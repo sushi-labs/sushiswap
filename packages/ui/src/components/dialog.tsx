@@ -1,79 +1,79 @@
-'use client'
+"use client";
 
-import { XMarkIcon } from '@heroicons/react/24/solid'
-import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { type VariantProps, cva } from 'class-variance-authority'
-import * as React from 'react'
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 import {
+  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
-  createContext,
   useCallback,
   useContext,
   useMemo,
   useState,
-} from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+} from "react";
+import { Chain, ChainId } from "sushi/chain";
 
 import {
   Button,
+  classNames,
   Dots,
   IconButton,
   LinkInternal,
   Loader,
-  classNames,
-} from '../index'
-import { CheckMarkIcon } from './icons/CheckmarkIcon'
-import { FailedMarkIcon } from './icons/FailedMarkIcon'
+} from "../index";
+import { CheckMarkIcon } from "./icons/CheckmarkIcon";
+import { FailedMarkIcon } from "./icons/FailedMarkIcon";
 
 const dialogVariants = cva(
-  'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+  "duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
   {
     variants: {
       variant: {
         default:
-          'rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-gray-100 dark:bg-slate-800 p-6 shadow-lg rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]',
-        opaque: 'px-4 fixed z-50 top-4 grid w-full max-w-xl',
+          "rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 bg-gray-100 dark:bg-slate-800 p-6 shadow-lg rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]",
+        opaque: "px-4 fixed z-50 top-4 grid w-full max-w-xl",
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: "default",
     },
-  },
-)
+  }
+);
 
 const dialogOverlayVariants = cva(
-  'fixed inset-0 z-50 transition-all duration-100 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in',
+  "fixed inset-0 z-50 transition-all duration-100 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in",
   {
     variants: {
       variant: {
-        default: 'bg-black/10 backdrop-blur-sm',
-        opaque: 'bg-gray-100 dark:bg-slate-900',
+        default: "bg-black/10 backdrop-blur-sm",
+        opaque: "bg-gray-100 dark:bg-slate-900",
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: "default",
     },
-  },
-)
+  }
+);
 
-const dialogCloseVariants = cva('', {
+const dialogCloseVariants = cva("", {
   variants: {
     variant: {
-      default: 'absolute top-6 right-6',
-      opaque: 'hidden',
+      default: "absolute top-6 right-6",
+      opaque: "hidden",
     },
   },
   defaultVariants: {
-    variant: 'default',
+    variant: "default",
   },
-})
+});
 
-const Dialog = DialogPrimitive.Root
-const DialogTrigger = DialogPrimitive.Trigger
-const DialogClose = DialogPrimitive.Close
+const Dialog = DialogPrimitive.Root;
+const DialogTrigger = DialogPrimitive.Trigger;
+const DialogClose = DialogPrimitive.Close;
 
 const DialogPortal = ({
   className,
@@ -85,8 +85,8 @@ const DialogPortal = ({
       {children}
     </div>
   </DialogPrimitive.Portal>
-)
-DialogPortal.displayName = DialogPrimitive.Portal.displayName
+);
+DialogPortal.displayName = DialogPrimitive.Portal.displayName;
 
 interface DialogOverlay
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>,
@@ -101,13 +101,13 @@ const DialogOverlay = React.forwardRef<
     className={dialogOverlayVariants({ variant, className })}
     {...props}
   />
-))
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+));
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof dialogVariants> {
-  hideClose?: boolean
+  hideClose?: boolean;
 }
 
 const DialogContent = React.forwardRef<
@@ -116,7 +116,7 @@ const DialogContent = React.forwardRef<
 >(
   (
     { className, hideClose: _hideClose = false, variant, children, ...props },
-    ref,
+    ref
   ) => (
     <DialogPortal>
       <DialogOverlay variant={variant} />
@@ -134,9 +134,9 @@ const DialogContent = React.forwardRef<
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
-  ),
-)
-DialogContent.displayName = DialogPrimitive.Content.displayName
+  )
+);
+DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({
   className,
@@ -144,13 +144,13 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={classNames(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
-      className,
+      "flex flex-col space-y-1.5 text-center sm:text-left",
+      className
     )}
     {...props}
   />
-)
-DialogHeader.displayName = 'DialogHeader'
+);
+DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({
   className,
@@ -158,13 +158,13 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={classNames(
-      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-      className,
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      className
     )}
     {...props}
   />
-)
-DialogFooter.displayName = 'DialogFooter'
+);
+DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -173,13 +173,13 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={classNames(
-      'text-lg font-semibold leading-none tracking-tight mr-[64px]',
-      className,
+      "text-lg font-semibold leading-none tracking-tight mr-[64px]",
+      className
     )}
     {...props}
   />
-))
-DialogTitle.displayName = DialogPrimitive.Title.displayName
+));
+DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
@@ -187,98 +187,98 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={classNames('text-sm text-muted-foreground mr-[64px]', className)}
+    className={classNames("text-sm text-muted-foreground mr-[64px]", className)}
     {...props}
   />
-))
-DialogDescription.displayName = DialogPrimitive.Description.displayName
+));
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 interface DialogReviewProps
   extends Omit<
     React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>,
-    'children' | 'open'
+    "children" | "open"
   > {
-  children: ({ confirm }: { confirm(): void }) => ReactNode
+  children: ({ confirm }: { confirm(): void }) => ReactNode;
 }
 
 const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
-  const { confirm, open, setOpen } = useDialog(DialogType.Review)
+  const { confirm, open, setOpen } = useDialog(DialogType.Review);
   return (
     <Dialog {...props} open={open} onOpenChange={setOpen}>
       {children({ confirm })}
     </Dialog>
-  )
-}
-DialogReview.displayName = 'DialogReview'
+  );
+};
+DialogReview.displayName = "DialogReview";
 
 interface DialogCustomProps {
-  children: ReactNode
-  dialogType: DialogType
+  children: ReactNode;
+  dialogType: DialogType;
 }
 
 const DialogCustom: FC<DialogCustomProps> = ({ children, ...props }) => {
-  const { open, setOpen } = useDialog(DialogType.Confirm)
+  const { open, setOpen } = useDialog(DialogType.Confirm);
   return (
     <Dialog {...props} open={open} onOpenChange={setOpen}>
       {children}
     </Dialog>
-  )
-}
-DialogCustom.displayName = 'DialogCustom'
+  );
+};
+DialogCustom.displayName = "DialogCustom";
 
 interface DialogConfirmProps extends DialogContentProps {
-  chainId: ChainId
-  testId: string
-  successMessage: ReactNode
-  buttonLink?: string
-  buttonText?: string
-  txHash: string | undefined
-  status: 'idle' | 'loading' | 'success' | 'error'
+  chainId: ChainId;
+  testId: string;
+  successMessage: ReactNode;
+  buttonLink?: string;
+  buttonText?: string;
+  txHash: string | undefined;
+  status: "idle" | "loading" | "success" | "error";
 }
 
 const DialogConfirm: FC<DialogConfirmProps> = ({
   chainId,
   testId,
   successMessage,
-  buttonText = 'Close',
+  buttonText = "Close",
   buttonLink,
   status,
   txHash,
   ...props
 }) => {
-  const { open, setOpen } = useDialog(DialogType.Confirm)
+  const { open, setOpen } = useDialog(DialogType.Confirm);
 
   return (
     <Dialog {...props} open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {status === 'loading' ? (
+            {status === "loading" ? (
               <Dots>Confirming</Dots>
-            ) : status === 'success' ? (
-              'Success!'
+            ) : status === "success" ? (
+              "Success!"
             ) : (
-              'Oops!'
+              "Oops!"
             )}
           </DialogTitle>
           <DialogDescription className="font-medium">
-            {status === 'loading' ? (
+            {status === "loading" ? (
               <>
-                Waiting for your{' '}
+                Waiting for your{" "}
                 <a
                   target="_blank"
-                  href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
+                  href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ""}
                   className="cursor-pointer text-blue hover:underline"
                   rel="noreferrer"
                 >
                   transaction
-                </a>{' '}
+                </a>{" "}
                 to be confirmed on the blockchain.
               </>
-            ) : status === 'success' ? (
+            ) : status === "success" ? (
               <a
                 target="_blank"
-                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ""}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -287,7 +287,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : (
               <a
                 target="_blank"
-                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
+                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ""}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -296,9 +296,9 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             )}
           </DialogDescription>
           <div className="py-6 flex justify-center">
-            {status === 'loading' ? (
+            {status === "loading" ? (
               <Loader size={132} strokeWidth={1} className="!text-blue" />
-            ) : status === 'success' ? (
+            ) : status === "success" ? (
               <CheckMarkIcon width={132} height={132} />
             ) : (
               <FailedMarkIcon width={132} height={132} />
@@ -323,9 +323,9 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
         </DialogHeader>
       </DialogContent>
     </Dialog>
-  )
-}
-DialogConfirm.displayName = 'DialogConfirm'
+  );
+};
+DialogConfirm.displayName = "DialogConfirm";
 
 enum DialogType {
   Review = 0,
@@ -333,52 +333,52 @@ enum DialogType {
 }
 
 interface DialogContext {
-  state: Record<DialogType, boolean>
-  confirm(): void
-  setState: Dispatch<SetStateAction<Record<DialogType, boolean>>>
+  state: Record<DialogType, boolean>;
+  confirm(): void;
+  setState: Dispatch<SetStateAction<Record<DialogType, boolean>>>;
 }
 
-const DialogContext = createContext<DialogContext | undefined>(undefined)
+const DialogContext = createContext<DialogContext | undefined>(undefined);
 
 interface DialogProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 const DialogProvider: FC<DialogProviderProps> = ({ children }) => {
   const [state, setState] = useState<Record<DialogType, boolean>>({
     [DialogType.Review]: false,
     [DialogType.Confirm]: false,
-  })
+  });
 
   const confirm = useCallback(() => {
     setState({
       [DialogType.Review]: false,
       [DialogType.Confirm]: true,
-    })
-  }, [])
+    });
+  }, []);
 
   return (
     <DialogContext.Provider value={{ state, confirm, setState }}>
       {children}
     </DialogContext.Provider>
-  )
-}
+  );
+};
 
 type UseDialog<T> = T extends DialogType.Review
   ? {
-      open: boolean
-      setOpen(open: boolean): void
-      confirm(): void
+      open: boolean;
+      setOpen(open: boolean): void;
+      confirm(): void;
     }
   : {
-      open: boolean
-      setOpen(open: boolean): void
-    }
+      open: boolean;
+      setOpen(open: boolean): void;
+    };
 
 const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
-  const context = useContext(DialogContext)
+  const context = useContext(DialogContext);
   if (!context) {
-    throw new Error('Hook can only be used inside Modal Context')
+    throw new Error("Hook can only be used inside Modal Context");
   }
 
   return useMemo(() => {
@@ -388,16 +388,16 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
         setOpen: (val) =>
           context.setState((prev) => ({ ...prev, [DialogType.Review]: val })),
         confirm: context.confirm,
-      } as UseDialog<T>
+      } as UseDialog<T>;
     } else {
       return {
         open: Boolean(context.state[type]),
         setOpen: (val) =>
           context.setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
-      } as UseDialog<T>
+      } as UseDialog<T>;
     }
-  }, [type])
-}
+  }, [context, type]);
+};
 
 export {
   Dialog,
@@ -416,4 +416,4 @@ export {
   DialogTrigger,
   DialogType,
   useDialog,
-}
+};
