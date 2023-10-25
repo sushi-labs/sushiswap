@@ -1,4 +1,3 @@
-import { ChainId } from 'sushi/chain'
 import type { Chain } from '@wagmi/core'
 import {
   arbitrum,
@@ -13,9 +12,11 @@ import {
   optimism,
   polygon,
   polygonZkEvm,
+  scroll,
   telos,
   zkSync,
 } from '@wagmi/core/chains'
+import { ChainId } from 'sushi/chain'
 
 export const defaultChains: Chain[] = [
   arbitrum,
@@ -37,6 +38,7 @@ export const defaultChains: Chain[] = [
   zkSync,
   // polygonMumbai,
   // sepolia,
+  scroll,
 ]
 
 export const otherChains: Chain[] = [

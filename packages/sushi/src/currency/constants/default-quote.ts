@@ -63,5 +63,6 @@ export const defaultQuoteCurrency = {
   [ChainId.ZKSYNC_ERA]: USDC[ChainId.ZKSYNC_ERA],
   [ChainId.LINEA]: axlUSDC[ChainId.LINEA],
   [ChainId.BASE]: axlUSDC[ChainId.BASE],
+  [ChainId.SCROLL]: USDC[ChainId.SCROLL],
   [ChainId.FILECOIN]: axlUSDC[ChainId.FILECOIN],
 } as const
