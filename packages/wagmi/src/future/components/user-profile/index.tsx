@@ -1,49 +1,47 @@
-'use client'
+"use client";
 
-import { useIsMounted } from '@sushiswap/hooks'
-import { useBreakpoint } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+import { useIsMounted } from "@sushiswap/hooks";
+import { Button } from "@sushiswap/ui/components/button";
 // import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@sushiswap/ui/components/popover'
-import React, { FC, useState } from 'react'
-import { ChainId } from 'sushi/chain'
-import { shortenAddress } from 'sushi/format'
-import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
-import { ConnectButton } from '../connect-button'
-import { ConnectView } from './ConnectView'
-import { DefaultView } from './DefaultView'
-import { ProfileView } from './ProfileView'
-import { SettingsView } from './SettingsView'
-import { TransactionsView } from './TransactionsView'
+} from "@sushiswap/ui/components/popover";
+import React, { FC, useState } from "react";
+import { ChainId } from "sushi/chain";
+import { shortenAddress } from "sushi/format";
+import { useAccount, useEnsAvatar, useEnsName, useNetwork } from "wagmi";
+import { ConnectButton } from "../connect-button";
+import { ConnectView } from "./ConnectView";
+import { DefaultView } from "./DefaultView";
+import { ProfileView } from "./ProfileView";
+import { SettingsView } from "./SettingsView";
+import { TransactionsView } from "./TransactionsView";
 
 interface ProfileProps {
-  networks: ChainId[]
+  networks: ChainId[];
 }
 
 export const UserProfile: FC<ProfileProps> = () => {
-  const isMounted = useIsMounted()
-  const { isSm } = useBreakpoint('sm')
-  const [view, setView] = useState<ProfileView>(ProfileView.Default)
-  const { chain } = useNetwork()
-  const { address } = useAccount()
+  const isMounted = useIsMounted();
+  const [view, setView] = useState<ProfileView>(ProfileView.Default);
+  const { chain } = useNetwork();
+  const { address } = useAccount();
 
   const { data: name } = useEnsName({
     chainId: ChainId.ETHEREUM,
     address,
-  })
+  });
 
   const { data: avatar } = useEnsAvatar({
     name,
     chainId: ChainId.ETHEREUM,
-  })
+  });
 
-  const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM
+  const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM;
 
-  if (!address || !isMounted) return <ConnectButton variant="secondary" />
+  if (!address || !isMounted) return <ConnectButton variant="secondary" />;
 
   return (
     <Popover>
@@ -61,9 +59,7 @@ export const UserProfile: FC<ProfileProps> = () => {
             ) : null
             // <JazzIcon diameter={20} address={address} />
           }
-          <span className="hidden sm:block">
-            {shortenAddress(address, isSm ? 3 : 2)}
-          </span>
+          {shortenAddress(address, 3)}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -80,5 +76,5 @@ export const UserProfile: FC<ProfileProps> = () => {
         )}
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};
