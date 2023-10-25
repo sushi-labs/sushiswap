@@ -31,6 +31,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.BOBA_AVAX,
   ChainId.BOBA_BNB,
   ChainId.BASE,
+  ChainId.SCROLL,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -56,6 +57,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.CORE,
   ChainId.BASE,
   ChainId.LINEA,
+  ChainId.SCROLL,
   ChainId.FILECOIN,
 ]
 export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
@@ -119,6 +121,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.CORE]: 'Core',
   [ChainId.BASE]: 'Base',
   [ChainId.LINEA]: 'Linea',
+  [ChainId.SCROLL]: 'Scroll',
   [ChainId.FILECOIN]: 'Filecoin',
 } as const
 
@@ -152,6 +155,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.CORE]: CORE_HOST,
   [ChainId.BASE]: STUDIO_HOST,
   [ChainId.LINEA]: LINEA_HOST,
+  [ChainId.SCROLL]: STUDIO_HOST,
   [ChainId.FILECOIN]: FILECOIN_HOST,
 } as const
 
@@ -207,6 +211,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushiswap/blocks-core',
   [ChainId.BASE]: 'blocks-base/v0.0.1',
   [ChainId.LINEA]: 'sushiswap/blocks-linea',
+  [ChainId.SCROLL]: 'blocks-scroll/v0.0.1',
   [ChainId.FILECOIN]: 'sushiswap/blocks',
 } as const
 
@@ -236,6 +241,7 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.BOBA_BNB]: 0.5,
   [ChainId.BTTC]: 2,
   [ChainId.THUNDERCORE]: 1,
+  [ChainId.SCROLL]: 3,
 } as const
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
@@ -276,6 +282,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
   [ChainId.BASE]: 'sushiswap-base/v0.0.1',
+  [ChainId.SCROLL]: 'sushiswap-scroll/v0.0.1',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
@@ -296,6 +303,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushi-v3/v3-core',
   [ChainId.BASE]: 'v3-base/v0.0.1',
   [ChainId.LINEA]: 'sushi-v3/v3-linea',
+  [ChainId.SCROLL]: 'v3-scroll/v0.0.1',
   [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
 }
 

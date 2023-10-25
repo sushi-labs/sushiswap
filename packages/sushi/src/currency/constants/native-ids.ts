@@ -48,6 +48,7 @@ export const nativeCurrencyIds = {
   [ChainId.ZKSYNC_ERA]: 'ETH',
   [ChainId.LINEA]: 'ETH',
   [ChainId.BASE]: 'ETH',
+  [ChainId.SCROLL]: 'ETH',
   // [ChainId.SEPOLIA]: 'ETH',
   [ChainId.FILECOIN]: 'FIL',
 } as const
