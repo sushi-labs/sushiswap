@@ -1,4 +1,5 @@
 import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
+import { useCallback, useEffect, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
   ARB,
@@ -17,7 +18,6 @@ import {
   WETH9,
   WNATIVE,
 } from 'sushi/currency'
-import { useCallback, useEffect, useMemo } from 'react'
 
 import { useLocalStorage } from './useLocalStorage'
 
@@ -303,6 +303,13 @@ export const COMMON_BASES = {
       address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
     }),
     USDC[ChainId.BASE],
+  ],
+  [ChainId.SCROLL]: [
+    Native.onChain(ChainId.SCROLL),
+    WNATIVE[ChainId.SCROLL],
+    USDC[ChainId.SCROLL],
+    USDT[ChainId.SCROLL],
+    WBTC[ChainId.SCROLL],
   ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const

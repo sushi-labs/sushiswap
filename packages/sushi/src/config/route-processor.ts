@@ -221,6 +221,7 @@ export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   // ChainId.POLYGON_ZKEVM,
+  ChainId.SCROLL,
 ] as const
 export type RouteProcessor3_2ChainId =
   typeof ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS[number]
@@ -243,6 +244,7 @@ export const ROUTE_PROCESSOR_3_2_ADDRESS: Record<
   [ChainId.OPTIMISM]: '0xEb94EcA012eC0bbB254722FdDa2CE7475875A52B',
   [ChainId.POLYGON]: '0xE7eb31f23A5BefEEFf76dbD2ED6AdC822568a5d2',
   // [ChainId.POLYGON_ZKEVM]: '0xbE811A0D44E2553d25d11CB8DC0d3F0D0E6430E6',
+  [ChainId.SCROLL]: '0xCA6Fe749878841b96F620Ec79638B13dAaD3D320',
 } as const
 export const isRouteProcessor3_2ChainId = (
   chainId: ChainId,
