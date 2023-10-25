@@ -388,9 +388,9 @@ export const filecoin = {
   contracts: {
     multicall3: {
       address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 3328594
-    }
-  }
+      blockCreated: 3328594,
+    },
+  },
 } as const
 
 const alchemyId =
