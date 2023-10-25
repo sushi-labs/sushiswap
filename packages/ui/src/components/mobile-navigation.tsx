@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import React, { FC } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "./sheet";
-import { Button } from "./button";
-import Link, { LinkProps } from "next/link";
-import { useRouter } from "next/navigation";
+import React, { FC } from 'react'
+import { Sheet, SheetContent, SheetTrigger } from './sheet'
+import { Button } from './button'
+import Link, { LinkProps } from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   classNames,
   EXPLORE_NAVIGATION_LINKS,
@@ -13,23 +13,23 @@ import {
   ScrollArea,
   SushiIcon,
   TOOLS_NAVIGATION_LINKS,
-} from "../index";
-import { Bars3Icon } from "@heroicons/react/20/solid";
+} from '../index'
+import { Bars3Icon } from '@heroicons/react/20/solid'
 
 interface MobileNavigationProps {
-  rightElement?: React.ReactNode;
+  rightElement?: React.ReactNode
 }
 
 export const MobileNavigation: FC<MobileNavigationProps> = ({
   rightElement,
 }) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
   return (
     <div
       className={navigationContainerVariants({
-        variant: "default",
-        className: "block md:hidden",
+        variant: 'default',
+        className: 'block md:hidden',
       })}
     >
       <div className="flex items-center justify-between flex-grow gap-4">
@@ -64,7 +64,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
                       >
                         {item.title}
                       </MobileLink>
-                    )
+                    ),
                 )}
               </div>
               <div className="flex flex-col space-y-2">
@@ -80,7 +80,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
                         >
                           {item.title}
                         </MobileLink>
-                      )
+                      ),
                   )}
                 </div>
                 <div className="flex flex-col space-y-3 pt-6">
@@ -95,7 +95,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
                         >
                           {item.title}
                         </MobileLink>
-                      )
+                      ),
                   )}
                 </div>
               </div>
@@ -107,13 +107,13 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 interface MobileLinkProps extends LinkProps {
-  onOpenChange?: (open: boolean) => void;
-  children: React.ReactNode;
-  className?: string;
+  onOpenChange?: (open: boolean) => void
+  children: React.ReactNode
+  className?: string
 }
 
 function MobileLink({
@@ -123,18 +123,18 @@ function MobileLink({
   children,
   ...props
 }: MobileLinkProps) {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <Link
       href={href}
       onClick={() => {
-        router.push(href.toString());
-        onOpenChange?.(false);
+        router.push(href.toString())
+        onOpenChange?.(false)
       }}
       className={classNames(className)}
       {...props}
     >
       {children}
     </Link>
-  );
+  )
 }
