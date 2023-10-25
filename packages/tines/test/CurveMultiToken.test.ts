@@ -3,7 +3,7 @@ import seedrandom from 'seedrandom'
 import { RToken } from '../dist'
 import {
   closeValues,
-  createCurvePoolsSingleForMultipool,
+  createCurvePoolsForMultipool,
   CurveMultitokenPool,
   CurvePool,
   getBigInt,
@@ -104,7 +104,7 @@ function createMultiPool(
   token0: RToken,
   token1: RToken,
 ): CurveMultitokenPool {
-  return createCurvePoolsSingleForMultipool(
+  return createCurvePoolsForMultipool(
     'curve multipool',
     [token0, token1],
     params.fee,
