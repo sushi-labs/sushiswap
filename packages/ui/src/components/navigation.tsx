@@ -1,9 +1,9 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import Link from "next/link";
-import * as React from "react";
+import { cva, type VariantProps } from 'class-variance-authority'
+import Link from 'next/link'
+import * as React from 'react'
 
-import classNames from "classnames";
-import { SushiIcon } from "./icons/SushiIcon";
+import classNames from 'classnames'
+import { SushiIcon } from './icons/SushiIcon'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,129 +12,129 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "./navigation-menu";
-import { OnramperButton } from "./onramper";
-import { MobileNavigation } from "./mobile-navigation";
+} from './navigation-menu'
+import { OnramperButton } from './onramper'
+import { MobileNavigation } from './mobile-navigation'
 
 const EXPLORE_NAVIGATION_LINKS: {
-  title: string;
-  href: string;
-  description: string;
+  title: string
+  href: string
+  description: string
 }[] = [
   {
-    title: "Swap",
-    href: "/swap",
-    description: "The easiest way to trade.",
+    title: 'Swap',
+    href: '/swap',
+    description: 'The easiest way to trade.',
   },
   {
-    title: "Pools",
-    href: "/pools",
-    description: "Earn fees by providing liquidity.",
+    title: 'Pools',
+    href: '/pools',
+    description: 'Earn fees by providing liquidity.',
   },
   {
-    title: "Pay",
-    href: "/furo",
-    description: "Automate salaries and vesting schedules.",
+    title: 'Pay',
+    href: '/furo',
+    description: 'Automate salaries and vesting schedules.',
   },
   {
-    title: "Analytics",
-    href: "/analytics",
-    description: "Find the best opportunities",
+    title: 'Analytics',
+    href: '/analytics',
+    description: 'Find the best opportunities',
   },
   {
-    title: "Blog",
-    href: "/blog",
+    title: 'Blog',
+    href: '/blog',
     description:
-      "Stay up to date with the latest product developments at Sushi.",
+      'Stay up to date with the latest product developments at Sushi.',
   },
   {
-    title: "Academy",
-    href: "/academy",
-    description: "Everything you need to get up to speed with DeFi.",
+    title: 'Academy',
+    href: '/academy',
+    description: 'Everything you need to get up to speed with DeFi.',
   },
   {
-    title: "Partner with Sushi",
-    href: "/partner",
-    description: "Incentivize your token with Sushi rewards.",
+    title: 'Partner with Sushi',
+    href: '/partner',
+    description: 'Incentivize your token with Sushi rewards.',
   },
   {
-    title: "List enquiry",
-    href: "/tokenlist-request",
-    description: "Get your token on our default token list.",
+    title: 'List enquiry',
+    href: '/tokenlist-request',
+    description: 'Get your token on our default token list.',
   },
-];
+]
 
 const TOOLS_NAVIGATION_LINKS: {
-  title: string;
-  href: string;
-  description: string;
+  title: string
+  href: string
+  description: string
 }[] = [
   {
-    title: "Analytics",
-    href: "/analytics",
-    description: "Find the best opportunities",
+    title: 'Analytics',
+    href: '/analytics',
+    description: 'Find the best opportunities',
   },
   {
-    title: "Blog",
-    href: "/blog",
+    title: 'Blog',
+    href: '/blog',
     description:
-      "Stay up to date with the latest product developments at Sushi.",
+      'Stay up to date with the latest product developments at Sushi.',
   },
   {
-    title: "Academy",
-    href: "/academy",
-    description: "Everything you need to get up to speed with DeFi.",
+    title: 'Academy',
+    href: '/academy',
+    description: 'Everything you need to get up to speed with DeFi.',
   },
   {
-    title: "Forum & Proposals",
-    href: "https://forum.sushi.com",
-    description: "View and discuss proposals for SushiSwap.",
+    title: 'Forum & Proposals',
+    href: 'https://forum.sushi.com',
+    description: 'View and discuss proposals for SushiSwap.',
   },
   {
-    title: "Participate",
-    href: "https://snapshot.org/#/sushigov.eth",
+    title: 'Participate',
+    href: 'https://snapshot.org/#/sushigov.eth',
     description:
-      "As a Sushi holder, you can vote on proposals to shape the future of SushiSwap.",
+      'As a Sushi holder, you can vote on proposals to shape the future of SushiSwap.',
   },
-];
+]
 
 const PARTNER_NAVIGATION_LINKS: {
-  title: string;
-  href: string;
-  description: string;
+  title: string
+  href: string
+  description: string
 }[] = [
   {
-    title: "Partner with Sushi",
-    href: "/partner",
-    description: "Incentivize your token with Sushi rewards.",
+    title: 'Partner with Sushi',
+    href: '/partner',
+    description: 'Incentivize your token with Sushi rewards.',
   },
   {
-    title: "List enquiry",
-    href: "/tokenlist-request",
-    description: "Get your token on our default token list.",
+    title: 'List enquiry',
+    href: '/tokenlist-request',
+    description: 'Get your token on our default token list.',
   },
-];
+]
 
 const navigationContainerVariants = cva(
-  "px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]",
+  'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
   {
     variants: {
       variant: {
         default:
-          "bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800",
-        transparent: "",
+          'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800',
+        transparent: '',
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: 'default',
     },
-  }
-);
+  },
+)
 
 interface NavContainerProps
   extends VariantProps<typeof navigationContainerVariants> {
-  children: React.ReactNode;
-  className: string;
+  children: React.ReactNode
+  className: string
 }
 
 const NavigationContainer: React.FC<NavContainerProps> = ({
@@ -149,12 +149,12 @@ const NavigationContainer: React.FC<NavContainerProps> = ({
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
 interface NavProps extends VariantProps<typeof navigationContainerVariants> {
-  rightElement?: React.ReactNode;
-  legacyBehavior?: boolean;
+  rightElement?: React.ReactNode
+  legacyBehavior?: boolean
 }
 
 const Navigation: React.FC<NavProps> = ({
@@ -288,20 +288,20 @@ const Navigation: React.FC<NavProps> = ({
       </NavigationContainer>
       <MobileNavigation rightElement={rightElement} />
     </>
-  );
-};
+  )
+}
 
-interface NavigationListItemProps extends React.ComponentPropsWithoutRef<"a"> {
-  legacyBehavior?: boolean;
+interface NavigationListItemProps extends React.ComponentPropsWithoutRef<'a'> {
+  legacyBehavior?: boolean
 }
 
 const NavigationListItem = React.forwardRef<
-  React.ElementRef<"a">,
+  React.ElementRef<'a'>,
   NavigationListItemProps
 >(
   (
     { className, title, children, legacyBehavior = false, href, ...props },
-    ref
+    ref,
   ) => {
     return (
       <li>
@@ -310,8 +310,8 @@ const NavigationListItem = React.forwardRef<
             <a
               ref={ref}
               className={classNames(
-                "cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                className
+                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                className,
               )}
               href={href}
               {...props}
@@ -325,8 +325,8 @@ const NavigationListItem = React.forwardRef<
             <Link
               href={href}
               className={classNames(
-                "cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                className
+                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                className,
               )}
             >
               <div className="text-sm font-medium leading-none">{title}</div>
@@ -337,11 +337,11 @@ const NavigationListItem = React.forwardRef<
           )}
         </NavigationMenuLink>
       </li>
-    );
-  }
-);
+    )
+  },
+)
 
-NavigationListItem.displayName = "NavListItem";
+NavigationListItem.displayName = 'NavListItem'
 
 export {
   EXPLORE_NAVIGATION_LINKS,
@@ -351,4 +351,4 @@ export {
   NavigationListItem,
   PARTNER_NAVIGATION_LINKS,
   TOOLS_NAVIGATION_LINKS,
-};
+}
