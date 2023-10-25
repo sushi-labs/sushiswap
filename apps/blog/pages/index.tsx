@@ -7,11 +7,11 @@ import type { InferGetServerSidePropsType } from 'next'
 import type { FC } from 'react'
 import { useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import type { GhostArticle } from '../lib/ghost'
-import BlogSeo from '../components/seo/blog-seo'
-import type { Article, Category, Collection } from '../types'
 import { ArticleList, Card, Categories, Hero } from '../components'
+import BlogSeo from '../components/seo/blog-seo'
 import { getArticles, getCategories } from '../lib/api'
+import type { GhostArticle } from '../lib/ghost'
+import type { Article, Category, Collection } from '../types'
 
 export async function getStaticProps() {
   const [articles, categories] = await Promise.all([
@@ -128,7 +128,7 @@ const _Home: FC = () => {
             ) : null}
             <div className="flex justify-center">
               <Button asChild variant="secondary">
-                <LinkInternal href="/blog/archive">View Archive</LinkInternal>
+                <LinkInternal href="/archive">View Archive</LinkInternal>
               </Button>
             </div>
           </Container>

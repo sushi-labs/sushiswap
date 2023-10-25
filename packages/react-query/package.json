@@ -58,6 +58,7 @@
   "devDependencies": {
     "@sentry/nextjs": "7.74.0",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",

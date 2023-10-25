@@ -26,3 +26,63 @@ export const isSushiXSwapChainId = (
   chainId: ChainId,
 ): chainId is SushiXSwapChainId =>
   SUSHIXSWAP_SUPPORTED_CHAIN_IDS.includes(chainId as SushiXSwapChainId)
+
+export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.BSC,
+  ChainId.AVALANCHE,
+  ChainId.POLYGON,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+] as const
+
+export type SushiXSwap2ChainId = typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS[number]
+
+export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
+  [ChainId.ETHEREUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.BSC]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.AVALANCHE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.POLYGON]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.ARBITRUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.OPTIMISM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+} as const
+
+export const isSushiXSwap2ChainId = (
+  chainId: ChainId,
+): chainId is SushiXSwap2ChainId =>
+  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS.includes(chainId as SushiXSwap2ChainId)
+
+export const STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.BSC,
+  ChainId.AVALANCHE,
+  ChainId.POLYGON,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+] as const
+
+export type StargateAdapterChainId =
+  typeof STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS[number]
+
+export const STARGATE_ADAPTER_ADDRESS: Record<
+  StargateAdapterChainId,
+  `0x${string}`
+> = {
+  [ChainId.ETHEREUM]: '0x580ED43F3BBa06555785C81c2957efCCa71f7483',
+  [ChainId.BSC]: '0x078047150F8efa223B3d407f00E462e38f4B1b9C',
+  [ChainId.AVALANCHE]: '0x078047150F8efa223B3d407f00E462e38f4B1b9C',
+  [ChainId.POLYGON]: '0x5AbEdAc449A8301467c3e124B98e7151641F1e56',
+  [ChainId.ARBITRUM]: '0xFbc12984689e5f15626Bad03Ad60160Fe98B303C',
+  [ChainId.OPTIMISM]: '0x078047150F8efa223B3d407f00E462e38f4B1b9C',
+  [ChainId.BASE]: '0x580ED43F3BBa06555785C81c2957efCCa71f7483',
+} as const
+
+export const isStargateAdapterChainId = (
+  chainId: ChainId,
+): chainId is StargateAdapterChainId =>
+  STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS.includes(
+    chainId as StargateAdapterChainId,
+  )

@@ -50,15 +50,15 @@ export const SwapModeButtons = () => {
             <CardHeader>
               <CardTitle>Cross-chain Swap</CardTitle>
               <CardDescription>
-                Swap your funds on one network and swap them into a token on a
-                different network.{' '}
+                Swap tokens natively across 7 chains including Ethereum,
+                Arbitrum, Optimism, Polygon, Base and more!
               </CardDescription>
             </CardHeader>
             <CardContent>
               <a
                 target="_blank"
                 className="text-sm text-blue hover:underline"
-                href="https://www.sushi.com/academy/articles/sushi-xswap-a-crosschain-dex"
+                href="https://www.sushi.com/blog/sushixswap-v2"
                 rel="noreferrer"
               >
                 Learn more.

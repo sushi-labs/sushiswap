@@ -100,15 +100,15 @@ export const Notification: FC<{
               ) : (
                 <></>
               ))}
-            {status === 'success' && notification.type === 'send' && (
-              <ArrowRightIcon width={20} height={20} />
-            )}
-            {status === 'success' && notification.type === 'stargate' && (
+            {notification.type === 'stargate' && (
               <UICurrency.Icon
                 currency={STARGATE_TOKEN}
                 width={20}
                 height={20}
               />
+            )}
+            {status === 'success' && notification.type === 'send' && (
+              <ArrowRightIcon width={20} height={20} />
             )}
             {status === 'success' && notification.type === 'swap' && (
               <ArrowsUpDownIcon width={20} height={20} />

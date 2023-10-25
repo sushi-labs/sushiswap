@@ -49,6 +49,7 @@ export const useTradeQuery = (
     gasPrice = 50n,
     slippagePercentage,
     recipient,
+    source,
     enabled,
     onError,
   }: UseTradeParams,
@@ -108,6 +109,7 @@ export const useTradeQuery = (
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
+      source !== undefined && params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
       const json = await res.json()
