@@ -334,7 +334,9 @@ enum DialogType {
 
 interface DialogContext {
   state: Record<DialogType, boolean>;
+
   confirm(): void;
+
   setState: Dispatch<SetStateAction<Record<DialogType, boolean>>>;
 }
 
@@ -381,22 +383,24 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
     throw new Error("Hook can only be used inside Modal Context");
   }
 
+  const { state, setState, confirm } = context;
+
   return useMemo(() => {
     if (type === DialogType.Review) {
       return {
-        open: Boolean(context.state[type]),
+        open: Boolean(state[type]),
         setOpen: (val) =>
-          context.setState((prev) => ({ ...prev, [DialogType.Review]: val })),
-        confirm: context.confirm,
+          setState((prev) => ({ ...prev, [DialogType.Review]: val })),
+        confirm,
       } as UseDialog<T>;
     } else {
       return {
-        open: Boolean(context.state[type]),
+        open: Boolean(state[type]),
         setOpen: (val) =>
-          context.setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
+          setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
       } as UseDialog<T>;
     }
-  }, [context, type]);
+  }, [state, setState, confirm, type]);
 };
 
 export {
