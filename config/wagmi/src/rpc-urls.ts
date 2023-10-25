@@ -42,4 +42,6 @@ export const rpcUrls = {
     `https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`,
     // `https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`
   ],
-}
+} as const
+
+export type RpcEnabledChainId = keyof typeof rpcUrls
