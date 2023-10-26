@@ -2,8 +2,8 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
-  isStargateBridgeToken,
   STARGATE_BRIDGE_TOKENS,
+  isStargateBridgeToken,
 } from '@sushiswap/stargate'
 import {
   DialogClose,
@@ -58,10 +58,10 @@ import React, {
 } from 'react'
 import { gasMargin } from 'sushi/calculate'
 import { Chain, chainName } from 'sushi/chain'
-import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
+import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
-import { stringify, UserRejectedRequestError } from 'viem'
+import { UserRejectedRequestError, stringify } from 'viem'
 
 import { APPROVE_TAG_XSWAP } from '../../../lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
@@ -70,11 +70,11 @@ import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import {
   ConfirmationDialogContent,
   Divider,
+  GetStateComponent,
+  StepState,
   failedState,
   finishedState,
-  GetStateComponent,
   pendingState,
-  StepState,
 } from './cross-chain-swap-confirmation-dialog'
 import {
   useCrossChainSwapTrade,

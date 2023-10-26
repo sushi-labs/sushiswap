@@ -18,10 +18,10 @@ import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTra
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
-  createContext,
   Dispatch,
   FC,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -29,13 +29,13 @@ import {
   useState,
 } from 'react'
 import { ChainId } from 'sushi/chain'
-import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
+import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
 import {
   Amount,
-  defaultQuoteCurrency,
   Native,
-  tryParseAmount,
   Type,
+  defaultQuoteCurrency,
+  tryParseAmount,
 } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
