@@ -12,7 +12,6 @@ import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { usePoolGraphData } from 'lib/hooks'
-import { useTheme } from 'next-themes'
 import { FC, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'
@@ -41,8 +40,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   address,
   chainId,
 }) => {
-  const { resolvedTheme } = useTheme()
-
   const { data: graphPair, isLoading } = usePoolGraphData({
     poolAddress: address,
     chainId,
@@ -143,7 +140,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
                 : formatUSD(params[0].value)
             }</span>
             <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
-              date instanceof Date && !isNaN(date?.getTime())
+              date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
                     `dd MMM yyyy${

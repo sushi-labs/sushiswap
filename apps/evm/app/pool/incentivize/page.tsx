@@ -88,7 +88,6 @@ const Incentivize = withCheckerRoot(() => {
     setNetwork,
     feeAmount,
     setFeeAmount,
-    tokensLoading,
   } = useConcentratedLiquidityURLState()
 
   const { approved } = useApproved(APPROVE_TAG)

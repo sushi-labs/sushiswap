@@ -39,7 +39,6 @@ import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { Percent } from 'sushi/math'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'

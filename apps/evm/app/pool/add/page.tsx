@@ -1,11 +1,7 @@
 'use client'
 
 import { computePoolAddress } from '@sushiswap/v3-sdk'
-import {
-  useAccount,
-  useConcentratedLiquidityPool,
-  useConcentratedPositionInfo,
-} from '@sushiswap/wagmi'
+import { useAccount, useConcentratedPositionInfo } from '@sushiswap/wagmi'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/hooks/contracts/useV3FactoryContract'
 import React, { FC, useMemo, useState } from 'react'
 import { tryParseAmount } from 'sushi/currency'
@@ -71,13 +67,6 @@ const _Add: FC = () => {
         : undefined,
     [chainId, feeAmount, token0, token1],
   )
-
-  const { data: pool, isInitialLoading } = useConcentratedLiquidityPool({
-    chainId,
-    token0,
-    token1,
-    feeAmount,
-  })
 
   const fiatAmounts = useMemo(
     () => [tryParseAmount('1', token0), tryParseAmount('1', token1)],

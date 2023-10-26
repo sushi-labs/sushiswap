@@ -122,7 +122,7 @@ export const Header: FC = () => {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            {navData.map(({ title, href, links, isExternal }) => {
+            {navData.map(({ title, href, links }) => {
               if (href && !links) {
                 return (
                   <NavigationMenuItem key={href}>
