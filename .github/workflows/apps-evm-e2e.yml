@@ -15,11 +15,6 @@ on:
       - "config/wagmi/**"
       - "packages/**"
 
-defaults:
-  run:
-    # change this if your nextjs app does not live at the root of the repo
-    working-directory: ./apps/evm
-
 # https://playwright.dev/docs/ci#sharding
 env:
   CI: true
@@ -53,23 +48,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
-        working-directory: .
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-
-      - name: Install playwright
-        run: npx playwright install --with-deps chromium
+          node-version: ${{ matrix.node-version }}
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Which Anvil
-        run: which anvil
+      - name: Install playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
       - name: Test
         run: pnpm test-evm-app
@@ -81,7 +72,6 @@ jobs:
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           # NEXT_PUBLIC_DST_CHAIN_ID: ${{ matrix.dst-chain-id }}
           # NEXT_PUBLIC_DRPC_ID: ${{ secrets.NEXT_PUBLIC_DRPC_ID }}
-        working-directory: .
 
       - name: Upload test results
         if: always()
