@@ -687,7 +687,7 @@ async function checkMultipleSwapsFork(
     return 'skipped (pool init error)'
 
   const n = 2 //poolInfo.tokenContracts.length
-  const steps = 1
+  const steps = 100
 
   const flowInternal : number[][][] = []
   for (let i = 0; i < n; ++i) {
@@ -709,13 +709,9 @@ async function checkMultipleSwapsFork(
     const res1 = Number(pool.reserve1)
     if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
 
-    const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-    const amountIn = res0 * amountInPortion
-
+    const amountIn = res0 * getRandomExp(rnd, 1e-6, 1e-3)
     const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
       .out + addFlowOut(from, to)
-    addFlowInp(from, to, amountIn)
-    addFlowOut(from, to, -expectedOut)
     pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
   }
 
@@ -730,7 +726,7 @@ async function checkMultipleSwapsFork(
         poolInfo,
         flowI > 0 ? i : j,
         flowI > 0 ? j : i,
-        flowI > 0 ? flowI : flowI
+        flowI > 0 ? flowI : flowJ
       )
       expectCloseValues(flowI > 0 ? -flowJ : -flowI, realOut, precision)
     }
@@ -764,7 +760,7 @@ describe('Real Curve pools consistency check', () => {
   describe('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
     const poolNumber = 1 // MulticoinPoolNumber
     for (let i = 0; i < poolNumber; ++i) {
-      const [poolAddress, name, poolType, precision = 1e-6] =
+      const [poolAddress, name, poolType, precision = 1e-7] =
         NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
         debugger

@@ -46,13 +46,13 @@ export class CurveMultitokenPool extends RPool {
     if (direction) {
       console.assert(amountIn >= this.flow0, 'CurveMultitokenPool.calcOutByIn Unexpected input value 0')
       return {
-        out: this.core.calcOutByIn(amountIn - this.flow0, this.index0, this.index1) + this.flow1,
+        out: this.core.calcOutByIn(amountIn - this.flow0, this.index0, this.index1) - this.flow1,
         gasSpent: SWAP_GAS_COST
       }
     } else {
       console.assert(amountIn >= this.flow1, 'CurveMultitokenPool.calcOutByIn Unexpected input value 1')
       return {
-        out: this.core.calcOutByIn(amountIn - this.flow1, this.index1, this.index0) + this.flow0,
+        out: this.core.calcOutByIn(amountIn - this.flow1, this.index1, this.index0) - this.flow0,
         gasSpent: SWAP_GAS_COST
       }
     }
