@@ -109,7 +109,8 @@ const config: PlaywrightTestConfig = {
         // '--silent',
         // '--block-time 15',
       ].join(' '),
-      port: Number(process.env.ANVIL_PORT || 8545),
+      url: `http://127.0.0.1:${process.env.ANVIL_PORT || 8545}`,
+      // port: Number(process.env.ANVIL_PORT || 8545),
       // timeout: 120_000,
       // reuseExistingServer: !process.env.CI,
       env: {

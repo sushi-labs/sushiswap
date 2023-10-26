@@ -22,9 +22,8 @@ import {
   expect,
   test,
 } from 'next/experimental/testmode/playwright'
-import { Native, SUSHI, Token, Type } from 'sushi/currency'
+import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
-// import { expect, test } from 'next/experimental/testmode/playwright/msw'
 import { zeroAddress } from 'viem'
 
 import { createERC20 } from '../create-erc20'
