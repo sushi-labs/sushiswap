@@ -1,8 +1,8 @@
 import {
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
   TridentConstantPool,
   TridentStablePool,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
 } from '@sushiswap/trident-sdk'
 import {
   Button,
@@ -41,10 +41,10 @@ import {
   useSignature,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
+  LiquidityInput,
   approveMasterContractAction,
   batchAction,
   deployNewPoolAction,
-  LiquidityInput,
 } from 'lib/actions'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
@@ -54,10 +54,10 @@ import { Amount, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import {
   Address,
+  UserRejectedRequestError,
   encodeAbiParameters,
   encodeFunctionData,
   parseAbiParameters,
-  UserRejectedRequestError,
   zeroAddress,
 } from 'viem'
 

@@ -7,9 +7,9 @@ import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
   Address,
-  getTridentRouterContractConfig,
   TridentConstantPoolState,
   TridentStablePoolState,
+  getTridentRouterContractConfig,
   useAccount,
   useBentoBoxTotals,
   useNetwork,
@@ -33,10 +33,10 @@ import {
   withCheckerRoot,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
+  LiquidityOutput,
   approveMasterContractAction,
   batchAction,
   burnLiquidityAction,
-  LiquidityOutput,
   sweepAction,
   unwrapWETHAction,
 } from 'lib/actions'

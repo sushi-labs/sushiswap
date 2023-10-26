@@ -2,6 +2,7 @@ import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
 } from 'sushi/config'
 
 import { UsePoolsParams } from '../types'
@@ -22,6 +23,7 @@ export const getAllPoolsCodeMap = async ({
     LiquidityProviders.Trident,
   ]
   if (
+    isRouteProcessor3_2ChainId(chainId) ||
     isRouteProcessor3_1ChainId(chainId) ||
     isRouteProcessor3ChainId(chainId)
   ) {

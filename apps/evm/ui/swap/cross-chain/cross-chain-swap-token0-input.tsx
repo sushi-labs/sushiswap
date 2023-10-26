@@ -1,10 +1,6 @@
 'use client'
 
 import {
-  STARGATE_SUPPORTED_CHAIN_IDS,
-  StargateChainId,
-} from '@sushiswap/stargate'
-import {
   Button,
   Collapsible,
   Label,
@@ -15,6 +11,7 @@ import {
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Chain } from 'sushi/chain'
 
+import { SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapToken0Input = () => {
@@ -32,14 +29,18 @@ export const CrossChainSwapToken0Input = () => {
             From
           </Label>
           <NetworkSelector
-            networks={STARGATE_SUPPORTED_CHAIN_IDS}
-            selected={chainId0 as StargateChainId}
+            networks={SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS}
+            selected={chainId0}
             onSelect={(chainId, close) => {
               setChainId0(chainId)
               close()
             }}
           >
-            <Button variant="secondary" size="xs">
+            <Button
+              variant="secondary"
+              size="xs"
+              testId="network-selector-from"
+            >
               <NetworkIcon chainId={chainId0} width={16} height={16} />
               {Chain.from(chainId0)?.name}
               <SelectIcon />

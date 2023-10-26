@@ -1,6 +1,11 @@
 // @ts-nocheck
 
-import { Page, expect, test } from '@playwright/test'
+import { Page } from '@playwright/test'
+import {
+  NextFixture,
+  expect,
+  test,
+} from 'next/experimental/testmode/playwright'
 import { ChainId } from 'sushi/chain'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from 'sushi/currency'
 import { zeroAddress } from 'viem'
@@ -28,13 +33,16 @@ const wbtc = WBTC[chainId]
 
 // test.beforeAll(async () => {})
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, next }) => {
   page.on('pageerror', (error) => {
     console.error(error)
   })
   // We cam reset the fork easily
   // const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
   // await client.reset({ blockNumber: 42259027n })
+  next.onFetch(() => {
+    return 'continue'
+  })
   await page.goto(url)
   await switchNetwork(page, chainId)
 })

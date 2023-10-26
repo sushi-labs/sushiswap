@@ -304,6 +304,13 @@ export const COMMON_BASES = {
     }),
     USDC[ChainId.BASE],
   ],
+  [ChainId.SCROLL]: [
+    Native.onChain(ChainId.SCROLL),
+    WNATIVE[ChainId.SCROLL],
+    USDC[ChainId.SCROLL],
+    USDT[ChainId.SCROLL],
+    WBTC[ChainId.SCROLL],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 

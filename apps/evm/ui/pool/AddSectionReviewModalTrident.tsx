@@ -36,9 +36,9 @@ import {
   useSignature,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
+  LiquidityInput,
   approveMasterContractAction,
   batchAction,
-  LiquidityInput,
 } from 'lib/actions'
 import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
 import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
@@ -50,10 +50,10 @@ import { Amount, Token, Type } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import {
   Address,
+  UserRejectedRequestError,
   encodeAbiParameters,
   encodeFunctionData,
   parseAbiParameters,
-  UserRejectedRequestError,
   zeroAddress,
 } from 'viem'
 

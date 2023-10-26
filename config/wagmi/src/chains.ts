@@ -12,6 +12,7 @@ import {
   optimism,
   polygon,
   polygonZkEvm,
+  scroll,
   telos,
   zkSync,
 } from '@wagmi/core/chains'
@@ -37,6 +38,7 @@ export const defaultChains: Chain[] = [
   zkSync,
   // polygonMumbai,
   // sepolia,
+  scroll,
 ]
 
 export const otherChains: Chain[] = [

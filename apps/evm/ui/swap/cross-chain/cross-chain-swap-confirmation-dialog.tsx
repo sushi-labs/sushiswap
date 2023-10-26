@@ -1,18 +1,14 @@
-import {
-  STARGATE_BRIDGE_TOKENS,
-  STARGATE_TOKEN,
-  isStargateBridgeToken,
-} from '@sushiswap/stargate'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui/components/loader'
+import { TransactionType } from 'lib/swap/useCrossChainTrade/SushiXSwap2'
 import { FC, ReactNode } from 'react'
 import { Chain } from 'sushi/chain'
+import { STARGATE_TOKEN } from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
-
 import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
@@ -36,11 +32,11 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   } = useDerivedStateCrossChainSwap()
   const { data: trade } = useCrossChainSwapTrade()
 
-  const swapOnDest = !isStargateBridgeToken(token1)
-  const dstBridgeToken =
-    token1?.isToken && isStargateBridgeToken(token1)
-      ? token1
-      : STARGATE_BRIDGE_TOKENS[chainId1][0]
+  const swapOnDest =
+    trade?.transactionType &&
+    [TransactionType.BridgeAndSwap, TransactionType.CrossChainSwap].includes(
+      trade.transactionType,
+    )
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>
@@ -103,8 +99,8 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   if (dialogState.dest === StepState.PartialSuccess) {
     return (
       <>
-        We {`couldn't`} swap {dstBridgeToken.symbol} into {token1?.symbol},{' '}
-        {dstBridgeToken.symbol} has been send to{' '}
+        We {`couldn't`} swap {trade?.dstBridgeToken?.symbol} into{' '}
+        {token1?.symbol}, {trade?.dstBridgeToken?.symbol} has been send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
             <a

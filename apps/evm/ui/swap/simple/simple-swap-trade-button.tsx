@@ -24,6 +24,7 @@ import {
   useSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
+import { useIsSwapMaintenance } from './use-is-swap-maintenance'
 
 export const SimpleSwapTradeButton: FC = () => {
   return (
@@ -41,6 +42,7 @@ export const _SimpleSwapTradeButton: FC<{
   error: Error | null
   isSuccess: boolean
 }> = ({ error, isSuccess }) => {
+  const { data: maintenance } = useIsSwapMaintenance()
   const { isSlippageError } = usePersistedSlippageError({ isSuccess, error })
   const { data: trade } = useSimpleSwapTrade()
   const [checked, setChecked] = useState(false)
@@ -66,60 +68,66 @@ export const _SimpleSwapTradeButton: FC<{
   return (
     <>
       <div>
-        <Checker.Connect>
-          <Checker.Network chainId={chainId}>
-            <Checker.Amounts chainId={chainId} amounts={[swapAmount]}>
-              <Checker.ApproveERC20
-                id="approve-erc20"
-                amount={swapAmount}
-                contract={
-                  isRouteProcessor3_2ChainId(chainId)
-                    ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
-                    : isRouteProcessor3_1ChainId(chainId)
-                    ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-                    : isRouteProcessor3ChainId(chainId)
-                    ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-                    : isRouteProcessorChainId(chainId)
-                    ? ROUTE_PROCESSOR_ADDRESS[chainId]
-                    : undefined
-                }
-              >
-                <Checker.Success tag={APPROVE_TAG_SWAP}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="xl"
-                      disabled={Boolean(
-                        isSlippageError ||
-                          error ||
-                          !trade?.amountOut?.greaterThan(ZERO) ||
-                          trade?.route?.status === 'NoWay' ||
-                          +swapAmountString === 0 ||
-                          (!checked && warningSeverity(trade?.priceImpact) > 3),
-                      )}
-                      color={
-                        warningSeverity(trade?.priceImpact) >= 3
-                          ? 'red'
-                          : 'blue'
-                      }
-                      fullWidth
-                      testId="swap"
-                    >
-                      {!checked && warningSeverity(trade?.priceImpact) >= 3
-                        ? 'Price impact too high'
-                        : trade?.route?.status === 'NoWay'
-                        ? 'No trade found'
-                        : isWrap
-                        ? 'Wrap'
-                        : isUnwrap
-                        ? 'Unwrap'
-                        : 'Swap'}
-                    </Button>
-                  </DialogTrigger>
-                </Checker.Success>
-              </Checker.ApproveERC20>
-            </Checker.Amounts>
-          </Checker.Network>
-        </Checker.Connect>
+        <Checker.Guard
+          guardWhen={maintenance}
+          guardText="Maintenance in progress"
+        >
+          <Checker.Connect>
+            <Checker.Network chainId={chainId}>
+              <Checker.Amounts chainId={chainId} amounts={[swapAmount]}>
+                <Checker.ApproveERC20
+                  id="approve-erc20"
+                  amount={swapAmount}
+                  contract={
+                    isRouteProcessor3_2ChainId(chainId)
+                      ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
+                      : isRouteProcessor3_1ChainId(chainId)
+                      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
+                      : isRouteProcessor3ChainId(chainId)
+                      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
+                      : isRouteProcessorChainId(chainId)
+                      ? ROUTE_PROCESSOR_ADDRESS[chainId]
+                      : undefined
+                  }
+                >
+                  <Checker.Success tag={APPROVE_TAG_SWAP}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="xl"
+                        disabled={Boolean(
+                          isSlippageError ||
+                            error ||
+                            !trade?.amountOut?.greaterThan(ZERO) ||
+                            trade?.route?.status === 'NoWay' ||
+                            +swapAmountString === 0 ||
+                            (!checked &&
+                              warningSeverity(trade?.priceImpact) > 3),
+                        )}
+                        color={
+                          warningSeverity(trade?.priceImpact) >= 3
+                            ? 'red'
+                            : 'blue'
+                        }
+                        fullWidth
+                        testId="swap"
+                      >
+                        {!checked && warningSeverity(trade?.priceImpact) >= 3
+                          ? 'Price impact too high'
+                          : trade?.route?.status === 'NoWay'
+                          ? 'No trade found'
+                          : isWrap
+                          ? 'Wrap'
+                          : isUnwrap
+                          ? 'Unwrap'
+                          : 'Swap'}
+                      </Button>
+                    </DialogTrigger>
+                  </Checker.Success>
+                </Checker.ApproveERC20>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
+        </Checker.Guard>
       </div>
       {warningSeverity(trade?.priceImpact) > 3 && (
         <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">

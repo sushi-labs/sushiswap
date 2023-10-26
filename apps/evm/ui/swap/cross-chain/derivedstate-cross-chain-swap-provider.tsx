@@ -2,26 +2,19 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
-  STARGATE_SUPPORTED_CHAIN_IDS,
-  StargateChainId,
-} from '@sushiswap/stargate'
-import {
-  Address,
   useAccount,
   useNetwork,
   useTokenWithCache,
   watchNetwork,
 } from '@sushiswap/wagmi'
-import { useSignature } from '@sushiswap/wagmi/systems/Checker/Provider'
-import { APPROVE_TAG_XSWAP, IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
-  createContext,
   Dispatch,
   FC,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -29,16 +22,16 @@ import {
   useState,
 } from 'react'
 import { ChainId } from 'sushi/chain'
-import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
+import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
 import {
   Amount,
-  defaultQuoteCurrency,
   Native,
-  tryParseAmount,
   Type,
+  defaultQuoteCurrency,
+  tryParseAmount,
 } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { isAddress } from 'viem'
+import { Address, isAddress } from 'viem'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -71,7 +64,6 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
-    maintenance: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -108,8 +100,7 @@ const DerivedstateCrossChainSwapProvider: FC<
     if (!params.has('chainId0'))
       params.set(
         'chainId0',
-        (chain?.id &&
-        STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
+        (chain?.id && isSushiXSwap2ChainId(chain.id as ChainId)
           ? chain.id
           : ChainId.ETHEREUM
         ).toString(),
@@ -287,7 +278,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       if (
         !chain ||
         chain.id === chainId0 ||
-        !STARGATE_SUPPORTED_CHAIN_IDS.includes(chain.id as StargateChainId)
+        !isSushiXSwap2ChainId(chain.id as ChainId)
       )
         return
       push(pathname, { scroll: false })
@@ -328,7 +319,6 @@ const DerivedstateCrossChainSwapProvider: FC<
             swapAmount: tryParseAmount(swapAmountString, _token0),
             token0: _token0,
             token1: _token1,
-            maintenance: IS_XSWAP_MAINTENANCE,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -369,17 +359,6 @@ const useDerivedStateCrossChainSwap = () => {
   return context
 }
 
-const useIsXswapMaintenance = () => {
-  const context = useContext(DerivedStateCrossChainSwapContext)
-  if (!context) {
-    throw new Error(
-      'Hook can only be used inside CrossChain Swap Derived State Context',
-    )
-  }
-
-  return context.state.maintenance
-}
-
 const useCrossChainSwapTrade = () => {
   const {
     state: {
@@ -393,13 +372,12 @@ const useCrossChainSwapTrade = () => {
     },
   } = useDerivedStateCrossChainSwap()
 
-  const { signature } = useSignature(APPROVE_TAG_XSWAP)
   const [slippageTolerance] = useSlippageTolerance()
 
   return useCrossChainTrade({
     tradeId,
-    network0: chainId0 as SushiXSwapChainId,
-    network1: chainId1 as SushiXSwapChainId,
+    network0: chainId0 as SushiXSwap2ChainId,
+    network1: chainId1 as SushiXSwap2ChainId,
     token0,
     token1,
     amount: swapAmount,
@@ -407,11 +385,10 @@ const useCrossChainSwapTrade = () => {
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient: recipient as Address,
     enabled: Boolean(
-      isSushiXSwapChainId(chainId0) &&
-        isSushiXSwapChainId(chainId1) &&
+      isSushiXSwap2ChainId(chainId0) &&
+        isSushiXSwap2ChainId(chainId1) &&
         swapAmount?.greaterThan(ZERO),
     ),
-    bentoboxSignature: signature,
   })
 }
 
@@ -419,5 +396,4 @@ export {
   DerivedstateCrossChainSwapProvider,
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
-  useIsXswapMaintenance,
 }
