@@ -21,7 +21,7 @@ const useEdgeConfig = <T = unknown>() => {
   return context
 }
 
-const EdgeProvider = <T extends unknown>({
+const EdgeProvider = <T = unknown>({
   config,
   children,
 }: EdgeConfigProviderProps<T>) => {

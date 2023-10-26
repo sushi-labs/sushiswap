@@ -277,7 +277,7 @@ const _Add: FC<AddProps> = ({
     if (pool) {
       onChangeToken0TypedAmount(input0)
     }
-  }, [pool, onChangeToken0TypedAmount, input0])
+  }, [onChangeToken0TypedAmount])
 
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">

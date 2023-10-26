@@ -195,7 +195,7 @@ const _Add: FC<AddProps> = ({
     if (pool) {
       onChangeToken0TypedAmount(input0)
     }
-  }, [pool, onChangeToken0TypedAmount, input0])
+  }, [onChangeToken0TypedAmount])
 
   const networks = useMemo(
     () =>
