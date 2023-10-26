@@ -1,4 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
 import type { Chain } from '@wagmi/core'
 import {
   arbitrum,
@@ -13,7 +12,11 @@ import {
   optimism,
   polygon,
   polygonZkEvm,
+  scroll,
+  telos,
+  zkSync,
 } from '@wagmi/core/chains'
+import { ChainId } from 'sushi/chain'
 
 export const defaultChains: Chain[] = [
   arbitrum,
@@ -32,8 +35,10 @@ export const defaultChains: Chain[] = [
   optimism,
   // optimismGoerli,
   polygon,
+  zkSync,
   // polygonMumbai,
   // sepolia,
+  scroll,
 ]
 
 export const otherChains: Chain[] = [
@@ -138,10 +143,16 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'xDAI', symbol: 'xDAI', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
+        http: [
+          'https://xdai-rpc.gateway.pokt.network',
+          'https://rpc.gnosischain.com',
+        ],
       },
       public: {
-        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
+        http: [
+          'https://xdai-rpc.gateway.pokt.network',
+          'https://rpc.gnosischain.com',
+        ],
       },
     },
     blockExplorers: {
@@ -378,10 +389,16 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://nova.arbitrum.io/rpc'],
+        http: [
+          'https://nova.arbitrum.io/rpc',
+          'https://arbitrum-nova.drpc.org',
+        ],
       },
       public: {
-        http: ['https://nova.arbitrum.io/rpc'],
+        http: [
+          'https://nova.arbitrum.io/rpc',
+          'https://arbitrum-nova.drpc.org',
+        ],
       },
     },
     blockExplorers: {
@@ -468,10 +485,14 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+        http: [
+          'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+        ],
       },
       public: {
-        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+        http: [
+          'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+        ],
       },
     },
     blockExplorers: {
@@ -646,6 +667,90 @@ export const otherChains: Chain[] = [
       multicall3: {
         address: '0xcA11bde05977b3631167028862bE2a173976CA11',
         blockCreated: 100671921,
+      },
+    },
+  },
+  {
+    id: ChainId.HAQQ,
+    name: 'Haqq',
+    network: 'haqq',
+    nativeCurrency: { name: 'Islam', symbol: 'ISLM', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.eth.haqq.network'],
+      },
+      public: {
+        http: ['https://rpc.eth.haqq.network'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xfe2D04A5018AC1B366F599A13BF4e0C760b2aE6b',
+        blockCreated: 6589598,
+      },
+    },
+  },
+  {
+    id: ChainId.CORE,
+    name: 'Core',
+    network: 'core',
+    nativeCurrency: { name: 'Core', symbol: 'CORE', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+      },
+      public: {
+        http: ['https://rpc.coredao.org', 'https://rpc-core.icecreamswap.com'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xC4b2e1718E850535A0f3e79F7fC522d966821688',
+        blockCreated: 5087121,
+      },
+    },
+  },
+  {
+    ...telos,
+    id: ChainId.TELOS,
+  },
+  {
+    id: ChainId.LINEA,
+    name: 'Linea',
+    network: 'linea',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.linea.build'],
+      },
+      public: {
+        http: ['https://rpc.linea.build'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 42,
+      },
+    },
+  },
+  {
+    id: ChainId.BASE,
+    name: 'Base',
+    network: 'base',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://developer-access-mainnet.base.org'],
+      },
+      public: {
+        http: ['https://developer-access-mainnet.base.org'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 5022,
       },
     },
   },

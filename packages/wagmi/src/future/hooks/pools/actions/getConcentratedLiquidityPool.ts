@@ -1,7 +1,12 @@
-import { Token, Type } from '@sushiswap/currency'
-import { computePoolAddress, FeeAmount, Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { JSBI } from '@sushiswap/math'
+import { Token, Type } from 'sushi/currency'
+import {
+  computePoolAddress,
+  FeeAmount,
+  SushiSwapV3ChainId,
+  SushiSwapV3Pool,
+} from '@sushiswap/v3-sdk'
 import { Address, readContracts } from 'wagmi'
+
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
 export const getConcentratedLiquidityPools = async ({
@@ -10,7 +15,7 @@ export const getConcentratedLiquidityPools = async ({
 }: {
   chainId: SushiSwapV3ChainId
   poolKeys: [Type | undefined, Type | undefined, FeeAmount | undefined][]
-}): Promise<(Pool | null)[]> => {
+}): Promise<(SushiSwapV3Pool | null)[]> => {
   let poolTokens: ([Token, Token, FeeAmount] | undefined)[]
   if (!chainId) {
     poolTokens = new Array(poolKeys.length)
@@ -21,7 +26,9 @@ export const getConcentratedLiquidityPools = async ({
         const tokenB = currencyB.wrapped
         if (tokenA.equals(tokenB)) return undefined
 
-        return tokenA.sortsBefore(tokenB) ? [tokenA, tokenB, feeAmount] : [tokenB, tokenA, feeAmount]
+        return tokenA.sortsBefore(tokenB)
+          ? [tokenA, tokenB, feeAmount]
+          : [tokenB, tokenA, feeAmount]
       }
       return undefined
     })
@@ -35,7 +42,7 @@ export const getConcentratedLiquidityPools = async ({
         tokenA: value[0],
         tokenB: value[1],
         fee: value[2],
-      })
+      }),
   )
 
   const slot0s = await readContracts({
@@ -49,11 +56,27 @@ export const getConcentratedLiquidityPools = async ({
               inputs: [],
               name: 'slot0',
               outputs: [
-                { internalType: 'uint160', name: 'sqrtPriceX96', type: 'uint160' },
+                {
+                  internalType: 'uint160',
+                  name: 'sqrtPriceX96',
+                  type: 'uint160',
+                },
                 { internalType: 'int24', name: 'tick', type: 'int24' },
-                { internalType: 'uint16', name: 'observationIndex', type: 'uint16' },
-                { internalType: 'uint16', name: 'observationCardinality', type: 'uint16' },
-                { internalType: 'uint16', name: 'observationCardinalityNext', type: 'uint16' },
+                {
+                  internalType: 'uint16',
+                  name: 'observationIndex',
+                  type: 'uint16',
+                },
+                {
+                  internalType: 'uint16',
+                  name: 'observationCardinality',
+                  type: 'uint16',
+                },
+                {
+                  internalType: 'uint16',
+                  name: 'observationCardinalityNext',
+                  type: 'uint16',
+                },
                 { internalType: 'uint8', name: 'feeProtocol', type: 'uint8' },
                 { internalType: 'bool', name: 'unlocked', type: 'bool' },
               ],
@@ -62,7 +85,7 @@ export const getConcentratedLiquidityPools = async ({
             },
           ],
           functionName: 'slot0',
-        } as const)
+        }) as const,
     ),
   })
 
@@ -82,7 +105,7 @@ export const getConcentratedLiquidityPools = async ({
             },
           ],
           functionName: 'liquidity',
-        } as const)
+        }) as const,
     ),
   })
 
@@ -92,16 +115,27 @@ export const getConcentratedLiquidityPools = async ({
     const [token0, token1, fee] = tokens
 
     if (!slot0s[index]) return null
-    const slot0 = slot0s[index]
+    const slot0 = slot0s[index].result
 
     if (!liquidities[index]) return null
-    const liquidity = liquidities[index]
+    const liquidity = liquidities[index].result
 
-    if (!tokens || !slot0 || !liquidity) return null
-    if (!slot0 || !liquidity) return null
-    if (!slot0.sqrtPriceX96 || slot0.sqrtPriceX96.eq(0)) return null
+    if (!tokens || !slot0 || typeof liquidity === 'undefined') return null
 
-    return new Pool(token0, token1, fee, JSBI.BigInt(slot0.sqrtPriceX96), JSBI.BigInt(liquidity), slot0.tick)
+    const sqrtPriceX96 = slot0[0]
+    if (!sqrtPriceX96 || sqrtPriceX96 === 0n) return null
+
+    const tick = slot0[1]
+    if (typeof tick === 'undefined') return null
+
+    return new SushiSwapV3Pool(
+      token0,
+      token1,
+      fee,
+      sqrtPriceX96,
+      liquidity,
+      tick,
+    )
   })
 }
 
@@ -115,7 +149,11 @@ export const getConcentratedLiquidityPool = async ({
   token0: Type | undefined
   token1: Type | undefined
   feeAmount: FeeAmount | undefined
-}): Promise<Pool | null> => {
-  const poolKeys: [Type | undefined, Type | undefined, FeeAmount | undefined][] = [[token0, token1, feeAmount]]
+}): Promise<SushiSwapV3Pool | null> => {
+  const poolKeys: [
+    Type | undefined,
+    Type | undefined,
+    FeeAmount | undefined,
+  ][] = [[token0, token1, feeAmount]]
   return (await getConcentratedLiquidityPools({ poolKeys, chainId }))[0]
 }

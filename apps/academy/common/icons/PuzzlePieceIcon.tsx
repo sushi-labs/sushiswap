@@ -1,8 +1,21 @@
 export const PuzzlePieceIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="102"
+      height="102"
+      viewBox="0 0 102 102"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_1608_705)">
-        <rect width="102" height="102" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          width="102"
+          height="102"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <g clipPath="url(#clip0_1608_705)">
           <path
             fillRule="evenodd"
@@ -33,8 +46,17 @@ export const PuzzlePieceIcon = (props: React.ComponentProps<'svg'>) => {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feGaussianBlur in="BackgroundImageFix" stdDeviation="10.872" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1608_705" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_1608_705" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1608_705"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_1608_705"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_1608_705"
@@ -48,7 +70,12 @@ export const PuzzlePieceIcon = (props: React.ComponentProps<'svg'>) => {
           <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <clipPath id="clip0_1608_705">
-          <rect width="70" height="70" fill="white" transform="translate(20 12)" />
+          <rect
+            width="70"
+            height="70"
+            fill="white"
+            transform="translate(20 12)"
+          />
         </clipPath>
       </defs>
     </svg>

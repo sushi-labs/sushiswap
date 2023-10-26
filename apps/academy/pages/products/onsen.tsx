@@ -1,5 +1,6 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
-import { classNames, Container, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import onsenImg from 'common/assets/onsen-img.png'
 import {
   ProductArticles,
@@ -14,14 +15,13 @@ import { PeopleIcon, TradingIcon } from 'common/icons'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
-import { ArticleEntity } from '.mesh'
-
 const PRODUCT_SLUG = 'onsen'
-const { color, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
+const { color, productStats, buttonText, cards, faq } =
+  PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
@@ -39,29 +39,32 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    ['/bentobox-articles'],
+    ['/onsen-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
   const traderCards = cards.slice(0, 3)
   const projectCards = cards.slice(3)
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container
+      maxWidth="6xl"
+      className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}
+    >
       <ProductBackground color={color} />
       <ProductHero
         productName={longName}
         productDescription={description}
         productUrl={url}
         buttonText={buttonText}
-        buttonIcon={<ArrowRightCircleIcon width={20} height={20} />}
+        buttonIcon={ArrowRightCircleIcon}
         image={<Image src={onsenImg} unoptimized alt="onsen-img" />}
         productStats={productStats}
       />
@@ -85,16 +88,22 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 key={card.title}
                 className="p-px sm:h-[420px] rounded-3xl"
                 style={{
-                  background: !i ? `linear-gradient(218.8deg, ${color} 2.35%, rgba(0, 0, 0, 0) 97.65%)` : 'unset',
+                  background: !i
+                    ? `linear-gradient(218.8deg, ${color} 2.35%, rgba(0, 0, 0, 0) 97.65%)`
+                    : 'unset',
                 }}
               >
                 <div className="p-8 md:p-12 h-full bg-[#212939] rounded-3xl">
                   <card.Icon />
                   <div className="mt-6 sm:mt-10">
-                    <h3 className="text-xl font-bold sm:text-2xl">{card.title}</h3>
+                    <h3 className="text-xl font-bold sm:text-2xl">
+                      {card.title}
+                    </h3>
                   </div>
                   <div className="mt-2 sm:mt-4">
-                    <p className="text-xs text-slate-400 sm:text-sm">{card.subtitle}</p>
+                    <p className="text-xs text-slate-400 sm:text-sm">
+                      {card.subtitle}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -108,17 +117,16 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-6 gap-y-8">
             {projectCards.map((card) => (
-              <div key={card.title} className="p-12 h-full bg-[#212939] rounded-3xl">
+              <div
+                key={card.title}
+                className="p-12 h-full bg-[#212939] rounded-3xl"
+              >
                 <card.Icon />
                 <div className="mt-11">
-                  <Typography weight={700} variant="h3">
-                    {card.title}
-                  </Typography>
+                  <p className="text-2xl font-semibold">{card.title}</p>
                 </div>
                 <div className="mt-5">
-                  <Typography variant="sm" className="text-slate-400">
-                    {card.subtitle}
-                  </Typography>
+                  <p className="text-sm text-slate-400">{card.subtitle}</p>
                 </div>
               </div>
             ))}

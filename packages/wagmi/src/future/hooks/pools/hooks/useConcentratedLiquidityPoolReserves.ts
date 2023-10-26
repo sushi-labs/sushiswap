@@ -1,9 +1,10 @@
+import { SushiSwapV3ChainId, SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
-import { Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+
 import { getConcentratedLiquidityPoolReserves } from '../actions/getConcentratedLiquidityPoolReserves'
 
 interface UseConcentratedLiquidityPoolReserves {
-  pool: Pool | null | undefined
+  pool: SushiSwapV3Pool | null | undefined
   chainId: SushiSwapV3ChainId
   enabled?: boolean
 }
@@ -16,7 +17,12 @@ export const useConcentratedLiquidityPoolReserves = ({
   return useQuery({
     queryKey: [
       'useConcentratedLiquidityPoolReserves',
-      { token0: pool?.token0, token1: pool?.token1, feeAmount: pool?.fee, chainId },
+      {
+        token0: pool?.token0,
+        token1: pool?.token1,
+        feeAmount: pool?.fee,
+        chainId,
+      },
     ],
     queryFn: async () => {
       if (pool) {

@@ -1,9 +1,15 @@
+'use client'
+
+import { Token } from 'sushi/currency'
+import { createToast } from '@sushiswap/ui/components/toast'
+import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
 import { useCallback, useMemo, useState } from 'react'
-import { Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
-import { createToast } from '@sushiswap/ui/future/components/toast'
-import { Address, erc20ABI, useContractWrite, usePrepareContractWrite } from 'wagmi'
-import { SendTransactionResult } from '@wagmi/core'
+import {
+  Address,
+  erc20ABI,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi'
 
 interface UseTokenRevokeApproval {
   account: Address | undefined
@@ -11,14 +17,18 @@ interface UseTokenRevokeApproval {
   token: Token | undefined
 }
 
-export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevokeApproval) => {
+export const useTokenRevokeApproval = ({
+  account,
+  spender,
+  token,
+}: UseTokenRevokeApproval) => {
   const [isPending, setIsPending] = useState(false)
   const { config } = usePrepareContractWrite({
     address: token?.wrapped.address as Address,
     abi: erc20ABI,
     chainId: token?.chainId,
     functionName: 'approve',
-    args: [spender, BigNumber.from(0)],
+    args: [spender, 0n],
     enabled: Boolean(token),
   })
 
@@ -31,7 +41,7 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
           type: 'swap',
           chainId: token.chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Revoking approval for ${token.symbol}`,
             completed: `Successfully revoked approval for ${token.symbol}`,
@@ -41,12 +51,12 @@ export const useTokenRevokeApproval = ({ account, spender, token }: UseTokenRevo
           groupTimestamp: ts,
         })
 
-        data.wait().finally(() => {
+        waitForTransaction({ hash: data.hash }).finally(() => {
           setIsPending(false)
         })
       }
     },
-    [account, token]
+    [account, token],
   )
 
   const write = useContractWrite({

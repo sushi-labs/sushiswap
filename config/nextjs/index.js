@@ -2,16 +2,22 @@
 const defaultNextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  swcMinify: false,
+  swcMinify: true,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
     esmExternals: 'loose',
+    // optimizePackageImports: [
+    //   '@heroicons/react-v1/solid',
+    //   '@heroicons/react-v1/outline',
+    //   '@sushiswap/ui',
+    //   'sushi',
+    // ],
   },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    // path: 'https://cdn.sushi.com/image/fetch/',
+    domains: ['cdn.sushi.com'],
   },
   eslint: {
     dirs: [
@@ -35,6 +41,11 @@ const defaultNextConfig = {
         tls: false,
         net: false,
       }
+    }
+
+    config.module = {
+      ...config.module,
+      exprContextCritical: false,
     }
 
     return config

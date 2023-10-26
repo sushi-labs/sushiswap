@@ -52,11 +52,13 @@ model Token {
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  pools0      Pool[]      @relation("token0")
-  pools1      Pool[]      @relation("token1")
-  sushiPools0 SushiPool[] @relation("token0")
-  sushiPools1 SushiPool[] @relation("token1")
-  incentives  Incentive[]
+  pools0        Pool[]      @relation("token0")
+  pools1        Pool[]      @relation("token1")
+  sushiPools0   SushiPool[] @relation("token0")
+  sushiPools1   SushiPool[] @relation("token1")
+  steerVaults0  SteerVault[] @relation("token0")
+  steerVaults1  SteerVault[] @relation("token1")
+  incentives    Incentive[]
 
   @@unique([chainId, address])
   @@index(fields: [id])
@@ -166,6 +168,10 @@ model SushiPool {
   wasIncentivized Boolean     @default(false)
   incentives      Incentive[]
 
+  hasEnabledSteerVault  Boolean @default(false)
+  hadEnabledSteerVault  Boolean @default(false)
+  steerVaults           SteerVault[]
+
   createdAtBlockNumber BigInt   @db.UnsignedBigInt
   isBlacklisted        Boolean  @default(false)
   generatedAt          DateTime @default(now())
@@ -201,4 +207,71 @@ model Incentive {
   @@index(fields: [poolId])
   @@index(fields: [rewardTokenId])
   @@index(fields: [chainId, rewardTokenId])
+}
+
+enum SteerStrategy {
+  DeltaNeutralStables
+  ElasticExpansion
+  MovingVolatilityChannelMedium
+  HighLowChannel
+  StaticStable
+  ClassicRebalance
+}
+
+enum VaultState {
+  PendingApproval
+  PendingThreshold
+  Paused
+  Active
+  Retired
+}
+
+model SteerVault {
+  id                      String      @id // chainId:address
+  
+  pool                    SushiPool   @relation(fields: [poolId], references: [id])
+  poolId                  String
+  feeTier                 Float
+  
+  apr                     Float
+  apr1d                   Float
+  apr1m                   Float
+  apr1y                   Float
+
+  token0                  Token       @relation("token0", fields: [token0Id], references: [id])
+  token0Id                String
+  reserve0                String
+  fees0                   String
+
+  token1                  Token       @relation("token1", fields: [token1Id], references: [id])
+  token1Id                String 
+  reserve1                String
+  fees1                   String
+
+  strategy                SteerStrategy
+  description             String @db.Text
+  state                   VaultState
+
+  performanceFee          Float
+
+  lowerTick               Int
+  upperTick               Int
+
+  adjustmentFrequency     Int
+  lastAdjustmentTimestamp Int
+
+  isEnabled               Boolean @default(false)
+  wasEnabled              Boolean @default(false)
+
+  creator                 String
+  admin                   String
+  manager                 String
+
+  generatedAt             DateTime @default(now())
+  updatedAt               DateTime    @updatedAt
+
+  @@index(fields: [id])
+  @@index(fields: [poolId])
+  @@index(fields: [token0Id])
+  @@index(fields: [token1Id])
 }

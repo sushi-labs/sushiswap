@@ -125,7 +125,7 @@ query deprecated_TokensAndBundle(
 #   }
 # }
 
-query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
+query CrossChainToken($id: ID!, $now: Int!, $chainId: BigInt!) {
   crossChainToken(id: $id, now: $now, chainId: $chainId) {
     id
     chainId
@@ -178,7 +178,7 @@ query CrossChainStats(
   $orderBy: Pair_orderBy
   $orderDirection: OrderDirection
   $block: Block_height
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
   $now: Int!
 ) {
   crossChainStats(

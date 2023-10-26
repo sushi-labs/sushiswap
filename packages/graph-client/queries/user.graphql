@@ -2,7 +2,7 @@ fragment UserFields on User {
   id
 }
 
-query CrossChainUserPositions($id: ID!, $chainIds: [Int!]!) {
+query CrossChainUserPositions($id: ID!, $chainIds: [BigInt!]!) {
   crossChainUserPositions(id: $id, chainIds: $chainIds) {
     id
     pool

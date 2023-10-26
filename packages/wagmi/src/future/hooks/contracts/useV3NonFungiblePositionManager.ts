@@ -1,10 +1,16 @@
+import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  SushiSwapV3ChainId,
+} from '@sushiswap/v3-sdk'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
-import { Address, useProvider } from 'wagmi'
-import { V3_POSTIION_MANAGER, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { WalletClient } from 'viem'
+import { Address, usePublicClient, useWalletClient } from 'wagmi'
 
-export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV3ChainId) => ({
-  address: V3_POSTIION_MANAGER[chainId] as Address,
+export const getV3NonFungiblePositionManagerConractConfig = (
+  chainId: SushiSwapV3ChainId,
+) => ({
+  address: SUSHISWAP_V3_POSTIION_MANAGER[chainId] as Address,
   abi: [
     {
       inputs: [
@@ -18,9 +24,24 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'address', name: 'owner', type: 'address' },
-        { indexed: true, internalType: 'address', name: 'approved', type: 'address' },
-        { indexed: true, internalType: 'uint256', name: 'tokenId', type: 'uint256' },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'owner',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'approved',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
       ],
       name: 'Approval',
       type: 'event',
@@ -28,9 +49,24 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'address', name: 'owner', type: 'address' },
-        { indexed: true, internalType: 'address', name: 'operator', type: 'address' },
-        { indexed: false, internalType: 'bool', name: 'approved', type: 'bool' },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'owner',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'operator',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'bool',
+          name: 'approved',
+          type: 'bool',
+        },
       ],
       name: 'ApprovalForAll',
       type: 'event',
@@ -38,10 +74,30 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'uint256', name: 'tokenId', type: 'uint256' },
-        { indexed: false, internalType: 'address', name: 'recipient', type: 'address' },
-        { indexed: false, internalType: 'uint256', name: 'amount0', type: 'uint256' },
-        { indexed: false, internalType: 'uint256', name: 'amount1', type: 'uint256' },
+        {
+          indexed: true,
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'address',
+          name: 'recipient',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'amount0',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'amount1',
+          type: 'uint256',
+        },
       ],
       name: 'Collect',
       type: 'event',
@@ -49,10 +105,30 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'uint256', name: 'tokenId', type: 'uint256' },
-        { indexed: false, internalType: 'uint128', name: 'liquidity', type: 'uint128' },
-        { indexed: false, internalType: 'uint256', name: 'amount0', type: 'uint256' },
-        { indexed: false, internalType: 'uint256', name: 'amount1', type: 'uint256' },
+        {
+          indexed: true,
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint128',
+          name: 'liquidity',
+          type: 'uint128',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'amount0',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'amount1',
+          type: 'uint256',
+        },
       ],
       name: 'DecreaseLiquidity',
       type: 'event',
@@ -60,10 +136,30 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'uint256', name: 'tokenId', type: 'uint256' },
-        { indexed: false, internalType: 'uint128', name: 'liquidity', type: 'uint128' },
-        { indexed: false, internalType: 'uint256', name: 'amount0', type: 'uint256' },
-        { indexed: false, internalType: 'uint256', name: 'amount1', type: 'uint256' },
+        {
+          indexed: true,
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint128',
+          name: 'liquidity',
+          type: 'uint128',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'amount0',
+          type: 'uint256',
+        },
+        {
+          indexed: false,
+          internalType: 'uint256',
+          name: 'amount1',
+          type: 'uint256',
+        },
       ],
       name: 'IncreaseLiquidity',
       type: 'event',
@@ -71,9 +167,19 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'address', name: 'from', type: 'address' },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'from',
+          type: 'address',
+        },
         { indexed: true, internalType: 'address', name: 'to', type: 'address' },
-        { indexed: true, internalType: 'uint256', name: 'tokenId', type: 'uint256' },
+        {
+          indexed: true,
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
       ],
       name: 'Transfer',
       type: 'event',
@@ -174,7 +280,8 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
             { internalType: 'uint256', name: 'amount1Min', type: 'uint256' },
             { internalType: 'uint256', name: 'deadline', type: 'uint256' },
           ],
-          internalType: 'struct INonfungiblePositionManager.DecreaseLiquidityParams',
+          internalType:
+            'struct INonfungiblePositionManager.DecreaseLiquidityParams',
           name: 'params',
           type: 'tuple',
         },
@@ -206,13 +313,22 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
         {
           components: [
             { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
-            { internalType: 'uint256', name: 'amount0Desired', type: 'uint256' },
-            { internalType: 'uint256', name: 'amount1Desired', type: 'uint256' },
+            {
+              internalType: 'uint256',
+              name: 'amount0Desired',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'amount1Desired',
+              type: 'uint256',
+            },
             { internalType: 'uint256', name: 'amount0Min', type: 'uint256' },
             { internalType: 'uint256', name: 'amount1Min', type: 'uint256' },
             { internalType: 'uint256', name: 'deadline', type: 'uint256' },
           ],
-          internalType: 'struct INonfungiblePositionManager.IncreaseLiquidityParams',
+          internalType:
+            'struct INonfungiblePositionManager.IncreaseLiquidityParams',
           name: 'params',
           type: 'tuple',
         },
@@ -245,8 +361,16 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
             { internalType: 'uint24', name: 'fee', type: 'uint24' },
             { internalType: 'int24', name: 'tickLower', type: 'int24' },
             { internalType: 'int24', name: 'tickUpper', type: 'int24' },
-            { internalType: 'uint256', name: 'amount0Desired', type: 'uint256' },
-            { internalType: 'uint256', name: 'amount1Desired', type: 'uint256' },
+            {
+              internalType: 'uint256',
+              name: 'amount0Desired',
+              type: 'uint256',
+            },
+            {
+              internalType: 'uint256',
+              name: 'amount1Desired',
+              type: 'uint256',
+            },
             { internalType: 'uint256', name: 'amount0Min', type: 'uint256' },
             { internalType: 'uint256', name: 'amount1Min', type: 'uint256' },
             { internalType: 'address', name: 'recipient', type: 'address' },
@@ -314,15 +438,29 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
         { internalType: 'int24', name: 'tickLower', type: 'int24' },
         { internalType: 'int24', name: 'tickUpper', type: 'int24' },
         { internalType: 'uint128', name: 'liquidity', type: 'uint128' },
-        { internalType: 'uint256', name: 'feeGrowthInside0LastX128', type: 'uint256' },
-        { internalType: 'uint256', name: 'feeGrowthInside1LastX128', type: 'uint256' },
+        {
+          internalType: 'uint256',
+          name: 'feeGrowthInside0LastX128',
+          type: 'uint256',
+        },
+        {
+          internalType: 'uint256',
+          name: 'feeGrowthInside1LastX128',
+          type: 'uint256',
+        },
         { internalType: 'uint128', name: 'tokensOwed0', type: 'uint128' },
         { internalType: 'uint128', name: 'tokensOwed1', type: 'uint128' },
       ],
       stateMutability: 'view',
       type: 'function',
     },
-    { inputs: [], name: 'refundETH', outputs: [], stateMutability: 'payable', type: 'function' },
+    {
+      inputs: [],
+      name: 'refundETH',
+      outputs: [],
+      stateMutability: 'payable',
+      type: 'function',
+    },
     {
       inputs: [
         { internalType: 'address', name: 'from', type: 'address' },
@@ -504,12 +642,18 @@ export const getV3NonFungiblePositionManagerConractConfig = (chainId: SushiSwapV
   ] as const,
 })
 
-export function useV3NonFungiblePositionManager(chainId: SushiSwapV3ChainId | undefined) {
-  const signerOrProvider = useProvider({ chainId })
+export function useV3NonFungiblePositionManager(
+  chainId: SushiSwapV3ChainId | undefined,
+) {
+  const publicClient = usePublicClient({ chainId })
+  const { data: walletClient } = useWalletClient({ chainId })
 
   return useMemo(() => {
     if (!chainId) return null
 
-    return getContract({ ...getV3NonFungiblePositionManagerConractConfig(chainId), signerOrProvider })
-  }, [chainId, signerOrProvider])
+    return getContract({
+      ...getV3NonFungiblePositionManagerConractConfig(chainId),
+      walletClient: (walletClient as WalletClient) ?? publicClient,
+    })
+  }, [chainId, publicClient, walletClient])
 }

@@ -1,6 +1,6 @@
-import { isAddress } from '@ethersproject/address'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { isAddress } from 'viem'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { getToken, saveTokens } from '@sushiswap/dexie'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
@@ -10,13 +10,15 @@ import { useCustomTokens } from '@sushiswap/hooks'
 
 interface UseTokenParams<T extends boolean> {
   chainId: ChainId | undefined
-  address: string | undefined
+  address: string | undefined | null
   withStatus?: T
   enabled?: boolean
   keepPreviousData?: boolean
 }
 
-type UseTokenReturn<T> = T extends true ? { token: Token; status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED' } : Token
+type UseTokenReturn<T> = T extends true
+  ? { token: Token; status: 'UNKNOWN' | 'APPROVED' | 'DISAPPROVED' }
+  : Token
 
 type Data = {
   id: string
@@ -30,7 +32,7 @@ type Data = {
 export const getTokenWithQueryCacheHydrate = <T extends boolean>(
   chainId: ChainId | undefined,
   data: Data,
-  withStatus: T | undefined
+  withStatus: T | undefined,
 ): UseTokenReturn<T> | undefined => {
   if (data && chainId) {
     const { address, name, symbol, decimals } = data
@@ -57,7 +59,7 @@ export const getTokenWithQueryCacheHydrate = <T extends boolean>(
 
 interface GetTokenWithQueryCacheFn {
   chainId: ChainId | undefined
-  address: string | undefined
+  address: string | undefined | null
   customTokens: Record<string, Token>
   hasToken: (cur: string | Token) => boolean
 }
@@ -70,7 +72,13 @@ export const getTokenWithCacheQueryFn = async ({
 }: GetTokenWithQueryCacheFn) => {
   // Try fetching from localStorage
   if (chainId && hasToken(`${chainId}:${address}`)) {
-    const { address: tokenAddress, name, symbol, decimals, id } = customTokens[`${chainId}:${address}`]
+    const {
+      address: tokenAddress,
+      name,
+      symbol,
+      decimals,
+      id,
+    } = customTokens[`${chainId}:${address}`]
     return {
       address: tokenAddress,
       name,
@@ -90,11 +98,22 @@ export const getTokenWithCacheQueryFn = async ({
   // Try fetching from API
   const resp = await fetch(`https://tokens.sushi.com/v0/${chainId}/${address}`)
   if (resp.status === 200) {
-    const { address, name, symbol, decimals, status, id }: Data = await resp.json()
+    const { address, name, symbol, decimals, status, id }: Data =
+      await resp.json()
     const [chainId] = id.split(':')
 
     await saveTokens({
-      tokens: [{ address: address.toLowerCase(), chainId: +chainId, name, symbol, decimals, status, id }],
+      tokens: [
+        {
+          address: address.toLowerCase(),
+          chainId: Number(chainId),
+          name,
+          symbol,
+          decimals,
+          status,
+          id,
+        },
+      ],
     })
     return { address, name, symbol, decimals, status, id }
 
@@ -107,7 +126,7 @@ export const getTokenWithCacheQueryFn = async ({
       tokens: [
         {
           address: tokenAddress,
-          chainId: +chainId,
+          chainId: Number(chainId),
           name,
           symbol,
           decimals,
@@ -140,12 +159,13 @@ export const useTokenWithCache = <T extends boolean = false>({
   const { data: customTokens, hasToken } = useCustomTokens()
   const select = useCallback(
     (data: Data) => getTokenWithQueryCacheHydrate<T>(chainId, data, withStatus),
-    [chainId, withStatus]
+    [chainId, withStatus],
   )
     
   return useQuery({
     queryKey: ['token', { chainId, address }],
-    queryFn: async () => getTokenWithCacheQueryFn({ chainId, address, customTokens, hasToken }),
+    queryFn: async () =>
+      getTokenWithCacheQueryFn({ chainId, address, customTokens, hasToken }),
     enabled: Boolean(enabled && chainId && address && isAddress(address)),
     select,
     keepPreviousData,

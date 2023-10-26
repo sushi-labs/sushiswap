@@ -1,5 +1,18 @@
 {
-  "extends": "@sushiswap/typescript-config/react-library.json",
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "extends": [
+    "@tsconfig/strictest/tsconfig",
+    "@tsconfig/esm/tsconfig"
+  ],
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "ESNext",
+      "DOM"
+    ]
+  }
 }

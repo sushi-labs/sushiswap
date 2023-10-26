@@ -19,31 +19,24 @@
   "type": "module",
   "scripts": {
     "check": "tsc --pretty --noEmit",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
-    "lint": "TIMING=1 eslint --fix ."
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel"
   },
   "dependencies": {
-    "@sushiswap/abi": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@sushiswap/types": "workspace:*",
-    "@vercel/node": "2.14.3",
-    "@wagmi/core": "0.10.13",
+    "@vercel/node": "3.0.7",
+    "@wagmi/core": "1.4.3",
     "deepmerge-ts": "^4.3.0",
+    "sushi": "workspace:*",
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
-    "@tsconfig/strictest": "2.0.1",
-    "@tsconfig/node18": "2.0.0",
-    "@tsconfig/esm": "1.0.3",
-    "@types/node": "18.11.18",
-    "dotenv": "16.0.3",
-    "eslint": "8.41.0",
-    "typescript": "5.0.4",
-    "vercel": "29.4.0"
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
+    "@types/node": "18",
+    "dotenv": "16.3.1",
+    "typescript": "5.2.2",
+    "vercel": "32.4.1"
   }
 }

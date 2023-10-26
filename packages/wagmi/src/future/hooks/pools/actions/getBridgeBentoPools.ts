@@ -1,22 +1,21 @@
-import { Token } from '@sushiswap/currency'
+import { convertTokenToBento } from '@sushiswap/tines'
+import { BridgeBento, RToken, Rebase } from '@sushiswap/tines'
+import { balanceOfAbi } from 'sushi/abi'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
+import { Token } from 'sushi/currency'
 import { Address, readContracts } from 'wagmi'
-import { BigNumber } from 'ethers'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { balanceOfAbi } from '@sushiswap/abi'
-import { BridgeBento, RToken } from '@sushiswap/tines'
-import { convertTokenToBento } from '@sushiswap/router/dist/liquidity-providers/Trident'
 
 export enum BridgeBentoState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 export const getBridgeBentoPools = async (
-  chainId: BentoBoxV1ChainId,
+  chainId: BentoBoxChainId,
   currencies: Token[],
-  totals: Map<string,{ base: BigNumber; elastic: BigNumber }>
+  totals: Map<string, Rebase>,
 ) => {
   const balances = await readContracts({
     contracts: currencies.map(
@@ -26,14 +25,15 @@ export const getBridgeBentoPools = async (
           chainId,
           abi: balanceOfAbi,
           functionName: 'balanceOf',
-          args: [bentoBoxV1Address[chainId] as Address],
-        } as const)
+          args: [BENTOBOX_ADDRESS[chainId] as Address],
+        }) as const,
     ),
   })
 
   return currencies.map((el, i) => {
     const total = totals.get(el.address)
-    if (!total || !balances?.[i]) {
+    const balance = balances?.[i].result
+    if (!total || !balance) {
       return [BridgeBentoState.LOADING, null]
     }
 
@@ -47,7 +47,7 @@ export const getBridgeBentoPools = async (
         convertTokenToBento(el),
         elastic,
         base,
-        balances?.[i]
+        balance,
       ),
     ]
   })

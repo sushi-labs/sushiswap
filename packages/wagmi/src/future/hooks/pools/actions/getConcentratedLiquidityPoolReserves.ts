@@ -1,11 +1,21 @@
-import { Amount } from '@sushiswap/currency'
-import { computePoolAddress, Pool, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { JSBI } from '@sushiswap/math'
+import { Amount } from 'sushi/currency'
+import {
+  computePoolAddress,
+  SushiSwapV3ChainId,
+  SushiSwapV3Pool,
+} from '@sushiswap/v3-sdk'
 import { Address } from 'wagmi'
+
 import { fetchBalance } from '../../../..'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
-export const getConcentratedLiquidityPoolReserves = async ({ pool, chainId }: { pool: Pool; chainId: SushiSwapV3ChainId }) => {
+export const getConcentratedLiquidityPoolReserves = async ({
+  pool,
+  chainId,
+}: {
+  pool: SushiSwapV3Pool
+  chainId: SushiSwapV3ChainId
+}) => {
   const address = computePoolAddress({
     factoryAddress: getV3FactoryContractConfig(chainId).address,
     tokenA: pool.token0,
@@ -29,7 +39,7 @@ export const getConcentratedLiquidityPoolReserves = async ({ pool, chainId }: { 
   ])
 
   return [
-    Amount.fromRawAmount(pool.token0, JSBI.BigInt(balance1.formatted)),
-    Amount.fromRawAmount(pool.token1, JSBI.BigInt(balance2.formatted)),
+    Amount.fromRawAmount(pool.token0, balance1.value),
+    Amount.fromRawAmount(pool.token1, balance2.value),
   ]
 }

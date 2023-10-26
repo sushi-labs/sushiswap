@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import {
   BentoBridgePoolCode,
   BentoPoolCode,
@@ -18,7 +18,6 @@ import {
   StableSwapRPool,
   UniV3Pool,
 } from '@sushiswap/tines'
-import { BigNumber } from 'ethers'
 import * as fs from 'fs'
 import path from 'path'
 import * as serializer from 'serialijse'
@@ -43,50 +42,62 @@ const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')
 
 function makeSerializable(poolCodes: PoolCode[]) {
   poolCodes.forEach(({ pool }) => {
-    pool.reserve0 = pool.reserve0.toString() as unknown as BigNumber
-    pool.reserve1 = pool.reserve1.toString() as unknown as BigNumber
+    pool.reserve0 = String(pool.reserve0) as unknown as bigint
+    pool.reserve1 = String(pool.reserve1) as unknown as bigint
     pool.token0 = { ...pool.token0 } as RToken
     pool.token1 = { ...pool.token1 } as RToken
     if (pool instanceof StableSwapRPool) {
-      pool.k = pool.k.toString() as unknown as BigNumber
-      pool.total0.rebaseBN.base = pool.total0.rebaseBN.base.toString() as unknown as BigNumber
-      pool.total0.rebaseBN.elastic = pool.total0.rebaseBN.elastic.toString() as unknown as BigNumber
-      pool.total1.rebaseBN.base = pool.total1.rebaseBN.base.toString() as unknown as BigNumber
-      pool.total1.rebaseBN.elastic = pool.total1.rebaseBN.elastic.toString() as unknown as BigNumber
+      pool.k = String(pool.k) as unknown as bigint
+      pool.total0.rebaseBI.base = String(
+        pool.total0.rebaseBI.base,
+      ) as unknown as bigint
+      pool.total0.rebaseBI.elastic = String(
+        pool.total0.rebaseBI.elastic,
+      ) as unknown as bigint
+      pool.total1.rebaseBI.base = String(
+        pool.total1.rebaseBI.base,
+      ) as unknown as bigint
+      pool.total1.rebaseBI.elastic = String(
+        pool.total1.rebaseBI.elastic,
+      ) as unknown as bigint
     } else if (pool instanceof UniV3Pool) {
-      pool.liquidity = pool.liquidity.toString() as unknown as BigNumber
-      pool.sqrtPriceX96 = pool.sqrtPriceX96.toString() as unknown as BigNumber
-      pool.ticks.forEach((t) => (t.DLiquidity = t.DLiquidity.toString() as unknown as BigNumber))
+      pool.liquidity = String(pool.liquidity) as unknown as bigint
+      pool.sqrtPriceX96 = String(pool.sqrtPriceX96) as unknown as bigint
+      pool.ticks.forEach((t) => {
+        t.DLiquidity = String(t.DLiquidity) as unknown as bigint
+      })
     } else if (pool instanceof CurvePool) {
-      pool.D = pool.D.toString() as unknown as BigNumber
-      pool.rate0BN = pool.rate0BN.toString() as unknown as BigNumber
-      pool.rate1BN18 = pool.rate1BN18.toString() as unknown as BigNumber
-      pool.reserve0Rated = pool.reserve0Rated.toString() as unknown as BigNumber
-      pool.reserve1Rated = pool.reserve1Rated.toString() as unknown as BigNumber
+      pool.D = String(pool.D) as unknown as bigint
+      pool.rate0BI = String(pool.rate0BI) as unknown as bigint
+      pool.rate1BN18 = String(pool.rate1BN18) as unknown as bigint
+      pool.reserve0Rated = String(pool.reserve0Rated) as unknown as bigint
+      pool.reserve1Rated = String(pool.reserve1Rated) as unknown as bigint
     }
   })
 }
 
 function restoreAfterSerialization(poolCodes: PoolCode[]) {
   poolCodes.forEach(({ pool }) => {
-    pool.reserve0 = BigNumber.from(pool.reserve0)
-    pool.reserve1 = BigNumber.from(pool.reserve1)
+    pool.reserve0 = BigInt(pool.reserve0)
+    pool.reserve1 = BigInt(pool.reserve1)
     if (pool instanceof StableSwapRPool) {
-      pool.k = BigNumber.from(pool.k)
-      pool.total0.rebaseBN.base = BigNumber.from(pool.total0.rebaseBN.base)
-      pool.total0.rebaseBN.elastic = BigNumber.from(pool.total0.rebaseBN.elastic)
-      pool.total1.rebaseBN.base = BigNumber.from(pool.total1.rebaseBN.base)
-      pool.total1.rebaseBN.elastic = BigNumber.from(pool.total1.rebaseBN.elastic)
+      pool.k = BigInt(pool.k)
+      pool.total0.rebaseBI.base = BigInt(pool.total0.rebaseBI.base)
+      pool.total0.rebaseBI.elastic = BigInt(pool.total0.rebaseBI.elastic)
+      pool.total1.rebaseBI.base = BigInt(pool.total1.rebaseBI.base)
+      pool.total1.rebaseBI.elastic = BigInt(pool.total1.rebaseBI.elastic)
     } else if (pool instanceof UniV3Pool) {
-      pool.liquidity = BigNumber.from(pool.liquidity)
-      pool.sqrtPriceX96 = BigNumber.from(pool.sqrtPriceX96)
-      pool.ticks.forEach((t) => (t.DLiquidity = BigNumber.from(t.DLiquidity)))
+      pool.liquidity = BigInt(pool.liquidity)
+      pool.sqrtPriceX96 = BigInt(pool.sqrtPriceX96)
+      pool.ticks.forEach((t) => {
+        t.DLiquidity = BigInt(t.DLiquidity)
+      })
     } else if (pool instanceof CurvePool) {
-      pool.D = BigNumber.from(pool.D)
-      pool.rate0BN = BigNumber.from(pool.rate0BN)
-      pool.rate1BN18 = BigNumber.from(pool.rate1BN18)
-      pool.reserve0Rated = BigNumber.from(pool.reserve0Rated)
-      pool.reserve1Rated = BigNumber.from(pool.reserve1Rated)
+      pool.D = BigInt(pool.D)
+      pool.rate0BI = BigInt(pool.rate0BI)
+      pool.rate1BN18 = BigInt(pool.rate1BN18)
+      pool.reserve0Rated = BigInt(pool.reserve0Rated)
+      pool.reserve1Rated = BigInt(pool.reserve1Rated)
     }
   })
 }
@@ -95,7 +106,7 @@ export function savePoolSnapshot(
   poolCodes: PoolCode[],
   chainId: ChainId,
   blockNumber: number | undefined,
-  directory?: string
+  directory?: string,
 ) {
   // pools preparation for serialization
   makeSerializable(poolCodes)
@@ -106,13 +117,16 @@ export function savePoolSnapshot(
 
   directory = directory || snapshotDirDefault
   if (!fs.existsSync(directory)) fs.mkdirSync(directory)
-  fs.writeFileSync(path.resolve(directory, `${chainId}-${blockNumber}`), humanReadableStr)
+  fs.writeFileSync(
+    path.resolve(directory, `${chainId}-${blockNumber}`),
+    humanReadableStr,
+  )
 }
 
 export function loadPoolSnapshot(
   chainId: ChainId,
   blockNumber: number | undefined,
-  directory?: string
+  directory?: string,
 ): PoolCode[] | undefined {
   directory = directory || snapshotDirDefault
   const fileName = path.resolve(directory, `${chainId}-${blockNumber}`)

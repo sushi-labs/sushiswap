@@ -1,6 +1,9 @@
-import { FC } from 'react'
-import { GlobalNav } from '@sushiswap/ui/future/components/GlobalNav'
+'use client'
+
+import { Navigation } from '@sushiswap/ui'
+import type { FC } from 'react'
+import React from 'react'
 
 export const Header: FC = () => {
-  return <GlobalNav />
+  return <Navigation legacyBehavior />
 }

@@ -1,6 +1,7 @@
+'use client'
+
 import { ChefType } from '@sushiswap/client'
-import { Amount, Token } from '@sushiswap/currency'
-import { BigNumber } from 'ethers'
+import { Amount, Token } from 'sushi/currency'
 import { useMemo } from 'react'
 import { Address, useContractRead, useContractReads } from 'wagmi'
 
@@ -17,7 +18,8 @@ interface UseRewarderPayload {
   chef: ChefType
 }
 
-interface UseRewarderData extends Pick<ReturnType<typeof useContractRead>, 'isLoading' | 'isError'> {
+interface UseRewarderData
+  extends Pick<ReturnType<typeof useContractRead>, 'isLoading' | 'isError'> {
   data: (Amount<Token> | undefined)[]
 }
 
@@ -38,7 +40,8 @@ export const useRewarder: UseRewarder = ({
     if (
       !account ||
       !config ||
-      (rewardTokens.length !== rewarderAddresses.length && rewardTokens.length !== types.length)
+      (rewardTokens.length !== rewarderAddresses.length &&
+        rewardTokens.length !== types.length)
     ) {
       return []
     }
@@ -73,8 +76,8 @@ export const useRewarder: UseRewarder = ({
                 type: 'function',
               },
             ],
-            functionName: 'pendingSushi',
-            args: [BigNumber.from(farmId), account as Address],
+            functionName: 'pendingSushi' as const,
+            args: [BigInt(farmId), account as Address],
           } as const)
         : ({
             // ...getRewarderConfig(rewarderAddresses[i]),
@@ -116,11 +119,19 @@ export const useRewarder: UseRewarder = ({
                 type: 'function',
               },
             ],
-            functionName: 'pendingTokens',
-            args: [BigNumber.from(farmId), account as Address, BigNumber.from(0)],
+            functionName: 'pendingTokens' as const,
+            args: [BigInt(farmId), account as Address, 0n],
           } as const)
     })
-  }, [account, chainId, config, farmId, rewardTokens.length, rewarderAddresses, types])
+  }, [
+    account,
+    chainId,
+    config,
+    farmId,
+    rewardTokens.length,
+    rewarderAddresses,
+    types,
+  ])
 
   const { isError, isLoading, data } = useContractReads({
     contracts,
@@ -128,6 +139,7 @@ export const useRewarder: UseRewarder = ({
     keepPreviousData: true,
     allowFailure: true,
     enabled: !!account,
+    select: (results) => results.map((r) => r.result),
   })
 
   return useMemo(() => {
@@ -138,19 +150,25 @@ export const useRewarder: UseRewarder = ({
         isError,
       }
 
-    const _data = data as (BigNumber | { rewardAmounts: BigNumber[] })[]
-
+    // ! POSSIBLY BROKE IT, TEST
     return {
-      data: _data
-        .filter((el): el is NonNullable<(typeof _data)['0']> => !!el)
+      data: data
+        .filter((el): el is NonNullable<typeof data[0]> => !!el)
         .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
-          if (BigNumber.isBigNumber(result)) {
-            acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
+          if (typeof result === 'bigint') {
+            acc.push(
+              result
+                ? Amount.fromRawAmount(rewardTokens[index], result)
+                : undefined,
+            )
           } else {
             acc.push(
-              ...result.rewardAmounts.map((rewardAmount, index2: number) => {
-                return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount.toString())
-              })
+              ...result[1].map((rewardAmount, index2: number) => {
+                return Amount.fromRawAmount(
+                  rewardTokens[index + index2],
+                  rewardAmount,
+                )
+              }),
             )
           }
 

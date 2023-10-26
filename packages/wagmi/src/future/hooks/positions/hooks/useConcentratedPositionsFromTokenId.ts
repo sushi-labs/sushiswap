@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
-import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions'
-import { BigNumber } from 'ethers'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { useQuery } from '@tanstack/react-query'
+
+import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions'
 
 interface UseConcentratedLiquidityPositionsFromTokenIdParams {
   tokenId: number | string | undefined
@@ -15,10 +15,16 @@ export const useConcentratedLiquidityPositionsFromTokenId = ({
   enabled = true,
 }: UseConcentratedLiquidityPositionsFromTokenIdParams) => {
   return useQuery({
-    queryKey: ['useConcentratedLiquidityPositionsFromTokenId', { chainId, tokenIds: tokenId }],
+    queryKey: [
+      'useConcentratedLiquidityPositionsFromTokenId',
+      { chainId, tokenIds: tokenId },
+    ],
     queryFn: async () => {
+      // Shouldn't happen
+      if (!tokenId) throw new Error('TokenId is undefined')
+
       const positions = await getConcentratedLiquidityPositionsFromTokenIds({
-        tokenIds: [{ tokenId: BigNumber.from(tokenId), chainId }],
+        tokenIds: [{ tokenId: BigInt(tokenId), chainId }],
       })
 
       return positions[0]

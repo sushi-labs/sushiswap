@@ -1,17 +1,26 @@
+import {
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SushiSwapV3ChainId,
+} from '@sushiswap/v3-sdk'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
-import { Address, useProvider } from 'wagmi'
-import { V3_FACTORY_ADDRESS, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { WalletClient } from 'viem'
+import { Address, usePublicClient, useWalletClient } from 'wagmi'
 
 export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
-  address: V3_FACTORY_ADDRESS[chainId] as Address,
+  address: SUSHISWAP_V3_FACTORY_ADDRESS[chainId] as Address,
   abi: [
     { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
     {
       anonymous: false,
       inputs: [
         { indexed: true, internalType: 'uint24', name: 'fee', type: 'uint24' },
-        { indexed: true, internalType: 'int24', name: 'tickSpacing', type: 'int24' },
+        {
+          indexed: true,
+          internalType: 'int24',
+          name: 'tickSpacing',
+          type: 'int24',
+        },
       ],
       name: 'FeeAmountEnabled',
       type: 'event',
@@ -19,8 +28,18 @@ export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'address', name: 'oldOwner', type: 'address' },
-        { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'oldOwner',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'newOwner',
+          type: 'address',
+        },
       ],
       name: 'OwnerChanged',
       type: 'event',
@@ -28,11 +47,31 @@ export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
     {
       anonymous: false,
       inputs: [
-        { indexed: true, internalType: 'address', name: 'token0', type: 'address' },
-        { indexed: true, internalType: 'address', name: 'token1', type: 'address' },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'token0',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'token1',
+          type: 'address',
+        },
         { indexed: true, internalType: 'uint24', name: 'fee', type: 'uint24' },
-        { indexed: false, internalType: 'int24', name: 'tickSpacing', type: 'int24' },
-        { indexed: false, internalType: 'address', name: 'pool', type: 'address' },
+        {
+          indexed: false,
+          internalType: 'int24',
+          name: 'tickSpacing',
+          type: 'int24',
+        },
+        {
+          indexed: false,
+          internalType: 'address',
+          name: 'pool',
+          type: 'address',
+        },
       ],
       name: 'PoolCreated',
       type: 'event',
@@ -107,11 +146,15 @@ export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
 })
 
 export function useV3FactoryContract(chainId: SushiSwapV3ChainId | undefined) {
-  const signerOrProvider = useProvider({ chainId })
+  const publicClient = usePublicClient({ chainId })
+  const { data: walletClient } = useWalletClient({ chainId })
 
   return useMemo(() => {
     if (!chainId) return null
 
-    return getContract({ ...getV3FactoryContractConfig(chainId), signerOrProvider })
-  }, [chainId, signerOrProvider])
+    return getContract({
+      ...getV3FactoryContractConfig(chainId),
+      walletClient: (walletClient as WalletClient) ?? publicClient,
+    })
+  }, [chainId, publicClient, walletClient])
 }

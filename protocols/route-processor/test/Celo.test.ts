@@ -1,9 +1,9 @@
-import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type, USDC, WNATIVE } from '@sushiswap/currency'
+import { ChainId } from 'sushi/chain'
+import { Native, Token, Type, USDC, WNATIVE } from 'sushi/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
-import { getBigNumber, RouteStatus } from '@sushiswap/tines'
+import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
-import { BigNumber, Signer } from 'ethers'
+import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { createPublicClient } from 'viem'
 import { http } from 'viem'
@@ -28,17 +28,34 @@ async function makeSwap(
   toToken: Type,
   from: string,
   to: string,
-  amountIn: BigNumber
+  amountIn: bigint,
 ): Promise<number | undefined> {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  const route = Router.findBestRoute(pcMap, ChainId.CELO, fromToken, amountIn, toToken, 50e9)
+  const route = Router.findBestRoute(
+    pcMap,
+    ChainId.CELO,
+    fromToken,
+    amountIn,
+    toToken,
+    50e9,
+  )
   expect(route?.status).equal(RouteStatus.Success)
 
   if (route && pcMap) {
-    const rpParams = Router.routeProcessorParams(pcMap, route, fromToken, toToken, to, RouteProcessorAddr)
+    const rpParams = Router.routeProcessorParams(
+      pcMap,
+      route,
+      fromToken,
+      toToken,
+      to,
+      RouteProcessorAddr,
+    )
 
-    const RouteProcessorFactory = await ethers.getContractFactory('RouteProcessor', signer)
+    const RouteProcessorFactory = await ethers.getContractFactory(
+      'RouteProcessor',
+      signer,
+    )
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(
       rpParams.tokenIn,
@@ -47,7 +64,7 @@ async function makeSwap(
       rpParams.amountOutMin,
       rpParams.to,
       rpParams.routeCode,
-      { value: rpParams.value?.toString() }
+      { value: rpParams.value?.toString() },
     )
     // console.log(parseInt(res.toString()))
     return parseInt(res.toString())
@@ -56,7 +73,10 @@ async function makeSwap(
 
 describe('Celo', async () => {
   const chainId = ChainId.CELO
-  const provider = new ethers.providers.JsonRpcProvider('https://forno.celo.org', 42220)
+  const provider = new ethers.providers.JsonRpcProvider(
+    'https://forno.celo.org',
+    42220,
+  )
   const client = createPublicClient({
     chain: {
       ...hardhat,
@@ -92,20 +112,36 @@ describe('Celo', async () => {
       USDC[chainId],
       WNATIVE[chainId].address,
       WNATIVE[chainId].address,
-      getBigNumber(10 * 1e18)
+      10n * BigInt(1e18),
     )
   })
 
   it('cUSDC => WRAPPED CELO', async () => {
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, cUSDC, WNATIVE[chainId], user, user, getBigNumber(800000))
+    await makeSwap(
+      dataFetcher,
+      signer,
+      cUSDC,
+      WNATIVE[chainId],
+      user,
+      user,
+      800000n,
+    )
   })
 
   // Swap to native token not supported - use wrapped token instead (that is similar)
   it.skip('cUSDC => Native CELO: not supported', async () => {
     const user = '0xed30404098da5948d8B3cBD7958ceB641F2C352c' // has cUSDC and approved 800000 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, cUSDC, Native.onChain(chainId), user, user, getBigNumber(800000))
+    await makeSwap(
+      dataFetcher,
+      signer,
+      cUSDC,
+      Native.onChain(chainId),
+      user,
+      user,
+      800000n,
+    )
   })
 })

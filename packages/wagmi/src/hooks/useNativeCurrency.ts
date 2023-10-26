@@ -1,7 +1,11 @@
-import { ChainId } from '@sushiswap/chain'
-import { Native } from '@sushiswap/currency'
-import { useMemo } from 'react'
+'use client'
 
-export function useNativeCurrency({ chainId = ChainId.ETHEREUM }: { chainId?: number }): Native {
+import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
+
+export function useNativeCurrency({
+  chainId = ChainId.ETHEREUM,
+}: { chainId?: number }): Native {
   return useMemo(() => Native.onChain(chainId), [chainId])
 }

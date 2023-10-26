@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import {
   ProductArticles,
   ProductBackground,
@@ -14,8 +15,6 @@ import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import useSWR from 'swr'
-
-import { ArticleEntity, GetLatestAndRelevantArticlesQuery } from '.mesh'
 
 const PRODUCT_SLUG = 'bentobox'
 const { color, cards, buttonText, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
@@ -35,28 +34,31 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   slug,
   relevantArticleIds,
 }) => {
-  const { data, isValidating } = useSWR<GetLatestAndRelevantArticlesQuery>(
+  const { data, isValidating } = useSWR(
     ['/bentobox-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container
+      maxWidth="6xl"
+      className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}
+    >
       <ProductBackground color={color} isCentered />
       <ProductHero
         productName={longName}
         productDescription={description}
         productUrl={url}
         buttonText={buttonText}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
       />
       <ProductCards
         name={name}

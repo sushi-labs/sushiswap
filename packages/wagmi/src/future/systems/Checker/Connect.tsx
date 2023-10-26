@@ -1,37 +1,22 @@
-import { useIsMounted } from '@sushiswap/hooks'
+'use client'
+
+import { ButtonProps } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
 import { useAccount } from 'wagmi'
 
 import { ConnectButton } from '../../components'
-import { Button, ButtonProps } from '@sushiswap/ui/future/components/button'
-import dynamic from 'next/dynamic'
 
-export const Component: FC<ButtonProps<'button'>> = ({
+const Connect: FC<ButtonProps> = ({
   children,
-  className,
-  variant,
-  fullWidth,
-  size,
-  name,
-  onBlur,
-  type,
+  fullWidth = true,
+  size = 'xl',
+  ...props
 }) => {
-  const isMounted = useIsMounted()
   const { address } = useAccount()
 
-  if (isMounted && !address)
+  if (!address)
     return (
-      <ConnectButton
-        hideChevron={true}
-        className={className}
-        variant={variant}
-        fullWidth={fullWidth}
-        size={size}
-        name={name}
-        as={Button}
-        onBlur={onBlur}
-        type={type}
-      >
+      <ConnectButton fullWidth={fullWidth} size={size} {...props}>
         Connect Wallet
       </ConnectButton>
     )
@@ -39,6 +24,4 @@ export const Component: FC<ButtonProps<'button'>> = ({
   return <>{children}</>
 }
 
-export const Connect = dynamic(() => Promise.resolve(Component), {
-  ssr: false,
-})
+export { Connect }

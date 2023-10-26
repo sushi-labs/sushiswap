@@ -1,18 +1,19 @@
-import { Amount, Type } from '@sushiswap/currency'
+'use client'
+
+// import * as Sentry from '@sentry/nextjs'
+import { Amount, Type } from 'sushi/currency'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { useCallback, useMemo, useState } from 'react'
+import { maxUint256, UserRejectedRequestError } from 'viem'
 import {
   Address,
-  erc20ABI,
   useAccount,
   useContractWrite,
   usePrepareContractWrite,
-  UserRejectedRequestError,
 } from 'wagmi'
-import { MaxUint256 } from '@ethersproject/constants'
-import { BigNumber } from 'ethers'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+
 import { useTokenAllowance } from './useTokenAllowance'
-import { useCallback, useMemo, useState } from 'react'
-import { SendTransactionResult } from 'wagmi/actions'
-import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
 
 export enum ApprovalState {
   LOADING = 'LOADING',
@@ -34,7 +35,10 @@ export const useTokenApproval = ({
   spender,
   enabled = true,
   approveMax,
-}: UseTokenApprovalParams): [ApprovalState, ReturnType<typeof useContractWrite>] => {
+}: UseTokenApprovalParams): [
+  ApprovalState,
+  ReturnType<typeof useContractWrite>,
+] => {
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
   const {
@@ -51,14 +55,35 @@ export const useTokenApproval = ({
 
   const { config } = usePrepareContractWrite({
     chainId: amount?.currency.chainId,
-    abi: erc20ABI,
+    abi: [
+      {
+        constant: false,
+        inputs: [
+          { name: 'spender', type: 'address' },
+          { name: 'amount', type: 'uint256' },
+        ],
+        name: 'approve',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ] as const,
     address: amount?.currency?.wrapped?.address as Address,
     functionName: 'approve',
     args: [
       spender as Address,
-      approveMax ? MaxUint256 : amount ? BigNumber.from(amount.quotient.toString()) : BigNumber.from(0),
+      approveMax ? maxUint256 : amount ? amount.quotient : 0n,
     ],
-    enabled: Boolean(amount && spender && address && allowance && enabled && !isAllowanceLoading),
+    enabled: Boolean(
+      amount &&
+        spender &&
+        address &&
+        allowance &&
+        enabled &&
+        !isAllowanceLoading,
+    ),
+    // onError: (error) => Sentry.captureException(`approve prepare error: ${error.message}`),
   })
 
   const onSettled = useCallback(
@@ -78,7 +103,7 @@ export const useTokenApproval = ({
           type: 'approval',
           chainId: amount.currency.chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: `Approving ${amount.currency.symbol}`,
             completed: `Successfully approved ${amount.currency.symbol}`,
@@ -89,15 +114,14 @@ export const useTokenApproval = ({
         })
       }
     },
-    [address, amount]
+    [address, amount],
   )
 
   const execute = useContractWrite({
     ...config,
     onSettled,
     onSuccess: (data) => {
-      data
-        .wait()
+      waitForTransaction({ hash: data.hash })
         .then(() => {
           refetch().then(() => {
             setPending(false)
@@ -110,11 +134,14 @@ export const useTokenApproval = ({
   return useMemo(() => {
     let state = ApprovalState.UNKNOWN
     if (amount?.currency.isNative) state = ApprovalState.APPROVED
-    else if (allowance && amount && allowance.greaterThan(amount)) state = ApprovalState.APPROVED
-    else if (allowance && amount && allowance.equalTo(amount)) state = ApprovalState.APPROVED
+    else if (allowance && amount && allowance.greaterThan(amount))
+      state = ApprovalState.APPROVED
+    else if (allowance && amount && allowance.equalTo(amount))
+      state = ApprovalState.APPROVED
     else if (pending) state = ApprovalState.PENDING
     else if (isAllowanceLoading) state = ApprovalState.LOADING
-    else if (allowance && amount && allowance.lessThan(amount)) state = ApprovalState.NOT_APPROVED
+    else if (allowance && amount && allowance.lessThan(amount))
+      state = ApprovalState.NOT_APPROVED
 
     return [state, execute]
   }, [allowance, amount, execute, isAllowanceLoading, pending])

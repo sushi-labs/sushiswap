@@ -1,6 +1,8 @@
-import { chainShortName } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+'use client'
+
+import { chainShortName } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 export interface FarmMap<T> {
@@ -51,7 +53,12 @@ export const useFarmRewards = ({
   options,
 }: {
   options?: Omit<
-    UseQueryOptions<Record<number, FarmMap<RewardToken>>, unknown, Record<number, FarmMap<RewardToken>>, string[]>,
+    UseQueryOptions<
+      Record<number, FarmMap<RewardToken>>,
+      unknown,
+      Record<number, FarmMap<RewardToken>>,
+      string[]
+    >,
     'queryKey' | 'queryFn' | 'initialData'
   >
 }) => {
@@ -60,10 +67,15 @@ export const useFarmRewards = ({
     data: farmsMap,
     isError,
     isLoading,
-  } = useQuery(queryKey, () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()), {
-    staleTime: 2000,
-    ...options,
-  })
+  } = useQuery(
+    queryKey,
+    () =>
+      fetch('https://farm.sushi.com/v0').then((response) => response.json()),
+    {
+      staleTime: 2000,
+      ...options,
+    },
+  )
 
   return useMemo(() => {
     return {
@@ -71,33 +83,38 @@ export const useFarmRewards = ({
       isLoading,
       data:
         farmsMap && !isError && !isLoading
-          ? Object.entries(farmsMap).reduce<Record<number, FarmMap<Token>>>((acc, [_chainId, j]) => {
-              const chainId = Number(_chainId)
-              acc[chainId] = {
-                ...j,
-                farms: Object.entries(farmsMap[chainId].farms).reduce<Record<string, Farm<Token>>>((acc, [farm, v]) => {
-                  acc[`${chainShortName[chainId]}:${farm.toLowerCase()}`] = {
-                    ...v,
-                    incentives: farmsMap[chainId].farms[farm].incentives
-                      .filter((el) => el.rewardToken.address !== '')
-                      .map((el) => {
-                        return {
-                          ...el,
-                          rewardToken: new Token({
-                            chainId,
-                            address: el.rewardToken.address,
-                            symbol: el.rewardToken.symbol,
-                            decimals: 18,
-                          }),
-                        }
-                      }),
-                  }
-                  return acc
-                }, {}),
-              }
+          ? Object.entries(farmsMap).reduce<Record<number, FarmMap<Token>>>(
+              (acc, [_chainId, j]) => {
+                const chainId = Number(_chainId)
+                acc[chainId] = {
+                  ...j,
+                  farms: Object.entries(farmsMap[chainId].farms).reduce<
+                    Record<string, Farm<Token>>
+                  >((acc, [farm, v]) => {
+                    acc[`${chainShortName[chainId]}:${farm.toLowerCase()}`] = {
+                      ...v,
+                      incentives: farmsMap[chainId].farms[farm].incentives
+                        .filter((el) => el.rewardToken.address !== '')
+                        .map((el) => {
+                          return {
+                            ...el,
+                            rewardToken: new Token({
+                              chainId,
+                              address: el.rewardToken.address,
+                              symbol: el.rewardToken.symbol,
+                              decimals: 18,
+                            }),
+                          }
+                        }),
+                    }
+                    return acc
+                  }, {}),
+                }
 
-              return acc
-            }, {})
+                return acc
+              },
+              {},
+            )
           : undefined,
     }
   }, [farmsMap, isError, isLoading])

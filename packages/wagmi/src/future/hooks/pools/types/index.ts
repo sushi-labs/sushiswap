@@ -1,12 +1,14 @@
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
-import { ConstantProductPool, Pair, StablePool, TradeType } from '@sushiswap/amm'
 import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
+import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
+import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+import { ChainId } from 'sushi/chain'
+import { Type } from 'sushi/currency'
+import { TradeType } from 'sushi/dex'
 
 export enum PoolType {
-  V2,
-  ConstantProduct,
-  StablePool,
+  SushiSwapV2Pool = 'SushiSwapV2',
+  TridentConstantPool = 'TridentConstant',
+  TridentStablePool = 'TridentStable',
 }
 
 export interface UsePoolsParams {
@@ -20,9 +22,9 @@ export interface UsePoolsParams {
 }
 
 export type UsePoolsReturn = {
-  pairs: Pair[] | undefined
-  constantProductPools: ConstantProductPool[] | undefined
-  stablePools: StablePool[] | undefined
+  sushiSwapV2Pools: SushiSwapV2Pool[] | undefined
+  tridentConstantPools: TridentConstantPool[] | undefined
+  tridentStablePools: TridentStablePool[] | undefined
   bridgeBentoPools: BridgeBento[] | undefined
-  v3Pools: UniV3Pool[] | undefined
+  sushiSwapV3Pools: UniV3Pool[] | undefined
 }

@@ -62,7 +62,7 @@ query PairsByChainId(
   $orderBy: Pair_orderBy
   $orderDirection: OrderDirection
   $block: Block_height
-  $chainId: Int!
+  $chainId: BigInt!
 ) {
   pairs: pairsByChainId(
     first: $first
@@ -84,7 +84,7 @@ query PairsByChainIds(
   $orderBy: Pair_orderBy
   $orderDirection: OrderDirection
   $block: Block_height
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   pairs: pairsByChainIds(
     first: $first

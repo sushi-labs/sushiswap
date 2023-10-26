@@ -1,38 +1,7 @@
-/* eslint-disable turbo/no-undeclared-env-vars */
 import '@nomiclabs/hardhat-ethers'
 
-import { defaultConfig, EXPORT_TASK } from '@sushiswap/hardhat-config'
-import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
-import { HardhatUserConfig, subtask } from 'hardhat/config'
-import path from 'path'
-
-EXPORT_TASK()
-
-subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
-  if (solcVersion === '0.8.10') {
-    const compilerPath = path.join(__dirname, 'soljson-v0.8.10+commit.fc410830.js')
-    return {
-      compilerPath,
-      isSolcJs: true, // if you are using a native compiler, set this to false
-      version: solcVersion,
-      // this is used as extra information in the build-info files, but other than
-      // that is not important
-      longVersion: '0.8.10+commit.fc410830',
-    }
-  } else if (solcVersion === '0.7.6') {
-    const compilerPath = path.join(__dirname, 'soljson-v0.7.6+commit.7338295f')
-    return {
-      compilerPath,
-      isSolcJs: true, // if you are using a native compiler, set this to false
-      version: solcVersion,
-      // this is used as extra information in the build-info files, but other than
-      // that is not important
-      longVersion: 'soljson-v0.7.6+commit.7338295f',
-    }
-  }
-  // we just use the default subtask if the version is not 0.8.5
-  return runSuper()
-})
+import { defaultConfig } from '@sushiswap/hardhat-config'
+import { HardhatUserConfig } from 'hardhat/config'
 
 const config: HardhatUserConfig = {
   ...defaultConfig,
@@ -42,12 +11,16 @@ const config: HardhatUserConfig = {
       // ethereum
       forking: {
         enabled: true,
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 16861000,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+        blockNumber: 17390000,
       },
-      accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-      },
+      accounts: [
+        {
+          privateKey:
+            '0x0102030405060708091011121314151601020304050607080910111213141516',
+          balance: '10000000000000000000000000', //(10_000_000 ETH).
+        },
+      ],
       chainId: 1,
     },
   },
@@ -84,7 +57,7 @@ const config: HardhatUserConfig = {
     ],
   },
   mocha: {
-    timeout: 3600_000,
+    timeout: 24 * 3600_000,
   },
 }
 

@@ -1,14 +1,14 @@
-import { Address, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { useCallback, useMemo } from 'react'
-import { getContract, SendTransactionResult } from '@wagmi/core'
-import { createErrorToast, createToast } from '@sushiswap/ui/future/components/toast'
-import { V3MigrateChainId } from '../types'
-import { V3MigrateAddress } from '../constants'
-import { V3Migrator } from '../abis/V3Migrator'
-import { Amount, Token, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
+import { Amount, Token, Type } from 'sushi/currency'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { FeeAmount } from '@sushiswap/v3-sdk'
-import { BigNumber } from 'ethers'
+import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
+import { useCallback } from 'react'
+import { encodeFunctionData, UserRejectedRequestError } from 'viem'
+import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
+
+import { V3Migrator } from '../abis/V3Migrator'
+import { V3MigrateAddress } from '../constants'
+import { V3MigrateChainId } from '../types'
 
 interface UseV3Migrate {
   chainId: V3MigrateChainId
@@ -23,13 +23,13 @@ interface UseV3Migrate {
     fee: FeeAmount
     tickLower: number | undefined
     tickUpper: number | undefined
-    amount0Min: JSBI | undefined
-    amount1Min: JSBI | undefined
+    amount0Min: bigint | undefined
+    amount1Min: bigint | undefined
     recipient: Address | undefined
-    deadline: BigNumber | undefined
+    deadline: bigint | undefined
     refundAsETH: boolean
     noLiquidity: boolean | undefined
-    sqrtPrice: JSBI | undefined
+    sqrtPrice: bigint | undefined
   }
 }
 
@@ -38,10 +38,13 @@ export const V3MigrateContractConfig = (chainId: V3MigrateChainId) => ({
   abi: V3Migrator,
 })
 
-export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Migrate) => {
-  const contract = useMemo(() => getContract(V3MigrateContractConfig(chainId)), [chainId])
-
-  const { config } = usePrepareContractWrite(
+export const useV3Migrate = ({
+  account,
+  args,
+  chainId,
+  enabled = true,
+}: UseV3Migrate) => {
+  const prepare = usePrepareContractWrite(
     args.noLiquidity
       ? {
           ...V3MigrateContractConfig(chainId),
@@ -60,29 +63,37 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
             args.sqrtPrice
               ? ([
                   [
-                    contract.interface.encodeFunctionData('createAndInitializePoolIfNecessary', [
-                      args.token0.address,
-                      args.token1.address,
-                      args.fee,
-                      `0x${args.sqrtPrice.toString(16)}`,
-                    ]),
-                    contract.interface.encodeFunctionData('migrate', [
-                      {
-                        pair: args.pair,
-                        liquidityToMigrate: BigNumber.from(args.liquidityToMigrate.quotient.toString()),
-                        percentageToMigrate: args.percentageToMigrate,
-                        token0: args.token0.address as Address,
-                        token1: args.token1.address as Address,
-                        fee: args.fee,
-                        tickLower: args.tickLower,
-                        tickUpper: args.tickUpper,
-                        amount0Min: BigNumber.from(args.amount0Min.toString()),
-                        amount1Min: BigNumber.from(args.amount1Min.toString()),
-                        recipient: args.recipient,
-                        deadline: BigNumber.from(args.deadline),
-                        refundAsETH: args.refundAsETH,
-                      },
-                    ]),
+                    encodeFunctionData({
+                      abi: V3Migrator,
+                      functionName: 'createAndInitializePoolIfNecessary',
+                      args: [
+                        args.token0.address as Address,
+                        args.token1.address as Address,
+                        args.fee,
+                        args.sqrtPrice,
+                      ],
+                    }),
+                    encodeFunctionData({
+                      abi: V3Migrator,
+                      functionName: 'migrate',
+                      args: [
+                        {
+                          pair: args.pair,
+                          liquidityToMigrate: args.liquidityToMigrate.quotient,
+                          percentageToMigrate: args.percentageToMigrate,
+                          token0: args.token0.address as Address,
+                          token1: args.token1.address as Address,
+                          fee: args.fee,
+                          tickLower: args.tickLower,
+                          tickUpper: args.tickUpper,
+                          amount0Min: args.amount0Min,
+                          amount1Min: args.amount1Min,
+                          recipient: args.recipient,
+                          deadline: args.deadline,
+                          refundAsETH: args.refundAsETH,
+                        },
+                      ],
+                    }),
                   ],
                 ] as readonly [readonly `0x${string}`[]])
               : undefined,
@@ -96,7 +107,7 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
               args.token1 &&
               typeof args.tickLower === 'number' &&
               typeof args.tickUpper === 'number' &&
-              args.deadline
+              args.deadline,
           ),
         }
       : {
@@ -117,17 +128,17 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
               ? [
                   {
                     pair: args.pair,
-                    liquidityToMigrate: BigNumber.from(args.liquidityToMigrate.quotient.toString()),
+                    liquidityToMigrate: args.liquidityToMigrate.quotient,
                     percentageToMigrate: args.percentageToMigrate,
                     token0: args.token0.address as Address,
                     token1: args.token1.address as Address,
                     fee: args.fee,
                     tickLower: args.tickLower,
                     tickUpper: args.tickUpper,
-                    amount0Min: BigNumber.from(args.amount0Min.toString()),
-                    amount1Min: BigNumber.from(args.amount1Min.toString()),
+                    amount0Min: args.amount0Min,
+                    amount1Min: args.amount1Min,
                     recipient: args.recipient,
-                    deadline: BigNumber.from(args.deadline),
+                    deadline: args.deadline,
                     refundAsETH: args.refundAsETH,
                   },
                 ]
@@ -142,9 +153,9 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
               args.token1 &&
               typeof args.tickLower === 'number' &&
               typeof args.tickUpper === 'number' &&
-              args.deadline
+              args.deadline,
           ),
-        }
+        },
   )
 
   const onSettled = useCallback(
@@ -162,7 +173,7 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
           type: 'swap',
           chainId: chainId,
           txHash: data.hash,
-          promise: data.wait(),
+          promise: waitForTransaction({ hash: data.hash }),
           summary: {
             pending: 'Migrating your liquidity',
             completed: 'Successfully migrated your liquidity',
@@ -173,11 +184,14 @@ export const useV3Migrate = ({ account, args, chainId, enabled = true }: UseV3Mi
         })
       }
     },
-    [account, chainId]
+    [account, chainId],
   )
 
-  return useContractWrite({
-    ...config,
-    onSettled,
-  })
+  return {
+    prepare,
+    write: useContractWrite({
+      ...prepare.config,
+      onSettled,
+    }),
+  }
 }

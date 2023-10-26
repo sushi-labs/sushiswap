@@ -1,44 +1,50 @@
-import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
-import { bentoBoxV1Address, BentoBoxV1ChainId } from '@sushiswap/bentobox'
-import type { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { PrismaClient } from '@sushiswap/database'
-import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import {
-  constantProductPoolFactoryAddress,
-  ConstantProductPoolFactoryChainId,
-  stablePoolFactoryAddress,
-  StablePoolFactoryChainId,
-} from '@sushiswap/trident-core'
+  BridgeBento,
+  ConstantProductRPool,
+  RToken,
+  Rebase,
+  StableSwapRPool,
+  toShareBI,
+} from '@sushiswap/tines'
+import {
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+} from '@sushiswap/trident-sdk'
 import { add, getUnixTime } from 'date-fns'
-import { BigNumber } from 'ethers'
+import {
+  balanceOfAbi,
+  getReservesAbi,
+  getStableReservesAbi,
+  totalsAbi,
+} from 'sushi/abi'
+import type { ChainId } from 'sushi/chain'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
+import { Token } from 'sushi/currency'
 import { Address, PublicClient } from 'viem'
 
-import { discoverNewPools, filterOnDemandPools, filterTopPools, getAllPools, mapToken, PoolResponse2 } from '../lib/api'
+import {
+  PoolResponse2,
+  filterOnDemandPools,
+  filterTopPools,
+  mapToken,
+} from '../lib/api'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { TridentStaticPool, TridentStaticPoolFetcher } from '../static-pool-fetcher/Trident'
+import {
+  TridentStaticPool,
+  TridentStaticPoolFetcher,
+} from '../static-pool-fetcher/Trident'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
+import { convertTokenToBento } from '@sushiswap/tines'
+
+export function convertToNumbers(arr: bigint[]): (number | undefined)[] {
   return arr.map((a) => {
     if (a === undefined) return undefined
-    return parseInt(a._hex, 16)
+    return parseInt(a.toString(16), 16)
   })
-}
-
-export function getBentoChainId(chainId: string | number | undefined): string {
-  return `Bento ${chainId}`
-}
-
-export function convertTokenToBento(token: Token): RToken {
-  const t: RToken = { ...token } as RToken
-  t.chainId = getBentoChainId(token.chainId)
-  t.name = getBentoChainId(token.name)
-  t.symbol = getBentoChainId(token.symbol)
-  delete t.tokenId
-  return t
 }
 
 interface PoolInfo {
@@ -48,7 +54,7 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   // Need to override for type narrowing
-  chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>
+  //chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -56,42 +62,43 @@ export class TridentProvider extends LiquidityProvider {
   readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
 
   isInitialized = false
-  topClassicPools: Map<string, PoolCode> = new Map()
-  topStablePools: Map<string, PoolCode> = new Map()
+  topClassicPools: Map<Address, PoolCode> = new Map()
+  topStablePools: Map<Address, PoolCode> = new Map()
 
-  onDemandClassicPools: Map<string, PoolInfo> = new Map()
-  onDemandStablePools: Map<string, PoolInfo> = new Map()
+  onDemandClassicPools: Map<Address, PoolInfo> = new Map()
+  onDemandStablePools: Map<Address, PoolInfo> = new Map()
   poolsByTrade: Map<string, string[]> = new Map()
   availablePools: Map<string, PoolResponse2> = new Map()
 
   bridges: Map<string, PoolCode> = new Map()
-  bentoBox = bentoBoxV1Address
-  constantProductPoolFactory = constantProductPoolFactoryAddress
-  stablePoolFactory = stablePoolFactoryAddress
+  bentoBox = BENTOBOX_ADDRESS
+  constantProductPoolFactory = TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS
+  stablePoolFactory = TRIDENT_STABLE_POOL_FACTORY_ADDRESS
   latestPoolCreatedAtTimestamp = new Date()
-  discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
-  refreshAvailablePoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }))
+  discoverNewPoolsTimestamp = getUnixTime(
+    add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }),
+  )
+  refreshAvailablePoolsTimestamp = getUnixTime(
+    add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }),
+  )
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  databaseClient: PrismaClient | undefined
-
   constructor(
-    chainId: Extract<ChainId, BentoBoxV1ChainId & ConstantProductPoolFactoryChainId & StablePoolFactoryChainId>,
+    chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
     web3Client: PublicClient,
-    databaseClient?: PrismaClient
   ) {
     super(chainId, web3Client)
     this.chainId = chainId
-
-    this.databaseClient = databaseClient
     if (
       !(chainId in this.bentoBox) ||
       !(chainId in this.constantProductPoolFactory) ||
       !(chainId in this.stablePoolFactory)
     ) {
-      throw new Error(`${this.getType()} cannot be instantiated for chainId ${chainId}, no bentobox address found`)
+      throw new Error(
+        `${this.getType()} cannot be instantiated for chainId ${chainId}, no bentobox address found`,
+      )
     }
   }
 
@@ -113,13 +120,16 @@ export class TridentProvider extends LiquidityProvider {
 
     // TODO: generate pools from a list of tokens, exclude if they are included in the list above, multicall to see if the rest exist, keep the pools that exist.
 
-    const topPools = filterTopPools(Array.from(availablePools.values()), this.TOP_POOL_SIZE)
+    const topPools = filterTopPools(
+      Array.from(availablePools.values()),
+      this.TOP_POOL_SIZE,
+    )
 
     if (topPools.length > 0) {
       //console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
       //console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
-      return []
+      //return []
     }
 
     await this.initPools(topPools)
@@ -132,13 +142,6 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   private async getInitialPools(): Promise<Map<string, PoolResponse2>> {
-    if (this.databaseClient) {
-      const pools = await getAllPools(this.databaseClient, this.chainId, 'SushiSwap', 'TRIDENT', [
-        'CONSTANT_PRODUCT_POOL',
-        'STABLE_POOL',
-      ])
-      return pools
-    }
     return new Map()
   }
 
@@ -149,7 +152,8 @@ export class TridentProvider extends LiquidityProvider {
 
     const classicReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: pools.map(
           (pool) =>
@@ -158,16 +162,21 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+            e.message
+          }`,
+        )
       })
 
     const stableReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: stablePools.map(
           (p) =>
@@ -176,61 +185,79 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getStableReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+            e.message
+          }`,
+        )
       })
 
     const totalsPromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: sortedTokens.map(
           (t) =>
             ({
               args: [t.address as Address],
-              address: this.bentoBox[this.chainId],
+              address: this.bentoBox[this.chainId as BentoBoxChainId],
               chainId: this.chainId,
               abi: totalsAbi,
               functionName: 'totals',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+            e.message
+          }`,
+        )
       })
 
     const balancesPromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: sortedTokens.map(
           (t) =>
             ({
-              args: [this.bentoBox[this.chainId] as Address],
+              args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
               address: t.address as Address,
               chainId: this.chainId,
               abi: balanceOfAbi,
               functionName: 'balanceOf',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - INIT: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
+            e.message
+          }`,
+        )
       })
 
-    const [classicReserves, stableReserves, totals, balances] = await Promise.all([
-      classicReservePromise,
-      stableReservePromise,
-      totalsPromise,
-      balancesPromise,
-    ])
+    const [classicReserves, stableReserves, totals, balances] =
+      await Promise.all([
+        classicReservePromise,
+        stableReservePromise,
+        totalsPromise,
+        balancesPromise,
+      ])
 
     classicPools.forEach((pool, i) => {
-      const res0 = classicReserves?.[i]?.result?.[0]
-      const res1 = classicReserves?.[i]?.result?.[1]
+      const reserves = classicReserves as {
+        result: readonly [bigint, bigint, number]
+      }[]
+      const res0 = reserves[i]?.result?.[0]
+      const res1 = reserves[i]?.result?.[1]
       if (!res0 || !res1) return
       const tokens = [
         convertTokenToBento(mapToken(this.chainId, pool.token0)),
@@ -241,45 +268,58 @@ export class TridentProvider extends LiquidityProvider {
         tokens[0],
         tokens[1],
         pool.swapFee,
-        BigNumber.from(res0),
-        BigNumber.from(res1)
+        res0,
+        res1,
       )
-      const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
+      const pc = new BentoPoolCode(
+        rPool,
+        this.getType(),
+        this.getPoolProviderName(),
+      )
       this.topClassicPools.set(pool.address, pc)
     })
 
     const rebases: Map<string, Rebase> = new Map()
 
     sortedTokens.forEach((t, i) => {
-      const elastic = totals?.[i]?.result?.[0]
-      const base = totals?.[i]?.result?.[1]
-      const balance = balances?.[i]?.result
+      const total = totals as { result: readonly [bigint, bigint] }[]
+      const bal = balances as { result: bigint }[]
+      const elastic = total[i]?.result?.[0]
+      const base = total[i]?.result?.[1]
+      const balance = bal[i]?.result
       if (!elastic || !base || !balance) return
       const pool = new BridgeBento(
         `Bento bridge for ${t.symbol}`,
         t as RToken,
         convertTokenToBento(t),
-        BigNumber.from(elastic),
-        BigNumber.from(base),
-        BigNumber.from(balance)
+        elastic,
+        base,
+        balance,
       )
       this.bridges.set(
         t.address.toLowerCase(),
-        new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+        new BentoBridgePoolCode(
+          pool,
+          this.getType(),
+          this.getPoolProviderName(),
+          this.bentoBox[this.chainId as BentoBoxChainId],
+        ),
       )
       rebases.set(t.address.toLowerCase(), {
-        elastic: BigNumber.from(elastic),
-        base: BigNumber.from(base),
+        elastic: elastic,
+        base: base,
       })
     })
 
     stablePools.forEach((pool, i) => {
-      const res0 = stableReserves?.[i]?.result?.[0]
-      const res1 = stableReserves?.[i]?.result?.[1]
+      const sRes = stableReserves as { result: readonly [bigint, bigint] }[]
+      const res0 = sRes[i]?.result?.[0]
+      const res1 = sRes[i]?.result?.[1]
       const totals0 = rebases.get(pool.token0.address)
       const totals1 = rebases.get(pool.token1.address)
 
-      if (!res0 || !res1 || totals0 === undefined || totals1 === undefined) return
+      if (!res0 || !res1 || totals0 === undefined || totals1 === undefined)
+        return
 
       const tokens = [
         convertTokenToBento(mapToken(this.chainId, pool.token0)),
@@ -290,14 +330,21 @@ export class TridentProvider extends LiquidityProvider {
         tokens[0],
         tokens[1],
         pool.swapFee,
-        toShareBN(BigNumber.from(res0), totals0),
-        toShareBN(BigNumber.from(res1), totals1),
+        toShareBI(res0, totals0),
+        toShareBI(res1, totals1),
         pool.token0.decimals,
         pool.token1.decimals,
         totals0,
-        totals1
+        totals1,
       )
-      this.topStablePools.set(pool.address, new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName()))
+      this.topStablePools.set(
+        pool.address,
+        new BentoPoolCode(
+          stablePool,
+          this.getType(),
+          this.getPoolProviderName(),
+        ),
+      )
     })
   }
 
@@ -311,8 +358,12 @@ export class TridentProvider extends LiquidityProvider {
     const initialClassicPools = Array.from(this.topClassicPools.values())
     const initialStablePools = Array.from(this.topStablePools.values())
 
-    const onDemandClassicPools = Array.from(this.onDemandClassicPools.values()).map((p) => p.poolCode)
-    const onDemandStablePools = Array.from(this.onDemandStablePools.values()).map((p) => p.poolCode)
+    const onDemandClassicPools = Array.from(
+      this.onDemandClassicPools.values(),
+    ).map((p) => p.poolCode)
+    const onDemandStablePools = Array.from(
+      this.onDemandStablePools.values(),
+    ).map((p) => p.poolCode)
 
     if (
       initialClassicPools.length === 0 &&
@@ -327,7 +378,8 @@ export class TridentProvider extends LiquidityProvider {
 
     const initClassicReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: initialClassicPools.map(
           (pc) =>
@@ -336,16 +388,21 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
     const onDemandClassicReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: onDemandClassicPools.map(
           (pc) =>
@@ -354,17 +411,22 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
     const initStableReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: initialStablePools.map(
           (pc) =>
@@ -373,17 +435,22 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getStableReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
     const onDemandStableReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: onDemandStablePools.map(
           (pc) =>
@@ -392,63 +459,85 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getStableReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
     const totalsPromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: bridges.map(
           (b) =>
             ({
               args: [b.pool.token0.address as Address],
-              address: this.bentoBox[this.chainId] as Address,
+              address: this.bentoBox[
+                this.chainId as BentoBoxChainId
+              ] as Address,
               chainId: this.chainId,
               abi: totalsAbi,
               functionName: 'totals',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
     const balancesPromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: bridges.map(
           (b) =>
             ({
-              args: [this.bentoBox[this.chainId] as Address],
+              args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
               address: b.pool.token0.address as Address,
               chainId: this.chainId,
               abi: balanceOfAbi,
               functionName: 'balanceOf',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
-    const [initClassicReserves, onDemandClassicReserves, initStableReserves, onDemandStableReserves, totals, balances] =
-      await Promise.all([
-        initClassicReservePromise,
-        onDemandClassicReservePromise,
-        initStableReservePromise,
-        onDemandStableReservePromise,
-        totalsPromise,
-        balancesPromise,
-      ])
+    const [
+      initClassicReserves,
+      onDemandClassicReserves,
+      initStableReserves,
+      onDemandStableReserves,
+      totals,
+      balances,
+    ] = await Promise.all([
+      initClassicReservePromise,
+      onDemandClassicReservePromise,
+      initStableReservePromise,
+      onDemandStableReservePromise,
+      totalsPromise,
+      balancesPromise,
+    ])
 
     this.updateClassicReserves(initialClassicPools, initClassicReserves)
     this.updateClassicReserves(onDemandClassicPools, onDemandClassicReserves)
@@ -464,14 +553,12 @@ export class TridentProvider extends LiquidityProvider {
       if (!elastic || !base || !balance) {
         return
       }
-      const elasticBN = BigNumber.from(elastic)
-      const baseBN = BigNumber.from(base)
       rebases.set(t.address.toLowerCase(), {
-        elastic: elasticBN,
-        base: baseBN,
+        elastic,
+        base,
       })
-      if (!bridge.reserve0.eq(elasticBN) || !bridge.reserve1.eq(baseBN)) {
-        bridge.updateReserves(elasticBN, baseBN)
+      if (bridge.reserve0 !== elastic || bridge.reserve1 === base) {
+        bridge.updateReserves(elastic, base)
         // console.debug(
         //   `${this.getLogPrefix()} - BRIDGE REBASE UPDATE: ${bridge.token0.symbol} ${bridge.reserve0} ${bridge.reserve1}`
         // )
@@ -489,32 +576,57 @@ export class TridentProvider extends LiquidityProvider {
     //console.debug(`${this.getLogPrefix()} - UPDATED POOLS`)
   }
 
-  async getOnDemandPools(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
-    const topPoolAddresses = [...Array.from(this.topClassicPools.keys()), ...Array.from(this.topStablePools.keys())]
+  async getOnDemandPools(
+    t0: Token,
+    t1: Token,
+    excludePools?: Set<string>,
+  ): Promise<void> {
+    const topPoolAddresses = [
+      ...Array.from(this.topClassicPools.keys()),
+      ...Array.from(this.topStablePools.keys()),
+    ]
     let pools = filterOnDemandPools(
       Array.from(this.availablePools.values()),
       t0.address,
       t1.address,
       topPoolAddresses,
-      this.ON_DEMAND_POOL_SIZE
+      this.ON_DEMAND_POOL_SIZE,
     )
     if (excludePools) pools = pools.filter((p) => !excludePools.has(p.address))
 
     let [onDemandClassicPools, onDemandStablePools] =
       pools.length > 0
         ? [
-            pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL' && !this.topClassicPools.has(p.address)),
-            pools.filter((p) => p.type === 'STABLE_POOL' && !this.topStablePools.has(p.address)),
+            pools.filter(
+              (p) =>
+                p.type === 'CONSTANT_PRODUCT_POOL' &&
+                !this.topClassicPools.has(p.address),
+            ),
+            pools.filter(
+              (p) =>
+                p.type === 'STABLE_POOL' && !this.topStablePools.has(p.address),
+            ),
           ]
-        : await TridentStaticPoolFetcher.getStaticPools(this.client, this.chainId, t0, t1)
+        : await TridentStaticPoolFetcher.getStaticPools(
+            this.client,
+            this.chainId,
+            t0,
+            t1,
+          )
     if (excludePools)
-      onDemandClassicPools = (onDemandClassicPools as PoolResponse2[]).filter((p) => !excludePools.has(p.address))
+      onDemandClassicPools = (onDemandClassicPools as PoolResponse2[]).filter(
+        (p) => !excludePools.has(p.address),
+      )
     if (excludePools)
-      onDemandStablePools = (onDemandStablePools as PoolResponse2[]).filter((p) => !excludePools.has(p.address))
+      onDemandStablePools = (onDemandStablePools as PoolResponse2[]).filter(
+        (p) => !excludePools.has(p.address),
+      )
 
     this.poolsByTrade.set(
       this.getTradeId(t0, t1),
-      [onDemandClassicPools, onDemandStablePools].flat().map((pool) => pool.address)
+      [onDemandClassicPools, onDemandStablePools]
+        .flat()
+        .map((pool) => pool.address),
     )
 
     // const onDemandClassicPools = pools.filter(
@@ -522,17 +634,21 @@ export class TridentProvider extends LiquidityProvider {
     // )
 
     // const onDemandStablePools = pools.filter((p) => p.type === 'STABLE_POOL' && this.topStablePools.has(p.address))
-    const validUntilTimestamp = getUnixTime(add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }))
+    const validUntilTimestamp = getUnixTime(
+      add(Date.now(), { seconds: this.ON_DEMAND_POOLS_LIFETIME_IN_SECONDS }),
+    )
 
-    const sortedTokens = this.poolResponseToSortedTokens([...onDemandClassicPools, ...onDemandStablePools].flat())
-    let newBridges = 0
-    let updated = 0
-    let created = 0
+    const sortedTokens = this.poolResponseToSortedTokens(
+      [...onDemandClassicPools, ...onDemandStablePools].flat(),
+    )
+    // let newBridges = 0
+    // let updated = 0
+    // let created = 0
     const classicPoolCodesToCreate: PoolCode[] = []
     const stablePoolCodesToCreate: PoolCode[] = []
     const bridgesToCreate: BentoBridgePoolCode[] = []
 
-    sortedTokens.forEach((t, i) => {
+    sortedTokens.forEach((t) => {
       const fakeBridgeAddress = `Bento bridge for ${t.symbol}`
       if (excludePools?.has(fakeBridgeAddress)) return
       if (!this.bridges.has(t.address)) {
@@ -540,14 +656,19 @@ export class TridentProvider extends LiquidityProvider {
           fakeBridgeAddress,
           t as RToken,
           convertTokenToBento(t),
-          BigNumber.from(0),
-          BigNumber.from(0),
-          BigNumber.from(0)
+          0n,
+          0n,
+          0n,
         )
         bridgesToCreate.push(
-          new BentoBridgePoolCode(pool, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+          new BentoBridgePoolCode(
+            pool,
+            this.getType(),
+            this.getPoolProviderName(),
+            this.bentoBox[this.chainId as BentoBoxChainId],
+          ),
         )
-        ++newBridges
+        // ++newBridges
       }
     })
 
@@ -560,15 +681,19 @@ export class TridentProvider extends LiquidityProvider {
           convertTokenToBento(pr.token0 as Token),
           convertTokenToBento(pr.token1 as Token),
           pr.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0)
+          0n,
+          0n,
         )
-        const pc = new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
+        const pc = new BentoPoolCode(
+          rPool,
+          this.getType(),
+          this.getPoolProviderName(),
+        )
 
         classicPoolCodesToCreate.push(pc)
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
-        ++updated
+        // ++updated
       }
     })
 
@@ -581,26 +706,31 @@ export class TridentProvider extends LiquidityProvider {
           convertTokenToBento(pr.token0 as Token),
           convertTokenToBento(pr.token1 as Token),
           pr.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0),
+          0n,
+          0n,
           pr.token0.decimals,
           pr.token1.decimals,
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) },
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) }
+          { elastic: 0n, base: 0n },
+          { elastic: 0n, base: 0n },
         )
 
-        const pc = new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
+        const pc = new BentoPoolCode(
+          stablePool,
+          this.getType(),
+          this.getPoolProviderName(),
+        )
 
         stablePoolCodesToCreate.push(pc)
       } else {
         existingPool.validUntilTimestamp = validUntilTimestamp
-        ++updated
+        // ++updated
       }
     })
 
     const classicReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: classicPoolCodesToCreate.map(
           (pc) =>
@@ -609,17 +739,22 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
     const stableReservePromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: stablePoolCodesToCreate.map(
           (pc) =>
@@ -628,60 +763,77 @@ export class TridentProvider extends LiquidityProvider {
               chainId: this.chainId,
               abi: getStableReservesAbi,
               functionName: 'getReserves',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
     const totalsPromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: bridgesToCreate.map(
           (b) =>
             ({
               args: [b.pool.token0.address as Address],
-              address: this.bentoBox[this.chainId] as Address,
+              address: this.bentoBox[
+                this.chainId as BentoBoxChainId
+              ] as Address,
               chainId: this.chainId,
               abi: totalsAbi,
               functionName: 'totals',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
     const balancesPromise = this.client
       .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as Address,
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as Address,
         allowFailure: true,
         contracts: bridgesToCreate.map(
           (b) =>
             ({
-              args: [this.bentoBox[this.chainId] as Address],
+              args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
               address: b.pool.token0.address as Address,
               chainId: this.chainId,
               abi: balanceOfAbi,
               functionName: 'balanceOf',
-            } as const)
+            }) as const,
         ),
       })
       .catch((e) => {
-        console.warn(`${this.getLogPrefix()} - UPDATE: multicall failed, message: ${e.message}`)
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+            e.message
+          }`,
+        )
         return undefined
       })
 
-    const [classicReserves, stableReserves, totals, balances] = await Promise.all([
-      classicReservePromise,
-      stableReservePromise,
-      totalsPromise,
-      balancesPromise,
-    ])
+    const [classicReserves, stableReserves, totals, balances] =
+      await Promise.all([
+        classicReservePromise,
+        stableReservePromise,
+        totalsPromise,
+        balancesPromise,
+      ])
 
     classicPoolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool
@@ -689,16 +841,23 @@ export class TridentProvider extends LiquidityProvider {
       const res1 = classicReserves?.[i]?.result?.[1]
 
       if (res0 !== undefined && res1 !== undefined) {
-        pool.updateReserves(BigNumber.from(res0), BigNumber.from(res1))
-        this.onDemandClassicPools.set(pool.address, { poolCode, validUntilTimestamp })
-        ++created
+        pool.updateReserves(res0, res1)
+        this.onDemandClassicPools.set(pool.address, {
+          poolCode,
+          validUntilTimestamp,
+        })
+        // ++created
         // console.debug(
         //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} classic (${pool.token0.symbol}/${
         //     pool.token1.symbol
         //   })`
         // )
       } else {
-        console.error(`${this.getLogPrefix()} - ERROR FETCHING RESERVES: ${pool.address}, pool does not exist?`)
+        console.error(
+          `${this.getLogPrefix()} - ERROR FETCHING RESERVES: ${
+            pool.address
+          }, pool does not exist?`,
+        )
         // TODO: some pools seem to be initialized with 0 in reserves, they should just be ignored, shouldn't log error
       }
     })
@@ -714,13 +873,11 @@ export class TridentProvider extends LiquidityProvider {
       if (!elastic || !base || !balance) {
         return
       }
-      const elasticBN = BigNumber.from(elastic)
-      const baseBN = BigNumber.from(base)
       rebases.set(t.address.toLowerCase(), {
-        elastic: elasticBN,
-        base: baseBN,
+        elastic: elastic,
+        base: base,
       })
-      bridge.updateReserves(elasticBN, baseBN)
+      bridge.updateReserves(elastic, base)
       bridge.freeLiquidity = Number(balance)
       this.bridges.set(bridge.address.toLowerCase(), bc)
     })
@@ -731,7 +888,10 @@ export class TridentProvider extends LiquidityProvider {
 
       if (total0) {
         const current = pool.getTotal0()
-        if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+        if (
+          total0.elastic !== current.elastic ||
+          total0.base !== current.base
+        ) {
           pool.updateTotal0(total0)
         }
       }
@@ -739,7 +899,10 @@ export class TridentProvider extends LiquidityProvider {
       const total1 = rebases.get(pool.token1.address.toLowerCase())
       if (total1) {
         const current = pool.getTotal1()
-        if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+        if (
+          total1.elastic !== current.elastic ||
+          total1.base !== current.base
+        ) {
           pool.updateTotal1(total1)
         }
       }
@@ -747,22 +910,23 @@ export class TridentProvider extends LiquidityProvider {
       const res0 = stableReserves?.[i]?.result?.[0]
       const res1 = stableReserves?.[i]?.result?.[1]
 
-      const res0BN = BigNumber.from(res0)
-      const res1BN = BigNumber.from(res1)
       if (!res0 || !res1) {
         return
       }
-      //pool.updateReserves(toShareBN(res0BN, pool.getTotal0()), toShareBN(res1BN, pool.getTotal1()))
-      pool.updateReservesAmounts(res0BN, res1BN)
+      //pool.updateReserves(toShareBI(res0BN, pool.getTotal0()), toShareBI(res1BN, pool.getTotal1()))
+      pool.updateReservesAmounts(res0, res1)
 
-      this.onDemandStablePools.set(pool.address, { poolCode, validUntilTimestamp })
+      this.onDemandStablePools.set(pool.address, {
+        poolCode,
+        validUntilTimestamp,
+      })
 
       // console.debug(
       //   `${this.getLogPrefix()} - ON DEMAND CREATION: ${pool.address} stable (${pool.token0.symbol}/${
       //     pool.token1.symbol
       //   })`
       // )
-      ++created
+      // ++created
     })
 
     // console.debug(
@@ -771,47 +935,7 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   private async discoverNewPools() {
-    if (this.discoverNewPoolsTimestamp > getUnixTime(Date.now())) {
-      return
-    }
-
-    if (!this.databaseClient) {
-      return
-    }
-
-    this.discoverNewPoolsTimestamp = getUnixTime(add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }))
-    const newDate = new Date()
-    const discoveredPools = await discoverNewPools(
-      this.databaseClient,
-      this.chainId,
-      'SushiSwap',
-      'TRIDENT',
-      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-      this.latestPoolCreatedAtTimestamp
-    )
-
-    if (discoveredPools.size > 0) {
-      let addedPools = 0
-      this.latestPoolCreatedAtTimestamp = newDate
-      discoveredPools.forEach((pool) => {
-        if (!this.availablePools.has(pool.address)) {
-          this.availablePools.set(pool.address, pool)
-          addedPools++
-        }
-      })
-      if (addedPools > 0) {
-        this.prioritizeTopPools()
-      }
-    }
-
-    // console.debug(
-    //   `****** MEM - ${this.getLogPrefix()}
-    //   init classic pools: ${this.topClassicPools.size}
-    //   on demand classic pools: ${this.onDemandClassicPools.size}
-    //   init stable pools: ${this.topStablePools.size}
-    //   on demand stable pools: ${this.onDemandStablePools.size}
-    //   bridges: ${this.bridges.size}`
-    // )
+    return
   }
 
   private async updateAvailablePools() {
@@ -820,7 +944,7 @@ export class TridentProvider extends LiquidityProvider {
     }
 
     this.refreshAvailablePoolsTimestamp = getUnixTime(
-      add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS })
+      add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }),
     )
 
     const freshInitPools = await this.getInitialPools()
@@ -833,15 +957,24 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   private prioritizeTopPools() {
-    const allNewPools = filterTopPools(Array.from(this.availablePools.values()), this.TOP_POOL_SIZE)
+    const allNewPools = filterTopPools(
+      Array.from(this.availablePools.values()),
+      this.TOP_POOL_SIZE,
+    )
 
     const currentClassicPoolAddresses = Array.from(this.topClassicPools.keys())
     const newClassicAddresses = Array.from(
-      allNewPools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL').map((pool) => pool.address)
+      allNewPools
+        .filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
+        .map((pool) => pool.address),
     )
 
-    const classicPoolsToRemove = currentClassicPoolAddresses.filter((x) => !newClassicAddresses.includes(x))
-    const classicPoolsToAdd = newClassicAddresses.filter((x) => !currentClassicPoolAddresses.includes(x))
+    const classicPoolsToRemove = currentClassicPoolAddresses.filter(
+      (x) => !newClassicAddresses.includes(x),
+    )
+    const classicPoolsToAdd = newClassicAddresses.filter(
+      (x) => !currentClassicPoolAddresses.includes(x),
+    )
 
     classicPoolsToRemove.forEach((address) => {
       this.topClassicPools.delete(address)
@@ -860,25 +993,33 @@ export class TridentProvider extends LiquidityProvider {
           tokens[0],
           tokens[1],
           poolsToCreate.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0)
+          0n,
+          0n,
         )
         this.topClassicPools.set(
           poolsToCreate.address,
-          new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName())
+          new BentoPoolCode(rPool, this.getType(), this.getPoolProviderName()),
         )
         //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to classic top pools`)
       } else {
-        console.warn(`${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find classic pool, unexpected state.`)
+        console.warn(
+          `${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find classic pool, unexpected state.`,
+        )
       }
     })
 
     const currentStablePoolAddresses = Array.from(this.topStablePools.keys())
-    const newStablePools = Array.from(allNewPools.filter((p) => p.type === 'STABLE_POOL'))
+    const newStablePools = Array.from(
+      allNewPools.filter((p) => p.type === 'STABLE_POOL'),
+    )
     const newStablePoolAddresses = newStablePools.map((pool) => pool.address)
 
-    const stablePoolsToRemove = currentStablePoolAddresses.filter((x) => !newStablePoolAddresses.includes(x))
-    const stablePoolsToAdd = newStablePoolAddresses.filter((x) => !currentStablePoolAddresses.includes(x))
+    const stablePoolsToRemove = currentStablePoolAddresses.filter(
+      (x) => !newStablePoolAddresses.includes(x),
+    )
+    const stablePoolsToAdd = newStablePoolAddresses.filter(
+      (x) => !currentStablePoolAddresses.includes(x),
+    )
 
     stablePoolsToRemove.forEach((address) => {
       this.topStablePools.delete(address)
@@ -896,26 +1037,34 @@ export class TridentProvider extends LiquidityProvider {
           convertTokenToBento(token0),
           convertTokenToBento(token1),
           poolsToCreate.swapFee,
-          BigNumber.from(0),
-          BigNumber.from(0),
+          0n,
+          0n,
           poolsToCreate.token0.decimals,
           poolsToCreate.token1.decimals,
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) },
-          { elastic: BigNumber.from(0), base: BigNumber.from(0) }
+          { elastic: 0n, base: 0n },
+          { elastic: 0n, base: 0n },
         )
 
         this.topStablePools.set(
           poolsToCreate.address,
-          new BentoPoolCode(stablePool, this.getType(), this.getPoolProviderName())
+          new BentoPoolCode(
+            stablePool,
+            this.getType(),
+            this.getPoolProviderName(),
+          ),
         )
         //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to stable top pools`)
       } else {
-        console.warn(`${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find stable pool, unexpected state.`)
+        console.warn(
+          `${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find stable pool, unexpected state.`,
+        )
       }
     })
 
     const allPoolsToCreate = allNewPools.filter(
-      (p) => stablePoolsToAdd.includes(p.address) || classicPoolsToAdd.includes(p.address)
+      (p) =>
+        stablePoolsToAdd.includes(p.address) ||
+        classicPoolsToAdd.includes(p.address),
     )
     const sortedTokens = this.poolResponseToSortedTokens(allPoolsToCreate)
 
@@ -925,13 +1074,18 @@ export class TridentProvider extends LiquidityProvider {
           `Bento bridge for ${t.symbol}`,
           t as RToken,
           convertTokenToBento(t),
-          BigNumber.from(0),
-          BigNumber.from(0),
-          BigNumber.from(0)
+          0n,
+          0n,
+          0n,
         )
         this.bridges.set(
           t.address.toLowerCase(),
-          new BentoBridgePoolCode(bridge, this.getType(), this.getPoolProviderName(), this.bentoBox[this.chainId])
+          new BentoBridgePoolCode(
+            bridge,
+            this.getType(),
+            this.getPoolProviderName(),
+            this.bentoBox[this.chainId as BentoBoxChainId],
+          ),
         )
         //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added bridge ${bridge.address}`)
       }
@@ -954,7 +1108,11 @@ export class TridentProvider extends LiquidityProvider {
         }
       },
       onError: (error) => {
-        console.error(`${this.getLogPrefix()} - Error watching block number: ${error.message}`)
+        console.error(
+          `${this.getLogPrefix()} - Error watching block number: ${
+            error.message
+          }`,
+        )
       },
     })
   }
@@ -981,7 +1139,11 @@ export class TridentProvider extends LiquidityProvider {
     }
   }
 
-  async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+  async fetchPoolsForToken(
+    t0: Token,
+    t1: Token,
+    excludePools?: Set<string>,
+  ): Promise<void> {
     await this.getOnDemandPools(t0, t1, excludePools)
   }
 
@@ -989,7 +1151,10 @@ export class TridentProvider extends LiquidityProvider {
     const tradeId = this.getTradeId(t0, t1)
     const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
     const onDemandPoolCodes = poolsByTrade
-      ? [Array.from(this.onDemandClassicPools), Array.from(this.onDemandStablePools)]
+      ? [
+          Array.from(this.onDemandClassicPools),
+          Array.from(this.onDemandStablePools),
+        ]
           .flat()
           .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
           .map(([, p]) => p.poolCode)
@@ -1023,7 +1188,7 @@ export class TridentProvider extends LiquidityProvider {
               status: 'success'
             }
         )[]
-      | undefined
+      | undefined,
   ) {
     if (!reserves) return
     poolCodes.forEach((pc, i) => {
@@ -1031,16 +1196,14 @@ export class TridentProvider extends LiquidityProvider {
       const res0 = reserves?.[i]?.result?.[0]
       const res1 = reserves?.[i]?.result?.[1]
 
-      const res0BN = BigNumber.from(res0)
-      const res1BN = BigNumber.from(res1)
       if (!res0 || !res1) {
         return
       }
-      if (pool.reserve0.eq(res0BN) && pool.reserve1.eq(res1BN)) {
+      if (pool.reserve0 === res0 && pool.reserve1 === res1) {
         return
       }
 
-      pool.updateReserves(res0BN, res1BN)
+      pool.updateReserves(res0, res1)
       // console.info(
       //   `${this.getLogPrefix()} - SYNC, classic pool: ${pool.address} ${pool.token0.symbol}/${
       //     pool.token1.symbol
@@ -1065,7 +1228,7 @@ export class TridentProvider extends LiquidityProvider {
               status: 'success'
             }
         )[]
-      | undefined
+      | undefined,
   ) {
     if (!reserves) return
     poolCodes.forEach((pc, i) => {
@@ -1073,33 +1236,39 @@ export class TridentProvider extends LiquidityProvider {
       const total0 = rebases.get(pool.token0.address.toLowerCase())
       if (total0) {
         const current = pool.getTotal0()
-        if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+        if (
+          total0.elastic !== current.elastic ||
+          total0.base !== current.base
+        ) {
           pool.updateTotal0(total0)
         }
       }
       const total1 = rebases.get(pool.token1.address.toLowerCase())
       if (total1) {
         const current = pool.getTotal1()
-        if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+        if (
+          total1.elastic !== current.elastic ||
+          total1.base !== current.base
+        ) {
           pool.updateTotal1(total1)
         }
       }
       const res0 = reserves?.[i]?.result?.[0]
       const res1 = reserves?.[i]?.result?.[1]
 
-      const res0BN = BigNumber.from(res0)
-      const res1BN = BigNumber.from(res1)
       if (!res0 || !res1) {
         return
       }
 
-      pool.updateReservesAmounts(res0BN, res1BN)
+      pool.updateReservesAmounts(res0, res1)
       // Always updating because reserve0 and 1 is being converted to amount and adjusted to wei using realReservesToAdjusted()
       // but the res0 and res1 are not adjusted.
     })
   }
 
-  private poolResponseToSortedTokens(poolResults: (PoolResponse2 | TridentStaticPool)[]) {
+  private poolResponseToSortedTokens(
+    poolResults: (PoolResponse2 | TridentStaticPool)[],
+  ) {
     const tokenMap = new Map<string, Token>()
     poolResults.forEach((pool) => {
       tokenMap.set(pool.token0.address, pool.token0 as Token)

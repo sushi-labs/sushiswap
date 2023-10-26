@@ -1,22 +1,27 @@
-import { isAddress } from '@ethersproject/address'
-import { AddressZero } from '@ethersproject/constants'
-import { bentoBoxV1Abi } from '@sushiswap/abi'
-import { isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { ChainId, chainName } from '@sushiswap/chain'
-import { Amount, Native, Token, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { JSBI, ZERO } from '@sushiswap/math'
-import { getBentoBoxContractConfig } from '../useBentoBoxContract'
-import { BigNumber } from 'ethers'
-import { useMemo } from 'react'
-import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
+'use client'
 
+import { FundSource } from '@sushiswap/hooks'
+import { useMemo } from 'react'
+import { bentoBoxV1Abi } from 'sushi/abi'
+import { ChainId, chainName } from 'sushi/chain'
+import { isBentoBoxChainId } from 'sushi/config'
+import { Amount, Native, Token, Type } from 'sushi/currency'
+import { isAddress } from 'viem'
+import { zeroAddress } from 'viem'
+import {
+  Address,
+  erc20ABI,
+  useBalance as useWagmiBalance,
+  useContractReads,
+} from 'wagmi'
+
+import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 import { BalanceMap } from './types'
 
 type UseBalancesParams = {
-  account: string | undefined
+  account: Address | undefined
   currencies: (Type | undefined)[]
-  chainId?: number
+  chainId?: ChainId
   enabled?: boolean
   loadBentobox?: boolean
   watch?: boolean
@@ -53,35 +58,37 @@ export const useBalances: UseBalances = ({
 
   const [validatedTokens, validatedTokenAddresses] = useMemo(
     () =>
-      currencies.reduce<[Token[], string[][]]>(
+      currencies.reduce<[Token[], string[]]>(
         (acc, currencies) => {
           if (chainId && currencies && isAddress(currencies.wrapped.address)) {
             acc[0].push(currencies.wrapped)
-            acc[1].push([currencies.wrapped.address])
+            acc[1].push(currencies.wrapped.address as Address)
           }
 
           return acc
         },
-        [[], []]
+        [[], []],
       ),
-    [chainId, currencies]
+    [chainId, currencies],
   )
 
   const contracts = useMemo(() => {
+    if (!account) return []
+
     const input = validatedTokenAddresses.map((token) => {
       return {
         chainId,
-        address: token[0] as Address,
+        address: token as Address,
         abi: erc20ABI,
-        functionName: 'balanceOf',
-        args: [account],
+        functionName: 'balanceOf' as const,
+        args: [account] as const,
       }
     })
 
     if (loadBentobox && chainId) {
-      if (!isBentoBoxV1ChainId(chainId)) {
+      if (!isBentoBoxChainId(chainId)) {
         throw new Error(
-          `ChainId Error: BentoBox is not available on ${chainName[chainId]} and loadBentobox is enabled.`
+          `ChainId Error: BentoBox is not available on ${chainName[chainId]} and loadBentobox is enabled.`,
         )
       }
 
@@ -89,16 +96,16 @@ export const useBalances: UseBalances = ({
         chainId,
         ...getBentoBoxContractConfig(chainId),
         abi: bentoBoxV1Abi,
-        functionName: 'totals',
-        args: token,
+        functionName: 'totals' as const,
+        args: [token] as const,
       }))
 
       const balanceInputs = validatedTokenAddresses.map((token, i) => ({
         chainId,
         ...getBentoBoxContractConfig(chainId),
         abi: bentoBoxV1Abi,
-        functionName: 'balanceOf',
-        args: [validatedTokenAddresses[i][0], account],
+        functionName: 'balanceOf' as const,
+        args: [validatedTokenAddresses[i], account] as const,
       }))
 
       return [...input, ...totals, ...balanceInputs]
@@ -118,35 +125,46 @@ export const useBalances: UseBalances = ({
     if (data?.length !== contracts.length) return result
     for (let i = 0; i < validatedTokenAddresses.length; i++) {
       if (loadBentobox) {
-        const { base, elastic } = data[i + validatedTokenAddresses.length] as unknown as {
-          base: BigNumber
-          elastic: BigNumber
+        const { base, elastic } = data[i + validatedTokenAddresses.length]
+          .result as unknown as {
+          base: bigint
+          elastic: bigint
         }
-        if (base && elastic && data[i + 2 * validatedTokenAddresses.length]) {
+        if (
+          base &&
+          elastic &&
+          data[i + 2 * validatedTokenAddresses.length].result
+        ) {
           const rebase = {
-            base: JSBI.BigInt(base.toString()),
-            elastic: JSBI.BigInt(elastic.toString()),
+            base: base,
+            elastic: elastic,
           }
           const amount = Amount.fromShare(
             validatedTokens[i],
-            (data[i + 2 * validatedTokenAddresses.length] as unknown as BigNumber).toString(),
-            rebase
+            data[i + 2 * validatedTokenAddresses.length].result as bigint,
+            rebase,
           )
 
           result[validatedTokens[i].address] = {
-            [FundSource.BENTOBOX]: amount.greaterThan(ZERO) ? amount : Amount.fromRawAmount(validatedTokens[i], '0'),
+            [FundSource.BENTOBOX]: amount.greaterThan(0n)
+              ? amount
+              : Amount.fromRawAmount(validatedTokens[i], '0'),
             [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
           }
         } else {
           result[validatedTokens[i].address] = {
-            [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),
+            [FundSource.BENTOBOX]: Amount.fromRawAmount(
+              validatedTokens[i],
+              '0',
+            ),
             [FundSource.WALLET]: Amount.fromRawAmount(validatedTokens[i], '0'),
           }
         }
       }
 
-      const value = data[i] as unknown as BigNumber
-      const amount = value ? JSBI.BigInt(value.toString()) : undefined
+      const value = data[i]?.result as bigint | undefined
+      const amount = value ?? undefined
+
       if (!result[validatedTokens[i].address]) {
         result[validatedTokens[i].address] = {
           [FundSource.BENTOBOX]: Amount.fromRawAmount(validatedTokens[i], '0'),
@@ -155,18 +173,30 @@ export const useBalances: UseBalances = ({
       }
 
       if (amount)
-        result[validatedTokens[i].address][FundSource.WALLET] = Amount.fromRawAmount(validatedTokens[i], amount)
-      else result[validatedTokens[i].address][FundSource.WALLET] = Amount.fromRawAmount(validatedTokens[i], '0')
+        result[validatedTokens[i].address][FundSource.WALLET] =
+          Amount.fromRawAmount(validatedTokens[i], amount)
+      else
+        result[validatedTokens[i].address][FundSource.WALLET] =
+          Amount.fromRawAmount(validatedTokens[i], '0')
     }
 
     return result
-  }, [contracts.length, data, loadBentobox, validatedTokenAddresses.length, validatedTokens])
+  }, [
+    contracts.length,
+    data,
+    loadBentobox,
+    validatedTokenAddresses.length,
+    validatedTokens,
+  ])
 
   return useMemo(() => {
-    tokens[AddressZero] = {
+    tokens[zeroAddress] = {
       [FundSource.WALLET]:
         chainId && nativeBalance?.value
-          ? Amount.fromRawAmount(Native.onChain(chainId), nativeBalance.value.toString())
+          ? Amount.fromRawAmount(
+              Native.onChain(chainId),
+              nativeBalance.value.toString(),
+            )
           : undefined,
       [FundSource.BENTOBOX]:
         chainId && tokens[Native.onChain(chainId).wrapped.address]
@@ -179,11 +209,19 @@ export const useBalances: UseBalances = ({
       isLoading: isLoading || isNativeLoading,
       isError: isError || isNativeError,
     }
-  }, [tokens, chainId, nativeBalance?.value, isLoading, isNativeLoading, isError, isNativeError])
+  }, [
+    tokens,
+    chainId,
+    nativeBalance?.value,
+    isLoading,
+    isNativeLoading,
+    isError,
+    isNativeError,
+  ])
 }
 
 type UseBalanceParams = {
-  account: string | undefined
+  account: Address | undefined
   currency: Type | undefined
   chainId?: ChainId
   enabled?: boolean
@@ -191,7 +229,10 @@ type UseBalanceParams = {
   watch?: boolean
 }
 
-type UseBalance = (params: UseBalanceParams) => Pick<ReturnType<typeof useBalances>, 'isError' | 'isLoading'> & {
+type UseBalance = (params: UseBalanceParams) => Pick<
+  ReturnType<typeof useBalances>,
+  'isError' | 'isLoading'
+> & {
   data: Record<FundSource, Amount<Type>> | undefined
 }
 
@@ -214,10 +255,14 @@ export const useBalance: UseBalance = ({
   })
   return useMemo(() => {
     const walletBalance = currency
-      ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.WALLET]
+      ? data?.[currency.isNative ? zeroAddress : currency.wrapped.address]?.[
+          FundSource.WALLET
+        ]
       : undefined
     const bentoBalance = currency
-      ? data?.[currency.isNative ? AddressZero : currency.wrapped.address]?.[FundSource.BENTOBOX]
+      ? data?.[currency.isNative ? zeroAddress : currency.wrapped.address]?.[
+          FundSource.BENTOBOX
+        ]
       : undefined
     return {
       isError: isError,

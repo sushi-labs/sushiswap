@@ -52,6 +52,16 @@ query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
   }
 }
 
+query V3Factories($chainIds: [BigInt!]!) {
+  factories: v3factoriesByChainIds(chainIds: $chainIds) {
+    id
+    chainId
+    totalValueLockedUSD
+    totalVolumeUSD
+    poolCount
+  }
+}
+
 query V3Transactions($first: Int = 100, $skip: Int = 0, $orderBy: CONCENTRATED_Transaction_orderBy = timestamp, $orderDir: CONCENTRATED_OrderDirection = desc, $where: CONCENTRATED_Transaction_filter) {
   transactions: CONCENTRATED_transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id

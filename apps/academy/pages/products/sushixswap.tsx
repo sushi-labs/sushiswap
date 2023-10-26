@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import sushixswapImg from 'common/assets/sushixswap-img.png'
 import {
   ProductArticles,
@@ -14,11 +15,9 @@ import { WideTriangle } from 'common/icons'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { FC } from 'react'
 import useSWR from 'swr'
-
-import { ArticleEntity } from '.mesh'
 
 const PRODUCT_SLUG = 'sushixswap'
 const { color, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
@@ -38,20 +37,23 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    ['/bentobox-articles'],
+    ['/sushiswapx-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container
+      maxWidth="6xl"
+      className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}
+    >
       <ProductBackground color={color} />
       <ProductHero
         productName={
@@ -60,14 +62,17 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             <span className="flex items-center">
               <WideTriangle fill="#F7EA75" className="h-6 -mr-2 sm:h-10" />
               X
-              <WideTriangle fill="#FF9A5F" className="h-6 -ml-2 rotate-180 sm:h-10" />
+              <WideTriangle
+                fill="#FF9A5F"
+                className="h-6 -ml-2 rotate-180 sm:h-10"
+              />
             </span>
             <span>Swap</span>
           </h1>
         }
         productDescription={description}
         productUrl={url}
-        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        buttonIcon={LinkIcon}
         image={<Image src={sushixswapImg} unoptimized alt="sushixswap-img" />}
       />
       <ProductCards

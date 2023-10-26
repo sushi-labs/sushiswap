@@ -1,7 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
-import { Address, useContract, useProvider } from 'wagmi'
+'use client'
 
-import { multicallAbi } from '../abis'
+import { ChainId } from 'sushi/chain'
+import { getContract } from 'viem'
+import { Address, usePublicClient } from 'wagmi'
+
+import { multicallAbi } from 'sushi/abi'
 
 export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
@@ -32,13 +35,17 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
 }
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({
-  address: (chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '') as Address,
+  address: (chainId && chainId in MULTICALL_ADDRESS
+    ? MULTICALL_ADDRESS[chainId]
+    : '') as Address,
   abi: multicallAbi,
 })
 
-export function useMulticallContract(chainId: number): ReturnType<typeof useContract> {
-  return useContract({
+export function useMulticallContract(chainId: number) {
+  const publicClient = usePublicClient({ chainId })
+
+  return getContract({
     ...getMulticallContractConfig(chainId),
-    signerOrProvider: useProvider({ chainId }),
+    publicClient,
   })
 }

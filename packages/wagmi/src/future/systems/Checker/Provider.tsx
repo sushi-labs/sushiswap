@@ -1,7 +1,17 @@
 'use client'
 
-import React, { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
-import { Signature } from '@ethersproject/bytes'
+import { watchAccount, watchNetwork } from '@wagmi/core'
+import React, {
+  createContext,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { Signature } from 'viem'
 
 type CheckerContext = {
   state: Record<string, boolean>
@@ -12,33 +22,59 @@ type CheckerContext = {
 
 const CheckerContext = createContext<CheckerContext | undefined>(undefined)
 
-export interface ProviderProps {
+interface ProviderProps {
   children: ReactNode
 }
 
-export const CheckerProvider: FC<ProviderProps> = ({ children }) => {
-  const [state, setState] = useState<Record<string, boolean>>({})
-  const [signatureState, setSignatureState] = useState<Record<string, Signature | undefined>>({})
+interface State {
+  state: Record<string, boolean>
+  signatureState: Record<string, Signature | undefined>
+}
+
+const initialState = { state: {}, signatureState: {} }
+
+const CheckerProvider: FC<ProviderProps> = ({ children }) => {
+  const [{ state, signatureState }, setState] = useState<State>(initialState)
 
   const setApproved = useCallback((tag: string, approved: boolean) => {
     setState((prevState) => ({
       ...prevState,
-      [tag]: approved,
+      state: {
+        ...prevState.state,
+        [tag]: approved,
+      },
     }))
   }, [])
 
-  const setSignature = useCallback((tag: string, signature: Signature | undefined) => {
-    setSignatureState((prevState) => ({
-      ...prevState,
-      [tag]: signature,
-    }))
+  const setSignature = useCallback(
+    (tag: string, signature: Signature | undefined) => {
+      setState((prevState) => ({
+        ...prevState,
+        signatureState: {
+          ...prevState.signatureState,
+          [tag]: signature,
+        },
+      }))
+    },
+    [],
+  )
+
+  // Reset state when address/wallet changes
+  useEffect(() => {
+    const unwatchAccountListener = watchAccount(() => setState(initialState))
+    const unwatchChainListener = watchNetwork(() => setState(initialState))
+
+    return () => {
+      unwatchAccountListener()
+      unwatchChainListener()
+    }
   }, [])
 
   return (
     <CheckerContext.Provider
       value={useMemo(
         () => ({ setApproved, state, signatureState, setSignature }),
-        [setApproved, setSignature, signatureState, state]
+        [setApproved, setSignature, signatureState, state],
       )}
     >
       {children}
@@ -46,9 +82,9 @@ export const CheckerProvider: FC<ProviderProps> = ({ children }) => {
   )
 }
 
-export const useCheckerContext = () => useContext(CheckerContext)
+const useCheckerContext = () => useContext(CheckerContext)
 
-export const useApproved = (tag: string) => {
+const useApproved = (tag: string) => {
   const context = useCheckerContext()
   if (!context) {
     throw new Error('Hook can only be used inside Checker Context')
@@ -59,11 +95,11 @@ export const useApproved = (tag: string) => {
       approved: context.state[tag] ? context.state[tag] : false,
       setApproved: (approved: boolean) => context.setApproved(tag, approved),
     }),
-    [context, tag]
+    [context, tag],
   )
 }
 
-export const useSignature = (tag: string) => {
+const useSignature = (tag: string) => {
   const context = useCheckerContext()
   if (!context) {
     throw new Error('Hook can only be used inside Checker Context')
@@ -71,16 +107,21 @@ export const useSignature = (tag: string) => {
 
   return useMemo(
     () => ({
-      signature: context.signatureState[tag] ? context.signatureState[tag] : undefined,
-      setSignature: (signature: Signature | undefined) => context.setSignature(tag, signature),
+      signature: context.signatureState[tag]
+        ? context.signatureState[tag]
+        : undefined,
+      setSignature: (signature: Signature | undefined) =>
+        context.setSignature(tag, signature),
     }),
-    [context, tag]
+    [context, tag],
   )
 }
 
 // HOC component
 // useful for when the useApproved hook and the Checker.Success component are in the same component
-export const withCheckerRoot = <P extends object>(Component: React.FunctionComponent<P>): FC<P> =>
+const withCheckerRoot = <P extends object>(
+  Component: React.FunctionComponent<P>,
+): FC<P> =>
   function WithCheckerRootComponent(props: P) {
     return (
       <CheckerProvider>
@@ -88,3 +129,13 @@ export const withCheckerRoot = <P extends object>(Component: React.FunctionCompo
       </CheckerProvider>
     )
   }
+
+export {
+  type CheckerContext,
+  CheckerProvider,
+  type ProviderProps,
+  useApproved,
+  useCheckerContext,
+  useSignature,
+  withCheckerRoot,
+}

@@ -1,4 +1,4 @@
-import { BigintIsh, JSBI, sqrt } from '@sushiswap/math'
+import { BigintIsh, sqrt } from 'sushi/math'
 
 /**
  * Returns the sqrt ratio as a Q64.96 corresponding to a given ratio of amount1 and amount0
@@ -7,9 +7,12 @@ import { BigintIsh, JSBI, sqrt } from '@sushiswap/math'
  * @returns The sqrt ratio
  */
 
-export function encodeSqrtRatioX96(amount1: BigintIsh, amount0: BigintIsh): JSBI {
-  const numerator = JSBI.leftShift(JSBI.BigInt(amount1.toString()), JSBI.BigInt(192))
-  const denominator = JSBI.BigInt(amount0.toString())
-  const ratioX192 = JSBI.divide(numerator, denominator)
+export function encodeSqrtRatioX96(
+  amount1: BigintIsh,
+  amount0: BigintIsh,
+): bigint {
+  const numerator = BigInt(amount1.toString()) << 192n
+  const denominator = BigInt(amount0.toString())
+  const ratioX192 = numerator / denominator
   return sqrt(ratioX192)
 }

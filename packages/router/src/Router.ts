@@ -1,22 +1,27 @@
-import { ChainId } from '@sushiswap/chain'
-import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import {
-  findMultiRouteExactIn,
-  getBigNumber,
   MultiRoute,
   NetworkInfo,
-  RouteStatus,
   RPool,
   RToken,
+  RouteStatus,
+  findMultiRouteExactIn,
+  getBigInt,
 } from '@sushiswap/tines'
-import { BigNumber } from 'ethers'
+import { ChainId } from 'sushi/chain'
+import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from 'sushi/currency'
+import { Address, Hex } from 'viem'
 
-import { convertTokenToBento, getBentoChainId } from './lib/convert'
-import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
-import { PoolCode } from './pools/PoolCode'
+import { convertTokenToBento, getBentoChainId } from '@sushiswap/tines'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
-import { getRouteProcessor2Code, PermitData } from './TinesToRouteProcessor2'
+import {
+  PermitData,
+  RouterLiquiditySource,
+  getRouteProcessor2Code,
+} from './TinesToRouteProcessor2'
 import { getRouteProcessor4Code } from './TinesToRouteProcessor4'
+import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
+import { Bridge } from './pools/Bridge'
+import { PoolCode } from './pools/PoolCode'
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
@@ -31,50 +36,125 @@ function TokenToRToken(t: Type): RToken {
 }
 
 export interface RPParams {
-  tokenIn: string
-  amountIn: BigNumber
-  tokenOut: string
-  amountOutMin: BigNumber
-  to: string
-  routeCode: string
-  value?: BigNumber
+  tokenIn: Address
+  amountIn: bigint
+  tokenOut: Address
+  amountOutMin: bigint
+  to: Address
+  routeCode: Hex
+  value?: bigint
 }
 
 export type PoolFilter = (list: RPool) => boolean
 
 export class Router {
+  static findRouteType(
+    poolCodesMap: Map<string, PoolCode>,
+    addresses: string[],
+  ) {
+    // const poolCodes = addresses.map(address => poolCodesMap.get(address))
+    if (
+      addresses?.every((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          poolName?.startsWith('Wrap') ||
+          poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
+          poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
+          poolName?.startsWith(LiquidityProviders.Trident) ||
+          poolName?.startsWith(Bridge.BentoBox)
+        )
+      })
+    ) {
+      return 'Internal'
+    } else if (
+      addresses?.some((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          !poolName?.startsWith('Wrap') &&
+          (poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
+            poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
+            poolName?.startsWith(LiquidityProviders.Trident) ||
+            poolName?.startsWith(Bridge.BentoBox))
+        )
+      }) &&
+      addresses?.some((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          !poolName?.startsWith('Wrap') &&
+          (!poolName?.startsWith(LiquidityProviders.SushiSwapV2) ||
+            !poolName?.startsWith(LiquidityProviders.SushiSwapV3) ||
+            !poolName?.startsWith(LiquidityProviders.Trident) ||
+            !poolName?.startsWith(Bridge.BentoBox))
+        )
+      })
+    ) {
+      return 'Mix'
+    } else if (
+      addresses?.some((address) => {
+        const poolName = poolCodesMap.get(address)?.poolName
+        return (
+          poolName?.startsWith('Wrap') ||
+          (!poolName?.startsWith(LiquidityProviders.SushiSwapV2) &&
+            !poolName?.startsWith(LiquidityProviders.SushiSwapV3) &&
+            !poolName?.startsWith(LiquidityProviders.Trident) &&
+            !poolName?.startsWith(Bridge.BentoBox))
+        )
+      })
+    ) {
+      return 'External'
+    }
+
+    return 'Unknown'
+  }
+
   static findSushiRoute(
     poolCodesMap: Map<string, PoolCode>,
     chainId: ChainId,
     fromToken: Type,
-    amountIn: BigNumber,
+    amountIn: bigint,
     toToken: Type,
-    gasPrice: number
+    gasPrice: number,
   ) {
-    return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
-      LiquidityProviders.NativeWrap,
-      LiquidityProviders.SushiSwapV2,
-      LiquidityProviders.SushiSwapV3,
-      LiquidityProviders.Trident,
-    ])
+    return Router.findBestRoute(
+      poolCodesMap,
+      chainId,
+      fromToken,
+      amountIn,
+      toToken,
+      gasPrice,
+      [
+        LiquidityProviders.NativeWrap,
+        LiquidityProviders.SushiSwapV2,
+        LiquidityProviders.SushiSwapV3,
+        LiquidityProviders.Trident,
+      ],
+    )
   }
 
   static findSpecialRoute(
     poolCodesMap: Map<string, PoolCode>,
     chainId: ChainId,
     fromToken: Type,
-    amountIn: BigNumber,
+    amountIn: bigint,
     toToken: Type,
     gasPrice: number,
-    maxPriceImpact = 10 // 10%
+    maxPriceImpact = 1, // 1%
   ) {
     // Find preferrable route
-    const preferrableRoute = Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice, [
-      LiquidityProviders.NativeWrap,
-      LiquidityProviders.SushiSwapV2,
-      LiquidityProviders.SushiSwapV3,
-      LiquidityProviders.Trident,
-    ])
+    const preferrableRoute = Router.findBestRoute(
+      poolCodesMap,
+      chainId,
+      fromToken,
+      amountIn,
+      toToken,
+      gasPrice,
+      [
+        LiquidityProviders.NativeWrap,
+        LiquidityProviders.SushiSwapV2,
+        LiquidityProviders.SushiSwapV3,
+        LiquidityProviders.Trident,
+      ],
+    )
     // If the route is successful and the price impact is less than maxPriceImpact, then return the route
     if (
       preferrableRoute.status === RouteStatus.Success &&
@@ -84,22 +164,29 @@ export class Router {
       return preferrableRoute
     }
     // Otherwise, find the route using all possible liquidity providers
-    return Router.findBestRoute(poolCodesMap, chainId, fromToken, amountIn, toToken, gasPrice)
+    return Router.findBestRoute(
+      poolCodesMap,
+      chainId,
+      fromToken,
+      amountIn,
+      toToken,
+      gasPrice,
+    )
   }
 
   static findBestRoute(
     poolCodesMap: Map<string, PoolCode>,
     chainId: ChainId,
     fromToken: Type,
-    amountIn: BigNumber,
+    amountIn: bigint,
     toToken: Type,
     gasPrice: number,
     providers?: LiquidityProviders[], // all providers if undefined
-    poolFilter?: PoolFilter
+    poolFilter?: PoolFilter,
   ): MultiRoute {
     const networks: NetworkInfo[] = [
       {
-        chainId: chainId,
+        chainId: Number(chainId),
         baseToken: WNATIVE[chainId] as RToken,
         gasPrice: gasPrice as number,
       },
@@ -112,21 +199,23 @@ export class Router {
 
     let poolCodes = Array.from(poolCodesMap.values())
     if (providers) {
-      poolCodes = poolCodes.filter((pc) => [...providers, LiquidityProviders.NativeWrap].includes(pc.liquidityProvider))
+      poolCodes = poolCodes.filter((pc) =>
+        [...providers, LiquidityProviders.NativeWrap].includes(
+          pc.liquidityProvider,
+        ),
+      )
     }
     let pools = Array.from(poolCodes).map((pc) => pc.pool)
 
-    // console.log('before', pools.length)
     if (poolFilter) pools = pools.filter(poolFilter)
-    // console.log('after', pools.length)
-    // console.log({pools})
+
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),
       amountIn,
       pools,
       networks,
-      gasPrice
+      gasPrice,
     )
 
     return {
@@ -143,27 +232,32 @@ export class Router {
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
-    to: string,
-    RPAddr: string,
-    maxPriceImpact = 0.005
+    to: Address,
+    RPAddr: Address,
+    maxPriceImpact = 0.005,
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
-        ? fromToken.address
-        : fromToken.chainId == ChainId.CELO
+        ? (fromToken.address as Address)
+        : fromToken.chainId === ChainId.CELO
         ? WNATIVE_ADDRESS[ChainId.CELO] /*CELO native coin has ERC20 interface*/
         : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
+    const tokenOut =
+      toToken instanceof Token
+        ? (toToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const amountOutMin =
+      (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+      1_000_000n
 
     return {
       tokenIn,
-      amountIn: route.amountInBN,
+      amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessorCode(route, RPAddr, to, poolCodesMap),
-      value: fromToken instanceof Token ? undefined : route.amountInBN,
+      routeCode: getRouteProcessorCode(route, RPAddr, to, poolCodesMap) as Hex,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
 
@@ -172,48 +266,82 @@ export class Router {
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
-    to: string,
-    RPAddr: string,
+    to: Address,
+    RPAddr: Address,
     permits: PermitData[] = [],
-    maxPriceImpact = 0.005
+    maxPriceImpact = 0.005,
+    source = RouterLiquiditySource.Sender,
   ): RPParams {
-    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
+    const tokenIn =
+      fromToken instanceof Token
+        ? (fromToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut =
+      toToken instanceof Token
+        ? (toToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const amountOutMin =
+      (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+      1_000_000n
 
     return {
       tokenIn,
-      amountIn: route.amountInBN,
+      amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor2Code(route, RPAddr, to, poolCodesMap, permits),
-      value: fromToken instanceof Token ? undefined : route.amountInBN,
+      routeCode: getRouteProcessor2Code(
+        route,
+        RPAddr,
+        to,
+        poolCodesMap,
+        permits,
+        source,
+      ) as Hex,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
+
+  static routeProcessor3Params = this.routeProcessor2Params
+  static routeProcessor3_1Params = this.routeProcessor2Params
+  static routeProcessor3_2Params = this.routeProcessor2Params
 
   static routeProcessor4Params(
     poolCodesMap: Map<string, PoolCode>,
     route: MultiRoute,
     fromToken: Type,
     toToken: Type,
-    to: string,
-    RPAddr: string,
+    to: Address,
+    RPAddr: Address,
     permits: PermitData[] = [],
-    maxPriceImpact = 0.005
+    maxPriceImpact = 0.005,
   ): RPParams {
-    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
+    const tokenIn =
+      fromToken instanceof Token
+        ? (fromToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut =
+      toToken instanceof Token
+        ? (toToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const amountOutMin =
+      (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+      1_000_000n
 
     return {
       tokenIn,
-      amountIn: route.amountInBN,
+      amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor4Code(route, RPAddr, to, poolCodesMap, permits),
-      value: fromToken instanceof Token ? undefined : route.amountInBN,
+      routeCode: getRouteProcessor4Code(
+        route,
+        RPAddr,
+        to,
+        poolCodesMap,
+        permits,
+      ) as Hex,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
 
@@ -224,30 +352,34 @@ export class Router {
     fromToken: Type,
     toToken: Type,
     shiftPrimary = '',
-    shiftSub = '    '
+    shiftSub = '    ',
   ): string {
     let res = ''
-    res += shiftPrimary + 'Route Status: ' + route.status + '\n'
-    res += shiftPrimary + `Input: ${route.amountIn / Math.pow(10, fromToken.decimals)} ${fromToken.symbol}\n`
+    res += `${shiftPrimary}Route Status: ${route.status}\n`
+    res += `${shiftPrimary}Input: ${
+      route.amountIn / 10 ** fromToken.decimals
+    } ${fromToken.symbol}\n`
     route.legs.forEach((l, i) => {
-      res +=
-        shiftSub +
-        `${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}%` +
-        ` -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.symbol}\n`
+      res += `${shiftSub}${i + 1}. ${l.tokenFrom.symbol} ${Math.round(
+        l.absolutePortion * 100,
+      )}% -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${
+        l.tokenTo.symbol
+      }\n`
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
     })
-    const output = parseInt(route.amountOutBN.toString()) / Math.pow(10, toToken.decimals)
-    res += shiftPrimary + `Output: ${output} ${route.toToken.symbol}`
+    const output =
+      parseInt(route.amountOutBI.toString()) / 10 ** toToken.decimals
+    res += `${shiftPrimary}Output: ${output} ${route.toToken.symbol}`
 
     return res
   }
 }
 
-export function tokenQuantityString(token: Type, amount: BigNumber) {
-  const denominator = BigNumber.from(10).pow(token.decimals)
-  const integer = amount.div(denominator)
-  const fractional = amount.sub(integer.mul(denominator))
-  if (fractional.isZero()) return `${integer} ${token.symbol}`
+export function tokenQuantityString(token: Type, amount: bigint) {
+  const denominator = 10n ** BigInt(token.decimals)
+  const integer = amount / denominator
+  const fractional = amount - integer * denominator
+  if (fractional === 0n) return `${integer} ${token.symbol}`
   const paddedFractional = fractional.toString().padStart(token.decimals, '0')
   return `${integer}.${paddedFractional} ${token.symbol}`
 }

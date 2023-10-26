@@ -1,5 +1,5 @@
-import { ChainId, chainShortName } from '@sushiswap/chain'
-import type { Token } from '@sushiswap/currency'
+import { ChainId, chainShortName } from 'sushi/chain'
+import type { Token } from 'sushi/currency'
 import { PublicClient } from 'viem'
 
 import type { PoolCode } from '../pools/PoolCode'
@@ -25,7 +25,10 @@ export enum LiquidityProviders {
   Biswap = 'Biswap',
   CurveSwap = 'CurveSwap',
   DovishV3 = 'DovishV3',
+  Wagmi = 'Wagmi',
   LaserSwap = 'LaserSwap',
+  BaseSwap = 'BaseSwap',
+  AlgebraIntegral = 'AlgebraIntegral',
 }
 
 export abstract class LiquidityProvider {
@@ -57,7 +60,11 @@ export abstract class LiquidityProvider {
    * @param t0 Token
    * @param t1 Token
    */
-  abstract fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void>
+  abstract fetchPoolsForToken(
+    t0: Token,
+    t1: Token,
+    excludePools?: Set<string>,
+  ): Promise<void>
 
   /**
    * Returns a list of PoolCode
@@ -84,9 +91,13 @@ export abstract class LiquidityProvider {
    * @returns string
    */
   getLogPrefix(): string {
-    return `${chainShortName[this.chainId]}/${this.chainId}~${this.lastUpdateBlock}~${this.getType()}`
+    return `${chainShortName[this.chainId]}/${this.chainId}~${
+      this.lastUpdateBlock
+    }~${this.getType()}`
   }
 
   getTradeId = (t0: Token, t1: Token) =>
-    [t0.address.toLowerCase(), t1.address.toLowerCase()].sort((first, second) => (first > second ? -1 : 1)).join(':')
+    [t0.address.toLowerCase(), t1.address.toLowerCase()]
+      .sort((first, second) => (first > second ? -1 : 1))
+      .join(':')
 }

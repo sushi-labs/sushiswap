@@ -1,3 +1,5 @@
+'use client'
+
 import { QueryFunction } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Address, useQuery } from 'wagmi'
@@ -15,9 +17,13 @@ function queryKey({ tokens }: QueryKeyArgs) {
   return [{ entity: 'tokens', tokens: tokens || [] }] as const
 }
 
-const queryFn: QueryFunction<FetchTokensResult, ReturnType<typeof queryKey>> = ({ queryKey: [{ tokens }] }) => {
+const queryFn: QueryFunction<
+  FetchTokensResult,
+  ReturnType<typeof queryKey>
+> = ({ queryKey: [{ tokens }] }) => {
   if (!tokens) throw new Error('tokens is required')
-  if (tokens.filter((el) => !el.address).length > 0) throw new Error('address is required')
+  if (tokens.filter((el) => !el.address).length > 0)
+    throw new Error('address is required')
   return Promise.all(
     tokens.map((token) => {
       return fetchToken({
@@ -25,7 +31,7 @@ const queryFn: QueryFunction<FetchTokensResult, ReturnType<typeof queryKey>> = (
         chainId: token.chainId,
         formatUnits: token.formatUnits,
       })
-    })
+    }),
   )
 }
 
@@ -40,20 +46,26 @@ export function useTokens({
   onSuccess,
 }: UseTokensArgs & UseTokensConfig) {
   const _enabled = useMemo(() => {
-    return Boolean(tokens && tokens?.length > 0 && enabled && tokens.map((el) => el.address && el.chainId))
+    return Boolean(
+      tokens &&
+        tokens?.length > 0 &&
+        enabled &&
+        tokens.map((el) => el.address && el.chainId),
+    )
   }, [enabled, tokens])
 
-  return useQuery<FetchTokensResult, unknown, FetchTokensResult, ReturnType<typeof queryKey>>(
-    queryKey({ tokens }),
-    queryFn,
-    {
-      cacheTime,
-      enabled: _enabled,
-      staleTime,
-      suspense,
-      onError,
-      onSettled,
-      onSuccess,
-    }
-  )
+  return useQuery<
+    FetchTokensResult,
+    unknown,
+    FetchTokensResult,
+    ReturnType<typeof queryKey>
+  >(queryKey({ tokens }), queryFn, {
+    cacheTime,
+    enabled: _enabled,
+    staleTime,
+    suspense,
+    onError,
+    onSettled,
+    onSuccess,
+  })
 }

@@ -1,111 +1,244 @@
-import {BigNumber} from '@ethersproject/bignumber'
-import {calculateSlippageAmount} from '@sushiswap/amm'
-import {ChainId} from "@sushiswap/chain";
-import {Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS} from '@sushiswap/currency'
-import {JSBI, Percent, ZERO} from '@sushiswap/math'
-import {HexString} from '@sushiswap/types'
-import {useQuery} from '@tanstack/react-query'
-import {useCallback} from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { slippageAmount } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
+import {
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+} from 'sushi/config'
+import {
+  Amount,
+  Native,
+  Price,
+  WNATIVE_ADDRESS,
+  nativeCurrencyIds,
+} from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
+import { type Address, type Hex, stringify } from 'viem'
+import { deserialize } from 'wagmi'
 
-import {usePrice} from '../prices'
-import {UseTradeParams, UseTradeQuerySelect, UseTradeReturnWriteArgs} from './types'
-import {tradeValidator} from './validator'
+import { usePrice } from '../prices'
+import type {
+  UseTradeParams,
+  UseTradeQuerySelect,
+  UseTradeReturnWriteArgs,
+} from './types'
+import { tradeValidator } from './validator'
+
+const SWAP_BASE_URL =
+  process.env['SWAP_API_V0_BASE_URL'] ||
+  process.env['NEXT_PUBLIC_SWAP_API_V0_BASE_URL'] ||
+  'https://swap.sushi.com'
+
+function getApiVersion(chainId: ChainId) {
+  if (isRouteProcessor3_2ChainId(chainId)) {
+    return '/v3.2'
+  }
+  if (isRouteProcessor3_1ChainId(chainId)) {
+    return '/v3.1'
+  }
+  return ''
+}
 
 export const useTradeQuery = (
-  { chainId, fromToken, toToken, amount, gasPrice = 50, recipient, enabled, onError }: UseTradeParams,
-  select: UseTradeQuerySelect
+  {
+    chainId,
+    fromToken,
+    toToken,
+    amount,
+    gasPrice = 50n,
+    slippagePercentage,
+    recipient,
+    source,
+    enabled,
+    onError,
+  }: UseTradeParams,
+  select: UseTradeQuerySelect,
 ) => {
-    return useQuery({
-        queryKey: ['NoPersist', 'getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
-        queryFn: async () => {
-            const params = new URL(process.env.SWAP_API_V0_BASE_URL || process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0')
-            params.searchParams.set('chainId', `${chainId}`)
-            params.searchParams.set('fromTokenId', `${fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address}`)
-            params.searchParams.set('toTokenId', `${toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address}`)
-            params.searchParams.set('amount', `${amount?.quotient.toString()}`)
-            params.searchParams.set('gasPrice', `${gasPrice}`)
-            params.searchParams.set('to', `${recipient}`)
-            params.searchParams.set('preferSushi', 'true')
+  return useQuery({
+    queryKey: [
+      'getTrade',
+      {
+        chainId,
+        fromToken,
+        toToken,
+        amount,
+        slippagePercentage,
+        gasPrice,
+        recipient,
+      },
+    ],
+    queryFn: async () => {
+      const params = new URL(SWAP_BASE_URL + getApiVersion(chainId))
 
-            const res = await fetch(params.toString())
-            return tradeValidator.parse(await res.json())
-        },
-        refetchOnWindowFocus: true,
-        refetchInterval: 10000,
-        keepPreviousData: !!amount,
-        cacheTime: 0,
-        select,
-        enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-        onError,
-    })
+      params.searchParams.set('chainId', `${chainId}`)
+      params.searchParams.set(
+        'tokenIn',
+        `${
+          fromToken?.isNative
+            ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+            : fromToken?.wrapped.address
+        }`,
+      )
+      params.searchParams.set(
+        'tokenOut',
+        `${
+          toToken?.isNative
+            ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+            : toToken?.wrapped.address
+        }`,
+      )
+      params.searchParams.set(
+        'fromTokenId',
+        `${
+          fromToken?.isNative
+            ? nativeCurrencyIds[chainId]
+            : fromToken?.wrapped.address
+        }`,
+      )
+      params.searchParams.set(
+        'toTokenId',
+        `${
+          toToken?.isNative
+            ? nativeCurrencyIds[chainId]
+            : toToken?.wrapped.address
+        }`,
+      )
+      params.searchParams.set('amount', `${amount?.quotient.toString()}`)
+      params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
+      params.searchParams.set('gasPrice', `${gasPrice}`)
+      params.searchParams.set('to', `${recipient}`)
+      params.searchParams.set('preferSushi', 'true')
+      source !== undefined && params.searchParams.set('source', `${source}`)
+
+      const res = await fetch(params.toString())
+      const json = await res.json()
+      const deserialised = deserialize(json)
+      return tradeValidator.parse(deserialised)
+    },
+    refetchOnWindowFocus: true,
+    refetchInterval: 2500,
+    keepPreviousData: !!amount,
+    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    retry: false, // dont retry on failure, immediately fallback
+    select,
+    enabled:
+      enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
+    onError: (error) => (onError ? onError(error as Error) : undefined),
+    queryKeyHashFn: stringify,
+  })
 }
 
 export const useTrade = (variables: UseTradeParams) => {
-  const { chainId, fromToken, toToken, amount, slippagePercentage, carbonOffset } = variables
-  const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
+  const {
+    chainId,
+    fromToken,
+    toToken,
+    amount,
+    slippagePercentage,
+    carbonOffset,
+    gasPrice,
+  } = variables
+  const { data: price } = usePrice({
+    chainId,
+    address: WNATIVE_ADDRESS[chainId],
+  })
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
+      // console.log('data.args', data?.args)
       if (data && amount && data.route && fromToken && toToken) {
-          const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBN)
-          const amountOut = Amount.fromRawAmount(toToken, data.route.amountOutBN)
-          const isOffset = chainId === ChainId.POLYGON && carbonOffset
+        const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
+        const amountOut = Amount.fromRawAmount(toToken, data.route.amountOutBI)
+        const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-          let writeArgs: UseTradeReturnWriteArgs = data?.args
-              ? [
-                  data.args.tokenIn as HexString,
-                  BigNumber.from(data.args.amountIn),
-                  data.args.tokenOut as HexString,
-                  BigNumber.from(data.args.amountOutMin),
-                  data.args.to as HexString,
-                  data.args.routeCode as HexString,
-              ]
-              : undefined
-          let overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
+        let writeArgs: UseTradeReturnWriteArgs = data?.args
+          ? ([
+              data.args.tokenIn as Address,
+              BigInt(data.args.amountIn),
+              data.args.tokenOut as Address,
+              data.args.amountOutMin,
+              data.args.to as Address,
+              data.args.routeCode as Hex,
+            ] as const)
+          : undefined
+        let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
 
-          if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-              writeArgs = ['0xbc4a6be1285893630d45c881c6c343a65fdbe278', BigNumber.from('20000000000000000'), ...writeArgs]
-              overrides = { value: BigNumber.from(fromToken.isNative ? writeArgs[3] : '0').add(BigNumber.from('20000000000000000')) }
-          }
+        // console.debug(fromToken.isNative, writeArgs, value)
 
-          return {
-              swapPrice: amountOut.greaterThan(ZERO) ? new Price({
-                  baseAmount: amount,
-                  quoteAmount: amountOut
-              }) : undefined,
-              priceImpact: new Percent(JSBI.BigInt(Math.round(data.route.priceImpact * 10000)), JSBI.BigInt(10000)),
-              amountIn,
-              amountOut,
-              minAmountOut: Amount.fromRawAmount(
-                  toToken,
-                  calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
-              ),
-              gasSpent: price
-                  ? Amount.fromRawAmount(Native.onChain(chainId), data.route.gasSpent * 1e9)
-                      .multiply(price.asFraction)
-                      .toSignificant(4)
-                  : undefined,
-              route: data.route,
-              functionName: isOffset ? 'transferValueAndprocessRoute' : 'processRoute',
-              writeArgs,
-              overrides
-          }
-      }
+        if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
+          writeArgs = [
+            '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
+            20000000000000000n,
+            ...writeArgs,
+          ]
+          value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
+        }
+
+        const gasSpent = gasPrice
+          ? Amount.fromRawAmount(
+              Native.onChain(chainId),
+              gasPrice * BigInt(data.route.gasSpent * 1.2),
+            )
+          : undefined
 
         return {
-            swapPrice: undefined,
-            priceImpact: undefined,
-            amountIn: undefined,
-            amountOut: undefined,
-            minAmountOut: undefined,
-            gasSpent: undefined,
-            writeArgs: undefined,
-            route: undefined,
-            functionName: 'processRoute',
-            overrides: undefined
+          swapPrice: amountOut.greaterThan(ZERO)
+            ? new Price({
+                baseAmount: amount,
+                quoteAmount: amountOut,
+              })
+            : undefined,
+          priceImpact: data.route.priceImpact
+            ? new Percent(Math.round(data.route.priceImpact * 10000), 10000)
+            : undefined,
+          amountIn,
+          amountOut,
+          minAmountOut: Amount.fromRawAmount(
+            toToken,
+            slippageAmount(
+              amountOut,
+              new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+            )[0],
+          ),
+          gasSpent: gasSpent?.toSignificant(4),
+          gasSpentUsd:
+            price && gasSpent
+              ? gasSpent.multiply(price.asFraction).toSignificant(4)
+              : undefined,
+          route: data.route,
+          functionName: isOffset
+            ? 'transferValueAndprocessRoute'
+            : 'processRoute',
+          writeArgs,
+          value,
         }
+      }
+
+      return {
+        swapPrice: undefined,
+        priceImpact: undefined,
+        amountIn: undefined,
+        amountOut: undefined,
+        minAmountOut: undefined,
+        gasSpent: undefined,
+        gasSpentUsd: undefined,
+        writeArgs: undefined,
+        route: undefined,
+        functionName: 'processRoute',
+        value: undefined,
+      }
     },
-    [carbonOffset, amount, chainId, fromToken, price, slippagePercentage, toToken]
+    [
+      carbonOffset,
+      amount,
+      chainId,
+      fromToken,
+      price,
+      slippagePercentage,
+      toToken,
+      gasPrice,
+    ],
   )
 
   return useTradeQuery(variables, select)

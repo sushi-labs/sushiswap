@@ -11,12 +11,27 @@
   "rewrites": [
     { "source": "/v0", "destination": "/api/v0" },
     { "source": "/v0/:chainId", "destination": "/api/v0/:chainId" },
-    { "source": "/v0/:chainId/:address", "destination": "/api/v0/:chainId/:address" },
-    { "source": "/v0/:chainId/addresses", "destination": "/api/v0/:chainId/addresses" },
-    { "source": "/v0/:chainId/common", "destination": "/api/v0/:chainId/common" },
+    {
+      "source": "/v0/:chainId/:address",
+      "destination": "/api/v0/:chainId/:address"
+    },
+    {
+      "source": "/v0/:chainId/addresses",
+      "destination": "/api/v0/:chainId/addresses"
+    },
+    {
+      "source": "/v0/:chainId/common",
+      "destination": "/api/v0/:chainId/common"
+    },
     { "source": "/v0/:chainId/ids", "destination": "/api/v0/:chainId/ids" },
-    { "source": "/v0/:chainId/popular", "destination": "/api/v0/:chainId/popular" },
-    { "source": "/v0/search/:address", "destination": "/api/v0/search/:address" }
+    {
+      "source": "/v0/:chainId/popular",
+      "destination": "/api/v0/:chainId/popular"
+    },
+    {
+      "source": "/v0/search/:address",
+      "destination": "/api/v0/search/:address"
+    }
   ],
   "functions": {
     "api/v0/[chainId]/[address].ts": {

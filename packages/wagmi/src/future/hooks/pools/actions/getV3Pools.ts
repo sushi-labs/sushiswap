@@ -1,25 +1,30 @@
-import { Currency, Token, Type } from '@sushiswap/currency'
-import { Address, readContracts } from 'wagmi'
-import { BigNumber } from 'ethers'
-import { erc20Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { uniswapV3PoolAbi } from '../../../../abis/uniswapV3PoolAbi'
 import { RToken, UniV3Pool } from '@sushiswap/tines'
-import { SushiSwapV3ChainId, V3_FACTORY_ADDRESS, computePoolAddress, FeeAmount, V3_TICK_LENS } from '@sushiswap/v3-sdk'
+import {
+  FeeAmount,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_TICK_LENS,
+  SushiSwapV3ChainId,
+  computePoolAddress,
+} from '@sushiswap/v3-sdk'
+import { erc20Abi } from 'sushi/abi'
+import { uniswapV3PoolAbi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Currency, Token, Type } from 'sushi/currency'
+import { Address, readContracts } from 'wagmi'
 
 export enum V3PoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
+  LOADING = 'Loading',
+  NOT_EXISTS = 'Not exists',
+  EXISTS = 'Exists',
+  INVALID = 'Invalid',
 }
 
 interface PoolData {
-  address: string
+  address: Address
   token0: Token
   token1: Token
   fee: FeeAmount
-  sqrtPriceX96: BigNumber
+  sqrtPriceX96: bigint
   activeTick: number
 }
 
@@ -66,50 +71,65 @@ const tickLensAbi = [
 ] as const
 
 const getActiveTick = (tickCurrent: number, feeAmount: FeeAmount) =>
-  tickCurrent && feeAmount ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) * TICK_SPACINGS[feeAmount] : undefined
+  tickCurrent && feeAmount
+    ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) *
+      TICK_SPACINGS[feeAmount]
+    : undefined
 
 const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
 }
 
-export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undefined, Currency | undefined][]) => {
-  const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] = currencies.reduce<
-    [Currency, Currency, FeeAmount][]
-  >((list, [tokenA, tokenB]) => {
-    if (tokenA !== undefined && tokenB !== undefined) {
-      return list.concat([
-        [tokenA, tokenB, FeeAmount.LOWEST],
-        [tokenA, tokenB, FeeAmount.LOW],
-        [tokenA, tokenB, FeeAmount.MEDIUM],
-        [tokenA, tokenB, FeeAmount.HIGH],
-      ])
-    }
-    return []
-  }, [])
+export const getV3Pools = async (
+  chainId: ChainId,
+  currencies: [Currency | undefined, Currency | undefined][],
+) => {
+  const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] =
+    currencies.reduce<[Currency, Currency, FeeAmount][]>(
+      (list, [tokenA, tokenB]) => {
+        if (tokenA !== undefined && tokenB !== undefined) {
+          return list.concat([
+            [tokenA, tokenB, FeeAmount.LOWEST],
+            [tokenA, tokenB, FeeAmount.LOW],
+            [tokenA, tokenB, FeeAmount.MEDIUM],
+            [tokenA, tokenB, FeeAmount.HIGH],
+          ])
+        }
+        return []
+      },
+      [],
+    )
 
   const filtered: [Token, Token, FeeAmount][] = []
-  allCurrencyCombinationsWithAllFees.forEach(([currencyA, currencyB, feeAmount]) => {
-    if (currencyA && currencyB && feeAmount) {
-      const tokenA = currencyA.wrapped
-      const tokenB = currencyB.wrapped
-      if (tokenA.equals(tokenB)) return
-      filtered.push(tokenA.sortsBefore(tokenB) ? [tokenA, tokenB, feeAmount] : [tokenB, tokenA, feeAmount])
-    }
-  })
+  allCurrencyCombinationsWithAllFees.forEach(
+    ([currencyA, currencyB, feeAmount]) => {
+      if (currencyA && currencyB && feeAmount) {
+        const tokenA = currencyA.wrapped
+        const tokenB = currencyB.wrapped
+        if (tokenA.equals(tokenB)) return
+        filtered.push(
+          tokenA.sortsBefore(tokenB)
+            ? [tokenA, tokenB, feeAmount]
+            : [tokenB, tokenA, feeAmount],
+        )
+      }
+    },
+  )
 
   const slot0Contracts = filtered.map(
     ([currencyA, currencyB, fee]) =>
       ({
         chainId,
         address: computePoolAddress({
-          factoryAddress: V3_FACTORY_ADDRESS[chainId as SushiSwapV3ChainId],
+          factoryAddress:
+            SUSHISWAP_V3_FACTORY_ADDRESS[chainId as SushiSwapV3ChainId],
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
           fee,
         }) as Address,
         abi: uniswapV3PoolAbi,
         functionName: 'slot0',
-      } as const)
+      }) as const,
   )
 
   const slot0 = await readContracts({
@@ -123,8 +143,9 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
 
   filtered.forEach(([token0, token1, fee], i) => {
     if (!slot0[i]) return
-    const [sqrtPriceX96, tick] = slot0[i]
-    if (!sqrtPriceX96 || sqrtPriceX96.eq(0)) return
+    const [sqrtPriceX96, tick] = slot0[i].result || []
+    if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick === 'undefined')
+      return
     // const [tokenA, tokenB, fee] = tokens[index]
     existingPools.push([
       V3PoolState.LOADING,
@@ -146,7 +167,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
         address: poolData.address as Address,
         abi: uniswapV3PoolAbi,
         functionName: 'liquidity',
-      } as const)
+      }) as const,
   )
 
   const token0Contracts = existingPools.map(
@@ -157,7 +178,7 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
         args: [poolData.address as Address],
         abi: erc20Abi,
         functionName: 'balanceOf',
-      } as const)
+      }) as const,
   )
 
   const token1Contracts = existingPools.map(
@@ -168,45 +189,57 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
         args: [poolData.address as Address],
         abi: erc20Abi,
         functionName: 'balanceOf',
-      } as const)
+      }) as const,
   )
 
   const minIndexes = existingPools.map(([, poolData]) =>
     bitmapIndex(
-      poolData.activeTick - NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee],
-      TICK_SPACINGS[poolData.fee]
-    )
+      poolData.activeTick -
+        NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee],
+      TICK_SPACINGS[poolData.fee],
+    ),
   )
   const maxIndexes = existingPools.map(([, poolData]) =>
     bitmapIndex(
-      poolData.activeTick + NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee],
-      TICK_SPACINGS[poolData.fee]
-    )
+      poolData.activeTick +
+        NUMBER_OF_SURROUNDING_TICKS[poolData.fee] * TICK_SPACINGS[poolData.fee],
+      TICK_SPACINGS[poolData.fee],
+    ),
   )
 
   const lowerTicksContracts = existingPools.map(
     ([, poolData], i) =>
       ({
         chainId,
-        address: V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
+        address: SUSHISWAP_V3_TICK_LENS[
+          chainId as SushiSwapV3ChainId
+        ] as Address,
         args: [poolData.address as Address, minIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
-      } as const)
+      }) as const,
   )
 
   const upperTicksContracts = existingPools.map(
     ([, poolData], i) =>
       ({
         chainId,
-        address: V3_TICK_LENS[chainId as SushiSwapV3ChainId] as Address,
+        address: SUSHISWAP_V3_TICK_LENS[
+          chainId as SushiSwapV3ChainId
+        ] as Address,
         args: [poolData.address as Address, maxIndexes[i]],
         abi: tickLensAbi,
         functionName: 'getPopulatedTicksInWord',
-      } as const)
+      }) as const,
   )
 
-  const [liquidity, token0Balances, token1Balances, lowerTickResults, upperTickResults] = await Promise.all([
+  const [
+    liquidity,
+    token0Balances,
+    token1Balances,
+    lowerTickResults,
+    upperTickResults,
+  ] = await Promise.all([
     readContracts({
       contracts: liquidityContracts,
     }),
@@ -231,30 +264,43 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
     upperTicksContracts.length === 0
 
   if (isContractLengthsNull) return [[V3PoolState.INVALID, null]]
-  if (!liquidity || !token0Balances || !token1Balances || !lowerTickResults || !upperTickResults)
+  if (
+    !liquidity ||
+    !token0Balances ||
+    !token1Balances ||
+    !lowerTickResults ||
+    !upperTickResults
+  )
     return existingPools.map(() => [V3PoolState.LOADING, null])
 
   return existingPools.map(([, pool], i) => {
+    const token0Balance = token0Balances[i].result
+    const token1Balance = token1Balances[i].result
+
+    const _liquidity = liquidity?.[i].result
+
     if (
-      !liquidity?.[i] ||
-      !token0Balances?.[i] ||
-      !token1Balances?.[i] ||
+      !_liquidity ||
+      !token0Balance ||
+      !token1Balance ||
       !lowerTickResults?.[i] ||
       !upperTickResults?.[i]
     )
       return [V3PoolState.LOADING, null]
 
     const lowerTicks =
-      lowerTickResults[i].map((tick) => ({
+      lowerTickResults[i].result?.map((tick) => ({
         index: tick.tick,
         DLiquidity: tick.liquidityGross,
       })) ?? []
     const upperTicks =
-      upperTickResults[i].map((tick) => ({
+      upperTickResults[i].result?.map((tick) => ({
         index: tick.tick,
         DLiquidity: tick.liquidityGross,
       })) ?? []
-    const ticks = [...lowerTicks, ...upperTicks].sort((a, b) => a.index - b.index)
+    const ticks = [...lowerTicks, ...upperTicks].sort(
+      (a, b) => a.index - b.index,
+    )
 
     return [
       V3PoolState.EXISTS,
@@ -263,12 +309,12 @@ export const getV3Pools = async (chainId: ChainId, currencies: [Currency | undef
         pool.token0 as RToken,
         pool.token1 as RToken,
         pool.fee / 1_000_000,
-        token0Balances[i],
-        token1Balances[i],
+        token0Balance,
+        token1Balance,
         pool.activeTick,
-        liquidity[i],
+        _liquidity,
         pool.sqrtPriceX96,
-        ticks
+        ticks,
       ),
     ]
   })

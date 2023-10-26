@@ -1,8 +1,17 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames, IconButton } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { getTrendingSearch } from 'lib/api'
-import { ChangeEvent, FC, FormEvent, RefObject, useLayoutEffect, useState } from 'react'
+import {
+  ChangeEvent,
+  FC,
+  FormEvent,
+  RefObject,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react'
 import useSWR from 'swr'
 
 import { APP_HEADER_HEIGHT } from '../helpers'
@@ -15,21 +24,37 @@ interface SearchInput {
   ref?: RefObject<HTMLDivElement>
 }
 
-export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, showTopics, className }) => {
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect
+
+export const SearchInput: FC<SearchInput> = ({
+  ref,
+  handleSearch,
+  isTopOfPage,
+  showTopics,
+  className,
+}) => {
   const [isSticky, setIsSticky] = useState(isTopOfPage)
   const { isSm } = useBreakpoint('sm')
   const [isMobileAndSticky, setIsMobileAndSticky] = useState(isSticky)
-  const { data } = useSWR(showTopics && '/trending-search', async () => await getTrendingSearch())
-  const trendingTopics: string[] | undefined = data?.trendingSearch?.data?.attributes?.topics
+  const { data } = useSWR(
+    showTopics && '/trending-search',
+    async () => await getTrendingSearch(),
+  )
+  const trendingTopics: string[] | undefined =
+    data?.trendingSearch?.data?.attributes?.topics
 
   const [input, setInput] = useState('')
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const cachedRef = ref?.current
     if (cachedRef) {
-      const observer = new IntersectionObserver(([e]) => setIsSticky(!e.isIntersecting), {
-        threshold: APP_HEADER_HEIGHT / cachedRef.clientHeight,
-      })
+      const observer = new IntersectionObserver(
+        ([e]) => setIsSticky(!e.isIntersecting),
+        {
+          threshold: APP_HEADER_HEIGHT / cachedRef.clientHeight,
+        },
+      )
       observer.observe(cachedRef)
 
       return () => {
@@ -66,14 +91,14 @@ export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, s
         className={classNames(
           className,
           'z-10 flex w-full h-[56px] sm:h-16 pl-6 px-4 sticky sm:relative top-[54px] sm:top-[unset]',
-          isMobileAndSticky && 'bg-slate-900 border-b border-slate-800'
+          isMobileAndSticky && 'bg-slate-900 border-b border-slate-800',
         )}
       >
         <form
           onSubmit={onSubmit}
           className={classNames(
-            'flex max-w-[870px] w-full mx-auto h-full rounded-full pr-1.5 py-1.5 items-center transition ease-in-out duration-300',
-            isMobileAndSticky ? 'bg-slate-900' : 'bg-slate-800 pl-6'
+            'flex max-w-[870px] w-full mx-auto h-full rounded-full pr-3.5 py-1.5 items-center transition ease-in-out duration-300',
+            isMobileAndSticky ? 'bg-slate-900' : 'bg-slate-800 pl-6',
           )}
         >
           <input
@@ -84,25 +109,30 @@ export const SearchInput: FC<SearchInput> = ({ ref, handleSearch, isTopOfPage, s
               'w-full text-sm truncate bg-transparent sm:text-lg outline-0',
               isMobileAndSticky
                 ? 'sm:order-1 order-2 pl-3 placeholder:text-slate-500 font-medium'
-                : 'order-1 sm:placeholder:text-slate-400 placeholder:text-slate-50 sm:font-medium'
+                : 'order-1 sm:placeholder:text-slate-400 placeholder:text-slate-50 sm:font-medium',
             )}
           />
           <IconButton
             type="submit"
             className={classNames(
               'sm:bg-[#3B7EF6] rounded-full',
-              isMobileAndSticky ? 'sm:order-2 order-1' : 'order-2 ml-2 p-2.5 sm:p-[14px]'
+              isMobileAndSticky ? 'sm:order-2 order-1' : 'order-2 ml-2 p-2.5',
             )}
-          >
-            <MagnifyingGlassIcon
-              className={isMobileAndSticky ? 'w-5 h-5 fill-slate-500' : 'w-6 h-6 fill-[#3B7EF6] sm:fill-white'}
-            />
-          </IconButton>
+            icon={MagnifyingGlassIcon}
+            iconProps={{
+              className: isMobileAndSticky
+                ? 'fill-slate-500'
+                : 'fill-[#3B7EF6] sm:fill-white',
+            }}
+            name="Search"
+          />
         </form>
       </div>
       {showTopics && (
         <div className="mt-4 text-center">
-          <span className="block text-xs sm:text-sm text-slate-400 sm:inline">Try:</span>
+          <span className="block text-xs sm:text-sm text-slate-400 sm:inline">
+            Try:
+          </span>
           <div className="mt-2 ml-2 sm:ml-0 sm:mt-0 sm:inline">
             {!trendingTopics ? (
               <>

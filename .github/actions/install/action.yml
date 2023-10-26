@@ -1,0 +1,23 @@
+name: "Install"
+description: "Install dependencies"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8.9.2
+
+    - name: Set up node
+      uses: actions/setup-node@v3
+      with:
+        cache: pnpm
+        node-version: 18
+
+    - name: Set up foundry
+      uses: foundry-rs/foundry-toolchain@v1
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --ignore-scripts

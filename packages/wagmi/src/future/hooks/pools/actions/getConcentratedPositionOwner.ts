@@ -1,19 +1,20 @@
-import { BigNumber } from 'ethers'
-import { Address, readContracts } from 'wagmi'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { Address, readContracts } from 'wagmi'
+
 import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 
 export const getConcentratedPositionOwners = async ({
   tokenIds,
 }: {
-  tokenIds: { chainId: SushiSwapV3ChainId; tokenId: BigNumber }[]
+  tokenIds: { chainId: SushiSwapV3ChainId; tokenId: bigint }[]
 }) => {
   return readContracts({
     contracts: tokenIds.map(
       ({ tokenId, chainId }) =>
         ({
           chainId,
-          address: getV3NonFungiblePositionManagerConractConfig(chainId).address as Address,
+          address: getV3NonFungiblePositionManagerConractConfig(chainId)
+            .address as Address,
           abi: [
             {
               inputs: [
@@ -34,10 +35,10 @@ export const getConcentratedPositionOwners = async ({
               stateMutability: 'view',
               type: 'function',
             },
-          ],
+          ] as const,
           functionName: 'ownerOf',
-          args: [BigNumber.from(tokenId ? tokenId : 0)],
-        } as const)
+          args: [tokenId ?? 0n],
+        }) as const,
     ),
   })
 }

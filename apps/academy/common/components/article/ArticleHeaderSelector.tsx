@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { ComponentSharedTableOfContentsEntry, Maybe } from '.mesh'
@@ -18,14 +18,21 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
   scrollToHeader,
 }) => {
   return (
-    <Disclosure as="div" className="sticky top-[94px] sm:hidden bg-slate-900 z-20 px-6 border-b border-slate-200/5">
+    <Disclosure
+      as="div"
+      className="sticky top-[94px] sm:hidden bg-slate-900 z-20 px-6 border-b border-slate-200/5"
+    >
       {({ open, close }) => (
         <>
           <Disclosure.Button className="flex items-center justify-between w-full h-12 gap-1 text-slate-40 outline-0">
-            <Typography variant="sm" weight={500}>
+            <p className="text-sm font-medium">
               {selectedHeader || 'Table of Contents'}
-            </Typography>
-            <ChevronDownIcon width={12} height={12} className={classNames('transition', open && 'rotate-180')} />
+            </p>
+            <ChevronDownIcon
+              width={12}
+              height={12}
+              className={classNames('transition', open && 'rotate-180')}
+            />
           </Disclosure.Button>
           <Transition
             enter="transition duration-100 ease-out"
@@ -42,7 +49,9 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
                     key={el?.key}
                     className={classNames(
                       'cursor-pointer',
-                      selectedHeader === el?.text ? 'text-slate-50' : 'text-slate-400'
+                      selectedHeader === el?.text
+                        ? 'text-slate-50'
+                        : 'text-slate-400',
                     )}
                     onClick={() => {
                       close()
@@ -50,9 +59,7 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
                       setSelectedHeader(el?.text)
                     }}
                   >
-                    <Typography variant="sm" weight={500} as="span">
-                      {el?.text}
-                    </Typography>
+                    <span className="text-sm font-medium">{el?.text}</span>
                   </li>
                 ))}
               </ol>

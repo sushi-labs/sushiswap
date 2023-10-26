@@ -1,9 +1,11 @@
-import { Container } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
-import { Article, MediaBlock as MediaBlockType, RichTextBlock as RichTextBlockType } from 'types'
-
+import type { FC } from 'react'
+import { addBodyToArticle } from 'lib/ghost'
+import type { GhostArticle } from 'lib/ghost'
+import { ArticleSchema } from 'lib/validate'
+import type { Article } from 'types'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -11,9 +13,7 @@ import {
   ArticleLinks,
   ArticleSeo,
   Breadcrumb,
-  MediaBlock,
   PreviewBanner,
-  RichTextBlock,
 } from '../components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
@@ -21,9 +21,7 @@ export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)
-
-      // console.log(acc)
+      if (article.attributes?.slug) acc.push(`/${article.attributes.slug}`)
       return acc
     }, []),
     fallback: true,
@@ -37,34 +35,44 @@ export async function getStaticProps({
   params: { slug: string }
   preview: Record<string, unknown> | null
 }) {
-  const data = await getArticleAndMoreArticles(params.slug, !!preview)
+  const data = await getArticleAndMoreArticles(params.slug, Boolean(preview))
+  const article = data.articles?.data[0]
 
-  if (!data?.articles?.data?.[0]) {
+  if (!article) {
     return {
       props: {},
       notFound: true,
     }
   }
 
+  const parsedArticle = ArticleSchema.safeParse(article)
+
+  if (!parsedArticle.success) {
+    return {
+      props: {},
+      notFound: false,
+    }
+  }
+
   return {
     props: {
-      article: data.articles.data[0],
-      latestArticles: data?.moreArticles?.data,
-      preview: !!preview,
+      article: await addBodyToArticle(parsedArticle.data),
+      latestArticles: data.moreArticles?.data,
+      preview: Boolean(preview),
     },
     revalidate: 60,
   }
 }
 
 interface ArticlePage {
-  article?: Article
+  article?: GhostArticle
   latestArticles?: Article[]
   preview: boolean
 }
 
 const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
   const router = useRouter()
-  if (!router.isFallback && !article?.attributes?.slug) {
+  if (!router.isFallback && !article) {
     return <ErrorPage statusCode={404} />
   }
 
@@ -73,29 +81,17 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
       <ArticleSeo article={article?.attributes} />
       <PreviewBanner show={preview} />
       <Breadcrumb />
-      <Container maxWidth="2xl" className="px-4 mx-auto my-16">
+      <Container className="px-4 mx-auto my-16" maxWidth="2xl">
         <main>
           <article className="relative pt-10">
             <ArticleHeader article={article} />
             <ArticleAuthors article={article} />
-            <div className="mt-12 prose !prose-invert prose-slate">
-              {article?.attributes?.blocks?.map((block, i) => {
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedRichText') {
-                  return <RichTextBlock block={block as RichTextBlockType} key={i} />
-                }
-
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedMedia') {
-                  return <MediaBlock block={block as MediaBlockType} key={i} />
-                }
-
-                // @ts-ignore
-                if (block?.__typename === 'ComponentSharedDivider') {
-                  return <hr key={i} className="my-12 border border-slate-200/5" />
-                }
-              })}
-            </div>
+            <div
+              className="mt-12 prose !prose-invert prose-slate"
+              dangerouslySetInnerHTML={{
+                __html: article?.attributes.body || '',
+              }}
+            />
             <ArticleLinks article={article} />
             <ArticleFooter articles={latestArticles} />
           </article>

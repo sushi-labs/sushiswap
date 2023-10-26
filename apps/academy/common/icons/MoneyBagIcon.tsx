@@ -1,8 +1,21 @@
 export const MoneyBagIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="102"
+      height="102"
+      viewBox="0 0 102 102"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_1794_1583)">
-        <rect width="102" height="102" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          width="102"
+          height="102"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <g clipPath="url(#clip0_1794_1583)">
           <path
             d="M64.3972 66.5558H79.6805C78.3972 49.6197 71.1055 39.1002 61.7527 32.878L66.011 23.5836C66.1398 23.2886 66.1933 22.9664 66.1668 22.6457C66.1403 22.325 66.0346 22.0158 65.8593 21.746C65.6839 21.4762 65.4443 21.2542 65.162 21.0998C64.8796 20.9453 64.5634 20.8634 64.2416 20.8613H37.5833C37.2615 20.8634 36.9452 20.9453 36.6629 21.0998C36.3806 21.2542 36.141 21.4762 35.9656 21.746C35.7902 22.0158 35.6846 22.325 35.6581 22.6457C35.6316 22.9664 35.6851 23.2886 35.8138 23.5836L38.1472 28.6391H57.8249L56.0749 32.528H52.4777C53.5763 35.4821 54.3839 38.5364 54.8888 41.6474C55.2159 43.5772 55.4237 45.5254 55.511 47.4808L52.4388 49.6391C52.4472 47.124 52.239 44.6129 51.8166 42.1335C51.2793 38.8338 50.3525 35.6094 49.0555 32.528H47.111C45.3166 34.7953 43.7042 37.201 42.2888 39.7224C41.1476 41.8853 40.1789 44.1349 39.3916 46.4502L36.7277 44.6808C37.5053 42.443 38.4611 40.2712 39.586 38.1863C40.7227 36.2313 41.9691 34.3421 43.3194 32.528H39.9166L40.0722 32.8586C29.7666 39.7224 21.9305 51.778 21.9305 71.903C21.9042 72.326 21.962 72.7501 22.1006 73.1507C22.2391 73.5512 22.4557 73.9204 22.7377 74.2368C23.0198 74.5532 23.3617 74.8105 23.7438 74.994C24.1259 75.1775 24.5406 75.2835 24.9638 75.3058H40.5194C39.8514 74.6106 39.3902 73.7432 39.1875 72.8007C38.9847 71.8582 39.0484 70.8779 39.3714 69.9695C39.6943 69.0611 40.2638 68.2607 41.0161 67.6577C41.7683 67.0548 42.6736 66.6732 43.6305 66.5558C43.1648 65.766 42.9166 64.867 42.911 63.9502C42.911 62.5578 43.4642 61.2225 44.4487 60.2379C45.4333 59.2533 46.7687 58.7002 48.161 58.7002H59.8277C61.2201 58.7002 62.5555 59.2533 63.54 60.2379C64.5246 61.2225 65.0777 62.5578 65.0777 63.9502C65.0877 64.8639 64.8527 65.7637 64.3972 66.5558Z"
@@ -51,8 +64,17 @@ export const MoneyBagIcon = (props: React.ComponentProps<'svg'>) => {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feGaussianBlur in="BackgroundImageFix" stdDeviation="10.872" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1794_1583" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_1794_1583" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1794_1583"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_1794_1583"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_1794_1583"
@@ -66,7 +88,12 @@ export const MoneyBagIcon = (props: React.ComponentProps<'svg'>) => {
           <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <clipPath id="clip0_1794_1583">
-          <rect width="70" height="70" fill="white" transform="translate(16 16)" />
+          <rect
+            width="70"
+            height="70"
+            fill="white"
+            transform="translate(16 16)"
+          />
         </clipPath>
       </defs>
     </svg>

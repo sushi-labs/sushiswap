@@ -1,7 +1,9 @@
-import { getConcentratedLiquidityPool } from '../../pools'
-import { useQuery } from '@tanstack/react-query'
-import { Type } from '@sushiswap/currency'
+import { Type } from 'sushi/currency'
 import { Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { useQuery } from '@tanstack/react-query'
+import { stringify } from 'viem'
+
+import { getConcentratedLiquidityPool } from '../../pools'
 import { useConcentratedLiquidityPositionsFromTokenId } from './useConcentratedPositionsFromTokenId'
 
 interface UseConcentratedLiquidityPositionsFromTokenIdParams {
@@ -19,13 +21,17 @@ export const useConcentratedPositionInfo = ({
   chainId,
   enabled = true,
 }: UseConcentratedLiquidityPositionsFromTokenIdParams) => {
-  const { data: positionDetails } = useConcentratedLiquidityPositionsFromTokenId({
-    chainId,
-    tokenId,
-  })
+  const { data: positionDetails } =
+    useConcentratedLiquidityPositionsFromTokenId({
+      chainId,
+      tokenId,
+    })
 
   return useQuery({
-    queryKey: ['useConcentratedPositionInfo', { chainId, token0, token1, tokenId, positionDetails }],
+    queryKey: [
+      'useConcentratedPositionInfo',
+      { chainId, token0, token1, tokenId, positionDetails },
+    ],
     queryFn: async () => {
       const pool = await getConcentratedLiquidityPool({
         chainId,
@@ -49,5 +55,6 @@ export const useConcentratedPositionInfo = ({
     refetchInterval: 10000,
     enabled: Boolean(token0 && token1 && chainId && enabled && positionDetails),
     keepPreviousData: true,
+    queryKeyHashFn: stringify,
   })
 }

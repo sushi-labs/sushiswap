@@ -1,13 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
-import { getConcentratedLiquidityPositions } from '../actions'
-import { Pool, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { Address } from 'wagmi'
-import { getConcentratedLiquidityPool } from '../../pools'
-import { getTokenWithCacheQueryFn, getTokenWithQueryCacheHydrate } from '../../tokens'
+import { Amount, Token } from 'sushi/currency'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useAllPrices } from '@sushiswap/react-query'
-import { JSBI, ZERO } from '@sushiswap/math'
-import { Amount, Token } from '@sushiswap/currency'
+import {
+  Position,
+  SushiSwapV3ChainId,
+  SushiSwapV3Pool,
+} from '@sushiswap/v3-sdk'
+import { useQuery } from '@tanstack/react-query'
+import { Address } from 'wagmi'
+
+import { getConcentratedLiquidityPool } from '../../pools'
+import {
+  getTokenWithCacheQueryFn,
+  getTokenWithQueryCacheHydrate,
+} from '../../tokens'
+import { getConcentratedLiquidityPositions } from '../actions'
+import { ConcentratedLiquidityPosition } from '../types'
+
+interface UseConcentratedLiquidityPositionsData
+  extends ConcentratedLiquidityPosition {
+  pool: SushiSwapV3Pool
+  position: {
+    position: Position
+    positionUSD: number
+    unclaimedUSD: number
+  }
+}
 
 interface UseConcentratedLiquidityPositionsParams {
   account: Address | undefined
@@ -21,45 +39,75 @@ export const useConcentratedLiquidityPositions = ({
   enabled = true,
 }: UseConcentratedLiquidityPositionsParams) => {
   const { data: customTokens, hasToken } = useCustomTokens()
-  const { data: prices } = useAllPrices()
+  const { data: prices, isError: isPriceError } = useAllPrices()
 
   return useQuery({
-    queryKey: ['useConcentratedLiquidityPositions', { chainIds, account, prices }],
+    queryKey: [
+      'useConcentratedLiquidityPositions',
+      { chainIds, account, prices },
+    ],
     queryFn: async () => {
       const data = await getConcentratedLiquidityPositions({
         account: account,
         chainIds,
       })
 
-      if (data && prices) {
-        const pools = await Promise.all(
+      if (data && (prices || isPriceError)) {
+        const pools = await Promise.allSettled(
           data.map(async (el) => {
             const [token0Data, token1Data] = await Promise.all([
-              getTokenWithCacheQueryFn({ chainId: el.chainId, hasToken, customTokens, address: el.token0 }),
-              getTokenWithCacheQueryFn({ chainId: el.chainId, hasToken, customTokens, address: el.token1 }),
+              getTokenWithCacheQueryFn({
+                chainId: el.chainId,
+                hasToken,
+                customTokens,
+                address: el.token0,
+              }),
+              getTokenWithCacheQueryFn({
+                chainId: el.chainId,
+                hasToken,
+                customTokens,
+                address: el.token1,
+              }),
             ])
 
-            const token0 = getTokenWithQueryCacheHydrate(el.chainId, token0Data, false)
-            const token1 = getTokenWithQueryCacheHydrate(el.chainId, token1Data, false)
+            const token0 = getTokenWithQueryCacheHydrate(
+              el.chainId,
+              token0Data,
+              false,
+            )
+            const token1 = getTokenWithQueryCacheHydrate(
+              el.chainId,
+              token1Data,
+              false,
+            )
 
             const pool = (await getConcentratedLiquidityPool({
               chainId: el.chainId,
               token0,
               token1,
               feeAmount: el.fee,
-            })) as Pool
+            })) as SushiSwapV3Pool
 
             const position = new Position({
               pool,
-              liquidity: JSBI.BigInt(el.liquidity),
+              liquidity: el.liquidity,
               tickLower: el.tickLower,
               tickUpper: el.tickUpper,
             })
 
             const amountToUsd = (amount: Amount<Token>) => {
-              if (!amount?.greaterThan(ZERO) || !prices?.[el.chainId]?.[amount.currency.wrapped.address]) return 0
+              if (
+                !amount?.greaterThan(0n) ||
+                !prices?.[el.chainId]?.[amount.currency.wrapped.address]
+              )
+                return 0
               const price = Number(
-                Number(amount.toExact()) * Number(prices[el.chainId][amount.currency.wrapped.address].toFixed(10))
+                Number(amount.toExact()) *
+                  Number(
+                    prices[el.chainId][amount.currency.wrapped.address].toFixed(
+                      10,
+                    ),
+                  ),
               )
               if (isNaN(price) || price < 0.000001) {
                 return 0
@@ -68,10 +116,13 @@ export const useConcentratedLiquidityPositions = ({
               return price
             }
 
-            const positionUSD = amountToUsd(position.amount0) + amountToUsd(position.amount1)
+            const positionUSD =
+              amountToUsd(position.amount0) + amountToUsd(position.amount1)
             const unclaimedUSD =
-              amountToUsd(Amount.fromRawAmount(pool.token0, JSBI.BigInt(el.fees?.[0] || 0))) +
-              amountToUsd(Amount.fromRawAmount(pool.token1, JSBI.BigInt(el.fees?.[1] || 0)))
+              amountToUsd(
+                Amount.fromRawAmount(pool.token0, el.fees?.[0] || 0),
+              ) +
+              amountToUsd(Amount.fromRawAmount(pool.token1, el.fees?.[1] || 0))
 
             return {
               pool,
@@ -81,20 +132,27 @@ export const useConcentratedLiquidityPositions = ({
                 unclaimedUSD,
               },
             }
-          })
+          }),
         )
 
-        return data.map((el, i) => ({
-          ...el,
-          ...pools[i],
-        }))
+        return pools.reduce<UseConcentratedLiquidityPositionsData[]>(
+          (acc, el, i) => {
+            if (el.status === 'fulfilled') {
+              acc.push({
+                ...data[i],
+                ...el.value,
+              })
+            }
+
+            return acc
+          },
+          [],
+        )
       }
 
       return []
     },
-    refetchInterval: 10000,
+    refetchInterval: 3000,
     enabled: Boolean(account && chainIds && enabled),
-    staleTime: 15000,
-    cacheTime: 60000,
   })
 }
