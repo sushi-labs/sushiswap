@@ -709,10 +709,13 @@ async function checkMultipleSwapsFork(
     const res1 = Number(pool.reserve1)
     if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
 
-    const amountIn = res0 * getRandomExp(rnd, 1e-6, 1e-3)
+    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
     const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
       .out + addFlowOut(from, to)
-    pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
+    if (from < to)
+      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
+    else 
+      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
   }
 
   poolInfo.snapshot.restore()
