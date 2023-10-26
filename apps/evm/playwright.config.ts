@@ -100,15 +100,11 @@ const config: PlaywrightTestConfig = {
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [
     {
-      command: [
-        'anvil',
-        `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
-        `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${process.env.ANVIL_PORT || '8545'}`,
-        // '--no-mining',
-        // '--silent',
-        // '--block-time 15',
-      ].join(' '),
+      command: `~/.foundry/bin/anvil --fork-block-number=${
+        process.env.ANVIL_BLOCK_NUMBER
+      } --fork-url=${process.env.ANVIL_FORK_URL} --port=${
+        process.env.ANVIL_PORT || '8545'
+      }`,
       port: Number(process.env.ANVIL_PORT || '8545'),
       // url: `http://localhost:${process.env.ANVIL_PORT || 8545}`,
       // timeout: 120_000,
