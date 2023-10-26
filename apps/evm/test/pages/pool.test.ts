@@ -62,11 +62,6 @@ interface V3PoolArgs {
   type: 'CREATE' | 'ADD'
 }
 
-interface IncenvitivePoolArgs {
-  token0: Type
-  token1: Type
-}
-
 if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
   throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
@@ -709,53 +704,58 @@ async function removeLiquidityV2(page: Page, _next: NextFixture) {
 //   })
 // })
 
-async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
-  await handleToken(page, args.token0, 'FIRST')
-  await handleToken(page, args.token1, 'SECOND')
-  const feeOptionSelector = page.locator('[testdata-id=fee-option-500]')
-  await expect(feeOptionSelector).toBeEnabled()
-  await feeOptionSelector.click()
-  await expect(feeOptionSelector).toBeChecked()
+// interface IncenvitivePoolArgs {
+//   token0: Type
+//   token1: Type
+// }
 
-  await selectDate('[testdata-id=start-date]', 1, '001', page)
-  await selectDate('[testdata-id=end-date]', 0, '002', page)
+// async function incentivizePool(page: Page, args: IncenvitivePoolArgs) {
+//   await handleToken(page, args.token0, 'FIRST')
+//   await handleToken(page, args.token1, 'SECOND')
+//   const feeOptionSelector = page.locator('[testdata-id=fee-option-500]')
+//   await expect(feeOptionSelector).toBeEnabled()
+//   await feeOptionSelector.click()
+//   await expect(feeOptionSelector).toBeChecked()
 
-  const input0 = page.locator('[testdata-id=swap-from-input]')
-  await expect(input0).toBeVisible()
-  await expect(input0).toBeEnabled()
-  await input0.fill('2.4')
+//   await selectDate('[testdata-id=start-date]', 1, '001', page)
+//   await selectDate('[testdata-id=end-date]', 0, '002', page)
 
-  const button0 = page.locator('[testdata-id=swap-from-button-button]')
-  await expect(button0).toBeVisible()
-  await expect(button0).toBeEnabled()
-  await button0.click()
+//   const input0 = page.locator('[testdata-id=swap-from-input]')
+//   await expect(input0).toBeVisible()
+//   await expect(input0).toBeEnabled()
+//   await input0.fill('2.4')
 
-  await page.fill(
-    '[testdata-id=swap-from-token-selector-address-input]',
-    'SUSHI',
-  )
-  const rowSelector = page.locator(
-    `[testdata-id=swap-from-token-selector-row-${SUSHI[
-      CHAIN_ID
-    ].address.toLowerCase()}]`,
-  )
-  await expect(rowSelector).toBeVisible()
-  await rowSelector.click()
+//   const button0 = page.locator('[testdata-id=swap-from-button-button]')
+//   await expect(button0).toBeVisible()
+//   await expect(button0).toBeEnabled()
+//   await button0.click()
 
-  const approveTokenId = 'approve-erc20-button'
-  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
-  await expect(approveTokenLocator).toBeVisible()
-  await expect(approveTokenLocator).toBeEnabled()
-  await approveTokenLocator.click()
+//   await page.fill(
+//     '[testdata-id=swap-from-token-selector-address-input]',
+//     'SUSHI',
+//   )
+//   const rowSelector = page.locator(
+//     `[testdata-id=swap-from-token-selector-row-${SUSHI[
+//       CHAIN_ID
+//     ].address.toLowerCase()}]`,
+//   )
+//   await expect(rowSelector).toBeVisible()
+//   await rowSelector.click()
 
-  const previewLocator = page.locator('[testdata-id=incentivize-pool-review]')
-  await expect(previewLocator).toBeVisible({ timeout: 10_000 })
-  await expect(previewLocator).toBeEnabled()
-  await previewLocator.click()
-  await page
-    .locator('[testdata-id=incentivize-pool-confirm]')
-    .click({ timeout: 5_000 })
-}
+//   const approveTokenId = 'approve-erc20-button'
+//   const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
+//   await expect(approveTokenLocator).toBeVisible()
+//   await expect(approveTokenLocator).toBeEnabled()
+//   await approveTokenLocator.click()
+
+//   const previewLocator = page.locator('[testdata-id=incentivize-pool-review]')
+//   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
+//   await expect(previewLocator).toBeEnabled()
+//   await previewLocator.click()
+//   await page
+//     .locator('[testdata-id=incentivize-pool-confirm]')
+//     .click({ timeout: 5_000 })
+// }
 
 async function handleToken(
   page: Page,

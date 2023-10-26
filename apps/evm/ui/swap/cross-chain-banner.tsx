@@ -54,12 +54,12 @@ export const CrossChainBanner: FC = () => {
                 </motion.div>
               </CardTitle>
               <CardDescription>
-                Swap your funds on one network and swap them into a token on a
-                different network.{' '}
+                Swap tokens natively across 7 chains including Ethereum,
+                Arbitrum, Optimism, Polygon, Base and more!{' '}
                 <a
                   target="_blank"
                   className="text-blue hover:underline"
-                  href="https://www.sushi.com/academy/articles/sushi-xswap-a-crosschain-dex"
+                  href="https://www.sushi.com/blog/sushixswap-v2"
                   rel="noreferrer"
                 >
                   Learn more.

@@ -21,7 +21,7 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: 'swap.test.ts',
+  testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. */
   timeout: 90 * 1_000,
   expect: {
@@ -109,21 +109,24 @@ const config: PlaywrightTestConfig = {
         // '--silent',
         // '--block-time 15',
       ].join(' '),
+      port: Number(process.env.ANVIL_PORT || 8545),
+      // timeout: 120_000,
+      // reuseExistingServer: !process.env.CI,
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
         ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
-      port: Number(process.env.ANVIL_PORT || 8545),
     },
     {
       command: 'npm run start -- --experimental-test-proxy',
       port: 3000,
-      timeout: 120 * 1000,
+      // timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
+        EDGE_CONFIG: String(process.env.EDGE_CONFIG),
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
-        NEXT_PUBLIC_APP_ENV: String(process.env.NEXT_PUBLIC_APP_ENV),
+        NEXT_PUBLIC_APP_ENV: 'test',
       },
     },
   ],

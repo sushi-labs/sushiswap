@@ -10,6 +10,7 @@ import { SimpleSwapToken0Input } from './simple-swap-token0-input'
 import { SimpleSwapToken1Input } from './simple-swap-token1-input'
 import { SimpleSwapTradeButton } from './simple-swap-trade-button'
 import { SimpleSwapTradeStats } from './simple-swap-trade-stats'
+import { SwapMaintenanceMessage } from './swap-maintenance-message'
 
 export const SimpleSwapWidget = () => {
   return (
@@ -19,6 +20,7 @@ export const SimpleSwapWidget = () => {
         <SwapModeButtons />
         <SimpleSwapSettingsOverlay />
       </div>
+      <SwapMaintenanceMessage />
       <CrossChainBanner />
       <SimpleSwapToken0Input />
       <SimpleSwapSwitchTokensButton />

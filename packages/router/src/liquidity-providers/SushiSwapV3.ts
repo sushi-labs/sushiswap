@@ -24,6 +24,7 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.CORE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
       [ChainId.BASE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
       [ChainId.LINEA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+      [ChainId.SCROLL]: '0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e',
     } as const
     const initCodeHash = {
       [ChainId.ARBITRUM_NOVA]:
@@ -60,6 +61,8 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
         '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
       [ChainId.LINEA]:
         '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.SCROLL]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
     } as const
 
     const tickLens = {
@@ -80,6 +83,7 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.CORE]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
       [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
       [ChainId.LINEA]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
+      [ChainId.SCROLL]: '0x1f2FCf1d036b375b384012e61D3AA33F8C256bbE',
     } as const
     super(chainId, web3Client, factory, initCodeHash, tickLens)
   }

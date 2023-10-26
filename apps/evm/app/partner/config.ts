@@ -32,6 +32,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.BTTC,
   ChainId.POLYGON_ZKEVM,
   ChainId.LINEA,
+  ChainId.SCROLL,
 ] as const
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS
