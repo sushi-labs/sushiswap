@@ -74,7 +74,7 @@ export default function LiquidityChartRangeInput({
   currencyA: Type | undefined
   currencyB: Type | undefined
   feeAmount?: FeeAmount
-  ticksAtLimit: { [bound in Bound]?: boolean | undefined }
+  ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
   price: number | undefined
   priceLower?: Price<Token, Token>
   priceUpper?: Price<Token, Token>

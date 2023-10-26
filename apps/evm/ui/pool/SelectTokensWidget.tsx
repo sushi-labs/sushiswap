@@ -17,7 +17,6 @@ interface SelectTokensWidget {
 }
 
 export const SelectTokensWidget: FC<SelectTokensWidget> = ({
-  title,
   chainId,
   token0,
   token1,

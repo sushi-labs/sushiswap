@@ -217,17 +217,17 @@ export function useConcentratedDerivedMintInfo({
   existingPosition?: Position
 }): {
   pool?: SushiSwapV3Pool | null
-  ticks: { [bound in Bound]?: number | undefined }
+  ticks: { [_bound in Bound]?: number | undefined }
   price?: Price<Token, Token>
   pricesAtTicks: {
-    [bound in Bound]?: Price<Token, Token> | undefined
+    [_pricesAtTicksBound in Bound]?: Price<Token, Token> | undefined
   }
   pricesAtLimit: {
-    [bound in Bound]?: Price<Token, Token> | undefined
+    [_pricesAtLimitBound in Bound]?: Price<Token, Token> | undefined
   }
-  currencies: { [field in Field]?: Currency }
+  currencies: { [_field in Field]?: Currency }
   dependentField: Field
-  parsedAmounts: { [field in Field]?: Amount<Currency> }
+  parsedAmounts: { [_parsedAmountsField in Field]?: Amount<Currency> }
   position: Position | undefined
   noLiquidity?: boolean
   errorMessage?: ReactNode
@@ -237,7 +237,7 @@ export function useConcentratedDerivedMintInfo({
   depositADisabled: boolean
   depositBDisabled: boolean
   invertPrice: boolean
-  ticksAtLimit: { [bound in Bound]?: boolean | undefined }
+  ticksAtLimit: { [_ticksAtLimitBound in Bound]?: boolean | undefined }
   isLoading: boolean
   isInitialLoading: boolean
 } {
@@ -253,7 +253,7 @@ export function useConcentratedDerivedMintInfo({
     independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A
 
   // currencies
-  const currencies: { [field in Field]?: Currency } = useMemo(
+  const currencies: { [_field in Field]?: Currency } = useMemo(
     () => ({
       [Field.CURRENCY_A]: currencyA,
       [Field.CURRENCY_B]: currencyB,
@@ -529,19 +529,20 @@ export function useConcentratedDerivedMintInfo({
     invalidRange,
   ])
 
-  const parsedAmounts: { [field in Field]: Amount<Currency> | undefined } =
-    useMemo(() => {
-      return {
-        [Field.CURRENCY_A]:
-          independentField === Field.CURRENCY_A
-            ? independentAmount
-            : dependentAmount,
-        [Field.CURRENCY_B]:
-          independentField === Field.CURRENCY_A
-            ? dependentAmount
-            : independentAmount,
-      }
-    }, [dependentAmount, independentAmount, independentField])
+  const parsedAmounts: {
+    [_parsedAmountsField in Field]: Amount<Currency> | undefined
+  } = useMemo(() => {
+    return {
+      [Field.CURRENCY_A]:
+        independentField === Field.CURRENCY_A
+          ? independentAmount
+          : dependentAmount,
+      [Field.CURRENCY_B]:
+        independentField === Field.CURRENCY_A
+          ? dependentAmount
+          : independentAmount,
+    }
+  }, [dependentAmount, independentAmount, independentField])
 
   // single deposit only if price is out of range
   const deposit0Disabled = Boolean(

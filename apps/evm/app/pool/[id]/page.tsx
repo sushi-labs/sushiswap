@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import { ChainId } from 'sushi/chain'
 import { ManageV2LiquidityCard } from 'ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'ui/pool/PoolTransactionsV2'
-import { isAddress } from 'viem'
 
 import { Pool } from '@sushiswap/client'
 import {

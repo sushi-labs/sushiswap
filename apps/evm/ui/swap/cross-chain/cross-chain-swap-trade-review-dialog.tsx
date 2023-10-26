@@ -1,7 +1,10 @@
 'use client'
 
-import {useSlippageTolerance} from '@sushiswap/hooks'
-import {isStargateBridgeToken, STARGATE_BRIDGE_TOKENS,} from '@sushiswap/stargate'
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  isStargateBridgeToken,
+  STARGATE_BRIDGE_TOKENS,
+} from '@sushiswap/stargate'
 import {
   DialogClose,
   DialogContent,
@@ -15,12 +18,16 @@ import {
   DialogType,
   Message,
 } from '@sushiswap/ui'
-import {Collapsible} from '@sushiswap/ui/components/animation/Collapsible'
-import {Button} from '@sushiswap/ui/components/button'
-import {Dots} from '@sushiswap/ui/components/dots'
-import {List} from '@sushiswap/ui/components/list/List'
-import {SkeletonText} from '@sushiswap/ui/components/skeleton'
-import {createErrorToast, createInfoToast, createToast,} from '@sushiswap/ui/components/toast'
+import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { List } from '@sushiswap/ui/components/list/List'
+import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import {
+  createErrorToast,
+  createInfoToast,
+  createToast,
+} from '@sushiswap/ui/components/toast'
 import {
   Address,
   getSushiXSwapContractConfig,
@@ -31,22 +38,35 @@ import {
   usePrepareContractWrite,
   useTransaction,
 } from '@sushiswap/wagmi'
-import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
-import {useApproved, useApprovedActions,} from '@sushiswap/wagmi/systems/Checker/Provider'
-import {nanoid} from 'nanoid'
-import {log} from 'next-axiom'
-import React, {FC, ReactNode, useCallback, useEffect, useRef, useState,} from 'react'
-import {gasMargin} from 'sushi/calculate'
-import {Chain, chainName} from 'sushi/chain'
-import {isSushiXSwapChainId, SushiXSwapChainId} from 'sushi/config'
-import {shortenAddress} from 'sushi/format'
-import {ZERO} from 'sushi/math'
-import {stringify, UserRejectedRequestError} from 'viem'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
+import {
+  useApproved,
+  useApprovedActions,
+} from '@sushiswap/wagmi/systems/Checker/Provider'
+import { nanoid } from 'nanoid'
+import { log } from 'next-axiom'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import { gasMargin } from 'sushi/calculate'
+import { Chain, chainName } from 'sushi/chain'
+import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
+import { shortenAddress } from 'sushi/format'
+import { ZERO } from 'sushi/math'
+import { stringify, UserRejectedRequestError } from 'viem'
 
-import {APPROVE_TAG_XSWAP} from '../../../lib/constants'
-import {UseCrossChainTradeReturn} from '../../../lib/swap/useCrossChainTrade/types'
-import {useLayerZeroScanLink} from '../../../lib/swap/useLayerZeroScanLink'
-import {warningSeverity} from '../../../lib/swap/warningSeverity'
+import { APPROVE_TAG_XSWAP } from '../../../lib/constants'
+import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
+import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
+import { warningSeverity } from '../../../lib/swap/warningSeverity'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -56,7 +76,10 @@ import {
   pendingState,
   StepState,
 } from './cross-chain-swap-confirmation-dialog'
-import {useCrossChainSwapTrade, useDerivedStateCrossChainSwap,} from './derivedstate-cross-chain-swap-provider'
+import {
+  useCrossChainSwapTrade,
+  useDerivedStateCrossChainSwap,
+} from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
@@ -321,6 +344,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     }
   }, [lzData?.status])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (
       lzData?.link &&
@@ -340,9 +364,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         groupTimestamp: groupTs.current,
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lzData?.link])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (receipt && groupTs.current) {
       void createToast({
@@ -375,7 +399,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         groupTimestamp: groupTs.current,
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receipt])
 
   return (

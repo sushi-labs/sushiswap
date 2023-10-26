@@ -32,7 +32,7 @@ export interface LiquidityChartRangeInputProps {
     series: ChartEntry[]
     current: number
   }
-  ticksAtLimit: { [bound in Bound]?: boolean | undefined }
+  ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
 
   styles: {
     area: {

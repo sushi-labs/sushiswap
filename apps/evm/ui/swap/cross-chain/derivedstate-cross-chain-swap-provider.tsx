@@ -5,18 +5,23 @@ import {
   STARGATE_SUPPORTED_CHAIN_IDS,
   StargateChainId,
 } from '@sushiswap/stargate'
-import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
-import { useTokenWithCache } from '@sushiswap/wagmi'
+import {
+  Address,
+  useAccount,
+  useNetwork,
+  useTokenWithCache,
+  watchNetwork,
+} from '@sushiswap/wagmi'
 import { useSignature } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP, IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
+  createContext,
   Dispatch,
   FC,
   SetStateAction,
-  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -24,13 +29,13 @@ import {
   useState,
 } from 'react'
 import { ChainId } from 'sushi/chain'
-import { SushiXSwapChainId, isSushiXSwapChainId } from 'sushi/config'
+import { isSushiXSwapChainId, SushiXSwapChainId } from 'sushi/config'
 import {
   Amount,
-  Native,
-  Type,
   defaultQuoteCurrency,
+  Native,
   tryParseAmount,
+  Type,
 } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
@@ -199,7 +204,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Update the URL with a new token0
-  const setToken0 = useCallback<{ (token0: string | Type): void }>(
+  const setToken0 = useCallback<{ (_token0: string | Type): void }>(
     (_token0) => {
       // If entity is provided, parse it to a string
       const token0 = getTokenAsString(_token0)
@@ -212,7 +217,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Update the URL with a new token1
-  const setToken1 = useCallback<{ (token1: string | Type): void }>(
+  const setToken1 = useCallback<{ (_token1: string | Type): void }>(
     (_token1) => {
       // If entity is provided, parse it to a string
       const token1 = getTokenAsString(_token1)
@@ -226,7 +231,7 @@ const DerivedstateCrossChainSwapProvider: FC<
 
   // Update the URL with both tokens
   const setTokens = useCallback<{
-    (token0: string | Type, token1: string | Type): void
+    (_token0: string | Type, _token1: string | Type): void
   }>(
     (_token0, _token1) => {
       // If entity is provided, parse it to a string

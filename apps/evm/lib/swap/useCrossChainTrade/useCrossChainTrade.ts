@@ -1,4 +1,3 @@
-import { usePrice } from '@sushiswap/react-query'
 import {
   STARGATE_BRIDGE_TOKENS,
   StargateChainId,
@@ -18,7 +17,6 @@ import {
   Price,
   Token,
   Type,
-  WNATIVE_ADDRESS,
   tryParseAmount,
 } from 'sushi/currency'
 import { TradeType } from 'sushi/dex'
@@ -421,10 +419,6 @@ export const useCrossChainTradeQuery = (
 
 export const useCrossChainTrade = (variables: UseCrossChainTradeParams) => {
   const { token0, token1 } = variables
-  const { data: price } = usePrice({
-    chainId: variables.network0,
-    address: WNATIVE_ADDRESS[variables.network0],
-  })
   const { data: feeData } = useFeeData({
     chainId: variables.network0,
     enabled: variables.enabled,

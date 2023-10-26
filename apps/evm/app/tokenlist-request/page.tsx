@@ -52,11 +52,10 @@ export default function Partner() {
     'logoFile',
   ])
 
-  const {
-    data: token,
-    isLoading: isTokenDataLoading,
-    isError: isTokenError,
-  } = useTokenWithCache({ address: tokenAddress, chainId })
+  const { data: token, isError: isTokenError } = useTokenWithCache({
+    address: tokenAddress,
+    chainId,
+  })
   const { mutate, isLoading, data, status } = useApplyForTokenList()
 
   useEffect(() => {
@@ -66,7 +65,7 @@ export default function Partner() {
         message: 'Token not found',
       })
     else methods.clearErrors('tokenAddress')
-  }, [isTokenDataLoading, methods, tokenAddress, token, isTokenError])
+  }, [methods, isTokenError])
 
   const onDrop = useCallback<NonNullable<DropzoneOptions['onDrop']>>(
     (acceptedFiles) => {

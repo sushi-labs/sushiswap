@@ -121,7 +121,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
       filterData?.data &&
       (selectedTopic || selectedDifficulty || selectedProduct)
     )
-      return filterData.data
+      return filterData?.data
     return articles
   }, [
     articles,
@@ -130,6 +130,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
     selectedTopic,
     selectedProduct,
   ])
+
   const latestReleases = articles?.slice(0, 3)
 
   /**

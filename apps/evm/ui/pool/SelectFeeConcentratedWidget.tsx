@@ -55,7 +55,6 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
     setFeeAmount,
     token0,
     token1,
-    title,
     disableIfNotExists = false,
   }) {
     const { data: pools, isLoading } = usePoolsByTokenPair(
@@ -83,7 +82,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
           return
 
         const tvlShare = pool.totalValueLockedUSD / totalTvl
-        if (isNaN(tvlShare)) return
+        if (Number.isNaN(tvlShare)) return
         tvlDistribution.set(Number(pool.feeTier), tvlShare)
       })
 
