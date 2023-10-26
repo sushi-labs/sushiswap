@@ -1,27 +1,17 @@
 'use client'
 
-import {
-  createErrorToast,
-  createFailedToast,
-  createToast,
-} from '@sushiswap/ui/components/toast'
-import { useQuery } from '@tanstack/react-query'
-import { readContract } from '@wagmi/core'
-import { useCallback, useMemo, useState } from 'react'
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
-import { UserRejectedRequestError, hexToSignature } from 'viem'
-import {
-  Address,
-  useAccount,
-  useContractWrite,
-  usePrepareContractWrite,
-  useSignTypedData,
-} from 'wagmi'
-import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+import {createErrorToast, createFailedToast, createToast,} from '@sushiswap/ui/components/toast'
+import {useQuery} from '@tanstack/react-query'
+import {readContract} from '@wagmi/core'
+import {useCallback, useMemo, useState} from 'react'
+import {BENTOBOX_ADDRESS, BentoBoxChainId} from 'sushi/config'
+import {hexToSignature, UserRejectedRequestError} from 'viem'
+import {Address, useAccount, useContractWrite, usePrepareContractWrite, useSignTypedData,} from 'wagmi'
+import {SendTransactionResult, waitForTransaction} from 'wagmi/actions'
 
-import { getBentoBoxContractConfig } from '../..'
-import { useSignature } from '../../../systems/Checker/Provider'
-import { ApprovalState } from '../../approvals'
+import {getBentoBoxContractConfig} from '../..'
+import {useApprovedActions, useSignature,} from '../../../systems/Checker/Provider'
+import {ApprovalState} from '../../approvals'
 
 interface UseBentoboxApprovalParams {
   enabled?: boolean
@@ -39,10 +29,11 @@ export const useBentoBoxApproval = ({
   const { address } = useAccount()
   const [fallback, setFallback] = useState(false)
   const [pending, setPending] = useState(false)
-  const { signature, setSignature } = useSignature(tag)
+  const { signature } = useSignature(tag)
+  const { setSignature } = useApprovedActions(tag)
   const { signTypedDataAsync } = useSignTypedData()
 
-  const { data, refetch, isLoading, error } = useQuery({
+  const { data, refetch, isLoading } = useQuery({
     queryKey: ['masterContractApproval', { chainId, masterContract, address }],
     queryFn: async () => {
       if (masterContract && address) {

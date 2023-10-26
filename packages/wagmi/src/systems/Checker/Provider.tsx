@@ -1,17 +1,8 @@
 'use client'
 
-import { watchAccount, watchNetwork } from '@wagmi/core'
-import React, {
-  FC,
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { Signature } from 'viem'
+import {watchAccount, watchNetwork} from '@wagmi/core'
+import React, {createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState,} from 'react'
+import {Signature} from 'viem'
 
 type CheckerContext = {
   setApproved: (tag: string, approved: boolean) => void
@@ -99,30 +90,47 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
 const useCheckerContext = () => useContext(CheckerContext)
 const useCheckerStateContext = () => useContext(CheckerStateContext)
 
-const useApproved = (tag: string) => {
+const useApprovedActions = (tag: string) => {
   const context = useCheckerContext()
+
+  if (!context) {
+    throw new Error('Hook can only be used inside Checker Context')
+  }
+
+  const { setApproved, setSignature } = context
+
+  return useMemo(
+    () => ({
+      setApproved: (approved: boolean) => {
+        setApproved(tag, approved)
+      },
+      setSignature: (signature: Signature | undefined) => {
+        setSignature(tag, signature)
+      },
+    }),
+    [setApproved, setSignature, tag],
+  )
+}
+
+const useApproved = (tag: string) => {
   const stateContext = useCheckerStateContext()
 
-  if (!context || !stateContext) {
+  if (!stateContext) {
     throw new Error('Hook can only be used inside Checker Context')
   }
 
   return useMemo(
     () => ({
       approved: stateContext.state[tag] ? stateContext.state[tag] : false,
-      setApproved: (approved: boolean) => {
-        context.setApproved(tag, approved)
-      },
     }),
-    [context, stateContext, tag],
+    [stateContext, tag],
   )
 }
 
 const useSignature = (tag: string) => {
-  const context = useCheckerContext()
   const stateContext = useCheckerStateContext()
 
-  if (!context || !stateContext) {
+  if (!stateContext) {
     throw new Error('Hook can only be used inside Checker Context')
   }
 
@@ -131,11 +139,8 @@ const useSignature = (tag: string) => {
       signature: stateContext.signatureState[tag]
         ? stateContext.signatureState[tag]
         : undefined,
-      setSignature: (signature: Signature | undefined) => {
-        context.setSignature(tag, signature)
-      },
     }),
-    [context, stateContext, tag],
+    [stateContext, tag],
   )
 }
 
@@ -158,6 +163,7 @@ export {
   type ProviderProps,
   useApproved,
   useCheckerContext,
+  useApprovedActions,
   useSignature,
   withCheckerRoot,
 }

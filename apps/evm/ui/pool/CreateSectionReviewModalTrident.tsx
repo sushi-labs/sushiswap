@@ -1,8 +1,8 @@
 import {
-  TridentConstantPool,
-  TridentStablePool,
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
+  TridentConstantPool,
+  TridentStablePool,
 } from '@sushiswap/trident-sdk'
 import {
   Button,
@@ -17,7 +17,7 @@ import {
   DialogTrigger,
   Dots,
 } from '@sushiswap/ui'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import {createErrorToast, createToast} from '@sushiswap/ui/components/toast'
 import {
   PoolFinderType,
   useAccount,
@@ -30,37 +30,26 @@ import {
   useTridentStablePoolFactoryContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import {
-  useApproved,
-  useSignature,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
-import {
-  LiquidityInput,
-  approveMasterContractAction,
-  batchAction,
-  deployNewPoolAction,
-} from 'lib/actions'
-import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
-import { FC, ReactNode, useCallback, useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
-import { BentoBoxChainId } from 'sushi/config'
-import { Amount, Type } from 'sushi/currency'
-import { Fee } from 'sushi/dex'
+import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
+import {UsePrepareSendTransactionConfig} from '@sushiswap/wagmi/hooks/useSendTransaction'
+import {useApproved, useApprovedActions, useSignature,} from '@sushiswap/wagmi/systems/Checker/Provider'
+import {approveMasterContractAction, batchAction, deployNewPoolAction, LiquidityInput,} from 'lib/actions'
+import {APPROVE_TAG_CREATE_TRIDENT} from 'lib/constants'
+import {FC, ReactNode, useCallback, useMemo} from 'react'
+import {ChainId} from 'sushi/chain'
+import {BentoBoxChainId} from 'sushi/config'
+import {Amount, Type} from 'sushi/currency'
+import {Fee} from 'sushi/dex'
 import {
   Address,
-  UserRejectedRequestError,
   encodeAbiParameters,
   encodeFunctionData,
   parseAbiParameters,
+  UserRejectedRequestError,
   zeroAddress,
 } from 'viem'
 
-import { AddSectionReviewModal } from './AddSectionReviewModal'
+import {AddSectionReviewModal} from './AddSectionReviewModal'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxChainId
@@ -78,7 +67,8 @@ export const CreateSectionReviewModalTrident: FC<
 > = ({ token0, token1, input0, input1, fee, poolType, chainId, children }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { signature, setSignature } = useSignature(APPROVE_TAG_CREATE_TRIDENT)
+  const { signature } = useSignature(APPROVE_TAG_CREATE_TRIDENT)
+  const { setSignature } = useApprovedActions(APPROVE_TAG_CREATE_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory =

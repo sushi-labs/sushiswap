@@ -1,4 +1,4 @@
-import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
+import {TridentConstantPool, TridentStablePool} from '@sushiswap/trident-sdk'
 import {
   DialogConfirm,
   DialogContent,
@@ -10,9 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import {Button} from '@sushiswap/ui/components/button'
+import {Dots} from '@sushiswap/ui/components/dots'
+import {createErrorToast, createToast} from '@sushiswap/ui/components/toast'
 import {
   TridentConstantPoolState,
   TridentStablePoolState,
@@ -25,38 +25,28 @@ import {
   useTridentRouterContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import {
-  useApproved,
-  useSignature,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
-import {
-  LiquidityInput,
-  approveMasterContractAction,
-  batchAction,
-} from 'lib/actions'
-import { APPROVE_TAG_ADD_TRIDENT } from 'lib/constants'
-import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
-import { FC, ReactNode, useCallback, useMemo } from 'react'
-import { slippageAmount } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
-import { BentoBoxChainId } from 'sushi/config'
-import { Amount, Token, Type } from 'sushi/currency'
-import { Percent, ZERO } from 'sushi/math'
+import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
+import {UsePrepareSendTransactionConfig} from '@sushiswap/wagmi/hooks/useSendTransaction'
+import {useApproved, useApprovedActions, useSignature,} from '@sushiswap/wagmi/systems/Checker/Provider'
+import {approveMasterContractAction, batchAction, LiquidityInput,} from 'lib/actions'
+import {APPROVE_TAG_ADD_TRIDENT} from 'lib/constants'
+import {useSlippageTolerance} from 'lib/hooks/useSlippageTolerance'
+import {FC, ReactNode, useCallback, useMemo} from 'react'
+import {slippageAmount} from 'sushi/calculate'
+import {ChainId} from 'sushi/chain'
+import {BentoBoxChainId} from 'sushi/config'
+import {Amount, Token, Type} from 'sushi/currency'
+import {Percent, ZERO} from 'sushi/math'
 import {
   Address,
-  UserRejectedRequestError,
   encodeAbiParameters,
   encodeFunctionData,
   parseAbiParameters,
+  UserRejectedRequestError,
   zeroAddress,
 } from 'viem'
 
-import { AddSectionReviewModal } from './AddSectionReviewModal'
+import {AddSectionReviewModal} from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
@@ -89,7 +79,8 @@ export const AddSectionReviewModalTrident: FC<
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const { signature, setSignature } = useSignature(APPROVE_TAG_ADD_TRIDENT)
+  const { signature } = useSignature(APPROVE_TAG_ADD_TRIDENT)
+  const { setSignature } = useApprovedActions(APPROVE_TAG_ADD_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_ADD_TRIDENT)
   const liquidityToken = useMemo(() => {
     return new Token({

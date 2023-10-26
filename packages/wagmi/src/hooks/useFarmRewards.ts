@@ -1,10 +1,11 @@
 'use client'
 
-import { UseQueryOptions, useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import { chainShortName } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import { PoolType } from './pools'
+import {useQuery, UseQueryOptions} from '@tanstack/react-query'
+import {useMemo} from 'react'
+import {chainShortName} from 'sushi/chain'
+import {Token} from 'sushi/currency'
+import {PoolType} from './pools'
+import {ChefType} from '@sushiswap/client'
 
 export interface FarmMap<T> {
   chainId: number
@@ -19,11 +20,6 @@ export interface Farm<T> {
   incentives: Incentive<T>[]
   chefType: ChefType
   poolType: PoolType
-}
-
-export enum ChefType {
-  MasterChefV1 = 'MasterChefV1',
-  MasterChefV2 = 'MasterChefV2',
 }
 
 export interface Incentive<T> {
