@@ -1,11 +1,7 @@
 // @ts-nocheck
 
 import { Page } from '@playwright/test'
-import {
-  NextFixture,
-  expect,
-  test,
-} from 'next/experimental/testmode/playwright'
+import { expect, test } from 'next/experimental/testmode/playwright'
 import { ChainId } from 'sushi/chain'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from 'sushi/currency'
 import { zeroAddress } from 'viem'
