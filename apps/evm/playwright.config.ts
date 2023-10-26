@@ -61,8 +61,8 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
   },
-  globalSetup: './global.setup.ts',
-  globalTeardown: './global.teardown.ts',
+  // globalSetup: './global.setup.ts',
+  // globalTeardown: './global.teardown.ts',
 
   /* Configure projects for major browsers */
   projects: [
@@ -100,19 +100,23 @@ const config: PlaywrightTestConfig = {
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [
     {
-      command: `~/.foundry/bin/anvil --fork-block-number=${
-        process.env.ANVIL_BLOCK_NUMBER
-      } --fork-url=${process.env.ANVIL_FORK_URL} --port=${
-        process.env.ANVIL_PORT || '8545'
-      }`,
-      port: Number(process.env.ANVIL_PORT || '8545'),
+      command: [
+        'anvil',
+        `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
+        `--fork-url=${process.env.ANVIL_FORK_URL}`,
+        `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
+        // '--no-mining',
+        // '--silent',
+        // '--block-time 15',
+      ].join(' '),
+      port: Number(process.env.ANVIL_PORT || 8545),
       // url: `http://localhost:${process.env.ANVIL_PORT || 8545}`,
       // timeout: 120_000,
       // reuseExistingServer: !process.env.CI,
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-        ANVIL_PORT: String(process.env.ANVIL_PORT || '8545'),
+        ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
     },
     {
