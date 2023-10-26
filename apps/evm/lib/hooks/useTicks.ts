@@ -111,7 +111,9 @@ export function useTicks({
   return useMemo(() => {
     const { data } = reads
 
-    const reduced = data?.reduce((ticks, word) => [...ticks, ...word], [])
+    const reduced = data?.reduce((ticks, word) => {
+      return ticks.concat(word)
+    }, [])
     const renamed = (reduced as Writeable<typeof reduced>)?.map((tick) => ({
       tickIdx: tick.tick,
       liquidityNet: tick.liquidityNet,

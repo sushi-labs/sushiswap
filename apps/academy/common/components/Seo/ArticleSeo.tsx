@@ -39,7 +39,12 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,
             authors: authors?.map((author) => author.name),
-            tags: article.topics?.data.flat().filter(Boolean) as string[],
+            tags: article.topics?.data
+              .reduce<(Maybe<string> | undefined)[]>((acc, el) => {
+                acc.push(el.attributes.name)
+                return acc
+              }, [])
+              .filter(Boolean) as string[],
           },
         }}
         twitter={{

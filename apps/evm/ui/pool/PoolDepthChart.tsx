@@ -102,7 +102,6 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
           fontSize: 12,
           fontWeight: 500,
         },
-        // biome-ignore lint: echarts doesn't have types
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 

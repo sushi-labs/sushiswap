@@ -84,6 +84,11 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
           e.stopPropagation()
           setManuallyInverted((prev) => !prev)
         }}
+        onKeyDown={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          setManuallyInverted((prev) => !prev)
+        }}
       >
         <div className="flex items-center gap-2">
           <div

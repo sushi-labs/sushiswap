@@ -1,6 +1,4 @@
 import {
-  StargateAdapterChainId,
-  isStargateAdapterChainId,
   STARGATE_CHAIN_ID,
   STARGATE_CHAIN_PATHS,
   STARGATE_ETH_ADDRESS,
@@ -9,6 +7,8 @@ import {
   STARGATE_USDC_ADDRESS,
   STARGATE_USDT,
   STARGATE_USDT_ADDRESS,
+  StargateAdapterChainId,
+  isStargateAdapterChainId,
 } from 'sushi/config'
 import { Native, Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'

@@ -239,6 +239,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 ) : (
                   <div
                     onClick={() => setInvert((prev) => !prev)}
+                    onKeyDown={() => setInvert((prev) => !prev)}
                     role="button"
                     className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
                   >
@@ -452,6 +453,7 @@ export const PriceBlock: FC<PriceBlockProps> = ({
           />
           <div className="flex gap-1">
             <button
+              type="button"
               disabled={decrementDisabled}
               onClick={handleDecrement}
               className={classNames(

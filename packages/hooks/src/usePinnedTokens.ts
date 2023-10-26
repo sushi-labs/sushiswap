@@ -334,11 +334,13 @@ export const usePinnedTokens = () => {
   )
 
   useEffect(() => {
-    Object.entries(COMMON_BASES_IDS).forEach(([chainId, tokens]) => {
-      if (!value[chainId]) {
-        value[chainId] = tokens
-        setValue(value)
+    setValue((value) => {
+      for (const [chainId, tokens] of Object.entries(COMMON_BASES_IDS)) {
+        if (!value[chainId]) {
+          value[chainId] = tokens
+        }
       }
+      return value
     })
   }, [setValue])
 

@@ -156,7 +156,7 @@ async function handleNetwork(page: Page, chainId: ChainId, type: InputType) {
   await expect(networkSelector).toBeEnabled()
   await networkSelector.click()
 
-  const networkSearch = page.locator(`[testdata-id=network-selector-input]`)
+  const networkSearch = page.locator('[testdata-id=network-selector-input]')
   await expect(networkSearch).toBeVisible()
   await expect(networkSearch).toBeEnabled()
   await networkSearch.fill(chainName[chainId])
