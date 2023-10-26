@@ -17,7 +17,7 @@ import {
   DialogTrigger,
   Dots,
 } from '@sushiswap/ui'
-import {createErrorToast, createToast} from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   PoolFinderType,
   useAccount,
@@ -30,16 +30,28 @@ import {
   useTridentStablePoolFactoryContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
-import {UsePrepareSendTransactionConfig} from '@sushiswap/wagmi/hooks/useSendTransaction'
-import {useApproved, useApprovedActions, useSignature,} from '@sushiswap/wagmi/systems/Checker/Provider'
-import {approveMasterContractAction, batchAction, deployNewPoolAction, LiquidityInput,} from 'lib/actions'
-import {APPROVE_TAG_CREATE_TRIDENT} from 'lib/constants'
-import {FC, ReactNode, useCallback, useMemo} from 'react'
-import {ChainId} from 'sushi/chain'
-import {BentoBoxChainId} from 'sushi/config'
-import {Amount, Type} from 'sushi/currency'
-import {Fee} from 'sushi/dex'
+import {
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import {
+  useApproved,
+  useApprovedActions,
+  useSignature,
+} from '@sushiswap/wagmi/systems/Checker/Provider'
+import {
+  approveMasterContractAction,
+  batchAction,
+  deployNewPoolAction,
+  LiquidityInput,
+} from 'lib/actions'
+import { APPROVE_TAG_CREATE_TRIDENT } from 'lib/constants'
+import { FC, ReactNode, useCallback, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { BentoBoxChainId } from 'sushi/config'
+import { Amount, Type } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import {
   Address,
   encodeAbiParameters,
@@ -49,7 +61,7 @@ import {
   zeroAddress,
 } from 'viem'
 
-import {AddSectionReviewModal} from './AddSectionReviewModal'
+import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface CreateSectionReviewModalTridentProps {
   chainId: BentoBoxChainId

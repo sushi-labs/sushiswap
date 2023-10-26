@@ -14,8 +14,8 @@ import { Fee } from 'sushi/dex'
 import { Address, useContractReads } from 'wagmi'
 
 import { useBentoBoxTotals } from '../../bentobox'
-import { useTridentStablePoolFactoryContract } from './useTridentStablePoolFactoryContract'
 import { TridentStablePoolState } from '../actions'
+import { useTridentStablePoolFactoryContract } from './useTridentStablePoolFactoryContract'
 
 interface Rebase {
   base: bigint

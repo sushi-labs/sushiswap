@@ -12,8 +12,8 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
-import { getMasterChefContractConfig } from '../useMasterChefContract'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
+import { getMasterChefContractConfig } from './use-master-chef-contract'
 
 interface UseMasterChefWithdrawParams {
   chainId: number

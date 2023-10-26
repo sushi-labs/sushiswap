@@ -18,13 +18,13 @@ import {
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
 import { masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
+import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
   MINICHEF_ADDRESS,
   useMasterChefContract,
-} from '../useMasterChefContract'
-import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
+} from './use-master-chef-contract'
 
 interface UseMasterChefReturn
   extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {

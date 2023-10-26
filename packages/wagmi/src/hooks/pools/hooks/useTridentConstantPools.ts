@@ -13,8 +13,8 @@ import { Amount, Currency, Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import { Address, useContractReads } from 'wagmi'
 
-import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
 import { TridentConstantPoolState } from '../actions'
+import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
 
 type PoolInput = [Currency | undefined, Currency | undefined, Fee, boolean]
 

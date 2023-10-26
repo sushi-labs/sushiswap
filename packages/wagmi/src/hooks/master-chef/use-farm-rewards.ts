@@ -1,11 +1,12 @@
 'use client'
 
-import {useQuery, UseQueryOptions} from '@tanstack/react-query'
-import {useMemo} from 'react'
-import {chainShortName} from 'sushi/chain'
-import {Token} from 'sushi/currency'
-import {PoolType} from './pools'
-import {ChefType} from '@sushiswap/client'
+import { ChefType } from '@sushiswap/client'
+import { UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { chainShortName } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { RewarderType } from '.'
+import { PoolType } from '../pools'
 
 export interface FarmMap<T> {
   chainId: number
@@ -35,11 +36,6 @@ export interface Incentive<T> {
 export interface RewardToken {
   address: string
   symbol: string
-}
-
-export enum RewarderType {
-  Primary = 'Primary',
-  Secondary = 'Secondary',
 }
 
 // export enum PoolType {

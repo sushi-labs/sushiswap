@@ -1,8 +1,7 @@
 'use client'
 
 import { ChefType, Pool } from '@sushiswap/client'
-import { RewarderType, useAccount, useMasterChef } from '@sushiswap/wagmi'
-import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
+import { RewarderType, useAccount, useMasterChef, useRewarder } from '@sushiswap/wagmi'
 import { incentiveRewardToToken } from 'lib/functions'
 import { useTokenAmountDollarValues, useTokensFromPool } from 'lib/hooks'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
