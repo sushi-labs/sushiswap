@@ -23,9 +23,9 @@ defaults:
 # https://playwright.dev/docs/ci#sharding
 env:
   CI: true
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  NODE_OPTIONS: --max-old-space-size=8192
+  # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  # NODE_OPTIONS: --max-old-space-size=8192
   NEXT_TELEMETRY_DISABLED: 1
   EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
 concurrency:
@@ -76,6 +76,7 @@ jobs:
           ANVIL_PORT: 8545
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
+          DEBUG: pw:webserver
           # NEXT_PUBLIC_DST_CHAIN_ID: ${{ matrix.dst-chain-id }}
           # NEXT_PUBLIC_DRPC_ID: ${{ secrets.NEXT_PUBLIC_DRPC_ID }}
         working-directory: .
