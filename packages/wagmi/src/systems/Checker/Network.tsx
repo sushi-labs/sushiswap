@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import React, { FC, ReactElement } from 'react'
+import { FC, ReactElement } from 'react'
 import { chainName } from 'sushi/chain'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 

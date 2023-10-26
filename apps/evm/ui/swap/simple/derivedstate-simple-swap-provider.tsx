@@ -106,8 +106,6 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       if (!params.has('token1')) {
         params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
       }
-      // if (!params.has('recipient')) params.set('recipient', address ?? '')
-      console.log('defaultedParams in memo', Array.from(params.entries()))
       return params
     }, [chain, searchParams])
 
@@ -258,13 +256,13 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
-    // useEffect(() => {
-    //   const unwatch = watchNetwork(({ chain }) => {
-    //     if (!chain || chain.id === chainId) return
-    //     push(pathname, { scroll: false })
-    //   })
-    //   return () => unwatch()
-    // }, [chainId, pathname, push])
+    useEffect(() => {
+      const unwatch = watchNetwork(({ chain }) => {
+        if (!chain || chain.id === chainId) return
+        push(pathname, { scroll: false })
+      })
+      return () => unwatch()
+    }, [chainId, pathname, push])
 
     // Derive token0
     const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(

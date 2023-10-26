@@ -2,10 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
-import { isAddress } from 'viem'
-import { zeroAddress } from 'viem'
+import { Address, isAddress, zeroAddress } from 'viem'
 
-import { Address, erc20ABI, fetchBalance, readContracts } from '../..'
+import { erc20ABI, fetchBalance, readContracts } from '@wagmi/core'
 
 interface UseBalanceParams {
   chainId: ChainId | undefined

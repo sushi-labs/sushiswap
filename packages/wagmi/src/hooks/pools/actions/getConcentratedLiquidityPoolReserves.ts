@@ -6,8 +6,8 @@ import {
 import { Amount } from 'sushi/currency'
 import { Address } from 'wagmi'
 
-import { fetchBalance } from '../../..'
-import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
+import { fetchBalance } from '@wagmi/core'
+import { getV3FactoryContractConfig } from '../../contracts'
 
 export const getConcentratedLiquidityPoolReserves = async ({
   pool,

@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectPrimitive,
 } from '@sushiswap/ui/components/select'
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { Amount, Type } from 'sushi/currency'
 import { Address } from 'wagmi'
 

@@ -1,7 +1,7 @@
 import { SushiSwapV3ChainId, SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
 
-import { getConcentratedLiquidityPoolReserves } from '../actions/getConcentratedLiquidityPoolReserves'
+import { getConcentratedLiquidityPoolReserves } from '../actions'
 
 interface UseConcentratedLiquidityPoolReserves {
   pool: SushiSwapV3Pool | null | undefined

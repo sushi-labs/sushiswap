@@ -11,12 +11,11 @@ import {
   LinkExternal,
 } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { BentoBoxChainId } from 'sushi/config'
-import { Address } from 'wagmi'
+import { Address } from 'viem'
 
-import { ApprovalState } from '../../hooks'
-import { useBentoBoxApproval } from '../../hooks/bentobox'
+import { ApprovalState, useBentoBoxApproval } from '../../hooks'
 
 interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxChainId
@@ -43,8 +42,6 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
     masterContract,
     tag,
   })
-
-  console.log('approve bentobox', state, execute)
 
   if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>

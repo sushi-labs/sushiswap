@@ -1,14 +1,14 @@
 'use client'
 
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useBalancesWeb3 } from '../../hooks'
+import { useBalancesWeb3 } from '../../hooks/balances'
 
 interface AmountsProps extends ButtonProps {
   chainId: ChainId | undefined

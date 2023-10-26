@@ -18,7 +18,7 @@ import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 
-import { getAllPools } from '../actions/getAllPools'
+import { getAllPools } from '../actions'
 import { PoolType, UsePoolsParams } from '../types'
 
 const getPoolAddress = ({
