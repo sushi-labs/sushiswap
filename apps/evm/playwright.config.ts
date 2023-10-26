@@ -23,7 +23,7 @@ const config: PlaywrightTestConfig = {
   testDir: path.join(__dirname, 'test'),
   testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. */
-  timeout: 90 * 1_000,
+  timeout: 60 * 1_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -105,6 +105,7 @@ const config: PlaywrightTestConfig = {
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
         `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
+        '--host=::',
         // '--no-mining',
         // '--silent',
         // '--block-time 15',

@@ -68,6 +68,9 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
+      - name: Which Anvil
+        run: which anvil
+
       - name: Test
         run: pnpm test-evm-app
         env:

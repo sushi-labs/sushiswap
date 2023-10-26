@@ -333,14 +333,24 @@ export const usePinnedTokens = () => {
     COMMON_BASES_IDS,
   )
 
+  // useEffect(() => {
+  //   setValue((value) => {
+  //     for (const [chainId, tokens] of Object.entries(COMMON_BASES_IDS)) {
+  //       if (!value[chainId]) {
+  //         value[chainId] = tokens
+  //       }
+  //     }
+  //     return value
+  //   })
+  // }, [setValue])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    setValue((value) => {
-      for (const [chainId, tokens] of Object.entries(COMMON_BASES_IDS)) {
-        if (!value[chainId]) {
-          value[chainId] = tokens
-        }
+    Object.entries(COMMON_BASES_IDS).forEach(([chainId, tokens]) => {
+      if (!value[chainId]) {
+        value[chainId] = tokens
+        setValue(value)
       }
-      return value
     })
   }, [setValue])
 
