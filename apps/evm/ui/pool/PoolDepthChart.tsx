@@ -77,8 +77,9 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
       }
 
       if (valueNodes[1]) {
-        valueNodes[1].innerHTML = `At tick ${value[0].toFixed(3)} ${token1.symbol
-          } per ${token0.symbol}`
+        valueNodes[1].innerHTML = `At tick ${value[0].toFixed(3)} ${
+          token1.symbol
+        } per ${token0.symbol}`
       }
     },
     [
