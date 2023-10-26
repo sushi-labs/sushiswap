@@ -27,6 +27,8 @@ enum CurvePoolType {
   Factory = 'Factory',
 }
 
+const MulticoinPoolNumber = 10 // first pools in next array
+
 const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   // Multitoken
   [
@@ -528,21 +530,13 @@ async function checkSwap(
 }
 
 // Makes real swap in the fork and checks consistency
-async function makeSwapAndCheck(
+async function makeSwap(
   config: TestConfig,
   poolInfo: PoolInfo,
   from: number,
   to: number,
-  amountIn: number,
-  precision: number,
+  amountIn: number
 ) {
-  const i = Math.min(from, to)
-  const j = Math.max(from, to)
-  const expectedOut = (poolInfo.poolTines[i][j] as CurvePool).calcOutByIn(
-    Math.round(amountIn),
-    from < to,
-  )
-
   let balanceBefore = 0n
   const tokenContractTo = poolInfo.tokenContracts[to]
   if (tokenContractTo !== undefined) {
@@ -572,12 +566,7 @@ async function makeSwapAndCheck(
   }
 
   const realOutBI = balanceAfter - balanceBefore
-
-  expectCloseValues(realOutBI, expectedOut.out, precision);
-  const flow: number[] = poolInfo.currentFlow[i][j]
-  flow[0] += from < to ? amountIn : -expectedOut.out;
-  flow[1] += from < to ? -expectedOut.out : amountIn;
-  (poolInfo.poolTines[i][j] as CurvePool).setCurrentFlow(flow[0], flow[1], expectedOut.gasSpent)
+  return realOutBI
 }
 
 async function forEachFactoryPool(
@@ -618,7 +607,7 @@ async function processMultiTokenPool(
   config: TestConfig,
   poolAddress: Address,
   poolType: CurvePoolType,
-  precision: number,
+  precision: number
 ): Promise<string> {
   const testSeed = poolAddress
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -668,9 +657,84 @@ async function processMultiTokenPool(
           i,
           res1 * amountInPortion,
           precision,
-        )
+        )        
       }
     }
+  return 'passed'
+}
+
+
+async function checkMultipleSwapsFork(
+  config: TestConfig,
+  poolAddress: Address,
+  poolType: CurvePoolType,
+  precision: number
+): Promise<string> {
+  const testSeed = poolAddress
+  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+  let poolInfo
+  try {
+    poolInfo = await createCurvePoolInfo(
+      config,
+      poolAddress,
+      poolType,
+      BigInt(1e30),
+    )
+  } catch (e) {
+    // return 'skipped (pool init error)'
+  }
+  if (!poolInfo || poolInfo.tokenContracts.length < 2)
+    return 'skipped (pool init error)'
+
+  const n = 2 //poolInfo.tokenContracts.length
+  const steps = 1
+
+  const flowInternal : number[][][] = []
+  for (let i = 0; i < n; ++i) {
+    flowInternal[i] = []
+    for (let j = i + 1; j < n; ++j) flowInternal[i][j] = [0, 0]
+  }
+  function addFlowInp(from: number, to: number, val?: number): number {
+    return flowInternal[Math.min(from, to)][Math.max(from, to)][from < to ? 0 : 1] += (val ?? 0)
+  }
+  function addFlowOut(from: number, to: number, val?: number): number {
+    return flowInternal[Math.min(from, to)][Math.max(from, to)][from < to ? 1 : 0] += (val ?? 0)
+  }
+
+  for (let s = 0; s < steps; ++s) {
+    const from = 0
+    const to = 1
+    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
+    const res0 = Number(pool.reserve0)
+    const res1 = Number(pool.reserve1)
+    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
+
+    const amountInPortion = getRandomExp(rnd, 1e-5, 1)
+    const amountIn = res0 * amountInPortion
+
+    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
+      .out + addFlowOut(from, to)
+    addFlowInp(from, to, amountIn)
+    addFlowOut(from, to, -expectedOut)
+    pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
+  }
+
+  poolInfo.snapshot.restore()
+  for (let i = 0; i < n; ++i) {
+    for (let j = i + 1; j < n; ++j) {
+      const flowI = addFlowInp(i, j)
+      const flowJ = addFlowInp(j, i)
+      if (flowI == 0) continue
+      const realOut = await makeSwap(
+        config,
+        poolInfo,
+        flowI > 0 ? i : j,
+        flowI > 0 ? j : i,
+        flowI > 0 ? flowI : flowI
+      )
+      expectCloseValues(flowI > 0 ? -flowJ : -flowI, realOut, precision)
+    }
+  }
   return 'passed'
 }
 
@@ -687,6 +751,24 @@ describe('Real Curve pools consistency check', () => {
         NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
         const result = await processMultiTokenPool(
+          config,
+          poolAddress,
+          poolType,
+          precision,
+        )
+        expect(result).equal('passed')
+      })
+    }
+  })
+
+  describe('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
+    const poolNumber = 1 // MulticoinPoolNumber
+    for (let i = 0; i < poolNumber; ++i) {
+      const [poolAddress, name, poolType, precision = 1e-6] =
+        NON_FACTORY_POOLS[i]
+      it(`${name} (${poolAddress}, ${poolType})`, async () => {
+        debugger
+        const result = await checkMultipleSwapsFork(
           config,
           poolAddress,
           poolType,

@@ -204,10 +204,9 @@ class CurveMultitokenCore {
     from: number,
     to: number,
   ): number {
-    amountIn *= this.rates[from] as number
     const xBN = this.currentReservesRated[from] as bigint
     const yBN = this.currentReservesRated[to] as bigint
-    const xNewBN = xBN + getBigInt(amountIn)
+    const xNewBN = xBN + getBigInt(amountIn * this.rates[from])
     const yNewBN = this.computeY(from, xNewBN, to)
     if (yNewBN < MIN_LIQUIDITY) throw 'Curve pool OutOfLiquidity'
     const dy = Number(yBN - yNewBN) / (this.rates[to] as number)
