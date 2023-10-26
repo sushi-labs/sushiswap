@@ -13,7 +13,12 @@ interface SelectNetworkWidgetProps {
 }
 
 export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(
-  function SelectNetworkWidget({ selectedNetwork, onSelect, networks, title }) {
+  function SelectNetworkWidget({
+    selectedNetwork,
+    onSelect,
+    networks,
+    title: _title,
+  }) {
     return (
       <FormSection
         title="Network"

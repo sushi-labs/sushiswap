@@ -36,7 +36,7 @@ import {
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
-import React, { FC, Fragment, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'

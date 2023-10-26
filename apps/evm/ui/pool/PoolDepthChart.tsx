@@ -77,9 +77,8 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
       }
 
       if (valueNodes[1]) {
-        valueNodes[1].innerHTML = `At tick ${value[0].toFixed(3)} ${
-          token1.symbol
-        } per ${token0.symbol}`
+        valueNodes[1].innerHTML = `At tick ${value[0].toFixed(3)} ${token1.symbol
+          } per ${token0.symbol}`
       }
     },
     [
@@ -102,7 +101,6 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
           fontSize: 12,
           fontWeight: 500,
         },
-        // biome-ignore lint: echarts doesn't have types
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 

@@ -61,7 +61,7 @@ export const Header: FC = () => {
     PRODUCTS_ORDER.indexOf(
       a?.attributes?.slug as typeof PRODUCTS_ORDER[number],
     ) >
-      PRODUCTS_ORDER.indexOf(b?.attributes?.slug as typeof PRODUCTS_ORDER[number])
+    PRODUCTS_ORDER.indexOf(b?.attributes?.slug as typeof PRODUCTS_ORDER[number])
       ? 1
       : -1,
   )
