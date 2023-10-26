@@ -13,7 +13,7 @@ import {
   GoPlusLabsIcon,
   List,
 } from '@sushiswap/ui'
-import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
+import { useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
 import { Native, Token, defaultQuoteCurrency } from 'sushi/currency'

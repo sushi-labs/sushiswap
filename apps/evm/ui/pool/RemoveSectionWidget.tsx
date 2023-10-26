@@ -1,7 +1,6 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/outline'
-import { FundSource } from '@sushiswap/hooks'
 import {
   Card,
   CardCurrencyAmountItem,
@@ -78,16 +77,14 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           </SettingsOverlay>
         </WidgetAction>
       </WidgetHeader>
-      {balance?.[FundSource.WALLET]?.equalTo(ZERO) ? (
+      {balance?.equalTo(ZERO) ? (
         <Message variant="warning" size="sm" className="mb-4">
           No LP tokens found. Are you sure you unstaked your LP tokens?
         </Message>
       ) : null}
       <div
         className={
-          balance?.[FundSource.WALLET]?.equalTo(ZERO)
-            ? 'opacity-40 pointer-events-none'
-            : ''
+          balance?.equalTo(ZERO) ? 'opacity-40 pointer-events-none' : ''
         }
       >
         <div className="flex flex-col gap-6">

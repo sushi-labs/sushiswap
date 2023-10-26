@@ -6,7 +6,7 @@ import {
   StargateChainId,
 } from '@sushiswap/stargate'
 import { Address, useAccount, useNetwork, watchNetwork } from '@sushiswap/wagmi'
-import { useTokenWithCache } from '@sushiswap/wagmi/future'
+import { useTokenWithCache } from '@sushiswap/wagmi'
 import { useSignature } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP, IS_XSWAP_MAINTENANCE } from 'lib/constants'
 import { useCrossChainTrade } from 'lib/swap/useCrossChainTrade/useCrossChainTrade'

@@ -54,7 +54,7 @@ const hydrate = <T extends boolean>(
 }
 
 /**
- * @deprecated use @sushiswap/wagmi/future/hooks/useTokenWithCache
+ * @deprecated use @sushiswap/wagmi/useTokenWithCache
  */
 export const useToken = <T extends boolean = false>({
   chainId,

@@ -22,6 +22,7 @@ import {
 } from '@sushiswap/ui'
 import {
   useAccount,
+  useBalanceWeb3Refetch,
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
@@ -31,7 +32,6 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future'
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useRef } from 'react'

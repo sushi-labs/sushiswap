@@ -1,8 +1,8 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { FundSource } from '@sushiswap/hooks'
-import { _useBalance as useBalance, useAccount } from '@sushiswap/wagmi'
+import { useAccount } from '@sushiswap/wagmi'
+import { useBalanceWeb3 } from '@sushiswap/wagmi'
 import {
   useGraphPool,
   useTokenAmountDollarValues,
@@ -13,7 +13,7 @@ import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 
 interface PoolPositionContext {
-  balance: Record<FundSource, Amount<Type>> | undefined
+  balance: Amount<Type> | null | undefined
   value0: number
   value1: number
   underlying0: Amount<Type> | undefined
@@ -28,7 +28,7 @@ export const PoolPositionProvider: FC<{
   pool: Pool
   children: ReactNode
   watch?: boolean
-}> = ({ pool, children, watch = true }) => {
+}> = ({ pool, children }) => {
   const { address: account } = useAccount()
 
   const {
@@ -39,18 +39,17 @@ export const PoolPositionProvider: FC<{
     data: balance,
     isLoading,
     isError,
-  } = useBalance({
+  } = useBalanceWeb3({
     chainId: pool.chainId as ChainId,
     currency: liquidityToken,
     account,
-    watch,
   })
 
   const underlying = useUnderlyingTokenBalanceFromPool({
     reserve0,
     reserve1,
     totalSupply,
-    balance: balance?.[FundSource.WALLET],
+    balance,
   })
 
   const [underlying0, underlying1] = underlying

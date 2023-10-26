@@ -42,7 +42,7 @@ test.beforeEach(async ({ page }) => {
 // test.afterAll(async () => {})
 // test.afterEach(async ({ page }) => {})
 
-test('Wrap and unwrap', async ({ page }) => {
+test.only('Wrap and unwrap', async ({ page }) => {
   test.slow()
 
   await wrap(page, native, wnative, '10')
@@ -216,13 +216,13 @@ async function swap(
   await makeAnotherSwap.click()
 
   // Compare against cached balances to ensure there is at least a change...
-  const _swapFromBalanceAfter = await swapFromBalance.textContent()
+  const swapFromBalanceAfter = await swapFromBalance.textContent()
   await expect(swapFromBalance).not.toHaveText(swapFromBalanceBefore as string)
-  // expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
 
-  const _swapToBalanceAfter = await swapToBalance.textContent()
+  const swapToBalanceAfter = await swapToBalance.textContent()
   await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
-  // expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
 }
 
 async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {

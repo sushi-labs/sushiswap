@@ -1,4 +1,3 @@
-import { FundSource } from '@sushiswap/hooks'
 import {
   Message,
   TextField,
@@ -109,11 +108,9 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                   size="sm"
                   variant="link"
                   testId="stake-balance"
-                  onClick={() =>
-                    setValue(balance?.[FundSource.WALLET]?.toExact() || '')
-                  }
+                  onClick={() => setValue(balance?.toExact() || '')}
                 >
-                  Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                  Balance: {balance?.toSignificant(6)}
                 </Button>
               </div>
             </div>
@@ -123,11 +120,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 size="xs"
                 fullWidth
                 variant={value === '25' ? 'default' : 'secondary'}
-                onClick={() =>
-                  setValue(
-                    balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '',
-                  )
-                }
+                onClick={() => setValue(balance?.divide(4)?.toExact() || '')}
                 testId="stake-25"
               >
                 25%
@@ -136,11 +129,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 size="xs"
                 fullWidth
                 variant={value === '50' ? 'default' : 'secondary'}
-                onClick={() =>
-                  setValue(
-                    balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '',
-                  )
-                }
+                onClick={() => setValue(balance?.divide(2)?.toExact() || '')}
                 testId="stake-50"
               >
                 50%
@@ -150,12 +139,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 fullWidth
                 variant={value === '75' ? 'default' : 'secondary'}
                 onClick={() =>
-                  setValue(
-                    balance?.[FundSource.WALLET]
-                      ?.divide(4)
-                      .multiply(3)
-                      ?.toExact() || '',
-                  )
+                  setValue(balance?.divide(4).multiply(3)?.toExact() || '')
                 }
                 testId="stake-75"
               >
@@ -165,9 +149,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 size="xs"
                 fullWidth
                 variant={value === '100' ? 'default' : 'secondary'}
-                onClick={() =>
-                  setValue(balance?.[FundSource.WALLET]?.toExact() || '')
-                }
+                onClick={() => setValue(balance?.toExact() || '')}
                 testId="stake-max"
               >
                 MAX

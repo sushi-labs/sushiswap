@@ -1,4 +1,6 @@
 import {
+  Button,
+  Currency,
   DialogConfirm,
   DialogContent,
   DialogDescription,
@@ -7,11 +9,9 @@ import {
   DialogProvider,
   DialogReview,
   DialogTitle,
+  Dots,
+  List,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { List } from '@sushiswap/ui/components/list/List'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   FeeAmount,
@@ -20,18 +20,18 @@ import {
   isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
+  getV3NonFungiblePositionManagerConractConfig,
   useAccount,
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
+  useTransactionDeadline,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
 import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
-import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Bound } from 'lib/constants'
 import { useTokenAmountDollarValues } from 'lib/hooks'

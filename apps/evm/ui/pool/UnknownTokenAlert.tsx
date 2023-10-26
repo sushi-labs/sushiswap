@@ -3,7 +3,7 @@
 import { Pool } from '@sushiswap/client'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { Message } from '@sushiswap/ui'
-import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
+import { useTokenWithCache } from '@sushiswap/wagmi'
 import { FC, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'

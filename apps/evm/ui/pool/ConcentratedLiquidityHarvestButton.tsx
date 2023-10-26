@@ -2,7 +2,7 @@
 
 import { useAngleRewards } from '@sushiswap/react-query'
 import { Address } from '@sushiswap/wagmi'
-import { useHarvestAngleRewards } from '@sushiswap/wagmi/future/hooks'
+import { useHarvestAngleRewards } from '@sushiswap/wagmi'
 import { FC, ReactElement, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 

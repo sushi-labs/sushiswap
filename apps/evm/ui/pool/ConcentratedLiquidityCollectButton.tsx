@@ -7,6 +7,8 @@ import {
   isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
+  ConcentratedLiquidityPosition,
+  getV3NonFungiblePositionManagerConractConfig,
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
@@ -15,8 +17,6 @@ import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import { ConcentratedLiquidityPosition } from '@sushiswap/wagmi/future/hooks'
-import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { unwrapToken } from 'lib/functions'
 import { FC, ReactElement, useCallback, useMemo } from 'react'

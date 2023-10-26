@@ -6,7 +6,7 @@ import {
   isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
-import { useTokenWithCache } from '@sushiswap/wagmi/future/hooks'
+import { useTokenWithCache } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, {

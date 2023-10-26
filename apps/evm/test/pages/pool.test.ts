@@ -432,6 +432,7 @@ async function createOrAddTridentPool(
     await expect(approveBentoLocator).toBeVisible()
     await expect(approveBentoLocator).toBeEnabled()
     await approveBentoLocator.click()
+    console.log('approveBentoLocator clicked', approveBentoLocator)
   }
   const approveTokenId =
     args.type === 'CREATE'

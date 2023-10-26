@@ -17,7 +17,7 @@ import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
-import { useBalanceWeb3 } from '../../../future/hooks/balances'
+import { useBalanceWeb3 } from '../../../hooks/balances'
 import { TokenSelector } from '../../token-selector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'

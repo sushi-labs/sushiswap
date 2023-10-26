@@ -26,7 +26,7 @@ import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
-import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi/future/hooks'
+import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi'
 import { Bound } from 'lib/constants'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, {

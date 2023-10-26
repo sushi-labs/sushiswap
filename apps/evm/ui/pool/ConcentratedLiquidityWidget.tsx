@@ -5,9 +5,11 @@ import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import {
+  getV3NonFungiblePositionManagerConractConfig,
+  useConcentratedPositionOwner,
+} from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
-import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
-import { useConcentratedPositionOwner } from '@sushiswap/wagmi/future/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { Bound, Field } from 'lib/constants'
 import React, { FC, Fragment, useCallback, useMemo } from 'react'

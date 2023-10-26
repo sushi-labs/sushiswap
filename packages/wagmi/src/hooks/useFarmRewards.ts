@@ -4,6 +4,7 @@ import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { chainShortName } from 'sushi/chain'
 import { Token } from 'sushi/currency'
+import { PoolType } from './pools'
 
 export interface FarmMap<T> {
   chainId: number
@@ -45,9 +46,9 @@ export enum RewarderType {
   Secondary = 'Secondary',
 }
 
-export enum PoolType {
-  Legacy = 'Legacy',
-}
+// export enum PoolType {
+//   Legacy = 'Legacy',
+// }
 
 export const useFarmRewards = ({
   options,

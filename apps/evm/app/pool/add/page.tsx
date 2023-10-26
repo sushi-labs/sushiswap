@@ -1,12 +1,12 @@
 'use client'
 
 import { computePoolAddress } from '@sushiswap/v3-sdk'
-import { useAccount } from '@sushiswap/wagmi'
 import {
+  useAccount,
   useConcentratedLiquidityPool,
   useConcentratedPositionInfo,
-} from '@sushiswap/wagmi/future/hooks'
-import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
+} from '@sushiswap/wagmi'
+import { getV3FactoryContractConfig } from '@sushiswap/wagmi/hooks/contracts/useV3FactoryContract'
 import React, { FC, useMemo, useState } from 'react'
 import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'

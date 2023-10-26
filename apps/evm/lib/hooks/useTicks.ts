@@ -8,9 +8,11 @@ import {
   nearestUsableTick,
 } from '@sushiswap/v3-sdk'
 import { Address, useContractReads } from '@sushiswap/wagmi'
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
-import { getV3FactoryContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3FactoryContract'
-import { getV3TickLensContractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3TickLens'
+import {
+  getV3FactoryContractConfig,
+  getV3TickLensContractConfig,
+  useConcentratedLiquidityPool,
+} from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { Type } from 'sushi/currency'
 import { Writeable } from 'zod'

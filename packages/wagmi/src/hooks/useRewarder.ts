@@ -4,8 +4,6 @@ import { ChefType } from '@sushiswap/client'
 import { useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import { Address, useContractRead, useContractReads } from 'wagmi'
-
-import { RewarderType } from './useFarmRewards'
 import { getMasterChefContractConfig } from './useMasterChefContract'
 
 interface UseRewarderPayload {
@@ -24,6 +22,11 @@ interface UseRewarderData
 }
 
 type UseRewarder = (payload: UseRewarderPayload) => UseRewarderData
+
+export enum RewarderType {
+  Primary = 'Primary',
+  Secondary = 'Secondary',
+}
 
 export const useRewarder: UseRewarder = ({
   chainId,

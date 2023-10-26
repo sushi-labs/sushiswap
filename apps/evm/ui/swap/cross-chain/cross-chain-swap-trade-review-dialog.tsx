@@ -37,11 +37,11 @@ import {
   usePrepareContractWrite,
   useTransaction,
 } from '@sushiswap/wagmi'
+import { useBalanceWeb3Refetch } from '@sushiswap/wagmi'
 import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import { useBalanceWeb3Refetch } from '@sushiswap/wagmi/future/hooks'
 import {
   useApproved,
   useSignature,

@@ -1,5 +1,4 @@
 import { Pool } from '@sushiswap/client'
-import { FundSource } from '@sushiswap/hooks'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import Link from 'next/link'
@@ -24,8 +23,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
         <Button
           asChild
           disabled={Boolean(
-            balance?.[FundSource.WALLET]?.equalTo(ZERO) &&
-              stakedBalance?.equalTo(ZERO),
+            balance?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO),
           )}
           size="lg"
           variant="secondary"

@@ -9,7 +9,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
 import React from 'react'

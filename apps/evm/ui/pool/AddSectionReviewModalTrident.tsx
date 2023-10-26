@@ -105,7 +105,7 @@ export const AddSectionReviewModalTrident: FC<
 
   const totalSupply = useTotalSupply(liquidityToken)
   const tokens = useMemo(() => [token0, token1], [token0, token1])
-  const rebases = useBentoBoxTotals(chainId, tokens)
+  const { data: rebases } = useBentoBoxTotals({ chainId, currencies: tokens })
   const contract = useTridentRouterContract(chainId)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const [minAmount0, minAmount1] = useMemo(() => {
@@ -209,7 +209,7 @@ export const AddSectionReviewModalTrident: FC<
         groupTimestamp: ts,
       })
     },
-    [address, chain?.id, token0, token1],
+    [address, chain, token0, token1],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {

@@ -2,7 +2,6 @@
 
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Pool } from '@sushiswap/client'
-import { FundSource } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -48,12 +47,7 @@ import {
   useTotalSupply,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { useTransactionDeadline } from '@sushiswap/wagmi/future/hooks'
-import {
-  V3MigrateContractConfig,
-  useV3Migrate,
-} from '@sushiswap/wagmi/future/hooks/migrate/hooks/useV3Migrate'
-import { V3MigrateChainId } from '@sushiswap/wagmi/future/hooks/migrate/types'
+import { useTransactionDeadline } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
@@ -73,6 +67,11 @@ import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Fraction, Percent, ZERO } from 'sushi/math'
+import {
+  V3MigrateContractConfig,
+  useV3Migrate,
+} from '../../../../packages/wagmi/src/hooks/migrate/hooks/useV3Migrate'
+import { V3MigrateChainId } from '../../../../packages/wagmi/src/hooks/migrate/types'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
@@ -154,7 +153,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       token0 && pair?.[1] && totalSupply && balance
         ? Amount.fromRawAmount(
             token0?.wrapped,
-            (balance[FundSource.WALLET].quotient *
+            (balance.quotient *
               (token0.wrapped.equals(pair[1].token0)
                 ? pair[1].reserve0.quotient
                 : pair[1].reserve1.quotient)) /
@@ -169,7 +168,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       token1 && pair?.[1]?.reserve1 && totalSupply && balance
         ? Amount.fromRawAmount(
             token1?.wrapped,
-            (balance[FundSource.WALLET].quotient *
+            (balance.quotient *
               (token1.wrapped.equals(pair[1].token1)
                 ? pair[1].reserve1.quotient
                 : pair[1].reserve0.quotient)) /
@@ -380,7 +379,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
     account: address,
     args: {
       pair: pool.address as Address,
-      liquidityToMigrate: balance?.[FundSource.WALLET],
+      liquidityToMigrate: balance,
       percentageToMigrate: 100,
       token0: _token0?.wrapped,
       token1: _token1?.wrapped,
@@ -659,9 +658,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                   >
                     <Checker.Guard
                       size="default"
-                      guardWhen={
-                        !balance?.[FundSource.WALLET].greaterThan(ZERO)
-                      }
+                      guardWhen={!balance?.greaterThan(ZERO)}
                       guardText="Not enough balance"
                     >
                       <Checker.Guard
@@ -677,7 +674,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                           fullWidth
                           size="default"
                           id="approve-migrate"
-                          amount={balance?.[FundSource.WALLET] ?? undefined}
+                          amount={balance ?? undefined}
                           contract={
                             V3MigrateContractConfig(
                               pool.chainId as V3MigrateChainId,

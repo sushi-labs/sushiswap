@@ -16,7 +16,7 @@ import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import {
   useConcentratedLiquidityPool,
   useConcentratedLiquidityPoolReserves,
-} from '@sushiswap/wagmi/future/hooks'
+} from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from 'lib/hooks'
 import React, { FC, useMemo, useState } from 'react'
 import { ChainId } from 'sushi/chain'

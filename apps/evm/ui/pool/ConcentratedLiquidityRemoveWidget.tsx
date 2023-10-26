@@ -23,19 +23,17 @@ import {
   isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
+  ConcentratedLiquidityPosition,
+  getV3NonFungiblePositionManagerConractConfig,
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
+  useTransactionDeadline,
 } from '@sushiswap/wagmi'
 import {
   SendTransactionResult,
   waitForTransaction,
 } from '@sushiswap/wagmi/actions'
-import {
-  ConcentratedLiquidityPosition,
-  useTransactionDeadline,
-} from '@sushiswap/wagmi/future/hooks'
-import { getV3NonFungiblePositionManagerConractConfig } from '@sushiswap/wagmi/future/hooks/contracts/useV3NonFungiblePositionManager'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { unwrapToken } from 'lib/functions'

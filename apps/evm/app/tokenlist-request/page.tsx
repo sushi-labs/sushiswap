@@ -21,7 +21,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { useTokenWithCache } from '@sushiswap/wagmi/future'
+import { useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useEffect } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'

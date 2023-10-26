@@ -5,6 +5,7 @@ import {
   computeTridentStablePoolAddress,
 } from '@sushiswap/trident-sdk'
 import {
+  Button,
   DialogConfirm,
   DialogContent,
   DialogDescription,
@@ -14,9 +15,8 @@ import {
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  Dots,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   PoolFinderType,
@@ -25,9 +25,9 @@ import {
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
-  useStablePoolFactoryContract,
   useTridentConstantPoolFactoryContract,
   useTridentRouterContract,
+  useTridentStablePoolFactoryContract,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
 import {
@@ -83,12 +83,12 @@ export const CreateSectionReviewModalTrident: FC<
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory =
     useTridentConstantPoolFactoryContract(chainId)
-  const stablePoolFactory = useStablePoolFactoryContract(chainId)
+  const stablePoolFactory = useTridentStablePoolFactoryContract(chainId)
 
-  const totals = useBentoBoxTotals(
+  const { data: totals } = useBentoBoxTotals({
     chainId,
-    useMemo(() => [token0, token1], [token0, token1]),
-  )
+    currencies: useMemo(() => [token0, token1], [token0, token1]),
+  })
 
   const pool = useMemo(() => {
     if (!token0 || !token1 || !fee) return

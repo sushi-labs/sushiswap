@@ -23,7 +23,7 @@ import React, { FC, useState } from 'react'
 import { Amount, Type } from 'sushi/currency'
 import { Address } from 'wagmi'
 
-import { ApprovalState, useTokenApproval } from '../../future/hooks'
+import { ApprovalState, useTokenApproval } from '../../hooks'
 
 interface ApproveERC20Props extends ButtonProps {
   id: string
@@ -66,12 +66,12 @@ const ApproveERC20: FC<ApproveERC20Props> = ({
       <HoverCard openDelay={0} closeDelay={0}>
         <Button
           disabled={state !== ApprovalState.NOT_APPROVED || !write}
-          loading={loading}
-          testId={id}
           className={classNames(className, 'group relative')}
+          loading={loading}
           onClick={() => write?.()}
           fullWidth={fullWidth}
           size={size}
+          testId={id}
           {...props}
         >
           Approve {amount?.currency.symbol} {max ? 'Permanently' : ''}

@@ -1,11 +1,12 @@
 import { RouteStatus } from '@sushiswap/tines'
 import { isTridentChainId } from '@sushiswap/trident-sdk'
 import { SUSHISWAP_V2_FACTORY_ADDRESS } from '@sushiswap/v2-sdk'
-import { UsePoolsReturn } from '@sushiswap/wagmi/future/hooks/pools'
 import { ChainId } from 'sushi/chain'
 import { Amount, Currency, Type, WNATIVE } from 'sushi/currency'
 import { TradeType, Version as TradeVersion } from 'sushi/dex'
+import { Address } from 'viem'
 import { FetchFeeDataResult } from 'wagmi/actions'
+import { UsePoolsReturn } from '../../../../../packages/wagmi/src/hooks/pools'
 import { findMultiRouteExactIn } from './findMultiRouteExactIn'
 import { findSingleRouteExactIn } from './findSingleRouteExactIn'
 import { Trade } from './trade'
@@ -19,7 +20,7 @@ export interface GetTradeParams {
   enabled?: boolean
   pools: UsePoolsReturn | undefined
   feeData: FetchFeeDataResult | undefined
-  rebases: { base: bigint; elastic: bigint }[] | null | undefined
+  rebases: Record<Address, { base: bigint; elastic: bigint }> | null | undefined
 }
 
 export const getClientTrade = async ({
@@ -38,7 +39,7 @@ export const getClientTrade = async ({
       : [toToken, fromToken]
 
   const [currencyInRebase, currencyOutRebase] = totals
-    ? totals
+    ? Object.values(totals)
     : [undefined, undefined]
 
   if (

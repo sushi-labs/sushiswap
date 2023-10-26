@@ -15,7 +15,8 @@ import React, { FC } from 'react'
 import { BentoBoxChainId } from 'sushi/config'
 import { Address } from 'wagmi'
 
-import { ApprovalState, useBentoboxApproval } from '../../future/hooks'
+import { ApprovalState } from '../../hooks'
+import { useBentoBoxApproval } from '../../hooks/bentobox'
 
 interface ApproveBentoboxProps extends ButtonProps {
   chainId: BentoBoxChainId
@@ -36,12 +37,14 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const [state, execute] = useBentoboxApproval({
+  const [state, execute] = useBentoBoxApproval({
     enabled,
     chainId,
     masterContract,
     tag,
   })
+
+  console.log('approve bentobox', state, execute)
 
   if (state === ApprovalState.APPROVED || !enabled) {
     return <>{children}</>
@@ -50,6 +53,7 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <Button
+        disabled={!execute}
         loading={
           state === ApprovalState.LOADING ||
           state === ApprovalState.PENDING ||
@@ -61,7 +65,7 @@ const ApproveBentobox: FC<ApproveBentoboxProps> = ({
         testId={id}
         {...props}
       >
-        Approve Bentobox
+        Approve BentoBox
         <HoverCardTrigger>
           <InformationCircleIcon width={16} height={16} />
         </HoverCardTrigger>

@@ -6,7 +6,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@sushiswap/ui'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi/future'
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { Row } from '@tanstack/react-table'
 import { FC } from 'react'
 

@@ -8,7 +8,7 @@ import { ZERO } from 'sushi/math'
 import { zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useBalancesWeb3 } from '../../future/hooks'
+import { useBalancesWeb3 } from '../../hooks'
 
 interface AmountsProps extends ButtonProps {
   chainId: ChainId | undefined

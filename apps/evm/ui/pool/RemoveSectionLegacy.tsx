@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { FundSource, useDebounce, useIsMounted } from '@sushiswap/hooks'
+import { useDebounce, useIsMounted } from '@sushiswap/hooks'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -84,7 +84,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       reserve0,
       reserve1,
       totalSupply,
-      balance: balance?.[FundSource.WALLET],
+      balance: balance,
     })
 
     const [underlying0, underlying1] = underlying
@@ -136,7 +136,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const debouncedMinAmount1 = useDebounce(minAmount1, 500)
 
     const amountToRemove = useMemo(
-      () => balance?.[FundSource.WALLET].multiply(percentToRemove),
+      () => balance?.multiply(percentToRemove),
       [balance, percentToRemove],
     )
 
@@ -177,7 +177,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           !underlying1 ||
           !address ||
           !pool ||
-          !balance?.[FundSource.WALLET] ||
+          !balance ||
           !debouncedMinAmount0 ||
           !debouncedMinAmount1 ||
           !deadline
@@ -205,8 +205,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                 token1IsNative
                   ? (pool.token0.wrapped.address as Address)
                   : (pool.token1.wrapped.address as Address),
-                balance[FundSource.WALLET].multiply(percentToRemoveDebounced)
-                  .quotient,
+                balance.multiply(percentToRemoveDebounced).quotient,
                 token1IsNative
                   ? debouncedMinAmount0.quotient
                   : debouncedMinAmount1.quotient,
@@ -224,8 +223,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
             args: [
               pool.token0.wrapped.address as Address,
               pool.token1.wrapped.address as Address,
-              balance[FundSource.WALLET].multiply(percentToRemoveDebounced)
-                .quotient,
+              balance.multiply(percentToRemoveDebounced).quotient,
               debouncedMinAmount0.quotient,
               debouncedMinAmount1.quotient,
               address,

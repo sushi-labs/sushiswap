@@ -4,8 +4,12 @@ import {
   StargateChainId,
   isStargateBridgeToken,
 } from '@sushiswap/stargate'
-import { useFeeData, useSushiXSwapContract } from '@sushiswap/wagmi'
-import { useBentoboxTotals, usePools } from '@sushiswap/wagmi/future/hooks'
+import {
+  useBentoBoxTotals,
+  useFeeData,
+  usePools,
+  useSushiXSwapContract,
+} from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import {
@@ -100,12 +104,12 @@ export const useCrossChainTradeQuery = (
 
   const { data: srcFeeData } = useFeeData({ chainId: network0, enabled })
   const { data: dstFeeData } = useFeeData({ chainId: network1, enabled })
-  const { data: srcRebases } = useBentoboxTotals({
+  const { data: srcRebases } = useBentoBoxTotals({
     chainId: network0,
     currencies: [token0, srcBridgeToken],
     enabled,
   })
-  const { data: dstRebases } = useBentoboxTotals({
+  const { data: dstRebases } = useBentoBoxTotals({
     chainId: network1,
     currencies: [dstBridgeToken, token1],
     enabled,
@@ -257,11 +261,12 @@ export const useCrossChainTradeQuery = (
       }
 
       // console.log({ recipient, amount, network0, network1, dstMinimumAmountOut, srcRebases, dstRebases, contract })
-      const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases || [
-        undefined,
-        undefined,
-      ]
-      const [, dstOutputCurrencyRebase] = dstRebases || [undefined, undefined]
+      const [srcInputCurrencyRebase, srcOutputCurrencyRebase] = srcRebases
+        ? Object.values(srcRebases)
+        : [undefined, undefined]
+      const [, dstOutputCurrencyRebase] = dstRebases
+        ? Object.values(dstRebases)
+        : [undefined, undefined]
 
       if (
         !recipient ||

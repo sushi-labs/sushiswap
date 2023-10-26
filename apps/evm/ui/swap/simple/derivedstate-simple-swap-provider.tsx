@@ -5,11 +5,12 @@ import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
   Address,
   useAccount,
+  useClientTrade,
   useFeeData,
   useNetwork,
+  useTokenWithCache,
   watchNetwork,
 } from '@sushiswap/wagmi'
-import { useClientTrade, useTokenWithCache } from '@sushiswap/wagmi/future'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -39,8 +40,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-    ? 'NATIVE'
-    : token.wrapped.address
+      ? 'NATIVE'
+      : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -90,7 +91,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user
     const defaultedParams = useMemo(() => {
-      const params = new URLSearchParams(Array.from(searchParams.entries()))
+      const params = new URLSearchParams(searchParams)
       if (!params.has('chainId'))
         params.set(
           'chainId',
@@ -99,10 +100,14 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
             : ChainId.ETHEREUM
           ).toString(),
         )
-      if (!params.has('token0')) params.set('token0', 'NATIVE')
-      if (!params.has('token1'))
+      if (!params.has('token0')) {
+        params.set('token0', 'NATIVE')
+      }
+      if (!params.has('token1')) {
         params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
+      }
       // if (!params.has('recipient')) params.set('recipient', address ?? '')
+      console.log('defaultedParams in memo', Array.from(params.entries()))
       return params
     }, [chain, searchParams])
 
@@ -126,6 +131,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     // Update the URL with a new chainId
     const setChainId = useCallback<{ (chainId: number): void }>(
       (chainId) => {
+        console.log("setChainId", chainId)
         push(
           `${pathname}?${createQueryString([
             { name: 'swapAmount', value: null },
@@ -141,23 +147,25 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
 
     // Switch token0 and token1
     const switchTokens = useCallback(() => {
-      const params = new URLSearchParams(defaultedParams)
-      const token0 = params.get('token0')
-      const token1 = params.get('token1')
-
-      // Can safely cast as defaultedParams are always defined
-      params.set('token0', token1 as string)
-      params.set('token1', token0 as string)
-      if (params.has('swapAmount')) {
-        params.delete('swapAmount')
-      }
-
-      push(`${pathname}?${params.toString()}`, { scroll: false })
-    }, [pathname, push, defaultedParams])
+      console.log('switchTokens', {
+        token0: defaultedParams.get('token1'),
+        token1: defaultedParams.get('token0'),
+      })
+      push(
+        `${pathname}?${createQueryString([
+          { name: 'swapAmount', value: null },
+          { name: 'token0', value: defaultedParams.get('token1') as string },
+          { name: 'token1', value: defaultedParams.get('token0') as string },
+        ])}`,
+        { scroll: false },
+      )
+    }, [createQueryString, defaultedParams, pathname, push])
 
     // Update the URL with a new token0
-    const setToken0 = useCallback<{ (token0: string | Type): void }>(
+    const setToken0 = useCallback<{ (_token0: string | Type): void }>(
       (_token0) => {
+        console.log('setToken0', _token0)
+
         // If entity is provided, parse it to a string
         const token0 = getTokenAsString(_token0)
 
@@ -165,6 +173,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         if (
           defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
         ) {
+          console.log('setToken0 switch tokens')
           switchTokens()
         }
 
@@ -182,8 +191,10 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     )
 
     // Update the URL with a new token1
-    const setToken1 = useCallback<{ (token1: string | Type): void }>(
+    const setToken1 = useCallback<{ (_token1: string | Type): void }>(
       (_token1) => {
+        console.log('setToken1', _token1)
+
         // If entity is provided, parse it to a string
         const token1 = getTokenAsString(_token1)
 
@@ -191,6 +202,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         if (
           defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()
         ) {
+          console.log('setToken1 switch tokens')
           switchTokens()
         }
 
@@ -209,7 +221,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
 
     // Update the URL with both tokens
     const setTokens = useCallback<{
-      (token0: string | Type, token1: string | Type): void
+      (_token0: string | Type, _token1: string | Type): void
     }>(
       (_token0, _token1) => {
         // If entity is provided, parse it to a string
@@ -228,11 +240,11 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     )
 
     // Update the URL with a new swapAmount
-    const setSwapAmount = useCallback<{ (swapAmount: string): void }>(
-      (swapAmount) => {
+    const setSwapAmount = useCallback<{ (value: string): void }>(
+      (value) => {
         push(
           `${pathname}?${createQueryString([
-            { name: 'swapAmount', value: swapAmount },
+            { name: 'swapAmount', value: value },
           ])}`,
           { scroll: false },
         )
@@ -246,13 +258,13 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
-    useEffect(() => {
-      const unwatch = watchNetwork(({ chain }) => {
-        if (!chain || chain.id === chainId) return
-        push(pathname, { scroll: false })
-      })
-      return () => unwatch()
-    }, [chainId, pathname, push])
+    // useEffect(() => {
+    //   const unwatch = watchNetwork(({ chain }) => {
+    //     if (!chain || chain.id === chainId) return
+    //     push(pathname, { scroll: false })
+    //   })
+    //   return () => unwatch()
+    // }, [chainId, pathname, push])
 
     // Derive token0
     const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(
@@ -272,6 +284,12 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         enabled: isAddress(defaultedParams.get('token1') as string),
         keepPreviousData: false,
       },
+    )
+
+    console.log(
+      'defaultedParams',
+      Array.from(defaultedParams.entries()),
+      Array.from(searchParams.entries()),
     )
 
     return (

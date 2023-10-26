@@ -36,13 +36,11 @@ import {
   Address,
   readContract,
   useAccount,
+  useConcentratedLiquidityPool,
   useSignMessage,
+  useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { useWaitForTransaction } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
-import { DistributionCreator } from '@sushiswap/wagmi/future/hooks/rewards/abis/DistributionCreator'
-import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi/future/hooks/rewards/hooks/useIncentivizePoolWithRewards'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
@@ -52,6 +50,8 @@ import { format } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
+import { DistributionCreator } from '../../../../../packages/wagmi/src/hooks/rewards/abis/DistributionCreator'
+import { useIncentivizePoolWithRewards } from '../../../../../packages/wagmi/src/hooks/rewards/hooks/useIncentivizePoolWithRewards'
 
 import { ANGLE_ENABLED_NETWORKS } from '../../../config'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'

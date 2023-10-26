@@ -6,7 +6,7 @@ import {
   TICK_SPACINGS,
   tickToPrice,
 } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
+import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { Type } from 'sushi/currency'
 

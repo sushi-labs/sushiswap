@@ -1,25 +1,25 @@
-"use client";
+'use client'
 
-import React, { FC, ReactNode, useEffect } from "react";
+import React, { FC, ReactNode, useEffect } from 'react'
 
-import { useApproved } from "./Provider";
+import { useApproved } from './Provider'
 
 interface SuccessProps {
-  children: ReactNode;
-  tag: string;
+  children: ReactNode
+  tag: string
 }
 // If this gets mounted it sets checker approved to true
 const Success: FC<SuccessProps> = ({ children, tag }) => {
-  const { setApproved } = useApproved(tag);
+  const { setApproved } = useApproved(tag)
 
   useEffect(() => {
-    setApproved(true);
+    setApproved(true)
     return () => {
-      setApproved(false);
-    };
-  }, [setApproved]);
+      setApproved(false)
+    }
+  }, [setApproved])
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
-export { Success, type SuccessProps };
+export { Success, type SuccessProps }

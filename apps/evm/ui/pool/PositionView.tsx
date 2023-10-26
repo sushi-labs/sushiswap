@@ -33,7 +33,7 @@ import {
   useConcentratedPositionInfo,
   useConcentratedPositionOwner,
   useTokenWithCache,
-} from '@sushiswap/wagmi/future/hooks'
+} from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import useIsTickAtLimit from 'lib/hooks/useIsTickAtLimit'
 import React, { FC, Fragment, useMemo, useState } from 'react'

@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool, Protocol } from '@sushiswap/client'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -74,11 +74,14 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
       [percentage],
     )
     const tokens = useMemo(() => [token0, token1], [token0, token1])
-    const rebases = useBentoBoxTotals(_pool.chainId as BentoBoxChainId, tokens)
+    const { data: rebases } = useBentoBoxTotals({
+      chainId: _pool.chainId as BentoBoxChainId,
+      currencies: tokens,
+    })
     const { balance } = usePoolPosition()
 
     const slpAmountToRemove = useMemo(() => {
-      return balance?.[FundSource.WALLET].multiply(percentToRemove)
+      return balance?.multiply(percentToRemove)
     }, [balance, percentToRemove])
 
     // TODO: Standardize fee format
@@ -120,7 +123,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
       reserve0: pool?.reserve0,
       reserve1: pool?.reserve1,
       totalSupply,
-      balance: balance?.[FundSource.WALLET],
+      balance: balance,
     })
 
     const [underlying0, underlying1] = underlying
@@ -188,7 +191,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
           groupTimestamp: ts,
         })
       },
-      [address, chain?.id, token0.symbol, token1.symbol],
+      [address, chain, token0.symbol, token1.symbol],
     )
 
     const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {

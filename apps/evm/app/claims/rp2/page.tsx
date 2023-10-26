@@ -5,12 +5,12 @@ import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { List } from '@sushiswap/ui/components/list/List'
-import { useAccount } from '@sushiswap/wagmi'
-import { ConnectButton } from '@sushiswap/wagmi/components'
 import {
+  useAccount,
   useRP2ExploitCheck,
   useRP2ExploitClaimFinder,
-} from '@sushiswap/wagmi/future/hooks'
+} from '@sushiswap/wagmi'
+import { ConnectButton } from '@sushiswap/wagmi/components'
 import React, { Fragment } from 'react'
 
 import { ClaimItem } from '../components/ClaimItem'

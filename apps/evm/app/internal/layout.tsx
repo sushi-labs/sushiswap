@@ -31,7 +31,7 @@ export default function InternalLayout({
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Bentobox</NavigationMenuTrigger>
+              <NavigationMenuTrigger>BentoBox</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="w-[400px] gap-3 p-4">
                   <NavigationListItem

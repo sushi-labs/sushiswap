@@ -12,7 +12,7 @@ import {
   priceToClosestTick,
   tickToPrice,
 } from '@sushiswap/v3-sdk'
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi/future/hooks'
+import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import { Bound, Field } from 'lib/constants'
 import { getTickToPrice, tryParseTick } from 'lib/functions'
 import {
