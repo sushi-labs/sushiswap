@@ -23,8 +23,6 @@
     "@martianwallet/aptos-wallet-adapter": "^0.0.4",
     "@pontem/wallet-adapter-plugin": "^0.2.0",
     "@rise-wallet/wallet-adapter": "^0.1.2",
-    "@sushiswap/amm": "workspace:*",
-    "@sushiswap/format": "workspace:0.1.0",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
@@ -48,9 +46,7 @@
     "swr": "^2.2.0"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "18.11.18",
     "@types/react": "18.2.6",
