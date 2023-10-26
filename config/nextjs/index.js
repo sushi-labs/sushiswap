@@ -6,6 +6,7 @@ const defaultNextConfig = {
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
+    // webpackBuildWorker: true,
     esmExternals: 'loose',
     // Prepare for Next.js 13.5.4+
     // optimizePackageImports: [

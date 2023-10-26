@@ -110,8 +110,8 @@ const config: PlaywrightTestConfig = {
         // '--silent',
         // '--block-time 15',
       ].join(' '),
-      port: Number(process.env.ANVIL_PORT || 8545),
-      // url: `http://localhost:${process.env.ANVIL_PORT || 8545}`,
+      // port: Number(process.env.ANVIL_PORT || 8545),
+      url: `http://127.0.0.1:${process.env.ANVIL_PORT || 8545}`,
       // timeout: 120_000,
       // reuseExistingServer: !process.env.CI,
       env: {
@@ -119,6 +119,8 @@ const config: PlaywrightTestConfig = {
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
         ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
+      stderr: 'pipe',
+      stdout: 'pipe',
     },
     {
       command: 'npm run start -- --experimental-test-proxy',
@@ -130,6 +132,8 @@ const config: PlaywrightTestConfig = {
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
         NEXT_PUBLIC_APP_ENV: 'test',
       },
+      stderr: 'pipe',
+      stdout: 'pipe',
     },
   ],
 }
