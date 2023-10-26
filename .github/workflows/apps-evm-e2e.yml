@@ -25,7 +25,7 @@ env:
   CI: true
   # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  # NODE_OPTIONS: --max-old-space-size=8192
+  NODE_OPTIONS: --max-old-space-size=8192
   NEXT_TELEMETRY_DISABLED: 1
   EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
 concurrency:
