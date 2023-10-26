@@ -195,9 +195,7 @@ const _Add: FC<AddProps> = ({
     if (pool) {
       onChangeToken0TypedAmount(input0)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onChangeToken0TypedAmount])
+  }, [pool, onChangeToken0TypedAmount, input0])
 
   const networks = useMemo(
     () =>

@@ -16,7 +16,7 @@ interface PoolPositionStakedDesktopProps {
 export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
   pool,
 }) => {
-  const { value1, value0, underlying1, underlying0, isLoading, isError } =
+  const { value1, value0, underlying1, underlying0, isLoading } =
     usePoolPositionStaked()
 
   if (!pool.incentives) return <></>

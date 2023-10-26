@@ -277,9 +277,7 @@ const _Add: FC<AddProps> = ({
     if (pool) {
       onChangeToken0TypedAmount(input0)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onChangeToken0TypedAmount])
+  }, [pool, onChangeToken0TypedAmount, input0])
 
   return (
     <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">

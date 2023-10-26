@@ -30,11 +30,11 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
         openGraph={{
           ...(isMediaVideo(article.cover.data?.attributes?.provider_metadata)
             ? {
-                videos: [{ url: cover }],
-              }
+              videos: [{ url: cover }],
+            }
             : {
-                images: [{ url: cover, alt: coverAlt || '' }],
-              }),
+              images: [{ url: cover, alt: coverAlt || '' }],
+            }),
           article: {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,

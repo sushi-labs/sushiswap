@@ -61,7 +61,7 @@ export const Header: FC = () => {
     PRODUCTS_ORDER.indexOf(
       a?.attributes?.slug as typeof PRODUCTS_ORDER[number],
     ) >
-    PRODUCTS_ORDER.indexOf(b?.attributes?.slug as typeof PRODUCTS_ORDER[number])
+      PRODUCTS_ORDER.indexOf(b?.attributes?.slug as typeof PRODUCTS_ORDER[number])
       ? 1
       : -1,
   )
@@ -122,7 +122,7 @@ export const Header: FC = () => {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            {navData.map(({ title, href, links, isExternal: _isExternal }) => {
+            {navData.map(({ title, href, links }) => {
               if (href && !links) {
                 return (
                   <NavigationMenuItem key={href}>
