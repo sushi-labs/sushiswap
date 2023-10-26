@@ -1,8 +1,17 @@
 'use client'
 
-import {watchAccount, watchNetwork} from '@wagmi/core'
-import React, {createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState,} from 'react'
-import {Signature} from 'viem'
+import { watchAccount, watchNetwork } from '@wagmi/core'
+import React, {
+  FC,
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { Signature } from 'viem'
 
 type CheckerContext = {
   setApproved: (tag: string, approved: boolean) => void

@@ -1,7 +1,7 @@
 import { readContract } from '@wagmi/core'
 import { chainsL2 } from 'sushi/chain'
 
-import { getMulticall3ContractConfig } from '../../useMulticall3Contract'
+import { getMulticall3ContractConfig } from '../../contracts/useMulticall3Contract'
 
 const L2_DEADLINE_FROM_NOW = 60n * 5n
 const TTL = 30n

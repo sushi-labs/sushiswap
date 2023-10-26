@@ -1,8 +1,8 @@
 'use client'
 
-import React, {FC, ReactNode, useEffect} from 'react'
+import React, { FC, ReactNode, useEffect } from 'react'
 
-import {useApprovedActions} from './Provider'
+import { useApprovedActions } from './Provider'
 
 interface SuccessProps {
   children: ReactNode

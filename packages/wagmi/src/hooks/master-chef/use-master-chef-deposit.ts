@@ -13,8 +13,8 @@ import {
 } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
-import { useMasterChefContract } from '../useMasterChefContract'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
+import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefDepositParams {
   chainId: number

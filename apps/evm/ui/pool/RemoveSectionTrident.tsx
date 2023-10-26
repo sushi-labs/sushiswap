@@ -1,54 +1,57 @@
 'use client'
 
-import {Pool, Protocol} from '@sushiswap/client'
-import {useIsMounted} from '@sushiswap/hooks'
-import {Button} from '@sushiswap/ui/components/button'
-import {Dots} from '@sushiswap/ui/components/dots'
-import {createToast} from '@sushiswap/ui/components/toast'
+import { Pool, Protocol } from '@sushiswap/client'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Button } from '@sushiswap/ui/components/button'
+import { Dots } from '@sushiswap/ui/components/dots'
+import { createToast } from '@sushiswap/ui/components/toast'
 import {
-    Address,
-    getTridentRouterContractConfig,
-    TridentConstantPoolState,
-    TridentStablePoolState,
-    useAccount,
-    useBentoBoxTotals,
-    useNetwork,
-    usePrepareSendTransaction,
-    useSendTransaction,
-    useTotalSupply,
-    useTridentConstantPool,
-    useTridentRouterContract,
-    useTridentStablePool,
+  Address,
+  getTridentRouterContractConfig,
+  TridentConstantPoolState,
+  TridentStablePoolState,
+  useAccount,
+  useBentoBoxTotals,
+  useNetwork,
+  usePrepareSendTransaction,
+  useSendTransaction,
+  useTotalSupply,
+  useTridentConstantPool,
+  useTridentRouterContract,
+  useTridentStablePool,
 } from '@sushiswap/wagmi'
-import {SendTransactionResult, waitForTransaction,} from '@sushiswap/wagmi/actions'
-import {UsePrepareSendTransactionConfig} from '@sushiswap/wagmi/hooks/useSendTransaction'
-import {Checker} from '@sushiswap/wagmi/systems'
 import {
-    useApproved,
-    useApprovedActions,
-    useSignature,
-    withCheckerRoot,
+  SendTransactionResult,
+  waitForTransaction,
+} from '@sushiswap/wagmi/actions'
+import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { Checker } from '@sushiswap/wagmi/systems'
+import {
+  useApproved,
+  useApprovedActions,
+  useSignature,
+  withCheckerRoot,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import {
-    approveMasterContractAction,
-    batchAction,
-    burnLiquidityAction,
-    LiquidityOutput,
-    sweepAction,
-    unwrapWETHAction,
+  approveMasterContractAction,
+  batchAction,
+  burnLiquidityAction,
+  LiquidityOutput,
+  sweepAction,
+  unwrapWETHAction,
 } from 'lib/actions'
-import {APPROVE_TAG_REMOVE_TRIDENT} from 'lib/constants'
-import {useTokensFromPool, useUnderlyingTokenBalanceFromPool} from 'lib/hooks'
-import {useSlippageTolerance} from 'lib/hooks/useSlippageTolerance'
-import {FC, useCallback, useMemo, useState} from 'react'
-import {slippageAmount} from 'sushi/calculate'
-import {ChainId} from 'sushi/chain'
-import {BentoBoxChainId} from 'sushi/config'
-import {Amount, Native} from 'sushi/currency'
-import {Percent} from 'sushi/math'
+import { APPROVE_TAG_REMOVE_TRIDENT } from 'lib/constants'
+import { useTokensFromPool, useUnderlyingTokenBalanceFromPool } from 'lib/hooks'
+import { useSlippageTolerance } from 'lib/hooks/useSlippageTolerance'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { slippageAmount } from 'sushi/calculate'
+import { ChainId } from 'sushi/chain'
+import { BentoBoxChainId } from 'sushi/config'
+import { Amount, Native } from 'sushi/currency'
+import { Percent } from 'sushi/math'
 
-import {usePoolPosition} from './PoolPositionProvider'
-import {RemoveSectionWidget} from './RemoveSectionWidget'
+import { usePoolPosition } from './PoolPositionProvider'
+import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface RemoveSectionTridentProps {
   pool: Pool

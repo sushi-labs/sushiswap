@@ -1,17 +1,30 @@
 'use client'
 
-import {createErrorToast, createFailedToast, createToast,} from '@sushiswap/ui/components/toast'
-import {useQuery} from '@tanstack/react-query'
-import {readContract} from '@wagmi/core'
-import {useCallback, useMemo, useState} from 'react'
-import {BENTOBOX_ADDRESS, BentoBoxChainId} from 'sushi/config'
-import {hexToSignature, UserRejectedRequestError} from 'viem'
-import {Address, useAccount, useContractWrite, usePrepareContractWrite, useSignTypedData,} from 'wagmi'
-import {SendTransactionResult, waitForTransaction} from 'wagmi/actions'
+import {
+  createErrorToast,
+  createFailedToast,
+  createToast,
+} from '@sushiswap/ui/components/toast'
+import { useQuery } from '@tanstack/react-query'
+import { readContract } from '@wagmi/core'
+import { useCallback, useMemo, useState } from 'react'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
+import { UserRejectedRequestError, hexToSignature } from 'viem'
+import {
+  Address,
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+  useSignTypedData,
+} from 'wagmi'
+import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
 
-import {getBentoBoxContractConfig} from '../..'
-import {useApprovedActions, useSignature,} from '../../../systems/Checker/Provider'
-import {ApprovalState} from '../../approvals'
+import { getBentoBoxContractConfig } from '../..'
+import {
+  useApprovedActions,
+  useSignature,
+} from '../../../systems/Checker/Provider'
+import { ApprovalState } from '../../approvals'
 
 interface UseBentoboxApprovalParams {
   enabled?: boolean

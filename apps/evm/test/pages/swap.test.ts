@@ -42,7 +42,7 @@ test.beforeEach(async ({ page }) => {
 // test.afterAll(async () => {})
 // test.afterEach(async ({ page }) => {})
 
-test.only('Wrap and unwrap', async ({ page }) => {
+test('Wrap and unwrap', async ({ page }) => {
   test.slow()
 
   await wrap(page, native, wnative, '10')

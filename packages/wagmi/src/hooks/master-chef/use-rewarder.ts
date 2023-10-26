@@ -4,7 +4,7 @@ import { ChefType } from '@sushiswap/client'
 import { useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import { Address, useContractRead, useContractReads } from 'wagmi'
-import { getMasterChefContractConfig } from './useMasterChefContract'
+import { getMasterChefContractConfig } from './use-master-chef-contract'
 
 interface UseRewarderPayload {
   account: string | undefined
