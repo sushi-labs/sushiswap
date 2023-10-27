@@ -4,19 +4,24 @@
     "build": {
       "inputs": [
         "public",
-        "src/**", 
-        "package.json", 
-        "next.config.js", 
+        "src/**",
+        "package.json",
+        "next.config.js",
         "postcss.config.js",
         "sentry.client.config.ts",
         "sentry.edge.config.ts",
         "sentry.server.config.ts",
-        "tailwind.config.js", 
+        "tailwind.config.js",
         "tsconfig.json"
       ],
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
-      "dotEnv": [".env.production.local", ".env.local", ".env.production", ".env"]
+      "dotEnv": [
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
+      ]
     },
 
     "check": {
