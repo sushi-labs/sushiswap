@@ -16,8 +16,8 @@ on:
 env:
   CI: true
   NODE_OPTIONS: --max-old-space-size=8192
-  # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   TURBO_FORCE: false
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,6 +39,7 @@ jobs:
           fetch-depth: 2
           submodules: true
 
+      # Has to be before setup node for caching to work
       - uses: pnpm/action-setup@v2
         with:
           version: ${{ matrix.pnpm-version }}
@@ -53,7 +54,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile --prefer-offline
         
       - name: Test
         run: pnpm exec turbo run test --filter evm
