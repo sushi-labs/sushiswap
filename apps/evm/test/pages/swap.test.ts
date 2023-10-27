@@ -23,7 +23,7 @@ const wnative = native.wrapped
 const usdc = USDC[chainId]
 const usdt = USDT[chainId]
 const _dai = DAI[chainId]
-const sushi = SUSHI[chainId]
+const _sushi = SUSHI[chainId]
 const wbtc = WBTC[chainId]
 
 test.beforeAll(async () => {

@@ -62,7 +62,7 @@ interface V3PoolArgs {
 }
 
 if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
-  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
+  new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
 const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID)

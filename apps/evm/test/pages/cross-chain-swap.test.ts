@@ -18,6 +18,8 @@ if (typeof process.env.NEXT_PUBLIC_DST_CHAIN_ID !== 'string') {
 const srcChainId = parseInt(
   process.env.NEXT_PUBLIC_CHAIN_ID,
 ) as SupportedChainId
+
+// TODO: Change to dstChainIds based on paths
 const dstChainId = parseInt(
   process.env.NEXT_PUBLIC_DST_CHAIN_ID,
 ) as SupportedChainId

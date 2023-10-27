@@ -34,6 +34,10 @@
       "types": "./dist/config/index.d.ts",
       "default": "./dist/config/index.js"
     },
+    "./contract": {
+      "types": "./dist/contract/index.d.ts",
+      "default": "./dist/contract/index.js"
+    },
     "./convert": {
       "types": "./dist/convert/index.d.ts",
       "default": "./dist/convert/index.js"
@@ -96,6 +100,9 @@
       ],
       "config": [
         "./dist/config/index.d.ts"
+      ],
+      "contract": [
+        "./dist/contract/index.d.ts"
       ],
       "convert": [
         "./dist/convert/index.d.ts"
