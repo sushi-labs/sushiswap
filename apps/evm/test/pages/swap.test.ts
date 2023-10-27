@@ -52,9 +52,9 @@ test('Wrap and unwrap', async ({ page }) => {
   await wrap(page, wnative, native, '10')
 })
 
-test.only('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  // first swap test is long because it needs to get a lot of data
+test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
+  // first swap test is long because it needs to get a lot of data
   test.expect.configure({ timeout: 180_000 })
   await swap(page, native, sushi, '10')
   await maxSwap(page, sushi, native)
