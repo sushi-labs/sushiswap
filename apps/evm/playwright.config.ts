@@ -21,8 +21,8 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testMatch: 'pool.test.ts',
-  // testIgnore: 'cross-chain-swap.test.ts',
+  // testMatch: 'pool.test.ts',
+  testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. */
   timeout: 60_000,
   expect: {
@@ -136,7 +136,7 @@ const config: PlaywrightTestConfig = {
       reuseExistingServer: !process.env.CI,
       env: {
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
-        NEXT_PUBLIC_APP_ENV: 'test',
+        NEXT_PUBLIC_APP_ENV: String(process.env.NEXT_PUBLIC_APP_ENV),
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
       },
       // stderr: 'pipe',
