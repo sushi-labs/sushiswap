@@ -23,7 +23,7 @@ const config: PlaywrightTestConfig = {
   testDir: path.join(__dirname, 'test'),
   // testMatch: 'pool.test.ts',
   testIgnore: 'cross-chain-swap.test.ts',
-  /* Maximum time one test can run for. */
+  /* Maximum time one test can run for. Defaults to 30s. */
   timeout: 60_000,
   expect: {
     /**
@@ -115,7 +115,7 @@ const config: PlaywrightTestConfig = {
         // '--block-time 15',
       ].join(' '),
       port: Number(process.env.ANVIL_PORT || 8545),
-      timeout: 120 * 1000,
+      timeout: 120_000,
       // reuseExistingServer: !process.env.CI,
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),

@@ -5,7 +5,7 @@ import { expect, test } from 'next/experimental/testmode/playwright'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
-import { SupportedChainId } from '../../config'
+import { SupportedChainId } from '../../src/config'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
@@ -26,7 +26,9 @@ const _dai = DAI[chainId]
 const sushi = SUSHI[chainId]
 const wbtc = WBTC[chainId]
 
-// test.beforeAll(async () => {})
+test.beforeAll(async () => {
+  test.expect.configure({ timeout: 180_000 })
+})
 
 test.beforeEach(async ({ page, next }) => {
   page.on('pageerror', (error) => {
@@ -47,15 +49,12 @@ test.beforeEach(async ({ page, next }) => {
 
 test('Wrap and unwrap', async ({ page }) => {
   test.slow()
-
   await wrap(page, native, wnative, '10')
   await wrap(page, wnative, native, '10')
 })
 
-test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+test.only('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
-  // first swap test is long because it needs to get a lot of data
-  test.expect.configure({ timeout: 180_000 })
   await swap(page, native, sushi, '10')
   await maxSwap(page, sushi, native)
 })

@@ -2,6 +2,7 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
+      "inputs": ["src/**"],
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
       "env": [
@@ -20,6 +21,7 @@
       ]
     },
     "test": {
+      "inputs": ["src/**", "test/**"],
       "outputs": ["test-results/**"],
       "dependsOn": ["build"],
       "env": [

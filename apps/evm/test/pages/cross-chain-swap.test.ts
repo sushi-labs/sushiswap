@@ -3,7 +3,7 @@ import { ChainId, chainName } from 'sushi/chain'
 import { Native, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
-import { SupportedChainId } from '../../config'
+import { SupportedChainId } from '../../src/config'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
