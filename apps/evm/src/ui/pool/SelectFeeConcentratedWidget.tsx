@@ -146,14 +146,17 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
                           variant="secondary"
                         >
                           <LinkInternal
-                            href={`/pool/add?chainId=${token0.chainId
-                              }&feeAmount=${option.value}&fromCurrency=${token0.isNative
+                            href={`/pool/add?chainId=${
+                              token0.chainId
+                            }&feeAmount=${option.value}&fromCurrency=${
+                              token0.isNative
                                 ? 'NATIVE'
                                 : token0.wrapped.address
-                              }&toCurrency=${token1.isNative
+                            }&toCurrency=${
+                              token1.isNative
                                 ? 'NATIVE'
                                 : token1.wrapped.address
-                              }`}
+                            }`}
                           >
                             Create Pool
                           </LinkInternal>

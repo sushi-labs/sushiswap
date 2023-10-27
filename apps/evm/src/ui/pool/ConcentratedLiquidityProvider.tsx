@@ -66,11 +66,11 @@ type Actions =
   | { type: 'resetMintState' }
   | { type: 'typeLeftRangeInput'; typedValue: string }
   | {
-    type: 'typeInput'
-    field: Field
-    typedValue: string
-    noLiquidity: boolean
-  }
+      type: 'typeInput'
+      field: Field
+      typedValue: string
+      noLiquidity: boolean
+    }
   | { type: 'typeRightRangeInput'; typedValue: string }
   | { type: 'setFullRange' }
   | { type: 'typeStartPriceInput'; typedValue: string }
@@ -304,11 +304,11 @@ export function useConcentratedDerivedMintInfo({
         const price =
           baseAmount && parsedQuoteAmount
             ? new Price(
-              baseAmount.currency,
-              parsedQuoteAmount.currency,
-              baseAmount.quotient,
-              parsedQuoteAmount.quotient,
-            )
+                baseAmount.currency,
+                parsedQuoteAmount.currency,
+                baseAmount.quotient,
+                parsedQuoteAmount.quotient,
+              )
             : undefined
         return (invertPrice ? price?.invert() : price) ?? undefined
       }
@@ -378,39 +378,39 @@ export function useConcentratedDerivedMintInfo({
           ? existingPosition.tickLower
           : (invertPrice && typeof rightRangeTypedValue === 'boolean') ||
             (!invertPrice && typeof leftRangeTypedValue === 'boolean')
-            ? tickSpaceLimits[Bound.LOWER]
-            : invertPrice
-              ? tryParseTick(
-                token1,
-                token0,
-                feeAmount,
-                rightRangeTypedValue.toString(),
-              )
-              : tryParseTick(
-                token0,
-                token1,
-                feeAmount,
-                leftRangeTypedValue.toString(),
-              ),
+          ? tickSpaceLimits[Bound.LOWER]
+          : invertPrice
+          ? tryParseTick(
+              token1,
+              token0,
+              feeAmount,
+              rightRangeTypedValue.toString(),
+            )
+          : tryParseTick(
+              token0,
+              token1,
+              feeAmount,
+              leftRangeTypedValue.toString(),
+            ),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? existingPosition.tickUpper
           : (!invertPrice && typeof rightRangeTypedValue === 'boolean') ||
             (invertPrice && typeof leftRangeTypedValue === 'boolean')
-            ? tickSpaceLimits[Bound.UPPER]
-            : invertPrice
-              ? tryParseTick(
-                token1,
-                token0,
-                feeAmount,
-                leftRangeTypedValue.toString(),
-              )
-              : tryParseTick(
-                token0,
-                token1,
-                feeAmount,
-                rightRangeTypedValue.toString(),
-              ),
+          ? tickSpaceLimits[Bound.UPPER]
+          : invertPrice
+          ? tryParseTick(
+              token1,
+              token0,
+              feeAmount,
+              leftRangeTypedValue.toString(),
+            )
+          : tryParseTick(
+              token0,
+              token1,
+              feeAmount,
+              rightRangeTypedValue.toString(),
+            ),
     }
   }, [
     existingPosition,
@@ -437,8 +437,8 @@ export function useConcentratedDerivedMintInfo({
   // mark invalid range
   const invalidRange = Boolean(
     typeof tickLower === 'number' &&
-    typeof tickUpper === 'number' &&
-    tickLower >= tickUpper,
+      typeof tickUpper === 'number' &&
+      tickLower >= tickUpper,
   )
 
   const pricesAtLimit = useMemo(() => {
@@ -460,10 +460,10 @@ export function useConcentratedDerivedMintInfo({
   // liquidity range warning
   const outOfRange = Boolean(
     !invalidRange &&
-    price &&
-    lowerPrice &&
-    upperPrice &&
-    (price.lessThan(lowerPrice) || price.greaterThan(upperPrice)),
+      price &&
+      lowerPrice &&
+      upperPrice &&
+      (price.lessThan(lowerPrice) || price.greaterThan(upperPrice)),
   )
 
   // amounts
@@ -492,18 +492,18 @@ export function useConcentratedDerivedMintInfo({
       const position: Position | undefined =
         wrappedIndependentAmount.currency.equals(poolForPosition.token0)
           ? Position.fromAmount0({
-            pool: poolForPosition,
-            tickLower,
-            tickUpper,
-            amount0: independentAmount.quotient,
-            useFullPrecision: true, // we want full precision for the theoretical position
-          })
+              pool: poolForPosition,
+              tickLower,
+              tickUpper,
+              amount0: independentAmount.quotient,
+              useFullPrecision: true, // we want full precision for the theoretical position
+            })
           : Position.fromAmount1({
-            pool: poolForPosition,
-            tickLower,
-            tickUpper,
-            amount1: independentAmount.quotient,
-          })
+              pool: poolForPosition,
+              tickLower,
+              tickUpper,
+              amount1: independentAmount.quotient,
+            })
 
       const dependentTokenAmount = wrappedIndependentAmount.currency.equals(
         poolForPosition.token0,
@@ -547,13 +547,13 @@ export function useConcentratedDerivedMintInfo({
   // single deposit only if price is out of range
   const deposit0Disabled = Boolean(
     typeof tickUpper === 'number' &&
-    poolForPosition &&
-    poolForPosition.tickCurrent >= tickUpper,
+      poolForPosition &&
+      poolForPosition.tickCurrent >= tickUpper,
   )
   const deposit1Disabled = Boolean(
     typeof tickLower === 'number' &&
-    poolForPosition &&
-    poolForPosition.tickCurrent <= tickLower,
+      poolForPosition &&
+      poolForPosition.tickCurrent <= tickLower,
   )
 
   // sorted for token order
@@ -564,10 +564,10 @@ export function useConcentratedDerivedMintInfo({
         poolForPosition &&
         tokenA &&
         poolForPosition.token0.equals(tokenA)) ||
-      (deposit1Disabled &&
-        poolForPosition &&
-        tokenA &&
-        poolForPosition.token1.equals(tokenA)),
+        (deposit1Disabled &&
+          poolForPosition &&
+          tokenA &&
+          poolForPosition.token1.equals(tokenA)),
     )
   const depositBDisabled =
     invalidRange ||
@@ -576,10 +576,10 @@ export function useConcentratedDerivedMintInfo({
         poolForPosition &&
         tokenB &&
         poolForPosition.token0.equals(tokenB)) ||
-      (deposit1Disabled &&
-        poolForPosition &&
-        tokenB &&
-        poolForPosition.token1.equals(tokenB)),
+        (deposit1Disabled &&
+          poolForPosition &&
+          tokenB &&
+          poolForPosition.token1.equals(tokenB)),
     )
 
   // create position entity based on users selection
@@ -598,17 +598,17 @@ export function useConcentratedDerivedMintInfo({
     // mark as 0 if disabled because out of range
     const amount0 = !deposit0Disabled
       ? parsedAmounts?.[
-        tokenA.equals(poolForPosition.token0)
-          ? Field.CURRENCY_A
-          : Field.CURRENCY_B
-      ]?.quotient
+          tokenA.equals(poolForPosition.token0)
+            ? Field.CURRENCY_A
+            : Field.CURRENCY_B
+        ]?.quotient
       : 0n
     const amount1 = !deposit1Disabled
       ? parsedAmounts?.[
-        tokenA.equals(poolForPosition.token0)
-          ? Field.CURRENCY_B
-          : Field.CURRENCY_A
-      ]?.quotient
+          tokenA.equals(poolForPosition.token0)
+            ? Field.CURRENCY_B
+            : Field.CURRENCY_A
+        ]?.quotient
       : 0n
 
     if (amount0 !== undefined && amount1 !== undefined) {

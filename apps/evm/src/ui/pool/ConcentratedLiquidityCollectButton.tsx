@@ -45,88 +45,88 @@ export const ConcentratedLiquidityCollectButton: FC<
   token0,
   token1,
 }) => {
-    const { chain } = useNetwork()
+  const { chain } = useNetwork()
 
-    const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-      if (
-        token0 &&
-        token1 &&
-        position &&
-        account &&
-        positionDetails &&
-        isSushiSwapV3ChainId(chainId)
-      ) {
-        const feeValue0 = positionDetails.fees
-          ? Amount.fromRawAmount(token0, positionDetails.fees[0])
-          : undefined
-        const feeValue1 = positionDetails.fees
-          ? Amount.fromRawAmount(token0, positionDetails.fees[1])
-          : undefined
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (
+      token0 &&
+      token1 &&
+      position &&
+      account &&
+      positionDetails &&
+      isSushiSwapV3ChainId(chainId)
+    ) {
+      const feeValue0 = positionDetails.fees
+        ? Amount.fromRawAmount(token0, positionDetails.fees[0])
+        : undefined
+      const feeValue1 = positionDetails.fees
+        ? Amount.fromRawAmount(token0, positionDetails.fees[1])
+        : undefined
 
-        const { calldata, value } =
-          NonfungiblePositionManager.collectCallParameters({
-            tokenId: positionDetails.tokenId.toString(),
-            expectedCurrencyOwed0:
-              feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
-            expectedCurrencyOwed1:
-              feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
-            recipient: account,
-          })
+      const { calldata, value } =
+        NonfungiblePositionManager.collectCallParameters({
+          tokenId: positionDetails.tokenId.toString(),
+          expectedCurrencyOwed0:
+            feeValue0 ?? Amount.fromRawAmount(unwrapToken(token0), 0),
+          expectedCurrencyOwed1:
+            feeValue1 ?? Amount.fromRawAmount(unwrapToken(token1), 0),
+          recipient: account,
+        })
 
-        return {
-          to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
-          data: calldata as Hex,
-          value: BigInt(value),
-        }
+      return {
+        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        data: calldata as Hex,
+        value: BigInt(value),
+      }
+    }
+
+    return {}
+  }, [account, chainId, position, positionDetails, token0, token1])
+
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
       }
 
-      return {}
-    }, [account, chainId, position, positionDetails, token0, token1])
+      if (!data || !position) return
 
-    const onSettled = useCallback(
-      (data: SendTransactionResult | undefined, error: Error | null) => {
-        if (error instanceof UserRejectedRequestError) {
-          createErrorToast(error?.message, true)
-        }
+      const ts = new Date().getTime()
+      void createToast({
+        account,
+        type: 'claimRewards',
+        chainId,
+        txHash: data.hash,
+        promise: waitForTransaction({ hash: data.hash }),
+        summary: {
+          pending: `Collecting fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
+          completed: `Collected fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
+          failed: 'Something went wrong when trying to collect fees',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [account, chainId, position],
+  )
 
-        if (!data || !position) return
-
-        const ts = new Date().getTime()
-        void createToast({
-          account,
-          type: 'claimRewards',
-          chainId,
-          txHash: data.hash,
-          promise: waitForTransaction({ hash: data.hash }),
-          summary: {
-            pending: `Collecting fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
-            completed: `Collected fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
-            failed: 'Something went wrong when trying to collect fees',
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
-        })
-      },
-      [account, chainId, position],
-    )
-
-    const { config } = usePrepareSendTransaction({
-      ...prepare,
-      chainId,
-      enabled: Boolean(
-        token0 &&
+  const { config } = usePrepareSendTransaction({
+    ...prepare,
+    chainId,
+    enabled: Boolean(
+      token0 &&
         token1 &&
         account &&
         position &&
         positionDetails &&
         chainId === chain?.id,
-      ),
-    })
+    ),
+  })
 
-    const data = useSendTransaction({
-      ...config,
-      onSettled,
-    })
+  const data = useSendTransaction({
+    ...config,
+    onSettled,
+  })
 
-    return children(data)
-  }
+  return children(data)
+}

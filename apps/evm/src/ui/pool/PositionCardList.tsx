@@ -30,8 +30,8 @@ export const PositionCardList: FC<PositionCardList> = ({ children }) => {
         positions: isValidating
           ? new Array(6).fill(null)
           : (userPositions || [])
-            .filter((el) => el.pool.protocol === Protocol.SUSHISWAP_V2)
-            .sort((a, b) => value(b) - value(a)),
+              .filter((el) => el.pool.protocol === Protocol.SUSHISWAP_V2)
+              .sort((a, b) => value(b) - value(a)),
         isLoading: isValidating,
       })}
     </>
