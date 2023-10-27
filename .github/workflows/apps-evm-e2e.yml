@@ -13,8 +13,10 @@ on:
       - "config/viem/**"
       - "config/wagmi/**"
       - "packages/**"
-
-# https://playwright.dev/docs/ci#sharding
+defaults:
+  run:
+    # change this if your nextjs app does not live at the root of the repo
+    working-directory: ./apps/evm
 env:
   CI: true
   NODE_OPTIONS: --max-old-space-size=8192
@@ -39,6 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
+          submodules: true
 
       - uses: pnpm/action-setup@v2
         with:
@@ -50,26 +53,36 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-
       - name: Install dependencies
         run: pnpm install
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        working-directory: .
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+      - name: Install playwright
+        run: pnpm exec playwright install --with-deps chromium        
+
+      # - name: Install Foundry
+      #   uses: foundry-rs/foundry-toolchain@v1
+
+      # - name: Install dependencies
+      #   run: pnpm install
+      #   env:
+      #     PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+
+      # - name: Install Playwright Browsers
+      #   run: npx playwright install --with-deps chromium
         
       - name: Test
         run: pnpm test-evm-app
         env:
-          ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
           ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
+          ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+          ANVIL_PORT: 8545
           EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           NEXT_TELEMETRY_DISABLED: 1
+        working-directory: .
+
 
       - name: Upload test results
         if: always()

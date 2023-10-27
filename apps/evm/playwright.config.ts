@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig = {
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: !process.env.CI ? 90_000 : 90_000,
+    timeout: !process.env.CI ? 45_000 : 90_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -106,17 +106,18 @@ const config: PlaywrightTestConfig = {
         'anvil',
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${8545}`,
+        `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
         // '--no-mining',
         // '--silent',
         // '--block-time 15',
       ].join(' '),
-      port: 8545,
-      timeout: 120 * 1000,
-      reuseExistingServer: !process.env.CI,
+      port: Number(process.env.ANVIL_PORT || 8545),
+      // timeout: 120 * 1000,
+      // reuseExistingServer: !process.env.CI,
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
+        ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
       },
       // stderr: 'pipe',
       // stdout: 'pipe',
