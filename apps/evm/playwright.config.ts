@@ -97,6 +97,7 @@ const config: PlaywrightTestConfig = {
     //   },
     // },
   ],
+  maxFailures: process.env.CI ? 1 : 0,
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [
