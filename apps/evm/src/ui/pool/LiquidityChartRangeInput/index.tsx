@@ -135,9 +135,9 @@ export default function LiquidityChartRangeInput({
 
     return leftPrice && rightPrice
       ? [
-        parseFloat(leftPrice?.toSignificant(6)),
-        parseFloat(rightPrice?.toSignificant(6)),
-      ]
+          parseFloat(leftPrice?.toSignificant(6)),
+          parseFloat(rightPrice?.toSignificant(6)),
+        ]
       : undefined
   }, [isSorted, priceLower, priceUpper])
 

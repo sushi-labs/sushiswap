@@ -61,16 +61,16 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
           price={
             price
               ? parseFloat(
-                (invertPrice ? price.invert() : price).toSignificant(8),
-              )
+                  (invertPrice ? price.invert() : price).toSignificant(8),
+                )
               : undefined
           }
           priceLower={undefined}
           priceUpper={undefined}
           interactive={false}
           hideBrushes={true}
-          onLeftRangeInput={() => { }}
-          onRightRangeInput={() => { }}
+          onLeftRangeInput={() => {}}
+          onRightRangeInput={() => {}}
         />
       )}
     </>

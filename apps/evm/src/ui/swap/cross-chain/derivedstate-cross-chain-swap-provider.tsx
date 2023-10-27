@@ -37,8 +37,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-      ? 'NATIVE'
-      : token.wrapped.address
+    ? 'NATIVE'
+    : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -386,8 +386,8 @@ const useCrossChainSwapTrade = () => {
     recipient: recipient as Address,
     enabled: Boolean(
       isSushiXSwap2ChainId(chainId0) &&
-      isSushiXSwap2ChainId(chainId1) &&
-      swapAmount?.greaterThan(ZERO),
+        isSushiXSwap2ChainId(chainId1) &&
+        swapAmount?.greaterThan(ZERO),
     ),
   })
 }

@@ -53,10 +53,10 @@ export const PositionsTable: FC<PositionsTableProps> = ({
     const searchFiltered = positions.filter((el) =>
       _tokenSymbols.length > 0
         ? _tokenSymbols.some((symbol) => {
-          return [el.pool?.token0.symbol, el.pool?.token1.symbol].includes(
-            symbol.toUpperCase(),
-          )
-        })
+            return [el.pool?.token0.symbol, el.pool?.token1.symbol].includes(
+              symbol.toUpperCase(),
+            )
+          })
         : true,
     )
     const chainFiltered = searchFiltered.filter((el) =>

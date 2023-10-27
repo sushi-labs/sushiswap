@@ -147,28 +147,28 @@ const Incentivize = withCheckerRoot(() => {
     args:
       amount[0] && v3Address && rewardToken && epochs && startDate && signature
         ? [
-          {
-            uniV3Pool: v3Address as Address,
-            rewardToken: rewardToken.wrapped.address as Address,
-            amount: amount[0].quotient,
-            positionWrappers:
-              blacklist.length > 0 ? (blacklist as Address[]) : [],
-            wrapperTypes: blacklist.length > 0 ? [3] : [],
-            propToken0: customize ? distro1[0] * 100 : 2000,
-            propToken1: customize ? distro2[0] * 100 : 2000,
-            propFees: customize ? distro3[0] * 100 : 6000,
-            epochStart: Math.floor(startDate.getTime() / 1000) || 0,
-            numEpoch: epochs,
-            isOutOfRangeIncentivized: customizeOOR ? 1 : 0,
-            boostedReward: 0,
-            boostingAddress: ADDRESS_ZERO,
-            rewardId:
-              '0x0000000000000000000000000000000000000000000000000000000000000000',
-            additionalData:
-              '0x0000000000000000000000000000000000000000000000000000000000000000',
-          },
-          signature,
-        ]
+            {
+              uniV3Pool: v3Address as Address,
+              rewardToken: rewardToken.wrapped.address as Address,
+              amount: amount[0].quotient,
+              positionWrappers:
+                blacklist.length > 0 ? (blacklist as Address[]) : [],
+              wrapperTypes: blacklist.length > 0 ? [3] : [],
+              propToken0: customize ? distro1[0] * 100 : 2000,
+              propToken1: customize ? distro2[0] * 100 : 2000,
+              propFees: customize ? distro3[0] * 100 : 6000,
+              epochStart: Math.floor(startDate.getTime() / 1000) || 0,
+              numEpoch: epochs,
+              isOutOfRangeIncentivized: customizeOOR ? 1 : 0,
+              boostedReward: 0,
+              boostingAddress: ADDRESS_ZERO,
+              rewardId:
+                '0x0000000000000000000000000000000000000000000000000000000000000000',
+              additionalData:
+                '0x0000000000000000000000000000000000000000000000000000000000000000',
+            },
+            signature,
+          ]
         : undefined,
     chainId: chainId as SushiSwapV3ChainId,
     enabled: Boolean(
@@ -192,9 +192,9 @@ const Incentivize = withCheckerRoot(() => {
     () =>
       angleRewardTokens
         ? angleRewardTokens.reduce<Record<string, Token>>((acc, cur) => {
-          acc[cur.token.wrapped.address] = cur.token
-          return acc
-        }, {})
+            acc[cur.token.wrapped.address] = cur.token
+            return acc
+          }, {})
         : {},
     [angleRewardTokens],
   )
@@ -300,9 +300,10 @@ const Incentivize = withCheckerRoot(() => {
               amount[0] &&
               minAmount &&
               amount[0].lessThan(minAmount) && {
-              error: `Min. ${minAmount.toSignificant(4)} ${rewardToken.symbol
+                error: `Min. ${minAmount.toSignificant(4)} ${
+                  rewardToken.symbol
                 }`,
-            })}
+              })}
           />
           <p
             className={typographyVariants({
@@ -476,8 +477,9 @@ const Incentivize = withCheckerRoot(() => {
                 })}
               >
                 {blacklist.length > 0
-                  ? `${blacklist.length} address${blacklist.length > 1 ? 'es' : ''
-                  } blacklisted.`
+                  ? `${blacklist.length} address${
+                      blacklist.length > 1 ? 'es' : ''
+                    } blacklisted.`
                   : 'The addresses to blacklist, use commas to separate addresses.'}
               </p>
             </div>
@@ -559,8 +561,9 @@ const Incentivize = withCheckerRoot(() => {
                                               </List.KeyValue>
                                             ) : null}
                                             {feeAmount && (
-                                              <List.KeyValue title="Fee Tier">{`${+feeAmount / 10000
-                                                }%`}</List.KeyValue>
+                                              <List.KeyValue title="Fee Tier">{`${
+                                                +feeAmount / 10000
+                                              }%`}</List.KeyValue>
                                             )}
                                           </List.Control>
                                         </List>

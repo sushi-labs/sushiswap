@@ -70,10 +70,10 @@ export const RewardsSection: FC = () => {
           .filter((el) =>
             _tokenSymbols.length > 0
               ? _tokenSymbols.some((symbol) => {
-                return [el.token0.symbol, el.token1.symbol].includes(
-                  symbol.toUpperCase(),
-                )
-              })
+                  return [el.token0.symbol, el.token1.symbol].includes(
+                    symbol.toUpperCase(),
+                  )
+                })
               : true,
           )
       })

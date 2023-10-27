@@ -106,18 +106,18 @@ export const PoolHeader: FC<PoolHeader> = ({
                   pool.protocol === 'SUSHISWAP_V3'
                     ? 'bg-blue/20 text-blue'
                     : pool.protocol === 'SUSHISWAP_V2'
-                      ? 'bg-pink/20 text-pink'
-                      : 'bg-green/20 text-green',
+                    ? 'bg-pink/20 text-pink'
+                    : 'bg-green/20 text-green',
                   'text-sm px-2 py-1 font-semibold rounded-full mt-0.5',
                 )}
               >
                 {pool.protocol === 'SUSHISWAP_V3'
                   ? 'V3'
                   : pool.protocol === 'SUSHISWAP_V2'
-                    ? 'V2'
-                    : pool.protocol === 'BENTOBOX_CLASSIC'
-                      ? 'Classic'
-                      : 'Stable'}
+                  ? 'V2'
+                  : pool.protocol === 'BENTOBOX_CLASSIC'
+                  ? 'Classic'
+                  : 'Stable'}
               </div>
             )}
           </div>

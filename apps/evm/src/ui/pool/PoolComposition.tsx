@@ -40,11 +40,11 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
         <CardDescription>
           {formatUSD(
             (data?.liquidityNative ?? 0) *
-            Number(
-              prices?.[Native.onChain(pool.chainId).wrapped.address]?.toFixed(
-                10,
+              Number(
+                prices?.[Native.onChain(pool.chainId).wrapped.address]?.toFixed(
+                  10,
+                ),
               ),
-            ),
           )}
         </CardDescription>
       </CardHeader>

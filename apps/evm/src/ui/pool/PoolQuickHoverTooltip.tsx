@@ -71,8 +71,9 @@ export const PoolQuickHoverTooltip: FC<PoolQuickHoverTooltipProps> = ({
                         incentive,
                       ),
                     }}
-                    title={`${formatNumber(incentive.rewardPerDay)} ${incentive.rewardToken.symbol
-                      }`}
+                    title={`${formatNumber(incentive.rewardPerDay)} ${
+                      incentive.rewardToken.symbol
+                    }`}
                   />
                 ))}
             </List.Control>

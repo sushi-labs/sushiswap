@@ -96,8 +96,8 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
               invalidRange || !inRange
                 ? 'bg-red'
                 : closed
-                  ? 'bg-slate-700'
-                  : 'bg-green',
+                ? 'bg-slate-700'
+                : 'bg-green',
               'w-2 h-2 rounded-full',
             )}
           />
@@ -105,10 +105,10 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
             {fullRange
               ? '0'
               : formatTickPrice({
-                price: priceLower,
-                atLimit: tickAtLimit,
-                direction: Bound.UPPER,
-              })}{' '}
+                  price: priceLower,
+                  atLimit: tickAtLimit,
+                  direction: Bound.UPPER,
+                })}{' '}
             {currencyQuote?.symbol}
             <div className="flex items-center">
               <ArrowSmLeftIcon
@@ -125,10 +125,10 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
             {fullRange
               ? '∞'
               : formatTickPrice({
-                price: priceUpper,
-                atLimit: tickAtLimit,
-                direction: Bound.UPPER,
-              })}{' '}
+                  price: priceUpper,
+                  atLimit: tickAtLimit,
+                  direction: Bound.UPPER,
+                })}{' '}
             {currencyQuote?.symbol}
           </span>
         </div>

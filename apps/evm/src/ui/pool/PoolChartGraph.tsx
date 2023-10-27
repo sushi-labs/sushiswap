@@ -23,10 +23,10 @@ import { PoolChartType } from './PoolChartTypes'
 
 interface PoolChartProps {
   chart:
-  | PoolChartType.Volume
-  | PoolChartType.Fees
-  | PoolChartType.TVL
-  | PoolChartType.APR
+    | PoolChartType.Volume
+    | PoolChartType.Fees
+    | PoolChartType.TVL
+    | PoolChartType.APR
   period: PoolChartPeriod
   address: string
   chainId: ChainId
@@ -105,9 +105,10 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
           new Date(name * 1000),
-          `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-            ? ' p'
-            : ''
+          `dd MMM yyyy${
+            chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
+              ? ' p'
+              : ''
           }`,
         )
       }
@@ -133,19 +134,22 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${chart === PoolChartType.APR
-              ? formatPercent(params[0].value)
-              : formatUSD(params[0].value)
+            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${
+              chart === PoolChartType.APR
+                ? formatPercent(params[0].value)
+                : formatUSD(params[0].value)
             }</span>
-            <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${date instanceof Date && !Number.isNaN(date?.getTime())
-              ? format(
-                date,
-                `dd MMM yyyy${chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-                  ? ' p'
-                  : ''
-                }`,
-              )
-              : ''
+            <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
+              date instanceof Date && !Number.isNaN(date?.getTime())
+                ? format(
+                    date,
+                    `dd MMM yyyy${
+                      chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
+                        ? ' p'
+                        : ''
+                    }`,
+                  )
+                : ''
             }</span>
           </div>`
         },
