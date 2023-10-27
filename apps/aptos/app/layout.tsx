@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 
 import '@sushiswap/ui/index.css'
+import './../app/swap/css/swap.css'
 
 import React from 'react'
 import { Providers } from './providers'
 import { Header } from './header'
-import Container from '@sushiswap/ui/future/components/Container'
 
 export const metadata: Metadata = {
   title: {
@@ -28,9 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="h-screen">
         <Providers>
           <Header />
-          <Container maxWidth={520} className="p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
-            {children}
-          </Container>
+          {children}
         </Providers>
       </body>
     </html>

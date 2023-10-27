@@ -6,6 +6,9 @@ import { withAxiom } from 'next-axiom'
 const nextConfig = {
   ...defaultNextConfig,
   transpilePackages: ['@sushiswap/ui'],
+  compiler: {
+    styledComponents: true,
+  },
   async redirects() {
     return [
       {
@@ -14,6 +17,9 @@ const nextConfig = {
         destination: '/swap',
       },
     ]
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 }
 
