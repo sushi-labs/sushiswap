@@ -27,7 +27,7 @@ const sushi = SUSHI[chainId]
 const wbtc = WBTC[chainId]
 
 test.beforeAll(async () => {
-  test.expect.configure({ timeout: 180_000 })
+  // test.expect.configure({ timeout: 180_000 })
 })
 
 test.beforeEach(async ({ page, next }) => {
