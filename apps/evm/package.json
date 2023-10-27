@@ -78,7 +78,7 @@
   "devDependencies": {
     "@next/env": "13.5.4",
     "@next/eslint-plugin-next": "13.5.4",
-    "@playwright/test": "1.39.0",
+    "@playwright/test": "1.37.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/next": "2.0.1",

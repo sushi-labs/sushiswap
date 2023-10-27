@@ -39,6 +39,9 @@ importers:
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.11.18)
+      playwright:
+        specifier: 1.37.0
+        version: 1.37.0
       sort-package-json:
         specifier: 2.6.0
         version: 2.6.0
@@ -785,8 +788,8 @@ importers:
         specifier: 13.5.4
         version: 13.5.4
       '@playwright/test':
-        specifier: 1.39.0
-        version: 1.39.0
+        specifier: 1.37.0
+        version: 1.37.0
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
@@ -1705,7 +1708,7 @@ importers:
         version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       vitest:
         specifier: 0.34.6
-        version: 0.34.6
+        version: 0.34.6(playwright@1.37.0)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -10348,12 +10351,15 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@playwright/test@1.39.0:
-    resolution: {integrity: sha512-3u1iFqgzl7zr004bGPYiN/5EZpRUSFddQBra8Rqll5N0/vfpqlP9I9EXqAoGacuAbX6c9Ulg/Cjqglp5VkK6UQ==}
+  /@playwright/test@1.37.0:
+    resolution: {integrity: sha512-181WBLk4SRUyH1Q96VZl7BP6HcK0b7lbdeKisn3N/vnjitk+9HbdlFz/L5fey05vxaAhldIDnzo8KUoy8S3mmQ==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      playwright: 1.39.0
+      '@types/node': 18.17.5
+      playwright-core: 1.37.0
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: true
 
   /@popperjs/core@2.11.7:
@@ -30450,8 +30456,8 @@ packages:
     hasBin: true
     dev: true
 
-  /playwright-core@1.39.0:
-    resolution: {integrity: sha512-+k4pdZgs1qiM+OUkSjx96YiKsXsmb59evFoqv8SKO067qBA+Z2s/dCzJij/ZhdQcs2zlTAgRKfeiiLm8PQ2qvw==}
+  /playwright-core@1.37.0:
+    resolution: {integrity: sha512-1c46jhTH/myQw6sesrcuHVtLoSNfJv8Pfy9t3rs6subY7kARv0HRw5PpyfPYPpPtQvBOmgbE6K+qgYUpj81LAA==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
@@ -30465,14 +30471,13 @@ packages:
       playwright-core: 1.34.3
     dev: true
 
-  /playwright@1.39.0:
-    resolution: {integrity: sha512-naE5QT11uC/Oiq0BwZ50gDmy8c8WLPRTEWuSSFVG2egBka/1qMoSqYQcROMT9zLwJ86oPofcTH2jBY/5wWOgIw==}
+  /playwright@1.37.0:
+    resolution: {integrity: sha512-CrAEFfVioamMwDKmygc/HAkzEAxYAwjD+zod2poTxM7ObivkoDsKHu1ned16fnQV/Tf1kDB8KtsyH8Qd3VzJIg==}
     engines: {node: '>=16'}
     hasBin: true
+    requiresBuild: true
     dependencies:
-      playwright-core: 1.39.0
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.37.0
     dev: true
 
   /pluralize@8.0.0:
@@ -36003,7 +36008,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@0.34.6:
+  /vitest@0.34.6(playwright@1.37.0):
     resolution: {integrity: sha512-+5CALsOvbNKnS+ZHMXtuUC7nL8/7F1F2DnHGjSsszX8zCjWSSviphCb/NuS9Nzf4Q03KyyDRBAXhF/8lffME4Q==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -36051,6 +36056,7 @@ packages:
       magic-string: 0.30.2
       pathe: 1.1.1
       picocolors: 1.0.0
+      playwright: 1.37.0
       std-env: 3.3.3
       strip-literal: 1.3.0
       tinybench: 2.5.0
