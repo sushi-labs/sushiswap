@@ -75,14 +75,14 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <img
-                  src="https://cdn.sushi.com/image/upload/f_auto,c_limit,w_64,q_auto/tokens/137/0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a.jpg"
+                  src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
                   className="rounded-full"
                   height={20}
                   width={20}
                   alt=""
                 />
                 <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
-                  {reward ? parseFloat(String(formatNumber(reward, decimals as number))) : 0} SUSHI
+                  {reward ? parseFloat(String(formatNumber(reward, decimals as number))) : 0} APT
                 </Typography>
               </div>
               <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">

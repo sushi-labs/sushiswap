@@ -15,13 +15,13 @@ export const PoolRewards: FC<{ isFarm: boolean; rewardsPerDay: number }> = ({ is
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <img
-                src="https://cdn.sushi.com/image/upload/f_auto,c_limit,w_64,q_auto/tokens/137/0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a.jpg"
+                src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
                 className="rounded-full"
                 height={20}
                 width={20}
                 alt=""
               />
-              {rewardsPerDay} SUSHI per day
+              {rewardsPerDay} APT per day
             </div>
           </div>
         </List.KeyValue>
