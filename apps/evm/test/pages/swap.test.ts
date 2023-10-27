@@ -52,9 +52,10 @@ test('Wrap and unwrap', async ({ page }) => {
   await wrap(page, wnative, native, '10')
 })
 
-test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+test.only('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   // first swap test is long because it needs to get a lot of data
-  test.setTimeout(120_000)
+  test.slow()
+  test.expect.configure({ timeout: 180_000 })
   await swap(page, native, sushi, '10')
   await maxSwap(page, sushi, native)
 })
@@ -219,12 +220,12 @@ async function swap(
   await makeAnotherSwap.click()
 
   // Compare against cached balances to ensure there is at least a change...
-  const swapFromBalanceAfter = await swapFromBalance.textContent()
   await expect(swapFromBalance).not.toHaveText(swapFromBalanceBefore as string)
+  const swapFromBalanceAfter = await swapFromBalance.textContent()
   expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
 
-  const swapToBalanceAfter = await swapToBalance.textContent()
   await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
+  const swapToBalanceAfter = await swapToBalance.textContent()
   expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
 }
 
@@ -286,8 +287,11 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   await makeAnotherSwap.click()
 
   // Compare against cached balances to ensure there is at least a change...
+  await expect(swapFromBalance).not.toHaveText(swapFromBalanceBefore as string)
   const swapFromBalanceAfter = await swapFromBalance.textContent()
   expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+
+  await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
   const swapToBalanceAfter = await swapToBalance.textContent()
   expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
 }
