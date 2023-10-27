@@ -45,7 +45,7 @@ try {
     limiter: Ratelimit.slidingWindow(5, '1 h'),
   })
 } catch {
-  console.log('Warning: Rate limit not enabled')
+  console.warn('Rate limit not enabled')
 }
 
 export const maxDuration = 15 // in seconds

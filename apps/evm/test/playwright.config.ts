@@ -101,28 +101,28 @@ const config: PlaywrightTestConfig = {
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: [
-    {
-      command: [
-        'anvil',
-        `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
-        `--fork-url=${process.env.ANVIL_FORK_URL}`,
-        `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
-        // '--host=127.0.0.1',
-        // '--no-mining',
-        '--silent',
-        // '--block-time 15',
-      ].join(' '),
-      port: Number(process.env.ANVIL_PORT || 8545),
-      timeout: 120_000,
-      // reuseExistingServer: !process.env.CI,
-      env: {
-        ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
-        ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
-        ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
-      },
-      // stderr: 'pipe',
-      // stdout: 'pipe',
-    },
+    // {
+    //   command: [
+    //     'anvil',
+    //     `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
+    //     `--fork-url=${process.env.ANVIL_FORK_URL}`,
+    //     `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
+    //     // '--host=127.0.0.1',
+    //     // '--no-mining',
+    //     '--silent',
+    //     // '--block-time 15',
+    //   ].join(' '),
+    //   port: Number(process.env.ANVIL_PORT || 8545),
+    //   timeout: 120_000,
+    //   // reuseExistingServer: !process.env.CI,
+    //   env: {
+    //     ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
+    //     ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
+    //     ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
+    //   },
+    //   // stderr: 'pipe',
+    //   // stdout: 'pipe',
+    // },
     {
       command: `NEXT_PUBLIC_APP_ENV=test EDGE_CONFIG=${String(
         process.env.EDGE_CONFIG,

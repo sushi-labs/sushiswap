@@ -11,6 +11,11 @@ overrides:
   '@types/react': 18.2.14
   '@types/react-dom': 18.2.6
 
+patchedDependencies:
+  '@viem/anvil@0.0.6':
+    hash: eusculfp2fywcngsmmmriurpl4
+    path: patches/@viem__anvil@0.0.6.patch
+
 importers:
 
   .:
@@ -828,7 +833,7 @@ importers:
         version: 1.0.1
       '@viem/anvil':
         specifier: 0.0.6
-        version: 0.0.6
+        version: 0.0.6(patch_hash=eusculfp2fywcngsmmmriurpl4)
       autoprefixer:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.4.23)
@@ -15879,7 +15884,7 @@ packages:
       - supports-color
     dev: false
 
-  /@viem/anvil@0.0.6:
+  /@viem/anvil@0.0.6(patch_hash=eusculfp2fywcngsmmmriurpl4):
     resolution: {integrity: sha512-OjKR/+FVwzuygXYFqP8MBal1SXG8bT2gbZwqqB0XuLw81LNBBvmE/Repm6+5kkBh4IUj0PhYdrqOsnayS14Gtg==}
     dependencies:
       execa: 7.2.0
@@ -15891,6 +15896,7 @@ packages:
       - debug
       - utf-8-validate
     dev: true
+    patched: true
 
   /@vitejs/plugin-react@3.1.0(vite@4.3.9):
     resolution: {integrity: sha512-AfgcRL8ZBhAlc3BFdigClmTUMISmmzHn7sB2h9U1odvc5U/MjWXsAaz18b/WoppUTDBzxOJwo2VdClfUcItu9g==}

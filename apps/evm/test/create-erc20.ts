@@ -9,7 +9,7 @@ export async function createERC20({
   chainId,
   name = 'FakeToken',
   symbol = 'FT',
-  decimals = 18f,
+  decimals = 18,
 }: {
   chainId: number
   name: string
