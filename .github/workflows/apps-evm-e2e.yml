@@ -18,7 +18,7 @@ env:
   NODE_OPTIONS: --max-old-space-size=8192
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  TURBO_FORCE: true
+  TURBO_FORCE: false
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
