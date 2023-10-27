@@ -6,7 +6,7 @@
         "public",
         "src/**",
         "package.json",
-        "next.config.js",
+        "next.config.mjs",
         "postcss.config.js",
         "sentry.client.config.ts",
         "sentry.edge.config.ts",

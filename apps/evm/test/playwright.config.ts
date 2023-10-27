@@ -1,4 +1,3 @@
-import path from 'path'
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
 import { defineConfig } from 'next/experimental/testmode/playwright'
@@ -110,7 +109,7 @@ const config: PlaywrightTestConfig = {
         `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
         // '--host=127.0.0.1',
         // '--no-mining',
-        // '--silent',
+        '--silent',
         // '--block-time 15',
       ].join(' '),
       port: Number(process.env.ANVIL_PORT || 8545),
