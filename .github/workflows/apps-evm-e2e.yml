@@ -28,11 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        block-number: [47479278]
         chain-id: [137]
-        dst-chain-id: [42161]
         node-version: [18]
         pnpm-version: [8.9.2]
-        block-number: [47479278]
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
