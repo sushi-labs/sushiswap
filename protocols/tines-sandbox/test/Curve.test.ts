@@ -686,7 +686,7 @@ async function checkMultipleSwapsFork(
   if (!poolInfo || poolInfo.tokenContracts.length < 2)
     return 'skipped (pool init error)'
 
-  const n = 2 //poolInfo.tokenContracts.length
+  const n = poolInfo.tokenContracts.length
   const steps = 100
 
   const flowInternal : number[][][] = []
@@ -721,6 +721,48 @@ async function checkMultipleSwapsFork(
     else 
       pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
   }
+  
+  for (let s = 0; s < steps; ++s) {
+    const from = 0
+    const to = 2
+    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
+    const res0 = Number(pool.reserve0)
+    const res1 = Number(pool.reserve1)
+    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
+
+    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
+    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
+      .out + addFlowOut(from, to)
+    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
+      .inp - addFlowInp(from, to)
+    expectCloseValues(amountIn, expectedIn, 1e-6)
+
+    if (from < to)
+      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
+    else 
+      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
+  }
+  
+  for (let s = 0; s < steps; ++s) {
+    const from = 1
+    const to = 2
+    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
+    const res0 = Number(pool.reserve0)
+    const res1 = Number(pool.reserve1)
+    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
+
+    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
+    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
+      .out + addFlowOut(from, to)
+    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
+      .inp - addFlowInp(from, to)
+    expectCloseValues(amountIn, expectedIn, 1e-6)
+
+    if (from < to)
+      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
+    else 
+      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
+  }
 
   poolInfo.snapshot.restore()
   for (let i = 0; i < n; ++i) {
@@ -735,6 +777,7 @@ async function checkMultipleSwapsFork(
         flowI > 0 ? j : i,
         flowI > 0 ? flowI : flowJ
       )
+      console.log(i, j, flowI > 0 ? -flowJ : -flowI, realOut, precision)
       expectCloseValues(flowI > 0 ? -flowJ : -flowI, realOut, precision)
     }
   }
