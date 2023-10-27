@@ -41,7 +41,9 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? 'dot' : 'list',
+  // reporter: process.env.CI ? 'dot' : 'list',
+  reporter: process.env.CI ? 'github' : 'list',
+
   // reporter: process.env.CI ? 'github' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -50,7 +52,7 @@ const config: PlaywrightTestConfig = {
     headless: !process.env.CI ? false : true,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
-    // video: 'on',
+    video: 'off',
     colorScheme: 'dark',
 
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
@@ -107,12 +109,13 @@ const config: PlaywrightTestConfig = {
         `--fork-block-number=${process.env.ANVIL_BLOCK_NUMBER}`,
         `--fork-url=${process.env.ANVIL_FORK_URL}`,
         `--port=${Number(process.env.ANVIL_PORT || 8545)}`,
+        // '--host=127.0.0.1',
         // '--no-mining',
         // '--silent',
         // '--block-time 15',
       ].join(' '),
       port: Number(process.env.ANVIL_PORT || 8545),
-      // timeout: 120 * 1000,
+      timeout: 120 * 1000,
       // reuseExistingServer: !process.env.CI,
       env: {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
@@ -129,8 +132,8 @@ const config: PlaywrightTestConfig = {
       reuseExistingServer: !process.env.CI,
       env: {
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
-        NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
         NEXT_PUBLIC_APP_ENV: 'test',
+        NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
       },
       // stderr: 'pipe',
       // stdout: 'pipe',

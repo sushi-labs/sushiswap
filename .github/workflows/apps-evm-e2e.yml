@@ -13,15 +13,12 @@ on:
       - "config/viem/**"
       - "config/wagmi/**"
       - "packages/**"
-defaults:
-  run:
-    # change this if your nextjs app does not live at the root of the repo
-    working-directory: ./apps/evm
 env:
   CI: true
   NODE_OPTIONS: --max-old-space-size=8192
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_FORCE: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -53,36 +50,21 @@ jobs:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}
 
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
       - name: Install dependencies
         run: pnpm install
-        working-directory: .
-
-      - name: Install playwright
-        run: pnpm exec playwright install --with-deps chromium        
-
-      # - name: Install Foundry
-      #   uses: foundry-rs/foundry-toolchain@v1
-
-      # - name: Install dependencies
-      #   run: pnpm install
-      #   env:
-      #     PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-
-      # - name: Install Playwright Browsers
-      #   run: npx playwright install --with-deps chromium
         
       - name: Test
-        run: pnpm test-evm-app
+        run: pnpm exec turbo run test --filter evm
         env:
-          ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
           ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-          ANVIL_PORT: 8545
+          ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
           EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           NEXT_TELEMETRY_DISABLED: 1
-        working-directory: .
-
 
       - name: Upload test results
         if: always()
