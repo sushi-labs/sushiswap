@@ -712,6 +712,10 @@ async function checkMultipleSwapsFork(
     const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
     const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
       .out + addFlowOut(from, to)
+    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
+      .inp - addFlowInp(from, to)
+    expectCloseValues(amountIn, expectedIn, 1e-6)
+
     if (from < to)
       pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
     else 

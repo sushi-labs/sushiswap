@@ -71,7 +71,7 @@ export class CurveMultitokenPool extends RPool {
     } else {
       console.assert(amountOut + this.flow0 >= 0, 'CurveMultitokenPool.calcInByOut Unexpected input value 1')
       return {
-        inp: this.core.calcInByOut(amountOut + this.flow0, this.index1, this.index0) -+ this.flow1,
+        inp: this.core.calcInByOut(amountOut + this.flow0, this.index1, this.index0) + this.flow1,
         gasSpent: SWAP_GAS_COST
       }
     }
