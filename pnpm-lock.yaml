@@ -1532,9 +1532,6 @@ importers:
       sushi:
         specifier: workspace:*
         version: link:../sushi
-      viem:
-        specifier: 1.16.6
-        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
@@ -1572,6 +1569,9 @@ importers:
       typescript:
         specifier: 5.2.2
         version: 5.2.2
+      viem:
+        specifier: 1.16.6
+        version: 1.16.6(typescript@5.2.2)(zod@3.21.4)
       wagmi:
         specifier: 1.4.3
         version: 1.4.3(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)

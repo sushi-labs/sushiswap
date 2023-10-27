@@ -52,7 +52,6 @@
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
     "sushi": "workspace:*",
-    "viem": "1.16.6",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -67,6 +66,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
+    "viem": "1.16.6",
     "wagmi": "1.4.3"
   },
   "peerDependencies": {
@@ -74,6 +74,7 @@
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "viem": "1.16.6",
     "wagmi": "1.4.3"
   }
 }

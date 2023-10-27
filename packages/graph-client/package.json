@@ -14,8 +14,8 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "sideEffects": true,
   "type": "module",
+  "sideEffects": true,
   "exports": {
     ".": {
       "types": "./.graphclient/index.d.ts",
