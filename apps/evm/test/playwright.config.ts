@@ -19,8 +19,6 @@ const baseURL = `http://localhost:${PORT}`
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  // Test directory
-  testDir: path.join(__dirname, 'test'),
   // testMatch: 'swap.test.ts',
   testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. Defaults to 30s. */
@@ -65,8 +63,8 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
   },
-  globalSetup: './test/global.setup.ts',
-  globalTeardown: './test/global.teardown.ts',
+  globalSetup: './global.setup.ts',
+  globalTeardown: './global.teardown.ts',
 
   /* Configure projects for major browsers */
   projects: [

@@ -10,7 +10,7 @@
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
-    "test": "npx playwright test"
+    "test": "npx playwright test -c test/playwright.config.ts"
   },
   "dependencies": {
     "@headlessui/react": "1.7.7",
