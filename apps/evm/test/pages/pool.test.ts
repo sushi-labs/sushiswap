@@ -8,14 +8,22 @@ import {
   TridentChainId,
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
+  isTridentChainId,
 } from '@sushiswap/trident-sdk'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SushiSwapV2ChainId,
   computeSushiSwapV2PoolAddress,
+  isSushiSwapV2ChainId,
 } from '@sushiswap/v2-sdk'
 import {
+  FeeAmount,
   SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  SushiSwapV3ChainId,
   computePoolAddress,
+  isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
   NextFixture,
@@ -26,7 +34,8 @@ import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import { zeroAddress } from 'viem'
 
-import { createERC20 } from '../create-erc20'
+import { createERC20 } from 'test/create-erc20'
+import { interceptAnvil } from 'test/intercept-anvil'
 
 interface TridentPoolArgs {
   token0: Type
@@ -79,15 +88,76 @@ const BASE_URL = 'http://localhost:3000/pool'
 
 // Global hooks
 test.beforeAll(async () => {
-  FAKE_TOKEN = await createERC20({
-    chainId: CHAIN_ID,
-    name: 'FakeToken',
-    symbol: 'FT',
-    decimals: 18,
-  })
+  try {
+    FAKE_TOKEN = await createERC20({
+      chainId: CHAIN_ID,
+      name: 'FakeToken',
+      symbol: 'FT',
+      decimals: 18,
+    })
+    // MOCK_TOKEN_1_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_1_DP',
+    //   symbol: '1_DP',
+    //   decimals: 1,
+    // })
+    // MOCK_TOKEN_6_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_6_DP',
+    //   symbol: '6_DP',
+    //   decimals: 6,
+    // })
+    // MOCK_TOKEN_8_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_8_DP',
+    //   symbol: '8_DP',
+    //   decimals: 8,
+    // })
+    // MOCK_TOKEN_18_DP = await createERC20({
+    //   chainId: CHAIN_ID,
+    //   name: 'MOCK_TOKEN_18_DP',
+    //   symbol: '18_DP',
+    //   decimals: 18,
+    // })
+  } catch (error) {
+    console.error('error creating fake token', error)
+  }
 })
 test.beforeEach(async ({ page, next }) => {
-  await mockTokenApi(page, [FAKE_TOKEN])
+  page.on('pageerror', (error) => {
+    console.error(error)
+  })
+
+  try {
+    await page.route('https://tokens.sushi.com/v0', async (route) => {
+      const response = await route.fetch()
+      const json = await response.json()
+
+      await route.fulfill({
+        json: json.concat(
+          [FAKE_TOKEN].map((token) => ({
+            id: token.id,
+            chainId: token.chainId,
+            address: token.address.toLowerCase(),
+            name: token.name,
+            symbol: token.symbol,
+            decimals: token.decimals,
+            isCommon: false,
+            isFeeOnTransfer: false,
+          })),
+        ),
+      })
+    })
+  } catch (error) {
+    console.error('error mockking token api', error)
+  }
+
+  try {
+    await interceptAnvil(page)
+  } catch (error) {
+    console.error('error intercepting anvil', error)
+  }
+
   next.onFetch(() => {
     return 'continue'
   })
@@ -95,54 +165,43 @@ test.beforeEach(async ({ page, next }) => {
 
 // Tests will only work for polygon atm
 test.describe('V3', () => {
+  test.skip(!isSushiSwapV3ChainId(CHAIN_ID))
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
 
-  test('Create pool', async ({ page, next }) => {
+  test('Create, add both sides, single side each token & remove', async ({
+    page,
+    next,
+  }) => {
     test.slow()
+
+    console.log('Create pool')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
       startPrice: '0.5',
       minPrice: '0.1',
       maxPrice: '0.9',
-      amount: '0.001',
+      amount: '0.0001',
       amountBelongsToToken0: false,
       type: 'CREATE',
     })
-  })
 
-  test('Add liquidity, both sides', async ({ page, next }) => {
-    test.slow()
-    await createOrAddLiquidityV3(page, next, {
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      minPrice: '0.3',
-      maxPrice: '0.7',
-      amount: '0.0001',
-      amountBelongsToToken0: false,
-      type: 'ADD',
-    })
-  })
-
-  test('Add liquidity, only one side(NATIVE)', async ({ page, next }) => {
-    test.slow()
+    console.log('Add liquidity, only one side(NATIVE)')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
       minPrice: '0.8',
       maxPrice: '0.9',
-      amount: '1',
+      amount: '0.0001',
       amountBelongsToToken0: true,
       type: 'ADD',
     })
-  })
 
-  test('Add liquidity, only one side(FAKE_TOKEN)', async ({ page, next }) => {
-    test.slow()
+    console.log('Add liquidity, only one side(FAKE_TOKEN)')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
@@ -152,35 +211,40 @@ test.describe('V3', () => {
       amountBelongsToToken0: false,
       type: 'ADD',
     })
-  })
 
-  test('Remove liquidity', async ({ page, next }) => {
-    test.slow()
+    console.log('Remove liquidity')
     await mockPoolApi(
       page,
       next,
       NATIVE_TOKEN.wrapped,
       FAKE_TOKEN,
-      10000,
+      FeeAmount.HIGH,
       'SUSHISWAP_V3',
     )
+
+    const poolAddress = computePoolAddress({
+      factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID],
+      tokenA: NATIVE_TOKEN.wrapped,
+      tokenB: FAKE_TOKEN,
+      fee: FeeAmount.HIGH,
+      twap: false,
+    })
+    const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
+    await page.goto(removeLiquidityUrl)
+
     await removeLiquidityV3(page, next)
   })
 })
 
 test.describe('Trident', () => {
-  console.log(
-    'trident',
-    !TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId),
-  )
-  test.skip(!TRIDENT_SUPPORTED_CHAIN_IDS.includes(CHAIN_ID as TridentChainId))
+  test.skip(!isTridentChainId(CHAIN_ID))
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
 
-  test('Create pool', async ({ page, next }) => {
+  test('Create, add & remove', async ({ page, next }) => {
     test.slow()
     await createOrAddTridentPool(page, next, {
       // 0.01% fee is not created at block 42259027
@@ -191,10 +255,7 @@ test.describe('Trident', () => {
       fee: Fee.DEFAULT.toString(),
       type: 'CREATE',
     })
-  })
 
-  test('Add liquidity', async ({ page, next }) => {
-    test.slow()
     await createOrAddTridentPool(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
@@ -203,10 +264,7 @@ test.describe('Trident', () => {
       fee: Fee.DEFAULT.toString(),
       type: 'ADD',
     })
-  })
 
-  test('Remove liquidity', async ({ page, next }) => {
-    test.slow()
     await mockPoolApi(
       page,
       next,
@@ -223,7 +281,7 @@ test.describe('Trident', () => {
       twap: false,
     })
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
-    await page.goto(removeLiquidityUrl, { timeout: 25_000 })
+    await page.goto(removeLiquidityUrl)
     await removeLiquidityV2(page, next)
   })
 
@@ -289,41 +347,36 @@ test.describe('Trident', () => {
 })
 
 test.describe('V2', () => {
+  test.skip(!isSushiSwapV2ChainId(CHAIN_ID))
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
     await page.goto(url)
     await switchNetwork(page, CHAIN_ID)
   })
-  test('Create', async ({ page, next }) => {
+
+  test('Create, add & remove', async ({ page, next }) => {
     test.slow()
     await createOrAddV2Pool(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
+      amount0: '1',
+      amount1: '1',
       type: 'CREATE',
     })
-  })
 
-  test('Add liquidity', async ({ page, next }) => {
-    test.slow()
     await createOrAddV2Pool(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
+      amount0: '10',
+      amount1: '10',
       type: 'ADD',
     })
-  })
 
-  test('Remove liquidity', async ({ page, next }) => {
-    test.slow()
     const poolAddress = computeSushiSwapV2PoolAddress({
       factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
     })
-
     await mockPoolApi(
       page,
       next,
@@ -332,10 +385,8 @@ test.describe('V2', () => {
       Fee.DEFAULT,
       'SUSHISWAP_V2',
     )
-
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
-
     await removeLiquidityV2(page, next)
   })
 })
@@ -358,8 +409,22 @@ async function createOrAddLiquidityV3(
     await startPriceInput.isEnabled()
     await startPriceInput.fill(args.startPrice, { timeout: 15_000 })
   }
-  await page.locator('[testdata-id=min-price-input]').fill(args.minPrice)
-  await page.locator('[testdata-id=max-price-input]').fill(args.maxPrice)
+
+  // Fill min price
+  const minPriceInput = page.locator('[testdata-id=min-price-input]')
+  // await expect(minPriceInput).toBeVisible()
+  // await expect(minPriceInput).toBeEnabled()
+  // const minPriceValueBefore = await minPriceInput.getAttribute('value')
+  await minPriceInput.fill(args.minPrice)
+  // await expect(minPriceInput).not.toHaveValue(minPriceValueBefore)
+
+  // Fill max price
+  const maxPriceInput = page.locator('[testdata-id=max-price-input]')
+  // await expect(maxPriceInput).toBeVisible()
+  // await expect(maxPriceInput).toBeEnabled()
+  // const maxPriceValueBefore = await maxPriceInput.getAttribute('value')
+  await maxPriceInput.fill(args.maxPrice)
+  // await expect(maxPriceInput).not.toHaveValue(maxPriceValueBefore)
 
   const tokenOrderNumber = args.amountBelongsToToken0 ? 0 : 1
   await page
@@ -426,7 +491,7 @@ async function createOrAddTridentPool(
     await expect(approveBentoLocator).toBeVisible()
     await expect(approveBentoLocator).toBeEnabled()
     await approveBentoLocator.click()
-    console.log('approveBentoLocator clicked', approveBentoLocator)
+    // console.log('approveBentoLocator clicked', approveBentoLocator)
   }
   const approveTokenId =
     args.type === 'CREATE'
@@ -437,7 +502,7 @@ async function createOrAddTridentPool(
 
   // create-trident-approve-token1-button
   // add-liquidity-trident-approve-token1-button
-  console.log('approveTokenId', approveTokenId)
+  // console.log('approveTokenId', approveTokenId)
   const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
   await expect(approveTokenLocator).toBeVisible()
   await expect(approveTokenLocator).toBeEnabled()
@@ -813,41 +878,6 @@ export async function selectDate(
     .click()
 
   await page.locator('li.react-datepicker__time-list-item').first().click()
-}
-
-async function mockTokenApi(page: Page, tokens: Token[]) {
-  await page.route('https://tokens.sushi.com/v0', async (route) => {
-    const response = await route.fetch()
-    const json = await response.json()
-    await route.fulfill({
-      json: [
-        ...json,
-        ...tokens.map((token) => ({
-          id: token.id,
-          chainId: token.chainId,
-          address: token.address.toLowerCase(),
-          name: 'FakeToken',
-          symbol: 'FT',
-          decimals: 18,
-          isCommon: false,
-          isFeeOnTransfer: false,
-        })),
-      ],
-    })
-  })
-
-  // await page.route('https://gateway.ipfs.io/ipns/tokens.uniswap.org', async (route, request) => {
-  //   const response = await route.fetch()
-  //   const json = await response.json()
-  //   json.tokens.push({
-  //     chainId: CHAIN_ID,
-  //     address: tokenAddress.toLowerCase(),
-  //     name: 'FakeToken',
-  //     symbol: 'FT',
-  //     decimals: 18,
-  //   })
-  //   await route.fulfill({ response, json })
-  // })
 }
 
 async function mockPoolApi(

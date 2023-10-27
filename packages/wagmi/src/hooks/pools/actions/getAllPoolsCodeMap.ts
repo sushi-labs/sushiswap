@@ -53,10 +53,12 @@ export const getAllPoolsCodeMap = async ({
   const testLiquidityProviders = [...sushiLiquidityProviders]
 
   const dataFetcher = DataFetcher.onChain(chainId)
+  // console.log('dataFetcher startDataFetching')
   dataFetcher.startDataFetching(
     isTest ? testLiquidityProviders : liquidityProviders,
   )
   await dataFetcher.fetchPoolsForToken(currencyA, currencyB)
+  // console.log('dataFetcher stopDataFetching')
   dataFetcher.stopDataFetching()
   return dataFetcher.getCurrentPoolCodeMap(currencyA, currencyB)
 }

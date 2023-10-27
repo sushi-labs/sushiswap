@@ -5,7 +5,8 @@ import { expect, test } from 'next/experimental/testmode/playwright'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
-import { SupportedChainId } from '../../src/config'
+import { SupportedChainId } from 'src/config'
+import { interceptAnvil } from 'test/intercept-anvil'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
@@ -26,17 +27,21 @@ const _dai = DAI[chainId]
 const _sushi = SUSHI[chainId]
 const wbtc = WBTC[chainId]
 
-test.beforeAll(async () => {
-  // test.expect.configure({ timeout: 180_000 })
-})
+// test.beforeAll(async () => {
+//   console.log('beforeAll swap tests')
+// })
 
 test.beforeEach(async ({ page, next }) => {
   page.on('pageerror', (error) => {
     console.error(error)
   })
-  // We cam reset the fork easily
-  // const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
-  // await client.reset({ blockNumber: 42259027n })
+
+  try {
+    await interceptAnvil(page)
+  } catch (error) {
+    console.error('error intercepting anvil', error)
+  }
+
   next.onFetch(() => {
     return 'continue'
   })
@@ -91,6 +96,7 @@ test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({
 // })
 
 test('Swap Native to WBTC', async ({ page }) => {
+  test.slow()
   await swap(page, native, wbtc, '1')
 })
 

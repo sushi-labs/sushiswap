@@ -1,11 +1,14 @@
-import childProcess from 'child_process'
-import { promisify } from 'util'
 import { type FullConfig } from '@playwright/test'
-const exec = promisify(childProcess.exec)
+import { proxy } from './anvil-proxy'
 
 async function globalTeardown(_config: FullConfig) {
-  console.log('globalTeardown')
-  await exec('pkill -2 anvil')
+  try {
+    console.log('globalTeardown')
+    const shutdown = await proxy
+    await shutdown()
+  } catch (error) {
+    console.error('globalTeardown', error)
+  }
 }
 
 export default globalTeardown

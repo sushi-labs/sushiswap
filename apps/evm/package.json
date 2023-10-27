@@ -76,7 +76,6 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@next/env": "13.5.4",
     "@next/eslint-plugin-next": "13.5.4",
     "@playwright/test": "1.37.0",
     "@sushiswap/jest-config": "workspace:*",

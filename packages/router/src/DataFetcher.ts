@@ -32,6 +32,7 @@ import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
 import type { PoolCode } from './pools/PoolCode'
 
+// TODO: Should be a mode on the config for DataFetcher
 const isTest =
   process.env['APP_ENV'] === 'test' ||
   process.env['NEXT_PUBLIC_APP_ENV'] === 'test'

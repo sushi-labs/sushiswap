@@ -214,11 +214,11 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                     price={
                       price
                         ? parseFloat(
-                            (invertPrice
-                              ? price.invert()
-                              : price
-                            ).toSignificant(8),
-                          )
+                          (invertPrice
+                            ? price.invert()
+                            : price
+                          ).toSignificant(8),
+                        )
                         : undefined
                     }
                     priceLower={priceLower}

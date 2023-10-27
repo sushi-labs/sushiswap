@@ -18,7 +18,7 @@ const baseURL = `http://localhost:${PORT}`
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  // testMatch: 'swap.test.ts',
+  // testMatch: 'pool.test.ts',
   testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. Defaults to 30s. */
   timeout: 60_000,
@@ -31,15 +31,14 @@ const config: PlaywrightTestConfig = {
     timeout: 180_000,
   },
   /* Run tests in files in parallel */
-  fullyParallel: false,
+  fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   // Retry on CI only.
   // retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: 1,
+  // workers: 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  // reporter: process.env.CI ? 'dot' : 'list',
   reporter: process.env.CI ? 'github' : 'list',
 
   // reporter: process.env.CI ? 'github' : 'html',
@@ -73,7 +72,6 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Chrome'],
       },
     },
-
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },
@@ -82,7 +80,6 @@ const config: PlaywrightTestConfig = {
     //   name: 'webkit',
     //   use: { ...devices['Desktop Safari'] },
     // },
-
     // /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
@@ -124,11 +121,12 @@ const config: PlaywrightTestConfig = {
     //   // stdout: 'pipe',
     // },
     {
-      command: `NEXT_PUBLIC_APP_ENV=test EDGE_CONFIG=${String(
-        process.env.EDGE_CONFIG,
-      )} NEXT_PUBLIC_CHAIN_ID=${String(
-        process.env.NEXT_PUBLIC_CHAIN_ID,
-      )} npm run start -- --experimental-test-proxy`,
+      command: [
+        `EDGE_CONFIG=${String(process.env.EDGE_CONFIG)}`,
+        'NEXT_PUBLIC_APP_ENV=test',
+        `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
+        'npm run start -- --experimental-test-proxy',
+      ].join(' '),
       port: 3000,
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
