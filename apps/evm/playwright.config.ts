@@ -21,7 +21,7 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  // testMatch: 'pool.test.ts',
+  // testMatch: 'swap.test.ts',
   testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. Defaults to 30s. */
   timeout: 60_000,
