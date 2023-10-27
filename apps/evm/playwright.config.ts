@@ -118,8 +118,8 @@ const config: PlaywrightTestConfig = {
         ANVIL_PORT: String(process.env.ANVIL_PORT || 8545),
         DEBUG: 'pw:webserver',
       },
-      stderr: 'pipe',
-      stdout: 'pipe',
+      // stderr: 'pipe',
+      // stdout: 'pipe',
     },
     {
       command: 'npm run start -- --experimental-test-proxy',
@@ -131,8 +131,8 @@ const config: PlaywrightTestConfig = {
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
         NEXT_PUBLIC_APP_ENV: 'test',
       },
-      stderr: 'pipe',
-      stdout: 'pipe',
+      // stderr: 'pipe',
+      // stdout: 'pipe',
     },
   ],
 }

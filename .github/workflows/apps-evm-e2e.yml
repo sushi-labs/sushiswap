@@ -28,7 +28,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   e2e:
-    timeout-minutes: 30
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,6 +40,8 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: pnpm/action-setup@v2
         with:
@@ -59,34 +61,17 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
-      # - name: Install playwright
-      #   run: npx playwright install --with-deps chromium
-
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
         
-
-      - name: Build
-        run: pnpm exec turbo run build --filter evm
-
-      - name: Run Playwright tests
-        run: npx playwright test
-        working-directory: ./apps/evm
+      - name: Test
+        run: pnpm exec turbo run test --filter evm
         env:
           ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
           ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
           ANVIL_PORT: 8545
           NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
-
-      # - name: Test
-      #   run: pnpm test-evm-app
-      #   env:
-      #     ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
-      #     ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
-      #     ANVIL_PORT: 8545
-      #     NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-      #     NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           # NEXT_PUBLIC_DST_CHAIN_ID: ${{ matrix.dst-chain-id }}
           # NEXT_PUBLIC_DRPC_ID: ${{ secrets.NEXT_PUBLIC_DRPC_ID }}
 
