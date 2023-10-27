@@ -18,15 +18,22 @@
       "dependsOn": ["^build"],
       "dotEnv": [".env.production.local", ".env.local", ".env.production", ".env"]
     },
+
+    "check": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "dotEnv": [".env.development.local", ".env.local", ".env.development", ".env"],
+      "cache": false,
+      "persistent": true
+    },
     "test": {
       "inputs": ["test/**"],
       "outputs": ["test-results/**"],
       "dependsOn": ["build"],
       "dotEnv": [".env.test.local", ".env.test", ".env"]
-    },
-    "check": {
-      "dependsOn": ["^build"],
-      "cache": false
     }
   }
 }
