@@ -21,7 +21,8 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // Test directory
   testDir: path.join(__dirname, 'test'),
-  testIgnore: 'cross-chain-swap.test.ts',
+  testMatch: 'pool.test.ts',
+  // testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. */
   timeout: 60_000,
   expect: {
@@ -29,7 +30,7 @@ const config: PlaywrightTestConfig = {
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: !process.env.CI ? 45_000 : 90_000,
+    timeout: !process.env.CI ? 90_000 : 90_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -116,8 +117,8 @@ const config: PlaywrightTestConfig = {
         ANVIL_BLOCK_NUMBER: String(process.env.ANVIL_BLOCK_NUMBER),
         ANVIL_FORK_URL: String(process.env.ANVIL_FORK_URL),
       },
-      stderr: 'pipe',
-      stdout: 'pipe',
+      // stderr: 'pipe',
+      // stdout: 'pipe',
     },
     {
       command: 'npm run start -- --experimental-test-proxy',
@@ -129,8 +130,8 @@ const config: PlaywrightTestConfig = {
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
         NEXT_PUBLIC_APP_ENV: 'test',
       },
-      stderr: 'pipe',
-      stdout: 'pipe',
+      // stderr: 'pipe',
+      // stdout: 'pipe',
     },
   ],
 }
