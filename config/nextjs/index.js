@@ -6,8 +6,8 @@ const defaultNextConfig = {
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
-    // webpackBuildWorker: true,
-    esmExternals: 'loose',
+    webpackBuildWorker: true,
+    // esmExternals: 'loose',
     // Prepare for Next.js 13.5.4+
     // optimizePackageImports: [
     //   '@heroicons/react-v1/solid',
@@ -21,6 +21,7 @@ const defaultNextConfig = {
     //   '@sushiswap/router',
     //   '@sushiswap/tines',
     //   '@sushiswap/ui',
+    //   '@sushiswap/wagmi',
     //   'sushi',
     // ],
   },
