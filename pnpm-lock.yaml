@@ -1430,8 +1430,8 @@ importers:
         specifier: 2.0.2
         version: 2.0.2
       '@wagmi/core':
-        specifier: 1.4.3
-        version: 1.4.3(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
+        specifier: 1.4.3-cjs
+        version: 1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
       graphql:
         specifier: 16.6.0
         version: 16.6.0
@@ -15888,6 +15888,34 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+
+  /@wagmi/core@1.4.3-cjs(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4):
+    resolution: {integrity: sha512-NCGW0Y8TAZ5zTcS5shXcvpDhzcWCc8MPXKjrEz8J1qu4Y8YkVkDRR3JF+MprRCvF8k3gt1nrLatnwEGnY1izmg==}
+    peerDependencies:
+      typescript: 5.2.2
+      viem: '>=0.3.35'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@wagmi/connectors': 3.1.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.16.6)(zod@3.21.4)
+      abitype: 0.8.7(typescript@5.2.2)(zod@3.21.4)
+      eventemitter3: 4.0.7
+      typescript: 5.2.2
+      viem: 1.16.6(typescript@5.2.2)(zod@3.21.4)
+      zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - '@types/react'
+      - bufferutil
+      - encoding
+      - immer
+      - lokijs
+      - react
+      - supports-color
+      - utf-8-validate
+      - zod
+    dev: true
 
   /@walletconnect/core@2.10.1:
     resolution: {integrity: sha512-WAoXfmj+Zy5q48TnrKUjmHXJCBahzKwbul+noepRZf7JDtUAZ9IOWpUjg+UPRbfK5EiWZ0TF42S6SXidf7EHoQ==}

@@ -6,9 +6,9 @@ const defaultNextConfig = {
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
-    webpackBuildWorker: true,
-    // esmExternals: 'loose',
-    // Prepare for Next.js 13.5.4+
+    // webpackBuildWorker: true,
+    esmExternals: 'loose',
+    // Prepare for Next.js 14
     // optimizePackageImports: [
     //   '@heroicons/react-v1/solid',
     //   '@heroicons/react-v1/outline',
