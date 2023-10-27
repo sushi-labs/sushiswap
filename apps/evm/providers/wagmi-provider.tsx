@@ -5,8 +5,12 @@ import {
 } from '@sushiswap/wagmi'
 import type { FC, ReactNode } from 'react'
 
+const isTest = process.env.NEXT_PUBLIC_APP_ENV !== 'test'
+
+console.log('isTest', isTest)
+
 const config =
-  process.env.NEXT_PUBLIC_APP_ENV !== 'test'
+  !isTest
     ? createProductionConfig()
     : createTestConfig()
 

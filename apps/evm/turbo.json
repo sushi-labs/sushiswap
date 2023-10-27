@@ -20,7 +20,7 @@
       ]
     },
     "test": {
-      "outputs": [],
+      "outputs": ["test-results/**"],
       "dependsOn": ["build"],
       "env": [
         "ALCHEMY_ID",
