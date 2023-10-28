@@ -663,6 +663,12 @@ async function processMultiTokenPool(
   return 'passed'
 }
 
+function getRandomPair(rnd: () => number, num: number): [number, number] {
+  const i = Math.floor(rnd() * num)
+  let j = Math.floor(rnd() * (num-1))
+  if (j >= i) ++j
+  return [i, j]
+}
 
 async function checkMultipleSwapsFork(
   config: TestConfig,
@@ -701,52 +707,8 @@ async function checkMultipleSwapsFork(
     return flowInternal[Math.min(from, to)][Math.max(from, to)][from < to ? 1 : 0] += (val ?? 0)
   }
 
-  // TODO: arbitrary swap order !!!
   for (let s = 0; s < steps; ++s) {
-    const from = 0
-    const to = 2
-    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
-    const res0 = Number(pool.reserve0)
-    const res1 = Number(pool.reserve1)
-    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
-
-    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
-    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
-      .out + addFlowOut(from, to)
-    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
-      .inp - addFlowInp(from, to)
-    expectCloseValues(amountIn, expectedIn, 1e-6)
-
-    if (from < to)
-      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
-    else 
-      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
-  }
-  
-  for (let s = 0; s < steps; ++s) {
-    const from = 1
-    const to = 2
-    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
-    const res0 = Number(pool.reserve0)
-    const res1 = Number(pool.reserve1)
-    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
-
-    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
-    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
-      .out + addFlowOut(from, to)
-    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
-      .inp - addFlowInp(from, to)
-    expectCloseValues(amountIn, expectedIn, 1e-6)
-
-    if (from < to)
-      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
-    else 
-      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
-  }
-  
-  for (let s = 0; s < steps; ++s) {
-    const from = 0
-    const to = 1
+    const [from, to] = getRandomPair(rnd, n)
     const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
     const res0 = Number(pool.reserve0)
     const res1 = Number(pool.reserve1)
@@ -765,27 +727,27 @@ async function checkMultipleSwapsFork(
       pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
   }
 
-  // TODO: remember and compare results in future
   for (let i = 0; i < n; ++i)
     for (let j = i + 1; j < n; ++j)
       poolInfo.poolTines[i][j].cleanTmpData()
   poolInfo.snapshot.restore()
 
-  // TODO: arbitrary check order!
   for (let i = 0; i < n; ++i) {
     for (let j = i + 1; j < n; ++j) {
-      const inp = addFlowInp(i, j)
+      const direction = addFlowInp(i, j) >= 0
+      const [inp, outPrimary] = direction ? 
+        [addFlowInp(i, j), -addFlowOut(i, j)] : [addFlowOut(i, j), -addFlowInp(i, j)]
       if (inp == 0) continue
-      const expectedOut = poolInfo.poolTines[i][j].calcOutByInReal(inp, true)
+      const expectedOut = poolInfo.poolTines[i][j].calcOutByInReal(inp, direction)
       const realOut = await makeSwap(
         config,
         poolInfo,
-        inp > 0 ? i : j,
-        inp > 0 ? j : i,
-        inp > 0 ? inp : expectedOut // TODO
+        direction ? i : j,
+        direction ? j : i,
+        inp
       )
-      console.log(i, j, inp > 0 ? expectedOut : -inp, realOut, precision)
-      expectCloseValues(inp > 0 ? expectedOut : -inp, realOut, precision)
+      console.log(`${direction ? i : j}->${direction ? j : i} prime=${outPrimary} final=${expectedOut}(${expectedOut/outPrimary}) real=${realOut}`)
+      expectCloseValues(expectedOut, realOut, precision)
     }
   }
   return 'passed'

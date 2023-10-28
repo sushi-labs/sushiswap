@@ -78,7 +78,7 @@ export class CurveMultitokenPool extends RPool {
   }
 
   override calcOutByInReal(amountIn: number, direction: boolean): number {
-    const amountOut = this.calcOutByIn(amountIn, direction).out
+    const amountOut = Math.round(this.calcOutByIn(amountIn, direction).out)
     const [flow0, flow1] = direction ? [amountIn, -amountOut] : [-amountOut, amountIn]
     this.setCurrentFlow(flow0, flow1)
     return amountOut
