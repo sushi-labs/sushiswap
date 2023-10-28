@@ -84,13 +84,8 @@ let FAKE_TOKEN: Token
 
 const BASE_URL = 'http://localhost:3000/pool'
 
-// test.beforeAll(async () => {
-//   console.log('beforeAll pool tests')
-// })
-test.beforeEach(async ({ page, next }) => {
-  page.on('pageerror', (error) => {
-    console.error(error)
-  })
+test.beforeAll(async () => {
+  console.log('beforeAll pool tests')
 
   try {
     FAKE_TOKEN = await createERC20({
@@ -135,25 +130,31 @@ test.beforeEach(async ({ page, next }) => {
       error,
     )
   }
+})
+test.beforeEach(async ({ page, next }) => {
+  page.on('pageerror', (error) => {
+    console.error(error)
+  })
+
+  if (!FAKE_TOKEN) {
+    throw new Error("FAKE_TOKEN doesn't exist")
+  }
 
   try {
     await page.route('https://tokens.sushi.com/v0', async (route) => {
-      const response = await route.fetch()
-      const json = await response.json()
-      console.log('JSON >>>>> ', json)
+      // const response = await route.fetch()
+      // const json = await response.json()
       await route.fulfill({
-        json: json.concat(
-          [FAKE_TOKEN].map((token) => ({
-            id: token.id,
-            chainId: token.chainId,
-            address: token.address.toLowerCase(),
-            name: token.name,
-            symbol: token.symbol,
-            decimals: token.decimals,
-            isCommon: false,
-            isFeeOnTransfer: false,
-          })),
-        ),
+        json: [FAKE_TOKEN].map((token) => ({
+          id: token.id,
+          chainId: token.chainId,
+          address: token.address.toLowerCase(),
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals,
+          isCommon: false,
+          isFeeOnTransfer: false,
+        })),
       })
     })
   } catch (error) {
@@ -943,6 +944,7 @@ async function mockPoolApi(
         fee,
       })
     } else {
+      console.error('>>>>>>>>> UNKNOWN PROTOCOL')
       throw Error('Unknown protocol')
     }
 

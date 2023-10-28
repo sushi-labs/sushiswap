@@ -37,5 +37,5 @@ if (process.env.ANVIL_PORT) {
 export const testWorkerIndex = Number(process.env.TEST_WORKER_INDEX ?? 0)
 export const testParallelIndex = Number(process.env.TEST_PARALLEL_INDEX ?? 0)
 
-export const localHttpUrl = `http://127.0.0.1:${anvilPort}/${testWorkerIndex}`
-export const localWsUrl = `ws://127.0.0.1:${anvilPort}/${testWorkerIndex}`
+export const localHttpUrl = `http://127.0.0.1:${anvilPort}/${testParallelIndex}`
+export const localWsUrl = `ws://127.0.0.1:${anvilPort}/${testParallelIndex}`
