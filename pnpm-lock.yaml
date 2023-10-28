@@ -786,9 +786,6 @@ importers:
         specifier: 3.21.4
         version: 3.21.4
     devDependencies:
-      '@next/env':
-        specifier: 13.5.4
-        version: 13.5.4
       '@next/eslint-plugin-next':
         specifier: 13.5.4
         version: 13.5.4
@@ -9127,6 +9124,7 @@ packages:
 
   /@next/env@13.5.4:
     resolution: {integrity: sha512-LGegJkMvRNw90WWphGJ3RMHMVplYcOfRWf2Be3td3sUa+1AaxmsYyANsA+znrGCBjXJNi4XAQlSoEfUxs/4kIQ==}
+    dev: false
 
   /@next/eslint-plugin-next@13.5.4:
     resolution: {integrity: sha512-vI94U+D7RNgX6XypSyjeFrOzxGlZyxOplU0dVE5norIfZGn/LDjJYPHdvdsR5vN1eRtl6PDAsOHmycFEOljK5A==}
