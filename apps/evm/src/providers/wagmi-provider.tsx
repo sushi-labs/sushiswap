@@ -10,6 +10,9 @@ const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
 // const config = !isTest ? createProductionConfig() : createTestConfig()
 
 export const WagmiConfig: FC<{ children: ReactNode }> = ({ children }) => {
-  const config = useMemo(() => !isTest ? createProductionConfig() : createTestConfig(), [])
+  const config = useMemo(
+    () => (!isTest ? createProductionConfig() : createTestConfig()),
+    [],
+  )
   return <_WagmiConfig config={config}>{children}</_WagmiConfig>
 }
