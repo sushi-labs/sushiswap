@@ -86,8 +86,14 @@ let FAKE_TOKEN: Token
 
 const BASE_URL = 'http://localhost:3000/pool'
 
-// Global hooks
-test.beforeAll(async () => {
+// test.beforeAll(async () => {
+//   console.log('beforeAll pool tests')
+// })
+test.beforeEach(async ({ page, next }) => {
+  page.on('pageerror', (error) => {
+    console.error(error)
+  })
+
   try {
     FAKE_TOKEN = await createERC20({
       chainId: CHAIN_ID,
@@ -131,17 +137,12 @@ test.beforeAll(async () => {
       error,
     )
   }
-})
-test.beforeEach(async ({ page, next }) => {
-  page.on('pageerror', (error) => {
-    console.error(error)
-  })
 
   try {
     await page.route('https://tokens.sushi.com/v0', async (route) => {
       const response = await route.fetch()
       const json = await response.json()
-
+      console.log('JSON >>>>> ', json)
       await route.fulfill({
         json: json.concat(
           [FAKE_TOKEN].map((token) => ({
