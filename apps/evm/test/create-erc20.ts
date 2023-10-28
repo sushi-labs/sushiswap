@@ -49,8 +49,6 @@ export async function createERC20({
   // await client.mine({ blocks: 1 })
   const transaction = await client.waitForTransactionReceipt({
     hash,
-    timeout: 60_000,
-    pollingInterval: 1_000,
   })
   // const transaction = await client.getTransactionReceipt({ hash })
   if (!transaction?.contractAddress) {
