@@ -1,10 +1,7 @@
-// @ts-nocheck
-
 import { Page } from '@playwright/test'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TRIDENT_SUPPORTED_CHAIN_IDS,
   TridentChainId,
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
@@ -12,7 +9,6 @@ import {
 } from '@sushiswap/trident-sdk'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainId,
   computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
@@ -20,7 +16,6 @@ import {
 import {
   FeeAmount,
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   SushiSwapV3ChainId,
   computePoolAddress,
   isSushiSwapV3ChainId,
@@ -34,6 +29,7 @@ import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import { zeroAddress } from 'viem'
 
+import { SupportedChainId } from 'src/config'
 import { createERC20 } from 'test/create-erc20'
 import { interceptAnvil } from 'test/intercept-anvil'
 
@@ -74,7 +70,9 @@ if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
   new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
-const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID)
+const CHAIN_ID = Number(
+  process.env.NEXT_PUBLIC_CHAIN_ID as string,
+) as SupportedChainId
 const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
 
 let FAKE_TOKEN: Token
@@ -233,11 +231,11 @@ test.describe('V3', () => {
     )
 
     const poolAddress = computePoolAddress({
-      factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID],
+      factoryAddress:
+        SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
       fee: FeeAmount.HIGH,
-      twap: false,
     })
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
@@ -284,7 +282,8 @@ test.describe('Trident', () => {
       'BENTOBOX_CLASSIC',
     )
     const poolAddress = computeTridentConstantPoolAddress({
-      factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID],
+      factoryAddress:
+        TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID as TridentChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
       fee: Fee.DEFAULT,
@@ -307,7 +306,8 @@ test.describe('Trident', () => {
     })
 
     const poolAddress = computeTridentConstantPoolAddress({
-      factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID],
+      factoryAddress:
+        TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID as TridentChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
       fee: Fee.DEFAULT,
@@ -383,7 +383,8 @@ test.describe('V2', () => {
     })
 
     const poolAddress = computeSushiSwapV2PoolAddress({
-      factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID],
+      factoryAddress:
+        SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV2ChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
     })
@@ -911,20 +912,23 @@ async function mockPoolApi(
 
     if (protocol === 'SUSHISWAP_V3') {
       address = computePoolAddress({
-        factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID],
+        factoryAddress:
+          SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
         tokenA,
         tokenB,
         fee: fee,
       })
     } else if (protocol === 'SUSHISWAP_V2') {
       address = computeSushiSwapV2PoolAddress({
-        factoryAddress: SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID],
+        factoryAddress:
+          SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV2ChainId],
         tokenA,
         tokenB,
       })
     } else if (protocol === 'BENTOBOX_CLASSIC') {
       address = computeTridentConstantPoolAddress({
-        factoryAddress: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID],
+        factoryAddress:
+          TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID as TridentChainId],
         tokenA,
         tokenB,
         fee,
@@ -932,11 +936,14 @@ async function mockPoolApi(
       })
     } else if (protocol === 'BENTOBOX_STABLE') {
       address = computeTridentStablePoolAddress({
-        factoryAddress: TRIDENT_STABLE_POOL_FACTORY_ADDRESS[CHAIN_ID],
+        factoryAddress:
+          TRIDENT_STABLE_POOL_FACTORY_ADDRESS[CHAIN_ID as TridentChainId],
         tokenA,
         tokenB,
         fee,
       })
+    } else {
+      throw Error('Unknown protocol')
     }
 
     const mockPool = {
