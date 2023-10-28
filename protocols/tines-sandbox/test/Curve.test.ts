@@ -701,27 +701,7 @@ async function checkMultipleSwapsFork(
     return flowInternal[Math.min(from, to)][Math.max(from, to)][from < to ? 1 : 0] += (val ?? 0)
   }
 
-  for (let s = 0; s < steps; ++s) {
-    const from = 0
-    const to = 1
-    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
-    const res0 = Number(pool.reserve0)
-    const res1 = Number(pool.reserve1)
-    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
-
-    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
-    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
-      .out + addFlowOut(from, to)
-    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
-      .inp - addFlowInp(from, to)
-    expectCloseValues(amountIn, expectedIn, 1e-6)
-
-    if (from < to)
-      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
-    else 
-      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
-  }
-  
+  // TODO: arbitrary swap order !!!
   for (let s = 0; s < steps; ++s) {
     const from = 0
     const to = 2
@@ -763,22 +743,49 @@ async function checkMultipleSwapsFork(
     else 
       pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
   }
+  
+  for (let s = 0; s < steps; ++s) {
+    const from = 0
+    const to = 1
+    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
+    const res0 = Number(pool.reserve0)
+    const res1 = Number(pool.reserve1)
+    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
 
+    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
+    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
+      .out + addFlowOut(from, to)
+    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
+      .inp - addFlowInp(from, to)
+    expectCloseValues(amountIn, expectedIn, 1e-6)
+
+    if (from < to)
+      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
+    else 
+      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
+  }
+
+  // TODO: remember and compare results in future
+  for (let i = 0; i < n; ++i)
+    for (let j = i + 1; j < n; ++j)
+      poolInfo.poolTines[i][j].cleanTmpData()
   poolInfo.snapshot.restore()
+
+  // TODO: arbitrary check order!
   for (let i = 0; i < n; ++i) {
     for (let j = i + 1; j < n; ++j) {
-      const flowI = addFlowInp(i, j)
-      const flowJ = addFlowInp(j, i)
-      if (flowI == 0) continue
+      const inp = addFlowInp(i, j)
+      if (inp == 0) continue
+      const expectedOut = poolInfo.poolTines[i][j].calcOutByInReal(inp, true)
       const realOut = await makeSwap(
         config,
         poolInfo,
-        flowI > 0 ? i : j,
-        flowI > 0 ? j : i,
-        flowI > 0 ? flowI : flowJ
+        inp > 0 ? i : j,
+        inp > 0 ? j : i,
+        inp > 0 ? inp : expectedOut // TODO
       )
-      console.log(i, j, flowI > 0 ? -flowJ : -flowI, realOut, precision)
-      expectCloseValues(flowI > 0 ? -flowJ : -flowI, realOut, precision)
+      console.log(i, j, inp > 0 ? expectedOut : -inp, realOut, precision)
+      expectCloseValues(inp > 0 ? expectedOut : -inp, realOut, precision)
     }
   }
   return 'passed'
@@ -807,13 +814,12 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  describe('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
+  describe.only('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
     const poolNumber = 1 // MulticoinPoolNumber
     for (let i = 0; i < poolNumber; ++i) {
       const [poolAddress, name, poolType, precision = 1e-7] =
         NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
-        debugger
         const result = await checkMultipleSwapsFork(
           config,
           poolAddress,

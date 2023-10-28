@@ -77,6 +77,13 @@ export class CurveMultitokenPool extends RPool {
     }
   }
 
+  override calcOutByInReal(amountIn: number, direction: boolean): number {
+    const amountOut = this.calcOutByIn(amountIn, direction).out
+    const [flow0, flow1] = direction ? [amountIn, -amountOut] : [-amountOut, amountIn]
+    this.setCurrentFlow(flow0, flow1)
+    return amountOut
+  }
+
   calcCurrentPriceWithoutFee(direction: boolean): number {
     if (direction)
       return this.core.calcCurrentPriceWithoutFee(this.index0, this.index1)
@@ -88,6 +95,12 @@ export class CurveMultitokenPool extends RPool {
     this.core.applyReserveChange(this.index1, flow1 - this.flow1)
     this.flow0 = flow0
     this.flow1 = flow1
+  }
+
+  override cleanTmpData() {
+    this.flow0 = 0
+    this.flow1 = 0
+    this.core.cleanTmpData()
   }
 }
 
@@ -261,6 +274,12 @@ class CurveMultitokenCore {
     this.D = 0n
   }
 
+  cleanTmpData() {
+    this.D = 0n
+    this.currentReservesRated = this.reserves.map(
+      (r, i) => (r * (this.ratesBN18[i] as bigint)) / E18,
+    )
+  }
 }
 
 export function createCurvePoolsForMultipool(
