@@ -46,8 +46,13 @@ export async function createERC20({
     account,
     args: [name, symbol, BigInt(decimals)],
   })
-  await client.mine({ blocks: 1 })
-  const transaction = await client.getTransactionReceipt({ hash })
+  // await client.mine({ blocks: 1 })
+  const transaction = await client.waitForTransactionReceipt({
+    hash,
+    timeout: 60_000,
+    pollingInterval: 1_000,
+  })
+  // const transaction = await client.getTransactionReceipt({ hash })
   if (!transaction?.contractAddress) {
     throw new Error('No contract address was found')
   }
