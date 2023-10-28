@@ -24,8 +24,9 @@ concurrency:
   cancel-in-progress: true
 jobs:
   e2e:
+    runs-on:
+      labels: ubuntu-latest-4core
     timeout-minutes: 15
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         block-number: [47479278]
