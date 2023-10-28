@@ -48,8 +48,7 @@ export async function createERC20({
   })
   await client.mine({ blocks: 1 })
   const transaction = await client.getTransactionReceipt({ hash })
-  const contractAddress = transaction.contractAddress
-  if (!contractAddress) {
+  if (!transaction?.contractAddress) {
     throw new Error('No contract address was found')
   }
   // const balance = await client.readContract({
@@ -61,7 +60,7 @@ export async function createERC20({
 
   return new Token({
     chainId,
-    address: contractAddress,
+    address: transaction.contractAddress,
     decimals,
     symbol,
     name,

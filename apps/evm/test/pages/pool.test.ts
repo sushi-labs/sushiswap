@@ -120,7 +120,16 @@ test.beforeAll(async () => {
     //   decimals: 18,
     // })
   } catch (error) {
-    console.error('error creating fake token', error)
+    console.error(
+      'error creating fake token',
+      {
+        chainId: CHAIN_ID,
+        name: 'FakeToken',
+        symbol: 'FT',
+        decimals: 18,
+      },
+      error,
+    )
   }
 })
 test.beforeEach(async ({ page, next }) => {
