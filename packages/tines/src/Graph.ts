@@ -321,15 +321,17 @@ export class Edge {
       const outInc = from === this.vert0 ? to.bestIncome : -from.bestIncome
       const inNew = inPrev + inInc
       const outNew = outPrev + outInc
-      console.assert(inNew * outNew >= 0)
+      console.assert(inNew * outNew >= 0)      
       if (inNew >= 0) {
         this.direction = true
         this.amountInPrevious = inNew
         this.amountOutPrevious = outNew
+        this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
       } else {
         this.direction = false
         this.amountInPrevious = -inNew
         this.amountOutPrevious = -outNew
+        this.pool.setCurrentFlow(outNew, -inNew, this.spentGasNew)
       }
     } else console.error('Error 221')
     this.spentGas = this.spentGasNew
@@ -1016,6 +1018,7 @@ export class Graph {
       e.amountInPrevious = 0
       e.amountOutPrevious = 0
       e.direction = true
+      e.pool.cleanTmpData()
     })
     let output = 0
     let gasSpentInit = 0
@@ -1049,6 +1052,7 @@ export class Graph {
     console.assert(gasSpent <= gasSpentInit, 'Internal Error 491')
 
     //if (topologyWasChanged || removedEdgesNumber > 0) {
+    this.edges.forEach((e) => e.pool.cleanTmpData())
     output = this.updateLegsAmountOut(legs, amountIn * totalrouted)
     totalOutput = output - toVert.gasPrice * gasSpent
     if (output === 0) {
