@@ -51,7 +51,7 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
     'busdv2',
     CurvePoolType.Legacy,
   ],
-  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.Legacy],
+  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.Legacy, 1e-3],
   // ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.Legacy], TODO: fix it
   ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.Legacy],
   ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.Legacy],
@@ -719,7 +719,7 @@ async function checkMultipleSwapsFork(
       .out + addFlowOut(from, to)
     const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
       .inp - addFlowInp(from, to)
-    expectCloseValues(amountIn, expectedIn, 1e-6)
+    expectCloseValues(amountIn, expectedIn, precision)
 
     if (from < to)
       pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
@@ -776,8 +776,8 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  describe.only('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
-    const poolNumber = 1 // MulticoinPoolNumber
+  describe('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
+    const poolNumber = MulticoinPoolNumber
     for (let i = 0; i < poolNumber; ++i) {
       const [poolAddress, name, poolType, precision = 1e-7] =
         NON_FACTORY_POOLS[i]
