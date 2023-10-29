@@ -31,6 +31,7 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
+  Amount,
   Native,
   Type,
   defaultQuoteCurrency,
@@ -39,6 +40,7 @@ import {
 import { ZERO } from 'sushi/math'
 import { SWRConfig } from 'swr'
 
+import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
 import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from '../../../../../ui/pool/SelectTokensWidget'
@@ -79,14 +81,14 @@ export default function Page({ params }: { params: { chainId: string } }) {
             !token0 || !token1 ? (
               'Select Tokens'
             ) : [SushiSwapV2PoolState.LOADING].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
+                poolState as SushiSwapV2PoolState,
+              ) ? (
               <div className="h-[20px] flex items-center justify-center">
                 <Loader width={14} />
               </div>
             ) : [SushiSwapV2PoolState.EXISTS].includes(
-              poolState as SushiSwapV2PoolState,
-            ) ? (
+                poolState as SushiSwapV2PoolState,
+              ) ? (
               'Add Liquidity'
             ) : (
               'Create Pool'
@@ -146,7 +148,12 @@ const _Add: FC<AddProps> = ({
   }>({ input0: '', input1: '' })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
+    if (!token0 || !token1) return [undefined, undefined]
+
+    return [
+      tryParseAmount(input0, token0) || Amount.fromRawAmount(token0, 0),
+      tryParseAmount(input1, token1) || Amount.fromRawAmount(token1, 0),
+    ]
   }, [input0, input1, token0, token1])
 
   const noLiquidity = useMemo(() => {
@@ -164,7 +171,7 @@ const _Add: FC<AddProps> = ({
       } else if (token0 && pool) {
         setTypedAmounts({
           input0: value,
-          input1: ''
+          input1: '',
         })
       }
     },
@@ -203,19 +210,25 @@ const _Add: FC<AddProps> = ({
     [],
   )
 
-  const _setToken0 = useCallback((token: Type | undefined) => {
-    if (token?.id === token1?.id) return;
-    setIndependendField(1)
-    setTypedAmounts((prev) => ({ ...prev, input0: '', }))
-    setToken0(token)
-  }, [setToken0, token1])
+  const _setToken0 = useCallback(
+    (token: Type | undefined) => {
+      if (token?.id === token1?.id) return
+      setIndependendField(1)
+      setTypedAmounts((prev) => ({ ...prev, input0: '' }))
+      setToken0(token)
+    },
+    [setToken0, token1],
+  )
 
-  const _setToken1 = useCallback((token: Type | undefined) => {
-    if (token?.id === token0?.id) return;
-    setIndependendField(0)
-    setTypedAmounts((prev) => ({ ...prev, input1: '', }))
-    setToken1(token)
-  }, [setToken1, token0])
+  const _setToken1 = useCallback(
+    (token: Type | undefined) => {
+      if (token?.id === token0?.id) return
+      setIndependendField(0)
+      setTypedAmounts((prev) => ({ ...prev, input1: '' }))
+      setToken1(token)
+    },
+    [setToken1, token0],
+  )
 
   useEffect(() => {
     if (pool && token0 && token1) {
@@ -302,6 +315,12 @@ const _Add: FC<AddProps> = ({
               poolState === SushiSwapV2PoolState.INVALID
             }
             loading={poolState === SushiSwapV2PoolState.LOADING}
+          />
+          <AddSectionPoolShareCardV2
+            pool={pool}
+            poolState={poolState}
+            input0={parsedInput0}
+            input1={parsedInput1}
           />
           <CheckerProvider>
             <Checker.Connect fullWidth>

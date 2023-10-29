@@ -5,6 +5,10 @@ export const formatPercent = (value: any) => {
     useGrouping: false,
   })
 
+  if (value === 0) {
+    return '0.00%'
+  }
+
   if (value < 0.0001) {
     return '<0.01%'
   }
