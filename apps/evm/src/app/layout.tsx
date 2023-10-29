@@ -37,7 +37,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${roboto_mono.variable} dark`}
-      // suppressHydrationWarning={true}
+    // suppressHydrationWarning={true}
     >
       <link
         rel="apple-touch-icon"
@@ -61,7 +61,7 @@ export default function RootLayout({
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body
         className="h-screen"
-        // suppressHydrationWarning={true}
+        suppressHydrationWarning={true}
       >
         <div className="flex flex-col h-full">
           <Providers>
