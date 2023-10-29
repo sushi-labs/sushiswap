@@ -1,7 +1,7 @@
-import { getAddress } from '@ethersproject/address'
-import { Token } from 'sushi/currency'
 import { saveTokens } from '@sushiswap/dexie'
 import { useQuery } from '@tanstack/react-query'
+import { Token } from 'sushi/currency'
+import { getAddress } from 'viem'
 
 interface UseTokensParams {
   chainId: number

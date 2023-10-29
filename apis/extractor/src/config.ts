@@ -1,4 +1,4 @@
-import { LogFilterType } from '@sushiswap/extractor/dist/LogFilter2'
+import { LogFilterType } from '@sushiswap/extractor'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,

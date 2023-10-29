@@ -1,6 +1,6 @@
-import { parseUnits } from '@ethersproject/units'
-import { Fraction } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
+import { Fraction } from 'sushi/math'
+import { parseUnits } from 'viem'
 
 interface UsePrice {
   chainId: number | undefined

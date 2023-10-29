@@ -1,5 +1,5 @@
-import { getPreviewPostBySlug } from 'lib/api'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { getPreviewPostBySlug } from '../../lib/api'
 
 export default async function preview(
   req: NextApiRequest,
@@ -11,15 +11,17 @@ export default async function preview(
     req.query.secret !== process.env.STRAPI_PREVIEW_SECRET ||
     !req.query.slug
   ) {
-    return res.status(401).json({ message: 'Invalid token' })
+    res.status(401).json({ message: 'Invalid token' })
+    return
   }
 
   // Fetch the headless CMS to check if the provided `slug` exists
   const article = await getPreviewPostBySlug(req.query.slug as string)
 
   // If the slug doesn't exist prevent preview mode from being enabled
-  if (!article?.articles?.data?.[0]) {
-    return res.status(401).json({ message: 'Invalid slug' })
+  if (!article.articles?.data[0]) {
+    res.status(401).json({ message: 'Invalid slug' })
+    return
   }
 
   // Enable Preview Mode by setting the cookies
@@ -28,7 +30,7 @@ export default async function preview(
   // Redirect to the path from the fetched post
   // We don't redirect to req.query.slug as that might lead to open redirect vulnerabilities
   res.writeHead(307, {
-    Location: `/blog/${article?.articles?.data?.[0]?.attributes?.slug}`,
+    Location: `/blog/${article.articles.data[0]?.attributes?.slug}`,
   })
   res.end()
 }

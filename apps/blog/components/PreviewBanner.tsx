@@ -1,7 +1,7 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 interface PreviewBanner {
   show: boolean
@@ -13,8 +13,8 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
   return (
     <div className="bg-slate-700 py-3 flex items-center border-t border-slate-600 border-b">
       <Container
-        maxWidth="2xl"
         className="mx-auto px-4 flex items-center justify-between"
+        maxWidth="2xl"
       >
         <div className="flex flex-col gap-1">
           <span className="font-medium text-white">Preview Mode</span>

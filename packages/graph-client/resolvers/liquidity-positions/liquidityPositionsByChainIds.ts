@@ -6,13 +6,13 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
 import { GraphQLResolveInfo } from 'graphql'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
   Query,
-  QueryliquidityPositionsByChainIdsArgs,
   QueryResolvers,
+  QueryliquidityPositionsByChainIdsArgs,
   RequireFields,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'

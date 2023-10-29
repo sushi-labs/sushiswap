@@ -1,12 +1,12 @@
-import { Fee, Pool } from '@sushiswap/base-sdk'
+import { Amount, Price, Share, Token } from 'sushi/currency'
 import {
+  Fee,
   InsufficientInputAmountError,
   InsufficientReservesError,
-} from '@sushiswap/base-sdk'
-import { Amount, Price, Share, Token } from 'sushi/currency'
-import { sqrt, ZERO } from 'sushi'
+  Pool,
+} from 'sushi/dex'
+import { ZERO, sqrt } from 'sushi/math'
 import invariant from 'tiny-invariant'
-
 import {
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,

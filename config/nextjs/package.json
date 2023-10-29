@@ -15,6 +15,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "index.js",
   "files": [
     "index.js"

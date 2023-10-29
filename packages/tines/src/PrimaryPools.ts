@@ -1,8 +1,8 @@
-import { abs } from 'sushi'
+import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
-import { computeHybridLiquidity } from './functions'
 import { getBigInt, revertPositive } from './Utils'
+import { computeHybridLiquidity } from './functions'
 
 export const TYPICAL_SWAP_GAS_COST = 60_000
 export const TYPICAL_MINIMAL_LIQUIDITY = 1000
@@ -42,7 +42,7 @@ export abstract class RPool {
     minLiquidity = TYPICAL_MINIMAL_LIQUIDITY,
     swapGasCost = TYPICAL_SWAP_GAS_COST,
   ) {
-    this.address = address || ''
+    this.address = address || '0x'
     this.token0 = token0
     this.token1 = token1
     if (token0 && token1) {
@@ -114,7 +114,7 @@ export class ConstantProductRPool extends RPool {
     this.reserve1Number = Number(reserve1 || '0')
   }
 
-  updateReserves(res0: bigint, res1: bigint) {
+  override updateReserves(res0: bigint, res1: bigint) {
     this.reserve0 = res0
     this.reserve0Number = Number(res0)
     this.reserve1 = res1
@@ -132,7 +132,7 @@ export class ConstantProductRPool extends RPool {
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcOutByInReal(amountIn: number, direction: boolean): number {
+  override calcOutByInReal(amountIn: number, direction: boolean): number {
     const x = direction ? this.reserve0Number : this.reserve1Number
     const y = direction ? this.reserve1Number : this.reserve0Number
     const amountInWithoutFee = Math.floor(amountIn * (1 - this.fee) * 1000) // rounding of amount without fee
@@ -206,7 +206,7 @@ export class HybridRPool extends RPool {
     this.D = 0n
   }
 
-  updateReserves(res0: bigint, res1: bigint) {
+  override updateReserves(res0: bigint, res1: bigint) {
     this.D = 0n
     this.reserve0 = res0
     this.reserve1 = res1

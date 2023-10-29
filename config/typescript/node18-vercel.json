@@ -1,9 +1,0 @@
-{
-  "$schema": "https://json.schemastore.org/tsconfig.json",
-  "display": "Node 18 + Vercel",
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "nodenext",
-    "allowSyntheticDefaultImports": true
-  }
-}

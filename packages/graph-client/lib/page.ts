@@ -1,6 +1,6 @@
 import { InputMaybe, Pagination } from '../.graphclient/index.js'
 
-export const page = <T extends Array<unknown>>(
+export const page = <T extends unknown[]>(
   data: T,
   pagination: InputMaybe<Pagination | undefined>,
 ): T => {

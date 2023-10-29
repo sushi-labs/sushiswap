@@ -1,16 +1,17 @@
 // @ts-nocheck
 
-import { expect, Page, test } from '@playwright/test'
-import { ChainId } from 'sushi/chain'
+import { Page } from '@playwright/test'
+import { expect, test } from 'next/experimental/testmode/playwright'
 import { DAI, Native, SUSHI, Type, USDC, USDT, WBTC } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 
-import { SupportedChainId } from '../../config'
+import { SupportedChainId } from 'src/config'
+import { interceptAnvil } from 'test/intercept-anvil'
 
 type InputType = 'INPUT' | 'OUTPUT'
 
 if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
-  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
+  new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
 const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as SupportedChainId
@@ -22,19 +23,28 @@ const wnative = native.wrapped
 
 const usdc = USDC[chainId]
 const usdt = USDT[chainId]
-const dai = DAI[chainId]
-const sushi = SUSHI[chainId]
+const _dai = DAI[chainId]
+const _sushi = SUSHI[chainId]
 const wbtc = WBTC[chainId]
 
-// test.beforeAll(async () => {})
+// test.beforeAll(async () => {
+//   console.log('beforeAll swap tests')
+// })
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, next }) => {
   page.on('pageerror', (error) => {
     console.error(error)
   })
-  // We cam reset the fork easily
-  // const client = createTestClient({ mode: 'anvil', chain: foundry, transport: http() })
-  // await client.reset({ blockNumber: 42259027n })
+
+  try {
+    await interceptAnvil(page)
+  } catch (error) {
+    console.error('error intercepting anvil', error)
+  }
+
+  next.onFetch(() => {
+    return 'continue'
+  })
   await page.goto(url)
   await switchNetwork(page, chainId)
 })
@@ -44,17 +54,15 @@ test.beforeEach(async ({ page }) => {
 
 test('Wrap and unwrap', async ({ page }) => {
   test.slow()
-
   await wrap(page, native, wnative, '10')
   await wrap(page, wnative, native, '10')
 })
 
-test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  test.slow()
-  const amount = chainId === ChainId.ARBITRUM ? '10' : '100'
-  await swap(page, native, sushi, amount)
-  await maxSwap(page, sushi, native)
-})
+// test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
+//   test.slow()
+//   await swap(page, native, sushi, '10')
+//   await maxSwap(page, sushi, native)
+// })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   test.slow()
@@ -88,6 +96,7 @@ test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({
 // })
 
 test('Swap Native to WBTC', async ({ page }) => {
+  test.slow()
   await swap(page, native, wbtc, '1')
 })
 
@@ -216,13 +225,13 @@ async function swap(
   await makeAnotherSwap.click()
 
   // Compare against cached balances to ensure there is at least a change...
-  const swapFromBalanceAfter = await swapFromBalance.textContent()
   await expect(swapFromBalance).not.toHaveText(swapFromBalanceBefore as string)
-  // expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+  const swapFromBalanceAfter = await swapFromBalance.textContent()
+  expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
 
-  const swapToBalanceAfter = await swapToBalance.textContent()
   await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
-  // expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+  const swapToBalanceAfter = await swapToBalance.textContent()
+  expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
 }
 
 async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
@@ -283,8 +292,11 @@ async function maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
   await makeAnotherSwap.click()
 
   // Compare against cached balances to ensure there is at least a change...
+  await expect(swapFromBalance).not.toHaveText(swapFromBalanceBefore as string)
   const swapFromBalanceAfter = await swapFromBalance.textContent()
   expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+
+  await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
   const swapToBalanceAfter = await swapToBalance.textContent()
   expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
 }

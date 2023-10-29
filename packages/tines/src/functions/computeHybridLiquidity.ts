@@ -1,4 +1,4 @@
-import { abs } from 'sushi'
+import { abs } from 'sushi/math'
 
 import { A_PRECISION } from '../constants'
 

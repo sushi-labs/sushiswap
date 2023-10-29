@@ -1,9 +1,9 @@
-import { isAddress } from '@ethersproject/address'
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import { getToken, saveTokens } from '@sushiswap/dexie'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { isAddress } from 'viem'
 
 interface UseTokenParams<T extends boolean> {
   chainId: ChainId | undefined
@@ -54,7 +54,7 @@ const hydrate = <T extends boolean>(
 }
 
 /**
- * @deprecated use @sushiswap/wagmi/future/hooks/useTokenWithCache
+ * @deprecated use @sushiswap/wagmi/useTokenWithCache
  */
 export const useToken = <T extends boolean = false>({
   chainId,

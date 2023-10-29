@@ -66,7 +66,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       description,
       size,
       variant = 'secondary',
-      name,
+      name: _name,
       ...props
     },
     ref,

@@ -31,7 +31,7 @@ export class BridgeUnlimited extends RPool {
     return 1
   }
 
-  alwaysAppropriateForPricing() {
+  override alwaysAppropriateForPricing() {
     return true
   }
 }

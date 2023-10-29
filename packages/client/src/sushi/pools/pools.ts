@@ -1,5 +1,5 @@
 import type {} from '@sushiswap/database'
-import type { getEarnPools as getEarnPoolsOriginal } from '@sushiswap/pools-api/lib/api'
+import { getEarnPools } from '@sushiswap/pools-api/lib/api'
 import { PoolsApiSchema } from '@sushiswap/pools-api/lib/schemas/pools'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
@@ -13,7 +13,7 @@ import type {
 } from '../../types'
 
 export { PoolsApiSchema }
-export type Pools = Awaited<ReturnType<typeof getEarnPoolsOriginal>>
+export type Pools = Awaited<ReturnType<typeof getEarnPools>>
 export type GetPoolsArgs =
   | GetApiInputFromOutput<
       typeof PoolsApiSchema['_input'],

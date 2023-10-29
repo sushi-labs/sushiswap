@@ -54,7 +54,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     this.pools = pools
     this.tokenPath = tokenPath
     this.input = input
-    this.output = output ?? tokenPath[tokenPath.length - 1]
+    this.output = output ?? (tokenPath[tokenPath.length - 1] as TOutput)
   }
 
   public get chainId(): number {
@@ -90,11 +90,13 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
           },
     ).price
 
-    return (this._midPrice = new Price(
+    this._midPrice = new Price(
       this.input,
       this.output,
       price.denominator,
       price.numerator,
-    ))
+    )
+
+    return this._midPrice
   }
 }

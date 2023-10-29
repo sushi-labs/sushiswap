@@ -1,11 +1,10 @@
-import { BENTOBOX_ADDRESS, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 
 const func: DeployFunction = async function ({
   getNamedAccounts,
   deployments,
-  run,
   getChainId,
 }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments

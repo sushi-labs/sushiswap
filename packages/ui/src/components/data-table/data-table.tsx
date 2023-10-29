@@ -36,6 +36,7 @@ import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
 
 declare module '@tanstack/react-table' {
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   interface ColumnMeta<TData extends RowData, TValue> {
     className?: string
     skeleton?: React.ReactNode
@@ -144,7 +145,7 @@ export function DataTable<TData, TValue>({
               .fill(null)
               .map((_, i) => (
                 <TableRow key={i}>
-                  {table.getVisibleFlatColumns().map((column, i) => {
+                  {table.getVisibleFlatColumns().map((column, _i) => {
                     return (
                       <TableCell
                         style={{ width: column.getSize() }}

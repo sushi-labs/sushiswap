@@ -2,8 +2,5 @@ packages:
   - 'apis/*'
   - 'apps/*'
   - 'config/*'
-  - 'examples/*'
-  - 'jobs/**'
   - 'packages/**'
   - 'protocols/*'
-  - 'subgraphs/*'

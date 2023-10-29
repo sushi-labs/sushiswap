@@ -42,8 +42,8 @@ export const SlippageTolerance: FC<{
   )
 
   const isDangerous =
-    (!isNaN(+slippageTolerance) && +slippageTolerance >= 1.3) ||
-    (!isNaN(+slippageTolerance) &&
+    (!Number.isNaN(+slippageTolerance) && +slippageTolerance >= 1.3) ||
+    (!Number.isNaN(+slippageTolerance) &&
       +slippageTolerance <= 0.1 &&
       +slippageTolerance > 0)
 

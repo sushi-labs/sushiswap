@@ -1,21 +1,21 @@
-import { ChainId, chainName, chainShortName } from 'sushi/chain'
 import {
-  isSushiSwapChain,
-  isSushiSwapV3Chain,
-  isTridentChain,
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
   SUSHISWAP_V3_SUBGRAPH_NAME,
   SushiSwapV3ChainId,
   TRIDENT_SUBGRAPH_NAME,
+  isSushiSwapChain,
+  isSushiSwapV3Chain,
+  isTridentChain,
 } from '@sushiswap/graph-config'
+import { ChainId, chainName, chainShortName } from 'sushi/chain'
 
 import {
   FactoryDaySnapshot,
-  getBuiltGraphSDK,
   Query,
   QueryResolvers,
   SushiSwapV3DayDatasQuery,
+  getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
 
 const transformV3DayToSnapshot = (

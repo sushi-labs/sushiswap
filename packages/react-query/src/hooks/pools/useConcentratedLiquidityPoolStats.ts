@@ -1,9 +1,9 @@
 import '@sushiswap/database'
 
-import { ChainId } from 'sushi/chain'
 import { getPool } from '@sushiswap/client'
-import { Amount, Token } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
+import { ChainId } from 'sushi/chain'
+import { Amount, Token } from 'sushi/currency'
 import { parseUnits } from 'viem'
 
 interface UseConcentratedLiquidityPoolStats {
