@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Format
@@ -28,8 +30,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commit_message: 'chore: format'
-          commit_user_name: 'github-actions[bot]'
-          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_user_name: 'sushi-actions[bot]'
+          commit_user_email: 'sushi-actions[bot]@users.noreply.github.com'
 
   lint:
     name: Lint
@@ -38,6 +40,8 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Lint
@@ -47,8 +51,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commit_message: 'chore: lint'
-          commit_user_name: 'github-actions[bot]'
-          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_user_name: 'sushi-actions[bot]'
+          commit_user_email: 'sushi-actions[bot]@users.noreply.github.com'
      
   # build:
   #   name: Build
