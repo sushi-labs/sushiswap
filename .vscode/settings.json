@@ -30,23 +30,23 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "biomejs.biome",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[html]": {
     "editor.defaultFormatter": "biomejs.biome",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   "[solidity]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
