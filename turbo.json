@@ -46,6 +46,12 @@
     },
     "dev": {
       "dependsOn": ["^build", "generate"],
+      "dotEnv": [
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ],
       "cache": false,
       "persistent": true
     },
@@ -59,10 +65,6 @@
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "lint:fix": {
       "dependsOn": ["^build"],
       "outputs": []
     },

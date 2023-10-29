@@ -23,12 +23,10 @@ export interface FooterProps
 const config: Record<
   string,
   | Record<string, { href: string; rel?: string; target?: string }>
-  | Array<
-      Record<
-        string,
-        Record<string, { href: string; rel?: string; target?: string }>
-      >
-    >
+  | Record<
+      string,
+      Record<string, { href: string; rel?: string; target?: string }>
+    >[]
 > = {
   Services: {
     Swap: { href: 'https://www.sushi.com/swap' },

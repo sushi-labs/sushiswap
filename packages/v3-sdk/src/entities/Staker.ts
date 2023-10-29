@@ -215,7 +215,8 @@ export abstract class Staker {
    * @param incentiveKey An `IncentiveKey` which represents a unique staking program.
    * @returns An encoded IncentiveKey to be read by ethers
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
   private static _encodeIncentiveKey(incentiveKey: IncentiveKey): {} {
     const { token0, token1, fee } = incentiveKey.pool
     const refundee = validateAndParseAddress(incentiveKey.refundee)

@@ -93,7 +93,9 @@ const querySchema3_2 = querySchema.extend({
         message: 'ChainId not supported.',
       },
     )
-    .transform((chainId) => chainId as RouteProcessor3_2ChainId),
+    .transform(
+      (chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 534352>,
+    ),
 })
 
 const PORT = process.env['PORT'] || 80

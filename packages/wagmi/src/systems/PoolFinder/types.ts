@@ -15,7 +15,7 @@ export type ComponentsWrapperProps<T> = {
   children:
     | ReactElement<T>
     | Array<ReactElement<T> | undefined>
-    | Array<Array<ReactElement<T>> | ReactElement<T> | undefined>
+    | Array<ReactElement<T>[] | ReactElement<T> | undefined>
     | undefined
 }
 

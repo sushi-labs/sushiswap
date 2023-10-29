@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
   ARB,
-  Currency,
+  type Currency,
   DAI,
   FRAX,
   GNO,
@@ -333,6 +333,18 @@ export const usePinnedTokens = () => {
     COMMON_BASES_IDS,
   )
 
+  // useEffect(() => {
+  //   setValue((value) => {
+  //     for (const [chainId, tokens] of Object.entries(COMMON_BASES_IDS)) {
+  //       if (!value[chainId]) {
+  //         value[chainId] = tokens
+  //       }
+  //     }
+  //     return value
+  //   })
+  // }, [setValue])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     Object.entries(COMMON_BASES_IDS).forEach(([chainId, tokens]) => {
       if (!value[chainId]) {
@@ -340,15 +352,17 @@ export const usePinnedTokens = () => {
         setValue(value)
       }
     })
-  }, [value])
+  }, [setValue])
 
   const addPinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(
-        new Set([...value[chainId], `${chainId}:${getAddress(address)}`]),
-      )
-      setValue(value)
+      setValue((value) => {
+        value[chainId] = Array.from(
+          new Set([...value[chainId], `${chainId}:${getAddress(address)}`]),
+        )
+        return value
+      })
     },
     [setValue],
   )
@@ -356,14 +370,16 @@ export const usePinnedTokens = () => {
   const removePinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(
-        new Set(
-          value[chainId].filter(
-            (token) => token !== `${chainId}:${getAddress(address)}`,
+      setValue((value) => {
+        value[chainId] = Array.from(
+          new Set(
+            value[chainId].filter(
+              (token) => token !== `${chainId}:${getAddress(address)}`,
+            ),
           ),
-        ),
-      )
-      setValue(value)
+        )
+        return value
+      })
     },
     [setValue],
   )

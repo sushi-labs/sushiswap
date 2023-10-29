@@ -1,5 +1,5 @@
-import type { FC } from 'react'
 import type { GhostArticle } from 'lib/ghost'
+import type { FC } from 'react'
 import { Image } from '../Image'
 
 interface ArticleAuthors {

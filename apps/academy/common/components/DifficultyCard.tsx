@@ -4,9 +4,9 @@ import { DIFFICULTY_ELEMENTS, DOCS_URL } from 'common/helpers'
 import { AcademyIcon } from 'common/icons'
 import { FC, Fragment, useState } from 'react'
 
-import { DifficultyEntity } from '.mesh'
 import { Chip } from '@sushiswap/ui/components/chip'
 import { CircleIcon } from '@sushiswap/ui/components/icons'
+import { DifficultyEntity } from '.mesh'
 
 interface DifficultyCard {
   difficulty: DifficultyEntity

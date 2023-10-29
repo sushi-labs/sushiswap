@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { getAddress } from 'viem'
+import { Address, getAddress } from 'viem'
 
 import { Currency } from './Currency.js'
 import { type Type } from './Type.js'
@@ -15,7 +15,7 @@ export class Token extends Currency {
   /**
    * The contract address on the chain on which this token lives
    */
-  public readonly address: string
+  public readonly address: Address
 
   public constructor({
     // TODO:

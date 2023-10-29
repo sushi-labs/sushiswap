@@ -58,6 +58,11 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
                       scrollToHeader(el?.key)
                       setSelectedHeader(el?.text)
                     }}
+                    onKeyDown={() => {
+                      close()
+                      scrollToHeader(el?.key)
+                      setSelectedHeader(el?.text)
+                    }}
                   >
                     <span className="text-sm font-medium">{el?.text}</span>
                   </li>

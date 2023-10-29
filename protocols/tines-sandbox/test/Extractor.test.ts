@@ -1,6 +1,3 @@
-import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { Native, Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryV2,
@@ -17,7 +14,7 @@ import {
   Router,
 } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { getBigInt, RouteStatus } from '@sushiswap/tines'
+import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
@@ -29,11 +26,14 @@ import {
   SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
-import { Address, createPublicClient, http, Transport } from 'viem'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Native, Token } from 'sushi/currency'
+import { http, Address, Transport, createPublicClient } from 'viem'
 import {
+  Chain,
   arbitrum,
   celo,
-  Chain,
   mainnet,
   optimism,
   polygon,
@@ -189,8 +189,8 @@ async function startInfinitTest(args: {
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
-        toToken = tokens[i]
+      const fromToken = Native.onChain(chainId)
+      const toToken = tokens[i]
       const route = Router.findBestRoute(
         poolMap,
         chainId,

@@ -10,7 +10,7 @@
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
-    "test": "npx playwright test"
+    "test": "npx playwright test -c test/playwright.config.ts"
   },
   "dependencies": {
     "@headlessui/react": "1.7.7",
@@ -19,7 +19,7 @@
     "@hookform/resolvers": "3.3.1",
     "@layerzerolabs/scan-client": "0.0.6",
     "@octokit/auth-app": "4.0.7",
-    "@sentry/nextjs": "7.74.0",
+    "@sentry/nextjs": "7.75.1",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
@@ -46,7 +46,7 @@
     "@upstash/redis": "1.22.1",
     "@vercel/analytics": "1.1.1",
     "@vercel/edge-config": "0.4.1",
-    "@wagmi/core": "1.4.3",
+    "@wagmi/core": "1.4.5",
     "cors": "2.8.5",
     "d3": "7.8.4",
     "date-fns": "2.30.0",
@@ -71,12 +71,11 @@
     "sushi": "workspace:*",
     "swr": "2.1.5",
     "tiny-invariant": "1.3.1",
-    "viem": "1.16.6",
-    "wagmi": "1.4.3",
+    "viem": "1.17.2",
+    "wagmi": "1.4.5",
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@next/env": "13.5.4",
     "@next/eslint-plugin-next": "13.5.4",
     "@playwright/test": "1.37.0",
     "@sushiswap/jest-config": "workspace:*",

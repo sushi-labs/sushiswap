@@ -1,11 +1,11 @@
 import { EventEmitter } from 'node:events'
 
-import { erc20Abi } from 'sushi/abi'
-import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
 import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { Abi, Address, parseAbiItem } from 'abitype'
-import { decodeEventLog, Log } from 'viem'
+import { erc20Abi } from 'sushi/abi'
+import { Token } from 'sushi/currency'
+import { Log, decodeEventLog } from 'viem'
 
 import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'

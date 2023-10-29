@@ -1,3 +1,4 @@
+import { CurvePool, RToken } from '@sushiswap/tines'
 import { ChainId } from 'sushi/chain'
 import { Token, Type } from 'sushi/currency'
 import { FRAX } from 'sushi/currency'
@@ -6,13 +7,12 @@ import { WBTC } from 'sushi/currency'
 import { Native } from 'sushi/currency'
 import { LINK } from 'sushi/currency'
 import { renBTC } from 'sushi/currency'
-import { CurvePool, RToken } from '@sushiswap/tines'
 import {
   Address,
   ContractFunctionConfig,
+  PublicClient,
   getContract,
   parseAbi,
-  PublicClient,
 } from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
@@ -504,7 +504,6 @@ export class CurveProvider extends LiquidityProvider {
           abi: curvePoolABI[poolType],
           functionName: functionName,
           args,
-          // rome-ignore lint/suspicious/noExplicitAny: any
         })) as any,
       })
     }
