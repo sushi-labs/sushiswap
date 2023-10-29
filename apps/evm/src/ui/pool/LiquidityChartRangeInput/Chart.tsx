@@ -67,6 +67,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
     zoom,
   ])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // reset zoom as necessary
     setZoom(null)

@@ -72,6 +72,7 @@ export const Zoom: FC<ZoomProps> = ({
     [svg],
   )
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!svg) return
 
@@ -98,6 +99,7 @@ export const Zoom: FC<ZoomProps> = ({
     zoomLevels.min,
   ])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // reset zoom to initial on zoomLevel change
     zoomInitial()

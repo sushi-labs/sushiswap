@@ -1,7 +1,7 @@
 'use client'
 
 import { usePrices } from '@sushiswap/react-query'
-import { classNames } from '@sushiswap/ui'
+import { Button, classNames } from '@sushiswap/ui'
 import { FC, ReactElement, ReactNode, useCallback, useState } from 'react'
 import { Price, Type } from 'sushi/currency'
 
@@ -76,12 +76,15 @@ export const Rate: FC<Rate> = ({ children, price }) => {
         )}
       >
         {price ? (
-          <div
+          <Button
+            type="button"
+            variant="link"
             className="flex items-center h-full gap-1 font-medium"
             onClick={toggleInvert}
+            onKeyDown={toggleInvert}
           >
             {content} <span className="text-slate-500">(${usdPrice})</span>
-          </div>
+          </Button>
         ) : (
           'Enter an amount'
         )}

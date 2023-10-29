@@ -467,8 +467,10 @@ export const PriceBlock: FC<PriceBlockProps> = ({
               <MinusIcon width={12} height={12} />
             </button>
             <button
+              type="button"
               disabled={incrementDisabled}
               onClick={handleIncrement}
+              onKeyDown={handleIncrement}
               className={classNames(
                 incrementDisabled
                   ? 'opacity-40'

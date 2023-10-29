@@ -151,6 +151,7 @@ export const Brush: FC<BrushProps> = ({
   }, [brushExtent, xScale])
 
   // show labels when local brush changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setShowLabels(true)
     const timeout = setTimeout(() => setShowLabels(false), 1500)

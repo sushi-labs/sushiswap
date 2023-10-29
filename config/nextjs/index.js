@@ -42,7 +42,7 @@ const defaultNextConfig = {
       'ui',
     ],
   },
-  webpack: (config, { isServer, webpack }) => {
+  webpack: (config, { webpack }) => {
     if (config.plugins) {
       config.plugins.push(
         new webpack.IgnorePlugin({

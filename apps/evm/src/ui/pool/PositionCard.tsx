@@ -8,11 +8,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui/components/tooltip'
-import { useTokensFromPool } from 'src/lib/hooks'
 import React, { FC } from 'react'
+import { useTokensFromPool } from 'src/lib/hooks'
+import { PositionWithPool } from 'src/types'
 import { Chain } from 'sushi/chain'
 import { formatNumber, formatUSD } from 'sushi/format'
-import { PositionWithPool } from 'src/types'
 
 interface PositionCard {
   position: PositionWithPool

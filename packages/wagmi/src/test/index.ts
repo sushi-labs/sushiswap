@@ -18,7 +18,7 @@ const testWalletIndex = Number(
     0,
 )
 
-const localHttpUrl = 'http://127.0.0.1:8545'
+const localHttpUrl = `http://127.0.0.1:${anvilPort}`
 
 export const createTestConfig = () => {
   const { publicClient } = configureChains(

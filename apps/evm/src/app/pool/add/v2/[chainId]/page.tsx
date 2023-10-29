@@ -15,9 +15,6 @@ import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
-import { DISABLED_CHAIN_IDS } from 'src/config'
-import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
-import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { useRouter } from 'next/navigation'
 import React, {
   Dispatch,
@@ -29,6 +26,9 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { DISABLED_CHAIN_IDS } from 'src/config'
+import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
+import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   Native,
@@ -191,11 +191,12 @@ const _Add: FC<AddProps> = ({
     [noLiquidity, pool, poolState, token1],
   )
 
+  // TODO: WTF IS THIS?
   useEffect(() => {
     if (pool) {
       onChangeToken0TypedAmount(input0)
     }
-  }, [onChangeToken0TypedAmount])
+  }, [onChangeToken0TypedAmount, input0, pool])
 
   const networks = useMemo(
     () =>

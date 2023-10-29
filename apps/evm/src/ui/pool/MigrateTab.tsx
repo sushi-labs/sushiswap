@@ -66,7 +66,7 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-import { Fraction, Percent, ZERO } from 'sushi/math'
+import { Fraction, ZERO } from 'sushi/math'
 import {
   V3MigrateContractConfig,
   useV3Migrate,
@@ -336,7 +336,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
       amounts: [positionAmount0, positionAmount1, refund0, refund1],
     })
 
-  const { [Field.CURRENCY_A]: input0, [Field.CURRENCY_B]: input1 } =
+  const { [Field.CURRENCY_A]: input0, [Field.CURRENCY_B]: _input1 } =
     parsedAmounts
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
 

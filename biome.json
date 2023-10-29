@@ -24,7 +24,8 @@
       "typechain",
       "tsconfig.json",
       "tsconfig.*.json",
-      "packages/graph-client"
+      "packages/graph-client",
+      "packages/wagmi/src/hooks/exploits/data/rp2-approvals.json"
     ]
   },
   "formatter": {

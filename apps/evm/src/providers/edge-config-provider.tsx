@@ -1,7 +1,7 @@
 'use client'
 
-import { createContext, useContext } from 'react'
 import once from 'lodash.once'
+import { createContext, useContext } from 'react'
 
 interface EdgeConfigProviderProps<T> {
   config: T
