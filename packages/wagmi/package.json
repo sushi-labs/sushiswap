@@ -76,7 +76,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@wagmi/core": "1.4.5",
-    "next": "13.4.19",
+    "next": "14.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
@@ -86,7 +86,7 @@
   "peerDependencies": {
     "@sentry/nextjs": "7.74.0",
     "@wagmi/core": "1.4.5",
-    "next": "13.4.19",
+    "next": "14.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "viem": "1.17.2",
@@ -116,6 +116,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.19"
+    "next": "14.0.0"
   }
 }
