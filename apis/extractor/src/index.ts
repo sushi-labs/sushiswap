@@ -8,15 +8,6 @@ import {
   type WarningLevel,
 } from '@sushiswap/extractor'
 import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
-  type RouteProcessor3_1ChainId,
-  type RouteProcessor3_2ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-} from '@sushiswap/route-processor-sdk'
-import {
   NativeWrapProvider,
   PoolCode,
   Router,
@@ -29,6 +20,15 @@ import {
 import cors from 'cors'
 import express, { type Express, type Request, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
+import {
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  type RouteProcessor3_1ChainId,
+  type RouteProcessor3_2ChainId,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+} from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { type Address } from 'viem'
 import z from 'zod'
@@ -93,7 +93,9 @@ const querySchema3_2 = querySchema.extend({
         message: 'ChainId not supported.',
       },
     )
-    .transform((chainId) => chainId as RouteProcessor3_2ChainId),
+    .transform(
+      (chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 534352>,
+    ),
 })
 
 const PORT = process.env['PORT'] || 80

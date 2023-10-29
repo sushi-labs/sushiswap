@@ -1,15 +1,11 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
-import { isPromiseFulfilled } from 'sushi'
+import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import type {
-  PoolApiSchema,
-  PoolCountApiSchema,
-  PoolsApiSchema,
-} from './../schemas'
+import { isPromiseFulfilled } from 'sushi/validate'
 import { getUnindexedPool } from '../getUnindexedPool'
+import { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas'
 import { SushiPoolSelect } from './select'
 
 function parseWhere(
@@ -158,7 +154,6 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   console.log('getEarnPool pool', pool)
 
   if (!pool) {
-    // rome-ignore lint/suspicious/noExplicitAny: recursive
     pool = (await getUnindexedPool(id)) as any
   }
 

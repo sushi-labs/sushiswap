@@ -1,8 +1,8 @@
-import { parseUnits } from '@ethersproject/units'
+import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi'
-import { useQuery } from '@tanstack/react-query'
+import { ZERO } from 'sushi/math'
+import { parseUnits } from 'viem'
 import z from 'zod'
 
 import { usePrices } from '../prices'
@@ -180,7 +180,7 @@ export const angleRewardsSelect = ({
     if (amount?.greaterThan(ZERO) && price) {
       amountUSD = Number(Number(amount.toExact()) * Number(price.toFixed(10)))
     }
-    if (isNaN(amountUSD) || amountUSD < 0.000001) {
+    if (Number.isNaN(amountUSD) || amountUSD < 0.000001) {
       amountUSD = 0
     }
 

@@ -1,4 +1,5 @@
-import { ChainId } from 'sushi/chain'
+import * as fs from 'fs'
+import path from 'path'
 import {
   BentoBridgePoolCode,
   BentoPoolCode,
@@ -13,14 +14,13 @@ import {
   BridgeUnlimited,
   ConstantProductRPool,
   CurvePool,
-  RebaseInternal,
   RToken,
+  RebaseInternal,
   StableSwapRPool,
   UniV3Pool,
 } from '@sushiswap/tines'
-import * as fs from 'fs'
-import path from 'path'
 import * as serializer from 'serialijse'
+import { ChainId } from 'sushi/chain'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)

@@ -1,10 +1,10 @@
-import { TradeType } from '@sushiswap/amm'
 import { Amount as CurrencyAmount, Native, Token, WETH9 } from 'sushi/currency'
-import { Percent } from 'sushi'
+import { TradeType } from 'sushi/dex'
+import { Percent } from 'sushi/math'
 
-import { FeeAmount, TICK_SPACINGS } from '../constants'
-import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from '../utils'
 import { Route, SushiSwapV3Pool, SushiSwapV3Router, Trade } from '.'
+import { FeeAmount, TICK_SPACINGS } from '../constants'
+import { TickMath, encodeSqrtRatioX96, nearestUsableTick } from '../utils'
 
 describe('SwapRouter', () => {
   const ETHER = Native.onChain(1)

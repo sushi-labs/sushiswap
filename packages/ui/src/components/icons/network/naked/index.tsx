@@ -29,6 +29,7 @@ import { OptimismNaked } from './OptimismNaked'
 import { PalmNaked } from './PalmNaked'
 import { PolygonNaked } from './PolygonNaked'
 import { PolygonZKNaked } from './PolygonZKNaked'
+import { ScrollNaked } from './ScrollNaked'
 import { TelosNaked } from './TelosNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
 
@@ -60,6 +61,7 @@ export * from './OptimismNaked'
 export * from './PalmNaked'
 export * from './PolygonNaked'
 export * from './PolygonZKNaked'
+export * from './ScrollNaked'
 export * from './TelosNaked'
 
 export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
@@ -94,4 +96,5 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.ZKSYNC_ERA]: EthereumNaked,
   [ChainId.LINEA]: LineaNaked,
   [ChainId.BASE]: BaseNaked,
+  [ChainId.SCROLL]: ScrollNaked,
 }

@@ -127,6 +127,7 @@ export const Carousel = <T,>({
           <div
             role="button"
             onClick={() => prev()}
+            onKeyDown={() => prev()}
             className="p-3 rounded-full cursor-pointer bg-gray-200/80 dark:bg-slate-700/80"
           >
             <ChevronLeftIcon width={32} height={32} />
@@ -138,6 +139,7 @@ export const Carousel = <T,>({
           <div
             role="button"
             onClick={() => next()}
+            onKeyDown={() => next()}
             className="p-3 rounded-full cursor-pointer bg-gray-200/80 dark:bg-slate-700/80"
           >
             <ChevronRightIcon width={32} height={32} />

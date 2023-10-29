@@ -5,7 +5,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class BiswapProvider extends UniswapV2BaseProvider {
-  fee = 0.002
+  override fee = 0.002
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.BSC]: '0x858E3312ed3A876947EA49d572A7C42DE08af7EE',

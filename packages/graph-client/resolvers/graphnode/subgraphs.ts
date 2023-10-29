@@ -1,8 +1,8 @@
 import {
-  getBuiltGraphSDK,
   Resolvers,
   SubgraphStatus,
   SubgraphWithNode,
+  getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
 
 export const subgraphs: Resolvers['Query']['subgraphs'] = async (

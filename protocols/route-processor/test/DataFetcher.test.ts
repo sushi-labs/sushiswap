@@ -1,9 +1,9 @@
+import { DataFetcher } from '@sushiswap/router'
 import { ChainId, chainName } from 'sushi/chain'
 import { FRAX, SUSHI, Token, Type, USDC, USDT, WNATIVE } from 'sushi/currency'
-import { DataFetcher } from '@sushiswap/router'
 
 async function testDF(
-  chainName: string,
+  _chainName: string,
   dataFetcher: DataFetcher,
   t0: Type | undefined,
   t1: Type | undefined,

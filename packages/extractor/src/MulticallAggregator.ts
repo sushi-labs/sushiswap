@@ -1,5 +1,5 @@
-import { ChainId } from 'sushi/chain'
 import { Abi, Narrow } from 'abitype'
+import { ChainId } from 'sushi/chain'
 import {
   Address,
   MulticallContract,

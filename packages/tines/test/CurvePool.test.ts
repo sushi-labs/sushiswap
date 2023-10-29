@@ -2,7 +2,7 @@ import seedrandom from 'seedrandom'
 import { Address } from 'viem'
 
 import { RToken } from '../dist'
-import { closeValues, CurvePool, getBigInt } from '../src'
+import { CurvePool, closeValues, getBigInt } from '../src'
 
 const token0 = {
   name: 'Token0',

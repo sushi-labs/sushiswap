@@ -92,7 +92,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       //console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
     } else {
       //console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
-      return []
+      //return []
     }
 
     const results = await this.client
@@ -176,6 +176,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       pools = (pools as StaticPool[]).filter(
         (p) => !excludePools.has(p.address),
       )
+
+    console.debug('staticPools v2 base', pools.length)
+
     if (pools.length === 0) {
       //console.info(`${this.getLogPrefix()} - No on demand pools found for ${t0.symbol}/${t1.symbol}`)
       return

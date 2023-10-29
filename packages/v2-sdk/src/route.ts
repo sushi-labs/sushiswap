@@ -72,12 +72,15 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
         (accumulator, currentValue) => accumulator.multiply(currentValue),
         prices[0],
       )
-    return (this._midPrice = new Price(
+
+    this._midPrice = new Price(
       this.input,
       this.output,
       reduced.denominator,
       reduced.numerator,
-    ))
+    )
+
+    return this._midPrice
   }
 
   public get chainId(): number {

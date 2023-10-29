@@ -1,7 +1,7 @@
-import {
+import { getMeshSDK } from '../.mesh'
+import type {
   ArticleFiltersInput,
   CategoryFiltersInput,
-  getMeshSDK,
   PaginationArg,
 } from '../.mesh'
 

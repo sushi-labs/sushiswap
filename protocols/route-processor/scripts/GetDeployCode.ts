@@ -1,6 +1,6 @@
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { chainName } from 'sushi/chain'
 import { ethers } from 'hardhat'
+import { chainName } from 'sushi/chain'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 
 const chainId = parseInt(process.argv[2]) as BentoBoxChainId
 console.log(`Deployment code for network ${chainName[chainId]} (${chainId})`)

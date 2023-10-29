@@ -2,22 +2,22 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi } from 'sushi/abi'
 import {
-  createCurvePoolsForMultipool,
   CurveMultitokenPool,
   CurvePool,
-  getBigInt,
   RPool,
   RToken,
+  createCurvePoolsForMultipool,
+  getBigInt,
 } from '@sushiswap/tines'
-import { type Contract } from 'sushi/types'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { Address, parseAbi, WalletClient } from 'viem'
+import { erc20Abi } from 'sushi/abi'
+import { type Contract } from 'sushi/types'
+import { Address, WalletClient, parseAbi } from 'viem'
 import { readContract, simulateContract } from 'viem/actions'
 
-import { getTestConfig, TestConfig } from '../src/getTestConfig'
+import { TestConfig, getTestConfig } from '../src/getTestConfig'
 import { setTokenBalance } from '../src/setTokenBalance'
 
 enum CurvePoolType {
@@ -332,7 +332,7 @@ async function createCurvePoolInfo(
         functionName: 'coins',
         args: [i],
       })
-    } catch (e) {
+    } catch (_e) {
       break
     }
     if (token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
@@ -570,7 +570,7 @@ async function processMultiTokenPool(
       poolType,
       BigInt(1e30),
     )
-  } catch (e) {
+  } catch (_e) {
     // return 'skipped (pool init error)'
   }
   if (!poolInfo || poolInfo.tokenContracts.length < 2)
@@ -638,10 +638,10 @@ describe('Real Curve pools consistency check', () => {
   })
 
   it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
-    let passed = 0,
-      i = 0
-    const startFrom = 0,
-      finishAt = 10
+    let passed = 0
+    let i = 0
+    const startFrom = 0
+    const finishAt = 10
     await forEachFactoryPool(
       config,
       async (poolAddress: Address, factoryName: string) => {

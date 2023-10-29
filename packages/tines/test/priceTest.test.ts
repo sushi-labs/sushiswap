@@ -2,10 +2,10 @@ import seedrandom from 'seedrandom'
 
 import { calcTokenPrices } from '../src'
 import {
-  createNetwork,
-  expectCloseValues,
   MAX_POOL_IMBALANCE,
   TToken,
+  createNetwork,
+  expectCloseValues,
 } from './utils'
 
 const GAS_PRICE = 50 * 1e-9
@@ -16,7 +16,7 @@ const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 const network = createNetwork(rnd, 100, 0.05, GAS_PRICE)
 
 it('Token price calculation is correct for minLiquidity = 0', () => {
-  const baseToken = network.tokens[0]
+  const baseToken = network.tokens[0] as TToken
   const prices = calcTokenPrices(network.pools, baseToken)
   Array.from(prices.keys()).forEach((v) => {
     const t = network.tokens.find((t) => t.tokenId === v.tokenId) as TToken
@@ -36,7 +36,7 @@ it('Token price calculation is correct for minLiquidity = 0', () => {
 })
 
 it('Token price calculation is correct for minLiquidity != 0', () => {
-  const baseToken = network.tokens[0]
+  const baseToken = network.tokens[0] as TToken
   const prices = calcTokenPrices(network.pools, baseToken, 1e26)
   Array.from(prices.keys()).forEach((v) => {
     const t = network.tokens.find((t) => t.tokenId === v.tokenId) as TToken

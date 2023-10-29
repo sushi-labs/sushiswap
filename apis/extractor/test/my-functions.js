@@ -1,16 +1,7 @@
-const {
-  Native,
-  USDC,
-  USDT,
-  SUSHI,
-  WBTC,
-  DAI,
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-} = require('@sushiswap/currency')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { ChainId } = require('@sushiswap/chain')
+const { Native, USDC, USDT, SUSHI, WBTC, DAI } = require('sushi/currency')
+const { ChainId } = require('sushi/chain')
 
-function setQuery(context, events, done) {
+function setQuery(context, _events, done) {
   const chainIds = [
     ChainId.ETHEREUM,
     ChainId.ARBITRUM,
@@ -37,9 +28,7 @@ function setQuery(context, events, done) {
     tokenOut: tokenOut.isNative
       ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
       : tokenOut.address,
-    amount: Math.floor(
-      Math.random() * Math.pow(10, tokenIn.decimals),
-    ).toString(),
+    amount: Math.floor(Math.random() * 10 ** tokenIn.decimals).toString(),
     to: '0x8f54C8c2df62c94772ac14CcFc85603742976312',
   }
   return done()

@@ -9,9 +9,6 @@ enum PoolVersion {
   TRIDENT = 'TRIDENT',
 }
 
-// TODO
-enum ChefType {}
-
 enum RewarderType {
   Primary = 'Primary',
   Secondary = 'Secondary',

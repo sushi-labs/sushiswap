@@ -9,7 +9,7 @@ import {
   useReducer,
 } from 'react'
 
-import { SushiSwapV2PoolState } from '../../hooks/useSushiSwapV2Pools'
+import { SushiSwapV2PoolState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { SushiSwapV2Pool } from './SushiSwapV2Pool'
 import { TridentConstantPool } from './TridentConstantPool'
@@ -33,7 +33,7 @@ export interface PoolFinderState {
   pool: PoolStateUnion
 }
 
-const reducer = (state: PoolFinderState, action: PoolExistenceStateAction) => {
+const reducer = (_state: PoolFinderState, action: PoolExistenceStateAction) => {
   switch (action.type) {
     case 'update': {
       return {

@@ -11,8 +11,8 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
   OnramperButton,
+  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
@@ -122,7 +122,7 @@ export const Header: FC = () => {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            {navData.map(({ title, href, links, isExternal }) => {
+            {navData.map(({ title, href, links }) => {
               if (href && !links) {
                 return (
                   <NavigationMenuItem key={href}>

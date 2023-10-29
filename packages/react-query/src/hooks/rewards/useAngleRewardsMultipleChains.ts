@@ -1,5 +1,5 @@
-import { ChainId } from 'sushi/chain'
 import { useQuery } from '@tanstack/react-query'
+import { ChainId } from 'sushi/chain'
 
 import { useAllPrices } from '../prices'
 import { angleRewardsQueryFn, angleRewardsSelect } from './useAngleRewards'

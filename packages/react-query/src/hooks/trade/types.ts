@@ -1,3 +1,4 @@
+import { RouterLiquiditySource } from '@sushiswap/router'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
@@ -15,6 +16,7 @@ export interface UseTradeParams {
   gasPrice?: bigint | null | undefined
   slippagePercentage: string
   recipient: Address | undefined
+  source?: RouterLiquiditySource
   enabled: boolean
   carbonOffset: boolean
   onError?(e: Error): void

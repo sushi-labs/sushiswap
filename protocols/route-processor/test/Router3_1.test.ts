@@ -2,13 +2,31 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, routeProcessor3Abi, weth9Abi } from 'sushi/abi'
 import {
-  BENTOBOX_ADDRESS,
-  BentoBoxChainId,
-  isBentoBoxChainId,
-} from '@sushiswap/bentobox-sdk'
+  CurvePoolCode,
+  DataFetcher,
+  LiquidityProviders,
+  NativeWrapBridgePoolCode,
+  PermitData,
+  PoolFilter,
+  Router,
+} from '@sushiswap/router'
+import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
+import {
+  BridgeBento,
+  RPool,
+  RouteStatus,
+  StableSwapRPool,
+  getBigInt,
+} from '@sushiswap/tines'
+import { setTokenBalance } from '@sushiswap/tines-sandbox'
+import { expect } from 'chai'
+import { signERC2612Permit } from 'eth-permit'
+import { config, network } from 'hardhat'
+import seedrandom from 'seedrandom'
+import { erc20Abi, routeProcessor3Abi, weth9Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import {
   DAI,
   DAI_ADDRESS,
@@ -28,36 +46,14 @@ import {
   WBTC_ADDRESS,
   WNATIVE,
 } from 'sushi/currency'
-import { abs } from 'sushi'
-import {
-  CurvePoolCode,
-  DataFetcher,
-  LiquidityProviders,
-  NativeWrapBridgePoolCode,
-  PermitData,
-  PoolFilter,
-  Router,
-} from '@sushiswap/router'
-import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import {
-  BridgeBento,
-  getBigInt,
-  RouteStatus,
-  RPool,
-  StableSwapRPool,
-} from '@sushiswap/tines'
-import { setTokenBalance } from '@sushiswap/tines-sandbox'
+import { abs } from 'sushi/math'
 import { type Contract } from 'sushi/types'
-import { expect } from 'chai'
-import { signERC2612Permit } from 'eth-permit'
-import { config, network } from 'hardhat'
-import seedrandom from 'seedrandom'
 import {
   Address,
   Client,
+  Hex,
   createPublicClient,
   custom,
-  Hex,
   testActions,
   walletActions,
 } from 'viem'
@@ -936,7 +932,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
           intermidiateResult,
           usedPools,
         )
-      } catch (e) {
+      } catch (_e) {
         throwed = true
       }
       expect(

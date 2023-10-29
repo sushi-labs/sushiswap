@@ -10,9 +10,10 @@ https://pnpm.io/installation
 
 `pnpm install`
 
+
 ### Dev
 
-`pnpm exec turbo run dev --filter=swap`
+`pnpm exec turbo run dev --filter=evm`
 
 #### Vercel APIs
 

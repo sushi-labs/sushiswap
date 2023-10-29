@@ -1,17 +1,17 @@
-import { sushiV3PoolAbi } from 'sushi/abi'
 import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from '@sushiswap/tines'
-import { type Contract } from 'sushi/types'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
+import { sushiV3PoolAbi } from 'sushi/abi'
+import { type Contract } from 'sushi/types'
 import { WalletClient } from 'viem'
 import { readContract } from 'viem/actions'
 
 import {
+  UniV3Environment,
+  UniV3PoolInfo,
   createRandomUniV3Pool,
   createUniV3EnvZero,
   createUniV3Pool,
-  UniV3Environment,
-  UniV3PoolInfo,
 } from '../src'
 import { getTestConfig } from '../src/getTestConfig'
 
@@ -135,7 +135,7 @@ function checkPrice(pool: UniV3Pool) {
   try {
     const out = pool.calcOutByIn(inp, direction).out
     realPrice = out / inp
-  } catch (e) {
+  } catch (_e) {
     return
   }
   expectCloseValues(direction ? price1 : price2, realPrice, 10 / inp)
@@ -235,7 +235,7 @@ async function checkSwap(
     let amounOutTines = 0
     try {
       amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction).out
-    } catch (e) {
+    } catch (_e) {
       errorThrown = true
     }
     if (!errorThrown) {

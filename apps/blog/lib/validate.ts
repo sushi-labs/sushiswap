@@ -1,5 +1,5 @@
-import { Article, Image } from 'types'
 import { z } from 'zod'
+import type { Article, Image } from '../types'
 
 const image: z.ZodSchema<Image> = z.object({
   // id: z.number(),

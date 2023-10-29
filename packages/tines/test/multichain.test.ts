@@ -1,12 +1,13 @@
 import seedrandom from 'seedrandom'
 
-import { findMultiRouteExactIn, NetworkInfo } from '../src'
+import { NetworkInfo, findMultiRouteExactIn } from '../src'
 import {
+  Network,
+  TToken,
   checkRoute,
   createMultipleNetworks,
   createMultipleNetworksWithStargateBridge,
   getRandom,
-  Network,
 } from './utils'
 
 function chooseRandomTokenWithChainId(
@@ -29,10 +30,10 @@ function setRandomBaseTokenInNetworkInfo(
     rnd,
     network,
     networksInfo.chainId as number,
-  )
+  ) as TToken
   networksInfo.baseToken = randomToken
   //networksInfo.baseTokenPrice = randomToken.price
-  networksInfo.gasPrice = gasPrice * Math.pow(10, randomToken.decimals - 18)
+  networksInfo.gasPrice = gasPrice * 10 ** (randomToken.decimals - 18)
 }
 
 it('two chains with pool bridge', () => {
@@ -58,19 +59,29 @@ it('two chains with pool bridge', () => {
     )
 
     for (let j = 0; j < 10; ++j) {
-      setRandomBaseTokenInNetworkInfo(rnd, network, networksInfo[0], 100e9)
-      setRandomBaseTokenInNetworkInfo(rnd, network, networksInfo[1], 50e9)
+      setRandomBaseTokenInNetworkInfo(
+        rnd,
+        network,
+        networksInfo[0] as NetworkInfo,
+        100e9,
+      )
+      setRandomBaseTokenInNetworkInfo(
+        rnd,
+        network,
+        networksInfo[1] as NetworkInfo,
+        50e9,
+      )
 
       const fromToken = chooseRandomTokenWithChainId(
         rnd,
         network,
-        networksInfo[0].chainId as number,
-      )
+        (networksInfo[0] as NetworkInfo).chainId as number,
+      ) as TToken
       const toToken = chooseRandomTokenWithChainId(
         rnd,
         network,
-        networksInfo[1].chainId as number,
-      )
+        (networksInfo[1] as NetworkInfo).chainId as number,
+      ) as TToken
       const shift = Math.min(fromToken.price, 1)
       const amountIn = getRandom(rnd, 1e9 / shift, 1e24 / shift)
 
@@ -106,19 +117,29 @@ it('two chains with Stargate bridge', () => {
       ])
 
     for (let j = 0; j < 10; ++j) {
-      setRandomBaseTokenInNetworkInfo(rnd, network, networksInfo[0], 100e9)
-      setRandomBaseTokenInNetworkInfo(rnd, network, networksInfo[1], 50e9)
+      setRandomBaseTokenInNetworkInfo(
+        rnd,
+        network,
+        networksInfo[0] as NetworkInfo,
+        100e9,
+      )
+      setRandomBaseTokenInNetworkInfo(
+        rnd,
+        network,
+        networksInfo[1] as NetworkInfo,
+        50e9,
+      )
 
       const fromToken = chooseRandomTokenWithChainId(
         rnd,
         network,
-        networksInfo[0].chainId as number,
-      )
+        (networksInfo[0] as NetworkInfo).chainId as number,
+      ) as TToken
       const toToken = chooseRandomTokenWithChainId(
         rnd,
         network,
-        networksInfo[1].chainId as number,
-      )
+        (networksInfo[1] as NetworkInfo).chainId as number,
+      ) as TToken
       const shift = Math.min(fromToken.price, 1)
       const amountIn = getRandom(rnd, 1e9 / shift, 1e24 / shift)
 

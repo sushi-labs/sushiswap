@@ -1,8 +1,8 @@
 import {
-  getBuiltGraphSDK,
   Query,
   QueryResolvers,
   UserPosition,
+  getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
 import { fetchBalances } from '../../lib/wagmi.js'
 

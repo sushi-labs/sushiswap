@@ -1,11 +1,11 @@
-import { defaultAbiCoder, Interface } from '@ethersproject/abi'
-import { validateAndParseAddress } from '@sushiswap/amm'
-import { Token } from 'sushi/currency'
-import { BigintIsh } from 'sushi'
+import { Interface, defaultAbiCoder } from '@ethersproject/abi'
 import IUniswapV3Staker from '@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json'
+import { Token } from 'sushi/currency'
+import { BigintIsh } from 'sushi/math'
+import { validateAndParseAddress } from '../utils'
 
-import { MethodParameters, toHex } from '../utils/calldata'
 import { SushiSwapV3Pool } from '.'
+import { MethodParameters, toHex } from '../utils/calldata'
 import { Multicall } from './Multicall'
 
 export type FullWithdrawOptions = ClaimOptions & WithdrawOptions
@@ -215,7 +215,8 @@ export abstract class Staker {
    * @param incentiveKey An `IncentiveKey` which represents a unique staking program.
    * @returns An encoded IncentiveKey to be read by ethers
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
   private static _encodeIncentiveKey(incentiveKey: IncentiveKey): {} {
     const { token0, token1, fee } = incentiveKey.pool
     const refundee = validateAndParseAddress(incentiveKey.refundee)

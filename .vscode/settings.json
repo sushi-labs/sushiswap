@@ -1,19 +1,32 @@
 {
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": true,
+    "source.organizeImports.biome": true,
+    "source.fixAll.eslint": true
+  },
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": false,
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
   "eslint.enable": true,
+  "eslint.workingDirectories": [
+    {
+      "pattern": "./apps/*/"
+    },
+    {
+      "pattern": "./packages/*/"
+    }
+  ],
   "eslint.validate": [
-    "json",
     "javascript",
     "javascriptreact",
     "typescript",
     "typescriptreact"
   ],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnPaste": false,
-  "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "quickfix.biome": true,
-    "source.organizeImports.biome": true
+  "files.associations": {
+    "*.css": "tailwindcss"
   },
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome",
@@ -28,11 +41,14 @@
     "editor.formatOnSave": true
   },
   "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.formatOnSave": true
+  },
+  "[html]": {
     "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true
   },
   "[solidity]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "prettier.prettierPath": "./node_modules/prettier"
+  }
 }

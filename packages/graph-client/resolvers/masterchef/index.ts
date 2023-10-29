@@ -1,13 +1,13 @@
 // @ts-nocheck
 
-import { ChainId, chainName } from 'sushi/chain'
 import {
   MASTERCHEF_V1_SUBGRAPH_NAME,
   MASTERCHEF_V2_SUBGRAPH_NAME,
   MINICHEF_SUBGRAPH_NAME,
   SUBGRAPH_HOST,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
+import { ChainId, chainName } from 'sushi/chain'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import { Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
 
@@ -113,8 +113,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
     return promiseSettledResults
       .flat()
       .filter(isPromiseFulfilled)
-      .map((promiseFulfilled) => promiseFulfilled.value)
-      .flat()
+      .flatMap((promiseFulfilled) => promiseFulfilled.value)
     // .filter((user) => user.pool)
   })
 }
