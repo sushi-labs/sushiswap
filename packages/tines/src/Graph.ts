@@ -107,6 +107,7 @@ export class Edge {
     this.spentGas = 0
     this.spentGasNew = 0
     this.bestEdgeIncome = 0
+    this.pool.cleanTmpData()
   }
 
   reserve(v: Vertice): bigint {
@@ -326,13 +327,12 @@ export class Edge {
         this.direction = true
         this.amountInPrevious = inNew
         this.amountOutPrevious = outNew
-        this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
       } else {
         this.direction = false
         this.amountInPrevious = -inNew
         this.amountOutPrevious = -outNew
-        this.pool.setCurrentFlow(outNew, -inNew, this.spentGasNew)
       }
+      this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
     } else console.error('Error 221')
     this.spentGas = this.spentGasNew
 
@@ -346,6 +346,8 @@ export class Edge {
           precision = 2e-3
         }
       }
+      // if (this.pool instanceof CurveMultitokenPool)
+      //   console.log(this.amountInPrevious, this.amountOutPrevious, this.direction, this.pool.flow0, this.pool.flow1)
       if (this.direction) {
         const granularity = this.pool.granularity1()
         return closeValues(

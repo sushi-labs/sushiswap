@@ -16,20 +16,34 @@ export class CurveMultitokenPool extends RPool {
   flow1: number = 0
 
   constructor(core: CurveMultitokenCore, index0: number, index1: number) {
-    super(
-      core.address as Address,
-      core.tokens[index0] as RToken,
-      core.tokens[index1] as RToken,
-      core.fee,
-      core.reserves[index0] as bigint,
-      core.reserves[index1] as bigint,
-      MIN_LIQUIDITY,
-      SWAP_GAS_COST,
-    )
-    console.assert(index0 < index1, 'Wrong CurveMultitokenPool indexes')
-    this.core = core
-    this.index0 = index0
-    this.index1 = index1
+    if (core) {
+      super(
+        core.address as Address,
+        core.tokens[index0] as RToken,
+        core.tokens[index1] as RToken,
+        core.fee,
+        core.reserves[index0] as bigint,
+        core.reserves[index1] as bigint,
+        MIN_LIQUIDITY,
+        SWAP_GAS_COST,
+      )
+      console.assert(index0 < index1, 'Wrong CurveMultitokenPool indexes')
+      this.core = core
+      this.index0 = index0
+      this.index1 = index1
+    } else {
+      // for deserealization
+      super(
+        undefined as unknown as Address,
+        undefined as unknown as RToken,
+        undefined as unknown as RToken,
+        undefined as unknown as number,
+        undefined as unknown as bigint,
+        undefined as unknown as bigint,
+        MIN_LIQUIDITY,
+        SWAP_GAS_COST,
+      )
+    }
   }
 
   override updateReserves(_res0: bigint, _res1: bigint) {
@@ -106,7 +120,7 @@ export class CurveMultitokenPool extends RPool {
 
 const E18 = getBigInt(1e18)
 
-class CurveMultitokenCore {
+export class CurveMultitokenCore {
   address: string
   tokens: RToken[]
   fee: number
@@ -133,27 +147,31 @@ class CurveMultitokenCore {
     reserves: bigint[],
     rates?: number[],
   ) {
-    this.address = address
-    this.tokens = tokens
-    this.fee = fee
-    this.A = A
-    this.reserves = reserves
-    const decimalsMax = Math.max(...tokens.map((t) => t.decimals))
-    this.rates = tokens.map(
-      (t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1),
-    )
-    this.ratesBN18 = this.rates.map((r) => getBigInt(r * 1e18)) // precision is 18 digits
-    this.currentReservesRated = this.reserves.map(
-      (r, i) => (r * (this.ratesBN18[i] as bigint)) / E18,
-    )
-    this.D = ZERO
+    if (address) {
+      this.address = address
+      this.tokens = tokens
+      this.fee = fee
+      this.A = A
+      this.reserves = reserves
+      const decimalsMax = Math.max(...tokens.map((t) => t.decimals))
+      this.rates = tokens.map(
+        (t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1),
+      )
+      this.ratesBN18 = this.rates.map((r) => getBigInt(r * 1e18)) // precision is 18 digits
+      this.currentReservesRated = this.reserves.map(
+        (r, i) => (r * (this.ratesBN18[i] as bigint)) / E18,
+      )
+      this.D = 0n
 
-    this.Ann = getBigInt(A * this.tokens.length)
-    this.n = BigInt(this.tokens.length)
-    this.Annn = this.Ann * this.n
-    this.AnnMinus1 = this.Ann - 1n
-    this.nn = getBigInt(Math.pow(this.tokens.length, this.tokens.length))
-    this.nPlus1 = this.n + 1n
+      this.Ann = getBigInt(A * this.tokens.length)
+      this.n = BigInt(this.tokens.length)
+      this.Annn = this.Ann * this.n
+      this.AnnMinus1 = this.Ann - 1n
+      this.nn = getBigInt(Math.pow(this.tokens.length, this.tokens.length))
+      this.nPlus1 = this.n + 1n
+    } else {    // for deserialization
+
+    }
   }
 
   updateReserve(index: number, res: bigint) {
@@ -221,7 +239,7 @@ class CurveMultitokenCore {
     const yBN = this.currentReservesRated[to] as bigint
     const xNewBN = xBN + getBigInt(amountIn * this.rates[from])
     const yNewBN = this.computeY(from, xNewBN, to)
-    if (yNewBN < MIN_LIQUIDITY) throw 'Curve pool OutOfLiquidity'
+    if (yNewBN < MIN_LIQUIDITY) throw new Error(`Curve pool OutOfLiquidity`)
     const dy = Number(yBN - yNewBN) / (this.rates[to] as number)
     return dy * (1 - this.fee)
   }
@@ -270,7 +288,7 @@ class CurveMultitokenCore {
   }
 
   applyReserveChange(index: number, diff: number) {
-    this.currentReservesRated[index] += BigInt(diff * this.rates[index])
+    this.currentReservesRated[index] += BigInt(Math.round(diff * this.rates[index]))
     this.D = 0n
   }
 

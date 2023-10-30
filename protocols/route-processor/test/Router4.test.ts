@@ -86,7 +86,7 @@ async function setRouterPrimaryBalance(
   amount = 1n,
 ): Promise<boolean> {
   if (token) {
-    return await setTokenBalance(client, token, router, amount)
+    return await setTokenBalance(token, router, amount)
   }
   return false
 }
@@ -309,7 +309,7 @@ async function makeSwap(
   //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
-  if (route.status === RouteStatus.NoWay) return
+  if (route.status === RouteStatus.NoWay) throw new Error('NoWay')
 
   const rpParams = Router.routeProcessor4Params(
     pcMap,
@@ -1008,10 +1008,10 @@ describe('End-to-end RouteProcessor4 test', async function () {
 
     const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
     for (let i = 0; i < pools.length; ++i) {
-      const [address, type, from, to] = pools[i]
+      const [address, type, [from, to]] = pools[i]
       it(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
         await env.snapshot.restore()
-        const amoutIn = BigInt(1e12)
+        const amoutIn = BigInt(1e18)
         if (from instanceof Token)
           await setRouterPrimaryBalance(
             env.client,
