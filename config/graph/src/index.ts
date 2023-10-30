@@ -293,7 +293,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.KAVA]: 'sushi-v2/sushiswap-kava',
   [ChainId.METIS]: 'sushi-v2/sushiswap-metis',
   [ChainId.BTTC]: 'sushi-v2/bttc',
-  [ChainId.FILECOIN]: 'sushiswap/sushiswap-filecoin'
+  [ChainId.FILECOIN]: 'sushiswap/sushiswap-filecoin',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
