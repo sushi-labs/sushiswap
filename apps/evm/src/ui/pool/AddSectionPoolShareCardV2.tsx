@@ -1,27 +1,16 @@
-import { Card, CardContent, CardHeader, Loader } from '@sushiswap/ui'
+import { Card, CardContent, Collapsible, StatValue } from '@sushiswap/ui'
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { FC, useMemo } from 'react'
 import { Amount, Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
+import { Stat, StatLabel } from '@sushiswap/ui'
 
 interface AddSectionPoolShareCardV2 {
   pool: SushiSwapV2Pool | null
   poolState: SushiSwapV2PoolState
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
-}
-
-const title = {
-  [SushiSwapV2PoolState.NOT_EXISTS]: 'Initial prices and pool share',
-  [SushiSwapV2PoolState.EXISTS]: 'Prices and pool share',
-  [SushiSwapV2PoolState.INVALID]: 'Invalid pool',
-  [SushiSwapV2PoolState.LOADING]: (
-    <span className="flex flex-row space-x-2 items-center">
-      <span>Loading</span>
-      {<Loader />}
-    </span>
-  ),
 }
 
 export const AddSectionPoolShareCardV2: FC<AddSectionPoolShareCardV2> = ({
@@ -79,39 +68,30 @@ export const AddSectionPoolShareCardV2: FC<AddSectionPoolShareCardV2> = ({
     )
   }, [poolState, pool, token0Input])
 
+  if (!token0Input || !token1Input) return <></>
+
   return (
-    <Card>
-      <CardHeader>{title[poolState]}</CardHeader>
-      <CardContent className="grid grid-cols-3">
-        <CardContent className="items-center">
-          {token0Input && token1Input ? (
-            <>
-              <div>{token1Per0 || '-'}</div>
-              <div className="text-xs">
-                {token1Input.currency.symbol} per {token0Input.currency.symbol}
-              </div>
-            </>
-          ) : (
-            <div>-</div>
-          )}
+    <Collapsible open={Boolean(token1Per0 && token1Per0)}>
+      <Card variant="outline">
+        <CardContent className="grid grid-cols-3 pt-6">
+          <Stat>
+            <StatValue size="sm">{token1Per0 || '-'}</StatValue>
+            <StatLabel size="sm">
+              {token1Input.currency.symbol} per {token0Input.currency.symbol}
+            </StatLabel>
+          </Stat>
+          <Stat>
+            <StatValue size="sm">{token0Per1 || '-'}</StatValue>
+            <StatLabel size="sm">
+              {token0Input.currency.symbol} per {token1Input.currency.symbol}
+            </StatLabel>
+          </Stat>
+          <Stat>
+            <StatValue size="sm">{formatPercent(poolShare)}</StatValue>
+            <StatLabel size="sm">Share of pool</StatLabel>
+          </Stat>
         </CardContent>
-        <CardContent className="items-center">
-          {token0Input && token1Input ? (
-            <>
-              <div>{token0Per1 || '-'}</div>
-              <div className="text-xs">
-                {token0Input.currency.symbol} per {token1Input.currency.symbol}
-              </div>{' '}
-            </>
-          ) : (
-            <div>-</div>
-          )}
-        </CardContent>
-        <CardContent className="items-center">
-          <div>{formatPercent(poolShare)}</div>
-          <div className="text-xs">Share of pool</div>
-        </CardContent>
-      </CardContent>
-    </Card>
+      </Card>
+    </Collapsible>
   )
 }

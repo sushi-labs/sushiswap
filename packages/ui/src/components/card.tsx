@@ -8,7 +8,7 @@ import { Currency } from './currency'
 import { SkeletonText } from './skeleton'
 
 const cardVariants = cva(
-  'relative rounded-xl border border-accent bg-white dark:bg-background shadow-sm',
+  'relative rounded-xl border border-accent',
   {
     variants: {
       variant: {
