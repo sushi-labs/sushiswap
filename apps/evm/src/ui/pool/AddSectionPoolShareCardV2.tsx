@@ -1,10 +1,10 @@
 import { Card, CardContent, Collapsible, StatValue } from '@sushiswap/ui'
+import { Stat, StatLabel } from '@sushiswap/ui'
 import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { FC, useMemo } from 'react'
 import { Amount, Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
-import { Stat, StatLabel } from '@sushiswap/ui'
 
 interface AddSectionPoolShareCardV2 {
   pool: SushiSwapV2Pool | null

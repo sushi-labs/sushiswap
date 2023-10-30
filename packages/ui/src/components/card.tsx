@@ -7,20 +7,17 @@ import classNames from 'classnames'
 import { Currency } from './currency'
 import { SkeletonText } from './skeleton'
 
-const cardVariants = cva(
-  'relative rounded-xl border border-accent',
-  {
-    variants: {
-      variant: {
-        default: 'shadow-sm bg-white dark:bg-background',
-        outline: '',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
+const cardVariants = cva('relative rounded-xl border border-accent', {
+  variants: {
+    variant: {
+      default: 'shadow-sm bg-white dark:bg-background',
+      outline: '',
     },
   },
-)
+  defaultVariants: {
+    variant: 'default',
+  },
+})
 
 export interface CardProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
