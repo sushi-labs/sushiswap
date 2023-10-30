@@ -4,9 +4,7 @@ import stringify from 'fast-json-stable-stringify'
 import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
 
-import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { TVLChart } from './tvl-chart'
-import { VolumeChart } from './volume-chart'
+import { PlusCircleIcon } from '@heroicons/react/20/solid'
 import {
   Button,
   Card,
@@ -23,7 +21,9 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import { Chain, ChainId } from 'sushi/chain'
-import { PlusCircleIcon } from '@heroicons/react/20/solid'
+import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { TVLChart } from './tvl-chart'
+import { VolumeChart } from './volume-chart'
 
 const isAllThenNone = (chainIds: number[]) =>
   SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
