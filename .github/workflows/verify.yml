@@ -20,6 +20,7 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.PAT }}
           ref: ${{ github.head_ref }}
       - name: Install dependencies
         uses: ./.github/actions/install
@@ -41,6 +42,7 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.PAT }}
           ref: ${{ github.head_ref }}
       - name: Install dependencies
         uses: ./.github/actions/install
