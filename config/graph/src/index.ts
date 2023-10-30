@@ -32,6 +32,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.BOBA_BNB,
   ChainId.BASE,
   ChainId.SCROLL,
+  ChainId.FILECOIN,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -283,6 +284,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
   [ChainId.BASE]: 'sushiswap-base/v0.0.1',
   [ChainId.SCROLL]: 'sushiswap-scroll/v0.0.1',
+  [ChainId.FILECOIN]: 'sushiswap/sushiswap-filecoin'
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
