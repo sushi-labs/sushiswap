@@ -87,9 +87,8 @@
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
     "@tanstack/react-table": "8.9.1",
-    "class-variance-authority": "0.6.1",
+    "class-variance-authority": "0.7.0",
     "classnames": "2.3.2",
-    "clsx": "1.2.1",
     "cmdk": "0.2.0",
     "date-fns": "2.30.0",
     "lucide-react": "0.258.0",
@@ -124,14 +123,14 @@
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
     "typescript": "5.2.2",
-    "wagmi": "1.4.3"
+    "wagmi": "1.4.5"
   },
   "peerDependencies": {
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "wagmi": "1.4.3"
+    "wagmi": "1.4.5"
   },
   "peerDependenciesMeta": {
     "next": {

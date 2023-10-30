@@ -1,17 +1,17 @@
 import { Address } from 'viem'
 
 import {
-  closeValues,
   ConstantProductRPool,
-  getBigInt,
   HybridRPool,
   MultiRoute,
   NetworkInfo,
-  RouteLeg,
-  RouteStatus,
   RPool,
   RToken,
+  RouteLeg,
+  RouteStatus,
   StableSwapRPool,
+  closeValues,
+  getBigInt,
 } from '../src'
 import { BridgeUnlimited } from '../src/BridgeBidirectionalUnlimited'
 import { BridgeStargateV04OneWay } from '../src/BridgeStargateV04OneWay'
@@ -550,7 +550,7 @@ export function expectCloseValues(
         `\n v1 = ${a}` +
         `\n v2 = ${b}` +
         `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
-        `${additionalInfo === '' ? '' : '\n' + additionalInfo}`,
+        `${additionalInfo === '' ? '' : `\n${additionalInfo}`}`,
     )
     //debugger
   }
@@ -578,7 +578,7 @@ export function checkRoute(
     return
   }
 
-  const multiChain = baseTokenOrNetworks instanceof Array
+  const multiChain = Array.isArray(baseTokenOrNetworks)
   const basePricesAreSet = multiChain
     ? true
     : connectedTokens.has(baseTokenOrNetworks as TToken)

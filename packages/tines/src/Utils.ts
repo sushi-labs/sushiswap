@@ -70,7 +70,7 @@ export function revertPositive(
       else min = x0
     }
     return (min + max) / 2
-  } catch (e) {
+  } catch (_e) {
     return 0
   }
 }
@@ -82,7 +82,7 @@ export function getBigInt(value: number): bigint {
   const exp = Math.floor(Math.log(v) / Math.LN2)
   console.assert(exp >= 51, 'Internal Error 314')
   const shift = exp - 51
-  const mant = Math.round(v / Math.pow(2, shift))
+  const mant = Math.round(v / 2 ** shift)
   const res = BigInt(mant) * 2n ** BigInt(shift)
   return value > 0 ? res : res * -1n
 }

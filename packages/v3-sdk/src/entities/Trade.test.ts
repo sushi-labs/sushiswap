@@ -568,6 +568,7 @@ describe('Trade', () => {
           tradeType: TradeType.EXACT_INPUT,
         })
       it('is cached', () => {
+        // biome-ignore lint/suspicious/noSelfCompare: <explanation>
         expect(exactIn.priceImpact === exactIn.priceImpact).toStrictEqual(true)
       })
       it('is correct', () => {
@@ -576,6 +577,7 @@ describe('Trade', () => {
 
       it('is cached with multiple routes', () => {
         expect(
+          // biome-ignore lint/suspicious/noSelfCompare: <explanation>
           exactInMultipleRoutes.priceImpact ===
             exactInMultipleRoutes.priceImpact,
         ).toStrictEqual(true)
@@ -615,6 +617,7 @@ describe('Trade', () => {
         })
 
       it('is cached', () => {
+        // biome-ignore lint/suspicious/noSelfCompare: <explanation>
         expect(exactOut.priceImpact === exactOut.priceImpact).toStrictEqual(
           true,
         )
@@ -625,6 +628,7 @@ describe('Trade', () => {
 
       it('is cached with multiple routes', () => {
         expect(
+          // biome-ignore lint/suspicious/noSelfCompare: <explanation>
           exactOutMultipleRoutes.priceImpact ===
             exactOutMultipleRoutes.priceImpact,
         ).toStrictEqual(true)
@@ -876,14 +880,13 @@ describe('Trade', () => {
   describe('#minimumAmountOut', () => {
     describe('tradeType = EXACT_INPUT', () => {
       let exactIn: Trade<Token, Token, TradeType.EXACT_INPUT>
-      beforeEach(
-        async () =>
-          (exactIn = await Trade.fromRoute(
-            new Route([pool_0_1, pool_1_2], token0, token2),
-            CurrencyAmount.fromRawAmount(token0, 10000),
-            TradeType.EXACT_INPUT,
-          )),
-      )
+      beforeEach(async () => {
+        exactIn = await Trade.fromRoute(
+          new Route([pool_0_1, pool_1_2], token0, token2),
+          CurrencyAmount.fromRawAmount(token0, 10000),
+          TradeType.EXACT_INPUT,
+        )
+      })
 
       it('throws if less than 0', () => {
         expect(() => exactIn.minimumAmountOut(new Percent(-1n, 100))).toThrow(

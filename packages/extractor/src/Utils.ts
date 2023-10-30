@@ -13,7 +13,7 @@ export async function repeatAsync<RetType>(
       const ret = await action()
       if (print && i > 0) console.log(`attemps ${print}: ${i + 1}`)
       return ret
-    } catch (e) {
+    } catch (_e) {
       if (delayBetween) await delay(delayBetween)
     }
   }
@@ -27,7 +27,7 @@ export async function repeat<RetType>(
   for (let i = 0; i < times - 1; ++i) {
     try {
       return await action()
-    } catch (e) {
+    } catch (_e) {
       // skip
     }
   }

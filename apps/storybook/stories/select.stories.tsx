@@ -102,6 +102,7 @@ export const Caption = {
   ),
 } satisfies Story
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: This is a storybook
 export const Error = {
   storyName: 'Error caption',
   args: {

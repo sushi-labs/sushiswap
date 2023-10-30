@@ -5,36 +5,48 @@
       "_cjs",
       "_esm",
       "_types",
+      ".turbo",
+      ".next",
       ".mesh",
       ".graphclient",
+      ".storybook",
+      "storybook-static",
+      "node_modules",
       "**/node_modules",
       "CHANGELOG.md",
       "dist",
-      "cache",
       "artifacts",
-      "deployments",
-      "test/contracts",
+      "cache",
       "coverage",
+      "deployments",
+      "test-results",
+      "test/contracts",
+      "typechain",
       "tsconfig.json",
-      "tsconfig.*.json"
+      "tsconfig.*.json",
+      "packages/graph-client",
+      "packages/wagmi/src/hooks/exploits/data/rp2-approvals.json"
     ]
   },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
     "indentStyle": "space",
-    "indentSize": 2,
+    "indentWidth": 2,
     "lineWidth": 80
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
       "correctness": {
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "error"
       },
       "nursery": {
-        "useExhaustiveDependencies": "error",
         "useGroupedTypeImport": "off"
       },
       "performance": {
@@ -50,7 +62,9 @@
         "noExplicitAny": "off"
       },
       "complexity": {
-        "useLiteralKeys": "off"
+        "useLiteralKeys": "off",
+        "noForEach": "off",
+        "noStaticOnlyClass": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"

@@ -1,9 +1,9 @@
 import { Amount as CurrencyAmount, Native, Token, WETH9 } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 
+import { NonfungiblePositionManager, Position, SushiSwapV3Pool } from '.'
 import { FeeAmount, TICK_SPACINGS } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
-import { NonfungiblePositionManager, Position, SushiSwapV3Pool } from '.'
 
 describe('NonfungiblePositionManager', () => {
   const token0 = new Token({

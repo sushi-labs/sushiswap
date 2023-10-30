@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { useQuery } from '@tanstack/react-query'
 
 const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.AVALANCHE,
@@ -49,7 +49,8 @@ const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
     const isHoneypot = cur?.is_honeypot === '1'
     const supportedCurrencyAddress = supportedCurrencies?.[i]?.address
     if (isHoneypot && typeof supportedCurrencyAddress === 'string') {
-      return [...acc, supportedCurrencyAddress]
+      acc.push(supportedCurrencyAddress)
+      return acc
     }
     return acc
   }, [] as string[])

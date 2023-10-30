@@ -1,7 +1,7 @@
 import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import type { ChainId } from 'sushi/chain'
 import { Token, Type } from 'sushi/currency'
-import { getAddress, isAddress } from 'viem'
+import { Address, getAddress, isAddress } from 'viem'
 
 type TagDetails = Tags[keyof Tags]
 
@@ -25,9 +25,9 @@ export class WrappedTokenInfo implements Token {
     this.list = list
   }
 
-  private _checksummedAddress: string | null = null
+  private _checksummedAddress: Address | null = null
 
-  public get address(): string {
+  public get address(): Address {
     if (this._checksummedAddress) return this._checksummedAddress
     if (!isAddress(this.tokenInfo.address))
       throw new Error(`Invalid token address: ${this.tokenInfo.address}`)

@@ -9,8 +9,8 @@ import {
 
 import {
   Block,
-  Resolvers,
   ResolverTypeWrapper,
+  Resolvers,
 } from '../../.graphclient/index.js'
 import { _blocksByChainIds, blocksByChainIds } from './blocksByChainIds.js'
 

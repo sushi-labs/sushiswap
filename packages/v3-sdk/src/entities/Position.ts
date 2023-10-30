@@ -1,5 +1,5 @@
 import { Amount as CurrencyAmount, Price, Token } from 'sushi/currency'
-import { BigintIsh, Percent, MAX_UINT256 } from 'sushi/math'
+import { BigintIsh, MAX_UINT256, Percent } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'

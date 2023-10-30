@@ -1,0 +1,22 @@
+diff --git a/dist/cjs/pool/createPool.js b/dist/cjs/pool/createPool.js
+index 926cdc3cc8a3190dc8d6c43ba8edd97de0ce1976..0485d090933eaf22b99a58bc189546bb38727b4b 100644
+--- a/dist/cjs/pool/createPool.js
++++ b/dist/cjs/pool/createPool.js
+@@ -2,7 +2,7 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.createPool = void 0;
+ const createAnvil_js_1 = require("../anvil/createAnvil.js");
+-const get_port_1 = require("get-port");
++
+ /**
+  * Creates pool of anvil instances.
+  */
+@@ -22,7 +22,7 @@ function createPool({ instanceLimit, autoPort = true, } = {}) {
+                     ...options,
+                     ...(options?.port === undefined && autoPort
+                         ? {
+-                            port: await (0, get_port_1.default)(),
++                            port: await (0, (await import("get-port")).default)(),
+                         }
+                         : {}),
+                 };

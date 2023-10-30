@@ -1,31 +1,31 @@
 import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
 import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
 import AlgebraPoolDeployer from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json'
-import TickLens from '@cryptoalgebra/integral-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json'
-import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
 import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/NonfungibleTokenPositionDescriptor.json'
 import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
-import { ChainId } from 'sushi/chain'
-import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
+import TickLens from '@cryptoalgebra/integral-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json'
+import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
 import {
+  CLTick,
   CL_MAX_TICK,
   CL_MIN_TICK,
-  CLTick,
   RToken,
   UniV3Pool,
 } from '@sushiswap/tines'
 import seedrandom from 'seedrandom'
+import { ChainId } from 'sushi/chain'
+import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
 import {
   Abi,
   Address,
-  getContractAddress,
   Hex,
   PublicClient,
   WalletClient,
+  getContractAddress,
 } from 'viem'
 
-import { approve, balanceOf, TestTokens } from './TestTokens'
+import { TestTokens, approve, balanceOf } from './TestTokens'
 import {
   getDeploymentAddress,
   getRndExp,
@@ -211,7 +211,7 @@ export async function approveTestTokensToContract(
   )
 }
 
-const Two96 = Math.pow(2, 96)
+const Two96 = 2 ** 96
 export function encodePriceSqrt(reserve1: number, reserve0: number) {
   return BigInt(Math.round(Math.sqrt(reserve1 / reserve0) * Two96))
 }

@@ -1,18 +1,18 @@
 import { AbiEvent } from 'abitype'
 import {
   Block,
-  encodeEventTopics,
   Log,
   PublicClient,
   WatchBlocksReturnType,
+  encodeEventTopics,
 } from 'viem'
 
 import { warnLog } from './WarnLog'
 
 enum LogFilterType {
-  OneCall, // one eth_getLogs call for all topict - the most preferrable
-  MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
-  SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
+  OneCall = 0, // one eth_getLogs call for all topict - the most preferrable
+  MultiCall = 1, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
+  SelfFilter = 2, // Topic filtering doesn't support for provider. Filtering on the client
 }
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -29,7 +29,7 @@ async function repeatAsync(
       await action()
       if (print && i > 0) console.log(`attemps ${print}: ${i + 1}`)
       return
-    } catch (e) {
+    } catch (_e) {
       if (delayBetween) await delay(delayBetween)
     }
   }

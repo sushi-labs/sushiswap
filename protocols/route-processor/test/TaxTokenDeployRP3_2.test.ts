@@ -2,27 +2,27 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
+import {
+  DataFetcher,
+  LiquidityProviders,
+  RPParams,
+  Router,
+} from '@sushiswap/router'
+import { MultiRoute, RouteStatus } from '@sushiswap/tines'
+import { expect } from 'chai'
+import { config } from 'hardhat'
+import { createProvider } from 'hardhat/internal/core/providers/construction'
 import { routeProcessor3Abi } from 'sushi/abi'
 import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import {
-  DataFetcher,
-  LiquidityProviders,
-  Router,
-  RPParams,
-} from '@sushiswap/router'
-import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { type Contract } from 'sushi/types'
-import { expect } from 'chai'
-import { config } from 'hardhat'
-import { createProvider } from 'hardhat/internal/core/providers/construction'
 import {
   Address,
   Client,
+  Hex,
   createPublicClient,
   custom,
-  Hex,
   walletActions,
 } from 'viem'
 import { hardhat } from 'viem/chains'
@@ -142,7 +142,7 @@ export async function checkTaxTokenTransfer(
 
 async function testTaxTokenBuy(
   env: TestEnvironment,
-  route: MultiRoute,
+  _route: MultiRoute,
   rpParams: RPParams,
   account: Address,
 ): Promise<bigint> {
@@ -271,7 +271,7 @@ async function testTaxToken(args: {
       args.env.userAddress,
     )
     const diff =
-      routeBuy.amountOutBI == 0n
+      routeBuy.amountOutBI === 0n
         ? -1
         : Number(amountOutReal - routeBuy.amountOutBI) / routeBuy.amountOut
     console.log(
@@ -280,7 +280,7 @@ async function testTaxToken(args: {
       } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff} `,
     )
   } catch (e) {
-    console.log('Routing failed. No connection ? ' + e)
+    console.log(`Routing failed. No connection ? ${e}`)
     expect(e).equal(undefined)
     return
   }
@@ -327,7 +327,7 @@ async function testTaxToken(args: {
       args.env.userAddress,
     )
     const diff =
-      routeSell.amountOutBI == 0n
+      routeSell.amountOutBI === 0n
         ? -1
         : Number(amountOutReal - routeSell.amountOutBI) / routeSell.amountOut
     console.log(
@@ -336,7 +336,7 @@ async function testTaxToken(args: {
       } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff} `,
     )
   } catch (e) {
-    console.log('Routing failed. No connection ? ' + e)
+    console.log(`Routing failed. No connection ? ${e}`)
     expect(e).equal(undefined)
   }
 }

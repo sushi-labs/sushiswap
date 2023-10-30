@@ -1,3 +1,4 @@
+import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { ChainId } from 'sushi/chain'
 import {
   DAI,
@@ -15,7 +16,6 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from 'sushi/currency'
-import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 
 import { loadPoolSnapshot, savePoolSnapshot } from './poolSerializer'
 

@@ -2,8 +2,8 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import {
   Query,
-  QuerypairsByChainIdArgs,
   QueryResolvers,
+  QuerypairsByChainIdArgs,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'

@@ -1,10 +1,10 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { classNames, LinkInternal } from '@sushiswap/ui'
+import { LinkInternal, classNames } from '@sushiswap/ui'
 import { Chip } from '@sushiswap/ui/components/chip'
 import { format } from 'date-fns'
 import type { FC } from 'react'
-import type { Article } from '../../types'
 import { isMediaVideo } from '../../lib/media'
+import type { Article } from '../../types'
 import { Image } from '../Image'
 
 interface Card {

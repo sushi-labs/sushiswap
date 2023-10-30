@@ -194,8 +194,8 @@ export class StableSwapRPool extends RPool {
     const x2 = x << 1n
     const x3 = x * 3n
     const xCube = x * x * x
-    let yPrev = yHint,
-      y = yHint
+    let yPrev = yHint
+    let y = yHint
     for (let i = 0; i < 255; ++i) {
       const ySquare = y * y
       const yCube = ySquare * y
