@@ -311,7 +311,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.KAVA]: 'sushi-v3/v3-kava',
   [ChainId.METIS]: 'sushi-v3/v3-metis',
   [ChainId.BTTC]: 'sushi-v3/v3-bttc',
-  }
+}
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.POLYGON]: 'sushi-v2/trident-polygon',
