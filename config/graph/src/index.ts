@@ -32,6 +32,9 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.BOBA_BNB,
   ChainId.BASE,
   ChainId.SCROLL,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.BTTC,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -58,6 +61,9 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.BASE,
   ChainId.LINEA,
   ChainId.SCROLL,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.BTTC,
 ]
 export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
 
@@ -278,6 +284,9 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
   [ChainId.BASE]: 'sushiswap-base/v0.0.1',
   [ChainId.SCROLL]: 'sushiswap-scroll/v0.0.1',
+  [ChainId.KAVA]: 'sushi-v2/sushiswap-kava',
+  [ChainId.METIS]: 'sushi-v2/sushiswap-metis',
+  [ChainId.BTTC]: 'sushi-v2/bttc',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
@@ -299,7 +308,10 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BASE]: 'v3-base/v0.0.1',
   [ChainId.LINEA]: 'sushi-v3/v3-linea',
   [ChainId.SCROLL]: 'v3-scroll/v0.0.1',
-}
+  [ChainId.KAVA]: 'sushi-v3/v3-kava',
+  [ChainId.METIS]: 'sushi-v3/v3-metis',
+  [ChainId.BTTC]: 'sushi-v3/v3-bttc',
+  }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.POLYGON]: 'sushi-v2/trident-polygon',
