@@ -1,5 +1,5 @@
 import { ChainId } from 'sushi/chain'
-import { Token, Type } from 'sushi/currency'
+import { DAI, Token, Type, USDT } from 'sushi/currency'
 import { FRAX } from 'sushi/currency'
 import { USDC } from 'sushi/currency'
 import { WBTC } from 'sushi/currency'
@@ -145,6 +145,11 @@ export const CURVE_NON_FACTORY_POOLS: Record<
   [Address, CurvePoolType, Type[]][]
 > = {
   [ChainId.ETHEREUM]: [
+    [ // 3pool
+      '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
+      CurvePoolType.LegacyV3,
+      [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM]]
+    ],
     [
       '0xdc24316b9ae028f1497c275eb9192a3ea0f67022',
       CurvePoolType.Legacy,

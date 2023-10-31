@@ -1006,12 +1006,17 @@ describe('End-to-end RouteProcessor4 test', async function () {
       )
     })
 
+    const amountInForTest: Record<Address, number> = {
+      '0x0ce6a5ff5217e38315f87032cf90686c96627caa': 1e16,
+      '0x93054188d876f558f4a66b2ef1d97d16edf0895b': 1e10
+    }
+
     const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
     for (let i = 0; i < pools.length; ++i) {
       const [address, type, [from, to]] = pools[i]
       it(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
         await env.snapshot.restore()
-        const amoutIn = BigInt(1e18)
+        const amoutIn = BigInt(amountInForTest[address] ?? 1e18)
         if (from instanceof Token)
           await setRouterPrimaryBalance(
             env.client,
