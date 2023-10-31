@@ -2,7 +2,7 @@
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import classNames from 'classnames'

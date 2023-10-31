@@ -1,20 +1,20 @@
 'use client'
 
-import React, { FC } from 'react'
-import { Sheet, SheetContent, SheetTrigger } from './sheet'
-import { Button } from './button'
+import { Bars3Icon } from '@heroicons/react/20/solid'
 import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/navigation'
+import React, { FC } from 'react'
 import {
-  classNames,
   EXPLORE_NAVIGATION_LINKS,
-  navigationContainerVariants,
   PARTNER_NAVIGATION_LINKS,
   ScrollArea,
   TOOLS_NAVIGATION_LINKS,
+  classNames,
+  navigationContainerVariants,
 } from '../index'
-import { Bars3Icon } from '@heroicons/react/20/solid'
+import { Button } from './button'
 import { SushiIcon } from './icons'
+import { Sheet, SheetContent, SheetTrigger } from './sheet'
 
 interface MobileNavigationProps {
   rightElement?: React.ReactNode

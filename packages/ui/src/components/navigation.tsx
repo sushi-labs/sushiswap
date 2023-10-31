@@ -1,9 +1,10 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
 import { SushiIcon } from './icons'
+import { MobileNavigation } from './mobile-navigation'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,7 +15,6 @@ import {
   navigationMenuTriggerStyle,
 } from './navigation-menu'
 import { OnramperButton } from './onramper'
-import { MobileNavigation } from './mobile-navigation'
 
 const EXPLORE_NAVIGATION_LINKS: {
   title: string
