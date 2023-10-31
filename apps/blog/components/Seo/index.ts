@@ -1,2 +1,2 @@
-export * from './ArticleSeo'
-export * from './BlogSeo'
+export * from './article-seo'
+export * from './blog-seo'

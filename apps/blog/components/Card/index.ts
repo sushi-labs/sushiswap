@@ -1,2 +1,2 @@
-export * from './Card'
-export * from './CardSkeleton'
+export * from './card'
+export * from './card-skeleton'

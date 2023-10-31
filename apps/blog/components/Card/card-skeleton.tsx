@@ -1,4 +1,4 @@
-export const CardSkeleton = () => {
+export function CardSkeleton() {
   return (
     <div className="relative overflow-hidden bg-slate-800 animate-pulse h-[400px] rounded-xl">
       <div className="bg-slate-700 h-[240px]" />

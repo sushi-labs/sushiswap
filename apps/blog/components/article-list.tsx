@@ -1,15 +1,18 @@
-import { FC, ReactNode } from 'react'
-import { Article } from 'types'
+import type { FC, ReactNode } from 'react'
+import type { Article } from '../types'
+import { CardSkeleton } from './card/card-skeleton'
 
-import { CardSkeleton } from './Card'
-
-interface ArticleList {
+interface ArticleListProps {
   loading: boolean
   articles: Article[]
-  render(article: Article): ReactNode
+  render: (article: Article) => ReactNode
 }
 
-export const ArticleList: FC<ArticleList> = ({ articles, loading, render }) => {
+export const ArticleList: FC<ArticleListProps> = ({
+  articles,
+  loading,
+  render,
+}) => {
   if (loading)
     return (
       <>
