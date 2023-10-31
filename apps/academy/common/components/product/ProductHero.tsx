@@ -1,5 +1,5 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames, LinkInternal } from '@sushiswap/ui'
+import { LinkInternal, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { IconComponent } from '@sushiswap/ui/types'
 import { FC, ReactNode, useEffect, useLayoutEffect, useState } from 'react'

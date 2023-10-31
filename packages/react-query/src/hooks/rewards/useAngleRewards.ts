@@ -180,7 +180,7 @@ export const angleRewardsSelect = ({
     if (amount?.greaterThan(ZERO) && price) {
       amountUSD = Number(Number(amount.toExact()) * Number(price.toFixed(10)))
     }
-    if (isNaN(amountUSD) || amountUSD < 0.000001) {
+    if (Number.isNaN(amountUSD) || amountUSD < 0.000001) {
       amountUSD = 0
     }
 

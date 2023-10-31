@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { chainName, chainShortName } from 'sushi/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -8,6 +7,7 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
+import { chainName, chainShortName } from 'sushi/chain'
 
 import { QueryResolvers, Token } from '../../.graphclient/index.js'
 import { FarmAPI } from '../../lib/incentives.js'

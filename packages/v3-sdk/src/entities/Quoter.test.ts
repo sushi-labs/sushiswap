@@ -1,9 +1,9 @@
-import { TradeType } from 'sushi/dex'
 import { Amount as CurrencyAmount, Token, WETH9 } from 'sushi/currency'
+import { TradeType } from 'sushi/dex'
 
-import { FeeAmount, TICK_SPACINGS } from '../constants'
-import { encodeSqrtRatioX96, nearestUsableTick, TickMath } from '../utils'
 import { Route, SushiSwapV3Pool, Trade } from '.'
+import { FeeAmount, TICK_SPACINGS } from '../constants'
+import { TickMath, encodeSqrtRatioX96, nearestUsableTick } from '../utils'
 import { SwapQuoter } from './Quoter'
 
 describe('SwapQuoter', () => {

@@ -46,21 +46,18 @@
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
     "idb-keyval": "6.2.0",
     "nanoid": "4.0.0",
     "sushi": "workspace:*",
-    "viem": "1.16.6",
-    "wagmi": "1.4.3",
     "zod": "3.21.4"
   },
   "devDependencies": {
     "@sentry/nextjs": "7.74.0",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
-    "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
@@ -68,12 +65,16 @@
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "viem": "1.17.2",
+    "wagmi": "1.4.5"
   },
   "peerDependencies": {
     "@sentry/nextjs": "7.74.0",
     "next": "13.4.19",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "viem": "1.17.2",
+    "wagmi": "1.4.5"
   }
 }

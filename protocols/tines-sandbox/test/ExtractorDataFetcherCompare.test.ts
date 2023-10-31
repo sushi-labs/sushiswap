@@ -1,5 +1,3 @@
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryV2,
@@ -28,8 +26,10 @@ import {
   SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { expect } from 'chai'
-import { Address, createPublicClient, http, Transport } from 'viem'
-import { arbitrum, Chain, mainnet, polygon } from 'viem/chains'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { http, Address, Transport, createPublicClient } from 'viem'
+import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -152,7 +152,7 @@ async function CompareTest(args: {
   let count = 0
   for (let i = 1; i < tokens.length; i += 2) {
     const j = i - 1
-    if (tokens[i].address == tokens[j].address) continue
+    if (tokens[i].address === tokens[j].address) continue
 
     const add0 = ADDITIONAL_BASES[chainId]?.[tokens[i].address] ?? []
     const add1 = ADDITIONAL_BASES[chainId]?.[tokens[j].address] ?? []

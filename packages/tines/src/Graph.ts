@@ -2,7 +2,7 @@ import { Address } from 'viem'
 
 import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
-import { ASSERT, closeValues, DEBUG, getBigInt } from './Utils'
+import { ASSERT, DEBUG, closeValues, getBigInt } from './Utils'
 
 const ROUTER_DISTRIBUTION_PORTION = 65535
 
@@ -113,7 +113,8 @@ export class Edge {
   }
 
   calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
-    let res, gas
+    let res
+    let gas
     if (v === this.vert1) {
       if (this.direction) {
         if (amountIn < this.amountOutPrevious) {
@@ -172,7 +173,8 @@ export class Edge {
   }
 
   calcInput(v: Vertice, amountOut: number): { inp: number; gasSpent: number } {
-    let res, gas
+    let res
+    let gas
     if (v === this.vert1) {
       if (!this.direction) {
         if (amountOut < this.amountOutPrevious) {
@@ -261,9 +263,9 @@ export class Edge {
       ? this.amountOutPrevious
       : -this.amountOutPrevious
     const to = from.getNeibour(this)
-    let directionNew,
-      amountInNew = 0,
-      amountOutNew = 0
+    let directionNew
+    let amountInNew = 0
+    let amountOutNew = 0
     if (to) {
       const inInc = from === this.vert0 ? amountIn : -amountOut
       const outInc = from === this.vert0 ? amountOut : -amountIn
@@ -437,17 +439,16 @@ export class Graph {
     minPriceLiquidity = 0,
     priceLogging = false,
   ) {
-    const networks: NetworkInfo[] =
-      baseTokenOrNetworks instanceof Array
-        ? baseTokenOrNetworks
-        : [
-            {
-              chainId: baseTokenOrNetworks.chainId,
-              baseToken: baseTokenOrNetworks,
-              //baseTokenPrice: 1,
-              gasPrice: gasPriceSingleNetwork || 0,
-            },
-          ]
+    const networks: NetworkInfo[] = Array.isArray(baseTokenOrNetworks)
+      ? baseTokenOrNetworks
+      : [
+          {
+            chainId: baseTokenOrNetworks.chainId,
+            baseToken: baseTokenOrNetworks,
+            //baseTokenPrice: 1,
+            gasPrice: gasPriceSingleNetwork || 0,
+          },
+        ]
 
     setTokenId(...networks.map((n) => n.baseToken))
     this.vertices = []
@@ -775,19 +776,20 @@ export class Graph {
       closestVert.edges.forEach((e) => {
         const v2 = closestVert === e.vert0 ? e.vert1 : e.vert0
         if (processedVert.has(v2)) return
-        let newIncome: number, gas
+        let newIncome: number
+        let gas
         try {
           const { out, gasSpent } = e.calcOutput(
             closestVert as Vertice,
             (closestVert as Vertice).bestIncome,
           )
-          if (!isFinite(out) || !isFinite(gasSpent))
+          if (!Number.isFinite(out) || !Number.isFinite(gasSpent))
             // Math errors protection
             return
 
           newIncome = out
           gas = gasSpent
-        } catch (err) {
+        } catch (_err) {
           // Any arithmetic error or out-of-liquidity
           e.bestEdgeIncome = -1
           return
@@ -894,19 +896,20 @@ export class Graph {
       closestVert.edges.forEach((e) => {
         const v2 = closestVert === e.vert0 ? e.vert1 : e.vert0
         if (processedVert.has(v2)) return
-        let newIncome: number, gas
+        let newIncome: number
+        let gas
         try {
           const { inp, gasSpent } = e.calcInput(
             closestVert as Vertice,
             (closestVert as Vertice).bestIncome,
           )
-          if (!isFinite(inp) || !isFinite(gasSpent))
+          if (!Number.isFinite(inp) || !Number.isFinite(gasSpent))
             // Math errors protection
             return
           if (inp < 0) return // No enouph liquidity in the pool
           newIncome = inp
           gas = gasSpent
-        } catch (e) {
+        } catch (_e) {
           // Any arithmetic error or out-of-liquidity
           return
         }
@@ -1056,7 +1059,8 @@ export class Graph {
     }
     //}
 
-    let swapPrice, priceImpact
+    let swapPrice
+    let priceImpact
     try {
       swapPrice = output / amountIn / totalrouted
       const priceTo = this.getVert(to)?.price
@@ -1064,7 +1068,7 @@ export class Graph {
       primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact =
         primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
-    } catch (e) {
+    } catch (_e) {
       /* skip division by 0 errors*/
     }
 
@@ -1130,7 +1134,7 @@ export class Graph {
         // }
       }
     }
-    if (step == 0) return NoWayMultiRoute(from, to)
+    if (step === 0) return NoWayMultiRoute(from, to)
     let status
     if (step < routeValues.length) status = RouteStatus.Partial
     else status = RouteStatus.Success
@@ -1149,7 +1153,8 @@ export class Graph {
       input = this.calcLegsAmountIn(legs, amountOut)
     }
 
-    let swapPrice, priceImpact
+    let swapPrice
+    let priceImpact
     try {
       swapPrice = amountOut / input
       const priceTo = this.getVert(to)?.price
@@ -1157,7 +1162,7 @@ export class Graph {
       primaryPrice = priceTo && priceFrom ? priceFrom / priceTo : undefined
       priceImpact =
         primaryPrice !== undefined ? 1 - swapPrice / primaryPrice : undefined
-    } catch (e) {
+    } catch (_e) {
       /* skip division by 0 errors*/
     }
 
@@ -1291,7 +1296,7 @@ export class Graph {
 
   // returns route output
   updateLegsAmountOut(legs: RouteLeg[], amountIn: number): number {
-    if (legs.length == 0) return 0
+    if (legs.length === 0) return 0
     const amounts = new Map<string, number>()
     amounts.set((legs[0] as RouteLeg).tokenFrom.tokenId as string, amountIn)
     legs.forEach((l) => {
@@ -1406,8 +1411,8 @@ export class Graph {
   }
 
   removeWeakestEdge(verts: Vertice[]) {
-    let minVert: Vertice | undefined = undefined,
-      minVertNext: Vertice
+    let minVert: Vertice | undefined = undefined
+    let minVertNext: Vertice
     let minOutput = Number.MAX_VALUE
     verts.forEach((v1, i) => {
       const v2 = i === 0 ? verts[verts.length - 1] : verts[i - 1]

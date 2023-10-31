@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { ChainId, chainName, chainShortName } from 'sushi/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -8,6 +7,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
+import { ChainId, chainName, chainShortName } from 'sushi/chain'
 
 import {
   Query,

@@ -1,8 +1,8 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Container } from '@sushiswap/ui/components/container'
-import type { FC } from 'react'
 import type { GhostArticle } from 'lib/ghost'
+import type { FC } from 'react'
 import { ArticleAuthors, ArticleHeader } from './article'
 
 interface Hero {

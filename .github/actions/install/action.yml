@@ -18,6 +18,10 @@ runs:
     - name: Set up foundry
       uses: foundry-rs/foundry-toolchain@v1
 
+    # - name: Install playwright
+    #   shell: bash
+    #   run: npx playwright install --with-deps chromium
+
     - name: Install dependencies
       shell: bash
       run: pnpm install --ignore-scripts

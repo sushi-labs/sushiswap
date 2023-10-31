@@ -1,6 +1,6 @@
 import { abs } from 'sushi/math'
 
-import { closeValues, getBigInt, StableSwapRPool } from '../src'
+import { StableSwapRPool, closeValues, getBigInt } from '../src'
 
 const token0 = {
   name: 'Token0',

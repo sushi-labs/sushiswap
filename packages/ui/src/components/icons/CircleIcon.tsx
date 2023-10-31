@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { IconProps } from '../../types'
 
@@ -23,7 +23,7 @@ export const CircleIcon: FC<CircleWithText> = ({
       {...props}
     >
       <circle cx="12" cy="12" r="9.6" />
-      {typeof text !== undefined && (
+      {typeof text !== 'undefined' && (
         <text
           x="12"
           y="16"
