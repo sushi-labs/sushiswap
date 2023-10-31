@@ -5,8 +5,6 @@ import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
   isTridentChainId,
 } from '@sushiswap/trident-sdk'
 import {

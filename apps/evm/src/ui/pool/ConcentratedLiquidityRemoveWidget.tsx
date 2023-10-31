@@ -9,7 +9,6 @@ import {
   CardFooter,
   CardGroup,
   CardLabel,
-  classNames,
   Currency,
   DialogConfirm,
   DialogContent,
@@ -137,15 +136,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     return [undefined, undefined]
   }, [positionDetails, token0, token1])
 
-  const [discountedAmount0, discountedAmount1] = useMemo(() => {
-    if (!position) return [undefined, undefined]
-    const liquidityPercentage = new Percent(debouncedValue, 100)
-    const discountedAmount0 = position.amount0.multiply(liquidityPercentage)
-    const discountedAmount1 = position.amount1.multiply(liquidityPercentage)
-
-    return [discountedAmount0, discountedAmount1]
-  }, [debouncedValue, position])
-
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
     const liquidityPercentage = new Percent(debouncedValue, 100)
     const discountedAmount0 = position
@@ -271,7 +261,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         .multiply(value)
         .divide(100),
     ]
-  }, [feeValue0, feeValue1, position?.amount0, position?.amount1, value])
+  }, [feeValue0, feeValue1, position, value])
 
   const fiatAmountsAsNumber = useTokenAmountDollarValues({
     chainId,
