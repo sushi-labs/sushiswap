@@ -15,9 +15,9 @@ import {
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   FeeAmount,
-  isSushiSwapV3ChainId,
   NonfungiblePositionManager,
   Position,
+  isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
   getV3NonFungiblePositionManagerConractConfig,
@@ -38,7 +38,7 @@ import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
-import { Amount, tryParseAmount, Type } from 'sushi/currency'
+import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'

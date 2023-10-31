@@ -15,13 +15,13 @@ import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 
+import { Bound, Field } from '../../lib/constants'
 import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from './ConcentratedLiquidityProvider'
-import { Bound, Field } from '../../lib/constants'
 
 interface ConcentratedLiquidityWidget {
   chainId: SushiSwapV3ChainId

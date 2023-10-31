@@ -1,5 +1,6 @@
 'use client'
 
+import { CogIcon } from '@heroicons/react-v1/outline'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -12,7 +13,6 @@ import {
   CardItem,
   CardLabel,
   CardTitle,
-  classNames,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -27,6 +27,7 @@ import {
   TabsTrigger,
   Toggle,
   WidgetAction,
+  classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
@@ -40,7 +41,6 @@ import {
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useMemo, useState } from 'react'
-import { CogIcon } from '@heroicons/react-v1/outline'
 
 import useIsTickAtLimit from 'src/lib/hooks/useIsTickAtLimit'
 import { Chain } from 'sushi/chain'

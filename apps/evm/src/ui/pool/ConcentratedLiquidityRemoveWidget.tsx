@@ -52,10 +52,10 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { unwrapToken } from 'src/lib/functions'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { Chain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { Hex, UserRejectedRequestError } from 'viem'
-import { Chain } from 'sushi/chain'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 
 interface ConcentratedLiquidityRemoveWidget {
