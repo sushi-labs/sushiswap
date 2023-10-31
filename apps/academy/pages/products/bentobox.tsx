@@ -74,7 +74,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         isLoading={isValidating}
       />
       <ProductArticles
-        title="Learn about Bentobox"
+        title="Learn about BentoBox"
         subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
         productName={PRODUCT_SLUG}

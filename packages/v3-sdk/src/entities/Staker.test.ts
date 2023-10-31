@@ -1,8 +1,8 @@
 import { Token } from 'sushi/currency'
 
+import { NonfungiblePositionManager, Staker, SushiSwapV3Pool } from '.'
 import { FeeAmount } from '../constants'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
-import { NonfungiblePositionManager, Staker, SushiSwapV3Pool } from '.'
 
 describe.skip('Staker', () => {
   const reward = new Token({

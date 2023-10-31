@@ -123,30 +123,32 @@ export class SushiSwapV3Pool {
    * Returns the current mid price of the pool in terms of token0, i.e. the ratio of token1 over token0
    */
   public get token0Price(): Price<Token, Token> {
-    return (
-      this._token0Price ??
-      (this._token0Price = new Price(
+    if (!this._token0Price) {
+      this._token0Price = new Price(
         this.token0,
         this.token1,
         Q192,
         this.sqrtRatioX96 * this.sqrtRatioX96,
-      ))
-    )
+      )
+    }
+
+    return this._token0Price
   }
 
   /**
    * Returns the current mid price of the pool in terms of token1, i.e. the ratio of token0 over token1
    */
   public get token1Price(): Price<Token, Token> {
-    return (
-      this._token1Price ??
-      (this._token1Price = new Price(
+    if (!this._token1Price) {
+      this._token1Price = new Price(
         this.token1,
         this.token0,
         this.sqrtRatioX96 * this.sqrtRatioX96,
         Q192,
-      ))
-    )
+      )
+    }
+
+    return this._token1Price
   }
 
   /**

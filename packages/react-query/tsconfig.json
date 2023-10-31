@@ -19,7 +19,7 @@
       "ESNext",
       "DOM"
     ],
-    "module": "ES2020",
+    "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ESNext",
     "sourceMap": true,

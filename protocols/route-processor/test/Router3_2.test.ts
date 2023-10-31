@@ -932,7 +932,7 @@ describe('End-to-end RouteProcessor3_2 test', async function () {
           intermidiateResult,
           usedPools,
         )
-      } catch (e) {
+      } catch (_e) {
         throwed = true
       }
       expect(

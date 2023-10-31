@@ -7,7 +7,6 @@
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnPaste": false,
   "editor.formatOnSave": false,
-  "biome.lspBin": "node_modules/.bin/biome-lsp",
   "editor.quickSuggestions": {
     "strings": "on"
   },
@@ -42,7 +41,7 @@
     "editor.formatOnSave": true
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true
   },
   "[html]": {

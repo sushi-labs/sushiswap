@@ -1,7 +1,7 @@
 import { default as seedrandom } from 'seedrandom'
 import { Address } from 'viem'
 
-import { CL_MAX_TICK, CL_MIN_TICK, CLRPool, CLTick, getBigInt } from '../src'
+import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK, getBigInt } from '../src'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -118,7 +118,7 @@ function getRandomCLPool(
 function getMaxInputApprox(pool: CLRPool, direction: boolean): number {
   let prevOutput = -1
   let input = 10
-  // eslint-disable-next-line no-constant-condition
+  // biome-ignore lint/correctness/noConstantCondition: <explanation>
   while (1) {
     const output = pool.calcOutByIn(input, direction).out
     if (output === prevOutput) {

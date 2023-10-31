@@ -16,7 +16,6 @@ const TRANSAK_NETWORKS = [
 
 export const getOnrampURL = (provider: OnRampProvider, address: string) => {
   switch (provider) {
-    case OnRampProvider.Transak:
     default: {
       const params = new URLSearchParams()
       params.append('apiKey', '5baa5495-64a5-4bcb-af71-febf3e54b07e')

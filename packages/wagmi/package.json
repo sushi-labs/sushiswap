@@ -19,12 +19,6 @@
       "./src/*/index.ts",
       "./src/*/index.tsx"
     ],
-    "./components/*": [
-      "./src/components/*.ts",
-      "./src/components/*.tsx",
-      "./src/components/*/index.ts",
-      "./src/components/*/index.tsx"
-    ],
     "./future/*": [
       "./src/future/*.ts",
       "./src/future/*.tsx",
@@ -37,8 +31,6 @@
       "*": [
         "src/*",
         "src/*/index",
-        "src/components/*",
-        "src/components/*/index",
         "src/future/*",
         "src/future/*/index"
       ]
@@ -83,22 +75,22 @@
     "@types/jest": "29.5.5",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "@wagmi/core": "1.4.3",
+    "@wagmi/core": "1.4.5",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
-    "viem": "1.16.6",
-    "wagmi": "1.4.3"
+    "viem": "1.17.2",
+    "wagmi": "1.4.5"
   },
   "peerDependencies": {
     "@sentry/nextjs": "7.74.0",
-    "@wagmi/core": "1.4.3",
+    "@wagmi/core": "1.4.5",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "viem": "1.16.6",
-    "wagmi": "1.4.3"
+    "viem": "1.17.2",
+    "wagmi": "1.4.5"
   },
   "peerDependenciesMeta": {
     "@sentry/nextjs": {

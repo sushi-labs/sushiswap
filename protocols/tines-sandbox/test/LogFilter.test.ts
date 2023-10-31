@@ -1,5 +1,5 @@
 import { LogFilter2, LogFilterType } from '@sushiswap/extractor'
-import { createPublicClient, http, Log, parseAbiItem } from 'viem'
+import { http, Log, createPublicClient, parseAbiItem } from 'viem'
 import { mainnet } from 'viem/chains'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -143,8 +143,8 @@ it.skip('LogFilter completeness test', async () => {
       })
       logs1.forEach((l) => logsEthalon.delete(l))
     }
-    let uniqueMy = 0,
-      uniqueEthalon = 0
+    let uniqueMy = 0
+    let uniqueEthalon = 0
     logsMy.forEach((l) => {
       if (!logsEthalon.has(l)) uniqueMy++
     })

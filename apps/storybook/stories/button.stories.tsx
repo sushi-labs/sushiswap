@@ -1,11 +1,11 @@
 // Button.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { ChainId } from 'sushi/chain'
-import { SUSHI } from 'sushi/currency'
 import { Button, ButtonProps, DiscordIcon } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import * as React from 'react'
+import { ChainId } from 'sushi/chain'
+import { SUSHI } from 'sushi/currency'
 
 import { ViewGroup } from '../components/View'
 
