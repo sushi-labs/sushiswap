@@ -54,7 +54,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
             </MobileLink>
             <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
-                {EXPLORE_NAVIGATION_LINKS.slice(0,-2).map(
+                {EXPLORE_NAVIGATION_LINKS.slice(0, -2).map(
                   (item) =>
                     item.href && (
                       <MobileLink
