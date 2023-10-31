@@ -11,10 +11,10 @@ import {
   navigationContainerVariants,
   PARTNER_NAVIGATION_LINKS,
   ScrollArea,
-  SushiIcon,
   TOOLS_NAVIGATION_LINKS,
 } from '../index'
 import { Bars3Icon } from '@heroicons/react/20/solid'
+import { SushiIcon } from './icons'
 
 interface MobileNavigationProps {
   rightElement?: React.ReactNode
@@ -49,12 +49,12 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
               className="flex items-center"
               onOpenChange={setOpen}
             >
-              <SushiIcon className="mr-2 h-4 w-4" />
+              <SushiIcon className="mr-2 h-4 w-4" width={24} height={24} />
               <span className="font-bold">Sushi</span>
             </MobileLink>
             <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
-                {EXPLORE_NAVIGATION_LINKS.map(
+                {EXPLORE_NAVIGATION_LINKS.slice(0,-2).map(
                   (item) =>
                     item.href && (
                       <MobileLink
@@ -77,6 +77,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
                           key={item.href}
                           href={item.href}
                           onOpenChange={setOpen}
+                          className="text-muted-foreground"
                         >
                           {item.title}
                         </MobileLink>
@@ -92,6 +93,7 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
                           key={item.href}
                           href={item.href}
                           onOpenChange={setOpen}
+                          className="text-muted-foreground"
                         >
                           {item.title}
                         </MobileLink>
