@@ -2,13 +2,13 @@
 import type * as _ from '@prisma/client/runtime'
 
 import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
-import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select'
+import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select.js'
 import { deepmergeInto } from 'deepmerge-ts'
 import {
   SteerVaultApiSchema,
   SteerVaultCountApiSchema,
   SteerVaultsApiSchema,
-} from '../schemas'
+} from '../schemas/index.js'
 
 function parseWhere(
   args:
