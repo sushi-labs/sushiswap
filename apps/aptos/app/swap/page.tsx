@@ -16,6 +16,7 @@ import { SwapTradeInput } from 'components/SwapTradeInput'
 import { SwapTradeOutput } from 'components/SwapTradeOutput'
 import { TradeStats } from 'components/TradeStats'
 import { useAccount } from 'utils/useAccount'
+import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 
 export default function SwapPage() {
   const { disconnect, network } = useWallet()
@@ -23,13 +24,7 @@ export default function SwapPage() {
   const { token0, token1, isTransactionPending } = useSwapState()
   const { isLoadingAccount } = useAccount()
   useEffect(() => {
-    if (network?.name?.toLowerCase() === undefined) {
-      disconnect()
-    }
-    if (network?.name?.toLowerCase() === 'mainnet' || network?.name?.toLowerCase() === 'devnet') {
-      disconnect()
-      alert('Please switch network to testnet')
-    }
+    requiredNetworkAlert(network, disconnect)
   }, [network])
 
   const swapTokenIfAlreadySelected = () => {

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Token } from './tokenType'
 import { useCustomTokens } from './useCustomTokens'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 interface GetTokenWithQueryCacheFn {
   address: string | undefined
   hasToken: (currency: string | Token) => boolean
@@ -19,7 +20,7 @@ export const getTokenDetails = async ({ address, hasToken, customTokens }: GetTo
   if (!address) return {} as Token
   const tokenAddress = address.split(':')
   const response = await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
+    `${FETCH_URL_PREFIX}/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
   )
   if (response.status == 200) {
     const data = await response.json()

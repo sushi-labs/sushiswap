@@ -4,17 +4,12 @@ import Link from 'next/link'
 import React, { FC, useEffect } from 'react'
 import { Add } from '../Pool/PoolPage'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 
 export default function AddPage() {
   const { network, disconnect } = useWallet()
   useEffect(() => {
-    if (network?.name?.toLowerCase() === undefined) {
-      disconnect()
-    }
-    if (network?.name?.toLowerCase() === 'mainnet' || network?.name?.toLowerCase() === 'devnet') {
-      disconnect()
-      alert('Please switch network to testnet')
-    }
+    requiredNetworkAlert(network, disconnect)
   }, [network])
   return (
     <>

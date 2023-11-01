@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 import { useMemo } from 'react'
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
 const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
@@ -39,7 +40,7 @@ export type FarmLP = {
 
 const farmsQueryFn = async () => {
   const response = await fetch(
-    `https://fullnode.testnet.aptoslabs.com/v1/accounts/${MASTERCHEF_CONTRACT}/resource/${MASTERCHEF_CONTRACT}::masterchef::MasterChef`
+    `${FETCH_URL_PREFIX}/v1/accounts/${MASTERCHEF_CONTRACT}/resource/${MASTERCHEF_CONTRACT}::masterchef::MasterChef`
   )
   if (response.status == 200) {
     const data: FarmLP = await response.json()

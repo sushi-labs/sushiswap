@@ -3,10 +3,12 @@ import { Token } from './tokenType'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
 import { Pool } from './usePools'
 import { baseTokens } from './baseTokens'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 
 export type Route = {
   route: string[]
   amountOut: number
+  priceImpact: number
 }
 export async function useAllCommonPairs(amount_in = 0, coinA: Token, coinB: Token, pairs: Pool[] | undefined) {
   const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
@@ -28,7 +30,7 @@ export async function useAllCommonPairs(amount_in = 0, coinA: Token, coinB: Toke
     }
   }
   let reserves
-  await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
+  await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resources`)
     .then((res) => res.json())
     .then((data) => {
       let t: any = {}
@@ -121,7 +123,7 @@ export async function getPoolPairs() {
     let inverse = false
     try {
       setLoadingPrice(true)
-      await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
+      await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resources`)
         .then((res) => res.json())
         .then((data) => {
           reserves = data.filter((d: TokenPairReserve) => {
@@ -156,10 +158,14 @@ export async function getPoolPairs() {
   }, [token0, token1, isTransactionPending])
 }
 
-const exactOutput = (amt_in: number, res_x: number, res_y: number) => {
-  let amt_with_fee = amt_in * 9975
-  let amt_out = (amt_with_fee * res_y) / (res_x * 10000 + amt_with_fee)
+export const exactOutput = (amt_in: number, res_x: number, res_y: number) => {
+  const amt_with_fee = amountWithFee(amt_in)
+  const amt_out = (amt_with_fee * res_y) / (res_x * 10000 + amt_with_fee)
   return amt_out
+}
+
+const amountWithFee = (amt_in: number) => {
+  return amt_in * 9975
 }
 
 function findPossibleRoutes(tokenA: string, tokenB: string, graph: any, visited: any, currentRoute: any, routes: any) {
@@ -197,42 +203,59 @@ function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB
   findPossibleRoutes(coinA.address, coinB.address, tokenGraph, visitedTokens, currentTokenRoute, allRoutes)
 
   // let firstInput = 100000000
-  let lastOutput
+  let lastOutput = 0
   const bestFinder = []
-
+  const prices = []
   for (let route of allRoutes) {
     if (route.length < 6) {
       if (ARR[route[0] + '|||' + route[1]] || ARR[route[1] + '|||' + route[0]]) {
-        let res_x = ARR[route[0] + '|||' + route[1]]?.res_x || ARR[route[1] + '|||' + route[0]]?.res_y
-        let res_y = ARR[route[0] + '|||' + route[1]]?.res_y || ARR[route[1] + '|||' + route[0]]?.res_x
+        const res_x = ARR[route[0] + '|||' + route[1]]?.res_x || ARR[route[1] + '|||' + route[0]]?.res_y
+        const res_y = ARR[route[0] + '|||' + route[1]]?.res_y || ARR[route[1] + '|||' + route[0]]?.res_x
         lastOutput = exactOutput(firstInput, res_x, res_y)
+        prices.push(res_y / res_x)
 
         if (ARR[route[1] + '|||' + route[2]] || ARR[route[2] + '|||' + route[1]]) {
-          let res_x = ARR[route[1] + '|||' + route[2]]?.res_x || ARR[route[2] + '|||' + route[1]]?.res_y
-          let res_y = ARR[route[1] + '|||' + route[2]]?.res_y || ARR[route[2] + '|||' + route[1]]?.res_x
+          const res_x = ARR[route[1] + '|||' + route[2]]?.res_x || ARR[route[2] + '|||' + route[1]]?.res_y
+          const res_y = ARR[route[1] + '|||' + route[2]]?.res_y || ARR[route[2] + '|||' + route[1]]?.res_x
           lastOutput = exactOutput(lastOutput, res_x, res_y)
+          prices.push(res_y / res_x)
 
           if (ARR[route[2] + '|||' + route[3]] || ARR[route[3] + '|||' + route[2]]) {
-            let res_x = ARR[route[2] + '|||' + route[3]]?.res_x || ARR[route[3] + '|||' + route[2]]?.res_y
-            let res_y = ARR[route[2] + '|||' + route[3]]?.res_y || ARR[route[3] + '|||' + route[2]]?.res_x
+            const res_x = ARR[route[2] + '|||' + route[3]]?.res_x || ARR[route[3] + '|||' + route[2]]?.res_y
+            const res_y = ARR[route[2] + '|||' + route[3]]?.res_y || ARR[route[3] + '|||' + route[2]]?.res_x
             lastOutput = exactOutput(lastOutput, res_x, res_y)
+            prices.push(res_y / res_x)
 
             if (ARR[route[3] + '|||' + route[4]] || ARR[route[4] + '|||' + route[3]]) {
-              let res_x = ARR[route[3] + '|||' + route[4]]?.res_x || ARR[route[4] + '|||' + route[3]]?.res_y
-              let res_y = ARR[route[3] + '|||' + route[4]]?.res_y || ARR[route[4] + '|||' + route[3]]?.res_x
+              const res_x = ARR[route[3] + '|||' + route[4]]?.res_x || ARR[route[4] + '|||' + route[3]]?.res_y
+              const res_y = ARR[route[3] + '|||' + route[4]]?.res_y || ARR[route[4] + '|||' + route[3]]?.res_x
               lastOutput = exactOutput(lastOutput, res_x, res_y)
+              prices.push(res_y / res_x)
             }
           }
         }
       }
-      bestFinder.push({ route: route, amountOut: lastOutput })
+
+      const midPrice = prices.slice(1).reduce((accumulator, currentValue) => accumulator * currentValue, prices[0])
+      const priceImpact = computePriceImpact(midPrice, firstInput, lastOutput)
+
+      bestFinder.push({
+        route: route,
+        amountOut: lastOutput,
+        priceImpact: priceImpact.toFixed(2),
+      })
     }
   }
-  // console.log(bestFinder)
   const bestRoutePrice = bestFinder.length
     ? bestFinder.reduce((r: any, b: any) => (r.amountOut > b.amountOut ? r : b))
     : {}
   return bestRoutePrice
+}
+
+function computePriceImpact(midPrice: number, amountIn: number, amountOut: number) {
+  const quotedOutputAmount = amountIn * midPrice
+  const priceImpact = ((quotedOutputAmount - amountOut) / quotedOutputAmount) * 100
+  return priceImpact
 }
 
 export const formatNumber = (number: number, decimals: number) => {

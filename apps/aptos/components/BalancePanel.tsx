@@ -13,7 +13,7 @@ interface Props {
 
 export const BalancePanel = ({ coinData, isLoading, decimals, onClick, type }: Props) => {
   let [big, portion] = (coinData ? `${coinData / 10 ** decimals}` : '0.00').split('.')
-  portion = portion ? portion.substring(0, 2) : '00'
+  portion = portion ? portion.substring(0, 6) : '00'
   return (
     <button
       id="swap-from-balance-button"

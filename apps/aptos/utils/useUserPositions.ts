@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Pool, usePools } from './usePools'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 
 export type CoinStore = {
   type: string
@@ -32,7 +33,7 @@ const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 const userPositionsQueryFn = async (address: string, allPools: Pool[] = []) => {
   if (address) {
-    const response = await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${address}/resources`)
+    const response = await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${address}/resources`)
     if (response.status == 200) {
       const data = await response.json()
       const userLPTokens: CoinStore[] = data?.filter((coin: CoinStore) => {

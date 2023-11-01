@@ -6,6 +6,7 @@ import { JazzIcon } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import React, { Dispatch, SetStateAction } from 'react'
 import { ProfileView } from './WalletSelector'
+import { providerNetwork } from 'lib/constants'
 interface Props {
   balance: number | undefined
   setView: Dispatch<SetStateAction<ProfileView>>
@@ -52,7 +53,7 @@ export const DefaultView = ({ balance, setView }: Props) => {
             iconProps={{ width: 18, height: 18 }}
             as="a"
             target="_blank"
-            href={`https://explorer.aptoslabs.com/account/${account?.address}?network=testnet`}
+            href={`https://explorer.aptoslabs.com/account/${account?.address}?network=${providerNetwork}`}
             description="View on Explorer"
           />
           <IconButton

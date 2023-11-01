@@ -8,6 +8,7 @@ import React, { ReactNode, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
 import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
+import { providerNetwork } from 'lib/constants'
 interface Props {
   id: string
   token: Token[]
@@ -91,7 +92,7 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
                                 target="_blank"
                                 href={`https://explorer.aptoslabs.com/account/${
                                   cur.address.split('::')[0]
-                                }?network=testnet`}
+                                }?network=${providerNetwork}`}
                                 className="flex gap-1 text-sm items-center text-blue font-medium justify-end"
                                 rel="noreferrer"
                               >

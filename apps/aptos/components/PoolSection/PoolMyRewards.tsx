@@ -2,9 +2,10 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Typography } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui/future/components/Dots'
 import { Button } from '@sushiswap/ui/future/components/button'
-import { Network, Provider } from 'aptos'
+import { Provider } from 'aptos'
 import WalletSelector from 'components/WalletSelector'
 import { createToast } from 'components/toast'
+import { providerNetwork } from 'lib/constants'
 import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
 import { formatNumber } from 'utils/utilFunctions'
@@ -21,7 +22,7 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
   const tokenAddress = decodeURIComponent(router?.id)
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const harvest = async () => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(providerNetwork)
     setTransactionPending(true)
     try {
       const response = await signAndSubmitTransaction({

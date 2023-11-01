@@ -1,4 +1,3 @@
-import { Network } from 'aptos'
 const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 export function payloadArgs(amount_in: number, routes: any, minimumOut: number) {
   switch (routes.length) {

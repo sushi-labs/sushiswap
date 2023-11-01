@@ -6,8 +6,9 @@ import { Button } from '@sushiswap/ui/future/components/button'
 import { Token } from 'utils/tokenType'
 import { useParams } from 'next/navigation'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Network, Provider } from 'aptos'
+import { Provider } from 'aptos'
 import { createToast } from 'components/toast'
+import { providerNetwork } from 'lib/constants'
 
 const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
 const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
@@ -59,7 +60,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const withdrawLiquidity = async () => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(providerNetwork)
     setTransactionPending(true)
 
     try {

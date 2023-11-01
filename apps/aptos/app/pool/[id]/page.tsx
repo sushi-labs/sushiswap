@@ -18,6 +18,7 @@ import { useUserRewards } from 'utils/useUserRewards'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 import { useRewardsPerDay } from 'utils/useRewardsPerDay'
+import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 
 const Pool: FC = ({}) => {
   return <_Pool />
@@ -48,13 +49,7 @@ const _Pool = () => {
   const rewards = useUserRewards(farms, stakes, pIdIndex, farmIndex)
   const rewardsPerDay = useRewardsPerDay(farms, farmIndex, coinInfo?.data?.decimals)
   useEffect(() => {
-    if (network?.name?.toLowerCase() === undefined) {
-      disconnect()
-    }
-    if (network?.name?.toLowerCase() === 'mainnet' || network?.name?.toLowerCase() === 'devnet') {
-      disconnect()
-      alert('Please switch network to testnet')
-    }
+    requiredNetworkAlert(network, disconnect)
   }, [network])
 
   return (
@@ -84,7 +79,11 @@ const _Pool = () => {
                   </div>
                 </AppearOnMount>
                 <div className="hidden lg:flex">
-                  <PoolButtons isFarm={farmIndex !== undefined && farmIndex !== -1} />
+                  <PoolButtons
+                    isFarm={farmIndex !== undefined && farmIndex !== -1}
+                    token0={pool.data.token_x_details.token_address}
+                    token1={pool.data.token_y_details.token_address}
+                  />
                 </div>
               </div>
             </div>

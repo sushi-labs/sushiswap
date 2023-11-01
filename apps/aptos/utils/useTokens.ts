@@ -12,19 +12,16 @@ export type Data = {
 
 const BASE_TOKENS: Token[] = TOKENS.tokens
 export const fetchTokensQueryFn = async () => {
-  return BASE_TOKENS.reduce<Record<string, Token>>(
-    (acc, { address, decimals, name, symbol, logoURI }) => {
-      acc[address] = {
-        name,
-        decimals,
-        symbol,
-        address,
-        logoURI,
-      }
-      return acc
-    },
-    {}
-  )
+  return BASE_TOKENS.reduce<Record<string, Token>>((acc, { address, decimals, name, symbol, logoURI }) => {
+    acc[address] = {
+      name,
+      decimals,
+      symbol,
+      address,
+      logoURI,
+    }
+    return acc
+  }, {})
 }
 
 export function getTokensWithoutKey() {
@@ -32,10 +29,7 @@ export function getTokensWithoutKey() {
   Object.entries(BASE_TOKENS).forEach(([, value]) => {
     tokens.push(value)
   })
-  return useMemo(() => {
-    return tokens
-      .map((token) => token)
-        }, [tokens])
+  return tokens.map((token) => token)
 }
 
 export function useTokens() {

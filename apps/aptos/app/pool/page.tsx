@@ -10,18 +10,13 @@ import { useAccount } from 'utils/useAccount'
 import Loading from 'app/loading'
 import { useEffect } from 'react'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 
 export default function Pool() {
   const { isLoadingAccount } = useAccount()
   const { network, disconnect } = useWallet()
   useEffect(() => {
-    if (network?.name?.toLowerCase() === undefined) {
-      disconnect()
-    }
-    if (network?.name?.toLowerCase() === 'mainnet' || network?.name?.toLowerCase() === 'devnet') {
-      disconnect()
-      alert('Please switch network to testnet')
-    }
+    requiredNetworkAlert(network, disconnect)
   }, [network])
   return (
     <>

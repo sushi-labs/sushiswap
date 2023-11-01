@@ -31,7 +31,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
     setNoRouteFound,
   } = useSwapActions()
 
-  const { data:  routes, isFetching: isPriceFetching } = useSwapRouter({
+  const { data: routes, isFetching: isPriceFetching } = useSwapRouter({
     balance,
   })
   useEffect(() => {
@@ -49,7 +49,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
         setNoRouteFound('')
       } else {
         setBestRoutes([])
-        setNoRouteFound('Price Impact High')
+        setNoRouteFound('No trade found')
       }
     }
   }, [amount, routes, isPriceFetching])
@@ -71,8 +71,8 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
     checkBalance(String(amount))
   }, [token0, token1, balance])
 
-  if(!isMounted) return <></>
-  
+  if (!isMounted) return <></>
+
   return (
     <TradeInput
       id="swap-from"

@@ -9,7 +9,7 @@ import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { ModalType } from '@sushiswap/ui/future/components/modal/ModalProvider'
 import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
-import { Network, Provider } from 'aptos'
+import { Provider } from 'aptos'
 import React, { FC } from 'react'
 import { payloadArgs } from 'utils/payloadUtil'
 import { createToast } from './toast'
@@ -17,6 +17,10 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { formatNumber } from 'utils/utilFunctions'
 import { Icon } from './Icon'
 import { classNames } from '@sushiswap/ui'
+import { providerNetwork } from 'lib/constants'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { useSwapRouter } from 'utils/useSwapRouter'
+import { warningSeverity, warningSeverityClassName } from 'lib/swap/warningSeverity'
 
 interface Props {
   isTransactionPending: boolean
@@ -24,11 +28,20 @@ interface Props {
 
 export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   const { bestRoutes, token0, token1, slippageAmount, amount, outputAmount, isPriceFetching } = useSwapState()
-  const { account, signAndSubmitTransaction, network } = useWallet()
+  const { account, signAndSubmitTransaction } = useWallet()
   const { setisTransactionPending, setAmount } = useSwapActions()
+
+  const { data: balance, isLoading: isPriceLoading } = useTokenBalance({
+    account: account?.address as string,
+    currency: token0?.address,
+    refetchInterval: 2000,
+  })
+  const { data: routes, isFetching } = useSwapRouter({
+    balance,
+  })
   const minOutput = slippageAmount ? formatNumber(slippageAmount, token1 ? token1.decimals : 8) : 0
   const swapToken = async (close: () => void) => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(providerNetwork)
     const payload: any = payloadArgs(
       parseInt((parseFloat(String(amount)) * 10 ** token0.decimals) as unknown as string),
       bestRoutes,
@@ -116,11 +129,16 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                     title="Price Impact"
                     subtitle="The impact your trade has on the market price of this pool."
                   >
-                    <span className={'text-gray-700 text-right dark:text-slate-400'}>
+                    <span
+                      className={classNames(
+                        warningSeverityClassName(warningSeverity(routes?.priceImpact)),
+                        'text-gray-700 text-right dark:text-slate-400 '
+                      )}
+                    >
                       {isPriceFetching ? (
                         <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
                       ) : (
-                        `+0.13% (static right now)`
+                        <>{routes?.priceImpact ? -routes?.priceImpact : 0}%</>
                       )}
                     </span>
                   </List.KeyValue>
@@ -150,7 +168,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                       <List.KeyValue title="Recipient">
                         <a
                           target="_blank"
-                          href={`https://explorer.aptoslabs.com/account/${account?.address}?network=testnet`}
+                          href={`https://explorer.aptoslabs.com/account/${account?.address}?network=${providerNetwork}`}
                           className={classNames('flex items-center gap-2 cursor-pointer text-blue')}
                           rel="noreferrer"
                         >

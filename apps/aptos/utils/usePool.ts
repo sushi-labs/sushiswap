@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { Pool } from './usePools'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 export const getPoolQueryFn = async (address: string) => {
   if (address) {
     const response = await fetch(
-      `https://fullnode.testnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resource/${CONTRACT_ADDRESS}::swap::TokenPairMetadata<${address}>`
+      `${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resource/${CONTRACT_ADDRESS}::swap::TokenPairMetadata<${address}>`
     )
     if (response.status == 200) {
       const pair = await response.json()

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 
 export type Pool = {
   id: string
@@ -41,7 +42,7 @@ export type Pool = {
 
 export async function fetchPoolsQueryFn() {
   const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
-  const response = await fetch(`https://fullnode.testnet.aptoslabs.com/v1/accounts/${CONTRACT_ADDRESS}/resources`)
+  const response = await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resources`)
   if (response.status == 200) {
     const data = await response.json()
     const coinPair: Pool[] = data.filter((pair: Pool) => {
@@ -53,7 +54,7 @@ export async function fetchPoolsQueryFn() {
   return []
 }
 
-export function usePools(enable: boolean = true) {
+export function usePools(enable = true) {
   return useQuery({
     queryKey: ['pools'],
     queryFn: async () => fetchPoolsQueryFn(),

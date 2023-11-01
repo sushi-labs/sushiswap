@@ -5,13 +5,14 @@ import { Icon } from 'components/Icon'
 import { FC } from 'react'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { providerNetwork } from 'lib/constants'
 
 interface PoolHeader {
   row: Pool
 }
 
 const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
-
+console.log(providerNetwork)
 export const PoolHeader: FC<PoolHeader> = ({ row }) => {
   const { token0, token1 } = useTokensFromPools(row)
   return (
@@ -25,7 +26,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
             </IconList>
             <Link.External
               className="flex flex-col !no-underline group"
-              href={`https://explorer.aptoslabs.com/account/${CONTRACT_ADDRESS}/coins?network=testnet`}
+              href={`https://explorer.aptoslabs.com/account/${CONTRACT_ADDRESS}/coins?network=${providerNetwork}`}
             >
               <div className="flex items-center gap-2">
                 <Typography

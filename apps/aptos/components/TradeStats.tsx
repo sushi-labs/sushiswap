@@ -7,16 +7,29 @@ import { useSwapState } from 'app/swap/trade/TradeProvider'
 import React from 'react'
 import { formatNumber } from 'utils/utilFunctions'
 import { TradeRoute } from './TradeRoute'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { useSwapRouter } from 'utils/useSwapRouter'
+import { providerNetwork } from 'lib/constants'
+import { warningSeverity, warningSeverityClassName } from 'lib/swap/warningSeverity'
 
 export const TradeStats = () => {
-  const { token1, amount, bestRoutes, isLoadingPrice, isPriceFetching, outputAmount, slippageAmount } = useSwapState()
-  const { account, network } = useWallet()
+  const { token0, token1, amount, bestRoutes, isLoadingPrice, isPriceFetching, outputAmount, slippageAmount } =
+    useSwapState()
+  const { account } = useWallet()
   const loading = Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
   const outputSwapTokenAmount = outputAmount
     ? String(formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8))
     : ''
 
   const minOutput = slippageAmount ? formatNumber(slippageAmount, token1 ? token1.decimals : 8) : 0
+  const { data: balance } = useTokenBalance({
+    account: account?.address as string,
+    currency: token0?.address,
+    refetchInterval: 2000,
+  })
+  const { data: routes } = useSwapRouter({
+    balance,
+  })
 
   return (
     <Transition
@@ -31,8 +44,17 @@ export const TradeStats = () => {
       <div className="w-full px-2 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">Price impact</span>
-          <span className={classNames('text-sm font-semibold text-gray-700 text-right dark:text-slate-400')}>
-            {loading ? <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" /> : <>null</>}
+          <span
+            className={classNames(
+              warningSeverityClassName(warningSeverity(routes?.priceImpact)),
+              'text-sm font-semibold text-gray-700 text-right dark:text-slate-400'
+            )}
+          >
+            {loading ? (
+              <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : (
+              <>{routes?.priceImpact ? -routes?.priceImpact : 0}%</>
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center gap-2">
@@ -78,7 +100,7 @@ export const TradeStats = () => {
             <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
               <a
                 target="_blank"
-                href={`https://explorer.aptoslabs.com/account/${account?.address}?network=testnet`}
+                href={`https://explorer.aptoslabs.com/account/${account?.address}?network=${providerNetwork}`}
                 className={classNames('transition-all flex gap-1 items-center')}
                 rel="noreferrer"
               >

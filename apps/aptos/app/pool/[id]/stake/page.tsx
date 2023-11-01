@@ -8,6 +8,7 @@ import { AddSectionStake } from 'components/AddSection/AddSectionStake'
 import { Layout } from 'components/Layout'
 import { useParams } from 'next/navigation'
 import { FC, useEffect, useMemo } from 'react'
+import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 import { useAccount } from 'utils/useAccount'
 import { isFarm, useFarms } from 'utils/useFarms'
 import { usePool } from 'utils/usePool'
@@ -83,15 +84,8 @@ const _Add = () => {
     totalSupply: Number(totalSupply),
     decimals: coinInfo?.data?.decimals,
   })
-
   useEffect(() => {
-    if (network?.name?.toLowerCase() === undefined) {
-      disconnect()
-    }
-    if (network?.name?.toLowerCase() === 'mainnet' || network?.name?.toLowerCase() === 'devnet') {
-      disconnect()
-      alert('Please switch network to testnet')
-    }
+    requiredNetworkAlert(network, disconnect)
   }, [network])
   if (!pool?.id) return <></>
   if (farmIndex === -1) return <>\</>

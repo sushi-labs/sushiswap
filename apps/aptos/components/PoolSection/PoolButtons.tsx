@@ -5,9 +5,11 @@ import { FC } from 'react'
 
 interface PoolButtonsProps {
   isFarm: boolean
+  token0: string
+  token1: string
 }
 
-export const PoolButtons: FC<PoolButtonsProps> = ({ isFarm }) => {
+export const PoolButtons: FC<PoolButtonsProps> = ({ isFarm, token0, token1 }) => {
   const router = useParams()
   return (
     <div className="flex flex-col w-full gap-2">
@@ -19,7 +21,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ isFarm }) => {
             </Button>
           </a>
         </Link.Internal>
-        <Link.Internal href={`/pool/add`} passHref={true}>
+        <Link.Internal href={`/pool/add?token0=${token0}&token1=${token1}`} passHref={true}>
           <Button as="a" size="lg" fullWidth>
             Deposit
           </Button>

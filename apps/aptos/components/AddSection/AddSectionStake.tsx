@@ -6,9 +6,10 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { Token } from 'utils/tokenType'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Network, Provider } from 'aptos'
+import { Provider } from 'aptos'
 import { useParams } from 'next/navigation'
 import { createToast } from 'components/toast'
+import { providerNetwork } from 'lib/constants'
 
 interface AddSectionStakeProps {
   title?: string
@@ -61,7 +62,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ title, token0, token1, bal
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const depositeLiquidity = async () => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(providerNetwork)
     setTransactionPending(true)
 
     try {

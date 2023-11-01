@@ -1,5 +1,5 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Network, Provider } from 'aptos'
+import { Provider } from 'aptos'
 import React, { useMemo, useState } from 'react'
 import { Pool } from 'utils/usePools'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
@@ -9,6 +9,7 @@ import { Dots } from '@sushiswap/ui/future/components/Dots'
 import WalletSelector from 'components/WalletSelector'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Token } from 'utils/tokenType'
+import { providerNetwork } from 'lib/constants'
 interface Props {
   pool: Pool
   liquidityBalance: number | undefined
@@ -80,7 +81,7 @@ export const RemoveSectionLegacy = ({
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
   const removeLiquidityHandler = async () => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(providerNetwork)
     if (!account?.address) return []
     setisTransactionPending(true)
     if (!liquidityBalance) return

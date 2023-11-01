@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 
 export const tokenBalanceQueryFn = async (account: string, currency: string) => {
   if (account) {
     const response = await fetch(
-      `https://fullnode.testnet.aptoslabs.com/v1/accounts/${account}/resource/0x1::coin::CoinStore<${currency}>`
+      `${FETCH_URL_PREFIX}/v1/accounts/${account}/resource/0x1::coin::CoinStore<${currency}>`
     )
     if (response.status == 200) {
       const data = await response.json()

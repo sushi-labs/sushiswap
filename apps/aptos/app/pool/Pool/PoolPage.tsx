@@ -6,19 +6,21 @@ import { ContentBlock } from 'components/ContentBlock'
 import TradeInput from 'components/TradeInput'
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { getPoolPairs } from 'utils/utilFunctions'
-import { SelectNetworkWidget, SelectTokensWidget } from 'components/NewPositionSection'
+import { SelectTokensWidget } from 'components/NewPositionSection'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-import { Network, Provider } from 'aptos'
+import { Provider } from 'aptos'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AddLiquidityButton } from 'app/pool/Pool/AddLiquidityButton'
 import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
 import { Button } from '@sushiswap/ui/future/components/button'
 import { createToast } from 'components/toast'
 import { liquidityArgs } from 'utils/liquidityPayload'
-import { getTokensWithoutKey } from 'utils/useTokens'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import Loading from 'app/loading'
 import { useAccount } from 'utils/useAccount'
+import { providerNetwork } from 'lib/constants'
+import { useSearchParams } from 'next/navigation'
+import getTokenFromAddress from 'utils/getTokenFromAddress'
 
 export function Add() {
   // const router = useRouter()
@@ -44,9 +46,6 @@ export function Add() {
             </span>
           </Link>
           <h1 className="mt-2 text-3xl font-medium">Add Liquidity</h1>
-          <h1 className="text-lg text-gray-600 dark:dark:text-slate-400">
-            Create a new pool or create a liquidity position on an existing pool.
-          </h1>
         </div>
         <div className="grid grid-cols-1 sm:w-[340px] md:w-[572px] gap-10">
           <div className="hidden md:block">
@@ -61,7 +60,7 @@ export function Add() {
 const _Add: FC = () => {
   const { setToken0, setToken1, setAmount0, setAmount1, setisTransactionPending } = usePoolActions()
   const { token0, token1, amount0, amount1, isPriceFetching, poolPairRatio, pairs } = usePoolState()
-  const { network, disconnect, account, signAndSubmitTransaction, connected } = useWallet()
+  const { network, account, signAndSubmitTransaction, connected } = useWallet()
   const [error0, setError0] = useState('')
   const [error1, setError1] = useState('')
   console.log(poolPairRatio)
@@ -74,7 +73,7 @@ const _Add: FC = () => {
   }
 
   const addLiquidity = async (close: () => void) => {
-    const provider = new Provider(Network.TESTNET)
+    const provider = new Provider(providerNetwork)
     const payload: payloadType = liquidityArgs(
       token0.address,
       token1.address,
@@ -124,7 +123,7 @@ const _Add: FC = () => {
       setAmount0(value)
       if (pairs?.data) {
         if (value) {
-          setAmount1(String(parseFloat(String(value)) * poolPairRatio))
+          setAmount1(String(parseFloat((parseFloat(value) * poolPairRatio).toFixed(token1.decimals))))
         } else {
           setAmount1('')
         }
@@ -133,13 +132,24 @@ const _Add: FC = () => {
     [poolPairRatio, balance0]
   )
 
+  const searchParams = useSearchParams()
+  const token0Address = searchParams.get('token0')
+  const token1Address = searchParams.get('token1')
+
+  useEffect(() => {
+    const _token0 = getTokenFromAddress(token0Address)
+    const _token1 = getTokenFromAddress(token1Address)
+    if (_token0) setToken0(_token0)
+    if (_token1) setToken1(_token1)
+  }, [])
+
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance1(value)
       setAmount1(value)
       if (pairs?.data) {
         if (value) {
-          setAmount0(String(parseFloat(String(value)) / poolPairRatio))
+          setAmount0(String(parseFloat((parseFloat(value) / poolPairRatio).toFixed(token0.decimals))))
         } else {
           setAmount0('')
         }
@@ -147,14 +157,6 @@ const _Add: FC = () => {
     },
     [poolPairRatio, balance1]
   )
-  const tokensWithoutKey = getTokensWithoutKey()
-  useEffect(() => {
-    if (network?.name === undefined) {
-      disconnect()
-    }
-    setToken0(tokensWithoutKey[0])
-    setToken1(tokensWithoutKey[1])
-  }, [network])
 
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
@@ -204,7 +206,6 @@ const _Add: FC = () => {
   return (
     <>
       <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-        <SelectNetworkWidget />
         <SelectTokensWidget handleSwap={swapTokenIfAlreadySelected} />
         <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
           <div className="flex flex-col gap-4">
