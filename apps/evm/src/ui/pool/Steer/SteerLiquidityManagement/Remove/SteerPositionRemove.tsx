@@ -30,11 +30,11 @@ import {
 } from '@sushiswap/wagmi'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import { slippageAmount } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
-import { slippageAmount } from 'sushi'
 
 interface SteerPositionRemoveProps {
   vault: SteerVault

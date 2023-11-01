@@ -20,6 +20,7 @@ import {
 import { formatPercent, formatUSD } from 'sushi/format'
 
 import { SteerStrategyComponent } from '.'
+import { APRHoverCard } from '../../APRHoverCard'
 import { SteerAPRChart } from '../SteerAPRChart'
 import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {
@@ -30,7 +31,6 @@ import {
 } from '../SteerLiquidityManagement'
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
 import { SteerStrategyConfig } from '../constants'
-import { APRHoverCard } from '../../APRHoverCard'
 
 export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
   vault,
