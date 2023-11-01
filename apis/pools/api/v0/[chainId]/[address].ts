@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getEarnPool } from '../../../lib/api/index'
-import { PoolApiSchema } from '../../../lib/schemas/pool'
+import { getEarnPool } from '../../../lib/api'
+import { PoolApiSchema } from '../../../lib/schemas'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')

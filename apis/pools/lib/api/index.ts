@@ -3,7 +3,7 @@ import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
 import { isPromiseFulfilled } from 'sushi/validate'
 import { getUnindexedPool } from '../getUnindexedPool'
-import { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas'
+import { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from '../schemas'
 import { SushiPoolSelect } from './select'
 
 function parseWhere(
