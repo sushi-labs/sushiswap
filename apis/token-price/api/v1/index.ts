@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { roundToNearestMinutes, sub } from 'date-fns'
 
-import { getPrices } from '../../lib/api.js'
-import { TokenPricesV1ApiSchema } from '../../lib/schemas/v1/index.js'
+import { getPrices } from '../../lib/api'
+import { TokenPricesV1ApiSchema } from '../../lib/schemas/v1/index'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600')

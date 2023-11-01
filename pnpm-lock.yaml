@@ -1190,24 +1190,12 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/tokens-api':
-        specifier: workspace:*
-        version: link:../../apis/tokens
-      '@sushiswap/typescript-config':
-        specifier: workspace:*
-        version: link:../../config/typescript
       '@tsconfig/esm':
         specifier: 1.0.4
         version: 1.0.4
       '@tsconfig/strictest':
         specifier: 2.0.2
         version: 2.0.2
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
       react:
         specifier: 18.2.0
         version: 18.2.0

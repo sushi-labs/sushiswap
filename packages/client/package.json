@@ -14,43 +14,18 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    },
-    "./hooks": {
-      "types": "./dist/hooks/index.d.ts",
-      "import": "./dist/hooks/index.js",
-      "default": "./dist/hooks/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "module": "./dist/index.js",
+  "main": "dist/index.js",
   "source": "src/index.ts",
-  "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      ".": [
-        "src/index"
-      ],
-      "hooks": [
-        "src/hooks/index"
-      ]
-    }
-  },
+  "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/hooks/index.ts",
+    "build": "tsup src/index.ts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc --watch",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
+    "dev": "tsup src/index.ts --watch",
     "prepublishOnly": "pnpm build"
   },
   "jest": {
@@ -67,15 +42,8 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/pools-api": "workspace:*",
-    "@sushiswap/steer-vault-api": "workspace:*",
-    "@sushiswap/token-price-api": "workspace:*",
-    "@sushiswap/tokens-api": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "@types/node": "18",
-    "eslint": "8.43.0",
     "react": "18.2.0",
     "swr": "2.1.5",
     "tsup": "7.2.0",

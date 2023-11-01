@@ -50,7 +50,7 @@ import React, { useMemo, useState } from 'react'
 import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
-import { useSteerVaults } from '@sushiswap/client/hooks'
+import { useSteerVaults } from '@sushiswap/client'
 import { isAngleEnabledChainId } from '../../config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'

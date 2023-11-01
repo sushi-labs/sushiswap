@@ -41,7 +41,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import { useSWRConfig } from 'swr'
 
-import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
+import { usePoolCount, usePoolsInfinite } from '@sushiswap/client'
 import { isAngleEnabledChainId } from '../../config'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {

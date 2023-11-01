@@ -3,9 +3,6 @@
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
+    "noEmit": true
   }
 }
