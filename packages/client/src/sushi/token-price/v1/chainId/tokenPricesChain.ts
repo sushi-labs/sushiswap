@@ -1,7 +1,7 @@
-import useSWR from 'swr'
 import { getPricesByChainId } from '@sushiswap/token-price-api/lib/api'
 import { TokenPricesChainV1ApiSchema } from '@sushiswap/token-price-api/lib/schemas/v1/chainId'
 import { fetch } from '@whatwg-node/fetch'
+import useSWR from 'swr'
 
 import { TOKEN_PRICE_API } from '../../../../constants'
 import { parseArgs } from '../../../../functions'
