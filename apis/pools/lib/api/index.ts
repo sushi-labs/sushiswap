@@ -1,6 +1,4 @@
 // eslint-disable-next-line
-import type * as _ from '@prisma/client/runtime'
-
 import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
 import { isPromiseFulfilled } from 'sushi/validate'
