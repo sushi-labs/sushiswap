@@ -1,3 +1,5 @@
+'use client'
+
 import { SteerVault } from '@sushiswap/client'
 import { SteerStrategy } from '@sushiswap/client'
 import { FC } from 'react'
