@@ -7,6 +7,7 @@ import React, { FC, ReactNode, useCallback, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Address } from 'wagmi'
 
+import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import {
   NAME_COLUMN_V3,
   POSITION_SIZE_CELL,
@@ -14,7 +15,6 @@ import {
   PRICE_RANGE_COLUMN,
 } from '../../../columns'
 import { useManualPositions } from './useManualPositions'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 
 const COLUMNS = [
   NAME_COLUMN_V3,

@@ -2,9 +2,9 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatNumber } from 'sushi/format'
 
+import { PoolNameCellPool } from '../../../../PoolNameCell'
 import { SteerPosition } from '../useSteerPositions'
 import { SteerStrategyCell } from './SteerStrategyCell'
-import { PoolNameCellPool } from '../../../../PoolNameCell'
 
 export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
   id: 'name',

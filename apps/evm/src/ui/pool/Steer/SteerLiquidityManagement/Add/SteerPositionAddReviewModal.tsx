@@ -37,11 +37,11 @@ import { formatUSD } from 'sushi/format'
 import { Percent } from 'sushi/math'
 import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
 
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import { slippageAmount } from 'sushi'
+import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
-import {slippageAmount} from "sushi";
 
 interface SteerPositionAddReviewModalProps {
   vault: SteerVault
@@ -154,14 +154,8 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
             vault.address as Address,
             parsedAmounts.CURRENCY_A.quotient,
             parsedAmounts.CURRENCY_B.quotient,
-            slippageAmount(
-              parsedAmounts.CURRENCY_A,
-              slippagePercent,
-            )[0],
-              slippageAmount(
-              parsedAmounts.CURRENCY_B,
-              slippagePercent,
-            )[0],
+            slippageAmount(parsedAmounts.CURRENCY_A, slippagePercent)[0],
+            slippageAmount(parsedAmounts.CURRENCY_B, slippagePercent)[0],
             address,
           ],
         }),

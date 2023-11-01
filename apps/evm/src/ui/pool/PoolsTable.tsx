@@ -41,6 +41,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Native } from 'sushi/currency'
 import { useSWRConfig } from 'swr'
 
+import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
 import { isAngleEnabledChainId } from '../../config'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
@@ -52,7 +53,6 @@ import {
   VOLUME_1M_COLUMN,
   VOLUME_7D_COLUMN,
 } from './columns'
-import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
 
 const COLUMNS = [
   NAME_COLUMN_POOL,

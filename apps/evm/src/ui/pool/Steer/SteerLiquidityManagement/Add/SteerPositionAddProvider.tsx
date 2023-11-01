@@ -2,6 +2,7 @@
 
 import type { SteerVault } from '@sushiswap/client'
 import { useSteerVault } from '@sushiswap/client/hooks'
+import { useSteerVaultReserves } from '@sushiswap/wagmi'
 import {
   FC,
   ReactNode,
@@ -12,7 +13,6 @@ import {
 } from 'react'
 import { Field } from 'src/lib/constants'
 import { Amount, Currency, Token, tryParseAmount } from 'sushi/currency'
-import { useSteerVaultReserves } from '@sushiswap/wagmi'
 
 interface State {
   independentField: Field

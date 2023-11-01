@@ -23,13 +23,13 @@ import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 
+import { Container, LinkInternal, Message } from '@sushiswap/ui'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { StatisticsCharts } from './StatisticsChart'
-import { Container, LinkInternal, Message } from '@sushiswap/ui'
 
 enum Granularity {
   Day = 0,

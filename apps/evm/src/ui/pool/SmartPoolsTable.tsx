@@ -50,12 +50,12 @@ import React, { useMemo, useState } from 'react'
 import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
+import { useSteerVaults } from '@sushiswap/client/hooks'
 import { isAngleEnabledChainId } from '../../config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import { SteerStrategyConfig } from './Steer/constants'
-import { useSteerVaults } from '@sushiswap/client/hooks'
 
 const COLUMNS = [
   {
