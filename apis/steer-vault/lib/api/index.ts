@@ -1,14 +1,14 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
-import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select.js'
 
 import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
+import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select'
 import { deepmergeInto } from 'deepmerge-ts'
 import {
   SteerVaultApiSchema,
   SteerVaultCountApiSchema,
   SteerVaultsApiSchema,
-} from './../schemas/index.js'
+} from '../schemas'
 
 function parseWhere(
   args:

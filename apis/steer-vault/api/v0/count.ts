@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getSteerVaultCount } from '../../lib/api/index.js'
-import { SteerVaultCountApiSchema } from '../../lib/schemas/count.js'
+import { getSteerVaultCount } from '../../lib/api'
+import { SteerVaultCountApiSchema } from '../../lib/schemas'
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
   response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
