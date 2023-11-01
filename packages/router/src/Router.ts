@@ -175,7 +175,7 @@ export class Router {
   }
 
   static findBestRoute(
-    poolCodesMap: Map<string, PoolCode>,
+    poolCodes: Map<string, PoolCode> | PoolCode[],
     chainId: ChainId,
     fromToken: Type,
     amountIn: bigint,
@@ -197,15 +197,22 @@ export class Router {
       },
     ]
 
-    let poolCodes = Array.from(poolCodesMap.values())
+    let poolCodesMap: Map<string, PoolCode>
+    if (poolCodes instanceof Map) poolCodesMap = poolCodes
+    else {
+      poolCodesMap = new Map()
+      poolCodes.forEach(p => poolCodesMap.set(p.pool.address, p))
+    }
+    
+    let poolCodesList = poolCodes instanceof Map ? Array.from(poolCodes.values()) : poolCodes
     if (providers) {
-      poolCodes = poolCodes.filter((pc) =>
+      poolCodesList = poolCodesList.filter((pc) =>
         [...providers, LiquidityProviders.NativeWrap].includes(
           pc.liquidityProvider,
         ),
       )
     }
-    let pools = Array.from(poolCodes).map((pc) => pc.pool)
+    let pools = Array.from(poolCodesList).map((pc) => pc.pool)
 
     if (poolFilter) pools = pools.filter(poolFilter)
 

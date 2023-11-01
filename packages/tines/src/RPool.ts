@@ -100,4 +100,7 @@ export abstract class RPool {
   alwaysAppropriateForPricing(): boolean {
     return false
   }
+
+  // not so easy for multitoken pools
+  uniqueID(): string { return this.address}
 }

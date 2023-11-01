@@ -124,14 +124,15 @@ async function getTestEnvironment() {
 
   dataFetcher.startDataFetching()
   const poolCodes = new Map<string, PoolCode>()
+  let poolList: PoolCode[] = []
   if (!UPDATE_POOL_STATES) {
-    const pc = await getAllPoolCodes(
+    poolList = await getAllPoolCodes(
       dataFetcher,
       chainId,
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,
     )
-    pc.forEach((p) => poolCodes.set(p.pool.address, p))
+    poolList.forEach((p) => poolCodes.set(p.pool.address, p))
   }
 
   const RouteProcessorTx = await client.deployContract({
@@ -210,6 +211,7 @@ async function getTestEnvironment() {
     user2,
     dataFetcher,
     poolCodes,
+    poolList,
     snapshot: await takeSnapshot(),
   } satisfies {
     chainId: ChainId
@@ -219,6 +221,7 @@ async function getTestEnvironment() {
     user2: HDAccount
     dataFetcher: DataFetcher
     poolCodes: Map<string, PoolCode>
+    poolList: PoolCode[]
     snapshot: SnapshotRestorer
   }
 }
@@ -283,7 +286,8 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env.user.address, env.chainId)
 
   const route = Router.findBestRoute(
-    pcMap,
+    //pcMap,
+    env.poolList.filter(p => !usedPools.has(p.pool.address)),
     env.chainId,
     fromToken,
     amountIn,
@@ -952,6 +956,21 @@ describe('End-to-end RouteProcessor4 test', async function () {
   }
 
   if (network.config.chainId === 1) {
+    it('Curve 3pool test', async function () {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
+      debugger
+      intermidiateResult = await updMakeSwap(
+        env,
+        Native.onChain(chainId),
+        USDT[chainId as keyof typeof USDT_ADDRESS],
+        intermidiateResult,
+        usedPools,
+        [LiquidityProviders.CurveSwap, LiquidityProviders.SushiSwapV2],
+      )
+    })
+
     it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: Native => sETH', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()

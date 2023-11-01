@@ -116,6 +116,10 @@ export class CurveMultitokenPool extends RPool {
     this.flow1 = 0
     this.core.cleanTmpData()
   }
+
+  override uniqueID(): string {
+    return `${this.address}_${this.index0}_${this.index1}`
+  }
 }
 
 const E18 = getBigInt(1e18)
