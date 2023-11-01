@@ -25,3 +25,17 @@ if (process.env.ANVIL_BLOCK_TIME) {
     `\`ANVIL_BLOCK_TIME\` not found. Falling back to \`${blockTime}\`.`,
   )
 }
+
+export let anvilPort: number
+if (process.env.ANVIL_PORT) {
+  anvilPort = Number(process.env.ANVIL_PORT)
+} else {
+  anvilPort = 8545
+  console.warn(`\`ANVIL_PORT\` not found. Falling back to \`${anvilPort}\`.`)
+}
+
+export const testWorkerIndex = Number(process.env.TEST_WORKER_INDEX ?? 0)
+export const testParallelIndex = Number(process.env.TEST_PARALLEL_INDEX ?? 0)
+
+export const localHttpUrl = `http://127.0.0.1:${anvilPort}/${testParallelIndex}`
+export const localWsUrl = `ws://127.0.0.1:${anvilPort}/${testParallelIndex}`

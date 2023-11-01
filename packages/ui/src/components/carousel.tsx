@@ -126,6 +126,7 @@ export const Carousel = <T,>({
       {buttons.hasPrev && (
         <div className="scale-[0.8] group-hover:scale-[1] opacity-0 group-hover:opacity-100 flex absolute top-0 left-4 bottom-0 items-center transition-all">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation()
               prev()
@@ -139,6 +140,7 @@ export const Carousel = <T,>({
       {buttons.hasNext && (
         <div className="scale-[0.8] group-hover:scale-[1] opacity-0 group-hover:opacity-100 flex absolute top-0 right-4 bottom-0 items-center transition-all">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation()
               next()

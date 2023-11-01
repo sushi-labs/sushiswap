@@ -18,7 +18,7 @@ async function getTokenRatios(vault: GetTokenRatiosProps) {
   let prices
   try {
     prices = await getTokenPricesChain({ chainId: vault.chainId })
-  } catch (e) {
+  } catch (_e) {
     return { token0: 0, token1: 0 }
   }
 

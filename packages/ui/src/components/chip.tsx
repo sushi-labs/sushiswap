@@ -67,6 +67,7 @@ const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
           <div
             role="button"
             onClick={onClose}
+            onKeyDown={onClose}
             className="p-0.5 bg-secondary hover:bg-accent rounded-full cursor-pointer"
           >
             <XMarkIcon width={12} height={12} />

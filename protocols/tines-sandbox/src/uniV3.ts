@@ -1,4 +1,15 @@
 import {
+  CLTick,
+  CL_MAX_TICK,
+  CL_MIN_TICK,
+  RToken,
+  UniV3Pool,
+} from '@sushiswap/tines'
+import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
+import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
+import { expect } from 'chai'
+import seedrandom from 'seedrandom'
+import {
   erc20Abi,
   nonfungiblePositionManagerAbi,
   sushiV3FactoryAbi,
@@ -6,18 +17,7 @@ import {
 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import {
-  CL_MAX_TICK,
-  CL_MIN_TICK,
-  CLTick,
-  RToken,
-  UniV3Pool,
-} from '@sushiswap/tines'
 import { type Contract } from 'sushi/types'
-import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
-import { expect } from 'chai'
-import seedrandom from 'seedrandom'
 import { Address, DeployContractParameters, Hex, WalletClient } from 'viem'
 import { readContract, waitForTransactionReceipt } from 'viem/actions'
 

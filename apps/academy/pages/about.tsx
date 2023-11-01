@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { classNames, LinkExternal } from '@sushiswap/ui'
+import { LinkExternal, classNames } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import sushiPulse from 'common/assets/sushi-pulse.png'
 import sushidilly from 'common/assets/sushidilly.png'

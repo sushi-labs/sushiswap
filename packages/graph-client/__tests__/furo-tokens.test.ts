@@ -1,5 +1,5 @@
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { getBuiltGraphSDK } from '..'
+import { getBuiltGraphSDK } from '../.graphclient/index.js'
 
 describe('Furo Tokens', () => {
   const sdk = getBuiltGraphSDK()

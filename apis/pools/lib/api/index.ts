@@ -1,21 +1,17 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import * as Database from '@sushiswap/database'
+import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import { isPromiseFulfilled } from 'sushi'
-import { getUnindexedPool } from '../getUnindexedPool.js'
-import type {
-  PoolApiSchema,
-  PoolCountApiSchema,
-  PoolsApiSchema,
-} from './../schemas/index.js'
-import { SushiPoolSelect } from './select.js'
+import { isPromiseFulfilled } from 'sushi/validate'
+import { getUnindexedPool } from '../getUnindexedPool'
+import { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas'
+import { SushiPoolSelect } from './select'
 
 function parseWhere(
   args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output,
 ) {
-  const where: NonNullable<Database.Prisma.SushiPoolWhereInput> = {}
+  const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
 
   const addFilter = (filter: typeof where) => deepmergeInto(where, filter)
 
@@ -158,7 +154,6 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   console.log('getEarnPool pool', pool)
 
   if (!pool) {
-    // rome-ignore lint/suspicious/noExplicitAny: recursive
     pool = (await getUnindexedPool(id)) as any
   }
 
@@ -169,21 +164,20 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
 
 export async function getEarnPools(args: typeof PoolsApiSchema._output) {
   const take = args.take
-  const orderBy: Database.Prisma.SushiPoolOrderByWithRelationInput = {
+  const orderBy: Prisma.SushiPoolOrderByWithRelationInput = {
     [args.orderBy]: args.orderDir,
   }
-  const where: Database.Prisma.SushiPoolWhereInput = parseWhere(args)
+  const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
   let skip = 0
-  let cursor: { cursor: Database.Prisma.SushiPoolWhereUniqueInput } | object =
-    {}
+  let cursor: { cursor: Prisma.SushiPoolWhereUniqueInput } | object = {}
 
   if (args.cursor) {
     skip = 1
     cursor = { cursor: { id: args.cursor } }
   }
 
-  const client = await Database.createClient()
+  const client = await createClient()
   const pools = await client.sushiPool.findMany({
     take,
     skip,
@@ -193,9 +187,7 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
     select: SushiPoolSelect,
   })
 
-  const poolsRetyped = pools as unknown as Database.DecimalToString<
-    typeof pools
-  >
+  const poolsRetyped = pools as unknown as DecimalToString<typeof pools>
 
   if (args.ids && args.ids.length > poolsRetyped.length) {
     const fetchedPoolIds = poolsRetyped.map((pool) => pool.id)
@@ -222,9 +214,9 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
 export async function getEarnPoolCount(
   args: typeof PoolCountApiSchema._output,
 ) {
-  const where: Database.Prisma.SushiPoolWhereInput = parseWhere(args)
+  const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
-  const client = await Database.createClient()
+  const client = await createClient()
   const count = await client.sushiPool.count({
     where,
   })

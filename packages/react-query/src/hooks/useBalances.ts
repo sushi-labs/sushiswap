@@ -1,7 +1,7 @@
-import { getAddress } from '@ethersproject/address'
-import { Amount, Native, type Type } from 'sushi/currency'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { Amount, Native, type Type } from 'sushi/currency'
+import { getAddress } from 'viem'
 
 import { useTokens } from './tokens'
 

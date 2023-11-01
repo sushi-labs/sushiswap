@@ -1,4 +1,4 @@
-import { createClient, Prisma } from '@sushiswap/database'
+import { Prisma, createClient } from '@sushiswap/database'
 
 export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
   const client = await createClient()

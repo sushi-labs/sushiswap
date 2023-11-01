@@ -7,7 +7,7 @@ import { TimeAgo } from '../time-ago'
 
 interface ToastContent {
   icon?: ReactNode
-  summary: ReactNode | Array<ReactNode>
+  summary: ReactNode | ReactNode[]
   code?: boolean
   href?: string
 }

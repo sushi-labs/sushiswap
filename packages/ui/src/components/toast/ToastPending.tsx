@@ -10,11 +10,11 @@ interface ToastPending extends ResolvedNotification {
 }
 
 export const ToastPending: FC<ToastPending> = ({
-  type,
+  type: _type,
   href,
   chainId,
   txHash,
-  onDismiss,
+  onDismiss: _onDismiss,
   summary,
 }) => {
   const txUrl = href

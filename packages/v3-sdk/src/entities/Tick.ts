@@ -1,4 +1,4 @@
-import { BigintIsh } from 'sushi'
+import { BigintIsh } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 import { TickMath } from '../utils'

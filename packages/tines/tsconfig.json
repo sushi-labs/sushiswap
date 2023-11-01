@@ -1,6 +1,6 @@
 {
   // TODO: Fix strictness "@tsconfig/strictest/tsconfig"
-  "extends": ["@tsconfig/node18/tsconfig"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": ["src"],
   "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
@@ -10,6 +10,8 @@
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "exactOptionalPropertyTypes": false
   }
 }

@@ -54,7 +54,7 @@
     "prepublishOnly": "pnpm build"
   },
   "jest": {
-    "preset": "@sushiswap/jest-config/node"
+    "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",

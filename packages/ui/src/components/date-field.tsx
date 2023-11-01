@@ -44,6 +44,7 @@ const DateField: FC<DateFieldProps> = ({
         <div
           role="button"
           onClick={() => setOpen((open) => !open)}
+          onKeyDown={() => setOpen((open) => !open)}
           className="cursor-pointer absolute right-3 top-0 bottom-0 flex items-center"
         >
           <CalendarIcon

@@ -1,4 +1,4 @@
-import { BigintIsh, sqrt } from 'sushi'
+import { BigintIsh, sqrt } from 'sushi/math'
 
 /**
  * Returns the sqrt ratio as a Q64.96 corresponding to a given ratio of amount1 and amount0

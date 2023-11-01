@@ -1,7 +1,6 @@
-import { getAddress, isAddress } from '@ethersproject/address'
-import { parseUnits } from '@ethersproject/units'
-import { Fraction } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
+import { Fraction } from 'sushi/math'
+import { getAddress, isAddress, parseUnits } from 'viem'
 
 const hydrate = (data: Record<string, number>) => {
   return Object.entries(data).reduce<Record<string, Record<string, Fraction>>>(

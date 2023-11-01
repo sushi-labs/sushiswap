@@ -1,9 +1,9 @@
 import { EventEmitter } from 'node:events'
 
-import { tickLensAbi } from 'sushi/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from '@sushiswap/router'
 import { CLTick } from '@sushiswap/tines'
 import { Address } from 'abitype'
+import { tickLensAbi } from 'sushi/abi'
 
 import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -85,7 +85,7 @@ export class WordLoadManager extends EventEmitter {
               this.downloadQueue.pop()
           }
         }
-      } catch (e) {
+      } catch (_e) {
         warnLog(
           this.client.chainId,
           `Pool ${this.poolAddress} ticks downloading failed`,

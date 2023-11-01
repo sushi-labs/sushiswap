@@ -1,7 +1,7 @@
 import {
   ConstantProductRPool,
-  findMultiRouteExactIn,
   RouteStatus,
+  findMultiRouteExactIn,
 } from '../src'
 
 // Tests that Tines doesn't fail if input token == output token

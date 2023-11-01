@@ -1,4 +1,4 @@
-import { abs } from 'sushi'
+import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
@@ -47,7 +47,7 @@ export class CurvePool extends RPool {
     }
   }
 
-  updateReserves(res0: bigint, res1: bigint) {
+  override updateReserves(res0: bigint, res1: bigint) {
     this.D = 0n
     this.reserve0 = res0
     this.reserve1 = res1

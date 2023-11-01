@@ -1,27 +1,27 @@
-import { ChainId } from 'sushi/chain'
-import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from 'sushi/currency'
 import {
-  findMultiRouteExactIn,
-  getBigInt,
   MultiRoute,
   NetworkInfo,
-  RouteStatus,
   RPool,
   RToken,
+  RouteStatus,
+  findMultiRouteExactIn,
+  getBigInt,
 } from '@sushiswap/tines'
+import { ChainId } from 'sushi/chain'
+import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Address, Hex } from 'viem'
 
-import { convertTokenToBento, getBentoChainId } from './lib/convert'
+import { convertTokenToBento, getBentoChainId } from '@sushiswap/tines'
+import { getRouteProcessorCode } from './TinesToRouteProcessor'
+import {
+  PermitData,
+  RouterLiquiditySource,
+  getRouteProcessor2Code,
+} from './TinesToRouteProcessor2'
+import { getRouteProcessor4Code } from './TinesToRouteProcessor4'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { Bridge } from './pools/Bridge'
 import { PoolCode } from './pools/PoolCode'
-import { getRouteProcessorCode } from './TinesToRouteProcessor'
-import {
-  getRouteProcessor2Code,
-  PermitData,
-  RouterLiquiditySource,
-} from './TinesToRouteProcessor2'
-import { getRouteProcessor4Code } from './TinesToRouteProcessor4'
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken

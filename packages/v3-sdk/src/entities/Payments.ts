@@ -1,8 +1,8 @@
 import { Interface } from '@ethersproject/abi'
-import { validateAndParseAddress } from '@sushiswap/amm'
-import { Token } from 'sushi/currency'
-import { Percent } from 'sushi'
 import IPeripheryPaymentsWithFee from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json'
+import { Token } from 'sushi/currency'
+import { Percent } from 'sushi/math'
+import { validateAndParseAddress } from '../utils'
 
 import { toHex } from '../utils/calldata'
 

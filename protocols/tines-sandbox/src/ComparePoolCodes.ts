@@ -49,7 +49,7 @@ export function isSubpool(etalon: PoolCode, result: PoolCode): boolean {
     expect(p1.liquidity.toString()).equal(pp2.liquidity.toString())
     expect(p1.sqrtPriceX96.toString()).equal(pp2.sqrtPriceX96.toString())
     expect(p1.ticks.length).lessThanOrEqual(pp2.ticks.length)
-    const start = pp2.ticks.findIndex((t) => t.index == p1.ticks[0].index)
+    const start = pp2.ticks.findIndex((t) => t.index === p1.ticks[0].index)
     expect(start).not.equal(-1)
     p1.ticks.forEach((t1, i) => {
       const t2 = pp2.ticks[start + i]

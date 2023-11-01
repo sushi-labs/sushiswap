@@ -4,8 +4,8 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import {
   Query,
-  QueryblocksByChainIdsArgs,
   QueryResolvers,
+  QueryblocksByChainIdsArgs,
   RequireFields,
 } from '../../.graphclient/index.js'
 import { BlocksTypes } from '../../.graphclient/sources/Blocks/types.js'
@@ -37,7 +37,7 @@ export const _blocksByChainIds = async (
           info,
         }).then((blocks: BlocksTypes.Block[]) => {
           if (!Array.isArray(blocks)) {
-            console.error(`Blocks query failed on ${chainId}`, blocks)
+            // console.error(`Blocks query failed on ${chainId}`, blocks)
             return []
           }
           // console.debug(`Blocks ${chainId}`, blocks)

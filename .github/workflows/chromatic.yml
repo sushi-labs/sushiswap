@@ -7,7 +7,9 @@ on:
       - ".github/workflows/chromatic.yml"
       - "config/tailwindcss/**"
       - "packages/ui/**"
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -19,12 +21,12 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Build storybook
-        run: pnpm exec turbo run build --filter=docs^...
+        run: pnpm exec turbo run build --filter=storybook^...
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          workingDir: apps/docs
+          workingDir: apps/storybook
           buildScriptName: build
           exitOnceUploaded: true
 

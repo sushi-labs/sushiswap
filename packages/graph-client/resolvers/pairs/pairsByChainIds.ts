@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { ChainId } from 'sushi/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -8,11 +7,12 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
+import { ChainId } from 'sushi/chain'
 
 import {
   Query,
-  QuerypairsByChainIdsArgs,
   QueryResolvers,
+  QuerypairsByChainIdsArgs,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'

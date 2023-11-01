@@ -37,7 +37,7 @@ export class ConstantProductPoolCode extends PoolCode {
     return code
   }
 
-  getSwapCodeForRouteProcessor2(
+  override getSwapCodeForRouteProcessor2(
     leg: RouteLeg,
     _route: MultiRoute,
     to: string,
@@ -52,7 +52,7 @@ export class ConstantProductPoolCode extends PoolCode {
     return code
   }
 
-  getSwapCodeForRouteProcessor4(
+  override getSwapCodeForRouteProcessor4(
     leg: RouteLeg,
     _route: MultiRoute,
     to: string,

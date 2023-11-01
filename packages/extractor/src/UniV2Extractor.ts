@@ -1,9 +1,9 @@
-import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
-import { computeSushiSwapV2PoolAddress } from '@sushiswap/v2-sdk'
-import { Token } from 'sushi/currency'
 import { ConstantProductPoolCode, LiquidityProviders } from '@sushiswap/router'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { Address, decodeEventLog, Log, parseAbiItem, PublicClient } from 'viem'
+import { computeSushiSwapV2PoolAddress } from '@sushiswap/v2-sdk'
+import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
+import { Token } from 'sushi/currency'
+import { Address, Log, PublicClient, decodeEventLog, parseAbiItem } from 'viem'
 
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
@@ -219,7 +219,7 @@ export class UniV2Extractor {
             addToCache: false,
             startTime,
           })
-        } catch (e) {
+        } catch (_e) {
           this.taskCounter.dec()
           warnLog(
             this.multiCallAggregator.chainId,
@@ -261,7 +261,7 @@ export class UniV2Extractor {
       const [reserve0, reserve1] = reserves as [bigint, bigint]
       pool.updateReserves(reserve0, reserve1)
       poolState.status = PoolStatus.ValidPool
-    } catch (e) {
+    } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
         `Ext2 pool ${poolState.poolCode.pool.address} update fail`,
@@ -381,7 +381,7 @@ export class UniV2Extractor {
             )
             const [res0, res1] = reserves as [bigint, bigint]
             return await this.addPoolByLog(addr as Address, res0, res1, factory)
-          } catch (e) {
+          } catch (_e) {
             return
           }
         })()

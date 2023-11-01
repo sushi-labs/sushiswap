@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK } from '..'
+import { getBuiltGraphSDK } from '../.graphclient/index.js'
 
 // TOKENS BY CHAIN IDS
 // ;(async () => {

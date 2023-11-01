@@ -1,6 +1,6 @@
 import { getAddress, isAddress } from '@ethersproject/address'
-import { Token } from 'sushi/currency'
 import { useCallback, useMemo } from 'react'
+import { Token } from 'sushi/currency'
 
 import { useLocalStorage } from './useLocalStorage'
 

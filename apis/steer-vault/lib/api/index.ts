@@ -4,7 +4,7 @@ import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select.js'
 
 import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import type {
+import {
   SteerVaultApiSchema,
   SteerVaultCountApiSchema,
   SteerVaultsApiSchema,

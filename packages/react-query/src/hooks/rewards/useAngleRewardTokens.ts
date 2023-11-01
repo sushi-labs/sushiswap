@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Token, tryParseAmount } from 'sushi/currency'
-import { useQuery } from '@tanstack/react-query'
 
 import { angleRewardTokensValidator } from './validator'
 

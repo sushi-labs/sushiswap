@@ -1,20 +1,20 @@
 import { AbiEvent } from 'abitype'
 import {
   Block,
-  encodeEventTopics,
   Log,
   PublicClient,
   WatchBlocksReturnType,
+  encodeEventTopics,
 } from 'viem'
 
 import { repeatAsync } from './Utils'
 import { warnLog } from './WarnLog'
 
 export enum LogFilterType {
-  Native, // getFilterChanges - is not supported widely
-  OneCall, // one eth_getLogs call for all topict - the most preferrable
-  MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
-  SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
+  Native = 0, // getFilterChanges - is not supported widely
+  OneCall = 1, // one eth_getLogs call for all topict - the most preferrable
+  MultiCall = 2, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
+  SelfFilter = 3, // Topic filtering doesn't support for provider. Filtering on the client
 }
 
 class BlockFrame {
@@ -105,7 +105,7 @@ export class LogFilter2 {
 
   start() {
     if (this.unWatchBlocks) return // have been started
-    if (this.logType == LogFilterType.Native) {
+    if (this.logType === LogFilterType.Native) {
       this.client
         .createEventFilter({ events: this.eventsAll })
         .then((filter) => {

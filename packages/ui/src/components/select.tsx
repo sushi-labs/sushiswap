@@ -8,8 +8,6 @@ import { FC } from 'react'
 
 import { textFieldVariants } from './text-field'
 
-export * as SelectPrimitive from '@radix-ui/react-select'
-
 const Select = SelectPrimitive.Root
 
 const SelectGroup = SelectPrimitive.Group
@@ -198,4 +196,5 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  SelectPrimitive,
 }

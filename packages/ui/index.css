@@ -1,6 +1,6 @@
 @import '@fontsource-variable/inter/index.css';
 @import 'react-datepicker/dist/react-datepicker.css';
-@import './DatePicker.css';
+@import './date-picker.css';
 
 @tailwind base;
 @tailwind components;

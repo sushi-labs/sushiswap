@@ -9,11 +9,11 @@ interface ToastCompleted extends ResolvedNotification {
 }
 
 export const ToastCompleted: FC<ToastCompleted> = ({
-  type,
+  type: _type,
   href,
   chainId,
   txHash,
-  onDismiss,
+  onDismiss: _onDismiss,
   summary,
 }) => {
   const txUrl = href

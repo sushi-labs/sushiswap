@@ -36,8 +36,6 @@
     "@nomiclabs/hardhat-solhint": "2.0.1",
     "@nomiclabs/hardhat-waffle": "2.0.3",
     "@openzeppelin/contracts": "4.8.0",
-    "@sushiswap/amm": "workspace:*",
-    "@sushiswap/bentobox-sdk": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/router": "workspace:*",
@@ -74,6 +72,6 @@
     "ts-node": "10.9.1",
     "typechain": "8.1.1",
     "typescript": "5.2.2",
-    "viem": "1.16.2"
+    "viem": "1.17.2"
   }
 }
