@@ -2237,6 +2237,9 @@ importers:
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../dexie
+      '@sushiswap/graph-config':
+        specifier: workspace:*
+        version: link:../../config/graph
       '@sushiswap/hooks':
         specifier: workspace:*
         version: link:../hooks

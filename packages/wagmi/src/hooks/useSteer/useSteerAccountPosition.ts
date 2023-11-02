@@ -24,13 +24,24 @@ export const useSteerAccountPositions = ({
 
   return useQuery({
     queryKey: ['useSteerAccountPositions', { vaultIds, account, client }],
-    queryFn: () => {
+    queryFn: async () => {
       if (!vaultIds || !account) return null
 
-      return getSteerAccountPositions({
+      const data = await getSteerAccountPositions({
         clients: clientsFromIds(vaultIds) as PublicClient[],
         account,
         vaultIds: vaultIds,
+      })
+
+      return data.map((el, i) => {
+        if (el) {
+          return {
+            ...el,
+            vaultId: vaultIds[i],
+          }
+        }
+
+        return null
       })
     },
     refetchInterval: 10000,

@@ -53,6 +53,7 @@
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",

@@ -562,8 +562,6 @@ export const SmartPoolsTable = () => {
     [protocols, farmsOnly, vaults],
   )
 
-  console.log(_vaults)
-
   return (
     <Card>
       <CardHeader>

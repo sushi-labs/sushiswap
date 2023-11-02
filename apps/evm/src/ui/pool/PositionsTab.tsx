@@ -14,8 +14,8 @@ import React, { useState } from 'react'
 
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
-import { SmartPoolsTable } from './SmartPoolsTable'
 import { Smart } from './ConcentratedPositionsTable'
+import { SmartPositionsTable } from './SmartPositionsTable'
 
 const ITEMS: { value: string; children: React.ReactNode }[] = [
   {
@@ -120,7 +120,7 @@ export const PositionsTab = () => {
           />
         </TabsContent>
         <TabsContent value="smart">
-          <Smart />
+          <SmartPositionsTable />
         </TabsContent>
       </Tabs>
     </div>

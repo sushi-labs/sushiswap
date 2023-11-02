@@ -80,7 +80,10 @@ async function getSteerAccountPositions({
       token1Balance = (vaultReserve.reserve1 * accountBalance) / totalSupply
     }
 
+    const { address, chainId } = getChainIdAddressFromId(_)
     return {
+      address,
+      chainId,
       steerTokenBalance: accountBalance,
       steerTokenSupply: totalSupply,
       token0Balance,
