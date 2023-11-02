@@ -37,7 +37,6 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
   tab = 'add',
 }) => {
   const isFarm = pool.wasIncentivized || pool.isIncentivized
-  console.debug('ManageV2LiquidityCard (client)', pool)
 
   return (
     <Card>
@@ -113,7 +112,7 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
             )}
           </TabsList>
         </CardContent>
-        <div className="pb-4 px-6">
+        <div className="px-6 pb-4">
           <Separator />
         </div>
         <PoolPositionProvider pool={pool}>

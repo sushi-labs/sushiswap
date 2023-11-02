@@ -627,7 +627,7 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
   await removeLiquidityTabSelector.click()
 
   await switchNetwork(page, CHAIN_ID)
-
+  
   await page.locator('[testdata-id=liquidity-max-button]').click()
   const handleLiquidityLocator = page.locator(
     '[testdata-id=remove-or-add-liquidity-button]',
@@ -918,14 +918,14 @@ async function mockPoolApi(
         tokenA,
         tokenB,
         fee: fee,
-      })
+      }).toLowerCase()
     } else if (protocol === 'SUSHISWAP_V2') {
       address = computeSushiSwapV2PoolAddress({
         factoryAddress:
           SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV2ChainId],
         tokenA,
         tokenB,
-      })
+      }).toLowerCase()
     } else if (protocol === 'BENTOBOX_CLASSIC') {
       address = computeTridentConstantPoolAddress({
         factoryAddress:
@@ -934,7 +934,7 @@ async function mockPoolApi(
         tokenB,
         fee,
         twap: false,
-      })
+      }).toLowerCase()
     } else if (protocol === 'BENTOBOX_STABLE') {
       address = computeTridentStablePoolAddress({
         factoryAddress:
@@ -942,7 +942,7 @@ async function mockPoolApi(
         tokenA,
         tokenB,
         fee,
-      })
+      }).toLowerCase()
     } else {
       console.error('>>>>>>>>> UNKNOWN PROTOCOL')
       throw Error('Unknown protocol')
@@ -1012,7 +1012,7 @@ async function mockPoolApi(
       hasEnabledSteerVault: false,
       steerVaults: [],
     }
-
+    
     if (request.url === 'https://pools.sushi.com/api/v0') {
       return new Response(JSON.stringify([mockPool]), {
         headers: {
