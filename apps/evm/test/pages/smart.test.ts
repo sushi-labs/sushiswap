@@ -2,7 +2,7 @@ import {
   Page,
   // NextFixture,
   expect,
-  test
+  test,
 } from 'next/experimental/testmode/playwright'
 import { SupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
@@ -19,7 +19,7 @@ const CHAIN_ID = Number(
 
 test.beforeAll(async () => {
   test.skip(CHAIN_ID !== ChainId.POLYGON)
-  
+
   const address = '0x23DefC2Ca207e7FBD84AE43B00048Fb5Cb4DB5B2'
   try {
     await impersonateAccount({
@@ -32,7 +32,6 @@ test.beforeAll(async () => {
   }
 })
 
-
 test.beforeEach(async ({ page, next }) => {
   page.on('pageerror', (error) => {
     console.error(error)
@@ -44,7 +43,6 @@ test.beforeEach(async ({ page, next }) => {
   await page.goto(BASE_URL)
   await switchNetwork(page, CHAIN_ID)
 })
-
 
 test('Create and remove smart pool position', async ({ page }) => {
   test.slow()
@@ -90,5 +88,4 @@ async function switchNetwork(page: Page, chainId: number) {
   await expect(networkToSelect).toBeVisible()
   await expect(networkToSelect).toBeEnabled()
   await networkToSelect.click()
-
 }
