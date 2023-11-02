@@ -321,7 +321,14 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.KAVA],
     DAI[ChainId.KAVA],
   ],
-  [ChainId.METIS]: [WNATIVE[ChainId.METIS]],
+  [ChainId.METIS]: [
+    WNATIVE[ChainId.METIS],
+    WETH9[ChainId.METIS],
+    WBTC[ChainId.METIS],
+    USDC[ChainId.METIS],
+    USDT[ChainId.METIS],
+    DAI[ChainId.METIS],
+  ],
   [ChainId.BOBA]: [
     WNATIVE[ChainId.BOBA],
     WBTC[ChainId.BOBA],
