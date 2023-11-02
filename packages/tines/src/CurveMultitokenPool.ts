@@ -130,9 +130,10 @@ export class CurveMultitokenCore {
   fee: number
   A: number
   reserves: bigint[]
+  reservesRated: bigint[]
   rates: number[]
   ratesBN18: bigint[]
-  currentReservesRated: bigint[]
+  currentFlow: bigint[]
   D: bigint
 
   // For faster calculation
@@ -162,9 +163,8 @@ export class CurveMultitokenCore {
         (t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1),
       )
       this.ratesBN18 = this.rates.map((r) => getBigInt(r * 1e18)) // precision is 18 digits
-      this.currentReservesRated = this.reserves.map(
-        (r, i) => (r * (this.ratesBN18[i] as bigint)) / E18,
-      )
+      this.reservesRated = this.reserves.map((r, i) => r * this.ratesBN18[i] / E18) 
+      this.currentFlow = this.reserves.map(() => 0n)
       this.D = 0n
 
       this.Ann = getBigInt(A * this.tokens.length)
@@ -179,22 +179,27 @@ export class CurveMultitokenCore {
   }
 
   updateReserve(index: number, res: bigint) {
-    this.D = ZERO
+    this.D = 0n
     this.reserves[index] = res
-    this.currentReservesRated[index] = (res * (this.ratesBN18[index] as bigint)) / E18 // remove precision 1e18
+    this.reservesRated[index] = res * this.ratesBN18[index] / E18
+    this.currentFlow[index] = 0n
+  }
+
+  getCurrentReserve(i: number): bigint {
+    return this.reservesRated[i] + this.currentFlow[i]
   }
 
   computeLiquidity(): bigint {
     if (this.D !== 0n) return this.D // already calculated
-    if (this.currentReservesRated.some((r) => r === 0n)) return ZERO
+    if (this.reserves.some((r) => r === 0n)) return 0n
 
-    const s = this.currentReservesRated.reduce((a, b) => a + b, ZERO)
+    const s = this.reservesRated.reduce((a, b) => a + b, 0n)
     let prevD
     let D = s
     const AnnS = this.Ann * s
     for (let i = 0; i < 256; i++) {
       let dP = D
-      this.currentReservesRated.forEach((r) => (dP = (dP * D) / r))
+      this.reservesRated.forEach((r) => (dP = (dP * D) / r))
       dP = dP / this.nn
       prevD = D
       // D = (Ann * S + D_P * N_COINS) * D / ((Ann - 1) * D + (N_COINS + 1) * D_P)
@@ -214,7 +219,7 @@ export class CurveMultitokenCore {
     for (let i = 0; i < this.tokens.length; ++i) {
       let _x = ZERO
       if (i == xIndex) _x = x
-      else if (i != yIndex) _x = this.currentReservesRated[i] as bigint
+      else if (i != yIndex) _x = this.getCurrentReserve(i) as bigint
       else continue
       S_ = S_ + _x
       c = (c * D) / _x / this.n
@@ -239,8 +244,8 @@ export class CurveMultitokenCore {
     from: number,
     to: number,
   ): number {
-    const xBN = this.currentReservesRated[from] as bigint
-    const yBN = this.currentReservesRated[to] as bigint
+    const xBN = this.getCurrentReserve(from)
+    const yBN = this.getCurrentReserve(to)
     const xNewBN = xBN + getBigInt(amountIn * this.rates[from])
     const yNewBN = this.computeY(from, xNewBN, to)
     if (yNewBN < MIN_LIQUIDITY) throw new Error(`Curve pool OutOfLiquidity`)
@@ -253,10 +258,9 @@ export class CurveMultitokenCore {
     from: number,
     to: number,
   ): number {
-    amountOut *= this.rates[to] as number
-    const xBN = this.currentReservesRated[from] as bigint
-    const yBN = this.currentReservesRated[to] as bigint
-    let yNewBN = yBN - getBigInt(amountOut / (1 - this.fee))
+    const xBN = this.getCurrentReserve(from)
+    const yBN = this.getCurrentReserve(to)
+    let yNewBN = yBN - getBigInt(amountOut * this.rates[to]/ (1 - this.fee))
     if (yNewBN < 1)
       // lack of precision
       yNewBN = 1n
@@ -271,13 +275,13 @@ export class CurveMultitokenCore {
   }
 
   calcCurrentPriceWithoutFee(from: number, to: number): number {
-    const xInp = Number(this.currentReservesRated[from])
+    const xInp = Number(this.reservesRated[from])
     const D = Number(this.computeLiquidity())
     let Sx = 0,
       Px = 1
     this.tokens.forEach((_, i) => {
       if (i == to) return
-      const x = Number(this.currentReservesRated[i])
+      const x = Number(this.reservesRated[i])
       Sx += x
       Px *= x
     })
@@ -292,15 +296,11 @@ export class CurveMultitokenCore {
   }
 
   applyReserveChange(index: number, diff: number) {
-    this.currentReservesRated[index] += BigInt(Math.round(diff * this.rates[index]))
-    this.D = 0n
+    this.currentFlow[index] += BigInt(Math.round(diff * this.rates[index]))
   }
 
   cleanTmpData() {
-    this.D = 0n
-    this.currentReservesRated = this.reserves.map(
-      (r, i) => (r * (this.ratesBN18[i] as bigint)) / E18,
-    )
+    this.currentFlow = this.reserves.map(() => 0n)
   }
 }
 

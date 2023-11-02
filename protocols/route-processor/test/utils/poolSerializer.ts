@@ -90,7 +90,8 @@ function makeSerializable(poolCodes: PoolCode[]) {
       core.tokens = core.tokens.map(t => ({ ...t }) as RToken)
       core.reserves = core.reserves.map(r => String(r) as unknown as bigint)
       core.ratesBN18 = core.ratesBN18.map(r => String(r) as unknown as bigint)
-      core.currentReservesRated = core.currentReservesRated.map(r => String(r) as unknown as bigint)
+      core.reservesRated = core.reservesRated.map(r => String(r) as unknown as bigint)
+      core.currentFlow = core.currentFlow.map(r => String(r) as unknown as bigint)
     }
   })
 }
@@ -128,7 +129,8 @@ function restoreAfterSerialization(poolCodes: PoolCode[]) {
       core.nPlus1 = BigInt(core.nPlus1)
       core.reserves = core.reserves.map(r => BigInt(r))
       core.ratesBN18 = core.ratesBN18.map(r => BigInt(r))
-      core.currentReservesRated = core.currentReservesRated.map(r => BigInt(r))
+      core.reservesRated = core.reservesRated.map(r => BigInt(r))
+      core.currentFlow = core.currentFlow.map(r => BigInt(r))
     } 
   })
 }
