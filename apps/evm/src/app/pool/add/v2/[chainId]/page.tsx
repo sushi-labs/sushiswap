@@ -231,7 +231,13 @@ const _Add: FC<AddProps> = ({
   )
 
   useEffect(() => {
-    if (pool && token0 && token1) {
+    // Includes !!pool
+    if (
+      pool?.reserve0.greaterThan(0) &&
+      pool.reserve1.greaterThan(0) &&
+      token0 &&
+      token1
+    ) {
       if (independendField === 0) {
         const parsedAmount = tryParseAmount(input0, token0)
         setTypedAmounts({
