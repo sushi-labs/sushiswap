@@ -585,7 +585,7 @@ export const SmartPoolsTable = () => {
         </CardDescription>
       </CardHeader>
       <DataTable
-        testId={(row) => `smart-pools-table-${row.id.split(':')[1]}`}
+        testId={(row) => `smart-pools-table-${row.id.replace(':', '-')}`}
         onPaginationChange={setPagination}
         pagination={true}
         state={state}
