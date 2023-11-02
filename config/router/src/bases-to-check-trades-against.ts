@@ -159,6 +159,13 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.ARBITRUM_NOVA],
     USDT[ChainId.ARBITRUM_NOVA],
     DAI[ChainId.ARBITRUM_NOVA],
+    new Token({
+      chainId: ChainId.ARBITRUM_NOVA,
+      address: '0xf823C3cD3CeBE0a1fA952ba88Dc9EEf8e0Bf46AD',
+      decimals: 18,
+      symbol: 'ARB',
+      name: 'Arbitrum',
+    }),
   ],
   [ChainId.AVALANCHE]: [
     WNATIVE[ChainId.AVALANCHE],
