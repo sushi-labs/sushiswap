@@ -71,9 +71,17 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   ],
   [ChainId.GNOSIS]: [
     WNATIVE[ChainId.GNOSIS],
+    WETH9[ChainId.GNOSIS],
     USDC[ChainId.GNOSIS],
     USDT[ChainId.GNOSIS],
     DAI[ChainId.GNOSIS],
+    new Token({
+      chainId: ChainId.GNOSIS,
+      address: '0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb',
+      decimals: 18,
+      symbol: 'GNO',
+      name: 'Gnosis',
+    }),
   ],
   [ChainId.BSC]: [
     WNATIVE[ChainId.BSC],
