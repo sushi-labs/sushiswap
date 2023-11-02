@@ -1,6 +1,6 @@
 'use client'
 
-import { usePools } from '@sushiswap/client'
+import { usePools } from '@sushiswap/client/hooks'
 import { Token as GraphToken } from '@sushiswap/graph-client'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'

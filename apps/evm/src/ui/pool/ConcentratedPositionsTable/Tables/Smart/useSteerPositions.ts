@@ -1,6 +1,6 @@
 'use client'
 
-import { usePool, useSteerVaults } from '@sushiswap/client'
+import { usePool, useSteerVaults } from '@sushiswap/client/hooks'
 import { useAllPrices } from '@sushiswap/react-query'
 import { Address, useAccount, useSteerAccountPositions } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
