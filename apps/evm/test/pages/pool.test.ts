@@ -627,7 +627,7 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
   await removeLiquidityTabSelector.click()
 
   await switchNetwork(page, CHAIN_ID)
-  
+
   await page.locator('[testdata-id=liquidity-max-button]').click()
   const handleLiquidityLocator = page.locator(
     '[testdata-id=remove-or-add-liquidity-button]',
@@ -1012,7 +1012,7 @@ async function mockPoolApi(
       hasEnabledSteerVault: false,
       steerVaults: [],
     }
-    
+
     if (request.url === 'https://pools.sushi.com/api/v0') {
       return new Response(JSON.stringify([mockPool]), {
         headers: {
