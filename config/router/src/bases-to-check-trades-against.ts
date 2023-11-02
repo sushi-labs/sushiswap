@@ -91,10 +91,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     DAI[ChainId.ARBITRUM],
     new Token({
       chainId: ChainId.ARBITRUM,
-      address: '0x6576Bb918709906DcbFDCeae4bB1e6df7C8a1077',
+      address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
       decimals: 6,
       symbol: 'USDC.e',
-      name: 'Bridge USDC (Arb1)',
+      name: 'Bridged USDC (Arb1)',
     }),
     // MIM[ChainId.ARBITRUM],
     // FRAX[ChainId.ARBITRUM],
