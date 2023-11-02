@@ -45,7 +45,7 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/hooks/index.ts",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",

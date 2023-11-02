@@ -1,5 +1,5 @@
 import type {} from '@sushiswap/database'
-import type { getSteerVault as _getSteerVault } from '@sushiswap/steer-vault-api/lib/api/index.js'
+import type { getSteerVault as _getSteerVault } from '@sushiswap/steer-vault-api/lib/api/index'
 import { SteerVaultApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/vault'
 import { fetch } from '@whatwg-node/fetch'
 import type { ChainId } from 'sushi/chain'

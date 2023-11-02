@@ -1,5 +1,5 @@
 import type {} from '@sushiswap/database'
-import type { getSteerVaults as _getSteerVaults } from '@sushiswap/steer-vault-api/lib/api/index.js'
+import type { getSteerVaults as _getSteerVaults } from '@sushiswap/steer-vault-api/lib/api/index'
 import { SteerVaultsApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/vaults'
 
 import { STEER_VAULT_API } from '../../constants.js'

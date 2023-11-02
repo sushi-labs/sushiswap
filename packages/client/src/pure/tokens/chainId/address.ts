@@ -1,4 +1,4 @@
-import type { getToken as _getToken } from '@sushiswap/tokens-api/lib/api.js'
+import type { getToken as _getToken } from '@sushiswap/tokens-api/lib/api'
 import { TokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/address'
 import type { ChainId } from 'sushi/chain'
 

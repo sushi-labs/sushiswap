@@ -50,7 +50,7 @@ export async function getSteerVault(args: typeof SteerVaultApiSchema._output) {
     await getSteerVaults({
       ids: [id],
       take: 1,
-      orderBy: 'liquidityUSD',
+      orderBy: 'reserveUSD',
       orderDir: 'desc',
     })
 

@@ -1,4 +1,5 @@
-import { getEarnPoolCount as getEarnPoolCountOriginal } from '@sushiswap/pools-api/lib/api/index.js'
+// biome-ignore lint/correctness/noUnusedVariables: it's fine 😀
+import type { getEarnPoolCount as getEarnPoolCountOriginal } from '@sushiswap/pools-api/lib/api/index'
 import { PoolCountApiSchema } from '@sushiswap/pools-api/lib/schemas/count'
 import { fetch } from '@whatwg-node/fetch'
 

@@ -1,5 +1,6 @@
 import type {} from '@sushiswap/database'
-import { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api/index.js'
+// biome-ignore lint/correctness/noUnusedVariables: it's fine 😀
+import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api/index'
 import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas/pool'
 import { fetch } from '@whatwg-node/fetch'
 import type { ChainId } from 'sushi/chain'

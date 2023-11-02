@@ -8,6 +8,7 @@
     "noEmit": true,
     "module": "ESNext",
     "esModuleInterop": true,
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true
   }
 }

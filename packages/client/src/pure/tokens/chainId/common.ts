@@ -1,4 +1,4 @@
-import type { getCommonTokens as _getCommonTokens } from '@sushiswap/tokens-api/lib/api.js'
+import type { getCommonTokens as _getCommonTokens } from '@sushiswap/tokens-api/lib/api'
 import { CommonTokensApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/common'
 
 import { TOKENS_API } from '../../../constants.js'

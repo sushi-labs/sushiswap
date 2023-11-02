@@ -1,4 +1,4 @@
-import type { getSteerVaultCount as _getSteerVaultCount } from '@sushiswap/steer-vault-api/lib/api/index.js'
+import type { getSteerVaultCount as _getSteerVaultCount } from '@sushiswap/steer-vault-api/lib/api/index'
 import { SteerVaultCountApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/count'
 import { fetch } from '@whatwg-node/fetch'
 

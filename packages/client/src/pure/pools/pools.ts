@@ -1,5 +1,6 @@
 import type {} from '@sushiswap/database'
-import { getEarnPools as getEarnPoolsOriginal } from '@sushiswap/pools-api/lib/api/index.js'
+// biome-ignore lint/correctness/noUnusedVariables: it's fine 😀
+import type { getEarnPools as getEarnPoolsOriginal } from '@sushiswap/pools-api/lib/api/index'
 import { PoolsApiSchema } from '@sushiswap/pools-api/lib/schemas/pools'
 
 import { POOL_API } from '../../constants.js'
