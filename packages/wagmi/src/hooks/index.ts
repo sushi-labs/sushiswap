@@ -14,6 +14,7 @@ export * from './trade'
 export * from './useSteer'
 export * from './utils'
 export * from './wallet'
+export * from './migrate'
 
 // legacy
 export { useSendTransaction as _useSendTransaction } from './useSendTransaction'
