@@ -61,10 +61,10 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
   {
     value: 'smart',
     children: (
-        <div className="flex items-center gap-2">
-          <span>💡</span>
-          <span>Smart Pool</span>
-        </div>
+      <div className="flex items-center gap-2">
+        <span>💡</span>
+        <span>Smart Pool</span>
+      </div>
     ),
   },
 ]
