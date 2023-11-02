@@ -30,7 +30,7 @@ import { Fee } from 'sushi/dex'
 import { zeroAddress } from 'viem'
 
 import { SupportedChainId } from 'src/config'
-import { createERC20 } from 'test/create-erc20'
+import { createERC20 } from 'test/erc20'
 import { interceptAnvil } from 'test/intercept-anvil'
 
 interface TridentPoolArgs {
