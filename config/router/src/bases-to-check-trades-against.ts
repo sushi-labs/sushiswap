@@ -1,5 +1,6 @@
 import { ChainId } from 'sushi/chain'
 import {
+  BUSD,
   DAI,
   FRAX,
   LINK,
@@ -91,6 +92,21 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     DAI[ChainId.BSC],
     MIM[ChainId.BSC],
     FRAX[ChainId.BSC],
+    BUSD[ChainId.BSC],
+    new Token({
+      chainId: ChainId.BSC,
+      address: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
+      decimals: 18,
+      symbol: 'BTCB',
+      name: 'Binance-Peg BTCB Token',
+    }),
+    new Token({
+      chainId: ChainId.BSC,
+      address: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
+      decimals: 18,
+      symbol: 'Cake',
+      name: 'PancakeSwap Token',
+    }),
   ],
   [ChainId.ARBITRUM]: [
     WNATIVE[ChainId.ARBITRUM],
