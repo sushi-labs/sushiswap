@@ -68,7 +68,7 @@
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.5",
     "eslint": "8.43.0",
     "next": "13.4.19",
     "react": "18.2.0",
@@ -77,7 +77,7 @@
     "typescript": "5.1.6"
   },
   "peerDependencies": {
-    "@wagmi/core": "1.4.1",
+    "@wagmi/core": "1.4.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "wagmi": "1.4.5"

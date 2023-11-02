@@ -7,6 +7,8 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "module": "ESNext",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true
   }
 }

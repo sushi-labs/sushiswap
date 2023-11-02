@@ -1,7 +1,7 @@
 'use client'
 
 import type { SteerVault } from '@sushiswap/client'
-import { useSteerVault } from '@sushiswap/client'
+import { useSteerVault } from '@sushiswap/client/hooks'
 import { useSteerVaultReserves } from '@sushiswap/wagmi'
 import {
   FC,

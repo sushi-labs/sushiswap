@@ -2,13 +2,13 @@
 import type * as _ from '@prisma/client/runtime'
 
 import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
-import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select'
+import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select.js'
 import { deepmergeInto } from 'deepmerge-ts'
 import {
   SteerVaultApiSchema,
   SteerVaultCountApiSchema,
   SteerVaultsApiSchema,
-} from '../schemas'
+} from '../schemas/index.js'
 
 function parseWhere(
   args:
@@ -50,7 +50,7 @@ export async function getSteerVault(args: typeof SteerVaultApiSchema._output) {
     await getSteerVaults({
       ids: [id],
       take: 1,
-      orderBy: 'liquidityUSD',
+      orderBy: 'reserveUSD',
       orderDir: 'desc',
     })
 

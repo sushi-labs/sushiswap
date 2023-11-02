@@ -4,7 +4,7 @@ import { Pool, Pools, Protocol, parseArgs } from '@sushiswap/client'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 
-import { usePools } from '@sushiswap/client'
+import { usePools } from '@sushiswap/client/hooks'
 import { getGraphPools } from '../../api'
 
 function transformGraphPool(

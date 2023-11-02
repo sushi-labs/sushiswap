@@ -1,4 +1,4 @@
-import * as Database from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
 
 export const SushiPoolSelect = {
   id: true,
@@ -150,4 +150,4 @@ export const SushiPoolSelect = {
       manager: true,
     },
   },
-} as const satisfies Database.Prisma.SushiPoolSelect
+} as const satisfies Prisma.SushiPoolSelect

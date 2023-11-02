@@ -14,7 +14,7 @@ import {
   v3baseAbi,
 } from 'sushi/abi'
 
-import { getEarnPool } from './api'
+import { getEarnPool } from './api/index.js'
 
 const { publicClient } = configureChains(allChains, allProviders)
 

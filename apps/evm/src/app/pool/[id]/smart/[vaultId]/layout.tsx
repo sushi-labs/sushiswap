@@ -1,4 +1,4 @@
-import { getPool, getSteerVault } from '@sushiswap/client'
+import { getPool, getSteerVault, getSteerVaultUrl } from '@sushiswap/client'
 import { Breadcrumb, Container, LinkInternal } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
@@ -24,6 +24,7 @@ export default async function Layout({
   )()
 
   const vaultId = unsanitize(params.vaultId)
+  console.log(getSteerVaultUrl(vaultId))
   const vault = await unstable_cache(
     () => getSteerVault(vaultId),
     ['steer-vault', vaultId],

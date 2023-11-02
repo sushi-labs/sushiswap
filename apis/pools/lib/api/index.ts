@@ -1,10 +1,16 @@
 // eslint-disable-next-line
+import type * as _ from '@prisma/client/runtime'
+
 import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import { isPromiseFulfilled } from 'sushi/validate'
-import { getUnindexedPool } from '../getUnindexedPool'
-import { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from '../schemas'
-import { SushiPoolSelect } from './select'
+import { isPromiseFulfilled } from 'sushi'
+import { getUnindexedPool } from '../getUnindexedPool.js'
+import {
+  PoolApiSchema,
+  PoolCountApiSchema,
+  PoolsApiSchema,
+} from './../schemas/index.js'
+import { SushiPoolSelect } from './select.js'
 
 function parseWhere(
   args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output,
@@ -152,6 +158,7 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   console.log('getEarnPool pool', pool)
 
   if (!pool) {
+    // biome-ignore lint/suspicious/noExplicitAny: recursive
     pool = (await getUnindexedPool(id)) as any
   }
 
