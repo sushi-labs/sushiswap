@@ -14,6 +14,8 @@ import React, { useState } from 'react'
 
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
+import { SmartPoolsTable } from './SmartPoolsTable'
+import { Smart } from './ConcentratedPositionsTable'
 
 const ITEMS: { value: string; children: React.ReactNode }[] = [
   {
@@ -54,6 +56,15 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
         <span>🍱</span>
         <span>Trident Classic</span>
       </div>
+    ),
+  },
+  {
+    value: 'smart',
+    children: (
+        <div className="flex items-center gap-2">
+          <span>💡</span>
+          <span>Smart Pool</span>
+        </div>
     ),
   },
 ]
@@ -107,6 +118,9 @@ export const PositionsTab = () => {
             protocol={Protocol.BENTOBOX_CLASSIC}
             rowLink={(row) => `/pool/${row.pool.id}`}
           />
+        </TabsContent>
+        <TabsContent value="smart">
+          <Smart />
         </TabsContent>
       </Tabs>
     </div>

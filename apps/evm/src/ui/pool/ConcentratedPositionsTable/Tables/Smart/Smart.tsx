@@ -14,6 +14,7 @@ import {
   STEER_STRATEGY_COLUMN,
 } from './columns'
 import { SteerPosition, useSteerPositions } from './useSteerPositions'
+import { Card, CardHeader, CardTitle } from '@sushiswap/ui'
 
 const COLUMNS = [
   STEER_NAME_COLUMN,
@@ -54,21 +55,31 @@ export const Smart: FC<Smart> = ({ chainId, poolAddress, onRowClick }) => {
   const { data, isLoading } = useSteerPositions({ chainId, poolAddress })
 
   return (
-    <DataTable
-      testId="concentrated-smart-positions"
-      loading={isLoading}
-      linkFormatter={(row) =>
-        `/pool/${row.vault.pool.id}/smart/${row.vault.id}`
-      }
-      rowRenderer={rowRenderer}
-      columns={COLUMNS}
-      data={data}
-      pagination={true}
-      onPaginationChange={setPaginationState}
-      state={{
-        ...tableState,
-        pagination: paginationState,
-      }}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          My Positions{' '}
+          <span className="text-gray-400 dark:text-slate-500">
+            ({data?.length})
+          </span>
+        </CardTitle>
+      </CardHeader>
+      <DataTable
+        testId="concentrated-smart-positions"
+        loading={isLoading}
+        linkFormatter={(row) =>
+          `/pool/${row.vault.pool.id}/smart/${row.vault.id}`
+        }
+        rowRenderer={rowRenderer}
+        columns={COLUMNS}
+        data={data}
+        pagination={true}
+        onPaginationChange={setPaginationState}
+        state={{
+          ...tableState,
+          pagination: paginationState,
+        }}
+      />
+    </Card>
   )
 }
