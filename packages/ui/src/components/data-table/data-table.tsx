@@ -46,7 +46,7 @@ declare module '@tanstack/react-table' {
 }
 
 interface DataTableProps<TData, TValue> {
-  testId?: string
+  testId?: string | ((value: TData, index: number) => string)
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   toolbar?: (table: TableType<TData>) => ReactNode
@@ -164,7 +164,11 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={r}
                   data-state={row.getIsSelected() && 'selected'}
-                  testdata-id={`${testId}-${r}-tr`}
+                  testdata-id={
+                    typeof testId === 'function'
+                      ? testId(row.original, r)
+                      : `${testId}-${r}-tr`
+                  }
                 >
                   {row.getVisibleCells().map((cell, i) =>
                     linkFormatter &&
