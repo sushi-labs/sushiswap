@@ -40,6 +40,8 @@ import {
   useSignMessage,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
+import { DistributionCreator } from '@sushiswap/wagmi'
+import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
@@ -50,8 +52,6 @@ import { format } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
-import { DistributionCreator } from '@sushiswap/wagmi'
-import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi'
 
 import { ANGLE_ENABLED_NETWORKS } from '../../../config'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'

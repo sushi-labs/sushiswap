@@ -158,7 +158,6 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
   console.log('getEarnPool pool', pool)
 
   if (!pool) {
-    // biome-ignore lint/suspicious/noExplicitAny: recursive
     pool = (await getUnindexedPool(id)) as any
   }
 

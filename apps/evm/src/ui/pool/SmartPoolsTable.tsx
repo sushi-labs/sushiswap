@@ -585,6 +585,7 @@ export const SmartPoolsTable = () => {
         </CardDescription>
       </CardHeader>
       <DataTable
+        testId="smart-pools-table"
         onPaginationChange={setPagination}
         pagination={true}
         state={state}

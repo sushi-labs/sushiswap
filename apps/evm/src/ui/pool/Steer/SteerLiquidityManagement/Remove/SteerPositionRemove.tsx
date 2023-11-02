@@ -271,8 +271,9 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           />
         </CardGroup>
       </Card>
-      <Checker.Connect fullWidth variant="outline" size="xl">
+      <Checker.Connect testId="connect" fullWidth variant="outline" size="xl">
         <Checker.Network
+          testId="switch-network"
           fullWidth
           variant="outline"
           size="xl"

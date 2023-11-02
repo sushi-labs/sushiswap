@@ -80,9 +80,14 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
         />
       </div>
 
-      <Checker.Connect fullWidth>
-        <Checker.Network fullWidth chainId={vault.chainId}>
+      <Checker.Connect testId="connect" fullWidth>
+        <Checker.Network
+          testId="switch-network"
+          fullWidth
+          chainId={vault.chainId}
+        >
           <Checker.Amounts
+            testId="check-amounts"
             fullWidth
             chainId={vault.chainId as ChainId}
             amounts={amounts}
