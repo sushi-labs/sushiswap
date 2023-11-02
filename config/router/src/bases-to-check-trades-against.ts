@@ -33,6 +33,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     NFTX[ChainId.ETHEREUM],
     LINK[ChainId.ETHEREUM],
     SUSHI[ChainId.ETHEREUM],
+    MIM[ChainId.ETHEREUM],
   ],
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
   [ChainId.KOVAN]: [WNATIVE[ChainId.KOVAN], USDC[ChainId.KOVAN]],
