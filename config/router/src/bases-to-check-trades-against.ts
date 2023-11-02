@@ -96,6 +96,20 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
       symbol: 'USDC.e',
       name: 'Bridged USDC (Arb1)',
     }),
+    new Token({
+      chainId: ChainId.ARBITRUM,
+      address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+      decimals: 18,
+      symbol: 'ARB',
+      name: 'Arbitrum',
+    }),
+    new Token({
+      chainId: ChainId.ARBITRUM,
+      address: '0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a',
+      decimals: 18,
+      symbol: 'GMX',
+      name: 'GMX',
+    }),
     // MIM[ChainId.ARBITRUM],
     // FRAX[ChainId.ARBITRUM],
     // new Token({
