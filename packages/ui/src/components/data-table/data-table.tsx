@@ -145,7 +145,7 @@ export function DataTable<TData, TValue>({
             Array.from({ length: 3 })
               .fill(null)
               .map((_, i) => (
-                <TableRow key={i}>
+                <TableRow key={i} testdata-id="table-rows-loading">
                   {table.getVisibleFlatColumns().map((column, _i) => {
                     return (
                       <TableCell
@@ -206,7 +206,11 @@ export function DataTable<TData, TValue>({
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                testdata-id="table-no-results"
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>
