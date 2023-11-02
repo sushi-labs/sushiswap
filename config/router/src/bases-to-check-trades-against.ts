@@ -89,6 +89,13 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
     DAI[ChainId.ARBITRUM],
+    new Token({
+      chainId: ChainId.ARBITRUM,
+      address: '0x6576Bb918709906DcbFDCeae4bB1e6df7C8a1077',
+      decimals: 6,
+      symbol: 'USDC.e',
+      name: 'Bridge USDC (Arb1)',
+    }),
     // MIM[ChainId.ARBITRUM],
     // FRAX[ChainId.ARBITRUM],
     // new Token({
