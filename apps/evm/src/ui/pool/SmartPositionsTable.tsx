@@ -4,15 +4,6 @@ import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 
-import { usePoolFilters } from './PoolsFiltersProvider'
-import {
-  STEER_NAME_COLUMN,
-  STEER_POSITION_SIZE_COLUMN,
-  STEER_STRATEGY_COLUMN,
-} from './ConcentratedPositionsTable/Tables/Smart/columns'
-import { SteerPosition } from './ConcentratedPositionsTable/Tables/Smart/useSteerPositions'
-import { useAccount } from 'wagmi'
-import { useSteerAccountPositionsFormatted } from '@sushiswap/wagmi'
 import { STEER_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import {
   SkeletonText,
@@ -21,8 +12,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { useSteerAccountPositionsFormatted } from '@sushiswap/wagmi'
 import { formatPercent } from 'sushi'
+import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
+import {
+  STEER_NAME_COLUMN,
+  STEER_POSITION_SIZE_COLUMN,
+  STEER_STRATEGY_COLUMN,
+} from './ConcentratedPositionsTable/Tables/Smart/columns'
+import { SteerPosition } from './ConcentratedPositionsTable/Tables/Smart/useSteerPositions'
+import { usePoolFilters } from './PoolsFiltersProvider'
 
 const COLUMNS = [
   STEER_NAME_COLUMN,

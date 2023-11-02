@@ -2,11 +2,11 @@ import { getSteerAccountPositions } from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { Address, usePublicClient } from 'wagmi'
 
-import { clientsFromIds } from './getClientsFromIds'
-import { PublicClient } from 'viem'
 import { getSteerVaults } from '@sushiswap/client'
-import { Amount, Token } from 'sushi/currency'
 import { useAllPrices } from '@sushiswap/react-query'
+import { Amount, Token } from 'sushi/currency'
+import { PublicClient } from 'viem'
+import { clientsFromIds } from './getClientsFromIds'
 
 import { STEER_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 

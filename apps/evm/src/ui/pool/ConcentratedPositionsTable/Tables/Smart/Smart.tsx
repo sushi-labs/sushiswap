@@ -8,13 +8,13 @@ import React, { FC, ReactNode, useCallback, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Address } from 'wagmi'
 
+import { Card, CardHeader, CardTitle } from '@sushiswap/ui'
 import {
   STEER_NAME_COLUMN,
   STEER_POSITION_SIZE_COLUMN,
   STEER_STRATEGY_COLUMN,
 } from './columns'
 import { SteerPosition, useSteerPositions } from './useSteerPositions'
-import { Card, CardHeader, CardTitle } from '@sushiswap/ui'
 
 const COLUMNS = [
   STEER_NAME_COLUMN,

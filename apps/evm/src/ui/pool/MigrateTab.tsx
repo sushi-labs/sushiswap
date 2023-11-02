@@ -48,6 +48,8 @@ import {
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
 import { useTransactionDeadline } from '@sushiswap/wagmi'
+import { V3MigrateContractConfig, useV3Migrate } from '@sushiswap/wagmi'
+import { V3MigrateChainId } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
@@ -67,8 +69,6 @@ import { Chain, ChainId } from 'sushi/chain'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Fraction, ZERO } from 'sushi/math'
-import { V3MigrateContractConfig, useV3Migrate } from '@sushiswap/wagmi'
-import { V3MigrateChainId } from '@sushiswap/wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
