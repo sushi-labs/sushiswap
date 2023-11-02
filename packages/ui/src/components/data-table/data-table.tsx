@@ -206,7 +206,11 @@ export function DataTable<TData, TValue>({
             })
           ) : (
             <TableRow>
-              <TableCell testdata-id="table-no-results" colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                testdata-id="table-no-results"
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>
