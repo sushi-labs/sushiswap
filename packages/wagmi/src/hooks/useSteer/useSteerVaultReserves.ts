@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getChainIdAddressFromId } from 'sushi'
 import { usePublicClient } from 'wagmi'
 
+import { PublicClient } from 'viem'
 import { clientsFromIds } from './getClientsFromIds'
 
 interface UseSteerVaultsReserves {
@@ -25,7 +26,7 @@ export const useSteerVaultsReserves = ({
       if (!vaultIds) return null
 
       return getSteerVaultsReserves({
-        clients: clientsFromIds(vaultIds),
+        clients: clientsFromIds(vaultIds) as PublicClient[],
         vaultIds: vaultIds,
       })
     },

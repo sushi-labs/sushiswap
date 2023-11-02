@@ -7,6 +7,7 @@ import { getChainIdAddressFromId } from 'sushi'
 import { Address, usePublicClient } from 'wagmi'
 
 import { clientsFromIds } from './getClientsFromIds'
+import { PublicClient } from 'viem'
 
 interface UseSteerAccountPositions {
   account: Address | undefined
@@ -27,7 +28,7 @@ export const useSteerAccountPositions = ({
       if (!vaultIds || !account) return null
 
       return getSteerAccountPositions({
-        clients: clientsFromIds(vaultIds),
+        clients: clientsFromIds(vaultIds) as PublicClient[],
         account,
         vaultIds: vaultIds,
       })
