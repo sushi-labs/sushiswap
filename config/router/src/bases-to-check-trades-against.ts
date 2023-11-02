@@ -18,6 +18,7 @@ import {
   WBTC,
   WETH9,
   WNATIVE,
+  axlUSDC,
 } from 'sushi/currency'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
@@ -408,7 +409,22 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   ],
   [ChainId.BASE]: [
     WNATIVE[ChainId.BASE],
+    new Token({
+      chainId: ChainId.BASE,
+      address: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
+      decimals: 18,
+      symbol: 'cbETH',
+      name: 'Coinbase Wrapped Staked ETH',
+    }),
     USDC[ChainId.BASE],
+    new Token({
+      chainId: ChainId.BASE,
+      address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
+      decimals: 6,
+      symbol: 'USDbC',
+      name: 'USD Base Coin',
+    }),
+    axlUSDC[ChainId.BASE],
     DAI[ChainId.BASE],
   ],
   [ChainId.SCROLL]: [
