@@ -33,7 +33,7 @@ export default function TabsLayout({
             href={`/pool/smart-pool?${searchParams.toString()}`}
           >
             <PathnameButton
-              id="all-pools"
+              id="smart-pools"
               pathname={'/pool/smart-pool'}
               asChild
               size="sm"
