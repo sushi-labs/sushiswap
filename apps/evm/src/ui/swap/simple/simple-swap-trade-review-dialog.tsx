@@ -19,6 +19,7 @@ import {
   classNames,
   useToast,
 } from '@sushiswap/ui'
+import { LinkExternal } from '@sushiswap/ui'
 import {
   useAccount,
   useBalanceWeb3Refetch,
@@ -62,7 +63,6 @@ import {
   useSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
-import { LinkExternal } from '@sushiswap/ui'
 
 export const SimpleSwapTradeReviewDialog: FC<{
   children({
