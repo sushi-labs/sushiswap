@@ -16,7 +16,7 @@ import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/Concent
 import { PositionsTable } from './PositionsTable'
 import { SmartPositionsTable } from './SmartPositionsTable'
 
-const ITEMS: { id: string, value: string; children: React.ReactNode }[] = [
+const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
   {
     id: 'sushiswap-v3',
     value: 'v3',
@@ -96,7 +96,11 @@ export const PositionsTab = () => {
           </div>
           <TabsList className="hidden sm:inline-flex">
             {ITEMS.map((item) => (
-              <TabsTrigger key={item.value} value={item.value} testdata-id={item.id}>
+              <TabsTrigger
+                key={item.value}
+                value={item.value}
+                testdata-id={item.id}
+              >
                 {item.children}
               </TabsTrigger>
             ))}
