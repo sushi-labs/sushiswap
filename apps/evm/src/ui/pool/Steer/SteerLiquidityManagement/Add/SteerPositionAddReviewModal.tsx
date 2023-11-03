@@ -29,6 +29,7 @@ import {
   useWaitForTransaction,
   waitForTransaction,
 } from '@sushiswap/wagmi'
+import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
@@ -42,6 +43,7 @@ import { slippageAmount } from 'sushi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
+import { APPROVE_TAG_STEER } from 'src/lib/constants'
 
 interface SteerPositionAddReviewModalProps {
   vault: SteerVault
@@ -60,6 +62,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     const { chain } = useNetwork()
     const { address } = useAccount()
     const [slippageTolerance] = useSlippageTolerance('addSteerLiquidity')
+    const { approved } = useApproved(APPROVE_TAG_STEER)
 
     const { data: accountPosition } = useSteerAccountPosition({
       account: address,
@@ -172,7 +175,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     const { config, isError } = usePrepareSendTransaction({
       ...prepare,
       chainId: chainId,
-      enabled: chainId === chain?.id,
+      enabled: Boolean(approved && chainId === chain?.id),
     })
 
     const {
