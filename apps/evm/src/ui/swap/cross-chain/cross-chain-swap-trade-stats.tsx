@@ -151,9 +151,7 @@ export const CrossChainSwapTradeStats: FC = () => {
                 target="_blank"
                 href={Chain.from(chainId1)?.getAccountUrl(recipient)}
                 className={classNames(
-                  address !== recipient
-                    ? 'text-yellow-600'
-                    : 'text-blue',
+                  address !== recipient ? 'text-yellow-600' : 'text-blue',
                   'transition-all flex gap-1 items-center',
                 )}
                 rel="noreferrer"
