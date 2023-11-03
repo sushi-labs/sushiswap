@@ -66,7 +66,7 @@ async function addSmartPoolPosition(page: Page) {
   await expect(smartPoolRowLocator).toBeVisible()
   await smartPoolRowLocator.click()
 
-  await page.locator('[testdata-id=add-liquidity-token1-input]').fill('0.0001')
+  await page.locator('[testdata-id=add-liquidity-token0-input]').fill('0.00005')
 
   const approveToken0Locator = page.locator(
     '[testdata-id=approve-erc20-0-button]',
@@ -90,20 +90,20 @@ async function addSmartPoolPosition(page: Page) {
   await reviewLocator.click()
 
   const confirmLocator = page.locator(
-    '[testdata-id=add-concentrated-liquidity-confirmation-modal-button]',
+    '[testdata-id=confirm-add-liquidity-button]',
   )
   await expect(confirmLocator).toBeVisible()
   await expect(confirmLocator).toBeEnabled()
   await confirmLocator.click()
 
-  const expectedText = '(Successfully added liquidity to the .* pair)'
+  const expectedText = '(Successfully added liquidity to the .* smart pool)'
   const regex = new RegExp(expectedText)
-  await expect(page.getByText(regex))
+  await expect(page.getByText(regex)).toBeVisible()
 }
 
 async function removeSmartPoolPosition(page: Page) {
-  // const poolId = '137-0x3361bf42cca22dc5fe37c7bd2c6a7284db440dfc'
   await page.locator('[testdata-id=my-positions-button]').click()
+  await page.locator('[testdata-id=sushiswap-smart]').click()
 
   const concentratedPositionTableSelector = page.locator(
     '[testdata-id=smart-positions-loading-0]',
@@ -136,8 +136,8 @@ async function removeSmartPoolPosition(page: Page) {
   await expect(removeLiquidityLocator).toBeEnabled()
   await removeLiquidityLocator.click()
 
-  const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
-  expect(page.getByText(regex))
+  const regex = new RegExp('(Successfully removed liquidity from the .* smart pool)')
+  await expect(page.getByText(regex)).toBeVisible()
 }
 
 async function switchNetwork(page: Page, chainId: number) {
