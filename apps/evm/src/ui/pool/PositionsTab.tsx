@@ -16,8 +16,9 @@ import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/Concent
 import { PositionsTable } from './PositionsTable'
 import { SmartPositionsTable } from './SmartPositionsTable'
 
-const ITEMS: { value: string; children: React.ReactNode }[] = [
+const ITEMS: { id: string, value: string; children: React.ReactNode }[] = [
   {
+    id: 'sushiswap-v3',
     value: 'v3',
     children: (
       <div className="flex items-center gap-2">
@@ -29,6 +30,7 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'sushiswap-v2',
     value: 'v2',
     children: (
       <div className="flex items-center gap-2">
@@ -40,6 +42,7 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'trident-stable',
     value: 'stable',
     children: (
       <div className="flex items-center gap-2">
@@ -49,6 +52,7 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'trident-classic',
     value: 'classic',
     children: (
       <div className="flex items-center gap-2">
@@ -58,6 +62,7 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'sushiswap-smart',
     value: 'smart',
     children: (
       <div className="flex items-center gap-2">
@@ -91,7 +96,7 @@ export const PositionsTab = () => {
           </div>
           <TabsList className="hidden sm:inline-flex">
             {ITEMS.map((item) => (
-              <TabsTrigger key={item.value} value={item.value}>
+              <TabsTrigger key={item.value} value={item.value} testdata-id={item.id}>
                 {item.children}
               </TabsTrigger>
             ))}
