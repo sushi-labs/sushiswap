@@ -119,7 +119,7 @@ const ToastDescription = React.forwardRef<
   <ToastPrimitives.Description
     ref={ref}
     className={classNames(
-      'h-full flex items-center gap-1.5 relative text-sm opacity-90 pr-10 flex-1',
+      'pt-3 h-full flex items-center gap-1.5 relative text-sm opacity-90 pr-10 flex-1',
       className,
     )}
     {...props}

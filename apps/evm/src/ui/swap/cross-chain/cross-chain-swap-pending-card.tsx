@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowRightIcon } from '@heroicons/react/20/solid'
-import { LinkExternal, SelectIcon, Timer } from '@sushiswap/ui'
+import { LinkExternal, SelectIcon, Timer, useToast } from '@sushiswap/ui'
 import {
   CollapsibleContent,
   CollapsibleNew,
@@ -14,7 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { useState } from 'react'
+import {useEffect, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
@@ -26,6 +26,7 @@ export const CrossChainSwapPendingCard = () => {
 
   const [open, setOpen] = useState<boolean>(true)
   const [date] = useState<Date>(new Date(Date.now() + 1000 * 60 * 5))
+  const { toast } = useToast()
 
   const { data } = useLayerZeroScanLink({
     tradeId,
@@ -34,6 +35,41 @@ export const CrossChainSwapPendingCard = () => {
     txHash:
       '0xf5fe3c5d006e02b77b2c22f36d95ce57b116f8ca1efa9bc8c738016fd0d78727',
   })
+
+  useEffect(() => {
+    toast({
+      variant: 'default',
+      caption: 'Ethereum -> Polygon',
+      description: (
+        <div className="grid grid-cols-[auto_60px] gap-1 justify-between items-center w-full text-sm font-medium">
+          <div className="block truncate">
+            0.00533 ETH <ArrowRightIcon className="inline h-4 w-4 -mt-0.5" />{' '}
+            0.3434 SUSHI
+          </div>
+          <div className="flex justify-end">
+            <Timer date={date}>
+              {({ minutes, seconds }) => {
+                return (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <LinkExternal href={data?.link}>
+                          Est. {minutes}:{seconds}
+                        </LinkExternal>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>View on LayerZeroScan</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )
+              }}
+            </Timer>
+          </div>
+        </div>
+      ),
+    })
+  }, [])
 
   return (
     <CollapsibleNew open={open} onOpenChange={setOpen}>
@@ -52,7 +88,7 @@ export const CrossChainSwapPendingCard = () => {
                       <Tooltip>
                         <TooltipTrigger>
                           <LinkExternal href={data?.link}>
-                            {minutes}:{seconds}
+                            Est. {minutes}:{seconds}
                           </LinkExternal>
                         </TooltipTrigger>
                         <TooltipContent>

@@ -89,12 +89,7 @@ export function Toaster() {
             >
               {visual && <ToastVisual>{visual}</ToastVisual>}
               {description && (
-                <ToastDescription
-                  className={classNames(
-                    visual ? 'pt-3' : 'pt-0',
-                    'max-h-[70px]',
-                  )}
-                >
+                <ToastDescription className={classNames('max-h-[70px]')}>
                   {caption ? (
                     <ToastCaption variant={props.variant}>
                       {caption}
