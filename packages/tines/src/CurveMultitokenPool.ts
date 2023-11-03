@@ -59,16 +59,14 @@ export class CurveMultitokenPool extends RPool {
   ): { out: number; gasSpent: number } {
     if (direction) {
       console.assert(amountIn >= this.flow0, 'CurveMultitokenPool.calcOutByIn Unexpected input value 0')
-      return {
-        out: this.core.calcOutByIn(amountIn - this.flow0, this.index0, this.index1) - this.flow1,
-        gasSpent: SWAP_GAS_COST
-      }
+      const out = this.core.calcOutByIn(amountIn - this.flow0, this.index0, this.index1) - this.flow1
+      console.assert(out >= 0, 'CurveMultitokenPool.calcOutByIn Unexpected output value 0')
+      return {out, gasSpent: SWAP_GAS_COST}
     } else {
       console.assert(amountIn >= this.flow1, 'CurveMultitokenPool.calcOutByIn Unexpected input value 1')
-      return {
-        out: this.core.calcOutByIn(amountIn - this.flow1, this.index1, this.index0) - this.flow0,
-        gasSpent: SWAP_GAS_COST
-      }
+      const out = this.core.calcOutByIn(amountIn - this.flow1, this.index1, this.index0) - this.flow0
+      console.assert(out >= 0, 'CurveMultitokenPool.calcOutByIn Unexpected output value 1')
+      return {out, gasSpent: SWAP_GAS_COST}
     }
   }
 
@@ -77,17 +75,15 @@ export class CurveMultitokenPool extends RPool {
     direction: boolean,
   ): { inp: number; gasSpent: number } {
     if (direction) {
-      console.assert(amountOut + this.flow1 >= 0, 'CurveMultitokenPool.calcInByOut Unexpected input value 0')
-      return {
-        inp: this.core.calcInByOut(amountOut + this.flow1, this.index0, this.index1) + this.flow0,
-        gasSpent: SWAP_GAS_COST
-      }
+      console.assert(amountOut + this.flow1 <= 0, 'CurveMultitokenPool.calcInByOut Unexpected input value 0')
+      const inp = this.core.calcInByOut(-amountOut - this.flow1, this.index0, this.index1) + this.flow0
+      console.assert(inp >= 0, 'CurveMultitokenPool.calcInByOut Unexpected output value 0')      
+      return {inp, gasSpent: SWAP_GAS_COST}
     } else {
-      console.assert(amountOut + this.flow0 >= 0, 'CurveMultitokenPool.calcInByOut Unexpected input value 1')
-      return {
-        inp: this.core.calcInByOut(amountOut + this.flow0, this.index1, this.index0) + this.flow1,
-        gasSpent: SWAP_GAS_COST
-      }
+      console.assert(amountOut + this.flow0 <= 0, 'CurveMultitokenPool.calcInByOut Unexpected input value 1')
+      const inp = this.core.calcInByOut(-amountOut - this.flow0, this.index1, this.index0) + this.flow1
+      console.assert(inp >= 0, 'CurveMultitokenPool.calcInByOut Unexpected output value 1')      
+      return {inp, gasSpent: SWAP_GAS_COST}
     }
   }
 

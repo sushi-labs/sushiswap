@@ -317,11 +317,12 @@ export class Edge {
       ? this.amountOutPrevious
       : -this.amountOutPrevious
     const to = from.getNeibour(this)
+    let inNew, outNew
     if (to) {
       const inInc = from === this.vert0 ? from.bestIncome : -to.bestIncome
       const outInc = from === this.vert0 ? to.bestIncome : -from.bestIncome
-      const inNew = inPrev + inInc
-      const outNew = outPrev + outInc
+      inNew = inPrev + inInc
+      outNew = outPrev + outInc
       console.assert(inNew * outNew >= 0)      
       if (inNew >= 0) {
         this.direction = true
@@ -331,8 +332,7 @@ export class Edge {
         this.direction = false
         this.amountInPrevious = -inNew
         this.amountOutPrevious = -outNew
-      }
-      this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
+      }      
     } else console.error('Error 221')
     this.spentGas = this.spentGasNew
 
@@ -366,6 +366,7 @@ export class Edge {
         )
       }
     }, 'Error 225')
+    this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
   }
 }
 
