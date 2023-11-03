@@ -501,13 +501,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     {priceLower
                                       ?.subtract(
                                         invert
-                                          ? pool.token1Price
-                                          : pool.token0Price,
+                                          ? pool.token0Price
+                                          : pool.token1Price,
                                       )
                                       .divide(
                                         invert
-                                          ? pool.token1Price
-                                          : pool.token0Price,
+                                          ? pool.token0Price
+                                          : pool.token1Price,
                                       )
                                       .multiply(100)
                                       .toSignificant(2)}
@@ -522,13 +522,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                       {priceLower
                                         ?.subtract(
                                           invert
-                                            ? pool.token1Price
-                                            : pool.token0Price,
+                                            ? pool.token0Price
+                                            : pool.token1Price,
                                         )
                                         .divide(
                                           invert
-                                            ? pool.token1Price
-                                            : pool.token0Price,
+                                            ? pool.token0Price
+                                            : pool.token1Price,
                                         )
                                         .multiply(100)
                                         .toSignificant(2)}
@@ -579,13 +579,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     {priceUpper
                                       ?.subtract(
                                         invert
-                                          ? pool.token1Price
-                                          : pool.token0Price,
+                                          ? pool.token0Price
+                                          : pool.token1Price,
                                       )
                                       .divide(
                                         invert
-                                          ? pool.token1Price
-                                          : pool.token0Price,
+                                          ? pool.token0Price
+                                          : pool.token1Price,
                                       )
                                       .multiply(100)
                                       .toSignificant(2)}
@@ -600,13 +600,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                       {priceUpper
                                         ?.subtract(
                                           invert
-                                            ? pool.token1Price
-                                            : pool.token0Price,
+                                            ? pool.token0Price
+                                            : pool.token1Price,
                                         )
                                         .divide(
                                           invert
-                                            ? pool.token1Price
-                                            : pool.token0Price,
+                                            ? pool.token0Price
+                                            : pool.token1Price,
                                         )
                                         .multiply(100)
                                         .toSignificant(2)}
