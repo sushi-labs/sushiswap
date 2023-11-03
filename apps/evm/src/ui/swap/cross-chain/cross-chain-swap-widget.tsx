@@ -2,6 +2,7 @@ import { CrossChainBanner } from '../cross-chain-banner'
 import { SwapModeButtons } from '../swap-mode-buttons'
 import { CrossChainSwapHeader } from './cross-chain-swap-header'
 import { CrossChainSwapMaintenanceMessage } from './cross-chain-swap-maintenance-message'
+import { CrossChainSwapPendingCard } from './cross-chain-swap-pending-card'
 import { CrossChainSwapSettingsOverlay } from './cross-chain-swap-settings-overlay'
 import { CrossChainSwapSwitchTokensButton } from './cross-chain-swap-switch-tokens-button'
 import { CrossChainSwapTokenNotFoundDialog } from './cross-chain-swap-token-not-found-dialog'
@@ -9,7 +10,6 @@ import { CrossChainSwapToken0Input } from './cross-chain-swap-token0-input'
 import { CrossChainSwapToken1Input } from './cross-chain-swap-token1-input'
 import { CrossChainSwapTradeButton } from './cross-chain-swap-trade-button'
 import { CrossChainSwapTradeStats } from './cross-chain-swap-trade-stats'
-import { CrossChainSwapPendingCard } from './cross-chain-swap-pending-card'
 
 export const CrossChainSwapWidget = () => {
   return (
@@ -29,7 +29,7 @@ export const CrossChainSwapWidget = () => {
       </div>
       <CrossChainSwapTradeStats />
       <CrossChainSwapTokenNotFoundDialog />
-        <CrossChainSwapPendingCard />
+      <CrossChainSwapPendingCard />
     </div>
   )
 }

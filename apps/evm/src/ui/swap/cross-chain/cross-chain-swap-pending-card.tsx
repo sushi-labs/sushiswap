@@ -1,23 +1,23 @@
 'use client'
 
+import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import { LinkExternal, SelectIcon, Timer } from '@sushiswap/ui'
-import { useState } from 'react'
 import {
   CollapsibleContent,
   CollapsibleNew,
   CollapsibleTrigger,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { useState } from 'react'
 import { Chain } from 'sushi/chain'
-import { ArrowRightIcon } from '@heroicons/react/20/solid'
+import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
+import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapPendingCard = () => {
   const {
@@ -45,24 +45,24 @@ export const CrossChainSwapPendingCard = () => {
               0.3434 SUSHI
             </div>
             <div className="flex justify-end">
-                <Timer date={date}>
-                  {({ minutes, seconds }) => {
-                    return (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <LinkExternal href={data?.link}>
-                              {minutes}:{seconds}
-                            </LinkExternal>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>View on LayerZeroScan</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )
-                  }}
-                </Timer>
+              <Timer date={date}>
+                {({ minutes, seconds }) => {
+                  return (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <LinkExternal href={data?.link}>
+                            {minutes}:{seconds}
+                          </LinkExternal>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>View on LayerZeroScan</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )
+                }}
+              </Timer>
             </div>
           </div>
           <CollapsibleTrigger asChild>
@@ -75,11 +75,15 @@ export const CrossChainSwapPendingCard = () => {
         <CollapsibleContent className="space-y-2 pr-3 pb-3">
           <div className="flex justify-between">
             <div className="text-sm text-muted-foreground">From network</div>
-            <div className="text-sm font-medium">{Chain.from(chainId0)?.name}</div>
+            <div className="text-sm font-medium">
+              {Chain.from(chainId0)?.name}
+            </div>
           </div>
           <div className="flex justify-between">
             <div className="text-sm text-muted-foreground">To network</div>
-            <div className="text-sm font-medium">{Chain.from(chainId1)?.name}</div>
+            <div className="text-sm font-medium">
+              {Chain.from(chainId1)?.name}
+            </div>
           </div>
         </CollapsibleContent>
       </div>
