@@ -6,7 +6,8 @@ import {
 } from 'next/experimental/testmode/playwright'
 import { SupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
-import { impersonateAccount } from 'test/erc20'
+import { prepareERC20Balance } from 'test/erc20'
+import { interceptAnvil } from 'test/intercept-anvil'
 
 if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
   new Error('NEXT_PUBLIC_CHAIN_ID not set')
@@ -17,19 +18,17 @@ const CHAIN_ID = Number(
   process.env.NEXT_PUBLIC_CHAIN_ID as string,
 ) as SupportedChainId
 
-test.beforeAll(async () => {
+test.beforeEach(async ({ page }) => {
   test.skip(CHAIN_ID !== ChainId.POLYGON)
 
-  const address = '0x23DefC2Ca207e7FBD84AE43B00048Fb5Cb4DB5B2'
   try {
-    await impersonateAccount({
-      chainId: CHAIN_ID,
-      address,
-    })
-    console.log(`Impersonated account, ${address}`)
+    await interceptAnvil(page)
   } catch (error) {
-    console.error(`Couldn't impersonate account, ${address}`, error)
+    console.error('error intercepting anvil', error)
   }
+  await prepareERC20Balance({
+    chainId: CHAIN_ID,
+  })
 })
 
 test.beforeEach(async ({ page, next }) => {
@@ -40,16 +39,25 @@ test.beforeEach(async ({ page, next }) => {
   next.onFetch(() => {
     return 'continue'
   })
+
   await page.goto(BASE_URL)
   await switchNetwork(page, CHAIN_ID)
 })
 
+test.afterAll(async () => {})
+test.afterEach(async () => {})
+
+  // TODO: need to setup config to target specific pools depending on the network, however, the user need to change as well if more networks are added
+
 test('Create and remove smart pool position', async ({ page }) => {
   test.slow()
-  // TODO: need to setup config to target specific pools depending on the network, however, the user need to change as well if more networks are added
-  const poolId = '0x3361bf42cca22dc5fe37c7bd2c6a7284db440dfc'
-
+  await addSmartPoolPosition(page)
   await page.goto(BASE_URL)
+  await removeSmartPoolPosition(page)
+})
+
+async function addSmartPoolPosition(page: Page) {
+  const poolId = '137-0x3361bf42cca22dc5fe37c7bd2c6a7284db440dfc'
   await page.locator('[testdata-id=smart-pools-button]').click()
 
   const smartPoolRowLocator = page.locator(
@@ -58,8 +66,7 @@ test('Create and remove smart pool position', async ({ page }) => {
   await expect(smartPoolRowLocator).toBeVisible()
   await smartPoolRowLocator.click()
 
-  // SAVEPOINT HERE
-  await page.locator('[testdata-id=add-liquidity-token1-input]').fill('0.00001')
+  await page.locator('[testdata-id=add-liquidity-token1-input]').fill('0.0001')
 
   const approveToken0Locator = page.locator(
     '[testdata-id=approve-erc20-0-button]',
@@ -74,7 +81,64 @@ test('Create and remove smart pool position', async ({ page }) => {
   await expect(approveToken1Locator).toBeVisible()
   await expect(approveToken1Locator).toBeEnabled()
   await approveToken1Locator.click()
-})
+
+  const reviewLocator = page.locator(
+    '[testdata-id=add-steer-liquidity-preview-button]',
+  )
+  await expect(reviewLocator).toBeVisible()
+  await expect(reviewLocator).toBeEnabled()
+  await reviewLocator.click()
+
+  const confirmLocator = page.locator(
+    '[testdata-id=add-concentrated-liquidity-confirmation-modal-button]',
+  )
+  await expect(confirmLocator).toBeVisible()
+  await expect(confirmLocator).toBeEnabled()
+  await confirmLocator.click()
+
+  const expectedText = '(Successfully added liquidity to the .* pair)'
+  const regex = new RegExp(expectedText)
+  await expect(page.getByText(regex))
+}
+
+async function removeSmartPoolPosition(page: Page) {
+  // const poolId = '137-0x3361bf42cca22dc5fe37c7bd2c6a7284db440dfc'
+  await page.locator('[testdata-id=my-positions-button]').click()
+
+  const concentratedPositionTableSelector = page.locator(
+    '[testdata-id=smart-positions-loading-0]',
+  )
+  await expect(concentratedPositionTableSelector).not.toBeVisible()
+
+  const firstPositionSelector = page.locator(
+    '[testdata-id=smart-positions-0-0-td]',
+  )
+  await expect(firstPositionSelector).toBeVisible()
+  await firstPositionSelector.click()
+
+  const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
+  await expect(removeLiquidityTabSelector).toBeVisible()
+  await removeLiquidityTabSelector.click()
+
+  await page.locator('[testdata-id=remove-liquidity-max-button]').click()
+
+  const approveSlpId = 'approve-remove-liquidity-slp-button'
+  const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+  await expect(approveSlpLocator).toBeVisible()
+  await expect(approveSlpLocator).toBeEnabled()
+  await approveSlpLocator.click()
+
+  const removeLiquidityLocator = page.locator(
+    '[testdata-id=remove-liquidity-button]',
+  )
+
+  await expect(removeLiquidityLocator).toBeVisible()
+  await expect(removeLiquidityLocator).toBeEnabled()
+  await removeLiquidityLocator.click()
+
+  const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
+  expect(page.getByText(regex))
+}
 
 async function switchNetwork(page: Page, chainId: number) {
   const networkSelector = page.locator('[testdata-id=network-selector-button]')

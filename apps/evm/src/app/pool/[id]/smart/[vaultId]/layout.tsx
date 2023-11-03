@@ -30,7 +30,6 @@ export default async function Layout({
     ['steer-vault', vaultId],
     { revalidate: 60 * 15 },
   )()
-
   if (!pool) {
     notFound()
   }
@@ -43,7 +42,7 @@ export default async function Layout({
       <Container maxWidth="5xl" className="px-4">
         <Breadcrumb />
       </Container>
-      <Container maxWidth="5xl" className="pt-10 px-4">
+      <Container maxWidth="5xl" className="px-4 pt-10">
         <PoolHeader
           backUrl={referer?.includes('/pool?') ? referer.toString() : '/pool'}
           address={pool.address}
@@ -62,7 +61,7 @@ export default async function Layout({
             <Container maxWidth="5xl" className="px-2 sm:px-4">
               <LinkInternal
                 href={`/pool/${params.id}/smart`}
-                className="text-blue hover:underline text-sm"
+                className="text-sm text-blue hover:underline"
               >
                 ← Strategies
               </LinkInternal>

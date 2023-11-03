@@ -40,7 +40,6 @@ function getPriceExtremes(
     !upperPrice.includes('.') && upperPrice.length > 9
       ? formatNumber(upperPrice)
       : upperPrice
-
   return { min: lowerPrice, max: upperPrice }
 }
 
