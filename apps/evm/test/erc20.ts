@@ -4,10 +4,10 @@ import { Token } from 'sushi/currency'
 import {
   http,
   createTestClient,
+  formatUnits,
+  parseUnits,
   publicActions,
   walletActions,
-  parseUnits,
-  formatUnits,
 } from 'viem'
 import { privateKeyToAccount, publicKeyToAddress } from 'viem/accounts'
 import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
@@ -114,20 +114,19 @@ export async function prepareERC20Balance({
   })
 
   await client.writeContract({
-      ...erc20Contract,
-      address: usdcAddress,
-      functionName: 'transfer',
-      account: impersonatedAccount,
-      args: [publicAddress, usdcAmount],
-    })
-    await
-    client.writeContract({
-      ...erc20Contract,
-      address: wethAddress,
-      functionName: 'transfer',
-      account: impersonatedAccount,
-      args: [publicAddress, wethAmount],
-    })
+    ...erc20Contract,
+    address: usdcAddress,
+    functionName: 'transfer',
+    account: impersonatedAccount,
+    args: [publicAddress, usdcAmount],
+  })
+  await client.writeContract({
+    ...erc20Contract,
+    address: wethAddress,
+    functionName: 'transfer',
+    account: impersonatedAccount,
+    args: [publicAddress, wethAmount],
+  })
 
   await client.stopImpersonatingAccount({
     address: impersonatedAccount,

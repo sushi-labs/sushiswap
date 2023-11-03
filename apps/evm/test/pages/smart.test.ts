@@ -47,7 +47,7 @@ test.beforeEach(async ({ page, next }) => {
 test.afterAll(async () => {})
 test.afterEach(async () => {})
 
-  // TODO: need to setup config to target specific pools depending on the network, however, the user need to change as well if more networks are added
+// TODO: need to setup config to target specific pools depending on the network, however, the user need to change as well if more networks are added
 
 test('Create and remove smart pool position', async ({ page }) => {
   test.slow()
