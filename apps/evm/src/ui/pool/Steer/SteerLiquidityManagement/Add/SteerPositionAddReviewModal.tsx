@@ -29,8 +29,8 @@ import {
   useWaitForTransaction,
   waitForTransaction,
 } from '@sushiswap/wagmi'
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
@@ -39,11 +39,11 @@ import { Percent } from 'sushi/math'
 import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { APPROVE_TAG_STEER } from 'src/lib/constants'
 import { slippageAmount } from 'sushi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
-import { APPROVE_TAG_STEER } from 'src/lib/constants'
 
 interface SteerPositionAddReviewModalProps {
   vault: SteerVault
