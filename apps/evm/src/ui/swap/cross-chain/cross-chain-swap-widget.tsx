@@ -9,6 +9,7 @@ import { CrossChainSwapToken0Input } from './cross-chain-swap-token0-input'
 import { CrossChainSwapToken1Input } from './cross-chain-swap-token1-input'
 import { CrossChainSwapTradeButton } from './cross-chain-swap-trade-button'
 import { CrossChainSwapTradeStats } from './cross-chain-swap-trade-stats'
+import { CrossChainSwapPendingCard } from './cross-chain-swap-pending-card'
 
 export const CrossChainSwapWidget = () => {
   return (
@@ -28,6 +29,7 @@ export const CrossChainSwapWidget = () => {
       </div>
       <CrossChainSwapTradeStats />
       <CrossChainSwapTokenNotFoundDialog />
+        <CrossChainSwapPendingCard />
     </div>
   )
 }
