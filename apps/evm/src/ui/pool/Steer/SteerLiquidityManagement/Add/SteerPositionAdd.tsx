@@ -105,7 +105,6 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                 contract={
                   STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
                 }
-                enabled={!!parsedAmounts?.[Field.CURRENCY_A]}
               >
                 <Checker.ApproveERC20
                   fullWidth
@@ -114,7 +113,6 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                   contract={
                     STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
                   }
-                  enabled={!!parsedAmounts?.[Field.CURRENCY_B]}
                 >
                   <Checker.Success tag={APPROVE_TAG_STEER}>
                     <SteerPositionAddReviewModal
