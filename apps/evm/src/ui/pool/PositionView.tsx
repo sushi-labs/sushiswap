@@ -1,5 +1,6 @@
 'use client'
 
+import { CogIcon } from '@heroicons/react-v1/outline'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -15,13 +16,17 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  IconButton,
   LinkInternal,
   Separator,
+  SettingsModule,
+  SettingsOverlay,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   Toggle,
+  WidgetAction,
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -36,6 +41,7 @@ import {
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useMemo, useState } from 'react'
+
 import useIsTickAtLimit from 'src/lib/hooks/useIsTickAtLimit'
 import { Chain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
@@ -223,12 +229,34 @@ const Component: FC<{ id: string }> = ({ id }) => {
                   <Separator />
                 </div>
                 <TabsContent value="add">
-                  <CardContent>
+                  <CardContent className="relative">
                     <CardHeader className="px-0 pb-0">
                       <CardTitle>Add liquidity</CardTitle>
                       <CardDescription>
                         Provide liquidity to earn fees & rewards.
                       </CardDescription>
+                      <WidgetAction>
+                        <SettingsOverlay
+                          options={{
+                            slippageTolerance: {
+                              storageKey: 'addLiquidity',
+                              defaultValue: '0.5',
+                              title: 'Add Liquidity Slippage',
+                            },
+                          }}
+                          modules={[
+                            SettingsModule.CustomTokens,
+                            SettingsModule.SlippageTolerance,
+                          ]}
+                        >
+                          <IconButton
+                            size="sm"
+                            name="Settings"
+                            icon={CogIcon}
+                            variant="secondary"
+                          />
+                        </SettingsOverlay>
+                      </WidgetAction>
                     </CardHeader>
                     <ConcentratedLiquidityWidget
                       withTitleAndDescription={false}
