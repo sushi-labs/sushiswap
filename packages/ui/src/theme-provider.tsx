@@ -3,8 +3,8 @@
 import { ThemeProvider as NextThemeProvider } from 'next-themes'
 import { FC, ReactNode } from 'react'
 
-import { ToastContainer } from './components/toast'
 import { OnramperProvider, Toaster } from './components'
+import { ToastContainer } from './components/toast'
 
 interface ThemeProviderProps {
   children: ReactNode | ReactNode[]

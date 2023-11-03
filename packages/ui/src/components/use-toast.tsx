@@ -1,9 +1,9 @@
 // Inspired by react-hot-toast library
 import * as React from 'react'
-import {ToastActionElement, ToastProps} from '.'
+import { ToastActionElement, ToastProps } from '.'
 
 const TOAST_LIMIT = 3
-const TOAST_REMOVE_DELAY = 1000000
+const _TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -176,7 +176,7 @@ function useToast() {
         listeners.splice(index, 1)
       }
     }
-  }, [state])
+  }, [setState])
 
   return {
     ...state,

@@ -2,6 +2,7 @@
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { useBreakpoint } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import {
   Popover,
@@ -12,14 +13,13 @@ import React, { FC, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
 import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
+import { usePendingTransactions } from '../..'
 import { ConnectButton } from '../connect-button'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { ProfileView } from './ProfileView'
 import { SettingsView } from './SettingsView'
 import { TransactionsView } from './TransactionsView'
-import { Loader } from '@sushiswap/ui'
-import { usePendingTransactions } from '../..'
 
 interface ProfileProps {
   networks: ChainId[]

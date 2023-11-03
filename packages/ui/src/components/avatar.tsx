@@ -5,7 +5,7 @@ import Image from 'next/image'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import {cloudinaryImageLoader} from '../cloudinary'
+import { cloudinaryImageLoader } from '../cloudinary'
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,

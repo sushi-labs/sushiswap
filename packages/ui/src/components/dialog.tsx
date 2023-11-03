@@ -2,14 +2,14 @@
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 import {
-  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useMemo,
@@ -18,20 +18,20 @@ import {
 import { Chain, ChainId } from 'sushi/chain'
 
 import {
+  ArrowTopRightOnSquareIcon,
+  ArrowUpIcon,
+} from '@heroicons/react/20/solid'
+import {
   Button,
-  classNames,
   Dots,
   IconButton,
   LinkExternal,
   LinkInternal,
   Loader,
+  classNames,
 } from '../index'
 import { CheckMarkIcon } from './icons/CheckmarkIcon'
 import { FailedMarkIcon } from './icons/FailedMarkIcon'
-import {
-  ArrowTopRightOnSquareIcon,
-  ArrowUpIcon,
-} from '@heroicons/react/20/solid'
 
 const dialogVariants = cva(
   'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
@@ -252,15 +252,18 @@ const DialogSuccess: FC<DialogSuccessProps> = ({
   const { open, setOpen } = useDialog(DialogType.Confirm)
 
   // Call onClose handler with delayed timeout to allow for animation to finish
-  const onOpenChangeHandler = useCallback((open: boolean) => {
-    setOpen(false)
+  const onOpenChangeHandler = useCallback(
+    (open: boolean) => {
+      setOpen(false)
 
-    if (!open && onClose) {
-      setTimeout(() => {
-        onClose()
-      }, 200)
-    }
-  }, [])
+      if (!open && onClose) {
+        setTimeout(() => {
+          onClose()
+        }, 200)
+      }
+    },
+    [setOpen, onClose],
+  )
 
   return (
     <Dialog {...props} open={open} onOpenChange={onOpenChangeHandler}>

@@ -39,7 +39,8 @@ module.exports = {
       matchUtilities(
         {
           'translate-3d': () => ({
-            transform: ` translate3d(var(--tw-translate-x), var(--tw-translate-y), var(--tw-translate-z))`,
+            transform:
+              'translate3d(var(--tw-translate-x), var(--tw-translate-y), var(--tw-translate-z))',
           }), // this is actual CSS
         },
         { values: theme('translate'), supportsNegativeValues: true },
