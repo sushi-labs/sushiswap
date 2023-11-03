@@ -269,7 +269,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
                 <DialogFooter>
                   <Button
                     size="xl"
-                    fullWidth  
+                    fullWidth
                     loading={!sendTransactionAsync || isWritePending}
                     onClick={() =>
                       sendTransactionAsync?.().then(() => confirm())

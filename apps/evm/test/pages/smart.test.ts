@@ -136,7 +136,9 @@ async function removeSmartPoolPosition(page: Page) {
   await expect(removeLiquidityLocator).toBeEnabled()
   await removeLiquidityLocator.click()
 
-  const regex = new RegExp('(Successfully removed liquidity from the .* smart pool)')
+  const regex = new RegExp(
+    '(Successfully removed liquidity from the .* smart pool)',
+  )
   await expect(page.getByText(regex)).toBeVisible()
 }
 
