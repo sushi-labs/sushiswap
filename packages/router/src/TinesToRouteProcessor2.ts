@@ -1,5 +1,5 @@
+import { MultiRoute, RToken, RouteLeg, RouteStatus } from '@sushiswap/tines'
 import { ChainId } from 'sushi/chain'
-import { MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
 import { Hex } from 'viem'
 
 import { HEXer } from './HEXer'

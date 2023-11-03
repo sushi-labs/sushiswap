@@ -1,5 +1,5 @@
-import { Fee } from '@sushiswap/amm'
 import { FC, useEffect } from 'react'
+import { Fee } from 'sushi/dex'
 
 import { useTridentStablePool } from '../../hooks'
 import { PoolFinderType, TridentPoolFinderProps } from './types'

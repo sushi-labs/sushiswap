@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { chainName, chainShortNameToChainId } from 'sushi/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -10,12 +9,13 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
+import { chainName, chainShortNameToChainId } from 'sushi/chain'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
-  getBuiltGraphSDK,
   Pair,
   QueryResolvers,
+  getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { SushiSwapV3Types } from '../../.graphclient/sources/SushiSwapV3/types.js'

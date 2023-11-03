@@ -1,4 +1,3 @@
-import { InsufficientInputAmountError } from '@sushiswap/base-sdk'
 import { ChainId } from 'sushi/chain'
 import {
   Amount,
@@ -8,10 +7,11 @@ import {
   WETH9,
   WETH9_ADDRESS,
 } from 'sushi/currency'
+import { InsufficientInputAmountError } from 'sushi/dex'
 
 import { TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS } from '../constants'
-import { computeTridentConstantPoolAddress } from './computeTridentConstantPoolAddress'
 import { TridentConstantPool } from './TridentConstantPool'
+import { computeTridentConstantPoolAddress } from './computeTridentConstantPoolAddress'
 
 describe('computePoolAddress', () => {
   it('should correctly compute the pool address', () => {
@@ -45,7 +45,7 @@ describe('computePoolAddress', () => {
       twap,
     })
 
-    expect(address).toEqual('0x3A7bA3048fb3287051F6CB3dF64233F13558132C')
+    expect(address).toEqual('0x3a55461275dc8F4a60B0d7fe32E96341c96ebEce')
   })
 })
 
@@ -57,7 +57,7 @@ describe('TridentConstantPool', () => {
     symbol: 'USDC',
     name: 'USD Coin',
   })
-  const DAI = new Token({
+  const WETH = new Token({
     chainId: ChainId.OPTIMISM,
     address: WETH9_ADDRESS[ChainId.OPTIMISM],
     decimals: 18,
@@ -81,8 +81,8 @@ describe('TridentConstantPool', () => {
 
   describe('#getAddress', () => {
     it.skip('returns the correct address', () => {
-      expect(TridentConstantPool.getAddress(USDC, DAI, 30, true)).toEqual(
-        '0x614e51758495824A9D1aaA66192151e69E9c4ca6',
+      expect(TridentConstantPool.getAddress(USDC, WETH, 30, true)).toEqual(
+        '0x3a55461275dc8F4a60B0d7fe32E96341c96ebEce',
       )
     })
   })
@@ -92,19 +92,19 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '100'),
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           30,
           true,
         ).token0,
-      ).toEqual(DAI)
+      ).toEqual(USDC)
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           Amount.fromRawAmount(USDC, '100'),
           30,
           true,
         ).token0,
-      ).toEqual(DAI)
+      ).toEqual(USDC)
     })
   })
   describe('#token1', () => {
@@ -112,19 +112,19 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '100'),
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           30,
           true,
         ).token1,
-      ).toEqual(USDC)
+      ).toEqual(WETH)
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           Amount.fromRawAmount(USDC, '100'),
           30,
           true,
         ).token1,
-      ).toEqual(USDC)
+      ).toEqual(WETH)
     })
   })
   describe('#reserve0', () => {
@@ -132,19 +132,19 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '100'),
-          Amount.fromRawAmount(DAI, '101'),
+          Amount.fromRawAmount(WETH, '101'),
           30,
           true,
         ).reserve0,
-      ).toEqual(Amount.fromRawAmount(DAI, '101'))
+      ).toEqual(Amount.fromRawAmount(USDC, '100'))
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '101'),
+          Amount.fromRawAmount(WETH, '101'),
           Amount.fromRawAmount(USDC, '100'),
           30,
           true,
         ).reserve0,
-      ).toEqual(Amount.fromRawAmount(DAI, '101'))
+      ).toEqual(Amount.fromRawAmount(USDC, '100'))
     })
   })
   describe('#reserve1', () => {
@@ -152,19 +152,19 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '100'),
-          Amount.fromRawAmount(DAI, '101'),
+          Amount.fromRawAmount(WETH, '101'),
           30,
           true,
         ).reserve1,
-      ).toEqual(Amount.fromRawAmount(USDC, '100'))
+      ).toEqual(Amount.fromRawAmount(WETH, '101'))
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '101'),
+          Amount.fromRawAmount(WETH, '101'),
           Amount.fromRawAmount(USDC, '100'),
           30,
           true,
         ).reserve1,
-      ).toEqual(Amount.fromRawAmount(USDC, '100'))
+      ).toEqual(Amount.fromRawAmount(WETH, '101'))
     })
   })
 
@@ -173,19 +173,19 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '101'),
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           30,
           true,
         ).token0Price,
-      ).toEqual(new Price(DAI, USDC, '100', '101'))
+      ).toEqual(new Price(USDC, WETH, '101', '100'))
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           Amount.fromRawAmount(USDC, '101'),
           30,
           true,
         ).token0Price,
-      ).toEqual(new Price(DAI, USDC, '100', '101'))
+      ).toEqual(new Price(USDC, WETH, '101', '100'))
     })
   })
 
@@ -194,32 +194,32 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '101'),
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           30,
           true,
         ).token1Price,
-      ).toEqual(new Price(USDC, DAI, '101', '100'))
+      ).toEqual(new Price(WETH, USDC, '100', '101'))
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           Amount.fromRawAmount(USDC, '101'),
           30,
           true,
         ).token1Price,
-      ).toEqual(new Price(USDC, DAI, '101', '100'))
+      ).toEqual(new Price(WETH, USDC, '100', '101'))
     })
   })
 
   describe('#priceOf', () => {
     const pair = new TridentConstantPool(
       Amount.fromRawAmount(USDC, '101'),
-      Amount.fromRawAmount(DAI, '100'),
+      Amount.fromRawAmount(WETH, '100'),
       30,
       true,
     )
     it('returns price of token in terms of other token', () => {
-      expect(pair.priceOf(DAI)).toEqual(pair.token0Price)
-      expect(pair.priceOf(USDC)).toEqual(pair.token1Price)
+      expect(pair.priceOf(USDC)).toEqual(pair.token0Price)
+      expect(pair.priceOf(WETH)).toEqual(pair.token1Price)
     })
 
     it('throws if invalid token', () => {
@@ -232,14 +232,14 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '100'),
-          Amount.fromRawAmount(DAI, '101'),
+          Amount.fromRawAmount(WETH, '101'),
           30,
           true,
         ).reserveOf(USDC),
       ).toEqual(Amount.fromRawAmount(USDC, '100'))
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '101'),
+          Amount.fromRawAmount(WETH, '101'),
           Amount.fromRawAmount(USDC, '100'),
           30,
           true,
@@ -250,7 +250,7 @@ describe('TridentConstantPool', () => {
     it('throws if not in the pair', () => {
       expect(() =>
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '101'),
+          Amount.fromRawAmount(WETH, '101'),
           Amount.fromRawAmount(USDC, '100'),
           30,
           true,
@@ -264,14 +264,14 @@ describe('TridentConstantPool', () => {
       expect(
         new TridentConstantPool(
           Amount.fromRawAmount(USDC, '100'),
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           30,
           true,
         ).chainId,
       ).toEqual(10)
       expect(
         new TridentConstantPool(
-          Amount.fromRawAmount(DAI, '100'),
+          Amount.fromRawAmount(WETH, '100'),
           Amount.fromRawAmount(USDC, '100'),
           30,
           true,
@@ -283,7 +283,7 @@ describe('TridentConstantPool', () => {
     expect(
       new TridentConstantPool(
         Amount.fromRawAmount(USDC, '100'),
-        Amount.fromRawAmount(DAI, '100'),
+        Amount.fromRawAmount(WETH, '100'),
         30,
         true,
       ).involvesToken(USDC),
@@ -291,15 +291,15 @@ describe('TridentConstantPool', () => {
     expect(
       new TridentConstantPool(
         Amount.fromRawAmount(USDC, '100'),
-        Amount.fromRawAmount(DAI, '100'),
+        Amount.fromRawAmount(WETH, '100'),
         30,
         true,
-      ).involvesToken(DAI),
+      ).involvesToken(WETH),
     ).toEqual(true)
     expect(
       new TridentConstantPool(
         Amount.fromRawAmount(USDC, '100'),
-        Amount.fromRawAmount(DAI, '100'),
+        Amount.fromRawAmount(WETH, '100'),
         30,
         true,
       ).involvesToken(WETH9[1]),

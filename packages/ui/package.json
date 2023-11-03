@@ -16,7 +16,7 @@
   ],
   "exports": {
     "./index.css": "./index.css",
-    "./DatePicker.css": "./DatePicker.css",
+    "./date-picker.css": "./date-picker.css",
     "./tailwind.js": "./tailwind.js",
     ".": [
       "./dist/index.js"
@@ -43,7 +43,7 @@
   "files": [
     "dist",
     "index.css",
-    "DatePicker.css",
+    "date-picker.css",
     "tailwind.js"
   ],
   "scripts": {
@@ -84,16 +84,14 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
-    "@sushiswap/token-lists": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
     "@tanstack/react-table": "8.9.1",
-    "class-variance-authority": "0.6.1",
+    "class-variance-authority": "0.7.0",
     "classnames": "2.3.2",
-    "clsx": "1.2.1",
     "cmdk": "0.2.0",
-    "date-fns": "2.29.3",
+    "date-fns": "2.30.0",
     "lucide-react": "0.258.0",
     "nanoid": "4.0.0",
     "next-themes": "0.2.1",
@@ -125,16 +123,15 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "tsup": "7.2.0",
     "typescript": "5.2.2",
-    "wagmi": "1.4.3"
+    "wagmi": "1.4.5"
   },
   "peerDependencies": {
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "wagmi": "1.4.3"
+    "wagmi": "1.4.5"
   },
   "peerDependenciesMeta": {
     "next": {

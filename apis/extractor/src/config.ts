@@ -1,4 +1,4 @@
-import { LogFilterType } from '@sushiswap/extractor/dist/LogFilter2'
+import { LogFilterType } from '@sushiswap/extractor'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -29,12 +29,30 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.BOBA_AVAX,
   // ChainId.BOBA_BNB,
   ChainId.BSC,
-  // ChainId.CELO,
+  // ChainId.BTTC,
+  ChainId.CELO,
+  // ChainId.CORE,
   ChainId.ETHEREUM,
-  // ChainId.FANTOM,
+  ChainId.FANTOM,
+  // ChainId.FUSE,
+  ChainId.GNOSIS,
+  // ChainId.HAQQ,
+  // ChainId.HARMONY,
+  // ChainId.HECO,
+  // ChainId.KAVA,
+  // ChainId.LINEA,
+  // ChainId.METIS,
+  // ChainId.MOONBEAM,
+  // ChainId.MOONRIVER,
+  // ChainId.OKEX,
   ChainId.OPTIMISM,
+  // ChainId.PALM,
   ChainId.POLYGON,
-  // ChainId.POLYGON_ZKEVM,
+  ChainId.POLYGON_ZKEVM,
+  // ChainId.SCROLL,
+  // ChainId.TELOS,
+  // ChainId.THUNDERCORE,
+  // ChainId.ZKSYNC_ERA,
 ] as const
 
 export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
@@ -283,6 +301,15 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FANTOM],
     cacheDir: './cache',
     logDepth: 300,
+    logging: true,
+  },
+  [ChainId.GNOSIS]: {
+    client: createPublicClient(config[ChainId.GNOSIS]),
+    factoriesV2: [sushiswapV2Factory(ChainId.GNOSIS)],
+    factoriesV3: [sushiswapV3Factory(ChainId.GNOSIS)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.GNOSIS],
+    cacheDir: './cache',
+    logDepth: 50,
     logging: true,
   },
   [ChainId.OPTIMISM]: {

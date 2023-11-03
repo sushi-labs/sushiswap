@@ -6,7 +6,7 @@ import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class LaserSwapV2Provider extends UniswapV2BaseProvider {
-  fee = 0.0025
+  override fee = 0.0025
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.THUNDERCORE]:

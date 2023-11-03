@@ -1,4 +1,4 @@
-import { MAX_UINT256 } from 'sushi'
+import { MAX_UINT256 } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 const POWERS_OF_2 = [128, 64, 32, 16, 8, 4, 2, 1].map(

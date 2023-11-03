@@ -5,7 +5,7 @@
  * @returns true if sorted
  */
 export function isSorted<T>(
-  list: Array<T>,
+  list: T[],
   comparator: (a: T, b: T) => number,
 ): boolean {
   for (let i = 0; i < list.length - 1; i++) {

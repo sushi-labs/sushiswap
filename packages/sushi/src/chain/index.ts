@@ -58,6 +58,7 @@ export const Type = {
 } as const
 export type Type = typeof Type[keyof typeof Type]
 
+// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: explaination
 export class Chain implements Chain {
   public static fromRaw(data: Data) {
     return new Chain(data)

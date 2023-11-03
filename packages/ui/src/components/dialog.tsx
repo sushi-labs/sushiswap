@@ -118,24 +118,29 @@ interface DialogContentProps
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, hideClose = false, variant, children, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay variant={variant} />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={dialogVariants({ variant, className })}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close
-        asChild
-        className={dialogCloseVariants({ variant })}
+>(
+  (
+    { className, hideClose: _hideClose = false, variant, children, ...props },
+    ref,
+  ) => (
+    <DialogPortal>
+      <DialogOverlay variant={variant} />
+      <DialogPrimitive.Content
+        ref={ref}
+        className={dialogVariants({ variant, className })}
+        {...props}
       >
-        <IconButton icon={XMarkIcon} name="Close" />
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPortal>
-))
+        {children}
+        <DialogPrimitive.Close
+          asChild
+          className={dialogCloseVariants({ variant })}
+        >
+          <IconButton icon={XMarkIcon} name="Close" />
+        </DialogPrimitive.Close>
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  ),
+)
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
 const DialogHeader = ({
@@ -401,13 +406,15 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
 DialogConfirm.displayName = 'DialogConfirm'
 
 enum DialogType {
-  Review,
-  Confirm,
+  Review = 0,
+  Confirm = 1,
 }
 
 interface DialogContext {
   state: Record<DialogType, boolean>
+
   confirm(): void
+
   setState: Dispatch<SetStateAction<Record<DialogType, boolean>>>
 }
 
@@ -454,22 +461,24 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
     throw new Error('Hook can only be used inside Modal Context')
   }
 
+  const { state, setState, confirm } = context
+
   return useMemo(() => {
     if (type === DialogType.Review) {
       return {
-        open: Boolean(context.state[type]),
+        open: Boolean(state[type]),
         setOpen: (val) =>
-          context.setState((prev) => ({ ...prev, [DialogType.Review]: val })),
-        confirm: context.confirm,
+          setState((prev) => ({ ...prev, [DialogType.Review]: val })),
+        confirm,
       } as UseDialog<T>
     } else {
       return {
-        open: Boolean(context.state[type]),
+        open: Boolean(state[type]),
         setOpen: (val) =>
-          context.setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
+          setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
       } as UseDialog<T>
     }
-  }, [context, type])
+  }, [state, setState, confirm, type])
 }
 
 export {

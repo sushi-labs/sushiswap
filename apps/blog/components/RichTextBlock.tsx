@@ -1,6 +1,6 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { RichTextBlock as RichTextType } from 'types'
+import type { RichTextBlock as RichTextType } from 'types'
 
 interface RichText {
   block: RichTextType

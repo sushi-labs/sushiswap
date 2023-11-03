@@ -1,6 +1,3 @@
-import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
 import {
   FactoryV2,
   LogFilter2,
@@ -16,7 +13,10 @@ import {
 } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { RouteStatus } from '@sushiswap/tines'
-import { Address, createPublicClient, http } from 'viem'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
+import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
 import { RP3Address } from './UniV3Extractor.test'
@@ -76,8 +76,8 @@ async function startInfinitTest(args: {
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
-        toToken = tokens[i]
+      const fromToken = Native.onChain(chainId)
+      const toToken = tokens[i]
       const route = Router.findBestRoute(
         poolMap,
         chainId,
@@ -136,7 +136,7 @@ async function startInfinitTest(args: {
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-      } catch (e) {
+      } catch (_e) {
         console.log('Routing failed. No connection ?')
       }
     }
@@ -168,7 +168,7 @@ async function allPoolsPrefetchingTest(args: {
   )
 }
 
-it.skip('UniV2 Extractor Ethereum infinit work test', async () => {
+it.skip('UniV2 Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,

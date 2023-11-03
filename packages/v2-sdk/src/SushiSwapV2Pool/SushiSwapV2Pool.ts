@@ -1,15 +1,15 @@
+import { chainName } from 'sushi/chain'
+import { Amount, Price, Token } from 'sushi/currency'
 import {
   InsufficientInputAmountError,
   InsufficientReservesError,
-} from '@sushiswap/base-sdk'
-import { chainName } from 'sushi/chain'
-import { Amount, Price, Token } from 'sushi/currency'
-import { _997, _1000, BigintIsh, FIVE, ONE, sqrt, ZERO } from 'sushi'
+} from 'sushi/dex'
+import { BigintIsh, FIVE, ONE, ZERO, _997, _1000, sqrt } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
 import {
-  isSushiSwapV2ChainId,
   SUSHISWAP_V2_FACTORY_ADDRESS,
+  isSushiSwapV2ChainId,
 } from '../constants'
 import { computeSushiSwapV2PoolAddress } from './computeSushiSwapV2PoolAddress'
 import { SerializedSushiSwapV2Pool, sushiSwapV2PoolSchema } from './zod'

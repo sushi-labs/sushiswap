@@ -1,7 +1,7 @@
+import { BridgeUnlimited, RToken } from '@sushiswap/tines'
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { ChainId } from 'sushi/chain'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from 'sushi/currency'
-import { BridgeUnlimited, RToken } from '@sushiswap/tines'
 import { PublicClient } from 'viem'
 
 import { NativeWrapBridgePoolCode } from '../pools/NativeWrapBridge'

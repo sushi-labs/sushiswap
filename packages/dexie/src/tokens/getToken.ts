@@ -1,4 +1,4 @@
-import { ChainId } from 'sushi/chain'
+import { type ChainId } from 'sushi/chain'
 
 import { db } from '../db.js'
 import { type SavedToken } from './types.js'

@@ -75,6 +75,7 @@ const LOGO: Record<number, string> = {
   [ChainId.ZKSYNC_ERA]: EthereumLogo,
   [ChainId.LINEA]: EthereumLogo,
   [ChainId.BASE]: EthereumLogo,
+  [ChainId.SCROLL]: EthereumLogo,
 }
 
 function djb2(str: string) {
@@ -90,12 +91,9 @@ function hashStringToColor(str: string) {
   const r = (hash & 0xff0000) >> 16
   const g = (hash & 0x00ff00) >> 8
   const b = hash & 0x0000ff
-  return (
-    '#' +
-    ('0' + r.toString(16)).substr(-2) +
-    ('0' + g.toString(16)).substr(-2) +
-    ('0' + b.toString(16)).substr(-2)
-  )
+  return `#${`0${r.toString(16)}`.substr(-2)}${`0${g.toString(16)}`.substr(
+    -2,
+  )}${`0${b.toString(16)}`.substr(-2)}`
 }
 
 export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {

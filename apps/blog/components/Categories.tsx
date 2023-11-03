@@ -1,6 +1,7 @@
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { Dispatch, FC, SetStateAction, useCallback } from 'react'
-import { Category } from 'types'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useCallback } from 'react'
+import type { Category } from 'types'
 
 interface Categories {
   selected: string[]
@@ -18,7 +19,7 @@ export const Categories: FC<Categories> = ({
       onSelect((prevState: string[]) => {
         if (selected.includes(index))
           return prevState.filter((el) => el !== index)
-        else return [...prevState, index]
+        return [...prevState, index]
       })
     },
     [selected, onSelect],
@@ -27,15 +28,17 @@ export const Categories: FC<Categories> = ({
   return (
     <>
       {categories.map((category) => {
-        if (!category?.id) return <></>
+        if (!category.id) return <></>
 
         return (
           <Toggle
-            pressed={Boolean(selected.includes(category.id))}
-            onPressedChange={() => handleSelect(category.id as string)}
             key={category.id}
+            onPressedChange={() => {
+              handleSelect(category.id)
+            }}
+            pressed={Boolean(selected.includes(category.id))}
           >
-            {category?.attributes?.name}
+            {category.attributes.name}
           </Toggle>
         )
       })}

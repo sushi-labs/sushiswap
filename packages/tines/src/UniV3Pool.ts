@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { CL_MAX_TICK, CL_MIN_TICK, CLTick } from './CLPool'
+import { CLTick, CL_MAX_TICK, CL_MIN_TICK } from './CLPool'
 import {
   RPool,
   RToken,
@@ -113,9 +113,9 @@ export class UniV3Pool extends RPool {
         this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
         this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
       }
-      if (this.ticks[0].index > CL_MIN_TICK)
+      if ((this.ticks[0] as CLTick).index > CL_MIN_TICK)
         this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
-      if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK)
+      if ((this.ticks[this.ticks.length - 1] as CLTick).index < CL_MAX_TICK)
         this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
 
       this.liquidity = liquidity
@@ -147,7 +147,7 @@ export class UniV3Pool extends RPool {
     let b = this.ticks.length
     while (b - a > 1) {
       const c = Math.floor((a + b) / 2)
-      const ind = this.ticks[c].index
+      const ind = (this.ticks[c] as CLTick).index
       if (ind === tick) return c
       if (ind < tick) a = c
       else b = c
@@ -176,18 +176,21 @@ export class UniV3Pool extends RPool {
         else return { out: outAmount, gasSpent: this.swapGasCost }
       }
 
-      let nextTickPrice, priceDiff
+      let nextTickPrice
+      let priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
         const nextTickPriceBI = getSqrtRatioAtTick(
-          this.ticks[nextTickToCross].index,
+          (this.ticks[nextTickToCross] as CLTick).index,
         )
         nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
         priceDiff =
           parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
-        nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
+        nextTickPrice = Math.sqrt(
+          1.0001 ** (this.ticks[nextTickToCross] as CLTick).index,
+        )
         priceDiff = currentPrice - nextTickPrice
       }
 
@@ -219,7 +222,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           input -= maxDx
           currentLiquidityBI =
-            currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
+            currentLiquidityBI -
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross--
           if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
@@ -237,7 +241,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           input -= maxDy
           currentLiquidityBI =
-            currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
+            currentLiquidityBI +
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross++
           if (nextTickToCross === this.ticks.length - 1)
             currentLiquidityBI = ZERO // Protection if we know not all ticks
@@ -255,7 +260,7 @@ export class UniV3Pool extends RPool {
     } // TODO: more accurate gas prediction
   }
 
-  calcOutByInReal(amountIn: number, direction: boolean): number {
+  override calcOutByInReal(amountIn: number, direction: boolean): number {
     const amountInRounded =
       Math.floor(amountIn * (1 - this.fee)) / (1 - this.fee)
     return Math.floor(this.calcOutByIn(amountInRounded, direction, false).out)
@@ -279,18 +284,21 @@ export class UniV3Pool extends RPool {
         return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost }
 
       ++stepCounter
-      let nextTickPrice, priceDiff
+      let nextTickPrice
+      let priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
         const nextTickPriceBI = getSqrtRatioAtTick(
-          this.ticks[nextTickToCross].index,
+          (this.ticks[nextTickToCross] as CLTick).index,
         )
         nextTickPrice = parseInt(nextTickPriceBI.toString()) / two96
         priceDiff =
           parseInt((currentPriceBI - nextTickPriceBI).toString()) / two96
         startFlag = false
       } else {
-        nextTickPrice = Math.sqrt(1.0001 ** this.ticks[nextTickToCross].index)
+        nextTickPrice = Math.sqrt(
+          1.0001 ** (this.ticks[nextTickToCross] as CLTick).index,
+        )
         priceDiff = currentPrice - nextTickPrice
       }
 
@@ -313,7 +321,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
           currentLiquidityBI =
-            currentLiquidityBI - this.ticks[nextTickToCross].DLiquidity
+            currentLiquidityBI -
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross--
           if (nextTickToCross === 0) currentLiquidityBI = ZERO // Protection if we know not all ticks
         }
@@ -333,7 +342,8 @@ export class UniV3Pool extends RPool {
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
           currentLiquidityBI =
-            currentLiquidityBI + this.ticks[nextTickToCross].DLiquidity
+            currentLiquidityBI +
+            (this.ticks[nextTickToCross] as CLTick).DLiquidity
           nextTickToCross++
           if (nextTickToCross === this.ticks.length - 1)
             currentLiquidityBI = ZERO // Protection if we know not all ticks

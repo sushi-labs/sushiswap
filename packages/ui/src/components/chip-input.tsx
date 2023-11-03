@@ -53,8 +53,8 @@ const ChipInput: FC<ChipInputProps> = ({
 }) => {
   const ref = useRef<HTMLInputElement>(null)
   const [state, setState] = useState(`${values.join(',')},`)
-  const [pending, startTransition] = useTransition()
-  const inputHasText = ref.current && ref.current.value !== ''
+  const [_pending, startTransition] = useTransition()
+  const _inputHasText = ref.current && ref.current.value !== ''
 
   // Empty when reset
   useEffect(() => {

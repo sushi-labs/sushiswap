@@ -1,12 +1,10 @@
-import { routeProcessor2Abi } from 'sushi/abi'
-import { Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryAlgebra,
   FactoryV2,
   FactoryV3,
-  getAlgebraPoolAddress,
   LogFilterType,
+  getAlgebraPoolAddress,
 } from '@sushiswap/extractor'
 import {
   ConstantProductPoolCode,
@@ -14,22 +12,25 @@ import {
   PoolCode,
   Router,
 } from '@sushiswap/router'
-import { findMultiRouteExactIn, RouteStatus, RToken } from '@sushiswap/tines'
+import { RToken, RouteStatus, findMultiRouteExactIn } from '@sushiswap/tines'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { Token } from 'sushi/currency'
 import {
   Abi,
   Address,
-  createPublicClient,
-  custom,
   Hex,
   PublicClient,
   Transport,
-  walletActions,
   WalletClient,
+  createPublicClient,
+  custom,
+  walletActions,
 } from 'viem'
 import { Chain, hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
+  TestTokens,
   algebraPoolBurn,
   algebraPoolMint,
   algebraPoolSwap,
@@ -42,7 +43,6 @@ import {
   createTestTokens,
   getDeploymentAddress,
   getInitCodeHash,
-  TestTokens,
 } from '../src'
 import MultiCall3 from './Multicall3.sol/Multicall3.json'
 import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
@@ -77,7 +77,7 @@ async function startInfinitTest(args: {
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = 0; j < tokens.length; ++j) {
-        if (i == j) continue
+        if (i === j) continue
         await delay(1000)
         const time0 = performance.now()
         const pools0 = extractor.getPoolCodesForTokens(tokens)
@@ -184,7 +184,7 @@ async function simulateUserActivity(
   for (;;) {
     for (let i = 0; i < tokens.length; ++i)
       for (let j = 0; j < tokens.length; ++j) {
-        if (i == j) continue
+        if (i === j) continue
         await delay(delayValue)
         try {
           const amountIn = BigInt(1e12)
@@ -199,7 +199,7 @@ async function simulateUserActivity(
           console.log(
             `Swap simulation: ${amountIn} ${tokens[i].symbol} => ${amountOut} ${tokens[j].symbol} `,
           )
-        } catch (e) {
+        } catch (_e) {
           //
         }
       }
@@ -237,7 +237,7 @@ async function simulateUserActivity(
           console.log(
             `Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} tokenId=${tokenId}`,
           )
-        } catch (e) {
+        } catch (_e) {
           // console.log(e)
         }
       }
@@ -252,7 +252,7 @@ async function simulateUserActivity(
           positions[i].liquidity,
         )
         console.log(`Burn simulation: ${positions[i].tokenId}`)
-      } catch (e) {
+      } catch (_e) {
         // console.log(e)
       }
     }

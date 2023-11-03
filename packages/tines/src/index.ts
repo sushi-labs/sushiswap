@@ -10,3 +10,5 @@ export * from './StableSwapPool'
 export * from './StarGateFeesV04'
 export * from './UniV3Pool'
 export * from './Utils'
+
+export * from './functions'

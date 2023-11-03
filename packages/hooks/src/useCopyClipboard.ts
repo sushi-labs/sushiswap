@@ -24,7 +24,7 @@ export function useCopyClipboard(
       }
     }
     return undefined
-  }, [isCopied, setIsCopied, timeout])
+  }, [isCopied, timeout])
 
   return [isCopied, staticCopy]
 }

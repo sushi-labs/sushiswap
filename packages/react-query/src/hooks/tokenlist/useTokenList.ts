@@ -1,7 +1,7 @@
-import { getAddress } from '@ethersproject/address'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { Token } from 'sushi/currency'
+import { getAddress } from 'viem'
 
 import type { UseTokenListQuerySelect } from './types'
 import { tokenListValidator } from './validator'

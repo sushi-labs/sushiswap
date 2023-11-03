@@ -1,20 +1,14 @@
-import { calculateSlippageAmount } from '@sushiswap/amm'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
-import {
-  Amount,
-  Native,
-  nativeCurrencyIds,
-  Price,
-  WNATIVE_ADDRESS,
-} from 'sushi/currency'
-import { Percent, ZERO } from 'sushi/math'
 import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
-} from '@sushiswap/route-processor-sdk'
-import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
-import { stringify, type Hex, type Address } from 'viem'
+} from 'sushi/config'
+import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
+import { type Address, type Hex, stringify } from 'viem'
 import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
@@ -49,6 +43,7 @@ export const useTradeQuery = (
     gasPrice = 50n,
     slippagePercentage,
     recipient,
+    source,
     enabled,
     onError,
   }: UseTradeParams,
@@ -87,27 +82,12 @@ export const useTradeQuery = (
             : toToken?.wrapped.address
         }`,
       )
-      params.searchParams.set(
-        'fromTokenId',
-        `${
-          fromToken?.isNative
-            ? nativeCurrencyIds[chainId]
-            : fromToken?.wrapped.address
-        }`,
-      )
-      params.searchParams.set(
-        'toTokenId',
-        `${
-          toToken?.isNative
-            ? nativeCurrencyIds[chainId]
-            : toToken?.wrapped.address
-        }`,
-      )
       params.searchParams.set('amount', `${amount?.quotient.toString()}`)
       params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
+      source !== undefined && params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
       const json = await res.json()
@@ -194,7 +174,7 @@ export const useTrade = (variables: UseTradeParams) => {
           amountOut,
           minAmountOut: Amount.fromRawAmount(
             toToken,
-            calculateSlippageAmount(
+            slippageAmount(
               amountOut,
               new Percent(Math.floor(+slippagePercentage * 100), 10_000),
             )[0],

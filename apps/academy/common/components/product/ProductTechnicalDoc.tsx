@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { classNames, LinkExternal } from '@sushiswap/ui'
+import { LinkExternal, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { DocsIcon } from 'common/icons'
 import { FC } from 'react'

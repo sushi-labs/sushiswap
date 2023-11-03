@@ -3,7 +3,7 @@ import '@nomiclabs/hardhat-ethers'
 import { defaultConfig } from '@sushiswap/hardhat-config'
 import { HardhatUserConfig } from 'hardhat/config'
 
-const accounts = {
+const _accounts = {
   mnemonic:
     process.env.MNEMONIC ||
     'test test test test test test test test test test test junk',

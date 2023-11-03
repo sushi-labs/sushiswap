@@ -1,4 +1,3 @@
-import { ChainId } from 'sushi/chain'
 import {
   DataFetcher,
   LiquidityProviders,
@@ -9,15 +8,16 @@ import { CL_MAX_TICK } from '@sushiswap/tines'
 import { CL_MIN_TICK } from '@sushiswap/tines'
 import { UniV3Pool } from '@sushiswap/tines'
 import {
+  UniV3Environment,
+  UniV3PoolInfo,
   createRandomUniV3Pool,
   createUniV3EnvReal,
   createUniV3Pool,
   possibleFee,
-  UniV3Environment,
-  UniV3PoolInfo,
 } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
+import { ChainId } from 'sushi/chain'
 import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'
@@ -162,7 +162,7 @@ describe('DataFetcher Uni V3', () => {
       ][i % possibleFee.length]
       const poolInfo = await createRandomUniV3Pool(
         env,
-        'pool' + i,
+        `pool${i}`,
         10,
         0.8,
         fee,

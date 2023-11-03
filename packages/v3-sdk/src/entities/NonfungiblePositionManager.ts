@@ -1,18 +1,18 @@
 import { Interface } from '@ethersproject/abi'
-import { validateAndParseAddress } from '@sushiswap/amm'
+import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import {
   Amount as CurrencyAmount,
   Currency,
   Native,
   Token,
 } from 'sushi/currency'
-import { BigintIsh, Percent } from 'sushi'
-import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
+import { BigintIsh, Percent } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
-import { ADDRESS_ZERO } from '../constants'
-import { MethodParameters, toHex } from '../utils/calldata'
 import { SushiSwapV3Pool } from '.'
+import { ADDRESS_ZERO } from '../constants'
+import { validateAndParseAddress } from '../utils'
+import { MethodParameters, toHex } from '../utils/calldata'
 import { Multicall } from './Multicall'
 import { Payments } from './Payments'
 import { Position } from './Position'
