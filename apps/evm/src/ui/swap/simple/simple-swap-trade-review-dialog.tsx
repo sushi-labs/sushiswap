@@ -17,7 +17,6 @@ import {
   SkeletonBox,
   SkeletonText,
   classNames,
-  createErrorToast,
   useToast,
 } from '@sushiswap/ui'
 import {
@@ -63,6 +62,7 @@ import {
   useSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapErrorMessage } from './simple-swap-error-message'
+import { LinkExternal } from '@sushiswap/ui'
 
 export const SimpleSwapTradeReviewDialog: FC<{
   children({
@@ -183,7 +183,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
             variant: 'success',
             caption: Chain.from(chainId)?.name,
             description: (
-              <>
+              <LinkExternal href={Chain.from(chainId)?.getTxUrl(data.hash)}>
                 {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'}{' '}
                 <b>
                   {trade.amountIn?.toSignificant(6)}{' '}
@@ -194,7 +194,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                   {trade.amountOut?.toSignificant(6)}{' '}
                   {trade.amountOut?.currency.symbol}{' '}
                 </b>
-              </>
+              </LinkExternal>
             ),
           })
         })
@@ -381,14 +381,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
         args: stringify(trade?.writeArgs),
         error: stringify(error),
       })
-      createErrorToast(error.message, false)
+
+      toast({
+        variant: 'destructive',
+        description: <>Transaction rejected.</>,
+      })
     },
   })
 
   return (
     <DialogProvider>
       <DialogReview>
-        {({ confirm }) => (
+        {({ confirm, close }) => (
           <>
             <div className="flex flex-col">
               <SimpleSwapErrorMessage
@@ -535,7 +539,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                     fullWidth
                     size="xl"
                     loading={!writeAsync && !isError}
-                    onClick={() => writeAsync?.().then(() => confirm())}
+                    onClick={() => writeAsync?.().then(confirm).catch(close)}
                     disabled={Boolean(
                       !!error ||
                         isWritePending ||

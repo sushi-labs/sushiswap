@@ -203,14 +203,20 @@ interface DialogReviewProps
     React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>,
     'children' | 'open'
   > {
-  children: ({ confirm }: { confirm(): void }) => ReactNode
+  children: ({
+    confirm,
+    close,
+  }: { confirm(): void; close(): void }) => ReactNode
 }
 
 const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
   const { confirm, open, setOpen } = useDialog(DialogType.Review)
+
+  const close = useCallback(() => setOpen(false), [setOpen])
+
   return (
     <Dialog {...props} open={open} onOpenChange={setOpen}>
-      {children({ confirm })}
+      {children({ confirm, close })}
     </Dialog>
   )
 }
