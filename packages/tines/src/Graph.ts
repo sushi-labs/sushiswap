@@ -1306,7 +1306,7 @@ export class Graph {
       const vert = this.getVert(l.tokenFrom)
       console.assert(vert !== undefined, 'Internal Error 570')
       const edge = (vert as Vertice).edges.find(
-        (e) => e.pool.address === l.poolAddress,
+        (e) => e.pool.address === l.poolAddress && vert.getNeibour(e).token.address === l.tokenTo.address,
       )
       console.assert(edge !== undefined, 'Internel Error 569')
       const pool = (edge as Edge).pool
@@ -1357,7 +1357,7 @@ export class Graph {
       const vert = this.getVert(l.tokenTo)
       console.assert(vert !== undefined, 'Internal Error 884')
       const edge = (vert as Vertice).edges.find(
-        (e) => e.pool.address === l.poolAddress,
+        (e) => e.pool.address === l.poolAddress && vert.getNeibour(e).token.address === l.tokenFrom.address,
       )
       console.assert(edge !== undefined, 'Internel Error 888')
       const pool = (edge as Edge).pool
