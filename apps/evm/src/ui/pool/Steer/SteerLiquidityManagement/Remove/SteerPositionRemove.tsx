@@ -189,7 +189,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
         'flex flex-col gap-4',
       )}
     >
-      <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white rounded-xl dark:bg-secondary border border-accent">
+      <div className="p-3 pb-2 space-y-2 overflow-hidden bg-white border rounded-xl dark:bg-secondary border-accent">
         <div className="flex justify-between gap-4">
           <div>
             <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
@@ -260,7 +260,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           />
         </div>
       </div>
-      <Card variant="outline" className="space-y-6 p-6">
+      <Card variant="outline" className="p-6 space-y-6">
         <CardGroup>
           <CardLabel>{"You'll"} receive</CardLabel>
           <CardCurrencyAmountItem
@@ -282,7 +282,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           <Button
             size="xl"
             loading={isWritePending}
-            disabled={+value === 0}
+            disabled={+value === 0 || !sendTransaction}
             fullWidth
             onClick={() => sendTransaction?.()}
             testId="remove-or-add-steer-liquidity"
