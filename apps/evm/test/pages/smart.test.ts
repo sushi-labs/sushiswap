@@ -102,7 +102,6 @@ async function addSmartPoolPosition(page: Page) {
 }
 
 async function removeSmartPoolPosition(page: Page) {
-
   // FIXME: Currently disabled until we can make the smart positions table show the position.
   // await page.locator('[testdata-id=my-positions-button]').click()
   // await page.locator('[testdata-id=sushiswap-smart]').click()
@@ -117,7 +116,6 @@ async function removeSmartPoolPosition(page: Page) {
   // )
   // await expect(firstPositionSelector).toBeVisible()
   // await firstPositionSelector.click()
-
 
   const poolId = '137-0x3361bf42cca22dc5fe37c7bd2c6a7284db440dfc'
   await page.locator('[testdata-id=smart-pools-button]').click()
