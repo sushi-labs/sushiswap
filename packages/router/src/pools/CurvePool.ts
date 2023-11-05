@@ -52,7 +52,7 @@ export class CurvePoolCode extends PoolCode {
 
     const [index0, index1] = this.pool instanceof CurveMultitokenPool ? [this.pool.index0, this.pool.index1] : [0, 1]
     const [fromIndex, toIndex] = 
-      leg.tokenFrom.tokenId == this.pool.token0.tokenId ? [index0, index1] : [index1, index0]
+      leg.tokenFrom.tokenId == leg.tokenFrom.tokenId ? [index0, index1] : [index1, index0]
     const code = new HEXer()
       .uint8(5) // Curve pool
       .address(this.pool.address)
