@@ -132,7 +132,7 @@ async function getTestEnvironment() {
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,
     )
-    poolList.forEach((p) => poolCodes.set(p.pool.address, p))
+    poolList.forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
   }
 
   const RouteProcessorTx = await client.deployContract({
@@ -287,7 +287,7 @@ async function makeSwap(
 
   const route = Router.findBestRoute(
     //pcMap,
-    env.poolList.filter(p => !usedPools.has(p.pool.address)),
+    env.poolList.filter(p => !usedPools.has(p.pool.uniqueID())),
     env.chainId,
     fromToken,
     amountIn,
@@ -299,8 +299,8 @@ async function makeSwap(
   // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // const cc = route.legs
   //   .map((l) => {
-  //     if (pcMap.get(l.poolAddress)?.liquidityProvider == LiquidityProviders.CurveSwap)
-  //       return `${pcMap.get(l.poolAddress)?.poolName}: ${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${
+  //     if (pcMap.get(l.uniqueId)?.liquidityProvider == LiquidityProviders.CurveSwap)
+  //       return `${pcMap.get(l.uniqueId)?.poolName}: ${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${
   //         l.poolAddress
   //       }  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   })
@@ -367,8 +367,8 @@ async function makeSwap(
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
-      if (!(pcMap.get(l.poolAddress) instanceof NativeWrapBridgePoolCode)) {
-        usedPools.add(l.poolAddress)
+      if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
+        usedPools.add(l.uniqueId)
       }
     })
   }
@@ -543,8 +543,8 @@ async function checkTransferAndRoute(
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
-      if (!(pcMap.get(l.poolAddress) instanceof NativeWrapBridgePoolCode)) {
-        usedPools.add(l.poolAddress)
+      if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
+        usedPools.add(l.uniqueId)
       }
     })
   }
@@ -959,7 +959,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
     it('Curve 3pool test', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
+      intermidiateResult[0] = BigInt(1e5) * BigInt(1e18)
       debugger
       intermidiateResult = await updMakeSwap(
         env,

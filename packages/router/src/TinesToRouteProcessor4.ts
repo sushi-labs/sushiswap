@@ -19,6 +19,14 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
     super(routeProcessorAddress, chainId, pools)
   }
 
+  override getPoolCode(l: RouteLeg): PoolCode {
+    const pc = this.pools.get(l.uniqueId)
+    if (pc === undefined) {
+      throw new Error(`unknown pool: ${l.uniqueId}`)
+    }
+    return pc
+  }
+
   override getRouteProcessorCode(
     route: MultiRoute,
     toAddress: string,

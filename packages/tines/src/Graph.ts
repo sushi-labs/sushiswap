@@ -11,6 +11,7 @@ const ROUTER_DISTRIBUTION_PORTION = 65535
 export interface RouteLeg {
   poolType: 'Stable' | 'Classic' | 'Unknown'
   poolAddress: Address // which pool use for swap
+  uniqueId: string // pool.uniqueId
   poolFee: number
 
   tokenFrom: RToken // from what token to swap
@@ -1232,6 +1233,7 @@ export class Graph {
 
         legs.push({
           poolAddress: edge.pool.address,
+          uniqueId: edge.pool.uniqueID(),
           poolType,
           poolFee: edge.pool.fee,
           tokenFrom: n.token,

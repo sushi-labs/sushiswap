@@ -342,7 +342,7 @@ export class DataFetcher {
         currency0.wrapped,
         currency1.wrapped,
       )
-      poolCodes.forEach((pc) => result.set(pc.pool.address, pc))
+      poolCodes.forEach((pc) => result.set(pc.pool.uniqueID(), pc))
     })
 
     return result
