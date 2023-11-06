@@ -1,6 +1,6 @@
 export const EVM_APP_BASE_URL =
-  process.env['EVM_APP_BASE_URL'] ||
   process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
+  process.env['NEXT_PUBLIC_VERCEL_URL'] ||
   'http://localhost:3000'
 
 export const TOKEN_PRICE_API =
