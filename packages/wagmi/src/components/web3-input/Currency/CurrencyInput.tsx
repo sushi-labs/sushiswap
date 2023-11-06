@@ -9,7 +9,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   useTransition,
 } from 'react'
@@ -17,7 +16,7 @@ import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
-import { useBalanceWeb3 } from '../../../hooks/balances'
+import { useBalanceWeb3 } from '../../../hooks'
 import { TokenSelector } from '../../token-selector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -70,12 +69,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
   const [pending, startTransition] = useTransition()
-
-  const inputRef = useRef<HTMLInputElement>(null)
-  const focusInput = useCallback(() => {
-    if (disabled) return
-    inputRef.current?.focus()
-  }, [disabled])
 
   const { data: balance, isInitialLoading: isBalanceLoading } = useBalanceWeb3({
     chainId,
@@ -193,8 +186,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
 
   return (
     <div
-      onClick={focusInput}
-      onKeyDown={focusInput}
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         'relative space-y-2 overflow-hidden pb-2',
@@ -223,7 +214,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           <TextField
             testdata-id={`${id}-input`}
             type="number"
-            ref={inputRef}
             variant="naked"
             disabled={disabled}
             onValueChange={_onChange}

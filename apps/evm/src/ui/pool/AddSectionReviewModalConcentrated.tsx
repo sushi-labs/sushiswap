@@ -321,6 +321,9 @@ export const AddSectionReviewModalConcentrated: FC<
                         )}{' '}
                       </div>
                     </List.KeyValue>{' '}
+                    <List.KeyValue flex title="Slippage">
+                      {slippageTolerance.toSignificant(2)}%
+                    </List.KeyValue>
                   </List.Control>
                 </List>
                 <List className="!pt-0">

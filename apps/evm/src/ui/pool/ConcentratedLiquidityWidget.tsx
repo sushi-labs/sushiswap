@@ -11,11 +11,11 @@ import {
 } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
-import React, { FC, Fragment, useCallback, useMemo } from 'react'
-import { Bound, Field } from 'src/lib/constants'
+import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 
+import { Bound, Field } from '../../lib/constants'
 import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
 import {
   useConcentratedDerivedMintInfo,
