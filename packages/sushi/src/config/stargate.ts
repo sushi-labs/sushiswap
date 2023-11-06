@@ -108,8 +108,8 @@ export const STARGATE_USDC_ADDRESS = {
   [ChainId.ETHEREUM]: USDC_ADDRESS[ChainId.ETHEREUM],
   [ChainId.AVALANCHE]: USDC_ADDRESS[ChainId.AVALANCHE],
   [ChainId.POLYGON]: USDC_ADDRESS[ChainId.POLYGON],
-  [ChainId.ARBITRUM]: USDC_ADDRESS[ChainId.ARBITRUM],
-  [ChainId.OPTIMISM]: USDC_ADDRESS[ChainId.OPTIMISM],
+  [ChainId.ARBITRUM]: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
+  [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
   // [ChainId.FANTOM]: USDC_ADDRESS[ChainId.FANTOM],
   [ChainId.FANTOM]: '0x28a92dde19D9989F39A49905d7C9C2FAc7799bDf',
   // [ChainId.BASE]: USDC_ADDRESS[ChainId.BASE],
@@ -121,8 +121,20 @@ export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> =
     [ChainId.ETHEREUM]: USDC[ChainId.ETHEREUM],
     [ChainId.AVALANCHE]: USDC[ChainId.AVALANCHE],
     [ChainId.POLYGON]: USDC[ChainId.POLYGON],
-    [ChainId.ARBITRUM]: USDC[ChainId.ARBITRUM],
-    [ChainId.OPTIMISM]: USDC[ChainId.OPTIMISM],
+    [ChainId.ARBITRUM]: new Token({
+      chainId: ChainId.ARBITRUM,
+      address: STARGATE_USDC_ADDRESS[ChainId.ARBITRUM],
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
+    [ChainId.OPTIMISM]: new Token({
+      chainId: ChainId.OPTIMISM,
+      address: STARGATE_USDC_ADDRESS[ChainId.OPTIMISM],
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
     // [ChainId.FANTOM]: USDC[ChainId.FANTOM],
     [ChainId.FANTOM]: new Token({
       chainId: ChainId.FANTOM,
@@ -149,7 +161,7 @@ export const STARGATE_USDT_ADDRESS = {
   [ChainId.ARBITRUM]: USDT_ADDRESS[ChainId.ARBITRUM],
   [ChainId.FANTOM]: USDT_ADDRESS[ChainId.FANTOM],
   [ChainId.METIS]: USDT_ADDRESS[ChainId.METIS],
-  [ChainId.KAVA]: '0x919C1c267BC06a7039e03fcc2eF738525769109c',
+  [ChainId.KAVA]: '0xAad094F6A75A14417d39f04E690fC216f080A41a',
 } as const
 
 export const STARGATE_USDT: Record<keyof typeof STARGATE_USDT_ADDRESS, Token> =
