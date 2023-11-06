@@ -1,6 +1,10 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import {
+  FeeAmount,
+  SushiSwapV3ChainId,
+  getPriceRangeWithTokenRatio,
+} from '@sushiswap/v3-sdk'
 import { format } from 'd3'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
@@ -9,7 +13,12 @@ import colors from 'tailwindcss/colors'
 
 import { Chart } from './Chart'
 import { useDensityChartData } from './hooks'
-import { ZoomLevels } from './types'
+import { HandleType, ZoomLevels } from './types'
+
+const brushKeyToFieldKey: Record<HandleType, 'LOWER' | 'UPPER'> = {
+  e: 'LOWER',
+  w: 'UPPER',
+}
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
@@ -62,9 +71,11 @@ export default function LiquidityChartRangeInput({
   currencyB,
   feeAmount,
   ticksAtLimit,
+  priceRange,
   price,
   priceLower,
   priceUpper,
+  weightLockedCurrencyBase,
   onLeftRangeInput,
   onRightRangeInput,
   interactive,
@@ -75,9 +86,11 @@ export default function LiquidityChartRangeInput({
   currencyB: Type | undefined
   feeAmount?: FeeAmount
   ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
+  priceRange: number | undefined
   price: number | undefined
   priceLower?: Price<Token, Token>
   priceUpper?: Price<Token, Token>
+  weightLockedCurrencyBase: number | undefined
   onLeftRangeInput: (typedValue: string) => void
   onRightRangeInput: (typedValue: string) => void
   interactive: boolean
@@ -165,6 +178,27 @@ export default function LiquidityChartRangeInput({
   const isUninitialized =
     !currencyA || !currencyB || (data === undefined && !isLoading)
 
+  /**
+   * If user locked a desired token weight, we need to compute a correct price range when user is brushing.
+   * Note that when brushing, the `range` given from the brush event is NOT necessarily equal to what is displayed on the screen.
+   */
+  const getNewRangeWhenBrushing = useCallback(
+    (
+      range: [number, number],
+      movingHandle: HandleType | undefined,
+    ): [number, number] | undefined => {
+      if (!price || !movingHandle || !weightLockedCurrencyBase) return undefined
+      return getPriceRangeWithTokenRatio(
+        price,
+        range[0],
+        range[1],
+        brushKeyToFieldKey[movingHandle],
+        weightLockedCurrencyBase,
+      )
+    },
+    [price, weightLockedCurrencyBase],
+  )
+
   return (
     <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
       {isUninitialized ? (
@@ -223,8 +257,9 @@ export default function LiquidityChartRangeInput({
             brushLabels={brushLabelValue}
             brushDomain={brushDomain}
             onBrushDomainChange={onBrushDomainChangeEnded}
+            getNewRangeWhenBrushing={getNewRangeWhenBrushing}
             zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
-            ticksAtLimit={ticksAtLimit}
+            priceRange={priceRange}
             hideBrushes={hideBrushes}
           />
         </div>

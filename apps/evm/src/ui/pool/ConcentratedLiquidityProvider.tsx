@@ -8,19 +8,24 @@ import {
   TICK_SPACINGS,
   TickMath,
   encodeSqrtRatioX96,
+  getPriceRangeWithTokenRatio,
   nearestUsableTick,
   priceToClosestTick,
+  priceToNumber,
   tickToPrice,
 } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import {
+  Dispatch,
   FC,
   ReactNode,
+  SetStateAction,
   createContext,
   useCallback,
   useContext,
   useMemo,
   useReducer,
+  useState,
 } from 'react'
 import { Bound, Field } from 'src/lib/constants'
 import { getTickToPrice, tryParseTick } from 'src/lib/functions'
@@ -240,6 +245,14 @@ export function useConcentratedDerivedMintInfo({
   ticksAtLimit: { [_ticksAtLimitBound in Bound]?: boolean | undefined }
   isLoading: boolean
   isInitialLoading: boolean
+  leftBoundInput: string | true
+  rightBoundInput: string | true
+  weightLockedCurrencyBase: number | undefined
+  setWeightLockedCurrencyBase: (
+    weightLockedCurrencyBase: number | undefined,
+  ) => void
+  independentRangeField: Bound
+  setIndependentRangeField: Dispatch<SetStateAction<Bound>>
 } {
   const {
     independentField,
@@ -369,6 +382,45 @@ export function useConcentratedDerivedMintInfo({
     [feeAmount],
   )
 
+  const [independentRangeField, setIndependentRangeField] = useState<Bound>(
+    Bound.LOWER,
+  )
+  const [weightLockedCurrencyBase, setWeightLockedCurrencyBase] = useState<
+    number | undefined
+  >(undefined)
+
+  const [leftBoundInput, rightBoundInput] = useMemo((): [
+    string | true,
+    string | true,
+  ] => {
+    if (
+      weightLockedCurrencyBase != null &&
+      price &&
+      leftRangeTypedValue !== '' &&
+      rightRangeTypedValue !== ''
+    ) {
+      const newRange = getPriceRangeWithTokenRatio(
+        priceToNumber(invertPrice ? price.invert() : price),
+        leftRangeTypedValue === true ? 2 ** -112 : Number(leftRangeTypedValue),
+        rightRangeTypedValue === true ? 2 ** 112 : Number(rightRangeTypedValue),
+        independentRangeField,
+        weightLockedCurrencyBase,
+      )?.map((x) => x.toString())
+
+      if (newRange && newRange[0] != null && newRange[1] != null) {
+        return [newRange[0], newRange[1]]
+      }
+    }
+    return [leftRangeTypedValue, rightRangeTypedValue]
+  }, [
+    weightLockedCurrencyBase,
+    leftRangeTypedValue,
+    rightRangeTypedValue,
+    independentRangeField,
+    price,
+    invertPrice,
+  ])
+
   // parse typed range values and determine closest ticks
   // lower should always be a smaller tick
   const ticks = useMemo(() => {
@@ -376,48 +428,28 @@ export function useConcentratedDerivedMintInfo({
       [Bound.LOWER]:
         typeof existingPosition?.tickLower === 'number'
           ? existingPosition.tickLower
-          : (invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-            (!invertPrice && typeof leftRangeTypedValue === 'boolean')
+          : (invertPrice && rightBoundInput === true) ||
+            (!invertPrice && leftBoundInput === true)
           ? tickSpaceLimits[Bound.LOWER]
           : invertPrice
-          ? tryParseTick(
-              token1,
-              token0,
-              feeAmount,
-              rightRangeTypedValue.toString(),
-            )
-          : tryParseTick(
-              token0,
-              token1,
-              feeAmount,
-              leftRangeTypedValue.toString(),
-            ),
+          ? tryParseTick(token1, token0, feeAmount, rightBoundInput.toString())
+          : tryParseTick(token0, token1, feeAmount, leftBoundInput.toString()),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? existingPosition.tickUpper
-          : (!invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-            (invertPrice && typeof leftRangeTypedValue === 'boolean')
+          : (invertPrice && leftBoundInput === true) ||
+            (!invertPrice && rightBoundInput === true)
           ? tickSpaceLimits[Bound.UPPER]
           : invertPrice
-          ? tryParseTick(
-              token1,
-              token0,
-              feeAmount,
-              leftRangeTypedValue.toString(),
-            )
-          : tryParseTick(
-              token0,
-              token1,
-              feeAmount,
-              rightRangeTypedValue.toString(),
-            ),
+          ? tryParseTick(token1, token0, feeAmount, leftBoundInput.toString())
+          : tryParseTick(token0, token1, feeAmount, rightBoundInput.toString()),
     }
   }, [
     existingPosition,
     feeAmount,
     invertPrice,
-    leftRangeTypedValue,
-    rightRangeTypedValue,
+    leftBoundInput,
+    rightBoundInput,
     token0,
     token1,
     tickSpaceLimits,
@@ -663,6 +695,12 @@ export function useConcentratedDerivedMintInfo({
       currencies,
       pool,
       parsedAmounts,
+      leftBoundInput,
+      rightBoundInput,
+      weightLockedCurrencyBase,
+      setWeightLockedCurrencyBase,
+      independentRangeField,
+      setIndependentRangeField,
       ticks,
       price,
       pricesAtTicks,
@@ -685,9 +723,11 @@ export function useConcentratedDerivedMintInfo({
       depositADisabled,
       depositBDisabled,
       errorMessage,
+      independentRangeField,
       invalidPool,
       invalidRange,
       invertPrice,
+      leftBoundInput,
       noLiquidity,
       outOfRange,
       parsedAmounts,
@@ -696,9 +736,11 @@ export function useConcentratedDerivedMintInfo({
       price,
       pricesAtLimit,
       pricesAtTicks,
+      rightBoundInput,
       ticks,
       ticksAtLimit,
       usePool,
+      weightLockedCurrencyBase,
     ],
   )
 }
