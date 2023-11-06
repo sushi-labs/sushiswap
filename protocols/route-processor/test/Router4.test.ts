@@ -286,8 +286,8 @@ async function makeSwap(
   //await checkPoolsState(pcMap, env.user.address, env.chainId)
 
   const route = Router.findBestRoute(
-    //pcMap,
-    env.poolList.filter(p => !usedPools.has(p.pool.uniqueID())),
+    pcMap,
+    //env.poolList.filter(p => !usedPools.has(p.pool.uniqueID())),
     env.chainId,
     fromToken,
     amountIn,
@@ -796,7 +796,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
       intermidiateResult[0] = getBigInt(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
-        console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter)
+        console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter, 
+          `pools: ${env.poolCodes.size - usedPools.size}/${env.poolCodes.size}`)
         intermidiateResult = await updMakeSwap(
           env,
           testTokensSet[currentToken] as Type,
@@ -956,7 +957,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
   }
 
   if (network.config.chainId === 1) {
-    it('Curve 3pool test', async function () {
+    it('Curve 3pool test using 2 pools from 3', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e5) * BigInt(1e18)

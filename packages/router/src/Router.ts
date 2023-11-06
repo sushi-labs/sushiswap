@@ -201,7 +201,7 @@ export class Router {
     if (poolCodes instanceof Map) poolCodesMap = poolCodes
     else {
       poolCodesMap = new Map()
-      poolCodes.forEach(p => poolCodesMap.set(p.pool.address, p))
+      poolCodes.forEach(p => poolCodesMap.set(p.pool.uniqueID(), p))
     }
     
     let poolCodesList = poolCodes instanceof Map ? Array.from(poolCodes.values()) : poolCodes
@@ -369,7 +369,7 @@ export class Router {
     route.legs.forEach((l, i) => {
       res += `${shiftSub}${i + 1}. ${l.tokenFrom.symbol} ${Math.round(
         l.absolutePortion * 100,
-      )}% -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${
+      )}% -> [${poolCodesMap.get(l.uniqueId)?.poolName}] -> ${
         l.tokenTo.symbol
       }\n`
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
