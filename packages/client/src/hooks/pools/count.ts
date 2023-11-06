@@ -4,7 +4,7 @@ import {
   type GetPoolCountArgs,
   type PoolCount,
   getPoolCountUrl,
-} from '../../pure/pools/count.js'
+} from '../../pure/pools/count/count'
 import { type SWRHookConfig } from '../../types.js'
 
 export const usePoolCount = ({

@@ -4,8 +4,8 @@ import {
   type GetSteerVaultArgs,
   type SteerVault,
   getSteerVaultUrl,
-} from '../../pure/steer-vault/vault.js'
-import { type SWRHookConfig } from '../../types.js'
+} from '../../pure/steer-vault/vault/vault'
+import { type SWRHookConfig } from '../../types'
 
 export const useSteerVault = ({
   args,

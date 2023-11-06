@@ -1168,28 +1168,40 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database
-      '@sushiswap/pools-api':
-        specifier: workspace:*
-        version: link:../../apis/pools
-      '@sushiswap/steer-vault-api':
-        specifier: workspace:*
-        version: link:../../apis/steer-vault
       '@sushiswap/token-price-api':
         specifier: workspace:*
         version: link:../../apis/token-price
+      '@sushiswap/viem-config':
+        specifier: workspace:*
+        version: link:../../config/viem
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
+      deepmerge-ts:
+        specifier: ^4.3.0
+        version: 4.3.0
       sushi:
         specifier: workspace:*
         version: link:../sushi
       tslib:
         specifier: latest
         version: 2.6.2
+      viem:
+        specifier: 1.17.2
+        version: 1.17.2(typescript@5.2.2)(zod@3.21.4)
+      zod:
+        specifier: 3.21.4
+        version: 3.21.4
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
+      '@sushiswap/pools-api':
+        specifier: workspace:*
+        version: link:../../apis/pools
+      '@sushiswap/steer-vault-api':
+        specifier: workspace:*
+        version: link:../../apis/steer-vault
       '@sushiswap/tokens-api':
         specifier: workspace:*
         version: link:../../apis/tokens

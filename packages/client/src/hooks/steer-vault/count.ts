@@ -4,8 +4,8 @@ import {
   type GetSteerVaultCountArgs,
   type SteerVaultCount,
   getSteerVaultCountUrl,
-} from '../../pure/steer-vault/count.js'
-import { type SWRHookConfig } from '../../types.js'
+} from '../../pure/steer-vault/count/count'
+import { type SWRHookConfig } from '../../types'
 
 export const useSteerVaultCount = ({
   args,

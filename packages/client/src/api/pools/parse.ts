@@ -1,18 +1,9 @@
-// eslint-disable-next-line
-import type * as _ from '@prisma/client/runtime'
-
-import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
+import { type Prisma } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import { isPromiseFulfilled } from 'sushi'
-import { getUnindexedPool } from '../getUnindexedPool.js'
-import {
-  PoolApiSchema,
-  PoolCountApiSchema,
-  PoolsApiSchema,
-} from './../schemas/index.js'
-import { SushiPoolSelect } from './select.js'
+import { type PoolCountApiSchema } from '../../pure/pools/count/schema'
+import { type PoolsApiSchema } from '../../pure/pools/pools/schema'
 
-function parseWhere(
+export function parsePoolArgs(
   args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output,
 ) {
   const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
@@ -140,87 +131,4 @@ function parseWhere(
   }
 
   return where
-}
-
-export async function getEarnPool(args: typeof PoolApiSchema._output) {
-  const id = `${args.chainId}:${args.address.toLowerCase()}`
-
-  // Need to specify take, orderBy and orderDir to make TS happy
-  let [pool]: Awaited<ReturnType<typeof getEarnPools>> = await getEarnPools({
-    ids: [id],
-    take: 1,
-    orderBy: 'liquidityUSD',
-    orderDir: 'desc',
-  })
-
-  if (!pool) {
-    pool = (await getUnindexedPool(id)) as any
-  }
-
-  if (!pool) throw new Error('Pool not found.')
-
-  return pool
-}
-
-export async function getEarnPools(args: typeof PoolsApiSchema._output) {
-  const take = args.take
-  const orderBy: Prisma.SushiPoolOrderByWithRelationInput = {
-    [args.orderBy]: args.orderDir,
-  }
-  const where: Prisma.SushiPoolWhereInput = parseWhere(args)
-
-  let skip = 0
-  let cursor: { cursor: Prisma.SushiPoolWhereUniqueInput } | object = {}
-
-  if (args.cursor) {
-    skip = 1
-    cursor = { cursor: { id: args.cursor } }
-  }
-
-  const client = await createClient()
-  const pools = await client.sushiPool.findMany({
-    take,
-    skip,
-    ...cursor,
-    where,
-    orderBy,
-    select: SushiPoolSelect,
-  })
-
-  const poolsRetyped = pools as unknown as DecimalToString<typeof pools>
-
-  if (args.ids && args.ids.length > poolsRetyped.length) {
-    const fetchedPoolIds = poolsRetyped.map((pool) => pool.id)
-    const unfetchedPoolIds = args.ids.filter(
-      (id) => !fetchedPoolIds.includes(id),
-    )
-
-    const { getUnindexedPool } = await import('../getUnindexedPool')
-
-    const unindexedPoolsResults = await Promise.allSettled(
-      unfetchedPoolIds.map((id) => getUnindexedPool(id)),
-    )
-    const unindexedPools = unindexedPoolsResults.flatMap((res) =>
-      isPromiseFulfilled(res) ? [res.value] : [],
-    )
-
-    poolsRetyped.push(...unindexedPools)
-  }
-
-  await client.$disconnect()
-  return poolsRetyped
-}
-
-export async function getEarnPoolCount(
-  args: typeof PoolCountApiSchema._output,
-) {
-  const where: Prisma.SushiPoolWhereInput = parseWhere(args)
-
-  const client = await createClient()
-  const count = await client.sushiPool.count({
-    where,
-  })
-
-  await client.$disconnect()
-  return { count }
 }

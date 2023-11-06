@@ -1,15 +1,11 @@
-import type {} from '@sushiswap/database'
-// biome-ignore lint/correctness/noUnusedVariables: it's fine 😀
-import type { getEarnPool as getEarnPoolOriginal } from '@sushiswap/pools-api/lib/api/index'
-import { PoolApiSchema } from '@sushiswap/pools-api/lib/schemas/pool'
-import { fetch } from '@whatwg-node/fetch'
 import type { ChainId } from 'sushi/chain'
+import { type getPoolFromDB } from '../../../api/pools/pool'
+import { POOL_API } from '../../../constants'
+import { type GetApiInputFromOutput } from '../../../types'
+import { type PoolApiSchema } from './schema'
 
-import { POOL_API } from '../../constants.js'
-import type { GetApiInputFromOutput } from '../../types.js'
-
-export { PoolApiSchema }
-export type Pool = Awaited<ReturnType<typeof getEarnPoolOriginal>>
+export { type PoolApiSchema }
+export type Pool = Awaited<ReturnType<typeof getPoolFromDB>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetPoolArgs =
   | GetApiInputFromOutput<

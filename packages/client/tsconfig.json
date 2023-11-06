@@ -6,6 +6,7 @@
     "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": "./src",
-    "declaration": true
+    "declaration": true,
+    "moduleResolution": "Bundler"
   }
 }

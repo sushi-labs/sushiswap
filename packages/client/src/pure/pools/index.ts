@@ -1,4 +1,3 @@
-export * from './count'
-export * from './pool'
-export * from './pools'
+export * from './pool/pool'
+export * from './pools/pools'
 export { ChefType, Protocol, RewarderType } from '@sushiswap/database'

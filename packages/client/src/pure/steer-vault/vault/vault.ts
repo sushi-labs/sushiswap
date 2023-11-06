@@ -1,14 +1,11 @@
-import type {} from '@sushiswap/database'
-import type { getSteerVault as _getSteerVault } from '@sushiswap/steer-vault-api/lib/api/index'
-import { SteerVaultApiSchema } from '@sushiswap/steer-vault-api/lib/schemas/vault'
-import { fetch } from '@whatwg-node/fetch'
-import type { ChainId } from 'sushi/chain'
+import { getChainIdAddressFromId } from 'sushi/format'
+import { type getSteerVaultFromDB } from '../../../api/steer-vault/vault'
+import { STEER_VAULT_API } from '../../../constants'
+import { type GetApiInputFromOutput } from '../../../types'
+import { type SteerVaultApiSchema } from './schema'
 
-import { STEER_VAULT_API } from '../../constants.js'
-import type { GetApiInputFromOutput } from '../../types.js'
-
-export { SteerVaultApiSchema }
-export type SteerVault = Awaited<ReturnType<typeof _getSteerVault>>
+export { type SteerVaultApiSchema }
+export type SteerVault = Awaited<ReturnType<typeof getSteerVaultFromDB>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetSteerVaultArgs =
   | GetApiInputFromOutput<
@@ -20,8 +17,9 @@ export type GetSteerVaultArgs =
 export const getSteerVaultUrl = (args: GetSteerVaultArgs) => {
   let chainId
   let address
+
   if (typeof args === 'string') {
-    ;[chainId, address] = args.split(':') as [ChainId, string]
+    ;({ chainId, address } = getChainIdAddressFromId(args))
   } else {
     ;[chainId, address] = [args.chainId, args.address]
   }

@@ -1,4 +1,3 @@
-export * from './count.js'
-export * from './vault.js'
-export * from './vaults.js'
-export { SteerStrategy } from '@sushiswap/database'
+export * from './count/count'
+export * from './vault/vault'
+export * from './vaults/vaults'

@@ -4,8 +4,8 @@ import {
   type GetPoolArgs,
   type Pool,
   getPoolUrl,
-} from '../../pure/pools/pool.js'
-import { type SWRHookConfig } from '../../types.js'
+} from '../../pure/pools/pool/pool'
+import { type SWRHookConfig } from '../../types'
 
 export const usePool = ({ args, shouldFetch }: SWRHookConfig<GetPoolArgs>) => {
   return useSWR<Pool>(

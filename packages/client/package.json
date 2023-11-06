@@ -58,18 +58,17 @@
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/pools-api": "workspace:*",
-    "@sushiswap/steer-vault-api": "workspace:*",
     "@sushiswap/token-price-api": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "sushi": "workspace:*",
-    "tslib": "latest"
+    "deepmerge-ts": "^4.3.0",
+    "tslib": "latest",
+    "viem": "1.17.2",
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/pools-api": "workspace:*",
-    "@sushiswap/steer-vault-api": "workspace:*",
-    "@sushiswap/token-price-api": "workspace:*",
     "@sushiswap/tokens-api": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",

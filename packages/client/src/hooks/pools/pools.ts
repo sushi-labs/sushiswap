@@ -5,8 +5,8 @@ import {
   type GetPoolsArgs,
   type Pools,
   getPoolsUrl,
-} from '../../pure/pools/pools.js'
-import { type InfiniteSWRHookConfig, type SWRHookConfig } from '../../types.js'
+} from '../../pure/pools/pools/pools'
+import { type InfiniteSWRHookConfig, type SWRHookConfig } from '../../types'
 
 export const usePools = ({
   args,
