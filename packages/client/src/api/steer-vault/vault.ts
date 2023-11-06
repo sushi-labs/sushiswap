@@ -13,7 +13,7 @@ export async function getSteerVaultFromDB(
     await getSteerVaultsFromDB({
       ids: [id],
       take: 1,
-      orderBy: 'liquidityUSD',
+      orderBy: 'reserveUSD',
       orderDir: 'desc',
     })
 

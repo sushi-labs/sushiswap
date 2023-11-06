@@ -1,5 +1,5 @@
 import { type getPoolCountFromDB } from '../../../api/pools/count'
-import { POOL_API } from '../../../constants'
+import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
 import { type GetApiInputFromOutput } from '../../../types'
 import { type PoolCountApiSchema } from './schema'
@@ -14,7 +14,7 @@ export type GetPoolCountArgs =
   | undefined
 
 export const getPoolCountUrl = (args: GetPoolCountArgs) => {
-  return `${POOL_API}/api/v0/count${parseArgs(args)}`
+  return `${EVM_APP_BASE_URL}/pool/api/pools/count${parseArgs(args)}`
 }
 
 export const getPoolCount = async (

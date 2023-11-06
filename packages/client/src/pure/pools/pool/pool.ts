@@ -1,6 +1,6 @@
-import type { ChainId } from 'sushi/chain'
+import { getChainIdAddressFromId } from 'sushi'
 import { type getPoolFromDB } from '../../../api/pools/pool'
-import { POOL_API } from '../../../constants'
+import { EVM_APP_BASE_URL } from '../../../constants'
 import { type GetApiInputFromOutput } from '../../../types'
 import { type PoolApiSchema } from './schema'
 
@@ -18,12 +18,12 @@ export const getPoolUrl = (args: GetPoolArgs) => {
   let chainId
   let address
   if (typeof args === 'string') {
-    ;[chainId, address] = args.split(':') as [ChainId, string]
+    ;({ chainId, address } = getChainIdAddressFromId(args))
   } else {
     ;[chainId, address] = [args.chainId, args.address]
   }
 
-  return `${POOL_API}/api/v0/${chainId}/${address}`
+  return `${EVM_APP_BASE_URL}/pool/api/pools/${chainId}/${address}`
 }
 
 export const getPool = async (args: GetPoolArgs): Promise<Pool> => {

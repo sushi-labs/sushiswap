@@ -1,5 +1,5 @@
 import { type getSteerVaultCountFromDB } from '../../../api/steer-vault/count'
-import { STEER_VAULT_API } from '../../../constants'
+import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
 import { type GetApiInputFromOutput } from '../../../types'
 import { type SteerVaultCountApiSchema } from './schema'
@@ -16,7 +16,7 @@ export type GetSteerVaultCountArgs =
   | undefined
 
 export const getSteerVaultCountUrl = (args: GetSteerVaultCountArgs) => {
-  return `${STEER_VAULT_API}/api/v0/count${parseArgs(args)}`
+  return `${EVM_APP_BASE_URL}/pool/api/steer-vault/count${parseArgs(args)}`
 }
 
 export const getSteerVaultCount = async (

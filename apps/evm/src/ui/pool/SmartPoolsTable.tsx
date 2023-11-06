@@ -10,7 +10,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
-import { Protocol, SteerVaults } from '@sushiswap/client'
+import { Protocol, SteerVault, SteerVaults } from '@sushiswap/client'
 import {
   Badge,
   Button,
@@ -373,26 +373,30 @@ const COLUMNS = [
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger
-                    asChild={isAngleEnabledChainId(row.original.chainId)}
+                    asChild={isAngleEnabledChainId(row.original.pool.chainId)}
                   >
                     <DropdownMenuItem
                       asChild
-                      disabled={!isAngleEnabledChainId(row.original.chainId)}
+                      disabled={
+                        !isAngleEnabledChainId(row.original.pool.chainId)
+                      }
                     >
                       <Link
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
                         href={`/pool/incentivize?chainId=${
-                          row.original.chainId
+                          row.original.pool.chainId
                         }&fromCurrency=${
                           row.original.token0.address ===
-                          Native.onChain(row.original.chainId).wrapped.address
+                          Native.onChain(row.original.pool.chainId).wrapped
+                            .address
                             ? 'NATIVE'
                             : row.original.token0.address
                         }&toCurrency=${
                           row.original.token1.address ===
-                          Native.onChain(row.original.chainId).wrapped.address
+                          Native.onChain(row.original.pool.chainId).wrapped
+                            .address
                             ? 'NATIVE'
                             : row.original.token1.address
                         }&feeAmount=${
@@ -406,7 +410,7 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!isAngleEnabledChainId(row.original.chainId)
+                      {!isAngleEnabledChainId(row.original.pool.chainId)
                         ? 'Not available on this network'
                         : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
                     </p>
@@ -520,7 +524,7 @@ const COLUMNS = [
       skeleton: <SkeletonText fontSize="lg" />,
     },
   },
-] satisfies ColumnDef<SteerVaults[0], unknown>[]
+] satisfies ColumnDef<SteerVault, unknown>[]
 
 export const SmartPoolsTable = () => {
   const { chainIds, protocols, farmsOnly } = usePoolFilters()

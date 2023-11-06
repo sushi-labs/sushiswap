@@ -30,6 +30,7 @@ export default async function Layout({
     ['steer-vault', vaultId],
     { revalidate: 60 * 15 },
   )()
+
   if (!pool) {
     notFound()
   }

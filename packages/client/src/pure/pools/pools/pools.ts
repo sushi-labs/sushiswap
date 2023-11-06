@@ -1,5 +1,5 @@
 import { type getPoolsFromDB } from '../../../api/pools/pools/'
-import { POOL_API } from '../../../constants'
+import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
 import { type GetApiInputFromOutput } from '../../../types'
 import { type PoolsApiSchema } from './schema'
@@ -14,7 +14,7 @@ export type GetPoolsArgs =
   | undefined
 
 export const getPoolsUrl = (args: GetPoolsArgs) => {
-  return `${POOL_API}/api/v0${parseArgs(args)}`
+  return `${EVM_APP_BASE_URL}/pool/api/pools${parseArgs(args)}`
 }
 
 export const getPools = async (args: GetPoolsArgs): Promise<Pools> => {

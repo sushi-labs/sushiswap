@@ -33,6 +33,8 @@ export async function getSteerVaultsFromDB(
     orderBy,
     select: {
       id: true,
+      address: true,
+      chainId: true,
 
       pool: {
         select: SushiPoolSelect,
@@ -41,6 +43,7 @@ export async function getSteerVaultsFromDB(
 
       apr: true,
       apr1d: true,
+      apr1w: true,
       // apr1m: true,
       // apr1y: true,
 
@@ -54,7 +57,9 @@ export async function getSteerVaultsFromDB(
         },
       },
       reserve0: true,
+      reserve0USD: true,
       fees0: true,
+      fees0USD: true,
 
       token1: {
         select: {
@@ -66,9 +71,15 @@ export async function getSteerVaultsFromDB(
         },
       },
       reserve1: true,
+      reserve1USD: true,
       fees1: true,
+      fees1USD: true,
+
+      reserveUSD: true,
+      feesUSD: true,
 
       strategy: true,
+      payloadHash: true,
       // description: true,
       // state: true
 

@@ -1196,12 +1196,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/pools-api':
-        specifier: workspace:*
-        version: link:../../apis/pools
-      '@sushiswap/steer-vault-api':
-        specifier: workspace:*
-        version: link:../../apis/steer-vault
       '@sushiswap/tokens-api':
         specifier: workspace:*
         version: link:../../apis/tokens

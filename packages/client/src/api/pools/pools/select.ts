@@ -1,4 +1,4 @@
-import type { Prisma } from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
 
 export const SushiPoolSelect = {
   id: true,
@@ -87,30 +87,67 @@ export const SushiPoolSelect = {
   steerVaults: {
     select: {
       id: true,
-      adjustmentFrequency: true,
+      address: true,
+      chainId: true,
+
+      feeTier: true,
+
       apr: true,
       apr1d: true,
-      apr1m: true,
-      apr1y: true,
-      description: true,
+      apr1w: true,
+      // apr1m: true,
+      // apr1y: true,
+
+      token0: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
+      reserve0: true,
+      reserve0USD: true,
       fees0: true,
+      fees0USD: true,
+
+      token1: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
+      reserve1: true,
+      reserve1USD: true,
       fees1: true,
-      feeTier: true,
-      lastAdjustmentTimestamp: true,
-      generatedAt: true,
+      fees1USD: true,
+
+      reserveUSD: true,
+      feesUSD: true,
+
+      strategy: true,
+      payloadHash: true,
+      // description: true,
+      // state: true
+
+      performanceFee: true,
+
       lowerTick: true,
       upperTick: true,
-      performanceFee: true,
-      reserve0: true,
-      reserve1: true,
-      state: true,
-      strategy: true,
+
+      adjustmentFrequency: true,
+      lastAdjustmentTimestamp: true,
+
       isEnabled: true,
       wasEnabled: true,
-      admin: true,
+
       creator: true,
+      admin: true,
       manager: true,
-      updatedAt: true,
     },
   },
 } as const satisfies Prisma.SushiPoolSelect

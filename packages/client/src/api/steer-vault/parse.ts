@@ -20,11 +20,11 @@ export function parseSteerArgs(
     })
   }
 
-  // if ('chainIds' in args && args.chainIds !== undefined) {
-  //   addFilter({
-  //     chainId: { in: args.chainIds },
-  //   })
-  // }
+  if ('chainIds' in args && args.chainIds !== undefined) {
+    addFilter({
+      chainId: { in: args.chainIds },
+    })
+  }
 
   if ('isEnabled' in args && args.isEnabled !== undefined) {
     addFilter({

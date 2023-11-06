@@ -1,5 +1,6 @@
 import type { Address } from 'viem'
 import type { ChainId } from '../chain/index.js'
+import { unsanitize } from './unsanitize.js'
 
 export const getIdFromChainIdAddress = (
   chainId: string | number,
@@ -7,7 +8,7 @@ export const getIdFromChainIdAddress = (
 ) => `${chainId}:${address.toLowerCase()}`
 
 export const getChainIdAddressFromId = (id: string) => {
-  const [chainId, address] = id.split(':') as [string, Address]
+  const [chainId, address] = unsanitize(id).split(':') as [string, Address]
 
   if (!chainId || !address) throw new Error(`Invalid id: ${id}`)
 

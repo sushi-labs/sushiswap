@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const SteerVaultsApiSchema = z.object({
-  take: z.coerce.number().int().lte(1000).default(20),
+  take: z.coerce.number().int().lte(1000).default(1000),
   ids: z
     .string()
     .transform((ids) => ids?.split(',').map((id) => id.toLowerCase()))

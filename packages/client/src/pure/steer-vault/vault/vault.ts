@@ -1,6 +1,6 @@
 import { getChainIdAddressFromId } from 'sushi/format'
 import { type getSteerVaultFromDB } from '../../../api/steer-vault/vault'
-import { STEER_VAULT_API } from '../../../constants'
+import { EVM_APP_BASE_URL } from '../../../constants'
 import { type GetApiInputFromOutput } from '../../../types'
 import { type SteerVaultApiSchema } from './schema'
 
@@ -24,7 +24,7 @@ export const getSteerVaultUrl = (args: GetSteerVaultArgs) => {
     ;[chainId, address] = [args.chainId, args.address]
   }
 
-  return `${STEER_VAULT_API}/api/v0/${chainId}/${address}`
+  return `${EVM_APP_BASE_URL}/pool/api/steer-vault/${chainId}/${address}`
 }
 
 export const getSteerVault = async (
