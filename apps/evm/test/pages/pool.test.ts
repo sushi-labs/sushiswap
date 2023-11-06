@@ -1013,14 +1013,22 @@ async function mockPoolApi(
       steerVaults: [],
     }
 
-    if (request.url === 'https://pools.sushi.com/api/v0') {
+    if (
+      request.url.toLowerCase() ===
+        'https://pools-git-feature-steer-integration.sushi.com/api/v0'.toLowerCase() ||
+      request.url.toLowerCase() ===
+        'https://pools.sushi.com/api/v0'.toLowerCase()
+    ) {
       return new Response(JSON.stringify([mockPool]), {
         headers: {
           'Content-Type': 'application/json',
         },
       })
     } else if (
-      request.url === `https://pools.sushi.com/api/v0/${CHAIN_ID}/${address}`
+      request.url.toLowerCase() ===
+        `https://pools-git-feature-steer-integration.sushi.com/api/v0/${CHAIN_ID}/${address}`.toLowerCase() ||
+      request.url.toLowerCase() ===
+        `https://pools.sushi.com/api/v0/${CHAIN_ID}/${address}`.toLowerCase()
     ) {
       return new Response(JSON.stringify(mockPool), {
         headers: {
