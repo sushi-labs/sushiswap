@@ -69,8 +69,8 @@
     "@sushiswap/token-price-api": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
-    "sushi": "workspace:*",
     "deepmerge-ts": "^4.3.0",
+    "sushi": "workspace:*",
     "tslib": "latest",
     "viem": "1.17.2",
     "zod": "3.21.4"
