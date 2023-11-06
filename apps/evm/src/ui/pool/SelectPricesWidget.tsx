@@ -489,6 +489,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   {PRICE_RANGE_OPTIONS.map(({ value, label, onClick }) => (
                     <RadioGroup.Option value={value} key={value}>
                       <Toggle
+                        disabled={!feeAmount}
                         size="sm"
                         variant="outline"
                         onClick={
