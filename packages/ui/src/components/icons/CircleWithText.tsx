@@ -22,7 +22,7 @@ export const CircleWithText: FC<CircleWithText> = ({
       className={classNames('shrink-0 block rounded-full', className)}
     >
       <circle cx="12" cy="12" r="9.6" />
-      {typeof text !== undefined && (
+      {typeof text !== 'undefined' && (
         <text
           x="12"
           y="16"

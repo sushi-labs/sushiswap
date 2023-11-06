@@ -8,7 +8,7 @@ export function validateAndParseAddress(address: string): string {
     const checksummedAddress = getAddress(address)
     warning(address === checksummedAddress, `${address} is not checksummed.`)
     return checksummedAddress
-  } catch (error) {
+  } catch (_error) {
     invariant(false, `${address} is not a valid address.`)
   }
 }

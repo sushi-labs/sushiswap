@@ -1,7 +1,4 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
 import {
   FactoryV3,
   LogFilter2,
@@ -24,21 +21,24 @@ import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.so
 import { expect } from 'chai'
 import { network } from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
+import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
 import {
+  http,
   Address,
+  CustomTransport,
+  Transaction,
+  WalletClient,
   createPublicClient,
   createWalletClient,
   custom,
-  CustomTransport,
-  http,
-  Transaction,
-  WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
 import {
+  Chain,
   arbitrum,
   celo,
-  Chain,
   hardhat,
   mainnet,
   optimism,
@@ -618,8 +618,8 @@ async function startInfinitTest(args: {
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
-        toToken = tokens[i]
+      const fromToken = Native.onChain(chainId)
+      const toToken = tokens[i]
       const route = Router.findBestRoute(
         poolMap,
         chainId,
@@ -678,14 +678,14 @@ async function startInfinitTest(args: {
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-      } catch (e) {
+      } catch (_e) {
         console.log('Routing failed. No connection ?')
       }
     }
   }
 }
 
-it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
+it.skip('UniV3 Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -696,7 +696,7 @@ it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Polygon infinit work test', async () => {
+it.skip('UniV3 Extractor Polygon infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
@@ -707,7 +707,7 @@ it.skip('UniV3 Extractor Polygon infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Arbitrum infinit work test', async () => {
+it.skip('UniV3 Extractor Arbitrum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: arbitrum,
@@ -718,7 +718,7 @@ it.skip('UniV3 Extractor Arbitrum infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Optimism infinit work test', async () => {
+it.skip('UniV3 Extractor Optimism infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: optimism,
@@ -730,7 +730,7 @@ it.skip('UniV3 Extractor Optimism infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Celo infinit work test', async () => {
+it.skip('UniV3 Extractor Celo infinite work test', async () => {
   await startInfinitTest({
     providerURL: 'https://forno.celo.org',
     chain: celo,

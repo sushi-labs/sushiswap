@@ -1,7 +1,7 @@
 const { Native, USDC, USDT, SUSHI, WBTC, DAI } = require('sushi/currency')
 const { ChainId } = require('sushi/chain')
 
-function setQuery(context, events, done) {
+function setQuery(context, _events, done) {
   const chainIds = [
     ChainId.ETHEREUM,
     ChainId.ARBITRUM,

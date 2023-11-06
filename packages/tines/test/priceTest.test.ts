@@ -2,10 +2,10 @@ import seedrandom from 'seedrandom'
 
 import { calcTokenPrices } from '../src'
 import {
-  createNetwork,
-  expectCloseValues,
   MAX_POOL_IMBALANCE,
   TToken,
+  createNetwork,
+  expectCloseValues,
 } from './utils'
 
 const GAS_PRICE = 50 * 1e-9

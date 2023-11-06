@@ -135,7 +135,8 @@ export class CLRPool extends RPool {
         return { out: outAmount, gasSpent: this.swapGasCost }
 
       const tick = this.ticks[nextTickToCross] as CLTick
-      let nextTickPrice, priceDiff
+      let nextTickPrice
+      let priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
         const nextTickPriceBI = getSqrtRatioAtTick(tick.index)
@@ -223,7 +224,8 @@ export class CLRPool extends RPool {
         return { inp: input, gasSpent: this.swapGasCost }
 
       const nextTick = this.ticks[nextTickToCross] as CLTick
-      let nextTickPrice, priceDiff
+      let nextTickPrice
+      let priceDiff
       if (startFlag) {
         // Increasing precision at first step only - otherwise its too slow
         const nextTickPriceBI = getSqrtRatioAtTick(nextTick.index)

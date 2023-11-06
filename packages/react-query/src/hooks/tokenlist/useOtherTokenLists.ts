@@ -66,7 +66,12 @@ export const useOtherTokenListsQuery = ({
       ...tokenListQuery,
       data: _data,
     }
-  }, [query, defaultTokenList, tokenListQuery]) as typeof tokenListQuery & {
+  }, [
+    chainId,
+    query,
+    defaultTokenList,
+    tokenListQuery,
+  ]) as typeof tokenListQuery & {
     data: Record<string, Token>
   }
 }

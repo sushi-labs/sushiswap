@@ -1,8 +1,8 @@
 import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
 
-import { Token } from 'sushi/currency'
 import { PoolCode } from '@sushiswap/router'
+import { Token } from 'sushi/currency'
 import { Address, PublicClient } from 'viem'
 
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'
@@ -16,7 +16,7 @@ import { TokenManager } from './TokenManager'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor'
 import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
-import { setWarningMessageHandler, WarningMessageHandler } from './WarnLog'
+import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -285,7 +285,7 @@ export class Extractor {
         await file.writeFile(`${token.address} ${token.symbol} ${num}\n`)
       }
       await file.close()
-    } catch (e) {
+    } catch (_e) {
       // do nothing
     }
   }

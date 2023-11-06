@@ -1,11 +1,11 @@
-import { ChainId } from 'sushi/chain'
-import { Token, Type } from 'sushi/currency'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
   CUSTOM_BASES,
 } from '@sushiswap/router-config'
 import flatMap from 'lodash.flatmap'
+import { ChainId } from 'sushi/chain'
+import { Token, Type } from 'sushi/currency'
 
 export function getCurrencyCombinations(
   chainId: ChainId,

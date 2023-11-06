@@ -946,7 +946,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
           intermidiateResult,
           usedPools,
         )
-      } catch (e) {
+      } catch (_e) {
         throwed = true
       }
       expect(

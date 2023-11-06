@@ -2,10 +2,10 @@ import seedrandom from 'seedrandom'
 
 import { RToken } from '../dist'
 import {
-  closeValues,
-  createCurvePoolsForMultipool,
   CurveMultitokenPool,
   CurvePool,
+  closeValues,
+  createCurvePoolsForMultipool,
   getBigInt,
 } from '../src'
 
@@ -53,8 +53,8 @@ function expectCloseValues(
   precision: number,
   precisionAbs?: number
 ) {
-  const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
-  const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
+  const a = typeof v1 === 'number' ? v1 : parseFloat(v1.toString())
+  const b = typeof v2 === 'number' ? v2 : parseFloat(v2.toString())
   if (precisionAbs !== undefined && Math.abs(a-b) < precisionAbs) return true
   const res = closeValues(a, b, precision)
   if (!res) {
@@ -145,14 +145,14 @@ function checkPoolPriceCalculation(
 }
 
 function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
-  const reserve0 = Math.pow(10, token0.decimals) * getRandomExp(rnd, 1, 1e12)
+  const reserve0 = 10 ** token0.decimals * getRandomExp(rnd, 1, 1e12)
   const params = {
     A: Math.round(getRandomExp(rnd, 1, 10_000)),
     fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
     reserve0: getBigInt(reserve0),
     reserve1: getBigInt(
       reserve0 *
-        Math.pow(10, token1.decimals - token0.decimals) *
+        10 ** (token1.decimals - token0.decimals) *
         getRandomExp(rnd, 1 / 1000, 1000),
     ),
     ratio: getRandomExp(rnd, 0.5, 2),
@@ -166,7 +166,7 @@ function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
 describe('Curve pool-multipool tests', () => {
   it('Random test decimals 18-18', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '18-18_' + p
+      const testSeed = `18-18_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const { pool, multipool } = createRandomPool(rnd, token0, token1)
       checkPoolPriceCalculation(pool, multipool)
@@ -190,7 +190,7 @@ describe('Curve pool-multipool tests', () => {
 
   it('Random test decimals 18-6', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '18-6_' + p
+      const testSeed = `18-6_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const { pool, multipool } = createRandomPool(rnd, token1, token2)
       checkPoolPriceCalculation(pool, multipool)
@@ -214,7 +214,7 @@ describe('Curve pool-multipool tests', () => {
 
   it('Random test decimals 6-6', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '6-6_' + p
+      const testSeed = `6-6_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const { pool, multipool } = createRandomPool(rnd, token2, token3)
       checkPoolPriceCalculation(pool, multipool)

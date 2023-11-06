@@ -23,8 +23,11 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
-  ChainId.LINEA,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.SCROLL,
   ChainId.OPTIMISM,
+  ChainId.LINEA,
+  ChainId.CORE,
   ChainId.BSC,
   ChainId.THUNDERCORE,
   ChainId.GNOSIS,
@@ -41,7 +44,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
   children: ReactNode
 }
 
-const NEW_CHAINS: number[] = [ChainId.LINEA] satisfies ChainId[]
+const NEW_CHAINS: number[] = [ChainId.SCROLL] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
   onSelect,
@@ -70,6 +73,7 @@ const NetworkSelector = <T extends number>({
           <CommandGroup>
             {_networks.map((el) => (
               <CommandItem
+                className="cursor-pointer"
                 testdata-id={`network-selector-${el}`}
                 value={`${Chain.from(el)?.name}__${el}`}
                 key={el}

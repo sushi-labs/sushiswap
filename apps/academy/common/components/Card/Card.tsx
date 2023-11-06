@@ -1,4 +1,4 @@
-import { classNames, LinkInternal } from '@sushiswap/ui'
+import { LinkInternal, classNames } from '@sushiswap/ui'
 import { Chip } from '@sushiswap/ui/components/chip'
 import { format } from 'date-fns'
 import { FC } from 'react'

@@ -13,5 +13,5 @@ export const useBalancesRefetch = ({ chainId, account }: UseBalances) => {
       queryKey: [`https://balances.sushi.com/v0/${chainId}/${account}`],
       type: 'active',
     })
-  }, [queryClient])
+  }, [queryClient, chainId, account])
 }

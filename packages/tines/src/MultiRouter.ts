@@ -42,7 +42,7 @@ function calcBestFlowNumber(
     (bestSingleRoute.gasSpent * (gasPriceIn || 0) * amountIn) / priceImpact,
   )
   const bestFlowNumber = Math.round(amountIn / bestFlowAmount)
-  if (!isFinite(bestFlowNumber)) return maxFlowNumber
+  if (!Number.isFinite(bestFlowNumber)) return maxFlowNumber
 
   const realFlowNumber = Math.max(1, Math.min(bestFlowNumber, maxFlowNumber))
   return realFlowNumber
@@ -242,7 +242,7 @@ function checkChainId(
   pools: RPool[],
   baseTokenOrNetworks: RToken | NetworkInfo[],
 ) {
-  if (baseTokenOrNetworks instanceof Array) {
+  if (Array.isArray(baseTokenOrNetworks)) {
     baseTokenOrNetworks.forEach((n) => {
       if (n.chainId !== n.baseToken.chainId) {
         throw new Error(
@@ -252,10 +252,11 @@ function checkChainId(
     })
   }
 
-  const chainIds: (string | number | undefined)[] =
-    baseTokenOrNetworks instanceof Array
-      ? baseTokenOrNetworks.map((n) => n.chainId)
-      : [baseTokenOrNetworks.chainId]
+  const chainIds: (string | number | undefined)[] = Array.isArray(
+    baseTokenOrNetworks,
+  )
+    ? baseTokenOrNetworks.map((n) => n.chainId)
+    : [baseTokenOrNetworks.chainId]
   const chainIdSet = new Set(chainIds)
 
   const checkToken = (t: RToken) => {

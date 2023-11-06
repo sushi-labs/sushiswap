@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Format
@@ -31,28 +34,31 @@ jobs:
           commit_user_name: 'github-actions[bot]'
           commit_user_email: 'github-actions[bot]@users.noreply.github.com'
 
-  # lint:
-  #   name: Lint
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 5
-  #   steps:
-  #     - name: Clone repository
-  #       uses: actions/checkout@v4
-  #     - name: Install dependencies
-  #       uses: ./.github/actions/install
-  #     - name: Lint apps
-  #       run: pnpm exec turbo run lint --filter=./apps/*
-  #     - uses: stefanzweifel/git-auto-commit-action@v4
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         commit_message: 'chore: lint'
-  #         commit_user_name: 'github-actions[bot]'
-  #         commit_user_email: 'github-actions[bot]@users.noreply.github.com'
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
+      - name: Install dependencies
+        uses: ./.github/actions/install
+      - name: Lint
+        run: pnpm lint --apply
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commit_message: 'chore: lint'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
      
   # build:
   #   name: Build
-  #   needs: lint
+  #   needs: [lint, format]
   #   runs-on: ubuntu-latest
   #   timeout-minutes: 5
   #   steps:
@@ -66,9 +72,9 @@ jobs:
 
   types:
     name: Types
-    needs: format
+    needs: [lint, format]
     runs-on: ubuntu-latest
-    # timeout-minutes: 5
+    timeout-minutes: 5
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -81,6 +87,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    needs: [lint, format]
     steps:
       - name: Clone repository
         uses: actions/checkout@v4

@@ -5,7 +5,6 @@ import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 const func: DeployFunction = async function ({
   getNamedAccounts,
   deployments,
-  run,
   getChainId,
 }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments

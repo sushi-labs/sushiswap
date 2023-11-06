@@ -36,10 +36,10 @@ export const ArticleSeo: FC<ArticleSeoProps> = ({ article }) => {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,
             authors: authors.map((author) => author.name),
-            tags: article.categories.data.reduce<string[]>(
-              (acc, el) => [...acc, el.attributes.name],
-              [],
-            ),
+            tags: article.categories.data.reduce<string[]>((acc, el) => {
+              acc.push(el.attributes.name)
+              return acc
+            }, []),
           },
         }}
         title={article.title}

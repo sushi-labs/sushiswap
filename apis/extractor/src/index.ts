@@ -93,10 +93,14 @@ const querySchema3_2 = querySchema.extend({
         message: 'ChainId not supported.',
       },
     )
-    .transform((chainId) => chainId as RouteProcessor3_2ChainId),
+    .transform(
+      (chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 534352>,
+    ),
 })
 
 const PORT = process.env['PORT'] || 80
+
+const SENTRY_DSN = process.env['SENTRY_DSN'] as string
 
 const extractors = new Map<SupportedChainId, Extractor>()
 const tokenManagers = new Map<SupportedChainId, TokenManager>()
@@ -105,21 +109,21 @@ const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
 async function main() {
   const app: Express = express()
 
-  // Sentry.init({
-  //   dsn: process.env.SENTRY_DSN,
-  //   integrations: [
-  //     // enable HTTP calls tracing
-  //     new Sentry.Integrations.Http({
-  //       tracing: true,
-  //     }),
-  //     // enable Express.js middleware tracing
-  //     new Sentry.Integrations.Express({
-  //       app,
-  //     }),
-  //   ],
-  //   // Performance Monitoring
-  //   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
-  // })
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({
+        tracing: true,
+      }),
+      // enable Express.js middleware tracing
+      new Sentry.Integrations.Express({
+        app,
+      }),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  })
 
   for (const chainId of SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor({

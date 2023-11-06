@@ -1,8 +1,6 @@
 // Checkbox.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, USDT } from 'sushi/currency'
 import {
   Button,
   Card,
@@ -17,6 +15,8 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import * as React from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, SUSHI, USDT } from 'sushi/currency'
 
 const variants: CardProps['variant'][] = ['default', 'outline']
 

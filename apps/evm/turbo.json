@@ -2,41 +2,48 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
+      "inputs": [
+        "public",
+        "src/**",
+        "package.json",
+        "next.config.mjs",
+        "postcss.config.js",
+        "sentry.client.config.ts",
+        "sentry.edge.config.ts",
+        "sentry.server.config.ts",
+        "tailwind.config.js",
+        "tsconfig.json"
+      ],
       "outputs": [".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"],
-      "env": [
-        "ACADEMY_URL",
-        "ALCHEMY_ID",
-        "BLOG_URL",
-        "DRPC_ID",
-        "EDGE_CONFIG",
-        "FURO_URL",
-        "TOKEN_LIST_PR_WEBHOOK_URL",
-        "OCTOKIT_KEY",
-        "SWAP_API_V0_BASE_URL",
-        "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL",
-        "NEXT_TELEMETRY_DISABLED"
+      "dotEnv": [
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
       ]
     },
-    "test": {
-      "outputs": [],
-      "dependsOn": ["build"],
-      "env": [
-        "ALCHEMY_ID",
-        "ANVIL_FORK_URL",
-        "ANVIL_BLOCK_NUMBER",
-        "ANVIL_PORT",
-        "APP_ENV",
-        "CHAIN_ID",
-        "DRPC_ID",
-        "EDGE_CONFIG",
-        "PORT"
-      ]
-    },
+
     "check": {
       "dependsOn": ["^build"],
       "cache": false
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "dotEnv": [
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "inputs": ["test/**"],
+      "outputs": ["test-results/**"],
+      "dependsOn": ["build"],
+      "dotEnv": [".env.test.local", ".env.test", ".env"]
     }
   }
 }

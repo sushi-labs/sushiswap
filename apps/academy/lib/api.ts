@@ -1,8 +1,8 @@
 import {
   ArticleFiltersInput,
-  getMeshSDK,
   GetProductsQueryVariables,
   PaginationArg,
+  getMeshSDK,
 } from '../.mesh'
 import { ArticleSchema } from './validate'
 

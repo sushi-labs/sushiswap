@@ -189,7 +189,9 @@ export class CurveMultitokenCore {
     const AnnS = this.Ann * s
     for (let i = 0; i < 256; i++) {
       let dP = D
-      this.reservesRated.forEach((r) => (dP = (dP * D) / r))
+      this.reservesRated.forEach((r) => {
+        dP = (dP * D) / r
+      })
       dP = dP / this.nn
       prevD = D
       // D = (Ann * S + D_P * N_COINS) * D / ((Ann - 1) * D + (N_COINS + 1) * D_P)
@@ -208,7 +210,7 @@ export class CurveMultitokenCore {
     let S_ = ZERO
     for (let i = 0; i < this.tokens.length; ++i) {
       let _x = ZERO
-      if (i == xIndex) _x = x
+      if (i === xIndex) _x = x
       else if (i != yIndex) _x = this.diffToAbsolute(0, i) as bigint
       else continue
       S_ = S_ + _x
@@ -253,17 +255,17 @@ export class CurveMultitokenCore {
   calcCurrentPriceWithoutFee(from: number, to: number): number {
     const xInp = Number(this.reservesRated[from])
     const D = Number(this.computeLiquidity())
-    let Sx = 0,
-      Px = 1
+    let Sx = 0
+    let Px = 1
     this.tokens.forEach((_, i) => {
-      if (i == to) return
+      if (i === to) return
       const x = Number(this.reservesRated[i])
       Sx += x
       Px *= x
     })
     const n = this.tokens.length
     const b = Sx + D / this.A / n - D
-    const c = Math.pow(D / n, n + 1) / Px / this.A
+    const c = (D / n) ** (n + 1) / Px / this.A
     const Ds = Math.sqrt(b * b + 4 * c)
     const dD = 2 * b - (4 * c) / xInp
     const price = 0.5 - dD / Ds / 4
