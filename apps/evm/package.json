@@ -20,7 +20,7 @@
     "@layerzerolabs/scan-client": "0.0.6",
     "@octokit/auth-app": "4.0.7",
     "@radix-ui/react-slot": "1.0.2",
-    "@sentry/nextjs": "7.75.1",
+    "@sentry/nextjs": "7.77.0",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",

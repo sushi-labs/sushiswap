@@ -7,6 +7,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "moduleResolution": "Bundler"
   }
 }
