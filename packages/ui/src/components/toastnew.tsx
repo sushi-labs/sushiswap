@@ -1,9 +1,9 @@
 'use client'
 
-import * as React from 'react'
 import * as ToastPrimitives from '@radix-ui/react-toast'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { X } from 'lucide-react'
+import * as React from 'react'
 import { classNames } from '../index'
 
 const ToastProvider = ToastPrimitives.Provider
@@ -102,7 +102,9 @@ const ToastDescription = React.forwardRef<
     )}
     {...props}
   >
-    <div className="truncate group-hover:whitespace-normal min-w-0">{children}</div>
+    <div className="truncate group-hover:whitespace-normal min-w-0">
+      {children}
+    </div>
   </ToastPrimitives.Description>
 ))
 ToastDescription.displayName = ToastPrimitives.Description.displayName

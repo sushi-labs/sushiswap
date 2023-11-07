@@ -4,7 +4,7 @@ import {
   ArrowRightIcon,
   ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/20/solid'
-import { Chip, LinkExternal, Timer, classNames } from '@sushiswap/ui'
+import { LinkExternal, Timer, classNames } from '@sushiswap/ui'
 
 import {
   Tooltip,
@@ -12,12 +12,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { useAccount, useTransactionAdder } from '@sushiswap/wagmi'
 import { FC, useEffect, useState } from 'react'
 import { Chain } from 'sushi/chain'
+import { STARGATE_CONFIRMATION_SECONDS } from 'sushi/config'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
 import { CrossChainSwapPendingTransaction } from './cross-chain-swap-pending-transactions-provider'
-import { STARGATE_CONFIRMATION_SECONDS } from 'sushi/config'
-import { useAccount, useTransactionAdder } from '@sushiswap/wagmi'
 
 export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
   ({ tradeId, amountIn, amountOut, chainId0, chainId1, txHash }) => {

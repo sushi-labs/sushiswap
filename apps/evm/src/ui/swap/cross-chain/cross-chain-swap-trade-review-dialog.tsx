@@ -25,7 +25,6 @@ import {
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
-  useTransactionAdder,
 } from '@sushiswap/wagmi'
 import {
   SendTransactionResult,
@@ -36,7 +35,11 @@ import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useRef } from 'react'
 import { gasMargin } from 'sushi/calculate'
 import { Chain, chainName } from 'sushi/chain'
-import {SushiXSwap2ChainId, isSushiXSwap2ChainId, StargateChainId} from 'sushi/config'
+import {
+  StargateChainId,
+  SushiXSwap2ChainId,
+  isSushiXSwap2ChainId,
+} from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { stringify } from 'viem'
@@ -45,11 +48,11 @@ import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
 import { warningSeverity } from '../../../lib/swap/warningSeverity'
+import { useCrossChainSwapPendingTransactionsActions } from './cross-chain-swap-pending-transactions-provider'
 import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
 } from './derivedstate-cross-chain-swap-provider'
-import { useCrossChainSwapPendingTransactionsActions } from './cross-chain-swap-pending-transactions-provider'
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,

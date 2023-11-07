@@ -2,7 +2,7 @@
 
 import { Label } from '@sushiswap/ui'
 import { CrossChainSwapPendingCard } from './cross-chain-swap-pending-card'
-import {useCrossChainSwapPendingTransactionsProvider} from "./cross-chain-swap-pending-transactions-provider";
+import { useCrossChainSwapPendingTransactionsProvider } from './cross-chain-swap-pending-transactions-provider'
 
 export const CrossChainSwapPendingCardList = () => {
   const pendingTransactions = useCrossChainSwapPendingTransactionsProvider()

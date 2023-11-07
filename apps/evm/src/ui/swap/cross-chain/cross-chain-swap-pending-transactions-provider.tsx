@@ -9,8 +9,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Amount, Type } from 'sushi/currency'
 import { StargateChainId } from 'sushi/config'
+import { Amount, Type } from 'sushi/currency'
 
 export interface CrossChainSwapPendingTransaction {
   tradeId: string

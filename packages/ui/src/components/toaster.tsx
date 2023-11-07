@@ -22,7 +22,11 @@ export function Toaster() {
           return (
             <Toastnew key={id} {...props}>
               {description && (
-                <ToastDescription className={classNames('max-h-[70px] group-hover:max-h-[unset]')}>
+                <ToastDescription
+                  className={classNames(
+                    'max-h-[70px] group-hover:max-h-[unset]',
+                  )}
+                >
                   {caption ? (
                     <ToastCaption variant={props.variant}>
                       {caption}
