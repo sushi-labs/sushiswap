@@ -36,7 +36,7 @@ import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useRef } from 'react'
 import { gasMargin } from 'sushi/calculate'
 import { Chain, chainName } from 'sushi/chain'
-import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
+import {SushiXSwap2ChainId, isSushiXSwap2ChainId, StargateChainId} from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { stringify } from 'viem'
@@ -49,6 +49,7 @@ import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
 } from './derivedstate-cross-chain-swap-provider'
+import { useCrossChainSwapPendingTransactionsActions } from './cross-chain-swap-pending-transactions-provider'
 
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
@@ -59,6 +60,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const {
     mutate: { setTradeId, setSwapAmount },
     state: {
+      tradeId,
       recipient,
       swapAmount,
       swapAmountString,
@@ -72,7 +74,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const refetchBalances = useBalanceWeb3Refetch()
   const { toast } = useToast()
-  const { mutate } = useTransactionAdder({ account: address })
+  const { push } = useCrossChainSwapPendingTransactionsActions()
 
   const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
 
@@ -105,27 +107,17 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       const trade = tradeRef.current
       if (!trade || !chainId0 || !data || !address) return
 
-      mutate({
-        account: address,
-        chainId: chainId0,
-        hash: data.hash,
-        payload: JSON.stringify({
-          type: 'swap',
-          inputAmount: trade?.amountIn?.toSignificant(6),
-          outputAmount: trade?.amountOut?.toSignificant(6),
-          inputToken: {
-            address: trade?.amountIn?.currency.wrapped.address,
-            decimals: trade?.amountIn?.currency.decimals,
-            symbol: trade?.amountIn?.currency.symbol,
-          },
-          outputToken: {
-            address: trade?.amountOut?.currency.wrapped.address,
-            decimals: trade?.amountOut?.currency.decimals,
-            symbol: trade?.amountOut?.currency.symbol,
-          },
-        }),
-        timestamp: new Date().getTime(),
-      })
+      // For showing tx status on the page
+      if (trade.amountIn && trade.amountOut) {
+        push({
+          tradeId,
+          txHash: data.hash,
+          amountOut: trade.amountOut,
+          amountIn: trade.amountIn,
+          chainId1: trade.amountIn.currency.chainId as StargateChainId,
+          chainId0: trade.amountOut.currency.chainId as StargateChainId,
+        })
+      }
 
       waitForTransaction({ chainId: chainId0, hash: data.hash }).catch(() => {
         toast({
@@ -138,7 +130,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         })
       })
     },
-    [chainId0, address, mutate, toast],
+    [chainId0, address, push, tradeId, toast],
   )
 
   const {

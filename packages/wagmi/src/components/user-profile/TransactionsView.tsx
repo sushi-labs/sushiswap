@@ -22,7 +22,7 @@ import {
   useTransactionDeleter,
   useTransactions,
 } from '../../hooks'
-import { ProfileView } from './index'
+import { ProfileView } from './ProfileView'
 
 interface TransactionsProps {
   address: `0x${string}`

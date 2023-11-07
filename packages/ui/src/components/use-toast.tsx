@@ -1,9 +1,9 @@
 // Inspired by react-hot-toast library
 import * as React from 'react'
-import { ToastActionElement, ToastProps } from '.'
+import { ToastActionElement, ToastProps } from './toastnew'
 
-const TOAST_LIMIT = 3
-const _TOAST_REMOVE_DELAY = 1000000
+const TOAST_LIMIT = 4
+const TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -152,7 +152,7 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
-      onOpenChange: (open) => {
+      onOpenChange: (open: boolean) => {
         if (!open) dismiss()
       },
     },

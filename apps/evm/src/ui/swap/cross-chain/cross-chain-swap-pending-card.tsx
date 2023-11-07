@@ -1,128 +1,130 @@
 'use client'
 
-import { ArrowRightIcon } from '@heroicons/react/20/solid'
-import { LinkExternal, SelectIcon, Timer, useToast } from '@sushiswap/ui'
 import {
-  CollapsibleContent,
-  CollapsibleNew,
-  CollapsibleTrigger,
-} from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
+  ArrowRightIcon,
+  ArrowTopRightOnSquareIcon,
+} from '@heroicons/react/20/solid'
+import { Chip, LinkExternal, Timer, classNames } from '@sushiswap/ui'
+
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { useLayerZeroScanLink } from '../../../lib/swap/useLayerZeroScanLink'
-import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
+import { CrossChainSwapPendingTransaction } from './cross-chain-swap-pending-transactions-provider'
+import { STARGATE_CONFIRMATION_SECONDS } from 'sushi/config'
+import { useAccount, useTransactionAdder } from '@sushiswap/wagmi'
 
-export const CrossChainSwapPendingCard = () => {
-  const {
-    state: { tradeId, chainId0, chainId1 },
-  } = useDerivedStateCrossChainSwap()
-
-  const [open, setOpen] = useState<boolean>(true)
-  const [date] = useState<Date>(new Date(Date.now() + 1000 * 60 * 5))
-  const { toast } = useToast()
-
-  const { data } = useLayerZeroScanLink({
-    tradeId,
-    network0: chainId0,
-    network1: chainId1,
-    txHash:
-      '0xf5fe3c5d006e02b77b2c22f36d95ce57b116f8ca1efa9bc8c738016fd0d78727',
-  })
-
-  useEffect(() => {
-    toast({
-      variant: 'default',
-      caption: 'Ethereum -> Polygon',
-      description: (
-        <div className="grid grid-cols-[auto_60px] gap-1 justify-between items-center w-full text-sm font-medium">
-          <div className="block truncate">
-            0.00533 ETH <ArrowRightIcon className="inline h-4 w-4 -mt-0.5" />{' '}
-            0.3434 SUSHI
-          </div>
-          <div className="flex justify-end">
-            <Timer date={date}>
-              {({ minutes, seconds }) => {
-                return (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <LinkExternal href={data?.link}>
-                          Est. {minutes}:{seconds}
-                        </LinkExternal>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>View on LayerZeroScan</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )
-              }}
-            </Timer>
-          </div>
-        </div>
-      ),
+export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
+  ({ tradeId, amountIn, amountOut, chainId0, chainId1, txHash }) => {
+    const { address } = useAccount()
+    const { mutate } = useTransactionAdder({ account: address })
+    const { data } = useLayerZeroScanLink({
+      tradeId,
+      network0: chainId0,
+      network1: chainId1,
+      txHash,
     })
-  }, [])
 
-  return (
-    <CollapsibleNew open={open} onOpenChange={setOpen}>
-      <div className="flex flex-col space-y-3 pl-4 pr-2 py-2 bg-white rounded-xl border border-input shadow-sm">
+    const [date] = useState<Date>(
+      new Date(Date.now() + 1000 * STARGATE_CONFIRMATION_SECONDS[chainId0]),
+    )
+
+    // Add to tx history
+    useEffect(() => {
+      if (data?.status === 'DELIVERED' && address) {
+        mutate({
+          account: address,
+          chainId: chainId0,
+          hash: data.dstTxHash as `0x${string}`,
+          payload: JSON.stringify({
+            type: 'swap',
+            inputAmount: amountIn.toSignificant(6),
+            outputAmount: amountOut.toSignificant(6),
+            inputToken: {
+              address: amountIn.currency.wrapped.address,
+              decimals: amountIn.currency.decimals,
+              symbol: amountIn.currency.symbol,
+            },
+            outputToken: {
+              address: amountOut.currency.wrapped.address,
+              decimals: amountOut.currency.decimals,
+              symbol: amountOut.currency.symbol,
+            },
+          }),
+          timestamp: new Date().getTime(),
+        })
+      }
+    }, [address, amountIn, amountOut, chainId0, data, mutate])
+
+    return (
+      <div className="relative overflow-hidden group flex flex-col space-y-3 px-4 py-2 bg-white rounded-l-sm rounded-r-lg border border-input">
         <div className="flex items-center justify-between space-x-4 w-full">
-          <div className="grid grid-cols-[auto_60px] gap-1 justify-between items-center w-full text-sm font-medium">
-            <div className="block truncate">
-              0.00533 ETH <ArrowRightIcon className="inline h-4 w-4 -mt-0.5" />{' '}
-              0.3434 SUSHI
+          <div className="grid grid-cols-[auto_100px] gap-1 justify-between items-center w-full text-sm font-medium">
+            <div className="min-w-0 truncate group-hover:whitespace-normal">
+              <div className="block truncate text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">
+                {Chain.fromChainId(chainId0)?.name}
+                <ArrowRightIcon className="inline h-3 w-3 -mt-0.5 ml-1 mr-1" />
+                {Chain.fromChainId(chainId1)?.name}
+              </div>
+              <div className="block truncate group-hover:whitespace-normal">
+                {amountIn.toSignificant(6)} {amountIn.currency.symbol}{' '}
+                <ArrowRightIcon className="inline h-4 w-4 -mt-0.5" />{' '}
+                {amountOut.toSignificant(6)} {amountOut.currency.symbol}
+              </div>
             </div>
-            <div className="flex justify-end">
-              <Timer date={date}>
-                {({ minutes, seconds }) => {
-                  return (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <LinkExternal href={data?.link}>
-                            Est. {minutes}:{seconds}
-                          </LinkExternal>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>View on LayerZeroScan</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )
-                }}
-              </Timer>
+            <div className="flex gap-2">
+              {data?.status === 'INFLIGHT' ? (
+                <Timer date={date}>
+                  {({ minutes, seconds }) => {
+                    return (
+                      <span className="text-right w-full">
+                        {minutes}:{seconds}
+                      </span>
+                    )
+                  }}
+                </Timer>
+              ) : (
+                <div className="flex flex-grow" />
+              )}
+              {data?.link ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <LinkExternal
+                        href={data?.link}
+                        className="text-right w-full"
+                      >
+                        <ArrowTopRightOnSquareIcon
+                          width={18}
+                          height={18}
+                          className="text-blue hover:underline"
+                        />
+                      </LinkExternal>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>View on LayerzeroScan</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : null}
             </div>
           </div>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-9 p-0">
-              <SelectIcon className="h-4 w-4" />
-              <span className="sr-only">Toggle</span>
-            </Button>
-          </CollapsibleTrigger>
         </div>
-        <CollapsibleContent className="space-y-2 pr-3 pb-3">
-          <div className="flex justify-between">
-            <div className="text-sm text-muted-foreground">From network</div>
-            <div className="text-sm font-medium">
-              {Chain.from(chainId0)?.name}
-            </div>
-          </div>
-          <div className="flex justify-between">
-            <div className="text-sm text-muted-foreground">To network</div>
-            <div className="text-sm font-medium">
-              {Chain.from(chainId1)?.name}
-            </div>
-          </div>
-        </CollapsibleContent>
+        <div
+          className={classNames(
+            data?.status === 'DELIVERED'
+              ? 'bg-green'
+              : data?.status === 'INFLIGHT'
+              ? 'bg-blue'
+              : 'bg-yellow',
+            'absolute bottom-0 top-0 left-0 w-[3px] !mt-0',
+          )}
+        />
       </div>
-    </CollapsibleNew>
-  )
-}
+    )
+  }
