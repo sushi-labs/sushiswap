@@ -313,30 +313,24 @@ export class Edge {
 
   applySwap(from: Vertice) {
     console.assert(this.amountInPrevious * this.amountOutPrevious >= 0)
-    const inPrev = this.direction
-      ? this.amountInPrevious
-      : -this.amountInPrevious
-    const outPrev = this.direction
-      ? this.amountOutPrevious
-      : -this.amountOutPrevious
+    const inPrev = this.direction ? this.amountInPrevious : -this.amountInPrevious
+    const outPrev = this.direction ? this.amountOutPrevious : -this.amountOutPrevious
     const to = from.getNeibour(this)
-    let inNew, outNew
-    if (to) {
-      const inInc = from === this.vert0 ? from.bestIncome : -to.bestIncome
-      const outInc = from === this.vert0 ? to.bestIncome : -from.bestIncome
-      inNew = inPrev + inInc
-      outNew = outPrev + outInc
-      console.assert(inNew * outNew >= 0)      
-      if (inNew >= 0) {
-        this.direction = true
-        this.amountInPrevious = inNew
-        this.amountOutPrevious = outNew
-      } else {
-        this.direction = false
-        this.amountInPrevious = -inNew
-        this.amountOutPrevious = -outNew
-      }      
-    } else console.error('Error 221')
+    const inInc = from === this.vert0 ? from.bestIncome : -to.bestIncome
+    const outInc = from === this.vert0 ? to.bestIncome : -from.bestIncome
+    const inNew = inPrev + inInc
+    const outNew = outPrev + outInc
+    console.assert(inNew * outNew >= 0)      
+    if (inNew >= 0) {
+      this.direction = true
+      this.amountInPrevious = inNew
+      this.amountOutPrevious = outNew
+    } else {
+      this.direction = false
+      this.amountInPrevious = -inNew
+      this.amountOutPrevious = -outNew
+    }      
+    this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
     this.spentGas = this.spentGasNew
 
     ASSERT(() => {
@@ -369,7 +363,6 @@ export class Edge {
         )
       }
     }, 'Error 225')
-    this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
   }
 }
 
@@ -787,7 +780,7 @@ export class Graph {
         // different paths => in one route). It is not better then use one pool (For curve at least) 
         // and it is calculated wrong (with no flow applying)
         if (e.pool.address === closestVert.bestSource?.pool.address) return
-        
+
         let newIncome: number
         let gas
         try {
