@@ -223,6 +223,7 @@ export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
   ChainId.POLYGON_ZKEVM,
   ChainId.SCROLL,
+  ChainId.FILECOIN,
 ] as const
 export type RouteProcessor3_2ChainId =
   typeof ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS[number]
@@ -247,6 +248,7 @@ export const ROUTE_PROCESSOR_3_2_ADDRESS: Record<
   [ChainId.POLYGON]: '0xE7eb31f23A5BefEEFf76dbD2ED6AdC822568a5d2',
   [ChainId.POLYGON_ZKEVM]: '0xbE811A0D44E2553d25d11CB8DC0d3F0D0E6430E6',
   [ChainId.SCROLL]: '0xCA6Fe749878841b96F620Ec79638B13dAaD3D320',
+  [ChainId.FILECOIN]: '0xCdBCd51a5E8728E0AF4895ce5771b7d17fF71959',
 } as const
 export const isRouteProcessor3_2ChainId = (
   chainId: ChainId,

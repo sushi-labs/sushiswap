@@ -94,7 +94,7 @@ const querySchema3_2 = querySchema.extend({
       },
     )
     .transform(
-      (chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 534352>,
+      (chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 534352 | 314>,
     ),
 })
 

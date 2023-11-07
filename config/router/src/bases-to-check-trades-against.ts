@@ -434,4 +434,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.SCROLL],
     USDT[ChainId.SCROLL],
   ],
+  [ChainId.FILECOIN]: [
+    WNATIVE[ChainId.FILECOIN],
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+  ],
 }

@@ -64,4 +64,5 @@ export const defaultQuoteCurrency = {
   [ChainId.LINEA]: axlUSDC[ChainId.LINEA],
   [ChainId.BASE]: axlUSDC[ChainId.BASE],
   [ChainId.SCROLL]: USDC[ChainId.SCROLL],
+  [ChainId.FILECOIN]: axlUSDC[ChainId.FILECOIN],
 } as const

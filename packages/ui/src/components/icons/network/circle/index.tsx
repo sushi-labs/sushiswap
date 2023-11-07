@@ -14,6 +14,7 @@ import { CeloCircle } from './CeloCircle'
 import { CoreCircle } from './CoreCircle'
 import { EthereumCircle } from './EthereumCircle'
 import { FantomCircle } from './FantomCircle'
+import { FilecoinCircle } from './FilecoinCircle'
 import { FuseCircle } from './FuseCircle'
 import { GnosisCircle } from './GnosisCircle'
 import { HaqqCircle } from './HaqqCircle'
@@ -46,6 +47,7 @@ export * from './CeloCircle'
 export * from './CoreCircle'
 export * from './EthereumCircle'
 export * from './FantomCircle'
+export * from './FilecoinCircle'
 export * from './FuseCircle'
 export * from './GnosisCircle'
 export * from './HaqqCircle'
@@ -98,4 +100,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.LINEA]: LineaCircle,
   [ChainId.BASE]: BaseCircle,
   [ChainId.SCROLL]: ScrollCircle,
+  [ChainId.FILECOIN]: FilecoinCircle,
 }

@@ -14,6 +14,7 @@ import { CeloNaked } from './CeloNaked'
 import { CoreNaked } from './CoreNaked'
 import { EthereumNaked } from './EthereumNaked'
 import { FantomNaked } from './FantomNaked'
+import { FilecoinNaked } from './FilecoinNaked'
 import { FuseNaked } from './FuseNaked'
 import { GnosisNaked } from './GnosisNaked'
 import { HaqqNakked } from './HaqqNaked'
@@ -46,6 +47,7 @@ export * from './CeloNaked'
 export * from './CoreNaked'
 export * from './EthereumNaked'
 export * from './FantomNaked'
+export * from './FilecoinNaked'
 export * from './FuseNaked'
 export * from './GnosisNaked'
 export * from './HaqqNaked'
@@ -97,4 +99,5 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.LINEA]: LineaNaked,
   [ChainId.BASE]: BaseNaked,
   [ChainId.SCROLL]: ScrollNaked,
+  [ChainId.FILECOIN]: FilecoinNaked,
 }

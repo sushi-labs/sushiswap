@@ -50,4 +50,5 @@ export const nativeCurrencyIds = {
   [ChainId.BASE]: 'ETH',
   [ChainId.SCROLL]: 'ETH',
   // [ChainId.SEPOLIA]: 'ETH',
+  [ChainId.FILECOIN]: 'FIL',
 } as const
