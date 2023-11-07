@@ -46,7 +46,8 @@ export const queryParamsSchema = z.object({
   tokenId: z.coerce
     .number()
     .int()
-    .transform((val) => val.toString())
+    .nullable()
+    .transform((val) => val?.toString())
     .optional(),
 })
 
