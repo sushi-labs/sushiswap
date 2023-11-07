@@ -79,7 +79,7 @@ enum YieldRatePeriod {
 const YIELD_RATE_OPTIONS = [
   {
     value: YieldRatePeriod.ANNUALLY,
-    label: 'Anually',
+    label: 'Annually',
   },
   {
     value: YieldRatePeriod.MONTHLY,
@@ -639,22 +639,24 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                               (when in-range, excl. IL)
                             </span>
                           </TooltipTrigger>
-                          <TooltipContent>
+                          <TooltipContent className="!bg-secondary !p-0.5">
                             <RadioGroup
-                              className="flex"
                               value={yieldRate}
                               onChange={setYieldRate}
                             >
-                              {YIELD_RATE_OPTIONS.map(({ value, label }) => (
-                                <RadioGroup.Option value={value} key={value}>
-                                  <Toggle
+                              <div className="flex gap-1 items-center">
+                                {YIELD_RATE_OPTIONS.map(({ value, label }) => (
+                                  <RadioGroup.Option
+                                    value={value}
+                                    key={value}
+                                    as={Toggle}
                                     size="sm"
                                     pressed={yieldRate === value}
                                   >
                                     {label}
-                                  </Toggle>
-                                </RadioGroup.Option>
-                              ))}
+                                  </RadioGroup.Option>
+                                ))}
+                              </div>
                             </RadioGroup>
                           </TooltipContent>
                         </Tooltip>
