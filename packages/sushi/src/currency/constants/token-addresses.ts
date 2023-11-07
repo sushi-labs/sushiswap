@@ -526,6 +526,39 @@ export const QUICK_ADDRESS = {
 export const OP_ADDRESS = {
   [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000042',
 } as const
+export const GNS_ADDRESS = {
+  [ChainId.POLYGON]: '0xE5417Af564e4bFDA1c483642db72007871397896',
+} as const
+
+export const SAND_ADDRESS = {
+  [ChainId.POLYGON]: '0xBbba073C31bF03b8ACf7c28EF0738DeCF3695683',
+} as const
+
+export const STG_ADDRESS = {
+  [ChainId.POLYGON]: '0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590',
+} as const
+
+export const RNDR_ADDRESS = {
+  [ChainId.POLYGON]: '0x61299774020dA444Af134c82fa83E3810b309991',
+} as const
+
+export const TEL_ADDRESS = {
+  [ChainId.POLYGON]: '0x61299774020dA444Af134c82fa83E3810b309991',
+} as const
+
+export const GRT_ADDRESS = {
+  [ChainId.POLYGON]: '0x5fe2B58c013d7601147DcdD68C143A77499f5531',
+} as const
+
+export const BAL_ADDRESS = {
+  [ChainId.POLYGON]: '0x9a71012B13CA4d3D0Cdc72A177DF3ef03b0E76A3',
+} as const
+
+export const OCEAN_ADDRESS = {
+  [ChainId.POLYGON]: '0x282d8efCe846A88B159800bd4130ad77443Fa1A1',
+} as const
+
+
 
 export const LINK_ADDRESS = {
   [ChainId.ETHEREUM]: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
