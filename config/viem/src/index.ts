@@ -394,8 +394,8 @@ export const filecoin = {
   },
 } as const
 
-const alchemyId =
-  process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
+// const alchemyId =
+//   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 export const config: Record<
@@ -410,12 +410,8 @@ export const config: Record<
   },
   [ChainId.ARBITRUM]: {
     chain: arbitrum,
-    transport: fallback(
-      [
-        http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`),
-        // http(`https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`,
     ),
   },
   [ChainId.AVALANCHE]: {
@@ -474,12 +470,8 @@ export const config: Record<
   },
   [ChainId.ETHEREUM]: {
     chain: mainnet,
-    transport: fallback(
-      [
-        http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
     ),
   },
   [ChainId.FANTOM]: {
@@ -526,32 +518,18 @@ export const config: Record<
   },
   [ChainId.OPTIMISM]: {
     chain: optimism,
-    transport: fallback(
-      [
-        http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`,
     ),
   },
   [ChainId.POLYGON]: {
     chain: polygon,
-    transport: fallback(
-      [
-        http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcId}`),
-      ],
-      { rank: true },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcId}`),
   },
   [ChainId.POLYGON_ZKEVM]: {
     chain: polygonZkEvm,
-    transport: fallback(
-      [
-        http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`,
     ),
   },
   [ChainId.THUNDERCORE]: {
