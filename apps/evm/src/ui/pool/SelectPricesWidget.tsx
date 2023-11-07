@@ -459,7 +459,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             </div>
           )}
           <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <div className="flex justify-end lg:hidden">
                 {isLoading || !pool || !token0 || !token1 ? (
                   <SkeletonText fontSize="xs" />
