@@ -114,7 +114,7 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
-    logType: LogFilterType.Native,
+    // logType: LogFilterType.Native,
     logging: true,
   },
   [ChainId.ARBITRUM_NOVA]: {
