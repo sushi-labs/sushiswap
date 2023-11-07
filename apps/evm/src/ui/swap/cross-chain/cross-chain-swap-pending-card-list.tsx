@@ -14,7 +14,7 @@ export const CrossChainSwapPendingCardList = () => {
       <Label className="px-2 text-muted-foreground">
         Pending transactions ({pendingTransactions.length})
       </Label>
-      {pendingTransactions.map(
+      {pendingTransactions.reverse().map(
         ({ tradeId, amountIn, amountOut, txHash, chainId0, chainId1 }) => {
           return (
             <CrossChainSwapPendingCard

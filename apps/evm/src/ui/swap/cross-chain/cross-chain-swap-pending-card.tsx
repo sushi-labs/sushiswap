@@ -4,7 +4,7 @@ import {
   ArrowRightIcon,
   ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/20/solid'
-import { LinkExternal, Timer, classNames } from '@sushiswap/ui'
+import { LinkExternal, Loader, Timer, classNames } from '@sushiswap/ui'
 
 import {
   Tooltip,
@@ -31,7 +31,7 @@ export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
     })
 
     const [date] = useState<Date>(
-      new Date(Date.now() + 1000 * STARGATE_CONFIRMATION_SECONDS[chainId0]),
+      new Date(Date.now() + (1000 * STARGATE_CONFIRMATION_SECONDS[chainId0])),
     )
 
     // Add to tx history
@@ -78,26 +78,21 @@ export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
               </div>
             </div>
             <div className="flex gap-2">
-              {data?.status === 'INFLIGHT' ? (
                 <Timer date={date}>
-                  {({ minutes, seconds }) => {
-                    return (
-                      <span className="text-right w-full">
+                    {({ minutes, seconds }) => {
+                        return (
+                            <span className="text-right w-full">
                         {minutes}:{seconds}
                       </span>
-                    )
-                  }}
+                        )
+                    }}
                 </Timer>
-              ) : (
-                <div className="flex flex-grow" />
-              )}
-              {data?.link ? (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
                       <LinkExternal
                         href={data?.link}
-                        className="text-right w-full"
+                        className={classNames(data?.link ? "" : '!cursor-default opacity-40 pointer-events-none text-muted-foreground', "text-right w-full")}
                       >
                         <ArrowTopRightOnSquareIcon
                           width={18}
@@ -107,11 +102,10 @@ export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
                       </LinkExternal>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>View on LayerzeroScan</p>
+                      <p>{data?.link ? 'View on LayerzeroScan' : 'Not available yet'}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              ) : null}
             </div>
           </div>
         </div>
@@ -119,9 +113,9 @@ export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
           className={classNames(
             data?.status === 'DELIVERED'
               ? 'bg-green'
-              : data?.status === 'INFLIGHT'
-              ? 'bg-blue'
-              : 'bg-yellow',
+              : data?.status === 'FAILED'
+              ? 'bg-yellow'
+              : 'bg-blue',
             'absolute bottom-0 top-0 left-0 w-[3px] !mt-0',
           )}
         />

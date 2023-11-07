@@ -117,8 +117,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           txHash: data.hash,
           amountOut: trade.amountOut,
           amountIn: trade.amountIn,
-          chainId1: trade.amountIn.currency.chainId as StargateChainId,
-          chainId0: trade.amountOut.currency.chainId as StargateChainId,
+          chainId0: trade.amountIn.currency.chainId as StargateChainId,
+          chainId1: trade.amountOut.currency.chainId as StargateChainId,
         })
       }
 
