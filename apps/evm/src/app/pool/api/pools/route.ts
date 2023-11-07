@@ -1,10 +1,9 @@
 import { PoolsApiSchema, getPoolsFromDB } from '@sushiswap/client/api'
-import { type NextRequest, NextResponse } from 'next/server.js'
+import { NextResponse } from 'next/server.js'
 
-export async function GET(request: NextRequest) {
-  const result = PoolsApiSchema.safeParse(
-    Object.fromEntries(request.nextUrl.searchParams),
-  )
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const result = PoolsApiSchema.safeParse(Object.fromEntries(searchParams))
 
   if (!result.success) {
     return NextResponse.json(result.error.format(), { status: 400 })

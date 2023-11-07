@@ -1,8 +1,8 @@
 import { PoolApiSchema, getPoolFromDB } from '@sushiswap/client/api'
-import { type NextRequest, NextResponse } from 'next/server.js'
+import { NextResponse } from 'next/server.js'
 
 export async function GET(
-  _request: NextRequest,
+  _request: Request,
   { params }: { params: { chainId: string; address: string } },
 ) {
   const result = PoolApiSchema.safeParse({

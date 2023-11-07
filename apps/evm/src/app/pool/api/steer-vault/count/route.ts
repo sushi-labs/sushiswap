@@ -2,11 +2,12 @@ import {
   SteerVaultCountApiSchema,
   getSteerVaultCountFromDB,
 } from '@sushiswap/client/api'
-import { type NextRequest, NextResponse } from 'next/server.js'
+import { NextResponse } from 'next/server.js'
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
   const result = SteerVaultCountApiSchema.safeParse(
-    Object.fromEntries(request.nextUrl.searchParams),
+    Object.fromEntries(searchParams),
   )
 
   if (!result.success) {
