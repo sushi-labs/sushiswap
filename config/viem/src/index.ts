@@ -22,7 +22,6 @@ import {
   //  evmosTestnet,
   fantom,
   // fantomTestnet,
-  // filecoin,
   // filecoinTestnet,
   foundry,
   fuse as _fuse, // missing multicall
@@ -78,7 +77,6 @@ export {
   //  evmosTestnet,
   fantom,
   // fantomTestnet,
-  // filecoin,
   // filecoinTestnet,
   foundry,
   gnosis,
@@ -369,8 +367,35 @@ export const core = {
   },
 } as const
 
-const alchemyId =
-  process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
+export const filecoin = {
+  id: ChainId.FILECOIN,
+  name: 'Filecoin Mainnet',
+  network: 'filecoin-mainnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'filecoin',
+    symbol: 'FIL',
+  },
+  rpcUrls: {
+    default: { http: ['https://api.node.glif.io/rpc/v1'] },
+    public: { http: ['https://api.node.glif.io/rpc/v1'] },
+  },
+  blockExplorers: {
+    default: { name: 'Filfox', url: 'https://filfox.info/en' },
+    filscan: { name: 'Filscan', url: 'https://filscan.io' },
+    filscout: { name: 'Filscout', url: 'https://filscout.io/en' },
+    glif: { name: 'Glif', url: 'https://explorer.glif.io' },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 3328594,
+    },
+  },
+} as const
+
+// const alchemyId =
+//   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 export const config: Record<
@@ -385,12 +410,8 @@ export const config: Record<
   },
   [ChainId.ARBITRUM]: {
     chain: arbitrum,
-    transport: fallback(
-      [
-        http(`${arbitrum.rpcUrls.alchemy.http}/${alchemyId}`),
-        // http(`https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`,
     ),
   },
   [ChainId.AVALANCHE]: {
@@ -449,12 +470,8 @@ export const config: Record<
   },
   [ChainId.ETHEREUM]: {
     chain: mainnet,
-    transport: fallback(
-      [
-        http(`${mainnet.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
     ),
   },
   [ChainId.FANTOM]: {
@@ -501,32 +518,18 @@ export const config: Record<
   },
   [ChainId.OPTIMISM]: {
     chain: optimism,
-    transport: fallback(
-      [
-        http(`${optimism.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`,
     ),
   },
   [ChainId.POLYGON]: {
     chain: polygon,
-    transport: fallback(
-      [
-        http(`${polygon.rpcUrls.alchemy.http}/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcId}`),
-      ],
-      { rank: true },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcId}`),
   },
   [ChainId.POLYGON_ZKEVM]: {
     chain: polygonZkEvm,
-    transport: fallback(
-      [
-        http(`https://polygonzkevm-mainnet.g.alchemy.com/v2/${alchemyId}`),
-        http(`https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`),
-      ],
-      { rank: true },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=polygon-zkevm&dkey=${drpcId}`,
     ),
   },
   [ChainId.THUNDERCORE]: {
@@ -594,5 +597,14 @@ export const config: Record<
   [ChainId.SCROLL]: {
     chain: scroll,
     transport: http(`https://lb.drpc.org/ogrpc?network=scroll&dkey=${drpcId}`),
+  },
+  [ChainId.FILECOIN]: {
+    chain: filecoin,
+    transport: fallback(
+      filecoin.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      },
+    ),
   },
 } as const

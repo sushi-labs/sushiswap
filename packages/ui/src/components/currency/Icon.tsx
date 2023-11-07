@@ -31,6 +31,7 @@ const BttcLogo = 'bttc.svg'
 const ThundercoreLogo = 'thundercore.svg'
 const CoreLogo = 'core.svg'
 const IslmLogo = 'islm.svg'
+const FilecoinLogo = 'filecoin.svg'
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
   [ChainId.KOVAN]: EthereumLogo,
@@ -76,6 +77,7 @@ const LOGO: Record<number, string> = {
   [ChainId.LINEA]: EthereumLogo,
   [ChainId.BASE]: EthereumLogo,
   [ChainId.SCROLL]: EthereumLogo,
+  [ChainId.FILECOIN]: FilecoinLogo,
 }
 
 function djb2(str: string) {

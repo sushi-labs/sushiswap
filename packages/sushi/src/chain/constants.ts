@@ -41,7 +41,7 @@ export const ChainId = {
   // BASE_TESTNET: 84531,
   POLYGON_ZKEVM: 1101,
   THUNDERCORE: 108,
-  // FILECOIN: 314,
+  FILECOIN: 314,
   HAQQ: 11235,
   CORE: 1116,
   ZKSYNC_ERA: 324,
@@ -118,7 +118,7 @@ export const ChainKey = {
   [ChainId.ZKSYNC_ERA]: 'zksync-era',
   [ChainId.LINEA]: 'linea',
   [ChainId.BASE]: 'base',
-  // [ChainId.FILECOIN]: 'filecoin',
+  [ChainId.FILECOIN]: 'filecoin',
   // [ChainId.SEPOLIA]: 'sepolia',
   [ChainId.SCROLL]: 'scroll',
 } as const

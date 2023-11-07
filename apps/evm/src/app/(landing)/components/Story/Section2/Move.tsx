@@ -20,7 +20,7 @@ export const Move: FC = () => {
                 you’re on, with no extra fees.
               </h5>
               <div className="flex gap-6">
-                <LinkInternal href="/xswap">
+                <LinkInternal href="/swap/cross-chain">
                   <Button asChild variant="secondary">
                     Visit xSwap
                   </Button>

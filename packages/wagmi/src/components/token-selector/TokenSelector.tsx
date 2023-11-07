@@ -83,7 +83,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const { data: pricesMap } = usePrices({ chainId })
   const {
     data: balancesMap,
-    isLoading: isBalanceLoading,
+    isInitialLoading: isBalanceLoading,
     refetch,
   } = useBalances({ chainId, account: address, enabled: open })
 
@@ -161,8 +161,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   // Refetch whenever TokenSelector opens
   useEffect(() => {
-    if (open) refetch()
-  }, [open, refetch])
+    if (open && !!address) refetch()
+  }, [open, address, refetch])
 
   const isLoading =
     isTokensLoading || isOtherTokensLoading || isQueryTokenLoading

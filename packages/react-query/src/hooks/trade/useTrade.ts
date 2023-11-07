@@ -6,13 +6,7 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
-import {
-  Amount,
-  Native,
-  Price,
-  WNATIVE_ADDRESS,
-  nativeCurrencyIds,
-} from 'sushi/currency'
+import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { type Address, type Hex, stringify } from 'viem'
 import { deserialize } from 'wagmi'
@@ -85,22 +79,6 @@ export const useTradeQuery = (
         `${
           toToken?.isNative
             ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-            : toToken?.wrapped.address
-        }`,
-      )
-      params.searchParams.set(
-        'fromTokenId',
-        `${
-          fromToken?.isNative
-            ? nativeCurrencyIds[chainId]
-            : fromToken?.wrapped.address
-        }`,
-      )
-      params.searchParams.set(
-        'toTokenId',
-        `${
-          toToken?.isNative
-            ? nativeCurrencyIds[chainId]
             : toToken?.wrapped.address
         }`,
       )

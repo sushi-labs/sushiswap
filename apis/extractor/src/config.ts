@@ -1,4 +1,4 @@
-import { LogFilterType } from '@sushiswap/extractor'
+// import { LogFilterType } from '@sushiswap/extractor'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -29,12 +29,30 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.BOBA_AVAX,
   // ChainId.BOBA_BNB,
   ChainId.BSC,
-  // ChainId.CELO,
+  // ChainId.BTTC,
+  ChainId.CELO,
+  // ChainId.CORE,
   ChainId.ETHEREUM,
-  // ChainId.FANTOM,
+  ChainId.FANTOM,
+  // ChainId.FUSE,
+  ChainId.GNOSIS,
+  // ChainId.HAQQ,
+  // ChainId.HARMONY,
+  // ChainId.HECO,
+  // ChainId.KAVA,
+  ChainId.LINEA,
+  // ChainId.METIS,
+  // ChainId.MOONBEAM,
+  // ChainId.MOONRIVER,
+  // ChainId.OKEX,
   ChainId.OPTIMISM,
+  // ChainId.PALM,
   ChainId.POLYGON,
-  // ChainId.POLYGON_ZKEVM,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.SCROLL,
+  // ChainId.TELOS,
+  // ChainId.THUNDERCORE,
+  // ChainId.ZKSYNC_ERA,
 ] as const
 
 export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
@@ -96,7 +114,7 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
-    logType: LogFilterType.Native,
+    // logType: LogFilterType.Native,
     logging: true,
   },
   [ChainId.ARBITRUM_NOVA]: {
@@ -285,6 +303,15 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 300,
     logging: true,
   },
+  [ChainId.GNOSIS]: {
+    client: createPublicClient(config[ChainId.GNOSIS]),
+    factoriesV2: [sushiswapV2Factory(ChainId.GNOSIS)],
+    factoriesV3: [sushiswapV3Factory(ChainId.GNOSIS)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.GNOSIS],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   [ChainId.OPTIMISM]: {
     client: createPublicClient(config[ChainId.OPTIMISM]),
     factoriesV2: [
@@ -389,6 +416,24 @@ export const EXTRACTOR_CONFIG = {
       uniswapV3Factory(ChainId.BASE),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.SCROLL]: {
+    client: createPublicClient(config[ChainId.SCROLL]),
+    factoriesV2: [sushiswapV2Factory(ChainId.SCROLL)],
+    factoriesV3: [sushiswapV3Factory(ChainId.SCROLL)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.LINEA]: {
+    client: createPublicClient(config[ChainId.LINEA]),
+    // factoriesV2: [sushiswapV2Factory(ChainId.LINEA)],
+    factoriesV3: [sushiswapV3Factory(ChainId.LINEA)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,

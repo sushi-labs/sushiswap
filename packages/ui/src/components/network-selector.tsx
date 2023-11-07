@@ -28,6 +28,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.OPTIMISM,
   ChainId.LINEA,
   ChainId.CORE,
+  ChainId.FILECOIN,
   ChainId.BSC,
   ChainId.THUNDERCORE,
   ChainId.GNOSIS,
@@ -44,7 +45,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
   children: ReactNode
 }
 
-const NEW_CHAINS: number[] = [ChainId.SCROLL] satisfies ChainId[]
+const NEW_CHAINS: number[] = [ChainId.FILECOIN] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
   onSelect,
