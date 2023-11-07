@@ -30,6 +30,8 @@ export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.POLYGON_ZKEVM,
+  ChainId.SCROLL,
+  ChainId.LINEA,
 ]
 export type SwapApiEnabledChainId = typeof SWAP_API_ENABLED_NETWORKS[number]
 export const isSwapApiEnabledChainId = (

@@ -24,8 +24,10 @@ import {
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
+  RouteProcessor3ChainId,
   type RouteProcessor3_1ChainId,
   type RouteProcessor3_2ChainId,
+  isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
@@ -46,10 +48,15 @@ const querySchema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM)
-    .refine((chainId) => isSupportedChainId(chainId), {
-      message: 'ChainId not supported.',
-    })
-    .transform((chainId) => chainId as SupportedChainId),
+    .refine(
+      (chainId) =>
+        isRouteProcessor3ChainId(chainId as RouteProcessor3ChainId) &&
+        isSupportedChainId(chainId),
+      {
+        message: 'ChainId not supported.',
+      },
+    )
+    .transform((chainId) => chainId as RouteProcessor3ChainId),
   tokenIn: z.string(),
   tokenOut: z.string(),
   amount: z.string().transform((amount) => BigInt(amount)),
@@ -71,7 +78,8 @@ const querySchema3_1 = querySchema.extend({
     .default(ChainId.ETHEREUM)
     .refine(
       (chainId) =>
-        isRouteProcessor3_1ChainId(chainId as RouteProcessor3_1ChainId),
+        isRouteProcessor3_1ChainId(chainId as RouteProcessor3_1ChainId) &&
+        isSupportedChainId(chainId),
       {
         message: 'ChainId not supported.',
       },
@@ -88,23 +96,31 @@ const querySchema3_2 = querySchema.extend({
     .default(ChainId.ETHEREUM)
     .refine(
       (chainId) =>
-        isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId),
+        isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId) &&
+        isSupportedChainId(chainId),
       {
         message: 'ChainId not supported.',
       },
     )
-    .transform(
-      (chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 534352 | 314>,
-    ),
+    .transform((chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 314>),
 })
 
 const PORT = process.env['PORT'] || 80
 
 const SENTRY_DSN = process.env['SENTRY_DSN'] as string
 
-const extractors = new Map<SupportedChainId, Extractor>()
-const tokenManagers = new Map<SupportedChainId, TokenManager>()
-const nativeProviders = new Map<SupportedChainId, NativeWrapProvider>()
+const extractors = new Map<
+  RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
+  Extractor
+>()
+const tokenManagers = new Map<
+  RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
+  TokenManager
+>()
+const nativeProviders = new Map<
+  RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
+  NativeWrapProvider
+>()
 
 async function main() {
   const app: Express = express()
