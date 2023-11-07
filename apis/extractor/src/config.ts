@@ -1,4 +1,4 @@
-import { LogFilterType } from '@sushiswap/extractor'
+// import { LogFilterType } from '@sushiswap/extractor'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -40,7 +40,7 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.HARMONY,
   // ChainId.HECO,
   // ChainId.KAVA,
-  // ChainId.LINEA,
+  ChainId.LINEA,
   // ChainId.METIS,
   // ChainId.MOONBEAM,
   // ChainId.MOONRIVER,
@@ -49,7 +49,7 @@ export const SUPPORTED_CHAIN_IDS = [
   // ChainId.PALM,
   ChainId.POLYGON,
   ChainId.POLYGON_ZKEVM,
-  // ChainId.SCROLL,
+  ChainId.SCROLL,
   // ChainId.TELOS,
   // ChainId.THUNDERCORE,
   // ChainId.ZKSYNC_ERA,
@@ -114,7 +114,7 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
-    logType: LogFilterType.Native,
+    // logType: LogFilterType.Native,
     logging: true,
   },
   [ChainId.ARBITRUM_NOVA]: {
@@ -416,6 +416,24 @@ export const EXTRACTOR_CONFIG = {
       uniswapV3Factory(ChainId.BASE),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.SCROLL]: {
+    client: createPublicClient(config[ChainId.SCROLL]),
+    factoriesV2: [sushiswapV2Factory(ChainId.SCROLL)],
+    factoriesV3: [sushiswapV3Factory(ChainId.SCROLL)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.LINEA]: {
+    client: createPublicClient(config[ChainId.LINEA]),
+    // factoriesV2: [sushiswapV2Factory(ChainId.LINEA)],
+    factoriesV3: [sushiswapV3Factory(ChainId.LINEA)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
