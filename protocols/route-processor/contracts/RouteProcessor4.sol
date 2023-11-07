@@ -451,7 +451,7 @@ contract RouteProcessor4 is Ownable {
       amountOut = ICurve(pool).exchange{value: amountIn}(fromIndex, toIndex, amountIn, 0);
     } else {
       if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
-      IERC20(tokenIn).approve(pool, amountIn);
+      IERC20(tokenIn).safeApprove(pool, amountIn);
       if (poolType == 0) amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
       else {
         uint256 balanceBefore = IERC20(tokenOut).balanceOf(address(this));
