@@ -31,7 +31,7 @@ export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
     })
 
     const [date] = useState<Date>(
-      new Date(Date.now() + (1000 * STARGATE_CONFIRMATION_SECONDS[chainId0])),
+      new Date(Date.now() + 1000 * STARGATE_CONFIRMATION_SECONDS[chainId0]),
     )
 
     // Add to tx history
@@ -78,34 +78,43 @@ export const CrossChainSwapPendingCard: FC<CrossChainSwapPendingTransaction> =
               </div>
             </div>
             <div className="flex gap-2">
-                <Timer date={date}>
-                    {({ minutes, seconds }) => {
-                        return (
-                            <span className="text-right w-full">
-                        {minutes}:{seconds}
-                      </span>
-                        )
-                    }}
-                </Timer>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <LinkExternal
-                        href={data?.link}
-                        className={classNames(data?.link ? "" : '!cursor-default opacity-40 pointer-events-none text-muted-foreground', "text-right w-full")}
-                      >
-                        <ArrowTopRightOnSquareIcon
-                          width={18}
-                          height={18}
-                          className="text-blue hover:underline"
-                        />
-                      </LinkExternal>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{data?.link ? 'View on LayerzeroScan' : 'Not available yet'}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+              <Timer date={date}>
+                {({ minutes, seconds }) => {
+                  return (
+                    <span className="text-right w-full">
+                      {minutes}:{seconds}
+                    </span>
+                  )
+                }}
+              </Timer>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <LinkExternal
+                      href={data?.link}
+                      className={classNames(
+                        data?.link
+                          ? ''
+                          : '!cursor-default opacity-40 pointer-events-none text-muted-foreground',
+                        'text-right w-full',
+                      )}
+                    >
+                      <ArrowTopRightOnSquareIcon
+                        width={18}
+                        height={18}
+                        className="text-blue hover:underline"
+                      />
+                    </LinkExternal>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {data?.link
+                        ? 'View on LayerzeroScan'
+                        : 'Not available yet'}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
         </div>
