@@ -783,6 +783,11 @@ export class Graph {
       closestVert.edges.forEach((e) => {
         const v2 = closestVert === e.vert0 ? e.vert1 : e.vert0
         if (processedVert.has(v2)) return
+        // multitoken pool protection. Don't use two pools from one multipool in one path (but is possible in
+        // different paths => in one route). It is not better then use one pool (For curve at least) 
+        // and it is calculated wrong (with no flow applying)
+        if (e.pool.address === closestVert.bestSource?.pool.address) return
+        
         let newIncome: number
         let gas
         try {
