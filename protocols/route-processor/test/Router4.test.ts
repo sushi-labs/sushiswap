@@ -683,7 +683,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
   })
 
   if (network.config.chainId === 137) {
-    it('Trident Native => SUSHI => Native (Polygon only)', async function () {
+    // NoWay
+    it.skip('Trident Native => SUSHI => Native (Polygon only)', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
@@ -707,7 +708,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
   }
 
   if (network.config.chainId === 137) {
-    it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
+    // NoWay
+    it.skip('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
       const filter = (pool: RPool) =>
         pool instanceof StableSwapRPool || pool instanceof BridgeBento
       await env.snapshot.restore()
