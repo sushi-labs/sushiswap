@@ -1,8 +1,8 @@
-import { ModalType, useModal } from './ModalProvider'
-import React, { FC, Fragment, useEffect } from 'react'
-import { useBreakpoint } from '@sushiswap/hooks'
 import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
-import {ExtractProps, syncScrollLockSafeArea } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { ExtractProps, syncScrollLockSafeArea } from '@sushiswap/ui'
+import React, { FC, Fragment, useEffect } from 'react'
+import { ModalType, useModal } from './ModalProvider'
 
 export type ModalPanelProps = Omit<
   ExtractProps<typeof HeadlessDialog>,

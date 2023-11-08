@@ -1,6 +1,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import WalletSelector from 'components/WalletSelector'
 import { createToast } from 'components/toast'
@@ -12,7 +13,6 @@ import { Pool } from 'utils/usePools'
 import { formatNumber } from 'utils/utilFunctions'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
-import { Dots } from '@sushiswap/ui'
 interface Props {
   pool: Pool
   liquidityBalance: number | undefined

@@ -1,8 +1,8 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
+import { Badge, classNames } from '@sushiswap/ui'
 import React, { CSSProperties } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
-import { Badge, classNames } from '@sushiswap/ui'
 import { Modal } from './Modal/Modal'
 type PropType = {
   id: string

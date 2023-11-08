@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
 import { Transition } from '@headlessui/react'
 import { SushiIcon } from '@sushiswap/ui'
+import React from 'react'
 
 export default function Loading() {
   return (

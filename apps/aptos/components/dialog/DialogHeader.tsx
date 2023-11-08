@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { IconButton, classNames } from '@sushiswap/ui'
 import React, { FC, ReactNode } from 'react'
-import { classNames, IconButton } from '@sushiswap/ui'
 
 export interface DialogHeaderProps {
   title: string | ReactNode

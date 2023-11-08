@@ -1,10 +1,10 @@
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { useIsMounted } from '@sushiswap/hooks'
+import { Button } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { useCustomTokens } from 'utils/useCustomTokens'
-import { Button } from '@sushiswap/ui'
-import { List } from '@sushiswap/ui'
 
 export const TokenSelectorCustomTokenOverlay = () => {
   const isMounted = useIsMounted()
@@ -52,7 +52,7 @@ export const TokenSelectorCustomTokenOverlay = () => {
                   <List.MenuItem
                     key={token.address}
                     title={token.symbol || ''}
-                    subtitle={"APTOS"}
+                    subtitle={'APTOS'}
                     onClick={() => mutate('remove', [token])}
                     hoverIcon={TrashIcon}
                   />

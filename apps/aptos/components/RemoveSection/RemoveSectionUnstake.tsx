@@ -1,16 +1,11 @@
-import { Button, Dots } from '@sushiswap/ui'
-import { FC, useState } from 'react'
-import { useIsMounted } from '@sushiswap/hooks'
-import { useParams } from 'next/navigation'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Provider } from 'aptos'
 import { createToast } from 'components/toast'
-<<<<<<< HEAD
-import { useNetwork } from 'utils/useNetwork'
 import { networkNameToNetwork } from 'config/chains'
+import { useNetwork } from 'utils/useNetwork'
 
-=======
-import { providerNetwork } from 'lib/constants'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Button, Dots } from '@sushiswap/ui'
 import {
   Card,
   Message,
@@ -20,24 +15,20 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
+import { useParams } from 'next/navigation'
+import { FC, useState } from 'react'
 
-const MASTERCHEF_CONTRACT =
-  process.env['MASTERCHEF_CONTRACT'] ||
-  process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
-const CONTRACT_ADDRESS =
-  process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
->>>>>>> c4469572a (fix(apps/swap): fix u swap styles for aptos)
 interface AddSectionStakeProps {
   balance: number
   decimals: number
   lpTokenName: string | undefined
 }
 
-export const RemoveSectionUnstake: FC<{
-  balance: number
-  decimals: number
-  lpTokenName: string | undefined
-}> = ({ balance, decimals, lpTokenName }) => {
+export const RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
+  balance,
+  decimals,
+  lpTokenName,
+}) => {
   const isMounted = useIsMounted()
   if (!isMounted) return <></>
   return (
@@ -66,15 +57,9 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const withdrawLiquidity = async () => {
-<<<<<<< HEAD
-    if (!masterchefContract) return
+    if (!masterchefContract || !decimals) return
 
     const provider = new Provider(networkNameToNetwork(network))
-=======
-    if (!decimals) return
-
-    const provider = new Provider(providerNetwork)
->>>>>>> c4469572a (fix(apps/swap): fix u swap styles for aptos)
     setTransactionPending(true)
 
     try {
@@ -106,33 +91,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   }
 
   return (
-<<<<<<< HEAD
-    <RemoveSectionUnstakeWidget
-      value={value}
-      setValue={setValue}
-      token0={token0}
-      token1={token1}
-      stakeAmount={stakeAmount}
-      balance={balance}
-    >
-      {Number(value) > balance ? (
-        <Button size="xl" variant="filled" disabled testId="stake-liquidity">
-          Insufficient Balance
-        </Button>
-      ) : (
-        <Button
-          onClick={Number(value) > 0 ? withdrawLiquidity : () => {}}
-          fullWidth
-          size="xl"
-          variant="filled"
-          disabled={isTransactionPending || !value}
-          testId="unstake-liquidity"
-        >
-          {isTransactionPending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
-        </Button>
-      )}
-    </RemoveSectionUnstakeWidget>
-=======
     <Widget id="stakeLiquidity" variant="empty">
       <WidgetHeader>
         <WidgetTitle>Unstake Liquidity</WidgetTitle>
@@ -229,6 +187,5 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
         </WidgetFooter>
       </div>
     </Widget>
->>>>>>> c4469572a (fix(apps/swap): fix u swap styles for aptos)
   )
 }

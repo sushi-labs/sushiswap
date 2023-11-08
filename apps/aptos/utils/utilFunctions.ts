@@ -1,4 +1,4 @@
-import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
+import { usePoolActions, usePoolState } from 'components/Pool/PoolProvider'
 import { SupportedNetwork, chains } from 'config/chains'
 import { useMemo } from 'react'
 import { baseTokens } from './baseTokens'

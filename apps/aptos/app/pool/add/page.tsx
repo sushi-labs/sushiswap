@@ -1,9 +1,10 @@
 'use client'
+
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Container } from '@sushiswap/ui'
 import React, { FC, useEffect } from 'react'
 import requiredNetworkAlert from 'utils/requiredNetworkAlert'
-import { Add } from '../Pool/PoolPage'
+import { Add } from '../../../components/Pool/PoolPage'
 
 export default function AddPage() {
   const { network, disconnect } = useWallet()

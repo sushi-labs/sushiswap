@@ -1,4 +1,3 @@
-// import useStablePrice from 'utils/useStablePrice'
 import { CogIcon } from '@heroicons/react/24/outline'
 import {
   Button,
@@ -17,7 +16,6 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { CardCurrencyAmountItem } from 'components/CardCurrencyAmountItem'
-// import { useIsMounted } from '@sushiswap/hooks'
 import { FC, ReactNode } from 'react'
 import { Token as TokenType } from 'utils/tokenType'
 

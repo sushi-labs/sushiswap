@@ -1,6 +1,12 @@
 import { useDebounce } from '@sushiswap/hooks'
-import { DataTable } from '@sushiswap/ui'
-import { PaginationState, SortingState } from '@tanstack/react-table'
+import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import {
+  ColumnDef,
+  PaginationState,
+  SortingState,
+  TableState,
+} from '@tanstack/react-table'
+import { usePoolFilters } from 'components/PoolFiltersProvider'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useFarms } from 'utils/useFarms'
 import { useNetwork } from 'utils/useNetwork'
@@ -12,22 +18,25 @@ import {
   TVL_COLUMN,
 } from './Cells/columns'
 
-const columns = [NAME_COLUMN, TVL_COLUMN, APR_COLUMN, RESERVE_COLUMN] as any
+const COLUMNS = [
+  NAME_COLUMN,
+  TVL_COLUMN,
+  APR_COLUMN,
+  RESERVE_COLUMN,
+] satisfies ColumnDef<Pool, unknown>[]
 
-interface PoolsTable {
-  farmsOnly: boolean
-  query: string
-}
+export const PoolsTable = () => {
+  const { tokenSymbols, farmsOnly } = usePoolFilters()
 
-export const PoolsTable = ({ farmsOnly, query }: PoolsTable) => {
   const { data: pools, isLoading } = usePools()
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
-  const [, setPagination] = useState<PaginationState>({
+  const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
+
   const { data: farms } = useFarms()
 
   const {
@@ -52,7 +61,12 @@ export const PoolsTable = ({ farmsOnly, query }: PoolsTable) => {
     () => (!farmsOnly ? pools?.flat() || [] : farmFilter?.flat() || []),
     [pools, farmsOnly, farmFilter],
   )
-  const debouncedQuery = useDebounce(query.trimStart().toLowerCase(), 400)
+
+  const debouncedQuery = useDebounce(
+    tokenSymbols.join(' ').trimStart().toLowerCase(),
+    400,
+  )
+
   const tableData = useMemo(() => {
     if (debouncedQuery.split(' ')[0] === '') return data
     return data.filter(
@@ -66,34 +80,35 @@ export const PoolsTable = ({ farmsOnly, query }: PoolsTable) => {
     )
   }, [debouncedQuery, data])
 
-  // const table = useReactTable<Pool>({
-  //   data: tableData,
-  //   state: {
-  //     sorting,
-  //   },
-  //   columns: columns,
-  //   onSortingChange: setSorting,
-  //   onPaginationChange: setPagination,
-  //   getCoreRowModel: getCoreRowModel(),
-  //   getSortedRowModel: getSortedRowModel(),
-  //   manualSorting: true,
-  //   manualPagination: true,
-  //   sortDescFirst: true,
-  // })
+  const state: Partial<TableState> = useMemo(() => {
+    return {
+      sorting,
+      pagination,
+    }
+  }, [sorting, pagination])
 
   return (
-    <DataTable<Pool, unknown>
-      columns={columns}
-      data={tableData}
-      onPaginationChange={setPagination}
-      onSortingChange={setSorting}
-      pagination={true}
-      state={{
-        sorting,
-      }}
-      loading={!pools || isLoading}
-      testId="pools"
-      linkFormatter={rowLink}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          Pools{' '}
+          {tableData?.length ? (
+            <span className="text-gray-400 dark:text-slate-500">
+              ({tableData?.length})
+            </span>
+          ) : null}
+        </CardTitle>
+      </CardHeader>
+      <DataTable
+        state={state}
+        onSortingChange={setSorting}
+        onPaginationChange={setPagination}
+        loading={!pools && isLoading}
+        linkFormatter={rowLink}
+        columns={COLUMNS}
+        data={data}
+        pagination={true}
+      />
+    </Card>
   )
 }

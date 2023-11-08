@@ -1,8 +1,8 @@
 import { Dialog as HeadlessDialog } from '@headlessui/react/dist/components/dialog/dialog'
+import { ExtractProps } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { ModalPanel } from './ModalPanel'
 import { ModalType } from './ModalProvider'
-import { ExtractProps } from '@sushiswap/ui'
 
 export type ModalConfirmProps = Omit<
   ExtractProps<typeof HeadlessDialog>,

@@ -11,6 +11,8 @@ import {
   JazzIcon,
   SkeletonText,
 } from '@sushiswap/ui'
+import { LinkExternal } from '@sushiswap/ui'
+import { networkNameToNetwork } from 'config/chains'
 import { Aptos } from 'lib/coins'
 import React, { Dispatch, SetStateAction } from 'react'
 import { formatUSD } from 'sushi/format'
@@ -18,8 +20,6 @@ import { useNetwork } from 'utils/useNetwork'
 import useStablePrice from 'utils/useStablePrice'
 import { ProfileView } from './WalletSelector'
 
-import { LinkExternal } from '@sushiswap/ui'
-import { providerNetwork } from 'lib/constants'
 interface Props {
   balance: number | undefined
   setView: Dispatch<SetStateAction<ProfileView>>
@@ -77,7 +77,9 @@ export const DefaultView = ({ balance, setView }: Props) => {
           </ClipboardController>
 
           <LinkExternal
-            href={`https://explorer.aptoslabs.com/account/${account?.address}?network=${providerNetwork}`}
+            href={`https://explorer.aptoslabs.com/account/${
+              account?.address
+            }?network=${networkNameToNetwork(network)}`}
           >
             <IconButton
               size="sm"

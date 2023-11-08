@@ -1,10 +1,10 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Tab } from '@headlessui/react'
+import { Button, Container } from '@sushiswap/ui'
 import { PoolsTable } from 'app/pool/PoolsSection/Tables/PoolsTable'
 import { PositionsTable } from 'app/pool/PoolsSection/Tables/PositionsTable'
 import { PoolFilters } from 'app/pool/PoolsSection/Tables/TableFilters/PoolFilters'
 import React, { Fragment, useState } from 'react'
-import { Button, Container } from '@sushiswap/ui'
 
 export default function PoolsSection() {
   const [tab, setTab] = useState<number>(0)

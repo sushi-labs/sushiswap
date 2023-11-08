@@ -8,14 +8,11 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui'
 import Loading from 'app/loading'
-import { AddLiquidityButton } from 'app/pool/Pool/AddLiquidityButton'
-import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
-import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
 import { Provider } from 'aptos'
 import { ContentBlock } from 'components/ContentBlock'
 import { Layout } from 'components/Layout'
 import { SelectTokensWidget } from 'components/NewPositionSection'
-import TradeInput from 'components/TradeInput'
+import { TradeInput } from 'components/TradeInput'
 import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import Link from 'next/link'
@@ -27,6 +24,9 @@ import { useAccount } from 'utils/useAccount'
 import { useNetwork } from 'utils/useNetwork'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { usePoolPairs } from 'utils/utilFunctions'
+import { AddLiquidityButton } from './AddLiquidityButton'
+import { AddSectionReviewModal } from './AddSectionReviewModel'
+import { usePoolActions, usePoolState } from './PoolProvider'
 
 export function Add() {
   // const router = useRouter()

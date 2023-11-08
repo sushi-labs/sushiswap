@@ -1,7 +1,7 @@
 import { CardItem } from '@sushiswap/ui'
 import React from 'react'
-import { Icon } from './Icon'
 import { Token } from 'utils/tokenType'
+import { Icon } from './Icon'
 
 interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {

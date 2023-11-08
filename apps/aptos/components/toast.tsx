@@ -1,8 +1,8 @@
+import { TOAST_OPTIONS } from '@sushiswap/ui'
+import { ToastButtons } from '@sushiswap/ui/components/toast/ToastButtons'
+import { ToastContent } from '@sushiswap/ui/components/toast/ToastContent'
 import React from 'react'
 import { toast } from 'react-toastify'
-import { ToastContent } from '@sushiswap/ui/components/toast/ToastContent'
-import { ToastButtons } from '@sushiswap/ui/components/toast/ToastButtons'
-import { TOAST_OPTIONS } from '@sushiswap/ui'
 
 interface Props {
   summery: string

@@ -1,11 +1,11 @@
 'use client'
 
-import { FC, ReactNode } from 'react'
-import { Dialog } from './Dialog'
 import { Button, Dots, Loader } from '@sushiswap/ui'
-import { Chain, ChainId } from 'sushi/dist/chain'
 import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
+import { FC, ReactNode } from 'react'
+import { Chain, ChainId } from 'sushi/dist/chain'
+import { Dialog } from './Dialog'
 
 export enum ConfirmationDialogState {
   Undefined = 0,

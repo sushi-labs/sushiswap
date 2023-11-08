@@ -5,7 +5,7 @@ import { Modal } from 'components/Modal/Modal'
 import { FC, ReactNode } from 'react'
 import { formatUSD } from 'sushi/format'
 import useStablePrice from 'utils/useStablePrice'
-import { ModalType } from '../../../components/Modal/ModalProvider'
+import { ModalType } from '../../components/Modal/ModalProvider'
 import { usePoolState } from './PoolProvider'
 import { Rate } from './Rate'
 

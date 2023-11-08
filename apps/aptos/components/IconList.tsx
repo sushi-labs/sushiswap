@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import { Children, cloneElement, FC, isValidElement, ReactNode } from 'react'
+import { Children, FC, ReactNode, cloneElement, isValidElement } from 'react'
 
 export interface IconListProps {
   children: ReactNode

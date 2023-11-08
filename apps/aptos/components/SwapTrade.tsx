@@ -1,6 +1,6 @@
-import React from 'react'
 import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
 import { useSwapActions } from 'app/swap/trade/TradeProvider'
+import React from 'react'
 
 export default function SwapTrade() {
   const { swapTokens } = useSwapActions()
