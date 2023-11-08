@@ -36,9 +36,15 @@
 //     console.error(error)
 //   })
 
+<<<<<<< HEAD
 //   next.onFetch( () => {
 //     return 'continue'
 //   })
+=======
+  next.onFetch(() => {
+    return 'continue'
+  })
+>>>>>>> f3449a8c8ccfd0dc450521e8c8f9ed2705dcb98d
 
 //   await page.goto(BASE_URL)
 //   await switchNetwork(page, CHAIN_ID)
