@@ -1,4 +1,4 @@
-import {CogIcon} from '@heroicons/react/24/outline'
+import { CogIcon } from '@heroicons/react/24/outline'
 import {
   Button,
   Card,
@@ -15,9 +15,9 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import {FC, ReactNode} from 'react'
-import {Token as TokenType} from 'utils/tokenType'
-import {CardCurrencyAmountItem} from 'components/CardCurrencyAmountItem'
+import { CardCurrencyAmountItem } from 'components/CardCurrencyAmountItem'
+import { FC, ReactNode } from 'react'
+import { Token as TokenType } from 'utils/tokenType'
 
 interface RemoveSectionWidgetProps {
   isFarm: boolean
@@ -135,8 +135,14 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           <Card variant="outline" className="p-6">
             <CardGroup>
               <CardLabel>You&apos;ll receive at least:</CardLabel>
-              <CardCurrencyAmountItem amount={token0MinMinimum} currency={token0} />
-              <CardCurrencyAmountItem amount={token1MinMinimum} currency={token1} />
+              <CardCurrencyAmountItem
+                amount={token0MinMinimum}
+                currency={token0}
+              />
+              <CardCurrencyAmountItem
+                amount={token1MinMinimum}
+                currency={token1}
+              />
             </CardGroup>
           </Card>
         </div>

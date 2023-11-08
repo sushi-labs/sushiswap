@@ -32,7 +32,6 @@
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-table": "8.9.1",
     "@vercel/analytics": "0.1.5",
-    "sushi": "workspace:*",
     "aptos": "^1.11.0",
     "fewcha-plugin-wallet-adapter": "^0.1.2",
     "next": "13.4.4",
@@ -44,7 +43,9 @@
     "react-toastify": "9.1.3",
     "react-virtualized-auto-sizer": "1.0.7",
     "react-window": "1.8.7",
-    "swr": "^2.2.0"
+    "sushi": "workspace:*",
+    "swr": "^2.2.0",
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

@@ -59,7 +59,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
             Staked Position
           </span>
           <span className="text-sm dark:text-slate-100 text-gray-900">
-            {"$0.00"}
+            {'$0.00'}
           </span>
         </div>
         <div className="flex items-center justify-between">
@@ -70,7 +70,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
             </span>
           </div>
           <span className="text-sm dark:text-slate-400 text-slate-600">
-            {"$0.00"}
+            {'$0.00'}
           </span>
         </div>
         <div className="flex items-center justify-between">
@@ -81,7 +81,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
             </span>
           </div>
           <span className="text-sm dark:text-slate-400 text-slate-600">
-            {"$0.00"}
+            {'$0.00'}
           </span>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Token } from './tokenType'
 import { FETCH_URL_PREFIX } from 'lib/constants'
+import { Token } from './tokenType'
 
 export interface coinType {
   type: string
@@ -21,7 +21,6 @@ export async function getTokenData(token: Token) {
       })
     }
   }
-  if (tokenData?.[0]?.data?.coin)
-    return tokenData[0]?.data?.coin?.value
+  if (tokenData?.[0]?.data?.coin) return tokenData[0]?.data?.coin?.value
   return 0
 }

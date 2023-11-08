@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react'
-import TradeInput from './TradeInput'
-import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import { useSwapRouter } from 'utils/useSwapRouter'
 import { useIsMounted } from '@sushiswap/hooks'
+import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
+import React, { useEffect, useRef } from 'react'
+import { useSwapRouter } from 'utils/useSwapRouter'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import TradeInput from './TradeInput'
 
 interface Props {
   handleSwap: () => void

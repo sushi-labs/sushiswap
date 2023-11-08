@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import TOKENS from './../config/tokenList.json'
 import { Token } from './tokenType'
-import { useQuery } from '@tanstack/react-query'
 export type Data = {
   address: string
   decimals: number

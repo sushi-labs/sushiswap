@@ -6,10 +6,10 @@ import {
 } from '@heroicons/react/24/outline'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { ClipboardController, IconButton } from '@sushiswap/ui'
+import { LinkExternal } from '@sushiswap/ui'
+import { providerNetwork } from 'lib/constants'
 import React, { Dispatch, SetStateAction } from 'react'
 import { ProfileView } from './WalletSelector'
-import { providerNetwork } from 'lib/constants'
-import { LinkExternal } from '@sushiswap/ui'
 interface Props {
   balance: number | undefined
   setView: Dispatch<SetStateAction<ProfileView>>

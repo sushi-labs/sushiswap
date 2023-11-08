@@ -2,18 +2,24 @@ import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
 import { useBreakpoint } from '@sushiswap/hooks'
 import React, { FC, Fragment, FunctionComponent, useEffect } from 'react'
 
+import { ExtractProps } from '@sushiswap/ui'
 import DialogActions, { DialogActionProps } from './DialogActions'
 import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
-import { ExtractProps } from '@sushiswap/ui'
 
 export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   afterLeave?(): void
   children?: React.ReactNode
 }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
+const DialogRoot: FC<DialogRootProps> = ({
+  open,
+  onClose,
+  children,
+  afterLeave,
+  ...rest
+}) => {
   const { unmount } = rest
   const { isMd } = useBreakpoint('md')
 
@@ -39,7 +45,12 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
   }, [isMd, open])
 
   return (
-    <Transition show={open} as={Fragment} afterLeave={afterLeave} unmount={unmount}>
+    <Transition
+      show={open}
+      as={Fragment}
+      afterLeave={afterLeave}
+      unmount={unmount}
+    >
       <HeadlessDialog className="relative z-[1080]" onClose={onClose} {...rest}>
         <Transition.Child
           as={Fragment}
@@ -66,7 +77,9 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               unmount={unmount}
             >
-              <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
+              <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">
+                {children}
+              </HeadlessDialog.Panel>
             </Transition.Child>
           </div>
         </div>

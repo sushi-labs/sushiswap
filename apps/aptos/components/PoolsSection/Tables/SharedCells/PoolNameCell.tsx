@@ -1,12 +1,12 @@
+import { TooltipContent } from '@sushiswap/ui'
+import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
+import { Icon } from 'components/Icon'
+import { IconList } from 'components/IconList'
 import React, { FC } from 'react'
-import { Row } from './types'
+import { isFarm, useFarms } from 'utils/useFarms'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
-import { IconList } from 'components/IconList'
-import { Icon } from 'components/Icon'
-import { classNames } from '@sushiswap/ui'
-import { isFarm, useFarms } from 'utils/useFarms'
-import { Tooltip } from '@sushiswap/ui/future/components/Tooltip'
+import { Row } from './types'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPools(row)
@@ -26,14 +26,26 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
       </div>
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-          {token0?.symbol} <span className="font-normal text-gray-900 dark:text-slate-500">/</span> {token1?.symbol}{' '}
-          <div className={classNames('text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1')}></div>
+          {token0?.symbol}{' '}
+          <span className="font-normal text-gray-900 dark:text-slate-500">
+            /
+          </span>{' '}
+          {token1?.symbol}{' '}
         </span>
         <div className="flex gap-1">
           {_isFarm !== -1 && (
-            <Tooltip description="Farm rewards available">
-              <div className="bg-green/20 text-green text-[10px] px-2 rounded-full">🧑‍🌾</div>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+                    🧑‍🌾
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Farm rewards available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </div>

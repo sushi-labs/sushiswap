@@ -1,4 +1,4 @@
-import { useWallet, WalletName } from '@aptos-labs/wallet-adapter-react'
+import { WalletName, useWallet } from '@aptos-labs/wallet-adapter-react'
 import {
   Button,
   ButtonProps,

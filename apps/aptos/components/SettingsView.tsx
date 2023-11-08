@@ -2,8 +2,8 @@ import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import React, { FC, Fragment } from 'react'
 
 import { RadioGroup } from '@headlessui/react'
-import { IconButton, List, classNames } from '@sushiswap/ui'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
+import { IconButton, List, classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { ProfileView } from './WalletSelector'
 

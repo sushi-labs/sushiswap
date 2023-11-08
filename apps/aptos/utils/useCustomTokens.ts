@@ -1,7 +1,7 @@
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Data } from './useTokens'
 import { useCallback, useMemo } from 'react'
 import { Token } from './tokenType'
+import { Data } from './useTokens'
 
 export function useCustomTokens() {
   const [value, setValue] = useLocalStorage<Record<string, Data>>(

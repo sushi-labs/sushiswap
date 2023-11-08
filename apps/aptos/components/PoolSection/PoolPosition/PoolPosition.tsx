@@ -1,8 +1,8 @@
+import { useBreakpoint } from '@sushiswap/hooks'
 import { FC } from 'react'
+import { Pool } from 'utils/usePools'
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
-import { Pool } from 'utils/usePools'
-import { useBreakpoint } from '@sushiswap/hooks'
 
 interface PoolPositionProps {
   row: Pool

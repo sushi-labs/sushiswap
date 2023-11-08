@@ -1,11 +1,11 @@
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { FC, ReactNode } from 'react'
-import { Rate } from './Rate'
-import { usePoolState } from './PoolProvider'
-import { Icon } from 'components/Icon'
 import { Button } from '@sushiswap/ui'
+import { Icon } from 'components/Icon'
 import { Modal } from 'components/Modal/Modal'
-import { ModalType } from '../../../components/Modal/ModalProvider'
+import { FC, ReactNode } from 'react'
+import { ModalType } from '../Modal/ModalProvider'
+import { usePoolState } from './PoolProvider'
+import { Rate } from './Rate'
 
 interface Props {
   children({ close }: { close: () => void }): ReactNode

@@ -1,7 +1,7 @@
-import WalletSelector from '../../../components/WalletSelector'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { usePoolState } from './PoolProvider'
 import { Modal } from 'components/Modal/Modal'
+import WalletSelector from '../WalletSelector'
+import { usePoolState } from './PoolProvider'
 
 interface Props {
   buttonError: string
@@ -26,7 +26,7 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
                   ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
                   : ''
               }`}
-              disabled={buttonError ? true : false}
+              disabled={!!buttonError}
               onClick={() => {
                 token1Value ? open() : {}
               }}
@@ -40,7 +40,7 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
               )}
             </button>
           ) : (
-            <WalletSelector color="blue" fullWidth={true} />
+            <WalletSelector />
           )}
         </div>
       )}

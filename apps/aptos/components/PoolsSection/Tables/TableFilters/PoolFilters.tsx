@@ -1,7 +1,7 @@
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Tab } from '@headlessui/react'
+import { Button } from '@sushiswap/ui'
 import { FC } from 'react'
 import { Search } from '../../../../../components/Search'
-import { Tab } from '@headlessui/react'
 
 interface Props {
   showCategories: boolean
@@ -38,11 +38,11 @@ export const PoolFilters: FC<Props> = ({
                   <Button
                     onClick={farmHandler}
                     size="sm"
-                    variant="outlined"
+                    variant="outline"
                     color={farmsOnly ? 'blue' : 'default'}
                     className="flex gap-2.5"
                   >
-                    <span>🧑‍🌾</span> <span>Farms</span>
+                    <span>🧑�🌾</span> <span>Farms</span>
                   </Button>
                 </div>
               </div>

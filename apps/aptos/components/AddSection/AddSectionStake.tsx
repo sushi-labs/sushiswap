@@ -1,11 +1,11 @@
-import { Button, Dots } from '@sushiswap/ui'
-import { FC, useState } from 'react'
-import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { Button, Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import { useParams } from 'next/navigation'
 import { createToast } from 'components/toast'
 import { providerNetwork } from 'lib/constants'
+import { useParams } from 'next/navigation'
+import { FC, useState } from 'react'
+import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
   balance: number

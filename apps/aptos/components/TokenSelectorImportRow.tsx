@@ -2,11 +2,11 @@ import {
   ArrowTopRightOnSquareIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline'
+import { Button, List } from '@sushiswap/ui'
+import { providerNetwork } from 'lib/constants'
 import React, { ReactNode, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
-import { providerNetwork } from 'lib/constants'
-import { Button, List } from '@sushiswap/ui'
 import { Modal } from './Modal/Modal'
 interface Props {
   id: string

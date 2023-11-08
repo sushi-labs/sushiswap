@@ -1,11 +1,11 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import React, { useEffect, useState } from 'react'
-import WalletSelector from './WalletSelector'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
-import { useSwapRouter } from 'utils/useSwapRouter'
 import { warningSeverity } from 'lib/swap/warningSeverity'
+import React, { useEffect, useState } from 'react'
+import { useSwapRouter } from 'utils/useSwapRouter'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { Modal } from './Modal/Modal'
+import WalletSelector from './WalletSelector'
 
 export const SwapButton = () => {
   const { connected, account } = useWallet()

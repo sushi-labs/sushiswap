@@ -99,7 +99,7 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
         </div>
       </div>
       {!connected ? (
-        <WalletSelector color="blue" size="xl" fullWidth={true} />
+        <WalletSelector />
       ) : (
         <Button
           size="xl"

@@ -1,6 +1,6 @@
-import React, { SVGProps } from 'react'
 import { Wallet } from '@aptos-labs/wallet-adapter-core'
 import { LinkExternal } from '@sushiswap/ui'
+import React, { SVGProps } from 'react'
 interface Props {
   Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null>
   wallet: Wallet

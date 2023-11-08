@@ -3,10 +3,10 @@ import { useIsSmScreen } from '@sushiswap/hooks'
 import React, { FC, Fragment, ReactElement } from 'react'
 import ReactDOM from 'react-dom'
 
-import { useSlideInContext } from './SlideIn'
-import { useEscapeClose } from './useEscapeClose'
 import { classNames } from '@sushiswap/ui'
 import { Dialog } from '../dialog'
+import { useSlideInContext } from './SlideIn'
+import { useEscapeClose } from './useEscapeClose'
 
 export type FromRight = {
   show: boolean

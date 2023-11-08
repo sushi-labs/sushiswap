@@ -1,18 +1,18 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import React, { useState } from 'react'
-import { ConnectView } from './ConnectView'
-import { DefaultView } from './DefaultView'
-import { SettingsView } from './SettingsView'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import { useTokens } from 'utils/useTokens'
 import {
   Button,
   JazzIcon,
+  Popover,
   PopoverContent,
   PopoverTrigger,
-  Popover,
 } from '@sushiswap/ui'
+import React, { useState } from 'react'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { useTokens } from 'utils/useTokens'
 import ConnectButton from './ConnectButton'
+import { ConnectView } from './ConnectView'
+import { DefaultView } from './DefaultView'
+import { SettingsView } from './SettingsView'
 
 export enum ProfileView {
   Disconnected = 0,

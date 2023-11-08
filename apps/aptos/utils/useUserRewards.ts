@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { userStakes } from './useUserHandle'
-import { FarmLP } from './useFarms'
 import getAptosPerShare from './getAptosPerShare'
+import { FarmLP } from './useFarms'
+import { userStakes } from './useUserHandle'
 
 export const ACC_SUSHI_PRECISION = 1000000000000
 

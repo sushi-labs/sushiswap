@@ -1,14 +1,7 @@
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
-import { Provider } from 'aptos'
-import React, { FC } from 'react'
-import { payloadArgs } from 'utils/payloadUtil'
-import { createToast } from './toast'
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { formatNumber } from 'utils/utilFunctions'
-import { Icon } from './Icon'
 import {
   Badge,
   Button,
@@ -19,15 +12,22 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
+import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
+import { Provider } from 'aptos'
 import { providerNetwork } from 'lib/constants'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import { useSwapRouter } from 'utils/useSwapRouter'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'lib/swap/warningSeverity'
+import React, { FC } from 'react'
+import { payloadArgs } from 'utils/payloadUtil'
+import { useSwapRouter } from 'utils/useSwapRouter'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { formatNumber } from 'utils/utilFunctions'
+import { Icon } from './Icon'
 import { Modal } from './Modal/Modal'
 import { ModalType } from './Modal/ModalProvider'
+import { createToast } from './toast'
 
 interface Props {
   isTransactionPending: boolean

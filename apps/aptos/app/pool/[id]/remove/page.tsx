@@ -1,10 +1,10 @@
 'use client'
-import React, { useEffect } from 'react'
-import Remove from './remove'
-import { useAccount } from 'utils/useAccount'
-import Loading from 'app/loading'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import Loading from 'app/loading'
+import React, { useEffect } from 'react'
 import requiredNetworkAlert from 'utils/requiredNetworkAlert'
+import { useAccount } from 'utils/useAccount'
+import Remove from './remove'
 
 const Pool = () => {
   const { isLoadingAccount } = useAccount()

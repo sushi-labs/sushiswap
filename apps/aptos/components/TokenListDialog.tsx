@@ -1,3 +1,14 @@
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  List,
+  TextField,
+} from '@sushiswap/ui'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
+import { DialogHeader, DialogTitle, DialogTrigger } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, {
   CSSProperties,
   ReactElement,
@@ -5,26 +16,15 @@ import React, {
   useCallback,
   useState,
 } from 'react'
-import TokenListItem from './TokenListItem'
-import { Token } from 'utils/tokenType'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import useTokenWithCache from 'utils/useTokenWithCache'
-import { TokenSelectorImportRow } from './TokenSelectorImportRow'
-import { useTokens } from 'utils/useTokens'
+import { Token } from 'utils/tokenType'
 import { useCustomTokens } from 'utils/useCustomTokens'
 import { useSortedTokenList } from 'utils/useSortedTokenList'
-import {
-  Dialog,
-  DialogDescription,
-  DialogContent,
-  List,
-  TextField,
-} from '@sushiswap/ui'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { DialogTitle, DialogTrigger, DialogHeader } from '@sushiswap/ui'
-import { classNames } from '@sushiswap/ui'
+import useTokenWithCache from 'utils/useTokenWithCache'
+import { useTokens } from 'utils/useTokens'
+import TokenListItem from './TokenListItem'
+import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 
 type RowCallback = (row: {
   index: number

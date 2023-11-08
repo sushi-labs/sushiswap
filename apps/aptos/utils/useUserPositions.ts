@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { Pool, usePools } from './usePools'
 import { FETCH_URL_PREFIX } from 'lib/constants'
+import { Pool, usePools } from './usePools'
 
 export type CoinStore = {
   type: string

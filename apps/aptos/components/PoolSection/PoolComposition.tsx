@@ -1,7 +1,3 @@
-import { FC } from 'react'
-import { Pool } from 'utils/usePools'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
-import { formatNumber } from 'utils/utilFunctions'
 import {
   Card,
   CardContent,
@@ -11,6 +7,10 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
+import { FC } from 'react'
+import { Pool } from 'utils/usePools'
+import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { formatNumber } from 'utils/utilFunctions'
 import { CardCurrencyAmountItem } from '../CardCurrencyAmountItem'
 
 interface PoolCompositionProps {

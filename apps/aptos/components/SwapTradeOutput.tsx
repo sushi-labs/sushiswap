@@ -1,9 +1,9 @@
-import React from 'react'
-import TradeInput from './TradeInput'
-import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
-import { formatNumber } from 'utils/utilFunctions'
-import { useTokenBalance } from 'utils/useTokenBalance'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
+import React from 'react'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { formatNumber } from 'utils/utilFunctions'
+import TradeInput from './TradeInput'
 
 interface Props {
   handleSwap: () => void

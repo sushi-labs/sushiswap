@@ -1,3 +1,4 @@
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Loader, classNames } from '@sushiswap/ui'
 import React, {
   FC,
@@ -8,7 +9,6 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Search {
   className?: string

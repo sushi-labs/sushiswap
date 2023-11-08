@@ -1,9 +1,3 @@
-import React from 'react'
-import { PricePanel } from './PricePanel'
-import { BalancePanel } from './BalancePanel'
-import TokenListDialog from './TokenListDialog'
-import { Token } from 'utils/tokenType'
-import { Icon } from './Icon'
 import {
   Button,
   SelectIcon,
@@ -11,7 +5,13 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
+import React from 'react'
+import { Token } from 'utils/tokenType'
+import { BalancePanel } from './BalancePanel'
+import { Icon } from './Icon'
 import { Modal } from './Modal/Modal'
+import { PricePanel } from './PricePanel'
+import TokenListDialog from './TokenListDialog'
 interface PropType {
   id: string
   type: 'INPUT' | 'OUTPUT'

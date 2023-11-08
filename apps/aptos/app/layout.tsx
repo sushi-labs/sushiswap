@@ -4,8 +4,8 @@ import '@sushiswap/ui/index.css'
 import './../app/swap/css/swap.css'
 
 import React from 'react'
-import { Providers } from './providers'
 import { Header } from './header'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: {

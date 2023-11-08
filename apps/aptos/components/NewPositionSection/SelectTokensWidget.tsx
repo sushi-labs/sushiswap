@@ -1,11 +1,11 @@
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import { Button } from '@sushiswap/ui'
+import { Icon } from 'components/Icon'
+import { Modal } from 'components/Modal/Modal'
 import React, { FC } from 'react'
 import { ContentBlock } from '../ContentBlock'
+import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
 import TokenListDialog from '../TokenListDialog'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-import { Icon } from 'components/Icon'
-import { Button } from '@sushiswap/ui'
-import { Modal } from 'components/Modal/Modal'
 interface Props {
   handleSwap: () => void
 }

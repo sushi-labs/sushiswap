@@ -1,11 +1,6 @@
-import { Button, Dots } from '@sushiswap/ui'
-import { FC, useState } from 'react'
-import { useIsMounted } from '@sushiswap/hooks'
-import { useParams } from 'next/navigation'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Provider } from 'aptos'
-import { createToast } from 'components/toast'
-import { providerNetwork } from 'lib/constants'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Button, Dots } from '@sushiswap/ui'
 import {
   Card,
   Message,
@@ -15,6 +10,11 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
+import { Provider } from 'aptos'
+import { createToast } from 'components/toast'
+import { providerNetwork } from 'lib/constants'
+import { useParams } from 'next/navigation'
+import { FC, useState } from 'react'
 
 const MASTERCHEF_CONTRACT =
   process.env['MASTERCHEF_CONTRACT'] ||

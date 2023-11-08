@@ -10,14 +10,14 @@ import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { PoolRewards } from 'components/PoolSection/PoolRewards'
 import { useParams } from 'next/navigation'
 import { FC, useEffect, useMemo } from 'react'
+import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 import { useAccount } from 'utils/useAccount'
 import { isFarm, useFarms } from 'utils/useFarms'
 import { usePool } from 'utils/usePool'
-import { useUserRewards } from 'utils/useUserRewards'
+import { useRewardsPerDay } from 'utils/useRewardsPerDay'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
-import { useRewardsPerDay } from 'utils/useRewardsPerDay'
-import requiredNetworkAlert from 'utils/requiredNetworkAlert'
+import { useUserRewards } from 'utils/useUserRewards'
 
 const Pool: FC = () => {
   return <_Pool />

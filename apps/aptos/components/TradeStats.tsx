@@ -2,17 +2,17 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
-import React from 'react'
-import { formatNumber } from 'utils/utilFunctions'
-import { TradeRoute } from './TradeRoute'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import { useSwapRouter } from 'utils/useSwapRouter'
 import { providerNetwork } from 'lib/constants'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'lib/swap/warningSeverity'
+import React from 'react'
+import { useSwapRouter } from 'utils/useSwapRouter'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { formatNumber } from 'utils/utilFunctions'
 import { Modal } from './Modal/Modal'
+import { TradeRoute } from './TradeRoute'
 
 export const TradeStats = () => {
   const {

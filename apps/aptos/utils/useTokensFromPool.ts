@@ -1,5 +1,5 @@
-import { Pool } from './usePools'
 import { Token } from './tokenType'
+import { Pool } from './usePools'
 import { useTokens } from './useTokens'
 
 export function useTokensFromPools(row: Pool) {

@@ -1,8 +1,8 @@
 import React from 'react'
+import { Token } from 'utils/tokenType'
+import useTokenWithCache from 'utils/useTokenWithCache'
 import { useTokens } from 'utils/useTokens'
 import { Icon } from './Icon'
-import useTokenWithCache from 'utils/useTokenWithCache'
-import { Token } from 'utils/tokenType'
 import { Modal } from './Modal/Modal'
 import { ModalType } from './Modal/ModalProvider'
 interface Props {

@@ -1,4 +1,4 @@
-import { Typography, classNames } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import {
   FC,
   ReactElement,
@@ -75,9 +75,10 @@ export const Rate: FC<Rate> = ({ children }) => {
       {/* <Typography variant="xs" className={classNames('cursor-pointer h-[36px] flex items-center gap-1')}>
         Rate
       </Typography> */}
-      <Typography
-        variant="xs"
-        className={classNames('cursor-pointer h-[36px] flex items-center ')}
+      <span
+        className={classNames(
+          'text-xs cursor-pointer h-[36px] flex items-center ',
+        )}
       >
         <button
           type="button"
@@ -86,7 +87,7 @@ export const Rate: FC<Rate> = ({ children }) => {
         >
           {content} <span className="text-slate-500">(${})</span>
         </button>
-      </Typography>
+      </span>
     </div>
   )
 }

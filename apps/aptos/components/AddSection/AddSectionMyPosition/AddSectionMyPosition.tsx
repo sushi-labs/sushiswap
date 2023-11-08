@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
-import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { Token } from 'utils/tokenType'
+import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
+import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
 
 interface Props {
   balance: number

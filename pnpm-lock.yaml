@@ -415,10 +415,10 @@ importers:
         version: 1.0.2
       '@aptstats/aptos-wallet-framework':
         specifier: ^0.0.6
-        version: 0.0.6(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+        version: 0.0.6(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
       '@aptstats/safepal-wallet-extension':
         specifier: ^0.0.3
-        version: 0.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+        version: 0.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
       '@blocto/aptos-wallet-adapter-plugin':
         specifier: ^0.1.9
         version: 0.1.9
@@ -503,6 +503,9 @@ importers:
       swr:
         specifier: ^2.2.0
         version: 2.2.4(react@18.2.0)
+      zod:
+        specifier: 3.21.4
+        version: 3.21.4
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -2883,7 +2886,7 @@ packages:
       - debug
     dev: false
 
-  /@aptstats/aptos-wallet-framework@0.0.2(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+  /@aptstats/aptos-wallet-framework@0.0.2(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-HcagZHjKPGopDcs51XSfj2AX8yVaUONixjbGOOX+ydeBkMPFOoiDFeGXCVa3MklNncap1VGE+F/izND5gUDs3A==}
     peerDependencies:
       aptos: ^1.3.16
@@ -2895,7 +2898,7 @@ packages:
       js-sha3: 0.8.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-scripts: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.41.0)(react@18.2.0)(typescript@5.2.2)
+      react-scripts: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.41.0)(react@18.2.0)(typescript@5.2.2)
     transitivePeerDependencies:
       - '@babel/plugin-syntax-flow'
       - '@babel/plugin-transform-react-jsx'
@@ -2932,7 +2935,7 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  /@aptstats/aptos-wallet-framework@0.0.6(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+  /@aptstats/aptos-wallet-framework@0.0.6(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-EU9W6jygRksRCoke+zoue6+md1Q4kTrQHHyKzBf0gypVHidhEnwqZbdW45po80flkdIyfiX2Z+WLWOaKREqWOg==}
     peerDependencies:
       aptos: ^1.3.16
@@ -2944,7 +2947,7 @@ packages:
       js-sha3: 0.8.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-scripts: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.41.0)(react@18.2.0)(typescript@5.2.2)
+      react-scripts: 5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.41.0)(react@18.2.0)(typescript@5.2.2)
     transitivePeerDependencies:
       - '@babel/plugin-syntax-flow'
       - '@babel/plugin-transform-react-jsx'
@@ -2981,12 +2984,12 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  /@aptstats/safepal-wallet-extension@0.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+  /@aptstats/safepal-wallet-extension@0.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-th27vQG9EqmO6yopGIdbEBSAdTAXMmitPA8Ria0Oq21LX4m6gb2Wl/XYXLLJ/ULW+WSolpkVwPu+Zldo9yU4xw==}
     peerDependencies:
       aptos: ^1.3.16
     dependencies:
-      '@aptstats/aptos-wallet-framework': 0.0.2(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+      '@aptstats/aptos-wallet-framework': 0.0.2(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(aptos@1.20.0)(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
       aptos: 1.20.0
       eventemitter3: 4.0.7
     transitivePeerDependencies:
@@ -5057,7 +5060,6 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.23.2)
       '@babel/types': 7.23.0
-    dev: false
 
   /@babel/plugin-transform-react-jsx@7.22.5(@babel/core@7.23.2):
     resolution: {integrity: sha512-rog5gZaVbUip5iWDMTYbVM15XQq+RkUKhET/IHR6oizR+JEoN6CAfTTuHcK4vwUyzca30qqHqEpzBOnaRMWYMA==}
@@ -5381,7 +5383,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.0
-    dev: false
 
   /@babel/template@7.22.15:
     resolution: {integrity: sha512-QPErUVm4uyJa60rkI73qneDacvdvzxshT3kksGqlGWYdOTIUOwJ7RDUL8sGqslY1uXWSL6xMFKEXDS3ox2uF0w==}
@@ -13483,7 +13484,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@babel/runtime': 7.22.10
+      '@babel/runtime': 7.23.2
       '@types/react-reconciler': 0.26.7
       base64-js: 1.5.1
       its-fine: 1.1.1(react@18.2.0)
@@ -24331,7 +24332,7 @@ packages:
       eslint: 8.51.0
     dev: false
 
-  /eslint-config-react-app@7.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.41.0)(jest@27.5.1)(typescript@5.2.2):
+  /eslint-config-react-app@7.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.41.0)(jest@27.5.1)(typescript@5.2.2):
     resolution: {integrity: sha512-K6rNzvkIeHaTd8m/QEh1Zko0KI7BACWkkneSs6s9cKZC/J27X3eZR6Upt1jkmZ/4FK+XUOPPxMEN7+lbUXfSlA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -24349,7 +24350,7 @@ packages:
       babel-preset-react-app: 10.0.1
       confusing-browser-globals: 1.0.11
       eslint: 8.41.0
-      eslint-plugin-flowtype: 8.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.41.0)
+      eslint-plugin-flowtype: 8.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.41.0)
       eslint-plugin-import: 2.28.1(@typescript-eslint/parser@5.62.0)(eslint@8.41.0)
       eslint-plugin-jest: 25.7.0(@typescript-eslint/eslint-plugin@5.62.0)(eslint@8.41.0)(jest@27.5.1)(typescript@5.2.2)
       eslint-plugin-jsx-a11y: 6.7.1(eslint@8.41.0)
@@ -24564,7 +24565,7 @@ packages:
       ignore: 5.2.4
     dev: false
 
-  /eslint-plugin-flowtype@8.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.41.0):
+  /eslint-plugin-flowtype@8.0.3(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.41.0):
     resolution: {integrity: sha512-dX8l6qUL6O+fYPtpNRideCFSpmWOUVx5QcaGLVqe/vlDiBSe4vYljDWDETwnyFzpl7By/WVIu6rcrniCgH9BqQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -24573,7 +24574,7 @@ packages:
       eslint: ^8.1.0
     dependencies:
       '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.23.2)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.23.2)
+      '@babel/plugin-transform-react-jsx': 7.22.15(@babel/core@7.23.2)
       eslint: 8.41.0
       lodash: 4.17.21
       string-natural-compare: 3.0.1
@@ -31932,7 +31933,7 @@ packages:
       '@babel/plugin-transform-named-capturing-groups-regex': 7.22.5(@babel/core@7.23.2)
       '@babel/plugin-transform-parameters': 7.22.5(@babel/core@7.23.2)
       '@babel/plugin-transform-react-display-name': 7.22.5(@babel/core@7.23.2)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.23.2)
+      '@babel/plugin-transform-react-jsx': 7.22.15(@babel/core@7.23.2)
       '@babel/plugin-transform-react-jsx-self': 7.22.5(@babel/core@7.23.2)
       '@babel/plugin-transform-react-jsx-source': 7.22.5(@babel/core@7.23.2)
       '@babel/plugin-transform-runtime': 7.22.15(@babel/core@7.23.2)
@@ -31969,7 +31970,7 @@ packages:
     resolution: {integrity: sha512-XKahvB+iuYJSCr3QqCpROli4B4zASAYpkK+j3a0CJmokxCDNbgyI4Fp88uIL6rNaZfN0Mv35S0b99SdFXIfHjg==}
     engines: {node: '>=16'}
     dependencies:
-      '@babel/runtime': 7.22.10
+      '@babel/runtime': 7.23.2
       react-refresh: 0.4.3
 
   /metro-source-map@0.76.8:
@@ -36786,7 +36787,7 @@ packages:
       shallow-equal: 1.2.1
     dev: false
 
-  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.41.0)(react@18.2.0)(typescript@5.2.2):
+  /react-scripts@5.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.41.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-8VAmEm/ZAwQzJ+GOMLbBsTdDKOpuZh7RPs0UymvBR2vRk4iZWCskjbFnxqjrzoIvlNNRZ3QJFx6/qDSi6zSnaQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
@@ -36814,7 +36815,7 @@ packages:
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
       eslint: 8.41.0
-      eslint-config-react-app: 7.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.41.0)(jest@27.5.1)(typescript@5.2.2)
+      eslint-config-react-app: 7.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.15)(eslint@8.41.0)(jest@27.5.1)(typescript@5.2.2)
       eslint-webpack-plugin: 3.2.0(eslint@8.41.0)(webpack@5.88.2)
       file-loader: 6.2.0(webpack@5.88.2)
       fs-extra: 10.1.0

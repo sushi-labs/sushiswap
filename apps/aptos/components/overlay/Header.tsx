@@ -5,8 +5,8 @@ import {
   ChevronUpIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { IconButton, classNames } from '@sushiswap/ui'
 import { FC } from 'react'
-import { classNames, IconButton } from '@sushiswap/ui'
 
 export interface Header {
   title: string

@@ -1,25 +1,25 @@
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
-import { Layout } from 'components/Layout'
-import { ContentBlock } from 'components/ContentBlock'
-import TradeInput from 'components/TradeInput'
-import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { getPoolPairs } from 'utils/utilFunctions'
-import { SelectTokensWidget } from 'components/NewPositionSection'
-import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-import { Provider } from 'aptos'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { AddLiquidityButton } from 'app/pool/Pool/AddLiquidityButton'
-import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
-import { createToast } from 'components/toast'
-import { liquidityArgs } from 'utils/liquidityPayload'
-import { useTokenBalance } from 'utils/useTokenBalance'
+import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
+import { Button, IconButton } from '@sushiswap/ui'
 import Loading from 'app/loading'
-import { useAccount } from 'utils/useAccount'
+import { Provider } from 'aptos'
+import { ContentBlock } from 'components/ContentBlock'
+import { Layout } from 'components/Layout'
+import { SelectTokensWidget } from 'components/NewPositionSection'
+import TradeInput from 'components/TradeInput'
+import { createToast } from 'components/toast'
 import { providerNetwork } from 'lib/constants'
+import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import getTokenFromAddress from 'utils/getTokenFromAddress'
-import {Button, IconButton } from '@sushiswap/ui'
+import { liquidityArgs } from 'utils/liquidityPayload'
+import { useAccount } from 'utils/useAccount'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { getPoolPairs } from 'utils/utilFunctions'
+import { AddLiquidityButton } from './AddLiquidityButton'
+import { AddSectionReviewModal } from './AddSectionReviewModel'
+import { usePoolActions, usePoolState } from './PoolProvider'
 
 export function Add() {
   // const router = useRouter()
@@ -110,7 +110,7 @@ const _Add: FC = () => {
       setAmount1('')
     } catch (_e) {
       const toastId = `failed:${Math.random()}`
-      createToast({ summery: "User rejected request", toastId: toastId })
+      createToast({ summery: 'User rejected request', toastId: toastId })
     } finally {
       setisTransactionPending(false)
     }
@@ -124,7 +124,7 @@ const _Add: FC = () => {
     account: account?.address as string,
     currency: token1.address,
   })
-  console.log(pairs)
+
   const tradeVal = useRef<HTMLInputElement>(null)
   const tradeVal1 = useRef<HTMLInputElement>(null)
   const onChangeToken0TypedAmount = useCallback(
@@ -182,13 +182,11 @@ const _Add: FC = () => {
 
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
-  }, [account, connected, network, token0, token1, balance0, poolPairRatio])
+  }, [onChangeToken0TypedAmount, amount0])
+
   useEffect(() => {
     PoolInputBalance1(String(amount1))
-  }, [amount1, token1, balance1])
-  // useEffect(() => {
-  //   onChangeToken1TypedAmount(String(amount1))
-  // }, [account, connected, network, amount1, balance1, poolPairRatio])
+  }, [amount1])
 
   const PoolInputBalance0 = (tradeVal: string) => {
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/
@@ -236,7 +234,7 @@ const _Add: FC = () => {
         >
           <div className="flex flex-col gap-4">
             <TradeInput
-              id={"liquidity-from"}
+              id={'liquidity-from'}
               token={token0}
               alteredSelected={token1}
               value={String(amount0)}
@@ -263,7 +261,7 @@ const _Add: FC = () => {
             </div>
             <TradeInput
               alteredSelected={token0}
-              id={"liquidity-to"}
+              id={'liquidity-to'}
               token={token1}
               value={String(amount1)}
               setToken={setToken1}

@@ -1,5 +1,6 @@
 import { WalletName, useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
+import { List } from '@sushiswap/ui'
 import React, { FC, SVGProps } from 'react'
 import { FewchaIcon } from 'walletIcons/FewchaIcon'
 import { MartianIcon } from 'walletIcons/MartianIcon'
@@ -7,7 +8,6 @@ import { PetraIcon } from 'walletIcons/PetraIcon'
 import { PontemIcon } from 'walletIcons/PontemIcon'
 import { RiseIcon } from 'walletIcons/RiseIcon'
 import { NotFoundWalletList } from './NotFoundWalletList'
-import { List } from '@sushiswap/ui'
 
 export const WalletIcons: Record<
   string,

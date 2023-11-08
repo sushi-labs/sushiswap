@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
-import { Token } from './tokenType'
-import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-import { Pool } from './usePools'
-import { baseTokens } from './baseTokens'
 import { FETCH_URL_PREFIX } from 'lib/constants'
+import { useMemo } from 'react'
+import { usePoolActions, usePoolState } from '../components/Pool/PoolProvider'
+import { baseTokens } from './baseTokens'
+import { Token } from './tokenType'
+import { Pool } from './usePools'
 
 export type Route = {
   route: string[]
@@ -39,7 +39,7 @@ export async function useAllCommonPairs(
   await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resources`)
     .then((res) => res.json())
     .then((data) => {
-      let t: any = {}
+      const t: any = {}
       const reserve_tokens: any = {}
       const reserve_token_info: any = {}
       if (data?.error_code) return
@@ -64,13 +64,13 @@ export async function useAllCommonPairs(
             `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
           ]
         ) {
-          let info = {
+          const info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${token[0]}, ${token[1]}>>`
               ],
           }
-          let data =
+          const data =
             reserve_tokens[
               `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
             ]
@@ -89,13 +89,13 @@ export async function useAllCommonPairs(
             `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
           ]
         ) {
-          let info = {
+          const info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${token[1]}, ${token[0]}>>`
               ],
           }
-          let data =
+          const data =
             reserve_tokens[
               `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
             ]

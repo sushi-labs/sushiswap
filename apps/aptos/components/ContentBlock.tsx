@@ -1,5 +1,5 @@
-import React, { FC, ReactNode } from 'react'
 import { classNames } from '@sushiswap/ui'
+import React, { FC, ReactNode } from 'react'
 
 export const ContentBlock: FC<{
   title: ReactNode

@@ -11,7 +11,7 @@ const DialogActions: FC<DialogActionProps> = ({ children, className }) => {
     <div
       className={classNames(
         className,
-        'h-[68px] items-center absolute left-0 right-0 bottom-0 px-3 flex flex-row-reverse gap-3'
+        'h-[68px] items-center absolute left-0 right-0 bottom-0 px-3 flex flex-row-reverse gap-3',
       )}
     >
       {children}

@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import { CardItem } from '@sushiswap/ui'
+import { FC } from 'react'
 
 export const PoolRewards: FC<{ isFarm: boolean; rewardsPerDay: number }> = ({
   rewardsPerDay,

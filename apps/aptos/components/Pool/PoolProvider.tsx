@@ -138,9 +138,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   }, [internalState, baseTokens])
   return (
     <PoolActionsContext.Provider value={api}>
-      <PoolStateContext.Provider
-        value={useMemo(() => ({ ...state }), [state])}
-      >
+      <PoolStateContext.Provider value={useMemo(() => ({ ...state }), [state])}>
         {children}
       </PoolStateContext.Provider>
     </PoolActionsContext.Provider>

@@ -1,3 +1,5 @@
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   FC,
   ReactNode,
@@ -7,8 +9,6 @@ import {
   useReducer,
 } from 'react'
 import { Token } from 'utils/tokenType'
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { getTokensWithoutKey } from 'utils/useTokens'
 interface SwapProviderProps {
   children: ReactNode

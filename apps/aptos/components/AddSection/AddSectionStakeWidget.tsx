@@ -1,12 +1,12 @@
 import {
   Button,
   TextField,
-  textFieldVariants,
   Widget,
   WidgetDescription,
   WidgetFooter,
   WidgetHeader,
   WidgetTitle,
+  textFieldVariants,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 

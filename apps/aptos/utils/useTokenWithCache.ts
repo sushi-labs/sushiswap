@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 import { Token } from './tokenType'
 import { useCustomTokens } from './useCustomTokens'
-import { FETCH_URL_PREFIX } from 'lib/constants'
 interface GetTokenWithQueryCacheFn {
   address: string | undefined
   hasToken: (currency: string | Token) => boolean

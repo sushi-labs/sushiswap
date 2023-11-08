@@ -1,15 +1,15 @@
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Provider } from 'aptos'
-import React, { useMemo, useState } from 'react'
-import { Pool } from 'utils/usePools'
-import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { formatNumber } from 'utils/utilFunctions'
-import { createToast } from 'components/toast'
-import WalletSelector from 'components/WalletSelector'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Token } from 'utils/tokenType'
-import { providerNetwork } from 'lib/constants'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import { Dots } from '@sushiswap/ui'
+import { Provider } from 'aptos'
+import WalletSelector from 'components/WalletSelector'
+import { createToast } from 'components/toast'
+import { providerNetwork } from 'lib/constants'
+import React, { useMemo, useState } from 'react'
+import { Token } from 'utils/tokenType'
+import { Pool } from 'utils/usePools'
+import { formatNumber } from 'utils/utilFunctions'
+import { RemoveSectionWidget } from './RemoveSectionWidget'
 interface Props {
   pool: Pool
   liquidityBalance: number | undefined
@@ -122,7 +122,7 @@ export const RemoveSectionLegacy = ({
     } catch (err) {
       console.log(err)
       const toastId = `failed:${Math.random()}`
-      createToast({ summery: "User rejected request", toastId: toastId })
+      createToast({ summery: 'User rejected request', toastId: toastId })
     } finally {
       setisTransactionPending(false)
     }
