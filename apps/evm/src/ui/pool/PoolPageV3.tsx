@@ -73,7 +73,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
       <div className="flex flex-col gap-6">
-        <Message variant="info" size="sm">
+        {/* <Message variant="info" size="sm">
           {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
           allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
           this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
@@ -87,7 +87,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
           >
             here
           </LinkInternal>
-        </Message>
+        </Message> */}
         <PoolsFiltersProvider>
           <ConcentratedPositionsTable
             chainId={pool.chainId as ChainId}
