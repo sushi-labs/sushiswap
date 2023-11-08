@@ -318,7 +318,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}`}
+                  href={`/pool/${row.original.pool.id}`}
                 >
                   <ArrowDownRightIcon width={16} height={16} className="mr-2" />
                   Pool details
@@ -329,7 +329,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/positions/create/manual`}
+                  href={`/pool/${row.original.pool.id}/positions/create/manual`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position
