@@ -314,10 +314,10 @@ async function makeSwap(
   //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
-  // if (route.status === RouteStatus.NoWay) {
-  //   if (throwAtNoWay) throw new Error('NoWay')
-  //   return
-  // }
+  if (route.status === RouteStatus.NoWay) {
+    if (throwAtNoWay) throw new Error('NoWay')
+    return
+  }
 
   const rpParams = Router.routeProcessor4Params(
     pcMap,
