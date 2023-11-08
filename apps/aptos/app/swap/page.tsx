@@ -47,9 +47,9 @@ export default function SwapPage() {
             <SwapTradeOutput handleSwap={swapTokenIfAlreadySelected} />
             <SwapButton />
           </div>
+          <TradeStats />
+          <TradeReviewDialog isTransactionPending={isTransactionPending} />
         </div>
-        <TradeStats />
-        <TradeReviewDialog isTransactionPending={isTransactionPending} />
       </Container>
     </>
   )

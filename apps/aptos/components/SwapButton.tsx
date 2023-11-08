@@ -18,12 +18,13 @@ export const SwapButton = () => {
     refetchInterval: 2000,
   })
   const { data: routes } = useSwapRouter({ balance })
+
   useEffect(() => {
     if (warningSeverity(routes?.priceImpact) <= 3) {
       setChecked(false)
     }
   }, [routes])
-  console.log(!checked && warningSeverity(routes?.priceImpact) > 3)
+
   return (
     <Modal.Trigger tag="review-modal">
       {({ open }) => (
@@ -42,12 +43,12 @@ export const SwapButton = () => {
                     : ''
                 }`}
                 disabled={
-                  noRouteFound ||
-                  error ||
-                  Number(amount) <= 0 ||
-                  (!checked && warningSeverity(routes?.priceImpact) > 3)
-                    ? true
-                    : false
+                  !!(
+                    noRouteFound ||
+                    error ||
+                    Number(amount) <= 0 ||
+                    (!checked && warningSeverity(routes?.priceImpact) > 3)
+                  )
                 }
                 onClick={() => {
                   amount ? open() : {}
@@ -66,7 +67,7 @@ export const SwapButton = () => {
                 )}
               </button>
             ) : (
-              <WalletSelector color="blue" size="xl" fullWidth={true} />
+              <WalletSelector />
             )}
           </div>
           {warningSeverity(routes?.priceImpact) > 3 && (
