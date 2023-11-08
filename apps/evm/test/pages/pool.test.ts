@@ -81,11 +81,11 @@ let FAKE_TOKEN: Token
 // let MOCK_TOKEN_6_DP: Token
 // let MOCK_TOKEN_8_DP: Token
 // let MOCK_TOKEN_18_DP: Token
-const EVM_APP_BASE_URL =
-  process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
-  (process.env['NEXT_PUBLIC_VERCEL_URL']
-    ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
-    : 'http://localhost:3000')
+// const EVM_APP_BASE_URL =
+//   process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
+//   (process.env['NEXT_PUBLIC_VERCEL_URL']
+//     ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
+//     : 'http://localhost:3000')
 const BASE_URL = 'http://localhost:3000/pool'
 
 test.beforeAll(async () => {
