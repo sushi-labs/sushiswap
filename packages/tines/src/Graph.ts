@@ -1058,7 +1058,14 @@ export class Graph {
 
     //if (topologyWasChanged || removedEdgesNumber > 0) {
     this.edges.forEach((e) => e.pool.cleanTmpData())
+    // const initialOutput = output
+    // const assumeZero = legs.some(l => l.assumedAmountOut < 1)
+    // if (Math.abs(output - 17947093338.87304) < 1e-3) {
+    //   debugger
+    // }
     output = this.updateLegsAmountOut(legs, amountIn * totalrouted)
+    // const diff = (output - initialOutput)/initialOutput
+    // if (Math.abs(diff) > 1e-4 && !assumeZero) console.log(`        Output recalc: ${diff} ${initialOutput}=>${output}`)
     totalOutput = output - toVert.gasPrice * gasSpent
     if (output === 0) {
       status = RouteStatus.NoWay
@@ -1311,7 +1318,7 @@ export class Graph {
       const vert = this.getVert(l.tokenFrom)
       console.assert(vert !== undefined, 'Internal Error 570')
       const edge = (vert as Vertice).edges.find(
-        (e) => e.pool.address === l.poolAddress && vert.getNeibour(e).token.address === l.tokenTo.address,
+        (e) => e.pool.uniqueID() === l.uniqueId,
       )
       console.assert(edge !== undefined, 'Internel Error 569')
       const pool = (edge as Edge).pool
@@ -1362,7 +1369,7 @@ export class Graph {
       const vert = this.getVert(l.tokenTo)
       console.assert(vert !== undefined, 'Internal Error 884')
       const edge = (vert as Vertice).edges.find(
-        (e) => e.pool.address === l.poolAddress && vert.getNeibour(e).token.address === l.tokenFrom.address,
+        (e) => e.pool.uniqueID() === l.uniqueId
       )
       console.assert(edge !== undefined, 'Internel Error 888')
       const pool = (edge as Edge).pool

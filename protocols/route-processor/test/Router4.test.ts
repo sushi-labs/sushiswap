@@ -259,6 +259,7 @@ async function makeSwap(
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
+  throwAtNoWay = true
 ): Promise<[bigint, bigint] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -313,7 +314,10 @@ async function makeSwap(
   //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
-  if (route.status === RouteStatus.NoWay) throw new Error('NoWay')
+  // if (route.status === RouteStatus.NoWay) {
+  //   if (throwAtNoWay) throw new Error('NoWay')
+  //   return
+  // }
 
   const rpParams = Router.routeProcessor4Params(
     pcMap,
@@ -422,6 +426,7 @@ async function updMakeSwap(
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
+  throwAtNoWay = true
 ): Promise<[bigint | undefined, bigint]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
@@ -439,6 +444,7 @@ async function updMakeSwap(
     providers,
     poolFilter,
     permits,
+    throwAtNoWay
   )
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -806,6 +812,10 @@ describe('End-to-end RouteProcessor4 test', async function () {
           testTokensSet[nextToken] as Type,
           intermidiateResult,
           usedPools,
+          undefined,
+          undefined,
+          undefined,
+          false //throwAtNoWay
         )
         currentToken = nextToken
         if (
