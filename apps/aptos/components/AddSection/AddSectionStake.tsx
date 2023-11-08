@@ -141,39 +141,33 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
           balance={balance}
           price={price}
         >
-          {Number(value) > balance ? (
-            <Button fullWidth size="default" disabled testId="stake-liquidity">
-              Insufficient Balance
-            </Button>
-          ) : (
-            <Button
-              onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
-              fullWidth
-              size="default"
-              disabled={isTransactionPending || !value}
-              testId="stake-liquidity"
-            >
-              {Number(value) > balance ? (
-                <Button size="xl" disabled testId="stake-liquidity">
-                  Insufficient Balance
-                </Button>
-              ) : (
-                <Button
-                  onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
-                  fullWidth
-                  size="xl"
-                  disabled={isTransactionPending || !value}
-                  testId="stake-liquidity"
-                >
-                  {isTransactionPending ? (
-                    <Dots>Confirm transaction</Dots>
-                  ) : (
-                    'Stake Liquidity'
-                  )}
-                </Button>
-              )}
-            </Button>
-          )}
+          <Button
+            onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
+            fullWidth
+            size="default"
+            disabled={isTransactionPending || !value}
+            testId="stake-liquidity"
+          >
+            {Number(value) > balance ? (
+              <Button size="xl" disabled testId="stake-liquidity">
+                Insufficient Balance
+              </Button>
+            ) : (
+              <Button
+                onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
+                fullWidth
+                size="xl"
+                disabled={isTransactionPending || !value}
+                testId="stake-liquidity"
+              >
+                {isTransactionPending ? (
+                  <Dots>Confirm transaction</Dots>
+                ) : (
+                  'Stake Liquidity'
+                )}
+              </Button>
+            )}
+          </Button>
         </AddSectionStakeWidget>
       </div>
     </div>
