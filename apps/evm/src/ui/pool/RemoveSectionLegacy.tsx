@@ -180,7 +180,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           !balance ||
           !debouncedMinAmount0 ||
           !debouncedMinAmount1 ||
-          !deadline
+          !deadline ||
+          Number(percentage) === 0
         ) {
           return
         }
@@ -286,6 +287,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       deadline,
       _pool.chainId,
       percentToRemoveDebounced,
+      percentage,
     ])
 
     const { config } = usePrepareSendTransaction({

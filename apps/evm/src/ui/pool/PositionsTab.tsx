@@ -12,11 +12,13 @@ import {
 } from '@sushiswap/ui'
 import React, { useState } from 'react'
 
-import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
+import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
+import { SmartPositionsTable } from './SmartPositionsTable'
 
-const ITEMS: { value: string; children: React.ReactNode }[] = [
+const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
   {
+    id: 'sushiswap-v3',
     value: 'v3',
     children: (
       <div className="flex items-center gap-2">
@@ -28,6 +30,7 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'sushiswap-v2',
     value: 'v2',
     children: (
       <div className="flex items-center gap-2">
@@ -39,6 +42,7 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'trident-stable',
     value: 'stable',
     children: (
       <div className="flex items-center gap-2">
@@ -48,11 +52,22 @@ const ITEMS: { value: string; children: React.ReactNode }[] = [
     ),
   },
   {
+    id: 'trident-classic',
     value: 'classic',
     children: (
       <div className="flex items-center gap-2">
         <span>🍱</span>
         <span>Trident Classic</span>
+      </div>
+    ),
+  },
+  {
+    id: 'sushiswap-smart',
+    value: 'smart',
+    children: (
+      <div className="flex items-center gap-2">
+        <span>💡</span>
+        <span>Smart Pool</span>
       </div>
     ),
   },
@@ -81,7 +96,11 @@ export const PositionsTab = () => {
           </div>
           <TabsList className="hidden sm:inline-flex">
             {ITEMS.map((item) => (
-              <TabsTrigger key={item.value} value={item.value}>
+              <TabsTrigger
+                key={item.value}
+                value={item.value}
+                testdata-id={item.id}
+              >
                 {item.children}
               </TabsTrigger>
             ))}
@@ -107,6 +126,9 @@ export const PositionsTab = () => {
             protocol={Protocol.BENTOBOX_CLASSIC}
             rowLink={(row) => `/pool/${row.pool.id}`}
           />
+        </TabsContent>
+        <TabsContent value="smart">
+          <SmartPositionsTable />
         </TabsContent>
       </Tabs>
     </div>

@@ -14,14 +14,16 @@ import {
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import {
+  Address,
   useConcentratedLiquidityPool,
   useConcentratedLiquidityPoolReserves,
 } from '@sushiswap/wagmi'
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 
+import { Container, LinkInternal, Message } from '@sushiswap/ui'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
@@ -67,156 +69,165 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
       chainId,
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
-  const incentiveAmounts = useMemo(
-    () => poolStats?.incentives.map((el) => el.reward),
-    [poolStats?.incentives],
-  )
-  const _fiatValuesIncentives = useTokenAmountDollarValues({
-    chainId,
-    amounts: incentiveAmounts,
-  })
 
   return (
-    <div className="flex flex-col gap-6">
-      <PoolsFiltersProvider>
-        <ConcentratedPositionsTable
-          chainId={pool.chainId as ChainId}
-          poolId={pool.address}
-        />
-      </PoolsFiltersProvider>
-      <div className="py-4">
-        <Separator />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
-        <StatisticsCharts address={address} chainId={chainId} />
-        <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pool Liquidity</CardTitle>
-              <CardDescription>
-                {formatUSD(fiatValues[0] + fiatValues[1])}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CardCurrencyAmountItem
-                isLoading={isReservesLoading}
-                amount={reserves?.[0]}
-                fiatValue={formatUSD(fiatValues[0])}
-              />
-              <CardCurrencyAmountItem
-                isLoading={isReservesLoading}
-                amount={reserves?.[1]}
-                fiatValue={formatUSD(fiatValues[1])}
-              />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <div className="flex flex-col md:flex-row justify-between gap-y-4">
-                  Statistics
-                  <div className="flex items-center gap-1">
-                    <Toggle
-                      variant="outline"
-                      size="xs"
-                      pressed={granularity === Granularity.Day}
-                      onClick={() => setGranularity(Granularity.Day)}
-                    >
-                      24H
-                    </Toggle>
-                    <Toggle
-                      variant="outline"
-                      size="xs"
-                      pressed={granularity === Granularity.Week}
-                      onClick={() => setGranularity(Granularity.Week)}
-                    >
-                      1W
-                    </Toggle>
+    <Container maxWidth="5xl" className="px-2 sm:px-4">
+      <div className="flex flex-col gap-6">
+        <Message variant="info" size="sm">
+          {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
+          allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
+          this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
+          providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
+          decisions.`}{' '}
+          To create a smart pool position, click{' '}
+          <LinkInternal
+            shallow={true}
+            href={`/pool/${pool.id}/smart`}
+            className="underline"
+          >
+            here
+          </LinkInternal>
+        </Message>
+        <PoolsFiltersProvider>
+          <ConcentratedPositionsTable
+            chainId={pool.chainId as ChainId}
+            poolId={pool.address as Address}
+          />
+        </PoolsFiltersProvider>
+        <div className="py-4">
+          <Separator />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+          <StatisticsCharts address={address} chainId={chainId} />
+          <div className="flex flex-col gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Pool Liquidity</CardTitle>
+                <CardDescription>
+                  {formatUSD(fiatValues[0] + fiatValues[1])}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CardCurrencyAmountItem
+                  isLoading={isReservesLoading}
+                  amount={reserves?.[0]}
+                  fiatValue={formatUSD(fiatValues[0])}
+                />
+                <CardCurrencyAmountItem
+                  isLoading={isReservesLoading}
+                  amount={reserves?.[1]}
+                  fiatValue={formatUSD(fiatValues[1])}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <div className="flex flex-col md:flex-row justify-between gap-y-4">
+                    Statistics
+                    <div className="flex items-center gap-1">
+                      <Toggle
+                        variant="outline"
+                        size="xs"
+                        pressed={granularity === Granularity.Day}
+                        onClick={() => setGranularity(Granularity.Day)}
+                      >
+                        24H
+                      </Toggle>
+                      <Toggle
+                        variant="outline"
+                        size="xs"
+                        pressed={granularity === Granularity.Week}
+                        onClick={() => setGranularity(Granularity.Week)}
+                      >
+                        1W
+                      </Toggle>
+                    </div>
                   </div>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 gap-3">
-                <div>
-                  <CardLabel>Volume</CardLabel>
-                  {poolStats ? (
-                    <div className="text-xl font-semibold">
-                      {formatUSD(
-                        granularity === Granularity.Week
-                          ? poolStats.volume1w
-                          : poolStats.volume1d ?? 0,
-                      )}{' '}
-                      <span
-                        className={classNames(
-                          'text-xs',
-                          poolStats[
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-3">
+                  <div>
+                    <CardLabel>Volume</CardLabel>
+                    {poolStats ? (
+                      <div className="text-xl font-semibold">
+                        {formatUSD(
+                          granularity === Granularity.Week
+                            ? poolStats.volume1w
+                            : poolStats.volume1d ?? 0,
+                        )}{' '}
+                        <span
+                          className={classNames(
+                            'text-xs',
+                            poolStats[
+                              granularity === Granularity.Week
+                                ? 'volumeChange1w'
+                                : 'volumeChange1d'
+                            ] > 0
+                              ? 'text-green'
+                              : 'text-red',
+                          )}
+                        >
+                          (
+                          {poolStats[
                             granularity === Granularity.Week
                               ? 'volumeChange1w'
                               : 'volumeChange1d'
-                          ] > 0
-                            ? 'text-green'
-                            : 'text-red',
-                        )}
-                      >
-                        (
-                        {poolStats[
+                          ].toFixed(2)}
+                          %)
+                        </span>
+                      </div>
+                    ) : (
+                      <SkeletonText />
+                    )}
+                  </div>
+                  <div>
+                    <CardLabel>Fees</CardLabel>
+                    {poolStats ? (
+                      <div className="text-xl font-semibold">
+                        {formatUSD(
                           granularity === Granularity.Week
-                            ? 'volumeChange1w'
-                            : 'volumeChange1d'
-                        ].toFixed(2)}
-                        %)
-                      </span>
-                    </div>
-                  ) : (
-                    <SkeletonText />
-                  )}
-                </div>
-                <div>
-                  <CardLabel>Fees</CardLabel>
-                  {poolStats ? (
-                    <div className="text-xl font-semibold">
-                      {formatUSD(
-                        granularity === Granularity.Week
-                          ? poolStats.fees1w
-                          : poolStats.fees1d ?? 0,
-                      )}{' '}
-                      <span
-                        className={classNames(
-                          'text-xs',
-                          poolStats[
+                            ? poolStats.fees1w
+                            : poolStats.fees1d ?? 0,
+                        )}{' '}
+                        <span
+                          className={classNames(
+                            'text-xs',
+                            poolStats[
+                              granularity === Granularity.Week
+                                ? 'feesChange1w'
+                                : 'feesChange1d'
+                            ] > 0
+                              ? 'text-green'
+                              : 'text-red',
+                          )}
+                        >
+                          (
+                          {poolStats[
                             granularity === Granularity.Week
                               ? 'feesChange1w'
                               : 'feesChange1d'
-                          ] > 0
-                            ? 'text-green'
-                            : 'text-red',
-                        )}
-                      >
-                        (
-                        {poolStats[
-                          granularity === Granularity.Week
-                            ? 'feesChange1w'
-                            : 'feesChange1d'
-                        ].toFixed(2)}
-                        %)
-                      </span>
-                    </div>
-                  ) : (
-                    <SkeletonText />
-                  )}
+                          ].toFixed(2)}
+                          %)
+                        </span>
+                      </div>
+                    ) : (
+                      <SkeletonText />
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
+        <div className="py-4">
+          <Separator />
+        </div>
+        <PoolRewardDistributionsCard pool={pool} />
+        <PoolTransactionsV3 pool={pool} poolId={pool.address} />
       </div>
-      <div className="py-4">
-        <Separator />
-      </div>
-      <PoolRewardDistributionsCard pool={pool} />
-      <PoolTransactionsV3 pool={pool} poolId={pool.address} />
-    </div>
+    </Container>
   )
 }
 
