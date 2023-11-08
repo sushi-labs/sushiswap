@@ -1,29 +1,22 @@
 'use client'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import Loading from 'app/loading'
-import { Layout } from 'components/Layout'
-import { PoolButtons } from 'components/PoolSection/PoolButtons'
+import { ManageV2LiquidityCard } from 'components/ManageV2LiquidityCard'
 import { PoolComposition } from 'components/PoolSection/PoolComposition'
-import { PoolHeader } from 'components/PoolSection/PoolHeader'
 import { PoolMyRewards } from 'components/PoolSection/PoolMyRewards'
 import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { PoolRewards } from 'components/PoolSection/PoolRewards'
 import { useParams } from 'next/navigation'
-import { FC, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import requiredNetworkAlert from 'utils/requiredNetworkAlert'
-import { useAccount } from 'utils/useAccount'
 import { isFarm, useFarms } from 'utils/useFarms'
 import { usePool } from 'utils/usePool'
 import { useRewardsPerDay } from 'utils/useRewardsPerDay'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 import { useUserRewards } from 'utils/useUserRewards'
+import { Container } from '@sushiswap/ui'
 
-const Pool: FC = () => {
-  return <_Pool />
-}
-
-const _Pool = () => {
+const Pool = () => {
   const router = useParams()
   const { account, network, disconnect } = useWallet()
   const tokenAddress = decodeURIComponent(router?.id)
@@ -48,7 +41,6 @@ const _Pool = () => {
       return 0
     }
   }, [stakes, pIdIndex])
-  const { isLoadingAccount } = useAccount()
 
   const rewards = useUserRewards(farms, stakes, pIdIndex, farmIndex)
   const rewardsPerDay = useRewardsPerDay(
@@ -61,50 +53,36 @@ const _Pool = () => {
   }, [network, disconnect])
 
   return (
-    <>
-      {isLoadingAccount && <Loading />}
-      {pool?.id && (
-        <Layout>
-          <div className="flex flex-col gap-9">
-            <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-              <div className="flex flex-col order-1 gap-9">
-                <PoolHeader row={pool} />
-                <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
-                <PoolComposition row={pool} />
-                <PoolRewards
-                  isFarm={farmIndex !== -1}
-                  rewardsPerDay={rewardsPerDay}
-                />
-              </div>
-              <div className="flex flex-col order-2 gap-4">
-                <div className="flex flex-col gap-10">
-                  {farmIndex !== undefined && farmIndex !== -1 && (
-                    <PoolMyRewards
-                      reward={rewards}
-                      decimals={coinInfo?.data?.decimals}
-                      isLoading={isPoolLoading || isStakeLoading}
-                    />
-                  )}
-                  <PoolPosition
-                    row={pool}
-                    isLoading={isPoolLoading || isStakeLoading}
-                    stakeAmount={stakeAmount}
-                  />
-                </div>
-                <div className="hidden lg:flex">
-                  <PoolButtons
-                    isFarm={farmIndex !== undefined && farmIndex !== -1}
-                    token0={pool.data.token_x_details.token_address}
-                    token1={pool.data.token_y_details.token_address}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="w-full bg-gray-900/5 dark:bg-slate-200/5 my-5 md:my-10 h-0.5" />
+    <Container maxWidth="5xl" className="px-2 sm:px-4">
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
+          <div className="flex flex-col gap-6">
+            <ManageV2LiquidityCard />
+            {pool?.id ? <PoolComposition row={pool} /> : null}
+            <PoolRewards
+              isFarm={farmIndex !== -1}
+              rewardsPerDay={rewardsPerDay}
+            />
           </div>
-        </Layout>
-      )}
-    </>
+          <div className="flex flex-col gap-6">
+            {pool?.id ? (
+              <PoolPosition
+                row={pool}
+                isLoading={isPoolLoading || isStakeLoading}
+                stakeAmount={stakeAmount}
+              />
+            ) : null}
+            {farmIndex !== undefined && farmIndex !== -1 && (
+              <PoolMyRewards
+                reward={rewards}
+                decimals={coinInfo?.data?.decimals}
+                isLoading={isPoolLoading || isStakeLoading}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </Container>
   )
 }
 

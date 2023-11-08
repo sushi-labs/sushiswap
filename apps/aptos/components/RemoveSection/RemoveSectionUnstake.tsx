@@ -48,7 +48,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   decimals,
   lpTokenName,
 }) => {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(0)
+  const toRemove = Number(value / 100) * balance
 
   const router = useParams()
   const tokenAddress = decodeURIComponent(router?.id)
@@ -64,7 +65,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
       const response = await signAndSubmitTransaction({
         type: 'entry_function_payload',
         type_arguments: [`${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`],
-        arguments: [parseInt(String(Number(value) * 10 ** decimals))],
+        arguments: [parseInt(String(Number(toRemove) * 10 ** decimals))],
         function: `${MASTERCHEF_CONTRACT}::masterchef::withdraw`,
       })
       await provider.waitForTransaction(response?.hash)
@@ -72,7 +73,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
       if (!response?.success) return
       const toastId = `completed:${response?.hash}`
       createToast({
-        summery: `Successfully unstaked ${value} ${lpTokenName} tokens`,
+        summery: `Successfully unstaked ${toRemove} ${lpTokenName} tokens`,
         toastId: toastId,
       })
       setTransactionPending(false)
@@ -115,8 +116,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
                 <Button
                   fullWidth
                   size="sm"
-                  variant={value === '25' ? 'default' : 'secondary'}
-                  onClick={() => setValue('25')}
+                  variant={value === 25 ? 'default' : 'secondary'}
+                  onClick={() => setValue(25)}
                   testId="unstake-25"
                 >
                   25%
@@ -124,8 +125,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
                 <Button
                   fullWidth
                   size="sm"
-                  variant={value === '50' ? 'default' : 'secondary'}
-                  onClick={() => setValue('50')}
+                  variant={value === 50 ? 'default' : 'secondary'}
+                  onClick={() => setValue(50)}
                   testId="unstake-50"
                 >
                   50%
@@ -133,8 +134,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
                 <Button
                   fullWidth
                   size="sm"
-                  variant={value === '75' ? 'default' : 'secondary'}
-                  onClick={() => setValue('75')}
+                  variant={value === 75 ? 'default' : 'secondary'}
+                  onClick={() => setValue(75)}
                   testId="unstake-75"
                 >
                   75%
@@ -142,8 +143,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
                 <Button
                   fullWidth
                   size="sm"
-                  variant={value === '100' ? 'default' : 'secondary'}
-                  onClick={() => setValue('100')}
+                  variant={value === 100 ? 'default' : 'secondary'}
+                  onClick={() => setValue(100)}
                   testId="unstake-max"
                 >
                   MAX
@@ -153,7 +154,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
             <div className="px-1 pt-2 pb-3">
               <input
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
+                onChange={(e) => setValue(Number(e.target.value))}
                 type="range"
                 min="1"
                 max="100"
@@ -163,8 +164,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
           </Card>
         </div>
         <WidgetFooter>
-          {Number(value) > balance ? (
-            <Button size="default" disabled testId="stake-liquidity">
+          {toRemove > balance ? (
+            <Button fullWidth size="default" disabled testId="stake-liquidity">
               Insufficient Balance
             </Button>
           ) : (

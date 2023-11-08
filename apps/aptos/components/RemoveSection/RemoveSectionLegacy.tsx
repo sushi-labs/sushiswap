@@ -159,7 +159,7 @@ export const RemoveSectionLegacy = ({
             )}
           </button>
         ) : (
-          <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
+          <WalletSelector />
         )}
       </>
     </RemoveSectionWidget>

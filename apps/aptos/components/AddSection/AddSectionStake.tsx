@@ -81,7 +81,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
   return (
     <AddSectionStakeWidget value={value} setValue={setValue} balance={balance}>
       {Number(value) > balance ? (
-        <Button size="default" disabled testId="stake-liquidity">
+        <Button fullWidth size="default" disabled testId="stake-liquidity">
           Insufficient Balance
         </Button>
       ) : (

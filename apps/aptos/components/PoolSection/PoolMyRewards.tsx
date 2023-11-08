@@ -1,5 +1,5 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Button, Dots } from '@sushiswap/ui'
+import { Button, CardTitle, Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import WalletSelector from 'components/WalletSelector'
 import { createToast } from 'components/toast'
@@ -7,6 +7,14 @@ import { providerNetwork } from 'lib/constants'
 import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
 import { formatNumber } from 'utils/utilFunctions'
+import { Card, CardDescription, CardHeader } from '@sushiswap/ui'
+import {
+  CardContent,
+  CardFooter,
+  CardGroup,
+  CardItem,
+  CardLabel,
+} from '@sushiswap/ui'
 interface Props {
   reward: number
   decimals: number | undefined
@@ -55,61 +63,48 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
       setTransactionPending(false)
     }
   }
+
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-900/5 dark:border-slate-200/5">
-          <span className="dark:text-slate-50 text-gray-900">My Rewards</span>
-          <div className="flex flex-col">
-            <span className="text-sm text-right dark:text-slate-50 text-gray-900">
-              {'$0.00'}
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-3 px-5 py-4">
-          {isLoading ? (
-            <div className="grid justify-between grid-cols-10 gap-2">
-              <div className="h-[20px] bg-slate-700 animate-pulse col-span-8 rounded-full" />
-              <div className="h-[20px] bg-slate-700 animate-pulse col-span-2 rounded-full" />
-            </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+    <Card>
+      <CardHeader>
+        <CardTitle>Unclaimed rewards</CardTitle>
+        <CardDescription>Total: $0.00</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <CardGroup>
+          <CardLabel>Tokens</CardLabel>
+          <CardItem
+            title={
+              <div className="font-medium flex items-center gap-2 text-muted-foreground">
                 <img
                   src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
                   className="rounded-full"
-                  height={20}
-                  width={20}
+                  height={18}
+                  width={18}
                   alt=""
-                />
-                <span className="text-sm dark:text-slate-300 text-gray-700">
-                  {reward
-                    ? parseFloat(
-                        String(formatNumber(reward, decimals as number)),
-                      )
-                    : 0}{' '}
-                  APT
-                </span>
+                />{' '}
+                APT
               </div>
-              <span className="text-xs dark:text-slate-400 text-slate-600">
-                {'$0.00'}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
-      {!connected ? (
-        <WalletSelector />
-      ) : (
-        <Button
-          size="xl"
-          fullWidth
-          onClick={harvest}
-          disabled={isTransactionPending}
-        >
-          {isTransactionPending ? <Dots>Claiming</Dots> : 'Claim'}
-        </Button>
-      )}
-    </div>
+            }
+          >
+            <span className="flex gap-1 font-semibold">
+              {' '}
+              {reward
+                ? parseFloat(String(formatNumber(reward, decimals as number)))
+                : 0}{' '}
+            </span>
+          </CardItem>
+        </CardGroup>
+      </CardContent>
+      <CardFooter>
+        {!connected ? (
+          <WalletSelector />
+        ) : (
+          <Button fullWidth onClick={harvest} disabled={isTransactionPending}>
+            {isTransactionPending ? <Dots>Claiming</Dots> : 'Claim'}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
   )
 }
