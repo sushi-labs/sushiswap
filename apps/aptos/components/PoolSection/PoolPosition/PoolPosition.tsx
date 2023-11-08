@@ -1,4 +1,11 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
 import { useNetwork } from 'utils/useNetwork'
@@ -73,12 +80,11 @@ export const PoolPosition: FC<PoolPositionProps> = ({
   const token1StakedInUsd = token1Price
     ? token1Price * Number(stakedUnderlying1)
     : 0
-
   return (
-    <div className="flex flex-col dark:bg-slate-800 rounded-2xl bg-white">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-900/5 dark:border-slate-200/5">
-        <span className="text-gray-900 dark:text-slate-50">My Position</span>
-        <div className="flex flex-col">
+    <Card>
+      <CardHeader>
+        <CardTitle>My Position</CardTitle>
+        <CardDescription>
           <span className="text-sm text-right dark:text-slate-50 text-gray-900">
             {formatUSD(
               token0StakedInUsd +
@@ -87,24 +93,26 @@ export const PoolPosition: FC<PoolPositionProps> = ({
                 token1UnstakedInUsd,
             )}
           </span>
-        </div>
-      </div>
-      <PoolPositionDesktop
-        row={row}
-        isLoading={isLoading || isBalanceLoading || isLoadingSupply}
-        underlying0={underlying0}
-        underlying1={underlying1}
-        value0={token0UnstakedInUsd}
-        value1={token1UnstakedInUsd}
-      />
-      <PoolPositionStakedDesktop
-        row={row}
-        isLoading={isLoading || isBalanceLoading || isLoadingSupply}
-        underlying0={stakedUnderlying0}
-        underlying1={stakedUnderlying1}
-        value0={token0StakedInUsd}
-        value1={token1StakedInUsd}
-      />
-    </div>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <PoolPositionDesktop
+          row={row}
+          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
+          underlying0={underlying0}
+          underlying1={underlying1}
+          value0={token0UnstakedInUsd}
+          value1={token1UnstakedInUsd}
+        />
+        <PoolPositionStakedDesktop
+          row={row}
+          isLoading={isLoading || isBalanceLoading || isLoadingSupply}
+          underlying0={stakedUnderlying0}
+          underlying1={stakedUnderlying1}
+          value0={token0StakedInUsd}
+          value1={token1StakedInUsd}
+        />
+      </CardContent>
+    </Card>
   )
 }

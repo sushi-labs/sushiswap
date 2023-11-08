@@ -19,29 +19,25 @@ const CardCurrencyAmountItem = React.forwardRef<
     return <CardItem ref={ref} skeleton />
   }
 
-  if (amount) {
-    return (
-      <CardItem
-        title={
-          <div className="font-medium flex items-center gap-2 text-muted-foreground">
-            <Icon currency={currency} width={18} height={18} />
-            {currency.symbol}
-          </div>
-        }
-        ref={ref}
-        {...props}
-      >
-        <span className="flex gap-1 font-semibold">
-          {amount}{' '}
-          <span className="font-normal text-gray-400 dark:text-slate-600">
-            {fiatValue}
-          </span>
+  return (
+    <CardItem
+      title={
+        <div className="font-medium flex items-center gap-2 text-muted-foreground">
+          <Icon currency={currency} width={18} height={18} />
+          {currency.symbol}
+        </div>
+      }
+      ref={ref}
+      {...props}
+    >
+      <span className="flex gap-1 font-semibold">
+        {amount}{' '}
+        <span className="font-normal text-gray-400 dark:text-slate-600">
+          {fiatValue}
         </span>
-      </CardItem>
-    )
-  }
-
-  return null
+      </span>
+    </CardItem>
+  )
 })
 CardCurrencyAmountItem.displayName = 'CardCurrencyAmountItem'
 
