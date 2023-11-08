@@ -1,9 +1,10 @@
-import { Icon } from 'components/Icon'
 import { FC, useMemo } from 'react'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
+import { CardGroup, CardLabel } from '@sushiswap/ui'
+import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
 
 interface PoolPositionStakedDesktopProps {
   row: Pool
@@ -33,58 +34,21 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
     decimals: coinInfo?.data?.decimals,
   })
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-3 px-5 py-4">
-        <div className="flex justify-between mb-1 py-0.5">
-          <div className="h-[16px] bg-slate-600 animate-pulse w-[100px] rounded-full" />
-          <div className="h-[16px] bg-slate-600 animate-pulse w-[60px] rounded-full" />
-        </div>
-        <div className="flex justify-between py-0.5">
-          <div className="h-[16px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
-          <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
-        </div>
-        <div className="flex justify-between py-0.5">
-          <div className="h-[16px] bg-slate-700 animate-pulse w-[160px] rounded-full" />
-          <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
-        </div>
-      </div>
-    )
-  }
-  if (!isLoading)
-    return (
-      <div className="flex flex-col gap-3 px-5 py-4">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-sm dark:text-slate-100 text-gray-900">
-            Staked Position
-          </span>
-          <span className="text-sm dark:text-slate-100 text-gray-900">
-            {'$0.00'}
-          </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Icon currency={token0} width={20} height={20} />
-            <span className="text-sm dark:text-slate-300 text-gray-700">
-              {underlying0 ? underlying0.toFixed(6) : 0} {token0.symbol}
-            </span>
-          </div>
-          <span className="text-sm dark:text-slate-400 text-slate-600">
-            {'$0.00'}
-          </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Icon currency={token1} width={20} height={20} />
-            <span className="text-sm dark:text-slate-300 text-gray-700">
-              {underlying1 ? underlying1.toFixed(6) : 0} {token1.symbol}
-            </span>
-          </div>
-          <span className="text-sm dark:text-slate-400 text-slate-600">
-            {'$0.00'}
-          </span>
-        </div>
-      </div>
-    )
-  return <></>
+  return (
+    <CardGroup>
+      <CardLabel>Staked</CardLabel>
+      <CardCurrencyAmountItem
+        currency={token0}
+        isLoading={isLoading}
+        amount={underlying0}
+        fiatValue={'$0.00'}
+      />
+      <CardCurrencyAmountItem
+        isLoading={isLoading}
+        currency={token1}
+        amount={underlying1}
+        fiatValue={'$0.00'}
+      />
+    </CardGroup>
+  )
 }
