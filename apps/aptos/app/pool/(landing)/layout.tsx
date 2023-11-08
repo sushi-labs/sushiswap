@@ -48,6 +48,7 @@ export default function TabsLayout({
             href={`/pool/my-rewards?${searchParams.toString()}`}
           >
             <PathnameButton
+              disabled
               id="my-rewards"
               pathname={'/pool/my-rewards'}
               asChild
