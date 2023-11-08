@@ -36,7 +36,7 @@ test.beforeEach(async ({ page, next }) => {
     console.error(error)
   })
 
-  next.onFetch( () => {
+  next.onFetch(() => {
     return 'continue'
   })
 

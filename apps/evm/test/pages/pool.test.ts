@@ -82,10 +82,10 @@ let FAKE_TOKEN: Token
 // let MOCK_TOKEN_8_DP: Token
 // let MOCK_TOKEN_18_DP: Token
 const EVM_APP_BASE_URL =
-process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
-(process.env['NEXT_PUBLIC_VERCEL_URL']
-  ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
-  : 'http://localhost:3000')
+  process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
+  (process.env['NEXT_PUBLIC_VERCEL_URL']
+    ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
+    : 'http://localhost:3000')
 const BASE_URL = 'http://localhost:3000/pool'
 
 test.beforeAll(async () => {
@@ -1024,16 +1024,16 @@ async function mockPoolApi(
       steerVaults: [],
     }
 
-    if (
-      request.url.toLowerCase().endsWith('/pool/api/pools')
-    ) {
+    if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
       return new Response(JSON.stringify([mockPool]), {
         headers: {
           'Content-Type': 'application/json',
         },
       })
     } else if (
-      request.url.toLowerCase().endsWith(`/pool/api/pools/${CHAIN_ID}/${address}`.toLowerCase())
+      request.url
+        .toLowerCase()
+        .endsWith(`/pool/api/pools/${CHAIN_ID}/${address}`.toLowerCase())
     ) {
       return new Response(JSON.stringify(mockPool), {
         headers: {
