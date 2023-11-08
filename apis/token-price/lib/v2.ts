@@ -1,6 +1,12 @@
-import { STABLES, WNATIVE } from '@sushiswap/currency'
-import { calcTokenPrices, ConstantProductRPool, RPool, type RToken, UniV3Pool } from '@sushiswap/tines'
-import { fetch } from '@whatwg-node/fetch'
+import {
+  ConstantProductRPool,
+  RPool,
+  type RToken,
+  UniV3Pool,
+  calcTokenPrices,
+} from '@sushiswap/tines'
+import { STABLES, WNATIVE } from 'sushi/currency'
+// import { fetch } from '@whatwg-node/fetch'
 
 import { Currency } from './enums.js'
 
@@ -62,9 +68,14 @@ async function fetchTokens() {
 }
 
 async function fetchPoolCodes(chainId: number) {
-  const response = await fetch(`https://swap.sushi.com/pool-codes?chainId=${chainId}`)
+  const response = await fetch(
+    `https://swap.sushi.com/pool-codes?chainId=${chainId}`,
+  )
   const jsonString = await response.json()
-  const preprocessedString = jsonString.replace(/"#bigint\.(-?\d+(\.\d+)?)"/g, '"$1"')
+  const preprocessedString = jsonString.replace(
+    /"#bigint\.(-?\d+(\.\d+)?)"/g,
+    '"$1"',
+  )
   return JSON.parse(preprocessedString) as PoolCode[]
 }
 
@@ -82,7 +93,7 @@ function mapPool(poolCode: PoolCode) {
       poolCode.pool.token1 as RToken,
       poolCode.pool.fee,
       BigInt(poolCode.pool.reserve0),
-      BigInt(poolCode.pool.reserve1)
+      BigInt(poolCode.pool.reserve1),
     )
   } else if (
     poolCode.pool.nearestTick &&
@@ -100,13 +111,18 @@ function mapPool(poolCode: PoolCode) {
       poolCode.pool.nearestTick,
       poolCode.pool.liquidity,
       poolCode.pool.sqrtPriceX96,
-      poolCode.pool.ticks
+      poolCode.pool.ticks,
     )
   }
   return undefined
 }
 
-function calculateTokenPrices(tokens: RToken[], bases: RToken[], pools: RPool[], minimumLiquidityUsd: number) {
+function calculateTokenPrices(
+  tokens: RToken[],
+  bases: RToken[],
+  pools: RPool[],
+  minimumLiquidityUsd: number,
+) {
   const prices: Map<string, Map<string, number>> = new Map()
   const bestPrices: Record<string, number> = {}
   bases.forEach((base) => {
@@ -115,7 +131,9 @@ function calculateTokenPrices(tokens: RToken[], bases: RToken[], pools: RPool[],
     const currentPricesMap = new Map<string, number>()
     currentPrices.forEach((value, key) => {
       if (key.address === base.address) return
-      const price = Number((value / 10 ** (base.decimals - key.decimals)).toFixed(18))
+      const price = Number(
+        (value / 10 ** (base.decimals - key.decimals)).toFixed(18),
+      )
       currentPricesMap.set(key.address, price)
     })
     prices.set(base.address, currentPricesMap)
@@ -157,10 +175,16 @@ function calculateTokenPrices(tokens: RToken[], bases: RToken[], pools: RPool[],
 }
 
 export async function getPrices(chainId: number, currency: Currency) {
-  if (currency === Currency.USD && STABLES[chainId as keyof typeof STABLES] === undefined) {
+  if (
+    currency === Currency.USD &&
+    STABLES[chainId as keyof typeof STABLES] === undefined
+  ) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
-  const [tokens, poolCodes] = await Promise.all([fetchTokens(), fetchPoolCodes(chainId)])
+  const [tokens, poolCodes] = await Promise.all([
+    fetchTokens(),
+    fetchPoolCodes(chainId),
+  ])
   const tokenMap = new Map<string, TokenResponse>()
   tokens
     .filter((t) => t.chainId === chainId)
@@ -170,13 +194,21 @@ export async function getPrices(chainId: number, currency: Currency) {
         tokenMap.set(t.address.toLowerCase(), t)
       }
     })
-  console.log(`Found ${tokens.length} tokens, filtered it down to ${tokenMap.size}`)
+  console.log(
+    `Found ${tokens.length} tokens, filtered it down to ${tokenMap.size}`,
+  )
 
   const filteredPoolCodes = poolCodes.filter(
-    (pc) => tokenMap.has(pc.pool.token0.address.toLowerCase()) && tokenMap.has(pc.pool.token1.address.toLowerCase())
+    (pc) =>
+      tokenMap.has(pc.pool.token0.address.toLowerCase()) &&
+      tokenMap.has(pc.pool.token1.address.toLowerCase()),
   )
-  console.log(`Found ${poolCodes.length} pools, filtered it down to ${filteredPoolCodes.length}`)
-  const mappedPools = filteredPoolCodes.map(mapPool).filter((p) => p !== undefined) as RPool[]
+  console.log(
+    `Found ${poolCodes.length} pools, filtered it down to ${filteredPoolCodes.length}`,
+  )
+  const mappedPools = filteredPoolCodes
+    .map(mapPool)
+    .filter((p) => p !== undefined) as RPool[]
 
   const bases =
     currency === Currency.USD
@@ -185,4 +217,5 @@ export async function getPrices(chainId: number, currency: Currency) {
   return calculateTokenPrices(tokens, bases, mappedPools, 1000)
 }
 
-const hasPrice = (input: number | undefined): input is number => input !== undefined
+const hasPrice = (input: number | undefined): input is number =>
+  input !== undefined
