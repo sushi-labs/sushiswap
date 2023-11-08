@@ -124,6 +124,14 @@ const sLINK = new Token({
   name: 'Synth sLINK',
 })
 
+const sUSD = new Token({
+  chainId: 1,
+  address: '0x57Ab1ec28D129707052df4dF418D58a2D46d5f51',
+  decimals: 18,
+  symbol: 'sUSD',
+  name: 'Synth sUSD',
+})
+
 const HBTC = new Token({
   chainId: 1,
   address: '0x0316EB71485b0Ab14103307bf65a021042c6d380',
@@ -149,6 +157,11 @@ export const CURVE_NON_FACTORY_POOLS: Record<
       '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
       CurvePoolType.LegacyV3,
       [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM]]
+    ],
+    [ // susd
+      '0xa5407eae9ba41422680e2e00537571bcc53efbfd',
+      CurvePoolType.LegacyV2,
+      [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM], sUSD]
     ],
     [
       '0xdc24316b9ae028f1497c275eb9192a3ea0f67022',
