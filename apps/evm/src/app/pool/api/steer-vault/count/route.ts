@@ -3,6 +3,7 @@ import {
   getSteerVaultCountFromDB,
 } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
+import { CORS } from '../../cors'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -14,6 +15,6 @@ export async function GET(request: Request) {
     return NextResponse.json(result.error.format(), { status: 400 })
   }
 
-  const pools = await getSteerVaultCountFromDB(result.data)
-  return NextResponse.json(pools)
+  const count = await getSteerVaultCountFromDB(result.data)
+  return NextResponse.json(count, { headers: CORS })
 }

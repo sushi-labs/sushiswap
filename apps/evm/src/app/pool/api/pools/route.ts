@@ -1,5 +1,6 @@
 import { PoolsApiSchema, getPoolsFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
+import { CORS } from '../cors'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -10,5 +11,5 @@ export async function GET(request: Request) {
   }
 
   const pools = await getPoolsFromDB(result.data)
-  return NextResponse.json(pools)
+  return NextResponse.json(pools, { headers: CORS })
 }

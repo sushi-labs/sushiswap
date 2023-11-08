@@ -1,5 +1,6 @@
 import { PoolCountApiSchema, getPoolCountFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
+import { CORS } from '../../cors'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -9,6 +10,6 @@ export async function GET(request: Request) {
     return NextResponse.json(result.error.format(), { status: 400 })
   }
 
-  const pools = await getPoolCountFromDB(result.data)
-  return NextResponse.json(pools)
+  const count = await getPoolCountFromDB(result.data)
+  return NextResponse.json(count, { headers: CORS })
 }
