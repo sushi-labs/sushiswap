@@ -30,5 +30,5 @@ export default async function PoolPage({
     return <PoolPageV3 pool={pool} />
   }
 
-  return <PoolPageV2 pool={pool} />
+  return <PoolPageV2 pool={pool} tab={tab} />
 }

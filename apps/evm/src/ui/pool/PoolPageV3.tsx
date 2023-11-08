@@ -20,7 +20,6 @@ import {
 } from '@sushiswap/wagmi'
 import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 
 import { Container, LinkInternal, Message } from '@sushiswap/ui'
@@ -90,7 +89,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
         </Message>
         <PoolsFiltersProvider>
           <ConcentratedPositionsTable
-            chainId={pool.chainId as ChainId}
+            chainId={pool.chainId as SushiSwapV3ChainId}
             poolId={pool.address as Address}
           />
         </PoolsFiltersProvider>
