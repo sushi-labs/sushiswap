@@ -4,6 +4,7 @@ import { Container } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { usePool } from '../../../utils/usePool'
 import { PoolHeader } from '../../../components/PoolSection/PoolHeader'
+import { Breadcrumb } from '@sushiswap/ui'
 
 export default function Layout({
   children,
@@ -14,6 +15,9 @@ export default function Layout({
 
   return (
     <>
+      <Container maxWidth="5xl" className="px-4">
+        <Breadcrumb />
+      </Container>
       <Container maxWidth="5xl" className="pt-10 px-4">
         {pool ? <PoolHeader row={pool} /> : null}
       </Container>
