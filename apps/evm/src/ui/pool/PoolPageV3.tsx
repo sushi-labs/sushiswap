@@ -73,21 +73,23 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
       <div className="flex flex-col gap-6">
-        {/* <Message variant="info" size="sm">
-          {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
-          allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
-          this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
-          providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
-          decisions.`}{' '}
-          To create a smart pool position, click{' '}
-          <LinkInternal
-            shallow={true}
-            href={`/pool/${pool.id}/smart`}
-            className="underline"
-          >
-            here
-          </LinkInternal>
-        </Message> */}
+        {pool.hasEnabledSteerVault && (
+          <Message variant="info" size="sm">
+            {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
+        allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
+        this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
+        providers (LPs) and allows the market to dictate the distribution of LPs' positions based on rational
+        decisions.`}{' '}
+            To create a smart pool position, click{' '}
+            <LinkInternal
+              shallow={true}
+              href={`/pool/${pool.id}/smart`}
+              className="underline"
+            >
+              here
+            </LinkInternal>
+          </Message>
+        )}
         <PoolsFiltersProvider>
           <ConcentratedPositionsTable
             chainId={pool.chainId as ChainId}
