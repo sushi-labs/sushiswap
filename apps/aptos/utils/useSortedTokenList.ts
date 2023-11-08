@@ -1,7 +1,11 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { Token } from './tokenType'
-import { filterTokens, getSortedTokensByQuery, tokenComparator } from './useSortedTokensByQuery'
+import {
+  filterTokens,
+  getSortedTokensByQuery,
+  tokenComparator,
+} from './useSortedTokensByQuery'
 
 interface Params {
   query: string
@@ -10,7 +14,11 @@ interface Params {
   chainId?: number
 }
 
-export const useSortedTokenList = ({ query, tokenMap, customTokenMap }: Params) => {
+export const useSortedTokenList = ({
+  query,
+  tokenMap,
+  customTokenMap,
+}: Params) => {
   const debouncedQuery = useDebounce(query, 250)
   return useQuery({
     queryKey: ['sortedTokenList', { debouncedQuery, tokenMap, customTokenMap }],
@@ -19,11 +27,23 @@ export const useSortedTokenList = ({ query, tokenMap, customTokenMap }: Params) 
       const customTokenMapValues = customTokenMap
         ? Object.values(customTokenMap)
         : []
-      const filteredTokens: Token[] = filterTokens(tokenMapValues, debouncedQuery)
-      const filteredCustomTokens: Token[] = filterTokens(customTokenMapValues, debouncedQuery)
+      const filteredTokens: Token[] = filterTokens(
+        tokenMapValues,
+        debouncedQuery,
+      )
+      const filteredCustomTokens: Token[] = filterTokens(
+        customTokenMapValues,
+        debouncedQuery,
+      )
       // const sortedTokens
-      const sortedTokens: Token[] = [...filteredTokens, ...filteredCustomTokens].sort(tokenComparator())
-      const filteredSortedTokens = getSortedTokensByQuery(sortedTokens, debouncedQuery)
+      const sortedTokens: Token[] = [
+        ...filteredTokens,
+        ...filteredCustomTokens,
+      ].sort(tokenComparator())
+      const filteredSortedTokens = getSortedTokensByQuery(
+        sortedTokens,
+        debouncedQuery,
+      )
       return filteredSortedTokens
     },
     keepPreviousData: false,

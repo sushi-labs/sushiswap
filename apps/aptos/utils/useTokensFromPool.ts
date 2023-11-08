@@ -1,15 +1,10 @@
 import { Pool } from './usePools'
 import { Token } from './tokenType'
 import { useTokens } from './useTokens'
-import { useMemo } from 'react'
 
 export function useTokensFromPools(row: Pool) {
   let token0: Token = {} as Token
   let token1: Token = {} as Token
-
-  const chainId = useMemo(() => {
-    return row?.id?.split(':')[0]
-  }, [row])
 
   const { data: tokens } = useTokens()
   const address0 = row?.data?.token_x_details?.token_address
@@ -19,7 +14,6 @@ export function useTokensFromPools(row: Pool) {
   } else {
     token0 = {
       address: row?.data?.token_x_details?.token_address,
-      chainId: Number(chainId),
       decimals: row?.data?.token_x_details?.decimals,
       name: row?.data?.token_x_details?.name,
       symbol: row?.data?.token_x_details?.symbol,
@@ -30,7 +24,6 @@ export function useTokensFromPools(row: Pool) {
   } else {
     token1 = {
       address: row?.data?.token_y_details?.token_address,
-      chainId: Number(chainId),
       decimals: row?.data?.token_y_details?.decimals,
       name: row?.data?.token_y_details?.name,
       symbol: row?.data?.token_y_details?.symbol,

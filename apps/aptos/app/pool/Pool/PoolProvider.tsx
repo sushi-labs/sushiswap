@@ -1,4 +1,11 @@
-import { FC, ReactNode, createContext, useContext, useMemo, useReducer } from 'react'
+import {
+  FC,
+  ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useReducer,
+} from 'react'
 import { Token } from 'utils/tokenType'
 import { getTokensWithoutKey } from 'utils/useTokens'
 
@@ -98,15 +105,22 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   const api = useMemo(() => {
     const setToken0 = (value: Token) => dispatch({ type: 'setToken0', value })
     const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
-    const setAmount0 = (value: string) => dispatch({ type: 'setAmount0', value })
-    const setAmount1 = (value: string) => dispatch({ type: 'setAmount1', value })
-    const setLoadingPrice = (value: boolean) => dispatch({ type: 'setLoadingPrice', value })
-    const setButtonError = (value: string) => dispatch({ type: 'setButtonError', value })
-    const setisTransactionPending = (value: boolean) => dispatch({ type: 'setisTransactionPending', value })
-    const setPriceFetching = (value: boolean) => dispatch({ type: 'setPriceFetching', value })
+    const setAmount0 = (value: string) =>
+      dispatch({ type: 'setAmount0', value })
+    const setAmount1 = (value: string) =>
+      dispatch({ type: 'setAmount1', value })
+    const setLoadingPrice = (value: boolean) =>
+      dispatch({ type: 'setLoadingPrice', value })
+    const setButtonError = (value: string) =>
+      dispatch({ type: 'setButtonError', value })
+    const setisTransactionPending = (value: boolean) =>
+      dispatch({ type: 'setisTransactionPending', value })
+    const setPriceFetching = (value: boolean) =>
+      dispatch({ type: 'setPriceFetching', value })
     const setError = (value: string) => dispatch({ type: 'setError', value })
     const setPairs = (value: object) => dispatch({ type: 'setPairs', value })
-    const setPoolPairRatio = (value: number) => dispatch({ type: 'setPoolPairRatio', value })
+    const setPoolPairRatio = (value: number) =>
+      dispatch({ type: 'setPoolPairRatio', value })
 
     return {
       setToken0,
@@ -124,7 +138,9 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   }, [internalState, baseTokens])
   return (
     <PoolActionsContext.Provider value={api}>
-      <PoolStateContext.Provider value={useMemo(() => ({ ...state }), [state, baseTokens])}>
+      <PoolStateContext.Provider
+        value={useMemo(() => ({ ...state }), [state])}
+      >
         {children}
       </PoolStateContext.Provider>
     </PoolActionsContext.Provider>

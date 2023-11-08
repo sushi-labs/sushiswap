@@ -1,12 +1,17 @@
 import { Token } from './tokenType'
 const alwaysTrue = () => true
 
-export function createTokenFilterFunction<T extends Token>(search: string): (tokens: T) => boolean {
+export function createTokenFilterFunction<T extends Token>(
+  search: string,
+): (tokens: T) => boolean {
   // const isValidAddress = isAddress(search)
 
   // if (isValidAddress) {
   // }
-  if ((search.startsWith('0x') && search.length > 65) || search == '0x1::aptos_coin::AptosCoin') {
+  if (
+    (search.startsWith('0x') && search.length > 65) ||
+    search === '0x1::aptos_coin::AptosCoin'
+  ) {
     return (t: T) => search.toLowerCase() === t.address.toLowerCase()
   }
 
@@ -23,13 +28,21 @@ export function createTokenFilterFunction<T extends Token>(search: string): (tok
       .split(/\s+/)
       .filter((s) => s.length > 0)
 
-    return lowerSearchParts.every((p) => p.length === 0 || sParts.some((sp) => sp.startsWith(p) || sp.endsWith(p)))
+    return lowerSearchParts.every(
+      (p) =>
+        p.length === 0 ||
+        sParts.some((sp) => sp.startsWith(p) || sp.endsWith(p)),
+    )
   }
 
-  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
+  return ({ name, symbol }: T): boolean =>
+    Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)))
 }
 
-export function filterTokens<T extends Token>(tokens: T[], search: string): T[] {
+export function filterTokens<T extends Token>(
+  tokens: T[],
+  search: string,
+): T[] {
   return tokens.filter(createTokenFilterFunction(search))
 }
 
@@ -43,7 +56,10 @@ export const tokenComparator = () => {
   }
 }
 
-export function getSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
+export function getSortedTokensByQuery(
+  tokens: Token[] | undefined,
+  searchQuery: string,
+): Token[] {
   if (!tokens) {
     return []
   }
@@ -69,7 +85,9 @@ export function getSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
   tokens.map((token) => {
     if (token.symbol?.toLowerCase() === symbolMatch[0]) {
       return exactMatches.push(token)
-    } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
+    } else if (
+      token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())
+    ) {
       return symbolSubstrings.push(token)
     } else {
       return rest.push(token)

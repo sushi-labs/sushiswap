@@ -8,7 +8,14 @@ import { MartianWallet } from '@martianwallet/aptos-wallet-adapter'
 import { RiseWallet } from '@rise-wallet/wallet-adapter'
 import { ThemeProvider } from '@sushiswap/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-const wallets = [new PetraWallet(), new PontemWallet(), new FewchaWallet(), new MartianWallet(), new RiseWallet()]
+import { Modal } from 'components/Modal/Modal'
+const wallets = [
+  new PetraWallet(),
+  new PontemWallet(),
+  new FewchaWallet(),
+  new MartianWallet(),
+  new RiseWallet(),
+]
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient()
@@ -16,7 +23,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <>
       <QueryClientProvider client={queryClient}>
         <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <Modal.Provider>{children}</Modal.Provider>
+          </ThemeProvider>
         </AptosWalletAdapterProvider>
       </QueryClientProvider>
     </>

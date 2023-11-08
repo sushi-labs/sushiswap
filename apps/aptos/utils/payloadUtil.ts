@@ -1,5 +1,10 @@
-const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
-export function payloadArgs(amount_in: number, routes: any, minimumOut: number) {
+const CONTRACT_ADDRESS =
+  process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+export function payloadArgs(
+  amount_in: number,
+  routes: any,
+  minimumOut: number,
+) {
   switch (routes.length) {
     case 2:
       return {
@@ -8,7 +13,6 @@ export function payloadArgs(amount_in: number, routes: any, minimumOut: number) 
         arguments: [amount_in, minimumOut],
         function: `${CONTRACT_ADDRESS}::router::swap_exact_input`,
       }
-      break
     case 3:
       return {
         type: 'entry_function_payload',
@@ -16,7 +20,6 @@ export function payloadArgs(amount_in: number, routes: any, minimumOut: number) 
         arguments: [amount_in, minimumOut],
         function: `${CONTRACT_ADDRESS}::router::swap_exact_input_doublehop`,
       }
-      break
     case 4:
       return {
         type: 'entry_function_payload',
@@ -24,7 +27,6 @@ export function payloadArgs(amount_in: number, routes: any, minimumOut: number) 
         arguments: [amount_in, minimumOut],
         function: `${CONTRACT_ADDRESS}::router::swap_exact_input_triplehop`,
       }
-      break
     case 5:
       return {
         type: 'entry_function_payload',
@@ -32,9 +34,7 @@ export function payloadArgs(amount_in: number, routes: any, minimumOut: number) 
         arguments: [amount_in, minimumOut],
         function: `${CONTRACT_ADDRESS}::router::swap_exact_input_quadruplehop`,
       }
-      break
     default:
       return undefined
   }
-  return undefined
 }

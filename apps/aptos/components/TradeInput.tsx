@@ -1,13 +1,17 @@
-import React, { useCallback } from 'react'
-import { Input } from '@sushiswap/ui/future/components/input'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import React from 'react'
 import { PricePanel } from './PricePanel'
 import { BalancePanel } from './BalancePanel'
 import TokenListDialog from './TokenListDialog'
 import { Token } from 'utils/tokenType'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { Icon } from './Icon'
+import {
+  Button,
+  SelectIcon,
+  SkeletonBox,
+  TextField,
+  classNames,
+} from '@sushiswap/ui'
+import { Modal } from './Modal/Modal'
 interface PropType {
   id: string
   type: 'INPUT' | 'OUTPUT'
@@ -23,6 +27,8 @@ interface PropType {
   tradeVal?: React.RefObject<HTMLInputElement>
   onUserInput?: (value: string) => void
   handleSwap: () => void
+  className?: string
+  fetching?: boolean
 }
 export default function TradeInput({
   id,
@@ -36,15 +42,11 @@ export default function TradeInput({
   balance,
   error,
   isLoadingPrice,
-  tradeVal,
   onUserInput,
   handleSwap,
+  className,
+  fetching,
 }: PropType) {
-  const focusInput = useCallback(() => {
-    if (tradeVal) {
-      tradeVal.current?.focus()
-    }
-  }, [tradeVal])
   const balanceClick = () => {
     if (setAmount && balance) {
       // if (token.symbol == 'APT') {
@@ -53,7 +55,7 @@ export default function TradeInput({
       //   setAmount((balance / 10 ** 8) as unknown as string)
       // }
       if (onUserInput) {
-        token.symbol == 'APT'
+        token.symbol === 'APT'
           ? onUserInput(((balance - 2000000) / 10 ** 8) as unknown as string)
           : onUserInput((balance / 10 ** 8) as unknown as string)
       }
@@ -64,33 +66,47 @@ export default function TradeInput({
   }
   return (
     <div
-      className={`${
-        error && '!bg-red-500/20 !dark:bg-red-900/30'
-      } space-y-2 overflow-hidden pb-2 p-3 bg-white dark:bg-slate-800 rounded-xl`}
-      onClick={focusInput}
+      className={classNames(
+        error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+        'relative space-y-2 overflow-hidden pb-2',
+        className,
+      )}
     >
+      <div
+        data-state={fetching ? 'active' : 'inactive'}
+        className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
+      />
       <div className="relative flex items-center gap-4">
-        {isLoadingPrice ? (
-          <div className="w-full flex items-center">
-            <div className="w-[170px]">
-              <Skeleton.Text fontSize="text-2xl" className="w-full" />
-            </div>
-          </div>
-        ) : (
-          <Input.Numeric
-            id={id}
-            variant="unstyled"
-            value={value}
-            ref={tradeVal}
-            onUserInput={(value) => {
+        <div
+          data-state={isLoadingPrice ? 'active' : 'inactive'}
+          className={classNames(
+            'data-[state=inactive]:hidden data-[state=active]:flex',
+            'gap-4 items-center justify-between flex-grow h-[44px]',
+          )}
+        >
+          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
+          <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+        </div>
+        <div
+          data-state={isLoadingPrice ? 'inactive' : 'active'}
+          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
+        >
+          <TextField
+            testdata-id={`${id}-input`}
+            type="number"
+            variant="naked"
+            disabled={disabled}
+            onValueChange={(value) => {
               if (onUserInput && token !== alteredSelected) {
                 onUserInput(value)
               }
             }}
-            disabled={disabled}
-            className="text-gray-900 dark:text-slate-50 text-left border-none focus:outline-none focus:ring-0 p-0 bg-transparent w-full truncate font-medium without-ring !text-3xl py-1"
+            value={value}
+            readOnly={disabled}
+            className={classNames('p-0 py-1 !text-3xl font-medium')}
           />
-        )}
+        </div>
+
         <TokenListDialog
           id={id}
           selected={token}
@@ -98,48 +114,31 @@ export default function TradeInput({
           handleChangeToken={setToken}
           handleSwap={handleSwap}
         >
-          <Modal.Trigger tag={`${id}-token-selector-modal`}>
-            {({ open }) => (
-              <>
-                <button
-                  onClick={open}
-                  id={`${id}-token-selector`}
-                  type="button"
-                  testdata-id="swap-from-button"
-                  className="flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12] whitespace-nowrap"
-                >
-                  {token ? (
-                    <>
-                      <span className="w-[28px] h-[28px] mr-0.5">
-                        <Icon currency={token} height={28} width={28} />
-                      </span>
-                      {token.symbol}
-                      <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
-                    </>
-                  ) : (
-                    'Select'
-                  )}
-                </button>
-              </>
+          <Button
+            size="lg"
+            data-state={isLoadingPrice ? 'inactive' : 'active'}
+            variant={token ? 'secondary' : 'default'}
+            id={`${id}-token-selector`}
+            type="button"
+            testdata-id="swap-from-button"
+            className={classNames(
+              token ? 'pl-2 pr-3 text-xl' : '',
+              '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
             )}
-          </Modal.Trigger>
+          >
+            {token ? (
+              <>
+                <span className="w-[28px] h-[28px] mr-0.5">
+                  <Icon currency={token} height={28} width={28} />
+                </span>
+                {token.symbol}
+                <SelectIcon />
+              </>
+            ) : (
+              'Select'
+            )}
+          </Button>
         </TokenListDialog>
-        <div
-          style={{
-            position: 'fixed',
-            top: '1px',
-            left: '1px',
-            width: '1px',
-            height: '0px',
-            padding: '0px',
-            margin: '-1px',
-            overflow: 'hidden',
-            clip: 'rect(0px, 0px, 0px, 0px)',
-            whiteSpace: 'nowrap',
-            borderWidth: '0px',
-            display: 'none',
-          }}
-        />
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel isLoading={isLoadingPrice} error={error} />

@@ -1,4 +1,3 @@
-import { Typography } from '@sushiswap/ui'
 import { Icon } from 'components/Icon'
 import { FC, useMemo } from 'react'
 import { Pool } from 'utils/usePools'
@@ -12,7 +11,11 @@ interface PoolPositionStakedDesktopProps {
   stakeAmount: number
 }
 
-export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ row, isLoading, stakeAmount }) => {
+export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
+  row,
+  isLoading,
+  stakeAmount,
+}) => {
   const { token0, token1 } = useTokensFromPools(row)
   const tokenAddress = row?.id
   const { data: coinInfo } = useTotalSupply(tokenAddress)
@@ -52,34 +55,34 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
     return (
       <div className="flex flex-col gap-3 px-5 py-4">
         <div className="flex items-center justify-between mb-1">
-          <Typography variant="sm" weight={600} className="dark:text-slate-100 text-gray-900">
+          <span className="text-sm dark:text-slate-100 text-gray-900">
             Staked Position
-          </Typography>
-          <Typography variant="xs" weight={500} className="dark:text-slate-100 text-gray-900">
-            {`$0.00`}
-          </Typography>
+          </span>
+          <span className="text-sm dark:text-slate-100 text-gray-900">
+            {"$0.00"}
+          </span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Icon currency={token0} width={20} height={20} />
-            <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
+            <span className="text-sm dark:text-slate-300 text-gray-700">
               {underlying0 ? underlying0.toFixed(6) : 0} {token0.symbol}
-            </Typography>
+            </span>
           </div>
-          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-            {`$0.00`}
-          </Typography>
+          <span className="text-sm dark:text-slate-400 text-slate-600">
+            {"$0.00"}
+          </span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Icon currency={token1} width={20} height={20} />
-            <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
+            <span className="text-sm dark:text-slate-300 text-gray-700">
               {underlying1 ? underlying1.toFixed(6) : 0} {token1.symbol}
-            </Typography>
+            </span>
           </div>
-          <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-            {`$0.00`}
-          </Typography>
+          <span className="text-sm dark:text-slate-400 text-slate-600">
+            {"$0.00"}
+          </span>
         </div>
       </div>
     )

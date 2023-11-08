@@ -18,7 +18,9 @@ export const SwapTradeOutput = ({ handleSwap }: Props) => {
     refetchInterval: 2000,
   })
   const outputSwapTokenAmount = outputAmount
-    ? String(formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8))
+    ? String(
+        formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8),
+      )
     : ''
   const { setToken1 } = useSwapActions()
   return (
@@ -29,10 +31,12 @@ export const SwapTradeOutput = ({ handleSwap }: Props) => {
       setToken={setToken1}
       isLoadingPrice={isLoading || isPriceFetching}
       token={token1}
+      fetching={isPriceFetching}
       alteredSelected={token0}
       disabled={true}
       type="OUTPUT"
       value={outputSwapTokenAmount}
+      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
     />
   )
 }

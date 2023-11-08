@@ -1,31 +1,47 @@
-import { List } from '@sushiswap/ui/future/components/list/List'
 import { FC } from 'react'
-import { formatNumber } from 'utils/utilFunctions'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardGroup,
+  CardHeader,
+  CardLabel,
+  CardTitle,
+} from '@sushiswap/ui'
+import { CardItem } from '@sushiswap/ui'
 
-export const PoolRewards: FC<{ isFarm: boolean; rewardsPerDay: number }> = ({ isFarm, rewardsPerDay }) => {
-  if (!isFarm) return <></>
+export const PoolRewards: FC<{ isFarm: boolean; rewardsPerDay: number }> = ({
+  rewardsPerDay,
+}) => {
   return (
-    <List>
-      <div className="flex items-center justify-between">
-        <List.Label>Pool Rewards</List.Label>
-        <List.Label>Reward APR: {'0.00%'}</List.Label>
-      </div>
-      <List.Control>
-        <List.KeyValue flex title={`SUSHI`}>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <img
-                src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
-                className="rounded-full"
-                height={20}
-                width={20}
-                alt=""
-              />
-              {rewardsPerDay} APT per day
-            </div>
-          </div>
-        </List.KeyValue>
-      </List.Control>
-    </List>
+    <Card>
+      <CardHeader>
+        <CardTitle>Rewards</CardTitle>
+        <CardDescription>
+          Distributed to everyone who provides liquidity to this pool. <br />
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <CardGroup>
+          <CardLabel>Tokens (per day)</CardLabel>
+          <CardItem
+            title={
+              <div className="font-medium flex items-center gap-2 text-muted-foreground">
+                <img
+                  src="https://cryptototem.com/wp-content/uploads/2022/08/aptos-logo.jpg"
+                  className="rounded-full"
+                  height={18}
+                  width={18}
+                  alt=""
+                />{' '}
+                APT
+              </div>
+            }
+          >
+            <span className="flex gap-1 font-semibold">{rewardsPerDay} </span>
+          </CardItem>
+        </CardGroup>
+      </CardContent>
+    </Card>
   )
 }

@@ -7,9 +7,18 @@ interface GetTokenWithQueryCacheFn {
   hasToken: (currency: string | Token) => boolean
   customTokens: Record<string, Token>
 }
-export const getTokenDetails = async ({ address, hasToken, customTokens }: GetTokenWithQueryCacheFn) => {
+export const getTokenDetails = async ({
+  address,
+  hasToken,
+  customTokens,
+}: GetTokenWithQueryCacheFn) => {
   if (hasToken(`${address}`)) {
-    const { address: tokenAddress, name, symbol, decimals } = customTokens[`${address}`]
+    const {
+      address: tokenAddress,
+      name,
+      symbol,
+      decimals,
+    } = customTokens[`${address}`]
     return {
       address: tokenAddress,
       name,
@@ -20,9 +29,9 @@ export const getTokenDetails = async ({ address, hasToken, customTokens }: GetTo
   if (!address) return {} as Token
   const tokenAddress = address.split(':')
   const response = await fetch(
-    `${FETCH_URL_PREFIX}/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
+    `${FETCH_URL_PREFIX}/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`,
   )
-  if (response.status == 200) {
+  if (response.status === 200) {
     const data = await response.json()
     const tokenAddress = data?.type.slice(20).slice(0, -1)
     return {
@@ -41,11 +50,16 @@ interface UseTokenParams {
   keepPreviousData?: boolean
 }
 
-export default function useTokenWithCache({ address, enabled = true, keepPreviousData = true }: UseTokenParams) {
+export default function useTokenWithCache({
+  address,
+  enabled = true,
+  keepPreviousData = true,
+}: UseTokenParams) {
   const { data: customTokens, hasToken } = useCustomTokens()
   return useQuery({
     queryKey: ['token', { address }],
-    queryFn: async () => address && getTokenDetails({ address, hasToken, customTokens }),
+    queryFn: async () =>
+      address && getTokenDetails({ address, hasToken, customTokens }),
     enabled: Boolean(enabled && address),
     refetchOnWindowFocus: false,
     keepPreviousData,

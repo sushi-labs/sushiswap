@@ -33,18 +33,25 @@ const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 const userPositionsQueryFn = async (address: string, allPools: Pool[] = []) => {
   if (address) {
-    const response = await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${address}/resources`)
-    if (response.status == 200) {
+    const response = await fetch(
+      `${FETCH_URL_PREFIX}/v1/accounts/${address}/resources`,
+    )
+    if (response.status === 200) {
       const data = await response.json()
       const userLPTokens: CoinStore[] = data?.filter((coin: CoinStore) => {
-        return coin?.type.includes(`0x1::coin::CoinStore<${CONTRACT_ADDRESS}::swap::LPToken`)
+        return coin?.type.includes(
+          `0x1::coin::CoinStore<${CONTRACT_ADDRESS}::swap::LPToken`,
+        )
       })
       if (allPools.length) {
         const userPositions = allPools.filter((pool: Pool) => {
           const poolAddress = pool.id
           return userLPTokens.some((userLPToken) => {
             const tokenAddress = userLPToken.type
-              .replaceAll(`0x1::coin::CoinStore<${CONTRACT_ADDRESS}::swap::LPToken<`, '')
+              .replaceAll(
+                `0x1::coin::CoinStore<${CONTRACT_ADDRESS}::swap::LPToken<`,
+                '',
+              )
               .slice(0, -2)
             return tokenAddress === poolAddress
           })
@@ -60,7 +67,7 @@ const userPositionsQueryFn = async (address: string, allPools: Pool[] = []) => {
   return [] as Pool[]
 }
 
-export function useUserPositions(address: string, enabled: boolean = true) {
+export function useUserPositions(address: string, enabled = true) {
   const { data: allPools } = usePools()
   return useQuery({
     queryKey: ['userPositions', { address, allPools }],

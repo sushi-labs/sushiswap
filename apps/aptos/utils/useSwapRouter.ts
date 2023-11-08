@@ -15,13 +15,26 @@ export function useSwapRouter({ balance }: useSwapRouterArgs) {
   const [slippageTolerance] = useSlippageTolerance()
   const { data: pairs } = usePools(true)
   return useQuery({
-    queryKey: ['router', { amount, token0, token1, account, connected, slippageTolerance, balance }],
-    queryFn: async () =>
-      useAllCommonPairs(
-        parseFloat((Number(amount) * 10 ** token0.decimals) as unknown as string),
+    queryKey: [
+      'router',
+      {
+        amount,
         token0,
         token1,
-        pairs
+        account,
+        connected,
+        slippageTolerance,
+        balance,
+      },
+    ],
+    queryFn: async () =>
+      useAllCommonPairs(
+        parseFloat(
+          (Number(amount) * 10 ** token0.decimals) as unknown as string,
+        ),
+        token0,
+        token1,
+        pairs,
       ),
     refetchInterval: 10000,
     refetchOnWindowFocus: true,

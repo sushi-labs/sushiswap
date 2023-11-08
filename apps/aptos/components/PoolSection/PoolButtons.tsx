@@ -1,5 +1,4 @@
-import { Link } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button, LinkInternal } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { FC } from 'react'
 
@@ -9,33 +8,43 @@ interface PoolButtonsProps {
   token1: string
 }
 
-export const PoolButtons: FC<PoolButtonsProps> = ({ isFarm, token0, token1 }) => {
+export const PoolButtons: FC<PoolButtonsProps> = ({
+  isFarm,
+  token0,
+  token1,
+}) => {
   const router = useParams()
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
-        <Link.Internal href={`/pool/${decodeURIComponent(router?.id)}/remove`} passHref={true}>
-          <a className="w-full">
-            <Button size="lg" color="default" fullWidth>
-              Withdraw
-            </Button>
-          </a>
-        </Link.Internal>
-        <Link.Internal href={`/pool/add?token0=${token0}&token1=${token1}`} passHref={true}>
-          <Button as="a" size="lg" fullWidth>
+        <LinkInternal
+          href={`/pool/${decodeURIComponent(router?.id)}/remove`}
+          passHref={true}
+        >
+          <Button size="lg" color="default" fullWidth>
+            Withdraw
+          </Button>
+        </LinkInternal>
+        <LinkInternal
+          href={`/pool/add?token0=${token0}&token1=${token1}`}
+          passHref={true}
+        >
+          <Button size="lg" fullWidth>
             Deposit
           </Button>
-        </Link.Internal>
+        </LinkInternal>
       </div>
-      <Button className="col-span-2" size="lg" color="default" as="a" href={`/swap`}>
-        Trade
-      </Button>
+      <LinkInternal href={'/swap'} passHref={true}>
+        <Button className="col-span-2" size="lg" color="default">
+          Trade
+        </Button>
+      </LinkInternal>
       {isFarm && (
-        <Link.Internal href={`/pool/${decodeURIComponent(router?.id)}/stake`}>
+        <LinkInternal href={`/pool/${decodeURIComponent(router?.id)}/stake`}>
           <Button className="col-span-2" size="lg" color="default">
             Stake Liquidity
           </Button>
-        </Link.Internal>
+        </LinkInternal>
       )}
     </div>
   )

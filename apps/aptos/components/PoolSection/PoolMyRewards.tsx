@@ -1,7 +1,5 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { Typography } from '@sushiswap/ui'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Button, Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import WalletSelector from 'components/WalletSelector'
 import { createToast } from 'components/toast'
@@ -14,8 +12,12 @@ interface Props {
   decimals: number | undefined
   isLoading: boolean
 }
-const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
-const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+const MASTERCHEF_CONTRACT =
+  process.env['MASTERCHEF_CONTRACT'] ||
+  process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
+const CONTRACT_ADDRESS =
+  process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+
 export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
   const router = useParams()
   const { connected, signAndSubmitTransaction } = useWallet()
@@ -38,7 +40,7 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
       if (!response?.success) return
       const toastId = `completed:${response?.hash}`
       createToast({
-        summery: `Successfully claimed rewards`,
+        summery: 'Successfully claimed rewards',
         toastId: toastId,
       })
       setTransactionPending(false)
@@ -46,7 +48,7 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
       console.log(err)
       const toastId = `failed:${Math.random()}`
       createToast({
-        summery: `Something went wrong when claiming rewards`,
+        summery: 'Something went wrong when claiming rewards',
         toastId: toastId,
       })
     } finally {
@@ -57,13 +59,11 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-col bg-white dark:bg-slate-800 rounded-2xl">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-900/5 dark:border-slate-200/5">
-          <Typography weight={600} className="dark:text-slate-50 text-gray-900">
-            My Rewards
-          </Typography>
+          <span className="dark:text-slate-50 text-gray-900">My Rewards</span>
           <div className="flex flex-col">
-            <Typography variant="sm" weight={600} className="text-right dark:text-slate-50 text-gray-900">
-              {`$0.00`}
-            </Typography>
+            <span className="text-sm text-right dark:text-slate-50 text-gray-900">
+              {'$0.00'}
+            </span>
           </div>
         </div>
         <div className="flex flex-col gap-3 px-5 py-4">
@@ -82,13 +82,18 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
                   width={20}
                   alt=""
                 />
-                <Typography variant="sm" weight={600} className="dark:text-slate-300 text-gray-700">
-                  {reward ? parseFloat(String(formatNumber(reward, decimals as number))) : 0} APT
-                </Typography>
+                <span className="text-sm dark:text-slate-300 text-gray-700">
+                  {reward
+                    ? parseFloat(
+                        String(formatNumber(reward, decimals as number)),
+                      )
+                    : 0}{' '}
+                  APT
+                </span>
               </div>
-              <Typography variant="xs" weight={500} className="dark:text-slate-400 text-slate-600">
-                {`$0.00`}
-              </Typography>
+              <span className="text-xs dark:text-slate-400 text-slate-600">
+                {'$0.00'}
+              </span>
             </div>
           )}
         </div>
@@ -96,7 +101,12 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
       {!connected ? (
         <WalletSelector color="blue" size="xl" fullWidth={true} />
       ) : (
-        <Button size="xl" fullWidth onClick={harvest} disabled={isTransactionPending}>
+        <Button
+          size="xl"
+          fullWidth
+          onClick={harvest}
+          disabled={isTransactionPending}
+        >
           {isTransactionPending ? <Dots>Claiming</Dots> : 'Claim'}
         </Button>
       )}

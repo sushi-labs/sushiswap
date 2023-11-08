@@ -34,6 +34,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
   const { data: routes, isFetching: isPriceFetching } = useSwapRouter({
     balance,
   })
+
   useEffect(() => {
     setOutputAmount('')
     setSlippageAmount(0)
@@ -67,6 +68,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
       setError('')
     }
   }
+
   useEffect(() => {
     checkBalance(String(amount))
   }, [token0, token1, balance])
@@ -88,6 +90,7 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
       tradeVal={tradeVal}
       setAmount={setAmount}
       handleSwap={handleSwap}
+      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
     />
   )
 }

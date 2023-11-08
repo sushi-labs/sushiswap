@@ -1,6 +1,5 @@
 import TOKENS from './../config/tokenList.json'
 import { Token } from './tokenType'
-import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 export type Data = {
   address: string
@@ -12,16 +11,19 @@ export type Data = {
 
 const BASE_TOKENS: Token[] = TOKENS.tokens
 export const fetchTokensQueryFn = async () => {
-  return BASE_TOKENS.reduce<Record<string, Token>>((acc, { address, decimals, name, symbol, logoURI }) => {
-    acc[address] = {
-      name,
-      decimals,
-      symbol,
-      address,
-      logoURI,
-    }
-    return acc
-  }, {})
+  return BASE_TOKENS.reduce<Record<string, Token>>(
+    (acc, { address, decimals, name, symbol, logoURI }) => {
+      acc[address] = {
+        name,
+        decimals,
+        symbol,
+        address,
+        logoURI,
+      }
+      return acc
+    },
+    {},
+  )
 }
 
 export function getTokensWithoutKey() {

@@ -1,14 +1,20 @@
 import { FarmLP } from './useFarms'
 import { ACC_SUSHI_PRECISION } from './useUserRewards'
 
-export default function getAptosPerShare(farms: FarmLP | undefined, farmIndex: number | undefined) {
+export default function getAptosPerShare(
+  farms: FarmLP | undefined,
+  farmIndex: number | undefined,
+) {
   const TOTAL_APTOS_RATE_PRECISION = 100000
   if (farms === undefined) return 0
   if (farmIndex === undefined || farmIndex === -1) return 0
 
   const poolInfo = farms?.data?.pool_info[farmIndex]
   let aptosReward = 0
-  let currentAptosPerShare = farmIndex != undefined && farmIndex !== -1 ? Number(poolInfo.acc_aptos_per_share) : 0
+  let currentAptosPerShare =
+    farmIndex !== undefined && farmIndex !== -1
+      ? Number(poolInfo.acc_aptos_per_share)
+      : 0
   const currentTime = Date.now() / 1000
 
   if (currentTime > Number(poolInfo.last_reward_timestamp)) {
@@ -29,18 +35,30 @@ export default function getAptosPerShare(farms: FarmLP | undefined, farmIndex: n
       multiplier = 0
     } else if (currentTime <= Number(farms.data.end_timestamp)) {
       multiplier =
-        currentTime - Math.max(Number(poolInfo.last_reward_timestamp), Number(farms.data.last_upkeep_timestamp))
+        currentTime -
+        Math.max(
+          Number(poolInfo.last_reward_timestamp),
+          Number(farms.data.last_upkeep_timestamp),
+        )
     } else {
       multiplier =
         Number(farms.data.end_timestamp) -
-        Math.max(Number(poolInfo.last_reward_timestamp), Number(farms.data.last_upkeep_timestamp))
+        Math.max(
+          Number(poolInfo.last_reward_timestamp),
+          Number(farms.data.last_upkeep_timestamp),
+        )
     }
     if (supply > 0 && Number(totalAllocPoint) > 0) {
       aptosReward =
-        (multiplier * Number(farms.data.aptos_per_second) * Number(aptosRate) * Number(poolInfo.alloc_point)) /
+        (multiplier *
+          Number(farms.data.aptos_per_second) *
+          Number(aptosRate) *
+          Number(poolInfo.alloc_point)) /
         Number(totalAllocPoint) /
         TOTAL_APTOS_RATE_PRECISION
-      currentAptosPerShare = Number(poolInfo.acc_aptos_per_share) + (aptosReward * ACC_SUSHI_PRECISION) / supply
+      currentAptosPerShare =
+        Number(poolInfo.acc_aptos_per_share) +
+        (aptosReward * ACC_SUSHI_PRECISION) / supply
     }
     return currentAptosPerShare
   }

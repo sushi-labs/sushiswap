@@ -1,14 +1,13 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { ArrowTopRightOnSquareIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { SlideIn } from '@sushiswap/ui/future/components/animation'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Overlay } from '@sushiswap/ui/future/components/overlay'
+import {
+  ArrowTopRightOnSquareIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/24/outline'
 import React, { ReactNode, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { providerNetwork } from 'lib/constants'
+import { Button, List } from '@sushiswap/ui'
+import { Modal } from './Modal/Modal'
 interface Props {
   id: string
   token: Token[]
@@ -17,7 +16,6 @@ interface Props {
 
 export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
   const [open, setOpen] = useState<boolean>(false)
-  const { network } = useWallet()
   const onClick = useCallback(() => {
     onImport()
 
@@ -43,7 +41,12 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
             </div>
 
             <div className="flex flex-col">
-              <Button className="rounded-full" color="blue" size="xs" onClick={() => setOpen(true)}>
+              <Button
+                className="rounded-full"
+                color="blue"
+                size="xs"
+                onClick={() => setOpen(true)}
+              >
                 Import
               </Button>
             </div>
@@ -56,12 +59,19 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
 
           <div className="space-y-3 my-3">
             <div className="rounded-2xl p-3 flex flex-col gap-2 items-center">
-              <ExclamationTriangleIcon width={26} height={26} className="text-red" />
-              <span className="font-medium text-lg text-gray-900 dark:text-slate-200">Trade at your own risk!</span>
+              <ExclamationTriangleIcon
+                width={26}
+                height={26}
+                className="text-red"
+              />
+              <span className="font-medium text-lg text-gray-900 dark:text-slate-200">
+                Trade at your own risk!
+              </span>
               <span className="text-sm text-gray-600 dark:text-slate-400 text-center">
-                {token.length > 1 ? "These tokens don't" : "This token doesn't"} appear on the active token list(s).
-                Anyone can create a token, including creating fake versions of existing tokens that claim to represent
-                projects
+                {token.length > 1 ? "These tokens don't" : "This token doesn't"}{' '}
+                appear on the active token list(s). Anyone can create a token,
+                including creating fake versions of existing tokens that claim
+                to represent projects
               </span>
             </div>
             <List>
@@ -86,7 +96,8 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
 
                             <div className="flex flex-col">
                               <span className="text-right font-medium text-sm text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                                {cur.address.substring(0, 6)} ... {cur.address.split('::')[0].substring(66 - 4)}
+                                {cur.address.substring(0, 6)} ...{' '}
+                                {cur.address.split('::')[0].substring(66 - 4)}
                               </span>
                               <a
                                 target="_blank"
@@ -96,12 +107,16 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
                                 className="flex gap-1 text-sm items-center text-blue font-medium justify-end"
                                 rel="noreferrer"
                               >
-                                View on Explorer <ArrowTopRightOnSquareIcon width={14} height={14} />
+                                View on Explorer{' '}
+                                <ArrowTopRightOnSquareIcon
+                                  width={14}
+                                  height={14}
+                                />
                               </a>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div>,
                     )
                   }
                   return acc
@@ -113,8 +128,6 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
                 {({ close }) => (
                   <Button
                     fullWidth
-                    size="xl"
-                    variant="filled"
                     color="blue"
                     onClick={() => {
                       onClick()

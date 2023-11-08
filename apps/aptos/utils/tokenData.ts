@@ -11,7 +11,9 @@ export async function getTokenData(token: Token) {
   const { account } = useWallet()
   let tokenData: any
   if (account?.address && token) {
-    const res = await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${account?.address}/resources`)
+    const res = await fetch(
+      `${FETCH_URL_PREFIX}/v1/accounts/${account?.address}/resources`,
+    )
     const data = await res.json()
     if (!data.error_code) {
       tokenData = data?.filter((coin: coinType) => {
@@ -19,6 +21,7 @@ export async function getTokenData(token: Token) {
       })
     }
   }
-  if (tokenData && tokenData[0]?.data?.coin) return tokenData[0]?.data?.coin?.value
+  if (tokenData?.[0]?.data?.coin)
+    return tokenData[0]?.data?.coin?.value
   return 0
 }

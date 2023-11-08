@@ -1,15 +1,16 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import React, { useEffect, useState } from 'react'
 import WalletSelector from './WalletSelector'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { useSwapRouter } from 'utils/useSwapRouter'
 import { warningSeverity } from 'lib/swap/warningSeverity'
 import { useTokenBalance } from 'utils/useTokenBalance'
+import { Modal } from './Modal/Modal'
 
 export const SwapButton = () => {
   const { connected, account } = useWallet()
-  const { amount, isPriceFetching, noRouteFound, error, token0 } = useSwapState()
+  const { amount, isPriceFetching, noRouteFound, error, token0 } =
+    useSwapState()
   const [checked, setChecked] = useState<boolean>(false)
   const { data: balance } = useTokenBalance({
     account: account?.address as string,
@@ -30,6 +31,7 @@ export const SwapButton = () => {
           <div className="pt-4">
             {connected ? (
               <button
+                type="button"
                 className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
                   noRouteFound ||
                   error ||
@@ -40,7 +42,10 @@ export const SwapButton = () => {
                     : ''
                 }`}
                 disabled={
-                  noRouteFound || error || Number(amount) <= 0 || (!checked && warningSeverity(routes?.priceImpact) > 3)
+                  noRouteFound ||
+                  error ||
+                  Number(amount) <= 0 ||
+                  (!checked && warningSeverity(routes?.priceImpact) > 3)
                     ? true
                     : false
                 }
@@ -61,7 +66,7 @@ export const SwapButton = () => {
                 )}
               </button>
             ) : (
-              <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
+              <WalletSelector color="blue" size="xl" fullWidth={true} />
             )}
           </div>
           {warningSeverity(routes?.priceImpact) > 3 && (
@@ -73,9 +78,13 @@ export const SwapButton = () => {
                 onChange={(e) => setChecked(e.target.checked)}
                 className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-600 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
               />
-              <label htmlFor="expert-checkbox" className="ml-2 font-medium text-red-600">
-                Price impact is too high. You will lose a big portion of your funds in this trade. Please tick the box
-                if you would like to continue.
+              <label
+                htmlFor="expert-checkbox"
+                className="ml-2 font-medium text-red-600"
+              >
+                Price impact is too high. You will lose a big portion of your
+                funds in this trade. Please tick the box if you would like to
+                continue.
               </label>
             </div>
           )}

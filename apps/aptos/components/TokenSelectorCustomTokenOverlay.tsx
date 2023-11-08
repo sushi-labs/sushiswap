@@ -1,13 +1,10 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { SlideIn } from '@sushiswap/ui/future/components/animation'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Overlay } from '@sushiswap/ui/future/components/overlay'
 import React, { useMemo, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { useCustomTokens } from 'utils/useCustomTokens'
+import { Button } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 
 export const TokenSelectorCustomTokenOverlay = () => {
   const isMounted = useIsMounted()
@@ -32,10 +29,19 @@ export const TokenSelectorCustomTokenOverlay = () => {
 
   return (
     <>
-      <Button className="rounded-full" color="blue" size="xs" onClick={() => setOpen(true)}>
+      <Button
+        className="rounded-full"
+        color="blue"
+        size="xs"
+        onClick={() => setOpen(true)}
+      >
         Manage
       </Button>
-      <SlideIn.FromRight show={open} onClose={() => setOpen(false)} className="!mt-0">
+      <SlideIn.FromRight
+        show={open}
+        onClose={() => setOpen(false)}
+        className="!mt-0"
+      >
         <Overlay.Content>
           <Overlay.Header onBack={() => setOpen(false)} title="Custom Tokens" />
           <List>
@@ -46,14 +52,16 @@ export const TokenSelectorCustomTokenOverlay = () => {
                   <List.MenuItem
                     key={token.address}
                     title={token.symbol || ''}
-                    subtitle={`APTOS`}
+                    subtitle={"APTOS"}
                     onClick={() => mutate('remove', [token])}
                     hoverIcon={TrashIcon}
                   />
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center gap-1">
-                  <span className="text-xs flex text-slate-500 py-10">No custom tokens found</span>
+                  <span className="text-xs flex text-slate-500 py-10">
+                    No custom tokens found
+                  </span>
                 </div>
               )}
             </List.Control>

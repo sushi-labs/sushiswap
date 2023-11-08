@@ -1,8 +1,8 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useQuery } from '@tanstack/react-query'
-import { FarmLP } from './useFarms'
 import { FETCH_URL_PREFIX, GRAPHQL_URL } from 'lib/constants'
-const MASTERCHEF_CONTRACT = process.env['MASTERCHEF_CONTRACT'] || process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
+const MASTERCHEF_CONTRACT =
+  process.env['MASTERCHEF_CONTRACT'] ||
+  process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
 export type PoolUserInfo = {
   type: string
   data: {
@@ -53,18 +53,23 @@ const userHandleQueryFn = async (handle: string | undefined) => {
 
 const userPoolQueryFn = async (address: string | undefined) => {
   const response = await fetch(
-    `${FETCH_URL_PREFIX}/v1/accounts/${address}/resource/${MASTERCHEF_CONTRACT}::masterchef::PoolUserInfo`
+    `${FETCH_URL_PREFIX}/v1/accounts/${address}/resource/${MASTERCHEF_CONTRACT}::masterchef::PoolUserInfo`,
   )
-  if (response.status == 200) {
+  if (response.status === 200) {
     const userPoolInfo: PoolUserInfo = await response.json()
     return userPoolInfo
   }
   return {} as PoolUserInfo
 }
 
-export const getPIdIndex = (farmIndex: number | undefined, stakes: userStakes | undefined) => {
-  return stakes && stakes?.data?.current_table_items?.length
-    ? stakes?.data?.current_table_items?.map((key) => key.decoded_key).indexOf(String(farmIndex))
+export const getPIdIndex = (
+  farmIndex: number | undefined,
+  stakes: userStakes | undefined,
+) => {
+  return stakes?.data?.current_table_items?.length
+    ? stakes?.data?.current_table_items
+        ?.map((key) => key.decoded_key)
+        .indexOf(String(farmIndex))
     : -1
 }
 
@@ -87,8 +92,11 @@ export function useUserHandle({
   // const { data: handle } = useUserPool(address)
   return useQuery({
     queryKey: ['userStackes', { userHandle }],
-    queryFn: async () => userHandleQueryFn(userHandle?.data?.pid_to_user_info?.inner?.handle),
-    enabled: Boolean(userHandle?.data?.pid_to_user_info?.inner?.handle && address),
+    queryFn: async () =>
+      userHandleQueryFn(userHandle?.data?.pid_to_user_info?.inner?.handle),
+    enabled: Boolean(
+      userHandle?.data?.pid_to_user_info?.inner?.handle && address,
+    ),
     refetchInterval: 2000,
   })
 }

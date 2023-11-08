@@ -9,25 +9,25 @@ interface Params {
   decimals: number | undefined
 }
 
-type UseUnderlyingTokenBalanceFromPairParams = (params: Params) => [number | undefined, number | undefined]
+type UseUnderlyingTokenBalanceFromPairParams = (
+  params: Params,
+) => [number | undefined, number | undefined]
 
-export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPairParams = ({
-  balance,
-  totalSupply,
-  reserve1,
-  reserve0,
-  decimals,
-}) => {
-  return useMemo(() => {
-    if (!balance || !totalSupply || !reserve0 || !reserve1) {
-      return [undefined, undefined]
-    }
+export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPairParams =
+  ({ balance, totalSupply, reserve1, reserve0, decimals }) => {
+    return useMemo(() => {
+      if (!balance || !totalSupply || !reserve0 || !reserve1) {
+        return [undefined, undefined]
+      }
 
-    if (totalSupply === 0) {
-      return [0, 0]
-    }
-    const underlying0 = (reserve0 * balance) / totalSupply
-    const underlying1 = (reserve1 * balance) / totalSupply
-    return [formatNumber(underlying0, decimals as number), formatNumber(underlying1, decimals as number)]
-  }, [balance, reserve0, reserve1, totalSupply])
-}
+      if (totalSupply === 0) {
+        return [0, 0]
+      }
+      const underlying0 = (reserve0 * balance) / totalSupply
+      const underlying1 = (reserve1 * balance) / totalSupply
+      return [
+        formatNumber(underlying0, decimals as number),
+        formatNumber(underlying1, decimals as number),
+      ]
+    }, [balance, reserve0, reserve1, totalSupply, decimals])
+  }

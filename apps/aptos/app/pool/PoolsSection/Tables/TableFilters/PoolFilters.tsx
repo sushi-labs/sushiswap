@@ -11,14 +11,26 @@ interface Props {
   setQuery: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const PoolFilters: FC<Props> = ({ showCategories = true, farmHandler, farmsOnly, query, setQuery }) => {
+export const PoolFilters: FC<Props> = ({
+  showCategories = true,
+  farmHandler,
+  farmsOnly,
+  query,
+  setQuery,
+}) => {
   return (
     <>
       <Tab.Group>
         <Tab.Panels>
           <div className="flex flex-col gap-4 mb-4">
             <div className="flex gap-4">
-              <Search id="search" loading={false} onChange={setQuery} value={query ?? ''} delimiter=" " />
+              <Search
+                id="search"
+                loading={false}
+                onChange={setQuery}
+                value={query ?? ''}
+                delimiter=" "
+              />
             </div>
             {showCategories && (
               <div className="flex flex-wrap items-center gap-3">

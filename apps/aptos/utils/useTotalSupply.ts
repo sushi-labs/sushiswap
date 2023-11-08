@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { FETCH_URL_PREFIX } from 'lib/constants'
 
-const CONTRACT_ADDRESS = process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+const CONTRACT_ADDRESS =
+  process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
 export type CoinInfo = {
   type: string
@@ -19,10 +20,10 @@ export type CoinInfo = {
               {
                 limit: string
                 value: string
-              }
+              },
             ]
           }
-        }
+        },
       ]
     }
     symbol: string
@@ -32,9 +33,9 @@ export type CoinInfo = {
 const totalSupplyQueryFn = async (tokenAddress: string) => {
   if (tokenAddress) {
     const response = await fetch(
-      `${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resource/0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>>`
+      `${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resource/0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>>`,
     )
-    if (response.status == 200) {
+    if (response.status === 200) {
       const data = await response.json()
       return data as CoinInfo
     }

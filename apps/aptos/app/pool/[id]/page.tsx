@@ -1,6 +1,5 @@
 'use client'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { AppearOnMount } from '@sushiswap/ui'
 import Loading from 'app/loading'
 import { Layout } from 'components/Layout'
 import { PoolButtons } from 'components/PoolSection/PoolButtons'
@@ -20,7 +19,7 @@ import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 import { useRewardsPerDay } from 'utils/useRewardsPerDay'
 import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 
-const Pool: FC = ({}) => {
+const Pool: FC = () => {
   return <_Pool />
 }
 
@@ -33,13 +32,18 @@ const _Pool = () => {
   const farmIndex = isFarm(tokenAddress, farms)
   const { data: coinInfo } = useTotalSupply(tokenAddress)
   const { data: userHandle } = useUserPool(account?.address)
-  const { data: stakes, isInitialLoading: isStakeLoading } = useUserHandle({ address: account?.address, userHandle })
+  const { data: stakes, isInitialLoading: isStakeLoading } = useUserHandle({
+    address: account?.address,
+    userHandle,
+  })
   const pIdIndex = useMemo(() => {
     return getPIdIndex(farmIndex, stakes)
   }, [stakes, farmIndex])
   const stakeAmount = useMemo(() => {
     if (stakes?.data.current_table_items.length && pIdIndex !== -1) {
-      return Number(stakes?.data.current_table_items[pIdIndex]?.decoded_value?.amount)
+      return Number(
+        stakes?.data.current_table_items[pIdIndex]?.decoded_value?.amount,
+      )
     } else {
       return 0
     }
@@ -47,10 +51,14 @@ const _Pool = () => {
   const { isLoadingAccount } = useAccount()
 
   const rewards = useUserRewards(farms, stakes, pIdIndex, farmIndex)
-  const rewardsPerDay = useRewardsPerDay(farms, farmIndex, coinInfo?.data?.decimals)
+  const rewardsPerDay = useRewardsPerDay(
+    farms,
+    farmIndex,
+    coinInfo?.data?.decimals,
+  )
   useEffect(() => {
     requiredNetworkAlert(network, disconnect)
-  }, [network])
+  }, [network, disconnect])
 
   return (
     <>
@@ -63,21 +71,26 @@ const _Pool = () => {
                 <PoolHeader row={pool} />
                 <hr className="my-3 border-t border-gray-900/5 dark:border-slate-200/5" />
                 <PoolComposition row={pool} />
-                <PoolRewards isFarm={farmIndex !== -1} rewardsPerDay={rewardsPerDay} />
+                <PoolRewards
+                  isFarm={farmIndex !== -1}
+                  rewardsPerDay={rewardsPerDay}
+                />
               </div>
               <div className="flex flex-col order-2 gap-4">
-                <AppearOnMount>
-                  <div className="flex flex-col gap-10">
-                    {farmIndex !== undefined && farmIndex !== -1 && (
-                      <PoolMyRewards
-                        reward={rewards}
-                        decimals={coinInfo?.data?.decimals}
-                        isLoading={isPoolLoading || isStakeLoading}
-                      />
-                    )}
-                    <PoolPosition row={pool} isLoading={isPoolLoading || isStakeLoading} stakeAmount={stakeAmount} />
-                  </div>
-                </AppearOnMount>
+                <div className="flex flex-col gap-10">
+                  {farmIndex !== undefined && farmIndex !== -1 && (
+                    <PoolMyRewards
+                      reward={rewards}
+                      decimals={coinInfo?.data?.decimals}
+                      isLoading={isPoolLoading || isStakeLoading}
+                    />
+                  )}
+                  <PoolPosition
+                    row={pool}
+                    isLoading={isPoolLoading || isStakeLoading}
+                    stakeAmount={stakeAmount}
+                  />
+                </div>
                 <div className="hidden lg:flex">
                   <PoolButtons
                     isFarm={farmIndex !== undefined && farmIndex !== -1}

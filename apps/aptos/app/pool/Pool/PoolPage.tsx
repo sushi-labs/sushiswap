@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
 import { Layout } from 'components/Layout'
 import { ContentBlock } from 'components/ContentBlock'
 import TradeInput from 'components/TradeInput'
@@ -12,7 +11,6 @@ import { Provider } from 'aptos'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AddLiquidityButton } from 'app/pool/Pool/AddLiquidityButton'
 import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { createToast } from 'components/toast'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useTokenBalance } from 'utils/useTokenBalance'
@@ -21,6 +19,7 @@ import { useAccount } from 'utils/useAccount'
 import { providerNetwork } from 'lib/constants'
 import { useSearchParams } from 'next/navigation'
 import getTokenFromAddress from 'utils/getTokenFromAddress'
+import {Button, IconButton } from '@sushiswap/ui'
 
 export function Add() {
   // const router = useRouter()
@@ -32,15 +31,12 @@ export function Add() {
       {isLoadingAccount && <Loading />}
       <Layout className="flex justify-center">
         <div className="flex flex-col gap-2">
-          <Link className="flex items-center gap-4 mb-2 group" href="/pool" shallow={true}>
-            <IconButton
-              icon={ArrowLeftIcon}
-              iconProps={{
-                width: 24,
-                height: 24,
-                transparent: true,
-              }}
-            />
+          <Link
+            className="flex items-center gap-4 mb-2 group"
+            href="/pool"
+            shallow={true}
+          >
+            <IconButton icon={ArrowLeftIcon} size="sm" name="arrow" />
             <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
               Go back to pools list
             </span>
@@ -58,8 +54,22 @@ export function Add() {
 }
 
 const _Add: FC = () => {
-  const { setToken0, setToken1, setAmount0, setAmount1, setisTransactionPending } = usePoolActions()
-  const { token0, token1, amount0, amount1, isPriceFetching, poolPairRatio, pairs } = usePoolState()
+  const {
+    setToken0,
+    setToken1,
+    setAmount0,
+    setAmount1,
+    setisTransactionPending,
+  } = usePoolActions()
+  const {
+    token0,
+    token1,
+    amount0,
+    amount1,
+    isPriceFetching,
+    poolPairRatio,
+    pairs,
+  } = usePoolState()
   const { network, account, signAndSubmitTransaction, connected } = useWallet()
   const [error0, setError0] = useState('')
   const [error1, setError1] = useState('')
@@ -78,7 +88,7 @@ const _Add: FC = () => {
       token0.address,
       token1.address,
       parseInt(String(Number(amount0) * 10 ** token0.decimals)),
-      parseInt(String(Number(amount1) * 10 ** token1.decimals))
+      parseInt(String(Number(amount1) * 10 ** token1.decimals)),
     )
     setisTransactionPending(true)
     if (!account) return []
@@ -98,9 +108,9 @@ const _Add: FC = () => {
       close()
       setAmount0('')
       setAmount1('')
-    } catch (error) {
+    } catch (_e) {
       const toastId = `failed:${Math.random()}`
-      createToast({ summery: `User rejected request`, toastId: toastId })
+      createToast({ summery: "User rejected request", toastId: toastId })
     } finally {
       setisTransactionPending(false)
     }
@@ -123,13 +133,19 @@ const _Add: FC = () => {
       setAmount0(value)
       if (pairs?.data) {
         if (value) {
-          setAmount1(String(parseFloat((parseFloat(value) * poolPairRatio).toFixed(token1.decimals))))
+          setAmount1(
+            String(
+              parseFloat(
+                (parseFloat(value) * poolPairRatio).toFixed(token1.decimals),
+              ),
+            ),
+          )
         } else {
           setAmount1('')
         }
       }
     },
-    [poolPairRatio, balance0]
+    [poolPairRatio, balance0],
   )
 
   const searchParams = useSearchParams()
@@ -149,13 +165,19 @@ const _Add: FC = () => {
       setAmount1(value)
       if (pairs?.data) {
         if (value) {
-          setAmount0(String(parseFloat((parseFloat(value) / poolPairRatio).toFixed(token0.decimals))))
+          setAmount0(
+            String(
+              parseFloat(
+                (parseFloat(value) / poolPairRatio).toFixed(token0.decimals),
+              ),
+            ),
+          )
         } else {
           setAmount0('')
         }
       }
     },
-    [poolPairRatio, balance1]
+    [poolPairRatio, balance1],
   )
 
   useEffect(() => {
@@ -207,10 +229,14 @@ const _Add: FC = () => {
     <>
       <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
         <SelectTokensWidget handleSwap={swapTokenIfAlreadySelected} />
-        <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
+        <ContentBlock
+          title={
+            <span className="text-gray-900 dark:text-white">Deposit.</span>
+          }
+        >
           <div className="flex flex-col gap-4">
             <TradeInput
-              id={`liquidity-from`}
+              id={"liquidity-from"}
               token={token0}
               alteredSelected={token1}
               value={String(amount0)}
@@ -225,13 +251,19 @@ const _Add: FC = () => {
               handleSwap={swapTokenIfAlreadySelected}
             />
             <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-              <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
-                <PlusIcon strokeWidth={3} className="w-4 h-4 dark:text-slate-400 text-slate-600" />
+              <button
+                type="button"
+                className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900"
+              >
+                <PlusIcon
+                  strokeWidth={3}
+                  className="w-4 h-4 dark:text-slate-400 text-slate-600"
+                />
               </button>
             </div>
             <TradeInput
               alteredSelected={token0}
-              id={`liquidity-to`}
+              id={"liquidity-to"}
               token={token1}
               value={String(amount1)}
               setToken={setToken1}
@@ -244,7 +276,10 @@ const _Add: FC = () => {
               type="INPUT"
               handleSwap={swapTokenIfAlreadySelected}
             />
-            <AddLiquidityButton buttonError={error0 || error1} token1Value={String(amount0)} />
+            <AddLiquidityButton
+              buttonError={error0 || error1}
+              token1Value={String(amount0)}
+            />
           </div>
         </ContentBlock>
         <AddSectionReviewModal>

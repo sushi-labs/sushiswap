@@ -1,4 +1,4 @@
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui'
 import React from 'react'
 interface Props {
   isLoading: boolean
@@ -8,13 +8,15 @@ export const PricePanel = ({ isLoading, error }: Props) => {
   if (isLoading) {
     return (
       <div className="w-[90px] flex items-center">
-        <Skeleton.Text fontSize="text-lg" className="w-full" />
+        <SkeletonText fontSize="lg" className="w-full" />
       </div>
     )
   }
 
   if (error) {
-    return <p className="font-medium text-lg py-1 select-none text-red">{error}</p>
+    return (
+      <p className="font-medium text-lg py-1 select-none text-red">{error}</p>
+    )
   }
 
   return (

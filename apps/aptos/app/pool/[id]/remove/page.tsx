@@ -11,7 +11,7 @@ const Pool = () => {
   const { network, disconnect } = useWallet()
   useEffect(() => {
     requiredNetworkAlert(network, disconnect)
-  }, [network])
+  }, [network, disconnect])
   return (
     <div>
       {isLoadingAccount && <Loading />}

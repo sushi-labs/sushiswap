@@ -42,11 +42,16 @@ export type Pool = {
 
 export async function fetchPoolsQueryFn() {
   const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
-  const response = await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resources`)
-  if (response.status == 200) {
+  const response = await fetch(
+    `${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resources`,
+  )
+  if (response.status === 200) {
     const data = await response.json()
     const coinPair: Pool[] = data.filter((pair: Pool) => {
-      pair.id = pair?.data?.token_x_details?.token_address + ', ' + pair?.data?.token_y_details?.token_address
+      pair.id =
+        pair?.data?.token_x_details?.token_address +
+        ', ' +
+        pair?.data?.token_y_details?.token_address
       return pair.type.includes(`${CONTRACT_ADDRESS}::swap::TokenPairMetadata`)
     })
     return coinPair

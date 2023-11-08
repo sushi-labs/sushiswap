@@ -17,7 +17,7 @@ export const PositionsTable = ({ query }: Props) => {
   const { account } = useWallet()
   const { data: userPositions, isLoading } = useUserPositions(
     account?.address as string,
-    true
+    true,
   )
   const data = useMemo(() => userPositions?.flat() || [], [userPositions])
 
@@ -26,8 +26,12 @@ export const PositionsTable = ({ query }: Props) => {
     if (debouncedQuery.split(' ')[0] == '') return data
     return data.filter(
       (pool) =>
-        debouncedQuery?.split(' ').includes(pool.data.token_x_details.symbol.toLowerCase()) ||
-        debouncedQuery?.split(' ').includes(pool.data.token_y_details.symbol.toLowerCase())
+        debouncedQuery
+          ?.split(' ')
+          .includes(pool.data.token_x_details.symbol.toLowerCase()) ||
+        debouncedQuery
+          ?.split(' ')
+          .includes(pool.data.token_y_details.symbol.toLowerCase()),
     )
   }, [debouncedQuery, data])
 
@@ -43,7 +47,13 @@ export const PositionsTable = ({ query }: Props) => {
     <Container maxWidth="7xl" className="px-4 mx-auto">
       <GenericTable<Pool>
         table={table}
-        pageSize={tableData?.length ? tableData?.length : data?.length ? data?.length : 5}
+        pageSize={
+          tableData?.length
+            ? tableData?.length
+            : data?.length
+            ? data?.length
+            : 5
+        }
         loading={!userPositions || isLoading}
         testId="positions"
         placeholder="No positions found"
