@@ -1,8 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
 import { BridgeState, getStarGateFeesV04 } from './StarGateFeesV04'
-import { getBigNumber } from './Utils'
+import { getBigInt } from './Utils'
 
 export class BridgeStargateV04OneWay extends RPool {
   bridgeState: BridgeState
@@ -14,31 +14,47 @@ export class BridgeStargateV04OneWay extends RPool {
     token1: RToken, // to token
     bridgeState: BridgeState,
     whitelisted: boolean,
-    swapGasCost = 150_000
+    swapGasCost = 150_000,
   ) {
-    super(id, token0, token1, Number.NaN, BigNumber.from(0), BigNumber.from(0), 0, swapGasCost)
+    super(id as Address, token0, token1, Number.NaN, 0n, 0n, 0, swapGasCost)
     this.bridgeState = bridgeState
     this.whitelisted = whitelisted
   }
 
   calcFeeAmount(amountIn: number) {
-    const fees = getStarGateFeesV04(this.bridgeState, this.whitelisted, getBigNumber(amountIn))
-    const feesTotal = fees.lpFee.add(fees.protocolFee).add(fees.eqFee).sub(fees.eqReward)
+    const fees = getStarGateFeesV04(
+      this.bridgeState,
+      this.whitelisted,
+      getBigInt(amountIn),
+    )
+    const feesTotal = fees.lpFee + fees.protocolFee + fees.eqFee - fees.eqReward
     return parseInt(feesTotal.toString())
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+  ): { out: number; gasSpent: number } {
     if (!direction) throw new Error('Wrong way for BridgeStargateV04OneWay')
-    const fees = getStarGateFeesV04(this.bridgeState, this.whitelisted, getBigNumber(amountIn))
-    const maxAmount = parseInt(this.bridgeState.currentBalance.sub(fees.lpFee).add(fees.eqReward).toString())
-    if (amountIn > maxAmount) throw new Error('OutOfLiquidity BridgeStargateV04OneWay')
-    const feesTotal = parseInt(fees.lpFee.add(fees.protocolFee).add(fees.eqFee).sub(fees.eqReward).toString())
+    const fees = getStarGateFeesV04(
+      this.bridgeState,
+      this.whitelisted,
+      getBigInt(amountIn),
+    )
+    const maxAmount = parseInt(
+      (this.bridgeState.currentBalance - fees.lpFee + fees.eqReward).toString(),
+    )
+    if (amountIn > maxAmount)
+      throw new Error('OutOfLiquidity BridgeStargateV04OneWay')
+    const feesTotal = parseInt(
+      (fees.lpFee + fees.protocolFee + fees.eqFee - fees.eqReward).toString(),
+    )
     const out = amountIn - feesTotal
     console.assert(out >= 0, 'Error 336')
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(): { inp: number; gasSpent: number } {
     throw new Error('calcInByOut for BridgeStargateV04OneWay')
   }
 
@@ -46,7 +62,7 @@ export class BridgeStargateV04OneWay extends RPool {
     return 1
   }
 
-  alwaysAppropriateForPricing() {
+  override alwaysAppropriateForPricing() {
     return true
   }
 }

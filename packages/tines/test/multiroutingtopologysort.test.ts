@@ -1,7 +1,7 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
+import { Address } from 'viem'
 
-import { Edge, Graph, Vertice } from '../src'
+import { Edge, Graph, Vertice, getBigInt } from '../src'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 
 type Topology = [number, number[][]]
@@ -9,38 +9,65 @@ type Topology = [number, number[][]]
 function createTopology(t: Topology): [Graph, Vertice, Vertice] {
   const tokens: RToken[] = []
   for (let i = 0; i < t[0]; ++i) {
-    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i, decimals: 18 })
+    tokens.push({ name: `${i}`, address: `${i}`, symbol: `${i}`, decimals: 18 })
   }
-  const bn = BigNumber.from(1e6)
+  const bn = getBigInt(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool('' + i, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+    return new ConstantProductRPool(
+      `${i}` as Address,
+      tokens[e[0] as number] as RToken,
+      tokens[e[1] as number] as RToken,
+      0.003,
+      bn,
+      bn,
+    )
   })
-  const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
+  const g = new Graph(pools, tokens[0] as RToken, tokens[0] as RToken, 0) // just a dummy
   g.edges.forEach((e) => {
     e.amountInPrevious = 1
     e.amountOutPrevious = 1
-    const edge = t[1][parseInt(e.pool.address)]
-    console.assert(edge[0] == parseInt(e.vert0.token.name), 'internal Error 28')
-    console.assert(edge[1] == parseInt(e.vert1.token.name), 'internal Error 29')
-    e.direction = edge[0] == parseInt(e.vert0.token.name)
+    const edge = t[1][parseInt(e.pool.address)] as number[]
+    console.assert(
+      (edge[0] as number) === parseInt(e.vert0.token.name),
+      'internal Error 28',
+    )
+    console.assert(
+      (edge[1] as number) === parseInt(e.vert1.token.name),
+      'internal Error 29',
+    )
+    e.direction = (edge[0] as number) === parseInt(e.vert0.token.name)
   })
-  g.getOrCreateVertice(tokens[0])
-  g.getOrCreateVertice(tokens[tokens.length - 1])
-  return [g, g.getVert(tokens[0]) as Vertice, g.getVert(tokens[tokens.length - 1]) as Vertice]
+  g.getOrCreateVertice(tokens[0] as RToken)
+  g.getOrCreateVertice(tokens[tokens.length - 1] as RToken)
+  return [
+    g,
+    g.getVert(tokens[0] as RToken) as Vertice,
+    g.getVert(tokens[tokens.length - 1] as RToken) as Vertice,
+  ]
 }
 
-function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Vertice] {
+function createCorrectTopology(
+  t: Topology,
+  paths: number,
+): [Graph, Vertice, Vertice] {
   const tokens: RToken[] = []
   for (let i = 0; i < t[0]; ++i) {
-    tokens.push({ name: '' + i, address: '' + i, symbol: '' + i, decimals: 18 })
+    tokens.push({ name: `${i}`, address: `${i}`, symbol: `${i}`, decimals: 18 })
   }
-  const bn = BigNumber.from(1e6)
+  const bn = getBigInt(1e6)
   const pools = t[1].map((e, i) => {
-    return new ConstantProductRPool('' + i, tokens[e[0]], tokens[e[1]], 0.003, bn, bn)
+    return new ConstantProductRPool(
+      `${i}` as Address,
+      tokens[e[0] as number] as RToken,
+      tokens[e[1] as number] as RToken,
+      0.003,
+      bn,
+      bn,
+    )
   })
-  const g = new Graph(pools, tokens[0], tokens[0], 0) // just a dummy
-  const from = g.getOrCreateVertice(tokens[0])
-  const to = g.getOrCreateVertice(tokens[tokens.length - 1])
+  const g = new Graph(pools, tokens[0] as RToken, tokens[0] as RToken, 0) // just a dummy
+  const from = g.getOrCreateVertice(tokens[0] as RToken)
+  const to = g.getOrCreateVertice(tokens[tokens.length - 1] as RToken)
   for (let i = 0; i < paths; ++i) {
     const p = generatePath(g, from, to, new Set<Vertice>())
     if (p === undefined) return [g, from, to]
@@ -48,15 +75,22 @@ function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Ver
   }
   return [g, from, to]
 }
-function generatePath(g: Graph, from: Vertice, to: Vertice, used: Set<Vertice>): Edge[] | undefined {
+function generatePath(
+  g: Graph,
+  from: Vertice,
+  to: Vertice,
+  used: Set<Vertice>,
+): Edge[] | undefined {
   if (from === to) return []
   used.add(from)
-  const edges = from.edges.filter((e) => !used.has(from.getNeibour(e) as Vertice))
+  const edges = from.edges.filter(
+    (e) => !used.has(from.getNeibour(e) as Vertice),
+  )
   while (edges.length) {
     const r = Math.floor(rnd() * from.edges.length)
     const edge = from.edges[r]
     const p = generatePath(g, from.getNeibour(edge) as Vertice, to, used)
-    if (p !== undefined) return [edge, ...p]
+    if (p !== undefined) return [edge as Edge, ...p]
     edges.splice(r, 1)
   }
   return undefined
@@ -64,12 +98,12 @@ function generatePath(g: Graph, from: Vertice, to: Vertice, used: Set<Vertice>):
 function applyPath(p: Edge[], from: Vertice, to: Vertice) {
   let v = from
   p.forEach((e) => {
-    if (e.amountInPrevious == 0) {
-      e.direction = v == e.vert0
+    if (e.amountInPrevious === 0) {
+      e.direction = v === e.vert0
       e.amountInPrevious = 1
       e.amountOutPrevious = 1
     } else {
-      if (e.direction == (v == e.vert0)) {
+      if (e.direction === (v === e.vert0)) {
         e.amountInPrevious++
         e.amountOutPrevious++
       } else {
@@ -126,7 +160,7 @@ it('Verts after the last', () => {
   const res = g[0].topologySort(g[1], g[2])
   expect(res.status).toEqual(3)
   expect(res.vertices.length).toEqual(1)
-  expect(res.vertices[0].token.name).toEqual('3')
+  expect((res.vertices[0] as Vertice).token.name).toEqual('3')
 })
 
 it('Fork topology', () => {
@@ -221,10 +255,10 @@ it('Cycle not from begin', () => {
 const testSeed = '0' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 function getRandomTopology(tokens: number, density: number): Topology {
-  const edges = []
+  const edges: [number, number][] = []
   for (let i = 0; i < tokens; ++i) {
     for (let j = 0; j < tokens; ++j) {
-      if (i == j) continue
+      if (i === j) continue
       const r = rnd()
       if (r < density) edges.push([i, j])
       if (r < density * density) edges.push([i, j])
@@ -236,12 +270,18 @@ function getRandomTopology(tokens: number, density: number): Topology {
 function vertIndex(v: Vertice): number {
   return parseInt(v.token.name)
 }
-function getEdge(i: number, res: { status: number; vertices: Vertice[] }): [number, number] {
-  return [vertIndex(res.vertices[i]), vertIndex(res.vertices[i - 1])]
+function getEdge(
+  i: number,
+  res: { status: number; vertices: Vertice[] },
+): [number, number] {
+  return [
+    vertIndex(res.vertices[i] as Vertice),
+    vertIndex(res.vertices[i - 1] as Vertice),
+  ]
 }
 function findEdge(edge: [number, number], t: Topology): number {
   for (let j = 0; j < t[1].length; j++) {
-    if (t[1][j][0] == edge[0] && t[1][j][1] == edge[1]) {
+    if (t[1][j][0] === edge[0] && t[1][j][1] === edge[1]) {
       return j
     }
   }
@@ -283,19 +323,19 @@ function checkTopologySort(t: Topology) {
     const notLastVert = new Set<number>()
     res.vertices.forEach((e, i) => vertPlace.set(vertIndex(e), i))
     t[1].forEach(([a, b]) => {
-      const p1 = vertPlace.get(a)
-      const p2 = vertPlace.get(b)
+      const p1 = vertPlace.get(a as number)
+      const p2 = vertPlace.get(b as number)
       if (p1 !== undefined) {
         expect(p2).toBeDefined()
         expect(p1 as number).toBeLessThan(p2 as number)
-        notLastVert.add(a)
+        notLastVert.add(a as number)
       }
     })
     expect(notLastVert.size).toEqual(res.vertices.length - 1)
     expect(notLastVert.has(vertIndex(g[2]))).toBeFalsy()
     return 2
   }
-  if (res.status == 3 && res.vertices[res.vertices.length - 1] === g[1]) {
+  if (res.status === 3 && res.vertices[res.vertices.length - 1] === g[1]) {
     // No way between start and end verts
     expect(res.vertices.length).toBeGreaterThan(0)
     const verts = new Set<number>()
@@ -304,10 +344,10 @@ function checkTopologySort(t: Topology) {
     expect(verts.has(vertIndex(g[2]))).toBeFalsy()
     const vertsReached = new Set<number>()
     t[1].forEach(([a, b]) => {
-      const p1 = verts.has(a)
-      const p2 = verts.has(b)
+      const p1 = verts.has(a as number)
+      const p2 = verts.has(b as number)
       if (p1) expect(p2).toBeTruthy()
-      if (p1) vertsReached.add(b)
+      if (p1) vertsReached.add(b as number)
     })
     expect(vertsReached.size).toEqual(res.vertices.length - 1)
     expect(vertsReached.has(vertIndex(g[1]))).toBeFalsy()
@@ -328,15 +368,15 @@ function checkTopologySort(t: Topology) {
     expect(verts.has(vertIndex(g[2]))).toBeFalsy()
     const vertsReached = new Set<number>()
     t[1].forEach(([a, b]) => {
-      const p1 = verts.has(a)
-      const p2 = verts.has(b)
+      const p1 = verts.has(a as number)
+      const p2 = verts.has(b as number)
       if (p1) expect(p2).toBeTruthy()
-      if (p2) vertsReached.add(b)
+      if (p2) vertsReached.add(b as number)
     })
     expect(vertsReached.size).toEqual(res.vertices.length)
 
     // remove all dead end
-    const nextEdgeList = t[1].filter(([_, b]) => !verts.has(b))
+    const nextEdgeList = t[1].filter(([_, b]) => !verts.has(b as number))
     const t2: Topology = [t[0], nextEdgeList]
     const nextRes = checkTopologySort(t2)
     expect(nextRes).toEqual(2)

@@ -1,17 +1,17 @@
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+import { Address } from 'viem'
 
 import {
-  closeValues,
   ConstantProductRPool,
-  getBigNumber,
   HybridRPool,
   MultiRoute,
   NetworkInfo,
-  RouteLeg,
-  RouteStatus,
   RPool,
   RToken,
+  RouteLeg,
+  RouteStatus,
   StableSwapRPool,
+  closeValues,
+  getBigInt,
 } from '../src'
 import { BridgeUnlimited } from '../src/BridgeBidirectionalUnlimited'
 import { BridgeStargateV04OneWay } from '../src/BridgeStargateV04OneWay'
@@ -24,7 +24,7 @@ const MAX_POOL_RESERVE = 1e31
 const MIN_POOL_IMBALANCE = 1 / (1 + 1e-3)
 export const MAX_POOL_IMBALANCE = 1 + 1e-3
 const MIN_LIQUIDITY = 1000
-const MAX_LIQUIDITY = Math.pow(2, 110)
+const MAX_LIQUIDITY = 2 ** 110
 const MIN_HYBRID_A = 200
 const MAX_HYBRID_A = 300000
 
@@ -44,11 +44,11 @@ export function createNetwork(
   tokenNumber: number,
   density: number,
   gasPrice: number,
-  garantedStableTokens = 1
+  garantedStableTokens = 1,
 ): Network {
-  const tokens = []
+  const tokens: TToken[] = []
   for (let i = 0; i < tokenNumber; ++i) {
-    tokens.push(createRandomToken(rnd, '' + i, i < garantedStableTokens))
+    tokens.push(createRandomToken(rnd, `${i}`, i < garantedStableTokens))
   }
 
   const pools: RPool[] = []
@@ -66,11 +66,11 @@ export function createNetwork(
         // third pool
         pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
-      if (r < Math.pow(density, 4)) {
+      if (r < density ** 4) {
         // third pool
         pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
-      if (r < Math.pow(density, 5)) {
+      if (r < density ** 5) {
         // third pool
         pools.push(getRandomPool(rnd, tokens[i], tokens[j]))
       }
@@ -84,9 +84,13 @@ export function createNetwork(
   }
 }
 
-function createRandomToken(rnd: () => number, name: string, stablePriceGaranted = false): TToken {
+function createRandomToken(
+  rnd: () => number,
+  name: string,
+  stablePriceGaranted = false,
+): TToken {
   const price = stablePriceGaranted ? STABLE_TOKEN_PRICE : getTokenPrice(rnd)
-  const decimals = price == STABLE_TOKEN_PRICE ? getRandomDecimals(rnd) : 18
+  const decimals = price === STABLE_TOKEN_PRICE ? getRandomDecimals(rnd) : 18
   return {
     name,
     address: name,
@@ -131,7 +135,9 @@ interface Variants {
 
 function choice(rnd: () => number, obj: Variants) {
   let total = 0
-  Object.entries(obj).forEach(([, p]) => (total += p))
+  Object.entries(obj).forEach(([, p]) => {
+    total += p
+  })
   if (total <= 0) throw new Error('Error 62')
   const val = rnd() * total
   let past = 0
@@ -181,20 +187,25 @@ function getCPPool(rnd: () => number, t0: TToken, t1: TToken) {
     reserve0 *= raseRate
     reserve1 *= raseRate
   }
-  console.assert(reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY, 'Error reserve0 clculation')
-  console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, 'Error reserve1 clculation ' + reserve1)
+  console.assert(
+    reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY,
+    'Error reserve0 clculation',
+  )
+  console.assert(
+    reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY,
+    `Error reserve1 clculation ${reserve1}`,
+  )
 
   return new ConstantProductRPool(
-    `pool cp ${t0.name} ${t1.name} ${reserve0} ${price} ${fee}`,
+    `pool cp ${t0.name} ${t1.name} ${reserve0} ${price} ${fee}` as Address,
     t0,
     t1,
     fee,
-    getBigNumber(reserve0 * Math.pow(10, t0.decimals - 6)),
-    getBigNumber(reserve1 * Math.pow(10, t1.decimals - 6))
+    getBigInt(reserve0 * 10 ** (t0.decimals - 6)),
+    getBigInt(reserve1 * 10 ** (t1.decimals - 6)),
   )
 }
 
-const ZERO = BigNumber.from(0)
 function getStableSwapPool(rnd: () => number, t0: TToken, t1: TToken) {
   if (rnd() < 0.5) {
     const t = t0
@@ -219,23 +230,29 @@ function getStableSwapPool(rnd: () => number, t0: TToken, t1: TToken) {
     reserve0 *= raseRate
     reserve1 *= raseRate
   }
-  console.assert(reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY, 'Error reserve0 clculation')
-  console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, 'Error reserve1 clculation ' + reserve1)
+  console.assert(
+    reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY,
+    'Error reserve0 clculation',
+  )
+  console.assert(
+    reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY,
+    `Error reserve1 clculation ${reserve1}`,
+  )
 
-  const total0 = { base: ZERO, elastic: ZERO }
-  const total1 = { base: ZERO, elastic: ZERO }
+  const total0 = { base: 0n, elastic: 0n }
+  const total1 = { base: 0n, elastic: 0n }
 
   const pool = new StableSwapRPool(
-    `pool ss ${t0.name} ${t1.name} ${reserve0} ${fee}`,
+    `pool ss ${t0.name} ${t1.name} ${reserve0} ${fee}` as Address,
     t0,
     t1,
     fee,
-    getBigNumber(reserve0 * Math.pow(10, t0.decimals - 6)),
-    getBigNumber(reserve1 * Math.pow(10, t1.decimals - 6)),
+    getBigInt(reserve0 * 10 ** (t0.decimals - 6)),
+    getBigInt(reserve1 * 10 ** (t1.decimals - 6)),
     t0.decimals,
     t1.decimals,
     total0,
-    total1
+    total1,
   )
   return pool
 }
@@ -264,17 +281,23 @@ export function getHybridPool(rnd: () => number, t0: RToken, t1: RToken) {
     reserve0 *= raseRate
     reserve1 *= raseRate
   }
-  console.assert(reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY, 'Error reserve0 clculation')
-  console.assert(reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY, 'Error reserve1 clculation ' + reserve1)
+  console.assert(
+    reserve0 >= MIN_LIQUIDITY && reserve0 <= MAX_LIQUIDITY,
+    'Error reserve0 clculation',
+  )
+  console.assert(
+    reserve1 >= MIN_LIQUIDITY && reserve1 <= MAX_LIQUIDITY,
+    `Error reserve1 clculation ${reserve1}`,
+  )
 
   return new HybridRPool(
-    `pool hb ${t0.name} ${t1.name} ${reserve0} ${1} ${fee}`,
+    `pool hb ${t0.name} ${t1.name} ${reserve0} ${1} ${fee}` as Address,
     t0,
     t1,
     fee,
     A,
-    getBigNumber(reserve0),
-    getBigNumber(reserve1)
+    getBigInt(reserve0),
+    getBigInt(reserve1),
   )
 }
 
@@ -289,29 +312,41 @@ export function chooseRandomToken(rnd: () => number, network: Network): TToken {
   return network.tokens[Math.floor(rnd() * num)]
 }
 
-export function chooseRandomStableToken(rnd: () => number, network: Network, amount: number): TToken[] {
-  const stables = network.tokens.filter((t) => t.price == STABLE_TOKEN_PRICE)
-  if (stables.length < amount) throw new Error('No enough stable tokens in the network')
+export function chooseRandomStableToken(
+  rnd: () => number,
+  network: Network,
+  amount: number,
+): TToken[] {
+  const stables = network.tokens.filter((t) => t.price === STABLE_TOKEN_PRICE)
+  if (stables.length < amount)
+    throw new Error('No enough stable tokens in the network')
 
-  const tokens = []
+  const tokens: TToken[] = []
   for (let i = 0; i < amount; ++i) {
     const selected = Math.floor(rnd() * stables.length)
     tokens.push(stables[selected])
     stables.splice(selected, 1)
   }
 
-  console.assert(new Set(tokens).size == amount)
+  console.assert(new Set(tokens).size === amount)
 
   return tokens
 }
 
-export function chooseRandomTokensForSwap(rnd: () => number, network: Network): [TToken, TToken, TToken] {
+export function chooseRandomTokensForSwap(
+  rnd: () => number,
+  network: Network,
+): [TToken, TToken, TToken] {
   const num = network.tokens.length
   const token0 = Math.floor(rnd() * num)
   const token1 = (token0 + 1 + Math.floor(rnd() * (num - 1))) % num
   expect(token0).not.toEqual(token1)
   const tokenBase = Math.floor(rnd() * num)
-  return [network.tokens[token0], network.tokens[token1], network.tokens[tokenBase]]
+  return [
+    network.tokens[token0],
+    network.tokens[token1],
+    network.tokens[tokenBase],
+  ]
 }
 
 function createBridge(rnd: () => number, net1: Network, net2: Network) {
@@ -324,28 +359,59 @@ function createStargateBridge(rnd: () => number, net1: Network, net2: Network) {
   const [usdc0, usdt0, stg0] = chooseRandomStableToken(rnd, net1, 3)
   const [usdc1, usdt1, stg1] = chooseRandomStableToken(rnd, net2, 3)
   const bridgeState = {
-    currentAssetSD: BigNumber.from('62204680881791000000'),
-    lpAsset: BigNumber.from('82018577759839000000'),
-    eqFeePool: BigNumber.from('12415520434000000'),
-    idealBalance: BigNumber.from('6649285670242000000'),
-    currentBalance: BigNumber.from('3951760190743000000'),
+    currentAssetSD: 62204680881791000000n,
+    lpAsset: 82018577759839000000n,
+    eqFeePool: 12415520434000000n,
+    idealBalance: 6649285670242000000n,
+    currentBalance: 3951760190743000000n,
     allocPointIsPositive: true,
   }
   return [
-    new BridgeStargateV04OneWay(`BridgeStargateV04OneWay usdc-usdc`, usdc0, usdc1, bridgeState, false),
-    new BridgeStargateV04OneWay(`BridgeStargateV04OneWay usdt-usdt`, usdt0, usdt1, bridgeState, false),
-    new BridgeStargateV04OneWay(`BridgeStargateV04OneWay usdc-usdt`, usdc0, usdt1, bridgeState, false),
-    new BridgeStargateV04OneWay(`BridgeStargateV04OneWay usdt-usdc`, usdt0, usdc1, bridgeState, false),
-    new BridgeUnlimited(`BridgeUnlimited ${stg0.address}-${stg1.address}`, stg0, stg1, 0),
+    new BridgeStargateV04OneWay(
+      'BridgeStargateV04OneWay usdc-usdc',
+      usdc0,
+      usdc1,
+      bridgeState,
+      false,
+    ),
+    new BridgeStargateV04OneWay(
+      'BridgeStargateV04OneWay usdt-usdt',
+      usdt0,
+      usdt1,
+      bridgeState,
+      false,
+    ),
+    new BridgeStargateV04OneWay(
+      'BridgeStargateV04OneWay usdc-usdt',
+      usdc0,
+      usdt1,
+      bridgeState,
+      false,
+    ),
+    new BridgeStargateV04OneWay(
+      'BridgeStargateV04OneWay usdt-usdc',
+      usdt0,
+      usdc1,
+      bridgeState,
+      false,
+    ),
+    new BridgeUnlimited(
+      `BridgeUnlimited ${stg0.address}-${stg1.address}`,
+      stg0,
+      stg1,
+      0,
+    ),
   ]
 }
 
 export function createMultipleNetworks(
   rnd: () => number,
   networkData: NetworkCreateData[],
-  bridgeNumber = 1
+  bridgeNumber = 1,
 ): { networksInfo: NetworkInfo[]; network: Network; pools: RPool[] } {
-  const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice))
+  const networks = networkData.map((d) =>
+    createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice),
+  )
 
   let pools: RPool[] = []
   let tokens: TToken[] = []
@@ -387,9 +453,11 @@ export function createMultipleNetworks(
 
 export function createMultipleNetworksWithStargateBridge(
   rnd: () => number,
-  networkData: NetworkCreateData[]
+  networkData: NetworkCreateData[],
 ): { networksInfo: NetworkInfo[]; network: Network; pools: RPool[] } {
-  const networks = networkData.map((d) => createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice, 3))
+  const networks = networkData.map((d) =>
+    createNetwork(rnd, d.tokenNumber, d.density, d.gasPrice, 3),
+  )
 
   let pools: RPool[] = []
   let tokens: TToken[] = []
@@ -446,7 +514,10 @@ function getTokenPools(network: Network): Map<RToken, RPool[]> {
   return tokenPools
 }
 
-function getAllConnectedTokens(start: RToken, tokenPools: Map<RToken, RPool[]>): Set<RToken> {
+function getAllConnectedTokens(
+  start: RToken,
+  tokenPools: Map<RToken, RPool[]>,
+): Set<RToken> {
   const connected = new Set<RToken>()
   const nextTokens = [start]
   while (nextTokens.length) {
@@ -456,7 +527,7 @@ function getAllConnectedTokens(start: RToken, tokenPools: Map<RToken, RPool[]>):
     }
     connected.add(token)
     tokenPools.get(token)?.forEach((p) => {
-      const token2 = token == p.token0 ? p.token1 : p.token0
+      const token2 = token === p.token0 ? p.token1 : p.token0
       nextTokens.push(token2)
     })
   }
@@ -464,14 +535,14 @@ function getAllConnectedTokens(start: RToken, tokenPools: Map<RToken, RPool[]>):
 }
 
 export function expectCloseValues(
-  v1: BigNumberish,
-  v2: BigNumberish,
+  v1: number,
+  v2: number,
   precision: number,
   description = '',
-  additionalInfo = ''
+  additionalInfo = '',
 ) {
-  const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
-  const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
+  const a = v1
+  const b = v2
   const res = closeValues(a, b, precision)
   if (!res) {
     console.log(
@@ -479,7 +550,7 @@ export function expectCloseValues(
         `\n v1 = ${a}` +
         `\n v2 = ${b}` +
         `\n precision = ${Math.abs(a / b - 1)}, expected < ${precision}` +
-        `${additionalInfo == '' ? '' : '\n' + additionalInfo}`
+        `${additionalInfo === '' ? '' : `\n${additionalInfo}`}`,
     )
     //debugger
   }
@@ -488,7 +559,7 @@ export function expectCloseValues(
 }
 
 export function atomPrice(token: TToken | RToken) {
-  return (token as TToken).price / Math.pow(10, token.decimals)
+  return (token as TToken).price / 10 ** token.decimals
 }
 
 export function checkRoute(
@@ -498,7 +569,7 @@ export function checkRoute(
   to: TToken,
   amountIn: number,
   baseTokenOrNetworks: TToken | NetworkInfo[],
-  gasPrice?: number
+  gasPrice?: number,
 ) {
   const tokenPools = getTokenPools(network)
   const connectedTokens = getAllConnectedTokens(from, tokenPools)
@@ -507,18 +578,22 @@ export function checkRoute(
     return
   }
 
-  const multiChain = baseTokenOrNetworks instanceof Array
-  const basePricesAreSet = multiChain ? true : connectedTokens.has(baseTokenOrNetworks as TToken)
+  const multiChain = Array.isArray(baseTokenOrNetworks)
+  const basePricesAreSet = multiChain
+    ? true
+    : connectedTokens.has(baseTokenOrNetworks as TToken)
 
   // amountIn checks
-  if (route.status === RouteStatus.Success) expectCloseValues(route.amountIn, amountIn, 1e-13)
+  if (route.status === RouteStatus.Success)
+    expectCloseValues(route.amountIn, amountIn, 1e-13)
   else if (route.status === RouteStatus.Partial) {
     expect(route.amountIn).toBeLessThan(amountIn)
     expect(route.amountIn).toBeGreaterThan(0)
   }
 
   // amountOut checks
-  if (route.status !== RouteStatus.NoWay) expect(route.amountOut).toBeGreaterThan(0)
+  if (route.status !== RouteStatus.NoWay)
+    expect(route.amountOut).toBeGreaterThan(0)
   // const outPriceToIn = atomPrice(to) / atomPrice(from)
   // Slippage can be arbitrary
   // Slippage is always not-negative
@@ -531,7 +606,10 @@ export function checkRoute(
   // gasSpent checks
   const poolMap = new Map<string, RPool>()
   network.pools.forEach((p) => poolMap.set(p.address, p))
-  const expectedGasSpent = route.legs.reduce((a, b) => a + (poolMap.get(b.poolAddress)?.swapGasCost as number), 0)
+  const expectedGasSpent = route.legs.reduce(
+    (a, b) => a + (poolMap.get(b.poolAddress)?.swapGasCost as number),
+    0,
+  )
   expect(route.gasSpent).toEqual(expectedGasSpent)
 
   // totalAmountOut checks
@@ -541,17 +619,24 @@ export function checkRoute(
     if (multiChain) {
       expect(route.totalAmountOut).toBeLessThanOrEqual(route.amountOut)
     } else {
-      const outPriceToBase = atomPrice(baseTokenOrNetworks as TToken) / atomPrice(to)
-      const expectedTotalAmountOut = route.amountOut - route.gasSpent * (gasPrice as number) * outPriceToBase
+      const outPriceToBase =
+        atomPrice(baseTokenOrNetworks as TToken) / atomPrice(to)
+      const expectedTotalAmountOut =
+        route.amountOut - route.gasSpent * (gasPrice as number) * outPriceToBase
 
-      expectCloseValues(route.totalAmountOut, expectedTotalAmountOut, 2 * (MAX_POOL_IMBALANCE - 1) + 1e-7)
+      expectCloseValues(
+        route.totalAmountOut,
+        expectedTotalAmountOut,
+        2 * (MAX_POOL_IMBALANCE - 1) + 1e-7,
+      )
     }
   } else {
     expect(route.totalAmountOut).toEqual(route.amountOut)
   }
 
   // legs checks
-  if (route.status !== RouteStatus.NoWay) expect(route.legs.length).toBeGreaterThan(0)
+  if (route.status !== RouteStatus.NoWay)
+    expect(route.legs.length).toBeGreaterThan(0)
   const usedPools = new Map<string, boolean>()
   const usedTokens = new Map<RToken, RouteLeg[]>()
   route.legs.forEach((l) => {

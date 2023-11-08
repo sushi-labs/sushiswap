@@ -1,6 +1,7 @@
-import { Button } from '@sushiswap/ui'
-import { Dispatch, FC, SetStateAction, useCallback } from 'react'
-import { Category } from 'types'
+import { Toggle } from '@sushiswap/ui/components/toggle'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useCallback } from 'react'
+import type { Category } from 'types'
 
 interface Categories {
   selected: string[]
@@ -8,33 +9,37 @@ interface Categories {
   categories: Category[]
 }
 
-export const Categories: FC<Categories> = ({ categories, selected, onSelect }) => {
+export const Categories: FC<Categories> = ({
+  categories,
+  selected,
+  onSelect,
+}) => {
   const handleSelect = useCallback(
     (index: string) => {
       onSelect((prevState: string[]) => {
-        if (selected.includes(index)) return prevState.filter((el) => el !== index)
-        else return [...prevState, index]
+        if (selected.includes(index))
+          return prevState.filter((el) => el !== index)
+        return [...prevState, index]
       })
     },
-    [selected, onSelect]
+    [selected, onSelect],
   )
 
   return (
     <>
       {categories.map((category) => {
-        if (!category?.id) return <></>
+        if (!category.id) return <></>
 
         return (
-          <Button
-            size="sm"
-            color={selected.includes(category.id) ? 'blue' : 'gray'}
-            onClick={() => handleSelect(category.id as string)}
-            variant="outlined"
+          <Toggle
             key={category.id}
-            className="!text-xs capitalize"
+            onPressedChange={() => {
+              handleSelect(category.id)
+            }}
+            pressed={Boolean(selected.includes(category.id))}
           >
-            {category?.attributes?.name}
-          </Button>
+            {category.attributes.name}
+          </Toggle>
         )
       })}
     </>

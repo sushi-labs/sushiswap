@@ -1,11 +1,10 @@
-import { bentoBoxV1Address, isBentoBoxV1ChainId } from '@sushiswap/bentobox'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 
 const func: DeployFunction = async function ({
   getNamedAccounts,
   deployments,
-  run,
   getChainId,
 }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
@@ -14,11 +13,11 @@ const func: DeployFunction = async function ({
 
   const chainId = await getChainId()
 
-  if (!isBentoBoxV1ChainId(chainId)) {
+  if (!isBentoBoxChainId(chainId)) {
     throw Error(`No BENTOBOX_ADDRESS for chain #${chainId}!`)
   }
 
-  const args = [bentoBoxV1Address[chainId]]
+  const args = [BENTOBOX_ADDRESS[chainId]]
 
   const { address } = await deploy('RouteProcessor', {
     from: deployer,

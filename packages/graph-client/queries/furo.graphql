@@ -4,7 +4,7 @@ query furoTokensByChainIds(
   $where: Token_filter
   $orderBy: Token_orderBy = liquidityShares
   $orderDirection: OrderDirection = desc
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   tokens: furoTokensByChainIds(
     first: $first

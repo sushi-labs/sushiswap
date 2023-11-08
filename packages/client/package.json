@@ -14,50 +14,89 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.js",
+      "default": "./dist/hooks/index.js"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js",
+      "default": "./dist/api/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "module": "./dist/index.js",
+  "source": "src/index.ts",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "src/index"
+      ],
+      "hooks": [
+        "src/hooks/index"
+      ],
+      "api": [
+        "src/api/index"
+      ]
+    }
+  },
   "typings": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
+    "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup src/index.ts --format esm --watch --dts",
-    "prepublishOnly": "pnpm build",
-    "lint": "TIMING=1 eslint . --fix"
+    "dev": "tsc --watch",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
+    "prepublishOnly": "pnpm build"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/token-price-api": "workspace:*",
+    "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
-    "tslib": "latest"
+    "deepmerge-ts": "^4.3.0",
+    "sushi": "workspace:*",
+    "tslib": "latest",
+    "viem": "1.17.2",
+    "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/tokens-api": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/pools-api": "workspace:*",
-    "@types/node": "18.11.18",
-    "eslint": "8.41.0",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
+    "@types/node": "18",
+    "eslint": "8.43.0",
+    "react": "18.2.0",
     "swr": "2.1.5",
-    "tsup": "6.5.0",
-    "typescript": "5.0.4"
+    "tsup": "7.2.0",
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
-    "swr": "2.1.5",
-    "react": "18.2.0"
+    "react": "*",
+    "swr": "*"
   },
   "peerDependenciesMeta": {
-    "swr": {
+    "react": {
       "optional": true
     },
-    "react": {
+    "swr": {
       "optional": true
     }
   }

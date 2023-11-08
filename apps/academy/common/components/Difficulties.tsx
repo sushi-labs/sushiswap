@@ -1,7 +1,7 @@
-import { CircleIcon } from '@sushiswap/ui'
 import { DIFFICULTY_ELEMENTS } from 'common/helpers'
 import { FC } from 'react'
 
+import { CircleIcon } from '@sushiswap/ui/components/icons'
 import { DifficultyEntity } from '../../.mesh'
 
 interface Difficulties {
@@ -10,20 +10,27 @@ interface Difficulties {
   difficulties: DifficultyEntity[]
 }
 
-export const Difficulties: FC<Difficulties> = ({ difficulties, selected, onSelect }) => {
+export const Difficulties: FC<Difficulties> = ({
+  difficulties,
+  selected,
+  onSelect,
+}) => {
   return (
     <>
       {difficulties.map((difficulty, i) => {
         if (!difficulty?.attributes?.slug) return <></>
-        const slug = difficulty.attributes.slug as keyof typeof DIFFICULTY_ELEMENTS
+        const slug = difficulty.attributes
+          .slug as keyof typeof DIFFICULTY_ELEMENTS
         const { color } = DIFFICULTY_ELEMENTS[slug]
         return (
           <button
+            type="button"
             key={i}
             onClick={() => onSelect(difficulty)}
             className="text-sm px-4 font-semibold h-[38px] rounded-lg flex items-center gap-2.5 border hover:opacity-90"
             style={{
-              borderColor: selected?.id === difficulty.id ? color : 'transparent',
+              borderColor:
+                selected?.id === difficulty.id ? color : 'transparent',
               background: `${color}33`,
             }}
           >

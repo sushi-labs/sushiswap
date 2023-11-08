@@ -1,8 +1,23 @@
 export const BeginnerUserIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="104" height="108" viewBox="0 0 104 108" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="104"
+      height="108"
+      viewBox="0 0 104 108"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_226_680)">
-        <rect x="0.580078" y="0.398438" width="102.782" height="107.465" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          x="0.580078"
+          y="0.398438"
+          width="102.782"
+          height="107.465"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -30,8 +45,17 @@ export const BeginnerUserIcon = (props: React.ComponentProps<'svg'>) => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_226_680" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_226_680" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_226_680"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_226_680"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_226_680"

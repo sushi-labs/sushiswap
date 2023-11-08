@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
 import furoImg from 'common/assets/furo-img.png'
 import {
   ProductArticles,
@@ -14,55 +15,64 @@ import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
 import { ProductSeo } from '../../common/components/Seo/ProductSeo'
 
 const PRODUCT_SLUG = 'furo'
-const { color, cards, buttonText, productStats, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
+const { color, cards, buttonText, productStats, faq } =
+  PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
-  if (!product) throw new Error(`Product not found`)
+  if (!product) throw new Error('Product not found')
   return { props: product, revalidate: 60 }
 }
 
-const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product) => {
+const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (
+  product,
+) => {
   const { name, longName, url, description, slug, relevantArticleIds } = product
 
   const { data, isValidating } = useSWR(
-    [`/furo-articles`],
+    ['/furo-articles'],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
-  const latestArticles = data?.articles?.data ?? []
-  const relevantArticles = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles ?? []
+  const relevantArticles = data?.relevantArticles ?? []
 
   return (
     <>
       <ProductSeo product={product} />
-      <Container maxWidth="6xl" className={classNames('mx-auto pt-10', DEFAULT_SIDE_PADDING)}>
+      <Container
+        maxWidth="6xl"
+        className={classNames('mx-auto pt-10', DEFAULT_SIDE_PADDING)}
+      >
         <ProductBackground color={color} />
         <ProductHero
           productName={longName}
           productDescription={description}
           productUrl={url}
           buttonText={buttonText}
-          buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+          buttonIcon={LinkIcon}
           image={<Image src={furoImg} unoptimized alt="furo-img" />}
           productStats={productStats}
         />
       </Container>
 
-      <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
+      <Container
+        maxWidth="6xl"
+        className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}
+      >
         <ProductInfoImages
           color="#64C7FE"
           secondaryColor="#B084E9"

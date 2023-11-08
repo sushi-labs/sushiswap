@@ -1,0 +1,194 @@
+{
+  "name": "sushi",
+  "version": "3.0.0",
+  "description": "Sushi",
+  "keywords": [
+    "sushi"
+  ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/sushi"
+  },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./abi": {
+      "types": "./dist/abi/index.d.ts",
+      "default": "./dist/abi/index.js"
+    },
+    "./calculate": {
+      "types": "./dist/calculate/index.d.ts",
+      "default": "./dist/calculate/index.js"
+    },
+    "./chain": {
+      "types": "./dist/chain/index.d.ts",
+      "default": "./dist/chain/index.js"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "default": "./dist/config/index.js"
+    },
+    "./contract": {
+      "types": "./dist/contract/index.d.ts",
+      "default": "./dist/contract/index.js"
+    },
+    "./convert": {
+      "types": "./dist/convert/index.d.ts",
+      "default": "./dist/convert/index.js"
+    },
+    "./currency": {
+      "types": "./dist/currency/index.d.ts",
+      "default": "./dist/currency/index.js"
+    },
+    "./extractor": {
+      "types": "./dist/extractor/index.d.ts",
+      "default": "./dist/extractor/index.js"
+    },
+    "./dex": {
+      "types": "./dist/dex/index.d.ts",
+      "default": "./dist/dex/index.js"
+    },
+    "./format": {
+      "types": "./dist/format/index.d.ts",
+      "default": "./dist/format/index.js"
+    },
+    "./log": {
+      "types": "./dist/log/index.d.ts",
+      "default": "./dist/log/index.js"
+    },
+    "./math": {
+      "types": "./dist/math/index.d.ts",
+      "default": "./dist/math/index.js"
+    },
+    "./sort": {
+      "types": "./dist/sort/index.d.ts",
+      "default": "./dist/sort/index.js"
+    },
+    "./token-list": {
+      "types": "./dist/token-list/index.d.ts",
+      "default": "./dist/token-list/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
+    },
+    "./validate": {
+      "types": "./dist/validate/index.d.ts",
+      "default": "./dist/validate/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "abi": [
+        "./dist/abi/index.d.ts"
+      ],
+      "calculate": [
+        "./dist/calculate/index.d.ts"
+      ],
+      "chain": [
+        "./dist/chain/index.d.ts"
+      ],
+      "config": [
+        "./dist/config/index.d.ts"
+      ],
+      "contract": [
+        "./dist/contract/index.d.ts"
+      ],
+      "convert": [
+        "./dist/convert/index.d.ts"
+      ],
+      "currency": [
+        "./dist/currency/index.d.ts"
+      ],
+      "dex": [
+        "./dist/dex/index.d.ts"
+      ],
+      "extractor": [
+        "./dist/extractor/index.d.ts"
+      ],
+      "format": [
+        "./dist/format/index.d.ts"
+      ],
+      "gas": [
+        "./dist/gas/index.d.ts"
+      ],
+      "log": [
+        "./dist/log/index.d.ts"
+      ],
+      "math": [
+        "./dist/math/index.d.ts"
+      ],
+      "sort": [
+        "./dist/sort/index.d.ts"
+      ],
+      "token-list": [
+        "./dist/token-list/index.d.ts"
+      ],
+      "types": [
+        "./dist/types/index.d.ts"
+      ],
+      "validate": [
+        "./dist/validate/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w",
+    "prepublishOnly": "pnpm build",
+    "test": "vitest run -c ./test/vitest.config.ts",
+    "test:watch": "vitest dev -c ./test/vitest.config.ts"
+  },
+  "dependencies": {
+    "@uniswap/token-lists": "1.0.0-beta.33",
+    "big.js": "6.1.1",
+    "decimal.js-light": "2.5.1",
+    "numeral": "2.0.6",
+    "tiny-invariant": "1.3.1",
+    "toformat": "2.0.0"
+  },
+  "devDependencies": {
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
+    "@tsconfig/strictest": "2.0.2",
+    "@types/big.js": "6.2.0",
+    "@types/jest": "29.5.5",
+    "@types/numeral": "2.0.3",
+    "jest": "29.7.0",
+    "typescript": "5.2.2",
+    "viem": "1.17.2",
+    "vitest": "0.34.6",
+    "zod": "3.21.4"
+  },
+  "peerDependencies": {
+    "@sushiswap/tines": "*",
+    "viem": "*",
+    "zod": "*"
+  },
+  "peerDependenciesMeta": {
+    "@sushiswap/tines": {
+      "optional": true
+    },
+    "viem": {
+      "optional": true
+    },
+    "zod": {
+      "optional": true
+    }
+  }
+}

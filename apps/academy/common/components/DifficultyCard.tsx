@@ -1,10 +1,11 @@
 import { Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
-import { Chip, CircleIcon } from '@sushiswap/ui'
 import { DIFFICULTY_ELEMENTS, DOCS_URL } from 'common/helpers'
 import { AcademyIcon } from 'common/icons'
 import { FC, Fragment, useState } from 'react'
 
+import { Chip } from '@sushiswap/ui/components/chip'
+import { CircleIcon } from '@sushiswap/ui/components/icons'
 import { DifficultyEntity } from '.mesh'
 
 interface DifficultyCard {
@@ -32,12 +33,12 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
 
       <div className="space-y-5">
         <div className="relative flex items-center h-10">
-          <Chip
-            label={difficulty?.attributes?.label}
-            color="default"
-            className="h-7 sm:text-sm sm:font-normal pl-[14px] pr-[14px]"
-            icon={<CircleIcon width={8} height={8} fill={color} stroke={color} />}
-          />
+          <Chip variant="ghost">
+            <div className="flex gap-2 items-center">
+              <CircleIcon width={8} height={8} fill={color} stroke={color} />
+              {difficulty?.attributes?.label}
+            </div>
+          </Chip>
           <Transition
             as={Fragment}
             show={hover}
@@ -56,7 +57,9 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
             </div>
           </Transition>
         </div>
-        <p className="text-xl font-bold sm:text-2xl">{difficulty?.attributes?.longDescription}</p>
+        <p className="text-xl font-bold sm:text-2xl">
+          {difficulty?.attributes?.longDescription}
+        </p>
       </div>
     </a>
   )

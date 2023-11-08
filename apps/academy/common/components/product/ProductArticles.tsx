@@ -1,30 +1,35 @@
-import { Button, Link } from '@sushiswap/ui'
+import { LinkInternal } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
+import { Article } from 'types'
 
 import { ArticleList } from '../ArticleList'
 import { Card } from '../Card'
 import { ProductSectionTitle } from './ProductSectionTitle'
-import { ArticleEntity } from '.mesh'
 
 interface ProductArticles {
   title: string
   productName: string
-  articles: ArticleEntity[]
+  articles: Article[]
   subtitle: string
   isLoading: boolean
 }
 
-export const ProductArticles: FC<ProductArticles> = ({ title, productName, articles, subtitle, isLoading }) => {
+export const ProductArticles: FC<ProductArticles> = ({
+  title,
+  productName,
+  articles,
+  subtitle,
+  isLoading,
+}) => {
   return (
     <section className="py-10 sm:py-[75px]">
       <div className="flex items-center justify-between w-full">
         <ProductSectionTitle title={title} subtitle={subtitle} />
 
-        <Link.Internal href={`/articles?product=${productName}`}>
-          <Button variant="outlined" className="min-w-max h-[38px] px-5 !font-medium">
-            View All
-          </Button>
-        </Link.Internal>
+        <LinkInternal href={`?product=${productName}`}>
+          <Button variant="secondary">View All</Button>
+        </LinkInternal>
       </div>
       <div className="mt-8 sm:mt-20">
         {articles && (
@@ -33,7 +38,12 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
               skeletonAmount={3}
               articles={articles}
               loading={isLoading}
-              render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+              render={(article) => (
+                <Card
+                  article={article}
+                  key={`article__left__${article?.attributes?.slug}`}
+                />
+              )}
             />
           </div>
         )}

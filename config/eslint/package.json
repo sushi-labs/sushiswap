@@ -1,5 +1,5 @@
 {
-  "name": "@sushiswap/eslint-config",
+  "name": "eslint-config-sushi",
   "version": "0.1.1",
   "description": "Sushi Config",
   "keywords": [
@@ -9,33 +9,20 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "index.js",
   "files": [
-    "index.js",
-    "base/index.js",
-    "hardhat/index.js",
-    "nextjs/index.js",
-    "react/index.js"
+    "nextjs/index.js"
   ],
   "dependencies": {
-    "eslint-config-next": "13.4.4",
-    "eslint-config-prettier": "8.8.0",
-    "eslint-config-turbo": "1.10.3",
-    "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-simple-import-sort": "10.0.0",
-    "eslint-plugin-testing-library": "5.11.0",
-    "eslint-plugin-unused-imports": "2.0.0"
+    "@vercel/style-guide": "5.0.1",
+    "eslint-config-turbo": "1.10.15",
+    "eslint-plugin-mdx": "2.2.0",
+    "eslint-plugin-storybook": "0.6.15"
   },
   "devDependencies": {
-    "@types/eslint": "8.40.0",
-    "@types/node": "18.11.18"
-  },
-  "peerDependencies": {
-    "eslint": "8.41.0"
-  },
-  "peerDependenciesMeta": {
-    "eslint": {
-      "optional": false
-    }
+    "@types/eslint": "8.44.4",
+    "@types/node": "18",
+    "typescript": "5.2.2"
   }
 }

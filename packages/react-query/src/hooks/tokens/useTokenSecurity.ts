@@ -1,6 +1,6 @@
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 
 const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.AVALANCHE,
@@ -27,23 +27,33 @@ interface TokenSecurity {
 
 const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
   const supportedCurrencies = currencies.filter(
-    (currency) => currency && SUPPORTED_CHAINS.includes(currency.chainId)
+    (currency) => currency && SUPPORTED_CHAINS.includes(currency.chainId),
   ) as Token[]
 
   const tokenSecurity = await Promise.all(
     supportedCurrencies.map((currency) =>
       fetch(
-        `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}?contract_addresses=${currency.address}`
+        `https://api.gopluslabs.io/api/v1/token_security/${currency.chainId}?contract_addresses=${currency.address}`,
       )
-        .then((response) => response.json() as Promise<{ result?: Record<string, TokenSecurity> }>)
-        .then((data) => data?.result?.[currency.address.toLowerCase()])
-    )
+        .then(
+          (response) =>
+            response.json() as Promise<{
+              result?: Record<string, TokenSecurity>
+            }>,
+        )
+        .then((data) => data?.result?.[currency.address.toLowerCase()]),
+    ),
   )
 
-  const honeypots = tokenSecurity.reduce(
-    (acc, cur, i) => (cur?.is_honeypot === '1' ? [...acc, supportedCurrencies[i].address] : acc),
-    [] as string[]
-  )
+  const honeypots = tokenSecurity.reduce((acc, cur, i) => {
+    const isHoneypot = cur?.is_honeypot === '1'
+    const supportedCurrencyAddress = supportedCurrencies?.[i]?.address
+    if (isHoneypot && typeof supportedCurrencyAddress === 'string') {
+      acc.push(supportedCurrencyAddress)
+      return acc
+    }
+    return acc
+  }, [] as string[])
 
   return {
     tokenSecurity,

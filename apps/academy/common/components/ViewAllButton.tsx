@@ -1,21 +1,28 @@
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
-import { Button, ButtonProps, classNames } from '@sushiswap/ui'
-import React, { ElementType, forwardRef, Ref } from 'react'
+import { classNames } from '@sushiswap/ui'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import React, { forwardRef } from 'react'
 
-export const ViewAllButton = forwardRef(
-  ({ isSmall, className, ...rest }: ButtonProps<ElementType>, ref: Ref<HTMLButtonElement>) => (
+interface ViewAllButton extends ButtonProps {
+  isSmall?: boolean
+}
+
+export const ViewAllButton = forwardRef<HTMLButtonElement, ViewAllButton>(
+  ({ isSmall, className, ...rest }, ref) => (
     <Button
+      icon={PlusCircleIcon}
+      iconProps={{ fill: '#3B7EF6' }}
       ref={ref}
-      color="gray"
+      variant="secondary"
       className={classNames(
-        'font-normal !bg-slate-800 rounded-full',
-        isSmall ? 'h-8 pr-1 sm:hidden' : 'pr-2.5 pl-[18px] hidden sm:flex',
-        className
+        isSmall ? 'sm:hidden' : 'hidden sm:flex',
+        className,
       )}
-      endIcon={<PlusCircleIcon fill="#3B7EF6" height={24} width={24} />}
       {...rest}
     >
       View All
     </Button>
-  )
+  ),
 )
+
+ViewAllButton.displayName = 'ViewAllButton'

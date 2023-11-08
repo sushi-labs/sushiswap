@@ -1,4 +1,4 @@
-query Bundles($chainIds: [Int!]!) {
+query Bundles($chainIds: [BigInt!]!) {
   bundles: bundlesByChainIds(chainIds: $chainIds) {
     id
     chainId

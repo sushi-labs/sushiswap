@@ -1,5 +1,4 @@
-import { JSBI } from '@sushiswap/math'
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi/math'
 /**
  * Generated method parameters for executing a call.
  */
@@ -20,7 +19,7 @@ export interface MethodParameters {
  * @returns The hex encoded calldata
  */
 export function toHex(bigintIsh: BigintIsh) {
-  const bigInt = JSBI.BigInt(bigintIsh.toString())
+  const bigInt = BigInt(bigintIsh.toString())
   let hex = bigInt.toString(16)
   if (hex.length % 2 !== 0) {
     hex = `0${hex}`

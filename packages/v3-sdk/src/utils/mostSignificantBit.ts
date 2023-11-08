@@ -1,22 +1,18 @@
-import { JSBI, MAX_UINT256 } from '@sushiswap/math'
+import { MAX_UINT256 } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
-import { ZERO } from '../internalConstants'
+const POWERS_OF_2 = [128, 64, 32, 16, 8, 4, 2, 1].map(
+  (pow: number): [number, bigint] => [pow, 2n ** BigInt(pow)],
+)
 
-const TWO = JSBI.BigInt(2)
-const POWERS_OF_2 = [128, 64, 32, 16, 8, 4, 2, 1].map((pow: number): [number, JSBI] => [
-  pow,
-  JSBI.exponentiate(TWO, JSBI.BigInt(pow)),
-])
-
-export function mostSignificantBit(x: JSBI): number {
-  invariant(JSBI.greaterThan(x, ZERO), 'ZERO')
-  invariant(JSBI.lessThanOrEqual(x, MAX_UINT256), 'MAX')
+export function mostSignificantBit(x: bigint): number {
+  invariant(x > 0n, 'ZERO')
+  invariant(x <= MAX_UINT256, 'MAX')
 
   let msb = 0
   for (const [power, min] of POWERS_OF_2) {
-    if (JSBI.greaterThanOrEqual(x, min)) {
-      x = JSBI.signedRightShift(x, JSBI.BigInt(power))
+    if (x >= min) {
+      x = x >> BigInt(power)
       msb += power
     }
   }

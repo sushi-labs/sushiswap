@@ -1,25 +1,17 @@
 import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
-import { Tooltip, TwitterIcon } from '@sushiswap/ui'
+import { ClipboardController } from '@sushiswap/ui'
+import { TwitterIcon } from '@sushiswap/ui/components/icons'
 import { getShareText } from 'common/helpers'
-import { FC, useState } from 'react'
-
-import { ArticleEntity } from '../../../.mesh'
+import { GhostArticle } from 'lib/ghost'
+import { FC } from 'react'
 
 interface ArticleLinks {
-  article?: ArticleEntity
+  article?: GhostArticle
 }
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
   const shareText = getShareText(article?.attributes?.title)
   const url = `https://www.sushi.com/academy/articles/${article?.attributes?.slug}`
-
-  const [showTooltip, setShowTooltip] = useState(false)
-  const handleTooltipTimer = () => {
-    setShowTooltip(true)
-    setTimeout(() => {
-      setShowTooltip(false)
-    }, 1000)
-  }
 
   return (
     <section>
@@ -30,30 +22,34 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           href={`http://twitter.com/share?text=${shareText}&url=https://www.sushi.com/academy/articles/${article?.attributes?.slug}`}
           rel="noreferrer"
         >
-          <TwitterIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
+          <TwitterIcon
+            width={20}
+            height={20}
+            className="cursor-pointer text-blue hover:text-blue-400"
+          />
         </a>
         <a
           title="Share by Email"
-          href={`mailto:?subject=${encodeURI(article?.attributes?.title || '')}&body=${shareText} ${encodeURI(url)}`}
+          href={`mailto:?subject=${encodeURI(
+            article?.attributes?.title || '',
+          )}&body=${shareText} ${encodeURI(url)}`}
         >
-          <EnvelopeIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
+          <EnvelopeIcon
+            width={20}
+            height={20}
+            className="cursor-pointer text-blue hover:text-blue-400"
+          />
         </a>
-        <Tooltip
-          button={
+        <ClipboardController>
+          {({ setCopied }) => (
             <LinkIcon
               width={20}
               height={20}
               className="cursor-pointer text-blue hover:text-blue-400"
-              onClick={() => {
-                navigator.clipboard.writeText(url)
-                handleTooltipTimer()
-              }}
+              onClick={() => setCopied(url)}
             />
-          }
-          panel={<>Copied to clipboard</>}
-          placement="bottom"
-          visible={showTooltip}
-        />
+          )}
+        </ClipboardController>
       </div>
     </section>
   )

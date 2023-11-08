@@ -39,6 +39,8 @@ contract RouteProcessor4 is Ownable {
     uint amountOut
   );
 
+  error MinimalOutputBalanceViolation(uint amountOut);
+
   IBentoBoxMinimal public immutable bentoBox;
   mapping (address => bool) priviledgedUsers;
   address private lastCalledPool;
@@ -139,27 +141,39 @@ contract RouteProcessor4 is Ownable {
     uint256 balanceInInitial = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
     uint256 balanceOutInitial = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
 
-    uint256 stream = InputStream.createStream(route);
-    while (stream.isNotEmpty()) {
-      uint8 commandCode = stream.readUint8();
-      if (commandCode == 1) processMyERC20(stream);
-      else if (commandCode == 2) processUserERC20(stream, amountIn);
-      else if (commandCode == 3) processNative(stream);
-      else if (commandCode == 4) processOnePool(stream);
-      else if (commandCode == 5) processInsideBento(stream);
-      else if (commandCode == 6) applyPermit(tokenIn, stream);
-      else revert('RouteProcessor: Unknown command code');
+    uint256 realAmountIn = amountIn;
+    {
+      uint step = 0;
+      uint256 stream = InputStream.createStream(route);
+      while (stream.isNotEmpty()) {
+        uint8 commandCode = stream.readUint8();
+        if (commandCode == 1) {
+          uint256 usedAmount = processMyERC20(stream); 
+          if (step == 0) realAmountIn = usedAmount;
+        } 
+        else if (commandCode == 2) processUserERC20(stream, amountIn);
+        else if (commandCode == 3) {
+          uint256 usedAmount = processNative(stream); 
+          if (step == 0) realAmountIn = usedAmount;
+        } 
+        else if (commandCode == 4) processOnePool(stream);
+        else if (commandCode == 5) processInsideBento(stream);
+        else if (commandCode == 6) applyPermit(tokenIn, stream);
+        else revert('RouteProcessor: Unknown command code');
+        ++step;
+      }
     }
 
     uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
-    require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal imput balance violation');
-
+    require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
+    
     uint256 balanceOutFinal = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
-    require(balanceOutFinal >= balanceOutInitial + amountOutMin, 'RouteProcessor: Minimal ouput balance violation');
+    if (balanceOutFinal < balanceOutInitial + amountOutMin)
+      revert MinimalOutputBalanceViolation(balanceOutFinal - balanceOutInitial);
 
     amountOut = balanceOutFinal - balanceOutInitial;
 
-    emit Route(msg.sender, to, tokenIn, tokenOut, amountIn, amountOutMin, amountOut);
+    emit Route(msg.sender, to, tokenIn, tokenOut, realAmountIn, amountOutMin, amountOut);
   }
 
   function applyPermit(address tokenIn, uint256 stream) private {
@@ -174,17 +188,17 @@ contract RouteProcessor4 is Ownable {
 
   /// @notice Processes native coin: call swap for all pools that swap from native coin
   /// @param stream Streamed process program
-  function processNative(uint256 stream) private {
-    uint256 amountTotal = address(this).balance;
+  function processNative(uint256 stream) private returns (uint256 amountTotal) {
+    amountTotal = address(this).balance;
     distributeAndSwap(stream, address(this), NATIVE_ADDRESS, amountTotal);
   }
 
   /// @notice Processes ERC20 token from this contract balance:
   /// @notice Call swap for all pools that swap from this token
   /// @param stream Streamed process program
-  function processMyERC20(uint256 stream) private {
+  function processMyERC20(uint256 stream) private returns (uint256 amountTotal) {
     address token = stream.readAddress();
-    uint256 amountTotal = IERC20(token).balanceOf(address(this));
+    amountTotal = IERC20(token).balanceOf(address(this));
     unchecked {
       if (amountTotal > 0) amountTotal -= 1;     // slot undrain protection
     }
@@ -279,7 +293,9 @@ contract RouteProcessor4 is Ownable {
         if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
         IWETH(tokenIn).withdraw(amountIn);
       }
-      payable(to).transfer(address(this).balance);
+      //payable(to).transfer(address(this).balance);
+      (bool success,)= payable(to).call{value: address(this).balance}("");
+      require(success, "RouteProcessor: Native token transfer failed");
     }
   }
 
@@ -323,14 +339,15 @@ contract RouteProcessor4 is Ownable {
     address to = stream.readAddress();
     uint24 fee = stream.readUint24();   // pool fee in 1/1_000_000
 
-    (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
-    require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
-    (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
-
     if (amountIn != 0) {
       if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
       else IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
-    } else amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
+    }
+
+    (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
+    require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
+    (uint256 reserveIn, uint256 reserveOut) = direction == 1 ? (r0, r1) : (r1, r0);
+    amountIn = IERC20(tokenIn).balanceOf(pool) - reserveIn;  // tokens already were transferred
 
     uint256 amountInWithFee = amountIn * (1_000_000 - fee);
     uint256 amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1_000_000 + amountInWithFee);
@@ -390,16 +407,30 @@ contract RouteProcessor4 is Ownable {
     int256 amount0Delta,
     int256 amount1Delta,
     bytes calldata data
-  ) external {
+  ) public {
     require(msg.sender == lastCalledPool, 'RouteProcessor.uniswapV3SwapCallback: call from unknown source');
     lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
     (address tokenIn) = abi.decode(data, (address));
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
-
-    // Normally, RouteProcessor shouldn't have any liquidity on board
-    // If some liquidity exists, it is sweept by the next user that makes swap through these tokens
     IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
+  }
+
+  /// @notice Called to `msg.sender` after executing a swap via IAlgebraPool#swap.
+  /// @dev In the implementation you must pay the pool tokens owed for the swap.
+  /// The caller of this method _must_ be checked to be a AlgebraPool deployed by the canonical AlgebraFactory.
+  /// amount0Delta and amount1Delta can both be 0 if no tokens were swapped.
+  /// @param amount0Delta The amount of token0 that was sent (negative) or must be received (positive) by the pool by
+  /// the end of the swap. If positive, the callback must send that amount of token0 to the pool.
+  /// @param amount1Delta The amount of token1 that was sent (negative) or must be received (positive) by the pool by
+  /// the end of the swap. If positive, the callback must send that amount of token1 to the pool.
+  /// @param data Any data passed through by the caller via the IAlgebraPoolActions#swap call
+  function algebraSwapCallback(
+    int256 amount0Delta,
+    int256 amount1Delta,
+    bytes calldata data
+  ) external {
+    uniswapV3SwapCallback(amount0Delta, amount1Delta, data);
   }
 
   /// @notice Curve pool swap

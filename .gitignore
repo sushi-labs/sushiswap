@@ -1,4 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+bin
 
 # dependencies
 node_modules
@@ -86,6 +87,7 @@ screenshots
 
 # playwright
 playwright-report
+test-results
 
 # Sentry
 .sentryclirc
@@ -96,3 +98,9 @@ results/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# storybook
+storybook-static
+
+# tines snapshots
+test/snapshots/

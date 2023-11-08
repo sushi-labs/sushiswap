@@ -1,36 +1,40 @@
-import { AddressZero } from '@ethersproject/constants'
-import { Amount, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
-import { Button } from '@sushiswap/ui'
+'use client'
+
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { FC, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Amount, Type } from 'sushi/currency'
+import { ZERO } from 'sushi/math'
+import { zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useBalances } from '../../hooks'
-import { CheckerButton } from './types'
+import { useBalancesWeb3 } from '../../hooks/balances'
 
-export interface AmountsProps extends CheckerButton {
-  chainId: number | undefined
+interface AmountsProps extends ButtonProps {
+  chainId: ChainId | undefined
   amounts: (Amount<Type> | undefined)[]
-  fundSource: FundSource
 }
 
-export const Amounts: FC<AmountsProps> = ({
+const Amounts: FC<AmountsProps> = ({
+  type: _type,
   amounts,
-  fundSource,
   chainId,
   children,
-  className,
-  variant,
-  fullWidth,
-  as,
-  size,
+  fullWidth = true,
+  size = 'xl',
+  ...props
 }) => {
   const { address } = useAccount()
-  const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
-  const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
+  const amountsAreDefined = useMemo(
+    () => amounts.every((el) => el?.greaterThan(ZERO)),
+    [amounts],
+  )
+  const currencies = useMemo(
+    () => amounts.map((amount) => amount?.currency),
+    [amounts],
+  )
 
-  const { data: balances } = useBalances({
+  const { data: balances } = useBalancesWeb3({
     currencies,
     chainId,
     account: address,
@@ -40,35 +44,39 @@ export const Amounts: FC<AmountsProps> = ({
   const sufficientBalance = useMemo(() => {
     return amounts?.every((amount) => {
       if (!amount) return true
-      return !balances?.[amount.currency.isNative ? AddressZero : amount.currency.wrapped.address]?.[
-        fundSource
+      return !balances?.[
+        amount.currency.isNative ? zeroAddress : amount.currency.wrapped.address
       ]?.lessThan(amount)
     })
-  }, [amounts, balances, fundSource])
+  }, [amounts, balances])
 
-  return useMemo(() => {
-    if (!amountsAreDefined)
-      return (
-        <Button
-          id="amount-checker"
-          disabled
-          className={className}
-          variant={variant}
-          as={as}
-          fullWidth={fullWidth}
-          size={size}
-        >
-          Enter Amount
-        </Button>
-      )
+  if (!amountsAreDefined)
+    return (
+      <Button
+        id="amount-checker"
+        disabled={true}
+        fullWidth={fullWidth}
+        size={size}
+        {...props}
+      >
+        Enter Amount
+      </Button>
+    )
 
-    if (!sufficientBalance)
-      return (
-        <Button disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
-          Insufficient Balance
-        </Button>
-      )
+  if (!sufficientBalance)
+    return (
+      <Button
+        id="amount-checker"
+        disabled={true}
+        fullWidth={fullWidth}
+        size={size}
+        {...props}
+      >
+        Insufficient Balance
+      </Button>
+    )
 
-    return <>{children}</>
-  }, [amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
+  return <>{children}</>
 }
+
+export { Amounts, type AmountsProps }

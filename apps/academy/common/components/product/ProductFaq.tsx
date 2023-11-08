@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { ProductSectionTitle } from './ProductSectionTitle'
@@ -19,15 +19,16 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
             {({ open }) => (
               <>
                 <Disclosure.Button className="flex items-center justify-between w-full p-6 sm:p-9">
-                  <Typography variant="lg" className="text-left">
-                    {question}
-                  </Typography>
+                  <p className="text-lg text-left">{question}</p>
                   <div className="flex items-center justify-center h-6 rounded-full bg-slate-700/60 ml-2 min-w-[24px]">
                     <ChevronDownIcon
                       strokeWidth={4}
                       width={12}
                       height={12}
-                      className={classNames('transition', open && 'transform rotate-180')}
+                      className={classNames(
+                        'transition',
+                        open && 'transform rotate-180',
+                      )}
                     />
                   </div>
                 </Disclosure.Button>

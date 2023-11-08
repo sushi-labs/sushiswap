@@ -1,20 +1,31 @@
-import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
+import {
+  Children,
+  FC,
+  ReactElement,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+  useMemo,
+  useReducer,
+} from 'react'
 
-import { PairState } from '../../hooks'
+import { SushiSwapV2PoolState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
-import { ConstantProductPool } from './ConstantProductPool'
-import { LegacyPool } from './LegacyPool'
-import { StablePool } from './StablePool'
+import { SushiSwapV2Pool } from './SushiSwapV2Pool'
+import { TridentConstantPool } from './TridentConstantPool'
+import { TridentStablePool } from './TridentStablePool'
 import {
   ComponentsWrapperProps,
-  LegacyPoolFinderProps,
   PoolExistenceStateAction,
   PoolStateUnion,
+  SushiSwapV2PoolFinderProps,
   TridentPoolFinderProps,
 } from './types'
 
 interface Props {
-  components: ReactElement<ComponentsWrapperProps<LegacyPoolFinderProps | TridentPoolFinderProps>>
+  components: ReactElement<
+    ComponentsWrapperProps<SushiSwapV2PoolFinderProps | TridentPoolFinderProps>
+  >
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
@@ -22,7 +33,7 @@ export interface PoolFinderState {
   pool: PoolStateUnion
 }
 
-const reducer = (state: PoolFinderState, action: PoolExistenceStateAction) => {
+const reducer = (_state: PoolFinderState, action: PoolExistenceStateAction) => {
   switch (action.type) {
     case 'update': {
       return {
@@ -34,7 +45,7 @@ const reducer = (state: PoolFinderState, action: PoolExistenceStateAction) => {
 
 const Controller: FC<Props> = ({ components, children }) => {
   const [state, dispatch] = useReducer(reducer, {
-    pool: [PairState.LOADING, null],
+    pool: [SushiSwapV2PoolState.LOADING, null],
   })
 
   const childrenComponents = useMemo(() => {
@@ -48,7 +59,7 @@ const Controller: FC<Props> = ({ components, children }) => {
             index,
           })
         }
-      })
+      }),
     )
   }, [components])
 
@@ -62,12 +73,12 @@ const Controller: FC<Props> = ({ components, children }) => {
 
 export const PoolFinder: typeof Controller & {
   Components: typeof ComponentsWrapper
-  LegacyPool: typeof LegacyPool
-  ConstantProductPool: typeof ConstantProductPool
-  StablePool: typeof StablePool
+  SushiSwapV2Pool: typeof SushiSwapV2Pool
+  TridentConstantPool: typeof TridentConstantPool
+  TridentStablePool: typeof TridentStablePool
 } = Object.assign(Controller, {
   Components: ComponentsWrapper,
-  LegacyPool,
-  ConstantProductPool,
-  StablePool,
+  SushiSwapV2Pool,
+  TridentConstantPool,
+  TridentStablePool,
 })

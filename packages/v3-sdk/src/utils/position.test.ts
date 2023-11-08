@@ -1,26 +1,29 @@
-import { JSBI } from '@sushiswap/math'
-
-import { ZERO } from '../internalConstants'
 import { PositionLibrary } from '.'
 
 describe('PositionLibrary', () => {
   describe('#getTokensOwed', () => {
     it('0', () => {
-      const [tokensOwed0, tokensOwed1] = PositionLibrary.getTokensOwed(ZERO, ZERO, ZERO, ZERO, ZERO)
-      expect(tokensOwed0).toEqual(ZERO)
-      expect(tokensOwed1).toEqual(ZERO)
+      const [tokensOwed0, tokensOwed1] = PositionLibrary.getTokensOwed(
+        0n,
+        0n,
+        0n,
+        0n,
+        0n,
+      )
+      expect(tokensOwed0).toEqual(0n)
+      expect(tokensOwed1).toEqual(0n)
     })
 
     it('non-0', () => {
       const [tokensOwed0, tokensOwed1] = PositionLibrary.getTokensOwed(
-        ZERO,
-        ZERO,
-        JSBI.BigInt(1),
-        JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128)),
-        JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128))
+        0n,
+        0n,
+        1n,
+        2n ** 128n,
+        2n ** 128n,
       )
-      expect(tokensOwed0).toEqual(JSBI.BigInt(1))
-      expect(tokensOwed1).toEqual(JSBI.BigInt(1))
+      expect(tokensOwed0).toEqual(1n)
+      expect(tokensOwed1).toEqual(1n)
     })
   })
 })

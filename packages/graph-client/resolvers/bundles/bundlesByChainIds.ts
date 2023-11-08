@@ -10,10 +10,17 @@ import {
 
 import { Bundle, Query, QueryResolvers } from '../../.graphclient/index.js'
 
-export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (root, args, context, info) => {
+export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (
+  root,
+  args,
+  context,
+  info,
+) => {
   return Promise.all<Query['bundlesByChainIds']>([
     ...args.chainIds
-      .filter((el): el is (typeof TRIDENT_ENABLED_NETWORKS)[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+        TRIDENT_ENABLED_NETWORKS.includes(el),
+      )
       .map((chainId) =>
         context.Trident.Query.bundles({
           root,
@@ -31,11 +38,13 @@ export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (roo
                 ...bundle,
                 chainId,
               }))
-            : []
-        )
+            : [],
+        ),
       ),
     ...args.chainIds
-      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+        SUSHISWAP_ENABLED_NETWORKS.includes(el),
+      )
       .map((chainId) =>
         context.SushiSwap.Query.bundles({
           root,
@@ -53,8 +62,8 @@ export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (roo
                 ...bundle,
                 chainId,
               }))
-            : []
-        )
+            : [],
+        ),
       ),
   ]).then((bundles) => bundles.flat())
 }

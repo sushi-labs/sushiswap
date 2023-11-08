@@ -1,12 +1,11 @@
-import { ChainId } from '@sushiswap/chain'
-import { PrismaClient } from '@sushiswap/database'
+import { ChainId } from 'sushi/chain'
 import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV3BaseProvider } from './UniswapV3Base'
 
 export class SushiSwapV3Provider extends UniswapV3BaseProvider {
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
+  constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ARBITRUM_NOVA]: '0xaa26771d497814E81D305c511Efbb3ceD90BF5bd',
       [ChainId.ARBITRUM]: '0x1af415a1EbA07a4986a52B6f2e7dE7003D82231e',
@@ -22,22 +21,60 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.BOBA]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
       [ChainId.POLYGON_ZKEVM]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
       [ChainId.THUNDERCORE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+      [ChainId.CORE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+      [ChainId.BASE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+      [ChainId.LINEA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+      [ChainId.SCROLL]: '0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e',
+      [ChainId.KAVA]: '0x1e9B24073183d5c6B7aE5FB4b8f0b1dd83FDC77a',
+      [ChainId.METIS]: '0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F',
+      [ChainId.BTTC]: '0xBBDe1d67297329148Fe1ED5e6B00114842728e65',
+      [ChainId.FILECOIN]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
     } as const
     const initCodeHash = {
-      [ChainId.ARBITRUM_NOVA]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.ARBITRUM]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.AVALANCHE]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.BSC]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.ETHEREUM]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.FANTOM]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.FUSE]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.GNOSIS]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.MOONRIVER]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.OPTIMISM]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.POLYGON]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.BOBA]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.POLYGON_ZKEVM]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-      [ChainId.THUNDERCORE]: '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.ARBITRUM_NOVA]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.ARBITRUM]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.AVALANCHE]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.BSC]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.ETHEREUM]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.FANTOM]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.FUSE]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.GNOSIS]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.MOONRIVER]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.OPTIMISM]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.POLYGON]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.BOBA]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.POLYGON_ZKEVM]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.THUNDERCORE]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.CORE]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.BASE]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.LINEA]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.SCROLL]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.KAVA]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.METIS]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.BTTC]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      [ChainId.FILECOIN]:
+        '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
     } as const
 
     const tickLens = {
@@ -55,8 +92,16 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.BOBA]: '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c',
       [ChainId.POLYGON_ZKEVM]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
       [ChainId.THUNDERCORE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
+      [ChainId.CORE]: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
+      [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
+      [ChainId.LINEA]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
+      [ChainId.SCROLL]: '0x1f2FCf1d036b375b384012e61D3AA33F8C256bbE',
+      [ChainId.KAVA]: '0xA62eC622DbA415Aa94110739B1f951B1202Cf322',
+      [ChainId.METIS]: '0x078047150F8efa223B3d407f00E462e38f4B1b9C',
+      [ChainId.BTTC]: '0x1400feFD6F9b897970f00Df6237Ff2B8b27Dc82C',
+      [ChainId.FILECOIN]: '0x1be211D8DA40BC0ae8719c6663307Bfc987b1d6c',
     } as const
-    super(chainId, web3Client, factory, initCodeHash, tickLens, databaseClient)
+    super(chainId, web3Client, factory, initCodeHash, tickLens)
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.SushiSwapV3

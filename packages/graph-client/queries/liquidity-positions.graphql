@@ -18,7 +18,7 @@ query LiquidityPositions(
   $block: Block_height
   $orderBy: LiquidityPosition_orderBy
   $orderDirection: OrderDirection
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   liquidityPositions: liquidityPositionsByChainIds(
     skip: $skip

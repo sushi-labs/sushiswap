@@ -1,6 +1,14 @@
-import { getBuiltGraphSDK, Resolvers, SubgraphStatus, SubgraphWithNode } from '../../.graphclient/index.js'
+import {
+  Resolvers,
+  SubgraphStatus,
+  SubgraphWithNode,
+  getBuiltGraphSDK,
+} from '../../.graphclient/index.js'
 
-export const subgraphs: Resolvers['Query']['subgraphs'] = async (root, args) => {
+export const subgraphs: Resolvers['Query']['subgraphs'] = async (
+  root,
+  args,
+) => {
   const fetch = async ({ subgraphName, nodeUrl }: SubgraphWithNode) => {
     const sdk = getBuiltGraphSDK({ node: nodeUrl })
 
@@ -28,7 +36,9 @@ export const subgraphs: Resolvers['Query']['subgraphs'] = async (root, args) => 
           const status: SubgraphStatus = hasFailed
             ? 'Failed'
             : // @ts-ignore
-            data.chains[0].chainHeadBlock.number - data.chains[0].latestBlock.number <= 50
+            data.chains[0].chainHeadBlock.number -
+                data.chains[0].latestBlock.number <=
+              50
             ? 'Synced'
             : 'Syncing'
 
@@ -45,7 +55,7 @@ export const subgraphs: Resolvers['Query']['subgraphs'] = async (root, args) => 
             entityCount: data.entityCount as number,
           }
         })
-      })
+      }),
     )
   ).filter(Boolean)
 }

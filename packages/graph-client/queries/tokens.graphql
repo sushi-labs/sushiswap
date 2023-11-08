@@ -20,7 +20,7 @@ query TokensByChainIds(
   $orderDirection: OrderDirection = desc
   $block: Block_height
   $pagination: Pagination
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   tokens: tokensByChainIds(
     first: $first

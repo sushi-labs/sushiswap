@@ -1,0 +1,32 @@
+name: 'Chromatic'
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - ".github/workflows/chromatic.yml"
+      - "config/tailwindcss/**"
+      - "packages/ui/**"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/actions/install
+      - name: Build storybook
+        run: pnpm exec turbo run build --filter=storybook^...
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/storybook
+          buildScriptName: build
+          exitOnceUploaded: true
+

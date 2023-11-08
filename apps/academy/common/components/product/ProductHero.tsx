@@ -1,6 +1,8 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Button, classNames, Link, Typography } from '@sushiswap/ui'
-import { FC, ReactNode, useLayoutEffect, useState } from 'react'
+import { LinkInternal, classNames } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui/components/button'
+import { IconComponent } from '@sushiswap/ui/types'
+import { FC, ReactNode, useEffect, useLayoutEffect, useState } from 'react'
 
 import { ProductStat, ProductStats } from './'
 
@@ -8,19 +10,25 @@ interface ProductHero {
   productName: ReactNode
   productDescription: string
   productUrl: string
-  buttonIcon: JSX.Element
+  buttonIcon: IconComponent
   buttonText?: string
   image?: JSX.Element
   productStats?: ProductStat[]
 }
 
-const Title: FC<{ productName: ReactNode; isCentered: boolean }> = ({ productName, isCentered }) => (
+const Title: FC<{ productName: ReactNode; isCentered: boolean }> = ({
+  productName,
+  isCentered,
+}) => (
   <>
     {typeof productName === 'string'
       ? productName.split('-').map((name, i) => (
           <h1
             key={i}
-            className={classNames('text-4xl sm:text-6xl font-bold sm:leading-[78px]', isCentered && 'text-center')}
+            className={classNames(
+              'text-4xl sm:text-6xl font-bold sm:leading-[78px]',
+              isCentered && 'text-center',
+            )}
           >
             {name}
           </h1>
@@ -28,6 +36,9 @@ const Title: FC<{ productName: ReactNode; isCentered: boolean }> = ({ productNam
       : productName}
   </>
 )
+
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 export const ProductHero: FC<ProductHero> = ({
   productName,
@@ -41,7 +52,8 @@ export const ProductHero: FC<ProductHero> = ({
   const { isMd } = useBreakpoint('md')
 
   const [isCentered, setIsCentered] = useState(false)
-  useLayoutEffect(() => {
+
+  useIsomorphicLayoutEffect(() => {
     setIsCentered(!image || !isMd)
   }, [image, isMd])
 
@@ -51,20 +63,25 @@ export const ProductHero: FC<ProductHero> = ({
         <div className={classNames(isCentered && 'flex flex-col items-center')}>
           <Title productName={productName} isCentered={isCentered} />
 
-          <h3 className={classNames('sm:text-2xl mt-1.5 font-medium text-slate-400', isCentered && 'text-center')}>
+          <h3
+            className={classNames(
+              'sm:text-2xl mt-1.5 font-medium text-slate-400',
+              isCentered && 'text-center',
+            )}
+          >
             {productDescription}
           </h3>
 
-          <Link.External href={productUrl}>
-            <Button size="lg" className="mt-16 rounded-lg" startIcon={buttonIcon}>
-              <Typography weight={500}>{buttonText}</Typography>
-            </Button>
-          </Link.External>
+          <Button asChild className="mt-16" icon={buttonIcon}>
+            <LinkInternal href={productUrl}>{buttonText}</LinkInternal>
+          </Button>
         </div>
         {image && <div className="hidden md:block">{image}</div>}
       </div>
 
-      {productStats && <ProductStats productStats={productStats} isCentered={isCentered} />}
+      {productStats && (
+        <ProductStats productStats={productStats} isCentered={isCentered} />
+      )}
     </section>
   )
 }

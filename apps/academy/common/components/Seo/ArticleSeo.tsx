@@ -1,11 +1,12 @@
+import { GhostArticle } from 'lib/ghost'
 import { ArticleJsonLd, NextSeo } from 'next-seo'
 import { FC } from 'react'
 
-import { Article, Maybe } from '../../../.mesh'
+import { Maybe } from '../../../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../../../lib/media'
 
 interface ArticleSeo {
-  article?: Maybe<Article> | undefined
+  article?: Maybe<GhostArticle['attributes']> | undefined
 }
 
 export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
@@ -39,12 +40,19 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
             modifiedTime: article.updatedAt,
             authors: authors?.map((author) => author.name),
             tags: article.topics?.data
-              .reduce<(Maybe<string> | undefined)[]>((acc, el) => [...acc, el.attributes?.name], [])
+              .reduce<(Maybe<string> | undefined)[]>((acc, el) => {
+                acc.push(el.attributes.name)
+                return acc
+              }, [])
               .filter(Boolean) as string[],
           },
         }}
         twitter={{
-          cardType: isMediaVideo(article.cover?.data?.attributes?.provider_metadata) ? 'player' : 'summary_large_image',
+          cardType: isMediaVideo(
+            article.cover?.data?.attributes?.provider_metadata,
+          )
+            ? 'player'
+            : 'summary_large_image',
         }}
       />
       <ArticleJsonLd

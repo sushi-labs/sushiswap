@@ -1,28 +1,41 @@
-import { Listbox } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames, Container, Select } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui/components/container'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@sushiswap/ui/components/select'
 import { LooperBg } from 'common/assets/LooperBg'
-import { FC, useLayoutEffect, useState } from 'react'
+import { FC, useEffect, useLayoutEffect, useState } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
-import { GradientWrapper, SelectOption } from './'
 import { DifficultyEntity, Maybe } from '.mesh'
 
 interface ArticlesPagesHeader {
   title: Maybe<string> | undefined
   difficulties: DifficultyEntity[]
-  selectedDifficulty: Maybe<DifficultyEntity> | undefined
-  onSelect(difficulty: DifficultyEntity): void
+  selectedDifficulty: string | undefined
+  onSelect(index: string): void
 }
 
 const baseBg = [113, 285]
 const smBg = [226, 570]
 
-export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficulties, selectedDifficulty, onSelect }) => {
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect
+
+export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
+  title,
+  difficulties,
+  selectedDifficulty,
+  onSelect,
+}) => {
   const { isSm } = useBreakpoint('sm')
   const [[bgHeight, bgWidth], setBgDimensions] = useState(baseBg)
-  useLayoutEffect(() => {
+
+  useIsomorphicLayoutEffect(() => {
     setBgDimensions(isSm ? smBg : baseBg)
   }, [isSm])
 
@@ -30,7 +43,10 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
     <section className="bg-slate-800 h-[113px] sm:h-[226px] relative">
       <Container
         maxWidth="6xl"
-        className={classNames(DEFAULT_SIDE_PADDING, 'flex items-center justify-between h-full gap-4 mx-auto')}
+        className={classNames(
+          DEFAULT_SIDE_PADDING,
+          'flex items-center justify-between h-full gap-4 mx-auto',
+        )}
       >
         <div className="absolute bottom-0 right-0 opacity-20">
           <LooperBg height={bgHeight} width={bgWidth} />
@@ -40,35 +56,24 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
           <p className="text-3xl sm:text-5xl sm:font-medium">{title}</p>
         </div>
 
-        <Select
-          className="hidden w-1/2 sm:w-auto sm:flex"
-          value={selectedDifficulty}
-          onChange={onSelect}
-          button={
-            <GradientWrapper className="h-[54px] w-60 rounded-lg">
-              <Listbox.Button
-                type="button"
-                className="flex items-center justify-between w-full h-full gap-2 px-6 rounded-lg bg-slate-800 text-slate-50"
-              >
-                <span className="text-lg min-w-max">
-                  {selectedDifficulty?.attributes?.label ?? 'Select Difficulty'}
-                </span>
-                <ChevronDownIcon width={12} height={12} aria-hidden="true" />
-              </Listbox.Button>
-            </GradientWrapper>
-          }
-        >
-          <Select.Options className="!bg-slate-700 p-2 space-y-1">
+        <Select value={selectedDifficulty} onValueChange={onSelect}>
+          <SelectTrigger placeholder="Select Difficulty">
+            {selectedDifficulty
+              ? difficulties[+selectedDifficulty]?.attributes?.label
+              : ''}
+          </SelectTrigger>
+          <SelectContent>
             {difficulties?.map((difficulty, i) => (
-              <SelectOption
+              <SelectItem
                 key={i}
-                value={difficulty}
-                isSelected={difficulty.id === selectedDifficulty?.id}
+                value={`${difficulty}`}
                 title={difficulty?.attributes?.name as string}
                 className="px-4 text-base"
-              />
+              >
+                {difficulty?.attributes?.name}
+              </SelectItem>
             ))}
-          </Select.Options>
+          </SelectContent>
         </Select>
       </Container>
     </section>

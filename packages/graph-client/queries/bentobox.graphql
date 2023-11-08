@@ -24,7 +24,7 @@ query CrossChainStrategyKpis(
   $orderBy: StrategyKpi_orderBy = apr
   $orderDirection: OrderDirection = desc
   $block: Block_height
-  $chainIds: [Int!]!
+  $chainIds: [BigInt!]!
 ) {
   crossChainStrategyKpis(
     skip: $skip
@@ -70,7 +70,7 @@ query Rebases($skip: Int = 0, $first: Int = 100, $where: Rebase_filter) {
   }
 }
 
-query RebasesByChainIds($first: Int, $skip: Int, $where: Rebase_filter, $chainIds: [Int!]!) {
+query RebasesByChainIds($first: Int, $skip: Int, $where: Rebase_filter, $chainIds: [BigInt!]!) {
   rebases: rebasesByChainIds(skip: $skip, first: $first, where: $where, chainIds: $chainIds) {
     id
     chainId

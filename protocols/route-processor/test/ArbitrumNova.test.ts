@@ -1,10 +1,10 @@
-import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Type } from '@sushiswap/currency'
 import { DataFetcher, LiquidityProviders, Router } from '@sushiswap/router'
-import { getBigNumber, RouteStatus } from '@sushiswap/tines'
+import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
-import { BigNumber, Signer } from 'ethers'
+import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
+import { ChainId } from 'sushi/chain'
+import { Native, SUSHI, Type } from 'sushi/currency'
 import { createPublicClient } from 'viem'
 import { http } from 'viem'
 import { hardhat } from 'viem/chains'
@@ -18,17 +18,35 @@ async function makeSwap(
   signer: Signer,
   fromToken: Type,
   toToken: Type,
-  from: string,
+  _from: string,
   to: string,
-  amountIn: BigNumber
+  amountIn: bigint,
 ): Promise<number | undefined> {
   await dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const pcMap = dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
-  const route = Router.findBestRoute(pcMap, ChainId.ARBITRUM_NOVA, fromToken, amountIn, toToken, 50e9)
+  const route = Router.findBestRoute(
+    pcMap,
+    ChainId.ARBITRUM_NOVA,
+    fromToken,
+    amountIn,
+    toToken,
+    50e9,
+  )
   expect(route?.status).equal(RouteStatus.Success)
   if (route && pcMap) {
-    const rpParams = Router.routeProcessor2Params(pcMap, route, fromToken, toToken, to, RouteProcessorAddr)
-    const RouteProcessorFactory = await ethers.getContractFactory<RouteProcessor3__factory>('RouteProcessor3', signer)
+    const rpParams = Router.routeProcessor2Params(
+      pcMap,
+      route,
+      fromToken,
+      toToken,
+      to,
+      RouteProcessorAddr,
+    )
+    const RouteProcessorFactory =
+      await ethers.getContractFactory<RouteProcessor3__factory>(
+        'RouteProcessor3',
+        signer,
+      )
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(
       rpParams.tokenIn,
@@ -37,7 +55,7 @@ async function makeSwap(
       rpParams.amountOutMin,
       rpParams.to,
       rpParams.routeCode,
-      { value: rpParams.value?.toString() }
+      { value: rpParams.value?.toString() },
     )
     return parseInt(res.toString())
   }
@@ -45,7 +63,10 @@ async function makeSwap(
 
 describe('Arbitrum Nova RP3', async () => {
   const chainId = ChainId.ARBITRUM_NOVA
-  const provider = new ethers.providers.JsonRpcProvider('https://nova.arbitrum.io/rpc', 42170)
+  const provider = new ethers.providers.JsonRpcProvider(
+    'https://nova.arbitrum.io/rpc',
+    42170,
+  )
   const client = createPublicClient({
     chain: {
       ...hardhat,
@@ -60,14 +81,22 @@ describe('Arbitrum Nova RP3', async () => {
   })
 
   const dataFetcher = new DataFetcher(chainId, client)
-  dataFetcher.startDataFetching([LiquidityProviders.SushiSwap])
+  dataFetcher.startDataFetching([LiquidityProviders.SushiSwapV2])
 
   it('ETH => SUSHI', async () => {
     const fromToken = Native.onChain(ChainId.ARBITRUM_NOVA)
     const toToken = SUSHI[ChainId.ARBITRUM_NOVA]
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312'
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(1e17))
+    await makeSwap(
+      dataFetcher,
+      signer,
+      fromToken,
+      toToken,
+      user,
+      user,
+      BigInt(1e17),
+    )
   })
 
   it('SUSHI => ETH', async () => {
@@ -75,6 +104,14 @@ describe('Arbitrum Nova RP3', async () => {
     const toToken = Native.onChain(ChainId.ARBITRUM_NOVA)
     const user = '0x8f54C8c2df62c94772ac14CcFc85603742976312' // has SUSHI and approved 1e18 to the RP
     const signer = await provider.getUncheckedSigner(user)
-    await makeSwap(dataFetcher, signer, fromToken, toToken, user, user, getBigNumber(1e17))
+    await makeSwap(
+      dataFetcher,
+      signer,
+      fromToken,
+      toToken,
+      user,
+      user,
+      BigInt(1e17),
+    )
   })
 })
