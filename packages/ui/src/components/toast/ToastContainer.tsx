@@ -13,7 +13,7 @@ export const ToastContainer: FC<ToastContainer> = ({ className }) => {
       newestOnTop
       bodyClassName={() => ''}
       toastClassName={() =>
-        'mx-4 flex flex-col shadow-md bg-white/50 paper dark:bg-slate-800/50 mt-12 md:mt-2 rounded-xl overflow-hidden text-[color:var(--color)]'
+        'border border-accent mx-4 flex flex-col shadow-md bg-background mt-12 md:mt-2 rounded-xl overflow-hidden text-[color:var(--color)]'
       }
       className={className}
     />

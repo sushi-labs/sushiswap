@@ -8,19 +8,21 @@ import { Type } from 'sushi/currency'
 
 import { ChartEntry } from './types'
 
+interface UseDensityChartData {
+  chainId: SushiSwapV3ChainId
+  token0: Type | undefined
+  token1: Type | undefined
+  feeAmount: FeeAmount | undefined
+  enabled?: boolean
+}
+
 export function useDensityChartData({
   chainId,
   token0,
   token1,
   feeAmount,
   enabled = true,
-}: {
-  chainId: SushiSwapV3ChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  feeAmount: FeeAmount | undefined
-  enabled?: boolean
-}) {
+}: UseDensityChartData) {
   const activeLiquidity = useConcentratedActiveLiquidity({
     chainId,
     token0,

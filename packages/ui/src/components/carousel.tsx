@@ -29,7 +29,7 @@ export const Carousel = <T,>({
   className,
 }: CarouselProps<T>) => {
   const [buttons, setButtons] = useState({
-    hasNext: true,
+    hasNext: slides.length > 1,
     hasPrev: false,
   })
 
@@ -115,6 +115,7 @@ export const Carousel = <T,>({
                     }px))`,
                   }}
                 >
+                  <span />
                   {render(el, i)}
                 </div>
               </div>
@@ -124,26 +125,30 @@ export const Carousel = <T,>({
       </div>
       {buttons.hasPrev && (
         <div className="scale-[0.8] group-hover:scale-[1] opacity-0 group-hover:opacity-100 flex absolute top-0 left-4 bottom-0 items-center transition-all">
-          <div
-            role="button"
-            onClick={() => prev()}
-            onKeyDown={() => prev()}
-            className="p-3 rounded-full cursor-pointer bg-gray-200/80 dark:bg-slate-700/80"
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              prev()
+            }}
+            className="shadow-md hover:border-accent border border-transparent p-3 rounded-full cursor-pointer bg-gray-200 dark:bg-slate-700"
           >
             <ChevronLeftIcon width={32} height={32} />
-          </div>
+          </button>
         </div>
       )}
       {buttons.hasNext && (
         <div className="scale-[0.8] group-hover:scale-[1] opacity-0 group-hover:opacity-100 flex absolute top-0 right-4 bottom-0 items-center transition-all">
-          <div
-            role="button"
-            onClick={() => next()}
-            onKeyDown={() => next()}
-            className="p-3 rounded-full cursor-pointer bg-gray-200/80 dark:bg-slate-700/80"
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              next()
+            }}
+            className="shadow-md hover:border-accent border border-transparent p-3 rounded-full cursor-pointer bg-gray-200 dark:bg-slate-700"
           >
             <ChevronRightIcon width={32} height={32} />
-          </div>
+          </button>
         </div>
       )}
     </div>
