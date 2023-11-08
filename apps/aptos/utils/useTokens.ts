@@ -1,8 +1,8 @@
-import { Token } from './tokenType'
 import { useQuery } from '@tanstack/react-query'
-import { useNetwork } from './useNetwork'
 import { SupportedNetwork } from 'config/chains'
 import { tokenlists } from 'config/tokenlists'
+import { Token } from './tokenType'
+import { useNetwork } from './useNetwork'
 export type Data = {
   address: string
   decimals: number
@@ -11,22 +11,29 @@ export type Data = {
   logoURI?: string
 }
 
-export const fetchTokensQueryFn = async ({ network }: { network: SupportedNetwork }) => {
+export const fetchTokensQueryFn = async ({
+  network,
+}: { network: SupportedNetwork }) => {
   const baseTokens = tokenlists[network].tokens
 
-  return baseTokens.reduce<Record<string, Token>>((acc, { address, decimals, name, symbol, logoURI }) => {
-    acc[address] = {
-      name,
-      decimals,
-      symbol,
-      address,
-      logoURI,
-    }
-    return acc
-  }, {})
+  return baseTokens.reduce<Record<string, Token>>(
+    (acc, { address, decimals, name, symbol, logoURI }) => {
+      acc[address] = {
+        name,
+        decimals,
+        symbol,
+        address,
+        logoURI,
+      }
+      return acc
+    },
+    {},
+  )
 }
 
-export function getTokensWithoutKey({ network }: { network: SupportedNetwork }) {
+export function getTokensWithoutKey({
+  network,
+}: { network: SupportedNetwork }) {
   const baseTokens = tokenlists[network].tokens
   const tokens: Token[] = []
 

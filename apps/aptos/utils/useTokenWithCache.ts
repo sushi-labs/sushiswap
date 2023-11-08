@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { SupportedNetwork, chains } from 'config/chains'
 import { Token } from './tokenType'
 import { useCustomTokens } from './useCustomTokens'
 import { useNetwork } from './useNetwork'
-import { SupportedNetwork, chains } from 'config/chains'
 
 interface GetTokenWithQueryCacheFn {
   address: string | undefined
@@ -10,9 +10,19 @@ interface GetTokenWithQueryCacheFn {
   customTokens: Record<string, Token>
   network: SupportedNetwork
 }
-export const getTokenDetails = async ({ address, hasToken, customTokens, network }: GetTokenWithQueryCacheFn) => {
+export const getTokenDetails = async ({
+  address,
+  hasToken,
+  customTokens,
+  network,
+}: GetTokenWithQueryCacheFn) => {
   if (hasToken(`${address}`)) {
-    const { address: tokenAddress, name, symbol, decimals } = customTokens[`${address}`]
+    const {
+      address: tokenAddress,
+      name,
+      symbol,
+      decimals,
+    } = customTokens[`${address}`]
     return {
       address: tokenAddress,
       name,
@@ -25,7 +35,7 @@ export const getTokenDetails = async ({ address, hasToken, customTokens, network
   const tokenAddress = address.split(':')
 
   const response = await fetch(
-    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`,
   )
   if (response.status === 200) {
     const data = await response.json()
@@ -47,13 +57,18 @@ interface UseTokenParams {
   keepPreviousData?: boolean
 }
 
-export default function useTokenWithCache({ address, enabled = true, keepPreviousData = true }: UseTokenParams) {
+export default function useTokenWithCache({
+  address,
+  enabled = true,
+  keepPreviousData = true,
+}: UseTokenParams) {
   const { data: customTokens, hasToken } = useCustomTokens()
   const { network } = useNetwork()
 
   return useQuery({
     queryKey: ['token', { address, network }],
-    queryFn: async () => address && getTokenDetails({ address, hasToken, customTokens, network }),
+    queryFn: async () =>
+      address && getTokenDetails({ address, hasToken, customTokens, network }),
     enabled: Boolean(enabled && address),
     refetchOnWindowFocus: false,
     keepPreviousData,

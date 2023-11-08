@@ -1,11 +1,18 @@
 'use client'
 
-import { FC, ReactNode, createContext, useContext, useMemo, useReducer } from 'react'
-import { Token } from 'utils/tokenType'
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { getTokensWithoutKey } from 'utils/useTokens'
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  FC,
+  ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useReducer,
+} from 'react'
+import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
+import { getTokensWithoutKey } from 'utils/useTokens'
 interface SwapProviderProps {
   children: ReactNode
 }
@@ -78,7 +85,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           slippageAmount:
             action.value -
             (action.value *
-              parseFloat(slippageTolerance ? (slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) : '0.5')) /
+              parseFloat(
+                slippageTolerance
+                  ? slippageTolerance === 'AUTO'
+                    ? '0.5'
+                    : slippageTolerance
+                  : '0.5',
+              )) /
               100,
         }
       case 'setOutputAmount':
@@ -118,14 +131,21 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
     const swapTokens = () => dispatch({ type: 'swapTokens' })
     const setAmount = (value: string) => dispatch({ type: 'setAmount', value })
-    const setSlippageAmount = (value: number) => dispatch({ type: 'setSlippageAmount', value })
-    const setOutputAmount = (value: string) => dispatch({ type: 'setOutputAmount', value })
+    const setSlippageAmount = (value: number) =>
+      dispatch({ type: 'setSlippageAmount', value })
+    const setOutputAmount = (value: string) =>
+      dispatch({ type: 'setOutputAmount', value })
     const setError = (value: string) => dispatch({ type: 'setError', value })
-    const setLoadingPrice = (value: boolean) => dispatch({ type: 'setLoadingPrice', value })
-    const setisTransactionPending = (value: boolean) => dispatch({ type: 'setisTransactionPending', value })
-    const setPriceFetching = (value: boolean) => dispatch({ type: 'setPriceFetching', value })
-    const setBestRoutes = (value: string[]) => dispatch({ type: 'setBestRoutes', value })
-    const setNoRouteFound = (value: string) => dispatch({ type: 'setNoRouteFound', value })
+    const setLoadingPrice = (value: boolean) =>
+      dispatch({ type: 'setLoadingPrice', value })
+    const setisTransactionPending = (value: boolean) =>
+      dispatch({ type: 'setisTransactionPending', value })
+    const setPriceFetching = (value: boolean) =>
+      dispatch({ type: 'setPriceFetching', value })
+    const setBestRoutes = (value: string[]) =>
+      dispatch({ type: 'setBestRoutes', value })
+    const setNoRouteFound = (value: string) =>
+      dispatch({ type: 'setNoRouteFound', value })
 
     return {
       setToken0,
@@ -145,7 +165,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 
   return (
     <SwapActionsContext.Provider value={api}>
-      <SwapStateContext.Provider value={useMemo(() => ({ ...state }), [state, baseTokens])}>
+      <SwapStateContext.Provider value={useMemo(() => ({ ...state }), [state])}>
         {children}
       </SwapStateContext.Provider>
     </SwapActionsContext.Provider>

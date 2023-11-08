@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Pool, usePools } from './usePools'
 import { SupportedNetwork, chains } from 'config/chains'
 import { useNetwork } from './useNetwork'
+import { Pool, usePools } from './usePools'
 
 export type CoinStore = {
   type: string
@@ -37,13 +37,21 @@ interface UserPositionsQueryFn {
   network: SupportedNetwork
 }
 
-const userPositionsQueryFn = async ({ address, allPools = [], network }: UserPositionsQueryFn) => {
-  const response = await fetch(`${chains[network].api.fetchUrlPrefix}/v1/accounts/${address}/resources`)
+const userPositionsQueryFn = async ({
+  address,
+  allPools = [],
+  network,
+}: UserPositionsQueryFn) => {
+  const response = await fetch(
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${address}/resources`,
+  )
 
   if (response.status === 200) {
     const data = await response.json()
     const userLPTokens: CoinStore[] = data?.filter((coin: CoinStore) => {
-      return coin?.type.includes(`0x1::coin::CoinStore<${chains[network].contracts.swap}::swap::LPToken`)
+      return coin?.type.includes(
+        `0x1::coin::CoinStore<${chains[network].contracts.swap}::swap::LPToken`,
+      )
     })
 
     if (allPools.length) {
@@ -51,7 +59,10 @@ const userPositionsQueryFn = async ({ address, allPools = [], network }: UserPos
         const poolAddress = pool.id
         return userLPTokens.some((userLPToken) => {
           const tokenAddress = userLPToken.type
-            .replaceAll(`0x1::coin::CoinStore<${chains[network].contracts.swap}::swap::LPToken<`, '')
+            .replaceAll(
+              `0x1::coin::CoinStore<${chains[network].contracts.swap}::swap::LPToken<`,
+              '',
+            )
             .slice(0, -2)
           return tokenAddress === poolAddress
         })
@@ -72,7 +83,8 @@ export function useUserPositions(address: string, enabled = true) {
 
   return useQuery({
     queryKey: ['userPositions', { address, allPools, network }],
-    queryFn: async () => userPositionsQueryFn({ address, allPools: allPools as Pool[], network }),
+    queryFn: async () =>
+      userPositionsQueryFn({ address, allPools: allPools as Pool[], network }),
     enabled: Boolean(enabled && address),
     refetchOnMount: false,
     refetchOnWindowFocus: false,

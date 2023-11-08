@@ -64,7 +64,7 @@ interface UserPoolQueryFn {
 
 const userPoolQueryFn = async ({ address, network }: UserPoolQueryFn) => {
   const response = await fetch(
-    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${address}/resource/${chains[network].contracts.masterchef}::masterchef::PoolUserInfo`
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${address}/resource/${chains[network].contracts.masterchef}::masterchef::PoolUserInfo`,
   )
 
   if (response.status === 200) {
@@ -75,9 +75,14 @@ const userPoolQueryFn = async ({ address, network }: UserPoolQueryFn) => {
   return undefined
 }
 
-export const getPIdIndex = (farmIndex: number | undefined, stakes: UserStakes | undefined) => {
+export const getPIdIndex = (
+  farmIndex: number | undefined,
+  stakes: UserStakes | undefined,
+) => {
   return stakes?.data?.current_table_items?.length
-    ? stakes?.data?.current_table_items?.map((key) => key.decoded_key).indexOf(String(farmIndex))
+    ? stakes?.data?.current_table_items
+        ?.map((key) => key.decoded_key)
+        .indexOf(String(farmIndex))
     : -1
 }
 
@@ -86,13 +91,19 @@ export function useUserPool(address: string | undefined) {
 
   return useQuery({
     queryKey: ['handle', { address, network: network?.name }],
-    queryFn: async () => userPoolQueryFn({ address: address as string, network: network?.name as SupportedNetwork }),
+    queryFn: async () =>
+      userPoolQueryFn({
+        address: address as string,
+        network: network?.name as SupportedNetwork,
+      }),
     enabled: Boolean(address && isSupportedNetwork(network?.name)),
     refetchInterval: 2000,
   })
 }
 
-export function useUserHandle({ userHandle }: { userHandle: PoolUserInfo | undefined }) {
+export function useUserHandle({
+  userHandle,
+}: { userHandle: PoolUserInfo | undefined }) {
   const { network } = useWallet()
 
   return useQuery({
@@ -102,7 +113,10 @@ export function useUserHandle({ userHandle }: { userHandle: PoolUserInfo | undef
         handle: userHandle?.data?.pid_to_user_info?.inner?.handle as string,
         network: network?.name as SupportedNetwork,
       }),
-    enabled: Boolean(userHandle?.data?.pid_to_user_info?.inner?.handle && isSupportedNetwork(network?.name)),
+    enabled: Boolean(
+      userHandle?.data?.pid_to_user_info?.inner?.handle &&
+        isSupportedNetwork(network?.name),
+    ),
     refetchInterval: 2000,
   })
 }

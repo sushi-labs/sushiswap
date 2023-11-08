@@ -1,10 +1,8 @@
-import { classNames } from '@sushiswap/ui'
-import { WalletIcon } from '@sushiswap/ui/future/components/icons'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import { SkeletonText, WalletIcon, classNames } from '@sushiswap/ui'
 import React, { useMemo } from 'react'
-import { Fraction } from '@sushiswap/math'
+import { Fraction } from 'sushi/math'
 
-interface Props {
+interface BalancePanel {
   coinData: number
   isLoading: boolean
   decimals: number
@@ -12,7 +10,13 @@ interface Props {
   type: 'INPUT' | 'OUTPUT'
 }
 
-export const BalancePanel = ({ coinData, isLoading, decimals, onClick, type }: Props) => {
+export const BalancePanel = ({
+  coinData,
+  isLoading,
+  decimals,
+  onClick,
+  type,
+}: BalancePanel) => {
   const [big, portion] = useMemo(
     () =>
       (coinData
@@ -32,13 +36,13 @@ export const BalancePanel = ({ coinData, isLoading, decimals, onClick, type }: P
         type === 'INPUT'
           ? 'text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300'
           : 'text-gray-500 dark:text-slate-500',
-        `font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md`
+        'font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md',
       )}
     >
       <WalletIcon width={18} height={18} />
       {isLoading ? (
         <div className="w-[60px] flex items-center">
-          <Skeleton.Text fontSize="text-lg" className="w-full" />
+          <SkeletonText fontSize="lg" className="w-full" />
         </div>
       ) : (
         <span className="text-lg">

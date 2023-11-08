@@ -6,7 +6,17 @@ const tailwindConfig = {
   darkMode: 'class',
   presets: [sharedConfig],
   theme: {
-    extend: {},
+    extend: {
+      display: ['group-hover'],
+      visibility: ['group-hover'],
+      keyframes: {
+        dash: {
+          to: {
+            'stroke-dashoffset': '0',
+          },
+        },
+      },
+    },
   },
 }
 

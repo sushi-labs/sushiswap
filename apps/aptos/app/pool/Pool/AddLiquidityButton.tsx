@@ -1,7 +1,7 @@
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import WalletSelector from '../../../components/WalletSelector'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { usePoolState } from './PoolProvider'
+import { Modal } from 'components/Modal/Modal'
 
 interface Props {
   buttonError: string
@@ -17,8 +17,12 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
         <div className="pt-4">
           {connected ? (
             <button
+              type="button"
               className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                isPriceFetching || buttonError || Number(amount0) <= 0 || Number(amount1) <= 0
+                isPriceFetching ||
+                buttonError ||
+                Number(amount0) <= 0 ||
+                Number(amount1) <= 0
                   ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
                   : ''
               }`}
@@ -36,7 +40,7 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
               )}
             </button>
           ) : (
-            <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
+            <WalletSelector color="blue" fullWidth={true} />
           )}
         </div>
       )}

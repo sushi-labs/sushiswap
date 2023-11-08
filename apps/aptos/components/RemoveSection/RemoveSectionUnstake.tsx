@@ -1,53 +1,55 @@
-import { AppearOnMount, Dots } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import { FC, useState } from 'react'
-import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Token } from 'utils/tokenType'
 import { useParams } from 'next/navigation'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Provider } from 'aptos'
 import { createToast } from 'components/toast'
+<<<<<<< HEAD
 import { useNetwork } from 'utils/useNetwork'
 import { networkNameToNetwork } from 'config/chains'
 
+=======
+import { providerNetwork } from 'lib/constants'
+import {
+  Card,
+  Message,
+  Widget,
+  WidgetDescription,
+  WidgetFooter,
+  WidgetHeader,
+  WidgetTitle,
+} from '@sushiswap/ui'
+
+const MASTERCHEF_CONTRACT =
+  process.env['MASTERCHEF_CONTRACT'] ||
+  process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
+const CONTRACT_ADDRESS =
+  process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+>>>>>>> c4469572a (fix(apps/swap): fix u swap styles for aptos)
 interface AddSectionStakeProps {
-  token0: Token
-  token1: Token
-  stakeAmount: number
   balance: number
   decimals: number
   lpTokenName: string | undefined
 }
 
 export const RemoveSectionUnstake: FC<{
-  token0: Token
-  token1: Token
-  stakeAmount: number
   balance: number
   decimals: number
   lpTokenName: string | undefined
-}> = ({ token0, token1, stakeAmount, balance, decimals, lpTokenName }) => {
+}> = ({ balance, decimals, lpTokenName }) => {
   const isMounted = useIsMounted()
   if (!isMounted) return <></>
   return (
-    <AppearOnMount show={true}>
-      <_RemoveSectionUnstake
-        token0={token0}
-        token1={token1}
-        stakeAmount={stakeAmount}
-        balance={balance}
-        decimals={decimals}
-        lpTokenName={lpTokenName}
-      />
-    </AppearOnMount>
+    <_RemoveSectionUnstake
+      balance={balance}
+      decimals={decimals}
+      lpTokenName={lpTokenName}
+    />
   )
 }
 
 export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
-  token0,
-  token1,
-  stakeAmount,
   balance,
   decimals,
   lpTokenName,
@@ -64,9 +66,15 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const withdrawLiquidity = async () => {
+<<<<<<< HEAD
     if (!masterchefContract) return
 
     const provider = new Provider(networkNameToNetwork(network))
+=======
+    if (!decimals) return
+
+    const provider = new Provider(providerNetwork)
+>>>>>>> c4469572a (fix(apps/swap): fix u swap styles for aptos)
     setTransactionPending(true)
 
     try {
@@ -96,7 +104,9 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
       setTransactionPending(false)
     }
   }
+
   return (
+<<<<<<< HEAD
     <RemoveSectionUnstakeWidget
       value={value}
       setValue={setValue}
@@ -122,5 +132,103 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
         </Button>
       )}
     </RemoveSectionUnstakeWidget>
+=======
+    <Widget id="stakeLiquidity" variant="empty">
+      <WidgetHeader>
+        <WidgetTitle>Unstake Liquidity</WidgetTitle>
+        <WidgetDescription>
+          Unstake your liquidity tokens first if you mean to remove your
+          liquidity position
+        </WidgetDescription>
+      </WidgetHeader>
+      {balance <= 0 ? (
+        <Message variant="warning" size="sm" className="mb-4">
+          We could not find any staked LP tokens for unstaking.
+        </Message>
+      ) : null}
+      <div className={balance <= 0 ? 'opacity-40 pointer-events-none' : ''}>
+        <div className="flex flex-col gap-6">
+          <Card variant="outline" className="p-6">
+            <div className="flex justify-between gap-4">
+              <div>
+                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
+                  {value}%
+                </h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  fullWidth
+                  size="sm"
+                  variant={value === '25' ? 'default' : 'secondary'}
+                  onClick={() => setValue('25')}
+                  testId="unstake-25"
+                >
+                  25%
+                </Button>
+                <Button
+                  fullWidth
+                  size="sm"
+                  variant={value === '50' ? 'default' : 'secondary'}
+                  onClick={() => setValue('50')}
+                  testId="unstake-50"
+                >
+                  50%
+                </Button>
+                <Button
+                  fullWidth
+                  size="sm"
+                  variant={value === '75' ? 'default' : 'secondary'}
+                  onClick={() => setValue('75')}
+                  testId="unstake-75"
+                >
+                  75%
+                </Button>
+                <Button
+                  fullWidth
+                  size="sm"
+                  variant={value === '100' ? 'default' : 'secondary'}
+                  onClick={() => setValue('100')}
+                  testId="unstake-max"
+                >
+                  MAX
+                </Button>
+              </div>
+            </div>
+            <div className="px-1 pt-2 pb-3">
+              <input
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                type="range"
+                min="1"
+                max="100"
+                className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
+              />
+            </div>
+          </Card>
+        </div>
+        <WidgetFooter>
+          {Number(value) > balance ? (
+            <Button size="default" disabled testId="stake-liquidity">
+              Insufficient Balance
+            </Button>
+          ) : (
+            <Button
+              onClick={Number(value) > 0 ? withdrawLiquidity : () => {}}
+              fullWidth
+              size="default"
+              disabled={isTransactionPending || !value}
+              testId="unstake-liquidity"
+            >
+              {isTransactionPending ? (
+                <Dots>Confirm transaction</Dots>
+              ) : (
+                'Unstake Liquidity'
+              )}
+            </Button>
+          )}
+        </WidgetFooter>
+      </div>
+    </Widget>
+>>>>>>> c4469572a (fix(apps/swap): fix u swap styles for aptos)
   )
 }

@@ -1,47 +1,64 @@
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { List } from '@sushiswap/ui/future/components/list/List'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
-import { ModalType } from '@sushiswap/ui/future/components/modal/ModalProvider'
-import { Skeleton } from '@sushiswap/ui/future/components/skeleton'
+import {
+  Badge,
+  Button,
+  Dots,
+  List,
+  SkeletonBox,
+  SkeletonCircle,
+  SkeletonText,
+  classNames,
+} from '@sushiswap/ui'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { Provider } from 'aptos'
+import { networkNameToNetwork } from 'config/chains'
+import {
+  warningSeverity,
+  warningSeverityClassName,
+} from 'lib/swap/warningSeverity'
 import React, { FC } from 'react'
 import { payloadArgs } from 'utils/payloadUtil'
-import { createToast } from './toast'
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { useNetwork } from 'utils/useNetwork'
+import { useSwapRouter } from 'utils/useSwapRouter'
+import { useTokenBalance } from 'utils/useTokenBalance'
 import { formatNumber } from 'utils/utilFunctions'
 import { Icon } from './Icon'
-import { classNames } from '@sushiswap/ui'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import { useSwapRouter } from 'utils/useSwapRouter'
-import { warningSeverity, warningSeverityClassName } from 'lib/swap/warningSeverity'
-import { useNetwork } from 'utils/useNetwork'
-import { networkNameToNetwork } from 'config/chains'
+import { Modal } from './Modal/Modal'
+import { ModalType } from './Modal/ModalProvider'
+import { createToast } from './toast'
 
 interface Props {
   isTransactionPending: boolean
 }
 
 export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
-  const { bestRoutes, token0, token1, slippageAmount, amount, outputAmount, isPriceFetching } = useSwapState()
+  const {
+    bestRoutes,
+    token0,
+    token1,
+    slippageAmount,
+    amount,
+    outputAmount,
+    isPriceFetching,
+  } = useSwapState()
   const { account, signAndSubmitTransaction } = useWallet()
   const { setisTransactionPending, setAmount } = useSwapActions()
 
-  const { data: balance, isLoading: isPriceLoading } = useTokenBalance({
+  const { data: balance } = useTokenBalance({
     account: account?.address as string,
     currency: token0?.address,
     refetchInterval: 2000,
   })
-  const { data: routes, isFetching } = useSwapRouter({
+  const { data: routes } = useSwapRouter({
     balance,
   })
 
-  const minOutput = slippageAmount ? formatNumber(slippageAmount, token1 ? token1.decimals : 8) : 0
+  const minOutput = slippageAmount
+    ? formatNumber(slippageAmount, token1 ? token1.decimals : 8)
+    : 0
 
   const {
     network,
@@ -52,9 +69,12 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
     const provider = new Provider(networkNameToNetwork(network))
     const payload: any = payloadArgs(
       swapContract,
-      parseInt((parseFloat(String(amount)) * 10 ** token0.decimals) as unknown as string),
+      parseInt(
+        (parseFloat(String(amount)) *
+          10 ** token0.decimals) as unknown as string,
+      ),
       bestRoutes,
-      parseInt(String(slippageAmount))
+      parseInt(String(slippageAmount)),
     )
     if (!account?.address) return []
     setisTransactionPending(true)
@@ -69,14 +89,14 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
       const toastId = `completed:${response?.hash}`
       createToast({
         summery: `Swap ${amount} ${token0.symbol} for ${parseFloat(
-          (parseInt(outputAmount) / 10 ** token1?.decimals).toFixed(9)
+          (parseInt(outputAmount) / 10 ** token1?.decimals).toFixed(9),
         )} ${token1.symbol}`,
         toastId: toastId,
       })
       setisTransactionPending(false)
       close()
       setAmount('')
-    } catch (error) {
+    } catch (_e) {
       const toastId = `failed:${Math.random()}`
       createToast({ summery: 'User rejected request', toastId: toastId })
     } finally {
@@ -84,9 +104,14 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
     }
   }
   const [slippageTolerance] = useSlippageTolerance('swapSlippage')
+
   return (
     <>
-      <Modal.Review modalType={ModalType.Regular} variant="opaque" tag="review-modal">
+      <Modal.Review
+        modalType={ModalType.Regular}
+        variant="opaque"
+        tag="review-modal"
+      >
         {({ close }) => (
           <div className="max-w-[504px] mx-auto">
             <button type="button" onClick={close} className="p-3 pl-0">
@@ -95,10 +120,11 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
             <div className="flex items-start justify-between gap-4 py-2">
               <div className="flex flex-col flex-grow gap-1">
                 {!outputAmount || isPriceFetching ? (
-                  <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
+                  <SkeletonText fontSize="3xl" className="w-2/3" />
                 ) : (
                   <h1 className="text-3xl font-semibold dark:text-slate-50">
-                    Buy {formatNumber(Number(outputAmount), token1.decimals)} {token1?.symbol}
+                    Buy {formatNumber(Number(outputAmount), token1.decimals)}{' '}
+                    {token1?.symbol}
                   </h1>
                 )}
                 <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
@@ -124,7 +150,10 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                       <Icon currency={token1} width={56} height={56} />
                     ) : (
                       // <img src={token1.logoURI} className="rounded-full" width={56} height={56} />
-                      <Skeleton.Circle radius={56} className="bg-gray-100 dark:bg-slate-800" />
+                      <SkeletonCircle
+                        radius={56}
+                        className="bg-gray-100 dark:bg-slate-800"
+                      />
                     )}
                   </Badge>
                 </div>
@@ -140,12 +169,14 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                   >
                     <span
                       className={classNames(
-                        warningSeverityClassName(warningSeverity(routes?.priceImpact)),
-                        'text-gray-700 text-right dark:text-slate-400 '
+                        warningSeverityClassName(
+                          warningSeverity(routes?.priceImpact),
+                        ),
+                        'text-gray-700 text-right dark:text-slate-400 ',
                       )}
                     >
                       {isPriceFetching ? (
-                        <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
+                        <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
                       ) : (
                         <>{routes?.priceImpact ? -routes?.priceImpact : 0}%</>
                       )}
@@ -158,7 +189,11 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                     subtitle="The minimum amount you are guaranteed to receive."
                   >
                     {!outputAmount || isPriceFetching ? (
-                      <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
+                      <SkeletonText
+                        align="right"
+                        fontSize="sm"
+                        className="w-1/2"
+                      />
                     ) : (
                       <>
                         {minOutput} {token1?.symbol}
@@ -167,7 +202,15 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                   </List.KeyValue>
 
                   <List.KeyValue title="Network fee">
-                    {isPriceFetching ? <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" /> : '~$0.00'}
+                    {isPriceFetching ? (
+                      <SkeletonText
+                        align="right"
+                        fontSize="sm"
+                        className="w-1/3"
+                      />
+                    ) : (
+                      '~$0.00'
+                    )}
                   </List.KeyValue>
                 </List.Control>
 
@@ -180,10 +223,15 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                           href={`https://explorer.aptoslabs.com/account/${
                             account?.address
                           }?network=${networkNameToNetwork(network)}`}
-                          className={classNames('flex items-center gap-2 cursor-pointer text-blue')}
+                          className={classNames(
+                            'flex items-center gap-2 cursor-pointer text-blue',
+                          )}
                           rel="noreferrer"
                         >
-                          {`${account?.address.substring(0, 6)}...${account?.address.substring(66 - 4)}`}
+                          {`${account?.address.substring(
+                            0,
+                            6,
+                          )}...${account?.address.substring(66 - 4)}`}
                         </a>
                       </List.KeyValue>
                     </List.Control>

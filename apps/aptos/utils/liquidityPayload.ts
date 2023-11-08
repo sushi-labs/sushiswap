@@ -5,7 +5,7 @@ export function liquidityArgs(
   amount0: number,
   amount1: number,
   minimumIn: number,
-  minimumOut: number
+  minimumOut: number,
 ) {
   return {
     type: 'entry_function_payload',

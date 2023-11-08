@@ -1,16 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
-import { Pool } from './usePools'
-import { useNetwork } from './useNetwork'
 import { SupportedNetwork, chains } from 'config/chains'
+import { useNetwork } from './useNetwork'
+import { Pool } from './usePools'
 
 interface GetPoolQueryFn {
   poolAddress: string
   network: SupportedNetwork
 }
 
-export const getPoolQueryFn = async ({ poolAddress, network }: GetPoolQueryFn) => {
+export const getPoolQueryFn = async ({
+  poolAddress,
+  network,
+}: GetPoolQueryFn) => {
   const response = await fetch(
-    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.swap}/resource/${chains[network].contracts.swap}::swap::TokenPairMetadata<${poolAddress}>`
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.swap}/resource/${chains[network].contracts.swap}::swap::TokenPairMetadata<${poolAddress}>`,
   )
 
   if (response.status === 200) {

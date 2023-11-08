@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { SupportedNetwork, chains } from 'config/chains'
 import { useMemo } from 'react'
 import { useNetwork } from './useNetwork'
-import { SupportedNetwork, chains } from 'config/chains'
 
 type PoolInfo = {
   acc_sushi_per_share: string
@@ -43,7 +43,7 @@ interface FarmsQueryFn {
 
 const farmsQueryFn = async ({ network }: FarmsQueryFn) => {
   const response = await fetch(
-    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.masterchef}/resource/${chains[network].contracts.masterchef}::masterchef::MasterChef`
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.masterchef}/resource/${chains[network].contracts.masterchef}::masterchef::MasterChef`,
   )
 
   if (response.status === 200) {
@@ -65,8 +65,11 @@ export const useIsFarm = ({ poolAddress, farms }: UseIsFarm) => {
   } = useNetwork()
 
   return useMemo(
-    () => farms?.data?.lps.indexOf(`${swapContract}::swap::LPToken<${poolAddress}>`),
-    [poolAddress, swapContract, farms]
+    () =>
+      farms?.data?.lps.indexOf(
+        `${swapContract}::swap::LPToken<${poolAddress}>`,
+      ),
+    [poolAddress, swapContract, farms],
   )
 }
 

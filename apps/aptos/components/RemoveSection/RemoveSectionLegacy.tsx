@@ -1,18 +1,18 @@
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import { Provider } from 'aptos'
-import React, { useMemo, useState } from 'react'
-import { Pool } from 'utils/usePools'
-import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { formatNumber } from 'utils/utilFunctions'
-import { createToast } from 'components/toast'
-import { Dots } from '@sushiswap/ui/future/components/Dots'
-import WalletSelector from 'components/WalletSelector'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import { classNames } from '@sushiswap/ui'
+import { Provider } from 'aptos'
+import WalletSelector from 'components/WalletSelector'
+import { createToast } from 'components/toast'
+import { networkNameToNetwork } from 'config/chains'
+import React, { useMemo, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
-import { classNames } from '@sushiswap/ui'
-import { networkNameToNetwork } from 'config/chains'
+import { Pool } from 'utils/usePools'
+import { formatNumber } from 'utils/utilFunctions'
+import { RemoveSectionWidget } from './RemoveSectionWidget'
 
+import { Dots } from '@sushiswap/ui'
 interface Props {
   pool: Pool
   liquidityBalance: number | undefined
@@ -39,7 +39,11 @@ export const RemoveSectionLegacy = ({
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const slippagePercent = useMemo(() => {
     return (
-      Math.floor(+(slippageTolerance === 'AUTO' || slippageTolerance === '' ? '0.5' : slippageTolerance) * 100) / 10000
+      Math.floor(
+        +(slippageTolerance === 'AUTO' || slippageTolerance === ''
+          ? '0.5'
+          : slippageTolerance) * 100,
+      ) / 10000
     )
   }, [slippageTolerance])
 
@@ -48,24 +52,33 @@ export const RemoveSectionLegacy = ({
   }, [pool])
 
   const [percentage, setPercentage] = useState<string>('')
-  const [isTransactionPending, setisTransactionPending] = useState<boolean>(false)
+  const [isTransactionPending, setisTransactionPending] =
+    useState<boolean>(false)
   const { account, signAndSubmitTransaction, connected } = useWallet()
 
   const currencyAToRemove = useMemo(() => {
     return token0
       ? underlying0 && liquidityBalance
-        ? Math.floor((Number(reserve0) * Math.floor((liquidityBalance * +percentage) / 100)) / Number(totalSupply))
+        ? Math.floor(
+            (Number(reserve0) *
+              Math.floor((liquidityBalance * +percentage) / 100)) /
+              Number(totalSupply),
+          )
         : 0
       : undefined
-  }, [percentage, token0, underlying0, slippagePercent])
+  }, [percentage, token0, underlying0, totalSupply, liquidityBalance, reserve0])
 
   const currencyBToRemove = useMemo(() => {
     return token1
       ? underlying1 && liquidityBalance
-        ? Math.floor((Number(reserve1) * Math.floor((liquidityBalance * +percentage) / 100)) / Number(totalSupply))
+        ? Math.floor(
+            (Number(reserve1) *
+              Math.floor((liquidityBalance * +percentage) / 100)) /
+              Number(totalSupply),
+          )
         : 0
       : undefined
-  }, [percentage, token1, underlying0, slippagePercent])
+  }, [percentage, token1, underlying1, totalSupply, liquidityBalance, reserve1])
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
@@ -97,7 +110,11 @@ export const RemoveSectionLegacy = ({
       const response = await signAndSubmitTransaction({
         type: 'entry_function_payload',
         type_arguments: [token0?.address, token1?.address],
-        arguments: [Math.floor((liquidityBalance * +percentage) / 100), minAmount0, minAmount1],
+        arguments: [
+          Math.floor((liquidityBalance * +percentage) / 100),
+          minAmount0,
+          minAmount1,
+        ],
         function: `${swapContract}::router::remove_liquidity`,
       })
       await provider.waitForTransaction(response?.hash)
@@ -136,9 +153,8 @@ export const RemoveSectionLegacy = ({
           <button
             className={classNames(
               'btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold',
-              Number(percentage) <= 0 || isTransactionPending
-                ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
-                : ''
+              (Number(percentage) <= 0 || isTransactionPending) &&
+                'pointer-events-none relative opacity-[0.4] overflow-hidden',
             )}
             type="button"
             disabled={Number(percentage) <= 0 || isTransactionPending}
@@ -153,7 +169,7 @@ export const RemoveSectionLegacy = ({
             )}
           </button>
         ) : (
-          <WalletSelector hideChevron color="blue" size="xl" fullWidth={true} />
+          <WalletSelector />
         )}
       </>
     </RemoveSectionWidget>

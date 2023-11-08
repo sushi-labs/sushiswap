@@ -4,13 +4,24 @@ import { useCallback, useMemo } from 'react'
 import { Token } from './tokenType'
 
 export function useCustomTokens() {
-  const [value, setValue] = useLocalStorage<Record<string, Data>>('sushi.customTokens.aptos', {})
+  const [value, setValue] = useLocalStorage<Record<string, Data>>(
+    'sushi.customTokens.aptos',
+    {},
+  )
 
   const hydrate = useCallback((data: Record<string, Data>) => {
-    return Object.entries(data).reduce<Record<string, Token>>((acc, [k, { address, decimals, name, symbol }]) => {
-      acc[k] = { address, decimals, name: String(name), symbol: String(symbol) }
-      return acc
-    }, {})
+    return Object.entries(data).reduce<Record<string, Token>>(
+      (acc, [k, { address, decimals, name, symbol }]) => {
+        acc[k] = {
+          address,
+          decimals,
+          name: String(name),
+          symbol: String(symbol),
+        }
+        return acc
+      },
+      {},
+    )
   }, [])
 
   const addCustomToken = useCallback(
@@ -30,11 +41,11 @@ export function useCustomTokens() {
             acc[`${cur.address}`] = cur
             return acc
           },
-          { ...prev }
+          { ...prev },
         )
       })
     },
-    [setValue]
+    [setValue],
   )
 
   const removeCustomToken = useCallback(
@@ -49,7 +60,7 @@ export function useCustomTokens() {
         }, {})
       })
     },
-    [setValue]
+    [setValue],
   )
 
   const hasToken = useCallback(
@@ -59,7 +70,7 @@ export function useCustomTokens() {
       }
       return !!value[`${currency.address}`]
     },
-    [value]
+    [value],
   )
 
   const mutate = useCallback(
@@ -67,7 +78,7 @@ export function useCustomTokens() {
       if (type === 'add') addCustomToken(currency)
       if (type === 'remove') removeCustomToken(currency[0])
     },
-    [addCustomToken]
+    [addCustomToken, removeCustomToken],
   )
 
   return useMemo(() => {
@@ -76,5 +87,5 @@ export function useCustomTokens() {
       mutate,
       hasToken,
     }
-  }, [hydrate, mutate, hasToken])
+  }, [hydrate, mutate, hasToken, value])
 }

@@ -24,10 +24,7 @@
     "@msafe/aptos-wallet-adapter": "^1.0.13",
     "@pontem/wallet-adapter-plugin": "^0.2.0",
     "@rise-wallet/wallet-adapter": "^0.1.2",
-    "@sushiswap/amm": "workspace:*",
-    "@sushiswap/format": "workspace:0.1.0",
     "@sushiswap/hooks": "workspace:*",
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
@@ -37,6 +34,7 @@
     "@tanstack/react-table": "8.9.1",
     "@vercel/analytics": "0.1.5",
     "@vercel/edge-config": "0.4.1",
+    "sushi": "workspace:*",
     "aptos": "^1.11.0",
     "fewcha-plugin-wallet-adapter": "^0.1.2",
     "lodash": "^4.17.21",
@@ -53,9 +51,7 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/lodash": "^4.14.200",
     "@types/node": "18.11.18",

@@ -1,12 +1,10 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Tab } from '@headlessui/react'
-import { useDebounce } from '@sushiswap/hooks'
-import Container from '@sushiswap/ui/future/components/Container'
-import { Button } from '@sushiswap/ui/future/components/button'
 import { PoolsTable } from 'app/pool/PoolsSection/Tables/PoolsTable'
 import { PositionsTable } from 'app/pool/PoolsSection/Tables/PositionsTable'
 import { PoolFilters } from 'app/pool/PoolsSection/Tables/TableFilters/PoolFilters'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useState } from 'react'
+import { Button, Container } from '@sushiswap/ui'
 
 export default function PoolsSection() {
   const [tab, setTab] = useState<number>(0)
@@ -26,7 +24,7 @@ export default function PoolsSection() {
               {({ selected }) => (
                 <Button
                   size="sm"
-                  variant={selected ? 'outlined' : 'empty'}
+                  variant={selected ? 'outline' : 'ghost'}
                   color="default"
                   className="!rounded-full !h-[36px]"
                 >
@@ -40,7 +38,7 @@ export default function PoolsSection() {
                   {({ selected }) => (
                     <Button
                       size="sm"
-                      variant={selected ? 'outlined' : 'empty'}
+                      variant={selected ? 'outline' : 'ghost'}
                       color="default"
                       testId="my-positions"
                       className="!rounded-full !h-[36px]"
@@ -53,7 +51,7 @@ export default function PoolsSection() {
                   {({ selected }) => (
                     <Button
                       size="sm"
-                      variant={selected ? 'outlined' : 'empty'}
+                      variant={selected ? 'outline' : 'ghost'}
                       color="default"
                       className="!rounded-full !h-[36px]"
                       testId="my-rewards"
@@ -85,7 +83,6 @@ export default function PoolsSection() {
           <Tab.Panel>
             <PositionsTable query={query} />
           </Tab.Panel>
-          <Tab.Panel></Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>

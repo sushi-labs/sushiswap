@@ -47,14 +47,16 @@ interface FetchPoolsQueryFn {
 
 export async function fetchPoolsQueryFn({ network }: FetchPoolsQueryFn) {
   const response = await fetch(
-    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.swap}/resources`
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.swap}/resources`,
   )
 
   if (response.status === 200) {
     const data = await response.json()
     const coinPair: Pool[] = data.filter((pair: Pool) => {
       pair.id = `${pair?.data?.token_x_details?.token_address}, ${pair?.data?.token_y_details?.token_address}`
-      return pair.type.includes(`${chains[network].contracts.swap}::swap::TokenPairMetadata`)
+      return pair.type.includes(
+        `${chains[network].contracts.swap}::swap::TokenPairMetadata`,
+      )
     })
 
     return coinPair

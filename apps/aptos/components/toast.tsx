@@ -1,8 +1,8 @@
-import { TOAST_OPTIONS } from '@sushiswap/ui/future/components/toast'
-import { ToastButtons } from '@sushiswap/ui/future/components/toast/ToastButtons'
-import { ToastContent } from '@sushiswap/ui/future/components/toast/ToastContent'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { ToastContent } from '@sushiswap/ui/components/toast/ToastContent'
+import { ToastButtons } from '@sushiswap/ui/components/toast/ToastButtons'
+import { TOAST_OPTIONS } from '@sushiswap/ui'
 
 interface Props {
   summery: string
@@ -19,6 +19,6 @@ export const createToast = ({ summery, link = '', toastId }: Props) => {
     {
       ...TOAST_OPTIONS,
       toastId,
-    }
+    },
   )
 }

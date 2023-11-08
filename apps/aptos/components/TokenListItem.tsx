@@ -1,10 +1,9 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
-import { Badge } from '@sushiswap/ui/future/components/Badge'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
 import React, { CSSProperties } from 'react'
 import { Token } from 'utils/tokenType'
 import { Icon } from './Icon'
-import { classNames } from '@sushiswap/ui'
+import { Badge, classNames } from '@sushiswap/ui'
+import { Modal } from './Modal/Modal'
 type PropType = {
   id: string
   style: CSSProperties
@@ -27,13 +26,14 @@ export default function TokenListItem({
     <div className="py-0.5 h-[64px]" style={style}>
       <Modal.Trigger tag={`${id}-token-selector-modal`}>
         {({ close }) => (
-          <div
+          <button
+            type="button"
             className={classNames(
               selected ? 'bg-black/[0.06] dark:bg-white/[0.06]' : '',
-              `group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-$TRDL cursor-pointer`
+              'group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-$TRDL cursor-pointer',
             )}
             onClick={() => {
-              if (token?.address == alteredSelected?.address) {
+              if (token?.address === alteredSelected?.address) {
                 handleSwap()
               } else {
                 handleChangeToken(token)
@@ -48,7 +48,11 @@ export default function TokenListItem({
                     position="bottom-right"
                     badgeContent={
                       <div className="bg-white dark:bg-slate-800 rounded-full">
-                        <CheckCircleIcon width={20} height={20} className="text-blue rounded-full" />
+                        <CheckCircleIcon
+                          width={20}
+                          height={20}
+                          className="text-blue rounded-full"
+                        />
                       </div>
                     }
                   >
@@ -71,7 +75,7 @@ export default function TokenListItem({
                 </div>
               </div>
             </div>
-          </div>
+          </button>
         )}
       </Modal.Trigger>
     </div>

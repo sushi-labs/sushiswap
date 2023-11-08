@@ -18,10 +18,10 @@ export type CoinInfo = {
               {
                 limit: string
                 value: string
-              }
+              },
             ]
           }
-        }
+        },
       ]
     }
     symbol: string
@@ -33,9 +33,12 @@ interface TotalSupplyQueryFn {
   network: SupportedNetwork
 }
 
-const totalSupplyQueryFn = async ({ tokenAddress, network }: TotalSupplyQueryFn) => {
+const totalSupplyQueryFn = async ({
+  tokenAddress,
+  network,
+}: TotalSupplyQueryFn) => {
   const response = await fetch(
-    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.swap}/resource/0x1::coin::CoinInfo<${chains[network].contracts.swap}::swap::LPToken<${tokenAddress}>>`
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${chains[network].contracts.swap}/resource/0x1::coin::CoinInfo<${chains[network].contracts.swap}::swap::LPToken<${tokenAddress}>>`,
   )
   if (response.status === 200) {
     const data = await response.json()
@@ -50,7 +53,8 @@ export function useTotalSupply(tokenAddress: string | undefined) {
 
   return useQuery({
     queryKey: ['totalSupply', { tokenAddress, network }],
-    queryFn: async () => totalSupplyQueryFn({ tokenAddress: tokenAddress as string, network }),
+    queryFn: async () =>
+      totalSupplyQueryFn({ tokenAddress: tokenAddress as string, network }),
     enabled: Boolean(tokenAddress),
   })
 }

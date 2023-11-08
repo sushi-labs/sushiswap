@@ -1,5 +1,5 @@
-import { Token } from './tokenType'
 import { SupportedNetwork, chains } from 'config/chains'
+import { Token } from './tokenType'
 
 export interface CoinType {
   type: string
@@ -15,7 +15,9 @@ interface GetTokenData {
 export async function getTokenData({ token, account, network }: GetTokenData) {
   let tokenData
 
-  const res = await fetch(`${chains[network].api.fetchUrlPrefix}/v1/accounts/${account}/resources`)
+  const res = await fetch(
+    `${chains[network].api.fetchUrlPrefix}/v1/accounts/${account}/resources`,
+  )
   const data = await res.json()
 
   if (!data.error_code) {

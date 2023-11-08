@@ -1,4 +1,9 @@
-export function payloadArgs(contractAddress: string, amount_in: number, routes: any, minimumOut: number) {
+export function payloadArgs(
+  contractAddress: string,
+  amount_in: number,
+  routes: any,
+  minimumOut: number,
+) {
   switch (routes.length) {
     case 2:
       return {
@@ -31,5 +36,4 @@ export function payloadArgs(contractAddress: string, amount_in: number, routes: 
     default:
       return undefined
   }
-  return undefined
 }

@@ -11,13 +11,16 @@ import { ThemeProvider } from '@sushiswap/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { chains } from 'config/chains'
 
+import { Modal } from 'components/Modal/Modal'
 const wallets = [
   new PetraWallet(),
   new PontemWallet(),
   new FewchaWallet(),
   new MartianWallet(),
   new RiseWallet(),
-  new MSafeWalletAdapter(Object.values(chains).map((chain) => chain.other.MSafeOrigin)),
+  new MSafeWalletAdapter(
+    Object.values(chains).map((chain) => chain.other.MSafeOrigin),
+  ),
 ]
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -26,7 +29,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <>
       <QueryClientProvider client={queryClient}>
         <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <Modal.Provider>{children}</Modal.Provider>
+          </ThemeProvider>
         </AptosWalletAdapterProvider>
       </QueryClientProvider>
     </>

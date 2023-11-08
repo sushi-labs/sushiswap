@@ -1,28 +1,32 @@
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
-import { IconButton } from '@sushiswap/ui/future/components/IconButton'
-import { Layout } from 'components/Layout'
-import { ContentBlock } from 'components/ContentBlock'
-import TradeInput from 'components/TradeInput'
-import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { usePoolPairs } from 'utils/utilFunctions'
-import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-import { Provider } from 'aptos'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
+import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  Button,
+  IconButton,
+  SettingsModule,
+  SettingsOverlay,
+} from '@sushiswap/ui'
+import Loading from 'app/loading'
 import { AddLiquidityButton } from 'app/pool/Pool/AddLiquidityButton'
 import { AddSectionReviewModal } from 'app/pool/Pool/AddSectionReviewModel'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
+import { Provider } from 'aptos'
+import { ContentBlock } from 'components/ContentBlock'
+import { Layout } from 'components/Layout'
+import { SelectTokensWidget } from 'components/NewPositionSection'
+import TradeInput from 'components/TradeInput'
 import { createToast } from 'components/toast'
-import { liquidityArgs } from 'utils/liquidityPayload'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import Loading from 'app/loading'
-import { useAccount } from 'utils/useAccount'
-import { useSearchParams } from 'next/navigation'
-import getTokenFromAddress from 'utils/getTokenFromAddress'
-import { SettingsModule, SettingsOverlay } from '@sushiswap/ui/future/components/settings'
-import { useNetwork } from 'utils/useNetwork'
 import { networkNameToNetwork } from 'config/chains'
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
+import getTokenFromAddress from 'utils/getTokenFromAddress'
+import { liquidityArgs } from 'utils/liquidityPayload'
+import { useAccount } from 'utils/useAccount'
+import { useNetwork } from 'utils/useNetwork'
+import { useTokenBalance } from 'utils/useTokenBalance'
+import { usePoolPairs } from 'utils/utilFunctions'
 
 export function Add() {
   // const router = useRouter()
@@ -34,15 +38,12 @@ export function Add() {
       {isLoadingAccount && <Loading />}
       <Layout className="flex justify-center">
         <div className="flex flex-col gap-2">
-          <Link className="flex items-center gap-4 mb-2 group" href="/pool" shallow={true}>
-            <IconButton
-              icon={ArrowLeftIcon}
-              iconProps={{
-                width: 24,
-                height: 24,
-                transparent: true,
-              }}
-            />
+          <Link
+            className="flex items-center gap-4 mb-2 group"
+            href="/pool"
+            shallow={true}
+          >
+            <IconButton icon={ArrowLeftIcon} size="sm" name="arrow" />
             <span className="group-hover:opacity-[1] transition-all opacity-0 text-sm font-medium">
               Go back to pools list
             </span>
@@ -72,9 +73,20 @@ const _Add: FC = () => {
     setSlippageAmount0,
     setSlippageAmount1,
   } = usePoolActions()
-  const { token0, token1, amount0, amount1, isPriceFetching, poolPairRatio, pairs, slippageAmount0, slippageAmount1 } =
-    usePoolState()
+  // const { token0, token1, amount0, amount1, isPriceFetching, pairs, slippageAmount0, slippageAmount1 } =
+  //   usePoolState()
   const { account, signAndSubmitTransaction, connected } = useWallet()
+  const {
+    token0,
+    token1,
+    amount0,
+    amount1,
+    isPriceFetching,
+    poolPairRatio,
+    pairs,
+    slippageAmount0,
+    slippageAmount1,
+  } = usePoolState()
   const [error0, setError0] = useState('')
   const [error1, setError1] = useState('')
 
@@ -101,7 +113,7 @@ const _Add: FC = () => {
       parseInt(String(Number(amount0) * 10 ** token0.decimals)),
       parseInt(String(Number(amount1) * 10 ** token1.decimals)),
       parseInt(String(slippageAmount0)),
-      parseInt(String(slippageAmount1))
+      parseInt(String(slippageAmount1)),
     )
     setisTransactionPending(true)
     if (!account) return []
@@ -121,7 +133,7 @@ const _Add: FC = () => {
       close()
       setAmount0('')
       setAmount1('')
-    } catch (error) {
+    } catch (_e) {
       const toastId = `failed:${Math.random()}`
       createToast({ summery: 'User rejected request', toastId: toastId })
     } finally {
@@ -149,14 +161,20 @@ const _Add: FC = () => {
           const decimalDiff = token0.decimals - token1.decimals
 
           setAmount1(
-            String(parseFloat((parseFloat(value) * poolPairRatio * 10 ** decimalDiff).toFixed(token1.decimals)))
+            String(
+              parseFloat(
+                (parseFloat(value) * poolPairRatio * 10 ** decimalDiff).toFixed(
+                  token1.decimals,
+                ),
+              ),
+            ),
           )
         } else {
           setAmount1('')
         }
       }
     },
-    [poolPairRatio, balance0, token0, token1]
+    [poolPairRatio, balance0, token0, token1],
   )
 
   const searchParams = useSearchParams()
@@ -179,14 +197,21 @@ const _Add: FC = () => {
           const decimalDiff = token1.decimals - token0.decimals
 
           setAmount0(
-            String(parseFloat(((parseFloat(value) / poolPairRatio) * 10 ** decimalDiff).toFixed(token0.decimals)))
+            String(
+              parseFloat(
+                (
+                  (parseFloat(value) / poolPairRatio) *
+                  10 ** decimalDiff
+                ).toFixed(token0.decimals),
+              ),
+            ),
           )
         } else {
           setAmount0('')
         }
       }
     },
-    [poolPairRatio, balance1]
+    [poolPairRatio, balance1],
   )
 
   useEffect(() => {
@@ -241,7 +266,12 @@ const _Add: FC = () => {
   return (
     <>
       <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-        <ContentBlock title={<span className="text-gray-900 dark:text-white">Deposit.</span>}>
+        <SelectTokensWidget />
+        <ContentBlock
+          title={
+            <span className="text-gray-900 dark:text-white">Deposit.</span>
+          }
+        >
           <div className="flex flex-col gap-4">
             <TradeInput
               id={'liquidity-from'}
@@ -259,8 +289,14 @@ const _Add: FC = () => {
               handleSwap={swapTokenIfAlreadySelected}
             />
             <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-              <button type="button" className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900">
-                <PlusIcon strokeWidth={3} className="w-4 h-4 dark:text-slate-400 text-slate-600" />
+              <button
+                type="button"
+                className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900"
+              >
+                <PlusIcon
+                  strokeWidth={3}
+                  className="w-4 h-4 dark:text-slate-400 text-slate-600"
+                />
               </button>
             </div>
             <TradeInput
@@ -278,7 +314,10 @@ const _Add: FC = () => {
               type="INPUT"
               handleSwap={swapTokenIfAlreadySelected}
             />
-            <AddLiquidityButton buttonError={error0 || error1} token1Value={String(amount0)} />
+            <AddLiquidityButton
+              buttonError={error0 || error1}
+              token1Value={String(amount0)}
+            />
           </div>
         </ContentBlock>
         <AddSectionReviewModal>

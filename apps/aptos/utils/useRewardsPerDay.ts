@@ -5,7 +5,7 @@ const SECONDS_PER_DAY = 86400
 export function useRewardsPerDay(
   farms: FarmLP | undefined,
   farmIndex: number | undefined,
-  decimals: number | undefined
+  decimals: number | undefined,
 ) {
   return useMemo(() => {
     if (farms && farmIndex !== undefined && farmIndex !== -1 && decimals) {
@@ -17,7 +17,7 @@ export function useRewardsPerDay(
           SECONDS_PER_DAY *
           Number(farms?.data?.pool_info?.[farmIndex]?.alloc_point)) /
           Number(total_allocPoint),
-        decimals
+        decimals,
       )
     } else {
       return '0'

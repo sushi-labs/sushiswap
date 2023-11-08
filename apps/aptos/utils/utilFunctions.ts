@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
-import { Token } from './tokenType'
 import { usePoolActions, usePoolState } from 'app/pool/Pool/PoolProvider'
-import { Pool } from './usePools'
-import { baseTokens } from './baseTokens'
-import { useNetwork } from './useNetwork'
 import { SupportedNetwork, chains } from 'config/chains'
+import { useMemo } from 'react'
+import { baseTokens } from './baseTokens'
+import { Token } from './tokenType'
+import { useNetwork } from './useNetwork'
+import { Pool } from './usePools'
 
 export type Route = {
   route: string[]
@@ -20,7 +20,13 @@ interface GetAllCommonPairs {
   network: SupportedNetwork
 }
 
-export async function getAllCommonPairs({ amount_in = 0, coinA, coinB, pairs, network }: GetAllCommonPairs) {
+export async function getAllCommonPairs({
+  amount_in = 0,
+  coinA,
+  coinB,
+  pairs,
+  network,
+}: GetAllCommonPairs) {
   const {
     api: { fetchUrlPrefix },
     contracts: { swap: swapContract },
@@ -48,7 +54,7 @@ export async function getAllCommonPairs({ amount_in = 0, coinA, coinB, pairs, ne
   await fetch(`${fetchUrlPrefix}/v1/accounts/${swapContract}/resources`)
     .then((res) => res.json())
     .then((data) => {
-      let t: any = {}
+      const t: any = {}
       const reserve_tokens: any = {}
       const reserve_token_info: any = {}
 
@@ -60,17 +66,28 @@ export async function getAllCommonPairs({ amount_in = 0, coinA, coinB, pairs, ne
           return true
         }
 
-        if (d.type.includes(`0x1::coin::CoinInfo<${swapContract}::swap::LPToken<`)) {
+        if (
+          d.type.includes(`0x1::coin::CoinInfo<${swapContract}::swap::LPToken<`)
+        ) {
           reserve_token_info[d.type] = d
         }
       })
       allPairs.map((token) => {
-        if (reserve_tokens[`${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`]) {
+        if (
+          reserve_tokens[
+            `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
+          ]
+        ) {
           const info = {
             lpTokenInfo:
-              reserve_token_info[`0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[0]}, ${token[1]}>>`],
+              reserve_token_info[
+                `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[0]}, ${token[1]}>>`
+              ],
           }
-          const data = reserve_tokens[`${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`]
+          const data =
+            reserve_tokens[
+              `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
+            ]
 
           t[`${token[0]}|||${token[1]}`] = {
             pairs: `${token[0]}|||${token[1]}`,
@@ -81,12 +98,21 @@ export async function getAllCommonPairs({ amount_in = 0, coinA, coinB, pairs, ne
           }
         }
 
-        if (reserve_tokens[`${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`]) {
+        if (
+          reserve_tokens[
+            `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
+          ]
+        ) {
           const info = {
             lpTokenInfo:
-              reserve_token_info[`0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[1]}, ${token[0]}>>`],
+              reserve_token_info[
+                `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[1]}, ${token[0]}>>`
+              ],
           }
-          const data = reserve_tokens[`${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`]
+          const data =
+            reserve_tokens[
+              `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
+            ]
 
           t[`${token[1]}|||${token[0]}`] = {
             pairs: `${token[0]}|||${token[1]}`,
@@ -148,10 +174,16 @@ export async function usePoolPairs() {
         .then((res) => res.json())
         .then((data) => {
           reserves = data.filter((d: TokenPairReserve) => {
-            if (d.type === `${swapContract}::swap::TokenPairReserve<${token0.address}, ${token1.address}>`) {
+            if (
+              d.type ===
+              `${swapContract}::swap::TokenPairReserve<${token0.address}, ${token1.address}>`
+            ) {
               inverse = false
               return true
-            } else if (d.type === `${swapContract}::swap::TokenPairReserve<${token1.address}, ${token0.address}>`) {
+            } else if (
+              d.type ===
+              `${swapContract}::swap::TokenPairReserve<${token1.address}, ${token0.address}>`
+            ) {
               inverse = true
               return true
             }
@@ -167,9 +199,15 @@ export async function usePoolPairs() {
     if (reserves?.length) {
       setPairs(reserves[0])
       if (inverse) {
-        setPoolPairRatio(Number(reserves[0]?.data?.reserve_x) / Number(reserves[0]?.data?.reserve_y))
+        setPoolPairRatio(
+          Number(reserves[0]?.data?.reserve_x) /
+            Number(reserves[0]?.data?.reserve_y),
+        )
       } else {
-        setPoolPairRatio(Number(reserves[0]?.data?.reserve_y) / Number(reserves[0]?.data?.reserve_x))
+        setPoolPairRatio(
+          Number(reserves[0]?.data?.reserve_y) /
+            Number(reserves[0]?.data?.reserve_x),
+        )
       }
     } else {
       setPairs({})
@@ -189,7 +227,14 @@ const amountWithFee = (amt_in: number) => {
   return amt_in * 9975
 }
 
-function findPossibleRoutes(tokenA: string, tokenB: string, graph: any, visited: any, currentRoute: any, routes: any) {
+function findPossibleRoutes(
+  tokenA: string,
+  tokenB: string,
+  graph: any,
+  visited: any,
+  currentRoute: any,
+  routes: any,
+) {
   // Mark the current token as visited
   visited[tokenA] = true
 
@@ -205,7 +250,14 @@ function findPossibleRoutes(tokenA: string, tokenB: string, graph: any, visited:
       for (const adjacentToken of graph[tokenA]) {
         // If the adjacent token is not visited, recursively find possible routes
         if (!visited[adjacentToken]) {
-          findPossibleRoutes(adjacentToken, tokenB, graph, visited, currentRoute, routes)
+          findPossibleRoutes(
+            adjacentToken,
+            tokenB,
+            graph,
+            visited,
+            currentRoute,
+            routes,
+          )
         }
       }
     }
@@ -216,12 +268,25 @@ function findPossibleRoutes(tokenA: string, tokenB: string, graph: any, visited:
   visited[tokenA] = false
 }
 
-function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB: any) {
+function RouteDemo(
+  firstInput: any,
+  ARR: any,
+  tokenGraph: any,
+  coinA: any,
+  coinB: any,
+) {
   const visitedTokens = {}
   const currentTokenRoute: any[] = []
   const allRoutes: any[] = []
 
-  findPossibleRoutes(coinA.address, coinB.address, tokenGraph, visitedTokens, currentTokenRoute, allRoutes)
+  findPossibleRoutes(
+    coinA.address,
+    coinB.address,
+    tokenGraph,
+    visitedTokens,
+    currentTokenRoute,
+    allRoutes,
+  )
 
   // let firstInput = 100000000
   let lastOutput = 0
@@ -229,34 +294,67 @@ function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB
   for (const route of allRoutes) {
     const prices = []
     if (route.length < 6) {
-      if (ARR[route[0] + '|||' + route[1]] || ARR[route[1] + '|||' + route[0]]) {
-        const res_x = ARR[route[0] + '|||' + route[1]]?.res_x || ARR[route[1] + '|||' + route[0]]?.res_y
-        const res_y = ARR[route[0] + '|||' + route[1]]?.res_y || ARR[route[1] + '|||' + route[0]]?.res_x
+      if (
+        ARR[route[0] + '|||' + route[1]] ||
+        ARR[route[1] + '|||' + route[0]]
+      ) {
+        const res_x =
+          ARR[route[0] + '|||' + route[1]]?.res_x ||
+          ARR[route[1] + '|||' + route[0]]?.res_y
+        const res_y =
+          ARR[route[0] + '|||' + route[1]]?.res_y ||
+          ARR[route[1] + '|||' + route[0]]?.res_x
         lastOutput = exactOutput(firstInput, res_x, res_y)
         prices.push(res_y / res_x)
 
-        if (ARR[route[1] + '|||' + route[2]] || ARR[route[2] + '|||' + route[1]]) {
-          const res_x = ARR[route[1] + '|||' + route[2]]?.res_x || ARR[route[2] + '|||' + route[1]]?.res_y
-          const res_y = ARR[route[1] + '|||' + route[2]]?.res_y || ARR[route[2] + '|||' + route[1]]?.res_x
+        if (
+          ARR[route[1] + '|||' + route[2]] ||
+          ARR[route[2] + '|||' + route[1]]
+        ) {
+          const res_x =
+            ARR[route[1] + '|||' + route[2]]?.res_x ||
+            ARR[route[2] + '|||' + route[1]]?.res_y
+          const res_y =
+            ARR[route[1] + '|||' + route[2]]?.res_y ||
+            ARR[route[2] + '|||' + route[1]]?.res_x
           lastOutput = exactOutput(lastOutput, res_x, res_y)
           prices.push(res_y / res_x)
 
-          if (ARR[route[2] + '|||' + route[3]] || ARR[route[3] + '|||' + route[2]]) {
-            const res_x = ARR[route[2] + '|||' + route[3]]?.res_x || ARR[route[3] + '|||' + route[2]]?.res_y
-            const res_y = ARR[route[2] + '|||' + route[3]]?.res_y || ARR[route[3] + '|||' + route[2]]?.res_x
+          if (
+            ARR[route[2] + '|||' + route[3]] ||
+            ARR[route[3] + '|||' + route[2]]
+          ) {
+            const res_x =
+              ARR[route[2] + '|||' + route[3]]?.res_x ||
+              ARR[route[3] + '|||' + route[2]]?.res_y
+            const res_y =
+              ARR[route[2] + '|||' + route[3]]?.res_y ||
+              ARR[route[3] + '|||' + route[2]]?.res_x
             lastOutput = exactOutput(lastOutput, res_x, res_y)
             prices.push(res_y / res_x)
 
-            if (ARR[route[3] + '|||' + route[4]] || ARR[route[4] + '|||' + route[3]]) {
-              const res_x = ARR[route[3] + '|||' + route[4]]?.res_x || ARR[route[4] + '|||' + route[3]]?.res_y
-              const res_y = ARR[route[3] + '|||' + route[4]]?.res_y || ARR[route[4] + '|||' + route[3]]?.res_x
+            if (
+              ARR[route[3] + '|||' + route[4]] ||
+              ARR[route[4] + '|||' + route[3]]
+            ) {
+              const res_x =
+                ARR[route[3] + '|||' + route[4]]?.res_x ||
+                ARR[route[4] + '|||' + route[3]]?.res_y
+              const res_y =
+                ARR[route[3] + '|||' + route[4]]?.res_y ||
+                ARR[route[4] + '|||' + route[3]]?.res_x
               lastOutput = exactOutput(lastOutput, res_x, res_y)
               prices.push(res_y / res_x)
             }
           }
         }
       }
-      const midPrice = prices.slice(1).reduce((accumulator, currentValue) => accumulator * currentValue, prices[0])
+      const midPrice = prices
+        .slice(1)
+        .reduce(
+          (accumulator, currentValue) => accumulator * currentValue,
+          prices[0],
+        )
       const priceImpact = computePriceImpact(midPrice, firstInput, lastOutput)
 
       bestFinder.push({
@@ -272,9 +370,14 @@ function RouteDemo(firstInput: any, ARR: any, tokenGraph: any, coinA: any, coinB
   return bestRoutePrice
 }
 
-function computePriceImpact(midPrice: number, amountIn: number, amountOut: number) {
+function computePriceImpact(
+  midPrice: number,
+  amountIn: number,
+  amountOut: number,
+) {
   const quotedOutputAmount = amountIn * midPrice
-  const priceImpact = ((quotedOutputAmount - amountOut) / quotedOutputAmount) * 100
+  const priceImpact =
+    ((quotedOutputAmount - amountOut) / quotedOutputAmount) * 100
   return priceImpact
 }
 

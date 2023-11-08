@@ -1,13 +1,13 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { classNames } from '@sushiswap/ui'
+import { useSwapState } from 'app/swap/trade/TradeProvider'
+import { warningSeverity } from 'lib/swap/warningSeverity'
 import React, { useEffect, useState } from 'react'
 import { useIsSwapMaintenance } from 'utils/use-is-swap-maintenance'
-import WalletSelector from './WalletSelector'
-import { Modal } from '@sushiswap/ui/future/components/modal/Modal'
-import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { warningSeverity } from 'lib/swap/warningSeverity'
 import { useTokenBalance } from 'utils/useTokenBalance'
-import { Button } from '@sushiswap/ui/future/components/button'
+import { Modal } from './Modal/Modal'
+import WalletSelector from './WalletSelector'
 
 export const SwapButton = () => {
   const { data: maintenance } = useIsSwapMaintenance()
@@ -20,29 +20,35 @@ export const SwapButton = () => {
     refetchInterval: 2000,
   })
   const { data: routes } = useSwapRouter({ balance })
+
   useEffect(() => {
     if (warningSeverity(routes?.priceImpact) <= 3) {
       setChecked(false)
     }
   }, [routes])
+
+  const swapButtonDisabled = Boolean(
+    maintenance ||
+      noRouteFound ||
+      error ||
+      Number(amount) <= 0 ||
+      (!checked && warningSeverity(routes?.priceImpact) > 3),
+  )
+
   return (
     <Modal.Trigger tag="review-modal">
       {({ open }) => (
         <>
           <div className="pt-4">
             {connected ? (
-              <Button
-                fullWidth
-                size="xl"
-                disabled={
-                  !!(
-                    maintenance ||
-                    noRouteFound ||
-                    error ||
-                    Number(amount) <= 0 ||
-                    (!checked && warningSeverity(routes?.priceImpact) > 3)
-                  )
-                }
+              <button
+                type="button"
+                className={classNames(
+                  'btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold',
+                  swapButtonDisabled &&
+                    'pointer-events-none relative opacity-[0.4] overflow-hidden',
+                )}
+                disabled={swapButtonDisabled}
                 onClick={() => {
                   amount ? open() : {}
                 }}
@@ -63,14 +69,9 @@ export const SwapButton = () => {
                 ) : (
                   <>Enter Amount</>
                 )}
-              </Button>
+              </button>
             ) : (
-              <WalletSelector
-                hideChevron
-                color="blue"
-                size="xl"
-                fullWidth={true}
-              />
+              <WalletSelector />
             )}
           </div>
           {warningSeverity(routes?.priceImpact) > 3 && (

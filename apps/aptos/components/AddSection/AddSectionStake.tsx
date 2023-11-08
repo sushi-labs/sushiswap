@@ -1,16 +1,14 @@
-import { Transition } from '@headlessui/react'
-import { Dots, Typography } from '@sushiswap/ui'
-import { FC, Fragment, useState } from 'react'
-import { AddSectionStakeWidget } from './AddSectionStakeWidget'
-import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/future/components/button'
-import { Token } from 'utils/tokenType'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { Transition } from '@headlessui/react'
+import { Button, Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import { useParams } from 'next/navigation'
 import { createToast } from 'components/toast'
-import { useNetwork } from 'utils/useNetwork'
 import { networkNameToNetwork } from 'config/chains'
+import { useParams } from 'next/navigation'
+import { FC, Fragment, useState } from 'react'
+import { Token } from 'utils/tokenType'
+import { useNetwork } from 'utils/useNetwork'
+import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
   title?: string
@@ -31,7 +29,6 @@ export const AddSectionStake: FC<{
   lpTokenName: string | undefined
   price: number
 }> = ({ title, token0, token1, balance, decimals, lpTokenName, price }) => {
-  const isMounted = useIsMounted()
   return (
     <Transition
       appear
@@ -77,8 +74,9 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
   } = useNetwork()
 
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
+
   const depositeLiquidity = async () => {
-    if (!masterchefContract) return
+    if (!masterchefContract || decimals === undefined) return
 
     const provider = new Provider(networkNameToNetwork(network))
     setTransactionPending(true)
@@ -110,8 +108,13 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
       setTransactionPending(false)
     }
   }
+
   return (
-    <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+    <div
+      className="relative"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <Transition
         show={Boolean(hover && balance <= 0)}
         as={Fragment}
@@ -123,9 +126,9 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
         leaveTo="transform opacity-0"
       >
         <div className="border dark:border-slate-200/5 border-gray-900/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
-          <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
+          <span className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3 text-sm font-semibold">
             No liquidity tokens found, did you add liquidity first?
-          </Typography>
+          </span>
         </div>
       </Transition>
       <div className={''}>
@@ -139,7 +142,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
           price={price}
         >
           {Number(value) > balance ? (
-            <Button size="xl" variant="filled" disabled testId="stake-liquidity">
+            <Button size="xl" disabled testId="stake-liquidity">
               Insufficient Balance
             </Button>
           ) : (
@@ -147,11 +150,14 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
               onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
               fullWidth
               size="xl"
-              variant="filled"
               disabled={isTransactionPending || !value}
               testId="stake-liquidity"
             >
-              {isTransactionPending ? <Dots>Confirm transaction</Dots> : 'Stake Liquidity'}
+              {isTransactionPending ? (
+                <Dots>Confirm transaction</Dots>
+              ) : (
+                'Stake Liquidity'
+              )}
             </Button>
           )}
         </AddSectionStakeWidget>

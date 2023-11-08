@@ -18,10 +18,24 @@ export function useSwapRouter({ balance }: useSwapRouterArgs) {
   const { data: pairs } = usePools(true)
 
   return useQuery({
-    queryKey: ['router', { amount, token0, token1, account, connected, slippageTolerance, balance, network }],
+    queryKey: [
+      'router',
+      {
+        amount,
+        token0,
+        token1,
+        account,
+        connected,
+        slippageTolerance,
+        balance,
+        network,
+      },
+    ],
     queryFn: async () =>
       getAllCommonPairs({
-        amount_in: parseFloat((Number(amount) * 10 ** token0.decimals) as unknown as string),
+        amount_in: parseFloat(
+          (Number(amount) * 10 ** token0.decimals) as unknown as string,
+        ),
         coinA: token0,
         coinB: token1,
         pairs,
