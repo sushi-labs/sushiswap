@@ -1,5 +1,5 @@
 import type { ChainProviderFn } from '@wagmi/core'
-import { alchemyProvider } from '@wagmi/core/providers/alchemy'
+// import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
 import { type RpcEnabledChainId, rpcUrls } from './rpc-urls'
@@ -16,10 +16,10 @@ export const allProviders: ChainProviderFn[] = [
       }
     },
   }),
-  alchemyProvider({
-    apiKey: (process.env['ALCHEMY_ID'] ||
-      process.env['NEXT_PUBLIC_ALCHEMY_ID']) as string,
-  }),
+  // alchemyProvider({
+  //   apiKey: (process.env['ALCHEMY_ID'] ||
+  //     process.env['NEXT_PUBLIC_ALCHEMY_ID']) as string,
+  // }),
   // infuraProvider({ infuraId }),
   publicProvider(),
 ]

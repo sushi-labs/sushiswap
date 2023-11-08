@@ -590,6 +590,13 @@ export const WNATIVE = {
   [ChainId.LINEA]: WETH9[ChainId.LINEA],
   [ChainId.BASE]: WETH9[ChainId.BASE],
   [ChainId.SCROLL]: WETH9[ChainId.SCROLL],
+  [ChainId.FILECOIN]: new Token({
+    chainId: ChainId.FILECOIN,
+    address: WNATIVE_ADDRESS[ChainId.FILECOIN],
+    decimals: 18,
+    symbol: 'WFIL',
+    name: 'Wrapped FIL',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
