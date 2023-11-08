@@ -334,7 +334,7 @@ export class Edge {
     this.spentGas = this.spentGasNew
 
     ASSERT(() => {
-      let precision = 1e-9
+      let precision = Math.max(1/this.amountOutPrevious, 1/this.amountInPrevious, 1e-9)
       if (this.pool instanceof StableSwapRPool) {
         let price = this.pool.calcCurrentPriceWithoutFee(true)
         if (price < 1) price = 1 / price
