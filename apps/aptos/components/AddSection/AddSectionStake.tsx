@@ -142,21 +142,35 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
           price={price}
         >
           {Number(value) > balance ? (
-            <Button size="xl" disabled testId="stake-liquidity">
+            <Button fullWidth size="default" disabled testId="stake-liquidity">
               Insufficient Balance
             </Button>
           ) : (
             <Button
               onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
               fullWidth
-              size="xl"
+              size="default"
               disabled={isTransactionPending || !value}
               testId="stake-liquidity"
             >
-              {isTransactionPending ? (
-                <Dots>Confirm transaction</Dots>
+              {Number(value) > balance ? (
+                <Button size="xl" disabled testId="stake-liquidity">
+                  Insufficient Balance
+                </Button>
               ) : (
-                'Stake Liquidity'
+                <Button
+                  onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
+                  fullWidth
+                  size="xl"
+                  disabled={isTransactionPending || !value}
+                  testId="stake-liquidity"
+                >
+                  {isTransactionPending ? (
+                    <Dots>Confirm transaction</Dots>
+                  ) : (
+                    'Stake Liquidity'
+                  )}
+                </Button>
               )}
             </Button>
           )}

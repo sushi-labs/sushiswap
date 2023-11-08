@@ -18,14 +18,6 @@ export const PoolButtons: FC<PoolButtonsProps> = ({
     <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
         <LinkInternal
-          href={`/pool/${decodeURIComponent(router?.id)}/remove`}
-          passHref={true}
-        >
-          <Button size="lg" color="default" fullWidth>
-            Withdraw
-          </Button>
-        </LinkInternal>
-        <LinkInternal
           href={`/pool/add?token0=${token0}&token1=${token1}`}
           passHref={true}
         >
