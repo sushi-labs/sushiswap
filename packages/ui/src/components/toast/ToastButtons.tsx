@@ -11,7 +11,12 @@ interface ToastButtons {
 
 export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
   return (
-    <div className={classNames(href ? 'grid-cols-2' : 'grid-cols-auto', 'grid gap-4 p-4 pt-0')}>
+    <div
+      className={classNames(
+        href ? 'grid-cols-2' : 'grid-cols-auto',
+        'grid gap-4 p-4 pt-0',
+      )}
+    >
       <Button size="sm" onClick={onDismiss} variant="secondary">
         Dismiss
       </Button>

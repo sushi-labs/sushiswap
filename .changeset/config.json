@@ -1,6 +1,9 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "sushiswap/sushiswap" }],
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "sushiswap/sushiswap" }
+  ],
   "commit": false,
   "fixed": [],
   "linked": [],
@@ -8,26 +11,20 @@
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "evm",
-    "academy",
-    "blog",
-    "furo",
-    "next-13-example",
-    "node-18-example",
     "@sushiswap/balances-api",
-    "@sushiswap/tokens-api",
-    "@sushiswap/swap-api",
+    "@sushiswap/client",
     "@sushiswap/pools-api",
+    "@sushiswap/react-query",
+    "@sushiswap/route-processor",
+    "@sushiswap/steer-vault-api",
+    "@sushiswap/storybook",
     "@sushiswap/token-list-api",
     "@sushiswap/token-price-api",
-    "@sushiswap/cli",
-    "@sushiswap/client",
-    "@sushiswap/react-query",
+    "@sushiswap/tokens-api",
     "@sushiswap/ui",
     "@sushiswap/wagmi",
-    "@sushiswap/pool-job",
-    "@sushiswap/route-processor",
-    "@sushiswap/docs",
-    "@sushiswap/steer-vault-api"
+    "academy",
+    "blog",
+    "evm"
   ]
 }

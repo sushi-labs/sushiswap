@@ -9,9 +9,6 @@ enum PoolVersion {
   TRIDENT = 'TRIDENT',
 }
 
-// TODO
-enum ChefType {}
-
 enum RewarderType {
   Primary = 'Primary',
   Secondary = 'Secondary',
@@ -79,7 +76,9 @@ export interface Pool {
 }
 
 export const POOL_API =
-  process.env['POOLS_API_V0_BASE_URL'] || process.env['NEXT_PUBLIC_POOLS_API_V0_BASE_URL'] || 'https://pools.sushi.com'
+  process.env['POOLS_API_V0_BASE_URL'] ||
+  process.env['NEXT_PUBLIC_POOLS_API_V0_BASE_URL'] ||
+  'https://pools.sushi.com'
 
 export function parseArgs<T>(args?: Partial<T>) {
   if (!args) return ''
@@ -95,13 +94,15 @@ export const getPool = async (poolId: string): Promise<Pool> => {
   return import('node-fetch').then(({ default: fetch }) =>
     fetch(`${POOL_API}/api/v0?ids=${poolId}`)
       .then((data: any) => data.json())
-      .then((data: any) => data[0])
+      .then((data: any) => data[0]),
   )
 }
 
 export const getPools = async (args?: GetPoolsArgs): Promise<Pool[]> => {
   return import('node-fetch').then(({ default: fetch }) =>
-    fetch(`${POOL_API}/api/v0${parseArgs(args)}`).then((data: any) => data.json())
+    fetch(`${POOL_API}/api/v0${parseArgs(args)}`).then((data: any) =>
+      data.json(),
+    ),
   )
 }
 
@@ -109,5 +110,5 @@ export const getPoolCount = async (args?: GetPoolsArgs): Promise<number> =>
   import('node-fetch').then(({ default: fetch }) =>
     fetch(`${POOL_API}/api/v0/count${parseArgs(args)}`)
       .then((data: any) => data.json())
-      .then((data: any) => data.count)
+      .then((data: any) => data.count),
   )

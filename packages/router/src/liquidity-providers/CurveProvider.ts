@@ -1,13 +1,19 @@
-import { ChainId } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
-import { FRAX } from '@sushiswap/currency'
-import { USDC } from '@sushiswap/currency'
-import { WBTC } from '@sushiswap/currency'
-import { Native } from '@sushiswap/currency'
-import { LINK } from '@sushiswap/currency'
-import { renBTC } from '@sushiswap/currency'
 import { CurvePool, RToken } from '@sushiswap/tines'
-import { Address, ContractFunctionConfig, getContract, parseAbi, PublicClient } from 'viem'
+import { ChainId } from 'sushi/chain'
+import { Token, Type } from 'sushi/currency'
+import { FRAX } from 'sushi/currency'
+import { USDC } from 'sushi/currency'
+import { WBTC } from 'sushi/currency'
+import { Native } from 'sushi/currency'
+import { LINK } from 'sushi/currency'
+import { renBTC } from 'sushi/currency'
+import {
+  Address,
+  ContractFunctionConfig,
+  PublicClient,
+  getContract,
+  parseAbi,
+} from 'viem'
 
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { CurvePoolCode } from '../pools/CurvePool'
@@ -134,25 +140,83 @@ export enum CurvePoolType {
 }
 
 const ETH = Native.onChain(ChainId.ETHEREUM)
-export const CURVE_NON_FACTORY_POOLS: Record<number, [Address, CurvePoolType, Type, Type][]> = {
+export const CURVE_NON_FACTORY_POOLS: Record<
+  number,
+  [Address, CurvePoolType, Type, Type][]
+> = {
   [ChainId.ETHEREUM]: [
-    ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', CurvePoolType.Legacy, ETH, stETH],
+    [
+      '0xdc24316b9ae028f1497c275eb9192a3ea0f67022',
+      CurvePoolType.Legacy,
+      ETH,
+      stETH,
+    ],
     [
       '0xdcef968d416a41cdac0ed8702fac8128a64241a2',
       CurvePoolType.Legacy,
       FRAX[ChainId.ETHEREUM],
       USDC[ChainId.ETHEREUM],
     ],
-    ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', CurvePoolType.Legacy, WBTC[ChainId.ETHEREUM], sBTC],
-    ['0xc5424b857f758e906013f3555dad202e4bdb4567', CurvePoolType.Legacy, ETH, sETH],
-    ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', CurvePoolType.Legacy, ETH, frxETH],
-    ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', CurvePoolType.Legacy, EURS, sEUR],
-    ['0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2', CurvePoolType.Legacy, ETH, ankrETH],
-    ['0xeb16ae0052ed37f479f7fe63849198df1765a733', CurvePoolType.Legacy, aDAI, aSUSD],
-    ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', CurvePoolType.Legacy, ETH, rETH],
-    ['0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56', CurvePoolType.LegacyV2, cDAI, cUSDC],
-    ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', CurvePoolType.Legacy, LINK[ChainId.ETHEREUM], sLINK],
-    ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', CurvePoolType.LegacyV3, HBTC, WBTC[ChainId.ETHEREUM]],
+    [
+      '0xf253f83aca21aabd2a20553ae0bf7f65c755a07f',
+      CurvePoolType.Legacy,
+      WBTC[ChainId.ETHEREUM],
+      sBTC,
+    ],
+    [
+      '0xc5424b857f758e906013f3555dad202e4bdb4567',
+      CurvePoolType.Legacy,
+      ETH,
+      sETH,
+    ],
+    [
+      '0xa1f8a6807c402e4a15ef4eba36528a3fed24e577',
+      CurvePoolType.Legacy,
+      ETH,
+      frxETH,
+    ],
+    [
+      '0x0ce6a5ff5217e38315f87032cf90686c96627caa',
+      CurvePoolType.Legacy,
+      EURS,
+      sEUR,
+    ],
+    [
+      '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2',
+      CurvePoolType.Legacy,
+      ETH,
+      ankrETH,
+    ],
+    [
+      '0xeb16ae0052ed37f479f7fe63849198df1765a733',
+      CurvePoolType.Legacy,
+      aDAI,
+      aSUSD,
+    ],
+    [
+      '0xf9440930043eb3997fc70e1339dbb11f341de7a8',
+      CurvePoolType.Legacy,
+      ETH,
+      rETH,
+    ],
+    [
+      '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56',
+      CurvePoolType.LegacyV2,
+      cDAI,
+      cUSDC,
+    ],
+    [
+      '0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0',
+      CurvePoolType.Legacy,
+      LINK[ChainId.ETHEREUM],
+      sLINK,
+    ],
+    [
+      '0x4ca9b3063ec5866a4b82e437059d2c43d1be596f',
+      CurvePoolType.LegacyV3,
+      HBTC,
+      WBTC[ChainId.ETHEREUM],
+    ],
     [
       '0x93054188d876f558f4a66b2ef1d97d16edf0895b',
       CurvePoolType.LegacyV2,
@@ -178,14 +242,19 @@ const factoryABI = parseAbi([
   //'function get_n_coins(address) pure returns (uint256)',
 ] as const)
 
-export async function getAllSupportedCurvePools(publicClient: PublicClient): Promise<Map<string, CurvePoolType>> {
+export async function getAllSupportedCurvePools(
+  publicClient: PublicClient,
+): Promise<Map<string, CurvePoolType>> {
   const result: Map<string, CurvePoolType> = new Map()
   const chainId = await publicClient.getChainId()
 
-  const promises = CURVE_FACTORY_ADDRESSES[chainId as keyof typeof CURVE_FACTORY_ADDRESSES].map(async (factory) => {
+  const promises = CURVE_FACTORY_ADDRESSES[
+    chainId as keyof typeof CURVE_FACTORY_ADDRESSES
+  ].map(async (factory) => {
     const factoryContract = getContract({
       address: factory as '0x${string}',
       abi: factoryABI,
+      // @ts-ignore
       publicClient,
     })
 
@@ -196,7 +265,9 @@ export async function getAllSupportedCurvePools(publicClient: PublicClient): Pro
     }
   })
   await Promise.all(promises)
-  ;(CURVE_NON_FACTORY_POOLS[chainId] ?? []).forEach((pool) => result.set(pool[0], pool[1]))
+  ;(CURVE_NON_FACTORY_POOLS[chainId] ?? []).forEach((pool) =>
+    result.set(pool[0], pool[1]),
+  )
 
   return result
 }
@@ -290,45 +361,62 @@ export class CurveProvider extends LiquidityProvider {
   async getPoolsForTokens(
     t0: Token,
     t1: Token,
-    excludePools?: Set<string>
+    excludePools?: Set<string>,
   ): Promise<Map<Address, [CurvePoolType, Type, Type]>> {
     const pools: Map<Address, [CurvePoolType, Type, Type]> = new Map()
     let currencyCombinations = getCurrencyCombinations(this.chainId, t0, t1)
     for (let i = 0; currencyCombinations.length > 0; ++i) {
-      const calls = (CURVE_FACTORY_ADDRESSES[this.chainId] ?? []).flatMap((factory) =>
-        currencyCombinations.map(([t0, t1]) => ({
-          address: factory,
-          chainId: this.chainId,
-          abi: factoryABI,
-          functionName: 'find_pool_for_coins' as const,
-          args: [t0.address as Address, t1.address as Address, BigInt(i)] as const,
-        }))
+      const calls = (CURVE_FACTORY_ADDRESSES[this.chainId] ?? []).flatMap(
+        (factory) =>
+          currencyCombinations.map(([t0, t1]) => ({
+            address: factory,
+            chainId: this.chainId,
+            abi: factoryABI,
+            functionName: 'find_pool_for_coins' as const,
+            args: [
+              t0.address as Address,
+              t1.address as Address,
+              BigInt(i),
+            ] as const,
+          })),
       )
       const newFoundPools = await this.client.multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as '0x${string}',
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as '0x${string}',
         allowFailure: true,
         contracts: calls,
       })
       newFoundPools.forEach((pool, i) => {
-        if (pool.status === 'success' && excludePools?.has(pool.result) !== true)
-          pools.set(pool.result, [CurvePoolType.Factory, ...currencyCombinations[i]])
+        if (
+          pool.status === 'success' &&
+          excludePools?.has(pool.result) !== true
+        )
+          pools.set(pool.result, [
+            CurvePoolType.Factory,
+            ...currencyCombinations[i],
+          ])
       })
       currencyCombinations = newFoundPools
-        .map((pool, i) => (pool.status === 'success' ? currencyCombinations[i] : undefined))
+        .map((pool, i) =>
+          pool.status === 'success' ? currencyCombinations[i] : undefined,
+        )
         .filter((c) => c !== undefined) as [Token, Token][]
     }
-
     ;(CURVE_NON_FACTORY_POOLS[this.chainId] ?? []).forEach((pool) => {
-      if (excludePools?.has(pool[0]) !== true) pools.set(pool[0], [pool[1], pool[2], pool[3]])
+      if (excludePools?.has(pool[0]) !== true)
+        pools.set(pool[0], [pool[1], pool[2], pool[3]])
     })
 
     return pools
   }
 
-  async getPoolRatio(pools: [string, [CurvePoolType, Type, Type]][]): Promise<(number | undefined)[]> {
+  async getPoolRatio(
+    pools: [string, [CurvePoolType, Type, Type]][],
+  ): Promise<(number | undefined)[]> {
     if (this.chainId === ChainId.ETHEREUM) {
       const ratios = await this.client.multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as '0x${string}',
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as '0x${string}',
         allowFailure: true,
         contracts: [
           {
@@ -340,19 +428,25 @@ export class CurveProvider extends LiquidityProvider {
           {
             address: '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593', // rETH
             //chainId: this.chainId,
-            abi: parseAbi(['function getExchangeRate() pure returns (uint256)'] as const),
+            abi: parseAbi([
+              'function getExchangeRate() pure returns (uint256)',
+            ] as const),
             functionName: 'getExchangeRate',
           },
           {
             address: '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSDC
             //chainId: this.chainId,
-            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)'] as const),
+            abi: parseAbi([
+              'function exchangeRateCurrent() pure returns (uint256)',
+            ] as const),
             functionName: 'exchangeRateCurrent',
           },
           {
             address: '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', // cDAI
             //chainId: this.chainId,
-            abi: parseAbi(['function exchangeRateCurrent() pure returns (uint256)'] as const),
+            abi: parseAbi([
+              'function exchangeRateCurrent() pure returns (uint256)',
+            ] as const),
             functionName: 'exchangeRateCurrent',
           },
         ],
@@ -385,16 +479,24 @@ export class CurveProvider extends LiquidityProvider {
     } else return pools.map(() => 1)
   }
 
-  async getCurvePoolCodes(pools: Map<Address, [CurvePoolType, Type, Type]>): Promise<PoolCode[]> {
+  async getCurvePoolCodes(
+    pools: Map<Address, [CurvePoolType, Type, Type]>,
+  ): Promise<PoolCode[]> {
     const poolArray = Array.from(pools.entries())
     const poolsMulticall = <
-      T extends ContractFunctionConfig<(typeof curvePoolABI)[keyof typeof curvePoolABI]>['functionName']
+      T extends ContractFunctionConfig<
+        typeof curvePoolABI[keyof typeof curvePoolABI]
+      >['functionName'],
     >(
       functionName: T,
-      args?: ContractFunctionConfig<(typeof curvePoolABI)[keyof typeof curvePoolABI], T>['args']
+      args?: ContractFunctionConfig<
+        typeof curvePoolABI[keyof typeof curvePoolABI],
+        T
+      >['args'],
     ) => {
       return this.client.multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3?.address as '0x${string}',
+        multicallAddress: this.client.chain?.contracts?.multicall3
+          ?.address as '0x${string}',
         allowFailure: true,
         contracts: poolArray.map(([address, [poolType]]) => ({
           address: address as Address,
@@ -402,7 +504,6 @@ export class CurveProvider extends LiquidityProvider {
           abi: curvePoolABI[poolType],
           functionName: functionName,
           args,
-          // rome-ignore lint/suspicious/noExplicitAny: any
         })) as any,
       })
     }
@@ -431,7 +532,7 @@ export class CurveProvider extends LiquidityProvider {
         _balance1 === undefined ||
         _ratio === undefined
       )
-        return
+        return []
       const poolTines = new CurvePool(
         poolAddress,
         token0 as RToken,
@@ -440,9 +541,13 @@ export class CurveProvider extends LiquidityProvider {
         Number(_A as bigint),
         BigInt((_balance0 as bigint).toString()),
         BigInt((_balance1 as bigint).toString()),
-        _ratio
+        _ratio,
       )
-      return new CurvePoolCode(poolTines, this.getType(), this.getPoolProviderName())
+      return new CurvePoolCode(
+        poolTines,
+        this.getType(),
+        this.getPoolProviderName(),
+      )
     })
 
     return poolCodes.filter((p) => p !== undefined) as PoolCode[]
@@ -453,7 +558,11 @@ export class CurveProvider extends LiquidityProvider {
    * @param t0 Token
    * @param t1 Token
    */
-  override async fetchPoolsForToken(t0: Token, t1: Token, excludePools?: Set<string>): Promise<void> {
+  override async fetchPoolsForToken(
+    t0: Token,
+    t1: Token,
+    excludePools?: Set<string>,
+  ): Promise<void> {
     const pools = await this.getPoolsForTokens(t0, t1, excludePools)
     this.foundPools = await this.getCurvePoolCodes(pools)
     //console.log(JSON.stringify(this.foundPools, undefined, '   '))

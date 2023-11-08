@@ -1,11 +1,11 @@
-import { defaultAbiCoder, Interface } from '@ethersproject/abi'
-import { validateAndParseAddress } from '@sushiswap/amm'
-import { Token } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
+import { Interface, defaultAbiCoder } from '@ethersproject/abi'
 import IUniswapV3Staker from '@uniswap/v3-staker/artifacts/contracts/UniswapV3Staker.sol/UniswapV3Staker.json'
+import { Token } from 'sushi/currency'
+import { BigintIsh } from 'sushi/math'
+import { validateAndParseAddress } from '../utils'
 
-import { MethodParameters, toHex } from '../utils/calldata'
 import { SushiSwapV3Pool } from '.'
+import { MethodParameters, toHex } from '../utils/calldata'
 import { Multicall } from './Multicall'
 
 export type FullWithdrawOptions = ClaimOptions & WithdrawOptions
@@ -82,18 +82,25 @@ export abstract class Staker {
    * @param options Options for producing the calldata to claim. Can't claim unless you unstake.
    * @returns The calldatas for 'unstakeToken' and 'claimReward'.
    */
-  private static encodeClaim(incentiveKey: IncentiveKey, options: ClaimOptions): string[] {
+  private static encodeClaim(
+    incentiveKey: IncentiveKey,
+    options: ClaimOptions,
+  ): string[] {
     const calldatas: string[] = []
     calldatas.push(
       Staker.INTERFACE.encodeFunctionData('unstakeToken', [
         this._encodeIncentiveKey(incentiveKey),
         toHex(options.tokenId),
-      ])
+      ]),
     )
     const recipient: string = validateAndParseAddress(options.recipient)
     const amount = options.amount ?? 0
     calldatas.push(
-      Staker.INTERFACE.encodeFunctionData('claimReward', [incentiveKey.rewardToken.address, recipient, toHex(amount)])
+      Staker.INTERFACE.encodeFunctionData('claimReward', [
+        incentiveKey.rewardToken.address,
+        recipient,
+        toHex(amount),
+      ]),
     )
     return calldatas
   }
@@ -107,8 +114,13 @@ export abstract class Staker {
    * Note that you can only specify one amount and one recipient across the various programs if you are collecting from multiple programs at once.
    * @returns
    */
-  public static collectRewards(incentiveKeys: IncentiveKey | IncentiveKey[], options: ClaimOptions): MethodParameters {
-    incentiveKeys = Array.isArray(incentiveKeys) ? incentiveKeys : [incentiveKeys]
+  public static collectRewards(
+    incentiveKeys: IncentiveKey | IncentiveKey[],
+    options: ClaimOptions,
+  ): MethodParameters {
+    incentiveKeys = Array.isArray(incentiveKeys)
+      ? incentiveKeys
+      : [incentiveKeys]
     let calldatas: string[] = []
 
     for (let i = 0; i < incentiveKeys.length; i++) {
@@ -121,7 +133,7 @@ export abstract class Staker {
         Staker.INTERFACE.encodeFunctionData('stakeToken', [
           this._encodeIncentiveKey(incentiveKey),
           toHex(options.tokenId),
-        ])
+        ]),
       )
     }
     return {
@@ -138,11 +150,13 @@ export abstract class Staker {
    */
   public static withdrawToken(
     incentiveKeys: IncentiveKey | IncentiveKey[],
-    withdrawOptions: FullWithdrawOptions
+    withdrawOptions: FullWithdrawOptions,
   ): MethodParameters {
     let calldatas: string[] = []
 
-    incentiveKeys = Array.isArray(incentiveKeys) ? incentiveKeys : [incentiveKeys]
+    incentiveKeys = Array.isArray(incentiveKeys)
+      ? incentiveKeys
+      : [incentiveKeys]
 
     const claimOptions = {
       tokenId: withdrawOptions.tokenId,
@@ -160,7 +174,7 @@ export abstract class Staker {
         toHex(withdrawOptions.tokenId),
         owner,
         withdrawOptions.data ? withdrawOptions.data : toHex(0),
-      ])
+      ]),
     )
     return {
       calldata: Multicall.encodeMulticall(calldatas),
@@ -173,8 +187,12 @@ export abstract class Staker {
    * @param incentiveKeys A single IncentiveKey or array of IncentiveKeys to be encoded and used in the data parameter in `safeTransferFrom`
    * @returns An IncentiveKey as a string
    */
-  public static encodeDeposit(incentiveKeys: IncentiveKey | IncentiveKey[]): string {
-    incentiveKeys = Array.isArray(incentiveKeys) ? incentiveKeys : [incentiveKeys]
+  public static encodeDeposit(
+    incentiveKeys: IncentiveKey | IncentiveKey[],
+  ): string {
+    incentiveKeys = Array.isArray(incentiveKeys)
+      ? incentiveKeys
+      : [incentiveKeys]
     let data: string
 
     if (incentiveKeys.length > 1) {
@@ -185,7 +203,10 @@ export abstract class Staker {
       }
       data = defaultAbiCoder.encode([`${Staker.INCENTIVE_KEY_ABI}[]`], [keys])
     } else {
-      data = defaultAbiCoder.encode([Staker.INCENTIVE_KEY_ABI], [this._encodeIncentiveKey(incentiveKeys[0])])
+      data = defaultAbiCoder.encode(
+        [Staker.INCENTIVE_KEY_ABI],
+        [this._encodeIncentiveKey(incentiveKeys[0])],
+      )
     }
     return data
   }
@@ -194,7 +215,8 @@ export abstract class Staker {
    * @param incentiveKey An `IncentiveKey` which represents a unique staking program.
    * @returns An encoded IncentiveKey to be read by ethers
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+
+  // biome-ignore lint/complexity/noBannedTypes: <explanation>
   private static _encodeIncentiveKey(incentiveKey: IncentiveKey): {} {
     const { token0, token1, fee } = incentiveKey.pool
     const refundee = validateAndParseAddress(incentiveKey.refundee)

@@ -54,7 +54,11 @@ export class HEXer {
   }
 
   uint32(data: number): HEXer {
-    if (data >= 256 * 256 * 256 * 256 || data < 0 || data !== Math.round(data)) {
+    if (
+      data >= 256 * 256 * 256 * 256 ||
+      data < 0 ||
+      data !== Math.round(data)
+    ) {
       throw new Error(`Wrong uint32: ${data}`)
     }
     this.hex += data.toString(16).padStart(8, '0')
@@ -64,7 +68,11 @@ export class HEXer {
 
   uint256(data: bigint | number): HEXer {
     if (typeof data === 'number') {
-      if (data > Number.MAX_SAFE_INTEGER || data < 0 || data !== Math.round(data)) {
+      if (
+        data > Number.MAX_SAFE_INTEGER ||
+        data < 0 ||
+        data !== Math.round(data)
+      ) {
         throw new Error(`Wrong uint256: ${data}`)
       }
       this.hex += data.toString(16).padStart(64, '0')

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
@@ -11,7 +11,7 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
-export type TridentChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
+export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -31,12 +31,17 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.BOBA_AVAX,
   ChainId.BOBA_BNB,
   ChainId.BASE,
+  ChainId.SCROLL,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.BTTC,
+  ChainId.FILECOIN,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
 ] as const
 
-export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
 
 export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -56,11 +61,20 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.CORE,
   ChainId.BASE,
   ChainId.LINEA,
+  ChainId.SCROLL,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.BTTC,
+  ChainId.FILECOIN,
 ]
-export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
+export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(
-  new Set([...SUSHISWAP_ENABLED_NETWORKS, ...SUSHISWAP_V3_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS])
+  new Set([
+    ...SUSHISWAP_ENABLED_NETWORKS,
+    ...SUSHISWAP_V3_ENABLED_NETWORKS,
+    ...TRIDENT_ENABLED_NETWORKS,
+  ]),
 )
 
 export type SwapSupportedChainIds = typeof SWAP_ENABLED_NETWORKS
@@ -75,6 +89,7 @@ export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
+export const FILECOIN_HOST = 'sushi.laconic.com/subgraphs/name'
 export const STUDIO_HOST = 'api.studio.thegraph.com/query/32073'
 export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
@@ -113,6 +128,8 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.CORE]: 'Core',
   [ChainId.BASE]: 'Base',
   [ChainId.LINEA]: 'Linea',
+  [ChainId.SCROLL]: 'Scroll',
+  [ChainId.FILECOIN]: 'Filecoin',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -145,6 +162,8 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.CORE]: CORE_HOST,
   [ChainId.BASE]: STUDIO_HOST,
   [ChainId.LINEA]: LINEA_HOST,
+  [ChainId.SCROLL]: STUDIO_HOST,
+  [ChainId.FILECOIN]: FILECOIN_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -164,7 +183,9 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.BTTC]: 'sushiswap/bentobox-bttc',
 } as const
 
-export const BENTOBOX_ENABLED_NETWORKS = Object.keys(BENTOBOX_SUBGRAPH_NAME).map(Number) as BentoBoxChainId[]
+export const BENTOBOX_ENABLED_NETWORKS = Object.keys(
+  BENTOBOX_SUBGRAPH_NAME,
+).map(Number) as BentoBoxChainId[]
 
 export type BentoBoxChainId = keyof typeof BENTOBOX_SUBGRAPH_NAME
 
@@ -197,6 +218,8 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushiswap/blocks-core',
   [ChainId.BASE]: 'blocks-base/v0.0.1',
   [ChainId.LINEA]: 'sushiswap/blocks-linea',
+  [ChainId.SCROLL]: 'blocks-scroll/v0.0.1',
+  [ChainId.FILECOIN]: 'sushiswap/blocks',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -225,6 +248,7 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.BOBA_BNB]: 0.5,
   [ChainId.BTTC]: 2,
   [ChainId.THUNDERCORE]: 1,
+  [ChainId.SCROLL]: 3,
 } as const
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
@@ -265,6 +289,11 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
   [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
   [ChainId.BASE]: 'sushiswap-base/v0.0.1',
+  [ChainId.SCROLL]: 'sushiswap-scroll/v0.0.1',
+  [ChainId.KAVA]: 'sushi-v2/sushiswap-kava',
+  [ChainId.METIS]: 'sushi-v2/sushiswap-metis',
+  [ChainId.BTTC]: 'sushi-v2/sushiswap-bttc',
+  [ChainId.FILECOIN]: 'sushiswap/sushiswap-filecoin',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
@@ -285,6 +314,11 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushi-v3/v3-core',
   [ChainId.BASE]: 'v3-base/v0.0.1',
   [ChainId.LINEA]: 'sushi-v3/v3-linea',
+  [ChainId.SCROLL]: 'v3-scroll/v0.0.1',
+  [ChainId.KAVA]: 'sushi-v3/v3-kava',
+  [ChainId.METIS]: 'sushi-v3/v3-metis',
+  [ChainId.BTTC]: 'sushi-v3/v3-bttc',
+  [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
@@ -298,7 +332,10 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.AVALANCHE]: 'sushi-v2/trident-avalanche',
 } as const
 
-export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_NAME, number> = {
+export const TRIDENT_SUBGRAPH_START_BLOCK: Record<
+  keyof typeof TRIDENT_SUBGRAPH_NAME,
+  number
+> = {
   [ChainId.POLYGON]: 34188953,
   [ChainId.OPTIMISM]: 7464195,
   [ChainId.KAVA]: 162097,
@@ -329,7 +366,8 @@ export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.BSC]: 'sushiswap/minichef-bsc',
 } as const
 
-export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
+export const MASTERCHEF_V1_SUBGRAPH_NAME =
+  'jiro-ono/masterchef-staging' as const
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
 
 export const FURO_ENABLED_NETWORKS = [
@@ -379,7 +417,7 @@ export const STEER_ENABLED_NETWORKS = [
   ChainId.CELO,
 ] as const
 
-export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
+export type SteerChainId = typeof STEER_ENABLED_NETWORKS[number]
 
 export const STEER_SUBGRAPGH_NAME: Record<SteerChainId, string> = {
   [ChainId.POLYGON]: 'steerprotocol/steer-protocol-polygon',
@@ -394,3 +432,16 @@ export const STEER_SUBGRAPGH_NAME: Record<SteerChainId, string> = {
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]
+
+export const isTridentChain = (chainId: ChainId): chainId is TridentChainId =>
+  Object.keys(TRIDENT_SUBGRAPH_NAME).map(Number).includes(chainId)
+
+export const isSushiSwapChain = (
+  chainId: ChainId,
+): chainId is SushiSwapChainId =>
+  Object.keys(SUSHISWAP_SUBGRAPH_NAME).map(Number).includes(chainId)
+
+export const isSushiSwapV3Chain = (
+  chainId: ChainId,
+): chainId is SushiSwapV3ChainId =>
+  Object.keys(SUSHISWAP_V3_SUBGRAPH_NAME).map(Number).includes(chainId)

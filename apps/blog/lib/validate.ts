@@ -1,5 +1,5 @@
-import { Article, Image } from 'types'
 import { z } from 'zod'
+import type { Article, Image } from '../types'
 
 const image: z.ZodSchema<Image> = z.object({
   // id: z.number(),
@@ -53,8 +53,8 @@ export const ArticleSchema: z.ZodSchema<Article> = z.object({
             // createdAt: z.string(),
             // updatedAt: z.string(),
           }),
-        })
-      )
+        }),
+      ),
     ),
     title: z.string(),
     description: z.string(),
@@ -72,8 +72,8 @@ export const ArticleSchema: z.ZodSchema<Article> = z.object({
             // createdAt: z.string(),
             // updatedAt: z.string(),
           }),
-        })
-      )
+        }),
+      ),
     ),
     createdAt: z.string(),
     updatedAt: z.string(),

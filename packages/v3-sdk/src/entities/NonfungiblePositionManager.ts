@@ -1,13 +1,18 @@
 import { Interface } from '@ethersproject/abi'
-import { validateAndParseAddress } from '@sushiswap/amm'
-import { Amount as CurrencyAmount, Currency, Native, Token } from '@sushiswap/currency'
-import { BigintIsh, Percent } from '@sushiswap/math'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
+import {
+  Amount as CurrencyAmount,
+  Currency,
+  Native,
+  Token,
+} from 'sushi/currency'
+import { BigintIsh, Percent } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
-import { ADDRESS_ZERO } from '../constants'
-import { MethodParameters, toHex } from '../utils/calldata'
 import { SushiSwapV3Pool } from '.'
+import { ADDRESS_ZERO } from '../constants'
+import { validateAndParseAddress } from '../utils'
+import { MethodParameters, toHex } from '../utils/calldata'
 import { Multicall } from './Multicall'
 import { Payments } from './Payments'
 import { Position } from './Position'
@@ -65,7 +70,8 @@ export interface CommonAddLiquidityOptions {
 }
 
 export type MintOptions = CommonAddLiquidityOptions & MintSpecificOptions
-export type IncreaseOptions = CommonAddLiquidityOptions & IncreaseSpecificOptions
+export type IncreaseOptions = CommonAddLiquidityOptions &
+  IncreaseSpecificOptions
 
 export type AddLiquidityOptions = MintOptions | IncreaseOptions
 
@@ -166,7 +172,9 @@ export interface RemoveLiquidityOptions {
 }
 
 export abstract class NonfungiblePositionManager {
-  public static INTERFACE: Interface = new Interface(INonfungiblePositionManager.abi)
+  public static INTERFACE: Interface = new Interface(
+    INonfungiblePositionManager.abi,
+  )
 
   /**
    * Cannot be constructed.
@@ -174,12 +182,15 @@ export abstract class NonfungiblePositionManager {
   private constructor() {}
 
   private static encodeCreate(pool: SushiSwapV3Pool): string {
-    return NonfungiblePositionManager.INTERFACE.encodeFunctionData('createAndInitializePoolIfNecessary', [
-      pool.token0.address,
-      pool.token1.address,
-      pool.fee,
-      toHex(pool.sqrtRatioX96),
-    ])
+    return NonfungiblePositionManager.INTERFACE.encodeFunctionData(
+      'createAndInitializePoolIfNecessary',
+      [
+        pool.token0.address,
+        pool.token1.address,
+        pool.fee,
+        toHex(pool.sqrtRatioX96),
+      ],
+    )
   }
 
   public static createCallParameters(pool: SushiSwapV3Pool): MethodParameters {
@@ -189,16 +200,22 @@ export abstract class NonfungiblePositionManager {
     }
   }
 
-  public static addCallParameters(position: Position, options: AddLiquidityOptions): MethodParameters {
+  public static addCallParameters(
+    position: Position,
+    options: AddLiquidityOptions,
+  ): MethodParameters {
     invariant(position.liquidity > 0n, 'ZERO_LIQUIDITY')
 
     const calldatas: string[] = []
 
     // get amounts
-    const { amount0: amount0Desired, amount1: amount1Desired } = position.mintAmounts
+    const { amount0: amount0Desired, amount1: amount1Desired } =
+      position.mintAmounts
 
     // adjust for slippage
-    const minimumAmounts = position.mintAmountsWithSlippage(options.slippageTolerance)
+    const minimumAmounts = position.mintAmountsWithSlippage(
+      options.slippageTolerance,
+    )
     const amount0Min = toHex(minimumAmounts.amount0)
     const amount1Min = toHex(minimumAmounts.amount1)
 
@@ -211,10 +228,14 @@ export abstract class NonfungiblePositionManager {
 
     // permits if necessary
     if (options.token0Permit) {
-      calldatas.push(SelfPermit.encodePermit(position.pool.token0, options.token0Permit))
+      calldatas.push(
+        SelfPermit.encodePermit(position.pool.token0, options.token0Permit),
+      )
     }
     if (options.token1Permit) {
-      calldatas.push(SelfPermit.encodePermit(position.pool.token1, options.token1Permit))
+      calldatas.push(
+        SelfPermit.encodePermit(position.pool.token1, options.token1Permit),
+      )
     }
 
     // mint
@@ -236,21 +257,24 @@ export abstract class NonfungiblePositionManager {
             recipient,
             deadline,
           },
-        ])
+        ]),
       )
     } else {
       // increase
       calldatas.push(
-        NonfungiblePositionManager.INTERFACE.encodeFunctionData('increaseLiquidity', [
-          {
-            tokenId: toHex(options.tokenId),
-            amount0Desired: toHex(amount0Desired),
-            amount1Desired: toHex(amount1Desired),
-            amount0Min,
-            amount1Min,
-            deadline,
-          },
-        ])
+        NonfungiblePositionManager.INTERFACE.encodeFunctionData(
+          'increaseLiquidity',
+          [
+            {
+              tokenId: toHex(options.tokenId),
+              amount0Desired: toHex(amount0Desired),
+              amount1Desired: toHex(amount1Desired),
+              amount0Min,
+              amount1Min,
+              deadline,
+            },
+          ],
+        ),
       )
     }
 
@@ -258,9 +282,15 @@ export abstract class NonfungiblePositionManager {
 
     if (options.useNative) {
       const wrapped = options.useNative.wrapped
-      invariant(position.pool.token0.equals(wrapped) || position.pool.token1.equals(wrapped), 'NO_WETH')
+      invariant(
+        position.pool.token0.equals(wrapped) ||
+          position.pool.token1.equals(wrapped),
+        'NO_WETH',
+      )
 
-      const wrappedValue = position.pool.token0.equals(wrapped) ? amount0Desired : amount1Desired
+      const wrappedValue = position.pool.token0.equals(wrapped)
+        ? amount0Desired
+        : amount1Desired
 
       // we only need to refund if we're actually sending ETH
       if (wrappedValue > 0n) {
@@ -282,7 +312,8 @@ export abstract class NonfungiblePositionManager {
     const tokenId = toHex(options.tokenId)
 
     const involvesETH =
-      options.expectedCurrencyOwed0.currency.isNative || options.expectedCurrencyOwed1.currency.isNative
+      options.expectedCurrencyOwed0.currency.isNative ||
+      options.expectedCurrencyOwed1.currency.isNative
 
     const recipient = validateAndParseAddress(options.recipient)
 
@@ -295,7 +326,7 @@ export abstract class NonfungiblePositionManager {
           amount0Max: MaxUint128,
           amount1Max: MaxUint128,
         },
-      ])
+      ]),
     )
 
     if (involvesETH) {
@@ -316,8 +347,11 @@ export abstract class NonfungiblePositionManager {
     return calldatas
   }
 
-  public static collectCallParameters(options: CollectOptions): MethodParameters {
-    const calldatas: string[] = NonfungiblePositionManager.encodeCollect(options)
+  public static collectCallParameters(
+    options: CollectOptions,
+  ): MethodParameters {
+    const calldatas: string[] =
+      NonfungiblePositionManager.encodeCollect(options)
 
     return {
       calldata: Multicall.encodeMulticall(calldatas),
@@ -331,7 +365,10 @@ export abstract class NonfungiblePositionManager {
    * @param options Additional information necessary for generating the calldata
    * @returns The call parameters
    */
-  public static removeCallParameters(position: Position, options: RemoveLiquidityOptions): MethodParameters {
+  public static removeCallParameters(
+    position: Position,
+    options: RemoveLiquidityOptions,
+  ): MethodParameters {
     const calldatas: string[] = []
 
     const deadline = toHex(options.deadline)
@@ -340,16 +377,16 @@ export abstract class NonfungiblePositionManager {
     // construct a partial position with a percentage of liquidity
     const partialPosition = new Position({
       pool: position.pool,
-      liquidity: options.liquidityPercentage.multiply(position.liquidity).quotient,
+      liquidity: options.liquidityPercentage.multiply(position.liquidity)
+        .quotient,
       tickLower: position.tickLower,
       tickUpper: position.tickUpper,
     })
     invariant(partialPosition.liquidity > 0n, 'ZERO_LIQUIDITY')
 
     // slippage-adjusted underlying amounts
-    const { amount0: amount0Min, amount1: amount1Min } = partialPosition.burnAmountsWithSlippage(
-      options.slippageTolerance
-    )
+    const { amount0: amount0Min, amount1: amount1Min } =
+      partialPosition.burnAmountsWithSlippage(options.slippageTolerance)
 
     if (options.permit) {
       calldatas.push(
@@ -360,41 +397,55 @@ export abstract class NonfungiblePositionManager {
           options.permit.v,
           options.permit.r,
           options.permit.s,
-        ])
+        ]),
       )
     }
 
     // remove liquidity
     calldatas.push(
-      NonfungiblePositionManager.INTERFACE.encodeFunctionData('decreaseLiquidity', [
-        {
-          tokenId,
-          liquidity: toHex(partialPosition.liquidity),
-          amount0Min: toHex(amount0Min),
-          amount1Min: toHex(amount1Min),
-          deadline,
-        },
-      ])
+      NonfungiblePositionManager.INTERFACE.encodeFunctionData(
+        'decreaseLiquidity',
+        [
+          {
+            tokenId,
+            liquidity: toHex(partialPosition.liquidity),
+            amount0Min: toHex(amount0Min),
+            amount1Min: toHex(amount1Min),
+            deadline,
+          },
+        ],
+      ),
     )
 
-    const { expectedCurrencyOwed0, expectedCurrencyOwed1, ...rest } = options.collectOptions
+    const { expectedCurrencyOwed0, expectedCurrencyOwed1, ...rest } =
+      options.collectOptions
     calldatas.push(
       ...NonfungiblePositionManager.encodeCollect({
         tokenId: toHex(options.tokenId),
         // add the underlying value to the expected currency already owed
         expectedCurrencyOwed0: expectedCurrencyOwed0.add(
-          CurrencyAmount.fromRawAmount(expectedCurrencyOwed0.currency, amount0Min)
+          CurrencyAmount.fromRawAmount(
+            expectedCurrencyOwed0.currency,
+            amount0Min,
+          ),
         ),
         expectedCurrencyOwed1: expectedCurrencyOwed1.add(
-          CurrencyAmount.fromRawAmount(expectedCurrencyOwed1.currency, amount1Min)
+          CurrencyAmount.fromRawAmount(
+            expectedCurrencyOwed1.currency,
+            amount1Min,
+          ),
         ),
         ...rest,
-      })
+      }),
     )
 
     if (options.liquidityPercentage.equalTo(1n)) {
       if (options.burnToken) {
-        calldatas.push(NonfungiblePositionManager.INTERFACE.encodeFunctionData('burn', [tokenId]))
+        calldatas.push(
+          NonfungiblePositionManager.INTERFACE.encodeFunctionData('burn', [
+            tokenId,
+          ]),
+        )
       }
     } else {
       invariant(options.burnToken !== true, 'CANNOT_BURN')
@@ -406,7 +457,9 @@ export abstract class NonfungiblePositionManager {
     }
   }
 
-  public static safeTransferFromParameters(options: SafeTransferOptions): MethodParameters {
+  public static safeTransferFromParameters(
+    options: SafeTransferOptions,
+  ): MethodParameters {
     const recipient = validateAndParseAddress(options.recipient)
     const sender = validateAndParseAddress(options.sender)
 
@@ -414,14 +467,13 @@ export abstract class NonfungiblePositionManager {
     if (options.data) {
       calldata = NonfungiblePositionManager.INTERFACE.encodeFunctionData(
         'safeTransferFrom(address,address,uint256,bytes)',
-        [sender, recipient, toHex(options.tokenId), options.data]
+        [sender, recipient, toHex(options.tokenId), options.data],
       )
     } else {
-      calldata = NonfungiblePositionManager.INTERFACE.encodeFunctionData('safeTransferFrom(address,address,uint256)', [
-        sender,
-        recipient,
-        toHex(options.tokenId),
-      ])
+      calldata = NonfungiblePositionManager.INTERFACE.encodeFunctionData(
+        'safeTransferFrom(address,address,uint256)',
+        [sender, recipient, toHex(options.tokenId)],
+      )
     }
     return {
       calldata: calldata,

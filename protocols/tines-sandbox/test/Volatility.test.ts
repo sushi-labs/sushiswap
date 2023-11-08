@@ -1,6 +1,6 @@
-import { routeProcessor2Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { Address, createPublicClient, http } from 'viem'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
 import { RP3Address } from './Extractor.test'
@@ -61,9 +61,13 @@ async function volatilityCheck(args: {
             startOutput[i] = startOutput[i] ?? Number(amountOut)
             const diff = Number(amountOut) / startOutput[i] - 1
             const sdiff = diff > 0 ? `+${diff}` : diff
-            console.log(`    ${params.name} time: +${Math.round((Date.now() - startTime) / 1000)}s diff: ${sdiff}`)
+            console.log(
+              `    ${params.name} time: +${Math.round(
+                (Date.now() - startTime) / 1000,
+              )}s diff: ${sdiff}`,
+            )
           }
-        } catch (e) {
+        } catch (_e) {
           console.log('Routing failed. No connection ?')
         }
         inProgress = false

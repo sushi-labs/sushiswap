@@ -1,13 +1,19 @@
-import { isPromiseFulfilled } from '@sushiswap/validate'
-import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { Address, configureChains, createConfig, erc20ABI, readContract } from '@wagmi/core'
+// import { allChains, allProviders } from '@sushiswap/wagmi-config'
+import {
+  Address,
+  // configureChains,
+  // createConfig,
+  erc20ABI,
+  readContract,
+} from '@wagmi/core'
+import { isPromiseFulfilled } from 'sushi/validate'
 
-const { publicClient } = configureChains(allChains, allProviders)
+// const { publicClient } = configureChains(allChains, allProviders)
 
-createConfig({ publicClient })
+// createConfig({ publicClient })
 
 export async function fetchBalances(
-  args: { token: string; user: string; chainId: number }[]
+  args: { token: string; user: string; chainId: number }[],
 ): Promise<Record<string, string>> {
   // const _balances = await readContracts({
   //   allowFailure: true,
@@ -31,8 +37,8 @@ export async function fetchBalances(
         args: [user as Address],
         chainId,
         abi: erc20ABI,
-      } as const)
-    )
+      } as const),
+    ),
   ).then((promiseSettledResults) => {
     if (!Array.isArray(promiseSettledResults)) {
       console.error('balance readContract failed')
@@ -41,12 +47,17 @@ export async function fetchBalances(
     return promiseSettledResults.map((promiseSettledResult, i) => {
       return {
         ...args[i],
-        value: isPromiseFulfilled(promiseSettledResult) ? promiseSettledResult.value : 0n,
+        value: isPromiseFulfilled(promiseSettledResult)
+          ? promiseSettledResult.value
+          : 0n,
       }
     })
   })
 
   return Object.fromEntries(
-    balances.map((balance) => [`${balance.chainId}:${balance.token}`, balance.value.toString()])
+    balances.map((balance) => [
+      `${balance.chainId}:${balance.token}`,
+      balance.value.toString(),
+    ]),
   )
 }

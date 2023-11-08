@@ -1,5 +1,5 @@
-import { Fee } from '@sushiswap/base-sdk'
-import { amountSchema } from '@sushiswap/currency'
+import { amountSchema } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import z from 'zod'
 
 export const tridentConstantPoolSchema = z.object({

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId } from 'sushi/chain'
 import {
   AAVE,
   APE,
@@ -26,23 +26,23 @@ import {
   MKR,
   PRIMATE,
   PRIMATE_ADDRESS,
-  renBTC,
-  renBTC_ADDRESS,
-  rETH2_ADDRESS,
-  sETH2,
   SNX,
   SUSHI,
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
-  Token,
   TRIBE,
   TRIBE_ADDRESS,
+  Token,
   WBTC,
   WBTC_ADDRESS,
   XSUSHI,
   XSUSHI_ADDRESS,
   YFI,
-} from '@sushiswap/currency'
+  rETH2_ADDRESS,
+  renBTC,
+  renBTC_ADDRESS,
+  sETH2,
+} from 'sushi/currency'
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }

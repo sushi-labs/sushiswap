@@ -2,7 +2,7 @@ import { classNames } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { LoadingOverlay } from '@sushiswap/ui/components/loader'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
-import { addBodyToArticle, GhostArticle } from 'lib/ghost'
+import { GhostArticle, addBodyToArticle } from 'lib/ghost'
 import { ArticleSchema } from 'lib/validate'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
@@ -23,7 +23,8 @@ export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article?.attributes?.slug) acc.push(`/articles/${article?.attributes.slug}`)
+      if (article?.attributes?.slug)
+        acc.push(`/articles/${article?.attributes.slug}`)
       return acc
     }, []),
     fallback: true,
@@ -132,7 +133,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
           <div
             className={classNames(
               'sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]',
-              DEFAULT_SIDE_PADDING
+              DEFAULT_SIDE_PADDING,
             )}
           >
             <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] sm:flex sticky h-fit top-28">
@@ -161,7 +162,11 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
               </ol>
             </aside>
             <article className="!prose-invert prose prose-slate">
-              <div dangerouslySetInnerHTML={{ __html: article.attributes.body || '' }} />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: article.attributes.body || '',
+                }}
+              />
             </article>
           </div>
 

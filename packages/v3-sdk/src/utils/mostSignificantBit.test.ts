@@ -1,4 +1,4 @@
-import { MAX_UINT256 } from '@sushiswap/math'
+import { MAX_UINT256 } from 'sushi/math'
 
 import { mostSignificantBit } from './mostSignificantBit'
 

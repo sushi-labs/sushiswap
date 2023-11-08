@@ -2,22 +2,29 @@
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { Chain, ChainId } from '@sushiswap/chain'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 import {
-  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useMemo,
   useState,
 } from 'react'
+import { Chain, ChainId } from 'sushi/chain'
 
-import { Button, classNames, Dots, IconButton, LinkInternal, Loader } from '../index'
+import {
+  Button,
+  Dots,
+  IconButton,
+  LinkInternal,
+  Loader,
+  classNames,
+} from '../index'
 import { CheckMarkIcon } from './icons/CheckmarkIcon'
 import { FailedMarkIcon } from './icons/FailedMarkIcon'
 
@@ -34,7 +41,7 @@ const dialogVariants = cva(
     defaultVariants: {
       variant: 'default',
     },
-  }
+  },
 )
 
 const dialogOverlayVariants = cva(
@@ -49,7 +56,7 @@ const dialogOverlayVariants = cva(
     defaultVariants: {
       variant: 'default',
     },
-  }
+  },
 )
 
 const dialogCloseVariants = cva('', {
@@ -68,9 +75,15 @@ const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
 const DialogClose = DialogPrimitive.Close
 
-const DialogPortal = ({ className, children, ...props }: DialogPrimitive.DialogPortalProps) => (
+const DialogPortal = ({
+  className,
+  children,
+  ...props
+}: DialogPrimitive.DialogPortalProps) => (
   <DialogPrimitive.Portal className={classNames(className)} {...props}>
-    <div className="fixed inset-0 z-50 flex items-start justify-center sm:items-center">{children}</div>
+    <div className="fixed inset-0 z-50 flex items-start justify-center sm:items-center">
+      {children}
+    </div>
   </DialogPrimitive.Portal>
 )
 DialogPortal.displayName = DialogPrimitive.Portal.displayName
@@ -79,11 +92,16 @@ interface DialogOverlay
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>,
     VariantProps<typeof dialogOverlayVariants> {}
 
-const DialogOverlay = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Overlay>, DialogOverlay>(
-  ({ className, variant, ...props }, ref) => (
-    <DialogPrimitive.Overlay ref={ref} className={dialogOverlayVariants({ variant, className })} {...props} />
-  )
-)
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  DialogOverlay
+>(({ className, variant, ...props }, ref) => (
+  <DialogPrimitive.Overlay
+    ref={ref}
+    className={dialogOverlayVariants({ variant, className })}
+    {...props}
+  />
+))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 interface DialogContentProps
@@ -92,28 +110,59 @@ interface DialogContentProps
   hideClose?: boolean
 }
 
-const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogContentProps>(
-  ({ className, hideClose = false, variant, children, ...props }, ref) => (
+const DialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  DialogContentProps
+>(
+  (
+    { className, hideClose: _hideClose = false, variant, children, ...props },
+    ref,
+  ) => (
     <DialogPortal>
       <DialogOverlay variant={variant} />
-      <DialogPrimitive.Content ref={ref} className={dialogVariants({ variant, className })} {...props}>
+      <DialogPrimitive.Content
+        ref={ref}
+        className={dialogVariants({ variant, className })}
+        {...props}
+      >
         {children}
-        <DialogPrimitive.Close asChild className={dialogCloseVariants({ variant })}>
+        <DialogPrimitive.Close
+          asChild
+          className={dialogCloseVariants({ variant })}
+        >
           <IconButton icon={XMarkIcon} name="Close" />
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
-  )
+  ),
 )
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
-const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={classNames('flex flex-col space-y-1.5 text-center sm:text-left', className)} {...props} />
+const DialogHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={classNames(
+      'flex flex-col space-y-1.5 text-center sm:text-left',
+      className,
+    )}
+    {...props}
+  />
 )
 DialogHeader.displayName = 'DialogHeader'
 
-const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={classNames('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)} {...props} />
+const DialogFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={classNames(
+      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
+      className,
+    )}
+    {...props}
+  />
 )
 DialogFooter.displayName = 'DialogFooter'
 
@@ -123,7 +172,10 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={classNames('text-lg font-semibold leading-none tracking-tight mr-[64px]', className)}
+    className={classNames(
+      'text-lg font-semibold leading-none tracking-tight mr-[64px]',
+      className,
+    )}
     {...props}
   />
 ))
@@ -142,7 +194,10 @@ const DialogDescription = React.forwardRef<
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
 interface DialogReviewProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>, 'children' | 'open'> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>,
+    'children' | 'open'
+  > {
   children: ({ confirm }: { confirm(): void }) => ReactNode
 }
 
@@ -198,7 +253,13 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {status === 'loading' ? <Dots>Confirming</Dots> : status === 'success' ? 'Success!' : 'Oops!'}
+            {status === 'loading' ? (
+              <Dots>Confirming</Dots>
+            ) : status === 'success' ? (
+              'Success!'
+            ) : (
+              'Oops!'
+            )}
           </DialogTitle>
           <DialogDescription className="font-medium">
             {status === 'loading' ? (
@@ -206,7 +267,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
                 Waiting for your{' '}
                 <a
                   target="_blank"
-                  href={txHash ? Chain.from(chainId).getTxUrl(txHash) : ''}
+                  href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
                   className="cursor-pointer text-blue hover:underline"
                   rel="noreferrer"
                 >
@@ -217,7 +278,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : status === 'success' ? (
               <a
                 target="_blank"
-                href={txHash ? Chain.from(chainId).getTxUrl(txHash) : ''}
+                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -226,7 +287,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             ) : (
               <a
                 target="_blank"
-                href={txHash ? Chain.from(chainId).getTxUrl(txHash) : ''}
+                href={txHash ? Chain.from(chainId)?.getTxUrl(txHash) : ''}
                 className="cursor-pointer text-blue hover:underline"
                 rel="noreferrer"
               >
@@ -245,8 +306,17 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button testId={testId} asChild={!!buttonLink} fullWidth size="xl">
-                {buttonLink ? <LinkInternal href={buttonLink}>{buttonText}</LinkInternal> : <>{buttonText}</>}
+              <Button
+                testId={testId}
+                asChild={!!buttonLink}
+                fullWidth
+                size="xl"
+              >
+                {buttonLink ? (
+                  <LinkInternal href={buttonLink}>{buttonText}</LinkInternal>
+                ) : (
+                  <>{buttonText}</>
+                )}
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -258,13 +328,15 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
 DialogConfirm.displayName = 'DialogConfirm'
 
 enum DialogType {
-  Review,
-  Confirm,
+  Review = 0,
+  Confirm = 1,
 }
 
 interface DialogContext {
   state: Record<DialogType, boolean>
+
   confirm(): void
+
   setState: Dispatch<SetStateAction<Record<DialogType, boolean>>>
 }
 
@@ -287,7 +359,11 @@ const DialogProvider: FC<DialogProviderProps> = ({ children }) => {
     })
   }, [])
 
-  return <DialogContext.Provider value={{ state, confirm, setState }}>{children}</DialogContext.Provider>
+  return (
+    <DialogContext.Provider value={{ state, confirm, setState }}>
+      {children}
+    </DialogContext.Provider>
+  )
 }
 
 type UseDialog<T> = T extends DialogType.Review
@@ -307,20 +383,24 @@ const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
     throw new Error('Hook can only be used inside Modal Context')
   }
 
+  const { state, setState, confirm } = context
+
   return useMemo(() => {
     if (type === DialogType.Review) {
       return {
-        open: Boolean(context.state[type]),
-        setOpen: (val) => context.setState((prev) => ({ ...prev, [DialogType.Review]: val })),
-        confirm: context.confirm,
+        open: Boolean(state[type]),
+        setOpen: (val) =>
+          setState((prev) => ({ ...prev, [DialogType.Review]: val })),
+        confirm,
       } as UseDialog<T>
     } else {
       return {
-        open: Boolean(context.state[type]),
-        setOpen: (val) => context.setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
+        open: Boolean(state[type]),
+        setOpen: (val) =>
+          setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
       } as UseDialog<T>
     }
-  }, [context, type])
+  }, [state, setState, confirm, type])
 }
 
 export {

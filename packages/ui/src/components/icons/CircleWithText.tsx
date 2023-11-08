@@ -7,7 +7,11 @@ interface CircleWithText extends IconProps {
   text?: string | number
 }
 
-export const CircleWithText: FC<CircleWithText> = ({ text, className, ...props }) => {
+export const CircleWithText: FC<CircleWithText> = ({
+  text,
+  className,
+  ...props
+}) => {
   return (
     <svg
       {...props}
@@ -18,8 +22,15 @@ export const CircleWithText: FC<CircleWithText> = ({ text, className, ...props }
       className={classNames('shrink-0 block rounded-full', className)}
     >
       <circle cx="12" cy="12" r="9.6" />
-      {typeof text !== undefined && (
-        <text x="12" y="16" textAnchor="middle" fontSize="0.75rem" stroke="#fff" fontFamily="inherit">
+      {typeof text !== 'undefined' && (
+        <text
+          x="12"
+          y="16"
+          textAnchor="middle"
+          fontSize="0.75rem"
+          stroke="#fff"
+          fontFamily="inherit"
+        >
           {text}
         </text>
       )}

@@ -2,26 +2,18 @@ import '@sushiswap/ui/index.css'
 import '../index.css'
 import '../variables.css'
 
-import { Cloudinary } from '@cloudinary/url-gen'
 import { ThemeProvider } from '@sushiswap/ui'
 import { GlobalFooter } from '@sushiswap/ui/components/global-footer'
 import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
 import { Analytics } from '@vercel/analytics/react'
+import { DefaultSeo } from 'next-seo'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { DefaultSeo } from 'next-seo'
 import { useEffect } from 'react'
-
-import { Header } from '../components'
+import { Header } from '../components/Header'
 import SEO from '../next-seo.config'
-
-export const cld = new Cloudinary({
-  cloud: {
-    cloudName: 'sushi-cdn',
-  },
-})
 
 declare global {
   interface Window {
@@ -29,7 +21,7 @@ declare global {
   }
 }
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
   useEffect(() => {
     const handler = (page: any) => {
@@ -48,12 +40,30 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1" />
-        <link rel="manifest" href="/site.webmanifest?v=1" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
-        <link rel="shortcut icon" href="/favicon.ico?v=1" />
+        <link
+          href="/apple-touch-icon.png?v=1"
+          rel="apple-touch-icon"
+          sizes="180x180"
+        />
+        <link
+          href="/favicon-32x32.png?v=1"
+          rel="icon"
+          sizes="32x32"
+          type="image/png"
+        />
+        <link
+          href="/favicon-16x16.png?v=1"
+          rel="icon"
+          sizes="16x16"
+          type="image/png"
+        />
+        <link href="/site.webmanifest?v=1" rel="manifest" />
+        <link
+          color="#fa52a0"
+          href="/safari-pinned-tab.svg?v=1"
+          rel="mask-icon"
+        />
+        <link href="/favicon.ico?v=1" rel="shortcut icon" />
       </Head>
       <ThemeProvider forcedTheme="dark">
         <DefaultSeo {...SEO} />

@@ -1,8 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/legacy/image'
-import { FC } from 'react'
-import { Image as ImageType } from 'types'
-
+import type { FC } from 'react'
+import type { Image as ImageType } from 'types'
 import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 
 interface ImageProps {
@@ -13,7 +12,10 @@ interface ImageProps {
   objectFit?: 'cover' | 'contain'
   className?: string
   image: {
-    attributes: Pick<ImageType['attributes'], 'provider_metadata' | 'url' | 'width' | 'height' | 'alternativeText'>
+    attributes: Pick<
+      ImageType['attributes'],
+      'provider_metadata' | 'url' | 'width' | 'height' | 'alternativeText'
+    >
   }
 }
 
@@ -26,16 +28,16 @@ export const Image: FC<ImageProps> = ({
   layout = 'fill',
   objectFit = 'cover',
 }) => {
-  if (!image?.attributes || !image?.attributes.url) {
+  if (!image.attributes.url) {
     return <></>
   }
 
   if (isMediaVideo(image.attributes.provider_metadata)) {
     return (
       <video
-        autoPlay={true}
-        loop
+        autoPlay
         className={classNames(className, '!my-0')}
+        loop
         {...(width && { width })}
         {...(height && { height })}
         style={{ objectFit: 'cover', height }}
@@ -53,18 +55,18 @@ export const Image: FC<ImageProps> = ({
 
   return (
     <NextImage
-      quality={quality}
+      alt={alternativeText || ''}
       className={className}
-      layout={layout}
-      width={layout !== 'fill' ? width || _width || 640 : undefined}
       height={layout !== 'fill' ? height || _height || 400 : undefined}
+      layout={layout}
       objectFit={objectFit}
+      quality={quality}
       src={getOptimizedMedia({
         metadata: image.attributes.provider_metadata,
         width,
         height,
       })}
-      alt={alternativeText || ''}
+      width={layout !== 'fill' ? width || _width || 640 : undefined}
     />
   )
 }

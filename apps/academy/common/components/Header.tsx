@@ -11,8 +11,8 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
   OnramperButton,
+  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
@@ -32,22 +32,38 @@ export interface HeaderSection {
   isExternal?: boolean
 }
 
-const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'bentobox']
+const PRODUCTS_ORDER = [
+  'trident',
+  'furo',
+  'sushixswap',
+  'onsen',
+  'kashi',
+  'bentobox',
+]
 
 export const Header: FC = () => {
   const { data: productsData } = useSWR(
     '/products',
-    async () => (await getProducts({ filters: { show: { eq: true } } }))?.products
+    async () =>
+      (await getProducts({ filters: { show: { eq: true } } }))?.products,
   )
-  const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
+  const { data: difficultiesData } = useSWR(
+    '/difficulties',
+    async () => (await getDifficulties())?.difficulties,
+  )
 
   const products = useMemo(() => productsData?.data ?? [], [productsData?.data])
-  const difficulties = useMemo(() => difficultiesData?.data ?? [], [difficultiesData?.data])
+  const difficulties = useMemo(
+    () => difficultiesData?.data ?? [],
+    [difficultiesData?.data],
+  )
   const sortedProducts = products.sort((a, b) =>
-    PRODUCTS_ORDER.indexOf(a?.attributes?.slug as (typeof PRODUCTS_ORDER)[number]) >
-    PRODUCTS_ORDER.indexOf(b?.attributes?.slug as (typeof PRODUCTS_ORDER)[number])
+    PRODUCTS_ORDER.indexOf(
+      a?.attributes?.slug as typeof PRODUCTS_ORDER[number],
+    ) >
+    PRODUCTS_ORDER.indexOf(b?.attributes?.slug as typeof PRODUCTS_ORDER[number])
       ? 1
-      : -1
+      : -1,
   )
 
   const navData: HeaderSection[] = useMemo(
@@ -66,7 +82,9 @@ export const Header: FC = () => {
           const isTechnical = attributes?.slug === 'technical'
           return {
             name: attributes?.shortDescription as string,
-            href: isTechnical ? DOCS_URL : `/articles?difficulty=${attributes?.slug}`,
+            href: isTechnical
+              ? DOCS_URL
+              : `/articles?difficulty=${attributes?.slug}`,
             isExternal: isTechnical,
           }
         }),
@@ -74,7 +92,7 @@ export const Header: FC = () => {
       { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
       { title: 'About', href: '/about' },
     ],
-    [difficulties, sortedProducts]
+    [difficulties, sortedProducts],
   )
 
   return (
@@ -97,16 +115,21 @@ export const Header: FC = () => {
                     </NavigationListItem>
                   ))}
                   <OnramperButton>
-                    <NavigationListItem title="Buy Crypto">Need to buy some more crypto?</NavigationListItem>
+                    <NavigationListItem title="Buy Crypto">
+                      Need to buy some more crypto?
+                    </NavigationListItem>
                   </OnramperButton>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            {navData.map(({ title, href, links, isExternal }) => {
+            {navData.map(({ title, href, links }) => {
               if (href && !links) {
                 return (
                   <NavigationMenuItem key={href}>
-                    <NavigationMenuLink href={href} className={navigationMenuTriggerStyle()}>
+                    <NavigationMenuLink
+                      href={href}
+                      className={navigationMenuTriggerStyle()}
+                    >
                       {title}
                     </NavigationMenuLink>
                   </NavigationMenuItem>

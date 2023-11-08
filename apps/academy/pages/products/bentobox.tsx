@@ -41,14 +41,17 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false,
-    }
+    },
   )
 
   const latestArticles = data?.articles ?? []
   const relevantArticles = data?.relevantArticles ?? []
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container
+      maxWidth="6xl"
+      className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}
+    >
       <ProductBackground color={color} isCentered />
       <ProductHero
         productName={longName}
@@ -71,7 +74,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         isLoading={isValidating}
       />
       <ProductArticles
-        title="Learn about Bentobox"
+        title="Learn about BentoBox"
         subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
         productName={PRODUCT_SLUG}

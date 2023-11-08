@@ -1,4 +1,4 @@
-import { ONE, ZERO } from '@sushiswap/math'
+import { ONE, ZERO } from 'sushi/math'
 
 export abstract class LiquidityMath {
   /**

@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom'
 
-import { getBigInt, RToken } from '../src'
+import { RToken, getBigInt } from '../src'
 import { BridgeBento } from '../src'
 
 function calcPrecision(a: number, b: number): number {
@@ -10,7 +10,13 @@ function calcPrecision(a: number, b: number): number {
   return Math.abs(a / b - 1)
 }
 
-function expectCloseValues(v1: number, v2: number, precisionExpected: number, description = '', additionalInfo = '') {
+function expectCloseValues(
+  v1: number,
+  v2: number,
+  precisionExpected: number,
+  description = '',
+  additionalInfo = '',
+) {
   // const a = typeof v1 === 'number' ? v1 : parseFloat(v1.toString())
   // const b = typeof v2 === 'number' ? v2 : parseFloat(v2.toString())
   const a = v1
@@ -21,7 +27,7 @@ function expectCloseValues(v1: number, v2: number, precisionExpected: number, de
       `Close values expectation failed: ${description}
       v1 = ${a}\
       v2= ${b}\
-      precision = ${precision}, expected < ${precisionExpected}`
+      precision = ${precision}, expected < ${precisionExpected}`,
     )
     if (additionalInfo !== '') {
       console.log(additionalInfo)
@@ -38,7 +44,7 @@ function checkBridging(bridge: BridgeBento, amount: number) {
   try {
     const amount2 = bridge.calcOutByIn(share, false).out
     expectCloseValues(amount, amount2, 1e-10)
-  } catch (e) {
+  } catch (_e) {
     expect(bridge.freeLiquidity).toBeDefined()
     let out
     if (bridge.base === 0) {
@@ -95,7 +101,14 @@ function getRandomBridge(rnd: () => number) {
   const elastic = Math.floor(getRandomExp(rnd, 1, 1e20))
   const base = Math.floor(getRandomExp(rnd, 1, 1e20))
 
-  return new BridgeBento('aaa', token1, token2, getBigInt(elastic), getBigInt(base), getBigInt(elastic / 2))
+  return new BridgeBento(
+    'aaa',
+    token1,
+    token2,
+    getBigInt(elastic),
+    getBigInt(base),
+    getBigInt(elastic / 2),
+  )
 }
 
 function getBridge(elastic: number, base: number) {
@@ -111,7 +124,13 @@ function getBridge(elastic: number, base: number) {
     address: 'token2',
     decimals: 18,
   }
-  return new BridgeBento('aaa', token1, token2, getBigInt(elastic), getBigInt(base))
+  return new BridgeBento(
+    'aaa',
+    token1,
+    token2,
+    getBigInt(elastic),
+    getBigInt(base),
+  )
 }
 
 describe('Bento Bridge test', () => {

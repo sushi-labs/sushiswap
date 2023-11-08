@@ -1,8 +1,9 @@
 import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
-import { ChainId } from '@sushiswap/chain'
+import { useCallback, useEffect, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 import {
   ARB,
-  Currency,
+  type Currency,
   DAI,
   FRAX,
   GNO,
@@ -16,8 +17,7 @@ import {
   WBTC,
   WETH9,
   WNATIVE,
-} from '@sushiswap/currency'
-import { useCallback, useEffect, useMemo } from 'react'
+} from 'sushi/currency'
 
 import { useLocalStorage } from './useLocalStorage'
 
@@ -150,7 +150,11 @@ export const COMMON_BASES = {
     USDT[ChainId.CELO],
     DAI[ChainId.CELO],
   ],
-  [ChainId.PALM]: [Native.onChain(ChainId.PALM), WNATIVE[ChainId.PALM], WETH9[ChainId.PALM]],
+  [ChainId.PALM]: [
+    Native.onChain(ChainId.PALM),
+    WNATIVE[ChainId.PALM],
+    WETH9[ChainId.PALM],
+  ],
   [ChainId.MOONRIVER]: [
     Native.onChain(ChainId.MOONRIVER),
     WNATIVE[ChainId.MOONRIVER],
@@ -281,7 +285,12 @@ export const COMMON_BASES = {
     WBTC[ChainId.ZKSYNC_ERA],
     USDC[ChainId.ZKSYNC_ERA],
   ],
-  [ChainId.LINEA]: [Native.onChain(ChainId.LINEA), WNATIVE[ChainId.LINEA], DAI[ChainId.LINEA], USDC[ChainId.LINEA]],
+  [ChainId.LINEA]: [
+    Native.onChain(ChainId.LINEA),
+    WNATIVE[ChainId.LINEA],
+    DAI[ChainId.LINEA],
+    USDC[ChainId.LINEA],
+  ],
   [ChainId.BASE]: [
     Native.onChain(ChainId.BASE),
     WNATIVE[ChainId.BASE],
@@ -295,10 +304,25 @@ export const COMMON_BASES = {
     }),
     USDC[ChainId.BASE],
   ],
+  [ChainId.SCROLL]: [
+    Native.onChain(ChainId.SCROLL),
+    WNATIVE[ChainId.SCROLL],
+    USDC[ChainId.SCROLL],
+    USDT[ChainId.SCROLL],
+    WBTC[ChainId.SCROLL],
+  ],
+  [ChainId.FILECOIN]: [
+    Native.onChain(ChainId.FILECOIN),
+    WNATIVE[ChainId.FILECOIN],
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 
-const COMMON_BASES_IDS = Object.entries(COMMON_BASES).reduce<Record<string, string[]>>((acc, [chain, tokens]) => {
+const COMMON_BASES_IDS = Object.entries(COMMON_BASES).reduce<
+  Record<string, string[]>
+>((acc, [chain, tokens]) => {
   const chainId = chain
   acc[chainId] = Array.from(new Set(tokens.map((token) => token.id)))
   return acc
@@ -310,8 +334,23 @@ function getAddress(address: string) {
 }
 
 export const usePinnedTokens = () => {
-  const [value, setValue] = useLocalStorage('sushi.pinnedTokens', COMMON_BASES_IDS)
+  const [value, setValue] = useLocalStorage(
+    'sushi.pinnedTokens',
+    COMMON_BASES_IDS,
+  )
 
+  // useEffect(() => {
+  //   setValue((value) => {
+  //     for (const [chainId, tokens] of Object.entries(COMMON_BASES_IDS)) {
+  //       if (!value[chainId]) {
+  //         value[chainId] = tokens
+  //       }
+  //     }
+  //     return value
+  //   })
+  // }, [setValue])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     Object.entries(COMMON_BASES_IDS).forEach(([chainId, tokens]) => {
       if (!value[chainId]) {
@@ -319,26 +358,36 @@ export const usePinnedTokens = () => {
         setValue(value)
       }
     })
-  }, [value])
+  }, [setValue])
 
   const addPinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(new Set([...value[chainId], `${chainId}:${getAddress(address)}`]))
-      setValue(value)
+      setValue((value) => {
+        value[chainId] = Array.from(
+          new Set([...value[chainId], `${chainId}:${getAddress(address)}`]),
+        )
+        return value
+      })
     },
-    [setValue]
+    [setValue],
   )
 
   const removePinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(
-        new Set(value[chainId].filter((token) => token !== `${chainId}:${getAddress(address)}`))
-      )
-      setValue(value)
+      setValue((value) => {
+        value[chainId] = Array.from(
+          new Set(
+            value[chainId].filter(
+              (token) => token !== `${chainId}:${getAddress(address)}`,
+            ),
+          ),
+        )
+        return value
+      })
     },
-    [setValue]
+    [setValue],
   )
 
   const hasToken = useCallback(
@@ -358,7 +407,7 @@ export const usePinnedTokens = () => {
 
       return !!value?.[currency.chainId]?.includes(currency.id)
     },
-    [value]
+    [value],
   )
 
   const mutate = useCallback(
@@ -366,7 +415,7 @@ export const usePinnedTokens = () => {
       if (type === 'add') addPinnedToken(currencyId)
       if (type === 'remove') removePinnedToken(currencyId)
     },
-    [addPinnedToken, removePinnedToken]
+    [addPinnedToken, removePinnedToken],
   )
 
   return useMemo(() => {

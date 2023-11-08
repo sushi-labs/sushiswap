@@ -1,9 +1,24 @@
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { Extractor, FactoryV2, FactoryV3, LogFilterType, MultiCallAggregator, TokenManager } from '@sushiswap/extractor'
-import { DataFetcher, LiquidityProviders, NativeWrapProvider } from '@sushiswap/router'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
+import {
+  Extractor,
+  FactoryV2,
+  FactoryV3,
+  LogFilterType,
+  MultiCallAggregator,
+  TokenManager,
+} from '@sushiswap/extractor'
+import {
+  DataFetcher,
+  LiquidityProviders,
+  NativeWrapProvider,
+} from '@sushiswap/router'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+} from '@sushiswap/router-config'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
+} from '@sushiswap/v2-sdk'
 import {
   POOL_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -11,8 +26,10 @@ import {
   SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { expect } from 'chai'
-import { Address, createPublicClient, http, Transport } from 'viem'
-import { arbitrum, Chain, mainnet, polygon } from 'viem/chains'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { http, Address, Transport, createPublicClient } from 'viem'
+import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -20,7 +37,8 @@ export const RP3Address = {
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
   [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
-  [ChainId.POLYGON_ZKEVM]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
+  [ChainId.POLYGON_ZKEVM]:
+    '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
   [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
 }
@@ -31,7 +49,8 @@ export const TickLensContract = {
   [ChainId.ARBITRUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
   [ChainId.OPTIMISM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
   [ChainId.CELO]: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
-  [ChainId.POLYGON_ZKEVM]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
+  [ChainId.POLYGON_ZKEVM]:
+    '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
   [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776' as Address,
   [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
 }
@@ -44,7 +63,8 @@ function uniswapV2Factory(chain: ChainId): FactoryV2 {
     address: UniswapV2FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV2,
     fee: 0.003,
-    initCodeHash: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+    initCodeHash:
+      '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
   }
 }
 
@@ -107,25 +127,32 @@ async function CompareTest(args: {
   const chainId = client.chain?.id as ChainId
 
   const extractor = new Extractor({ ...args, client, logging: false })
-  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []))
+  await extractor.start(
+    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []),
+  )
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
-  const poolsNativeSet = new Set(nativeProvider.getCurrentPoolList().map((pc) => pc.pool.address))
+  const poolsNativeSet = new Set(
+    nativeProvider.getCurrentPoolList().map((pc) => pc.pool.address),
+  )
 
   const tokenManager = new TokenManager(
-    extractor.extractorV2?.multiCallAggregator || (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
+    extractor.extractorV2?.multiCallAggregator ||
+      (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
     __dirname,
-    `tokens-${client.chain?.id}`
+    `tokens-${client.chain?.id}`,
   )
   await tokenManager.addCachedTokens()
   const tokens =
     args.checkTokens ??
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(Array.from(tokenManager.tokens.values())).slice(0, 60)
+    BASES_TO_CHECK_TRADES_AGAINST[chainId]
+      .concat(Array.from(tokenManager.tokens.values()))
+      .slice(0, 60)
 
   let count = 0
   for (let i = 1; i < tokens.length; i += 2) {
     const j = i - 1
-    if (tokens[i].address == tokens[j].address) continue
+    if (tokens[i].address === tokens[j].address) continue
 
     const add0 = ADDITIONAL_BASES[chainId]?.[tokens[i].address] ?? []
     const add1 = ADDITIONAL_BASES[chainId]?.[tokens[j].address] ?? []
@@ -135,8 +162,11 @@ async function CompareTest(args: {
 
     const [poolCodesExtractor, poolCodesDataFetcher] = await Promise.all([
       extractor.getPoolCodesForTokensAsync(
-        BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i], tokens[j]]).concat(add0).concat(add1),
-        10_000 // 10 sec timeout
+        BASES_TO_CHECK_TRADES_AGAINST[chainId]
+          .concat([tokens[i], tokens[j]])
+          .concat(add0)
+          .concat(add1),
+        10_000, // 10 sec timeout
       ),
       (async () => {
         await dataFetcher.fetchPoolsForToken(tokens[i], tokens[j])
@@ -150,11 +180,17 @@ async function CompareTest(args: {
     const poolsDataFetcher = poolCodesDataFetcher.map((pc) => pc.pool.address)
     const poolsDataFetcherSet = new Set(poolsDataFetcher)
 
-    const poolsExtractorOnly = poolsExtractor.filter((p) => !poolsDataFetcherSet.has(p) && !poolsNativeSet.has(p))
-    const poolsDataFetcherOnly = poolsDataFetcher.filter((p) => !poolsExtractorSet.has(p) && !poolsNativeSet.has(p))
+    const poolsExtractorOnly = poolsExtractor.filter(
+      (p) => !poolsDataFetcherSet.has(p) && !poolsNativeSet.has(p),
+    )
+    const poolsDataFetcherOnly = poolsDataFetcher.filter(
+      (p) => !poolsExtractorSet.has(p) && !poolsNativeSet.has(p),
+    )
 
     console.log(
-      `${++count} ${tokens[i].symbol} -> ${tokens[j].symbol} [${poolsExtractorOnly}] [${poolsDataFetcherOnly}]`
+      `${++count} ${tokens[i].symbol} -> ${
+        tokens[j].symbol
+      } [${poolsExtractorOnly}] [${poolsDataFetcherOnly}]`,
     )
     expect(poolsExtractorOnly.length).equal(0)
     expect(poolsDataFetcherOnly.length).equal(0)

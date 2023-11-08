@@ -1,11 +1,19 @@
 {
   "extends": "@sushiswap/typescript-config/react-library.json",
-  "include": ["src"],
-  "exclude": ["dist", "node_modules"],
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".turbo"
+  ],
   "compilerOptions": {
     "rootDir": "./src",
+    "outDir": "./dist",
     "declaration": false,
     "declarationMap": false,
-    "target": "ES2020"
-   }
+    "sourceMap": false,
+    "target": "ESNext"
+  }
 }

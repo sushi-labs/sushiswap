@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { classNames, LinkExternal } from '@sushiswap/ui'
+import { LinkExternal, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { DocsIcon } from 'common/icons'
 import { FC } from 'react'
@@ -10,7 +10,10 @@ interface ProductTechnicalDoc {
   url: string
 }
 
-const DocsButton: FC<{ className: string; url: string }> = ({ className, url }) => (
+const DocsButton: FC<{ className: string; url: string }> = ({
+  className,
+  url,
+}) => (
   <LinkExternal href={url}>
     <Button className={classNames(className)} variant="secondary">
       <ArrowRightIcon width={20} height={20} />
@@ -18,7 +21,11 @@ const DocsButton: FC<{ className: string; url: string }> = ({ className, url }) 
   </LinkExternal>
 )
 
-export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({ color, secondaryColor, url }) => {
+export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({
+  color,
+  secondaryColor,
+  url,
+}) => {
   return (
     <div className="py-10 sm:py-[75px]">
       <div className="flex items-center p-6 sm:p-10 rounded-3xl bg-slate-800">

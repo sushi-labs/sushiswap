@@ -1,7 +1,9 @@
-import { MAX_UINT256 } from '@sushiswap/math'
+import { MAX_UINT256 } from 'sushi/math'
 import invariant from 'tiny-invariant'
 
-const POWERS_OF_2 = [128, 64, 32, 16, 8, 4, 2, 1].map((pow: number): [number, bigint] => [pow, 2n ** BigInt(pow)])
+const POWERS_OF_2 = [128, 64, 32, 16, 8, 4, 2, 1].map(
+  (pow: number): [number, bigint] => [pow, 2n ** BigInt(pow)],
+)
 
 export function mostSignificantBit(x: bigint): number {
   invariant(x > 0n, 'ZERO')

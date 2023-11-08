@@ -1,3 +1,3 @@
-# React Query Config
+# Tailwind CSS Config
 
 ...

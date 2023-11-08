@@ -7,12 +7,17 @@ import { TimeAgo } from '../time-ago'
 
 interface ToastContent {
   icon?: ReactNode
-  summary: ReactNode | Array<ReactNode>
+  summary: ReactNode | ReactNode[]
   code?: boolean
   href?: string
 }
 
-export const ToastContent: FC<ToastContent> = ({ icon, href, summary, code = false }) => {
+export const ToastContent: FC<ToastContent> = ({
+  icon,
+  href,
+  summary,
+  code = false,
+}) => {
   const [date] = useState(new Date())
 
   return (
@@ -21,7 +26,9 @@ export const ToastContent: FC<ToastContent> = ({ icon, href, summary, code = fal
       <div className="flex flex-col gap-1 overflow-hidden">
         {!code ? (
           <>
-            <span className="font-semibold mb-1 text-sm text-gray-900 dark:text-slate-200">{summary}</span>
+            <span className="font-semibold mb-1 text-sm text-gray-900 dark:text-slate-200">
+              {summary}
+            </span>
             {href && (
               <a
                 href={href}
@@ -29,7 +36,12 @@ export const ToastContent: FC<ToastContent> = ({ icon, href, summary, code = fal
                 className="flex items-center text-sm font-medium gap-2 text-gray-700 dark:text-slate-400"
                 rel="noreferrer"
               >
-                View on explorer <ArrowTopRightOnSquareIcon width={16} height={16} strokeWidth={2} />
+                View on explorer{' '}
+                <ArrowTopRightOnSquareIcon
+                  width={16}
+                  height={16}
+                  strokeWidth={2}
+                />
               </a>
             )}
             <span className="text-[10px] font-medium text-gray-600 dark:text-slate-400">

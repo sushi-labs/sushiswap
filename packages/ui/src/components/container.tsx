@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import classNames from 'classnames'
 import React from 'react'
 
@@ -43,8 +43,14 @@ export interface ContainerProps
 const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
   ({ className, maxWidth, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'div'
-    return <Comp className={classNames(containerVariants({ maxWidth, className }))} ref={ref} {...props} />
-  }
+    return (
+      <Comp
+        className={classNames(containerVariants({ maxWidth, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  },
 )
 
 Container.displayName = 'Container'

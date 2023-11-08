@@ -2,25 +2,27 @@
 const defaultNextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  swcMinify: false,
+  swcMinify: true,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
-  modularizeImports: {
-    '@heroicons-v1/react/solid': {
-      transform: '@heroicons-v1/react/solid/{{member}}',
-    },
-    '@heroicons-v1/react/outline': {
-      transform: '@heroicons-v1/react/outline/{{member}}',
-    },
-    '@heroicons/react': {
-      transform: '@heroicons/react/{{member}}',
-    },
-    lodash: {
-      transform: 'lodash/{{member}}',
-    },
-  },
   experimental: {
-    esmExternals: 'loose',
+    // webpackBuildWorker: true,
+    // Prepare for Next.js 14
+    // optimizePackageImports: [
+    //   '@heroicons/react-v1/solid',
+    //   '@heroicons/react-v1/outline',
+    //   '@sushiswap/client',
+    //   '@sushiswap/database',
+    //   '@sushiswap/dexie',
+    //   '@sushiswap/graph-client',
+    //   '@sushiswap/hooks',
+    //   '@sushiswap/react-query',
+    //   '@sushiswap/router',
+    //   '@sushiswap/tines',
+    //   '@sushiswap/ui',
+    //   '@sushiswap/wagmi',
+    //   'sushi',
+    // ],
   },
   images: {
     loader: 'cloudinary',
@@ -40,22 +42,33 @@ const defaultNextConfig = {
       'ui',
     ],
   },
-  webpack: (config, { isServer }) => {
-    // If client-side, don't polyfill `fs`
-    if (!isServer) {
-      config.resolve.fallback = {
-        fs: false,
-        dns: false,
-        tls: false,
-        net: false,
-      }
+  webpack: (config, { webpack }) => {
+    if (config.plugins) {
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^(lokijs|pino-pretty|encoding)$/,
+        }),
+      )
     }
-
-    config.module = {
-      ...config.module,
-      exprContextCritical: false,
-    }
-
+    // Ignore import trace warnings from graphclient & sentry
+    config.ignoreWarnings = [
+      {
+        module: /node_modules\/@graphql-mesh\/utils\/esm\/defaultImportFn\.js/,
+      },
+      { file: /node_modules\/@graphql-mesh\/utils\/esm\/defaultImportFn\.js/ },
+      {
+        module: /node_modules\/@sentry\/utils\/esm\/index\.js/,
+      },
+      { file: /node_modules\/@sentry\/utils\/esm\/index\.js/ },
+      {
+        module: /node_modules\/@sentry\/utils\/esm\/isBrowser\.js/,
+      },
+      { file: /node_modules\/@sentry\/utils\/esm\/isBrowser\.js/ },
+      {
+        module: /node_modules\/@whatwg-node\/fetch\/dist\/node-ponyfill\.js/,
+      },
+      { file: /node_modules\/@whatwg-node\/fetch\/dist\/node-ponyfill\.js/ },
+    ]
     return config
   },
 }

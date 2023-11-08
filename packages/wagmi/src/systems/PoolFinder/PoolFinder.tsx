@@ -1,4 +1,13 @@
-import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
+import {
+  Children,
+  FC,
+  ReactElement,
+  ReactNode,
+  cloneElement,
+  isValidElement,
+  useMemo,
+  useReducer,
+} from 'react'
 
 import { SushiSwapV2PoolState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
@@ -14,7 +23,9 @@ import {
 } from './types'
 
 interface Props {
-  components: ReactElement<ComponentsWrapperProps<SushiSwapV2PoolFinderProps | TridentPoolFinderProps>>
+  components: ReactElement<
+    ComponentsWrapperProps<SushiSwapV2PoolFinderProps | TridentPoolFinderProps>
+  >
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
@@ -22,7 +33,7 @@ export interface PoolFinderState {
   pool: PoolStateUnion
 }
 
-const reducer = (state: PoolFinderState, action: PoolExistenceStateAction) => {
+const reducer = (_state: PoolFinderState, action: PoolExistenceStateAction) => {
   switch (action.type) {
     case 'update': {
       return {
@@ -48,7 +59,7 @@ const Controller: FC<Props> = ({ components, children }) => {
             index,
           })
         }
-      })
+      }),
     )
   }, [components])
 

@@ -1,15 +1,27 @@
-import type { ConstantProductRPool, MultiRoute, RouteLeg } from '@sushiswap/tines'
+import type {
+  ConstantProductRPool,
+  MultiRoute,
+  RouteLeg,
+} from '@sushiswap/tines'
 
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'
 
 export class ConstantProductPoolCode extends PoolCode {
-  constructor(pool: ConstantProductRPool, liquidityProvider: LiquidityProviders, providerName: string) {
+  constructor(
+    pool: ConstantProductRPool,
+    liquidityProvider: LiquidityProviders,
+    providerName: string,
+  ) {
     super(pool, liquidityProvider, `${providerName} ${(pool?.fee || 0) * 100}%`)
   }
 
-  getSwapCodeForRouteProcessor(leg: RouteLeg, _route: MultiRoute, to: string): string {
+  getSwapCodeForRouteProcessor(
+    leg: RouteLeg,
+    _route: MultiRoute,
+    to: string,
+  ): string {
     // swapUniswapPool = 0x20(address pool, address tokenIn, bool direction, address to)
     const code = new HEXer()
       .uint8(10) // swapUniswapPool
@@ -18,11 +30,18 @@ export class ConstantProductPoolCode extends PoolCode {
       .bool(leg.tokenFrom.address === this.pool.token0.address)
       .address(to)
       .toString()
-    console.assert(code.length === 62 * 2, 'getSwapCodeForRouteProcessor unexpected code length')
+    console.assert(
+      code.length === 62 * 2,
+      'getSwapCodeForRouteProcessor unexpected code length',
+    )
     return code
   }
 
-  getSwapCodeForRouteProcessor2(leg: RouteLeg, _route: MultiRoute, to: string): string {
+  override getSwapCodeForRouteProcessor2(
+    leg: RouteLeg,
+    _route: MultiRoute,
+    to: string,
+  ): string {
     const code = new HEXer()
       .uint8(0) // uniV2 pool
       .address(this.pool.address)
@@ -33,7 +52,11 @@ export class ConstantProductPoolCode extends PoolCode {
     return code
   }
 
-  getSwapCodeForRouteProcessor4(leg: RouteLeg, _route: MultiRoute, to: string): string {
+  override getSwapCodeForRouteProcessor4(
+    leg: RouteLeg,
+    _route: MultiRoute,
+    to: string,
+  ): string {
     const code = new HEXer()
       .uint8(0) // uniV2 pool
       .address(this.pool.address)

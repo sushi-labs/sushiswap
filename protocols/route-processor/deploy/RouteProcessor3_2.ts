@@ -1,6 +1,6 @@
-import { BENTOBOX_ADDRESS, isBentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 
 const func: DeployFunction = async function ({
   getNamedAccounts,
@@ -14,7 +14,9 @@ const func: DeployFunction = async function ({
   const chainId = await getChainId()
 
   const args = [
-    isBentoBoxChainId(chainId) ? BENTOBOX_ADDRESS[chainId] : '0x0000000000000000000000000000000000000000',
+    isBentoBoxChainId(chainId)
+      ? BENTOBOX_ADDRESS[chainId]
+      : '0x0000000000000000000000000000000000000000',
     [],
   ]
 
@@ -31,7 +33,7 @@ const func: DeployFunction = async function ({
     constructorArguments: args,
   })
 
-  console.log(`RouteProcessor3_2 verified`)
+  console.log('RouteProcessor3_2 verified')
 }
 
 func.tags = ['RouteProcessor3_2']

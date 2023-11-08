@@ -1,15 +1,17 @@
-import { ChainId } from '@sushiswap/chain'
-import { PrismaClient } from '@sushiswap/database'
-import { SUSHISWAP_V2_FACTORY_ADDRESS, SUSHISWAP_V2_INIT_CODE_HASH } from '@sushiswap/v2-sdk'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
+} from '@sushiswap/v2-sdk'
+import { ChainId } from 'sushi/chain'
 import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
 export class SushiSwapV2Provider extends UniswapV2BaseProvider {
-  constructor(chainId: ChainId, web3Client: PublicClient, databaseClient?: PrismaClient) {
-    const factory = SUSHISWAP_V2_FACTORY_ADDRESS as { [chainId: number]: `0x${string}` }
-    super(chainId, web3Client, factory, SUSHISWAP_V2_INIT_CODE_HASH, databaseClient)
+  constructor(chainId: ChainId, web3Client: PublicClient) {
+    const factory = SUSHISWAP_V2_FACTORY_ADDRESS
+    super(chainId, web3Client, factory, SUSHISWAP_V2_INIT_CODE_HASH)
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.SushiSwapV2

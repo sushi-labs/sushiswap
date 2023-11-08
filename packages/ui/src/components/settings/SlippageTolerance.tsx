@@ -6,7 +6,12 @@ import React, { FC, useCallback } from 'react'
 
 import { Collapsible } from '../animation'
 import { CardDescription, CardHeader, CardTitle } from '../card'
-import { HoverCard, HoverCardContent, HoverCardPrimitive, HoverCardTrigger } from '../hover-card'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardPrimitive,
+  HoverCardTrigger,
+} from '../hover-card'
 import { Label } from '../label'
 import { Separator } from '../separator'
 import { Switch } from '../switch'
@@ -25,18 +30,22 @@ export const SlippageTolerance: FC<{
   className?: string
   showAutoSelector?: boolean
 }> = ({ options, className, showAutoSelector = true }) => {
-  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(options?.storageKey)
+  const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
+    options?.storageKey,
+  )
 
   const onChange = useCallback(
     (value: string) => {
       setSlippageTolerance(value)
     },
-    [setSlippageTolerance]
+    [setSlippageTolerance],
   )
 
   const isDangerous =
-    (!isNaN(+slippageTolerance) && +slippageTolerance >= 1.3) ||
-    (!isNaN(+slippageTolerance) && +slippageTolerance <= 0.1 && +slippageTolerance > 0)
+    (!Number.isNaN(+slippageTolerance) && +slippageTolerance >= 1.3) ||
+    (!Number.isNaN(+slippageTolerance) &&
+      +slippageTolerance <= 0.1 &&
+      +slippageTolerance > 0)
 
   return (
     <HoverCard openDelay={0} closeDelay={0}>
@@ -46,13 +55,21 @@ export const SlippageTolerance: FC<{
             <div className="flex justify-between items-center gap-4">
               <div className="flex flex-col gap-2">
                 <Label>Automatic Slippage Tolerance</Label>
-                <span className={typographyVariants({ variant: 'muted', className: 'text-sm' })}>
-                  Turn off automatic slippage tolerance <br /> to adjust the value.
+                <span
+                  className={typographyVariants({
+                    variant: 'muted',
+                    className: 'text-sm',
+                  })}
+                >
+                  Turn off automatic slippage tolerance <br /> to adjust the
+                  value.
                 </span>
               </div>
               <Switch
                 checked={slippageTolerance === 'AUTO'}
-                onCheckedChange={(checked) => setSlippageTolerance(checked ? 'AUTO' : '0.5')}
+                onCheckedChange={(checked) =>
+                  setSlippageTolerance(checked ? 'AUTO' : '0.5')
+                }
               />
             </div>
             <div className="my-4 h-px w-full dark:bg-slate-200/5 bg-gray-900/5" />
@@ -71,14 +88,17 @@ export const SlippageTolerance: FC<{
                     <CardTitle>Slippage</CardTitle>
                     <CardDescription className="prose">
                       <p>
-                        Slippage is the difference between the expected value of output from a trade and the actual
-                        value due to asset volatility and liquidity depth. If the actual slippage falls outside of the
-                        user-designated range, the transaction will revert.
+                        Slippage is the difference between the expected value of
+                        output from a trade and the actual value due to asset
+                        volatility and liquidity depth. If the actual slippage
+                        falls outside of the user-designated range, the
+                        transaction will revert.
                       </p>
                       <a
                         className="text-blue hover:underline"
                         target="_blank"
                         href="https://www.sushi.com/academy/articles/what-is-slippage-price-impact"
+                        rel="noreferrer"
                       >
                         Learn more
                       </a>
@@ -98,7 +118,7 @@ export const SlippageTolerance: FC<{
           <span
             className={classNames(
               isDangerous ? '!text-red' : 'dark:text-slate-400 text-gray-600',
-              'text-sm font-semibold'
+              'text-sm font-semibold',
             )}
           >
             {slippageTolerance === 'AUTO' ? '0.5%' : `${slippageTolerance}%`}

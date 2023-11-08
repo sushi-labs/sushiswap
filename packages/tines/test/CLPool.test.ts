@@ -1,7 +1,7 @@
 import { default as seedrandom } from 'seedrandom'
 import { Address } from 'viem'
 
-import { CL_MAX_TICK, CL_MIN_TICK, CLRPool, CLTick, getBigInt } from '../src'
+import { CLRPool, CLTick, CL_MAX_TICK, CL_MIN_TICK, getBigInt } from '../src'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -27,8 +27,9 @@ function addTick(ticks: CLTick[], index: number, L: bigint) {
   if (fromIndex === -1) {
     ticks.push({ index, DLiquidity: L })
   } else {
-    if (ticks[fromIndex].index === index) {
-      ticks[fromIndex].DLiquidity = ticks[fromIndex].DLiquidity + L
+    const fromTick = ticks[fromIndex] as CLTick
+    if (fromTick.index === index) {
+      fromTick.DLiquidity += L
     } else {
       ticks.splice(fromIndex, 0, { index, DLiquidity: L })
     }
@@ -37,23 +38,27 @@ function addTick(ticks: CLTick[], index: number, L: bigint) {
 
 function addLiquidity(pool: CLRPool, from: number, to: number, L: bigint) {
   console.assert(from >= CL_MIN_TICK && from < to && to <= CL_MAX_TICK)
-  console.assert((from / pool.tickSpacing) % 2 === 0 && (to / pool.tickSpacing) % 2 !== 0, `${from} - ${to}`)
+  console.assert(
+    (from / pool.tickSpacing) % 2 === 0 && (to / pool.tickSpacing) % 2 !== 0,
+    `${from} - ${to}`,
+  )
   console.assert(L >= 0n)
   addTick(pool.ticks, from, L)
   addTick(pool.ticks, to, L)
 }
 
 function getTickPrice(pool: CLRPool, tick: number): number {
-  return Math.sqrt(1.0001 ** pool.ticks[tick].index)
+  return Math.sqrt(1.0001 ** (pool.ticks[tick] as CLTick).index)
 }
 
 function getTickLiquidity(pool: CLRPool, tick: number): bigint {
   let L = 0n
   for (let i = 0; i <= tick; ++i) {
-    if (pool.ticks[i].index % 2 === 0) {
-      L = L + pool.ticks[i].DLiquidity
+    const tick = pool.ticks[i] as CLTick
+    if (tick.index % 2 === 0) {
+      L = L + tick.DLiquidity
     } else {
-      L = L - pool.ticks[i].DLiquidity
+      L = L - tick.DLiquidity
     }
   }
   return L
@@ -72,7 +77,12 @@ function getRandomRange(rnd: () => number, tickSpacing: number) {
   }
 }
 
-function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: number, maxLiquidity: number): CLRPool {
+function getRandomCLPool(
+  rnd: () => number,
+  rangeNumber: number,
+  minLiquidity: number,
+  maxLiquidity: number,
+): CLRPool {
   const tickSpacing = rnd() > 0.5 ? 5 : 60
   const pool = new CLRPool(
     'CLRPool' as Address,
@@ -85,11 +95,11 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
     0n,
     two96BI,
     -1,
-    []
+    [],
   )
 
   for (let i = 0; i < rangeNumber; ++i) {
-    const [low, high] = getRandomRange(rnd, tickSpacing)
+    const [low, high] = getRandomRange(rnd, tickSpacing) as [number, number]
     const liquidity = getRandomExp(rnd, minLiquidity, maxLiquidity)
     addLiquidity(pool, low, high, getBigInt(liquidity))
   }
@@ -97,7 +107,9 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
   pool.nearestTick = Math.floor(getRandomLin(rnd, 0, pool.ticks.length - 1))
   const tickPrice = getTickPrice(pool, pool.nearestTick)
   const nextTickPrice = getTickPrice(pool, pool.nearestTick + 1)
-  pool.sqrtPriceX96 = getBigInt(getRandomLin(rnd, tickPrice, nextTickPrice) * two96)
+  pool.sqrtPriceX96 = getBigInt(
+    getRandomLin(rnd, tickPrice, nextTickPrice) * two96,
+  )
   pool.liquidity = getTickLiquidity(pool, pool.nearestTick)
 
   return pool
@@ -106,7 +118,7 @@ function getRandomCLPool(rnd: () => number, rangeNumber: number, minLiquidity: n
 function getMaxInputApprox(pool: CLRPool, direction: boolean): number {
   let prevOutput = -1
   let input = 10
-  // eslint-disable-next-line no-constant-condition
+  // biome-ignore lint/correctness/noConstantCondition: <explanation>
   while (1) {
     const output = pool.calcOutByIn(input, direction).out
     if (output === prevOutput) {
@@ -143,7 +155,10 @@ describe('CL pool test', () => {
         const output2 = pool.calcOutByIn(input2, direction).out
         const precision1 = Math.abs(input / input2 - 1)
         const precision2 = Math.abs(output / output2 - 1)
-        expect(precision1 < expectedCalculationPrecision || precision2 < expectedCalculationPrecision)
+        expect(
+          precision1 < expectedCalculationPrecision ||
+            precision2 < expectedCalculationPrecision,
+        )
       }
     }
   })

@@ -1,10 +1,10 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { classNames } from '@sushiswap/ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 interface Pagination {
   page: number
-  onPage(page: number): void
+  onPage: (page: number) => void
   pages: number
 }
 
@@ -14,10 +14,17 @@ export const Pagination: FC<Pagination> = ({ page, onPage, pages }) => {
       <div
         className={classNames(
           page > 1 ? '' : 'pointer-events-none opacity-40',
-          'cursor-pointer p-1 bg-blue hover:bg-blue-600 rounded-full cursor-pointer'
+          'cursor-pointer p-1 bg-blue hover:bg-blue-600 rounded-full cursor-pointer',
         )}
       >
-        <ChevronLeftIcon className="text-slate-200" width={28} height={28} onClick={() => onPage(page - 1)} />
+        <ChevronLeftIcon
+          className="text-slate-200"
+          height={28}
+          onClick={() => {
+            onPage(page - 1)
+          }}
+          width={28}
+        />
       </div>
       <div className="text-base text-slate-200">
         {page} of {pages}
@@ -25,10 +32,17 @@ export const Pagination: FC<Pagination> = ({ page, onPage, pages }) => {
       <div
         className={classNames(
           page < pages ? '' : 'pointer-events-none opacity-40',
-          'cursor-pointer p-1 bg-blue hover:bg-blue-600 rounded-full cursor-pointer'
+          'cursor-pointer p-1 bg-blue hover:bg-blue-600 rounded-full cursor-pointer',
         )}
       >
-        <ChevronRightIcon className="text-slate-200" width={28} height={28} onClick={() => onPage(page + 1)} />
+        <ChevronRightIcon
+          className="text-slate-200"
+          height={28}
+          onClick={() => {
+            onPage(page + 1)
+          }}
+          width={28}
+        />
       </div>
     </div>
   )

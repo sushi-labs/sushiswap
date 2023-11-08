@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { ChainId } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -8,8 +7,13 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
+import { ChainId } from 'sushi/chain'
 
-import { Query, QuerypairsByChainIdsArgs, QueryResolvers } from '../../.graphclient/index.js'
+import {
+  Query,
+  QueryResolvers,
+  QuerypairsByChainIdsArgs,
+} from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
 
@@ -33,12 +37,13 @@ export const _pairsByChainIds = async (
   root = {},
   args: QuerypairsByChainIdsArgs,
   context: SushiSwapTypes.Context & TridentTypes.Context,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ): Promise<Query['pairsByChainIds']> => {
   return Promise.all<Query['pairsByChainIds'][]>([
     ...args.chainIds
-      .filter((chainId): chainId is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
-        SUSHISWAP_ENABLED_NETWORKS.includes(chainId)
+      .filter(
+        (chainId): chainId is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+          SUSHISWAP_ENABLED_NETWORKS.includes(chainId),
       )
       .map((chainId) =>
         context.SushiSwap.Query.pairs({
@@ -48,7 +53,9 @@ export const _pairsByChainIds = async (
             where: args?.where?.type_in
               ? {
                   ...args.where,
-                  type_in: args.where.type_in.filter((el) => el === 'CONSTANT_PRODUCT_POOL'),
+                  type_in: args.where.type_in.filter(
+                    (el) => el === 'CONSTANT_PRODUCT_POOL',
+                  ),
                   id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
                 }
               : {
@@ -70,11 +77,11 @@ export const _pairsByChainIds = async (
           }
           // console.debug(`SushiSwap pairs ${chainId}`, pairs)
           return pairs.map((pair) => ({ ...pair, chainId, address: pair.id }))
-        })
+        }),
       ),
     ...args.chainIds
-      .filter((chainId): chainId is (typeof TRIDENT_ENABLED_NETWORKS)[number] =>
-        TRIDENT_ENABLED_NETWORKS.includes(chainId)
+      .filter((chainId): chainId is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+        TRIDENT_ENABLED_NETWORKS.includes(chainId),
       )
       .map((chainId) =>
         context.Trident.Query.pairs({
@@ -100,7 +107,7 @@ export const _pairsByChainIds = async (
           }
           // console.debug(`Trident pairs ${chainId}`, pairs)
           return pairs.map((pair) => ({ ...pair, chainId, address: pair.id }))
-        })
+        }),
       ),
   ]).then((promise) => promise.flatMap((pairs) => pairs))
 }
@@ -109,7 +116,7 @@ export const pairsByChainIds: QueryResolvers['pairsByChainIds'] = async (
   root,
   args,
   context,
-  info
+  info,
 ): Promise<Query['pairsByChainIds']> => {
   return _pairsByChainIds(root, args, context, info)
 }

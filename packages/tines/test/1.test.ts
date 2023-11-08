@@ -1,4 +1,8 @@
-import { ConstantProductRPool, findMultiRouteExactIn, RouteStatus } from '../src'
+import {
+  ConstantProductRPool,
+  RouteStatus,
+  findMultiRouteExactIn,
+} from '../src'
 
 // Reason of fail: too big Gas price
 it('real fail from production 1', () => {
@@ -20,7 +24,7 @@ it('real fail from production 1', () => {
     token1,
     0.003,
     BigInt('0x0f4240'), // 1e6
-    BigInt('0xe8d4a51000') // 1e12
+    BigInt('0xe8d4a51000'), // 1e12
   )
   const pool2 = new ConstantProductRPool(
     '0x253029F0D3593Afd4187500F1CB243F1EceaABAB',
@@ -28,7 +32,7 @@ it('real fail from production 1', () => {
     token1,
     0.003,
     BigInt('0x0f4240'), // 1e6
-    BigInt('0xe8d4a51000') // 1e12
+    BigInt('0xe8d4a51000'), // 1e12
   )
   const res = findMultiRouteExactIn(
     token0,
@@ -36,7 +40,7 @@ it('real fail from production 1', () => {
     1000000,
     [pool1, pool2],
     token1,
-    750000000000 // 750 GWei
+    750000000000, // 750 GWei
   )
 
   expect(res).toBeDefined()

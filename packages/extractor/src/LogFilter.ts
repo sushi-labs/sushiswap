@@ -1,12 +1,18 @@
 import { AbiEvent } from 'abitype'
-import { Block, encodeEventTopics, Log, PublicClient, WatchBlocksReturnType } from 'viem'
+import {
+  Block,
+  Log,
+  PublicClient,
+  WatchBlocksReturnType,
+  encodeEventTopics,
+} from 'viem'
 
 import { warnLog } from './WarnLog'
 
 enum LogFilterType {
-  OneCall, // one eth_getLogs call for all topict - the most preferrable
-  MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
-  SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
+  OneCall = 0, // one eth_getLogs call for all topict - the most preferrable
+  MultiCall = 1, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
+  SelfFilter = 2, // Topic filtering doesn't support for provider. Filtering on the client
 }
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -16,14 +22,14 @@ async function repeatAsync(
   delayBetween: number,
   action: () => Promise<void>,
   failed: () => void,
-  print?: string
+  print?: string,
 ) {
   for (let i = 0; i < times; ++i) {
     try {
       await action()
       if (print && i > 0) console.log(`attemps ${print}: ${i + 1}`)
       return
-    } catch (e) {
+    } catch (_e) {
       if (delayBetween) await delay(delayBetween)
     }
   }
@@ -60,7 +66,8 @@ class BlockFrame {
   }
 
   add(blockNumber: number, blockHash: string): boolean {
-    if (this.firstNumber === undefined || this.lastNumber === undefined) return false
+    if (this.firstNumber === undefined || this.lastNumber === undefined)
+      return false
     if (blockNumber < this.firstNumber) return false
     if (blockNumber >= this.lastNumber) return false
     const hashes = this.hashNumerMap.get(blockNumber)
@@ -101,7 +108,7 @@ export class LogFilter {
     depth: number,
     events: AbiEvent[],
     logType: LogFilterType,
-    onNewLogs: (arg?: Log[]) => void
+    onNewLogs: (arg?: Log[]) => void,
   ) {
     this.client = client
     this.depth = depth
@@ -138,7 +145,10 @@ export class LogFilter {
   }
 
   setNewGoal(blockNumber: number, block: Block): boolean {
-    const deletedHashes = this.blockFrame.setFrame(blockNumber - this.depth, blockNumber + this.depth)
+    const deletedHashes = this.blockFrame.setFrame(
+      blockNumber - this.depth,
+      blockNumber + this.depth,
+    )
     const initProcessedBlocksNumber = this.processedBlockHash.size
     deletedHashes.forEach((hash) => {
       this.blockHashMap.delete(hash)
@@ -154,7 +164,9 @@ export class LogFilter {
   }
 
   sortAndProcessLogs(blockHash: string | null, logs: Log[]) {
-    const logsSorted = logs.sort((a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0))
+    const logsSorted = logs.sort(
+      (a, b) => Number(a.logIndex || 0) - Number(b.logIndex || 0),
+    )
     this.logHashMap.set(blockHash || '', logsSorted)
     this.processNewLogs()
   }
@@ -162,7 +174,10 @@ export class LogFilter {
   addBlock(block: Block, isGoal: boolean) {
     const blockNumber = block.number === null ? null : Number(block.number)
     if (blockNumber === null || block.hash === null) {
-      warnLog(this.client.chain?.id, `Incorrect block: number=${blockNumber} hash=${block.hash}`)
+      warnLog(
+        this.client.chain?.id,
+        `Incorrect block: number=${blockNumber} hash=${block.hash}`,
+      )
       return
     }
     if (isGoal) if (!this.setNewGoal(blockNumber, block)) return
@@ -187,7 +202,7 @@ export class LogFilter {
             })
             this.sortAndProcessLogs(block.hash, logs as Log[])
           },
-          backupPlan
+          backupPlan,
         )
         break
       case LogFilterType.MultiCall:
@@ -196,29 +211,42 @@ export class LogFilter {
             this.client.getLogs({
               blockHash: block.hash as `0x${string}`,
               event,
-            })
-          )
-        ).then((logss) => this.sortAndProcessLogs(block.hash, logss.flat()), backupPlan)
+            }),
+          ),
+        ).then(
+          (logss) => this.sortAndProcessLogs(block.hash, logss.flat()),
+          backupPlan,
+        )
         break
       case LogFilterType.SelfFilter:
         this.client.getLogs({ blockHash: block.hash as `0x${string}` }).then(
           (logs) =>
             this.sortAndProcessLogs(
               block.hash,
-              logs.filter((l) => this.topics.includes(l.topics[0] ?? ''))
+              logs.filter((l) => this.topics.includes(l.topics[0] ?? '')),
             ),
-          backupPlan
+          backupPlan,
         )
         break
       default:
-        warnLog(this.client.chain?.id, `Internal errror: Unknown Log Type: ${this.logType}`)
+        warnLog(
+          this.client.chain?.id,
+          `Internal errror: Unknown Log Type: ${this.logType}`,
+        )
     }
     if (this.lastProcessedBlock && !this.blockHashMap.has(block.parentHash))
       repeatAsync(
         10,
         1000,
-        () => this.client.getBlock({ blockHash: block.parentHash }).then((b) => this.addBlock(b, false)),
-        () => warnLog(this.client.chain?.id, 'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1')
+        () =>
+          this.client
+            .getBlock({ blockHash: block.parentHash })
+            .then((b) => this.addBlock(b, false)),
+        () =>
+          warnLog(
+            this.client.chain?.id,
+            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1',
+          ),
       )
   }
 
@@ -258,7 +286,7 @@ export class LogFilter {
         l.reverse().map((l) => {
           l.removed = true
           return l
-        })
+        }),
       )
       this.processedBlockHash.delete(downLine[i].hash || '')
     }
@@ -270,7 +298,7 @@ export class LogFilter {
         l.map((l) => {
           l.removed = false
           return l
-        })
+        }),
       )
       this.processedBlockHash.add(upLine[i].hash || '')
       this.lastProcessedBlock = upLine[i]

@@ -1,4 +1,4 @@
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi/math'
 /**
  * Generated method parameters for executing a call.
  */

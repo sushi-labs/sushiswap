@@ -1,4 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
 import type { Chain } from '@wagmi/core'
 import {
   arbitrum,
@@ -13,9 +12,11 @@ import {
   optimism,
   polygon,
   polygonZkEvm,
+  scroll,
   telos,
   zkSync,
 } from '@wagmi/core/chains'
+import { ChainId } from 'sushi/chain'
 
 export const defaultChains: Chain[] = [
   arbitrum,
@@ -37,6 +38,7 @@ export const defaultChains: Chain[] = [
   zkSync,
   // polygonMumbai,
   // sepolia,
+  scroll,
 ]
 
 export const otherChains: Chain[] = [
@@ -141,10 +143,16 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'xDAI', symbol: 'xDAI', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
+        http: [
+          'https://xdai-rpc.gateway.pokt.network',
+          'https://rpc.gnosischain.com',
+        ],
       },
       public: {
-        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
+        http: [
+          'https://xdai-rpc.gateway.pokt.network',
+          'https://rpc.gnosischain.com',
+        ],
       },
     },
     blockExplorers: {
@@ -381,10 +389,16 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://nova.arbitrum.io/rpc'],
+        http: [
+          'https://nova.arbitrum.io/rpc',
+          'https://arbitrum-nova.drpc.org',
+        ],
       },
       public: {
-        http: ['https://nova.arbitrum.io/rpc'],
+        http: [
+          'https://nova.arbitrum.io/rpc',
+          'https://arbitrum-nova.drpc.org',
+        ],
       },
     },
     blockExplorers: {
@@ -471,10 +485,14 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+        http: [
+          'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+        ],
       },
       public: {
-        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+        http: [
+          'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+        ],
       },
     },
     blockExplorers: {
@@ -733,6 +751,26 @@ export const otherChains: Chain[] = [
       multicall3: {
         address: '0xcA11bde05977b3631167028862bE2a173976CA11',
         blockCreated: 5022,
+      },
+    },
+  },
+  {
+    id: ChainId.FILECOIN,
+    name: 'Filecoin',
+    network: 'filecoin',
+    nativeCurrency: { name: 'Filecoin', symbol: 'FIL', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.ankr.com/filecoin'],
+      },
+      public: {
+        http: ['https://rpc.ankr.com/filecoin'],
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0x08ba1ac7f15f2215f27b5403a89bed22ceb70cfb',
+        blockCreated: 2732870,
       },
     },
   },

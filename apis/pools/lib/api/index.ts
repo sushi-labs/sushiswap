@@ -1,14 +1,16 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
-import { isPromiseFulfilled } from '@sushiswap/validate'
+import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import type { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas/index.js'
-import { getUnindexedPool } from '../getUnindexedPool.js'
-import { SushiPoolSelect } from './select.js'
+import { isPromiseFulfilled } from 'sushi/validate'
+import { getUnindexedPool } from '../getUnindexedPool'
+import { PoolApiSchema, PoolCountApiSchema, PoolsApiSchema } from './../schemas'
+import { SushiPoolSelect } from './select'
 
-function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output) {
+function parseWhere(
+  args: typeof PoolsApiSchema._output | typeof PoolCountApiSchema._output,
+) {
   const where: NonNullable<Prisma.SushiPoolWhereInput> = {}
 
   const addFilter = (filter: typeof where) => deepmergeInto(where, filter)
@@ -31,13 +33,21 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     addFilter({ protocol: { in: args.protocols } })
   }
 
-  if ('isIncentivized' in args && args.isIncentivized !== undefined && args.isIncentivized) {
+  if (
+    'isIncentivized' in args &&
+    args.isIncentivized !== undefined &&
+    args.isIncentivized
+  ) {
     addFilter({
       isIncentivized: args.isIncentivized,
     })
   }
 
-  if ('isWhitelisted' in args && args.isWhitelisted !== undefined && args.isWhitelisted) {
+  if (
+    'isWhitelisted' in args &&
+    args.isWhitelisted !== undefined &&
+    args.isWhitelisted
+  ) {
     addFilter({
       token0: {
         status: 'APPROVED',
@@ -48,7 +58,11 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     })
   }
 
-  if ('isWhitelisted' in args && args.isWhitelisted !== undefined && !args.isWhitelisted) {
+  if (
+    'isWhitelisted' in args &&
+    args.isWhitelisted !== undefined &&
+    !args.isWhitelisted
+  ) {
     addFilter({
       OR: [
         {
@@ -80,7 +94,10 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     })
   }
 
-  if ('hasEnabledSteerVault' in args && args.hasEnabledSteerVault !== undefined) {
+  if (
+    'hasEnabledSteerVault' in args &&
+    args.hasEnabledSteerVault !== undefined
+  ) {
     addFilter({
       hasEnabledSteerVault: args.hasEnabledSteerVault,
     })
@@ -97,14 +114,20 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
     } else {
       // Create every possible set of two
       const sets = args.tokenSymbols.flatMap((token0, i, arr) =>
-        arr.slice(i + 1).map((token1) => [token0, token1] as const)
+        arr.slice(i + 1).map((token1) => [token0, token1] as const),
       )
       addFilter({
         AND: [
           {
             OR: sets.flatMap((set) => [
-              { token0: { symbol: { contains: set[0] } }, token1: { symbol: { contains: set[1] } } },
-              { token0: { symbol: { contains: set[1] } }, token1: { symbol: { contains: set[0] } } },
+              {
+                token0: { symbol: { contains: set[0] } },
+                token1: { symbol: { contains: set[1] } },
+              },
+              {
+                token0: { symbol: { contains: set[1] } },
+                token1: { symbol: { contains: set[0] } },
+              },
             ]),
           },
         ],
@@ -116,8 +139,7 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
 }
 
 export async function getEarnPool(args: typeof PoolApiSchema._output) {
-
-  console.log("getEarnPool args", args)
+  console.log('getEarnPool args', args)
 
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
@@ -129,10 +151,9 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
     orderDir: 'desc',
   })
 
-  console.log("getEarnPool pool", pool)
+  console.log('getEarnPool pool', pool)
 
   if (!pool) {
-    // rome-ignore lint/suspicious/noExplicitAny: recursive
     pool = (await getUnindexedPool(id)) as any
   }
 
@@ -143,7 +164,9 @@ export async function getEarnPool(args: typeof PoolApiSchema._output) {
 
 export async function getEarnPools(args: typeof PoolsApiSchema._output) {
   const take = args.take
-  const orderBy: Prisma.SushiPoolOrderByWithRelationInput = { [args.orderBy]: args.orderDir }
+  const orderBy: Prisma.SushiPoolOrderByWithRelationInput = {
+    [args.orderBy]: args.orderDir,
+  }
   const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
   let skip = 0
@@ -168,12 +191,18 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
 
   if (args.ids && args.ids.length > poolsRetyped.length) {
     const fetchedPoolIds = poolsRetyped.map((pool) => pool.id)
-    const unfetchedPoolIds = args.ids.filter((id) => !fetchedPoolIds.includes(id))
+    const unfetchedPoolIds = args.ids.filter(
+      (id) => !fetchedPoolIds.includes(id),
+    )
 
-    const { getUnindexedPool } = await import('../getUnindexedPool.js')
+    const { getUnindexedPool } = await import('../getUnindexedPool')
 
-    const unindexedPoolsResults = await Promise.allSettled(unfetchedPoolIds.map((id) => getUnindexedPool(id)))
-    const unindexedPools = unindexedPoolsResults.flatMap((res) => (isPromiseFulfilled(res) ? [res.value] : []))
+    const unindexedPoolsResults = await Promise.allSettled(
+      unfetchedPoolIds.map((id) => getUnindexedPool(id)),
+    )
+    const unindexedPools = unindexedPoolsResults.flatMap((res) =>
+      isPromiseFulfilled(res) ? [res.value] : [],
+    )
 
     poolsRetyped.push(...unindexedPools)
   }
@@ -182,7 +211,9 @@ export async function getEarnPools(args: typeof PoolsApiSchema._output) {
   return poolsRetyped
 }
 
-export async function getEarnPoolCount(args: typeof PoolCountApiSchema._output) {
+export async function getEarnPoolCount(
+  args: typeof PoolCountApiSchema._output,
+) {
   const where: Prisma.SushiPoolWhereInput = parseWhere(args)
 
   const client = await createClient()

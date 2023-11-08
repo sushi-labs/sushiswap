@@ -1,4 +1,4 @@
-import { Price, Token } from '@sushiswap/currency'
+import { Price, Token } from 'sushi/currency'
 
 import { Q192 } from '../internalConstants'
 import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96'
@@ -11,7 +11,11 @@ import { TickMath } from './tickMath'
  * @param quoteToken the quote token of the price
  * @param tick the tick for which to return the price
  */
-export function tickToPrice(baseToken: Token, quoteToken: Token, tick: number): Price<Token, Token> {
+export function tickToPrice(
+  baseToken: Token,
+  quoteToken: Token,
+  tick: number,
+): Price<Token, Token> {
   const sqrtRatioX96 = TickMath.getSqrtRatioAtTick(tick)
 
   const ratioX192 = sqrtRatioX96 * sqrtRatioX96
@@ -34,7 +38,11 @@ export function priceToClosestTick(price: Price<Token, Token>): number {
     : encodeSqrtRatioX96(price.denominator, price.numerator)
 
   let tick = TickMath.getTickAtSqrtRatio(sqrtRatioX96)
-  const nextTickPrice = tickToPrice(price.baseCurrency, price.quoteCurrency, tick + 1)
+  const nextTickPrice = tickToPrice(
+    price.baseCurrency,
+    price.quoteCurrency,
+    tick + 1,
+  )
   if (sorted) {
     if (!price.lessThan(nextTickPrice)) {
       tick++

@@ -1,25 +1,35 @@
 'use client'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Slot } from '@radix-ui/react-slot'
-import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useContext, useState } from 'react'
+import React, {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react'
 
-import { classNames } from '../index'
+import classNames from 'classnames'
 import { Dialog, DialogOverlay, DialogPrimitive } from './dialog'
 import { IconButton } from './iconbutton'
 
-export const OnramperButton: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => {
-  const { setOpen } = useOnramperContext()
+export const OnramperButton: FC<{ children: ReactNode; className?: string }> =
+  ({ children, className }) => {
+    const { setOpen } = useOnramperContext()
 
-  const onClick = useCallback(() => {
-    setOpen(true)
-  }, [setOpen])
+    const onClick = useCallback(() => {
+      setOpen(true)
+    }, [setOpen])
 
-  return (
-    <Slot onClick={onClick} className={className}>
-      {children}
-    </Slot>
-  )
-}
+    return (
+      <Slot onClick={onClick} className={className}>
+        {children}
+      </Slot>
+    )
+  }
 
 interface OnramperPanelProps {
   address?: string
@@ -28,7 +38,8 @@ interface OnramperPanelProps {
 export const OnramperPanel: FC<OnramperPanelProps> = ({ address }) => {
   const { open, setOpen } = useOnramperContext()
 
-  let src = 'https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=ETH'
+  let src =
+    'https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=ETH'
   if (address) {
     src += `&wallets=ETH:${address}`
   }
@@ -39,11 +50,15 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({ address }) => {
         <DialogOverlay />
         <DialogPrimitive.Content
           className={classNames(
-            'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl md:w-full'
+            'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl md:w-full',
           )}
         >
           <div className="flex justify-end">
-            <IconButton onClick={() => setOpen(false)} icon={XMarkIcon} name="Close" />
+            <IconButton
+              onClick={() => setOpen(false)}
+              icon={XMarkIcon}
+              name="Close"
+            />
           </div>
           <div className="flex items-center justify-center w-full h-[75vh] sm:h-[620px] rounded-t-2xl sm:rounded-2xl overflow-hidden">
             <iframe
@@ -68,7 +83,12 @@ interface OnramperContext {
 const OnramperContext = createContext<OnramperContext | undefined>(undefined)
 
 interface ProviderProps {
-  children: (({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }) => ReactNode) | ReactNode
+  children:
+    | (({
+        open,
+        setOpen,
+      }: { open: boolean; setOpen(open: boolean): void }) => ReactNode)
+    | ReactNode
 }
 
 export const OnramperProvider: FC<ProviderProps> = ({ children }) => {

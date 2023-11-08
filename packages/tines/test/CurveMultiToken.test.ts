@@ -1,7 +1,13 @@
 import seedrandom from 'seedrandom'
 
 import { RToken } from '../dist'
-import { closeValues, createCurvePoolsForMultipool, CurveMultitokenPool, CurvePool, getBigInt } from '../src'
+import {
+  CurveMultitokenPool,
+  CurvePool,
+  closeValues,
+  createCurvePoolsForMultipool,
+  getBigInt,
+} from '../src'
 
 const token0 = {
   name: 'Token0',
@@ -46,17 +52,17 @@ function expectCloseValues(
   v2: bigint | number,
   precision: number,
   description = '',
-  additionalInfo = ''
+  additionalInfo = '',
 ) {
-  const a = typeof v1 == 'number' ? v1 : parseFloat(v1.toString())
-  const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
+  const a = typeof v1 === 'number' ? v1 : parseFloat(v1.toString())
+  const b = typeof v2 === 'number' ? v2 : parseFloat(v2.toString())
   const res = closeValues(a, b, precision)
   if (!res) {
     console.log('Close values expectation failed:', description)
     console.log('v1 =', a)
     console.log('v2 =', b)
     console.log('precision =', Math.abs(a / b - 1), ', expected <', precision)
-    if (additionalInfo != '') {
+    if (additionalInfo !== '') {
       console.log(additionalInfo)
     }
   }
@@ -65,9 +71,15 @@ function expectCloseValues(
 }
 
 function createPool(
-  params: { A: number; fee: number; reserve0: bigint; reserve1: bigint; ratio: number },
+  params: {
+    A: number
+    fee: number
+    reserve0: bigint
+    reserve1: bigint
+    ratio: number
+  },
   token0: RToken,
-  token1: RToken
+  token1: RToken,
 ): CurvePool {
   return new CurvePool(
     '0xcurve pool',
@@ -77,14 +89,20 @@ function createPool(
     params.A,
     params.reserve0,
     params.reserve1,
-    params.ratio
+    params.ratio,
   )
 }
 
 function createMultiPool(
-  params: { A: number; fee: number; reserve0: bigint; reserve1: bigint; ratio: number },
+  params: {
+    A: number
+    fee: number
+    reserve0: bigint
+    reserve1: bigint
+    ratio: number
+  },
   token0: RToken,
-  token1: RToken
+  token1: RToken,
 ): CurveMultitokenPool {
   return createCurvePoolsForMultipool(
     'curve multipool',
@@ -92,11 +110,16 @@ function createMultiPool(
     params.fee,
     params.A,
     [params.reserve0, params.reserve1],
-    [1, params.ratio]
-  )[0]
+    [1, params.ratio],
+  )[0] as CurveMultitokenPool
 }
 
-function checkSwap(pool: CurvePool, multipool: CurveMultitokenPool, amountIn: number, direction: boolean): number {
+function checkSwap(
+  pool: CurvePool,
+  multipool: CurveMultitokenPool,
+  amountIn: number,
+  direction: boolean,
+): number {
   const { out, gasSpent } = pool.calcOutByIn(amountIn, direction)
   const res1 = multipool.calcOutByIn(amountIn, direction)
 
@@ -112,7 +135,10 @@ function checkSwap(pool: CurvePool, multipool: CurveMultitokenPool, amountIn: nu
   return out
 }
 
-function checkPoolPriceCalculation(pool: CurvePool, multipool: CurveMultitokenPool) {
+function checkPoolPriceCalculation(
+  pool: CurvePool,
+  multipool: CurveMultitokenPool,
+) {
   const price1 = pool.calcCurrentPriceWithoutFee(true)
   const price1M = multipool.calcCurrentPriceWithoutFee(true)
   expectCloseValues(price1M, price1, 1e-12)
@@ -123,12 +149,16 @@ function checkPoolPriceCalculation(pool: CurvePool, multipool: CurveMultitokenPo
 }
 
 function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
-  const reserve0 = Math.pow(10, token0.decimals) * getRandomExp(rnd, 1, 1e12)
+  const reserve0 = 10 ** token0.decimals * getRandomExp(rnd, 1, 1e12)
   const params = {
     A: Math.round(getRandomExp(rnd, 1, 10_000)),
     fee: Math.round(getRandomLin(rnd, 1, 100)) / 10_000,
     reserve0: getBigInt(reserve0),
-    reserve1: getBigInt(reserve0 * Math.pow(10, token1.decimals - token0.decimals) * getRandomExp(rnd, 1 / 1000, 1000)),
+    reserve1: getBigInt(
+      reserve0 *
+        10 ** (token1.decimals - token0.decimals) *
+        getRandomExp(rnd, 1 / 1000, 1000),
+    ),
     ratio: getRandomExp(rnd, 0.5, 2),
   }
   return {
@@ -140,42 +170,72 @@ function createRandomPool(rnd: () => number, token0: RToken, token1: RToken) {
 describe('Curve pool-multipool tests', () => {
   it('Random test decimals 18-18', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '18-18_' + p
+      const testSeed = `18-18_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const { pool, multipool } = createRandomPool(rnd, token0, token1)
       checkPoolPriceCalculation(pool, multipool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, multipool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, multipool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })
 
   it('Random test decimals 18-6', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '18-6_' + p
+      const testSeed = `18-6_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const { pool, multipool } = createRandomPool(rnd, token1, token2)
       checkPoolPriceCalculation(pool, multipool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, multipool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, multipool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })
 
   it('Random test decimals 6-6', () => {
     for (let p = 0; p < 30; ++p) {
-      const testSeed = '6-6_' + p
+      const testSeed = `6-6_${p}`
       const rnd: () => number = seedrandom(testSeed) // random [0, 1)
       const { pool, multipool } = createRandomPool(rnd, token2, token3)
       checkPoolPriceCalculation(pool, multipool)
       for (let i = 0; i < 30; ++i) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1e-1)
-        checkSwap(pool, multipool, parseInt(pool.getReserve0().toString()) * amountInPortion, true)
-        checkSwap(pool, multipool, parseInt(pool.getReserve1().toString()) * amountInPortion, false)
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve0().toString()) * amountInPortion,
+          true,
+        )
+        checkSwap(
+          pool,
+          multipool,
+          parseInt(pool.getReserve1().toString()) * amountInPortion,
+          false,
+        )
       }
     }
   })

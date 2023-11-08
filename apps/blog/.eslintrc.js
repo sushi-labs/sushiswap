@@ -1,1 +1,4 @@
-module.exports = require('@sushiswap/eslint-config/nextjs')
+module.exports = {
+  // extends: ['sushi/next'],
+  extends: 'next/core-web-vitals',
+}

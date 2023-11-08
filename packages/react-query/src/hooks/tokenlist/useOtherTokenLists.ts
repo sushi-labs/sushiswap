@@ -1,8 +1,8 @@
-import { getAddress } from '@ethersproject/address'
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
+import { getAddress } from 'viem'
 
 import { useTokens } from '../tokens'
 import { DEFAULT_LIST_OF_LISTS } from './constants'
@@ -13,16 +13,20 @@ interface UseOtherTokenListsParams {
   query: string | undefined
 }
 
-export const useOtherTokenListsQuery = ({ chainId, query }: UseOtherTokenListsParams) => {
+export const useOtherTokenListsQuery = ({
+  chainId,
+  query,
+}: UseOtherTokenListsParams) => {
   const { data: defaultTokenList } = useTokens({ chainId })
   const tokenListQuery = useQuery({
     queryKey: ['otherTokenLists', { chainId }],
     queryFn: async () => {
-      const res = await Promise.all(DEFAULT_LIST_OF_LISTS.map((el) => fetch(el).then((res) => res.json())))
+      const res = await Promise.all(
+        DEFAULT_LIST_OF_LISTS.map((el) => fetch(el).then((res) => res.json())),
+      )
       return res
         .map((el) => otherTokenListValidator.parse(el))
-        .map((el) => el.tokens)
-        .flat()
+        .flatMap((el) => el.tokens)
     },
     keepPreviousData: true,
     staleTime: 900000, // 15 mins
@@ -40,7 +44,10 @@ export const useOtherTokenListsQuery = ({ chainId, query }: UseOtherTokenListsPa
         // Filter out dupes
         if (defaultTokenList[`${_chainId}:${getAddress(address)}`]) return acc
 
-        if (symbol.toLowerCase().includes(_query) || address.toLowerCase().toLowerCase() === _query) {
+        if (
+          symbol.toLowerCase().includes(_query) ||
+          address.toLowerCase().toLowerCase() === _query
+        ) {
           acc[`${_chainId}:${getAddress(address)}`] = new Token({
             chainId: _chainId,
             name,
@@ -52,12 +59,19 @@ export const useOtherTokenListsQuery = ({ chainId, query }: UseOtherTokenListsPa
 
         return acc
       },
-      {}
+      {},
     )
 
     return {
       ...tokenListQuery,
       data: _data,
     }
-  }, [query, defaultTokenList, tokenListQuery]) as typeof tokenListQuery & { data: Record<string, Token> }
+  }, [
+    chainId,
+    query,
+    defaultTokenList,
+    tokenListQuery,
+  ]) as typeof tokenListQuery & {
+    data: Record<string, Token>
+  }
 }

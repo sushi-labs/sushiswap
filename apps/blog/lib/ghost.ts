@@ -1,5 +1,4 @@
 import GhostContentAPI from '@tryghost/content-api'
-
 import { ArticleSchema } from './validate'
 
 export function getGhostClient() {
@@ -10,15 +9,31 @@ export function getGhostClient() {
   })
 }
 
-export async function addBodyToArticle(article: (typeof ArticleSchema)['_output']) {
+function processVideos(html: string) {
+  console.log(html)
+
+  html = html.replaceAll(/<div class="kg-video-overlay">(.*?)<\/div>/gms, '')
+  html = html.replaceAll(
+    /<div class="kg-video-player-container(.*?)<input type="range" class="kg-video-volume-slider" max="100" value="100">/gms,
+    '',
+  )
+  html = html.replaceAll('<video src=', '<video controls=true src=')
+  return html
+}
+
+export async function addBodyToArticle(
+  article: typeof ArticleSchema['_output'],
+) {
   const ghostClient = getGhostClient()
-  const { html } = await ghostClient.posts.read({ slug: article.attributes.ghostSlug })
+  const { html } = await ghostClient.posts.read({
+    slug: article.attributes.ghostSlug,
+  })
 
   return {
     ...article,
     attributes: {
       ...article.attributes,
-      body: html,
+      body: html ? processVideos(html) : '',
     },
   }
 }

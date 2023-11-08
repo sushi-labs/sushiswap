@@ -4,23 +4,28 @@ import { IconComponent } from '../../types'
 
 export const ClassicPoolIcon: IconComponent = (props) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 32 32">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 32 32"
+    >
       <path
         stroke="url(#paint0_linear_3959_23219)"
         strokeWidth="1.5"
         d="M9.795 15.79a5.995 5.995 0 100-11.99 5.995 5.995 0 000 11.99z"
-      ></path>
+      />
       <path
         stroke="url(#paint1_linear_3959_23219)"
         strokeWidth="1.5"
         d="M22.076 28.07a5.995 5.995 0 100-11.99 5.995 5.995 0 000 11.99z"
-      ></path>
+      />
       <path
         stroke="url(#paint2_linear_3959_23219)"
         strokeLinecap="round"
         strokeWidth="1.5"
         d="M22.417 4.564L9.567 27.08"
-      ></path>
+      />
       <defs>
         <linearGradient
           id="paint0_linear_3959_23219"
@@ -30,8 +35,8 @@ export const ClassicPoolIcon: IconComponent = (props) => {
           y2="7.451"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#0993EC"></stop>
-          <stop offset="1" stopColor="#F338C3"></stop>
+          <stop stopColor="#0993EC" />
+          <stop offset="1" stopColor="#F338C3" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_3959_23219"
@@ -41,8 +46,8 @@ export const ClassicPoolIcon: IconComponent = (props) => {
           y2="19.731"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#0993EC"></stop>
-          <stop offset="1" stopColor="#F338C3"></stop>
+          <stop stopColor="#0993EC" />
+          <stop offset="1" stopColor="#F338C3" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_3959_23219"
@@ -52,8 +57,8 @@ export const ClassicPoolIcon: IconComponent = (props) => {
           y2="6.885"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#0993EC"></stop>
-          <stop offset="1" stopColor="#F338C3"></stop>
+          <stop stopColor="#0993EC" />
+          <stop offset="1" stopColor="#F338C3" />
         </linearGradient>
       </defs>
     </svg>

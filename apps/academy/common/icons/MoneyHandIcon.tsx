@@ -1,8 +1,21 @@
 export const MoneyHandIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="102"
+      height="102"
+      viewBox="0 0 102 102"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g filter="url(#filter0_b_1608_691)">
-        <rect width="102" height="102" rx="12.5446" fill="white" fillOpacity="0.1" />
+        <rect
+          width="102"
+          height="102"
+          rx="12.5446"
+          fill="white"
+          fillOpacity="0.1"
+        />
         <path
           d="M84.9393 68.1817C84.9393 68.606 84.6212 69.0302 84.1969 69.1363L56.1969 78.8939C55.2424 79.212 54.3939 79.3181 53.4393 79.3181C52.5908 79.3181 51.8484 79.2121 50.9999 78.9999L32.1212 73.3787V55.0302H33.4999C38.2727 55.0302 42.9393 56.6211 46.8636 59.3787C49.409 60.0151 62.2424 56.7272 61.3939 64.6817C61.2878 65.6363 60.9696 66.4848 60.4393 67.2272L63.6212 67.4393L77.7272 62.9848C81.2272 61.712 84.9393 64.3636 84.9393 68.1817ZM29.9999 52.4848V74.5454C29.9999 75.0757 29.4696 75.606 28.9393 75.606H18.1212C17.5908 75.606 17.0605 75.0757 17.0605 74.5454V52.4848C17.0605 51.8484 17.5908 51.4242 18.1212 51.4242H28.9393C29.5757 51.4242 29.9999 51.9545 29.9999 52.4848ZM55.0302 33.0757V37.5302C53.5454 37.106 52.5908 36.6817 52.5908 35.1969C52.5908 33.9242 53.7575 33.1817 55.0302 33.0757ZM59.4848 43.4696C59.4848 44.8484 58.2121 45.4848 56.8333 45.6969V41.1363C58.3181 41.4545 59.4848 41.9848 59.4848 43.4696Z"
           fill="white"
@@ -33,8 +46,17 @@ export const MoneyHandIcon = (props: React.ComponentProps<'svg'>) => {
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feGaussianBlur in="BackgroundImageFix" stdDeviation="10.872" />
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1608_691" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_1608_691" result="shape" />
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1608_691"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_backgroundBlur_1608_691"
+            result="shape"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_1608_691"

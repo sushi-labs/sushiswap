@@ -1,12 +1,20 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
-import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select.js'
+import { SushiPoolSelect } from '@sushiswap/pools-api/lib/api/select'
 
-import { createClient, Prisma, type DecimalToString } from '@sushiswap/database'
+import { type DecimalToString, Prisma, createClient } from '@sushiswap/database'
 import { deepmergeInto } from 'deepmerge-ts'
-import type { SteerVaultApiSchema, SteerVaultCountApiSchema, SteerVaultsApiSchema } from './../schemas/index.js'
+import {
+  SteerVaultApiSchema,
+  SteerVaultCountApiSchema,
+  SteerVaultsApiSchema,
+} from './../schemas'
 
-function parseWhere(args: typeof SteerVaultsApiSchema._output | typeof SteerVaultCountApiSchema._output) {
+function parseWhere(
+  args:
+    | typeof SteerVaultsApiSchema._output
+    | typeof SteerVaultCountApiSchema._output,
+) {
   const where: NonNullable<Prisma.SteerVaultWhereInput> = {}
 
   const addFilter = (filter: typeof where) => deepmergeInto(where, filter)
@@ -38,21 +46,26 @@ export async function getSteerVault(args: typeof SteerVaultApiSchema._output) {
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
   // Need to specify take, orderBy and orderDir to make TS happy
-  const [vault]: Awaited<ReturnType<typeof getSteerVaults>> = await getSteerVaults({
-    ids: [id],
-    take: 1,
-    orderBy: 'liquidityUSD',
-    orderDir: 'desc',
-  })
+  const [vault]: Awaited<ReturnType<typeof getSteerVaults>> =
+    await getSteerVaults({
+      ids: [id],
+      take: 1,
+      orderBy: 'liquidityUSD',
+      orderDir: 'desc',
+    })
 
   if (!vault) throw new Error('Pool not found.')
 
   return vault
 }
 
-export async function getSteerVaults(args: typeof SteerVaultsApiSchema._output) {
+export async function getSteerVaults(
+  args: typeof SteerVaultsApiSchema._output,
+) {
   const take = args.take
-  const orderBy: Prisma.SteerVaultOrderByWithRelationInput = { [args.orderBy]: args.orderDir }
+  const orderBy: Prisma.SteerVaultOrderByWithRelationInput = {
+    [args.orderBy]: args.orderDir,
+  }
   const where: Prisma.SteerVaultWhereInput = parseWhere(args)
 
   let skip = 0
@@ -134,7 +147,9 @@ export async function getSteerVaults(args: typeof SteerVaultsApiSchema._output) 
   return vaultsRetyped
 }
 
-export async function getSteerVaultCount(args: typeof SteerVaultCountApiSchema._output) {
+export async function getSteerVaultCount(
+  args: typeof SteerVaultCountApiSchema._output,
+) {
   const where: Prisma.SteerVaultWhereInput = parseWhere(args)
 
   const client = await createClient()

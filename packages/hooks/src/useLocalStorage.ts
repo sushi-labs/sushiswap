@@ -1,7 +1,16 @@
 // Hook
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 
-export const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>] => {
+export const useLocalStorage = <T>(
+  key: string,
+  initialValue: T,
+): [T, Dispatch<SetStateAction<T>>] => {
   const readValue = useCallback((): T => {
     if (typeof window === 'undefined') {
       return initialValue
@@ -11,7 +20,7 @@ export const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<S
       const item = window.localStorage.getItem(key)
       // Parse stored json or if none return initialValue
       return item ? (JSON.parse(item) as T) : initialValue
-    } catch (error) {
+    } catch (_error) {
       // If error also return initialValue
       return initialValue
     }
@@ -27,7 +36,8 @@ export const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<S
     (value) => {
       try {
         // Allow value to be a function so we have same API as useState
-        const valueToStore = value instanceof Function ? value(storedValue) : value
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value
         // Save state
         setStoredValue(valueToStore)
         // Save to local storage
@@ -41,7 +51,7 @@ export const useLocalStorage = <T>(key: string, initialValue: T): [T, Dispatch<S
         console.log(error)
       }
     },
-    [key, storedValue]
+    [key, storedValue],
   )
 
   // To trigger rerenders globally

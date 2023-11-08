@@ -1,4 +1,4 @@
-import { abs } from '@sushiswap/math'
+import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
 import { RPool, RToken } from './PrimaryPools'
@@ -27,7 +27,9 @@ export class RebaseInternal {
     this.rebaseBI = rebase
     if (rebase !== undefined) {
       if (rebase.base === 0n || rebase.elastic === 0n) this.elastic2Base = 1
-      else this.elastic2Base = parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
+      else
+        this.elastic2Base =
+          parseInt(rebase.elastic.toString()) / parseInt(rebase.base.toString())
     } else {
       // for deserialization
       this.elastic2Base = 1
@@ -47,12 +49,20 @@ export class RebaseInternal {
   }
 }
 
-export function realReservesToAdjusted(reserve: bigint, total: Rebase, decimals: number) {
+export function realReservesToAdjusted(
+  reserve: bigint,
+  total: Rebase,
+  decimals: number,
+) {
   const amount = toAmountBI(reserve, total)
   return (amount * getBigInt(1e12)) / getBigInt(10 ** decimals)
 }
 
-export function adjustedReservesToReal(reserve: bigint, total: Rebase, decimals: number) {
+export function adjustedReservesToReal(
+  reserve: bigint,
+  total: Rebase,
+  decimals: number,
+) {
   const amount = (reserve * getBigInt(10 ** decimals)) / getBigInt(1e12)
   return toShareBI(amount, total)
 }
@@ -77,7 +87,7 @@ export class StableSwapRPool extends RPool {
     decimals0: number,
     decimals1: number,
     total0: Rebase,
-    total1: Rebase
+    total1: Rebase,
   ) {
     super(
       address,
@@ -89,7 +99,7 @@ export class StableSwapRPool extends RPool {
         : realReservesToAdjusted(reserve0, total0, decimals0),
       reserve1 === undefined
         ? (undefined as unknown as bigint) // for deserialization
-        : realReservesToAdjusted(reserve1, total1, decimals1)
+        : realReservesToAdjusted(reserve1, total1, decimals1),
     )
     this.k = 0n
     this.decimals0 = decimals0
@@ -108,23 +118,39 @@ export class StableSwapRPool extends RPool {
     }
   }
 
-  getReserve0() {
-    return adjustedReservesToReal(this.reserve0, this.total0.rebaseBI, this.decimals0)
+  override getReserve0() {
+    return adjustedReservesToReal(
+      this.reserve0,
+      this.total0.rebaseBI,
+      this.decimals0,
+    )
   }
-  getReserve1() {
-    return adjustedReservesToReal(this.reserve1, this.total1.rebaseBI, this.decimals1)
+  override getReserve1() {
+    return adjustedReservesToReal(
+      this.reserve1,
+      this.total1.rebaseBI,
+      this.decimals1,
+    )
   }
-  granularity0(): number {
+  override granularity0(): number {
     return Math.max(1 / this.decimalsCompensation0, 1)
   }
-  granularity1(): number {
+  override granularity1(): number {
     return Math.max(1 / this.decimalsCompensation1, 1)
   }
 
-  updateReserves(res0: bigint, res1: bigint) {
+  override updateReserves(res0: bigint, res1: bigint) {
     this.k = 0n
-    this.reserve0 = realReservesToAdjusted(res0, this.total0.rebaseBI, this.decimals0)
-    this.reserve1 = realReservesToAdjusted(res1, this.total1.rebaseBI, this.decimals1)
+    this.reserve0 = realReservesToAdjusted(
+      res0,
+      this.total0.rebaseBI,
+      this.decimals0,
+    )
+    this.reserve1 = realReservesToAdjusted(
+      res1,
+      this.total1.rebaseBI,
+      this.decimals1,
+    )
   }
 
   updateReservesAmounts(res0: bigint, res1: bigint) {
@@ -168,8 +194,8 @@ export class StableSwapRPool extends RPool {
     const x2 = x << 1n
     const x3 = x * 3n
     const xCube = x * x * x
-    let yPrev = yHint,
-      y = yHint
+    let yPrev = yHint
+    let y = yHint
     for (let i = 0; i < 255; ++i) {
       const ySquare = y * y
       const yCube = ySquare * y
@@ -180,32 +206,54 @@ export class StableSwapRPool extends RPool {
     return y
   }
 
-  calcOutByIn(amountIn: number, direction: boolean, throwIfOutOfLiquidity = true): { out: number; gasSpent: number } {
-    amountIn = direction ? this.total0.toAmount(amountIn) : this.total1.toAmount(amountIn)
-    amountIn *= direction ? this.decimalsCompensation0 : this.decimalsCompensation1
+  calcOutByIn(
+    amountIn: number,
+    direction: boolean,
+    throwIfOutOfLiquidity = true,
+  ): { out: number; gasSpent: number } {
+    amountIn = direction
+      ? this.total0.toAmount(amountIn)
+      : this.total1.toAmount(amountIn)
+    amountIn *= direction
+      ? this.decimalsCompensation0
+      : this.decimalsCompensation1
     const x = direction ? this.reserve0 : this.reserve1
     const y = direction ? this.reserve1 : this.reserve0
     const xNew = x + getBigInt(Math.floor(amountIn * (1 - this.fee)))
     const yNew = this.computeY(xNew, y)
     const outA = parseInt((y - yNew).toString()) - 1 // with precision loss compensation
     const outB = Math.max(outA, 0)
-    const outC = direction ? this.total1.toShare(outB) : this.total0.toShare(outB)
-    const out = outC / (direction ? this.decimalsCompensation1 : this.decimalsCompensation0)
+    const outC = direction
+      ? this.total1.toShare(outB)
+      : this.total0.toShare(outB)
+    const out =
+      outC /
+      (direction ? this.decimalsCompensation1 : this.decimalsCompensation0)
 
     const initialReserve = direction ? this.getReserve1() : this.getReserve0()
-    if (throwIfOutOfLiquidity && initialReserve - getBigInt(out) < this.minLiquidity)
+    if (
+      throwIfOutOfLiquidity &&
+      initialReserve - getBigInt(out) < this.minLiquidity
+    )
       throw new Error('StableSwap OutOfLiquidity')
 
     return { out, gasSpent: this.swapGasCost }
   }
 
-  calcOutByInReal(amountIn: number, direction: boolean): number {
+  override calcOutByInReal(amountIn: number, direction: boolean): number {
     return Math.floor(this.calcOutByIn(amountIn, direction, false).out)
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
-    amountOut = direction ? this.total1.toAmount(amountOut) : this.total0.toAmount(amountOut)
-    amountOut *= direction ? this.decimalsCompensation1 : this.decimalsCompensation0
+  calcInByOut(
+    amountOut: number,
+    direction: boolean,
+  ): { inp: number; gasSpent: number } {
+    amountOut = direction
+      ? this.total1.toAmount(amountOut)
+      : this.total0.toAmount(amountOut)
+    amountOut *= direction
+      ? this.decimalsCompensation1
+      : this.decimalsCompensation0
     const x = direction ? this.reserve0 : this.reserve1
     const y = direction ? this.reserve1 : this.reserve0
     const yNew = y - getBigInt(Math.ceil(amountOut))
@@ -216,8 +264,12 @@ export class StableSwapRPool extends RPool {
 
     const xNew = this.computeY(yNew, x)
     const inp0 = parseInt((xNew - x).toString()) / (1 - this.fee)
-    const inp1 = direction ? this.total0.toShare(inp0) : this.total1.toShare(inp0)
-    const inp2 = inp1 / (direction ? this.decimalsCompensation0 : this.decimalsCompensation1)
+    const inp1 = direction
+      ? this.total0.toShare(inp0)
+      : this.total1.toShare(inp0)
+    const inp2 =
+      inp1 /
+      (direction ? this.decimalsCompensation0 : this.decimalsCompensation1)
     const inp = Math.max(inp2, 1)
     return { inp, gasSpent: this.swapGasCost }
   }

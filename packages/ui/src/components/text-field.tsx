@@ -1,23 +1,26 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
-import { classNames } from '../index'
+import classNames from 'classnames'
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 
-const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
-const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+const inputRegex = RegExp('^\\d*(?:\\\\[.])?\\d*$') // match escaped "." characters via in a non-capturing group
+const escapeRegExp = (string: string) =>
+  string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 
-const numericInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> = {
-  placeholder: '0.0',
-}
+const numericInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
+  {
+    placeholder: '0.0',
+  }
 
-const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> = {
-  placeholder: '0',
-  pattern: '^[0-9]*$',
-  inputMode: 'decimal',
-  maxLength: 3,
-}
+const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
+  {
+    placeholder: '0',
+    pattern: '^[0-9]*$',
+    inputMode: 'decimal',
+    maxLength: 3,
+  }
 
 const textFieldVariants = cva(
   'truncate appearance-none dark:text-slate-50 text-gray-900 w-full !ring-0 !outline-none',
@@ -54,7 +57,7 @@ const textFieldVariants = cva(
       size: 'default',
       isError: 'no',
     },
-  }
+  },
 )
 
 type InputType = 'text' | 'number' | 'percent'
@@ -75,7 +78,8 @@ interface TextFieldDynamicProps<T extends InputType> {
   onValueChange?(val: string): void
 }
 
-export type TextFieldProps<T extends InputType> = TextFieldBaseProps & TextFieldDynamicProps<T>
+export type TextFieldProps<T extends InputType> = TextFieldBaseProps &
+  TextFieldDynamicProps<T>
 
 const isTypeText = (type: InputType): type is 'text' => type === 'text'
 const isTypeNumber = (type: InputType): type is 'number' => type === 'number'
@@ -96,9 +100,11 @@ const Component = <T extends InputType>(
     isError,
     ...props
   }: TextFieldProps<T>,
-  ref: React.ForwardedRef<HTMLInputElement>
+  ref: React.ForwardedRef<HTMLInputElement>,
 ) => {
-  const _onChange: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (e) => {
+  const _onChange: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (
+    e,
+  ) => {
     const nextUserInput = e.target.value
     if (typeof nextUserInput === 'undefined') {
       return
@@ -122,7 +128,10 @@ const Component = <T extends InputType>(
       onValueChange(nextUserInput)
     } else if (isTypePercent(type)) {
       const _nextUserInput = nextUserInput.replace(/,/g, '.').replace(/%/g, '')
-      if (_nextUserInput === '' || inputRegex.test(escapeRegExp(_nextUserInput))) {
+      if (
+        _nextUserInput === '' ||
+        inputRegex.test(escapeRegExp(_nextUserInput))
+      ) {
         if (onValueChange) onValueChange(_nextUserInput)
       }
     }
@@ -138,7 +147,10 @@ const Component = <T extends InputType>(
         <Icon
           {...iconProps}
           className={buttonIconVariants({
-            className: classNames('text-muted-foreground absolute left-3', iconProps?.className),
+            className: classNames(
+              'text-muted-foreground absolute left-3',
+              iconProps?.className,
+            ),
           })}
         />
       ) : null}
@@ -149,7 +161,10 @@ const Component = <T extends InputType>(
           variant,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
-          className: classNames(className, 'flex-grow flex-1 !outline-none !ring-0'),
+          className: classNames(
+            className,
+            'flex-grow flex-1 !outline-none !ring-0',
+          ),
         })}
         ref={ref}
         autoCorrect="off"
@@ -179,11 +194,23 @@ const Component = <T extends InputType>(
 const TextField = React.forwardRef(Component)
 TextField.displayName = 'TextField'
 
-const TextFieldDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => {
-    return <p ref={ref} className={classNames('text-sm text-muted-foreground', className)} {...props} />
-  }
-)
+const TextFieldDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => {
+  return (
+    <p
+      ref={ref}
+      className={classNames('text-sm text-muted-foreground', className)}
+      {...props}
+    />
+  )
+})
 TextFieldDescription.displayName = 'TextFieldDescription'
 
-export { TextField, type TextFieldBaseProps, TextFieldDescription, textFieldVariants }
+export {
+  TextField,
+  type TextFieldBaseProps,
+  TextFieldDescription,
+  textFieldVariants,
+}

@@ -25,7 +25,10 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
                       strokeWidth={4}
                       width={12}
                       height={12}
-                      className={classNames('transition', open && 'transform rotate-180')}
+                      className={classNames(
+                        'transition',
+                        open && 'transform rotate-180',
+                      )}
                     />
                   </div>
                 </Disclosure.Button>

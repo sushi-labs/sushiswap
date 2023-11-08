@@ -1,14 +1,8 @@
 {
-  "extends": "@sushiswap/typescript-config/node18.json",
-  "exclude": ["node_modules", "dist"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
   "include": ["src"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "./dist",
-    "rootDir": ".",
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "noEmit": true
   }
 }

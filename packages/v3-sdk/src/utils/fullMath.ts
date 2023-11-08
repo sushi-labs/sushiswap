@@ -1,4 +1,4 @@
-import { ONE, ZERO } from '@sushiswap/math'
+import { ONE, ZERO } from 'sushi/math'
 
 export abstract class FullMath {
   /**
@@ -6,7 +6,11 @@ export abstract class FullMath {
    */
   private constructor() {}
 
-  public static mulDivRoundingUp(a: bigint, b: bigint, denominator: bigint): bigint {
+  public static mulDivRoundingUp(
+    a: bigint,
+    b: bigint,
+    denominator: bigint,
+  ): bigint {
     const product = a * b
     let result = product / denominator
     if (product % denominator !== ZERO) {

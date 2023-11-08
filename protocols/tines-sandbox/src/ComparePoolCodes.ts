@@ -22,7 +22,10 @@ export function comparePoolCodes(pc1: PoolCode, pc2: PoolCode): boolean {
     p1.ticks.forEach((t1, i) => {
       const t2 = pp2.ticks[i]
       expect(t1.index).equal(t2.index, `tick ${i}/${p1.ticks.length}`)
-      expect(t1.DLiquidity.toString()).equal(t2.DLiquidity.toString(), `tick ${i}/${p1.ticks.length}`)
+      expect(t1.DLiquidity.toString()).equal(
+        t2.DLiquidity.toString(),
+        `tick ${i}/${p1.ticks.length}`,
+      )
     })
     expect(p1.nearestTick).equal(pp2.nearestTick)
   }
@@ -46,12 +49,15 @@ export function isSubpool(etalon: PoolCode, result: PoolCode): boolean {
     expect(p1.liquidity.toString()).equal(pp2.liquidity.toString())
     expect(p1.sqrtPriceX96.toString()).equal(pp2.sqrtPriceX96.toString())
     expect(p1.ticks.length).lessThanOrEqual(pp2.ticks.length)
-    const start = pp2.ticks.findIndex((t) => t.index == p1.ticks[0].index)
+    const start = pp2.ticks.findIndex((t) => t.index === p1.ticks[0].index)
     expect(start).not.equal(-1)
     p1.ticks.forEach((t1, i) => {
       const t2 = pp2.ticks[start + i]
       expect(t1.index).equal(t2.index, `tick ${i}/${p1.ticks.length}`)
-      expect(t1.DLiquidity.toString()).equal(t2.DLiquidity.toString(), `tick ${i}/${p1.ticks.length}`)
+      expect(t1.DLiquidity.toString()).equal(
+        t2.DLiquidity.toString(),
+        `tick ${i}/${p1.ticks.length}`,
+      )
     })
     expect(p1.nearestTick + start).equal(pp2.nearestTick)
   }

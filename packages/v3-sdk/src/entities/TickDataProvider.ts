@@ -1,4 +1,4 @@
-import { BigintIsh } from '@sushiswap/math'
+import { BigintIsh } from 'sushi/math'
 
 /**
  * Provides information about ticks
@@ -16,7 +16,11 @@ export interface TickDataProvider {
    * @param lte Whether the next tick should be lte the current tick
    * @param tickSpacing The tick spacing of the pool
    */
-  nextInitializedTickWithinOneWord(tick: number, lte: boolean, tickSpacing: number): Promise<[number, boolean]>
+  nextInitializedTickWithinOneWord(
+    tick: number,
+    lte: boolean,
+    tickSpacing: number,
+  ): Promise<[number, boolean]>
 }
 
 /**
@@ -32,7 +36,7 @@ export class NoTickDataProvider implements TickDataProvider {
   async nextInitializedTickWithinOneWord(
     _tick: number,
     _lte: boolean,
-    _tickSpacing: number
+    _tickSpacing: number,
   ): Promise<[number, boolean]> {
     throw new Error(NoTickDataProvider.ERROR_MESSAGE)
   }
