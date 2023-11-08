@@ -11,15 +11,14 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui/components/slot'
-import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ChainId } from 'sushi/chain'
-import { Writeable } from 'zod'
 
+import { SUSHISWAP_V3_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,
@@ -38,7 +37,7 @@ const COLUMNS = [
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 interface ConcentratedPositionsTableProps {
-  chainId?: ChainId
+  chainId?: SushiSwapV3ChainId
   poolId?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewPositionButton?: boolean
@@ -47,8 +46,13 @@ interface ConcentratedPositionsTableProps {
 export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
   ({ chainId, onRowClick, poolId, hideNewPositionButton = false }) => {
     const { address } = useAccount()
-    const { chainIds, tokenSymbols } = usePoolFilters()
+    const { chainIds: filterChainIds, tokenSymbols } = usePoolFilters()
     const [hide, setHide] = useState(true)
+
+    const chainIds = useMemo(() => {
+      if (chainId) return [chainId] as SushiSwapV3ChainId[]
+      return SUSHISWAP_V3_ENABLED_NETWORKS
+    }, [chainId])
 
     const [paginationState, setPaginationState] = useState<PaginationState>({
       pageIndex: 0,
@@ -58,15 +62,13 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     const { data: positions, isInitialLoading } =
       useConcentratedLiquidityPositions({
         account: address,
-        chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS as Writeable<
-          typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
-        >,
+        chainIds: chainIds,
       })
 
     const _positions = useMemo(() => {
       const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
       return (positions || [])
-        ?.filter((el) => chainIds.includes(el.chainId))
+        ?.filter((el) => filterChainIds.includes(el.chainId))
         .filter((el) =>
           _tokenSymbols.length > 0
             ? _tokenSymbols.some((symbol) => {
@@ -83,7 +85,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
             (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
           )
         })
-    }, [tokenSymbols, positions, chainIds, hide, poolId])
+    }, [tokenSymbols, positions, filterChainIds, hide, poolId])
 
     const rowRenderer = useCallback(
       (
