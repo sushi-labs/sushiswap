@@ -543,7 +543,7 @@ export const RNDR_ADDRESS = {
 } as const
 
 export const TEL_ADDRESS = {
-  [ChainId.POLYGON]: '0x61299774020dA444Af134c82fa83E3810b309991',
+  [ChainId.POLYGON]: '0xdF7837DE1F2Fa4631D716CF2502f8b230F1dcc32',
 } as const
 
 export const GRT_ADDRESS = {
