@@ -89,13 +89,14 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
           onClick={Number(value) > 0 ? depositeLiquidity : () => {}}
           fullWidth
           size="default"
-          disabled={isTransactionPending || !value}
+          // disabled={isTransactionPending || !value}
+          disabled={true}
           testId="stake-liquidity"
         >
           {isTransactionPending ? (
             <Dots>Confirm transaction</Dots>
           ) : (
-            'Stake Liquidity'
+            'Coming soon'
           )}
         </Button>
       )}

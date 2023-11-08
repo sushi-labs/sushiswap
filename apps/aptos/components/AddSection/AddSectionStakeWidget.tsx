@@ -7,8 +7,10 @@ import {
   WidgetHeader,
   WidgetTitle,
   textFieldVariants,
+  typographyVariants,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
+import { formatUSD } from 'sushi'
 
 interface AddSectionStakeWidgetProps {
   setValue(value: string): void
@@ -51,14 +53,15 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                 unit="SLP"
               />
               <div className="flex w-full justify-between gap-2">
-                {/*<span*/}
-                {/*  className={typographyVariants({*/}
-                {/*    variant: 'muted',*/}
-                {/*    className: 'text-sm',*/}
-                {/*  })}*/}
-                {/*>*/}
-                {/*  {formatUSD(value0 + value1)}*/}
-                {/*</span>*/}
+                <span
+                  className={typographyVariants({
+                    variant: 'muted',
+                    className: 'text-sm',
+                  })}
+                >
+                  {/*{formatUSD(value0 + value1)}*/}
+                  {formatUSD(0)}
+                </span>
                 <Button
                   size="sm"
                   variant="link"
