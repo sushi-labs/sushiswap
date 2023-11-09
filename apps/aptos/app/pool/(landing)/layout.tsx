@@ -42,21 +42,20 @@ export default function TabsLayout({
               My Positions
             </PathnameButton>
           </LinkInternal>
-          <LinkInternal
-            shallow={true}
-            scroll={false}
-            href={`/pool/my-rewards?${searchParams.toString()}`}
+          {/*<LinkInternal*/}
+          {/*  shallow={true}*/}
+          {/*  scroll={false}*/}
+          {/*  href={`/pool/my-rewards?${searchParams.toString()}`}*/}
+          {/*>*/}
+          <PathnameButton
+            disabled
+            id="my-rewards"
+            pathname={'/pool/my-rewards'}
+            size="sm"
           >
-            <PathnameButton
-              disabled
-              id="my-rewards"
-              pathname={'/pool/my-rewards'}
-              asChild
-              size="sm"
-            >
-              My Rewards
-            </PathnameButton>
-          </LinkInternal>
+            My Rewards
+          </PathnameButton>
+          {/*</LinkInternal>*/}
         </div>
       </Container>
       <section className="flex flex-col flex-1">

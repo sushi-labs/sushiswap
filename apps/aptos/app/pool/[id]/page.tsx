@@ -59,10 +59,6 @@ const Pool = () => {
           <div className="flex flex-col gap-6">
             <ManageV2LiquidityCard />
             {pool?.id ? <PoolComposition row={pool} /> : null}
-            <PoolRewards
-              isFarm={farmIndex !== -1}
-              rewardsPerDay={rewardsPerDay}
-            />
           </div>
           <div className="flex flex-col gap-6">
             {pool?.id ? (
@@ -79,6 +75,10 @@ const Pool = () => {
                 isLoading={isPoolLoading || isStakeLoading}
               />
             )}
+            <PoolRewards
+              isFarm={farmIndex !== -1}
+              rewardsPerDay={rewardsPerDay}
+            />
           </div>
         </div>
       </div>
