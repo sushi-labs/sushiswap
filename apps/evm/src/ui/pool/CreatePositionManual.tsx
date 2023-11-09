@@ -1,6 +1,5 @@
 'use client'
 
-import { SteerStrategy } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import {
   Card,
