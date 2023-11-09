@@ -21,7 +21,7 @@ interface TradeInput {
   value: string
   setAmount?: (value: string) => void
   disabled?: boolean
-  setToken: (token: Token) => void
+  setToken?: (token: Token) => void
   balance: number | undefined
   error?: string
   isLoadingPrice: boolean
@@ -111,23 +111,44 @@ export function TradeInput({
           />
         </div>
 
-        <TokenListDialog
-          id={id}
-          selected={token}
-          alteredSelected={alteredSelected}
-          handleChangeToken={setToken}
-          handleSwap={handleSwap}
-        >
-          <Button
-            size="lg"
-            data-state={isLoadingPrice ? 'inactive' : 'active'}
-            variant={token ? 'secondary' : 'default'}
-            id={`${id}-token-selector`}
-            type="button"
-            testdata-id="swap-from-button"
+        {setToken ? (
+          <TokenListDialog
+            id={id}
+            selected={token}
+            alteredSelected={alteredSelected}
+            handleChangeToken={setToken}
+            handleSwap={handleSwap}
+          >
+            <Button
+              size="lg"
+              data-state={isLoadingPrice ? 'inactive' : 'active'}
+              variant={token ? 'secondary' : 'default'}
+              id={`${id}-token-selector`}
+              type="button"
+              testdata-id="swap-from-button"
+              className={classNames(
+                token ? 'pl-2 pr-3 text-xl' : '',
+                '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+              )}
+            >
+              {token ? (
+                <>
+                  <span className="w-[28px] h-[28px] mr-0.5">
+                    <Icon currency={token} height={28} width={28} />
+                  </span>
+                  {token.symbol}
+                  <SelectIcon />
+                </>
+              ) : (
+                'Select'
+              )}
+            </Button>
+          </TokenListDialog>
+        ) : (
+          <div
+            id={`${id}-button`}
             className={classNames(
-              token ? 'pl-2 pr-3 text-xl' : '',
-              '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
             )}
           >
             {token ? (
@@ -136,13 +157,14 @@ export function TradeInput({
                   <Icon currency={token} height={28} width={28} />
                 </span>
                 {token.symbol}
-                <SelectIcon />
               </>
             ) : (
-              'Select'
+              <span className="text-gray-400 dark:text-slate-500">
+                No token selected
+              </span>
             )}
-          </Button>
-        </TokenListDialog>
+          </div>
+        )}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel

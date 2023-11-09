@@ -26,6 +26,7 @@ import { isFarm, useFarms } from '../utils/useFarms'
 import { getPIdIndex, useUserHandle, useUserPool } from '../utils/useUserHandle'
 import { AddSectionStake } from './AddSection/AddSectionStake'
 import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
+import { AddSectionWidget } from './AddSection/AddSectionWidget'
 
 const CONTRACT_ADDRESS =
   process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
@@ -66,8 +67,6 @@ export const ManageV2LiquidityCard: FC = () => {
     totalSupply: Number(totalSupply),
     decimals: coinInfo?.data?.decimals,
   })
-
-  // farm
 
   const { data: farms } = useFarms()
   const farmIndex = isFarm(tokenAddress, farms)
@@ -169,7 +168,9 @@ export const ManageV2LiquidityCard: FC = () => {
         </div>
 
         <TabsContent value="add">
-          <CardContent>{/*<AddSectionLegacy />*/}</CardContent>
+          <CardContent>
+            <AddSectionWidget />
+          </CardContent>
         </TabsContent>
         <TabsContent value="remove">
           <CardContent>
