@@ -1,6 +1,7 @@
 'use client'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { Container } from '@sushiswap/ui'
 import { ManageV2LiquidityCard } from 'components/ManageV2LiquidityCard'
 import { PoolComposition } from 'components/PoolSection/PoolComposition'
 import { PoolMyRewards } from 'components/PoolSection/PoolMyRewards'
@@ -15,7 +16,6 @@ import { useRewardsPerDay } from 'utils/useRewardsPerDay'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
 import { useUserRewards } from 'utils/useUserRewards'
-import { Container } from '@sushiswap/ui'
 
 const Pool = () => {
   const router = useParams()

@@ -1,5 +1,6 @@
 'use client'
 
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import {
   Card,
   CardContent,
@@ -12,21 +13,20 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { FC, useMemo, useState } from 'react'
-import { Pool } from '../utils/usePools'
-import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
 import { useParams } from 'next/navigation'
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { useTokenBalance } from '../utils/useTokenBalance'
+import { FC, useMemo, useState } from 'react'
+import { isFarm, useFarms } from '../utils/useFarms'
 import { usePool } from '../utils/usePool'
+import { Pool } from '../utils/usePools'
+import { useTokenBalance } from '../utils/useTokenBalance'
 import { useTokensFromPools } from '../utils/useTokensFromPool'
 import { useTotalSupply } from '../utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from '../utils/useUnderlyingTokenBalanceFromPool'
-import { isFarm, useFarms } from '../utils/useFarms'
 import { getPIdIndex, useUserHandle, useUserPool } from '../utils/useUserHandle'
 import { AddSectionStake } from './AddSection/AddSectionStake'
-import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
 import { AddSectionWidget } from './AddSection/AddSectionWidget'
+import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
+import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
 
 const CONTRACT_ADDRESS =
   process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
