@@ -38,7 +38,8 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
   },
   [SteerStrategy.BollingerAlgo]: {
     name: 'Bollinger Bands Pool',
-    description: '',
+    description:
+      'This strategy uses a technique called Bollinger bands to create a flexible pool of funds for liquidity provision. It automatically adjusts to changes in market conditions, such as price swings and fluctuations, to optimize the placement of funds, fees earned, and capital efficiency.',
   },
   [SteerStrategy.ChannelMultiplier]: {
     name: 'Channel Multiplier Pool',
@@ -47,7 +48,8 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
   },
   [SteerStrategy.FixedPercentage]: {
     name: 'Fixed Percentage Pool',
-    description: '',
+    description:
+      'This strategy routinely sets a position of a provided percentage spreading above and below the current price.',
   },
   [SteerStrategy.PriceMultiplier]: {
     name: 'Price Multiplier Pool',
@@ -56,7 +58,8 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
   },
   [SteerStrategy.KeltnerAlgo]: {
     name: 'Keltner Channel Pool',
-    description: '',
+    description:
+      'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility and can help identify trends useful for providing liquidity.',
   },
   [SteerStrategy.MovingVolatilityChannel]: {
     name: 'Moving Volatility Pool',
