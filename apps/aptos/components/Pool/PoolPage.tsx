@@ -70,10 +70,9 @@ const _Add: FC = () => {
     poolPairRatio,
     pairs,
   } = usePoolState()
-  const { network, account, signAndSubmitTransaction, connected } = useWallet()
+  const { account, signAndSubmitTransaction, connected } = useWallet()
   const [error0, setError0] = useState('')
   const [error1, setError1] = useState('')
-  console.log(poolPairRatio)
 
   type payloadType = {
     type: string
@@ -226,7 +225,6 @@ const _Add: FC = () => {
   return (
     <>
       <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
-        <SelectTokensWidget handleSwap={swapTokenIfAlreadySelected} />
         <ContentBlock
           title={
             <span className="text-gray-900 dark:text-white">Deposit.</span>
@@ -247,17 +245,16 @@ const _Add: FC = () => {
               setAmount={setAmount0}
               type="INPUT"
               handleSwap={swapTokenIfAlreadySelected}
+              className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
             />
-            <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-              <button
-                type="button"
-                className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900"
-              >
+            <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
+              <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
                 <PlusIcon
-                  strokeWidth={3}
-                  className="w-4 h-4 dark:text-slate-400 text-slate-600"
+                  width={16}
+                  height={16}
+                  className="text-muted-foreground"
                 />
-              </button>
+              </div>
             </div>
             <TradeInput
               alteredSelected={token0}
@@ -273,6 +270,7 @@ const _Add: FC = () => {
               setAmount={setAmount1}
               type="INPUT"
               handleSwap={swapTokenIfAlreadySelected}
+              className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
             />
             <AddLiquidityButton
               buttonError={error0 || error1}
