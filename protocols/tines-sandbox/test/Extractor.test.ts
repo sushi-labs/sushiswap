@@ -46,7 +46,8 @@ export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
   [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
   [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
-  [ChainId.ARBITRUM_NOVA]: '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288' as Address,
+  [ChainId.ARBITRUM_NOVA]:
+    '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288' as Address,
   [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
   [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.POLYGON_ZKEVM]:
@@ -327,7 +328,7 @@ it.skip('Extractor Arbitrum Nova infinite work test', async () => {
     logging: true,
     logType: LogFilterType.Native,
     RP3Address: RP3Address[ChainId.ARBITRUM_NOVA],
-    account: '0xc882b111a75c0c657fc507c04fbfcd2cc984f071'
+    account: '0xc882b111a75c0c657fc507c04fbfcd2cc984f071',
   })
 })
 
