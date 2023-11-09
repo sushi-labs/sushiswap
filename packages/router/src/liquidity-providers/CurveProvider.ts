@@ -536,6 +536,7 @@ export class CurveProvider extends LiquidityProvider {
     const balance0 = await poolsMulticall('balances', [0n])
     const balance1 = await poolsMulticall('balances', [1n])
     const balance2 = await poolsMulticall('balances', [2n])
+    const balance3 = await poolsMulticall('balances', [3n])
     const ratio = await this.getPoolRatio(poolArray)
     
     const poolCodes = poolArray.map(([poolAddress, [, tokens]], i) => {
@@ -544,6 +545,7 @@ export class CurveProvider extends LiquidityProvider {
       const _balance0 = balance0[i].result as bigint
       const _balance1 = balance1[i].result as bigint
       const _balance2 = balance2[i].result as bigint
+      const _balance3 = balance3[i].result as bigint
       const _ratio = ratio[i]
       if (
         _fee === undefined ||
@@ -555,7 +557,7 @@ export class CurveProvider extends LiquidityProvider {
         return []
       const poolTines = createCurvePoolsForMultipool(poolAddress, tokens as RToken[], 
         Number(_fee) / 1e10, Number(_A), 
-      [_balance0, _balance1, _balance2].slice(0, tokens.length), _ratio)
+      [_balance0, _balance1, _balance2, _balance3].slice(0, tokens.length), _ratio)
       
       return poolTines.map(
         p => new CurvePoolCode(
