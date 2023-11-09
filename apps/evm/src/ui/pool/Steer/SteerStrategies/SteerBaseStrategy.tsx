@@ -32,7 +32,7 @@ import {
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
 import { SteerStrategyConfig } from '../constants'
 
-export const SteerElasticExpansionStrategy: SteerStrategyComponent = ({
+export const SteerBaseStrategy: SteerStrategyComponent = ({
   vault,
   generic: { priceExtremes, tokenRatios, adjustment, positions },
 }) => {

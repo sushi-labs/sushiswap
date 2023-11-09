@@ -212,10 +212,16 @@ model Incentive {
 enum SteerStrategy {
   DeltaNeutralStables
   ElasticExpansion
+  MovingVolatilityChannel
   MovingVolatilityChannelMedium
   HighLowChannel
   StaticStable
   ClassicRebalance
+  ChannelMultiplier
+  PriceMultiplier
+  FixedPercentage
+  KeltnerAlgo
+  BollingerAlgo
 }
 
 enum VaultState {

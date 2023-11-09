@@ -18,15 +18,6 @@ import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWi
 
 import { SelectPricesWidget } from './SelectPricesWidget'
 
-export const SteerStrategies = {
-  [SteerStrategy.ClassicRebalance]: <></>,
-  [SteerStrategy.DeltaNeutralStables]: <></>,
-  [SteerStrategy.ElasticExpansion]: <></>,
-  [SteerStrategy.HighLowChannel]: <></>,
-  [SteerStrategy.MovingVolatilityChannelMedium]: <></>,
-  [SteerStrategy.StaticStable]: <></>,
-} as const satisfies Record<SteerStrategy, unknown>
-
 interface ManualProps {
   address: string
   chainId: SushiSwapV3ChainId
