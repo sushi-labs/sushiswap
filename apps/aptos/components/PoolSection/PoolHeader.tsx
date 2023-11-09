@@ -1,10 +1,4 @@
 import { LinkExternal, classNames, typographyVariants } from '@sushiswap/ui'
-import { Icon } from 'components/Icon'
-import { IconList } from 'components/IconList'
-import { providerNetwork } from 'lib/constants'
-import { FC } from 'react'
-import { Pool } from 'utils/usePools'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
 import {
   Button,
   Tooltip,
@@ -12,7 +6,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { Icon } from 'components/Icon'
+import { IconList } from 'components/IconList'
+import { providerNetwork } from 'lib/constants'
+import { FC } from 'react'
 import { formatPercent } from 'sushi'
+import { Pool } from 'utils/usePools'
+import { useTokensFromPools } from 'utils/useTokensFromPool'
 
 interface PoolHeader {
   row: Pool

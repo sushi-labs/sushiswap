@@ -1,9 +1,9 @@
+import { CardGroup, CardLabel } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
-import { CardGroup, CardLabel } from '@sushiswap/ui'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
 
 interface PoolPositionStakedDesktopProps {

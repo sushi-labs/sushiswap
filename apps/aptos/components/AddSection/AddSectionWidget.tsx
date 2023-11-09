@@ -1,5 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { PlusIcon } from '@heroicons/react/20/solid'
+import { CogIcon } from '@heroicons/react/24/outline'
 import {
   IconButton,
   WidgetAction,
@@ -7,7 +8,14 @@ import {
   WidgetFooter,
   WidgetTitle,
 } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
+import {
+  SettingsModule,
+  SettingsOverlay,
+} from '@sushiswap/ui/components/settings'
+import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { Provider } from 'aptos'
+import { AddLiquidityButton } from 'components/Pool/AddLiquidityButton'
 import TradeInput from 'components/TradeInput'
 import { createToast } from 'components/toast'
 import { providerNetwork } from 'lib/constants'
@@ -16,20 +24,12 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import getTokenFromAddress from 'utils/getTokenFromAddress'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useTokenBalance } from 'utils/useTokenBalance'
-import {
-  SettingsModule,
-  SettingsOverlay,
-} from '@sushiswap/ui/components/settings'
-import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
-import { CogIcon } from '@heroicons/react/24/outline'
-import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
-import { AddLiquidityButton } from 'components/Pool/AddLiquidityButton'
-import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
-import { Button } from '@sushiswap/ui'
-import { useTokensFromPools } from '../../utils/useTokensFromPool'
 import { usePool } from '../../utils/usePool'
 import { Pool } from '../../utils/usePools'
+import { useTokensFromPools } from '../../utils/useTokensFromPool'
 import { getPoolPairs } from '../../utils/utilFunctions'
+import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
+import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
 
 type payloadType = {
   type: string

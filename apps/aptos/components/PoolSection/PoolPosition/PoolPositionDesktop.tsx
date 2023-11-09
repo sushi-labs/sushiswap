@@ -1,4 +1,5 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { CardGroup, CardLabel } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { FC, useMemo } from 'react'
 import { usePool } from 'utils/usePool'
@@ -7,7 +8,6 @@ import { useTokenBalance } from 'utils/useTokenBalance'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
-import { CardGroup, CardLabel } from '@sushiswap/ui'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
 
 interface PoolPositionProps {

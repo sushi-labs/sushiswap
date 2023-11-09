@@ -1,12 +1,5 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, CardTitle, Dots } from '@sushiswap/ui'
-import { Provider } from 'aptos'
-import WalletSelector from 'components/WalletSelector'
-import { createToast } from 'components/toast'
-import { providerNetwork } from 'lib/constants'
-import { useParams } from 'next/navigation'
-import { FC, useState } from 'react'
-import { formatNumber } from 'utils/utilFunctions'
 import { Card, CardDescription, CardHeader } from '@sushiswap/ui'
 import {
   CardContent,
@@ -15,6 +8,13 @@ import {
   CardItem,
   CardLabel,
 } from '@sushiswap/ui'
+import { Provider } from 'aptos'
+import WalletSelector from 'components/WalletSelector'
+import { createToast } from 'components/toast'
+import { providerNetwork } from 'lib/constants'
+import { useParams } from 'next/navigation'
+import { FC, useState } from 'react'
+import { formatNumber } from 'utils/utilFunctions'
 interface Props {
   reward: number
   decimals: number | undefined

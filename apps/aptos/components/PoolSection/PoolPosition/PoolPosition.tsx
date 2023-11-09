@@ -1,8 +1,8 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 import { FC } from 'react'
 import { Pool } from 'utils/usePools'
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
-import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
 
 interface PoolPositionProps {
   row: Pool
