@@ -10,7 +10,8 @@ import { POOL_TYPES } from './TableFiltersPoolType'
 
 export const TableFiltersResetButton: FC = () => {
   const [isPending, startTransition] = useTransition()
-  const { protocols, chainIds, tokenSymbols, farmsOnly } = usePoolFilters()
+  const { protocols, chainIds, tokenSymbols, farmsOnly, smartPoolsOnly } =
+    usePoolFilters()
   const setFilters = useSetPoolFilters()
 
   const networks = useMemo(
@@ -25,7 +26,9 @@ export const TableFiltersResetButton: FC = () => {
     (types?.length ?? 0) +
       (networks?.length ?? 0) +
       (tokenSymbols?.length ?? 0) >
-      0 || farmsOnly,
+      0 ||
+      farmsOnly ||
+      smartPoolsOnly,
   )
 
   const reset = useCallback(() => {
@@ -36,6 +39,7 @@ export const TableFiltersResetButton: FC = () => {
         chainIds: undefined,
         tokenSymbols: undefined,
         farmsOnly: undefined,
+        smartPoolsOnly: undefined,
       })
     })
   }, [setFilters])
@@ -46,7 +50,9 @@ export const TableFiltersResetButton: FC = () => {
       : (types?.length ?? 0) +
           (networks?.length ?? 0) +
           (tokenSymbols?.length ?? 0) >
-          0 || farmsOnly
+          0 ||
+        farmsOnly ||
+        smartPoolsOnly
   ) {
     return (
       <Button

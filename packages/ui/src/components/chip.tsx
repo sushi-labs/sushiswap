@@ -18,6 +18,9 @@ const chipVariants = cva(
           'bg-red hover:bg-red-600 focus:bg-red-700 border-transparent text-destructive-foreground',
         ghost: 'hover:bg-muted focus:bg-accent',
         outline: 'text-foreground',
+        pink: 'bg-pink/10 text-pink',
+        blue: 'bg-blue/10 text-blue',
+        green: 'bg-green/10 text-green',
       },
       hasRemove: {
         yes: 'pr-0.5',

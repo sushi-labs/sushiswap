@@ -53,7 +53,7 @@ const COLUMNS = [
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <TimeAgo
-                className="whitespace-nowrap underline decoration-dotted"
+                className="whitespace-nowrap underline decoration-dotted underline-offset-2"
                 value={new Date(start * 1000)}
               />
             </TooltipTrigger>
@@ -78,7 +78,7 @@ const COLUMNS = [
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <TimeAgo
-                className="whitespace-nowrap underline decoration-dotted"
+                className="whitespace-nowrap underline decoration-dotted underline-offset-2"
                 value={new Date(end * 1000)}
               />
             </TooltipTrigger>

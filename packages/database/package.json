@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",

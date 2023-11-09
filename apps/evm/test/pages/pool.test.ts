@@ -30,7 +30,7 @@ import { Fee } from 'sushi/dex'
 import { zeroAddress } from 'viem'
 
 import { SupportedChainId } from 'src/config'
-import { createERC20 } from 'test/create-erc20'
+import { createERC20 } from 'test/erc20'
 import { interceptAnvil } from 'test/intercept-anvil'
 
 interface TridentPoolArgs {
@@ -81,7 +81,11 @@ let FAKE_TOKEN: Token
 // let MOCK_TOKEN_6_DP: Token
 // let MOCK_TOKEN_8_DP: Token
 // let MOCK_TOKEN_18_DP: Token
-
+// const EVM_APP_BASE_URL =
+//   process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
+//   (process.env['NEXT_PUBLIC_VERCEL_URL']
+//     ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
+//     : 'http://localhost:3000')
 const BASE_URL = 'http://localhost:3000/pool'
 
 test.beforeAll(async () => {
@@ -925,14 +929,14 @@ async function mockPoolApi(
         tokenA,
         tokenB,
         fee: fee,
-      })
+      }).toLowerCase()
     } else if (protocol === 'SUSHISWAP_V2') {
       address = computeSushiSwapV2PoolAddress({
         factoryAddress:
           SUSHISWAP_V2_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV2ChainId],
         tokenA,
         tokenB,
-      })
+      }).toLowerCase()
     } else if (protocol === 'BENTOBOX_CLASSIC') {
       address = computeTridentConstantPoolAddress({
         factoryAddress:
@@ -941,7 +945,7 @@ async function mockPoolApi(
         tokenB,
         fee,
         twap: false,
-      })
+      }).toLowerCase()
     } else if (protocol === 'BENTOBOX_STABLE') {
       address = computeTridentStablePoolAddress({
         factoryAddress:
@@ -949,7 +953,7 @@ async function mockPoolApi(
         tokenA,
         tokenB,
         fee,
-      })
+      }).toLowerCase()
     } else {
       console.error('>>>>>>>>> UNKNOWN PROTOCOL')
       throw Error('Unknown protocol')
@@ -1020,14 +1024,16 @@ async function mockPoolApi(
       steerVaults: [],
     }
 
-    if (request.url === 'https://pools.sushi.com/api/v0') {
+    if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
       return new Response(JSON.stringify([mockPool]), {
         headers: {
           'Content-Type': 'application/json',
         },
       })
     } else if (
-      request.url === `https://pools.sushi.com/api/v0/${CHAIN_ID}/${address}`
+      request.url
+        .toLowerCase()
+        .endsWith(`/pool/api/pools/${CHAIN_ID}/${address}`.toLowerCase())
     ) {
       return new Response(JSON.stringify(mockPool), {
         headers: {

@@ -75,7 +75,7 @@ export interface Pool {
   volumeUSD: string
 }
 
-export const POOL_API =
+export const EVM_APP_BASE_URL =
   process.env['POOLS_API_V0_BASE_URL'] ||
   process.env['NEXT_PUBLIC_POOLS_API_V0_BASE_URL'] ||
   'https://pools.sushi.com'
@@ -92,7 +92,7 @@ export function parseArgs<T>(args?: Partial<T>) {
 
 export const getPool = async (poolId: string): Promise<Pool> => {
   return import('node-fetch').then(({ default: fetch }) =>
-    fetch(`${POOL_API}/api/v0?ids=${poolId}`)
+    fetch(`${EVM_APP_BASE_URL}/api/v0?ids=${poolId}`)
       .then((data: any) => data.json())
       .then((data: any) => data[0]),
   )
@@ -100,7 +100,7 @@ export const getPool = async (poolId: string): Promise<Pool> => {
 
 export const getPools = async (args?: GetPoolsArgs): Promise<Pool[]> => {
   return import('node-fetch').then(({ default: fetch }) =>
-    fetch(`${POOL_API}/api/v0${parseArgs(args)}`).then((data: any) =>
+    fetch(`${EVM_APP_BASE_URL}/api/v0${parseArgs(args)}`).then((data: any) =>
       data.json(),
     ),
   )
@@ -108,7 +108,7 @@ export const getPools = async (args?: GetPoolsArgs): Promise<Pool[]> => {
 
 export const getPoolCount = async (args?: GetPoolsArgs): Promise<number> =>
   import('node-fetch').then(({ default: fetch }) =>
-    fetch(`${POOL_API}/api/v0/count${parseArgs(args)}`)
+    fetch(`${EVM_APP_BASE_URL}/api/v0/count${parseArgs(args)}`)
       .then((data: any) => data.json())
       .then((data: any) => data.count),
   )

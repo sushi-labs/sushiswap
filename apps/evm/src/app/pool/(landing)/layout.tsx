@@ -30,6 +30,23 @@ export default function TabsLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
+            href={`/pool/smart-pool?${searchParams.toString()}`}
+          >
+            <PathnameButton
+              id="smart-pools"
+              pathname={'/pool/smart-pool'}
+              asChild
+              size="sm"
+            >
+              Smart Pools{' '}
+              <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                NEW
+              </div>
+            </PathnameButton>
+          </LinkInternal>
+          <LinkInternal
+            shallow={true}
+            scroll={false}
             href={`/pool/my-positions?${searchParams.toString()}`}
           >
             <PathnameButton

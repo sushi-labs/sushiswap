@@ -1,4 +1,5 @@
-import { PoolsApiSchema, getPools } from '@sushiswap/client'
+import { getPools } from '@sushiswap/client'
+import { PoolsApiSchema } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server'
 
 export const revalidate = 3600

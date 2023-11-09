@@ -2,7 +2,7 @@ import type { ChainProviderFn } from '@wagmi/core'
 // import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
-import { type RpcEnabledChainId, rpcUrls } from './rpc-urls'
+import { type RpcEnabledChainId, rpcUrls } from './rpc-urls.js'
 
 export const allProviders: ChainProviderFn[] = [
   jsonRpcProvider({
