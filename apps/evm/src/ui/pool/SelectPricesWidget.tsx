@@ -225,7 +225,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
     if (!ticksAtLimit[Bound.LOWER] && !ticksAtLimit[Bound.UPPER]) {
       // switch price
-      if (weightLockedCurrencyBase)
+      if (typeof weightLockedCurrencyBase === 'number')
         setWeightLockedCurrencyBase(1 - weightLockedCurrencyBase)
       setIndependentRangeField((field) =>
         field === Bound.LOWER ? Bound.UPPER : Bound.LOWER,
@@ -336,7 +336,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
   const currentWeight0 = valueRatio?.[0]
   const handleToggleWeightLock = useCallback(() => {
-    if (!weightLockedCurrencyBase) {
+    if (typeof weightLockedCurrencyBase !== 'number') {
       setWeightLockedCurrencyBase(currentWeight0)
     } else {
       if (typeof leftBoundInput === 'string') onLeftRangeInput(leftBoundInput)
@@ -355,7 +355,11 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   ])
 
   const isTokenWeightUnmatched = useMemo(() => {
-    if (weightLockedCurrencyBase == null || currentWeight0 == null) return false
+    if (
+      typeof weightLockedCurrencyBase !== 'number' ||
+      typeof currentWeight0 !== 'number'
+    )
+      return false
     const absDiff = Math.abs(currentWeight0 - weightLockedCurrencyBase)
     const pctDiff = Math.abs(currentWeight0 / weightLockedCurrencyBase - 1)
     return absDiff > 0.01 && pctDiff > 0.03 // threshold: 1% abs diff and 3% pct diff
@@ -551,7 +555,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                             valueRatio[1] * 100
                           ).toFixed(0)}%`
                         : '-'}
-                      {weightLockedCurrencyBase && isTokenWeightUnmatched ? (
+                      {typeof weightLockedCurrencyBase === 'number' &&
+                      isTokenWeightUnmatched ? (
                         <TooltipProvider>
                           <Tooltip delayDuration={0}>
                             <TooltipTrigger asChild>
@@ -579,13 +584,13 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                             <Button
                               size="xs"
                               variant={
-                                !weightLockedCurrencyBase
+                                typeof weightLockedCurrencyBase !== 'number'
                                   ? 'outline'
                                   : 'destructive'
                               }
                               onClick={handleToggleWeightLock}
                             >
-                              {!weightLockedCurrencyBase ? (
+                              {typeof weightLockedCurrencyBase !== 'number' ? (
                                 <LockOpenIcon width={10} height={10} />
                               ) : (
                                 <LockClosedIcon width={10} height={10} />

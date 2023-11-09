@@ -187,7 +187,12 @@ export default function LiquidityChartRangeInput({
       range: [number, number],
       movingHandle: HandleType | undefined,
     ): [number, number] | undefined => {
-      if (!price || !movingHandle || !weightLockedCurrencyBase) return undefined
+      if (
+        typeof price !== 'number' ||
+        !movingHandle ||
+        typeof weightLockedCurrencyBase !== 'number'
+      )
+        return undefined
       return getPriceRangeWithTokenRatio(
         price,
         range[0],
