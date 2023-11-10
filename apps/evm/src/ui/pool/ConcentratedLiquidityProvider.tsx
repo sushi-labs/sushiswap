@@ -47,6 +47,7 @@ interface State {
   startPriceTypedValue: string // for the case when there's no liquidity
   leftRangeTypedValue: string | FullRange
   rightRangeTypedValue: string | FullRange
+  weightLockedCurrencyBase: number | undefined
 }
 
 type Api = {
@@ -57,6 +58,7 @@ type Api = {
   onStartPriceInput(typedValue: string): void
   resetMintState(): void
   setFullRange(): void
+  setWeightLockedCurrencyBase(value: number | undefined): void
 }
 
 const initialState: State = {
@@ -65,6 +67,7 @@ const initialState: State = {
   startPriceTypedValue: '',
   leftRangeTypedValue: '',
   rightRangeTypedValue: '',
+  weightLockedCurrencyBase: undefined,
 }
 
 type Actions =
@@ -79,6 +82,7 @@ type Actions =
   | { type: 'typeRightRangeInput'; typedValue: string }
   | { type: 'setFullRange' }
   | { type: 'typeStartPriceInput'; typedValue: string }
+  | { type: 'setWeightLockedCurrencyBase'; value: number | undefined }
 
 const ConcentratedLiquidityStateContext = createContext<State>(initialState)
 const ConcentratedLiquidityActionsContext = createContext<Api>({} as Api)
@@ -101,6 +105,9 @@ const reducer = (state: State, action: Actions): State => {
         independentField: action.field,
         typedValue: action.typedValue,
       }
+    }
+    case 'setWeightLockedCurrencyBase': {
+      return { ...state, weightLockedCurrencyBase: action.value }
     }
   }
 }
@@ -160,6 +167,8 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
       dispatch({ type: 'typeStartPriceInput', typedValue })
     const resetMintState = () => dispatch({ type: 'resetMintState' })
     const setFullRange = () => dispatch({ type: 'setFullRange' })
+    const setWeightLockedCurrencyBase = (value: number | undefined) =>
+      dispatch({ type: 'setWeightLockedCurrencyBase', value })
 
     return {
       resetMintState,
@@ -169,6 +178,7 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
       onLeftRangeInput,
       onRightRangeInput,
       onStartPriceInput,
+      setWeightLockedCurrencyBase,
     }
   }, [])
 
@@ -248,9 +258,6 @@ export function useConcentratedDerivedMintInfo({
   leftBoundInput: string | true
   rightBoundInput: string | true
   weightLockedCurrencyBase: number | undefined
-  setWeightLockedCurrencyBase: (
-    weightLockedCurrencyBase: number | undefined,
-  ) => void
   independentRangeField: Bound
   setIndependentRangeField: Dispatch<SetStateAction<Bound>>
 } {
@@ -260,6 +267,7 @@ export function useConcentratedDerivedMintInfo({
     leftRangeTypedValue,
     rightRangeTypedValue,
     startPriceTypedValue,
+    weightLockedCurrencyBase,
   } = useConcentratedMintState()
 
   const dependentField =
@@ -385,9 +393,6 @@ export function useConcentratedDerivedMintInfo({
   const [independentRangeField, setIndependentRangeField] = useState<Bound>(
     Bound.LOWER,
   )
-  const [weightLockedCurrencyBase, setWeightLockedCurrencyBase] = useState<
-    number | undefined
-  >(undefined)
 
   const [leftBoundInput, rightBoundInput] = useMemo((): [
     string | true,
@@ -454,6 +459,19 @@ export function useConcentratedDerivedMintInfo({
     token1,
     tickSpaceLimits,
   ])
+
+  console.log(
+    'ticks',
+    ticks,
+    existingPosition,
+    feeAmount,
+    invertPrice,
+    leftBoundInput,
+    rightBoundInput,
+    token0,
+    token1,
+    tickSpaceLimits,
+  )
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks || {}
 
@@ -698,7 +716,6 @@ export function useConcentratedDerivedMintInfo({
       leftBoundInput,
       rightBoundInput,
       weightLockedCurrencyBase,
-      setWeightLockedCurrencyBase,
       independentRangeField,
       setIndependentRangeField,
       ticks,

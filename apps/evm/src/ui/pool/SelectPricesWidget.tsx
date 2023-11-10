@@ -135,7 +135,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     leftBoundInput,
     rightBoundInput,
     weightLockedCurrencyBase,
-    setWeightLockedCurrencyBase,
     setIndependentRangeField,
     parsedAmounts,
     dependentField,
@@ -155,6 +154,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     onStartPriceInput,
     onFieldAInput,
     onFieldBInput,
+    setWeightLockedCurrencyBase,
   } = useConcentratedMintActionHandlers()
   const { startPriceTypedValue, independentField, typedValue } =
     useConcentratedMintState()
@@ -212,13 +212,21 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     ],
   )
 
-  const formattedAmounts = {
-    [independentField]:
-      independentField === Field.CURRENCY_A
-        ? typedValue
-        : parsedAmounts?.[dependentField]?.toSignificant(6) ?? '',
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
-  }
+  const formattedAmounts: {
+    [_formattedAmountsField in Field]: string
+  } = useMemo(
+    () => ({
+      [Field.CURRENCY_A]:
+        independentField === Field.CURRENCY_A
+          ? typedValue
+          : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+      [Field.CURRENCY_B]:
+        independentField === Field.CURRENCY_A
+          ? parsedAmounts[dependentField]?.toSignificant(6) ?? ''
+          : typedValue,
+    }),
+    [typedValue, dependentField, independentField, parsedAmounts],
+  )
 
   const handleSwitchTokens = () => {
     switchTokens?.()
@@ -676,7 +684,9 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       </Explainer>
                     </div>
                     {!apr || !sanitizedCE ? (
-                      <div>Not enough data</div>
+                      <div className="text-muted-foreground">
+                        Not enough data
+                      </div>
                     ) : (
                       <div>
                         <span className="text-muted-foreground">
