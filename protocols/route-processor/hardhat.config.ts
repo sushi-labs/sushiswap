@@ -24,6 +24,7 @@ const config: HardhatUserConfig = {
     //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
     //   },
     //   chainId: 1,
+    //   blockGasLimit: 1_000_000_000
     // },
     hardhat: {
       forking: {
