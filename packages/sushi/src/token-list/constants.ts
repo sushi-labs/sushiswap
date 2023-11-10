@@ -36,6 +36,9 @@ export const CELO_LIST =
 export const PLASMA_BNB_LIST =
   'https://raw.githubusercontent.com/plasmadlt/plasma-finance-token-list/master/bnb.json'
 
+export const LINEA_LIST =
+  'https://raw.githubusercontent.com/Consensys/linea-token-list/main/json/linea-mainnet-token-fulllist.json'
+
 // this is the default list of lists that are exposed to users
 // lower index == higher priority for token import
 export const DEFAULT_TOKEN_LIST_OF_TOKEN_LISTS_TO_DISPLAY: string[] = [
@@ -57,6 +60,7 @@ export const DEFAULT_TOKEN_LIST_OF_TOKEN_LISTS_TO_DISPLAY: string[] = [
   OPTIMISM_LIST,
   CELO_LIST,
   PLASMA_BNB_LIST,
+  LINEA_LIST,
 ]
 
 export const DEFAULT_LIST_OF_LISTS: string[] = [

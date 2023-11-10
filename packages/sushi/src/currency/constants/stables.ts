@@ -181,4 +181,11 @@ export const STABLES = {
     THUNDERCORE_ANY_USDT,
     THUNDERCORE_ANY_USDC,
   ],
+  [ChainId.SCROLL]: [
+    USDC[ChainId.SCROLL],
+    USDT[ChainId.SCROLL],
+    DAI[ChainId.SCROLL],
+  ],
+  [ChainId.FILECOIN]: [USDC[ChainId.FILECOIN], DAI[ChainId.FILECOIN]],
+  [ChainId.LINEA]: [USDC[ChainId.LINEA], DAI[ChainId.LINEA]],
 } as const
