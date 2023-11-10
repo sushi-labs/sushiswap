@@ -8,6 +8,8 @@ import {
 import { STABLES, WNATIVE } from 'sushi/currency'
 // import { fetch } from '@whatwg-node/fetch'
 
+import { deserialize } from '@wagmi/core'
+import { DEFAULT_LIST_OF_LISTS, isPromiseFulfilled } from 'sushi'
 import { Currency } from './enums.js'
 
 interface TokenResponse {
@@ -59,24 +61,21 @@ interface PoolCode {
 }
 
 async function fetchTokens() {
-  const responses = await Promise.all([
-    fetch('https://token-list.sushi.com'),
-    fetch('https://bridge.arbitrum.io/token-list-42161.json'),
-  ])
-  const json = await Promise.all(responses.map((r) => r.json()))
-  return [...json[0].tokens, ...json[1].tokens] as TokenResponse[]
+  return Promise.allSettled(
+    DEFAULT_LIST_OF_LISTS.map((el) => fetch(el).then((res) => res.json())),
+  ).then((promiseSettledResults) => {
+    return promiseSettledResults
+      .filter(isPromiseFulfilled)
+      .flatMap((el) => el.value.tokens)
+  }) as Promise<TokenResponse[]>
 }
 
 async function fetchPoolCodes(chainId: number) {
   const response = await fetch(
     `https://swap.sushi.com/pool-codes?chainId=${chainId}`,
   )
-  const jsonString = await response.json()
-  const preprocessedString = jsonString.replace(
-    /"#bigint\.(-?\d+(\.\d+)?)"/g,
-    '"$1"',
-  )
-  return JSON.parse(preprocessedString) as PoolCode[]
+  const json = await response.json()
+  return deserialize(json) as PoolCode[]
 }
 
 function mapPool(poolCode: PoolCode) {

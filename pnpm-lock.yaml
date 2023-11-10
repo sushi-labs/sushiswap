@@ -313,6 +313,9 @@ importers:
       '@vercel/node':
         specifier: 3.0.8
         version: 3.0.8
+      '@wagmi/core':
+        specifier: 1.4.5
+        version: 1.4.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.21.4)
       date-fns:
         specifier: 2.30.0
         version: 2.30.0

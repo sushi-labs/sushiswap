@@ -14,7 +14,8 @@
     "date-fns": "2.30.0",
     "ioredis": "5.3.1",
     "sushi": "workspace:*",
-    "zod": "3.21.4"
+    "zod": "3.21.4",
+    "@wagmi/core": "1.4.5"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
