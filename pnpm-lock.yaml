@@ -191,8 +191,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
       '@sushiswap/default-token-list':
-        specifier: ^41.4.0
-        version: 41.5.0
+        specifier: ^42.0.0
+        version: 42.0.0
       '@vercel/node':
         specifier: 3.0.7
         version: 3.0.7
@@ -14265,8 +14265,8 @@ packages:
     resolution: {integrity: sha512-2mN2QxAeRWywsWrh598DKqKjOiHlsdi0OXlmcBIlHJY9DYbMz8lZFl9v/2sL3Xj8c1WQ0i9xyktfObv3hhn6KQ==}
     dev: false
 
-  /@sushiswap/default-token-list@41.5.0:
-    resolution: {integrity: sha512-SMDWC6WyoH4BoCH5oHDAo3mub3WB6qXK5uEUm/7zvHCY4ckMwJ77n/Q/hYJt1gjMotkOZ9oOVOaWh8qMBJou+A==}
+  /@sushiswap/default-token-list@42.0.0:
+    resolution: {integrity: sha512-QVZQcie8PbPLEtoKCuAbDL1FPbw04IlR4S6sAGCYisYT4tL57UCXwog5QTYT9sIGSE/WE0ZI3QIcHRAKeIRlDA==}
     dev: false
 
   /@swc/helpers@0.5.1:
