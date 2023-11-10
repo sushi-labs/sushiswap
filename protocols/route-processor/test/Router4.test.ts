@@ -15,6 +15,8 @@ import {
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
   BridgeBento,
+  // CurveMultitokenCore,
+  // CurveMultitokenPool,
   RPool,
   RouteStatus,
   StableSwapRPool,
@@ -281,14 +283,13 @@ async function makeSwap(
   } else {
     pcMap = new Map()
     Array.from(env.poolCodes.entries()).forEach((e) => {
-      if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
+      if (!usedPools.has(e[1].pool.address)) pcMap.set(e[0], e[1])
     })
   }
   //await checkPoolsState(pcMap, env.user.address, env.chainId)
 
   const route = Router.findBestRoute(
     pcMap,
-    //env.poolList.filter(p => !usedPools.has(p.pool.uniqueID())),
     env.chainId,
     fromToken,
     amountIn,
@@ -314,6 +315,20 @@ async function makeSwap(
   //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
+  // const poolsS = new Map<string, [number, number][]>()
+  // route.legs.forEach(l => {
+  //   const pool = pcMap.get(l.uniqueId)?.pool
+  //   if (pool instanceof CurveMultitokenPool) {
+  //     const prev: [number, number][] = poolsS.get(pool.core.address) ?? []
+  //     prev.push([pool.index0, pool.index1])
+  //     poolsS.set(pool.core.address, prev)
+  //   }
+  // })
+  // Array.from(poolsS.entries()).forEach(([addr, ind]) => {
+  //   if (ind.length >= 2)
+  //     ind.forEach(([i0, i1]) => console.log(`    ${addr} ${i0}-${i1}`))
+  // })
+
   if (route.status === RouteStatus.NoWay) {
     if (throwAtNoWay) throw new Error('NoWay')
     return
@@ -372,7 +387,7 @@ async function makeSwap(
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
       if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
-        usedPools.add(l.uniqueId)
+        usedPools.add(l.poolAddress)
       }
     })
   }
@@ -480,7 +495,7 @@ async function checkTransferAndRoute(
   } else {
     pcMap = new Map()
     Array.from(env.poolCodes.entries()).forEach((e) => {
-      if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
+      if (!usedPools.has(e[1].pool.address)) pcMap.set(e[0], e[1])
     })
   }
 
@@ -550,7 +565,7 @@ async function checkTransferAndRoute(
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
       if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
-        usedPools.add(l.uniqueId)
+        usedPools.add(l.poolAddress)
       }
     })
   }
