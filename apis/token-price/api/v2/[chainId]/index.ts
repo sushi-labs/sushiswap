@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
+import { getPrices } from '../../../lib/api/v2.js'
 import { Currency } from '../../../lib/enums.js'
-import { getPrices } from '../../../lib/v2.js'
 
 const schema = z.object({
   chainId: z.coerce

@@ -10,7 +10,7 @@ import { STABLES, WNATIVE } from 'sushi/currency'
 
 import { deserialize } from '@wagmi/core'
 import { DEFAULT_LIST_OF_LISTS, isPromiseFulfilled } from 'sushi'
-import { Currency } from './enums.js'
+import { Currency } from '../enums.js'
 
 interface TokenResponse {
   address: string

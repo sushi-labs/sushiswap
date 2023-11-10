@@ -448,7 +448,10 @@ export const EXTRACTOR_CONFIG = {
   [ChainId.LINEA]: {
     client: createPublicClient(config[ChainId.LINEA]),
     // factoriesV2: [sushiswapV2Factory(ChainId.LINEA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.LINEA)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.LINEA),
+      pancakeswapV3Factory(ChainId.LINEA),
+    ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
     cacheDir: './cache',
     logDepth: 50,
