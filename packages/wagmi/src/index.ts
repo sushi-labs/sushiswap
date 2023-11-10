@@ -12,6 +12,9 @@ export * from './hooks'
 // Export systems
 export * from './systems'
 
+// Export components
+export * from './components'
+
 // Export test
 export * from './test'
 

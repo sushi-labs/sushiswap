@@ -3,7 +3,7 @@
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC } from 'react'
 
-import { SteerManual } from './SteerManual'
+import { CreatePositionManual } from './CreatePositionManual'
 
 interface NewPositionProps {
   address: string
@@ -11,7 +11,7 @@ interface NewPositionProps {
 }
 
 export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
-  return <SteerManual address={address} chainId={chainId} />
+  return <CreatePositionManual address={address} chainId={chainId} />
 
   // const { data: poolStats, isLoading, isError } = useConcentratedLiquidityPoolStats({ chainId, address })
 

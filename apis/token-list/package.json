@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@sushiswap/chainlink-token-list": "^0.1.0",
-    "@sushiswap/default-token-list": "^41.4.0",
+    "@sushiswap/default-token-list": "^42.0.0",
     "@vercel/node": "3.0.8"
   },
   "devDependencies": {

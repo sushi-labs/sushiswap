@@ -25,7 +25,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@sentry/node": "7.74.0",
+    "@sentry/node": "7.77.0",
     "@sushiswap/extractor": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
