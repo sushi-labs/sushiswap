@@ -134,8 +134,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     isLoading,
     leftBoundInput,
     rightBoundInput,
-    weightLockedCurrencyBase,
-    setIndependentRangeField,
     parsedAmounts,
     dependentField,
   } = useConcentratedDerivedMintInfo({
@@ -155,9 +153,15 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     onFieldAInput,
     onFieldBInput,
     setWeightLockedCurrencyBase,
+    setIndependentRangeField,
   } = useConcentratedMintActionHandlers()
-  const { startPriceTypedValue, independentField, typedValue } =
-    useConcentratedMintState()
+  const {
+    startPriceTypedValue,
+    independentField,
+    independentRangeField,
+    typedValue,
+    weightLockedCurrencyBase,
+  } = useConcentratedMintState()
 
   const { data: existingPosition, isLoading: positionLoading } =
     useConcentratedLiquidityPositionsFromTokenId({
@@ -235,8 +239,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       // switch price
       if (typeof weightLockedCurrencyBase === 'number')
         setWeightLockedCurrencyBase(1 - weightLockedCurrencyBase)
-      setIndependentRangeField((field) =>
-        field === Bound.LOWER ? Bound.UPPER : Bound.LOWER,
+      setIndependentRangeField(
+        independentRangeField === Bound.LOWER ? Bound.UPPER : Bound.LOWER,
       )
       onLeftRangeInput(
         (invertPrice ? priceLower : priceUpper?.invert())?.toSignificant(6) ??

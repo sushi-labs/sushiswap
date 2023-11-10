@@ -16,16 +16,13 @@ import {
 } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import {
-  Dispatch,
   FC,
   ReactNode,
-  SetStateAction,
   createContext,
   useCallback,
   useContext,
   useMemo,
   useReducer,
-  useState,
 } from 'react'
 import { Bound, Field } from 'src/lib/constants'
 import { getTickToPrice, tryParseTick } from 'src/lib/functions'
@@ -43,6 +40,7 @@ type FullRange = true
 
 interface State {
   independentField: Field
+  independentRangeField: Bound
   typedValue: string
   startPriceTypedValue: string // for the case when there's no liquidity
   leftRangeTypedValue: string | FullRange
@@ -59,10 +57,12 @@ type Api = {
   resetMintState(): void
   setFullRange(): void
   setWeightLockedCurrencyBase(value: number | undefined): void
+  setIndependentRangeField(value: Bound): void
 }
 
 const initialState: State = {
   independentField: Field.CURRENCY_A,
+  independentRangeField: Bound.LOWER,
   typedValue: '',
   startPriceTypedValue: '',
   leftRangeTypedValue: '',
@@ -83,6 +83,7 @@ type Actions =
   | { type: 'setFullRange' }
   | { type: 'typeStartPriceInput'; typedValue: string }
   | { type: 'setWeightLockedCurrencyBase'; value: number | undefined }
+  | { type: 'setIndependentRangeField'; value: Bound }
 
 const ConcentratedLiquidityStateContext = createContext<State>(initialState)
 const ConcentratedLiquidityActionsContext = createContext<Api>({} as Api)
@@ -108,6 +109,9 @@ const reducer = (state: State, action: Actions): State => {
     }
     case 'setWeightLockedCurrencyBase': {
       return { ...state, weightLockedCurrencyBase: action.value }
+    }
+    case 'setIndependentRangeField': {
+      return { ...state, independentRangeField: action.value }
     }
   }
 }
@@ -169,6 +173,8 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
     const setFullRange = () => dispatch({ type: 'setFullRange' })
     const setWeightLockedCurrencyBase = (value: number | undefined) =>
       dispatch({ type: 'setWeightLockedCurrencyBase', value })
+    const setIndependentRangeField = (value: Bound) =>
+      dispatch({ type: 'setIndependentRangeField', value })
 
     return {
       resetMintState,
@@ -179,6 +185,7 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
       onRightRangeInput,
       onStartPriceInput,
       setWeightLockedCurrencyBase,
+      setIndependentRangeField,
     }
   }, [])
 
@@ -257,12 +264,10 @@ export function useConcentratedDerivedMintInfo({
   isInitialLoading: boolean
   leftBoundInput: string | true
   rightBoundInput: string | true
-  weightLockedCurrencyBase: number | undefined
-  independentRangeField: Bound
-  setIndependentRangeField: Dispatch<SetStateAction<Bound>>
 } {
   const {
     independentField,
+    independentRangeField,
     typedValue,
     leftRangeTypedValue,
     rightRangeTypedValue,
@@ -390,10 +395,6 @@ export function useConcentratedDerivedMintInfo({
     [feeAmount],
   )
 
-  const [independentRangeField, setIndependentRangeField] = useState<Bound>(
-    Bound.LOWER,
-  )
-
   const [leftBoundInput, rightBoundInput] = useMemo((): [
     string | true,
     string | true,
@@ -459,19 +460,6 @@ export function useConcentratedDerivedMintInfo({
     token1,
     tickSpaceLimits,
   ])
-
-  console.log(
-    'ticks',
-    ticks,
-    existingPosition,
-    feeAmount,
-    invertPrice,
-    leftBoundInput,
-    rightBoundInput,
-    token0,
-    token1,
-    tickSpaceLimits,
-  )
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks || {}
 
@@ -715,9 +703,6 @@ export function useConcentratedDerivedMintInfo({
       parsedAmounts,
       leftBoundInput,
       rightBoundInput,
-      weightLockedCurrencyBase,
-      independentRangeField,
-      setIndependentRangeField,
       ticks,
       price,
       pricesAtTicks,
@@ -740,7 +725,6 @@ export function useConcentratedDerivedMintInfo({
       depositADisabled,
       depositBDisabled,
       errorMessage,
-      independentRangeField,
       invalidPool,
       invalidRange,
       invertPrice,
@@ -757,7 +741,6 @@ export function useConcentratedDerivedMintInfo({
       ticks,
       ticksAtLimit,
       usePool,
-      weightLockedCurrencyBase,
     ],
   )
 }
