@@ -3,17 +3,9 @@ import { NextResponse } from "next/server";
 import { DEFAULT_LIST_OF_LISTS } from "sushi";
 
 export async function GET(req: Request) {
-	const authToken = (req.headers.get("authorization") || "")
-		.split("Bearer ")
-		.at(1);
-	if (!authToken || authToken !== process.env.CRON_SECRET) {
-		return NextResponse.json(
-			{ error: "Unauthorized" },
-			{
-				status: 401,
-			},
-		);
-	}
+  if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json('Unauthorized', { status: 401 });
+  }
 
 	if (!process.env.UPSTASH_SUSHISWAP_REDIS_REST_URL)
 		throw new Error("UPSTASH_REDIS_REST_URL undefined");
