@@ -29,6 +29,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     return response.status(200).json(json)
   } else {
     const price = await getPrice(chainId, address, currency)
+    console.log({ price })
 
     if (price === undefined) return response.status(404).send(0)
 

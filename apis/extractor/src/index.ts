@@ -578,26 +578,18 @@ async function main() {
     const tokenManager = tokenManagers.get(chainId) as TokenManager
     const token = (await tokenManager.findToken(address)) as Token
     const poolCodesMap = new Map<string, PoolCode>()
-
-    // const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
-    //   Array.from(tokenManager.tokens.values()).slice(0, 100),
-    // )
-
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
     const additional = ADDITIONAL_BASES[chainId]?.[token.wrapped.address] ?? []
-
     const tokens = Array.from(
       new Set([token.wrapped, ...common, ...additional]),
     )
-
     const { prefetched: cachedPoolCodes, fetchingNumber } =
       extractor.getPoolCodesForTokensFull(tokens)
     cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
-
     if (fetchingNumber > 0) {
       const poolCodes = await extractor.getPoolCodesForTokensAsync(
         tokens,
-        10_000,
+        2_000,
       )
       poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     }

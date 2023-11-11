@@ -12,8 +12,9 @@ import {
   type TokenInfo,
   type TokenList,
 } from 'sushi/token-list'
-import { isPromiseFulfilled } from 'sushi/validate'
+// import { isPromiseFulfilled } from 'sushi/validate'
 import { getAddress } from 'viem'
+import redis from '../redis.js'
 
 export const Currency = {
   USD: 'USD',
@@ -64,11 +65,27 @@ interface PoolCode {
 }
 
 async function fetchTokensFromLists() {
-  return Promise.allSettled(
-    DEFAULT_LIST_OF_LISTS.map((el) => fetch(el).then((res) => res.json())),
-  ).then((promiseSettledResults: PromiseSettledResult<TokenList>[]) => {
-    return promiseSettledResults.filter(isPromiseFulfilled).flatMap((el) =>
-      el.value.tokens.map((t) => ({
+  const promises: Promise<TokenList>[] = []
+
+  for (const key of DEFAULT_LIST_OF_LISTS) {
+    const cached = await redis.get(key)
+    if (cached) {
+      promises.push(Promise.resolve(JSON.parse(cached)))
+    } else {
+      promises.push(
+        fetch(key)
+          .then((res) => res.json())
+          .then((res) => {
+            redis.set(key, JSON.stringify(res), 'EX', 60 * 15)
+            return res
+          }),
+      )
+    }
+  }
+
+  return Promise.all(promises).then((tokenLists) => {
+    return tokenLists.flatMap((tokenList) =>
+      tokenList.tokens.map((t) => ({
         ...(t as TokenInfo),
         // Token addresses are sometimes lowercase from token lists
         address: getAddress(t.address),
@@ -77,10 +94,13 @@ async function fetchTokensFromLists() {
   })
 }
 
-async function fetchPoolCodes(chainId: number) {
-  const response = await fetch(
-    `https://swap.sushi.com/pool-codes?chainId=${chainId}`,
-  )
+async function fetchPoolCodes(chainId: number, address?: string) {
+  const url = new URL('https://swap.sushi.com/pool-codes')
+  url.searchParams.set('chainId', chainId.toString())
+  if (address) {
+    url.searchParams.set('address', address)
+  }
+  const response = await fetch(url)
   const json = await response.json()
   return deserialize(json) as PoolCode[]
 }
@@ -235,7 +255,12 @@ export async function getPrices(chainId: number, currency: Currency) {
       ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
       : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
 
-  const prices = calculateTokenPrices(tokensFromLists, bases, mappedPools, 1000)
+  const prices = calculateTokenPrices(
+    Array.from(tokens.values()),
+    bases,
+    mappedPools,
+    1000,
+  )
 
   return prices
 }
@@ -275,6 +300,8 @@ export async function getPrice(
       }
     })
 
+  console.log(`tokens size is ${tokens.size}`)
+
   const filteredPoolCodes = poolCodes.filter(
     (pc) =>
       tokens.has(pc.pool.token0.address.toLowerCase()) &&
@@ -289,6 +316,11 @@ export async function getPrice(
       ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
       : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
 
-  const prices = calculateTokenPrices(tokensFromLists, bases, mappedPools, 1000)
+  const prices = calculateTokenPrices(
+    Array.from(tokens.values()),
+    bases,
+    mappedPools,
+    1000,
+  )
   return prices[address]
 }
