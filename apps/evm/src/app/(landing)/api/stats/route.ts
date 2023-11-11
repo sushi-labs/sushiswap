@@ -9,10 +9,13 @@ import { formatNumber, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
-  const price = await fetch(
-    `https://token-price.sushi.com/v2/1/${SUSHI_ADDRESS[ChainId.ETHEREUM]}`,
-  ).then((data) => data.json())
-  return price
+  const url = `https://token-price.sushi.com/v2/1/${
+    SUSHI_ADDRESS[ChainId.ETHEREUM]
+  }`
+
+  const res = await fetch(url)
+  const json = await res.json()
+  return json
 }
 
 interface ExchangeData {
@@ -70,7 +73,7 @@ const getBentoTvl = async () => {
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
 
-  const prices = await fetch('https://token-price.sushi.com/v2').then((data) =>
+  const prices = await fetch('https://token-price.sushi.com/v1').then((data) =>
     data.json(),
   )
 

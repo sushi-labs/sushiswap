@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { Fraction } from 'sushi/math'
 import { getAddress, isAddress, parseUnits } from 'viem'
 
@@ -28,8 +29,10 @@ export const usePrices = ({ chainId }: UsePrices) => {
         {},
       )
     },
-    staleTime: 900000, // 15 mins
-    cacheTime: 3600000, // 1hr
+    staleTime: ms('15s'),
+    cacheTime: ms('1m'),
+    // staleTime: 900000, // 15 mins
+    // cacheTime: 3600000, // 1hr
     refetchOnWindowFocus: false,
     enabled: Boolean(chainId),
   })
