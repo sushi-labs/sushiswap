@@ -602,7 +602,8 @@ async function main() {
       )
       poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     }
-    return res.json(Array.from(poolCodesMap.values()))
+    const { serialize } = await import('wagmi')
+    return res.json(serialize(Array.from(poolCodesMap.values())))
   })
 
   app.get('/pool-codes', async (req: Request, res: Response) => {
