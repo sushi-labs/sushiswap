@@ -555,6 +555,7 @@ async function main() {
   })
 
   app.get('/pool-codes-for-token', async (req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600')
     // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
     const { chainId, address } = z
       .object({
@@ -606,6 +607,7 @@ async function main() {
 
   app.get('/pool-codes', async (req: Request, res: Response) => {
     // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600')
     const { chainId } = z
       .object({
         chainId: z.coerce
