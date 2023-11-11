@@ -77,6 +77,14 @@ async function fetchPoolCodes(chainId: number) {
   return deserialize(json) as PoolCode[]
 }
 
+async function fetchPoolCodesForToken(chainId: number, address: string) {
+  const response = await fetch(
+    `https://swap.sushi.com/pool-codes-for-token?chainId=${chainId}&address=${address}`,
+  )
+  const json = await response.json()
+  return deserialize(json) as PoolCode[]
+}
+
 function mapPool(poolCode: PoolCode) {
   // Assumption, if all v3 fields are undefined, it's a v2 pool, otherwise v3. then we don't have to check the liquidity provider
   if (
@@ -239,7 +247,40 @@ export async function getPrice(
   address: string,
   currency: Currency = Currency.USD,
 ) {
-  // Just for now, we need to change this once extractor has endpoint for fetching poolcodes for a specific token
-  const prices = await getPrices(chainId, currency)
+  if (
+    currency === Currency.USD &&
+    STABLES[chainId as keyof typeof STABLES] === undefined
+  ) {
+    throw new Error(`ChainId ${chainId} has no stables configured`)
+  }
+  const [tokensFromLists, poolCodes] = await Promise.all([
+    fetchTokensFromLists(),
+    fetchPoolCodesForToken(chainId, address),
+  ])
+  const tokens = new Map<string, TokenInfo>()
+  tokensFromLists
+    .filter((t) => t.chainId === chainId)
+    .forEach((t) => {
+      if (!tokens.has(t.address.toLowerCase())) {
+        // first tokens should be sushis, we don't override them in case we have changed name/symbols
+        tokens.set(t.address.toLowerCase(), t)
+      }
+    })
+
+  const filteredPoolCodes = poolCodes.filter(
+    (pc) =>
+      tokens.has(pc.pool.token0.address.toLowerCase()) &&
+      tokens.has(pc.pool.token1.address.toLowerCase()),
+  )
+  const mappedPools = filteredPoolCodes
+    .map(mapPool)
+    .filter((p) => p !== undefined) as RPool[]
+
+  const bases =
+    currency === Currency.USD
+      ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
+      : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
+
+  const prices = calculateTokenPrices(tokensFromLists, bases, mappedPools, 1000)
   return prices[address]
 }
