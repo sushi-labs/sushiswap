@@ -121,7 +121,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV3: [
       uniswapV3Factory(ChainId.ARBITRUM),
       sushiswapV3Factory(ChainId.ARBITRUM),
-      pancakeswapV3Factory(ChainId.ARBITRUM),
+      // pancakeswapV3Factory(ChainId.ARBITRUM),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
@@ -171,7 +171,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV3: [
       sushiswapV3Factory(ChainId.BASE),
       uniswapV3Factory(ChainId.BASE),
-      pancakeswapV3Factory(ChainId.BASE),
+      // pancakeswapV3Factory(ChainId.BASE),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     cacheDir: './cache',
@@ -241,7 +241,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV3: [
       uniswapV3Factory(ChainId.BSC),
       sushiswapV3Factory(ChainId.BSC),
-      pancakeswapV3Factory(ChainId.BSC),
+      // pancakeswapV3Factory(ChainId.BSC),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BSC],
     cacheDir: './cache',
@@ -292,7 +292,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV3: [
       uniswapV3Factory(ChainId.ETHEREUM),
       sushiswapV3Factory(ChainId.ETHEREUM),
-      pancakeswapV3Factory(ChainId.ETHEREUM),
+      // pancakeswapV3Factory(ChainId.ETHEREUM),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
     cacheDir: './cache',
@@ -422,7 +422,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV2: [],
     factoriesV3: [
       sushiswapV3Factory(ChainId.POLYGON_ZKEVM),
-      pancakeswapV3Factory(ChainId.POLYGON_ZKEVM),
+      // pancakeswapV3Factory(ChainId.POLYGON_ZKEVM),
       {
         address: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c' as Address,
         provider: LiquidityProviders.DovishV3,
@@ -451,7 +451,7 @@ export const EXTRACTOR_CONFIG = {
     // factoriesV2: [sushiswapV2Factory(ChainId.LINEA)],
     factoriesV3: [
       sushiswapV3Factory(ChainId.LINEA),
-      pancakeswapV3Factory(ChainId.LINEA),
+      // pancakeswapV3Factory(ChainId.LINEA),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
     cacheDir: './cache',
