@@ -14,7 +14,7 @@ import {
 } from 'sushi/token-list'
 import { isPromiseFulfilled } from 'sushi/validate'
 import { getAddress } from 'viem'
-import { Currency } from '../enums.js'
+import { Currency } from '../enums'
 
 interface Token {
   chainId: number
