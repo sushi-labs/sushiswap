@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
+import { isExtractorSupportedChainId } from 'sushi/config'
 import { getPrices } from '../../../lib/api/v2.js'
 import { Currency } from '../../../lib/enums.js'
 
@@ -18,8 +19,16 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
 
   const { chainId, currency } = schema.parse(request.query)
 
-  const tokens = await getPrices(chainId, currency)
-  return response.status(200).json(tokens)
+  if (!isExtractorSupportedChainId(chainId)) {
+    const res = await fetch(
+      `https://token-price.sushi.com/v1/${chainId}?currency=${currency}`,
+    )
+    const prices = await res.json()
+    return response.status(200).json(prices)
+  } else {
+    const prices = await getPrices(chainId, currency)
+    return response.status(200).json(prices)
+  }
 }
 
 export default handler

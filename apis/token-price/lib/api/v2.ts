@@ -14,7 +14,15 @@ import {
 } from 'sushi/token-list'
 import { isPromiseFulfilled } from 'sushi/validate'
 import { getAddress } from 'viem'
-import { Currency } from '../enums.js'
+
+export const Currency = {
+  USD: 'USD',
+  NATIVE: 'NATIVE',
+  ETHEREUM: 'ETHEREUM',
+  BITCOIN: 'BITCOIN',
+} as const
+
+export type Currency = typeof Currency[keyof typeof Currency]
 
 interface Token {
   chainId: number
