@@ -89,7 +89,11 @@ export function useTicks({
 
   const contractReads = useMemo(() => {
     const reads = []
-    if (minIndex && maxIndex && poolAddress) {
+    if (
+      typeof minIndex === 'number' &&
+      typeof maxIndex === 'number' &&
+      typeof poolAddress === 'string'
+    ) {
       for (let i = minIndex; i <= maxIndex; i++) {
         reads.push({
           ...getV3TickLensContractConfig(chainId),
