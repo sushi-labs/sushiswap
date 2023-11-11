@@ -8,9 +8,9 @@ import {
   UNISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
 import {
-  PANCAKESWAP_V3_FACTORY_ADDRESS,
-  PANCAKESWAP_V3_INIT_CODE_HASH,
-  PancakeSwapV3ChainId,
+  // PANCAKESWAP_V3_FACTORY_ADDRESS,
+  // PANCAKESWAP_V3_INIT_CODE_HASH,
+  // PancakeSwapV3ChainId,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
@@ -90,13 +90,13 @@ function uniswapV3Factory(chainId: UniswapV3ChainId) {
   } as const
 }
 
-function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
-  return {
-    address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
-    provider: LiquidityProviders.PancakeSwapV3,
-    initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
-  } as const
-}
+// function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
+//   return {
+//     address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
+//     provider: LiquidityProviders.PancakeSwapV3,
+//     initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
+//   } as const
+// }
 
 export const EXTRACTOR_CONFIG = {
   [ChainId.ARBITRUM]: {
