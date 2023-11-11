@@ -23,11 +23,9 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, currency, address } = schema.parse(request.query)
 
   if (!isExtractorSupportedChainId(chainId)) {
-    const res = await fetch(
+    return fetch(
       `https://token-price.sushi.com/v1/${chainId}/${address}?currency=${currency}`,
     )
-    const json = await res.json()
-    return response.status(res.status).json(json)
   }
 
   const price = await getPrice(chainId, address, currency)
