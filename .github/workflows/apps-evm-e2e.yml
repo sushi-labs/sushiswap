@@ -13,6 +13,8 @@ on:
       - "config/viem/**"
       - "config/wagmi/**"
       - "packages/**"
+  workflow_dispatch:
+
 env:
   CI: true
   NODE_OPTIONS: --max-old-space-size=8192
@@ -24,8 +26,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   e2e:
-    runs-on:
-      labels: ubuntu-latest-4core
+    runs-on: buildjet-4vcpu-ubuntu-2204
     timeout-minutes: 15
     strategy:
       matrix:
@@ -46,7 +47,7 @@ jobs:
           version: ${{ matrix.pnpm-version }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: buildjet/setup-node@v3
         with:
           cache: 'pnpm'
           node-version: ${{ matrix.node-version }}

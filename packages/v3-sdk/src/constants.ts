@@ -30,6 +30,7 @@ export const TICK_SPACINGS: { [_amount in FeeAmount]: number } = {
   [FeeAmount.HIGH]: 200,
 }
 
+// SUSHISWAP
 export const SUSHISWAP_V3_FACTORY_ADDRESS: Record<
   SushiSwapV3ChainId,
   `0x${string}`
@@ -213,6 +214,7 @@ export const isSushiSwapV3ChainId = (
 ): chainId is SushiSwapV3ChainId =>
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as SushiSwapV3ChainId)
 
+// UNISWAP
 export const UNISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.BSC,
@@ -263,4 +265,53 @@ export const UNISWAP_V3_FACTORY_ADDRESS: Record<
   [ChainId.BSC]: '0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7',
   [ChainId.CELO]: '0xAfE208a311B21f13EF87E33A90049fC17A7acDEc',
   [ChainId.BASE]: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD',
+} as const
+
+export const PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM,
+  ChainId.BASE,
+  ChainId.BSC,
+  ChainId.ETHEREUM,
+  ChainId.LINEA,
+  ChainId.POLYGON_ZKEVM,
+] as const
+
+export const PancakeSwapV3ChainIds = PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS
+
+export type PancakeSwapV3ChainId =
+  typeof PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS[number]
+
+export const isPancakeSwapV3ChainId = (
+  chainId: ChainId,
+): chainId is PancakeSwapV3ChainId =>
+  PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS.includes(chainId as PancakeSwapV3ChainId)
+
+export const PANCAKESWAP_V3_INIT_CODE_HASH: Record<
+  PancakeSwapV3ChainId,
+  `0x${string}`
+> = {
+  [ChainId.ARBITRUM]:
+    '0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2',
+  [ChainId.BASE]:
+    '0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2',
+  [ChainId.BSC]:
+    '0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2',
+  [ChainId.ETHEREUM]:
+    '0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2',
+  [ChainId.LINEA]:
+    '0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2',
+  [ChainId.POLYGON_ZKEVM]:
+    '0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2',
+} as const
+
+export const PANCAKESWAP_V3_FACTORY_ADDRESS: Record<
+  PancakeSwapV3ChainId,
+  `0x${string}`
+> = {
+  [ChainId.ARBITRUM]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+  [ChainId.BASE]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+  [ChainId.BSC]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+  [ChainId.ETHEREUM]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+  [ChainId.LINEA]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
+  [ChainId.POLYGON_ZKEVM]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
 } as const

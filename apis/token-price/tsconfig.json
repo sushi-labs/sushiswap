@@ -1,10 +1,15 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
+  "extends": "@tsconfig/strictest/tsconfig",
   "include": ["api", "lib"],
   "exclude": ["node_modules", ".vercel"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "noEmit": true
+    "noEmit": true,
+    
+    "module": "es2022",
+    "moduleResolution": "bundler",
+
+    "verbatimModuleSyntax": true
   }
 }

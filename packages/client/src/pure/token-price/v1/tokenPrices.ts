@@ -1,5 +1,5 @@
 import type {} from '@sushiswap/database'
-import { getPrices } from '@sushiswap/token-price-api/lib/api'
+import { getPrices } from '@sushiswap/token-price-api/lib/api/v1'
 import { TokenPricesV1ApiSchema } from '@sushiswap/token-price-api/lib/schemas/v1/index'
 import { fetch } from '@whatwg-node/fetch'
 

@@ -9,10 +9,13 @@
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
-    "@vercel/node": "3.0.7",
+    "@sushiswap/tines": "workspace:*",
+    "@vercel/node": "3.0.8",
+    "@wagmi/core": "1.4.5",
     "date-fns": "2.30.0",
     "ioredis": "5.3.1",
     "sushi": "workspace:*",
+    "viem": "1.17.2",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -21,6 +24,6 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "18",
     "typescript": "5.2.2",
-    "vercel": "32.4.1"
+    "vercel": "32.5.2"
   }
 }
