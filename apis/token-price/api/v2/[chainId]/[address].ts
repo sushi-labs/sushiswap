@@ -2,8 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { isExtractorSupportedChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 import { z } from 'zod'
-import { getPrice } from '../../../lib/api/v2.js'
-import { Currency } from '../../../lib/enums.js'
+import { Currency, getPrice } from '../../../lib/api/v2.js'
 
 const schema = z.object({
   chainId: z.coerce

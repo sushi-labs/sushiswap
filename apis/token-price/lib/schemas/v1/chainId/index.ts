@@ -1,6 +1,9 @@
 import { z } from 'zod'
 
-import { Currency } from '../../../enums'
+const Currency = {
+  USD: 'USD',
+  NATIVE: 'NATIVE',
+} as const
 
 export const TokenPricesChainV1ApiSchema = z.object({
   chainId: z.coerce
