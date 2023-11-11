@@ -64,28 +64,28 @@ interface PoolCode {
   poolName: string
 }
 
-const REDIS_KEY_PREFIX = "token-list-v2-";
+const REDIS_KEY_PREFIX = 'token-list-v2-'
 
 async function fetchTokensFromLists() {
-	const promises: Promise<TokenList>[] = [];
+  const promises: Promise<TokenList>[] = []
 
-	for (const url of DEFAULT_LIST_OF_LISTS) {
-		const key = `${REDIS_KEY_PREFIX}-${url}`.toLowerCase();
-		const cached = await redis.get(key);
-		if (cached) {
-			promises.push(Promise.resolve(JSON.parse(cached)));
-		}
-	}
+  for (const url of DEFAULT_LIST_OF_LISTS) {
+    const key = `${REDIS_KEY_PREFIX}-${url}`.toLowerCase()
+    const cached = await redis.get(key)
+    if (cached) {
+      promises.push(Promise.resolve(JSON.parse(cached)))
+    }
+  }
 
-	return Promise.all(promises).then((tokenLists) => {
-		return tokenLists.flatMap((tokenList) =>
-			tokenList.tokens.map((t) => ({
-				...(t as TokenInfo),
-				// Token addresses are sometimes lowercase from token lists
-				address: getAddress(t.address),
-			})),
-		);
-	});
+  return Promise.all(promises).then((tokenLists) => {
+    return tokenLists.flatMap((tokenList) =>
+      tokenList.tokens.map((t) => ({
+        ...(t as TokenInfo),
+        // Token addresses are sometimes lowercase from token lists
+        address: getAddress(t.address),
+      })),
+    )
+  })
 }
 
 async function fetchPoolCodes(chainId: number, address?: string) {
