@@ -1,8 +1,8 @@
 {
-    "crons": [
-      {
-        "path": "/api/cron/token-list",
-        "schedule": "*/15 * * * *"
-      }
-    ]
-  }
+  "crons": [
+    {
+      "path": "/api/cron/token-list",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}
