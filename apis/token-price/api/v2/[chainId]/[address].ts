@@ -23,16 +23,18 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, currency, address } = schema.parse(request.query)
 
   if (!isExtractorSupportedChainId(chainId)) {
-    return fetch(
+    const price = await fetch(
       `https://token-price.sushi.com/v1/${chainId}/${address}?currency=${currency}`,
     )
+    const json = await price.json()
+    return response.status(200).json(json)
+  } else {
+    const price = await getPrice(chainId, address, currency)
+
+    if (price === undefined) return response.status(404).send(0)
+
+    return response.status(200).json(price)
   }
-
-  const price = await getPrice(chainId, address, currency)
-
-  if (price === undefined) return response.status(404).send(0)
-
-  return response.status(200).json(price)
 }
 
 export default handler
