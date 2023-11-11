@@ -15,6 +15,7 @@
     "date-fns": "2.30.0",
     "ioredis": "5.3.1",
     "sushi": "workspace:*",
+    "viem": "1.17.2",
     "zod": "3.21.4"
   },
   "devDependencies": {

@@ -1,6 +1,16 @@
 import { ChainId } from '../../chain/index.js'
 import { Token } from '../Token.js'
-import { BUSD, DAI, FRAX, LUSD, MIM, USDC, USDT } from './tokens.js'
+import {
+  BUSD,
+  DAI,
+  FRAX,
+  LUSD,
+  MIM,
+  USDC,
+  USDT,
+  USD_PLUS,
+  axlUSDC,
+} from './tokens.js'
 
 const THUNDERCORE_ANY_USDT = new Token({
   chainId: ChainId.THUNDERCORE,
@@ -69,6 +79,14 @@ const BTTC_TRON_BRIDGE_USDT = new Token({
   name: 'Tether USD (Tron)',
 })
 
+const BASE_BRIDGE_USDC = new Token({
+  chainId: ChainId.BASE,
+  address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
+  decimals: 6,
+  symbol: 'USDbC',
+  name: 'USD Base Coin',
+})
+
 export const STABLES = {
   [ChainId.ARBITRUM]: [
     USDC[ChainId.ARBITRUM],
@@ -89,7 +107,13 @@ export const STABLES = {
     MIM[ChainId.AVALANCHE],
     FRAX[ChainId.AVALANCHE],
   ],
-  [ChainId.BASE]: [USDC[ChainId.BASE], DAI[ChainId.BASE]],
+  [ChainId.BASE]: [
+    USDC[ChainId.BASE],
+    DAI[ChainId.BASE],
+    axlUSDC[ChainId.BASE],
+    USD_PLUS[ChainId.BASE],
+    BASE_BRIDGE_USDC,
+  ],
   [ChainId.BOBA]: [USDC[ChainId.BOBA], USDT[ChainId.BOBA], DAI[ChainId.BOBA]],
   [ChainId.BOBA_AVAX]: [USDC[ChainId.BOBA_AVAX], USDT[ChainId.BOBA_AVAX]],
   [ChainId.BOBA_BNB]: [USDC[ChainId.BOBA_BNB], USDT[ChainId.BOBA_BNB]],

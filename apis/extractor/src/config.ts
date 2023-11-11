@@ -156,6 +156,28 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 100,
     logging: true,
   },
+  [ChainId.BASE]: {
+    client: createPublicClient(config[ChainId.BASE]),
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.BASE),
+      {
+        address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
+        provider: LiquidityProviders.BaseSwap,
+        fee: 0.0025,
+        initCodeHash:
+          '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
+      },
+    ],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.BASE),
+      uniswapV3Factory(ChainId.BASE),
+      pancakeswapV3Factory(ChainId.BASE),
+    ],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   [ChainId.BOBA]: {
     client: createPublicClient(config[ChainId.BOBA]),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
@@ -414,28 +436,7 @@ export const EXTRACTOR_CONFIG = {
     logging: true,
     maxCallsInOneBatch: 5,
   },
-  [ChainId.BASE]: {
-    client: createPublicClient(config[ChainId.BASE]),
-    factoriesV2: [
-      sushiswapV2Factory(ChainId.BASE),
-      {
-        address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
-        provider: LiquidityProviders.BaseSwap,
-        fee: 0.0025,
-        initCodeHash:
-          '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
-      },
-    ],
-    factoriesV3: [
-      sushiswapV3Factory(ChainId.BASE),
-      uniswapV3Factory(ChainId.BASE),
-      pancakeswapV3Factory(ChainId.BASE),
-    ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-  },
+
   [ChainId.SCROLL]: {
     client: createPublicClient(config[ChainId.SCROLL]),
     factoriesV2: [sushiswapV2Factory(ChainId.SCROLL)],

@@ -50,6 +50,7 @@
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
     "idb-keyval": "6.2.0",
+    "ms": "2.1.3",
     "nanoid": "4.0.0",
     "sushi": "workspace:*",
     "zod": "3.21.4"
@@ -58,6 +59,7 @@
     "@sentry/nextjs": "7.77.0",
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
+    "@types/ms": "0.7.34",
     "@tsconfig/strictest": "2.0.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
