@@ -64,34 +64,28 @@ interface PoolCode {
   poolName: string
 }
 
+const REDIS_KEY_PREFIX = "token-list-v2-";
+
 async function fetchTokensFromLists() {
-  const promises: Promise<TokenList>[] = []
+	const promises: Promise<TokenList>[] = [];
 
-  for (const key of DEFAULT_LIST_OF_LISTS) {
-    const cached = await redis.get(key)
-    if (cached) {
-      promises.push(Promise.resolve(JSON.parse(cached)))
-    } else {
-      promises.push(
-        fetch(key)
-          .then((res) => res.json())
-          .then((res) => {
-            redis.set(key, JSON.stringify(res), 'EX', 60 * 15)
-            return res
-          }),
-      )
-    }
-  }
+	for (const url of DEFAULT_LIST_OF_LISTS) {
+		const key = `${REDIS_KEY_PREFIX}-${url}`.toLowerCase();
+		const cached = await redis.get(key);
+		if (cached) {
+			promises.push(Promise.resolve(JSON.parse(cached)));
+		}
+	}
 
-  return Promise.all(promises).then((tokenLists) => {
-    return tokenLists.flatMap((tokenList) =>
-      tokenList.tokens.map((t) => ({
-        ...(t as TokenInfo),
-        // Token addresses are sometimes lowercase from token lists
-        address: getAddress(t.address),
-      })),
-    )
-  })
+	return Promise.all(promises).then((tokenLists) => {
+		return tokenLists.flatMap((tokenList) =>
+			tokenList.tokens.map((t) => ({
+				...(t as TokenInfo),
+				// Token addresses are sometimes lowercase from token lists
+				address: getAddress(t.address),
+			})),
+		);
+	});
 }
 
 async function fetchPoolCodes(chainId: number, address?: string) {
@@ -234,18 +228,13 @@ export async function getPrices(chainId: number, currency: Currency) {
         tokens.set(t.address.toLowerCase(), t)
       }
     })
-  console.log(
-    `Found ${tokensFromLists.length} tokens from lists, filtered it down to ${tokens.size}`,
-  )
 
   const filteredPoolCodes = poolCodes.filter(
     (pc) =>
       tokens.has(pc.pool.token0.address.toLowerCase()) &&
       tokens.has(pc.pool.token1.address.toLowerCase()),
   )
-  console.log(
-    `Found ${poolCodes.length} pools, filtered it down to ${filteredPoolCodes.length}`,
-  )
+
   const mappedPools = filteredPoolCodes
     .map(mapPool)
     .filter((p) => p !== undefined) as RPool[]
@@ -299,8 +288,6 @@ export async function getPrice(
         tokens.set(t.address.toLowerCase(), t)
       }
     })
-
-  console.log(`tokens size is ${tokens.size}`)
 
   const filteredPoolCodes = poolCodes.filter(
     (pc) =>
