@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { Currency } from '../../../enums'
+import { Currency } from '../../../enums.js'
 
 export const TokenPricesChainV1ApiSchema = z.object({
   chainId: z.coerce

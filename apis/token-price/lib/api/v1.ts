@@ -1,6 +1,6 @@
 import { createClient } from '@sushiswap/database'
 
-import { Currency } from '../enums'
+import { Currency } from '../enums.js'
 
 /**
  * Get the price of a token
