@@ -37,6 +37,10 @@ import {
   FRAX_ADDRESS,
   FXS,
   FXS_ADDRESS,
+  LINK,
+  LINK_ADDRESS,
+  MIM,
+  MIM_ADDRESS,
   Native,
   SUSHI,
   SUSHI_ADDRESS,
@@ -46,6 +50,7 @@ import {
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
+  WBTC,
   WBTC_ADDRESS,
   WNATIVE,
 } from 'sushi/currency'
@@ -635,6 +640,22 @@ describe('End-to-end RouteProcessor4 test', async function () {
       DAI[chainId as DAI_CHAINS],
       FRAX[chainId as FRAX_CHAINS],
       FXS[chainId as FXS_CHAINS],
+      // MKR[chainId as keyof typeof MKR_ADDRESS],
+      // YFI[chainId as keyof typeof YFI_ADDRESS],
+      // CRV[chainId as keyof typeof CRV_ADDRESS],
+      // SNX[chainId as keyof typeof SNX_ADDRESS],
+      // GNO[chainId as keyof typeof GNO_ADDRESS],
+      // LDO[chainId as keyof typeof LDO_ADDRESS],
+      // APE[chainId as keyof typeof APE_ADDRESS],
+      // FEI[chainId as keyof typeof FEI_ADDRESS],
+      WBTC[chainId as keyof typeof WBTC_ADDRESS],
+      // UNI[chainId as keyof typeof UNI_ADDRESS],
+      // BUSD[chainId as keyof typeof BUSD_ADDRESS],
+      // AAVE[chainId as keyof typeof AAVE_ADDRESS],
+      // COMP[chainId as keyof typeof COMP_ADDRESS],
+      // LUSD[chainId as keyof typeof LUSD_ADDRESS],
+      MIM[chainId as keyof typeof MIM_ADDRESS],
+      LINK[chainId as keyof typeof LINK_ADDRESS],
     ]
   })
 
@@ -817,7 +838,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
     }
   }
 
-  it.skip('Random swap test', async function () {
+  it.only('Random swap test', async function () {
     let routeCounter = 0
     for (let i = 0; i < 1000; ++i) {
       await env.snapshot.restore()
@@ -828,7 +849,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
         console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter, 
-          `pools: ${env.poolCodes.size - usedPools.size}/${env.poolCodes.size}`)
+          `pools: ${env.poolCodes.size - usedPools.size}/${env.poolCodes.size}`, 
+          `${testTokensSet[currentToken]?.symbol} => ${testTokensSet[nextToken]?.symbol}`)
         intermidiateResult = await updMakeSwap(
           env,
           testTokensSet[currentToken] as Type,
