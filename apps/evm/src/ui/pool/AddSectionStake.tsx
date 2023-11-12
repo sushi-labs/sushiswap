@@ -1,6 +1,7 @@
 'use client'
 
-import { ChefType, Pool, usePool } from '@sushiswap/client'
+import { ChefType, Pool } from '@sushiswap/client'
+import { usePool } from '@sushiswap/client/hooks'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'

@@ -14,6 +14,8 @@ import {
   useTokenRevokeApproval,
   useTokenWithCache,
 } from '@sushiswap/wagmi'
+import { RP2ClaimChainId } from '@sushiswap/wagmi'
+import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useMemo } from 'react'
 import { ROUTE_PROCESSOR_2_ADDRESS } from 'sushi/config'
@@ -21,8 +23,6 @@ import { Amount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address } from 'viem'
 import { z } from 'zod'
-import { RP2MerkleTreeClaimSchema } from '../../../../../../packages/wagmi/src/hooks/exploits/constants'
-import { RP2ClaimChainId } from '../../../../../../packages/wagmi/src/hooks/exploits/types'
 
 interface ClaimItem {
   account: Address

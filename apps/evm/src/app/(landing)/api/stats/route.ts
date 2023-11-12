@@ -9,10 +9,13 @@ import { formatNumber, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
-  const prices = await fetch('https://token-price.sushi.com/v1/1').then(
-    (data) => data.json(),
-  )
-  return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
+  const url = `https://token-price.sushi.com/v2/1/${
+    SUSHI_ADDRESS[ChainId.ETHEREUM]
+  }`
+
+  const res = await fetch(url)
+  const json = await res.json()
+  return json
 }
 
 interface ExchangeData {

@@ -19,7 +19,7 @@ import { formatNumber } from 'sushi/format'
 
 import { PositionWithPool } from '../../types'
 
-const ProtocolBadge: Record<Protocol, JSX.Element> = {
+export const ProtocolBadge: Record<Protocol, JSX.Element> = {
   [Protocol.BENTOBOX_STABLE]: (
     <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
       Trident Stable
@@ -87,7 +87,7 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
           <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
             {formatNumber(original.pool.swapFee * 100)}%
           </div>
-          {incentives && incentives.length > 0 && (
+          {original.pool.isIncentivized && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -103,16 +103,30 @@ export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
               </Tooltip>
             </TooltipProvider>
           )}
+          {original.pool.hasEnabledSteerVault && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
+                    💡
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Smart Pool available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
-  const { token0, token1 } = useTokensFromPool(original)
+export const PoolNameCellPool: FC<{ pool: Pool }> = ({ pool }) => {
+  const { token0, token1 } = useTokensFromPool(pool)
 
-  const incentives = original.incentives.filter((i) => i.rewardPerDay > 0)
+  const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
 
   return (
     <div className="flex items-center gap-5">
@@ -123,7 +137,7 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
             position="bottom-right"
             badgeContent={
               <NetworkIcon
-                chainId={original.chainId as ChainId}
+                chainId={pool.chainId as ChainId}
                 width={14}
                 height={14}
               />
@@ -150,11 +164,29 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
           />
         </span>
         <div className="flex gap-1">
-          {ProtocolBadge[original.protocol]}
-          <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-            {formatNumber(original.swapFee * 100)}%
-          </div>
-          {incentives && incentives.length > 0 && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {ProtocolBadge[pool.protocol]}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Protocol version</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
+                  {formatNumber(pool.swapFee * 100)}%
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Swap fee</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {pool.isIncentivized && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -166,6 +198,20 @@ export const PoolNameCellPool: FC<Row<Pool>> = ({ original }) => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Farm rewards available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          {pool.hasEnabledSteerVault && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="bg-[#F2E9D6] dark:bg-yellow/60 text-[10px] px-2 rounded-full">
+                    💡
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Smart Pool available</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

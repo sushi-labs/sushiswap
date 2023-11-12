@@ -41,11 +41,12 @@ declare module '@tanstack/react-table' {
     className?: string
     skeleton?: React.ReactNode
     headerDescription?: string
+    disableLink?: boolean
   }
 }
 
 interface DataTableProps<TData, TValue> {
-  testId?: string
+  testId?: string | ((value: TData, index: number) => string)
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   toolbar?: (table: TableType<TData>) => ReactNode
@@ -144,7 +145,7 @@ export function DataTable<TData, TValue>({
             Array.from({ length: 3 })
               .fill(null)
               .map((_, i) => (
-                <TableRow key={i}>
+                <TableRow key={i} testdata-id="table-rows-loading">
                   {table.getVisibleFlatColumns().map((column, _i) => {
                     return (
                       <TableCell
@@ -163,10 +164,15 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={r}
                   data-state={row.getIsSelected() && 'selected'}
-                  testdata-id={`${testId}-${r}-tr`}
+                  testdata-id={
+                    typeof testId === 'function'
+                      ? testId(row.original, r)
+                      : `${testId}-${r}-tr`
+                  }
                 >
                   {row.getVisibleCells().map((cell, i) =>
-                    linkFormatter ? (
+                    linkFormatter &&
+                    !cell.column.columnDef.meta?.disableLink ? (
                       <TableCellAsLink
                         style={{ width: cell.column.getSize() }}
                         href={linkFormatter(row.original)}
@@ -200,7 +206,11 @@ export function DataTable<TData, TValue>({
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                testdata-id="table-no-results"
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>

@@ -3,6 +3,12 @@
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "noEmit": true
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "moduleResolution": "Bundler"
   }
 }
