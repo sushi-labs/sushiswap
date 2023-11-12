@@ -51,7 +51,12 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
     'busdv2',
     CurvePoolType.Legacy,
   ],
-  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.Legacy, 1e-3],
+  [
+    '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956',
+    'qusd',
+    CurvePoolType.Legacy,
+    1e-3,
+  ],
   // ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.Legacy], TODO: fix it
   ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.Legacy],
   ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.Legacy],
@@ -444,7 +449,7 @@ async function createCurvePoolInfo(
       currentFlow[i] = []
       for (let j = i + 1; j < tokenContracts.length; ++j) {
         poolTines[i][j] = pools[n++]
-        currentFlow[i][j] = [0, 0] 
+        currentFlow[i][j] = [0, 0]
       }
     }
     console.assert(n === pools.length)
@@ -535,7 +540,7 @@ async function makeSwap(
   poolInfo: PoolInfo,
   from: number,
   to: number,
-  amountIn: number
+  amountIn: number,
 ) {
   let balanceBefore = 0n
   const tokenContractTo = poolInfo.tokenContracts[to]
@@ -607,7 +612,7 @@ async function processMultiTokenPool(
   config: TestConfig,
   poolAddress: Address,
   poolType: CurvePoolType,
-  precision: number
+  precision: number,
 ): Promise<string> {
   const testSeed = poolAddress
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -657,7 +662,7 @@ async function processMultiTokenPool(
           i,
           res1 * amountInPortion,
           precision,
-        )        
+        )
       }
     }
   return 'passed'
@@ -665,7 +670,7 @@ async function processMultiTokenPool(
 
 function getRandomPair(rnd: () => number, num: number): [number, number] {
   const i = Math.floor(rnd() * num)
-  let j = Math.floor(rnd() * (num-1))
+  let j = Math.floor(rnd() * (num - 1))
   if (j >= i) ++j
   return [i, j]
 }
@@ -674,7 +679,7 @@ async function checkMultipleSwapsFork(
   config: TestConfig,
   poolAddress: Address,
   poolType: CurvePoolType,
-  precision: number
+  precision: number,
 ): Promise<string> {
   const testSeed = poolAddress
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
@@ -695,58 +700,85 @@ async function checkMultipleSwapsFork(
   const n = poolInfo.tokenContracts.length
   const steps = 100
 
-  const flowInternal : number[][][] = []
+  const flowInternal: number[][][] = []
   for (let i = 0; i < n; ++i) {
     flowInternal[i] = []
     for (let j = i + 1; j < n; ++j) flowInternal[i][j] = [0, 0]
   }
   function addFlowInp(from: number, to: number, val?: number): number {
-    return flowInternal[Math.min(from, to)][Math.max(from, to)][from < to ? 0 : 1] += (val ?? 0)
+    return (flowInternal[Math.min(from, to)][Math.max(from, to)][
+      from < to ? 0 : 1
+    ] += val ?? 0)
   }
   function addFlowOut(from: number, to: number, val?: number): number {
-    return flowInternal[Math.min(from, to)][Math.max(from, to)][from < to ? 1 : 0] += (val ?? 0)
+    return (flowInternal[Math.min(from, to)][Math.max(from, to)][
+      from < to ? 1 : 0
+    ] += val ?? 0)
   }
 
   for (let s = 0; s < steps; ++s) {
     const [from, to] = getRandomPair(rnd, n)
-    const pool = poolInfo.poolTines[Math.min(from, to)][Math.max(from, to)] as RPool
+    const pool = poolInfo.poolTines[Math.min(from, to)][
+      Math.max(from, to)
+    ] as RPool
     const res0 = Number(pool.reserve0)
     const res1 = Number(pool.reserve1)
     if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
 
     const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
-    const expectedOut = pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
-      .out + addFlowOut(from, to)
-    const expectedIn = pool.calcInByOut(Math.round(expectedOut) - addFlowOut(from, to), from < to)
-      .inp - addFlowInp(from, to)
+    const expectedOut =
+      pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
+        .out + addFlowOut(from, to)
+    const expectedIn =
+      pool.calcInByOut(
+        Math.round(expectedOut) - addFlowOut(from, to),
+        from < to,
+      ).inp - addFlowInp(from, to)
     expectCloseValues(amountIn, expectedIn, precision)
 
     if (from < to)
-      pool.setCurrentFlow(addFlowInp(from, to, amountIn), addFlowOut(from, to, -expectedOut), 0)
-    else 
-      pool.setCurrentFlow(addFlowOut(from, to, -expectedOut), addFlowInp(from, to, amountIn), 0)
+      pool.setCurrentFlow(
+        addFlowInp(from, to, amountIn),
+        addFlowOut(from, to, -expectedOut),
+        0,
+      )
+    else
+      pool.setCurrentFlow(
+        addFlowOut(from, to, -expectedOut),
+        addFlowInp(from, to, amountIn),
+        0,
+      )
   }
 
   for (let i = 0; i < n; ++i)
-    for (let j = i + 1; j < n; ++j)
-      poolInfo.poolTines[i][j].cleanTmpData()
+    for (let j = i + 1; j < n; ++j) poolInfo.poolTines[i][j].cleanTmpData()
   poolInfo.snapshot.restore()
 
   for (let i = 0; i < n; ++i) {
     for (let j = i + 1; j < n; ++j) {
       const direction = addFlowInp(i, j) >= 0
-      const [inp, outPrimary] = direction ? 
-        [addFlowInp(i, j), -addFlowOut(i, j)] : [addFlowOut(i, j), -addFlowInp(i, j)]
+      const [inp, outPrimary] = direction
+        ? [addFlowInp(i, j), -addFlowOut(i, j)]
+        : [addFlowOut(i, j), -addFlowInp(i, j)]
       if (inp == 0) continue
-      const expectedOut = poolInfo.poolTines[i][j].calcOutByInReal(inp, direction)
+      const expectedOut = poolInfo.poolTines[i][j].calcOutByInReal(
+        inp,
+        direction,
+      )
       const realOut = await makeSwap(
         config,
         poolInfo,
         direction ? i : j,
         direction ? j : i,
-        inp
+        inp,
       )
-      console.log(`${direction ? i : j}->${direction ? j : i} prime=${outPrimary} final=${expectedOut}(${expectedOut/outPrimary}) real=${realOut}`)
+      console.log(
+        `${direction ? i : j}->${
+          direction ? j : i
+        } prime=${outPrimary} final=${expectedOut}(${
+          expectedOut / outPrimary
+        }) real=${realOut}`,
+      )
       expectCloseValues(expectedOut, realOut, precision)
     }
   }

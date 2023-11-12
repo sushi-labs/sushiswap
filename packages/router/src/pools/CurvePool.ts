@@ -1,4 +1,9 @@
-import { CurveMultitokenPool, CurvePool, MultiRoute, RouteLeg } from '@sushiswap/tines'
+import {
+  CurveMultitokenPool,
+  CurvePool,
+  MultiRoute,
+  RouteLeg,
+} from '@sushiswap/tines'
 import { ChainId } from 'sushi/chain'
 
 import { HEXer } from '../HEXer'
@@ -50,9 +55,14 @@ export class CurvePoolCode extends PoolCode {
         poolType = 1
     }
 
-    const [index0, index1] = this.pool instanceof CurveMultitokenPool ? [this.pool.index0, this.pool.index1] : [0, 1]
-    const [fromIndex, toIndex] = 
-      this.pool.token0.tokenId === leg.tokenFrom.tokenId ? [index0, index1] : [index1, index0]
+    const [index0, index1] =
+      this.pool instanceof CurveMultitokenPool
+        ? [this.pool.index0, this.pool.index1]
+        : [0, 1]
+    const [fromIndex, toIndex] =
+      this.pool.token0.tokenId === leg.tokenFrom.tokenId
+        ? [index0, index1]
+        : [index1, index0]
     const code = new HEXer()
       .uint8(5) // Curve pool
       .address(this.pool.address)

@@ -19,7 +19,7 @@ import {
   StableSwapRPool,
   UniV3Pool,
   CurveMultitokenPool,
-  CurveMultitokenCore
+  CurveMultitokenCore,
 } from '@sushiswap/tines'
 import * as serializer from 'serialijse'
 import { Native } from 'sushi/currency'
@@ -87,10 +87,12 @@ function makeSerializable(poolCodes: PoolCode[]) {
       core.nn = String(core.nn) as unknown as bigint
       core.n = String(core.n) as unknown as bigint
       core.nPlus1 = String(core.nPlus1) as unknown as bigint
-      core.tokens = core.tokens.map(t => ({ ...t }) as RToken)
-      core.reserves = core.reserves.map(r => String(r) as unknown as bigint)
-      core.ratesBN18 = core.ratesBN18.map(r => String(r) as unknown as bigint)
-      core.reservesRated = core.reservesRated.map(r => String(r) as unknown as bigint)
+      core.tokens = core.tokens.map((t) => ({ ...t }) as RToken)
+      core.reserves = core.reserves.map((r) => String(r) as unknown as bigint)
+      core.ratesBN18 = core.ratesBN18.map((r) => String(r) as unknown as bigint)
+      core.reservesRated = core.reservesRated.map(
+        (r) => String(r) as unknown as bigint,
+      )
       //core.currentFlow = core.currentFlow.map(r => String(r) as unknown as bigint)
     }
   })
@@ -121,17 +123,17 @@ function restoreAfterSerialization(poolCodes: PoolCode[]) {
     } else if (pool instanceof CurveMultitokenPool) {
       const core = pool.core
       core.D = BigInt(core.D)
-      core.Ann = BigInt(core.Ann) 
+      core.Ann = BigInt(core.Ann)
       core.Annn = BigInt(core.Annn)
       core.AnnMinus1 = BigInt(core.AnnMinus1)
       core.nn = BigInt(core.nn)
       core.n = BigInt(core.n)
       core.nPlus1 = BigInt(core.nPlus1)
-      core.reserves = core.reserves.map(r => BigInt(r))
-      core.ratesBN18 = core.ratesBN18.map(r => BigInt(r))
-      core.reservesRated = core.reservesRated.map(r => BigInt(r))
+      core.reserves = core.reserves.map((r) => BigInt(r))
+      core.ratesBN18 = core.ratesBN18.map((r) => BigInt(r))
+      core.reservesRated = core.reservesRated.map((r) => BigInt(r))
       //core.currentFlow = core.currentFlow.map(r => BigInt(r))
-    } 
+    }
   })
 }
 

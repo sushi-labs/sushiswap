@@ -198,8 +198,8 @@ class CurveMultitokenCoreSingle {
     to: number,
   ): { inp: number; gasSpent: number } {
     if (this.singlePairUsed)
-    if (this.singlePairUsed[0] !== from || this.singlePairUsed[1] !== to)
-      return { inp: Number.POSITIVE_INFINITY, gasSpent: 0 }
+      if (this.singlePairUsed[0] !== from || this.singlePairUsed[1] !== to)
+        return { inp: Number.POSITIVE_INFINITY, gasSpent: 0 }
     amountOut *= this.rates[to] as number
     const xBN = this.reservesRated[from] as bigint
     const yBN = this.reservesRated[to] as bigint
@@ -238,14 +238,22 @@ class CurveMultitokenCoreSingle {
     return price * scale
   }
 
-  setCurrentFlow(from: number, to: number, flow0: number, flow1: number, _gas: number) {
+  setCurrentFlow(
+    from: number,
+    to: number,
+    flow0: number,
+    flow1: number,
+    _gas: number,
+  ) {
     if (this.singlePairUsed) {
       if (flow0 !== 0 || flow1 !== 0)
-        console.assert(this.singlePairUsed[0] == from && this.singlePairUsed[1] == to, 'CurveMultitokenCoreSingle unexpected pair error')
+        console.assert(
+          this.singlePairUsed[0] == from && this.singlePairUsed[1] == to,
+          'CurveMultitokenCoreSingle unexpected pair error',
+        )
       else this.singlePairUsed = undefined
     } else {
-      if (flow0 !== 0 || flow1 !== 0)
-      this.singlePairUsed = [from, to]
+      if (flow0 !== 0 || flow1 !== 0) this.singlePairUsed = [from, to]
     }
   }
 }
@@ -258,7 +266,14 @@ export function createCurvePoolsSingleForMultipool(
   reserves: bigint[],
   rates?: number[],
 ) {
-  const core = new CurveMultitokenCoreSingle(address, tokens, fee, A, reserves, rates)
+  const core = new CurveMultitokenCoreSingle(
+    address,
+    tokens,
+    fee,
+    A,
+    reserves,
+    rates,
+  )
   const pools: CurveMultitokenPoolSingle[] = []
   for (let i = 0; i < tokens.length; ++i)
     for (let j = i + 1; j < tokens.length; ++j)

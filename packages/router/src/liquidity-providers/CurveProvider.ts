@@ -153,93 +153,87 @@ export const CURVE_NON_FACTORY_POOLS: Record<
   [Address, CurvePoolType, Type[]][]
 > = {
   [ChainId.ETHEREUM]: [
-    [ // 3pool
+    [
+      // 3pool
       '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
       CurvePoolType.LegacyV3,
-      [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM]]
+      [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM]],
     ],
-    [ // susd
+    [
+      // susd
       '0xa5407eae9ba41422680e2e00537571bcc53efbfd',
       CurvePoolType.LegacyV2,
-      [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM], sUSD]
+      [
+        DAI[ChainId.ETHEREUM],
+        USDC[ChainId.ETHEREUM],
+        USDT[ChainId.ETHEREUM],
+        sUSD,
+      ],
     ],
     [
       '0xdc24316b9ae028f1497c275eb9192a3ea0f67022',
       CurvePoolType.Legacy,
-      [ETH,
-      stETH,]
+      [ETH, stETH],
     ],
     [
       '0xdcef968d416a41cdac0ed8702fac8128a64241a2',
       CurvePoolType.Legacy,
-      [FRAX[ChainId.ETHEREUM],
-      USDC[ChainId.ETHEREUM],]
+      [FRAX[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM]],
     ],
     [
       '0xf253f83aca21aabd2a20553ae0bf7f65c755a07f',
       CurvePoolType.Legacy,
-      [WBTC[ChainId.ETHEREUM],
-      sBTC,]
+      [WBTC[ChainId.ETHEREUM], sBTC],
     ],
     [
       '0xc5424b857f758e906013f3555dad202e4bdb4567',
       CurvePoolType.Legacy,
-      [ETH,
-      sETH,]
+      [ETH, sETH],
     ],
     [
       '0xa1f8a6807c402e4a15ef4eba36528a3fed24e577',
       CurvePoolType.Legacy,
-      [ETH,
-      frxETH,]
+      [ETH, frxETH],
     ],
     [
       '0x0ce6a5ff5217e38315f87032cf90686c96627caa',
       CurvePoolType.Legacy,
-      [EURS,
-      sEUR,]
+      [EURS, sEUR],
     ],
     [
       '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2',
       CurvePoolType.Legacy,
-      [ETH,
-      ankrETH,]
+      [ETH, ankrETH],
     ],
     [
       '0xeb16ae0052ed37f479f7fe63849198df1765a733',
       CurvePoolType.Legacy,
-      [aDAI,
-      aSUSD,]
+      [aDAI, aSUSD],
     ],
     [
       '0xf9440930043eb3997fc70e1339dbb11f341de7a8',
       CurvePoolType.Legacy,
-      [ETH,
-      rETH,]
+      [ETH, rETH],
     ],
     [
       '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56',
       CurvePoolType.LegacyV2,
-      [cDAI,
-      cUSDC,]
+      [cDAI, cUSDC],
     ],
     [
       '0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0',
       CurvePoolType.Legacy,
-      [LINK[ChainId.ETHEREUM],
-      sLINK,]
+      [LINK[ChainId.ETHEREUM], sLINK],
     ],
     [
       '0x4ca9b3063ec5866a4b82e437059d2c43d1be596f',
       CurvePoolType.LegacyV3,
-      [HBTC,
-      WBTC[ChainId.ETHEREUM],]
+      [HBTC, WBTC[ChainId.ETHEREUM]],
     ],
     [
       '0x93054188d876f558f4a66b2ef1d97d16edf0895b',
       CurvePoolType.LegacyV2,
-      [renBTC[ChainId.ETHEREUM],
-      WBTC[ChainId.ETHEREUM],]
+      [renBTC[ChainId.ETHEREUM], WBTC[ChainId.ETHEREUM]],
     ],
     // Low liquidity ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', CurvePoolType.Legacy],
   ],
@@ -538,35 +532,39 @@ export class CurveProvider extends LiquidityProvider {
     const balance2 = await poolsMulticall('balances', [2n])
     const balance3 = await poolsMulticall('balances', [3n])
     const ratio = await this.getPoolRatio(poolArray)
-    
-    const poolCodes = poolArray.map(([poolAddress, [, tokens]], i) => {
-      const _fee = fee[i].result as bigint
-      const _A = A[i].result as bigint
-      const _balance0 = balance0[i].result as bigint
-      const _balance1 = balance1[i].result as bigint
-      const _balance2 = balance2[i].result as bigint
-      const _balance3 = balance3[i].result as bigint
-      const _ratio = ratio[i]
-      if (
-        _fee === undefined ||
-        _A === undefined ||
-        _balance0 === undefined ||
-        _balance1 === undefined ||
-        _ratio === undefined
-      )
-        return []
-      const poolTines = createCurvePoolsForMultipool(poolAddress, tokens as RToken[], 
-        Number(_fee) / 1e10, Number(_A), 
-      [_balance0, _balance1, _balance2, _balance3].slice(0, tokens.length), _ratio)
-      
-      return poolTines.map(
-        p => new CurvePoolCode(
-          p,
-          this.getType(),
-          this.getPoolProviderName(),
+
+    const poolCodes = poolArray
+      .map(([poolAddress, [, tokens]], i) => {
+        const _fee = fee[i].result as bigint
+        const _A = A[i].result as bigint
+        const _balance0 = balance0[i].result as bigint
+        const _balance1 = balance1[i].result as bigint
+        const _balance2 = balance2[i].result as bigint
+        const _balance3 = balance3[i].result as bigint
+        const _ratio = ratio[i]
+        if (
+          _fee === undefined ||
+          _A === undefined ||
+          _balance0 === undefined ||
+          _balance1 === undefined ||
+          _ratio === undefined
         )
-      )
-    }).flat()
+          return []
+        const poolTines = createCurvePoolsForMultipool(
+          poolAddress,
+          tokens as RToken[],
+          Number(_fee) / 1e10,
+          Number(_A),
+          [_balance0, _balance1, _balance2, _balance3].slice(0, tokens.length),
+          _ratio,
+        )
+
+        return poolTines.map(
+          (p) =>
+            new CurvePoolCode(p, this.getType(), this.getPoolProviderName()),
+        )
+      })
+      .flat()
 
     return poolCodes.filter((p) => p !== undefined) as PoolCode[]
   }
