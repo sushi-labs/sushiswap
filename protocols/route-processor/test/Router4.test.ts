@@ -838,7 +838,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
     }
   }
 
-  it.only('Random swap test', async function () {
+  it.skip('Random swap test', async function () {
     let routeCounter = 0
     for (let i = 0; i < 1000; ++i) {
       await env.snapshot.restore()
