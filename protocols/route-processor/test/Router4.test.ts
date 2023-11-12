@@ -328,6 +328,14 @@ async function makeSwap(
   //   if (ind.length >= 2)
   //     ind.forEach(([i0, i1]) => console.log(`    ${addr} ${i0}-${i1}`))
   // })
+  // if (route.fromToken.symbol !== 'ETH' && route.toToken.symbol !== 'ETH') {
+  //   route.legs.forEach(l => {
+  //     if (l.tokenFrom.symbol == 'ETH') 
+  //     console.log(`    IN ${l.tokenFrom.symbol} ${l.absolutePortion} ${l.uniqueId} `)
+  //     if (l.tokenTo.symbol == 'ETH') 
+  //     console.log(`    OUT ${l.tokenTo.symbol} ${l.uniqueId} `)
+  //   })
+  // }
 
   if (route.status === RouteStatus.NoWay) {
     if (throwAtNoWay) throw new Error('NoWay')
@@ -1013,7 +1021,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
       )
     })
 
-    it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: sETH => Native', async function () {
+    it('Path token => ETH => token', async function () {
       await env.snapshot.restore()
       const amoutIn = BigInt(1e18)
       await setRouterPrimaryBalance(
@@ -1026,10 +1034,10 @@ describe('End-to-end RouteProcessor4 test', async function () {
       intermidiateResult = await updMakeSwap(
         env,
         sETH,
-        Native.onChain(chainId),
+        USDC[ChainId.ETHEREUM],
         intermidiateResult,
         undefined,
-        [LiquidityProviders.CurveSwap],
+        [LiquidityProviders.CurveSwap, LiquidityProviders.UniswapV2],
       )
     })
 
