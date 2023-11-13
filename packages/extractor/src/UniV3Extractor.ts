@@ -22,7 +22,8 @@ import { warnLog } from './WarnLog'
 export interface FactoryV3 {
   address: Address
   provider: LiquidityProviders
-  initCodeHash: string
+  initCodeHash: string  
+  deployer?: Address
 }
 
 interface PoolInfo {
@@ -416,11 +417,12 @@ export class UniV3Extractor {
     tokenB: Token,
     fee: FeeAmount,
   ): Address {
+    const poolCreator = factory.deployer ?? factory.address
     const key = `${tokenA.address}${tokenB.address}${fee}${factory.address}`
     const cached = this.addressCache.get(key)
     if (cached) return cached
     const addr = computePoolAddress({
-      factoryAddress: factory.address,
+      factoryAddress: poolCreator,
       tokenA,
       tokenB,
       fee,

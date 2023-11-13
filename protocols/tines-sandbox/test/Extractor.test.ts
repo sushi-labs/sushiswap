@@ -70,6 +70,7 @@ export const TickLensContract = {
     '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
   [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776' as Address,
   [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
+  [ChainId.BSC]: '0xD9270014D396281579760619CCf4c3af0501A47C' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -121,9 +122,10 @@ function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
 
 function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   return {
-    address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],  // '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9'
+    address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
     provider: LiquidityProviders.PancakeSwapV3,
     initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
+    deployer: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9'
   } as const
 }
 
