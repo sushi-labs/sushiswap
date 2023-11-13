@@ -413,7 +413,11 @@ export function useConcentratedDerivedMintInfo({
         weightLockedCurrencyBase,
       )?.map((x) => withoutScientificNotation(x.toString()))
 
-      if (newRange && newRange[0] != null && newRange[1] != null) {
+      if (
+        newRange &&
+        typeof newRange[0] === 'string' &&
+        typeof newRange[1] === 'string'
+      ) {
         return [newRange[0], newRange[1]]
       }
     }
