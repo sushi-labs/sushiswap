@@ -58,8 +58,22 @@ export const PoolsTable = () => {
   }, [])
 
   const data = useMemo(
-    () => (!farmsOnly ? pools?.flat() || [] : farmFilter?.flat() || []),
-    [pools, farmsOnly, farmFilter],
+    () =>
+      !farmsOnly
+        ? pools
+            ?.flat()
+            .filter((el) =>
+              tokenSymbols.length > 0
+                ? tokenSymbols.includes(
+                    el.data.token_x_details.symbol.toLowerCase(),
+                  ) ||
+                  tokenSymbols.includes(
+                    el.data.token_y_details.symbol.toLowerCase(),
+                  )
+                : true,
+            ) || []
+        : farmFilter?.flat() || [],
+    [pools, farmsOnly, farmFilter, tokenSymbols],
   )
 
   const debouncedQuery = useDebounce(

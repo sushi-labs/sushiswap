@@ -209,11 +209,11 @@ const Navigation: React.FC<NavProps> = ({
                 asChild
                 className={navigationMenuTriggerStyle()}
               >
-                <a href="/pools">Pools</a>
+                <a href="/pool">Pools</a>
               </NavigationMenuLink>
             ) : (
               <NavigationMenuLink
-                href="/pools"
+                href="/pool"
                 className={navigationMenuTriggerStyle()}
               >
                 Pools
