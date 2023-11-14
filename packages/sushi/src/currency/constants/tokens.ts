@@ -53,6 +53,7 @@ import {
   UNI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
+  USD_PLUS_ADDRESS,
   WBTC_ADDRESS,
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
@@ -704,6 +705,16 @@ export const axlUSDC: Record<keyof typeof axlUSDC_ADDRESS, Token> =
     },
     axlUSDC_ADDRESS,
   ) as Record<keyof typeof axlUSDC_ADDRESS, Token>
+
+export const USD_PLUS: Record<keyof typeof USD_PLUS_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'USD+',
+      name: 'USD+',
+    },
+    USD_PLUS_ADDRESS,
+  ) as Record<keyof typeof USD_PLUS_ADDRESS, Token>
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
   ...(addressMapToTokenMap(

@@ -32,6 +32,7 @@ type PoolHeader = {
   apy?: {
     fees: number | undefined
     rewards: number | undefined
+    vault?: number
   }
   priceRange?: string
   hasEnabledStrategies?: boolean
@@ -130,7 +131,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <span className="underline decoration-dotted">
+                      <span className="underline decoration-dotted underline-offset-2">
                         {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
                       </span>
                     </TooltipTrigger>
@@ -140,9 +141,12 @@ export const PoolHeader: FC<PoolHeader> = ({
                   </Tooltip>
                 </TooltipProvider>
               ) : (
-                <APRHoverCard pool={pool}>
-                  <span className="underline decoration-dotted">
-                    {formatPercent((apy.fees || 0) + (apy.rewards || 0))}
+                <APRHoverCard pool={pool} smartPoolAPR={apy.vault}>
+                  <span className="underline decoration-dotted underline-offset-2">
+                    {formatPercent(
+                      ((typeof apy.vault === 'number' ? apy.vault : apy.fees) ||
+                        0) + (apy.rewards || 0),
+                    )}
                   </span>
                 </APRHoverCard>
               )}

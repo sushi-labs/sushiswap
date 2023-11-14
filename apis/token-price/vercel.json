@@ -15,6 +15,11 @@
     {
       "source": "/v1/:chainId/:address",
       "destination": "/api/v1/:chainId/:address"
+    },
+    { "source": "/v2/:chainId", "destination": "/api/v2/:chainId" },
+    {
+      "source": "/v2/:chainId/:address",
+      "destination": "/api/v2/:chainId/:address"
     }
   ]
 }

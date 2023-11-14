@@ -212,10 +212,16 @@ model Incentive {
 enum SteerStrategy {
   DeltaNeutralStables
   ElasticExpansion
+  MovingVolatilityChannel
   MovingVolatilityChannelMedium
   HighLowChannel
   StaticStable
   ClassicRebalance
+  ChannelMultiplier
+  PriceMultiplier
+  FixedPercentage
+  KeltnerAlgo
+  BollingerAlgo
 }
 
 enum VaultState {
@@ -228,12 +234,15 @@ enum VaultState {
 
 model SteerVault {
   id                      String      @id // chainId:address
+  address                 String      @default("")
+  chainId                 Int         @default(69)
   
   pool                    SushiPool   @relation(fields: [poolId], references: [id])
   poolId                  String
   feeTier                 Float
   
   apr                     Float
+  apr1w                   Float
   apr1d                   Float
   apr1m                   Float
   apr1y                   Float
@@ -241,14 +250,22 @@ model SteerVault {
   token0                  Token       @relation("token0", fields: [token0Id], references: [id])
   token0Id                String
   reserve0                String
+  reserve0USD             Decimal     @default(0)
   fees0                   String
+  fees0USD                Decimal     @default(0)
 
   token1                  Token       @relation("token1", fields: [token1Id], references: [id])
   token1Id                String 
   reserve1                String
+  reserve1USD             Decimal     @default(0)
   fees1                   String
+  fees1USD                Decimal     @default(0)
+
+  reserveUSD              Decimal     @default(0)
+  feesUSD                 Decimal     @default(0)
 
   strategy                SteerStrategy
+  payloadHash             String
   description             String @db.Text
   state                   VaultState
 

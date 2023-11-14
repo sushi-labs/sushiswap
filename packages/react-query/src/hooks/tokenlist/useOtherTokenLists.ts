@@ -4,8 +4,8 @@ import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
 
+import { DEFAULT_LIST_OF_LISTS } from 'sushi/token-list'
 import { useTokens } from '../tokens'
-import { DEFAULT_LIST_OF_LISTS } from './constants'
 import { otherTokenListValidator } from './validator'
 
 interface UseOtherTokenListsParams {

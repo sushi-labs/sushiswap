@@ -79,7 +79,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <span className="underline decoration-dotted flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
+          <span className="underline decoration-dotted underline-offset-2 flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
             {formatNumber(props.row.original.meanAPR)}%
           </span>
         </TooltipTrigger>
@@ -132,7 +132,7 @@ export const NETWORK_COLUMN_POOL: ColumnDef<Pool, unknown> = {
 export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCellPool {...props.row} />,
+  cell: (props) => <PoolNameCellPool pool={props.row.original} />,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -153,6 +153,8 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number(rowA.liquidityUSD) - Number(rowB.liquidityUSD),
   cell: (props) =>
     formatUSD(props.row.original.liquidityUSD).includes('NaN')
       ? '$0.00'
@@ -168,7 +170,7 @@ export const APR_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   accessorFn: (row) => row.totalApr1d,
   cell: (props) => (
     <APRHoverCard pool={props.row.original}>
-      <span className="underline decoration-dotted">
+      <span className="underline decoration-dotted underline-offset-2">
         {formatPercent(props.row.original.totalApr1d)}
       </span>
     </APRHoverCard>
@@ -182,6 +184,8 @@ export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1h',
   header: 'Volume (1h)',
   accessorFn: (row) => row.volume1h,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number(rowA.volume1h) - Number(rowB.volume1h),
   cell: (props) =>
     formatUSD(props.row.original.volume1h).includes('NaN')
       ? '$0.00'
@@ -195,6 +199,8 @@ export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1d',
   header: 'Volume (24h)',
   accessorFn: (row) => row.volume1d,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number(rowA.volume1d) - Number(rowB.volume1d),
   cell: (props) =>
     formatUSD(props.row.original.volume1d).includes('NaN')
       ? '$0.00'
@@ -208,6 +214,8 @@ export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1w',
   header: 'Volume (1w)',
   accessorFn: (row) => row.volume1w,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number(rowA.volume1w) - Number(rowB.volume1w),
   cell: (props) =>
     formatUSD(props.row.original.volume1w).includes('NaN')
       ? '$0.00'
@@ -221,6 +229,8 @@ export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
   id: 'volume1m',
   header: 'Volume (1m)',
   accessorFn: (row) => row.volume1m,
+  sortingFn: ({ original: rowA }, { original: rowB }) =>
+    Number(rowA.volume1m) - Number(rowB.volume1m),
   cell: (props) =>
     formatUSD(props.row.original.volume1m).includes('NaN')
       ? '$0.00'
@@ -287,7 +297,7 @@ export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   accessorFn: (row) => row.pool.totalApr1d,
   cell: (props) => (
     <APRHoverCard pool={props.row.original.pool}>
-      <span className="underline decoration-dotted">
+      <span className="underline decoration-dotted underline-offset-2">
         {formatPercent(props.row.original.pool.totalApr1d)}
       </span>
     </APRHoverCard>

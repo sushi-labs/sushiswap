@@ -70,7 +70,7 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
         {formatUSD(valueUSD)}
       </span>
       <div className="flex gap-1 absolute top-7 right-7">
-        {position.pool.incentives && position.pool.incentives.length > 0 && (
+        {position.pool.isIncentivized && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
