@@ -18,6 +18,8 @@ import {
 import { CardCurrencyAmountItem } from 'components/CardCurrencyAmountItem'
 import { FC, ReactNode } from 'react'
 import { Token as TokenType } from 'utils/tokenType'
+import useStablePrice from 'utils/useStablePrice'
+import { formatUSD } from 'sushi'
 
 interface RemoveSectionWidgetProps {
   title?: string
@@ -49,15 +51,11 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   token0MinMinimum,
   token1MinMinimum,
 }) => {
-  // const token0Price = useStablePrice({ currency: token0 })
-  // const token1Price = useStablePrice({ currency: token1 })
+  const token0Price = useStablePrice({ currency: token0 })
+  const token1Price = useStablePrice({ currency: token1 })
+  const token0PoolPrice = token0Price ? token0Price * Number(token0MinMinimum) : 0
+  const token1PoolPrice = token1Price ? token1Price * Number(token1MinMinimum) : 0
 
-  // const positionPrice = reserve0 && reserve1 && token0Price && token1Price && totalSupply
-  //                       ?
-  //                         (Number(reserve0) * token0Price + Number(reserve1) * token1Price)
-  //                           * (balance / Number(totalSupply))
-  //                       :
-  //                         undefined
   return (
     <Widget id="removeLiquidity" className="bg-white dark:bg-slate-800">
       <WidgetHeader title={title || 'Unstake Liquidity'}>
@@ -155,10 +153,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
               <CardCurrencyAmountItem
                 amount={Number(token0MinMinimum)}
                 currency={token0}
+                fiatValue={formatUSD(token0PoolPrice)}
               />
               <CardCurrencyAmountItem
                 amount={Number(token1MinMinimum)}
                 currency={token1}
+                fiatValue={formatUSD(token1PoolPrice)}
               />
             </CardGroup>
           </Card>
