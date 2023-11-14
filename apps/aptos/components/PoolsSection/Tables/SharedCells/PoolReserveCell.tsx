@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react'
-import { Row } from './types'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { formatNumber } from 'utils/utilFunctions'
+import { Row } from './types'
 
 export const PoolReserveCell: FC<Row<Pool>> = ({ row }) => {
   const { token0, token1 } = useTokensFromPools(row)
@@ -19,8 +19,10 @@ export const PoolReserveCell: FC<Row<Pool>> = ({ row }) => {
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
           {parseFloat(reserve_x)} {token0?.symbol}{' '}
-          <span className="font-normal text-gray-900 dark:text-slate-500">/</span> {parseFloat(reserve_y)}{' '}
-          {token1?.symbol}{' '}
+          <span className="font-normal text-gray-900 dark:text-slate-500">
+            /
+          </span>{' '}
+          {parseFloat(reserve_y)} {token1?.symbol}{' '}
         </span>
       </div>
     </div>

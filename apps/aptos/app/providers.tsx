@@ -2,16 +2,16 @@
 
 import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react'
 import { MartianWallet } from '@martianwallet/aptos-wallet-adapter'
+import { MSafeWalletAdapter } from '@msafe/aptos-wallet-adapter'
 import { PontemWallet } from '@pontem/wallet-adapter-plugin'
 import { RiseWallet } from '@rise-wallet/wallet-adapter'
-import { MSafeWalletAdapter } from '@msafe/aptos-wallet-adapter'
 import { ThemeProvider } from '@sushiswap/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { chains } from 'config/chains'
-
 import { Modal } from 'components/Modal/Modal'
+import { chains } from 'config/chains'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
+
 const wallets = [
   new PetraWallet(),
   new PontemWallet(),

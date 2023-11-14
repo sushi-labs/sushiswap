@@ -6,7 +6,9 @@ interface Props {
   value: string
 }
 export const PricePanel = ({ isLoading, error, value }: Props) => {
-  const [big, portion] = (value ? `${Number(value).toFixed(2)}` : '0.00').split('.')
+  const [big, portion] = (value ? `${Number(value).toFixed(2)}` : '0.00').split(
+    '.',
+  )
   if (isLoading) {
     return (
       <div className="w-[90px] flex items-center">

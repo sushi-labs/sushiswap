@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Token } from './tokenType'
 import { UseQueryResult, useQueries } from '@tanstack/react-query'
-import fromPairs from 'lodash/fromPairs'
+import fromPairs from 'lodash.frompairs'
 import { useNetwork } from './useNetwork'
 import { SupportedNetwork, chains } from 'config/chains'
 

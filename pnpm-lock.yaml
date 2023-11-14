@@ -491,9 +491,15 @@ importers:
       fewcha-plugin-wallet-adapter:
         specifier: ^0.1.2
         version: 0.1.3
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
+      lodash.frompairs:
+        specifier: ^4.0.1
+        version: 4.0.1
+      lodash.maxby:
+        specifier: ^4.6.0
+        version: 4.6.0
+      lodash.uniqby:
+        specifier: ^4.7.0
+        version: 4.7.0
       next:
         specifier: 13.4.4
         version: 13.4.4(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
@@ -537,9 +543,15 @@ importers:
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
-      '@types/lodash':
-        specifier: ^4.14.200
-        version: 4.14.202
+      '@types/lodash.frompairs':
+        specifier: ^4.0.9
+        version: 4.0.9
+      '@types/lodash.maxby':
+        specifier: ^4.6.9
+        version: 4.6.9
+      '@types/lodash.uniqby':
+        specifier: ^4.7.9
+        version: 4.7.9
       '@types/node':
         specifier: 18.11.18
         version: 18.11.18
@@ -16648,16 +16660,34 @@ packages:
       '@types/lodash': 4.14.202
     dev: true
 
+  /@types/lodash.frompairs@4.0.9:
+    resolution: {integrity: sha512-OZ7YqENr/kRqpDqXlU1RxGWSQ4Ha5gLFcz9v2OhxrrspHCeQ4PfC7SobvLJ8vCvftiEv7IEfZNpaLhHYkVB5SA==}
+    dependencies:
+      '@types/lodash': 4.14.197
+    dev: true
+
   /@types/lodash.groupby@4.6.7:
     resolution: {integrity: sha512-dFUR1pqdMgjIBbgPJ/8axJX6M1C7zsL+HF4qdYMQeJ7XOp0Qbf37I3zh9gpXr/ks6tgEYPDRqyZRAnFYvewYHQ==}
     dependencies:
       '@types/lodash': 4.14.202
     dev: true
 
+  /@types/lodash.maxby@4.6.9:
+    resolution: {integrity: sha512-sLH16KjHUjrLya0zAtIOQ4xraDpLhnYBgcgRwevpxj06El1Pbeu9B4F8o0u8eBvZv8iDw/5qteJwmKDw3wEyuA==}
+    dependencies:
+      '@types/lodash': 4.14.197
+    dev: true
+
   /@types/lodash.once@4.1.8:
     resolution: {integrity: sha512-kTRKTOMyz1ksmXWi+sHgliiqKY2KXcWfhNjcCPZgwPa++5w7QXqupjfrj006nBTlPOX6tBo5IhLUx19ezNd9Yg==}
     dependencies:
       '@types/lodash': 4.14.202
+    dev: true
+
+  /@types/lodash.uniqby@4.7.9:
+    resolution: {integrity: sha512-rjrXji/seS6BZJRgXrU2h6FqxRVufsbq/HE0Tx0SdgbtlWr2YmD/M64BlYEYYlaMcpZwy32IYVkMfUMYlPuv0w==}
+    dependencies:
+      '@types/lodash': 4.14.197
     dev: true
 
   /@types/lodash.zip@4.2.7:
@@ -31195,6 +31225,10 @@ packages:
     resolution: {integrity: sha512-C5N2Z3DgnnKr0LOpv/hKCgKdb7ZZwafIrsesve6lmzvZIRZRGaZ/l6Q8+2W7NaT+ZwO3fFlSCzCzrDCFdJfZ4g==}
     dev: true
 
+  /lodash.frompairs@4.0.1:
+    resolution: {integrity: sha512-dvqe2I+cO5MzXCMhUnfYFa9MD+/760yx2aTAN1lqEcEkf896TxgrX373igVdqSJj6tQd0jnSLE1UMuKufqqxFw==}
+    dev: false
+
   /lodash.get@4.4.2:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
 
@@ -31211,6 +31245,10 @@ packages:
 
   /lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
+
+  /lodash.maxby@4.6.0:
+    resolution: {integrity: sha512-QfTqQTwzmKxLy7VZlbx2M/ipWv8DCQ2F5BI/MRxLharOQ5V78yMSuB+JE+EuUM22txYfj09R2Q7hUlEYj7KdNg==}
+    dev: false
 
   /lodash.memoize@4.1.2:
     resolution: {integrity: sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==}
@@ -31252,6 +31290,10 @@ packages:
 
   /lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
+    dev: false
+
+  /lodash.uniqby@4.7.0:
+    resolution: {integrity: sha512-e/zcLx6CSbmaEgFHCA7BnoQKyCtKMxnuWrJygbwPs/AIn+IMKl66L8/s+wBUn5LRw2pZx3bUHibiV1b6aTWIww==}
     dev: false
 
   /lodash.zip@4.2.0:

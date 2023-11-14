@@ -3,12 +3,15 @@ export default function getFarmApr(
   poolWeight: number,
   cakePriceUsd: number,
   poolLiquidityUsd: number,
-  regularCakePerSecond: number
+  regularCakePerSecond: number,
 ) {
-  const yearlyCakeRewardAllocation = poolWeight ? poolWeight * regularCakePerSecond : NaN
-  const cakeRewardsApr = ((yearlyCakeRewardAllocation * cakePriceUsd) / poolLiquidityUsd) * 100
+  const yearlyCakeRewardAllocation = poolWeight
+    ? poolWeight * regularCakePerSecond
+    : NaN
+  const cakeRewardsApr =
+    ((yearlyCakeRewardAllocation * cakePriceUsd) / poolLiquidityUsd) * 100
   let cakeRewardsAprAsNumber: null | number = null
-  if (!isNaN(cakeRewardsApr) && isFinite(cakeRewardsApr)) {
+  if (!Number.isNaN(cakeRewardsApr) && Number.isFinite(cakeRewardsApr)) {
     cakeRewardsAprAsNumber = cakeRewardsApr / 10 ** 8
   }
   return { cakeRewardsApr: cakeRewardsAprAsNumber }

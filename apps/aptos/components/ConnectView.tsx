@@ -9,6 +9,7 @@ import { PetraIcon } from 'walletIcons/PetraIcon'
 import { PontemIcon } from 'walletIcons/PontemIcon'
 import { RiseIcon } from 'walletIcons/RiseIcon'
 import { NotFoundWalletList } from './NotFoundWalletList'
+import { MSafeIcon } from 'walletIcons/MSafeIcon'
 
 export const WalletIcons: Record<
   string,

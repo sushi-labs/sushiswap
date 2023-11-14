@@ -24,6 +24,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ row }) => {
 
   const token0Price = useStablePrice({ currency: token0 })
   const token1Price = useStablePrice({ currency: token1 })
+
   const balanceX = formatNumber(
     Number(row?.data?.balance_x?.value),
     token0.decimals,

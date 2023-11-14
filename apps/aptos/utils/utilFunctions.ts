@@ -1,10 +1,10 @@
-import { usePoolActions, usePoolState } from 'components/Pool/PoolProvider'
 import { SupportedNetwork, chains } from 'config/chains'
 import { useMemo } from 'react'
 import { baseTokens } from './baseTokens'
 import { Token } from './tokenType'
 import { useNetwork } from './useNetwork'
 import { Pool } from './usePools'
+import {usePoolActions, usePoolState} from "../components/Pool/PoolProvider";
 
 export type Route = {
   route: string[]
@@ -54,7 +54,7 @@ export async function getAllCommonPairs({
   await fetch(`${fetchUrlPrefix}/v1/accounts/${swapContract}/resources`)
     .then((res) => res.json())
     .then((data) => {
-      const t: any = {}
+      let t: any = {}
       const reserve_tokens: any = {}
       const reserve_token_info: any = {}
 
@@ -78,13 +78,13 @@ export async function getAllCommonPairs({
             `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
           ]
         ) {
-          const info = {
+          let info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[0]}, ${token[1]}>>`
               ],
           }
-          const data =
+          let data =
             reserve_tokens[
               `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
             ]
@@ -103,13 +103,13 @@ export async function getAllCommonPairs({
             `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
           ]
         ) {
-          const info = {
+          let info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[1]}, ${token[0]}>>`
               ],
           }
-          const data =
+          let data =
             reserve_tokens[
               `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
             ]
@@ -196,7 +196,7 @@ export async function usePoolPairs() {
     } finally {
       setLoadingPrice(false)
     }
-    if (reserves?.length) {
+    if (reserves && reserves.length) {
       setPairs(reserves[0])
       if (inverse) {
         setPoolPairRatio(
@@ -247,7 +247,7 @@ function findPossibleRoutes(
   } else {
     // Iterate through the adjacent tokens of the current token
     if (graph[tokenA]) {
-      for (const adjacentToken of graph[tokenA]) {
+      for (let adjacentToken of graph[tokenA]) {
         // If the adjacent token is not visited, recursively find possible routes
         if (!visited[adjacentToken]) {
           findPossibleRoutes(

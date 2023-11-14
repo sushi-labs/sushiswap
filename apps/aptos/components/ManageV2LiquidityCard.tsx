@@ -27,6 +27,7 @@ import { AddSectionStake } from './AddSection/AddSectionStake'
 import { AddSectionWidget } from './AddSection/AddSectionWidget'
 import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
 import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
+import useStablePrice from 'utils/useStablePrice'
 
 const CONTRACT_ADDRESS =
   process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
@@ -101,6 +102,18 @@ export const ManageV2LiquidityCard: FC = () => {
     totalSupply: Number(totalSupply),
     decimals: coinInfo?.data?.decimals,
   })
+
+  const token0Price = useStablePrice(token0)
+  const token1Price = useStablePrice(token1)
+  const token0RemovePoolPrice = token0Price
+    ? (token0Price * Number(reserve0)) / 10 ** token0.decimals
+    : 0
+  const token1RemovePoolPrice = token1Price
+    ? (token1Price * Number(reserve1)) / 10 ** token1.decimals
+    : 0
+  const lpPrice = coinInfo
+    ? (Number(reserve0) + Number(reserve1)) / Number(totalSupply)
+    : 0
 
   return (
     <Card>
@@ -195,6 +208,7 @@ export const ManageV2LiquidityCard: FC = () => {
               balance={balance}
               decimals={coinInfo?.data?.decimals}
               lpTokenName={coinInfo?.data?.name}
+              lpPrice={lpPrice}
             />
           </CardContent>
         </TabsContent>
@@ -202,7 +216,7 @@ export const ManageV2LiquidityCard: FC = () => {
           <CardContent>
             <RemoveSectionUnstake
               balance={farmBalance}
-              decimals={coinInfo?.data?.decimals}
+              decimals={coinInfo?.data?.decimals ?? 8}
               lpTokenName={coinInfo?.data?.name}
             />
           </CardContent>

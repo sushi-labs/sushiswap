@@ -13,7 +13,7 @@ import { Icon } from './Icon'
 import { PricePanel } from './PricePanel'
 import TokenListDialog from './TokenListDialog'
 
-interface TradeInput {
+type TradeInput = {
   id: string
   type: 'INPUT' | 'OUTPUT'
   token: Token
@@ -31,6 +31,7 @@ interface TradeInput {
   className?: string
   fetching?: boolean
 }
+
 export function TradeInput({
   id,
   type,

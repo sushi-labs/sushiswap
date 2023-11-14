@@ -26,6 +26,7 @@ export const TradeStats = () => {
   const { account } = useWallet()
   const loading =
     Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
+
   const outputSwapTokenAmount = outputAmount
     ? formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8)
     : ''

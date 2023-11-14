@@ -14,13 +14,13 @@ import { useNetwork } from 'utils/useNetwork'
 import useStablePrice from 'utils/useStablePrice'
 import { formatNumber } from 'utils/utilFunctions'
 
-interface Props {
+interface PoolMyRewards {
   reward: number
   decimals: number | undefined
   isLoading: boolean
 }
 
-export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
+export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
   const router = useParams()
   const { connected, signAndSubmitTransaction } = useWallet()
 
