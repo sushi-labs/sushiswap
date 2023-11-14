@@ -33,32 +33,20 @@ import { config } from '@sushiswap/viem-config'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import { http, Address, Transport, createPublicClient } from 'viem'
+import { http, Address, Transport, createPublicClient, walletActions, custom, Hex, PublicClient, WalletClient } from 'viem'
 import {
   Chain,
   arbitrum,
   arbitrumNova,
   celo,
+  hardhat,
   mainnet,
   optimism,
   polygon,
   polygonZkEvm,
 } from 'viem/chains'
-
-export const RP3Address = {
-  [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
-  [ChainId.POLYGON]: '0x0a6e511Fe663827b9cA7e2D2542b20B37fC217A6' as Address,
-  [ChainId.ARBITRUM]: '0xfc506AaA1340b4dedFfd88bE278bEe058952D674' as Address,
-  [ChainId.ARBITRUM_NOVA]:
-    '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288' as Address,
-  [ChainId.OPTIMISM]: '0x4C5D5234f232BD2D76B96aA33F5AE4FCF0E4BFAb' as Address,
-  [ChainId.CELO]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
-  [ChainId.POLYGON_ZKEVM]:
-    '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
-  [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
-  [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
-  [ChainId.BSC]: '0xd36990D74b947eC4Ad9f52Fe3D49d14AdDB51E44' as Address,
-}
+import { createHardhatProvider } from '../src'
+import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -131,9 +119,47 @@ function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
+async function createForkRouteProcessor(providerUrl: string, forkBlockNumber: bigint, chainId: ChainId): Promise<{
+  client: PublicClient & WalletClient,
+  deployUser: Address,
+  RouteProcessorAddress: Address | null
+}> {
+  const forkProvider = await createHardhatProvider(chainId, providerUrl, Number(forkBlockNumber))
+  const client =  createPublicClient({
+    chain: {
+      ...hardhat,
+      contracts: {
+        multicall3: {
+          address: '0xca11bde05977b3631167028862be2a173976ca11',
+          blockCreated: 100,
+        },
+      },
+      id: chainId,
+    },
+    transport: custom(forkProvider),
+  }).extend(walletActions)
+  const [deployUser] = await client.getAddresses()
+  const RouteProcessorTx = await client.deployContract({
+    chain: null,
+    abi: RouteProcessor4.abi,
+    bytecode: RouteProcessor4.bytecode as Hex,
+    account: deployUser,
+    args: ['0x0000000000000000000000000000000000000000', []],
+  })
+  const RouteProcessorAddress = (
+    await client.waitForTransactionReceipt({ hash: RouteProcessorTx })
+  ).contractAddress
+
+  return {
+    client,
+    deployUser,
+    RouteProcessorAddress
+  }
+}
+
 async function startInfinitTest(args: {
   transport?: Transport
-  providerURL?: string
+  providerURL: string
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
@@ -143,7 +169,6 @@ async function startInfinitTest(args: {
   logType?: LogFilterType
   logging?: boolean
   maxCallsInOneBatch?: number
-  RP3Address: Address
   account?: Address
   checkTokens?: Token[]
 }) {
@@ -153,6 +178,12 @@ async function startInfinitTest(args: {
     transport: transport,
   })
   const chainId = client.chain?.id as ChainId
+  
+  const forkBlockNumber = await client.getBlockNumber()
+  const fork = await createForkRouteProcessor(args.providerURL, forkBlockNumber, chainId)
+  if (!fork.RouteProcessorAddress)
+    throw new Error('RouteProcessor deploy failed')
+  console.log(`RP4 deploy address: ${fork.RouteProcessorAddress} at block ${forkBlockNumber} chainId ${chainId}`)
 
   const extractor = new Extractor({ ...args, client })
   await extractor.start(
@@ -224,13 +255,13 @@ async function startInfinitTest(args: {
         )
         continue
       }
-      const rpParams = Router.routeProcessor2Params(
+      const rpParams = Router.routeProcessor4Params(
         poolMap,
         route,
         fromToken,
         toToken,
-        args.RP3Address,
-        args.RP3Address,
+        fork.RouteProcessorAddress,
+        fork.RouteProcessorAddress,
       )
       if (rpParams === undefined) {
         console.log(
@@ -238,10 +269,19 @@ async function startInfinitTest(args: {
         )
         continue
       }
+
+      // console.log(
+      //   'ROUTE:',
+      //   route.legs.map(
+      //     (l) =>
+      //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+      //   )
+      // )
+
       try {
-        const { result: amountOutReal } = (await client.simulateContract({
-          address: args.RP3Address,
-          abi: routeProcessor2Abi,
+        const { result: amountOutReal } = (await fork.client.simulateContract({
+          address: fork.RouteProcessorAddress,
+          abi: RouteProcessor4.abi,
           functionName: 'processRoute',
           args: [
             rpParams.tokenIn as Address,
@@ -275,204 +315,9 @@ async function startInfinitTest(args: {
   }
 }
 
-it.skip('Extractor Ethereum infinite work test', async () => {
-  await startInfinitTest({
-    providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-    chain: mainnet,
-    //[], //uniswapV2Factory(ChainId.ETHEREUM)], //,
-    factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-    RP3Address: RP3Address[ChainId.ETHEREUM],
-  })
-})
-
-it.skip('Extractor Polygon infinite work test', async () => {
-  await startInfinitTest({
-    providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
-    chain: polygon,
-    factoriesV2: [
-      sushiswapV2Factory(ChainId.POLYGON),
-      {
-        address: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
-        provider: LiquidityProviders.QuickSwap,
-        fee: 0.003,
-        initCodeHash:
-          '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
-      },
-    ],
-    factoriesV3: [uniswapV3Factory(ChainId.POLYGON)],
-    tickHelperContract: TickLensContract[ChainId.POLYGON],
-    cacheDir: './cache',
-    logDepth: 100,
-    logging: true,
-    RP3Address: RP3Address[ChainId.POLYGON],
-  })
-})
-
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
-it.skip('Extractor Arbitrum infinite work test', async () => {
-  await startInfinitTest({
-    providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
-    //providerURL: `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`,
-    chain: arbitrum,
-    factoriesV2: [],
-    factoriesV3: [uniswapV3Factory(ChainId.ARBITRUM)],
-    tickHelperContract: TickLensContract[ChainId.ARBITRUM],
-    cacheDir: './cache',
-    logDepth: 300,
-    logType: LogFilterType.MultiCall,
-    logging: true,
-    RP3Address: RP3Address[ChainId.ARBITRUM],
-  })
-})
 
-it.skip('Extractor Arbitrum Nova infinite work test', async () => {
-  await startInfinitTest({
-    providerURL: `https://lb.drpc.org/ogrpc?network=arbitrum-nova&dkey=${drpcId}`,
-    chain: arbitrumNova,
-    factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM_NOVA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.ARBITRUM_NOVA)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
-    cacheDir: './cache',
-    logDepth: 300,
-    logging: true,
-    logType: LogFilterType.Native,
-    RP3Address: RP3Address[ChainId.ARBITRUM_NOVA],
-    account: '0xc882b111a75c0c657fc507c04fbfcd2cc984f071',
-  })
-})
-
-it.skip('Extractor Optimism infinite work test', async () => {
-  await startInfinitTest({
-    providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
-    chain: optimism,
-    factoriesV2: [],
-    factoriesV3: [uniswapV3Factory(ChainId.OPTIMISM)],
-    tickHelperContract: TickLensContract[ChainId.OPTIMISM],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-    RP3Address: RP3Address[ChainId.OPTIMISM],
-    account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
-  })
-})
-
-it.skip('Extractor Celo infinite work test', async () => {
-  await startInfinitTest({
-    providerURL: 'https://forno.celo.org',
-    chain: celo,
-    factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
-    factoriesV3: [uniswapV3Factory(ChainId.CELO)],
-    tickHelperContract: TickLensContract[ChainId.CELO],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-    RP3Address: RP3Address[ChainId.CELO],
-  })
-})
-
-it.skip('Extractor Polygon zkevm infinite work test', async () => {
-  await startInfinitTest({
-    providerURL: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
-    chain: polygonZkEvm,
-    factoriesV2: [],
-    factoriesV3: [
-      sushiswapV3Factory(ChainId.POLYGON_ZKEVM),
-      {
-        address: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c' as Address,
-        provider: LiquidityProviders.DovishV3,
-        initCodeHash:
-          '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
-      },
-    ],
-    tickHelperContract: TickLensContract[ChainId.POLYGON_ZKEVM],
-    cacheDir: './cache',
-    logDepth: 1000,
-    logType: LogFilterType.SelfFilter,
-    logging: true,
-    maxCallsInOneBatch: 5,
-    RP3Address: RP3Address[ChainId.POLYGON_ZKEVM],
-  })
-})
-
-it.skip('Extractor AVALANCH infinite work test', async () => {
-  await startInfinitTest({
-    transport: config[ChainId.AVALANCHE].transport,
-    chain: config[ChainId.AVALANCHE].chain as Chain,
-    factoriesV2: [
-      sushiswapV2Factory(ChainId.AVALANCHE),
-      {
-        address: '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10' as Address,
-        provider: LiquidityProviders.TraderJoe,
-        fee: 0.003,
-        initCodeHash:
-          '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
-      },
-    ],
-    factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
-    tickHelperContract: TickLensContract[ChainId.AVALANCHE],
-    cacheDir: './cache',
-    logDepth: 100,
-    logging: true,
-    RP3Address: RP3Address[ChainId.AVALANCHE],
-  })
-})
-
-it.skip('Extractor Base infinite work test', async () => {
-  await startInfinitTest({
-    ...config[ChainId.BASE],
-    chain: config[ChainId.BASE].chain as Chain,
-    factoriesV2: [
-      sushiswapV2Factory(ChainId.BASE),
-      {
-        address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
-        provider: LiquidityProviders.BaseSwap,
-        fee: 0.0025,
-        initCodeHash:
-          '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
-      },
-    ],
-    factoriesV3: [
-      sushiswapV3Factory(ChainId.BASE),
-      uniswapV3Factory(ChainId.BASE),
-    ],
-    tickHelperContract: TickLensContract[ChainId.BASE],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-    RP3Address: RP3Address[ChainId.BASE],
-    account: '0x4200000000000000000000000000000000000006', // just a whale because base eth_call needs gas (
-    // checkTokens: [
-    //   new Token({
-    //     chainId: ChainId.BASE,
-    //     address: '0x8544fe9d190fd7ec52860abbf45088e81ee24a8c',
-    //     symbol: 'TOSHI',
-    //     name: 'Toshi',
-    //     decimals: 18,
-    //   }),
-    //   new Token({
-    //     chainId: ChainId.BASE,
-    //     address: '0xa4220a2B0Cb10BF5FDC3B8c3D9E13728f5E7ca56',
-    //     symbol: 'MOCHI',
-    //     name: 'Moshi',
-    //     decimals: 18,
-    //   }),
-    // new Token({
-    //   chainId: ChainId.BASE,
-    //   address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
-    //   name: 'bpsTEST',
-    //   symbol: 'bpsTEST',
-    //   decimals: 18,
-    // }),
-    // ],
-  })
-})
-
-it.skip('Extractor BSC infinite work test', async () => {
+it.only('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
     transport: config[ChainId.BSC].transport,
     chain: config[ChainId.BSC].chain as Chain,
@@ -482,6 +327,6 @@ it.skip('Extractor BSC infinite work test', async () => {
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
-    RP3Address: RP3Address[ChainId.BSC],
+    providerURL: `https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`
   })
 })
