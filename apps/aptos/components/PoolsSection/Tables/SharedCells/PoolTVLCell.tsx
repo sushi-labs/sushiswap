@@ -15,6 +15,7 @@ export const PoolTVLCell: FC<Row<Pool>> = ({ row }) => {
   const token0Price = useStablePrice(token0) ?? 0
   const token1Price = useStablePrice(token1) ?? 0
 
+  console.log(formatUSD(token0Price * Number(reserve0) + token1Price * Number(reserve1)))
   const poolTvl = formatUSD(
     token0Price * Number(reserve0) + token1Price * Number(reserve1),
   )

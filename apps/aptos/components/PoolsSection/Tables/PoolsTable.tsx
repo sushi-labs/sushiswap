@@ -10,9 +10,9 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { useFarms } from 'utils/useFarms'
 import { Pool, usePools } from 'utils/usePools'
 import { usePoolFilters } from '../../PoolFiltersProvider'
-import { NAME_COLUMN } from './Cells/columns'
+import { NAME_COLUMN, TVL_COLUMN } from './Cells/columns'
 
-const COLUMNS = [NAME_COLUMN] satisfies ColumnDef<Pool, unknown>[]
+const COLUMNS = [NAME_COLUMN, TVL_COLUMN] satisfies ColumnDef<Pool, unknown>[]
 
 const CONTRACT_ADDRESS =
   process.env['NEXT_PUBLIC_SWAP_CONTRACT'] ||
@@ -30,6 +30,7 @@ export const PoolsTable = () => {
   })
 
   const { data: farms } = useFarms()
+
   const farmFilter = useMemo(() => {
     return pools?.filter((pool) => {
       const lpAddress = pool.id
@@ -39,13 +40,28 @@ export const PoolsTable = () => {
       return _isFarm !== -1
     })
   }, [pools, farms])
+
   const rowLink = useCallback((row: Pool) => {
     return `/pool/${row.id}`
   }, [])
 
   const data = useMemo(
-    () => (!farmsOnly ? pools?.flat() || [] : farmFilter?.flat() || []),
-    [pools, farmsOnly, farmFilter],
+    () =>
+      !farmsOnly
+        ? pools
+            ?.flat()
+            .filter((el) =>
+              tokenSymbols.length > 0
+                ? tokenSymbols.includes(
+                    el.data.token_x_details.symbol.toLowerCase(),
+                  ) ||
+                  tokenSymbols.includes(
+                    el.data.token_y_details.symbol.toLowerCase(),
+                  )
+                : true,
+            ) || []
+        : farmFilter?.flat() || [],
+    [pools, farmsOnly, farmFilter, tokenSymbols],
   )
 
   const debouncedQuery = useDebounce(

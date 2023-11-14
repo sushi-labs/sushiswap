@@ -38,7 +38,9 @@ export const PoolRewards: FC<{ isFarm: boolean; rewardsPerDay: string }> = ({
               </div>
             }
           >
-            <span className="flex gap-1 font-semibold">{rewardsPerDay} </span>
+            <span className="flex gap-1 font-semibold">
+              {!Number.isNaN(rewardsPerDay) ? '0' : rewardsPerDay}{' '}
+            </span>
           </CardItem>
         </CardGroup>
       </CardContent>

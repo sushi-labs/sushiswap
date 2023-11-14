@@ -27,7 +27,7 @@ import { useTokenBalance } from 'utils/useTokenBalance'
 import { usePool } from '../../utils/usePool'
 import { Pool } from '../../utils/usePools'
 import { useTokensFromPools } from '../../utils/useTokensFromPool'
-import {getPoolPairs, usePoolPairs} from '../../utils/utilFunctions'
+import { usePoolPairs } from '../../utils/utilFunctions'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
 import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
 
@@ -53,10 +53,19 @@ export const AddSectionWidget: FC = () => {
     setAmount0,
     setAmount1,
     setisTransactionPending,
+    setSlippageAmount0,
+    setSlippageAmount1,
   } = usePoolActions()
 
-  const { amount0, amount1, isPriceFetching, poolPairRatio, pairs } =
-    usePoolState()
+  const {
+    amount0,
+    amount1,
+    isPriceFetching,
+    poolPairRatio,
+    pairs,
+    slippageAmount0,
+    slippageAmount1,
+  } = usePoolState()
 
   const { account, signAndSubmitTransaction, connected } = useWallet()
   const [error0, setError0] = useState('')
@@ -69,6 +78,8 @@ export const AddSectionWidget: FC = () => {
       token1.address,
       parseInt(String(Number(amount0) * 10 ** token0.decimals)),
       parseInt(String(Number(amount1) * 10 ** token1.decimals)),
+      parseInt(String(slippageAmount0)),
+      parseInt(String(slippageAmount1)),
     )
     setisTransactionPending(true)
     if (!account) return []
@@ -88,9 +99,9 @@ export const AddSectionWidget: FC = () => {
       close()
       setAmount0('')
       setAmount1('')
-    } catch (_e) {
+    } catch (error) {
       const toastId = `failed:${Math.random()}`
-      createToast({ summery: 'User rejected request', toastId: toastId })
+      createToast({ summery: `User rejected request`, toastId: toastId })
     } finally {
       setisTransactionPending(false)
     }
@@ -166,7 +177,13 @@ export const AddSectionWidget: FC = () => {
 
   useEffect(() => {
     PoolInputBalance1(String(amount1))
-  }, [amount1])
+    PoolInputBalance0(String(amount0))
+  }, [amount1, amount0])
+
+  useEffect(() => {
+    setSlippageAmount0(amount0 ? Number(amount0) * 10 ** token0.decimals : 0)
+    setSlippageAmount1(amount1 ? Number(amount1) * 10 ** token1.decimals : 0)
+  }, [amount0, amount1, token0, token1, setSlippageAmount0, setSlippageAmount1])
 
   const PoolInputBalance0 = (tradeVal: string) => {
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/

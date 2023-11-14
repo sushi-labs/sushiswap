@@ -1,10 +1,10 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Tab } from '@headlessui/react'
 import { Button, Container } from '@sushiswap/ui'
-import { PoolsTable } from 'app/pool/PoolsSection/Tables/PoolsTable'
-import { PositionsTable } from 'app/pool/PoolsSection/Tables/PositionsTable'
-import { PoolFilters } from 'app/pool/PoolsSection/Tables/TableFilters/PoolFilters'
 import React, { Fragment, useState } from 'react'
+import { PoolFilters } from './PoolsSection/Tables'
+import { PoolsTable } from './PoolsSection/Tables/PoolsTable'
+import { PositionsTable } from './PoolsSection/Tables/PositionsTable'
 
 export default function PoolsSection() {
   const [tab, setTab] = useState<number>(0)
@@ -76,12 +76,11 @@ export default function PoolsSection() {
           </Container>
           <Tab.Panel>
             <Container maxWidth="7xl" className="px-4 mx-auto">
-              <PoolsTable farmsOnly={farmsOnly} query={query} />
-              {/* Pools Table */}
+              <PoolsTable />
             </Container>
           </Tab.Panel>
           <Tab.Panel>
-            <PositionsTable query={query} />
+            <PositionsTable />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
