@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { FETCH_URL_PREFIX } from 'lib/constants'
 import { Pool } from './usePools'
+import { FETCH_URL_PREFIX } from 'lib/constants'
 const CONTRACT_ADDRESS =
   process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+
 export const getPoolQueryFn = async (address: string) => {
   if (address) {
     const response = await fetch(
@@ -19,6 +20,7 @@ export const getPoolQueryFn = async (address: string) => {
   }
   return {} as Pool
 }
+
 export function usePool(address: string) {
   return useQuery({
     queryKey: ['pool', { address }],

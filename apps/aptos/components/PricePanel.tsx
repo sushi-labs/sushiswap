@@ -3,8 +3,13 @@ import React from 'react'
 interface Props {
   isLoading: boolean
   error?: string
+  value: number
 }
-export const PricePanel = ({ isLoading, error }: Props) => {
+export const PricePanel = ({ isLoading, error, value }: Props) => {
+  const [big, portion] = (value ? `${Number(value).toFixed(2)}` : '0.00').split(
+    '.',
+  )
+
   if (isLoading) {
     return (
       <div className="w-[90px] flex items-center">
@@ -21,7 +26,7 @@ export const PricePanel = ({ isLoading, error }: Props) => {
 
   return (
     <p className="font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400">
-      $ 0.<span className="text-sm font-semibold">00</span>
+      $ {big}.<span className="text-sm font-semibold">{portion}</span>
     </p>
   )
 }

@@ -5,6 +5,8 @@ import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
+import useStablePrice from 'utils/useStablePrice'
+import { formatUSD } from 'sushi'
 
 interface PoolPositionStakedDesktopProps {
   row: Pool
@@ -34,6 +36,11 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
     decimals: coinInfo?.data?.decimals,
   })
 
+  const token0Price = useStablePrice(token0)
+  const token1Price = useStablePrice(token1)
+  const token0StakedInUsd = token0Price ? token0Price * Number(underlying0) : 0
+  const token1StakedInUsd = token1Price ? token1Price * Number(underlying1) : 0
+
   return (
     <CardGroup>
       <CardLabel>Staked</CardLabel>
@@ -41,13 +48,13 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
         currency={token0}
         isLoading={isLoading}
         amount={underlying0}
-        fiatValue={'$0.00'}
+        fiatValue={formatUSD(token0StakedInUsd)}
       />
       <CardCurrencyAmountItem
         isLoading={isLoading}
         currency={token1}
         amount={underlying1}
-        fiatValue={'$0.00'}
+        fiatValue={formatUSD(token1StakedInUsd)}
       />
     </CardGroup>
   )

@@ -15,7 +15,7 @@ import getTokenFromAddress from 'utils/getTokenFromAddress'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useAccount } from 'utils/useAccount'
 import { useTokenBalance } from 'utils/useTokenBalance'
-import { getPoolPairs } from 'utils/utilFunctions'
+import {getPoolPairs, usePoolPairs} from 'utils/utilFunctions'
 import { AddLiquidityButton } from './AddLiquidityButton'
 import { AddSectionReviewModal } from './AddSectionReviewModel'
 import { usePoolActions, usePoolState } from './PoolProvider'
@@ -23,7 +23,7 @@ import { usePoolActions, usePoolState } from './PoolProvider'
 export function Add() {
   // const router = useRouter()
   const { isLoadingAccount } = useAccount()
-  getPoolPairs()
+  usePoolPairs()
 
   return (
     <>

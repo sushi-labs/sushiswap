@@ -8,6 +8,7 @@ import { PetraIcon } from 'walletIcons/PetraIcon'
 import { PontemIcon } from 'walletIcons/PontemIcon'
 import { RiseIcon } from 'walletIcons/RiseIcon'
 import { NotFoundWalletList } from './NotFoundWalletList'
+import { MSafeIcon } from 'walletIcons/MSafeIcon'
 
 export const WalletIcons: Record<
   string,
@@ -18,6 +19,7 @@ export const WalletIcons: Record<
   Fewcha: FewchaIcon,
   Martian: MartianIcon,
   Rise: RiseIcon,
+  MSafe: MSafeIcon,
 }
 
 export const ConnectView: FC<{ close(): void }> = ({ close }) => {

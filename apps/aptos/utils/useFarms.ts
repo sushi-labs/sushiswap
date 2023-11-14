@@ -66,5 +66,7 @@ export function useFarms() {
   return useQuery({
     queryKey: ['farms'],
     queryFn: () => farmsQueryFn(),
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   })
 }

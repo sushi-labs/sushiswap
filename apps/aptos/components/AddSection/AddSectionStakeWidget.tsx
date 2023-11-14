@@ -17,6 +17,7 @@ interface AddSectionStakeWidgetProps {
   value: string
   children: ReactNode
   balance: number
+  lpPrice: number
 }
 
 export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
@@ -24,7 +25,10 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
   value,
   children,
   balance,
+  lpPrice,
 }) => {
+  const priceUsd = lpPrice * Number(value)
+
   return (
     <Widget id="stakeLiquidity" variant="empty">
       <WidgetHeader>
@@ -59,8 +63,7 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                     className: 'text-sm',
                   })}
                 >
-                  {/*{formatUSD(value0 + value1)}*/}
-                  {formatUSD(0)}
+                  {formatUSD(priceUsd)}
                 </span>
                 <Button
                   size="sm"

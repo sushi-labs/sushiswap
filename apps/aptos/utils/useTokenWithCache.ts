@@ -41,7 +41,7 @@ export const getTokenDetails = async ({
       symbol: data.data.symbol,
     } as Token
   }
-  return {} as Token
+  return null
 }
 
 interface UseTokenParams {

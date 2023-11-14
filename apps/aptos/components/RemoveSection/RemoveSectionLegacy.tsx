@@ -16,8 +16,8 @@ interface Props {
   token0: Token
   token1: Token
   balance: number
-  underlying0: number | undefined
-  underlying1: number | undefined
+  underlying0: string | undefined
+  underlying1: string | undefined
   totalSupply: string | undefined
   isFarm: boolean
 }
@@ -85,12 +85,12 @@ export const RemoveSectionLegacy = ({
         ? slippagePercent === 0
           ? Math.floor(currencyAToRemove)
           : Math.floor(currencyAToRemove - currencyAToRemove * slippagePercent)
-        : undefined,
+        : 0,
       currencyBToRemove
         ? slippagePercent === 0
           ? Math.floor(currencyBToRemove)
           : Math.floor(currencyBToRemove - currencyBToRemove * slippagePercent)
-        : undefined,
+        : 0,
     ]
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 

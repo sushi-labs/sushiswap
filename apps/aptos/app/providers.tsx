@@ -9,12 +9,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Modal } from 'components/Modal/Modal'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
+import { MSafeWalletAdapter } from '@msafe/aptos-wallet-adapter'
+import { MSafeOrigin } from 'lib/constants'
+
 const wallets = [
   new PetraWallet(),
   new PontemWallet(),
   new FewchaWallet(),
   new MartianWallet(),
   new RiseWallet(),
+  new MSafeWalletAdapter(MSafeOrigin),
 ]
 
 export function Providers({ children }: { children: React.ReactNode }) {

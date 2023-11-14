@@ -27,8 +27,8 @@ interface RemoveSectionWidgetProps {
   token0: TokenType
   token1: TokenType
   balance: number
-  token0MinMinimum: number
-  token1MinMinimum: number
+  token0MinMinimum: string
+  token1MinMinimum: string
 }
 
 export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
@@ -136,11 +136,11 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             <CardGroup>
               <CardLabel>You&apos;ll receive at least:</CardLabel>
               <CardCurrencyAmountItem
-                amount={token0MinMinimum}
+                amount={Number(token0MinMinimum)}
                 currency={token0}
               />
               <CardCurrencyAmountItem
-                amount={token1MinMinimum}
+                amount={Number(token1MinMinimum)}
                 currency={token1}
               />
             </CardGroup>

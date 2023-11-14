@@ -17,11 +17,11 @@ export const SwapTradeOutput = ({ handleSwap }: Props) => {
     currency: token1?.address,
     refetchInterval: 2000,
   })
+
   const outputSwapTokenAmount = outputAmount
-    ? String(
-        formatNumber(parseFloat(outputAmount), token1 ? token1.decimals : 8),
-      )
+    ? formatNumber(Number(outputAmount), token1 ? token1.decimals : 8)
     : ''
+
   const { setToken1 } = useSwapActions()
   return (
     <TradeInput

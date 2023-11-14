@@ -114,10 +114,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
                   <SkeletonText fontSize="3xl" className="w-2/3" />
                 ) : (
                   <h1 className="text-3xl font-semibold dark:text-slate-50">
-                    Buy{' '}
-                    {(parseFloat(outputAmount) / 10 ** token1.decimals).toFixed(
-                      9,
-                    )}{' '}
+                    Buy {formatNumber(Number(outputAmount), token1.decimals)}{' '}
                     {token1?.symbol}
                   </h1>
                 )}

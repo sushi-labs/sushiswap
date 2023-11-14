@@ -9,6 +9,8 @@ import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/useUnderlyingTokenBalanceFromPool'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
+import useStablePrice from 'utils/useStablePrice'
+import { formatUSD } from 'sushi'
 
 interface PoolPositionProps {
   row: Pool
@@ -48,6 +50,15 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({
     decimals: LPSupply?.data?.decimals,
   })
 
+  const token0Price = useStablePrice(token0)
+  const token1Price = useStablePrice(token1)
+  const token0UnstakedInUsd = token0Price
+    ? token0Price * Number(underlying0)
+    : 0
+  const token1UnstakedInUsd = token1Price
+    ? token1Price * Number(underlying1)
+    : 0
+
   return (
     <CardGroup>
       <CardLabel>Unstaked</CardLabel>
@@ -55,13 +66,13 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({
         currency={token0}
         isLoading={isLoading}
         amount={underlying0}
-        fiatValue={'$0.00'}
+        fiatValue={formatUSD(token0UnstakedInUsd)}
       />
       <CardCurrencyAmountItem
         currency={token1}
         isLoading={isLoading}
         amount={underlying1}
-        fiatValue={'$0.00'}
+        fiatValue={formatUSD(token1UnstakedInUsd)}
       />
     </CardGroup>
   )

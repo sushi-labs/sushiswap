@@ -21,15 +21,16 @@ const MASTERCHEF_CONTRACT =
   process.env['NEXT_PUBLIC_MASTERCHEF_CONTRACT']
 const CONTRACT_ADDRESS =
   process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
+
 interface AddSectionStakeProps {
   balance: number
-  decimals: number | undefined
+  decimals: number
   lpTokenName: string | undefined
 }
 
 export const RemoveSectionUnstake: FC<{
   balance: number
-  decimals: number | undefined
+  decimals: number
   lpTokenName: string | undefined
 }> = ({ balance, decimals, lpTokenName }) => {
   const isMounted = useIsMounted()

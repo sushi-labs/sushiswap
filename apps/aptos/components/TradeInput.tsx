@@ -11,6 +11,7 @@ import { BalancePanel } from './BalancePanel'
 import { Icon } from './Icon'
 import { PricePanel } from './PricePanel'
 import TokenListDialog from './TokenListDialog'
+import useStablePrice from 'utils/useStablePrice'
 interface PropType {
   id: string
   type: 'INPUT' | 'OUTPUT'
@@ -64,6 +65,10 @@ export default function TradeInput({
       setAmount('0')
     }
   }
+
+  const tokenPrice = useStablePrice(token)
+  const amountInDollar = tokenPrice ? tokenPrice * Number(value) : 0
+
   return (
     <div
       className={classNames(
@@ -163,7 +168,11 @@ export default function TradeInput({
         )}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
-        <PricePanel isLoading={isLoadingPrice} error={error} />
+        <PricePanel
+          isLoading={isLoadingPrice}
+          error={error}
+          value={amountInDollar}
+        />
         <BalancePanel
           coinData={balance ? balance : 0}
           isLoading={isLoadingPrice}

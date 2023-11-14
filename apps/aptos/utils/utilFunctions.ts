@@ -1,9 +1,9 @@
-import { FETCH_URL_PREFIX } from 'lib/constants'
 import { useMemo } from 'react'
-import { usePoolActions, usePoolState } from '../components/Pool/PoolProvider'
-import { baseTokens } from './baseTokens'
 import { Token } from './tokenType'
 import { Pool } from './usePools'
+import { baseTokens } from './baseTokens'
+import { FETCH_URL_PREFIX } from 'lib/constants'
+import {usePoolActions, usePoolState} from "../components/Pool/PoolProvider";
 
 export type Route = {
   route: string[]
@@ -34,12 +34,11 @@ export async function useAllCommonPairs(
       allPairs.push([pairArray[i], pairArray[j]])
     }
   }
-
   let reserves
   await fetch(`${FETCH_URL_PREFIX}/v1/accounts/${CONTRACT_ADDRESS}/resources`)
     .then((res) => res.json())
     .then((data) => {
-      const t: any = {}
+      let t: any = {}
       const reserve_tokens: any = {}
       const reserve_token_info: any = {}
       if (data?.error_code) return
@@ -64,13 +63,13 @@ export async function useAllCommonPairs(
             `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
           ]
         ) {
-          const info = {
+          let info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${token[0]}, ${token[1]}>>`
               ],
           }
-          const data =
+          let data =
             reserve_tokens[
               `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
             ]
@@ -89,13 +88,13 @@ export async function useAllCommonPairs(
             `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
           ]
         ) {
-          const info = {
+          let info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${CONTRACT_ADDRESS}::swap::LPToken<${token[1]}, ${token[0]}>>`
               ],
           }
-          const data =
+          let data =
             reserve_tokens[
               `${CONTRACT_ADDRESS}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
             ]
@@ -142,7 +141,7 @@ type TokenPairReserve = {
   }
 }
 
-export async function getPoolPairs() {
+export async function usePoolPairs() {
   const CONTRACT_ADDRESS = process.env['NEXT_PUBLIC_SWAP_CONTRACT']
   const { token0, token1, isTransactionPending } = usePoolState()
   const { setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
@@ -179,7 +178,7 @@ export async function getPoolPairs() {
     } finally {
       setLoadingPrice(false)
     }
-    if (reserves?.length) {
+    if (reserves && reserves.length) {
       setPairs(reserves[0])
       if (inverse) {
         setPoolPairRatio(
@@ -230,7 +229,7 @@ function findPossibleRoutes(
   } else {
     // Iterate through the adjacent tokens of the current token
     if (graph[tokenA]) {
-      for (const adjacentToken of graph[tokenA]) {
+      for (let adjacentToken of graph[tokenA]) {
         // If the adjacent token is not visited, recursively find possible routes
         if (!visited[adjacentToken]) {
           findPossibleRoutes(
@@ -274,8 +273,8 @@ function RouteDemo(
   // let firstInput = 100000000
   let lastOutput = 0
   const bestFinder = []
-  const prices = []
-  for (const route of allRoutes) {
+  for (let route of allRoutes) {
+    const prices = []
     if (route.length < 6) {
       if (
         ARR[route[0] + '|||' + route[1]] ||
@@ -332,7 +331,6 @@ function RouteDemo(
           }
         }
       }
-
       const midPrice = prices
         .slice(1)
         .reduce(
@@ -366,25 +364,20 @@ function computePriceImpact(
 }
 
 export const formatNumber = (number: number, decimals: number) => {
-  if (number) {
-    number = number / 10 ** decimals
-    if (
-      String(number).includes('.') &&
-      String(number).split('.')[1].length > 8
-    ) {
-      number = parseFloat(number.toFixed(9))
+  if (number === 0) return '0'
+  let _number = (number / 10 ** decimals).toFixed(decimals)
+  if (_number) {
+    if (_number.includes('.') && _number.split('.')[1].length > 8) {
+      _number = Number(_number).toFixed(8)
     }
-    if (
-      String(number).includes('.') &&
-      parseFloat(String(number).split('.')[0]) > 0
-    ) {
-      number = parseFloat(number.toFixed(4))
+    if (_number.includes('.') && parseFloat(_number.split('.')[0]) > 0) {
+      _number = Number(_number).toFixed(4)
     }
   } else {
-    number = 0
+    _number = '0'
   }
-  if (number <= 0.000001) {
-    return 0
+  if (Number(_number) < 0.000000001) {
+    return '0'
   }
-  return number
+  return _number
 }

@@ -11,6 +11,7 @@ interface AddSectionStakeProps {
   balance: number
   decimals: number | undefined
   lpTokenName: string | undefined
+  lpPrice: number
 }
 const MASTERCHEF_CONTRACT =
   process.env['MASTERCHEF_CONTRACT'] ||
@@ -23,12 +24,14 @@ export const AddSectionStake: FC<{
   balance: number
   decimals: number | undefined
   lpTokenName: string | undefined
-}> = ({ balance, decimals, lpTokenName }) => {
+  lpPrice: number
+}> = ({ balance, decimals, lpTokenName, lpPrice }) => {
   return (
     <_AddSectionStake
       balance={balance}
       decimals={decimals}
       lpTokenName={lpTokenName}
+      lpPrice={lpPrice}
     />
   )
 }
@@ -37,6 +40,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
   balance,
   decimals,
   lpTokenName,
+  lpPrice,
 }) => {
   const router = useParams()
   const tokenAddress = decodeURIComponent(router?.id)
@@ -79,7 +83,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
   }
 
   return (
-    <AddSectionStakeWidget value={value} setValue={setValue} balance={balance}>
+    <AddSectionStakeWidget value={value} setValue={setValue} balance={balance} lpPrice={lpPrice}>
       {Number(value) > balance ? (
         <Button fullWidth size="default" disabled testId="stake-liquidity">
           Insufficient Balance

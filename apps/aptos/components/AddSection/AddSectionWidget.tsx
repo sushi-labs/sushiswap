@@ -27,7 +27,7 @@ import { useTokenBalance } from 'utils/useTokenBalance'
 import { usePool } from '../../utils/usePool'
 import { Pool } from '../../utils/usePools'
 import { useTokensFromPools } from '../../utils/useTokensFromPool'
-import { getPoolPairs } from '../../utils/utilFunctions'
+import {getPoolPairs, usePoolPairs} from '../../utils/utilFunctions'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
 import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
 
@@ -39,7 +39,7 @@ type payloadType = {
 }
 
 export const AddSectionWidget: FC = () => {
-  void getPoolPairs()
+  usePoolPairs()
 
   const router = useParams()
   const tokenAddress = decodeURIComponent(router?.id)

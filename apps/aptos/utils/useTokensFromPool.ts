@@ -1,6 +1,7 @@
-import { Token } from './tokenType'
 import { Pool } from './usePools'
+import { Token } from './tokenType'
 import { useTokens } from './useTokens'
+import { useMemo } from 'react'
 
 export function useTokensFromPools(row: Pool) {
   let token0: Token = {} as Token
@@ -29,5 +30,8 @@ export function useTokensFromPools(row: Pool) {
       symbol: row?.data?.token_y_details?.symbol,
     }
   }
-  return { token0, token1 }
+
+  return useMemo(() => {
+    return { token0, token1 }
+  }, [token0, token1])
 }

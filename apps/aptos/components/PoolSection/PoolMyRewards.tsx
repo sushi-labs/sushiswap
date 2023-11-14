@@ -15,6 +15,9 @@ import { providerNetwork } from 'lib/constants'
 import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
 import { formatNumber } from 'utils/utilFunctions'
+import { Aptos } from '../../lib/coins'
+import UseStablePrice from '../../utils/useStablePrice'
+import { formatUSD } from 'sushi'
 interface Props {
   reward: number
   decimals: number | undefined
@@ -26,9 +29,14 @@ const MASTERCHEF_CONTRACT =
 const CONTRACT_ADDRESS =
   process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
 
-export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
+export const PoolMyRewards: FC<Props> = ({ reward, decimals }) => {
   const router = useParams()
   const { connected, signAndSubmitTransaction } = useWallet()
+  const aptos = Aptos
+  const aptosPrice = UseStablePrice(aptos)
+  const aptosPriceInUsd = aptosPrice
+    ? aptosPrice * parseFloat(formatNumber(reward, decimals as number))
+    : 0
   const tokenAddress = decodeURIComponent(router?.id)
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const harvest = async () => {
@@ -68,7 +76,7 @@ export const PoolMyRewards: FC<Props> = ({ reward, decimals, isLoading }) => {
     <Card>
       <CardHeader>
         <CardTitle>Unclaimed rewards</CardTitle>
-        <CardDescription>Total: $0.00</CardDescription>
+        <CardDescription>Total: {formatUSD(aptosPriceInUsd)}</CardDescription>
       </CardHeader>
       <CardContent>
         <CardGroup>

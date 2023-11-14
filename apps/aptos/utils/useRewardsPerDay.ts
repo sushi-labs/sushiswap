@@ -20,7 +20,7 @@ export function useRewardsPerDay(
         decimals,
       )
     } else {
-      return 0
+      return '0'
     }
   }, [farms, farmIndex, decimals])
 }
