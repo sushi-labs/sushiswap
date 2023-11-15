@@ -20,7 +20,9 @@ import {
   SUSHISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
 import {
+  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
+  PANCAKESWAP_V3_FEE_SPACING_MAP,
   PANCAKESWAP_V3_INIT_CODE_HASH,
   PancakeSwapV3ChainId,
   POOL_INIT_CODE_HASH,
@@ -120,12 +122,13 @@ function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
   } as const
 }
 
-function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
+export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   return {
     address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
     provider: LiquidityProviders.PancakeSwapV3,
     initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
-    deployer: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9'
+    deployer: PANCAKESWAP_V3_DEPLOYER_ADDRESS[chainId],
+    feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP
   } as const
 }
 
@@ -275,11 +278,10 @@ async function startInfinitTest(args: {
   }
 }
 
-it.skip('Extractor Ethereum infinite work test', async () => {
+it.only('Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    //[], //uniswapV2Factory(ChainId.ETHEREUM)], //,
     factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
     factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],

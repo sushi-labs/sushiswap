@@ -20,7 +20,9 @@ import {
   SUSHISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
 import {
+  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
+  PANCAKESWAP_V3_FEE_SPACING_MAP,
   PANCAKESWAP_V3_INIT_CODE_HASH,
   PancakeSwapV3ChainId,
   POOL_INIT_CODE_HASH,
@@ -47,6 +49,7 @@ import {
 } from 'viem/chains'
 import { createHardhatProvider } from '../src'
 import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
+import { pancakeswapV3Factory } from './Extractor.test'
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -105,15 +108,6 @@ function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
     address: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
     provider: LiquidityProviders.SushiSwapV3,
     initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chainId],
-  } as const
-}
-
-function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
-  return {
-    address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
-    provider: LiquidityProviders.PancakeSwapV3,
-    initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
-    deployer: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9'
   } as const
 }
 
@@ -317,7 +311,7 @@ async function startInfinitTest(args: {
 
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
-it.only('Extractor BSC infinite work test', async () => {
+it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
     transport: config[ChainId.BSC].transport,
     chain: config[ChainId.BSC].chain as Chain,

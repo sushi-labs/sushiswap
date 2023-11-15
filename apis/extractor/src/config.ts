@@ -18,6 +18,11 @@ import {
   UNISWAP_V3_FACTORY_ADDRESS,
   UNISWAP_V3_INIT_CODE_HASH,
   type UniswapV3ChainId,
+  PANCAKESWAP_V3_FACTORY_ADDRESS,
+  PANCAKESWAP_V3_INIT_CODE_HASH,
+  PancakeSwapV3ChainId,
+  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
+  PANCAKESWAP_V3_FEE_SPACING_MAP,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId } from 'sushi/chain'
@@ -90,13 +95,15 @@ function uniswapV3Factory(chainId: UniswapV3ChainId) {
   } as const
 }
 
-// function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
-//   return {
-//     address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
-//     provider: LiquidityProviders.PancakeSwapV3,
-//     initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
-//   } as const
-// }
+export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
+  return {
+    address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
+    provider: LiquidityProviders.PancakeSwapV3,
+    initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
+    deployer: PANCAKESWAP_V3_DEPLOYER_ADDRESS[chainId],
+    feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP
+  } as const
+}
 
 export const EXTRACTOR_CONFIG = {
   [ChainId.ARBITRUM]: {

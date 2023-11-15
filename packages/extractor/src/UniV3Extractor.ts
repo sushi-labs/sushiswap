@@ -19,9 +19,9 @@ import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
 
-export type FeeSpaceMap = Record<number, number>
+export type FeeSpacingMap = Record<number, number>
 
-export const uniswapFeeSpaceMap:FeeSpaceMap = {
+export const uniswapFeeSpaceMap:FeeSpacingMap = {
   100: 1,
   500: 10,
   3000: 60,
@@ -33,7 +33,7 @@ export interface FactoryV3 {
   provider: LiquidityProviders
   initCodeHash: string  
   deployer?: Address
-  feeSpaceMap?: FeeSpaceMap
+  feeSpacingMap?: FeeSpacingMap
 }
 
 interface PoolInfo {
@@ -246,7 +246,7 @@ export class UniV3Extractor {
       this.otherFactoryPoolSet.add(addrL)
       return
     }
-    const spacing = (p.factory.feeSpaceMap ?? uniswapFeeSpaceMap)[p.fee]
+    const spacing = (p.factory.feeSpacingMap ?? uniswapFeeSpaceMap)[p.fee]
     if (spacing === undefined) {
       this.consoleLog(`Unknown spacing for pool ${p.address} with fee = ${p.fee}. Pool is ignored`)
       this.otherFactoryPoolSet.add(addrL)
@@ -298,7 +298,7 @@ export class UniV3Extractor {
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
-          const feeSpacingMap = (factory.feeSpaceMap ?? uniswapFeeSpaceMap)
+          const feeSpacingMap = (factory.feeSpacingMap ?? uniswapFeeSpaceMap)
           const fees = Object.keys(feeSpacingMap).map(f => Number(f))
           fees.forEach((fee) => {
             const addr = this.computeV3Address(factory, t0, t1, fee)
