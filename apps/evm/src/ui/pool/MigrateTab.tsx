@@ -569,6 +569,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
               chainId={pool.chainId as SushiSwapV3ChainId}
               token0={token0}
               token1={token1}
+              poolAddress={v3Address}
               feeAmount={feeAmount}
               tokenId={undefined}
               showStartPrice={false}
