@@ -2,7 +2,6 @@ import { EventEmitter } from 'node:events'
 
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
 import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
-import { FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Abi, Address, parseAbiItem } from 'abitype'
 import { erc20Abi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
@@ -95,7 +94,7 @@ export class UniV3PoolWatcher extends EventEmitter {
   tickHelperContract: Address
   token0: Token
   token1: Token
-  fee: FeeAmount
+  fee: number
   spacing: number
   latestEventBlockNumber = 0
 
@@ -113,7 +112,8 @@ export class UniV3PoolWatcher extends EventEmitter {
     tickHelperContract: Address,
     token0: Token,
     token1: Token,
-    fee: FeeAmount,
+    fee: number,
+    spacing: number,
     client: MultiCallAggregator,
     busyCounter?: Counter,
   ) {
@@ -124,7 +124,7 @@ export class UniV3PoolWatcher extends EventEmitter {
     this.token0 = token0
     this.token1 = token1
     this.fee = fee
-    this.spacing = TICK_SPACINGS[fee]
+    this.spacing = spacing
 
     this.client = client
     this.wordLoadManager = new WordLoadManager(

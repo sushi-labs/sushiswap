@@ -1,5 +1,5 @@
 import { LiquidityProviders, PoolCode } from '@sushiswap/router'
-import { FeeAmount, computePoolAddress } from '@sushiswap/v3-sdk'
+import { computePoolAddress } from '@sushiswap/v3-sdk'
 import IUniswapV3Factory from '@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
 import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
 import { Abi } from 'abitype'
@@ -19,18 +19,28 @@ import { TokenManager } from './TokenManager'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher'
 import { warnLog } from './WarnLog'
 
+export type FeeSpaceMap = Record<number, number>
+
+export const uniswapFeeSpaceMap:FeeSpaceMap = {
+  100: 1,
+  500: 10,
+  3000: 60,
+  10_000: 200,
+} 
+
 export interface FactoryV3 {
   address: Address
   provider: LiquidityProviders
   initCodeHash: string  
   deployer?: Address
+  feeSpaceMap?: FeeSpaceMap
 }
 
 interface PoolInfo {
   address: Address
   token0: Token
   token1: Token
-  fee: FeeAmount
+  fee: number
   factory: FactoryV3
 }
 
@@ -236,6 +246,12 @@ export class UniV3Extractor {
       this.otherFactoryPoolSet.add(addrL)
       return
     }
+    const spacing = (p.factory.feeSpaceMap ?? uniswapFeeSpaceMap)[p.fee]
+    if (spacing === undefined) {
+      this.consoleLog(`Unknown spacing for pool ${p.address} with fee = ${p.fee}. Pool is ignored`)
+      this.otherFactoryPoolSet.add(addrL)
+      return
+    }
     const watcher = new UniV3PoolWatcher(
       p.factory.provider,
       expectedPoolAddress,
@@ -243,6 +259,7 @@ export class UniV3Extractor {
       t0,
       t1,
       p.fee,
+      spacing,
       this.multiCallAggregator,
       this.taskCounter,
     )
@@ -275,15 +292,14 @@ export class UniV3Extractor {
     const startTime = performance.now()
     const prefetched: UniV3PoolWatcher[] = []
     const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
-    const fees = Object.values(FeeAmount).filter(
-      (fee) => typeof fee === 'number',
-    ) as FeeAmount[]
     for (let i = 0; i < tokensUnique.length; ++i) {
       const t0 = tokensUnique[i]
       this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
+          const feeSpacingMap = (factory.feeSpaceMap ?? uniswapFeeSpaceMap)
+          const fees = Object.keys(feeSpacingMap).map(f => Number(f))
           fees.forEach((fee) => {
             const addr = this.computeV3Address(factory, t0, t1, fee)
             const addrL = addr.toLowerCase() as Address
@@ -368,7 +384,7 @@ export class UniV3Extractor {
         ])
         if (token0 && token1) {
           this.addPoolWatching(
-            { address, token0, token1, fee: fee as FeeAmount, factory },
+            { address, token0, token1, fee: fee as number, factory },
             'logs',
             true,
             startTime,
@@ -415,12 +431,12 @@ export class UniV3Extractor {
     factory: FactoryV3,
     tokenA: Token,
     tokenB: Token,
-    fee: FeeAmount,
+    fee: number,
   ): Address {
-    const poolCreator = factory.deployer ?? factory.address
     const key = `${tokenA.address}${tokenB.address}${fee}${factory.address}`
     const cached = this.addressCache.get(key)
     if (cached) return cached
+    const poolCreator = factory.deployer ?? factory.address
     const addr = computePoolAddress({
       factoryAddress: poolCreator,
       tokenA,
