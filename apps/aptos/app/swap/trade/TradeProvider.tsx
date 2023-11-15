@@ -1,3 +1,5 @@
+'use client'
+
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {

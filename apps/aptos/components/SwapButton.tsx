@@ -6,11 +6,13 @@ import { useSwapRouter } from 'utils/useSwapRouter'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { Modal } from './Modal/Modal'
 import WalletSelector from './WalletSelector'
+import { useIsSwapMaintenance } from '../utils/use-is-swap-maintenance'
+import { Button } from '@sushiswap/ui'
 
 export const SwapButton = () => {
+  const { data: maintenance } = useIsSwapMaintenance()
   const { connected, account } = useWallet()
-  const { amount, isPriceFetching, noRouteFound, error, token0 } =
-    useSwapState()
+  const { amount, noRouteFound, error, token0 } = useSwapState()
   const [checked, setChecked] = useState<boolean>(false)
   const { data: balance } = useTokenBalance({
     account: account?.address as string,
@@ -31,19 +33,12 @@ export const SwapButton = () => {
         <>
           <div className="pt-4">
             {connected ? (
-              <button
-                type="button"
-                className={`btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold ${
-                  noRouteFound ||
-                  error ||
-                  isPriceFetching ||
-                  Number(amount) <= 0 ||
-                  (!checked && warningSeverity(routes?.priceImpact) > 3)
-                    ? 'pointer-events-none relative opacity-[0.4] overflow-hidden'
-                    : ''
-                }`}
+              <Button
+                size="xl"
+                fullWidth
                 disabled={
                   !!(
+                    maintenance ||
                     noRouteFound ||
                     error ||
                     Number(amount) <= 0 ||
@@ -54,7 +49,9 @@ export const SwapButton = () => {
                   amount ? open() : {}
                 }}
               >
-                {!checked && warningSeverity(routes?.priceImpact) >= 3 ? (
+                {maintenance ? (
+                  'Maintenance in progress'
+                ) : !checked && warningSeverity(routes?.priceImpact) >= 3 ? (
                   <>Price impact too high</>
                 ) : noRouteFound ? (
                   noRouteFound
@@ -65,7 +62,7 @@ export const SwapButton = () => {
                 ) : (
                   <>Enter Amount</>
                 )}
-              </button>
+              </Button>
             ) : (
               <WalletSelector />
             )}
