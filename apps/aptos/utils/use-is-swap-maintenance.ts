@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { SwapEdgeConfig } from 'lib/edge/get-swap-edge-config'
-import { useEdgeConfig } from 'providers/edge-config-provider'
+import { useEdgeConfig } from '../providers/edge-config-provider'
+import { SwapEdgeConfig } from '../lib/edge/get-swap-edge-config'
 
 export const useIsSwapMaintenance = () => {
   const { maintenance } = useEdgeConfig<SwapEdgeConfig>()
@@ -20,5 +20,6 @@ export const useIsSwapMaintenance = () => {
     },
     initialData: maintenance,
     refetchInterval: 60000,
+    refetchOnWindowFocus: true,
   })
 }

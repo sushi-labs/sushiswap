@@ -1,5 +1,4 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { classNames } from '@sushiswap/ui'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { warningSeverity } from 'lib/swap/warningSeverity'
 import React, { useEffect, useState } from 'react'
@@ -8,6 +7,7 @@ import { useSwapRouter } from 'utils/useSwapRouter'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { Modal } from './Modal/Modal'
 import WalletSelector from './WalletSelector'
+import { Button } from '@sushiswap/ui'
 
 export const SwapButton = () => {
   const { data: maintenance } = useIsSwapMaintenance()
@@ -41,14 +41,12 @@ export const SwapButton = () => {
         <>
           <div className="pt-4">
             {connected ? (
-              <button
-                type="button"
-                className={classNames(
-                  'btn w-full flex items-center justify-center gap-2 cursor-pointer transition-all bg-blue hover:bg-blue-600 active:bg-blue-700 text-white px-6 h-[52px] rounded-xl text-base font-semibold',
-                  swapButtonDisabled &&
-                    'pointer-events-none relative opacity-[0.4] overflow-hidden',
-                )}
-                disabled={swapButtonDisabled}
+              <Button
+                size="xl"
+                fullWidth
+                disabled={
+                  swapButtonDisabled
+                }
                 onClick={() => {
                   amount ? open() : {}
                 }}
@@ -69,7 +67,7 @@ export const SwapButton = () => {
                 ) : (
                   <>Enter Amount</>
                 )}
-              </button>
+              </Button>
             ) : (
               <WalletSelector />
             )}
