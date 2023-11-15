@@ -1,24 +1,20 @@
-import {
-  ArrowTopRightOnSquareIcon,
-  ExclamationTriangleIcon,
-} from '@heroicons/react/24/outline'
-import { Button, List } from '@sushiswap/ui'
+import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, List } from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
-import React, { ReactNode, useCallback, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
 import { Icon } from './Icon'
-import { Modal } from './Modal/Modal'
-import { SlideIn } from './SlideIn'
-import { Overlay } from './overlay'
-interface Props {
-  id: string
-  token: Token[]
+
+interface TokenSelectorImportRow {
+  token: Token
   onImport(): void
 }
 
-export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
-  const [open, setOpen] = useState<boolean>(false)
+export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ token, onImport }) => {
+  const [, setOpen] = useState<boolean>(false)
+
+  const {network} = useNetwork()
+
   const onClick = useCallback(() => {
     onImport()
 
@@ -27,127 +23,72 @@ export const TokenSelectorImportRow = ({ id, token, onImport }: Props) => {
     }, 250)
   }, [onImport])
 
-  const { network } = useNetwork()
-
   return (
-    <>
-      <div className="py-0.5 h-[64px]">
-        <div className="flex items-center w-full h-full rounded-lg px-3">
-          <div className="flex items-center justify-between flex-grow gap-2 rounded">
-            <div className="flex flex-row items-center flex-grow gap-4">
-              <Icon currency={token[0]} height={40} width={40} />
-              <div className="flex flex-col items-start">
-                <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                  {token[0].symbol}
-                </span>
-                <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
-                  {token[0].name}
-                </span>
-              </div>
+    <Dialog>
+      <div className="relative py-0.5 h-[64px]">
+        <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
+          <div className="flex flex-row items-center flex-grow gap-4">
+            <div className="w-10 h-10">
+              <Icon currency={token} height={40} width={40} />
             </div>
-
-            <div className="flex flex-col">
-              <Button
-                className="rounded-full"
-                color="blue"
-                size="xs"
-                onClick={() => setOpen(true)}
-              >
-                Import
-              </Button>
+            <div className="flex flex-col items-start">
+              <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">
+                {token.symbol}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+                {token.name}
+              </span>
             </div>
+          </div>
+          <div className="flex flex-col">
+            <DialogTrigger asChild>
+              <Button size="xs">Import</Button>
+            </DialogTrigger>
           </div>
         </div>
       </div>
-      <SlideIn.FromRight show={open} onClose={() => setOpen(false)}>
-        <Overlay.Content className="bg-white dark:bg-slate-800 !pb-0">
-          <Overlay.Header onBack={() => setOpen(false)} title="" />
-
-          <div className="space-y-3 my-3">
-            <div className="rounded-2xl p-3 flex flex-col gap-2 items-center">
-              <ExclamationTriangleIcon
-                width={26}
-                height={26}
-                className="text-red"
-              />
-              <span className="font-medium text-lg text-gray-900 dark:text-slate-200">
-                Trade at your own risk!
-              </span>
-              <span className="text-sm text-gray-600 dark:text-slate-400 text-center">
-                {token.length > 1 ? "These tokens don't" : "This token doesn't"}{' '}
-                appear on the active token list(s). Anyone can create a token,
-                including creating fake versions of existing tokens that claim
-                to represent projects
-              </span>
-            </div>
-            <List>
-              <List.Control>
-                {token.reduce<ReactNode[]>((acc, cur) => {
-                  if (cur) {
-                    acc.push(
-                      <div className="py-0.5 h-[64px]" key={cur.address}>
-                        <div className="flex items-center w-full h-full rounded-lg px-3">
-                          <div className="flex items-center justify-between flex-grow gap-2 rounded">
-                            <div className="flex flex-row items-center flex-grow gap-4">
-                              <Icon currency={cur} height={40} width={40} />
-                              <div className="flex flex-col items-start">
-                                <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                                  {cur.symbol}
-                                </span>
-                                <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
-                                  {cur.name}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-col">
-                              <span className="text-right font-medium text-sm text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
-                                {cur.address.substring(0, 6)} ...{' '}
-                                {cur.address.split('::')[0].substring(66 - 4)}
-                              </span>
-                              <a
-                                target="_blank"
-                                href={`https://explorer.aptoslabs.com/account/${
-                                  cur.address.split('::')[0]
-                                }?network=${networkNameToNetwork(network)}`}
-                                className="flex gap-1 text-sm items-center text-blue font-medium justify-end"
-                                rel="noreferrer"
-                              >
-                                View on Explorer{' '}
-                                <ArrowTopRightOnSquareIcon
-                                  width={14}
-                                  height={14}
-                                />
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>,
-                    )
-                  }
-                  return acc
-                }, [])}
-              </List.Control>
-            </List>
-            <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1">
-              <Modal.Trigger tag={`${id}-token-selector-modal`}>
-                {({ close }) => (
-                  <Button
-                    fullWidth
-                    color="blue"
-                    onClick={() => {
-                      onClick()
-                      close()
-                    }}
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Import token</DialogTitle>
+          <DialogDescription>
+            Trade at your own risk! This token doesn't appear on the active
+            token list(s). Anyone can create a token, including creating fake
+            versions of existing tokens that claim to represent projects.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-4">
+          <List className="!pt-0">
+            <List.Control>
+              <div className="flex items-center gap-4 py-2 px-4">
+                <Icon currency={token} width={40} height={40} />
+                <div className="flex flex-col gap-1">
+                  <span className="truncate font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
+                    {token.symbol}
+                  </span>
+                  <a
+                    target="_blank"
+                    href={`https://explorer.aptoslabs.com/account/${
+                      token.address.split('::')[0]
+                    }?network=${networkNameToNetwork(network)}`}
+                    className="flex gap-1 text-sm text-blue font-medium"
+                    rel="noreferrer"
                   >
-                    Import
-                  </Button>
-                )}
-              </Modal.Trigger>
-            </div>
+                    {token.address.substring(0, 6)} ...{' '}
+                    {token.address.split('::')[0].substring(66 - 4)}
+                  </a>
+                </div>
+              </div>
+            </List.Control>
+          </List>
+        </div>
+        <DialogFooter>
+          <div className="flex flex-col gap-3 w-full">
+            <Button fullWidth size="xl" onClick={onClick}>
+              I understand
+            </Button>
           </div>
-        </Overlay.Content>
-      </SlideIn.FromRight>
-    </>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
