@@ -166,8 +166,7 @@ export default function TokenListDialog({
               !customTokens[`${queryToken.address}`] &&
               !tokens?.[`${queryToken.address}`] && (
                 <TokenSelectorImportRow
-                  id={id}
-                  token={[queryToken]}
+                  token={queryToken}
                   onImport={() => {
                     queryToken && handleImport(queryToken)
                     close()
