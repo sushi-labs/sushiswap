@@ -60,11 +60,11 @@ const liquidityAbi: Abi = [
 const tickSpacingAbi: Abi = [
   {
     inputs: [],
-    name: "tickSpacing",
-    outputs: [{ internalType: "int24", name:"", type: "int24" }],
-    stateMutability: "view",
-    type: "function"
-  }
+    name: 'tickSpacing',
+    outputs: [{ internalType: 'int24', name: '', type: 'int24' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ]
 
 export const UniV3EventsAbi = [
@@ -80,7 +80,8 @@ export const UniV3EventsAbi = [
   parseAbiItem(
     'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)',
   ),
-  parseAbiItem( // For Pancake
+  parseAbiItem(
+    // For Pancake
     'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint128 protocolFeesToken0, uint128 protocolFeesToken1)',
   ),
   parseAbiItem(
@@ -161,7 +162,11 @@ export class UniV3PoolWatcher extends EventEmitter {
             returnValues: [slot0, tickSpacing, liquidity, balance0, balance1],
           } = await this.client.callSameBlock([
             { address: this.address, abi: slot0Abi, functionName: 'slot0' },
-            { address: this.address, abi: tickSpacingAbi, functionName: 'tickSpacing' },
+            {
+              address: this.address,
+              abi: tickSpacingAbi,
+              functionName: 'tickSpacing',
+            },
             {
               address: this.address,
               abi: liquidityAbi,
@@ -182,7 +187,10 @@ export class UniV3PoolWatcher extends EventEmitter {
           ])
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
-          if (tickSpacing !== this.spacing) throw new Error(`Wrong spacing. Expected: ${this.spacing}. Real: ${tickSpacing}`)
+          if (tickSpacing !== this.spacing)
+            throw new Error(
+              `Wrong spacing. Expected: ${this.spacing}. Real: ${tickSpacing}`,
+            )
 
           const [sqrtPriceX96, tick] = slot0 as [bigint, number]
           this.state = {

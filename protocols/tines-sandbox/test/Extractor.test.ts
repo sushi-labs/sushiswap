@@ -128,7 +128,7 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
     provider: LiquidityProviders.PancakeSwapV3,
     initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
     deployer: PANCAKESWAP_V3_DEPLOYER_ADDRESS[chainId],
-    feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP
+    feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP,
   } as const
 }
 
@@ -478,7 +478,7 @@ it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
     transport: config[ChainId.BSC].transport,
     chain: config[ChainId.BSC].chain as Chain,
-    factoriesV2: [ ],
+    factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
     tickHelperContract: TickLensContract[ChainId.BSC],
     cacheDir: './cache',

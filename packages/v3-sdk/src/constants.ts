@@ -332,5 +332,5 @@ export const PANCAKESWAP_V3_FEE_SPACING_MAP: Record<number, number> = {
   100: 1,
   500: 10,
   2500: 50,
-  10_000: 200
+  10_000: 200,
 }
