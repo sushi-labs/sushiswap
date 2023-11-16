@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { isExtractorSupportedChainId } from 'sushi/config'
 import { isAddress } from 'viem'
 import { z } from 'zod'
-import { getPrice } from '../../../lib/api/v2.js'
-import { Currency } from '../../../lib/enums.js'
+import { Currency, getPrice } from '../../../lib/api/v2.js'
 
 const schema = z.object({
   chainId: z.coerce
@@ -17,17 +17,24 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600')
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
 
   const { chainId, currency, address } = schema.parse(request.query)
 
-  const price = await getPrice(chainId, address, currency)
+  if (!isExtractorSupportedChainId(chainId)) {
+    const price = await fetch(
+      `https://token-price.sushi.com/v1/${chainId}/${address}?currency=${currency}`,
+    )
+    const json = await price.json()
+    return response.status(200).json(json)
+  } else {
+    const price = await getPrice(chainId, address, currency)
+    console.log({ price })
 
-  console.log('token price', price)
+    if (price === undefined) return response.status(404).send(0)
 
-  if (price === undefined) return response.status(404).send(0)
-
-  return response.status(200).json(price)
+    return response.status(200).json(price)
+  }
 }
 
 export default handler

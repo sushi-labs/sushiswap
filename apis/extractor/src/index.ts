@@ -21,25 +21,23 @@ import cors from 'cors'
 import express, { type Express, type Request, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
+  EXTRACTOR_SUPPORTED_CHAIN_IDS,
+  type ExtractorSupportedChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   RouteProcessor3ChainId,
   type RouteProcessor3_1ChainId,
   type RouteProcessor3_2ChainId,
+  isExtractorSupportedChainId,
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
-import { Native } from 'sushi/currency'
-import { type Address } from 'viem'
+import { Native, Token } from 'sushi/currency'
+import { type Address, isAddress } from 'viem'
 import z from 'zod'
-import {
-  EXTRACTOR_CONFIG,
-  SUPPORTED_CHAIN_IDS,
-  type SupportedChainId,
-  isSupportedChainId,
-} from './config'
+import { EXTRACTOR_CONFIG } from './config'
 
 const querySchema = z.object({
   chainId: z.coerce
@@ -51,7 +49,7 @@ const querySchema = z.object({
     .refine(
       (chainId) =>
         isRouteProcessor3ChainId(chainId as RouteProcessor3ChainId) &&
-        isSupportedChainId(chainId),
+        isExtractorSupportedChainId(chainId),
       {
         message: 'ChainId not supported.',
       },
@@ -79,7 +77,7 @@ const querySchema3_1 = querySchema.extend({
     .refine(
       (chainId) =>
         isRouteProcessor3_1ChainId(chainId as RouteProcessor3_1ChainId) &&
-        isSupportedChainId(chainId),
+        isExtractorSupportedChainId(chainId),
       {
         message: 'ChainId not supported.',
       },
@@ -97,7 +95,7 @@ const querySchema3_2 = querySchema.extend({
     .refine(
       (chainId) =>
         isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId) &&
-        isSupportedChainId(chainId),
+        isExtractorSupportedChainId(chainId),
       {
         message: 'ChainId not supported.',
       },
@@ -141,7 +139,7 @@ async function main() {
     tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
 
-  for (const chainId of SUPPORTED_CHAIN_IDS) {
+  for (const chainId of EXTRACTOR_SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
       warningMessageHandler: (
@@ -556,20 +554,52 @@ async function main() {
     return res.status(200).send()
   })
 
-  // app.get('/pool-codes-for-tokens', (req: Request, res: Response) => {
-  //   // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
-  //   const { chainId } = querySchema.parse(req.query)
-  //   const extractor = extractors.get(chainId) as Extractor
-  //   const tokenManager = tokenManagers.get(chainId) as TokenManager
-  //   const tokens = BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
-  //     Array.from(tokenManager.tokens.values()).slice(0, 100),
-  //   )
-  //   const poolCodes = extractor.getPoolCodesForTokens(tokens)
-  //   return res.json(poolCodes)
-  // })
+  app.get('/pool-codes-for-token', async (req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
+    // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
+    const { chainId, address } = z
+      .object({
+        chainId: z.coerce
+          .number()
+          .int()
+          .gte(0)
+          .lte(2 ** 256)
+          .default(ChainId.ETHEREUM)
+          .refine((chainId) => isExtractorSupportedChainId(chainId), {
+            message: 'ChainId not supported.',
+          })
+          .transform((chainId) => chainId as ExtractorSupportedChainId),
+        address: z.coerce.string().refine(isAddress, {
+          message: 'Address is not checksummed.',
+        }),
+      })
+      .parse(req.query)
+    const extractor = extractors.get(chainId) as Extractor
+    const tokenManager = tokenManagers.get(chainId) as TokenManager
+    const token = (await tokenManager.findToken(address)) as Token
+    const poolCodesMap = new Map<string, PoolCode>()
+    const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
+    const additional = ADDITIONAL_BASES[chainId]?.[token.wrapped.address] ?? []
+    const tokens = Array.from(
+      new Set([token.wrapped, ...common, ...additional]),
+    )
+    const { prefetched: cachedPoolCodes, fetchingNumber } =
+      extractor.getPoolCodesForTokensFull(tokens)
+    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    if (fetchingNumber > 0) {
+      const poolCodes = await extractor.getPoolCodesForTokensAsync(
+        tokens,
+        2_000,
+      )
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    }
+    const { serialize } = await import('wagmi')
+    return res.json(serialize(Array.from(poolCodesMap.values())))
+  })
 
   app.get('/pool-codes', async (req: Request, res: Response) => {
     // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
     const { chainId } = z
       .object({
         chainId: z.coerce
@@ -578,10 +608,10 @@ async function main() {
           .gte(0)
           .lte(2 ** 256)
           .default(ChainId.ETHEREUM)
-          .refine((chainId) => isSupportedChainId(chainId), {
+          .refine((chainId) => isExtractorSupportedChainId(chainId), {
             message: 'ChainId not supported.',
           })
-          .transform((chainId) => chainId as SupportedChainId),
+          .transform((chainId) => chainId as ExtractorSupportedChainId),
       })
       .parse(req.query)
     const extractor = extractors.get(chainId) as Extractor

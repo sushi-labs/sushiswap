@@ -25,7 +25,7 @@ export const SimpleSwapHeader = () => {
     amounts,
   })
 
-  const { data: prices } = usePrices({ chainId })
+  const { data: prices, isLoading: isPricesLoading } = usePrices({ chainId })
 
   const price = useMemo(() => {
     if (!token0 || !token1) return '0.00'
@@ -55,7 +55,7 @@ export const SimpleSwapHeader = () => {
   return (
     <div className="flex flex-col items-start gap-2 mb-4 sm:mt-10 mt-2">
       <h1 className={typographyVariants({ variant: 'h1' })}>Trade</h1>
-      {isLoading || !token0 || !token1 ? (
+      {isLoading || isPricesLoading || !token0 || !token1 ? (
         <SkeletonText fontSize="sm" className="w-2/4" />
       ) : (
         <Button

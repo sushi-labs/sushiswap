@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { Fraction } from 'sushi/math'
 import { getAddress, isAddress, parseUnits } from 'viem'
 
@@ -8,10 +9,10 @@ interface UsePrices {
 
 export const usePrices = ({ chainId }: UsePrices) => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v1/${chainId}`],
+    queryKey: [`https://token-price.sushi.com/v2/${chainId}`],
     queryFn: async () => {
       const data: Record<string, number> = await fetch(
-        `https://token-price.sushi.com/v1/${chainId}`,
+        `https://token-price.sushi.com/v2/${chainId}`,
         // `http://localhost:3001/v2/${chainId}`,
       ).then((response) => response.json())
       return Object.entries(data).reduce<Record<string, Fraction>>(
@@ -28,8 +29,10 @@ export const usePrices = ({ chainId }: UsePrices) => {
         {},
       )
     },
-    staleTime: 900000, // 15 mins
-    cacheTime: 3600000, // 1hr
+    staleTime: ms('15s'),
+    cacheTime: ms('1m'),
+    // staleTime: 900000, // 15 mins
+    // cacheTime: 3600000, // 1hr
     refetchOnWindowFocus: false,
     enabled: Boolean(chainId),
   })

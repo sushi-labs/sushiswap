@@ -1,6 +1,10 @@
 import { createClient } from '@sushiswap/database'
 
-import { Currency } from '../enums.js'
+const Currency = {
+  USD: 'USD',
+  NATIVE: 'NATIVE',
+} as const
+type Currency = typeof Currency[keyof typeof Currency]
 
 /**
  * Get the price of a token
