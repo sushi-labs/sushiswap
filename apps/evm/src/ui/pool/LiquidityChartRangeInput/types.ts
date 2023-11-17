@@ -1,5 +1,3 @@
-import { Bound } from 'src/lib/constants'
-
 export interface ChartEntry {
   activeLiquidity: number
   price0: number
@@ -32,7 +30,7 @@ export interface LiquidityChartRangeInputProps {
     series: ChartEntry[]
     current: number
   }
-  ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
+  priceRange: number | undefined
 
   styles: {
     area: {
@@ -61,6 +59,16 @@ export interface LiquidityChartRangeInputProps {
     mode: string | undefined,
   ) => void
 
+  getNewRangeWhenBrushing: (
+    range: [number, number],
+    movingHandle: HandleType | undefined,
+  ) => [number, number] | undefined
+
   zoomLevels: ZoomLevels
   hideBrushes?: boolean
+}
+
+export enum HandleType {
+  e = 'e',
+  w = 'w',
 }

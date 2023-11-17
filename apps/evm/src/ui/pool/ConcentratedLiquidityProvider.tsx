@@ -8,8 +8,10 @@ import {
   TICK_SPACINGS,
   TickMath,
   encodeSqrtRatioX96,
+  getPriceRangeWithTokenRatio,
   nearestUsableTick,
   priceToClosestTick,
+  priceToNumber,
   tickToPrice,
 } from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
@@ -38,10 +40,12 @@ type FullRange = true
 
 interface State {
   independentField: Field
+  independentRangeField: Bound
   typedValue: string
   startPriceTypedValue: string // for the case when there's no liquidity
   leftRangeTypedValue: string | FullRange
   rightRangeTypedValue: string | FullRange
+  weightLockedCurrencyBase: number | undefined
 }
 
 type Api = {
@@ -52,14 +56,18 @@ type Api = {
   onStartPriceInput(typedValue: string): void
   resetMintState(): void
   setFullRange(): void
+  setWeightLockedCurrencyBase(value: number | undefined): void
+  setIndependentRangeField(value: Bound): void
 }
 
 const initialState: State = {
   independentField: Field.CURRENCY_A,
+  independentRangeField: Bound.LOWER,
   typedValue: '',
   startPriceTypedValue: '',
   leftRangeTypedValue: '',
   rightRangeTypedValue: '',
+  weightLockedCurrencyBase: undefined,
 }
 
 type Actions =
@@ -74,6 +82,8 @@ type Actions =
   | { type: 'typeRightRangeInput'; typedValue: string }
   | { type: 'setFullRange' }
   | { type: 'typeStartPriceInput'; typedValue: string }
+  | { type: 'setWeightLockedCurrencyBase'; value: number | undefined }
+  | { type: 'setIndependentRangeField'; value: Bound }
 
 const ConcentratedLiquidityStateContext = createContext<State>(initialState)
 const ConcentratedLiquidityActionsContext = createContext<Api>({} as Api)
@@ -96,6 +106,12 @@ const reducer = (state: State, action: Actions): State => {
         independentField: action.field,
         typedValue: action.typedValue,
       }
+    }
+    case 'setWeightLockedCurrencyBase': {
+      return { ...state, weightLockedCurrencyBase: action.value }
+    }
+    case 'setIndependentRangeField': {
+      return { ...state, independentRangeField: action.value }
     }
   }
 }
@@ -155,6 +171,10 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
       dispatch({ type: 'typeStartPriceInput', typedValue })
     const resetMintState = () => dispatch({ type: 'resetMintState' })
     const setFullRange = () => dispatch({ type: 'setFullRange' })
+    const setWeightLockedCurrencyBase = (value: number | undefined) =>
+      dispatch({ type: 'setWeightLockedCurrencyBase', value })
+    const setIndependentRangeField = (value: Bound) =>
+      dispatch({ type: 'setIndependentRangeField', value })
 
     return {
       resetMintState,
@@ -164,6 +184,8 @@ export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
       onLeftRangeInput,
       onRightRangeInput,
       onStartPriceInput,
+      setWeightLockedCurrencyBase,
+      setIndependentRangeField,
     }
   }, [])
 
@@ -240,13 +262,17 @@ export function useConcentratedDerivedMintInfo({
   ticksAtLimit: { [_ticksAtLimitBound in Bound]?: boolean | undefined }
   isLoading: boolean
   isInitialLoading: boolean
+  leftBoundInput: string | true
+  rightBoundInput: string | true
 } {
   const {
     independentField,
+    independentRangeField,
     typedValue,
     leftRangeTypedValue,
     rightRangeTypedValue,
     startPriceTypedValue,
+    weightLockedCurrencyBase,
   } = useConcentratedMintState()
 
   const dependentField =
@@ -369,6 +395,42 @@ export function useConcentratedDerivedMintInfo({
     [feeAmount],
   )
 
+  const [leftBoundInput, rightBoundInput] = useMemo((): [
+    string | true,
+    string | true,
+  ] => {
+    if (
+      typeof weightLockedCurrencyBase === 'number' &&
+      price &&
+      leftRangeTypedValue !== '' &&
+      rightRangeTypedValue !== ''
+    ) {
+      const newRange = getPriceRangeWithTokenRatio(
+        priceToNumber(invertPrice ? price.invert() : price),
+        leftRangeTypedValue === true ? 2 ** -112 : Number(leftRangeTypedValue),
+        rightRangeTypedValue === true ? 2 ** 112 : Number(rightRangeTypedValue),
+        independentRangeField,
+        weightLockedCurrencyBase,
+      )?.map((x) => withoutScientificNotation(x.toString()))
+
+      if (
+        newRange &&
+        typeof newRange[0] === 'string' &&
+        typeof newRange[1] === 'string'
+      ) {
+        return [newRange[0], newRange[1]]
+      }
+    }
+    return [leftRangeTypedValue, rightRangeTypedValue]
+  }, [
+    weightLockedCurrencyBase,
+    leftRangeTypedValue,
+    rightRangeTypedValue,
+    independentRangeField,
+    price,
+    invertPrice,
+  ])
+
   // parse typed range values and determine closest ticks
   // lower should always be a smaller tick
   const ticks = useMemo(() => {
@@ -376,48 +438,28 @@ export function useConcentratedDerivedMintInfo({
       [Bound.LOWER]:
         typeof existingPosition?.tickLower === 'number'
           ? existingPosition.tickLower
-          : (invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-            (!invertPrice && typeof leftRangeTypedValue === 'boolean')
+          : (invertPrice && rightBoundInput === true) ||
+            (!invertPrice && leftBoundInput === true)
           ? tickSpaceLimits[Bound.LOWER]
           : invertPrice
-          ? tryParseTick(
-              token1,
-              token0,
-              feeAmount,
-              rightRangeTypedValue.toString(),
-            )
-          : tryParseTick(
-              token0,
-              token1,
-              feeAmount,
-              leftRangeTypedValue.toString(),
-            ),
+          ? tryParseTick(token1, token0, feeAmount, rightBoundInput.toString())
+          : tryParseTick(token0, token1, feeAmount, leftBoundInput.toString()),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? existingPosition.tickUpper
-          : (!invertPrice && typeof rightRangeTypedValue === 'boolean') ||
-            (invertPrice && typeof leftRangeTypedValue === 'boolean')
+          : (invertPrice && leftBoundInput === true) ||
+            (!invertPrice && rightBoundInput === true)
           ? tickSpaceLimits[Bound.UPPER]
           : invertPrice
-          ? tryParseTick(
-              token1,
-              token0,
-              feeAmount,
-              leftRangeTypedValue.toString(),
-            )
-          : tryParseTick(
-              token0,
-              token1,
-              feeAmount,
-              rightRangeTypedValue.toString(),
-            ),
+          ? tryParseTick(token1, token0, feeAmount, leftBoundInput.toString())
+          : tryParseTick(token0, token1, feeAmount, rightBoundInput.toString()),
     }
   }, [
     existingPosition,
     feeAmount,
     invertPrice,
-    leftRangeTypedValue,
-    rightRangeTypedValue,
+    leftBoundInput,
+    rightBoundInput,
     token0,
     token1,
     tickSpaceLimits,
@@ -663,6 +705,8 @@ export function useConcentratedDerivedMintInfo({
       currencies,
       pool,
       parsedAmounts,
+      leftBoundInput,
+      rightBoundInput,
       ticks,
       price,
       pricesAtTicks,
@@ -688,6 +732,7 @@ export function useConcentratedDerivedMintInfo({
       invalidPool,
       invalidRange,
       invertPrice,
+      leftBoundInput,
       noLiquidity,
       outOfRange,
       parsedAmounts,
@@ -696,6 +741,7 @@ export function useConcentratedDerivedMintInfo({
       price,
       pricesAtLimit,
       pricesAtTicks,
+      rightBoundInput,
       ticks,
       ticksAtLimit,
       usePool,
@@ -830,5 +876,36 @@ export function useRangeHopCallbacks(
     getIncrementUpper,
     getSetFullRange: setFullRange,
     resetMintState,
+  }
+}
+
+/**
+ * Convert scientific notation into decimal form, e.g. "-12.34e-5" => "-0.0001234",
+ * @param value Number in scientific notation
+ * @return Number in decimal form only
+ */
+export function withoutScientificNotation(value: string): string | undefined {
+  if (!value.includes('e')) return value
+
+  if (!value.match(/^-?\d*\.?\d+(e[+-]?\d+)?$/)) return undefined
+
+  const [sign, absValue] = value.startsWith('-')
+    ? ['-', value.slice(1)]
+    : ['', value]
+  const [m, n] = absValue.split('e')
+  const [integer, fraction] = m.split('.')
+
+  const mantissa = (integer + (fraction ?? '')).replace(/^0+/, '')
+  const exponent = parseInt(n ?? 0) - (fraction ?? '').length
+
+  if (exponent >= 0) {
+    return sign + mantissa + '0'.repeat(exponent)
+  } else {
+    const i = mantissa.length + exponent
+    if (i > 0) {
+      return `${sign + mantissa.slice(0, i)}.${mantissa.slice(i) || 0}`
+    } else {
+      return `${sign}0.${'0'.repeat(-i)}${mantissa}`
+    }
   }
 }
