@@ -20,7 +20,12 @@ import {
   SUSHISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
 import {
+  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
+  PANCAKESWAP_V3_FACTORY_ADDRESS,
+  PANCAKESWAP_V3_FEE_SPACING_MAP,
+  PANCAKESWAP_V3_INIT_CODE_HASH,
   POOL_INIT_CODE_HASH,
+  PancakeSwapV3ChainId,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
@@ -54,6 +59,7 @@ export const RP3Address = {
     '0x2f686751b19a9d91cc3d57d90150Bc767f050066' as Address,
   [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
   [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
+  [ChainId.BSC]: '0xd36990D74b947eC4Ad9f52Fe3D49d14AdDB51E44' as Address,
 }
 
 export const TickLensContract = {
@@ -66,6 +72,7 @@ export const TickLensContract = {
     '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
   [ChainId.AVALANCHE]: '0xDdC1b5920723F774d2Ec2C3c9355251A20819776' as Address,
   [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
+  [ChainId.BSC]: '0xD9270014D396281579760619CCf4c3af0501A47C' as Address,
 }
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
@@ -112,6 +119,16 @@ function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
     address: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
     provider: LiquidityProviders.SushiSwapV3,
     initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chainId],
+  } as const
+}
+
+export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
+  return {
+    address: PANCAKESWAP_V3_FACTORY_ADDRESS[chainId],
+    provider: LiquidityProviders.PancakeSwapV3,
+    initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
+    deployer: PANCAKESWAP_V3_DEPLOYER_ADDRESS[chainId],
+    feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP,
   } as const
 }
 
@@ -265,7 +282,6 @@ it.skip('Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    //[], //uniswapV2Factory(ChainId.ETHEREUM)], //,
     factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
     factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
@@ -455,5 +471,19 @@ it.skip('Extractor Base infinite work test', async () => {
     //   decimals: 18,
     // }),
     // ],
+  })
+})
+
+it.skip('Extractor BSC infinite work test', async () => {
+  await startInfinitTest({
+    transport: config[ChainId.BSC].transport,
+    chain: config[ChainId.BSC].chain as Chain,
+    factoriesV2: [],
+    factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
+    tickHelperContract: TickLensContract[ChainId.BSC],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RP3Address: RP3Address[ChainId.BSC],
   })
 })
