@@ -201,10 +201,11 @@ export class Router {
     if (poolCodes instanceof Map) poolCodesMap = poolCodes
     else {
       poolCodesMap = new Map()
-      poolCodes.forEach(p => poolCodesMap.set(p.pool.uniqueID(), p))
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
     }
-    
-    let poolCodesList = poolCodes instanceof Map ? Array.from(poolCodes.values()) : poolCodes
+
+    let poolCodesList =
+      poolCodes instanceof Map ? Array.from(poolCodes.values()) : poolCodes
     if (providers) {
       poolCodesList = poolCodesList.filter((pc) =>
         [...providers, LiquidityProviders.NativeWrap].includes(

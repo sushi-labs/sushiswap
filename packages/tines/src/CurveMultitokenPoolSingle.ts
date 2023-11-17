@@ -102,7 +102,7 @@ class CurveMultitokenCoreSingle {
     this.reserves = reserves
     const decimalsMax = Math.max(...tokens.map((t) => t.decimals))
     this.rates = tokens.map(
-      (t, i) => Math.pow(10, decimalsMax - t.decimals) * (rates?.[i] ?? 1),
+      (t, i) => 10 ** (decimalsMax - t.decimals) * (rates?.[i] ?? 1),
     )
     this.ratesBN18 = this.rates.map((r) => getBigInt(r * 1e18)) // precision is 18 digits
     this.reservesRated = this.reserves.map(
@@ -114,7 +114,7 @@ class CurveMultitokenCoreSingle {
     this.n = BigInt(this.tokens.length)
     this.Annn = this.Ann * this.n
     this.AnnMinus1 = this.Ann - 1n
-    this.nn = getBigInt(Math.pow(this.tokens.length, this.tokens.length))
+    this.nn = getBigInt(this.tokens.length ** this.tokens.length)
     this.nPlus1 = this.n + 1n
   }
 
@@ -134,7 +134,9 @@ class CurveMultitokenCoreSingle {
     const AnnS = this.Ann * s
     for (let i = 0; i < 256; i++) {
       let dP = D
-      this.reservesRated.forEach((r) => (dP = (dP * D) / r))
+      this.reservesRated.forEach((r) => {
+        dP = (dP * D) / r
+      })
       dP = dP / this.nn
       prevD = D
       // D = (Ann * S + D_P * N_COINS) * D / ((Ann - 1) * D + (N_COINS + 1) * D_P)
@@ -153,8 +155,8 @@ class CurveMultitokenCoreSingle {
     let S_ = ZERO
     for (let i = 0; i < this.tokens.length; ++i) {
       let _x = ZERO
-      if (i == xIndex) _x = x
-      else if (i != yIndex) _x = this.reservesRated[i] as bigint
+      if (i === xIndex) _x = x
+      else if (i !== yIndex) _x = this.reservesRated[i] as bigint
       else continue
       S_ = S_ + _x
       c = (c * D) / _x / this.n
@@ -198,8 +200,8 @@ class CurveMultitokenCoreSingle {
     to: number,
   ): { inp: number; gasSpent: number } {
     if (this.singlePairUsed)
-    if (this.singlePairUsed[0] !== from || this.singlePairUsed[1] !== to)
-      return { inp: Number.POSITIVE_INFINITY, gasSpent: 0 }
+      if (this.singlePairUsed[0] !== from || this.singlePairUsed[1] !== to)
+        return { inp: Number.POSITIVE_INFINITY, gasSpent: 0 }
     amountOut *= this.rates[to] as number
     const xBN = this.reservesRated[from] as bigint
     const yBN = this.reservesRated[to] as bigint
@@ -220,17 +222,17 @@ class CurveMultitokenCoreSingle {
   calcCurrentPriceWithoutFee(from: number, to: number): number {
     const xInp = Number(this.reservesRated[from])
     const D = Number(this.computeLiquidity())
-    let Sx = 0,
-      Px = 1
+    let Sx = 0
+    let Px = 1
     this.tokens.forEach((_, i) => {
-      if (i == to) return
+      if (i === to) return
       const x = Number(this.reservesRated[i])
       Sx += x
       Px *= x
     })
     const n = this.tokens.length
     const b = Sx + D / this.A / n - D
-    const c = Math.pow(D / n, n + 1) / Px / this.A
+    const c = (D / n) ** (n + 1) / Px / this.A
     const Ds = Math.sqrt(b * b + 4 * c)
     const dD = 2 * b - (4 * c) / xInp
     const price = 0.5 - dD / Ds / 4
@@ -238,14 +240,22 @@ class CurveMultitokenCoreSingle {
     return price * scale
   }
 
-  setCurrentFlow(from: number, to: number, flow0: number, flow1: number, _gas: number) {
+  setCurrentFlow(
+    from: number,
+    to: number,
+    flow0: number,
+    flow1: number,
+    _gas: number,
+  ) {
     if (this.singlePairUsed) {
       if (flow0 !== 0 || flow1 !== 0)
-        console.assert(this.singlePairUsed[0] == from && this.singlePairUsed[1] == to, 'CurveMultitokenCoreSingle unexpected pair error')
+        console.assert(
+          this.singlePairUsed[0] === from && this.singlePairUsed[1] === to,
+          'CurveMultitokenCoreSingle unexpected pair error',
+        )
       else this.singlePairUsed = undefined
     } else {
-      if (flow0 !== 0 || flow1 !== 0)
-      this.singlePairUsed = [from, to]
+      if (flow0 !== 0 || flow1 !== 0) this.singlePairUsed = [from, to]
     }
   }
 }
@@ -258,7 +268,14 @@ export function createCurvePoolsSingleForMultipool(
   reserves: bigint[],
   rates?: number[],
 ) {
-  const core = new CurveMultitokenCoreSingle(address, tokens, fee, A, reserves, rates)
+  const core = new CurveMultitokenCoreSingle(
+    address,
+    tokens,
+    fee,
+    A,
+    reserves,
+    rates,
+  )
   const pools: CurveMultitokenPoolSingle[] = []
   for (let i = 0; i < tokens.length; ++i)
     for (let j = i + 1; j < tokens.length; ++j)

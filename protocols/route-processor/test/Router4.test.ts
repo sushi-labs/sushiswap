@@ -87,7 +87,7 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
 }
 
 async function setRouterPrimaryBalance(
-  client: Client,
+  _client: Client,
   router: Address,
   token?: Address,
   amount = 1n,
@@ -266,7 +266,7 @@ async function makeSwap(
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
-  throwAtNoWay = true
+  throwAtNoWay = true,
 ): Promise<[bigint, bigint] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -335,9 +335,9 @@ async function makeSwap(
   // })
   // if (route.fromToken.symbol !== 'ETH' && route.toToken.symbol !== 'ETH') {
   //   route.legs.forEach(l => {
-  //     if (l.tokenFrom.symbol == 'ETH') 
+  //     if (l.tokenFrom.symbol == 'ETH')
   //     console.log(`    IN ${l.tokenFrom.symbol} ${l.absolutePortion} ${l.uniqueId} `)
-  //     if (l.tokenTo.symbol == 'ETH') 
+  //     if (l.tokenTo.symbol == 'ETH')
   //     console.log(`    OUT ${l.tokenTo.symbol} ${l.uniqueId} `)
   //   })
   // }
@@ -454,7 +454,7 @@ async function updMakeSwap(
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
-  throwAtNoWay = true
+  throwAtNoWay = true,
 ): Promise<[bigint | undefined, bigint]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
@@ -472,7 +472,7 @@ async function updMakeSwap(
     providers,
     poolFilter,
     permits,
-    throwAtNoWay
+    throwAtNoWay,
   )
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -848,9 +848,14 @@ describe('End-to-end RouteProcessor4 test', async function () {
       intermidiateResult[0] = getBigInt(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
-        console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter, 
-          `pools: ${env.poolCodes.size - usedPools.size}/${env.poolCodes.size}`, 
-          `${testTokensSet[currentToken]?.symbol} => ${testTokensSet[nextToken]?.symbol}`)
+        console.log(
+          'Round # ',
+          i + 1,
+          ' Total Route # ',
+          ++routeCounter,
+          `pools: ${env.poolCodes.size - usedPools.size}/${env.poolCodes.size}`,
+          `${testTokensSet[currentToken]?.symbol} => ${testTokensSet[nextToken]?.symbol}`,
+        )
         intermidiateResult = await updMakeSwap(
           env,
           testTokensSet[currentToken] as Type,
@@ -860,7 +865,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
           undefined,
           undefined,
           undefined,
-          false //throwAtNoWay
+          false, //throwAtNoWay
         )
         currentToken = nextToken
         if (
@@ -1018,7 +1023,6 @@ describe('End-to-end RouteProcessor4 test', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e5) * BigInt(1e18)
-      debugger
       intermidiateResult = await updMakeSwap(
         env,
         Native.onChain(chainId),
@@ -1085,7 +1089,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
 
     const amountInForTest: Record<Address, number> = {
       '0x0ce6a5ff5217e38315f87032cf90686c96627caa': 1e16,
-      '0x93054188d876f558f4a66b2ef1d97d16edf0895b': 1e10
+      '0x93054188d876f558f4a66b2ef1d97d16edf0895b': 1e10,
     }
 
     const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]

@@ -102,5 +102,7 @@ export abstract class RPool {
   }
 
   // not so easy for multitoken pools
-  uniqueID(): string { return this.address}
+  uniqueID(): string {
+    return this.address
+  }
 }

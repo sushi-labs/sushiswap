@@ -1,7 +1,7 @@
 import { Address } from 'viem'
 
+import { ConstantProductRPool } from './PrimaryPools'
 import { RPool, RToken, setTokenId } from './RPool'
-import { ConstantProductRPool} from './PrimaryPools'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, DEBUG, closeValues, getBigInt } from './Utils'
 
@@ -313,14 +313,18 @@ export class Edge {
 
   applySwap(from: Vertice) {
     console.assert(this.amountInPrevious * this.amountOutPrevious >= 0)
-    const inPrev = this.direction ? this.amountInPrevious : -this.amountInPrevious
-    const outPrev = this.direction ? this.amountOutPrevious : -this.amountOutPrevious
+    const inPrev = this.direction
+      ? this.amountInPrevious
+      : -this.amountInPrevious
+    const outPrev = this.direction
+      ? this.amountOutPrevious
+      : -this.amountOutPrevious
     const to = from.getNeibour(this)
     const inInc = from === this.vert0 ? from.bestIncome : -to.bestIncome
     const outInc = from === this.vert0 ? to.bestIncome : -from.bestIncome
     const inNew = inPrev + inInc
     const outNew = outPrev + outInc
-    console.assert(inNew * outNew >= 0)      
+    console.assert(inNew * outNew >= 0)
     if (inNew >= 0) {
       this.direction = true
       this.amountInPrevious = inNew
@@ -329,12 +333,16 @@ export class Edge {
       this.direction = false
       this.amountInPrevious = -inNew
       this.amountOutPrevious = -outNew
-    }      
+    }
     this.pool.setCurrentFlow(inNew, -outNew, this.spentGasNew)
     this.spentGas = this.spentGasNew
 
     ASSERT(() => {
-      let precision = Math.max(1/this.amountOutPrevious, 1/this.amountInPrevious, 1e-9)
+      let precision = Math.max(
+        1 / this.amountOutPrevious,
+        1 / this.amountInPrevious,
+        1e-9,
+      )
       if (this.pool instanceof StableSwapRPool) {
         let price = this.pool.calcCurrentPriceWithoutFee(true)
         if (price < 1) price = 1 / price
@@ -777,7 +785,7 @@ export class Graph {
         const v2 = closestVert === e.vert0 ? e.vert1 : e.vert0
         if (processedVert.has(v2)) return
         // multitoken pool protection. Don't use two pools from one multipool in one path (but is possible in
-        // different paths => in one route). It is not better then use one pool (For curve at least) 
+        // different paths => in one route). It is not better then use one pool (For curve at least)
         // and it is calculated wrong (with no flow applying)
         if (e.pool.address === closestVert.bestSource?.pool.address) return
 
@@ -1369,7 +1377,7 @@ export class Graph {
       const vert = this.getVert(l.tokenTo)
       console.assert(vert !== undefined, 'Internal Error 884')
       const edge = (vert as Vertice).edges.find(
-        (e) => e.pool.uniqueID() === l.uniqueId
+        (e) => e.pool.uniqueID() === l.uniqueId,
       )
       console.assert(edge !== undefined, 'Internel Error 888')
       const pool = (edge as Edge).pool

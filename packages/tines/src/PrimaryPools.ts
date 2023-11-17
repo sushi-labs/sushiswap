@@ -1,9 +1,9 @@
 import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
+import { RPool, RToken } from './RPool'
 import { getBigInt, revertPositive } from './Utils'
 import { computeHybridLiquidity } from './functions'
-import { RPool, RToken } from './RPool'
 
 export class ConstantProductRPool extends RPool {
   reserve0Number: number

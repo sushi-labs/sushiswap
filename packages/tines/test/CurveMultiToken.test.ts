@@ -51,11 +51,11 @@ function expectCloseValues(
   v1: bigint | number,
   v2: bigint | number,
   precision: number,
-  precisionAbs?: number
+  precisionAbs?: number,
 ) {
   const a = typeof v1 === 'number' ? v1 : parseFloat(v1.toString())
   const b = typeof v2 === 'number' ? v2 : parseFloat(v2.toString())
-  if (precisionAbs !== undefined && Math.abs(a-b) < precisionAbs) return true
+  if (precisionAbs !== undefined && Math.abs(a - b) < precisionAbs) return true
   const res = closeValues(a, b, precision)
   if (!res) {
     console.log('v1 =', a)
