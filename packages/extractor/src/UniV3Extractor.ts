@@ -21,17 +21,17 @@ import { warnLog } from './WarnLog'
 
 export type FeeSpacingMap = Record<number, number>
 
-export const uniswapFeeSpaceMap:FeeSpacingMap = {
+export const uniswapFeeSpaceMap: FeeSpacingMap = {
   100: 1,
   500: 10,
   3000: 60,
   10_000: 200,
-} 
+}
 
 export interface FactoryV3 {
   address: Address
   provider: LiquidityProviders
-  initCodeHash: string  
+  initCodeHash: string
   deployer?: Address
   feeSpacingMap?: FeeSpacingMap
 }
@@ -248,7 +248,9 @@ export class UniV3Extractor {
     }
     const spacing = (p.factory.feeSpacingMap ?? uniswapFeeSpaceMap)[p.fee]
     if (spacing === undefined) {
-      this.consoleLog(`Unknown spacing for pool ${p.address} with fee = ${p.fee}. Pool is ignored`)
+      this.consoleLog(
+        `Unknown spacing for pool ${p.address} with fee = ${p.fee}. Pool is ignored`,
+      )
       this.otherFactoryPoolSet.add(addrL)
       return
     }
@@ -298,8 +300,8 @@ export class UniV3Extractor {
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
-          const feeSpacingMap = (factory.feeSpacingMap ?? uniswapFeeSpaceMap)
-          const fees = Object.keys(feeSpacingMap).map(f => Number(f))
+          const feeSpacingMap = factory.feeSpacingMap ?? uniswapFeeSpaceMap
+          const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
           fees.forEach((fee) => {
             const addr = this.computeV3Address(factory, t0, t1, fee)
             const addrL = addr.toLowerCase() as Address

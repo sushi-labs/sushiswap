@@ -20,36 +20,29 @@ import {
   SUSHISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
 import {
-  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
-  PANCAKESWAP_V3_FACTORY_ADDRESS,
-  PANCAKESWAP_V3_FEE_SPACING_MAP,
-  PANCAKESWAP_V3_INIT_CODE_HASH,
-  PancakeSwapV3ChainId,
   POOL_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
-  SUSHISWAP_V3_TICK_LENS,
   SushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
-import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import { http, Address, Transport, createPublicClient, walletActions, custom, Hex, PublicClient, WalletClient } from 'viem'
 import {
-  Chain,
-  arbitrum,
-  arbitrumNova,
-  celo,
-  hardhat,
-  mainnet,
-  optimism,
-  polygon,
-  polygonZkEvm,
-} from 'viem/chains'
+  http,
+  Address,
+  Hex,
+  PublicClient,
+  Transport,
+  WalletClient,
+  createPublicClient,
+  custom,
+  walletActions,
+} from 'viem'
+import { Chain, hardhat } from 'viem/chains'
 import { createHardhatProvider } from '../src'
-import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
 import { pancakeswapV3Factory } from './Extractor.test'
+import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -77,7 +70,7 @@ export function uniswapV2Factory(chain: ChainId): FactoryV2 {
   }
 }
 
-function sushiswapV2Factory(chain: ChainId): FactoryV2 {
+export function sushiswapV2Factory(chain: ChainId): FactoryV2 {
   return {
     address: SUSHISWAP_V2_FACTORY_ADDRESS[chain] as Address,
     provider: LiquidityProviders.SushiSwapV2,
@@ -95,7 +88,7 @@ export const UniswapV3FactoryAddress: Record<number, string> = {
   [ChainId.CELO]: '0xAfE208a311B21f13EF87E33A90049fC17A7acDEc',
   [ChainId.BASE]: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD',
 }
-function uniswapV3Factory(chain: ChainId): FactoryV3 {
+export function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
@@ -103,7 +96,7 @@ function uniswapV3Factory(chain: ChainId): FactoryV3 {
   }
 }
 
-function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
+export function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
   return {
     address: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
     provider: LiquidityProviders.SushiSwapV3,
@@ -113,13 +106,21 @@ function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-async function createForkRouteProcessor(providerUrl: string, forkBlockNumber: bigint, chainId: ChainId): Promise<{
-  client: PublicClient & WalletClient,
-  deployUser: Address,
+async function createForkRouteProcessor(
+  providerUrl: string,
+  forkBlockNumber: bigint,
+  chainId: ChainId,
+): Promise<{
+  client: PublicClient & WalletClient
+  deployUser: Address
   RouteProcessorAddress: Address | null
 }> {
-  const forkProvider = await createHardhatProvider(chainId, providerUrl, Number(forkBlockNumber))
-  const client =  createPublicClient({
+  const forkProvider = await createHardhatProvider(
+    chainId,
+    providerUrl,
+    Number(forkBlockNumber),
+  )
+  const client = createPublicClient({
     chain: {
       ...hardhat,
       contracts: {
@@ -147,7 +148,7 @@ async function createForkRouteProcessor(providerUrl: string, forkBlockNumber: bi
   return {
     client,
     deployUser,
-    RouteProcessorAddress
+    RouteProcessorAddress,
   }
 }
 
@@ -172,12 +173,18 @@ async function startInfinitTest(args: {
     transport: transport,
   })
   const chainId = client.chain?.id as ChainId
-  
+
   const forkBlockNumber = await client.getBlockNumber()
-  const fork = await createForkRouteProcessor(args.providerURL, forkBlockNumber, chainId)
+  const fork = await createForkRouteProcessor(
+    args.providerURL,
+    forkBlockNumber,
+    chainId,
+  )
   if (!fork.RouteProcessorAddress)
     throw new Error('RouteProcessor deploy failed')
-  console.log(`RP4 deploy address: ${fork.RouteProcessorAddress} at block ${forkBlockNumber} chainId ${chainId}`)
+  console.log(
+    `RP4 deploy address: ${fork.RouteProcessorAddress} at block ${forkBlockNumber} chainId ${chainId}`,
+  )
 
   const extractor = new Extractor({ ...args, client })
   await extractor.start(
@@ -315,12 +322,12 @@ it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
     transport: config[ChainId.BSC].transport,
     chain: config[ChainId.BSC].chain as Chain,
-    factoriesV2: [ ],
+    factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
     tickHelperContract: TickLensContract[ChainId.BSC],
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
-    providerURL: `https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`
+    providerURL: `https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`,
   })
 })

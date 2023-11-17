@@ -8,6 +8,11 @@ import {
   UNISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
 import {
+  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
+  PANCAKESWAP_V3_FACTORY_ADDRESS,
+  PANCAKESWAP_V3_FEE_SPACING_MAP,
+  PANCAKESWAP_V3_INIT_CODE_HASH,
+  PancakeSwapV3ChainId,
   // PANCAKESWAP_V3_FACTORY_ADDRESS,
   // PANCAKESWAP_V3_INIT_CODE_HASH,
   // PancakeSwapV3ChainId,
@@ -18,11 +23,6 @@ import {
   UNISWAP_V3_FACTORY_ADDRESS,
   UNISWAP_V3_INIT_CODE_HASH,
   type UniswapV3ChainId,
-  PANCAKESWAP_V3_FACTORY_ADDRESS,
-  PANCAKESWAP_V3_INIT_CODE_HASH,
-  PancakeSwapV3ChainId,
-  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
-  PANCAKESWAP_V3_FEE_SPACING_MAP,
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId } from 'sushi/chain'
@@ -59,7 +59,7 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
     provider: LiquidityProviders.PancakeSwapV3,
     initCodeHash: PANCAKESWAP_V3_INIT_CODE_HASH[chainId],
     deployer: PANCAKESWAP_V3_DEPLOYER_ADDRESS[chainId],
-    feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP
+    feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP,
   } as const
 }
 
