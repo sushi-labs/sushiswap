@@ -112,6 +112,7 @@ export class QualityChecker {
           pool.token0,
           pool.token1,
           pool.fee,
+          pool.spacing,
           pool.client,
           pool.busyCounter,
         )
