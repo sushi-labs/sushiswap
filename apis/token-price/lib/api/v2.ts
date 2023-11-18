@@ -1,9 +1,9 @@
 import {
   ConstantProductRPool,
   RPool,
+  type RToken,
   UniV3Pool,
   calcTokenPrices,
-  type RToken,
 } from '@sushiswap/tines'
 import { deserialize } from '@wagmi/core'
 import { ExtractorSupportedChainId } from 'sushi/config'
@@ -61,14 +61,18 @@ interface PoolCode {
 }
 
 async function fetchTokens(chainId: ExtractorSupportedChainId) {
-  const result = await fetch(`https://tokens-git-feature-token-v2-api.sushi.com/v1/${chainId}/`)
+  const result = await fetch(
+    `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/`,
+  )
+  // const result = await fetch(`https://tokens.sushi.com/v1/${chainId}/`)
   const tokenList = (await result.json()) as TokenInfo[]
   return tokenList
 }
 
 async function fetchToken(chainId: ExtractorSupportedChainId, address: string) {
   const result = await fetch(
-    `https://tokens-git-feature-token-v2-api.sushi.com/v1/${chainId}/${getAddress(address)}`,
+    // `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/${getAddress(address)}`,
+    `https://tokens.sushi.com/v1/${chainId}/${getAddress(address)}`,
   )
   const tokenList = (await result.json()) as TokenInfo | undefined
   return tokenList
