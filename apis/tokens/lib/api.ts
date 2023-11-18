@@ -11,6 +11,8 @@ createConfig({
   publicClient,
 })
 
+
+
 export async function getToken(chainId: number, address: string) {
   // TODO: example to include default list token
   // const tokenFromList = defaultTokenList.tokens.find((token) => token.chainId === chainId && token.address === address)

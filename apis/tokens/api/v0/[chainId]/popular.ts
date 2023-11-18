@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getPopularTokens } from '../../../lib/api/v0.js'
+import { getPopularTokens } from '../../../lib/api.js'
 import { PopularTokensApiSchema } from '../../../lib/schemas/chainId/popular.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
