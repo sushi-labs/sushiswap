@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { isExtractorSupportedChainId } from 'sushi/config'
-import { isAddress, getAddress } from 'viem'
+import { getAddress, isAddress } from 'viem'
 import { z } from 'zod'
 import { Currency, getPrice } from '../../../lib/api/v2.js'
 
