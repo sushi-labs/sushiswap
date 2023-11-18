@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getCommonTokens } from '../../../lib/api.js'
+import { getCommonTokens } from '../../../lib/api/v0.js'
 import { CommonTokensApiSchema } from '../../../lib/schemas/chainId/common.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {

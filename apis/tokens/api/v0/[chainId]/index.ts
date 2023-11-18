@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { getTokensByChainId } from '../../../lib/api.js'
+import { getTokensByChainId } from '../../../lib/api/v0.js'
 import { TokensByChainIdApiSchema } from '../../../lib/schemas/chainId/index.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
