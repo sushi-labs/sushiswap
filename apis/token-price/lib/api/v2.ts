@@ -1,20 +1,16 @@
 import {
   ConstantProductRPool,
   RPool,
-  type RToken,
   UniV3Pool,
   calcTokenPrices,
+  type RToken,
 } from '@sushiswap/tines'
 import { deserialize } from '@wagmi/core'
+import { ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
-import {
-  DEFAULT_LIST_OF_LISTS,
-  type TokenInfo,
-  type TokenList,
-} from 'sushi/token-list'
+import { type TokenInfo } from 'sushi/token-list'
+import { getAddress } from 'viem/utils'
 // import { isPromiseFulfilled } from 'sushi/validate'
-import { getAddress } from 'viem'
-import redis from '../redis.js'
 
 export const Currency = {
   USD: 'USD',
@@ -64,28 +60,18 @@ interface PoolCode {
   poolName: string
 }
 
-const REDIS_KEY_PREFIX = 'token-list-v2-'
+async function fetchTokens(chainId: ExtractorSupportedChainId) {
+  const result = await fetch(`https://tokens.sushi.com/v1/${chainId}/`)
+  const tokenList = (await result.json()) as TokenInfo[]
+  return tokenList
+}
 
-async function fetchTokensFromLists() {
-  const promises: Promise<TokenList>[] = []
-
-  for (const url of DEFAULT_LIST_OF_LISTS) {
-    const key = `${REDIS_KEY_PREFIX}-${url}`.toLowerCase()
-    const cached = await redis.get(key)
-    if (cached) {
-      promises.push(Promise.resolve(JSON.parse(cached)))
-    }
-  }
-
-  return Promise.all(promises).then((tokenLists) => {
-    return tokenLists.flatMap((tokenList) =>
-      tokenList.tokens.map((t) => ({
-        ...(t as TokenInfo),
-        // Token addresses are sometimes lowercase from token lists
-        address: getAddress(t.address),
-      })),
-    )
-  })
+async function fetchToken(chainId: ExtractorSupportedChainId, address: string) {
+  const result = await fetch(
+    `https://tokens.sushi.com/v1/${chainId}/${getAddress(address)}`,
+  )
+  const tokenList = (await result.json()) as TokenInfo | undefined
+  return tokenList
 }
 
 async function fetchPoolCodes(chainId: number, address?: string) {
@@ -215,27 +201,13 @@ export async function getPrices(chainId: number, currency: Currency) {
   ) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
-  const [tokensFromLists, poolCodes] = await Promise.all([
-    fetchTokensFromLists(),
+
+  const [tokens, poolCodes] = await Promise.all([
+    fetchTokens(chainId as ExtractorSupportedChainId),
     fetchPoolCodes(chainId),
-  ])
-  const tokens = new Map<string, TokenInfo>()
-  tokensFromLists
-    .filter((t) => t.chainId === chainId)
-    .forEach((t) => {
-      if (!tokens.has(t.address.toLowerCase())) {
-        // first tokens should be sushis, we don't override them in case we have changed name/symbols
-        tokens.set(t.address.toLowerCase(), t)
-      }
-    })
+  ]) // The reason we fetch tokens here is to NOT send prices for every single token tines could price
 
-  const filteredPoolCodes = poolCodes.filter(
-    (pc) =>
-      tokens.has(pc.pool.token0.address.toLowerCase()) &&
-      tokens.has(pc.pool.token1.address.toLowerCase()),
-  )
-
-  const mappedPools = filteredPoolCodes
+  const mappedPools = poolCodes
     .map(mapPool)
     .filter((p) => p !== undefined) as RPool[]
 
@@ -262,7 +234,7 @@ const hasPrice = (input: number | undefined): input is number =>
  * @param {number} chainId
  * @param {string} address
  * @param {Currency} currency
- * @returns {number}
+ * @returns {number | undefined}
  */
 export async function getPrice(
   chainId: number,
@@ -275,39 +247,22 @@ export async function getPrice(
   ) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
-  const [tokensFromLists, poolCodes] = await Promise.all([
-    fetchTokensFromLists(),
+
+  const [token, poolCodes] = await Promise.all([
+    fetchToken(chainId as ExtractorSupportedChainId, address),
     fetchPoolCodesForToken(chainId, address),
   ])
-  const tokens = new Map<string, TokenInfo>()
-  tokensFromLists
-    .filter((t) => t.chainId === chainId)
-    .forEach((t) => {
-      if (!tokens.has(t.address.toLowerCase())) {
-        // first tokens should be sushis, we don't override them in case we have changed name/symbols
-        tokens.set(t.address.toLowerCase(), t)
-      }
-    })
-
-  const filteredPoolCodes = poolCodes.filter(
-    (pc) =>
-      tokens.has(pc.pool.token0.address.toLowerCase()) &&
-      tokens.has(pc.pool.token1.address.toLowerCase()),
-  )
-  const mappedPools = filteredPoolCodes
+  if (token === undefined) {
+    return undefined
+  }
+  const mappedPools = poolCodes
     .map(mapPool)
     .filter((p) => p !== undefined) as RPool[]
-
   const bases =
     currency === Currency.USD
       ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
       : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
 
-  const prices = calculateTokenPrices(
-    Array.from(tokens.values()),
-    bases,
-    mappedPools,
-    1000,
-  )
+  const prices = calculateTokenPrices([token], bases, mappedPools, 1000)
   return prices[address]
 }
