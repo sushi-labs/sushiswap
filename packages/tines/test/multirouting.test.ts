@@ -8,7 +8,8 @@ import {
   findMultiRouteExactOut,
   getBigInt,
 } from '../src'
-import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
+import { ConstantProductRPool } from '../src/PrimaryPools'
+import { RToken } from '../src/RPool'
 import { checkRouteResult } from './snapshots/snapshot'
 
 const gasPrice = 1 * 200 * 1e-9

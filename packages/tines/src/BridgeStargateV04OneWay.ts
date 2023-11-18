@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { RPool, RToken } from './RPool'
 import { BridgeState, getStarGateFeesV04 } from './StarGateFeesV04'
 import { getBigInt } from './Utils'
 

@@ -13,6 +13,8 @@ import {
   BridgeBento,
   BridgeUnlimited,
   ConstantProductRPool,
+  CurveMultitokenCore,
+  CurveMultitokenPool,
   CurvePool,
   RToken,
   RebaseInternal,
@@ -21,6 +23,7 @@ import {
 } from '@sushiswap/tines'
 import * as serializer from 'serialijse'
 import { ChainId } from 'sushi/chain'
+import { Native } from 'sushi/currency'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)
@@ -36,6 +39,9 @@ serializer.declarePersistable(UniV3PoolCode)
 serializer.declarePersistable(UniV3Pool)
 serializer.declarePersistable(CurvePoolCode)
 serializer.declarePersistable(CurvePool)
+serializer.declarePersistable(CurveMultitokenPool)
+serializer.declarePersistable(CurveMultitokenCore)
+serializer.declarePersistable(Native)
 
 // default dir for pools snapshots
 const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')
@@ -72,6 +78,22 @@ function makeSerializable(poolCodes: PoolCode[]) {
       pool.rate1BN18 = String(pool.rate1BN18) as unknown as bigint
       pool.reserve0Rated = String(pool.reserve0Rated) as unknown as bigint
       pool.reserve1Rated = String(pool.reserve1Rated) as unknown as bigint
+    } else if (pool instanceof CurveMultitokenPool) {
+      const core = pool.core
+      core.D = String(core.D) as unknown as bigint
+      core.Ann = String(core.Ann) as unknown as bigint
+      core.Annn = String(core.Annn) as unknown as bigint
+      core.AnnMinus1 = String(core.AnnMinus1) as unknown as bigint
+      core.nn = String(core.nn) as unknown as bigint
+      core.n = String(core.n) as unknown as bigint
+      core.nPlus1 = String(core.nPlus1) as unknown as bigint
+      core.tokens = core.tokens.map((t) => ({ ...t }) as RToken)
+      core.reserves = core.reserves.map((r) => String(r) as unknown as bigint)
+      core.ratesBN18 = core.ratesBN18.map((r) => String(r) as unknown as bigint)
+      core.reservesRated = core.reservesRated.map(
+        (r) => String(r) as unknown as bigint,
+      )
+      //core.currentFlow = core.currentFlow.map(r => String(r) as unknown as bigint)
     }
   })
 }
@@ -98,6 +120,19 @@ function restoreAfterSerialization(poolCodes: PoolCode[]) {
       pool.rate1BN18 = BigInt(pool.rate1BN18)
       pool.reserve0Rated = BigInt(pool.reserve0Rated)
       pool.reserve1Rated = BigInt(pool.reserve1Rated)
+    } else if (pool instanceof CurveMultitokenPool) {
+      const core = pool.core
+      core.D = BigInt(core.D)
+      core.Ann = BigInt(core.Ann)
+      core.Annn = BigInt(core.Annn)
+      core.AnnMinus1 = BigInt(core.AnnMinus1)
+      core.nn = BigInt(core.nn)
+      core.n = BigInt(core.n)
+      core.nPlus1 = BigInt(core.nPlus1)
+      core.reserves = core.reserves.map((r) => BigInt(r))
+      core.ratesBN18 = core.ratesBN18.map((r) => BigInt(r))
+      core.reservesRated = core.reservesRated.map((r) => BigInt(r))
+      //core.currentFlow = core.currentFlow.map(r => BigInt(r))
     }
   })
 }

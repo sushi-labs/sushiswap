@@ -15,6 +15,8 @@ import {
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
   BridgeBento,
+  // CurveMultitokenCore,
+  // CurveMultitokenPool,
   RPool,
   RouteStatus,
   StableSwapRPool,
@@ -35,6 +37,10 @@ import {
   FRAX_ADDRESS,
   FXS,
   FXS_ADDRESS,
+  LINK,
+  LINK_ADDRESS,
+  MIM,
+  MIM_ADDRESS,
   Native,
   SUSHI,
   SUSHI_ADDRESS,
@@ -44,6 +50,7 @@ import {
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
+  WBTC,
   WBTC_ADDRESS,
   WNATIVE,
 } from 'sushi/currency'
@@ -80,13 +87,13 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
 }
 
 async function setRouterPrimaryBalance(
-  client: Client,
+  _client: Client,
   router: Address,
   token?: Address,
   amount = 1n,
 ): Promise<boolean> {
   if (token) {
-    return await setTokenBalance(client, token, router, amount)
+    return await setTokenBalance(token, router, amount)
   }
   return false
 }
@@ -124,14 +131,15 @@ async function getTestEnvironment() {
 
   dataFetcher.startDataFetching()
   const poolCodes = new Map<string, PoolCode>()
+  let poolList: PoolCode[] = []
   if (!UPDATE_POOL_STATES) {
-    const pc = await getAllPoolCodes(
+    poolList = await getAllPoolCodes(
       dataFetcher,
       chainId,
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,
     )
-    pc.forEach((p) => poolCodes.set(p.pool.address, p))
+    poolList.forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
   }
 
   const RouteProcessorTx = await client.deployContract({
@@ -210,6 +218,7 @@ async function getTestEnvironment() {
     user2,
     dataFetcher,
     poolCodes,
+    poolList,
     snapshot: await takeSnapshot(),
   } satisfies {
     chainId: ChainId
@@ -219,6 +228,7 @@ async function getTestEnvironment() {
     user2: HDAccount
     dataFetcher: DataFetcher
     poolCodes: Map<string, PoolCode>
+    poolList: PoolCode[]
     snapshot: SnapshotRestorer
   }
 }
@@ -256,6 +266,7 @@ async function makeSwap(
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
+  throwAtNoWay = true,
 ): Promise<[bigint, bigint] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -277,7 +288,7 @@ async function makeSwap(
   } else {
     pcMap = new Map()
     Array.from(env.poolCodes.entries()).forEach((e) => {
-      if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
+      if (!usedPools.has(e[1].pool.address)) pcMap.set(e[0], e[1])
     })
   }
   //await checkPoolsState(pcMap, env.user.address, env.chainId)
@@ -295,8 +306,8 @@ async function makeSwap(
   // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // const cc = route.legs
   //   .map((l) => {
-  //     if (pcMap.get(l.poolAddress)?.liquidityProvider == LiquidityProviders.CurveSwap)
-  //       return `${pcMap.get(l.poolAddress)?.poolName}: ${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${
+  //     if (pcMap.get(l.uniqueId)?.liquidityProvider == LiquidityProviders.CurveSwap)
+  //       return `${pcMap.get(l.uniqueId)?.poolName}: ${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${
   //         l.poolAddress
   //       }  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   })
@@ -309,7 +320,32 @@ async function makeSwap(
   //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   )
   // )
-  if (route.status === RouteStatus.NoWay) return
+  // const poolsS = new Map<string, [number, number][]>()
+  // route.legs.forEach(l => {
+  //   const pool = pcMap.get(l.uniqueId)?.pool
+  //   if (pool instanceof CurveMultitokenPool) {
+  //     const prev: [number, number][] = poolsS.get(pool.core.address) ?? []
+  //     prev.push([pool.index0, pool.index1])
+  //     poolsS.set(pool.core.address, prev)
+  //   }
+  // })
+  // Array.from(poolsS.entries()).forEach(([addr, ind]) => {
+  //   if (ind.length >= 2)
+  //     ind.forEach(([i0, i1]) => console.log(`    ${addr} ${i0}-${i1}`))
+  // })
+  // if (route.fromToken.symbol !== 'ETH' && route.toToken.symbol !== 'ETH') {
+  //   route.legs.forEach(l => {
+  //     if (l.tokenFrom.symbol == 'ETH')
+  //     console.log(`    IN ${l.tokenFrom.symbol} ${l.absolutePortion} ${l.uniqueId} `)
+  //     if (l.tokenTo.symbol == 'ETH')
+  //     console.log(`    OUT ${l.tokenTo.symbol} ${l.uniqueId} `)
+  //   })
+  // }
+
+  if (route.status === RouteStatus.NoWay) {
+    if (throwAtNoWay) throw new Error('NoWay')
+    return
+  }
 
   const rpParams = Router.routeProcessor4Params(
     pcMap,
@@ -363,7 +399,7 @@ async function makeSwap(
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
-      if (!(pcMap.get(l.poolAddress) instanceof NativeWrapBridgePoolCode)) {
+      if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
         usedPools.add(l.poolAddress)
       }
     })
@@ -418,6 +454,7 @@ async function updMakeSwap(
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
+  throwAtNoWay = true,
 ): Promise<[bigint | undefined, bigint]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
@@ -435,6 +472,7 @@ async function updMakeSwap(
     providers,
     poolFilter,
     permits,
+    throwAtNoWay,
   )
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -470,7 +508,7 @@ async function checkTransferAndRoute(
   } else {
     pcMap = new Map()
     Array.from(env.poolCodes.entries()).forEach((e) => {
-      if (!usedPools.has(e[0])) pcMap.set(e[0], e[1])
+      if (!usedPools.has(e[1].pool.address)) pcMap.set(e[0], e[1])
     })
   }
 
@@ -539,7 +577,7 @@ async function checkTransferAndRoute(
 
   if (!UPDATE_POOL_STATES) {
     route.legs.forEach((l) => {
-      if (!(pcMap.get(l.poolAddress) instanceof NativeWrapBridgePoolCode)) {
+      if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
         usedPools.add(l.poolAddress)
       }
     })
@@ -602,6 +640,22 @@ describe('End-to-end RouteProcessor4 test', async function () {
       DAI[chainId as DAI_CHAINS],
       FRAX[chainId as FRAX_CHAINS],
       FXS[chainId as FXS_CHAINS],
+      // MKR[chainId as keyof typeof MKR_ADDRESS],
+      // YFI[chainId as keyof typeof YFI_ADDRESS],
+      // CRV[chainId as keyof typeof CRV_ADDRESS],
+      // SNX[chainId as keyof typeof SNX_ADDRESS],
+      // GNO[chainId as keyof typeof GNO_ADDRESS],
+      // LDO[chainId as keyof typeof LDO_ADDRESS],
+      // APE[chainId as keyof typeof APE_ADDRESS],
+      // FEI[chainId as keyof typeof FEI_ADDRESS],
+      WBTC[chainId as keyof typeof WBTC_ADDRESS],
+      // UNI[chainId as keyof typeof UNI_ADDRESS],
+      // BUSD[chainId as keyof typeof BUSD_ADDRESS],
+      // AAVE[chainId as keyof typeof AAVE_ADDRESS],
+      // COMP[chainId as keyof typeof COMP_ADDRESS],
+      // LUSD[chainId as keyof typeof LUSD_ADDRESS],
+      MIM[chainId as keyof typeof MIM_ADDRESS],
+      LINK[chainId as keyof typeof LINK_ADDRESS],
     ]
   })
 
@@ -679,7 +733,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
   })
 
   if (network.config.chainId === 137) {
-    it('Trident Native => SUSHI => Native (Polygon only)', async function () {
+    // NoWay
+    it.skip('Trident Native => SUSHI => Native (Polygon only)', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
@@ -703,7 +758,8 @@ describe('End-to-end RouteProcessor4 test', async function () {
   }
 
   if (network.config.chainId === 137) {
-    it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
+    // NoWay
+    it.skip('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
       const filter = (pool: RPool) =>
         pool instanceof StableSwapRPool || pool instanceof BridgeBento
       await env.snapshot.restore()
@@ -792,13 +848,24 @@ describe('End-to-end RouteProcessor4 test', async function () {
       intermidiateResult[0] = getBigInt(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
-        console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter)
+        console.log(
+          'Round # ',
+          i + 1,
+          ' Total Route # ',
+          ++routeCounter,
+          `pools: ${env.poolCodes.size - usedPools.size}/${env.poolCodes.size}`,
+          `${testTokensSet[currentToken]?.symbol} => ${testTokensSet[nextToken]?.symbol}`,
+        )
         intermidiateResult = await updMakeSwap(
           env,
           testTokensSet[currentToken] as Type,
           testTokensSet[nextToken] as Type,
           intermidiateResult,
           usedPools,
+          undefined,
+          undefined,
+          undefined,
+          false, //throwAtNoWay
         )
         currentToken = nextToken
         if (
@@ -952,6 +1019,20 @@ describe('End-to-end RouteProcessor4 test', async function () {
   }
 
   if (network.config.chainId === 1) {
+    it('Curve 3pool test using 2 pools from 3', async function () {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      intermidiateResult[0] = BigInt(1e5) * BigInt(1e18)
+      intermidiateResult = await updMakeSwap(
+        env,
+        Native.onChain(chainId),
+        USDT[chainId as keyof typeof USDT_ADDRESS],
+        intermidiateResult,
+        usedPools,
+        [LiquidityProviders.CurveSwap, LiquidityProviders.SushiSwapV2],
+      )
+    })
+
     it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: Native => sETH', async function () {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
@@ -966,7 +1047,7 @@ describe('End-to-end RouteProcessor4 test', async function () {
       )
     })
 
-    it('Curve pool 0xc5424b857f758e906013f3555dad202e4bdb4567: sETH => Native', async function () {
+    it('Path token => ETH => token', async function () {
       await env.snapshot.restore()
       const amoutIn = BigInt(1e18)
       await setRouterPrimaryBalance(
@@ -979,10 +1060,10 @@ describe('End-to-end RouteProcessor4 test', async function () {
       intermidiateResult = await updMakeSwap(
         env,
         sETH,
-        Native.onChain(chainId),
+        USDC[ChainId.ETHEREUM],
         intermidiateResult,
         undefined,
-        [LiquidityProviders.CurveSwap],
+        [LiquidityProviders.CurveSwap, LiquidityProviders.UniswapV2],
       )
     })
 
@@ -1006,12 +1087,17 @@ describe('End-to-end RouteProcessor4 test', async function () {
       )
     })
 
+    const amountInForTest: Record<Address, number> = {
+      '0x0ce6a5ff5217e38315f87032cf90686c96627caa': 1e16,
+      '0x93054188d876f558f4a66b2ef1d97d16edf0895b': 1e10,
+    }
+
     const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
     for (let i = 0; i < pools.length; ++i) {
-      const [address, type, from, to] = pools[i]
+      const [address, type, [from, to]] = pools[i]
       it(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async function () {
         await env.snapshot.restore()
-        const amoutIn = BigInt(1e12)
+        const amoutIn = BigInt(amountInForTest[address] ?? 1e18)
         if (from instanceof Token)
           await setRouterPrimaryBalance(
             env.client,

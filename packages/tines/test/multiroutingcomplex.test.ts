@@ -7,7 +7,7 @@ import {
   findMultiRouteExactIn,
   findSingleRouteExactIn,
 } from '../src'
-import { RPool } from '../src/PrimaryPools'
+import { RPool } from '../src/RPool'
 import { checkRouteResult } from './snapshots/snapshot'
 import {
   MAX_POOL_IMBALANCE,
