@@ -1,11 +1,11 @@
+import { isPromiseFulfilled } from 'sushi'
 import {
   DEFAULT_LIST_OF_LISTS,
   type TokenInfo,
   type TokenList,
 } from 'sushi/token-list'
-import { redis } from '../redis.js'
 import { getAddress } from 'viem'
-import { isPromiseFulfilled } from 'sushi'
+import { redis } from '../redis.js'
 
 const REDIS_KEY_PREFIX = 'token-list-v2-'
 
