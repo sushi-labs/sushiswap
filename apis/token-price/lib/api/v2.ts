@@ -5,7 +5,7 @@ import {
   UniV3Pool,
   calcTokenPrices,
 } from '@sushiswap/tines'
-import { deserialize } from '@wagmi/core'
+import { Address, deserialize } from '@wagmi/core'
 import { ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
 import { type TokenInfo } from 'sushi/token-list'
@@ -242,7 +242,7 @@ const hasPrice = (input: number | undefined): input is number =>
  */
 export async function getPrice(
   chainId: number,
-  address: string,
+  address: Address,
   currency: Currency = Currency.USD,
 ) {
   if (
