@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import type { TokenInfo } from 'sushi'
-import { isAddress } from 'viem'
+import { getAddress, isAddress } from 'viem'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -22,7 +22,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const result = await fetch(`https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/`)
   // const result = await fetch(`https://tokens.sushi.com/v1/${chainId}/`)
   const tokenList = (await result.json()) as TokenInfo[]
-  const json = tokenList.find((t) => t.address === address)
+  const json = tokenList.find((t) => t.address === getAddress(address))
 
   if (json !== undefined) {
     return response.status(200).json(json)
