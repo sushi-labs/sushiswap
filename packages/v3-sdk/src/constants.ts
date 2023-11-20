@@ -315,3 +315,22 @@ export const PANCAKESWAP_V3_FACTORY_ADDRESS: Record<
   [ChainId.LINEA]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
   [ChainId.POLYGON_ZKEVM]: '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865',
 } as const
+
+export const PANCAKESWAP_V3_DEPLOYER_ADDRESS: Record<
+  PancakeSwapV3ChainId,
+  `0x${string}`
+> = {
+  [ChainId.ARBITRUM]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
+  [ChainId.BASE]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
+  [ChainId.BSC]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
+  [ChainId.ETHEREUM]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
+  [ChainId.LINEA]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
+  [ChainId.POLYGON_ZKEVM]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
+} as const
+
+export const PANCAKESWAP_V3_FEE_SPACING_MAP: Record<number, number> = {
+  100: 1,
+  500: 10,
+  2500: 50,
+  10_000: 200,
+}

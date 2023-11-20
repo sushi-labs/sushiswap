@@ -1,7 +1,7 @@
 import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { RPool, RToken } from './RPool'
 import { getBigInt } from './Utils'
 
 export class CurvePool extends RPool {

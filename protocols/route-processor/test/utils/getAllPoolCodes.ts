@@ -57,9 +57,9 @@ export async function getAllPoolCodes(
           )
           let newPools = 0
           pc.forEach((p) => {
-            if (!foundPools.has(p.pool.address)) {
+            if (!foundPools.has(p.pool.uniqueID())) {
               ;(poolCodes as PoolCode[]).push(p)
-              foundPools.add(p.pool.address)
+              foundPools.add(p.pool.uniqueID())
               ++newPools
             }
           })

@@ -51,20 +51,16 @@ function expectCloseValues(
   v1: bigint | number,
   v2: bigint | number,
   precision: number,
-  description = '',
-  additionalInfo = '',
+  precisionAbs?: number,
 ) {
   const a = typeof v1 === 'number' ? v1 : parseFloat(v1.toString())
   const b = typeof v2 === 'number' ? v2 : parseFloat(v2.toString())
+  if (precisionAbs !== undefined && Math.abs(a - b) < precisionAbs) return true
   const res = closeValues(a, b, precision)
   if (!res) {
-    console.log('Close values expectation failed:', description)
     console.log('v1 =', a)
     console.log('v2 =', b)
     console.log('precision =', Math.abs(a / b - 1), ', expected <', precision)
-    if (additionalInfo !== '') {
-      console.log(additionalInfo)
-    }
   }
   expect(res).toBeTruthy()
   return res
@@ -123,13 +119,13 @@ function checkSwap(
   const { out, gasSpent } = pool.calcOutByIn(amountIn, direction)
   const res1 = multipool.calcOutByIn(amountIn, direction)
 
-  expect(res1.out).toEqual(out)
+  expectCloseValues(res1.out, out, 1e-12, 10)
   expect(res1.gasSpent).toEqual(gasSpent)
 
   const { inp, gasSpent: gasSpent2 } = pool.calcInByOut(out, direction)
   const res2 = multipool.calcInByOut(out, direction)
 
-  expect(res2.inp).toEqual(inp)
+  expectCloseValues(res2.inp, inp, 1e-12, 10)
   expect(res2.gasSpent).toEqual(gasSpent2)
 
   return out

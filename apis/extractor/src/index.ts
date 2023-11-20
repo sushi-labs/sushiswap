@@ -205,7 +205,7 @@ async function main() {
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider
       .getCurrentPoolList()
-      .forEach((p) => poolCodesMap.set(p.pool.address, p))
+      .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     const extractor = extractors.get(chainId) as Extractor
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
@@ -228,14 +228,14 @@ async function main() {
 
     const { prefetched: cachedPoolCodes, fetchingNumber } =
       extractor.getPoolCodesForTokensFull(tokens)
-    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     if (fetchingNumber > 0) {
       const poolCodes = await extractor.getPoolCodesForTokensAsync(
         tokens,
         2_000,
       )
-      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
     }
 
     const bestRoute = preferSushi
@@ -331,7 +331,7 @@ async function main() {
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider
       .getCurrentPoolList()
-      .forEach((p) => poolCodesMap.set(p.pool.address, p))
+      .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     const extractor = extractors.get(chainId) as Extractor
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
@@ -354,14 +354,14 @@ async function main() {
 
     const { prefetched: cachedPoolCodes, fetchingNumber } =
       extractor.getPoolCodesForTokensFull(tokens)
-    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     if (fetchingNumber > 0) {
       const poolCodes = await extractor.getPoolCodesForTokensAsync(
         tokens,
         2_000,
       )
-      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
     }
 
     const bestRoute = preferSushi
@@ -457,7 +457,7 @@ async function main() {
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider
       .getCurrentPoolList()
-      .forEach((p) => poolCodesMap.set(p.pool.address, p))
+      .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     const extractor = extractors.get(chainId) as Extractor
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
@@ -479,14 +479,14 @@ async function main() {
 
     const { prefetched: cachedPoolCodes, fetchingNumber } =
       extractor.getPoolCodesForTokensFull(tokens)
-    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     if (fetchingNumber > 0) {
       const poolCodes = await extractor.getPoolCodesForTokensAsync(
         tokens,
         2_000,
       )
-      poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
     }
 
     const bestRoute = preferSushi

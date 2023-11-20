@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { RPool, RToken } from './RPool'
 
 export class BridgeUnlimited extends RPool {
   constructor(
