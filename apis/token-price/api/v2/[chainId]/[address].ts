@@ -20,7 +20,7 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
+  response.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600')
 
   const { chainId, currency, address } = schema.parse(request.query)
 
