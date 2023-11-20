@@ -74,7 +74,11 @@ const NetworkSelector = <T extends number>({
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             <CommandItem className="cursor-pointer">
-              <Link href="https://aptos.sushi.com">
+              <Link
+                href="https://aptos.sushi.com"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 <div className="flex items-center gap-2">
                   <AptosCircle width={22} height={22} />
                   Aptos
