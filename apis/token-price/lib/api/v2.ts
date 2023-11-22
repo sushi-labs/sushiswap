@@ -66,7 +66,9 @@ async function fetchTokens(chainId: ExtractorSupportedChainId) {
 }
 
 async function fetchToken(chainId: ExtractorSupportedChainId, address: string) {
-  const result = await fetch(`https://tokens.sushi.com/v1/${chainId}/${address}`)
+  const result = await fetch(
+    `https://tokens.sushi.com/v1/${chainId}/${address}`,
+  )
   const tokenList = (await result.json()) as TokenInfo | undefined
   return tokenList
 }
