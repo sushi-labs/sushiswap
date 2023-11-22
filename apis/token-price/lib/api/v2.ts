@@ -267,5 +267,5 @@ export async function getPrice(
       : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
 
   const prices = calculateTokenPrices([token], bases, mappedPools, 1000)
-  return prices[address]
+  return prices[address.toLowerCase()]
 }
