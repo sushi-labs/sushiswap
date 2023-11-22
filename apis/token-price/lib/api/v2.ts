@@ -9,7 +9,6 @@ import { Address, deserialize } from '@wagmi/core'
 import { ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
 import { type TokenInfo } from 'sushi/token-list'
-import { getAddress } from 'viem/utils'
 // import { isPromiseFulfilled } from 'sushi/validate'
 
 export const Currency = {
@@ -71,10 +70,8 @@ async function fetchTokens(chainId: ExtractorSupportedChainId) {
 
 async function fetchToken(chainId: ExtractorSupportedChainId, address: string) {
   const result = await fetch(
-    `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/${getAddress(
-      address,
-    )}`,
-    // `https://tokens.sushi.com/v1/${chainId}/${getAddress(address)}`,
+    `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/${address}`,
+    // `https://tokens.sushi.com/v1/${chainId}/${address}`,
   )
   const tokenList = (await result.json()) as TokenInfo | undefined
   return tokenList
@@ -160,14 +157,14 @@ function calculateTokenPrices(
       const price = Number(
         (value / 10 ** (base.decimals - key.decimals)).toFixed(18),
       )
-      currentPricesMap.set(key.address, price)
+      currentPricesMap.set(key.address.toLowerCase(), price)
     })
-    prices.set(base.address, currentPricesMap)
+    prices.set(base.address.toLowerCase(), currentPricesMap)
   })
   for (const token of tokens) {
     const tokenPrices = Array.from(prices.keys())
       .map((t) => prices.get(t))
-      .map((t) => t?.get(token.address))
+      .map((t) => t?.get(token.address.toLowerCase()))
       .filter(hasPrice)
     let price
     if (tokenPrices.length === 0) {
@@ -194,7 +191,7 @@ function calculateTokenPrices(
       }
     }
     if (price) {
-      bestPrices[token.address] = price
+      bestPrices[token.address.toLowerCase()] = price
     }
   }
   return bestPrices

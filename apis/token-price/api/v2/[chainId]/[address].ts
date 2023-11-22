@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { isExtractorSupportedChainId } from 'sushi/config'
-import { getAddress, isAddress } from 'viem'
+import { getAddress } from 'viem'
 import { z } from 'zod'
 import { Currency, getPrice } from '../../../lib/api/v2.js'
 
@@ -12,9 +12,6 @@ const schema = z.object({
     .lte(2 ** 256),
   address: z.coerce
     .string()
-    .refine(isAddress, {
-      message: 'Address is not checksummed.',
-    })
     .transform((address) => getAddress(address)),
   currency: z.nativeEnum(Currency).default(Currency.USD),
 })
