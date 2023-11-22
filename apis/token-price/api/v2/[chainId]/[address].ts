@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { isExtractorSupportedChainId } from 'sushi/config'
-import { isAddress } from 'viem'
+import { getAddress } from 'viem'
 import { z } from 'zod'
 import { Currency, getPrice } from '../../../lib/api/v2.js'
 
@@ -10,14 +10,15 @@ const schema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256),
-  address: z.coerce.string().refine(isAddress, {
-    message: 'Address is not checksummed.',
-  }),
+  address: z.coerce.string().transform((address) => getAddress(address)),
   currency: z.nativeEnum(Currency).default(Currency.USD),
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
+  response.setHeader(
+    'Cache-Control',
+    's-maxage=300, stale-while-revalidate=600',
+  )
 
   const { chainId, currency, address } = schema.parse(request.query)
 

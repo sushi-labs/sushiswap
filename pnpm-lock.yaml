@@ -270,12 +270,21 @@ importers:
       '@sushiswap/wagmi-config':
         specifier: workspace:*
         version: link:../../config/wagmi
+      '@upstash/redis':
+        specifier: 1.22.1
+        version: 1.22.1
       '@vercel/node':
         specifier: 3.0.9
         version: 3.0.9
       '@wagmi/core':
         specifier: 1.4.5
         version: 1.4.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.21.4)
+      sushi:
+        specifier: workspace:*
+        version: link:../../packages/sushi
+      viem:
+        specifier: 1.17.2
+        version: 1.17.2(typescript@5.2.2)(zod@3.21.4)
       zod:
         specifier: 3.21.4
         version: 3.21.4
