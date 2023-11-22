@@ -157,14 +157,14 @@ function calculateTokenPrices(
       const price = Number(
         (value / 10 ** (base.decimals - key.decimals)).toFixed(18),
       )
-      currentPricesMap.set(key.address.toLowerCase(), price)
+      currentPricesMap.set(key.address, price)
     })
-    prices.set(base.address.toLowerCase(), currentPricesMap)
+    prices.set(base.address, currentPricesMap)
   })
   for (const token of tokens) {
     const tokenPrices = Array.from(prices.keys())
       .map((t) => prices.get(t))
-      .map((t) => t?.get(token.address.toLowerCase()))
+      .map((t) => t?.get(token.address))
       .filter(hasPrice)
     let price
     if (tokenPrices.length === 0) {
@@ -191,7 +191,7 @@ function calculateTokenPrices(
       }
     }
     if (price) {
-      bestPrices[token.address.toLowerCase()] = price
+      bestPrices[token.address] = price
     }
   }
   return bestPrices
@@ -267,5 +267,5 @@ export async function getPrice(
       : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
 
   const prices = calculateTokenPrices([token], bases, mappedPools, 1000)
-  return prices[address.toLowerCase()]
+  return prices[token.address]
 }
