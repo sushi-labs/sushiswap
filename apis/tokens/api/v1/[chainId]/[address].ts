@@ -9,7 +9,7 @@ const schema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256),
-  address: z.coerce.string()
+  address: z.coerce.string(),
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
@@ -25,7 +25,9 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   )
   // const result = await fetch(`https://tokens.sushi.com/v1/${chainId}/`)
   const tokenList = (await result.json()) as TokenInfo[]
-  const json = tokenList.find((t) => t.address.toLowerCase() === address.toLowerCase())
+  const json = tokenList.find(
+    (t) => t.address.toLowerCase() === address.toLowerCase(),
+  )
 
   if (json !== undefined) {
     return response.status(200).json(json)
