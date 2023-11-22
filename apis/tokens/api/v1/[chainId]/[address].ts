@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import type { TokenInfo } from 'sushi'
-import { getAddress, isAddress } from 'viem'
 import { z } from 'zod'
 
 const schema = z.object({
