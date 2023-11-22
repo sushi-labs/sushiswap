@@ -10,6 +10,7 @@ import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import '../interfaces/ICurve.sol';
 import './InputStream.sol';
+import './Approve.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -23,9 +24,9 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-/// version 2.1
 contract RouteProcessor4 is Ownable {
   using SafeERC20 for IERC20;
+  using Approve for IERC20;
   using SafeERC20 for IERC20Permit;
   using InputStream for uint256;
 
@@ -459,7 +460,7 @@ contract RouteProcessor4 is Ownable {
       amountOut = ICurve(pool).exchange{value: amountIn}(fromIndex, toIndex, amountIn, 0);
     } else {
       if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
-      IERC20(tokenIn).safeApprove(pool, amountIn);
+      IERC20(tokenIn).approveStable(pool, amountIn);
       if (poolType == 0) amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
       else {
         uint256 balanceBefore = IERC20(tokenOut).balanceOf(address(this));
