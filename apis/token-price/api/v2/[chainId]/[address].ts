@@ -10,9 +10,7 @@ const schema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256),
-  address: z.coerce
-    .string()
-    .transform((address) => getAddress(address)),
+  address: z.coerce.string().transform((address) => getAddress(address)),
   currency: z.nativeEnum(Currency).default(Currency.USD),
 })
 
