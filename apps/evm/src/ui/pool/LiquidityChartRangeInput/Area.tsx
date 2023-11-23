@@ -34,9 +34,16 @@ export const Area: FC<AreaProps> = ({
             .x((d: unknown) => xScale(xValue(d as ChartEntry)))
             .y1((d: unknown) => yScale(yValue(d as ChartEntry)))
             .y0(yScale(0))(
-            series.filter((d) => {
+            series.filter((d, i) => {
               const value = xScale(xValue(d))
-              return value > 0 && value <= window.innerWidth
+              if (value > 0 && value <= window.innerWidth) return true
+
+              if (i < series.length - 1) {
+                const value = xScale(xValue(series[i + 1]))
+                if (value > 0 && value <= window.innerWidth) return true
+              }
+
+              return false
             }) as Iterable<[number, number]>,
           ) ?? undefined
         }
