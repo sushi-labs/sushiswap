@@ -29,6 +29,7 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.METIS]: '0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F',
       [ChainId.BTTC]: '0xBBDe1d67297329148Fe1ED5e6B00114842728e65',
       [ChainId.FILECOIN]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+      [ChainId.HAQQ]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
     } as const
     const initCodeHash = {
       [ChainId.ARBITRUM_NOVA]:
@@ -75,6 +76,8 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
         '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
       [ChainId.FILECOIN]:
         '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+        [ChainId.HAQQ]:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
     } as const
 
     const tickLens = {
@@ -100,6 +103,7 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.METIS]: '0x078047150F8efa223B3d407f00E462e38f4B1b9C',
       [ChainId.BTTC]: '0x1400feFD6F9b897970f00Df6237Ff2B8b27Dc82C',
       [ChainId.FILECOIN]: '0x1be211D8DA40BC0ae8719c6663307Bfc987b1d6c',
+      [ChainId.HAQQ]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
     } as const
     super(chainId, web3Client, factory, initCodeHash, tickLens)
   }
