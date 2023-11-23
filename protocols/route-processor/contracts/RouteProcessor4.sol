@@ -16,6 +16,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
+address constant INTERNAL_INPUT_SOURCE = 0x0000000000000000000000000000000000000000;
 
 /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
 uint160 constant MIN_SQRT_RATIO = 4295128739;
@@ -242,7 +243,7 @@ contract RouteProcessor4 is Ownable {
   /// @param stream Streamed process program
   function processOnePool(uint256 stream) private {
     address token = stream.readAddress();
-    swap(stream, address(this), token, 0);
+    swap(stream, INTERNAL_INPUT_SOURCE, token, 0);
   }
 
   /// @notice Processes Bento tokens 
@@ -314,10 +315,9 @@ contract RouteProcessor4 is Ownable {
 
     if (direction > 0) {  // outside to Bento
       // deposit to arbitrary recipient is possible only from address(bentoBox)
-      if (amountIn != 0) {
-        if (from == address(this)) IERC20(tokenIn).safeTransfer(address(bentoBox), amountIn);
-        else IERC20(tokenIn).safeTransferFrom(msg.sender, address(bentoBox), amountIn);
-      } else {
+      if (from == address(this)) IERC20(tokenIn).safeTransfer(address(bentoBox), amountIn);
+      else if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(bentoBox), amountIn);
+      else {
         // tokens already are at address(bentoBox)
         amountIn = IERC20(tokenIn).balanceOf(address(bentoBox)) +
         bentoBox.strategyData(tokenIn).balance -
@@ -325,7 +325,7 @@ contract RouteProcessor4 is Ownable {
       }
       bentoBox.deposit(tokenIn, address(bentoBox), to, amountIn, 0);
     } else { // Bento to outside
-      if (amountIn > 0) {
+      if (from != INTERNAL_INPUT_SOURCE) {
         bentoBox.transfer(tokenIn, from, address(this), amountIn);
       } else amountIn = bentoBox.balanceOf(tokenIn, address(this));
       bentoBox.withdraw(tokenIn, address(this), to, 0, amountIn);
@@ -343,10 +343,8 @@ contract RouteProcessor4 is Ownable {
     address to = stream.readAddress();
     uint24 fee = stream.readUint24();   // pool fee in 1/1_000_000
 
-    if (amountIn != 0) {
-      if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
-      else IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
-    }
+    if (from == address(this)) IERC20(tokenIn).safeTransfer(pool, amountIn);
+    else if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, pool, amountIn);
 
     (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
     require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
@@ -368,7 +366,7 @@ contract RouteProcessor4 is Ownable {
     address pool = stream.readAddress();
     bytes memory swapData = stream.readBytes();
 
-    if (amountIn != 0) {
+    if (from != INTERNAL_INPUT_SOURCE) {
       bentoBox.transfer(tokenIn, from, pool, amountIn);
     }
     
