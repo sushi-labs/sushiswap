@@ -46,7 +46,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
   children: ReactNode
 }
 
-const NEW_CHAINS: number[] = [ChainId.FILECOIN] satisfies ChainId[]
+const NEW_CHAINS: number[] = [ChainId.FILECOIN, ChainId.HAQQ] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
   onSelect,
