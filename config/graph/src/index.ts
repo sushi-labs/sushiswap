@@ -166,6 +166,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.LINEA]: LINEA_HOST,
   [ChainId.SCROLL]: STUDIO_HOST,
   [ChainId.FILECOIN]: FILECOIN_HOST,
+  [ChainId.HAQQ]: HAQQ_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
