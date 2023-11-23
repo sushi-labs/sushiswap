@@ -294,8 +294,7 @@ contract RouteProcessor4 is Ownable {
         if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
         IWETH(tokenIn).withdraw(amountIn);
       }
-      //payable(to).transfer(address(this).balance);
-      (bool success,)= payable(to).call{value: address(this).balance}("");
+      (bool success,)= payable(to).call{value: amountIn}("");
       require(success, "RouteProcessor: Native token transfer failed");
     }
   }
