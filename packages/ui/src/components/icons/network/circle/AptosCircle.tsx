@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../../types'
 import classNames from 'classnames'
+import { IconComponent } from '../../../../types'
 
 export const AptosCircle: IconComponent = (props) => (
   <svg
