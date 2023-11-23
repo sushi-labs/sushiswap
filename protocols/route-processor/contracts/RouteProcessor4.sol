@@ -121,7 +121,11 @@ contract RouteProcessor4 is Ownable {
     bytes memory route
   ) external payable lock returns (uint256 amountOut) {
     (bool success, bytes memory returnBytes) = transferValueTo.call{value: amountValueTransfer}('');
-    require(success, string(abi.encodePacked(returnBytes)));
+    if (!success) {
+      assembly {
+        revert(add(32, returnBytes), mload(returnBytes))
+      }
+    }
     return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
   }
 
