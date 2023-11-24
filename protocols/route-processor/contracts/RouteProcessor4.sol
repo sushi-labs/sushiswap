@@ -41,12 +41,12 @@ contract RouteProcessor4 is Ownable {
     address to, 
     address indexed tokenIn, 
     address indexed tokenOut, 
-    uint amountIn, 
-    uint amountOutMin,
-    uint amountOut
+    uint256 amountIn, 
+    uint256 amountOutMin,
+    uint256 amountOut
   );
 
-  error MinimalOutputBalanceViolation(uint amountOut);
+  error MinimalOutputBalanceViolation(uint256 amountOut);
 
   IBentoBoxMinimal public immutable bentoBox;
   mapping (address => bool) priviledgedUsers;
@@ -71,7 +71,7 @@ contract RouteProcessor4 is Ownable {
     bentoBox = IBentoBoxMinimal(_bentoBox);
     lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
 
-    for (uint i = 0; i < priviledgedUserList.length; i++) {
+    for (uint256 i = 0; i < priviledgedUserList.length; i++) {
       priviledgedUsers[priviledgedUserList[i]] = true;
     }
   }
@@ -154,7 +154,7 @@ contract RouteProcessor4 is Ownable {
 
     uint256 realAmountIn = amountIn;
     {
-      uint step = 0;
+      uint256 step = 0;
       uint256 stream = InputStream.createStream(route);
       while (stream.isNotEmpty()) {
         uint8 commandCode = stream.readUint8();
@@ -188,7 +188,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   function applyPermit(address tokenIn, uint256 stream) private {
-    //address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s)
+    //address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
     uint256 value = stream.readUint();
     uint256 deadline = stream.readUint();
     uint8 v = stream.readUint8();
