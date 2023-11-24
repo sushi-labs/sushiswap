@@ -49,7 +49,7 @@ contract RouteProcessor4 is Ownable {
   error MinimalOutputBalanceViolation(uint256 amountOut);
 
   IBentoBoxMinimal public immutable bentoBox;
-  mapping (address => bool) priviledgedUsers;
+  mapping (address => bool) public priviledgedUsers;
   address private lastCalledPool;
 
   uint8 private unlocked = NOT_LOCKED;
