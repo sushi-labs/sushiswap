@@ -18,6 +18,11 @@ address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
 address constant INTERNAL_INPUT_SOURCE = 0x0000000000000000000000000000000000000000;
 
+uint8 constant LOCKED = 2;
+uint8 constant NOT_LOCKED = 1;
+uint8 constant PAUSED = 2;
+uint8 constant NOT_PAUSED = 1;
+
 /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
 uint160 constant MIN_SQRT_RATIO = 4295128739;
 /// @dev The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)
@@ -47,14 +52,14 @@ contract RouteProcessor4 is Ownable {
   mapping (address => bool) priviledgedUsers;
   address private lastCalledPool;
 
-  uint8 private unlocked = 1;
-  uint8 private paused = 1;
+  uint8 private unlocked = NOT_LOCKED;
+  uint8 private paused = NOT_PAUSED;
   modifier lock() {
-      require(unlocked == 1, 'RouteProcessor is locked');
-      require(paused == 1, 'RouteProcessor is paused');
-      unlocked = 2;
+      require(unlocked == NOT_LOCKED, 'RouteProcessor is locked');
+      require(paused == NOT_PAUSED, 'RouteProcessor is paused');
+      unlocked = LOCKED;
       _;
-      unlocked = 1;
+      unlocked = NOT_LOCKED;
   }
 
   modifier onlyOwnerOrPriviledgedUser() {
@@ -76,11 +81,11 @@ contract RouteProcessor4 is Ownable {
   }
 
   function pause() external onlyOwnerOrPriviledgedUser {
-    paused = 2;
+    paused = PAUSED;
   }
 
   function resume() external onlyOwnerOrPriviledgedUser {
-    paused = 1;
+    paused = NOT_PAUSED;
   }
 
   /// @notice For native unwrapping
