@@ -443,7 +443,7 @@ contract RouteProcessor4 is Ownable {
     uniswapV3SwapCallback(amount0Delta, amount1Delta, data);
   }
 
-  /// @notice Curve pool swap
+  /// @notice Curve pool swap. Legacy pools that don't return amountOut and have native coins are not supported
   /// @param stream [pool, swapData]
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
