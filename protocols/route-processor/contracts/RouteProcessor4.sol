@@ -411,10 +411,11 @@ contract RouteProcessor4 is Ownable {
     bytes calldata data
   ) public {
     require(msg.sender == lastCalledPool, 'RouteProcessor.uniswapV3SwapCallback: call from unknown source');
-    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
-    (address tokenIn) = abi.decode(data, (address));
     int256 amount = amount0Delta > 0 ? amount0Delta : amount1Delta;
     require(amount > 0, 'RouteProcessor.uniswapV3SwapCallback: not positive amount');
+    
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS;
+    (address tokenIn) = abi.decode(data, (address));
     IERC20(tokenIn).safeTransfer(msg.sender, uint256(amount));
   }
 
