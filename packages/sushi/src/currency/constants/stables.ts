@@ -164,6 +164,7 @@ export const STABLES = {
     DAI[ChainId.HARMONY],
     FRAX[ChainId.HARMONY],
   ],
+  [ChainId.HAQQ]: [USDC[ChainId.HAQQ], USDT[ChainId.HAQQ], DAI[ChainId.HAQQ]],
   [ChainId.HECO]: [USDC[ChainId.HECO], USDT[ChainId.HECO], DAI[ChainId.HECO]],
   [ChainId.KAVA]: [USDC[ChainId.KAVA], USDT[ChainId.KAVA], DAI[ChainId.KAVA]],
   [ChainId.LINEA]: [USDC[ChainId.LINEA], DAI[ChainId.LINEA]],
