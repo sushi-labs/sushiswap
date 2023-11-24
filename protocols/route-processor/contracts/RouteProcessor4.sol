@@ -63,7 +63,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   modifier onlyOwnerOrPriviledgedUser() {
-    require(msg.sender == owner() || priviledgedUsers[msg.sender], "RP: caller is not the owner or a priviledged user");
+    require(msg.sender == owner() || priviledgedUsers[msg.sender], "RP: caller is not the owner or a privileged user");
     _;
   }
 
@@ -187,8 +187,10 @@ contract RouteProcessor4 is Ownable {
     emit Route(msg.sender, to, tokenIn, tokenOut, realAmountIn, amountOutMin, amountOut);
   }
 
+  /// @notice Applies ERC-2612 permit
+  /// @param tokenIn permitted token
+  /// @param stream Streamed program
   function applyPermit(address tokenIn, uint256 stream) private {
-    //address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
     uint256 value = stream.readUint();
     uint256 deadline = stream.readUint();
     uint8 v = stream.readUint8();
@@ -198,7 +200,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   /// @notice Processes native coin: call swap for all pools that swap from native coin
-  /// @param stream Streamed process program
+  /// @param stream Streamed program
   function processNative(uint256 stream) private returns (uint256 amountTotal) {
     amountTotal = address(this).balance;
     distributeAndSwap(stream, address(this), NATIVE_ADDRESS, amountTotal);
@@ -206,7 +208,7 @@ contract RouteProcessor4 is Ownable {
 
   /// @notice Processes ERC20 token from this contract balance:
   /// @notice Call swap for all pools that swap from this token
-  /// @param stream Streamed process program
+  /// @param stream Streamed program
   function processMyERC20(uint256 stream) private returns (uint256 amountTotal) {
     address token = stream.readAddress();
     amountTotal = IERC20(token).balanceOf(address(this));
@@ -218,7 +220,7 @@ contract RouteProcessor4 is Ownable {
   
   /// @notice Processes ERC20 token from msg.sender balance:
   /// @notice Call swap for all pools that swap from this token
-  /// @param stream Streamed process program
+  /// @param stream Streamed program
   /// @param amountTotal Amount of tokens to take from msg.sender
   function processUserERC20(uint256 stream, uint256 amountTotal) private {
     address token = stream.readAddress();
@@ -228,7 +230,7 @@ contract RouteProcessor4 is Ownable {
   /// @notice Processes ERC20 token for cases when the token has only one output pool
   /// @notice In this case liquidity is already at pool balance. This is an optimization
   /// @notice Call swap for all pools that swap from this token
-  /// @param stream Streamed process program
+  /// @param stream Streamed program
   function processOnePool(uint256 stream) private {
     address token = stream.readAddress();
     swap(stream, INTERNAL_INPUT_SOURCE, token, 0);
@@ -236,7 +238,7 @@ contract RouteProcessor4 is Ownable {
 
   /// @notice Processes Bento tokens 
   /// @notice Call swap for all pools that swap from this token
-  /// @param stream Streamed process program
+  /// @param stream Streamed program
   function processInsideBento(uint256 stream) private {
     address token = stream.readAddress();
     uint256 amountTotal = bentoBox.balanceOf(token, address(this));
@@ -247,7 +249,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   /// @notice Distributes amountTotal to several pools according to their shares and calls swap for each pool
-  /// @param stream Streamed process program
+  /// @param stream Streamed program
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
   /// @param amountTotal Total amount of tokenIn for swaps 
@@ -264,7 +266,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   /// @notice Makes swap
-  /// @param stream Streamed process program
+  /// @param stream Streamed program
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
   /// @param amountIn Amount of tokenIn to take for swap
@@ -331,7 +333,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   /// @notice UniswapV2 pool swap
-  /// @param stream [pool, direction, recipient]
+  /// @param stream [pool, direction, recipient, fee]
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
   /// @param amountIn Amount of tokenIn to take for swap
@@ -434,6 +436,13 @@ contract RouteProcessor4 is Ownable {
     uniswapV3SwapCallback(amount0Delta, amount1Delta, data);
   }
 
+  /// @notice Called to `msg.sender` after executing a swap via PancakeV3Pool#swap.
+  /// @dev In the implementation you must pay the pool tokens owed for the swap.
+  /// @param amount0Delta The amount of token0 that was sent (negative) or must be received (positive) by the pool by
+  /// the end of the swap. If positive, the callback must send that amount of token0 to the pool.
+  /// @param amount1Delta The amount of token1 that was sent (negative) or must be received (positive) by the pool by
+  /// the end of the swap. If positive, the callback must send that amount of token1 to the pool.
+  /// @param data Any data passed through by the caller via the PancakeV3Pool#swap call
   function pancakeV3SwapCallback(
     int256 amount0Delta,
     int256 amount1Delta,
@@ -443,7 +452,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   /// @notice Curve pool swap. Legacy pools that don't return amountOut and have native coins are not supported
-  /// @param stream [pool, swapData]
+  /// @param stream [pool, poolType, fromIndex, toIndex, recipient, output token]
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
   /// @param amountIn Amount of tokenIn to take for swap
