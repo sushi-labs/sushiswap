@@ -132,6 +132,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.LINEA]: 'Linea',
   [ChainId.SCROLL]: 'Scroll',
   [ChainId.FILECOIN]: 'Filecoin',
+  [ChainId.HAQQ]: 'HAQQ',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
