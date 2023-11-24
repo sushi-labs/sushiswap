@@ -256,7 +256,7 @@ contract RouteProcessor4 is Ownable {
     unchecked {
       for (uint256 i = 0; i < num; ++i) {
         uint16 share = stream.readUint16();
-        uint256 amount = (amountTotal * share) / 65535;
+        uint256 amount = (amountTotal * share) / type(uint16).max /*65535*/;
         amountTotal -= amount;
         swap(stream, from, tokenIn, amount);
       }
