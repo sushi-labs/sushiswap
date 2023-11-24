@@ -220,23 +220,6 @@ contract RouteProcessor4 is Ownable {
     distributeAndSwap(stream, msg.sender, token, amountTotal);
   }
 
-  /// @notice Distributes amountTotal to several pools according to their shares and calls swap for each pool
-  /// @param stream Streamed process program
-  /// @param from Where to take liquidity for swap
-  /// @param tokenIn Input token
-  /// @param amountTotal Total amount of tokenIn for swaps 
-  function distributeAndSwap(uint256 stream, address from, address tokenIn, uint256 amountTotal) private {
-    uint8 num = stream.readUint8();
-    unchecked {
-      for (uint256 i = 0; i < num; ++i) {
-        uint16 share = stream.readUint16();
-        uint256 amount = (amountTotal * share) / 65535;
-        amountTotal -= amount;
-        swap(stream, from, tokenIn, amount);
-      }
-    }
-  }
-
   /// @notice Processes ERC20 token for cases when the token has only one output pool
   /// @notice In this case liquidity is already at pool balance. This is an optimization
   /// @notice Call swap for all pools that swap from this token
@@ -251,16 +234,26 @@ contract RouteProcessor4 is Ownable {
   /// @param stream Streamed process program
   function processInsideBento(uint256 stream) private {
     address token = stream.readAddress();
-    uint8 num = stream.readUint8();
-
     uint256 amountTotal = bentoBox.balanceOf(token, address(this));
     unchecked {
       if (amountTotal > 0) amountTotal -= 1;     // slot undrain protection
+    }
+    distributeAndSwap(stream, address(this), token, amountTotal);
+  }
+
+  /// @notice Distributes amountTotal to several pools according to their shares and calls swap for each pool
+  /// @param stream Streamed process program
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountTotal Total amount of tokenIn for swaps 
+  function distributeAndSwap(uint256 stream, address from, address tokenIn, uint256 amountTotal) private {
+    uint8 num = stream.readUint8();
+    unchecked {
       for (uint256 i = 0; i < num; ++i) {
         uint16 share = stream.readUint16();
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
-        swap(stream, address(this), token, amount);
+        swap(stream, from, tokenIn, amount);
       }
     }
   }
