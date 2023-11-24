@@ -423,13 +423,13 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 50,
     logging: true,
   },
-  [ChainId.HAQQ]: {
-    client: createPublicClient(config[ChainId.HAQQ]),
-    // factoriesV2: [sushiswapV2Factory(ChainId.HAQQ)],
-    factoriesV3: [sushiswapV3Factory(ChainId.HAQQ)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-  },
+  // [ChainId.HAQQ]: {
+  //   client: createPublicClient(config[ChainId.HAQQ]),
+  //   // factoriesV2: [sushiswapV2Factory(ChainId.HAQQ)],
+  //   factoriesV3: [sushiswapV3Factory(ChainId.HAQQ)],
+  //   tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
+  //   cacheDir: './cache',
+  //   logDepth: 50,
+  //   logging: true,
+  // },
 }
