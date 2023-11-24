@@ -63,7 +63,7 @@ contract RouteProcessor4 is Ownable {
   }
 
   modifier onlyOwnerOrPriviledgedUser() {
-    require(msg.sender == owner() || priviledgedUsers[msg.sender] == true, "RP: caller is not the owner or a priviledged user");
+    require(msg.sender == owner() || priviledgedUsers[msg.sender], "RP: caller is not the owner or a priviledged user");
     _;
   }
 
