@@ -16,7 +16,7 @@ library Approve {
     (bool success, bytes memory data) = address(token).call(
       abi.encodeWithSelector(token.approve.selector, spender, amount)
     );
-    return success && (data.length > 0 ? abi.decode(data, (bool)) : true);
+    return success && (data.length == 0 || abi.decode(data, (bool)));
   }
 
   /**
