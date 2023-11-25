@@ -80,11 +80,7 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
       outputDistribution[0],
       route,
     )
-    return (
-      startPoint === outputDistribution[0].poolAddress ||
-      // TODO: temporary !!! - too many changes to fix it as it should be. Later
-      outputDistribution[0].poolAddress.startsWith('Bento bridge for')
-    )
+    return startPoint === outputDistribution[0].poolAddress
   }
 
   override swapCode(

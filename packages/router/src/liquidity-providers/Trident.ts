@@ -289,7 +289,7 @@ export class TridentProvider extends LiquidityProvider {
       const balance = bal[i]?.result
       if (!elastic || !base || !balance) return
       const pool = new BridgeBento(
-        `Bento bridge for ${t.symbol}`,
+        this.bentoBox[this.chainId as BentoBoxChainId],
         t as RToken,
         convertTokenToBento(t),
         elastic,
@@ -649,17 +649,16 @@ export class TridentProvider extends LiquidityProvider {
     const bridgesToCreate: BentoBridgePoolCode[] = []
 
     sortedTokens.forEach((t) => {
-      const fakeBridgeAddress = `Bento bridge for ${t.symbol}`
-      if (excludePools?.has(fakeBridgeAddress)) return
       if (!this.bridges.has(t.address)) {
         const pool = new BridgeBento(
-          fakeBridgeAddress,
+          this.bentoBox[this.chainId as BentoBoxChainId],
           t as RToken,
           convertTokenToBento(t),
           0n,
           0n,
           0n,
         )
+        if (excludePools?.has(pool.uniqueID())) return
         bridgesToCreate.push(
           new BentoBridgePoolCode(
             pool,
@@ -879,7 +878,7 @@ export class TridentProvider extends LiquidityProvider {
       })
       bridge.updateReserves(elastic, base)
       bridge.freeLiquidity = Number(balance)
-      this.bridges.set(bridge.address.toLowerCase(), bc)
+      this.bridges.set(bridge.uniqueID(), bc)
     })
 
     stablePoolCodesToCreate.forEach((poolCode, i) => {
@@ -1071,7 +1070,7 @@ export class TridentProvider extends LiquidityProvider {
     sortedTokens.forEach((t) => {
       if (!this.bridges.has(t.address)) {
         const bridge = new BridgeBento(
-          `Bento bridge for ${t.symbol}`,
+          this.bentoBox[this.chainId as BentoBoxChainId],
           t as RToken,
           convertTokenToBento(t),
           0n,
