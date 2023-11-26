@@ -129,6 +129,8 @@ const _Add = () => {
           <div className="hidden md:block" />
           <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
             <AddSectionStake
+              token0={token0}
+              token1={token1}
               balance={balance}
               decimals={coinInfo?.data?.decimals}
               lpTokenName={coinInfo?.data?.name}

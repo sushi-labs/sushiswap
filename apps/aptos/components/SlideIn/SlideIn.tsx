@@ -1,7 +1,7 @@
 import {
-  createContext,
   FC,
   ReactElement,
+  createContext,
   useContext,
   useEffect,
   useRef,
@@ -39,9 +39,6 @@ export const useSlideInContext = () => {
   return useContext(SlideInContext)
 }
 
-/**
- * @deprecated
- */
 export const SlideIn: FC<RootProps> & {
   FromLeft: FC<FromLeft>
   FromRight: FC<FromRight>
