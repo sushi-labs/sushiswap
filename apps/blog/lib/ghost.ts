@@ -23,9 +23,14 @@ export async function addBodyToArticle(
   article: typeof ArticleSchema['_output'],
 ) {
   const ghostClient = getGhostClient()
-  const { html } = await ghostClient.posts.read({
-    slug: article.attributes.ghostSlug,
-  })
+
+  let html
+
+  try {
+    ;({ html } = await ghostClient.posts.read({
+      slug: article.attributes.ghostSlug,
+    }))
+  } catch {}
 
   return {
     ...article,
