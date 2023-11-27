@@ -224,6 +224,23 @@ const Navigation: React.FC<NavProps> = ({
                 asChild
                 className={navigationMenuTriggerStyle()}
               >
+                <a href="/bonds">Bonds</a>
+              </NavigationMenuLink>
+            ) : (
+              <NavigationMenuLink
+                href="/bonds"
+                className={navigationMenuTriggerStyle()}
+              >
+                Bonds
+              </NavigationMenuLink>
+            )}
+          </NavigationMenuItem>
+          <NavigationMenuItem className="hidden md:block">
+            {legacyBehavior ? (
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
                 <a href="/furo">Pay</a>
               </NavigationMenuLink>
             ) : (

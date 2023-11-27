@@ -81,6 +81,12 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     !DISABLED_CHAIN_IDS.includes(c as typeof DISABLED_CHAIN_IDS[number]),
 )
 
+export const BONDS_ENABLED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+]
+
 export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
 export const isSupportedChainId = (
   chainId: number,
