@@ -6,7 +6,7 @@ export interface Content {
   children: ReactNode | ReactNode[]
 }
 
-export const Content = forwardRef<HTMLDivElement, Content>(
+const Content = forwardRef<HTMLDivElement, Content>(
   ({ className, children }, ref) => {
     return (
       <div
@@ -21,3 +21,7 @@ export const Content = forwardRef<HTMLDivElement, Content>(
     )
   },
 )
+
+Content.displayName = 'OverlayContent'
+
+export { Content }

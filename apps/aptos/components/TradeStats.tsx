@@ -9,7 +9,10 @@ import {
 } from 'lib/swap/warningSeverity'
 import React from 'react'
 import { useNetwork } from 'utils/useNetwork'
+import { useSwapRouter } from 'utils/useSwapRouter'
 import { useTokenBalance } from 'utils/useTokenBalance'
+import { formatNumber } from 'utils/utilFunctions'
+import { Modal } from './Modal/Modal'
 import { TradeRoute } from './TradeRoute'
 
 export const TradeStats = () => {

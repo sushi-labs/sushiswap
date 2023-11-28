@@ -16,9 +16,8 @@ import {
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { Provider } from 'aptos'
 import { AddLiquidityButton } from 'components/Pool/AddLiquidityButton'
-import TradeInput from 'components/TradeInput'
+import { TradeInput } from 'components/TradeInput'
 import { createToast } from 'components/toast'
-import { providerNetwork } from 'lib/constants'
 import { useParams, useSearchParams } from 'next/navigation'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import getTokenFromAddress from 'utils/getTokenFromAddress'
@@ -30,6 +29,8 @@ import { useTokensFromPools } from '../../utils/useTokensFromPool'
 import { usePoolPairs } from '../../utils/utilFunctions'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
 import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
+import { useNetwork } from 'utils/useNetwork'
+import { networkNameToNetwork } from 'config/chains'
 
 type payloadType = {
   type: string
@@ -67,13 +68,16 @@ export const AddSectionWidget: FC = () => {
     slippageAmount1,
   } = usePoolState()
 
+  const {network, contracts: {swap: swapContract}} = useNetwork()
+
   const { account, signAndSubmitTransaction, connected } = useWallet()
   const [error0, setError0] = useState('')
   const [error1, setError1] = useState('')
 
   const addLiquidity = async (close: () => void) => {
-    const provider = new Provider(providerNetwork)
+    const provider = new Provider(networkNameToNetwork(network))
     const payload: payloadType = liquidityArgs(
+      swapContract,
       token0.address,
       token1.address,
       parseInt(String(Number(amount0) * 10 ** token0.decimals)),
@@ -144,8 +148,8 @@ export const AddSectionWidget: FC = () => {
   const token1Address = searchParams.get('token1')
 
   useEffect(() => {
-    const _token0 = getTokenFromAddress(token0Address)
-    const _token1 = getTokenFromAddress(token1Address)
+    const _token0 = getTokenFromAddress({ address: token0Address, network })
+    const _token1 = getTokenFromAddress({ address: token1Address, network })
     if (_token0) setToken0(_token0)
     if (_token1) setToken1(_token1)
   }, [])

@@ -23,4 +23,6 @@ const DialogContent: FC<DialogContentProps> = forwardRef<
   )
 })
 
-export default DialogContent
+DialogContent.displayName = 'DialogContent'
+
+export { DialogContent }

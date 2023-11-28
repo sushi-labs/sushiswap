@@ -3,8 +3,8 @@ import { useBreakpoint } from '@sushiswap/hooks'
 import React, { FC, Fragment, FunctionComponent, useEffect } from 'react'
 
 import { ExtractProps } from '@sushiswap/ui'
-import DialogActions, { DialogActionProps } from './DialogActions'
-import DialogContent, { DialogContentProps } from './DialogContent'
+import { DialogActionProps, DialogActions } from './DialogActions'
+import { DialogContent, DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 

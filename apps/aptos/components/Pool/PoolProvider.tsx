@@ -1,5 +1,12 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { FC, ReactNode, createContext, useMemo } from 'react'
+import {
+  FC,
+  ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useReducer,
+} from 'react'
 import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
 import { getTokensWithoutKey } from 'utils/useTokens'

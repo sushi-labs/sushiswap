@@ -1,4 +1,14 @@
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, List } from '@sushiswap/ui'
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  List,
+} from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
 import React, { FC, useCallback, useState } from 'react'
 import { Token } from 'utils/tokenType'
@@ -10,10 +20,13 @@ interface TokenSelectorImportRow {
   onImport(): void
 }
 
-export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ token, onImport }) => {
+export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
+  token,
+  onImport,
+}) => {
   const [, setOpen] = useState<boolean>(false)
 
-  const {network} = useNetwork()
+  const { network } = useNetwork()
 
   const onClick = useCallback(() => {
     onImport()
@@ -51,7 +64,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ token, onIm
         <DialogHeader>
           <DialogTitle>Import token</DialogTitle>
           <DialogDescription>
-            Trade at your own risk! This token doesn't appear on the active
+            Trade at your own risk! This token doesn{"'"}t appear on the active
             token list(s). Anyone can create a token, including creating fake
             versions of existing tokens that claim to represent projects.
           </DialogDescription>

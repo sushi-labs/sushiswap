@@ -6,7 +6,10 @@ export interface DialogActionProps {
   children: ReactNode | ReactNode[]
 }
 
-const DialogActions: FC<DialogActionProps> = ({ children, className }) => {
+export const DialogActions: FC<DialogActionProps> = ({
+  children,
+  className,
+}) => {
   return (
     <div
       className={classNames(
@@ -18,5 +21,3 @@ const DialogActions: FC<DialogActionProps> = ({ children, className }) => {
     </div>
   )
 }
-
-export default DialogActions
