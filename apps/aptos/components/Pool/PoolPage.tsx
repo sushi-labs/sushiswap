@@ -15,9 +15,7 @@ import { TradeInput } from 'components/TradeInput'
 import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import getTokenFromAddress from 'utils/getTokenFromAddress'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useAccount } from 'utils/useAccount'
 import { useNetwork } from 'utils/useNetwork'
@@ -62,6 +60,13 @@ export function Add() {
   )
 }
 
+type PayloadType = {
+  type: string
+  type_arguments: string[]
+  arguments: number[]
+  function: string
+}
+
 const _Add: FC = () => {
   const {
     setToken0,
@@ -72,8 +77,7 @@ const _Add: FC = () => {
     setSlippageAmount0,
     setSlippageAmount1,
   } = usePoolActions()
-  // const { token0, token1, amount0, amount1, isPriceFetching, pairs, slippageAmount0, slippageAmount1 } =
-  //   usePoolState()
+
   const { account, signAndSubmitTransaction, connected } = useWallet()
   const {
     token0,
@@ -82,7 +86,7 @@ const _Add: FC = () => {
     amount1,
     isPriceFetching,
     poolPairRatio,
-    pairs,
+    poolReserves,
     slippageAmount0,
     slippageAmount1,
   } = usePoolState()
@@ -91,13 +95,6 @@ const _Add: FC = () => {
 
   const [slippageAmount] = useSlippageTolerance()
 
-  type payloadType = {
-    type: string
-    type_arguments: string[]
-    arguments: number[]
-    function: string
-  }
-
   const {
     network,
     contracts: { swap: swapContract },
@@ -105,15 +102,17 @@ const _Add: FC = () => {
 
   const addLiquidity = async (close: () => void) => {
     const provider = new Provider(networkNameToNetwork(network))
-    const payload: payloadType = liquidityArgs(
+
+    const payload: PayloadType = liquidityArgs(
       swapContract,
       token0.address,
       token1.address,
       parseInt(String(Number(amount0) * 10 ** token0.decimals)),
       parseInt(String(Number(amount1) * 10 ** token1.decimals)),
-      parseInt(String(slippageAmount0)),
-      parseInt(String(slippageAmount1)),
+      parseInt(String(Number(slippageAmount0) * 10 ** token0.decimals)),
+      parseInt(String(Number(slippageAmount1) * 10 ** token1.decimals)),
     )
+
     setisTransactionPending(true)
     if (!account) return []
     try {
@@ -121,7 +120,7 @@ const _Add: FC = () => {
       await provider.waitForTransaction(response?.hash)
       if (!response?.success) return
       const toastId = `completed:${response?.hash}`
-      const summery = pairs
+      const summery = poolReserves
         ? `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`
         : `Created the ${token0.symbol}/${token1.symbol} liquidity pool`
       createToast({
@@ -151,11 +150,11 @@ const _Add: FC = () => {
 
   const tradeVal = useRef<HTMLInputElement>(null)
   const tradeVal1 = useRef<HTMLInputElement>(null)
+
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance0(value)
-      setAmount0(value)
-      if (pairs?.data) {
+      if (poolReserves?.data) {
         if (value) {
           const decimalDiff = token0.decimals - token1.decimals
 
@@ -173,25 +172,13 @@ const _Add: FC = () => {
         }
       }
     },
-    [poolPairRatio, balance0, token0, token1],
+    [poolPairRatio, poolReserves, token0, token1, setAmount1],
   )
-
-  const searchParams = useSearchParams()
-  const token0Address = searchParams.get('token0')
-  const token1Address = searchParams.get('token1')
-
-  useEffect(() => {
-    const _token0 = getTokenFromAddress({ address: token0Address, network })
-    const _token1 = getTokenFromAddress({ address: token1Address, network })
-    if (_token0) setToken0(_token0)
-    if (_token1) setToken1(_token1)
-  }, [])
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance1(value)
-      setAmount1(value)
-      if (pairs?.data) {
+      if (poolReserves?.data) {
         if (value) {
           const decimalDiff = token1.decimals - token0.decimals
 
@@ -210,22 +197,28 @@ const _Add: FC = () => {
         }
       }
     },
-    [poolPairRatio, balance1],
+    [poolPairRatio, poolReserves, token0, token1, setAmount0],
   )
 
   useEffect(() => {
+    if (amount0) {
+      setSlippageAmount0(Number(amount0))
+    }
+    if (amount1) {
+      setSlippageAmount1(Number(amount1))
+    }
+
+    slippageAmount
+  }, [setSlippageAmount0, setSlippageAmount1, amount0, amount1, slippageAmount])
+
+  useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
-  }, [account, connected, network, token0, token1, balance0, poolPairRatio])
+  }, [onChangeToken0TypedAmount, amount0])
 
   useEffect(() => {
     PoolInputBalance1(String(amount1))
     PoolInputBalance0(String(amount0))
-  }, [amount1, token1, balance1])
-
-  useEffect(() => {
-    setSlippageAmount0(amount0 ? Number(amount0) * 10 ** token0.decimals : 0)
-    setSlippageAmount1(amount1 ? Number(amount1) * 10 ** token1.decimals : 0)
-  }, [amount0, amount1, slippageAmount])
+  }, [amount1, amount0])
 
   const PoolInputBalance0 = (tradeVal: string) => {
     const regexPattern = /^[0-9]*(\.[0-9]*)?$/

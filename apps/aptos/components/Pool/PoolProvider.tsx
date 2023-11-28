@@ -35,8 +35,8 @@ type State = {
 type PoolApi = {
   setToken0(token: Token): void
   setToken1(token: Token): void
-  setAmount0(amount1: string): void
-  setAmount1(amount2: string): void
+  setAmount0(amount0: string): void
+  setAmount1(amount1: string): void
   setLoadingPrice(isLoadingPrice: boolean): void
   setButtonError(buttonError: string): void
   setisTransactionPending(value: boolean): void
@@ -44,8 +44,8 @@ type PoolApi = {
   setError(value: string): void
   setPoolReserves(value: TokenPairReserve | null): void
   setPoolPairRatio(value: number): void
-  setSlippageAmount0(amount1: number): void
-  setSlippageAmount1(amount2: number): void
+  setSlippageAmount0(amount0: number): void
+  setSlippageAmount1(amount1: number): void
 }
 
 export const PoolStateContext = createContext<State>({} as State)

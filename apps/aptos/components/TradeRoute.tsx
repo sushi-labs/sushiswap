@@ -56,12 +56,12 @@ const ComplexRoutePath = ({
   const { data: queryToken1 } = useTokenWithCache({ address: toTokenAddress })
 
   const fromToken = (
-    tokens && tokens[fromTokenAddress]
+    tokens?.[fromTokenAddress]
       ? tokens[fromTokenAddress]
       : queryToken0 && queryToken0
   ) as Token
   const toToken = (
-    tokens && tokens[toTokenAddress]
+    tokens?.[toTokenAddress]
       ? tokens[toTokenAddress]
       : queryToken1 && queryToken1
   ) as Token

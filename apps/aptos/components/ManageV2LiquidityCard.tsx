@@ -16,7 +16,6 @@ import {
 import { useParams } from 'next/navigation'
 import { FC, useMemo, useState } from 'react'
 import { useNetwork } from 'utils/useNetwork'
-import useStablePrice from 'utils/useStablePrice'
 import { useFarms, useIsFarm } from '../utils/useFarms'
 import { usePool } from '../utils/usePool'
 import { Pool } from '../utils/usePools'
@@ -97,23 +96,6 @@ export const ManageV2LiquidityCard: FC = () => {
     ? ((stakeAmount / 10 ** coinInfo?.data?.decimals) as number)
     : 0
 
-  const [farmUnderlying0, farmUnderlying1] = useUnderlyingTokenBalanceFromPool({
-    balance: stakeAmount,
-    reserve0: Number(reserve0),
-    reserve1: Number(reserve1),
-    totalSupply: Number(totalSupply),
-    token0,
-    token1,
-  })
-
-  const token0Price = useStablePrice({ currency: token0 })
-  const token1Price = useStablePrice({ currency: token1 })
-  const token0RemovePoolPrice = token0Price
-    ? (token0Price * Number(reserve0)) / 10 ** token0.decimals
-    : 0
-  const token1RemovePoolPrice = token1Price
-    ? (token1Price * Number(reserve1)) / 10 ** token1.decimals
-    : 0
   const lpPrice = coinInfo
     ? (Number(reserve0) + Number(reserve1)) / Number(totalSupply)
     : 0

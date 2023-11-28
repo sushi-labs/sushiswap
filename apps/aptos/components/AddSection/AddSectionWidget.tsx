@@ -1,6 +1,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { CogIcon } from '@heroicons/react/24/outline'
+import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   IconButton,
   WidgetAction,
@@ -31,7 +32,7 @@ import { usePoolPairs } from '../../utils/utilFunctions'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
 import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
 
-type payloadType = {
+type PayloadType = {
   type: string
   type_arguments: string[]
   arguments: number[]
@@ -69,6 +70,8 @@ export const AddSectionWidget: FC = () => {
     slippageAmount1,
   } = usePoolState()
 
+  const [slippageAmount] = useSlippageTolerance()
+
   useEffect(() => {
     if (token0State.address !== token0.address) {
       setToken0(token0)
@@ -90,14 +93,15 @@ export const AddSectionWidget: FC = () => {
   const addLiquidity = useCallback(
     async (close: () => void) => {
       const provider = new Provider(networkNameToNetwork(network))
-      const payload: payloadType = liquidityArgs(
+
+      const payload: PayloadType = liquidityArgs(
         swapContract,
         token0.address,
         token1.address,
         parseInt(String(Number(amount0) * 10 ** token0.decimals)),
         parseInt(String(Number(amount1) * 10 ** token1.decimals)),
-        parseInt(String(slippageAmount0)),
-        parseInt(String(slippageAmount1)),
+        parseInt(String(Number(slippageAmount0) * 10 ** token0.decimals)),
+        parseInt(String(Number(slippageAmount1) * 10 ** token1.decimals)),
       )
       setisTransactionPending(true)
       if (!account) return []
@@ -159,7 +163,6 @@ export const AddSectionWidget: FC = () => {
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance0(value)
-      // setAmount0(value)
       if (poolReserves?.data) {
         if (value) {
           const decimalDiff = token0.decimals - token1.decimals
@@ -181,12 +184,9 @@ export const AddSectionWidget: FC = () => {
     [poolPairRatio, poolReserves, token0, token1, setAmount1],
   )
 
-  console.log('update')
-
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance1(value)
-      // setAmount1(value)
       if (poolReserves?.data) {
         if (value) {
           const decimalDiff = token1.decimals - token0.decimals
@@ -219,9 +219,15 @@ export const AddSectionWidget: FC = () => {
   }, [amount1, amount0])
 
   useEffect(() => {
-    setSlippageAmount0(amount0 ? Number(amount0) * 10 ** token0.decimals : 0)
-    setSlippageAmount1(amount1 ? Number(amount1) * 10 ** token1.decimals : 0)
-  }, [amount0, amount1, token0, token1, setSlippageAmount0, setSlippageAmount1])
+    if (amount0) {
+      setSlippageAmount0(Number(amount0))
+    }
+    if (amount1) {
+      setSlippageAmount1(Number(amount1))
+    }
+
+    slippageAmount
+  }, [setSlippageAmount0, setSlippageAmount1, amount0, amount1, slippageAmount])
 
   const PoolInputBalance0 = useCallback(
     (tradeVal: string) => {
