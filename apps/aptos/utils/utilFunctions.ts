@@ -1,10 +1,11 @@
+import { useQuery } from '@tanstack/react-query'
 import { SupportedNetwork, chains } from 'config/chains'
-import { useMemo } from 'react'
+import { useEffect } from 'react'
+import { usePoolActions, usePoolState } from '../components/Pool/PoolProvider'
 import { baseTokens } from './baseTokens'
 import { Token } from './tokenType'
 import { useNetwork } from './useNetwork'
 import { Pool } from './usePools'
-import {usePoolActions, usePoolState} from "../components/Pool/PoolProvider";
 
 export type Route = {
   route: string[]
@@ -39,7 +40,6 @@ export async function getAllCommonPairs({
     basePairs.add(pair?.data?.token_x_details?.token_address)
     basePairs.add(pair?.data?.token_y_details?.token_address)
   })
-  let reserves
   const pairArray = [...basePairs]
   let returnRoutes: Route = {} as Route
 
@@ -54,37 +54,24 @@ export async function getAllCommonPairs({
   await fetch(`${fetchUrlPrefix}/v1/accounts/${swapContract}/resources`)
     .then((res) => res.json())
     .then((data) => {
-      let t: any = {}
+      const t: any = {}
       const reserve_tokens: any = {}
       const reserve_token_info: any = {}
 
       if (data?.error_code) return
-      reserves = data.filter((d: any) => {
-        if (d.type.includes('swap::TokenPairReserve')) {
-          reserve_tokens[d.type] = d
-
-          return true
-        }
-
-        if (
-          d.type.includes(`0x1::coin::CoinInfo<${swapContract}::swap::LPToken<`)
-        ) {
-          reserve_token_info[d.type] = d
-        }
-      })
       allPairs.map((token) => {
         if (
           reserve_tokens[
             `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
           ]
         ) {
-          let info = {
+          const info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[0]}, ${token[1]}>>`
               ],
           }
-          let data =
+          const data =
             reserve_tokens[
               `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
             ]
@@ -103,13 +90,13 @@ export async function getAllCommonPairs({
             `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
           ]
         ) {
-          let info = {
+          const info = {
             lpTokenInfo:
               reserve_token_info[
                 `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[1]}, ${token[0]}>>`
               ],
           }
-          let data =
+          const data =
             reserve_tokens[
               `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
             ]
@@ -148,7 +135,7 @@ export async function getAllCommonPairs({
   return returnRoutes as Route
 }
 
-type TokenPairReserve = {
+export type TokenPairReserve = {
   type: string
   data: {
     block_timestamp_last: string
@@ -163,17 +150,26 @@ export async function usePoolPairs() {
     contracts: { swap: swapContract },
   } = useNetwork()
   const { token0, token1, isTransactionPending } = usePoolState()
-  const { setPairs, setLoadingPrice, setPoolPairRatio } = usePoolActions()
 
-  return useMemo(async () => {
-    let reserves: TokenPairReserve[] = [{}] as TokenPairReserve[]
-    let inverse = false
-    try {
-      setLoadingPrice(true)
-      await fetch(`${fetchUrlPrefix}/v1/accounts/${swapContract}/resources`)
-        .then((res) => res.json())
-        .then((data) => {
-          reserves = data.filter((d: TokenPairReserve) => {
+  const { setPoolReserves, setLoadingPrice, setPoolPairRatio } =
+    usePoolActions()
+
+  const { data, isLoading } = useQuery<{
+    poolReserves: TokenPairReserve | null
+    poolPairRatio: number
+  }>({
+    queryKey: ['poolPairs', swapContract, token0, token1, isTransactionPending],
+    queryFn: async () => {
+      const url = `${fetchUrlPrefix}/v1/accounts/${swapContract}/resources`
+
+      const response = await fetch(url)
+
+      if (response.status === 200) {
+        let inverse = false
+
+        const data = await response.json()
+        const reserves: TokenPairReserve[] = data.filter(
+          (d: TokenPairReserve) => {
             if (
               d.type ===
               `${swapContract}::swap::TokenPairReserve<${token0.address}, ${token1.address}>`
@@ -187,34 +183,45 @@ export async function usePoolPairs() {
               inverse = true
               return true
             }
-          })
-        })
+          },
+        )
 
-      setLoadingPrice(false)
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setLoadingPrice(false)
-    }
-    if (reserves && reserves.length) {
-      setPairs(reserves[0])
-      if (inverse) {
-        setPoolPairRatio(
-          Number(reserves[0]?.data?.reserve_x) /
-            Number(reserves[0]?.data?.reserve_y),
-        )
-      } else {
-        setPoolPairRatio(
-          Number(reserves[0]?.data?.reserve_y) /
-            Number(reserves[0]?.data?.reserve_x),
-        )
+        if (reserves?.length) {
+          if (inverse) {
+            return {
+              poolReserves: reserves[0],
+              poolPairRatio:
+                Number(reserves[0]?.data?.reserve_x) /
+                Number(reserves[0]?.data?.reserve_y),
+            }
+          } else {
+            return {
+              poolReserves: reserves[0],
+              poolPairRatio:
+                Number(reserves[0]?.data?.reserve_y) /
+                Number(reserves[0]?.data?.reserve_x),
+            }
+          }
+        }
       }
-    } else {
-      setPairs({})
-      setPoolPairRatio(0)
+
+      return {
+        poolReserves: null,
+        poolPairRatio: 0,
+      }
+    },
+  })
+
+  useEffect(() => {
+    if (data) {
+      setPoolReserves(data?.poolReserves)
+      setPoolPairRatio(data?.poolPairRatio)
     }
-    return reserves
-  }, [token0, token1, isTransactionPending, swapContract, fetchUrlPrefix])
+  }, [data, setPoolReserves, setPoolPairRatio])
+
+  useEffect(() => {
+    setLoadingPrice(isLoading)
+  }, [isLoading, setLoadingPrice])
 }
 
 export const exactOutput = (amt_in: number, res_x: number, res_y: number) => {
@@ -247,7 +254,7 @@ function findPossibleRoutes(
   } else {
     // Iterate through the adjacent tokens of the current token
     if (graph[tokenA]) {
-      for (let adjacentToken of graph[tokenA]) {
+      for (const adjacentToken of graph[tokenA]) {
         // If the adjacent token is not visited, recursively find possible routes
         if (!visited[adjacentToken]) {
           findPossibleRoutes(
@@ -295,54 +302,54 @@ function RouteDemo(
     const prices = []
     if (route.length < 6) {
       if (
-        ARR[route[0] + '|||' + route[1]] ||
-        ARR[route[1] + '|||' + route[0]]
+        ARR[`${route[0]}|||${route[1]}`] ||
+        ARR[`${route[1]}|||${route[0]}`]
       ) {
         const res_x =
-          ARR[route[0] + '|||' + route[1]]?.res_x ||
-          ARR[route[1] + '|||' + route[0]]?.res_y
+          ARR[`${route[0]}|||${route[1]}`]?.res_x ||
+          ARR[`${route[1]}|||${route[0]}`]?.res_y
         const res_y =
-          ARR[route[0] + '|||' + route[1]]?.res_y ||
-          ARR[route[1] + '|||' + route[0]]?.res_x
+          ARR[`${route[0]}|||${route[1]}`]?.res_y ||
+          ARR[`${route[1]}|||${route[0]}`]?.res_x
         lastOutput = exactOutput(firstInput, res_x, res_y)
         prices.push(res_y / res_x)
 
         if (
-          ARR[route[1] + '|||' + route[2]] ||
-          ARR[route[2] + '|||' + route[1]]
+          ARR[`${route[1]}|||${route[2]}`] ||
+          ARR[`${route[2]}|||${route[1]}`]
         ) {
           const res_x =
-            ARR[route[1] + '|||' + route[2]]?.res_x ||
-            ARR[route[2] + '|||' + route[1]]?.res_y
+            ARR[`${route[1]}|||${route[2]}`]?.res_x ||
+            ARR[`${route[2]}|||${route[1]}`]?.res_y
           const res_y =
-            ARR[route[1] + '|||' + route[2]]?.res_y ||
-            ARR[route[2] + '|||' + route[1]]?.res_x
+            ARR[`${route[1]}|||${route[2]}`]?.res_y ||
+            ARR[`${route[2]}|||${route[1]}`]?.res_x
           lastOutput = exactOutput(lastOutput, res_x, res_y)
           prices.push(res_y / res_x)
 
           if (
-            ARR[route[2] + '|||' + route[3]] ||
-            ARR[route[3] + '|||' + route[2]]
+            ARR[`${route[2]}|||${route[3]}`] ||
+            ARR[`${route[3]}|||${route[2]}`]
           ) {
             const res_x =
-              ARR[route[2] + '|||' + route[3]]?.res_x ||
-              ARR[route[3] + '|||' + route[2]]?.res_y
+              ARR[`${route[2]}|||${route[3]}`]?.res_x ||
+              ARR[`${route[3]}|||${route[2]}`]?.res_y
             const res_y =
-              ARR[route[2] + '|||' + route[3]]?.res_y ||
-              ARR[route[3] + '|||' + route[2]]?.res_x
+              ARR[`${route[2]}|||${route[3]}`]?.res_y ||
+              ARR[`${route[3]}|||${route[2]}`]?.res_x
             lastOutput = exactOutput(lastOutput, res_x, res_y)
             prices.push(res_y / res_x)
 
             if (
-              ARR[route[3] + '|||' + route[4]] ||
-              ARR[route[4] + '|||' + route[3]]
+              ARR[`${route[3]}|||${route[4]}`] ||
+              ARR[`${route[4]}|||${route[3]}`]
             ) {
               const res_x =
-                ARR[route[3] + '|||' + route[4]]?.res_x ||
-                ARR[route[4] + '|||' + route[3]]?.res_y
+                ARR[`${route[3]}|||${route[4]}`]?.res_x ||
+                ARR[`${route[4]}|||${route[3]}`]?.res_y
               const res_y =
-                ARR[route[3] + '|||' + route[4]]?.res_y ||
-                ARR[route[4] + '|||' + route[3]]?.res_x
+                ARR[`${route[3]}|||${route[4]}`]?.res_y ||
+                ARR[`${route[4]}|||${route[3]}`]?.res_x
               lastOutput = exactOutput(lastOutput, res_x, res_y)
               prices.push(res_y / res_x)
             }

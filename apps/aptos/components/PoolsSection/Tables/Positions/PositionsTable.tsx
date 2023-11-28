@@ -6,10 +6,15 @@ import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Pool } from 'utils/usePools'
 import { useUserPositions } from 'utils/useUserPositions'
-import { usePoolFilters } from '../../PoolFiltersProvider'
-import { NAME_COLUMN } from './Cells/columns'
+import { usePoolFilters } from '../../../PoolFiltersProvider'
+import { NAME_COLUMN, TVL_COLUMN } from '../Pools/columns'
+import { MYPOSITION_TVL_COLUMN } from './columns'
 
-const COLUMNS = [NAME_COLUMN] satisfies ColumnDef<Pool, unknown>[]
+const COLUMNS = [
+  NAME_COLUMN,
+  TVL_COLUMN,
+  MYPOSITION_TVL_COLUMN,
+] satisfies ColumnDef<Pool, unknown>[]
 
 export const PositionsTable = () => {
   const { tokenSymbols } = usePoolFilters()

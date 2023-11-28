@@ -18,10 +18,11 @@ import { Provider } from 'aptos'
 import { AddLiquidityButton } from 'components/Pool/AddLiquidityButton'
 import { TradeInput } from 'components/TradeInput'
 import { createToast } from 'components/toast'
-import { useParams, useSearchParams } from 'next/navigation'
+import { networkNameToNetwork } from 'config/chains'
+import { useParams } from 'next/navigation'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import getTokenFromAddress from 'utils/getTokenFromAddress'
 import { liquidityArgs } from 'utils/liquidityPayload'
+import { useNetwork } from 'utils/useNetwork'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { usePool } from '../../utils/usePool'
 import { Pool } from '../../utils/usePools'
@@ -29,8 +30,6 @@ import { useTokensFromPools } from '../../utils/useTokensFromPool'
 import { usePoolPairs } from '../../utils/utilFunctions'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
 import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
-import { useNetwork } from 'utils/useNetwork'
-import { networkNameToNetwork } from 'config/chains'
 
 type payloadType = {
   type: string
@@ -59,57 +58,91 @@ export const AddSectionWidget: FC = () => {
   } = usePoolActions()
 
   const {
+    token0: token0State,
+    token1: token1State,
     amount0,
     amount1,
     isPriceFetching,
     poolPairRatio,
-    pairs,
+    poolReserves,
     slippageAmount0,
     slippageAmount1,
   } = usePoolState()
 
-  const {network, contracts: {swap: swapContract}} = useNetwork()
+  useEffect(() => {
+    if (token0State.address !== token0.address) {
+      setToken0(token0)
+    }
+    if (token1State.address !== token1.address) {
+      setToken1(token1)
+    }
+  }, [token0, token1, setToken0, setToken1])
+
+  const {
+    network,
+    contracts: { swap: swapContract },
+  } = useNetwork()
 
   const { account, signAndSubmitTransaction, connected } = useWallet()
   const [error0, setError0] = useState('')
   const [error1, setError1] = useState('')
 
-  const addLiquidity = async (close: () => void) => {
-    const provider = new Provider(networkNameToNetwork(network))
-    const payload: payloadType = liquidityArgs(
+  const addLiquidity = useCallback(
+    async (close: () => void) => {
+      const provider = new Provider(networkNameToNetwork(network))
+      const payload: payloadType = liquidityArgs(
+        swapContract,
+        token0.address,
+        token1.address,
+        parseInt(String(Number(amount0) * 10 ** token0.decimals)),
+        parseInt(String(Number(amount1) * 10 ** token1.decimals)),
+        parseInt(String(slippageAmount0)),
+        parseInt(String(slippageAmount1)),
+      )
+      setisTransactionPending(true)
+      if (!account) return []
+      try {
+        const response: any = await signAndSubmitTransaction(payload)
+        await provider.waitForTransaction(response?.hash)
+        if (!response?.success) return
+        const toastId = `completed:${response?.hash}`
+        const summery = poolReserves
+          ? `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`
+          : `Created the ${token0.symbol}/${token1.symbol} liquidity pool`
+        createToast({
+          summery: summery,
+          toastId: toastId,
+        })
+        setisTransactionPending(false)
+        close()
+        setAmount0('')
+        setAmount1('')
+      } catch {
+        const toastId = `failed:${Math.random()}`
+        createToast({ summery: 'User rejected request', toastId: toastId })
+      } finally {
+        setisTransactionPending(false)
+      }
+    },
+    [
+      account,
+      poolReserves,
+      network,
+      token0,
+      token1,
+      amount0,
+      amount1,
       swapContract,
-      token0.address,
-      token1.address,
-      parseInt(String(Number(amount0) * 10 ** token0.decimals)),
-      parseInt(String(Number(amount1) * 10 ** token1.decimals)),
-      parseInt(String(slippageAmount0)),
-      parseInt(String(slippageAmount1)),
-    )
-    setisTransactionPending(true)
-    if (!account) return []
-    try {
-      const response: any = await signAndSubmitTransaction(payload)
-      await provider.waitForTransaction(response?.hash)
-      if (!response?.success) return
-      const toastId = `completed:${response?.hash}`
-      const summery = pairs
-        ? `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`
-        : `Created the ${token0.symbol}/${token1.symbol} liquidity pool`
-      createToast({
-        summery: summery,
-        toastId: toastId,
-      })
-      setisTransactionPending(false)
-      close()
-      setAmount0('')
-      setAmount1('')
-    } catch (error) {
-      const toastId = `failed:${Math.random()}`
-      createToast({ summery: `User rejected request`, toastId: toastId })
-    } finally {
-      setisTransactionPending(false)
-    }
-  }
+      amount0,
+      amount1,
+      slippageAmount0,
+      slippageAmount1,
+      setAmount0,
+      setAmount1,
+      setisTransactionPending,
+      signAndSubmitTransaction,
+    ],
+  )
 
   const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance({
     account: account?.address as string,
@@ -122,16 +155,21 @@ export const AddSectionWidget: FC = () => {
 
   const tradeVal = useRef<HTMLInputElement>(null)
   const tradeVal1 = useRef<HTMLInputElement>(null)
+
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance0(value)
-      setAmount0(value)
-      if (pairs?.data) {
+      // setAmount0(value)
+      if (poolReserves?.data) {
         if (value) {
+          const decimalDiff = token0.decimals - token1.decimals
+
           setAmount1(
             String(
               parseFloat(
-                (parseFloat(value) * poolPairRatio).toFixed(token1.decimals),
+                (parseFloat(value) * poolPairRatio * 10 ** decimalDiff).toFixed(
+                  token1.decimals,
+                ),
               ),
             ),
           )
@@ -140,30 +178,26 @@ export const AddSectionWidget: FC = () => {
         }
       }
     },
-    [poolPairRatio, balance0],
+    [poolPairRatio, poolReserves, token0, token1, setAmount1],
   )
 
-  const searchParams = useSearchParams()
-  const token0Address = searchParams.get('token0')
-  const token1Address = searchParams.get('token1')
-
-  useEffect(() => {
-    const _token0 = getTokenFromAddress({ address: token0Address, network })
-    const _token1 = getTokenFromAddress({ address: token1Address, network })
-    if (_token0) setToken0(_token0)
-    if (_token1) setToken1(_token1)
-  }, [])
+  console.log('update')
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
       PoolInputBalance1(value)
-      setAmount1(value)
-      if (pairs?.data) {
+      // setAmount1(value)
+      if (poolReserves?.data) {
         if (value) {
+          const decimalDiff = token1.decimals - token0.decimals
+
           setAmount0(
             String(
               parseFloat(
-                (parseFloat(value) / poolPairRatio).toFixed(token0.decimals),
+                (
+                  (parseFloat(value) / poolPairRatio) *
+                  10 ** decimalDiff
+                ).toFixed(token0.decimals),
               ),
             ),
           )
@@ -172,7 +206,7 @@ export const AddSectionWidget: FC = () => {
         }
       }
     },
-    [poolPairRatio, balance1],
+    [poolPairRatio, poolReserves, token0, token1, setAmount0],
   )
 
   useEffect(() => {
@@ -189,40 +223,47 @@ export const AddSectionWidget: FC = () => {
     setSlippageAmount1(amount1 ? Number(amount1) * 10 ** token1.decimals : 0)
   }, [amount0, amount1, token0, token1, setSlippageAmount0, setSlippageAmount1])
 
-  const PoolInputBalance0 = (tradeVal: string) => {
-    const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-    if (regexPattern.test(tradeVal)) {
-      setAmount0(tradeVal)
-    }
-    if (connected && typeof balance0 === 'number') {
-      const priceEst = balance0 / 10 ** token0.decimals < parseFloat(tradeVal)
-      if (priceEst) {
-        setError0('Exceeds Balance')
-      } else {
-        setError0('')
+  const PoolInputBalance0 = useCallback(
+    (tradeVal: string) => {
+      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
+      if (regexPattern.test(tradeVal)) {
+        setAmount0(tradeVal)
       }
-    }
-  }
-
-  const PoolInputBalance1 = (tradeVal1: string) => {
-    const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-    if (regexPattern.test(tradeVal1)) {
-      setAmount1(tradeVal1)
-    }
-    if (connected && typeof balance1 === 'number') {
-      const priceEst = balance1 / 10 ** token1.decimals < parseFloat(tradeVal1)
-      if (priceEst) {
-        setError1('Exceeds Balance')
-      } else {
-        setError1('')
+      if (connected && typeof balance0 === 'number') {
+        const priceEst = balance0 / 10 ** token0.decimals < parseFloat(tradeVal)
+        if (priceEst) {
+          setError0('Exceeds Balance')
+        } else {
+          setError0('')
+        }
       }
-    }
-  }
+    },
+    [connected, balance0, setAmount0, token0],
+  )
 
-  const swapTokenIfAlreadySelected = () => {
+  const PoolInputBalance1 = useCallback(
+    (tradeVal1: string) => {
+      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
+      if (regexPattern.test(tradeVal1)) {
+        setAmount1(tradeVal1)
+      }
+      if (connected && typeof balance1 === 'number') {
+        const priceEst =
+          balance1 / 10 ** token1.decimals < parseFloat(tradeVal1)
+        if (priceEst) {
+          setError1('Exceeds Balance')
+        } else {
+          setError1('')
+        }
+      }
+    },
+    [connected, balance1, setAmount1, token1],
+  )
+
+  const swapTokenIfAlreadySelected = useCallback(() => {
     setToken0(token1)
     setToken1(token0)
-  }
+  }, [setToken0, setToken1, token0, token1])
 
   return (
     <Widget id="addLiquidity" variant="empty">

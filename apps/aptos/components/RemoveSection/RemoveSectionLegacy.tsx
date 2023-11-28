@@ -51,7 +51,7 @@ export const RemoveSectionLegacy = ({
     return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
   }, [pool])
 
-  const [percentage, setPercentage] = useState<string>('')
+  const [percentage, setPercentage] = useState<string>('0')
   const [isTransactionPending, setisTransactionPending] =
     useState<boolean>(false)
   const { account, signAndSubmitTransaction, connected } = useWallet()
@@ -94,7 +94,6 @@ export const RemoveSectionLegacy = ({
         : 0,
     ]
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
-  console.log(currencyAToRemove)
 
   const {
     network,
@@ -125,7 +124,7 @@ export const RemoveSectionLegacy = ({
         toastId: toastId,
       })
       setisTransactionPending(false)
-      setPercentage('')
+      setPercentage('0')
     } catch (err) {
       console.log(err)
       const toastId = `failed:${Math.random()}`

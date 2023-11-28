@@ -74,11 +74,15 @@ export const useIsFarm = ({ poolAddress, farms }: UseIsFarm) => {
 }
 
 export function useFarms() {
-  const { network } = useNetwork()
+  const {
+    network,
+    contracts: { masterchef },
+  } = useNetwork()
 
   return useQuery({
     queryKey: ['farms', { network }],
     queryFn: () => farmsQueryFn({ network }),
+    enabled: Boolean(masterchef),
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   })

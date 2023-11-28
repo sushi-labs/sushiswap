@@ -2,7 +2,7 @@
 
 import { Container } from '@sushiswap/ui'
 import { TableFiltersFarmsOnly } from 'components/TableFiltersFarmsOnly'
-import { PositionsTable } from '../../../../components/PoolsSection/Tables/PositionsTable'
+import { PositionsTable } from '../../../../components/PoolsSection/Tables/Positions/PositionsTable'
 import { TableFiltersSearchToken } from '../../../../components/TableFiltersSearchToken'
 
 export default function MyPositionsPage() {

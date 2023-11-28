@@ -1,6 +1,6 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useQuery } from '@tanstack/react-query'
 import { SupportedNetwork, chains, isSupportedNetwork } from 'config/chains'
+import { useNetwork } from './useNetwork'
 
 export type PoolUserInfo = {
   type: string
@@ -87,16 +87,19 @@ export const getPIdIndex = (
 }
 
 export function useUserPool(address: string | undefined) {
-  const { network } = useWallet()
+  const {
+    network,
+    contracts: { masterchef },
+  } = useNetwork()
 
   return useQuery({
-    queryKey: ['handle', { address, network: network?.name }],
+    queryKey: ['handle', { address, network }],
     queryFn: async () =>
       userPoolQueryFn({
         address: address as string,
-        network: network?.name as SupportedNetwork,
+        network: network,
       }),
-    enabled: Boolean(address && isSupportedNetwork(network?.name)),
+    enabled: Boolean(address && isSupportedNetwork(network) && masterchef),
     refetchInterval: 2000,
   })
 }
@@ -104,18 +107,22 @@ export function useUserPool(address: string | undefined) {
 export function useUserHandle({
   userHandle,
 }: { userHandle: PoolUserInfo | undefined }) {
-  const { network } = useWallet()
+  const {
+    network,
+    contracts: { masterchef },
+  } = useNetwork()
 
   return useQuery({
-    queryKey: ['userStackes', { userHandle, network: network?.name }],
+    queryKey: ['userStackes', { userHandle, network: network }],
     queryFn: async () =>
       userHandleQueryFn({
         handle: userHandle?.data?.pid_to_user_info?.inner?.handle as string,
-        network: network?.name as SupportedNetwork,
+        network: network as SupportedNetwork,
       }),
     enabled: Boolean(
       userHandle?.data?.pid_to_user_info?.inner?.handle &&
-        isSupportedNetwork(network?.name),
+        isSupportedNetwork(network) &&
+        masterchef,
     ),
     refetchInterval: 2000,
   })

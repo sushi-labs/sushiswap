@@ -15,6 +15,7 @@ import {
 } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { FC, useMemo, useState } from 'react'
+import { useNetwork } from 'utils/useNetwork'
 import useStablePrice from 'utils/useStablePrice'
 import { useFarms, useIsFarm } from '../utils/useFarms'
 import { usePool } from '../utils/usePool'
@@ -29,18 +30,19 @@ import { AddSectionWidget } from './AddSection/AddSectionWidget'
 import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
 import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
 
-const CONTRACT_ADDRESS =
-  process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
-
 export const ManageV2LiquidityCard: FC = () => {
   const [tab, setTab] = useState<string>('add')
   const router = useParams()
   const tokenAddress = decodeURIComponent(router?.id)
 
+  const {
+    contracts: { swap: swapContract },
+  } = useNetwork()
+
   const { account } = useWallet()
   const { data: LPBalance } = useTokenBalance({
     account: account?.address as string,
-    currency: `${CONTRACT_ADDRESS}::swap::LPToken<${tokenAddress}>`,
+    currency: `${swapContract}::swap::LPToken<${tokenAddress}>`,
     enabled: true,
     refetchInterval: 2000,
   })

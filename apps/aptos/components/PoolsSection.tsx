@@ -3,8 +3,8 @@ import { Tab } from '@headlessui/react'
 import { Button, Container } from '@sushiswap/ui'
 import React, { Fragment, useState } from 'react'
 import { PoolFilters } from './PoolsSection/Tables'
-import { PoolsTable } from './PoolsSection/Tables/PoolsTable'
-import { PositionsTable } from './PoolsSection/Tables/PositionsTable'
+import { PoolsTable } from './PoolsSection/Tables/Pools/PoolsTable'
+import { PositionsTable } from './PoolsSection/Tables/Positions/PositionsTable'
 
 export default function PoolsSection() {
   const [tab, setTab] = useState<number>(0)

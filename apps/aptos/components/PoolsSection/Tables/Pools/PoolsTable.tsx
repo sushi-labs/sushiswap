@@ -11,12 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { useFarms } from 'utils/useFarms'
 import { useNetwork } from 'utils/useNetwork'
 import { Pool, usePools } from 'utils/usePools'
-import {
-  APR_COLUMN,
-  NAME_COLUMN,
-  RESERVE_COLUMN,
-  TVL_COLUMN,
-} from './Cells/columns'
+import { APR_COLUMN, NAME_COLUMN, RESERVE_COLUMN, TVL_COLUMN } from './columns'
 
 const COLUMNS = [
   NAME_COLUMN,

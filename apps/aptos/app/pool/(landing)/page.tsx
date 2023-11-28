@@ -2,7 +2,7 @@
 
 import { Container } from '@sushiswap/ui'
 import { TableFiltersSearchToken } from 'components/TableFiltersSearchToken'
-import { PoolsTable } from '../../../components/PoolsSection/Tables/PoolsTable'
+import { PoolsTable } from '../../../components/PoolsSection/Tables/Pools/PoolsTable'
 import { TableFiltersFarmsOnly } from '../../../components/TableFiltersFarmsOnly'
 
 export default async function PoolPage() {
