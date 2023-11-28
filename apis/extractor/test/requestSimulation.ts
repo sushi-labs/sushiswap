@@ -63,12 +63,13 @@ async function makeRequest(
     `&tokenIn=${from.address}&tokenOut=${to.address}&amount=${amount}&to=${recipient}`
   try {
     const resp = await fetch(requestUrl)
-    const respObj = await resp.json()
+    const json = await resp.json() as string
+    const respObj = JSON.parse(json)
+    return respObj.route.status
   } catch (e) {
     console.log('Failed request:', requestUrl)
-    return false
+    return 'Failed'
   }
-  return true
 }
 
 async function simulate() {
