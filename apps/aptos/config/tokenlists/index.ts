@@ -1,7 +1,7 @@
 import { NetworkName } from '@aptos-labs/wallet-adapter-core'
 import { SupportedNetwork } from 'config/chains'
-import { testnet } from './testnet'
 import { mainnet } from './mainnet'
+import { testnet } from './testnet'
 
 export const tokenlists = {
   [NetworkName.Mainnet]: mainnet,

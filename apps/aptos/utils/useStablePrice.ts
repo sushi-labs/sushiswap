@@ -1,17 +1,20 @@
+import { NetworkName } from '@aptos-labs/wallet-adapter-core'
 import { Aptos, L0_USDC, STABLECOINS, USDC } from 'lib/coins'
 import { useMemo } from 'react'
-import usePairs from './usePairs'
-import { Token } from './tokenType'
 import getCurrencyPrice from './getCurrencyPrice'
+import { Token } from './tokenType'
 import { useNetwork } from './useNetwork'
-import { NetworkName } from '@aptos-labs/wallet-adapter-core'
+import usePairs from './usePairs'
 
 interface UseStablePrice {
   currency: Token
   ledgerVersion?: number
 }
 
-export default function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
+export default function useStablePrice({
+  currency,
+  ledgerVersion,
+}: UseStablePrice) {
   const { network } = useNetwork()
 
   const defaultStable = useMemo(() => {
@@ -27,10 +30,15 @@ export default function useStablePrice({ currency, ledgerVersion }: UseStablePri
   const [nativePairInfo, stableNativePairInfo] = usePairs({
     currencies: useMemo(
       () => [
-        [currency && native.address === currency.address ? undefined : currency, native],
+        [
+          currency && native.address === currency.address
+            ? undefined
+            : currency,
+          native,
+        ],
         [native, defaultStable],
       ],
-      [native, defaultStable, currency]
+      [native, defaultStable, currency],
     ),
     ledgerVersion,
   })
@@ -39,9 +47,14 @@ export default function useStablePrice({ currency, ledgerVersion }: UseStablePri
     currencies: useMemo(
       () =>
         stableTokens.map((stableToken) => {
-          return [stableToken && currency.address === stableToken.address ? undefined : currency, stableToken]
+          return [
+            stableToken && currency.address === stableToken.address
+              ? undefined
+              : currency,
+            stableToken,
+          ]
         }),
-      [stableTokens, currency]
+      [stableTokens, currency],
     ),
     ledgerVersion,
   })
@@ -54,7 +67,15 @@ export default function useStablePrice({ currency, ledgerVersion }: UseStablePri
       stableTokens,
       nativePairInfo,
       stableNativePairInfo,
-      stablePairsInfo
+      stablePairsInfo,
     )
-  }, [currency, defaultStable, nativePairInfo, stableNativePairInfo, stablePairsInfo, stableTokens, native])
+  }, [
+    currency,
+    defaultStable,
+    nativePairInfo,
+    stableNativePairInfo,
+    stablePairsInfo,
+    stableTokens,
+    native,
+  ])
 }

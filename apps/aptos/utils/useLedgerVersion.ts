@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { useNetwork } from './useNetwork'
 import { SupportedNetwork } from 'config/chains'
+import { useNetwork } from './useNetwork'
 
 type UseLedgerVersion = { secondsAgo: number; network: SupportedNetwork }
 
@@ -12,7 +12,9 @@ export function getLedgerVersion(args: UseLedgerVersion) {
   return fetch(getLedgerVersionUrl(args))
 }
 
-export function useLedgerVersion({ secondsAgo }: Omit<UseLedgerVersion, 'network'>) {
+export function useLedgerVersion({
+  secondsAgo,
+}: Omit<UseLedgerVersion, 'network'>) {
   const { network } = useNetwork()
 
   return useQuery({

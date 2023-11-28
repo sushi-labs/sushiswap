@@ -1,4 +1,5 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { Button } from '@sushiswap/ui'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { warningSeverity } from 'lib/swap/warningSeverity'
 import React, { useEffect, useState } from 'react'
@@ -7,7 +8,6 @@ import { useSwapRouter } from 'utils/useSwapRouter'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { Modal } from './Modal/Modal'
 import WalletSelector from './WalletSelector'
-import { Button } from '@sushiswap/ui'
 
 export const SwapButton = () => {
   const { data: maintenance } = useIsSwapMaintenance()
@@ -44,9 +44,7 @@ export const SwapButton = () => {
               <Button
                 size="xl"
                 fullWidth
-                disabled={
-                  swapButtonDisabled
-                }
+                disabled={swapButtonDisabled}
                 onClick={() => {
                   amount ? open() : {}
                 }}

@@ -37,7 +37,7 @@ export const getTokenDetails = async ({
   const response = await fetch(
     `${chains[network].api.fetchUrlPrefix}/v1/accounts/${tokenAddress[0]}/resource/0x1::coin::CoinInfo<${address}>`,
   )
-  
+
   if (response.status === 200) {
     const data = await response.json()
     const tokenAddress = data?.type.slice(20).slice(0, -1)

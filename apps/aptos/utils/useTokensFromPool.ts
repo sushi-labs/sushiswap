@@ -1,7 +1,7 @@
-import { Pool } from './usePools'
-import { Token } from './tokenType'
-import { useTokens } from './useTokens'
 import { useMemo } from 'react'
+import { Token } from './tokenType'
+import { Pool } from './usePools'
+import { useTokens } from './useTokens'
 
 export function useTokensFromPools(row: Pool) {
   let token0: Token = {} as Token
