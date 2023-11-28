@@ -3,7 +3,7 @@ import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import React from 'react'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { formatNumber } from 'utils/utilFunctions'
-import TradeInput from './TradeInput'
+import { TradeInput } from './TradeInput'
 
 interface SwapTradeOutput {
   handleSwap: () => void

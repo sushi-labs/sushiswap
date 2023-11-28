@@ -15,7 +15,8 @@ import {
 } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { FC, useMemo, useState } from 'react'
-import { isFarm, useFarms } from '../utils/useFarms'
+import useStablePrice from 'utils/useStablePrice'
+import { useFarms, useIsFarm } from '../utils/useFarms'
 import { usePool } from '../utils/usePool'
 import { Pool } from '../utils/usePools'
 import { useTokenBalance } from '../utils/useTokenBalance'
@@ -27,7 +28,6 @@ import { AddSectionStake } from './AddSection/AddSectionStake'
 import { AddSectionWidget } from './AddSection/AddSectionWidget'
 import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
 import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
-import useStablePrice from 'utils/useStablePrice'
 
 const CONTRACT_ADDRESS =
   process.env['SWAP_CONTRACT'] || process.env['NEXT_PUBLIC_SWAP_CONTRACT']
@@ -66,14 +66,14 @@ export const ManageV2LiquidityCard: FC = () => {
     reserve0: Number(reserve0),
     reserve1: Number(reserve1),
     totalSupply: Number(totalSupply),
-    decimals: coinInfo?.data?.decimals,
+    token0,
+    token1,
   })
 
   const { data: farms } = useFarms()
-  const farmIndex = isFarm(tokenAddress, farms)
+  const farmIndex = useIsFarm({ poolAddress: tokenAddress, farms })
   const { data: userHandle } = useUserPool(account?.address)
   const { data: stakes } = useUserHandle({
-    address: account?.address,
     userHandle,
   })
 
@@ -100,11 +100,12 @@ export const ManageV2LiquidityCard: FC = () => {
     reserve0: Number(reserve0),
     reserve1: Number(reserve1),
     totalSupply: Number(totalSupply),
-    decimals: coinInfo?.data?.decimals,
+    token0,
+    token1,
   })
 
-  const token0Price = useStablePrice(token0)
-  const token1Price = useStablePrice(token1)
+  const token0Price = useStablePrice({ currency: token0 })
+  const token1Price = useStablePrice({ currency: token1 })
   const token0RemovePoolPrice = token0Price
     ? (token0Price * Number(reserve0)) / 10 ** token0.decimals
     : 0
@@ -138,7 +139,7 @@ export const ManageV2LiquidityCard: FC = () => {
             >
               Remove
             </TabsTrigger>
-            {isFarm(tokenAddress, farms) ? (
+            {useIsFarm({ poolAddress: tokenAddress, farms }) ? (
               <TabsTrigger
                 testdata-id="stake-tab"
                 value="stake"
@@ -156,7 +157,7 @@ export const ManageV2LiquidityCard: FC = () => {
                 Stake
               </TabsTrigger>
             )}
-            {isFarm(tokenAddress, farms) ? (
+            {useIsFarm({ poolAddress: tokenAddress, farms }) ? (
               <TabsTrigger
                 testdata-id="unstake-tab"
                 value="unstake"
@@ -208,7 +209,9 @@ export const ManageV2LiquidityCard: FC = () => {
               balance={balance}
               decimals={coinInfo?.data?.decimals}
               lpTokenName={coinInfo?.data?.name}
-              lpPrice={lpPrice}
+              token0={token0}
+              token1={token1}
+              price={lpPrice}
             />
           </CardContent>
         </TabsContent>

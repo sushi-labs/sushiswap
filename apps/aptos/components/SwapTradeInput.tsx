@@ -4,7 +4,7 @@ import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import React, { useEffect, useRef } from 'react'
 import { useSwapRouter } from 'utils/useSwapRouter'
 import { useTokenBalance } from 'utils/useTokenBalance'
-import TradeInput from './TradeInput'
+import { TradeInput } from './TradeInput'
 
 interface Props {
   handleSwap: () => void

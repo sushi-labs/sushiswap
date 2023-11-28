@@ -17,9 +17,9 @@ import {
 } from '@sushiswap/ui'
 import { CardCurrencyAmountItem } from 'components/CardCurrencyAmountItem'
 import { FC, ReactNode } from 'react'
+import { formatUSD } from 'sushi'
 import { Token as TokenType } from 'utils/tokenType'
 import useStablePrice from 'utils/useStablePrice'
-import { formatUSD } from 'sushi'
 
 interface RemoveSectionWidgetProps {
   title?: string
@@ -53,11 +53,15 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
 }) => {
   const token0Price = useStablePrice({ currency: token0 })
   const token1Price = useStablePrice({ currency: token1 })
-  const token0PoolPrice = token0Price ? token0Price * Number(token0MinMinimum) : 0
-  const token1PoolPrice = token1Price ? token1Price * Number(token1MinMinimum) : 0
+  const token0PoolPrice = token0Price
+    ? token0Price * Number(token0MinMinimum)
+    : 0
+  const token1PoolPrice = token1Price
+    ? token1Price * Number(token1MinMinimum)
+    : 0
 
   return (
-    <Widget id="removeLiquidity" className="bg-white dark:bg-slate-800">
+    <Widget id="removeLiquidity" variant="empty">
       <WidgetHeader title={title || 'Unstake Liquidity'}>
         <WidgetTitle>Remove Liquidity</WidgetTitle>
         <WidgetDescription>
