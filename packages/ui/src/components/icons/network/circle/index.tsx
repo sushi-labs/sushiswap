@@ -34,6 +34,7 @@ import { ScrollCircle } from './ScrollCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 
+export * from './AptosCircle'
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
 export * from './AvalancheCircle'

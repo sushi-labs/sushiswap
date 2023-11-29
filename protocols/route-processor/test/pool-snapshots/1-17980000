@@ -50080,9 +50080,9 @@
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
-        "address": "0xdc24316b9ae028f1497c275eb9192a3ea0f67022",
+        "address": "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
         "token0": {
           "o": 4669
         },
@@ -50090,18 +50090,889 @@
           "o": 4670
         },
         "fee": 0.0001,
+        "reserve0": "52825408699809804519557649",
+        "reserve1": "60337896403153",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4671
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "id": "1:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "tokenId": "0x6B175474E89094C44Da98b954EedeAC495271d0F_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+        "tokens": {
+          "a": [
+            {
+              "o": 4672
+            },
+            {
+              "o": 4673
+            },
+            {
+              "o": 4674
+            }
+          ]
+        },
+        "fee": 0.0001,
+        "A": 2000,
+        "reserves": {
+          "a": [
+            "52825408699809804519557649",
+            "60337896403153",
+            "110235346247970"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "52825408699809804519557649",
+            "60337896403153001199796433",
+            "110235346247970002191988504"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1000000000000,
+            1000000000000
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000019884624838656",
+            "1000000000000000019884624838656"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0,
+            0
+          ]
+        },
+        "D": "0",
+        "Ann": "6000",
+        "Annn": "18000",
+        "AnnMinus1": "5999",
+        "nn": "27",
+        "n": "3",
+        "nPlus1": "4"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "id": "1:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "tokenId": "0x6B175474E89094C44Da98b954EedeAC495271d0F_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4676
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.01%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+        "token0": {
+          "o": 4677
+        },
+        "token1": {
+          "o": 4678
+        },
+        "fee": 0.0001,
+        "reserve0": "52825408699809804519557649",
+        "reserve1": "110235346247970",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4671
+        },
+        "index0": 0,
+        "index1": 2,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "id": "1:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "tokenId": "0x6B175474E89094C44Da98b954EedeAC495271d0F_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4680
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.01%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+        "token0": {
+          "o": 4681
+        },
+        "token1": {
+          "o": 4682
+        },
+        "fee": 0.0001,
+        "reserve0": "60337896403153",
+        "reserve1": "110235346247970",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4671
+        },
+        "index0": 1,
+        "index1": 2,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4684
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.02%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xa5407eae9ba41422680e2e00537571bcc53efbfd",
+        "token0": {
+          "o": 4685
+        },
+        "token1": {
+          "o": 4686
+        },
+        "fee": 0.0002,
+        "reserve0": "5955351225975844866459651",
+        "reserve1": "5931107738390",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4687
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "id": "1:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "tokenId": "0x6B175474E89094C44Da98b954EedeAC495271d0F_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xa5407eae9ba41422680e2e00537571bcc53efbfd",
+        "tokens": {
+          "a": [
+            {
+              "o": 4688
+            },
+            {
+              "o": 4689
+            },
+            {
+              "o": 4690
+            },
+            {
+              "o": 4691
+            }
+          ]
+        },
+        "fee": 0.0002,
+        "A": 256,
+        "reserves": {
+          "a": [
+            "5955351225975844866459651",
+            "5931107738390",
+            "6579600852628",
+            "6836858953262702022419795"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "5955351225975844866459651",
+            "5931107738390000117937852",
+            "6579600852628000130832894",
+            "6836858953262702022419795"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1000000000000,
+            1000000000000,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000019884624838656",
+            "1000000000000000019884624838656",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "D": "0",
+        "Ann": "1024",
+        "Annn": "4096",
+        "AnnMinus1": "1023",
+        "nn": "256",
+        "n": "4",
+        "nPlus1": "5"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "id": "1:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "tokenId": "0x6B175474E89094C44Da98b954EedeAC495271d0F_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sUSD",
+        "name": "Synth sUSD",
+        "id": "1:0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "tokenId": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4693
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.02%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xa5407eae9ba41422680e2e00537571bcc53efbfd",
+        "token0": {
+          "o": 4694
+        },
+        "token1": {
+          "o": 4695
+        },
+        "fee": 0.0002,
+        "reserve0": "5955351225975844866459651",
+        "reserve1": "6579600852628",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4687
+        },
+        "index0": 0,
+        "index1": 2,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "id": "1:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "tokenId": "0x6B175474E89094C44Da98b954EedeAC495271d0F_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4697
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.02%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xa5407eae9ba41422680e2e00537571bcc53efbfd",
+        "token0": {
+          "o": 4698
+        },
+        "token1": {
+          "o": 4699
+        },
+        "fee": 0.0002,
+        "reserve0": "5955351225975844866459651",
+        "reserve1": "6836858953262702022419795",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4687
+        },
+        "index0": 0,
+        "index1": 3,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "id": "1:0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "tokenId": "0x6B175474E89094C44Da98b954EedeAC495271d0F_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sUSD",
+        "name": "Synth sUSD",
+        "id": "1:0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "tokenId": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4701
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.02%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xa5407eae9ba41422680e2e00537571bcc53efbfd",
+        "token0": {
+          "o": 4702
+        },
+        "token1": {
+          "o": 4703
+        },
+        "fee": 0.0002,
+        "reserve0": "5931107738390",
+        "reserve1": "6579600852628",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4687
+        },
+        "index0": 1,
+        "index1": 2,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4705
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.02%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xa5407eae9ba41422680e2e00537571bcc53efbfd",
+        "token0": {
+          "o": 4706
+        },
+        "token1": {
+          "o": 4707
+        },
+        "fee": 0.0002,
+        "reserve0": "5931107738390",
+        "reserve1": "6836858953262702022419795",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4687
+        },
+        "index0": 1,
+        "index1": 3,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sUSD",
+        "name": "Synth sUSD",
+        "id": "1:0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "tokenId": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4709
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.02%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xa5407eae9ba41422680e2e00537571bcc53efbfd",
+        "token0": {
+          "o": 4710
+        },
+        "token1": {
+          "o": 4711
+        },
+        "fee": 0.0002,
+        "reserve0": "6579600852628",
+        "reserve1": "6836858953262702022419795",
+        "minLiquidity": 1000,
+        "swapGasCost": 90000,
+        "core": {
+          "o": 4687
+        },
+        "index0": 2,
+        "index1": 3,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDT",
+        "name": "Tether USD",
+        "id": "1:0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "tokenId": "0xdAC17F958D2ee523a2206206994597C13D831ec7_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sUSD",
+        "name": "Synth sUSD",
+        "id": "1:0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+        "tokenId": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51_1"
+      }
+    },
+    {
+      "c": "CurvePoolCode",
+      "d": {
+        "pool": {
+          "o": 4713
+        },
+        "liquidityProvider": "CurveSwap",
+        "poolName": "Curve 0.01%"
+      }
+    },
+    {
+      "c": "CurveMultitokenPool",
+      "d": {
+        "address": "0xdc24316b9ae028f1497c275eb9192a3ea0f67022",
+        "token0": {
+          "o": 4714
+        },
+        "token1": {
+          "o": 4715
+        },
+        "fee": 0.0001,
         "reserve0": "101213639154359963302122",
         "reserve1": "102090741225467285219903",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4716
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "ETH",
+        "name": "Ether",
+        "id": "1:NATIVE",
+        "isNative": true,
+        "isToken": false,
+        "tokenId": "_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "stETH",
+        "name": "Liquid staked Ether 2.0",
+        "id": "1:0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+        "tokenId": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xdc24316b9ae028f1497c275eb9192a3ea0f67022",
+        "tokens": {
+          "a": [
+            {
+              "o": 4717
+            },
+            {
+              "o": 4718
+            }
+          ]
+        },
+        "fee": 0.0001,
         "A": 30,
+        "reserves": {
+          "a": [
+            "101213639154359963302122",
+            "102090741225467285219903"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "101213639154359963302122",
+            "102090741225467285219903"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 1,
-        "rate1": 1,
-        "reserve0Rated": "101213639154359963302122",
-        "reserve1Rated": "102090741225467285219903"
+        "Ann": "60",
+        "Annn": "120",
+        "AnnMinus1": "59",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50135,35 +51006,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4672
+          "o": 4720
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xdcef968d416a41cdac0ed8702fac8128a64241a2",
         "token0": {
-          "o": 4673
+          "o": 4721
         },
         "token1": {
-          "o": 4674
+          "o": 4722
         },
         "fee": 0.0001,
         "reserve0": "351116811937927920035540773",
         "reserve1": "99399195896736",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4723
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "FRAX",
+        "name": "Frax",
+        "id": "1:0x853d955aCEf822Db058eb8505911ED77F175b99e",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x853d955aCEf822Db058eb8505911ED77F175b99e",
+        "tokenId": "0x853d955aCEf822Db058eb8505911ED77F175b99e_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 6,
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "id": "1:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "tokenId": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xdcef968d416a41cdac0ed8702fac8128a64241a2",
+        "tokens": {
+          "a": [
+            {
+              "o": 4724
+            },
+            {
+              "o": 4725
+            }
+          ]
+        },
+        "fee": 0.0001,
         "A": 1500,
+        "reserves": {
+          "a": [
+            "351116811937927920035540773",
+            "99399195896736"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "351116811937927920035540773",
+            "99399195896736001976515719"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1000000000000
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000019884624838656"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1000000000000000019884624838656",
-        "rate0": 1,
-        "rate1": 1000000000000,
-        "reserve0Rated": "351116811937927920035540773",
-        "reserve1Rated": "99399195896736001976515719"
+        "Ann": "3000",
+        "Annn": "6000",
+        "AnnMinus1": "2999",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50198,35 +51151,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4676
+          "o": 4727
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xf253f83aca21aabd2a20553ae0bf7f65c755a07f",
         "token0": {
-          "o": 4677
+          "o": 4728
         },
         "token1": {
-          "o": 4678
+          "o": 4729
         },
         "fee": 0.0004,
         "reserve0": "21995308097",
         "reserve1": "249480440674427685181",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4730
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "WBTC",
+        "name": "Wrapped BTC",
+        "id": "1:0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "tokenId": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sBTC",
+        "name": "Synth sBTC",
+        "id": "1:0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
+        "tokenId": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xf253f83aca21aabd2a20553ae0bf7f65c755a07f",
+        "tokens": {
+          "a": [
+            {
+              "o": 4731
+            },
+            {
+              "o": 4732
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 100,
+        "reserves": {
+          "a": [
+            "21995308097",
+            "249480440674427685181"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "219953080970000039198",
+            "249480440674427685181"
+          ]
+        },
+        "rates": {
+          "a": [
+            10000000000,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "10000000000000001782142992384",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "10000000000",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 10000000000,
-        "rate1": 1,
-        "reserve0Rated": "219953080970000000000",
-        "reserve1Rated": "249480440674427685181"
+        "Ann": "200",
+        "Annn": "400",
+        "AnnMinus1": "199",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50261,35 +51296,116 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4680
+          "o": 4734
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xc5424b857f758e906013f3555dad202e4bdb4567",
         "token0": {
-          "o": 4681
+          "o": 4735
         },
         "token1": {
-          "o": 4682
+          "o": 4736
         },
         "fee": 0.0002,
         "reserve0": "3336079528707255633980",
         "reserve1": "3610446185727891494666",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4737
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "ETH",
+        "name": "Ether",
+        "id": "1:NATIVE",
+        "isNative": true,
+        "isToken": false,
+        "tokenId": "_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sETH",
+        "name": "Synth sETH",
+        "id": "1:0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
+        "tokenId": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xc5424b857f758e906013f3555dad202e4bdb4567",
+        "tokens": {
+          "a": [
+            {
+              "o": 4738
+            },
+            {
+              "o": 4739
+            }
+          ]
+        },
+        "fee": 0.0002,
         "A": 256,
+        "reserves": {
+          "a": [
+            "3336079528707255633980",
+            "3610446185727891494666"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "3336079528707255633980",
+            "3610446185727891494666"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 1,
-        "rate1": 1,
-        "reserve0Rated": "3336079528707255633980",
-        "reserve1Rated": "3610446185727891494666"
+        "Ann": "512",
+        "Annn": "1024",
+        "AnnMinus1": "511",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50323,35 +51439,116 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4684
+          "o": 4741
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xa1f8a6807c402e4a15ef4eba36528a3fed24e577",
         "token0": {
-          "o": 4685
+          "o": 4742
         },
         "token1": {
-          "o": 4686
+          "o": 4743
         },
         "fee": 0.0002,
         "reserve0": "20460743488913333447419",
         "reserve1": "57186627042238114375820",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4744
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "ETH",
+        "name": "Ether",
+        "id": "1:NATIVE",
+        "isNative": true,
+        "isToken": false,
+        "tokenId": "_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "frxETH",
+        "name": "Frax Ether",
+        "id": "1:0x5e8422345238f34275888049021821e8e08caa1f",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x5E8422345238F34275888049021821E8E08CAa1f",
+        "tokenId": "0x5E8422345238F34275888049021821E8E08CAa1f_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xa1f8a6807c402e4a15ef4eba36528a3fed24e577",
+        "tokens": {
+          "a": [
+            {
+              "o": 4745
+            },
+            {
+              "o": 4746
+            }
+          ]
+        },
+        "fee": 0.0002,
         "A": 1200,
+        "reserves": {
+          "a": [
+            "20460743488913333447419",
+            "57186627042238114375820"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "20460743488913333447419",
+            "57186627042238114375820"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 1,
-        "rate1": 1,
-        "reserve0Rated": "20460743488913333447419",
-        "reserve1Rated": "57186627042238114375820"
+        "Ann": "2400",
+        "Annn": "4800",
+        "AnnMinus1": "2399",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50385,35 +51582,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4688
+          "o": 4748
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0x0ce6a5ff5217e38315f87032cf90686c96627caa",
         "token0": {
-          "o": 4689
+          "o": 4749
         },
         "token1": {
-          "o": 4690
+          "o": 4750
         },
         "fee": 0.0004,
         "reserve0": "126779157",
         "reserve1": "1185707452480252098233237",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4751
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 2,
+        "symbol": "EURS",
+        "name": "STASIS EURS",
+        "id": "1:0xdb25f211ab05b1c97d595516f45794528a807ad8",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xdB25f211AB05b1c97D595516F45794528a807ad8",
+        "tokenId": "0xdB25f211AB05b1c97D595516F45794528a807ad8_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sEUR",
+        "name": "Synth sEUR",
+        "id": "1:0xd71ecff9342a5ced620049e616c5035f1db98620",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xD71eCFF9342A5Ced620049e616c5035F1dB98620",
+        "tokenId": "0xD71eCFF9342A5Ced620049e616c5035F1dB98620_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0x0ce6a5ff5217e38315f87032cf90686c96627caa",
+        "tokens": {
+          "a": [
+            {
+              "o": 4752
+            },
+            {
+              "o": 4753
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 100,
+        "reserves": {
+          "a": [
+            "126779157",
+            "1185707452480252098233237"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "1267791570000000077167153",
+            "1185707452480252098233237"
+          ]
+        },
+        "rates": {
+          "a": [
+            10000000000000000,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "10000000000000000608673814477275136",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "10000000000000000",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 10000000000000000,
-        "rate1": 1,
-        "reserve0Rated": "1267791570000000000000000",
-        "reserve1Rated": "1185707452480252098233237"
+        "Ann": "200",
+        "Annn": "400",
+        "AnnMinus1": "199",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50448,35 +51727,116 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4692
+          "o": 4755
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2",
         "token0": {
-          "o": 4693
+          "o": 4756
         },
         "token1": {
-          "o": 4694
+          "o": 4757
         },
         "fee": 0.0004,
         "reserve0": "753433585014395612756",
         "reserve1": "680808162651034843335",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4758
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "ETH",
+        "name": "Ether",
+        "id": "1:NATIVE",
+        "isNative": true,
+        "isToken": false,
+        "tokenId": "_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "ankrETH",
+        "name": "Ankr Staked ETH",
+        "id": "1:0xE95A203B1a91a908F9B9CE46459d101078c2c3cb",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xE95A203B1a91a908F9B9CE46459d101078c2c3cb",
+        "tokenId": "0xE95A203B1a91a908F9B9CE46459d101078c2c3cb_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2",
+        "tokens": {
+          "a": [
+            {
+              "o": 4759
+            },
+            {
+              "o": 4760
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 10,
+        "reserves": {
+          "a": [
+            "753433585014395612756",
+            "680808162651034843335"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "753433585014395612756",
+            "767771317032109386828"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1.1277351817323167
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1127735181732316672"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1127735181732316672",
-        "rate0": 1,
-        "rate1": 1.1277351817323167,
-        "reserve0Rated": "753433585014395612756",
-        "reserve1Rated": "767771317032109386828"
+        "Ann": "20",
+        "Annn": "40",
+        "AnnMinus1": "19",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50510,35 +51870,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4696
+          "o": 4762
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xeb16ae0052ed37f479f7fe63849198df1765a733",
         "token0": {
-          "o": 4697
+          "o": 4763
         },
         "token1": {
-          "o": 4698
+          "o": 4764
         },
         "fee": 0.0004,
         "reserve0": "764100264663030838919100",
         "reserve1": "817935407556774118109467",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4765
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "aDAI",
+        "name": "Aave interest bearing DAI",
+        "id": "1:0x028171bCA77440897B824Ca71D1c56caC55b68A3",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x028171bCA77440897B824Ca71D1c56caC55b68A3",
+        "tokenId": "0x028171bCA77440897B824Ca71D1c56caC55b68A3_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "aSUSD",
+        "name": "Aave interest bearing SUSD",
+        "id": "1:0x6C5024Cd4F8A59110119C56f8933403A539555EB",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x6C5024Cd4F8A59110119C56f8933403A539555EB",
+        "tokenId": "0x6C5024Cd4F8A59110119C56f8933403A539555EB_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xeb16ae0052ed37f479f7fe63849198df1765a733",
+        "tokens": {
+          "a": [
+            {
+              "o": 4766
+            },
+            {
+              "o": 4767
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 100,
+        "reserves": {
+          "a": [
+            "764100264663030838919100",
+            "817935407556774118109467"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "764100264663030838919100",
+            "817935407556774118109467"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 1,
-        "rate1": 1,
-        "reserve0Rated": "764100264663030838919100",
-        "reserve1Rated": "817935407556774118109467"
+        "Ann": "200",
+        "Annn": "400",
+        "AnnMinus1": "199",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50573,35 +52015,116 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4700
+          "o": 4769
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xf9440930043eb3997fc70e1339dbb11f341de7a8",
         "token0": {
-          "o": 4701
+          "o": 4770
         },
         "token1": {
-          "o": 4702
+          "o": 4771
         },
         "fee": 0.0004,
         "reserve0": "766558431879075738250",
         "reserve1": "762743811830833107760",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4772
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "ETH",
+        "name": "Ether",
+        "id": "1:NATIVE",
+        "isNative": true,
+        "isToken": false,
+        "tokenId": "_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "rETH",
+        "name": "StaFi",
+        "id": "1:0x9559Aaa82d9649C7A7b220E7c461d2E74c9a3593",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x9559Aaa82d9649C7A7b220E7c461d2E74c9a3593",
+        "tokenId": "0x9559Aaa82d9649C7A7b220E7c461d2E74c9a3593_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xf9440930043eb3997fc70e1339dbb11f341de7a8",
+        "tokens": {
+          "a": [
+            {
+              "o": 4773
+            },
+            {
+              "o": 4774
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 10,
+        "reserves": {
+          "a": [
+            "766558431879075738250",
+            "762743811830833107760"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "766558431879075738250",
+            "810461080196882948920"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1.0625600203186347
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1062560020318634752"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1062560020318634752",
-        "rate0": 1,
-        "rate1": 1.0625600203186347,
-        "reserve0Rated": "766558431879075738250",
-        "reserve1Rated": "810461080196882948920"
+        "Ann": "20",
+        "Annn": "40",
+        "AnnMinus1": "19",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50635,35 +52158,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4704
+          "o": 4776
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56",
         "token0": {
-          "o": 4705
+          "o": 4777
         },
         "token1": {
-          "o": 4706
+          "o": 4778
         },
         "fee": 0.0004,
         "reserve0": "3715538161520546",
         "reserve1": "10724695411023640",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4779
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "cDAI",
+        "name": "Compound Dai",
+        "id": "1:0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+        "tokenId": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "cUSDC",
+        "name": "Compound USD Coin",
+        "id": "1:0x39AA39c021dfbaE8faC545936693aC917d5E7563",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
+        "tokenId": "0x39AA39c021dfbaE8faC545936693aC917d5E7563_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56",
+        "tokens": {
+          "a": [
+            {
+              "o": 4780
+            },
+            {
+              "o": 4781
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 4500,
+        "reserves": {
+          "a": [
+            "3715538161520546",
+            "10724695411023640"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "3715538161520546",
+            "11028567440960369"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1.0283338610833075
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1028333861083307520"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1028333861083307520",
-        "rate0": 1,
-        "rate1": 1.0283338610833075,
-        "reserve0Rated": "3715538161520546",
-        "reserve1Rated": "11028567440960369"
+        "Ann": "9000",
+        "Annn": "18000",
+        "AnnMinus1": "8999",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50698,35 +52303,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4708
+          "o": 4783
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0",
         "token0": {
-          "o": 4709
+          "o": 4784
         },
         "token1": {
-          "o": 4710
+          "o": 4785
         },
         "fee": 0.0004,
         "reserve0": "79246833556614744789001",
         "reserve1": "16612702419108030954506",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4786
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "LINK",
+        "name": "ChainLink Token",
+        "id": "1:0x514910771AF9Ca656af840dff83E8264EcF986CA",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
+        "tokenId": "0x514910771AF9Ca656af840dff83E8264EcF986CA_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "sLINK",
+        "name": "Synth sLINK",
+        "id": "1:0xbBC455cb4F1B9e4bFC4B73970d360c8f032EfEE6",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xbBC455cb4F1B9e4bFC4B73970d360c8f032EfEE6",
+        "tokenId": "0xbBC455cb4F1B9e4bFC4B73970d360c8f032EfEE6_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0",
+        "tokens": {
+          "a": [
+            {
+              "o": 4787
+            },
+            {
+              "o": 4788
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 100,
+        "reserves": {
+          "a": [
+            "79246833556614744789001",
+            "16612702419108030954506"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "79246833556614744789001",
+            "16612702419108030954506"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 1,
-        "rate1": 1,
-        "reserve0Rated": "79246833556614744789001",
-        "reserve1Rated": "16612702419108030954506"
+        "Ann": "200",
+        "Annn": "400",
+        "AnnMinus1": "199",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50761,35 +52448,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4712
+          "o": 4790
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0x4ca9b3063ec5866a4b82e437059d2c43d1be596f",
         "token0": {
-          "o": 4713
+          "o": 4791
         },
         "token1": {
-          "o": 4714
+          "o": 4792
         },
         "fee": 0.0004,
         "reserve0": "112022149490122013483",
         "reserve1": "4569185345",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4793
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 18,
+        "symbol": "HBTS",
+        "name": "Huobi BTC",
+        "id": "1:0x0316EB71485b0Ab14103307bf65a021042c6d380",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x0316EB71485b0Ab14103307bf65a021042c6d380",
+        "tokenId": "0x0316EB71485b0Ab14103307bf65a021042c6d380_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "WBTC",
+        "name": "Wrapped BTC",
+        "id": "1:0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "tokenId": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0x4ca9b3063ec5866a4b82e437059d2c43d1be596f",
+        "tokens": {
+          "a": [
+            {
+              "o": 4794
+            },
+            {
+              "o": 4795
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 1000,
+        "reserves": {
+          "a": [
+            "112022149490122013483",
+            "4569185345"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "112022149490122013483",
+            "45691853450000008142"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            10000000000
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "10000000000000001782142992384"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "10000000000000001782142992384",
-        "rate0": 1,
-        "rate1": 10000000000,
-        "reserve0Rated": "112022149490122013483",
-        "reserve1Rated": "45691853450000008142"
+        "Ann": "2000",
+        "Annn": "4000",
+        "AnnMinus1": "1999",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50824,35 +52593,117 @@
       "c": "CurvePoolCode",
       "d": {
         "pool": {
-          "o": 4716
+          "o": 4797
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%"
       }
     },
     {
-      "c": "CurvePool",
+      "c": "CurveMultitokenPool",
       "d": {
         "address": "0x93054188d876f558f4a66b2ef1d97d16edf0895b",
         "token0": {
-          "o": 4717
+          "o": 4798
         },
         "token1": {
-          "o": 4718
+          "o": 4799
         },
         "fee": 0.0004,
         "reserve0": "1334631604",
         "reserve1": "18468485279",
         "minLiquidity": 1000,
         "swapGasCost": 90000,
+        "core": {
+          "o": 4800
+        },
+        "index0": 0,
+        "index1": 1,
+        "flow0": 0,
+        "flow1": 0
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "renBTC",
+        "name": "renBTC",
+        "id": "1:0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
+        "isNative": false,
+        "isToken": true,
+        "address": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
+        "tokenId": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D_1"
+      }
+    },
+    {
+      "c": "Object",
+      "d": {
+        "chainId": 1,
+        "decimals": 8,
+        "symbol": "WBTC",
+        "name": "Wrapped BTC",
+        "id": "1:0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "isNative": false,
+        "isToken": true,
+        "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+        "tokenId": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599_1"
+      }
+    },
+    {
+      "c": "CurveMultitokenCore",
+      "d": {
+        "address": "0x93054188d876f558f4a66b2ef1d97d16edf0895b",
+        "tokens": {
+          "a": [
+            {
+              "o": 4801
+            },
+            {
+              "o": 4802
+            }
+          ]
+        },
+        "fee": 0.0004,
         "A": 1000,
+        "reserves": {
+          "a": [
+            "1334631604",
+            "18468485279"
+          ]
+        },
+        "reservesRated": {
+          "a": [
+            "1334631604",
+            "18468485279"
+          ]
+        },
+        "rates": {
+          "a": [
+            1,
+            1
+          ]
+        },
+        "ratesBN18": {
+          "a": [
+            "1000000000000000000",
+            "1000000000000000000"
+          ]
+        },
+        "currentFlow": {
+          "a": [
+            0,
+            0
+          ]
+        },
         "D": "0",
-        "rate0BI": "1",
-        "rate1BN18": "1000000000000000000",
-        "rate0": 1,
-        "rate1": 1,
-        "reserve0Rated": "1334631604",
-        "reserve1Rated": "18468485279"
+        "Ann": "2000",
+        "Annn": "4000",
+        "AnnMinus1": "1999",
+        "nn": "4",
+        "n": "2",
+        "nPlus1": "3"
       }
     },
     {
@@ -50887,7 +52738,7 @@
       "c": "ConstantProductPoolCode",
       "d": {
         "pool": {
-          "o": 4720
+          "o": 4804
         },
         "liquidityProvider": "SushiSwapV2",
         "poolName": "SushiSwapV2 0.3%"
@@ -50898,10 +52749,10 @@
       "d": {
         "address": "0x61eB53ee427aB4E007d78A9134AaCb3101A2DC23",
         "token0": {
-          "o": 4721
+          "o": 4805
         },
         "token1": {
-          "o": 4722
+          "o": 4806
         },
         "fee": 0.003,
         "reserve0": "258218625152506906623492",
@@ -50944,7 +52795,7 @@
       "c": "ConstantProductPoolCode",
       "d": {
         "pool": {
-          "o": 4724
+          "o": 4808
         },
         "liquidityProvider": "SushiSwapV2",
         "poolName": "SushiSwapV2 0.3%"
@@ -50955,10 +52806,10 @@
       "d": {
         "address": "0xc218001e3D102e3d1De9bf2c0F7D9626d76C6f30",
         "token0": {
-          "o": 4725
+          "o": 4809
         },
         "token1": {
-          "o": 4726
+          "o": 4810
         },
         "fee": 0.003,
         "reserve0": "36341015812691012619",
@@ -51001,7 +52852,7 @@
       "c": "ConstantProductPoolCode",
       "d": {
         "pool": {
-          "o": 4728
+          "o": 4812
         },
         "liquidityProvider": "SushiSwapV2",
         "poolName": "SushiSwapV2 0.3%"
@@ -51012,10 +52863,10 @@
       "d": {
         "address": "0xA25F8c63DB066713b92f922D1D9D1A32065a1A7E",
         "token0": {
-          "o": 4729
+          "o": 4813
         },
         "token1": {
-          "o": 4730
+          "o": 4814
         },
         "fee": 0.003,
         "reserve0": "2899566986725128",
@@ -51058,7 +52909,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4732
+          "o": 4816
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 0.3%"
@@ -51069,10 +52920,10 @@
       "d": {
         "address": "0x39c9E3128b8736e02A30B2B9b7E50FF522b935c5",
         "token0": {
-          "o": 4733
+          "o": 4817
         },
         "token1": {
-          "o": 4734
+          "o": 4818
         },
         "fee": 0.003,
         "reserve0": "8269639003526366458323",
@@ -51085,55 +52936,55 @@
         "ticks": {
           "a": [
             {
-              "o": 4735
+              "o": 4819
             },
             {
-              "o": 4736
+              "o": 4820
             },
             {
-              "o": 4737
+              "o": 4821
             },
             {
-              "o": 4738
+              "o": 4822
             },
             {
-              "o": 4739
+              "o": 4823
             },
             {
-              "o": 4740
+              "o": 4824
             },
             {
-              "o": 4741
+              "o": 4825
             },
             {
-              "o": 4742
+              "o": 4826
             },
             {
-              "o": 4743
+              "o": 4827
             },
             {
-              "o": 4744
+              "o": 4828
             },
             {
-              "o": 4745
+              "o": 4829
             },
             {
-              "o": 4746
+              "o": 4830
             },
             {
-              "o": 4747
+              "o": 4831
             },
             {
-              "o": 4748
+              "o": 4832
             },
             {
-              "o": 4749
+              "o": 4833
             },
             {
-              "o": 4750
+              "o": 4834
             },
             {
-              "o": 4751
+              "o": 4835
             }
           ]
         }
@@ -51290,7 +53141,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4753
+          "o": 4837
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 1%"
@@ -51301,10 +53152,10 @@
       "d": {
         "address": "0xCD8286b48936cDAC20518247dBD310ab681A9fBf",
         "token0": {
-          "o": 4754
+          "o": 4838
         },
         "token1": {
-          "o": 4755
+          "o": 4839
         },
         "fee": 0.01,
         "reserve0": "204694432024855488809172",
@@ -51317,112 +53168,112 @@
         "ticks": {
           "a": [
             {
-              "o": 4756
+              "o": 4840
             },
             {
-              "o": 4757
+              "o": 4841
             },
             {
-              "o": 4758
+              "o": 4842
             },
             {
-              "o": 4759
+              "o": 4843
             },
             {
-              "o": 4760
+              "o": 4844
             },
             {
-              "o": 4761
+              "o": 4845
             },
             {
-              "o": 4762
+              "o": 4846
             },
             {
-              "o": 4763
+              "o": 4847
             },
             {
-              "o": 4764
+              "o": 4848
             },
             {
-              "o": 4765
+              "o": 4849
             },
             {
-              "o": 4766
+              "o": 4850
             },
             {
-              "o": 4767
+              "o": 4851
             },
             {
-              "o": 4768
+              "o": 4852
             },
             {
-              "o": 4769
+              "o": 4853
             },
             {
-              "o": 4770
+              "o": 4854
             },
             {
-              "o": 4771
+              "o": 4855
             },
             {
-              "o": 4772
+              "o": 4856
             },
             {
-              "o": 4773
+              "o": 4857
             },
             {
-              "o": 4774
+              "o": 4858
             },
             {
-              "o": 4775
+              "o": 4859
             },
             {
-              "o": 4776
+              "o": 4860
             },
             {
-              "o": 4777
+              "o": 4861
             },
             {
-              "o": 4778
+              "o": 4862
             },
             {
-              "o": 4779
+              "o": 4863
             },
             {
-              "o": 4780
+              "o": 4864
             },
             {
-              "o": 4781
+              "o": 4865
             },
             {
-              "o": 4782
+              "o": 4866
             },
             {
-              "o": 4783
+              "o": 4867
             },
             {
-              "o": 4784
+              "o": 4868
             },
             {
-              "o": 4785
+              "o": 4869
             },
             {
-              "o": 4786
+              "o": 4870
             },
             {
-              "o": 4787
+              "o": 4871
             },
             {
-              "o": 4788
+              "o": 4872
             },
             {
-              "o": 4789
+              "o": 4873
             },
             {
-              "o": 4790
+              "o": 4874
             },
             {
-              "o": 4791
+              "o": 4875
             }
           ]
         }
@@ -51712,7 +53563,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4793
+          "o": 4877
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 0.3%"
@@ -51723,10 +53574,10 @@
       "d": {
         "address": "0x6350B0D4f9e7a52630073fE0cab6dEa0f4052BF3",
         "token0": {
-          "o": 4794
+          "o": 4878
         },
         "token1": {
-          "o": 4795
+          "o": 4879
         },
         "fee": 0.003,
         "reserve0": "89292449176768845707",
@@ -51739,25 +53590,25 @@
         "ticks": {
           "a": [
             {
-              "o": 4796
+              "o": 4880
             },
             {
-              "o": 4797
+              "o": 4881
             },
             {
-              "o": 4798
+              "o": 4882
             },
             {
-              "o": 4799
+              "o": 4883
             },
             {
-              "o": 4800
+              "o": 4884
             },
             {
-              "o": 4801
+              "o": 4885
             },
             {
-              "o": 4802
+              "o": 4886
             }
           ]
         }
@@ -51844,7 +53695,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4804
+          "o": 4888
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 1%"
@@ -51855,10 +53706,10 @@
       "d": {
         "address": "0xb64508B9f7b81407549e13DB970DD5BB5C19107F",
         "token0": {
-          "o": 4805
+          "o": 4889
         },
         "token1": {
-          "o": 4806
+          "o": 4890
         },
         "fee": 0.01,
         "reserve0": "256305251429972869383097",
@@ -51871,16 +53722,16 @@
         "ticks": {
           "a": [
             {
-              "o": 4807
+              "o": 4891
             },
             {
-              "o": 4808
+              "o": 4892
             },
             {
-              "o": 4809
+              "o": 4893
             },
             {
-              "o": 4810
+              "o": 4894
             }
           ]
         }
@@ -51946,7 +53797,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4812
+          "o": 4896
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 0.01%"
@@ -51957,10 +53808,10 @@
       "d": {
         "address": "0x705d76F7e9583fc7e659013d65f061Eb447e1802",
         "token0": {
-          "o": 4813
+          "o": 4897
         },
         "token1": {
-          "o": 4814
+          "o": 4898
         },
         "fee": 0.0001,
         "reserve0": "25",
@@ -51973,16 +53824,16 @@
         "ticks": {
           "a": [
             {
-              "o": 4815
+              "o": 4899
             },
             {
-              "o": 4816
+              "o": 4900
             },
             {
-              "o": 4817
+              "o": 4901
             },
             {
-              "o": 4818
+              "o": 4902
             }
           ]
         }
@@ -52048,7 +53899,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4820
+          "o": 4904
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 0.05%"
@@ -52059,10 +53910,10 @@
       "d": {
         "address": "0x6b4265E16E7CF4bc160062DE8219438A3d08518c",
         "token0": {
-          "o": 4821
+          "o": 4905
         },
         "token1": {
-          "o": 4822
+          "o": 4906
         },
         "fee": 0.0005,
         "reserve0": "9",
@@ -52075,16 +53926,16 @@
         "ticks": {
           "a": [
             {
-              "o": 4823
+              "o": 4907
             },
             {
-              "o": 4824
+              "o": 4908
             },
             {
-              "o": 4825
+              "o": 4909
             },
             {
-              "o": 4826
+              "o": 4910
             }
           ]
         }
@@ -52150,7 +54001,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4828
+          "o": 4912
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 0.3%"
@@ -52161,10 +54012,10 @@
       "d": {
         "address": "0xb60436a69b7Ea62Df1C52c9CEF0B96B0165D5BaE",
         "token0": {
-          "o": 4829
+          "o": 4913
         },
         "token1": {
-          "o": 4830
+          "o": 4914
         },
         "fee": 0.003,
         "reserve0": "1010253844527777",
@@ -52177,16 +54028,16 @@
         "ticks": {
           "a": [
             {
-              "o": 4831
+              "o": 4915
             },
             {
-              "o": 4832
+              "o": 4916
             },
             {
-              "o": 4833
+              "o": 4917
             },
             {
-              "o": 4834
+              "o": 4918
             }
           ]
         }
@@ -52252,7 +54103,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4836
+          "o": 4920
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 1%"
@@ -52263,10 +54114,10 @@
       "d": {
         "address": "0x1BC5d5cE644Ba9be1Af92Be47D2132B7aCa66Ab1",
         "token0": {
-          "o": 4837
+          "o": 4921
         },
         "token1": {
-          "o": 4838
+          "o": 4922
         },
         "fee": 0.01,
         "reserve0": "6566280833974168756176",
@@ -52279,22 +54130,22 @@
         "ticks": {
           "a": [
             {
-              "o": 4839
+              "o": 4923
             },
             {
-              "o": 4840
+              "o": 4924
             },
             {
-              "o": 4841
+              "o": 4925
             },
             {
-              "o": 4842
+              "o": 4926
             },
             {
-              "o": 4843
+              "o": 4927
             },
             {
-              "o": 4844
+              "o": 4928
             }
           ]
         }
@@ -52374,7 +54225,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4846
+          "o": 4930
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 0.3%"
@@ -52385,10 +54236,10 @@
       "d": {
         "address": "0x71ebaDb8F2aCF42037fAC8D1545E41071274e89b",
         "token0": {
-          "o": 4847
+          "o": 4931
         },
         "token1": {
-          "o": 4848
+          "o": 4932
         },
         "fee": 0.003,
         "reserve0": "155275305247797074114896",
@@ -52401,22 +54252,22 @@
         "ticks": {
           "a": [
             {
-              "o": 4849
+              "o": 4933
             },
             {
-              "o": 4850
+              "o": 4934
             },
             {
-              "o": 4851
+              "o": 4935
             },
             {
-              "o": 4852
+              "o": 4936
             },
             {
-              "o": 4853
+              "o": 4937
             },
             {
-              "o": 4854
+              "o": 4938
             }
           ]
         }
@@ -52496,7 +54347,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4856
+          "o": 4940
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 0.01%"
@@ -52507,10 +54358,10 @@
       "d": {
         "address": "0x67A6C35f48aCEd972c0BC9168ec3Eb027B52BF7E",
         "token0": {
-          "o": 4857
+          "o": 4941
         },
         "token1": {
-          "o": 4858
+          "o": 4942
         },
         "fee": 0.0001,
         "reserve0": "3",
@@ -52523,16 +54374,16 @@
         "ticks": {
           "a": [
             {
-              "o": 4859
+              "o": 4943
             },
             {
-              "o": 4860
+              "o": 4944
             },
             {
-              "o": 4861
+              "o": 4945
             },
             {
-              "o": 4862
+              "o": 4946
             }
           ]
         }
@@ -52598,7 +54449,7 @@
       "c": "UniV3PoolCode",
       "d": {
         "pool": {
-          "o": 4864
+          "o": 4948
         },
         "liquidityProvider": "UniswapV3",
         "poolName": "UniswapV3 1%"
@@ -52609,10 +54460,10 @@
       "d": {
         "address": "0xe4f916Ec234Ea3a057879b5Fec6F18A8F9032c4a",
         "token0": {
-          "o": 4865
+          "o": 4949
         },
         "token1": {
-          "o": 4866
+          "o": 4950
         },
         "fee": 0.01,
         "reserve0": "3617962804726981",
@@ -52625,16 +54476,16 @@
         "ticks": {
           "a": [
             {
-              "o": 4867
+              "o": 4951
             },
             {
-              "o": 4868
+              "o": 4952
             },
             {
-              "o": 4869
+              "o": 4953
             },
             {
-              "o": 4870
+              "o": 4954
             }
           ]
         }
@@ -52700,7 +54551,7 @@
       "c": "ConstantProductPoolCode",
       "d": {
         "pool": {
-          "o": 4872
+          "o": 4956
         },
         "liquidityProvider": "UniswapV2",
         "poolName": "UniswapV2 0.3%"
@@ -52711,10 +54562,10 @@
       "d": {
         "address": "0xecBa967D84fCF0405F6b32Bc45F4d36BfDBB2E81",
         "token0": {
-          "o": 4873
+          "o": 4957
         },
         "token1": {
-          "o": 4874
+          "o": 4958
         },
         "fee": 0.003,
         "reserve0": "14913484053531937883315",
@@ -52757,7 +54608,7 @@
       "c": "ConstantProductPoolCode",
       "d": {
         "pool": {
-          "o": 4876
+          "o": 4960
         },
         "liquidityProvider": "UniswapV2",
         "poolName": "UniswapV2 0.3%"
@@ -52768,10 +54619,10 @@
       "d": {
         "address": "0xE1573B9D29e2183B1AF0e743Dc2754979A40D237",
         "token0": {
-          "o": 4877
+          "o": 4961
         },
         "token1": {
-          "o": 4878
+          "o": 4962
         },
         "fee": 0.003,
         "reserve0": "1082130140881182520967403",
@@ -52814,7 +54665,7 @@
       "c": "ConstantProductPoolCode",
       "d": {
         "pool": {
-          "o": 4880
+          "o": 4964
         },
         "liquidityProvider": "UniswapV2",
         "poolName": "UniswapV2 0.3%"
@@ -52825,10 +54676,10 @@
       "d": {
         "address": "0x9BAC32D4f3322bC7588BB119283bAd7073145355",
         "token0": {
-          "o": 4881
+          "o": 4965
         },
         "token1": {
-          "o": 4882
+          "o": 4966
         },
         "fee": 0.003,
         "reserve0": "582661661",
@@ -52871,7 +54722,7 @@
       "c": "ConstantProductPoolCode",
       "d": {
         "pool": {
-          "o": 4884
+          "o": 4968
         },
         "liquidityProvider": "UniswapV2",
         "poolName": "UniswapV2 0.3%"
@@ -52882,10 +54733,10 @@
       "d": {
         "address": "0x79D4Eaa5768a4A71727bdb35eAE5148991a6551E",
         "token0": {
-          "o": 4885
+          "o": 4969
         },
         "token1": {
-          "o": 4886
+          "o": 4970
         },
         "fee": 0.003,
         "reserve0": "384124273",
@@ -53447,9 +55298,6 @@
         "o": 4667
       },
       {
-        "o": 4671
-      },
-      {
         "o": 4675
       },
       {
@@ -53459,82 +55307,112 @@
         "o": 4683
       },
       {
-        "o": 4687
+        "o": 4692
       },
       {
-        "o": 4691
+        "o": 4696
       },
       {
-        "o": 4695
+        "o": 4700
       },
       {
-        "o": 4699
+        "o": 4704
       },
       {
-        "o": 4703
+        "o": 4708
       },
       {
-        "o": 4707
-      },
-      {
-        "o": 4711
-      },
-      {
-        "o": 4715
+        "o": 4712
       },
       {
         "o": 4719
       },
       {
-        "o": 4723
+        "o": 4726
       },
       {
-        "o": 4727
+        "o": 4733
       },
       {
-        "o": 4731
+        "o": 4740
       },
       {
-        "o": 4752
+        "o": 4747
       },
       {
-        "o": 4792
+        "o": 4754
+      },
+      {
+        "o": 4761
+      },
+      {
+        "o": 4768
+      },
+      {
+        "o": 4775
+      },
+      {
+        "o": 4782
+      },
+      {
+        "o": 4789
+      },
+      {
+        "o": 4796
       },
       {
         "o": 4803
       },
       {
+        "o": 4807
+      },
+      {
         "o": 4811
       },
       {
-        "o": 4819
+        "o": 4815
       },
       {
-        "o": 4827
+        "o": 4836
       },
       {
-        "o": 4835
+        "o": 4876
       },
       {
-        "o": 4845
+        "o": 4887
       },
       {
-        "o": 4855
+        "o": 4895
       },
       {
-        "o": 4863
+        "o": 4903
       },
       {
-        "o": 4871
+        "o": 4911
       },
       {
-        "o": 4875
+        "o": 4919
       },
       {
-        "o": 4879
+        "o": 4929
       },
       {
-        "o": 4883
+        "o": 4939
+      },
+      {
+        "o": 4947
+      },
+      {
+        "o": 4955
+      },
+      {
+        "o": 4959
+      },
+      {
+        "o": 4963
+      },
+      {
+        "o": 4967
       }
     ]
   }

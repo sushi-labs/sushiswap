@@ -56,6 +56,7 @@ export const CreatePositionManual: FC<ManualProps> = ({ address, chainId }) => {
           chainId={chainId}
           token0={_token0}
           token1={_token1}
+          poolAddress={address}
           feeAmount={poolStats?.feeAmount}
           tokenId={undefined}
           switchTokens={() => setInvertTokens((prev) => !prev)}

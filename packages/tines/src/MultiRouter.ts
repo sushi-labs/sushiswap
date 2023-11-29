@@ -5,7 +5,7 @@ import {
   NoWayMultiRoute,
   RouteStatus,
 } from './Graph'
-import { RPool, RToken, setTokenId } from './PrimaryPools'
+import { RPool, RToken, setTokenId } from './RPool'
 
 // Assumes route is a single path
 function calcPriceImactWithoutFee(route: MultiRoute) {
@@ -74,7 +74,7 @@ function deduplicatePools(pools: RPool[]): RPool[] {
     const chId1 = p.token1.chainId || 0
     const chainInfo =
       chId0 < chId1 ? `_${chId0}_${chId1}` : `_${chId1}_${chId0}`
-    poolMap.set(p.address + chainInfo, p)
+    poolMap.set(p.uniqueID() + chainInfo, p)
   })
   return Array.from(poolMap.values())
 }

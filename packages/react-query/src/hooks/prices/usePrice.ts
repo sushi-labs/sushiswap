@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-// import ms from 'ms'
+import ms from 'ms'
 import { Fraction } from 'sushi/math'
 import { parseUnits } from 'viem'
 
@@ -22,10 +22,10 @@ export const usePrice = ({ chainId, address }: UsePrice) => {
       )
     },
     enabled: Boolean(chainId && address),
-    // staleTime: ms('15s'),
-    // cacheTime: ms('1m'),
-    staleTime: 900000, // 15 mins
-    cacheTime: 3600000, // 1hr
+    staleTime: ms('15s'),
+    cacheTime: ms('1m'),
+    // staleTime: 900000, // 15 mins
+    // cacheTime: 3600000, // 1hr
     refetchOnWindowFocus: false,
   })
 }

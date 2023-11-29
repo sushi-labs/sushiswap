@@ -32,6 +32,7 @@ export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.SCROLL,
   ChainId.LINEA,
+  ChainId.HAQQ,
 ]
 export type SwapApiEnabledChainId = typeof SWAP_API_ENABLED_NETWORKS[number]
 export const isSwapApiEnabledChainId = (
@@ -39,7 +40,7 @@ export const isSwapApiEnabledChainId = (
 ): chainId is SwapApiEnabledChainId =>
   SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
 
-export const DISABLED_CHAIN_IDS = [ChainId.HAQQ] as const
+export const DISABLED_CHAIN_IDS = [ChainId.BOBA_AVAX] as const
 
 const PREFERRED_CHAINID_ORDER = [
   ChainId.ETHEREUM,

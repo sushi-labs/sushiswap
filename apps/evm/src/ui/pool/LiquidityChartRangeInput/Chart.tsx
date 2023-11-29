@@ -1,6 +1,5 @@
 import { ZoomTransform, max, scaleLinear } from 'd3'
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { Bound } from 'src/lib/constants'
 
 import { Area } from './Area'
 import { AxisBottom } from './AxisBottom'
@@ -15,7 +14,7 @@ const yAccessor = (d: ChartEntry) => d.activeLiquidity
 export const Chart: FC<LiquidityChartRangeInputProps> = ({
   id = 'liquidityChartRangeInput',
   data: { series, current },
-  ticksAtLimit,
+  priceRange,
   styles,
   dimensions: { width, height },
   margins,
@@ -23,6 +22,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   brushDomain,
   brushLabels,
   onBrushDomainChange,
+  getNewRangeWhenBrushing,
   zoomLevels,
   hideBrushes,
 }) => {
@@ -99,9 +99,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
             'reset',
           )
         }}
-        showResetButton={Boolean(
-          ticksAtLimit[Bound.LOWER] || ticksAtLimit[Bound.UPPER],
-        )}
+        showResetButton={priceRange !== undefined}
         zoomLevels={zoomLevels}
       />
       <svg
@@ -180,6 +178,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
               setBrushExtent={onBrushDomainChange}
               westHandleColor={styles.brush.handle.west}
               eastHandleColor={styles.brush.handle.east}
+              getNewRangeWhenBrushing={getNewRangeWhenBrushing}
             />
           ) : null}
         </g>

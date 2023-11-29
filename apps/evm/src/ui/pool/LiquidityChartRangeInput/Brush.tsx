@@ -10,6 +10,7 @@ import React, {
 } from 'react'
 
 import { OffScreenHandle, brushHandleAccentPath, brushHandlePath } from './svg'
+import { HandleType } from './types'
 
 // flips the handles draggers when close to the container edges
 const FLIP_HANDLE_THRESHOLD_PX = 20
@@ -43,6 +44,10 @@ interface BrushProps {
   innerHeight: number
   westHandleColor: string
   eastHandleColor: string
+  getNewRangeWhenBrushing: (
+    range: [number, number],
+    movingHandle: HandleType | undefined,
+  ) => [number, number] | undefined
 }
 
 export const Brush: FC<BrushProps> = ({
@@ -56,6 +61,7 @@ export const Brush: FC<BrushProps> = ({
   innerHeight,
   westHandleColor,
   eastHandleColor,
+  getNewRangeWhenBrushing,
 }) => {
   const brushRef = useRef<SVGGElement | null>(null)
   const brushBehavior = useRef<BrushBehavior<SVGGElement> | null>(null)
@@ -78,6 +84,8 @@ export const Brush: FC<BrushProps> = ({
         return
       }
 
+      if (!mode) return
+
       const scaled = (selection as [number, number]).map(xScale.invert) as [
         number,
         number,
@@ -85,12 +93,20 @@ export const Brush: FC<BrushProps> = ({
 
       // avoid infinite render loop by checking for change
       if (type === 'end' && !compare(brushExtent, scaled, xScale)) {
-        setBrushExtent(scaled, mode)
+        const handleType =
+          scaled[0].toFixed(6) !== brushExtent[0].toFixed(6)
+            ? HandleType.e
+            : scaled[1].toFixed(6) !== brushExtent[1].toFixed(6)
+            ? HandleType.w
+            : undefined
+
+        const newRange = getNewRangeWhenBrushing(scaled, handleType)
+        setBrushExtent(newRange ?? scaled, mode)
       }
 
       setLocalBrushExtent(scaled)
     },
-    [xScale, brushExtent, setBrushExtent],
+    [xScale, brushExtent, setBrushExtent, getNewRangeWhenBrushing],
   )
 
   // keep local and external brush extent in sync

@@ -5,15 +5,11 @@ import {
   UniV3Pool,
   calcTokenPrices,
 } from '@sushiswap/tines'
-import { deserialize } from '@wagmi/core'
+import { Address, deserialize } from '@wagmi/core'
+import { ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
-import {
-  DEFAULT_LIST_OF_LISTS,
-  type TokenInfo,
-  type TokenList,
-} from 'sushi/token-list'
-import { isPromiseFulfilled } from 'sushi/validate'
-import { getAddress } from 'viem'
+import { type TokenInfo } from 'sushi/token-list'
+// import { isPromiseFulfilled } from 'sushi/validate'
 
 export const Currency = {
   USD: 'USD',
@@ -63,24 +59,31 @@ interface PoolCode {
   poolName: string
 }
 
-async function fetchTokensFromLists() {
-  return Promise.allSettled(
-    DEFAULT_LIST_OF_LISTS.map((el) => fetch(el).then((res) => res.json())),
-  ).then((promiseSettledResults: PromiseSettledResult<TokenList>[]) => {
-    return promiseSettledResults.filter(isPromiseFulfilled).flatMap((el) =>
-      el.value.tokens.map((t) => ({
-        ...(t as TokenInfo),
-        // Token addresses are sometimes lowercase from token lists
-        address: getAddress(t.address),
-      })),
-    )
-  })
+async function fetchTokens(chainId: ExtractorSupportedChainId) {
+  const result = await fetch(
+    `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/`,
+  )
+  // const result = await fetch(`https://tokens.sushi.com/v1/${chainId}/`)
+  const tokenList = (await result.json()) as TokenInfo[]
+  return tokenList
 }
 
-async function fetchPoolCodes(chainId: number) {
-  const response = await fetch(
-    `https://swap.sushi.com/pool-codes?chainId=${chainId}`,
+async function fetchToken(chainId: ExtractorSupportedChainId, address: string) {
+  const result = await fetch(
+    `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/${address}`,
+    // `https://tokens.sushi.com/v1/${chainId}/${address}`,
   )
+  const tokenList = (await result.json()) as TokenInfo | undefined
+  return tokenList
+}
+
+async function fetchPoolCodes(chainId: number, address?: string) {
+  const url = new URL('https://swap.sushi.com/pool-codes')
+  url.searchParams.set('chainId', chainId.toString())
+  if (address) {
+    url.searchParams.set('address', address)
+  }
+  const response = await fetch(url)
   const json = await response.json()
   return deserialize(json) as PoolCode[]
 }
@@ -201,32 +204,13 @@ export async function getPrices(chainId: number, currency: Currency) {
   ) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
-  const [tokensFromLists, poolCodes] = await Promise.all([
-    fetchTokensFromLists(),
-    fetchPoolCodes(chainId),
-  ])
-  const tokens = new Map<string, TokenInfo>()
-  tokensFromLists
-    .filter((t) => t.chainId === chainId)
-    .forEach((t) => {
-      if (!tokens.has(t.address.toLowerCase())) {
-        // first tokens should be sushis, we don't override them in case we have changed name/symbols
-        tokens.set(t.address.toLowerCase(), t)
-      }
-    })
-  console.log(
-    `Found ${tokensFromLists.length} tokens from lists, filtered it down to ${tokens.size}`,
-  )
 
-  const filteredPoolCodes = poolCodes.filter(
-    (pc) =>
-      tokens.has(pc.pool.token0.address.toLowerCase()) &&
-      tokens.has(pc.pool.token1.address.toLowerCase()),
-  )
-  console.log(
-    `Found ${poolCodes.length} pools, filtered it down to ${filteredPoolCodes.length}`,
-  )
-  const mappedPools = filteredPoolCodes
+  const [tokens, poolCodes] = await Promise.all([
+    fetchTokens(chainId as ExtractorSupportedChainId),
+    fetchPoolCodes(chainId),
+  ]) // The reason we fetch tokens here is to NOT send prices for every single token tines could price
+
+  const mappedPools = poolCodes
     .map(mapPool)
     .filter((p) => p !== undefined) as RPool[]
 
@@ -235,7 +219,12 @@ export async function getPrices(chainId: number, currency: Currency) {
       ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
       : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
 
-  const prices = calculateTokenPrices(tokensFromLists, bases, mappedPools, 1000)
+  const prices = calculateTokenPrices(
+    Array.from(tokens.values()),
+    bases,
+    mappedPools,
+    1000,
+  )
 
   return prices
 }
@@ -248,11 +237,11 @@ const hasPrice = (input: number | undefined): input is number =>
  * @param {number} chainId
  * @param {string} address
  * @param {Currency} currency
- * @returns {number}
+ * @returns {number | undefined}
  */
 export async function getPrice(
   chainId: number,
-  address: string,
+  address: Address,
   currency: Currency = Currency.USD,
 ) {
   if (
@@ -261,34 +250,22 @@ export async function getPrice(
   ) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
-  const [tokensFromLists, poolCodes] = await Promise.all([
-    fetchTokensFromLists(),
+
+  const [token, poolCodes] = await Promise.all([
+    fetchToken(chainId as ExtractorSupportedChainId, address),
     fetchPoolCodesForToken(chainId, address),
   ])
-  const tokens = new Map<string, TokenInfo>()
-  tokensFromLists
-    .filter((t) => t.chainId === chainId)
-    .forEach((t) => {
-      if (!tokens.has(t.address.toLowerCase())) {
-        // first tokens should be sushis, we don't override them in case we have changed name/symbols
-        tokens.set(t.address.toLowerCase(), t)
-      }
-    })
-
-  const filteredPoolCodes = poolCodes.filter(
-    (pc) =>
-      tokens.has(pc.pool.token0.address.toLowerCase()) &&
-      tokens.has(pc.pool.token1.address.toLowerCase()),
-  )
-  const mappedPools = filteredPoolCodes
+  if (token === undefined) {
+    return undefined
+  }
+  const mappedPools = poolCodes
     .map(mapPool)
     .filter((p) => p !== undefined) as RPool[]
-
   const bases =
     currency === Currency.USD
       ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
       : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
 
-  const prices = calculateTokenPrices(tokensFromLists, bases, mappedPools, 1000)
-  return prices[address]
+  const prices = calculateTokenPrices([token], bases, mappedPools, 1000)
+  return prices[token.address]
 }

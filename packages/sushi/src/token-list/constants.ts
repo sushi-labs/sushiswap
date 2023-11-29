@@ -10,6 +10,7 @@ export const SUSHI_CHAINLINK_TOKEN_LIST =
 export const UNI_LIST = 'https://gateway.ipfs.io/ipns/tokens.uniswap.org'
 export const UNI_EXTENDED_LIST =
   'https://gateway.ipfs.io/ipns/extendedtokens.uniswap.org'
+
 const COINGECKO_LIST = 'https://tokens.coingecko.com/uniswap/all.json'
 const COINGECK_BASE_LIST = 'https://tokens.coingecko.com/base/all.json'
 const COINGECKO_BNB_LIST =
@@ -22,6 +23,7 @@ const COINGECKO_CELO_LIST = 'https://tokens.coingecko.com/celo/all.json'
 const COINGECKO_POLYGON_LIST =
   'https://tokens.coingecko.com/polygon-pos/all.json'
 const COINGECKO_AVAX_LIST = 'https://tokens.coingecko.com/avalanche/all.json'
+
 const COMPOUND_LIST =
   'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json'
 const GEMINI_LIST = 'https://www.gemini.com/uniswap/manifest.json'
@@ -73,4 +75,9 @@ export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
   SUSHI_DEFAULT_TOKEN_LIST,
   SUSHI_CHAINLINK_TOKEN_LIST,
   OPTIMISM_LIST,
+]
+
+export const BLACKLIST_TOKEN_IDS: string[] = [
+  // Fake Aptos token
+  '0x8CDf7AF57E4c8B930e1B23c477c22f076530585e',
 ]
