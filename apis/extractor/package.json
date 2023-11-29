@@ -22,8 +22,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
     "load-testing": "artillery run test/load.yml",
-    "start": "node dist/index.js",
-    "simulate": "ts-node --skipProject ./test/requestSimulation.ts"
+    "simulate": "ts-node --skipProject ./test/requestSimulation.ts",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@sentry/node": "7.77.0",

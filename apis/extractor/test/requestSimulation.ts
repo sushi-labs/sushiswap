@@ -4,9 +4,9 @@ import path from 'path'
 const CACHE_DIR = '../cache'
 const TOKEN_FILES_PREFIX = 'tokens-'
 const SERVER_ADDRESS = 'http://localhost:1337'
-const USER_ADDRESS = '0xBa8656A5D95087ab4d015f1B68D72cD246FcC6C3'   // random address with no contract
+const USER_ADDRESS = '0xBa8656A5D95087ab4d015f1B68D72cD246FcC6C3' // random address with no contract
 const REQUEST_PER_SEC = 2
-const MS_PER_REQUEST = Math.round(1000/REQUEST_PER_SEC)
+const MS_PER_REQUEST = Math.round(1000 / REQUEST_PER_SEC)
 
 interface Token {
   address: string
@@ -15,7 +15,7 @@ interface Token {
   decimals: number
 }
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms));
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 function loadAllTokens(): Record<number, Token[]> {
   const res: Record<number, Token[]> = {}
@@ -33,7 +33,10 @@ function loadAllTokens(): Record<number, Token[]> {
   return res
 }
 
-function getRandomNetwork(totalTokens: number, tokenNumber: [number, number][]): number {
+function getRandomNetwork(
+  totalTokens: number,
+  tokenNumber: [number, number][],
+): number {
   const num = Math.floor(Math.random() * totalTokens)
   let total = 0
   for (let i = 0; i < tokenNumber.length; ++i) {
@@ -47,16 +50,16 @@ function getRandomNetwork(totalTokens: number, tokenNumber: [number, number][]):
 // Arbitrary 2 tokens
 function getRandomPair(num: number): [number, number] {
   const first = Math.floor(Math.random() * num)
-  let second = Math.floor(Math.random() * (num-1))
+  let second = Math.floor(Math.random() * (num - 1))
   if (second >= first) ++second
   return [first, second]
 }
 
 // arbitrary token against arbitrary first 5 tokens
 function getRandomPair2(num: number): [number, number] {
-  const best = Math.min(num-1, 5)
+  const best = Math.min(num - 1, 5)
   const first = Math.floor(Math.random() * best)
-  let second = Math.floor(Math.random() * (num-1))
+  let second = Math.floor(Math.random() * (num - 1))
   if (second >= first) ++second
   return Math.random() < 0.5 ? [first, second] : [second, first]
 }
@@ -73,7 +76,7 @@ async function makeRequest(
     `&tokenIn=${from.address}&tokenOut=${to.address}&amount=${amount}&to=${recipient}`
   try {
     const resp = await fetch(requestUrl)
-    const json = await resp.json() as string
+    const json = (await resp.json()) as string
     const respObj = JSON.parse(json)
     return respObj.route.status
   } catch (e) {
@@ -84,8 +87,10 @@ async function makeRequest(
 
 async function simulate() {
   const tokens = loadAllTokens()
-  const tokenNumber: [number, number][] = Object.entries(tokens).map(([id, tokens]) => [Number(id), tokens.length])
-  const totalTokens = tokenNumber.reduce((a, b) => a+b[1], 0)
+  const tokenNumber: [number, number][] = Object.entries(tokens).map(
+    ([id, tokens]) => [Number(id), tokens.length],
+  )
+  const totalTokens = tokenNumber.reduce((a, b) => a + b[1], 0)
   for (;;) {
     const delayPromise = delay(MS_PER_REQUEST)
     const chainId = getRandomNetwork(totalTokens, tokenNumber)
@@ -93,9 +98,19 @@ async function simulate() {
     const [from, to] = getRandomPair2(chainTokens.length)
     const amount = BigInt(10 ** (chainTokens[from].decimals + 1))
     const startTime = performance.now()
-    const res = await makeRequest(chainId, chainTokens[from], amount, chainTokens[to], USER_ADDRESS)
+    const res = await makeRequest(
+      chainId,
+      chainTokens[from],
+      amount,
+      chainTokens[to],
+      USER_ADDRESS,
+    )
     const timing = performance.now() - startTime
-    console.log(`Request: ${chainId} 1e${chainTokens[from].decimals + 1} ${chainTokens[from].symbol}->${chainTokens[to].symbol} ${res} ${Math.round(timing)}ms`)
+    console.log(
+      `Request: ${chainId} 1e${chainTokens[from].decimals + 1} ${
+        chainTokens[from].symbol
+      }->${chainTokens[to].symbol} ${res} ${Math.round(timing)}ms`,
+    )
     await delayPromise
   }
 }
