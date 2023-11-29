@@ -552,7 +552,7 @@ export class UniV2Extractor {
     ++this.watchedPools
     if (args.source !== 'cache')
       this.consoleLog(
-        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}`,
+        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}/${this.poolMap.size}`,
       )
     return poolState.poolCode
   }

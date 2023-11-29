@@ -260,7 +260,7 @@ export class UniV3Extractor {
       if (source !== 'cache') {
         const delay = Math.round(performance.now() - startTime)
         this.consoleLog(
-          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`,
+          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}/${this.poolMap.size + this.emptyAddressSet.size}`,
         )
       }
     })
@@ -433,5 +433,5 @@ export class UniV3Extractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`V3-${this.multiCallAggregator.chainId}: ${log}`)
-  }
+  }  
 }
