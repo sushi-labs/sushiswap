@@ -48,12 +48,12 @@ function getRandomNetwork(
 }
 
 // Arbitrary 2 tokens
-function getRandomPair(num: number): [number, number] {
-  const first = Math.floor(Math.random() * num)
-  let second = Math.floor(Math.random() * (num - 1))
-  if (second >= first) ++second
-  return [first, second]
-}
+// function getRandomPair(num: number): [number, number] {
+//   const first = Math.floor(Math.random() * num)
+//   let second = Math.floor(Math.random() * (num - 1))
+//   if (second >= first) ++second
+//   return [first, second]
+// }
 
 // arbitrary token against arbitrary first 5 tokens
 function getRandomPair2(num: number): [number, number] {
@@ -79,7 +79,7 @@ async function makeRequest(
     const json = (await resp.json()) as string
     const respObj = JSON.parse(json)
     return respObj.route.status
-  } catch (e) {
+  } catch (_e) {
     console.log('Failed request:', requestUrl)
     return 'Failed'
   }
