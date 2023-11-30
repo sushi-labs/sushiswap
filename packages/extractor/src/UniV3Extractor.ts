@@ -280,7 +280,9 @@ export class UniV3Extractor {
       if (source !== 'cache') {
         const delay = Math.round(performance.now() - startTime)
         this.consoleLog(
-          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`,
+          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${
+            this.watchedPools
+          }/${this.poolMap.size + this.emptyAddressSet.size}`,
         )
       }
     })

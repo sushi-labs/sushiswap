@@ -124,6 +124,7 @@ async function main() {
   const app: Express = express()
 
   Sentry.init({
+    enabled: true,
     dsn: SENTRY_DSN,
     integrations: [
       // enable HTTP calls tracing

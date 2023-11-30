@@ -1,0 +1,38 @@
+config:
+  # This is a test server run by team Artillery
+  # It's designed to be highly scalable
+  target: http://localhost:8080
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 1
+      name: Constant load, 1 RPS
+  processor: "./new-tokens.js"
+  # Load & configure a couple of useful plugins
+  # https://docs.art/reference/extensions
+  plugins:
+    ensure: {}
+    expect: {}
+    # apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+      thresholds:
+        - http.response_time.p99: 100
+        - http.response_time.p95: 75
+scenarios:
+  - flow:
+      - function: "setQuery"
+      - get:
+          url: "/?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}&to={{ query.to }}"
+          capture:
+            - json: "$.route"
+              as: route
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: route.status
+            - equals:
+                - "Success"
+                - "{{ route.status }}"
