@@ -21,8 +21,8 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "load-testing": "artillery run test/load.yml",
     "load-new-tokens": "artillery run test/load-new-tokens.yml",
+    "load-testing": "artillery run test/load.yml",
     "simulate": "ts-node --skipProject ./test/requestSimulation.ts",
     "start": "node dist/index.js"
   },
