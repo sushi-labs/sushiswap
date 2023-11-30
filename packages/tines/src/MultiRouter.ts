@@ -112,7 +112,7 @@ export function findMultiRouteExactIn(
 
     const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
     return getBetterRouteExactIn(outSingle, outMulti)
-  } catch (e) {
+  } catch (_e) {
     return NoWayMultiRoute(from, to)
   }
 }
