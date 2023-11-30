@@ -37,6 +37,10 @@ export class Extractor {
   extractorAlg?: AlgebraExtractor
   multiCallAggregator: MultiCallAggregator
   cacheDir: string
+  logging?: boolean
+  requestStartedNum = 0
+  requestFinishedNum = 0
+  requestFailedNum = 0
 
   /// @param client
   /// @param factoriesV2 list of supported V2 factories
@@ -61,6 +65,7 @@ export class Extractor {
     warningMessageHandler?: WarningMessageHandler
   }) {
     this.cacheDir = args.cacheDir
+    this.logging = args.logging
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
@@ -125,141 +130,190 @@ export class Extractor {
       this.cacheDir,
       `TokensStatus-${this.multiCallAggregator?.chainId}`,
     )
+    this.reportRequestStatistics()
+  }
+
+  lastRequestStartedNum = 0
+  lastRequestLogTime = Date.now()
+  reportRequestStatistics() {
+    if (!this.logging) return
+    if (this.lastRequestStartedNum < this.requestStartedNum) {
+      const now = Date.now()
+      console.log(
+        `${this.multiCallAggregator.chainId} Requests: ` +
+          `${this.requestStartedNum} total, ` +
+          `${this.requestStartedNum - this.requestFinishedNum} pending, ` +
+          `${this.requestFailedNum} failed, ` +
+          `${
+            this.requestStartedNum - this.lastRequestStartedNum
+          } in the last ${Math.round(
+            (now - this.lastRequestLogTime) / 1000,
+          )} sec`,
+      )
+      this.lastRequestStartedNum = this.requestStartedNum
+      this.lastRequestLogTime = now
+    }
+    setTimeout(() => this.reportRequestStatistics(), 60_000)
   }
 
   getPoolCodesForTokens(tokens: Token[]): PoolCode[] {
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address, t))
-    const tokensUnique = Array.from(tokenMap.values())
+    ++this.requestStartedNum
+    try {
+      const tokenMap = new Map<string, Token>()
+      tokens.forEach((t) => tokenMap.set(t.address, t))
+      const tokensUnique = Array.from(tokenMap.values())
 
-    const pools2 = this.extractorV2
-      ? this.extractorV2.getPoolsForTokens(tokensUnique).prefetched
-      : []
-    const pools3 = this.extractorV3
-      ? (this.extractorV3
-          .getWatchersForTokens(tokensUnique)
-          .prefetched.map((w) => w.getPoolCode())
-          .filter((pc) => pc !== undefined) as PoolCode[])
-      : []
-    const poolsAlg = this.extractorAlg
-      ? (this.extractorAlg
-          .getWatchersForTokens(tokensUnique)
-          .prefetched.map((w) => w.getPoolCode())
-          .filter((pc) => pc !== undefined) as PoolCode[])
-      : []
-    return pools2.concat(pools3).concat(poolsAlg)
+      const pools2 = this.extractorV2
+        ? this.extractorV2.getPoolsForTokens(tokensUnique).prefetched
+        : []
+      const pools3 = this.extractorV3
+        ? (this.extractorV3
+            .getWatchersForTokens(tokensUnique)
+            .prefetched.map((w) => w.getPoolCode())
+            .filter((pc) => pc !== undefined) as PoolCode[])
+        : []
+      const poolsAlg = this.extractorAlg
+        ? (this.extractorAlg
+            .getWatchersForTokens(tokensUnique)
+            .prefetched.map((w) => w.getPoolCode())
+            .filter((pc) => pc !== undefined) as PoolCode[])
+        : []
+      ++this.requestFinishedNum
+      return pools2.concat(pools3).concat(poolsAlg)
+    } catch (e) {
+      ++this.requestFinishedNum
+      ++this.requestFailedNum
+      throw e
+    }
   }
 
   getPoolCodesForTokensFull(tokens: Token[]): {
     prefetched: PoolCode[]
     fetchingNumber: number
   } {
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address, t))
-    const tokensUnique = Array.from(tokenMap.values())
+    ++this.requestStartedNum
+    try {
+      const tokenMap = new Map<string, Token>()
+      tokens.forEach((t) => tokenMap.set(t.address, t))
+      const tokensUnique = Array.from(tokenMap.values())
 
-    let prefetched: PoolCode[] = []
-    let fetchingNumber = 0
-    if (this.extractorV2) {
-      const pools2 = this.extractorV2.getPoolsForTokens(tokensUnique)
-      prefetched = pools2.prefetched
-      fetchingNumber = pools2.fetching.length
-    }
-    if (this.extractorV3) {
-      const pools3 = this.extractorV3.getWatchersForTokens(tokensUnique)
-      const pools3Prefetched = pools3.prefetched
-        .map((w) => w.getPoolCode())
-        .filter((pc) => pc !== undefined) as PoolCode[]
+      let prefetched: PoolCode[] = []
+      let fetchingNumber = 0
+      if (this.extractorV2) {
+        const pools2 = this.extractorV2.getPoolsForTokens(tokensUnique)
+        prefetched = pools2.prefetched
+        fetchingNumber = pools2.fetching.length
+      }
+      if (this.extractorV3) {
+        const pools3 = this.extractorV3.getWatchersForTokens(tokensUnique)
+        const pools3Prefetched = pools3.prefetched
+          .map((w) => w.getPoolCode())
+          .filter((pc) => pc !== undefined) as PoolCode[]
 
-      prefetched = prefetched.concat(pools3Prefetched)
-      fetchingNumber += pools3.fetching.length
-    }
-    if (this.extractorAlg) {
-      const poolsAlg = this.extractorAlg.getWatchersForTokens(tokensUnique)
-      const poolsAlgPrefetched = poolsAlg.prefetched
-        .map((w) => w.getPoolCode())
-        .filter((pc) => pc !== undefined) as PoolCode[]
+        prefetched = prefetched.concat(pools3Prefetched)
+        fetchingNumber += pools3.fetching.length
+      }
+      if (this.extractorAlg) {
+        const poolsAlg = this.extractorAlg.getWatchersForTokens(tokensUnique)
+        const poolsAlgPrefetched = poolsAlg.prefetched
+          .map((w) => w.getPoolCode())
+          .filter((pc) => pc !== undefined) as PoolCode[]
 
-      prefetched = prefetched.concat(poolsAlgPrefetched)
-      fetchingNumber += poolsAlg.fetching.length
+        prefetched = prefetched.concat(poolsAlgPrefetched)
+        fetchingNumber += poolsAlg.fetching.length
+      }
+      ++this.requestFinishedNum
+      return { prefetched, fetchingNumber }
+    } catch (e) {
+      ++this.requestFinishedNum
+      ++this.requestFailedNum
+      throw e
     }
-    return { prefetched, fetchingNumber }
   }
 
   async getPoolCodesForTokensAsync(
     tokens: Token[],
     timeout: number,
   ): Promise<PoolCode[]> {
-    let poolsV2: PoolCode[] = []
-    let watchersV3: UniV3PoolWatcher[] = []
-    let watchersAlg: AlgebraPoolWatcher[] = []
-    let promises: Promise<void>[] = []
+    ++this.requestStartedNum
+    try {
+      let poolsV2: PoolCode[] = []
+      let watchersV3: UniV3PoolWatcher[] = []
+      let watchersAlg: AlgebraPoolWatcher[] = []
+      let promises: Promise<void>[] = []
 
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address, t))
-    const tokensUnique = Array.from(tokenMap.values())
+      const tokenMap = new Map<string, Token>()
+      tokens.forEach((t) => tokenMap.set(t.address, t))
+      const tokensUnique = Array.from(tokenMap.values())
 
-    if (this.extractorV2) {
-      const { prefetched, fetching } =
-        this.extractorV2.getPoolsForTokens(tokensUnique)
-      poolsV2 = prefetched
-      promises = fetching.map(async (p) => {
-        const pc = await p
-        if (pc !== undefined) poolsV2.push(pc)
-      })
-    }
+      if (this.extractorV2) {
+        const { prefetched, fetching } =
+          this.extractorV2.getPoolsForTokens(tokensUnique)
+        poolsV2 = prefetched
+        promises = fetching.map(async (p) => {
+          const pc = await p
+          if (pc !== undefined) poolsV2.push(pc)
+        })
+      }
 
-    if (this.extractorV3) {
-      const { prefetched, fetching } =
-        this.extractorV3.getWatchersForTokens(tokensUnique)
-      watchersV3 = prefetched
-      prefetched.forEach((w) => {
-        if (w.getStatus() !== UniV3PoolWatcherStatus.All)
-          promises.push(w.statusAll())
-      })
-      promises = promises.concat(
-        fetching.map(async (p) => {
-          const w = await p
-          if (w === undefined) return
-          watchersV3.push(w)
-          if (w.getStatus() !== UniV3PoolWatcherStatus.All) await w.statusAll()
-        }),
-      )
-    }
+      if (this.extractorV3) {
+        const { prefetched, fetching } =
+          this.extractorV3.getWatchersForTokens(tokensUnique)
+        watchersV3 = prefetched
+        prefetched.forEach((w) => {
+          if (w.getStatus() !== UniV3PoolWatcherStatus.All)
+            promises.push(w.statusAll())
+        })
+        promises = promises.concat(
+          fetching.map(async (p) => {
+            const w = await p
+            if (w === undefined) return
+            watchersV3.push(w)
+            if (w.getStatus() !== UniV3PoolWatcherStatus.All)
+              await w.statusAll()
+          }),
+        )
+      }
 
-    if (this.extractorAlg) {
-      const { prefetched, fetching } =
-        this.extractorAlg.getWatchersForTokens(tokensUnique)
-      watchersAlg = prefetched
-      prefetched.forEach((w) => {
-        if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-          promises.push(w.statusAll())
-      })
-      promises = promises.concat(
-        fetching.map(async (p) => {
-          const w = await p
-          if (w === undefined) return
-          watchersAlg.push(w)
+      if (this.extractorAlg) {
+        const { prefetched, fetching } =
+          this.extractorAlg.getWatchersForTokens(tokensUnique)
+        watchersAlg = prefetched
+        prefetched.forEach((w) => {
           if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-            await w.statusAll()
-        }),
-      )
-    }
+            promises.push(w.statusAll())
+        })
+        promises = promises.concat(
+          fetching.map(async (p) => {
+            const w = await p
+            if (w === undefined) return
+            watchersAlg.push(w)
+            if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
+              await w.statusAll()
+          }),
+        )
+      }
 
-    await Promise.any([Promise.allSettled(promises), delay(timeout)])
-    const poolsV3 = watchersV3
-      .map((w) => w.getPoolCode())
-      .filter(
-        (pc) =>
-          pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
-      ) as PoolCode[]
-    const poolsAlg = watchersAlg
-      .map((w) => w.getPoolCode())
-      .filter(
-        (pc) =>
-          pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
-      ) as PoolCode[]
-    return poolsV3.concat(poolsAlg).concat(poolsV2)
+      await Promise.any([Promise.allSettled(promises), delay(timeout)])
+      const poolsV3 = watchersV3
+        .map((w) => w.getPoolCode())
+        .filter(
+          (pc) =>
+            pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
+        ) as PoolCode[]
+      const poolsAlg = watchersAlg
+        .map((w) => w.getPoolCode())
+        .filter(
+          (pc) =>
+            pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
+        ) as PoolCode[]
+      ++this.requestFinishedNum
+      return poolsV3.concat(poolsAlg).concat(poolsV2)
+    } catch (e) {
+      ++this.requestFinishedNum
+      ++this.requestFailedNum
+      throw e
+    }
   }
 
   getTokensPoolsQuantity(): [Token, number][] {

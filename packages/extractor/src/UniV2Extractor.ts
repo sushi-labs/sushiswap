@@ -294,10 +294,12 @@ export class UniV2Extractor {
             return
           }
           const startTime = performance.now()
+          this.taskCounter.inc()
           const promise = this.multiCallAggregator
             .callValue(addr, getReservesAbi, 'getReserves')
             .then(
               (reserves) => {
+                this.taskCounter.dec()
                 const poolState2 = this.poolMap.get(addrL)
                 if (poolState2) {
                   // pool was created
@@ -322,6 +324,7 @@ export class UniV2Extractor {
               },
               () => {
                 this.poolMap.set(addrL, { status: PoolStatus.NoPool })
+                this.taskCounter.dec()
                 return undefined
               },
             )
@@ -335,6 +338,7 @@ export class UniV2Extractor {
     }
   }
 
+  // Is not used now
   async addPoolsFromFactory(
     factoryAddr: Address,
     step = 1000,
