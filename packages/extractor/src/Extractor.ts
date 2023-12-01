@@ -134,25 +134,82 @@ export class Extractor {
   }
 
   lastRequestStartedNum = 0
+  rpcCalled = 0
+  rpcProcessed = 0
+  rpcFailed = 0
+  rpcMCalled = 0
+  rpcMProcessed = 0
+  rpcMFailed = 0
+  rpcTime = 0
   lastRequestLogTime = Date.now()
   reportRequestStatistics() {
     if (!this.logging) return
-    if (this.lastRequestStartedNum < this.requestStartedNum) {
-      const now = Date.now()
-      console.log(
-        `${this.multiCallAggregator.chainId} Requests: ` +
-          `${this.requestStartedNum} total, ` +
-          `${this.requestStartedNum - this.requestFinishedNum} pending, ` +
-          `${this.requestFailedNum} failed, ` +
-          `${
-            this.requestStartedNum - this.lastRequestStartedNum
-          } in the last ${Math.round(
-            (now - this.lastRequestLogTime) / 1000,
-          )} sec`,
-      )
-      this.lastRequestStartedNum = this.requestStartedNum
-      this.lastRequestLogTime = now
-    }
+    //if (this.lastRequestStartedNum < this.requestStartedNum) {
+    const now = Date.now()
+    console.log(
+      `${this.multiCallAggregator.chainId} Requests: ` +
+        `${this.requestStartedNum} total, ` +
+        `${this.requestStartedNum - this.requestFinishedNum} pending, ` +
+        `${this.requestFailedNum} failed, ` +
+        `${
+          this.requestStartedNum - this.lastRequestStartedNum
+        } in the last ${Math.round(
+          (now - this.lastRequestLogTime) / 1000,
+        )} sec`,
+    )
+    this.lastRequestStartedNum = this.requestStartedNum
+    //}
+
+    const processed =
+      this.multiCallAggregator.totalCallsProcessed - this.rpcProcessed
+    const processedM =
+      this.multiCallAggregator.totalMCallsProcessed - this.rpcMProcessed
+    console.log(
+      `${this.multiCallAggregator.chainId} RPC last ${Math.round(
+        (now - this.lastRequestLogTime) / 1000,
+      )} sec: Calls` +
+        ` +${this.multiCallAggregator.totalCalls - this.rpcCalled}` +
+        ` -${processed}` +
+        ` x${this.multiCallAggregator.totalCallsFailed - this.rpcFailed}` +
+        ` p${
+          this.multiCallAggregator.totalCalls -
+          this.multiCallAggregator.totalCallsProcessed -
+          this.multiCallAggregator.totalCallsFailed
+        }` +
+        ` ${
+          processed > 0
+            ? Math.round(
+                (this.multiCallAggregator.totalTimeSpent - this.rpcTime) /
+                  processed,
+              )
+            : 0
+        }ms, MultiCalls` +
+        ` +${this.multiCallAggregator.totalMCalls - this.rpcMCalled}` +
+        ` -${processedM}` +
+        ` x${this.multiCallAggregator.totalMCallsFailed - this.rpcMFailed}` +
+        ` p${
+          this.multiCallAggregator.totalMCalls -
+          this.multiCallAggregator.totalMCallsProcessed -
+          this.multiCallAggregator.totalMCallsFailed
+        }` +
+        ` ${
+          processedM > 0
+            ? Math.round(
+                (this.multiCallAggregator.totalTimeSpent - this.rpcTime) /
+                  processedM,
+              )
+            : 0
+        }ms`,
+    )
+    this.rpcCalled = this.multiCallAggregator.totalCalls
+    this.rpcProcessed = this.multiCallAggregator.totalCallsProcessed
+    this.rpcFailed = this.multiCallAggregator.totalCallsFailed
+    this.rpcMCalled = this.multiCallAggregator.totalMCalls
+    this.rpcMProcessed = this.multiCallAggregator.totalMCallsProcessed
+    this.rpcMFailed = this.multiCallAggregator.totalMCallsFailed
+    this.rpcTime = this.multiCallAggregator.totalTimeSpent
+
+    this.lastRequestLogTime = now
     setTimeout(() => this.reportRequestStatistics(), 60_000)
   }
 

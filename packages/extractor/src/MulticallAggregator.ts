@@ -29,6 +29,14 @@ export class MultiCallAggregator {
   maxCallsInOneBatch: number
   chainId: ChainId
 
+  totalCalls = 0
+  totalCallsProcessed = 0
+  totalCallsFailed = 0
+  totalMCalls = 0
+  totalMCallsProcessed = 0
+  totalMCallsFailed = 0
+  totalTimeSpent = 0
+
   constructor(client: PublicClient, maxCallsInOneBatch = 0) {
     this.client = client
     this.maxCallsInOneBatch = maxCallsInOneBatch
@@ -157,7 +165,10 @@ export class MultiCallAggregator {
       functionName: 'getBlockNumber',
     })
     let res
+    const startTime = performance.now()
     for (;;) {
+      this.totalCalls += pendingCalls.length - 1
+      this.totalMCalls += 1
       try {
         res = await this.client.multicall({
           allowFailure: true,
@@ -169,6 +180,8 @@ export class MultiCallAggregator {
           })),
         })
       } catch (e) {
+        this.totalCallsFailed += pendingCalls.length - 1
+        this.totalMCallsFailed += 1
         // warnLog(
         //   this.client.chain?.id,
         //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
@@ -176,6 +189,9 @@ export class MultiCallAggregator {
         warnLog(this.client.chain?.id, `Multicall error ${e}`)
         continue
       }
+      this.totalCallsProcessed += pendingCalls.length - 1
+      this.totalMCallsProcessed += 1
+      this.totalTimeSpent += performance.now() - startTime
       break
     }
     if (res[0].status !== 'success') {
