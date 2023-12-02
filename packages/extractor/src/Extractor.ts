@@ -47,7 +47,6 @@ export class Extractor {
   /// @param factoriesV3 list of supported V3 factories
   /// @param tickHelperContract address of helper contract for pool's ticks download
   /// @param cacheDir directory for cache
-  //                  Extremely recomended
   //                  IMPORTANT: Use different cacheDir for Extractors with the same chainId
   /// @param logDepth the depth of logs to keep in memory for reorgs
   /// @param logging to write logs in console or not
