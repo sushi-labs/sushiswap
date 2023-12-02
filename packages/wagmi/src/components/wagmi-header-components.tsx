@@ -22,6 +22,7 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
         networks={chainIds}
         selectedNetwork={selectedNetwork}
         onChange={onChange}
+        showAptos={true}
       />
       <UserProfile networks={chainIds} />
     </>

@@ -15,7 +15,8 @@ export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
   selectedNetwork?: ChainId
   onChange?(chainId: ChainId): void
-}> = ({ networks, selectedNetwork, onChange }) => {
+  showAptos?: boolean
+}> = ({ networks, selectedNetwork, onChange, showAptos = false }) => {
   const isMounted = useIsMounted()
   const { switchNetworkAsync } = useSwitchNetwork()
   const { chain } = useNetwork()
@@ -53,6 +54,7 @@ export const HeaderNetworkSelector: FC<{
       selected={selected}
       onSelect={onSwitchNetwork}
       networks={networks}
+      showAptos={showAptos}
     >
       <Button variant="secondary" testId="network-selector">
         <Suspense fallback={null}>

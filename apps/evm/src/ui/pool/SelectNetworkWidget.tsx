@@ -29,6 +29,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(
             networks={networks}
             selected={selectedNetwork}
             onSelect={onSelect}
+            showAptos={true}
           >
             <Button variant="secondary" className="!font-medium">
               <NetworkIcon chainId={selectedNetwork} width={16} height={16} />

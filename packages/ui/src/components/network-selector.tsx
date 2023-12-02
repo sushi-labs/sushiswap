@@ -43,6 +43,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
   networks: readonly T[]
   selected: T
   onSelect: NetworkSelectorOnSelectCallback<T>
+  showAptos?: boolean
   children: ReactNode
 }
 
@@ -54,6 +55,7 @@ const NEW_CHAINS: number[] = [
 const NetworkSelector = <T extends number>({
   onSelect,
   networks = [],
+  showAptos = false,
   children,
 }: Omit<NetworkSelectorProps<T>, 'variant'>) => {
   const [open, setOpen] = useState(false)
@@ -76,21 +78,23 @@ const NetworkSelector = <T extends number>({
           />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
-            <CommandItem className="cursor-pointer">
-              <Link
-                href="https://aptos.sushi.com"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <div className="flex items-center gap-2">
-                  <AptosCircle width={22} height={22} />
-                  Aptos
-                  <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                    NEW
+            {showAptos && (
+              <CommandItem className="cursor-pointer">
+                <Link
+                  href="https://aptos.sushi.com"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <div className="flex items-center gap-2">
+                    <AptosCircle width={22} height={22} />
+                    Aptos
+                    <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                      NEW
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </CommandItem>
+                </Link>
+              </CommandItem>
+            )}
             {_networks.map((el) => (
               <CommandItem
                 className="cursor-pointer"
