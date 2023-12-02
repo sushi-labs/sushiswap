@@ -147,10 +147,10 @@ export class UniV3Extractor {
             this.lastProcessdBlock = Number(
               logs[logs.length - 1].blockNumber || 0,
             )
-        } catch (e) {
+        } catch (_e) {
           warnLog(
             this.multiCallAggregator.chainId,
-            `Block ${blockNumber} log process error: ${e}`,
+            `Block ${blockNumber} log process error`,
           )
         }
       } else {
@@ -210,10 +210,10 @@ export class UniV3Extractor {
         return pool.processLog(l)
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
-    } catch (e) {
+    } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
-        `Log processing for pool ${l.address} throwed an exception ${e}`,
+        `Log processing for pool ${l.address} throwed an exception`,
       )
       return 'Exception!!!'
     }

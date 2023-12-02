@@ -179,14 +179,14 @@ export class MultiCallAggregator {
             args: c.args as Narrow<readonly unknown[] | undefined>,
           })),
         })
-      } catch (e) {
+      } catch (_e) {
         this.totalCallsFailed += pendingCalls.length - 1
         this.totalMCallsFailed += 1
         // warnLog(
         //   this.client.chain?.id,
         //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
         // )
-        warnLog(this.client.chain?.id, `Multicall error ${e}`)
+        warnLog(this.client.chain?.id, 'Multicall error')
         continue
       }
       this.totalCallsProcessed += pendingCalls.length - 1

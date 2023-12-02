@@ -121,8 +121,8 @@ export class LogFilter2 {
                   )
                   if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
                 })
-              } catch (e) {
-                warnLog(this.client.chain?.id, `getFilterChanges failed ${e}`)
+              } catch (_e) {
+                warnLog(this.client.chain?.id, 'getFilterChanges failed')
                 this.stop()
               }
               this.blockProcessing = false
