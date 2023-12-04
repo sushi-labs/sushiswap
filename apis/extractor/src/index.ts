@@ -1,12 +1,7 @@
 import 'dotenv/config'
 
-import path from 'path'
 import * as Sentry from '@sentry/node'
-import {
-  Extractor,
-  TokenManager,
-  type WarningLevel,
-} from '@sushiswap/extractor'
+import { Extractor, type WarningLevel } from '@sushiswap/extractor'
 import {
   NativeWrapProvider,
   PoolCode,
@@ -111,10 +106,6 @@ const extractors = new Map<
   RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
   Extractor
 >()
-const tokenManagers = new Map<
-  RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
-  TokenManager
->()
 const nativeProviders = new Map<
   RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
   NativeWrapProvider
@@ -153,13 +144,6 @@ async function main() {
     })
     await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
     extractors.set(chainId, extractor)
-    const tokenManager = new TokenManager(
-      extractor.multiCallAggregator,
-      path.resolve(__dirname, '../cache'),
-      `./tokens-${chainId}`,
-    )
-    await tokenManager.addCachedTokens()
-    tokenManagers.set(chainId, tokenManager)
     const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
     nativeProviders.set(chainId, nativeProvider)
   }
@@ -190,7 +174,8 @@ async function main() {
       preferSushi,
       maxPriceImpact,
     } = parsed.data
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
+    const extractor = extractors.get(chainId) as Extractor
+    const tokenManager = extractor.tokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
         ? Native.onChain(chainId)
@@ -208,7 +193,6 @@ async function main() {
       .getCurrentPoolList()
       .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
-    const extractor = extractors.get(chainId) as Extractor
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
     const additionalA = tokenIn
       ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
@@ -227,17 +211,8 @@ async function main() {
       ]),
     )
 
-    const { prefetched: cachedPoolCodes, fetchingNumber } =
-      extractor.getPoolCodesForTokensFull(tokens)
-    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-
-    if (fetchingNumber > 0) {
-      const poolCodes = await extractor.getPoolCodesForTokensAsync(
-        tokens,
-        2_000,
-      )
-      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-    }
+    const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
+    poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     const bestRoute = preferSushi
       ? Router.findSpecialRoute(
@@ -316,7 +291,8 @@ async function main() {
       preferSushi,
       maxPriceImpact,
     } = parsed.data
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
+    const extractor = extractors.get(chainId) as Extractor
+    const tokenManager = extractor.tokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
         ? Native.onChain(chainId)
@@ -334,7 +310,6 @@ async function main() {
       .getCurrentPoolList()
       .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
-    const extractor = extractors.get(chainId) as Extractor
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
     const additionalA = tokenIn
       ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
@@ -353,17 +328,8 @@ async function main() {
       ]),
     )
 
-    const { prefetched: cachedPoolCodes, fetchingNumber } =
-      extractor.getPoolCodesForTokensFull(tokens)
-    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-
-    if (fetchingNumber > 0) {
-      const poolCodes = await extractor.getPoolCodesForTokensAsync(
-        tokens,
-        2_000,
-      )
-      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-    }
+    const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
+    poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     const bestRoute = preferSushi
       ? Router.findSpecialRoute(
@@ -442,7 +408,8 @@ async function main() {
       preferSushi,
       maxPriceImpact,
     } = parsed.data
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
+    const extractor = extractors.get(chainId) as Extractor
+    const tokenManager = extractor.tokenManager
     const [tokenIn, tokenOut] = await Promise.all([
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
         ? Native.onChain(chainId)
@@ -460,7 +427,6 @@ async function main() {
       .getCurrentPoolList()
       .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
-    const extractor = extractors.get(chainId) as Extractor
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
     const additionalA = tokenIn
       ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
@@ -478,17 +444,8 @@ async function main() {
       ]),
     )
 
-    const { prefetched: cachedPoolCodes, fetchingNumber } =
-      extractor.getPoolCodesForTokensFull(tokens)
-    cachedPoolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-
-    if (fetchingNumber > 0) {
-      const poolCodes = await extractor.getPoolCodesForTokensAsync(
-        tokens,
-        2_000,
-      )
-      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-    }
+    const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
+    poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     const bestRoute = preferSushi
       ? Router.findSpecialRoute(
@@ -576,7 +533,7 @@ async function main() {
       })
       .parse(req.query)
     const extractor = extractors.get(chainId) as Extractor
-    const tokenManager = tokenManagers.get(chainId) as TokenManager
+    const tokenManager = extractor.tokenManager
     const token = (await tokenManager.findToken(address)) as Token
     const poolCodesMap = new Map<string, PoolCode>()
     const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []

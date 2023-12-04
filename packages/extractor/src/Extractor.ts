@@ -36,6 +36,7 @@ export class Extractor {
   extractorV3?: UniV3Extractor
   extractorAlg?: AlgebraExtractor
   multiCallAggregator: MultiCallAggregator
+  tokenManager: TokenManager
   cacheDir: string
   logging?: boolean
   requestStartedNum = 0
@@ -70,7 +71,7 @@ export class Extractor {
       args.client,
       args.maxCallsInOneBatch ?? 0,
     )
-    const tokenManager = new TokenManager(
+    this.tokenManager = new TokenManager(
       this.multiCallAggregator,
       args.cacheDir,
       `tokens-${this.multiCallAggregator.chainId}`,
@@ -88,7 +89,7 @@ export class Extractor {
         logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager,
+        this.tokenManager,
       )
     if (args.factoriesV3 && args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
@@ -99,7 +100,7 @@ export class Extractor {
         logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager,
+        this.tokenManager,
       )
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
       this.extractorAlg = new AlgebraExtractor(
@@ -110,7 +111,7 @@ export class Extractor {
         logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
-        tokenManager,
+        this.tokenManager,
       )
     setWarningMessageHandler(args.warningMessageHandler)
   }
