@@ -431,12 +431,6 @@ export class UniV2Extractor {
             'factory',
           ),
         )
-
-        this.multiCallAggregator.callValue(
-          addr,
-          tridentConstantPoolAbi,
-          'factory',
-        )
         factory = this.factoryMap.get(
           (factoryAddr as string).toLowerCase() as Address,
         )

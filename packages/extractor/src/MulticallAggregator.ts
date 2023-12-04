@@ -196,13 +196,14 @@ export class MultiCallAggregator {
     }
     if (res[0].status !== 'success') {
       // getBlockNumber Failed
-      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
+      const error = res[0].error.toString().substring(0, 1000)
+      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](error)
     } else {
       const blockNumber = res[0].result as number
       for (let i = 1; i < res.length; ++i) {
         if (res[i].status === 'success')
           pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
-        else pendingRejects[i - 1](res[i].error)
+        else pendingRejects[i - 1](res[i].error?.toString().substring(0, 1000))
       }
     }
   }
