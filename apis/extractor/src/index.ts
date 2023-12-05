@@ -111,8 +111,11 @@ const nativeProviders = new Map<
   NativeWrapProvider
 >()
 
+let wagmi: any
 async function main() {
   const app: Express = express()
+
+  wagmi = await import('wagmi')
 
   Sentry.init({
     enabled: true,
@@ -201,15 +204,13 @@ async function main() {
       ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? []
       : []
 
-    const tokens = Array.from(
-      new Set([
-        tokenIn.wrapped,
-        tokenOut.wrapped,
-        ...common,
-        ...additionalA,
-        ...additionalB,
-      ]),
-    )
+    const tokens = [
+      tokenIn.wrapped,
+      tokenOut.wrapped,
+      ...common,
+      ...additionalA,
+      ...additionalB,
+    ]
 
     const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
     poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
@@ -232,10 +233,8 @@ async function main() {
           gasPrice ?? 30e9,
         )
 
-    const { serialize } = await import('wagmi')
-
     return res.json(
-      serialize({
+      wagmi.serialize({
         route: {
           status: bestRoute?.status,
           fromToken:
@@ -318,15 +317,13 @@ async function main() {
       ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? []
       : []
 
-    const tokens = Array.from(
-      new Set([
-        tokenIn.wrapped,
-        tokenOut.wrapped,
-        ...common,
-        ...additionalA,
-        ...additionalB,
-      ]),
-    )
+    const tokens = [
+      tokenIn.wrapped,
+      tokenOut.wrapped,
+      ...common,
+      ...additionalA,
+      ...additionalB,
+    ]
 
     const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
     poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
@@ -349,10 +346,8 @@ async function main() {
           gasPrice ?? 30e9,
         )
 
-    const { serialize } = await import('wagmi')
-
     return res.json(
-      serialize({
+      wagmi.serialize({
         route: {
           status: bestRoute?.status,
           fromToken:
@@ -434,15 +429,14 @@ async function main() {
     const additionalB = tokenOut
       ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? []
       : []
-    const tokens = Array.from(
-      new Set([
-        tokenIn.wrapped,
-        tokenOut.wrapped,
-        ...common,
-        ...additionalA,
-        ...additionalB,
-      ]),
-    )
+
+    const tokens = [
+      tokenIn.wrapped,
+      tokenOut.wrapped,
+      ...common,
+      ...additionalA,
+      ...additionalB,
+    ]
 
     const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
     poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
@@ -465,10 +459,8 @@ async function main() {
           gasPrice ?? 30e9,
         )
 
-    const { serialize } = await import('wagmi')
-
     return res.json(
-      serialize({
+      wagmi.serialize({
         route: {
           status: bestRoute?.status,
           fromToken:

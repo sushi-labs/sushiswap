@@ -5,7 +5,7 @@ const CACHE_DIR = '../cache'
 const TOKEN_FILES_PREFIX = 'tokens-'
 const SERVER_ADDRESS = 'http://localhost:1337'
 const USER_ADDRESS = '0xBa8656A5D95087ab4d015f1B68D72cD246FcC6C3' // random address with no contract
-const REQUEST_PER_SEC = 20
+const REQUEST_PER_SEC = 2
 const MS_PER_REQUEST = Math.round(1000 / REQUEST_PER_SEC)
 
 interface Token {
@@ -89,8 +89,8 @@ async function makeRequest(
     const json = (await resp.json()) as string
     const respObj = JSON.parse(json)
     res = respObj.route.status
-  } catch (_e) {
-    console.log('Failed request:', requestUrl)
+  } catch (e) {
+    console.log('Failed request:', requestUrl, e)
     //return 'Failed'
   }
   const timing = performance.now() - startTime
@@ -111,7 +111,7 @@ async function simulate() {
     const delayPromise = delay(MS_PER_REQUEST)
     const chainId = getRandomNetwork(totalTokens, tokenNumber)
     const chainTokens = tokens[chainId]
-    const [from, to] = getRandomPair3(chainTokens.length)
+    const [from, to] = getRandomPair2(chainTokens.length)
     const amount = BigInt(10 ** (chainTokens[from].decimals + 1))
     // const startTime = performance.now()
     // const res = await
