@@ -126,10 +126,11 @@ export class Extractor {
       ].filter((e) => e !== undefined),
     )
     this.getPoolCodesForTokens(tokensPrefetch)
-    this.printTokensPoolsQuantity(
-      this.cacheDir,
-      `TokensStatus-${this.multiCallAggregator?.chainId}`,
-    )
+    if (this.cacheDir !== '')
+      this.printTokensPoolsQuantity(
+        this.cacheDir,
+        `TokensStatus-${this.multiCallAggregator?.chainId}`,
+      )
     this.reportRequestStatistics()
   }
 
