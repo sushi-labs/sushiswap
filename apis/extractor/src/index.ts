@@ -33,6 +33,7 @@ import { Native, Token } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import z from 'zod'
 import { EXTRACTOR_CONFIG } from './config'
+import { RequestStatistics, ResponseRejectReason } from './requestStatistics'
 
 const querySchema = z.object({
   chainId: z.coerce
@@ -110,6 +111,8 @@ const nativeProviders = new Map<
   RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
   NativeWrapProvider
 >()
+
+const requestStatistics = new RequestStatistics(60_000)
 
 let wagmi: any
 async function main() {
@@ -265,6 +268,7 @@ async function main() {
 
   app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
+    requestStatistics.start()
   })
 }
 
@@ -274,8 +278,10 @@ function processRequest(
   rpAddress: Record<number, Address>,
 ) {
   return async (req: Request, res: Response) => {
+    const statistics = requestStatistics.requestProcessingStart()
     const parsed = qSchema.safeParse(req.query)
     if (!parsed.success) {
+      requestStatistics.requestRejected(ResponseRejectReason.WRONG_INPUT_PARAMS)
       return res.status(422).send()
     }
     const {
@@ -291,17 +297,39 @@ function processRequest(
     } = parsed.data
     const extractor = extractors.get(chainId) as Extractor
     const tokenManager = extractor.tokenManager
-    const [tokenIn, tokenOut] = await Promise.all([
+
+    // Timing optimization: try to take tokens sync first - to avoid async call if tokens are known
+    let tokensAreKnown = true
+    let tokenIn =
       _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
         ? Native.onChain(chainId)
-        : tokenManager.findToken(_tokenIn as Address),
+        : tokenManager.getKnownToken(_tokenIn as Address)
+    let tokenOut =
       _tokenOut === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
         ? Native.onChain(chainId)
-        : tokenManager.findToken(_tokenOut as Address),
-    ])
+        : tokenManager.getKnownToken(_tokenOut as Address)
     if (!tokenIn || !tokenOut) {
+      // take unknown tokens async
+      tokensAreKnown = false
+      if (tokenIn === undefined && tokenOut !== undefined) {
+        tokenIn = await tokenManager.findToken(_tokenIn as Address)
+      } else if (tokenIn !== undefined && tokenOut === undefined) {
+        tokenOut = await tokenManager.findToken(_tokenOut as Address)
+      } else {
+        // both tokens are unknown
+        const tokens = await Promise.all([
+          tokenManager.findToken(_tokenIn as Address),
+          tokenManager.findToken(_tokenOut as Address),
+        ])
+        tokenIn = tokens[0]
+        tokenOut = tokens[1]
+      }
+    }
+    if (!tokenIn || !tokenOut) {
+      requestStatistics.requestRejected(ResponseRejectReason.UNSUPPORTED_TOKENS)
       throw new Error('tokenIn or tokenOut is not supported')
     }
+
     const poolCodesMap = new Map<string, PoolCode>()
     const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
     nativeProvider
@@ -345,7 +373,7 @@ function processRequest(
           gasPrice ?? 30e9,
         )
 
-    return res.json(
+    const resp = res.json(
       wagmi.serialize({
         route: {
           status: bestRoute?.status,
@@ -384,6 +412,8 @@ function processRequest(
           : undefined,
       }),
     )
+    requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
+    return resp
   }
 }
 
