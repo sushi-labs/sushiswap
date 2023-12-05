@@ -40,6 +40,7 @@
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "express-rate-limit": "6.9.0",
+    "jsonwebtoken": "9.0.2",
     "sushi": "workspace:*",
     "viem": "1.17.2",
     "wagmi": "1.4.5",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@tsconfig/esm": "1.0.4",
+    "@types/jsonwebtoken": "^9.0.5",
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "@types/cors": "2.8.13",
