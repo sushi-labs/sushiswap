@@ -112,7 +112,7 @@ const nativeProviders = new Map<
   NativeWrapProvider
 >()
 
-const requestStatistics = new RequestStatistics(60_000)
+const requestStatistics = new RequestStatistics(60_000, 3_600_000)
 
 let wagmi: any
 async function main() {
