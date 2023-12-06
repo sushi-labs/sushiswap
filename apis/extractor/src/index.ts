@@ -352,7 +352,9 @@ function processRequest(
       ...additionalB,
     ]
 
-    const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
+    const poolCodes = tokensAreKnown
+      ? extractor.getPoolCodesForTokens(tokens) // fast version
+      : await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
     poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
     const bestRoute = preferSushi
