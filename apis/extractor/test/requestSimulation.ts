@@ -48,18 +48,26 @@ function getRandomNetwork(
 }
 
 // Arbitrary 2 tokens
-// function getRandomPair(num: number): [number, number] {
-//   const first = Math.floor(Math.random() * num)
-//   let second = Math.floor(Math.random() * (num - 1))
-//   if (second >= first) ++second
-//   return [first, second]
-// }
+export function getRandomPair(num: number): [number, number] {
+  const first = Math.floor(Math.random() * num)
+  let second = Math.floor(Math.random() * (num - 1))
+  if (second >= first) ++second
+  return [first, second]
+}
 
 // arbitrary token against arbitrary first 5 tokens
-function getRandomPair2(num: number): [number, number] {
+export function getRandomPair2(num: number): [number, number] {
   const best = Math.min(num - 1, 5)
   const first = Math.floor(Math.random() * best)
   let second = Math.floor(Math.random() * (num - 1))
+  if (second >= first) ++second
+  return Math.random() < 0.5 ? [first, second] : [second, first]
+}
+
+export function getRandomPair3(num: number): [number, number] {
+  const best = Math.min(num - 1, 5)
+  const first = Math.floor(Math.random() * best)
+  let second = Math.floor(Math.random() * (best - 1))
   if (second >= first) ++second
   return Math.random() < 0.5 ? [first, second] : [second, first]
 }
@@ -71,18 +79,26 @@ async function makeRequest(
   to: Token,
   recipient: string,
 ) {
+  const startTime = performance.now()
   const requestUrl =
     `${SERVER_ADDRESS}/?chainId=${chainId}` +
     `&tokenIn=${from.address}&tokenOut=${to.address}&amount=${amount}&to=${recipient}`
+  let res = 'Failed'
   try {
     const resp = await fetch(requestUrl)
     const json = (await resp.json()) as string
     const respObj = JSON.parse(json)
-    return respObj.route.status
-  } catch (_e) {
-    console.log('Failed request:', requestUrl)
-    return 'Failed'
+    res = respObj.route.status
+  } catch (e) {
+    console.log('Failed request:', requestUrl, e)
+    //return 'Failed'
   }
+  const timing = performance.now() - startTime
+  console.log(
+    `Request: ${chainId} 1e${from.decimals + 1} ${from.symbol}->${
+      to.symbol
+    } ${res} ${Math.round(timing)}ms`,
+  )
 }
 
 async function simulate() {
@@ -97,20 +113,21 @@ async function simulate() {
     const chainTokens = tokens[chainId]
     const [from, to] = getRandomPair2(chainTokens.length)
     const amount = BigInt(10 ** (chainTokens[from].decimals + 1))
-    const startTime = performance.now()
-    const res = await makeRequest(
+    // const startTime = performance.now()
+    // const res = await
+    makeRequest(
       chainId,
       chainTokens[from],
       amount,
       chainTokens[to],
       USER_ADDRESS,
     )
-    const timing = performance.now() - startTime
-    console.log(
-      `Request: ${chainId} 1e${chainTokens[from].decimals + 1} ${
-        chainTokens[from].symbol
-      }->${chainTokens[to].symbol} ${res} ${Math.round(timing)}ms`,
-    )
+    // const timing = performance.now() - startTime
+    // console.log(
+    //   `Request: ${chainId} 1e${chainTokens[from].decimals + 1} ${
+    //     chainTokens[from].symbol
+    //   }->${chainTokens[to].symbol} ${res} ${Math.round(timing)}ms`,
+    // )
     await delayPromise
   }
 }

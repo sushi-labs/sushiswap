@@ -1,4 +1,4 @@
-import { AbiEvent } from 'abitype'
+import { AbiEvent, Address } from 'abitype'
 import {
   Block,
   Log,
@@ -68,6 +68,18 @@ interface FilterMy {
   onNewLogs: (arg?: Log[]) => void // undefined if LogFilter is stopped
 }
 
+class BlockParams {
+  hash: Address | null
+  number: number | null
+  parentHash: Address
+
+  constructor(block: Block) {
+    this.hash = block.hash
+    this.number = block.number === null ? null : Number(block.number)
+    this.parentHash = block.parentHash
+  }
+}
+
 // - network fail/absence protection
 // - restores missed blocks
 // - correctly processes removed logs (like undos)
@@ -82,11 +94,11 @@ export class LogFilter2 {
 
   unWatchBlocks?: WatchBlocksReturnType
 
-  lastProcessedBlock?: Block
+  lastProcessedBlock?: BlockParams
   processedBlockHash: Set<string> = new Set()
-  nextGoalBlock?: Block
+  nextGoalBlock?: BlockParams
 
-  blockHashMap: Map<string, Block> = new Map()
+  blockHashMap: Map<string, BlockParams> = new Map()
   logHashMap: Map<string, Log[]> = new Map()
   blockFrame: BlockFrame = new BlockFrame()
 
@@ -109,8 +121,8 @@ export class LogFilter2 {
       this.client
         .createEventFilter({ events: this.eventsAll })
         .then((filter) => {
-          this.unWatchBlocks = this.client.watchBlocks({
-            onBlock: async () => {
+          this.unWatchBlocks = this.client.watchBlockNumber({
+            onBlockNumber: async () => {
               if (this.blockProcessing) return
               this.blockProcessing = true
               try {
@@ -121,8 +133,8 @@ export class LogFilter2 {
                   )
                   if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
                 })
-              } catch (e) {
-                warnLog(this.client.chain?.id, `getFilterChanges failed ${e}`)
+              } catch (_e) {
+                warnLog(this.client.chain?.id, 'getFilterChanges failed')
                 this.stop()
               }
               this.blockProcessing = false
@@ -151,7 +163,8 @@ export class LogFilter2 {
     if (signalStopping) this.filters.forEach((f) => f.onNewLogs()) // Signal about stopping
   }
 
-  setNewGoal(blockNumber: number, block: Block): boolean {
+  setNewGoal(block: BlockParams): boolean {
+    const blockNumber = block.number as number
     const deletedHashes = this.blockFrame.setFrame(
       blockNumber - this.depth,
       blockNumber + this.depth,
@@ -159,6 +172,7 @@ export class LogFilter2 {
     const initProcessedBlocksNumber = this.processedBlockHash.size
     deletedHashes.forEach((hash) => {
       this.blockHashMap.delete(hash)
+      this.logHashMap.set(hash, undefined as unknown as Log[]) // memory optimization
       this.logHashMap.delete(hash)
       this.processedBlockHash.delete(hash)
     })
@@ -178,18 +192,18 @@ export class LogFilter2 {
     this.processNewLogs()
   }
 
-  addBlock(block: Block, isGoal: boolean) {
-    const blockNumber = block.number === null ? null : Number(block.number)
-    if (blockNumber === null || block.hash === null) {
+  addBlock(_block: Block, isGoal: boolean) {
+    const block = new BlockParams(_block)
+    if (block.number === null || block.hash === null) {
       warnLog(
         this.client.chain?.id,
-        `Incorrect block: number=${blockNumber} hash=${block.hash}`,
+        `Incorrect block: number=${block.number} hash=${block.hash}`,
       )
       return
     }
-    if (isGoal) if (!this.setNewGoal(blockNumber, block)) return
+    if (isGoal) if (!this.setNewGoal(block)) return
     if (this.blockHashMap.has(block.hash)) return
-    if (!this.blockFrame.add(blockNumber, block.hash)) return
+    if (!this.blockFrame.add(block.number, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
     const backupPlan = () => {
@@ -259,8 +273,8 @@ export class LogFilter2 {
 
   processNewLogs() {
     if (!this.unWatchBlocks) return
-    const upLine: Block[] = []
-    let cornerBlock: Block | undefined = this.nextGoalBlock
+    const upLine: BlockParams[] = []
+    let cornerBlock: BlockParams | undefined = this.nextGoalBlock
     for (;;) {
       if (cornerBlock === undefined)
         if (this.lastProcessedBlock) return
@@ -270,9 +284,9 @@ export class LogFilter2 {
       cornerBlock = this.blockHashMap.get(cornerBlock.parentHash)
     }
 
-    const downLine: Block[] = []
+    const downLine: BlockParams[] = []
     if (cornerBlock) {
-      let b: Block | undefined = this.lastProcessedBlock
+      let b: BlockParams | undefined = this.lastProcessedBlock
       for (;;) {
         if (b === undefined) return
         if (b.hash === cornerBlock.hash) break
