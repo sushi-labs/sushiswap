@@ -121,8 +121,8 @@ export class LogFilter2 {
       this.client
         .createEventFilter({ events: this.eventsAll })
         .then((filter) => {
-          this.unWatchBlocks = this.client.watchBlocks({
-            onBlock: async () => {
+          this.unWatchBlocks = this.client.watchBlockNumber({
+            onBlockNumber: async () => {
               if (this.blockProcessing) return
               this.blockProcessing = true
               try {
