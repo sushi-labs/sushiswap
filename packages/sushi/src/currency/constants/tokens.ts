@@ -77,7 +77,7 @@ export const OCEAN = addressMapToTokenMap(
     symbol: 'OCEAN',
     name: 'Ocean Token',
   },
-  OCEAN_ADDRESS
+  OCEAN_ADDRESS,
 ) as Record<keyof typeof OCEAN_ADDRESS, Token>
 
 export const BAL = addressMapToTokenMap(
@@ -86,7 +86,7 @@ export const BAL = addressMapToTokenMap(
     symbol: 'BAL',
     name: 'Balancer',
   },
-  BAL_ADDRESS
+  BAL_ADDRESS,
 ) as Record<keyof typeof BAL_ADDRESS, Token>
 
 export const WAVAX = addressMapToTokenMap(
@@ -95,7 +95,7 @@ export const WAVAX = addressMapToTokenMap(
     symbol: 'WAVAX',
     name: 'Wrapped Avalanche Token',
   },
-  WAVAX_ADDRESS
+  WAVAX_ADDRESS,
 ) as Record<keyof typeof WAVAX_ADDRESS, Token>
 
 export const KNCv2 = addressMapToTokenMap(
@@ -104,7 +104,7 @@ export const KNCv2 = addressMapToTokenMap(
     symbol: 'KNCv2',
     name: 'Kyber Network Crystal V2',
   },
-  KNCv2_ADDRESS
+  KNCv2_ADDRESS,
 ) as Record<keyof typeof KNCv2_ADDRESS, Token>
 
 export const GRT = addressMapToTokenMap(
@@ -113,7 +113,7 @@ export const GRT = addressMapToTokenMap(
     symbol: 'GRT',
     name: 'Graph Token',
   },
-  GRT_ADDRESS
+  GRT_ADDRESS,
 ) as Record<keyof typeof GRT_ADDRESS, Token>
 
 export const TEL = addressMapToTokenMap(
@@ -122,7 +122,7 @@ export const TEL = addressMapToTokenMap(
     symbol: 'TEL',
     name: 'Telcoin',
   },
-  TEL_ADDRESS
+  TEL_ADDRESS,
 ) as Record<keyof typeof TEL_ADDRESS, Token>
 
 export const RNDR = addressMapToTokenMap(
@@ -131,7 +131,7 @@ export const RNDR = addressMapToTokenMap(
     symbol: 'RNDR',
     name: 'Render Token',
   },
-  RNDR_ADDRESS
+  RNDR_ADDRESS,
 ) as Record<keyof typeof RNDR_ADDRESS, Token>
 
 export const SAND = addressMapToTokenMap(
@@ -140,7 +140,7 @@ export const SAND = addressMapToTokenMap(
     symbol: 'SAND',
     name: 'SAND',
   },
-  SAND_ADDRESS
+  SAND_ADDRESS,
 ) as Record<keyof typeof SAND_ADDRESS, Token>
 
 export const STG = addressMapToTokenMap(
@@ -149,7 +149,7 @@ export const STG = addressMapToTokenMap(
     symbol: 'STG',
     name: 'StargateToken',
   },
-  STG_ADDRESS
+  STG_ADDRESS,
 ) as Record<keyof typeof STG_ADDRESS, Token>
 
 export const GNS = addressMapToTokenMap(
@@ -158,7 +158,7 @@ export const GNS = addressMapToTokenMap(
     symbol: 'GNS',
     name: 'Gains Network',
   },
-  GNS_ADDRESS
+  GNS_ADDRESS,
 ) as Record<keyof typeof GNS_ADDRESS, Token>
 export const MANA = addressMapToTokenMap(
   {
