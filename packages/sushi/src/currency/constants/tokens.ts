@@ -26,6 +26,7 @@ import {
   GRT_ADDRESS,
   JPY_ADDRESS,
   KLIMA_ADDRESS,
+  KNCv2,
   KP3R_ADDRESS,
   LDO_ADDRESS,
   LINK_ADDRESS,
@@ -54,6 +55,7 @@ import {
   USDC_ADDRESS,
   USDT_ADDRESS,
   USD_PLUS_ADDRESS,
+  WAVAX,
   WBTC_ADDRESS,
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
@@ -86,6 +88,24 @@ export const BAL = addressMapToTokenMap(
   },
   BAL_ADDRESS
 ) as Record<keyof typeof BAL_ADDRESS, Token>
+
+export const WAVAX = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'WAVAX',
+    name: 'Wrapped Avalanche Token',
+  },
+  AVAX_ADDRESS
+) as Record<keyof typeof WAVAX_ADDRESS, Token>
+
+export const KNCv2 = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'KNCv2',
+    name: 'Kyber Network Crystal V2',
+  },
+  KNCv2_ADDRESS
+) as Record<keyof typeof KNCv2_ADDRESS, Token>
 
 export const GRT = addressMapToTokenMap(
   {
