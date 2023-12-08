@@ -95,7 +95,7 @@ export const WAVAX = addressMapToTokenMap(
     symbol: 'WAVAX',
     name: 'Wrapped Avalanche Token',
   },
-  AVAX_ADDRESS
+  WAVAX_ADDRESS
 ) as Record<keyof typeof WAVAX_ADDRESS, Token>
 
 export const KNCv2 = addressMapToTokenMap(
