@@ -1,0 +1,15 @@
+{
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "exactOptionalPropertyTypes": false,
+    "strictNullChecks": false
+  }
+}
