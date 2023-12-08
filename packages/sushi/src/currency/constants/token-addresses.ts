@@ -370,6 +370,15 @@ export const SUSHI_ADDRESS = {
 
 export const XSUSHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272',
+  [ChainId.POLYGON]: '0x6811079e3c63ed96eb005384d7e7ec8810e3d521',
+} as const
+
+export const WAVAX_ADDRESS = {
+  [ChainId.POLYGON]: '0x2C89bbc92BD86F8075d1DEcc58C7F4E0107f286b',
+} as const
+
+export const KNCv2_ADDRESS = {
+  [ChainId.POLYGON]: '0x1C954E8fe737F99f68Fa1CCda3e51ebDB291948C',
 } as const
 
 export const USDC_ADDRESS = {
