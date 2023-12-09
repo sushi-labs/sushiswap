@@ -38,8 +38,6 @@ import { Native, Token } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import z from 'zod'
 import { EXTRACTOR_CONFIG } from './config'
-import rateLimit from 'express-rate-limit'
-import { Role, decodeUser } from './authorization'
 
 const querySchema = z.object({
   chainId: z.coerce
@@ -106,7 +104,6 @@ const querySchema3_2 = querySchema.extend({
 })
 
 const PORT = process.env['PORT'] || 80
-const JWT_SECRET = process.env["JWT_SECRET"] as string;
 
 const SENTRY_DSN = process.env['SENTRY_DSN'] as string
 
@@ -124,27 +121,10 @@ const nativeProviders = new Map<
 >()
 
 async function main() {
-  if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET not set')
-  }
   const app: Express = express()
-  const limiter = rateLimit({
-    max: (req: Request) => { 
-      const token = req.headers["authorization"]?.split(" ")[1];
-      const user = decodeUser(token, JWT_SECRET);
-      if (user?.rateLimit) return user.rateLimit;
-      if (user?.roles.includes(Role.ADMIN)) return 3600;
-      if (user?.roles.includes(Role.PREMIUM)) return 1000;
-      if (user?.roles.includes(Role.BASIC)) return 360;
-      if (user?.roles.includes(Role.TRIAL)) return 180;
-      return 60; // 60 requests per minute
-    },
-    message: "Too many requests, please try again later.",
-  });
-  app.use(limiter);
 
   Sentry.init({
-    enabled: false,
+    enabled: true,
     dsn: SENTRY_DSN,
     integrations: [
       // enable HTTP calls tracing
@@ -160,8 +140,7 @@ async function main() {
     tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
 
-  // for (const chainId of EXTRACTOR_SUPPORTED_CHAIN_IDS) {
-  for (const chainId of [ChainId.ARBITRUM]) {
+  for (const chainId of EXTRACTOR_SUPPORTED_CHAIN_IDS) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
       warningMessageHandler: (
