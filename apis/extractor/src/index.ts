@@ -21,7 +21,7 @@ import cors from 'cors'
 import express, { type Express, type Request, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
-  EXTRACTOR_SUPPORTED_CHAIN_IDS,
+  // EXTRACTOR_SUPPORTED_CHAIN_IDS,
   type ExtractorSupportedChainId,
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
@@ -124,7 +124,7 @@ async function main() {
   const app: Express = express()
 
   Sentry.init({
-    enabled: true,
+    enabled: false,
     dsn: SENTRY_DSN,
     integrations: [
       // enable HTTP calls tracing
@@ -140,7 +140,7 @@ async function main() {
     tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
 
-  for (const chainId of EXTRACTOR_SUPPORTED_CHAIN_IDS) {
+  for (const chainId of [ChainId.ARBITRUM]) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
       warningMessageHandler: (
