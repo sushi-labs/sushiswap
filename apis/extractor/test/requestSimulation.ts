@@ -5,7 +5,7 @@ const CACHE_DIR = '../cache'
 const TOKEN_FILES_PREFIX = 'tokens-'
 const SERVER_ADDRESS = 'http://localhost:1337'
 const USER_ADDRESS = '0xBa8656A5D95087ab4d015f1B68D72cD246FcC6C3' // random address with no contract
-const REQUEST_PER_SEC = 2
+const REQUEST_PER_SEC = 15
 const MS_PER_REQUEST = Math.round(1000 / REQUEST_PER_SEC)
 
 interface Token {
@@ -72,6 +72,11 @@ export function getRandomPair3(num: number): [number, number] {
   return Math.random() < 0.5 ? [first, second] : [second, first]
 }
 
+let success = 0
+let successTime = 0
+let failed = 0
+let failedTime = 0
+
 async function makeRequest(
   chainId: number,
   from: Token,
@@ -86,18 +91,35 @@ async function makeRequest(
   let res = 'Failed'
   try {
     const resp = await fetch(requestUrl)
-    const json = (await resp.json()) as string
-    const respObj = JSON.parse(json)
-    res = respObj.route.status
+    if (resp.status === 200) {
+      const json = (await resp.json()) as string
+      const respObj = JSON.parse(json)
+      res = respObj.route.status
+    } else throw new Error(resp.status.toString())
   } catch (e) {
-    console.log('Failed request:', requestUrl, e)
+    const timing = performance.now() - startTime
+    ++failed
+    failedTime += timing
+    console.log(
+      'Failed request:',
+      //requestUrl,
+      `${Math.round((failed / (failed + success)) * 100)}%`,
+      `${success > 0 ? Math.round(successTime / success) : 0}ms`,
+      `${failed > 0 ? Math.round(failedTime / failed) : 0}ms`,
+      (e as Error).message,
+    )
     //return 'Failed'
   }
   const timing = performance.now() - startTime
+  ++success
+  successTime += timing
   console.log(
     `Request: ${chainId} 1e${from.decimals + 1} ${from.symbol}->${
       to.symbol
-    } ${res} ${Math.round(timing)}ms`,
+    } ${res} ${Math.round(timing)}ms ()`,
+    `${Math.round((success / (failed + success)) * 100)}%`,
+    `${success > 0 ? Math.round(successTime / success) : 0}ms`,
+    `${failed > 0 ? Math.round(failedTime / failed) : 0}ms`,
   )
 }
 
