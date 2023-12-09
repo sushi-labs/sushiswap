@@ -90,8 +90,8 @@ export class AlgebraQualityChecker {
         }
       }
       warnLog(pool.client.chainId, 'Quality check timeout error')
-    } catch (e) {
-      warnLog(pool.client.chainId, `Quality check error: ${e}`)
+    } catch (_e) {
+      warnLog(pool.client.chainId, 'Quality check error')
     }
     return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }

@@ -7,13 +7,11 @@ interface GetSteerVaultsAprs {
 }
 
 interface AprTimeseries {
-  data: [
-    {
-      startTime: number
-      endTime: number
-      feeApr: number
-    },
-  ]
+  data: {
+    startTime: number
+    endTime: number
+    feeApr: number
+  }[]
   message: string
 }
 

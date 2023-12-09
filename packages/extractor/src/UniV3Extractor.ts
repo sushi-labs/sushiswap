@@ -147,10 +147,10 @@ export class UniV3Extractor {
             this.lastProcessdBlock = Number(
               logs[logs.length - 1].blockNumber || 0,
             )
-        } catch (e) {
+        } catch (_e) {
           warnLog(
             this.multiCallAggregator.chainId,
-            `Block ${blockNumber} log process error: ${e}`,
+            `Block ${blockNumber} log process error`,
           )
         }
       } else {
@@ -210,10 +210,10 @@ export class UniV3Extractor {
         return pool.processLog(l)
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
-    } catch (e) {
+    } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
-        `Log processing for pool ${l.address} throwed an exception ${e}`,
+        `Log processing for pool ${l.address} throwed an exception`,
       )
       return 'Exception!!!'
     }
@@ -353,6 +353,7 @@ export class UniV3Extractor {
   async addPoolByAddress(address: Address) {
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.multiCallAggregator.chainId === undefined) return
+    this.taskCounter.inc()
     try {
       this.emptyAddressSet.delete(address)
       const startTime = performance.now()
@@ -393,6 +394,7 @@ export class UniV3Extractor {
             true,
             startTime,
           )
+          this.taskCounter.dec()
           return
         }
       }
@@ -400,6 +402,7 @@ export class UniV3Extractor {
       // adding pool failed - let's add its address in otherFactoryPoolSet in order to not
       // spent resources for in the future
     }
+    this.taskCounter.dec()
     this.otherFactoryPoolSet.add(address.toLowerCase() as Address)
     this.consoleLog(
       `other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`,

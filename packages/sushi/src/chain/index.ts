@@ -106,6 +106,15 @@ export class Chain implements Chain {
       this.explorers?.sort((explorer) =>
         explorer.name === 'Scrollscan' ? -1 : 1,
       )
+    } else if (data.name === 'Arbitrum Nova') {
+      this.explorers = [
+        {
+          name: 'Arbitrum Nova Explorer',
+          url: 'https://nova.arbiscan.io',
+          standard: 'EIP3091',
+        },
+        ...(this.explorers ?? []),
+      ]
     }
   }
   getTxUrl(txHash: string): string {
