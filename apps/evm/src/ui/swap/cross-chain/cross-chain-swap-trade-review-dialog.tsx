@@ -57,9 +57,10 @@ import { UserRejectedRequestError, stringify } from 'viem'
 
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
+import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
 import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
 import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
-// import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
+import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import {
   ConfirmationDialogContent,
@@ -83,6 +84,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const {
     mutate: { setTradeId, setSwapAmount },
     state: {
+      adapter,
       recipient,
       swapAmount,
       swapAmountString,
@@ -282,18 +284,20 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     [onComplete, writeAsync],
   )
 
-  // const { data: lzData } = useLayerZeroScanLink({
-  //   tradeId,
-  //   network1: chainId1,
-  //   network0: chainId0,
-  //   txHash: data?.hash,
-  // })
+  const { data: lzData } = useLayerZeroScanLink({
+    tradeId,
+    network1: chainId1,
+    network0: chainId0,
+    txHash: data?.hash,
+    enabled: adapter === SushiXSwap2Adapter.Stargate,
+  })
 
   const { data: axelarScanData } = useAxelarScanLink({
     tradeId,
     network1: chainId1,
     network0: chainId0,
     txHash: data?.hash,
+    enabled: adapter === SushiXSwap2Adapter.Squid,
   })
 
   const { data: receipt } = useTransaction({
@@ -302,21 +306,21 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     hash: axelarScanData?.dstTxHash as `0x${string}` | undefined,
   })
 
-  // useEffect(() => {
-  //   if (lzData?.status === 'DELIVERED') {
-  //     setStepStates({
-  //       source: StepState.Success,
-  //       bridge: StepState.Success,
-  //       dest: StepState.Success,
-  //     })
-  //   }
-  //   if (lzData?.status === 'FAILED') {
-  //     setStepStates((prev) => ({
-  //       ...prev,
-  //       dest: StepState.PartialSuccess,
-  //     }))
-  //   }
-  // }, [lzData?.status])
+  useEffect(() => {
+    if (lzData?.status === 'DELIVERED') {
+      setStepStates({
+        source: StepState.Success,
+        bridge: StepState.Success,
+        dest: StepState.Success,
+      })
+    }
+    if (lzData?.status === 'FAILED') {
+      setStepStates((prev) => ({
+        ...prev,
+        dest: StepState.PartialSuccess,
+      }))
+    }
+  }, [lzData?.status])
 
   useEffect(() => {
     if (axelarScanData?.status === 'success') {
@@ -344,9 +348,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     ) {
       void createInfoToast({
         account: address,
-        type: 'stargate',
+        type: 'squid',
         chainId: chainId0,
-        // href: lzData.link,
         href: axelarScanData.link,
         summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${
           Chain.from(chainId0)?.name
@@ -356,6 +359,27 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       })
     }
   }, [axelarScanData?.link])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (
+      lzData?.link &&
+      groupTs.current &&
+      stepStates.source === StepState.Success
+    ) {
+      void createInfoToast({
+        account: address,
+        type: 'stargate',
+        chainId: chainId0,
+        href: lzData.link,
+        summary: `Bridging ${tradeRef?.current?.srcBridgeToken?.symbol} from ${
+          Chain.from(chainId0)?.name
+        } to ${Chain.from(chainId1)?.name}`,
+        timestamp: new Date().getTime(),
+        groupTimestamp: groupTs.current,
+      })
+    }
+  }, [lzData?.link])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -545,11 +569,17 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <div>
                 <ConfirmationDialogContent
                   dialogState={stepStates}
-                  // lzUrl={lzData?.link}
-                  lzUrl={axelarScanData?.link}
+                  lzUrl={
+                    adapter === SushiXSwap2Adapter.Stargate
+                      ? lzData?.link
+                      : axelarScanData?.link
+                  }
                   txHash={data?.hash}
-                  // dstTxHash={lzData?.dstTxHash}
-                  dstTxHash={axelarScanData?.dstTxHash}
+                  dstTxHash={
+                    adapter === SushiXSwap2Adapter.Stargate
+                      ? lzData?.dstTxHash
+                      : axelarScanData?.dstTxHash
+                  }
                 />
               </div>
             </DialogDescription>

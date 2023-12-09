@@ -13,6 +13,7 @@ import {
   SQUID_ADAPTER_ADDRESS,
   SQUID_ROUTER_ADDRESS,
   SquidAdapterChainId,
+  isSquidAdapterChainId,
 } from 'sushi/config'
 import { encodeFunctionData, stringify } from 'viem'
 import {
@@ -45,20 +46,23 @@ export const useSquidCrossChainTrade = ({
   const { address } = useAccount()
 
   const { bridgePath, isSrcSwap, isDstSwap } = useMemo(() => {
-    const bridgePath = {
-      srcBridgeToken: axlUSDC[network0],
-      dstBridgeToken: axlUSDC[network1],
-    }
+    const bridgePath =
+      isSquidAdapterChainId(network0) && isSquidAdapterChainId(network1)
+        ? {
+            srcBridgeToken: axlUSDC[network0],
+            dstBridgeToken: axlUSDC[network1],
+          }
+        : undefined
 
     const isSrcSwap = Boolean(
       token0 &&
-        bridgePath.srcBridgeToken &&
+        bridgePath?.srcBridgeToken &&
         !token0.equals(bridgePath.srcBridgeToken),
     )
 
     const isDstSwap = Boolean(
       token1 &&
-        bridgePath.dstBridgeToken &&
+        bridgePath?.dstBridgeToken &&
         !token1.equals(bridgePath.dstBridgeToken),
     )
 
@@ -156,12 +160,13 @@ export const useSquidCrossChainTrade = ({
         recipient,
         srcTrade,
         dstTrade,
+        bridgePath,
         squidRoute,
         squidError,
       },
     ],
     queryFn: async () => {
-      if (squidError) {
+      if (squidError || !bridgePath) {
         return {
           amountIn: amount,
           route: {
@@ -185,14 +190,6 @@ export const useSquidCrossChainTrade = ({
       }
 
       const { srcBridgeToken, dstBridgeToken } = bridgePath
-
-      console.log(
-        token0.symbol,
-        isSrcSwap ? `-> ${srcBridgeToken.symbol}` : '',
-        '==BRIDGE==>',
-        isDstSwap ? `${dstBridgeToken.symbol} ->` : '',
-        token1.symbol,
-      )
 
       const dstAmountOut =
         isDstSwap && dstTrade?.amountOut
@@ -342,7 +339,9 @@ export const useSquidCrossChainTrade = ({
     cacheTime: 0,
     enabled:
       enabled &&
-      Boolean(token0 && token1 && amount && (squidRoute || squidError)),
+      Boolean(
+        token0 && token1 && amount && (squidRoute || squidError || !bridgePath),
+      ),
     queryKeyHashFn: stringify,
   })
 }

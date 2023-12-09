@@ -169,14 +169,14 @@ export const getSquidRouteRequest = ({
   amount: Amount<Currency> | undefined
   fromAddress: `0x${string}` | undefined
   toAddress: `0x${string}` | undefined
-  bridgePath: { srcBridgeToken: Token; dstBridgeToken: Token }
+  bridgePath: { srcBridgeToken: Token; dstBridgeToken: Token } | undefined
   slippagePercentage: string
   isSrcSwap: boolean | undefined
   isDstSwap: boolean | undefined
   srcTrade: UseTradeReturn | undefined
   dstTrade: UseTradeReturn | undefined
 }) => {
-  if (!token0 || !token1 || !amount) return undefined
+  if (!token0 || !token1 || !amount || !bridgePath) return undefined
 
   const useSrcTrade = Boolean(
     isSrcSwap &&

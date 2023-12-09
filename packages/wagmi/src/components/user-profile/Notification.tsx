@@ -32,6 +32,14 @@ export const STARGATE_TOKEN = new Token({
   name: 'StargateToken',
 })
 
+export const AXELAR_TOKEN = new Token({
+  chainId: ChainId.ETHEREUM,
+  address: '0x467719aD09025FcC6cF6F8311755809d45a5E5f3',
+  decimals: 6,
+  symbol: 'AXL',
+  name: 'Axelar',
+})
+
 export const Notification: FC<{
   data: ResolvedNotification
   showExtra?: boolean
@@ -106,6 +114,9 @@ export const Notification: FC<{
                 width={20}
                 height={20}
               />
+            )}
+            {notification.type === 'squid' && (
+              <UICurrency.Icon currency={AXELAR_TOKEN} width={20} height={20} />
             )}
             {status === 'success' && notification.type === 'send' && (
               <ArrowRightIcon width={20} height={20} />

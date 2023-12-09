@@ -8,6 +8,7 @@ import { stargateAdapterAbi } from 'sushi/abi'
 import {
   STARGATE_ADAPTER_ADDRESS,
   STARGATE_CHAIN_ID,
+  StargateAdapterChainId,
   StargateChainId,
 } from 'sushi/config'
 import { Amount, Currency, Native } from 'sushi/currency'
@@ -30,7 +31,7 @@ import {
 import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 import { useStargateBridgeFees } from './useStargateBridgeFees'
 
-export const useCrossChainTrade = ({
+export const useStargateCrossChainTrade = ({
   network0,
   network1,
   token0,
@@ -40,7 +41,10 @@ export const useCrossChainTrade = ({
   recipient,
   enabled,
   tradeId,
-}: UseCrossChainTradeParams) => {
+}: Omit<UseCrossChainTradeParams, 'network0' | 'network1'> & {
+  network0: StargateAdapterChainId
+  network1: StargateAdapterChainId
+}) => {
   const { data: feeData0 } = useFeeData({ chainId: network0, enabled })
   const { data: feeData1 } = useFeeData({ chainId: network1, enabled })
 
