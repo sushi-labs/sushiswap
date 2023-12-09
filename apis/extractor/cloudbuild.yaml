@@ -3,7 +3,7 @@ steps:
     args:
       - build
       - '--build-arg'
-      - 'SCRIPT_PATH=./apis/extractor'
+      - 'SCRIPT_PATH=extractor-api'
       - '-t'
       - 'gcr.io/$PROJECT_ID/$TRIGGER_NAME:latest'
       - '-f'
