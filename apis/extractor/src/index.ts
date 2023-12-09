@@ -278,6 +278,13 @@ function processRequest(
   rpAddress: Record<number, Address>,
 ) {
   return async (req: Request, res: Response) => {
+    // @ts-ignore
+    if (process.getActiveResourcesInfo().length > 150) {
+      // server is overloaded
+      requestStatistics.requestRejected(ResponseRejectReason.SERVER_OVERLOADED)
+      return res.status(529).send('Internal Server Error')
+    }
+
     const statistics = requestStatistics.requestProcessingStart()
     const parsed = qSchema.safeParse(req.query)
     if (!parsed.success) {
