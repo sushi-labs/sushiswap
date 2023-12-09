@@ -1,6 +1,7 @@
 export enum ResponseRejectReason {
   WRONG_INPUT_PARAMS = 0,
   UNSUPPORTED_TOKENS = 1,
+  SERVER_OVERLOADED = 2,
 }
 
 export class RequestStatistics {
@@ -48,8 +49,8 @@ export class RequestStatistics {
       const mins = Math.floor(time / 60 / 1000) - (days * 24 + hours) * 60
       const timeHuman = [
         days > 0 ? `${days}d` : '',
-        days > 0 && hours > 0 ? `${hours}h` : '',
-        `${mins}m`,
+        hours > 0 ? `${hours}h` : '',
+        mins > 0 ? `${mins}m` : '',
       ]
         .filter((s) => s !== '')
         .join(' ')
