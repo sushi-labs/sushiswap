@@ -1148,6 +1148,9 @@ importers:
       '@sushiswap/bentobox-sdk':
         specifier: 1.0.0
         version: 1.0.0(viem@1.17.2)
+      '@sushiswap/bonds-sdk':
+        specifier: workspace:*
+        version: link:../../packages/bonds-sdk
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../../packages/client
@@ -1248,9 +1251,19 @@ importers:
 
   packages/bonds-sdk:
     dependencies:
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
       sushi:
         specifier: workspace:*
         version: link:../sushi
+    optionalDependencies:
+      next:
+        specifier: 13.4.19
+        version: 13.4.19(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1258,9 +1271,6 @@ importers:
       '@tsconfig/esm':
         specifier: 1.0.4
         version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
       '@tsconfig/strictest':
         specifier: 2.0.2
         version: 2.0.2
@@ -1279,6 +1289,9 @@ importers:
       typescript:
         specifier: 5.2.2
         version: 5.2.2
+      viem:
+        specifier: 1.17.2
+        version: 1.17.2(typescript@5.2.2)(zod@3.21.4)
 
   packages/client:
     dependencies:
@@ -1830,9 +1843,6 @@ importers:
       viem:
         specifier: 1.17.2
         version: 1.17.2(typescript@5.2.2)(zod@3.21.4)
-      wagmi:
-        specifier: 1.4.5
-        version: 1.4.5(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)
     optionalDependencies:
       next:
         specifier: 13.4.19
@@ -1850,9 +1860,6 @@ importers:
       '@types/node':
         specifier: '18'
         version: 18.17.5
-      '@wagmi/core':
-        specifier: 1.4.5
-        version: 1.4.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.21.4)
       eslint:
         specifier: 8.43.0
         version: 8.43.0
@@ -36881,6 +36888,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: true
 
   /wagmi@1.4.5(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.21.4):
     resolution: {integrity: sha512-Ph62E6cO5n2Z8Z5LTyZrkaNprxTsbC4w0qZJT4OJdXrEELziI8z/b4FO6amVFXdu2rDp/wpvF56e4mhKC8/Kdw==}

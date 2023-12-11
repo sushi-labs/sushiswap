@@ -39,6 +39,13 @@ export async function steer() {
   }
 }
 
+async function extract() {
+  const result = await Promise.allSettled(
+    STEER_ENABLED_NETWORKS.map(extractChain),
+  )
+  return result.filter(isPromiseFulfilled).map((r) => r.value)
+}
+
 async function extractChain(chainId: SteerChainId) {
   const sdk = getBuiltGraphSDK({
     url: STEER_SUBGRAPH_URL[chainId],
@@ -127,13 +134,6 @@ async function extractChain(chainId: SteerChainId) {
     chainId,
     vaults: vaultsWithPayloads.filter(isPromiseFulfilled).map((r) => r.value),
   }
-}
-
-async function extract() {
-  const result = await Promise.allSettled(
-    STEER_ENABLED_NETWORKS.map(extractChain),
-  )
-  return result.filter(isPromiseFulfilled).map((r) => r.value)
 }
 
 const StrategyTypes: Record<string, SteerStrategy> = {

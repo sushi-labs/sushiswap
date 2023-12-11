@@ -58,6 +58,7 @@
     "sushi": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/client": "workspace:*",

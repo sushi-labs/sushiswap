@@ -68,6 +68,16 @@ sources:
           value: Steer_
           includeRootOperations: true
           includeTypes: true
+  - name: Bonds
+    handler:
+      graphql:
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-mainnet}
+        retry: 3
+    transforms:
+      - prefix:
+          value: Bonds_
+          includeRootOperations: true
+          includeTypes: true
 
 additionalTypeDefs: |
   # Type Extensions

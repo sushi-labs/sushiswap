@@ -337,3 +337,44 @@ query SteerVaults($first: Int = 1000, $skip: Int = 0) {
     manager: vaultManager
   }
 }
+
+query BondMarkets($first: Int = 1000, $skip: Int = 0) {
+  bonds: Bonds_markets(first: $first, skip: $skip) {
+    id
+    name
+    network
+    type
+    auctioneer
+    teller
+    marketId
+    owner
+    callbackAddress
+    capacity
+    capacityInQuote
+    chainId
+    minPrice
+    scale
+    start
+    conclusion
+    payoutToken {
+      id
+      address
+      symbol
+      decimals
+      name
+    }
+    quoteToken {
+      id
+      address
+      symbol
+      decimals
+      name
+      }
+    vesting
+    vestingType
+    isInstantSwap
+    hasClosed
+    totalBondedAmount
+    totalPayoutAmount
+  }
+}

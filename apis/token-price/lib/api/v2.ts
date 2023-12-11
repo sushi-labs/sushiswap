@@ -5,8 +5,8 @@ import {
   UniV3Pool,
   calcTokenPrices,
 } from '@sushiswap/tines'
-import { Address, deserialize } from '@wagmi/core'
-import { ExtractorSupportedChainId } from 'sushi/config'
+import { type Address, deserialize } from '@wagmi/core'
+import { type ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
 import { type TokenInfo } from 'sushi/token-list'
 // import { isPromiseFulfilled } from 'sushi/validate'

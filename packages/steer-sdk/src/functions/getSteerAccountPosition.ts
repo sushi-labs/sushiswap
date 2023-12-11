@@ -1,4 +1,4 @@
-import { erc20ABI } from '@wagmi/core'
+import { erc20Abi } from 'sushi/abi'
 import { getChainIdAddressFromId } from 'sushi/format'
 import type { Address, PublicClient } from 'viem'
 
@@ -24,7 +24,7 @@ async function getSteerAccountPositions({
         const { chainId, address } = getChainIdAddressFromId(id)
 
         return {
-          abi: erc20ABI,
+          abi: erc20Abi,
           chainId,
           address,
           args: [account] as const,
@@ -42,7 +42,7 @@ async function getSteerAccountPositions({
         const { chainId, address } = getChainIdAddressFromId(id)
 
         return {
-          abi: erc20ABI,
+          abi: erc20Abi,
           chainId,
           address,
           functionName: 'totalSupply' as const,

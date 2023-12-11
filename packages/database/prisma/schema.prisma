@@ -52,13 +52,15 @@ model Token {
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  pools0        Pool[]      @relation("token0")
-  pools1        Pool[]      @relation("token1")
-  sushiPools0   SushiPool[] @relation("token0")
-  sushiPools1   SushiPool[] @relation("token1")
-  steerVaults0  SteerVault[] @relation("token0")
-  steerVaults1  SteerVault[] @relation("token1")
-  incentives    Incentive[]
+  pools0          Pool[]        @relation("token0")
+  pools1          Pool[]        @relation("token1")
+  sushiPools0     SushiPool[]   @relation("token0")
+  sushiPools1     SushiPool[]   @relation("token1")
+  steerVaults0    SteerVault[]  @relation("token0")
+  steerVaults1    SteerVault[]  @relation("token1")
+  incentives      Incentive[]
+  bondMarkets0    BondMarket[]  @relation("quoteToken")
+  bondMarkets1    BondMarket[]  @relation("payoutToken")
 
   @@unique([chainId, address])
   @@index(fields: [id])
@@ -234,8 +236,8 @@ enum VaultState {
 
 model SteerVault {
   id                      String      @id // chainId:address
-  address                 String      @default("")
-  chainId                 Int         @default(69)
+  address                 String
+  chainId                 Int
   
   pool                    SushiPool   @relation(fields: [poolId], references: [id])
   poolId                  String
@@ -288,7 +290,65 @@ model SteerVault {
   updatedAt               DateTime    @updatedAt
 
   @@index(fields: [id])
+  @@index(fields: [chainId])
   @@index(fields: [poolId])
   @@index(fields: [token0Id])
   @@index(fields: [token1Id])
+}
+
+enum BondMarketType {
+  Static
+  Dynamic
+}
+
+enum BondVestingType {
+  Fixed
+}
+
+model BondMarket {
+  id                  String      @id // chainId:auctioneerAddress:marketId
+  chainId             Int
+
+  marketId            Int
+  marketType          BondMarketType
+  tellerAddress       String
+
+  start               DateTime
+  end                 DateTime
+
+  discount            Decimal
+
+  minPrice            Int
+  capacity            Int
+  capacityInQuote     Boolean
+
+  vesting             Int
+  vestingType         BondVestingType
+
+  issuer              BondIssuer? @relation(fields: [issuerId], references: [id])
+  issuerId            String
+
+  quoteToken          Token   @relation("quoteToken", fields: [quoteTokenId], references: [id])
+  quoteTokenId        String
+  totalBondedAmount   Int
+
+  payoutToken         Token    @relation("payoutToken", fields: [payoutTokenId], references: [id])
+  payoutTokenId       String
+  totalPayoutAmount   Int
+
+  @@index(fields: [chainId])
+  @@index(fields: [marketId])
+  @@index(fields: [chainId, marketType])
+  @@index(fields: [marketType])
+  @@index(fields: [issuerId])
+  @@index(fields: [quoteTokenId])
+  @@index(fields: [payoutTokenId])
+}
+
+model BondIssuer {
+  id            String @id // chainId:address
+  name          String
+  link          String
+
+  bondMarkets   BondMarket[]
 }

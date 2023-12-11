@@ -3,6 +3,7 @@ import { ChainId } from 'sushi/chain'
 export const BONDS_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
   ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
 ] as const satisfies Readonly<ChainId[]>
 
 export type BondChainId = typeof BONDS_ENABLED_NETWORKS[number]
@@ -12,6 +13,8 @@ export const BONDS_SUBGRAPH_URL: Record<BondChainId, string> = {
     'api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-mainnet',
   [ChainId.ARBITRUM]:
     'api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-arbitrum-mainnet',
+  [ChainId.OPTIMISM]:
+    'api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-optimism-mainnet',
 }
 
 export const isBondChainId = (chainId: ChainId): chainId is BondChainId =>

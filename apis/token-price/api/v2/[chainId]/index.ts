@@ -1,17 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { z } from 'zod'
 
 import { isExtractorSupportedChainId } from 'sushi/config'
-import { Currency, getPrices } from '../../../lib/api/v2.js'
-
-const schema = z.object({
-  chainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256),
-  currency: z.nativeEnum(Currency).default(Currency.USD),
-})
+import { getPrices } from '../../../lib/api/v2.js'
+import { TokenPricesChainV2ApiSchema } from '../../../lib/schemas/v2/chainId/index.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   response.setHeader(
@@ -19,7 +10,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     's-maxage=300, stale-while-revalidate=600',
   )
 
-  const { chainId, currency } = schema.parse(request.query)
+  const { chainId, currency } = TokenPricesChainV2ApiSchema.parse(request.query)
 
   if (!isExtractorSupportedChainId(chainId)) {
     const res = await fetch(
