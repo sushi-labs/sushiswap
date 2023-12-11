@@ -29,10 +29,19 @@ export const isSquidRouteProcessorEnabled: Record<
   SquidAdapterChainId,
   boolean
 > = {
+  [ChainId.ETHEREUM]: true,
+  [ChainId.BSC]: false,
+  [ChainId.AVALANCHE]: false,
+  [ChainId.POLYGON]: true,
   [ChainId.ARBITRUM]: true,
+  [ChainId.OPTIMISM]: true,
   [ChainId.BASE]: true,
-  [ChainId.OPTIMISM]: false,
-  [ChainId.POLYGON]: false,
+  [ChainId.FANTOM]: false,
+  [ChainId.LINEA]: true,
+  [ChainId.KAVA]: true,
+  [ChainId.MOONBEAM]: false,
+  [ChainId.CELO]: false,
+  [ChainId.SCROLL]: false,
 }
 
 /*
