@@ -206,9 +206,10 @@ export const useSquidCrossChainTrade = ({
         priceImpact = priceImpact.add(srcTrade.priceImpact)
       if (isDstSwap && dstTrade?.priceImpact)
         priceImpact = priceImpact.add(dstTrade.priceImpact)
+
       priceImpact = priceImpact.add(
         new Percent(
-          Number(squidRoute.estimate.aggregatePriceImpact) * 100,
+          Math.round(Number(squidRoute.estimate.aggregatePriceImpact) * 100),
           10000,
         ),
       )
