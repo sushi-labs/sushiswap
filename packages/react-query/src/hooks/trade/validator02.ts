@@ -1,6 +1,6 @@
 import z from 'zod'
 
-const tokenValidator = z.object({
+export const tokenValidator = z.object({
   address: z.string(), // 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE if native
   symbol: z.string(),
   name: z.string(),
@@ -51,6 +51,7 @@ const routeDontExistValidator = z.object({
   status: z.enum(['NoWay']),
 })
 
-export const tradeValidator02 = z.object({
-  route: z.union([routeExistValidator, routeDontExistValidator]),
-})
+export const tradeValidator02 = z.union([
+  routeExistValidator,
+  routeDontExistValidator,
+])
