@@ -1,0 +1,17 @@
+# This Service manifest defines:
+# - a load balancer for pods matching label "app: node-hello-world"
+# - exposing the application to the public Internet (type:LoadBalancer)
+# - routes port 80 of the load balancer to the port 8080 of the Pods.
+# Syntax reference https://kubernetes.io/docs/concepts/configuration/overview/
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: extractor-1
+  ports:
+  - name: http
+    port: 81
+    targetPort: 8080

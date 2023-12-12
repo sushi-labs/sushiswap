@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extractor-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-1
+  template:
+    metadata:
+      labels:
+        app: extractor-1
+    spec:
+      containers:
+        - name: extractor
+          image: extractor-1
+          ports:
+          - containerPort: 8080
+          env:
+          - name: PORT
+            value: "8080"
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
