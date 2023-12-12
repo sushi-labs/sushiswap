@@ -32,7 +32,7 @@ import {
 import { Native, Token } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import z from 'zod'
-import { EXTRACTOR_CONFIG } from './config'
+import { CONFIG_GROUPS, EXTRACTOR_CONFIG } from './config'
 import { RequestStatistics, ResponseRejectReason } from './requestStatistics'
 
 const querySchema = z.object({
@@ -101,6 +101,8 @@ const querySchema3_2 = querySchema.extend({
 
 const PORT = process.env['PORT'] || 80
 
+const CONFIG_GROUP_NAME = (process.env['CONFIG_GROUP'] ?? 'DEFAULT' as keyof typeof CONFIG_GROUPS)
+
 const SENTRY_DSN = process.env['SENTRY_DSN'] as string
 
 const extractors = new Map<
@@ -137,7 +139,12 @@ async function main() {
     tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
 
-  for (const chainId of [ChainId.ARBITRUM]) {
+  const CHAIN_IDS = CONFIG_GROUPS[CONFIG_GROUP_NAME as keyof typeof CONFIG_GROUPS]
+  if (!CHAIN_IDS) {
+    throw new Error(`CONFIG_GROUP '${CONFIG_GROUP_NAME}' is not supported`)
+  }
+
+  for (const chainId of CHAIN_IDS) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
       warningMessageHandler: (
