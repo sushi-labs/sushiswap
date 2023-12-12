@@ -417,7 +417,9 @@ const useCrossChainSwapTrade = () => {
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     recipient: recipient as Address,
-    enabled: Boolean(swapAmount?.greaterThan(ZERO)),
+    enabled: Boolean(
+      adapter !== SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),
+    ),
   })
 
   return adapter === SushiXSwap2Adapter.Stargate

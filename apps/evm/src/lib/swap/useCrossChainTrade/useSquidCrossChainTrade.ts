@@ -115,20 +115,23 @@ export const useSquidCrossChainTrade = ({
 
   const squidRouteRequest = useMemo(
     () =>
-      getSquidRouteRequest({
-        token0,
-        token1,
-        amount,
-        fromAddress: address,
-        toAddress: recipient,
-        bridgePath,
-        slippagePercentage,
-        isSrcSwap,
-        isDstSwap,
-        srcTrade,
-        dstTrade,
-      }),
+      enabled
+        ? getSquidRouteRequest({
+            token0,
+            token1,
+            amount,
+            fromAddress: address,
+            toAddress: recipient,
+            bridgePath,
+            slippagePercentage,
+            isSrcSwap,
+            isDstSwap,
+            srcTrade,
+            dstTrade,
+          })
+        : undefined,
     [
+      enabled,
       token0,
       token1,
       amount,
@@ -143,8 +146,10 @@ export const useSquidCrossChainTrade = ({
     ],
   )
 
-  const { data: squidRoute, error: squidError } =
-    useSquidRoute(squidRouteRequest)
+  const { data: squidRoute, error: squidError } = useSquidRoute(
+    squidRouteRequest,
+    enabled,
+  )
 
   return useQuery({
     queryKey: [
