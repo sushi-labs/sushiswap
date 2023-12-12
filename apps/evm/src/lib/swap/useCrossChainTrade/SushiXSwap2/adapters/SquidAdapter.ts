@@ -9,11 +9,18 @@ import { UseTradeReturn } from '@sushiswap/react-query'
 import { erc20Abi, routeProcessor3_1Abi, squidRouterAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
+  ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_ADDRESS,
   SQUID_CHAIN_NAME,
   SQUID_ROUTER_ADDRESS,
   SquidAdapterChainId,
   SquidMulticallCall,
+  isRouteProcessor3ChainId,
+  isRouteProcessor3_1ChainId,
+  isRouteProcessor3_2ChainId,
+  isRouteProcessorChainId,
 } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import {
@@ -230,6 +237,18 @@ export const getSquidRouteRequest = ({
 
   // RouteProcessor dstHook
   if (useDstTrade) {
+    const rpAddress = isRouteProcessor3_2ChainId(token1.chainId)
+      ? ROUTE_PROCESSOR_3_2_ADDRESS[token1.chainId]
+      : isRouteProcessor3_1ChainId(token1.chainId)
+      ? ROUTE_PROCESSOR_3_1_ADDRESS[token1.chainId]
+      : isRouteProcessor3ChainId(token1.chainId)
+      ? ROUTE_PROCESSOR_3_ADDRESS[token1.chainId]
+      : isRouteProcessorChainId(token1.chainId)
+      ? ROUTE_PROCESSOR_ADDRESS[token1.chainId]
+      : undefined
+
+    if (rpAddress === undefined) throw new Error('RP not found')
+
     // Grant approval of dstBridgeToken to RouteProcessor & call ProcessRoute()
     routeRequest.postHook = {
       chainType: ChainType.EVM,
@@ -242,12 +261,7 @@ export const getSquidRouteRequest = ({
           callData: encodeFunctionData({
             abi: erc20Abi,
             functionName: 'approve',
-            args: [
-              ROUTE_PROCESSOR_3_2_ADDRESS[
-                token1.chainId as SquidAdapterChainId
-              ],
-              0n,
-            ],
+            args: [rpAddress, 0n],
           }),
           value: '0',
           payload: {
@@ -260,8 +274,7 @@ export const getSquidRouteRequest = ({
         {
           chainType: ChainType.EVM,
           callType: SquidCallType.FULL_TOKEN_BALANCE,
-          target:
-            ROUTE_PROCESSOR_3_2_ADDRESS[token1.chainId as SquidAdapterChainId],
+          target: rpAddress,
           callData: encodeFunctionData({
             abi: routeProcessor3_1Abi,
             functionName: 'processRoute',
