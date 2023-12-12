@@ -1,6 +1,6 @@
 import { ChainId } from '../chain'
 
-export const SquidIntegratorId = 'example-swap-widget' // TODO
+export const SquidIntegratorId = 'sushiswap-sdk'
 
 export const SQUID_CHAIN_NAME = {
   [ChainId.ARBITRUM]: 'Arbitrum',
