@@ -392,34 +392,37 @@ const useCrossChainSwapTrade = () => {
   } = useDerivedStateCrossChainSwap()
   const [slippageTolerance] = useSlippageTolerance()
 
+  const stargateCrossChainTrade = useStargateCrossChainTrade({
+    tradeId,
+    network0: chainId0 as StargateAdapterChainId,
+    network1: chainId1 as StargateAdapterChainId,
+    token0,
+    token1,
+    amount: swapAmount,
+    slippagePercentage:
+      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+    recipient: recipient as Address,
+    enabled: Boolean(
+      adapter === SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),
+    ),
+  })
+
+  const squidCrossChainTrade = useSquidCrossChainTrade({
+    tradeId,
+    network0: chainId0 as SquidAdapterChainId,
+    network1: chainId1 as SquidAdapterChainId,
+    token0,
+    token1,
+    amount: swapAmount,
+    slippagePercentage:
+      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+    recipient: recipient as Address,
+    enabled: Boolean(swapAmount?.greaterThan(ZERO)),
+  })
+
   return adapter === SushiXSwap2Adapter.Stargate
-    ? useStargateCrossChainTrade({
-        tradeId,
-        network0: chainId0 as StargateAdapterChainId,
-        network1: chainId1 as StargateAdapterChainId,
-        token0,
-        token1,
-        amount: swapAmount,
-        slippagePercentage:
-          slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-        recipient: recipient as Address,
-        enabled: Boolean(
-          adapter === SushiXSwap2Adapter.Stargate &&
-            swapAmount?.greaterThan(ZERO),
-        ),
-      })
-    : useSquidCrossChainTrade({
-        tradeId,
-        network0: chainId0 as SquidAdapterChainId,
-        network1: chainId1 as SquidAdapterChainId,
-        token0,
-        token1,
-        amount: swapAmount,
-        slippagePercentage:
-          slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-        recipient: recipient as Address,
-        enabled: Boolean(swapAmount?.greaterThan(ZERO)),
-      })
+    ? stargateCrossChainTrade
+    : squidCrossChainTrade
 }
 
 export {
