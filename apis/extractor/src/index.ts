@@ -313,11 +313,11 @@ function processRequest(
       // Timing optimization: try to take tokens sync first - to avoid async call if tokens are known
       let tokensAreKnown = true
       let tokenIn =
-        _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+        _tokenIn.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
           ? Native.onChain(chainId)
           : tokenManager.getKnownToken(_tokenIn as Address)
       let tokenOut =
-        _tokenOut === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+        _tokenOut.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
           ? Native.onChain(chainId)
           : tokenManager.getKnownToken(_tokenOut as Address)
       if (!tokenIn || !tokenOut) {

@@ -1,10 +1,10 @@
 import z from 'zod'
 
 const tokenValidator = z.object({
-  address: z.string().optional(),
+  address: z.string(), // 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE if native
   symbol: z.string(),
   name: z.string(),
-  decimals: z.number().optional(),
+  decimals: z.number(),
 })
 
 export const legValidator = z.object({
@@ -12,37 +12,45 @@ export const legValidator = z.object({
   poolType: z.string(),
   poolName: z.string(),
   poolFee: z.number(),
-  tokenFrom: tokenValidator,
-  tokenTo: tokenValidator,
+  tokenFrom: z.number(), // index in tokens array
+  tokenTo: z.number(), // index in tokens array
   share: z.number(),
   assumedAmountIn: z.string(),
   assumedAmountOut: z.string(),
 })
 
+const routeExistValidator = z.object({
+  status: z.enum(['Success', 'Partial']),
+  tokens: z.array(tokenValidator),
+  tokenFrom: z.number(), // index in tokens array
+  tokenTo: z.number(), // index in tokens array
+
+  primaryPrice: z.number(),
+  swapPrice: z.number(),
+  priceImpact: z.number(),
+
+  amountIn: z.string(),
+  amountOutMin: z.string(),
+  assumedAmountOut: z.string(),
+  gasSpent: z.number(),
+
+  legs: z.array(legValidator),
+
+  routeProcessorAddr: z.string(),
+  routeProcessorArgs: z.object({
+    tokenIn: z.string(),
+    amountIn: z.string(),
+    tokenOut: z.string(),
+    amountOutMin: z.string(),
+    to: z.string(),
+    routeCode: z.string(),
+  }),
+})
+
+const routeDontExistValidator = z.object({
+  status: z.enum(['NoWay']),
+})
+
 export const tradeValidator02 = z.object({
-  route: z
-    .object({
-      status: z.string(),
-      tokenFrom: tokenValidator,
-      tokenTo: tokenValidator,
-      primaryPrice: z.number().optional(),
-      swapPrice: z.number().optional(),
-      priceImpact: z.number().optional(),
-      amountIn: z.string(),
-      assumedAmountOut: z.string(),
-      legs: z.array(legValidator).optional(),
-      gasSpent: z.number(),
-      totalAmountOut: z.string(),
-    })
-    .optional(),
-  args: z.optional(
-    z.object({
-      amountIn: z.string(),
-      amountOutMin: z.string(),
-      to: z.string(),
-      tokenIn: z.string(),
-      tokenOut: z.string(),
-      routeCode: z.string(),
-    }),
-  ),
+  route: z.union([routeExistValidator, routeDontExistValidator]),
 })

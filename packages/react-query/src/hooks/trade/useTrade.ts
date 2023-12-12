@@ -17,7 +17,7 @@ import type {
   UseTradeQuerySelect,
   UseTradeReturnWriteArgs,
 } from './types'
-import { tradeValidator } from './validator'
+import { tradeValidator01 } from './validator01'
 
 const SWAP_BASE_URL =
   process.env['SWAP_API_V0_BASE_URL'] ||
@@ -92,7 +92,7 @@ export const useTradeQuery = (
       const res = await fetch(params.toString())
       const json = await res.json()
       const deserialised = deserialize(json)
-      return tradeValidator.parse(deserialised)
+      return tradeValidator01.parse(deserialised)
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
