@@ -48,6 +48,7 @@ http {
        listen 80;
       location / {
         proxy_pass $extractor_ip
+        }
       }
    }
 }
