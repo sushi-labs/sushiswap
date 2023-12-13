@@ -10,8 +10,45 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: extractor-1
+    app: nginx
   ports:
   - name: http
-    port: 81
-    targetPort: 8080
+    port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30001
+  selector:
+    app: nginx
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: '
+events {
+}
+
+
+http {
+  map $arg_chainId $extractor_ip {
+      default 127.0.0.1:8080;
+      1    127.0.0.1:8081;
+  }
+   server {
+       listen 80;
+      location / {
+        proxy_pass $extractor_ip
+      }
+   }
+}
+'
