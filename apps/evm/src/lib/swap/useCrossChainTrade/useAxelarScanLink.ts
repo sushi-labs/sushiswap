@@ -37,7 +37,7 @@ export const useAxelarScanLink = ({
         return squid.getStatus({ transactionId: txHash }).then((data) => ({
           link: data.axelarTransactionUrl,
           status: data.squidTransactionStatus,
-          dstTxHash: data.toChain?.transactionUrl,
+          dstTxHash: data.toChain?.transactionId,
         }))
       }
 

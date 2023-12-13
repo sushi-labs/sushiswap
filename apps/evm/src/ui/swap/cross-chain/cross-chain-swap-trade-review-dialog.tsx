@@ -569,11 +569,12 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <div>
                 <ConfirmationDialogContent
                   dialogState={stepStates}
-                  lzUrl={
+                  bridgeUrl={
                     adapter === SushiXSwap2Adapter.Stargate
                       ? lzData?.link
                       : axelarScanData?.link
                   }
+                  adapter={adapter}
                   txHash={data?.hash}
                   dstTxHash={
                     adapter === SushiXSwap2Adapter.Stargate

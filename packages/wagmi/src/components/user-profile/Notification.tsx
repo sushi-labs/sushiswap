@@ -15,7 +15,7 @@ import {
 import { ResolvedNotification } from '@sushiswap/dexie'
 import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkIcon, SquidIcon } from '@sushiswap/ui/components/icons'
 import { LinkExternal } from '@sushiswap/ui/components/link'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { TimeAgo } from '@sushiswap/ui/components/time-ago'
@@ -30,14 +30,6 @@ export const STARGATE_TOKEN = new Token({
   decimals: 18,
   symbol: 'STG',
   name: 'StargateToken',
-})
-
-export const AXELAR_TOKEN = new Token({
-  chainId: ChainId.ETHEREUM,
-  address: '0x467719aD09025FcC6cF6F8311755809d45a5E5f3',
-  decimals: 6,
-  symbol: 'AXL',
-  name: 'Axelar',
 })
 
 export const Notification: FC<{
@@ -116,7 +108,7 @@ export const Notification: FC<{
               />
             )}
             {notification.type === 'squid' && (
-              <UICurrency.Icon currency={AXELAR_TOKEN} width={20} height={20} />
+              <SquidIcon width={20} height={20} />
             )}
             {status === 'success' && notification.type === 'send' && (
               <ArrowRightIcon width={20} height={20} />
