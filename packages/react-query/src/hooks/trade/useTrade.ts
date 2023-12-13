@@ -100,7 +100,7 @@ export const useTradeQuery = (
       } catch (e) {
         try {
           // Try  API 2.0
-          if (fromToken && toToken && recipient) {
+          if (fromToken && toToken) {
             const resp2 = tradeValidator02.parse(deserialised)
             const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
             return resp1

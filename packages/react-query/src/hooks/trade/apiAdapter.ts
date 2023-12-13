@@ -87,58 +87,64 @@ export function apiAdapter02To01(
   res: swapApi2,
   fromToken: Token | Native,
   toToken: Token | Native,
-  to: string,
+  to: string | undefined,
 ): swapApi1 {
   if (res.status === 'NoWay') {
-    return {
-      route: {
-        status: res.status,
-        fromToken: getApi1Token(fromToken),
-        toToken: getApi1Token(toToken),
-        amountIn: 0,
-        amountInBI: 0n,
-        amountOut: 0,
-        amountOutBI: 0n,
-        legs: [],
-        gasSpent: 0,
-        totalAmountOut: 0,
-        totalAmountOutBI: 0n,
-      },
-      args: {
-        amountIn: 0n,
-        amountOutMin: 0n,
-        to,
-        tokenIn: getApi1TokenAddr(fromToken),
-        tokenOut: getApi1TokenAddr(toToken),
-        routeCode: '',
-      },
+    const route = {
+      status: res.status,
+      fromToken: getApi1Token(fromToken),
+      toToken: getApi1Token(toToken),
+      amountIn: 0,
+      amountInBI: 0n,
+      amountOut: 0,
+      amountOutBI: 0n,
+      legs: [],
+      gasSpent: 0,
+      totalAmountOut: 0,
+      totalAmountOutBI: 0n,
     }
+    if (to !== undefined)
+      return {
+        route,
+        args: {
+          amountIn: 0n,
+          amountOutMin: 0n,
+          to,
+          tokenIn: getApi1TokenAddr(fromToken),
+          tokenOut: getApi1TokenAddr(toToken),
+          routeCode: '',
+        },
+      }
+    else return { route }
   } else {
-    return {
-      route: {
-        status: res.status,
-        fromToken: getApi1Token(fromToken),
-        toToken: getApi1Token(toToken),
-        primaryPrice: res.primaryPrice,
-        swapPrice: res.swapPrice,
-        priceImpact: res.priceImpact,
-        amountIn: Number(res.amountIn),
-        amountInBI: BigInt(res.amountIn),
-        amountOut: Number(res.assumedAmountOut),
-        amountOutBI: BigInt(res.assumedAmountOut),
-        legs: res.legs.map((l) => getApi1Leg(l, res.tokens, fromToken.chainId)),
-        gasSpent: res.gasSpent,
-        totalAmountOut: Number(res.assumedAmountOut),
-        totalAmountOutBI: BigInt(res.assumedAmountOut),
-      },
-      args: {
-        amountIn: BigInt(res.routeProcessorArgs.amountIn),
-        amountOutMin: BigInt(res.routeProcessorArgs.amountOutMin),
-        to: res.routeProcessorArgs.to,
-        tokenIn: res.routeProcessorArgs.tokenIn,
-        tokenOut: res.routeProcessorArgs.tokenOut,
-        routeCode: res.routeProcessorArgs.routeCode,
-      },
+    const route = {
+      status: res.status,
+      fromToken: getApi1Token(fromToken),
+      toToken: getApi1Token(toToken),
+      primaryPrice: res.primaryPrice,
+      swapPrice: res.swapPrice,
+      priceImpact: res.priceImpact,
+      amountIn: Number(res.amountIn),
+      amountInBI: BigInt(res.amountIn),
+      amountOut: Number(res.assumedAmountOut),
+      amountOutBI: BigInt(res.assumedAmountOut),
+      legs: res.route.map((l) => getApi1Leg(l, res.tokens, fromToken.chainId)),
+      gasSpent: res.gasSpent,
+      totalAmountOut: Number(res.assumedAmountOut),
+      totalAmountOutBI: BigInt(res.assumedAmountOut),
     }
+    if (res.routeProcessorArgs)
+      return {
+        route,
+        args: {
+          amountIn: BigInt(res.routeProcessorArgs.amountIn),
+          amountOutMin: BigInt(res.routeProcessorArgs.amountOutMin),
+          to: res.routeProcessorArgs.to,
+          tokenIn: res.routeProcessorArgs.tokenIn,
+          tokenOut: res.routeProcessorArgs.tokenOut,
+          routeCode: res.routeProcessorArgs.routeCode,
+        },
+      }
+    else return { route }
   }
 }

@@ -30,21 +30,22 @@ const routeExistValidator = z.object({
   priceImpact: z.number(),
 
   amountIn: z.string(),
-  amountOutMin: z.string(),
   assumedAmountOut: z.string(),
   gasSpent: z.number(),
 
-  legs: z.array(legValidator),
+  route: z.array(legValidator),
 
-  routeProcessorAddr: z.string(),
-  routeProcessorArgs: z.object({
-    tokenIn: z.string(),
-    amountIn: z.string(),
-    tokenOut: z.string(),
-    amountOutMin: z.string(),
-    to: z.string(),
-    routeCode: z.string(),
-  }),
+  routeProcessorAddr: z.string().optional(),
+  routeProcessorArgs: z
+    .object({
+      tokenIn: z.string(),
+      amountIn: z.string(),
+      tokenOut: z.string(),
+      amountOutMin: z.string(),
+      to: z.string(),
+      routeCode: z.string(),
+    })
+    .optional(),
 })
 
 const routeDontExistValidator = z.object({

@@ -33,7 +33,10 @@ import { Native, Token } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import z from 'zod'
 import { EXTRACTOR_CONFIG } from './config'
+import { makeAPI02Object } from './makeAPI02Object'
 import { RequestStatistics, ResponseRejectReason } from './requestStatistics'
+
+const API_VERSION = 1
 
 const querySchema = z.object({
   chainId: z.coerce
@@ -391,45 +394,69 @@ function processRequest(
             gasPrice ?? 30e9,
           )
 
-      const resp = res.json(
-        wagmi.serialize({
-          route: {
-            status: bestRoute?.status,
-            fromToken:
-              bestRoute?.fromToken?.address === ''
-                ? Native.onChain(chainId)
-                : bestRoute?.fromToken,
-            toToken:
-              bestRoute?.toToken?.address === ''
-                ? Native.onChain(chainId)
-                : bestRoute?.toToken,
-            primaryPrice: bestRoute?.primaryPrice,
-            swapPrice: bestRoute?.swapPrice,
-            amountIn: bestRoute?.amountIn,
-            amountInBI: bestRoute?.amountInBI,
-            amountOut: bestRoute?.amountOut,
-            amountOutBI: bestRoute?.amountOutBI,
-            priceImpact: bestRoute?.priceImpact,
-            totalAmountOut: bestRoute?.totalAmountOut,
-            totalAmountOutBI: bestRoute?.totalAmountOutBI,
-            gasSpent: bestRoute?.gasSpent,
-            legs: bestRoute?.legs,
-          },
-          args: to
-            ? rpCode(
-                poolCodesMap,
-                bestRoute,
-                tokenIn,
-                tokenOut,
-                to,
-                rpAddress[chainId] as Address,
-                [],
-                maxPriceImpact,
-                source ?? RouterLiquiditySource.Sender,
-              )
-            : undefined,
-        }),
-      )
+      let resp
+      // @ts-ignore
+      if (API_VERSION === 1) {
+        resp = res.json(
+          wagmi.serialize({
+            route: {
+              status: bestRoute?.status,
+              fromToken:
+                bestRoute?.fromToken?.address === ''
+                  ? Native.onChain(chainId)
+                  : bestRoute?.fromToken,
+              toToken:
+                bestRoute?.toToken?.address === ''
+                  ? Native.onChain(chainId)
+                  : bestRoute?.toToken,
+              primaryPrice: bestRoute?.primaryPrice,
+              swapPrice: bestRoute?.swapPrice,
+              amountIn: bestRoute?.amountIn,
+              amountInBI: bestRoute?.amountInBI,
+              amountOut: bestRoute?.amountOut,
+              amountOutBI: bestRoute?.amountOutBI,
+              priceImpact: bestRoute?.priceImpact,
+              totalAmountOut: bestRoute?.totalAmountOut,
+              totalAmountOutBI: bestRoute?.totalAmountOutBI,
+              gasSpent: bestRoute?.gasSpent,
+              legs: bestRoute?.legs,
+            },
+            args: to
+              ? rpCode(
+                  poolCodesMap,
+                  bestRoute,
+                  tokenIn,
+                  tokenOut,
+                  to,
+                  rpAddress[chainId] as Address,
+                  [],
+                  maxPriceImpact,
+                  source ?? RouterLiquiditySource.Sender,
+                )
+              : undefined,
+          }),
+        )
+      } else {
+        const rpParams = to
+          ? rpCode(
+              poolCodesMap,
+              bestRoute,
+              tokenIn,
+              tokenOut,
+              to,
+              rpAddress[chainId] as Address,
+              [],
+              maxPriceImpact,
+              source ?? RouterLiquiditySource.Sender,
+            )
+          : undefined
+        const respObj = makeAPI02Object(
+          bestRoute,
+          rpParams,
+          rpAddress[chainId] as Address,
+        )
+        resp = res.json(JSON.stringify(respObj))
+      }
       requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
       return resp
     } catch (e) {
