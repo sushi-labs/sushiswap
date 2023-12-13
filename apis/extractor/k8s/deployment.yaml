@@ -20,6 +20,8 @@ spec:
           env:
           - name: PORT
             value: "8080"
+          - name: CONFIG_GROUP
+            value: "1"
           - name: DRPC_ID
             valueFrom: 
               secretKeyRef:
@@ -29,3 +31,69 @@ spec:
             tcpSocket:
               port: 8080
             initialDelaySeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extractor-56
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-56
+  template:
+    metadata:
+      labels:
+        app: extractor-56
+    spec:
+      containers:
+        - name: extractor
+          image: extractor
+          ports:
+          - containerPort: 8081
+          env:
+          - name: PORT
+            value: "8081"
+          - name: CONFIG_GROUP
+            value: "56"
+          - name: DRPC_ID
+            valueFrom: 
+              secretKeyRef:
+                name: extractor
+                key: DRPC_ID
+          readinessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+          - name: config-vol
+            mountPath: /etc/nginx/
+      volumes:
+        - name: config-vol
+          configMap:
+            name: nginx-config
+            items:
+              - key: nginx.conf
+                path: nginx.conf
