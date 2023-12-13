@@ -1,35 +1,28 @@
-FROM node:20-alpine
+FROM node:20-slim AS base
 
-# Install git and pnpm
-RUN apk add --no-cache git libc6-compat grep
-RUN npm install -g pnpm@8.9.2 turbo@1.10.5
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 
-# Do ARG stuff
-ARG SCRIPT_PATH="./"
-ENV SCRIPT_PATH ${SCRIPT_PATH}
+RUN corepack enable
 
-ARG TURBO_TOKEN
-ARG TURBO_TEAM
+WORKDIR /app
 
-# Copy the repo into the build context
-WORKDIR /workdir/repo
 COPY . .
 
-RUN ls
+FROM base AS installer
 
-# Prune unneeded packages
-# Need to pull the package name from the path
-RUN turbo prune --out-dir=../pruned --scope=$(pnpm list --depth -1 --parseable --long --filter "./$SCRIPT_PATH" | grep -oP '(?<=\:)(.*(?=@))') 
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-WORKDIR /workdir/pruned
-# Can delete the previous workdir, won't be needed anymore
-RUN rm -rf /workdir/repo
+FROM base AS builder
 
-RUN HUSKY=0 pnpm install
-RUN pnpm exec turbo run build --filter="./$SCRIPT_PATH"
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm exec turbo run build --filter=extractor-api
 
-# Delete store path since it's now unneeded, to reduce image size
-RUN rm -rf $(pnpm store path)
+FROM base AS runner
 
-EXPOSE 8080/tcp
-CMD pnpm exec turbo run start --only --filter="./$SCRIPT_PATH"
+COPY --from=installer /app/node_modules /app/node_modules
+COPY --from=builder /app/apis/extractor/dist /app/apis/extractor/dist
+
+EXPOSE 8080
+
+CMD node /app/apis/extractor/dist/index.js
