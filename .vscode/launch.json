@@ -7,7 +7,8 @@
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
             "watch": true,
             "cleanUp": true,
-            "portForward": true
+            "portForward": true,
+            "imageRegistry": "gcr.io/sushi-dev-382510"
         }
     ]
 }

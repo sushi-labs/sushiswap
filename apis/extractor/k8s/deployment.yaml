@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: extractor
-          image: extractor-1
+          image: extractor
           ports:
           - containerPort: 8080
           env:
