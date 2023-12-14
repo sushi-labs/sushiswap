@@ -101,7 +101,8 @@ const querySchema3_2 = querySchema.extend({
 
 const PORT = process.env['PORT'] || 80
 
-const CONFIG_GROUP_NAME = (process.env['CONFIG_GROUP'] ?? 'DEFAULT' as keyof typeof CONFIG_GROUPS)
+const CONFIG_GROUP_NAME =
+  process.env['CONFIG_GROUP'] ?? ('DEFAULT' as keyof typeof CONFIG_GROUPS)
 
 const SENTRY_DSN = process.env['SENTRY_DSN'] as string
 
@@ -116,11 +117,8 @@ const nativeProviders = new Map<
 
 const requestStatistics = new RequestStatistics(60_000, 3_600_000)
 
-let wagmi: any
 async function main() {
   const app: Express = express()
-
-  wagmi = await import('wagmi')
 
   Sentry.init({
     enabled: false,
@@ -139,7 +137,8 @@ async function main() {
     tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
 
-  const CHAIN_IDS = CONFIG_GROUPS[CONFIG_GROUP_NAME as keyof typeof CONFIG_GROUPS]
+  const CHAIN_IDS =
+    CONFIG_GROUPS[CONFIG_GROUP_NAME as keyof typeof CONFIG_GROUPS]
   if (!CHAIN_IDS) {
     throw new Error(`CONFIG_GROUP '${CONFIG_GROUP_NAME}' is not supported`)
   }
@@ -382,8 +381,10 @@ function processRequest(
           gasPrice ?? 30e9,
         )
 
+    const { serialize } = await import('wagmi')
+
     const resp = res.json(
-      wagmi.serialize({
+      serialize({
         route: {
           status: bestRoute?.status,
           fromToken:
