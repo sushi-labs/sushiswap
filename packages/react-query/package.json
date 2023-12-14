@@ -47,6 +47,7 @@
     "@sushiswap/database": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/router": "workspace:*",
+    "@sushiswap/tines": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
     "idb-keyval": "6.2.0",

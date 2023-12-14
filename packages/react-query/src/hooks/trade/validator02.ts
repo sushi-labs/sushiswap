@@ -1,3 +1,4 @@
+import { PoolType } from '@sushiswap/tines'
 import z from 'zod'
 
 export const tokenValidator = z.object({
@@ -9,7 +10,7 @@ export const tokenValidator = z.object({
 
 export const legValidator = z.object({
   poolAddress: z.string(),
-  poolType: z.string(),
+  poolType: z.nativeEnum(PoolType),
   poolName: z.string(),
   poolFee: z.number(),
   tokenFrom: z.number(), // index in tokens array

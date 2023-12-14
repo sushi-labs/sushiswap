@@ -2,6 +2,7 @@ import { Address } from 'viem'
 
 import { CLTick, CL_MAX_TICK, CL_MIN_TICK } from './CLPool'
 import {
+  PoolType,
   RPool,
   RToken,
   TYPICAL_MINIMAL_LIQUIDITY,
@@ -140,6 +141,10 @@ export class UniV3Pool extends RPool {
     this.liquidity = liquidity
     this.sqrtPriceX96 = sqrtPriceX96
     this.nearestTick = this._findTickForPrice(tick)
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Concentrated
   }
 
   _findTickForPrice(tick: number) {

@@ -1,3 +1,4 @@
+import { PoolType } from '@sushiswap/tines'
 import { Native, Token } from 'sushi/currency'
 import z from 'zod'
 import type {
@@ -62,8 +63,8 @@ function getApi1TokenAddr(token: Token | Native): string {
     : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 }
 
-function getApi1PoolType(pt: string) {
-  if (pt === 'Classic' || pt === 'Stable') return pt
+function getApi1PoolType(pt: PoolType) {
+  if (pt === PoolType.Classic || pt === PoolType.Stable) return pt
   return 'Unknown'
 }
 

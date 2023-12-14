@@ -1475,6 +1475,9 @@ importers:
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../router
+      '@sushiswap/tines':
+        specifier: workspace:*
+        version: link:../tines
       '@tanstack/react-query':
         specifier: 4.28.0
         version: 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
