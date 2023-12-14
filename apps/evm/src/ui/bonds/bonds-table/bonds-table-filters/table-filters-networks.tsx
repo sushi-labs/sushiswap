@@ -1,6 +1,8 @@
 'use client'
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { BondChainId } from '@sushiswap/bonds-sdk'
+import { BONDS_ENABLED_CHAIN_IDS } from '@sushiswap/bonds-sdk'
 import {
   Chip,
   Popover,
@@ -16,11 +18,10 @@ import {
 } from '@sushiswap/ui/components/command'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useState, useTransition } from 'react'
-import { BONDS_ENABLED_CHAIN_IDS } from 'src/config'
-import { Chain, ChainId } from 'sushi/chain'
+import { Chain } from 'sushi/chain'
 import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 
-const isAllThenNone = (chainIds: number[]) =>
+const isAllThenNone = (chainIds: BondChainId[]) =>
   BONDS_ENABLED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
 
 export const TableFiltersNetwork: FC = () => {
@@ -33,7 +34,7 @@ export const TableFiltersNetwork: FC = () => {
   const values = pending ? localValue : isAllThenNone(chainIds)
 
   const onClick = useCallback(
-    (chainId: ChainId) => {
+    (chainId: BondChainId) => {
       let _newValues: number[]
       if (localValue.includes(chainId)) {
         _newValues = localValue.filter((el) => el !== chainId)
@@ -101,7 +102,9 @@ export const TableFiltersNetwork: FC = () => {
               <CommandItem
                 key={chainId}
                 value={`${chainId}`}
-                onSelect={(currentValue) => onClick(+currentValue as ChainId)}
+                onSelect={(currentValue) =>
+                  onClick(+currentValue as BondChainId)
+                }
                 className="py-2 pl-8 pr-2"
               >
                 {values.includes(chainId) ? (

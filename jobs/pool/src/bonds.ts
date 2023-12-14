@@ -1,7 +1,7 @@
 import './lib/wagmi.js'
 
 import {
-  BONDS_ENABLED_NETWORKS,
+  BONDS_ENABLED_CHAIN_IDS,
   BONDS_SUBGRAPH_URL,
   BondChainId,
   getBondDiscount,
@@ -42,7 +42,7 @@ export async function bonds() {
 
 async function extract() {
   const result = await Promise.allSettled(
-    BONDS_ENABLED_NETWORKS.map(extractChain),
+    BONDS_ENABLED_CHAIN_IDS.map(extractChain),
   )
 
   return result.filter(isPromiseFulfilled).map((r) => r.value)

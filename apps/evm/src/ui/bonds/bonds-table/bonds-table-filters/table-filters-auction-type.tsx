@@ -1,6 +1,7 @@
 'use client'
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { AuctionType, AuctionTypes } from '@sushiswap/bonds-sdk'
 import { useMutationObserver } from '@sushiswap/hooks'
 import {
   Chip,
@@ -25,26 +26,14 @@ import { CheckIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 
-export enum AuctionType {
-  Static = 'STATIC',
-  Dynamic = 'DYNAMIC',
-}
-
-export const AUCTION_TYPES = [AuctionType.Static, AuctionType.Dynamic]
-
-export const AUCTIONTYPE_MAP: Record<AuctionType, string> = {
-  [AuctionType.Static]: 'Static',
-  [AuctionType.Dynamic]: 'Dynamic',
-} as const
-
-const AUCTIONTYPE_DESCRIPTIONS = {
+const AUCTIONTYPE_DESCRIPTIONS: Record<AuctionType, string> = {
   [AuctionType.Static]:
     'A fixed-price auction type that enabled issuers to set a fixed price that bonders must pay to obtain payout tokens.',
   [AuctionType.Dynamic]: '',
 }
 
 const isAllThenNone = (auctionTypes: AuctionType[]) =>
-  auctionTypes.length === AUCTION_TYPES.length ? [] : auctionTypes
+  auctionTypes.length === AuctionTypes.length ? [] : auctionTypes
 
 export const TableFiltersAuctionType: FC = () => {
   const [pending, startTransition] = useTransition()
@@ -52,7 +41,7 @@ export const TableFiltersAuctionType: FC = () => {
   const { auctionTypes } = useBondFilters()
   const setFilters = useSetBondFilters()
   const [peekedAuctionType, setPeekedAuctionType] = React.useState<AuctionType>(
-    AUCTION_TYPES[0],
+    AuctionType.Static,
   )
   const [localValue, setValues] = useState<AuctionType[]>(
     isAllThenNone(auctionTypes),
@@ -110,10 +99,10 @@ export const TableFiltersAuctionType: FC = () => {
                 {values.length > 2 ? (
                   <Chip variant="secondary">{values.length} selected</Chip>
                 ) : (
-                  AUCTION_TYPES.filter((option) => values.includes(option)).map(
+                  AuctionTypes.filter((option) => values.includes(option)).map(
                     (option) => (
                       <Chip variant="secondary" key={option}>
-                        {AUCTIONTYPE_MAP[option]}
+                        {AuctionType[option]}
                       </Chip>
                     ),
                   )
@@ -133,7 +122,7 @@ export const TableFiltersAuctionType: FC = () => {
               className="hidden md:block w-[240px]"
             >
               <div className="flex flex-col gap-2">
-                <Label>{AUCTIONTYPE_MAP[peekedAuctionType]}</Label>
+                <Label>{AuctionType[peekedAuctionType]}</Label>
                 <div className="text-sm text-muted-foreground">
                   {AUCTIONTYPE_DESCRIPTIONS[peekedAuctionType]}
                 </div>
@@ -144,15 +133,13 @@ export const TableFiltersAuctionType: FC = () => {
             <CommandList>
               <HoverCardTrigger />
               <CommandGroup>
-                {AUCTION_TYPES.map((el) => (
+                {AuctionTypes.map((el) => (
                   <AuctionTypeItem
                     selected={values}
                     key={el}
                     auctionType={el}
                     onPeek={(auctionType) => setPeekedAuctionType(auctionType)}
-                    onSelect={() =>
-                      auctionTypeHandler(el.toUpperCase() as AuctionType)
-                    }
+                    onSelect={() => auctionTypeHandler(el)}
                   />
                 ))}
               </CommandGroup>
@@ -207,7 +194,7 @@ const AuctionTypeItem: FC<AuctionTypeItemProps> = ({
           />
         </span>
       ) : null}
-      {AUCTIONTYPE_MAP[auctionType]}
+      {AuctionType[auctionType]}
     </CommandItem>
   )
 }

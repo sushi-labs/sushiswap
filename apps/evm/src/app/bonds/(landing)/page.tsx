@@ -1,3 +1,4 @@
+import { getBonds } from '@sushiswap/client'
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 import {
@@ -9,6 +10,8 @@ import {
 } from '../../../ui/bonds'
 
 export default async function BondsPage() {
+  const bonds = await getBonds()
+
   return (
     <Container maxWidth="7xl" className="px-4">
       <div className="flex flex-wrap gap-3 mb-4">
@@ -17,7 +20,7 @@ export default async function BondsPage() {
         <TableFiltersPositiveDiscountOnly />
         <TableFiltersResetButton />
       </div>
-      <BondsTable />
+      <BondsTable initialData={bonds} />
     </Container>
   )
 }

@@ -1,6 +1,6 @@
 import { getAddress } from 'viem'
 import { z } from 'zod'
-import { Currency } from '../../../api/v2.js'
+import { Currency } from '../../../api/v2'
 
 export const TokenPriceV2ApiSchema = z.object({
   chainId: z.coerce

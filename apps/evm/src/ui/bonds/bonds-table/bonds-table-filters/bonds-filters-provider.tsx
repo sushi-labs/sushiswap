@@ -1,5 +1,10 @@
 'use client'
 
+import {
+  AuctionType,
+  BONDS_ENABLED_CHAIN_IDS,
+  isBondChainId,
+} from '@sushiswap/bonds-sdk'
 import { parseArgs } from '@sushiswap/client'
 import { useRouter } from 'next/navigation'
 import {
@@ -11,11 +16,10 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { BONDS_ENABLED_CHAIN_IDS } from 'src/config'
 import { z } from 'zod'
 
-import { useTypedSearchParams } from '../../lib/hooks'
-import { AuctionType } from './table-filters-auction-type'
+import { ChainId } from 'sushi/chain'
+import { useTypedSearchParams } from '../../../../lib/hooks'
 
 type FilterContext = z.TypeOf<typeof bondFiltersSchema>
 
@@ -34,8 +38,11 @@ export const bondFiltersSchema = z.object({
     .default(BONDS_ENABLED_CHAIN_IDS.join(','))
     .transform((chainIds) =>
       chainIds !== null && chainIds !== ','
-        ? chainIds.split(',').map((chainId) => Number(chainId))
-        : BONDS_ENABLED_CHAIN_IDS,
+        ? chainIds
+            .split(',')
+            .map((chainId) => Number(chainId) as ChainId)
+            .filter(isBondChainId)
+        : [...BONDS_ENABLED_CHAIN_IDS],
     ),
   auctionTypes: z
     .string()
@@ -72,7 +79,7 @@ export const BondsFiltersProvider: FC<BondsFiltersProvider> = ({
       value={useMemo(
         () => ({
           auctionTypes: auctionTypes ? auctionTypes : [],
-          chainIds: chainIds ? chainIds : BONDS_ENABLED_CHAIN_IDS,
+          chainIds: chainIds ? chainIds : [...BONDS_ENABLED_CHAIN_IDS],
           positiveDiscountsOnly: positiveDiscountsOnly
             ? positiveDiscountsOnly
             : false,

@@ -65,7 +65,9 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/token-price-api": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",

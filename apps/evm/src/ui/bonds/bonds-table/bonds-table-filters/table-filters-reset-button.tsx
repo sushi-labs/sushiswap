@@ -4,9 +4,8 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Button } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo, useState, useTransition } from 'react'
 
-import { BONDS_ENABLED_CHAIN_IDS } from '../../config'
+import { AuctionTypes, BONDS_ENABLED_CHAIN_IDS } from '@sushiswap/bonds-sdk'
 import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
-import { AUCTION_TYPES } from './table-filters-auction-type'
 
 export const TableFiltersResetButton: FC = () => {
   const [isPending, startTransition] = useTransition()
@@ -25,7 +24,7 @@ export const TableFiltersResetButton: FC = () => {
   )
 
   const types = useMemo(
-    () => (auctionTypes.length === AUCTION_TYPES.length ? [] : auctionTypes),
+    () => (auctionTypes.length === AuctionTypes.length ? [] : auctionTypes),
     [auctionTypes],
   )
 

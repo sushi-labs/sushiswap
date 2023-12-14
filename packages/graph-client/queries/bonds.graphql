@@ -1,0 +1,37 @@
+query BondMarkets($first: Int = 1000, $skip: Int = 0, $where: Bonds_Market_filter) {
+  bonds: Bonds_markets(first: $first, skip: $skip, where: $where) {
+    id
+    chainId
+    type
+    auctioneer
+    teller
+    marketId
+    owner
+    capacity
+    capacityInQuote
+    minPrice
+    scale
+    start
+    conclusion
+    payoutToken {
+      address
+      symbol
+      decimals
+      name
+    }
+    quoteToken {
+      address
+      symbol
+      decimals
+      name
+    }
+    vesting
+    vestingType
+    isInstantSwap
+    hasClosed
+    totalBondedAmount
+    totalPayoutAmount
+    averageBondPrice
+    bondsIssued
+  }
+}

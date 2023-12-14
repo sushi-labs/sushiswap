@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { AuctionType } from '@sushiswap/bonds-sdk'
 import { Currency, LinkInternal } from '@sushiswap/ui'
 import { classNames } from '@sushiswap/ui'
 import { Button, LinkExternal, typographyVariants } from '@sushiswap/ui'
@@ -8,7 +9,6 @@ import { formatDistance } from 'date-fns'
 import { shortenAddress } from 'sushi'
 import { Chain, ChainId } from 'sushi/chain'
 import { SUSHI, USDC, tryParseAmount } from 'sushi/currency'
-import { AuctionType } from './table-filters-auction-type'
 
 export const MOCK_DATA = {
   chainId: ChainId.POLYGON,
