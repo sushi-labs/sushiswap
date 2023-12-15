@@ -1,14 +1,26 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: extractor-default-service
+spec:
+  selector:
+    app: extractor-default
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: extractor-1-service
 spec:
   selector:
     app: extractor-1
   type: ClusterIP
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -19,17 +31,17 @@ spec:
     app: extractor-56
   type: ClusterIP
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: extractor-default-service
+  name: extractor-137-service
 spec:
   selector:
-    app: extractor-default
+    app: extractor-137
   type: ClusterIP
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: 80
