@@ -15,6 +15,12 @@ export const RewardsV3ClaimableCell: FC<Row<AngleRewardsPool>> = ({
     chainId: original.chainId,
     amounts: unclaimed,
   })
+  const totalUnclaimedAmountUSD = useMemo(
+    () => dollarValues.reduce((acc, cur) => acc + cur, 0),
+    [dollarValues],
+  )
 
-  return `$${dollarValues.reduce((acc, cur) => acc + +formatNumber(cur), 0)}`
+  return `$${
+    totalUnclaimedAmountUSD === 0 ? '0' : formatNumber(totalUnclaimedAmountUSD)
+  }`
 }

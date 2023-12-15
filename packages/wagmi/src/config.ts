@@ -3,7 +3,6 @@ import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { configureChains, createConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -32,12 +31,6 @@ export const createProductionConfig = () => {
         options: {
           shimDisconnect: true,
           // shimChainChangedDisconnect: false,
-        },
-      }),
-      new LedgerConnector({
-        chains,
-        options: {
-          enableDebugLogs: process.env.NODE_ENV !== 'production',
         },
       }),
       new WalletConnectConnector({
