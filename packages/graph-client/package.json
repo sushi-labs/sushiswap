@@ -61,6 +61,7 @@
     "@graphql-tools/merge": "9.0.0",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@whatwg-node/fetch": "0.8.4",
     "date-fns": "2.30.0",
     "node-fetch": "3.3.0",
     "tslib": "2.5.0"
