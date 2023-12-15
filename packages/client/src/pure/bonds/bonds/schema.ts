@@ -1,16 +1,12 @@
 import {
-  AuctionType,
+  type AuctionType,
+  AuctionTypes,
   BONDS_ENABLED_CHAIN_IDS,
   getChainIdAuctioneerMarketFromMarketId,
   isBondChainId,
 } from '@sushiswap/bonds-sdk'
 import type { ChainId } from 'sushi/chain'
 import { z } from 'zod'
-
-const auctionTypes: Record<keyof typeof AuctionType, string> = {
-  Dynamic: 'dynamic',
-  Static: 'static',
-}
 
 export const BondsApiSchema = z.object({
   take: z.coerce.number().int().lte(1000).default(1000),
@@ -28,53 +24,53 @@ export const BondsApiSchema = z.object({
     .default(BONDS_ENABLED_CHAIN_IDS.join(','))
     .transform((val) => val.split(',').map((v) => parseInt(v) as ChainId))
     .transform((chainIds) => chainIds.filter(isBondChainId)),
-  isOpen: z.coerce
-    .string()
-    .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('isOpen must true or false')
-      }
-    })
-    .optional(),
   issuerIds: z
     .string()
     .transform((ids) => ids?.split(',').map((id) => id.toLowerCase()))
     .optional(),
-  isDiscounted: z.coerce
+  onlyOpen: z.coerce
     .string()
+    .optional()
+    .default('true')
     .transform((val) => {
       if (val === 'true') {
         return true
       } else if (val === 'false') {
         return false
       } else {
-        throw new Error('isDiscounted must true or false')
+        throw new Error('onlyOpen must true or false')
       }
-    })
-    .optional(),
+    }),
+  onlyDiscounted: z.coerce
+    .string()
+    .optional()
+    .default('false')
+    .transform((val) => {
+      if (val === 'true') {
+        return true
+      } else if (val === 'false') {
+        return false
+      } else {
+        throw new Error('onlyDiscounted must true or false')
+      }
+    }),
   auctionTypes: z
     .string()
+    .optional()
+    .default(AuctionTypes.join(','))
     .transform((types) =>
       types?.split(',').map((type) => {
-        const auctionType =
-          AuctionType[type.toLowerCase() as keyof typeof AuctionType]
-
-        if (!auctionType) {
+        if (!AuctionTypes.includes(type as AuctionType)) {
           throw new Error(
-            `Invalid auction type ${auctionType}, valid options are ${Object.keys(
-              AuctionType,
-            ).join(', ')}`,
+            `Invalid auction type ${type}, valid options are ${AuctionTypes.join(
+              ', ',
+            )}`,
           )
         }
 
-        return auctionTypes[auctionType]
+        return type as AuctionType
       }),
-    )
-    .optional(),
+    ),
   orderBy: z.string().default('discount'),
   orderDir: z.enum(['asc', 'desc']).default('desc'),
 })

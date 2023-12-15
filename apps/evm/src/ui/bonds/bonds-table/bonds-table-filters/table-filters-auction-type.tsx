@@ -32,8 +32,10 @@ const AUCTIONTYPE_DESCRIPTIONS: Record<AuctionType, string> = {
   [AuctionType.Dynamic]: '',
 }
 
-const isAllThenNone = (auctionTypes: AuctionType[]) =>
-  auctionTypes.length === AuctionTypes.length ? [] : auctionTypes
+const isAllThenNone = (auctionTypes: AuctionType[] | undefined) =>
+  !auctionTypes || auctionTypes.length === AuctionTypes.length
+    ? []
+    : auctionTypes
 
 export const TableFiltersAuctionType: FC = () => {
   const [pending, startTransition] = useTransition()

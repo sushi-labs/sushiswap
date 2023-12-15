@@ -5,11 +5,11 @@ import React, { FC, useCallback, useState, useTransition } from 'react'
 
 import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 
-export const TableFiltersPositiveDiscountOnly: FC = () => {
+export const TableFiltersOpenOnly: FC = () => {
   const [isPending, startTransition] = useTransition()
-  const { onlyDiscounted } = useBondFilters()
+  const { onlyOpen } = useBondFilters()
   const setFilters = useSetBondFilters()
-  const [checked, setChecked] = useState(onlyDiscounted)
+  const [checked, setChecked] = useState(onlyOpen)
 
   const toggle = useCallback(
     (checked: boolean) => {
@@ -17,7 +17,7 @@ export const TableFiltersPositiveDiscountOnly: FC = () => {
       startTransition(() => {
         setFilters((prev) => ({
           ...prev,
-          onlyDiscounted: !prev.onlyDiscounted ? true : undefined,
+          onlyOpen: prev.onlyOpen === undefined ? false : undefined,
         }))
       })
     },
@@ -28,10 +28,10 @@ export const TableFiltersPositiveDiscountOnly: FC = () => {
     <Toggle
       variant="outline"
       onPressedChange={toggle}
-      pressed={isPending ? checked : onlyDiscounted}
+      pressed={isPending ? checked : onlyOpen === undefined}
       size="sm"
     >
-      Positive Discount Only
+      Open Only
     </Toggle>
   )
 }

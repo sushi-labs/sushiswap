@@ -1,8 +1,7 @@
 'use client'
 
-import { Bond, getBonds, getBondsUrl } from '@sushiswap/client'
+import { Bond } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
-import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { FC, useState } from 'react'
 import {
@@ -36,26 +35,20 @@ export const BondsTable: FC<PositionsTableProps> = ({ initialData = [] }) => {
     pageSize: 10,
   })
 
-  const { data, isInitialLoading } = useQuery({
-    queryKey: [getBondsUrl()],
-    queryFn: () => getBonds({ isOpen: true }),
-    initialData,
-  })
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>
           Bonds{' '}
           <span className="text-gray-400 dark:text-slate-500">
-            ({data?.length})
+            ({initialData?.length})
           </span>
         </CardTitle>
       </CardHeader>
       <DataTable
-        loading={isInitialLoading}
+        loading={false}
         columns={COLUMNS}
-        data={data}
+        data={initialData}
         pagination={true}
         onPaginationChange={setPaginationState}
         state={{

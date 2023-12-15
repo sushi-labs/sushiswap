@@ -1,4 +1,6 @@
 import {
+  AuctionType,
+  // AuctionType,
   BONDS_SUBGRAPH_URL,
   getBondDiscount,
   getBondMarketsPrices,
@@ -15,8 +17,17 @@ import { type BondsApiSchema } from '../../../pure/bonds/bonds/schema'
 import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/tokenPricesChain'
 import { BondSchema } from '../schema'
 
-const isOpen = (start: bigint | null, end: bigint | null) =>
+const onlyOpen = (start: bigint | null, end: bigint | null) =>
   (!start || Date.now() / 1000 > start) && end && Date.now() / 1000 < end
+
+const convertAuctionTypes = (auctionTypes: AuctionType[]) => {
+  const map = {
+    [AuctionType.Dynamic]: 'dynamic',
+    [AuctionType.Static]: 'static',
+  } as const
+
+  return auctionTypes.map((type) => map[type])
+}
 
 export async function getBondsFromSubgraph(
   args: typeof BondsApiSchema._output,
@@ -26,14 +37,16 @@ export async function getBondsFromSubgraph(
   const marketIdFilter =
     args.ids?.map(({ marketNumber }) => Number(marketNumber)) || null
 
+  const auctionTypes = convertAuctionTypes(args.auctionTypes)
+
   const query = {
     first: args.take,
     where: {
       auctioneer_in: auctioneers,
       marketId_in: marketIdFilter,
-      hasClosed: args.isOpen ? false : null,
+      hasClosed: args.onlyOpen ? false : null,
       owner_in: args.issuerIds || null,
-      type_in: args.auctionTypes || null,
+      type_in: auctionTypes,
     },
   } satisfies BondMarketsQueryVariables
 
@@ -66,8 +79,8 @@ export async function getBondsFromSubgraph(
           )
             return false
           if (
-            typeof args.isOpen !== 'undefined' &&
-            args.isOpen !== isOpen(bond.start, bond.conclusion)
+            typeof args.onlyOpen !== 'undefined' &&
+            args.onlyOpen !== onlyOpen(bond.start, bond.conclusion)
           ) {
             return false
           }
@@ -88,81 +101,96 @@ export async function getBondsFromSubgraph(
         marketIds,
       })
 
-      return bondsParsed.flatMap((bond, i) => {
-        const quoteTokenPriceUSD = prices[getAddress(bond.quoteToken.address)]
-        const payoutTokenPriceUSD = prices[getAddress(bond.payoutToken.address)]
+      return bondsParsed
+        .flatMap((bond, i) => {
+          const quoteTokenPriceUSD = prices[getAddress(bond.quoteToken.address)]
+          const payoutTokenPriceUSD =
+            prices[getAddress(bond.payoutToken.address)]
 
-        const marketId = marketIds[i]
-        const marketPrice = marketPrices.find(
-          (el) => el.marketId === marketId,
-        )?.marketPrice
+          const marketId = marketIds[i]
+          const marketPrice = marketPrices.find(
+            (el) => el.marketId === marketId,
+          )?.marketPrice
 
-        if (
-          !quoteTokenPriceUSD ||
-          !payoutTokenPriceUSD ||
-          !marketPrice ||
-          !bond.scale
-        )
-          return []
+          if (
+            !quoteTokenPriceUSD ||
+            !payoutTokenPriceUSD ||
+            !marketPrice ||
+            !bond.scale
+          )
+            return []
 
-        const discount = getBondDiscount({
-          marketScale: bond.scale,
-          marketPrice: marketPrice,
-          payoutToken: {
-            priceUSD: payoutTokenPriceUSD,
-            decimals: Number(bond.payoutToken.decimals),
-          },
-          quoteToken: {
-            priceUSD: quoteTokenPriceUSD,
-            decimals: Number(bond.quoteToken.decimals),
-          },
+          const { discount, discountedPrice, quoteTokensPerPayoutToken } =
+            getBondDiscount({
+              marketScale: bond.scale,
+              marketPrice: marketPrice,
+              payoutToken: {
+                priceUSD: payoutTokenPriceUSD,
+                decimals: Number(bond.payoutToken.decimals),
+              },
+              quoteToken: {
+                priceUSD: quoteTokenPriceUSD,
+                decimals: Number(bond.quoteToken.decimals),
+              },
+            })
+
+          return {
+            id: marketIds[i],
+            chainId,
+
+            marketId: Number(bond.marketId),
+            marketType: bond.type,
+
+            tellerAddress: bond.teller,
+            auctioneerAddress: bond.auctioneer,
+
+            start: Number(bond.start),
+            end: Number(bond.conclusion),
+
+            discount,
+
+            price: marketPrice ? String(marketPrice) : null,
+            minPrice: bond.minPrice ? String(bond.minPrice) : null,
+
+            capacity:
+              Number(bond.capacity) / 10 ** Number(bond.payoutToken.decimals),
+            capacityInQuote: bond.capacityInQuote,
+
+            vesting: Number(bond.vesting),
+            vestingType: bond.vestingType,
+
+            issuerId: bond.owner,
+
+            quoteToken: {
+              ...bond.quoteToken,
+              id: getIdFromChainIdAddress(chainId, bond.quoteToken.address),
+              decimals: Number(bond.quoteToken.decimals),
+              chainId,
+              priceUSD: quoteTokenPriceUSD,
+            },
+
+            payoutToken: {
+              ...bond.payoutToken,
+              id: getIdFromChainIdAddress(chainId, bond.payoutToken.address),
+              decimals: Number(bond.payoutToken.decimals),
+              chainId,
+              priceUSD: payoutTokenPriceUSD,
+              discountedPriceUSD: discountedPrice,
+            },
+
+            quoteTokensPerPayoutToken,
+
+            totalBondedAmount: bond.totalBondedAmount,
+            totalPayoutAmount: bond.totalPayoutAmount,
+          }
         })
+        .filter((bond) => {
+          if (typeof args.onlyDiscounted !== 'undefined') {
+            return args.onlyDiscounted ? bond.discount > 0 : true
+          }
 
-        return {
-          id: marketIds[i],
-          chainId,
-
-          marketId: Number(bond.marketId),
-          marketType: bond.type,
-
-          tellerAddress: bond.teller,
-          auctioneerAddress: bond.auctioneer,
-
-          start: Number(bond.start),
-          end: Number(bond.conclusion),
-
-          discount,
-
-          price: marketPrice ? String(marketPrice) : null,
-          minPrice: bond.minPrice ? String(bond.minPrice) : null,
-
-          capacity:
-            Number(bond.capacity) / 10 ** Number(bond.payoutToken.decimals),
-          capacityInQuote: bond.capacityInQuote,
-
-          vesting: Number(bond.vesting),
-          vestingType: bond.vestingType,
-
-          issuerId: bond.owner,
-
-          quoteToken: {
-            ...bond.quoteToken,
-            id: getIdFromChainIdAddress(chainId, bond.quoteToken.address),
-            decimals: Number(bond.quoteToken.decimals),
-            chainId,
-          },
-
-          payoutToken: {
-            ...bond.payoutToken,
-            id: getIdFromChainIdAddress(chainId, bond.payoutToken.address),
-            decimals: Number(bond.payoutToken.decimals),
-            chainId,
-          },
-
-          totalBondedAmount: bond.totalBondedAmount,
-          totalPayoutAmount: bond.totalPayoutAmount,
-        }
-      })
+          return true
+        })
     }),
   )
 

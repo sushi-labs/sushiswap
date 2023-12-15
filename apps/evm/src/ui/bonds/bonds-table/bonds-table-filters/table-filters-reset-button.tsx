@@ -12,29 +12,30 @@ export const TableFiltersResetButton: FC = () => {
   const {
     auctionTypes,
     chainIds,
-    positiveDiscountsOnly,
-    payoutAssets,
-    bondAssets,
+    onlyDiscounted,
+    onlyOpen,
+    // payoutAssets,
+    // bondAssets,
   } = useBondFilters()
   const setFilters = useSetBondFilters()
 
   const networks = useMemo(
-    () => (BONDS_ENABLED_CHAIN_IDS.length === chainIds.length ? [] : chainIds),
+    () => (BONDS_ENABLED_CHAIN_IDS.length === chainIds?.length ? [] : chainIds),
     [chainIds],
   )
 
   const types = useMemo(
-    () => (auctionTypes.length === AuctionTypes.length ? [] : auctionTypes),
+    () => (auctionTypes?.length === AuctionTypes.length ? [] : auctionTypes),
     [auctionTypes],
   )
 
   const [show, setShow] = useState(
-    (types?.length ?? 0) +
-      (networks?.length ?? 0) +
-      (payoutAssets?.length ?? 0) >
-      0 ||
-      (bondAssets?.length ?? 0) > 0 ||
-      positiveDiscountsOnly,
+    (types?.length ?? 0) + (networks?.length ?? 0) || // +
+      // (payoutAssets?.length ?? 0) >
+      // 0 ||
+      // (bondAssets?.length ?? 0) > 0 ||
+      onlyDiscounted ||
+      onlyOpen === false,
   )
 
   const reset = useCallback(() => {
@@ -43,9 +44,10 @@ export const TableFiltersResetButton: FC = () => {
       setFilters({
         auctionTypes: undefined,
         chainIds: undefined,
-        payoutAssets: undefined,
-        bondAssets: undefined,
-        positiveDiscountsOnly: undefined,
+        // payoutAssets: undefined,
+        // bondAssets: undefined,
+        onlyDiscounted: undefined,
+        onlyOpen: undefined,
       })
     })
   }, [setFilters])
@@ -53,12 +55,12 @@ export const TableFiltersResetButton: FC = () => {
   if (
     isPending
       ? show
-      : (types?.length ?? 0) +
-          (networks?.length ?? 0) +
-          (payoutAssets?.length ?? 0) >
-          0 ||
-        (bondAssets?.length ?? 0) > 0 ||
-        positiveDiscountsOnly
+      : (types?.length ?? 0) + (networks?.length ?? 0) || // +
+        //   (payoutAssets?.length ?? 0) >
+        //   0 ||
+        // (bondAssets?.length ?? 0) > 0 ||
+        onlyDiscounted ||
+        onlyOpen === false
   ) {
     return (
       <Button

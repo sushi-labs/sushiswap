@@ -21,35 +21,40 @@ import React, { FC, useCallback, useState, useTransition } from 'react'
 import { Chain } from 'sushi/chain'
 import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 
-const isAllThenNone = (chainIds: BondChainId[]) =>
-  BONDS_ENABLED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
+const isAllThenNone = (chainIds: BondChainId[] | undefined) =>
+  !chainIds || chainIds.length === BONDS_ENABLED_CHAIN_IDS.length
+    ? []
+    : chainIds
 
 export const TableFiltersNetwork: FC = () => {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { chainIds } = useBondFilters()
   const setFilters = useSetBondFilters()
-  const [localValue, setValues] = useState<number[]>(isAllThenNone(chainIds))
+  const [localValue, setValues] = useState<BondChainId[]>(
+    isAllThenNone(chainIds),
+  )
 
   const values = pending ? localValue : isAllThenNone(chainIds)
 
   const onClick = useCallback(
     (chainId: BondChainId) => {
-      let _newValues: number[]
+      let _newValues: BondChainId[]
       if (localValue.includes(chainId)) {
         _newValues = localValue.filter((el) => el !== chainId)
       } else {
         _newValues = [...(localValue ?? []), chainId]
       }
+      _newValues = isAllThenNone(_newValues)
+
       setValues(_newValues)
 
       startTransition(() => {
         setFilters((prev) => {
           if (prev.chainIds?.includes(chainId)) {
-            const chains = prev.chainIds.filter((el) => el !== chainId)
-            return { ...prev, chainIds: chains }
+            return { ...prev, chainIds: _newValues }
           } else {
-            return { ...prev, chainIds: [...(prev.chainIds ?? []), chainId] }
+            return { ...prev, chainIds: _newValues }
           }
         })
       })

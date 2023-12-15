@@ -23,19 +23,12 @@ export function getBondDiscount({
   const baseScale =
     10n ** BigInt(36 + payoutToken.decimals - quoteToken.decimals)
 
-  console.log(baseScale)
-
   const shift = Number(baseScale) / Number(marketScale)
-  console.log(shift)
   const price = Number(marketPrice) * shift
-  console.log(price)
   const quoteTokensPerPayoutToken = price / 10 ** 36
-  console.log(quoteTokensPerPayoutToken)
   const discountedPrice = quoteTokensPerPayoutToken * quoteToken.priceUSD
-  console.log('discountedPrice', discountedPrice)
 
-  const discount = discountedPrice / payoutToken.priceUSD
-  console.log('discount', discount)
+  const discount = -1 * (discountedPrice / payoutToken.priceUSD - 1)
 
-  return discount
+  return { discount, quoteTokensPerPayoutToken, discountedPrice }
 }

@@ -1,11 +1,7 @@
 'use client'
 
-import {
-  AuctionType,
-  BONDS_ENABLED_CHAIN_IDS,
-  isBondChainId,
-} from '@sushiswap/bonds-sdk'
 import { parseArgs } from '@sushiswap/client'
+import { BondsApiSchema } from '@sushiswap/client/api'
 import { useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -16,12 +12,15 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { z } from 'zod'
 
-import { ChainId } from 'sushi/chain'
 import { useTypedSearchParams } from '../../../../lib/hooks'
 
-type FilterContext = z.TypeOf<typeof bondFiltersSchema>
+type FilterContext = Partial<
+  Pick<
+    typeof BondsApiSchema._output,
+    'auctionTypes' | 'chainIds' | 'onlyDiscounted' | 'onlyOpen'
+  >
+>
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)
 
@@ -32,66 +31,30 @@ interface BondsFiltersProvider {
   passedFilters?: Partial<BondFilters>
 }
 
-export const bondFiltersSchema = z.object({
-  chainIds: z.coerce
-    .string()
-    .default(BONDS_ENABLED_CHAIN_IDS.join(','))
-    .transform((chainIds) =>
-      chainIds !== null && chainIds !== ','
-        ? chainIds
-            .split(',')
-            .map((chainId) => Number(chainId) as ChainId)
-            .filter(isBondChainId)
-        : [...BONDS_ENABLED_CHAIN_IDS],
-    ),
-  auctionTypes: z
-    .string()
-    .transform((protocols) =>
-      protocols !== null && protocols !== ','
-        ? (protocols.split(',') as AuctionType[])
-        : [],
-    ),
-  positiveDiscountsOnly: z
-    .string()
-    .transform((bool) => (bool ? bool === 'true' : undefined)),
-  payoutAssets: z.coerce.string().transform((addresses) => {
-    return addresses.split(',')
-  }),
-  bondAssets: z.coerce.string().transform((addresses) => {
-    return addresses.split(',')
-  }),
-})
-
 export const BondsFiltersProvider: FC<BondsFiltersProvider> = ({
   children,
 }) => {
-  const urlFilters = useTypedSearchParams(bondFiltersSchema.partial())
-  const {
-    payoutAssets,
-    bondAssets,
-    auctionTypes,
-    chainIds,
-    positiveDiscountsOnly,
-  } = urlFilters
+  const urlFilters = useTypedSearchParams(BondsApiSchema.partial())
+  const { auctionTypes, chainIds, onlyDiscounted, onlyOpen } = urlFilters
 
   return (
     <FilterContext.Provider
       value={useMemo(
         () => ({
           auctionTypes: auctionTypes ? auctionTypes : [],
-          chainIds: chainIds ? chainIds : [...BONDS_ENABLED_CHAIN_IDS],
-          positiveDiscountsOnly: positiveDiscountsOnly
-            ? positiveDiscountsOnly
-            : false,
-          payoutAssets: payoutAssets ? payoutAssets : [],
-          bondAssets: bondAssets ? bondAssets : [],
+          chainIds: chainIds ? chainIds : undefined,
+          onlyDiscounted: !!onlyDiscounted,
+          onlyOpen: onlyOpen,
+          // payoutAssets: payoutAssets ? payoutAssets : [],
+          // bondAssets: bondAssets ? bondAssets : [],
         }),
         [
           auctionTypes,
           chainIds,
-          positiveDiscountsOnly,
-          payoutAssets,
-          bondAssets,
+          onlyDiscounted,
+          onlyOpen,
+          // payoutAssets,
+          // bondAssets,
         ],
       )}
     >
@@ -111,7 +74,7 @@ export const useBondFilters = () => {
 
 export const useSetBondFilters = () => {
   const { push } = useRouter()
-  const urlFilters = useTypedSearchParams(bondFiltersSchema.partial())
+  const urlFilters = useTypedSearchParams(BondsApiSchema.partial())
 
   const setFilters: Dispatch<SetStateAction<typeof urlFilters>> = (filters) => {
     if (typeof filters === 'function') {

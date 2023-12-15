@@ -1,6 +1,7 @@
 export * from './bonds-table/bonds-table-filters/bonds-filters-provider'
 export * from './bonds-table/bonds-table-filters/table-filters-auction-type'
 export * from './bonds-table/bonds-table-filters/table-filters-networks'
+export * from './bonds-table/bonds-table-filters/table-filters-open-only'
 export * from './bonds-table/bonds-table-filters/table-filters-positive-discount-only'
 export * from './bonds-table/bonds-table'
 export * from './bonds-table/bonds-table-filters/table-filters-reset-button'
