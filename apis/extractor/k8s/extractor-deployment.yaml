@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: extractor-1
+  name: extractor-default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: extractor-1
+      app: extractor-default
   template:
     metadata:
       labels:
-        app: extractor-1
+        app: extractor-default
     spec:
       containers:
         - name: extractor
           image: extractor:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 80
           env:
             - name: PORT
               value: "8080"
@@ -27,10 +27,10 @@ spec:
                 secretKeyRef:
                   name: extractor
                   key: DRPC_ID
-          # readinessProbe:
-          #   tcpSocket:
-          #     port: 8080
-          #   initialDelaySeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
 # ---
 # apiVersion: apps/v1
 # kind: Deployment
