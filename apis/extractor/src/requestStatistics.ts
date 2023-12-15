@@ -1,6 +1,8 @@
 export enum ResponseRejectReason {
   WRONG_INPUT_PARAMS = 0,
   UNSUPPORTED_TOKENS = 1,
+  SERVER_OVERLOADED = 2,
+  UNKNOWN_EXCEPTION = 3,
 }
 
 export class RequestStatistics {
@@ -31,6 +33,8 @@ export class RequestStatistics {
     this.rejects = []
     this.rejects[ResponseRejectReason.WRONG_INPUT_PARAMS] = 0
     this.rejects[ResponseRejectReason.UNSUPPORTED_TOKENS] = 0
+    this.rejects[ResponseRejectReason.SERVER_OVERLOADED] = 0
+    this.rejects[ResponseRejectReason.UNKNOWN_EXCEPTION] = 0
   }
 
   start() {
@@ -48,8 +52,8 @@ export class RequestStatistics {
       const mins = Math.floor(time / 60 / 1000) - (days * 24 + hours) * 60
       const timeHuman = [
         days > 0 ? `${days}d` : '',
-        days > 0 && hours > 0 ? `${hours}h` : '',
-        `${mins}m`,
+        hours > 0 ? `${hours}h` : '',
+        mins > 0 ? `${mins}m` : '',
       ]
         .filter((s) => s !== '')
         .join(' ')
@@ -66,16 +70,16 @@ export class RequestStatistics {
               this.timeTotalUnKnownTokens / this.processedUnKnownTokens,
             )}ms)`
           : ''
+      const load = Math.round(
+        ((this.timeTotalKnownTokens + this.timeTotalUnKnownTokens) / time) *
+          100,
+      )
       console.log(
-        `All Requests (${timeHuman}): ${
-          this.total
-        } total, ${processed} processed(tokens: ${
-          this.processedKnownTokens
-        } known${timeKnownAvg}, ${
-          this.processedUnKnownTokens
-        } new${timeUnKnownAvg}), ${
-          this.total - processed - this.rejected
-        } pending or thrown, ${this.rejected} rejected`,
+        `All Requests (${timeHuman}): ${this.total} total` +
+          `, ${processed} processed(tokens: ${this.processedKnownTokens} known${timeKnownAvg}` +
+          `, ${this.processedUnKnownTokens} new${timeUnKnownAvg})` +
+          `, ${this.rejected} rejected` +
+          `, load ${load}%`,
       )
     }
     setTimeout(() => this._processTotalStatistics(), this.totalInterval)
@@ -107,6 +111,14 @@ export class RequestStatistics {
                 processedUnKnown,
             )}ms)`
           : ''
+      const load = Math.round(
+        ((this.timeTotalKnownTokens -
+          this.timeTotalKnownTokensLast +
+          this.timeTotalUnKnownTokens -
+          this.timeTotalUnKnownTokensLast) /
+          (now - this.startTimeLast)) *
+          100,
+      )
 
       console.log(
         `All Requests last ${Math.round(
@@ -117,7 +129,7 @@ export class RequestStatistics {
             this.processedKnownTokens -
             this.processedUnKnownTokens -
             this.rejected
-          } pending or thrown, ${rejected} rejected`,
+          } pending, ${rejected} rejected, load ${load}%`,
       )
 
       this.startTimeLast = now
