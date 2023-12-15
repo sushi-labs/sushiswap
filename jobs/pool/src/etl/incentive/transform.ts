@@ -1,4 +1,4 @@
-import { createClient, Prisma } from '@sushiswap/database'
+import { Prisma, createClient } from '@sushiswap/database'
 
 /**
  * Filters token incentives to only include the ones that are new or have changed.
@@ -6,7 +6,9 @@ import { createClient, Prisma } from '@sushiswap/database'
  * @param incentives
  * @returns
  */
-export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInput[]): Promise<{
+export async function filterIncentives(
+  incentives: Prisma.IncentiveCreateManyInput[],
+): Promise<{
   incentivesToCreate: Prisma.IncentiveCreateManyInput[]
   incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
 }> {
@@ -28,7 +30,9 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
   const foundPools = poolsFound.map((pool) => pool.id)
 
   const rewardTokensFound = await client.token.findMany({
-    where: { id: { in: incentives.map((incentive) => incentive.rewardTokenId) } },
+    where: {
+      id: { in: incentives.map((incentive) => incentive.rewardTokenId) },
+    },
     select: { id: true },
   })
   const foundRewardTokens = rewardTokensFound.map((token) => token.id)
@@ -55,8 +59,10 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     }
     return false
   })
-  if (missingPools) console.log(`Missing pools, skipping incentives: ${missingPools}`)
-  if (missingTokens) console.log(`Missing tokens, skipping incentives: ${missingTokens}`)
+  if (missingPools)
+    console.log(`Missing pools, skipping incentives: ${missingPools}`)
+  if (missingTokens)
+    console.log(`Missing tokens, skipping incentives: ${missingTokens}`)
   if (missingPools > 0) {
     Object.entries(missingPoolIds).forEach(([chainId, poolIds]) => {
       console.log(`Missing pools on chain ${chainId}, count: ${poolIds.length}`)
@@ -68,7 +74,10 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     if (!incentiveExists) {
       return false
     }
-    if (incentive.apr !== incentiveExists.apr || incentive.rewardPerDay !== incentiveExists.rewardPerDay) {
+    if (
+      incentive.apr !== incentiveExists.apr ||
+      incentive.rewardPerDay !== incentiveExists.rewardPerDay
+    ) {
       return true
     } else {
       incentivesAlreadyUpToDate++
@@ -76,11 +85,13 @@ export async function filterIncentives(incentives: Prisma.IncentiveCreateManyInp
     return false
   })
 
+  await client.$disconnect()
+
   console.log(
     `TRANSFORM - Filtering incentives\n
     ${incentivesToCreate.length} incentives should be created.\n
     ${incentivesAlreadyUpToDate} incentives are already up to date.\n
-    ${incentivesToUpdate.length} incentives should be updated.\n`
+    ${incentivesToUpdate.length} incentives should be updated.\n`,
   )
 
   return { incentivesToCreate, incentivesToUpdate }

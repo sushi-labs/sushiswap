@@ -1,4 +1,4 @@
-import { createClient, Prisma } from '@sushiswap/database'
+import { Prisma, createClient } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
 
 /**
@@ -9,7 +9,7 @@ import { performance } from 'perf_hooks'
  */
 export async function mergeIncentives(
   incentivesToCreate: Prisma.IncentiveCreateManyInput[],
-  incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
+  incentivesToUpdate: Prisma.IncentiveCreateManyInput[],
 ) {
   const incentivesAlreadyExist = await hasIncentives()
   if (incentivesAlreadyExist) {
@@ -45,7 +45,15 @@ async function updateIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   const startTime = performance.now()
   const updatedIncentives = await Promise.all(incentivesToUpdate)
   const endTime = performance.now()
-  console.log(`LOAD - Updated ${updatedIncentives.length} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
+
+  await client.$disconnect()
+
+  console.log(
+    `LOAD - Updated ${updatedIncentives.length} incentives. (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s) `,
+  )
 }
 
 async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
@@ -56,8 +64,10 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   let count = 0
   const batchSize = 500
   const startTime = performance.now()
+
+  const client = await createClient()
+
   for (let i = 0; i < incentives.length; i += batchSize) {
-    const client = await createClient()
     const created = await client.incentive.createMany({
       data: incentives.slice(i, i + batchSize),
       skipDuplicates: true,
@@ -66,11 +76,17 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
     count += created.count
   }
   const endTime = performance.now()
-  console.log(`LOAD - Created ${count} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s)`)
+  console.log(
+    `LOAD - Created ${count} incentives. (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s)`,
+  )
 }
 
 async function hasIncentives() {
   const client = await createClient()
   const count = await client.incentive.count()
+  await client.$disconnect()
   return count > 0
 }
