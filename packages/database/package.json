@@ -42,7 +42,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo node_modules dist",
     "dev": "tsc -w",
-    "generate": "prisma generate --data-proxy",
+    "generate": "prisma generate",
     "prepublishOnly": "pnpm build",
     "pull": "prisma db pull",
     "push": "prisma db push --skip-generate",
