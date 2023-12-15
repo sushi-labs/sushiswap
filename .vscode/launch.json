@@ -5,7 +5,7 @@
             "type": "cloudcode.kubernetes",
             "request": "launch",
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
-            "watch": true,
+            "watch": false,
             "cleanUp": true,
             "portForward": true,
             "imageRegistry": "gcr.io/sushi-dev-382510"

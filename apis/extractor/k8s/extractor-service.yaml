@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: extractor-1-service
+spec:
+  selector:
+    app: extractor-1
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  selector:
+    app: nginx
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: 'events {} http { map $arg_chainId $extractor_uri { default http://www.sushi.com/; 1 http://extractor-1-service:8080/; } server { listen 80; location / { proxy_pass $extractor_uri; } location /test { proxy_pass http://extractor-1-service:8080/; } } }'
