@@ -1,6 +1,66 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: extractor-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-1
+  template:
+    metadata:
+      labels:
+        app: extractor-1
+    spec:
+      containers:
+        - name: extractor
+          image: extractor:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: CONFIG_GROUP
+              value: "1"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: DRPC_ID
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extractor-56
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-56
+  template:
+    metadata:
+      labels:
+        app: extractor-56
+    spec:
+      containers:
+        - name: extractor
+          image: extractor:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: CONFIG_GROUP
+              value: "56"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: DRPC_ID
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: extractor-default
 spec:
   replicas: 1
@@ -27,44 +87,8 @@ spec:
                 secretKeyRef:
                   name: extractor
                   key: DRPC_ID
-          # readinessProbe:
-          #   tcpSocket:
-          #     port: 8080
-          #   initialDelaySeconds: 5
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: extractor-default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: extractor-default
-  template:
-    metadata:
-      labels:
-        app: extractor-default
-    spec:
-      containers:
-        - name: extractor
-          image: extractor:latest
-          ports:
-            - containerPort: 80
-          env:
-            - name: PORT
-              value: "8080"
-            - name: CONFIG_GROUP
-              value: "1"
-            - name: DRPC_ID
-              valueFrom:
-                secretKeyRef:
-                  name: extractor
-                  key: DRPC_ID
-          readinessProbe:
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 5
+
+
 # ---
 # apiVersion: apps/v1
 # kind: Deployment
@@ -82,54 +106,20 @@ spec:
 #     spec:
 #       containers:
 #         - name: extractor
-#           image: extractor:latest
+#           image: extractor
 #           ports:
-#             - containerPort: 8080
+#           - containerPort: 8081
 #           env:
-#             - name: PORT
-#               value: "8080"
-#             - name: CONFIG_GROUP
-#               value: "56"
-#             - name: DRPC_ID
-#               valueFrom:
-#                 secretKeyRef:
-#                   name: extractor
-#                   key: DRPC_ID
-#           # readinessProbe:
-#           #   tcpSocket:
-#           #     port: 8080
-#           #   initialDelaySeconds: 5
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: extractor-137
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: extractor-137
-#   template:
-#     metadata:
-#       labels:
-#         app: extractor-137
-#     spec:
-#       containers:
-#         - name: extractor
-#           image: extractor:latest
-#           ports:
-#             - containerPort: 8080
-#           env:
-#             - name: PORT
-#               value: "8080"
-#             - name: CONFIG_GROUP
-#               value: "137"
-#             - name: DRPC_ID
-#               valueFrom:
-#                 secretKeyRef:
-#                   name: extractor
-#                   key: DRPC_ID
-#           # readinessProbe:
-#           #   tcpSocket:
-#           #     port: 8080
-#           #   initialDelaySeconds: 5
+#           - name: PORT
+#             value: "8081"
+#           - name: CONFIG_GROUP
+#             value: "56"
+#           - name: DRPC_ID
+#             valueFrom: 
+#               secretKeyRef:
+#                 name: extractor
+#                 key: DRPC_ID
+#           readinessProbe:
+#             tcpSocket:
+#               port: 8081
+#             initialDelaySeconds: 5
