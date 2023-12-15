@@ -21,7 +21,7 @@ import { Currency } from '@sushiswap/ui/components/currency'
 import { List } from '@sushiswap/ui/components/list/List'
 import { Address } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems/Checker'
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
 import { formatNumber } from 'sushi/format'
 
@@ -33,6 +33,11 @@ interface RewardSlide {
 }
 
 export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
+  const totalUnclaimedAmountUSD = useMemo(
+    () => data.unclaimed.reduce((acc, cur) => acc + cur.amountUSD, 0),
+    [data.unclaimed],
+  )
+
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <Card className="w-[320px]">
@@ -40,10 +45,9 @@ export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
           <CardTitle>
             {' '}
             $
-            {data.unclaimed.reduce(
-              (acc, cur) => acc + +formatNumber(cur.amountUSD),
-              0,
-            )}
+            {totalUnclaimedAmountUSD === 0
+              ? '0'
+              : formatNumber(totalUnclaimedAmountUSD)}
           </CardTitle>
           <CardDescription>{Chain.from(data.chainId)?.name}</CardDescription>
         </CardHeader>
