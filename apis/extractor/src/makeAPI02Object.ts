@@ -86,6 +86,8 @@ export function makeAPI02Object(
       to: rpParams.to,
       routeCode: rpParams.routeCode,
     }
+    if (rpParams.value !== undefined)
+      APIObj.routeProcessorArgs.value = rpParams.value.toString()
   }
 
   return APIObj

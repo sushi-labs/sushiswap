@@ -45,6 +45,7 @@ const routeExistValidator = z.object({
       amountOutMin: z.string(),
       to: z.string(),
       routeCode: z.string(),
+      value: z.string().optional(),
     })
     .optional(),
 })
