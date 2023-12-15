@@ -48,20 +48,88 @@ spec:
 #     spec:
 #       containers:
 #         - name: extractor
-#           image: extractor
+#           image: extractor:latest
 #           ports:
-#           - containerPort: 8081
+#             - containerPort: 8080
 #           env:
-#           - name: PORT
-#             value: "8081"
-#           - name: CONFIG_GROUP
-#             value: "56"
-#           - name: DRPC_ID
-#             valueFrom: 
-#               secretKeyRef:
-#                 name: extractor
-#                 key: DRPC_ID
-#           readinessProbe:
-#             tcpSocket:
-#               port: 8081
-#             initialDelaySeconds: 5
+#             - name: PORT
+#               value: "8080"
+#             - name: CONFIG_GROUP
+#               value: "56"
+#             - name: DRPC_ID
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: extractor
+#                   key: DRPC_ID
+#           # readinessProbe:
+#           #   tcpSocket:
+#           #     port: 8080
+#           #   initialDelaySeconds: 5
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: extractor-137
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: extractor-137
+#   template:
+#     metadata:
+#       labels:
+#         app: extractor-137
+#     spec:
+#       containers:
+#         - name: extractor
+#           image: extractor:latest
+#           ports:
+#             - containerPort: 8080
+#           env:
+#             - name: PORT
+#               value: "8080"
+#             - name: CONFIG_GROUP
+#               value: "137"
+#             - name: DRPC_ID
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: extractor
+#                   key: DRPC_ID
+#           # readinessProbe:
+#           #   tcpSocket:
+#           #     port: 8080
+#           #   initialDelaySeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extractor-default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-default
+  template:
+    metadata:
+      labels:
+        app: extractor-default
+    spec:
+      containers:
+        - name: extractor
+          image: extractor:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: CONFIG_GROUP
+              value: "DEFAULT"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: DRPC_ID
+          # readinessProbe:
+          #   tcpSocket:
+          #     port: 8080
+          #   initialDelaySeconds: 5

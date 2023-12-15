@@ -20,14 +20,13 @@ data:
     http {
       map $arg_chainId $extractor_uri {
        1 http://extractor-1-service:8080$request_uri/; 
+      #  137 http://extractor-137-service:8080$request_uri/; 
+      #  56 http://extractor-56-service:8080$request_uri/; 
        default http://extractor-default-service:8080$request_uri/; 
       } 
       server { 
         listen 80; location / { 
           proxy_pass $extractor_uri; 
         } 
-        location /test/ { 
-          proxy_pass http://extractor-1-service:8080/; 
-          } 
-        } 
+      } 
     }
