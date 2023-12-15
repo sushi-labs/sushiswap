@@ -81,6 +81,17 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     !DISABLED_CHAIN_IDS.includes(c as typeof DISABLED_CHAIN_IDS[number]),
 )
 
+const DISABLED_ANALYTICS_CHAIN_IDS = [ChainId.BOBA_AVAX, ChainId.KAVA]
+
+export const ANALYTICS_CHAIN_IDS = [
+  ...SUPPORTED_CHAIN_IDS.filter(
+    (el) =>
+      !DISABLED_ANALYTICS_CHAIN_IDS.includes(
+        el as typeof DISABLED_ANALYTICS_CHAIN_IDS[number],
+      ),
+  ),
+]
+
 export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
 export const isSupportedChainId = (
   chainId: number,
