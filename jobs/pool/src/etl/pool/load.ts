@@ -521,47 +521,30 @@ export async function updatePoolsWithIncentivesTotalApr() {
 
 export async function updatePoolsWithSteerVaults() {
   const client = await createClient()
-  const poolsWithSteerVaults = await client.sushiPool.findMany({
-    where: {
-      steerVaults: { some: {} },
-    },
-    include: {
-      steerVaults: {
-        include: {
-          pool: true,
-        },
-      },
-    },
-  })
-
   const startTime = performance.now()
 
-  for (const pool of poolsWithSteerVaults) {
-    const hasSteerVault = pool.steerVaults.some(
-      (steerVault) => steerVault.isEnabled,
-    )
-    const hadSteerVault =
-      hasSteerVault ||
-      pool.steerVaults.some((steerVault) => steerVault.wasEnabled)
-
-    await client.sushiPool.update({
-      select: { id: true },
-      where: {
-        id: pool.id,
-      },
-      data: {
-        hasEnabledSteerVault: hasSteerVault,
-        hadEnabledSteerVault: hadSteerVault,
-      },
-    })
-  }
+  const poolsUpdatedCount = await client.$executeRaw`
+    UPDATE
+      SushiPool p
+    SET
+      hasEnabledSteerVault = COALESCE(
+        (SELECT MAX(sv.isEnabled) FROM SteerVault sv WHERE sv.poolId = p.id),
+        false
+      ),
+      hadEnabledSteerVault = COALESCE(
+        (SELECT MAX(sv.isEnabled OR sv.wasEnabled) FROM SteerVault sv WHERE sv.poolId = p.id),
+        false
+      )
+    WHERE
+      EXISTS (SELECT 1 FROM SteerVault sv WHERE sv.poolId = p.id AND (sv.isEnabled OR sv.wasEnabled));
+  `;
 
   const endTime = performance.now()
 
   await client.$disconnect()
 
   console.log(
-    `LOAD - Updated ${poolsWithSteerVaults.length} pools with steer vaults (${(
+    `LOAD - Updated ${poolsUpdatedCount} pools with steer vaults (${(
       (endTime - startTime) /
       1000
     ).toFixed(1)}s) `,
