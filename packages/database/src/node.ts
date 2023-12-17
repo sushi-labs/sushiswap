@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { defaultPrismaClientOptions } from './common'
+import { defaultPrismaClientOptions } from './common.js'
 
-export { type DecimalToString } from './common'
+export { type DecimalToString } from './common.js'
 export * from '@prisma/client'
 
 export async function createClient(options = defaultPrismaClientOptions) {
