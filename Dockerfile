@@ -41,6 +41,6 @@ FROM base AS runner
 COPY --from=installer /app/node_modules /app/node_modules
 COPY --from=builder /app/apis/extractor/dist /app/apis/extractor/dist
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD node /app/apis/extractor/dist/index.js
