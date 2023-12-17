@@ -281,13 +281,14 @@ function processRequest(
     try {
       const statistics = requestStatistics.requestProcessingStart()
 
+      // Server Overloaded protection - time not came
       // @ts-ignore
-      if (process.getActiveResourcesInfo().length > 150) {
-        requestStatistics.requestRejected(
-          ResponseRejectReason.SERVER_OVERLOADED,
-        )
-        return res.status(529).send('Server Overloaded')
-      }
+      // if (process.getActiveResourcesInfo().length > 150) {
+      //   requestStatistics.requestRejected(
+      //     ResponseRejectReason.SERVER_OVERLOADED,
+      //   )
+      //   return res.status(529).send('Server Overloaded')
+      // }
 
       const parsed = qSchema.safeParse(req.query)
       if (!parsed.success) {
