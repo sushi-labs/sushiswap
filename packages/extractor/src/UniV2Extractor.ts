@@ -294,10 +294,12 @@ export class UniV2Extractor {
             return
           }
           const startTime = performance.now()
+          this.taskCounter.inc()
           const promise = this.multiCallAggregator
             .callValue(addr, getReservesAbi, 'getReserves')
             .then(
               (reserves) => {
+                this.taskCounter.dec()
                 const poolState2 = this.poolMap.get(addrL)
                 if (poolState2) {
                   // pool was created
@@ -322,6 +324,7 @@ export class UniV2Extractor {
               },
               () => {
                 this.poolMap.set(addrL, { status: PoolStatus.NoPool })
+                this.taskCounter.dec()
                 return undefined
               },
             )
@@ -335,6 +338,7 @@ export class UniV2Extractor {
     }
   }
 
+  // Is not used now
   async addPoolsFromFactory(
     factoryAddr: Address,
     step = 1000,
@@ -427,12 +431,6 @@ export class UniV2Extractor {
             'factory',
           ),
         )
-
-        this.multiCallAggregator.callValue(
-          addr,
-          tridentConstantPoolAbi,
-          'factory',
-        )
         factory = this.factoryMap.get(
           (factoryAddr as string).toLowerCase() as Address,
         )
@@ -463,11 +461,11 @@ export class UniV2Extractor {
       ])
       token0 = tokens[0]
       token1 = tokens[1]
-    } catch (e) {
+    } catch (_e) {
       this.taskCounter.dec()
       warnLog(
         this.multiCallAggregator.chainId,
-        `Ext2 add pool ${addr} by log failed: ${e}`,
+        `Ext2 add pool ${addr} by log failed`,
       )
       return
     }
@@ -552,7 +550,7 @@ export class UniV2Extractor {
     ++this.watchedPools
     if (args.source !== 'cache')
       this.consoleLog(
-        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}`,
+        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}/${this.poolMap.size}`,
       )
     return poolState.poolCode
   }

@@ -303,7 +303,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
       ...config,
       onSettled,
       onSuccess: () => {
-        setPercentage('')
+        setPercentage('0')
         setSignature(undefined)
       },
     })

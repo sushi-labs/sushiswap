@@ -88,29 +88,33 @@ export function findMultiRouteExactIn(
   gasPrice?: number,
   flows?: number | number[],
 ): MultiRoute {
-  pools = deduplicatePools(pools)
-  checkChainId(pools, baseTokenOrNetworks)
-  setTokenId(from, to)
-  if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
-  const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
+  try {
+    pools = deduplicatePools(pools)
+    checkChainId(pools, baseTokenOrNetworks)
+    setTokenId(from, to)
+    if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
+    const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
-  if (flows !== undefined)
-    return g.findBestRouteExactIn(from, to, amountIn, flows)
+    if (flows !== undefined)
+      return g.findBestRouteExactIn(from, to, amountIn, flows)
 
-  const outSingle = g.findBestRouteExactIn(from, to, amountIn, 1)
-  // Possible optimization of timing
-  // if (g.findBestPathExactIn(from, to, amountIn/100 + 10_000, 0)?.gasSpent === 0) return outSingle
-  g.cleanTmpData()
+    const outSingle = g.findBestRouteExactIn(from, to, amountIn, 1)
+    // Possible optimization of timing
+    // if (g.findBestPathExactIn(from, to, amountIn/100 + 10_000, 0)?.gasSpent === 0) return outSingle
+    g.cleanTmpData()
 
-  const bestFlowNumber = calcBestFlowNumber(
-    outSingle,
-    amountIn,
-    g.getVert(from)?.gasPrice,
-  )
-  if (bestFlowNumber === 1) return outSingle
+    const bestFlowNumber = calcBestFlowNumber(
+      outSingle,
+      amountIn,
+      g.getVert(from)?.gasPrice,
+    )
+    if (bestFlowNumber === 1) return outSingle
 
-  const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
-  return getBetterRouteExactIn(outSingle, outMulti)
+    const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
+    return getBetterRouteExactIn(outSingle, outMulti)
+  } catch (_e) {
+    return NoWayMultiRoute(from, to)
+  }
 }
 
 function getBetterRouteExactOut(

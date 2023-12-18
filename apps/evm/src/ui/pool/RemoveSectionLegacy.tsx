@@ -300,7 +300,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       ...config,
       onSettled,
       onSuccess: () => {
-        setPercentage('')
+        setPercentage('0')
       },
     })
 

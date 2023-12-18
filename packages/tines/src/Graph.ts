@@ -726,7 +726,7 @@ export class Graph {
     | undefined {
     const start = this.getVert(from)
     const finish = this.getVert(to)
-    if (!start || !finish) return undefined
+    if (!start || !finish || Number.isNaN(finish.price)) return undefined
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0

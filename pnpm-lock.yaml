@@ -173,11 +173,11 @@ importers:
         specifier: 4.17.17
         version: 4.17.17
       '@types/node':
-        specifier: '18'
-        version: 18.17.5
+        specifier: '>=20.8.4'
+        version: 20.10.5
       artillery:
         specifier: 2.0.0-35
-        version: 2.0.0-35(@types/node@18.17.5)(typescript@5.2.2)
+        version: 2.0.0-35(@types/node@20.10.5)(typescript@5.2.2)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1369,8 +1369,11 @@ importers:
   packages/database:
     dependencies:
       '@prisma/client':
-        specifier: 4.12.0
-        version: 4.12.0(prisma@4.12.0)
+        specifier: 5.6.0
+        version: 5.6.0(prisma@5.6.0)
+      '@prisma/extension-accelerate':
+        specifier: ^0.6.2
+        version: 0.6.2(@prisma/client@5.6.0)
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1394,8 +1397,8 @@ importers:
         specifier: 29.7.0
         version: 29.7.0(@types/node@18.17.5)
       prisma:
-        specifier: 4.12.0
-        version: 4.12.0
+        specifier: 5.6.0
+        version: 5.6.0
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -2917,12 +2920,12 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@artilleryio/platform-fargate@2.0.0(@types/node@18.17.5)(typescript@5.2.2):
+  /@artilleryio/platform-fargate@2.0.0(@types/node@20.10.5)(typescript@5.2.2):
     resolution: {integrity: sha512-xYF66lTBLf9aCyuDR8kA0uTtQ4nexOw4AFjqoy8pZbQVm4Hop+7YcVQAWKCBGe52hNVUVgpQdF5ofSXIBoSKSQ==}
     engines: {node: '>= 18.16.1'}
     dependencies:
       '@aws-sdk/credential-providers': 3.391.0
-      '@oclif/core': 2.11.8(@types/node@18.17.5)(typescript@5.2.2)
+      '@oclif/core': 2.11.8(@types/node@20.10.5)(typescript@5.2.2)
       '@supercharge/promise-pool': 2.4.0
       ajv: 6.12.6
       artillery-plugin-ensure: 1.3.0
@@ -8963,7 +8966,7 @@ packages:
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
       '@grpc/proto-loader': 0.7.9
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
     dev: true
 
   /@grpc/proto-loader@0.7.9:
@@ -10036,7 +10039,7 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@oclif/core@2.11.8(@types/node@18.17.5)(typescript@5.2.2):
+  /@oclif/core@2.11.8(@types/node@20.10.5)(typescript@5.2.2):
     resolution: {integrity: sha512-GILmztcHBzze45GvxRpUvqQI5nM26kSE/Q21Y+6DtMR+C8etM/hFW26D3uqIAbGlGtg5QEZZ6pjA/Fqgz+gl3A==}
     engines: {node: '>=14.0.0'}
     dependencies:
@@ -10065,7 +10068,7 @@ packages:
       strip-ansi: 6.0.1
       supports-color: 8.1.1
       supports-hyperlinks: 2.3.0
-      ts-node: 10.9.1(@swc/core@1.3.26)(@types/node@18.17.5)(typescript@5.2.2)
+      ts-node: 10.9.1(@types/node@20.10.5)(typescript@5.2.2)
       tslib: 2.6.2
       widest-line: 3.1.0
       wordwrap: 1.0.0
@@ -10077,11 +10080,11 @@ packages:
       - typescript
     dev: true
 
-  /@oclif/plugin-help@5.2.17(@types/node@18.17.5)(typescript@5.2.2):
+  /@oclif/plugin-help@5.2.17(@types/node@20.10.5)(typescript@5.2.2):
     resolution: {integrity: sha512-8dhvATZZnkD8uq3etsvbVjjpdxiTqXTPjkMlU8ToQz09DL5BBzYApm65iTHFE0Vn9DPbKcNxX1d8YiF3ilgMOQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@oclif/core': 2.11.8(@types/node@18.17.5)(typescript@5.2.2)
+      '@oclif/core': 2.11.8(@types/node@20.10.5)(typescript@5.2.2)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -10089,12 +10092,12 @@ packages:
       - typescript
     dev: true
 
-  /@oclif/plugin-not-found@2.3.37(@types/node@18.17.5)(typescript@5.2.2):
+  /@oclif/plugin-not-found@2.3.37(@types/node@20.10.5)(typescript@5.2.2):
     resolution: {integrity: sha512-P3D56ElnJQeztmkCmMqdr9QWyOlF/C/+Dl8QNFX+agGnGdumdyr28n4xDyFHsw7hm3o9TMYpLDLThKy95lXFsw==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@oclif/color': 1.0.10
-      '@oclif/core': 2.11.8(@types/node@18.17.5)(typescript@5.2.2)
+      '@oclif/core': 2.11.8(@types/node@20.10.5)(typescript@5.2.2)
       fast-levenshtein: 3.0.0
     transitivePeerDependencies:
       - '@swc/core'
@@ -10836,9 +10839,9 @@ packages:
       squirrelly: 8.0.8
     dev: false
 
-  /@prisma/client@4.12.0(prisma@4.12.0):
-    resolution: {integrity: sha512-j9/ighfWwux97J2dS15nqhl60tYoH8V0IuSsgZDb6bCFcQD3fXbXmxjYC8GHhIgOk3lB7Pq+8CwElz2MiDpsSg==}
-    engines: {node: '>=14.17'}
+  /@prisma/client@5.6.0(prisma@5.6.0):
+    resolution: {integrity: sha512-mUDefQFa1wWqk4+JhKPYq8BdVoFk9NFMBXUI8jAkBfQTtgx8WPx02U2HB/XbAz3GSUJpeJOKJQtNvaAIDs6sug==}
+    engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
       prisma: '*'
@@ -10846,17 +10849,26 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 4.12.0-67.659ef412370fa3b41cd7bf6e94587c1dfb7f67e7
-      prisma: 4.12.0
+      '@prisma/engines-version': 5.6.0-32.e95e739751f42d8ca026f6b910f5a2dc5adeaeee
+      prisma: 5.6.0
     dev: false
 
-  /@prisma/engines-version@4.12.0-67.659ef412370fa3b41cd7bf6e94587c1dfb7f67e7:
-    resolution: {integrity: sha512-JIHNj5jlXb9mcaJwakM0vpgRYJIAurxTUqM0iX0tfEQA5XLZ9ONkIckkhuAKdAzocZ+80GYg7QSsfpjg7OxbOA==}
+  /@prisma/engines-version@5.6.0-32.e95e739751f42d8ca026f6b910f5a2dc5adeaeee:
+    resolution: {integrity: sha512-UoFgbV1awGL/3wXuUK3GDaX2SolqczeeJ5b4FVec9tzeGbSWJboPSbT0psSrmgYAKiKnkOPFSLlH6+b+IyOwAw==}
     dev: false
 
-  /@prisma/engines@4.12.0:
-    resolution: {integrity: sha512-0alKtnxhNB5hYU+ymESBlGI4b9XrGGSdv7Ud+8TE/fBNOEhIud0XQsAR+TrvUZgS4na5czubiMsODw0TUrgkIA==}
+  /@prisma/engines@5.6.0:
+    resolution: {integrity: sha512-Mt2q+GNJpU2vFn6kif24oRSBQv1KOkYaterQsi0k2/lA+dLvhRX6Lm26gon6PYHwUM8/h8KRgXIUMU0PCLB6bw==}
     requiresBuild: true
+
+  /@prisma/extension-accelerate@0.6.2(@prisma/client@5.6.0):
+    resolution: {integrity: sha512-KIBVPeWt8qaSg7wQ+TXmCVeUDoW75whtXcdS9dbHxRoO2OWFH5I9+qbkHBhx5Wj/h1wQpS8usuxGnsZqiBjUpQ==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@prisma/client': '>=4.16.1'
+    dependencies:
+      '@prisma/client': 5.6.0(prisma@5.6.0)
+    dev: false
 
   /@protobufjs/aspromise@1.1.2:
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -15121,7 +15133,7 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
     dev: true
 
   /@types/btoa-lite@1.0.0:
@@ -15148,7 +15160,7 @@ packages:
   /@types/cli-progress@3.11.0:
     resolution: {integrity: sha512-XhXhBv1R/q2ahF3BM7qT5HLzJNlIL0wbcGyZVjqOTqAybAnsLisd7gy1UCyIqpL+5Iv6XhlSyzjLCnI2sIdbCg==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
     dev: true
 
   /@types/concat-stream@1.6.1:
@@ -15172,12 +15184,12 @@ packages:
   /@types/connect@3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
 
   /@types/cors@2.8.13:
     resolution: {integrity: sha512-RG8AStHlUiV5ysZQKq97copd2UmVYw3/pRMLefISZ3S1hK104Cwm7iLQ3fTKx+lsUH2CE8FlLaYeEA2LSeqYUA==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
     dev: true
 
   /@types/cross-spawn@6.0.2:
@@ -15420,7 +15432,7 @@ packages:
   /@types/express-serve-static-core@4.17.35:
     resolution: {integrity: sha512-wALWQwrgiB2AWTT91CB62b6Yt0sNHpznUXeZEcnPU3DRdlDIz74x8Qg1UUYKSVFi+va5vKOLYRBI1bRKiLLKIg==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
       '@types/qs': 6.9.8
       '@types/range-parser': 1.2.4
       '@types/send': 0.17.1
@@ -15647,6 +15659,11 @@ packages:
   /@types/node@18.17.5:
     resolution: {integrity: sha512-xNbS75FxH6P4UXTPUJp/zNPq6/xsfdJKussCWNOnz4aULWIRwMgP1LgaB5RiBnMX1DPCYenuqGZfnIAx5mbFLA==}
 
+  /@types/node@20.10.5:
+    resolution: {integrity: sha512-nNPsNE65wjMxEKI93yOP+NPGGBJz/PoN3kZsVLee0XMiJolxSekEVD8wRwBUBqkwc7UWop0edW50yrCQW4CyRw==}
+    dependencies:
+      undici-types: 5.26.5
+
   /@types/node@20.5.0:
     resolution: {integrity: sha512-Mgq7eCtoTjT89FqNoTzzXg2XvCi5VMhRV6+I2aYanc6kQCBImeNaAYRs/DyoVqk1YEUJK5gN9VO7HRIdz4Wo3Q==}
 
@@ -15784,7 +15801,7 @@ packages:
     resolution: {integrity: sha512-Cwo8LE/0rnvX7kIIa3QHCkcuF21c05Ayb0ZfxPiv0W8VRiZiNW/WuRupHKpqqGVGf7SUA44QSOUKaEd9lIrd/Q==}
     dependencies:
       '@types/mime': 1.3.2
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
     dev: true
 
   /@types/serve-static@1.15.2:
@@ -15792,7 +15809,7 @@ packages:
     dependencies:
       '@types/http-errors': 2.0.1
       '@types/mime': 3.0.1
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
     dev: true
 
   /@types/sinon-chai@3.2.9:
@@ -17913,18 +17930,18 @@ packages:
       - utf-8-validate
     dev: true
 
-  /artillery@2.0.0-35(@types/node@18.17.5)(typescript@5.2.2):
+  /artillery@2.0.0-35(@types/node@20.10.5)(typescript@5.2.2):
     resolution: {integrity: sha512-fmBsR93gPyzFt+D6l1n6KKnyD3TF/g70AgFur5iQkWdiRL4rm06ZuYyE2rg5PcsKPOg58bjFdt0U9o1Vr4+umg==}
     engines: {node: '>= 18.16.1'}
     hasBin: true
     dependencies:
       '@artilleryio/int-commons': 2.0.4
       '@artilleryio/int-core': 2.2.2
-      '@artilleryio/platform-fargate': 2.0.0(@types/node@18.17.5)(typescript@5.2.2)
+      '@artilleryio/platform-fargate': 2.0.0(@types/node@20.10.5)(typescript@5.2.2)
       '@aws-sdk/credential-providers': 3.391.0
-      '@oclif/core': 2.11.8(@types/node@18.17.5)(typescript@5.2.2)
-      '@oclif/plugin-help': 5.2.17(@types/node@18.17.5)(typescript@5.2.2)
-      '@oclif/plugin-not-found': 2.3.37(@types/node@18.17.5)(typescript@5.2.2)
+      '@oclif/core': 2.11.8(@types/node@20.10.5)(typescript@5.2.2)
+      '@oclif/plugin-help': 5.2.17(@types/node@20.10.5)(typescript@5.2.2)
+      '@oclif/plugin-not-found': 2.3.37(@types/node@20.10.5)(typescript@5.2.2)
       archiver: 5.3.2
       artillery-engine-playwright: 0.3.1
       artillery-plugin-apdex: 1.0.1
@@ -31568,13 +31585,13 @@ packages:
     dependencies:
       parse-ms: 2.1.0
 
-  /prisma@4.12.0:
-    resolution: {integrity: sha512-xqVper4mbwl32BWzLpdznHAYvYDWQQWK2tBfXjdUD397XaveRyAP7SkBZ6kFlIg8kKayF4hvuaVtYwXd9BodAg==}
-    engines: {node: '>=14.17'}
+  /prisma@5.6.0:
+    resolution: {integrity: sha512-EEaccku4ZGshdr2cthYHhf7iyvCcXqwJDvnoQRAJg5ge2Tzpv0e2BaMCp+CbbDUwoVTzwgOap9Zp+d4jFa2O9A==}
+    engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 4.12.0
+      '@prisma/engines': 5.6.0
 
   /private@0.1.8:
     resolution: {integrity: sha512-VvivMrbvd2nKkiG38qjULzlc+4Vx4wm/whI9pQD35YrARNnhxeiRktSOhSukRLFNlzg6Br/cJPet5J/u19r/mg==}
@@ -31660,7 +31677,7 @@ packages:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 18.17.5
+      '@types/node': 20.10.5
       long: 5.2.3
     dev: true
 
@@ -35532,6 +35549,37 @@ packages:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
 
+  /ts-node@10.9.1(@types/node@20.10.5)(typescript@5.2.2):
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: 5.2.2
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 20.10.5
+      acorn: 8.10.0
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.2.2
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    dev: true
+
   /ts-toolbelt@6.15.5:
     resolution: {integrity: sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==}
 
@@ -36086,6 +36134,9 @@ packages:
     resolution: {integrity: sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==}
     requiresBuild: true
     optional: true
+
+  /undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
   /undici@5.23.0:
     resolution: {integrity: sha512-1D7w+fvRsqlQ9GscLBwcAJinqcZGHUKjbOmXdlE/v8BvEGXjeWAax+341q44EuTcHXXnfyKNbKRq4Lg7OzhMmg==}
