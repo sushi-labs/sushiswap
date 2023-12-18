@@ -1,4 +1,5 @@
-import { Button, SquidIcon } from '@sushiswap/ui'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+import { Button, SquidIcon, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
@@ -86,9 +87,13 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             target="_blank"
             rel="noreferrer noopener noreferer"
             href={bridgeUrl}
-            className={!bridgeUrl ? 'cursor-wait' : ''}
+            className={classNames(
+              !bridgeUrl ? 'cursor-wait' : '',
+              'flex items-center gap-1',
+            )}
           >
             <Dots>to destination chain</Dots>
+            <ArrowTopRightOnSquareIcon width={16} height={16} />
           </a>
         </Button>{' '}
         <span className="flex items-center gap-1">
