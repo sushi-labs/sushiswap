@@ -185,7 +185,6 @@ export class AlgebraExtractor {
           )
         }
       } else {
-        this.logFilter.start()
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
@@ -200,7 +199,6 @@ export class AlgebraExtractor {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
-      this.logFilter.start()
 
       if (this.tokenManager.tokens.size === 0)
         await this.tokenManager.addCachedTokens()
