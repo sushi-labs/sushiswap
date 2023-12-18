@@ -1,6 +1,7 @@
 import { Address } from 'viem'
 
 import {
+  PoolType,
   RPool,
   RToken,
   TYPICAL_MINIMAL_LIQUIDITY,
@@ -295,5 +296,9 @@ export class CLRPool extends RPool {
     const currentPrice = parseInt(this.sqrtPriceX96.toString()) / two96
     const p = currentPrice * currentPrice
     return direction ? p : 1 / p
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Concentrated
   }
 }
