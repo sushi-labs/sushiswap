@@ -8,7 +8,6 @@ import {
   LUSD,
   MATIC,
   MIM,
-  NFTX,
   OHM,
   OP,
   QUICK,
