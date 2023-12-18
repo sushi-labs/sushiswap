@@ -39,13 +39,19 @@ async function providerTest(provider: string) {
       events,
     })
     .then((filter) => {
-      client.watchBlocks({
+      console.log(`New LogFilter was created: ${filter.id}`)
+      const unWatchBlocks = client.watchBlocks({
         onBlock: async (block: Block) => {
           try {
             const logs = await client.getFilterChanges({ filter })
-            console.log(`Block ${block.number}: ${logs.length} logs`)
+            //if (Math.random() < 1 / 5) throw new Error('Test error')
+            console.log(
+              `Block #${block.number} (timestamp ${block.timestamp}): ${logs.length} logs`,
+            )
           } catch (e) {
-            console.log('Error getFilterChanges !!!', e)
+            console.log(new Date(), `filter ${filter.id} failed:`, e)
+            unWatchBlocks()
+            providerTest(provider)
           }
         },
       })

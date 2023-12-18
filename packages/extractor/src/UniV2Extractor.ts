@@ -171,7 +171,6 @@ export class UniV2Extractor {
           `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
         )
       } else {
-        this.logFilter.start()
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
@@ -185,7 +184,6 @@ export class UniV2Extractor {
 
   async start() {
     const startTime = performance.now()
-    this.logFilter.start()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
 
