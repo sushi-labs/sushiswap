@@ -29,11 +29,11 @@ COPY turbo.json turbo.json
 
 FROM base AS installer
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --frozen-lockfile
 
 FROM base AS builder
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 RUN pnpm exec turbo run build --filter=extractor-api
 
 FROM base AS runner

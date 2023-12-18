@@ -1,8 +1,28 @@
-apiVersion: skaffold/v4beta8
+# apiVersion: skaffold/v4beta8
+# kind: Config
+# metadata:
+#   name: sushiswap
+# build:
+#   artifacts:
+#     - image: extractor
+#       context: ../../
+#       docker:
+#         dockerfile: Dockerfile
+#         buildArgs:
+#           SCRIPT_PATH: "./apis/extractor"
+#   tagPolicy:
+#     sha256: {}
+# manifests:
+#   rawYaml:
+#     - k8s/*.yaml
+
+# To learn more about the skaffold.yaml schema visit
+# https://skaffold.dev/docs/references/yaml/
+apiVersion: skaffold/v2beta19
 kind: Config
-metadata:
-  name: sushiswap
 build:
+  tagPolicy:
+    sha256: {}
   artifacts:
     - image: extractor
       context: ../../
@@ -10,8 +30,11 @@ build:
         dockerfile: Dockerfile
         buildArgs:
           SCRIPT_PATH: "./apis/extractor"
-  tagPolicy:
-    sha256: {}
-manifests:
-  rawYaml:
-    - k8s/*.yaml
+deploy:
+  kubectl:
+    manifests:
+    - k8s/**
+profiles:
+- name: cloudbuild
+  build:
+    googleCloudBuild: {}

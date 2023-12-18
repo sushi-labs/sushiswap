@@ -1,7 +1,18 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
             "name": "Kubernetes: Run/Debug",
+            "type": "cloudcode.kubernetes",
+            "request": "launch",
+            "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
+            "watch": false,
+            "cleanUp": true,
+            "portForward": true
+        },
+        {
+            "name": "Run on Kubernetes - Cloud Build",
+            "profile": "cloudbuild",
             "type": "cloudcode.kubernetes",
             "request": "launch",
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
