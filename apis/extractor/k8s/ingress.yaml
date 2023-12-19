@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: extractor-ingress
+  name: nginx-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "ingress-nginx"
 spec:
   rules:
-  - host: swap.sushi.com
-    http:
+  - http:
       paths:
-      - path: ~^/.*\?chainId=(1|56|137|default)$
+      - path: "/*"
         pathType: ImplementationSpecific
         backend:
           service:
-            name: extractor-$1-service
+            name: nginx-service
             port:
               number: 80
