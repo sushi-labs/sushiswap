@@ -1,13 +1,14 @@
-import { useTrade as useApiTrade } from '@sushiswap/react-query'
+import { UseTradeReturn, useTrade as useApiTrade } from '@sushiswap/react-query'
 import { useAccount, useFeeData } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
-import { Amount, Native, axlUSDC } from 'sushi/currency'
+import { Amount, Native, Token, Type, axlUSDC } from 'sushi/currency'
 import { Percent, ZERO_PERCENT } from 'sushi/math'
 import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 
 import { RouterLiquiditySource } from '@sushiswap/router'
+import { RToken } from '@sushiswap/tines'
 import { squidRouterAbi } from 'sushi/abi'
 import {
   SQUID_ADAPTER_ADDRESS,
@@ -322,6 +323,36 @@ export const useSquidCrossChainTrade = ({
 
       return {
         transactionType,
+        srcTrade: isSrcSwap
+          ? srcTrade ??
+            ({
+              route: {
+                legs: [
+                  {
+                    poolName: 'Squid',
+                    tokenFrom: tokenToRToken(token0),
+                    tokenTo: tokenToRToken(srcBridgeToken),
+                    absolutePortion: 1,
+                  },
+                ],
+              },
+            } as UseTradeReturn)
+          : undefined,
+        dstTrade: isDstSwap
+          ? dstTrade ??
+            ({
+              route: {
+                legs: [
+                  {
+                    poolName: 'Squid',
+                    tokenFrom: tokenToRToken(dstBridgeToken),
+                    tokenTo: tokenToRToken(token1),
+                    absolutePortion: 1,
+                  },
+                ],
+              },
+            } as UseTradeReturn)
+          : undefined,
         srcBridgeToken,
         dstBridgeToken,
         priceImpact,
@@ -350,4 +381,16 @@ export const useSquidCrossChainTrade = ({
       ),
     queryKeyHashFn: stringify,
   })
+}
+
+function tokenToRToken(t: Type): RToken {
+  if (t instanceof Token) return t as RToken
+  const nativeRToken: RToken = {
+    address: '',
+    name: t.name,
+    symbol: t.symbol,
+    chainId: t.chainId,
+    decimals: 18,
+  }
+  return nativeRToken
 }

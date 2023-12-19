@@ -408,6 +408,8 @@ export const useStargateCrossChainTrade = ({
 
       return {
         transactionType,
+        srcTrade,
+        dstTrade,
         srcBridgeToken,
         dstBridgeToken,
         priceImpact,

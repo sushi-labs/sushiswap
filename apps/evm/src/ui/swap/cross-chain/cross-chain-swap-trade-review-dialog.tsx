@@ -70,6 +70,7 @@ import {
   failedState,
   finishedState,
 } from './cross-chain-swap-confirmation-dialog'
+import { CrossChainSwapTradeReviewRoute } from './cross-chain-swap-trade-review-route'
 import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
@@ -302,8 +303,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const { data: receipt } = useTransaction({
     chainId: chainId1,
-    // hash: lzData?.dstTxHash as `0x${string}` | undefined,
-    hash: axelarScanData?.dstTxHash as `0x${string}` | undefined,
+    hash: (adapter === SushiXSwap2Adapter.Stargate
+      ? lzData?.dstTxHash
+      : axelarScanData?.dstTxHash) as `0x${string}` | undefined,
   })
 
   useEffect(() => {
@@ -341,7 +343,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (
-      // lzData?.link &&
       axelarScanData?.link &&
       groupTs.current &&
       stepStates.source === StepState.Success
@@ -452,7 +453,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                   Swap {swapAmount?.toSignificant(6)} {token0?.symbol}{' '}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 overflow-x-hidden">
                 <List>
                   <List.Control>
                     <List.KeyValue title="Network">
@@ -509,6 +510,11 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                         }`
                       )}
                     </List.KeyValue>
+                  </List.Control>
+                </List>
+                <List className="!pt-2">
+                  <List.Control>
+                    <CrossChainSwapTradeReviewRoute />
                   </List.Control>
                 </List>
                 {recipient && (
