@@ -9,7 +9,7 @@ import { performance } from 'perf_hooks'
  */
 export async function mergeIncentives(
   incentivesToCreate: Prisma.IncentiveCreateManyInput[],
-  incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
+  incentivesToUpdate: Prisma.IncentiveCreateManyInput[],
 ) {
   const incentivesAlreadyExist = await hasIncentives()
   if (incentivesAlreadyExist) {
@@ -45,7 +45,12 @@ async function updateIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   const startTime = performance.now()
   const updatedIncentives = await Promise.all(incentivesToUpdate)
   const endTime = performance.now()
-  console.log(`LOAD - Updated ${updatedIncentives.length} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
+  console.log(
+    `LOAD - Updated ${updatedIncentives.length} incentives. (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s) `,
+  )
 }
 
 async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
@@ -66,7 +71,12 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
     count += created.count
   }
   const endTime = performance.now()
-  console.log(`LOAD - Created ${count} incentives. (${((endTime - startTime) / 1000).toFixed(1)}s)`)
+  console.log(
+    `LOAD - Created ${count} incentives. (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s)`,
+  )
 }
 
 async function hasIncentives() {

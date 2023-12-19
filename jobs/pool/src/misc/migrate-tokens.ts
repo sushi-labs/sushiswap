@@ -15,12 +15,12 @@
 //         },
 //       },
 //     })
-  
+
 //     try {
 //       const startTime = performance.now()
-  
+
 //       await start(productionClient, previewClient)
-  
+
 //       const endTime = performance.now()
 //       console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 //     } catch (e) {
@@ -32,7 +32,7 @@
 //       await productionClient.$disconnect()
 //     }
 //   }
-  
+
 //   async function start(productionClient: PrismaClient, previewClient: PrismaClient) {
 //     const approvedTokensResult = await productionClient.token.findMany({
 //       select: {
@@ -50,7 +50,7 @@
 //         status: 'APPROVED',
 //       },
 //     })
-  
+
 //     const existingTokens = await previewClient.token.findMany({
 //         select: {
 //             id: true,
@@ -70,14 +70,13 @@
 
 //     console.log(`Tokens to create: ${tokensToCreate.length}, tokens to update: ${tokensToUpdate.length}`)
 
-
 //     for (let i = 0; i < tokensToCreate.length; i += batchSize) {
 //         const batch = tokensToCreate.slice(i, i + batchSize)
-      
+
 //           const tokensCreated = await previewClient.token.createMany({
 //             data: batch,
 //           })
-        
+
 //         console.log(`LOAD - ${tokensCreated.count} tokens created.`)
 //     }
 
@@ -99,7 +98,7 @@
 //         })
 //       )
 //       const tokensUpdated = await Promise.allSettled(batchToUpdate)
-  
+
 //       console.log(`LOAD - ${tokensUpdated.length} tokens updated.`)
 //       updateTokenCount += tokensUpdated.length
 //     }
