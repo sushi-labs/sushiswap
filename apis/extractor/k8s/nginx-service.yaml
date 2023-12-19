@@ -16,10 +16,6 @@ kind: ConfigMap
 metadata:
   name: nginx-config
 data:
-  # index.html: |
-  #   <html>
-  #   <h1>Welcome</h1>
-  #   </html>
   nginx.conf: |
     events {
       worker_connections 4096;

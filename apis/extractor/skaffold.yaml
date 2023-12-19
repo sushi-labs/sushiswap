@@ -33,8 +33,20 @@ build:
 deploy:
   kubectl:
     manifests:
-    - k8s/**
+    - extractor-deployment.yaml
+    - extractor-service.yaml
+    - nginx-deployment.yaml
+    - nginx-service.yaml
 profiles:
 - name: cloudbuild
   build:
     googleCloudBuild: {}
+  deploy:
+    kubectl:
+      manifests:
+      - extractor-deployment.yaml
+      - extractor-service.yaml
+      - nginx-deployment.yaml
+      - nginx-service.yaml
+      - ingress.yaml
+      - managed-certificate.yaml
