@@ -417,4 +417,11 @@ export class Extractor {
       : []
     return pools2.concat(pools3).concat(poolsAlg)
   }
+
+  isStarted(): boolean {
+    if (this.extractorV2 && !this.extractorV2.isStarted()) return false
+    if (this.extractorV3 && !this.extractorV3.isStarted()) return false
+    if (this.extractorAlg && !this.extractorAlg.isStarted()) return false
+    return true
+  }
 }

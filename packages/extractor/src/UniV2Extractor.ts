@@ -79,6 +79,7 @@ export class UniV2Extractor {
   readonly taskCounter: Counter
   readonly poolPermanentCache: PermanentCache<PoolCacheRecord>
   watchedPools = 0
+  started = false
 
   /// @param client
   /// @param factories list of supported factories
@@ -231,13 +232,12 @@ export class UniV2Extractor {
     this.consoleLog(`${cachedPools.size} pools were taken from cache`)
     await Promise.allSettled(promises)
 
-    warnLog(
-      this.multiCallAggregator.chainId,
-      `ExtractorV2 was started (${Math.round(
+    this.consoleLog(
+      `ExtractorV2 is started and ready(${Math.round(
         performance.now() - startTime,
       )}ms)`,
-      'info',
     )
+    this.started = true
   }
 
   async updatePoolState(poolState: PoolState) {
@@ -596,5 +596,9 @@ export class UniV2Extractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`V2-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }
