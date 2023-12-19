@@ -24,14 +24,14 @@ export const CrossChainSwapTradeReviewRoute = () => {
         </span>
         <div className="flex flex-col gap-2">
           {isTradeLoading || !trade ? (
-            <SkeletonText fontSize="sm" />
+            <SkeletonText fontSize="xs" />
           ) : (
             <span className="text-xs font-medium overflow-hidden overflow-ellipsis whitespace-nowrap">
               Swap {token0?.symbol} to {trade.srcBridgeToken?.symbol}
             </span>
           )}
           {isTradeLoading || !trade ? (
-            <SkeletonBox className="h-4 py-0.5 w-[80px]" />
+            <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
           ) : trade.srcTrade ? (
             <TradeRoutePathView trade={trade.srcTrade}>
               <button
@@ -89,7 +89,7 @@ export const CrossChainSwapTradeReviewRoute = () => {
             </span>
           )}
           {isTradeLoading || !trade ? (
-            <SkeletonBox className="h-4 py-0.5 w-[80px]" />
+            <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
           ) : trade.dstTrade ? (
             <TradeRoutePathView trade={trade.dstTrade}>
               <button
