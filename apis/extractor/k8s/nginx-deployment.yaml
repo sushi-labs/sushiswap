@@ -18,17 +18,13 @@ spec:
         image: nginx:latest
         ports:
         - containerPort: 80
-        readinessProbe:
-          httpGet:
-            scheme: HTTP
-            path: /index.html
-            port: 80
-          initialDelaySeconds: 10
-          periodSeconds: 5
         volumeMounts:
-            - name: nginx-public
-              mountPath: /usr/share/nginx/html/
+          - name: nginx-volume
+            mountPath: /etc/nginx/
       volumes:
-      - name: nginx-public
-        configMap:
-          name: nginx-index-html-configmap
+        - name: nginx-volume
+          configMap:
+            name: nginx-config
+            items:
+              - key: nginx.conf
+                path: nginx.conf

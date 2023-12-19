@@ -14,13 +14,12 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-index-html-configmap
-  namespace: default
+  name: nginx-config
 data:
-  index.html: |
-    <html>
-    <h1>Welcome</h1>
-    </html>
+  # index.html: |
+  #   <html>
+  #   <h1>Welcome</h1>
+  #   </html>
   nginx.conf: |
     events {
       worker_connections 4096;
@@ -37,7 +36,7 @@ data:
         default extractor-default;
       }
       server { 
-        listen 80; 
+        listen 80;
         location / {
           proxy_pass http://$proxy_pass;
         } 
