@@ -3,6 +3,8 @@ import { getUser } from 'src/lib/api'
 import { ChainId } from 'sushi/chain'
 import { z } from 'zod'
 
+export const revalidate = 15
+
 const schema = z.object({
   id: z.string(),
   chainIds: z
