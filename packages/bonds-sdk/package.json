@@ -82,6 +82,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.19"
+    "next": "13.5.6"
   }
 }
