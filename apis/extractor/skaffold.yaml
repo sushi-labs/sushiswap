@@ -33,10 +33,10 @@ build:
 deploy:
   kubectl:
     manifests:
-    - extractor-deployment.yaml
-    - extractor-service.yaml
-    - nginx-deployment.yaml
-    - nginx-service.yaml
+    - k8s/extractor-deployment.yaml
+    - k8s/extractor-service.yaml
+    - k8s/nginx-deployment.yaml
+    - k8s/nginx-service.yaml
 profiles:
 - name: cloudbuild
   build:
@@ -44,9 +44,9 @@ profiles:
   deploy:
     kubectl:
       manifests:
-      - extractor-deployment.yaml
-      - extractor-service.yaml
-      - nginx-deployment.yaml
-      - nginx-service.yaml
-      - ingress.yaml
-      - managed-certificate.yaml
+      - k8s/extractor-deployment.yaml
+      - k8s/extractor-service.yaml
+      - k8s/nginx-deployment.yaml
+      - k8s/nginx-service.yaml
+      - k8s/ingress.yaml
+      - k8s/managed-certificate.yaml

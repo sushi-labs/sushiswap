@@ -35,6 +35,10 @@ data:
         listen 80;
         location / {
           proxy_pass http://$proxy_pass;
-        } 
+        }
+        location /health {
+          auth_basic off;
+          return 200;
+        }
       } 
     }
