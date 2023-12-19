@@ -12,14 +12,12 @@ import { type Address, type Hex, stringify } from 'viem'
 import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
-import { apiAdapter02To01 } from './apiAdapter'
 import type {
   UseTradeParams,
   UseTradeQuerySelect,
   UseTradeReturnWriteArgs,
 } from './types'
-import { tradeValidator01 } from './validator01'
-import { tradeValidator02 } from './validator02'
+import { tradeValidator } from './validator'
 
 const SWAP_BASE_URL =
   process.env['SWAP_API_V0_BASE_URL'] ||
@@ -94,20 +92,7 @@ export const useTradeQuery = (
       const res = await fetch(params.toString())
       const json = await res.json()
       const deserialised = deserialize(json)
-      try {
-        // Try API 1.0
-        return tradeValidator01.parse(deserialised)
-      } catch (e) {
-        try {
-          // Try  API 2.0
-          if (fromToken && toToken) {
-            const resp2 = tradeValidator02.parse(deserialised)
-            const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
-            return resp1
-          }
-        } catch (_e) {}
-        throw e
-      }
+      return tradeValidator.parse(deserialised)
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,

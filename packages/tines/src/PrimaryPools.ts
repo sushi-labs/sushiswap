@@ -1,7 +1,7 @@
 import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
-import { PoolType, RPool, RToken } from './RPool'
+import { RPool, RToken } from './RPool'
 import { getBigInt, revertPositive } from './Utils'
 import { computeHybridLiquidity } from './functions'
 
@@ -27,10 +27,6 @@ export class ConstantProductRPool extends RPool {
     this.reserve0Number = Number(res0)
     this.reserve1 = res1
     this.reserve1Number = Number(res1)
-  }
-
-  override poolType(): PoolType {
-    return PoolType.Classic
   }
 
   calcOutByIn(
@@ -122,10 +118,6 @@ export class HybridRPool extends RPool {
     this.D = 0n
     this.reserve0 = res0
     this.reserve1 = res1
-  }
-
-  override poolType(): PoolType {
-    return PoolType.Curve
   }
 
   computeLiquidity(): bigint {

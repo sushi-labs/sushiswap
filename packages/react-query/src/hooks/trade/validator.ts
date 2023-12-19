@@ -1,6 +1,6 @@
 import z from 'zod'
 
-export const tokenValidator = z.object({
+const tokenValidator = z.object({
   chainId: z.number().or(z.string()),
   decimals: z.number().optional(),
   symbol: z.string(),
@@ -24,7 +24,7 @@ export const legValidator = z.object({
   poolName: z.string(),
 })
 
-export const tradeValidator01 = z.object({
+export const tradeValidator = z.object({
   route: z
     .object({
       status: z.string(),

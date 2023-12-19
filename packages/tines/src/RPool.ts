@@ -18,16 +18,6 @@ export function setTokenId(...tokens: RToken[]) {
   })
 }
 
-export enum PoolType {
-  Wrap = 'Wrap',
-  Bridge = 'Bridge',
-  Classic = 'Classic',
-  Concentrated = 'Concentrated',
-  Stable = 'Stable',
-  Curve = 'Curve',
-  Unknown = 'Unknown',
-}
-
 export abstract class RPool {
   readonly address: Address
   token0: RToken
@@ -114,9 +104,5 @@ export abstract class RPool {
   // not so easy for multitoken pools
   uniqueID(): string {
     return this.address
-  }
-
-  poolType(): PoolType {
-    return PoolType.Unknown
   }
 }

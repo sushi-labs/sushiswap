@@ -117,9 +117,6 @@ importers:
       '@sushiswap/router-config':
         specifier: workspace:*
         version: link:../../config/router
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
       '@sushiswap/v2-sdk':
         specifier: workspace:*
         version: link:../../packages/v2-sdk
@@ -1478,9 +1475,6 @@ importers:
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../router
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../tines
       '@tanstack/react-query':
         specifier: 4.28.0
         version: 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
@@ -14674,7 +14668,7 @@ packages:
   /@types/concat-stream@1.6.1:
     resolution: {integrity: sha512-eHE4cQPoj6ngxBZMvVf6Hw7Mh4jMW4U9lpGmS5GBPB9RYxlFg+CHaVN7ErNY4W9XfLIEn20b4VDYaIrbq0q4uA==}
     dependencies:
-      '@types/node': 20.10.0
+      '@types/node': 18.17.5
     dev: true
 
   /@types/concat-stream@2.0.0:
@@ -14956,7 +14950,7 @@ packages:
   /@types/form-data@0.0.33:
     resolution: {integrity: sha512-8BSvG1kGm83cyJITQMZSulnl6QV8jqAGreJsc5tPu1Jq0vTSOiY/k24Wx82JRpWwZSqrala6sd5rWi6aNXvqcw==}
     dependencies:
-      '@types/node': 20.10.0
+      '@types/node': 18.17.5
     dev: true
 
   /@types/geojson@7946.0.10:
@@ -15352,7 +15346,7 @@ packages:
   /@types/ws@7.4.7:
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
     dependencies:
-      '@types/node': 20.10.0
+      '@types/node': 18.17.5
 
   /@types/ws@8.5.5:
     resolution: {integrity: sha512-lwhs8hktwxSjf9UaZ9tG5M03PGogvFaH8gUgLNbN9HKIg0dvv6q+gkSuJ8HN4/VbyxkuLzCjlN7GquQ0gUJfIg==}
@@ -37836,7 +37830,6 @@ packages:
 
   /zksync-web3@0.13.4(ethers@5.7.2):
     resolution: {integrity: sha512-AjCKhn9TRqsk2T9VLKxlod22rnVWOWGOjq+QXppFe2yTxZx9dVaai325OJ0aa7a3m5wx+9yhPqBu23jG2xPo5Q==}
-    deprecated: This package has been deprecated in favor of zksync-ethers@5.0.0
     peerDependencies:
       ethers: ^5.7.0
     dependencies:
