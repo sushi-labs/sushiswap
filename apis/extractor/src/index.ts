@@ -36,7 +36,7 @@ import { EXTRACTOR_CONFIG } from './config'
 import { makeAPI02Object } from './makeAPI02Object'
 import { RequestStatistics, ResponseRejectReason } from './requestStatistics'
 
-const API_VERSION = 1
+const API_VERSION = 2
 
 const querySchema = z.object({
   chainId: z.coerce
