@@ -1,4 +1,4 @@
-import type * as _ from '@prisma/client/runtime'
+import type * as _ from '@prisma/client'
 
 import { type PoolApiSchema } from '../../pure/pools/pool/schema'
 import { getPoolsFromDB } from './pools/'

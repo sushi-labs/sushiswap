@@ -7,8 +7,9 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const TEST_MODE = TestMode.KNOWN_TOKENS
-const REQUEST_PER_SEC = 25
+const TEST_MODE = TestMode.ONE_UNKNOWN_TOKEN
+const REQUEST_PER_SEC = 2
+const SWAP_AMOUNT = 10
 
 const CACHE_DIR = '../cache'
 const TOKEN_FILES_PREFIX = 'tokens-'
@@ -37,6 +38,12 @@ function loadAllTokens(): Record<number, Token[]> {
       .split('\n')
       .map((s) => (s === '' ? undefined : (JSON.parse(s) as Token)))
       .filter((t) => t !== undefined) as Token[]
+    res[chainId].unshift({
+      address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      name: 'Native',
+      symbol: 'Native',
+      decimals: 18,
+    })
   })
   return res
 }
@@ -65,7 +72,7 @@ function getRandomPair1(num: number): [number, number] {
 
 // arbitrary token against arbitrary first 5 tokens
 function getRandomPair2(num: number): [number, number] {
-  const best = Math.min(num - 1, 5)
+  const best = Math.min(num - 1, 6)
   const first = Math.floor(Math.random() * best)
   let second = Math.floor(Math.random() * (num - 1))
   if (second >= first) ++second
@@ -73,7 +80,7 @@ function getRandomPair2(num: number): [number, number] {
 }
 
 function getRandomPair3(num: number): [number, number] {
-  const best = Math.min(num - 1, 5)
+  const best = Math.min(num - 1, 6)
   const first = Math.floor(Math.random() * best)
   let second = Math.floor(Math.random() * (best - 1))
   if (second >= first) ++second
@@ -112,7 +119,7 @@ async function makeRequest(
     if (resp.status === 200) {
       const json = (await resp.json()) as string
       const respObj = JSON.parse(json)
-      res = respObj.route.status
+      res = respObj.route?.status ?? respObj.status
     } else throw new Error(resp.status.toString())
   } catch (e) {
     const timing = performance.now() - startTime
@@ -152,7 +159,7 @@ async function simulate() {
     const chainId = getRandomNetwork(totalTokens, tokenNumber)
     const chainTokens = tokens[chainId]
     const [from, to] = getRandomPair(chainTokens.length, TEST_MODE)
-    const amount = BigInt(10 ** (chainTokens[from].decimals + 1))
+    const amount = BigInt(SWAP_AMOUNT * 10 ** chainTokens[from].decimals)
     // const startTime = performance.now()
     // const res = await
     makeRequest(
