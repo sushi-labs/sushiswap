@@ -17,7 +17,7 @@ export const TableFiltersResetButton: FC = () => {
     // payoutAssets,
     // bondAssets,
   } = useBondFilters()
-  const setFilters = useSetBondFilters()
+  const { setFilters } = useSetBondFilters()
 
   const networks = useMemo(
     () => (BONDS_ENABLED_CHAIN_IDS.length === chainIds?.length ? [] : chainIds),

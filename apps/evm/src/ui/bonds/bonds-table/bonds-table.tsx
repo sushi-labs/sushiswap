@@ -23,13 +23,17 @@ const COLUMNS = [
 ] satisfies ColumnDef<Bond, unknown>[]
 
 interface PositionsTableProps {
-  initialData?: Bond[]
+  data: Bond[]
+  isLoading?: boolean
   onRowClick?(row: Bond): void
 }
 
 const tableState = { sorting: [{ id: 'discount', desc: true }] }
 
-export const BondsTable: FC<PositionsTableProps> = ({ initialData = [] }) => {
+export const BondsTable: FC<PositionsTableProps> = ({
+  data,
+  isLoading = false,
+}) => {
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -41,14 +45,14 @@ export const BondsTable: FC<PositionsTableProps> = ({ initialData = [] }) => {
         <CardTitle>
           Bonds{' '}
           <span className="text-gray-400 dark:text-slate-500">
-            ({initialData?.length})
+            ({data?.length})
           </span>
         </CardTitle>
       </CardHeader>
       <DataTable
-        loading={false}
+        loading={isLoading}
         columns={COLUMNS}
-        data={initialData}
+        data={data}
         pagination={true}
         onPaginationChange={setPaginationState}
         state={{

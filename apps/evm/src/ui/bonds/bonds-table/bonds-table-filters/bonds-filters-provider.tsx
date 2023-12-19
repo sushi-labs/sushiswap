@@ -84,5 +84,5 @@ export const useSetBondFilters = () => {
     }
   }
 
-  return setFilters
+  return { setFilters }
 }

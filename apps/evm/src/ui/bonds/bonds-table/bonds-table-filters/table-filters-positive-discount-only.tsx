@@ -8,7 +8,7 @@ import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 export const TableFiltersPositiveDiscountOnly: FC = () => {
   const [isPending, startTransition] = useTransition()
   const { onlyDiscounted } = useBondFilters()
-  const setFilters = useSetBondFilters()
+  const { setFilters } = useSetBondFilters()
   const [checked, setChecked] = useState(onlyDiscounted)
 
   const toggle = useCallback(

@@ -30,7 +30,7 @@ export const TableFiltersNetwork: FC = () => {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { chainIds } = useBondFilters()
-  const setFilters = useSetBondFilters()
+  const { setFilters } = useSetBondFilters()
   const [localValue, setValues] = useState<BondChainId[]>(
     isAllThenNone(chainIds),
   )

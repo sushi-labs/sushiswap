@@ -8,7 +8,7 @@ import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 export const TableFiltersOpenOnly: FC = () => {
   const [isPending, startTransition] = useTransition()
   const { onlyOpen } = useBondFilters()
-  const setFilters = useSetBondFilters()
+  const { setFilters } = useSetBondFilters()
   const [checked, setChecked] = useState(onlyOpen)
 
   const toggle = useCallback(

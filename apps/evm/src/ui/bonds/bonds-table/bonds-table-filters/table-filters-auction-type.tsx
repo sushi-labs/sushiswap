@@ -29,7 +29,7 @@ import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 const AUCTIONTYPE_DESCRIPTIONS: Record<AuctionType, string> = {
   [AuctionType.Static]:
     'A fixed-price auction type that enabled issuers to set a fixed price that bonders must pay to obtain payout tokens.',
-  [AuctionType.Dynamic]: '',
+  [AuctionType.Dynamic]: 'Lorem ipsum',
 }
 
 const isAllThenNone = (auctionTypes: AuctionType[] | undefined) =>
@@ -41,7 +41,7 @@ export const TableFiltersAuctionType: FC = () => {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const { auctionTypes } = useBondFilters()
-  const setFilters = useSetBondFilters()
+  const { setFilters } = useSetBondFilters()
   const [peekedAuctionType, setPeekedAuctionType] = React.useState<AuctionType>(
     AuctionType.Static,
   )
@@ -59,18 +59,16 @@ export const TableFiltersAuctionType: FC = () => {
       } else {
         _newValues = [...(values ?? []), item]
       }
+      _newValues = isAllThenNone(_newValues)
+
       setValues(_newValues)
 
       startTransition(() => {
         setFilters((prev) => {
           if (prev.auctionTypes?.includes(item)) {
-            const auctionTypes = prev.auctionTypes.filter((el) => el !== item)
-            return { ...prev, auctionTypes }
+            return { ...prev, auctionTypes: _newValues }
           } else {
-            return {
-              ...prev,
-              auctionTypes: [...(prev.auctionTypes ?? []), item],
-            }
+            return { ...prev, auctionTypes: _newValues }
           }
         })
       })
@@ -120,6 +118,7 @@ export const TableFiltersAuctionType: FC = () => {
             <HoverCardContent
               side="left"
               align="start"
+              sideOffset={120}
               forceMount
               className="hidden md:block w-[240px]"
             >
@@ -168,13 +167,9 @@ const AuctionTypeItem: FC<AuctionTypeItemProps> = ({
 }) => {
   const ref = React.useRef<HTMLDivElement>(null)
 
-  useMutationObserver(ref, (mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.type === 'attributes') {
-        if (mutation.attributeName === 'aria-selected') {
-          onPeek(auctionType)
-        }
-      }
+  useMutationObserver(ref, () => {
+    if (ref.current?.ariaSelected) {
+      onPeek(auctionType)
     }
   })
 
