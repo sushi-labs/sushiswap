@@ -196,7 +196,10 @@ async function main() {
   )
 
   app.get('/health', (_, res: Response) => {
-    return res.status(200).send()
+    const isStarted = Array.from(extractors.values()).every((e) =>
+      e.isStarted(),
+    )
+    return res.status(isStarted ? 200 : 503).send()
   })
 
   app.get('/pool-codes-for-token', async (req: Request, res: Response) => {
@@ -220,6 +223,7 @@ async function main() {
       })
       .parse(req.query)
     const extractor = extractors.get(chainId) as Extractor
+
     const tokenManager = extractor.tokenManager
     const token = (await tokenManager.findToken(address)) as Token
     const poolCodesMap = new Map<string, PoolCode>()

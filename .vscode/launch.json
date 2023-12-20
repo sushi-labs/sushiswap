@@ -17,7 +17,7 @@
             "request": "launch",
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
             "watch": false,
-            "cleanUp": true,
+            "cleanUp": false,
             "portForward": true,
             "imageRegistry": "gcr.io/sushi-dev-382510"
         }
