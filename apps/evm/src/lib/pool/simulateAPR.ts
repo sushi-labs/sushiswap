@@ -22,7 +22,8 @@ export const simulate = async ({
 
   // Iterate over active distributions to compute the APR
   return distributionData?.reduce((prev, curr) => {
-    const active = curr.endTimestamp > Date.now() && curr.startTimestamp < Date.now()
+    const active =
+      curr.endTimestamp > Date.now() && curr.startTimestamp < Date.now()
 
     if (!active) return prev
     const yearlyRewards =
@@ -38,7 +39,8 @@ export const simulate = async ({
           (poolData?.poolBalanceToken0 + +amount0.toExact()) +
           (curr.propToken1 * +amount1.toExact()) /
             (poolData?.poolBalanceToken1 + +amount1.toExact()) +
-          (curr.propFees * liquidity) / (poolData?.poolTotalLiquidity + liquidity))) /
+          (curr.propFees * liquidity) /
+            (poolData?.poolTotalLiquidity + liquidity))) /
         (+amount0.toExact() *
           +prices[amount0.currency.address].toSignificant(6) +
           +amount1.toExact() *
