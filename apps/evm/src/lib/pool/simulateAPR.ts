@@ -22,23 +22,23 @@ export const simulate = async ({
 
   // Iterate over active distributions to compute the APR
   return distributionData?.reduce((prev, curr) => {
-    const active = curr.end > Date.now() && curr.start < Date.now()
+    const active = curr.endTimestamp > Date.now() && curr.startTimestamp < Date.now()
 
     if (!active) return prev
     const yearlyRewards =
       (+prices[curr.token.address].toSignificant(6) *
         curr.amount *
         (365 * 24 * 3600)) /
-      (curr.end - curr.start)
+      (curr.endTimestamp - curr.startTimestamp)
 
     return (
       prev +
       (yearlyRewards *
         ((curr.propToken0 * +amount0.toExact()) /
-          (poolData?.token0InPool + +amount0.toExact()) +
+          (poolData?.poolBalanceToken0 + +amount0.toExact()) +
           (curr.propToken1 * +amount1.toExact()) /
-            (poolData?.token1InPool + +amount1.toExact()) +
-          (curr.propFees * liquidity) / (poolData?.liquidity + liquidity))) /
+            (poolData?.poolBalanceToken1 + +amount1.toExact()) +
+          (curr.propFees * liquidity) / (poolData?.poolTotalLiquidity + liquidity))) /
         (+amount0.toExact() *
           +prices[amount0.currency.address].toSignificant(6) +
           +amount1.toExact() *
