@@ -27,7 +27,12 @@ const COLUMNS = [
     header: 'Reward (per day)',
     cell: (props) => {
       const { startTimestamp, endTimestamp, amount, token } = props.row.original
-      const _reward = rewardPerDay({ start: startTimestamp, end: endTimestamp, amount, token })
+      const _reward = rewardPerDay({
+        start: startTimestamp,
+        end: endTimestamp,
+        amount,
+        token,
+      })
       if (!_reward) return <>n/a</>
 
       return (
