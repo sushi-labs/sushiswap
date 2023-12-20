@@ -37,6 +37,7 @@ export class Extractor {
   extractorAlg?: AlgebraExtractor
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
+  readonly logFilter: LogFilter2
   cacheDir: string
   logging?: boolean
   requestStartedNum = 0
@@ -76,17 +77,18 @@ export class Extractor {
       args.cacheDir,
       `tokens-${this.multiCallAggregator.chainId}`,
     )
-    const logFilter = new LogFilter2(
+    this.logFilter = new LogFilter2(
       this.client,
       args.logDepth,
       args.logType ?? LogFilterType.OneCall,
+      args.logging,
     )
     if (args.factoriesV2 && args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
         this.client,
         args.factoriesV2,
         args.cacheDir,
-        logFilter,
+        this.logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
         this.tokenManager,
@@ -97,7 +99,7 @@ export class Extractor {
         args.tickHelperContract,
         args.factoriesV3,
         args.cacheDir,
-        logFilter,
+        this.logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
         this.tokenManager,
@@ -108,7 +110,7 @@ export class Extractor {
         args.tickHelperContract,
         args.factoriesAlgebra,
         args.cacheDir,
-        logFilter,
+        this.logFilter,
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
         this.tokenManager,
@@ -118,6 +120,7 @@ export class Extractor {
 
   /// @param tokensPrefetch Prefetch all pools between these tokens
   async start(tokensPrefetch: Token[] = []) {
+    this.logFilter.start()
     await Promise.all(
       [
         this.extractorV2?.start(),
@@ -413,5 +416,12 @@ export class Extractor {
       ? this.extractorAlg.getCurrentPoolCodes()
       : []
     return pools2.concat(pools3).concat(poolsAlg)
+  }
+
+  isStarted(): boolean {
+    if (this.extractorV2 && !this.extractorV2.isStarted()) return false
+    if (this.extractorV3 && !this.extractorV3.isStarted()) return false
+    if (this.extractorAlg && !this.extractorAlg.isStarted()) return false
+    return true
   }
 }

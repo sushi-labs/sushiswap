@@ -1,5 +1,6 @@
 import { ChainId } from 'sushi/chain'
 import {
+  AAVE,
   BUSD,
   DAI,
   FRAX,
@@ -7,7 +8,6 @@ import {
   LUSD,
   MATIC,
   MIM,
-  NFTX,
   OHM,
   OP,
   QUICK,
@@ -33,10 +33,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     MIM[ChainId.ETHEREUM],
     FRAX[ChainId.ETHEREUM],
     OHM[ChainId.ETHEREUM],
-    NFTX[ChainId.ETHEREUM],
     LINK[ChainId.ETHEREUM],
     SUSHI[ChainId.ETHEREUM],
-    MIM[ChainId.ETHEREUM],
   ],
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
   [ChainId.KOVAN]: [WNATIVE[ChainId.KOVAN], USDC[ChainId.KOVAN]],
@@ -47,16 +45,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.POLYGON],
     USDT[ChainId.POLYGON],
     DAI[ChainId.POLYGON],
-    MIM[ChainId.POLYGON],
     FRAX[ChainId.POLYGON],
     QUICK[ChainId.POLYGON],
-    new Token({
-      chainId: ChainId.POLYGON,
-      address: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
-      decimals: 18,
-      name: 'Toucan Protocol: Base Carbon Tonne',
-      symbol: 'BCT',
-    }),
+    LINK[ChainId.POLYGON],
+    AAVE[ChainId.POLYGON],
   ],
   [ChainId.POLYGON_TESTNET]: [
     WNATIVE[ChainId.POLYGON_TESTNET],
@@ -70,14 +62,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.FANTOM],
     DAI[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
-    FRAX[ChainId.FANTOM],
   ],
   [ChainId.GNOSIS]: [
     WNATIVE[ChainId.GNOSIS],
     WETH9[ChainId.GNOSIS],
     USDC[ChainId.GNOSIS],
     USDT[ChainId.GNOSIS],
-    DAI[ChainId.GNOSIS],
     new Token({
       chainId: ChainId.GNOSIS,
       address: '0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb',
@@ -92,8 +82,6 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDC[ChainId.BSC],
     USDT[ChainId.BSC],
     DAI[ChainId.BSC],
-    MIM[ChainId.BSC],
-    FRAX[ChainId.BSC],
     BUSD[ChainId.BSC],
     new Token({
       chainId: ChainId.BSC,
@@ -168,6 +156,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
       symbol: 'ARB',
       name: 'Arbitrum',
     }),
+    SUSHI[ChainId.ARBITRUM_NOVA],
   ],
   [ChainId.AVALANCHE]: [
     WNATIVE[ChainId.AVALANCHE],
@@ -189,7 +178,6 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
       symbol: 'USDT.e',
       name: 'Tether USD',
     }),
-    DAI[ChainId.AVALANCHE],
     new Token({
       chainId: ChainId.AVALANCHE,
       address: '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70',
@@ -198,7 +186,6 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
       name: 'Dai Stablecoin',
     }),
     MIM[ChainId.AVALANCHE],
-    FRAX[ChainId.AVALANCHE],
     new Token({
       chainId: ChainId.AVALANCHE,
       address: '0x0da67235dD5787D67955420C84ca1cEcd4E5Bb3b',

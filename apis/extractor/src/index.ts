@@ -33,6 +33,7 @@ import { Native, Token } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import z from 'zod'
 import { CONFIG_GROUPS, EXTRACTOR_CONFIG } from './config'
+import { makeAPI02Object } from './makeAPI02Object'
 import { RequestStatistics, ResponseRejectReason } from './requestStatistics'
 
 const querySchema = z.object({
@@ -119,7 +120,6 @@ const requestStatistics = new RequestStatistics(60_000, 3_600_000)
 
 async function main() {
   const app: Express = express()
-
   Sentry.init({
     enabled: false,
     dsn: SENTRY_DSN,
@@ -284,130 +284,123 @@ function processRequest(
   rpAddress: Record<number, Address>,
 ) {
   return async (req: Request, res: Response) => {
-    const statistics = requestStatistics.requestProcessingStart()
-    const parsed = qSchema.safeParse(req.query)
-    if (!parsed.success) {
-      requestStatistics.requestRejected(ResponseRejectReason.WRONG_INPUT_PARAMS)
-      return res.status(422).send()
-    }
-    const {
-      chainId,
-      tokenIn: _tokenIn,
-      tokenOut: _tokenOut,
-      amount,
-      gasPrice,
-      source,
-      to,
-      preferSushi,
-      maxPriceImpact,
-    } = parsed.data
-    const extractor = extractors.get(chainId) as Extractor
-    const tokenManager = extractor.tokenManager
+    try {
+      const statistics = requestStatistics.requestProcessingStart()
 
-    // Timing optimization: try to take tokens sync first - to avoid async call if tokens are known
-    let tokensAreKnown = true
-    let tokenIn =
-      _tokenIn === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-        ? Native.onChain(chainId)
-        : tokenManager.getKnownToken(_tokenIn as Address)
-    let tokenOut =
-      _tokenOut === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-        ? Native.onChain(chainId)
-        : tokenManager.getKnownToken(_tokenOut as Address)
-    if (!tokenIn || !tokenOut) {
-      // take unknown tokens async
-      tokensAreKnown = false
-      if (tokenIn === undefined && tokenOut !== undefined) {
-        tokenIn = await tokenManager.findToken(_tokenIn as Address)
-      } else if (tokenIn !== undefined && tokenOut === undefined) {
-        tokenOut = await tokenManager.findToken(_tokenOut as Address)
-      } else {
-        // both tokens are unknown
-        const tokens = await Promise.all([
-          tokenManager.findToken(_tokenIn as Address),
-          tokenManager.findToken(_tokenOut as Address),
-        ])
-        tokenIn = tokens[0]
-        tokenOut = tokens[1]
+      // Server Overloaded protection - time not came
+      // @ts-ignore
+      // if (process.getActiveResourcesInfo().length > 150) {
+      //   requestStatistics.requestRejected(
+      //     ResponseRejectReason.SERVER_OVERLOADED,
+      //   )
+      //   return res.status(529).send('Server Overloaded')
+      // }
+
+      const parsed = qSchema.safeParse(req.query)
+      if (!parsed.success) {
+        requestStatistics.requestRejected(
+          ResponseRejectReason.WRONG_INPUT_PARAMS,
+        )
+        return res.status(422).send('Request parameters parsing error')
       }
-    }
-    if (!tokenIn || !tokenOut) {
-      requestStatistics.requestRejected(ResponseRejectReason.UNSUPPORTED_TOKENS)
-      throw new Error('tokenIn or tokenOut is not supported')
-    }
+      const {
+        chainId,
+        tokenIn: _tokenIn,
+        tokenOut: _tokenOut,
+        amount,
+        gasPrice,
+        source,
+        to,
+        preferSushi,
+        maxPriceImpact,
+      } = parsed.data
+      const extractor = extractors.get(chainId) as Extractor
+      const tokenManager = extractor.tokenManager
 
-    const poolCodesMap = new Map<string, PoolCode>()
-    const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
-    nativeProvider
-      .getCurrentPoolList()
-      .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-
-    const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
-    const additionalA = tokenIn
-      ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
-      : []
-    const additionalB = tokenOut
-      ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? []
-      : []
-
-    const tokens = [
-      tokenIn.wrapped,
-      tokenOut.wrapped,
-      ...common,
-      ...additionalA,
-      ...additionalB,
-    ]
-
-    const poolCodes = tokensAreKnown
-      ? extractor.getPoolCodesForTokens(tokens) // fast version
-      : await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
-    poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-
-    const bestRoute = preferSushi
-      ? Router.findSpecialRoute(
-          poolCodesMap,
-          chainId,
-          tokenIn,
-          amount,
-          tokenOut,
-          gasPrice ?? 30e9,
+      // Timing optimization: try to take tokens sync first - to avoid async call if tokens are known
+      let tokensAreKnown = true
+      let tokenIn =
+        _tokenIn.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          ? Native.onChain(chainId)
+          : tokenManager.getKnownToken(_tokenIn as Address)
+      let tokenOut =
+        _tokenOut.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+          ? Native.onChain(chainId)
+          : tokenManager.getKnownToken(_tokenOut as Address)
+      if (!tokenIn || !tokenOut) {
+        // take unknown tokens async
+        tokensAreKnown = false
+        if (tokenIn === undefined && tokenOut !== undefined) {
+          tokenIn = await tokenManager.findToken(_tokenIn as Address)
+        } else if (tokenIn !== undefined && tokenOut === undefined) {
+          tokenOut = await tokenManager.findToken(_tokenOut as Address)
+        } else {
+          // both tokens are unknown
+          const tokens = await Promise.all([
+            tokenManager.findToken(_tokenIn as Address),
+            tokenManager.findToken(_tokenOut as Address),
+          ])
+          tokenIn = tokens[0]
+          tokenOut = tokens[1]
+        }
+      }
+      if (!tokenIn || !tokenOut) {
+        requestStatistics.requestRejected(
+          ResponseRejectReason.UNSUPPORTED_TOKENS,
         )
-      : Router.findBestRoute(
-          poolCodesMap,
-          chainId,
-          tokenIn,
-          amount,
-          tokenOut,
-          gasPrice ?? 30e9,
-        )
+        return res
+          .status(422)
+          .send(`Unknown token ${tokenIn === undefined ? _tokenIn : _tokenOut}`)
+      }
 
-    const { serialize } = await import('wagmi')
+      const poolCodesMap = new Map<string, PoolCode>()
+      const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
+      nativeProvider
+        .getCurrentPoolList()
+        .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
-    const resp = res.json(
-      serialize({
-        route: {
-          status: bestRoute?.status,
-          fromToken:
-            bestRoute?.fromToken?.address === ''
-              ? Native.onChain(chainId)
-              : bestRoute?.fromToken,
-          toToken:
-            bestRoute?.toToken?.address === ''
-              ? Native.onChain(chainId)
-              : bestRoute?.toToken,
-          primaryPrice: bestRoute?.primaryPrice,
-          swapPrice: bestRoute?.swapPrice,
-          amountIn: bestRoute?.amountIn,
-          amountInBI: bestRoute?.amountInBI,
-          amountOut: bestRoute?.amountOut,
-          amountOutBI: bestRoute?.amountOutBI,
-          priceImpact: bestRoute?.priceImpact,
-          totalAmountOut: bestRoute?.totalAmountOut,
-          totalAmountOutBI: bestRoute?.totalAmountOutBI,
-          gasSpent: bestRoute?.gasSpent,
-          legs: bestRoute?.legs,
-        },
-        args: to
+      const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
+      const additionalA = tokenIn
+        ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
+        : []
+      const additionalB = tokenOut
+        ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? []
+        : []
+
+      const tokens = [
+        tokenIn.wrapped,
+        tokenOut.wrapped,
+        ...common,
+        ...additionalA,
+        ...additionalB,
+      ]
+
+      const poolCodes = tokensAreKnown
+        ? extractor.getPoolCodesForTokens(tokens) // fast version
+        : await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
+      poolCodes.forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
+
+      const bestRoute = preferSushi
+        ? Router.findSpecialRoute(
+            poolCodesMap,
+            chainId,
+            tokenIn,
+            amount,
+            tokenOut,
+            gasPrice ?? 30e9,
+          )
+        : Router.findBestRoute(
+            poolCodesMap,
+            chainId,
+            tokenIn,
+            amount,
+            tokenOut,
+            gasPrice ?? 30e9,
+          )
+
+      const json = makeAPI02Object(
+        bestRoute,
+        to
           ? rpCode(
               poolCodesMap,
               bestRoute,
@@ -420,10 +413,15 @@ function processRequest(
               source ?? RouterLiquiditySource.Sender,
             )
           : undefined,
-      }),
-    )
-    requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
-    return resp
+        rpAddress[chainId] as Address,
+      )
+
+      requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
+      return res.json(JSON.stringify(json))
+    } catch (e) {
+      requestStatistics.requestRejected(ResponseRejectReason.UNKNOWN_EXCEPTION)
+      throw e
+    }
   }
 }
 

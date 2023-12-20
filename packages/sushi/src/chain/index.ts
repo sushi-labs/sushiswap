@@ -9,6 +9,7 @@ const EIP3091_OVERRIDE = [
   ChainId.OPTIMISM,
   ChainId.BOBA,
   ChainId.BASE,
+  ChainId.FILECOIN,
 ] as number[]
 
 type Data = typeof RAW[number]
@@ -115,6 +116,8 @@ export class Chain implements Chain {
         },
         ...(this.explorers ?? []),
       ]
+    } else if (data.name === 'Filecoin') {
+      this.explorers?.sort((explorer) => (explorer.name === 'Filfox' ? -1 : 1))
     }
   }
   getTxUrl(txHash: string): string {

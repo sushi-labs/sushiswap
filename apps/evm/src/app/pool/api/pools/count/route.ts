@@ -2,6 +2,8 @@ import { PoolCountApiSchema, getPoolCountFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../cors'
 
+export const revalidate = 15
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const result = PoolCountApiSchema.safeParse(Object.fromEntries(searchParams))
