@@ -36,8 +36,6 @@ import { EXTRACTOR_CONFIG } from './config'
 import { makeAPI02Object } from './makeAPI02Object'
 import { RequestStatistics, ResponseRejectReason } from './requestStatistics'
 
-const API_VERSION = 2
-
 const querySchema = z.object({
   chainId: z.coerce
     .number()
@@ -117,12 +115,8 @@ const nativeProviders = new Map<
 
 const requestStatistics = new RequestStatistics(60_000, 3_600_000)
 
-let wagmi: any
 async function main() {
   const app: Express = express()
-
-  wagmi = await import('wagmi')
-
   Sentry.init({
     enabled: true,
     dsn: SENTRY_DSN,
@@ -395,50 +389,9 @@ function processRequest(
             gasPrice ?? 30e9,
           )
 
-      let resp
-      // @ts-ignore
-      if (API_VERSION === 1) {
-        resp = res.json(
-          wagmi.serialize({
-            route: {
-              status: bestRoute?.status,
-              fromToken:
-                bestRoute?.fromToken?.address === ''
-                  ? Native.onChain(chainId)
-                  : bestRoute?.fromToken,
-              toToken:
-                bestRoute?.toToken?.address === ''
-                  ? Native.onChain(chainId)
-                  : bestRoute?.toToken,
-              primaryPrice: bestRoute?.primaryPrice,
-              swapPrice: bestRoute?.swapPrice,
-              amountIn: bestRoute?.amountIn,
-              amountInBI: bestRoute?.amountInBI,
-              amountOut: bestRoute?.amountOut,
-              amountOutBI: bestRoute?.amountOutBI,
-              priceImpact: bestRoute?.priceImpact,
-              totalAmountOut: bestRoute?.totalAmountOut,
-              totalAmountOutBI: bestRoute?.totalAmountOutBI,
-              gasSpent: bestRoute?.gasSpent,
-              legs: bestRoute?.legs,
-            },
-            args: to
-              ? rpCode(
-                  poolCodesMap,
-                  bestRoute,
-                  tokenIn,
-                  tokenOut,
-                  to,
-                  rpAddress[chainId] as Address,
-                  [],
-                  maxPriceImpact,
-                  source ?? RouterLiquiditySource.Sender,
-                )
-              : undefined,
-          }),
-        )
-      } else {
-        const rpParams = to
+      const json = makeAPI02Object(
+        bestRoute,
+        to
           ? rpCode(
               poolCodesMap,
               bestRoute,
@@ -450,16 +403,12 @@ function processRequest(
               maxPriceImpact,
               source ?? RouterLiquiditySource.Sender,
             )
-          : undefined
-        const respObj = makeAPI02Object(
-          bestRoute,
-          rpParams,
-          rpAddress[chainId] as Address,
-        )
-        resp = res.json(JSON.stringify(respObj))
-      }
+          : undefined,
+        rpAddress[chainId] as Address,
+      )
+
       requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
-      return resp
+      return res.json(JSON.stringify(json))
     } catch (e) {
       requestStatistics.requestRejected(ResponseRejectReason.UNKNOWN_EXCEPTION)
       throw e
