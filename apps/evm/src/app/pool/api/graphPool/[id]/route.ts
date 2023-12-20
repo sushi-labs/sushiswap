@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server'
 import { getGraphPool } from 'src/lib/api'
 import { z } from 'zod'
 
+export const revalidate = 15
+
 const schema = z.object({
   id: z.string(),
 })
-
-// export const revalidate = 60 // revalidate every minute
 
 // uses thegraph, not the pools api
 export async function GET(
