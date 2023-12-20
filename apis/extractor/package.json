@@ -53,6 +53,7 @@
     "@types/express": "4.17.17",
     "@types/node": ">=20.8.4",
     "artillery": "2.0.0-35",
+    "ts-node": "10.9.2",
     "typescript": "5.2.2"
   }
 }

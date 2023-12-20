@@ -28,8 +28,10 @@ build:
       context: ../../
       docker:
         dockerfile: Dockerfile
-        buildArgs:
-          SCRIPT_PATH: "./apis/extractor"
+        # buildArgs:
+        #   TURBO_TEAM: "teamsushi"
+        #   TURBO_TOKEN: "from env?"
+
 deploy:
   kubectl:
     manifests:

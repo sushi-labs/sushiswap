@@ -17,21 +17,23 @@ spec:
           image: extractor:latest
           ports:
             - containerPort: 80
-          resources:
-            requests:
-              memory: "8Gi"
-              cpu: "1000m"
+          # resources:
+          #   requests:
+          #     memory: "8Gi"
+          #     cpu: "1000m"
           livenessProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 1
+            failureThreshold: 3
             periodSeconds: 10
+            timeoutSeconds: 3
+            terminationGracePeriodSeconds: 60
           startupProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 30
+            failureThreshold: 3
             periodSeconds: 10
           env:
             - name: CONFIG_GROUP
@@ -61,21 +63,23 @@ spec:
           image: extractor:latest
           ports:
             - containerPort: 80
-          resources:
-            requests:
-              memory: "8Gi"
-              cpu: "1000m"
+          # resources:
+          #   requests:
+          #     memory: "8Gi"
+          #     cpu: "1000m"
           livenessProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 1
+            failureThreshold: 3
             periodSeconds: 10
+            timeoutSeconds: 3
+            terminationGracePeriodSeconds: 60
           startupProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 30
+            failureThreshold: 3
             periodSeconds: 10
           env:
             - name: CONFIG_GROUP
@@ -105,21 +109,23 @@ spec:
           image: extractor:latest
           ports:
             - containerPort: 80
-          resources:
-            requests:
-              memory: "8Gi"
-              cpu: "1000m"
+          # resources:
+          #   requests:
+          #     memory: "8Gi"
+          #     cpu: "1000m"
           livenessProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 1
+            failureThreshold: 3
             periodSeconds: 10
+            timeoutSeconds: 3
+            terminationGracePeriodSeconds: 60
           startupProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 30
+            failureThreshold: 3
             periodSeconds: 10
           env:
             - name: CONFIG_GROUP
@@ -149,21 +155,23 @@ spec:
           image: extractor:latest
           ports:
             - containerPort: 80
-          resources:
-            requests:
-              memory: "8Gi"
-              cpu: "1000m"
+          # resources:
+          #   requests:
+          #     memory: "8Gi"
+          #     cpu: "1000m"
           livenessProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 1
+            failureThreshold: 3
             periodSeconds: 10
+            timeoutSeconds: 3
+            terminationGracePeriodSeconds: 60
           startupProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 30
+            failureThreshold: 3
             periodSeconds: 10
           env:
             - name: CONFIG_GROUP

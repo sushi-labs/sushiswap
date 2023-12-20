@@ -1,7 +1,10 @@
 import 'dotenv/config'
 
-import * as Sentry from '@sentry/node'
-import { Extractor, type WarningLevel } from '@sushiswap/extractor'
+// import * as Sentry from '@sentry/node'
+import {
+  Extractor,
+  // type WarningLevel
+} from '@sushiswap/extractor'
 import {
   NativeWrapProvider,
   PoolCode,
@@ -12,7 +15,7 @@ import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
 } from '@sushiswap/router-config'
-import cors from 'cors'
+// import cors from 'cors'
 import express, { type Express, type Request, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
@@ -34,15 +37,21 @@ import { type Address, isAddress } from 'viem'
 import z from 'zod'
 import { CONFIG_GROUPS, EXTRACTOR_CONFIG } from './config'
 import { makeAPI02Object } from './makeAPI02Object'
-import { RequestStatistics, ResponseRejectReason } from './requestStatistics'
+
+// TODO: these will be sigular soon
+import extractors from './extractor'
+import nativeProviders from './native-provider'
+import requestStatistics, { ResponseRejectReason } from './request-statistics'
+
+const zChainId = z.coerce
+  .number()
+  .int()
+  .gte(0)
+  .lte(2 ** 256)
+  .default(ChainId.ETHEREUM)
 
 const querySchema = z.object({
-  chainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256)
-    .default(ChainId.ETHEREUM)
+  chainId: zChainId
     .refine(
       (chainId) =>
         isRouteProcessor3ChainId(chainId as RouteProcessor3ChainId) &&
@@ -65,12 +74,7 @@ const querySchema = z.object({
 })
 
 const querySchema3_1 = querySchema.extend({
-  chainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256)
-    .default(ChainId.ETHEREUM)
+  chainId: zChainId
     .refine(
       (chainId) =>
         isRouteProcessor3_1ChainId(chainId as RouteProcessor3_1ChainId) &&
@@ -83,12 +87,7 @@ const querySchema3_1 = querySchema.extend({
 })
 
 const querySchema3_2 = querySchema.extend({
-  chainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256)
-    .default(ChainId.ETHEREUM)
+  chainId: zChainId
     .refine(
       (chainId) =>
         isRouteProcessor3_2ChainId(chainId as RouteProcessor3_2ChainId) &&
@@ -105,37 +104,27 @@ const PORT = process.env['PORT'] || 80
 const CONFIG_GROUP_NAME =
   process.env['CONFIG_GROUP'] ?? ('DEFAULT' as keyof typeof CONFIG_GROUPS)
 
-const SENTRY_DSN = process.env['SENTRY_DSN'] as string
-
-const extractors = new Map<
-  RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
-  Extractor
->()
-const nativeProviders = new Map<
-  RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
-  NativeWrapProvider
->()
-
-const requestStatistics = new RequestStatistics(60_000, 3_600_000)
-
-async function main() {
+// const SENTRY_DSN = process.env['SENTRY_DSN'] as string
+;(async function () {
   const app: Express = express()
-  Sentry.init({
-    enabled: false,
-    dsn: SENTRY_DSN,
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({
-        tracing: true,
-      }),
-      // enable Express.js middleware tracing
-      new Sentry.Integrations.Express({
-        app,
-      }),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
-  })
+  const { serialize } = await import('wagmi')
+
+  // Sentry.init({
+  //   enabled: false,
+  //   dsn: SENTRY_DSN,
+  //   integrations: [
+  //     // enable HTTP calls tracing
+  //     new Sentry.Integrations.Http({
+  //       tracing: true,
+  //     }),
+  //     // enable Express.js middleware tracing
+  //     new Sentry.Integrations.Express({
+  //       app,
+  //     }),
+  //   ],
+  //   // Performance Monitoring
+  //   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  // })
 
   const CHAIN_IDS =
     CONFIG_GROUPS[CONFIG_GROUP_NAME as keyof typeof CONFIG_GROUPS]
@@ -146,13 +135,13 @@ async function main() {
   for (const chainId of CHAIN_IDS) {
     const extractor = new Extractor({
       ...EXTRACTOR_CONFIG[chainId],
-      warningMessageHandler: (
-        chain: ChainId | number | undefined,
-        message: string,
-        level: WarningLevel,
-      ) => {
-        Sentry.captureMessage(`${chain}: ${message}`, level)
-      },
+      // warningMessageHandler: (
+      //   chain: ChainId | number | undefined,
+      //   message: string,
+      //   level: WarningLevel,
+      // ) => {
+      //   Sentry.captureMessage(`${chain}: ${message}`, level)
+      // },
     })
     await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
     extractors.set(chainId, extractor)
@@ -160,40 +149,15 @@ async function main() {
     nativeProviders.set(chainId, nativeProvider)
   }
 
-  app.use(
-    cors({
-      origin: /sushi\.com$/,
-    }),
-  )
+  // app.use(
+  //   cors({
+  //     origin: /sushi\.com$/,
+  //   }),
+  // )
 
   // Trace incoming requests
-  app.use(Sentry.Handlers.requestHandler())
-  app.use(Sentry.Handlers.tracingHandler())
-
-  app.get(
-    '/',
-    processRequest(
-      querySchema,
-      Router.routeProcessor3Params,
-      ROUTE_PROCESSOR_3_ADDRESS,
-    ),
-  )
-  app.get(
-    '/v3.1',
-    processRequest(
-      querySchema3_1,
-      Router.routeProcessor3_1Params,
-      ROUTE_PROCESSOR_3_1_ADDRESS,
-    ),
-  )
-  app.get(
-    '/v3.2',
-    processRequest(
-      querySchema3_2,
-      Router.routeProcessor3_2Params,
-      ROUTE_PROCESSOR_3_2_ADDRESS,
-    ),
-  )
+  // app.use(Sentry.Handlers.requestHandler())
+  // app.use(Sentry.Handlers.tracingHandler())
 
   app.get('/health', (_, res: Response) => {
     const isStarted = Array.from(extractors.values()).every((e) =>
@@ -207,12 +171,7 @@ async function main() {
     // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
     const { chainId, address } = z
       .object({
-        chainId: z.coerce
-          .number()
-          .int()
-          .gte(0)
-          .lte(2 ** 256)
-          .default(ChainId.ETHEREUM)
+        chainId: zChainId
           .refine((chainId) => isExtractorSupportedChainId(chainId), {
             message: 'ChainId not supported.',
           })
@@ -242,7 +201,6 @@ async function main() {
       )
       poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
     }
-    const { serialize } = await import('wagmi')
     return res.json(serialize(Array.from(poolCodesMap.values())))
   })
 
@@ -251,12 +209,7 @@ async function main() {
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
     const { chainId } = z
       .object({
-        chainId: z.coerce
-          .number()
-          .int()
-          .gte(0)
-          .lte(2 ** 256)
-          .default(ChainId.ETHEREUM)
+        chainId: zChainId
           .refine((chainId) => isExtractorSupportedChainId(chainId), {
             message: 'ChainId not supported.',
           })
@@ -265,22 +218,50 @@ async function main() {
       .parse(req.query)
     const extractor = extractors.get(chainId) as Extractor
     const poolCodes = extractor.getCurrentPoolCodes()
-    const { serialize } = await import('wagmi')
     res.json(serialize(poolCodes))
   })
+
+  app.get(
+    '/',
+    processRequest(
+      querySchema,
+      Router.routeProcessor3Params,
+      ROUTE_PROCESSOR_3_ADDRESS,
+    ),
+  )
+  app.get(
+    '/v3.1',
+    processRequest(
+      querySchema3_1,
+      Router.routeProcessor3_1Params,
+      ROUTE_PROCESSOR_3_1_ADDRESS,
+    ),
+  )
+  app.get(
+    '/v3.2',
+    processRequest(
+      querySchema3_2,
+      Router.routeProcessor3_2Params,
+      ROUTE_PROCESSOR_3_2_ADDRESS,
+    ),
+  )
 
   // app.get('/debug-sentry', function mainHandler(req, res) {
   //   throw new Error('My first Sentry error!')
   // })
 
   // The error handler must be registered before any other error middleware and after all controllers
-  app.use(Sentry.Handlers.errorHandler())
+  // app.use(Sentry.Handlers.errorHandler())
 
   app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
+    console.log(`Extractor ${CONFIG_GROUP_NAME} app listening on port ${PORT}`)
     requestStatistics.start()
   })
-}
+
+  process.on('SIGTERM', (code) => {
+    console.log(`About to exit with code: ${code}`)
+  })
+})()
 
 function processRequest(
   qSchema: typeof querySchema | typeof querySchema3_2,
@@ -288,6 +269,7 @@ function processRequest(
   rpAddress: Record<number, Address>,
 ) {
   return async (req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
     try {
       const statistics = requestStatistics.requestProcessingStart()
 
@@ -428,5 +410,3 @@ function processRequest(
     }
   }
 }
-
-main()
