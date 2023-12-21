@@ -351,7 +351,7 @@ importers:
         version: 5.15.0(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@14.0.1)(next@14.0.4)
+        version: 3.1.43(@next/env@14.0.4)(next@14.0.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -378,8 +378,8 @@ importers:
         specifier: 0.94.2
         version: 0.94.2(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.94.1)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@10.0.5)(@types/node@18.17.5)(graphql@16.6.0)(tslib@2.6.2)
       '@next/eslint-plugin-next':
-        specifier: 13.5.4
-        version: 13.5.4
+        specifier: 14.0.4
+        version: 14.0.4
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
@@ -402,8 +402,8 @@ importers:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.4.23)
       eslint-config-next:
-        specifier: 13.5.4
-        version: 13.5.4(eslint@8.43.0)(typescript@5.2.2)
+        specifier: 14.0.4
+        version: 14.0.4(eslint@8.43.0)(typescript@5.2.2)
       eslint-config-sushi:
         specifier: workspace:*
         version: link:../../config/eslint
@@ -457,7 +457,7 @@ importers:
         version: 5.15.0(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@14.0.1)(next@14.0.4)
+        version: 3.1.43(@next/env@14.0.4)(next@14.0.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -487,8 +487,8 @@ importers:
         specifier: 0.94.2
         version: 0.94.2(@graphql-mesh/cross-helpers@0.4.0)(@graphql-mesh/store@0.94.1)(@graphql-mesh/types@0.94.1)(@graphql-mesh/utils@0.94.1)(@graphql-tools/utils@10.0.5)(@types/node@18.17.5)(graphql@16.6.0)(tslib@2.6.2)
       '@next/eslint-plugin-next':
-        specifier: 13.5.4
-        version: 13.5.4
+        specifier: 14.0.4
+        version: 14.0.4
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
@@ -511,8 +511,8 @@ importers:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.4.23)
       eslint-config-next:
-        specifier: 13.5.4
-        version: 13.5.4(eslint@8.43.0)(typescript@5.2.2)
+        specifier: 14.0.4
+        version: 14.0.4(eslint@8.43.0)(typescript@5.2.2)
       eslint-config-sushi:
         specifier: workspace:*
         version: link:../../config/eslint
@@ -722,8 +722,8 @@ importers:
         version: 3.21.4
     devDependencies:
       '@next/eslint-plugin-next':
-        specifier: 13.5.4
-        version: 13.5.4
+        specifier: 14.0.4
+        version: 14.0.4
       '@playwright/test':
         specifier: 1.37.0
         version: 1.37.0
@@ -770,8 +770,8 @@ importers:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.4.23)
       eslint-config-next:
-        specifier: 13.5.4
-        version: 13.5.4(eslint@8.43.0)(typescript@5.2.2)
+        specifier: 14.0.4
+        version: 14.0.4(eslint@8.43.0)(typescript@5.2.2)
       eslint-config-sushi:
         specifier: workspace:*
         version: link:../../config/eslint
@@ -2054,7 +2054,7 @@ importers:
         version: 1.1.2(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-avatar':
         specifier: ^1.0.3
-        version: 1.0.3(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
+        version: 1.0.4(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-checkbox':
         specifier: 1.0.4
         version: 1.0.4(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
@@ -9652,15 +9652,11 @@ packages:
       tar-fs: 2.1.1
     dev: true
 
-  /@next/env@14.0.1:
-    resolution: {integrity: sha512-Ms8ZswqY65/YfcjrlcIwMPD7Rg/dVjdLapMcSHG26W6O67EJDF435ShW4H4LXi1xKO1oRc97tLXUpx8jpLe86A==}
-    dev: false
-
   /@next/env@14.0.4:
     resolution: {integrity: sha512-irQnbMLbUNQpP1wcE5NstJtbuA/69kRfzBrpAD7Gsn8zm/CY6YQYc3HQBz8QPxwISG26tIm5afvvVbu508oBeQ==}
 
-  /@next/eslint-plugin-next@13.5.4:
-    resolution: {integrity: sha512-vI94U+D7RNgX6XypSyjeFrOzxGlZyxOplU0dVE5norIfZGn/LDjJYPHdvdsR5vN1eRtl6PDAsOHmycFEOljK5A==}
+  /@next/eslint-plugin-next@14.0.4:
+    resolution: {integrity: sha512-U3qMNHmEZoVmHA0j/57nRfi3AscXNvkOnxDmle/69Jz/G0o/gWjXTDdlgILZdrxQ0Lw/jv2mPW8PGy0EGIHXhQ==}
     dependencies:
       glob: 7.1.7
     dev: true
@@ -11070,8 +11066,8 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  /@radix-ui/react-avatar@1.0.3(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-9ToF7YNex3Ste45LrAeTlKtONI9yVRt/zOS158iilIkW5K/Apeyb/TUQlcEFTEFvWr8Kzdi2ZYrm1/suiXPajQ==}
+  /@radix-ui/react-avatar@1.0.4(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-kVK2K7ZD3wwj3qhle0ElXhOjbezIgyl2hVvgwfIdexL3rN6zJmy5AqqIf+D31lxVppdzV8CjAfZ6PklkmInZLw==}
     peerDependencies:
       '@types/react': 18.2.14
       '@types/react-dom': 18.2.6
@@ -22574,8 +22570,8 @@ packages:
     optionalDependencies:
       source-map: 0.6.1
 
-  /eslint-config-next@13.5.4(eslint@8.43.0)(typescript@5.2.2):
-    resolution: {integrity: sha512-FzQGIj4UEszRX7fcRSJK6L1LrDiVZvDFW320VVntVKh3BSU8Fb9kpaoxQx0cdFgf3MQXdeSbrCXJ/5Z/NndDkQ==}
+  /eslint-config-next@14.0.4(eslint@8.43.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-9/xbOHEQOmQtqvQ1UsTQZpnA7SlDMBtuKJ//S4JnoyK3oGLhILKXdBgu/UO7lQo/2xOykQULS1qQ6p2+EpHgAQ==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0
       typescript: 5.2.2
@@ -22583,7 +22579,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 13.5.4
+      '@next/eslint-plugin-next': 14.0.4
       '@rushstack/eslint-patch': 1.3.3
       '@typescript-eslint/parser': 6.7.5(eslint@8.43.0)(typescript@5.2.2)
       eslint: 8.43.0
@@ -22631,7 +22627,7 @@ packages:
     dependencies:
       debug: 3.2.7
       is-core-module: 2.13.0
-      resolve: 1.22.4
+      resolve: 1.22.8
     transitivePeerDependencies:
       - supports-color
 
@@ -22648,7 +22644,7 @@ packages:
       eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.7.5)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.0)(eslint@8.43.0)
       eslint-plugin-import: 2.28.1(@typescript-eslint/parser@6.7.5)(eslint-import-resolver-typescript@3.6.0)(eslint@8.43.0)
       fast-glob: 3.3.1
-      get-tsconfig: 4.7.0
+      get-tsconfig: 4.7.2
       is-core-module: 2.13.0
       is-glob: 4.0.3
     transitivePeerDependencies:
@@ -24949,12 +24945,12 @@ packages:
     resolution: {integrity: sha512-pmjiZ7xtB8URYm74PlGJozDNyhvsVLUcpBa8DZBG3bWHwaHa9bPiRpiSfovw+fjhwONSCWKRyk+JQHEGZmMrzw==}
     dependencies:
       resolve-pkg-maps: 1.0.0
+    dev: false
 
   /get-tsconfig@4.7.2:
     resolution: {integrity: sha512-wuMsz4leaj5hbGgg4IvDU0bqJagpftG5l5cXIAvo8uZrqn0NJqwtfupTN00VnkQJPcIRrxYrm1Ue24btpCha2A==}
     dependencies:
       resolve-pkg-maps: 1.0.0
-    dev: false
 
   /get-uri@6.0.1:
     resolution: {integrity: sha512-7ZqONUVqaabogsYNWlYj0t3YZaL6dhuEueZXGF+/YVmf6dHmaFg8/6psJKqhx9QykIDKzpGcy2cn4oV4YC7V/Q==}
@@ -30200,7 +30196,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /next-sitemap@3.1.43(@next/env@14.0.1)(next@14.0.4):
+  /next-sitemap@3.1.43(@next/env@14.0.4)(next@14.0.4):
     resolution: {integrity: sha512-TshDAP69OjHwvszedQ/jBvOjzqy7Gm9NU3ZIP30X3e1qXsNVOVF5uzi9kQOI6v0uBG08QUOk9wKNSIk3zI/wjQ==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -30209,7 +30205,7 @@ packages:
       next: '*'
     dependencies:
       '@corex/deepmerge': 4.0.43
-      '@next/env': 14.0.1
+      '@next/env': 14.0.4
       minimist: 1.2.8
       next: 14.0.4(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
     dev: false

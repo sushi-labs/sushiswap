@@ -2,12 +2,7 @@ import type { PublicClient } from 'viem'
 import { type MarketId, getChainIdAuctioneerMarketFromMarketId } from '..'
 import { bondFixedTermSDAAbi } from '../abi'
 
-interface GetMarketsPrices {
-  client: PublicClient
-  marketIds: MarketId[]
-}
-
-export function getMarketPricesContracts({
+export function getMarketInfosContracts({
   marketIds,
 }: { marketIds: MarketId[] }) {
   return marketIds.map((marketId) => {
@@ -18,36 +13,43 @@ export function getMarketPricesContracts({
       abi: bondFixedTermSDAAbi,
       chainId,
       address: auctioneerAddress,
-      functionName: 'marketPrice' as const,
+      functionName: 'getMarketInfoForPurchase' as const,
       args: [marketNumber] as const,
     }
   })
 }
 
-export async function getMarketsPrices({
-  client,
-  marketIds,
-}: GetMarketsPrices) {
+interface GetMarketInfos {
+  client: PublicClient
+  marketIds: MarketId[]
+}
+
+export async function getMarketInfos({ client, marketIds }: GetMarketInfos) {
   const result = await client.multicall({
     allowFailure: true,
-    contracts: getMarketPricesContracts({ marketIds }),
+    contracts: getMarketInfosContracts({ marketIds }),
   })
 
   return result.flatMap((r, i) =>
     r.result
       ? {
           marketId: marketIds[i]!,
-          marketPrice: r.result,
+          owner: r.result[0],
+          callbackAddress: r.result[1],
+          payoutToken: r.result[2],
+          quoteToken: r.result[3],
+          vesting: r.result[4],
+          maxPayout: r.result[5],
         }
       : [],
   )
 }
 
-interface GetMarketPrice {
+interface GetMarketInfo {
   client: PublicClient
   marketId: MarketId
 }
 
-export async function getMarketPrice({ client, marketId }: GetMarketPrice) {
-  return (await getMarketsPrices({ client, marketIds: [marketId] }))[0]
+export async function getMarketInfo({ client, marketId }: GetMarketInfo) {
+  return (await getMarketInfos({ client, marketIds: [marketId] }))[0]
 }

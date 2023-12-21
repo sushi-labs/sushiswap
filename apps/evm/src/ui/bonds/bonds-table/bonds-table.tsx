@@ -53,6 +53,7 @@ export const BondsTable: FC<PositionsTableProps> = ({
         loading={isLoading}
         columns={COLUMNS}
         data={data}
+        linkFormatter={(row) => `/bonds/${row.id}`}
         pagination={true}
         onPaginationChange={setPaginationState}
         state={{

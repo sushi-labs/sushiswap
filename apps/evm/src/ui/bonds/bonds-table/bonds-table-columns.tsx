@@ -68,7 +68,7 @@ export const PAYOUT_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  {AUCTION_TYPE_BADGE[props.row.original.marketType]}
+                  {AUCTION_TYPE_BADGE[props.row.original.auctionType]}
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Market Type</p>

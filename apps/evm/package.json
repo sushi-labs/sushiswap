@@ -79,7 +79,7 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "13.5.4",
+    "@next/eslint-plugin-next": "14.0.4",
     "@playwright/test": "1.37.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
@@ -95,7 +95,7 @@
     "@types/react-virtualized-auto-sizer": "1.0.1",
     "@viem/anvil": "0.0.6",
     "autoprefixer": "10.4.14",
-    "eslint-config-next": "13.5.4",
+    "eslint-config-next": "14.0.4",
     "eslint-config-sushi": "workspace:*",
     "postcss": "8.4.23",
     "tailwindcss": "3.3.2",

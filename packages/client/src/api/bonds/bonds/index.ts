@@ -1,10 +1,9 @@
 import {
   AuctionType,
-  // AuctionType,
   BONDS_SUBGRAPH_URL,
   getBondDiscount,
-  getBondMarketsPrices,
   getMarketIdFromChainIdAuctioneerMarket,
+  getMarketsPrices,
 } from '@sushiswap/bonds-sdk'
 import {
   type BondMarketsQueryVariables,
@@ -96,7 +95,7 @@ export async function getBondsFromSubgraph(
         }),
       )
 
-      const marketPrices = await getBondMarketsPrices({
+      const marketPrices = await getMarketsPrices({
         client: createPublicClient(config[chainId]),
         marketIds,
       })
@@ -135,11 +134,11 @@ export async function getBondsFromSubgraph(
             })
 
           return {
-            id: marketIds[i],
+            id: marketIds[i]!,
             chainId,
 
             marketId: Number(bond.marketId),
-            marketType: bond.type,
+            auctionType: bond.type,
 
             tellerAddress: bond.teller,
             auctioneerAddress: bond.auctioneer,
@@ -147,6 +146,7 @@ export async function getBondsFromSubgraph(
             start: Number(bond.start),
             end: Number(bond.conclusion),
 
+            marketScale: String(bond.scale),
             discount,
 
             price: marketPrice ? String(marketPrice) : null,

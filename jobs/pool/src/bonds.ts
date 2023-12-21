@@ -5,8 +5,8 @@ import {
   BONDS_SUBGRAPH_URL,
   BondChainId,
   getBondDiscount,
-  getBondMarketsPrices,
   getMarketIdFromChainIdAuctioneerMarket,
+  getMarketsPrices,
 } from '@sushiswap/bonds-sdk'
 import { getTokenPricesChainV2 } from '@sushiswap/client'
 import {
@@ -65,7 +65,7 @@ async function extractChain(chainId: BondChainId) {
       marketNumber: bond.marketId,
     }),
   )
-  const marketPrices = await getBondMarketsPrices({ client, marketIds })
+  const marketPrices = await getMarketsPrices({ client, marketIds })
 
   const tokenSet = new Set<string>()
   const tokens: Pick<

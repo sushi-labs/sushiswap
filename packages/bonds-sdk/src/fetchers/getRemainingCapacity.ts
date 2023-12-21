@@ -2,12 +2,12 @@ import type { PublicClient } from 'viem'
 import { type MarketId, getChainIdAuctioneerMarketFromMarketId } from '..'
 import { bondFixedTermSDAAbi } from '../abi'
 
-interface GetMarketsPrices {
+interface GetRemainingCapacities {
   client: PublicClient
   marketIds: MarketId[]
 }
 
-export function getMarketPricesContracts({
+export function getRemainingCapacitiesContracts({
   marketIds,
 }: { marketIds: MarketId[] }) {
   return marketIds.map((marketId) => {
@@ -18,36 +18,39 @@ export function getMarketPricesContracts({
       abi: bondFixedTermSDAAbi,
       chainId,
       address: auctioneerAddress,
-      functionName: 'marketPrice' as const,
+      functionName: 'currentCapacity' as const,
       args: [marketNumber] as const,
     }
   })
 }
 
-export async function getMarketsPrices({
+export async function getRemainingCapacities({
   client,
   marketIds,
-}: GetMarketsPrices) {
+}: GetRemainingCapacities) {
   const result = await client.multicall({
     allowFailure: true,
-    contracts: getMarketPricesContracts({ marketIds }),
+    contracts: getRemainingCapacitiesContracts({ marketIds }),
   })
 
   return result.flatMap((r, i) =>
     r.result
       ? {
           marketId: marketIds[i]!,
-          marketPrice: r.result,
+          remainingCapacity: r.result,
         }
       : [],
   )
 }
 
-interface GetMarketPrice {
+interface GetRemainingCapacity {
   client: PublicClient
   marketId: MarketId
 }
 
-export async function getMarketPrice({ client, marketId }: GetMarketPrice) {
-  return (await getMarketsPrices({ client, marketIds: [marketId] }))[0]
+export async function getRemainingCapacity({
+  client,
+  marketId,
+}: GetRemainingCapacity) {
+  return (await getRemainingCapacities({ client, marketIds: [marketId] }))[0]
 }

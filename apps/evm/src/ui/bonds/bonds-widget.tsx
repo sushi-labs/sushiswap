@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowDownIcon } from '@heroicons/react/24/solid'
+import { Bond } from '@sushiswap/client'
 import { CardContent } from '@sushiswap/ui'
 import {
   Button,
@@ -11,10 +12,14 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
-import { useState } from 'react'
-import { MOCK_DATA } from './bonds-market-page-header'
+import { useMemo, useState } from 'react'
+import { Token } from 'sushi/currency'
 
-export const BondsWidget = () => {
+export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
+  const [quoteToken, payoutToken] = useMemo(() => {
+    return [new Token(staleBond.quoteToken), new Token(staleBond.payoutToken)]
+  }, [staleBond.quoteToken, staleBond.payoutToken])
+
   const [input0, onInput0] = useState('')
   const [input1, onInput1] = useState('')
 
@@ -34,8 +39,8 @@ export const BondsWidget = () => {
             loading={false}
             value={input0}
             onChange={onInput0}
-            currency={MOCK_DATA.bondAsset}
-            chainId={MOCK_DATA.chainId}
+            currency={quoteToken}
+            chainId={staleBond.chainId}
           />
           <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
             <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
@@ -51,8 +56,8 @@ export const BondsWidget = () => {
             className="border border-accent px-3 py-1.5 !rounded-xl"
             value={input1}
             onChange={onInput1}
-            currency={MOCK_DATA.payoutAsset}
-            chainId={MOCK_DATA.chainId}
+            currency={payoutToken}
+            chainId={staleBond.chainId}
           />
         </div>
       </CardContent>

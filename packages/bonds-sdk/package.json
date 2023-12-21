@@ -33,7 +33,7 @@
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
-      ".": [
+      "*": [
         "src/index"
       ],
       "abi": [
