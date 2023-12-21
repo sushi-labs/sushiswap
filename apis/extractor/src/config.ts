@@ -26,7 +26,6 @@ import {
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId } from 'sushi/chain'
-import { EXTRACTOR_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 import { type Address, createPublicClient } from 'viem'
 
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
@@ -144,33 +143,33 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 50,
     logging: true,
   },
-  [ChainId.BOBA]: {
-    client: createPublicClient(config[ChainId.BOBA]),
-    factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-  },
-  [ChainId.BOBA_AVAX]: {
-    client: createPublicClient(config[ChainId.BOBA_AVAX]),
-    factoriesV2: [sushiswapV2Factory(ChainId.BOBA_AVAX)],
-    factoriesV3: [],
-    // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_AVAX],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-  },
-  [ChainId.BOBA_BNB]: {
-    client: createPublicClient(config[ChainId.BOBA_BNB]),
-    factoriesV2: [sushiswapV2Factory(ChainId.BOBA_BNB)],
-    factoriesV3: [],
-    // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_BNB],
-    cacheDir: './cache',
-    logDepth: 500,
-    logging: true,
-  },
+  // [ChainId.BOBA]: {
+  //   client: createPublicClient(config[ChainId.BOBA]),
+  //   factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
+  //   factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
+  //   tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
+  //   cacheDir: './cache',
+  //   logDepth: 50,
+  //   logging: true,
+  // },
+  // [ChainId.BOBA_AVAX]: {
+  //   client: createPublicClient(config[ChainId.BOBA_AVAX]),
+  //   factoriesV2: [sushiswapV2Factory(ChainId.BOBA_AVAX)],
+  //   factoriesV3: [],
+  //   // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_AVAX],
+  //   cacheDir: './cache',
+  //   logDepth: 50,
+  //   logging: true,
+  // },
+  // [ChainId.BOBA_BNB]: {
+  //   client: createPublicClient(config[ChainId.BOBA_BNB]),
+  //   factoriesV2: [sushiswapV2Factory(ChainId.BOBA_BNB)],
+  //   factoriesV3: [],
+  //   // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA_BNB],
+  //   cacheDir: './cache',
+  //   logDepth: 500,
+  //   logging: true,
+  // },
   [ChainId.BSC]: {
     client: createPublicClient(config[ChainId.BSC]),
     factoriesV2: [
@@ -435,14 +434,4 @@ export const EXTRACTOR_CONFIG = {
   // },
 }
 
-export const CONFIG_GROUPS = {
-  [ChainId.ETHEREUM]: [ChainId.ETHEREUM],
-  [ChainId.BSC]: [ChainId.BSC],
-  [ChainId.POLYGON]: [ChainId.POLYGON],
-  ['default']: EXTRACTOR_SUPPORTED_CHAIN_IDS.filter(
-    (chainId) =>
-      ![ChainId.ETHEREUM, ChainId.BSC, ChainId.POLYGON].includes(
-        chainId as any,
-      ), // TODO: fix any
-  ),
-}
+export type CONFIGURED_CHAIN_IDS = keyof typeof EXTRACTOR_CONFIG

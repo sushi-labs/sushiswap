@@ -35,11 +35,9 @@ import {
 import { Native, Token } from 'sushi/currency'
 import { type Address, isAddress } from 'viem'
 import z from 'zod'
-import { CONFIG_GROUPS, EXTRACTOR_CONFIG } from './config'
+import { CONFIGURED_CHAIN_IDS, EXTRACTOR_CONFIG } from './config'
 import { makeAPI02Object } from './makeAPI02Object'
 
-// TODO: these will be sigular soon
-import extractors from './extractor'
 import nativeProviders from './native-provider'
 import requestStatistics, { ResponseRejectReason } from './request-statistics'
 
@@ -101,9 +99,21 @@ const querySchema3_2 = querySchema.extend({
 
 const PORT = process.env['PORT'] || 80
 
-const CONFIG_GROUP_NAME =
-  process.env['CONFIG_GROUP'] ?? ('DEFAULT' as keyof typeof CONFIG_GROUPS)
+const CHAIN_ID = process.env['CHAIN_ID'] as CONFIGURED_CHAIN_IDS | undefined // TODO: shouldn't cast, we should validate with zod 
+if (!CHAIN_ID) {
+  throw new Error("CHAIN_ID is not set")
+}
 
+  const extractor = new Extractor({
+    ...EXTRACTOR_CONFIG[CHAIN_ID],
+    // warningMessageHandler: (
+    //   chain: ChainId | number | undefined,
+    //   message: string,
+    //   level: WarningLevel,
+    // ) => {
+    //   Sentry.captureMessage(`${chain}: ${message}`, level)
+    // },
+  })
 // const SENTRY_DSN = process.env['SENTRY_DSN'] as string
 ;(async function () {
   const app: Express = express()
@@ -126,28 +136,11 @@ const CONFIG_GROUP_NAME =
   //   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   // })
 
-  const CHAIN_IDS =
-    CONFIG_GROUPS[CONFIG_GROUP_NAME as keyof typeof CONFIG_GROUPS]
-  if (!CHAIN_IDS) {
-    throw new Error(`CONFIG_GROUP '${CONFIG_GROUP_NAME}' is not supported`)
-  }
 
-  for (const chainId of CHAIN_IDS) {
-    const extractor = new Extractor({
-      ...EXTRACTOR_CONFIG[chainId],
-      // warningMessageHandler: (
-      //   chain: ChainId | number | undefined,
-      //   message: string,
-      //   level: WarningLevel,
-      // ) => {
-      //   Sentry.captureMessage(`${chain}: ${message}`, level)
-      // },
-    })
-    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
-    extractors.set(chainId, extractor)
-    const nativeProvider = new NativeWrapProvider(chainId, extractor.client)
-    nativeProviders.set(chainId, nativeProvider)
-  }
+    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
+    const nativeProvider = new NativeWrapProvider(CHAIN_ID, extractor.client)
+    nativeProviders.set(CHAIN_ID, nativeProvider)
+
 
   // app.use(
   //   cors({
@@ -160,10 +153,7 @@ const CONFIG_GROUP_NAME =
   // app.use(Sentry.Handlers.tracingHandler())
 
   app.get('/health', (_, res: Response) => {
-    const isStarted = Array.from(extractors.values()).every((e) =>
-      e.isStarted(),
-    )
-    return res.status(isStarted ? 200 : 503).send()
+    return res.status(extractor.isStarted() ? 200 : 503).send()
   })
 
   app.get('/pool-codes-for-token', async (req: Request, res: Response) => {
@@ -181,7 +171,6 @@ const CONFIG_GROUP_NAME =
         }),
       })
       .parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
 
     const tokenManager = extractor.tokenManager
     const token = (await tokenManager.findToken(address)) as Token
@@ -204,19 +193,18 @@ const CONFIG_GROUP_NAME =
     return res.json(serialize(Array.from(poolCodesMap.values())))
   })
 
-  app.get('/pool-codes', async (req: Request, res: Response) => {
+  app.get('/pool-codes', async (_req: Request, res: Response) => {
     // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
-    const { chainId } = z
-      .object({
-        chainId: zChainId
-          .refine((chainId) => isExtractorSupportedChainId(chainId), {
-            message: 'ChainId not supported.',
-          })
-          .transform((chainId) => chainId as ExtractorSupportedChainId),
-      })
-      .parse(req.query)
-    const extractor = extractors.get(chainId) as Extractor
+    // const { chainId } = z
+    //   .object({
+    //     chainId: zChainId
+    //       .refine((chainId) => isExtractorSupportedChainId(chainId), {
+    //         message: 'ChainId not supported.',
+    //       })
+    //       .transform((chainId) => chainId as ExtractorSupportedChainId),
+    //   })
+    //   .parse(req.query)
     const poolCodes = extractor.getCurrentPoolCodes()
     res.json(serialize(poolCodes))
   })
@@ -254,7 +242,7 @@ const CONFIG_GROUP_NAME =
   // app.use(Sentry.Handlers.errorHandler())
 
   app.listen(PORT, () => {
-    console.log(`Extractor ${CONFIG_GROUP_NAME} app listening on port ${PORT}`)
+    console.log(`Extractor ${CHAIN_ID} app listening on port ${PORT}`)
     requestStatistics.start()
   })
 
@@ -300,7 +288,6 @@ function processRequest(
         preferSushi,
         maxPriceImpact,
       } = parsed.data
-      const extractor = extractors.get(chainId) as Extractor
       const tokenManager = extractor.tokenManager
 
       // Timing optimization: try to take tokens sync first - to avoid async call if tokens are known

@@ -1,23 +1,15 @@
 chainIds: 
-- 1
-- 137
-- 56
-- "default"
-
-# USE THIS LIST LATER WHEN REFACTORED FROM GROUPS TO CHAIN_ID, need to solve nginx config, if you disable chainid 1 it will throw this:
-# nginx: [emerg] host not found in upstream "extractor-1-service" in /etc/nginx/nginx.conf:5
-
-  # - 42161 # ARBITRUM
-  # - 42170 # ARBITRUM_NOVA
-  # - 43114 # AVALANCHE
-  # - 8453 # BASE 
-  # - 56 # BSC
-  # - 42220 # CELO
-  # - 1 # ETHEREUM
-  # - 250 # FANTOM
-  # - 100 # GNOSIS
-  # - 59144 # LINEA
-  # - 10 # OPTIMISM
-  # - 137 # POLYGON
-  # - 1101 # POLYGON_ZKEVM
-  # - 534352 # SCROLL
+  - 42161 # ARBITRUM
+  - 42170 # ARBITRUM_NOVA
+  - 43114 # AVALANCHE
+  - 8453 # BASE 
+  - 56 # BSC
+  - 42220 # CELO
+  - 1 # ETHEREUM
+  - 250 # FANTOM
+  - 100 # GNOSIS
+  - 59144 # LINEA
+  - 10 # OPTIMISM
+  - 137 # POLYGON
+  - 1101 # POLYGON_ZKEVM
+  - 534352 # SCROLL

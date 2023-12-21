@@ -21,16 +21,19 @@ data:
       worker_connections 4096;
     }
     http { 
-      upstream extractor-1 {server extractor-1-service;}
-      upstream extractor-56 {server extractor-56-service;}
-      upstream extractor-137 {server extractor-137-service;}
-      upstream extractor-default {server extractor-default-service;}
-      map $arg_chainId $proxy_pass {
-        1       extractor-1;
-        56      extractor-56;
-        137     extractor-137;
-        default extractor-default;
+      {{- $chainIds := .Values.chainIds }}
+      {{- range $index, $value := $chainIds }}
+      upstream extractor-{{ $value }} {
+        server extractor-{{ $value }}-service;
       }
+      {{- end }}
+      
+      map $arg_chainId $proxy_pass {
+        {{- range $index, $value := $chainIds }}
+        {{ $value }}     extractor-{{ $value }};
+        {{- end }}
+      }
+      
       server { 
         listen 80;
         location / {
