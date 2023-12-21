@@ -47,6 +47,7 @@ import { Chain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
+import { getAddress } from 'viem'
 import { isAngleEnabledChainId } from '../../config'
 import { Bound } from '../../lib/constants'
 import {
@@ -176,7 +177,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
     chainId,
     amounts: positionAmounts,
   })
-  const currentAngleRewardsPool = rewardsData?.pools[poolId]
+  const currentAngleRewardsPool = rewardsData?.pools[getAddress(poolId)]
 
   return (
     <>

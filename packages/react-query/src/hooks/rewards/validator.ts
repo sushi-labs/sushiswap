@@ -54,7 +54,7 @@ export const angleRewardsPoolsValidator = z.object({
       }),
     )
     .optional(),
-  userTVL: z.number().optional(),
+  userTVL: z.number().optional().nullable(),
   userBalanceToken0: z.number().optional(),
   userBalanceToken1: z.number().optional(),
 })
