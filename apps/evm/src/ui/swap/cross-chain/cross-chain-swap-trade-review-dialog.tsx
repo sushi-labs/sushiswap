@@ -568,7 +568,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         )}
       </DialogReview>
       <DialogCustom dialogType={DialogType.Confirm}>
-        <DialogContent>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Cross-chain swap</DialogTitle>
             <DialogDescription asChild>
