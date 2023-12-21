@@ -33,10 +33,12 @@ build:
         #   TURBO_TOKEN: "from env?"
 
 deploy:
+  helm:
+    releases:
+      - name: extractors
+        chartPath: k8s/chart
   kubectl:
     manifests:
-    - k8s/extractor-deployment.yaml
-    - k8s/extractor-service.yaml
     - k8s/nginx-deployment.yaml
     - k8s/nginx-service.yaml
 profiles:

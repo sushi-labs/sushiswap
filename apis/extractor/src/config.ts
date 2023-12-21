@@ -439,7 +439,7 @@ export const CONFIG_GROUPS = {
   [ChainId.ETHEREUM]: [ChainId.ETHEREUM],
   [ChainId.BSC]: [ChainId.BSC],
   [ChainId.POLYGON]: [ChainId.POLYGON],
-  ['DEFAULT']: EXTRACTOR_SUPPORTED_CHAIN_IDS.filter(
+  ['default']: EXTRACTOR_SUPPORTED_CHAIN_IDS.filter(
     (chainId) =>
       ![ChainId.ETHEREUM, ChainId.BSC, ChainId.POLYGON].includes(
         chainId as any,

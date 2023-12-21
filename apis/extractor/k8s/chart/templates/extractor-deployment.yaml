@@ -1,0 +1,49 @@
+{{- $chainIds := .Values.chainIds }}
+{{- range $index, $value := $chainIds }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extractor-{{ $value }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-{{ $value }}
+  template:
+    metadata:
+      labels:
+        app: extractor-{{ $value }}
+    spec:
+      containers:
+        - name: extractor
+          image: extractor:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "8Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+            terminationGracePeriodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 3
+            periodSeconds: 10
+          env:
+            - name: CONFIG_GROUP
+              value: "{{ $value }}"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: DRPC_ID
+{{- end }}

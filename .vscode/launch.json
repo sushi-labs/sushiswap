@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Kubernetes: Run/Debug",
+            "name": "LOCAL: Minikube",
             "type": "cloudcode.kubernetes",
             "request": "launch",
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
@@ -11,7 +11,7 @@
             "portForward": true
         },
         {
-            "name": "Run on Kubernetes - Cloud Build",
+            "name": "DEV: GKE",
             "profile": "cloudbuild",
             "type": "cloudcode.kubernetes",
             "request": "launch",
