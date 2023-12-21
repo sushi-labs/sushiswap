@@ -20,6 +20,11 @@ spec:
           image: extractor:latest
           ports:
             - containerPort: 80
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: "0.5"
           livenessProbe:
             httpGet:
               path: /health
