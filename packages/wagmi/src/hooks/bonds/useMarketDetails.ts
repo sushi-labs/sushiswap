@@ -1,7 +1,9 @@
 import {
+  REFERRER_ADDRESS,
   getBondDiscount,
   getMarketInfosContracts,
   getMarketPricesContracts,
+  getMaxAmountsAcceptedContracts,
   getRemainingCapacitiesContracts,
 } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
@@ -30,9 +32,18 @@ export const useBondMarketDetails = ({
       marketIds: [bond.id],
     })[0]
     const marketInfo = getMarketInfosContracts({ marketIds: [bond.id] })[0]
+    const maxAmountAccepted = getMaxAmountsAcceptedContracts({
+      marketIds: [bond.id],
+      referrer: REFERRER_ADDRESS[bond.chainId],
+    })[0]
 
-    return [marketPrice, remainingCapacity, marketInfo] as const
-  }, [bond.id])
+    return [
+      marketPrice,
+      remainingCapacity,
+      marketInfo,
+      maxAmountAccepted,
+    ] as const
+  }, [bond.id, bond.chainId])
 
   const { data } = useContractReads({
     allowFailure: false,
@@ -41,10 +52,8 @@ export const useBondMarketDetails = ({
     watch: Boolean(enabled),
   })
 
-  const [marketPrice, remainingCapacityBI, marketInfo] = useMemo(
-    () => data || [],
-    [data],
-  )
+  const [marketPrice, remainingCapacityBI, marketInfo, maxAmountAcceptedBI] =
+    useMemo(() => data || [], [data])
 
   const [quoteTokenPriceUSD, payoutTokenPriceUSD] = useMemo(() => {
     if (!prices) return []
@@ -88,10 +97,23 @@ export const useBondMarketDetails = ({
     )
   }, [bond, remainingCapacityBI])
 
+  const maxAmountAccepted = useMemo(() => {
+    if (!maxAmountAcceptedBI) return undefined
+
+    // Let's ask the bond guys about this - wouldn't match up with the maxPayout
+
+    // https://dev.bondprotocol.finance/developers/market-calculations#capacity-payout-and-allowances
+    const mAAreduced = maxAmountAcceptedBI // - (maxAmountAcceptedBI / 1000n) * 5n
+
+    return Amount.fromRawAmount(new Token(bond.quoteToken), mAAreduced)
+  }, [bond, maxAmountAcceptedBI])
+
   return {
     ...discount,
     quoteTokenPriceUSD,
     payoutTokenPriceUSD,
+    marketPrice,
+    maxAmountAccepted,
     currentCapacity,
     remainingCapacity,
   }

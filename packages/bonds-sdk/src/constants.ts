@@ -1,4 +1,5 @@
 import { ChainId } from 'sushi/chain'
+import { type Address, zeroAddress } from 'viem'
 
 export const AuctionType = {
   Static: 'Static',
@@ -36,3 +37,9 @@ export const BONDS_SUBGRAPH_URL: Record<BondChainId, string> = {
 
 export const isBondChainId = (chainId: ChainId): chainId is BondChainId =>
   BONDS_ENABLED_CHAIN_IDS.includes(chainId as BondChainId)
+
+export const REFERRER_ADDRESS: Record<BondChainId, Address> = {
+  [ChainId.ETHEREUM]: zeroAddress,
+  [ChainId.ARBITRUM]: zeroAddress,
+  [ChainId.OPTIMISM]: zeroAddress,
+}

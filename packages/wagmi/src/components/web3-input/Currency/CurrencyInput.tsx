@@ -16,6 +16,7 @@ import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { useBalanceWeb3 } from '../../../hooks'
 import { TokenSelector } from '../../token-selector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
@@ -66,6 +67,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   disableInsufficientBalanceError = false,
   fetching,
 }) => {
+  const isMounted = useIsMounted()
+
   const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
   const [pending, startTransition] = useTransition()
@@ -103,7 +106,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     }
   }, [onChange, currency, value])
 
-  const isLoading = loading || currencyLoading || isBalanceLoading
+  const isLoading = !isMounted || loading || currencyLoading || isBalanceLoading
   const _error = error
     ? error
     : insufficientBalance
@@ -112,6 +115,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
 
   const _onChange = useCallback(
     (value: string) => {
+      console.log('change!')
+
       setLocalValue(value)
       startTransition(() => {
         onChange?.(value)

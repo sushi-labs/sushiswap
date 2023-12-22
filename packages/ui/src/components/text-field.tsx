@@ -168,7 +168,7 @@ const Component = <T extends InputType>(
         })}
         ref={ref}
         autoCorrect="off"
-        autoCapitalize="off"
+        autoCapitalize="none"
         spellCheck="false"
         autoComplete="off"
         {...(isTypeNumber(type) && numericInputProps)}

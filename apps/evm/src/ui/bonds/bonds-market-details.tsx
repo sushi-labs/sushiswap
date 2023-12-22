@@ -155,7 +155,7 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
                       width={16}
                       height={16}
                     />
-                    {currentCapacity?.toSignificant(4)} {payoutToken.symbol}
+                    {currentCapacity?.toSignificant(6)} {payoutToken.symbol}
                   </>
                 ) : (
                   <SkeletonText fontSize="sm" />
@@ -163,7 +163,7 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
               </div>
             </div>
           </div>
-          <div className="border border-accent p-4 flex flex-col gap-3 rounded-xl">
+          <div className="border border-accent p-4 flex flex-col gap-4 rounded-xl">
             <div className="flex">
               <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-blue/10 text-blue">
                 Remaining Capacity
@@ -181,7 +181,7 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
                       width={16}
                       height={16}
                     />
-                    {remainingCapacity?.toSignificant(4)}{' '}
+                    {remainingCapacity?.toSignificant(6)}{' '}
                     {remainingCapacity?.currency.symbol}
                   </>
                 ) : (

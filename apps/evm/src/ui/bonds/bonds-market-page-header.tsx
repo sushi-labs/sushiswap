@@ -93,10 +93,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
                 vestingLength: bond.vesting,
                 vestingType: bond.vestingType,
               }) * 1000,
-              new Date(),
-              {
-                addSuffix: true,
-              },
+              Date.now(),
             )}
           </div>
           <div className="flex items-center gap-1.5">
