@@ -9,3 +9,33 @@ query Bar($block: Block_height) {
     apr12m
   }
 }
+
+query BarHistory {
+  hourSnapshots(orderBy: date, orderDirection: desc) {
+    id
+    date
+    xSushiSupply
+    apr1m
+    apr3m
+    apr6m
+    apr12m
+  }
+  daySnapshots(orderBy: date, orderDirection: desc) {
+    id
+    date
+    xSushiSupply
+    apr1m
+    apr3m
+    apr6m
+    apr12m
+  }
+  weekSnapshots(orderBy: date, orderDirection: desc) {
+    id
+    date
+    xSushiSupply
+    apr1m
+    apr3m
+    apr6m
+    apr12m
+  }
+}

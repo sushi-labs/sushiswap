@@ -12,12 +12,11 @@ import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
-import { usePoolGraphData } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatNumber, formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
+import { useBarGraphData } from 'src/lib/bar/useBarGraphData'
 import { BarChartPeriod, chartPeriods } from './BarChartPeriods'
 import { BarChartType } from './BarChartTypes'
 
@@ -29,30 +28,26 @@ interface BarChartProps {
 const tailwind = resolveConfig(tailwindConfig)
 
 export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
-  //   const { data: graphPair, isLoading } = usePoolGraphData({
-  //     poolAddress: address,
-  //     chainId,
-  //   })
-  const graphPair = undefined
-  const isLoading = true
+  const { data: barData, isLoading } = useBarGraphData()
 
-  const swapFee = graphPair ? graphPair?.swapFee / 10000 : 0
-
-  const [xData, yData]: [number[], number[]] = useMemo(() => {
+  const [xData, yData] = useMemo(() => {
     const data =
-      (chartPeriods[period] < chartPeriods[BarChartPeriod.Week]
-        ? graphPair?.hourSnapshots
-        : graphPair?.daySnapshots) || []
+      (period === BarChartPeriod.Day
+        ? barData?.hourSnapshots
+        : period === BarChartPeriod.Week || period === BarChartPeriod.Month
+        ? barData?.daySnapshots
+        : barData?.weekSnapshots) ?? []
 
     const currentDate = Math.round(Date.now())
-    const [x, y] = data.reduce<[number[], number[]]>(
+
+    const [x, y] = data.reduce(
       (acc, cur) => {
         if (cur.date * 1000 >= currentDate - chartPeriods[period]) {
           acc[0].push(cur.date)
           if (chart === BarChartType.APR) {
-            acc[1].push(Number(cur.apr))
+            acc[1].push(Number(cur.apr12m))
           } else if (chart === BarChartType.TotalSupply) {
-            acc[1].push(Number(cur.totalSupply))
+            acc[1].push(Number(cur.xSushiSupply))
           }
         }
         return acc
@@ -61,13 +56,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
     )
 
     return [x.reverse(), y.reverse()]
-  }, [
-    chart,
-    graphPair?.hourSnapshots,
-    graphPair?.daySnapshots,
-    period,
-    swapFee,
-  ])
+  }, [barData, period, chart])
 
   // Transient update for performance
   const onMouseOver = useCallback(
@@ -79,15 +68,9 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
         if (chart === BarChartType.APR) {
           valueNodes[0].innerHTML = formatPercent(value)
         } else {
-          valueNodes[0].innerHTML = formatUSD(value)
+          valueNodes[0].innerHTML = formatNumber(value)
         }
       }
-
-      //   if (valueNodes[1]) {
-      //     if (chart === PoolChartType.Volume) {
-      //       valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
-      //     }
-      //   }
 
       if (nameNodes[0]) {
         nameNodes[0].innerHTML = format(
@@ -98,7 +81,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
         )
       }
     },
-    [period, chart, swapFee],
+    [period, chart],
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -122,7 +105,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
             <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${
               chart === BarChartType.APR
                 ? formatPercent(params[0].value)
-                : formatUSD(params[0].value)
+                : formatNumber(params[0].value)
             }</span>
             <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
               date instanceof Date && !Number.isNaN(date?.getTime())
@@ -144,9 +127,9 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
         show: false,
       },
       grid: {
-        top: 0,
-        left: 0,
-        right: 0,
+        top: 4,
+        left: 4,
+        right: 4,
         bottom: 0,
       },
       dataZoom: {
@@ -161,6 +144,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
       },
       xAxis: [
         {
+          boundaryGap: false,
           show: false,
           type: 'category',
           data: xData,
@@ -170,12 +154,10 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
         {
           show: false,
           type: 'value',
-          name: 'Volume',
         },
       ],
       series: [
         {
-          name: 'Volume',
           type: 'line',
           smooth: true,
           xAxisIndex: 0,
@@ -185,10 +167,6 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
             normal: {
               barBorderRadius: 2,
             },
-          },
-          areaStyle: {
-            // @ts-ignore
-            color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
           animationDelayUpdate: function (idx: number) {
@@ -208,17 +186,8 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
           <span className="hoveredItemValue">
             {chart === BarChartType.APR
               ? formatPercent(yData[yData.length - 1])
-              : formatUSD(yData[yData.length - 1])}
-          </span>{' '}
-          {/* {chart === ChartType.Volume && (
-            <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
-              <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">
-                {formatUSD(Number(yData[yData.length - 1]) * Number(swapFee))}
-              </span>{' '}
-              earned
-            </span>
-          )} */}
+              : formatNumber(yData[yData.length - 1])}
+          </span>
         </CardTitle>
         <CardDescription>
           {xData.length ? (
@@ -237,11 +206,11 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
+              'h-[200px] w-full dark:via-slate-800 dark:to-slate-900',
             )}
           />
         ) : (
-          <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
+          <ReactECharts option={DEFAULT_OPTION} style={{ height: 200 }} />
         )}
       </CardContent>
     </>
