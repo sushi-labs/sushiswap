@@ -159,7 +159,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
       series: [
         {
           type: 'line',
-          smooth: true,
+          smooth: false,
           xAxisIndex: 0,
           yAxisIndex: 0,
           itemStyle: {
@@ -183,11 +183,17 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
     <>
       <CardHeader>
         <CardTitle>
-          <span className="hoveredItemValue">
-            {chart === BarChartType.APR
-              ? formatPercent(yData[yData.length - 1])
-              : formatNumber(yData[yData.length - 1])}
-          </span>
+          {isLoading ? (
+            <div>
+              <SkeletonText fontSize="sm" className="!w-20" />
+            </div>
+          ) : (
+            <span className="hoveredItemValue">
+              {chart === BarChartType.APR
+                ? formatPercent(yData[yData.length - 1])
+                : formatNumber(yData[yData.length - 1])}
+            </span>
+          )}
         </CardTitle>
         <CardDescription>
           {xData.length ? (
@@ -198,7 +204,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
               )}
             </div>
           ) : (
-            <SkeletonText fontSize="sm" />
+            <SkeletonText fontSize="sm" className="!w-32" />
           )}
         </CardDescription>
       </CardHeader>
