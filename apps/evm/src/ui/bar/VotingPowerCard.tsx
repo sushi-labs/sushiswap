@@ -1,6 +1,6 @@
 'use client'
 
-import { FireIcon, InformationCircleIcon } from '@heroicons/react/24/outline'
+import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import {
   Button,
   Card,
@@ -10,20 +10,36 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { ConnectButton } from '@sushiswap/wagmi'
+import { useMemo } from 'react'
 import { useVotingPower } from 'src/lib/bar/useVotingPower'
+import { useVotingPowerBreakdown } from 'src/lib/bar/useVotingPowerBreakdown'
+import { Amount, Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 import { useAccount } from 'wagmi'
+import { BoostVotingPowerModal } from './BoostVotingPowerModal'
 
 export const VotingPowerCard = () => {
   const { address, isConnected } = useAccount()
 
   const { data: votingPower, isLoading } = useVotingPower({ address })
 
+  const { balances, weights } = useVotingPowerBreakdown({ address })
+
+  const nonZeroBalances: Amount<Type>[] = useMemo(
+    () =>
+      !balances
+        ? []
+        : Object.values(balances).filter((amount) => amount.greaterThan(0)),
+    [balances],
+  )
+
   return (
     <Card>
       <CardHeader className="!pb-3">
         <CardTitle className="flex gap-1 items-center">
-          <span className="text-xs text-muted-foreground">My Voting Power</span>
+          <span className="text-xs text-muted-foreground">
+            Your Voting Power
+          </span>
           <InformationCircleIcon width={12} height={12} />
         </CardTitle>
       </CardHeader>
@@ -41,8 +57,14 @@ export const VotingPowerCard = () => {
                   POWAH
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  110 XSUSHI + 1,092,213.12 ETH-SUSHI SLP
-                  {/* TODO */}
+                  {nonZeroBalances
+                    .map(
+                      (amount) =>
+                        `${formatNumber(amount.toSignificant(6))} ${
+                          amount.currency.symbol
+                        }`,
+                    )
+                    .join(' + ')}
                 </span>
               </>
             )}
@@ -54,12 +76,10 @@ export const VotingPowerCard = () => {
                 rel="noreferrer noopener noreferer"
                 href={'https://snapshot.org/#/delegate/sushigov.eth'}
               >
-                Delegate My Vote
+                Delegate Someone
               </a>
             </Button>
-            <Button variant={'secondary'} icon={FireIcon}>
-              Boost Voting Power
-            </Button>
+            <BoostVotingPowerModal weights={weights} />
           </div>
         </CardContent>
       ) : (

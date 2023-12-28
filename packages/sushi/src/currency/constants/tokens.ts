@@ -10,10 +10,12 @@ import {
   ANKR_ADDRESS,
   APE_ADDRESS,
   ARB_ADDRESS,
+  AXSUSHI_ADDRESS,
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
   CRV_ADDRESS,
+  CRXSUSHI_ADDRESS,
   DAI_ADDRESS,
   ENJ_ADDRESS,
   FEI_ADDRESS,
@@ -30,6 +32,7 @@ import {
   MAI_ADDRESS,
   MANA_ADDRESS,
   MATIC_ADDRESS,
+  MEOW_ADDRESS,
   MIM_ADDRESS,
   MKR_ADDRESS,
   NFTX_ADDRESS,
@@ -41,6 +44,7 @@ import {
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
   TRIBE_ADDRESS,
+  TSUSHI_ADDRESS,
   TUSD_ADDRESS,
   UNI_ADDRESS,
   USDC_ADDRESS,
@@ -617,6 +621,42 @@ export const XSUSHI = addressMapToTokenMap(
   },
   XSUSHI_ADDRESS,
 ) as Record<keyof typeof XSUSHI_ADDRESS, Token>
+
+export const AXSUSHI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'aXSUSHI',
+    name: 'Aave ibXSUSHI',
+  },
+  AXSUSHI_ADDRESS,
+) as Record<keyof typeof AXSUSHI_ADDRESS, Token>
+
+export const CRXSUSHI = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'crXSUSHI',
+    name: 'Cream XSUSHI',
+  },
+  CRXSUSHI_ADDRESS,
+) as Record<keyof typeof CRXSUSHI_ADDRESS, Token>
+
+export const TSUSHI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'tSUSHI',
+    name: 'Tokemak tSUSHI',
+  },
+  TSUSHI_ADDRESS,
+) as Record<keyof typeof TSUSHI_ADDRESS, Token>
+
+export const MEOW = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MEOW',
+    name: 'Meowshi',
+  },
+  MEOW_ADDRESS,
+) as Record<keyof typeof MEOW_ADDRESS, Token>
 
 export const axlUSDC: Record<keyof typeof axlUSDC_ADDRESS, Token> =
   addressMapToTokenMap(

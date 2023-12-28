@@ -371,6 +371,23 @@ export const SUSHI_ADDRESS = {
 
 export const XSUSHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272',
+  [ChainId.POLYGON]: '0x6811079E3c63ED96Eb005384d7E7ec8810E3D521',
+} as const
+
+export const AXSUSHI_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xF256CC7847E919FAc9B808cC216cAc87CCF2f47a',
+} as const
+
+export const CRXSUSHI_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x228619CCa194Fbe3Ebeb2f835eC1eA5080DaFbb2',
+} as const
+
+export const TSUSHI_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xf49764c9C5d644ece6aE2d18Ffd9F1E902629777',
+} as const
+
+export const MEOW_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x650F44eD6F1FE0E1417cb4b3115d52494B4D9b6D',
 } as const
 
 export const USDC_ADDRESS = {

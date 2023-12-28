@@ -10,6 +10,14 @@ const SnapshotStrategies = [
       decimals: '18',
     },
   },
+  {
+    name: 'erc20-balance-of',
+    params: {
+      address: '0x6811079E3c63ED96Eb005384d7E7ec8810E3D521',
+      decimals: 18,
+    },
+    network: '137',
+  },
 ]
 
 export const useVotingPower = ({
@@ -20,7 +28,7 @@ export const useVotingPower = ({
     queryFn: async () => {
       if (!address) throw new Error()
 
-      const response = await snapshot.utils.getVp(
+      const { vp } = await snapshot.utils.getVp(
         address,
         '1',
         SnapshotStrategies,
@@ -29,10 +37,9 @@ export const useVotingPower = ({
         true,
       )
 
-      console.log({ response })
-
-      return response.vp as number
+      return vp as number
     },
     enabled: Boolean(address),
+    staleTime: 300000,
   })
 }
