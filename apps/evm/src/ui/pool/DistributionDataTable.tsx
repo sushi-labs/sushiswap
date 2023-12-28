@@ -26,8 +26,13 @@ const COLUMNS = [
     id: 'reward',
     header: 'Reward (per day)',
     cell: (props) => {
-      const { start, end, amount, token } = props.row.original
-      const _reward = rewardPerDay({ start, end, amount, token })
+      const { startTimestamp, endTimestamp, amount, token } = props.row.original
+      const _reward = rewardPerDay({
+        start: startTimestamp,
+        end: endTimestamp,
+        amount,
+        token,
+      })
       if (!_reward) return <>n/a</>
 
       return (
@@ -47,18 +52,18 @@ const COLUMNS = [
     id: 'duration',
     header: 'Started',
     cell: (props) => {
-      const { start } = props.row.original
+      const { startTimestamp } = props.row.original
       return (
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <TimeAgo
                 className="whitespace-nowrap underline decoration-dotted underline-offset-2"
-                value={new Date(start * 1000)}
+                value={new Date(startTimestamp * 1000)}
               />
             </TooltipTrigger>
             <TooltipContent>
-              {format(new Date(start * 1000), 'dd MMM yyyy HH:mm')}
+              {format(new Date(startTimestamp * 1000), 'dd MMM yyyy HH:mm')}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -72,18 +77,18 @@ const COLUMNS = [
     id: 'end',
     header: 'Ends in',
     cell: (props) => {
-      const { end } = props.row.original
+      const { endTimestamp } = props.row.original
       return (
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <TimeAgo
                 className="whitespace-nowrap underline decoration-dotted underline-offset-2"
-                value={new Date(end * 1000)}
+                value={new Date(endTimestamp * 1000)}
               />
             </TooltipTrigger>
             <TooltipContent>
-              {format(new Date(end * 1000), 'dd MMM yyyy HH:mm')}
+              {format(new Date(endTimestamp * 1000), 'dd MMM yyyy HH:mm')}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

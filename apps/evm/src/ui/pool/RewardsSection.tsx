@@ -64,7 +64,7 @@ export const RewardsSection: FC = () => {
         return Object.values(el.pools ?? {})
           .filter(
             (el) =>
-              (el?.userTotalBalance0 ?? 0) + (el?.userTotalBalance1 ?? 0) > 0 ||
+              (el?.userBalanceToken0 ?? 0) + (el?.userBalanceToken1 ?? 0) > 0 ||
               Object.keys(el.rewardsPerToken).length > 0,
           )
           .filter((el) =>

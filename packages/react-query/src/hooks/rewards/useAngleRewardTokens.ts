@@ -19,7 +19,7 @@ export const useAngleRewardTokens = ({
           `https://api.angle.money/v1/merkl?chainId=${chainId}&user=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`,
         )
       ).json()
-      const parsed = angleRewardTokensValidator.parse(res)
+      const parsed = angleRewardTokensValidator.parse(res[chainId])
 
       return parsed.validRewardTokens
         .map((el) => {

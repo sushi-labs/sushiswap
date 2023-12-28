@@ -107,6 +107,7 @@ export class AlgebraExtractor {
   qualityChecker: AlgebraQualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
+  started = false
 
   constructor(
     client: PublicClient,
@@ -243,11 +244,22 @@ export class AlgebraExtractor {
             factory,
           })
       })
-      cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
+      const promises = Array.from(cachedPools.values())
+        .map((p) => this.addPoolWatching(p, 'cache', false))
+        .filter((w) => w !== undefined)
+        .map((w) => (w as AlgebraPoolWatcher).statusAll())
+      Promise.allSettled(promises).then((_) => {
+        this.started = true
+        this.consoleLog(
+          `ExtractorAlg is ready (${Math.round(
+            performance.now() - startTime,
+          )}ms)`,
+        )
+      })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       warnLog(
         this.multiCallAggregator.chainId,
-        `ExtractorAlg was started (${Math.round(
+        `ExtractorAlg is started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
         'info',
@@ -483,5 +495,9 @@ export class AlgebraExtractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`Alg-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }

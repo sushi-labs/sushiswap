@@ -75,6 +75,7 @@ export class UniV3Extractor {
   qualityChecker: QualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
+  started = false
 
   constructor(
     client: PublicClient,
@@ -188,14 +189,23 @@ export class UniV3Extractor {
             factory,
           })
       })
-      cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
+      const promises = Array.from(cachedPools.values())
+        .map((p) => this.addPoolWatching(p, 'cache', false))
+        .filter((w) => w !== undefined)
+        .map((w) => (w as UniV3PoolWatcher).statusAll())
+      Promise.allSettled(promises).then((_) => {
+        this.started = true
+        this.consoleLog(
+          `ExtractorV3 is ready (${Math.round(
+            performance.now() - startTime,
+          )}ms)`,
+        )
+      })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
-      warnLog(
-        this.multiCallAggregator.chainId,
-        `ExtractorV3 was started (${Math.round(
+      this.consoleLog(
+        `ExtractorV3 is started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
-        'info',
       )
     }
   }
@@ -456,5 +466,9 @@ export class UniV3Extractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`V3-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }
