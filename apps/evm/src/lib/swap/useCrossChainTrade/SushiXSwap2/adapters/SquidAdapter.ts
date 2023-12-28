@@ -43,7 +43,7 @@ export const isSquidRouteProcessorEnabled: Record<
   [ChainId.ARBITRUM]: true,
   [ChainId.OPTIMISM]: true,
   [ChainId.BASE]: true,
-  [ChainId.FANTOM]: false,
+  [ChainId.FANTOM]: true,
   [ChainId.LINEA]: true,
   [ChainId.KAVA]: false,
   [ChainId.MOONBEAM]: false,
