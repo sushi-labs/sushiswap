@@ -13,7 +13,6 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import Link from 'next/link'
-import { BarProvider } from './BarProvider'
 import { StakeSection } from './StakeSection'
 import { UnstakeSection } from './UnstakeSection'
 
@@ -59,18 +58,16 @@ export const ManageBarCard = ({
         <div className="px-6 pb-4">
           <Separator />
         </div>
-        <BarProvider>
-          <TabsContent value="stake">
-            <CardContent>
-              <StakeSection />
-            </CardContent>
-          </TabsContent>
-          <TabsContent value="unstake">
-            <CardContent>
-              <UnstakeSection />
-            </CardContent>
-          </TabsContent>
-        </BarProvider>
+        <TabsContent value="stake">
+          <CardContent>
+            <StakeSection />
+          </CardContent>
+        </TabsContent>
+        <TabsContent value="unstake">
+          <CardContent>
+            <UnstakeSection />
+          </CardContent>
+        </TabsContent>
       </Tabs>
     </Card>
   )

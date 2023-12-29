@@ -10,30 +10,29 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import { ConnectButton, useBalancesWeb3 } from '@sushiswap/wagmi'
-import { useMemo } from 'react'
+import { ConnectButton, useBalanceWeb3 } from '@sushiswap/wagmi'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
-import { SUSHI, SUSHI_ADDRESS, XSUSHI, XSUSHI_ADDRESS } from 'sushi/currency'
+import { SUSHI } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { useAccount } from 'wagmi'
 
 export const BarBalanceCard = () => {
   const { isConnected, address } = useAccount()
 
-  const { data: balances, isLoading } = useBalancesWeb3({
-    chainId: ChainId.ETHEREUM,
-    account: address,
-    currencies: [SUSHI[ChainId.ETHEREUM], XSUSHI[ChainId.ETHEREUM]],
-  })
+  const { data: sushiBalance, isLoading: isSushiBalanceLoading } =
+    useBalanceWeb3({
+      chainId: ChainId.ETHEREUM,
+      account: address,
+      currency: SUSHI[ChainId.ETHEREUM],
+    })
 
-  const [sushiBalance, xSushiBalance] = useMemo(
-    () => [
-      balances?.[SUSHI_ADDRESS[ChainId.ETHEREUM]],
-      balances?.[XSUSHI_ADDRESS[ChainId.ETHEREUM]],
-    ],
-    [balances],
-  )
+  const { data: xSushiBalance, isLoading: isXSushiBalanceLoading } =
+    useBalanceWeb3({
+      chainId: ChainId.ETHEREUM,
+      account: address,
+      currency: SUSHI[ChainId.ETHEREUM],
+    })
 
   const [sushiFiatValue, xSushiFiatValue] = useTokenAmountDollarValues({
     chainId: ChainId.ETHEREUM,
@@ -53,7 +52,7 @@ export const BarBalanceCard = () => {
           <CardGroup>
             <CardLabel>Staked</CardLabel>
             <CardCurrencyAmountItem
-              isLoading={isLoading}
+              isLoading={isXSushiBalanceLoading}
               amount={xSushiBalance}
               fiatValue={formatUSD(xSushiFiatValue)}
             />
@@ -61,7 +60,7 @@ export const BarBalanceCard = () => {
           <CardGroup>
             <CardLabel>Available</CardLabel>
             <CardCurrencyAmountItem
-              isLoading={isLoading}
+              isLoading={isSushiBalanceLoading}
               amount={sushiBalance}
               fiatValue={formatUSD(sushiFiatValue)}
             />

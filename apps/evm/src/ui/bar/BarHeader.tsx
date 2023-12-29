@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { Button, Currency, LinkExternal } from '@sushiswap/ui'
+import { Button, Currency, LinkExternal, SkeletonText } from '@sushiswap/ui'
 import {
   Tooltip,
   TooltipContent,
@@ -12,9 +12,11 @@ import React from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { XSUSHI } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
+import { useSushiBar } from './BarProvider'
 
 export const BarHeader = () => {
-  const apy = '0.42'
+  const { apr, isLoading } = useSushiBar()
+
   return (
     <div className="flex flex-col gap-6">
       <span className="gap-3 flex">
@@ -34,18 +36,22 @@ export const BarHeader = () => {
       <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground">
         <div className="flex items-center gap-1.5">
           <span className="tracking-tighter font-semibold">APR</span>
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <span className="underline decoration-dotted underline-offset-2">
-                  {formatPercent(apy)}
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                The APR displayed is algorithmic and subject to change.
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {isLoading ? (
+            <SkeletonText className="w-12" fontSize="default" />
+          ) : (
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <span className="underline decoration-dotted underline-offset-2">
+                    {formatPercent(apr)}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  The APR displayed is algorithmic and subject to change.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           <span className="tracking-tighter font-semibold">Network</span>

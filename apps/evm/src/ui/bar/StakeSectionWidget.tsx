@@ -28,37 +28,6 @@ export const StakeSectionWidget = ({
   onInput,
   children,
 }: StakeSectionWidgetProps) => {
-  // const { data } = useContractReads({
-  //   contracts: [
-  //     {
-  //       address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
-  //       chainId: ChainId.ETHEREUM,
-  //       abi: erc20Abi,
-  //       functionName: 'totalSupply',
-  //     },
-  //     {
-  //       address: SUSHI_ADDRESS[ChainId.ETHEREUM],
-  //       chainId: ChainId.ETHEREUM,
-  //       abi: erc20Abi,
-  //       functionName: 'balanceOf',
-  //       args: [XSUSHI_ADDRESS[ChainId.ETHEREUM]],
-  //     },
-  //   ],
-  //   staleTime: 300000, // 5mins
-  // })
-
-  // const [totalSupply, sushiBalance, xSushiAmount] = useMemo(() => {
-  //   const totalSupply = data?.[0]?.result
-  //   const sushiBalance = data?.[1]?.result
-
-  //   const xSushiAmount =
-  //     parsedInput && totalSupply && sushiBalance
-  //       ? parsedInput.multiply(totalSupply).divide(sushiBalance).toExact()
-  //       : ''
-
-  //   return [totalSupply, sushiBalance, xSushiAmount]
-  // }, [data, parsedInput])
-
   const { totalSupply, sushiBalance } = useSushiBar()
 
   const xSushiAmount = useMemo(

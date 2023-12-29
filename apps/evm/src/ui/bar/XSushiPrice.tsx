@@ -4,13 +4,23 @@ import { Button, SkeletonText } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
-import { Price, SUSHI, SUSHI_ADDRESS, tryParseAmount } from 'sushi/currency'
+import {
+  Amount,
+  Price,
+  SUSHI,
+  SUSHI_ADDRESS,
+  Type,
+  tryParseAmount,
+} from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
 export const XSushiPrice = ({
   totalSupply,
   sushiBalance,
-}: { totalSupply: bigint | undefined; sushiBalance: bigint | undefined }) => {
+}: {
+  totalSupply: Amount<Type> | undefined
+  sushiBalance: Amount<Type> | undefined
+}) => {
   const [invert, setInvert] = useState(true)
 
   const amounts = useMemo(() => {
@@ -25,7 +35,7 @@ export const XSushiPrice = ({
   const xSushiFiatPrice = useMemo(
     () =>
       sushiFiatPrice && sushiBalance && totalSupply
-        ? (sushiFiatPrice * Number(sushiBalance)) / Number(totalSupply)
+        ? sushiFiatPrice * Number(sushiBalance.quotient / totalSupply.quotient)
         : 0,
     [sushiBalance, totalSupply, sushiFiatPrice],
   )
@@ -40,9 +50,12 @@ export const XSushiPrice = ({
           prices[SUSHI_ADDRESS[ChainId.ETHEREUM]],
         )
       : undefined
+
     const xSushiPrice =
       sushiPrice && totalSupply && sushiBalance
-        ? sushiPrice.multiply(sushiBalance).divide(totalSupply)
+        ? sushiPrice
+            .multiply(sushiBalance.quotient)
+            .divide(totalSupply.quotient)
         : undefined
 
     let price

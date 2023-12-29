@@ -8,7 +8,6 @@ export const metadata = {
 export default async function Layout({
   children,
 }: { children: React.ReactNode; params: { id: string } }) {
-  // get APY
   return (
     <>
       <Container maxWidth="5xl" className="px-4 pt-16 mb-12">

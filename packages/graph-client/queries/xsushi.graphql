@@ -3,6 +3,8 @@ query Bar($block: Block_height) {
     id
     sushiXsushiRatio
     xSushiSushiRatio
+    sushiSupply
+    xSushiSupply
     apr1m
     apr3m
     apr6m

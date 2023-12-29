@@ -1,14 +1,14 @@
 'use client'
 
-import { useContractReads } from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
-import { erc20Abi } from 'sushi/abi'
+import { useBarData } from 'src/lib/bar/useBarData'
 import { ChainId } from 'sushi/chain'
-import { SUSHI_ADDRESS, XSUSHI_ADDRESS } from 'sushi/currency'
+import { Amount, SUSHI, Type, XSUSHI, tryParseAmount } from 'sushi/currency'
 
 interface BarContext {
-  totalSupply: bigint | undefined
-  sushiBalance: bigint | undefined
+  totalSupply: Amount<Type> | undefined
+  sushiBalance: Amount<Type> | undefined
+  apr: string | undefined
   isLoading: boolean
   isError: boolean
 }
@@ -19,31 +19,16 @@ export const BarProvider: FC<{
   children: ReactNode
   watch?: boolean
 }> = ({ children }) => {
-  const { data, isLoading, isError } = useContractReads({
-    contracts: [
-      {
-        address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
-        chainId: ChainId.ETHEREUM,
-        abi: erc20Abi,
-        functionName: 'totalSupply',
-      },
-      {
-        address: SUSHI_ADDRESS[ChainId.ETHEREUM],
-        chainId: ChainId.ETHEREUM,
-        abi: erc20Abi,
-        functionName: 'balanceOf',
-        args: [XSUSHI_ADDRESS[ChainId.ETHEREUM]],
-      },
+  const { data, isLoading, isError } = useBarData()
+
+  const [sushiBalance, totalSupply, apr] = useMemo(
+    () => [
+      tryParseAmount(data?.xsushi?.sushiSupply, SUSHI[ChainId.ETHEREUM]),
+      tryParseAmount(data?.xsushi?.xSushiSupply, XSUSHI[ChainId.ETHEREUM]),
+      data?.xsushi?.apr12m ? data?.xsushi?.apr12m : undefined,
     ],
-    staleTime: 60000, // 1min
-  })
-
-  const [totalSupply, sushiBalance] = useMemo(() => {
-    const totalSupply = data?.[0]?.result
-    const sushiBalance = data?.[1]?.result
-
-    return [totalSupply, sushiBalance]
-  }, [data])
+    [data],
+  )
 
   return (
     <Context.Provider
@@ -51,10 +36,11 @@ export const BarProvider: FC<{
         () => ({
           totalSupply,
           sushiBalance,
+          apr,
           isLoading,
           isError,
         }),
-        [isError, isLoading, totalSupply, sushiBalance],
+        [sushiBalance, totalSupply, apr, isError, isLoading],
       )}
     >
       {children}
@@ -65,7 +51,7 @@ export const BarProvider: FC<{
 export const useSushiBar = () => {
   const context = useContext(Context)
   if (!context) {
-    throw new Error('Hook can only be used inside Pool Position Context')
+    throw new Error('Hook can only be used inside SushiBar Context')
   }
 
   return context
