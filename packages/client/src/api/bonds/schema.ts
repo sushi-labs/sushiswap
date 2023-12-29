@@ -66,3 +66,18 @@ export const BondSchema = z.object({
   averageBondPrice: z.coerce.number(),
   bondsIssued: bigint(),
 })
+
+export const BondPositionSchema = z.object({
+  owner: address(),
+  chainId: chainId(),
+
+  balance: bigint(),
+
+  bondToken: z.object({
+    id: z.string(),
+    expiry: bigint(),
+    type: z.string(),
+    teller: z.string(),
+    underlying: token(),
+  }),
+})

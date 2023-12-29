@@ -1,5 +1,4 @@
 import {
-  AuctionType,
   BONDS_SUBGRAPH_URL,
   getBondDiscount,
   getMarketIdFromChainIdAuctioneerMarket,
@@ -14,19 +13,12 @@ import { getIdFromChainIdAddress, isPromiseFulfilled } from 'sushi'
 import { createPublicClient, getAddress } from 'viem'
 import { type BondsApiSchema } from '../../../pure/bonds/bonds/schema'
 import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/tokenPricesChain'
+import { convertAuctionTypes } from '../common'
 import { BondSchema } from '../schema'
+// import { createClient } from '@sushiswap/database'
 
 const onlyOpen = (start: bigint | null, end: bigint | null) =>
   (!start || Date.now() / 1000 > start) && end && Date.now() / 1000 < end
-
-const convertAuctionTypes = (auctionTypes: AuctionType[]) => {
-  const map = {
-    [AuctionType.Dynamic]: 'dynamic',
-    [AuctionType.Static]: 'static',
-  } as const
-
-  return auctionTypes.map((type) => map[type])
-}
 
 export async function getBondsFromSubgraph(
   args: typeof BondsApiSchema._output,
@@ -52,6 +44,10 @@ export async function getBondsFromSubgraph(
   Object.entries(query.where).map(([key, value]) => {
     if (value === null) delete query.where[key as keyof typeof query.where]
   })
+
+  // const client = await createClient()
+  // const issuers = client.bondIssuer.findMany()
+  // client.$disconnect()
 
   const bonds = await Promise.allSettled(
     args.chainIds.map(async (chainId) => {

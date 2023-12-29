@@ -40,7 +40,7 @@ export default async function BondPage({
         <div className="py-4">
           <Separator />
         </div>
-        <BondsPositionsTable />
+        <BondsPositionsTable payoutTokenId={bond.payoutToken.id} />
       </div>
     </Container>
   )

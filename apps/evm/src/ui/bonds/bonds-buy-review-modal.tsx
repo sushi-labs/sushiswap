@@ -1,3 +1,4 @@
+import { RefreshIcon } from '@heroicons/react-v1/solid'
 import { REFERRER_ADDRESS, getCliffTimestamp } from '@sushiswap/bonds-sdk'
 import { bondFixedTermTellerAbi } from '@sushiswap/bonds-sdk/abi'
 import { Bond } from '@sushiswap/client'
@@ -159,7 +160,7 @@ export const BondsBuyReviewModal: FC<BondsBuyReviewModal> = ({
     data,
   } = useSendTransaction({
     ...config,
-    gas: config?.gas ? (config.gas * 120n) / 100n : undefined,
+    gas: config?.gas ? config.gas * 2n : undefined,
     chainId: bond.chainId,
     onSettled,
     onSuccess,
@@ -195,6 +196,18 @@ export const BondsBuyReviewModal: FC<BondsBuyReviewModal> = ({
                   </label>
                 </div>
               )}
+              <div className="w-full bg-[rgba(0,0,0,0.04)] text-gray-500 dark:text-gray-400 dark:bg-[#1A2031] text-sm rounded-xl px-4 py-2 flex flex-row items-center space-x-3">
+                <RefreshIcon
+                  height={16}
+                  width={16}
+                  className="animate-rotate"
+                />
+                <div>
+                  <span>Price quote is refreshed automatically every</span>
+                  <span className="text-blue font-semibold"> 4 </span>
+                  <span>seconds.</span>
+                </div>
+              </div>
               <List className="!pt-0">
                 <List.Control>
                   <List.KeyValue title="Network">

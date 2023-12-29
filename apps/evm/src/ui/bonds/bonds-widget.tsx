@@ -23,7 +23,7 @@ import { Checker, Web3Input, useBondMarketDetails } from '@sushiswap/wagmi'
 import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_BONDS } from 'src/lib/constants'
 import { Amount, Token, tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
@@ -40,6 +40,10 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
     })
 
   // Amount handling
+  const [independentField, setIndependentField] = useState<'quote' | 'payout'>(
+    'quote',
+  )
+
   const [quoteInputField, setQuoteInput] = useState('')
   const [payoutInputField, setPayoutInput] = useState('')
 
@@ -67,6 +71,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
         value = quoteAmount.toSignificant(8)
       }
 
+      setIndependentField('quote')
       setQuoteInput(value)
       setQuoteAmount(quoteAmount)
 
@@ -108,6 +113,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
         value = payoutAmount.toSignificant(8)
       }
 
+      setIndependentField('payout')
       setPayoutInput(value)
       setPayoutAmount(payoutAmount)
 
@@ -131,6 +137,16 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
       staleBond.marketScale,
     ],
   )
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: need to update quote/payout input fields when market price changes
+  useEffect(() => {
+    if (independentField === 'quote') {
+      onQuoteInput(quoteInputField)
+    } else {
+      onPayoutInput(payoutInputField)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marketPrice])
 
   // Negative discount warning
   const [noDiscountConfirmed, setNoDiscountConfirmed] = useState(false)

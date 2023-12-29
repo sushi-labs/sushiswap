@@ -35,3 +35,24 @@ query BondMarkets($first: Int = 1000, $skip: Int = 0, $where: Bonds_Market_filte
     bondsIssued
   }
 }
+
+query BondPositions($where: Bonds_OwnerBalance_filter) {
+  positions: Bonds_ownerBalances(first: 1000, where: $where) {
+    id
+    owner
+    balance
+    chainId
+    bondToken {
+      id
+      expiry
+      type
+      teller
+      underlying {
+        address
+        symbol
+        decimals
+        name
+      }
+    }
+  }
+}

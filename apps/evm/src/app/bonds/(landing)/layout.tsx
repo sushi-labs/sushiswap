@@ -3,7 +3,6 @@
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 
-import { BondsFiltersProvider } from '../../../ui/bonds'
 import { PathnameButton } from '../../../ui/pool'
 import { Hero } from '../hero'
 
@@ -51,7 +50,7 @@ export default function TabsLayout({
       </Container>
       <section className="flex flex-col flex-1">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-          <BondsFiltersProvider>{children}</BondsFiltersProvider>
+          {children}
         </div>
       </section>
     </>
