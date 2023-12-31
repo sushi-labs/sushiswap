@@ -6,15 +6,8 @@ import { classNames } from '@sushiswap/ui'
 import { Button, LinkExternal, typographyVariants } from '@sushiswap/ui'
 import { formatDistance } from 'date-fns'
 import { shortenAddress } from 'sushi'
-import { Chain, ChainId } from 'sushi/chain'
-import { SUSHI, Token, USDC } from 'sushi/currency'
-
-export const MOCK_DATA = {
-  bondAsset: SUSHI[ChainId.POLYGON],
-  payoutAsset: USDC[ChainId.POLYGON],
-  issuer: 'Sushi',
-  issuerLink: 'https://sushi.com',
-}
+import { Chain } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 
 export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
   const bond = await getBond({
@@ -149,17 +142,21 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Issuer</span>
-            <LinkExternal target="_blank" href={MOCK_DATA.issuerLink}>
-              <Button
-                asChild
-                size="md"
-                variant="link"
-                className="!font-medium !text-secondary-foreground"
-              >
-                {MOCK_DATA.issuer}
-                <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-              </Button>
-            </LinkExternal>
+            {bond.issuer ? (
+              <LinkExternal target="_blank" href={bond.issuer.link}>
+                <Button
+                  asChild
+                  size="md"
+                  variant="link"
+                  className="!font-medium !text-secondary-foreground"
+                >
+                  {bond.issuer.name}
+                  <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+                </Button>
+              </LinkExternal>
+            ) : (
+              <div className="text-secondary-foreground">Unknown</div>
+            )}
           </div>
         </div>
       </div>

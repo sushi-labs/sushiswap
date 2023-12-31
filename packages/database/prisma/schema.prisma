@@ -59,8 +59,6 @@ model Token {
   steerVaults0    SteerVault[]  @relation("token0")
   steerVaults1    SteerVault[]  @relation("token1")
   incentives      Incentive[]
-  bondMarkets0    BondMarket[]  @relation("quoteToken")
-  bondMarkets1    BondMarket[]  @relation("payoutToken")
 
   @@unique([chainId, address])
   @@index(fields: [id])
@@ -296,59 +294,20 @@ model SteerVault {
   @@index(fields: [token1Id])
 }
 
-enum BondMarketType {
-  Static
-  Dynamic
-}
+model BondIssuerId {
+  id              String @id
 
-enum BondVestingType {
-  Fixed
-}
+  bondIssuer      BondIssuer @relation(fields: [bondIssuerName], references: [name])
+  bondIssuerName  String
 
-model BondMarket {
-  id                  String      @id // chainId:auctioneerAddress:marketId
-  chainId             Int
-
-  marketId            Int
-  marketType          BondMarketType
-  tellerAddress       String
-
-  start               DateTime
-  end                 DateTime
-
-  discount            Decimal
-
-  minPrice            Int
-  capacity            Int
-  capacityInQuote     Boolean
-
-  vesting             Int
-  vestingType         BondVestingType
-
-  issuer              BondIssuer? @relation(fields: [issuerId], references: [id])
-  issuerId            String
-
-  quoteToken          Token   @relation("quoteToken", fields: [quoteTokenId], references: [id])
-  quoteTokenId        String
-  totalBondedAmount   Int
-
-  payoutToken         Token    @relation("payoutToken", fields: [payoutTokenId], references: [id])
-  payoutTokenId       String
-  totalPayoutAmount   Int
-
-  @@index(fields: [chainId])
-  @@index(fields: [marketId])
-  @@index(fields: [chainId, marketType])
-  @@index(fields: [marketType])
-  @@index(fields: [issuerId])
-  @@index(fields: [quoteTokenId])
-  @@index(fields: [payoutTokenId])
+  @@index([bondIssuerName])
 }
 
 model BondIssuer {
-  id            String @id // chainId:address
-  name          String
+  name          String @id
+
+  ids           BondIssuerId[]
   link          String
 
-  bondMarkets   BondMarket[]
+  isApproved      Boolean @default(false)
 }

@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import { AuctionType } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
+// import { useIsMounted } from '@sushiswap/hooks'
 import {
   Badge,
   Currency,
@@ -11,7 +14,6 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useQuery } from '@tanstack/react-query'
 import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import { formatPercent, formatUSD } from 'sushi'
@@ -168,20 +170,28 @@ export const ISSUER_COLUMN: ColumnDef<Bond, unknown> = {
   id: 'issuer',
   header: 'Issuer',
   cell: (props) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { data, isLoading } = useQuery({
-      queryKey: ['bond-issuers'],
-      queryFn: async () => {
-        await new Promise((resolve) => setTimeout(resolve, 5000))
-        return 'Issuer'
-      },
-    })
+    // const isMounted = useIsMounted()
 
-    if (isLoading) {
-      return <SkeletonText fontSize="lg" />
-    }
+    const bond = props.row.original
 
-    return data
+    if (!bond.issuer) return <>Unknown</>
+
+    return (
+      // Cannot use <a> because of some weird SSR behavior
+      <div
+        onKeyUp={(e) => {
+          e.preventDefault()
+          window.open(bond.issuer!.link, '_blank')
+        }}
+        onClick={(e) => {
+          e.preventDefault()
+          window.open(bond.issuer!.link, '_blank')
+        }}
+        className="cursor-pointer text-blue hover:underline"
+      >
+        {bond.issuer.name}
+      </div>
+    )
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,

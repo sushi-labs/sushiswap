@@ -24,10 +24,23 @@ export const BondsApiSchema = z.object({
     .default(BONDS_ENABLED_CHAIN_IDS.join(','))
     .transform((val) => val.split(',').map((v) => parseInt(v) as ChainId))
     .transform((chainIds) => chainIds.filter(isBondChainId)),
-  issuerIds: z
+  issuerNames: z
     .string()
-    .transform((ids) => ids?.split(',').map((id) => id.toLowerCase()))
+    .transform((names) => names?.split(','))
     .optional(),
+  anyIssuer: z.coerce
+    .string()
+    .optional()
+    .default('false')
+    .transform((val) => {
+      if (val === 'true') {
+        return true
+      } else if (val === 'false') {
+        return false
+      } else {
+        throw new Error('anyIssuer must true or false')
+      }
+    }),
   onlyOpen: z.coerce
     .string()
     .optional()

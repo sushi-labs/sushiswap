@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/bonds-sdk'
 import { getBond } from '@sushiswap/client'
 import { Container, Separator } from '@sushiswap/ui'
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { unsanitize } from 'sushi'
 import {
@@ -20,7 +21,13 @@ export default async function BondPage({
   // Will throw an error if the market id is invalid
   getChainIdAuctioneerMarketFromMarketId(marketId)
 
-  const bond = await getBond({ marketId })
+  const bond = await unstable_cache(
+    async () => getBond({ marketId }),
+    ['bond', marketId],
+    {
+      revalidate: 5,
+    },
+  )()
 
   if (!bond) {
     notFound()

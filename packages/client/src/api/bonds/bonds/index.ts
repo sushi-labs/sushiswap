@@ -4,18 +4,22 @@ import {
   getMarketIdFromChainIdAuctioneerMarket,
   getMarketsPrices,
 } from '@sushiswap/bonds-sdk'
+import { createClient } from '@sushiswap/database'
 import {
   type BondMarketsQueryVariables,
   getBuiltGraphSDK,
 } from '@sushiswap/graph-client'
 import { config } from '@sushiswap/viem-config'
-import { getIdFromChainIdAddress, isPromiseFulfilled } from 'sushi'
+import {
+  getChainIdAddressFromId,
+  getIdFromChainIdAddress,
+  isPromiseFulfilled,
+} from 'sushi'
 import { createPublicClient, getAddress } from 'viem'
 import { type BondsApiSchema } from '../../../pure/bonds/bonds/schema'
 import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/tokenPricesChain'
 import { convertAuctionTypes } from '../common'
 import { BondSchema } from '../schema'
-// import { createClient } from '@sushiswap/database'
 
 const onlyOpen = (start: bigint | null, end: bigint | null) =>
   (!start || Date.now() / 1000 > start) && end && Date.now() / 1000 < end
@@ -36,7 +40,7 @@ export async function getBondsFromSubgraph(
       auctioneer_in: auctioneers,
       marketId_in: marketIdFilter,
       hasClosed: args.onlyOpen ? false : null,
-      owner_in: args.issuerIds || null,
+      // owner_in: args.issuerIds || null,
       type_in: auctionTypes,
     },
   } satisfies BondMarketsQueryVariables
@@ -45,9 +49,30 @@ export async function getBondsFromSubgraph(
     if (value === null) delete query.where[key as keyof typeof query.where]
   })
 
-  // const client = await createClient()
-  // const issuers = client.bondIssuer.findMany()
-  // client.$disconnect()
+  const client = await createClient()
+  const issuers = await client.bondIssuer
+    .findMany({
+      select: {
+        name: true,
+        link: true,
+        ids: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      where: {
+        isApproved: true,
+      },
+      cacheStrategy: {
+        swr: 900,
+        ttl: 300,
+      },
+    })
+    .then((d) =>
+      d.map((issuer) => ({ ...issuer, ids: issuer.ids.map(({ id }) => id) })),
+    )
+  await client.$disconnect()
 
   const bonds = await Promise.allSettled(
     args.chainIds.map(async (chainId) => {
@@ -66,13 +91,32 @@ export async function getBondsFromSubgraph(
           return bond.data
         })
         .filter((bond) => {
-          if (auctioneers && !auctioneers?.includes(bond.auctioneer))
+          if (
+            !args.anyIssuer &&
+            !issuers.some((issuer) =>
+              issuer.ids.some((id) => {
+                const { chainId, address } = getChainIdAddressFromId(id)
+                return (
+                  chainId === bond.chainId &&
+                  address.toLowerCase() === bond.owner.toLowerCase()
+                )
+              }),
+            )
+          ) {
             return false
+          }
+
+          if (auctioneers && !auctioneers?.includes(bond.auctioneer)) {
+            return false
+          }
+
           if (
             marketIdFilter &&
             !marketIdFilter?.includes(Number(bond.marketId))
-          )
+          ) {
             return false
+          }
+
           if (
             typeof args.onlyOpen !== 'undefined' &&
             args.onlyOpen !== onlyOpen(bond.start, bond.conclusion)
@@ -106,6 +150,16 @@ export async function getBondsFromSubgraph(
           const marketPrice = marketPrices.find(
             (el) => el.marketId === marketId,
           )?.marketPrice
+
+          const issuer = issuers.find((issuer) =>
+            issuer.ids.some((id) => {
+              const { chainId, address } = getChainIdAddressFromId(id)
+              return (
+                chainId === bond.chainId &&
+                address.toLowerCase() === bond.owner.toLowerCase()
+              )
+            }),
+          )
 
           if (
             !quoteTokenPriceUSD ||
@@ -155,7 +209,8 @@ export async function getBondsFromSubgraph(
             vesting: Number(bond.vesting),
             vestingType: bond.vestingType,
 
-            issuerId: bond.owner,
+            issuerAddress: bond.owner,
+            issuer,
 
             quoteToken: {
               ...bond.quoteToken,

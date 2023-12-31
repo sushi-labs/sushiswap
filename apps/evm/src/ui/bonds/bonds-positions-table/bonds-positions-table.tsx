@@ -51,7 +51,7 @@ export const BondsPositionsTable: FC<PositionsTableProps> = ({
     [address, chainIds, onlyUnredeemed, payoutTokenId],
   )
 
-  const { data = [], isLoading } = useQuery({
+  const { data = [], isInitialLoading } = useQuery({
     queryKey: [getBondsPositionsUrl(args)],
     queryFn: () => getBondsPositions(args),
     refetchInterval: 15 * 1000,
@@ -78,7 +78,7 @@ export const BondsPositionsTable: FC<PositionsTableProps> = ({
         </CardTitle>
       </CardHeader>
       <DataTable
-        loading={isLoading || !isMounted}
+        loading={isInitialLoading || !isMounted}
         columns={COLUMNS}
         data={data}
         pagination={true}

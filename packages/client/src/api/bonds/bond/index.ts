@@ -7,6 +7,7 @@ export async function getBondFromSubgraph(args: typeof BondApiSchema._output) {
   const bondsArgs = BondsApiSchema.parse({
     ids: getMarketIdFromChainIdAuctioneerMarket(args.marketId),
     chainIds: String(args.marketId.chainId),
+    anyIssuer: 'true',
   })
 
   return (await getBondsFromSubgraph(bondsArgs))[0]

@@ -1,5 +1,6 @@
-import { getBonds } from '@sushiswap/client'
+import { getBonds, getBondsUrl } from '@sushiswap/client'
 import { BondsApiSchema } from '@sushiswap/client/api'
+import { unstable_cache } from 'next/cache'
 import { FC, Suspense } from 'react'
 import { BondsTable } from '..'
 
@@ -17,7 +18,14 @@ export const BondsTableWrapper: FC<{ params: typeof BondsApiSchema._input }> =
 
 const _BondsTableWrapper: FC<{ params: typeof BondsApiSchema._input }> =
   async ({ params }) => {
-    const bonds = await getBonds(BondsApiSchema.parse(params))
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    const args = BondsApiSchema.parse(params)
+
+    const bonds = await unstable_cache(
+      async () => getBonds(args),
+      ['bonds', getBondsUrl(args)],
+      {
+        revalidate: 2,
+      },
+    )()
     return <BondsTable data={bonds} />
   }

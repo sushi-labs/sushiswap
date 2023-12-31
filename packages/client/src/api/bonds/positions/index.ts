@@ -29,7 +29,11 @@ export async function getBondPositionsFromSubgraph(
   const query = {
     where: {
       balance_gt: args.onlyUnredeemed ? 0 : null,
-      bondToken_contains_nocase: payoutTokenAddress,
+      bondToken_: payoutTokenAddress
+        ? {
+            underlying_contains_nocase: payoutTokenAddress,
+          }
+        : null,
       owner_contains_nocase: args.userAddress,
     },
   } satisfies BondPositionsQueryVariables
