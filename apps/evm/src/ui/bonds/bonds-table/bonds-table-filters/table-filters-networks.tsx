@@ -17,7 +17,13 @@ import {
   CommandItem,
 } from '@sushiswap/ui/components/command'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
-import React, { FC, useCallback, useState, useTransition } from 'react'
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+  useTransition,
+} from 'react'
 import { Chain } from 'sushi/chain'
 import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 
@@ -61,6 +67,10 @@ export const TableFiltersNetwork: FC = () => {
     },
     [setFilters, localValue],
   )
+
+  useEffect(() => {
+    setValues(isAllThenNone(chainIds))
+  }, [chainIds])
 
   return (
     <Popover modal={true} open={open} onOpenChange={setOpen}>

@@ -31,7 +31,7 @@ export const TableFiltersOpenOnly: FC = () => {
       pressed={isPending ? checked : onlyOpen === undefined}
       size="sm"
     >
-      Open Only
+      Open Markets Only
     </Toggle>
   )
 }

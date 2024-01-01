@@ -104,6 +104,7 @@ export const PAYOUT_AMOUNT_COLUMN: ColumnDef<BondPosition, unknown> = {
 export const MATURITY_COLUMN: ColumnDef<BondPosition, unknown> = {
   id: 'maturity',
   header: 'Maturity',
+  accessorFn: (row) => row.maturity,
   cell: (props) => {
     const isMounted = useIsMounted()
 

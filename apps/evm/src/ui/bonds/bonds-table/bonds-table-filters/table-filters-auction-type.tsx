@@ -29,7 +29,8 @@ import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 const AUCTIONTYPE_DESCRIPTIONS: Record<AuctionType, string> = {
   [AuctionType.Static]:
     'A fixed-price auction type that enabled issuers to set a fixed price that bonders must pay to obtain payout tokens.',
-  [AuctionType.Dynamic]: 'Lorem ipsum',
+  [AuctionType.Dynamic]:
+    'A dynamic-price auction type using a Sequential Dutch Auction (SDA) mechanism that enables issuers to set a starting price which dynamically adjusts based on the supply and demand, bonders pay a dynamic price to obtain payout tokens.',
 }
 
 const isAllThenNone = (auctionTypes: AuctionType[] | undefined) =>

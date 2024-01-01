@@ -22,7 +22,7 @@ import { Token } from 'sushi/currency'
 const AUCTION_TYPE_BADGE: Record<AuctionType, JSX.Element> = {
   [AuctionType.Dynamic]: (
     <div className="whitespace-nowrap text-cyan-700 bg-cyan-100 text-[10px] font-medium px-2 rounded-full">
-      Static
+      Dynamic
     </div>
   ),
   [AuctionType.Static]: (
@@ -90,6 +90,7 @@ export const PAYOUT_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
 export const PRICE_COLUMN: ColumnDef<Bond, unknown> = {
   id: 'price',
   header: 'Price',
+  accessorFn: (row) => row.payoutToken.discountedPriceUSD,
   cell: ({ row: { original } }) => (
     <div className="flex flex-col space-y-1">
       <div className="text-sm font-medium">
@@ -108,6 +109,7 @@ export const PRICE_COLUMN: ColumnDef<Bond, unknown> = {
 export const DISCOUNT_COLUMN: ColumnDef<Bond, unknown> = {
   id: 'discount',
   header: 'Discount',
+  accessorFn: (row) => row.discount,
   cell: (props) => {
     const discount = props.row.original.discount
 
@@ -153,6 +155,7 @@ export const BOND_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
 export const CLIFF_COLUMN: ColumnDef<Bond, unknown> = {
   id: 'cliff',
   header: 'Cliff',
+  accessorFn: (row) => row.vesting,
   cell: (props) => {
     if (!props.row.original.vesting) return <>-</>
 
@@ -170,8 +173,6 @@ export const ISSUER_COLUMN: ColumnDef<Bond, unknown> = {
   id: 'issuer',
   header: 'Issuer',
   cell: (props) => {
-    // const isMounted = useIsMounted()
-
     const bond = props.row.original
 
     if (!bond.issuer) return <>Unknown</>

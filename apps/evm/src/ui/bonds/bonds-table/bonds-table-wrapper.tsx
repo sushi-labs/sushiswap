@@ -24,7 +24,7 @@ const _BondsTableWrapper: FC<{ params: typeof BondsApiSchema._input }> =
       async () => getBonds(args),
       ['bonds', getBondsUrl(args)],
       {
-        revalidate: 2,
+        revalidate: 1,
       },
     )()
     return <BondsTable data={bonds} />
