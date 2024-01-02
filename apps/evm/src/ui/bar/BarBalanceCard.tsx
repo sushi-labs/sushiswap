@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import { ConnectButton, useBalanceWeb3 } from '@sushiswap/wagmi'
+import { useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
 import { SUSHI } from 'sushi/currency'
@@ -34,9 +35,14 @@ export const BarBalanceCard = () => {
       currency: SUSHI[ChainId.ETHEREUM],
     })
 
+  const amounts = useMemo(
+    () => [sushiBalance ?? undefined, xSushiBalance ?? undefined],
+    [sushiBalance, xSushiBalance],
+  )
+
   const [sushiFiatValue, xSushiFiatValue] = useTokenAmountDollarValues({
     chainId: ChainId.ETHEREUM,
-    amounts: [sushiBalance, xSushiBalance],
+    amounts: amounts,
   })
 
   return (
@@ -53,7 +59,7 @@ export const BarBalanceCard = () => {
             <CardLabel>Staked</CardLabel>
             <CardCurrencyAmountItem
               isLoading={isXSushiBalanceLoading}
-              amount={xSushiBalance}
+              amount={xSushiBalance ?? undefined}
               fiatValue={formatUSD(xSushiFiatValue)}
             />
           </CardGroup>
@@ -61,7 +67,7 @@ export const BarBalanceCard = () => {
             <CardLabel>Available</CardLabel>
             <CardCurrencyAmountItem
               isLoading={isSushiBalanceLoading}
-              amount={sushiBalance}
+              amount={sushiBalance ?? undefined}
               fiatValue={formatUSD(sushiFiatValue)}
             />
           </CardGroup>

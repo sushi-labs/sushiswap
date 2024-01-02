@@ -5,9 +5,9 @@ import { useQuery } from '@tanstack/react-query'
 
 const sdk = getBuiltGraphSDK()
 
-export const useBarGraphData = (enabled = true) => {
+export const useBarChartData = (enabled = true) => {
   return useQuery({
-    queryKey: ['useBarGraphData'],
+    queryKey: ['useBarChartData'],
     queryFn: async () => await sdk.BarHistory(),
     keepPreviousData: true,
     staleTime: 0,

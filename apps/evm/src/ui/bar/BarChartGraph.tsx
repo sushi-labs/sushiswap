@@ -16,7 +16,7 @@ import { formatNumber, formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
-import { useBarGraphData } from 'src/lib/bar/useBarGraphData'
+import { useBarChartData } from 'src/lib/bar'
 import { BarChartPeriod, chartPeriods } from './BarChartPeriods'
 import { BarChartType } from './BarChartTypes'
 
@@ -28,7 +28,7 @@ interface BarChartProps {
 const tailwind = resolveConfig(tailwindConfig)
 
 export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
-  const { data: barData, isLoading } = useBarGraphData()
+  const { data: barData, isLoading } = useBarChartData()
 
   const [xData, yData] = useMemo(() => {
     const data =
@@ -40,7 +40,7 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
 
     const currentDate = Math.round(Date.now())
 
-    const [x, y] = data.reduce(
+    const [x, y] = data.reduce<[number[], number[]]>(
       (acc, cur) => {
         if (cur.date * 1000 >= currentDate - chartPeriods[period]) {
           acc[0].push(cur.date)
