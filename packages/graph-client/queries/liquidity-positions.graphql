@@ -33,3 +33,43 @@ query LiquidityPositions(
     ...LiquidityPositionFields
   }
 }
+
+query LiquidityPositionsByUsers(
+  $skip: Int = 0
+  $first: Int = 100
+  $where: LiquidityPosition_filter
+  $block: Block_height
+  $orderBy: LiquidityPosition_orderBy
+  $orderDirection: OrderDirection
+  $users: [UserInput!]!
+) {
+  liquidityPositions: liquidityPositionsByUsers(
+    skip: $skip
+    first: $first
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
+    users: $users
+  ) {
+    id
+    ...LiquidityPositionFields
+    pair {
+      id
+      liquidity
+      liquidityUSD
+      token0 {
+        id
+        address: id
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        address: id
+        symbol
+        decimals
+      }
+    }
+  }
+}

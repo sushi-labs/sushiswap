@@ -1,5 +1,6 @@
 import { Resolvers } from '../../.graphclient/index.js'
 import { liquidityPositionsByChainIds } from './liquidityPositionsByChainIds.js'
+import { liquidityPositionsByUsers } from './liquidityPositionsByUsers.js'
 
 export const resolvers: Resolvers = {
   LiquidityPosition: {
@@ -8,5 +9,6 @@ export const resolvers: Resolvers = {
   },
   Query: {
     liquidityPositionsByChainIds,
+    liquidityPositionsByUsers,
   },
 }
