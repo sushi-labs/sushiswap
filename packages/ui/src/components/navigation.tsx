@@ -31,6 +31,11 @@ const EXPLORE_NAVIGATION_LINKS: {
     description: 'Earn fees by providing liquidity.',
   },
   {
+    title: 'Sushi Bar',
+    href: '/bar',
+    description: 'Earn protocol fees by staking SUSHI.',
+  },
+  {
     title: 'Pay',
     href: '/furo',
     description: 'Automate salaries and vesting schedules.',
@@ -215,6 +220,23 @@ const Navigation: React.FC<NavProps> = ({
                 className={navigationMenuTriggerStyle()}
               >
                 Pools
+              </NavigationMenuLink>
+            )}
+          </NavigationMenuItem>
+          <NavigationMenuItem className="hidden md:block">
+            {legacyBehavior ? (
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
+                <a href="/bar">Sushi Bar</a>
+              </NavigationMenuLink>
+            ) : (
+              <NavigationMenuLink
+                href="/bar"
+                className={navigationMenuTriggerStyle()}
+              >
+                Sushi Bar
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>
