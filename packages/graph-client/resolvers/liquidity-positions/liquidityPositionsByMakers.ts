@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -10,25 +10,26 @@ import { isPromiseFulfilled } from 'sushi/validate'
 import {
   Query,
   QueryResolvers,
-  QueryliquidityPositionsByUsersArgs,
+  QueryliquidityPositionsByMakersArgs,
   RequireFields,
+  getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
 
-export const _liquidityPositionsByUsers = async (
+export const _liquidityPositionsByMakers = async (
   root = {},
   args: RequireFields<
-    QueryliquidityPositionsByUsersArgs,
+    QueryliquidityPositionsByMakersArgs,
     'skip' | 'first' | 'users'
   >,
   context: SushiSwapTypes.Context & TridentTypes.Context,
   info: GraphQLResolveInfo,
 ) => {
   const liquidityPositions = await Promise.allSettled<
-    Query['liquidityPositionsByUsers'][]
-  >([
-    ...args.users
+    Query['liquidityPositionsByMakers'][]
+  >(
+    args.users
       .filter((user) =>
         SUSHISWAP_ENABLED_NETWORKS.includes(user.chainId),
       )
@@ -40,7 +41,7 @@ export const _liquidityPositionsByUsers = async (
             where: {
               ...args?.where,
               user: id
-            }
+            },
           },
           context: {
             ...context,
@@ -57,15 +58,41 @@ export const _liquidityPositionsByUsers = async (
             )
             return []
           }
-          return liquidityPositions.map((liquidityPosition) => ({
-            ...liquidityPosition,
-            chainId,
-          }))
+
+          const sdk = getBuiltGraphSDK({
+            subgraphHost: SUBGRAPH_HOST[chainId],
+            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+          })
+          
+          return (!liquidityPositions.length ? (Promise.resolve([])) : 
+          
+          sdk.V2Burns({
+            where: {
+              sender: id,
+              pair_: {
+                id_in: liquidityPositions.map((lp) => lp.pair.id)
+              }
+            },
+          })
+
+          ).then(({ burns }: { burns: SushiSwapTypes.V2Burn[] }) => {
+            const burnsMap = burns?.reduce((accum, cur) => {
+              accum[cur.pair.id] = accum[cur.pair.id] ?? cur
+              return accum
+            }, {}) ?? {}
+
+            return liquidityPositions.map((liquidityPosition) => ({
+              ...liquidityPosition,
+              chainId,
+              lastDistributedTimestamp: burnsMap[liquidityPosition.pair.id]?.transaction?.createdAtTimestamp,
+              lastDistributedTx: burnsMap[liquidityPosition.pair.id]?.transaction?.id
+            }))
+          })
         }),
       ),
-  ]).then((promiseSettledResults) => {
+  ).then((promiseSettledResults) => {
     if (!Array.isArray(promiseSettledResults)) {
-      console.error('liquidityPositionsByUsers query failed')
+      console.error('liquidityPositionsByMakers query failed')
       return []
     }
     return promiseSettledResults
@@ -77,7 +104,7 @@ export const _liquidityPositionsByUsers = async (
   return liquidityPositions
 }
 
-export const liquidityPositionsByUsers: QueryResolvers['liquidityPositionsByUsers'] =
+export const liquidityPositionsByMakers: QueryResolvers['liquidityPositionsByMakers'] =
   async (root, args, context, info) => {
-    return _liquidityPositionsByUsers(root, args, context, info)
+    return _liquidityPositionsByMakers(root, args, context, info)
   }

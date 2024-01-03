@@ -9,7 +9,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { DistributionDataTable } from './DistributionDataTable'
+import { HistoricDistributionDataTable } from './HistoricDistributionDataTable'
+import { UpcomingDistributionDataTable } from './UpcomingDistributionDataTable'
 
 export const BarDistributionsCard = () => {
   return (
@@ -34,10 +35,10 @@ export const BarDistributionsCard = () => {
           </TabsList>
         </CardContent>
         <TabsContent value="upcoming">
-          <DistributionDataTable />
+          <UpcomingDistributionDataTable />
         </TabsContent>
         <TabsContent value="historic">
-          <DistributionDataTable />
+          <HistoricDistributionDataTable />
         </TabsContent>
       </Tabs>
     </Card>

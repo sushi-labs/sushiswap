@@ -340,6 +340,8 @@ additionalTypeDefs: |
   }
   extend type LiquidityPosition {
     chainId: BigInt!
+    lastDistributedTx: String
+    lastDistributedTimestamp: Int
   }
 
   extend type BentoBoxKpi {
@@ -430,7 +432,7 @@ additionalTypeDefs: |
       block: Block_height
       chainIds: [BigInt!]!
     ): [LiquidityPosition!]!
-    liquidityPositionsByUsers(
+    liquidityPositionsByMakers(
       skip: Int = 0
       first: Int = 100
       where: LiquidityPosition_filter

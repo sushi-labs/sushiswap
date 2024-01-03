@@ -34,7 +34,7 @@ query LiquidityPositions(
   }
 }
 
-query LiquidityPositionsByUsers(
+query LiquidityPositionsByMakers(
   $skip: Int = 0
   $first: Int = 100
   $where: LiquidityPosition_filter
@@ -43,7 +43,7 @@ query LiquidityPositionsByUsers(
   $orderDirection: OrderDirection
   $users: [UserInput!]!
 ) {
-  liquidityPositions: liquidityPositionsByUsers(
+  liquidityPositions: liquidityPositionsByMakers(
     skip: $skip
     first: $first
     where: $where
@@ -54,6 +54,8 @@ query LiquidityPositionsByUsers(
   ) {
     id
     ...LiquidityPositionFields
+    lastDistributedTx
+    lastDistributedTimestamp
     pair {
       id
       liquidity
