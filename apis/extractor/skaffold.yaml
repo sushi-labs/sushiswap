@@ -26,10 +26,6 @@ profiles:
   build:
     googleCloudBuild:
       projectId: "extractor-410208"
-  manifests:
-    rawYaml:
-      - k8s/ingress.yaml
-      - k8s/managed-certificate.yaml
 - name: production
   build:
     googleCloudBuild:
