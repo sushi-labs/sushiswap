@@ -38,8 +38,8 @@ import z from 'zod'
 import { CONFIGURED_CHAIN_IDS, EXTRACTOR_CONFIG } from './config'
 import { makeAPI02Object } from './makeAPI02Object'
 
-import nativeProviders from './native-provider'
-import requestStatistics, { ResponseRejectReason } from './request-statistics'
+import { nativeProviders } from './native-provider'
+import { requestStatistics, ResponseRejectReason } from './request-statistics'
 
 const zChainId = z.coerce
   .number()

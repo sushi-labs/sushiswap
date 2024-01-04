@@ -5,9 +5,7 @@ import {
   type RouteProcessor3_2ChainId,
 } from 'sushi/config'
 
-const nativeProviders = new Map<
+export const nativeProviders = new Map<
   RouteProcessor3ChainId | RouteProcessor3_1ChainId | RouteProcessor3_2ChainId,
   NativeWrapProvider
 >()
-
-export default nativeProviders
