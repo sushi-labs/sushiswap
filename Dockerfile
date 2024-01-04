@@ -41,23 +41,23 @@ COPY turbo.json turbo.json
 
 # RUN turbo prune @sushiswap/extractor-api --docker
 
-FROM base AS installer
+# FROM base AS installer
 
-RUN pnpm install --prod --frozen-lockfile
+# RUN pnpm install --prod --frozen-lockfile
 # RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 
-FROM base AS builder
+# FROM base AS builder
 
 RUN pnpm install --frozen-lockfile
 RUN pnpm exec turbo run build --filter=extractor-api
 
-FROM base AS runner
+# FROM base AS runner
 
 # COPY --from=installer /app/node_modules /app/node_modules
 # COPY --from=builder /app/apis/extractor/dist /app/apis/extractor/dist
 
-COPY --from=builder . .
+# COPY --from=builder /app /app
 
 EXPOSE 80
 
