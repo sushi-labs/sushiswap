@@ -129,9 +129,6 @@ importers:
       '@sushiswap/viem-config':
         specifier: workspace:*
         version: link:../../config/viem
-      '@vercel/node':
-        specifier: 3.0.9
-        version: 3.0.9
       '@wagmi/core':
         specifier: 1.4.5
         version: 1.4.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.17.2)(zod@3.21.4)

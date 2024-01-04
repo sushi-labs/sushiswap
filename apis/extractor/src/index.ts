@@ -99,7 +99,10 @@ const querySchema3_2 = querySchema.extend({
 
 const PORT = process.env['PORT'] || 80
 
-const CHAIN_ID = process.env['CHAIN_ID'] as CONFIGURED_CHAIN_IDS | undefined // TODO: shouldn't cast, we should validate with zod
+const CHAIN_ID = Number(process.env['CHAIN_ID']) as
+  | CONFIGURED_CHAIN_IDS
+  | undefined // TODO: shouldn't cast, we should validate with zod
+
 if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
 }
