@@ -15,7 +15,7 @@ export const useBarPositions = (enabled = true) => {
   return useQuery({
     queryKey: ['useBarPositions'],
     queryFn: async () => {
-      const results = await sdk.LiquidityPositionsByUsers({
+      const results = await sdk.LiquidityPositionsByMakers({
         users: Object.entries(SUSHI_MAKER_ADDRESS).reduce<
           { chainId: number; id: string }[]
         >((accum, [chainId, address]) => {

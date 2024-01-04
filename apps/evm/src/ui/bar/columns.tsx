@@ -47,7 +47,8 @@ export const LAST_DISTRUBUTED_COLUMN: ColumnDef<BarPosition, unknown> = {
   header: 'Last Distributed',
   accessorFn: (row) => row.lastDistributedTimestamp ?? '0',
   cell: (props) =>
-    props.row.original.lastDistributedTimestamp ? (
+    props.row.original.lastDistributedTimestamp &&
+    props.row.original.lastDistributedTx ? (
       // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
       <div onClick={(e) => e.stopPropagation()}>
         <a
