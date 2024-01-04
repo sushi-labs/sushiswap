@@ -15,8 +15,6 @@ build:
         # buildArgs:
         #   TURBO_TEAM: "teamsushi"
         #   TURBO_TOKEN:{{ .TURBO_TOKEN }}
-  googleCloudBuild:
-    projectId: "extractor-410208"
 deploy:
   helm:
     releases:
@@ -24,7 +22,17 @@ deploy:
         chartPath: k8s/chart
 profiles:
 - name: development
+  build:
+    googleCloudBuild:
+      projectId: "extractor-410208"
+  manifests:
+    rawYaml:
+      - k8s/ingress.yaml
+      - k8s/managed-certificate.yaml
 - name: production
+  build:
+    googleCloudBuild:
+      projectId: "extractor-410208"
   manifests:
     rawYaml:
       - k8s/ingress.yaml
