@@ -4,7 +4,7 @@ metadata:
   name: nginx-ingress
   annotations:
     kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "ingress-nginx"
+    kubernetes.io/ingress.global-static-ip-name: "extractor"
     networking.gke.io/managed-certificates: "managed-certificate"
 spec:
   rules:
