@@ -26,6 +26,9 @@ profiles:
   build:
     googleCloudBuild:
       projectId: "extractor-410208"
+  manifests:
+    rawYaml:
+      - k8s/ingress-dev.yaml
 - name: production
   build:
     googleCloudBuild:
