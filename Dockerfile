@@ -54,9 +54,13 @@ RUN pnpm exec turbo run build --filter=extractor-api
 
 FROM base AS runner
 
-COPY --from=installer /app/node_modules /app/node_modules
-COPY --from=installer /app/apis/extractor/node_modules /app/apis/extractor/node_modules
+# COPY --from=installer /app/node_modules /app/node_modules
+# COPY --from=installer /app/apis/extractor/node_modules /app/apis/extractor/node_modules
+# COPY --from=builder /app/apis/extractor/dist /app/apis/extractor/dist
+
+COPY --from=installer /app /app
 COPY --from=builder /app/apis/extractor/dist /app/apis/extractor/dist
+
 
 EXPOSE 80
 
