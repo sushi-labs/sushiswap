@@ -6,9 +6,9 @@ description: extractor pipeline
 serialPipeline:
   stages:
   - targetId: development
-    profiles: []
+    profiles: [development]
   - targetId: production
-    profiles: []
+    profiles: [production]
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
