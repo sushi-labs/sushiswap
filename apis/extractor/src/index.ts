@@ -39,7 +39,7 @@ import { CONFIGURED_CHAIN_IDS, EXTRACTOR_CONFIG } from './config'
 import { makeAPI02Object } from './makeAPI02Object'
 
 import { nativeProviders } from './native-provider'
-import { requestStatistics, ResponseRejectReason } from './request-statistics'
+import { ResponseRejectReason, requestStatistics } from './request-statistics'
 
 const zChainId = z.coerce
   .number()
@@ -99,21 +99,27 @@ const querySchema3_2 = querySchema.extend({
 
 const PORT = process.env['PORT'] || 80
 
-const CHAIN_ID = process.env['CHAIN_ID'] as CONFIGURED_CHAIN_IDS | undefined // TODO: shouldn't cast, we should validate with zod 
+const CHAIN_ID = process.env['CHAIN_ID'] as CONFIGURED_CHAIN_IDS | undefined // TODO: shouldn't cast, we should validate with zod
 if (!CHAIN_ID) {
-  throw new Error("CHAIN_ID is not set")
+  throw new Error('CHAIN_ID is not set')
 }
 
-  const extractor = new Extractor({
-    ...EXTRACTOR_CONFIG[CHAIN_ID],
-    // warningMessageHandler: (
-    //   chain: ChainId | number | undefined,
-    //   message: string,
-    //   level: WarningLevel,
-    // ) => {
-    //   Sentry.captureMessage(`${chain}: ${message}`, level)
-    // },
-  })
+const extractor = new Extractor({
+  ...EXTRACTOR_CONFIG[CHAIN_ID],
+  // warningMessageHandler: (
+  //   chain: ChainId | number | undefined,
+  //   message: string,
+  //   level: WarningLevel,
+  // ) => {
+  //   Sentry.captureMessage(`${chain}: ${message}`, level)
+  // },
+})
+
+const nativeProvider = new NativeWrapProvider(
+  CHAIN_ID as ChainId,
+  extractor.client,
+)
+
 // const SENTRY_DSN = process.env['SENTRY_DSN'] as string
 ;(async function () {
   const app: Express = express()
@@ -136,11 +142,9 @@ if (!CHAIN_ID) {
   //   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   // })
 
-
-    await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
-    const nativeProvider = new NativeWrapProvider(CHAIN_ID, extractor.client)
-    nativeProviders.set(CHAIN_ID, nativeProvider)
-
+  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
+  const nativeProvider = new NativeWrapProvider(CHAIN_ID, extractor.client)
+  nativeProviders.set(CHAIN_ID, nativeProvider)
 
   // app.use(
   //   cors({
@@ -327,7 +331,6 @@ function processRequest(
       }
 
       const poolCodesMap = new Map<string, PoolCode>()
-      const nativeProvider = nativeProviders.get(chainId) as NativeWrapProvider
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
