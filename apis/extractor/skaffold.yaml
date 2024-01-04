@@ -4,6 +4,17 @@ apiVersion: skaffold/v4beta7
 kind: Config
 metadata:
   name: extractor
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+    - image: extractor
+      context: ../../
+      docker:
+        dockerfile: Dockerfile
+        # buildArgs:
+        #   TURBO_TEAM: "teamsushi"
+        #   TURBO_TOKEN:{{ .TURBO_TOKEN }}
 deploy:
   helm:
     releases:
@@ -11,17 +22,6 @@ deploy:
         chartPath: k8s/chart
 profiles:
 - name: local
-  build:
-    tagPolicy:
-      sha256: {}
-    artifacts:
-      - image: extractor
-        context: ../../
-        docker:
-          dockerfile: Dockerfile
-          # buildArgs:
-          #   TURBO_TEAM: "teamsushi"
-          #   TURBO_TOKEN:{{ .TURBO_TOKEN }}
 - name: development
   build:
     googleCloudBuild:
