@@ -5,25 +5,23 @@ metadata:
 description: extractor pipeline
 serialPipeline:
   stages:
-  - targetId: dev
+  - targetId: development
     profiles: []
-  # - targetId: qsprod
-  #   profiles: []
+  - targetId: production
+    profiles: []
 ---
-
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
-  name: dev
+  name: development
 description: development cluster
 gke:
-  cluster: projects/sushi-dev-382510/locations/us-east4/clusters/dev
-# ---
-
-# apiVersion: deploy.cloud.google.com/v1
-# kind: Target
-# metadata:
-#   name: prod
-# description: production cluster
-# gke:
-#   cluster: projects/PROJECT_ID/locations/us-central1/clusters/quickstart-cluster-qsprod
+  cluster: projects/extractor-410208/locations/us-east4/clusters/development
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: production
+description: production cluster
+gke:
+  cluster: projects/extractor-410208/locations/us-central1/clusters/production

@@ -18,8 +18,10 @@
 
 # To learn more about the skaffold.yaml schema visit
 # https://skaffold.dev/docs/references/yaml/
-apiVersion: skaffold/v2beta19
+apiVersion: skaffold/v4beta8
 kind: Config
+metadata:
+  name: extractor
 build:
   tagPolicy:
     sha256: {}
@@ -31,22 +33,27 @@ build:
         # buildArgs:
         #   TURBO_TEAM: "teamsushi"
         #   TURBO_TOKEN:{{ .TURBO_TOKEN }}
-
+  googleCloudBuild:
+    projectId: "extractor-410208"
 deploy:
   helm:
     releases:
       - name: extractors
         chartPath: k8s/chart
+manifests:
+  rawYaml:
+    - k8s/ingress.yaml
+    - k8s/managed-certificate.yaml
 profiles:
-- name: cloudbuild
-  build:
-    googleCloudBuild: {}
+- name: development
   deploy:
     helm:
       releases:
         - name: extractors
           chartPath: k8s/chart
-    kubectl:
-      manifests:
-      - k8s/ingress.yaml
-      - k8s/managed-certificate.yaml
+- name: production
+  deploy:
+    helm:
+      releases:
+        - name: extractors
+          chartPath: k8s/chart

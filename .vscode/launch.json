@@ -8,18 +8,19 @@
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
             "watch": false,
             "cleanUp": true,
-            "portForward": true
+            "portForward": true,
+            "imageRegistry": "gcr.io/extractor-410208"
         },
         {
             "name": "DEV: GKE",
-            "profile": "cloudbuild",
+            "profile": "development",
             "type": "cloudcode.kubernetes",
             "request": "launch",
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
             "watch": false,
             "cleanUp": false,
             "portForward": true,
-            "imageRegistry": "gcr.io/sushi-dev-382510"
+            "imageRegistry": "gcr.io/extractor-410208"
         }
     ]
 }
