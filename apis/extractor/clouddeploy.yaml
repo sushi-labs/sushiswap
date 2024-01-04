@@ -1,0 +1,29 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: extractor
+description: extractor pipeline
+serialPipeline:
+  stages:
+  - targetId: dev
+    profiles: []
+  # - targetId: qsprod
+  #   profiles: []
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: dev
+description: development cluster
+gke:
+  cluster: projects/sushi-dev-382510/locations/us-east4/clusters/dev
+# ---
+
+# apiVersion: deploy.cloud.google.com/v1
+# kind: Target
+# metadata:
+#   name: prod
+# description: production cluster
+# gke:
+#   cluster: projects/PROJECT_ID/locations/us-central1/clusters/quickstart-cluster-qsprod

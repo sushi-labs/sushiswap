@@ -30,7 +30,7 @@ build:
         dockerfile: Dockerfile
         # buildArgs:
         #   TURBO_TEAM: "teamsushi"
-        #   TURBO_TOKEN: "from env?"
+        #   TURBO_TOKEN:{{ .TURBO_TOKEN }}
 
 deploy:
   helm:
