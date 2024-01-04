@@ -24,4 +24,4 @@ metadata:
   name: production
 description: production cluster
 gke:
-  cluster: projects/extractor-410208/locations/us-central1/clusters/production
+  cluster: projects/extractor-410208/locations/us-east4/clusters/production

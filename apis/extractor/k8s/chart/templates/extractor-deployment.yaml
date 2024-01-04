@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: extractor
-          image: extractor:latest
+          image: extractor
           ports:
             - containerPort: 80
           resources:

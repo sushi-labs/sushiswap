@@ -3,6 +3,7 @@
     "configurations": [
         {
             "name": "LOCAL: Minikube",
+            "profile": "local",
             "type": "cloudcode.kubernetes",
             "request": "launch",
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
