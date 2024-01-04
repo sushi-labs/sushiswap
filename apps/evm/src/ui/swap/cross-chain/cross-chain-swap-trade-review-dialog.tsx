@@ -62,6 +62,7 @@ import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
 import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
 import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { Native } from 'sushi/currency'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -431,8 +432,16 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               >
                 <div className="pt-4">
                   <Message size="sm" variant="destructive">
-                    Insufficient funds to pay for gas on the destination chain.
-                    Please lower your input amount.
+                    Insufficient {Native.onChain(chainId0).symbol} balance on{' '}
+                    {Chain.fromChainId(chainId0)?.name} to cover the network
+                    fee. Please lower your input amount or{' '}
+                    <a
+                      href={`/swap?chainId=${chainId0}&token0=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&token1=NATIVE`}
+                      className="underline decoration-dotted underline-offset-2"
+                    >
+                      swap for more {Native.onChain(chainId0).symbol}
+                    </a>
+                    .
                   </Message>
                 </div>
               </Collapsible>
