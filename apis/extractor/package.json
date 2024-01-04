@@ -35,7 +35,6 @@
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
-    "@vercel/node": "3.0.9",
     "@wagmi/core": "1.4.5",
     "cors": "2.8.5",
     "dotenv": "16.3.1",

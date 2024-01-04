@@ -143,9 +143,6 @@ const nativeProvider = new NativeWrapProvider(
   // })
 
   await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
-  const nativeProvider = new NativeWrapProvider(CHAIN_ID, extractor.client)
-  nativeProviders.set(CHAIN_ID, nativeProvider)
-
   // app.use(
   //   cors({
   //     origin: /sushi\.com$/,
