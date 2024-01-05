@@ -9,7 +9,10 @@ import extractor from '../../extractor'
 import schema from './schema'
 
 async function handler(req: Request, res: Response) {
-  res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
+  res.setHeader(
+    'Cache-Control',
+    'maxage=10, s-maxage=10, stale-while-revalidate=59',
+  )
   // console.log('HTTP: GET /get-pool-codes-for-tokens', JSON.stringify(req.query))
   const { chainId, address } = schema.parse(req.query)
   const tokenManager = extractor.tokenManager

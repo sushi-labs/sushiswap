@@ -85,7 +85,7 @@ async function fetchToken(chainId: ExtractorSupportedChainId, address: string) {
 
 async function fetchPoolCodes(chainId: number, address?: string) {
   try {
-    const url = new URL('https://swap.sushi.com/pool-codes')
+    const url = new URL('https://production.sushi.com/pool-codes')
     url.searchParams.set('chainId', chainId.toString())
     if (address) {
       url.searchParams.set('address', address)
@@ -102,7 +102,7 @@ async function fetchPoolCodes(chainId: number, address?: string) {
 async function fetchPoolCodesForToken(chainId: number, address: string) {
   try {
     const response = await fetch(
-      `https://swap.sushi.com/pool-codes-for-token?chainId=${chainId}&address=${address}`,
+      `https://production.sushi.com/pool-codes-for-token?chainId=${chainId}&address=${address}`,
     )
     const json = await response.json()
     return deserialize(json) as PoolCode[]
