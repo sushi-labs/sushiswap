@@ -10,8 +10,7 @@ async function handler(req: Request, res: Response) {
   // console.log('HTTP: GET /pool-codes', JSON.stringify(req.query))
   schema.parse(req.query)
   const poolCodes = extractor.getCurrentPoolCodes()
-  const { serialize } = await import('wagmi')
-  res.json(serialize(poolCodes))
+  res.json(poolCodes)
 }
 
 export default handler

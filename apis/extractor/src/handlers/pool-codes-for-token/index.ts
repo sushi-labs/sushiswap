@@ -28,8 +28,7 @@ async function handler(req: Request, res: Response) {
     const poolCodes = await extractor.getPoolCodesForTokensAsync(tokens, 2_000)
     poolCodes.forEach((p) => poolCodesMap.set(p.pool.address, p))
   }
-  const { serialize } = await import('wagmi')
-  return res.json(serialize(Array.from(poolCodesMap.values())))
+  return res.json(Array.from(poolCodesMap.values()))
 }
 
 export default handler
