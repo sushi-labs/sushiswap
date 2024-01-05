@@ -3,9 +3,12 @@ kind: Ingress
 metadata:
   name: extractor-staging-ingress
   annotations:
-    kubernetes.io/ingressClassName: "gce"
+    kubernetes.io/ingress.class: "nginx"
     kubernetes.io/ingress.global-static-ip-name: "extractor-staging-ip"
     networking.gke.io/managed-certificates: "extractor-staging-managed-certificate"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE"
 spec:
   rules:
   - http:
