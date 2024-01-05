@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import { SortDirection, SortingState, TableState } from '@tanstack/react-table'
+import { SortingState, TableState } from '@tanstack/react-table'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useMemo, useState, useTransition } from 'react'
 
@@ -46,14 +46,6 @@ export function TokenHoldersTable({
   const page = params.get(PAGE_KEY) ? Number(params.get(PAGE_KEY)) : 1
   const maxUserCountReached = userCount === 1000
 
-  function sortColumn(direction: false | SortDirection) {
-    params.set(ORDER_DIRECTION_KEY, direction === 'desc' ? 'asc' : 'desc')
-
-    startTransition(() => {
-      replace(`${pathname}?${params.toString()}`)
-    })
-  }
-
   function filterBalance(balance: number) {
     if (balance === Number(params.get(BALANCE_FILTER.key))) {
       params.delete(BALANCE_FILTER.key)
@@ -74,108 +66,6 @@ export function TokenHoldersTable({
     })
   }
 
-  // const [columns] = useState([
-  //   columnHelper.accessor('rank', {
-  //     header: 'Rank',
-  //     cell: (info) => (
-  //       <span className="text-slate-600 dark:text-slate-300">
-  //         {info.getValue()}
-  //       </span>
-  //     ),
-  //     size: 40,
-  //     enableSorting: false,
-  //     meta: { skeleton: <SkeletonText /> },
-  //   }),
-  //   columnHelper.accessor('address', {
-  //     header: 'Name',
-  //     cell: (info) => {
-  //       const address = info.getValue()
-  //       return (
-  //         <a
-  //           href={`https://etherscan.io/address/${address}`}
-  //           className="gap-2 font-bold flex items-center"
-  //         >
-  //           {isCustomName(address)
-  //             ? tokenHolderNames[address]
-  //             : shortenAddress(address)}
-  //           <ArrowTopRightOnSquareIcon
-  //             className="mb-0.5 h-4 w-4"
-  //             strokeWidth={2.5}
-  //           />
-  //         </a>
-  //       )
-  //     },
-  //     minSize: 240,
-  //     enableSorting: false,
-  //     meta: { skeleton: <SkeletonText /> },
-  //   }),
-  //   columnHelper.accessor('quantity', {
-  //     header: (h) => (
-  //       <div onClick={() => sortColumn(h.column.getIsSorted())}>Quantity</div>
-  //     ),
-  //     cell: (info) => (
-  //       <span className="text-slate-600 dark:text-slate-300">
-  //         {info.getValue().toLocaleString('EN', {
-  //           maximumFractionDigits: 0,
-  //         })}
-  //       </span>
-  //     ),
-  //     meta: { skeleton: <SkeletonText /> },
-  //     size: 100,
-  //   }),
-  //   columnHelper.accessor('ownership', {
-  //     header: (h) => (
-  //       <div onClick={() => sortColumn(h.column.getIsSorted())}>Ownership</div>
-  //     ),
-  //     cell: (info) => (
-  //       <span className="text-slate-600 dark:text-slate-300">
-  //         {info.getValue().toLocaleString('EN', {
-  //           maximumFractionDigits: 2,
-  //           style: 'percent',
-  //         })}
-  //       </span>
-  //     ),
-  //     meta: { skeleton: <SkeletonText /> },
-  //     size: 60,
-  //   }),
-  //   columnHelper.accessor('value', {
-  //     header: (h) => (
-  //       <div onClick={() => sortColumn(h.column.getIsSorted())}>Value</div>
-  //     ),
-  //     cell: (info) =>
-  //       info.getValue().toLocaleString('EN', {
-  //         maximumFractionDigits: 0,
-  //         style: 'currency',
-  //         currency: 'USD',
-  //       }),
-  //     meta: { skeleton: <SkeletonText /> },
-  //     size: 110,
-  //   }),
-  //   columnHelper.accessor('change30d', {
-  //     header: 'Change (30d)',
-  //     cell: (info) => {
-  //       const change = info.getValue()
-  //       const color =
-  //         change > 0
-  //           ? 'text-green-400'
-  //           : change < 0
-  //           ? 'text-red-400'
-  //           : 'text-slate-700 dark:text-gray-50'
-  //       return (
-  //         <span className={color}>
-  //           {change.toLocaleString('EN', {
-  //             maximumFractionDigits: 2,
-  //             style: 'percent',
-  //           })}
-  //         </span>
-  //       )
-  //     },
-  //     meta: { skeleton: <SkeletonText /> },
-  //     enableSorting: false,
-  //     size: 60,
-  //   }),
-  // ])
-
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'quantity', desc: params.get(ORDER_DIRECTION_KEY) !== 'asc' },
   ])
@@ -183,12 +73,10 @@ export function TokenHoldersTable({
   const state: Partial<TableState> = useMemo(() => {
     return {
       sorting,
-      pagination: {
-        pageIndex: 0,
-        pageSize: users.length,
-      },
     }
-  }, [users.length, sorting])
+  }, [sorting])
+
+  console.log('data', users)
 
   return (
     <div className="space-y-8">
@@ -213,7 +101,6 @@ export function TokenHoldersTable({
             state={state}
             onSortingChange={setSorting}
             loading={isPending}
-            // rowRenderer={rowRenderer}
             columns={COLUMNS}
             data={users}
           />

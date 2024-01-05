@@ -24,7 +24,7 @@ export async function getSushiPriceUSD() {
     'https://token-price.sushi.com/v2/1',
   )
 
-  return prices?.[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()] ?? 0
+  return prices?.[SUSHI_ADDRESS[ChainId.ETHEREUM]] ?? 0
 }
 
 async function getBlockNumberFromTimestamp(timestamp: number) {

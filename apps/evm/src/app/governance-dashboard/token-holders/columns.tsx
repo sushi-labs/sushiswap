@@ -8,6 +8,7 @@ import { TokenHolder } from './types'
 export const RANK_COLUMN: ColumnDef<TokenHolder, unknown> = {
   id: 'rank',
   header: 'Rank',
+  size: 40,
   accessorFn: (row) => row.rank,
   cell: (props) => (
     <span className="text-slate-600 dark:text-slate-300">
@@ -22,6 +23,7 @@ export const RANK_COLUMN: ColumnDef<TokenHolder, unknown> = {
 export const NAME_COLUMN: ColumnDef<TokenHolder, unknown> = {
   id: 'name',
   header: 'Name',
+  minSize: 240,
   accessorFn: (row) => row.address,
   cell: (props) => (
     <a
