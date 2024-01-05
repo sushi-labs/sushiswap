@@ -3,6 +3,8 @@ import 'dotenv/config'
 import * as Sentry from '@sentry/node'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
+import { TokenInfo } from 'sushi'
+import { Token } from 'sushi/currency'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
 import extractor from './extractor'
 import poolCodes from './handlers/pool-codes'
@@ -65,7 +67,29 @@ app.use(Sentry.Handlers.errorHandler())
 
 app.listen(PORT, () => {
   console.log(`Extractor ${CHAIN_ID} app listening on port ${PORT}`)
+
   requestStatistics.start()
+
+  fetch(`https://tokens.sushi.com/v1/${CHAIN_ID}`)
+    .then((res) => res.json() as Promise<TokenInfo[]>)
+    .then((tokenList) => {
+      extractor.start(
+        tokenList.map(
+          (token) =>
+            new Token({
+              chainId: token.chainId,
+              address: token.address,
+              decimals: token.decimals,
+              symbol: token.symbol,
+              name: token.name,
+            }),
+        ),
+      )
+    })
+    .catch((e) => {
+      console.log('Error fetching tokens')
+      throw e
+    })
 })
 
 process.on('SIGTERM', (code) => {

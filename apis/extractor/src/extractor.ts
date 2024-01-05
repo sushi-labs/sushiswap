@@ -16,12 +16,6 @@ const extractor = new Extractor({
   },
 })
 
-fetch(`https://tokens.sushi.com/v1/${CHAIN_ID}`)
-  .then((res) => res.json() as Promise<TokenInfo[]>)
-  .then((tokenList) => {
-    extractor.start(tokenList as Token[])
-  })
-
 // extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
 
 export default extractor
