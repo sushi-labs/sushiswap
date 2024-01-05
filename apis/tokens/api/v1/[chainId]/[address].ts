@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
-import { fetchTokensFromLists } from '../../../lib/api/v1'
+import { fetchTokensFromLists } from '../../../lib/api/v1.js'
 
 const schema = z.object({
   chainId: z.coerce
