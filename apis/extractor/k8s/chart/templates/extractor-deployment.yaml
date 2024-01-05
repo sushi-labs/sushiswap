@@ -30,7 +30,6 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
-            terminationGracePeriodSeconds: 60
           startupProbe:
             httpGet:
               path: /health

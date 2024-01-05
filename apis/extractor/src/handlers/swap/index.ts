@@ -168,7 +168,7 @@ function handler(
       )
 
       requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
-      return res.json(JSON.stringify(json))
+      return res.json(json)
     } catch (e) {
       requestStatistics.requestRejected(ResponseRejectReason.UNKNOWN_EXCEPTION)
       throw e
