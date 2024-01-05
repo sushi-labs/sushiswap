@@ -1,8 +1,6 @@
 import * as Sentry from '@sentry/node'
 import { Extractor, WarningLevel } from '@sushiswap/extractor'
-import { TokenInfo } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config'
 
 const extractor = new Extractor({
