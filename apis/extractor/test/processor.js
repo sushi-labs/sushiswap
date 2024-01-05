@@ -93,7 +93,9 @@ const tokenNumber = Object.entries(tokens).map(([id, tokens]) => [
 const totalTokens = tokenNumber.reduce((a, b) => a + b[1], 0)
 
 function setQuery(context, _, done) {
-  const chainId = getRandomNetwork(totalTokens, tokenNumber)
+  // TODO: maybe allow this to be set in the scenario
+  const _chainId = getRandomNetwork(totalTokens, tokenNumber)
+  const chainId = 1
   const chainTokens = tokens[chainId]
   const [from, to] = getRandomPair(chainTokens.length, TEST_MODE)
   const amount = BigInt(SWAP_AMOUNT * 10 ** chainTokens[from].decimals)
