@@ -30,6 +30,10 @@ Sentry.init({
   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
 })
 
+app.set('json replacer', (_key: string, value: any) =>
+  typeof value === 'bigint' ? value.toString() : value,
+)
+
 // RequestHandler creates a separate execution context, so that all
 // transactions/spans/breadcrumbs are isolated across requests
 app.use(Sentry.Handlers.requestHandler())
@@ -62,7 +66,29 @@ app.use(Sentry.Handlers.errorHandler())
 
 app.listen(PORT, () => {
   console.log(`Extractor ${CHAIN_ID} app listening on port ${PORT}`)
+
   requestStatistics.start()
+
+  // fetch(`https://tokens.sushi.com/v1/${CHAIN_ID}`)
+  //   .then((res) => res.json() as Promise<TokenInfo[]>)
+  //   .then((tokenList) => {
+  //     extractor.start(
+  //       tokenList.map(
+  //         (token) =>
+  //           new Token({
+  //             chainId: token.chainId,
+  //             address: token.address,
+  //             decimals: token.decimals,
+  //             symbol: token.symbol,
+  //             name: token.name,
+  //           }),
+  //       ),
+  //     )
+  //   })
+  //   .catch((e) => {
+  //     console.log('Error fetching tokens')
+  //     throw e
+  //   })
 })
 
 process.on('SIGTERM', (code) => {

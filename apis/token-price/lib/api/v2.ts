@@ -5,7 +5,7 @@ import {
   UniV3Pool,
   calcTokenPrices,
 } from '@sushiswap/tines'
-import { Address, deserialize } from '@wagmi/core'
+import { Address } from '@wagmi/core'
 import { ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
 import { type TokenInfo } from 'sushi/token-list'
@@ -60,40 +60,56 @@ interface PoolCode {
 }
 
 async function fetchTokens(chainId: ExtractorSupportedChainId) {
-  const result = await fetch(
-    `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/`,
-  )
-  // const result = await fetch(`https://tokens.sushi.com/v1/${chainId}/`)
-  const tokenList = (await result.json()) as TokenInfo[]
-  return tokenList
+  try {
+    const result = await fetch(`https://tokens.sushi.com/v1/${chainId}`)
+    const tokenList = (await result.json()) as TokenInfo[]
+    return tokenList
+  } catch (e) {
+    console.log('Error fetching tokens')
+    throw e
+  }
 }
 
 async function fetchToken(chainId: ExtractorSupportedChainId, address: string) {
-  const result = await fetch(
-    `https://tokens-git-feature-token-v2-api.sushi.com/api/v1/${chainId}/${address}`,
-    // `https://tokens.sushi.com/v1/${chainId}/${address}`,
-  )
-  const tokenList = (await result.json()) as TokenInfo | undefined
-  return tokenList
+  try {
+    const result = await fetch(
+      `https://tokens.sushi.com/v1/${chainId}/${address}`,
+    )
+    const tokenList = (await result.json()) as TokenInfo | undefined
+    return tokenList
+  } catch (e) {
+    console.log('Error fetching token')
+    throw e
+  }
 }
 
 async function fetchPoolCodes(chainId: number, address?: string) {
-  const url = new URL('https://swap.sushi.com/pool-codes')
-  url.searchParams.set('chainId', chainId.toString())
-  if (address) {
-    url.searchParams.set('address', address)
+  try {
+    const url = new URL('https://production.sushi.com/pool-codes')
+    url.searchParams.set('chainId', chainId.toString())
+    if (address) {
+      url.searchParams.set('address', address)
+    }
+    const response = await fetch(url)
+    const json = await response.json()
+    return JSON.parse(json) as PoolCode[]
+  } catch (e) {
+    console.log('Error fetching pool codes')
+    throw e
   }
-  const response = await fetch(url)
-  const json = await response.json()
-  return deserialize(json) as PoolCode[]
 }
 
 async function fetchPoolCodesForToken(chainId: number, address: string) {
-  const response = await fetch(
-    `https://swap.sushi.com/pool-codes-for-token?chainId=${chainId}&address=${address}`,
-  )
-  const json = await response.json()
-  return deserialize(json) as PoolCode[]
+  try {
+    const response = await fetch(
+      `https://production.sushi.com/pool-codes-for-token?chainId=${chainId}&address=${address}`,
+    )
+    const json = await response.json()
+    return JSON.parse(json) as PoolCode[]
+  } catch (e) {
+    console.log('Error fetching pool codes for token')
+    throw e
+  }
 }
 
 function mapPool(poolCode: PoolCode) {
