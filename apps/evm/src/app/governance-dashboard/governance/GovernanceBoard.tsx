@@ -3,8 +3,15 @@
 import { classNames } from '@sushiswap/ui'
 import React, { useState } from 'react'
 
-import { GovernanceItemCard, GovernanceTypeFilter } from '../components'
-import { GOV_STATUS, GovernanceItem, GovernanceStatus } from '../lib'
+import {
+  GOV_STATUS,
+  GovernanceItem,
+  GovernanceStatus,
+} from '../../../lib/governance-dashboard'
+import {
+  GovernanceItemCard,
+  GovernanceTypeFilter,
+} from '../../../ui/governance-dashboard'
 
 function isValidGovernanceType(govType: string): govType is GovernanceStatus {
   return govType in GOV_STATUS
@@ -13,9 +20,13 @@ function isValidGovernanceType(govType: string): govType is GovernanceStatus {
 export function GovernanceBoard({
   governanceItemsMapping,
 }: {
-  governanceItemsMapping: Record<'IMPLEMENTATION' | 'PROPOSAL' | 'DISCUSSION', GovernanceItem[]>
+  governanceItemsMapping: Record<
+    'IMPLEMENTATION' | 'PROPOSAL' | 'DISCUSSION',
+    GovernanceItem[]
+  >
 }) {
-  const [selectedGovType, setSelectedGovType] = useState<GovernanceStatus>('IMPLEMENTATION')
+  const [selectedGovType, setSelectedGovType] =
+    useState<GovernanceStatus>('IMPLEMENTATION')
 
   return (
     <>
@@ -23,8 +34,15 @@ export function GovernanceBoard({
         {Object.entries(governanceItemsMapping).map(([key, items]) => (
           <div key={key} className="space-y-5">
             <div className="flex items-center gap-2 pl-2.5">
-              <div className={classNames('h-3 w-3 rounded-sm', isValidGovernanceType(key) && GOV_STATUS[key].color)} />
-              <h3 className="font-medium">{isValidGovernanceType(key) ? GOV_STATUS[key].title : ''}</h3>
+              <div
+                className={classNames(
+                  'h-3 w-3 rounded-sm',
+                  isValidGovernanceType(key) && GOV_STATUS[key].color,
+                )}
+              />
+              <h3 className="font-medium">
+                {isValidGovernanceType(key) ? GOV_STATUS[key].title : ''}
+              </h3>
             </div>
 
             {items.length ? (
@@ -42,7 +60,10 @@ export function GovernanceBoard({
         ))}
       </div>
       <div className="space-y-4 md:hidden">
-        <GovernanceTypeFilter selectedGovType={selectedGovType} setSelectedGovType={setSelectedGovType} />
+        <GovernanceTypeFilter
+          selectedGovType={selectedGovType}
+          setSelectedGovType={setSelectedGovType}
+        />
         <div className="grid gap-2">
           {governanceItemsMapping[selectedGovType].map((item, index) => (
             <GovernanceItemCard key={index} {...item} />

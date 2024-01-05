@@ -2,7 +2,7 @@
 
 import { classNames } from '@sushiswap/ui'
 import React from 'react'
-import { GovernanceItem } from '../lib'
+import { GovernanceItem } from '../../lib/governance-dashboard'
 
 export function GovernanceItemCard(props: GovernanceItem) {
   const { type, title, isActive, url, category } = props
@@ -11,7 +11,9 @@ export function GovernanceItemCard(props: GovernanceItem) {
       <div className="!h-fit rounded-lg border border-slate-300 dark:border-slate-700/60 p-4 transition ease-in-out hover:border-slate-600">
         <div className="flex items-center gap-2">
           <div className={classNames('h-2 w-2 rounded-sm', type.color)} />
-          <span className="text-xs text-slate-500 dark:text-slate-400">{type.title}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">
+            {type.title}
+          </span>
         </div>
         <h3 className="mt-2 line-clamp-2 h-12">{title}</h3>
 

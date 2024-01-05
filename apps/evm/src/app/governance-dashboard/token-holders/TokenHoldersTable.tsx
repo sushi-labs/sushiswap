@@ -6,8 +6,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useMemo, useState, useTransition } from 'react'
 
 import { DataTable } from '@sushiswap/ui'
-import { FilterButton } from '../components/FilterButton'
-import { formatNumber } from '../lib'
+import { formatNumber } from '../../../lib/governance-dashboard'
+import { FilterButton } from '../../../ui/governance-dashboard/FilterButton'
 import {
   MONTHLY_CHANGE_COLUMN,
   NAME_COLUMN,

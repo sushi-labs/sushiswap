@@ -3,7 +3,7 @@
 import { DataTable } from '@sushiswap/ui'
 import React from 'react'
 
-import { TreasuryBalance } from '../lib'
+import { TreasuryBalance } from '../../../lib/governance-dashboard'
 import {
   BALANCE_COLUMN,
   BALANCE_USD_COLUMN,

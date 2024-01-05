@@ -7,15 +7,23 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 import { SwiperSlide } from 'swiper/react'
 
-import { DATE_FILTERS, GOV_STATUS, GovernanceItem, GovernanceStatus } from '../../lib'
+import {
+  DATE_FILTERS,
+  GOV_STATUS,
+  GovernanceItem,
+  GovernanceStatus,
+} from '../../../lib/governance-dashboard'
 import { CardNavigation } from '../CardNavigation'
 import { FilterButton } from '../FilterButton'
 import { GovernanceDateFilters } from '../GovernanceDateFilters'
 import { GovernanceItemCard } from '../GovernanceItemCard'
 import { GovernanceTypeFilter } from '../GovernanceTypeFilter'
 
-export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, GovernanceItem[]> }) {
-  const [selectedGovType, setSelectedGovType] = useState<GovernanceStatus>('IMPLEMENTATION')
+export function LatestPosts({
+  posts,
+}: { posts: Record<GovernanceStatus, GovernanceItem[]> }) {
+  const [selectedGovType, setSelectedGovType] =
+    useState<GovernanceStatus>('IMPLEMENTATION')
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -32,7 +40,9 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
     <section className="space-y-8">
       <div className="space-y-3">
         <div className="relative z-10 flex items-center justify-between">
-          <h2 className="pl-1 text-2xl font-bold dark:text-slate-200">Latest @ Sushi</h2>
+          <h2 className="pl-1 text-2xl font-bold dark:text-slate-200">
+            Latest @ Sushi
+          </h2>
           <div className="md:hidden">
             <GovernanceDateFilters />
           </div>
@@ -40,7 +50,9 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
           <div className="hidden gap-2 md:flex">
             {DATE_FILTERS.options.map((filter) => (
               <FilterButton
-                isActive={(params.get(DATE_FILTERS.key) ?? 'all') === filter.key}
+                isActive={
+                  (params.get(DATE_FILTERS.key) ?? 'all') === filter.key
+                }
                 key={filter.key}
                 onClick={() => filterDate(filter.key)}
               >
@@ -50,7 +62,10 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
           </div>
         </div>
         <div className="md:hidden">
-          <GovernanceTypeFilter selectedGovType={selectedGovType} setSelectedGovType={setSelectedGovType} />
+          <GovernanceTypeFilter
+            selectedGovType={selectedGovType}
+            setSelectedGovType={setSelectedGovType}
+          />
         </div>
       </div>
 
@@ -63,7 +78,7 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
                 selectedGovType === key
                   ? 'bg-gradient-to-r from-[#0993EC] to-[#F338C3] px-0.5 pt-0.5'
                   : 'eae-in-out transition-transform hover:-translate-y-1',
-                i && '-mt-4'
+                i && '-mt-4',
               )}
               key={key}
               onClick={() => setSelectedGovType(key as GovernanceStatus)}
@@ -71,7 +86,9 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
             >
               <div className="flex items-center justify-between gap-10 rounded-t-2xl bg-gradient-to-b from-white to-[#F4F5F6] dark:from-[#212939] dark:to-[#101728] px-5 py-5 pb-10">
                 <div className="flex items-center gap-2">
-                  <div className={classNames('h-3 w-3 rounded-sm', status.color)} />
+                  <div
+                    className={classNames('h-3 w-3 rounded-sm', status.color)}
+                  />
                   <span className="font-medium">{status.title}</span>
                 </div>
                 <div className="flex h-6 w-10 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-500/60 text-xs font-semibold text-slate-600 dark:text-white">
@@ -99,10 +116,13 @@ export function LatestPosts({ posts }: { posts: Record<GovernanceStatus, Governa
                 ))}
               </CardNavigation>
             ) : (
-              <p key={key} className="font-bold text-xl flex items-center justify-center">
+              <p
+                key={key}
+                className="font-bold text-xl flex items-center justify-center"
+              >
                 No posts found
               </p>
-            ))
+            )),
         )}
       </div>
     </section>

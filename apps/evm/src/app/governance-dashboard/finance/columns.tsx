@@ -2,7 +2,7 @@ import { Currency, Progress, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatNumber } from 'sushi'
 import { Native, Token } from 'sushi/currency'
-import { TreasuryBalance } from '../lib'
+import { TreasuryBalance } from '../../../lib/governance-dashboard'
 
 export const TOKEN_COLUMN: ColumnDef<TreasuryBalance, unknown> = {
   id: 'token',

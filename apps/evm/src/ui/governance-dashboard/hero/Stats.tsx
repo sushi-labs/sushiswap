@@ -7,7 +7,7 @@ import {
   getNotionEvents,
   getSushiUserCount,
   getTreasurySnapshot,
-} from '../../lib'
+} from '../../../lib/governance-dashboard'
 import { StatsBackground } from './StatsBackground'
 
 export async function Stats() {

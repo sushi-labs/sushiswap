@@ -3,8 +3,13 @@
 import { CircleIcon, classNames } from '@sushiswap/ui'
 import React from 'react'
 
-import { KpiCard } from '../components'
-import { formatNumber, getPercentageDiff, SushiBudget, TreasurySnapshot } from '../lib'
+import {
+  SushiBudget,
+  TreasurySnapshot,
+  formatNumber,
+  getPercentageDiff,
+} from '../../../lib/governance-dashboard'
+import { KpiCard } from '../../../ui/governance-dashboard'
 
 export function TreasuryKpis({
   treasurySnapshot,
@@ -15,8 +20,12 @@ export function TreasuryKpis({
 }) {
   const currentQuarter = budgetData[budgetData.length - 1]
   const previousQuarter = budgetData[budgetData.length - 2]
-  const budgetDiff = getPercentageDiff(currentQuarter.budget, previousQuarter.budget)
-  const runwayQuarters = treasurySnapshot.balancesValueUsd / currentQuarter.expenses
+  const budgetDiff = getPercentageDiff(
+    currentQuarter.budget,
+    previousQuarter.budget,
+  )
+  const runwayQuarters =
+    treasurySnapshot.balancesValueUsd / currentQuarter.expenses
   const runwayMonths = Math.floor(runwayQuarters * 3)
 
   const treasuryKpis = [
@@ -48,12 +57,16 @@ export function TreasuryKpis({
         <div className="flex items-center gap-[14px] text-sm mt-1">
           <div className="flex items-baseline gap-3">
             <label className="text-slate-400">Liquid</label>
-            <span className="font-bold">${formatNumber(treasurySnapshot.balancesValueUsd)}</span>
+            <span className="font-bold">
+              ${formatNumber(treasurySnapshot.balancesValueUsd)}
+            </span>
           </div>
           <div className="h-4 rounded-full border border-gray-50/20 bg-gray-50/20" />
           <div className="flex items-baseline justify-end gap-3">
             <label className="text-slate-400">Vesting</label>
-            <span className="font-bold">${formatNumber(treasurySnapshot.vestingValueUsd)}</span>
+            <span className="font-bold">
+              ${formatNumber(treasurySnapshot.vestingValueUsd)}
+            </span>
           </div>
         </div>
       ),
@@ -62,8 +75,17 @@ export function TreasuryKpis({
       title: 'Quarterly Budget / Burn Rate',
       value: formatNumber(currentQuarter.budget),
       additional: (
-        <dd className={classNames('text-sm', budgetDiff < 0 ? 'text-red-400' : 'text-green-400')}>
-          {budgetDiff.toLocaleString('EN', { style: 'percent', maximumFractionDigits: 2 })} from last quarter
+        <dd
+          className={classNames(
+            'text-sm',
+            budgetDiff < 0 ? 'text-red-400' : 'text-green-400',
+          )}
+        >
+          {budgetDiff.toLocaleString('EN', {
+            style: 'percent',
+            maximumFractionDigits: 2,
+          })}{' '}
+          from last quarter
         </dd>
       ),
     },
