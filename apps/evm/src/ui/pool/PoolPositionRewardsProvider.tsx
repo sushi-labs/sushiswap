@@ -102,6 +102,7 @@ export const _PoolPositionRewardsProvider: FC<
     rewarderAddresses,
     types,
     chef: chefType,
+    enabled: Boolean(account),
   })
 
   const { harvest } = useMasterChef({
