@@ -22,7 +22,7 @@ export const RewardsV3NameCell: FC<Row<AngleRewardsPool>> = (props) => {
   const { original } = props
 
   const ongoingFarms = original.distributionData.filter(
-    (el) => el.end * 1000 >= Date.now(),
+    (el) => el.endTimestamp * 1000 >= Date.now(),
   )
   return (
     <div className="flex items-center gap-4">
