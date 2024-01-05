@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
-import cors from 'cors'
+// import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
 import extractor from './extractor'
