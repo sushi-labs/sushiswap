@@ -5,18 +5,18 @@ metadata:
 description: extractor pipeline
 serialPipeline:
   stages:
-  - targetId: development
-    profiles: [development]
+  - targetId: staging
+    profiles: [staging]
   - targetId: production
     profiles: [production]
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
-  name: development
-description: development cluster
+  name: staging
+description: staging cluster
 gke:
-  cluster: projects/extractor-410208/locations/us-east4/clusters/development
+  cluster: projects/extractor-410208/locations/us-east4/clusters/staging
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target

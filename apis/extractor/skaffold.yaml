@@ -22,13 +22,13 @@ deploy:
         chartPath: k8s/chart
 profiles:
 - name: local
-- name: development
+- name: staging
   build:
     googleCloudBuild:
       projectId: "extractor-410208"
   manifests:
     rawYaml:
-      - k8s/ingress-development.yaml
+      - k8s/ingress-staging.yaml
 - name: production
   build:
     googleCloudBuild:

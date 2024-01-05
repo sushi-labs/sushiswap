@@ -1,11 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: extractor-ingress
+  name: extractor-production-ingress
   annotations:
     kubernetes.io/ingressClassName: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "extractor-production"
-    networking.gke.io/managed-certificates: "managed-certificate-production"
+    kubernetes.io/ingress.global-static-ip-name: "extractor-production-ip"
+    networking.gke.io/managed-certificates: "extractor-production-managed-certificate"
 spec:
   rules:
   - http:
@@ -21,7 +21,7 @@ spec:
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: managed-certificate-production
+  name: extractor-production-managed-certificate
 spec:
   domains:
-    - swap2.sushi.com
+    - production.sushi.com
