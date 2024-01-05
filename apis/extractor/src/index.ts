@@ -1,10 +1,7 @@
 import 'dotenv/config'
 
-// import * as Sentry from '@sentry/node'
-import {
-  Extractor,
-  // type WarningLevel
-} from '@sushiswap/extractor'
+import * as Sentry from '@sentry/node'
+import { Extractor, type WarningLevel } from '@sushiswap/extractor'
 import {
   NativeWrapProvider,
   PoolCode,
@@ -15,7 +12,6 @@ import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
 } from '@sushiswap/router-config'
-// import cors from 'cors'
 import express, { type Express, type Request, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
@@ -97,9 +93,9 @@ const querySchema3_2 = querySchema.extend({
 
 const PORT = process.env['PORT'] || 80
 
-const CHAIN_ID = Number(process.env['CHAIN_ID']) as
-  | CONFIGURED_CHAIN_IDS
-  | undefined // TODO: shouldn't cast, we should validate with zod
+const SENTRY_DSN = process.env['SENTRY_DSN'] as string
+
+const CHAIN_ID = Number(process.env['CHAIN_ID']) as CONFIGURED_CHAIN_IDS
 
 if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
@@ -107,52 +103,44 @@ if (!CHAIN_ID) {
 
 const extractor = new Extractor({
   ...EXTRACTOR_CONFIG[CHAIN_ID],
-  // warningMessageHandler: (
-  //   chain: ChainId | number | undefined,
-  //   message: string,
-  //   level: WarningLevel,
-  // ) => {
-  //   Sentry.captureMessage(`${chain}: ${message}`, level)
-  // },
+  warningMessageHandler: (
+    chain: ChainId | number | undefined,
+    message: string,
+    level: WarningLevel,
+  ) => {
+    Sentry.captureMessage(`${chain}: ${message}`, level)
+  },
 })
 
 const nativeProvider = new NativeWrapProvider(
   CHAIN_ID as ChainId,
   extractor.client,
 )
-
-// const SENTRY_DSN = process.env['SENTRY_DSN'] as string
-;(async function () {
+async function bootstrap() {
   const app: Express = express()
   const { serialize } = await import('wagmi')
 
-  // Sentry.init({
-  //   enabled: false,
-  //   dsn: SENTRY_DSN,
-  //   integrations: [
-  //     // enable HTTP calls tracing
-  //     new Sentry.Integrations.Http({
-  //       tracing: true,
-  //     }),
-  //     // enable Express.js middleware tracing
-  //     new Sentry.Integrations.Express({
-  //       app,
-  //     }),
-  //   ],
-  //   // Performance Monitoring
-  //   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
-  // })
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    integrations: [
+      // enable HTTP calls tracing
+      new Sentry.Integrations.Http({
+        tracing: true,
+      }),
+      // enable Express.js middleware tracing
+      new Sentry.Integrations.Express({
+        app,
+      }),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  })
 
-  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
-  // app.use(
-  //   cors({
-  //     origin: /sushi\.com$/,
-  //   }),
-  // )
-
-  // Trace incoming requests
-  // app.use(Sentry.Handlers.requestHandler())
-  // app.use(Sentry.Handlers.tracingHandler())
+  // RequestHandler creates a separate execution context, so that all
+  // transactions/spans/breadcrumbs are isolated across requests
+  app.use(Sentry.Handlers.requestHandler())
+  // TracingHandler creates a trace for every incoming request
+  app.use(Sentry.Handlers.tracingHandler())
 
   app.get('/health', (_, res: Response) => {
     return res.status(extractor.isStarted() ? 200 : 503).send()
@@ -241,7 +229,7 @@ const nativeProvider = new NativeWrapProvider(
   // })
 
   // The error handler must be registered before any other error middleware and after all controllers
-  // app.use(Sentry.Handlers.errorHandler())
+  app.use(Sentry.Handlers.errorHandler())
 
   app.listen(PORT, () => {
     console.log(`Extractor ${CHAIN_ID} app listening on port ${PORT}`)
@@ -250,8 +238,16 @@ const nativeProvider = new NativeWrapProvider(
 
   process.on('SIGTERM', (code) => {
     console.log(`About to exit with code: ${code}`)
+    // if (extractor.isStarted()) {
+    //   await extractor.stop()
+    // }
   })
-})()
+
+  // Finally, start the extractor
+  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
+}
+
+bootstrap()
 
 function processRequest(
   qSchema: typeof querySchema | typeof querySchema3_2,

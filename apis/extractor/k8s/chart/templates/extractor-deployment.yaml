@@ -47,4 +47,9 @@ spec:
                 secretKeyRef:
                   name: extractor
                   key: DRPC_ID
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: SENTRY_DSN
 {{- end }}

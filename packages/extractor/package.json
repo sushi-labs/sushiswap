@@ -31,7 +31,7 @@
   "dependencies": {
     "@cryptoalgebra/integral-core": "0.2.0",
     "@cryptoalgebra/integral-periphery": "0.2.0",
-    "@sentry/node": "7.74.0",
+    "@sentry/node": "7.92.0",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",

@@ -29,8 +29,16 @@ minikube start --base-image gcr.io/k8s-minikube/kicbase:v0.0.40
 ## First time cluster setup
 
 Setup the DRPC SECRET
+
+
+
 ```bash
 kubectl create secret generic extractor --from-literal=DRPC_ID=XXX
+
+kubectl create secret generic extractor \
+    --from-literal=DRPC_ID=XXX \
+    --from-literal=SENTRY_DSN=XXX
+
 ```
 
 Create a static ip for the staging environment
