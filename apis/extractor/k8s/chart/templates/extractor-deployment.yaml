@@ -22,7 +22,7 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: 500m
+              cpu: 0.5
             limits:
               cpu: 1
           livenessProbe:
