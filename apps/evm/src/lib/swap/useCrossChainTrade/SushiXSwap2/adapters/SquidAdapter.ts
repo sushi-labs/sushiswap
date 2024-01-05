@@ -233,10 +233,11 @@ export const getSquidRouteRequest = ({
       autoMode: 1,
     },
     prefer: [DexName.SUSHISWAP_V3, DexName.SUSHISWAP],
+    quoteOnly: !fromAddress || !toAddress,
   }
 
   // RouteProcessor dstHook
-  if (useDstTrade) {
+  if (useDstTrade && dstTrade?.writeArgs) {
     const rpAddress = isRouteProcessor3_2ChainId(token1.chainId)
       ? ROUTE_PROCESSOR_3_2_ADDRESS[token1.chainId]
       : isRouteProcessor3_1ChainId(token1.chainId)
