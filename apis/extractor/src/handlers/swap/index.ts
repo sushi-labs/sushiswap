@@ -10,12 +10,19 @@ import {
 } from '@sushiswap/router-config'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
+import {
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_ADDRESS,
+} from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { Address } from 'viem'
-import { CHAIN_ID } from './config'
-import extractor from './extractor'
-import { makeAPI02Object } from './makeAPI02Object'
-import requestStatistics, { ResponseRejectReason } from './request-statistics'
+import { CHAIN_ID } from '../../config'
+import extractor from '../../extractor'
+import { makeAPI02Object } from '../../makeAPI02Object'
+import requestStatistics, {
+  ResponseRejectReason,
+} from '../../request-statistics'
 import { querySchema3, querySchema3_1, querySchema3_2 } from './schema'
 
 const nativeProvider = new NativeWrapProvider(
@@ -23,7 +30,7 @@ const nativeProvider = new NativeWrapProvider(
   extractor.client,
 )
 
-export default function (
+function handler(
   qSchema: typeof querySchema3 | typeof querySchema3_1 | typeof querySchema3_2,
   rpCode: typeof Router.routeProcessor3Params,
   rpAddress: Record<number, Address>,
@@ -168,3 +175,19 @@ export default function (
     }
   }
 }
+
+export const v3 = handler(
+  querySchema3,
+  Router.routeProcessor3Params,
+  ROUTE_PROCESSOR_3_ADDRESS,
+)
+export const v3_1 = handler(
+  querySchema3_1,
+  Router.routeProcessor3_1Params,
+  ROUTE_PROCESSOR_3_1_ADDRESS,
+)
+export const v3_2 = handler(
+  querySchema3_2,
+  Router.routeProcessor3_2Params,
+  ROUTE_PROCESSOR_3_2_ADDRESS,
+)

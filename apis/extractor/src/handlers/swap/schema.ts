@@ -1,6 +1,7 @@
 import { RouterLiquiditySource } from '@sushiswap/router'
 import { ChainId } from 'sushi/chain'
 import {
+  ExtractorSupportedChainId,
   RouteProcessor3ChainId,
   RouteProcessor3_1ChainId,
   RouteProcessor3_2ChainId,
@@ -9,15 +10,26 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
-import { Address } from 'viem'
+import { Address, isAddress } from 'viem'
 import z from 'zod'
-
 export const zChainId = z.coerce
   .number()
   .int()
   .gte(0)
   .lte(2 ** 256)
   .default(ChainId.ETHEREUM)
+
+export const poolCodesForTokenSchema = z
+  .object({
+    chainId: zChainId
+      .refine((chainId) => isExtractorSupportedChainId(chainId), {
+        message: 'ChainId not supported.',
+      })
+      .transform((chainId) => chainId as ExtractorSupportedChainId),
+    address: z.coerce.string().refine(isAddress, {
+      message: 'Address is not checksummed.',
+    }),
+  })
 
 export const querySchema3 = z.object({
   chainId: zChainId
