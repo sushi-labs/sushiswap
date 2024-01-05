@@ -5,7 +5,7 @@ import {
   UniV3Pool,
   calcTokenPrices,
 } from '@sushiswap/tines'
-import { Address } from '@wagmi/core'
+import { Address, deserialize } from '@wagmi/core'
 import { ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
 import { type TokenInfo } from 'sushi/token-list'
@@ -92,7 +92,7 @@ async function fetchPoolCodes(chainId: number, address?: string) {
     }
     const response = await fetch(url)
     const json = await response.json()
-    return JSON.parse(json) as PoolCode[]
+    return deserialize(json) as PoolCode[]
   } catch (e) {
     console.log('Error fetching pool codes')
     throw e
@@ -105,7 +105,7 @@ async function fetchPoolCodesForToken(chainId: number, address: string) {
       `https://production.sushi.com/pool-codes-for-token?chainId=${chainId}&address=${address}`,
     )
     const json = await response.json()
-    return JSON.parse(json) as PoolCode[]
+    return deserialize(json) as PoolCode[]
   } catch (e) {
     console.log('Error fetching pool codes for token')
     throw e
