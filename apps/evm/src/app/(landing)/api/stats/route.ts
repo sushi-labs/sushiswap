@@ -73,13 +73,14 @@ const getBentoTvl = async () => {
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
 
-  const prices = await fetch('https://token-price.sushi.com/v1').then((data) =>
+  const prices = await fetch('https://token-price.sushi.com/v2').then((data) =>
     data.json(),
   )
 
   return rebases.reduce((acc, cur) => {
     const price =
-      prices[cur.chainId][cur.id] || prices[cur.chainId][getAddress(cur.id)]
+      prices?.[cur.chainId]?.[cur.id] ||
+      prices?.[cur.chainId]?.[getAddress(cur.id)]
     if (!price) return acc
 
     return (
