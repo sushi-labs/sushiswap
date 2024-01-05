@@ -13,8 +13,8 @@
             "imageRegistry": "gcr.io/extractor-410208"
         },
         {
-            "name": "DEV: GKE",
-            "profile": "development",
+            "name": "STAGING: GKE",
+            "profile": "staging",
             "type": "cloudcode.kubernetes",
             "request": "launch",
             "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",

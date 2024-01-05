@@ -33,9 +33,17 @@ Setup the DRPC SECRET
 kubectl create secret generic extractor --from-literal=DRPC_ID=XXX
 ```
 
-Create a static ip for the ingress controller
+Create a static ip for the staging environment
 ```bash
-gcloud compute addresses create ingress-nginx --global
+gcloud compute addresses create extractor-staging-ip --global
 ```
 
+Create a static ip for the production environment
+```bash
+gcloud compute addresses create extractor-production-ip --global
+```
+
+## Release
+
+gcloud deploy releases create 'extractor-$DATE-$TIME' --project=extractor-410208 --region=us-east4 --source=./apis/extractor --delivery-pipeline=extractor --images=extractor=IMAGE
 
