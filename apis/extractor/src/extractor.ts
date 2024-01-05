@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node'
 import { Extractor, WarningLevel } from '@sushiswap/extractor'
+import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ChainId } from 'sushi/chain'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config'
 
@@ -13,5 +14,7 @@ const extractor = new Extractor({
     Sentry.captureMessage(`${chain}: ${message}`, level)
   },
 })
+
+extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
 
 export default extractor
