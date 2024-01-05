@@ -1,6 +1,7 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
+import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
 import extractor from './extractor'
@@ -34,6 +35,8 @@ Sentry.init({
 app.use(Sentry.Handlers.requestHandler())
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler())
+
+app.use(cors())
 
 app.get('/health', (_, res: Response) => {
   return res.status(extractor.isStarted() ? 200 : 503).send()

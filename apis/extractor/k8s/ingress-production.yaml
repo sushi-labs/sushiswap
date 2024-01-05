@@ -3,12 +3,8 @@ kind: Ingress
 metadata:
   name: extractor-production-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     kubernetes.io/ingress.global-static-ip-name: "extractor-production-ip"
     networking.gke.io/managed-certificates: "extractor-production-managed-certificate"
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE"
 spec:
   rules:
   - http:
