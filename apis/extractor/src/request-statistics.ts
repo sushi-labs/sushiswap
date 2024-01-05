@@ -163,3 +163,7 @@ export class RequestStatistics {
     }
   }
 }
+
+const requestStatistics = new RequestStatistics(60_000, 3_600_000)
+
+export default requestStatistics

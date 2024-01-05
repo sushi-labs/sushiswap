@@ -7,13 +7,14 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const TEST_MODE = TestMode.ONE_UNKNOWN_TOKEN
-const REQUEST_PER_SEC = 2
+const TEST_MODE = TestMode.KNOWN_TOKENS
+const REQUEST_PER_SEC = 150
 const SWAP_AMOUNT = 10
 
 const CACHE_DIR = '../cache'
 const TOKEN_FILES_PREFIX = 'tokens-'
-const SERVER_ADDRESS = 'http://localhost:1337'
+// const SERVER_ADDRESS = 'http://localhost:1337'
+const SERVER_ADDRESS = 'https://swap2.sushi.com'
 const USER_ADDRESS = '0xBa8656A5D95087ab4d015f1B68D72cD246FcC6C3' // random address with no contract
 const MS_PER_REQUEST = Math.round(1000 / REQUEST_PER_SEC)
 
