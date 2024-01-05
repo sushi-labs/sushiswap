@@ -1,7 +1,0 @@
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  name: managed-certificate
-spec:
-  domains:
-    - swap2.sushi.com

@@ -37,7 +37,7 @@ import { type Address, isAddress } from 'viem'
 import z from 'zod'
 import { CONFIGURED_CHAIN_IDS, EXTRACTOR_CONFIG } from './config'
 import { makeAPI02Object } from './makeAPI02Object'
-import { ResponseRejectReason, requestStatistics } from './request-statistics'
+import requestStatistics, { ResponseRejectReason } from './request-statistics'
 
 const zChainId = z.coerce
   .number()

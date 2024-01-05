@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: extractor-ingress
+  annotations:
+    kubernetes.io/ingressClassName: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "extractor-production"
+    networking.gke.io/managed-certificates: "managed-certificate-production"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: managed-certificate-production
+spec:
+  domains:
+    - swap2.sushi.com
