@@ -7,6 +7,8 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: "extractor-production-ip"
     networking.gke.io/managed-certificates: "extractor-production-managed-certificate"
     nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
 spec:
   rules:
   - http:
