@@ -1,4 +1,4 @@
-// import { LogFilterType } from '@sushiswap/extractor'
+import { LogFilterType } from '@sushiswap/extractor'
 import { LiquidityProviders } from '@sushiswap/router'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -91,7 +91,7 @@ export const EXTRACTOR_CONFIG = {
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
-    // logType: LogFilterType.Native,
+    logType: LogFilterType.Native,
     logging: true,
   },
   [ChainId.ARBITRUM_NOVA]: {
@@ -423,4 +423,13 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 50,
     logging: true,
   },
+  // [ChainId.HAQQ]: {
+  //   client: createPublicClient(config[ChainId.HAQQ]),
+  //   // factoriesV2: [sushiswapV2Factory(ChainId.HAQQ)],
+  //   factoriesV3: [sushiswapV3Factory(ChainId.HAQQ)],
+  //   tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
+  //   cacheDir: './cache',
+  //   logDepth: 50,
+  //   logging: true,
+  // },
 }

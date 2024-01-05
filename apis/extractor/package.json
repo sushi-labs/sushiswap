@@ -21,7 +21,9 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
+    "load-new-tokens": "artillery run test/load-new-tokens.yml",
     "load-testing": "artillery run test/load.yml",
+    "simulate": "ts-node --skipProject ./test/requestSimulation.ts",
     "start": "node dist/index.js"
   },
   "dependencies": {
@@ -29,6 +31,7 @@
     "@sushiswap/extractor": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/router-config": "workspace:*",
+    "@sushiswap/tines": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",
     "@sushiswap/viem-config": "workspace:*",
@@ -49,7 +52,7 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/cors": "2.8.13",
     "@types/express": "4.17.17",
-    "@types/node": "18",
+    "@types/node": ">=20.8.4",
     "artillery": "2.0.0-35",
     "typescript": "5.2.2"
   }

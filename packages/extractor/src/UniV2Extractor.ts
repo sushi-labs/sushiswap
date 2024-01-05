@@ -79,6 +79,7 @@ export class UniV2Extractor {
   readonly taskCounter: Counter
   readonly poolPermanentCache: PermanentCache<PoolCacheRecord>
   watchedPools = 0
+  started = false
 
   /// @param client
   /// @param factories list of supported factories
@@ -171,7 +172,6 @@ export class UniV2Extractor {
           `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
         )
       } else {
-        this.logFilter.start()
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
@@ -185,7 +185,6 @@ export class UniV2Extractor {
 
   async start() {
     const startTime = performance.now()
-    this.logFilter.start()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
 
@@ -233,13 +232,12 @@ export class UniV2Extractor {
     this.consoleLog(`${cachedPools.size} pools were taken from cache`)
     await Promise.allSettled(promises)
 
-    warnLog(
-      this.multiCallAggregator.chainId,
-      `ExtractorV2 was started (${Math.round(
+    this.consoleLog(
+      `ExtractorV2 is started and ready(${Math.round(
         performance.now() - startTime,
       )}ms)`,
-      'info',
     )
+    this.started = true
   }
 
   async updatePoolState(poolState: PoolState) {
@@ -294,10 +292,12 @@ export class UniV2Extractor {
             return
           }
           const startTime = performance.now()
+          this.taskCounter.inc()
           const promise = this.multiCallAggregator
             .callValue(addr, getReservesAbi, 'getReserves')
             .then(
               (reserves) => {
+                this.taskCounter.dec()
                 const poolState2 = this.poolMap.get(addrL)
                 if (poolState2) {
                   // pool was created
@@ -322,6 +322,7 @@ export class UniV2Extractor {
               },
               () => {
                 this.poolMap.set(addrL, { status: PoolStatus.NoPool })
+                this.taskCounter.dec()
                 return undefined
               },
             )
@@ -335,6 +336,7 @@ export class UniV2Extractor {
     }
   }
 
+  // Is not used now
   async addPoolsFromFactory(
     factoryAddr: Address,
     step = 1000,
@@ -427,12 +429,6 @@ export class UniV2Extractor {
             'factory',
           ),
         )
-
-        this.multiCallAggregator.callValue(
-          addr,
-          tridentConstantPoolAbi,
-          'factory',
-        )
         factory = this.factoryMap.get(
           (factoryAddr as string).toLowerCase() as Address,
         )
@@ -463,11 +459,11 @@ export class UniV2Extractor {
       ])
       token0 = tokens[0]
       token1 = tokens[1]
-    } catch (e) {
+    } catch (_e) {
       this.taskCounter.dec()
       warnLog(
         this.multiCallAggregator.chainId,
-        `Ext2 add pool ${addr} by log failed: ${e}`,
+        `Ext2 add pool ${addr} by log failed`,
       )
       return
     }
@@ -552,7 +548,7 @@ export class UniV2Extractor {
     ++this.watchedPools
     if (args.source !== 'cache')
       this.consoleLog(
-        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}`,
+        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}/${this.poolMap.size}`,
       )
     return poolState.poolCode
   }
@@ -600,5 +596,9 @@ export class UniV2Extractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`V2-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }

@@ -9,6 +9,7 @@ const EIP3091_OVERRIDE = [
   ChainId.OPTIMISM,
   ChainId.BOBA,
   ChainId.BASE,
+  ChainId.FILECOIN,
 ] as number[]
 
 type Data = typeof RAW[number]
@@ -106,6 +107,17 @@ export class Chain implements Chain {
       this.explorers?.sort((explorer) =>
         explorer.name === 'Scrollscan' ? -1 : 1,
       )
+    } else if (data.name === 'Arbitrum Nova') {
+      this.explorers = [
+        {
+          name: 'Arbitrum Nova Explorer',
+          url: 'https://nova.arbiscan.io',
+          standard: 'EIP3091',
+        },
+        ...(this.explorers ?? []),
+      ]
+    } else if (data.name === 'Filecoin') {
+      this.explorers?.sort((explorer) => (explorer.name === 'Filfox' ? -1 : 1))
     }
   }
   getTxUrl(txHash: string): string {

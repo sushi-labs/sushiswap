@@ -107,6 +107,7 @@ export class AlgebraExtractor {
   qualityChecker: AlgebraQualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
+  started = false
 
   constructor(
     client: PublicClient,
@@ -178,14 +179,13 @@ export class AlgebraExtractor {
             this.lastProcessdBlock = Number(
               logs[logs.length - 1].blockNumber || 0,
             )
-        } catch (e) {
+        } catch (_e) {
           warnLog(
             this.multiCallAggregator.chainId,
-            `Block ${blockNumber} log process error: ${e}`,
+            `Block ${blockNumber} log process error`,
           )
         }
       } else {
-        this.logFilter.start()
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
@@ -200,7 +200,6 @@ export class AlgebraExtractor {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
-      this.logFilter.start()
 
       if (this.tokenManager.tokens.size === 0)
         await this.tokenManager.addCachedTokens()
@@ -245,11 +244,22 @@ export class AlgebraExtractor {
             factory,
           })
       })
-      cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
+      const promises = Array.from(cachedPools.values())
+        .map((p) => this.addPoolWatching(p, 'cache', false))
+        .filter((w) => w !== undefined)
+        .map((w) => (w as AlgebraPoolWatcher).statusAll())
+      Promise.allSettled(promises).then((_) => {
+        this.started = true
+        this.consoleLog(
+          `ExtractorAlg is ready (${Math.round(
+            performance.now() - startTime,
+          )}ms)`,
+        )
+      })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       warnLog(
         this.multiCallAggregator.chainId,
-        `ExtractorAlg was started (${Math.round(
+        `ExtractorAlg is started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
         'info',
@@ -265,10 +275,10 @@ export class AlgebraExtractor {
         return pool.processLog(l)
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
-    } catch (e) {
+    } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
-        `Log processing for pool ${l.address} throwed an exception ${e}`,
+        `Log processing for pool ${l.address} throwed an exception`,
       )
       return 'Exception!!!'
     }
@@ -485,5 +495,9 @@ export class AlgebraExtractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`Alg-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }

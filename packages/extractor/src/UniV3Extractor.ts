@@ -75,6 +75,7 @@ export class UniV3Extractor {
   qualityChecker: QualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
+  started = false
 
   constructor(
     client: PublicClient,
@@ -147,14 +148,13 @@ export class UniV3Extractor {
             this.lastProcessdBlock = Number(
               logs[logs.length - 1].blockNumber || 0,
             )
-        } catch (e) {
+        } catch (_e) {
           warnLog(
             this.multiCallAggregator.chainId,
-            `Block ${blockNumber} log process error: ${e}`,
+            `Block ${blockNumber} log process error`,
           )
         }
       } else {
-        this.logFilter.start()
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
@@ -169,7 +169,6 @@ export class UniV3Extractor {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
-      this.logFilter.start()
 
       if (this.tokenManager.tokens.size === 0)
         await this.tokenManager.addCachedTokens()
@@ -190,14 +189,23 @@ export class UniV3Extractor {
             factory,
           })
       })
-      cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
+      const promises = Array.from(cachedPools.values())
+        .map((p) => this.addPoolWatching(p, 'cache', false))
+        .filter((w) => w !== undefined)
+        .map((w) => (w as UniV3PoolWatcher).statusAll())
+      Promise.allSettled(promises).then((_) => {
+        this.started = true
+        this.consoleLog(
+          `ExtractorV3 is ready (${Math.round(
+            performance.now() - startTime,
+          )}ms)`,
+        )
+      })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
-      warnLog(
-        this.multiCallAggregator.chainId,
-        `ExtractorV3 was started (${Math.round(
+      this.consoleLog(
+        `ExtractorV3 is started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
-        'info',
       )
     }
   }
@@ -210,10 +218,10 @@ export class UniV3Extractor {
         return pool.processLog(l)
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
-    } catch (e) {
+    } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
-        `Log processing for pool ${l.address} throwed an exception ${e}`,
+        `Log processing for pool ${l.address} throwed an exception`,
       )
       return 'Exception!!!'
     }
@@ -280,7 +288,9 @@ export class UniV3Extractor {
       if (source !== 'cache') {
         const delay = Math.round(performance.now() - startTime)
         this.consoleLog(
-          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`,
+          `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${
+            this.watchedPools
+          }/${this.poolMap.size + this.emptyAddressSet.size}`,
         )
       }
     })
@@ -351,6 +361,7 @@ export class UniV3Extractor {
   async addPoolByAddress(address: Address) {
     if (this.otherFactoryPoolSet.has(address.toLowerCase() as Address)) return
     if (this.multiCallAggregator.chainId === undefined) return
+    this.taskCounter.inc()
     try {
       this.emptyAddressSet.delete(address)
       const startTime = performance.now()
@@ -391,6 +402,7 @@ export class UniV3Extractor {
             true,
             startTime,
           )
+          this.taskCounter.dec()
           return
         }
       }
@@ -398,6 +410,7 @@ export class UniV3Extractor {
       // adding pool failed - let's add its address in otherFactoryPoolSet in order to not
       // spent resources for in the future
     }
+    this.taskCounter.dec()
     this.otherFactoryPoolSet.add(address.toLowerCase() as Address)
     this.consoleLog(
       `other factory pool ${address}, such pools known: ${this.otherFactoryPoolSet.size}`,
@@ -453,5 +466,9 @@ export class UniV3Extractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`V3-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }

@@ -1,7 +1,7 @@
 //import { bigint } from '@ethersproject/bignumber'
 import { Address } from 'viem'
 
-import { RPool, RToken } from './RPool'
+import { PoolType, RPool, RToken } from './RPool'
 import { getBigInt } from './Utils'
 
 const ZERO = 0n
@@ -51,6 +51,10 @@ export class CurveMultitokenPool extends RPool {
     // super.updateReserves(res0, res1)
     // this.core.updateReserve(this.index0, res0)
     // this.core.updateReserve(this.index1, res1)
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Curve
   }
 
   calcOutByIn(
