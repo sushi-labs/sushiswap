@@ -45,11 +45,7 @@ export const BALANCE_USD_COLUMN: ColumnDef<TreasuryBalance, unknown> = {
   id: 'balanceUSD',
   header: 'Value',
   accessorFn: (row) => row.balanceUSD,
-  cell: (props) => (
-    <div className="w-full text-right">
-      ${formatNumber(props.row.original.balanceUSD)}
-    </div>
-  ),
+  cell: (props) => `${formatNumber(props.row.original.balanceUSD)}`,
   meta: {
     skeleton: <SkeletonText />,
   },
@@ -59,11 +55,7 @@ export const BALANCE_COLUMN: ColumnDef<TreasuryBalance, unknown> = {
   id: 'balance',
   header: 'Tokens',
   accessorFn: (row) => row.balance,
-  cell: (props) => (
-    <div className="w-full text-right">
-      {formatNumber(props.row.original.balance)}
-    </div>
-  ),
+  cell: (props) => `${formatNumber(props.row.original.balance)}`,
   meta: {
     skeleton: <SkeletonText />,
   },
@@ -71,17 +63,14 @@ export const BALANCE_COLUMN: ColumnDef<TreasuryBalance, unknown> = {
 
 export const PRICE_COLUMN: ColumnDef<TreasuryBalance, unknown> = {
   id: 'price',
-  header: 'Tokens',
+  header: 'Price',
   accessorFn: (row) => row.price,
-  cell: (props) => (
-    <div className="w-full pr-3 text-right">
-      {(+props.row.original.price).toLocaleString('EN', {
-        maximumFractionDigits: 2,
-        style: 'currency',
-        currency: 'USD',
-      })}
-    </div>
-  ),
+  cell: (props) =>
+    `${props.row.original.price.toLocaleString('EN', {
+      maximumFractionDigits: 2,
+      style: 'currency',
+      currency: 'USD',
+    })}`,
   meta: {
     skeleton: <SkeletonText />,
   },
