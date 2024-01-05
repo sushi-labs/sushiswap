@@ -30,6 +30,10 @@ Sentry.init({
   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
 })
 
+app.set('json replacer', (_key: string, value: any) =>
+  typeof value === 'bigint' ? value.toString() : value,
+)
+
 // RequestHandler creates a separate execution context, so that all
 // transactions/spans/breadcrumbs are isolated across requests
 app.use(Sentry.Handlers.requestHandler())
