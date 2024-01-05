@@ -27,7 +27,9 @@ interface ExchangeData {
 const getV2Data = async () => {
   const sdk = getBuiltGraphSDK()
   const { factories } = await sdk.Factories({
-    chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+    chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
+      (value) => value !== ChainId.KAVA,
+    ),
   })
 
   return {
@@ -79,7 +81,8 @@ const getBentoTvl = async () => {
 
   return rebases.reduce((acc, cur) => {
     const price =
-      prices[cur.chainId]?.[cur.id] || prices[cur.chainId]?.[getAddress(cur.id)]
+      prices?.[cur.chainId]?.[cur.id] ||
+      prices?.[cur.chainId]?.[getAddress(cur.id)]
     if (!price) return acc
 
     return (
