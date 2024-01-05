@@ -70,26 +70,26 @@ app.listen(PORT, () => {
 
   requestStatistics.start()
 
-  fetch(`https://tokens.sushi.com/v1/${CHAIN_ID}`)
-    .then((res) => res.json() as Promise<TokenInfo[]>)
-    .then((tokenList) => {
-      extractor.start(
-        tokenList.map(
-          (token) =>
-            new Token({
-              chainId: token.chainId,
-              address: token.address,
-              decimals: token.decimals,
-              symbol: token.symbol,
-              name: token.name,
-            }),
-        ),
-      )
-    })
-    .catch((e) => {
-      console.log('Error fetching tokens')
-      throw e
-    })
+  // fetch(`https://tokens.sushi.com/v1/${CHAIN_ID}`)
+  //   .then((res) => res.json() as Promise<TokenInfo[]>)
+  //   .then((tokenList) => {
+  //     extractor.start(
+  //       tokenList.map(
+  //         (token) =>
+  //           new Token({
+  //             chainId: token.chainId,
+  //             address: token.address,
+  //             decimals: token.decimals,
+  //             symbol: token.symbol,
+  //             name: token.name,
+  //           }),
+  //       ),
+  //     )
+  //   })
+  //   .catch((e) => {
+  //     console.log('Error fetching tokens')
+  //     throw e
+  //   })
 })
 
 process.on('SIGTERM', (code) => {
