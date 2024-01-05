@@ -9,7 +9,7 @@ function priceRecalcInterval(_chainId: ChainId) {
   return 10
 }
 const lastPriceUpdate: number[] = []
-const lastPricesSerialized: string[] = []
+const lastPricesSerialized: Record<number, Record<string, number>> = {}
 
 const handler = async (req: Request, res: Response) => {
   const { chainId } = schema.parse(req.query)
@@ -41,7 +41,7 @@ const handler = async (req: Request, res: Response) => {
     Object.keys(prices).forEach((addr) => {
       prices[addr] /= usdPriceSupposed
     })
-    lastPricesSerialized[chainId] = JSON.stringify(prices)
+    lastPricesSerialized[chainId] = prices
   }
   res.json(lastPricesSerialized[chainId])
 }

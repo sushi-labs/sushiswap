@@ -257,7 +257,9 @@ export function calcTokenAddressPrices(
   )
   const res: Record<string, number> = {}
   g.vertices.forEach((v) => {
-    if (v.price !== 0) res[v.token.address] = v.price
+    if (v.price !== 0) res[v.token.address] = Number(
+      (v.price / 10 ** (baseToken.decimals - v.token.decimals)).toFixed(18),
+    )
   })
   return res
 }
