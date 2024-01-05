@@ -5,7 +5,7 @@ import {
   UniV3Pool,
   calcTokenPrices,
 } from '@sushiswap/tines'
-import { Address } from '@wagmi/core'
+import { Address, deserialize } from '@wagmi/core'
 import { ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
 import { type TokenInfo } from 'sushi/token-list'
@@ -41,16 +41,16 @@ interface Pool {
   reserve1: string
   minLiquidity: number
   swapGasCost: number
-  reserve0Number: bigint
-  reserve1Number: bigint
-  liquidity?: bigint
-  sqrtPriceX96?: bigint
+  reserve0Number: string
+  reserve1Number: string
+  liquidity?: string
+  sqrtPriceX96?: string
   nearestTick?: number
   ticks?: Tick[]
 }
 interface Tick {
   index: number
-  DLiquidity: bigint
+  DLiquidity: string
 }
 
 interface PoolCode {
@@ -92,7 +92,7 @@ async function fetchPoolCodes(chainId: number, address?: string) {
     }
     const response = await fetch(url)
     const json = await response.json()
-    return JSON.parse(json) as PoolCode[]
+    return deserialize(json) as PoolCode[]
   } catch (e) {
     console.log('Error fetching pool codes')
     throw e
@@ -105,7 +105,7 @@ async function fetchPoolCodesForToken(chainId: number, address: string) {
       `https://production.sushi.com/pool-codes-for-token?chainId=${chainId}&address=${address}`,
     )
     const json = await response.json()
-    return JSON.parse(json) as PoolCode[]
+    return deserialize(json) as PoolCode[]
   } catch (e) {
     console.log('Error fetching pool codes for token')
     throw e
@@ -142,9 +142,12 @@ function mapPool(poolCode: PoolCode) {
       BigInt(poolCode.pool.reserve0),
       BigInt(poolCode.pool.reserve1),
       poolCode.pool.nearestTick,
-      poolCode.pool.liquidity,
-      poolCode.pool.sqrtPriceX96,
-      poolCode.pool.ticks,
+      BigInt(poolCode.pool.liquidity),
+      BigInt(poolCode.pool.sqrtPriceX96),
+      poolCode.pool.ticks.map((tick) => ({
+        index: tick.index,
+        DLiquidity: BigInt(tick.DLiquidity),
+      })),
     )
   }
   return undefined
