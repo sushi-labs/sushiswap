@@ -27,7 +27,9 @@ interface ExchangeData {
 const getV2Data = async () => {
   const sdk = getBuiltGraphSDK()
   const { factories } = await sdk.Factories({
-    chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+    chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
+      (value) => value !== ChainId.KAVA,
+    ),
   })
 
   return {
@@ -73,7 +75,7 @@ const getBentoTvl = async () => {
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
 
-  const prices = await fetch('https://token-price.sushi.com/v2').then((data) =>
+  const prices = await fetch('https://token-price.sushi.com/v1').then((data) =>
     data.json(),
   )
 
