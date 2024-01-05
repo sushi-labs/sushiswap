@@ -29,7 +29,6 @@ const handler = async (req: Request, res: Response) => {
       baseToken,
       1000 * 10 ** baseToken.decimals,
     )
-
     const stablesPrices = STABLES[chainId]
       .map((t) => {
         const price = prices[t.address]
