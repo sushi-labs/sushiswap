@@ -52,4 +52,9 @@ spec:
                 secretKeyRef:
                   name: extractor
                   key: SENTRY_DSN
+            - name: SENTRY_ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: SENTRY_ENVIRONMENT
 {{- end }}

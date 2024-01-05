@@ -435,3 +435,4 @@ export const EXTRACTOR_CONFIG = {
 }
 
 export type CONFIGURED_CHAIN_IDS = keyof typeof EXTRACTOR_CONFIG
+

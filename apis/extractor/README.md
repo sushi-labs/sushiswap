@@ -37,7 +37,8 @@ kubectl create secret generic extractor --from-literal=DRPC_ID=XXX
 
 kubectl create secret generic extractor \
     --from-literal=DRPC_ID=XXX \
-    --from-literal=SENTRY_DSN=XXX
+    --from-literal=SENTRY_DSN=XXX \
+    --from-literal=SENTRY_ENVIRONMENT=XXX
 
 ```
 
