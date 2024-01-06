@@ -555,6 +555,9 @@ importers:
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../../packages/client
+      '@sushiswap/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../../packages/dexie
