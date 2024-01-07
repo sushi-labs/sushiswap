@@ -30,6 +30,8 @@ import {
 import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 import { useStargateBridgeFees } from './useStargateBridgeFees'
 
+import * as Sentry from '@sentry/nextjs'
+
 export const useCrossChainTrade = ({
   network0,
   network1,
