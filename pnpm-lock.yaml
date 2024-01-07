@@ -2267,6 +2267,9 @@ importers:
       '@wagmi/core':
         specifier: 1.4.13
         version: 1.4.13(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
+      eslint-config-sushi:
+        specifier: workspace:*
+        version: link:../../config/eslint
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -10462,6 +10465,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -29927,6 +29931,9 @@ packages:
 
   /napi-macros@2.2.2:
     resolution: {integrity: sha512-hmEVtAGYzVQpCKdbQea4skABsdXW4RUh5t5mJ2zzqowJS2OyXZTU1KhDVFhx+NlWZ4ap9mqR9TcDO3LTTttd+g==}
+
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
 
   /natives@1.1.6:
     resolution: {integrity: sha512-6+TDFewD4yxY14ptjKaS63GVdtKiES1pTPyxn9Jb0rBqPMZ7VcCiooEhPNsr+mqHtMGxa/5c/HhcC4uPEUw/nA==}
