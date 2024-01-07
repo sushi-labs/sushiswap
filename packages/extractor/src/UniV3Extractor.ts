@@ -313,41 +313,9 @@ export class UniV3Extractor {
           const feeSpacingMap = factory.feeSpacingMap ?? uniswapFeeSpaceMap
           const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
           fees.forEach((fee) => {
-            const addr = this.computeV3Address(factory, t0, t1, fee)
-            const addrL = addr.toLowerCase() as Address
-            const pool = this.poolMap.get(addrL)
-            if (pool) {
-              prefetched.push(pool)
-              return
-            }
-            if (this.emptyAddressSet.has(addr)) return
-            const promise = this.multiCallAggregator
-              .callValue(
-                factory.address,
-                IUniswapV3Factory.abi as Abi,
-                'getPool',
-                [t0.address, t1.address, fee],
-              )
-              .then(
-                (checkedAddress) => {
-                  if (
-                    checkedAddress ===
-                    '0x0000000000000000000000000000000000000000'
-                  ) {
-                    this.emptyAddressSet.add(addr)
-                    return
-                  }
-                  const watcher = this.addPoolWatching(
-                    { address: addr, token0: t0, token1: t1, fee, factory },
-                    'request',
-                    true,
-                    startTime,
-                  )
-                  return watcher
-                },
-                () => undefined,
-              )
-            fetching.push(promise)
+            const res = this.getWatchersForTokenPair(factory, fee, t0, t1, startTime)
+            if (res instanceof Promise) fetching.push(res)
+            else if (res !== undefined) prefetched.push(res)
           })
         })
       }
@@ -356,6 +324,75 @@ export class UniV3Extractor {
       prefetched,
       fetching,
     }
+  }
+
+  getWatchersBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: UniV3PoolWatcher[]
+    fetching: Promise<UniV3PoolWatcher | undefined>[]
+  } {
+    const startTime = performance.now()
+    const prefetched: UniV3PoolWatcher[] = []
+    const fetching: Promise<UniV3PoolWatcher | undefined>[] = []
+    for (let i = 0; i < tokensUnique1.length; ++i) {
+      const t0 = tokensUnique1[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = 0; j < tokensUnique2.length; ++j) {
+        const t1 = tokensUnique2[j]
+        this.factories.forEach((factory) => {
+          const feeSpacingMap = factory.feeSpacingMap ?? uniswapFeeSpaceMap
+          const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
+          fees.forEach((fee) => {
+          const res = this.getWatchersForTokenPair(factory, fee, t0, t1, startTime)
+          if (res instanceof Promise) fetching.push(res)
+          else if (res !== undefined) prefetched.push(res)
+          })
+        })
+      }
+    }
+    return {
+      prefetched,
+      fetching,
+    }
+  }
+
+  getWatchersForTokenPair(
+    factory: FactoryV3,
+    fee: number,
+    t0: Token,
+    t1: Token,
+    startTime: number,
+  ): undefined | UniV3PoolWatcher | Promise<UniV3PoolWatcher | undefined> {
+    const addr = this.computeV3Address(factory, t0, t1, fee)
+    const addrL = addr.toLowerCase() as Address
+    const pool = this.poolMap.get(addrL)
+    if (pool) return pool
+    if (this.emptyAddressSet.has(addr)) return
+    const promise = this.multiCallAggregator
+      .callValue(factory.address, IUniswapV3Factory.abi as Abi, 'getPool', [
+        t0.address,
+        t1.address,
+        fee,
+      ])
+      .then(
+        (checkedAddress) => {
+          if (checkedAddress === '0x0000000000000000000000000000000000000000') {
+            this.emptyAddressSet.add(addr)
+            return
+          }
+          const watcher = this.addPoolWatching(
+            { address: addr, token0: t0, token1: t1, fee, factory },
+            'request',
+            true,
+            startTime,
+          )
+          return watcher
+        },
+        () => undefined,
+      )
+    return promise
   }
 
   async addPoolByAddress(address: Address) {
