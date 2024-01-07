@@ -4,19 +4,6 @@ import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 
-export const ANGLE_ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
-  ChainId.POLYGON,
-  ChainId.ARBITRUM,
-  ChainId.OPTIMISM,
-  ChainId.BASE,
-]
-export type AngleEnabledChainId = typeof ANGLE_ENABLED_NETWORKS[number]
-export const isAngleEnabledChainId = (
-  chainId: number,
-): chainId is AngleEnabledChainId =>
-  ANGLE_ENABLED_NETWORKS.includes(chainId as AngleEnabledChainId)
-
 export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
   ChainId.ARBITRUM_NOVA,
