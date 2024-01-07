@@ -10,6 +10,7 @@ import {
   angleRewardsBaseValidator,
   angleRewardsPoolsValidator,
 } from './validator'
+import { isAngleEnabledChainId } from 'sushi/config'
 
 type TransformedRewardsPerToken = Record<
   string,
@@ -229,6 +230,8 @@ export const useAngleRewards = ({
     select: (data) => angleRewardsSelect({ chainId, data, prices }),
     staleTime: 15000, // 15 seconds
     cacheTime: 60000, // 1min
-    enabled: Boolean(enabled && prices && chainId),
+    enabled: Boolean(
+      enabled && prices && chainId && isAngleEnabledChainId(chainId),
+    ),
   })
 }

@@ -51,7 +51,7 @@ import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 import { useSteerVaults } from '@sushiswap/client/hooks'
-import { isAngleEnabledChainId } from '../../config'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'

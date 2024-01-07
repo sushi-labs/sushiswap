@@ -53,7 +53,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 
-import { ANGLE_ENABLED_NETWORKS } from '../../../config'
+import { ANGLE_ENABLED_NETWORKS } from 'sushi/config'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,
