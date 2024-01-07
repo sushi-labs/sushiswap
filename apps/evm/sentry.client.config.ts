@@ -10,6 +10,8 @@ Sentry.init({
   // Replay may only be enabled for the client-side
   integrations: [
     new Sentry.Replay({
+      maskAllInputs: false,
+      maskAllText: false,
       // Additional Replay configuration goes in here
     }),
   ],

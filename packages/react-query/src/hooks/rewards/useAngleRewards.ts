@@ -56,8 +56,9 @@ export const angleRewardsQueryFn = async ({
     url += `&user=${account}`
   }
 
-  const res = await (await fetch(url)).json()
-  return angleRewardsBaseValidator.parse(res[chainId])
+  const res = await fetch(url)
+  const json = await res.json()
+  return angleRewardsBaseValidator.parse(json[chainId])
 }
 
 interface AngleRewardsSelect {

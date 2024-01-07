@@ -108,6 +108,7 @@ export default withSentryConfig(
   {
     hideSourceMaps: true,
     widenClientFileUpload: true,
+    automaticVercelMonitors: true,
   },
   // {
   //   // For all available options, see:
