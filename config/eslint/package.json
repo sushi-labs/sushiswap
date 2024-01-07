@@ -10,9 +10,9 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
-  "main": "index.js",
   "files": [
-    "nextjs/index.js"
+    "nextjs/index.js",
+    "react/index.js"
   ],
   "dependencies": {
     "@vercel/style-guide": "5.0.1",
