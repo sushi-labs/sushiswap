@@ -1,5 +1,6 @@
 import { saveTokens } from '@sushiswap/dexie'
 import { useQuery } from '@tanstack/react-query'
+import { WrappedTokenInfo } from 'sushi'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
 
@@ -8,35 +9,48 @@ interface UseTokensParams {
 }
 
 type Data = {
-  id: string
   address: string
+  chainId: number
   name: string
   symbol: string
   decimals: number
+  logoURI: string
 }
 
 export const fetchTokensQueryFn = async () => {
-  const resp = await fetch('https://tokens.sushi.com/v0')
-  if (resp.status === 200) {
-    const data: Data[] = await resp.json()
+  const res = await fetch('https://tokens.sushi.com/v1')
+  if (res.status === 200) {
+    const data: Data[] = await res.json()
     await saveTokens({
-      tokens: data.map(({ id, address, symbol, decimals, name }) => {
-        const [chainId] = id.split(':')
-        return {
-          id,
-          address,
-          symbol,
-          decimals,
-          name,
-          status: 'APPROVED',
-          chainId: Number(chainId),
-        }
-      }),
+      tokens: data.map(
+        ({ address, chainId, symbol, decimals, name, logoURI }) => {
+          return {
+            id: `${chainId}:${address}`,
+            address,
+            symbol,
+            decimals,
+            name,
+            logoURI,
+            status: 'APPROVED',
+            chainId: Number(chainId),
+          }
+        },
+      ),
     })
 
     return data.reduce<Record<number, Record<string, Token>>>(
-      (acc, { id, name, symbol, decimals }) => {
-        const [_chainId, _address] = id.split(':')
+      (
+        acc,
+        {
+          address: _address,
+          chainId: _chainId,
+          name,
+          logoURI,
+          symbol,
+          decimals,
+        },
+      ) => {
+        // const [_chainId, _address] = id.split(':')
 
         const chainId = Number(_chainId)
         const address = String(_address)
@@ -45,12 +59,13 @@ export const fetchTokensQueryFn = async () => {
 
         const map = acc[chainId] as Record<string, Token>
 
-        map[getAddress(address)] = new Token({
+        map[getAddress(address)] = new WrappedTokenInfo({
           chainId,
           name,
           decimals,
           symbol,
           address,
+          logoURI,
         })
 
         return acc
