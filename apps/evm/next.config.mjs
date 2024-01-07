@@ -107,6 +107,7 @@ export default withSentryConfig(
   sentryWebpackPluginOptions,
   {
     hideSourceMaps: true,
+    widenClientFileUpload: true,
   },
   // {
   //   // For all available options, see:
