@@ -105,6 +105,9 @@ const sentryWebpackPluginOptions = {
 export default withSentryConfig(
   withAxiom(nextConfig),
   sentryWebpackPluginOptions,
+  {
+    hideSourceMaps: true,
+  },
   // {
   //   // For all available options, see:
   //   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/

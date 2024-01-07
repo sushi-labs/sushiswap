@@ -19,7 +19,7 @@ Sentry.init({
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   // debug: process.env.NODE_ENV !== 'production',
-  debug: !process.env.VERCEL_ENV,
+  debug: !process.env.NEXT_PUBLIC_VERCEL_ENV,
 
   // Capture Replay for 10% of all sessions,
   // plus for 100% of sessions with an error
@@ -27,5 +27,7 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0,
 
   enabled: true,
-  environment: process.env.VERCEL_ENV ? process.env.VERCEL_ENV : 'local',
+  environment: process.env.NEXT_PUBLIC_VERCEL_ENV
+    ? process.env.NEXT_PUBLIC_VERCEL_ENV
+    : 'local',
 })
