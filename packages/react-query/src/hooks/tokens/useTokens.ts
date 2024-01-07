@@ -18,7 +18,9 @@ type Data = {
 }
 
 export const fetchTokensQueryFn = async () => {
-  const res = await fetch('https://tokens.sushi.com/v1')
+  const res = await fetch(
+    'https://tokens-git-feature-tokens-v1-index.sushi.com/v1',
+  )
   if (res.status === 200) {
     const data: Data[] = await res.json()
     await saveTokens({
@@ -38,7 +40,7 @@ export const fetchTokensQueryFn = async () => {
       ),
     })
 
-    return data.reduce<Record<number, Record<string, Token>>>(
+    return data.reduce<Record<number, Record<string, WrappedTokenInfo>>>(
       (
         acc,
         {
