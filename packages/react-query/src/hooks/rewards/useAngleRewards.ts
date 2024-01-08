@@ -5,12 +5,14 @@ import { ZERO } from 'sushi/math'
 import { parseUnits } from 'viem'
 import z from 'zod'
 
+import { isAngleEnabledChainId } from 'sushi/config'
+
 import { usePrices } from '../prices'
+
 import {
   angleRewardsBaseValidator,
   angleRewardsPoolsValidator,
 } from './validator'
-import { isAngleEnabledChainId } from 'sushi/config'
 
 type TransformedRewardsPerToken = Record<
   string,
