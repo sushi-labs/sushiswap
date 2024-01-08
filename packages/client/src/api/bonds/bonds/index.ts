@@ -21,7 +21,7 @@ import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/toke
 import { convertAuctionTypes } from '../common'
 import { BondSchema } from '../schema'
 
-const onlyOpen = (start: bigint | null, end: bigint | null) =>
+const isOpen = (start: bigint | null, end: bigint | null) =>
   (!start || Date.now() / 1000 > start) && end && Date.now() / 1000 < end
 
 export async function getBondsFromSubgraph(
@@ -119,10 +119,7 @@ export async function getBondsFromSubgraph(
             return false
           }
 
-          if (
-            typeof args.onlyOpen !== 'undefined' &&
-            args.onlyOpen !== onlyOpen(bond.start, bond.conclusion)
-          ) {
+          if (args.onlyOpen && !isOpen(bond.start, bond.conclusion)) {
             return false
           }
 
