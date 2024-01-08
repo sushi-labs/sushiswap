@@ -7,6 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Explainer,
   SkeletonText,
 } from '@sushiswap/ui'
 import { ConnectButton } from '@sushiswap/wagmi'
@@ -40,7 +41,12 @@ export const VotingPowerCard = () => {
           <span className="text-xs text-muted-foreground">
             Your Voting Power
           </span>
-          <InformationCircleIcon width={12} height={12} />
+          <Explainer
+            icon={InformationCircleIcon}
+            iconProps={{ width: 12, height: 12 }}
+          >
+            Voting power is used to participate in the Sushi DAO.
+          </Explainer>
         </CardTitle>
       </CardHeader>
       {isConnected ? (
