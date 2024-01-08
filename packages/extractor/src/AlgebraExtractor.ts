@@ -406,18 +406,13 @@ export class AlgebraExtractor {
     if (pool) return pool
     if (this.emptyAddressSet.has(addr)) return
     const promise = this.multiCallAggregator
-      .callValue(
-        factory.address,
-        AlgebraFactory.abi as Abi,
-        'poolByPair',
-        [t0.address, t1.address],
-      )
+      .callValue(factory.address, AlgebraFactory.abi as Abi, 'poolByPair', [
+        t0.address,
+        t1.address,
+      ])
       .then(
         (checkedAddress) => {
-          if (
-            checkedAddress ===
-            '0x0000000000000000000000000000000000000000'
-          ) {
+          if (checkedAddress === '0x0000000000000000000000000000000000000000') {
             this.emptyAddressSet.add(addr)
             return
           }

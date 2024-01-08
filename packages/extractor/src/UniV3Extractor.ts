@@ -313,7 +313,13 @@ export class UniV3Extractor {
           const feeSpacingMap = factory.feeSpacingMap ?? uniswapFeeSpaceMap
           const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
           fees.forEach((fee) => {
-            const res = this.getWatchersForTokenPair(factory, fee, t0, t1, startTime)
+            const res = this.getWatchersForTokenPair(
+              factory,
+              fee,
+              t0,
+              t1,
+              startTime,
+            )
             if (res instanceof Promise) fetching.push(res)
             else if (res !== undefined) prefetched.push(res)
           })
@@ -345,9 +351,15 @@ export class UniV3Extractor {
           const feeSpacingMap = factory.feeSpacingMap ?? uniswapFeeSpaceMap
           const fees = Object.keys(feeSpacingMap).map((f) => Number(f))
           fees.forEach((fee) => {
-          const res = this.getWatchersForTokenPair(factory, fee, t0, t1, startTime)
-          if (res instanceof Promise) fetching.push(res)
-          else if (res !== undefined) prefetched.push(res)
+            const res = this.getWatchersForTokenPair(
+              factory,
+              fee,
+              t0,
+              t1,
+              startTime,
+            )
+            if (res instanceof Promise) fetching.push(res)
+            else if (res !== undefined) prefetched.push(res)
           })
         })
       }

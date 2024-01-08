@@ -250,7 +250,10 @@ export class Extractor {
   }
 
   // downloads pools for all pairs from tokensBaseSet and between tokensBaseSet and tokensAdditionalSet
-  async prefetch(tokensBaseSet: Token[], tokensAdditionalSet: Token[]): Promise<void> {
+  async prefetch(
+    tokensBaseSet: Token[],
+    tokensAdditionalSet: Token[],
+  ): Promise<void> {
     ++this.requestStartedNum
     try {
       const baseMap = new Map<string, Token>()
@@ -259,24 +262,38 @@ export class Extractor {
 
       const addMap = new Map<string, Token>()
       tokensAdditionalSet.forEach((t) => {
-        if (baseMap.get(t.address) === undefined)
-         addMap.set(t.address, t)
+        if (baseMap.get(t.address) === undefined) addMap.set(t.address, t)
       })
       const addUnique = Array.from(addMap.values())
 
       let fetching: Promise<unknown>[] = []
 
-      if (this.extractorV2 ) {
-        fetching = fetching.concat(this.extractorV2.getPoolsForTokens(baseUnique).fetching)
-        fetching = fetching.concat(this.extractorV2.getPoolsBetweenTokenSets(baseUnique, addUnique).fetching)
+      if (this.extractorV2) {
+        fetching = fetching.concat(
+          this.extractorV2.getPoolsForTokens(baseUnique).fetching,
+        )
+        fetching = fetching.concat(
+          this.extractorV2.getPoolsBetweenTokenSets(baseUnique, addUnique)
+            .fetching,
+        )
       }
-      if (this.extractorV3 ) {
-        fetching = fetching.concat(this.extractorV3.getWatchersForTokens(baseUnique).fetching)
-        fetching = fetching.concat(this.extractorV3.getWatchersBetweenTokenSets(baseUnique, addUnique).fetching)
+      if (this.extractorV3) {
+        fetching = fetching.concat(
+          this.extractorV3.getWatchersForTokens(baseUnique).fetching,
+        )
+        fetching = fetching.concat(
+          this.extractorV3.getWatchersBetweenTokenSets(baseUnique, addUnique)
+            .fetching,
+        )
       }
       if (this.extractorAlg) {
-        fetching = fetching.concat(this.extractorAlg.getWatchersForTokens(baseUnique).fetching)
-        fetching = fetching.concat(this.extractorAlg.getWatchersBetweenTokenSets(baseUnique, addUnique).fetching)
+        fetching = fetching.concat(
+          this.extractorAlg.getWatchersForTokens(baseUnique).fetching,
+        )
+        fetching = fetching.concat(
+          this.extractorAlg.getWatchersBetweenTokenSets(baseUnique, addUnique)
+            .fetching,
+        )
       }
       await Promise.allSettled(fetching)
       ++this.requestFinishedNum
