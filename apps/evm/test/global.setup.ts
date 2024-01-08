@@ -11,7 +11,7 @@ export default async function globalSetup(_config: FullConfig) {
     },
   })
 
-  process.on('exit', async () => {
+  process.on('SIGTERM', async () => {
     await shutdown()
   })
 }

@@ -32,7 +32,8 @@ const SET_LIST =
 
 export const OPTIMISM_LIST =
   'https://static.optimism.io/optimism.tokenlist.json'
-export const ARBITRUM_LIST = 'https://bridge.arbitrum.io/token-list-42161.json'
+export const ARBITRUM_LIST =
+  'https://tokenlist.arbitrum.io/ArbTokenLists/arbed_arb_whitelist_era.json'
 export const CELO_LIST =
   'https://celo-org.github.io/celo-token-list/celo.tokenlist.json'
 export const PLASMA_BNB_LIST =

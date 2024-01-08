@@ -26,7 +26,7 @@ const Network: FC<NetworkProps> = ({
   ...rest
 }): ReactElement<any, any> | null => {
   const { chain } = useNetwork()
-  const { switchNetwork } = useSwitchNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
 
   if (!chainId) return null
 
@@ -36,7 +36,9 @@ const Network: FC<NetworkProps> = ({
       <Button
         fullWidth={fullWidth}
         size={size}
-        onClick={() => switchNetwork?.(_chainId)}
+        onClick={async () => {
+          await switchNetworkAsync?.(_chainId)
+        }}
         {...rest}
       >
         Switch to {chainName[_chainId]}

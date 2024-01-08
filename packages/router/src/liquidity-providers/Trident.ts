@@ -88,8 +88,9 @@ export class TridentProvider extends LiquidityProvider {
   constructor(
     chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
     web3Client: PublicClient,
+    isTest = false,
   ) {
-    super(chainId, web3Client)
+    super(chainId, web3Client, isTest)
     this.chainId = chainId
     if (
       !(chainId in this.bentoBox) ||

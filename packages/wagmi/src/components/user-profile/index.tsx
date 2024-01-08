@@ -29,7 +29,7 @@ export const UserProfile: FC<ProfileProps> = () => {
   const { isSm } = useBreakpoint('sm')
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const { chain } = useNetwork()
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const { data: name } = useEnsName({
     chainId: ChainId.ETHEREUM,
@@ -70,7 +70,7 @@ export const UserProfile: FC<ProfileProps> = () => {
         className="w-80"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        {!address && <ConnectView onSelect={close} />}
+        {!isConnected && <ConnectView onSelect={close} />}
         {view === ProfileView.Default && address && (
           <DefaultView chainId={chainId} address={address} setView={setView} />
         )}

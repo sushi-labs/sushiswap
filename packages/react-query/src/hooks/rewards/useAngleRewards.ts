@@ -5,7 +5,10 @@ import { ZERO } from 'sushi/math'
 import { parseUnits } from 'viem'
 import z from 'zod'
 
+import { isAngleEnabledChainId } from 'sushi/config'
+
 import { usePrices } from '../prices'
+
 import {
   angleRewardsBaseValidator,
   angleRewardsPoolsValidator,
@@ -56,8 +59,9 @@ export const angleRewardsQueryFn = async ({
     url += `&user=${account}`
   }
 
-  const res = await (await fetch(url)).json()
-  return angleRewardsBaseValidator.parse(res[chainId])
+  const res = await fetch(url)
+  const json = await res.json()
+  return angleRewardsBaseValidator.parse(json[chainId])
 }
 
 interface AngleRewardsSelect {
@@ -228,6 +232,8 @@ export const useAngleRewards = ({
     select: (data) => angleRewardsSelect({ chainId, data, prices }),
     staleTime: 15000, // 15 seconds
     cacheTime: 60000, // 1min
-    enabled: Boolean(enabled && prices && chainId),
+    enabled: Boolean(
+      enabled && prices && chainId && isAngleEnabledChainId(chainId),
+    ),
   })
 }

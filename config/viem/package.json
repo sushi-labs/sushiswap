@@ -40,7 +40,7 @@
     "jest": "29.7.0",
     "sushi": "workspace:*",
     "typescript": "5.2.2",
-    "viem": "1.17.2"
+    "viem": "1.21.4"
   },
   "peerDependencies": {
     "sushi": "*",
