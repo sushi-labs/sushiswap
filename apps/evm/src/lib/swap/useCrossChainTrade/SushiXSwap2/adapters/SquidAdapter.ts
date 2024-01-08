@@ -204,7 +204,8 @@ export const getSquidRouteRequest = ({
       (!isSrcSwap || srcTrade?.amountOut),
   )
 
-  if ((useSrcTrade && !srcTrade) || (useDstTrade && !dstTrade)) return undefined
+  if ((useSrcTrade && !srcTrade?.writeArgs) || (useDstTrade && !dstTrade))
+    return undefined
 
   const { srcBridgeToken, dstBridgeToken } = bridgePath
 
