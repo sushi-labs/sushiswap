@@ -1,6 +1,4 @@
 export * from './useBarChartData'
 export * from './useBarData'
-export * from './useHistoricBarDistributions'
-export * from './useUpcomingBarDistributions'
 export * from './useVotingPower'
 export * from './useVotingPowerBreakdown'

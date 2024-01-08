@@ -1,7 +1,6 @@
 import { Container, Separator } from '@sushiswap/ui'
 import { BarBalanceCard } from './BarBalanceCard'
 import { BarChartCard } from './BarChartCard'
-import { BarDistributionsCard } from './BarDistributionsCard'
 import { ManageBarCard } from './ManageBarCard'
 import { VotingPowerCard } from './VotingPowerCard'
 
@@ -25,7 +24,6 @@ export const BarPage = ({ tab }: BarPage) => {
       <div className="py-4">
         <Separator />
       </div>
-      <BarDistributionsCard />
     </Container>
   )
 }
