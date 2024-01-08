@@ -21,19 +21,25 @@ export const BarBalanceProvider: FC<{
 }> = ({ children }) => {
   const { isConnected, address } = useAccount()
 
-  const { data: sushiBalance, isLoading: isSushiBalanceLoading, isError: isSushiBalanceError } =
-    useBalanceWeb3({
-      chainId: ChainId.ETHEREUM,
-      account: address,
-      currency: SUSHI[ChainId.ETHEREUM],
-    })
+  const {
+    data: sushiBalance,
+    isLoading: isSushiBalanceLoading,
+    isError: isSushiBalanceError,
+  } = useBalanceWeb3({
+    chainId: ChainId.ETHEREUM,
+    account: address,
+    currency: SUSHI[ChainId.ETHEREUM],
+  })
 
-  const { data: xSushiBalance, isLoading: isXSushiBalanceLoading, isError: isXSushiBalanceError } =
-    useBalanceWeb3({
-      chainId: ChainId.ETHEREUM,
-      account: address,
-      currency: SUSHI[ChainId.ETHEREUM],
-    })
+  const {
+    data: xSushiBalance,
+    isLoading: isXSushiBalanceLoading,
+    isError: isXSushiBalanceError,
+  } = useBalanceWeb3({
+    chainId: ChainId.ETHEREUM,
+    account: address,
+    currency: SUSHI[ChainId.ETHEREUM],
+  })
 
   return (
     <Context.Provider
@@ -45,7 +51,15 @@ export const BarBalanceProvider: FC<{
           isLoading: isSushiBalanceLoading || isXSushiBalanceLoading,
           isError: isSushiBalanceError || isXSushiBalanceError,
         }),
-        [sushiBalance, xSushiBalance, isConnected, isSushiBalanceLoading, isXSushiBalanceLoading, isSushiBalanceError, isXSushiBalanceError],
+        [
+          sushiBalance,
+          xSushiBalance,
+          isConnected,
+          isSushiBalanceLoading,
+          isXSushiBalanceLoading,
+          isSushiBalanceError,
+          isXSushiBalanceError,
+        ],
       )}
     >
       {children}
