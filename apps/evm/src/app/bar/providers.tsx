@@ -1,7 +1,7 @@
 'use client'
 
 import { SplashController, ThemeProvider } from '@sushiswap/ui'
-import { BarProvider } from 'src/ui/bar'
+import { SushiBarProvider } from 'src/ui/bar'
 import { DeferUntilWalletReady } from 'src/ui/swap/defer-until-wallet-ready'
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -9,7 +9,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ThemeProvider>
       <DeferUntilWalletReady>
         <SplashController>
-          <BarProvider>{children}</BarProvider>
+          <SushiBarProvider>{children}</SushiBarProvider>
         </SplashController>
       </DeferUntilWalletReady>
     </ThemeProvider>

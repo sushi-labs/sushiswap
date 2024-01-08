@@ -10,30 +10,16 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import { ConnectButton, useBalanceWeb3 } from '@sushiswap/wagmi'
+import { ConnectButton } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
-import { SUSHI } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-import { useAccount } from 'wagmi'
+import { useBarBalance } from './BarBalanceProvider'
 
 export const BarBalanceCard = () => {
-  const { isConnected, address } = useAccount()
-
-  const { data: sushiBalance, isLoading: isSushiBalanceLoading } =
-    useBalanceWeb3({
-      chainId: ChainId.ETHEREUM,
-      account: address,
-      currency: SUSHI[ChainId.ETHEREUM],
-    })
-
-  const { data: xSushiBalance, isLoading: isXSushiBalanceLoading } =
-    useBalanceWeb3({
-      chainId: ChainId.ETHEREUM,
-      account: address,
-      currency: SUSHI[ChainId.ETHEREUM],
-    })
+  const { sushiBalance, xSushiBalance, isConnected, isLoading } =
+    useBarBalance()
 
   const amounts = useMemo(
     () => [sushiBalance ?? undefined, xSushiBalance ?? undefined],
@@ -58,7 +44,7 @@ export const BarBalanceCard = () => {
           <CardGroup>
             <CardLabel>Staked</CardLabel>
             <CardCurrencyAmountItem
-              isLoading={isXSushiBalanceLoading}
+              isLoading={isLoading && !xSushiBalance}
               amount={xSushiBalance ?? undefined}
               fiatValue={formatUSD(xSushiFiatValue)}
             />
@@ -66,7 +52,7 @@ export const BarBalanceCard = () => {
           <CardGroup>
             <CardLabel>Available</CardLabel>
             <CardCurrencyAmountItem
-              isLoading={isSushiBalanceLoading}
+              isLoading={isLoading && !sushiBalance}
               amount={sushiBalance ?? undefined}
               fiatValue={formatUSD(sushiFiatValue)}
             />

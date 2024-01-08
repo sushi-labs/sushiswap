@@ -12,19 +12,14 @@ import {
 } from '@sushiswap/ui'
 import { ConnectButton } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
-import { useVotingPower } from 'src/lib/bar/useVotingPower'
-import { useVotingPowerBreakdown } from 'src/lib/bar/useVotingPowerBreakdown'
 import { Amount, Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
-import { useAccount } from 'wagmi'
 import { BoostVotingPowerModal } from './BoostVotingPowerModal'
+import { useVotingPower } from './VotingPowerProvider'
 
 export const VotingPowerCard = () => {
-  const { address, isConnected } = useAccount()
-
-  const { data: votingPower, isLoading } = useVotingPower({ address })
-
-  const { balances, weights } = useVotingPowerBreakdown({ address })
+  const { votingPower, balances, weights, isConnected, isLoading } =
+    useVotingPower()
 
   const nonZeroBalances: Amount<Type>[] = useMemo(
     () =>

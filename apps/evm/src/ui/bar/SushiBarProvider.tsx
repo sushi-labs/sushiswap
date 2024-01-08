@@ -5,7 +5,7 @@ import { useBarData } from 'src/lib/bar/useBarData'
 import { ChainId } from 'sushi/chain'
 import { Amount, SUSHI, Type, XSUSHI, tryParseAmount } from 'sushi/currency'
 
-interface BarContext {
+interface SushiBarContext {
   totalSupply: Amount<Type> | undefined
   sushiBalance: Amount<Type> | undefined
   apr: string | undefined
@@ -13,9 +13,9 @@ interface BarContext {
   isError: boolean
 }
 
-const Context = createContext<BarContext | undefined>(undefined)
+const Context = createContext<SushiBarContext | undefined>(undefined)
 
-export const BarProvider: FC<{
+export const SushiBarProvider: FC<{
   children: ReactNode
   watch?: boolean
 }> = ({ children }) => {

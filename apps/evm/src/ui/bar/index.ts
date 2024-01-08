@@ -1,2 +1,2 @@
 export * from './BarHeader'
-export * from './BarProvider'
+export * from './SushiBarProvider'

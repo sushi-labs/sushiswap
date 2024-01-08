@@ -12,7 +12,7 @@ import React from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { XSUSHI } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
-import { useSushiBar } from './BarProvider'
+import { useSushiBar } from './SushiBarProvider'
 
 export const BarHeader = () => {
   const { apr, isLoading } = useSushiBar()

@@ -12,7 +12,7 @@ import { Web3Input } from '@sushiswap/wagmi'
 import { ReactNode, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, SUSHI, Type, XSUSHI } from 'sushi/currency'
-import { useSushiBar } from './BarProvider'
+import { useSushiBar } from './SushiBarProvider'
 import { XSushiPrice } from './XSushiPrice'
 
 interface StakeSectionWidgetProps {
