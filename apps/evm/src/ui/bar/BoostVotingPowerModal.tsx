@@ -17,7 +17,7 @@ import {
 } from '@sushiswap/ui'
 import { SUSHI_ETH_SLP } from 'src/lib/bar/useVotingPowerBreakdown'
 import { ChainId } from 'sushi/chain'
-import { AXSUSHI, CRXSUSHI, MEOW, TSUSHI, Type, XSUSHI } from 'sushi/currency'
+import { Type, XSUSHI } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
 
 export const BoostVotingPowerModal = ({
@@ -26,10 +26,6 @@ export const BoostVotingPowerModal = ({
   weights:
     | {
         xsushi: Fraction
-        axsushi: Fraction
-        crxsushi: Fraction
-        tsushi: Fraction
-        meowshi: Fraction
         slp: Fraction
         xsushiPolygon: Fraction
       }
@@ -56,30 +52,6 @@ export const BoostVotingPowerModal = ({
               currency={XSUSHI[ChainId.ETHEREUM]}
               weight={weights?.xsushi}
               link="https://sushi.com/bar"
-            />
-            <CurrencyListItem
-              isLoading={!weights}
-              currency={AXSUSHI[ChainId.ETHEREUM]}
-              weight={weights?.axsushi}
-              link="https://app.aave.com/reserve-overview/?underlyingAsset=0x8798249c2e607446efb7ad49ec89dd1865ff4272"
-            />
-            <CurrencyListItem
-              isLoading={!weights}
-              currency={CRXSUSHI[ChainId.ETHEREUM]}
-              weight={weights?.crxsushi}
-              link="https://app.cream.finance"
-            />
-            <CurrencyListItem
-              isLoading={!weights}
-              currency={TSUSHI[ChainId.ETHEREUM]}
-              weight={weights?.tsushi}
-              link="https://app.tokemak.xyz"
-            />
-            <CurrencyListItem
-              isLoading={!weights}
-              currency={MEOW[ChainId.ETHEREUM]}
-              weight={weights?.meowshi}
-              link="https://app.sushi.com/tools/meowshi?chainId=1"
             />
             <CurrencyListItem
               isLoading={!weights}
