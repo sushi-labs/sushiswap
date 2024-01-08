@@ -41,7 +41,7 @@ const UsersToQuery = [
   },
 ]
 
-const fetchPositions = async ({ pageParam = 0 }) => {
+const fetchDistributions = async ({ pageParam = 0 }) => {
   const results = await sdk.LiquidityPositionsByMakers({
     users: UsersToQuery,
     where: { balance_gt: '0', pair_: { liquidityUSD_gt: '0' } },
@@ -65,10 +65,10 @@ const fetchPositions = async ({ pageParam = 0 }) => {
   }))
 }
 
-export const useBarTableDataInfinite = (enabled = true) => {
+export const useUpcomingBarDistributions = (enabled = true) => {
   return useInfiniteQuery({
-    queryKey: ['useBarTableDataInfinite'],
-    queryFn: fetchPositions,
+    queryKey: ['useUpcomingBarDistributions'],
+    queryFn: fetchDistributions,
     getNextPageParam: (_, pages) => pages.length,
     keepPreviousData: true,
     staleTime: 30000,
@@ -77,4 +77,6 @@ export const useBarTableDataInfinite = (enabled = true) => {
   })
 }
 
-export type BarPosition = Awaited<ReturnType<typeof fetchPositions>>[number]
+export type UpcomingBarDistribution = Awaited<
+  ReturnType<typeof fetchDistributions>
+>[number]

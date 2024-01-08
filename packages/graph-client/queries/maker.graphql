@@ -1,0 +1,10 @@
+query Servings($skip: Int = 0) {
+  servings(orderBy: timestamp, orderDirection: desc, skip: $skip) {
+    amountSushi
+    timestamp
+    tx
+    maker {
+      id
+    }
+  }
+}
