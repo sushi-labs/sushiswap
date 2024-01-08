@@ -1,4 +1,4 @@
-import { saveTokens } from '@sushiswap/dexie'
+// import { saveTokens } from '@sushiswap/dexie'
 import { useQuery } from '@tanstack/react-query'
 import { WrappedTokenInfo } from 'sushi'
 import { Token } from 'sushi/currency'
@@ -23,22 +23,22 @@ export const fetchTokensQueryFn = async () => {
   )
   if (res.status === 200) {
     const data: Data[] = await res.json()
-    await saveTokens({
-      tokens: data.map(
-        ({ address, chainId, symbol, decimals, name, logoURI }) => {
-          return {
-            id: `${chainId}:${address}`,
-            address,
-            symbol,
-            decimals,
-            name,
-            logoURI,
-            status: 'APPROVED',
-            chainId: Number(chainId),
-          }
-        },
-      ),
-    })
+    // await saveTokens({
+    //   tokens: data.map(
+    //     ({ address, chainId, symbol, decimals, name, logoURI }) => {
+    //       return {
+    //         id: `${chainId}:${address}`,
+    //         address,
+    //         symbol,
+    //         decimals,
+    //         name,
+    //         logoURI,
+    //         status: 'APPROVED',
+    //         chainId: Number(chainId),
+    //       }
+    //     },
+    //   ),
+    // })
 
     return data.reduce<Record<number, Record<string, WrappedTokenInfo>>>(
       (

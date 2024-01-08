@@ -13,8 +13,8 @@ export const UNI_EXTENDED_LIST =
 
 // const AAVE_LIST = 'tokenlist.aave.eth'
 
-const CMC_ALL_LIST =
-  'https://s3.coinmarketcap.com/generated/dex/tokens/eth-tokens-all.json'
+// const CMC_ALL_LIST =
+//   'https://s3.coinmarketcap.com/generated/dex/tokens/eth-tokens-all.json'
 
 const COINGECKO_LIST = 'https://tokens.coingecko.com/uniswap/all.json'
 const COINGECK_BASE_LIST = 'https://tokens.coingecko.com/base/all.json'
