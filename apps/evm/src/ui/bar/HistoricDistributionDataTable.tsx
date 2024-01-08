@@ -90,7 +90,7 @@ export const HistoricDistributionDataTable = () => {
         loading={isLoading}
         columns={COLUMNS}
         data={data}
-        linkFormatter={(row) => Chain.from(1)?.getTxUrl(row.txHash) ?? ''}
+        linkFormatter={(row) => Chain.from(1)?.getTxUrl(row.tx) ?? ''}
       />
     </InfiniteScroll>
   )
