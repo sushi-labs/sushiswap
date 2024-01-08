@@ -3,8 +3,8 @@
 import { useAccount } from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
-  useVotingPowerBreakdown,
   useVotingPower as useVotingPowerQuery,
+  useVotingPowerBreakdown,
 } from 'src/lib/bar'
 import { Amount, Type } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
