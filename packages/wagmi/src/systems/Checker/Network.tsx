@@ -48,7 +48,7 @@ const Network: FC<NetworkProps> = ({
         <Button
           fullWidth={fullWidth}
           size={size}
-          onClick={() => switchNetworkAsync?.(_chainId)}
+          onClick={async () => await switchNetworkAsync?.(_chainId)}
           {...rest}
         >
           Switch to {chainName[_chainId]}
