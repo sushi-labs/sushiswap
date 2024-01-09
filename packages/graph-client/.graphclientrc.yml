@@ -1,10 +1,4 @@
 sources:
-  - name: MakerV2
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/sushi-makerv2
-        retry: 3
-
   - name: xSUSHI
     handler:
       graphql:
