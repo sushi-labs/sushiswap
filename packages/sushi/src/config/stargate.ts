@@ -106,6 +106,34 @@ export const STARGATE_ETH: Record<keyof typeof STARGATE_ETH_ADDRESS, Token> = {
   }),
 }
 
+export const STARGATE_WETH_ADDRESS = {
+  [ChainId.FANTOM]: '0x695921034f0387eAc4e11620EE91b1b15A6A09fE',
+}
+
+export const STARGATE_WETH = {
+  [ChainId.FANTOM]: new Token({
+    chainId: ChainId.FANTOM,
+    address: STARGATE_WETH_ADDRESS[ChainId.FANTOM],
+    decimals: 18,
+    symbol: 'WETH',
+    name: 'Wrapped Ether',
+  }),
+}
+
+export const STARGATE_WBTC_ADDRESS = {
+  [ChainId.FANTOM]: '0xf1648C50d2863f780c57849D812b4B7686031A3D',
+}
+
+export const STARGATE_WBTC = {
+  [ChainId.FANTOM]: new Token({
+    chainId: ChainId.FANTOM,
+    address: STARGATE_WBTC_ADDRESS[ChainId.FANTOM],
+    decimals: 18,
+    symbol: 'WBTC',
+    name: 'Wrapped BTC',
+  }),
+}
+
 export const STARGATE_USDC_ADDRESS = {
   [ChainId.ETHEREUM]: USDC_ADDRESS[ChainId.ETHEREUM],
   [ChainId.AVALANCHE]: USDC_ADDRESS[ChainId.AVALANCHE],
@@ -173,7 +201,13 @@ export const STARGATE_USDT: Record<keyof typeof STARGATE_USDT_ADDRESS, Token> =
     [ChainId.AVALANCHE]: USDT[ChainId.AVALANCHE],
     [ChainId.POLYGON]: USDT[ChainId.POLYGON],
     [ChainId.ARBITRUM]: USDT[ChainId.ARBITRUM],
-    [ChainId.FANTOM]: USDT[ChainId.FANTOM],
+    [ChainId.FANTOM]: new Token({
+      chainId: ChainId.FANTOM,
+      address: STARGATE_USDT_ADDRESS[ChainId.FANTOM],
+      decimals: 6,
+      symbol: 'USDT',
+      name: 'Tether USD',
+    }),
     [ChainId.METIS]: USDT[ChainId.METIS],
     [ChainId.KAVA]: new Token({
       chainId: ChainId.KAVA,

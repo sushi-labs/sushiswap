@@ -1,5 +1,11 @@
 import { ChainId } from 'sushi/chain'
 import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from 'sushi/config'
+import {
   AAVE,
   BUSD,
   DAI,
@@ -18,6 +24,9 @@ import {
   WBTC,
   WETH9,
   WNATIVE,
+  WORMHOLE_USDC,
+  WORMHOLE_WBTC,
+  WORMHOLE_WETH,
   axlUSDC,
 } from 'sushi/currency'
 
@@ -56,11 +65,11 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   ],
   [ChainId.FANTOM]: [
     WNATIVE[ChainId.FANTOM],
-    WETH9[ChainId.FANTOM],
-    WBTC[ChainId.FANTOM],
-    USDC[ChainId.FANTOM],
-    USDT[ChainId.FANTOM],
-    DAI[ChainId.FANTOM],
+    STARGATE_USDC[ChainId.FANTOM],
+    STARGATE_USDT[ChainId.FANTOM],
+    STARGATE_WETH[ChainId.FANTOM],
+    STARGATE_WBTC[ChainId.FANTOM],
+    axlUSDC[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
   ],
   [ChainId.GNOSIS]: [
@@ -272,9 +281,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   ],
   [ChainId.MOONBEAM]: [
     WNATIVE[ChainId.MOONBEAM],
-    USDC[ChainId.MOONBEAM],
-    USDT[ChainId.MOONBEAM],
-    DAI[ChainId.MOONBEAM],
+    axlUSDC[ChainId.MOONBEAM],
+    WORMHOLE_USDC[ChainId.MOONBEAM],
+    WORMHOLE_WETH[ChainId.MOONBEAM],
+    WORMHOLE_WBTC[ChainId.MOONBEAM],
     FRAX[ChainId.MOONBEAM],
   ],
   [ChainId.OPTIMISM]: [

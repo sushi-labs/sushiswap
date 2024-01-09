@@ -50,6 +50,8 @@ import {
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
   WORMHOLE_USDC_ADDRESS,
+  WORMHOLE_WBTC_ADDRESS,
+  WORMHOLE_WETH_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
   axlUSDC_ADDRESS,
@@ -791,3 +793,21 @@ export const WORMHOLE_USDC = addressMapToTokenMap(
   },
   WORMHOLE_USDC_ADDRESS,
 ) as Record<keyof typeof WORMHOLE_USDC_ADDRESS, Token>
+
+export const WORMHOLE_WBTC = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'WBTC',
+    name: 'Wrapped BTC (Wormhole)',
+  },
+  WORMHOLE_WBTC_ADDRESS,
+) as Record<keyof typeof WORMHOLE_WBTC_ADDRESS, Token>
+
+export const WORMHOLE_WETH = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'WETH',
+    name: 'Wrapped Ether (Wormhole)',
+  },
+  WORMHOLE_WETH_ADDRESS,
+) as Record<keyof typeof WORMHOLE_WETH_ADDRESS, Token>

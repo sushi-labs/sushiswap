@@ -1,7 +1,7 @@
 import { ChainId } from '../../chain/index.js'
 
 import { Token } from '../Token.js'
-import { ARB, BUSD, GNO, OP, SUSHI, USDC, WETH9, axlUSDC } from './tokens.js'
+import { ARB, BUSD, GNO, OP, SUSHI, USDC, axlUSDC } from './tokens.js'
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
@@ -11,7 +11,7 @@ export const defaultQuoteCurrency = {
   [ChainId.KOVAN]: SUSHI[ChainId.KOVAN],
   [ChainId.POLYGON]: SUSHI[ChainId.POLYGON],
   // [ChainId.POLYGON_TESTNET]: SUSHI[ChainId.POLYGON_TESTNET],
-  [ChainId.FANTOM]: WETH9[ChainId.FANTOM],
+  [ChainId.FANTOM]: axlUSDC[ChainId.FANTOM],
   // [ChainId.FANTOM_TESTNET]: SUSHI[ChainId.FANTOM_TESTNET],
   [ChainId.GNOSIS]: GNO[ChainId.GNOSIS],
   [ChainId.BSC]: BUSD[ChainId.BSC],
@@ -32,7 +32,7 @@ export const defaultQuoteCurrency = {
   [ChainId.MOONRIVER]: SUSHI[ChainId.MOONRIVER],
   [ChainId.FUSE]: SUSHI[ChainId.FUSE],
   [ChainId.TELOS]: SUSHI[ChainId.TELOS],
-  [ChainId.MOONBEAM]: SUSHI[ChainId.MOONBEAM],
+  [ChainId.MOONBEAM]: axlUSDC[ChainId.MOONBEAM],
   [ChainId.OPTIMISM]: OP[ChainId.OPTIMISM],
   [ChainId.KAVA]: SUSHI[ChainId.KAVA],
   [ChainId.METIS]: SUSHI[ChainId.METIS],

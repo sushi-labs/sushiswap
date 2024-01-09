@@ -17,8 +17,13 @@ import {
   WBTC,
   WETH9,
   WNATIVE,
+  WORMHOLE_USDC,
+  WORMHOLE_WBTC,
+  WORMHOLE_WETH,
+  axlUSDC,
 } from 'sushi/currency'
 
+import { STARGATE_USDC, STARGATE_WBTC, STARGATE_WETH } from 'sushi/config'
 import { useLocalStorage } from './useLocalStorage'
 
 export const COMMON_BASES = {
@@ -96,11 +101,11 @@ export const COMMON_BASES = {
   [ChainId.FANTOM]: [
     Native.onChain(ChainId.FANTOM),
     WNATIVE[ChainId.FANTOM],
-    WBTC[ChainId.FANTOM],
-    WETH9[ChainId.FANTOM],
-    USDC[ChainId.FANTOM],
-    USDT[ChainId.FANTOM],
-    DAI[ChainId.FANTOM],
+    axlUSDC[ChainId.FANTOM],
+    STARGATE_USDC[ChainId.FANTOM],
+    STARGATE_WBTC[ChainId.FANTOM],
+    STARGATE_WBTC[ChainId.FANTOM],
+    STARGATE_WETH[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
   ],
   [ChainId.FANTOM_TESTNET]: [],
@@ -183,10 +188,10 @@ export const COMMON_BASES = {
   [ChainId.MOONBEAM]: [
     Native.onChain(ChainId.MOONBEAM),
     WNATIVE[ChainId.MOONBEAM],
-    WETH9[ChainId.MOONBEAM],
-    USDC[ChainId.MOONBEAM],
-    USDT[ChainId.MOONBEAM],
-    DAI[ChainId.MOONBEAM],
+    axlUSDC[ChainId.MOONBEAM],
+    WORMHOLE_USDC[ChainId.MOONBEAM],
+    WORMHOLE_WETH[ChainId.MOONBEAM],
+    WORMHOLE_WBTC[ChainId.MOONBEAM],
   ],
   [ChainId.OPTIMISM]: [
     Native.onChain(ChainId.OPTIMISM),
