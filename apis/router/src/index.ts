@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/node'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
-import { swapV4 } from './handlers/swap'
+import { swapV3_2 } from './handlers/swap'
 
 const app: Express = express()
 
@@ -37,7 +37,7 @@ app.get('/health', (_, res: Response) => {
   return res.status(200).send()
 })
 
-app.get('/swap/v4', swapV4)
+app.get('/swap/v3_2', swapV3_2)
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())

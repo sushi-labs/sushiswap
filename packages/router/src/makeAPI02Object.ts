@@ -1,5 +1,5 @@
-import { RPParams } from '@sushiswap/router'
 import { MultiRoute, RToken, RouteLeg, RouteStatus } from '@sushiswap/tines'
+import { RPParams } from '.'
 
 function makeAPI02Token(token: RToken) {
   return {

@@ -3,6 +3,7 @@ import {
   PoolCode,
   Router,
   RouterLiquiditySource,
+  makeAPI02Object,
 } from '@sushiswap/router'
 import {
   ADDITIONAL_BASES,
@@ -19,7 +20,6 @@ import { Native } from 'sushi/currency'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config'
 import extractor from '../../extractor'
-import { makeAPI02Object } from '../../makeAPI02Object'
 import requestStatistics, {
   ResponseRejectReason,
 } from '../../request-statistics'
