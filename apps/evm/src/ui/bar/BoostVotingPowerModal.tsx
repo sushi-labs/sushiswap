@@ -15,10 +15,10 @@ import {
   SkeletonCircle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { SUSHI_ETH_SLP } from 'src/lib/bar/useVotingPowerBreakdown'
 import { ChainId } from 'sushi/chain'
 import { Type, XSUSHI } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
+import { SUSHI_ETH_SLP } from './VotingPowerProvider'
 
 export const BoostVotingPowerModal = ({
   weights,
