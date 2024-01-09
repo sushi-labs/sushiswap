@@ -19,17 +19,16 @@ export const zChainId = z.coerce
   .lte(2 ** 256)
   .default(ChainId.ETHEREUM)
 
-export const poolCodesForTokenSchema = z
-  .object({
-    chainId: zChainId
-      .refine((chainId) => isExtractorSupportedChainId(chainId), {
-        message: 'ChainId not supported.',
-      })
-      .transform((chainId) => chainId as ExtractorSupportedChainId),
-    address: z.coerce.string().refine(isAddress, {
-      message: 'Address is not checksummed.',
-    }),
-  })
+export const poolCodesForTokenSchema = z.object({
+  chainId: zChainId
+    .refine((chainId) => isExtractorSupportedChainId(chainId), {
+      message: 'ChainId not supported.',
+    })
+    .transform((chainId) => chainId as ExtractorSupportedChainId),
+  address: z.coerce.string().refine(isAddress, {
+    message: 'Address is not checksummed.',
+  }),
+})
 
 export const querySchema3 = z.object({
   chainId: zChainId

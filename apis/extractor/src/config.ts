@@ -28,6 +28,7 @@ import { config } from '@sushiswap/viem-config'
 import { ChainId } from 'sushi/chain'
 import { type Address, createPublicClient } from 'viem'
 
+const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
   return {
     address: SUSHISWAP_V2_FACTORY_ADDRESS[chainId],
@@ -93,6 +94,7 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 300,
     logType: LogFilterType.Native,
     logging: true,
+    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.ARBITRUM_NOVA]: {
     client: createPublicClient(config[ChainId.ARBITRUM_NOVA]),
@@ -212,6 +214,7 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 1000,
     logging: true,
+    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.CELO]: {
     client: createPublicClient(config[ChainId.CELO]),
@@ -263,6 +266,7 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
+    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.FANTOM]: {
     client: createPublicClient(config[ChainId.FANTOM]),
@@ -332,6 +336,7 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 50,
     logging: true,
     account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
+    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON]: {
     client: createPublicClient(config[ChainId.POLYGON]),
@@ -381,6 +386,7 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
+    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON_ZKEVM]: {
     client: createPublicClient(config[ChainId.POLYGON_ZKEVM]),
