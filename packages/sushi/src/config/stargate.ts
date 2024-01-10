@@ -108,12 +108,20 @@ export const STARGATE_ETH: Record<keyof typeof STARGATE_ETH_ADDRESS, Token> = {
 
 export const STARGATE_WETH_ADDRESS = {
   [ChainId.FANTOM]: '0x695921034f0387eAc4e11620EE91b1b15A6A09fE',
+  [ChainId.KAVA]: '0x2DfD4dE5AE386Cd3f4fC8e2cb39240852E47F5E8',
 }
 
 export const STARGATE_WETH = {
   [ChainId.FANTOM]: new Token({
     chainId: ChainId.FANTOM,
     address: STARGATE_WETH_ADDRESS[ChainId.FANTOM],
+    decimals: 18,
+    symbol: 'WETH',
+    name: 'Wrapped Ether',
+  }),
+  [ChainId.KAVA]: new Token({
+    chainId: ChainId.KAVA,
+    address: STARGATE_WETH_ADDRESS[ChainId.KAVA],
     decimals: 18,
     symbol: 'WETH',
     name: 'Wrapped Ether',

@@ -34,7 +34,7 @@ export const defaultQuoteCurrency = {
   [ChainId.TELOS]: SUSHI[ChainId.TELOS],
   [ChainId.MOONBEAM]: axlUSDC[ChainId.MOONBEAM],
   [ChainId.OPTIMISM]: OP[ChainId.OPTIMISM],
-  [ChainId.KAVA]: SUSHI[ChainId.KAVA],
+  [ChainId.KAVA]: axlUSDC[ChainId.KAVA],
   [ChainId.METIS]: SUSHI[ChainId.METIS],
   [ChainId.BOBA]: USDC[ChainId.BOBA],
   [ChainId.BOBA_AVAX]: new Token({

@@ -21,6 +21,7 @@ import {
   WORMHOLE_WBTC,
   WORMHOLE_WETH,
   axlUSDC,
+  axlWBTC,
 } from 'sushi/currency'
 
 import { STARGATE_USDC, STARGATE_WBTC, STARGATE_WETH } from 'sushi/config'
@@ -204,11 +205,10 @@ export const COMMON_BASES = {
   [ChainId.KAVA]: [
     Native.onChain(ChainId.KAVA),
     WNATIVE[ChainId.KAVA],
-    WBTC[ChainId.KAVA],
-    WETH9[ChainId.KAVA],
-    USDC[ChainId.KAVA],
+    axlWBTC[ChainId.KAVA],
+    STARGATE_WETH[ChainId.KAVA],
+    axlUSDC[ChainId.KAVA],
     USDT[ChainId.KAVA],
-    DAI[ChainId.KAVA],
   ],
   [ChainId.METIS]: [
     Native.onChain(ChainId.METIS),

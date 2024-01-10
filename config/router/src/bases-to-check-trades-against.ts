@@ -27,7 +27,9 @@ import {
   WORMHOLE_USDC,
   WORMHOLE_WBTC,
   WORMHOLE_WETH,
+  axlETH,
   axlUSDC,
+  axlWBTC,
 } from 'sushi/currency'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
@@ -313,11 +315,11 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
   ],
   [ChainId.KAVA]: [
     WNATIVE[ChainId.KAVA],
-    WETH9[ChainId.KAVA],
-    WBTC[ChainId.KAVA],
-    USDC[ChainId.KAVA],
-    USDT[ChainId.KAVA],
-    DAI[ChainId.KAVA],
+    STARGATE_WETH[ChainId.KAVA],
+    STARGATE_USDT[ChainId.KAVA],
+    axlUSDC[ChainId.KAVA],
+    axlETH[ChainId.KAVA],
+    axlWBTC[ChainId.KAVA],
   ],
   [ChainId.METIS]: [
     WNATIVE[ChainId.METIS],
