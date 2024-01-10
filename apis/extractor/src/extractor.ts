@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node'
 import { Extractor, WarningLevel } from '@sushiswap/extractor'
+import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 // import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
@@ -20,9 +21,8 @@ const extractor = new Extractor({
 fetch('https://token-list.sushi.com')
   .then((res) => res.json() as Promise<TokenList>)
   .then((tokenList) => {
-    const tokens = tokenList.tokens
+    const additional = tokenList.tokens
       .filter((token) => token.chainId === CHAIN_ID)
-      // .slice(0, 400)
       .map(
         (token) =>
           new Token({
@@ -33,22 +33,11 @@ fetch('https://token-list.sushi.com')
             name: token.name,
           }),
       )
-    console.log(
-      `Starting extractor for ${tokens.length} tokens, includes WETH ${
-        tokens.some((token) => token.symbol === 'WETH') ? '✅' : '❌'
-      } includes USDC ${
-        tokens.some((token) => token.symbol === 'USDC') ? '✅' : '❌'
-      } includes WBTC ${
-        tokens.some((token) => token.symbol === 'WBTC') ? '✅' : '❌'
-      }`,
-    )
-    extractor.start(tokens)
+    extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID], additional)
   })
   .catch((e) => {
-    console.log('Error fetching tokens')
+    console.log('Error fetching tokens to preload')
     throw e
   })
-
-// extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
 
 export default extractor

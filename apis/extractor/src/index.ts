@@ -7,9 +7,9 @@ import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
 import extractor from './extractor'
 import poolCodes from './handlers/pool-codes'
 import poolCodesForToken from './handlers/pool-codes-for-token'
+import { priceByAddressHandler, pricesHandler } from './handlers/prices'
 import { v3, v3_1, v3_2 } from './handlers/swap'
 import requestStatistics from './request-statistics'
-import { priceByAddressHandler, pricesHandler } from './handlers/prices'
 
 const app: Express = express()
 
@@ -68,27 +68,6 @@ app.listen(PORT, () => {
   console.log(`Extractor ${CHAIN_ID} app listening on port ${PORT}`)
 
   requestStatistics.start()
-
-  // fetch(`https://tokens.sushi.com/v1/${CHAIN_ID}`)
-  //   .then((res) => res.json() as Promise<TokenInfo[]>)
-  //   .then((tokenList) => {
-  //     extractor.start(
-  //       tokenList.map(
-  //         (token) =>
-  //           new Token({
-  //             chainId: token.chainId,
-  //             address: token.address,
-  //             decimals: token.decimals,
-  //             symbol: token.symbol,
-  //             name: token.name,
-  //           }),
-  //       ),
-  //     )
-  //   })
-  //   .catch((e) => {
-  //     console.log('Error fetching tokens')
-  //     throw e
-  //   })
 })
 
 process.on('SIGTERM', (code) => {
