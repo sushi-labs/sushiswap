@@ -23,12 +23,13 @@ spec:
           resources:
             requests:
               cpu: 1
+              memory: 4Gi
           startupProbe:
             httpGet:
               path: /health
               port: 80
             failureThreshold: 3
-            periodSeconds: 60
+            periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /health
