@@ -137,8 +137,10 @@ export const useStargateCrossChainTrade = ({
 
     const bridgeImpact = new Percent(
       bridgeFee.quotient,
-      (isSrcSwap ? (srcTrade?.minAmountOut as Amount<Currency>) : amount)
-        .quotient,
+      bridgeFee.equalTo(0)
+        ? 1
+        : (isSrcSwap ? (srcTrade?.minAmountOut as Amount<Currency>) : amount)
+            .quotient,
     )
 
     return {
@@ -444,8 +446,8 @@ export const useStargateCrossChainTrade = ({
           feeData0 &&
           feeData1,
       ) &&
-      (isSrcSwap ? Boolean(srcTrade) : Boolean(srcAmountOut)) &&
-      (isDstSwap ? Boolean(dstTrade) : Boolean(dstAmountIn)),
+      (isSrcSwap ? Boolean(srcTrade?.writeArgs) : Boolean(srcAmountOut)) &&
+      (isDstSwap ? Boolean(dstTrade?.writeArgs) : Boolean(dstAmountIn)),
     queryKeyHashFn: stringify,
   })
 }
