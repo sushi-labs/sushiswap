@@ -1,5 +1,5 @@
 import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
   ARB,
@@ -21,7 +21,7 @@ import {
 
 import { useLocalStorage } from './useLocalStorage'
 
-export const COMMON_BASES = {
+export const DEFAULT_BASES = {
   [ChainId.ETHEREUM]: [
     Native.onChain(ChainId.ETHEREUM),
     WNATIVE[ChainId.ETHEREUM],
@@ -320,13 +320,13 @@ export const COMMON_BASES = {
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 
-const COMMON_BASES_IDS = Object.entries(COMMON_BASES).reduce<
-  Record<string, string[]>
->((acc, [chain, tokens]) => {
-  const chainId = chain
-  acc[chainId] = Array.from(new Set(tokens.map((token) => token.id)))
-  return acc
-}, {} as Record<ChainId, string[]>)
+// const DEFAULT_BASES_IDS = Object.entries(DEFAULT_BASES).reduce<
+//   Record<string, string[]>
+// >((acc, [chain, tokens]) => {
+//   const chainId = chain
+//   acc[chainId] = Array.from(new Set(tokens.map((token) => token.id)))
+//   return acc
+// }, {} as Record<ChainId, string[]>)
 
 function getAddress(address: string) {
   if (address === 'NATIVE') return 'NATIVE'
@@ -334,49 +334,31 @@ function getAddress(address: string) {
 }
 
 export const usePinnedTokens = () => {
-  const [value, setValue] = useLocalStorage(
-    'sushi.pinnedTokens',
-    COMMON_BASES_IDS,
+  const [pinnedTokens, setPinnedTokens] = useLocalStorage(
+    'sushi.pinned-tokens',
+    {} as Record<string, string[]>,
   )
-
-  // useEffect(() => {
-  //   setValue((value) => {
-  //     for (const [chainId, tokens] of Object.entries(COMMON_BASES_IDS)) {
-  //       if (!value[chainId]) {
-  //         value[chainId] = tokens
-  //       }
-  //     }
-  //     return value
-  //   })
-  // }, [setValue])
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    Object.entries(COMMON_BASES_IDS).forEach(([chainId, tokens]) => {
-      if (!value[chainId]) {
-        value[chainId] = tokens
-        setValue(value)
-      }
-    })
-  }, [setValue])
 
   const addPinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      setValue((value) => {
+      setPinnedTokens((value) => {
         value[chainId] = Array.from(
-          new Set([...value[chainId], `${chainId}:${getAddress(address)}`]),
+          new Set([
+            ...(value[chainId] || []),
+            `${chainId}:${getAddress(address)}`,
+          ]),
         )
         return value
       })
     },
-    [setValue],
+    [setPinnedTokens],
   )
 
   const removePinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      setValue((value) => {
+      setPinnedTokens((value) => {
         value[chainId] = Array.from(
           new Set(
             value[chainId].filter(
@@ -387,7 +369,7 @@ export const usePinnedTokens = () => {
         return value
       })
     },
-    [setValue],
+    [setPinnedTokens],
   )
 
   const hasToken = useCallback(
@@ -402,12 +384,14 @@ export const usePinnedTokens = () => {
           throw new Error('Address provided not a valid ERC20 address')
         }
 
-        return value?.[chainId]?.includes(`${chainId}:${getAddress(address)}`)
+        return pinnedTokens?.[chainId]?.includes(
+          `${chainId}:${getAddress(address)}`,
+        )
       }
 
-      return !!value?.[currency.chainId]?.includes(currency.id)
+      return !!pinnedTokens?.[currency.chainId]?.includes(currency.id)
     },
-    [value],
+    [pinnedTokens],
   )
 
   const mutate = useCallback(
@@ -420,9 +404,9 @@ export const usePinnedTokens = () => {
 
   return useMemo(() => {
     return {
-      data: value,
+      data: pinnedTokens,
       mutate,
       hasToken,
     }
-  }, [hasToken, mutate, value])
+  }, [hasToken, mutate, pinnedTokens])
 }
