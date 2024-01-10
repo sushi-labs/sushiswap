@@ -95,11 +95,7 @@ export const useSortedTokenList = ({
         debouncedQuery,
       )
       if (_includeNative)
-        return [
-          Native.onChain(chainId),
-          ...customTokenMapValues,
-          ...filteredSortedTokens,
-        ]
+        return [Native.onChain(chainId), ...filteredSortedTokens]
       return filteredSortedTokens
     },
     keepPreviousData: true,
