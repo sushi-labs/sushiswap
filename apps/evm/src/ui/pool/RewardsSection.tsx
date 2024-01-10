@@ -15,7 +15,7 @@ import { Carousel } from '@sushiswap/ui/components/carousel'
 import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { FC, useCallback, useMemo, useState } from 'react'
-import { ANGLE_ENABLED_NETWORKS } from 'src/config'
+import { ANGLE_ENABLED_NETWORKS } from 'sushi/config'
 
 import { usePoolFilters } from './PoolsFiltersProvider'
 import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'

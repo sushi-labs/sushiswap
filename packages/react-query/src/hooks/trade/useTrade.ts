@@ -92,7 +92,9 @@ export const useTradeQuery = (
       source !== undefined && params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
+      // const json = deserialize(await res.json()) should cause react query error
       const json = await res.json()
+
       try {
         // CC
         return tradeValidator01.parse(json)
