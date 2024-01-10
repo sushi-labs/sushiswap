@@ -335,7 +335,7 @@ function getAddress(address: string) {
 
 export const usePinnedTokens = () => {
   const [pinnedTokens, setPinnedTokens] = useLocalStorage(
-    'sushi.pinnedTokens',
+    'sushi.pinned-tokens',
     {} as Record<string, string[]>,
   )
 
