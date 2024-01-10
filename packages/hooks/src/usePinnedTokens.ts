@@ -24,7 +24,12 @@ import {
   axlWBTC,
 } from 'sushi/currency'
 
-import { STARGATE_USDC, STARGATE_WBTC, STARGATE_WETH } from 'sushi/config'
+import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from 'sushi/config'
 import { useLocalStorage } from './useLocalStorage'
 
 export const COMMON_BASES = {
@@ -104,9 +109,10 @@ export const COMMON_BASES = {
     WNATIVE[ChainId.FANTOM],
     axlUSDC[ChainId.FANTOM],
     STARGATE_USDC[ChainId.FANTOM],
-    STARGATE_WBTC[ChainId.FANTOM],
-    STARGATE_WBTC[ChainId.FANTOM],
+    STARGATE_USDT[ChainId.FANTOM],
     STARGATE_WETH[ChainId.FANTOM],
+    STARGATE_WBTC[ChainId.FANTOM],
+    axlUSDC[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
   ],
   [ChainId.FANTOM_TESTNET]: [],
