@@ -49,6 +49,7 @@ import {
   WBTC_ADDRESS,
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
+  WORMHOLE_USDC_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
   axlUSDC_ADDRESS,
@@ -781,3 +782,12 @@ export const LINK = addressMapToTokenMap(
   },
   LINK_ADDRESS,
 ) as Record<keyof typeof LINK_ADDRESS, Token>
+
+export const WORMHOLE_USDC = addressMapToTokenMap(
+  {
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin (Wormhole)',
+  },
+  WORMHOLE_USDC_ADDRESS,
+) as Record<keyof typeof WORMHOLE_USDC_ADDRESS, Token>

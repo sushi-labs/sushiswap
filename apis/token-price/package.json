@@ -11,11 +11,11 @@
     "@sushiswap/database": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@vercel/node": "3.0.9",
-    "@wagmi/core": "1.4.5",
+    "@wagmi/core": "1.4.13",
     "date-fns": "2.30.0",
     "ioredis": "5.3.1",
     "sushi": "workspace:*",
-    "viem": "1.17.2",
+    "viem": "1.21.4",
     "zod": "3.21.4"
   },
   "devDependencies": {

@@ -1,20 +1,22 @@
 import { ChainId } from '../chain'
+import { Token } from '../currency/Token.js'
+import { Type } from '../currency/Type.js'
+import {
+  BUSD_ADDRESS,
+  DAI_ADDRESS,
+  FRAX_ADDRESS,
+  MAI_ADDRESS,
+  USDC_ADDRESS,
+  USDT_ADDRESS,
+} from '../currency/constants/token-addresses.js'
 import {
   BUSD,
-  BUSD_ADDRESS,
   DAI,
-  DAI_ADDRESS,
   FRAX,
-  FRAX_ADDRESS,
   MAI,
-  MAI_ADDRESS,
-  Token,
-  Type,
   USDC,
-  USDC_ADDRESS,
   USDT,
-  USDT_ADDRESS,
-} from '../currency'
+} from '../currency/constants/tokens.js'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,
@@ -159,7 +161,7 @@ export const STARGATE_USDT_ADDRESS = {
   [ChainId.AVALANCHE]: USDT_ADDRESS[ChainId.AVALANCHE],
   [ChainId.POLYGON]: USDT_ADDRESS[ChainId.POLYGON],
   [ChainId.ARBITRUM]: USDT_ADDRESS[ChainId.ARBITRUM],
-  [ChainId.FANTOM]: USDT_ADDRESS[ChainId.FANTOM],
+  [ChainId.FANTOM]: '0xcc1b99dDAc1a33c201a742A1851662E87BC7f22C',
   [ChainId.METIS]: USDT_ADDRESS[ChainId.METIS],
   [ChainId.KAVA]: '0xAad094F6A75A14417d39f04E690fC216f080A41a',
 } as const

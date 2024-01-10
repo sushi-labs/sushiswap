@@ -9,7 +9,7 @@ import {
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { type Address, type Hex, stringify } from 'viem'
-import { deserialize } from 'wagmi'
+// import { deserialize } from 'wagmi'
 
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
@@ -92,20 +92,24 @@ export const useTradeQuery = (
       source !== undefined && params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
+      // const json = deserialize(await res.json()) should cause react query error
       const json = await res.json()
-      const deserialised = deserialize(json)
+
       try {
-        // Try API 1.0
-        return tradeValidator01.parse(deserialised)
+        // CC
+        return tradeValidator01.parse(json)
       } catch (e) {
+        console.error('tradeValidator01 error', e)
         try {
           // Try  API 2.0
           if (fromToken && toToken) {
-            const resp2 = tradeValidator02.parse(deserialised)
+            const resp2 = tradeValidator02.parse(json)
             const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
             return resp1
           }
-        } catch (_e) {}
+        } catch (_e) {
+          console.error('tradeValidator02 error', _e)
+        }
         throw e
       }
     },

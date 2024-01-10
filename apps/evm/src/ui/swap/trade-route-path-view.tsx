@@ -18,7 +18,11 @@ import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { Native, Token, Type } from 'sushi/currency'
 
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
-  if (token.address === '' || !token.address)
+  if (
+    token.address === '' ||
+    token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' ||
+    !token.address
+  )
     return Native.onChain(Number(token.chainId))
   // TODO: move this to api, it should return a number?
   const chainId = token.chainId.toString().startsWith('Bento ')

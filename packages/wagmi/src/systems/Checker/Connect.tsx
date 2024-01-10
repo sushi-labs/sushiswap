@@ -1,8 +1,10 @@
 'use client'
 
-import { ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { FC } from 'react'
 import { useAccount } from 'wagmi'
+
+import { Dots } from '@sushiswap/ui'
 
 import { ConnectButton } from '../../components'
 
@@ -12,9 +14,17 @@ const Connect: FC<ButtonProps> = ({
   size = 'xl',
   ...props
 }) => {
-  const { address } = useAccount()
+  const { isDisconnected, isConnecting, isReconnecting } = useAccount()
 
-  if (!address)
+  if (isConnecting || isReconnecting) {
+    return (
+      <Button fullWidth={fullWidth} size={size} disabled {...props}>
+        <Dots>Checking Wallet</Dots>
+      </Button>
+    )
+  }
+
+  if (isDisconnected)
     return (
       <ConnectButton fullWidth={fullWidth} size={size} {...props}>
         Connect Wallet

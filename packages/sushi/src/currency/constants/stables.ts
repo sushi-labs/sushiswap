@@ -1,4 +1,5 @@
 import { ChainId } from '../../chain/index.js'
+import { STARGATE_USDC, STARGATE_USDT } from '../../config/stargate.js'
 import { Token } from '../Token.js'
 import {
   BUSD,
@@ -9,6 +10,7 @@ import {
   USDC,
   USDT,
   USD_PLUS,
+  WORMHOLE_USDC,
   axlUSDC,
 } from './tokens.js'
 
@@ -145,9 +147,9 @@ export const STABLES = {
     FRAX[ChainId.ETHEREUM],
   ],
   [ChainId.FANTOM]: [
-    USDC[ChainId.FANTOM],
-    USDT[ChainId.FANTOM],
-    DAI[ChainId.FANTOM],
+    axlUSDC[ChainId.FANTOM],
+    STARGATE_USDC[ChainId.FANTOM],
+    STARGATE_USDT[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
   ],
@@ -174,9 +176,8 @@ export const STABLES = {
     DAI[ChainId.METIS],
   ],
   [ChainId.MOONBEAM]: [
-    USDC[ChainId.MOONBEAM],
-    USDT[ChainId.MOONBEAM],
-    DAI[ChainId.MOONBEAM],
+    WORMHOLE_USDC[ChainId.MOONBEAM],
+    axlUSDC[ChainId.MOONBEAM],
     FRAX[ChainId.MOONBEAM],
   ],
   [ChainId.MOONRIVER]: [
