@@ -1,5 +1,7 @@
 import { ChainId } from 'sushi/chain'
 
+export const POOL_FETCH_TIMEOUT = 2_000
+
 export const PORT = process.env['PORT'] || 80
 
 export const SENTRY_DSN = process.env['SENTRY_DSN'] as string

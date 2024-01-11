@@ -8,8 +8,9 @@ import {
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ROUTE_PROCESSOR_3_2_ADDRESS } from 'sushi/config'
+import { Type } from 'sushi/currency'
 import { Address, PublicClient } from 'viem'
-import { CHAIN_ID } from '../../config'
+import { CHAIN_ID, POOL_FETCH_TIMEOUT } from '../../config'
 import requestStatistics, {
   ResponseRejectReason,
 } from '../../request-statistics'
@@ -20,6 +21,18 @@ const nativeProvider = new NativeWrapProvider(
   CHAIN_ID as ChainId,
   undefined as unknown as PublicClient, // actually it is not used
 )
+
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+
+async function processUnknownToken(
+  client: ExtractorClient,
+  p: Promise<Type | undefined>,
+) {
+  const token = await p
+  if (!token) return
+  await Promise.any([client.fetchTokenPools(token), delay(POOL_FETCH_TIMEOUT)])
+  return token
+}
 
 const clients: Map<ChainId, ExtractorClient> = new Map()
 
@@ -60,13 +73,20 @@ function handler(
         return res.status(422).send(`Network ${chainId} is not supported`)
       }
 
-      const tokenInP = client.getToken(_tokenIn)
-      const tokenOutP = client.getToken(_tokenOut)
-      const tokensAreKnown =
-        !(tokenInP instanceof Promise) && !(tokenOutP instanceof Promise)
-      const tokenIn = tokenInP instanceof Promise ? await tokenInP : tokenInP
-      const tokenOut =
-        tokenOutP instanceof Promise ? await tokenOutP : tokenOutP
+      type T = Type | undefined | Promise<Type | undefined>
+      let tokenIn: T = client.getToken(_tokenIn)
+      let tokenOut: T = client.getToken(_tokenOut)
+
+      let tokensAreKnown = true
+      if (tokenIn instanceof Promise) {
+        tokensAreKnown = false
+        tokenIn = await processUnknownToken(client, tokenIn)
+      }
+      if (tokenOut instanceof Promise) {
+        tokensAreKnown = false
+        tokenOut = await processUnknownToken(client, tokenOut)
+      }
+
       if (!tokenIn || !tokenOut) {
         requestStatistics.requestRejected(
           ResponseRejectReason.UNSUPPORTED_TOKENS,
@@ -76,28 +96,10 @@ function handler(
           .send(`Unknown token ${tokenIn === undefined ? _tokenIn : _tokenOut}`)
       }
 
-      const poolCodesMap = tokensAreKnown
-        ? client.getKnownPoolCodesForTokens(tokenIn, tokenOut) // fast version
-        : await client.fetchPoolCodesForTokens(tokenIn, tokenOut, 2_000)
+      const poolCodesMap = client.getKnownPoolsForTokens(tokenIn, tokenOut)
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
-
-      // const common = BASES_TO_CHECK_TRADES_AGAINST?.[chainId] ?? []
-      // const additionalA = tokenIn
-      //   ? ADDITIONAL_BASES[chainId]?.[tokenIn.wrapped.address] ?? []
-      //   : []
-      // const additionalB = tokenOut
-      //   ? ADDITIONAL_BASES[chainId]?.[tokenOut.wrapped.address] ?? []
-      //   : []
-
-      // const tokens = [
-      //   tokenIn.wrapped,
-      //   tokenOut.wrapped,
-      //   ...common,
-      //   ...additionalA,
-      //   ...additionalB,
-      // ]
 
       const bestRoute = preferSushi
         ? Router.findSpecialRoute(

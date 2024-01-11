@@ -10,11 +10,13 @@ function tokenAddr(t: Type) {
   return t.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : t.address
 }
 
-function tokenId(t: Type) {
-  return t.isNative ? 'native' : t.address.toLowerCase()
+function tokenId(t: string | Type) {
+  if (typeof t === 'string') return t.toLowerCase()
+  if (t.isNative) return '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+  return t.address.toLowerCase()
 }
 
-function tokenPairId(t0: Type, t1: Type) {
+function tokenPairId(t0: string | Type, t1: string | Type) {
   const id0 = tokenId(t0)
   const id1 = tokenId(t1)
   return id0 < id1 ? id0 + id1 : id1 + id0
@@ -25,6 +27,7 @@ export class ExtractorClient {
   extractorServer: string
   tokenMap: Map<string, Token> = new Map()
   poolCodesMap: Map<string, PoolCode[]> = new Map()
+  fetchPoolsBetweenRequests: Set<string> = new Set()
 
   constructor(chainId: ChainId, extractorServer: string) {
     this.chainId = chainId
@@ -32,21 +35,41 @@ export class ExtractorClient {
   }
 
   // fetch pools for the pair if we didn't do it previously
-  async fetchTokenPairPools(t0: Type, t1: Type) {
+  async fetchPoolsBetween(t0: Type, t1: Type) {
     const id = tokenPairId(t0, t1)
     if (this.poolCodesMap.get(id) !== undefined) return
+    if (this.fetchPoolsBetweenRequests.has(id)) return // already fetched
 
+    this.fetchPoolsBetweenRequests.add(id)
     const resp = await fetch(
-      `${this.extractorServer}/pools/${tokenAddr(t0)}/${tokenAddr(t1)}`,
+      `${this.extractorServer}/poolsBetween/${tokenAddr(t0)}/${tokenAddr(t1)}`,
     )
+    this.fetchPoolsBetweenRequests.delete(id)
+
     if (resp.status !== 200) return
     const pools = (await resp.json()) as PoolCode[]
     this.poolCodesMap.set(id, pools)
     return pools
   }
 
-  getKnownPoolCodesForTokens(t0: Type, t1: Type): Map<string, PoolCode> {
-    this.fetchTokenPairPools(t0, t1)
+  async fetchTokenPools(t: string | Type) {
+    const addr = typeof t === 'string' ? t : tokenAddr(t)
+    const resp = await fetch(`${this.extractorServer}/poolsForToken/${addr}`)
+    if (resp.status !== 200) return
+    const pools = (await resp.json()) as PoolCode[]
+    pools.forEach((p) => {
+      const t0 = p.pool.token0
+      const t1 = p.pool.token1
+      const id = tokenPairId(t0.address, t1.address)
+      const pl = this.poolCodesMap.get(id)
+      if (pl === undefined) this.poolCodesMap.set(id, [p])
+      else pl.push(p)
+    })
+    return pools
+  }
+
+  getKnownPoolsForTokens(t0: Type, t1: Type): Map<string, PoolCode> {
+    this.fetchPoolsBetween(t0, t1)
     const tokens = this._getTokenListSorted(t0, t1)
     const pools: Map<string, PoolCode> = new Map()
     for (let i = 0; i < tokens.length; ++i) {
@@ -62,24 +85,16 @@ export class ExtractorClient {
     return pools
   }
 
-  async fetchPoolCodesForTokens(
-    _t0: Type,
-    _t1: Type,
-    _timeout: number,
-  ): Promise<Map<string, PoolCode>> {
-    return new Map()
-  }
-
   getToken(addr: string): Type | Promise<Type | undefined> {
     const addrL = addr.toLowerCase()
     if (addrL === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
       return Native.onChain(this.chainId)
     const token = this.tokenMap.get(addrL)
     if (token !== undefined) return token
-    return this._requestToken(addr)
+    return this.fetchToken(addr)
   }
 
-  async _requestToken(addr: string): Promise<Token | undefined> {
+  async fetchToken(addr: string): Promise<Token | undefined> {
     const resp = await fetch(`${this.extractorServer}/token/${addr}`)
     if (resp.status === 422) return // token don't exist
     if (resp.status !== 200)
