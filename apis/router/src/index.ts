@@ -3,10 +3,25 @@ import 'dotenv/config'
 import * as Sentry from '@sentry/node'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
-import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
+import { ChainId } from 'sushi/chain'
+import { ExtractorClient } from './ExtractorClient'
+import {
+  CHAIN_ID,
+  EXTRACTOR_SERVER,
+  POOL_UPDATE_INTERVAL,
+  PORT,
+  SENTRY_DSN,
+  SENTRY_ENVIRONMENT,
+} from './config'
 import { swapV3_2 } from './handlers/swap'
 
 const app: Express = express()
+
+const client = new ExtractorClient(
+  CHAIN_ID as ChainId,
+  EXTRACTOR_SERVER as string,
+  POOL_UPDATE_INTERVAL,
+)
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -37,7 +52,7 @@ app.get('/health', (_, res: Response) => {
   return res.status(200).send()
 })
 
-app.get('/swap/v3_2', swapV3_2)
+app.get('/swap/v3_2', swapV3_2(client))
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())

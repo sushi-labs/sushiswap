@@ -1,8 +1,8 @@
-import { ChainId } from 'sushi/chain'
-
 export const POOL_FETCH_TIMEOUT = 2_000
 
 export const MAX_TIME_WITHOUT_NETWORK_UPDATE = 120_000
+
+export const POOL_UPDATE_INTERVAL = 10_000
 
 export const PORT = process.env['PORT'] || 80
 
@@ -20,8 +20,7 @@ if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
 }
 
-export const ROUTER_CONFIG = {
-  [ChainId.ETHEREUM]: {
-    extractor: 'http://localhost:1337',
-  },
+export const EXTRACTOR_SERVER = process.env['EXTRACTOR_SERVER']
+if (!EXTRACTOR_SERVER) {
+  throw new Error('EXTRACTOR_SERVER is not set')
 }
