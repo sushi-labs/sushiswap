@@ -72,7 +72,9 @@ export class RequestStatistics {
             )}ms)`
           : ''
       const load = Math.round(
-        ((this.timeTotalKnownTokens + this.timeTotalUnKnownTokens) / time) *
+        (this.timeTotalKnownTokens /
+          //+ this.timeTotalUnKnownTokens  // shouldn't add async time
+          time) *
           100,
       )
       console.log(
@@ -113,10 +115,9 @@ export class RequestStatistics {
             )}ms)`
           : ''
       const load = Math.round(
-        ((this.timeTotalKnownTokens -
-          this.timeTotalKnownTokensLast +
+        ((this.timeTotalKnownTokens - this.timeTotalKnownTokensLast) /*+
           this.timeTotalUnKnownTokens -
-          this.timeTotalUnKnownTokensLast) /
+          this.timeTotalUnKnownTokensLast*/ /
           (now - this.startTimeLast)) *
           100,
       )
@@ -148,6 +149,13 @@ export class RequestStatistics {
     ++this.total
     return performance.now()
   }
+
+  // requestProcessingPause(startTime: number): number {
+  //   return performance.now() - startTime
+  // }
+  // requestProcessingResume(deltaPrev: number): number {
+  //   return performance.now() - deltaPrev
+  // }
 
   requestRejected(reason: ResponseRejectReason) {
     ++this.rejected
