@@ -4,6 +4,7 @@ export enum ResponseRejectReason {
   UNSUPPORTED_TOKENS = 2,
   SERVER_OVERLOADED = 3,
   UNKNOWN_EXCEPTION = 4,
+  NO_FRESH_DATA = 5,
 }
 
 export class RequestStatistics {

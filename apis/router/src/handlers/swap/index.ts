@@ -10,12 +10,16 @@ import { ChainId } from 'sushi/chain'
 import { ROUTE_PROCESSOR_3_2_ADDRESS } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { Address, PublicClient } from 'viem'
-import { CHAIN_ID, POOL_FETCH_TIMEOUT } from '../../config'
+import {
+  CHAIN_ID,
+  MAX_TIME_WITHOUT_NETWORK_UPDATE,
+  POOL_FETCH_TIMEOUT,
+} from '../../config'
 import requestStatistics, {
   ResponseRejectReason,
 } from '../../request-statistics'
 import { ExtractorClient } from './ExtractorClient'
-import { querySchema3, querySchema3_1, querySchema3_2 } from './schema'
+import { querySchema3_2 } from './schema'
 
 const nativeProvider = new NativeWrapProvider(
   CHAIN_ID as ChainId,
@@ -37,8 +41,8 @@ async function processUnknownToken(
 const clients: Map<ChainId, ExtractorClient> = new Map()
 
 function handler(
-  qSchema: typeof querySchema3 | typeof querySchema3_1 | typeof querySchema3_2,
-  rpCode: typeof Router.routeProcessor3Params,
+  qSchema: typeof querySchema3_2,
+  rpCode: typeof Router.routeProcessor3_2Params,
   rpAddress: Record<number, Address>,
 ) {
   return async (req: Request, res: Response) => {
@@ -71,6 +75,13 @@ function handler(
           ResponseRejectReason.UNSUPPORTED_NETWORK,
         )
         return res.status(422).send(`Network ${chainId} is not supported`)
+      }
+      if (
+        client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
+        Date.now()
+      ) {
+        requestStatistics.requestRejected(ResponseRejectReason.NO_FRESH_DATA)
+        return res.status(500).send(`Network ${chainId} data timeout`)
       }
 
       type T = Type | undefined | Promise<Type | undefined>

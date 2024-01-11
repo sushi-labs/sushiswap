@@ -25,13 +25,43 @@ function tokenPairId(t0: string | Type, t1: string | Type) {
 export class ExtractorClient {
   chainId: ChainId
   extractorServer: string
+  poolUpdateInterval: number
+  lastUpdatedTimestamp = 0
   tokenMap: Map<string, Token> = new Map()
   poolCodesMap: Map<string, PoolCode[]> = new Map()
   fetchPoolsBetweenRequests: Set<string> = new Set()
 
-  constructor(chainId: ChainId, extractorServer: string) {
+  constructor(
+    chainId: ChainId,
+    extractorServer: string,
+    poolUpdateInterval: number,
+  ) {
     this.chainId = chainId
     this.extractorServer = extractorServer
+    this.poolUpdateInterval = poolUpdateInterval
+  }
+
+  start() {
+    this.updatePools()
+  }
+
+  async updatePools() {
+    const resp = await fetch(
+      `${this.extractorServer}/pool-codes?chainId=${this.chainId}`,
+    )
+    if (resp.status === 200) {
+      const pools = (await resp.json()) as PoolCode[]
+      pools.forEach((p) => {
+        const t0 = p.pool.token0
+        const t1 = p.pool.token1
+        const id = tokenPairId(t0.address, t1.address)
+        const pl = this.poolCodesMap.get(id)
+        if (pl === undefined) this.poolCodesMap.set(id, [p])
+        else pl.push(p)
+      })
+      this.lastUpdatedTimestamp = Date.now()
+    }
+    setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
 
   // fetch pools for the pair if we didn't do it previously
