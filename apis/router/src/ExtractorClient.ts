@@ -72,7 +72,7 @@ export class ExtractorClient {
 
     this.fetchPoolsBetweenRequests.add(id)
     const resp = await fetch(
-      `${this.extractorServer}/poolsBetween/${tokenAddr(t0)}/${tokenAddr(t1)}`,
+      `${this.extractorServer}/pools-between/${tokenAddr(t0)}/${tokenAddr(t1)}`,
     )
     this.fetchPoolsBetweenRequests.delete(id)
 
@@ -84,7 +84,7 @@ export class ExtractorClient {
 
   async fetchTokenPools(t: string | Type) {
     const addr = typeof t === 'string' ? t : tokenAddr(t)
-    const resp = await fetch(`${this.extractorServer}/poolsForToken/${addr}`)
+    const resp = await fetch(`${this.extractorServer}/pools-for-token/${addr}`)
     if (resp.status !== 200) return
     const pools = (await resp.json()) as PoolCode[]
     pools.forEach((p) => {
