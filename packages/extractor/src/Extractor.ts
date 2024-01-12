@@ -304,6 +304,76 @@ export class Extractor {
     }
   }
 
+  async getPoolCodesBetweenTokenSets(
+    tokens1: Token[],
+    tokens2: Token[],
+  ): Promise<PoolCode[]> {
+    ++this.requestStartedNum
+    try {
+      const map1 = new Map<string, Token>()
+      tokens1.forEach((t) => map1.set(t.address, t))
+      const tokens1Unique = Array.from(map1.values())
+
+      const map2 = new Map<string, Token>()
+      tokens2.forEach((t) => {
+        if (map1.get(t.address) === undefined) map2.set(t.address, t)
+      })
+      const tokens2Unique = Array.from(map2.values())
+
+      let prefetchedAll: (PoolCode | undefined)[] = []
+      let fetchingAll: Promise<unknown>[] = []
+
+      if (this.extractorV2) {
+        const { prefetched, fetching } =
+          this.extractorV2.getPoolsBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(prefetched)
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      if (this.extractorV3) {
+        const { prefetched, fetching } =
+          this.extractorV3.getWatchersBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(
+          prefetched.map((w) => w.getPoolCode()),
+        )
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      if (this.extractorAlg) {
+        const { prefetched, fetching } =
+          this.extractorAlg.getWatchersBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(
+          prefetched.map((w) => w.getPoolCode()),
+        )
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      const fetchedAll = await Promise.allSettled(fetchingAll)
+      const res = prefetchedAll
+        .concat(
+          fetchedAll.map((p) => {
+            if (p === undefined) return undefined
+            if (p instanceof PoolCode) return p
+            if (p instanceof UniV3PoolWatcher) return p.getPoolCode()
+            if (p instanceof AlgebraPoolWatcher) return p.getPoolCode()
+          }),
+        )
+        .filter((p) => p !== undefined) as PoolCode[]
+      ++this.requestFinishedNum
+      return res
+    } catch (e) {
+      ++this.requestFinishedNum
+      ++this.requestFailedNum
+      throw e
+    }
+  }
+
   getPoolCodesForTokensFull(tokens: Token[]): {
     prefetched: PoolCode[]
     fetchingNumber: number

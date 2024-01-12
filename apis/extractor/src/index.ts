@@ -7,6 +7,7 @@ import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
 import extractor from './extractor'
 import poolCodes from './handlers/pool-codes'
 import poolCodesForToken from './handlers/pool-codes-for-token'
+import poolForToken from './handlers/pool-for-token'
 import prices from './handlers/prices'
 import { v3, v3_1, v3_2 } from './handlers/swap'
 import token from './handlers/token'
@@ -46,6 +47,7 @@ app.get('/health', (_, res: Response) => {
 app.get('/token', token)
 app.get('/pool-codes', poolCodes)
 app.get('/pool-codes-for-token', poolCodesForToken)
+app.get('/pools-for-token', poolForToken)
 app.get('/prices', prices)
 app.get('/swap', v3)
 app.get('/swap/v3.1', v3_1)
