@@ -9,8 +9,7 @@
       "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
       "watch": false,
       "cleanUp": true,
-      "portForward": true,
-      "imageRegistry": "gcr.io/extractor-410208"
+      "portForward": true
     },
     {
       "name": "STAGING: GKE",
