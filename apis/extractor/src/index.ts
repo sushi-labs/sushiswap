@@ -8,7 +8,7 @@ import extractor from './extractor'
 import poolCodes from './handlers/pool-codes'
 import poolCodesForToken from './handlers/pool-codes-for-token'
 import poolForToken from './handlers/pool-for-token'
-import prices from './handlers/prices'
+import { priceByAddressHandler, pricesHandler } from './handlers/prices'
 import { v3, v3_1, v3_2 } from './handlers/swap'
 import token from './handlers/token'
 import requestStatistics from './request-statistics'
@@ -32,6 +32,10 @@ Sentry.init({
   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
 })
 
+app.set('json replacer', (_key: string, value: any) =>
+  typeof value === 'bigint' ? value.toString() : value,
+)
+
 // RequestHandler creates a separate execution context, so that all
 // transactions/spans/breadcrumbs are isolated across requests
 app.use(Sentry.Handlers.requestHandler())
@@ -48,7 +52,10 @@ app.get('/token', token)
 app.get('/pool-codes', poolCodes)
 app.get('/pool-codes-for-token', poolCodesForToken)
 app.get('/pools-for-token', poolForToken)
-app.get('/prices', prices)
+
+app.get('/prices', pricesHandler)
+app.get('/prices/:address', priceByAddressHandler)
+
 app.get('/swap', v3)
 app.get('/swap/v3.1', v3_1)
 app.get('/swap/v3.2', v3_2)
@@ -62,6 +69,7 @@ app.use(Sentry.Handlers.errorHandler())
 
 app.listen(PORT, () => {
   console.log(`Extractor ${CHAIN_ID} app listening on port ${PORT}`)
+
   requestStatistics.start()
 })
 
