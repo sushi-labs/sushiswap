@@ -49,11 +49,11 @@ app.get('/health', (_, res: Response) => {
   return res.status(extractor.isStarted() ? 200 : 503).send()
 })
 
-app.get('/token', token)
+app.get('/token/:chainId/:address', token)
 app.get('/pool-codes', poolCodes)
 app.get('/pool-codes-for-token', poolCodesForToken)
-app.get('/pools-for-token', poolsForToken)
-app.get('/pools-between', poolsBetween)
+app.get('/pools-for-token/:chainId/:address', poolsForToken)
+app.get('/pools-between/:chainId/:addr0/:addr1', poolsBetween)
 
 app.get('/prices', pricesHandler)
 app.get('/prices/:address', priceByAddressHandler)
