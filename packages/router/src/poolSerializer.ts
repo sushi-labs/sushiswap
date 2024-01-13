@@ -137,6 +137,19 @@ function restoreAfterSerialization(poolCodes: PoolCode[]) {
   })
 }
 
+export function serializePoolCodesJSON(pools: PoolCode[]): object {
+  makeSerializable(pools)
+  const data = serializer.serialize(pools)
+  restoreAfterSerialization(pools)
+  return JSON.parse(data)
+}
+
+export function deserializePoolCodesJSON(data: string): PoolCode[] {
+  const poolCodes = serializer.deserialize(data) as PoolCode[]
+  restoreAfterSerialization(poolCodes)
+  return poolCodes
+}
+
 export function savePoolSnapshot(
   poolCodes: PoolCode[],
   chainId: ChainId,

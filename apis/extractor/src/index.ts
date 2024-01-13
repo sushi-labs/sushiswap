@@ -9,6 +9,7 @@ import poolCodes from './handlers/pool-codes'
 import poolCodesForToken from './handlers/pool-codes-for-token'
 import poolsBetween from './handlers/pools-between'
 import poolsForToken from './handlers/pools-for-token'
+import poolsJSON from './handlers/pools-json'
 import { priceByAddressHandler, pricesHandler } from './handlers/prices'
 import { v3, v3_1, v3_2 } from './handlers/swap'
 import token from './handlers/token'
@@ -49,9 +50,11 @@ app.get('/health', (_, res: Response) => {
   return res.status(extractor.isStarted() ? 200 : 503).send()
 })
 
-app.get('/token/:chainId/:address', token)
 app.get('/pool-codes', poolCodes)
 app.get('/pool-codes-for-token', poolCodesForToken)
+
+app.get('/token/:chainId/:address', token)
+app.get('/poos-json/:chainId', poolsJSON)
 app.get('/pools-for-token/:chainId/:address', poolsForToken)
 app.get('/pools-between/:chainId/:addr0/:addr1', poolsBetween)
 
