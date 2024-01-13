@@ -89,21 +89,19 @@ export class TokenManager {
         this.client.callValue(address, erc20Abi, 'name'),
       ])
 
+      if (
+        decimals.status !== 'fulfilled' ||
+        symbol.status !== 'fulfilled' ||
+        name.status !== 'fulfilled'
+      )
+        throw new Error('token params download failed')
+
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
         address: address,
-        decimals:
-          decimals.status === 'fulfilled'
-            ? Number(decimals.value as bigint)
-            : 18,
-        symbol:
-          symbol.status === 'fulfilled'
-            ? (symbol.value as string)
-            : `Unknown_${address.substring(2, 10)}`,
-        name:
-          name.status === 'fulfilled'
-            ? (name.value as string)
-            : `Unknown_${address.substring(2, 10)}`,
+        decimals: Number(decimals.value as bigint),
+        symbol: symbol.value as string,
+        name: name.value as string,
       })
       this.addToken(newToken)
       return newToken

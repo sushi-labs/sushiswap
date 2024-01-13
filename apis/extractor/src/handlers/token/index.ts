@@ -14,7 +14,6 @@ async function handler(req: Request, res: Response) {
   let token = tokenManager.getKnownToken(address as Address)
   if (token === undefined) {
     token = await tokenManager.findToken(address as Address)
-    if (token) tokenManager.addToken(token)
   }
   if (token)
     return res.json(
