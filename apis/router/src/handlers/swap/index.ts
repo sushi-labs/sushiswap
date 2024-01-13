@@ -45,7 +45,7 @@ function handler(
 ) {
   return (client: ExtractorClient) => {
     return async (req: Request, res: Response) => {
-      res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
+      res.setHeader('Cache-Control', 's-maxage=2, stale-while-revalidate=28')
       try {
         const statistics = requestStatistics.requestProcessingStart()
 
