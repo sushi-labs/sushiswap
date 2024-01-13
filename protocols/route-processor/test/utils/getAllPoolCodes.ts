@@ -17,7 +17,7 @@ import {
   WNATIVE,
 } from 'sushi/currency'
 
-import { loadPoolSnapshot, savePoolSnapshot } from './poolSerializer'
+import { loadPoolSnapshot, savePoolSnapshot } from '@sushiswap/router'
 
 export async function getAllPoolCodes(
   dataFetcher: DataFetcher,

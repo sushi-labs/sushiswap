@@ -1,15 +1,6 @@
 import * as fs from 'fs'
 import path from 'path'
 import {
-  BentoBridgePoolCode,
-  BentoPoolCode,
-  ConstantProductPoolCode,
-  CurvePoolCode,
-  NativeWrapBridgePoolCode,
-  PoolCode,
-  UniV3PoolCode,
-} from '@sushiswap/router'
-import {
   BridgeBento,
   BridgeUnlimited,
   ConstantProductRPool,
@@ -24,6 +15,15 @@ import {
 import * as serializer from 'serialijse'
 import { ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
+import {
+  BentoBridgePoolCode,
+  BentoPoolCode,
+  ConstantProductPoolCode,
+  CurvePoolCode,
+  NativeWrapBridgePoolCode,
+  PoolCode,
+  UniV3PoolCode,
+} from './'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)
@@ -165,7 +165,7 @@ export function loadPoolSnapshot(
 ): PoolCode[] | undefined {
   directory = directory || snapshotDirDefault
   const fileName = path.resolve(directory, `${chainId}-${blockNumber}`)
-  if (!fs.existsSync(fileName)) return
+  if (!fs.existsSync(fileName)) return undefined
   const str = fs.readFileSync(fileName, 'utf8')
   const poolCodes = serializer.deserialize(str) as PoolCode[]
   restoreAfterSerialization(poolCodes)
