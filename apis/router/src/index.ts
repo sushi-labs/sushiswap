@@ -22,6 +22,7 @@ const client = new ExtractorClient(
   EXTRACTOR_SERVER as string,
   POOL_UPDATE_INTERVAL,
 )
+client.start()
 
 Sentry.init({
   dsn: SENTRY_DSN,

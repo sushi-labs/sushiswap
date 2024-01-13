@@ -1,4 +1,4 @@
-import { PoolCode } from '@sushiswap/router'
+import { PoolCode, deserializePoolCodesJSON } from '@sushiswap/router'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
@@ -46,30 +46,37 @@ export class ExtractorClient {
   }
 
   async updatePools() {
-    const resp = await fetch(
-      `${this.extractorServer}/pool-codes?chainId=${this.chainId}`,
-    )
-    if (resp.status === 200) {
-      const pools = (await resp.json()) as PoolCode[]
-      this.poolCodesMap.clear()
-      this.tokenMap.clear()
-      pools.forEach((p) => {
-        const t0 = p.pool.token0
-        const t0Id = tokenId(t0.address)
-        if (this.tokenMap.get(t0Id) === undefined)
-          this.tokenMap.set(t0Id, new Token({ ...t0, chainId: this.chainId }))
+    try {
+      const resp = await fetch(
+        `${this.extractorServer}/pools-json/${this.chainId}`,
+      )
+      if (resp.status === 200) {
+        const data = await resp.text()
+        const pools = deserializePoolCodesJSON(data)
+        this.poolCodesMap.clear()
+        this.tokenMap.clear()
+        pools.forEach((p) => {
+          const t0 = p.pool.token0
+          const t0Id = tokenId(t0.address)
+          if (this.tokenMap.get(t0Id) === undefined)
+            this.tokenMap.set(t0Id, new Token({ ...t0, chainId: this.chainId }))
 
-        const t1 = p.pool.token1
-        const t1Id = tokenId(t1.address)
-        if (this.tokenMap.get(t1Id) === undefined)
-          this.tokenMap.set(t1Id, new Token({ ...t1, chainId: this.chainId }))
+          const t1 = p.pool.token1
+          const t1Id = tokenId(t1.address)
+          if (this.tokenMap.get(t1Id) === undefined)
+            this.tokenMap.set(t1Id, new Token({ ...t1, chainId: this.chainId }))
 
-        const id = tokenPairId(t0.address, t1.address)
-        const pl = this.poolCodesMap.get(id)
-        if (pl === undefined) this.poolCodesMap.set(id, [p])
-        else pl.push(p)
-      })
-      this.lastUpdatedTimestamp = Date.now()
+          const id = tokenPairId(t0.address, t1.address)
+          const pl = this.poolCodesMap.get(id)
+          if (pl === undefined) this.poolCodesMap.set(id, [p])
+          else pl.push(p)
+        })
+        this.lastUpdatedTimestamp = Date.now()
+      } else {
+        console.error(`Pool download failed, status=${resp.status}`)
+      }
+    } catch (e) {
+      console.error(`Pool download failed, ${e}`)
     }
     setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }

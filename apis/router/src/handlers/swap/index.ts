@@ -9,7 +9,7 @@ import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ROUTE_PROCESSOR_3_2_ADDRESS } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { Address, PublicClient } from 'viem'
+import { Address } from 'viem'
 import { ExtractorClient } from '../../ExtractorClient'
 import {
   CHAIN_ID,
@@ -23,7 +23,8 @@ import { querySchema3_2 } from './schema'
 
 const nativeProvider = new NativeWrapProvider(
   CHAIN_ID as ChainId,
-  undefined as unknown as PublicClient, // actually it is not used
+  // @ts-ignore
+  undefined, // actually it is not used
 )
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))

@@ -54,7 +54,7 @@ app.get('/pool-codes', poolCodes)
 app.get('/pool-codes-for-token', poolCodesForToken)
 
 app.get('/token/:chainId/:address', token)
-app.get('/poos-json/:chainId', poolsJSON)
+app.get('/pools-json/:chainId', poolsJSON)
 app.get('/pools-for-token/:chainId/:address', poolsForToken)
 app.get('/pools-between/:chainId/:addr0/:addr1', poolsBetween)
 

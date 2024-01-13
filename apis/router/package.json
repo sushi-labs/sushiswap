@@ -21,7 +21,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "start": "node --inspect dist/index.js"
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@sentry/node": "7.77.0",
