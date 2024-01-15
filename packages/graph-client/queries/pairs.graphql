@@ -186,9 +186,6 @@ query V2Burns($first: Int = 100, $skip: Int = 0, $orderBy: Burn_orderBy = timest
     amount1
     amountUSD
     logIndex
-    pair {
-      id
-    }
     transaction {
       id
       createdAtTimestamp

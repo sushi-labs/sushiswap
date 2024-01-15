@@ -237,10 +237,6 @@ additionalTypeDefs: |
   #   combined: BigDecimal!
   # }
 
-  input UserInput {
-    id: ID!
-    chainId: BigInt!
-  }
   type UserPosition {
     id: ID!
     pool: String!
@@ -340,8 +336,6 @@ additionalTypeDefs: |
   }
   extend type LiquidityPosition {
     chainId: BigInt!
-    lastDistributedTx: String
-    lastDistributedTimestamp: Int
   }
 
   extend type BentoBoxKpi {
@@ -431,15 +425,6 @@ additionalTypeDefs: |
       orderDirection: OrderDirection
       block: Block_height
       chainIds: [BigInt!]!
-    ): [LiquidityPosition!]!
-    liquidityPositionsByMakers(
-      skip: Int = 0
-      first: Int = 100
-      where: LiquidityPosition_filter
-      orderBy: LiquidityPosition_orderBy
-      orderDirection: OrderDirection
-      block: Block_height
-      users: [UserInput!]!
     ): [LiquidityPosition!]!
     # pairsByIds(
     #   skip: Int = 0
