@@ -1,5 +1,7 @@
 import { serializePoolCodesJSON } from '@sushiswap/router'
+import { ADDITIONAL_BASES } from '@sushiswap/router-config'
 import { Request, Response } from 'express'
+import { Token } from 'sushi/currency'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config'
 import extractor from '../../extractor'
@@ -19,9 +21,13 @@ async function handler(req: Request, res: Response) {
   if (!token0 || !token1) {
     return res.status(422).send(`Unknown token ${token0 ? addr0 : addr1}`)
   } else {
+    const additional0: Token[] =
+      ADDITIONAL_BASES[CHAIN_ID]?.[token0.wrapped.address] ?? []
+    const additional1: Token[] =
+      ADDITIONAL_BASES[CHAIN_ID]?.[token1.wrapped.address] ?? []
     const pools = await extractor.getPoolCodesBetweenTokenSets(
-      [token0],
-      [token1],
+      [token0, ...additional0],
+      [token1, ...additional1],
     )
     return res.json(serializePoolCodesJSON(pools))
   }
