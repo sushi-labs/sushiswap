@@ -37,6 +37,7 @@ export class Extractor {
   extractorAlg?: AlgebraExtractor
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
+  requestedPairs: Map<string, Set<string>> = new Map()
   readonly logFilter: LogFilter2
   cacheDir: string
   logging?: boolean
@@ -304,6 +305,18 @@ export class Extractor {
     }
   }
 
+  addRequestedPair(t0: Token, t1: Token) {
+    if (t0.address > t1.address) {
+      const t = t0
+      t0 = t1
+      t1 = t
+    }
+    const set = this.requestedPairs.get(t0.address)
+    if (set === undefined)
+      this.requestedPairs.set(t0.address, new Set([t1.address]))
+    else set.add(t1.address)
+  }
+
   async getPoolCodesBetweenTokenSets(
     tokens1: Token[],
     tokens2: Token[],
@@ -365,6 +378,12 @@ export class Extractor {
           }),
         )
         .filter((p) => p !== undefined) as PoolCode[]
+
+      tokens1Unique.forEach((t0) => {
+        tokens2Unique.forEach((t1) => {
+          this.addRequestedPair(t0, t1)
+        })
+      })
       ++this.requestFinishedNum
       return res
     } catch (e) {
@@ -408,6 +427,11 @@ export class Extractor {
 
         prefetched = prefetched.concat(poolsAlgPrefetched)
         fetchingNumber += poolsAlg.fetching.length
+      }
+      for (let i = 0; i < tokensUnique.length; ++i) {
+        for (let j = i + 1; j < tokensUnique.length; ++j) {
+          this.addRequestedPair(tokensUnique[i], tokensUnique[j])
+        }
       }
       ++this.requestFinishedNum
       return { prefetched, fetchingNumber }
@@ -494,6 +518,12 @@ export class Extractor {
           (pc) =>
             pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
         ) as PoolCode[]
+
+      for (let i = 0; i < tokensUnique.length; ++i) {
+        for (let j = i + 1; j < tokensUnique.length; ++j) {
+          this.addRequestedPair(tokensUnique[i], tokensUnique[j])
+        }
+      }
       ++this.requestFinishedNum
       return poolsV3.concat(poolsAlg).concat(poolsV2)
     } catch (e) {

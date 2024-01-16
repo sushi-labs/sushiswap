@@ -11,6 +11,7 @@ import poolsBetween from './handlers/pools-between'
 import poolsForToken from './handlers/pools-for-token'
 import poolsJSON from './handlers/pools-json'
 import { priceByAddressHandler, pricesHandler } from './handlers/prices'
+import requestedPairs from './handlers/requested-pairs'
 import { v3, v3_1, v3_2 } from './handlers/swap'
 import token from './handlers/token'
 import requestStatistics from './request-statistics'
@@ -57,6 +58,7 @@ app.get('/token/:chainId/:address', token)
 app.get('/pools-json/:chainId', poolsJSON)
 app.get('/pools-for-token/:chainId/:address', poolsForToken)
 app.get('/pools-between/:chainId/:addr0/:addr1', poolsBetween)
+app.get('/requested-pairs/:chainId', requestedPairs)
 
 app.get('/prices', pricesHandler)
 app.get('/prices/:address', priceByAddressHandler)
