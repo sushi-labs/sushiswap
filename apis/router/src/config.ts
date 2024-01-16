@@ -3,6 +3,7 @@ export const POOL_FETCH_TIMEOUT = 2_000
 export const MAX_TIME_WITHOUT_NETWORK_UPDATE = 120_000
 
 export const POOL_UPDATE_INTERVAL = 10_000
+export const REQUESTED_PAIRS_UPDATE_INTERVAL = 10_000 // TODO: make it less frequent
 
 export const PORT = process.env['PORT'] || 80
 

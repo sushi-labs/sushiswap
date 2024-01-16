@@ -28,23 +28,28 @@ export class ExtractorClient {
   chainId: ChainId
   extractorServer: string
   poolUpdateInterval: number
+  requestedPairsUpdateInterval: number
   lastUpdatedTimestamp = 0
   tokenMap: Map<string, Token> = new Map()
   poolCodesMap: Map<string, PoolCode[]> = new Map()
+  requestedPairs: Map<string, Set<string>> = new Map()
   fetchPoolsBetweenRequests: Set<string> = new Set()
 
   constructor(
     chainId: ChainId,
     extractorServer: string,
     poolUpdateInterval: number,
+    requestedPairsUpdateInterval: number,
   ) {
     this.chainId = chainId
     this.extractorServer = extractorServer
     this.poolUpdateInterval = poolUpdateInterval
+    this.requestedPairsUpdateInterval = requestedPairsUpdateInterval
   }
 
   start() {
     this.updatePools()
+    this.updateRequestedPairs()
   }
 
   async updatePools() {
@@ -89,11 +94,55 @@ export class ExtractorClient {
     setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
 
+  async updateRequestedPairs() {
+    try {
+      if (DEBUG_PRINT)
+        console.log(`${this.extractorServer}/requested-pairs/${this.chainId}`)
+      const resp = await fetch(
+        `${this.extractorServer}/requested-pairs/${this.chainId}`,
+      )
+      if (resp.status === 200) {
+        const data = (await resp.json()) as {
+          tokens: string[]
+          pairs: Record<number, number[]>
+        }
+        this.requestedPairs.clear()
+        let pairs = 0
+        for (const p in data.pairs) {
+          const set = data.pairs[p]?.map(
+            (n) => data.tokens[n] as string,
+          ) as string[]
+          this.requestedPairs.set(data.tokens[p] as string, new Set(set))
+          pairs += set.length
+        }
+        if (DEBUG_PRINT) console.log(`updated requested pairs: ${pairs}`)
+        this.lastUpdatedTimestamp = Date.now()
+      } else {
+        console.error(`Request pairs download failed, status=${resp.status}`)
+      }
+    } catch (e) {
+      console.error(`Pool download failed, ${e}`)
+    }
+    setTimeout(
+      () => this.updateRequestedPairs(),
+      this.requestedPairsUpdateInterval,
+    )
+  }
+
   // fetch pools for the pair if we didn't do it previously
   async fetchPoolsBetween(t0: Type, t1: Type) {
     const id = tokenPairId(t0, t1)
     if (this.poolCodesMap.get(id) !== undefined) return
     if (this.fetchPoolsBetweenRequests.has(id)) return // already fetched
+
+    let addr0 = tokenAddr(t0)
+    let addr1 = tokenAddr(t1)
+    if (addr0 > addr1) {
+      const addr = addr0
+      addr0 = addr1
+      addr1 = addr
+    }
+    if (this.requestedPairs.get(addr0)?.has(addr1)) return
 
     this.fetchPoolsBetweenRequests.add(id)
     try {
@@ -116,7 +165,14 @@ export class ExtractorClient {
       }
       const data = await resp.text()
       const pools = deserializePoolCodesJSON(data)
-      this.poolCodesMap.set(id, pools)
+      pools.forEach((p) => {
+        const t0 = p.pool.token0
+        const t1 = p.pool.token1
+        const id = tokenPairId(t0.address, t1.address)
+        const pl = this.poolCodesMap.get(id)
+        if (pl === undefined) this.poolCodesMap.set(id, [p])
+        else pl.push(p)
+      })
       if (DEBUG_PRINT) console.log(`fetchPoolsBetween: ${pools.length} pools`)
       return pools
     } catch (e) {

@@ -10,6 +10,7 @@ import {
   EXTRACTOR_SERVER,
   POOL_UPDATE_INTERVAL,
   PORT,
+  REQUESTED_PAIRS_UPDATE_INTERVAL,
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
 } from './config'
@@ -21,6 +22,7 @@ const client = new ExtractorClient(
   CHAIN_ID as ChainId,
   EXTRACTOR_SERVER as string,
   POOL_UPDATE_INTERVAL,
+  REQUESTED_PAIRS_UPDATE_INTERVAL,
 )
 client.start()
 
