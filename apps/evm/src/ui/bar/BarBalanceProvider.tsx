@@ -3,7 +3,7 @@
 import { useAccount, useBalanceWeb3 } from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, Type } from 'sushi/currency'
+import { Amount, SUSHI, Type, XSUSHI } from 'sushi/currency'
 
 interface BarBalanceContext {
   sushiBalance: Amount<Type> | null | undefined
@@ -38,7 +38,7 @@ export const BarBalanceProvider: FC<{
   } = useBalanceWeb3({
     chainId: ChainId.ETHEREUM,
     account: address,
-    currency: SUSHI[ChainId.ETHEREUM],
+    currency: XSUSHI[ChainId.ETHEREUM],
   })
 
   return (
