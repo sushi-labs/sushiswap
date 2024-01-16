@@ -1,12 +1,7 @@
 'use client'
 
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-  TooltipContent,
-} from '@sushiswap/ui'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { FC, ReactElement, ReactNode } from 'react'
 import { chainName } from 'sushi/chain'
