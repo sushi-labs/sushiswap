@@ -1,3 +1,4 @@
+import { serializePoolCodesJSON } from '@sushiswap/router'
 import { Request, Response } from 'express'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config'
@@ -22,8 +23,7 @@ async function handler(req: Request, res: Response) {
       [token0],
       [token1],
     )
-    const { serialize } = await import('wagmi')
-    return res.json(serialize(pools))
+    return res.json(serializePoolCodesJSON(pools))
   }
 }
 

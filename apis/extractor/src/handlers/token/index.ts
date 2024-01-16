@@ -16,15 +16,13 @@ async function handler(req: Request, res: Response) {
     token = await tokenManager.findToken(address as Address)
   }
   if (token)
-    return res.json(
-      JSON.stringify({
-        chainId: token.chainId,
-        address: token.address,
-        decimals: token.decimals,
-        symbol: token.symbol,
-        name: token.name,
-      }),
-    )
+    return res.json({
+      chainId: token.chainId,
+      address: token.address,
+      decimals: token.decimals,
+      symbol: token.symbol,
+      name: token.name,
+    })
   else return res.status(422).send(`Unknown token ${address}`)
 }
 

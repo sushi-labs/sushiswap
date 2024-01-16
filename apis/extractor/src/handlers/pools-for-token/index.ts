@@ -1,3 +1,4 @@
+import { serializePoolCodesJSON } from '@sushiswap/router'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
@@ -27,8 +28,7 @@ async function handler(req: Request, res: Response) {
       ADDITIONAL_BASES[CHAIN_ID]?.[token.wrapped.address] ?? []
     const tokens = Array.from(new Set([...common, ...additional]))
     const pools = await extractor.getPoolCodesBetweenTokenSets(tokens, [token])
-    const { serialize } = await import('wagmi')
-    return res.json(serialize(pools))
+    return res.json(serializePoolCodesJSON(pools))
   } else return res.status(422).send(`Unknown token ${address}`)
 }
 
