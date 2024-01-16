@@ -33,10 +33,9 @@ const _StakeSection = () => {
       parsedInput={parsedInput}
       onInput={setInput}
     >
-      <Checker.Connect size="default" variant="outline" fullWidth>
+      <Checker.Connect size="xl" fullWidth>
         <Checker.Network
-          size="default"
-          variant="outline"
+          size="xl"
           fullWidth
           chainId={ChainId.ETHEREUM}
           hoverCardContent={
@@ -47,15 +46,13 @@ const _StakeSection = () => {
           }
         >
           <Checker.Amounts
-            size="default"
-            variant="outline"
+            size="xl"
             fullWidth
             chainId={ChainId.ETHEREUM}
             amounts={[parsedInput]}
           >
             <Checker.ApproveERC20
-              size="default"
-              variant="outline"
+              size="xl"
               id="approve-sushi"
               className="whitespace-nowrap"
               fullWidth
@@ -64,7 +61,7 @@ const _StakeSection = () => {
             >
               <Checker.Success tag={APPROVE_TAG_STAKE}>
                 <Button
-                  size="default"
+                  size="xl"
                   onClick={() => writeAsync?.().then(() => setInput(''))}
                   fullWidth
                   disabled={isWritePending || !approved || !writeAsync}

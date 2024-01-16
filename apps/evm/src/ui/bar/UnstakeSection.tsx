@@ -25,10 +25,9 @@ const _UnstakeSection = () => {
       parsedInput={parsedInput}
       onInput={setInput}
     >
-      <Checker.Connect size="default" variant="outline" fullWidth>
+      <Checker.Connect size="xl" fullWidth>
         <Checker.Network
-          size="default"
-          variant="outline"
+          size="xl"
           fullWidth
           chainId={ChainId.ETHEREUM}
           hoverCardContent={
@@ -39,14 +38,13 @@ const _UnstakeSection = () => {
           }
         >
           <Checker.Amounts
-            size="default"
-            variant="outline"
+            size="xl"
             fullWidth
             chainId={ChainId.ETHEREUM}
             amounts={[parsedInput]}
           >
             <Button
-              size="default"
+              size="xl"
               onClick={() => writeAsync?.().then(() => setInput(''))}
               fullWidth
               disabled={isWritePending || !writeAsync}

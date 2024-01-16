@@ -1,6 +1,8 @@
 'use client'
 
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
+
 import {
   Button,
   Card,
@@ -8,9 +10,9 @@ import {
   CardHeader,
   CardTitle,
   Explainer,
+  LinkExternal,
   SkeletonText,
 } from '@sushiswap/ui'
-import { ConnectButton } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { Amount, Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
@@ -43,17 +45,17 @@ export const VotingPowerCard = () => {
           </Explainer>
         </CardTitle>
       </CardHeader>
-      {isConnected ? (
-        <CardContent>
+      <CardContent>
+        <div className="flex gap-1.5 flex-col">
           <div className="flex items-center gap-3">
-            {isLoading ? (
+            {isConnected && isLoading ? (
               <>
                 <SkeletonText fontSize="xl" className="!w-[200px]" />
               </>
             ) : (
               <>
                 <span className="text-xl font-bold">
-                  {votingPower === 0 ? 0 : formatNumber(votingPower)} SUSHI
+                  {votingPower === 0 || votingPower === undefined ? 0 : formatNumber(votingPower)} SUSHI
                   POWAH
                 </span>
                 <span className="text-sm text-muted-foreground">
@@ -70,26 +72,19 @@ export const VotingPowerCard = () => {
             )}
           </div>
           <div className="flex gap-6">
-            <Button>
-              <a
-                target="_blank"
-                rel="noreferrer noopener noreferer"
-                href={'https://snapshot.org/#/delegate/sushigov.eth'}
+            <LinkExternal href="https://snapshot.org/#/delegate/sushigov.eth">
+              <Button
+                variant="link"
+                size="sm"
+                className="!font-medium !text-secondary-foreground"
               >
-                Delegate Someone
-              </a>
-            </Button>
+                Delegate <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+              </Button>
+            </LinkExternal>
             {/* <BoostVotingPowerModal weights={weights} /> */}
           </div>
-        </CardContent>
-      ) : (
-        <CardContent>
-          <span className="font-bold text-xl">0 SUSHI POWAH</span>
-          <span>
-            <ConnectButton>Connect Wallet</ConnectButton>
-          </span>
-        </CardContent>
-      )}
+        </div>
+      </CardContent>
     </Card>
   )
 }
