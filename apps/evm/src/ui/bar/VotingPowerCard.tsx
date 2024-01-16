@@ -55,8 +55,10 @@ export const VotingPowerCard = () => {
             ) : (
               <>
                 <span className="text-xl font-bold">
-                  {votingPower === 0 || votingPower === undefined ? 0 : formatNumber(votingPower)} SUSHI
-                  POWAH
+                  {votingPower === 0 || votingPower === undefined
+                    ? 0
+                    : formatNumber(votingPower)}{' '}
+                  SUSHI POWAH
                 </span>
                 <span className="text-sm text-muted-foreground">
                   {nonZeroBalances
