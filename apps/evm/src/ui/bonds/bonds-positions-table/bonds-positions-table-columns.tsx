@@ -72,6 +72,7 @@ export const PAYOUT_ASSET_COLUMN: ColumnDef<BondPosition, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription: 'aa',
   },
 }
 

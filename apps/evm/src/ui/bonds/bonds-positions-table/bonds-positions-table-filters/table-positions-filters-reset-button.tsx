@@ -14,7 +14,7 @@ export const PositionsTableFiltersResetButton: FC = () => {
   const [isPending, startTransition] = useTransition()
   const {
     chainIds,
-    onlyUnredeemed,
+    onlyUnclaimedBonds,
     // payoutAssets,
   } = useBondPositionsFilters()
   const { setFilters } = useSetBondPositionsFilters()
@@ -28,7 +28,7 @@ export const PositionsTableFiltersResetButton: FC = () => {
     (networks?.length ?? 0) || // +
       // (payoutAssets?.length ?? 0) >
       // 0 ||
-      onlyUnredeemed === false,
+      onlyUnclaimedBonds === false,
   )
 
   const reset = useCallback(() => {
@@ -37,7 +37,7 @@ export const PositionsTableFiltersResetButton: FC = () => {
       setFilters({
         chainIds: undefined,
         // payoutAssets: undefined,
-        onlyUnredeemed: undefined,
+        onlyUnclaimedBonds: undefined,
       })
     })
   }, [setFilters])
@@ -48,7 +48,7 @@ export const PositionsTableFiltersResetButton: FC = () => {
       : (networks?.length ?? 0) || // +
         //   (payoutAssets?.length ?? 0) >
         //   0 ||
-        onlyUnredeemed === false
+        onlyUnclaimedBonds === false
   ) {
     return (
       <Button

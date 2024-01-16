@@ -160,7 +160,8 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
 
   const isMounted = useIsMounted()
 
-  const isNegativeDiscount = discount && discount < 0
+  const hasEnded = staleBond.end * 1000 < Date.now()
+  const isNegativeDiscount = Boolean(discount && discount < 0)
   const buttonVariant = isNegativeDiscount ? 'destructive' : 'default'
   const buttonText = isNegativeDiscount ? 'Bond Anyways' : 'Bond'
 
@@ -204,50 +205,59 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
           </div>
         </CardContent>
         <CardFooter>
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full">
             {isMounted ? (
-              <Checker.Connect>
-                <Checker.Network chainId={staleBond.chainId}>
-                  <Checker.Amounts
-                    chainId={staleBond.chainId}
-                    amounts={[quoteAmount]}
-                  >
-                    <Checker.ApproveERC20
-                      id="approve-erc20"
-                      amount={quoteAmount}
-                      contract={staleBond.tellerAddress}
+              <Checker.Guard
+                guardText="Market Closed"
+                guardWhen={hasEnded}
+                fullWidth
+              >
+                <Checker.Connect fullWidth>
+                  <Checker.Network chainId={staleBond.chainId} fullWidth>
+                    <Checker.Amounts
+                      chainId={staleBond.chainId}
+                      amounts={[quoteAmount]}
+                      fullWidth
                     >
-                      <Checker.Success tag={APPROVE_TAG_BONDS}>
-                        <Checker.Guard
-                          guardText={buttonText}
-                          guardWhen={Boolean(
-                            (discount || -1) <= 0 && !noDiscountConfirmed,
-                          )}
-                          variant={buttonVariant}
-                        >
-                          <BondsBuyReviewModal
-                            bond={staleBond}
-                            discount={discount}
-                            quoteAmount={quoteAmount}
-                            payoutAmount={payoutAmount}
-                            onSuccess={() => onQuoteInput('')}
+                      <Checker.ApproveERC20
+                        id="approve-erc20"
+                        amount={quoteAmount}
+                        contract={staleBond.tellerAddress}
+                        fullWidth
+                      >
+                        <Checker.Success tag={APPROVE_TAG_BONDS}>
+                          <Checker.Guard
+                            guardText={buttonText}
+                            guardWhen={Boolean(
+                              (discount || -1) <= 0 && !noDiscountConfirmed,
+                            )}
+                            variant={buttonVariant}
+                            fullWidth
                           >
-                            <DialogTrigger asChild>
-                              <Button
-                                variant={buttonVariant}
-                                size="xl"
-                                fullWidth
-                              >
-                                {buttonText}
-                              </Button>
-                            </DialogTrigger>
-                          </BondsBuyReviewModal>
-                        </Checker.Guard>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.Amounts>
-                </Checker.Network>
-              </Checker.Connect>
+                            <BondsBuyReviewModal
+                              bond={staleBond}
+                              discount={discount}
+                              quoteAmount={quoteAmount}
+                              payoutAmount={payoutAmount}
+                              onSuccess={() => onQuoteInput('')}
+                            >
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant={buttonVariant}
+                                  size="xl"
+                                  fullWidth
+                                >
+                                  {buttonText}
+                                </Button>
+                              </DialogTrigger>
+                            </BondsBuyReviewModal>
+                          </Checker.Guard>
+                        </Checker.Success>
+                      </Checker.ApproveERC20>
+                    </Checker.Amounts>
+                  </Checker.Network>
+                </Checker.Connect>
+              </Checker.Guard>
             ) : (
               <Button size="xl" fullWidth disabled>
                 Enter Amount
@@ -257,26 +267,28 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
               open={
                 quoteAmount.greaterThan(0) && chain?.id === staleBond.chainId
               }
-              className="gap-4 flex flex-col"
+              className="flex flex-col"
             >
-              <div className="mt-4 flex items-start px-4 py-3 rounded-xl bg-red/20">
-                <input
-                  id="expert-checkbox"
-                  type="checkbox"
-                  checked={noDiscountConfirmed}
-                  onChange={(e) => setNoDiscountConfirmed(e.target.checked)}
-                  className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-500 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 scale-75"
-                />
-                <label
-                  htmlFor="expert-checkbox"
-                  className="text-sm ml-2 font-medium text-red-500"
-                >
-                  I understand this market is currently priced at a premium, it
-                  is cheaper to buy on the market.
-                </label>
-              </div>
+              {isNegativeDiscount && (
+                <div className="mt-4 flex items-start px-4 py-3 rounded-xl bg-red/20">
+                  <input
+                    id="expert-checkbox"
+                    type="checkbox"
+                    checked={noDiscountConfirmed}
+                    onChange={(e) => setNoDiscountConfirmed(e.target.checked)}
+                    className="cursor-pointer mr-1 w-5 h-5 mt-0.5 text-red-500 !ring-red-600 bg-white border-red rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 scale-75"
+                  />
+                  <label
+                    htmlFor="expert-checkbox"
+                    className="text-sm ml-2 font-medium text-red-500"
+                  >
+                    I understand this market is currently priced at a premium,
+                    it is cheaper to buy on the market.
+                  </label>
+                </div>
+              )}
 
-              <div className=" w-full px-2 flex flex-col gap-2">
+              <div className="w-full px-2 flex flex-col gap-2 mt-4">
                 <div className="flex justify-between items-center gap-2">
                   <span className="text-sm text-gray-700 dark:text-slate-400">
                     Discount

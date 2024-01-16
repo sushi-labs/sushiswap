@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 export const BondsPositionsApiSchema = z.object({
   userAddress: z.string().transform((address) => address.toLowerCase()),
-  onlyUnredeemed: z.coerce
+  onlyUnclaimedBonds: z.coerce
     .string()
     .optional()
     .default('true')
@@ -14,7 +14,7 @@ export const BondsPositionsApiSchema = z.object({
       } else if (val === 'false') {
         return false
       } else {
-        throw new Error('onlyUnredeemed must true or false')
+        throw new Error('onlyUnclaimedBonds must true or false')
       }
     }),
   payoutTokenId: z

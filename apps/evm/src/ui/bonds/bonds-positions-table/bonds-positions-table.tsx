@@ -30,13 +30,13 @@ const COLUMNS = [
 interface PositionsTableProps {
   chainIds?: BondChainId[]
   payoutTokenId?: string // `${BondChainId}:0x${string}`
-  onlyUnredeemed?: boolean
+  onlyUnclaimedBonds?: boolean
 }
 
 export const BondsPositionsTable: FC<PositionsTableProps> = ({
   chainIds,
   payoutTokenId,
-  onlyUnredeemed,
+  onlyUnclaimedBonds,
 }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
@@ -45,10 +45,10 @@ export const BondsPositionsTable: FC<PositionsTableProps> = ({
     () => ({
       userAddress: address as Address,
       chainIds,
-      onlyUnredeemed,
+      onlyUnclaimedBonds,
       payoutTokenId,
     }),
-    [address, chainIds, onlyUnredeemed, payoutTokenId],
+    [address, chainIds, onlyUnclaimedBonds, payoutTokenId],
   )
 
   const { data = [], isInitialLoading } = useQuery({

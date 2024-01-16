@@ -40,8 +40,10 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
     discountedPrice,
     payoutTokenPriceUSD,
     quoteTokenPriceUSD,
-    currentCapacity,
+    availableCapacity,
+    availableCapacityUSD,
     remainingCapacity,
+    remainingCapacityUSD,
   } = useBondMarketDetails({
     bond: staleBond,
   })
@@ -71,21 +73,45 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
       <CardContent>
         <CardGroup>
           <CardLabel>Tokens</CardLabel>
-          <CardItem title="Market Price">
+          <CardItem
+            title={
+              <div className="flex flex-row space-x-1 items-center">
+                <span>Market Price</span>
+                <Explainer>Token price at current market spot price</Explainer>
+              </div>
+            }
+          >
             {typeof payoutTokenPriceUSD === 'number' ? (
               formatUSD(payoutTokenPriceUSD)
             ) : (
               <SkeletonText fontSize="sm" />
             )}
           </CardItem>
-          <CardItem title="Bond Price">
+          <CardItem
+            title={
+              <div className="flex flex-row space-x-1 items-center">
+                <span>Bond Price</span>
+                <Explainer>Token price after bond discount</Explainer>
+              </div>
+            }
+          >
             {typeof discountedPrice === 'number' ? (
               formatUSD(discountedPrice)
             ) : (
               <SkeletonText fontSize="sm" />
             )}
           </CardItem>
-          <CardItem title="Discount">
+          <CardItem
+            title={
+              <div className="flex flex-row space-x-1 items-center">
+                <span>Discount</span>
+                <Explainer>
+                  Percentage of the current spot price and bond market price
+                  difference
+                </Explainer>
+              </div>
+            }
+          >
             {discount && payoutTokenPriceUSD && discountedPrice ? (
               <span
                 className={
@@ -146,21 +172,28 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
                 </Explainer>
               </div>
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1 text-sm font-semibold">
-                {currentCapacity && isMounted ? (
-                  <>
+            <div>
+              {availableCapacity && availableCapacityUSD && isMounted ? (
+                <div className="flex flex-row">
+                  <div className="px-1 pt-0.5">
                     <Currency.Icon
                       currency={payoutToken}
                       width={16}
                       height={16}
                     />
-                    {currentCapacity?.toSignificant(6)} {payoutToken.symbol}
-                  </>
-                ) : (
-                  <SkeletonText fontSize="sm" />
-                )}
-              </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1 text-sm font-semibold">
+                      {availableCapacity?.toSignificant(6)} {payoutToken.symbol}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {formatUSD(availableCapacityUSD)}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <SkeletonText fontSize="sm" />
+              )}
             </div>
           </div>
           <div className="border border-accent p-4 flex flex-col gap-4 rounded-xl">
@@ -172,22 +205,29 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
                 </Explainer>
               </div>
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1 text-sm font-semibold">
-                {remainingCapacity && isMounted ? (
-                  <>
+            <div>
+              {remainingCapacity && remainingCapacityUSD && isMounted ? (
+                <div className="flex flex-row">
+                  <div className="px-1 pt-0.5">
                     <Currency.Icon
                       currency={remainingCapacity?.currency}
                       width={16}
                       height={16}
                     />
-                    {remainingCapacity?.toSignificant(6)}{' '}
-                    {remainingCapacity?.currency.symbol}
-                  </>
-                ) : (
-                  <SkeletonText fontSize="sm" />
-                )}
-              </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1 text-sm font-semibold">
+                      {remainingCapacity?.toSignificant(6)}{' '}
+                      {remainingCapacity?.currency.symbol}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {formatUSD(remainingCapacityUSD)}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <SkeletonText fontSize="sm" />
+              )}
             </div>
           </div>
         </div>

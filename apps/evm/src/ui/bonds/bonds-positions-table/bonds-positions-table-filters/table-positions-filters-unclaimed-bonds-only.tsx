@@ -8,11 +8,11 @@ import {
   useSetBondPositionsFilters,
 } from './bonds-positions-filters-provider'
 
-export const TableFiltersUnredeemedOnly: FC = () => {
+export const TableFiltersUnclaimedBondsOnly: FC = () => {
   const [isPending, startTransition] = useTransition()
-  const { onlyUnredeemed } = useBondPositionsFilters()
+  const { onlyUnclaimedBonds } = useBondPositionsFilters()
   const { setFilters } = useSetBondPositionsFilters()
-  const [checked, setChecked] = useState(onlyUnredeemed)
+  const [checked, setChecked] = useState(onlyUnclaimedBonds)
 
   const toggle = useCallback(
     (checked: boolean) => {
@@ -20,7 +20,8 @@ export const TableFiltersUnredeemedOnly: FC = () => {
       startTransition(() => {
         setFilters((prev) => ({
           ...prev,
-          onlyUnredeemed: prev.onlyUnredeemed === undefined ? false : undefined,
+          onlyUnclaimedBonds:
+            prev.onlyUnclaimedBonds === undefined ? false : undefined,
         }))
       })
     },
@@ -31,10 +32,10 @@ export const TableFiltersUnredeemedOnly: FC = () => {
     <Toggle
       variant="outline"
       onPressedChange={toggle}
-      pressed={isPending ? checked : onlyUnredeemed === undefined}
+      pressed={isPending ? checked : onlyUnclaimedBonds === undefined}
       size="sm"
     >
-      Unredeemed Only
+      Unclaimed Bonds Only
     </Toggle>
   )
 }

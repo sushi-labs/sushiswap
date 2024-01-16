@@ -15,6 +15,10 @@ export async function GET(request: Request) {
     return NextResponse.json(result.error.format(), { status: 400 })
   }
 
-  const positions = await getBondPositionsFromSubgraph(result.data)
-  return NextResponse.json(positions, { headers: CORS })
+  try {
+    const positions = await getBondPositionsFromSubgraph(result.data)
+    return NextResponse.json(positions, { headers: CORS })
+  } catch (e) {
+    return NextResponse.json(e, { headers: CORS })
+  }
 }

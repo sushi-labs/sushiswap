@@ -8,6 +8,7 @@ import { formatDistance } from 'date-fns'
 import { shortenAddress } from 'sushi'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
+import { BondsMarketPageHeaderDiscount } from './bonds-market-page-header-discount'
 
 export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
   const bond = await getBond({
@@ -79,6 +80,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
       </div>
       <div className="flex flex-col gap-y-5 text-secondary-foreground mb-8 mt-1.5">
         <div className="flex flex-wrap gap-x-[32px]">
+          <BondsMarketPageHeaderDiscount bond={bond} />
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Cliff</span>
             {formatDistance(
@@ -90,7 +92,9 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
             )}
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Ends</span>
+            <span className="tracking-tighter font-semibold">
+              {bond.end * 1000 < Date.now() ? 'Ended' : 'Ends'}
+            </span>
             {formatDistance(bond.end * 1000, new Date(), { addSuffix: true })}
           </div>
         </div>

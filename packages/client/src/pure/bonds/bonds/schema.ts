@@ -31,7 +31,8 @@ export const BondsApiSchema = z.object({
   anyIssuer: z.coerce
     .string()
     .optional()
-    .default('false')
+    // ! Change this to false
+    .default('true')
     .transform((val) => {
       if (val === 'true') {
         return true
@@ -44,6 +45,7 @@ export const BondsApiSchema = z.object({
   onlyOpen: z.coerce
     .string()
     .optional()
+    .default('true')
     .transform((val) => {
       if (val === 'true') {
         return true

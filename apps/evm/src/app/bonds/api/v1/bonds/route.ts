@@ -10,6 +10,10 @@ export async function GET(request: Request) {
     return NextResponse.json(result.error.format(), { status: 400 })
   }
 
-  const bonds = await getBondsFromSubgraph(result.data)
-  return NextResponse.json(bonds, { headers: CORS })
+  try {
+    const bonds = await getBondsFromSubgraph(result.data)
+    return NextResponse.json(bonds, { headers: CORS })
+  } catch (e) {
+    return NextResponse.json(e, { headers: CORS })
+  }
 }

@@ -82,26 +82,42 @@ export const useBondMarketDetails = ({
     })
   }, [quoteTokenPriceUSD, payoutTokenPriceUSD, marketPrice, bond])
 
-  const currentCapacity = useMemo(() => {
-    if (!marketInfo) return undefined
+  const [availableCapacity, availableCapacityUSD] = useMemo(() => {
+    if (!marketInfo) return []
 
-    return Amount.fromRawAmount(new Token(bond.payoutToken), marketInfo[5])
-  }, [bond, marketInfo])
+    const amount = Amount.fromRawAmount(
+      new Token(bond.payoutToken),
+      marketInfo[5],
+    )
 
-  const remainingCapacity = useMemo(() => {
-    if (!remainingCapacityBI) return undefined
+    if (!payoutTokenPriceUSD) return [amount]
 
-    return Amount.fromRawAmount(
+    const amountUSD = Number(amount.toSignificant(18)) * payoutTokenPriceUSD
+
+    return [amount, amountUSD]
+  }, [bond, marketInfo, payoutTokenPriceUSD])
+
+  const [remainingCapacity, remainingCapacityUSD] = useMemo(() => {
+    if (!remainingCapacityBI) return []
+
+    const amount = Amount.fromRawAmount(
       new Token(bond.capacityInQuote ? bond.quoteToken : bond.payoutToken),
       remainingCapacityBI,
     )
-  }, [bond, remainingCapacityBI])
+
+    if (!quoteTokenPriceUSD || !payoutTokenPriceUSD) return [amount]
+
+    const amountUSD =
+      Number(amount.toSignificant(18)) *
+      (bond.capacityInQuote ? quoteTokenPriceUSD : payoutTokenPriceUSD)
+
+    return [amount, amountUSD]
+  }, [bond, remainingCapacityBI, quoteTokenPriceUSD, payoutTokenPriceUSD])
 
   const maxAmountAccepted = useMemo(() => {
     if (!maxAmountAcceptedBI) return undefined
 
     // Let's ask the bond guys about this - wouldn't match up with the maxPayout
-
     // https://dev.bondprotocol.finance/developers/market-calculations#capacity-payout-and-allowances
     const mAAreduced = maxAmountAcceptedBI // - (maxAmountAcceptedBI / 1000n) * 5n
 
@@ -114,7 +130,9 @@ export const useBondMarketDetails = ({
     payoutTokenPriceUSD,
     marketPrice,
     maxAmountAccepted,
-    currentCapacity,
+    availableCapacity,
+    availableCapacityUSD,
     remainingCapacity,
+    remainingCapacityUSD,
   }
 }

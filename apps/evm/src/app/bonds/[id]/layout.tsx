@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/bonds-sdk'
 import { Breadcrumb, Container } from '@sushiswap/ui'
 import { unsanitize } from 'sushi/format'
-import { BondsMarketPageHeader } from '../../../ui/bonds/bonds-market-page-header'
+import { BondsMarketPageHeader } from '../../../ui/bonds/bonds-market-page-header/bonds-market-page-header'
 
 export const metadata = {
   title: 'Bonds 📝',

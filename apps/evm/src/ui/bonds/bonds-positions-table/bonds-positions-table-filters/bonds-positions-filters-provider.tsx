@@ -16,7 +16,10 @@ import {
 import { useTypedSearchParams } from '../../../../lib/hooks'
 
 type FilterContext = Partial<
-  Pick<typeof BondsPositionsApiSchema._output, 'chainIds' | 'onlyUnredeemed'>
+  Pick<
+    typeof BondsPositionsApiSchema._output,
+    'chainIds' | 'onlyUnclaimedBonds'
+  >
 >
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)
@@ -32,19 +35,19 @@ export const BondsPositionsFiltersProvider: FC<BondsFiltersProvider> = ({
   children,
 }) => {
   const urlFilters = useTypedSearchParams(BondsPositionsApiSchema.partial())
-  const { chainIds, onlyUnredeemed } = urlFilters
+  const { chainIds, onlyUnclaimedBonds } = urlFilters
 
   return (
     <FilterContext.Provider
       value={useMemo(
         () => ({
           chainIds: chainIds ? chainIds : undefined,
-          onlyUnredeemed: onlyUnredeemed,
+          onlyUnclaimedBonds: onlyUnclaimedBonds,
           // payoutAssets: payoutAssets ? payoutAssets : [],
         }),
         [
           chainIds,
-          onlyUnredeemed,
+          onlyUnclaimedBonds,
           // bondAssets,
         ],
       )}
