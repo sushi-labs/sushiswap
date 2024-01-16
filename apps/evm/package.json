@@ -21,6 +21,7 @@
     "@octokit/auth-app": "4.0.7",
     "@radix-ui/react-slot": "1.0.2",
     "@sentry/nextjs": "7.92.0",
+    "@snapshot-labs/snapshot.js": "^0.9.8",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",

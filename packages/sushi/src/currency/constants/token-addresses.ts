@@ -384,6 +384,7 @@ export const SUSHI_ADDRESS = {
 
 export const XSUSHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272',
+  [ChainId.POLYGON]: '0x6811079E3c63ED96Eb005384d7E7ec8810E3D521',
 } as const
 
 export const USDC_ADDRESS = {
