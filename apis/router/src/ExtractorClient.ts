@@ -6,6 +6,8 @@ import {
 import { ChainId } from 'sushi/chain'
 import { Native, Token, Type } from 'sushi/currency'
 
+const DEBUG_PRINT = true
+
 function tokenAddr(t: Type) {
   return t.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : t.address
 }
@@ -47,6 +49,8 @@ export class ExtractorClient {
 
   async updatePools() {
     try {
+      if (DEBUG_PRINT)
+        console.log(`${this.extractorServer}/pools-json/${this.chainId}`)
       const resp = await fetch(
         `${this.extractorServer}/pools-json/${this.chainId}`,
       )
@@ -71,6 +75,10 @@ export class ExtractorClient {
           if (pl === undefined) this.poolCodesMap.set(id, [p])
           else pl.push(p)
         })
+        if (DEBUG_PRINT)
+          console.log(
+            `updatePools: ${this.poolCodesMap.size} pools and ${this.tokenMap.size} tokens`,
+          )
         this.lastUpdatedTimestamp = Date.now()
       } else {
         console.error(`Pool download failed, status=${resp.status}`)
@@ -88,31 +96,70 @@ export class ExtractorClient {
     if (this.fetchPoolsBetweenRequests.has(id)) return // already fetched
 
     this.fetchPoolsBetweenRequests.add(id)
-    const resp = await fetch(
-      `${this.extractorServer}/pools-between/${tokenAddr(t0)}/${tokenAddr(t1)}`,
-    )
-    this.fetchPoolsBetweenRequests.delete(id)
+    try {
+      if (DEBUG_PRINT)
+        console.log(
+          `${this.extractorServer}/pools-between/${this.chainId}/${tokenAddr(
+            t0,
+          )}/${tokenAddr(t1)}`,
+        )
+      const resp = await fetch(
+        `${this.extractorServer}/pools-between/${this.chainId}/${tokenAddr(
+          t0,
+        )}/${tokenAddr(t1)}`,
+      )
+      this.fetchPoolsBetweenRequests.delete(id)
 
-    if (resp.status !== 200) return
-    const pools = (await resp.json()) as PoolCode[]
-    this.poolCodesMap.set(id, pools)
-    return pools
+      if (resp.status !== 200) {
+        if (DEBUG_PRINT) console.log(`Responded: ${resp.status}`)
+        return
+      }
+      const data = await resp.text()
+      const pools = deserializePoolCodesJSON(data)
+      this.poolCodesMap.set(id, pools)
+      if (DEBUG_PRINT) console.log(`fetchPoolsBetween: ${pools.length} pools`)
+      return pools
+    } catch (e) {
+      console.error(
+        `Error /pools-between/${this.chainId}/${tokenAddr(t0)}/${tokenAddr(
+          t1,
+        )}: ${e}`,
+      )
+      this.fetchPoolsBetweenRequests.delete(id)
+      return
+    }
   }
 
   async fetchTokenPools(t: string | Type) {
     const addr = typeof t === 'string' ? t : tokenAddr(t)
-    const resp = await fetch(`${this.extractorServer}/pools-for-token/${addr}`)
-    if (resp.status !== 200) return
-    const pools = (await resp.json()) as PoolCode[]
-    pools.forEach((p) => {
-      const t0 = p.pool.token0
-      const t1 = p.pool.token1
-      const id = tokenPairId(t0.address, t1.address)
-      const pl = this.poolCodesMap.get(id)
-      if (pl === undefined) this.poolCodesMap.set(id, [p])
-      else pl.push(p)
-    })
-    return pools
+    try {
+      if (DEBUG_PRINT)
+        console.log(
+          `${this.extractorServer}/pools-for-token/${this.chainId}/${addr}`,
+        )
+      const resp = await fetch(
+        `${this.extractorServer}/pools-for-token/${this.chainId}/${addr}`,
+      )
+      if (resp.status !== 200) {
+        if (DEBUG_PRINT) console.log(`Responded: ${resp.status}`)
+        return
+      }
+      const data = await resp.text()
+      const pools = deserializePoolCodesJSON(data)
+      pools.forEach((p) => {
+        const t0 = p.pool.token0
+        const t1 = p.pool.token1
+        const id = tokenPairId(t0.address, t1.address)
+        const pl = this.poolCodesMap.get(id)
+        if (pl === undefined) this.poolCodesMap.set(id, [p])
+        else pl.push(p)
+      })
+      if (DEBUG_PRINT) console.log(`fetchTokenPools: ${pools.length} pools`)
+      return pools
+    } catch (e) {
+      console.error(`Error /pools-for-token/${this.chainId}/${addr}: ${e}`)
+      return
+    }
   }
 
   getKnownPoolsForTokens(t0: Type, t1: Type): Map<string, PoolCode> {
@@ -142,12 +189,23 @@ export class ExtractorClient {
   }
 
   async fetchToken(addr: string): Promise<Token | undefined> {
-    const resp = await fetch(`${this.extractorServer}/token/${addr}`)
-    if (resp.status === 422) return // token don't exist
-    if (resp.status !== 200)
-      throw new Error(`Extractor server error ${resp.status}`)
-    const data = (await resp.json()) as Token
-    return new Token({ ...data })
+    try {
+      if (DEBUG_PRINT)
+        console.log(`${this.extractorServer}/token/${this.chainId}/${addr}`)
+      const resp = await fetch(
+        `${this.extractorServer}/token/${this.chainId}/${addr}`,
+      )
+      if (resp.status === 422) return // token don't exist
+      if (resp.status !== 200) {
+        if (DEBUG_PRINT) console.log(`Responded: ${resp.status}`)
+        throw new Error(`Extractor server error ${resp.status}`)
+      }
+      const data = (await resp.json()) as Token
+      return new Token(data)
+    } catch (e) {
+      console.error(`Error /token/${this.chainId}/${addr}: ${e}`)
+      return
+    }
   }
 
   _getTokenListSorted(t0: Type, t1: Type): Type[] {
