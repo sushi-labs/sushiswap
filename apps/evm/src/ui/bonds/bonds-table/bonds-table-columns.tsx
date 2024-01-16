@@ -84,6 +84,7 @@ export const PAYOUT_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription: 'Token available for purchase',
   },
 }
 
@@ -103,6 +104,7 @@ export const PRICE_COLUMN: ColumnDef<Bond, unknown> = {
   ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription: 'Token price after bond discount',
   },
 }
 
@@ -120,6 +122,7 @@ export const DISCOUNT_COLUMN: ColumnDef<Bond, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription: 'Percentage off current spot price',
   },
 }
 
@@ -149,6 +152,7 @@ export const BOND_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription: 'Asset used to purchase the bond',
   },
 }
 
@@ -166,6 +170,8 @@ export const CLIFF_COLUMN: ColumnDef<Bond, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription:
+      'Amount of days until bought tokens are claimable from the moment they are purchased',
   },
 }
 
