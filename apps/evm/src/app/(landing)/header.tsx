@@ -62,7 +62,7 @@ export const Header: FC = () => {
               </LinkInternal>
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden md:block">
-              <LinkInternal href="/bar">
+              <LinkInternal href="/stake">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Stake
                 </NavigationMenuLink>

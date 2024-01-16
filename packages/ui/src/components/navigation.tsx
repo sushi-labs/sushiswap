@@ -229,14 +229,14 @@ const Navigation: React.FC<NavProps> = ({
                 asChild
                 className={navigationMenuTriggerStyle()}
               >
-                <a href="/bar">Sushi Bar</a>
+                <a href="/stake">Stake</a>
               </NavigationMenuLink>
             ) : (
               <NavigationMenuLink
-                href="/bar"
+                href="/stake"
                 className={navigationMenuTriggerStyle()}
               >
-                Sushi Bar
+                Stake
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>
