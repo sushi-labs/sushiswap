@@ -620,7 +620,7 @@ const Incentivize = withCheckerRoot(() => {
                                             <List.KeyValue
                                               flex
                                               title="Exclude addresses"
-                                              subtitle="Exluded addresses from receiving rewards"
+                                              subtitle="Excluded addresses from receiving rewards"
                                             >
                                               {blacklist
                                                 ? `${blacklist.length} Addresses`
