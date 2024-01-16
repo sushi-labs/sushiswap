@@ -25,7 +25,7 @@ export const VotingPowerCard = () => {
     () =>
       !balances
         ? []
-        : Object.values(balances).filter((amount) => amount.greaterThan(0)),
+        : Object.values(balances).filter((amount) => amount?.greaterThan(0)),
     [balances],
   )
 
