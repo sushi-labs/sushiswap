@@ -14,18 +14,17 @@ import { ConnectButton } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { Amount, Type } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
-import { BoostVotingPowerModal } from './BoostVotingPowerModal'
+// import { BoostVotingPowerModal } from './BoostVotingPowerModal'
 import { useVotingPower } from './VotingPowerProvider'
 
 export const VotingPowerCard = () => {
-  const { votingPower, balances, weights, isConnected, isLoading } =
-    useVotingPower()
+  const { votingPower, balances, isConnected, isLoading } = useVotingPower()
 
   const nonZeroBalances: Amount<Type>[] = useMemo(
     () =>
       !balances
         ? []
-        : Object.values(balances).filter((amount) => amount.greaterThan(0)),
+        : Object.values(balances).filter((amount) => amount?.greaterThan(0)),
     [balances],
   )
 
@@ -49,7 +48,7 @@ export const VotingPowerCard = () => {
           <div className="flex items-center gap-3">
             {isLoading ? (
               <>
-                <SkeletonText fontSize="xl" className="!w-3/4" />
+                <SkeletonText fontSize="xl" className="!w-[200px]" />
               </>
             ) : (
               <>
@@ -80,12 +79,12 @@ export const VotingPowerCard = () => {
                 Delegate Someone
               </a>
             </Button>
-            <BoostVotingPowerModal weights={weights} />
+            {/* <BoostVotingPowerModal weights={weights} /> */}
           </div>
         </CardContent>
       ) : (
         <CardContent>
-          <span className="font-bold text-xl">n/a</span>
+          <span className="font-bold text-xl">0 SUSHI POWAH</span>
           <span>
             <ConnectButton>Connect Wallet</ConnectButton>
           </span>

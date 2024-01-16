@@ -12,13 +12,12 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import Link from 'next/link'
+import { useState } from 'react'
 import { StakeSection } from './StakeSection'
 import { UnstakeSection } from './UnstakeSection'
 
-export const ManageBarCard = ({
-  tab = 'stake',
-}: { tab?: 'stake' | 'unstake' }) => {
+export const ManageBarCard = () => {
+  const [tab, setTab] = useState<'stake' | 'unstake'>('stake')
   return (
     <Card>
       <CardHeader>
@@ -29,30 +28,26 @@ export const ManageBarCard = ({
       </CardHeader>
       <Tabs
         value={tab}
-        onValueChange={() => {}}
+        onValueChange={(tab) => setTab(tab as 'stake' | 'unstake')}
         className="w-full"
         defaultValue={tab}
       >
         <CardContent>
           <TabsList className="!flex">
-            <Link href={'/bar/stake'} className="flex flex-1" shallow>
-              <TabsTrigger
-                testdata-id="stake-tab"
-                value="stake"
-                className="flex flex-1"
-              >
-                Stake
-              </TabsTrigger>
-            </Link>
-            <Link href={'/bar/unstake'} className="flex flex-1" shallow>
-              <TabsTrigger
-                testdata-id="unstake-tab"
-                value="unstake"
-                className="flex flex-1"
-              >
-                Unstake
-              </TabsTrigger>
-            </Link>
+            <TabsTrigger
+              testdata-id="stake-tab"
+              value="stake"
+              className="flex flex-1"
+            >
+              Stake
+            </TabsTrigger>
+            <TabsTrigger
+              testdata-id="unstake-tab"
+              value="unstake"
+              className="flex flex-1"
+            >
+              Unstake
+            </TabsTrigger>
           </TabsList>
         </CardContent>
         <div className="px-6 pb-4">

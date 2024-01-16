@@ -3,11 +3,11 @@
 import { useAccount, useBalanceWeb3 } from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, Type } from 'sushi/currency'
+import { Amount, SUSHI, Type, XSUSHI } from 'sushi/currency'
 
 interface BarBalanceContext {
-  sushiBalance: Amount<Type> | null | undefined
-  xSushiBalance: Amount<Type> | null | undefined
+  sushiBalance: Amount<Type>
+  xSushiBalance: Amount<Type>
   isConnected: boolean
   isLoading: boolean
   isError: boolean
@@ -38,18 +38,21 @@ export const BarBalanceProvider: FC<{
   } = useBalanceWeb3({
     chainId: ChainId.ETHEREUM,
     account: address,
-    currency: SUSHI[ChainId.ETHEREUM],
+    currency: XSUSHI[ChainId.ETHEREUM],
   })
 
   return (
     <Context.Provider
       value={useMemo(
         () => ({
-          sushiBalance,
-          xSushiBalance,
+          sushiBalance:
+            sushiBalance ?? Amount.fromRawAmount(SUSHI[ChainId.ETHEREUM], 0),
+          xSushiBalance:
+            xSushiBalance ?? Amount.fromRawAmount(XSUSHI[ChainId.ETHEREUM], 0),
           isConnected,
-          isLoading: isSushiBalanceLoading || isXSushiBalanceLoading,
-          isError: isSushiBalanceError || isXSushiBalanceError,
+          isLoading:
+            isConnected && (isSushiBalanceLoading || isXSushiBalanceLoading),
+          isError: isConnected && (isSushiBalanceError || isXSushiBalanceError),
         }),
         [
           sushiBalance,

@@ -32,7 +32,7 @@ const Network: FC<NetworkProps> = ({
 
   const _chainId = Number(chainId)
   if (chain?.id !== _chainId)
-    return !TooltipContent ? (
+    return !hoverCardContent ? (
       <Button
         fullWidth={fullWidth}
         size={size}

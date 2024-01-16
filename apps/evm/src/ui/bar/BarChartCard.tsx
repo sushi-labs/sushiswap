@@ -6,7 +6,10 @@ import { BarChartGraph } from './BarChartGraph'
 import { BarChartPeriod, BarChartPeriods } from './BarChartPeriods'
 import { BarChartType, BarChartTypes } from './BarChartTypes'
 
-const charts = [BarChartType.APR, BarChartType.TotalSupply] as const
+const charts = [
+  BarChartType.TotalSupply,
+  // BarChartType.APR
+] as const
 const periods = [
   BarChartPeriod.Day,
   BarChartPeriod.Week,
@@ -17,7 +20,7 @@ const periods = [
 
 export const BarChartCard = () => {
   const [chart, setChart] = useState<typeof charts[number]>(charts[0])
-  const [period, setPeriod] = useState<BarChartPeriod>(BarChartPeriod.Day)
+  const [period, setPeriod] = useState<BarChartPeriod>(BarChartPeriod.Year)
 
   return (
     <Card>

@@ -30,7 +30,7 @@ export const BarHeader = () => {
         </span>
       </span>
       <span className="text-xl max-w-[720px] text-muted-foreground">
-        For every swap on Sushi, a 0.05% of the swap fee is locked into the
+        For every swap on Sushi, a portion of the swap fee is locked into the
         liquidity pool awaiting to be served to xSUSHI holders.
       </span>
       <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground">
