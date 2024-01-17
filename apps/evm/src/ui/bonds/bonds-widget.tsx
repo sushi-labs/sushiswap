@@ -41,7 +41,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
 
   const { chain } = useNetwork()
 
-  const { maxAmountAccepted, currentCapacity, marketPrice, discount } =
+  const { maxAmountAccepted, availableCapacity, marketPrice, discount } =
     useBondMarketDetails({
       bond: staleBond,
     })
@@ -105,7 +105,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
 
   const onPayoutInput = useCallback(
     (value: string) => {
-      if (!currentCapacity || !marketPrice) {
+      if (!availableCapacity || !marketPrice) {
         return
       }
 
@@ -115,8 +115,8 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
         payoutAmount = Amount.fromRawAmount(payoutToken, 0)
       }
 
-      if (payoutAmount.greaterThan(currentCapacity)) {
-        payoutAmount = currentCapacity
+      if (payoutAmount.greaterThan(availableCapacity)) {
+        payoutAmount = availableCapacity
         value = payoutAmount.toSignificant(8)
       }
 
@@ -137,7 +137,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
       setQuoteInput(value === '' ? '' : quoteAmount.toSignificant(8))
     },
     [
-      currentCapacity,
+      availableCapacity,
       marketPrice,
       payoutToken,
       quoteToken,
