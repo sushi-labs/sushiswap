@@ -259,13 +259,19 @@ export const isRouteProcessor3_2ChainId = (
   )
 
 // v4
-export const ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS = [] as const
+export const ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS = [
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+] as const
 export type RouteProcessor4ChainId =
   typeof ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS[number]
 export const ROUTE_PROCESSOR_4_ADDRESS: Record<
   RouteProcessor4ChainId,
   `0x${string}`
-> = {} as const
+> = {
+  [ChainId.ARBITRUM]: '0x9697Abf4c343ab76B3D06aC41e294161C69E808d',
+  [ChainId.OPTIMISM]: '0xc04Dd92245c84ae8616551Ac59A16B065A856A14',
+} as const
 export const isRouteProcessor4ChainId = (
   chainId: ChainId,
 ): chainId is RouteProcessor4ChainId =>
