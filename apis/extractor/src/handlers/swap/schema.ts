@@ -5,10 +5,12 @@ import {
   RouteProcessor3ChainId,
   RouteProcessor3_1ChainId,
   RouteProcessor3_2ChainId,
+  RouteProcessor4ChainId,
   isExtractorSupportedChainId,
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
+  isRouteProcessor4ChainId,
 } from 'sushi/config'
 import { Address, isAddress } from 'viem'
 import z from 'zod'
@@ -77,4 +79,17 @@ export const querySchema3_2 = querySchema3.extend({
       },
     )
     .transform((chainId) => chainId as Exclude<RouteProcessor3_2ChainId, 314>),
+})
+
+export const querySchema4 = querySchema3.extend({
+  chainId: zChainId
+    .refine(
+      (chainId) =>
+        isRouteProcessor4ChainId(chainId as RouteProcessor4ChainId) &&
+        isExtractorSupportedChainId(chainId),
+      {
+        message: 'ChainId not supported.',
+      },
+    )
+    .transform((chainId) => chainId as RouteProcessor4ChainId),
 })

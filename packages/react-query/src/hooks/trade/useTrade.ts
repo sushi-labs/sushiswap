@@ -5,6 +5,7 @@ import { ChainId } from 'sushi/chain'
 import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
+  isRouteProcessor4ChainId,
 } from 'sushi/config'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
@@ -27,6 +28,9 @@ const SWAP_BASE_URL =
   'https://staging.sushi.com/swap'
 
 function getApiVersion(chainId: ChainId) {
+  if (isRouteProcessor4ChainId(chainId)) {
+    return '/v4'
+  }
   if (isRouteProcessor3_2ChainId(chainId)) {
     return '/v3.2'
   }

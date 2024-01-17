@@ -14,6 +14,7 @@ import {
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_4_ADDRESS,
 } from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { Address } from 'viem'
@@ -23,7 +24,12 @@ import { makeAPI02Object } from '../../makeAPI02Object'
 import requestStatistics, {
   ResponseRejectReason,
 } from '../../request-statistics'
-import { querySchema3, querySchema3_1, querySchema3_2 } from './schema'
+import {
+  querySchema3,
+  querySchema3_1,
+  querySchema3_2,
+  querySchema4,
+} from './schema'
 
 const nativeProvider = new NativeWrapProvider(
   CHAIN_ID as ChainId,
@@ -32,7 +38,9 @@ const nativeProvider = new NativeWrapProvider(
 
 function handler(
   qSchema: typeof querySchema3 | typeof querySchema3_1 | typeof querySchema3_2,
-  rpCode: typeof Router.routeProcessor3Params,
+  rpCode:
+    | typeof Router.routeProcessor3Params
+    | typeof Router.routeProcessor4Params,
   rpAddress: Record<number, Address>,
 ) {
   return async (req: Request, res: Response) => {
@@ -190,4 +198,9 @@ export const v3_2 = handler(
   querySchema3_2,
   Router.routeProcessor3_2Params,
   ROUTE_PROCESSOR_3_2_ADDRESS,
+)
+export const v4 = handler(
+  querySchema4,
+  Router.routeProcessor4Params,
+  ROUTE_PROCESSOR_4_ADDRESS,
 )

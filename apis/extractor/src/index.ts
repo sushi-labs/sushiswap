@@ -8,7 +8,7 @@ import extractor from './extractor'
 import poolCodes from './handlers/pool-codes'
 import poolCodesForToken from './handlers/pool-codes-for-token'
 import { priceByAddressHandler, pricesHandler } from './handlers/prices'
-import { v3, v3_1, v3_2 } from './handlers/swap'
+import { v3, v3_1, v3_2, v4 } from './handlers/swap'
 import requestStatistics from './request-statistics'
 
 const app: Express = express()
@@ -56,6 +56,7 @@ app.get('/prices/:address', priceByAddressHandler)
 app.get('/swap', v3)
 app.get('/swap/v3.1', v3_1)
 app.get('/swap/v3.2', v3_2)
+app.get('/swap/v4', v4)
 
 // app.get('/debug-sentry', function mainHandler(req, res) {
 //   throw new Error('My first Sentry error!')
