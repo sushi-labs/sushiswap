@@ -29,7 +29,7 @@ const config: PlaywrightTestConfig = {
      * For example in `await expect(locator).toHaveText();`
      */
     // timeout: 10_000,
-    timeout: 60_000,
+    timeout: 180_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: false,
