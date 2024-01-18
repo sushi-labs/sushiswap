@@ -351,7 +351,7 @@ importers:
         version: 5.15.0(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@14.0.4)(next@14.0.4)
+        version: 3.1.43(@next/env@14.0.1)(next@14.0.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -457,7 +457,7 @@ importers:
         version: 5.15.0(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@14.0.4)(next@14.0.4)
+        version: 3.1.43(@next/env@14.0.1)(next@14.0.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -552,6 +552,9 @@ importers:
       '@sentry/nextjs':
         specifier: 7.92.0
         version: 7.92.0(next@14.0.4)(react@18.2.0)
+      '@snapshot-labs/snapshot.js':
+        specifier: ^0.9.8
+        version: 0.9.9
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../../packages/client
@@ -2681,8 +2684,8 @@ packages:
       - supports-color
     dev: true
 
-  /@artilleryio/int-core@2.2.2:
-    resolution: {integrity: sha512-BYbheLZb7m+DrQt2OTM4uaX6IWbjYf/D9ZVi49WW5QdDOTsnWCjOES46iR0lM2hWKf0qF2ESajkDVm1ithvXOw==}
+  /@artilleryio/int-core@2.3.0:
+    resolution: {integrity: sha512-Q1W+60mAS9fTBbMq2cH1nJCeIvjhKxlFbXP8oe0Xa5G+jXa8e8htPk0bMBW/Eb/ISZkEMr4il+W5M2jSTCrYhQ==}
     dependencies:
       '@artilleryio/int-commons': 2.0.4
       '@artilleryio/sketches-js': 2.1.1
@@ -2708,7 +2711,6 @@ packages:
       lodash: 4.17.21
       ms: 2.1.3
       protobufjs: 7.2.4
-      proxy: 1.0.2
       socket.io-client: 4.7.2
       socketio-wildcard: 2.0.0
       tough-cookie: 4.1.3
@@ -5292,6 +5294,10 @@ packages:
       solc: 0.4.26
       testrpc: 0.0.1
       web3-utils: 1.10.3
+
+  /@ensdomains/eth-ens-namehash@2.0.15:
+    resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
+    dev: false
 
   /@ensdomains/resolver@0.2.4:
     resolution: {integrity: sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==}
@@ -9172,6 +9178,10 @@ packages:
       pump: 3.0.0
       tar-fs: 2.1.1
     dev: true
+
+  /@next/env@14.0.1:
+    resolution: {integrity: sha512-Ms8ZswqY65/YfcjrlcIwMPD7Rg/dVjdLapMcSHG26W6O67EJDF435ShW4H4LXi1xKO1oRc97tLXUpx8jpLe86A==}
+    dev: false
 
   /@next/env@14.0.4:
     resolution: {integrity: sha512-irQnbMLbUNQpP1wcE5NstJtbuA/69kRfzBrpAD7Gsn8zm/CY6YQYc3HQBz8QPxwISG26tIm5afvvVbu508oBeQ==}
@@ -13094,6 +13104,30 @@ packages:
       tslib: 2.6.2
     dev: true
 
+  /@snapshot-labs/snapshot.js@0.9.9:
+    resolution: {integrity: sha512-9c9GVphUs/JwnNrQ39wvpjHhSZ3zqKUH5CSRXacwU1DSCmAg3/b21hauxavAUgK40oXCPkyZ5O1jrGKjbHeT8Q==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@ensdomains/eth-ens-namehash': 2.0.15
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/hash': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@ethersproject/units': 5.7.0
+      '@ethersproject/wallet': 5.7.0
+      ajv: 8.12.0
+      ajv-formats: 2.1.1(ajv@8.12.0)
+      cross-fetch: 3.1.8
+      json-to-graphql-query: 2.2.5
+      lodash.set: 4.3.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
   /@socket.io/component-emitter@3.1.0:
     resolution: {integrity: sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==}
     dev: true
@@ -15091,7 +15125,7 @@ packages:
   /@types/graceful-fs@4.1.6:
     resolution: {integrity: sha512-Sig0SNORX9fdW+bQuTEovKj3uHcUL6LQKbCrrqb1X7J6/ReAbhCXRAhc+SMejhLELFj2QcyuxmUooZ4bt5ReSw==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.10.0
 
   /@types/hast@2.3.5:
     resolution: {integrity: sha512-SvQi0L/lNpThgPoleH53cdjB3y9zpLlVjRbqB3rH8hx1jiRSBGAhyjV3H+URFjNVRqt2EdYNrbZE5IsGlNfpRg==}
@@ -17357,7 +17391,6 @@ packages:
         optional: true
     dependencies:
       ajv: 8.12.0
-    dev: true
 
   /ajv-keywords@3.5.2(ajv@6.12.6):
     resolution: {integrity: sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==}
@@ -17594,16 +17627,6 @@ packages:
   /argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
-  /args@5.0.1:
-    resolution: {integrity: sha512-1kqmFCFsPffavQFGt8OxJdIcETti99kySRUPMpOhaGjL6mRJn8HFU1OxKY5bMqfZKUwTQc1mZkAjmGYaVOHFtQ==}
-    engines: {node: '>= 6.0.0'}
-    dependencies:
-      camelcase: 5.0.0
-      chalk: 2.4.2
-      leven: 2.1.0
-      mri: 1.1.4
-    dev: true
-
   /aria-hidden@1.2.3:
     resolution: {integrity: sha512-xcLxITLe2HYa1cnYnwCjkOO1PqUHQpozB8x9AR0OgWN2woOBi5kSDVxKfd0b7sb1hw5qFeJhXm9H1nu3xSfLeQ==}
     engines: {node: '>=10'}
@@ -17794,8 +17817,8 @@ packages:
       - supports-color
     dev: true
 
-  /artillery-plugin-publish-metrics@2.9.0:
-    resolution: {integrity: sha512-IKWoGrBdR5+XQ82W9HYUNuO89f8y4aCDiqFHLVqMYCq4avqS9WsBKr49mCmLV0lhbUWA3qMcVfNZnuTdZLnHew==}
+  /artillery-plugin-publish-metrics@2.10.0:
+    resolution: {integrity: sha512-oG94cLOvFztca6qJX8ifz9ofHTd+Kc4UQBk5CGQPA4AGQH/6F+WDeaDVOU0fawcFRz/q5MAHl6XwZW60m8I7dw==}
     dependencies:
       '@aws-sdk/client-cloudwatch': 3.393.0
       '@opentelemetry/api': 1.6.0
@@ -17836,7 +17859,7 @@ packages:
     hasBin: true
     dependencies:
       '@artilleryio/int-commons': 2.0.4
-      '@artilleryio/int-core': 2.2.2
+      '@artilleryio/int-core': 2.3.0
       '@artilleryio/platform-fargate': 2.0.0(@types/node@20.10.0)(ts-node@10.9.2)(typescript@5.2.2)
       '@aws-sdk/credential-providers': 3.391.0
       '@oclif/core': 2.11.8(@types/node@20.10.0)(typescript@5.2.2)
@@ -17848,7 +17871,7 @@ packages:
       artillery-plugin-ensure: 1.3.0
       artillery-plugin-expect: 2.3.3
       artillery-plugin-metrics-by-endpoint: 1.2.0
-      artillery-plugin-publish-metrics: 2.9.0
+      artillery-plugin-publish-metrics: 2.10.0
       async: 2.6.4
       aws-sdk: 2.1438.0
       chalk: 2.4.2
@@ -18801,10 +18824,6 @@ packages:
       mixin-deep: 1.3.2
       pascalcase: 0.1.1
 
-  /basic-auth-parser@0.0.2:
-    resolution: {integrity: sha512-Y7OBvWn+JnW45JWHLY6ybYub2k9cXCMrtCyO1Hds2s6eqClqWhPnOQpgXUPjAiMHj+A8TEPIQQ1dYENnJoBOHQ==}
-    dev: true
-
   /basic-ftp@5.0.3:
     resolution: {integrity: sha512-QHX8HLlncOLpy54mh+k/sWIFd0ThmRqwe9ZjELybGZK+tZ8rUb9VO0saKJUROTbE+KhzDUT7xziGpGrW8Kmd+g==}
     engines: {node: '>=10.0.0'}
@@ -19414,11 +19433,6 @@ packages:
   /camelcase@3.0.0:
     resolution: {integrity: sha512-4nhGqUkc4BqbBBB4Q6zLuD7lzzrHYrjKGeYaEji/3tFR5VdJu9v+LilhGIVe8wxEJPPOeWo7eg8dwY13TZ1BNg==}
     engines: {node: '>=0.10.0'}
-
-  /camelcase@5.0.0:
-    resolution: {integrity: sha512-faqwZqnWxbxn+F1d399ygeamQNy3lPp/H9H6rNrqYh4FSVCtcY+3cub1MxA8o9mDd55mM8Aghuu/kuyYA6VTsA==}
-    engines: {node: '>=6'}
-    dev: true
 
   /camelcase@5.3.1:
     resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
@@ -26111,12 +26125,14 @@ packages:
   /is-accessor-descriptor@0.1.6:
     resolution: {integrity: sha512-e1BM1qnDbMRG3ll2U9dSK0UMHuWOs3pY3AtcFsmvwPtKL3MML/Q86i+GilLfvqEs4GW+ExB91tQ3Ig9noDIZ+A==}
     engines: {node: '>=0.10.0'}
+    deprecated: Please upgrade to v0.1.7
     dependencies:
       kind-of: 3.2.2
 
   /is-accessor-descriptor@1.0.0:
     resolution: {integrity: sha512-m5hnHTkcVsPfqx3AKlyttIPb7J+XykHvJP2B9bZDjlhLIoEq4XoK64Vg7boZlVWYK6LUY94dYPEE7Lh0ZkZKcQ==}
     engines: {node: '>=0.10.0'}
+    deprecated: Please upgrade to v1.0.1
     dependencies:
       kind-of: 6.0.3
 
@@ -26233,12 +26249,14 @@ packages:
   /is-data-descriptor@0.1.4:
     resolution: {integrity: sha512-+w9D5ulSoBNlmw9OHn3U2v51SyoCd0he+bB3xMl62oijhrspxowjU+AIcDY0N3iEJbUEkB15IlMASQsxYigvXg==}
     engines: {node: '>=0.10.0'}
+    deprecated: Please upgrade to v0.1.5
     dependencies:
       kind-of: 3.2.2
 
   /is-data-descriptor@1.0.0:
     resolution: {integrity: sha512-jbRXy1FmtAoCjQkVmIVYwuuqDFUbaOeDjmed1tOGPrsMhtJA4rD9tkgA0F1qJ3gRFRXcHYVkdeaP50Q5rE/jLQ==}
     engines: {node: '>=0.10.0'}
+    deprecated: Please upgrade to v1.0.1
     dependencies:
       kind-of: 6.0.3
 
@@ -27264,7 +27282,7 @@ packages:
     resolution: {integrity: sha512-eIz2msL/EzL9UFTFFx7jBTkeZfku0yUAyZZZmJ93H2TYEiroIx2PQjEXcwYtYl8zXCxb+PAmA2hLIt/6ZEkPHw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 20.10.0
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -27574,6 +27592,10 @@ packages:
 
   /json-stringify-safe@5.0.1:
     resolution: {integrity: sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA==}
+
+  /json-to-graphql-query@2.2.5:
+    resolution: {integrity: sha512-5Nom9inkIMrtY992LMBBG1Zaekrc10JaRhyZgprwHBVMDtRgllTvzl0oBbg13wJsVZoSoFNNMaeIVQs0P04vsA==}
+    dev: false
 
   /json5@0.5.1:
     resolution: {integrity: sha512-4xrs1aW+6N5DalkqSVA8fxh458CXvR99WU8WLKmq4v8eWAL86Xo3BVqyd3SkA9wEVjCMqyvvRRkshAdOnBp5rw==}
@@ -27928,11 +27950,6 @@ packages:
       level-iterator-stream: 3.0.1
       xtend: 4.0.2
 
-  /leven@2.1.0:
-    resolution: {integrity: sha512-nvVPLpIHUxCUoRLrFqTgSxXJ614d8AgQoWl7zPe/2VadE8+1dpU3LBhowRuBAcuwruWtOdD8oYC9jDNJjXDPyA==}
-    engines: {node: '>=0.10.0'}
-    dev: true
-
   /leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
     engines: {node: '>=6'}
@@ -28179,7 +28196,6 @@ packages:
 
   /lodash.set@4.3.2:
     resolution: {integrity: sha512-4hNPN5jlm/N/HLMCO43v8BXKq9Z7QdAGc/VGrRD61w8gN9g/6jF9A4L1pbUgBLCffi0w9VsXfTOij5x8iTyFvg==}
-    dev: true
 
   /lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
@@ -29795,11 +29811,6 @@ packages:
       '@motionone/utils': 10.15.1
       '@motionone/vue': 10.16.2
 
-  /mri@1.1.4:
-    resolution: {integrity: sha512-6y7IjGPm8AzlvoUrwAaw1tLnUBudaS3752vcd8JtrpGGQn+rXIe63LFVHm/YMwtqAuh+LJPCFdlLYPWM1nYn6w==}
-    engines: {node: '>=4'}
-    dev: true
-
   /mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -29984,7 +29995,7 @@ packages:
     dependencies:
       next: 14.0.4(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
-      remeda: 1.33.0
+      remeda: 1.37.0
       whatwg-fetch: 3.6.17
     dev: false
 
@@ -30000,7 +30011,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /next-sitemap@3.1.43(@next/env@14.0.4)(next@14.0.4):
+  /next-sitemap@3.1.43(@next/env@14.0.1)(next@14.0.4):
     resolution: {integrity: sha512-TshDAP69OjHwvszedQ/jBvOjzqy7Gm9NU3ZIP30X3e1qXsNVOVF5uzi9kQOI6v0uBG08QUOk9wKNSIk3zI/wjQ==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -30009,7 +30020,7 @@ packages:
       next: '*'
     dependencies:
       '@corex/deepmerge': 4.0.43
-      '@next/env': 14.0.4
+      '@next/env': 14.0.1
       minimist: 1.2.8
       next: 14.0.4(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
     dev: false
@@ -31732,17 +31743,6 @@ packages:
   /proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  /proxy@1.0.2:
-    resolution: {integrity: sha512-KNac2ueWRpjbUh77OAFPZuNdfEqNynm9DD4xHT14CccGpW8wKZwEkN0yjlb7X9G9Z9F55N0Q+1z+WfgAhwYdzQ==}
-    hasBin: true
-    dependencies:
-      args: 5.0.1
-      basic-auth-parser: 0.0.2
-      debug: 4.3.4(supports-color@8.1.1)
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
 
@@ -32934,8 +32934,8 @@ packages:
       unified: 10.1.2
     dev: false
 
-  /remeda@1.33.0:
-    resolution: {integrity: sha512-GExMiOhTB0eg1Rc7hvBMBNxwlVRYIulGfIj5pkuuAfy9HB3ms4PmLvbhMMjQ2btoCit0iN7eQmHgwTaGZTVWwg==}
+  /remeda@1.37.0:
+    resolution: {integrity: sha512-ldZYKtw5A+ijuu4PtRZLfV7msZnsywANIs98vryQgWU5Esa9GC+SVLwWbNcpPj5jJDjIjuW/h+wK+C2jmZnOLA==}
     dev: false
 
   /remove-accents@0.4.2:

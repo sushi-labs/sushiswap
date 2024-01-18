@@ -354,41 +354,9 @@ export class AlgebraExtractor {
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factoriesFull.forEach((factory) => {
-          const addr = this.computeAlgebraAddress(factory, t0, t1)
-          const addrL = addr.toLowerCase() as Address
-          const pool = this.poolMap.get(addrL)
-          if (pool) {
-            prefetched.push(pool)
-            return
-          }
-          if (this.emptyAddressSet.has(addr)) return
-          const promise = this.multiCallAggregator
-            .callValue(
-              factory.address,
-              AlgebraFactory.abi as Abi,
-              'poolByPair',
-              [t0.address, t1.address],
-            )
-            .then(
-              (checkedAddress) => {
-                if (
-                  checkedAddress ===
-                  '0x0000000000000000000000000000000000000000'
-                ) {
-                  this.emptyAddressSet.add(addr)
-                  return
-                }
-                const watcher = this.addPoolWatching(
-                  { address: addr, token0: t0, token1: t1, factory },
-                  'request',
-                  true,
-                  startTime,
-                )
-                return watcher
-              },
-              () => undefined,
-            )
-          fetching.push(promise)
+          const res = this.getWatchersForTokenPair(factory, t0, t1, startTime)
+          if (res instanceof Promise) fetching.push(res)
+          else if (res !== undefined) prefetched.push(res)
         })
       }
     }
@@ -396,6 +364,69 @@ export class AlgebraExtractor {
       prefetched,
       fetching,
     }
+  }
+
+  getWatchersBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: AlgebraPoolWatcher[]
+    fetching: Promise<AlgebraPoolWatcher | undefined>[]
+  } {
+    const startTime = performance.now()
+    const prefetched: AlgebraPoolWatcher[] = []
+    const fetching: Promise<AlgebraPoolWatcher | undefined>[] = []
+    for (let i = 0; i < tokensUnique1.length; ++i) {
+      const t0 = tokensUnique1[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = 0; j < tokensUnique2.length; ++j) {
+        const t1 = tokensUnique2[j]
+        this.factoriesFull.forEach((factory) => {
+          const res = this.getWatchersForTokenPair(factory, t0, t1, startTime)
+          if (res instanceof Promise) fetching.push(res)
+          else if (res !== undefined) prefetched.push(res)
+        })
+      }
+    }
+    return {
+      prefetched,
+      fetching,
+    }
+  }
+
+  getWatchersForTokenPair(
+    factory: FactoryAlgebraFull,
+    t0: Token,
+    t1: Token,
+    startTime: number,
+  ): undefined | AlgebraPoolWatcher | Promise<AlgebraPoolWatcher | undefined> {
+    const addr = this.computeAlgebraAddress(factory, t0, t1)
+    const addrL = addr.toLowerCase() as Address
+    const pool = this.poolMap.get(addrL)
+    if (pool) return pool
+    if (this.emptyAddressSet.has(addr)) return
+    const promise = this.multiCallAggregator
+      .callValue(factory.address, AlgebraFactory.abi as Abi, 'poolByPair', [
+        t0.address,
+        t1.address,
+      ])
+      .then(
+        (checkedAddress) => {
+          if (checkedAddress === '0x0000000000000000000000000000000000000000') {
+            this.emptyAddressSet.add(addr)
+            return
+          }
+          const watcher = this.addPoolWatching(
+            { address: addr, token0: t0, token1: t1, factory },
+            'request',
+            true,
+            startTime,
+          )
+          return watcher
+        },
+        () => undefined,
+      )
+    return promise
   }
 
   async addPoolByAddress(address: Address) {

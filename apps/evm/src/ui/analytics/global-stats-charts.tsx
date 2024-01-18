@@ -21,18 +21,18 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import { Chain, ChainId } from 'sushi/chain'
-import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { ANALYTICS_CHAIN_IDS } from '../../config'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'
 
 const isAllThenNone = (chainIds: number[]) =>
-  SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
+  ANALYTICS_CHAIN_IDS.length === chainIds.length ? [] : chainIds
 
 const fetcher = ({ url, chainIds }: { url: string; chainIds: ChainId[] }) => {
   const _url = new URL(url, window.location.origin)
   _url.searchParams.set(
     'networks',
-    stringify(chainIds.length > 0 ? chainIds : SUPPORTED_CHAIN_IDS),
+    stringify(chainIds.length > 0 ? chainIds : ANALYTICS_CHAIN_IDS),
   )
 
   return fetch(_url.href)
@@ -43,7 +43,7 @@ const fetcher = ({ url, chainIds }: { url: string; chainIds: ChainId[] }) => {
 export const GlobalStatsCharts: FC = () => {
   const [open, setOpen] = useState(false)
   const [localValue, setValues] = useState<number[]>(
-    isAllThenNone(SUPPORTED_CHAIN_IDS),
+    isAllThenNone(ANALYTICS_CHAIN_IDS),
   )
   const { data } = useSWR(
     { url: '/analytics/api/charts', chainIds: localValue },
@@ -92,7 +92,7 @@ export const GlobalStatsCharts: FC = () => {
                             {localValue.length} selected
                           </Chip>
                         ) : (
-                          SUPPORTED_CHAIN_IDS.filter((option) =>
+                          ANALYTICS_CHAIN_IDS.filter((option) =>
                             localValue.includes(option),
                           ).map((option) => (
                             <Chip variant="secondary" key={option}>
@@ -111,7 +111,7 @@ export const GlobalStatsCharts: FC = () => {
               >
                 <Command className="flex items-center gap-1">
                   <CommandGroup>
-                    {SUPPORTED_CHAIN_IDS.map((chainId) => (
+                    {ANALYTICS_CHAIN_IDS.map((chainId) => (
                       <CommandItem
                         key={chainId}
                         value={`${chainId}`}

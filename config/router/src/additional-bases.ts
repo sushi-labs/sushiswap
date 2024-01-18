@@ -98,13 +98,6 @@ export const ADDITIONAL_BASES: {
   [ChainId.FANTOM]: {
     [FRAX_ADDRESS[ChainId.FANTOM]]: [FXS[ChainId.FANTOM]],
     [FXS_ADDRESS[ChainId.FANTOM]]: [FRAX[ChainId.FANTOM]],
-    // FOUR
-    ['0x9E8862e39496BD336565Dd15cE2C0B90bc7dc121']: [
-      LINK[ChainId.FANTOM],
-      SNX[ChainId.FANTOM],
-      CRV[ChainId.FANTOM],
-      YFI[ChainId.FANTOM],
-    ],
   },
   [ChainId.BSC]: {
     [FRAX_ADDRESS[ChainId.BSC]]: [FXS[ChainId.BSC]],
