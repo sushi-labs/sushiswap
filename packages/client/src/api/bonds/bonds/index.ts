@@ -17,6 +17,7 @@ import {
 } from 'sushi'
 import { createPublicClient, getAddress } from 'viem'
 import { type BondsApiSchema } from '../../../pure/bonds/bonds/schema'
+import { getPools } from '../../../pure/pools/pools/pools'
 import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/tokenPricesChain'
 import { convertAuctionTypes } from '../common'
 import { BondSchema } from '../schema'
@@ -87,7 +88,7 @@ export async function getBondsFromSubgraph(
         .map((bond) => BondSchema.safeParse(bond))
         .flatMap((bond) => {
           if (!bond.success) {
-            console.log(bond.error)
+            console.error(bond.error)
             return []
           }
           return bond.data
@@ -134,14 +135,41 @@ export async function getBondsFromSubgraph(
         }),
       )
 
-      const marketPrices = await getMarketsPrices({
-        client: createPublicClient(config[chainId]),
-        marketIds,
-      })
+      const [marketPricesS, poolsS] = await Promise.allSettled([
+        getMarketsPrices({
+          client: createPublicClient(config[chainId]),
+          marketIds,
+        }),
+        getPools({
+          chainIds: [chainId],
+          ids: bondsParsed.map((bond) =>
+            getIdFromChainIdAddress(chainId, bond.quoteToken.address),
+          ),
+        }),
+      ])
+
+      if (!isPromiseFulfilled(marketPricesS))
+        throw new Error(`Failed to fetch marketPrices on ${chainId}`)
+
+      const marketPrices = marketPricesS.value
+      const pools = isPromiseFulfilled(poolsS) ? poolsS.value : []
 
       return bondsParsed
         .flatMap((bond, i) => {
-          const quoteTokenPriceUSD = prices[getAddress(bond.quoteToken.address)]
+          const quotePool = pools.find(
+            (p) => p.address === bond.quoteToken.address.toLowerCase(),
+          )
+
+          let quoteTokenPriceUSD: number | undefined
+          if (quotePool) {
+            quoteTokenPriceUSD =
+              Number(quotePool.liquidityUSD) /
+              (Number(quotePool.totalSupply) /
+                10 ** Number(bond.quoteToken.decimals))
+          } else {
+            quoteTokenPriceUSD = prices[getAddress(bond.quoteToken.address)]
+          }
+
           const payoutTokenPriceUSD =
             prices[getAddress(bond.payoutToken.address)]
 
@@ -167,6 +195,29 @@ export async function getBondsFromSubgraph(
             !bond.scale
           )
             return []
+
+          const quoteToken = {
+            ...bond.quoteToken,
+            id: getIdFromChainIdAddress(chainId, bond.quoteToken.address),
+            decimals: Number(bond.quoteToken.decimals),
+            chainId,
+            priceUSD: quoteTokenPriceUSD,
+            pool: quotePool
+              ? {
+                  token0: {
+                    ...quotePool.token0,
+                    chainId,
+                  },
+                  token1: {
+                    ...quotePool.token1,
+                    chainId,
+                  },
+                  liquidity: Number(quotePool.totalSupply),
+                  liquidityUSD: Number(quotePool.liquidityUSD),
+                  protocol: quotePool.protocol,
+                }
+              : null,
+          }
 
           const { discount, discountedPrice, quoteTokensPerPayoutToken } =
             getBondDiscount({
@@ -211,13 +262,7 @@ export async function getBondsFromSubgraph(
             issuerAddress: bond.owner,
             issuer,
 
-            quoteToken: {
-              ...bond.quoteToken,
-              id: getIdFromChainIdAddress(chainId, bond.quoteToken.address),
-              decimals: Number(bond.quoteToken.decimals),
-              chainId,
-              priceUSD: quoteTokenPriceUSD,
-            },
+            quoteToken,
 
             payoutToken: {
               ...bond.payoutToken,

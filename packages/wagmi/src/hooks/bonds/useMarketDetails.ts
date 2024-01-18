@@ -9,6 +9,7 @@ import {
 import { Bond } from '@sushiswap/client'
 import { usePrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
+import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { getAddress } from 'viem'
 import { useContractReads } from 'wagmi'
@@ -16,6 +17,68 @@ import { useContractReads } from 'wagmi'
 interface UseBondMarketDetails {
   bond: Bond
   enabled?: boolean
+}
+
+function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
+  const { data: prices } = usePrices({
+    chainId: enabled ? bond.chainId : undefined,
+  })
+
+  const { data } = useContractReads({
+    allowFailure: false,
+    contracts: [
+      {
+        abi: uniswapV2PairAbi,
+        functionName: 'getReserves',
+        chainId: bond.chainId,
+        address: bond.quoteToken.address,
+      },
+      {
+        abi: uniswapV2PairAbi,
+        functionName: 'totalSupply',
+        chainId: bond.chainId,
+        address: bond.quoteToken.address,
+      },
+    ],
+    enabled: Boolean(enabled && bond.quoteToken.pool),
+  })
+
+  return useMemo(() => {
+    if (!prices) {
+      return undefined
+    }
+
+    if (!bond.quoteToken.pool) {
+      return Number(
+        (prices[getAddress(bond.quoteToken.address)] || 0).toFixed(10),
+      )
+    }
+
+    if (!data) {
+      return undefined
+    }
+
+    const [[reserve0, reserve1], totalSupply] = data
+    const token0PriceUSD = Number(
+      prices?.[getAddress(bond.quoteToken.pool.token0.address)].toFixed(10),
+    )
+    const token1PriceUSD = Number(
+      prices?.[getAddress(bond.quoteToken.pool.token1.address)].toFixed(10),
+    )
+
+    const reserve0USD =
+      (Number(reserve0) / 10 ** bond.quoteToken.pool.token0.decimals) *
+      token0PriceUSD
+    const reserve1USD =
+      (Number(reserve1) / 10 ** bond.quoteToken.pool.token1.decimals) *
+      token1PriceUSD
+
+    const lpTokenPriceUSD =
+      (reserve0USD + reserve1USD) /
+      (Number(totalSupply) / 10 ** bond.quoteToken.decimals)
+
+    return lpTokenPriceUSD
+  }, [prices, bond.quoteToken, data])
 }
 
 export const useBondMarketDetails = ({
@@ -55,13 +118,11 @@ export const useBondMarketDetails = ({
   const [marketPrice, remainingCapacityBI, marketInfo, maxAmountAcceptedBI] =
     useMemo(() => data || [], [data])
 
-  const [quoteTokenPriceUSD, payoutTokenPriceUSD] = useMemo(() => {
-    if (!prices) return []
-
-    return [
-      Number((prices[getAddress(bond.quoteToken.address)] || 0).toFixed(10)),
-      Number((prices[getAddress(bond.payoutToken.address)] || 0).toFixed(10)),
-    ]
+  const quoteTokenPriceUSD = useQuoteTokenPriceUSD(bond, enabled)
+  const payoutTokenPriceUSD = useMemo(() => {
+    return Number(
+      (prices?.[getAddress(bond.payoutToken.address)] || 0)?.toFixed(10),
+    )
   }, [prices, bond])
 
   const discount = useMemo(() => {
@@ -117,7 +178,6 @@ export const useBondMarketDetails = ({
   const maxAmountAccepted = useMemo(() => {
     if (!maxAmountAcceptedBI) return undefined
 
-    // Let's ask the bond guys about this - wouldn't match up with the maxPayout
     // https://dev.bondprotocol.finance/developers/market-calculations#capacity-payout-and-allowances
     const mAAreduced = maxAmountAcceptedBI // - (maxAmountAcceptedBI / 1000n) * 5n
 

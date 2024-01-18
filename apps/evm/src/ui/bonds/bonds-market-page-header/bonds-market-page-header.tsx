@@ -1,6 +1,6 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { AuctionType, MarketId, getCliffTimestamp } from '@sushiswap/bonds-sdk'
-import { getBond } from '@sushiswap/client'
+import { Bond, getBond } from '@sushiswap/client'
 import { Currency, LinkInternal } from '@sushiswap/ui'
 import { classNames } from '@sushiswap/ui'
 import { Button, LinkExternal, typographyVariants } from '@sushiswap/ui'
@@ -9,6 +9,21 @@ import { shortenAddress } from 'sushi'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { BondsMarketPageHeaderDiscount } from './bonds-market-page-header-discount'
+
+const VestingTerm = ({ bond }: { bond: Bond }) => (
+  <div className="flex items-center gap-1.5">
+    <span className="tracking-tighter font-semibold">Vesting Term</span>
+    {bond.vesting
+      ? formatDistance(
+          getCliffTimestamp({
+            vestingLength: bond.vesting,
+            vestingType: bond.vestingType,
+          }) * 1000,
+          Date.now(),
+        )
+      : 'Immediate'}
+  </div>
+)
 
 export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
   const bond = await getBond({
@@ -81,16 +96,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
       <div className="flex flex-col gap-y-5 text-secondary-foreground mb-8 mt-1.5">
         <div className="flex flex-wrap gap-x-[32px]">
           <BondsMarketPageHeaderDiscount bond={bond} />
-          <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Vesting Term</span>
-            {formatDistance(
-              getCliffTimestamp({
-                vestingLength: bond.vesting,
-                vestingType: bond.vestingType,
-              }) * 1000,
-              Date.now(),
-            )}
-          </div>
+          <VestingTerm bond={bond} />
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">
               {bond.end * 1000 < Date.now() ? 'Ended' : 'Ends'}
