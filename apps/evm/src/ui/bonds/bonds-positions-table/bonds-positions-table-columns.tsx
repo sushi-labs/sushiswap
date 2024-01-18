@@ -73,7 +73,7 @@ export const PAYOUT_ASSET_COLUMN: ColumnDef<BondPosition, unknown> = {
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
     headerDescription:
-      'Purchased bonds awaiting for you to claim when (vesting term ends/bond matures)',
+      'Purchased bonds awaiting for you to claim when the bond matures',
   },
 }
 
@@ -101,7 +101,7 @@ export const PAYOUT_AMOUNT_COLUMN: ColumnDef<BondPosition, unknown> = {
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
     headerDescription:
-      'Purchased bond amount available for you to claim when (vesting term ends/bond matures)',
+      'Purchased bond amount available for you to claim when the bond matures',
   },
 }
 
