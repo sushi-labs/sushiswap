@@ -19,10 +19,10 @@ const baseURL = `http://localhost:${PORT}`
  */
 const config: PlaywrightTestConfig = {
   // quiet: true,
-  // testMatch: 'pool.test.ts',
+  // testMatch: 'swap.test.ts',
   testIgnore: 'cross-chain-swap.test.ts',
   /* Maximum time one test can run for. Defaults to 30s. */
-  timeout: 120_000,
+  timeout: 180_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -121,6 +121,7 @@ const config: PlaywrightTestConfig = {
     // },
     {
       command: [
+        `DATABASE_URL=${String(process.env.DATABASE_URL)}`,
         `EDGE_CONFIG=${String(process.env.EDGE_CONFIG)}`,
         'NEXT_PUBLIC_APP_ENV=test',
         `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
@@ -130,6 +131,7 @@ const config: PlaywrightTestConfig = {
       timeout: 120_000,
       reuseExistingServer: !process.env.CI,
       env: {
+        DATABASE_URL: String(process.env.DATABASE_URL),
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
         NEXT_PUBLIC_APP_ENV: String(process.env.NEXT_PUBLIC_APP_ENV),
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),

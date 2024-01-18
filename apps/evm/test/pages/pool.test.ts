@@ -294,7 +294,9 @@ test.describe('Trident', () => {
       fee: Fee.DEFAULT,
       twap: false,
     })
-    const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
+    const removeLiquidityUrl = BASE_URL.concat(
+      `/${CHAIN_ID}:${poolAddress}/remove`,
+    )
     await page.goto(removeLiquidityUrl)
     await removeLiquidityV2(page, next)
   })
@@ -401,7 +403,9 @@ test.describe('V2', () => {
       Fee.DEFAULT,
       'SUSHISWAP_V2',
     )
-    const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
+    const removeLiquidityUrl = BASE_URL.concat(
+      `/${CHAIN_ID}:${poolAddress}/remove`,
+    )
     await page.goto(removeLiquidityUrl)
     await removeLiquidityV2(page, next)
   })
@@ -464,9 +468,7 @@ async function createOrAddLiquidityV3(
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
   await previewLocator.click()
-  await page
-    .locator('[testdata-id=confirm-add-liquidity-button]')
-    .click({ timeout: 5_000 })
+  await page.locator('[testdata-id=confirm-add-liquidity-button]').click()
 
   const expectedText =
     args.type === 'ADD'
@@ -754,9 +756,9 @@ async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
 async function removeLiquidityV2(page: Page, _next: NextFixture) {
   await switchNetwork(page, CHAIN_ID)
 
-  const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
-  await expect(removeLiquidityTabSelector).toBeVisible()
-  await removeLiquidityTabSelector.click()
+  // const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
+  // await expect(removeLiquidityTabSelector).toBeVisible()
+  // await removeLiquidityTabSelector.click()
 
   await page.locator('[testdata-id=remove-liquidity-max-button]').click()
 

@@ -79,7 +79,7 @@
     "@types/react-dom": "18.2.6",
     "@wagmi/core": "1.4.13",
     "eslint-config-sushi": "workspace:*",
-    "next": "13.4.19",
+    "next": "14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
@@ -89,7 +89,7 @@
   "peerDependencies": {
     "@sentry/nextjs": "7.92.0",
     "@wagmi/core": "1.4.13",
-    "next": "13.4.19",
+    "next": "14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "viem": "1.21.4",
@@ -119,6 +119,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.19"
+    "next": "14.0.4"
   }
 }
