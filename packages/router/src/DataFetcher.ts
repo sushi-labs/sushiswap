@@ -113,7 +113,7 @@ export class DataFetcher {
 
   _setProviders(providers: LiquidityProviders[]) {
     // concrete providers
-    [
+    ;[
       ApeSwapProvider,
       BiswapProvider,
       CurveProvider,
