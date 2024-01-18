@@ -89,7 +89,7 @@ let FAKE_TOKEN: Token
 const BASE_URL = 'http://localhost:3000/pool'
 
 test.beforeAll(async () => {
-  console.log('beforeAll pool tests')
+  // console.log('beforeAll pool tests')
 
   try {
     FAKE_TOKEN = await createERC20({
@@ -165,6 +165,20 @@ test.beforeEach(async ({ page, next }) => {
     console.error('error mockking token api', error)
   }
 
+  // abort pool api requests which occur on the client
+  await page.route('http://localhost:3000/pool/api/**/*', async (route) => {
+    await route.abort()
+  })
+
+  // try {
+  //   await page.route('**/*', async (route) => {
+  //     console.log('PAGE ROUTE URL', route.request().url())
+  //     await route.continue()
+  //   })
+  // } catch (error) {
+  //   console.error('error mocking pool api', error)
+  // }
+
   try {
     await interceptAnvil(page)
   } catch (error) {
@@ -191,7 +205,17 @@ test.describe('V3', () => {
   }) => {
     test.slow()
 
-    console.log('Create pool')
+    // Mock first
+    await mockPoolApi(
+      page,
+      next,
+      NATIVE_TOKEN.wrapped,
+      FAKE_TOKEN,
+      FeeAmount.HIGH,
+      'SUSHISWAP_V3',
+    )
+
+    // console.log('Create pool')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
@@ -203,7 +227,7 @@ test.describe('V3', () => {
       type: 'CREATE',
     })
 
-    console.log('Add liquidity, only one side(NATIVE)')
+    // console.log('Add liquidity, only one side(NATIVE)')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
@@ -214,7 +238,7 @@ test.describe('V3', () => {
       type: 'ADD',
     })
 
-    console.log('Add liquidity, only one side(FAKE_TOKEN)')
+    // console.log('Add liquidity, only one side(FAKE_TOKEN)')
     await createOrAddLiquidityV3(page, next, {
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,
@@ -225,16 +249,7 @@ test.describe('V3', () => {
       type: 'ADD',
     })
 
-    console.log('Remove liquidity')
-    await mockPoolApi(
-      page,
-      next,
-      NATIVE_TOKEN.wrapped,
-      FAKE_TOKEN,
-      FeeAmount.HIGH,
-      'SUSHISWAP_V3',
-    )
-
+    // console.log('Remove liquidity')
     const poolAddress = computePoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
@@ -918,6 +933,8 @@ async function mockPoolApi(
     | 'BENTOBOX_CLASSIC',
 ) {
   next.onFetch((request) => {
+    // console.log('REQUEST', request.url.toLowerCase())
+
     const [tokenA, tokenB] = token0.sortsBefore(token1)
       ? [token0, token1]
       : [token1, token0] // does safety checks
@@ -1027,6 +1044,8 @@ async function mockPoolApi(
     }
 
     if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
+      // console.log('RETURN POOLS MOCK')
+
       return new Response(JSON.stringify([mockPool]), {
         headers: {
           'Content-Type': 'application/json',
@@ -1037,11 +1056,25 @@ async function mockPoolApi(
         .toLowerCase()
         .endsWith(`/pool/api/pools/${CHAIN_ID}/${address}`.toLowerCase())
     ) {
+      // console.log('RETURN POOL MOCK')
       return new Response(JSON.stringify(mockPool), {
         headers: {
           'Content-Type': 'application/json',
         },
       })
+    } else if (
+      request.url.toLowerCase().endsWith('/pool/api/pools/count'.toLowerCase())
+    ) {
+      // console.log('RETURN POOL COUNT MOCK')
+      return new Response(JSON.stringify({ count: 1 }), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    } else if (
+      request.url.toLowerCase().endsWith('/pool/api/graphPools'.toLowerCase())
+    ) {
+      // console.log('RETURN GRAPH POOLS MOCK')
     }
     return 'continue'
   })
