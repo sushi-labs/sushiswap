@@ -468,9 +468,7 @@ async function createOrAddLiquidityV3(
   await expect(previewLocator).toBeVisible({ timeout: 10_000 })
   await expect(previewLocator).toBeEnabled()
   await previewLocator.click()
-  await page
-    .locator('[testdata-id=confirm-add-liquidity-button]')
-    .click({ timeout: 5_000 })
+  await page.locator('[testdata-id=confirm-add-liquidity-button]').click()
 
   const expectedText =
     args.type === 'ADD'
