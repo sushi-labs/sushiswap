@@ -72,7 +72,8 @@ export const PAYOUT_ASSET_COLUMN: ColumnDef<BondPosition, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
-    headerDescription: 'aa',
+    headerDescription:
+      'Purchased bonds awaiting for you to claim when (vesting term ends/bond matures)',
   },
 }
 
@@ -99,6 +100,8 @@ export const PAYOUT_AMOUNT_COLUMN: ColumnDef<BondPosition, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription:
+      'Purchased bond amount available for you to claim when (vesting term ends/bond matures)',
   },
 }
 
@@ -126,21 +129,22 @@ export const MATURITY_COLUMN: ColumnDef<BondPosition, unknown> = {
   },
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
+    headerDescription: 'The fully vested date at which you can claim your bond',
   },
 }
 
-export const REDEEM_COLUMN: ColumnDef<BondPosition, unknown> = {
-  id: 'redeem',
-  header: 'Redeem',
+export const CLAIM_COLUMN: ColumnDef<BondPosition, unknown> = {
+  id: 'claim',
+  header: 'Claim',
   size: 130,
   cell: (props) => {
     const isMounted = useIsMounted()
 
     const position = props.row.original
 
-    const [redeemed, setRedeemed] = useState(BigInt(position.balance) === 0n)
+    const [claimed, setClaimed] = useState(BigInt(position.balance) === 0n)
     const notMature = position.maturity * 1000 > Date.now()
-    const redeemable = !redeemed && !notMature
+    const claimable = !claimed && !notMature
 
     const token = new Token(position.payoutToken)
     const balance = Amount.fromRawAmount(token, props.row.original.balance)
@@ -164,13 +168,13 @@ export const REDEEM_COLUMN: ColumnDef<BondPosition, unknown> = {
           txHash: data.hash,
           promise: waitForTransaction({ hash: data.hash }),
           summary: {
-            pending: `Redeeming bond (${balance.toSignificant(6)} ${
+            pending: `Claiming bond (${balance.toSignificant(6)} ${
               balance.currency.symbol
             })`,
-            completed: `Redeemed bond (${balance.toSignificant(6)} ${
+            completed: `Claimed bond (${balance.toSignificant(6)} ${
               balance.currency.symbol
             })`,
-            failed: `Failed to redeem bond (${balance.toSignificant(6)} ${
+            failed: `Failed to claim bond (${balance.toSignificant(6)} ${
               balance.currency.symbol
             })`,
           },
@@ -182,7 +186,7 @@ export const REDEEM_COLUMN: ColumnDef<BondPosition, unknown> = {
     )
 
     const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-      if (!address || chain?.id !== position.chainId || !redeemable) return {}
+      if (!address || chain?.id !== position.chainId || !claimable) return {}
 
       return {
         to: position.tellerAddress,
@@ -199,13 +203,13 @@ export const REDEEM_COLUMN: ColumnDef<BondPosition, unknown> = {
       position.bondTokenId,
       position.chainId,
       position.tellerAddress,
-      redeemable,
+      claimable,
     ])
 
     const { config, isError } = usePrepareSendTransaction({
       ...prepare,
       chainId: position.chainId,
-      enabled: Boolean(address && chain?.id === position.chainId && redeemable),
+      enabled: Boolean(address && chain?.id === position.chainId && claimable),
     })
 
     const { sendTransactionAsync, isLoading: isWritePending } =
@@ -214,14 +218,14 @@ export const REDEEM_COLUMN: ColumnDef<BondPosition, unknown> = {
         gas: config?.gas ? (config.gas * 105n) / 100n : undefined,
         chainId: position.chainId,
         onSettled,
-        onSuccess: () => setRedeemed(true),
+        onSuccess: () => setClaimed(true),
       })
 
     return (
       <div className="w-full flex justify-center">
         {isMounted ? (
           <Checker.Guard
-            guardWhen={redeemed}
+            guardWhen={claimed}
             guardText="Already Claimed"
             size="sm"
             variant="ghost"
@@ -246,16 +250,16 @@ export const REDEEM_COLUMN: ColumnDef<BondPosition, unknown> = {
                   className="text-xs"
                   fullWidth
                   loading={
-                    !sendTransactionAsync || isWritePending || !redeemable
+                    !sendTransactionAsync || isWritePending || !claimable
                   }
                   onClick={() => sendTransactionAsync?.().then(() => confirm())}
                 >
                   {isError ? (
                     'Shoot! Something went wrong :('
                   ) : isWritePending ? (
-                    <Dots>Redeeming</Dots>
+                    <Dots>Claiming</Dots>
                   ) : (
-                    <>Redeem</>
+                    <>Claim</>
                   )}
                 </Button>
               </Checker.Network>
@@ -263,7 +267,7 @@ export const REDEEM_COLUMN: ColumnDef<BondPosition, unknown> = {
           </Checker.Guard>
         ) : (
           <Button size="sm" variant="secondary" className="text-xs" fullWidth>
-            Redeem
+            Claim
           </Button>
         )}
       </div>

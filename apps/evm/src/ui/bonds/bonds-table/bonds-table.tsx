@@ -2,11 +2,11 @@
 
 import { Bond } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
-import { ColumnDef, PaginationState } from '@tanstack/react-table'
+import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useState } from 'react'
 import {
   BOND_ASSET_COLUMN,
-  CLIFF_COLUMN,
+  VESTING_COLUMN,
   DISCOUNT_COLUMN,
   ISSUER_COLUMN,
   PAYOUT_ASSET_COLUMN,
@@ -18,7 +18,7 @@ const COLUMNS = [
   PRICE_COLUMN,
   DISCOUNT_COLUMN,
   BOND_ASSET_COLUMN,
-  CLIFF_COLUMN,
+  VESTING_COLUMN,
   ISSUER_COLUMN,
 ] satisfies ColumnDef<Bond, unknown>[]
 
@@ -28,12 +28,14 @@ interface PositionsTableProps {
   onRowClick?(row: Bond): void
 }
 
-const tableState = { sorting: [{ id: 'discount', desc: true }] }
-
 export const BondsTable: FC<PositionsTableProps> = ({
   data,
   isLoading = false,
 }) => {
+  const [sortingState, setSortingState] = useState<SortingState>([
+    { id: 'discount', desc: true },
+  ])
+
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -56,8 +58,9 @@ export const BondsTable: FC<PositionsTableProps> = ({
         linkFormatter={(row) => `/bonds/${row.id}`}
         pagination={true}
         onPaginationChange={setPaginationState}
+        onSortingChange={setSortingState}
         state={{
-          ...tableState,
+          sorting: sortingState,
           pagination: paginationState,
         }}
       />

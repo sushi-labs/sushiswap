@@ -82,7 +82,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
         <div className="flex flex-wrap gap-x-[32px]">
           <BondsMarketPageHeaderDiscount bond={bond} />
           <div className="flex items-center gap-1.5">
-            <span className="tracking-tighter font-semibold">Cliff</span>
+            <span className="tracking-tighter font-semibold">Vesting Term</span>
             {formatDistance(
               getCliffTimestamp({
                 vestingLength: bond.vesting,

@@ -18,9 +18,9 @@ export const Hero: FC = () => {
               className: 'max-w-[500px]',
             })}
           >
-            Acquire vested tokens at a discount in comparison to current market
-            price. Discounted tokens are released according to their individual
-            vesting schedule per bond market.
+            Acquire vested tokens at a discount from the current market price.
+            Discounted tokens are released according to their vesting schedule
+            per bond market.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">

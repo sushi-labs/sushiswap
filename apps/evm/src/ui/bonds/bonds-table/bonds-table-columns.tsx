@@ -156,9 +156,9 @@ export const BOND_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
   },
 }
 
-export const CLIFF_COLUMN: ColumnDef<Bond, unknown> = {
-  id: 'cliff',
-  header: 'Cliff',
+export const VESTING_COLUMN: ColumnDef<Bond, unknown> = {
+  id: 'vesting',
+  header: 'Vesting',
   accessorFn: (row) => row.vesting,
   cell: (props) => {
     if (!props.row.original.vesting) return <>-</>
@@ -171,7 +171,7 @@ export const CLIFF_COLUMN: ColumnDef<Bond, unknown> = {
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
     headerDescription:
-      'Amount of days until bought tokens are claimable from the moment they are purchased',
+      'How long until bought tokens are claimable from the moment they are purchased',
   },
 }
 

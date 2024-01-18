@@ -14,17 +14,17 @@ import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 import { Address, useAccount } from 'wagmi'
 import {
-  MATURITY_COLUMN,
-  PAYOUT_AMOUNT_COLUMN,
   PAYOUT_ASSET_COLUMN,
-  REDEEM_COLUMN,
+  PAYOUT_AMOUNT_COLUMN,
+  MATURITY_COLUMN,
+  CLAIM_COLUMN,
 } from './bonds-positions-table-columns'
 
 const COLUMNS = [
   PAYOUT_ASSET_COLUMN,
   PAYOUT_AMOUNT_COLUMN,
   MATURITY_COLUMN,
-  REDEEM_COLUMN,
+  CLAIM_COLUMN,
 ] satisfies ColumnDef<BondPosition, unknown>[]
 
 interface PositionsTableProps {
@@ -59,7 +59,7 @@ export const BondsPositionsTable: FC<PositionsTableProps> = ({
   })
 
   const [sortingState, setSortingState] = useState<SortingState>([
-    { id: 'payout-amount', desc: true },
+    { id: 'maturity', desc: false },
   ])
 
   const [paginationState, setPaginationState] = useState<PaginationState>({
