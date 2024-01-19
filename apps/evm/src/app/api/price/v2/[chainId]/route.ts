@@ -18,8 +18,6 @@ const schema = z.object({
     .transform((currency) => currency ?? Currency.USD),
 })
 
-export const revalidate = 600
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { chainId: string } },
@@ -35,5 +33,9 @@ export async function GET(
       )
     : await getPrices(chainId, currency)
 
-  return Response.json(prices)
+  return Response.json(prices, {
+    headers: {
+      'Cache-Control': 's-maxage=600, stale-while-revalidate',
+    },
+  })
 }
