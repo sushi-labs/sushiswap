@@ -18,7 +18,7 @@ const schema = z.object({
     .transform((currency) => currency ?? Currency.USD),
 })
 
-// export const revalidate = 600
+export const revalidate = 600
 
 export async function GET(
   request: NextRequest,
@@ -29,17 +29,11 @@ export async function GET(
     chainId: params.chainId,
   })
 
-  if (!isExtractorSupportedChainId(chainId)) {
-    const res = await fetch(`/api/price/v1/${chainId}?currency=${currency}`)
-    const prices = await res.json()
-    return Response.json(prices)
-  } else {
-    const prices = await getPrices(chainId, currency)
-    return Response.json(prices, {
-      headers: {
-        'Cache-Control': 's-maxage=300, stale-while-revalidate=600',
-        'Content-Type': 'application/json',
-      },
-    })
-  }
+  const prices = !isExtractorSupportedChainId(chainId)
+    ? await fetch(`/api/price/v1/${chainId}?currency=${currency}`).then(
+        (res) => res.json(),
+      )
+    : await getPrices(chainId, currency)
+
+  return Response.json(prices)
 }

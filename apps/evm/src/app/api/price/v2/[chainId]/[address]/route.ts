@@ -33,17 +33,13 @@ export async function GET(
     address: params.address,
   })
 
-  if (!isExtractorSupportedChainId(chainId)) {
-    const price = await fetch(
-      `/api/price/v1/${chainId}/${address}?currency=${currency}`,
-    )
-    const json = await price.json()
-    return Response.json(json)
-  } else {
-    const price = await getPrice(chainId, address, currency)
+  const price = !isExtractorSupportedChainId(chainId)
+    ? await fetch(
+        `/api/price/v1/${chainId}/${address}?currency=${currency}`,
+      ).then((res) => res.json())
+    : await getPrice(chainId, address, currency)
 
-    if (price === undefined) return new Response('0', { status: 404 })
+  if (price === undefined) return new Response('0', { status: 404 })
 
-    return Response.json(price)
-  }
+  return Response.json(price)
 }
