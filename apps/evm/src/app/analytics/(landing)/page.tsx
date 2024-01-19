@@ -1,4 +1,5 @@
 import { Container } from '@sushiswap/ui'
+import { Suspense } from 'react'
 
 import { PoolsFiltersProvider } from '../../../ui/pool'
 import { PoolsTable } from '../../../ui/pool/PoolsTable'
@@ -10,17 +11,19 @@ import { TableFiltersSearchToken } from '../../../ui/pool/TableFiltersSearchToke
 
 export default function AnalyticsPage() {
   return (
-    <PoolsFiltersProvider>
-      <Container maxWidth="7xl" className="px-4">
-        <div className="flex flex-wrap gap-3 mb-4">
-          <TableFiltersSearchToken />
-          <TableFiltersPoolType />
-          <TableFiltersNetwork />
-          <TableFiltersFarmsOnly />
-          <TableFiltersResetButton />
-        </div>
-        <PoolsTable />
-      </Container>
-    </PoolsFiltersProvider>
+    <Suspense fallback={null}>
+      <PoolsFiltersProvider>
+        <Container maxWidth="7xl" className="px-4">
+          <div className="flex flex-wrap gap-3 mb-4">
+            <TableFiltersSearchToken />
+            <TableFiltersPoolType />
+            <TableFiltersNetwork />
+            <TableFiltersFarmsOnly />
+            <TableFiltersResetButton />
+          </div>
+          <PoolsTable />
+        </Container>
+      </PoolsFiltersProvider>
+    </Suspense>
   )
 }
