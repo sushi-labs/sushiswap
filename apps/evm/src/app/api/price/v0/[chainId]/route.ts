@@ -40,8 +40,15 @@ export async function GET(
 
   const now = getUnixTime(Date.now())
 
-  return Response.json({
-    ...json,
-    updatedSecondsAgo: now - json.updatedAtTimestamp,
-  })
+  return Response.json(
+    {
+      ...json,
+      updatedSecondsAgo: now - json.updatedAtTimestamp,
+    },
+    {
+      headers: {
+        'Cache-Control': 's-maxage=600, stale-while-revalidate',
+      },
+    },
+  )
 }

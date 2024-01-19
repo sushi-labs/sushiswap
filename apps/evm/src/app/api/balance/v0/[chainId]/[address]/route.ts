@@ -39,7 +39,9 @@ export async function GET(
   const { chainId, address } = querySchema.parse(params)
 
   const data = await (
-    await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
+    await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`, {
+      next: { revalidate: 3600 },
+    })
   ).json()
   const tokens = tokensSchema.parse(data)
 
@@ -75,5 +77,9 @@ export async function GET(
         .map(([token, balance]) => [token, balance?.toString()]),
     ),
   }
-  return Response.json(body)
+  return Response.json(body, {
+    headers: {
+      'Cache-Control': 's-maxage=1, stale-while-revalidate=59',
+    },
+  })
 }

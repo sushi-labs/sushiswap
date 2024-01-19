@@ -27,5 +27,9 @@ export async function GET(
   const token = await getPrice(chainId, address, dateThreshold, currency)
   if (token === undefined) return new Response('0', { status: 404 })
 
-  return Response.json(token)
+  return Response.json(token, {
+    headers: {
+      'Cache-Control': 's-maxage=600, stale-while-revalidate',
+    },
+  })
 }

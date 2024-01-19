@@ -20,5 +20,9 @@ export async function GET(request: NextRequest) {
   const dateThreshold = roundToNearestMinutes(threeDaysAgo, { nearestTo: 10 })
 
   const tokens = await getPrices(dateThreshold, currency)
-  return Response.json(tokens)
+  return Response.json(tokens, {
+    headers: {
+      'Cache-Control': 's-maxage=600, stale-while-revalidate',
+    },
+  })
 }
