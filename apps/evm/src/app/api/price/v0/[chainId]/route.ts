@@ -28,13 +28,13 @@ export async function GET(
     )
   }
 
-  const data = await redis.hget('prices', chainId)
+  const data = await redis.hget('prices', chainId.toString())
 
   if (!data) {
     return new Response(null, { status: 503 })
   }
 
-  const json = JSON.parse(data)
+  const json = JSON.parse(data as string)
 
   const now = getUnixTime(Date.now())
 

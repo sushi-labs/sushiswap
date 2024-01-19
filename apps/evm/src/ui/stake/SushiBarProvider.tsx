@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
-import { useBarData } from 'src/lib/bar/useBarData'
+import { useBarData } from 'src/lib/stake'
 import { ChainId } from 'sushi/chain'
 import { Amount, SUSHI, Type, XSUSHI, tryParseAmount } from 'sushi/currency'
 

@@ -2,18 +2,18 @@ import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'
 import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
+import { roundToNearestMinutes, sub } from 'date-fns'
 import { NextResponse } from 'next/server'
+import { DISABLED_ANALYTICS_CHAIN_IDS } from 'src/config'
+import { getPrices } from 'src/lib/price/v1'
+import { getPrice } from 'src/lib/price/v2'
 import { ChainId } from 'sushi/chain'
 import { SUSHI_ADDRESS } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
-  const url = `/api/price/v2/1/${SUSHI_ADDRESS[ChainId.ETHEREUM]}`
-
-  const res = await fetch(url)
-  const json = await res.json()
-  return json
+  return getPrice(ChainId.ETHEREUM, SUSHI_ADDRESS[ChainId.ETHEREUM])
 }
 
 interface ExchangeData {
@@ -26,7 +26,10 @@ const getV2Data = async () => {
   const sdk = getBuiltGraphSDK()
   const { factories } = await sdk.Factories({
     chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
-      (value) => value !== ChainId.KAVA,
+      (c) =>
+        !DISABLED_ANALYTICS_CHAIN_IDS.includes(
+          c as typeof DISABLED_ANALYTICS_CHAIN_IDS[number],
+        ),
     ),
   })
 
@@ -73,7 +76,9 @@ const getBentoTvl = async () => {
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
 
-  const prices = await fetch('/api/price/v1').then((data) => data.json())
+  const threeDaysAgo = sub(new Date(), { days: 3 })
+  const dateThreshold = roundToNearestMinutes(threeDaysAgo, { nearestTo: 10 })
+  const prices = await getPrices(dateThreshold)
 
   return rebases.reduce((acc, cur) => {
     const price =
@@ -110,7 +115,7 @@ const getV3Data = async () => {
   )
 }
 
-export const fetchCache = 'auto'
+export const revalidate = 3600
 
 export async function GET() {
   const [sushiPrice, bentoTVL, v2Data, v3Data] = await Promise.all([

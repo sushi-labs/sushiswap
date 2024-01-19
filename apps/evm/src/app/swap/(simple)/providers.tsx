@@ -1,4 +1,4 @@
-import { getSwapEdgeConfig } from 'src/lib/edge/get-swap-edge-config'
+import { getSwapEdgeConfig } from './get-swap-edge-config'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { DerivedstateSimpleSwapProvider } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 

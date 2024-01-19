@@ -161,55 +161,6 @@ importers:
         specifier: 32.5.3
         version: 32.5.3
 
-  apis/token-price:
-    dependencies:
-      '@sushiswap/database':
-        specifier: workspace:*
-        version: link:../../packages/database
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
-      '@vercel/node':
-        specifier: 3.0.9
-        version: 3.0.9
-      '@wagmi/core':
-        specifier: 1.4.13
-        version: 1.4.13(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
-      date-fns:
-        specifier: 2.30.0
-        version: 2.30.0
-      ioredis:
-        specifier: 5.3.1
-        version: 5.3.1
-      sushi:
-        specifier: workspace:*
-        version: link:../../packages/sushi
-      viem:
-        specifier: 1.21.4
-        version: 1.21.4(typescript@5.2.2)(zod@3.21.4)
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      vercel:
-        specifier: 32.5.3
-        version: 32.5.3
-
   apis/tokens:
     dependencies:
       '@sushiswap/database':
@@ -614,6 +565,9 @@ importers:
       framer-motion:
         specifier: 7.10.3
         version: 7.10.3(react-dom@18.2.0)(react@18.2.0)
+      ioredis:
+        specifier: 5.3.2
+        version: 5.3.2
       lodash.once:
         specifier: 4.1.1
         version: 4.1.1
@@ -1057,9 +1011,6 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database
-      '@sushiswap/token-price-api':
-        specifier: workspace:*
-        version: link:../../apis/token-price
       '@sushiswap/viem-config':
         specifier: workspace:*
         version: link:../../config/viem
@@ -26021,23 +25972,6 @@ packages:
     resolution: {integrity: sha512-b23PteSnYXSONJ6JQXRAlvJhuw8KOtkqa87W4wDtvMrud/DTJd5X+NpOOI+O/zZwVq6v0VLAaJ+1EDViKEuN9g==}
     dependencies:
       fp-ts: 1.19.3
-
-  /ioredis@5.3.1:
-    resolution: {integrity: sha512-C+IBcMysM6v52pTLItYMeV4Hz7uriGtoJdz7SSBDX6u+zwSYGirLdQh3L7t/OItWITcw3gTFMjJReYUwS4zihg==}
-    engines: {node: '>=12.22.0'}
-    dependencies:
-      '@ioredis/commands': 1.2.0
-      cluster-key-slot: 1.1.2
-      debug: 4.3.4(supports-color@8.1.1)
-      denque: 2.1.0
-      lodash.defaults: 4.2.0
-      lodash.isarguments: 3.1.0
-      redis-errors: 1.2.0
-      redis-parser: 3.0.0
-      standard-as-callback: 2.1.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
 
   /ioredis@5.3.2:
     resolution: {integrity: sha512-1DKMMzlIHM02eBBVOFQ1+AolGjs6+xEcM4PDL7NqOS6szq7H9jSaEkIUH6/a5Hl241LzW6JLSiAbNvTQjUupUA==}

@@ -3,7 +3,7 @@ import { FC } from 'react'
 import notFound from 'src/app/pool/not-found'
 
 import { unsanitize } from 'sushi'
-import { getToken } from '../../../../lib/analytics/api'
+import { getToken } from '../../../../lib/graph'
 import { TokenHeader } from '../../../../ui/analytics/token-page-header'
 import { TokenInformation } from '../../../../ui/analytics/token-page-information'
 import { TokenPairs } from '../../../../ui/analytics/token-page-pairs'

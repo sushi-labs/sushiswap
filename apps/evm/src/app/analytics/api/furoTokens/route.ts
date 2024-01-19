@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getFuroTokens } from 'src/lib/analytics/api'
+import { getFuroTokens } from 'src/lib/graph'
 
 import { furoTokensSchema } from '../../../../lib/schema'
 

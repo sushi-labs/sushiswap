@@ -8,9 +8,9 @@ import {
 } from '@sushiswap/v3-sdk'
 import { useMemo } from 'react'
 
-import { Bound } from '../constants'
+import { Bound } from '../../constants'
 
-export default function useIsTickAtLimit(
+export function useIsTickAtLimit(
   feeAmount: FeeAmount | undefined,
   tickLower: number | undefined,
   tickUpper: number | undefined,

@@ -33,6 +33,12 @@ import {
   withCheckerRoot,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { APPROVE_TAG_REMOVE_TRIDENT } from 'src/lib/constants'
+import {
+  useTokensFromPool,
+  useUnderlyingTokenBalanceFromPool,
+} from 'src/lib/hooks'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   LiquidityOutput,
   approveMasterContractAction,
@@ -40,13 +46,7 @@ import {
   burnLiquidityAction,
   sweepAction,
   unwrapWETHAction,
-} from 'src/lib/actions'
-import { APPROVE_TAG_REMOVE_TRIDENT } from 'src/lib/constants'
-import {
-  useTokensFromPool,
-  useUnderlyingTokenBalanceFromPool,
-} from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+} from 'src/lib/pool/trident/actions'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import { BentoBoxChainId } from 'sushi/config'

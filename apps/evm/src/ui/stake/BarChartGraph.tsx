@@ -16,7 +16,7 @@ import { formatNumber, formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
-import { useBarChartData } from 'src/lib/bar'
+import { useBarChartData } from 'src/lib/stake'
 import { BarChartPeriod, chartPeriods } from './BarChartPeriods'
 import { BarChartType } from './BarChartTypes'
 

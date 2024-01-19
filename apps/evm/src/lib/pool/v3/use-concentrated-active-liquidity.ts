@@ -10,8 +10,8 @@ import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { Type } from 'sushi/currency'
 
-import computeSurroundingTicks from '../functions'
-import { useTicks } from './useTicks'
+import computeSurroundingTicks from '../../functions'
+import { useTicks } from './use-ticks'
 
 const PRICE_FIXED_DIGITS = 8
 
