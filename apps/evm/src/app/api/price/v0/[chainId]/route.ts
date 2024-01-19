@@ -12,6 +12,8 @@ const schema = z.object({
     .lte(2 ** 256),
 })
 
+export const revalidate = 600
+
 export async function GET(
   _request: Request,
   { params }: { params: { chainId: string } },
