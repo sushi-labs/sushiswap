@@ -54,55 +54,6 @@ importers:
         specifier: 1.10.15
         version: 1.10.15
 
-  apis/balances:
-    dependencies:
-      '@sushiswap/wagmi-config':
-        specifier: workspace:*
-        version: link:../../config/wagmi
-      '@vercel/node':
-        specifier: 3.0.9
-        version: 3.0.9
-      '@wagmi/core':
-        specifier: 1.4.13
-        version: 1.4.13(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
-      '@whatwg-node/fetch':
-        specifier: 0.8.4
-        version: 0.8.4
-      lodash.zip:
-        specifier: 4.2.0
-        version: 4.2.0
-      sushi:
-        specifier: workspace:*
-        version: link:../../packages/sushi
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/lodash.zip':
-        specifier: 4.2.7
-        version: 4.2.7
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      '@types/node-fetch':
-        specifier: 2.6.2
-        version: 2.6.2
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      vercel:
-        specifier: 32.5.3
-        version: 32.5.3
-
   apis/extractor:
     dependencies:
       '@sentry/node':
@@ -558,6 +509,9 @@ importers:
       '@sushiswap/client':
         specifier: workspace:*
         version: link:../../packages/client
+      '@sushiswap/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../../packages/dexie
@@ -15211,12 +15165,6 @@ packages:
 
   /@types/lodash.once@4.1.9:
     resolution: {integrity: sha512-nvZ7GYfyZB6CUmXL+7HSXg53rFpc49FsKuRmMiCIGhgJB/yyTip8uHk4mxGyVJOl87dXPlf3qy42WsjOcIrnmg==}
-    dependencies:
-      '@types/lodash': 4.14.197
-    dev: true
-
-  /@types/lodash.zip@4.2.7:
-    resolution: {integrity: sha512-wRtK2bZ0HYXkJkeldrD35qOquGn5GOmp8+o886N18Aqw2DGFLP7JCTEb00j3xQZ+PCMTyfMS2OMbLUwah+bcyg==}
     dependencies:
       '@types/lodash': 4.14.197
     dev: true

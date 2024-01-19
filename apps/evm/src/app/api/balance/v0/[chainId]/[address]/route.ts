@@ -8,10 +8,7 @@ import {
   readContracts,
 } from '@wagmi/core'
 import zip from 'lodash.zip'
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
-
-type ResponseData = Record<string, string>
 
 const { publicClient } = configureChains(allChains, allProviders)
 createConfig({
@@ -31,12 +28,15 @@ const querySchema = z.object({
 
 const tokensSchema = z.array(z.coerce.string())
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>,
+export const revalidate = 10
+
+export async function GET(
+  _req: Request,
+  {
+    params,
+  }: { params: { chainId: string; address: string; tokens?: string[] } },
 ) {
-  res.setHeader('Cache-Control', 'max-age=1, stale-while-revalidate=59')
-  const { chainId, address } = querySchema.parse(req.query)
+  const { chainId, address } = querySchema.parse(params)
 
   const data = await (
     await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
@@ -75,5 +75,5 @@ export default async function handler(
         .map(([token, balance]) => [token, balance?.toString()]),
     ),
   }
-  return res.status(200).json(body)
+  return Response.json(body)
 }
