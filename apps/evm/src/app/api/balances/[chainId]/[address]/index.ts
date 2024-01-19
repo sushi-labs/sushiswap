@@ -1,5 +1,4 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import type { Address } from '@wagmi/core'
 import {
   configureChains,
@@ -8,9 +7,11 @@ import {
   fetchBalance,
   readContracts,
 } from '@wagmi/core'
-import { fetch } from '@whatwg-node/fetch'
 import zip from 'lodash.zip'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
+
+type ResponseData = Record<string, string>
 
 const { publicClient } = configureChains(allChains, allProviders)
 createConfig({
@@ -30,12 +31,16 @@ const querySchema = z.object({
 
 const tokensSchema = z.array(z.coerce.string())
 
-const handler = async (request: VercelRequest, response: VercelResponse) => {
-  response.setHeader('Cache-Control', 'max-age=1, stale-while-revalidate=59')
-  const { chainId, address } = querySchema.parse(request.query)
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>,
+) {
+  res.setHeader('Cache-Control', 'max-age=1, stale-while-revalidate=59')
+  const { chainId, address } = querySchema.parse(req.query)
 
-  const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
-  const data = await res.json()
+  const data = await (
+    await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
+  ).json()
   const tokens = tokensSchema.parse(data)
 
   const balance = await fetchBalance({
@@ -61,14 +66,14 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     tokens,
     balances.map((balance) => balance?.result || 0n),
   )
-  return response.status(200).json({
+
+  const body = {
     '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance.value.toString(),
     ...Object.fromEntries(
       zipped
         .filter(([, balance]) => balance !== 0n)
         .map(([token, balance]) => [token, balance?.toString()]),
     ),
-  })
+  }
+  return res.status(200).json(body)
 }
-
-export default handler

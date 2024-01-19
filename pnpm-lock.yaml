@@ -351,7 +351,7 @@ importers:
         version: 5.15.0(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@14.0.4)(next@14.1.0)
+        version: 3.1.43(@next/env@14.1.0)(next@14.1.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -457,7 +457,7 @@ importers:
         version: 5.15.0(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
       next-sitemap:
         specifier: 3.1.43
-        version: 3.1.43(@next/env@14.0.4)(next@14.1.0)
+        version: 3.1.43(@next/env@14.1.0)(next@14.1.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -661,8 +661,11 @@ importers:
         specifier: 7.10.3
         version: 7.10.3(react-dom@18.2.0)(react@18.2.0)
       lodash.once:
-        specifier: ^4.1.1
+        specifier: 4.1.1
         version: 4.1.1
+      lodash.zip:
+        specifier: 4.2.0
+        version: 4.2.0
       nanoid:
         specifier: 4.0.0
         version: 4.0.0
@@ -743,8 +746,11 @@ importers:
         specifier: 7.4.0
         version: 7.4.0
       '@types/lodash.once':
-        specifier: ^4.1.8
-        version: 4.1.8
+        specifier: 4.1.9
+        version: 4.1.9
+      '@types/lodash.zip':
+        specifier: 4.2.9
+        version: 4.2.9
       '@types/node':
         specifier: '18'
         version: 18.17.5
@@ -9179,10 +9185,6 @@ packages:
       tar-fs: 2.1.1
     dev: true
 
-  /@next/env@14.0.4:
-    resolution: {integrity: sha512-irQnbMLbUNQpP1wcE5NstJtbuA/69kRfzBrpAD7Gsn8zm/CY6YQYc3HQBz8QPxwISG26tIm5afvvVbu508oBeQ==}
-    dev: false
-
   /@next/env@14.1.0:
     resolution: {integrity: sha512-Py8zIo+02ht82brwwhTg36iogzFqGLPXlRGKQw5s+qP/kMNc4MAyDeEwBKDijk6zTIbegEgu8Qy7C1LboslQAw==}
 
@@ -15207,14 +15209,20 @@ packages:
       '@types/lodash': 4.14.197
     dev: true
 
-  /@types/lodash.once@4.1.8:
-    resolution: {integrity: sha512-kTRKTOMyz1ksmXWi+sHgliiqKY2KXcWfhNjcCPZgwPa++5w7QXqupjfrj006nBTlPOX6tBo5IhLUx19ezNd9Yg==}
+  /@types/lodash.once@4.1.9:
+    resolution: {integrity: sha512-nvZ7GYfyZB6CUmXL+7HSXg53rFpc49FsKuRmMiCIGhgJB/yyTip8uHk4mxGyVJOl87dXPlf3qy42WsjOcIrnmg==}
     dependencies:
       '@types/lodash': 4.14.197
     dev: true
 
   /@types/lodash.zip@4.2.7:
     resolution: {integrity: sha512-wRtK2bZ0HYXkJkeldrD35qOquGn5GOmp8+o886N18Aqw2DGFLP7JCTEb00j3xQZ+PCMTyfMS2OMbLUwah+bcyg==}
+    dependencies:
+      '@types/lodash': 4.14.197
+    dev: true
+
+  /@types/lodash.zip@4.2.9:
+    resolution: {integrity: sha512-cJvqtEzLgHUPF6H6v7K6Q/yIc1DAYpsUkHD1Q7bUOAcCE0b7drzoUMi/Toj0MjQI3WeM6rI6v295mkenAQ+R7A==}
     dependencies:
       '@types/lodash': 4.14.197
     dev: true
@@ -19136,7 +19144,7 @@ packages:
     resolution: {integrity: sha512-WHVocJYavUwVgVViC0ORikPHQquXwVh939TaelZ4WDqpWgTX/FsGhl/+P4qBUAGcRvtOgDgC+xftNWWp2RUTAQ==}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001521
+      caniuse-lite: 1.0.30001579
       electron-to-chromium: 1.4.494
 
   /browserslist@4.21.10:
@@ -30015,7 +30023,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /next-sitemap@3.1.43(@next/env@14.0.4)(next@14.1.0):
+  /next-sitemap@3.1.43(@next/env@14.1.0)(next@14.1.0):
     resolution: {integrity: sha512-TshDAP69OjHwvszedQ/jBvOjzqy7Gm9NU3ZIP30X3e1qXsNVOVF5uzi9kQOI6v0uBG08QUOk9wKNSIk3zI/wjQ==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -30024,7 +30032,7 @@ packages:
       next: '*'
     dependencies:
       '@corex/deepmerge': 4.0.43
-      '@next/env': 14.0.4
+      '@next/env': 14.1.0
       minimist: 1.2.8
       next: 14.1.0(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
     dev: false
