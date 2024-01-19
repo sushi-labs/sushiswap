@@ -9,9 +9,7 @@ import { formatNumber, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
-  const url = `https://token-price.sushi.com/v2/1/${
-    SUSHI_ADDRESS[ChainId.ETHEREUM]
-  }`
+  const url = `/api/price/v2/1/${SUSHI_ADDRESS[ChainId.ETHEREUM]}`
 
   const res = await fetch(url)
   const json = await res.json()
@@ -75,9 +73,7 @@ const getBentoTvl = async () => {
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
 
-  const prices = await fetch('https://token-price.sushi.com/v1').then((data) =>
-    data.json(),
-  )
+  const prices = await fetch('/api/price/v1').then((data) => data.json())
 
   return rebases.reduce((acc, cur) => {
     const price =

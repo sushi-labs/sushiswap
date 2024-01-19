@@ -30,9 +30,7 @@ export async function GET(
   })
 
   if (!isExtractorSupportedChainId(chainId)) {
-    const res = await fetch(
-      `https://token-price.sushi.com/v1/${chainId}?currency=${currency}`,
-    )
+    const res = await fetch(`/api/price/v1/${chainId}?currency=${currency}`)
     const prices = await res.json()
     return Response.json(prices)
   } else {
