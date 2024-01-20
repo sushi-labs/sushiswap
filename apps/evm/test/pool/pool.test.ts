@@ -155,8 +155,7 @@ test.beforeEach(async ({ page, next }) => {
           address: token.address.toLowerCase(),
           name: token.name,
           symbol: token.symbol,
-          decimals: token.decimals
-          
+          decimals: token.decimals,
         })),
       })
     })
