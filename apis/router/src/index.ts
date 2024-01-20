@@ -55,7 +55,7 @@ app.get('/health', (_, res: Response) => {
   return res.status(200).send()
 })
 
-app.get('/swap/v3_2', swapV3_2(client))
+app.get('/swap/v3.2', swapV3_2(client))
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())

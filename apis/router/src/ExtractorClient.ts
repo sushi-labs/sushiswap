@@ -131,6 +131,7 @@ export class ExtractorClient {
 
   // fetch pools for the pair if we didn't do it previously
   async fetchPoolsBetween(t0: Type, t1: Type) {
+    if (t0.isNative || t1.isNative) return // natives locally is processed wrapped
     const id = tokenPairId(t0, t1)
     if (this.poolCodesMap.get(id) !== undefined) return
     if (this.fetchPoolsBetweenRequests.has(id)) return // already fetched
