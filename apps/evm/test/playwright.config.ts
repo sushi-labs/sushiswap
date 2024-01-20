@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
   // testMatch: 'pool.test.ts',
   testIgnore: [
     // 'swap.test.test',
-    'cross-chain.test.ts'
+    'cross-chain.test.ts',
   ],
   /* Maximum time one test can run for. Defaults to 30s. */
   timeout: 180_000,
