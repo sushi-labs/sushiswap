@@ -180,7 +180,7 @@ test.beforeEach(async ({ page, next }) => {
   // }
 
   try {
-    await interceptAnvil(page)
+    await interceptAnvil(page, next)
   } catch (error) {
     console.error('error intercepting anvil', error)
   }

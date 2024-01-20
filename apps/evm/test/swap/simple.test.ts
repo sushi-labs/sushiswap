@@ -37,7 +37,7 @@ test.beforeEach(async ({ page, next }) => {
   })
 
   try {
-    await interceptAnvil(page)
+    await interceptAnvil(page, next)
   } catch (error) {
     console.error('error intercepting anvil', error)
   }
@@ -45,6 +45,7 @@ test.beforeEach(async ({ page, next }) => {
   next.onFetch(() => {
     return 'continue'
   })
+
   await page.goto(url)
   await switchNetwork(page, chainId)
 })
