@@ -1071,7 +1071,6 @@ async function mockPoolApi(
     ) {
       // console.log('RETURN GRAPH POOLS MOCK')
     }
-    return 'continue'
   })
 }
 

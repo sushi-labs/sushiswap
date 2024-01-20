@@ -59,9 +59,9 @@ test.beforeEach(async ({ page, next }) => {
     console.error('error intercepting anvil', error)
   }
 
-  // next.onFetch(() => {
-  //   return 'continue'
-  // })
+  next.onFetch(() => {
+    return 'continue'
+  })
 
   await page.goto(url)
   await switchNetwork(page, chainId)
@@ -333,10 +333,10 @@ async function approve(page: Page, currency: Type) {
     // .catch(() => console.log(`${inputCurrency.symbol} already approved or not needed`))
 
     const expectedApprovingText = `Approving ${currency.symbol}`
-    expect(page.getByText(expectedApprovingText)).toBeVisible()
+    await expect(page.getByText(expectedApprovingText)).toBeVisible()
 
     const expectedApproveText = `Successfully approved ${currency.symbol}`
-    expect(page.getByText(expectedApproveText)).toBeVisible()
+    await expect(page.getByText(expectedApproveText)).toBeVisible()
   }
 }
 

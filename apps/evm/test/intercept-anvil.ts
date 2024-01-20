@@ -24,6 +24,5 @@ export const interceptAnvil = async (page: Page, next: NextFixture) => {
       // )
       return fetch(url, request)
     }
-    return 'continue'
   })
 }
