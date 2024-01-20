@@ -165,19 +165,12 @@ test.beforeEach(async ({ page, next }) => {
     console.error('error mockking token api', error)
   }
 
-  // abort pool api requests which occur on the client
+  await page.route('http://localhost:3000/api/**/*', async (route) => {
+    await route.abort()
+  })
   await page.route('http://localhost:3000/pool/api/**/*', async (route) => {
     await route.abort()
   })
-
-  // try {
-  //   await page.route('**/*', async (route) => {
-  //     console.log('PAGE ROUTE URL', route.request().url())
-  //     await route.continue()
-  //   })
-  // } catch (error) {
-  //   console.error('error mocking pool api', error)
-  // }
 
   try {
     await interceptAnvil(page, next)

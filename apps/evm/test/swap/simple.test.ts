@@ -36,15 +36,15 @@ test.beforeEach(async ({ page, next }) => {
     console.error(error)
   })
 
+  await page.route('http://localhost:3000/api/**/*', async (route) => {
+    await route.abort()
+  })
+
   try {
     await interceptAnvil(page, next)
   } catch (error) {
     console.error('error intercepting anvil', error)
   }
-
-  await page.route('http://localhost:3000/api/**/*', async (route) => {
-    await route.abort()
-  })
 
   next.onFetch(() => {
     return 'continue'
@@ -191,17 +191,19 @@ async function swap(
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeVisible()
 
-  const priceImpactCheckbox = page.locator(
-    '[testdata-id=price-impact-checkbox]',
-  )
-  while (!(await swapButton.isEnabled())) {
-    if (
-      (await priceImpactCheckbox.isVisible()) &&
-      !(await priceImpactCheckbox.isChecked())
-    ) {
-      await priceImpactCheckbox.check()
-    }
-  }
+  // const priceImpactCheckbox = page.locator(
+  //   '[testdata-id=price-impact-checkbox]',
+  // )
+  // while (!(await swapButton.isEnabled())) {
+  //   if (
+  //     (await priceImpactCheckbox.isVisible()) &&
+  //     !(await priceImpactCheckbox.isChecked())
+  //   ) {
+  //     await priceImpactCheckbox.check()
+  //   }
+  // }
+
+  await swapButton.isEnabled()
 
   await swapButton.click()
 
