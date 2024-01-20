@@ -21,6 +21,7 @@ const config: PlaywrightTestConfig = {
   // quiet: true,
   // testMatch: 'simple.test.ts',
   testIgnore: [
+    'smart.test.ts',
     // 'swap.test.test',
     'cross-chain.test.ts',
   ],

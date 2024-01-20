@@ -40,15 +40,28 @@ test.beforeEach(async ({ page, next }) => {
     await route.abort()
   })
 
+  await page.route('https://tokens.sushi.com/v0', async (route) => {
+    await route.fulfill({
+      json: [wnative, usdc, usdt, wbtc].map((token) => ({
+        id: token.id,
+        chainId: token.chainId,
+        address: token.address.toLowerCase(),
+        name: token.name,
+        symbol: token.symbol,
+        decimals: token.decimals
+      })),
+    })
+  })
+
   try {
     await interceptAnvil(page, next)
   } catch (error) {
     console.error('error intercepting anvil', error)
   }
 
-  next.onFetch(() => {
-    return 'continue'
-  })
+  // next.onFetch(() => {
+  //   return 'continue'
+  // })
 
   await page.goto(url)
   await switchNetwork(page, chainId)

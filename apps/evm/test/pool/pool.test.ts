@@ -155,9 +155,8 @@ test.beforeEach(async ({ page, next }) => {
           address: token.address.toLowerCase(),
           name: token.name,
           symbol: token.symbol,
-          decimals: token.decimals,
-          isCommon: false,
-          isFeeOnTransfer: false,
+          decimals: token.decimals
+          
         })),
       })
     })
@@ -878,7 +877,7 @@ async function handleToken(
   await rowSelector.click()
 
   // await expect token selector to contain symbol of selected token
-  await expect(tokenSelector).toContainText(currency.symbol)
+  await expect(tokenSelector).toContainText(currency.symbol as string)
 }
 
 async function switchNetwork(page: Page, chainId: number) {
