@@ -42,6 +42,10 @@ test.beforeEach(async ({ page, next }) => {
     console.error('error intercepting anvil', error)
   }
 
+  await page.route('http://localhost:3000/api/**/*', async (route) => {
+    await route.abort()
+  })
+
   next.onFetch(() => {
     return 'continue'
   })
