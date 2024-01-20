@@ -125,9 +125,7 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
       return reserveUSD / (Number(totalSupply) / 10 ** bond.quoteToken.decimals)
     }
 
-    return Number(
-      (prices[getAddress(bond.quoteToken.address)] || 0).toFixed(10),
-    )
+    return getTokenPrice(prices, bond.quoteToken.address)
   }, [prices, bond, poolData, vaultData])
 }
 

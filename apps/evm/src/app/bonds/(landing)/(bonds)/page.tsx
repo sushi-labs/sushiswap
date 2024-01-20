@@ -1,9 +1,8 @@
-import { BondsApiSchema } from '@sushiswap/client/api'
 import { Container } from '@sushiswap/ui'
 import React from 'react'
-import { BondsTableWrapper } from 'src/ui/bonds/bonds-table/bonds-table-wrapper'
 import {
   BondsFiltersProvider,
+  BondsTable,
   TableFiltersAuctionType,
   TableFiltersNetwork,
   TableFiltersOpenOnly,
@@ -11,9 +10,7 @@ import {
   TableFiltersResetButton,
 } from '../../../../ui/bonds'
 
-export default async function BondsPage({
-  searchParams,
-}: { searchParams: typeof BondsApiSchema._input }) {
+export default async function BondsPage() {
   return (
     <BondsFiltersProvider>
       <Container maxWidth="7xl" className="px-4">
@@ -24,7 +21,7 @@ export default async function BondsPage({
           <TableFiltersOpenOnly />
           <TableFiltersResetButton />
         </div>
-        <BondsTableWrapper params={searchParams} />
+        <BondsTable />
       </Container>
     </BondsFiltersProvider>
   )

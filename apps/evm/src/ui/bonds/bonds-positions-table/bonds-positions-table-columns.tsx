@@ -133,146 +133,149 @@ export const MATURITY_COLUMN: ColumnDef<BondPosition, unknown> = {
   },
 }
 
-export const CLAIM_COLUMN: ColumnDef<BondPosition, unknown> = {
-  id: 'claim',
-  header: 'Claim',
-  size: 130,
-  cell: (props) => {
-    const isMounted = useIsMounted()
+const CLAIM_CELL = ({ position }: { position: BondPosition }) => {
+  const isMounted = useIsMounted()
 
-    const position = props.row.original
+  const [claimed, setClaimed] = useState(BigInt(position.balance) === 0n)
+  const notMature = position.maturity * 1000 > Date.now()
+  const claimable = !claimed && !notMature
 
-    const [claimed, setClaimed] = useState(BigInt(position.balance) === 0n)
-    const notMature = position.maturity * 1000 > Date.now()
-    const claimable = !claimed && !notMature
+  const token = new Token(position.payoutToken)
+  const balance = Amount.fromRawAmount(token, position.balance)
 
-    const token = new Token(position.payoutToken)
-    const balance = Amount.fromRawAmount(token, props.row.original.balance)
+  const { chain } = useNetwork()
 
-    const { chain } = useNetwork()
+  const { address } = useAccount()
 
-    const { address } = useAccount()
-
-    const onSettled = useCallback(
-      (data: SendTransactionResult | undefined, error: Error | null) => {
-        if (error instanceof UserRejectedRequestError) {
-          createErrorToast(error?.message, true)
-        }
-        if (!data) return
-
-        const ts = new Date().getTime()
-        void createToast({
-          account: address,
-          type: 'mint',
-          chainId: position.chainId,
-          txHash: data.hash,
-          promise: waitForTransaction({ hash: data.hash }),
-          summary: {
-            pending: `Claiming bond (${balance.toSignificant(6)} ${
-              balance.currency.symbol
-            })`,
-            completed: `Claimed bond (${balance.toSignificant(6)} ${
-              balance.currency.symbol
-            })`,
-            failed: `Failed to claim bond (${balance.toSignificant(6)} ${
-              balance.currency.symbol
-            })`,
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
-        })
-      },
-      [address, balance, position.chainId],
-    )
-
-    const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-      if (!address || chain?.id !== position.chainId || !claimable) return {}
-
-      return {
-        to: position.tellerAddress,
-        data: encodeFunctionData({
-          abi: bondFixedTermTellerAbi,
-          functionName: 'redeem',
-          args: [BigInt(position.bondTokenId), BigInt(position.balance)],
-        }),
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (error instanceof UserRejectedRequestError) {
+        createErrorToast(error?.message, true)
       }
-    }, [
-      address,
-      chain?.id,
-      position.balance,
-      position.bondTokenId,
-      position.chainId,
-      position.tellerAddress,
-      claimable,
-    ])
+      if (!data) return
 
-    const { config, isError } = usePrepareSendTransaction({
-      ...prepare,
+      const ts = new Date().getTime()
+      void createToast({
+        account: address,
+        type: 'mint',
+        chainId: position.chainId,
+        txHash: data.hash,
+        promise: waitForTransaction({ hash: data.hash }),
+        summary: {
+          pending: `Claiming bond (${balance.toSignificant(6)} ${
+            balance.currency.symbol
+          })`,
+          completed: `Claimed bond (${balance.toSignificant(6)} ${
+            balance.currency.symbol
+          })`,
+          failed: `Failed to claim bond (${balance.toSignificant(6)} ${
+            balance.currency.symbol
+          })`,
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [address, balance, position.chainId],
+  )
+
+  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+    if (!address || chain?.id !== position.chainId || !claimable) return {}
+
+    return {
+      to: position.tellerAddress,
+      data: encodeFunctionData({
+        abi: bondFixedTermTellerAbi,
+        functionName: 'redeem',
+        args: [BigInt(position.bondTokenId), BigInt(position.balance)],
+      }),
+    }
+  }, [
+    address,
+    chain?.id,
+    position.balance,
+    position.bondTokenId,
+    position.chainId,
+    position.tellerAddress,
+    claimable,
+  ])
+
+  const { config, isError } = usePrepareSendTransaction({
+    ...prepare,
+    chainId: position.chainId,
+    enabled: Boolean(address && chain?.id === position.chainId && claimable),
+  })
+
+  const { sendTransactionAsync, isLoading: isWritePending } =
+    useSendTransaction({
+      ...config,
+      gas: config?.gas ? (config.gas * 105n) / 100n : undefined,
       chainId: position.chainId,
-      enabled: Boolean(address && chain?.id === position.chainId && claimable),
+      onSettled,
+      onSuccess: () => setClaimed(true),
     })
 
-    const { sendTransactionAsync, isLoading: isWritePending } =
-      useSendTransaction({
-        ...config,
-        gas: config?.gas ? (config.gas * 105n) / 100n : undefined,
-        chainId: position.chainId,
-        onSettled,
-        onSuccess: () => setClaimed(true),
-      })
-
-    return (
-      <div className="w-full flex justify-center">
-        {isMounted ? (
+  return (
+    <div className="w-full flex justify-center">
+      {isMounted ? (
+        <Checker.Guard
+          guardWhen={claimed}
+          guardText="Already Claimed"
+          size="sm"
+          variant="ghost"
+          className="text-xs"
+        >
           <Checker.Guard
-            guardWhen={claimed}
-            guardText="Already Claimed"
+            guardWhen={notMature}
+            guardText="Not Mature"
             size="sm"
             variant="ghost"
             className="text-xs"
           >
-            <Checker.Guard
-              guardWhen={notMature}
-              guardText="Not Mature"
+            <Checker.Network
+              chainId={position.chainId}
               size="sm"
-              variant="ghost"
-              className="text-xs"
+              variant="secondary"
+              className="text-xs whitespace-pre-line"
             >
-              <Checker.Network
-                chainId={position.chainId}
+              <Button
                 size="sm"
                 variant="secondary"
-                className="text-xs whitespace-pre-line"
+                className="text-xs"
+                fullWidth
+                loading={!sendTransactionAsync || isWritePending || !claimable}
+                onClick={() => sendTransactionAsync?.().then(() => confirm())}
               >
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="text-xs"
-                  fullWidth
-                  loading={
-                    !sendTransactionAsync || isWritePending || !claimable
-                  }
-                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                >
-                  {isError ? (
-                    'Shoot! Something went wrong :('
-                  ) : isWritePending ? (
-                    <Dots>Claiming</Dots>
-                  ) : (
-                    <>Claim</>
-                  )}
-                </Button>
-              </Checker.Network>
-            </Checker.Guard>
+                {isError ? (
+                  'Shoot! Something went wrong :('
+                ) : isWritePending ? (
+                  <Dots>Claiming</Dots>
+                ) : (
+                  <>Claim</>
+                )}
+              </Button>
+            </Checker.Network>
           </Checker.Guard>
-        ) : (
-          <Button size="sm" variant="secondary" className="text-xs" fullWidth>
-            Claim
-          </Button>
-        )}
-      </div>
-    )
-  },
+        </Checker.Guard>
+      ) : (
+        <Button size="sm" variant="secondary" className="text-xs" fullWidth>
+          Claim
+        </Button>
+      )}
+    </div>
+  )
+}
+
+export const CLAIM_COLUMN: ColumnDef<BondPosition, unknown> = {
+  id: 'claim',
+  header: 'Claim',
+  size: 130,
+  cell: (props) => (
+    <CLAIM_CELL
+      position={props.row.original}
+      key={props.row.original.bondTokenId}
+    />
+  ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

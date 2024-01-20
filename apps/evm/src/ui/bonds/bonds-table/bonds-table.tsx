@@ -1,16 +1,19 @@
 'use client'
 
-import { Bond } from '@sushiswap/client'
+import { Bond, getBonds, getBondsUrl } from '@sushiswap/client'
+import { BondsApiSchema } from '@sushiswap/client/api'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
-import React, { FC, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import React, { FC, useMemo, useState } from 'react'
 import {
   BOND_ASSET_COLUMN,
-  VESTING_COLUMN,
   DISCOUNT_COLUMN,
   ISSUER_COLUMN,
   PAYOUT_ASSET_COLUMN,
   PRICE_COLUMN,
+  VESTING_COLUMN,
 } from './bonds-table-columns'
 
 const COLUMNS = [
@@ -22,16 +25,21 @@ const COLUMNS = [
   ISSUER_COLUMN,
 ] satisfies ColumnDef<Bond, unknown>[]
 
-interface PositionsTableProps {
-  data: Bond[]
-  isLoading?: boolean
-  onRowClick?(row: Bond): void
-}
+const emptyArray: any[] = []
 
-export const BondsTable: FC<PositionsTableProps> = ({
-  data,
-  isLoading = false,
-}) => {
+export const BondsTable: FC = () => {
+  const searchParams = useSearchParams()
+
+  const args = useMemo(() => {
+    return BondsApiSchema.parse(Object.fromEntries(searchParams))
+  }, [searchParams])
+
+  const { data, isLoading } = useQuery({
+    queryKey: [getBondsUrl(args)],
+    queryFn: () => getBonds(args),
+    cacheTime: 0,
+  })
+
   const [sortingState, setSortingState] = useState<SortingState>([
     { id: 'discount', desc: true },
   ])
@@ -46,15 +54,17 @@ export const BondsTable: FC<PositionsTableProps> = ({
       <CardHeader>
         <CardTitle>
           Bonds{' '}
-          <span className="text-gray-400 dark:text-slate-500">
-            ({data?.length})
-          </span>
+          {data && (
+            <span className="text-gray-400 dark:text-slate-500">
+              ({data.length})
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <DataTable
         loading={isLoading}
         columns={COLUMNS}
-        data={data}
+        data={data || emptyArray}
         linkFormatter={(row) => `/bonds/${row.id}`}
         pagination={true}
         onPaginationChange={setPaginationState}
