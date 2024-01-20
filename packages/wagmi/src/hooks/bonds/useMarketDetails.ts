@@ -8,10 +8,15 @@ import {
 } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
 import { usePrices } from '@sushiswap/react-query'
+import {
+  getTotalSuppliesContracts,
+  getVaultsReservesContracts,
+} from '@sushiswap/steer-sdk'
 import { useMemo } from 'react'
+import { Fraction } from 'sushi'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
-import { getAddress } from 'viem'
+import { Address, getAddress } from 'viem'
 import { useContractReads } from 'wagmi'
 
 interface UseBondMarketDetails {
@@ -19,12 +24,18 @@ interface UseBondMarketDetails {
   enabled?: boolean
 }
 
+function getTokenPrice(prices: Record<string, Fraction>, token: Address) {
+  const tokenPriceFraction = prices[getAddress(token)]
+  if (!tokenPriceFraction) return undefined
+  return Number(tokenPriceFraction.toFixed(10))
+}
+
 function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
   const { data: prices } = usePrices({
     chainId: enabled ? bond.chainId : undefined,
   })
 
-  const { data } = useContractReads({
+  const { data: poolData } = useContractReads({
     allowFailure: false,
     contracts: [
       {
@@ -43,42 +54,81 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
     enabled: Boolean(enabled && bond.quoteToken.pool),
   })
 
+  const { data: vaultData } = useContractReads({
+    allowFailure: false,
+    contracts: [
+      getVaultsReservesContracts({
+        vaultIds: [bond.quoteToken.vault?.id || '0x'],
+      })[0],
+      getTotalSuppliesContracts({
+        vaultIds: [bond.quoteToken.vault?.id || '0x'],
+      })[0],
+    ],
+    enabled: Boolean(enabled && bond.quoteToken.vault),
+  })
+
+  console.log(poolData, vaultData)
+
   return useMemo(() => {
     if (!prices) {
       return undefined
     }
 
-    if (!bond.quoteToken.pool) {
-      return Number(
-        (prices[getAddress(bond.quoteToken.address)] || 0).toFixed(10),
-      )
+    if (bond.quoteToken.pool) {
+      if (!poolData) {
+        return undefined
+      }
+
+      const pool = bond.quoteToken.pool
+
+      const token0PriceUSD = getTokenPrice(prices, pool.token0.address)
+      const token1PriceUSD = getTokenPrice(prices, pool.token1.address)
+
+      if (!token0PriceUSD || !token1PriceUSD) return undefined
+
+      const [[reserve0, reserve1], totalSupply] = poolData
+
+      const reserve0USD =
+        (Number(reserve0) / 10 ** pool.token0.decimals) * token0PriceUSD
+      const reserve1USD =
+        (Number(reserve1) / 10 ** pool.token1.decimals) * token1PriceUSD
+
+      const lpTokenPriceUSD =
+        (reserve0USD + reserve1USD) /
+        (Number(totalSupply) / 10 ** bond.quoteToken.decimals)
+
+      return lpTokenPriceUSD
     }
 
-    if (!data) {
-      return undefined
+    if (bond.quoteToken.vault) {
+      if (!vaultData) {
+        return undefined
+      }
+
+      const vault = bond.quoteToken.vault
+
+      const token0PriceUSD = getTokenPrice(prices, vault.token0.address)
+      const token1PriceUSD = getTokenPrice(prices, vault.token1.address)
+
+      if (!token0PriceUSD || !token1PriceUSD) return undefined
+
+      const [{ amountToken0: reserve0, amountToken1: reserve1 }, totalSupply] =
+        vaultData
+
+      const reserve0USD =
+        (Number(reserve0) / 10 ** vault.token0.decimals) * token0PriceUSD
+      const reserve1USD =
+        (Number(reserve1) / 10 ** vault.token1.decimals) * token1PriceUSD
+
+      const reserveUSD = reserve0USD + reserve1USD
+
+      return reserveUSD / (Number(totalSupply) / 10 ** bond.quoteToken.decimals)
     }
 
-    const [[reserve0, reserve1], totalSupply] = data
-    const token0PriceUSD = Number(
-      prices?.[getAddress(bond.quoteToken.pool.token0.address)].toFixed(10),
+    return Number(
+      (prices[getAddress(bond.quoteToken.address)] || 0).toFixed(10),
     )
-    const token1PriceUSD = Number(
-      prices?.[getAddress(bond.quoteToken.pool.token1.address)].toFixed(10),
-    )
-
-    const reserve0USD =
-      (Number(reserve0) / 10 ** bond.quoteToken.pool.token0.decimals) *
-      token0PriceUSD
-    const reserve1USD =
-      (Number(reserve1) / 10 ** bond.quoteToken.pool.token1.decimals) *
-      token1PriceUSD
-
-    const lpTokenPriceUSD =
-      (reserve0USD + reserve1USD) /
-      (Number(totalSupply) / 10 ** bond.quoteToken.decimals)
-
-    return lpTokenPriceUSD
-  }, [prices, bond.quoteToken, data])
+  }, [prices, bond, poolData, vaultData])
 }
 
 export const useBondMarketDetails = ({

@@ -1147,6 +1147,9 @@ importers:
       '@sushiswap/graph-client':
         specifier: workspace:*
         version: link:../graph-client
+      '@sushiswap/steer-sdk':
+        specifier: workspace:*
+        version: link:../steer-sdk
       '@sushiswap/token-price-api':
         specifier: workspace:*
         version: link:../../apis/token-price
@@ -1677,9 +1680,6 @@ importers:
       '@steerprotocol/contracts':
         specifier: 2.1.0-beta.14
         version: 2.1.0-beta.14(squirrelly@8.0.8)(typescript@5.2.2)
-      '@sushiswap/client':
-        specifier: workspace:*
-        version: link:../client
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database

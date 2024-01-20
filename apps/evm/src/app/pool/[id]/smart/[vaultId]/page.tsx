@@ -1,4 +1,4 @@
-import { getSteerVault } from '@sushiswap/client'
+import { getSteerVault, getTokenPricesChain } from '@sushiswap/client'
 import { SteerVault } from '@sushiswap/client'
 import { getSteerVaultPositions, getTokenRatios } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
@@ -57,7 +57,10 @@ function getAdjustment(vault: SteerVault): SteerStrategyGeneric['adjustment'] {
 
 async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
   const priceExtremes = getPriceExtremes(vault)
-  const tokenRatios = await getTokenRatios(vault)
+  const tokenRatios = await getTokenRatios({
+    vault,
+    prices: await getTokenPricesChain({ chainId: vault.chainId }),
+  })
   const adjustment = getAdjustment(vault)
   const positions =
     (await getSteerVaultPositions({

@@ -1,5 +1,6 @@
 import {
   BONDS_SUBGRAPH_URL,
+  type BondChainId,
   getBondDiscount,
   getMarketIdFromChainIdAuctioneerMarket,
   getMarketsPrices,
@@ -9,21 +10,140 @@ import {
   type BondMarketsQueryVariables,
   getBuiltGraphSDK,
 } from '@sushiswap/graph-client'
+import { getSteerVaultReserves, getTotalSupply } from '@sushiswap/steer-sdk'
 import { config } from '@sushiswap/viem-config'
 import {
   getChainIdAddressFromId,
   getIdFromChainIdAddress,
   isPromiseFulfilled,
 } from 'sushi'
-import { createPublicClient, getAddress } from 'viem'
+import { type Address, createPublicClient, getAddress } from 'viem'
 import { type BondsApiSchema } from '../../../pure/bonds/bonds/schema'
-import { getPools } from '../../../pure/pools/pools/pools'
+import { type Pools, getPools } from '../../../pure/pools/pools/pools'
+import {
+  type SteerVaults,
+  getSteerVaults,
+} from '../../../pure/steer-vault/vaults/vaults'
 import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/tokenPricesChain'
 import { convertAuctionTypes } from '../common'
 import { BondSchema } from '../schema'
 
 const isOpen = (start: bigint | null, end: bigint | null) =>
   (!start || Date.now() / 1000 > start) && end && Date.now() / 1000 < end
+
+async function getQuoteToken({
+  bond,
+  prices,
+  pools,
+  vaults,
+}: {
+  bond: (typeof BondSchema)['_output']
+  prices: Awaited<ReturnType<typeof getTokenPricesChainV2>>
+  pools: Pools
+  vaults: SteerVaults
+}) {
+  const quotePool = pools.find(
+    (p) => p.address === bond.quoteToken.address.toLowerCase(),
+  )
+
+  const base = {
+    ...bond.quoteToken,
+    id: getIdFromChainIdAddress(bond.chainId, bond.quoteToken.address),
+    decimals: Number(bond.quoteToken.decimals),
+    chainId: bond.chainId,
+    pool: undefined,
+    vault: undefined,
+  }
+
+  if (quotePool) {
+    const priceUSD =
+      Number(quotePool.liquidityUSD) /
+      (Number(quotePool.totalSupply) / 10 ** Number(bond.quoteToken.decimals))
+
+    return {
+      ...base,
+      priceUSD,
+      pool: {
+        poolId: quotePool.id,
+        token0: {
+          ...quotePool.token0,
+          address: quotePool.token0.address as Address,
+          chainId: bond.chainId,
+        },
+        token1: {
+          ...quotePool.token1,
+          address: quotePool.token1.address as Address,
+          chainId: bond.chainId,
+        },
+        liquidity: Number(quotePool.totalSupply),
+        liquidityUSD: Number(quotePool.liquidityUSD),
+        protocol: quotePool.protocol,
+      },
+    }
+  }
+
+  const quoteVault = vaults.find(
+    (v) => v.address === bond.quoteToken.address.toLowerCase(),
+  )
+
+  if (quoteVault) {
+    const client = createPublicClient(config[bond.chainId as BondChainId])
+    const vaultId = getIdFromChainIdAddress(
+      bond.chainId,
+      quoteVault.address as Address,
+    )
+
+    const [{ reserve0, reserve1 }, totalSupply] = await Promise.all([
+      getSteerVaultReserves({ client, vaultId }),
+      getTotalSupply({ client, vaultId }),
+    ])
+
+    const token0PriceUSD = prices[getAddress(quoteVault.token0.address)]
+    const token1PriceUSD = prices[getAddress(quoteVault.token1.address)]
+
+    if (!token0PriceUSD || !token1PriceUSD)
+      throw new Error(`Missing token prices for vaultId: ${vaultId}`)
+
+    const reserve0USD =
+      (Number(reserve0) / 10 ** quoteVault.token0.decimals) * token0PriceUSD
+    const reserve1USD =
+      (Number(reserve1) / 10 ** quoteVault.token1.decimals) * token1PriceUSD
+
+    const reserveUSD = reserve0USD + reserve1USD
+
+    const priceUSD = reserveUSD / (Number(totalSupply) / 10 ** base.decimals)
+
+    return {
+      ...base,
+      name: 'Steer Vault',
+      symbol: 'STEER',
+      priceUSD,
+      vault: {
+        id: vaultId,
+        poolId: quoteVault.pool.id,
+        token0: {
+          ...quoteVault.token0,
+          address: quoteVault.token0.address as Address,
+          chainId: bond.chainId,
+          priceUSD: token0PriceUSD,
+        },
+        token1: {
+          ...quoteVault.token1,
+          address: quoteVault.token1.address as Address,
+          chainId: bond.chainId,
+          priceUSD: token1PriceUSD,
+        },
+      },
+    }
+  }
+
+  const priceUSD = prices[getAddress(bond.quoteToken.address)]
+
+  return {
+    ...base,
+    priceUSD,
+  }
+}
 
 export async function getBondsFromSubgraph(
   args: typeof BondsApiSchema._output,
@@ -41,7 +161,6 @@ export async function getBondsFromSubgraph(
       auctioneer_in: auctioneers,
       marketId_in: marketIdFilter,
       hasClosed: args.onlyOpen ? false : null,
-      // owner_in: args.issuerIds || null,
       type_in: auctionTypes,
     },
   } satisfies BondMarketsQueryVariables
@@ -135,12 +254,18 @@ export async function getBondsFromSubgraph(
         }),
       )
 
-      const [marketPricesS, poolsS] = await Promise.allSettled([
+      const [marketPricesS, poolsS, vaultsS] = await Promise.allSettled([
         getMarketsPrices({
           client: createPublicClient(config[chainId]),
           marketIds,
         }),
         getPools({
+          chainIds: [chainId],
+          ids: bondsParsed.map((bond) =>
+            getIdFromChainIdAddress(chainId, bond.quoteToken.address),
+          ),
+        }),
+        getSteerVaults({
           chainIds: [chainId],
           ids: bondsParsed.map((bond) =>
             getIdFromChainIdAddress(chainId, bond.quoteToken.address),
@@ -153,22 +278,16 @@ export async function getBondsFromSubgraph(
 
       const marketPrices = marketPricesS.value
       const pools = isPromiseFulfilled(poolsS) ? poolsS.value : []
+      const vaults = isPromiseFulfilled(vaultsS) ? vaultsS.value : []
 
-      return bondsParsed
-        .flatMap((bond, i) => {
-          const quotePool = pools.find(
-            (p) => p.address === bond.quoteToken.address.toLowerCase(),
-          )
-
-          let quoteTokenPriceUSD: number | undefined
-          if (quotePool) {
-            quoteTokenPriceUSD =
-              Number(quotePool.liquidityUSD) /
-              (Number(quotePool.totalSupply) /
-                10 ** Number(bond.quoteToken.decimals))
-          } else {
-            quoteTokenPriceUSD = prices[getAddress(bond.quoteToken.address)]
-          }
+      const processed = Promise.allSettled(
+        bondsParsed.flatMap(async (bond, i) => {
+          const quoteToken = await getQuoteToken({
+            bond,
+            prices,
+            pools,
+            vaults,
+          })
 
           const payoutTokenPriceUSD =
             prices[getAddress(bond.payoutToken.address)]
@@ -189,35 +308,12 @@ export async function getBondsFromSubgraph(
           )
 
           if (
-            !quoteTokenPriceUSD ||
+            !quoteToken.priceUSD ||
             !payoutTokenPriceUSD ||
             !marketPrice ||
             !bond.scale
           )
             return []
-
-          const quoteToken = {
-            ...bond.quoteToken,
-            id: getIdFromChainIdAddress(chainId, bond.quoteToken.address),
-            decimals: Number(bond.quoteToken.decimals),
-            chainId,
-            priceUSD: quoteTokenPriceUSD,
-            pool: quotePool
-              ? {
-                  token0: {
-                    ...quotePool.token0,
-                    chainId,
-                  },
-                  token1: {
-                    ...quotePool.token1,
-                    chainId,
-                  },
-                  liquidity: Number(quotePool.totalSupply),
-                  liquidityUSD: Number(quotePool.liquidityUSD),
-                  protocol: quotePool.protocol,
-                }
-              : null,
-          }
 
           const { discount, discountedPrice, quoteTokensPerPayoutToken } =
             getBondDiscount({
@@ -228,7 +324,7 @@ export async function getBondsFromSubgraph(
                 decimals: Number(bond.payoutToken.decimals),
               },
               quoteToken: {
-                priceUSD: quoteTokenPriceUSD,
+                priceUSD: quoteToken.priceUSD,
                 decimals: Number(bond.quoteToken.decimals),
               },
             })
@@ -278,14 +374,22 @@ export async function getBondsFromSubgraph(
             totalBondedAmount: bond.totalBondedAmount,
             totalPayoutAmount: bond.totalPayoutAmount,
           }
-        })
-        .filter((bond) => {
-          if (typeof args.onlyDiscounted !== 'undefined') {
-            return args.onlyDiscounted ? bond.discount > 0 : true
-          }
+        }),
+      )
 
-          return true
-        })
+      const processedAwaited = (await processed).flatMap((bond) => {
+        if (isPromiseFulfilled(bond)) return bond.value
+        console.error(bond.reason)
+        return []
+      })
+
+      return processedAwaited.filter((bond) => {
+        if (typeof args.onlyDiscounted !== 'undefined') {
+          return args.onlyDiscounted ? bond.discount > 0 : true
+        }
+
+        return true
+      })
     }),
   )
 

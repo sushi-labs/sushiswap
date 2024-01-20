@@ -66,6 +66,7 @@
   },
   "dependencies": {
     "@sushiswap/bonds-sdk": "workspace:*",
+    "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/token-price-api": "workspace:*",

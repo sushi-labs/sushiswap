@@ -132,9 +132,17 @@ export const BOND_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
   cell: (props) => {
     const row = props.row.original
 
-    if (row.quoteToken.pool) {
-      const token0 = new Token(row.quoteToken.pool.token0)
-      const token1 = new Token(row.quoteToken.pool.token1)
+    if (row.quoteToken.pool || row.quoteToken.vault) {
+      let token0: Token
+      let token1: Token
+
+      if (row.quoteToken.pool) {
+        token0 = new Token(row.quoteToken.pool.token0)
+        token1 = new Token(row.quoteToken.pool.token1)
+      } else {
+        token0 = new Token(row.quoteToken.vault.token0)
+        token1 = new Token(row.quoteToken.vault.token1)
+      }
 
       return (
         <div className="flex items-center gap-3">
