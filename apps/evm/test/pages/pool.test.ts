@@ -883,6 +883,9 @@ async function handleToken(
   )
   await expect(rowSelector).toBeVisible()
   await rowSelector.click()
+
+  // await expect token selector to contain symbol of selected token
+  await expect(tokenSelector).toContainText(currency.symbol)
 }
 
 async function switchNetwork(page: Page, chainId: number) {
