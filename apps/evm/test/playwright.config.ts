@@ -20,7 +20,10 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   // quiet: true,
   // testMatch: 'pool.test.ts',
-  testIgnore: 'cross-chain-swap.test.ts',
+  testIgnore: [
+    // 'swap.test.test',
+    'cross-chain.test.ts'
+  ],
   /* Maximum time one test can run for. Defaults to 30s. */
   timeout: 180_000,
   expect: {
