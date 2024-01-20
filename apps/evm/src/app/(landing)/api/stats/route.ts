@@ -96,7 +96,12 @@ const getBentoTvl = async () => {
 const getV3Data = async () => {
   const sdk = getBuiltGraphSDK()
   const { factories } = await sdk.V3Factories({
-    chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+    chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.filter(
+      (c) =>
+        !DISABLED_ANALYTICS_CHAIN_IDS.includes(
+          c as typeof DISABLED_ANALYTICS_CHAIN_IDS[number],
+        ),
+    ),
   })
 
   return factories.reduce<ExchangeData>(
