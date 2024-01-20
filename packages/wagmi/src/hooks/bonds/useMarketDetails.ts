@@ -56,18 +56,18 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
 
   const { data: vaultData } = useContractReads({
     allowFailure: false,
-    contracts: [
-      getVaultsReservesContracts({
-        vaultIds: [bond.quoteToken.vault?.id || '0x'],
-      })[0],
-      getTotalSuppliesContracts({
-        vaultIds: [bond.quoteToken.vault?.id || '0x'],
-      })[0],
-    ],
+    contracts: bond.quoteToken.vault
+      ? [
+          getVaultsReservesContracts({
+            vaultIds: [bond.quoteToken.vault.id],
+          })?.[0],
+          getTotalSuppliesContracts({
+            vaultIds: [bond.quoteToken.vault.id],
+          })[0],
+        ]
+      : [],
     enabled: Boolean(enabled && bond.quoteToken.vault),
   })
-
-  console.log(poolData, vaultData)
 
   return useMemo(() => {
     if (!prices) {

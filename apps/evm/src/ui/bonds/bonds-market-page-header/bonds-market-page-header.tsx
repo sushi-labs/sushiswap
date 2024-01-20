@@ -5,6 +5,7 @@ import { Currency, LinkInternal } from '@sushiswap/ui'
 import { classNames } from '@sushiswap/ui'
 import { Button, LinkExternal, typographyVariants } from '@sushiswap/ui'
 import { formatDistance } from 'date-fns'
+import Link from 'next/link'
 import { shortenAddress } from 'sushi'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
@@ -25,6 +26,75 @@ const VestingTerm = ({ bond }: { bond: Bond }) => (
   </div>
 )
 
+const QuoteToken = ({ bond }: { bond: Bond }) => {
+  const quoteToken = new Token(bond.quoteToken)
+
+  if (bond.quoteToken.pool || bond.quoteToken.vault) {
+    const token0 = new Token(
+      bond.quoteToken.pool?.token0 || bond.quoteToken.vault!.token0,
+    )
+    const token1 = new Token(
+      bond.quoteToken.pool?.token1 || bond.quoteToken.vault!.token1,
+    )
+
+    let link: string | undefined = ''
+
+    if (bond.quoteToken.pool) {
+      link = `/pool/${bond.quoteToken.pool.poolId}`
+    } else if (bond.quoteToken.vault) {
+      link = `/pool/${bond.quoteToken.vault.poolId}/smart/${bond.quoteToken.vault.id}`
+    }
+
+    return (
+      <>
+        <Currency.IconList iconHeight={36} iconWidth={36}>
+          <Currency.Icon disableLink currency={token0} />
+          <Currency.Icon disableLink currency={token1} />
+        </Currency.IconList>
+        <Link href={link}>
+          <Button
+            asChild
+            variant="link"
+            className={typographyVariants({
+              variant: 'h1',
+              className:
+                'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50',
+            })}
+          >
+            {token0.symbol}/{token1.symbol}:
+          </Button>
+        </Link>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <Currency.IconList iconHeight={36} iconWidth={36}>
+        <Currency.Icon currency={quoteToken} />
+      </Currency.IconList>
+      <LinkExternal
+        target="_blank"
+        href={Chain.from(quoteToken.chainId)?.getTokenUrl(
+          quoteToken.wrapped.address,
+        )}
+      >
+        <Button
+          asChild
+          variant="link"
+          className={typographyVariants({
+            variant: 'h1',
+            className:
+              'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
+          })}
+        >
+          {quoteToken.symbol}:
+        </Button>
+      </LinkExternal>
+    </>
+  )
+}
+
 export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
   const bond = await getBond({
     marketId: id,
@@ -43,25 +113,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
           ← Bonds
         </LinkInternal>
         <div className="relative flex items-center gap-3 max-w-[100vh]">
-          <Currency.Icon width={36} height={36} currency={quoteToken} />
-          <LinkExternal
-            target="_blank"
-            href={Chain.from(quoteToken.chainId)?.getTokenUrl(
-              quoteToken.wrapped.address,
-            )}
-          >
-            <Button
-              asChild
-              variant="link"
-              className={typographyVariants({
-                variant: 'h1',
-                className:
-                  'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
-              })}
-            >
-              {quoteToken.symbol}:
-            </Button>
-          </LinkExternal>
+          <QuoteToken bond={bond} />
           <Currency.Icon width={36} height={36} currency={payoutToken} />
           <LinkExternal
             target="_blank"
