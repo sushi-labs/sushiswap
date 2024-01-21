@@ -371,10 +371,14 @@ export class Extractor {
       const res = prefetchedAll
         .concat(
           fetchedAll.map((p) => {
-            if (p === undefined) return undefined
-            if (p instanceof PoolCode) return p
-            if (p instanceof UniV3PoolWatcher) return p.getPoolCode()
-            if (p instanceof AlgebraPoolWatcher) return p.getPoolCode()
+            if (p.status === 'fulfilled') {
+              const value = p.value
+              if (value === undefined) return undefined
+              if (value instanceof PoolCode) return value
+              if (value instanceof UniV3PoolWatcher) return value.getPoolCode()
+              if (value instanceof AlgebraPoolWatcher)
+                return value.getPoolCode()
+            }
           }),
         )
         .filter((p) => p !== undefined) as PoolCode[]

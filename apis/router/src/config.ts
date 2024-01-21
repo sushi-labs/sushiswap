@@ -1,10 +1,16 @@
-export const POOL_FETCH_TIMEOUT = 2_000
+// If token is unknown - how much ms to wait it's pools from the extractor
+export const POOL_FETCH_TIMEOUT = 3_000
 
+// If extractor is not available - stop to provide routing after this time (ms)
 export const MAX_TIME_WITHOUT_NETWORK_UPDATE = 120_000
 
+// How often to update pools from extractor
 export const POOL_UPDATE_INTERVAL = 10_000
+
+// How often to update requested pairs from extractor
 export const REQUESTED_PAIRS_UPDATE_INTERVAL = 10_000 // TODO: make it less frequent
 
+// What port to listen
 export const PORT = process.env['PORT'] || 80
 
 export const SENTRY_DSN = process.env['SENTRY_DSN'] as string
