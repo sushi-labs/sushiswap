@@ -37,11 +37,11 @@ export const v3factoriesByChainIds: QueryResolvers['v3factoriesByChainIds'] =
             info,
           }).then((factories: SUSHISWAP_V3_Factory[]) => {
             return factories?.length > 0
-            ? factories.map((factory) => ({
-                ...factory,
-                chainId,
-              }))
-            : []
+              ? factories.map((factory) => ({
+                  ...factory,
+                  chainId,
+                }))
+              : []
           })
         }),
     ).then((promiseSettledResults) => {
