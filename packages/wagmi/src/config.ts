@@ -1,21 +1,16 @@
 import { captureMessage } from '@sentry/nextjs'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { createConfig } from 'wagmi'
+import { createConfig, configureChains } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { SafeConnector } from 'wagmi/connectors/safe'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
-import { configureChains } from '@wagmi/core'
-
-export const configureProductionChains = () =>
-  configureChains(allChains, allProviders, {
+export const createProductionConfig = () => {
+  const { chains, publicClient } = configureChains(allChains, allProviders, {
     pollingInterval: 4_000,
   })
-
-export const createProductionConfig = () => {
-  const { chains, publicClient } = configureProductionChains()
   return createConfig({
     publicClient,
     logger: {

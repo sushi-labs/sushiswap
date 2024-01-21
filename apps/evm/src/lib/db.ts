@@ -1,17 +1,11 @@
 import { createClient } from '@sushiswap/database'
-import {
-  configureProductionChains,
-  configureTestChains,
-} from '@sushiswap/wagmi/configure'
 import type { Address } from '@wagmi/core'
-import { createConfig, fetchToken } from '@wagmi/core'
-
+import { createConfig, configureChains, fetchToken } from '@wagmi/core'
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 // import * as defaultTokenList from '@sushiswap/default-token-list' assert { type: 'json' }
 
 const { publicClient } =
-  process.env.NEXT_PUBLIC_APP_ENV === 'test'
-    ? configureTestChains()
-    : configureProductionChains()
+  configureChains(allChains, allProviders)
 createConfig({
   autoConnect: true,
   publicClient,

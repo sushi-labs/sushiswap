@@ -1,9 +1,7 @@
-import {
-  configureProductionChains,
-  configureTestChains,
-} from '@sushiswap/wagmi/configure'
+import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address } from '@wagmi/core'
 import {
+  configureChains,
   createConfig,
   erc20ABI,
   fetchBalance,
@@ -13,9 +11,7 @@ import zip from 'lodash.zip'
 import { z } from 'zod'
 
 const { publicClient } =
-  process.env.NEXT_PUBLIC_APP_ENV === 'test'
-    ? configureTestChains()
-    : configureProductionChains()
+  configureChains(allChains, allProviders)
 createConfig({
   autoConnect: true,
   publicClient,

@@ -3,8 +3,7 @@ import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { http, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 
-import { configureChains } from '@wagmi/core'
-import { createConfig } from 'wagmi'
+import { createConfig, configureChains } from 'wagmi'
 
 import { accounts, testChains } from './constants'
 
@@ -23,8 +22,8 @@ const testWalletIndex = Number(
 
 const localHttpUrl = `http://127.0.0.1:${anvilPort}`
 
-export const configureTestChains = () =>
-  configureChains(
+export const createTestConfig = () => {
+  const { publicClient } = configureChains(
     testChains,
     [
       jsonRpcProvider({
@@ -37,9 +36,6 @@ export const configureTestChains = () =>
       pollingInterval: 1_000,
     },
   )
-
-export const createTestConfig = () => {
-  const { publicClient } = configureTestChains()
   const mockConnector = new MockConnector({
     options: {
       walletClient: createWalletClient({
