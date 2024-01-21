@@ -4,8 +4,7 @@ import { createConfig, configureChains, fetchToken } from '@wagmi/core'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 // import * as defaultTokenList from '@sushiswap/default-token-list' assert { type: 'json' }
 
-const { publicClient } =
-  configureChains(allChains, allProviders)
+const { publicClient } = configureChains(allChains, allProviders)
 createConfig({
   autoConnect: true,
   publicClient,

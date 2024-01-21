@@ -10,8 +10,7 @@ import {
 import zip from 'lodash.zip'
 import { z } from 'zod'
 
-const { publicClient } =
-  configureChains(allChains, allProviders)
+const { publicClient } = configureChains(allChains, allProviders)
 createConfig({
   autoConnect: true,
   publicClient,
