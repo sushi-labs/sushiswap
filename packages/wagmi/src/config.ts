@@ -1,6 +1,6 @@
 import { captureMessage } from '@sentry/nextjs'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { createConfig, configureChains } from 'wagmi'
+import { configureChains, createConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'

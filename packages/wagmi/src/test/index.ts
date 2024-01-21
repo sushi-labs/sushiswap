@@ -3,7 +3,7 @@ import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { http, createWalletClient } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 
-import { createConfig, configureChains } from 'wagmi'
+import { configureChains, createConfig } from 'wagmi'
 
 import { accounts, testChains } from './constants'
 
