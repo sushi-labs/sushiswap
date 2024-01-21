@@ -24,6 +24,9 @@
       "./src/future/*.tsx",
       "./src/future/*/index.ts",
       "./src/future/*/index.tsx"
+    ],
+    "./configure": [
+      "./src/configure.ts"
     ]
   },
   "typesVersions": {

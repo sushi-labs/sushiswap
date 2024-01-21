@@ -9,6 +9,11 @@ const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...defaultNextConfig,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   transpilePackages: ['@sushiswap/wagmi'],
   async redirects() {
     return [
@@ -56,16 +61,6 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'config.sushi.com',
-          },
-        ],
-        destination: '/api/config/:path*',
-      },
       {
         source: '/academy',
         destination: `${ACADEMY_URL}/academy`,

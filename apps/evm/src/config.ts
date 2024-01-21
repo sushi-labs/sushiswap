@@ -68,7 +68,7 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     !DISABLED_CHAIN_IDS.includes(c as typeof DISABLED_CHAIN_IDS[number]),
 )
 
-const DISABLED_ANALYTICS_CHAIN_IDS = [
+export const DISABLED_ANALYTICS_CHAIN_IDS = [
   ChainId.BOBA_AVAX,
   ChainId.KAVA,
   ChainId.MOONRIVER,

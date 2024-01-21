@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getUser } from 'src/lib/api'
+import { getUser } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
 import { z } from 'zod'
 
