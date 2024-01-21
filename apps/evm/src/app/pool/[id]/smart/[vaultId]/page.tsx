@@ -82,7 +82,7 @@ export default async function SteerVaultPage({
 }: { params: { vaultId: string } }) {
   const vaultId = unsanitize(params.vaultId)
 
-  const vault: SteerVault = await unstable_cache(
+  const vault = await unstable_cache(
     () => getSteerVault(vaultId),
     ['steer-vault', vaultId],
     { revalidate: 60 * 15 },

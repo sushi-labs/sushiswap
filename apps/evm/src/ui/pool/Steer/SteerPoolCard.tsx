@@ -60,7 +60,16 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
             </StatValue>
           </Stat>
           <div className="h-[200px] rounded-xl flex items-center justify-center">
-            <SteerAPRChart vault={vault} />
+            {!vault.isDeprecated ? (
+              <SteerAPRChart vault={vault} />
+            ) : (
+              <div className="text-center text-red dark:text-red-600">
+                <div className=" font-medium">This vault is deprecated.</div>
+                <div className="text-sm">
+                  It might not accrue any fees and won{"'"}t be readjusted.
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
         <Separator />

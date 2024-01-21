@@ -60,6 +60,14 @@ export default async function Layout({
           {' '}
           <div className="flex flex-col gap-4">
             <Container maxWidth="5xl" className="px-2 sm:px-4">
+              {vault.isDeprecated && (
+                <div className="text-center text-red dark:text-red-600 w-full">
+                  <div className=" font-medium">This vault is deprecated.</div>
+                  <div className="text-sm">
+                    {"It might not accrue any fees and won't be readjusted."}
+                  </div>
+                </div>
+              )}
               <LinkInternal
                 href={`/pool/${params.id}/smart`}
                 className="text-sm text-blue hover:underline"

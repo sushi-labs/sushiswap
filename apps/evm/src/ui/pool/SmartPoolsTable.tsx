@@ -140,7 +140,7 @@ const COLUMNS = [
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-                        🧑�🌾{' '}
+                        🧑🌾{' '}
                         {incentives.length > 1
                           ? `x ${incentives.length}`
                           : ''}{' '}
@@ -164,6 +164,11 @@ const COLUMNS = [
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              {original.isDeprecated && (
+                <div className="bg-red/50 dark:bg-red/80 text-[10px] px-2 rounded-full">
+                  Deprecated
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -541,7 +546,7 @@ export const SmartPoolsTable = () => {
       chainIds: chainIds,
       orderBy: 'reserveUSD',
       orderDir: 'desc',
-      isEnabled: true,
+      onlyEnabled: true,
     },
   })
 

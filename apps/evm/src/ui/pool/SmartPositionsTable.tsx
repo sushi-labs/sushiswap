@@ -90,7 +90,6 @@ export const SmartPositionsTable = () => {
 
   const _positions = useMemo(() => (positions ? positions : []), [positions])
 
-  console.log(_positions)
   return (
     <Card>
       <CardHeader>

@@ -201,13 +201,11 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
               <SteerLiquidityInRangeChip vault={vault} />
             </div>
           </CardHeader>
-          <div className="px-6">
-            <div className="h-[200px] w-full bg-secondary rounded-xl flex items-center justify-center">
-              <SteerStrategyLiquidityDistribution
-                pool={vault.pool}
-                positions={positions}
-              />
-            </div>
+          <div className="px-6 h-[200px] w-full">
+            <SteerStrategyLiquidityDistribution
+              pool={vault.pool}
+              positions={positions}
+            />
           </div>
           <div className="grid grid-cols-2">
             <Stat className="p-6">
