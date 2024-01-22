@@ -7,8 +7,8 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const RPS = 1
-const TEST_MODE = TestMode.ONE_UNKNOWN_TOKEN
+const RPS = 5
+const TEST_MODE = TestMode.KNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
 const routerServer = 'http://localhost:1338'

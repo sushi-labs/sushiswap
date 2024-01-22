@@ -84,7 +84,7 @@ export class ExtractorClient {
         console.log(
           `updatePools: ${this.poolCodesMap.size} pools and ${
             this.tokenMap.size
-          } tokens (${performance.now() - start}ms cpu time)`,
+          } tokens (${Math.round(performance.now() - start)}ms cpu time)`,
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
@@ -119,9 +119,9 @@ export class ExtractorClient {
           pairs += set.length
         }
         console.log(
-          `requested pairs update: ${pairs} pairs (${
-            performance.now() - start
-          }ms) cpu time`,
+          `requested pairs update: ${pairs} pairs (${Math.round(
+            performance.now() - start,
+          )}ms) cpu time`,
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {

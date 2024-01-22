@@ -14,6 +14,7 @@ import {
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
 } from './config'
+import { CPUUsageStatistics } from './cpu-usage-statistics'
 import { swapV3_2 } from './handlers/swap'
 import requestStatistics from './request-statistics'
 
@@ -45,6 +46,9 @@ Sentry.init({
 })
 
 requestStatistics.start()
+
+const cpuUsageStatistics = new CPUUsageStatistics(60_000)
+cpuUsageStatistics.start()
 
 // RequestHandler creates a separate execution context, so that all
 // transactions/spans/breadcrumbs are isolated across requests
