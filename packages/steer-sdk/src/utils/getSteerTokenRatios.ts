@@ -1,4 +1,4 @@
-import { getTokenPricesChain } from '@sushiswap/client'
+import { TOKEN_PRICE_API } from '@sushiswap/client'
 
 interface GetTokenRatiosProps {
   chainId: number
@@ -17,7 +17,9 @@ interface GetTokenRatiosProps {
 async function getTokenRatios(vault: GetTokenRatiosProps) {
   let prices
   try {
-    prices = await getTokenPricesChain({ chainId: vault.chainId })
+    prices = await fetch(`${TOKEN_PRICE_API}/api/v2/${vault.chainId}`).then(
+      (data) => data.json(),
+    )
   } catch (_e) {
     return { token0: 0, token1: 0 }
   }

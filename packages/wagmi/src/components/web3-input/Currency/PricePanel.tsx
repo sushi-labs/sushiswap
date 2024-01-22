@@ -27,7 +27,10 @@ export const PricePanel: FC<PricePanel> = ({
   )
   const [big, portion] = (
     parsedValue && price
-      ? `${parsedValue.multiply(price.asFraction).toFixed(2)}`
+      ? `${price.asFraction
+          .multiply(parsedValue)
+          .divide(10 ** parsedValue.currency.decimals)
+          .toFixed(2)}`
       : '0.00'
   ).split('.')
 

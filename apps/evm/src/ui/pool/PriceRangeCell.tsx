@@ -12,7 +12,7 @@ import {
   getPriceOrderingFromPositionForUI,
 } from 'src/lib/functions'
 import { usePriceInverter } from 'src/lib/hooks'
-import useIsTickAtLimit from 'src/lib/hooks/useIsTickAtLimit'
+import { useIsTickAtLimit } from 'src/lib/pool/v3'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
   ({ original }) => {

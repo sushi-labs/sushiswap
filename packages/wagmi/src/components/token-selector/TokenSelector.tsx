@@ -2,7 +2,11 @@
 
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { useCustomTokens, usePinnedTokens } from '@sushiswap/hooks'
+import {
+  DEFAULT_BASES,
+  useCustomTokens,
+  usePinnedTokens,
+} from '@sushiswap/hooks'
 import {
   useBalances,
   useOtherTokenListsQuery,
@@ -119,13 +123,24 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   })
 
   const pinnedTokens = useMemo(() => {
-    return (pinnedTokenMap?.[chainId] ?? [])
+    const pinned = (pinnedTokenMap?.[chainId] ?? [])
       .map((id) => {
         const [, address] = id.split(':')
         if (address === 'NATIVE') return Native.onChain(chainId)
         return tokenMap?.[address] || customTokenMap?.[address]
       })
       .filter((token): token is Token => !!token)
+      .map((token) => ({
+        token,
+        isDefault: false,
+      }))
+
+    const defaults = (DEFAULT_BASES[chainId] ?? []).map((token) => ({
+      token: token,
+      isDefault: true,
+    }))
+
+    return [...defaults, ...pinned]
   }, [pinnedTokenMap, tokenMap, chainId, customTokenMap])
 
   const _onSelect = useCallback(
@@ -193,7 +208,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
         {pinnedTokens.length > 0 && !hidePinnedTokens ? (
           <div className="flex flex-wrap gap-2">
-            {pinnedTokens.map((token) => (
+            {pinnedTokens.map(({ token, isDefault }) => (
               <div key={token.id} className="group">
                 <Button
                   size="sm"
@@ -210,16 +225,18 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                     disableLink
                   />
                   {token.symbol}
-                  <IconButton
-                    size="xs"
-                    name="remove"
-                    icon={XMarkIcon}
-                    variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      _onPin(token.id)
-                    }}
-                  />
+                  {!isDefault && (
+                    <IconButton
+                      size="xs"
+                      name="remove"
+                      icon={XMarkIcon}
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        _onPin(token.id)
+                      }}
+                    />
+                  )}
                 </Button>
               </div>
             ))}
