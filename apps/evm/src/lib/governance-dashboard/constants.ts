@@ -20,7 +20,11 @@ export const DATE_FILTERS = {
   key: 'dateFilter',
   options: [
     { key: 'month', title: 'Last Month', seconds: 60 * 60 * 24 * 30 },
-    { key: 'quarter', title: 'Last Quarter', seconds: (60 * 60 * 24 * 365) / 4 },
+    {
+      key: 'quarter',
+      title: 'Last Quarter',
+      seconds: (60 * 60 * 24 * 365) / 4,
+    },
     { key: 'year', title: 'Last Year', seconds: 60 * 60 * 24 * 365 },
     { key: 'all', title: 'All Time', seconds: null },
   ],

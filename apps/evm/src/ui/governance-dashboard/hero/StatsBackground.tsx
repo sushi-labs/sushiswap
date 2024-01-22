@@ -34,7 +34,15 @@ export function StatsBackground() {
             fillOpacity="0.3"
           />
         </g>
-        <rect x="1" y="1" width="353" height="328" rx="8" fill="url(#paint0_linear_520_19220)" fillOpacity="0.3" />
+        <rect
+          x="1"
+          y="1"
+          width="353"
+          height="328"
+          rx="8"
+          fill="url(#paint0_linear_520_19220)"
+          fillOpacity="0.3"
+        />
       </g>
 
       <defs>
@@ -48,8 +56,16 @@ export function StatsBackground() {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-          <feGaussianBlur stdDeviation="50" result="effect1_foregroundBlur_520_19220" />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feGaussianBlur
+            stdDeviation="50"
+            result="effect1_foregroundBlur_520_19220"
+          />
         </filter>
         <filter
           id="filter1_f_520_19220"
@@ -61,8 +77,16 @@ export function StatsBackground() {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-          <feGaussianBlur stdDeviation="50" result="effect1_foregroundBlur_520_19220" />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feGaussianBlur
+            stdDeviation="50"
+            result="effect1_foregroundBlur_520_19220"
+          />
         </filter>
         <linearGradient
           id="paint0_linear_520_19220"

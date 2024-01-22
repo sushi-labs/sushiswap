@@ -6,7 +6,11 @@ import React from 'react'
 
 const LINKS = [
   { icon: DiscordIcon, title: 'Discord', link: 'https://discord.gg/NVPXN4e' },
-  { icon: TwitterIcon, title: 'Twitter', link: 'https://twitter.com/sushiswap' },
+  {
+    icon: TwitterIcon,
+    title: 'Twitter',
+    link: 'https://twitter.com/sushiswap',
+  },
   { icon: GithubIcon, title: 'Github', link: 'https://github.com/sushiswap' },
   { icon: GlobeAltIcon, title: 'Website', link: 'https://sushi.com' },
 ]
