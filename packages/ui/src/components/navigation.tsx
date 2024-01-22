@@ -31,8 +31,8 @@ const EXPLORE_NAVIGATION_LINKS: {
     description: 'Earn fees by providing liquidity.',
   },
   {
-    title: 'Sushi Bar',
-    href: '/bar',
+    title: 'Stake',
+    href: '/stake',
     description: 'Earn protocol fees by staking SUSHI.',
   },
   {
