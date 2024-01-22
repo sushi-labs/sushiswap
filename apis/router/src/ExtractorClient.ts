@@ -6,7 +6,7 @@ import {
 import { ChainId } from 'sushi/chain'
 import { Native, Token, Type } from 'sushi/currency'
 
-const DEBUG_PRINT = true
+const DEBUG_PRINT = false
 
 function tokenAddr(t: Type) {
   return t.isNative ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : t.address
@@ -61,6 +61,7 @@ export class ExtractorClient {
       )
       if (resp.status === 200) {
         const data = await resp.text()
+        const start = performance.now()
         const pools = deserializePoolCodesJSON(data)
         this.poolCodesMap.clear()
         this.tokenMap.clear()
@@ -80,10 +81,11 @@ export class ExtractorClient {
           if (pl === undefined) this.poolCodesMap.set(id, [p])
           else pl.push(p)
         })
-        if (DEBUG_PRINT)
-          console.log(
-            `updatePools: ${this.poolCodesMap.size} pools and ${this.tokenMap.size} tokens`,
-          )
+        console.log(
+          `updatePools: ${this.poolCodesMap.size} pools and ${
+            this.tokenMap.size
+          } tokens (${performance.now() - start}ms cpu time)`,
+        )
         this.lastUpdatedTimestamp = Date.now()
       } else {
         console.error(`Pool download failed, status=${resp.status}`)
@@ -106,6 +108,7 @@ export class ExtractorClient {
           tokens: string[]
           pairs: Record<number, number[]>
         }
+        const start = performance.now()
         this.requestedPairs.clear()
         let pairs = 0
         for (const p in data.pairs) {
@@ -115,7 +118,11 @@ export class ExtractorClient {
           this.requestedPairs.set(data.tokens[p] as string, new Set(set))
           pairs += set.length
         }
-        if (DEBUG_PRINT) console.log(`updated requested pairs: ${pairs}`)
+        console.log(
+          `requested pairs update: ${pairs} pairs (${
+            performance.now() - start
+          }ms) cpu time`,
+        )
         this.lastUpdatedTimestamp = Date.now()
       } else {
         console.error(`Request pairs download failed, status=${resp.status}`)

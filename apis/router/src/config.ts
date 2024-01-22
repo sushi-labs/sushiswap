@@ -8,7 +8,7 @@ export const MAX_TIME_WITHOUT_NETWORK_UPDATE = 120_000
 export const POOL_UPDATE_INTERVAL = 10_000
 
 // How often to update requested pairs from extractor
-export const REQUESTED_PAIRS_UPDATE_INTERVAL = 10_000 // TODO: make it less frequent
+export const REQUESTED_PAIRS_UPDATE_INTERVAL = 120_000
 
 // What port to listen
 export const PORT = process.env['PORT'] || 80

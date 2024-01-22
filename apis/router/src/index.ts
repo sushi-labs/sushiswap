@@ -15,6 +15,7 @@ import {
   SENTRY_ENVIRONMENT,
 } from './config'
 import { swapV3_2 } from './handlers/swap'
+import requestStatistics from './request-statistics'
 
 const app: Express = express()
 
@@ -42,6 +43,8 @@ Sentry.init({
   // Performance Monitoring
   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
 })
+
+requestStatistics.start()
 
 // RequestHandler creates a separate execution context, so that all
 // transactions/spans/breadcrumbs are isolated across requests

@@ -7,6 +7,7 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
+const RPS = 1
 const TEST_MODE = TestMode.ONE_UNKNOWN_TOKEN
 const SWAP_AMOUNT = 10
 
@@ -47,35 +48,27 @@ async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
 
   try {
     const start = performance.now()
-    for (let i = 0; i < 4; ++i) {
-      const resR = await fetch(urlR)
-      if (resR.status !== 200) {
-        console.log('R status: ', resR.status, urlR)
-        return
-      }
-      const dataR = (await resR.json()) as { status: string }
-      if (dataR.status !== 'NoWay') {
-        console.log(
-          `${tokenIn.symbol} -> ${tokenOut.symbol} ${amount.toString()} ${
-            dataR.status
-          } ${Math.round(performance.now() - start)}ms`,
-        )
-        return
-      }
-      console.log(
-        `${tokenIn.symbol} -> ${tokenOut.symbol} ${amount.toString()} ${
-          dataR.status
-        }`,
-      )
-      await delay(1000)
+    //for (let i = 0; i < 3; ++i) {
+    const resR = await fetch(urlR)
+    if (resR.status !== 200) {
+      console.log('Response status: ', resR.status, urlR)
+      return
     }
+    const dataR = (await resR.json()) as { status: string }
+    console.log(
+      `${tokenIn.symbol} -> ${tokenOut.symbol} ${amount.toString()} ${
+        dataR.status
+      } ${Math.round(performance.now() - start)}ms`,
+    )
+    //await delay(1000)
+    //}
   } catch (e) {
     console.log(
       `${tokenIn.symbol} -> ${
         tokenOut.symbol
       } ${amount.toString()} Error: ${e}`,
     )
-    await delay(1000)
+    //await delay(1000)
   }
 }
 
@@ -114,13 +107,15 @@ function getRandomPair(num: number, mode: TestMode): [number, number] {
   return func(num)
 }
 
-async function testSequential() {
+async function test() {
   const tokens = loadAllTokens()
   for (;;) {
+    const timeout = delay(1000 / RPS)
     const [from, to] = getRandomPair(tokens.length, TEST_MODE)
     const amount = BigInt(SWAP_AMOUNT * 10 ** tokens[from].decimals)
-    await route(tokens[from], tokens[to], amount)
+    route(tokens[from], tokens[to], amount)
+    await timeout
   }
 }
 
-testSequential()
+test()
