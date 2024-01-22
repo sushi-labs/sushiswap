@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/node'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
+import { CPUUsageStatistics } from './cpu-usage-statistics'
 import extractor from './extractor'
 import poolCodes from './handlers/pool-codes'
 import poolCodesForToken from './handlers/pool-codes-for-token'
@@ -34,6 +35,9 @@ Sentry.init({
   // Performance Monitoring
   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
 })
+
+const cpuUsageStatistics = new CPUUsageStatistics(60_000)
+cpuUsageStatistics.start()
 
 app.set('json replacer', (_key: string, value: any) =>
   typeof value === 'bigint' ? value.toString() : value,
