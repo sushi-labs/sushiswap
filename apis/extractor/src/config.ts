@@ -457,3 +457,7 @@ export const CHAIN_ID = Number(
 if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
 }
+
+export const POOLS_SERIALIZATION_INTERVAL = (_chainId: ChainId) => 4_000
+export const REQUESTED_PAIRS_SERIALIZATION_INTERVAL = (_chainId: ChainId) =>
+  120_000

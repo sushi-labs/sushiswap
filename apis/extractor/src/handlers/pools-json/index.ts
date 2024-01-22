@@ -1,19 +1,35 @@
 import { serializePoolCodesJSON } from '@sushiswap/router'
 import { Request, Response } from 'express'
-import { CHAIN_ID } from '../../config'
+import { CHAIN_ID, POOLS_SERIALIZATION_INTERVAL } from '../../config'
 import extractor from '../../extractor'
+
+let lastPools: object = {}
+let lastPoolsSerializationTime = 0
 
 async function handler(req: Request, res: Response) {
   res.setHeader(
     'Cache-Control',
-    'maxage=10, s-maxage=10, stale-while-revalidate=59',
+    'maxage=1, s-maxage=1, stale-while-revalidate=59',
   )
   const chainId = req.params['chainId']
   if (chainId === undefined || Number(chainId) !== CHAIN_ID)
     return res.status(422).send(`Unsupported network ${chainId}`)
 
-  const poolCodes = extractor.getCurrentPoolCodes()
-  return res.json(serializePoolCodesJSON(poolCodes))
+  if (
+    Date.now() - lastPoolsSerializationTime >
+    POOLS_SERIALIZATION_INTERVAL(CHAIN_ID)
+  ) {
+    const start = performance.now()
+    const poolCodes = extractor.getCurrentPoolCodes()
+    lastPools = serializePoolCodesJSON(poolCodes)
+    lastPoolsSerializationTime = Date.now()
+    console.log(
+      `Pools serialization: ${poolCodes.length} pools ${Math.round(
+        performance.now() - start,
+      )}ms`,
+    )
+  }
+  return res.json(lastPools)
 }
 
 export default handler

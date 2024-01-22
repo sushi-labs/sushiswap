@@ -1,3 +1,5 @@
+import { ChainId } from 'sushi/chain'
+
 // If token is unknown - how much ms to wait it's pools from the extractor
 export const POOL_FETCH_TIMEOUT = 3_000
 
@@ -5,10 +7,10 @@ export const POOL_FETCH_TIMEOUT = 3_000
 export const MAX_TIME_WITHOUT_NETWORK_UPDATE = 120_000
 
 // How often to update pools from extractor
-export const POOL_UPDATE_INTERVAL = 10_000
+export const POOL_UPDATE_INTERVAL = (_chainId: ChainId) => 6_000
 
 // How often to update requested pairs from extractor
-export const REQUESTED_PAIRS_UPDATE_INTERVAL = 120_000
+export const REQUESTED_PAIRS_UPDATE_INTERVAL = (_chainId: ChainId) => 120_000
 
 // What port to listen
 export const PORT = process.env['PORT'] || 80

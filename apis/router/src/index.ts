@@ -23,8 +23,8 @@ const app: Express = express()
 const client = new ExtractorClient(
   CHAIN_ID as ChainId,
   EXTRACTOR_SERVER as string,
-  POOL_UPDATE_INTERVAL,
-  REQUESTED_PAIRS_UPDATE_INTERVAL,
+  POOL_UPDATE_INTERVAL(CHAIN_ID as ChainId),
+  REQUESTED_PAIRS_UPDATE_INTERVAL(CHAIN_ID as ChainId),
 )
 client.start()
 
