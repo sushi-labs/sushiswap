@@ -16,6 +16,7 @@ import {
 } from './config'
 import { CPUUsageStatistics } from './cpu-usage-statistics'
 import { swapV3_2 } from './handlers/swap'
+import tokenHandler from './handlers/token'
 import requestStatistics from './request-statistics'
 
 const app: Express = express()
@@ -63,6 +64,7 @@ app.get('/health', (_, res: Response) => {
 })
 
 app.get('/swap/v3.2', swapV3_2(client))
+app.get('/token/:chainId/:address', tokenHandler(client))
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())
