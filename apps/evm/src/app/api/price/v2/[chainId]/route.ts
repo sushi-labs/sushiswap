@@ -28,9 +28,9 @@ export async function GET(
   })
 
   const prices = !isExtractorSupportedChainId(chainId)
-    ? await fetch(`https://sushi.com/api/price/v1/${chainId}?currency=${currency}`).then(
-        (res) => res.json(),
-      )
+    ? await fetch(
+        `https://sushi.com/api/price/v1/${chainId}?currency=${currency}`,
+      ).then((res) => res.json())
     : await getPrices(chainId, currency)
 
   return Response.json(prices, {
