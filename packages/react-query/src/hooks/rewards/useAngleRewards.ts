@@ -91,7 +91,7 @@ export const angleRewardsSelect = ({
             > & { token: Token }
           >
         >((acc, el) => {
-          if (el.symbolRewardToken !== 'aglaMerkl') {
+          if (el.symbolRewardToken !== 'aglaMerkl' && !el.whitelist.length) {
             acc.push({
               ...el,
               token: new Token({

@@ -19,6 +19,7 @@ export const angleRewardsPoolsValidator = z.object({
       rewardToken: z.string(),
       symbolRewardToken: z.string(),
       unclaimed: z.number().optional(),
+      whitelist: z.array(z.string()),
     }),
   ),
   poolTotalLiquidity: z.number(),
