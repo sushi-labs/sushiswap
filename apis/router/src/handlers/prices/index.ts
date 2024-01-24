@@ -60,13 +60,13 @@ function updatePrices(
   logging = false,
 ): void {
   try {
-    const startTime = Date.now()
+    const startTime = performance.now()
     const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
     prices[currency] = getPrices(chainId, currency, pools)
     if (logging) {
       console.log(
         `updatePrices(${currency}) took ${
-          (Date.now() - startTime) / 1000
+          (performance.now() - startTime) / 1000
         } seconds. Pool count: ${pools.length}`,
       )
       lastLogTime = startTime
