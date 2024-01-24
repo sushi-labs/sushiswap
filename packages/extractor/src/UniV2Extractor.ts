@@ -79,6 +79,7 @@ export class UniV2Extractor {
   readonly taskCounter: Counter
   readonly poolPermanentCache: PermanentCache<PoolCacheRecord>
   watchedPools = 0
+  started = false
 
   /// @param client
   /// @param factories list of supported factories
@@ -171,7 +172,6 @@ export class UniV2Extractor {
           `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
         )
       } else {
-        this.logFilter.start()
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
@@ -185,7 +185,6 @@ export class UniV2Extractor {
 
   async start() {
     const startTime = performance.now()
-    this.logFilter.start()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
 
@@ -233,13 +232,12 @@ export class UniV2Extractor {
     this.consoleLog(`${cachedPools.size} pools were taken from cache`)
     await Promise.allSettled(promises)
 
-    warnLog(
-      this.multiCallAggregator.chainId,
-      `ExtractorV2 was started (${Math.round(
+    this.consoleLog(
+      `ExtractorV2 is started and ready(${Math.round(
         performance.now() - startTime,
       )}ms)`,
-      'info',
     )
+    this.started = true
   }
 
   async updatePoolState(poolState: PoolState) {
@@ -282,53 +280,9 @@ export class UniV2Extractor {
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
-          const addr = this.computeV2Address(factory, t0, t1)
-          const addrL = addr.toLowerCase()
-          const poolState = this.poolMap.get(addrL)
-          if (poolState) {
-            if (
-              poolState.status === PoolStatus.ValidPool ||
-              poolState.status === PoolStatus.UpdatingPool
-            )
-              prefetched.push(poolState.poolCode)
-            return
-          }
-          const startTime = performance.now()
-          this.taskCounter.inc()
-          const promise = this.multiCallAggregator
-            .callValue(addr, getReservesAbi, 'getReserves')
-            .then(
-              (reserves) => {
-                this.taskCounter.dec()
-                const poolState2 = this.poolMap.get(addrL)
-                if (poolState2) {
-                  // pool was created
-                  if (
-                    poolState2.status === PoolStatus.ValidPool ||
-                    poolState2.status === PoolStatus.UpdatingPool
-                  )
-                    return poolState2.poolCode
-                }
-                const [reserve0, reserve1] = reserves as [bigint, bigint]
-                return this.addPoolWatching({
-                  address: addr,
-                  token0: t0,
-                  token1: t1,
-                  reserve0,
-                  reserve1,
-                  factory,
-                  source: 'request',
-                  addToCache: true,
-                  startTime,
-                })
-              },
-              () => {
-                this.poolMap.set(addrL, { status: PoolStatus.NoPool })
-                this.taskCounter.dec()
-                return undefined
-              },
-            )
-          fetching.push(promise)
+          const res = this.getPoolForTokenPair(factory, t0, t1)
+          if (res instanceof Promise) fetching.push(res)
+          else prefetched.push(res)
         })
       }
     }
@@ -336,6 +290,86 @@ export class UniV2Extractor {
       prefetched,
       fetching,
     }
+  }
+
+  getPoolsBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: ConstantProductPoolCode[]
+    fetching: Promise<ConstantProductPoolCode | undefined>[]
+  } {
+    const prefetched: ConstantProductPoolCode[] = []
+    const fetching: Promise<ConstantProductPoolCode | undefined>[] = []
+    for (let i = 0; i < tokensUnique1.length; ++i) {
+      const t0 = tokensUnique1[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = 0; j < tokensUnique2.length; ++j) {
+        const t1 = tokensUnique2[j]
+        this.factories.forEach((factory) => {
+          const res = this.getPoolForTokenPair(factory, t0, t1)
+          if (res instanceof Promise) fetching.push(res)
+          else prefetched.push(res)
+        })
+      }
+    }
+    return {
+      prefetched,
+      fetching,
+    }
+  }
+
+  getPoolForTokenPair(
+    factory: FactoryV2,
+    t0: Token,
+    t1: Token,
+  ): ConstantProductPoolCode | Promise<ConstantProductPoolCode | undefined> {
+    const addr = this.computeV2Address(factory, t0, t1)
+    const addrL = addr.toLowerCase()
+    const poolState = this.poolMap.get(addrL)
+    if (poolState) {
+      if (
+        poolState.status === PoolStatus.ValidPool ||
+        poolState.status === PoolStatus.UpdatingPool
+      )
+        return poolState.poolCode
+    }
+    const startTime = performance.now()
+    this.taskCounter.inc()
+    const promise = this.multiCallAggregator
+      .callValue(addr, getReservesAbi, 'getReserves')
+      .then(
+        (reserves) => {
+          this.taskCounter.dec()
+          const poolState2 = this.poolMap.get(addrL)
+          if (poolState2) {
+            // pool was created
+            if (
+              poolState2.status === PoolStatus.ValidPool ||
+              poolState2.status === PoolStatus.UpdatingPool
+            )
+              return poolState2.poolCode
+          }
+          const [reserve0, reserve1] = reserves as [bigint, bigint]
+          return this.addPoolWatching({
+            address: addr,
+            token0: t0,
+            token1: t1,
+            reserve0,
+            reserve1,
+            factory,
+            source: 'request',
+            addToCache: true,
+            startTime,
+          })
+        },
+        () => {
+          this.poolMap.set(addrL, { status: PoolStatus.NoPool })
+          this.taskCounter.dec()
+          return undefined
+        },
+      )
+    return promise
   }
 
   // Is not used now
@@ -598,5 +632,9 @@ export class UniV2Extractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`V2-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }

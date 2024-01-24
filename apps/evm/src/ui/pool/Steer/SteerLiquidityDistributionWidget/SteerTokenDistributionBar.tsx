@@ -1,4 +1,4 @@
-import { Pool, getTokenPricesChain } from '@sushiswap/client'
+import { Pool, TOKEN_PRICE_API } from '@sushiswap/client'
 import { getTokenRatios } from '@sushiswap/steer-sdk'
 import React from 'react'
 
@@ -9,8 +9,19 @@ interface SteerTokenDistributionBarProps {
 export async function SteerTokenDistributionBar({
   vault,
 }: SteerTokenDistributionBarProps) {
-  const prices = await getTokenPricesChain({ chainId: vault.chainId })
-  const tokenRatios = await getTokenRatios({ vault, prices })
+  let tokenRatios = {
+    token0: 0,
+    token1: 0,
+  }
+
+  try {
+    const prices = await fetch(`${TOKEN_PRICE_API}/api/v2/${vault.chainId}`, {
+      next: { revalidate: 60 },
+    }).then((res) => res.json())
+    tokenRatios = await getTokenRatios({ vault, prices })
+  } catch (e) {
+    console.error(e)
+  }
 
   return (
     <div>

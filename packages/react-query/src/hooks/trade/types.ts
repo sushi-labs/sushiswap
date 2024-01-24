@@ -6,7 +6,7 @@ import { Percent } from 'sushi/math'
 import type { Address, GetFunctionArgs } from 'viem'
 import z from 'zod'
 
-import { legValidator, tradeValidator } from './validator'
+import { legValidator, tradeValidator01 } from './validator01'
 
 export interface UseTradeParams {
   chainId: ChainId
@@ -45,5 +45,5 @@ export interface UseTradeReturn {
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
-export type TradeType = z.infer<typeof tradeValidator>
+export type TradeType = z.infer<typeof tradeValidator01>
 export type TradeLegType = z.infer<typeof legValidator>

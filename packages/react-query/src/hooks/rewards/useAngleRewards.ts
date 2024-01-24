@@ -5,7 +5,10 @@ import { ZERO } from 'sushi/math'
 import { parseUnits } from 'viem'
 import z from 'zod'
 
+import { isAngleEnabledChainId } from 'sushi/config'
+
 import { usePrices } from '../prices'
+
 import {
   angleRewardsBaseValidator,
   angleRewardsPoolsValidator,
@@ -56,8 +59,9 @@ export const angleRewardsQueryFn = async ({
     url += `&user=${account}`
   }
 
-  const res = await (await fetch(url)).json()
-  return angleRewardsBaseValidator.parse(res)
+  const res = await fetch(url)
+  const json = await res.json()
+  return angleRewardsBaseValidator.parse(json[chainId])
 }
 
 interface AngleRewardsSelect {
@@ -87,13 +91,13 @@ export const angleRewardsSelect = ({
             > & { token: Token }
           >
         >((acc, el) => {
-          if (el.tokenSymbol !== 'aglaMerkl') {
+          if (el.symbolRewardToken !== 'aglaMerkl' && !el.whitelist.length) {
             acc.push({
               ...el,
               token: new Token({
                 chainId,
-                address: el.token,
-                symbol: el.tokenSymbol,
+                address: el.rewardToken,
+                symbol: el.symbolRewardToken,
                 decimals: 18,
               }),
             })
@@ -104,14 +108,14 @@ export const angleRewardsSelect = ({
         token0: new Token({
           chainId,
           address: b.token0,
-          symbol: b.tokenSymbol0,
-          decimals: b.decimalToken0,
+          symbol: b.symbolToken0,
+          decimals: b.decimalsToken0,
         }),
         token1: new Token({
           chainId,
           address: b.token1,
-          symbol: b.tokenSymbol1,
-          decimals: b.decimalToken1,
+          symbol: b.symbolToken1,
+          decimals: b.decimalsToken1,
         }),
         rewardsPerToken: Object.entries(
           b.rewardsPerToken,
@@ -132,7 +136,7 @@ export const angleRewardsSelect = ({
                   v.decimals,
                 ).toString(),
               ),
-              breakdown: Object.entries(v.breakdown).reduce<
+              breakdown: Object.entries(v.breakdownOfUnclaimed).reduce<
                 Record<string, Amount<Token>>
               >((acc, [i, j]) => {
                 acc[i] = Amount.fromRawAmount(
@@ -228,6 +232,8 @@ export const useAngleRewards = ({
     select: (data) => angleRewardsSelect({ chainId, data, prices }),
     staleTime: 15000, // 15 seconds
     cacheTime: 60000, // 1min
-    enabled: Boolean(enabled && prices && chainId),
+    enabled: Boolean(
+      enabled && prices && chainId && isAngleEnabledChainId(chainId),
+    ),
   })
 }

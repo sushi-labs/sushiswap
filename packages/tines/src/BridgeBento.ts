@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { RPool, RToken } from './RPool'
+import { PoolType, RPool, RToken } from './RPool'
 
 const BENTO_MINIMUM_SHARE_BALANCE = 1000 // Bento Shares
 const BRIDGING_GAS_COST = 60_000 // gas points
@@ -48,6 +48,10 @@ export class BridgeBento extends RPool {
     this.elastic = parseInt(elastic.toString())
     this.reserve1 = base
     this.base = parseInt(base.toString())
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Bridge
   }
 
   // direction == true -> deposit: calcs output shares by input amounts

@@ -240,6 +240,31 @@ export function calcTokenPrices(
   return res
 }
 
+export function calcTokenAddressPrices(
+  pools: RPool[],
+  baseToken: RToken,
+  minPriceLiquidity = 0,
+  priceLogging = false,
+): Record<string, number> {
+  setTokenId(baseToken)
+  const g = new Graph(
+    pools,
+    baseToken,
+    baseToken,
+    0,
+    minPriceLiquidity,
+    priceLogging,
+  )
+  const res: Record<string, number> = {}
+  g.vertices.forEach((v) => {
+    if (v.price !== 0)
+      res[v.token.address] = Number(
+        (v.price / 10 ** (baseToken.decimals - v.token.decimals)).toFixed(18),
+      )
+  })
+  return res
+}
+
 // Checks correctness of ChainId of each token in each network
 // Could be avoided for speed of work, but helps to find out difficult to catch bugs
 function checkChainId(

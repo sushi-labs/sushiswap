@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/nextjs'
+import * as Sentry from '@sentry/nextjs'
 import {
   QueryCache,
   QueryClient,
@@ -13,7 +13,8 @@ const queryClientConfig = {
   },
   queryCache: new QueryCache({
     onError: (error) => {
-      captureException(error)
+      console.error('react query global onError', error)
+      Sentry.captureException(error)
     },
   }),
   // deprecated in next version so there's no point using

@@ -12,9 +12,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { useSteerAccountPositionsFormatted } from '@sushiswap/wagmi'
+import { useAccount, useSteerAccountPositionsFormatted } from '@sushiswap/wagmi'
 import { formatPercent } from 'sushi'
-import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
 import {
   STEER_NAME_COLUMN,

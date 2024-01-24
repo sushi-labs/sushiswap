@@ -1,5 +1,6 @@
 export * from './approvals'
 export * from './balances'
+export * from './bar'
 export * from './bentobox'
 export * from './bonds'
 export * from './block'

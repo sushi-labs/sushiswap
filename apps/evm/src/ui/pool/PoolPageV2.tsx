@@ -54,7 +54,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool, tab }) => {
           <div className="flex flex-col gap-6">
             <PoolComposition pool={pool} />
             <PoolStats pool={pool} />
-            <PoolRewards pool={pool} />
+            {pool.isIncentivized ? <PoolRewards pool={pool} /> : null}
           </div>
         </div>
         <div className="py-4">

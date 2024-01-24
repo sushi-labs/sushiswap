@@ -10,7 +10,7 @@ import {
 import { getChainIdAddressFromId, isPromiseFulfilled } from 'sushi'
 import { getAddress } from 'viem'
 import { type BondsPositionsApiSchema } from '../../../pure/bonds/positions/schema'
-import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/tokenPricesChain'
+import { getTokenPricesChainV2 } from '../price'
 import { BondPositionSchema } from '../schema'
 
 export async function getBondPositionsFromSubgraph(

@@ -231,7 +231,8 @@ export async function getUnindexedPool(
 
   let lpTokenName
   try {
-    lpTokenName = await getTokenInfo({ client, address: address })
+    const { name } = await getTokenInfo({ client, address: address })
+    lpTokenName = name
   } catch (_e) {
     lpTokenName = 'V3'
   }

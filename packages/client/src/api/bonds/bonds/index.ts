@@ -24,8 +24,8 @@ import {
   type SteerVaults,
   getSteerVaults,
 } from '../../../pure/steer-vault/vaults/vaults'
-import { getTokenPricesChainV2 } from '../../../pure/token-price/v2/chainId/tokenPricesChain'
 import { convertAuctionTypes } from '../common'
+import { getTokenPricesChainV2 } from '../price'
 import { BondSchema } from '../schema'
 
 const isOpen = (start: bigint | null, end: bigint | null) =>
