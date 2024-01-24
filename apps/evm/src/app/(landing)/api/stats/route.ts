@@ -28,7 +28,7 @@ const getV2Data = async () => {
     chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
       (c) =>
         !DISABLED_ANALYTICS_CHAIN_IDS.includes(
-          c as typeof DISABLED_ANALYTICS_CHAIN_IDS[number],
+          c as (typeof DISABLED_ANALYTICS_CHAIN_IDS)[number],
         ),
     ),
   })
@@ -99,7 +99,7 @@ const getV3Data = async () => {
     chainIds: SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.filter(
       (c) =>
         !DISABLED_ANALYTICS_CHAIN_IDS.includes(
-          c as typeof DISABLED_ANALYTICS_CHAIN_IDS[number],
+          c as (typeof DISABLED_ANALYTICS_CHAIN_IDS)[number],
         ),
     ),
   })

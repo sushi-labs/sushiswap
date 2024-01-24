@@ -261,8 +261,8 @@ export async function getUnindexedPool(
   const poolName = tokens.map(({ symbol }) => symbol).join('-')
 
   const [token0, token1] = tokens as [
-    typeof tokens[number],
-    typeof tokens[number],
+    (typeof tokens)[number],
+    (typeof tokens)[number],
   ]
 
   return {

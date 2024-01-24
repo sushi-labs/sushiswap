@@ -8,7 +8,7 @@ export const AuctionType = {
 
 export const AuctionTypes = [AuctionType.Static, AuctionType.Dynamic] as const
 
-export type AuctionType = typeof AuctionType[keyof typeof AuctionType]
+export type AuctionType = (typeof AuctionType)[keyof typeof AuctionType]
 
 export const VestingType = {
   'Fixed-Term': 'Fixed-Term',
@@ -16,7 +16,7 @@ export const VestingType = {
 
 export const VestingTypes = [VestingType['Fixed-Term']] as const
 
-export type VestingType = typeof VestingType[keyof typeof VestingType]
+export type VestingType = (typeof VestingType)[keyof typeof VestingType]
 
 export const BONDS_ENABLED_CHAIN_IDS = [
   ChainId.ETHEREUM,
@@ -24,7 +24,7 @@ export const BONDS_ENABLED_CHAIN_IDS = [
   ChainId.OPTIMISM,
 ] as const satisfies Readonly<ChainId[]>
 
-export type BondChainId = typeof BONDS_ENABLED_CHAIN_IDS[number]
+export type BondChainId = (typeof BONDS_ENABLED_CHAIN_IDS)[number]
 
 export const BONDS_SUBGRAPH_URL: Record<BondChainId, string> = {
   [ChainId.ETHEREUM]:

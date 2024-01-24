@@ -26,7 +26,11 @@ const COLUMNS: ColumnDef<FuroToken, unknown>[] = [
   {
     id: 'tokenName',
     header: 'Name',
-    cell: ({ row: { original: { token } } }) => (
+    cell: ({
+      row: {
+        original: { token },
+      },
+    }) => (
       <div className="flex items-center gap-5">
         <div className="flex">
           <Badge

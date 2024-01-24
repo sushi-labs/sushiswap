@@ -8,8 +8,8 @@ export { type BondsApiSchema }
 export type Bonds = Awaited<ReturnType<typeof getBondsFromSubgraph>>
 export type GetBondsArgs =
   | GetApiInputFromOutput<
-      typeof BondsApiSchema['_input'],
-      typeof BondsApiSchema['_output']
+      (typeof BondsApiSchema)['_input'],
+      (typeof BondsApiSchema)['_output']
     >
   | undefined
 

@@ -11,8 +11,8 @@ export type BondsPositions = Awaited<
 >
 export type GetBondsPositionsArgs =
   | GetApiInputFromOutput<
-      typeof BondsPositionsApiSchema['_input'],
-      typeof BondsPositionsApiSchema['_output']
+      (typeof BondsPositionsApiSchema)['_input'],
+      (typeof BondsPositionsApiSchema)['_output']
     >
   | undefined
 

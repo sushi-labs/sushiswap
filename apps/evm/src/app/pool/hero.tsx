@@ -54,10 +54,10 @@ export const Hero: FC = () => {
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
                     ? `/pool/add?chainId=${chainId}`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                    ? `/pool/add/v2/${chainId}`
-                    : isTridentChainId(chainId as TridentChainId)
-                    ? `/pool/add/trident/${chainId}`
-                    : ''
+                      ? `/pool/add/v2/${chainId}`
+                      : isTridentChainId(chainId as TridentChainId)
+                        ? `/pool/add/trident/${chainId}`
+                        : ''
                 }
               >
                 I want to create a position

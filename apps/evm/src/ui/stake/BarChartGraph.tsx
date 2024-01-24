@@ -35,8 +35,8 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
       (period === BarChartPeriod.Day
         ? barData?.hourSnapshots
         : period === BarChartPeriod.Week || period === BarChartPeriod.Month
-        ? barData?.daySnapshots
-        : barData?.weekSnapshots) ?? []
+          ? barData?.daySnapshots
+          : barData?.weekSnapshots) ?? []
 
     const currentDate = Math.round(Date.now())
 

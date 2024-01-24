@@ -207,7 +207,8 @@ export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
 
 export const SushiSwapV3ChainIds = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
 
-export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS[number]
+export type SushiSwapV3ChainId =
+  (typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
 export const isSushiSwapV3ChainId = (
   chainId: ChainId,
@@ -227,7 +228,7 @@ export const UNISWAP_V3_SUPPORTED_CHAIN_IDS = [
 
 export const UniswapV3ChainIds = UNISWAP_V3_SUPPORTED_CHAIN_IDS
 
-export type UniswapV3ChainId = typeof UNISWAP_V3_SUPPORTED_CHAIN_IDS[number]
+export type UniswapV3ChainId = (typeof UNISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
 export const isUniswapV3ChainId = (
   chainId: ChainId,
@@ -279,7 +280,7 @@ export const PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS = [
 export const PancakeSwapV3ChainIds = PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS
 
 export type PancakeSwapV3ChainId =
-  typeof PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS[number]
+  (typeof PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
 export const isPancakeSwapV3ChainId = (
   chainId: ChainId,

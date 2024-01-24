@@ -11,7 +11,7 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
-export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
+export type TridentChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -41,7 +41,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   // ChainId.OKEX
 ] as const
 
-export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
+export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -68,7 +68,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.FILECOIN,
   ChainId.HAQQ,
 ]
-export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
+export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(
   new Set([
@@ -431,7 +431,7 @@ export const STEER_ENABLED_NETWORKS = [
   ChainId.SCROLL,
 ] as const
 
-export type SteerChainId = typeof STEER_ENABLED_NETWORKS[number]
+export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
 
 export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
   [ChainId.POLYGON]:

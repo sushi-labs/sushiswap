@@ -11,7 +11,7 @@ export const ANGLE_ENABLED_NETWORKS = [
   // ChainId.CORE,
   // ChainId.GNOSIS
 ]
-export type AngleEnabledChainId = typeof ANGLE_ENABLED_NETWORKS[number]
+export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
 export const isAngleEnabledChainId = (
   chainId: number,
 ): chainId is AngleEnabledChainId =>
