@@ -297,4 +297,8 @@ export class ExtractorClient {
 
     return tokensUnique
   }
+
+  getCurrentPoolCodes(): PoolCode[] {
+    return Array.from(this.poolCodesMap.values()).flat()
+  }
 }

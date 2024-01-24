@@ -15,6 +15,7 @@ import {
   SENTRY_ENVIRONMENT,
 } from './config'
 import { CPUUsageStatistics } from './cpu-usage-statistics'
+import { priceByAddressHandler, pricesHandler } from './handlers/prices'
 import { swapV3_2 } from './handlers/swap'
 import tokenHandler from './handlers/token'
 import requestStatistics from './request-statistics'
@@ -65,6 +66,8 @@ app.get('/health', (_, res: Response) => {
 
 app.get('/swap/v3.2', swapV3_2(client))
 app.get('/token/:chainId/:address', tokenHandler(client))
+app.get('/prices', pricesHandler(client))
+app.get('/prices/:address', priceByAddressHandler(client))
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())
