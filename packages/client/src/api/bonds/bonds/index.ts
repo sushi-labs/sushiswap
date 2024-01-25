@@ -193,14 +193,26 @@ export async function getBondsFromSubgraph(
       d.map((issuer) => ({ ...issuer, ids: issuer.ids.map(({ id }) => id) })),
     )
 
+  const bondDescriptionsP = client.bondMarket.findMany({
+    select: {
+      id: true,
+      description: true,
+    },
+    cacheStrategy: {
+      swr: 900,
+      ttl: 300,
+    },
+  })
+
   const bonds = await Promise.allSettled(
     args.chainIds.map(async (chainId) => {
       const sdk = getBuiltGraphSDK({ url: BONDS_SUBGRAPH_URL[chainId] })
 
-      const [{ bonds }, prices, issuers] = await Promise.all([
+      const [{ bonds }, prices, issuers, bondDescriptions] = await Promise.all([
         sdk.BondMarkets(query),
         getTokenPricesChainV2({ chainId }),
         issuersP,
+        bondDescriptionsP,
       ])
 
       const bondsParsed = bonds
@@ -297,6 +309,10 @@ export async function getBondsFromSubgraph(
             (el) => el.marketId === marketId,
           )?.marketPrice
 
+          const description =
+            bondDescriptions.find((el) => el.id === marketId)?.description ||
+            undefined
+
           const issuer = issuers.find((issuer) =>
             issuer.ids.some((id) => {
               const { chainId, address } = getChainIdAddressFromId(id)
@@ -332,6 +348,8 @@ export async function getBondsFromSubgraph(
           return {
             id: marketId,
             chainId,
+
+            description,
 
             marketId: Number(bond.marketId),
             auctionType: bond.type,
@@ -395,5 +413,10 @@ export async function getBondsFromSubgraph(
 
   await client.$disconnect()
 
-  return bonds.filter(isPromiseFulfilled).flatMap((bond) => bond.value)
+  return bonds.flatMap((bond) => {
+    if (isPromiseFulfilled(bond)) return bond.value
+
+    console.error(bond.reason)
+    return []
+  })
 }

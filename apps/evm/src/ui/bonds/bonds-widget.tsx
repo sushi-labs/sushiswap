@@ -8,6 +8,7 @@ import {
   CardContent,
   Collapsible,
   DialogTrigger,
+  LinkInternal,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
@@ -28,11 +29,52 @@ import {
 import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_BONDS } from 'src/lib/constants'
 import { Amount, Token, tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 import { BondsBuyReviewModal } from './bonds-buy-review-modal'
+
+const GetTokens = ({ bond }: { bond: Bond }) => {
+  if (!bond.quoteToken.pool && !bond.quoteToken.vault) return null
+
+  let text = ''
+  let link: React.JSX.Element = <></>
+
+  if (bond.quoteToken.pool) {
+    const pool = bond.quoteToken.pool
+    text = `Get ${pool.token0.symbol}/${pool.token1.symbol} SLP tokens`
+    link = (
+      <LinkInternal
+        href={`/pool/${bond.quoteToken.pool.poolId}`}
+        target="_blank"
+      >
+        Go to pool
+      </LinkInternal>
+    )
+  } else if (bond.quoteToken.vault) {
+    const vault = bond.quoteToken.vault
+
+    text = `Get ${vault.token0.symbol}/${vault.token1.symbol} Steer Vault tokens`
+    link = (
+      <LinkInternal
+        href={`/pool/${bond.quoteToken.vault.poolId}/smart/${bond.quoteToken.vault.id}`}
+        target="_blank"
+      >
+        Go to vault
+      </LinkInternal>
+    )
+  }
+
+  return (
+    <div className="w-full h-full bg-gradient-to-r from-[rgba(9,147,236,0.1)] to-[rgba(243,56,195,0.1)] rounded-xl px-3 py-1">
+      <div className="flex w-full justify-between text-sm">
+        <div>{text}</div>
+        <div className="text-blue">{link}</div>
+      </div>
+    </div>
+  )
+}
 
 export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
   const [quoteToken, payoutToken] = useMemo(() => {
@@ -171,10 +213,13 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
         <CardHeader>
           <CardTitle>Bond</CardTitle>
           <CardDescription>
-            Acquire vested tokens at a discount using the widget below.
+            <div>
+              Acquire vested tokens at a discount using the widget below.
+            </div>
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <GetTokens bond={staleBond} />
           <div className="flex flex-col gap-4">
             <Web3Input.Currency
               type="INPUT"

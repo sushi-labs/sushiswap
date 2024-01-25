@@ -9,15 +9,16 @@ import {
 } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
+import { useAccount } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
-import { Address, useAccount } from 'wagmi'
+import { Address } from 'wagmi'
 import {
-  PAYOUT_ASSET_COLUMN,
-  PAYOUT_AMOUNT_COLUMN,
-  MATURITY_COLUMN,
   CLAIM_COLUMN,
+  MATURITY_COLUMN,
+  PAYOUT_AMOUNT_COLUMN,
+  PAYOUT_ASSET_COLUMN,
 } from './bonds-positions-table-columns'
 
 const COLUMNS = [

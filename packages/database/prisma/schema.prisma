@@ -279,6 +279,7 @@ model SteerVault {
 
   isEnabled               Boolean @default(false)
   wasEnabled              Boolean @default(false)
+  isDeprecated            Boolean @default(false)
 
   creator                 String
   admin                   String
@@ -292,6 +293,11 @@ model SteerVault {
   @@index(fields: [poolId])
   @@index(fields: [token0Id])
   @@index(fields: [token1Id])
+}
+
+model BondMarket {
+  id             String @id
+  description    String? @db.Text
 }
 
 model BondIssuerId {

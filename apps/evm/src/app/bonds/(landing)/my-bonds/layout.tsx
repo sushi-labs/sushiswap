@@ -1,5 +1,3 @@
-'use client'
-
 import { BondsPositionsFiltersProvider } from '../../../../ui/bonds/bonds-positions-table/bonds-positions-table-filters/bonds-positions-filters-provider'
 
 export default function MyBondsLayout({

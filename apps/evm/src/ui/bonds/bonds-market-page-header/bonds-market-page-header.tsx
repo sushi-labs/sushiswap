@@ -51,7 +51,7 @@ const QuoteToken = ({ bond }: { bond: Bond }) => {
           <Currency.Icon disableLink currency={token0} />
           <Currency.Icon disableLink currency={token1} />
         </Currency.IconList>
-        <Link href={link}>
+        <Link href={link} target="_blank">
           <Button
             asChild
             variant="link"
@@ -104,7 +104,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
   const payoutToken = new Token(bond.payoutToken)
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <LinkInternal
           href="/bonds"
@@ -145,6 +145,11 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
           </div>
         </div>
       </div>
+      {bond.description && (
+        <span className="text-sm text-muted-foreground">
+          {bond.description}
+        </span>
+      )}
       <div className="flex flex-col gap-y-5 text-secondary-foreground mb-8 mt-1.5">
         <div className="flex flex-wrap gap-x-[32px]">
           <BondsMarketPageHeaderDiscount bond={bond} />
