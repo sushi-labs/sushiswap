@@ -2,7 +2,7 @@ import { SushiSwapV3ChainId, computePoolAddress } from '@sushiswap/v3-sdk'
 import { Address, readContracts } from 'wagmi'
 
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 
@@ -90,7 +90,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
 }): Promise<ConcentratedLiquidityPosition[]> => {
   const results = await readContracts({
     contracts: tokenIds.map((el) => ({
-      address: getV3NonFungiblePositionManagerConractConfig(el.chainId)
+      address: getV3NonFungiblePositionManagerContractConfig(el.chainId)
         .address as Address,
       abi: abiShard,
       chainId: el.chainId,

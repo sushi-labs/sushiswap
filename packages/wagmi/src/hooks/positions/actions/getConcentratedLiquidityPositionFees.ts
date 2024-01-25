@@ -1,7 +1,7 @@
 import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { getPublicClient } from 'wagmi/actions'
 
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
 
 const MAX_UINT128 = 2n ** 128n - 1n
@@ -69,7 +69,8 @@ export const getConcentratedLiquidityPositionFees = async ({
       chainId: el.chainId,
     }).simulateContract({
       abi: abiShard,
-      address: getV3NonFungiblePositionManagerConractConfig(el.chainId).address,
+      address: getV3NonFungiblePositionManagerContractConfig(el.chainId)
+        .address,
       functionName: 'collect',
       args: [
         {

@@ -7,7 +7,7 @@ import { useMemo } from 'react'
 import { WalletClient } from 'viem'
 import { Address, usePublicClient, useWalletClient } from 'wagmi'
 
-export const getV3NonFungiblePositionManagerConractConfig = (
+export const getV3NonFungiblePositionManagerContractConfig = (
   chainId: SushiSwapV3ChainId,
 ) => ({
   address: SUSHISWAP_V3_POSTIION_MANAGER[chainId] as Address,
@@ -652,7 +652,7 @@ export function useV3NonFungiblePositionManager(
     if (!chainId) return null
 
     return getContract({
-      ...getV3NonFungiblePositionManagerConractConfig(chainId),
+      ...getV3NonFungiblePositionManagerContractConfig(chainId),
       walletClient: (walletClient as WalletClient) ?? publicClient,
     })
   }, [chainId, publicClient, walletClient])

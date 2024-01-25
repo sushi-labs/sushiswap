@@ -20,7 +20,7 @@ import {
   isSushiSwapV3ChainId,
 } from '@sushiswap/v3-sdk'
 import {
-  getV3NonFungiblePositionManagerConractConfig,
+  getV3NonFungiblePositionManagerContractConfig,
   useAccount,
   useNetwork,
   usePrepareSendTransaction,
@@ -172,8 +172,8 @@ export const AddSectionReviewModalConcentrated: FC<
       const useNative = token0.isNative
         ? token0
         : token1.isNative
-        ? token1
-        : undefined
+          ? token1
+          : undefined
       const { calldata, value } =
         hasExistingPosition && tokenId
           ? NonfungiblePositionManager.addCallParameters(position, {
@@ -191,7 +191,7 @@ export const AddSectionReviewModalConcentrated: FC<
             })
 
       return {
-        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
         data: calldata as Hex,
         value: BigInt(value),
       }

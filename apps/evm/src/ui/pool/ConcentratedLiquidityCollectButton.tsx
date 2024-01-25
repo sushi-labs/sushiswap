@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import {
   ConcentratedLiquidityPosition,
-  getV3NonFungiblePositionManagerConractConfig,
+  getV3NonFungiblePositionManagerContractConfig,
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
@@ -74,7 +74,7 @@ export const ConcentratedLiquidityCollectButton: FC<
         })
 
       return {
-        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
         data: calldata as Hex,
         value: BigInt(value),
       }

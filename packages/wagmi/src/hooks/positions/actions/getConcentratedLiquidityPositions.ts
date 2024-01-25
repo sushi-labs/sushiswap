@@ -3,7 +3,7 @@ import { ChainId } from 'sushi/chain'
 import { erc20ABI, readContracts } from 'wagmi'
 
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
@@ -48,7 +48,7 @@ export const getConcentratedLiquidityPositions = async ({
     contracts: chainIds.map(
       (el) =>
         ({
-          address: getV3NonFungiblePositionManagerConractConfig(el).address,
+          address: getV3NonFungiblePositionManagerContractConfig(el).address,
           abi: erc20ABI,
           chainId: el,
           functionName: 'balanceOf' as const,
@@ -81,7 +81,7 @@ export const getConcentratedLiquidityPositions = async ({
         ({
           chainId: _chainId,
           address:
-            getV3NonFungiblePositionManagerConractConfig(_chainId).address,
+            getV3NonFungiblePositionManagerContractConfig(_chainId).address,
           abi: abiShard,
           functionName: 'tokenOfOwnerByIndex' as const,
           args: [account, BigInt(index)],
