@@ -110,8 +110,8 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   const _error = error
     ? error
     : insufficientBalance
-    ? 'Exceeds Balance'
-    : undefined
+      ? 'Exceeds Balance'
+      : undefined
 
   const _onChange = useCallback(
     (value: string) => {

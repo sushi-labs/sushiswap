@@ -78,8 +78,8 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
               connector.name === 'Safe'
                 ? 'Gnosis Safe'
                 : connector.name === 'WalletConnectLegacy'
-                ? 'WalletConnect'
-                : connector.name
+                  ? 'WalletConnect'
+                  : connector.name
             }
             key={connector.id}
             hoverIcon={ChevronRightIcon}

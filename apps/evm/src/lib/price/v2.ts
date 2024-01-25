@@ -18,7 +18,7 @@ export const Currency = {
   BITCOIN: 'BITCOIN',
 } as const
 
-export type Currency = typeof Currency[keyof typeof Currency]
+export type Currency = (typeof Currency)[keyof typeof Currency]
 
 interface Token {
   chainId: number
@@ -188,7 +188,7 @@ function calculateTokenPrices(
       .map((t) => prices.get(t))
       .map((t) => t?.get(token.address))
       .filter(hasPrice)
-    let price: number 
+    let price: number
     if (tokenPrices.length === 0) {
       price = 0
     } else if (tokenPrices.length === 1) {

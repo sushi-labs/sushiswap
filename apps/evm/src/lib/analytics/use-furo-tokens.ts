@@ -10,8 +10,8 @@ import useSWR from 'swr'
 import { furoTokensSchema } from '../schema'
 
 export type GetFuroTokenArgs = GetApiInputFromOutput<
-  typeof furoTokensSchema['_input'],
-  typeof furoTokensSchema['_output']
+  (typeof furoTokensSchema)['_input'],
+  (typeof furoTokensSchema)['_output']
 >
 
 export type FuroToken = NonNullable<
