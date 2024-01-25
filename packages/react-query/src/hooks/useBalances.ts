@@ -18,7 +18,7 @@ interface UseBalances {
 }
 
 // const queryKey = ({ chainId, account }): { account: string; chainId: number } => [
-//   `https://balances.sushi.com/v0/${chainId}/${account}`,
+//   `/api/balance/v0/${chainId}/${account}`,
 // ]
 
 export const useBalancesQuery = (
@@ -26,10 +26,10 @@ export const useBalancesQuery = (
   select: UseBalancesQuerySelect,
 ) => {
   return useQuery({
-    queryKey: [`https://balances.sushi.com/v0/${chainId}/${account}`],
+    queryKey: [`/api/balance/v0/${chainId}/${account}`],
     queryFn: () => {
-      return fetch(`https://balances.sushi.com/v0/${chainId}/${account}`).then(
-        (response) => response.json(),
+      return fetch(`/api/balance/v0/${chainId}/${account}`).then((response) =>
+        response.json(),
       )
     },
     staleTime: 900000, // 15 mins

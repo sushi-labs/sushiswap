@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 
 import { usePools } from '@sushiswap/client/hooks'
-import { getGraphPools } from '../../api'
+import { getGraphPools } from '../../graph'
 
 function transformGraphPool(
   graphPool: Awaited<ReturnType<typeof getGraphPools>>[0],

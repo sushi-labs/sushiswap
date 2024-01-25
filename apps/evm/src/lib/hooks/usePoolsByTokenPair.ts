@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getPoolsByTokenPair } from 'src/lib/api'
+import { getPoolsByTokenPair } from 'src/lib/graph'
 
 function usePoolsByTokenPair(tokenId0?: string, tokenId1?: string) {
   return useQuery({

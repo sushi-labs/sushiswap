@@ -1,11 +1,7 @@
 import { type FullConfig } from '@playwright/test'
 
 async function globalTeardown(_config: FullConfig) {
-  try {
-    console.log('globalTeardown')
-  } catch (error) {
-    console.error('globalTeardown', error)
-  }
+  // console.log('globalTeardown')
 }
 
 export default globalTeardown

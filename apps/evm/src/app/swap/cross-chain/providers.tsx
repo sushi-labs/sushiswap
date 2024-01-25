@@ -1,4 +1,5 @@
-import { getCrossChainSwapEdgeConfig } from 'src/lib/edge/get-cross-chain-swap-edge-config'
+import { getCrossChainSwapEdgeConfig } from './get-cross-chain-swap-edge-config'
+
 import { DerivedstateCrossChainSwapProvider } from 'src/ui/swap/cross-chain/derivedstate-cross-chain-swap-provider'
 import { EdgeProvider } from '../../../providers/edge-config-provider'
 

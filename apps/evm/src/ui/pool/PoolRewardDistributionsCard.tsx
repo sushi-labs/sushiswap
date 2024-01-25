@@ -20,7 +20,7 @@ import { ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
-import { isAngleEnabledChainId } from '../../config'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { DistributionDataTable } from './DistributionDataTable'
 
 interface PoolRewardDistributionsCardParams {

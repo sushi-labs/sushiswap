@@ -50,7 +50,9 @@ export const getAllPoolsCodeMap = async ({
     LiquidityProviders.LaserSwap, // thundercore
   ]
 
-  const testLiquidityProviders = [...sushiLiquidityProviders]
+  const testLiquidityProviders = [...sushiLiquidityProviders].filter(
+    (p) => p !== LiquidityProviders.Trident,
+  )
 
   const dataFetcher = DataFetcher.onChain(chainId)
   // console.log('dataFetcher startDataFetching')
