@@ -2,6 +2,8 @@ import { BondApiSchema, getBondFromSubgraph } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../../cors'
 
+export const revalidate = 3
+
 export async function GET(
   _request: Request,
   { params }: { params: { marketId: string } },
