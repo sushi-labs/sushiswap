@@ -11,5 +11,7 @@ export async function getBondFromSubgraph(args: typeof BondApiSchema._output) {
     onlyOpen: 'false',
   })
 
-  return (await getBondsFromSubgraph(bondsArgs))[0]
+  const bond = (await getBondsFromSubgraph(bondsArgs))[0]
+
+  return bond
 }

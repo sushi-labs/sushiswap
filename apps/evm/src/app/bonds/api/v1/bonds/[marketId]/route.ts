@@ -16,6 +16,11 @@ export async function GET(
 
   try {
     const bond = await getBondFromSubgraph(result.data)
+
+    if (!bond) {
+      return NextResponse.json({ error: 'Bond not found' }, { status: 404 })
+    }
+
     return NextResponse.json(bond, { headers: CORS })
   } catch (e) {
     return NextResponse.json(e, { headers: CORS })
