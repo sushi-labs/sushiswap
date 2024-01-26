@@ -1,4 +1,4 @@
-import { Pool, TOKEN_PRICE_API } from '@sushiswap/client'
+import { EVM_APP_BASE_URL, Pool } from '@sushiswap/client'
 import { getTokenRatios } from '@sushiswap/steer-sdk'
 import React from 'react'
 
@@ -15,9 +15,12 @@ export async function SteerTokenDistributionBar({
   }
 
   try {
-    const prices = await fetch(`${TOKEN_PRICE_API}/api/v2/${vault.chainId}`, {
-      next: { revalidate: 60 },
-    }).then((res) => res.json())
+    const prices = await fetch(
+      `${EVM_APP_BASE_URL}/api/price/v2/${vault.chainId}`,
+      {
+        next: { revalidate: 60 },
+      },
+    ).then((res) => res.json())
     tokenRatios = await getTokenRatios({ vault, prices })
   } catch (e) {
     console.error(e)
