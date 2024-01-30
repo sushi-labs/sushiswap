@@ -31,15 +31,15 @@ export const BondsApiSchema = z.object({
   anyIssuer: z.coerce
     .string()
     .optional()
-    // ! Change this to false
-    .default('true')
+    .default('false')
     .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('anyIssuer must true or false')
+      switch (val) {
+        case 'true':
+          return true
+        case 'false':
+          return false
+        default:
+          throw new Error('anyIssuer must true or false')
       }
     }),
   onlyOpen: z.coerce
@@ -47,12 +47,13 @@ export const BondsApiSchema = z.object({
     .optional()
     .default('true')
     .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('onlyOpen must true or false')
+      switch (val) {
+        case 'true':
+          return true
+        case 'false':
+          return false
+        default:
+          throw new Error('onlyOpen must true or false')
       }
     }),
   onlyDiscounted: z.coerce
@@ -60,12 +61,13 @@ export const BondsApiSchema = z.object({
     .optional()
     .default('false')
     .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('onlyDiscounted must true or false')
+      switch (val) {
+        case 'true':
+          return true
+        case 'false':
+          return false
+        default:
+          throw new Error('onlyDiscounted must true or false')
       }
     }),
   auctionTypes: z

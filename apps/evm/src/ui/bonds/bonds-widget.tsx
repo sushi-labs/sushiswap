@@ -8,6 +8,7 @@ import {
   CardContent,
   Collapsible,
   DialogTrigger,
+  Explainer,
   LinkInternal,
   SkeletonText,
   classNames,
@@ -55,21 +56,31 @@ const GetTokens = ({ bond }: { bond: Bond }) => {
   } else if (bond.quoteToken.vault) {
     const vault = bond.quoteToken.vault
 
-    text = `Get ${vault.token0.symbol}/${vault.token1.symbol} Steer Vault tokens`
+    text = `Get ${vault.token0.symbol}/${vault.token1.symbol} LP tokens`
     link = (
       <LinkInternal
         href={`/pool/${bond.quoteToken.vault.poolId}/smart/${bond.quoteToken.vault.id}`}
         target="_blank"
       >
-        Go to vault
+        Go to Smart Pool
       </LinkInternal>
     )
   }
 
   return (
     <div className="w-full h-full bg-gradient-to-r from-[rgba(9,147,236,0.1)] to-[rgba(243,56,195,0.1)] rounded-xl px-3 py-1">
-      <div className="flex w-full justify-between text-sm">
-        <div>{text}</div>
+      <div className="flex w-full justify-between text-[13px]">
+        <div className="dark:text-gray-400 flex flex-row items-center space-x-1">
+          <span>{text}</span>
+          <Explainer>
+            Liquidity Provider (LP) tokens represent proportional ownership of
+            the liquidity pool when you provide liquidity to the corresponding
+            pool on Sushi, they are redeemable for the originally deposited
+            assets and accrued trading fee. By spending your LP tokens to
+            acquire the bond, you will be trading them with the vested tokens at
+            a discount instead.
+          </Explainer>
+        </div>
         <div className="text-blue">{link}</div>
       </div>
     </div>

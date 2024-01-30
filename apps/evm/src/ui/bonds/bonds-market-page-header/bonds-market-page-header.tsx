@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { shortenAddress } from 'sushi'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
+import { BondsMarketPageHeaderDescription } from './bonds-market-page-header-description'
 import { BondsMarketPageHeaderDiscount } from './bonds-market-page-header-discount'
 
 const VestingTerm = ({ bond }: { bond: Bond }) => (
@@ -145,11 +146,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
           </div>
         </div>
       </div>
-      {bond.description && (
-        <span className="text-sm text-muted-foreground">
-          {bond.description}
-        </span>
-      )}
+      <BondsMarketPageHeaderDescription bond={bond} />
       <div className="flex flex-col gap-y-5 text-secondary-foreground mb-8 mt-1.5">
         <div className="flex flex-wrap gap-x-[32px]">
           <BondsMarketPageHeaderDiscount bond={bond} />

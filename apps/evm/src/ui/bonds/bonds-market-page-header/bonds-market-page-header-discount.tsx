@@ -11,7 +11,7 @@ export const BondsMarketPageHeaderDiscount = ({ bond }: { bond: Bond }) => {
   const isNegativeDiscount = Boolean(discount !== undefined && discount < 0)
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1.5 w-28">
       <span className="tracking-tighter font-semibold">Discount</span>
       {discount !== undefined ? (
         <span
@@ -20,7 +20,7 @@ export const BondsMarketPageHeaderDiscount = ({ bond }: { bond: Bond }) => {
           {formatPercent(discount)}
         </span>
       ) : (
-        <SkeletonText className="w-8" />
+        <SkeletonText fontSize="default" />
       )}
     </div>
   )

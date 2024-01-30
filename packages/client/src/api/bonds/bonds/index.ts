@@ -115,8 +115,8 @@ async function getQuoteToken({
 
     return {
       ...base,
-      name: 'Steer Vault',
-      symbol: 'STEER',
+      name: 'Smart Pool LP',
+      symbol: `${quoteVault.token0.symbol}/${quoteVault.token1.symbol}`,
       priceUSD,
       vault: {
         id: vaultId,
