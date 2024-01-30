@@ -20,6 +20,12 @@ import {
   createToast,
 } from '@sushiswap/ui'
 import { useSendTransaction } from '@sushiswap/wagmi'
+import {
+  useAccount,
+  useNetwork,
+  usePrepareSendTransaction,
+  useWaitForTransaction,
+} from '@sushiswap/wagmi'
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
@@ -37,12 +43,6 @@ import {
 import { Chain } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'
-import {
-  useAccount,
-  useNetwork,
-  usePrepareSendTransaction,
-  useWaitForTransaction,
-} from 'wagmi'
 
 interface BondsBuyReviewModal {
   bond: Bond
