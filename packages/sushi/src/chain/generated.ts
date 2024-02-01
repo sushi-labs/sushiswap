@@ -12,6 +12,12 @@ export default [
         "url": "https://eth.blockscout.com",
         "icon": "blockscout",
         "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://ethereum.dex.guru",
+        "icon": "dexguru",
+        "standard": "EIP3091"
       }
     ],
     "nativeCurrency": {
@@ -92,6 +98,12 @@ export default [
         "url": "https://optimism.blockscout.com",
         "icon": "blockscout",
         "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://optimism.dex.guru",
+        "icon": "dexguru",
+        "standard": "EIP3091"
       }
     ],
     "nativeCurrency": {
@@ -142,6 +154,12 @@ export default [
       {
         "name": "bscscan",
         "url": "https://bscscan.com",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://bnb.dex.guru",
+        "icon": "dexguru",
         "standard": "EIP3091"
       }
     ],
@@ -217,6 +235,12 @@ export default [
         "url": "https://gnosis.blockscout.com",
         "icon": "blockscout",
         "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://gnosis.dex.guru",
+        "icon": "dexguru",
+        "standard": "EIP3091"
       }
     ],
     "nativeCurrency": {
@@ -246,6 +270,14 @@ export default [
   },
   {
     "chainId": 122,
+    "explorers": [
+      {
+        "name": "blockscout",
+        "url": "https://explorer.fuse.io",
+        "icon": "blockscout",
+        "standard": "EIP3091"
+      }
+    ],
     "nativeCurrency": {
       "name": "Fuse",
       "symbol": "FUSE",
@@ -277,6 +309,12 @@ export default [
       {
         "name": "polygonscan",
         "url": "https://polygonscan.com",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://polygon.dex.guru",
+        "icon": "dexguru",
         "standard": "EIP3091"
       }
     ],
@@ -312,6 +350,12 @@ export default [
         "name": "ftmscan",
         "url": "https://ftmscan.com",
         "icon": "ftmscan",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://fantom.dex.guru",
+        "icon": "dexguru",
         "standard": "EIP3091"
       }
     ],
@@ -365,25 +409,7 @@ export default [
     }
   },
   {
-    "name": "Filecoin",
-    "chain": "FIL",
-    "icon": "filecoin",
-    "rpc": [
-      "https://api.node.glif.io/",
-      "https://rpc.ankr.com/filecoin",
-      "https://filecoin-mainnet.chainstacklabs.com/rpc/v1"
-    ],
-    "faucets": [],
-    "nativeCurrency": {
-      "name": "filecoin",
-      "symbol": "FIL",
-      "decimals": 18
-    },
-    "infoURL": "https://filecoin.io",
-    "shortName": "filecoin",
     "chainId": 314,
-    "networkId": 314,
-    "slip44": 461,
     "explorers": [
       {
         "name": "Filfox",
@@ -415,7 +441,14 @@ export default [
         "url": "https://filscout.io/en",
         "standard": "none"
       }
-    ]
+    ],
+    "nativeCurrency": {
+      "name": "filecoin",
+      "symbol": "FIL",
+      "decimals": 18
+    },
+    "name": "Filecoin - Mainnet",
+    "shortName": "filecoin"
   },
   {
     "chainId": 324,
@@ -432,7 +465,7 @@ export default [
       "symbol": "ETH",
       "decimals": 18
     },
-    "name": "zkSync Era Mainnet",
+    "name": "zkSync Mainnet",
     "shortName": "zksync",
     "parent": {
       "type": "L2",
@@ -586,6 +619,23 @@ export default [
     "shortName": "tftm"
   },
   {
+    "chainId": 7000,
+    "explorers": [
+      {
+        "name": "ZetaChain Mainnet Explorer",
+        "url": "https://explorer.mainnet.zetachain.com",
+        "standard": "none"
+      }
+    ],
+    "nativeCurrency": {
+      "name": "Zeta",
+      "symbol": "ZETA",
+      "decimals": 18
+    },
+    "name": "ZetaChain Mainnet",
+    "shortName": "zetachain-mainnet"
+  },
+  {
     "chainId": 8453,
     "explorers": [
       {
@@ -597,6 +647,12 @@ export default [
         "name": "basescout",
         "url": "https://base.blockscout.com",
         "icon": "blockscout",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://base.dex.guru",
+        "icon": "dexguru",
         "standard": "EIP3091"
       }
     ],
@@ -637,6 +693,12 @@ export default [
         "name": "Arbitrum Explorer",
         "url": "https://explorer.arbitrum.io",
         "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://arbitrum.dex.guru",
+        "icon": "dexguru",
+        "standard": "EIP3091"
       }
     ],
     "nativeCurrency": {
@@ -663,6 +725,12 @@ export default [
         "name": "Arbitrum Nova Chain Explorer",
         "url": "https://nova-explorer.arbitrum.io",
         "icon": "blockscout",
+        "standard": "EIP3091"
+      },
+      {
+        "name": "dexguru",
+        "url": "https://nova.dex.guru",
+        "icon": "dexguru",
         "standard": "EIP3091"
       }
     ],
@@ -796,6 +864,12 @@ export default [
         "url": "https://explorer.linea.build",
         "standard": "EIP3091",
         "icon": "linea"
+      },
+      {
+        "name": "L2scan",
+        "url": "https://linea.l2scan.co",
+        "standard": "EIP3091",
+        "icon": "linea"
       }
     ],
     "nativeCurrency": {
@@ -836,13 +910,13 @@ export default [
     "chainId": 534352,
     "explorers": [
       {
-        "name": "Blockscout",
-        "url": "https://blockscout.scroll.io",
+        "name": "Scrollscan",
+        "url": "https://scrollscan.com",
         "standard": "EIP3091"
       },
       {
-        "name": "Scrollscan",
-        "url": "https://scrollscan.com",
+        "name": "Blockscout",
+        "url": "https://blockscout.scroll.io",
         "standard": "EIP3091"
       }
     ],
@@ -901,9 +975,14 @@ export default [
     "chainId": 11297108109,
     "explorers": [
       {
-        "name": "Palm Explorer",
-        "url": "https://explorer.palm.io",
+        "name": "Chainlens",
+        "url": "https://palm.chainlens.com",
         "standard": "EIP3091"
+      },
+      {
+        "name": "Dora",
+        "url": "https://www.ondora.xyz/network/palm",
+        "standard": "none"
       }
     ],
     "nativeCurrency": {

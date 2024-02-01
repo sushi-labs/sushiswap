@@ -103,11 +103,11 @@ export class Chain implements Chain {
     }
 
     // process explorer overrides etc...
-    if (data.name === 'Scroll') {
+    if (data.chainId === ChainId.SCROLL) {
       this.explorers?.sort((explorer) =>
         explorer.name === 'Scrollscan' ? -1 : 1,
       )
-    } else if (data.name === 'Arbitrum Nova') {
+    } else if (data.chainId === ChainId.ARBITRUM_NOVA) {
       this.explorers = [
         {
           name: 'Arbitrum Nova Explorer',
@@ -116,8 +116,18 @@ export class Chain implements Chain {
         },
         ...(this.explorers ?? []),
       ]
-    } else if (data.name === 'Filecoin') {
+    } else if (data.chainId === ChainId.FILECOIN) {
+      this.name = 'Filecoin'
       this.explorers?.sort((explorer) => (explorer.name === 'Filfox' ? -1 : 1))
+    } else if (data.chainId === ChainId.ZETACHAIN) {
+      this.name = 'ZetaChain'
+      this.explorers = [
+        {
+          name: 'ZetaChain Mainnet Explorer',
+          url: 'https://explorer.zetachain.com',
+          standard: 'EIP3091',
+        },
+      ]
     }
   }
   getTxUrl(txHash: string): string {

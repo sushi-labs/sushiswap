@@ -36,6 +36,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.METIS,
   ChainId.BTTC,
   ChainId.FILECOIN,
+  ChainId.ZETACHAIN,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -67,6 +68,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.BTTC,
   ChainId.FILECOIN,
   ChainId.HAQQ,
+  ChainId.ZETACHAIN,
 ]
 export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
 
@@ -96,6 +98,8 @@ export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 export const LINEA_HOST = 'graph-query.linea.build/subgraphs/name'
 export const HAQQ_HOST = 'haqq.graph.p2p.org/subgraphs/name'
+export const ZETACHAIN_HOST =
+  'api.goldsky.com/api/public/project_cls39ugcfyhbq01xl9tsf6g38/subgraphs'
 
 export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
 
@@ -133,6 +137,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.SCROLL]: 'Scroll',
   [ChainId.FILECOIN]: 'Filecoin',
   [ChainId.HAQQ]: 'HAQQ',
+  [ChainId.ZETACHAIN]: 'ZetaChain',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -168,6 +173,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.SCROLL]: STUDIO_HOST,
   [ChainId.FILECOIN]: FILECOIN_HOST,
   [ChainId.HAQQ]: HAQQ_HOST,
+  [ChainId.ZETACHAIN]: ZETACHAIN_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -225,6 +231,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.SCROLL]: 'blocks-scroll/v0.0.1',
   [ChainId.FILECOIN]: 'sushiswap/blocks',
   [ChainId.HAQQ]: 'sushi/blocks-haqq',
+  [ChainId.ZETACHAIN]: 'blocks-zetachain/1.0.0/gn',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -299,6 +306,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.METIS]: 'sushi-v2/sushiswap-metis',
   [ChainId.BTTC]: 'sushi-v2/sushiswap-bttc',
   [ChainId.FILECOIN]: 'sushiswap/sushiswap-filecoin',
+  [ChainId.ZETACHAIN]: 'sushiswap-zetachain/1.0.0/gn',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
@@ -325,6 +333,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'sushi-v3/v3-bttc',
   [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
   [ChainId.HAQQ]: 'sushi/v3-haqq',
+  [ChainId.ZETACHAIN]: 'v3-zetachain/1.0.0/gn',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
