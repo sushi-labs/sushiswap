@@ -1,0 +1,58 @@
+{{- $chainIds := .Values.chainIds }}
+{{- range $index, $value := $chainIds }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: router-{{ $value }}
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: router-{{ $value }}
+  template:
+    metadata:
+      labels:
+        app: router-{{ $value }}
+    spec:
+      containers:
+        - name: router
+          image: router
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 0.25
+              memory: 1Gi
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+          env:
+            - name: CHAIN_ID
+              value: "{{ $value }}"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: DRPC_ID
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: SENTRY_DSN
+            - name: SENTRY_ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: extractor
+                  key: SENTRY_ENVIRONMENT
+{{- end }}

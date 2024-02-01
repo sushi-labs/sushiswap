@@ -29,7 +29,8 @@ if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
 }
 
-export const EXTRACTOR_SERVER = process.env['EXTRACTOR_SERVER']
+export const EXTRACTOR_SERVER =
+  process.env['EXTRACTOR_SERVER'] || `http://extractor-${CHAIN_ID}-service`
 if (!EXTRACTOR_SERVER) {
   throw new Error('EXTRACTOR_SERVER is not set')
 }

@@ -23,21 +23,18 @@ data:
     http { 
       {{- $chainIds := .Values.chainIds }}
       {{- range $index, $value := $chainIds }}
-      upstream extractor-{{ $value }} {
-        server extractor-{{ $value }}-service;
+      upstream router-{{ $value }} {
+        server router-{{ $value }};
       }
       {{- end }}
       
-      map $arg_chainId $proxy_pass {
-        {{- range $index, $value := $chainIds }}
-        {{ $value }}     extractor-{{ $value }};
-        {{- end }}
+      map $uri $proxy_pass {
+        ~^/(\w+)/(\w+)/(\d+) router-$3;
       }
       
       server { 
         listen 80;
         location / {
-          # add_header Access-Control-Allow-Origin *;
           proxy_pass http://$proxy_pass;
         }
         location /health {

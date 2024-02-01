@@ -39,7 +39,7 @@
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "sushi": "workspace:*",
-    "viem": "1.17.2",
+    "viem": "1.21.4",
     "wagmi": "1.4.5",
     "zod": "3.21.4"
   },

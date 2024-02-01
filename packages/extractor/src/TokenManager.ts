@@ -1,7 +1,13 @@
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { Address } from 'viem'
+import {
+  Address,
+  ContractFunctionExecutionError,
+  Hex,
+  hexToString,
+  trim,
+} from 'viem'
 
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
@@ -16,11 +22,11 @@ interface TokenCacheRecord {
 
 // For some tokens that are not 100% ERC-20:
 const SpecialTokens: Record<string, Omit<TokenCacheRecord, 'address'>> = {
-  '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
-    name: 'Maker Token',
-    symbol: 'MKR',
-    decimals: 18,
-  },
+  // '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
+  //   name: 'Maker Token',
+  //   symbol: 'MKR',
+  //   decimals: 18,
+  // },
 }
 
 export class TokenManager {
@@ -82,30 +88,63 @@ export class TokenManager {
       return newToken
     }
 
+    // try {
+    //   return await fetchToken_({ abi: erc20ABI })
+    // } catch (err) {
+    //   // In the chance that there is an error upon decoding the contract result,
+    //   // it could be likely that the contract data is represented as bytes32 instead
+    //   // of a string.
+    //   if (err instanceof ContractFunctionExecutionError) {
+    //     const { name, symbol, ...rest } = await fetchToken_({
+    //       abi: erc20ABI_bytes32,
+    //     })
+    //     return {
+    //       name: hexToString(trim(name as Hex, { dir: 'right' })),
+    //       symbol: hexToString(trim(symbol as Hex, { dir: 'right' })),
+    //       ...rest,
+    //     }
+    //   }
+    //   throw err
+    // }
+
     try {
-      const [decimals, symbol, name] = await Promise.allSettled([
+      const [decimals, symbol, name] = await Promise.all([
         this.client.callValue(address, erc20Abi, 'decimals'),
         this.client.callValue(address, erc20Abi, 'symbol'),
         this.client.callValue(address, erc20Abi, 'name'),
       ])
 
-      if (
-        decimals.status !== 'fulfilled' ||
-        symbol.status !== 'fulfilled' ||
-        name.status !== 'fulfilled'
-      )
-        throw new Error('token params download failed')
-
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
         address: address,
-        decimals: Number(decimals.value as bigint),
-        symbol: symbol.value as string,
-        name: name.value as string,
+        decimals: Number(decimals as bigint),
+        symbol: symbol as string,
+        name: name as string,
       })
       this.addToken(newToken)
       return newToken
     } catch (_e) {
+      // In the chance that there is an error upon decoding the contract result,
+      // it could be likely that the contract data is represented as bytes32 instead
+      // of a string.
+      if (_e instanceof ContractFunctionExecutionError) {
+        const [decimals, symbol, name] = await Promise.all([
+          this.client.callValue(address, erc20Abi_bytes32, 'decimals'),
+          this.client.callValue(address, erc20Abi_bytes32, 'symbol'),
+          this.client.callValue(address, erc20Abi_bytes32, 'name'),
+        ])
+
+        const newToken = new Token({
+          chainId: this.client.client.chain?.id as ChainId,
+          address: address,
+          decimals: Number(decimals as bigint),
+          name: hexToString(trim(name as Hex, { dir: 'right' })),
+          symbol: hexToString(trim(symbol as Hex, { dir: 'right' })),
+        })
+        this.addToken(newToken)
+        return newToken
+      }
+
       warnLog(
         this.client.client.chain?.id,
         `Token downloading error ${address}`,

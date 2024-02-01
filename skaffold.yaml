@@ -9,9 +9,13 @@ build:
     sha256: {}
   artifacts:
     - image: extractor
-      context: ../../
+      context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.extractor
+    - image: router
+      context: .
+      docker:
+        dockerfile: Dockerfile.router
         # buildArgs:
         #   TURBO_TEAM: "teamsushi"
         #   TURBO_TOKEN:{{ .TURBO_TOKEN }}

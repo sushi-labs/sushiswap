@@ -61,13 +61,16 @@ app.use(Sentry.Handlers.tracingHandler())
 app.use(cors())
 
 app.get('/health', (_, res: Response) => {
+  if (client.lastUpdatedTimestamp === 0) {
+    return res.status(400).send()
+  }
   return res.status(200).send()
 })
 
-app.get('/swap/v3.2', swapV3_2(client))
-app.get('/token/:chainId/:address', tokenHandler(client))
-app.get('/prices', pricesHandler(client))
-app.get('/prices/:address', priceByAddressHandler(client))
+app.get('/swap/v1/:chainId', swapV3_2(client))
+app.get('/token/v1/:chainId/:address', tokenHandler(client))
+app.get('/prices/v1/:chainId', pricesHandler(client))
+app.get('/prices/v1/:chainId/:address', priceByAddressHandler(client))
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())

@@ -7,11 +7,11 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const RPS = 5
-const TEST_MODE = TestMode.ONE_UNKNOWN_TOKEN
+const RPS = 150
+const TEST_MODE = TestMode.KNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
-const routerServer = 'http://localhost:1338'
+const routerServer = 'http://127.0.0.1:4505'
 const chainId = 1
 const tokensFile = './tokens-1'
 
@@ -27,10 +27,10 @@ const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 function loadAllTokens(): Token[] {
   const fileName = path.resolve(__dirname, tokensFile)
   const file = fs.readFileSync(fileName, 'utf8')
-  const res: Token[] = file
+  const res = file
     .split('\n')
     .map((s) => (s === '' ? undefined : (JSON.parse(s) as Token)))
-    .filter((t) => t !== undefined) as Token[]
+    .filter((t): t is Token => t !== undefined)
   res.unshift({
     address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
     name: 'Native',
@@ -41,7 +41,7 @@ function loadAllTokens(): Token[] {
 }
 
 async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
-  const query = `/swap/v3.2?chainId=${chainId}&tokenIn=${
+  const query = `/swap/v1/${chainId}?chainId=${chainId}&tokenIn=${
     tokenIn.address
   }&tokenOut=${tokenOut.address}&amount=${amount.toString()}`
   const urlR = routerServer + query

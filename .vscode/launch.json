@@ -6,7 +6,7 @@
       "profile": "local",
       "type": "cloudcode.kubernetes",
       "request": "launch",
-      "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
+      "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
       "watch": false,
       "cleanUp": true,
       "portForward": true
@@ -16,7 +16,7 @@
       "profile": "staging",
       "type": "cloudcode.kubernetes",
       "request": "launch",
-      "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
+      "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
       "watch": false,
       "cleanUp": false,
       "portForward": true,

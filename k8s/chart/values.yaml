@@ -1,0 +1,15 @@
+chainIds: 
+  # - 42161 # ARBITRUM
+  # - 42170 # ARBITRUM_NOVA
+  # - 43114 # AVALANCHE
+  # - 8453 # BASE 
+  # - 56 # BSC
+  # - 42220 # CELO
+  - 1 # ETHEREUM
+  # - 250 # FANTOM
+  # - 100 # GNOSIS
+  # - 59144 # LINEA
+  # - 10 # OPTIMISM
+  # - 137 # POLYGON
+  # - 1101 # POLYGON_ZKEVM
+  # - 534352 # SCROLL
