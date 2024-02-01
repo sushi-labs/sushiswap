@@ -150,10 +150,10 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
+    "generate": "ts-node --skipProject ./scripts/generate.ts",
     "prepublishOnly": "pnpm build",
     "test": "vitest run -c ./test/vitest.config.ts",
-    "test:watch": "vitest dev -c ./test/vitest.config.ts",
-    "generate": "ts-node --skipProject ./scripts/generate.ts"
+    "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },
   "dependencies": {
     "@uniswap/token-lists": "1.0.0-beta.33",
