@@ -229,7 +229,7 @@ export class CurveMultitokenCore {
     return BigInt(Math.round(mean))
 }
 
-  computeLiquidity(ANN: bigint, gamma: bigint, x_unsorted: bigint[]): bigint {
+  newton_D(ANN: bigint, gamma: bigint, x_unsorted: bigint[]): bigint {
     const N_COINS = this.reserves.length
     const N_COINS_BI = BigInt(N_COINS)
     // Initial value of invariant D is that for constant-product invariant
@@ -290,43 +290,104 @@ export class CurveMultitokenCore {
             diff = D_prev - D
         if (diff < 100 || diff * 10n**14n < D) { // Could reduce precision for gas efficiency here
             if (DEBUG) {
-            // Test that we are safe with the next newton_y
-            for (let i = 1; i < N_COINS; ++i) {
-              const frac = x[i] * E18 / D
-              if(!(frac > 10**11-1)) throw new Error(`unsafe values x[${i}] ${x[i]}`)
-              if (!((frac > 10**16 - 1) && (frac < 10**20 + 1))) throw new Error(`unsafe values x[${i}] ${x[i]}`)
-          }
+              // Test that we are safe with the next newton_y
+              for (let i = 1; i < N_COINS; ++i) {
+                const frac = x[i] * E18 / D
+                if(!(frac > 10**11-1)) throw new Error(`unsafe values x[${i}] ${x[i]}`)
+                if (!((frac > 10**16 - 1) && (frac < 10**20 + 1))) throw new Error(`unsafe values x[${i}] ${x[i]}`)
+            }
             return D
         }
     }
+  }
     throw new Error("Did not converge")
   }
 
-  computeY(xIndex: number, x: bigint, yIndex: number): bigint {
-    const D = this.computeLiquidity()
-    let c = D
-    let S_ = ZERO
-    for (let i = 0; i < this.tokens.length; ++i) {
-      let _x = ZERO
-      if (i === xIndex) _x = x
-      else if (i !== yIndex) _x = this.diffToAbsolute(0, i) as bigint
-      else continue
-      S_ = S_ + _x
-      c = (c * D) / _x / this.n
-    }
-    c = (c * D) / this.Annn
-    const b = D / this.Ann + S_
+  //Calculating x[i] given other balances x[0..N_COINS-1] and invariant D
+  //ANN = A * N**N
+  newton_y(ANN: bigint, gamma: bigint, x: bigint[], D: bigint, i: number): bigint {
+    const N_COINS = this.reserves.length
+    const N_COINS_BI = BigInt(N_COINS)
 
-    let y_prev = ZERO
-    let y = D
-    for (let i = 0; i < 256; i++) {
-      y_prev = y
-      y = (y * y + c) / (y * 2n + b - D)
-      if (Math.abs(Number(y - y_prev)) <= 1) {
-        break
+    if (DEBUG) {
+      const MIN_A = N_COINS**N_COINS * A_MULTIPLIER/100
+      const MAX_A = N_COINS**N_COINS * A_MULTIPLIER * 1000
+      if (!(ANN > MIN_A - 1 && ANN < MAX_A + 1)) throw new Error(`unsafe values A ${ANN}`)
+      if (!( gamma > MIN_GAMMA - 1 && gamma < MAX_GAMMA + 1)) throw new Error(`unsafe values gamma ${gamma}`)
+      if (!(D > 10**17 - 1 && D < 10**33 + 1)) throw new Error(`unsafe value D ${D}`)
+      for (let k = 1; k < N_COINS; ++k) {
+          const frac = x[k] * E18 / D
+          if(!(frac > 10**16-1)) throw new Error(`unsafe values x[${k}] ${x[k]}`)
       }
     }
-    return y
+
+    let y = D / N_COINS_BI
+    let K0_i = E18
+    let S_i = 0n
+
+    const x_sorted = x.map((e, j) => i === j ? 0n : e).sort((a, b) => Number(b-a))
+
+    const convergence_limit = Math.max(Number(x_sorted[0] / 10n**14n), Number(D / 10n**14n), 100)
+    for (let j = 2; j <= N_COINS; ++j) {
+        const _x = x_sorted[N_COINS-j]
+        y = y * D / (_x * N_COINS_BI)  // Small _x first
+        S_i += _x
+    }
+    for (let j = 0; j < N_COINS; ++j) 
+        K0_i = K0_i * x_sorted[j] * N_COINS_BI / D  // Large _x first
+
+    for (let j = 0; j < 255; ++j) {
+        const y_prev = y
+
+        const K0 = K0_i * y * N_COINS_BI / D
+        const S = S_i + y
+
+        let _g1k0 = gamma + E18
+        if (_g1k0 > K0)
+            _g1k0 = _g1k0 - K0 + 1n
+        else
+            _g1k0 = K0 - _g1k0 + 1n
+
+        // D / (A * N**N) * _g1k0**2 / gamma**2
+        const mul1 = E18 * D / gamma * _g1k0 / gamma * _g1k0 * BigInt(A_MULTIPLIER) / ANN
+
+        // 2*K0 / _g1k0
+        const mul2 = E18 + (2n * E18) * K0 / _g1k0
+
+        let yfprime = E18 * y + S * mul2 + mul1
+        const _dyfprime = D * mul2
+        if (yfprime < _dyfprime){
+            y = y_prev / 2n
+            continue
+        } else
+            yfprime -= _dyfprime
+        const fprime = yfprime / y
+
+        // y -= f / f_prime;  y = (y * fprime - f) / fprime
+        // y = (yfprime + 10**18 * D - 10**18 * S) // fprime + mul1 // fprime * (10**18 - K0) // K0
+        let y_minus = mul1 / fprime
+        let y_plus = (yfprime + E18 * D) / fprime + y_minus * E18 / K0
+        y_minus += E18 * S / fprime
+
+        if (y_plus < y_minus)
+            y = y_prev / 2n
+        else
+            y = y_plus - y_minus
+
+        let diff = 0n
+        if (y > y_prev)
+            diff = y - y_prev
+        else
+            diff = y_prev - y
+        if (diff < Math.max(convergence_limit, Number(y) / 10**14))
+        if (DEBUG) {
+            const frac = y * E18 / D
+            if (!((frac > 10**16 - 1) && (frac < 10**20 + 1))) 
+              throw new Error(`unsafe value for y ${frac}`)
+        }
+            return y
+      }
+    throw new Error("computeY: Did not converge")
   }
 
   flowIntToExt(flowInt: number): number {
