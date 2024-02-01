@@ -11,7 +11,9 @@ const RPS = 150
 const TEST_MODE = TestMode.KNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
-const routerServer = 'http://127.0.0.1:4505'
+const routerServers = [
+  'http://127.0.0.1:4505' /*, 'http://127.0.0.1:4506', 'http://127.0.0.1:4507'*/,
+]
 const chainId = 1
 const tokensFile = './tokens-1'
 
@@ -40,11 +42,15 @@ function loadAllTokens(): Token[] {
   return res
 }
 
+let next_server = 0
 async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
   const query = `/swap/v1/${chainId}?chainId=${chainId}&tokenIn=${
     tokenIn.address
   }&tokenOut=${tokenOut.address}&amount=${amount.toString()}`
-  const urlR = routerServer + query
+  const urlR = routerServers[next_server] + query
+
+  ++next_server
+  if (next_server >= routerServers.length) next_server = 0
 
   try {
     const start = performance.now()
