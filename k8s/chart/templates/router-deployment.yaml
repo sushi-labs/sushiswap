@@ -22,8 +22,8 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: 0.25
-              memory: 1Gi
+              cpu: "1"
+              memory: 4Gi
           startupProbe:
             httpGet:
               path: /health
@@ -36,7 +36,7 @@ spec:
               port: 80
             failureThreshold: 3
             periodSeconds: 10
-            timeoutSeconds: 3
+            timeoutSeconds: 10
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"
