@@ -37,7 +37,7 @@ async function getQuoteToken({
   pools,
   vaults,
 }: {
-  bond: (typeof BondSchema)['_output']
+  bond: typeof BondSchema['_output']
   prices: Awaited<ReturnType<typeof getTokenPricesChainV2>>
   pools: Pools
   vaults: SteerVaults
@@ -266,11 +266,33 @@ export async function getBondsFromSubgraph(
         }),
       )
 
-      const [marketPricesS, poolsS, vaultsS] = await Promise.allSettled([
+      // const tellerIds = bondsParsed.map((bond) =>
+      //   getIdFromChainIdAddress(chainId, bond.teller),
+      // )
+
+      const [
+        marketPricesS,
+        /*referrerFeesS, protocolFeesS, */ poolsS,
+        vaultsS,
+      ] = await Promise.allSettled([
         getMarketsPrices({
           client: createPublicClient(config[chainId]),
           marketIds,
         }),
+        // getReferrerFees({
+        //   client: createPublicClient(config[chainId]),
+        //   args: tellerIds.map((tellerId) => ({
+        //     referrerId: getIdFromChainIdAddress(
+        //       chainId,
+        //       REFERRER_ADDRESS[chainId],
+        //     ),
+        //     tellerId,
+        //   })),
+        // }),
+        // getProtocolFees({
+        //   client: createPublicClient(config[chainId]),
+        //   tellerIds,
+        // }),
         getPools({
           chainIds: [chainId],
           ids: bondsParsed.map((bond) =>
@@ -288,7 +310,15 @@ export async function getBondsFromSubgraph(
       if (!isPromiseFulfilled(marketPricesS))
         throw new Error(`Failed to fetch marketPrices on ${chainId}`)
 
+      // if (!isPromiseFulfilled(referrerFeesS))
+      //   throw new Error(`Failed to fetch referrerFees on ${chainId}`)
+
+      // if (!isPromiseFulfilled(protocolFeesS))
+      //   throw new Error(`Failed to fetch protocolFees on ${chainId}`)
+
       const marketPrices = marketPricesS.value
+      // const referrerFees = referrerFeesS.value
+      // const protocolFees = protocolFeesS.value
       const pools = isPromiseFulfilled(poolsS) ? poolsS.value : []
       const vaults = isPromiseFulfilled(vaultsS) ? vaultsS.value : []
 
@@ -309,6 +339,18 @@ export async function getBondsFromSubgraph(
             (el) => el.marketId === marketId,
           )?.marketPrice
 
+          // const referrerFee = referrerFees.find(
+          //   (el) =>
+          //     getChainIdAddressFromId(el.tellerId).address.toLowerCase() ===
+          //     bond.teller.toLowerCase(),
+          // )
+
+          // const protocolFee = protocolFees.find(
+          //   (el) =>
+          //     getChainIdAddressFromId(el.tellerId).address.toLowerCase() ===
+          //     bond.teller.toLowerCase(),
+          // )
+
           const description =
             bondDescriptions.find((el) => el.id === marketId)?.description ||
             undefined
@@ -327,9 +369,14 @@ export async function getBondsFromSubgraph(
             !quoteToken.priceUSD ||
             !payoutTokenPriceUSD ||
             !marketPrice ||
-            !bond.scale
+            !bond.scale /*||
+            !referrerFee ||
+            !protocolFee*/
           )
             return []
+
+          // const totalFee =
+          //   (referrerFee.referrerFee + protocolFee.protocolFee) / FEE_DECIMALS
 
           const { discount, discountedPrice, quoteTokensPerPayoutToken } =
             getBondDiscount({
@@ -365,6 +412,8 @@ export async function getBondsFromSubgraph(
 
             price: marketPrice ? String(marketPrice) : null,
             minPrice: bond.minPrice ? String(bond.minPrice) : null,
+
+            // totalFee,
 
             capacity:
               Number(bond.capacity) / 10 ** Number(bond.payoutToken.decimals),
