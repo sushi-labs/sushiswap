@@ -37,7 +37,7 @@ async function getQuoteToken({
   pools,
   vaults,
 }: {
-  bond: typeof BondSchema['_output']
+  bond: (typeof BondSchema)['_output']
   prices: Awaited<ReturnType<typeof getTokenPricesChainV2>>
   pools: Pools
   vaults: SteerVaults
