@@ -43,6 +43,8 @@ interface CurrencyInputProps {
   hidePinnedTokens?: boolean
   disableInsufficientBalanceError?: boolean
   hideSearch?: boolean
+  hidePricing?: boolean
+  hideIcon?: boolean
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -58,14 +60,16 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   usdPctChange,
   disableMaxButton = false,
   type,
+  fetching,
   currencyLoading,
   currencies,
   allowNative = true,
   error,
   hidePinnedTokens = false,
-  hideSearch = false,
   disableInsufficientBalanceError = false,
-  fetching,
+  hideSearch = false,
+  hidePricing = false,
+  hideIcon = false,
 }) => {
   const isMounted = useIsMounted()
 
@@ -82,6 +86,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   const { data: price, isInitialLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
     address: currency?.wrapped?.address,
+    enabled: !hidePricing,
   })
 
   const _value = useMemo(
@@ -240,14 +245,18 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           >
             {currency ? (
               <>
-                <div className="w-[28px] h-[28px] mr-0.5">
-                  <Currency.Icon
-                    disableLink
-                    currency={currency}
-                    width={28}
-                    height={28}
-                  />
-                </div>
+                {!hideIcon && (
+                  <>
+                    <div className="w-[28px] h-[28px] mr-0.5">
+                      <Currency.Icon
+                        disableLink
+                        currency={currency}
+                        width={28}
+                        height={28}
+                      />
+                    </div>
+                  </>
+                )}
                 {currency.symbol}
               </>
             ) : (
@@ -259,14 +268,18 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         ) : null}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
-        <PricePanel
-          value={value}
-          currency={currency}
-          usdPctChange={usdPctChange}
-          error={_error}
-          loading={isPriceLoading}
-          price={price}
-        />
+        {hidePricing ? (
+          <div />
+        ) : (
+          <PricePanel
+            value={value}
+            currency={currency}
+            usdPctChange={usdPctChange}
+            error={_error}
+            loading={isPriceLoading}
+            price={price}
+          />
+        )}
         <BalancePanel
           id={id}
           loading={isBalanceLoading}

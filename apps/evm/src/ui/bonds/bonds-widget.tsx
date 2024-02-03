@@ -240,6 +240,12 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
               onChange={onQuoteInput}
               currency={quoteToken}
               chainId={staleBond.chainId}
+              hideIcon={Boolean(
+                staleBond.quoteToken.pool || staleBond.quoteToken.vault,
+              )}
+              hidePricing={Boolean(
+                staleBond.quoteToken.pool || staleBond.quoteToken.vault,
+              )}
             />
             <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
               <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
