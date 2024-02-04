@@ -146,6 +146,8 @@ const POOL_TEST_AMOUNT_SPECIAL = {
 const POOLS_WE_DONT_SUPPORT = {
   '0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587':
     'STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/',
+  '0x064841157BadDcB2704cA38901D7d754a59b80E8':
+    'MBTC token(0xcfc013B416bE0Bd4b3bEdE35659423B796f8Dcf0) has been paused',
 } as const
 
 const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
@@ -859,7 +861,7 @@ describe('Real Curve pools consistency check', () => {
           `Factory ${factoryName} pool ${i} ${poolAddress} ... `,
         )
         if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
-          console.log(`skipped (${POOLS_WE_DONT_SUPPORT[poolAddress]})`)
+          console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
           return
         }
         const precision =
