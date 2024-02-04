@@ -70,7 +70,7 @@ export async function setTokenBalance(
 
   const balancePrimary = (await tokenContract.balanceOf(user)) as BigNumber
 
-  for (let i = 0; i < 200; ++i) {
+  for (let i = 0; i < 1000; ++i) {
     const [previousValue0, previousValue1] = await setStorage(
       realContract,
       i,

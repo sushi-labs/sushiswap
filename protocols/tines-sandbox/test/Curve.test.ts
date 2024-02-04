@@ -142,23 +142,12 @@ const POOL_TEST_AMOUNT_SPECIAL = {
   '0x87650D7bbfC3A9F10587d7778206671719d9910D': 1e40,
 }
 
-// We don't test these pools - problems with exchange function call
-const FACTORY_POOL_EXCEPTIONS_LIST: string[] = [
-  // '0x2B26239f52420d11420bC0982571BFE091417A7d',
-  // '0x439bfaE666826a7cB73663E366c12f03d0A13B49',
-  // //'0x87650D7bbfC3A9F10587d7778206671719d9910D',
-  // '0x961226B64AD373275130234145b96D100Dc0b655',
-  // '0xe7E4366f6ED6aFd23e88154C00B532BDc0352333',
-  // '0x8c524635d52bd7b1Bd55E062303177a7d916C046',
-  // '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D',
-  // '0x28B0Cf1baFB707F2c6826d10caf6DD901a6540C5',
-  // '0x0AD66FeC8dB84F8A3365ADA04aB23ce607ac6E24',
-  // '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3',
-  // '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
-] as const
-const FACTORY_POOL_EXCEPTION_SET = new Set(
-  FACTORY_POOL_EXCEPTIONS_LIST.map((p) => p.toLowerCase()),
-)
+// Pools we don't support - by any reason
+const POOLS_WE_DONT_SUPPORT = {
+  '0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587':
+    'STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/',
+} as const
+
 const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
   '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
 }
@@ -856,7 +845,7 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  it.only(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
+  it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
     let passed = 0
     let i = 0
     const startFrom = 0
@@ -869,8 +858,8 @@ describe('Real Curve pools consistency check', () => {
         process.stdout.write(
           `Factory ${factoryName} pool ${i} ${poolAddress} ... `,
         )
-        if (FACTORY_POOL_EXCEPTION_SET.has(poolAddress.toLowerCase())) {
-          console.log('skipped (exception list: function "exchange" failes)')
+        if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
+          console.log(`skipped (${POOLS_WE_DONT_SUPPORT[poolAddress]})`)
           return
         }
         const precision =
