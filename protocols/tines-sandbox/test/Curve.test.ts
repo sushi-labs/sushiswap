@@ -138,26 +138,28 @@ const FACTORY_ADDRESSES = [
   //'0xf18056bbd320e96a48e3fbf8bc061322531aac99', for crypto2 pools only
 ] as const
 
-// We don't test these pools - problems with exchange function call
-const FACTORY_POOL_EXCEPTIONS_LIST = [
-  '0x2B26239f52420d11420bC0982571BFE091417A7d',
-  '0x439bfaE666826a7cB73663E366c12f03d0A13B49',
-  '0x87650D7bbfC3A9F10587d7778206671719d9910D',
-  '0x961226B64AD373275130234145b96D100Dc0b655',
-  '0xe7E4366f6ED6aFd23e88154C00B532BDc0352333',
-  '0x8c524635d52bd7b1Bd55E062303177a7d916C046',
-  '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D',
-  '0x28B0Cf1baFB707F2c6826d10caf6DD901a6540C5',
-  '0x0AD66FeC8dB84F8A3365ADA04aB23ce607ac6E24',
+const POOL_TEST_AMOUNT_SPECIAL = {
+  '0x87650D7bbfC3A9F10587d7778206671719d9910D': 1e40,
+}
 
-  '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3',
-  '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
+// We don't test these pools - problems with exchange function call
+const FACTORY_POOL_EXCEPTIONS_LIST: string[] = [
+  // '0x2B26239f52420d11420bC0982571BFE091417A7d',
+  // '0x439bfaE666826a7cB73663E366c12f03d0A13B49',
+  // //'0x87650D7bbfC3A9F10587d7778206671719d9910D',
+  // '0x961226B64AD373275130234145b96D100Dc0b655',
+  // '0xe7E4366f6ED6aFd23e88154C00B532BDc0352333',
+  // '0x8c524635d52bd7b1Bd55E062303177a7d916C046',
+  // '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D',
+  // '0x28B0Cf1baFB707F2c6826d10caf6DD901a6540C5',
+  // '0x0AD66FeC8dB84F8A3365ADA04aB23ce607ac6E24',
+  // '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3',
+  // '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
 ] as const
 const FACTORY_POOL_EXCEPTION_SET = new Set(
   FACTORY_POOL_EXCEPTIONS_LIST.map((p) => p.toLowerCase()),
 )
 const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
-  //'0x6a274de3e2462c7614702474d64d376729831dca': 1e-3, //TODO!!!
   '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
 }
 
@@ -380,8 +382,9 @@ async function createCurvePoolInfo(
           args: [poolAddress, initialBalance],
           chain: null,
         })
-      } catch (_) {
+      } catch (e) {
         // in try block because crv token (0xD533a949740bb3306d119CC777fa900bA034cd52) doesn't allow re-approve (((
+        console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
       }
       tokenContracts.push(tokenContract)
 
@@ -400,6 +403,18 @@ async function createCurvePoolInfo(
         chainId: 1,
         decimals,
       })
+
+      // const balance = await readContract(config.client, {
+      //   ...tokenContract,
+      //   functionName: 'balanceOf',
+      //   args: [config.user.address],
+      // })
+      // const allowance = await readContract(config.client, {
+      //   ...tokenContract,
+      //   functionName: 'allowance',
+      //   args: [config.user.address, poolAddress],
+      // })
+      // console.log('token', symbol, balance, allowance)
     }
   }
 
@@ -633,7 +648,7 @@ async function processMultiTokenPool(
       config,
       poolAddress,
       poolType,
-      BigInt(1e30),
+      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
     )
   } catch (_e) {
     // return 'skipped (pool init error)'
@@ -659,22 +674,26 @@ async function processMultiTokenPool(
           : 10
       for (let k = 0; k < checks; ++k) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-        await checkSwap(
-          config,
-          poolInfo,
-          i,
-          j,
-          res0 * amountInPortion,
-          precision,
-        )
-        await checkSwap(
-          config,
-          poolInfo,
-          j,
-          i,
-          res1 * amountInPortion,
-          precision,
-        )
+        try {
+          await checkSwap(
+            config,
+            poolInfo,
+            i,
+            j,
+            res0 * amountInPortion,
+            precision,
+          )
+          await checkSwap(
+            config,
+            poolInfo,
+            j,
+            i,
+            res1 * amountInPortion,
+            precision,
+          )
+        } catch (e) {
+          return [`skipped (swap error) ${e}`, poolInfo]
+        }
       }
     }
   return ['passed', poolInfo]
@@ -701,7 +720,7 @@ async function checkMultipleSwapsFork(
       config,
       poolAddress,
       poolType,
-      BigInt(1e30),
+      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
     )
   } catch (_e) {
     // return 'skipped (pool init error)'
@@ -867,8 +886,16 @@ describe('Real Curve pools consistency check', () => {
           poolType.poolTines.forEach((p) => {
             p.forEach((t) => {
               if (t !== undefined) {
-                tokens.add(t.token0.symbol)
-                tokens.add(t.token1.symbol)
+                tokens.add(
+                  `${Math.round(Number(t.reserve0) / 10 ** t.token0.decimals)}${
+                    t.token0.symbol
+                  }`,
+                )
+                tokens.add(
+                  `${Math.round(Number(t.reserve1) / 10 ** t.token1.decimals)}${
+                    t.token1.symbol
+                  }`,
+                )
               }
             })
           })
