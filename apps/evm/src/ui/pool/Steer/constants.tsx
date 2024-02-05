@@ -6,6 +6,11 @@ interface SteerStrategyConfig {
 }
 
 export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
+  [SteerStrategy.SuperWide]: {
+    name: 'Super Wide Pool',
+    description:
+      'This strategy is designed to give an extremely low risk profile similar to that of constant product style AMMs while enabling deeper liquidity. It uses incredibly wide positions that are highly unlikely to go out of range or even have a major shift in token holding ratio.',
+  },
   [SteerStrategy.ClassicRebalance]: {
     name: 'Classic Rebalance Pool',
     description:
@@ -15,6 +20,10 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
     name: 'Delta Neutral Pool',
     description:
       'Uses Simple Moving Average and a predefined multiplier to construct a price range.',
+  },
+  [SteerStrategy.StableExpansion]: {
+    name: 'Stable Expansion Pool',
+    description: '',
   },
   [SteerStrategy.ElasticExpansion]: {
     name: 'Elastic Expansion Pool',
