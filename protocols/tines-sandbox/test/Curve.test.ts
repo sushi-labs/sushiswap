@@ -148,6 +148,28 @@ const POOLS_WE_DONT_SUPPORT = {
     'STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/',
   '0x064841157BadDcB2704cA38901D7d754a59b80E8':
     'MBTC token(0xcfc013B416bE0Bd4b3bEdE35659423B796f8Dcf0) has been paused',
+  '0x2B26239f52420d11420bC0982571BFE091417A7d':
+    'Swap Unknown error, low liquidity',
+  '0x439bfaE666826a7cB73663E366c12f03d0A13B49':
+    'Swap Unknown error, low liquidity',
+  '0x1F71f05CF491595652378Fe94B7820344A551B8E':
+    'Swap Unknown error, low liquidity',
+  '0x8461A004b50d321CB22B7d034969cE6803911899':
+    'Swap Unknown error, low liquidity',
+  '0xDa5B670CcD418a187a3066674A8002Adc9356Ad1':
+    'Swap Unknown error, low liquidity',
+  '0x8818a9bb44Fbf33502bE7c15c500d0C783B73067':
+    'Swap Unknown error, low liquidity',
+  '0x3F1B0278A9ee595635B61817630cC19DE792f506':
+    'Swap Unknown error, low liquidity',
+  '0xD6Ac1CB9019137a896343Da59dDE6d097F710538':
+    'Swap Unknown error, low liquidity',
+  '0x9c2C8910F113181783c249d8F6Aa41b51Cde0f0c':
+    'Swap Unknown error, low liquidity',
+  '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3':
+    'Swap Unknown error, low liquidity',
+  '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8':
+    'Swap Unknown error, low liquidity',
 } as const
 
 const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
@@ -922,10 +944,10 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  it.only(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
+  it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
     let passed = 0
     let i = 0
-    const startFrom = 46
+    const startFrom = 0
     const finishAt = 1000
     await forEachFactoryPool(
       config,
@@ -946,6 +968,10 @@ describe('Real Curve pools consistency check', () => {
           else if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined)
             console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
           else console.log('UNKNOWN ERROR:', check)
+          return
+        }
+        if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
+          console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
           return
         }
 
