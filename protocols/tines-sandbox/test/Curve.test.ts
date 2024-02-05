@@ -212,6 +212,81 @@ interface PoolInfo {
   snapshot: SnapshotRestorer
 }
 
+// tries to transfer tokens from pool to user(router) to understand if we can work with this pool or not
+// async function checkPool(config: TestConfig, pool: PoolInfo) {
+//   const promises = pool.tokenContracts.map(async (tokenContract) => {
+//     if (tokenContract === undefined) return true // to problems with transferring natives
+//     const res = await simulateContract(config.client, {
+//       address: tokenContract.address,
+//       abi: tokenContract.abi,
+//       functionName: 'transfer',
+//       args: [config.user.address, 1_000_000n],
+//     })
+//     return res.result
+//   })
+//   const res = await Promise.all(promises)
+//   return res.every((r) => r)
+// }
+async function checkPool(
+  config: TestConfig,
+  poolAddress: Address,
+  poolType: CurvePoolType,
+  minBalance = 1_000_000n,
+): Promise<string> {
+  const poolContract = {
+    address: poolAddress,
+    abi: parseAbi([
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function coins(uint256) pure returns (address)'
+        : 'function coins(int128) pure returns (address)',
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function balances(uint256) pure returns (uint256)'
+        : 'function balances(int128) pure returns (uint256)',
+    ]),
+  }
+  for (let i = 0n; i < 100n; ++i) {
+    let token: Address
+    try {
+      token = await readContract(config.client, {
+        ...poolContract,
+        functionName: 'coins',
+        args: [i],
+      })
+    } catch (_e) {
+      break
+    }
+    if (token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+      // native
+    } else {
+      const balance = await readContract(config.client, {
+        ...poolContract,
+        functionName: 'balances',
+        args: [BigInt(i)],
+      })
+      if (balance < minBalance)
+        return `token ${token}(${i}) low balance (${balance})`
+      try {
+        const res = await simulateContract(config.client, {
+          address: token,
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [config.user.address, minBalance],
+          account: poolAddress,
+        })
+        if (!res.result)
+          return `token ${token}(${i}) transfer simulation failed`
+      } catch (e) {
+        if (
+          e.toString().includes('function "transfer" returned no data ("0x")')
+        )
+          continue
+        return `token ${token}(${i}) transfer simulation failed`
+      }
+    }
+  }
+  return 'check passed'
+}
+
 async function getPoolRatio(
   config: TestConfig,
   poolAddress: Address,
@@ -860,10 +935,20 @@ describe('Real Curve pools consistency check', () => {
         process.stdout.write(
           `Factory ${factoryName} pool ${i} ${poolAddress} ... `,
         )
-        if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
-          console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
+
+        const check = await checkPool(
+          config,
+          poolAddress,
+          CurvePoolType.Factory,
+        )
+        if (check !== 'check passed') {
+          if (check.includes('low balance')) console.log(`skipped: ${check}`)
+          else if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined)
+            console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
+          else console.log('UNKNOWN ERROR:', check)
           return
         }
+
         const precision =
           FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e9
         const [result, poolType] = await processMultiTokenPool(
