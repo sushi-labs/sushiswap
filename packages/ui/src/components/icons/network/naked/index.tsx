@@ -33,6 +33,7 @@ import { PolygonZKNaked } from './PolygonZKNaked'
 import { ScrollNaked } from './ScrollNaked'
 import { TelosNaked } from './TelosNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
+import { ZetaChainNaked } from './ZetaChainNaked'
 
 export * from './ArbitrumNaked'
 export * from './ArbitrumNovaNaked'
@@ -65,6 +66,7 @@ export * from './PolygonNaked'
 export * from './PolygonZKNaked'
 export * from './ScrollNaked'
 export * from './TelosNaked'
+export * from './ZetaChainNaked'
 
 export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.ETHEREUM]: EthereumNaked,
@@ -100,4 +102,5 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.BASE]: BaseNaked,
   [ChainId.SCROLL]: ScrollNaked,
   [ChainId.FILECOIN]: FilecoinNaked,
+  [ChainId.ZETACHAIN]: ZetaChainNaked,
 }

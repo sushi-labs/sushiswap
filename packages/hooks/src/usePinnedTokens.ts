@@ -20,6 +20,8 @@ import {
   WORMHOLE_USDC,
   WORMHOLE_WBTC,
   WORMHOLE_WETH,
+  ZETA_ETH_BRIDGE_USDC,
+  ZETA_ETH_BRIDGE_USDT,
   axlUSDC,
   axlWBTC,
 } from 'sushi/currency'
@@ -327,6 +329,13 @@ export const DEFAULT_BASES = {
     WNATIVE[ChainId.FILECOIN],
     USDC[ChainId.FILECOIN],
     DAI[ChainId.FILECOIN],
+  ],
+  [ChainId.ZETACHAIN]: [
+    Native.onChain(ChainId.ZETACHAIN),
+    WNATIVE[ChainId.ZETACHAIN],
+    ZETA_ETH_BRIDGE_USDC,
+    ZETA_ETH_BRIDGE_USDT,
+    WETH9[ChainId.ZETACHAIN],
   ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const

@@ -268,6 +268,10 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     NATIVE: Native.onChain(ChainId.FILECOIN),
     WNATIVE: WNATIVE[ChainId.FILECOIN],
   },
+  [ChainId.ZETACHAIN]: {
+    NATIVE: Native.onChain(ChainId.ZETACHAIN),
+    WNATIVE: WNATIVE[ChainId.ZETACHAIN],
+  },
 } as const
 
 export type ShortCurrencyNameChainId =
