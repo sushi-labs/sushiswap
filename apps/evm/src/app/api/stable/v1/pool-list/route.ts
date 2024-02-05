@@ -9,17 +9,18 @@ import { z } from 'zod'
 import { CORS } from '../../cors'
 
 const schema = z.object({
-  chainId: z.coerce.number().transform((chainId) => {
-    if (
-      !isSushiSwapV2ChainId(chainId as ChainId) &&
-      !isSushiSwapV3ChainId(chainId as ChainId) &&
-      !isBentoBoxChainId(chainId as ChainId)
-    ) {
-      throw new Error('Invalid chainId')
-    }
-
-    return chainId as ChainId
-  }),
+  chainId: z.coerce
+    .number()
+    .refine(
+      (chainId) =>
+        isSushiSwapV2ChainId(chainId as ChainId) ||
+        isSushiSwapV3ChainId(chainId as ChainId) ||
+        isBentoBoxChainId(chainId as ChainId),
+      { message: 'Invalid chainId' },
+    )
+    .transform((chainId) => {
+      return chainId as ChainId
+    }),
   protocol: z
     .string()
     .refine(

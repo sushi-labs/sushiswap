@@ -17,13 +17,14 @@ import { getPool } from './getPool'
 import { getPosition } from './getPosition'
 
 const schema = z.object({
-  chainId: z.coerce.number().transform((chainId) => {
-    if (!isSushiSwapV3ChainId(chainId as ChainId)) {
-      throw new Error('Invalid chainId')
-    }
-
-    return chainId as SushiSwapV3ChainId
-  }),
+  chainId: z.coerce
+    .number()
+    .refine((chainId) => isSushiSwapV3ChainId(chainId as ChainId), {
+      message: 'Invalid chainId',
+    })
+    .transform((chainId) => {
+      return chainId as SushiSwapV3ChainId
+    }),
   positionId: z.coerce.bigint().positive(),
 })
 
