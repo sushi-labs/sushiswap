@@ -404,8 +404,18 @@ export const zetachain = {
     symbol: 'ZETA',
   },
   rpcUrls: {
-    default: { http: ['https://zetachain-evm.blockpi.network/v1/rpc/public'] },
-    public: { http: ['https://zetachain-evm.blockpi.network/v1/rpc/public'] },
+    default: {
+      http: [
+        'https://zetachain-evm.blockpi.network/v1/rpc/public',
+        'https://zetachain-mainnet-archive.allthatnode.com:8545',
+      ],
+    },
+    public: {
+      http: [
+        'https://zetachain-evm.blockpi.network/v1/rpc/public',
+        'https://zetachain-mainnet-archive.allthatnode.com:8545',
+      ],
+    },
   },
   blockExplorers: {
     default: { name: 'ZetaScan', url: 'https://explorer.zetachain.com/' },
@@ -637,6 +647,11 @@ export const config: Record<
   },
   [ChainId.ZETACHAIN]: {
     chain: zetachain,
-    transport: http(zetachain.rpcUrls.default.http[0]),
+    transport: fallback(
+      zetachain.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      },
+    ),
   },
 } as const
