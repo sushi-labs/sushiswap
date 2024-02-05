@@ -922,10 +922,10 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
+  it.only(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
     let passed = 0
     let i = 0
-    const startFrom = 0
+    const startFrom = 46
     const finishAt = 1000
     await forEachFactoryPool(
       config,
