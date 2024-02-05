@@ -408,12 +408,16 @@ export const zetachain = {
       http: [
         'https://zetachain-evm.blockpi.network/v1/rpc/public',
         'https://zetachain-mainnet-archive.allthatnode.com:8545',
+        'https://zetachain.rpc.thirdweb.com',
+        'https://jsonrpc.zetachain.nodestake.org',
       ],
     },
     public: {
       http: [
         'https://zetachain-evm.blockpi.network/v1/rpc/public',
         'https://zetachain-mainnet-archive.allthatnode.com:8545',
+        'https://zetachain.rpc.thirdweb.com',
+        'https://jsonrpc.zetachain.nodestake.org',
       ],
     },
   },
