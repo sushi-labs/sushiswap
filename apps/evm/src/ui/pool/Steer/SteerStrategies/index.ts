@@ -33,11 +33,12 @@ export const SteerStrategyComponents: Record<
   SteerStrategy,
   SteerStrategyComponent
 > = {
+  [SteerStrategy.SuperWide]: SteerBaseStrategy,
   [SteerStrategy.ClassicRebalance]: SteerBaseStrategy,
   [SteerStrategy.DeltaNeutralStables]: SteerBaseStrategy,
+  [SteerStrategy.StableExpansion]: SteerBaseStrategy,
   [SteerStrategy.ElasticExpansion]: SteerBaseStrategy,
   [SteerStrategy.HighLowChannel]: SteerBaseStrategy,
-  [SteerStrategy.MovingVolatilityChannelMedium]: SteerBaseStrategy,
   [SteerStrategy.StaticStable]: SteerBaseStrategy,
   [SteerStrategy.BollingerAlgo]: SteerBaseStrategy,
   [SteerStrategy.ChannelMultiplier]: SteerBaseStrategy,
@@ -45,4 +46,5 @@ export const SteerStrategyComponents: Record<
   [SteerStrategy.PriceMultiplier]: SteerBaseStrategy,
   [SteerStrategy.KeltnerAlgo]: SteerBaseStrategy,
   [SteerStrategy.MovingVolatilityChannel]: SteerBaseStrategy,
+  [SteerStrategy.MovingVolatilityChannelMedium]: SteerBaseStrategy,
 }
