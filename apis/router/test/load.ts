@@ -7,7 +7,7 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const RPS = 500
+const RPS = 600
 const TEST_MODE = TestMode.KNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
@@ -50,6 +50,8 @@ function loadAllTokens(): Token[] {
   return res
 }
 
+// let resCodes: Record<string, number> = {}
+
 let next_server = 0
 async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
   const query = `/swap/v1/${chainId}?chainId=${chainId}&tokenIn=${
@@ -61,19 +63,21 @@ async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
   if (next_server >= routerServers.length) next_server = 0
 
   try {
-    const start = performance.now()
+    // const start = performance.now()
+
     //for (let i = 0; i < 3; ++i) {
     const resR = await fetch(urlR)
+    // resCodes[resR.status] = (resCodes[resR.status] || 0) + 1
     if (resR.status !== 200) {
       console.log('Response status: ', resR.status, urlR)
       return
     }
-    const dataR = (await resR.json()) as { status: string }
-    console.log(
-      `${tokenIn.symbol} -> ${tokenOut.symbol} ${amount.toString()} ${
-        dataR.status
-      } ${Math.round(performance.now() - start)}ms`,
-    )
+    // const dataR = (await resR.json()) as { status: string }
+    // console.log(
+    //   `${tokenIn.symbol} -> ${tokenOut.symbol} ${amount.toString()} ${
+    //     dataR.status
+    //   } ${Math.round(performance.now() - start)}ms`,
+    // )
     //await delay(1000)
     //}
   } catch (e) {
@@ -123,6 +127,15 @@ function getRandomPair(num: number, mode: TestMode): [number, number] {
 
 async function test() {
   const tokens = loadAllTokens()
+  setInterval(() => {
+    console.log(
+      'Last 10s http status codes',
+      Object.keys(resCodes)
+        .map((key) => `${key}=${resCodes[key]}`)
+        .join(', '),
+    )
+    resCodes = {}
+  }, 10_000)
   for (;;) {
     const timeout = delay(1000 / RPS)
     const [from, to] = getRandomPair(tokens.length, TEST_MODE)

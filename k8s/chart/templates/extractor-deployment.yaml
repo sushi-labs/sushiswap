@@ -1,6 +1,5 @@
 {{- $chainIds := .Values.chainIds }}
 {{- range $index, $value := $chainIds }}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,10 +19,10 @@ spec:
           image: extractor
           ports:
             - containerPort: 80
-          resources:
-            requests:
-              cpu: 1
-              memory: 4Gi
+          # resources:
+          #   requests:
+          #     cpu: "1"
+          #     memory: "1Gi"
           startupProbe:
             httpGet:
               path: /health

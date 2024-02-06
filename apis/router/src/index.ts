@@ -3,6 +3,7 @@ import 'dotenv/config'
 import * as Sentry from '@sentry/node'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
+import protect from 'overload-protection'
 import { ChainId } from 'sushi/chain'
 import { ExtractorClient } from './ExtractorClient'
 import {
@@ -21,6 +22,18 @@ import tokenHandler from './handlers/token'
 import requestStatistics from './request-statistics'
 
 const app: Express = express()
+
+const surgeProtection = protect('express', {
+  production: process.env['NODE_ENV'] === 'production', // if production is false, detailed error messages are exposed to the client
+  clientRetrySecs: 1, // Retry-After header, in seconds (0 to disable) [default 1]
+  sampleInterval: 5, // sample rate, milliseconds [default 5]
+  maxEventLoopDelay: 16, // maximum detected delay between event loop ticks [default 42]
+  maxHeapUsedBytes: 0, // maximum heap used threshold (0 to disable) [default 0]
+  maxRssBytes: 0, // maximum rss size threshold (0 to disable) [default 0]
+  errorPropagationMode: false, // dictate behavior: take over the response or propagate an error to the framework [default false]
+  logging: false, // set to string for log level or function to pass data to
+  logStatsOnReq: false, // set to true to log stats on every requests
+})
 
 const client = new ExtractorClient(
   CHAIN_ID as ChainId,
@@ -61,16 +74,17 @@ app.use(Sentry.Handlers.tracingHandler())
 app.use(cors())
 
 app.get('/health', (_, res: Response) => {
-  if (client.lastUpdatedTimestamp === 0) {
-    return res.status(400).send()
-  }
-  return res.status(200).send()
+  return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
 })
 
-app.get('/swap/v1/:chainId', swapV3_2(client))
-app.get('/token/v1/:chainId/:address', tokenHandler(client))
-app.get('/prices/v1/:chainId', pricesHandler(client))
-app.get('/prices/v1/:chainId/:address', priceByAddressHandler(client))
+app.get('/swap/v1/:chainId', surgeProtection, swapV3_2(client))
+app.get('/token/v1/:chainId/:address', surgeProtection, tokenHandler(client))
+app.get('/prices/v1/:chainId', surgeProtection, pricesHandler(client))
+app.get(
+  '/prices/v1/:chainId/:address',
+  surgeProtection,
+  priceByAddressHandler(client),
+)
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())
@@ -78,6 +92,11 @@ app.use(Sentry.Handlers.errorHandler())
 app.listen(PORT, () => {
   console.log(`Router ${CHAIN_ID} app listening on port ${PORT}`)
 })
+
+// server.keepAliveTimeout = 65000
+// server.headersTimeout = 66000
+// server.keepAliveTimeout = 65000 // Ensure all inactive connections are terminated by the ALB, by setting this a few seconds higher than the ALB idle timeout
+// server.headersTimeout = 66000 // Ensure the headersTimeout is set higher than the keepAliveTimeout due to this nodejs regression bug: https://github.com/nodejs/node/issues/27363
 
 process.on('SIGTERM', (code) => {
   console.log(`About to exit with code: ${code}`)

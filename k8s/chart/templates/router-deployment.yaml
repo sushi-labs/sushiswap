@@ -6,7 +6,7 @@ kind: Deployment
 metadata:
   name: router-{{ $value }}
 spec:
-  # replicas: 1
+  replicas: 1
   selector:
     matchLabels:
       app: router-{{ $value }}
@@ -22,8 +22,8 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: "1"
-              memory: 4Gi
+              cpu: "1000m"
+              memory: "1Gi"
           startupProbe:
             httpGet:
               path: /health

@@ -18,6 +18,10 @@ spec:
         image: nginx:latest
         ports:
           - containerPort: 80
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "4Gi"
         readinessProbe:
           httpGet: 
             path: /health
