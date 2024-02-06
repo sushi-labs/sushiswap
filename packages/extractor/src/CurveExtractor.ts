@@ -6,7 +6,16 @@ import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
 import { warnLog } from './WarnLog'
 
-const CurvePoolListNames = [/*'/main', '/factory',*/ '/factory-eywa'] //'/factory-crvusd']
+const CurvePoolListNames = [
+  'main', // all not-factory pools, including 3pool
+  //'crypto', // all not-factory crypro pools
+  'factory',  // pools of factories 0x0959158b6040d32d04c301a72cbfd6b39e21c9ae(3CRV) and 0xb9fc157394af804a3578134a6585c0dc9cc990d4 (EUR)
+  'factory-crvusd', // pools for factory 0x4F8846Ae9380B90d2E71D5e3D042dff3E7ebb40d (crvUSD)
+  //'factory-eywa',   // legacy - 0 pools
+  //'factory-crypto',
+  //'factory-tricrypto',
+  'factory-stable-ng',
+]
 
 export interface CurveConfig {
   api: string
@@ -119,9 +128,10 @@ export class CurveExtractor {
   }
 
   async gatherCurvePools(): Promise<string[]> {
+    const urlPrefix = this.api.endsWith('/') ? this.api : this.api + '/'
     let pools: string[] = []
     for (const l in CurvePoolListNames) {
-      const url = this.api + CurvePoolListNames[l]
+      const url = urlPrefix + CurvePoolListNames[l]
       try {
         // @ts-ignore
         const listPoolsResp = await fetch(url)
