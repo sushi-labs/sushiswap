@@ -210,7 +210,9 @@ model Incentive {
 }
 
 enum SteerStrategy {
+  SuperWide
   DeltaNeutralStables
+  StableExpansion
   ElasticExpansion
   MovingVolatilityChannel
   MovingVolatilityChannelMedium

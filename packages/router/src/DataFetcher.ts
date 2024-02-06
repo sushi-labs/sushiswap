@@ -98,8 +98,6 @@ export class DataFetcher {
     } else {
       this.web3Client = createPublicClient(config[this.chainId])
     }
-
-    this.providers = [new NativeWrapProvider(this.chainId, this.web3Client)]
   }
 
   _providerIsIncluded(
@@ -113,6 +111,7 @@ export class DataFetcher {
 
   _setProviders(providers: LiquidityProviders[]) {
     // concrete providers
+    this.providers = [new NativeWrapProvider(this.chainId, this.web3Client)]
     ;[
       ApeSwapProvider,
       BiswapProvider,

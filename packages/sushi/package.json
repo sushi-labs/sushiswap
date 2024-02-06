@@ -150,6 +150,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
+    "generate": "ts-node --skipProject ./scripts/generate.ts",
     "prepublishOnly": "pnpm build",
     "test": "vitest run -c ./test/vitest.config.ts",
     "test:watch": "vitest dev -c ./test/vitest.config.ts"
@@ -170,6 +171,7 @@
     "@types/jest": "29.5.5",
     "@types/numeral": "2.0.3",
     "jest": "29.7.0",
+    "ts-node": "10.9.2",
     "typescript": "5.2.2",
     "viem": "1.21.4",
     "vitest": "0.34.6",

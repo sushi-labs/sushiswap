@@ -774,6 +774,43 @@ export const otherChains: Chain[] = [
       },
     },
   },
+  {
+    id: ChainId.ZETACHAIN,
+    name: 'ZetaChain',
+    network: 'zetachain',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Zeta',
+      symbol: 'ZETA',
+    },
+    rpcUrls: {
+      default: {
+        http: [
+          'https://zetachain-evm.blockpi.network/v1/rpc/public',
+          'https://zetachain-mainnet-archive.allthatnode.com:8545',
+          'https://zetachain.rpc.thirdweb.com',
+          'https://jsonrpc.zetachain.nodestake.org',
+        ],
+      },
+      public: {
+        http: [
+          'https://zetachain-evm.blockpi.network/v1/rpc/public',
+          'https://zetachain-mainnet-archive.allthatnode.com:8545',
+          'https://zetachain.rpc.thirdweb.com',
+          'https://jsonrpc.zetachain.nodestake.org',
+        ],
+      },
+    },
+    blockExplorers: {
+      default: { name: 'ZetaScan', url: 'https://explorer.zetachain.com/' },
+    },
+    contracts: {
+      multicall3: {
+        address: '0x039e87AB90205F9d87c5b40d4B28e2Be45dA4a20',
+        blockCreated: 1565755,
+      },
+    },
+  },
 ]
 
 export const allChains = [...defaultChains, ...otherChains]

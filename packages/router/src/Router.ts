@@ -325,6 +325,7 @@ export class Router {
     RPAddr: Address,
     permits: PermitData[] = [],
     maxPriceImpact = 0.005,
+    source = RouterLiquiditySource.Sender,
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
@@ -350,6 +351,7 @@ export class Router {
         to,
         poolCodesMap,
         permits,
+        source,
       ) as Hex,
       value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
