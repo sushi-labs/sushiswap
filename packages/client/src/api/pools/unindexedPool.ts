@@ -229,7 +229,7 @@ export async function getUnindexedPool(
     transport: cfg.transport,
   })
 
-  let lpTokenName
+  let lpTokenName: string
   try {
     const { name } = await getTokenInfo({ client, address: address })
     lpTokenName = name
