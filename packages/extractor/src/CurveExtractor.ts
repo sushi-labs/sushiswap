@@ -9,7 +9,7 @@ import { warnLog } from './WarnLog'
 const CurvePoolListNames = [
   'main', // all not-factory pools, including 3pool
   //'crypto', // all not-factory crypro pools
-  'factory',  // pools of factories 0x0959158b6040d32d04c301a72cbfd6b39e21c9ae(3CRV) and 0xb9fc157394af804a3578134a6585c0dc9cc990d4 (EUR)
+  'factory', // pools of factories 0x0959158b6040d32d04c301a72cbfd6b39e21c9ae(3CRV) and 0xb9fc157394af804a3578134a6585c0dc9cc990d4 (EUR)
   'factory-crvusd', // pools for factory 0x4F8846Ae9380B90d2E71D5e3D042dff3E7ebb40d (crvUSD)
   //'factory-eywa',   // legacy - 0 pools
   //'factory-crypto',
@@ -19,10 +19,23 @@ const CurvePoolListNames = [
 
 export interface CurveConfig {
   api: string
+  minPoolLiquidityLimitUSD: number
+}
+
+interface APIPoolInfo {
+  address: string
+  symbol: string
+  usdTotal: number
+  coins: {
+    address: string
+    decimals: string
+    usdPrice: number
+    poolBalance: string
+  }[]
 }
 
 export class CurveExtractor {
-  readonly api: string
+  readonly config: CurveConfig
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
 
@@ -45,7 +58,7 @@ export class CurveExtractor {
   ) {
     this.multiCallAggregator =
       multiCallAggregator || new MultiCallAggregator(client)
-    this.api = config.api
+    this.config = config
     this.tokenManager = tokenManager
     this.logging = logging
     this.taskCounter = new Counter(() => {
@@ -123,38 +136,32 @@ export class CurveExtractor {
   }
 
   async start() {
-    const pools = await this.gatherCurvePools()
-    pools.forEach((p) => console.log(p))
+    await this.gatherCurvePools()
+    //pools.forEach((p) => console.log(p))
   }
 
-  async gatherCurvePools(): Promise<string[]> {
-    const urlPrefix = this.api.endsWith('/') ? this.api : this.api + '/'
-    let pools: string[] = []
+  async gatherCurvePools(): Promise<APIPoolInfo[]> {
+    const api = this.config.api
+    const urlPrefix = api.endsWith('/') ? api : `${api}/`
+
+    const poolMap = new Map<string, APIPoolInfo>()
     for (const l in CurvePoolListNames) {
       const url = urlPrefix + CurvePoolListNames[l]
       try {
         // @ts-ignore
-        const listPoolsResp = await fetch(url)
-        const listPools = (await listPoolsResp.json()) as {
-          data?: { poolData?: { address: string }[] }
+        const dataResp = await fetch(url)
+        const data = (await dataResp.json()) as {
+          data?: { poolData?: APIPoolInfo[] }
         }
-        const poolData = listPools?.data?.poolData
-        if (poolData === undefined) {
+        const poolList = data?.data?.poolData
+        if (poolList === undefined) {
           warnLog(
             this.multiCallAggregator.chainId,
             `Crv pool list ${url} unexpected format`,
           )
           continue
         }
-        const poolAddresses: string[] = poolData.map((pd) => pd.address)
-        if (poolAddresses.some((a) => a === undefined)) {
-          warnLog(
-            this.multiCallAggregator.chainId,
-            `Crv pool list ${url} unexpected format`,
-          )
-          continue
-        }
-        pools = pools.concat(pools, poolAddresses)
+        poolList.forEach((p) => poolMap.set(p.address, p))
       } catch (_e) {
         warnLog(
           this.multiCallAggregator.chainId,
@@ -162,6 +169,21 @@ export class CurveExtractor {
         )
       }
     }
+    this.consoleLog(`Pools found: ${poolMap.size}`)
+
+    const pools = Array.from(poolMap.values()).filter((p) => {
+      return p.usdTotal >= this.config.minPoolLiquidityLimitUSD
+    })
+    this.consoleLog(
+      `Pools with liquidity >= ${this.config.minPoolLiquidityLimitUSD}USD: ${pools.length}`,
+    )
+    pools.forEach((p) => console.log(p.address))
+
     return pools
+  }
+
+  consoleLog(log: string) {
+    if (this.logging)
+      console.log(`CRV-${this.multiCallAggregator.chainId}: ${log}`)
   }
 }
