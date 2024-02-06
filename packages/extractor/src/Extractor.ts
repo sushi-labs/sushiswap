@@ -10,6 +10,7 @@ import {
   AlgebraPoolWatcher,
   AlgebraPoolWatcherStatus,
 } from './AlgebraPoolWatcher'
+import { CurveConfig, CurveExtractor } from './CurveExtractor'
 import { LogFilter2, LogFilterType } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
@@ -35,6 +36,7 @@ export class Extractor {
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
   extractorAlg?: AlgebraExtractor
+  extractorCurve?: CurveExtractor
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   readonly logFilter: LogFilter2
@@ -57,6 +59,7 @@ export class Extractor {
     factoriesV2?: FactoryV2[]
     factoriesV3?: FactoryV3[]
     factoriesAlgebra?: FactoryAlgebra[]
+    curveConfig?: CurveConfig
     tickHelperContract: Address
     cacheDir: string
     logType?: LogFilterType
@@ -115,6 +118,15 @@ export class Extractor {
         this.multiCallAggregator,
         this.tokenManager,
       )
+    if (args.curveConfig)
+      this.extractorCurve = new CurveExtractor(
+        this.client,
+        args.curveConfig,
+        this.logFilter,
+        this.tokenManager,
+        args.logging !== undefined ? args.logging : false,
+        this.multiCallAggregator,
+      )
     setWarningMessageHandler(args.warningMessageHandler)
   }
 
@@ -127,6 +139,7 @@ export class Extractor {
         this.extractorV2?.start(),
         this.extractorV3?.start(),
         this.extractorAlg?.start(),
+        this.extractorCurve?.start(),
       ].filter((e) => e !== undefined),
     )
     await this.prefetch(tokensBaseSet, tokensAdditionalSet)
