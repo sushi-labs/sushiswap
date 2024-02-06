@@ -95,22 +95,27 @@ export const useTradeQuery = (
       // const json = deserialize(await res.json()) should cause react query error
       const json = await res.json()
 
-      try {
+      {
         // CC
-        return tradeValidator01.parse(json)
-      } catch (e) {
-        console.error('tradeValidator01 error', e)
-        try {
-          // Try  API 2.0
-          if (fromToken && toToken) {
-            const resp2 = tradeValidator02.parse(json)
-            const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
-            return resp1
-          }
-        } catch (_e) {
-          console.error('tradeValidator02 error', _e)
+        const resp1 = tradeValidator01.safeParse(json)
+
+        if (resp1.success) {
+          return resp1.data
         }
-        throw e
+
+        // Try  API 2.0
+        if (fromToken && toToken) {
+          const resp2 = tradeValidator02.safeParse(json)
+
+          if (resp2.success) {
+            return apiAdapter02To01(resp2.data, fromToken, toToken, recipient)
+          }
+
+          console.error('tradeValidator02 error', resp2.error)
+          throw resp2.error
+        }
+
+        throw resp1.error
       }
     },
     refetchOnWindowFocus: true,
