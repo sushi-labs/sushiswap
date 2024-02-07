@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+
 // import { Agent, fetch, setGlobalDispatcher } from 'undici'
 
 // setGlobalDispatcher(
@@ -25,8 +26,8 @@ const routerServers = [
   // 'https://staging.sushi.com', // staging
   // 'http://35.230.163.56:80',
   // 'http://127.0.0.1:4505', // nginx
-  'http://127.0.0.1:4506', // service
-  // 'http://localhost:1338',
+  // 'http://127.0.0.1:4507', // service
+  'http://localhost:1338',
   // 'http://localhost:1339',
   // 'http://localhost:1340',
   // 'http://localhost:1341',
@@ -60,7 +61,7 @@ function loadAllTokens(): Token[] {
   return res
 }
 
-let responseStatusCodes: Record<string, number> = {}
+const responseStatusCodes: Record<string, number> = {}
 
 const responseTimes: number[] = []
 
@@ -129,7 +130,7 @@ async function test() {
         .join(', '),
       `Average response time: ${responseTimeAverage}ms`,
     )
-    responseStatusCodes = {}
+    // responseStatusCodes = {}
   }, 10_000)
   for (;;) {
     const timeout = delay(1000 / RPS)

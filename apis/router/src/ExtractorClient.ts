@@ -49,7 +49,7 @@ export class ExtractorClient {
 
   start() {
     this.updatePools()
-    this.updateRequestedPairs()
+    // this.updateRequestedPairs()
   }
 
   async updatePools() {
@@ -93,7 +93,7 @@ export class ExtractorClient {
     } catch (e) {
       console.error(`Pool download failed, ${e}`)
     }
-    setTimeout(() => this.updatePools(), this.poolUpdateInterval)
+    // setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
 
   async updateRequestedPairs() {

@@ -90,13 +90,27 @@ async function start() {
 
   // cpuUsage(1_000)
 
-  const protection = (_req: Request, _res: Response, next: NextFunction) => {
-    // if (lag() > 100) {
-    //   return res
-    //     .setHeader('Retry-After', 10)
-    //     .status(503)
-    //     .send('Service Unavailable')
-    // }
+  let rps = 0
+
+  const monitorRps = async (time: number) => {
+    setTimeout(() => {
+      rps = 0
+      monitorRps(time)
+    }, time)
+  }
+
+  monitorRps(1_000)
+
+  const protection = (_req: Request, res: Response, next: NextFunction) => {
+    rps++
+    if (rps > 250) {
+      return (
+        res
+          // .setHeader('Retry-After', 10)
+          .status(503)
+          .send('Service Unavailable')
+      )
+    }
     return next()
   }
 
