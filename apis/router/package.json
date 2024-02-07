@@ -23,6 +23,7 @@
     "compair-test": "ts-node --skip-project ./test/compair.ts",
     "dev": "tsc -w",
     "load-test": "ts-node --skip-project ./test/load.ts",
+    "artillery": "artillery run test/load.yml",
     "start": "node dist/index.js"
   },
   "dependencies": {
@@ -39,9 +40,9 @@
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "fastify": "4.26.0",
-    "@fastify/under-pressure": "8.3.0",
     "sushi": "workspace:*",
     "overload-protection": "1.2.3",
+    "event-loop-lag": "1.4.0",
     "viem": "1.21.4",
     "wagmi": "1.4.5",
     "zod": "3.21.4"
@@ -54,8 +55,10 @@
     "@types/express": "4.17.17",
     "@types/node": ">=20.8.4",
     "@types/overload-protection": "1.2.4",
-    "artillery": "2.0.0-35",
+    "@types/event-loop-lag": "1.0.33",
+    "artillery": "2.0.5",
     "ts-node": "10.9.2",
+    "undici": "6.6.2",
     "typescript": "5.2.2"
   }
 }

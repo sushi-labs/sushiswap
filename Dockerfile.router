@@ -61,4 +61,4 @@ RUN pnpm exec turbo run build --filter=router-api
 
 EXPOSE 80
 
-CMD node /app/apis/router/dist/index.js
+CMD NODE_ENV=production node /app/apis/router/dist/index.js

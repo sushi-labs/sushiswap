@@ -1,7 +1,6 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
-import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
 import { CPUUsageStatistics } from './cpu-usage-statistics'
@@ -11,9 +10,7 @@ import poolCodesForToken from './handlers/pool-codes-for-token'
 import poolsBetween from './handlers/pools-between'
 import poolsForToken from './handlers/pools-for-token'
 import poolsJSON from './handlers/pools-json'
-import { priceByAddressHandler, pricesHandler } from './handlers/prices'
 import requestedPairs from './handlers/requested-pairs'
-import { v3, v3_1, v3_2 } from './handlers/swap'
 import token from './handlers/token'
 import requestStatistics from './request-statistics'
 
@@ -49,8 +46,6 @@ app.use(Sentry.Handlers.requestHandler())
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler())
 
-app.use(cors())
-
 app.get('/health', (_, res: Response) => {
   return res.status(extractor.isStarted() ? 200 : 503).send()
 })
@@ -63,13 +58,6 @@ app.get('/pools-json/:chainId', poolsJSON)
 app.get('/pools-for-token/:chainId/:address', poolsForToken)
 app.get('/pools-between/:chainId/:addr0/:addr1', poolsBetween)
 app.get('/requested-pairs/:chainId', requestedPairs)
-
-app.get('/prices', pricesHandler)
-app.get('/prices/:address', priceByAddressHandler)
-
-app.get('/swap', v3)
-app.get('/swap/v3.1', v3_1)
-app.get('/swap/v3.2', v3_2)
 
 // app.get('/debug-sentry', function mainHandler(req, res) {
 //   throw new Error('My first Sentry error!')

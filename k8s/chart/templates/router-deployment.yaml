@@ -23,7 +23,6 @@ spec:
           resources:
             requests:
               cpu: "1000m"
-              memory: "1Gi"
           startupProbe:
             httpGet:
               path: /health

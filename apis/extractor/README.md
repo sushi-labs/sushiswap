@@ -51,3 +51,10 @@ gcloud compute addresses create extractor-production-ip --global
 
 gcloud deploy releases create 'extractor-$DATE-$TIME' --project=extractor-410208 --region=us-east4 --source=./apis/extractor --delivery-pipeline=extractor --images=extractor=IMAGE
 
+## View Router HPA
+
+kubectl get hpa router-1-hpa --watch
+
+## View Extractor VPA
+
+kubectl get vpa extractor-1-vpa --watch

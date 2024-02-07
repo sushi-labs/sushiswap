@@ -1,5 +1,5 @@
 chainIds: 
-  # - 42161 # ARBITRUM
+  - 42161 # ARBITRUM
   # - 42170 # ARBITRUM_NOVA
   # - 43114 # AVALANCHE
   # - 8453 # BASE 

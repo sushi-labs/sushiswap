@@ -53,7 +53,8 @@
   },
   "yaml.schemas": {
     "https://www.artillery.io/schema.json": [
-      "file:///home/feedme/sushi/sushiswap/apis/extractor/test/load.yml"
+      "file:///home/feedme/sushi/sushiswap/apis/extractor/test/load.yml",
+      "file:///home/feedme/sushi/sushiswap/apis/router/test/load.yml"
     ]
   }
 }

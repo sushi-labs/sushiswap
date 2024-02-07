@@ -1,5 +1,15 @@
 import fs from 'fs'
 import path from 'path'
+// import { Agent, fetch, setGlobalDispatcher } from 'undici'
+
+// setGlobalDispatcher(
+//   new Agent({
+//     connect: { timeout: 60_000 * 5 },
+//     headersTimeout: 60_000 * 5,
+//     bodyTimeout: 60_000 * 5,
+//     keepAliveTimeout: 60_000 * 5,
+//   }),
+// )
 
 enum TestMode {
   KNOWN_TOKENS = 0,
@@ -7,15 +17,14 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const RPS = 600
+const RPS = 400
 const TEST_MODE = TestMode.KNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
 const routerServers = [
-  'http://127.0.0.1:4505', // nginx
-  // 'http://127.0.0.1:4503', // service
-  // 'http://127.0.0.1:4506',
-  // 'http://127.0.0.1:4507',
+  // 'https://staging.sushi.com', // staging
+  'http://127.0.0.1:4507', // nginx
+  // 'http://127.0.0.1:4506', // service
   // 'http://localhost:1338',
   // 'http://localhost:1339',
   // 'http://localhost:1340',
@@ -50,7 +59,7 @@ function loadAllTokens(): Token[] {
   return res
 }
 
-// let resCodes: Record<string, number> = {}
+let resCodes: Record<string, number> = {}
 
 let next_server = 0
 async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
@@ -62,14 +71,20 @@ async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
   ++next_server
   if (next_server >= routerServers.length) next_server = 0
 
-  try {
-    // const start = performance.now()
+  const start = performance.now()
 
+  try {
     //for (let i = 0; i < 3; ++i) {
-    const resR = await fetch(urlR)
-    // resCodes[resR.status] = (resCodes[resR.status] || 0) + 1
-    if (resR.status !== 200) {
-      console.log('Response status: ', resR.status, urlR)
+    const res = await fetch(urlR)
+
+    resCodes[res.status] = (resCodes[res.status] || 0) + 1
+    if (res.status !== 200) {
+      // console.log(
+      //   'Response status: ',
+      //   resR.status,
+      //   urlR,
+      //   `${Math.round(performance.now() - start)}ms`,
+      // )
       return
     }
     // const dataR = (await resR.json()) as { status: string }
@@ -84,11 +99,35 @@ async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
     console.log(
       `${tokenIn.symbol} -> ${
         tokenOut.symbol
-      } ${amount.toString()} Error: ${e}`,
+      } ${amount.toString()} Error: ${e} ${Math.round(
+        performance.now() - start,
+      )}ms`,
     )
     //await delay(1000)
   }
 }
+
+async function test() {
+  const tokens = loadAllTokens()
+  setInterval(() => {
+    console.log(
+      'Last 10s http status codes',
+      Object.keys(resCodes)
+        .map((key) => `${key}=${resCodes[key]}`)
+        .join(', '),
+    )
+    resCodes = {}
+  }, 10_000)
+  for (;;) {
+    const timeout = delay(1000 / RPS)
+    const [from, to] = getRandomPair(tokens.length, TEST_MODE)
+    const amount = BigInt(SWAP_AMOUNT * 10 ** tokens[from].decimals)
+    route(tokens[from], tokens[to], amount)
+    await timeout
+  }
+}
+
+test()
 
 // Arbitrary 2 tokens
 function getRandomPair1(num: number): [number, number] {
@@ -124,25 +163,3 @@ function getRandomPair(num: number, mode: TestMode): [number, number] {
       : getRandomPair1
   return func(num)
 }
-
-async function test() {
-  const tokens = loadAllTokens()
-  setInterval(() => {
-    console.log(
-      'Last 10s http status codes',
-      Object.keys(resCodes)
-        .map((key) => `${key}=${resCodes[key]}`)
-        .join(', '),
-    )
-    resCodes = {}
-  }, 10_000)
-  for (;;) {
-    const timeout = delay(1000 / RPS)
-    const [from, to] = getRandomPair(tokens.length, TEST_MODE)
-    const amount = BigInt(SWAP_AMOUNT * 10 ** tokens[from].decimals)
-    route(tokens[from], tokens[to], amount)
-    await timeout
-  }
-}
-
-test()
