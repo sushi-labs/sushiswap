@@ -23,10 +23,11 @@ import { CPUUsageStatistics } from './cpu-usage-statistics'
 import { priceByAddressHandler, pricesHandler } from './handlers/prices'
 import { swapV3_2 } from './handlers/swap'
 import tokenHandler from './handlers/token'
-import requestStatistics from './request-statistics'
 
 // import overloadProtection from 'overload-protection'
-import eventLoopLag from 'event-loop-lag'
+// import eventLoopLag from 'event-loop-lag'
+// import pidusage from 'pidusage'
+import requestStatistics from './request-statistics'
 
 async function start() {
   const app: Express = express()
@@ -66,22 +67,36 @@ async function start() {
 
   app.use(cors())
 
-  const cpuUsageStatistics = new CPUUsageStatistics(1_000)
+  const cpuUsageStatistics = new CPUUsageStatistics(10_000)
   cpuUsageStatistics.start()
 
-  const interval = 5 // how often to refresh our measurement
-  const lag = eventLoopLag(interval)
+  // const lag = eventLoopLag(1_000)
 
-  const protection = (_req: Request, res: Response, next: NextFunction) => {
-    const _lag = lag()
-    // console.log(`Event loop lag: ${_lag}ms`)
-    // console.log(`Cpu usage: ${cpuUsageStatistics.lastUtilisation}%`)
-    if (_lag > 100) {
-      return res
-        .setHeader('Retry-After', 10)
-        .status(503)
-        .send('Service Unavailable')
-    }
+  // const cpuPoints: number[] = []
+  // const cpuSma = 0
+  // const cpuUsage = async (time: number) => {
+  //   setTimeout(async () => {
+  //     await (async () => {
+  //       const { cpu } = await pidusage(process.pid)
+  //       cpuPoints.push(cpu)
+  //       if (cpuPoints.length > 60) {
+  //         cpuPoints.shift()
+  //       }
+  //       cpuSma = cpuPoints.reduce((a, b) => a + b, 0) / cpuPoints.length
+  //     })()
+  //     cpuUsage(time)
+  //   }, time)
+  // }
+
+  // cpuUsage(1_000)
+
+  const protection = (_req: Request, _res: Response, next: NextFunction) => {
+    // if (lag() > 100) {
+    //   return res
+    //     .setHeader('Retry-After', 10)
+    //     .status(503)
+    //     .send('Service Unavailable')
+    // }
     return next()
   }
 
@@ -89,13 +104,13 @@ async function start() {
     return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
   })
 
-  app.get('/swap/v1/:chainId', protection, (req, res) => {
+  app.get(`/swap/v1/${CHAIN_ID}`, protection, (req, res) => {
     return swapV3_2(client)(req, res)
   })
-  app.get('/token/v1/:chainId/:address', protection, tokenHandler(client))
-  app.get('/prices/v1/:chainId', protection, pricesHandler(client))
+  app.get(`/token/v1/${CHAIN_ID}/:address`, protection, tokenHandler(client))
+  app.get(`/prices/v1/${CHAIN_ID}`, protection, pricesHandler(client))
   app.get(
-    '/prices/v1/:chainId/:address',
+    `/prices/v1/${CHAIN_ID}/:address`,
     protection,
     priceByAddressHandler(client),
   )

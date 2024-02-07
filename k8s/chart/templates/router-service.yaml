@@ -12,6 +12,5 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-  externalTrafficPolicy: Local
-  type: LoadBalancer
+  type: ClusterIP
 {{- end }}

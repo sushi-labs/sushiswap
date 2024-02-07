@@ -17,14 +17,15 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const RPS = 400
+const RPS = 350
 const TEST_MODE = TestMode.KNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
 const routerServers = [
   // 'https://staging.sushi.com', // staging
-  'http://127.0.0.1:4507', // nginx
-  // 'http://127.0.0.1:4506', // service
+  // 'http://35.230.163.56:80',
+  // 'http://127.0.0.1:4505', // nginx
+  'http://127.0.0.1:4506', // service
   // 'http://localhost:1338',
   // 'http://localhost:1339',
   // 'http://localhost:1340',
@@ -59,7 +60,11 @@ function loadAllTokens(): Token[] {
   return res
 }
 
-let resCodes: Record<string, number> = {}
+let responseStatusCodes: Record<string, number> = {}
+
+const responseTimes: number[] = []
+
+let responseTimeAverage = 0
 
 let next_server = 0
 async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
@@ -77,7 +82,14 @@ async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
     //for (let i = 0; i < 3; ++i) {
     const res = await fetch(urlR)
 
-    resCodes[res.status] = (resCodes[res.status] || 0) + 1
+    responseStatusCodes[res.status] = (responseStatusCodes[res.status] || 0) + 1
+
+    responseTimes.push(performance.now() - start)
+
+    if (responseTimes.length > 100) responseTimes.shift()
+    responseTimeAverage =
+      responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+
     if (res.status !== 200) {
       // console.log(
       //   'Response status: ',
@@ -112,11 +124,12 @@ async function test() {
   setInterval(() => {
     console.log(
       'Last 10s http status codes',
-      Object.keys(resCodes)
-        .map((key) => `${key}=${resCodes[key]}`)
+      Object.keys(responseStatusCodes)
+        .map((key) => `${key}=${responseStatusCodes[key]}`)
         .join(', '),
+      `Average response time: ${responseTimeAverage}ms`,
     )
-    resCodes = {}
+    responseStatusCodes = {}
   }, 10_000)
   for (;;) {
     const timeout = delay(1000 / RPS)
