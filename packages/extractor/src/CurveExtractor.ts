@@ -1,4 +1,5 @@
-import { CurvePoolCode } from '@sushiswap/router'
+import { CurvePoolCode, LiquidityProviders } from '@sushiswap/router'
+import { RToken, createCurvePoolsForMultipool } from '@sushiswap/tines'
 import { Address, PublicClient, parseAbi } from 'viem'
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
@@ -151,6 +152,13 @@ export class CurveExtractor {
     const balancesType = await Promise.all(
       pools.map((p) => this.detectPoolInterface(p.address)),
     )
+    await Promise.all(
+      pools.map((p, i) => {
+        const tokens = p.coins.map((t) => t.address)
+        return this.addPool(p.address, tokens, balancesType[i])
+      }),
+    )
+    this.consoleLog(`Total 2-token pools: ${this.poolMap.size}`)
     //pools.forEach((p, i) => console.log(p.address, balancesType[i]))
   }
 
@@ -206,17 +214,29 @@ export class CurveExtractor {
       )
       return true
     } catch (_e) {
-      console.log(poolAddress, _e)
       return false
     }
   }
 
-  async addPool(poolAddress: Address, tokenAddress: Address[]) {
+  async addPool(
+    poolAddress: Address,
+    tokenAddress: Address[],
+    balancesType: boolean,
+  ) {
     try {
-      /*const tokens = */ await Promise.all(
+      const tokens = await Promise.all(
         tokenAddress.map((a) => this.tokenManager.findToken(a)),
       )
-      this.multiCallAggregator.callSameBlock([
+      const balancesCalls = tokenAddress.map((_, i) => ({
+        address: poolAddress,
+        abi: balancesType ? ABIBalance256 : ABIBalance128,
+        functionName: 'balances',
+        args: [i],
+      }))
+      const {
+        blockNumber,
+        returnValues: [A, fee, ...balances],
+      } = await this.multiCallAggregator.callSameBlock([
         {
           address: poolAddress,
           abi: ABICommonPart,
@@ -227,21 +247,27 @@ export class CurveExtractor {
           abi: ABICommonPart,
           functionName: 'fee',
         },
-        {
-          address: poolAddress,
-          abi: ABIBalance128,
-          functionName: 'balance',
-        },
-        {
-          address: poolAddress,
-          abi: ABIBalance256,
-          functionName: 'balance',
-        },
+        ...balancesCalls,
       ])
+      const pools = createCurvePoolsForMultipool(
+        poolAddress,
+        tokens as RToken[],
+        Number(fee) / 1e10,
+        Number(A),
+        balances as bigint[],
+      )
+      pools.forEach((p) => {
+        const poolCode = new CurvePoolCode(
+          p,
+          LiquidityProviders.CurveSwap,
+          'Curve',
+        )
+        this.poolMap.set(p.uniqueID(), poolCode)
+      })
     } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
-        `Pool ${poolAddress} adding error`,
+        `Pool ${poolAddress} adding error ${_e}`,
       )
     }
   }
