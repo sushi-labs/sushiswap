@@ -1,5 +1,5 @@
 import { CurvePoolCode } from '@sushiswap/router'
-import { PublicClient } from 'viem'
+import { Address, PublicClient, parseAbi } from 'viem'
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -23,16 +23,27 @@ export interface CurveConfig {
 }
 
 interface APIPoolInfo {
-  address: string
+  address: Address
   symbol: string
   usdTotal: number
   coins: {
-    address: string
+    address: Address
     decimals: string
     usdPrice: number
     poolBalance: string
   }[]
 }
+
+const ABICommonPart = parseAbi([
+  'function A() pure returns (uint256)',
+  'function fee() pure returns (uint256)',
+])
+const ABIBalance128 = parseAbi([
+  'function balances(int128) pure returns (uint256)',
+])
+const ABIBalance256 = parseAbi([
+  'function balances(uint256) pure returns (uint256)',
+])
 
 export class CurveExtractor {
   readonly config: CurveConfig
@@ -136,8 +147,11 @@ export class CurveExtractor {
   }
 
   async start() {
-    await this.gatherCurvePools()
-    //pools.forEach((p) => console.log(p))
+    const pools = await this.gatherCurvePools()
+    const balancesType = await Promise.all(
+      pools.map((p) => this.detectPoolInterface(p.address)),
+    )
+    //pools.forEach((p, i) => console.log(p.address, balancesType[i]))
   }
 
   async gatherCurvePools(): Promise<APIPoolInfo[]> {
@@ -177,9 +191,59 @@ export class CurveExtractor {
     this.consoleLog(
       `Pools with liquidity >= ${this.config.minPoolLiquidityLimitUSD}USD: ${pools.length}`,
     )
-    pools.forEach((p) => console.log(p.address))
 
     return pools
+  }
+
+  // true - new interface balances/coins, false - bad
+  async detectPoolInterface(poolAddress: Address): Promise<boolean> {
+    try {
+      await this.multiCallAggregator.callValue(
+        poolAddress,
+        ABIBalance256,
+        'balances',
+        [0],
+      )
+      return true
+    } catch (_e) {
+      console.log(poolAddress, _e)
+      return false
+    }
+  }
+
+  async addPool(poolAddress: Address, tokenAddress: Address[]) {
+    try {
+      /*const tokens = */ await Promise.all(
+        tokenAddress.map((a) => this.tokenManager.findToken(a)),
+      )
+      this.multiCallAggregator.callSameBlock([
+        {
+          address: poolAddress,
+          abi: ABICommonPart,
+          functionName: 'A',
+        },
+        {
+          address: poolAddress,
+          abi: ABICommonPart,
+          functionName: 'fee',
+        },
+        {
+          address: poolAddress,
+          abi: ABIBalance128,
+          functionName: 'balance',
+        },
+        {
+          address: poolAddress,
+          abi: ABIBalance256,
+          functionName: 'balance',
+        },
+      ])
+    } catch (_e) {
+      warnLog(
+        this.multiCallAggregator.chainId,
+        `Pool ${poolAddress} adding error`,
+      )
+    }
   }
 
   consoleLog(log: string) {
