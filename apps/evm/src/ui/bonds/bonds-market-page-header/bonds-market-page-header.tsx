@@ -147,8 +147,8 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
         </div>
       </div>
       <BondsMarketPageHeaderDescription bond={bond} />
-      <div className="flex flex-col gap-y-5 text-secondary-foreground mb-8 mt-1.5">
-        <div className="flex flex-wrap gap-x-[32px]">
+      <div className="flex flex-col md:gap-y-5 text-secondary-foreground mb-8 mt-1.5">
+        <div className="flex flex-row gap-x-[32px] flex-wrap">
           <BondsMarketPageHeaderDiscount bond={bond} />
           <VestingTerm bond={bond} />
           <div className="flex items-center gap-1.5">
@@ -158,10 +158,12 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
             {formatDistance(bond.end * 1000, new Date(), { addSuffix: true })}
           </div>
         </div>
-        <div className="flex gap-x-[32px]">
+        <div className="flex gap-x-[32px] flex-wrap">
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Network</span>
-            {Chain.from(bond.chainId)?.name}
+            <span className="whitespace-nowrap">
+              {Chain.from(bond.chainId)?.name}
+            </span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">

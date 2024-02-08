@@ -69,8 +69,8 @@ const GetTokens = ({ bond }: { bond: Bond }) => {
 
   return (
     <div className="w-full h-full bg-gradient-to-r from-[rgba(9,147,236,0.1)] to-[rgba(243,56,195,0.1)] rounded-xl px-3 py-1">
-      <div className="flex w-full justify-between text-[13px]">
-        <div className="dark:text-gray-400 flex flex-row items-center space-x-1">
+      <div className="flex w-full justify-between text-[13px] flex-wrap">
+        <div className="dark:text-gray-400 flex flex-row items-center space-x-1 whitespace-nowrap">
           <span>{text}</span>
           <Explainer>
             Liquidity Provider (LP) tokens represent proportional ownership of
@@ -81,7 +81,7 @@ const GetTokens = ({ bond }: { bond: Bond }) => {
             a discount instead.
           </Explainer>
         </div>
-        <div className="text-blue">{link}</div>
+        <div className="text-blue whitespace-nowrap">{link}</div>
       </div>
     </div>
   )

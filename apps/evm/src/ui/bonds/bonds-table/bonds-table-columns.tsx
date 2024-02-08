@@ -151,10 +151,12 @@ export const BOND_ASSET_COLUMN: ColumnDef<Bond, unknown> = {
             <Currency.Icon disableLink currency={token1} />
           </Currency.IconList>
           <div className="flex flex-col gap-0.5">
-            <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
+            <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50 whitespace-nowrap">
               {token0.symbol}/{token1.symbol}
             </span>
-            <span className="text-xs text-gray-500">{row.quoteToken.name}</span>
+            <span className="text-xs text-gray-500 whitespace-nowrap">
+              {row.quoteToken.name}
+            </span>
           </div>
         </div>
       )
