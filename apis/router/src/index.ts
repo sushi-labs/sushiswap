@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
-import cors from 'cors'
+// import cors from 'cors'
 import express, {
   type Express,
   type NextFunction,
@@ -61,13 +61,13 @@ async function start() {
 
   // RequestHandler creates a separate execution context, so that all
   // transactions/spans/breadcrumbs are isolated across requests
-  app.use(Sentry.Handlers.requestHandler())
+  // app.use(Sentry.Handlers.requestHandler())
   // TracingHandler creates a trace for every incoming request
-  app.use(Sentry.Handlers.tracingHandler())
+  // app.use(Sentry.Handlers.tracingHandler())
 
-  app.use(cors())
+  // app.use(cors())
 
-  const cpuUsageStatistics = new CPUUsageStatistics(10_000)
+  const cpuUsageStatistics = new CPUUsageStatistics(60_000)
   cpuUsageStatistics.start()
 
   // const lag = eventLoopLag(1_000)
@@ -90,32 +90,40 @@ async function start() {
 
   // cpuUsage(1_000)
 
-  const rps = { counter: 0, timestamp: Date.now(), average: 0 }
+  const rps = {
+    counter: 0,
+    timestamp: Date.now(),
+    average: 0,
+    start: (time: number) => {
+      setTimeout(() => {
+        const now = Date.now()
 
-  const monitorRps = (time: number) => {
-    setTimeout(() => {
-      const now = Date.now()
+        const seconds = (now - rps.timestamp) / 1_000
 
-      const seconds = (now - rps.timestamp) / 1000
+        const average = rps.counter / seconds
 
-      const average = rps.counter / seconds
-
-      console.log(`RPS: ${average}`)
-      rps.timestamp = now
-      rps.counter = 0
-      rps.average = average
-      monitorRps(time)
-    }, time)
+        // console.log(`RPS: ${average}`)
+        rps.timestamp = now
+        rps.counter = 0
+        rps.average = average
+        rps.start(time)
+      }, time)
+    },
   }
-  monitorRps(1_000)
+  rps.start(1_000)
 
   const protection = (_req: Request, res: Response, next: NextFunction) => {
-    rps.counter++
     if (rps.counter > 100) {
       return res.setHeader('Retry-After', 10).status(503).end()
     }
+    rps.counter++
     return next()
   }
+
+  app.get('/200', (_, res: Response) => {
+    res.setHeader('Cache-Control', 'public, max-age=60')
+    return res.status(200).end()
+  })
 
   app.get('/health', (_, res: Response) => {
     return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
@@ -133,7 +141,7 @@ async function start() {
   )
 
   // The error handler must be registered before any other error middleware and after all controllers
-  app.use(Sentry.Handlers.errorHandler())
+  // app.use(Sentry.Handlers.errorHandler())
 
   app.listen(PORT, () => {
     console.log(`Router ${CHAIN_ID} app listening on port ${PORT}`)

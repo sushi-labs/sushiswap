@@ -3,11 +3,11 @@ config:
   # It's designed to be highly scalable
 
   # target: 'https://staging.sushi.com'
-  # target: 'http://127.0.0.1:4507'
+  # target: 'http://127.0.0.1:4505'
   # target: 'http://127.0.0.1:4503'
   # target: 'http://127.0.0.1:4506'
   # target: 'http://127.0.0.1:4507'
-  target: 'http://localhost:4505'
+  target: 'http://localhost:1338'
   # target: 'http://localhost:1339'
   # target: 'http://localhost:1340'
   # target: 'http://localhost:1341'
@@ -19,44 +19,7 @@ config:
   phases:
     - name: Warm up the API
       duration: 120
-      arrivalRate: 200
-      maxVusers: 200
-      # maxVusers: 250
-    # - name: Sustained
-    #   duration: 120
-    #   arrivalRate: 200
-    # - name: Warm up the API
-    #   duration: 30
-    #   arrivalRate: 50
-    #   rampTo: 100
-    #   maxVusers: 100
-    # - name: Ramp up to peak load for a single service
-    #   duration: 60
-    #   arrivalRate: 100
-    #   rampTo: 200
-    #   maxVusers: 200
-    # - name: Sustained peak load for a one services
-    #   duration: 60
-    #   arrivalRate: 200
-    #   maxVusers: 200
-    # - name: Ramp up to peak load for two services
-    #   duration: 60
-    #   arrivalRate: 200
-    #   rampTo: 400
-    #   maxVusers: 400
-    # - name: Sustained peak load for a two services
-    #   duration: 60
-    #   arrivalRate: 400
-    #   maxVusers: 400
-    # - name: Ramp up to peak load for three services
-    #   duration: 60
-    #   arrivalRate: 400
-    #   rampTo: 600
-    #   maxVusers: 600
-    # - name: Sustained peak load for a three services
-    #   duration: 60
-    #   arrivalRate: 600
-    #   maxVusers: 600
+      arrivalRate: 5000
 
   processor: "./processor.js"
   # Load & configure a couple of useful plugins
@@ -69,14 +32,18 @@ config:
   #   threshold: 100
   ensure:
       thresholds:
-        - http.response_time.p99: 100
-        - http.response_time.p95: 75
+        - http.response_time.p99: 250
+        - http.response_time.p95: 150
 scenarios:
   - flow:
+      # - get:
+      #     url: "/200"
+      #     expect:
+      #       - statusCode: [200]
       - function: "setQuery"
       - get:
           url: "/swap/v1/1?chainId={{ query.chainId }}&tokenIn={{ query.tokenIn }}&tokenOut={{ query.tokenOut }}&amount={{ query.amount }}"
-          # headers:
-          #   Keep-Alive: timeout=5, max=1000
+          headers:
+            Keep-Alive: "timeout=5, max=1000"
           expect:
             - statusCode: [200, 503]

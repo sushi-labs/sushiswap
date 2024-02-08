@@ -18,16 +18,16 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const RPS = 2000
+const RPS = 200
 const TEST_MODE = TestMode.KNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
 const routerServers = [
   // 'https://staging.sushi.com', // staging
   // 'http://35.230.163.56:80',
-  // 'http://127.0.0.1:4505', // nginx
+  'http://127.0.0.1:4505', // nginx
   // 'http://127.0.0.1:4503', // service
-  'http://localhost:1338',
+  // 'http://localhost:1338',
   // 'http://localhost:1339',
   // 'http://localhost:1340',
   // 'http://localhost:1341',
