@@ -3,14 +3,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: router-{{ $value }}
+  name: router-{{ $value }}-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: router-{{ $value }}
-  minReplicas: 1
-  maxReplicas: 2
+  minReplicas: 2
+  maxReplicas: 10
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 0

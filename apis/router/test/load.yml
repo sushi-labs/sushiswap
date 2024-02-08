@@ -7,7 +7,7 @@ config:
   # target: 'http://127.0.0.1:4503'
   # target: 'http://127.0.0.1:4506'
   # target: 'http://127.0.0.1:4507'
-  target: 'http://localhost:1338'
+  target: 'http://localhost:4505'
   # target: 'http://localhost:1339'
   # target: 'http://localhost:1340'
   # target: 'http://localhost:1341'
@@ -19,7 +19,8 @@ config:
   phases:
     - name: Warm up the API
       duration: 120
-      arrivalRate: 50
+      arrivalRate: 200
+      maxVusers: 200
       # maxVusers: 250
     # - name: Sustained
     #   duration: 120

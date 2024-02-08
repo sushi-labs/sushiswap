@@ -79,6 +79,7 @@ function handler(
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
           Date.now()
         ) {
+          console.log('no fresh data')
           requestStatistics.requestRejected(ResponseRejectReason.NO_FRESH_DATA)
           return res.status(500).send(`Network ${chainId} data timeout`)
         }

@@ -90,26 +90,29 @@ async function start() {
 
   // cpuUsage(1_000)
 
-  let rps = 0
+  const rps = { counter: 0, timestamp: Date.now(), average: 0 }
 
-  const monitorRps = async (time: number) => {
+  const monitorRps = (time: number) => {
     setTimeout(() => {
-      rps = 0
+      const now = Date.now()
+
+      const seconds = (now - rps.timestamp) / 1000
+
+      const average = rps.counter / seconds
+
+      console.log(`RPS: ${average}`)
+      rps.timestamp = now
+      rps.counter = 0
+      rps.average = average
       monitorRps(time)
     }, time)
   }
-
   monitorRps(1_000)
 
   const protection = (_req: Request, res: Response, next: NextFunction) => {
-    rps++
-    if (rps > 250) {
-      return (
-        res
-          // .setHeader('Retry-After', 10)
-          .status(503)
-          .send('Service Unavailable')
-      )
+    rps.counter++
+    if (rps.counter > 100) {
+      return res.setHeader('Retry-After', 10).status(503).end()
     }
     return next()
   }
