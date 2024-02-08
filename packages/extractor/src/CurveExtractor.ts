@@ -1,5 +1,6 @@
 import { CurvePoolCode, LiquidityProviders } from '@sushiswap/router'
 import { RToken, createCurvePoolsForMultipool } from '@sushiswap/tines'
+import { Token } from 'sushi/currency'
 import { Address, PublicClient, parseAbi } from 'viem'
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
@@ -52,10 +53,12 @@ export class CurveExtractor {
   readonly tokenManager: TokenManager
 
   readonly poolMap: Map<string, CurvePoolCode> = new Map()
+  readonly tokenPairMap: Map<string, CurvePoolCode[]> = new Map()
 
   readonly logFilter: LogFilter2
   readonly logging: boolean
   readonly taskCounter: Counter
+  started = false
 
   /// @param client
   /// @param factories list of supported factories
@@ -159,7 +162,7 @@ export class CurveExtractor {
       }),
     )
     this.consoleLog(`Total 2-token pools: ${this.poolMap.size}`)
-    //pools.forEach((p, i) => console.log(p.address, balancesType[i]))
+    this.started = true
   }
 
   async gatherCurvePools(): Promise<APIPoolInfo[]> {
@@ -263,6 +266,13 @@ export class CurveExtractor {
           'Curve',
         )
         this.poolMap.set(p.uniqueID(), poolCode)
+        const [a0, a1] =
+          p.token0.address < p.token1.address
+            ? [p.token0.address, p.token1.address]
+            : [p.token1.address, p.token0.address]
+        const tokenPair = this.tokenPairMap.get(a0 + a1) ?? []
+        tokenPair.push(poolCode)
+        this.tokenPairMap.set(a0 + a1, tokenPair)
       })
     } catch (_e) {
       warnLog(
@@ -270,6 +280,51 @@ export class CurveExtractor {
         `Pool ${poolAddress} adding error ${_e}`,
       )
     }
+  }
+
+  getPoolsForTokenPair(t0: Token, t1: Token) {
+    const [a0, a1] =
+      t0.address < t1.address
+        ? [t0.address, t1.address]
+        : [t1.address, t0.address]
+    return this.tokenPairMap.get(a0 + a1) ?? []
+  }
+
+  getPoolsForTokens(tokensUnique: Token[]): {
+    prefetched: CurvePoolCode[]
+    fetching: Promise<CurvePoolCode | undefined>[]
+  } {
+    let prefetched: CurvePoolCode[] = []
+    for (let i = 0; i < tokensUnique.length; ++i) {
+      const t0 = tokensUnique[i]
+      for (let j = i + 1; j < tokensUnique.length; ++j) {
+        const t1 = tokensUnique[j]
+        prefetched = prefetched.concat(this.getPoolsForTokenPair(t0, t1))
+      }
+    }
+    return {
+      prefetched,
+      fetching: [],
+    }
+  }
+
+  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+    const add = (token: RToken) => {
+      const num = tokenMap.get(token as Token) || 0
+      tokenMap.set(token as Token, num + 1)
+    }
+    Array.from(this.poolMap.values()).forEach((p) => {
+      add(p.pool.token0)
+      add(p.pool.token1)
+    })
+  }
+
+  getCurrentPoolCodes(): CurvePoolCode[] {
+    return Array.from(this.poolMap.values())
+  }
+
+  isStarted() {
+    return this.started
   }
 
   consoleLog(log: string) {

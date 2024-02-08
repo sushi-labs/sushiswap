@@ -253,8 +253,11 @@ export class Extractor {
             .prefetched.map((w) => w.getPoolCode())
             .filter((pc) => pc !== undefined) as PoolCode[])
         : []
+      const poolsCurve = this.extractorCurve
+        ? this.extractorCurve.getPoolsForTokens(tokensUnique).prefetched
+        : []
       ++this.requestFinishedNum
-      return pools2.concat(pools3).concat(poolsAlg)
+      return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
     } catch (e) {
       ++this.requestFinishedNum
       ++this.requestFailedNum
@@ -308,6 +311,9 @@ export class Extractor {
             .fetching,
         )
       }
+      // curve doesn't need to be prefetched
+      //if (this.extractorCurve) {
+
       await Promise.allSettled(fetching)
       ++this.requestFinishedNum
     } catch (e) {
@@ -351,6 +357,11 @@ export class Extractor {
 
         prefetched = prefetched.concat(poolsAlgPrefetched)
         fetchingNumber += poolsAlg.fetching.length
+      }
+      if (this.extractorCurve) {
+        const poolsCurve = this.extractorCurve.getPoolsForTokens(tokensUnique)
+        prefetched = prefetched.concat(poolsCurve.prefetched)
+        // no fetching
       }
       ++this.requestFinishedNum
       return { prefetched, fetchingNumber }
@@ -451,6 +462,8 @@ export class Extractor {
     if (this.extractorV2) this.extractorV2.getTokensPoolsQuantity(tokenMap)
     if (this.extractorV3) this.extractorV3.getTokensPoolsQuantity(tokenMap)
     if (this.extractorAlg) this.extractorAlg.getTokensPoolsQuantity(tokenMap)
+    if (this.extractorCurve)
+      this.extractorCurve.getTokensPoolsQuantity(tokenMap)
     return Array.from(tokenMap.entries()).sort(([, a], [, b]) => b - a)
   }
 
@@ -484,13 +497,17 @@ export class Extractor {
     const poolsAlg = this.extractorAlg
       ? this.extractorAlg.getCurrentPoolCodes()
       : []
-    return pools2.concat(pools3).concat(poolsAlg)
+    const poolsCurve = this.extractorCurve
+      ? this.extractorCurve.getCurrentPoolCodes()
+      : []
+    return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
   }
 
   isStarted(): boolean {
     if (this.extractorV2 && !this.extractorV2.isStarted()) return false
     if (this.extractorV3 && !this.extractorV3.isStarted()) return false
     if (this.extractorAlg && !this.extractorAlg.isStarted()) return false
+    if (this.extractorCurve && !this.extractorCurve.isStarted()) return false
     return true
   }
 }
