@@ -1,4 +1,5 @@
 import {
+  CurveConfig,
   Extractor,
   FactoryV2,
   FactoryV3,
@@ -140,6 +141,7 @@ async function startInfinitTest(args: {
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
+  curveConfig?: CurveConfig
   tickHelperContract: Address
   cacheDir: string
   logDepth: number
@@ -165,7 +167,9 @@ async function startInfinitTest(args: {
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
     extractor.extractorV2?.multiCallAggregator ||
-      (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
+      (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator) ||
+      extractor.extractorAlg?.multiCallAggregator ||
+      extractor.extractorCurve?.multiCallAggregator,
     __dirname,
     `tokens-${client.chain?.id}`,
   )
@@ -278,12 +282,34 @@ async function startInfinitTest(args: {
   }
 }
 
+it.only('Extractor Ethereum infinite work test (Curve only)', async () => {
+  await startInfinitTest({
+    providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+    chain: mainnet,
+    factoriesV2: [], //sushiswapV2Factory(ChainId.ETHEREUM)],
+    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
+    curveConfig: {
+      api: 'https://api.curve.fi/api/getPools/ethereum',
+      minPoolLiquidityLimitUSD: 10_000,
+    },
+    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+    RP3Address: RP3Address[ChainId.ETHEREUM],
+  })
+})
+
 it.skip('Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
     factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
     factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
+    // curveConfig: {
+    //   api: 'https://api.curve.fi/api/getPools/ethereum',
+    //   minPoolLiquidityLimitUSD: 10_000,
+    // },
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',
     logDepth: 50,
