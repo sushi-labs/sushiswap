@@ -282,7 +282,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.only('Extractor Ethereum infinite work test (Curve only)', async () => {
+it.skip('Extractor Ethereum infinite work test (Curve only)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
