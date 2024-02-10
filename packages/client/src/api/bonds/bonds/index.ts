@@ -270,6 +270,26 @@ export async function getBondsFromSubgraph(
       //   getIdFromChainIdAddress(chainId, bond.teller),
       // )
 
+      // No need to fetch if there are no bonds
+      const [poolsP, vaultsP] = (() => {
+        const quoteTokenIds = bondsParsed.map((bond) =>
+          getIdFromChainIdAddress(chainId, bond.quoteToken.address),
+        )
+
+        if (quoteTokenIds.length === 0) return [[], []]
+
+        return [
+          getPools({
+            chainIds: [chainId],
+            ids: quoteTokenIds,
+          }),
+          getSteerVaults({
+            chainIds: [chainId],
+            ids: quoteTokenIds,
+          }),
+        ]
+      })()
+
       const [
         marketPricesS,
         /*referrerFeesS, protocolFeesS, */ poolsS,
@@ -293,18 +313,8 @@ export async function getBondsFromSubgraph(
         //   client: createPublicClient(config[chainId]),
         //   tellerIds,
         // }),
-        getPools({
-          chainIds: [chainId],
-          ids: bondsParsed.map((bond) =>
-            getIdFromChainIdAddress(chainId, bond.quoteToken.address),
-          ),
-        }),
-        getSteerVaults({
-          chainIds: [chainId],
-          ids: bondsParsed.map((bond) =>
-            getIdFromChainIdAddress(chainId, bond.quoteToken.address),
-          ),
-        }),
+        poolsP,
+        vaultsP,
       ])
 
       if (!isPromiseFulfilled(marketPricesS))
