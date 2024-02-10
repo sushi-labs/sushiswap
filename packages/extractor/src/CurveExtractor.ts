@@ -1,7 +1,7 @@
 import { CurvePoolCode, LiquidityProviders } from '@sushiswap/router'
 import { RToken, createCurvePoolsForMultipool } from '@sushiswap/tines'
 import { Token } from 'sushi/currency'
-import { Address, PublicClient, parseAbi } from 'viem'
+import { AbiItem, Address, PublicClient, parseAbi, parseAbiItem } from 'viem'
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -18,6 +18,72 @@ const CurvePoolListNames = [
   //'factory-tricrypto',
   'factory-stable-ng',
 ]
+
+export const CurveEventsAbi = [
+  parseAbiItem(
+    'event TokenExchange(address indexed buyer, int128 sold_id, uint256 tokens_sold, int128 bought_id, uint256 tokens_bought)',
+  ),
+  parseAbiItem(
+    'event AddLiquidity(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 invariant, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event AddLiquidity(address indexed provider, uint256[3] token_amounts, uint256[3] fees, uint256 invariant, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event AddLiquidity(address indexed provider, uint256[4] token_amounts, uint256[4] fees, uint256 invariant, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event RemoveLiquidity(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event RemoveLiquidity(address indexed provider, uint256[3] token_amounts, uint256[3] fees, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event RemoveLiquidity(address indexed provider, uint256[4] token_amounts, uint256[4] fees, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event RemoveLiquidityOne(address indexed provider, uint256 token_amount, uint256 coin_amount)',
+  ),
+  parseAbiItem(
+    'event RemoveLiquidityImbalance(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 invariant, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event RemoveLiquidityImbalance(address indexed provider, uint256[3] token_amounts, uint256[3] fees, uint256 invariant, uint256 token_supply)',
+  ),
+  parseAbiItem(
+    'event RemoveLiquidityImbalance(address indexed provider, uint256[4] token_amounts, uint256[4] fees, uint256 invariant, uint256 token_supply)',
+  ),
+  parseAbiItem('event NewFee(uint256 fee, uint256 admin_fee)'),
+]
+
+const CurveAllEventsAbi = parseAbi([
+  // used
+  'event TokenExchange(address indexed buyer, int128 sold_id, uint256 tokens_sold, int128 bought_id, uint256 tokens_bought)',
+  'event TokenExchangeUnderlying(address indexed buyer, int128 sold_id, uint256 tokens_sold, int128 bought_id, uint256 tokens_bought)',
+  'event AddLiquidity(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 invariant, uint256 token_supply)',
+  'event AddLiquidity(address indexed provider, uint256[3] token_amounts, uint256[3] fees, uint256 invariant, uint256 token_supply)',
+  'event AddLiquidity(address indexed provider, uint256[4] token_amounts, uint256[4] fees, uint256 invariant, uint256 token_supply)',
+  'event RemoveLiquidity(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 token_supply)',
+  'event RemoveLiquidity(address indexed provider, uint256[3] token_amounts, uint256[3] fees, uint256 token_supply)',
+  'event RemoveLiquidity(address indexed provider, uint256[4] token_amounts, uint256[4] fees, uint256 token_supply)',
+  'event RemoveLiquidityOne(address indexed provider, uint256 token_amount, uint256 coin_amount)',
+  'event RemoveLiquidityOne(address indexed provider, uint256 token_amount, uint256 coin_amount, uint256 token_supply)',
+  'event RemoveLiquidityImbalance(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 invariant, uint256 token_supply)',
+  'event RemoveLiquidityImbalance(address indexed provider, uint256[3] token_amounts, uint256[3] fees, uint256 invariant, uint256 token_supply)',
+  'event RemoveLiquidityImbalance(address indexed provider, uint256[4] token_amounts, uint256[4] fees, uint256 invariant, uint256 token_supply)',
+  'event NewFee(uint256 fee, uint256 admin_fee)',
+  'event NewFee(uint256 fee, uint256 admin_fee, uint256 offpeg_fee_multiplier)',
+
+  //unused
+  'event CommitNewAdmin(uint256 indexed deadline, address indexed admin)',
+  'event NewAdmin(address indexed admin)',
+  'event CommitNewFee(uint256 indexed deadline, uint256 fee, uint256 admin_fee)',
+  'event CommitNewFee(uint256 indexed deadline, uint256 fee, uint256 admin_fee, uint256 offpeg_fee_multiplier)',
+  'event RampA(uint256 old_A, uint256 new_A, uint256 initial_time, uint256 future_time)',
+  'event StopRampA(uint256 A, uint256 t)',
+  'event Transfer(address indexed sender, address indexed receiver, uint256 value)',
+  'event Approval(address indexed owner, address indexed spender, uint256 value)',
+])
 
 export interface CurveConfig {
   api: string
@@ -203,6 +269,14 @@ export class CurveExtractor {
       `Pools with liquidity >= ${this.config.minPoolLiquidityLimitUSD}USD: ${pools.length}`,
     )
 
+    let skip = true
+    for (let i = 1; i < pools.length; ++i) {
+      if (pools[i].address === '0xEcd5e75AFb02eFa118AF914515D6521aaBd189F1')
+        skip = false
+      if (skip) continue
+      await this.testEvents(pools[i].address)
+    }
+
     return pools
   }
 
@@ -264,6 +338,7 @@ export class CurveExtractor {
           p,
           LiquidityProviders.CurveSwap,
           'Curve',
+          1, //poolType, don't rely on pool.exchange return value
         )
         this.poolMap.set(p.uniqueID(), poolCode)
         const [a0, a1] =
@@ -330,5 +405,30 @@ export class CurveExtractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`CRV-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  // checks that we don't miss any log of a pool - not for production
+  async testEvents(poolAddress: Address) {
+    const client = this.multiCallAggregator.client
+    const toBlock = (await client.getBlockNumber()) - 200n
+    const fromBlock = toBlock - 500_000n
+    const logsAll = await client.getLogs({
+      address: poolAddress,
+      fromBlock,
+      toBlock,
+    })
+    const logsKnownEvents = await client.getLogs({
+      address: poolAddress,
+      fromBlock,
+      toBlock,
+      events: CurveAllEventsAbi,
+    })
+
+    console.log(
+      poolAddress,
+      logsAll.length,
+      logsKnownEvents.length,
+      logsAll.length - logsKnownEvents.length,
+    )
   }
 }
