@@ -291,6 +291,9 @@ it.skip('Extractor Ethereum infinite work test (Curve only)', async () => {
     curveConfig: {
       api: 'https://api.curve.fi/api/getPools/ethereum',
       minPoolLiquidityLimitUSD: 10_000,
+      poolBlackList: [
+        '0x80466c64868E1ab14a1Ddf27A676C3fcBE638Fe5', // crypto pool in main list :(
+      ],
     },
     tickHelperContract: TickLensContract[ChainId.ETHEREUM],
     cacheDir: './cache',

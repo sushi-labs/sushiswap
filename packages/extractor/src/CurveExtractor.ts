@@ -1,7 +1,7 @@
 import { CurvePoolCode, LiquidityProviders } from '@sushiswap/router'
 import { RToken, createCurvePoolsForMultipool } from '@sushiswap/tines'
 import { Token } from 'sushi/currency'
-import { AbiItem, Address, PublicClient, parseAbi, parseAbiItem } from 'viem'
+import { Address, PublicClient, parseAbi, parseAbiItem } from 'viem'
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -16,12 +16,15 @@ const CurvePoolListNames = [
   //'factory-eywa',   // legacy - 0 pools
   //'factory-crypto',
   //'factory-tricrypto',
-  'factory-stable-ng',
+  // 'factory-stable-ng',   // stable pools new generation
 ]
 
 export const CurveEventsAbi = [
   parseAbiItem(
     'event TokenExchange(address indexed buyer, int128 sold_id, uint256 tokens_sold, int128 bought_id, uint256 tokens_bought)',
+  ),
+  parseAbiItem(
+    'event TokenExchangeUnderlying(address indexed buyer, int128 sold_id, uint256 tokens_sold, int128 bought_id, uint256 tokens_bought)',
   ),
   parseAbiItem(
     'event AddLiquidity(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 invariant, uint256 token_supply)',
@@ -45,6 +48,9 @@ export const CurveEventsAbi = [
     'event RemoveLiquidityOne(address indexed provider, uint256 token_amount, uint256 coin_amount)',
   ),
   parseAbiItem(
+    'event RemoveLiquidityOne(address indexed provider, uint256 token_amount, uint256 coin_amount, uint256 token_supply)',
+  ),
+  parseAbiItem(
     'event RemoveLiquidityImbalance(address indexed provider, uint256[2] token_amounts, uint256[2] fees, uint256 invariant, uint256 token_supply)',
   ),
   parseAbiItem(
@@ -54,6 +60,9 @@ export const CurveEventsAbi = [
     'event RemoveLiquidityImbalance(address indexed provider, uint256[4] token_amounts, uint256[4] fees, uint256 invariant, uint256 token_supply)',
   ),
   parseAbiItem('event NewFee(uint256 fee, uint256 admin_fee)'),
+  parseAbiItem(
+    'event NewFee(uint256 fee, uint256 admin_fee, uint256 offpeg_fee_multiplier)',
+  ),
 ]
 
 const CurveAllEventsAbi = parseAbi([
@@ -88,6 +97,7 @@ const CurveAllEventsAbi = parseAbi([
 export interface CurveConfig {
   api: string
   minPoolLiquidityLimitUSD: number
+  poolBlackList?: Address[]
 }
 
 interface APIPoolInfo {
@@ -234,6 +244,7 @@ export class CurveExtractor {
   async gatherCurvePools(): Promise<APIPoolInfo[]> {
     const api = this.config.api
     const urlPrefix = api.endsWith('/') ? api : `${api}/`
+    const blackList = this.config.poolBlackList ?? []
 
     const poolMap = new Map<string, APIPoolInfo>()
     for (const l in CurvePoolListNames) {
@@ -252,7 +263,10 @@ export class CurveExtractor {
           )
           continue
         }
-        poolList.forEach((p) => poolMap.set(p.address, p))
+        poolList.forEach((p) => {
+          if (!blackList.includes(p.address)) poolMap.set(p.address, p)
+        })
+        //poolList.forEach((p) => console.log(p.address, l))
       } catch (_e) {
         warnLog(
           this.multiCallAggregator.chainId,
@@ -269,13 +283,13 @@ export class CurveExtractor {
       `Pools with liquidity >= ${this.config.minPoolLiquidityLimitUSD}USD: ${pools.length}`,
     )
 
-    let skip = true
-    for (let i = 1; i < pools.length; ++i) {
-      if (pools[i].address === '0xEcd5e75AFb02eFa118AF914515D6521aaBd189F1')
-        skip = false
-      if (skip) continue
-      await this.testEvents(pools[i].address)
-    }
+    // let skip = true
+    // for (let i = 0; i < pools.length; ++i) {
+    //   //if (pools[i].address === '0x80466c64868E1ab14a1Ddf27A676C3fcBE638Fe5')
+    //     skip = false
+    //   if (skip) continue
+    //   await this.testEvents(pools[i].address)
+    // }
 
     return pools
   }
@@ -410,25 +424,32 @@ export class CurveExtractor {
   // checks that we don't miss any log of a pool - not for production
   async testEvents(poolAddress: Address) {
     const client = this.multiCallAggregator.client
-    const toBlock = (await client.getBlockNumber()) - 200n
-    const fromBlock = toBlock - 500_000n
-    const logsAll = await client.getLogs({
-      address: poolAddress,
-      fromBlock,
-      toBlock,
-    })
-    const logsKnownEvents = await client.getLogs({
-      address: poolAddress,
-      fromBlock,
-      toBlock,
-      events: CurveAllEventsAbi,
-    })
+    for (let blocks = 500_000; blocks > 1; blocks = Math.floor(blocks / 2)) {
+      try {
+        const toBlock = (await client.getBlockNumber()) - 200n
+        const fromBlock = toBlock - BigInt(blocks)
+        const logsAll = await client.getLogs({
+          address: poolAddress,
+          fromBlock,
+          toBlock,
+        })
+        const logsKnownEvents = await client.getLogs({
+          address: poolAddress,
+          fromBlock,
+          toBlock,
+          events: CurveAllEventsAbi,
+        })
 
-    console.log(
-      poolAddress,
-      logsAll.length,
-      logsKnownEvents.length,
-      logsAll.length - logsKnownEvents.length,
-    )
+        console.log(
+          poolAddress,
+          logsAll.length,
+          logsKnownEvents.length,
+          logsAll.length - logsKnownEvents.length,
+        )
+        return
+      } catch (_e) {
+        console.log(poolAddress, `${blocks} blocks - too much logs`)
+      }
+    }
   }
 }
