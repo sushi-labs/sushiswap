@@ -219,6 +219,10 @@ export class CurveMultitokenCore {
     this.currentFlow[index] = 0
   }
 
+  applyReserveDiff(index: number, diff: bigint) {
+    this.updateReserve(index, this.reserves[index] + diff)
+  }
+
   computeLiquidity(): bigint {
     if (this.D !== 0n) return this.D // already calculated
     if (this.reserves.some((r) => r === 0n)) return 0n

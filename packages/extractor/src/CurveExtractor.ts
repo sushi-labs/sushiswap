@@ -1,7 +1,18 @@
 import { CurvePoolCode, LiquidityProviders } from '@sushiswap/router'
-import { RToken, createCurvePoolsForMultipool } from '@sushiswap/tines'
+import {
+  CurveMultitokenCore,
+  RToken,
+  createCurvePoolsForMultipool,
+} from '@sushiswap/tines'
 import { Token } from 'sushi/currency'
-import { Address, PublicClient, parseAbi, parseAbiItem } from 'viem'
+import {
+  Address,
+  Log,
+  PublicClient,
+  decodeEventLog,
+  parseAbi,
+  parseAbiItem,
+} from 'viem'
 import { Counter } from './Counter'
 import { LogFilter2 } from './LogFilter2'
 import { MultiCallAggregator } from './MulticallAggregator'
@@ -128,8 +139,10 @@ export class CurveExtractor {
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
 
-  readonly poolMap: Map<string, CurvePoolCode> = new Map()
-  readonly tokenPairMap: Map<string, CurvePoolCode[]> = new Map()
+  readonly poolMap: Map<string, CurvePoolCode> = new Map() // indexed by uniqueId
+  readonly balancesType: Map<string, boolean> = new Map() // indexed by  pool address
+  readonly coreMap: Map<string, CurveMultitokenCore> = new Map() // indexed by pool address
+  readonly tokenPairMap: Map<string, CurvePoolCode[]> = new Map() // indexed by t0.address+t1.address
 
   readonly logFilter: LogFilter2
   readonly logging: boolean
@@ -157,73 +170,43 @@ export class CurveExtractor {
     })
 
     this.logFilter = logFilter
-    /*logFilter.addFilter(UniV2EventsListenAbi, (logs?: Log[]) => {
+    logFilter.addFilter(CurveEventsAbi, (logs?: Log[]) => {
       if (logs) {
-        let eventKnown = 0
-        let eventUnknown = 0
-        let eventIgnore = 0
-        let eventRemoved = 0
         logs.forEach((l) => {
-          const {
-            args: { reserve0, reserve1 },
-          } = decodeEventLog({
-            abi: UniV2EventsListenAbi,
+          const core = this.coreMap.get(l.address)
+          if (core === undefined) return
+          const { eventName, args } = decodeEventLog({
+            abi: CurveEventsAbi,
             data: l.data,
             topics: l.topics,
           })
-          const poolState = this.poolMap.get(l.address.toLowerCase())
-          if (!poolState || poolState.status === PoolStatus.NoPool) {
-            ++eventUnknown
-            if (reserve0 !== undefined && reserve1 !== undefined)
-              this.addPoolByLog(l.address, reserve0, reserve1)
-            return
-          }
-          if (poolState.status === PoolStatus.IgnorePool) {
-            ++eventIgnore
-            return
-          }
-          if (l.removed) {
-            ++eventRemoved
-            this.updatePoolState(poolState)
-            return
-          }
-          if (reserve0 !== undefined && reserve1 !== undefined) {
-            if (poolState.status === PoolStatus.AddingPool) {
-              poolState.reserve0 = reserve0
-              poolState.reserve1 = reserve1
-            } else {
-              poolState.poolCode.pool.updateReserves(reserve0, reserve1)
-              poolState.status = PoolStatus.ValidPool
+          switch (eventName) {
+            case 'TokenExchange':
+            case 'TokenExchangeUnderlying': {
+              const { sold_id, tokens_sold, bought_id, tokens_bought } = args
+              core.applyReserveDiff(Number(sold_id), tokens_sold)
+              core.applyReserveDiff(Number(bought_id), -tokens_bought)
+              break
             }
+            default:
+              this.updatePool(core)
           }
-          ++eventKnown
         })
         const blockNumber =
           logs.length > 0
             ? Number(logs[logs.length - 1].blockNumber || 0)
             : '<undefined>'
-        const eventInfo = [
-          eventKnown > 0 ? `${eventKnown} known` : '',
-          eventIgnore > 0 ? `${eventIgnore} ignore` : '',
-          eventUnknown > 0 ? `${eventUnknown} unknown` : '',
-          eventRemoved > 0 ? `${eventRemoved} removed` : '',
-        ]
-          .filter((e) => e !== '')
-          .join(', ')
-
         this.consoleLog(
-          `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
+          `Block ${blockNumber} ${logs.length} logs, jobs: ${this.taskCounter.counter}`,
         )
       } else {
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
-        Array.from(this.poolMap.values()).forEach((pc) =>
-          this.updatePoolState(pc),
-        )
+        Array.from(this.coreMap.values()).forEach((pc) => this.updatePool(pc))
       }
-    })*/
+    })
   }
 
   async start() {
@@ -311,13 +294,18 @@ export class CurveExtractor {
 
   async addPool(
     poolAddress: Address,
-    tokenAddress: Address[],
+    tokenAddress: Address[] | RToken[],
     balancesType: boolean,
   ) {
     try {
-      const tokens = await Promise.all(
-        tokenAddress.map((a) => this.tokenManager.findToken(a)),
-      )
+      const tokens =
+        typeof tokenAddress[0] === 'string'
+          ? await Promise.all(
+              tokenAddress.map((a) =>
+                this.tokenManager.findToken(a as Address),
+              ),
+            )
+          : tokenAddress
       const balancesCalls = tokenAddress.map((_, i) => ({
         address: poolAddress,
         abi: balancesType ? ABIBalance256 : ABIBalance128,
@@ -325,7 +313,6 @@ export class CurveExtractor {
         args: [i],
       }))
       const {
-        blockNumber,
         returnValues: [A, fee, ...balances],
       } = await this.multiCallAggregator.callSameBlock([
         {
@@ -347,6 +334,8 @@ export class CurveExtractor {
         Number(A),
         balances as bigint[],
       )
+      this.coreMap.set(poolAddress, pools[0].core)
+      this.balancesType.set(poolAddress, balancesType)
       pools.forEach((p) => {
         const poolCode = new CurvePoolCode(
           p,
@@ -369,6 +358,14 @@ export class CurveExtractor {
         `Pool ${poolAddress} adding error ${_e}`,
       )
     }
+  }
+
+  async updatePool(core: CurveMultitokenCore) {
+    return await this.addPool(
+      core.address as Address,
+      core.tokens,
+      this.balancesType.get(core.address) as boolean,
+    )
   }
 
   getPoolsForTokenPair(t0: Token, t1: Token) {
