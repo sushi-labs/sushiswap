@@ -48,6 +48,7 @@ export const BondSchema = z.object({
   owner: address(),
   capacity: bigint(),
   capacityInQuote: z.boolean(),
+  hasClosed: z.boolean(),
   start: bigint().nullable(),
   conclusion: bigint().nullable(),
   vesting: bigint(),

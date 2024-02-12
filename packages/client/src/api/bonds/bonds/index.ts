@@ -215,6 +215,7 @@ export async function getBondsFromSubgraph(
         bondDescriptionsP,
       ])
 
+      // Validate and parse the bonds
       const bondsParsed = bonds
         .map((bond) => BondSchema.safeParse(bond))
         .flatMap((bond) => {
@@ -224,41 +225,43 @@ export async function getBondsFromSubgraph(
           }
           return bond.data
         })
-        .filter((bond) => {
-          if (
-            !args.anyIssuer &&
-            !issuers.some((issuer) =>
-              issuer.ids.some((id) => {
-                const { chainId, address } = getChainIdAddressFromId(id)
-                return (
-                  chainId === bond.chainId &&
-                  address.toLowerCase() === bond.owner.toLowerCase()
-                )
-              }),
-            )
-          ) {
-            return false
-          }
 
-          if (auctioneers && !auctioneers?.includes(bond.auctioneer)) {
-            return false
-          }
+      // Filter the bonds based on the arguments
+      const bondsFiltered = bondsParsed.filter((bond) => {
+        if (
+          !args.anyIssuer &&
+          !issuers.some((issuer) =>
+            issuer.ids.some((id) => {
+              const { chainId, address } = getChainIdAddressFromId(id)
+              return (
+                chainId === bond.chainId &&
+                address.toLowerCase() === bond.owner.toLowerCase()
+              )
+            }),
+          )
+        ) {
+          return false
+        }
 
-          if (
-            marketIdFilter &&
-            !marketIdFilter?.includes(Number(bond.marketId))
-          ) {
-            return false
-          }
+        if (auctioneers && !auctioneers?.includes(bond.auctioneer)) {
+          return false
+        }
 
-          if (args.onlyOpen && !isOpen(bond.start, bond.conclusion)) {
-            return false
-          }
+        if (
+          marketIdFilter &&
+          !marketIdFilter?.includes(Number(bond.marketId))
+        ) {
+          return false
+        }
 
-          return true
-        })
+        if (args.onlyOpen && !isOpen(bond.start, bond.conclusion)) {
+          return false
+        }
 
-      const marketIds = bondsParsed.map((bond) =>
+        return true
+      })
+
+      const marketIds = bondsFiltered.map((bond) =>
         getMarketIdFromChainIdAuctioneerMarket({
           chainId,
           auctioneerAddress: bond.auctioneer,
@@ -266,16 +269,16 @@ export async function getBondsFromSubgraph(
         }),
       )
 
-      // const tellerIds = bondsParsed.map((bond) =>
+      // const tellerIds = bondsFiltered.map((bond) =>
       //   getIdFromChainIdAddress(chainId, bond.teller),
       // )
 
-      // No need to fetch if there are no bonds
       const [poolsP, vaultsP] = (() => {
-        const quoteTokenIds = bondsParsed.map((bond) =>
+        const quoteTokenIds = bondsFiltered.map((bond) =>
           getIdFromChainIdAddress(chainId, bond.quoteToken.address),
         )
 
+        // No need to fetch if there are no bonds
         if (quoteTokenIds.length === 0) return [[], []]
 
         return [
@@ -333,7 +336,7 @@ export async function getBondsFromSubgraph(
       const vaults = isPromiseFulfilled(vaultsS) ? vaultsS.value : []
 
       const processed = Promise.allSettled(
-        bondsParsed.flatMap(async (bond, i) => {
+        bondsFiltered.flatMap(async (bond, i) => {
           const quoteToken = await getQuoteToken({
             bond,
             prices,
@@ -414,6 +417,7 @@ export async function getBondsFromSubgraph(
             tellerAddress: bond.teller,
             auctioneerAddress: bond.auctioneer,
 
+            isClosed: bond.hasClosed || !isOpen(bond.start, bond.conclusion),
             start: Number(bond.start),
             end: Number(bond.conclusion),
 

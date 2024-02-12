@@ -213,7 +213,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
 
   const isMounted = useIsMounted()
 
-  const hasEnded = staleBond.end * 1000 < Date.now()
+  const hasEnded = staleBond.end * 1000 < Date.now() || staleBond.isClosed
   const isNegativeDiscount = Boolean(discount && discount < 0)
   const buttonVariant = isNegativeDiscount ? 'destructive' : 'default'
   const buttonText = isNegativeDiscount ? 'Bond Anyways' : 'Bond'
