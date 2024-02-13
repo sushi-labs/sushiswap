@@ -54,8 +54,10 @@ import {
   WORMHOLE_WETH_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
+  axlDAI_ADDRESS,
   axlETH_ADDRESS,
   axlUSDC_ADDRESS,
+  axlUSDT_ADDRESS,
   axlWBTC_ADDRESS,
   rETH2_ADDRESS,
   renBTC_ADDRESS,
@@ -639,6 +641,26 @@ export const axlUSDC: Record<keyof typeof axlUSDC_ADDRESS, Token> =
     },
     axlUSDC_ADDRESS,
   ) as Record<keyof typeof axlUSDC_ADDRESS, Token>
+
+export const axlUSDT: Record<keyof typeof axlUSDT_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'axlUSDT',
+      name: 'Axelar Wrapped USDT',
+    },
+    axlUSDT_ADDRESS,
+  ) as Record<keyof typeof axlUSDT_ADDRESS, Token>
+
+export const axlDAI: Record<keyof typeof axlDAI_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 18,
+      symbol: 'axlDAI',
+      name: 'Axelar Wrapped DAI',
+    },
+    axlDAI_ADDRESS,
+  ) as Record<keyof typeof axlDAI_ADDRESS, Token>
 
 export const axlETH: Record<keyof typeof axlETH_ADDRESS, Token> =
   addressMapToTokenMap(
