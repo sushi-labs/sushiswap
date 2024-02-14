@@ -206,7 +206,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
               </Button>
             </LinkExternal>
           </div>
-          <div className="flex items-center gap-1.5">
+          {/* <div className="flex items-center gap-1.5">
             <span className="tracking-tighter font-semibold">Issuer</span>
             {bond.issuer ? (
               <LinkExternal target="_blank" href={bond.issuer.link}>
@@ -223,7 +223,7 @@ export const BondsMarketPageHeader = async ({ id }: { id: MarketId }) => {
             ) : (
               <div className="text-secondary-foreground">Unknown</div>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
