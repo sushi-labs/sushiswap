@@ -96,8 +96,8 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
               invalidRange || !inRange
                 ? 'bg-red'
                 : closed
-                ? 'bg-slate-700'
-                : 'bg-green',
+                  ? 'bg-slate-700'
+                  : 'bg-green',
               'w-2 h-2 rounded-full',
             )}
           />

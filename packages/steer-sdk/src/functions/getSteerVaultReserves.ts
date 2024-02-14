@@ -1,8 +1,6 @@
-import { getChainIdAddressFromId } from 'sushi/format'
 import type { PublicClient } from 'viem'
 
-import { steerPeripheryAbi } from '../abi/steerPeripheryAbi.js'
-import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '../constants.js'
+import { getVaultsReservesContracts } from 'src/fetchers/getVaultReserves.js'
 import { multichainMulticall } from '../helpers/multichainMulticall.js'
 
 interface GetSteerVaultsReserves {
@@ -17,21 +15,7 @@ async function getSteerVaultsReserves({
   const result = await multichainMulticall({
     clients,
     params: {
-      contracts: vaultIds.map((id) => {
-        const { chainId, address } = getChainIdAddressFromId(id)
-
-        if (!isSteerChainId(chainId))
-          throw new Error(`Invalid chainId: ${chainId}`)
-        const steerPeriphery = STEER_PERIPHERY_ADDRESS[chainId]
-
-        return {
-          abi: steerPeripheryAbi,
-          address: steerPeriphery,
-          chainId,
-          args: [address] as const,
-          functionName: 'vaultBalancesByAddressWithFees' as const,
-        }
-      }),
+      contracts: getVaultsReservesContracts({ vaultIds }),
     },
   })
 
@@ -54,9 +38,14 @@ async function getSteerVaultReserves({
   client,
   vaultId,
 }: GetSteerVaultReserves) {
-  return (
+  const result = (
     await getSteerVaultsReserves({ clients: [client], vaultIds: [vaultId] })
   )[0]
+
+  if (!result)
+    throw new Error(`Failed to fetch reserves for vaultId: ${vaultId}`)
+
+  return result
 }
 
 export { getSteerVaultReserves, getSteerVaultsReserves }

@@ -5,7 +5,7 @@ import { multicall3Abi } from 'sushi/abi'
 import { getContract } from 'viem'
 import { Address, usePublicClient } from 'wagmi'
 
-type Multicall3ChainId = typeof allChains[number]['id']
+type Multicall3ChainId = (typeof allChains)[number]['id']
 
 export const getMulticall3ContractConfig = (
   chainId: Multicall3ChainId | undefined,

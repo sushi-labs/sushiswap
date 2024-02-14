@@ -40,11 +40,18 @@ interface ConcentratedPositionsTableProps {
   chainId?: SushiSwapV3ChainId
   poolId?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
+  hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
 }
 
 export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
-  ({ chainId, onRowClick, poolId, hideNewPositionButton = false }) => {
+  ({
+    chainId,
+    onRowClick,
+    poolId,
+    hideNewSmartPositionButton = true,
+    hideNewPositionButton = false,
+  }) => {
     const { address } = useAccount()
     const { chainIds: filterChainIds, tokenSymbols } = usePoolFilters()
     const [hide, setHide] = useState(true)
@@ -127,6 +134,16 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                     onCheckedChange={() => setHide((prev) => !prev)}
                   />
                 </div>
+                {!hideNewSmartPositionButton ? (
+                  <LinkInternal
+                    shallow={true}
+                    href={`/pool/${chainId}:${poolId}/smart`}
+                  >
+                    <Button icon={PlusIcon} asChild size="sm" variant="outline">
+                      Create smart position
+                    </Button>
+                  </LinkInternal>
+                ) : null}
                 {!hideNewPositionButton ? (
                   <LinkInternal
                     shallow={true}

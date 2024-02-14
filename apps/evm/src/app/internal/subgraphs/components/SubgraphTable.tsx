@@ -37,13 +37,21 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
   columnHelper.display({
     id: 'category',
     header: 'Category',
-    cell: ({ row: { original: { category } } }) => category,
+    cell: ({
+      row: {
+        original: { category },
+      },
+    }) => category,
     enableHiding: true,
   }),
   columnHelper.display({
     id: 'chainId',
     header: 'Chain',
-    cell: ({ row: { original: { chainId } } }) => {
+    cell: ({
+      row: {
+        original: { chainId },
+      },
+    }) => {
       return (
         <div className="flex space-x-2">
           <NetworkIcon
@@ -63,7 +71,11 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
   columnHelper.display({
     id: 'type',
     header: 'Type',
-    cell: ({ row: { original: { type } } }) => {
+    cell: ({
+      row: {
+        original: { type },
+      },
+    }) => {
       return (
         <div className="flex justify-center">
           {type === 'Current' ? (
@@ -96,7 +108,11 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
   columnHelper.display({
     id: 'subgraphName',
     header: 'Name',
-    cell: ({ row: { original: { subgraphName } } }) => subgraphName,
+    cell: ({
+      row: {
+        original: { subgraphName },
+      },
+    }) => subgraphName,
   }),
   columnHelper.accessor('startBlock', {
     header: 'Start Block',
@@ -124,7 +140,9 @@ const columns: ColumnDef<Subgraph, unknown>[] = [
     id: 'Status',
     header: 'Status',
     cell: ({
-      row: { original: { status, chainHeadBlock, lastSyncedBlock } },
+      row: {
+        original: { status, chainHeadBlock, lastSyncedBlock },
+      },
     }) => {
       const unsyncedBlockCount = chainHeadBlock - lastSyncedBlock
 

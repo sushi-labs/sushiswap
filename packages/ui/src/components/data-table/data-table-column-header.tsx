@@ -75,16 +75,18 @@ export function DataTableColumnHeader<TData, TValue>({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="underline decoration-dotted underline-offset-2">
-                  {title}
-                </span>
-                {column.getIsSorted() === 'desc' ? (
-                  <CaretDownIcon className="ml-2 h-4 w-4" />
-                ) : column.getIsSorted() === 'asc' ? (
-                  <CaretUpIcon className="ml-2 h-4 w-4" />
-                ) : (
-                  <CaretSortIcon className="ml-2 h-4 w-4" />
-                )}
+                <div className="flex flex-row gap-2 ui-items-center">
+                  <span className="underline decoration-dotted underline-offset-2">
+                    {title}
+                  </span>
+                  {column.getIsSorted() === 'desc' ? (
+                    <CaretDownIcon className="ml-2 h-4 w-4" />
+                  ) : column.getIsSorted() === 'asc' ? (
+                    <CaretUpIcon className="ml-2 h-4 w-4" />
+                  ) : (
+                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                  )}
+                </div>
               </TooltipTrigger>
               <TooltipContent>{description}</TooltipContent>
             </Tooltip>

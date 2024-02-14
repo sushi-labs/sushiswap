@@ -278,7 +278,7 @@ export type ShortCurrencyNameChainId =
   keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
 
 export type ShortCurrencyName =
-  keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
+  keyof (typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY)[ShortCurrencyNameChainId]
 
 export const isShortCurrencyNameSupported = (
   chainId: ChainId,

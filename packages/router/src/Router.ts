@@ -248,8 +248,10 @@ export class Router {
       fromToken instanceof Token
         ? (fromToken.address as Address)
         : fromToken.chainId === ChainId.CELO
-        ? WNATIVE_ADDRESS[ChainId.CELO] /*CELO native coin has ERC20 interface*/
-        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+          ? WNATIVE_ADDRESS[
+              ChainId.CELO
+            ] /*CELO native coin has ERC20 interface*/
+          : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut =
       toToken instanceof Token
         ? (toToken.address as Address)

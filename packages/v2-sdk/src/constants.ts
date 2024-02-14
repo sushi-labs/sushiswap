@@ -44,7 +44,8 @@ export const SUSHISWAP_V2_SUPPORTED_CHAIN_IDS = [
 
 export const SushiSwapV2ChainIds = SUSHISWAP_V2_SUPPORTED_CHAIN_IDS
 
-export type SushiSwapV2ChainId = typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS[number]
+export type SushiSwapV2ChainId =
+  (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
 
 export const isSushiSwapV2ChainId = (
   chainId: ChainId,
