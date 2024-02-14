@@ -10,7 +10,7 @@ import React, { FC, useMemo, useState } from 'react'
 import {
   BOND_ASSET_COLUMN,
   DISCOUNT_COLUMN,
-  ISSUER_COLUMN,
+  // ISSUER_COLUMN,
   PAYOUT_ASSET_COLUMN,
   PRICE_COLUMN,
   VESTING_COLUMN,
@@ -22,7 +22,7 @@ const COLUMNS = [
   DISCOUNT_COLUMN,
   BOND_ASSET_COLUMN,
   VESTING_COLUMN,
-  ISSUER_COLUMN,
+  // ISSUER_COLUMN,
 ] satisfies ColumnDef<Bond, unknown>[]
 
 const emptyArray: any[] = []
