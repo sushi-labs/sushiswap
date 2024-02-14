@@ -159,7 +159,7 @@ export const Hero: FC = () => {
         <div className="flex flex-col items-center gap-1 lg:items-end">
           <span className="font-semibold lg:text-sm">Need Help?</span>
           <Button icon={DiscordIcon} variant="link" size="sm" asChild>
-            <LinkExternal href="https://discord.com/invite/sushi-swap">
+            <LinkExternal href="https://sushi.com/discord">
               Join our discord
             </LinkExternal>
           </Button>
