@@ -1,11 +1,11 @@
-import { usePrices } from '@sushiswap/react-query'
-import { useMemo } from 'react'
-import { Address, getAddress } from 'viem'
 import {
   MarketId,
   getBondDiscount,
   getChainIdAuctioneerMarketFromMarketId,
-} from '../../../../bonds-sdk'
+} from '@sushiswap/bonds-sdk'
+import { usePrices } from '@sushiswap/react-query'
+import { useMemo } from 'react'
+import { Address, getAddress } from 'viem'
 import { useBondMarketPrices } from './useMarketPrice'
 
 interface UseBondsDiscount {

@@ -1,5 +1,5 @@
+import { MarketId, getMarketPricesContracts } from '@sushiswap/bonds-sdk'
 import { useContractReads } from 'wagmi'
-import { MarketId, getMarketPricesContracts } from '../../../../bonds-sdk'
 
 interface UseBondMarketPrices {
   marketIds: MarketId[] | undefined
