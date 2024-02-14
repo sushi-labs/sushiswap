@@ -20,6 +20,13 @@ const schema = z.object({
 
 export const revalidate = 60
 
+async function fetchV1(chainId: number, currency: string) {
+  return fetch(
+    `https://sushi.com/api/price/v1/${chainId}?currency=${currency}`,
+    { next: { revalidate: 0 } },
+  ).then((res) => res.json())
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { chainId: string } },
@@ -30,10 +37,7 @@ export async function GET(
   })
 
   const prices = !isExtractorSupportedChainId(chainId)
-    ? await fetch(
-        `https://sushi.com/api/price/v1/${chainId}?currency=${currency}`,
-        { next: { revalidate: 0 } },
-      ).then((res) => res.json())
+    ? await fetchV1(chainId, currency)
     : await getPrices(chainId, currency)
 
   return NextResponse.json(prices)
