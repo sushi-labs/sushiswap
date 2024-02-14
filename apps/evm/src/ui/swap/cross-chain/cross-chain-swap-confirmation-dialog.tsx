@@ -82,7 +82,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             rel="noreferrer noopener noreferer"
             href={lzUrl || ''}
           >
-            <Dots>to destination chain</Dots>
+            <Dots>to the destination chain</Dots>
           </a>
         </Button>{' '}
         <span className="flex items-center gap-1">
