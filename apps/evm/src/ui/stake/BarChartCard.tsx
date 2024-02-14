@@ -19,7 +19,7 @@ const periods = [
 ]
 
 export const BarChartCard = () => {
-  const [chart, setChart] = useState<(typeof charts)[number]>(charts[0])
+  const [chart, setChart] = useState<typeof charts[number]>(charts[0])
   const [period, setPeriod] = useState<BarChartPeriod>(BarChartPeriod.Year)
 
   return (

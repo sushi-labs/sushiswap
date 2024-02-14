@@ -7,8 +7,8 @@ import { type GetApiInputFromOutput } from '../../../types.js'
 export { PopularTokensApiSchema }
 export type PopularToken = Awaited<ReturnType<typeof _getPopularTokens>>
 export type GetPopularTokensArgs = GetApiInputFromOutput<
-  (typeof PopularTokensApiSchema)['_input'],
-  (typeof PopularTokensApiSchema)['_output']
+  typeof PopularTokensApiSchema['_input'],
+  typeof PopularTokensApiSchema['_output']
 >
 
 export const getPopularTokensUrl = (args: GetPopularTokensArgs) => {

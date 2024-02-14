@@ -7,8 +7,8 @@ import { type GetApiInputFromOutput } from '../../../types.js'
 export { SearchTokenApiSchema }
 export type TokenSearch = Awaited<ReturnType<typeof getTokensByAddress>>
 export type GetTokenSearchsArgs = GetApiInputFromOutput<
-  (typeof SearchTokenApiSchema)['_input'],
-  (typeof SearchTokenApiSchema)['_output']
+  typeof SearchTokenApiSchema['_input'],
+  typeof SearchTokenApiSchema['_output']
 >
 
 export const getSearchTokensUrl = (args: GetTokenSearchsArgs) => {

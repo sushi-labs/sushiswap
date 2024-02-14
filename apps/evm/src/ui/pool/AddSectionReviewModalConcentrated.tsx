@@ -172,8 +172,8 @@ export const AddSectionReviewModalConcentrated: FC<
       const useNative = token0.isNative
         ? token0
         : token1.isNative
-          ? token1
-          : undefined
+        ? token1
+        : undefined
       const { calldata, value } =
         hasExistingPosition && tokenId
           ? NonfungiblePositionManager.addCallParameters(position, {

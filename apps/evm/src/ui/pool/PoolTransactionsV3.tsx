@@ -224,7 +224,7 @@ function useTransactionsV3(
 
       return transactions.flatMap((transaction) => {
         const mints = (
-          transaction.mints as NonNullable<(typeof transaction.mints)[0]>[]
+          transaction.mints as NonNullable<typeof transaction.mints[0]>[]
         ).map((mint) => ({
           ...mint,
           owner: String(mint.owner),
@@ -234,7 +234,7 @@ function useTransactionsV3(
         }))
 
         const burns = (
-          transaction.burns as NonNullable<(typeof transaction.burns)[0]>[]
+          transaction.burns as NonNullable<typeof transaction.burns[0]>[]
         ).map((burn) => ({
           ...burn,
           owner: String(burn.owner),
@@ -243,7 +243,7 @@ function useTransactionsV3(
         }))
 
         const swaps = (
-          transaction.swaps as NonNullable<(typeof transaction.swaps)[0]>[]
+          transaction.swaps as NonNullable<typeof transaction.swaps[0]>[]
         ).map((swap) => ({
           ...swap,
           sender: String(swap.sender),
@@ -253,9 +253,7 @@ function useTransactionsV3(
         }))
 
         const collects = (
-          transaction.collects as NonNullable<
-            (typeof transaction.collects)[0]
-          >[]
+          transaction.collects as NonNullable<typeof transaction.collects[0]>[]
         ).map((collect) => ({
           ...collect,
           origin: String(collect.owner),

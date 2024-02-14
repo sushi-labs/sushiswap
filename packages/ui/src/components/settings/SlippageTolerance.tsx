@@ -111,8 +111,8 @@ export const SlippageTolerance: FC<{
               {+slippageTolerance <= 0.1 && +slippageTolerance > 0
                 ? 'Your transaction may be reverted due to low slippage tolerance'
                 : isDangerous
-                  ? 'Your transaction may be frontrun due to high slippage tolerance'
-                  : undefined}
+                ? 'Your transaction may be frontrun due to high slippage tolerance'
+                : undefined}
             </span>
           </div>
           <span

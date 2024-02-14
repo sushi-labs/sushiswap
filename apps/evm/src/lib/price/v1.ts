@@ -4,7 +4,7 @@ const Currency = {
   USD: 'USD',
   NATIVE: 'NATIVE',
 } as const
-type Currency = (typeof Currency)[keyof typeof Currency]
+type Currency = typeof Currency[keyof typeof Currency]
 
 /**
  * Get the price of a token
@@ -95,18 +95,15 @@ export async function getPrices(date: Date, currency: Currency = Currency.USD) {
     return {}
   }
 
-  return prices.reduce(
-    (acc, token) => {
-      acc[token.chainId] = acc[token.chainId] || {}
-      ;(acc[token.chainId] || {})[token.address] =
-        currency === Currency.USD
-          ? Number(token.derivedUSD)
-          : Number(token.derivedNative)
+  return prices.reduce((acc, token) => {
+    acc[token.chainId] = acc[token.chainId] || {}
+    ;(acc[token.chainId] || {})[token.address] =
+      currency === Currency.USD
+        ? Number(token.derivedUSD)
+        : Number(token.derivedNative)
 
-      return acc
-    },
-    {} as Record<number, Record<string, number>>,
-  )
+    return acc
+  }, {} as Record<number, Record<string, number>>)
 }
 
 /**
@@ -148,14 +145,11 @@ export async function getPricesByChainId(
     return {}
   }
 
-  return prices.reduce(
-    (acc, token) => {
-      acc[token.address] =
-        currency === Currency.USD
-          ? Number(token.derivedUSD)
-          : Number(token.derivedNative)
-      return acc
-    },
-    {} as Record<string, number>,
-  )
+  return prices.reduce((acc, token) => {
+    acc[token.address] =
+      currency === Currency.USD
+        ? Number(token.derivedUSD)
+        : Number(token.derivedNative)
+    return acc
+  }, {} as Record<string, number>)
 }

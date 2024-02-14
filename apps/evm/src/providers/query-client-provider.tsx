@@ -11,7 +11,7 @@ export const QueryClientProvider: FC<{ children: ReactNode }> = ({
   return (
     <_QueryClientProvider client={client}>
       {children}
-      {/* <ReactQueryDevtools initialonlyOpen={false} /> */}
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </_QueryClientProvider>
   )
 }

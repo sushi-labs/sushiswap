@@ -84,7 +84,9 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
             },
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: (idx: number) => idx * 2,
+          animationDelayUpdate: function (idx: number) {
+            return idx * 2
+          },
           data: timeseries?.map((d) => [d.startTime * 1000, d.feeApr]),
         },
       ],

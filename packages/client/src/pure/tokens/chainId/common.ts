@@ -7,8 +7,8 @@ import { type GetApiInputFromOutput } from '../../../types.js'
 export { CommonTokensApiSchema }
 export type CommonToken = Awaited<ReturnType<typeof _getCommonTokens>>
 export type GetCommonTokensArgs = GetApiInputFromOutput<
-  (typeof CommonTokensApiSchema)['_input'],
-  (typeof CommonTokensApiSchema)['_output']
+  typeof CommonTokensApiSchema['_input'],
+  typeof CommonTokensApiSchema['_output']
 >
 
 export const getCommonTokensUrl = (args: GetCommonTokensArgs) => {

@@ -80,8 +80,8 @@ const _Home: FC = () => {
     selected && filterData?.data
       ? filterData.data
       : articles
-        ? articles
-        : undefined
+      ? articles
+      : undefined
 
   return (
     <>

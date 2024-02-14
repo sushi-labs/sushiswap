@@ -29,8 +29,9 @@ export function getCurrencyCombinations(
 
   const bases: Token[] = [...common, ...additionalA, ...additionalB]
 
-  const basePairs: [Token, Token][] = flatMap(bases, (base): [Token, Token][] =>
-    bases.map((otherBase) => [base, otherBase]),
+  const basePairs: [Token, Token][] = flatMap(
+    bases,
+    (base): [Token, Token][] => bases.map((otherBase) => [base, otherBase]),
   )
 
   if (!tokenA || !tokenB) {

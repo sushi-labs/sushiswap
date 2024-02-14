@@ -1,8 +1,11 @@
+'use client'
+
 import { ImageProps } from 'next/image'
 import { FC } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 
+import { cloudinaryImageLoader } from '../../cloudinary'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
 
@@ -112,7 +115,11 @@ export const Icon: FC<IconProps> = ({
     : `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
-      <AvatarImage width={Number(rest.width) ?? 20} src={src} />
+      <AvatarImage
+        loader={cloudinaryImageLoader}
+        width={Number(rest.width) ?? 20}
+        src={src}
+      />
       <AvatarFallback
         style={{
           background: hashStringToColor(

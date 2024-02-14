@@ -97,8 +97,8 @@ export const Brush: FC<BrushProps> = ({
           scaled[0].toFixed(6) !== brushExtent[0].toFixed(6)
             ? HandleType.e
             : scaled[1].toFixed(6) !== brushExtent[1].toFixed(6)
-              ? HandleType.w
-              : undefined
+            ? HandleType.w
+            : undefined
 
         const newRange = getNewRangeWhenBrushing(scaled, handleType)
         setBrushExtent(newRange ?? scaled, mode)

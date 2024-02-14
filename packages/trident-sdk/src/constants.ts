@@ -58,7 +58,7 @@ export const TRIDENT_SUPPORTED_CHAIN_IDS = [
 
 export const TridentChainIds = TRIDENT_SUPPORTED_CHAIN_IDS
 
-export type TridentChainId = (typeof TRIDENT_SUPPORTED_CHAIN_IDS)[number]
+export type TridentChainId = typeof TRIDENT_SUPPORTED_CHAIN_IDS[number]
 
 export const isTridentChainId = (chainId: ChainId): chainId is TridentChainId =>
   TRIDENT_SUPPORTED_CHAIN_IDS.includes(chainId as TridentChainId)

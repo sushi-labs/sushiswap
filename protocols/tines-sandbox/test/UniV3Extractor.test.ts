@@ -674,7 +674,7 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools diff = ${diff > 0 ? '+' : ''}${diff}`,
+          } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff}`,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')

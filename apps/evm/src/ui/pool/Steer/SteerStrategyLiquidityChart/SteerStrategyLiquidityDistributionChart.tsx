@@ -142,7 +142,9 @@ export const SteerStrategyLiquidityDistributionChart: FC<
             animation: false,
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: (idx: number) => idx * 2,
+          animationDelayUpdate: function (idx: number) {
+            return idx * 2
+          },
           data: series.map((d) => [d.price0, d.activeLiquidity]),
         },
       ],

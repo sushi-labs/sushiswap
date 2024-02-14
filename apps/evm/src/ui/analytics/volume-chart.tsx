@@ -154,7 +154,9 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: (idx: number) => idx * 2,
+          animationDelayUpdate: function (idx: number) {
+            return idx * 2
+          },
           data: yData,
         },
       ],

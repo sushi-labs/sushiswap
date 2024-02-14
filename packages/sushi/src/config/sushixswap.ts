@@ -10,7 +10,7 @@ export const SUSHIXSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 
-export type SushiXSwapChainId = (typeof SUSHIXSWAP_SUPPORTED_CHAIN_IDS)[number]
+export type SushiXSwapChainId = typeof SUSHIXSWAP_SUPPORTED_CHAIN_IDS[number]
 
 export const SUSHIXSWAP_ADDRESS: Record<SushiXSwapChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262',
@@ -37,8 +37,7 @@ export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
 ] as const
 
-export type SushiXSwap2ChainId =
-  (typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS)[number]
+export type SushiXSwap2ChainId = typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS[number]
 
 export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.ETHEREUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
@@ -66,7 +65,7 @@ export const STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS = [
 ] as const
 
 export type StargateAdapterChainId =
-  (typeof STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS)[number]
+  typeof STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS[number]
 
 export const STARGATE_ADAPTER_ADDRESS: Record<
   StargateAdapterChainId,

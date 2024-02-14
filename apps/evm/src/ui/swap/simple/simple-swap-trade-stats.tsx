@@ -49,8 +49,8 @@ export const SimpleSwapTradeStats: FC = () => {
                 trade?.priceImpact?.lessThan(ZERO)
                   ? '+'
                   : trade?.priceImpact?.greaterThan(ZERO)
-                    ? '-'
-                    : ''
+                  ? '-'
+                  : ''
               }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
             ) : null}
           </span>

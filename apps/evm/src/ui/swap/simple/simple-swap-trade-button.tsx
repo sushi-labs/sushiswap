@@ -82,12 +82,12 @@ export const _SimpleSwapTradeButton: FC<{
                     isRouteProcessor3_2ChainId(chainId)
                       ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
                       : isRouteProcessor3_1ChainId(chainId)
-                        ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-                        : isRouteProcessor3ChainId(chainId)
-                          ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-                          : isRouteProcessorChainId(chainId)
-                            ? ROUTE_PROCESSOR_ADDRESS[chainId]
-                            : undefined
+                      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
+                      : isRouteProcessor3ChainId(chainId)
+                      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
+                      : isRouteProcessorChainId(chainId)
+                      ? ROUTE_PROCESSOR_ADDRESS[chainId]
+                      : undefined
                   }
                 >
                   <Checker.Success tag={APPROVE_TAG_SWAP}>
@@ -114,12 +114,12 @@ export const _SimpleSwapTradeButton: FC<{
                         {!checked && warningSeverity(trade?.priceImpact) >= 3
                           ? 'Price impact too high'
                           : trade?.route?.status === 'NoWay'
-                            ? 'No trade found'
-                            : isWrap
-                              ? 'Wrap'
-                              : isUnwrap
-                                ? 'Unwrap'
-                                : 'Swap'}
+                          ? 'No trade found'
+                          : isWrap
+                          ? 'Wrap'
+                          : isUnwrap
+                          ? 'Unwrap'
+                          : 'Swap'}
                       </Button>
                     </DialogTrigger>
                   </Checker.Success>

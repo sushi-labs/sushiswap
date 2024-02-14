@@ -8,8 +8,8 @@ export { type PoolsApiSchema }
 export type Pools = Awaited<ReturnType<typeof getPoolsFromDB>>
 export type GetPoolsArgs =
   | GetApiInputFromOutput<
-      (typeof PoolsApiSchema)['_input'],
-      (typeof PoolsApiSchema)['_output']
+      typeof PoolsApiSchema['_input'],
+      typeof PoolsApiSchema['_output']
     >
   | undefined
 

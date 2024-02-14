@@ -440,40 +440,20 @@ export function useConcentratedDerivedMintInfo({
         typeof existingPosition?.tickLower === 'number'
           ? existingPosition.tickLower
           : (invertPrice && rightBoundInput === true) ||
-              (!invertPrice && leftBoundInput === true)
-            ? tickSpaceLimits[Bound.LOWER]
-            : invertPrice
-              ? tryParseTick(
-                  token1,
-                  token0,
-                  feeAmount,
-                  rightBoundInput.toString(),
-                )
-              : tryParseTick(
-                  token0,
-                  token1,
-                  feeAmount,
-                  leftBoundInput.toString(),
-                ),
+            (!invertPrice && leftBoundInput === true)
+          ? tickSpaceLimits[Bound.LOWER]
+          : invertPrice
+          ? tryParseTick(token1, token0, feeAmount, rightBoundInput.toString())
+          : tryParseTick(token0, token1, feeAmount, leftBoundInput.toString()),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? existingPosition.tickUpper
           : (invertPrice && leftBoundInput === true) ||
-              (!invertPrice && rightBoundInput === true)
-            ? tickSpaceLimits[Bound.UPPER]
-            : invertPrice
-              ? tryParseTick(
-                  token1,
-                  token0,
-                  feeAmount,
-                  leftBoundInput.toString(),
-                )
-              : tryParseTick(
-                  token0,
-                  token1,
-                  feeAmount,
-                  rightBoundInput.toString(),
-                ),
+            (!invertPrice && rightBoundInput === true)
+          ? tickSpaceLimits[Bound.UPPER]
+          : invertPrice
+          ? tryParseTick(token1, token0, feeAmount, leftBoundInput.toString())
+          : tryParseTick(token0, token1, feeAmount, rightBoundInput.toString()),
     }
   }, [
     existingPosition,

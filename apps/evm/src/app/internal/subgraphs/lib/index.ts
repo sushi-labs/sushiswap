@@ -40,13 +40,10 @@ const NODE_URLS: Record<number, string> = {
         chainId in SUBGRAPH_HOST,
     )
     .filter((chainId) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)
-    .reduce(
-      (acc, chainId) => {
-        acc[Number(chainId)] = 'api.thegraph.com/index-node/graphql'
-        return acc
-      },
-      {} as Record<number, string>,
-    ),
+    .reduce((acc, chainId) => {
+      acc[Number(chainId)] = 'api.thegraph.com/index-node/graphql'
+      return acc
+    }, {} as Record<number, string>),
   [ChainId.KAVA]: 'pvt-metrics.graph.kava.io/graphql',
   // [ChainId.METIS]: '',
 }
@@ -65,7 +62,7 @@ const parseCategories = () => {
         // @ts-ignore
         Object.keys(CATEGORIES[categoryKey]).map(
           // @ts-ignore
-          (chainKey: keyof (typeof CATEGORIES)['BENTOBOX']) => ({
+          (chainKey: keyof typeof CATEGORIES['BENTOBOX']) => ({
             chainId: Number(String(chainKey).split('-')[0]),
             // @ts-ignore
             subgraphName: CATEGORIES[categoryKey][chainKey] as string,

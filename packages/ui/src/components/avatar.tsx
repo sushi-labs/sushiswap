@@ -24,24 +24,25 @@ Avatar.displayName = AvatarPrimitive.Root.displayName
 
 interface AvatarImageProps
   extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
+  loader: typeof cloudinaryImageLoader
   src: string
 }
 
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   AvatarImageProps
->(({ className, width, src }, ref) => {
+>(({ className, loader, width, src }, ref) => {
   const _width = Number(width) ?? 40
 
   return (
     <AvatarPrimitive.Image
-      src={cloudinaryImageLoader({ src, width: _width })}
+      src={loader({ src, width: _width })}
       asChild
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
     >
       <Image
-        loader={cloudinaryImageLoader}
+        loader={loader}
         alt="avatar"
         src={src}
         width={_width}

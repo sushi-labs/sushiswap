@@ -1,8 +1,7 @@
+import { erc20ABI } from '@wagmi/core'
 import { getChainIdAddressFromId } from 'sushi/format'
 import type { Address, PublicClient } from 'viem'
 
-import { getBalanceOfsContracts } from 'src/fetchers/getBalanceOf.js'
-import { getTotalSuppliesContracts } from 'src/fetchers/getTotalSupply.js'
 import { multichainMulticall } from '../helpers/multichainMulticall.js'
 import { getSteerVaultsReserves } from './getSteerVaultReserves.js'
 
@@ -21,7 +20,17 @@ async function getSteerAccountPositions({
     clients,
     params: {
       allowFailure: true,
-      contracts: getBalanceOfsContracts({ account, vaultIds }),
+      contracts: vaultIds.map((id) => {
+        const { chainId, address } = getChainIdAddressFromId(id)
+
+        return {
+          abi: erc20ABI,
+          chainId,
+          address,
+          args: [account] as const,
+          functionName: 'balanceOf' as const,
+        }
+      }),
     },
   })
 
@@ -29,7 +38,16 @@ async function getSteerAccountPositions({
     clients,
     params: {
       allowFailure: true,
-      contracts: getTotalSuppliesContracts({ vaultIds }),
+      contracts: vaultIds.map((id) => {
+        const { chainId, address } = getChainIdAddressFromId(id)
+
+        return {
+          abi: erc20ABI,
+          chainId,
+          address,
+          functionName: 'totalSupply' as const,
+        }
+      }),
     },
   })
 

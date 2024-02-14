@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 
-const inputRegex = /('^\\d*(?:\\\\[.])?\\d*$')/ // match escaped "." characters via in a non-capturing group
+const inputRegex = RegExp('^\\d*(?:\\\\[.])?\\d*$') // match escaped "." characters via in a non-capturing group
 const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 
@@ -168,7 +168,7 @@ const Component = <T extends InputType>(
         })}
         ref={ref}
         autoCorrect="off"
-        autoCapitalize="none"
+        autoCapitalize="off"
         spellCheck="false"
         autoComplete="off"
         {...(isTypeNumber(type) && numericInputProps)}

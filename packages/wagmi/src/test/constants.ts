@@ -6,7 +6,7 @@ export const foundryPolygon: Chain = {
 }
 
 export const testChains = [foundryPolygon, polygon, mainnet, arbitrum]
-export type TestChainId = (typeof testChains)[number]['id']
+export type TestChainId = typeof testChains[number]['id']
 
 // Default accounts from Anvil
 export const accounts = [

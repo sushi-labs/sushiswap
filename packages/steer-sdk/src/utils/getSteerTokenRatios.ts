@@ -1,21 +1,29 @@
+import { TOKEN_PRICE_API } from '@sushiswap/client'
+
 interface GetTokenRatiosProps {
-  vault: {
-    chainId: number
-    token0: {
-      address: string
-      decimals: number
-    }
-    token1: {
-      address: string
-      decimals: number
-    }
-    reserve0: string
-    reserve1: string
+  chainId: number
+  token0: {
+    address: string
+    decimals: number
   }
-  prices: Record<string, number>
+  token1: {
+    address: string
+    decimals: number
+  }
+  reserve0: string
+  reserve1: string
 }
 
-async function getTokenRatios({ vault, prices }: GetTokenRatiosProps) {
+async function getTokenRatios(vault: GetTokenRatiosProps) {
+  let prices
+  try {
+    prices = await fetch(`${TOKEN_PRICE_API}/api/v2/${vault.chainId}`).then(
+      (data) => data.json(),
+    )
+  } catch (_e) {
+    return { token0: 0, token1: 0 }
+  }
+
   const [reserve0USD, reserve1USD] = [
     (Number(vault.reserve0) / 10 ** (vault.token0.decimals - 36)) *
       (prices[vault.token0.address] || 0),

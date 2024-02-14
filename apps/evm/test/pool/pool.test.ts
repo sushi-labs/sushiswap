@@ -655,7 +655,7 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
   await expect(confirmLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await confirmLiquidityLocator.click({ timeout: 5_000 })
 
-  const regex = /('(Successfully removed liquidity from the .* pair)')/
+  const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   expect(page.getByText(regex))
 }
 
@@ -782,7 +782,7 @@ async function removeLiquidityV2(page: Page, _next: NextFixture) {
   await expect(removeLiquidityLocator).toBeEnabled()
   await removeLiquidityLocator.click()
 
-  const regex = /('(Successfully removed liquidity from the .* pair)')/
+  const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
   expect(page.getByText(regex))
 }
 

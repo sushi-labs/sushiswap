@@ -140,7 +140,7 @@ export abstract class TickMath {
     return tickLow === tickHigh
       ? tickLow
       : TickMath.getSqrtRatioAtTick(tickHigh) <= sqrtRatioX96
-        ? tickHigh
-        : tickLow
+      ? tickHigh
+      : tickLow
   }
 }

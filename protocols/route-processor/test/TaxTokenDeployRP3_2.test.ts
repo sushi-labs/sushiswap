@@ -341,7 +341,7 @@ async function testTaxToken(args: {
   }
 }
 
-describe('RouteProcessor3_2 tax token test for BASE', async () => {
+describe('RouteProcessor3_2 tax token test for BASE', async function () {
   let env: TestEnvironment
 
   before(async () => {
@@ -352,7 +352,7 @@ describe('RouteProcessor3_2 tax token test for BASE', async () => {
     )
   })
 
-  it('BASE <=> LCRV', async () => {
+  it('BASE <=> LCRV', async function () {
     const LCRV = new Token({
       chainId: ChainId.BASE,
       address: '0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f',
@@ -367,7 +367,7 @@ describe('RouteProcessor3_2 tax token test for BASE', async () => {
     })
   })
 
-  it('BASE <=> bpsTEST', async () => {
+  it('BASE <=> bpsTEST', async function () {
     const bpsTEST = new Token({
       chainId: ChainId.BASE,
       address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
@@ -383,7 +383,7 @@ describe('RouteProcessor3_2 tax token test for BASE', async () => {
   })
 })
 
-describe('RouteProcessor3_2 tax token test for ETHEREUM', async () => {
+describe('RouteProcessor3_2 tax token test for ETHEREUM', async function () {
   let env: TestEnvironment
 
   before(async () => {
@@ -394,7 +394,7 @@ describe('RouteProcessor3_2 tax token test for ETHEREUM', async () => {
     )
   })
 
-  it('ETH => UniBot', async () => {
+  it('ETH => UniBot', async function () {
     const uniBOT = new Token({
       chainId: ChainId.ETHEREUM,
       address: '0xf819d9cb1c2a819fd991781a822de3ca8607c3c9',

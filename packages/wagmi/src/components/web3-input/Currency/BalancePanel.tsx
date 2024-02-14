@@ -4,7 +4,6 @@ import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { FC, memo, useCallback } from 'react'
 import { Amount, Native, Type } from 'sushi/currency'
 
-import { useIsMounted } from '@sushiswap/hooks'
 import { CurrencyInputProps } from './CurrencyInput'
 
 type BalancePanel = Pick<
@@ -27,8 +26,6 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   loading,
   type,
 }) {
-  const isMounted = useIsMounted()
-
   const [big, portion] = (
     balance ? `${balance?.toSignificant(6)}` : '0.00'
   ).split('.')
@@ -50,7 +47,7 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
     }
   }, [balance, onChange])
 
-  if (loading || !isMounted) {
+  if (loading) {
     return (
       <div className="w-[60px] flex items-center">
         <SkeletonText fontSize="lg" className="w-full" />

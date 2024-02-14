@@ -18,8 +18,8 @@ export type DecimalToString<T> = {
   [P in keyof T]: T[P] extends Prisma.Decimal | null
     ? Exclude<T[P], Prisma.Decimal> | string
     : T[P] extends unknown[]
-      ? DecimalToString<T[P][0]>[]
-      : T[P] extends object
-        ? DecimalToString<T[P]>
-        : T[P]
+    ? DecimalToString<T[P][0]>[]
+    : T[P] extends object
+    ? DecimalToString<T[P]>
+    : T[P]
 }

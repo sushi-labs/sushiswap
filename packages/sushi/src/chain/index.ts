@@ -12,7 +12,7 @@ const EIP3091_OVERRIDE = [
   ChainId.FILECOIN,
 ] as number[]
 
-type Data = (typeof RAW)[number]
+type Data = typeof RAW[number]
 
 export interface Chain {
   name: string
@@ -35,7 +35,7 @@ export const Standard = {
   None: 'none',
 } as const
 
-export type Standard = (typeof Standard)[keyof typeof Standard]
+export type Standard = typeof Standard[keyof typeof Standard]
 
 export interface NativeCurrency {
   name: string
@@ -57,7 +57,7 @@ export const Type = {
   L2: 'L2',
   Shard: 'shard',
 } as const
-export type Type = (typeof Type)[keyof typeof Type]
+export type Type = typeof Type[keyof typeof Type]
 
 // biome-ignore lint/suspicious/noUnsafeDeclarationMerging: explaination
 export class Chain implements Chain {

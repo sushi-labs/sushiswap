@@ -16,7 +16,6 @@ import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
-import { useIsMounted } from '@sushiswap/hooks'
 import { useBalanceWeb3 } from '../../../hooks'
 import { TokenSelector } from '../../token-selector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
@@ -43,8 +42,6 @@ interface CurrencyInputProps {
   hidePinnedTokens?: boolean
   disableInsufficientBalanceError?: boolean
   hideSearch?: boolean
-  hidePricing?: boolean
-  hideIcon?: boolean
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -60,19 +57,15 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   usdPctChange,
   disableMaxButton = false,
   type,
-  fetching,
   currencyLoading,
   currencies,
   allowNative = true,
   error,
   hidePinnedTokens = false,
-  disableInsufficientBalanceError = false,
   hideSearch = false,
-  hidePricing = false,
-  hideIcon = false,
+  disableInsufficientBalanceError = false,
+  fetching,
 }) => {
-  const isMounted = useIsMounted()
-
   const [localValue, setLocalValue] = useState<string>('')
   const { address } = useAccount()
   const [pending, startTransition] = useTransition()
@@ -86,7 +79,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   const { data: price, isInitialLoading: isPriceLoading } = usePrice({
     chainId: currency?.chainId,
     address: currency?.wrapped?.address,
-    enabled: !hidePricing,
   })
 
   const _value = useMemo(
@@ -111,17 +103,15 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
     }
   }, [onChange, currency, value])
 
-  const isLoading = !isMounted || loading || currencyLoading || isBalanceLoading
+  const isLoading = loading || currencyLoading || isBalanceLoading
   const _error = error
     ? error
     : insufficientBalance
-      ? 'Exceeds Balance'
-      : undefined
+    ? 'Exceeds Balance'
+    : undefined
 
   const _onChange = useCallback(
     (value: string) => {
-      console.log('change!')
-
       setLocalValue(value)
       startTransition(() => {
         onChange?.(value)
@@ -245,18 +235,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           >
             {currency ? (
               <>
-                {!hideIcon && (
-                  <>
-                    <div className="w-[28px] h-[28px] mr-0.5">
-                      <Currency.Icon
-                        disableLink
-                        currency={currency}
-                        width={28}
-                        height={28}
-                      />
-                    </div>
-                  </>
-                )}
+                <div className="w-[28px] h-[28px] mr-0.5">
+                  <Currency.Icon
+                    disableLink
+                    currency={currency}
+                    width={28}
+                    height={28}
+                  />
+                </div>
                 {currency.symbol}
               </>
             ) : (
@@ -268,18 +254,14 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         ) : null}
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
-        {hidePricing ? (
-          <div />
-        ) : (
-          <PricePanel
-            value={value}
-            currency={currency}
-            usdPctChange={usdPctChange}
-            error={_error}
-            loading={isPriceLoading}
-            price={price}
-          />
-        )}
+        <PricePanel
+          value={value}
+          currency={currency}
+          usdPctChange={usdPctChange}
+          error={_error}
+          loading={isPriceLoading}
+          price={price}
+        />
         <BalancePanel
           id={id}
           loading={isBalanceLoading}

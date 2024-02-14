@@ -23,12 +23,12 @@ export const Badge: FC<Badge> = ({
           position === 'top-left'
             ? '-left-[25%] -top-[15%]'
             : position === 'bottom-right'
-              ? '-right-[25%] -bottom-[15%]'
-              : position === 'top-right'
-                ? '-right-[25%] -top-[15%]'
-                : position === 'bottom-left'
-                  ? '-left-[25%] -bottom-[15%]'
-                  : '',
+            ? '-right-[25%] -bottom-[15%]'
+            : position === 'top-right'
+            ? '-right-[25%] -top-[15%]'
+            : position === 'bottom-left'
+            ? '-left-[25%] -bottom-[15%]'
+            : '',
         )}
       >
         {badgeContent}

@@ -31,8 +31,8 @@ export function getCapitalEfficiency(
   const priceBounded = priceCurrent.greaterThan(priceUpper)
     ? priceUpper
     : priceCurrent.lessThan(priceLower)
-      ? priceLower
-      : priceCurrent
+    ? priceLower
+    : priceCurrent
   const sqrtPBounded = Math.sqrt(priceToNumber(priceBounded))
   const sqrtPLower = Math.sqrt(priceToNumber(priceLower))
   const sqrtPUpper = Math.sqrt(priceToNumber(priceUpper))

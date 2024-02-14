@@ -24,7 +24,7 @@ export const BENTOBOX_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 
-export type BentoBoxChainId = (typeof BENTOBOX_SUPPORTED_CHAIN_IDS)[number]
+export type BentoBoxChainId = typeof BENTOBOX_SUPPORTED_CHAIN_IDS[number]
 
 export const BENTOBOX_ADDRESS: Record<BentoBoxChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0x74c764D41B77DBbb4fe771daB1939B00b146894A',

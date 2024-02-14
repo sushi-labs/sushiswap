@@ -78,8 +78,8 @@ function getRandomPair(num, mode) {
     mode === TestMode.KNOWN_TOKENS
       ? getRandomPair3
       : mode === TestMode.ONE_UNKNOWN_TOKEN
-        ? getRandomPair2
-        : getRandomPair1
+      ? getRandomPair2
+      : getRandomPair1
   return func(num)
 }
 

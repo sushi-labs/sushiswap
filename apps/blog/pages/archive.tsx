@@ -85,8 +85,8 @@ const _Archive: FC = () => {
     selected && filterData?.meta
       ? filterData.meta
       : articlesData?.meta
-        ? articlesData.meta
-        : undefined
+      ? articlesData.meta
+      : undefined
 
   return (
     <>

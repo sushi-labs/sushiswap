@@ -36,7 +36,7 @@ export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
 ] as const
 
 export type ExtractorSupportedChainId =
-  (typeof EXTRACTOR_SUPPORTED_CHAIN_IDS)[number]
+  typeof EXTRACTOR_SUPPORTED_CHAIN_IDS[number]
 
 export const isExtractorSupportedChainId = (
   chainId: number,

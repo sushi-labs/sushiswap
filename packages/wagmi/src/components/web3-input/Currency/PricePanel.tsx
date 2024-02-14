@@ -65,10 +65,10 @@ export const PricePanel: FC<PricePanel> = ({
               usdPctChange > 0
                 ? 'text-green'
                 : usdPctChange < -5
-                  ? 'text-red'
-                  : usdPctChange < -3
-                    ? 'text-yellow'
-                    : 'text-slate-500',
+                ? 'text-red'
+                : usdPctChange < -3
+                ? 'text-yellow'
+                : 'text-slate-500',
             )}
           >
             {' '}
@@ -76,8 +76,8 @@ export const PricePanel: FC<PricePanel> = ({
               usdPctChange?.toFixed(2) === '0.00'
                 ? ''
                 : usdPctChange > 0
-                  ? '(+'
-                  : '('
+                ? '(+'
+                : '('
             }${
               usdPctChange?.toFixed(2) === '0.00'
                 ? ''

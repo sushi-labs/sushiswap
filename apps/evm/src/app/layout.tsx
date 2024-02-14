@@ -37,7 +37,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${roboto_mono.variable} dark`}
-      suppressHydrationWarning={true}
+      // suppressHydrationWarning={true}
     >
       <link
         rel="apple-touch-icon"

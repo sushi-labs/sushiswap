@@ -74,8 +74,8 @@ export const CrossChainSwapTradeButton: FC = () => {
                         {!checked && warningSeverity(trade?.priceImpact) >= 3
                           ? 'Price impact too high'
                           : trade?.route?.status === 'NoWay'
-                            ? 'No trade found'
-                            : 'Swap'}
+                          ? 'No trade found'
+                          : 'Swap'}
                       </Button>
                     </DialogTrigger>
                   </Checker.Success>

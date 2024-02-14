@@ -158,7 +158,7 @@ export const useRewarder: UseRewarder = ({
     // ! POSSIBLY BROKE IT, TEST
     return {
       data: data
-        .filter((el): el is NonNullable<(typeof data)[0]> => !!el)
+        .filter((el): el is NonNullable<typeof data[0]> => !!el)
         .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
           if (typeof result === 'bigint') {
             acc.push(
