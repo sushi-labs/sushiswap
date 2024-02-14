@@ -183,6 +183,7 @@ function calculateTokenPrices(
     })
     prices.set(base.address, currentPricesMap)
   })
+
   for (const token of tokens) {
     const tokenPrices = Array.from(prices.keys())
       .map((t) => prices.get(t))
@@ -216,6 +217,7 @@ function calculateTokenPrices(
       bestPrices[token.address] = price
     }
   }
+
   return bestPrices
 }
 
