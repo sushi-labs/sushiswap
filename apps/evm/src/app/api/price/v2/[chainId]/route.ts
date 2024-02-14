@@ -18,7 +18,7 @@ const schema = z.object({
     .transform((currency) => currency ?? Currency.USD),
 })
 
-export const revalidate = 60
+export const revalidate = 300
 
 async function fetchV1(chainId: number, currency: string) {
   return fetch(
