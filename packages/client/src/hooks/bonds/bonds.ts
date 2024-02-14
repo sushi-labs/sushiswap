@@ -1,8 +1,8 @@
 import useSWR from 'swr'
 
 import {
-  type GetBondsArgs,
   type Bonds,
+  type GetBondsArgs,
   getBondsUrl,
 } from '../../pure/bonds/bonds/bonds'
 import { type SWRHookConfig } from '../../types'

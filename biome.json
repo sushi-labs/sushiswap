@@ -40,7 +40,8 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+        "useHeadingContent": "off"
       },
       "correctness": {
         "noUnusedVariables": "error",
@@ -55,16 +56,20 @@
       "style": {
         "noNonNullAssertion": "off",
         "noParameterAssign": "off",
-        "useShorthandArrayType": "error"
+        "useShorthandArrayType": "error",
+        "noUselessElse": "off"
       },
       "suspicious": {
         "noArrayIndexKey": "off",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noImplicitAnyLet": "off"
       },
       "complexity": {
         "useLiteralKeys": "off",
         "noForEach": "off",
-        "noStaticOnlyClass": "off"
+        "noStaticOnlyClass": "off",
+        "noThisInStatic": "off",
+        "useSimpleNumberKeys": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"

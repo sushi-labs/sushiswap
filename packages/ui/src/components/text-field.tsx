@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
 
-const inputRegex = RegExp('^\\d*(?:\\\\[.])?\\d*$') // match escaped "." characters via in a non-capturing group
+const inputRegex = /('^\\d*(?:\\\\[.])?\\d*$')/ // match escaped "." characters via in a non-capturing group
 const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 
