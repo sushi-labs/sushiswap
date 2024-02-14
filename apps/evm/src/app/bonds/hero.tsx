@@ -31,12 +31,9 @@ export const Hero: FC = () => {
             iconPosition="end"
             icon={ArrowTopRightOnSquareIcon}
           >
-            <LinkExternal
-              href="https://www.sushi.com/blog/faq-sushi-bonds"
-              className="!text-current"
-            >
+            <LinkInternal href="https://www.sushi.com/blog/faq-sushi-bonds">
               Learn More
-            </LinkExternal>
+            </LinkInternal>
           </Button>
         </div>
       </div>
