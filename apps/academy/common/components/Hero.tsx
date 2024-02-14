@@ -39,7 +39,7 @@ export const Hero: FC = () => {
         <LinkExternal href="https://twitter.com/sushiswap">
           <TwitterIcon {...heroIconProps} />
         </LinkExternal>
-        <LinkExternal href="https://discord.com/invite/sushi-swap">
+        <LinkExternal href="https://sushi.com/discord">
           <DiscordIcon {...heroIconProps} />
         </LinkExternal>
         <LinkExternal href="https://www.youtube.com/c/SushiOfficial">

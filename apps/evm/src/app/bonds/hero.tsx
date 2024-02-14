@@ -31,12 +31,9 @@ export const Hero: FC = () => {
             iconPosition="end"
             icon={ArrowTopRightOnSquareIcon}
           >
-            <LinkExternal
-              href="https://www.sushi.com/blog/faq-sushi-bonds"
-              className="!text-current"
-            >
+            <LinkInternal href="https://www.sushi.com/blog/faq-sushi-bonds">
               Learn More
-            </LinkExternal>
+            </LinkInternal>
           </Button>
         </div>
       </div>
@@ -57,7 +54,7 @@ export const Hero: FC = () => {
         <div className="flex flex-col items-center gap-1 lg:items-end">
           <span className="font-semibold lg:text-sm">Need Help?</span>
           <Button icon={DiscordIcon} variant="link" size="sm" asChild>
-            <LinkExternal href="https://discord.com/invite/sushi-swap">
+            <LinkExternal href="https://sushi.com/discord">
               Join our discord
             </LinkExternal>
           </Button>

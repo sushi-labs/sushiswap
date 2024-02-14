@@ -21,6 +21,8 @@ const schema = z.object({
     .transform((currency) => currency ?? Currency.USD),
 })
 
+export const revalidate = 60
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { chainId: string; address: string } },
@@ -34,14 +36,11 @@ export async function GET(
   const price = !isExtractorSupportedChainId(chainId)
     ? await fetch(
         `https://sushi.com/api/price/v1/${chainId}/${address}?currency=${currency}`,
+        { next: { revalidate: 0 } },
       ).then((res) => res.json())
     : await getPrice(chainId, address, currency)
 
   if (price === undefined) return new Response('0', { status: 404 })
 
-  return Response.json(price, {
-    headers: {
-      'Cache-Control': 'max-age=60, stale-while-revalidate=600',
-    },
-  })
+  return Response.json(price)
 }
