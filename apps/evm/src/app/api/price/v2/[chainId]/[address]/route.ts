@@ -41,7 +41,7 @@ export async function GET(
 
   return Response.json(price, {
     headers: {
-      'Cache-Control': 's-maxage=600, stale-while-revalidate',
+      'Cache-Control': 'max-age=60, stale-while-revalidate=600',
     },
   })
 }
