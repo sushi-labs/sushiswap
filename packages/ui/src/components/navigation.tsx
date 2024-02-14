@@ -31,6 +31,11 @@ const EXPLORE_NAVIGATION_LINKS: {
     description: 'Earn fees by providing liquidity.',
   },
   {
+    title: 'Bonds',
+    href: '/bonds',
+    description: 'Earn interest by locking up your assets.',
+  },
+  {
     title: 'Stake',
     href: '/stake',
     description: 'Earn protocol fees by staking SUSHI.',
