@@ -19,7 +19,6 @@ WORKDIR /app
 
 COPY apis/router apis/router
 
-COPY config/router config/router
 COPY config/jest config/jest
 COPY config/typescript config/typescript
 COPY config/viem config/viem
