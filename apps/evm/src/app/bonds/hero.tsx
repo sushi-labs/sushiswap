@@ -24,20 +24,20 @@ export const Hero: FC = () => {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
-          <Button
-            asChild
-            size="lg"
-            variant="secondary"
-            iconPosition="end"
-            icon={ArrowTopRightOnSquareIcon}
+          <LinkExternal
+            href="https://www.sushi.com/blog/faq-sushi-bonds"
+            target="_blank"
           >
-            <LinkInternal
-              href="https://www.sushi.com/blog/faq-sushi-bonds"
-              target="_blank"
+            <Button
+              asChild
+              size="lg"
+              variant="secondary"
+              iconPosition="end"
+              icon={ArrowTopRightOnSquareIcon}
             >
-              Learn More
-            </LinkInternal>
-          </Button>
+              <div className="text-[--color]">Learn More</div>
+            </Button>
+          </LinkExternal>
         </div>
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-end">
