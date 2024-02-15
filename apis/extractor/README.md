@@ -24,11 +24,15 @@ Until fixed, use the following command to start minikube
 minikube start --base-image gcr.io/k8s-minikube/kicbase:v0.0.40
 ```
 
-## GKE
+## Google Cloud
 
-## First time cluster setup
+### Set Project
 
-Setup the DRPC SECRET
+```bash
+gcloud config set project sushi-api-414412
+```
+
+### Create Secret
 
 ```bash
 kubectl create secret generic sushi-api \
@@ -37,32 +41,44 @@ kubectl create secret generic sushi-api \
     --from-literal=SENTRY_ENVIRONMENT=XXX
 ```
 
-Create a static ip for the staging environment
+### Create a static ip for the staging environment
+
 ```bash
 gcloud compute addresses create sushi-api-staging-ip --global
 ```
 
-Create a static ip for the production environment
+### Create a static ip for the production environment
+
 ```bash
 gcloud compute addresses create sushi-api-production-ip --global
 ```
 
-## Deploy
+### Deploy
 
+```bash
 gcloud deploy apply --file=clouddeploy.yaml --region=us-east4 --project=sushi-api-414412
+```
 
-## Release
+### Release
 
+```bash
 gcloud deploy releases create 'sushi-api-$DATE-$TIME' --project=sushi-api-414412 --region=us-east4 --source=. --delivery-pipeline=sushi-api --images=extractor=IMAGE,router=IMAGE
+```
 
-## View Router HPA
+### View Router HPA
 
+```bash
 kubectl get hpa router-1-hpa --watch
+```
 
-## View Extractor VPA
+### View Extractor VPA
 
+```bash
 kubectl get vpa extractor-1-vpa --watch
+```
 
-## Restart
+### Restart
 
+```bash
 kubectl rollout restart deployment/extractor-1
+```
