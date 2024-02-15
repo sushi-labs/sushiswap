@@ -1,9 +1,6 @@
 import { PoolCode, deserializePoolCodesJSON } from '@sushiswap/router'
-import {
-  ADDITIONAL_BASES,
-  BASES_TO_CHECK_TRADES_AGAINST,
-} from '@sushiswap/router-config'
 import { ChainId } from 'sushi/chain'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 
 const DEBUG_PRINT = false

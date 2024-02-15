@@ -46,7 +46,6 @@
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/router": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",

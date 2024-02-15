@@ -1,10 +1,4 @@
-import { ChainId } from 'sushi/chain'
-import {
-  STARGATE_USDC,
-  STARGATE_USDT,
-  STARGATE_WBTC,
-  STARGATE_WETH,
-} from 'sushi/config'
+import { ChainId } from '../../chain'
 import {
   AAVE,
   BUSD,
@@ -30,7 +24,13 @@ import {
   axlETH,
   axlUSDC,
   axlWBTC,
-} from 'sushi/currency'
+} from '../../currency'
+import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from '../stargate'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
   readonly [chainId: number]: Token[]

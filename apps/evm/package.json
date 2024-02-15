@@ -29,7 +29,6 @@
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/router": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",

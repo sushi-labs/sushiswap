@@ -13,7 +13,6 @@ import {
   Router,
   UniswapV3Provider,
 } from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
 import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
@@ -23,6 +22,7 @@ import { network } from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
 import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
 import {
   http,

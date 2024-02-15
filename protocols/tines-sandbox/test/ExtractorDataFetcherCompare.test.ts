@@ -12,10 +12,6 @@ import {
   NativeWrapProvider,
 } from '@sushiswap/router'
 import {
-  ADDITIONAL_BASES,
-  BASES_TO_CHECK_TRADES_AGAINST,
-} from '@sushiswap/router-config'
-import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
 } from '@sushiswap/v2-sdk'
@@ -27,6 +23,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import { expect } from 'chai'
 import { ChainId } from 'sushi/chain'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { http, Address, Transport, createPublicClient } from 'viem'
 import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'

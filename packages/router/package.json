@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@ethersproject/address": "5.7.0",
-    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident-sdk": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",

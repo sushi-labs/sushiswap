@@ -1,12 +1,9 @@
 import { getCreate2Address } from '@ethersproject/address'
-import {
-  ADDITIONAL_BASES,
-  BASES_TO_CHECK_TRADES_AGAINST,
-} from '@sushiswap/router-config'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
 import { getReservesAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { Address, Hex, PublicClient, encodePacked, keccak256 } from 'viem'
 

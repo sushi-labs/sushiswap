@@ -1,10 +1,10 @@
+import flatMap from 'lodash.flatmap'
+import { ChainId } from 'sushi/chain'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
   CUSTOM_BASES,
-} from '@sushiswap/router-config'
-import flatMap from 'lodash.flatmap'
-import { ChainId } from 'sushi/chain'
+} from 'sushi/config'
 import { Token, Type } from 'sushi/currency'
 
 export function getCurrencyCombinations(

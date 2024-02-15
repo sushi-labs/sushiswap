@@ -13,7 +13,6 @@ import {
   PoolCode,
   Router,
 } from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -27,6 +26,7 @@ import {
 } from '@sushiswap/v3-sdk'
 import { config } from '@sushiswap/viem-config'
 import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import {
   http,

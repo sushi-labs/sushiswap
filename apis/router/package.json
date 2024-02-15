@@ -30,7 +30,6 @@
     "@sentry/node": "7.77.0",
     "@sushiswap/extractor": "workspace:*",
     "@sushiswap/router": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/v2-sdk": "workspace:*",
     "@sushiswap/v3-sdk": "workspace:*",

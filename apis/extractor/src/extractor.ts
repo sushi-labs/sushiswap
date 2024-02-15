@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node'
 import { Extractor, WarningLevel } from '@sushiswap/extractor'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 // import { Token } from 'sushi/currency'
 // import { TokenList } from 'sushi/token-list'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config'
