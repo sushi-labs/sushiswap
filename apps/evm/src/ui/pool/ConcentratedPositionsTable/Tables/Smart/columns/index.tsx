@@ -111,14 +111,16 @@ export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
             )}
             {vault.isDeprecated && (
               <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-              <div className="bg-red/50 dark:bg-red/80 text-[10px] px-2 rounded-full">
-                Deprecated
-              </div>
-              </TooltipTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-red/50 dark:bg-red/80 text-[10px] px-2 rounded-full">
+                      Deprecated
+                    </div>
+                  </TooltipTrigger>
                   <TooltipContent>
-                    <p>{"It might not accrue any fees and won't be readjusted."}</p>
+                    <p>
+                      {"It will not accrue any fees and won't be readjusted."}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

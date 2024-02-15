@@ -64,7 +64,7 @@ export default async function Layout({
                 <div className="text-center text-red dark:text-red-600 w-full">
                   <div className=" font-medium">This vault is deprecated.</div>
                   <div className="text-sm">
-                    {"It might not accrue any fees and won't be readjusted."}
+                    {"It will not accrue any fees and won't be readjusted."}
                   </div>
                 </div>
               )}
