@@ -3,6 +3,7 @@ import {
   FC,
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useReducer,
@@ -54,6 +55,7 @@ export const PoolActionsContext = createContext<PoolApi>({} as PoolApi)
 type Actions =
   | { type: 'setToken0'; value: Token }
   | { type: 'setToken1'; value: Token }
+  | { type: 'swapTokens' }
   | { type: 'setAmount0'; value: string }
   | { type: 'setAmount1'; value: string }
   | { type: 'setLoadingPrice'; value: boolean }
@@ -79,6 +81,8 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
         return { ...state, token0: action.value }
       case 'setToken1':
         return { ...state, token1: action.value }
+      case 'swapTokens':
+        return { ...state, token0: state.token1, token1: state.token0 }
       case 'setAmount0':
         return { ...state, amount0: action.value }
       case 'setAmount1':
@@ -150,9 +154,30 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     return { ...internalState }
   }, [internalState])
 
+  const setToken0 = useCallback(
+    (token0: Token) => {
+      if (state.token1.address === token0.address) {
+        dispatch({ type: 'swapTokens' })
+      } else {
+        dispatch({ type: 'setToken0', value: token0 as Token })
+      }
+    },
+    [state.token1],
+  )
+
+  const setToken1 = useCallback(
+    (token1: Token) => {
+      if (state.token0.address === token1.address) {
+        dispatch({ type: 'swapTokens' })
+      } else {
+        dispatch({ type: 'setToken1', value: token1 as Token })
+      }
+    },
+    [state.token0],
+  )
+
   const api = useMemo(() => {
-    const setToken0 = (value: Token) => dispatch({ type: 'setToken0', value })
-    const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
+    const swapTokens = () => dispatch({ type: 'swapTokens' })
     const setAmount0 = (value: string) =>
       dispatch({ type: 'setAmount0', value })
     const setAmount1 = (value: string) =>
@@ -178,6 +203,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     return {
       setToken0,
       setToken1,
+      swapTokens,
       setAmount0,
       setAmount1,
       setLoadingPrice,
@@ -190,7 +216,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       setSlippageAmount0,
       setSlippageAmount1,
     }
-  }, [])
+  }, [setToken0, setToken1])
 
   return (
     <PoolActionsContext.Provider value={api}>

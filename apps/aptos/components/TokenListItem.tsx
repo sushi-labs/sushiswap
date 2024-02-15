@@ -9,18 +9,14 @@ type PropType = {
   style: CSSProperties
   token: Token
   selected: boolean
-  alteredSelected: Token
   handleChangeToken: (token: Token) => void
-  handleSwap: () => void
 }
 export default function TokenListItem({
   id,
   style,
   token,
-  alteredSelected,
   selected,
   handleChangeToken,
-  handleSwap,
 }: PropType) {
   return (
     <div className="py-0.5 h-[64px]" style={style}>
@@ -33,11 +29,7 @@ export default function TokenListItem({
               'group flex items-center w-full active:bg-black/[0.06] dark:active:bg-white/[0.06] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] h-full rounded-lg px-3 token-$TRDL cursor-pointer',
             )}
             onClick={() => {
-              if (token?.address === alteredSelected?.address) {
-                handleSwap()
-              } else {
-                handleChangeToken(token)
-              }
+              handleChangeToken(token)
               close()
             }}
           >

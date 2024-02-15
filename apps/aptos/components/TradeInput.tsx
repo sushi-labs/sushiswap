@@ -1,13 +1,9 @@
-import {
-  Button,
-  SelectIcon,
-  SkeletonBox,
-  TextField,
-  classNames,
-} from '@sushiswap/ui'
-import React from 'react'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Token } from 'utils/tokenType'
 import useStablePrice from 'utils/useStablePrice'
+import { useTokenBalance } from 'utils/useTokenBalance'
 import { BalancePanel } from './BalancePanel'
 import { Icon } from './Icon'
 import { PricePanel } from './PricePanel'
@@ -17,58 +13,73 @@ type TradeInput = {
   id: string
   type: 'INPUT' | 'OUTPUT'
   token: Token
-  alteredSelected: Token
   value: string
-  setAmount?: (value: string) => void
+  onChange?: (value: string) => void
+  onSelect?: (token: Token) => void
   disabled?: boolean
-  setToken?: (token: Token) => void
-  balance: number | undefined
-  error?: string
-  isLoadingPrice: boolean
-  tradeVal?: React.RefObject<HTMLInputElement>
-  onUserInput?: (value: string) => void
-  handleSwap: () => void
   className?: string
   fetching?: boolean
+  disableInsufficientBalanceError?: boolean
 }
 
 export function TradeInput({
   id,
   type,
   token,
-  alteredSelected,
   value,
-  setAmount,
+  onChange,
   disabled,
-  setToken,
-  balance,
-  error,
-  isLoadingPrice,
-  onUserInput,
-  handleSwap,
+  onSelect,
   className,
   fetching,
+  disableInsufficientBalanceError = false,
 }: TradeInput) {
-  const balanceClick = () => {
-    if (setAmount && balance) {
-      // if (token.symbol == 'APT') {
-      //   setAmount(((balance - 2000000) / 10 ** 8) as unknown as string)
-      // } else {
-      //   setAmount((balance / 10 ** 8) as unknown as string)
-      // }
-      if (onUserInput) {
-        token.symbol === 'APT'
-          ? onUserInput(((balance - 2000000) / 10 ** 8) as unknown as string)
-          : onUserInput((balance / 10 ** 8) as unknown as string)
+  const { account } = useWallet()
+  const [insufficientBalance, setInsufficientBalance] = useState<boolean>(false)
+
+  const { data: balance, isInitialLoading: isBalanceLoading } = useTokenBalance(
+    {
+      account: account?.address as string,
+      currency: token.address,
+      refetchInterval: 2000,
+    },
+  )
+
+  const onUserInput = useCallback(
+    (amount: string) => {
+      if (onChange) {
+        onChange(amount)
       }
+    },
+    [onChange],
+  )
+
+  useEffect(() => {
+    if (typeof balance !== 'undefined') {
+      const priceEst = balance / 10 ** token.decimals < parseFloat(value)
+      setInsufficientBalance(priceEst)
     }
-    if (!balance && setAmount) {
-      setAmount('0')
+  }, [balance, value, token])
+
+  const balanceClick = () => {
+    if (balance) {
+      if (token.symbol === 'APT') {
+        onUserInput(String((balance - 2000000) / 10 ** 8))
+      } else {
+        onUserInput(String(balance / 10 ** token.decimals))
+      }
+    } else {
+      onUserInput('0')
     }
   }
 
   const tokenPrice = useStablePrice({ currency: token })
-  const amountInDollar = tokenPrice ? tokenPrice * Number(value) : 0
+  const amountUSD = tokenPrice ? tokenPrice * Number(value) : 0
+
+  const showInsufficientBalance =
+    insufficientBalance && !disableInsufficientBalanceError
+  const error = showInsufficientBalance ? 'Insufficient balance' : undefined
+
   return (
     <div
       className={classNames(
@@ -82,27 +93,14 @@ export function TradeInput({
         className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
       />
       <div className="relative flex items-center gap-4">
-        <div
-          data-state={isLoadingPrice ? 'active' : 'inactive'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'gap-4 items-center justify-between flex-grow h-[44px]',
-          )}
-        >
-          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
-        </div>
-        <div
-          data-state={isLoadingPrice ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-        >
+        <div className="flex flex-1 items-center">
           <TextField
             testdata-id={`${id}-input`}
             type="number"
             variant="naked"
             disabled={disabled}
             onValueChange={(value) => {
-              if (onUserInput && token !== alteredSelected) {
+              if (onUserInput) {
                 onUserInput(value)
               }
             }}
@@ -112,24 +110,21 @@ export function TradeInput({
           />
         </div>
 
-        {setToken ? (
+        {onSelect ? (
           <TokenListDialog
             id={id}
             selected={token}
-            alteredSelected={alteredSelected}
-            handleChangeToken={setToken}
-            handleSwap={handleSwap}
+            handleChangeToken={onSelect}
           >
             <Button
               size="lg"
-              data-state={isLoadingPrice ? 'inactive' : 'active'}
               variant={token ? 'secondary' : 'default'}
               id={`${id}-token-selector`}
               type="button"
               testdata-id="swap-from-button"
               className={classNames(
                 token ? 'pl-2 pr-3 text-xl' : '',
-                '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+                '!rounded-full flex',
               )}
             >
               {token ? (
@@ -169,13 +164,13 @@ export function TradeInput({
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
         <PricePanel
-          isLoading={isLoadingPrice}
+          isLoading={typeof tokenPrice === 'undefined'}
           error={error}
-          value={String(amountInDollar)}
+          value={String(amountUSD)}
         />
         <BalancePanel
           coinData={balance ? balance : 0}
-          isLoading={isLoadingPrice}
+          isLoading={isBalanceLoading}
           decimals={token?.decimals}
           onClick={balanceClick}
           type={type}

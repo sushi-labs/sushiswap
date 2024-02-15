@@ -25,6 +25,7 @@ export default function WalletSelector() {
   const { account, connected } = useWallet()
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const { data: tokens } = useTokens()
+
   const nativeCurr = tokens?.['0x1::aptos_coin::AptosCoin']
   const { data: balance } = useTokenBalance({
     account: account?.address as string,

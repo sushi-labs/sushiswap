@@ -1,22 +1,10 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import React from 'react'
-import { useTokenBalance } from 'utils/useTokenBalance'
 import { formatNumber } from 'utils/utilFunctions'
 import { TradeInput } from './TradeInput'
 
-interface SwapTradeOutput {
-  handleSwap: () => void
-}
-
-export const SwapTradeOutput = ({ handleSwap }: SwapTradeOutput) => {
-  const { account } = useWallet()
-  const { token0, token1, outputAmount, isPriceFetching } = useSwapState()
-  const { data: balance, isLoading } = useTokenBalance({
-    account: account?.address as string,
-    currency: token1?.address,
-    refetchInterval: 2000,
-  })
+export const SwapTradeOutput = () => {
+  const { token1, outputAmount, isPriceFetching } = useSwapState()
 
   const outputSwapTokenAmount = outputAmount
     ? formatNumber(Number(outputAmount), token1 ? token1.decimals : 8)
@@ -26,18 +14,15 @@ export const SwapTradeOutput = ({ handleSwap }: SwapTradeOutput) => {
 
   return (
     <TradeInput
-      handleSwap={handleSwap}
       id="swap-to"
-      balance={balance}
-      setToken={setToken1}
-      isLoadingPrice={isLoading || isPriceFetching}
+      onSelect={setToken1}
       token={token1}
       fetching={isPriceFetching}
-      alteredSelected={token0}
       disabled={true}
       type="OUTPUT"
       value={outputSwapTokenAmount}
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      disableInsufficientBalanceError={true}
     />
   )
 }

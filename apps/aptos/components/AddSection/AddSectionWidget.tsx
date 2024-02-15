@@ -21,10 +21,9 @@ import { TradeInput } from 'components/TradeInput'
 import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import { useParams } from 'next/navigation'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect } from 'react'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useNetwork } from 'utils/useNetwork'
-import { useTokenBalance } from 'utils/useTokenBalance'
 import { usePool } from '../../utils/usePool'
 import { Pool } from '../../utils/usePools'
 import { useTokensFromPools } from '../../utils/useTokensFromPool'
@@ -63,7 +62,6 @@ export const AddSectionWidget: FC = () => {
     token1: token1State,
     amount0,
     amount1,
-    isPriceFetching,
     poolPairRatio,
     poolReserves,
     slippageAmount0,
@@ -86,9 +84,7 @@ export const AddSectionWidget: FC = () => {
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const { account, signAndSubmitTransaction, connected } = useWallet()
-  const [error0, setError0] = useState('')
-  const [error1, setError1] = useState('')
+  const { account, signAndSubmitTransaction } = useWallet()
 
   const addLiquidity = useCallback(
     async (close: () => void) => {
@@ -148,21 +144,8 @@ export const AddSectionWidget: FC = () => {
     ],
   )
 
-  const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance({
-    account: account?.address as string,
-    currency: token0.address,
-  })
-  const { data: balance1, isLoading: isLoadingBalance1 } = useTokenBalance({
-    account: account?.address as string,
-    currency: token1.address,
-  })
-
-  const tradeVal = useRef<HTMLInputElement>(null)
-  const tradeVal1 = useRef<HTMLInputElement>(null)
-
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      PoolInputBalance0(value)
       if (poolReserves?.data) {
         if (value) {
           const decimalDiff = token0.decimals - token1.decimals
@@ -186,7 +169,6 @@ export const AddSectionWidget: FC = () => {
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      PoolInputBalance1(value)
       if (poolReserves?.data) {
         if (value) {
           const decimalDiff = token1.decimals - token0.decimals
@@ -214,11 +196,6 @@ export const AddSectionWidget: FC = () => {
   }, [onChangeToken0TypedAmount, amount0])
 
   useEffect(() => {
-    PoolInputBalance1(String(amount1))
-    PoolInputBalance0(String(amount0))
-  }, [amount1, amount0])
-
-  useEffect(() => {
     if (amount0) {
       setSlippageAmount0(Number(amount0))
     }
@@ -228,48 +205,6 @@ export const AddSectionWidget: FC = () => {
 
     slippageAmount
   }, [setSlippageAmount0, setSlippageAmount1, amount0, amount1, slippageAmount])
-
-  const PoolInputBalance0 = useCallback(
-    (tradeVal: string) => {
-      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-      if (regexPattern.test(tradeVal)) {
-        setAmount0(tradeVal)
-      }
-      if (connected && typeof balance0 === 'number') {
-        const priceEst = balance0 / 10 ** token0.decimals < parseFloat(tradeVal)
-        if (priceEst) {
-          setError0('Exceeds Balance')
-        } else {
-          setError0('')
-        }
-      }
-    },
-    [connected, balance0, setAmount0, token0],
-  )
-
-  const PoolInputBalance1 = useCallback(
-    (tradeVal1: string) => {
-      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-      if (regexPattern.test(tradeVal1)) {
-        setAmount1(tradeVal1)
-      }
-      if (connected && typeof balance1 === 'number') {
-        const priceEst =
-          balance1 / 10 ** token1.decimals < parseFloat(tradeVal1)
-        if (priceEst) {
-          setError1('Exceeds Balance')
-        } else {
-          setError1('')
-        }
-      }
-    },
-    [connected, balance1, setAmount1, token1],
-  )
-
-  const swapTokenIfAlreadySelected = useCallback(() => {
-    setToken0(token1)
-    setToken1(token0)
-  }, [setToken0, setToken1, token0, token1])
 
   return (
     <Widget id="addLiquidity" variant="empty">
@@ -305,16 +240,9 @@ export const AddSectionWidget: FC = () => {
         <TradeInput
           id={'liquidity-from'}
           token={token0}
-          alteredSelected={token1}
           value={String(amount0)}
-          balance={balance0}
-          error={error0}
-          isLoadingPrice={isLoadingBalance0 || isPriceFetching}
-          onUserInput={onChangeToken0TypedAmount}
-          tradeVal={tradeVal}
-          setAmount={setAmount0}
+          onChange={onChangeToken0TypedAmount}
           type="INPUT"
-          handleSwap={swapTokenIfAlreadySelected}
           className="border border-accent px-3 py-1.5 !rounded-xl"
         />
         <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
@@ -327,36 +255,23 @@ export const AddSectionWidget: FC = () => {
           </div>
         </div>
         <TradeInput
-          alteredSelected={token0}
           id={'liquidity-to'}
           token={token1}
           value={String(amount1)}
-          balance={balance1}
-          error={error1}
-          isLoadingPrice={isLoadingBalance1 || isPriceFetching}
-          onUserInput={onChangeToken1TypedAmount}
-          tradeVal={tradeVal1}
-          setAmount={setAmount1}
+          onChange={onChangeToken1TypedAmount}
           type="INPUT"
-          handleSwap={swapTokenIfAlreadySelected}
           className="border border-accent px-3 py-1.5 !rounded-xl"
         />
       </div>
       <WidgetFooter>
         <AddLiquidityButton
-          buttonError={error0 || error1}
+          buttonError={'AHOY'}
           token1Value={String(amount0)}
         />
       </WidgetFooter>
       <AddSectionReviewModal>
         {({ close }) => (
-          <Button
-            size="xl"
-            fullWidth
-            onClick={() => {
-              addLiquidity(close)
-            }}
-          >
+          <Button size="xl" fullWidth onClick={() => addLiquidity(close)}>
             Add
           </Button>
         )}

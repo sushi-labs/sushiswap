@@ -34,17 +34,13 @@ interface PropType {
   id: string
   children: ReactNode
   selected: Token
-  alteredSelected: Token
   handleChangeToken: (token: Token) => void
-  handleSwap: () => void
 }
 
 export default function TokenListDialog({
   id,
   children,
   selected,
-  alteredSelected,
-  handleSwap,
   handleChangeToken,
 }: PropType) {
   const [open, setOpen] = useState(false)
@@ -88,22 +84,13 @@ export default function TokenListDialog({
             style={style}
             token={sortedTokenList ? sortedTokenList[index] : ({} as Token)}
             selected={selected?.address === sortedTokenList?.[index]?.address}
-            alteredSelected={alteredSelected}
             handleChangeToken={_handleChangeToken}
             id={id}
-            handleSwap={handleSwap}
           />
         </>
       )
     },
-    [
-      selected,
-      sortedTokenList,
-      alteredSelected,
-      _handleChangeToken,
-      handleSwap,
-      id,
-    ],
+    [selected, sortedTokenList, _handleChangeToken, id],
   )
 
   return (

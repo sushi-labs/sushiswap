@@ -25,14 +25,6 @@ export default function ConnectButton(props: ButtonProps) {
     connect(name)
   }
 
-  // const { data: tokens } = useTokens()
-  // const nativeCurr = tokens?.['0x1::aptos_coin::AptosCoin']
-  // const { data: balance } = useTokenBalance({
-  //   account: account?.address as string,
-  //   currency: nativeCurr?.address as string,
-  //   refetchInterval: 2000,
-  // })
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

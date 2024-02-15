@@ -1,3 +1,5 @@
+'use client'
+
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { useSlippageTolerance } from '@sushiswap/hooks'
@@ -15,18 +17,16 @@ import { TradeInput } from 'components/TradeInput'
 import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import Link from 'next/link'
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useAccount } from 'utils/useAccount'
 import { useNetwork } from 'utils/useNetwork'
-import { useTokenBalance } from 'utils/useTokenBalance'
 import { usePoolPairs } from 'utils/utilFunctions'
 import { AddLiquidityButton } from './AddLiquidityButton'
 import { AddSectionReviewModal } from './AddSectionReviewModel'
 import { usePoolActions, usePoolState } from './PoolProvider'
 
 export function Add() {
-  // const router = useRouter()
   const { isLoadingAccount } = useAccount()
   usePoolPairs()
 
@@ -78,20 +78,17 @@ const _Add: FC = () => {
     setSlippageAmount1,
   } = usePoolActions()
 
-  const { account, signAndSubmitTransaction, connected } = useWallet()
+  const { account, signAndSubmitTransaction } = useWallet()
   const {
     token0,
     token1,
     amount0,
     amount1,
-    isPriceFetching,
     poolPairRatio,
     poolReserves,
     slippageAmount0,
     slippageAmount1,
   } = usePoolState()
-  const [error0, setError0] = useState('')
-  const [error1, setError1] = useState('')
 
   const [slippageAmount] = useSlippageTolerance()
 
@@ -139,65 +136,61 @@ const _Add: FC = () => {
     }
   }
 
-  const { data: balance0, isLoading: isLoadingBalance0 } = useTokenBalance({
-    account: account?.address as string,
-    currency: token0.address,
-  })
-  const { data: balance1, isLoading: isLoadingBalance1 } = useTokenBalance({
-    account: account?.address as string,
-    currency: token1.address,
-  })
-
-  const tradeVal = useRef<HTMLInputElement>(null)
-  const tradeVal1 = useRef<HTMLInputElement>(null)
-
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      PoolInputBalance0(value)
-      if (poolReserves?.data) {
-        if (value) {
-          const decimalDiff = token0.decimals - token1.decimals
+      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
+      if (regexPattern.test(value)) {
+        setAmount0(value)
+        if (poolReserves?.data) {
+          if (value) {
+            const decimalDiff = token0.decimals - token1.decimals
 
-          setAmount1(
-            String(
-              parseFloat(
-                (parseFloat(value) * poolPairRatio * 10 ** decimalDiff).toFixed(
-                  token1.decimals,
+            setAmount1(
+              String(
+                parseFloat(
+                  (
+                    parseFloat(value) *
+                    poolPairRatio *
+                    10 ** decimalDiff
+                  ).toFixed(token1.decimals),
                 ),
               ),
-            ),
-          )
-        } else {
-          setAmount1('')
+            )
+          } else {
+            setAmount1('')
+          }
         }
       }
     },
-    [poolPairRatio, poolReserves, token0, token1, setAmount1],
+    [poolPairRatio, poolReserves, token0, token1, setAmount0, setAmount1],
   )
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      PoolInputBalance1(value)
-      if (poolReserves?.data) {
-        if (value) {
-          const decimalDiff = token1.decimals - token0.decimals
+      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
+      if (regexPattern.test(value)) {
+        setAmount1(value)
+        if (poolReserves?.data) {
+          if (value) {
+            const decimalDiff = token1.decimals - token0.decimals
 
-          setAmount0(
-            String(
-              parseFloat(
-                (
-                  (parseFloat(value) / poolPairRatio) *
-                  10 ** decimalDiff
-                ).toFixed(token0.decimals),
+            setAmount0(
+              String(
+                parseFloat(
+                  (
+                    (parseFloat(value) / poolPairRatio) *
+                    10 ** decimalDiff
+                  ).toFixed(token0.decimals),
+                ),
               ),
-            ),
-          )
-        } else {
-          setAmount0('')
+            )
+          } else {
+            setAmount0('')
+          }
         }
       }
     },
-    [poolPairRatio, poolReserves, token0, token1, setAmount0],
+    [poolPairRatio, poolReserves, token0, token1, setAmount0, setAmount1],
   )
 
   useEffect(() => {
@@ -211,50 +204,6 @@ const _Add: FC = () => {
     slippageAmount
   }, [setSlippageAmount0, setSlippageAmount1, amount0, amount1, slippageAmount])
 
-  useEffect(() => {
-    onChangeToken0TypedAmount(String(amount0))
-  }, [onChangeToken0TypedAmount, amount0])
-
-  useEffect(() => {
-    PoolInputBalance1(String(amount1))
-    PoolInputBalance0(String(amount0))
-  }, [amount1, amount0])
-
-  const PoolInputBalance0 = (tradeVal: string) => {
-    const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-    if (regexPattern.test(tradeVal)) {
-      setAmount0(tradeVal)
-    }
-    if (connected && typeof balance0 === 'number') {
-      const priceEst = balance0 / 10 ** token0.decimals < parseFloat(tradeVal)
-      if (priceEst) {
-        setError0('Exceeds Balance')
-      } else {
-        setError0('')
-      }
-    }
-  }
-
-  const PoolInputBalance1 = (tradeVal1: string) => {
-    const regexPattern = /^[0-9]*(\.[0-9]*)?$/
-    if (regexPattern.test(tradeVal1)) {
-      setAmount1(tradeVal1)
-    }
-    if (connected && typeof balance1 === 'number') {
-      const priceEst = balance1 / 10 ** token1.decimals < parseFloat(tradeVal1)
-      if (priceEst) {
-        setError1('Exceeds Balance')
-      } else {
-        setError1('')
-      }
-    }
-  }
-
-  const swapTokenIfAlreadySelected = () => {
-    setToken0(token1)
-    setToken1(token0)
-  }
-
   return (
     <>
       <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
@@ -267,17 +216,10 @@ const _Add: FC = () => {
             <TradeInput
               id={'liquidity-from'}
               token={token0}
-              alteredSelected={token1}
               value={String(amount0)}
-              setToken={setToken0}
-              balance={balance0}
-              error={error0}
-              isLoadingPrice={isLoadingBalance0 || isPriceFetching}
-              onUserInput={onChangeToken0TypedAmount}
-              tradeVal={tradeVal}
-              setAmount={setAmount0}
+              onSelect={setToken0}
+              onChange={onChangeToken0TypedAmount}
               type="INPUT"
-              handleSwap={swapTokenIfAlreadySelected}
               className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
             />
             <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
@@ -290,23 +232,16 @@ const _Add: FC = () => {
               </div>
             </div>
             <TradeInput
-              alteredSelected={token0}
               id={'liquidity-to'}
               token={token1}
               value={String(amount1)}
-              setToken={setToken1}
-              balance={balance1}
-              error={error1}
-              isLoadingPrice={isLoadingBalance1 || isPriceFetching}
-              onUserInput={onChangeToken1TypedAmount}
-              tradeVal={tradeVal1}
-              setAmount={setAmount1}
+              onSelect={setToken1}
+              onChange={onChangeToken1TypedAmount}
               type="INPUT"
-              handleSwap={swapTokenIfAlreadySelected}
               className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
             />
             <AddLiquidityButton
-              buttonError={error0 || error1}
+              buttonError={'asdasda'}
               token1Value={String(amount0)}
             />
           </div>

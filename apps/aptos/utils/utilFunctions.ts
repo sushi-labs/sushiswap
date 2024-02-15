@@ -14,7 +14,7 @@ export type Route = {
 }
 
 interface GetAllCommonPairs {
-  amount_in?: number
+  amountIn?: number
   coinA: Token
   coinB: Token
   pairs: Pool[] | undefined
@@ -22,7 +22,7 @@ interface GetAllCommonPairs {
 }
 
 export async function getAllCommonPairs({
-  amount_in = 0,
+  amountIn = 0,
   coinA,
   coinB,
   pairs,
@@ -41,9 +41,8 @@ export async function getAllCommonPairs({
     basePairs.add(pair?.data?.token_y_details?.token_address)
   })
   const pairArray = [...basePairs]
-  let returnRoutes: Route = {} as Route
 
-  const allPairs: string[][] = []
+  const allPairs: [string, string][] = []
 
   for (let i = 0; i < pairArray.length; i++) {
     for (let j = i + 1; j < pairArray.length; j++) {
@@ -51,86 +50,95 @@ export async function getAllCommonPairs({
     }
   }
 
-  await fetch(`${fetchUrlPrefix}/v1/accounts/${swapContract}/resources`)
-    .then((res) => res.json())
-    .then((data) => {
-      const t: any = {}
-      const reserve_tokens: any = {}
-      const reserve_token_info: any = {}
+  const data: { data: any; type: string }[] | { error_code: any } = await fetch(
+    `${fetchUrlPrefix}/v1/accounts/${swapContract}/resources`,
+  ).then((res) => res.json())
 
-      if (data?.error_code) return
-      allPairs.map((token) => {
-        if (
-          reserve_tokens[
-            `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
-          ]
-        ) {
-          const info = {
-            lpTokenInfo:
-              reserve_token_info[
-                `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[0]}, ${token[1]}>>`
-              ],
-          }
-          const data =
-            reserve_tokens[
-              `${swapContract}::swap::TokenPairReserve<${token[0]}, ${token[1]}>`
-            ]
+  if ('error_code' in data) {
+    throw new Error(`Failed to fetch swap resources: ${data?.error_code}`)
+  }
 
-          t[`${token[0]}|||${token[1]}`] = {
-            pairs: `${token[0]}|||${token[1]}`,
-            res_x: data.data.reserve_x,
-            res_y: data.data.reserve_y,
-            ...info,
-            ...data,
-          }
-        }
+  const reserve_tokens = new Map<string, any>()
+  const reserve_token_info = new Map<string, any>()
 
-        if (
-          reserve_tokens[
-            `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
-          ]
-        ) {
-          const info = {
-            lpTokenInfo:
-              reserve_token_info[
-                `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token[1]}, ${token[0]}>>`
-              ],
-          }
-          const data =
-            reserve_tokens[
-              `${swapContract}::swap::TokenPairReserve<${token[1]}, ${token[0]}>`
-            ]
+  data.forEach((d) => {
+    if (d.type.includes('TokenPairReserve')) {
+      reserve_tokens.set(d.type, d)
+    }
+    if (d.type.includes('LPToken')) {
+      reserve_token_info.set(d.type, d)
+    }
+  })
 
-          t[`${token[1]}|||${token[0]}`] = {
-            pairs: `${token[0]}|||${token[1]}`,
-            res_x: data.data.reserve_x,
-            res_y: data.data.reserve_y,
-            ...info,
-            ...data,
-          }
-        }
-      })
+  const t = allPairs.reduce<Record<string, any>>((acc, [token0, token1]) => {
+    if (
+      reserve_tokens.has(
+        `${swapContract}::swap::TokenPairReserve<${token0}, ${token1}>`,
+      )
+    ) {
+      const info = {
+        lpTokenInfo: reserve_token_info.get(
+          `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token0}, ${token1}>>`,
+        ),
+      }
+      const data = reserve_tokens.get(
+        `${swapContract}::swap::TokenPairReserve<${token0}, ${token1}>`,
+      )
 
-      const graph = Object.values(t).reduce((data: any, coin: any) => {
-        const coins_data = coin.pairs.split('|||')
+      acc[`${token0}|||${token1}`] = {
+        pairs: `${token0}|||${token1}`,
+        res_x: data.data.reserve_x,
+        res_y: data.data.reserve_y,
+        ...info,
+        ...data,
+      }
+    }
 
-        if (data[coins_data[0]]) {
-          data[coins_data[0]].push(coins_data[1])
-        } else {
-          data[coins_data[0]] = [coins_data[1]]
-        }
+    if (
+      reserve_tokens.has(
+        `${swapContract}::swap::TokenPairReserve<${token1}, ${token0}>`,
+      )
+    ) {
+      const info = {
+        lpTokenInfo: reserve_token_info.get(
+          `0x1::coin::CoinInfo<${swapContract}::swap::LPToken<${token1}, ${token0}>>`,
+        ),
+      }
+      const data = reserve_tokens.get(
+        `${swapContract}::swap::TokenPairReserve<${token1}, ${token0}>`,
+      )
 
-        if (data[coins_data[1]]) {
-          data[coins_data[1]].push(coins_data[0])
-        } else {
-          data[coins_data[1]] = [coins_data[0]]
-        }
+      acc[`${token1}|||${token0}`] = {
+        pairs: `${token0}|||${token1}`,
+        res_x: data.data.reserve_x,
+        res_y: data.data.reserve_y,
+        ...info,
+        ...data,
+      }
+    }
 
-        return data
-      }, {})
+    return acc
+  }, {})
 
-      returnRoutes = RouteDemo(amount_in, t, graph, coinA, coinB) as Route
-    })
+  const graph = Object.values(t).reduce((data: any, coin: any) => {
+    const coins_data = coin.pairs.split('|||')
+
+    if (data[coins_data[0]]) {
+      data[coins_data[0]].push(coins_data[1])
+    } else {
+      data[coins_data[0]] = [coins_data[1]]
+    }
+
+    if (data[coins_data[1]]) {
+      data[coins_data[1]].push(coins_data[0])
+    } else {
+      data[coins_data[1]] = [coins_data[0]]
+    }
+
+    return data
+  }, {})
+
+  const returnRoutes = RouteDemo(amountIn, t, graph, coinA, coinB) as Route
 
   return returnRoutes as Route
 }

@@ -1,6 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
-import { SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
+import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { networkNameToNetwork } from 'config/chains'
 import {
@@ -10,14 +10,12 @@ import {
 import React from 'react'
 import { useNetwork } from 'utils/useNetwork'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { useTokenBalance } from 'utils/useTokenBalance'
 import { formatNumber } from 'utils/utilFunctions'
 import { Modal } from './Modal/Modal'
 import { TradeRoute } from './TradeRoute'
 
 export const TradeStats = () => {
   const {
-    token0,
     token1,
     amount,
     bestRoutes,
@@ -39,14 +37,8 @@ export const TradeStats = () => {
   const minOutput = slippageAmount
     ? formatNumber(slippageAmount, token1 ? token1.decimals : 8)
     : 0
-  const { data: balance } = useTokenBalance({
-    account: account?.address as string,
-    currency: token0?.address,
-    refetchInterval: 2000,
-  })
-  const { data: routes } = useSwapRouter({
-    balance,
-  })
+
+  const { data: routes } = useSwapRouter()
 
   return (
     <Transition
@@ -82,7 +74,7 @@ export const TradeStats = () => {
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !outputSwapTokenAmount ? (
-              <SkeletonText fontSize="sm" className="w-[120px]" />
+              <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
               `${outputSwapTokenAmount} ${token1.symbol}`
             )}
@@ -94,7 +86,7 @@ export const TradeStats = () => {
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !minOutput ? (
-              <SkeletonText fontSize="sm" className="w-[120px]" />
+              <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
               `${minOutput} ${token1.symbol}`
             )}
@@ -106,7 +98,7 @@ export const TradeStats = () => {
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading ? (
-              <SkeletonText fontSize="sm" className="w-[120px]" />
+              <SkeletonBox className="h-4 py-0.5 w-[40px] rounded-md" />
             ) : (
               <Modal.Trigger tag={'trade-state-routes'}>
                 {({ open }) => (

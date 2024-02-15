@@ -1,25 +1,17 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button } from '@sushiswap/ui'
 import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { warningSeverity } from 'lib/swap/warningSeverity'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useIsSwapMaintenance } from 'utils/use-is-swap-maintenance'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import ConnectButton from './ConnectButton'
+import { Checker } from './Checker'
 import { Modal } from './Modal/Modal'
 
 export const SwapButton = () => {
   const { data: maintenance } = useIsSwapMaintenance()
-  const { connected, account } = useWallet()
   const { amount, noRouteFound, error, token0 } = useSwapState()
   const [checked, setChecked] = useState<boolean>(false)
-  const { data: balance } = useTokenBalance({
-    account: account?.address as string,
-    currency: token0?.address,
-    refetchInterval: 2000,
-  })
-  const { data: routes } = useSwapRouter({ balance })
+  const { data: routes } = useSwapRouter()
 
   useEffect(() => {
     if (warningSeverity(routes?.priceImpact) <= 3) {
@@ -27,48 +19,58 @@ export const SwapButton = () => {
     }
   }, [routes])
 
-  const swapButtonDisabled = Boolean(
-    maintenance ||
-      noRouteFound ||
-      error ||
-      Number(amount) <= 0 ||
-      (!checked && warningSeverity(routes?.priceImpact) > 3),
-  )
+  const checkerAmount = useMemo(() => {
+    if (!token0) return []
+
+    return [
+      {
+        currency: token0.address,
+        amount: Number(amount) * 10 ** token0.decimals,
+      },
+    ]
+  }, [amount, token0])
 
   return (
     <Modal.Trigger tag="review-modal">
       {({ open }) => (
         <>
           <div className="pt-4">
-            {connected ? (
-              <Button
-                size="xl"
+            <Checker.Guard
+              guardWhen={maintenance}
+              guardText="Maintenance in progress"
+              fullWidth
+            >
+              <Checker.Guard
+                guardWhen={Boolean(noRouteFound)}
+                guardText={noRouteFound}
                 fullWidth
-                disabled={swapButtonDisabled}
-                onClick={() => {
-                  amount ? open() : {}
-                }}
-                color={
-                  warningSeverity(routes?.priceImpact) >= 3 ? 'red' : 'blue'
-                }
               >
-                {maintenance ? (
-                  'Maintenance in progress'
-                ) : !checked && warningSeverity(routes?.priceImpact) >= 3 ? (
-                  <>Price impact too high</>
-                ) : noRouteFound ? (
-                  noRouteFound
-                ) : error ? (
-                  'Insufficient Balance'
-                ) : Number(amount) > 0 ? (
-                  <>Swap</>
-                ) : (
-                  <>Enter Amount</>
-                )}
-              </Button>
-            ) : (
-              <ConnectButton />
-            )}
+                <Checker.Connect>
+                  <Checker.Amounts amounts={checkerAmount}>
+                    <Checker.Guard
+                      guardWhen={
+                        !checked && warningSeverity(routes?.priceImpact) > 3
+                      }
+                      guardText="Price impact too high"
+                      variant="destructive"
+                    >
+                      <Checker.Guard
+                        guardWhen={Boolean(error)}
+                        guardText="An unknown error occurred"
+                      >
+                        <Button
+                          size="xl"
+                          fullWidth
+                          onClick={() => (amount ? open() : {})}
+                        >
+                          Swap
+                        </Button>
+                      </Checker.Guard>
+                    </Checker.Guard>
+                  </Checker.Amounts>
+                </Checker.Connect>
+              </Checker.Guard>
+            </Checker.Guard>
           </div>
           {warningSeverity(routes?.priceImpact) > 3 && (
             <div className="flex items-start px-4 py-3 mt-4 rounded-xl bg-red/20">

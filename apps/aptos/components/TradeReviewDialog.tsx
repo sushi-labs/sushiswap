@@ -23,7 +23,6 @@ import React, { FC } from 'react'
 import { payloadArgs } from 'utils/payloadUtil'
 import { useNetwork } from 'utils/useNetwork'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { useTokenBalance } from 'utils/useTokenBalance'
 import { formatNumber } from 'utils/utilFunctions'
 import { Icon } from './Icon'
 import { Modal } from './Modal/Modal'
@@ -47,14 +46,7 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
   const { account, signAndSubmitTransaction } = useWallet()
   const { setisTransactionPending, setAmount } = useSwapActions()
 
-  const { data: balance } = useTokenBalance({
-    account: account?.address as string,
-    currency: token0?.address,
-    refetchInterval: 2000,
-  })
-  const { data: routes } = useSwapRouter({
-    balance,
-  })
+  const { data: routes } = useSwapRouter()
 
   const minOutput = slippageAmount
     ? formatNumber(slippageAmount, token1 ? token1.decimals : 8)

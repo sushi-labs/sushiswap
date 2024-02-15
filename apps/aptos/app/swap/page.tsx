@@ -14,22 +14,16 @@ import requiredNetworkAlert from 'utils/requiredNetworkAlert'
 import { useAccount } from 'utils/useAccount'
 import { SwitchAppType } from 'widget/SwitchAppType'
 import { WidgetTitleV2 } from 'widget/WidgetTitleV2'
-import { useSwapActions, useSwapState } from './trade/TradeProvider'
+import { useSwapState } from './trade/TradeProvider'
 
 export default function SwapPage() {
   const { disconnect, network } = useWallet()
-  const { setToken0, setToken1 } = useSwapActions()
-  const { token0, token1, isTransactionPending } = useSwapState()
+  const { isTransactionPending } = useSwapState()
   const { isLoadingAccount } = useAccount()
 
   useEffect(() => {
     requiredNetworkAlert(network, disconnect)
   }, [network, disconnect])
-
-  const swapTokenIfAlreadySelected = () => {
-    setToken0(token1)
-    setToken1(token0)
-  }
 
   return (
     <>
@@ -41,10 +35,10 @@ export default function SwapPage() {
             <SwitchAppType />
             <SettingsOverlay modules={[SettingsModule.SlippageTolerance]} />
           </div>
-          <SwapTradeInput handleSwap={swapTokenIfAlreadySelected} />
+          <SwapTradeInput />
           <SwapTrade />
           <div className="flex flex-col">
-            <SwapTradeOutput handleSwap={swapTokenIfAlreadySelected} />
+            <SwapTradeOutput />
             <SwapButton />
           </div>
           <TradeStats />

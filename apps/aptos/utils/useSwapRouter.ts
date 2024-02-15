@@ -5,17 +5,20 @@ import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { usePools } from 'utils/usePools'
 import { getAllCommonPairs } from 'utils/utilFunctions'
 import { useNetwork } from './useNetwork'
+import { useTokenBalance } from './useTokenBalance'
 
-type useSwapRouterArgs = {
-  balance: number | undefined
-}
-
-export function useSwapRouter({ balance }: useSwapRouterArgs) {
+export function useSwapRouter() {
   const { amount, token0, token1 } = useSwapState()
   const { account, connected } = useWallet()
   const { network } = useNetwork()
   const [slippageTolerance] = useSlippageTolerance()
   const { data: pairs } = usePools(true)
+
+  const { data: balance } = useTokenBalance({
+    account: account?.address as string,
+    currency: token0?.address,
+    refetchInterval: 2000,
+  })
 
   return useQuery({
     queryKey: [
@@ -33,7 +36,7 @@ export function useSwapRouter({ balance }: useSwapRouterArgs) {
     ],
     queryFn: async () =>
       getAllCommonPairs({
-        amount_in: parseFloat(
+        amountIn: parseFloat(
           (Number(amount) * 10 ** token0.decimals) as unknown as string,
         ),
         coinA: token0,
@@ -44,6 +47,8 @@ export function useSwapRouter({ balance }: useSwapRouterArgs) {
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
     refetchIntervalInBackground: true,
-    enabled: Boolean(amount && Number(amount) > 0),
+    enabled: Boolean(
+      amount && Number(amount) > 0 && typeof balance !== 'undefined',
+    ),
   })
 }

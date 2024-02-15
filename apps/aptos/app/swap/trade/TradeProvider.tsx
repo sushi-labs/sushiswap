@@ -1,11 +1,11 @@
 'use client'
 
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   FC,
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useReducer,
@@ -64,11 +64,11 @@ type Actions =
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const [slippageTolerance] = useSlippageTolerance()
-  const { account } = useWallet()
 
   const { network } = useNetwork()
 
   const baseTokens = getTokensWithoutKey({ network })
+
   const reducer = (state: State, action: Actions) => {
     switch (action.type) {
       case 'setToken0':
@@ -110,6 +110,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         return { ...state, noRouteFound: action.value }
     }
   }
+
   const [internalState, dispatch] = useReducer(reducer, {
     token0: baseTokens[0],
     token1: baseTokens[1],
@@ -123,12 +124,34 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     bestRoutes: [],
     noRouteFound: '',
   })
+
   const state = useMemo(() => {
     return { ...internalState }
-  }, [internalState, network, account, baseTokens])
+  }, [internalState])
+
+  const setToken0 = useCallback(
+    (token0: Token) => {
+      if (state.token1.address === token0.address) {
+        dispatch({ type: 'swapTokens' })
+      } else {
+        dispatch({ type: 'setToken0', value: token0 as Token })
+      }
+    },
+    [state.token1],
+  )
+
+  const setToken1 = useCallback(
+    (token1: Token) => {
+      if (state.token0.address === token1.address) {
+        dispatch({ type: 'swapTokens' })
+      } else {
+        dispatch({ type: 'setToken1', value: token1 as Token })
+      }
+    },
+    [state.token0],
+  )
+
   const api = useMemo(() => {
-    const setToken0 = (value: Token) => dispatch({ type: 'setToken0', value })
-    const setToken1 = (value: Token) => dispatch({ type: 'setToken1', value })
     const swapTokens = () => dispatch({ type: 'swapTokens' })
     const setAmount = (value: string) => dispatch({ type: 'setAmount', value })
     const setSlippageAmount = (value: number) =>
@@ -161,7 +184,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setBestRoutes,
       setNoRouteFound,
     }
-  }, [internalState, baseTokens])
+  }, [setToken0, setToken1])
 
   return (
     <SwapActionsContext.Provider value={api}>

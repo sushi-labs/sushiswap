@@ -1,28 +1,17 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useIsMounted } from '@sushiswap/hooks'
 import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useTransition } from 'react'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { useTokenBalance } from 'utils/useTokenBalance'
 import { TradeInput } from './TradeInput'
 
-interface Props {
-  handleSwap: () => void
-}
+export const SwapTradeInput = () => {
+  const [, startTransition] = useTransition()
 
-export const SwapTradeInput = ({ handleSwap }: Props) => {
-  const { connected, account } = useWallet()
-  const tradeVal = useRef<HTMLInputElement>(null)
   const isMounted = useIsMounted()
-  const { amount, token0, token1, error } = useSwapState()
-  const { data: balance, isLoading: isPriceLoading } = useTokenBalance({
-    account: account?.address as string,
-    currency: token0?.address,
-    refetchInterval: 2000,
-  })
+  const { amount, token0 } = useSwapState()
+
   const {
     setAmount,
-    setError,
     setToken0,
     setOutputAmount,
     setPriceFetching,
@@ -31,47 +20,38 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
     setNoRouteFound,
   } = useSwapActions()
 
-  const { data: routes, isFetching: isPriceFetching } = useSwapRouter({
-    balance,
-  })
+  const { data: route, isFetching: isPriceFetching } = useSwapRouter()
 
   useEffect(() => {
-    setOutputAmount('')
-    setSlippageAmount(0)
-    setNoRouteFound('')
-    setPriceFetching(isPriceFetching)
-    if (Number(amount) > 0) {
-      if (routes?.amountOut) {
-        setOutputAmount(String(routes?.amountOut))
-        setSlippageAmount(routes?.amountOut)
+    startTransition(() => {
+      setOutputAmount('')
+      setSlippageAmount(0)
+      setNoRouteFound('')
+      setPriceFetching(isPriceFetching)
+      if (Number(amount) > 0) {
+        if (route?.amountOut) {
+          setOutputAmount(String(route?.amountOut))
+          setSlippageAmount(route?.amountOut)
+        }
+        if (route?.route) {
+          setBestRoutes(route?.route)
+          setNoRouteFound('')
+        } else {
+          setBestRoutes([])
+          setNoRouteFound('No trade found')
+        }
       }
-      if (routes?.route) {
-        setBestRoutes(routes?.route)
-        setNoRouteFound('')
-      } else {
-        setBestRoutes([])
-        setNoRouteFound('No trade found')
-      }
-    }
-  }, [amount, routes, isPriceFetching])
-
-  const checkBalance = (value: string) => {
-    setAmount(value)
-    if (connected && typeof balance === 'number') {
-      const priceEst = balance / 10 ** token0?.decimals < parseFloat(value)
-      if (priceEst) {
-        setError('Exceeds Balance')
-      } else {
-        setError('')
-      }
-    } else {
-      setError('')
-    }
-  }
-
-  useEffect(() => {
-    checkBalance(String(amount))
-  }, [token0, token1, balance])
+    })
+  }, [
+    amount,
+    route,
+    isPriceFetching,
+    setSlippageAmount,
+    setBestRoutes,
+    setNoRouteFound,
+    setOutputAmount,
+    setPriceFetching,
+  ])
 
   if (!isMounted) return <></>
 
@@ -79,17 +59,10 @@ export const SwapTradeInput = ({ handleSwap }: Props) => {
     <TradeInput
       id="swap-from"
       type="INPUT"
-      setToken={setToken0}
+      onSelect={setToken0}
       token={token0}
-      alteredSelected={token1}
       value={String(amount)}
-      balance={balance}
-      error={error}
-      isLoadingPrice={isPriceLoading}
-      onUserInput={checkBalance}
-      tradeVal={tradeVal}
-      setAmount={setAmount}
-      handleSwap={handleSwap}
+      onChange={setAmount}
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
     />
   )
