@@ -480,7 +480,7 @@ export const config: Record<
   },
   [ChainId.FUSE]: {
     chain: fuse,
-    transport: http(fuse.rpcUrls.default.http[0]),
+    transport: http(`https://lb.drpc.org/ogrpc?network=fuse&dkey=${drpcId}`),
   },
   [ChainId.GNOSIS]: {
     chain: gnosis,
@@ -488,14 +488,8 @@ export const config: Record<
   },
   [ChainId.HARMONY]: {
     chain: harmonyOne,
-    transport: fallback(
-      [
-        http(harmonyOne.rpcUrls.default.http[0]),
-        http('https://rpc.ankr.com/harmony'),
-      ],
-      {
-        rank: true,
-      },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=harmony-0&dkey=${drpcId}`,
     ),
   },
   [ChainId.KAVA]: {
@@ -543,12 +537,7 @@ export const config: Record<
   },
   [ChainId.HAQQ]: {
     chain: haqq,
-    transport: fallback(
-      haqq.rpcUrls.default.http.map((url) => http(url)),
-      {
-        rank: true,
-      },
-    ),
+    transport: http(`https://lb.drpc.org/ogrpc?network=haqq&dkey=${drpcId}`),
   },
   [ChainId.CORE]: {
     chain: core,
@@ -600,11 +589,8 @@ export const config: Record<
   },
   [ChainId.FILECOIN]: {
     chain: filecoin,
-    transport: fallback(
-      filecoin.rpcUrls.default.http.map((url) => http(url)),
-      {
-        rank: true,
-      },
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
     ),
   },
 } as const
