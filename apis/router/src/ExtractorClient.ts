@@ -178,7 +178,8 @@ export class ExtractorClient {
         if (pl === undefined) this.poolCodesMap.set(id, [p])
         else pl.push(p)
       })
-      if (DEBUG_PRINT) console.log(`fetchPoolsBetween: ${pools.length} pools`)
+      if (DEBUG_PRINT)
+        console.log(`Fetch pool codes between: ${pools.length} pools`)
       return pools
     } catch (e) {
       console.error(
@@ -215,7 +216,8 @@ export class ExtractorClient {
         if (pl === undefined) this.poolCodesMap.set(id, [p])
         else pl.push(p)
       })
-      if (DEBUG_PRINT) console.log(`fetchTokenPools: ${pools.length} pools`)
+      if (DEBUG_PRINT)
+        console.log(`Fetch pool codes for token: ${pools.length} pools`)
       return pools
     } catch (e) {
       console.error(`Error /pool-codes-for-token/${this.chainId}/${addr}: ${e}`)

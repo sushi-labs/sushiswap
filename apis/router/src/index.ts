@@ -74,6 +74,10 @@ async function start() {
   app.get(`/swap/v3.2/${CHAIN_ID}`, (req, res) => {
     return swapHandler(client)(req, res)
   })
+  // app.get(`/swap/v4/${CHAIN_ID}`, (req, res) => {
+  //   return swapHandler(client)(req, res)
+  // })
+
   app.get(`/token/v1/${CHAIN_ID}/:address`, tokenHandler(client))
   app.get(`/price/v1/${CHAIN_ID}`, pricesHandler(client))
   app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler(client))
