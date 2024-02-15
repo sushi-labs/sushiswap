@@ -5,11 +5,10 @@ import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
 import { CPUUsageStatistics } from './cpu-usage-statistics'
 import extractor from './extractor'
+
 import poolCodes from './handlers/pool-codes'
+import poolCodesBetween from './handlers/pool-codes-between'
 import poolCodesForToken from './handlers/pool-codes-for-token'
-import poolsBetween from './handlers/pools-between'
-import poolsForToken from './handlers/pools-for-token'
-import poolsJSON from './handlers/pools-json'
 import requestedPairs from './handlers/requested-pairs'
 import token from './handlers/token'
 import requestStatistics from './request-statistics'
@@ -50,13 +49,10 @@ app.get('/health', (_, res: Response) => {
   return res.status(extractor.isStarted() ? 200 : 503).send()
 })
 
-app.get('/pool-codes', poolCodes)
-app.get('/pool-codes-for-token', poolCodesForToken)
-
 app.get('/token/:chainId/:address', token)
-app.get('/pools-json/:chainId', poolsJSON)
-app.get('/pools-for-token/:chainId/:address', poolsForToken)
-app.get('/pools-between/:chainId/:addr0/:addr1', poolsBetween)
+app.get('/pool-codes/:chainId', poolCodes)
+app.get('/pool-codes-for-token/:chainId/:address', poolCodesForToken)
+app.get('/pool-codes-between/:chainId/:addr0/:addr1', poolCodesBetween)
 app.get('/requested-pairs/:chainId', requestedPairs)
 
 // app.get('/debug-sentry', function mainHandler(req, res) {

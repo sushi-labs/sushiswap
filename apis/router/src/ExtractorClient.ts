@@ -52,9 +52,9 @@ export class ExtractorClient {
   async updatePools() {
     try {
       if (DEBUG_PRINT)
-        console.log(`${this.extractorServer}/pools-json/${this.chainId}`)
+        console.log(`${this.extractorServer}/pool-codes/${this.chainId}`)
       const resp = await fetch(
-        `${this.extractorServer}/pools-json/${this.chainId}`,
+        `${this.extractorServer}/pool-codes/${this.chainId}`,
       )
       if (resp.status === 200) {
         const data = await resp.text()
@@ -153,12 +153,12 @@ export class ExtractorClient {
     try {
       if (DEBUG_PRINT)
         console.log(
-          `${this.extractorServer}/pools-between/${this.chainId}/${tokenAddr(
-            t0,
-          )}/${tokenAddr(t1)}`,
+          `${this.extractorServer}/pool-codes-between/${
+            this.chainId
+          }/${tokenAddr(t0)}/${tokenAddr(t1)}`,
         )
       const resp = await fetch(
-        `${this.extractorServer}/pools-between/${this.chainId}/${tokenAddr(
+        `${this.extractorServer}/pool-codes-between/${this.chainId}/${tokenAddr(
           t0,
         )}/${tokenAddr(t1)}`,
       )
@@ -182,7 +182,7 @@ export class ExtractorClient {
       return pools
     } catch (e) {
       console.error(
-        `Error /pools-between/${this.chainId}/${tokenAddr(t0)}/${tokenAddr(
+        `Error /pool-codes-between/${this.chainId}/${tokenAddr(t0)}/${tokenAddr(
           t1,
         )}: ${e}`,
       )
@@ -196,10 +196,10 @@ export class ExtractorClient {
     try {
       if (DEBUG_PRINT)
         console.log(
-          `${this.extractorServer}/pools-for-token/${this.chainId}/${addr}`,
+          `${this.extractorServer}/pool-codes-for-token/${this.chainId}/${addr}`,
         )
       const resp = await fetch(
-        `${this.extractorServer}/pools-for-token/${this.chainId}/${addr}`,
+        `${this.extractorServer}/pool-codes-for-token/${this.chainId}/${addr}`,
       )
       if (resp.status !== 200) {
         if (DEBUG_PRINT) console.log(`Responded: ${resp.status}`)
@@ -218,7 +218,7 @@ export class ExtractorClient {
       if (DEBUG_PRINT) console.log(`fetchTokenPools: ${pools.length} pools`)
       return pools
     } catch (e) {
-      console.error(`Error /pools-for-token/${this.chainId}/${addr}: ${e}`)
+      console.error(`Error /pool-codes-for-token/${this.chainId}/${addr}: ${e}`)
       return
     }
   }
