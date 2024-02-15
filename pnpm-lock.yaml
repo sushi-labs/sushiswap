@@ -114,9 +114,6 @@ importers:
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
@@ -193,9 +190,6 @@ importers:
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
@@ -682,9 +676,6 @@ importers:
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../../packages/steer-sdk
@@ -896,9 +887,6 @@ importers:
       '@heroicons/react':
         specifier: 2.0.13
         version: 2.0.13(react@18.2.0)
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/tailwindcss-config':
         specifier: workspace:*
         version: link:../../config/tailwindcss
@@ -1098,30 +1086,6 @@ importers:
       next:
         specifier: 13.4.19
         version: 13.4.19(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
-
-  config/router:
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.11.18)
-      sushi:
-        specifier: workspace:*
-        version: link:../../packages/sushi
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
 
   config/tailwindcss:
     dependencies:
@@ -1530,9 +1494,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@tsconfig/esm':
         specifier: 1.0.4
         version: 1.0.4
@@ -1654,9 +1615,6 @@ importers:
       '@ethersproject/address':
         specifier: 5.7.0
         version: 5.7.0
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
@@ -2302,9 +2260,6 @@ importers:
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../router
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../steer-sdk
@@ -2583,9 +2538,6 @@ importers:
       '@sushiswap/router':
         specifier: workspace:*
         version: link:../../packages/router
-      '@sushiswap/router-config':
-        specifier: workspace:*
-        version: link:../../config/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
