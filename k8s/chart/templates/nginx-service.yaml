@@ -16,31 +16,30 @@ metadata:
   name: nginx-config
 data:
   nginx.conf: |
-    worker_processes 8;
-    # worker_cpu_affinity auto;
-    worker_rlimit_nofile 10240;
+    worker_processes 1;
+    worker_rlimit_nofile 8192;
     events {
-      worker_connections 10240;
+      worker_connections 4096;
     }
     http { 
       {{- $chainIds := .Values.chainIds }}
       {{- range $index, $value := $chainIds }}
       upstream router-{{ $value }} {
         zone upstreams 64K;
-        # server router-{{ $value }} max_fails=1 fail_timeout=2s;
         server router-{{ $value }};
         keepalive 2;
       }
       {{- end }}
-      
       map $uri $proxy_pass {
         ~^/(\w+)/(\w+)/(\d+) router-$3;
       }
-
       server { 
         listen 80;
         location / {
           proxy_http_version 1.1;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header "Connection" "";
           proxy_pass http://$proxy_pass;
         }
