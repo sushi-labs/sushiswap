@@ -469,6 +469,7 @@ export const EXTRACTOR_CONFIG = {
   [ChainId.HARMONY]: {
     client: createPublicClient(config[ChainId.HARMONY]),
     factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
+    // No V3 on Harmony?
     factoriesV3: [],
     tickHelperContract: '' as Address,
     cacheDir: './cache',
@@ -480,6 +481,16 @@ export const EXTRACTOR_CONFIG = {
     factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
     factoriesV3: [sushiswapV3Factory(ChainId.KAVA)],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+  },
+  [ChainId.MOONBEAM]: {
+    client: createPublicClient(config[ChainId.MOONBEAM]),
+    factoriesV2: [sushiswapV2Factory(ChainId.MOONBEAM)],
+    // No V3 on Moonbeam?
+    factoriesV3: [],
+    tickHelperContract: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
