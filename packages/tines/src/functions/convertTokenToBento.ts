@@ -1,5 +1,5 @@
 import { Token } from 'sushi/currency'
-import { RToken } from '../PrimaryPools'
+import { RToken } from '../RPool'
 import { getBentoChainId } from './getBentoChainId'
 
 export function convertTokenToBento(token: Token): RToken {

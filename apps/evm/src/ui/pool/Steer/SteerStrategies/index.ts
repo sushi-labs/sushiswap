@@ -2,12 +2,7 @@ import { SteerVault } from '@sushiswap/client'
 import { SteerStrategy } from '@sushiswap/client'
 import { FC } from 'react'
 
-import { SteerClassicRebalanceStrategy } from './SteerClassicRebalanceStrategy'
-import { SteerDeltaNeutralStablesStrategy } from './SteerDeltaNeutralStablesStrategy'
-import { SteerElasticExpansionStrategy } from './SteerElasticExpansionStrategy'
-import { SteerHighLowChannelStrategy } from './SteerHighLowChannelStrategy'
-import { SteerMovingVolatilityChannelMediumStrategy } from './SteerMovingVolatilityChannelMediumStrategy'
-import { SteerStaticStableStrategy } from './SteerStaticStableStrategy'
+import { SteerBaseStrategy } from './SteerBaseStrategy'
 
 export interface SteerStrategyGeneric {
   tokenRatios: {
@@ -38,11 +33,18 @@ export const SteerStrategyComponents: Record<
   SteerStrategy,
   SteerStrategyComponent
 > = {
-  [SteerStrategy.ClassicRebalance]: SteerClassicRebalanceStrategy,
-  [SteerStrategy.DeltaNeutralStables]: SteerDeltaNeutralStablesStrategy,
-  [SteerStrategy.ElasticExpansion]: SteerElasticExpansionStrategy,
-  [SteerStrategy.HighLowChannel]: SteerHighLowChannelStrategy,
-  [SteerStrategy.MovingVolatilityChannelMedium]:
-    SteerMovingVolatilityChannelMediumStrategy,
-  [SteerStrategy.StaticStable]: SteerStaticStableStrategy,
+  [SteerStrategy.SuperWide]: SteerBaseStrategy,
+  [SteerStrategy.ClassicRebalance]: SteerBaseStrategy,
+  [SteerStrategy.DeltaNeutralStables]: SteerBaseStrategy,
+  [SteerStrategy.StableExpansion]: SteerBaseStrategy,
+  [SteerStrategy.ElasticExpansion]: SteerBaseStrategy,
+  [SteerStrategy.HighLowChannel]: SteerBaseStrategy,
+  [SteerStrategy.StaticStable]: SteerBaseStrategy,
+  [SteerStrategy.BollingerAlgo]: SteerBaseStrategy,
+  [SteerStrategy.ChannelMultiplier]: SteerBaseStrategy,
+  [SteerStrategy.FixedPercentage]: SteerBaseStrategy,
+  [SteerStrategy.PriceMultiplier]: SteerBaseStrategy,
+  [SteerStrategy.KeltnerAlgo]: SteerBaseStrategy,
+  [SteerStrategy.MovingVolatilityChannel]: SteerBaseStrategy,
+  [SteerStrategy.MovingVolatilityChannelMedium]: SteerBaseStrategy,
 }

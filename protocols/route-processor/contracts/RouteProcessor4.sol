@@ -433,6 +433,14 @@ contract RouteProcessor4 is Ownable {
     uniswapV3SwapCallback(amount0Delta, amount1Delta, data);
   }
 
+  function pancakeV3SwapCallback(
+    int256 amount0Delta,
+    int256 amount1Delta,
+    bytes calldata data
+  ) external {
+    uniswapV3SwapCallback(amount0Delta, amount1Delta, data);
+  }
+
   /// @notice Curve pool swap
   /// @param stream [pool, swapData]
   /// @param from Where to take liquidity for swap
@@ -451,7 +459,7 @@ contract RouteProcessor4 is Ownable {
       amountOut = ICurve(pool).exchange{value: amountIn}(fromIndex, toIndex, amountIn, 0);
     } else {
       if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
-      IERC20(tokenIn).approve(pool, amountIn);
+      IERC20(tokenIn).safeApprove(pool, amountIn);
       if (poolType == 0) amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
       else {
         uint256 balanceBefore = IERC20(tokenOut).balanceOf(address(this));

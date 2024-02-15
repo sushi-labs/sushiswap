@@ -9,8 +9,8 @@ export type TokenAddress = Awaited<
   ReturnType<typeof getTokenAddressesByChainId>
 >
 export type GetTokenAddressesArgs = GetApiInputFromOutput<
-  typeof TokenAddressesApiSchema['_input'],
-  typeof TokenAddressesApiSchema['_output']
+  (typeof TokenAddressesApiSchema)['_input'],
+  (typeof TokenAddressesApiSchema)['_output']
 >
 
 export const getTokenAddressesUrl = (args: GetTokenAddressesArgs) => {

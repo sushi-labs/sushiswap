@@ -1,7 +1,7 @@
 import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { PoolType, RPool, RToken } from './RPool'
 import { getBigInt } from './Utils'
 
 export interface Rebase {
@@ -151,6 +151,10 @@ export class StableSwapRPool extends RPool {
       this.total1.rebaseBI,
       this.decimals1,
     )
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Stable
   }
 
   updateReservesAmounts(res0: bigint, res1: bigint) {

@@ -45,12 +45,20 @@ import {
   UNI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
+  USD_PLUS_ADDRESS,
   WBTC_ADDRESS,
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
+  WORMHOLE_USDC_ADDRESS,
+  WORMHOLE_WBTC_ADDRESS,
+  WORMHOLE_WETH_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
+  axlDAI_ADDRESS,
+  axlETH_ADDRESS,
   axlUSDC_ADDRESS,
+  axlUSDT_ADDRESS,
+  axlWBTC_ADDRESS,
   rETH2_ADDRESS,
   renBTC_ADDRESS,
   sETH2_ADDRESS,
@@ -597,6 +605,13 @@ export const WNATIVE = {
     symbol: 'WFIL',
     name: 'Wrapped FIL',
   }),
+  [ChainId.ZETACHAIN]: new Token({
+    chainId: ChainId.ZETACHAIN,
+    address: WNATIVE_ADDRESS[ChainId.ZETACHAIN],
+    decimals: 18,
+    symbol: 'WZETA',
+    name: 'Wrapped ZETA',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -626,6 +641,56 @@ export const axlUSDC: Record<keyof typeof axlUSDC_ADDRESS, Token> =
     },
     axlUSDC_ADDRESS,
   ) as Record<keyof typeof axlUSDC_ADDRESS, Token>
+
+export const axlUSDT: Record<keyof typeof axlUSDT_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'axlUSDT',
+      name: 'Axelar Wrapped USDT',
+    },
+    axlUSDT_ADDRESS,
+  ) as Record<keyof typeof axlUSDT_ADDRESS, Token>
+
+export const axlDAI: Record<keyof typeof axlDAI_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 18,
+      symbol: 'axlDAI',
+      name: 'Axelar Wrapped DAI',
+    },
+    axlDAI_ADDRESS,
+  ) as Record<keyof typeof axlDAI_ADDRESS, Token>
+
+export const axlETH: Record<keyof typeof axlETH_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 18,
+      symbol: 'axlETH',
+      name: 'Axelar Wrapped ETH',
+    },
+    axlETH_ADDRESS,
+  ) as Record<keyof typeof axlETH_ADDRESS, Token>
+
+export const axlWBTC: Record<keyof typeof axlWBTC_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 8,
+      symbol: 'axlWBTC',
+      name: 'Axelar Wrapped BTC',
+    },
+    axlWBTC_ADDRESS,
+  ) as Record<keyof typeof axlWBTC_ADDRESS, Token>
+
+export const USD_PLUS: Record<keyof typeof USD_PLUS_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'USD+',
+      name: 'USD+',
+    },
+    USD_PLUS_ADDRESS,
+  ) as Record<keyof typeof USD_PLUS_ADDRESS, Token>
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
   ...(addressMapToTokenMap(
@@ -770,3 +835,30 @@ export const LINK = addressMapToTokenMap(
   },
   LINK_ADDRESS,
 ) as Record<keyof typeof LINK_ADDRESS, Token>
+
+export const WORMHOLE_USDC = addressMapToTokenMap(
+  {
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin (Wormhole)',
+  },
+  WORMHOLE_USDC_ADDRESS,
+) as Record<keyof typeof WORMHOLE_USDC_ADDRESS, Token>
+
+export const WORMHOLE_WBTC = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'WBTC',
+    name: 'Wrapped BTC (Wormhole)',
+  },
+  WORMHOLE_WBTC_ADDRESS,
+) as Record<keyof typeof WORMHOLE_WBTC_ADDRESS, Token>
+
+export const WORMHOLE_WETH = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'WETH',
+    name: 'Wrapped Ether (Wormhole)',
+  },
+  WORMHOLE_WETH_ADDRESS,
+) as Record<keyof typeof WORMHOLE_WETH_ADDRESS, Token>

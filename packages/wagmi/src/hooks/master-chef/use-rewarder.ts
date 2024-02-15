@@ -14,6 +14,7 @@ interface UseRewarderPayload {
   rewarderAddresses: string[]
   types: RewarderType[]
   chef: ChefType
+  enabled?: boolean
 }
 
 interface UseRewarderData
@@ -36,6 +37,7 @@ export const useRewarder: UseRewarder = ({
   types,
   farmId,
   chef,
+  enabled,
 }) => {
   const config = getMasterChefContractConfig(chainId, chef)
 
@@ -141,7 +143,7 @@ export const useRewarder: UseRewarder = ({
     watch: true,
     keepPreviousData: true,
     allowFailure: true,
-    enabled: !!account,
+    enabled: !!account && !!enabled,
     select: (results) => results.map((r) => r.result),
   })
 
@@ -156,7 +158,7 @@ export const useRewarder: UseRewarder = ({
     // ! POSSIBLY BROKE IT, TEST
     return {
       data: data
-        .filter((el): el is NonNullable<typeof data[0]> => !!el)
+        .filter((el): el is NonNullable<(typeof data)[0]> => !!el)
         .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
           if (typeof result === 'bigint') {
             acc.push(

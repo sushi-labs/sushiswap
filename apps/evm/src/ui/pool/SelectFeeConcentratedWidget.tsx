@@ -64,7 +64,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
 
     const tvlDistribution = useMemo(() => {
       const tvlDistribution = new Map<
-        typeof FEE_OPTIONS[number]['value'],
+        (typeof FEE_OPTIONS)[number]['value'],
         number
       >()
 

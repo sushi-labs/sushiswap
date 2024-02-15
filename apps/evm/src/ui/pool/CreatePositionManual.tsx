@@ -1,6 +1,5 @@
 'use client'
 
-import { SteerStrategy } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import {
   Card,
@@ -17,15 +16,6 @@ import { unwrapToken } from 'src/lib/functions'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
 
 import { SelectPricesWidget } from './SelectPricesWidget'
-
-export const SteerStrategies = {
-  [SteerStrategy.ClassicRebalance]: <></>,
-  [SteerStrategy.DeltaNeutralStables]: <></>,
-  [SteerStrategy.ElasticExpansion]: <></>,
-  [SteerStrategy.HighLowChannel]: <></>,
-  [SteerStrategy.MovingVolatilityChannelMedium]: <></>,
-  [SteerStrategy.StaticStable]: <></>,
-} as const satisfies Record<SteerStrategy, unknown>
 
 interface ManualProps {
   address: string
@@ -66,6 +56,7 @@ export const CreatePositionManual: FC<ManualProps> = ({ address, chainId }) => {
           chainId={chainId}
           token0={_token0}
           token1={_token1}
+          poolAddress={address}
           feeAmount={poolStats?.feeAmount}
           tokenId={undefined}
           switchTokens={() => setInvertTokens((prev) => !prev)}

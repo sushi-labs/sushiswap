@@ -90,8 +90,8 @@ export class QualityChecker {
         }
       }
       warnLog(pool.client.chainId, 'Quality check timeout error')
-    } catch (e) {
-      warnLog(pool.client.chainId, `Quality check error: ${e}`)
+    } catch (_e) {
+      warnLog(pool.client.chainId, 'Quality check error')
     }
     return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }
@@ -112,6 +112,7 @@ export class QualityChecker {
           pool.token0,
           pool.token1,
           pool.fee,
+          pool.spacing,
           pool.client,
           pool.busyCounter,
         )

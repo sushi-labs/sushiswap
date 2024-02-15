@@ -11,7 +11,7 @@ export const defaultQuoteCurrency = {
   [ChainId.KOVAN]: SUSHI[ChainId.KOVAN],
   [ChainId.POLYGON]: SUSHI[ChainId.POLYGON],
   // [ChainId.POLYGON_TESTNET]: SUSHI[ChainId.POLYGON_TESTNET],
-  [ChainId.FANTOM]: WETH9[ChainId.FANTOM],
+  [ChainId.FANTOM]: axlUSDC[ChainId.FANTOM],
   // [ChainId.FANTOM_TESTNET]: SUSHI[ChainId.FANTOM_TESTNET],
   [ChainId.GNOSIS]: GNO[ChainId.GNOSIS],
   [ChainId.BSC]: BUSD[ChainId.BSC],
@@ -32,9 +32,9 @@ export const defaultQuoteCurrency = {
   [ChainId.MOONRIVER]: SUSHI[ChainId.MOONRIVER],
   [ChainId.FUSE]: SUSHI[ChainId.FUSE],
   [ChainId.TELOS]: SUSHI[ChainId.TELOS],
-  [ChainId.MOONBEAM]: SUSHI[ChainId.MOONBEAM],
+  [ChainId.MOONBEAM]: axlUSDC[ChainId.MOONBEAM],
   [ChainId.OPTIMISM]: OP[ChainId.OPTIMISM],
-  [ChainId.KAVA]: SUSHI[ChainId.KAVA],
+  [ChainId.KAVA]: axlUSDC[ChainId.KAVA],
   [ChainId.METIS]: SUSHI[ChainId.METIS],
   [ChainId.BOBA]: USDC[ChainId.BOBA],
   [ChainId.BOBA_AVAX]: new Token({
@@ -65,4 +65,5 @@ export const defaultQuoteCurrency = {
   [ChainId.BASE]: axlUSDC[ChainId.BASE],
   [ChainId.SCROLL]: USDC[ChainId.SCROLL],
   [ChainId.FILECOIN]: axlUSDC[ChainId.FILECOIN],
+  [ChainId.ZETACHAIN]: WETH9[ChainId.ZETACHAIN],
 } as const

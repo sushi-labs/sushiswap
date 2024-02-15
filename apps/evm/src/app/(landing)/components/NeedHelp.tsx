@@ -13,7 +13,7 @@ const SUPPORT_CHANNELS = [
   {
     icon: DiscordIcon,
     title: 'Community on Discord',
-    link: 'https://discord.gg/NVPXN4e',
+    link: 'https://sushi.com/discord',
   },
   {
     icon: TwitterIcon,

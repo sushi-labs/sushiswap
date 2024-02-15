@@ -191,7 +191,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
             pool.token0.address ||
           Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
-        const config = (function () {
+        const config = (() => {
           if (withNative) {
             const token1IsNative =
               Native.onChain(_pool.chainId).wrapped.address ===
@@ -300,7 +300,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       ...config,
       onSettled,
       onSuccess: () => {
-        setPercentage('')
+        setPercentage('0')
       },
     })
 

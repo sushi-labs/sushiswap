@@ -31,6 +31,16 @@ const EXPLORE_NAVIGATION_LINKS: {
     description: 'Earn fees by providing liquidity.',
   },
   {
+    title: 'Bonds',
+    href: '/bonds',
+    description: 'Earn interest by locking up your assets.',
+  },
+  {
+    title: 'Stake',
+    href: '/stake',
+    description: 'Earn protocol fees by staking SUSHI.',
+  },
+  {
     title: 'Pay',
     href: '/furo',
     description: 'Automate salaries and vesting schedules.',
@@ -217,6 +227,40 @@ const Navigation: React.FC<NavProps> = ({
                 className={navigationMenuTriggerStyle()}
               >
                 Pools
+              </NavigationMenuLink>
+            )}
+          </NavigationMenuItem>
+          <NavigationMenuItem className="hidden md:block">
+            {legacyBehavior ? (
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
+                <a href="/bonds">Bonds</a>
+              </NavigationMenuLink>
+            ) : (
+              <NavigationMenuLink
+                href="/bonds"
+                className={navigationMenuTriggerStyle()}
+              >
+                Bonds
+              </NavigationMenuLink>
+            )}
+          </NavigationMenuItem>
+          <NavigationMenuItem className="hidden md:block">
+            {legacyBehavior ? (
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
+                <a href="/stake">Stake</a>
+              </NavigationMenuLink>
+            ) : (
+              <NavigationMenuLink
+                href="/stake"
+                className={navigationMenuTriggerStyle()}
+              >
+                Stake
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>

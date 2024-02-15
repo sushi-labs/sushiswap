@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { PoolType, RPool, RToken } from './RPool'
 
 export class BridgeUnlimited extends RPool {
   constructor(
@@ -33,5 +33,9 @@ export class BridgeUnlimited extends RPool {
 
   override alwaysAppropriateForPricing() {
     return true
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Bridge
   }
 }

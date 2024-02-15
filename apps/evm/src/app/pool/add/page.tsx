@@ -185,6 +185,7 @@ const _Add: FC = () => {
         chainId={chainId}
         token0={token0}
         token1={token1}
+        poolAddress={poolAddress}
         tokenId={tokenId}
         feeAmount={feeAmount}
         switchTokens={switchTokens}

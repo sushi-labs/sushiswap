@@ -52,13 +52,13 @@ model Token {
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  pools0        Pool[]      @relation("token0")
-  pools1        Pool[]      @relation("token1")
-  sushiPools0   SushiPool[] @relation("token0")
-  sushiPools1   SushiPool[] @relation("token1")
-  steerVaults0  SteerVault[] @relation("token0")
-  steerVaults1  SteerVault[] @relation("token1")
-  incentives    Incentive[]
+  pools0          Pool[]        @relation("token0")
+  pools1          Pool[]        @relation("token1")
+  sushiPools0     SushiPool[]   @relation("token0")
+  sushiPools1     SushiPool[]   @relation("token1")
+  steerVaults0    SteerVault[]  @relation("token0")
+  steerVaults1    SteerVault[]  @relation("token1")
+  incentives      Incentive[]
 
   @@unique([chainId, address])
   @@index(fields: [id])
@@ -210,12 +210,20 @@ model Incentive {
 }
 
 enum SteerStrategy {
+  SuperWide
   DeltaNeutralStables
+  StableExpansion
   ElasticExpansion
+  MovingVolatilityChannel
   MovingVolatilityChannelMedium
   HighLowChannel
   StaticStable
   ClassicRebalance
+  ChannelMultiplier
+  PriceMultiplier
+  FixedPercentage
+  KeltnerAlgo
+  BollingerAlgo
 }
 
 enum VaultState {
@@ -228,8 +236,8 @@ enum VaultState {
 
 model SteerVault {
   id                      String      @id // chainId:address
-  address                 String      @default("")
-  chainId                 Int         @default(69)
+  address                 String
+  chainId                 Int
   
   pool                    SushiPool   @relation(fields: [poolId], references: [id])
   poolId                  String
@@ -273,6 +281,7 @@ model SteerVault {
 
   isEnabled               Boolean @default(false)
   wasEnabled              Boolean @default(false)
+  isDeprecated            Boolean @default(false)
 
   creator                 String
   admin                   String
@@ -282,7 +291,31 @@ model SteerVault {
   updatedAt               DateTime    @updatedAt
 
   @@index(fields: [id])
+  @@index(fields: [chainId])
   @@index(fields: [poolId])
   @@index(fields: [token0Id])
   @@index(fields: [token1Id])
+}
+
+model BondMarket {
+  id             String @id
+  description    String? @db.Text
+}
+
+model BondIssuerId {
+  id              String @id
+
+  bondIssuer      BondIssuer @relation(fields: [bondIssuerName], references: [name])
+  bondIssuerName  String
+
+  @@index([bondIssuerName])
+}
+
+model BondIssuer {
+  name          String @id
+
+  ids           BondIssuerId[]
+  link          String
+
+  isApproved      Boolean @default(false)
 }

@@ -1,11 +1,8 @@
-'use client'
-
 import { ImageProps } from 'next/image'
 import { FC } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 
-import { cloudinaryImageLoader } from '../../cloudinary'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
 
@@ -32,6 +29,7 @@ const ThundercoreLogo = 'thundercore.svg'
 const CoreLogo = 'core.svg'
 const IslmLogo = 'islm.svg'
 const FilecoinLogo = 'filecoin.svg'
+const ZetaLogo = 'zeta.svg'
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
   [ChainId.KOVAN]: EthereumLogo,
@@ -78,6 +76,7 @@ const LOGO: Record<number, string> = {
   [ChainId.BASE]: EthereumLogo,
   [ChainId.SCROLL]: EthereumLogo,
   [ChainId.FILECOIN]: FilecoinLogo,
+  [ChainId.ZETACHAIN]: ZetaLogo,
 }
 
 function djb2(str: string) {
@@ -113,11 +112,7 @@ export const Icon: FC<IconProps> = ({
     : `tokens/${currency.chainId}/${currency.wrapped.address}.jpg`
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
-      <AvatarImage
-        loader={cloudinaryImageLoader}
-        width={Number(rest.width) ?? 20}
-        src={src}
-      />
+      <AvatarImage width={Number(rest.width) ?? 20} src={src} />
       <AvatarFallback
         style={{
           background: hashStringToColor(

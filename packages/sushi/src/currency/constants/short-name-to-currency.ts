@@ -134,12 +134,6 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     // WNATIVE: WNATIVE[ChainId.FANTOM],
     FTM: Native.onChain(ChainId.FANTOM),
     WFTM: WNATIVE[ChainId.FANTOM],
-    ETH: WETH9[ChainId.FANTOM],
-    WETH: WETH9[ChainId.FANTOM],
-    WBTC: WBTC[ChainId.FANTOM],
-    USDC: USDC[ChainId.FANTOM],
-    USDT: USDT[ChainId.FANTOM],
-    DAI: DAI[ChainId.FANTOM],
     FRAX: FRAX[ChainId.FANTOM],
     MIM: MIM[ChainId.FANTOM],
     SUSHI: SUSHI[ChainId.FANTOM],
@@ -274,13 +268,17 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     NATIVE: Native.onChain(ChainId.FILECOIN),
     WNATIVE: WNATIVE[ChainId.FILECOIN],
   },
+  [ChainId.ZETACHAIN]: {
+    NATIVE: Native.onChain(ChainId.ZETACHAIN),
+    WNATIVE: WNATIVE[ChainId.ZETACHAIN],
+  },
 } as const
 
 export type ShortCurrencyNameChainId =
   keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
 
 export type ShortCurrencyName =
-  keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
+  keyof (typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY)[ShortCurrencyNameChainId]
 
 export const isShortCurrencyNameSupported = (
   chainId: ChainId,

@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { PoolType, RPool, RToken } from './RPool'
 import { BridgeState, getStarGateFeesV04 } from './StarGateFeesV04'
 import { getBigInt } from './Utils'
 
@@ -64,5 +64,9 @@ export class BridgeStargateV04OneWay extends RPool {
 
   override alwaysAppropriateForPricing() {
     return true
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Bridge
   }
 }

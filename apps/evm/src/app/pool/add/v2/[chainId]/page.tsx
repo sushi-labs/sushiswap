@@ -201,10 +201,10 @@ const _Add: FC<AddProps> = ({
       SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
         (chainId) =>
           !TESTNET_CHAIN_IDS.includes(
-            chainId as typeof TESTNET_CHAIN_IDS[number],
+            chainId as (typeof TESTNET_CHAIN_IDS)[number],
           ) &&
           !DISABLED_CHAIN_IDS.includes(
-            chainId as typeof DISABLED_CHAIN_IDS[number],
+            chainId as (typeof DISABLED_CHAIN_IDS)[number],
           ),
       ),
     [],

@@ -55,7 +55,7 @@ it('AlgebraIntegral RP4 Solo', async () => {
 
   const pcMap: Map<string, PoolCode> = new Map()
   pcMap.set(
-    pool.pool.address,
+    pool.pool.uniqueID(),
     new UniV3PoolCode(
       pool.pool,
       LiquidityProviders.AlgebraIntegral,

@@ -1,4 +1,4 @@
-import type * as _ from '@prisma/client/runtime'
+import type * as _ from '@prisma/client'
 
 import { type SteerVaultApiSchema } from '../../pure/steer-vault/vault/schema'
 import { getSteerVaultsFromDB } from './vaults'

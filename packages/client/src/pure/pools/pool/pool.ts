@@ -9,8 +9,8 @@ export type Pool = Awaited<ReturnType<typeof getPoolFromDB>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetPoolArgs =
   | GetApiInputFromOutput<
-      typeof PoolApiSchema['_input'],
-      typeof PoolApiSchema['_output']
+      (typeof PoolApiSchema)['_input'],
+      (typeof PoolApiSchema)['_output']
     >
   | string
 

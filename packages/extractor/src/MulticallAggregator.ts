@@ -29,6 +29,14 @@ export class MultiCallAggregator {
   maxCallsInOneBatch: number
   chainId: ChainId
 
+  totalCalls = 0
+  totalCallsProcessed = 0
+  totalCallsFailed = 0
+  totalMCalls = 0
+  totalMCallsProcessed = 0
+  totalMCallsFailed = 0
+  totalTimeSpent = 0
+
   constructor(client: PublicClient, maxCallsInOneBatch = 0) {
     this.client = client
     this.maxCallsInOneBatch = maxCallsInOneBatch
@@ -157,7 +165,10 @@ export class MultiCallAggregator {
       functionName: 'getBlockNumber',
     })
     let res
+    const startTime = performance.now()
     for (;;) {
+      this.totalCalls += pendingCalls.length - 1
+      this.totalMCalls += 1
       try {
         res = await this.client.multicall({
           allowFailure: true,
@@ -168,25 +179,31 @@ export class MultiCallAggregator {
             args: c.args as Narrow<readonly unknown[] | undefined>,
           })),
         })
-      } catch (e) {
+      } catch (_e) {
+        this.totalCallsFailed += pendingCalls.length - 1
+        this.totalMCallsFailed += 1
         // warnLog(
         //   this.client.chain?.id,
         //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
         // )
-        warnLog(this.client.chain?.id, `Multicall error ${e}`)
+        warnLog(this.client.chain?.id, 'Multicall error')
         continue
       }
+      this.totalCallsProcessed += pendingCalls.length - 1
+      this.totalMCallsProcessed += 1
+      this.totalTimeSpent += performance.now() - startTime
       break
     }
     if (res[0].status !== 'success') {
       // getBlockNumber Failed
-      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
+      const error = res[0].error.toString().substring(0, 1000)
+      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](error)
     } else {
       const blockNumber = res[0].result as number
       for (let i = 1; i < res.length; ++i) {
         if (res[i].status === 'success')
           pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
-        else pendingRejects[i - 1](res[i].error)
+        else pendingRejects[i - 1](res[i].error?.toString().substring(0, 1000))
       }
     }
   }

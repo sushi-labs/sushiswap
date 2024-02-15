@@ -1,7 +1,7 @@
 import { abs } from 'sushi/math'
 import { Address } from 'viem'
 
-import { RPool, RToken } from './PrimaryPools'
+import { PoolType, RPool, RToken } from './RPool'
 import { getBigInt } from './Utils'
 
 export class CurvePool extends RPool {
@@ -53,6 +53,10 @@ export class CurvePool extends RPool {
     this.reserve1 = res1
     this.reserve0Rated = this.reserve0 * this.rate0BI
     this.reserve1Rated = (this.reserve1 * this.rate1BN18) / getBigInt(1e18)
+  }
+
+  override poolType(): PoolType {
+    return PoolType.Curve
   }
 
   computeLiquidity(): bigint {

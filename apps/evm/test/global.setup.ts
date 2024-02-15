@@ -2,7 +2,7 @@ import { type FullConfig } from '@playwright/test'
 import { startProxy } from '@viem/anvil'
 
 export default async function globalSetup(_config: FullConfig) {
-  console.log('globalSetup')
+  // console.log('globalSetup')
   const shutdown = await startProxy({
     options: {
       forkUrl: String(process.env.ANVIL_FORK_URL),
@@ -11,7 +11,7 @@ export default async function globalSetup(_config: FullConfig) {
     },
   })
 
-  process.on('exit', async () => {
+  process.on('SIGTERM', async () => {
     await shutdown()
   })
 }

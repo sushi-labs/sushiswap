@@ -42,7 +42,7 @@ import { Native } from 'sushi/currency'
 import { useSWRConfig } from 'swr'
 
 import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
-import { isAngleEnabledChainId } from '../../config'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN_POOL,
@@ -97,7 +97,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/positions/create/manual`}
+                  href={`/pool/${row.original.id}/positions/create`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position

@@ -229,9 +229,10 @@ export async function getUnindexedPool(
     transport: cfg.transport,
   })
 
-  let lpTokenName
+  let lpTokenName: string
   try {
-    lpTokenName = await getTokenInfo({ client, address: address })
+    const { name } = await getTokenInfo({ client, address: address })
+    lpTokenName = name
   } catch (_e) {
     lpTokenName = 'V3'
   }
@@ -260,8 +261,8 @@ export async function getUnindexedPool(
   const poolName = tokens.map(({ symbol }) => symbol).join('-')
 
   const [token0, token1] = tokens as [
-    typeof tokens[number],
-    typeof tokens[number],
+    (typeof tokens)[number],
+    (typeof tokens)[number],
   ]
 
   return {

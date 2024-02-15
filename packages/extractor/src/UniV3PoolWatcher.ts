@@ -2,7 +2,6 @@ import { EventEmitter } from 'node:events'
 
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
 import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
-import { FeeAmount, TICK_SPACINGS } from '@sushiswap/v3-sdk'
 import { Abi, Address, parseAbiItem } from 'abitype'
 import { erc20Abi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
@@ -58,6 +57,16 @@ const liquidityAbi: Abi = [
   },
 ]
 
+const tickSpacingAbi: Abi = [
+  {
+    inputs: [],
+    name: 'tickSpacing',
+    outputs: [{ internalType: 'int24', name: '', type: 'int24' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
 export const UniV3EventsAbi = [
   parseAbiItem(
     'event Mint(address sender, address indexed owner, int24 indexed tickLower, int24 indexed tickUpper, uint128 amount, uint256 amount0, uint256 amount1)',
@@ -70,6 +79,10 @@ export const UniV3EventsAbi = [
   ),
   parseAbiItem(
     'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)',
+  ),
+  parseAbiItem(
+    // For Pancake
+    'event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick, uint128 protocolFeesToken0, uint128 protocolFeesToken1)',
   ),
   parseAbiItem(
     'event Flash(address indexed sender, address indexed recipient, uint256 amount0, uint256 amount1, uint256 paid0, uint256 paid1)',
@@ -92,7 +105,7 @@ export class UniV3PoolWatcher extends EventEmitter {
   tickHelperContract: Address
   token0: Token
   token1: Token
-  fee: FeeAmount
+  fee: number
   spacing: number
   latestEventBlockNumber = 0
 
@@ -110,7 +123,8 @@ export class UniV3PoolWatcher extends EventEmitter {
     tickHelperContract: Address,
     token0: Token,
     token1: Token,
-    fee: FeeAmount,
+    fee: number,
+    spacing: number,
     client: MultiCallAggregator,
     busyCounter?: Counter,
   ) {
@@ -121,7 +135,7 @@ export class UniV3PoolWatcher extends EventEmitter {
     this.token0 = token0
     this.token1 = token1
     this.fee = fee
-    this.spacing = TICK_SPACINGS[fee]
+    this.spacing = spacing
 
     this.client = client
     this.wordLoadManager = new WordLoadManager(
@@ -145,9 +159,14 @@ export class UniV3PoolWatcher extends EventEmitter {
         for (;;) {
           const {
             blockNumber,
-            returnValues: [slot0, liquidity, balance0, balance1],
+            returnValues: [slot0, tickSpacing, liquidity, balance0, balance1],
           } = await this.client.callSameBlock([
             { address: this.address, abi: slot0Abi, functionName: 'slot0' },
+            {
+              address: this.address,
+              abi: tickSpacingAbi,
+              functionName: 'tickSpacing',
+            },
             {
               address: this.address,
               abi: liquidityAbi,
@@ -168,6 +187,11 @@ export class UniV3PoolWatcher extends EventEmitter {
           ])
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
+          if (tickSpacing !== this.spacing)
+            throw new Error(
+              `Wrong spacing. Expected: ${this.spacing}. Real: ${tickSpacing}`,
+            )
+
           const [sqrtPriceX96, tick] = slot0 as [bigint, number]
           this.state = {
             blockNumber,
@@ -183,8 +207,8 @@ export class UniV3PoolWatcher extends EventEmitter {
           this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
           break
         }
-      } catch (e) {
-        warnLog(this.client.chainId, `Pool ${this.address} update failed: ${e}`)
+      } catch (_e) {
+        warnLog(this.client.chainId, `Pool ${this.address} update failed`)
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
