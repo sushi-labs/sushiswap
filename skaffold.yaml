@@ -3,7 +3,7 @@
 apiVersion: skaffold/v4beta7
 kind: Config
 metadata:
-  name: extractor
+  name: sushi-api
 build:
   tagPolicy:
     sha256: {}
@@ -22,7 +22,7 @@ build:
 deploy:
   helm:
     releases:
-      - name: extractors
+      - name: sushi-api
         chartPath: k8s/chart
 profiles:
 - name: local

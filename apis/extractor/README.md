@@ -47,9 +47,13 @@ Create a static ip for the production environment
 gcloud compute addresses create extractor-production-ip --global
 ```
 
+## Deploy
+
+gcloud deploy apply --file=clouddeploy.yaml --region=us-east4 --project=sushi-api-414412
+
 ## Release
 
-gcloud deploy releases create 'extractor-$DATE-$TIME' --project=sushi-api-414412 --region=us-east4 --source=. --delivery-pipeline=extractor --images=extractor=IMAGE,router=IMAGE
+gcloud deploy releases create 'sushi-api-$DATE-$TIME' --project=sushi-api-414412 --region=us-east4 --source=. --delivery-pipeline=sushi-api --images=extractor=IMAGE,router=IMAGE
 
 ## View Router HPA
 
