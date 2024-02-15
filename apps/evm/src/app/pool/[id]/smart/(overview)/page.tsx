@@ -4,7 +4,7 @@ import notFound from 'src/app/pool/not-found'
 import { SteerCarousel } from 'src/ui/pool/Steer/SteerCarousel'
 import { unsanitize } from 'sushi/format'
 
-export default async function PositionsCreatePage({
+export default async function VaultOverviewPage({
   params,
 }: { params: { id: string } }) {
   const poolId = unsanitize(params.id)

@@ -1,5 +1,3 @@
-'use client'
-
 import { Pool } from '@sushiswap/client'
 import {
   Card,
@@ -36,12 +34,6 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         )}
       >
         <CardHeader>
-          {/* <div className="flex gap-2 pb-3">
-            <Chip className="bg-blue/20 text-blue">
-              <ShieldCheckIcon className="h-3 w-3" />
-              Lowest risk
-            </Chip>
-          </div> */}
           <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
           <CardDescription>
             {SteerStrategyConfig[vault.strategy].description}
@@ -80,7 +72,6 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
           </Stat>
           <Stat className="px-6 py-4">
             <StatLabel size="sm">Total Fees</StatLabel>
-            {/* vault.feesUSD, will have to be total for now, will fix later */}
             <StatValue size="sm">{formatUSD(vault.feesUSD)}</StatValue>
           </Stat>
         </div>
