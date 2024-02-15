@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   const tokens = await getPrices(dateThreshold, currency)
   return Response.json(tokens, {
     headers: {
-      'Cache-Control': 's-maxage=600, stale-while-revalidate',
+      'Cache-Control': 'max-age=60, stale-while-revalidate=600',
     },
   })
 }

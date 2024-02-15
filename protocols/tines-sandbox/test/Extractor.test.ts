@@ -225,8 +225,7 @@ async function startInfinitTest(args: {
       )
       if (route.status === RouteStatus.NoWay) {
         console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` +
-            timingLine,
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
         )
         continue
       }
@@ -268,9 +267,7 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools ` +
-            timingLine +
-            ` diff = ${diff > 0 ? '+' : ''}${diff} `,
+          } pools ${timingLine} diff = ${diff > 0 ? '+' : ''}${diff} `,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')

@@ -133,7 +133,7 @@ export const getTokens = async (query?: GetTokensQuery) => {
 }
 
 export const getBentoBoxTokens = async (
-  query: typeof bentoBoxTokensSchema['_output'],
+  query: (typeof bentoBoxTokensSchema)['_output'],
 ) => {
   try {
     const { rebases } = await sdk.RebasesByChainIds({
@@ -154,7 +154,7 @@ export const getBentoBoxTokens = async (
 }
 
 export const getFuroTokens = async (
-  query: typeof furoTokensSchema['_output'],
+  query: (typeof furoTokensSchema)['_output'],
 ) => {
   try {
     const { tokens } = await sdk.furoTokensByChainIds({

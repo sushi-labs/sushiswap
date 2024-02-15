@@ -18,7 +18,7 @@ sources:
       graphql:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
         retry: 3
-    transforms:
+    # transforms:
 
   - name: FuroStream
     handler:
@@ -174,7 +174,7 @@ sources:
           includeTypes: false
           ignore:
             - _SubgraphErrorPolicy_
-  
+
   - name: GraphNode
     handler:
       graphql:
@@ -206,6 +206,19 @@ sources:
           ignore:
             - _SubgraphErrorPolicy_
 
+  - name: Bonds
+    handler:
+      graphql:
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-mainnet}
+        retry: 3
+    transforms:
+      - prefix:
+          value: Bonds_
+          includeRootOperations: true
+          includeTypes: true
+          ignore:
+            - _SubgraphErrorPolicy_
+
 # Had to disable global transforms since we have a jsonSchema handler in here now...
 transforms:
   # - autoPagination:
@@ -214,7 +227,7 @@ transforms:
   - addSourceName: true
 
 additionalTypeDefs: |
-  # Deprecated 
+  # Deprecated
   extend type deprecated_Token {
     chainId: BigInt!
   }
@@ -264,7 +277,7 @@ additionalTypeDefs: |
     address: String!
     amount: BigInt!
     pool: ChefUserPool
-  }  
+  }
   type RewardToken {
     address: String!
     symbol: String!
@@ -374,7 +387,7 @@ additionalTypeDefs: |
   # Query Extensions
   extend type Query {
     # Internal app
-    
+
     subgraphs(subgraphs: [SubgraphWithNode!]!, type: SubgraphType!): [Subgraph!]!
 
     crossChainBentoBoxKpis(
@@ -499,7 +512,7 @@ additionalTypeDefs: |
       orderDirection: OrderDirection
       block: Block_height
       pagination: Pagination
-      chainIds: [BigInt!]! 
+      chainIds: [BigInt!]!
     ): [Token!]!
     tokensByChainId(
       skip: Int = 0
@@ -518,7 +531,7 @@ additionalTypeDefs: |
       ids: [ID!]!
       block: Block_height
     ): [Token!]!
-    
+
     # CONCENTRADED
     ticksById(
       id: ID!

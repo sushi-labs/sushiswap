@@ -8,7 +8,7 @@ import { Amount, SUSHI, Type, XSUSHI, tryParseAmount } from 'sushi/currency'
 interface SushiBarContext {
   totalSupply: Amount<Type> | undefined
   sushiBalance: Amount<Type> | undefined
-  apr: string | undefined
+  apy: number | undefined
   isLoading: boolean
   isError: boolean
 }
@@ -21,11 +21,11 @@ export const SushiBarProvider: FC<{
 }> = ({ children }) => {
   const { data, isLoading, isError } = useBarData()
 
-  const [sushiBalance, totalSupply, apr] = useMemo(
+  const [sushiBalance, totalSupply, apy] = useMemo(
     () => [
       tryParseAmount(data?.xsushi?.sushiSupply, SUSHI[ChainId.ETHEREUM]),
       tryParseAmount(data?.xsushi?.xSushiSupply, XSUSHI[ChainId.ETHEREUM]),
-      data?.xsushi?.apr12m ? data?.xsushi?.apr12m : undefined,
+      data?.xsushi?.apr1m ? data.xsushi.apr1m * 12 : undefined,
     ],
     [data],
   )
@@ -36,11 +36,11 @@ export const SushiBarProvider: FC<{
         () => ({
           totalSupply,
           sushiBalance,
-          apr,
+          apy,
           isLoading,
           isError,
         }),
-        [sushiBalance, totalSupply, apr, isError, isLoading],
+        [sushiBalance, totalSupply, apy, isError, isLoading],
       )}
     >
       {children}

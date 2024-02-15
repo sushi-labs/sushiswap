@@ -10,8 +10,8 @@ export type SteerVaultCount = Awaited<
 >
 export type GetSteerVaultCountArgs =
   | GetApiInputFromOutput<
-      typeof SteerVaultCountApiSchema['_input'],
-      typeof SteerVaultCountApiSchema['_output']
+      (typeof SteerVaultCountApiSchema)['_input'],
+      (typeof SteerVaultCountApiSchema)['_output']
     >
   | undefined
 

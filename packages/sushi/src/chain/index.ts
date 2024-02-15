@@ -12,7 +12,7 @@ const EIP3091_OVERRIDE = [
   ChainId.FILECOIN,
 ] as number[]
 
-type Data = typeof RAW[number]
+type Data = (typeof RAW)[number]
 
 export interface Chain {
   name: string
@@ -35,7 +35,7 @@ export const Standard = {
   None: 'none',
 } as const
 
-export type Standard = typeof Standard[keyof typeof Standard]
+export type Standard = (typeof Standard)[keyof typeof Standard]
 
 export interface NativeCurrency {
   name: string
@@ -57,7 +57,7 @@ export const Type = {
   L2: 'L2',
   Shard: 'shard',
 } as const
-export type Type = typeof Type[keyof typeof Type]
+export type Type = (typeof Type)[keyof typeof Type]
 
 // biome-ignore lint/suspicious/noUnsafeDeclarationMerging: explaination
 export class Chain implements Chain {
@@ -103,11 +103,11 @@ export class Chain implements Chain {
     }
 
     // process explorer overrides etc...
-    if (data.name === 'Scroll') {
+    if (data.chainId === ChainId.SCROLL) {
       this.explorers?.sort((explorer) =>
         explorer.name === 'Scrollscan' ? -1 : 1,
       )
-    } else if (data.name === 'Arbitrum Nova') {
+    } else if (data.chainId === ChainId.ARBITRUM_NOVA) {
       this.explorers = [
         {
           name: 'Arbitrum Nova Explorer',
@@ -116,8 +116,18 @@ export class Chain implements Chain {
         },
         ...(this.explorers ?? []),
       ]
-    } else if (data.name === 'Filecoin') {
+    } else if (data.chainId === ChainId.FILECOIN) {
+      this.name = 'Filecoin'
       this.explorers?.sort((explorer) => (explorer.name === 'Filfox' ? -1 : 1))
+    } else if (data.chainId === ChainId.ZETACHAIN) {
+      this.name = 'ZetaChain'
+      this.explorers = [
+        {
+          name: 'ZetaChain Mainnet Explorer',
+          url: 'https://explorer.zetachain.com',
+          standard: 'EIP3091',
+        },
+      ]
     }
   }
   getTxUrl(txHash: string): string {

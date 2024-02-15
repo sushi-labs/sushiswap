@@ -4,7 +4,7 @@ import { isExtractorSupportedChainId } from 'sushi/config'
 
 import { Currency, getPrices } from 'src/lib/price/v2'
 
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const schema = z.object({
   chainId: z.coerce
@@ -18,6 +18,15 @@ const schema = z.object({
     .transform((currency) => currency ?? Currency.USD),
 })
 
+export const revalidate = 300
+
+async function fetchV1(chainId: number, currency: string) {
+  return fetch(
+    `https://sushi.com/api/price/v1/${chainId}?currency=${currency}`,
+    { next: { revalidate: 0 } },
+  ).then((res) => res.json())
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { chainId: string } },
@@ -28,14 +37,8 @@ export async function GET(
   })
 
   const prices = !isExtractorSupportedChainId(chainId)
-    ? await fetch(
-        `https://sushi.com/api/price/v1/${chainId}?currency=${currency}`,
-      ).then((res) => res.json())
+    ? await fetchV1(chainId, currency)
     : await getPrices(chainId, currency)
 
-  return Response.json(prices, {
-    headers: {
-      'Cache-Control': 's-maxage=600, stale-while-revalidate',
-    },
-  })
+  return NextResponse.json(prices)
 }

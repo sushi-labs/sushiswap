@@ -6,7 +6,7 @@ import {
   calcTokenPrices,
 } from '@sushiswap/tines'
 import { Address } from '@wagmi/core'
-import { ExtractorSupportedChainId } from 'sushi/config'
+import { type ExtractorSupportedChainId } from 'sushi/config'
 import { STABLES, WNATIVE } from 'sushi/currency'
 import { type TokenInfo } from 'sushi/token-list'
 // import { isPromiseFulfilled } from 'sushi/validate'
@@ -18,7 +18,7 @@ export const Currency = {
   BITCOIN: 'BITCOIN',
 } as const
 
-export type Currency = typeof Currency[keyof typeof Currency]
+export type Currency = (typeof Currency)[keyof typeof Currency]
 
 interface Token {
   chainId: number
@@ -183,12 +183,13 @@ function calculateTokenPrices(
     })
     prices.set(base.address, currentPricesMap)
   })
+
   for (const token of tokens) {
     const tokenPrices = Array.from(prices.keys())
       .map((t) => prices.get(t))
       .map((t) => t?.get(token.address))
       .filter(hasPrice)
-    let price
+    let price: number
     if (tokenPrices.length === 0) {
       price = 0
     } else if (tokenPrices.length === 1) {
@@ -216,6 +217,7 @@ function calculateTokenPrices(
       bestPrices[token.address] = price
     }
   }
+
   return bestPrices
 }
 

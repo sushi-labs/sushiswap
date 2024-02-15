@@ -9,8 +9,8 @@ export type SteerVault = Awaited<ReturnType<typeof getSteerVaultFromDB>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetSteerVaultArgs =
   | GetApiInputFromOutput<
-      typeof SteerVaultApiSchema['_input'],
-      typeof SteerVaultApiSchema['_output']
+      (typeof SteerVaultApiSchema)['_input'],
+      (typeof SteerVaultApiSchema)['_output']
     >
   | string
 

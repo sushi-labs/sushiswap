@@ -24,7 +24,7 @@ export const ROUTE_PROCESSOR_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 export type RouteProcessorChainId =
-  typeof ROUTE_PROCESSOR_SUPPORTED_CHAIN_IDS[number]
+  (typeof ROUTE_PROCESSOR_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_ADDRESS: Record<
   RouteProcessorChainId,
   `0x${string}`
@@ -73,7 +73,7 @@ export const ROUTE_PROCESSOR_2_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
 ] as const
 export type RouteProcessor2ChainId =
-  typeof ROUTE_PROCESSOR_2_SUPPORTED_CHAIN_IDS[number]
+  (typeof ROUTE_PROCESSOR_2_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_2_ADDRESS: Record<
   RouteProcessor2ChainId,
   `0x${string}`
@@ -134,7 +134,7 @@ export const ROUTE_PROCESSOR_3_SUPPORTED_CHAIN_IDS = [
   ChainId.LINEA,
 ] as const
 export type RouteProcessor3ChainId =
-  typeof ROUTE_PROCESSOR_3_SUPPORTED_CHAIN_IDS[number]
+  (typeof ROUTE_PROCESSOR_3_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_3_ADDRESS: Record<
   RouteProcessor3ChainId,
   `0x${string}`
@@ -186,7 +186,7 @@ export const ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 export type RouteProcessor3_1ChainId =
-  typeof ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS[number]
+  (typeof ROUTE_PROCESSOR_3_1_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_3_1_ADDRESS: Record<
   RouteProcessor3_1ChainId,
   `0x${string}`
@@ -224,9 +224,10 @@ export const ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.SCROLL,
   ChainId.FILECOIN,
+  ChainId.ZETACHAIN,
 ] as const
 export type RouteProcessor3_2ChainId =
-  typeof ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS[number]
+  (typeof ROUTE_PROCESSOR_3_2_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_3_2_ADDRESS: Record<
   RouteProcessor3_2ChainId,
   `0x${string}`
@@ -249,7 +250,7 @@ export const ROUTE_PROCESSOR_3_2_ADDRESS: Record<
   [ChainId.POLYGON_ZKEVM]: '0xbE811A0D44E2553d25d11CB8DC0d3F0D0E6430E6',
   [ChainId.SCROLL]: '0xCA6Fe749878841b96F620Ec79638B13dAaD3D320',
   [ChainId.FILECOIN]: '0xCdBCd51a5E8728E0AF4895ce5771b7d17fF71959',
-  [ChainId.LINEA]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904',
+  [ChainId.ZETACHAIN]: '0xb46e319390De313B8cc95EA5aa30C7bBFD79Da94',
 } as const
 export const isRouteProcessor3_2ChainId = (
   chainId: ChainId,
@@ -261,7 +262,7 @@ export const isRouteProcessor3_2ChainId = (
 // v4
 export const ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS = [] as const
 export type RouteProcessor4ChainId =
-  typeof ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS[number]
+  (typeof ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_4_ADDRESS: Record<
   RouteProcessor4ChainId,
   `0x${string}`

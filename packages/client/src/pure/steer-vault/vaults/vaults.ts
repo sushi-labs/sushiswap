@@ -8,8 +8,8 @@ export { type SteerVaultsApiSchema }
 export type SteerVaults = Awaited<ReturnType<typeof getSteerVaultsFromDB>>
 export type GetSteerVaultsArgs =
   | GetApiInputFromOutput<
-      typeof SteerVaultsApiSchema['_input'],
-      typeof SteerVaultsApiSchema['_output']
+      (typeof SteerVaultsApiSchema)['_input'],
+      (typeof SteerVaultsApiSchema)['_output']
     >
   | undefined
 
