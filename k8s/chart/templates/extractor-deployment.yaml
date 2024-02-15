@@ -42,16 +42,16 @@ spec:
             - name: DRPC_ID
               valueFrom:
                 secretKeyRef:
-                  name: extractor
+                  name: sushi-api
                   key: DRPC_ID
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
-                  name: extractor
+                  name: sushi-api
                   key: SENTRY_DSN
             - name: SENTRY_ENVIRONMENT
               valueFrom:
                 secretKeyRef:
-                  name: extractor
+                  name: sushi-api
                   key: SENTRY_ENVIRONMENT
 {{- end }}
