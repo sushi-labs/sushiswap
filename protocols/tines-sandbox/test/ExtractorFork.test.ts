@@ -225,13 +225,11 @@ async function startInfinitTest(args: {
         (p) => p instanceof ConstantProductPoolCode,
       ).length
       const pools1_3 = pools1.length - pools1_2
-      const timingLine =
-        `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(
-          time1 - time0,
-        )}ms` +
-        `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(
-          time2 - time1,
-        )}ms`
+      const timingLine = `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(
+        time1 - time0,
+      )}ms, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(
+        time2 - time1,
+      )}ms`
 
       const pools = pools1
       const poolMap = new Map<string, PoolCode>()
@@ -251,8 +249,7 @@ async function startInfinitTest(args: {
       )
       if (route.status === RouteStatus.NoWay) {
         console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` +
-            timingLine,
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
         )
         continue
       }
@@ -303,9 +300,7 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools ` +
-            timingLine +
-            ` diff = ${diff > 0 ? '+' : ''}${diff} `,
+          } pools ${timingLine} diff = ${diff > 0 ? '+' : ''}${diff} `,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')

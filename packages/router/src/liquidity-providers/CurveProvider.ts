@@ -497,12 +497,12 @@ export class CurveProvider extends LiquidityProvider {
     const poolArray = Array.from(pools.entries())
     const poolsMulticall = <
       T extends ContractFunctionConfig<
-        typeof curvePoolABI[keyof typeof curvePoolABI]
+        (typeof curvePoolABI)[keyof typeof curvePoolABI]
       >['functionName'],
     >(
       functionName: T,
       args?: ContractFunctionConfig<
-        typeof curvePoolABI[keyof typeof curvePoolABI],
+        (typeof curvePoolABI)[keyof typeof curvePoolABI],
         T
       >['args'],
     ) => {

@@ -154,14 +154,14 @@ async function testTaxToken(args: {
     console.log(
       `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
         route.legs.length - 1
-      } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff} `,
+      } pools diff = ${diff > 0 ? '+' : ''}${diff} `,
     )
   } catch (e) {
     console.log(`Routing failed. No connection ? ${e}`)
   }
 }
 
-it('Base tax token test: BASE => LCRV', async function () {
+it('Base tax token test: BASE => LCRV', async () => {
   const LCRV = new Token({
     chainId: ChainId.BASE,
     address: '0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f',
@@ -178,7 +178,7 @@ it('Base tax token test: BASE => LCRV', async function () {
   })
 })
 
-it('Base tax token test: BASE => bpsTEST', async function () {
+it('Base tax token test: BASE => bpsTEST', async () => {
   const bpsTEST = new Token({
     chainId: ChainId.BASE,
     address: '0x93980959778166ccbB95Db7EcF52607240bc541e',

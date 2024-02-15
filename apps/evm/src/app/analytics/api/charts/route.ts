@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { getCharts } from '../../../../lib/analytics/api'
+import { getCharts } from '../../../../lib/graph'
 
 export const revalidate = 3600
 

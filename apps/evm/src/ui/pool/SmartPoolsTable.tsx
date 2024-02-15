@@ -51,7 +51,7 @@ import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 import { useSteerVaults } from '@sushiswap/client/hooks'
-import { isAngleEnabledChainId } from '../../config'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'
@@ -582,7 +582,7 @@ export const SmartPoolsTable = () => {
           enhancing trading efficiency by providing deeper liquidity around the
           current price, increasing Liquidity Providers (LP) fee earnings. To
           learn more about Smart Pools, click{' '}
-          <LinkExternal href="https://steer.finance/steer-protocol-and-sushi-collaborate-to-optimize-concentrated-liquidity/">
+          <LinkExternal href="https://www.sushi.com/blog/faq-smart-pools">
             here
           </LinkExternal>
           .

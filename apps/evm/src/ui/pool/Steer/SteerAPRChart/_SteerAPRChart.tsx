@@ -84,9 +84,7 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
             },
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: function (idx: number) {
-            return idx * 2
-          },
+          animationDelayUpdate: (idx: number) => idx * 2,
           data: timeseries?.map((d) => [d.startTime * 1000, d.feeApr]),
         },
       ],
@@ -95,7 +93,7 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
   )
 
   const [leftDate, rightDate] = useMemo(() => {
-    if (!timeseries) return ['', '']
+    if (!timeseries || timeseries.length === 0) return ['', '']
 
     const leftDate = new Date(timeseries[0].startTime * 1000)
     const rightDate = new Date(
@@ -144,7 +142,18 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
       <div className="w-full h-full">
         <ReactVirtualizedAutoSizer>
           {({ height, width }) => (
-            <ReactECharts option={chartConfig} style={{ height, width }} />
+            <>
+              {timeseries?.length ? (
+                <ReactECharts option={chartConfig} style={{ height, width }} />
+              ) : (
+                <div
+                  style={{ width, height }}
+                  className="flex justify-center items-center text-slate-300 text-sm"
+                >
+                  No data found.
+                </div>
+              )}
+            </>
           )}
         </ReactVirtualizedAutoSizer>
       </div>

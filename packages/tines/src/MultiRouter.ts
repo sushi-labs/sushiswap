@@ -88,29 +88,33 @@ export function findMultiRouteExactIn(
   gasPrice?: number,
   flows?: number | number[],
 ): MultiRoute {
-  pools = deduplicatePools(pools)
-  checkChainId(pools, baseTokenOrNetworks)
-  setTokenId(from, to)
-  if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
-  const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
+  try {
+    pools = deduplicatePools(pools)
+    checkChainId(pools, baseTokenOrNetworks)
+    setTokenId(from, to)
+    if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
+    const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
-  if (flows !== undefined)
-    return g.findBestRouteExactIn(from, to, amountIn, flows)
+    if (flows !== undefined)
+      return g.findBestRouteExactIn(from, to, amountIn, flows)
 
-  const outSingle = g.findBestRouteExactIn(from, to, amountIn, 1)
-  // Possible optimization of timing
-  // if (g.findBestPathExactIn(from, to, amountIn/100 + 10_000, 0)?.gasSpent === 0) return outSingle
-  g.cleanTmpData()
+    const outSingle = g.findBestRouteExactIn(from, to, amountIn, 1)
+    // Possible optimization of timing
+    // if (g.findBestPathExactIn(from, to, amountIn/100 + 10_000, 0)?.gasSpent === 0) return outSingle
+    g.cleanTmpData()
 
-  const bestFlowNumber = calcBestFlowNumber(
-    outSingle,
-    amountIn,
-    g.getVert(from)?.gasPrice,
-  )
-  if (bestFlowNumber === 1) return outSingle
+    const bestFlowNumber = calcBestFlowNumber(
+      outSingle,
+      amountIn,
+      g.getVert(from)?.gasPrice,
+    )
+    if (bestFlowNumber === 1) return outSingle
 
-  const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
-  return getBetterRouteExactIn(outSingle, outMulti)
+    const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
+    return getBetterRouteExactIn(outSingle, outMulti)
+  } catch (_e) {
+    return NoWayMultiRoute(from, to)
+  }
 }
 
 function getBetterRouteExactOut(
@@ -232,6 +236,31 @@ export function calcTokenPrices(
   const res = new Map<RToken, number>()
   g.vertices.forEach((v) => {
     if (v.price !== 0) res.set(v.token, v.price)
+  })
+  return res
+}
+
+export function calcTokenAddressPrices(
+  pools: RPool[],
+  baseToken: RToken,
+  minPriceLiquidity = 0,
+  priceLogging = false,
+): Record<string, number> {
+  setTokenId(baseToken)
+  const g = new Graph(
+    pools,
+    baseToken,
+    baseToken,
+    0,
+    minPriceLiquidity,
+    priceLogging,
+  )
+  const res: Record<string, number> = {}
+  g.vertices.forEach((v) => {
+    if (v.price !== 0)
+      res[v.token.address] = Number(
+        (v.price / 10 ** (baseToken.decimals - v.token.decimals)).toFixed(18),
+      )
   })
   return res
 }

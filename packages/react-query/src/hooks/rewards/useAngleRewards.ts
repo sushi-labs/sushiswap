@@ -5,11 +5,11 @@ import { ZERO } from 'sushi/math'
 import { parseUnits } from 'viem'
 import z from 'zod'
 
+import { isAngleEnabledChainId } from 'sushi/config'
+
 import { usePrices } from '../prices'
-import {
-  angleRewardsBaseValidator,
-  angleRewardsPoolsValidator,
-} from './validator'
+
+import { angleRewardsPoolsValidator, angleRewardsValidator } from './validator'
 
 type TransformedRewardsPerToken = Record<
   string,
@@ -40,29 +40,34 @@ export type AngleRewardsPool = Omit<
 
 type TransformedPools = Record<string, AngleRewardsPool>
 
-interface UseAngleRewardsParams {
-  chainId: ChainId
+interface AngleRewardsQueryParams {
+  chainIds: ChainId[]
   account?: string | undefined
   enabled?: boolean
 }
 
 export const angleRewardsQueryFn = async ({
-  chainId,
+  chainIds,
   account,
-}: UseAngleRewardsParams) => {
-  let url = `https://api.angle.money/v1/merkl?chainId=${chainId}`
+}: AngleRewardsQueryParams) => {
+  const url = new URL('https://api.angle.money/v2/merkl')
+  url.searchParams.set('AMMs[0]', 'sushiswapv3')
+  chainIds.forEach((chainId, i) =>
+    url.searchParams.set(`chainIds[${i}]`, chainId.toString()),
+  )
 
   if (account) {
-    url += `&user=${account}`
+    url.searchParams.set('user', account)
   }
 
-  const res = await (await fetch(url)).json()
-  return angleRewardsBaseValidator.parse(res)
+  const res = await fetch(url)
+  const json = await res.json()
+  return angleRewardsValidator.parse(json)
 }
 
 interface AngleRewardsSelect {
   chainId: ChainId
-  data: Awaited<ReturnType<typeof angleRewardsQueryFn>>
+  data: z.infer<typeof angleRewardsValidator>[number] | undefined
   prices: ReturnType<typeof usePrices>['data']
 }
 
@@ -71,7 +76,7 @@ export const angleRewardsSelect = ({
   data,
   prices,
 }: AngleRewardsSelect) => {
-  if (!data || !data.pools || !prices) return undefined
+  if (!data?.pools || !prices) return undefined
 
   const pools = Object.entries(data.pools).reduce<TransformedPools>(
     (acc, [a, b]) => {
@@ -87,13 +92,13 @@ export const angleRewardsSelect = ({
             > & { token: Token }
           >
         >((acc, el) => {
-          if (el.tokenSymbol !== 'aglaMerkl') {
+          if (el.symbolRewardToken !== 'aglaMerkl' && !el.whitelist.length) {
             acc.push({
               ...el,
               token: new Token({
                 chainId,
-                address: el.token,
-                symbol: el.tokenSymbol,
+                address: el.rewardToken,
+                symbol: el.symbolRewardToken,
                 decimals: 18,
               }),
             })
@@ -104,14 +109,14 @@ export const angleRewardsSelect = ({
         token0: new Token({
           chainId,
           address: b.token0,
-          symbol: b.tokenSymbol0,
-          decimals: b.decimalToken0,
+          symbol: b.symbolToken0,
+          decimals: b.decimalsToken0,
         }),
         token1: new Token({
           chainId,
           address: b.token1,
-          symbol: b.tokenSymbol1,
-          decimals: b.decimalToken1,
+          symbol: b.symbolToken1,
+          decimals: b.decimalsToken1,
         }),
         rewardsPerToken: Object.entries(
           b.rewardsPerToken,
@@ -132,7 +137,7 @@ export const angleRewardsSelect = ({
                   v.decimals,
                 ).toString(),
               ),
-              breakdown: Object.entries(v.breakdown).reduce<
+              breakdown: Object.entries(v.breakdownOfUnclaimed).reduce<
                 Record<string, Amount<Token>>
               >((acc, [i, j]) => {
                 acc[i] = Amount.fromRawAmount(
@@ -216,6 +221,12 @@ export const angleRewardsSelect = ({
   }
 }
 
+interface UseAngleRewardsParams {
+  chainId: ChainId
+  account?: string | undefined
+  enabled?: boolean
+}
+
 export const useAngleRewards = ({
   chainId,
   account,
@@ -224,10 +235,14 @@ export const useAngleRewards = ({
   const { data: prices } = usePrices({ chainId })
   return useQuery({
     queryKey: ['getAngleRewards', { chainId, account }],
-    queryFn: async () => await angleRewardsQueryFn({ chainId, account }),
-    select: (data) => angleRewardsSelect({ chainId, data, prices }),
+    queryFn: async () =>
+      await angleRewardsQueryFn({ chainIds: [chainId], account }),
+    select: (data) =>
+      angleRewardsSelect({ chainId, data: data[chainId], prices }),
     staleTime: 15000, // 15 seconds
     cacheTime: 60000, // 1min
-    enabled: Boolean(enabled && prices && chainId),
+    enabled: Boolean(
+      enabled && prices && chainId && isAngleEnabledChainId(chainId),
+    ),
   })
 }

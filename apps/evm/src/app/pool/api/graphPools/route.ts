@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import { getGraphPools } from 'src/lib/api'
+import { getGraphPools } from 'src/lib/graph'
 import { z } from 'zod'
+
+export const revalidate = 60
 
 const schema = z.object({
   ids: z.string().transform((ids) => ids.split(',')),
 })
-
-// export const revalidate = 60 // revalidate every minute
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)

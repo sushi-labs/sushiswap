@@ -6,8 +6,8 @@ import React, { useEffect, useState } from 'react'
 import { useIsSwapMaintenance } from 'utils/use-is-swap-maintenance'
 import { useSwapRouter } from 'utils/useSwapRouter'
 import { useTokenBalance } from 'utils/useTokenBalance'
+import ConnectButton from './ConnectButton'
 import { Modal } from './Modal/Modal'
-import WalletSelector from './WalletSelector'
 
 export const SwapButton = () => {
   const { data: maintenance } = useIsSwapMaintenance()
@@ -67,7 +67,7 @@ export const SwapButton = () => {
                 )}
               </Button>
             ) : (
-              <WalletSelector />
+              <ConnectButton />
             )}
           </div>
           {warningSeverity(routes?.priceImpact) > 3 && (

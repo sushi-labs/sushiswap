@@ -222,8 +222,7 @@ async function startInfinitTest(args: {
       )
       if (route.status === RouteStatus.NoWay) {
         console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` +
-            timingLine,
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
         )
         continue
       }
@@ -265,9 +264,7 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools ` +
-            timingLine +
-            ` diff = ${diff > 0 ? '+' : ''}${diff} `,
+          } pools ${timingLine} diff = ${diff > 0 ? '+' : ''}${diff} `,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
@@ -318,15 +315,15 @@ it.skip('Extractor Polygon infinite work test', async () => {
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 it.skip('Extractor Arbitrum infinite work test', async () => {
   await startInfinitTest({
-    providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
-    //providerURL: `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`,
+    //providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
+    providerURL: `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcId}`,
     chain: arbitrum,
-    factoriesV2: [],
+    factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM)],
     factoriesV3: [uniswapV3Factory(ChainId.ARBITRUM)],
     tickHelperContract: TickLensContract[ChainId.ARBITRUM],
     cacheDir: './cache',
     logDepth: 300,
-    logType: LogFilterType.MultiCall,
+    logType: LogFilterType.Native,
     logging: true,
     RP3Address: RP3Address[ChainId.ARBITRUM],
   })

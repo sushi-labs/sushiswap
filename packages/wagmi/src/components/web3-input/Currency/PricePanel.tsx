@@ -27,7 +27,10 @@ export const PricePanel: FC<PricePanel> = ({
   )
   const [big, portion] = (
     parsedValue && price
-      ? `${parsedValue.multiply(price.asFraction).toFixed(2)}`
+      ? `${price.asFraction
+          .multiply(parsedValue)
+          .divide(10 ** parsedValue.currency.decimals)
+          .toFixed(2)}`
       : '0.00'
   ).split('.')
 
@@ -62,10 +65,10 @@ export const PricePanel: FC<PricePanel> = ({
               usdPctChange > 0
                 ? 'text-green'
                 : usdPctChange < -5
-                ? 'text-red'
-                : usdPctChange < -3
-                ? 'text-yellow'
-                : 'text-slate-500',
+                  ? 'text-red'
+                  : usdPctChange < -3
+                    ? 'text-yellow'
+                    : 'text-slate-500',
             )}
           >
             {' '}
@@ -73,8 +76,8 @@ export const PricePanel: FC<PricePanel> = ({
               usdPctChange?.toFixed(2) === '0.00'
                 ? ''
                 : usdPctChange > 0
-                ? '(+'
-                : '('
+                  ? '(+'
+                  : '('
             }${
               usdPctChange?.toFixed(2) === '0.00'
                 ? ''

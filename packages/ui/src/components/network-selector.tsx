@@ -28,6 +28,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.SCROLL,
   ChainId.OPTIMISM,
   ChainId.LINEA,
+  ChainId.ZETACHAIN,
   ChainId.CORE,
   ChainId.FILECOIN,
   ChainId.BSC,
@@ -40,6 +41,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
 ]
 
 export interface NetworkSelectorProps<T extends number = ChainId> {
+  showAptos?: boolean
   networks: readonly T[]
   selected: T
   onSelect: NetworkSelectorOnSelectCallback<T>
@@ -49,9 +51,11 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
 const NEW_CHAINS: number[] = [
   ChainId.FILECOIN,
   ChainId.HAQQ,
+  ChainId.ZETACHAIN,
 ] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
+  showAptos = false,
   onSelect,
   networks = [],
   children,
@@ -76,21 +80,23 @@ const NetworkSelector = <T extends number>({
           />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
-            <CommandItem className="cursor-pointer">
+            {showAptos ? (
               <Link
                 href="https://aptos.sushi.com"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <div className="flex items-center gap-2">
-                  <AptosCircle width={22} height={22} />
-                  Aptos
-                  <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                    NEW
+                <CommandItem className="cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <AptosCircle width={22} height={22} />
+                    Aptos
+                    <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                      NEW
+                    </div>
                   </div>
-                </div>
+                </CommandItem>
               </Link>
-            </CommandItem>
+            ) : null}
             {_networks.map((el) => (
               <CommandItem
                 className="cursor-pointer"

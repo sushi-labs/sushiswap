@@ -2,6 +2,7 @@
 
 import React, { FC, ReactNode, useEffect } from 'react'
 
+import { watchAccount, watchNetwork } from '@wagmi/core'
 import { useApprovedActions } from './Provider'
 
 interface SuccessProps {
@@ -16,6 +17,20 @@ const Success: FC<SuccessProps> = ({ children, tag }) => {
     setApproved(true)
     return () => {
       setApproved(false)
+    }
+  }, [setApproved])
+
+  useEffect(() => {
+    const unwatchAccountListener = watchAccount(() => {
+      setApproved(true)
+    })
+    const unwatchChainListener = watchNetwork(() => {
+      setApproved(true)
+    })
+
+    return () => {
+      unwatchAccountListener()
+      unwatchChainListener()
     }
   }, [setApproved])
 

@@ -83,7 +83,9 @@ export async function POST(request: NextRequest) {
 
   // Get latest commit for the new branch
   const {
-    data: { commit: { sha: latestIconsSha } },
+    data: {
+      commit: { sha: latestIconsSha },
+    },
   } = await octoKit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
     owner,
     repo: 'list',
@@ -94,7 +96,7 @@ export async function POST(request: NextRequest) {
   const displayName = tokenSymbol.toLowerCase().replace(/( )|(\.)/g, '_')
 
   // Find unused branch name
-  const branch = await (async function () {
+  const branch = await (async () => {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {

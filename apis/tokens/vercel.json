@@ -31,6 +31,12 @@
     {
       "source": "/v0/search/:address",
       "destination": "/api/v0/search/:address"
+    },
+    { "source": "/v1", "destination": "/api/v1" },
+    { "source": "/v1/:chainId", "destination": "/api/v1/:chainId" },
+    {
+      "source": "/v1/:chainId/:address",
+      "destination": "/api/v1/:chainId/:address"
     }
   ],
   "functions": {
@@ -65,6 +71,14 @@
     "api/v0/index.ts": {
       "memory": 256,
       "maxDuration": 30
+    },
+    "api/v1/[chainId]/[address].ts": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/v1/[chainId]/index.ts": {
+      "memory": 256,
+      "maxDuration": 15
     }
   }
 }

@@ -1,7 +1,6 @@
 import { Address } from 'viem'
 
-import { ConstantProductRPool } from './PrimaryPools'
-import { RPool, RToken, setTokenId } from './RPool'
+import { PoolType, RPool, RToken, setTokenId } from './RPool'
 import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, DEBUG, closeValues, getBigInt } from './Utils'
 
@@ -9,7 +8,7 @@ const ROUTER_DISTRIBUTION_PORTION = 65535
 
 // Routing info about each one swap
 export interface RouteLeg {
-  poolType: 'Stable' | 'Classic' | 'Unknown'
+  poolType: PoolType
   poolAddress: Address // which pool use for swap
   uniqueId: string // pool.uniqueId
   poolFee: number
@@ -726,7 +725,7 @@ export class Graph {
     | undefined {
     const start = this.getVert(from)
     const finish = this.getVert(to)
-    if (!start || !finish) return undefined
+    if (!start || !finish || Number.isNaN(finish.price)) return undefined
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
@@ -1233,26 +1232,14 @@ export class Graph {
       // const total = Number(outAmount)
       // const totalTest = outAmount
 
-      // console.debug('BEFORE', { outAmount, total, totalTest })
-
       outEdges.forEach((e, i) => {
         const p = e[2] as number
         const quantity = i + 1 === outEdges.length ? 1 : p / outAmount
         const edge = e[0] as Edge
-
-        // console.debug(`edge iter ${0}`, { e, p })
-
-        const poolType =
-          edge.pool instanceof StableSwapRPool
-            ? 'Stable'
-            : edge.pool instanceof ConstantProductRPool
-            ? 'Classic'
-            : 'Unknown'
-
         legs.push({
           poolAddress: edge.pool.address,
           uniqueId: edge.pool.uniqueID(),
-          poolType,
+          poolType: edge.pool.poolType(),
           poolFee: edge.pool.fee,
           tokenFrom: n.token,
           tokenTo: (n.getNeibour(edge) as Vertice).token,

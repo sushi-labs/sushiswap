@@ -29,7 +29,6 @@
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@sushiswap/wagmi": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-table": "8.9.1",
     "@vercel/analytics": "0.1.5",
