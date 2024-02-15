@@ -19,10 +19,6 @@ spec:
           image: extractor
           ports:
             - containerPort: 80
-          # resources:
-          #   requests:
-          #     cpu: "1"
-          #     memory: "1Gi"
           startupProbe:
             httpGet:
               path: /health

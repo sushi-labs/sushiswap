@@ -17,10 +17,10 @@ spec:
     containerPolicies:
       - containerName: '*'
         minAllowed:
-          cpu: 100m
-          memory: 100Mi
+          cpu: '100m'
+          memory: '100Mi'
         maxAllowed:
-          cpu: 1
-          memory: 500Mi
+          cpu: '1000m'
+          memory: '500Mi'
         controlledResources: ["cpu", "memory"]
 {{- end }}
