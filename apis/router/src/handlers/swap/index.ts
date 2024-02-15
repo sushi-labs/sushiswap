@@ -162,7 +162,7 @@ function handler(
   }
 }
 
-export const swapV3_2 = handler(
+export default handler(
   querySchema3_2,
   Router.routeProcessor3_2Params,
   ROUTE_PROCESSOR_3_2_ADDRESS,

@@ -2,12 +2,7 @@ import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
 // import cors from 'cors'
-import express, {
-  type Express,
-  type NextFunction,
-  type Request,
-  type Response,
-} from 'express'
+import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ExtractorClient } from './ExtractorClient'
 import {
@@ -20,14 +15,11 @@ import {
   SENTRY_ENVIRONMENT,
 } from './config'
 import { CPUUsageStatistics } from './cpu-usage-statistics'
-import { priceByAddressHandler, pricesHandler } from './handlers/prices'
-import { swapV3_2 } from './handlers/swap'
+import { priceByAddressHandler, pricesHandler } from './handlers/price'
+import swapHandler from './handlers/swap'
 import tokenHandler from './handlers/token'
 
 import process from 'node:process'
-// import overloadProtection from 'overload-protection'
-// import eventLoopLag from 'event-loop-lag'
-// import pidusage from 'pidusage'
 import requestStatistics from './request-statistics'
 
 async function start() {
@@ -62,94 +54,16 @@ async function start() {
 
   // RequestHandler creates a separate execution context, so that all
   // transactions/spans/breadcrumbs are isolated across requests
-  // app.use(Sentry.Handlers.requestHandler())
+  app.use(Sentry.Handlers.requestHandler())
   // TracingHandler creates a trace for every incoming request
-  // app.use(Sentry.Handlers.tracingHandler())
+  app.use(Sentry.Handlers.tracingHandler())
 
   // app.use(cors())
 
   const cpuUsageStatistics = new CPUUsageStatistics(60_000)
   cpuUsageStatistics.start()
 
-  // const lag = eventLoopLag(1_000)
-
-  // const rps = {
-  //   counter: 0,
-  //   timestamp: Date.now(),
-  //   average: 0,
-  //   start: (time: number) => {
-  //     setTimeout(() => {
-  //       const now = Date.now()
-  //       const seconds = (now - rps.timestamp) / 1_000
-  //       const average = rps.counter / seconds
-  //       console.log(`RPS: ${average}`)
-  //       rps.timestamp = now
-  //       rps.counter = 0
-  //       rps.average = average
-  //       rps.start(time)
-  //     }, time)
-  //   },
-  // }
-  // rps.start(1_000)
-
-  // const cpu: {
-  //   sma: number
-  //   last: number
-  //   points: number[]
-  //   start: (time: number) => void
-  // } = {
-  //   sma: 0,
-  //   points: [],
-  //   last: 0,
-  //   start: (time: number) => {
-  //     setTimeout(async () => {
-  //       await (async () => {
-  //         const pid = await pidusage(process.pid)
-  //         cpu.points.push(pid.cpu)
-  //         if (cpu.points.length > 60) {
-  //           cpu.points.shift()
-  //         }
-  //         cpu.last = pid.cpu
-  //         cpu.sma = cpu.points.reduce((a, b) => a + b, 0) / cpu.points.length
-  //       })()
-  //       cpu.start(time)
-  //     }, time)
-  //   },
-  // }
-  // cpu.start(1_000)
-
-  // const activeResources = {
-  //   length: 0,
-  //   start: (time: number) => {
-  //     setTimeout(() => {
-  //       // @ts-expect-error
-  //       activeResources.length = process.getActiveResourcesInfo().length
-  //       console.log('Active resources info is ', activeResources.length)
-  //       activeResources.start(time)
-  //     }, time)
-  //   },
-  // }
-  // activeResources.start(1_000)
-
-  const protection = (_req: Request, res: Response, next: NextFunction) => {
-    // if (rps.counter > 200) {
-    //   return res.setHeader('Retry-After', 10).status(503).end()
-    // }
-    // rps.counter++
-
-    const activeResourcesLength: number =
-      // @ts-expect-error
-      process.getActiveResourcesInfo().length
-
-    if (activeResourcesLength > 500) {
-      res.setHeader('Cache-Control', 'public, max-age=10')
-      return res.status(503).send()
-    }
-    return next()
-  }
-
   app.get('/200', (_, res: Response) => {
-    res.setHeader('Cache-Control', 'public, max-age=60')
     return res.status(200).end()
   })
 
@@ -157,28 +71,19 @@ async function start() {
     return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
   })
 
-  app.get(`/swap/v1/${CHAIN_ID}`, protection, (req, res) => {
-    return swapV3_2(client)(req, res)
+  app.get(`/swap/v1/${CHAIN_ID}`, (req, res) => {
+    return swapHandler(client)(req, res)
   })
-  app.get(`/token/v1/${CHAIN_ID}/:address`, protection, tokenHandler(client))
-  app.get(`/prices/v1/${CHAIN_ID}`, protection, pricesHandler(client))
-  app.get(
-    `/prices/v1/${CHAIN_ID}/:address`,
-    protection,
-    priceByAddressHandler(client),
-  )
+  app.get(`/token/v1/${CHAIN_ID}/:address`, tokenHandler(client))
+  app.get(`/price/v1/${CHAIN_ID}`, pricesHandler(client))
+  app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler(client))
 
   // The error handler must be registered before any other error middleware and after all controllers
-  // app.use(Sentry.Handlers.errorHandler())
+  app.use(Sentry.Handlers.errorHandler())
 
   app.listen(PORT, () => {
     console.log(`Router ${CHAIN_ID} app listening on port ${PORT}`)
   })
-
-  // server.keepAliveTimeout = 65000
-  // server.headersTimeout = 66000
-  // server.keepAliveTimeout = 65000 // Ensure all inactive connections are terminated by the ALB, by setting this a few seconds higher than the ALB idle timeout
-  // server.headersTimeout = 66000 // Ensure the headersTimeout is set higher than the keepAliveTimeout due to this nodejs regression bug: https://github.com/nodejs/node/issues/27363
 }
 
 process.on('SIGTERM', (code) => {

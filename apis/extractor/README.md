@@ -31,7 +31,7 @@ minikube start --base-image gcr.io/k8s-minikube/kicbase:v0.0.40
 Setup the DRPC SECRET
 
 ```bash
-kubectl create secret generic extractor \
+kubectl create secret generic sushi-api \
     --from-literal=DRPC_ID=XXX \
     --from-literal=SENTRY_DSN=XXX \
     --from-literal=SENTRY_ENVIRONMENT=XXX
@@ -39,12 +39,12 @@ kubectl create secret generic extractor \
 
 Create a static ip for the staging environment
 ```bash
-gcloud compute addresses create extractor-staging-ip --global
+gcloud compute addresses create sushi-api-staging-ip --global
 ```
 
 Create a static ip for the production environment
 ```bash
-gcloud compute addresses create extractor-production-ip --global
+gcloud compute addresses create sushi-api-production-ip --global
 ```
 
 ## Deploy
@@ -62,3 +62,7 @@ kubectl get hpa router-1-hpa --watch
 ## View Extractor VPA
 
 kubectl get vpa extractor-1-vpa --watch
+
+## Restart
+
+kubectl rollout restart deployment/extractor-1
