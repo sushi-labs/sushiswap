@@ -279,8 +279,8 @@ const WithDeprecationNotice: FC<{ children: ReactNode }> = ({ children }) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div>
-              <div className="bg-yellow/10 dark:text-yellow text-amber-900 whitespace-nowrap rounded-full flex gap-0.5 py-1 px-2 items-center">
-                <ExclamationCircleIcon width={16} height={16} /> Deprecated Soon
+              <div className="bg-yellow/10 dark:text-yellow text-amber-900 whitespace-nowrap rounded-full flex gap-0.5 py-1 px-2 items-center text-xs">
+                <ExclamationCircleIcon width={12} height={12} /> Deprecated Soon
               </div>
             </div>
           </TooltipTrigger>
