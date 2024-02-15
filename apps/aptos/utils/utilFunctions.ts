@@ -3,7 +3,7 @@ import { Token } from './tokenType'
 import { Pool } from './usePools'
 import { baseTokens } from './baseTokens'
 import { FETCH_URL_PREFIX } from 'lib/constants'
-import {usePoolActions, usePoolState} from "../components/Pool/PoolProvider";
+import { usePoolActions, usePoolState } from '../components/Pool/PoolProvider'
 
 export type Route = {
   route: string[]

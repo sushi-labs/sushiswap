@@ -116,8 +116,8 @@ export const useModal = <T extends ModalType>(
     type === ModalType.Regular
       ? ''
       : type === ModalType.Confirm
-      ? '-confirm'
-      : '-review'
+        ? '-confirm'
+        : '-review'
   }`
 
   return useMemo(() => {

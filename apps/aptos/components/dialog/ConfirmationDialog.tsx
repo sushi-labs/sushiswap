@@ -97,8 +97,8 @@ export const ConfirmationDialog: FC<ConfirmationDialog> = ({
             {state === ConfirmationDialogState.Success
               ? buttonSuccessMessage
               : state === ConfirmationDialogState.Failed
-              ? 'Try again'
-              : 'Close'}
+                ? 'Try again'
+                : 'Close'}
           </Button>
         </div>
       </Dialog.Content>

@@ -39,10 +39,10 @@ export const Header: FC<Header> = ({
             arrowDirection === 'left'
               ? ChevronLeftIcon
               : arrowDirection === 'right'
-              ? ChevronRightIcon
-              : arrowDirection === 'top'
-              ? ChevronUpIcon
-              : ChevronDownIcon
+                ? ChevronRightIcon
+                : arrowDirection === 'top'
+                  ? ChevronUpIcon
+                  : ChevronDownIcon
           }
           iconProps={{ className: 'cursor-pointer' }}
           name="back"

@@ -45,8 +45,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
 }) => {
   const token0Price = useStablePrice(token0)
   const token1Price = useStablePrice(token1)
-  const token0PoolPrice = token0Price ? token0Price * Number(token0MinMinimum) : 0
-  const token1PoolPrice = token1Price ? token1Price * Number(token1MinMinimum) : 0
+  const token0PoolPrice = token0Price
+    ? token0Price * Number(token0MinMinimum)
+    : 0
+  const token1PoolPrice = token1Price
+    ? token1Price * Number(token1MinMinimum)
+    : 0
 
   return (
     <Widget id="removeLiquidity" variant="empty">
