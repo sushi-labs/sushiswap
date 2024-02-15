@@ -487,7 +487,7 @@ export class Extractor {
     }
   }
 
-  getCurrentPoolCodes() {
+  getCurrentPoolCodes(): PoolCode[] {
     const pools2 = this.extractorV2
       ? this.extractorV2.getCurrentPoolCodes()
       : []

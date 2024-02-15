@@ -9,6 +9,7 @@ import {
 } from '@sushiswap/extractor'
 import {
   ConstantProductPoolCode,
+  CurvePoolCode,
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
@@ -150,7 +151,7 @@ async function startInfinitTest(args: {
   maxCallsInOneBatch?: number
   RP3Address: Address
   account?: Address
-  checkTokens?: Token[]
+  checkTokens?: (ext: Extractor) => Promise<Token[]>
 }) {
   const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
@@ -160,9 +161,7 @@ async function startInfinitTest(args: {
   const chainId = client.chain?.id as ChainId
 
   const extractor = new Extractor({ ...args, client })
-  await extractor.start(
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []),
-  )
+  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
@@ -174,11 +173,11 @@ async function startInfinitTest(args: {
     `tokens-${client.chain?.id}`,
   )
   await tokenManager.addCachedTokens()
-  const tokens =
-    args.checkTokens ??
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
-      Array.from(tokenManager.tokens.values()).slice(0, 100),
-    )
+  const tokens = args.checkTokens
+    ? await args.checkTokens(extractor)
+    : BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
+        Array.from(tokenManager.tokens.values()).slice(0, 100),
+      )
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
       await delay(1000)
@@ -286,8 +285,14 @@ it.skip('Extractor Ethereum infinite work test (Curve only)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [], //sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
+    factoriesV2: [
+      // sushiswapV2Factory(ChainId.ETHEREUM),
+      // uniswapV2Factory(ChainId.ETHEREUM),
+    ],
+    factoriesV3: [
+      // sushiswapV3Factory(ChainId.ETHEREUM),
+      // uniswapV3Factory(ChainId.ETHEREUM),
+    ],
     curveConfig: {
       api: 'https://api.curve.fi/api/getPools/ethereum',
       minPoolLiquidityLimitUSD: 10_000,
@@ -300,6 +305,17 @@ it.skip('Extractor Ethereum infinite work test (Curve only)', async () => {
     logDepth: 50,
     logging: true,
     RP3Address: RP3Address[ChainId.ETHEREUM],
+    checkTokens: async (extractor: Extractor): Promise<Token[]> => {
+      const tokens: Map<string, Token> = new Map()
+      extractor
+        .getCurrentPoolCodes()
+        .filter((p) => p instanceof CurvePoolCode)
+        .forEach((p) => {
+          tokens.set(p.pool.token0.address, p.pool.token0 as Token)
+          tokens.set(p.pool.token1.address, p.pool.token1 as Token)
+        })
+      return Array.from(tokens.values())
+    },
   })
 })
 
