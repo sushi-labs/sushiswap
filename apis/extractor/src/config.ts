@@ -308,6 +308,15 @@ export const EXTRACTOR_CONFIG = {
     logDepth: 300,
     logging: true,
   },
+  [ChainId.FUSE]: {
+    client: createPublicClient(config[ChainId.FUSE]),
+    factoriesV2: [sushiswapV2Factory(ChainId.FUSE)],
+    factoriesV3: [sushiswapV3Factory(ChainId.FUSE)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FUSE],
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   [ChainId.GNOSIS]: {
     client: createPublicClient(config[ChainId.GNOSIS]),
     factoriesV2: [sushiswapV2Factory(ChainId.GNOSIS)],
@@ -456,6 +465,10 @@ export const CHAIN_ID = Number(
 ) as keyof typeof EXTRACTOR_CONFIG
 if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
+}
+
+if (!(CHAIN_ID in EXTRACTOR_CONFIG)) {
+  throw new Error(`EXTRACTOR_CONFIG is not set for CHAIN_ID=${CHAIN_ID}`)
 }
 
 export const POOLS_SERIALIZATION_INTERVAL = (_chainId: ChainId) => 4_000
