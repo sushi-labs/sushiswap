@@ -19,6 +19,8 @@ import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
 import { warnLog } from './WarnLog'
 
+const POOL_RATIO_UPDATE_INTERVAL = 15 * 60_000 // How often to update pools with ratio !== 1
+
 const CurvePoolListNames = [
   'main', // all not-factory pools, including 3pool
   //'crypto', // all not-factory crypro pools
@@ -133,6 +135,20 @@ const ABIBalance128 = parseAbi([
 const ABIBalance256 = parseAbi([
   'function balances(uint256) pure returns (uint256)',
 ])
+const ABIGetVirtualPrice = parseAbi([
+  'function get_virtual_price() pure returns (uint256)',
+])
+
+const METAPOOL_COIN_TO_BASEPOOL: Record<string, Address> = {
+  '0x6c3f90f043a72fa612cbac8115ee7e52bde6e490':
+    '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7', // 3-pool
+  '0x075b1bb99792c9e1041ba13afef80c91a1e70fb3':
+    '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714', // sBTC
+  '0x3175df0976dfa876431c2e9ee6bc45b65d3473cc':
+    '0xDcEF968d416a41Cdac0ED8702fAC8128A64241A2', // fraxUSD
+  '0x051d7e5609917bd9b73f04bac0ded8dd46a74301':
+    '0xf253f83AcA21aAbD2A20553AE0BF7F65C755A07F',
+}
 
 export class CurveExtractor {
   readonly config: CurveConfig
@@ -143,6 +159,7 @@ export class CurveExtractor {
   readonly balancesType: Map<string, boolean> = new Map() // indexed by  pool address
   readonly coreMap: Map<string, CurveMultitokenCore> = new Map() // indexed by pool address
   readonly tokenPairMap: Map<string, CurvePoolCode[]> = new Map() // indexed by t0.address+t1.address
+  readonly ratioPoolSet: Set<string> = new Set() // indexed by pool address
 
   readonly logFilter: LogFilter2
   readonly logging: boolean
@@ -300,39 +317,50 @@ export class CurveExtractor {
     try {
       const tokens =
         typeof tokenAddress[0] === 'string'
-          ? await Promise.all(
+          ? ((await Promise.all(
               tokenAddress.map((a) =>
                 this.tokenManager.findToken(a as Address),
               ),
-            )
-          : tokenAddress
+            )) as RToken[])
+          : (tokenAddress as RToken[])
       const balancesCalls = tokenAddress.map((_, i) => ({
         address: poolAddress,
         abi: balancesType ? ABIBalance256 : ABIBalance128,
         functionName: 'balances',
         args: [i],
       }))
-      const {
-        returnValues: [A, fee, ...balances],
-      } = await this.multiCallAggregator.callSameBlock([
+      const [
         {
-          address: poolAddress,
-          abi: ABICommonPart,
-          functionName: 'A',
+          returnValues: [A, fee, ...balances],
         },
-        {
-          address: poolAddress,
-          abi: ABICommonPart,
-          functionName: 'fee',
-        },
-        ...balancesCalls,
+        ratio,
+      ] = await Promise.all([
+        this.multiCallAggregator.callSameBlock([
+          {
+            address: poolAddress,
+            abi: ABICommonPart,
+            functionName: 'A',
+          },
+          {
+            address: poolAddress,
+            abi: ABICommonPart,
+            functionName: 'fee',
+          },
+          ...balancesCalls,
+        ]),
+        this.getPoolRatio(
+          poolAddress,
+          tokens.map((t) => t.address) as Address[],
+        ),
       ])
+      if (ratio !== 1) this.ratioPoolSet.add(poolAddress)
       const pools = createCurvePoolsForMultipool(
         poolAddress,
         tokens as RToken[],
         Number(fee) / 1e10,
         Number(A),
         balances as bigint[],
+        ratio !== 1 ? [1, ratio] : undefined,
       )
       this.coreMap.set(poolAddress, pools[0].core)
       this.balancesType.set(poolAddress, balancesType)
@@ -366,6 +394,71 @@ export class CurveExtractor {
       core.tokens,
       this.balancesType.get(core.address) as boolean,
     )
+  }
+
+  async updateRatioPools() {
+    await Promise.all(
+      Array.from(this.ratioPoolSet.values()).map((pool) =>
+        this.updatePool(this.coreMap.get(pool) as CurveMultitokenCore),
+      ),
+    )
+  }
+
+  async getPoolRatio(
+    poolAddress: Address,
+    tokenAddress: Address[],
+  ): Promise<number> {
+    const basePoolAddress =
+      METAPOOL_COIN_TO_BASEPOOL[(tokenAddress[1] as Address).toLowerCase()]
+    if (basePoolAddress !== undefined) {
+      const price = (await this.multiCallAggregator.callValue(
+        basePoolAddress,
+        ABIGetVirtualPrice,
+        'get_virtual_price',
+      )) as bigint
+      // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
+      return Number(price) / 1e18
+    }
+
+    // collection of freaks
+    switch (poolAddress.toLowerCase()) {
+      case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
+        //ankrETH pool
+        const ratio = (await this.multiCallAggregator.callValue(
+          '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
+          parseAbi(['function ratio() pure returns (uint256)']),
+          'ratio',
+        )) as bigint
+        return 1e18 / Number(ratio)
+      }
+      case '0xf9440930043eb3997fc70e1339dbb11f341de7a8': {
+        // rETH pool
+        const ratio = (await this.multiCallAggregator.callValue(
+          '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593',
+          parseAbi(['function getExchangeRate() pure returns (uint256)']),
+          'getExchangeRate',
+        )) as bigint
+        return Number(ratio) / 1e18
+      }
+      case '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': {
+        // compound pool cUSDC-cDAI
+        const [ratio0, ratio1] = (await Promise.all([
+          this.multiCallAggregator.callValue(
+            '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSD
+            parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+            'exchangeRateCurrent',
+          ),
+          this.multiCallAggregator.callValue(
+            '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643', // cDAI
+            parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
+            'exchangeRateCurrent',
+          ),
+        ])) as [bigint, bigint]
+        return (Number(ratio0) / Number(ratio1)) * 1e12
+      }
+      default:
+        return 1
+    }
   }
 
   getPoolsForTokenPair(t0: Token, t1: Token) {
