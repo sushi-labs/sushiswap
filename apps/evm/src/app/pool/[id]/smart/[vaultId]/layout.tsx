@@ -51,7 +51,7 @@ export default async function Layout({
           apy={{
             rewards: pool?.incentiveApr,
             fees: pool?.feeApr1d,
-            vault: vault.apr,
+            vault: vault.apr1d,
           }}
         />
       </Container>

@@ -126,9 +126,9 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Total APR (24h)</StatLabel>
               <StatValue size="sm">
-                <APRHoverCard pool={vault.pool} smartPoolAPR={vault.apr}>
+                <APRHoverCard pool={vault.pool} smartPoolAPR={vault.apr1d}>
                   <span className="underline decoration-dotted underline-offset-2">
-                    {formatPercent(vault.apr + vault.pool.incentiveApr)}
+                    {formatPercent(vault.apr1d + vault.pool.incentiveApr)}
                   </span>
                 </APRHoverCard>
               </StatValue>

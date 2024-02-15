@@ -257,15 +257,15 @@ const COLUMNS = [
   },
   {
     id: 'totalApr1d',
-    header: 'APR',
+    header: 'APR (24h)',
     accessorFn: (row) =>
-      row.apr * 100 +
+      row.apr1d * 100 +
       row.pool.incentives
         .filter((el) => +el.rewardPerDay > 0)
         .reduce((acc, cur) => acc + cur.apr * 100, 0),
     cell: (props) => {
       const totalAPR =
-        props.row.original.apr * 100 +
+        props.row.original.apr1d * 100 +
         props.row.original.pool.incentives
           .filter((el) => +el.rewardPerDay > 0)
           .reduce((acc, cur) => acc + cur.apr * 100, 0)
@@ -286,7 +286,7 @@ const COLUMNS = [
           </TooltipProvider>
           <APRHoverCard
             pool={props.row.original.pool}
-            smartPoolAPR={props.row.original.apr}
+            smartPoolAPR={props.row.original.apr1d}
           >
             <span className="underline decoration-dotted underline-offset-2">
               {formatPercent(totalAPR / 100)}
