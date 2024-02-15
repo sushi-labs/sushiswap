@@ -342,7 +342,7 @@ export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
       <span
         className={classNames(
           props.row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC ||
-          props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE
+            props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE
             ? 'opacity-60'
             : '',
           'underline decoration-dotted underline-offset-2',
