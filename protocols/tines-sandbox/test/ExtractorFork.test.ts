@@ -28,19 +28,9 @@ import {
 import { config } from '@sushiswap/viem-config'
 import { ChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import {
-  http,
-  Address,
-  Hex,
-  PublicClient,
-  Transport,
-  WalletClient,
-  createPublicClient,
-  custom,
-  walletActions,
-} from 'viem'
-import { Chain, hardhat } from 'viem/chains'
-import { createHardhatProvider } from '../src'
+import { http, Address, Transport, createPublicClient } from 'viem'
+import { Chain } from 'viem/chains'
+import { createForkRouteProcessor4 } from '../src'
 import { pancakeswapV3Factory } from './Extractor.test'
 import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
 
@@ -106,52 +96,6 @@ export function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-async function createForkRouteProcessor(
-  providerUrl: string,
-  forkBlockNumber: bigint,
-  chainId: ChainId,
-): Promise<{
-  client: PublicClient & WalletClient
-  deployUser: Address
-  RouteProcessorAddress: Address | null
-}> {
-  const forkProvider = await createHardhatProvider(
-    chainId,
-    providerUrl,
-    Number(forkBlockNumber),
-  )
-  const client = createPublicClient({
-    chain: {
-      ...hardhat,
-      contracts: {
-        multicall3: {
-          address: '0xca11bde05977b3631167028862be2a173976ca11',
-          blockCreated: 100,
-        },
-      },
-      id: chainId,
-    },
-    transport: custom(forkProvider),
-  }).extend(walletActions)
-  const [deployUser] = await client.getAddresses()
-  const RouteProcessorTx = await client.deployContract({
-    chain: null,
-    abi: RouteProcessor4.abi,
-    bytecode: RouteProcessor4.bytecode as Hex,
-    account: deployUser,
-    args: ['0x0000000000000000000000000000000000000000', []],
-  })
-  const RouteProcessorAddress = (
-    await client.waitForTransactionReceipt({ hash: RouteProcessorTx })
-  ).contractAddress
-
-  return {
-    client,
-    deployUser,
-    RouteProcessorAddress,
-  }
-}
-
 async function startInfinitTest(args: {
   transport?: Transport
   providerURL: string
@@ -175,7 +119,7 @@ async function startInfinitTest(args: {
   const chainId = client.chain?.id as ChainId
 
   const forkBlockNumber = await client.getBlockNumber()
-  const fork = await createForkRouteProcessor(
+  const fork = await createForkRouteProcessor4(
     args.providerURL,
     forkBlockNumber,
     chainId,
