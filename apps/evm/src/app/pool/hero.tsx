@@ -54,10 +54,8 @@ export const Hero: FC = () => {
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
                     ? `/pool/add?chainId=${chainId}`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                      ? `/pool/add/v2/${chainId}`
-                      : isTridentChainId(chainId as TridentChainId)
-                        ? `/pool/add/trident/${chainId}`
-                        : ''
+                    ? `/pool/add/v2/${chainId}`
+                    : ''
                 }
               >
                 I want to create a position
@@ -105,22 +103,6 @@ export const Hero: FC = () => {
                         </div>
                         <p className="text-sm leading-snug text-muted-foreground">
                           Provide liquidity to a V2 liquidity pool.
-                        </p>
-                      </LinkInternal>
-                    </DropdownMenuItem>
-                  ) : null}
-                  {isTridentChainId(chainId as ChainId) ? (
-                    <DropdownMenuItem asChild>
-                      <LinkInternal
-                        href={`/pool/add/trident/${chainId}`}
-                        className="flex flex-col !items-start gap-1 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-1 font-medium leading-none">
-                          Trident Position{' '}
-                          <Chip variant="secondary">Deprecated 💀</Chip>
-                        </div>
-                        <p className="text-sm leading-snug text-muted-foreground">
-                          Provide liquidity to a Trident liquidity pool.
                         </p>
                       </LinkInternal>
                     </DropdownMenuItem>
