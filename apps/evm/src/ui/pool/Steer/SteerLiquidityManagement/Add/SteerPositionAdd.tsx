@@ -8,6 +8,7 @@ import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import React, { FC, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import { APPROVE_TAG_STEER, Field } from 'src/lib/constants'
 import {
@@ -16,7 +17,6 @@ import {
   useSteerPositionAddState,
 } from './SteerPositionAddProvider'
 import { SteerPositionAddReviewModal } from './SteerPositionAddReviewModal'
-import { useIsMounted } from '@sushiswap/hooks'
 
 interface SteerPositionAddProps {
   vault: SteerVault
