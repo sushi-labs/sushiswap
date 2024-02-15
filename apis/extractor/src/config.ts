@@ -469,10 +469,8 @@ export const EXTRACTOR_CONFIG = {
   [ChainId.HARMONY]: {
     client: createPublicClient(config[ChainId.HARMONY]),
     factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
-    factoriesV3: [
-      // sushiswapV3Factory(ChainId.HARMONY)
-    ],
-    // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HARMONY],
+    factoriesV3: [],
+    tickHelperContract: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
