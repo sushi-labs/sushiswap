@@ -19,7 +19,7 @@ import { MultiCallAggregator } from './MulticallAggregator'
 import { TokenManager } from './TokenManager'
 import { warnLog } from './WarnLog'
 
-const POOL_RATIO_UPDATE_INTERVAL = 15 * 60_000 // How often to update pools with ratio !== 1
+const POOL_RATIO_UPDATE_INTERVAL = 30 * 60_000 // How often to update pools with ratio !== 1
 
 const CurvePoolListNames = [
   'main', // all not-factory pools, including 3pool
@@ -237,6 +237,7 @@ export class CurveExtractor {
         return this.addPool(p.address, tokens, balancesType[i])
       }),
     )
+    this.consoleLog(`Found pools with ratio != 1: ${this.ratioPoolSet.size}`)
     setInterval(async () => {
       if (this.ratioPoolSet.size > 0) {
         await this.updateRatioPools()
