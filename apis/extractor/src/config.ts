@@ -29,6 +29,7 @@ import { ChainId } from 'sushi/chain'
 import { type Address, createPublicClient } from 'viem'
 
 const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
+
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
   return {
     address: SUSHISWAP_V2_FACTORY_ADDRESS[chainId],
@@ -423,7 +424,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV3: [sushiswapV3Factory(ChainId.SCROLL)],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
     cacheDir: './cache',
-    logDepth: 50,
+    logDepth: 300,
     logging: true,
   },
   [ChainId.LINEA]: {
@@ -435,18 +436,56 @@ export const EXTRACTOR_CONFIG = {
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
     cacheDir: './cache',
-    logDepth: 50,
+    logDepth: 300,
     logging: true,
   },
-  // [ChainId.HAQQ]: {
-  //   client: createPublicClient(config[ChainId.HAQQ]),
-  //   // factoriesV2: [sushiswapV2Factory(ChainId.HAQQ)],
-  //   factoriesV3: [sushiswapV3Factory(ChainId.HAQQ)],
-  //   tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
-  //   cacheDir: './cache',
-  //   logDepth: 50,
-  //   logging: true,
-  // },
+  [ChainId.FILECOIN]: {
+    client: createPublicClient(config[ChainId.FILECOIN]),
+    factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
+    factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+  },
+  [ChainId.METIS]: {
+    client: createPublicClient(config[ChainId.METIS]),
+    factoriesV2: [sushiswapV2Factory(ChainId.METIS)],
+    factoriesV3: [sushiswapV3Factory(ChainId.METIS)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.METIS],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+  },
+  [ChainId.HAQQ]: {
+    client: createPublicClient(config[ChainId.HAQQ]),
+    factoriesV2: [sushiswapV2Factory(ChainId.HAQQ)],
+    factoriesV3: [sushiswapV3Factory(ChainId.HAQQ)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+  },
+  [ChainId.HARMONY]: {
+    client: createPublicClient(config[ChainId.HARMONY]),
+    factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
+    factoriesV3: [
+      // sushiswapV3Factory(ChainId.HARMONY)
+    ],
+    // tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HARMONY],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+  },
+  [ChainId.KAVA]: {
+    client: createPublicClient(config[ChainId.KAVA]),
+    factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
+    factoriesV3: [sushiswapV3Factory(ChainId.KAVA)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+  },
 }
 
 export const PORT = process.env['PORT'] || 80
