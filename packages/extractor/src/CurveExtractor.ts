@@ -238,6 +238,7 @@ export class CurveExtractor {
       }),
     )
     this.consoleLog(`Total 2-token pools: ${this.poolMap.size}`)
+    setInterval(() => this.updateRatioPools(), POOL_RATIO_UPDATE_INTERVAL)
     this.started = true
   }
 
