@@ -237,8 +237,12 @@ export class CurveExtractor {
         return this.addPool(p.address, tokens, balancesType[i])
       }),
     )
-    this.consoleLog(`Total 2-token pools: ${this.poolMap.size}`)
-    setInterval(() => this.updateRatioPools(), POOL_RATIO_UPDATE_INTERVAL)
+    setInterval(async () => {
+      if (this.ratioPoolSet.size > 0) {
+        await this.updateRatioPools()
+        this.consoleLog(`${this.ratioPoolSet.size} ratio pools were updated`)
+      }
+    }, POOL_RATIO_UPDATE_INTERVAL)
     this.started = true
   }
 
