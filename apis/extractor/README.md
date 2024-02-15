@@ -49,7 +49,7 @@ gcloud compute addresses create extractor-production-ip --global
 
 ## Release
 
-gcloud deploy releases create 'extractor-$DATE-$TIME' --project=extractor-410208 --region=us-east4 --source=. --delivery-pipeline=extractor --images=extractor=IMAGE,router=IMAGE
+gcloud deploy releases create 'extractor-$DATE-$TIME' --project=sushi-api-414412 --region=us-east4 --source=. --delivery-pipeline=extractor --images=extractor=IMAGE,router=IMAGE
 
 ## View Router HPA
 

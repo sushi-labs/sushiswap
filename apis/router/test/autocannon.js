@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const autocannon = require('autocannon')
 
 const TestMode = {
   KNOWN_TOKENS: 0,
@@ -66,22 +67,39 @@ function getRandomPair(num, mode) {
 
 const tokens = loadAllTokens()
 
-function setQuery(context, _, done) {
-  const [from, to] = getRandomPair(tokens.length, TEST_MODE)
-  const tokenIn = tokens[from]
-  const tokenOut = tokens[to]
-  const amount = BigInt(SWAP_AMOUNT * 10 ** tokenIn.decimals)
-  context.vars['query'] = {
-    ...context.vars['query'],
-    chainId: chainId.toString(),
-    tokenIn: tokenIn.address,
-    tokenOut: tokenOut.address,
-    amount: amount.toString(),
-    // to: USER_ADDRESS,
-  }
-  return done()
-}
+const instance = autocannon(
+  {
+    url: 'http://staging.sushi.com',
+    duration: 30,
+    requests: [
+      // {
+      //   method: 'GET',
+      //   path: '/200',
+      // },
+      {
+        method: 'GET',
+        setupRequest: (req) => {
+          const [from, to] = getRandomPair(tokens.length, TEST_MODE)
+          const tokenIn = tokens[from]
+          const tokenOut = tokens[to]
+          const amount = BigInt(SWAP_AMOUNT * 10 ** tokenIn.decimals)
+          return {
+            ...req,
+            path: `/swap/v1/${chainId}?chainId=${chainId}&tokenIn=${
+              tokenIn.address
+            }&tokenOut=${tokenOut.address}&amount=${amount.toString()}`,
+          }
+        },
+      },
+    ],
+  },
+  console.log,
+)
 
-module.exports = {
-  setQuery,
-}
+// this is used to kill the instance on CTRL-C
+process.once('SIGINT', () => {
+  instance.stop()
+})
+
+// just render results
+autocannon.track(instance, { renderProgressBar: true })

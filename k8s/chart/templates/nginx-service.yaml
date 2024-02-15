@@ -16,7 +16,7 @@ metadata:
   name: nginx-config
 data:
   nginx.conf: |
-    worker_processes 1;
+    worker_processes 8;
     # worker_cpu_affinity auto;
     worker_rlimit_nofile 10240;
     events {
@@ -36,14 +36,13 @@ data:
       map $uri $proxy_pass {
         ~^/(\w+)/(\w+)/(\d+) router-$3;
       }
-      
+
       server { 
         listen 80;
         location / {
           proxy_http_version 1.1;
-          proxy_set_header   "Connection" "";
+          proxy_set_header "Connection" "";
           proxy_pass http://$proxy_pass;
-          # proxy_next_upstream error timeout http_500;
         }
         location /health {
           auth_basic off;

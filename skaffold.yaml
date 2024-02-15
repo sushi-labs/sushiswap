@@ -29,14 +29,14 @@ profiles:
 - name: staging
   build:
     googleCloudBuild:
-      projectId: "extractor-410208"
+      projectId: "sushi-api-414412"
   manifests:
     rawYaml:
       - k8s/ingress-staging.yaml
 - name: production
   build:
     googleCloudBuild:
-      projectId: "extractor-410208"
+      projectId: "sushi-api-414412"
   manifests:
     rawYaml:
       - k8s/ingress-production.yaml

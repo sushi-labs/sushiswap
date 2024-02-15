@@ -9,7 +9,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: router-{{ $value }}
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 10
   behavior:
     scaleDown:

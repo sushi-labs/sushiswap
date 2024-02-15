@@ -59,6 +59,7 @@
     "@types/overload-protection": "1.2.4",
     "@types/event-loop-lag": "1.0.33",
     "artillery": "2.0.5",
+    "autocannon": "7.14.0",
     "ts-node": "10.9.2",
     "undici": "6.6.2",
     "typescript": "5.2.2"

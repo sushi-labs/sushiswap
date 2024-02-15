@@ -1,11 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: extractor-staging-ingress
+  name: sushi-api-staging-ingress
   annotations:
     kubernetes.io/ingressClassName: "nginx"
-    kubernetes.io/ingress.global-static-ip-name: "extractor-staging-ip"
-    networking.gke.io/managed-certificates: "extractor-staging-managed-certificate"
+    kubernetes.io/ingress.global-static-ip-name: "sushi-api-staging-ip"
+    networking.gke.io/managed-certificates: "sushi-api-staging-managed-certificate"
     nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
   rules:
@@ -22,7 +22,7 @@ spec:
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: extractor-staging-managed-certificate
+  name: sushi-api-staging-managed-certificate
 spec:
   domains:
     - staging.sushi.com

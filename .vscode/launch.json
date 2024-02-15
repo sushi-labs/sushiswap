@@ -20,7 +20,7 @@
       "watch": false,
       "cleanUp": false,
       "portForward": true,
-      "imageRegistry": "gcr.io/extractor-410208"
+      "imageRegistry": "gcr.io/sushi-api-414412"
     }
   ]
 }
