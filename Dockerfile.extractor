@@ -21,15 +21,11 @@ COPY apis/extractor apis/extractor
 
 COPY config/jest config/jest
 COPY config/typescript config/typescript
-COPY config/viem config/viem
 
 COPY packages/extractor packages/extractor
 COPY packages/router packages/router
 COPY packages/sushi packages/sushi
 COPY packages/tines packages/tines
-COPY packages/trident-sdk packages/trident-sdk
-COPY packages/v2-sdk packages/v2-sdk
-COPY packages/v3-sdk packages/v3-sdk
 
 COPY patches patches
 
