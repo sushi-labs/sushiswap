@@ -71,7 +71,7 @@ async function start() {
     return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
   })
 
-  app.get(`/swap/v3.2/${CHAIN_ID}`, (req, res) => {
+  app.get(`/swap/v1/${CHAIN_ID}`, (req, res) => {
     return swapHandler(client)(req, res)
   })
   // app.get(`/swap/v4/${CHAIN_ID}`, (req, res) => {

@@ -150,6 +150,8 @@ function handler(
           rpAddress[chainId] as Address,
         )
 
+        // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
+
         requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(json)
       } catch (e) {
