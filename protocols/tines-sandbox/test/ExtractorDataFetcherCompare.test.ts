@@ -6,11 +6,6 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
-import {
-  DataFetcher,
-  LiquidityProviders,
-  NativeWrapProvider,
-} from '@sushiswap/router'
 import { expect } from 'chai'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -25,6 +20,11 @@ import {
 import { ChainId } from 'sushi/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
+import {
+  DataFetcher,
+  LiquidityProviders,
+  NativeWrapProvider,
+} from 'sushi/router'
 import { http, Address, Transport, createPublicClient } from 'viem'
 import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
 

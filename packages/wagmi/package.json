@@ -52,7 +52,6 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
-    "@sushiswap/router": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/ui": "workspace:*",

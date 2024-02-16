@@ -6,13 +6,6 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
-import {
-  ConstantProductPoolCode,
-  LiquidityProviders,
-  NativeWrapProvider,
-  PoolCode,
-  Router,
-} from '@sushiswap/router'
 import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -25,6 +18,13 @@ import { ChainId } from 'sushi/chain'
 import { viemConfig } from 'sushi/config'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
+import {
+  ConstantProductPoolCode,
+  LiquidityProviders,
+  NativeWrapProvider,
+  PoolCode,
+  Router,
+} from 'sushi/router'
 import {
   http,
   Address,

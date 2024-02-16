@@ -1,10 +1,10 @@
-import { DataFetcher, Router } from '@sushiswap/router'
 import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, Type, USDC, WNATIVE } from 'sushi/currency'
+import { DataFetcher, Router } from 'sushi/router'
 import { http, Address, createPublicClient } from 'viem'
 import { hardhat } from 'viem/chains'
 

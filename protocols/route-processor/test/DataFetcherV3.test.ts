@@ -1,9 +1,3 @@
-import {
-  DataFetcher,
-  LiquidityProviders,
-  NUMBER_OF_SURROUNDING_TICKS,
-  UniV3PoolCode,
-} from '@sushiswap/router'
 import { CL_MAX_TICK } from '@sushiswap/tines'
 import { CL_MIN_TICK } from '@sushiswap/tines'
 import { UniV3Pool } from '@sushiswap/tines'
@@ -18,6 +12,12 @@ import {
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { ChainId } from 'sushi/chain'
+import {
+  DataFetcher,
+  LiquidityProviders,
+  NUMBER_OF_SURROUNDING_TICKS,
+  UniV3PoolCode,
+} from 'sushi/router'
 import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'

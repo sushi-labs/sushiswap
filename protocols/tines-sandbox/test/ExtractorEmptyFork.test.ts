@@ -6,15 +6,15 @@ import {
   LogFilterType,
   getAlgebraPoolAddress,
 } from '@sushiswap/extractor'
+import { RToken, RouteStatus, findMultiRouteExactIn } from '@sushiswap/tines'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { Token } from 'sushi/currency'
 import {
   ConstantProductPoolCode,
   LiquidityProviders,
   PoolCode,
   Router,
-} from '@sushiswap/router'
-import { RToken, RouteStatus, findMultiRouteExactIn } from '@sushiswap/tines'
-import { routeProcessor2Abi } from 'sushi/abi'
-import { Token } from 'sushi/currency'
+} from 'sushi/router'
 import {
   Abi,
   Address,

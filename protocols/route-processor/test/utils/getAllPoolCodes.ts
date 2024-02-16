@@ -1,5 +1,3 @@
-import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
-import { loadPoolSnapshot, savePoolSnapshot } from '@sushiswap/router'
 import { ChainId } from 'sushi/chain'
 import {
   DAI,
@@ -17,6 +15,8 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from 'sushi/currency'
+import { DataFetcher, LiquidityProviders, PoolCode } from 'sushi/router'
+import { loadPoolSnapshot, savePoolSnapshot } from 'sushi/router'
 
 export async function getAllPoolCodes(
   dataFetcher: DataFetcher,

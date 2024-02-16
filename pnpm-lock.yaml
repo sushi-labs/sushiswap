@@ -111,9 +111,6 @@ importers:
       '@sushiswap/extractor':
         specifier: workspace:*
         version: link:../../packages/extractor
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../../packages/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
@@ -178,9 +175,6 @@ importers:
       '@sushiswap/extractor':
         specifier: workspace:*
         version: link:../../packages/extractor
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../../packages/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
@@ -655,9 +649,6 @@ importers:
       '@sushiswap/react-query':
         specifier: workspace:*
         version: link:../../packages/react-query
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../../packages/router
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../../packages/steer-sdk
@@ -1263,9 +1254,6 @@ importers:
       '@sentry/node':
         specifier: 7.92.0
         version: 7.92.0
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
@@ -1476,9 +1464,6 @@ importers:
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../dexie
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
@@ -1546,73 +1531,6 @@ importers:
       wagmi:
         specifier: 1.4.13
         version: 1.4.13(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
-
-  packages/router:
-    dependencies:
-      '@ethersproject/address':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../tines
-      date-fns:
-        specifier: 2.30.0
-        version: 2.30.0
-      lodash.flatmap:
-        specifier: ^4.5.0
-        version: 4.5.0
-      node-fetch:
-        specifier: 2.6.6
-        version: 2.6.6
-      serialijse:
-        specifier: ^0.3.0
-        version: 0.3.0
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-      tiny-invariant:
-        specifier: 1.3.1
-        version: 1.3.1
-      tiny-warning:
-        specifier: 1.0.3
-        version: 1.0.3
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/lodash.flatmap':
-        specifier: 4.5.7
-        version: 4.5.7
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      '@types/node-fetch':
-        specifier: 2.6.2
-        version: 2.6.2
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.17.5)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      viem:
-        specifier: 1.21.4
-        version: 1.21.4(typescript@5.2.2)(zod@3.21.4)
 
   packages/steer-sdk:
     dependencies:
@@ -1702,12 +1620,21 @@ importers:
       big.js:
         specifier: 6.1.1
         version: 6.1.1
+      date-fns:
+        specifier: 3.3.1
+        version: 3.3.1
       decimal.js-light:
         specifier: 2.5.1
         version: 2.5.1
+      lodash.flatmap:
+        specifier: 4.5.0
+        version: 4.5.0
       numeral:
         specifier: 2.0.6
         version: 2.0.6
+      serialijse:
+        specifier: 0.3.0
+        version: 0.3.0
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -1730,6 +1657,9 @@ importers:
       '@types/big.js':
         specifier: 6.2.0
         version: 6.2.0
+      '@types/lodash.flatmap':
+        specifier: 4.5.9
+        version: 4.5.9
       '@types/numeral':
         specifier: 2.0.3
         version: 2.0.3
@@ -2020,9 +1950,6 @@ importers:
       '@sushiswap/react-query':
         specifier: workspace:*
         version: link:../react-query
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../router
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../steer-sdk
@@ -2136,9 +2063,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../../packages/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
@@ -2283,9 +2207,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/router':
-        specifier: workspace:*
-        version: link:../../packages/router
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
@@ -5621,12 +5542,13 @@ packages:
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
       mkdirp: 0.5.6
-      node-fetch: 2.6.6
+      node-fetch: 2.6.12
       solc: 0.6.12
       ts-generator: 0.1.1
       typechain: 3.0.0(typescript@5.2.2)
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - typescript
       - utf-8-validate
@@ -11742,6 +11664,8 @@ packages:
       chalk: 4.1.2
       execa: 5.1.1
       prompts: 2.4.2
+    transitivePeerDependencies:
+      - encoding
 
   /@react-native-community/cli-config@11.3.7:
     resolution: {integrity: sha512-FDBLku9xskS+bx0YFJFLCmUJhEZ4/MMSC9qPYOGBollWYdgE7k/TWI0IeYFmMALAnbCdKQAYP5N29N55Tad8lg==}
@@ -11752,6 +11676,8 @@ packages:
       deepmerge: 4.3.1
       glob: 7.2.3
       joi: 17.12.0
+    transitivePeerDependencies:
+      - encoding
 
   /@react-native-community/cli-debugger-ui@11.3.7:
     resolution: {integrity: sha512-aVmKuPKHZENR8SrflkMurZqeyLwbKieHdOvaZCh1Nn/0UC5CxWcyST2DB2XQboZwsvr3/WXKJkSUO+SZ1J9qTQ==}
@@ -11781,6 +11707,8 @@ packages:
       sudo-prompt: 9.2.1
       wcwidth: 1.0.1
       yaml: 2.3.1
+    transitivePeerDependencies:
+      - encoding
 
   /@react-native-community/cli-hermes@11.3.7:
     resolution: {integrity: sha512-chkKd8n/xeZkinRvtH6QcYA8rjNOKU3S3Lw/3Psxgx+hAYV0Gyk95qJHTalx7iu+PwjOOqqvCkJo5jCkYLkoqw==}
@@ -11790,6 +11718,8 @@ packages:
       chalk: 4.1.2
       hermes-profile-transformer: 0.0.6
       ip: 1.1.8
+    transitivePeerDependencies:
+      - encoding
 
   /@react-native-community/cli-platform-android@11.3.7:
     resolution: {integrity: sha512-WGtXI/Rm178UQb8bu1TAeFC/RJvYGnbHpULXvE20GkmeJ1HIrMjkagyk6kkY3Ej25JAP2R878gv+TJ/XiRhaEg==}
@@ -11799,6 +11729,8 @@ packages:
       execa: 5.1.1
       glob: 7.2.3
       logkitty: 0.7.1
+    transitivePeerDependencies:
+      - encoding
 
   /@react-native-community/cli-platform-ios@11.3.7:
     resolution: {integrity: sha512-Z/8rseBput49EldX7MogvN6zJlWzZ/4M97s2P+zjS09ZoBU7I0eOKLi0N9wx+95FNBvGQQ/0P62bB9UaFQH2jw==}
@@ -11809,6 +11741,8 @@ packages:
       fast-xml-parser: 4.2.5
       glob: 7.2.3
       ora: 5.4.1
+    transitivePeerDependencies:
+      - encoding
 
   /@react-native-community/cli-plugin-metro@11.3.7(@babel/core@7.23.2):
     resolution: {integrity: sha512-0WhgoBVGF1f9jXcuagQmtxpwpfP+2LbLZH4qMyo6OtYLWLG13n2uRep+8tdGzfNzl1bIuUTeE9yZSAdnf9LfYQ==}
@@ -11827,6 +11761,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
@@ -11844,6 +11779,7 @@ packages:
       ws: 7.5.9
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
@@ -11854,11 +11790,13 @@ packages:
       chalk: 4.1.2
       find-up: 5.0.0
       mime: 2.6.0
-      node-fetch: 2.6.6
+      node-fetch: 2.6.12
       open: 6.4.0
       ora: 5.4.1
       semver: 7.5.4
       shell-quote: 1.8.1
+    transitivePeerDependencies:
+      - encoding
 
   /@react-native-community/cli-types@11.3.7:
     resolution: {integrity: sha512-OhSr/TiDQkXjL5YOs8+hvGSB+HltLn5ZI0+A3DCiMsjUgTTsYh+Z63OtyMpNjrdCEFcg0MpfdU2uxstCS6Dc5g==}
@@ -11890,6 +11828,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
@@ -14963,8 +14902,8 @@ packages:
     dependencies:
       '@types/node': 20.10.0
 
-  /@types/lodash.flatmap@4.5.7:
-    resolution: {integrity: sha512-ZTfFXFpta2MU1SkoidRz4QMPpFJdFuZkDNffofj/b3XGT59vD0cpddO0agiwjp9l8KIjLNHRcaAUpi2/izUmFw==}
+  /@types/lodash.flatmap@4.5.9:
+    resolution: {integrity: sha512-rACVyVCkf+YRthjL7wKb2e96nnZw+bRIEo2nl2ewP0GZLOuRP9QcB7FnyOj7aXI5Vrs6qONnc1lg66FdHVqCmQ==}
     dependencies:
       '@types/lodash': 4.14.197
     dev: true
@@ -21049,6 +20988,10 @@ packages:
     engines: {node: '>=0.11'}
     dependencies:
       '@babel/runtime': 7.22.10
+
+  /date-fns@3.3.1:
+    resolution: {integrity: sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==}
+    dev: false
 
   /dayjs@1.11.7:
     resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
@@ -28994,6 +28937,7 @@ packages:
       metro-runtime: 0.76.8
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
@@ -29032,11 +28976,12 @@ packages:
     dependencies:
       connect: 3.7.0
       debug: 2.6.9
-      node-fetch: 2.6.6
+      node-fetch: 2.6.12
       ws: 7.5.9
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
@@ -29184,6 +29129,7 @@ packages:
       nullthrows: 1.1.1
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
@@ -29231,7 +29177,7 @@ packages:
       metro-transform-plugins: 0.76.8
       metro-transform-worker: 0.76.8
       mime-types: 2.1.35
-      node-fetch: 2.6.6
+      node-fetch: 2.6.12
       nullthrows: 1.1.1
       rimraf: 3.0.2
       serialize-error: 2.1.0
@@ -29242,6 +29188,7 @@ packages:
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
@@ -32454,6 +32401,7 @@ packages:
       - '@babel/core'
       - '@babel/preset-env'
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 

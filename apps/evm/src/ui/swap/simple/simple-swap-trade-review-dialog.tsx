@@ -2,7 +2,6 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { UseTradeReturn } from '@sushiswap/react-query'
-import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
   Button,
   DialogConfirm,
@@ -51,6 +50,7 @@ import {
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
+import { Bridge, LiquidityProviders } from 'sushi/router'
 import { stringify } from 'viem'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import {

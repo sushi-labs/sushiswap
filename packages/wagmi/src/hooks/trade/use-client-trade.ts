@@ -3,7 +3,6 @@ import {
   UseTradeReturnWriteArgs,
   usePrice,
 } from '@sushiswap/react-query'
-import { Router } from '@sushiswap/router'
 import { useQuery } from '@tanstack/react-query'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
@@ -19,6 +18,7 @@ import {
 } from 'sushi/config'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent } from 'sushi/math'
+import { Router } from 'sushi/router'
 import { Address, Hex } from 'viem'
 import { useFeeData } from 'wagmi'
 import { usePoolsCodeMap } from '../pools'

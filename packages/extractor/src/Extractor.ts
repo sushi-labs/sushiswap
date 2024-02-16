@@ -1,8 +1,8 @@
 import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
 
-import { PoolCode } from '@sushiswap/router'
 import { Token } from 'sushi/currency'
+import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
 
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'

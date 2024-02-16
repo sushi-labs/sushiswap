@@ -1,5 +1,4 @@
 import { LogFilterType } from '@sushiswap/extractor'
-import { LiquidityProviders } from '@sushiswap/router'
 import {
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
@@ -26,6 +25,7 @@ import {
   UNISWAP_V2_FACTORY_ADDRESS,
   UNISWAP_V2_INIT_CODE_HASH,
 } from 'sushi/config'
+import { LiquidityProviders } from 'sushi/router'
 import { type Address, createPublicClient } from 'viem'
 
 const RPC_MAX_CALLS_IN_ONE_BATCH = 1000

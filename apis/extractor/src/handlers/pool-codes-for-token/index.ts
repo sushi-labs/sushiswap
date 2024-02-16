@@ -1,7 +1,7 @@
-import { serializePoolCodesJSON } from '@sushiswap/router'
 import { Request, Response } from 'express'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
+import { serializePoolCodesJSON } from 'sushi/router'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config'
 import extractor from '../../extractor'

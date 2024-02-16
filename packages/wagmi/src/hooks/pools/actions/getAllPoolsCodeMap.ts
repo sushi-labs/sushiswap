@@ -1,9 +1,9 @@
-import { DataFetcher, LiquidityProviders, PoolCode } from '@sushiswap/router'
 import {
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
+import { DataFetcher, LiquidityProviders, PoolCode } from 'sushi/router'
 
 import { UsePoolsParams } from '../types'
 

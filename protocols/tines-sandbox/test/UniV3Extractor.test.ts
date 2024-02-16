@@ -6,13 +6,6 @@ import {
   PoolInfo,
   UniV3Extractor,
 } from '@sushiswap/extractor'
-import {
-  LiquidityProviders,
-  NativeWrapProvider,
-  PoolCode,
-  Router,
-  UniswapV3Provider,
-} from '@sushiswap/router'
 import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
@@ -23,6 +16,13 @@ import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
+import {
+  LiquidityProviders,
+  NativeWrapProvider,
+  PoolCode,
+  Router,
+  UniswapV3Provider,
+} from 'sushi/router'
 import {
   http,
   Address,

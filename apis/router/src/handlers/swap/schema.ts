@@ -1,10 +1,10 @@
-import { RouterLiquiditySource } from '@sushiswap/router'
 import { ChainId } from 'sushi/chain'
 import {
   RouteProcessor3_2ChainId,
   isExtractorSupportedChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
+import { RouterLiquiditySource } from 'sushi/router'
 import { Address } from 'viem'
 import z from 'zod'
 

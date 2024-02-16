@@ -45,7 +45,6 @@
     "@sushiswap/extractor": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/node18": "18.2.2",

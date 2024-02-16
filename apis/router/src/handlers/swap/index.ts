@@ -3,7 +3,7 @@ import {
   Router,
   RouterLiquiditySource,
   makeAPI02Object,
-} from '@sushiswap/router'
+} from 'sushi/router'
 
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'

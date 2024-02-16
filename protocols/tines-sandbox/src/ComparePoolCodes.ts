@@ -1,6 +1,6 @@
-import { PoolCode } from '@sushiswap/router'
 import { UniV3Pool } from '@sushiswap/tines'
 import { expect } from 'chai'
+import { PoolCode } from 'sushi/router'
 
 export function comparePoolCodes(pc1: PoolCode, pc2: PoolCode): boolean {
   const p1 = pc1.pool

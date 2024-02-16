@@ -38,7 +38,6 @@
     "@openzeppelin/contracts": "4.8.0",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/tines-sandbox": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",

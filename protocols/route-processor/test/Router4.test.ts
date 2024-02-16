@@ -2,16 +2,6 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import {
-  CURVE_NON_FACTORY_POOLS,
-  DataFetcher,
-  LiquidityProviders,
-  NativeWrapBridgePoolCode,
-  PermitData,
-  PoolFilter,
-  Router,
-  sETH,
-} from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
   BridgeBento,
@@ -55,6 +45,16 @@ import {
   WNATIVE,
 } from 'sushi/currency'
 import { abs } from 'sushi/math'
+import {
+  CURVE_NON_FACTORY_POOLS,
+  DataFetcher,
+  LiquidityProviders,
+  NativeWrapBridgePoolCode,
+  PermitData,
+  PoolFilter,
+  Router,
+  sETH,
+} from 'sushi/router'
 import { type Contract } from 'sushi/types'
 import {
   Address,

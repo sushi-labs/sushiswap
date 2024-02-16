@@ -1,4 +1,3 @@
-import { getCurrencyCombinations } from '@sushiswap/router'
 import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
 import { isSushiSwapV3ChainId } from 'sushi'
 import {
@@ -11,6 +10,7 @@ import {
 import { isBentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { TradeType } from 'sushi/dex'
+import { getCurrencyCombinations } from 'sushi/router'
 
 import { getBentoboxTotalsMap } from '../../bentobox'
 import { UsePoolsParams, UsePoolsReturn } from '../types'
