@@ -4,14 +4,14 @@ import {
   RPool,
   RToken,
   RouteStatus,
+  convertTokenToBento,
   findMultiRouteExactIn,
+  getBentoChainId,
   getBigInt,
 } from '@sushiswap/tines'
 import { ChainId } from 'sushi/chain'
 import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Address, Hex } from 'viem'
-
-import { convertTokenToBento, getBentoChainId } from '@sushiswap/tines'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 import {
   PermitData,
