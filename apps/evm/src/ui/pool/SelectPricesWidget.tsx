@@ -30,11 +30,11 @@ import {
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
 import {
-  FeeAmount,
   SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   getCapitalEfficiency,
   getTokenRatio,
-} from '@sushiswap/v3-sdk'
+} from 'sushi'
 import { useAccount } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi'
 import React, {
@@ -96,7 +96,7 @@ interface SelectPricesWidget {
   token0: Type | undefined
   token1: Type | undefined
   poolAddress: string | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined
   children?: ReactNode

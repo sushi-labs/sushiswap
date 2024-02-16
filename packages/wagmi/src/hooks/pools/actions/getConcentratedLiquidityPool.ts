@@ -1,9 +1,9 @@
 import {
-  FeeAmount,
   SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   SushiSwapV3Pool,
-  computePoolAddress,
-} from '@sushiswap/v3-sdk'
+  computeSushiSwapV3PoolAddress,
+} from 'sushi'
 import { Token, Type } from 'sushi/currency'
 import { Address, readContracts } from 'wagmi'
 
@@ -14,9 +14,13 @@ export const getConcentratedLiquidityPools = async ({
   poolKeys,
 }: {
   chainId: SushiSwapV3ChainId
-  poolKeys: [Type | undefined, Type | undefined, FeeAmount | undefined][]
+  poolKeys: [
+    Type | undefined,
+    Type | undefined,
+    SushiSwapV3FeeAmount | undefined,
+  ][]
 }): Promise<(SushiSwapV3Pool | null)[]> => {
-  let poolTokens: ([Token, Token, FeeAmount] | undefined)[]
+  let poolTokens: ([Token, Token, SushiSwapV3FeeAmount] | undefined)[]
   if (!chainId) {
     poolTokens = new Array(poolKeys.length)
   } else {
@@ -37,7 +41,7 @@ export const getConcentratedLiquidityPools = async ({
   const poolAddresses = poolTokens.map(
     (value) =>
       value &&
-      computePoolAddress({
+      computeSushiSwapV3PoolAddress({
         factoryAddress: getV3FactoryContractConfig(chainId).address,
         tokenA: value[0],
         tokenB: value[1],
@@ -148,12 +152,12 @@ export const getConcentratedLiquidityPool = async ({
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
 }): Promise<SushiSwapV3Pool | null> => {
   const poolKeys: [
     Type | undefined,
     Type | undefined,
-    FeeAmount | undefined,
+    SushiSwapV3FeeAmount | undefined,
   ][] = [[token0, token1, feeAmount]]
   return (await getConcentratedLiquidityPools({ poolKeys, chainId }))[0]
 }

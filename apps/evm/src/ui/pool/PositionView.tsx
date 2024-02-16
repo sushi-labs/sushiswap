@@ -31,7 +31,6 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import {
   useConcentratedLiquidityPositionsFromTokenId,
@@ -41,6 +40,7 @@ import {
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useMemo, useState } from 'react'
+import { SushiSwapV3ChainId } from 'sushi'
 
 import useIsTickAtLimit from 'src/lib/hooks/useIsTickAtLimit'
 import { Chain } from 'sushi/chain'

@@ -5,7 +5,7 @@ import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { ChainId } from 'sushi/chain'
 import { Native, SUSHI, Type } from 'sushi/currency'
-import { createPublicClient } from 'viem'
+import { Address, createPublicClient } from 'viem'
 import { http } from 'viem'
 import { hardhat } from 'viem/chains'
 
@@ -39,7 +39,7 @@ async function makeSwap(
       route,
       fromToken,
       toToken,
-      to,
+      to as Address,
       RouteProcessorAddr,
     )
     const RouteProcessorFactory =

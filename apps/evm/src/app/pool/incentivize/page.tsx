@@ -28,11 +28,6 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import {
-  ADDRESS_ZERO,
-  SushiSwapV3ChainId,
-  SushiSwapV3Pool,
-} from '@sushiswap/v3-sdk'
-import {
   Address,
   readContract,
   useAccount,
@@ -50,10 +45,11 @@ import {
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { format } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
+import { SushiSwapV3ChainId, SushiSwapV3Pool } from 'sushi'
 import { Chain } from 'sushi/chain'
-import { Token, Type, tryParseAmount } from 'sushi/currency'
-
 import { ANGLE_ENABLED_NETWORKS } from 'sushi/config'
+import { Token, Type, tryParseAmount } from 'sushi/currency'
+import { zeroAddress } from 'viem'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,
@@ -161,7 +157,7 @@ const Incentivize = withCheckerRoot(() => {
               numEpoch: epochs,
               isOutOfRangeIncentivized: customizeOOR ? 1 : 0,
               boostedReward: 0,
-              boostingAddress: ADDRESS_ZERO,
+              boostingAddress: zeroAddress,
               rewardId:
                 '0x0000000000000000000000000000000000000000000000000000000000000000',
               additionalData:

@@ -1,5 +1,9 @@
 import { RToken, UniV3Pool } from '@sushiswap/tines'
-import { FeeAmount, TICK_SPACINGS, computePoolAddress } from '@sushiswap/v3-sdk'
+import {
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+  computeSushiSwapV3PoolAddress,
+} from 'sushi'
 import { erc20Abi, tickLensAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Currency, Token, Type } from 'sushi/currency'
@@ -14,21 +18,21 @@ interface StaticPool {
   address: Address
   token0: Token
   token1: Token
-  fee: FeeAmount
+  fee: SushiSwapV3FeeAmount
 }
 
 interface V3Pool {
   address: Address
   token0: Token
   token1: Token
-  fee: FeeAmount
+  fee: SushiSwapV3FeeAmount
   sqrtPriceX96: bigint
   activeTick: number
 }
 
 export const NUMBER_OF_SURROUNDING_TICKS = 1000 // 10% price impact
 
-const getActiveTick = (tickCurrent: number, feeAmount: FeeAmount) =>
+const getActiveTick = (tickCurrent: number, feeAmount: SushiSwapV3FeeAmount) =>
   typeof tickCurrent === 'number' && feeAmount
     ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) *
       TICK_SPACINGS[feeAmount]
@@ -353,23 +357,25 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
     const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
 
-    const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] =
-      currencyCombinations.reduce<[Currency, Currency, FeeAmount][]>(
-        (list, [tokenA, tokenB]) => {
-          if (tokenA !== undefined && tokenB !== undefined) {
-            return list.concat([
-              [tokenA, tokenB, FeeAmount.LOWEST],
-              [tokenA, tokenB, FeeAmount.LOW],
-              [tokenA, tokenB, FeeAmount.MEDIUM],
-              [tokenA, tokenB, FeeAmount.HIGH],
-            ])
-          }
-          return []
-        },
-        [],
-      )
+    const allCurrencyCombinationsWithAllFees: [
+      Type,
+      Type,
+      SushiSwapV3FeeAmount,
+    ][] = currencyCombinations.reduce<
+      [Currency, Currency, SushiSwapV3FeeAmount][]
+    >((list, [tokenA, tokenB]) => {
+      if (tokenA !== undefined && tokenB !== undefined) {
+        return list.concat([
+          [tokenA, tokenB, SushiSwapV3FeeAmount.LOWEST],
+          [tokenA, tokenB, SushiSwapV3FeeAmount.LOW],
+          [tokenA, tokenB, SushiSwapV3FeeAmount.MEDIUM],
+          [tokenA, tokenB, SushiSwapV3FeeAmount.HIGH],
+        ])
+      }
+      return []
+    }, [])
 
-    const filtered: [Token, Token, FeeAmount][] = []
+    const filtered: [Token, Token, SushiSwapV3FeeAmount][] = []
     allCurrencyCombinationsWithAllFees.forEach(
       ([currencyA, currencyB, feeAmount]) => {
         if (currencyA && currencyB && feeAmount) {
@@ -385,7 +391,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       },
     )
     return filtered.map(([currencyA, currencyB, fee]) => ({
-      address: computePoolAddress({
+      address: computeSushiSwapV3PoolAddress({
         factoryAddress: this.factory[this.chainId as keyof typeof this.factory],
         tokenA: currencyA.wrapped,
         tokenB: currencyB.wrapped,

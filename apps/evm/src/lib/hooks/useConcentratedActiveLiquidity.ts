@@ -1,11 +1,11 @@
 'use client'
 
 import {
-  FeeAmount,
   SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   TICK_SPACINGS,
   tickToPrice,
-} from '@sushiswap/v3-sdk'
+} from 'sushi'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { Type } from 'sushi/currency'
@@ -24,7 +24,7 @@ export interface TickProcessed {
 
 const getActiveTick = (
   tickCurrent: number | undefined,
-  feeAmount: FeeAmount | undefined,
+  feeAmount: SushiSwapV3FeeAmount | undefined,
 ) =>
   tickCurrent !== undefined && feeAmount
     ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) *
@@ -40,7 +40,7 @@ const useAllV3Ticks = ({
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
 }) => {
   // TODO: Add subgraph support
   return useTicks({ token0, token1, feeAmount, chainId })
@@ -56,7 +56,7 @@ export const useConcentratedActiveLiquidity = ({
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   enabled?: boolean
 }) => {
   const { data: pool, isLoading: isPoolLoading } = useConcentratedLiquidityPool(

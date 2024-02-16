@@ -4,7 +4,7 @@ import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { Position, SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi'
 import {
   getV3NonFungiblePositionManagerConractConfig,
   useConcentratedPositionOwner,
@@ -28,7 +28,7 @@ interface ConcentratedLiquidityWidget {
   account: string | undefined
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   setToken0?(token: Type): void
   setToken1?(token: Type): void
   tokensLoading: boolean

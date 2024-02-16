@@ -1,12 +1,12 @@
 'use client'
 
+import { useMemo } from 'react'
 import {
   TridentChainId,
   TridentStablePool,
   computeTridentStablePoolAddress,
   isTridentChainId,
-} from '@sushiswap/trident-sdk'
-import { useMemo } from 'react'
+} from 'sushi'
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'

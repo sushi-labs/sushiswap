@@ -1,4 +1,4 @@
-import { TridentConstantPool } from '@sushiswap/trident-sdk'
+import { TridentConstantPool } from 'sushi'
 import {
   tridentConstantPoolAbi,
   tridentConstantPoolFactoryAbi,

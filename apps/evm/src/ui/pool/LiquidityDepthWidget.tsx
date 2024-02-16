@@ -2,7 +2,7 @@
 
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from 'sushi'
 import React, { FC, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 

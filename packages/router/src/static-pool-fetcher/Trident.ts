@@ -2,7 +2,7 @@ import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
-} from '@sushiswap/trident-sdk'
+} from 'sushi'
 import {
   tridentGetPoolsAbi,
   tridentPoolsCountAbi,

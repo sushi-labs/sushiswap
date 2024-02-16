@@ -4,13 +4,6 @@ import { PlusIcon } from '@heroicons/react-v1/solid'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
-import {
-  SUSHISWAP_V2_ROUTER_ADDRESS,
-  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
-  SushiSwapV2ChainId,
-  isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
 import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
@@ -29,6 +22,13 @@ import React, {
 import { DISABLED_CHAIN_IDS } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
+import {
+  SUSHISWAP_V2_ROUTER_ADDRESS,
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SushiSwapV2ChainId,
+  SushiSwapV2Pool,
+  isSushiSwapV2ChainId,
+} from 'sushi'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   Amount,

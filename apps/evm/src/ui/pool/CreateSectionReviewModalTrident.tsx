@@ -1,10 +1,4 @@
 import {
-  TridentConstantPool,
-  TridentStablePool,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
-} from '@sushiswap/trident-sdk'
-import {
   Button,
   DialogConfirm,
   DialogContent,
@@ -48,6 +42,12 @@ import {
   deployNewPoolAction,
 } from 'src/lib/actions'
 import { APPROVE_TAG_CREATE_TRIDENT } from 'src/lib/constants'
+import {
+  TridentConstantPool,
+  TridentStablePool,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
+} from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'

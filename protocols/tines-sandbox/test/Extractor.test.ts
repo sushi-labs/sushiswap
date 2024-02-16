@@ -15,24 +15,22 @@ import {
 } from '@sushiswap/router'
 import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_INIT_CODE_HASH,
-} from '@sushiswap/v2-sdk'
-import {
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PANCAKESWAP_V3_INIT_CODE_HASH,
-  POOL_INIT_CODE_HASH,
   PancakeSwapV3ChainId,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
   SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
+  UNISWAP_V3_INIT_CODE_HASH,
+} from 'sushi'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import { viemConfig } from 'sushi/config'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { http, Address, Transport, createPublicClient } from 'viem'
@@ -110,7 +108,7 @@ function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash: UNISWAP_V3_INIT_CODE_HASH[chain],
   }
 }
 
@@ -403,8 +401,8 @@ it.skip('Extractor Polygon zkevm infinite work test', async () => {
 
 it.skip('Extractor AVALANCH infinite work test', async () => {
   await startInfinitTest({
-    transport: config[ChainId.AVALANCHE].transport,
-    chain: config[ChainId.AVALANCHE].chain as Chain,
+    transport: viemConfig[ChainId.AVALANCHE].transport,
+    chain: viemConfig[ChainId.AVALANCHE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.AVALANCHE),
       {
@@ -426,8 +424,8 @@ it.skip('Extractor AVALANCH infinite work test', async () => {
 
 it.skip('Extractor Base infinite work test', async () => {
   await startInfinitTest({
-    ...config[ChainId.BASE],
-    chain: config[ChainId.BASE].chain as Chain,
+    ...viemConfig[ChainId.BASE],
+    chain: viemConfig[ChainId.BASE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
       {
@@ -476,8 +474,8 @@ it.skip('Extractor Base infinite work test', async () => {
 
 it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
-    transport: config[ChainId.BSC].transport,
-    chain: config[ChainId.BSC].chain as Chain,
+    transport: viemConfig[ChainId.BSC].transport,
+    chain: viemConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
     tickHelperContract: TickLensContract[ChainId.BSC],

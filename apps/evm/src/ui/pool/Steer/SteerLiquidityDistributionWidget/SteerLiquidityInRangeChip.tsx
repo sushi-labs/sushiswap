@@ -2,7 +2,7 @@
 
 import { Pool } from '@sushiswap/client'
 import { Chip, SkeletonBox, classNames } from '@sushiswap/ui'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from 'sushi'
 import React, { FC, useMemo } from 'react'
 import { Token } from 'sushi/currency'
 import { useConcentratedActiveLiquidity } from '../../../../lib/hooks/useConcentratedActiveLiquidity'

@@ -29,12 +29,6 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  NonfungiblePositionManager,
-  Position,
-  SushiSwapV3ChainId,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
   ConcentratedLiquidityPosition,
   getV3NonFungiblePositionManagerConractConfig,
   useNetwork,
@@ -52,6 +46,12 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { unwrapToken } from 'src/lib/functions'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import {
+  NonfungiblePositionManager,
+  Position,
+  SushiSwapV3ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi'
 import { Chain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'

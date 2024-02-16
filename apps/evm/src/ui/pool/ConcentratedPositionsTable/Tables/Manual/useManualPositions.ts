@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
+import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS, isSushiSwapV3ChainId } from 'sushi'
 import {
   Address,
   useAccount,

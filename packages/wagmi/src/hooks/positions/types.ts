@@ -1,4 +1,4 @@
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from 'sushi'
 
 import { useConcentratedLiquidityPositions } from './hooks'
 

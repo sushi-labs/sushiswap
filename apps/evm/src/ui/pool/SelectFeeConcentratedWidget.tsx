@@ -16,33 +16,33 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui/components/dots'
-import { FeeAmount } from '@sushiswap/v3-sdk'
 import React, { FC, memo, useMemo } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
+import { SushiSwapV3FeeAmount } from 'sushi'
 import { Type } from 'sushi/currency'
 
 export const FEE_OPTIONS = [
   {
-    value: FeeAmount.LOWEST,
+    value: SushiSwapV3FeeAmount.LOWEST,
     subtitle: 'Best for very stable pairs.',
   },
   {
-    value: FeeAmount.LOW,
+    value: SushiSwapV3FeeAmount.LOW,
     subtitle: 'Best for less volatile pairs.',
   },
   {
-    value: FeeAmount.MEDIUM,
+    value: SushiSwapV3FeeAmount.MEDIUM,
     subtitle: 'Best for most pairs.',
   },
   {
-    value: FeeAmount.HIGH,
+    value: SushiSwapV3FeeAmount.HIGH,
     subtitle: 'Best for volatile pairs.',
   },
 ]
 
 interface SelectFeeConcentratedWidget {
-  feeAmount: FeeAmount | undefined
-  setFeeAmount: (fee: FeeAmount) => void
+  feeAmount: SushiSwapV3FeeAmount | undefined
+  setFeeAmount: (fee: SushiSwapV3FeeAmount) => void
   token0: Type | undefined
   token1: Type | undefined
   title?: string

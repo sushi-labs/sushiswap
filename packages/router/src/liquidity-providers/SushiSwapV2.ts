@@ -1,8 +1,8 @@
+import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
-} from '@sushiswap/v2-sdk'
-import { ChainId } from 'sushi/chain'
+} from 'sushi/config'
 import { PublicClient } from 'viem'
 
 import { LiquidityProviders } from './LiquidityProvider'

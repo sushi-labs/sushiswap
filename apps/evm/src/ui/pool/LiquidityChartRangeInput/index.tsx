@@ -1,10 +1,10 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import {
-  FeeAmount,
   SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   getPriceRangeWithTokenRatio,
-} from '@sushiswap/v3-sdk'
+} from 'sushi'
 import { format } from 'd3'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
@@ -20,26 +20,26 @@ const brushKeyToFieldKey: Record<HandleType, 'LOWER' | 'UPPER'> = {
   w: 'UPPER',
 }
 
-const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
-  [FeeAmount.LOWEST]: {
+const ZOOM_LEVELS: Record<SushiSwapV3FeeAmount, ZoomLevels> = {
+  [SushiSwapV3FeeAmount.LOWEST]: {
     initialMin: 0.999,
     initialMax: 1.001,
     min: 0.00001,
     max: 1.5,
   },
-  [FeeAmount.LOW]: {
+  [SushiSwapV3FeeAmount.LOW]: {
     initialMin: 0.999,
     initialMax: 1.001,
     min: 0.00001,
     max: 1.5,
   },
-  [FeeAmount.MEDIUM]: {
+  [SushiSwapV3FeeAmount.MEDIUM]: {
     initialMin: 0.5,
     initialMax: 2,
     min: 0.00001,
     max: 20,
   },
-  [FeeAmount.HIGH]: {
+  [SushiSwapV3FeeAmount.HIGH]: {
     initialMin: 0.5,
     initialMax: 2,
     min: 0.00001,
@@ -84,7 +84,7 @@ export default function LiquidityChartRangeInput({
   chainId: SushiSwapV3ChainId
   currencyA: Type | undefined
   currencyB: Type | undefined
-  feeAmount?: FeeAmount
+  feeAmount?: SushiSwapV3FeeAmount
   ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
   priceRange: number | undefined
   price: number | undefined
@@ -263,7 +263,7 @@ export default function LiquidityChartRangeInput({
             brushDomain={brushDomain}
             onBrushDomainChange={onBrushDomainChangeEnded}
             getNewRangeWhenBrushing={getNewRangeWhenBrushing}
-            zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
+            zoomLevels={ZOOM_LEVELS[feeAmount ?? SushiSwapV3FeeAmount.MEDIUM]}
             priceRange={priceRange}
             hideBrushes={hideBrushes}
           />

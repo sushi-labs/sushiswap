@@ -11,7 +11,7 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui/components/slot'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from 'sushi'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi'

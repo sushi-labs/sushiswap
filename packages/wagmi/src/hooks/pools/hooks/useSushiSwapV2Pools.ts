@@ -1,13 +1,13 @@
 'use client'
 
+import { useMemo } from 'react'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
   SushiSwapV2Pool,
   computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
-import { useMemo } from 'react'
+} from 'sushi'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import { Address, useContractReads } from 'wagmi'

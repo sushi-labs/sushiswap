@@ -1,30 +1,28 @@
 import { Page } from '@playwright/test'
 import {
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
-  isTridentChainId,
-} from '@sushiswap/trident-sdk'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SushiSwapV2ChainId,
-  computeSushiSwapV2PoolAddress,
-  isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
-import {
-  FeeAmount,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-  computePoolAddress,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
   NextFixture,
   expect,
   test,
 } from 'next/experimental/testmode/playwright'
+import {
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  computeSushiSwapV3PoolAddress,
+  isSushiSwapV3ChainId,
+} from 'sushi'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SushiSwapV2ChainId,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+  computeSushiSwapV2PoolAddress,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
+  isSushiSwapV2ChainId,
+  isTridentChainId,
+} from 'sushi'
 import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import { zeroAddress } from 'viem'
@@ -231,16 +229,16 @@ test.describe('V3', () => {
       next,
       NATIVE_TOKEN.wrapped,
       FAKE_TOKEN,
-      FeeAmount.HIGH,
+      SushiSwapV3FeeAmount.HIGH,
       'SUSHISWAP_V3',
     )
 
-    const poolAddress = computePoolAddress({
+    const poolAddress = computeSushiSwapV3PoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
-      fee: FeeAmount.HIGH,
+      fee: SushiSwapV3FeeAmount.HIGH,
     })
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
@@ -923,7 +921,7 @@ async function mockPoolApi(
     let address
 
     if (protocol === 'SUSHISWAP_V3') {
-      address = computePoolAddress({
+      address = computeSushiSwapV3PoolAddress({
         factoryAddress:
           SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
         tokenA,

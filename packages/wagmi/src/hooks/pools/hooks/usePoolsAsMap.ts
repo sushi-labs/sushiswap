@@ -1,19 +1,17 @@
+import { useQuery } from '@tanstack/react-query'
 import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SushiSwapV2Pool,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentConstantPool,
   TridentStablePool,
+  computeSushiSwapV2PoolAddress,
   computeTridentConstantPoolAddress,
   computeTridentStablePoolAddress,
-  isTridentChainId,
-} from '@sushiswap/trident-sdk'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SushiSwapV2Pool,
-  computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
-import { useQuery } from '@tanstack/react-query'
+  isTridentChainId,
+} from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'

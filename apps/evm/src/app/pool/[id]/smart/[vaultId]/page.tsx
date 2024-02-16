@@ -2,12 +2,12 @@ import { getSteerVault } from '@sushiswap/client'
 import { SteerVault } from '@sushiswap/client'
 import { getSteerVaultPositions, getTokenRatios } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
-import { tickToPrice } from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
 import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
+import { tickToPrice } from 'sushi'
+import { viemConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber, unsanitize } from 'sushi/format'
 
@@ -62,7 +62,7 @@ async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
   const positions =
     (await getSteerVaultPositions({
       client: createPublicClient(
-        config[vault.pool.chainId as keyof typeof config]!,
+        viemConfig[vault.pool.chainId as keyof typeof viemConfig]!,
       ),
       vaultId: vault.id,
     })) || []

@@ -3,7 +3,7 @@
 import { Pool } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui'
-import { SushiSwapV3ChainId, tickToPrice } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId, tickToPrice } from 'sushi'
 import React, { FC, useMemo } from 'react'
 
 import { useConcentratedDerivedMintInfo } from '../../ConcentratedLiquidityProvider'

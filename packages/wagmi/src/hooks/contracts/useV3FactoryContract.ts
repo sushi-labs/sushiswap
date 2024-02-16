@@ -1,9 +1,6 @@
-import {
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
+import { SUSHISWAP_V3_FACTORY_ADDRESS, SushiSwapV3ChainId } from 'sushi'
 import { WalletClient } from 'viem'
 import { Address, usePublicClient, useWalletClient } from 'wagmi'
 

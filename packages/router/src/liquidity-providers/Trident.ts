@@ -6,12 +6,12 @@ import {
   StableSwapRPool,
   toShareBI,
 } from '@sushiswap/tines'
+import { add, getUnixTime } from 'date-fns'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
-} from '@sushiswap/trident-sdk'
-import { add, getUnixTime } from 'date-fns'
+} from 'sushi'
 import {
   balanceOfAbi,
   getReservesAbi,

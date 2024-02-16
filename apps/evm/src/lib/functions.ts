@@ -1,16 +1,15 @@
 import { Pool, Protocol } from '@sushiswap/client'
-import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
-import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import {
-  FeeAmount,
   Position,
+  SushiSwapV3FeeAmount,
   TICK_SPACINGS,
   TickMath,
   encodeSqrtRatioX96,
   nearestUsableTick,
   priceToClosestTick,
   tickToPrice,
-} from '@sushiswap/v3-sdk'
+} from 'sushi'
+import { SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import {
   DAI,
@@ -103,7 +102,7 @@ export function tryParsePrice(
 export function tryParseTick(
   baseToken?: Token,
   quoteToken?: Token,
-  feeAmount?: FeeAmount,
+  feeAmount?: SushiSwapV3FeeAmount,
   value?: string,
 ): number | undefined {
   if (!baseToken || !quoteToken || !feeAmount || !value) {

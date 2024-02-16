@@ -42,7 +42,6 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/tines-sandbox": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@sushiswap/viem-config": "workspace:*",
     "@typechain/ethers-v5": "^10.0.0",
     "@typechain/hardhat": "^6.1.0",
     "@types/chai": "^4.3.0",

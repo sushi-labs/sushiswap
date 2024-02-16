@@ -117,15 +117,6 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
-      '@sushiswap/v2-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v2-sdk
-      '@sushiswap/v3-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v3-sdk
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@wagmi/core':
         specifier: 1.4.13
         version: 1.4.13(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
@@ -193,15 +184,6 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
-      '@sushiswap/v2-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v2-sdk
-      '@sushiswap/v3-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v3-sdk
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@wagmi/core':
         specifier: 1.4.5
         version: 1.4.5(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
@@ -685,21 +667,9 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../../packages/tines
-      '@sushiswap/trident-sdk':
-        specifier: workspace:*
-        version: link:../../packages/trident-sdk
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@sushiswap/v2-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v2-sdk
-      '@sushiswap/v3-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v3-sdk
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@sushiswap/wagmi':
         specifier: workspace:*
         version: link:../../packages/wagmi
@@ -1111,30 +1081,6 @@ importers:
 
   config/typescript: {}
 
-  config/viem:
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../jest
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.11.18)
-      sushi:
-        specifier: workspace:*
-        version: link:../../packages/sushi
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      viem:
-        specifier: 1.21.4
-        version: 1.21.4(typescript@5.2.2)(zod@3.21.4)
-
   config/wagmi:
     devDependencies:
       '@sushiswap/jest-config':
@@ -1167,9 +1113,6 @@ importers:
       '@sushiswap/token-price-api':
         specifier: workspace:*
         version: link:../../apis/token-price
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -1326,12 +1269,6 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
-      '@sushiswap/v2-sdk':
-        specifier: workspace:*
-        version: link:../v2-sdk
-      '@sushiswap/v3-sdk':
-        specifier: workspace:*
-        version: link:../v3-sdk
       '@uniswap/v3-core':
         specifier: 1.0.1
         version: 1.0.1
@@ -1618,18 +1555,6 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
-      '@sushiswap/trident-sdk':
-        specifier: workspace:*
-        version: link:../trident-sdk
-      '@sushiswap/v2-sdk':
-        specifier: workspace:*
-        version: link:../v2-sdk
-      '@sushiswap/v3-sdk':
-        specifier: workspace:*
-        version: link:../v3-sdk
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
@@ -1753,12 +1678,27 @@ importers:
 
   packages/sushi:
     dependencies:
+      '@ethersproject/abi':
+        specifier: 5.7.0
+        version: 5.7.0
+      '@ethersproject/address':
+        specifier: 5.7.0
+        version: 5.7.0
+      '@ethersproject/solidity':
+        specifier: 5.7.0
+        version: 5.7.0
       '@sushiswap/tines':
         specifier: '*'
         version: link:../tines
       '@uniswap/token-lists':
         specifier: 1.0.0-beta.33
         version: 1.0.0-beta.33
+      '@uniswap/v3-core':
+        specifier: 1.0.1
+        version: 1.0.1
+      '@uniswap/v3-periphery':
+        specifier: 1.4.4
+        version: 1.4.4
       big.js:
         specifier: 6.1.1
         version: 6.1.1
@@ -1771,6 +1711,9 @@ importers:
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
+      tiny-warning:
+        specifier: 1.0.3
+        version: 1.0.3
       toformat:
         specifier: 2.0.0
         version: 2.0.0
@@ -1787,15 +1730,9 @@ importers:
       '@types/big.js':
         specifier: 6.2.0
         version: 6.2.0
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
       '@types/numeral':
         specifier: 2.0.3
         version: 2.0.3
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.11.18)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1848,58 +1785,6 @@ importers:
       viem:
         specifier: 1.21.4
         version: 1.21.4(typescript@5.2.2)(zod@3.21.4)
-
-  packages/trident-sdk:
-    dependencies:
-      '@ethersproject/abi':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/address':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/bignumber':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/solidity':
-        specifier: 5.7.0
-        version: 5.7.0
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-      tiny-invariant:
-        specifier: 1.3.1
-        version: 1.3.1
-      tiny-warning:
-        specifier: 1.0.3
-        version: 1.0.3
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.17.5)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
 
   packages/ui:
     dependencies:
@@ -2109,128 +1994,6 @@ importers:
         specifier: 1.4.13
         version: 1.4.13(@types/react@18.2.14)(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)
 
-  packages/v2-sdk:
-    dependencies:
-      '@ethersproject/abi':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/address':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/bignumber':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/solidity':
-        specifier: 5.7.0
-        version: 5.7.0
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-      tiny-invariant:
-        specifier: 1.3.1
-        version: 1.3.1
-      tiny-warning:
-        specifier: 1.0.3
-        version: 1.0.3
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.17.5)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-
-  packages/v3-sdk:
-    dependencies:
-      '@ethersproject/abi':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/address':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/bignumber':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@ethersproject/solidity':
-        specifier: 5.7.0
-        version: 5.7.0
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../tines
-      '@uniswap/swap-router-contracts':
-        specifier: 1.3.0
-        version: 1.3.0(hardhat@2.17.0)
-      '@uniswap/v3-core':
-        specifier: 1.0.1
-        version: 1.0.1
-      '@uniswap/v3-periphery':
-        specifier: 1.4.3
-        version: 1.4.3
-      '@uniswap/v3-staker':
-        specifier: 1.0.2
-        version: 1.0.2
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-      tiny-invariant:
-        specifier: 1.3.1
-        version: 1.3.1
-      tiny-warning:
-        specifier: 1.0.3
-        version: 1.0.3
-      zod:
-        specifier: 3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.17.5)
-      ts-jest:
-        specifier: 29.1.1
-        version: 29.1.1(@babel/core@7.23.2)(jest@29.7.0)(typescript@5.2.2)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-
   packages/wagmi:
     dependencies:
       '@headlessui/react':
@@ -2266,21 +2029,9 @@ importers:
       '@sushiswap/tines':
         specifier: workspace:*
         version: link:../tines
-      '@sushiswap/trident-sdk':
-        specifier: workspace:*
-        version: link:../trident-sdk
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../ui
-      '@sushiswap/v2-sdk':
-        specifier: workspace:*
-        version: link:../v2-sdk
-      '@sushiswap/v3-sdk':
-        specifier: workspace:*
-        version: link:../v3-sdk
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@sushiswap/wagmi-config':
         specifier: workspace:*
         version: link:../../config/wagmi
@@ -2397,9 +2148,6 @@ importers:
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@typechain/ethers-v5':
         specifier: ^10.0.0
         version: 10.2.1(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@5.2.2)
@@ -2544,15 +2292,6 @@ importers:
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
-      '@sushiswap/v2-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v2-sdk
-      '@sushiswap/v3-sdk':
-        specifier: workspace:*
-        version: link:../../packages/v3-sdk
-      '@sushiswap/viem-config':
-        specifier: workspace:*
-        version: link:../../config/viem
       '@tsconfig/node18':
         specifier: 18.2.2
         version: 18.2.2
@@ -14829,8 +14568,8 @@ packages:
       '@types/node': 20.10.0
       '@types/responselike': 1.0.0
 
-  /@types/chai-subset@1.3.3:
-    resolution: {integrity: sha512-frBecisrNGz+F4T6bcc+NLeolfiojh5FxW2klu669+8BARtyQv2C/GkNW6FUodVe4BroGMP/wER/YDGc7rEllw==}
+  /@types/chai-subset@1.3.5:
+    resolution: {integrity: sha512-c2mPnw+xHtXDoHmdtcCXGwyLMiauiAyxWMzhGpqHC4nqI/Y5G2XhTampslK2rb59kpcuHon03UH8W6iYUzw88A==}
     dependencies:
       '@types/chai': 4.3.5
     dev: true
@@ -15081,7 +14820,7 @@ packages:
     resolution: {integrity: sha512-JNvhIEyxVW6EoMIFIvj93ZOywYFatlpu9deeH6eSx6PE3WHYvHaQtmHmQeNw7aA81bYGBPPQqdtBm6b1SsQMmA==}
     dependencies:
       '@types/eslint': 8.44.4
-      '@types/estree': 1.0.1
+      '@types/estree': 1.0.5
     dev: true
 
   /@types/eslint@8.44.4:
@@ -15103,6 +14842,10 @@ packages:
 
   /@types/estree@1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
+
+  /@types/estree@1.0.5:
+    resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+    dev: true
 
   /@types/event-loop-lag@1.0.33:
     resolution: {integrity: sha512-wDHcx+2jqIOO3MmN/zvp8IUn9o50ZAUCZSG2jShMJsB8NaWz4aVqFy6jppKDavy0lRYix5gzWXQ/EBnTa+EXFA==}
@@ -15854,6 +15597,18 @@ packages:
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-core': 1.0.0
       base64-sol: 1.0.1
+    dev: true
+
+  /@uniswap/v3-periphery@1.4.4:
+    resolution: {integrity: sha512-S4+m+wh8HbWSO3DKk4LwUCPZJTpCugIsHrWR86m/OrUyvSqGDTXKFfc2sMuGXCZrD1ZqO3rhQsKgdWg3Hbb2Kw==}
+    engines: {node: '>=10'}
+    dependencies:
+      '@openzeppelin/contracts': 3.4.2-solc-0.7
+      '@uniswap/lib': 4.0.1-alpha
+      '@uniswap/v2-core': 1.0.1
+      '@uniswap/v3-core': 1.0.1
+      base64-sol: 1.0.1
+    dev: false
 
   /@uniswap/v3-sdk@3.10.0(hardhat@2.17.0):
     resolution: {integrity: sha512-sbmSA1O+Ct960r66Ie/c1rOmVadpwRu8nQ79pGICv0pZJdnFIQ/SReG3F+iC2C2UNNjNP6aC2WDUggXrjyrgnA==}
@@ -15863,7 +15618,7 @@ packages:
       '@ethersproject/solidity': 5.7.0
       '@uniswap/sdk-core': 4.0.9
       '@uniswap/swap-router-contracts': 1.3.0(hardhat@2.17.0)
-      '@uniswap/v3-periphery': 1.4.3
+      '@uniswap/v3-periphery': 1.4.4
       '@uniswap/v3-staker': 1.0.0
       tiny-invariant: 1.3.1
       tiny-warning: 1.0.3
@@ -15878,16 +15633,7 @@ packages:
     dependencies:
       '@openzeppelin/contracts': 3.4.1-solc-0.7-2
       '@uniswap/v3-core': 1.0.0
-      '@uniswap/v3-periphery': 1.4.3
-    dev: false
-
-  /@uniswap/v3-staker@1.0.2:
-    resolution: {integrity: sha512-+swIh/yhY9GQGyQxT4Gz54aXYLK+uc3qsmIvaAX+FjvhcL9TGOvS9tXbQsCZM4AJW63vj6TLsmHIjGMIePL1BQ==}
-    engines: {node: '>=10'}
-    dependencies:
-      '@openzeppelin/contracts': 3.4.1-solc-0.7-2
-      '@uniswap/v3-core': 1.0.0
-      '@uniswap/v3-periphery': 1.4.3
+      '@uniswap/v3-periphery': 1.4.4
     dev: false
 
   /@upstash/core-analytics@0.0.6:
@@ -16210,7 +15956,7 @@ packages:
   /@vitest/snapshot@0.34.6:
     resolution: {integrity: sha512-B3OZqYn6k4VaN011D+ve+AA4whM4QkcwcrwaKwAbyyvS/NB1hCWjFIBQxAQQSQir9/RtyAAGuq+4RJmbn2dH4w==}
     dependencies:
-      magic-string: 0.30.2
+      magic-string: 0.30.7
       pathe: 1.1.1
       pretty-format: 29.7.0
     dev: true
@@ -16218,14 +15964,14 @@ packages:
   /@vitest/spy@0.34.6:
     resolution: {integrity: sha512-xaCvneSaeBw/cz8ySmF7ZwGvL0lBjfvqc1LpQ/vcdHEvpLn3Ff1vAvjw+CoGn0802l++5L/pxb7whwcWAw+DUQ==}
     dependencies:
-      tinyspy: 2.1.1
+      tinyspy: 2.2.1
     dev: true
 
   /@vitest/utils@0.34.6:
     resolution: {integrity: sha512-IG5aDD8S6zlvloDsnzHw0Ut5xczlF+kv2BOTo+iXfPr54Yhi5qbVOgGB1hZaVq4iJ4C/MZ2J0y15IlsV/ZcI0A==}
     dependencies:
       diff-sequences: 29.6.3
-      loupe: 2.3.6
+      loupe: 2.3.7
       pretty-format: 29.7.0
     dev: true
 
@@ -17627,6 +17373,11 @@ packages:
   /acorn-walk@8.2.0:
     resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
     engines: {node: '>=0.4.0'}
+
+  /acorn-walk@8.3.2:
+    resolution: {integrity: sha512-cjkyv4OtNCIeqhHrfS81QWXoCBPExR/J62oyEqepVw8WaQeSqpW2uhuLPh1m9eWhDuOo/jUXVTlifvesOWp/4A==}
+    engines: {node: '>=0.4.0'}
+    dev: true
 
   /acorn@6.4.2:
     resolution: {integrity: sha512-XtGIhXwF8YM8bJhGxG5kXgjkEuNGLTkoYqVE+KMR+aspr4KGYmKYg7yUe3KghyQ9yheNwLnjmzh/7+gfDBmHCQ==}
@@ -19854,7 +19605,7 @@ packages:
       check-error: 1.0.3
       deep-eql: 4.1.3
       get-func-name: 2.0.2
-      loupe: 2.3.6
+      loupe: 2.3.7
       pathval: 1.1.1
       type-detect: 4.0.8
     dev: true
@@ -28677,6 +28428,12 @@ packages:
       get-func-name: 2.0.0
     dev: true
 
+  /loupe@2.3.7:
+    resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
+    dependencies:
+      get-func-name: 2.0.2
+    dev: true
+
   /lower-case-first@2.0.2:
     resolution: {integrity: sha512-EVm/rR94FJTZi3zefZ82fLWab+GX14LJN4HrWBcuo6Evmsl9hEfnqxgcHCKb9q+mNf6EVdsjx/qucYFIIB84pg==}
     dependencies:
@@ -28770,6 +28527,13 @@ packages:
 
   /magic-string@0.30.2:
     resolution: {integrity: sha512-lNZdu7pewtq/ZvWUp9Wpf/x7WzMTsR26TWV03BRZrXFsv+BI6dy8RAiKgm1uM/kyR0rCfUcqvOlXKG66KhIGug==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.4.15
+    dev: true
+
+  /magic-string@0.30.7:
+    resolution: {integrity: sha512-8vBuFF/I/+OSLRmdf2wwFCJCz+nSn0m6DPvGH1fS/KiQoSaR+sETbov0eIk9KhEKy8CYqIkIAnbohxT/4H0kuA==}
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
@@ -34710,10 +34474,6 @@ packages:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
 
-  /std-env@3.3.3:
-    resolution: {integrity: sha512-Rz6yejtVyWnVjC1RFvNmYL10kgjC49EOghxWn0RFqlCHGFpQx+Xe7yW3I4ceK1SGrWIGMjD5Kbue8W/udkbMJg==}
-    dev: true
-
   /std-env@3.7.0:
     resolution: {integrity: sha512-JPbdCEQLj1w5GilpiHAx3qJvFndqybBysA3qUOnznweH4QbNYUsW/ea8QzSrnh0vNsezMMw5bcVool8lM0gwzg==}
 
@@ -35639,8 +35399,8 @@ packages:
     resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
     dev: false
 
-  /tinybench@2.5.0:
-    resolution: {integrity: sha512-kRwSG8Zx4tjF9ZiyH4bhaebu+EDz1BOx9hOigYHlUW4xxI/wKIUQUqo018UlU4ar6ATPBsaMrdbKZ+tmPdohFA==}
+  /tinybench@2.6.0:
+    resolution: {integrity: sha512-N8hW3PG/3aOoZAN5V/NSAEDz0ZixDSSt5b/a05iqtpgfLWMSVuCo7w0k2vVvEjdrIoeGqZzweX2WlyioNIHchA==}
     dev: true
 
   /tinypool@0.7.0:
@@ -35648,8 +35408,8 @@ packages:
     engines: {node: '>=14.0.0'}
     dev: true
 
-  /tinyspy@2.1.1:
-    resolution: {integrity: sha512-XPJL2uSzcOyBMky6OFrusqWlzfFrXtE0hPuMgW8A2HmaqrPo4ZQHRN/V0QXN3FSjKxpsbRrFc5LI7KOwBsT1/w==}
+  /tinyspy@2.2.1:
+    resolution: {integrity: sha512-KYad6Vy5VDWV4GH3fjpseMQ/XU2BhIYP7Vzd0LG44qRWm/Yt2WCOTicFdvmgo6gWaqooMQCawTtILVQJupKu7A==}
     engines: {node: '>=14.0.0'}
     dev: true
 
@@ -37206,7 +36966,7 @@ packages:
     dependencies:
       cac: 6.7.14
       debug: 4.3.4(supports-color@8.1.1)
-      mlly: 1.4.0
+      mlly: 1.4.2
       pathe: 1.1.1
       picocolors: 1.0.0
       vite: 4.3.9(@types/node@20.10.0)
@@ -37319,7 +37079,7 @@ packages:
         optional: true
     dependencies:
       '@types/chai': 4.3.5
-      '@types/chai-subset': 1.3.3
+      '@types/chai-subset': 1.3.5
       '@types/node': 20.10.0
       '@vitest/expect': 0.34.6
       '@vitest/runner': 0.34.6
@@ -37327,17 +37087,17 @@ packages:
       '@vitest/spy': 0.34.6
       '@vitest/utils': 0.34.6
       acorn: 8.10.0
-      acorn-walk: 8.2.0
+      acorn-walk: 8.3.2
       cac: 6.7.14
       chai: 4.3.10
       debug: 4.3.4(supports-color@8.1.1)
       local-pkg: 0.4.3
-      magic-string: 0.30.2
+      magic-string: 0.30.7
       pathe: 1.1.1
       picocolors: 1.0.0
-      std-env: 3.3.3
+      std-env: 3.7.0
       strip-literal: 1.3.0
-      tinybench: 2.5.0
+      tinybench: 2.6.0
       tinypool: 0.7.0
       vite: 4.3.9(@types/node@20.10.0)
       vite-node: 0.34.6(@types/node@20.10.0)
@@ -38312,7 +38072,7 @@ packages:
         optional: true
     dependencies:
       '@types/eslint-scope': 3.7.5
-      '@types/estree': 1.0.1
+      '@types/estree': 1.0.5
       '@webassemblyjs/ast': 1.11.6
       '@webassemblyjs/wasm-edit': 1.11.6
       '@webassemblyjs/wasm-parser': 1.11.6

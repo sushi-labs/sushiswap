@@ -2,11 +2,6 @@
 
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  NonfungiblePositionManager,
-  Position,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
   ConcentratedLiquidityPosition,
   getV3NonFungiblePositionManagerConractConfig,
   useNetwork,
@@ -20,6 +15,11 @@ import {
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { unwrapToken } from 'src/lib/functions'
+import {
+  NonfungiblePositionManager,
+  Position,
+  isSushiSwapV3ChainId,
+} from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { Hex, UserRejectedRequestError } from 'viem'

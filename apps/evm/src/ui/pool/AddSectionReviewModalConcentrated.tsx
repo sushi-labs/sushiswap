@@ -14,11 +14,11 @@ import {
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  FeeAmount,
   NonfungiblePositionManager,
   Position,
+  SushiSwapV3FeeAmount,
   isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
+} from 'sushi'
 import {
   getV3NonFungiblePositionManagerConractConfig,
   useAccount,
@@ -49,7 +49,7 @@ interface AddSectionReviewModalConcentratedProps
     'noLiquidity' | 'position' | 'price' | 'pricesAtTicks' | 'ticksAtLimit'
   > {
   chainId: ChainId
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined

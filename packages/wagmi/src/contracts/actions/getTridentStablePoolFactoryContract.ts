@@ -1,7 +1,4 @@
-import {
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
-} from '@sushiswap/trident-sdk'
+import { TRIDENT_STABLE_POOL_FACTORY_ADDRESS, TridentChainId } from 'sushi'
 import { tridentStablePoolFactoryAbi } from 'sushi/abi'
 import { Address } from 'wagmi'
 

@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from '@sushiswap/ui/components/card'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import {
   Address,
   useConcentratedLiquidityPool,
@@ -20,6 +19,7 @@ import {
 } from '@sushiswap/wagmi'
 import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { SushiSwapV3ChainId } from 'sushi'
 import { formatUSD } from 'sushi/format'
 
 import { Container, LinkInternal, Message } from '@sushiswap/ui'

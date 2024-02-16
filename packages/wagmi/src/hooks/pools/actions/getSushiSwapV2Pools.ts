@@ -4,7 +4,7 @@ import {
   SushiSwapV2Pool,
   computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
+} from 'sushi'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import { Address, readContracts } from 'wagmi'

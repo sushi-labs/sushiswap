@@ -1,11 +1,8 @@
 'use client'
 
-import {
-  SUSHISWAP_V2_ROUTER_ADDRESS,
-  SushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
 import { useMemo } from 'react'
 import { uniswapV2RouterAbi } from 'sushi/abi'
+import { SUSHISWAP_V2_ROUTER_ADDRESS, SushiSwapV2ChainId } from 'sushi/config'
 import { WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 import { getContract } from 'wagmi/actions'

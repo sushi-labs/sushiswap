@@ -9,6 +9,7 @@
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
+    "resolveJsonModule": true,
     "sourceMap": true
   }
 }

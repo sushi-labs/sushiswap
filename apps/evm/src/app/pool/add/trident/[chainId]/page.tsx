@@ -1,13 +1,6 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import {
-  TridentChainId,
-  TridentChainIds,
-  TridentConstantPool,
-  TridentStablePool,
-  isTridentChainId,
-} from '@sushiswap/trident-sdk'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
@@ -38,6 +31,13 @@ import {
   APPROVE_TAG_CREATE_TRIDENT,
 } from 'src/lib/constants'
 import { isTridentConstantPool, isTridentStablePool } from 'src/lib/functions'
+import {
+  TridentChainId,
+  TridentChainIds,
+  TridentConstantPool,
+  TridentStablePool,
+  isTridentChainId,
+} from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 import {

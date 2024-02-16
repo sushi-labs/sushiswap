@@ -1,10 +1,9 @@
-import { isTridentChainId } from '@sushiswap/trident-sdk'
-import { config } from '@sushiswap/viem-config'
+import { isTridentChainId } from 'sushi'
 import { ChainId, TestnetChainId } from 'sushi/chain'
+import { viemConfig } from 'sushi/config'
 import { isBentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { http, PublicClient, createPublicClient } from 'viem'
-
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
 import { CurveProvider } from './liquidity-providers/CurveProvider'
@@ -64,7 +63,7 @@ export class DataFetcher {
 
   constructor(chainId: ChainId, publicClient?: PublicClient) {
     this.chainId = chainId as Exclude<ChainId, TestnetChainId>
-    if (!publicClient && !config[this.chainId]) {
+    if (!publicClient && !viemConfig[this.chainId]) {
       throw new Error(
         `No public client given and no viem config found for chainId ${chainId}`,
       )
@@ -74,7 +73,7 @@ export class DataFetcher {
       this.web3Client = publicClient
     } else if (isTest) {
       this.web3Client = createPublicClient({
-        ...config[this.chainId],
+        ...viemConfig[this.chainId],
         transport: http('http://127.0.0.1:8545'),
         batch: {
           multicall: {
@@ -83,7 +82,7 @@ export class DataFetcher {
         },
       })
     } else {
-      this.web3Client = createPublicClient(config[this.chainId])
+      this.web3Client = createPublicClient(viemConfig[this.chainId])
     }
   }
 

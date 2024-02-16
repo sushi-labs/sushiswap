@@ -16,7 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui/components/tooltip'
-import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
+import { SushiSwapV3Pool } from 'sushi'
 import React, { FC, useMemo } from 'react'
 import { unwrapToken } from 'src/lib/functions'
 import { Chain } from 'sushi/chain'

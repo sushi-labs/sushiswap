@@ -14,7 +14,7 @@ import {
   DataTable,
 } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'

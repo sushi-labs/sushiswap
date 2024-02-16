@@ -11,17 +11,17 @@ import {
   LiquidityProviders,
   NativeWrapProvider,
 } from '@sushiswap/router'
+import { expect } from 'chai'
 import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_INIT_CODE_HASH,
-} from '@sushiswap/v2-sdk'
-import {
-  POOL_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { expect } from 'chai'
+  UNISWAP_V3_INIT_CODE_HASH,
+} from 'sushi'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
+} from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
@@ -87,7 +87,7 @@ function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash: UNISWAP_V3_INIT_CODE_HASH[chain],
   }
 }
 

@@ -1,12 +1,13 @@
 import { getCurrencyCombinations } from '@sushiswap/router'
 import { BridgeBento, UniV3Pool } from '@sushiswap/tines'
+import { isSushiSwapV3ChainId } from 'sushi'
 import {
+  SushiSwapV2Pool,
   TridentConstantPool,
   TridentStablePool,
+  isSushiSwapV2ChainId,
   isTridentChainId,
-} from '@sushiswap/trident-sdk'
-import { SushiSwapV2Pool, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+} from 'sushi'
 import { isBentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { TradeType } from 'sushi/dex'

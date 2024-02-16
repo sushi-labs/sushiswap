@@ -1,9 +1,9 @@
 'use client'
 
 import {
-  FeeAmount,
   Position,
   SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   SushiSwapV3Pool,
   TICK_SPACINGS,
   TickMath,
@@ -13,7 +13,7 @@ import {
   priceToClosestTick,
   priceToNumber,
   tickToPrice,
-} from '@sushiswap/v3-sdk'
+} from 'sushi'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import {
   FC,
@@ -236,7 +236,7 @@ export function useConcentratedDerivedMintInfo({
   token1: Type | undefined
   baseToken: Type | undefined
   chainId: SushiSwapV3ChainId
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   existingPosition?: Position
 }): {
   pool?: SushiSwapV3Pool | null
@@ -753,7 +753,7 @@ export function useConcentratedDerivedMintInfo({
 export function useRangeHopCallbacks(
   baseCurrency: Currency | undefined,
   quoteCurrency: Currency | undefined,
-  feeAmount: FeeAmount | undefined,
+  feeAmount: SushiSwapV3FeeAmount | undefined,
   tickLower: number | undefined,
   tickUpper: number | undefined,
   pool?: SushiSwapV3Pool | undefined | null,

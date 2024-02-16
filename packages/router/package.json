@@ -34,10 +34,6 @@
   "dependencies": {
     "@ethersproject/address": "5.7.0",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident-sdk": "workspace:*",
-    "@sushiswap/v2-sdk": "workspace:*",
-    "@sushiswap/v3-sdk": "workspace:*",
-    "@sushiswap/viem-config": "workspace:*",
     "date-fns": "2.30.0",
     "lodash.flatmap": "^4.5.0",
     "node-fetch": "2.6.6",

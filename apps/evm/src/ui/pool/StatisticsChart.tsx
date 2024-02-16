@@ -1,5 +1,5 @@
 import { Card } from '@sushiswap/ui'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from 'sushi'
 import React, { FC, useMemo, useState } from 'react'
 
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
