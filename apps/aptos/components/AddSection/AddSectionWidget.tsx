@@ -24,12 +24,12 @@ import { useParams } from 'next/navigation'
 import React, { FC, useCallback, useEffect } from 'react'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useNetwork } from 'utils/useNetwork'
+import { usePoolPairs } from '../../utils/swap-get-route/utilFunctions'
 import { usePool } from '../../utils/usePool'
 import { Pool } from '../../utils/usePools'
 import { useTokensFromPools } from '../../utils/useTokensFromPool'
-import { usePoolPairs } from '../../utils/utilFunctions'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
-import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
+import { usePoolActions, usePoolState } from '../Pool/PoolProvider/PoolProvider'
 
 type PayloadType = {
   type: string
@@ -194,17 +194,6 @@ export const AddSectionWidget: FC = () => {
   useEffect(() => {
     onChangeToken0TypedAmount(String(amount0))
   }, [onChangeToken0TypedAmount, amount0])
-
-  useEffect(() => {
-    if (amount0) {
-      setSlippageAmount0(Number(amount0))
-    }
-    if (amount1) {
-      setSlippageAmount1(Number(amount1))
-    }
-
-    slippageAmount
-  }, [setSlippageAmount0, setSlippageAmount1, amount0, amount1, slippageAmount])
 
   return (
     <Widget id="addLiquidity" variant="empty">

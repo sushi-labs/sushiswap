@@ -19,12 +19,12 @@ import { networkNameToNetwork } from 'config/chains'
 import Link from 'next/link'
 import { FC, useCallback, useEffect } from 'react'
 import { liquidityArgs } from 'utils/liquidityPayload'
+import { usePoolPairs } from 'utils/swap-get-route/utilFunctions'
 import { useAccount } from 'utils/useAccount'
 import { useNetwork } from 'utils/useNetwork'
-import { usePoolPairs } from 'utils/utilFunctions'
 import { AddLiquidityButton } from './AddLiquidityButton'
 import { AddSectionReviewModal } from './AddSectionReviewModel'
-import { usePoolActions, usePoolState } from './PoolProvider'
+import { usePoolActions, usePoolState } from './PoolProvider/PoolProvider'
 
 export function Add() {
   const { isLoadingAccount } = useAccount()
@@ -73,6 +73,7 @@ const _Add: FC = () => {
     setToken1,
     setAmount0,
     setAmount1,
+    setIndependentField,
     setisTransactionPending,
     setSlippageAmount0,
     setSlippageAmount1,
@@ -84,7 +85,6 @@ const _Add: FC = () => {
     token1,
     amount0,
     amount1,
-    poolPairRatio,
     poolReserves,
     slippageAmount0,
     slippageAmount1,
@@ -138,59 +138,24 @@ const _Add: FC = () => {
 
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
+      const regexPattern = /^(((0\.?)|[1-9][0-9]*)(\.[0-9]*)?)?$/
       if (regexPattern.test(value)) {
         setAmount0(value)
-        if (poolReserves?.data) {
-          if (value) {
-            const decimalDiff = token0.decimals - token1.decimals
-
-            setAmount1(
-              String(
-                parseFloat(
-                  (
-                    parseFloat(value) *
-                    poolPairRatio *
-                    10 ** decimalDiff
-                  ).toFixed(token1.decimals),
-                ),
-              ),
-            )
-          } else {
-            setAmount1('')
-          }
-        }
+        setIndependentField('token0')
       }
     },
-    [poolPairRatio, poolReserves, token0, token1, setAmount0, setAmount1],
+    [setAmount0, setIndependentField],
   )
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      const regexPattern = /^[0-9]*(\.[0-9]*)?$/
+      const regexPattern = /^(((0\.?)|[1-9][0-9]*)(\.[0-9]*)?)?$/
       if (regexPattern.test(value)) {
         setAmount1(value)
-        if (poolReserves?.data) {
-          if (value) {
-            const decimalDiff = token1.decimals - token0.decimals
-
-            setAmount0(
-              String(
-                parseFloat(
-                  (
-                    (parseFloat(value) / poolPairRatio) *
-                    10 ** decimalDiff
-                  ).toFixed(token0.decimals),
-                ),
-              ),
-            )
-          } else {
-            setAmount0('')
-          }
-        }
+        setIndependentField('token1')
       }
     },
-    [poolPairRatio, poolReserves, token0, token1, setAmount0, setAmount1],
+    [setAmount1, setIndependentField],
   )
 
   useEffect(() => {

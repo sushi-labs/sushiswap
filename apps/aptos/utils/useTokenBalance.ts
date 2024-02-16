@@ -14,8 +14,6 @@ export const tokenBalanceQueryFn = async ({
   currency,
   network,
 }: TokenBalanceQueryFn) => {
-  console.log(currency)
-
   const response = await fetch(
     `${chains[network].api.fetchUrlPrefix}/v1/accounts/${account}/resource/0x1::coin::CoinStore<${currency}>`,
   )
@@ -34,7 +32,7 @@ export const tokenBalanceQueryFn = async ({
 }
 
 interface UseTokenBalance {
-  account: string
+  account?: string
   currency: string
   enabled?: boolean
   refetchInterval?: number
@@ -50,15 +48,21 @@ export function useTokenBalance({
 
   return useQuery({
     queryKey: ['balance', { currency, account, network }],
-    queryFn: async () => tokenBalanceQueryFn({ account, currency, network }),
+    queryFn: async () => {
+      if (!account) {
+        throw new Error('Account is required')
+      }
+
+      return tokenBalanceQueryFn({ account, currency, network })
+    },
     select: (data) => data?.balance,
     refetchInterval,
-    enabled,
+    enabled: Boolean(account && currency && enabled),
   })
 }
 
 interface UseTokenBalances {
-  account: string
+  account?: string
   currencies: string[]
   enabled?: boolean
   refetchInterval?: number
@@ -75,6 +79,10 @@ export function useTokenBalances({
   return useQuery({
     queryKey: ['balance', { currencies, account, network }],
     queryFn: async () => {
+      if (!account) {
+        throw new Error('Account is required')
+      }
+
       const promises = currencies.map((currency) =>
         tokenBalanceQueryFn({ account, currency, network }),
       )
@@ -90,6 +98,6 @@ export function useTokenBalances({
         }, {})
     },
     refetchInterval: refetchInterval,
-    enabled,
+    enabled: Boolean(account && enabled),
   })
 }

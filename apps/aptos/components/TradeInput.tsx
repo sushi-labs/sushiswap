@@ -39,7 +39,7 @@ export function TradeInput({
 
   const { data: balance, isInitialLoading: isBalanceLoading } = useTokenBalance(
     {
-      account: account?.address as string,
+      account: account?.address,
       currency: token.address,
       refetchInterval: 2000,
     },

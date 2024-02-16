@@ -3,70 +3,34 @@ import {
   FC,
   ReactNode,
   createContext,
-  useCallback,
   useContext,
   useMemo,
   useReducer,
 } from 'react'
+import { TokenPairReserve } from 'utils/swap-get-route/utilFunctions'
 import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
 import { getTokensWithoutKey } from 'utils/useTokens'
-import { TokenPairReserve } from 'utils/utilFunctions'
+import { setAmount0 } from './actions/setAmount0'
+import { setAmount1 } from './actions/setAmount1'
+import { setPoolPairRatio } from './actions/setPoolPairRatio'
+import { setSlippageAmount0 } from './actions/setSlippageAmount0'
+import { setSlippageAmount1 } from './actions/setSlippageAmount1'
+import {
+  parseSlippageTolerance,
+  setSlippageTolerance,
+} from './actions/setSlippageTolerance'
+import { setToken0 } from './actions/setToken0'
+import { setToken1 } from './actions/setToken1'
+import { swapTokens } from './actions/swapTokens'
+import { Actions, PoolApi, State } from './types'
 
 interface PoolProviderProps {
   children: ReactNode
 }
 
-type State = {
-  token0: Token
-  token1: Token
-  amount0: string | null
-  amount1: string | null
-  isLoadingPrice: boolean
-  buttonError: string
-  isTransactionPending: boolean
-  isPriceFetching: boolean
-  error: string
-  poolReserves: TokenPairReserve | null
-  poolPairRatio: number
-  slippageAmount0: number
-  slippageAmount1: number
-}
-
-type PoolApi = {
-  setToken0(token: Token): void
-  setToken1(token: Token): void
-  setAmount0(amount0: string): void
-  setAmount1(amount1: string): void
-  setLoadingPrice(isLoadingPrice: boolean): void
-  setButtonError(buttonError: string): void
-  setisTransactionPending(value: boolean): void
-  setPriceFetching(value: boolean): void
-  setError(value: string): void
-  setPoolReserves(value: TokenPairReserve | null): void
-  setPoolPairRatio(value: number): void
-  setSlippageAmount0(amount0: number): void
-  setSlippageAmount1(amount1: number): void
-}
-
 export const PoolStateContext = createContext<State>({} as State)
 export const PoolActionsContext = createContext<PoolApi>({} as PoolApi)
-
-type Actions =
-  | { type: 'setToken0'; value: Token }
-  | { type: 'setToken1'; value: Token }
-  | { type: 'swapTokens' }
-  | { type: 'setAmount0'; value: string }
-  | { type: 'setAmount1'; value: string }
-  | { type: 'setLoadingPrice'; value: boolean }
-  | { type: 'setButtonError'; value: string }
-  | { type: 'setisTransactionPending'; value: boolean }
-  | { type: 'setPriceFetching'; value: boolean }
-  | { type: 'setError'; value: string }
-  | { type: 'setPoolReserves'; value: TokenPairReserve | null }
-  | { type: 'setPoolPairRatio'; value: number }
-  | { type: 'setSlippageAmount0'; value: number }
-  | { type: 'setSlippageAmount1'; value: number }
 
 export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   const [slippageTolerance] = useSlippageTolerance()
@@ -78,15 +42,17 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
   const reducer = (state: State, action: Actions): State => {
     switch (action.type) {
       case 'setToken0':
-        return { ...state, token0: action.value }
+        return setToken0(state, action)
       case 'setToken1':
-        return { ...state, token1: action.value }
+        return setToken1(state, action)
       case 'swapTokens':
-        return { ...state, token0: state.token1, token1: state.token0 }
+        return swapTokens(state, action)
       case 'setAmount0':
-        return { ...state, amount0: action.value }
+        return setAmount0(state, action)
       case 'setAmount1':
-        return { ...state, amount1: action.value }
+        return setAmount1(state, action)
+      case 'setIndependentField':
+        return { ...state, independentField: action.value }
       case 'setLoadingPrice':
         return { ...state, isLoadingPrice: action.value }
       case 'setButtonError':
@@ -100,37 +66,13 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       case 'setPoolReserves':
         return { ...state, poolReserves: action.value }
       case 'setPoolPairRatio':
-        return { ...state, poolPairRatio: action.value }
+        return setPoolPairRatio(state, action)
+      case 'setSlippageTolerance':
+        return setSlippageTolerance(state, action)
       case 'setSlippageAmount0':
-        return {
-          ...state,
-          slippageAmount0:
-            action.value -
-            (action.value *
-              parseFloat(
-                slippageTolerance
-                  ? slippageTolerance === 'AUTO'
-                    ? '0.5'
-                    : slippageTolerance
-                  : '0.5',
-              )) /
-              100,
-        }
+        return setSlippageAmount0(state, action)
       case 'setSlippageAmount1':
-        return {
-          ...state,
-          slippageAmount1:
-            action.value -
-            (action.value *
-              parseFloat(
-                slippageTolerance
-                  ? slippageTolerance === 'AUTO'
-                    ? '0.5'
-                    : slippageTolerance
-                  : '0.5',
-              )) /
-              100,
-        }
+        return setSlippageAmount1(state, action)
     }
   }
 
@@ -139,13 +81,15 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     token1: baseTokens[1],
     amount0: '',
     amount1: '',
+    independentField: 'token0',
     isLoadingPrice: false,
     buttonError: '',
     isTransactionPending: false,
     isPriceFetching: false,
     error: '',
     poolReserves: null,
-    poolPairRatio: 0,
+    poolPairRatio: null,
+    slippageTolerance: parseSlippageTolerance(slippageTolerance),
     slippageAmount0: 0,
     slippageAmount1: 0,
   })
@@ -154,34 +98,18 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
     return { ...internalState }
   }, [internalState])
 
-  const setToken0 = useCallback(
-    (token0: Token) => {
-      if (state.token1.address === token0.address) {
-        dispatch({ type: 'swapTokens' })
-      } else {
-        dispatch({ type: 'setToken0', value: token0 as Token })
-      }
-    },
-    [state.token1],
-  )
-
-  const setToken1 = useCallback(
-    (token1: Token) => {
-      if (state.token0.address === token1.address) {
-        dispatch({ type: 'swapTokens' })
-      } else {
-        dispatch({ type: 'setToken1', value: token1 as Token })
-      }
-    },
-    [state.token0],
-  )
-
   const api = useMemo(() => {
+    const setToken0 = (token: Token) =>
+      dispatch({ type: 'setToken0', value: token })
+    const setToken1 = (token: Token) =>
+      dispatch({ type: 'setToken1', value: token })
     const swapTokens = () => dispatch({ type: 'swapTokens' })
     const setAmount0 = (value: string) =>
       dispatch({ type: 'setAmount0', value })
     const setAmount1 = (value: string) =>
       dispatch({ type: 'setAmount1', value })
+    const setIndependentField = (value: State['independentField']) =>
+      dispatch({ type: 'setIndependentField', value })
     const setLoadingPrice = (value: boolean) =>
       dispatch({ type: 'setLoadingPrice', value })
     const setButtonError = (value: string) =>
@@ -206,6 +134,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       swapTokens,
       setAmount0,
       setAmount1,
+      setIndependentField,
       setLoadingPrice,
       setButtonError,
       setisTransactionPending,
@@ -216,7 +145,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
       setSlippageAmount0,
       setSlippageAmount1,
     }
-  }, [setToken0, setToken1])
+  }, [])
 
   return (
     <PoolActionsContext.Provider value={api}>

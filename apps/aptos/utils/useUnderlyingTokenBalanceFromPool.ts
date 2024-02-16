@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { formatNumber } from './utilFunctions'
+import { formatNumber } from './format-number'
 
 interface Params {
   totalSupply: number | undefined | null

@@ -5,12 +5,7 @@ import {
   LinkIcon,
 } from '@heroicons/react/24/outline'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
-import {
-  ClipboardController,
-  IconButton,
-  JazzIcon,
-  SkeletonText,
-} from '@sushiswap/ui'
+import { ClipboardController, IconButton, SkeletonText } from '@sushiswap/ui'
 import { LinkExternal } from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
 import { Aptos } from 'lib/coins'
@@ -35,27 +30,8 @@ export const DefaultView = ({ balance, setView }: Props) => {
   const price = useStablePrice({ currency: Aptos[network] })
 
   return (
-    <div className="flex flex-col gap-8 p-4">
-      <div className="flex justify-between gap-3">
-        <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
-          {account?.address && (
-            <JazzIcon diameter={16} address={account?.address as string} />
-          )}
-          <ClipboardController>
-            {({ setCopied }) => (
-              <span
-                className="cursor-pointer"
-                onClick={() => setCopied(account?.address as string)}
-                onKeyUp={() => setCopied(account?.address as string)}
-              >
-                {`${account?.address.substring(
-                  0,
-                  6,
-                )}...${account?.address.substring(66 - 4)}`}
-              </span>
-            )}
-          </ClipboardController>
-        </div>
+    <div className="flex flex-col gap-8">
+      <div className="flex justify-between gap-2">
         <div className="flex gap-2">
           <IconButton
             size="sm"

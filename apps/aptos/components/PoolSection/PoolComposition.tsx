@@ -9,10 +9,10 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
+import { formatNumber } from 'utils/format-number'
 import { Pool } from 'utils/usePools'
 import useStablePrice from 'utils/useStablePrice'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
-import { formatNumber } from 'utils/utilFunctions'
 import { CardCurrencyAmountItem } from '../CardCurrencyAmountItem'
 
 interface PoolCompositionProps {

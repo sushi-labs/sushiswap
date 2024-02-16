@@ -1,3 +1,5 @@
+'use client'
+
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { PlusIcon } from '@heroicons/react/24/outline'
@@ -12,7 +14,6 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import { Provider } from 'aptos'
 import { networkNameToNetwork } from 'config/chains'
 import {
@@ -20,20 +21,20 @@ import {
   warningSeverityClassName,
 } from 'lib/swap/warningSeverity'
 import React, { FC } from 'react'
+import {
+  useSimpleSwapActions,
+  useSimpleSwapState,
+} from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
+import { formatNumber } from 'utils/format-number'
 import { payloadArgs } from 'utils/payloadUtil'
 import { useNetwork } from 'utils/useNetwork'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { formatNumber } from 'utils/utilFunctions'
-import { Icon } from './Icon'
-import { Modal } from './Modal/Modal'
-import { ModalType } from './Modal/ModalProvider'
-import { createToast } from './toast'
+import { Icon } from '../../../components/Icon'
+import { Modal } from '../../../components/Modal/Modal'
+import { ModalType } from '../../../components/Modal/ModalProvider'
+import { createToast } from '../../../components/toast'
 
-interface Props {
-  isTransactionPending: boolean
-}
-
-export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
+export const SimpleSwapTradeReviewDialog: FC = () => {
   const {
     bestRoutes,
     token0,
@@ -42,9 +43,10 @@ export const TradeReviewDialog: FC<Props> = ({ isTransactionPending }) => {
     amount,
     outputAmount,
     isPriceFetching,
-  } = useSwapState()
+    isTransactionPending,
+  } = useSimpleSwapState()
   const { account, signAndSubmitTransaction } = useWallet()
-  const { setisTransactionPending, setAmount } = useSwapActions()
+  const { setisTransactionPending, setAmount } = useSimpleSwapActions()
 
   const { data: routes } = useSwapRouter()
 

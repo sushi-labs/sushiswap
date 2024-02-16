@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { usePoolState } from './PoolProvider'
+import { usePoolState } from './PoolProvider/PoolProvider'
 
 interface RenderPayload {
   invert: boolean

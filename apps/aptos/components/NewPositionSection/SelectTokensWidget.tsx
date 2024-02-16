@@ -4,7 +4,7 @@ import { Icon } from 'components/Icon'
 import { Modal } from 'components/Modal/Modal'
 import React, { FC } from 'react'
 import { ContentBlock } from '../ContentBlock'
-import { usePoolActions, usePoolState } from '../Pool/PoolProvider'
+import { usePoolActions, usePoolState } from '../Pool/PoolProvider/PoolProvider'
 import TokenListDialog from '../TokenListDialog'
 
 interface SelectTokensWidget {

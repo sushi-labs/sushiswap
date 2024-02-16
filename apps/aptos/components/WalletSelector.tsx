@@ -39,7 +39,7 @@ export default function WalletSelector() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">
+        <Button variant="secondary">
           <>
             <div className="hidden md:flex">
               <JazzIcon diameter={20} address={account?.address} />

@@ -1,13 +1,13 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { FC, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
+import { formatNumber } from 'utils/format-number'
 import { useNetwork } from 'utils/useNetwork'
 import { Pool } from 'utils/usePools'
 import useStablePrice from 'utils/useStablePrice'
 import { useTokenBalance } from 'utils/useTokenBalance'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
 import { useTotalSupply } from 'utils/useTotalSupply'
-import { formatNumber } from 'utils/utilFunctions'
 import { Row } from '../SharedCells/types'
 
 export const PoolMyPositionTVLCell: FC<Row<Pool>> = ({ row }) => {

@@ -7,10 +7,10 @@ import WalletSelector from 'components/WalletSelector'
 import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import React, { useMemo, useState } from 'react'
+import { formatNumber } from 'utils/format-number'
 import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
 import { Pool } from 'utils/usePools'
-import { formatNumber } from 'utils/utilFunctions'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface Props {

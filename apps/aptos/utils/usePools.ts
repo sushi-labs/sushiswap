@@ -65,13 +65,17 @@ export async function fetchPoolsQueryFn({ network }: FetchPoolsQueryFn) {
   return []
 }
 
-export function usePools(enable = true) {
+interface UsePools {
+  enabled?: boolean
+}
+
+export function usePools({ enabled = true }: UsePools = { enabled: true }) {
   const { network } = useNetwork()
 
   return useQuery({
     queryKey: ['pools', { network }],
     queryFn: async () => fetchPoolsQueryFn({ network }),
     keepPreviousData: true,
-    enabled: Boolean(enable),
+    enabled: Boolean(enabled),
   })
 }

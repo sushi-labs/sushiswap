@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
+import { formatNumber } from 'utils/format-number'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
-import { formatNumber } from 'utils/utilFunctions'
 import { Row } from './types'
 
 export const PoolReserveCell: FC<Row<Pool>> = ({ row }) => {

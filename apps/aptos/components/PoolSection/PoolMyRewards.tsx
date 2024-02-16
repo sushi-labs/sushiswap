@@ -10,9 +10,9 @@ import { Aptos } from 'lib/coins'
 import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
 import { formatUSD } from 'sushi/format'
+import { formatNumber } from 'utils/format-number'
 import { useNetwork } from 'utils/useNetwork'
 import useStablePrice from 'utils/useStablePrice'
-import { formatNumber } from 'utils/utilFunctions'
 
 interface PoolMyRewards {
   reward: number
@@ -21,7 +21,7 @@ interface PoolMyRewards {
 }
 
 export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
-  const router = useParams()
+  const router = useParams<{ id: string }>()
   const { connected, signAndSubmitTransaction } = useWallet()
 
   const {

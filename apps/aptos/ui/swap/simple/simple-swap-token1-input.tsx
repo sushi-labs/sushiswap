@@ -1,16 +1,19 @@
-import { useSwapActions, useSwapState } from 'app/swap/trade/TradeProvider'
 import React from 'react'
-import { formatNumber } from 'utils/utilFunctions'
-import { TradeInput } from './TradeInput'
+import {
+  useSimpleSwapActions,
+  useSimpleSwapState,
+} from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
+import { formatNumber } from 'utils/format-number'
+import { TradeInput } from '../../../components/TradeInput'
 
-export const SwapTradeOutput = () => {
-  const { token1, outputAmount, isPriceFetching } = useSwapState()
+export const SimpleSwapToken1Input = () => {
+  const { token1, outputAmount, isPriceFetching } = useSimpleSwapState()
 
   const outputSwapTokenAmount = outputAmount
     ? formatNumber(Number(outputAmount), token1 ? token1.decimals : 8)
     : ''
 
-  const { setToken1 } = useSwapActions()
+  const { setToken1 } = useSimpleSwapActions()
 
   return (
     <TradeInput

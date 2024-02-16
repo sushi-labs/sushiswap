@@ -1,20 +1,21 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
-import { useSwapState } from 'app/swap/trade/TradeProvider'
 import { networkNameToNetwork } from 'config/chains'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from 'lib/swap/warningSeverity'
 import React from 'react'
+import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
+import { formatNumber } from 'utils/format-number'
 import { useNetwork } from 'utils/useNetwork'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { formatNumber } from 'utils/utilFunctions'
-import { Modal } from './Modal/Modal'
-import { TradeRoute } from './TradeRoute'
+import { Modal } from '../../../components/Modal/Modal'
+import { TradeRoute } from '../../../components/TradeRoute'
 
-export const TradeStats = () => {
+export const SimpleSwapTradeStats = () => {
+  const { account } = useWallet()
   const {
     token1,
     amount,
@@ -23,8 +24,8 @@ export const TradeStats = () => {
     isPriceFetching,
     outputAmount,
     slippageAmount,
-  } = useSwapState()
-  const { account } = useWallet()
+  } = useSimpleSwapState()
+
   const loading =
     Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
 
@@ -64,7 +65,7 @@ export const TradeStats = () => {
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : (
-              <>{routes?.priceImpact ? -routes?.priceImpact : 0}%</>
+              <>{routes?.priceImpact ? -routes?.priceImpact.toFixed(2) : 0}%</>
             )}
           </span>
         </div>
@@ -120,7 +121,7 @@ export const TradeStats = () => {
             <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
               Recipient
             </span>
-            <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="font-semibold text-gray-700 text-right dark:text-slate-300">
               <a
                 target="_blank"
                 href={`https://explorer.aptoslabs.com/account/${

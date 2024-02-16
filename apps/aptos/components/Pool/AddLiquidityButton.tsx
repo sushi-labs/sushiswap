@@ -2,7 +2,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button } from '@sushiswap/ui'
 import { Modal } from 'components/Modal/Modal'
 import WalletSelector from '../WalletSelector'
-import { usePoolState } from './PoolProvider'
+import { usePoolState } from './PoolProvider/PoolProvider'
 
 interface Props {
   buttonError: string

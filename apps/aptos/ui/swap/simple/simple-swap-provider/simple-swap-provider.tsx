@@ -13,7 +13,8 @@ import {
 import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
 import { getTokensWithoutKey } from 'utils/useTokens'
-interface SwapProviderProps {
+
+interface SimpleSwapProvider {
   children: ReactNode
 }
 
@@ -45,8 +46,8 @@ type SwapApi = {
   setNoRouteFound(value: string): void
 }
 
-export const SwapStateContext = createContext<State>({} as State)
-export const SwapActionsContext = createContext<SwapApi>({} as SwapApi)
+export const SimpleSwapStateContext = createContext<State>({} as State)
+export const SimpleSwapActionsContext = createContext<SwapApi>({} as SwapApi)
 
 type Actions =
   | { type: 'setToken0'; value: Token }
@@ -62,7 +63,7 @@ type Actions =
   | { type: 'setBestRoutes'; value: string[] }
   | { type: 'setNoRouteFound'; value: string }
 
-export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
+export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   const [slippageTolerance] = useSlippageTolerance()
 
   const { network } = useNetwork()
@@ -187,27 +188,29 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   }, [setToken0, setToken1])
 
   return (
-    <SwapActionsContext.Provider value={api}>
-      <SwapStateContext.Provider value={useMemo(() => ({ ...state }), [state])}>
+    <SimpleSwapActionsContext.Provider value={api}>
+      <SimpleSwapStateContext.Provider
+        value={useMemo(() => ({ ...state }), [state])}
+      >
         {children}
-      </SwapStateContext.Provider>
-    </SwapActionsContext.Provider>
+      </SimpleSwapStateContext.Provider>
+    </SimpleSwapActionsContext.Provider>
   )
   // return <></>
 }
 
-export const useSwapState = () => {
-  const context = useContext(SwapStateContext)
+export const useSimpleSwapState = () => {
+  const context = useContext(SimpleSwapStateContext)
   if (!context) {
-    throw new Error('Hook can only be used inside State Context')
+    throw new Error('Hook can only be used inside SimpleSwapStateContext')
   }
 
   return context
 }
-export const useSwapActions = () => {
-  const context = useContext(SwapActionsContext)
+export const useSimpleSwapActions = () => {
+  const context = useContext(SimpleSwapActionsContext)
   if (!context) {
-    throw new Error('Hook can only be used inside State Actions Context')
+    throw new Error('Hook can only be used inside SimpleSwapActionsContext')
   }
 
   return context

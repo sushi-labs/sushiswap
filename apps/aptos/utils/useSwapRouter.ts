@@ -1,24 +1,17 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { useSwapState } from 'app/swap/trade/TradeProvider'
+import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
+import { getSwapRoute } from 'utils/swap-get-route'
 import { usePools } from 'utils/usePools'
-import { getAllCommonPairs } from 'utils/utilFunctions'
 import { useNetwork } from './useNetwork'
-import { useTokenBalance } from './useTokenBalance'
 
 export function useSwapRouter() {
-  const { amount, token0, token1 } = useSwapState()
+  const { amount, token0, token1 } = useSimpleSwapState()
   const { account, connected } = useWallet()
   const { network } = useNetwork()
   const [slippageTolerance] = useSlippageTolerance()
-  const { data: pairs } = usePools(true)
-
-  const { data: balance } = useTokenBalance({
-    account: account?.address as string,
-    currency: token0?.address,
-    refetchInterval: 2000,
-  })
+  const { data: pools } = usePools()
 
   return useQuery({
     queryKey: [
@@ -30,25 +23,25 @@ export function useSwapRouter() {
         account,
         connected,
         slippageTolerance,
-        balance,
         network,
       },
     ],
-    queryFn: async () =>
-      getAllCommonPairs({
-        amountIn: parseFloat(
-          (Number(amount) * 10 ** token0.decimals) as unknown as string,
-        ),
-        coinA: token0,
-        coinB: token1,
-        pairs,
+    queryFn: async () => {
+      if (!pools) {
+        throw new Error('No pairs found')
+      }
+
+      return getSwapRoute({
+        amountIn: Number(amount) * 10 ** token0.decimals,
+        tokenIn: token0,
+        tokenOut: token1,
+        pools,
         network,
-      }),
+      })
+    },
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
-    refetchIntervalInBackground: true,
-    enabled: Boolean(
-      amount && Number(amount) > 0 && typeof balance !== 'undefined',
-    ),
+    staleTime: 60000,
+    enabled: Boolean(amount && Number(amount) > 0 && pools),
   })
 }

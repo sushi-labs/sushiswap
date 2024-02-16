@@ -1,9 +1,10 @@
 import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
-import { useSwapActions } from 'app/swap/trade/TradeProvider'
 import React from 'react'
+import { useSimpleSwapActions } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 
-export default function SwapTrade() {
-  const { swapTokens } = useSwapActions()
+export const SimpleSwapSwitchTokensButton = () => {
+  const { swapTokens } = useSimpleSwapActions()
+
   return (
     <div className="left-0 right-0 lg:mt-[-26px] lg:mb-[-26px] flex items-center justify-center">
       <button
