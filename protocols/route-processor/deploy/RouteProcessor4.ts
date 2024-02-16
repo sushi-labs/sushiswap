@@ -12,10 +12,7 @@ const func: DeployFunction = async ({
 
   const chainId = await getChainId()
 
-  const args = [
-    '0x0000000000000000000000000000000000000000',
-    [],
-  ]
+  const args = ['0x0000000000000000000000000000000000000000', []]
 
   const { address } = await deploy('RouteProcessor4', {
     from: deployer,
