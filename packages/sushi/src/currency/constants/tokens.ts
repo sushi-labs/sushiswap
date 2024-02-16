@@ -603,6 +603,13 @@ export const WNATIVE = {
     symbol: 'WFIL',
     name: 'Wrapped FIL',
   }),
+  [ChainId.ZETACHAIN]: new Token({
+    chainId: ChainId.ZETACHAIN,
+    address: WNATIVE_ADDRESS[ChainId.ZETACHAIN],
+    decimals: 18,
+    symbol: 'WZETA',
+    name: 'Wrapped ZETA',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(

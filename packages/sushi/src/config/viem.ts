@@ -394,6 +394,48 @@ export const filecoin = {
   },
 } as const
 
+export const zetachain = {
+  id: ChainId.ZETACHAIN,
+  name: 'ZetaChain',
+  network: 'zetachain',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Zeta',
+    symbol: 'ZETA',
+  },
+  rpcUrls: {
+    default: {
+      http: [
+        'https://zetachain-evm.blockpi.network/v1/rpc/public',
+        'https://zetachain-mainnet-archive.allthatnode.com:8545',
+        'https://zetachain.rpc.thirdweb.com',
+        'https://jsonrpc.zetachain.nodestake.org',
+      ],
+    },
+    public: {
+      http: [
+        'https://zetachain-evm.blockpi.network/v1/rpc/public',
+        'https://zetachain-mainnet-archive.allthatnode.com:8545',
+        'https://zetachain.rpc.thirdweb.com',
+        'https://jsonrpc.zetachain.nodestake.org',
+      ],
+    },
+  },
+  blockExplorers: {
+    default: { name: 'ZetaScan', url: 'https://explorer.zetachain.com/' },
+    blockscout: {
+      name: 'Blockscout',
+      url: 'https://zetachain.blockscout.com/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0x039e87AB90205F9d87c5b40d4B28e2Be45dA4a20',
+      blockCreated: 1565755,
+    },
+  },
+} as const
+
 // const alchemyId =
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
@@ -591,6 +633,15 @@ export const viemConfig: Record<
     chain: filecoin,
     transport: http(
       `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
+    ),
+  },
+  [ChainId.ZETACHAIN]: {
+    chain: zetachain,
+    transport: fallback(
+      zetachain.rpcUrls.default.http.map((url) => http(url)),
+      {
+        rank: true,
+      },
     ),
   },
 } as const

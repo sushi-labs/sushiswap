@@ -351,6 +351,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.LINEA]: WETH9_ADDRESS[ChainId.LINEA],
   [ChainId.BASE]: WETH9_ADDRESS[ChainId.BASE],
   [ChainId.SCROLL]: WETH9_ADDRESS[ChainId.SCROLL],
+  [ChainId.ZETACHAIN]: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
 } as const
 
 export const SUSHI_ADDRESS = {
