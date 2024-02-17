@@ -24,4 +24,5 @@ spec:
           cpu: 1000m
           memory: 1000Mi
         controlledResources: ["cpu", "memory"]
+  recommender: extractor
 {{- end }}

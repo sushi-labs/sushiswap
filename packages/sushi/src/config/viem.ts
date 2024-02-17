@@ -398,7 +398,7 @@ export const filecoin = {
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
-export const viemConfig: Record<
+export const publicClientConfig: Record<
   Exclude<ChainId, TestnetChainId>,
   PublicClientConfig
 > = {

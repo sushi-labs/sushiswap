@@ -1,5 +1,5 @@
-import { ChainId } from 'sushi/chain'
 import { PublicClient } from 'viem'
+import { ChainId } from '../../chain'
 
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV3BaseProvider } from './UniswapV3Base'

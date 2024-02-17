@@ -15,7 +15,7 @@ import {
   SushiSwapV3ChainId,
 } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import { viemConfig } from 'sushi/config'
+import { publicClientConfig } from 'sushi/config'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import {
@@ -317,8 +317,8 @@ const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
-    transport: viemConfig[ChainId.BSC].transport,
-    chain: viemConfig[ChainId.BSC].chain as Chain,
+    transport: publicClientConfig[ChainId.BSC].transport,
+    chain: publicClientConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
     tickHelperContract: TickLensContract[ChainId.BSC],

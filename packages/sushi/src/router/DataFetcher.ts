@@ -1,6 +1,10 @@
 import { http, PublicClient, createPublicClient } from 'viem'
 import { ChainId, TestnetChainId } from '../chain'
-import { isBentoBoxChainId, isTridentChainId, viemConfig } from '../config'
+import {
+  isBentoBoxChainId,
+  isTridentChainId,
+  publicClientConfig,
+} from '../config'
 import { Type } from '../currency'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
 import { BiswapProvider } from './liquidity-providers/Biswap'
@@ -61,7 +65,7 @@ export class DataFetcher {
 
   constructor(chainId: ChainId, publicClient?: PublicClient) {
     this.chainId = chainId as Exclude<ChainId, TestnetChainId>
-    if (!publicClient && !viemConfig[this.chainId]) {
+    if (!publicClient && !publicClientConfig[this.chainId]) {
       throw new Error(
         `No public client given and no viem config found for chainId ${chainId}`,
       )
@@ -71,7 +75,7 @@ export class DataFetcher {
       this.web3Client = publicClient
     } else if (isTest) {
       this.web3Client = createPublicClient({
-        ...viemConfig[this.chainId],
+        ...publicClientConfig[this.chainId],
         transport: http('http://127.0.0.1:8545'),
         batch: {
           multicall: {
@@ -80,7 +84,7 @@ export class DataFetcher {
         },
       })
     } else {
-      this.web3Client = createPublicClient(viemConfig[this.chainId])
+      this.web3Client = createPublicClient(publicClientConfig[this.chainId])
     }
   }
 

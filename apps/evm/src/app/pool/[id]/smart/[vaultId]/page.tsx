@@ -6,11 +6,13 @@ import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
-import { tickToPrice } from 'sushi'
-import { viemConfig } from 'sushi/config'
-import { Token } from 'sushi/currency'
-import { formatNumber, unsanitize } from 'sushi/format'
-
+import {
+  Token,
+  formatNumber,
+  publicClientConfig,
+  tickToPrice,
+  unsanitize,
+} from 'sushi'
 import { createPublicClient } from 'viem'
 import {
   SteerStrategyComponents,
@@ -62,7 +64,9 @@ async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
   const positions =
     (await getSteerVaultPositions({
       client: createPublicClient(
-        viemConfig[vault.pool.chainId as keyof typeof viemConfig]!,
+        publicClientConfig[
+          vault.pool.chainId as keyof typeof publicClientConfig
+        ]!,
       ),
       vaultId: vault.id,
     })) || []

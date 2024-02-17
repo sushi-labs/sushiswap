@@ -23,7 +23,7 @@ import {
 } from 'sushi'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
-import { viemConfig } from 'sushi/config'
+import { publicClientConfig } from 'sushi/config'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import {
@@ -401,8 +401,8 @@ it.skip('Extractor Polygon zkevm infinite work test', async () => {
 
 it.skip('Extractor AVALANCH infinite work test', async () => {
   await startInfinitTest({
-    transport: viemConfig[ChainId.AVALANCHE].transport,
-    chain: viemConfig[ChainId.AVALANCHE].chain as Chain,
+    transport: publicClientConfig[ChainId.AVALANCHE].transport,
+    chain: publicClientConfig[ChainId.AVALANCHE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.AVALANCHE),
       {
@@ -424,8 +424,8 @@ it.skip('Extractor AVALANCH infinite work test', async () => {
 
 it.skip('Extractor Base infinite work test', async () => {
   await startInfinitTest({
-    ...viemConfig[ChainId.BASE],
-    chain: viemConfig[ChainId.BASE].chain as Chain,
+    ...publicClientConfig[ChainId.BASE],
+    chain: publicClientConfig[ChainId.BASE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
       {
@@ -474,8 +474,8 @@ it.skip('Extractor Base infinite work test', async () => {
 
 it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
-    transport: viemConfig[ChainId.BSC].transport,
-    chain: viemConfig[ChainId.BSC].chain as Chain,
+    transport: publicClientConfig[ChainId.BSC].transport,
+    chain: publicClientConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
     tickHelperContract: TickLensContract[ChainId.BSC],
