@@ -3,15 +3,16 @@ import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
   ARB,
-  type Currency,
   DAI,
   FRAX,
   GNO,
   MATIC,
   MIM,
-  Native,
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
   SUSHI,
-  Token,
   USDC,
   USDT,
   WBTC,
@@ -22,14 +23,8 @@ import {
   WORMHOLE_WETH,
   axlUSDC,
   axlWBTC,
-} from 'sushi/currency'
-
-import {
-  STARGATE_USDC,
-  STARGATE_USDT,
-  STARGATE_WBTC,
-  STARGATE_WETH,
 } from 'sushi/config'
+import { type Currency, Native, Token } from 'sushi/currency'
 import { useLocalStorage } from './useLocalStorage'
 
 export const DEFAULT_BASES = {

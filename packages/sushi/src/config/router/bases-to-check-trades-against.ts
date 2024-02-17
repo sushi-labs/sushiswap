@@ -1,4 +1,5 @@
 import { ChainId } from '../../chain'
+import { Token } from '../../currency'
 import {
   AAVE,
   BUSD,
@@ -23,8 +24,7 @@ import {
   axlETH,
   axlUSDC,
   axlWBTC,
-} from '../../config'
-import { Token } from '../../currency'
+} from '../currency'
 import {
   STARGATE_USDC,
   STARGATE_USDT,

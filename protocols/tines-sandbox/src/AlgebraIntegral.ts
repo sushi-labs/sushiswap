@@ -8,7 +8,8 @@ import TickLens from '@cryptoalgebra/integral-periphery/artifacts/contracts/lens
 import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
 import seedrandom from 'seedrandom'
 import { ChainId } from 'sushi/chain'
-import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
+import { WNATIVE_ADDRESS } from 'sushi/config'
+import { Token } from 'sushi/currency'
 import {
   CLTick,
   CL_MAX_TICK,
@@ -24,7 +25,6 @@ import {
   WalletClient,
   getContractAddress,
 } from 'viem'
-
 import { TestTokens, approve, balanceOf } from './TestTokens'
 import {
   getDeploymentAddress,

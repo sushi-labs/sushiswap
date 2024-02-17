@@ -1,4 +1,5 @@
 import { ChainId } from '../../chain'
+import { Token } from '../../currency'
 import {
   AAVE,
   APE,
@@ -41,8 +42,7 @@ import {
   renBTC,
   renBTC_ADDRESS,
   sETH2,
-} from '../../config'
-import { Token } from '../../currency'
+} from '../currency'
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }

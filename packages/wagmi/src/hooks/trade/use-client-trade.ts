@@ -11,12 +11,13 @@ import {
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
+  WNATIVE_ADDRESS,
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
   isRouteProcessorChainId,
 } from 'sushi/config'
-import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
+import { Amount, Native, Price } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { Router } from 'sushi/router'
 import { Address, Hex } from 'viem'

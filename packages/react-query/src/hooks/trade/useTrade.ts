@@ -6,11 +6,10 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
-import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
+import { WNATIVE_ADDRESS } from 'sushi/config'
+import { Amount, Native, Price } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { type Address, type Hex, stringify } from 'viem'
-// import { deserialize } from 'wagmi'
-
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type {

@@ -1,4 +1,5 @@
 import { ChainId } from '../chain'
+import { Token, Type } from '../currency'
 import {
   BUSD,
   BUSD_ADDRESS,
@@ -12,8 +13,7 @@ import {
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
-} from '../config'
-import { Token, Type } from '../currency'
+} from './currency'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,

@@ -4,7 +4,8 @@ import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
-import { Amount, SUSHI, SUSHI_ADDRESS, Token } from 'sushi/currency'
+import { SUSHI, SUSHI_ADDRESS } from 'sushi/config'
+import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
   Address,
