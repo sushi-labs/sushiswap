@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
 import { Address, getAddress } from 'viem'
-
 import { Currency } from './Currency'
 import { type Type } from './Type'
 import { type SerializedToken, tokenSchema } from './zod'
