@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "contributors": ["Ilya Lyalin", "Ola Stenberg", "LufyCZ", "JiroOno", "0xMasayoshi"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
