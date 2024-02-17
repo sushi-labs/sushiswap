@@ -284,6 +284,9 @@ export const ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.FUSE,
   ChainId.HARMONY,
+  ChainId.TELOS,
+  ChainId.BOBA,
+  ChainId.BOBA_BNB,
 ] as const
 export type RouteProcessor4ChainId =
   typeof ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS[number]
@@ -316,6 +319,9 @@ export const ROUTE_PROCESSOR_4_ADDRESS: Record<
   [ChainId.POLYGON_ZKEVM]: '0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e',
   [ChainId.FUSE]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
   [ChainId.HARMONY]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
+  [ChainId.TELOS]: '0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e',
+  [ChainId.BOBA]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
+  [ChainId.BOBA_BNB]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
 } as const
 export const isRouteProcessor4ChainId = (
   chainId: ChainId,
