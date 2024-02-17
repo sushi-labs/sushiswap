@@ -11,10 +11,7 @@ interface UseStablePrice {
   ledgerVersion?: number
 }
 
-export default function useStablePrice({
-  currency,
-  ledgerVersion,
-}: UseStablePrice) {
+export function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
   const { network } = useNetwork()
 
   const defaultStable = useMemo(() => {

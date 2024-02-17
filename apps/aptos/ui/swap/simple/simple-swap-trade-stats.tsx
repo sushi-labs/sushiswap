@@ -12,7 +12,7 @@ import { formatNumber } from 'utils/format-number'
 import { useNetwork } from 'utils/useNetwork'
 import { useSwapRouter } from 'utils/useSwapRouter'
 import { Modal } from '../../../components/Modal/Modal'
-import { TradeRoute } from '../../../components/TradeRoute'
+import { SwapRoute } from '../swap-route'
 
 export const SimpleSwapTradeStats = () => {
   const { account } = useWallet()
@@ -113,7 +113,7 @@ export const SimpleSwapTradeStats = () => {
                 )}
               </Modal.Trigger>
             )}
-            <TradeRoute trade={bestRoutes} />
+            <SwapRoute trade={bestRoutes} />
           </span>
         </div>
         {account?.address && (

@@ -1,7 +1,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Provider } from 'aptos'
-import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
+import { createToast } from 'ui/common/toast'
 import { useNetwork } from 'utils/useNetwork'
 
 import { useIsMounted } from '@sushiswap/hooks'

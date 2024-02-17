@@ -1,8 +1,8 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button } from '@sushiswap/ui'
 import { Modal } from 'components/Modal/Modal'
-import WalletSelector from '../WalletSelector'
-import { usePoolState } from './PoolProvider/PoolProvider'
+import { UserProfile } from '../../ui/common/user-profile/user-profile'
+import { usePoolState } from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
 
 interface Props {
   buttonError: string
@@ -41,7 +41,7 @@ export const AddLiquidityButton = ({ buttonError, token1Value }: Props) => {
               )}
             </Button>
           ) : (
-            <WalletSelector />
+            <UserProfile />
           )}
         </>
       )}

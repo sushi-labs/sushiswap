@@ -1,10 +1,10 @@
 import { Button } from '@sushiswap/ui'
 import { warningSeverity } from 'lib/swap/warningSeverity'
 import React, { useEffect, useMemo, useState } from 'react'
+import { Checker } from 'ui/common/checker'
 import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { useIsSwapMaintenance } from 'utils/use-is-swap-maintenance'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { Checker } from '../../../components/Checker'
 import { Modal } from '../../../components/Modal/Modal'
 
 export const SimpleSwapTradeButton = () => {

@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import {
   usePoolActions,
   usePoolState,
-} from '../../components/Pool/PoolProvider/PoolProvider'
+} from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
 import { useNetwork } from '../useNetwork'
 import { PoolReserve } from './types'
 

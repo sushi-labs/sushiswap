@@ -4,7 +4,7 @@ import {
   useSimpleSwapState,
 } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { formatNumber } from 'utils/format-number'
-import { TradeInput } from '../../../components/TradeInput'
+import { CurrencyInput } from '../../common/currency/currency-input/currency-input'
 
 export const SimpleSwapToken1Input = () => {
   const { token1, outputAmount, isPriceFetching } = useSimpleSwapState()
@@ -16,7 +16,7 @@ export const SimpleSwapToken1Input = () => {
   const { setToken1 } = useSimpleSwapActions()
 
   return (
-    <TradeInput
+    <CurrencyInput
       id="swap-to"
       onSelect={setToken1}
       token={token1}

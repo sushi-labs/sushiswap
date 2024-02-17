@@ -1,12 +1,12 @@
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Button, SkeletonText } from '@sushiswap/ui'
-import { Icon } from 'components/Icon'
 import { Modal } from 'components/Modal/Modal'
 import { FC, ReactNode } from 'react'
 import { formatUSD } from 'sushi/format'
-import useStablePrice from 'utils/useStablePrice'
+import { CurrencyIcon } from 'ui/common/currency/currency-icon'
+import { useStablePrice } from 'utils/useStablePrice'
 import { ModalType } from '../../components/Modal/ModalProvider'
-import { usePoolState } from './PoolProvider/PoolProvider'
+import { usePoolState } from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
 import { Rate } from './Rate'
 
 interface Props {
@@ -52,7 +52,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                   </span>
                   <div className="flex items-center justify-end gap-2 text-right">
                     {/* <img src={token0.logoURI} className="rounded-full" width={26} height={56} /> */}
-                    <Icon currency={token0} width={26} height={26} />
+                    <CurrencyIcon currency={token0} width={26} height={26} />
                     <span className="text-lg text-right dark:text-slate-50">
                       {token0?.symbol}
                     </span>
@@ -79,7 +79,7 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
                     {amount1}
                   </span>
                   <div className="flex items-center justify-end gap-2 text-right">
-                    <Icon currency={token1} width={26} height={26} />
+                    <CurrencyIcon currency={token1} width={26} height={26} />
                     {/* <img src={token1.logoURI} className="rounded-full" width={26} height={56} /> */}
                     <span className="text-lg text-right dark:text-slate-50">
                       {token1?.symbol}

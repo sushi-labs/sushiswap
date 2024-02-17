@@ -1,7 +1,7 @@
 import { CardItem } from '@sushiswap/ui'
 import React from 'react'
 import { Token } from 'utils/tokenType'
-import { Icon } from './Icon'
+import { CurrencyIcon } from '../ui/common/currency/currency-icon'
 
 interface CardCurrencyAmountItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -23,7 +23,7 @@ const CardCurrencyAmountItem = React.forwardRef<
     <CardItem
       title={
         <div className="font-medium flex items-center gap-2 text-muted-foreground">
-          <Icon currency={currency} width={18} height={18} />
+          <CurrencyIcon currency={currency} width={18} height={18} />
           {currency.symbol}
         </div>
       }

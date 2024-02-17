@@ -345,6 +345,9 @@ importers:
       '@heroicons/react':
         specifier: 2.0.13
         version: 2.0.13(react@18.2.0)
+      '@heroicons/react-v1':
+        specifier: npm:@heroicons/react@v1
+        version: /@heroicons/react@1.0.6(react@18.2.0)
       '@martianwallet/aptos-wallet-adapter':
         specifier: ^0.0.4
         version: 0.0.4

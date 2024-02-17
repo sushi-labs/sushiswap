@@ -12,6 +12,7 @@
     "test": "npx playwright test"
   },
   "dependencies": {
+    "@heroicons/react-v1": "npm:@heroicons/react@v1",
     "@aptos-labs/wallet-adapter-ant-design": "1.0.0",
     "@aptos-labs/wallet-adapter-core": "2.3.3",
     "@aptos-labs/wallet-adapter-react": "1.0.2",

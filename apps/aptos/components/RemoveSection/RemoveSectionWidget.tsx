@@ -19,7 +19,7 @@ import { CardCurrencyAmountItem } from 'components/CardCurrencyAmountItem'
 import { FC, ReactNode } from 'react'
 import { formatUSD } from 'sushi'
 import { Token as TokenType } from 'utils/tokenType'
-import useStablePrice from 'utils/useStablePrice'
+import { useStablePrice } from 'utils/useStablePrice'
 
 interface RemoveSectionWidgetProps {
   title?: string

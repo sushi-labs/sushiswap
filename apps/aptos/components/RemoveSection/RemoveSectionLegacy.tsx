@@ -3,10 +3,10 @@ import { useSlippageTolerance } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import WalletSelector from 'components/WalletSelector'
-import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import React, { useMemo, useState } from 'react'
+import { createToast } from 'ui/common/toast'
+import { UserProfile } from 'ui/common/user-profile/user-profile'
 import { formatNumber } from 'utils/format-number'
 import { Token } from 'utils/tokenType'
 import { useNetwork } from 'utils/useNetwork'
@@ -168,7 +168,7 @@ export const RemoveSectionLegacy = ({
             )}
           </button>
         ) : (
-          <WalletSelector />
+          <UserProfile />
         )}
       </>
     </RemoveSectionWidget>

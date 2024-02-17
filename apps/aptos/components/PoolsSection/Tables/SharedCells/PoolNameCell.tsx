@@ -1,8 +1,8 @@
 import { TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
-import { Icon } from 'components/Icon'
-import { IconList } from 'components/IconList'
 import React, { FC } from 'react'
+import { CurrencyIcon } from 'ui/common/currency/currency-icon'
+import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
 import { useFarms, useIsFarm } from 'utils/useFarms'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
@@ -18,10 +18,10 @@ export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
     <div className="flex items-center gap-1">
       <div className="flex min-w-[54px]">
         {token0 && token1 && (
-          <IconList iconWidth={26} iconHeight={26}>
-            <Icon currency={token0} />
-            <Icon currency={token1} />
-          </IconList>
+          <CurrencyIconList iconWidth={26} iconHeight={26}>
+            <CurrencyIcon currency={token0} />
+            <CurrencyIcon currency={token1} />
+          </CurrencyIconList>
         )}
       </div>
       <div className="flex flex-col gap-0.5">

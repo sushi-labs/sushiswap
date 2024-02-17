@@ -3,16 +3,16 @@ import { Button, CardFooter, CardTitle, Dots } from '@sushiswap/ui'
 import { Card, CardDescription, CardHeader } from '@sushiswap/ui'
 import { CardContent, CardGroup, CardItem, CardLabel } from '@sushiswap/ui'
 import { Provider } from 'aptos'
-import WalletSelector from 'components/WalletSelector'
-import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import { Aptos } from 'lib/coins'
 import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
 import { formatUSD } from 'sushi/format'
+import { createToast } from 'ui/common/toast'
+import { UserProfile } from 'ui/common/user-profile/user-profile'
 import { formatNumber } from 'utils/format-number'
 import { useNetwork } from 'utils/useNetwork'
-import useStablePrice from 'utils/useStablePrice'
+import { useStablePrice } from 'utils/useStablePrice'
 
 interface PoolMyRewards {
   reward: number
@@ -105,7 +105,7 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
       </CardContent>
       <CardFooter>
         {!connected ? (
-          <WalletSelector />
+          <UserProfile />
         ) : (
           <Button fullWidth onClick={harvest} disabled={isTransactionPending}>
             {isTransactionPending ? <Dots>Claiming</Dots> : 'Claim'}

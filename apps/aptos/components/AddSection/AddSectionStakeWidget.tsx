@@ -9,10 +9,10 @@ import {
   WidgetTitle,
   textFieldVariants,
 } from '@sushiswap/ui'
-import { Icon } from 'components/Icon'
-import { IconList } from 'components/IconList'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
+import { CurrencyIcon } from 'ui/common/currency/currency-icon'
+import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
 import { Token } from 'utils/tokenType'
 
 interface AddSectionStakeWidgetProps {
@@ -114,10 +114,10 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
             </Button>
           </div>
           <div className="min-w-[56px] -mr-[10px]">
-            <IconList iconHeight={28} iconWidth={28}>
-              <Icon currency={token0} />
-              <Icon currency={token1} />
-            </IconList>
+            <CurrencyIconList iconHeight={28} iconWidth={28}>
+              <CurrencyIcon currency={token0} />
+              <CurrencyIcon currency={token1} />
+            </CurrencyIconList>
           </div>
           <div className="grid items-center justify-between grid-cols-3 pb-2">
             <Transition

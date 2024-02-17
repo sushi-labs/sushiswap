@@ -1,9 +1,9 @@
 'use client'
 
 import { Navigation } from '@sushiswap/ui'
-import WalletSelector from 'components/WalletSelector'
 import React, { FC } from 'react'
+import { UserProfile } from 'ui/common/user-profile/user-profile'
 
 export const Header: FC = () => {
-  return <Navigation showOnramper={false} rightElement={<WalletSelector />} />
+  return <Navigation showOnramper={false} rightElement={<UserProfile />} />
 }

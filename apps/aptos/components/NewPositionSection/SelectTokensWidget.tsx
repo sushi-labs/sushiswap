@@ -1,11 +1,14 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Button } from '@sushiswap/ui'
-import { Icon } from 'components/Icon'
 import { Modal } from 'components/Modal/Modal'
 import React, { FC } from 'react'
+import { CurrencyIcon } from 'ui/common/currency/currency-icon'
+import TokenSelector from '../../ui/common/token-selector/token-selector'
+import {
+  usePoolActions,
+  usePoolState,
+} from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
 import { ContentBlock } from '../ContentBlock'
-import { usePoolActions, usePoolState } from '../Pool/PoolProvider/PoolProvider'
-import TokenListDialog from '../TokenListDialog'
 
 interface SelectTokensWidget {
   handleSwap: () => void
@@ -25,12 +28,12 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ handleSwap }) => {
       }
     >
       <div className="flex gap-3">
-        <TokenListDialog
+        <TokenSelector
           alteredSelected={token1}
           id={'liquidity-from-0'}
           selected={token0}
           handleSwap={handleSwap}
-          handleChangeToken={setToken0}
+          onSelect={setToken0}
         >
           <Modal.Trigger tag={'liquidity-from-0-token-selector-modal'}>
             {({ open }) => (
@@ -44,7 +47,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ handleSwap }) => {
                   color={!token0 ? 'blue' : 'default'}
                 >
                   <div className="w-[28px] h-[28px] mr-0.5">
-                    <Icon currency={token0} height={28} width={28} />
+                    <CurrencyIcon currency={token0} height={28} width={28} />
                   </div>
                   {token0.symbol}
                   <ChevronDownIcon
@@ -57,12 +60,12 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ handleSwap }) => {
               </>
             )}
           </Modal.Trigger>
-        </TokenListDialog>
-        <TokenListDialog
+        </TokenSelector>
+        <TokenSelector
           id={'liquidity-to-1'}
           selected={token1}
           alteredSelected={token0}
-          handleChangeToken={setToken1}
+          onSelect={setToken1}
           handleSwap={handleSwap}
         >
           <Modal.Trigger tag={'liquidity-to-1-token-selector-modal'}>
@@ -77,7 +80,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ handleSwap }) => {
                   testdata-id="token1-select-button"
                 >
                   <div className="w-[28px] h-[28px] mr-0.5">
-                    <Icon currency={token1} height={28} width={28} />
+                    <CurrencyIcon currency={token1} height={28} width={28} />
                   </div>
                   {token1.symbol}
 
@@ -91,7 +94,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({ handleSwap }) => {
               </>
             )}
           </Modal.Trigger>
-        </TokenListDialog>
+        </TokenSelector>
         <div
           style={{
             position: 'fixed',

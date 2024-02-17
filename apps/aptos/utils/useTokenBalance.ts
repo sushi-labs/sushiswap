@@ -33,7 +33,7 @@ export const tokenBalanceQueryFn = async ({
 
 interface UseTokenBalance {
   account?: string
-  currency: string
+  currency?: string
   enabled?: boolean
   refetchInterval?: number
 }
@@ -49,8 +49,8 @@ export function useTokenBalance({
   return useQuery({
     queryKey: ['balance', { currency, account, network }],
     queryFn: async () => {
-      if (!account) {
-        throw new Error('Account is required')
+      if (!account || !currency) {
+        throw new Error('Account and currency is required')
       }
 
       return tokenBalanceQueryFn({ account, currency, network })

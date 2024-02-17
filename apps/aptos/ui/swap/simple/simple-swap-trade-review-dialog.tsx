@@ -29,10 +29,10 @@ import { formatNumber } from 'utils/format-number'
 import { payloadArgs } from 'utils/payloadUtil'
 import { useNetwork } from 'utils/useNetwork'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { Icon } from '../../../components/Icon'
 import { Modal } from '../../../components/Modal/Modal'
 import { ModalType } from '../../../components/Modal/ModalProvider'
-import { createToast } from '../../../components/toast'
+import { CurrencyIcon } from '../../common/currency/currency-icon'
+import { createToast } from '../../common/toast'
 
 export const SimpleSwapTradeReviewDialog: FC = () => {
   const {
@@ -141,7 +141,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                     }
                   >
                     {token1 ? (
-                      <Icon currency={token1} width={56} height={56} />
+                      <CurrencyIcon currency={token1} width={56} height={56} />
                     ) : (
                       // <img src={token1.logoURI} className="rounded-full" width={56} height={56} />
                       <SkeletonCircle

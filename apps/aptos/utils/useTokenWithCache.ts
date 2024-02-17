@@ -5,18 +5,19 @@ import { useCustomTokens } from './useCustomTokens'
 import { useNetwork } from './useNetwork'
 
 interface GetTokenWithQueryCacheFn {
-  address: string | undefined
+  address: string
   hasToken: (currency: string | Token) => boolean
   customTokens: Record<string, Token>
   network: SupportedNetwork
 }
-export const getTokenDetails = async ({
+
+export async function getTokenDetails({
   address,
   hasToken,
   customTokens,
   network,
-}: GetTokenWithQueryCacheFn) => {
-  if (hasToken(`${address}`)) {
+}: GetTokenWithQueryCacheFn) {
+  if (hasToken(address)) {
     const {
       address: tokenAddress,
       name,
@@ -30,7 +31,6 @@ export const getTokenDetails = async ({
       decimals,
     } as Token
   }
-  if (!address) return undefined
 
   const tokenAddress = address.split(':')
 
@@ -41,6 +41,7 @@ export const getTokenDetails = async ({
   if (response.status === 200) {
     const data = await response.json()
     const tokenAddress = data?.type.slice(20).slice(0, -1)
+
     return {
       address: tokenAddress,
       decimals: data.data.decimals,
@@ -49,7 +50,7 @@ export const getTokenDetails = async ({
     } as Token
   }
 
-  return null
+  return undefined
 }
 
 interface UseTokenParams {
@@ -58,7 +59,7 @@ interface UseTokenParams {
   keepPreviousData?: boolean
 }
 
-export default function useTokenWithCache({
+export function useTokenWithCache({
   address,
   enabled = true,
   keepPreviousData = true,
@@ -68,8 +69,13 @@ export default function useTokenWithCache({
 
   return useQuery({
     queryKey: ['token', { address, network }],
-    queryFn: async () =>
-      address && getTokenDetails({ address, hasToken, customTokens, network }),
+    queryFn: async () => {
+      if (!address) {
+        throw new Error('Address is required')
+      }
+
+      return getTokenDetails({ address, hasToken, customTokens, network })
+    },
     enabled: Boolean(enabled && address),
     refetchOnWindowFocus: false,
     keepPreviousData,

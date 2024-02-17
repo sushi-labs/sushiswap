@@ -17,19 +17,22 @@ import {
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { Provider } from 'aptos'
 import { AddLiquidityButton } from 'components/Pool/AddLiquidityButton'
-import { TradeInput } from 'components/TradeInput'
-import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import { useParams } from 'next/navigation'
 import React, { FC, useCallback, useEffect } from 'react'
+import { CurrencyInput } from 'ui/common/currency/currency-input/currency-input'
+import { createToast } from 'ui/common/toast'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { useNetwork } from 'utils/useNetwork'
+import {
+  usePoolActions,
+  usePoolState,
+} from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
 import { usePoolPairs } from '../../utils/swap-get-route/utilFunctions'
 import { usePool } from '../../utils/usePool'
 import { Pool } from '../../utils/usePools'
 import { useTokensFromPools } from '../../utils/useTokensFromPool'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
-import { usePoolActions, usePoolState } from '../Pool/PoolProvider/PoolProvider'
 
 type PayloadType = {
   type: string

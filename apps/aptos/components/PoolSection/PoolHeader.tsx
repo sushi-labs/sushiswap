@@ -6,11 +6,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { Icon } from 'components/Icon'
-import { IconList } from 'components/IconList'
 import { networkNameToNetwork } from 'config/chains'
 import { FC } from 'react'
 import { formatPercent } from 'sushi'
+import { CurrencyIcon } from 'ui/common/currency/currency-icon'
+import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
 import { useNetwork } from 'utils/useNetwork'
 import { Pool } from 'utils/usePools'
 import { useTokensFromPools } from 'utils/useTokensFromPool'
@@ -31,10 +31,10 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
         <div className="relative flex items-center gap-3 max-w-[100vh]">
-          <IconList iconWidth={36} iconHeight={36}>
-            <Icon currency={token0} />
-            <Icon currency={token1} />
-          </IconList>
+          <CurrencyIconList iconWidth={36} iconHeight={36}>
+            <CurrencyIcon currency={token0} />
+            <CurrencyIcon currency={token1} />
+          </CurrencyIconList>
           <Button
             asChild
             variant="link"

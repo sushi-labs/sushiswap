@@ -5,7 +5,7 @@ import {
   useSimpleSwapState,
 } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { useSwapRouter } from 'utils/useSwapRouter'
-import { TradeInput } from '../../../components/TradeInput'
+import { CurrencyInput } from '../../common/currency/currency-input/currency-input'
 
 export const SimpleSwapToken0Input = () => {
   const [, startTransition] = useTransition()
@@ -59,7 +59,7 @@ export const SimpleSwapToken0Input = () => {
   if (!isMounted) return <></>
 
   return (
-    <TradeInput
+    <CurrencyInput
       id="swap-from"
       type="INPUT"
       onSelect={setToken0}

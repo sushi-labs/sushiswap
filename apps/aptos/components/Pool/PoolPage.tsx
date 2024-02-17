@@ -2,7 +2,6 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/20/solid'
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   Button,
   IconButton,
@@ -12,19 +11,21 @@ import {
 import Loading from 'app/loading'
 import { Provider } from 'aptos'
 import { ContentBlock } from 'components/ContentBlock'
-import { Layout } from 'components/Layout'
-import { TradeInput } from 'components/TradeInput'
-import { createToast } from 'components/toast'
 import { networkNameToNetwork } from 'config/chains'
 import Link from 'next/link'
-import { FC, useCallback, useEffect } from 'react'
+import { FC, useCallback } from 'react'
+import { CurrencyInput } from 'ui/common/currency/currency-input/currency-input'
+import { createToast } from 'ui/common/toast'
 import { liquidityArgs } from 'utils/liquidityPayload'
 import { usePoolPairs } from 'utils/swap-get-route/utilFunctions'
 import { useAccount } from 'utils/useAccount'
 import { useNetwork } from 'utils/useNetwork'
+import {
+  usePoolActions,
+  usePoolState,
+} from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
 import { AddLiquidityButton } from './AddLiquidityButton'
 import { AddSectionReviewModal } from './AddSectionReviewModel'
-import { usePoolActions, usePoolState } from './PoolProvider/PoolProvider'
 
 export function Add() {
   const { isLoadingAccount } = useAccount()
@@ -33,7 +34,7 @@ export function Add() {
   return (
     <>
       {isLoadingAccount && <Loading />}
-      <Layout className="flex justify-center">
+      <div className="flex justify-center">
         <div className="flex flex-col gap-2">
           <Link
             className="flex items-center gap-4 mb-2 group"
@@ -55,7 +56,7 @@ export function Add() {
             <_Add />
           </div>
         </div>
-      </Layout>
+      </div>
     </>
   )
 }
@@ -75,8 +76,6 @@ const _Add: FC = () => {
     setAmount1,
     setIndependentField,
     setisTransactionPending,
-    setSlippageAmount0,
-    setSlippageAmount1,
   } = usePoolActions()
 
   const { account, signAndSubmitTransaction } = useWallet()
@@ -89,8 +88,6 @@ const _Add: FC = () => {
     slippageAmount0,
     slippageAmount1,
   } = usePoolState()
-
-  const [slippageAmount] = useSlippageTolerance()
 
   const {
     network,
@@ -157,18 +154,6 @@ const _Add: FC = () => {
     },
     [setAmount1, setIndependentField],
   )
-
-  useEffect(() => {
-    if (amount0) {
-      setSlippageAmount0(Number(amount0))
-    }
-    if (amount1) {
-      setSlippageAmount1(Number(amount1))
-    }
-
-    slippageAmount
-  }, [setSlippageAmount0, setSlippageAmount1, amount0, amount1, slippageAmount])
-
   return (
     <>
       <div className="flex flex-col order-3 gap-[64px] pb-40 sm:order-2">
@@ -178,7 +163,7 @@ const _Add: FC = () => {
           }
         >
           <div className="flex flex-col gap-4">
-            <TradeInput
+            <CurrencyInput
               id={'liquidity-from'}
               token={token0}
               value={String(amount0)}
@@ -196,7 +181,7 @@ const _Add: FC = () => {
                 />
               </div>
             </div>
-            <TradeInput
+            <CurrencyInput
               id={'liquidity-to'}
               token={token1}
               value={String(amount1)}
