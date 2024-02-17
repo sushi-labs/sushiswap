@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
-import { STABLES, WNATIVE } from 'sushi/currency'
+import { STABLES, WNATIVE } from 'sushi/config'
 import { RPool, RToken, calcTokenAddressPrices } from 'sushi/tines'
 import { ExtractorClient } from '../../ExtractorClient'
 import { CHAIN_ID } from '../../config'

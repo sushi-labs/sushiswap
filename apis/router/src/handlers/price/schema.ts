@@ -1,9 +1,9 @@
 import { ChainId } from 'sushi/chain'
 import {
   ExtractorSupportedChainId,
+  STABLES,
   isExtractorSupportedChainId,
 } from 'sushi/config'
-import { STABLES } from 'sushi/currency'
 import { getAddress } from 'viem'
 import z from 'zod'
 
