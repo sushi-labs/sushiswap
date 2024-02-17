@@ -1,7 +1,5 @@
 import { ChainId } from '../../chain'
-import { Native } from '../Native'
-import { Token } from '../Token'
-import { type Type } from '../Type'
+import { Native, Token, Type } from '../../currency'
 import {
   AGEUR,
   DAI,

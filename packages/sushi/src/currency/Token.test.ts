@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-
 import { Token } from './Token'
 
 describe('Token', () => {

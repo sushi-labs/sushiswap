@@ -1,5 +1,5 @@
-import { ChainId } from '../../chain/index'
-import { Token } from '../Token'
+import { ChainId } from '../../chain'
+import { Token } from '../../currency'
 import { ARB, BUSD, GNO, OP, SUSHI, USDC, axlUSDC } from './tokens'
 
 export const defaultQuoteCurrency = {

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-
 import { Amount } from './Amount'
 import { Native } from './Native'
 import { Token } from './Token'

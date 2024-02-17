@@ -7,7 +7,6 @@ import {
   Rounding,
   ZERO,
 } from '../math'
-
 import { Native } from './Native'
 import { Share } from './Share'
 import { Token } from './Token'

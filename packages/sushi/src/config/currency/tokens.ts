@@ -1,6 +1,6 @@
 import { ChainId } from '../../chain'
-import { Token } from '../Token'
-import { addressMapToTokenMap } from '../functions'
+import { addressMapToTokenMap } from '../../convert'
+import { Token } from '../../currency'
 
 import {
   AAVE_ADDRESS,

@@ -10,14 +10,11 @@
     "src/**/*.bench.ts"
   ],
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
-    "target": "ES2022",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "moduleResolution": "NodeNext",
-    "resolveJsonModule": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "resolveJsonModule": true
   }
 }

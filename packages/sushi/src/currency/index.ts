@@ -1,7 +1,6 @@
-export * from './constants'
+export * from '../config/currency'
 // export * from './entities'
 export * from './functions'
-
 export * from './AddressMapper'
 export * from './Amount'
 // dont't export abstract currency

@@ -1,6 +1,6 @@
 import { ChainId } from '../../chain'
 import { STARGATE_USDC, STARGATE_USDT } from '../../config'
-import { Token } from '../Token'
+import { Token } from '../../currency'
 import {
   BUSD,
   DAI,
