@@ -111,6 +111,7 @@ export interface CurveConfig {
   api: string
   minPoolLiquidityLimitUSD: number
   poolBlackList?: Address[]
+  ratioPoolsUpdateInterval?: number
 }
 
 interface APIPoolInfo {
@@ -227,6 +228,8 @@ export class CurveExtractor {
   }
 
   async start() {
+    if (this.tokenManager.tokens.size === 0)
+      await this.tokenManager.addCachedTokens()
     const pools = await this.gatherCurvePools()
     const balancesType = await Promise.all(
       pools.map((p) => this.detectPoolInterface(p.address)),
@@ -243,7 +246,7 @@ export class CurveExtractor {
         await this.updateRatioPools()
         this.consoleLog(`${this.ratioPoolSet.size} ratio pools were updated`)
       }
-    }, POOL_RATIO_UPDATE_INTERVAL)
+    }, this.config.ratioPoolsUpdateInterval ?? POOL_RATIO_UPDATE_INTERVAL)
     this.started = true
   }
 
