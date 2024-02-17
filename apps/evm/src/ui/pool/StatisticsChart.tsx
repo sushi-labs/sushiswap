@@ -1,7 +1,6 @@
 import { Card } from '@sushiswap/ui'
-import { SushiSwapV3ChainId } from 'sushi'
 import React, { FC, useMemo, useState } from 'react'
-
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'

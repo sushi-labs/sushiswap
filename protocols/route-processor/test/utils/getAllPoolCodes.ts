@@ -23,7 +23,7 @@ export async function getAllPoolCodes(
   chainId: ChainId,
   blockNumber: number | undefined,
 ): Promise<PoolCode[]> {
-  let poolCodes = loadPoolSnapshot(chainId, blockNumber)
+  let poolCodes = await loadPoolSnapshot(chainId, blockNumber)
   if (poolCodes === undefined) {
     const fetchedTokens: Token[] = [
       WNATIVE[chainId],
@@ -69,7 +69,7 @@ export async function getAllPoolCodes(
         }
       }
     }
-    savePoolSnapshot(poolCodes, chainId, blockNumber)
+    await savePoolSnapshot(poolCodes, chainId, blockNumber)
   }
   const providers = new Map<LiquidityProviders, number>()
   poolCodes.forEach((p) => {

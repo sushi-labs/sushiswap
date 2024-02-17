@@ -1,4 +1,4 @@
-import { Token } from '../currency/Token'
+import { Token } from '../currency'
 
 export function addressMapToTokenMap(
   {

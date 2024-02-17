@@ -5,8 +5,8 @@ import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config'
 import { Currency, Token, Type } from '../../currency'
 import { computeSushiSwapV3PoolAddress } from '../../pool'
 import { RToken, UniV3Pool } from '../../tines'
-import { getCurrencyCombinations } from '../getCurrencyCombinations'
-import { type PoolCode, UniV3PoolCode } from '../pools'
+import { getCurrencyCombinations } from '../get-currency-combinations'
+import { type PoolCode, UniV3PoolCode } from '../pool-codes'
 import { LiquidityProvider } from './LiquidityProvider'
 
 interface StaticPool {

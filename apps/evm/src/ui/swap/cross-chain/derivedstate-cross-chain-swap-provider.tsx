@@ -23,13 +23,8 @@ import {
 import { useCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { ChainId } from 'sushi/chain'
 import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
-import {
-  Amount,
-  Native,
-  Type,
-  defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
+import { defaultQuoteCurrency } from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
 

@@ -1,6 +1,5 @@
 import { Address } from '@wagmi/core'
-import { ExtractorSupportedChainId } from 'sushi/config'
-import { STABLES, WNATIVE } from 'sushi/currency'
+import { ExtractorSupportedChainId, STABLES, WNATIVE } from 'sushi/config'
 import {
   ConstantProductRPool,
   RPool,

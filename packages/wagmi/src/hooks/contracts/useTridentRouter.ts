@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
-import { TRIDENT_ROUTER_ADDRESS, TridentChainId } from 'sushi'
 import { tridentRouterAbi } from 'sushi/abi'
+import { TRIDENT_ROUTER_ADDRESS, TridentChainId } from 'sushi/config'
 import { WalletClient } from 'viem'
 import { Address, useWalletClient } from 'wagmi'
 import { getContract } from 'wagmi/actions'

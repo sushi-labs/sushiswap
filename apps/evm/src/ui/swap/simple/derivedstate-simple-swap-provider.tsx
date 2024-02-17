@@ -27,9 +27,9 @@ import {
   Amount,
   Native,
   Type,
-  defaultQuoteCurrency,
   tryParseAmount,
 } from 'sushi/currency'
+import { defaultQuoteCurrency } from 'sushi/config'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'

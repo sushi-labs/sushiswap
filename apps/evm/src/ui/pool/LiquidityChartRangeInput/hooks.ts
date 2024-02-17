@@ -1,11 +1,10 @@
-import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi'
 import { useMemo } from 'react'
 import {
   TickProcessed,
   useConcentratedActiveLiquidity,
 } from 'src/lib/hooks/useConcentratedActiveLiquidity'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type } from 'sushi/currency'
-
 import { ChartEntry } from './types'
 
 interface UseDensityChartData {

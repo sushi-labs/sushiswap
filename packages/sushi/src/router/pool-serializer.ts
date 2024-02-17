@@ -1,6 +1,6 @@
-import * as fs from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
-import * as serializer from 'serialijse'
+import serializer from 'serialijse'
 import { ChainId } from '../chain'
 import { Native } from '../currency'
 import {
@@ -23,7 +23,7 @@ import {
   NativeWrapBridgePoolCode,
   PoolCode,
   UniV3PoolCode,
-} from './pools'
+} from './pool-codes'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)
@@ -150,7 +150,7 @@ export function deserializePoolCodesJSON(data: string): PoolCode[] {
   return poolCodes
 }
 
-export function savePoolSnapshot(
+export async function savePoolSnapshot(
   poolCodes: PoolCode[],
   chainId: ChainId,
   blockNumber: number | undefined,
@@ -164,22 +164,22 @@ export function savePoolSnapshot(
   restoreAfterSerialization(poolCodes)
 
   directory = directory || snapshotDirDefault
-  if (!fs.existsSync(directory)) fs.mkdirSync(directory)
-  fs.writeFileSync(
+  if (!existsSync(directory)) mkdirSync(directory)
+  writeFileSync(
     path.resolve(directory, `${chainId}-${blockNumber}`),
     humanReadableStr,
   )
 }
 
-export function loadPoolSnapshot(
+export async function loadPoolSnapshot(
   chainId: ChainId,
   blockNumber: number | undefined,
   directory?: string,
-): PoolCode[] | undefined {
+) {
   directory = directory || snapshotDirDefault
   const fileName = path.resolve(directory, `${chainId}-${blockNumber}`)
-  if (!fs.existsSync(fileName)) return undefined
-  const str = fs.readFileSync(fileName, 'utf8')
+  if (!existsSync(fileName)) return undefined
+  const str = readFileSync(fileName, 'utf8')
   const poolCodes = serializer.deserialize(str) as PoolCode[]
   restoreAfterSerialization(poolCodes)
   return poolCodes

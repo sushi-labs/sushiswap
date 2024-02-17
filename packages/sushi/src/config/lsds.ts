@@ -1,4 +1,4 @@
-import { ChainId } from '../../chain'
+import { ChainId } from '../chain'
 
 export const LSDS = {
   [ChainId.ETHEREUM]: [],

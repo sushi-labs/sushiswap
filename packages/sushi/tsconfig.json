@@ -12,11 +12,10 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "lib": ["ESNext"],
-    "target": "ES2022",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true
   }
 }

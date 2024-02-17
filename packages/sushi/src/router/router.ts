@@ -13,15 +13,15 @@ import {
   getBentoChainId,
   getBigInt,
 } from '../tines'
-import { getRouteProcessorCode } from './TinesToRouteProcessor'
+import { LiquidityProviders } from './liquidity-providers'
+import { PoolCode } from './pool-codes'
+import { getRouteProcessorCode } from './tines-to-route-processor'
 import {
   PermitData,
   RouterLiquiditySource,
   getRouteProcessor2Code,
-} from './TinesToRouteProcessor2'
-import { getRouteProcessor4Code } from './TinesToRouteProcessor4'
-import { LiquidityProviders } from './liquidity-providers'
-import { PoolCode } from './pools'
+} from './tines-to-route-processor-2'
+import { getRouteProcessor4Code } from './tines-to-route-processor-4'
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken

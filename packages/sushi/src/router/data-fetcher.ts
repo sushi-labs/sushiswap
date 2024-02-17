@@ -31,7 +31,7 @@ import { TridentProvider } from './liquidity-providers/Trident'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
-import type { PoolCode } from './pools'
+import type { PoolCode } from './pool-codes'
 
 // TODO: Should be a mode on the config for DataFetcher
 const isTest =

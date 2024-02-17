@@ -40,14 +40,12 @@ import {
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useMemo, useState } from 'react'
-import { SushiSwapV3ChainId } from 'sushi'
-
 import useIsTickAtLimit from 'src/lib/hooks/useIsTickAtLimit'
 import { Chain } from 'sushi/chain'
+import { SushiSwapV3ChainId } from 'sushi/config'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-
-import { isAngleEnabledChainId } from 'sushi/config'
 import { getAddress } from 'viem'
 import { Bound } from '../../lib/constants'
 import {

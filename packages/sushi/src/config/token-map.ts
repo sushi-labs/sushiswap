@@ -1,5 +1,5 @@
-import { ChainId } from '../../chain'
-import { AddressMapper } from '../../currency'
+import { ChainId } from '../chain'
+import { AddressMapper } from '../currency'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,

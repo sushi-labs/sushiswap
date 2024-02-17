@@ -1,14 +1,14 @@
 'use client'
 
+import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
+import { useMemo } from 'react'
 import {
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   TICK_SPACINGS,
-  tickToPrice,
-} from 'sushi'
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
-import { useMemo } from 'react'
+} from 'sushi/config'
 import { Type } from 'sushi/currency'
+import { tickToPrice } from 'sushi/pool'
 
 import computeSurroundingTicks from '../functions'
 import { useTicks } from './useTicks'

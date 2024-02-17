@@ -30,7 +30,11 @@ import {
   filterTopPools,
   mapToken,
 } from '../lib/api'
-import { BentoBridgePoolCode, BentoPoolCode, type PoolCode } from '../pools'
+import {
+  BentoBridgePoolCode,
+  BentoPoolCode,
+  type PoolCode,
+} from '../pool-codes'
 import {
   TridentStaticPool,
   TridentStaticPoolFetcher,

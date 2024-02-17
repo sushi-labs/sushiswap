@@ -1,28 +1,25 @@
 import { Pool, Protocol } from '@sushiswap/client'
+import { ChainId } from 'sushi/chain'
 import {
-  Position,
+  DAI,
   SushiSwapV3FeeAmount,
   TICK_SPACINGS,
+  USDC,
+  USDT,
+  WBTC,
+} from 'sushi/config'
+import { Native, Price, Token, Type, tryParseAmount } from 'sushi/currency'
+import {
+  Position,
+  SushiSwapV2Pool,
   TickMath,
+  TridentConstantPool,
+  TridentStablePool,
   encodeSqrtRatioX96,
   nearestUsableTick,
   priceToClosestTick,
   tickToPrice,
-} from 'sushi'
-import { SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from 'sushi'
-import { ChainId } from 'sushi/chain'
-import {
-  DAI,
-  Native,
-  Price,
-  Token,
-  Type,
-  USDC,
-  USDT,
-  WBTC,
-  tryParseAmount,
-} from 'sushi/currency'
-
+} from 'sushi/pool'
 import { Bound } from './constants'
 import { useTicks } from './hooks'
 import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'

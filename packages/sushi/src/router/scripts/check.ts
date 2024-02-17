@@ -3,9 +3,9 @@ import { ChainId } from '../../chain'
 import { USDC, USDT } from '../../config'
 import { Token, Type } from '../../currency'
 import { MultiRoute } from '../../tines'
-import { DataFetcher } from '../DataFetcher'
-import { Router } from '../Router'
+import { DataFetcher } from '../data-fetcher'
 import { LiquidityProviders } from '../liquidity-providers/LiquidityProvider'
+import { Router } from '../router'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 

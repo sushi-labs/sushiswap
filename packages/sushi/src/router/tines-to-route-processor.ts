@@ -2,7 +2,7 @@ import { Hex } from 'viem'
 import { ChainId } from '../chain'
 import { MultiRoute, RToken, RouteLeg, RouteStatus, getBigInt } from '../tines'
 import { HEXer } from './HEXer'
-import { PoolCode } from './pools/PoolCode'
+import { PoolCode } from './pool-codes/PoolCode'
 
 function last<T>(arr: T[]): T {
   return arr[arr.length - 1] as T

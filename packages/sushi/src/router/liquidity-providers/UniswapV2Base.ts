@@ -6,14 +6,14 @@ import { ChainId } from '../../chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '../../config'
 import { Token } from '../../currency'
 import { ConstantProductRPool, RToken } from '../../tines'
-import { getCurrencyCombinations } from '../getCurrencyCombinations'
+import { getCurrencyCombinations } from '../get-currency-combinations'
 import {
   PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
   mapToken,
 } from '../lib/api'
-import { ConstantProductPoolCode, type PoolCode } from '../pools'
+import { ConstantProductPoolCode, type PoolCode } from '../pool-codes'
 import { LiquidityProvider } from './LiquidityProvider'
 
 interface PoolInfo {

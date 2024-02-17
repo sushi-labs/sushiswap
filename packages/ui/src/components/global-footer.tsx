@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic'
 import { ReactNode, useCallback } from 'react'
-
 import { ExtractProps } from '../types'
 import { Container, ContainerProps } from './container'
 import {

@@ -1,12 +1,5 @@
 'use client'
 
-import {
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
-  TICK_SPACINGS,
-  computeSushiSwapV3PoolAddress,
-  nearestUsableTick,
-} from 'sushi'
 import { Address, useContractReads } from '@sushiswap/wagmi'
 import {
   getV3FactoryContractConfig,
@@ -14,7 +7,13 @@ import {
   useConcentratedLiquidityPool,
 } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
+import {
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+} from 'sushi/config'
 import { Type } from 'sushi/currency'
+import { computeSushiSwapV3PoolAddress, nearestUsableTick } from 'sushi/pool'
 import { Writeable } from 'zod'
 
 interface useTicksProps {

@@ -1,6 +1,5 @@
 import { LogFilterType } from '@sushiswap/extractor'
 import {
-  LiquidityProviders,
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
   PANCAKESWAP_V3_FEE_SPACING_MAP,
@@ -8,9 +7,6 @@ import {
   PancakeSwapV3ChainId,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
-  // PANCAKESWAP_V3_FACTORY_ADDRESS,
-  // PANCAKESWAP_V3_INIT_CODE_HASH,
-  // PancakeSwapV3ChainId,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
@@ -22,7 +18,8 @@ import {
   UNISWAP_V3_INIT_CODE_HASH,
   type UniswapV3ChainId,
   publicClientConfig,
-} from 'sushi'
+} from 'sushi/config'
+import { LiquidityProviders } from 'sushi/router'
 import { ChainId } from 'sushi/chain'
 
 import { type Address, createPublicClient } from 'viem'

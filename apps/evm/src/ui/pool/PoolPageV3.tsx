@@ -3,6 +3,7 @@
 import { getPool } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { CardLabel, Separator, SkeletonText, classNames } from '@sushiswap/ui'
+import { Container, LinkInternal, Message } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
@@ -19,10 +20,8 @@ import {
 } from '@sushiswap/wagmi'
 import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { SushiSwapV3ChainId } from 'sushi'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
-
-import { Container, LinkInternal, Message } from '@sushiswap/ui'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'

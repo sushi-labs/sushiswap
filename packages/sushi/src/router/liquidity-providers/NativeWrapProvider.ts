@@ -4,7 +4,7 @@ import type { ChainId } from '../../chain'
 import { WNATIVE, WNATIVE_ADDRESS } from '../../config'
 import { Native } from '../../currency'
 import { BridgeUnlimited, RToken } from '../../tines'
-import { NativeWrapBridgePoolCode, type PoolCode } from '../pools'
+import { NativeWrapBridgePoolCode, type PoolCode } from '../pool-codes'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 export class NativeWrapProvider extends LiquidityProvider {

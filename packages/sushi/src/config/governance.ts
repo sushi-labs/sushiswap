@@ -1,4 +1,4 @@
-import { ChainId } from '../../chain'
+import { ChainId } from '../chain'
 import { LDO } from './tokens'
 
 export const GOVERNANCE = {

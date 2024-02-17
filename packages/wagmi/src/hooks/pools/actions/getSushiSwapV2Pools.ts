@@ -1,12 +1,11 @@
+import { uniswapV2PairAbi } from 'sushi/abi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
-  SushiSwapV2Pool,
-  computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
-} from 'sushi'
-import { uniswapV2PairAbi } from 'sushi/abi'
+} from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
+import { SushiSwapV2Pool, computeSushiSwapV2PoolAddress } from 'sushi/pool'
 import { Address, readContracts } from 'wagmi'
 
 export enum PairState {

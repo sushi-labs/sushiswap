@@ -9,9 +9,9 @@ import { ChainId } from '../../chain'
 import { DAI, FRAX, LINK, USDC, USDT, WBTC, renBTC } from '../../config'
 import { Native, Token, Type } from '../../currency'
 import { RToken, createCurvePoolsForMultipool } from '../../tines'
-import { getCurrencyCombinations } from '../getCurrencyCombinations'
-import { CurvePoolCode } from '../pools/CurvePool'
-import { PoolCode } from '../pools/PoolCode'
+import { getCurrencyCombinations } from '../get-currency-combinations'
+import { CurvePoolCode } from '../pool-codes/CurvePool'
+import { PoolCode } from '../pool-codes/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 const stETH = new Token({

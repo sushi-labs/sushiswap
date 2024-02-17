@@ -4,7 +4,6 @@ import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Position, SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi'
 import {
   getV3NonFungiblePositionManagerConractConfig,
   useConcentratedPositionOwner,
@@ -13,7 +12,9 @@ import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type } from 'sushi/currency'
+import { Position } from 'sushi/pool'
 
 import { Bound, Field } from '../../lib/constants'
 import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'

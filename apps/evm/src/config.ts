@@ -1,6 +1,9 @@
-import { SushiSwapV3ChainIds } from 'sushi'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
-import { SushiSwapV2ChainIds, TridentChainIds } from 'sushi/config'
+import {
+  SushiSwapV2ChainIds,
+  SushiSwapV3ChainIds,
+  TridentChainIds,
+} from 'sushi/config'
 import { Currency } from 'sushi/currency'
 
 export const SWAP_API_ENABLED_NETWORKS = [

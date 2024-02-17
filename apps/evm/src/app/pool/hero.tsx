@@ -15,11 +15,12 @@ import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { useNetwork } from '@sushiswap/wagmi'
 import { FC } from 'react'
-import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import {
+  SushiSwapV3ChainId,
   TridentChainId,
   isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
   isTridentChainId,
 } from 'sushi/config'
 

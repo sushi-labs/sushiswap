@@ -1,5 +1,11 @@
-import { ChainId } from '../../chain'
-import { Token } from '../../currency'
+import { ChainId } from '../chain'
+import { Token } from '../currency'
+import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from './stargate'
 import {
   AAVE,
   BUSD,
@@ -24,13 +30,7 @@ import {
   axlETH,
   axlUSDC,
   axlWBTC,
-} from '../currency'
-import {
-  STARGATE_USDC,
-  STARGATE_USDT,
-  STARGATE_WBTC,
-  STARGATE_WETH,
-} from '../stargate'
+} from './tokens'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
   readonly [chainId: number]: Token[]

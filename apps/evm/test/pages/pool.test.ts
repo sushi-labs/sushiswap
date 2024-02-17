@@ -4,32 +4,31 @@ import {
   expect,
   test,
 } from 'next/experimental/testmode/playwright'
-import {
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
-  computeSushiSwapV3PoolAddress,
-  isSushiSwapV3ChainId,
-} from 'sushi'
+import { SupportedChainId } from 'src/config'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
-  computeSushiSwapV2PoolAddress,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
   isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
   isTridentChainId,
-} from 'sushi'
+} from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
-import { zeroAddress } from 'viem'
-
-import { SupportedChainId } from 'src/config'
+import {
+  computeSushiSwapV2PoolAddress,
+  computeSushiSwapV3PoolAddress,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
+} from 'sushi/pool'
 import { createERC20 } from 'test/erc20'
 import { interceptAnvil } from 'test/intercept-anvil'
+import { zeroAddress } from 'viem'
 
 interface TridentPoolArgs {
   token0: Type

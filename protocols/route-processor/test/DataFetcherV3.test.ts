@@ -127,7 +127,7 @@ describe('DataFetcher Uni V3', () => {
 
   before(async () => {
     env = await createUniV3EnvReal(ethers)
-    const poolCodes = loadPoolSnapshot(
+    const poolCodes = await loadPoolSnapshot(
       network.config.chainId as ChainId,
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,

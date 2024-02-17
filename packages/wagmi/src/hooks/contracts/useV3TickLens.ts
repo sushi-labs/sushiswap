@@ -1,6 +1,6 @@
 import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
-import { SUSHISWAP_V3_TICK_LENS, SushiSwapV3ChainId } from 'sushi'
+import { SUSHISWAP_V3_TICK_LENS, SushiSwapV3ChainId } from 'sushi/config'
 import { Address, usePublicClient } from 'wagmi'
 
 export const getV3TickLensContractConfig = (chainId: SushiSwapV3ChainId) => ({
