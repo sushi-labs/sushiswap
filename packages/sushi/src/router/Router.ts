@@ -11,7 +11,8 @@ import {
 } from 'sushi/tines'
 import { Address, Hex } from 'viem'
 import { ChainId } from '../chain'
-import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '../currency'
+import { WNATIVE, WNATIVE_ADDRESS } from '../config'
+import { Token, Type } from '../currency'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 import {
   PermitData,

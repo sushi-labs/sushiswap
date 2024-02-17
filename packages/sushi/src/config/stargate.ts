@@ -8,13 +8,12 @@ import {
   FRAX_ADDRESS,
   MAI,
   MAI_ADDRESS,
-  Token,
-  Type,
   USDC,
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
-} from '../currency'
+} from '../config'
+import { Token, Type } from '../currency'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,

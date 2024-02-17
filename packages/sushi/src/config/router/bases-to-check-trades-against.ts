@@ -12,7 +12,6 @@ import {
   OP,
   QUICK,
   SUSHI,
-  Token,
   USDC,
   USDT,
   WBTC,
@@ -24,7 +23,8 @@ import {
   axlETH,
   axlUSDC,
   axlWBTC,
-} from '../../currency'
+} from '../../config'
+import { Token } from '../../currency'
 import {
   STARGATE_USDC,
   STARGATE_USDT,

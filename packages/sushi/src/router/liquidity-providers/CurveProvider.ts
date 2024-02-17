@@ -7,18 +7,8 @@ import {
   parseAbi,
 } from 'viem'
 import { ChainId } from '../../chain'
-import {
-  DAI,
-  FRAX,
-  LINK,
-  Native,
-  Token,
-  Type,
-  USDC,
-  USDT,
-  WBTC,
-  renBTC,
-} from '../../currency'
+import { DAI, FRAX, LINK, USDC, USDT, WBTC, renBTC } from '../../config'
+import { Native, Token, Type } from '../../currency'
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { CurvePoolCode } from '../pools/CurvePool'
 import { PoolCode } from '../pools/PoolCode'

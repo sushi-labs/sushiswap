@@ -32,7 +32,6 @@ import {
   SWISE_ADDRESS,
   TRIBE,
   TRIBE_ADDRESS,
-  Token,
   WBTC,
   WBTC_ADDRESS,
   XSUSHI,
@@ -42,7 +41,8 @@ import {
   renBTC,
   renBTC_ADDRESS,
   sETH2,
-} from '../../currency'
+} from '../../config'
+import { Token } from '../../currency'
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }

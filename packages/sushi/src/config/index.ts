@@ -1,5 +1,6 @@
 export * from './angle'
 export * from './bentobox'
+export * from './currency'
 export * from './extractor'
 export * from './route-processor'
 export * from './router'

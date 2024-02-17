@@ -1,6 +1,6 @@
 import { ChainId } from '../../chain'
-import { AMPL_ADDRESS, DAI, Token, WNATIVE } from '../../currency'
-
+import { AMPL_ADDRESS, DAI, WNATIVE } from '../../config'
+import { Token } from '../../currency'
 /**
  * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
  * tokens.
