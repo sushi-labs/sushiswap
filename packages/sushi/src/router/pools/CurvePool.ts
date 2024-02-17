@@ -3,7 +3,7 @@ import {
   CurvePool,
   MultiRoute,
   RouteLeg,
-} from '@sushiswap/tines'
+} from 'sushi/tines'
 import { ChainId } from '../../chain'
 import { HEXer } from '../HEXer'
 import {

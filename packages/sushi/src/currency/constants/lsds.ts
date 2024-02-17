@@ -1,4 +1,4 @@
-import { ChainId } from '../../chain/index.js'
+import { ChainId } from '../../chain'
 
 export const LSDS = {
   [ChainId.ETHEREUM]: [],

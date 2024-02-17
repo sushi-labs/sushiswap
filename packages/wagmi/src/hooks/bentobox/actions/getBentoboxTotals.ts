@@ -1,7 +1,7 @@
-import { Rebase } from '@sushiswap/tines'
 import { bentoBoxV1TotalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Type as Currency } from 'sushi/currency'
+import { Rebase } from 'sushi/tines'
 import { Address, readContracts } from 'wagmi'
 
 const totalsMap = new Map<string, Rebase>()

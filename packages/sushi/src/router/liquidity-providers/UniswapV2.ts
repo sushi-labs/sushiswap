@@ -1,6 +1,5 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain'
-
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 

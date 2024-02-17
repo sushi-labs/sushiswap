@@ -1,5 +1,5 @@
 import https from 'https'
-import { MultiRoute } from '@sushiswap/tines'
+import { MultiRoute } from 'sushi/tines'
 import { ChainId } from '../../chain'
 import { Token, Type, USDC, USDT } from '../../currency'
 import { DataFetcher } from '../DataFetcher'

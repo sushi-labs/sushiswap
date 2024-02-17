@@ -1,12 +1,11 @@
 import { getCreate2Address } from '@ethersproject/address'
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
+import { ConstantProductRPool, RToken } from 'sushi/tines'
 import { Address, Hex, PublicClient, encodePacked, keccak256 } from 'viem'
 import { getReservesAbi } from '../../abi'
 import { ChainId } from '../../chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '../../config'
 import { Token } from '../../currency'
-
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import {
   PoolResponse2,
@@ -14,9 +13,9 @@ import {
   filterTopPools,
   mapToken,
 } from '../lib/api'
-import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
-import type { PoolCode } from '../pools/PoolCode'
+import { ConstantProductPoolCode, type PoolCode } from '../pools'
 import { LiquidityProvider } from './LiquidityProvider'
+
 interface PoolInfo {
   poolCode: PoolCode
   validUntilTimestamp: number

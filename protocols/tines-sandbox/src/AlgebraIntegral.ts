@@ -6,16 +6,16 @@ import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-peripher
 import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import TickLens from '@cryptoalgebra/integral-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json'
 import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
+import seedrandom from 'seedrandom'
+import { ChainId } from 'sushi/chain'
+import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
 import {
   CLTick,
   CL_MAX_TICK,
   CL_MIN_TICK,
   RToken,
   UniV3Pool,
-} from '@sushiswap/tines'
-import seedrandom from 'seedrandom'
-import { ChainId } from 'sushi/chain'
-import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
+} from 'sushi/tines'
 import {
   Abi,
   Address,

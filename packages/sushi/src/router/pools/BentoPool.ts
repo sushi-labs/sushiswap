@@ -4,7 +4,7 @@ import {
   RPool,
   RouteLeg,
   StableSwapRPool,
-} from '@sushiswap/tines'
+} from 'sushi/tines'
 import { Address, encodeAbiParameters } from 'viem'
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'

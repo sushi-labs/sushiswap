@@ -78,6 +78,10 @@
       "types": "./dist/sort/index.d.ts",
       "default": "./dist/sort/index.js"
     },
+    "./tines": {
+      "types": "./dist/tines/index.d.ts",
+      "default": "./dist/tines/index.js"
+    },
     "./token-list": {
       "types": "./dist/token-list/index.d.ts",
       "default": "./dist/token-list/index.js"
@@ -145,6 +149,9 @@
       "sort": [
         "./dist/sort/index.d.ts"
       ],
+      "tines": [
+        "./dist/tines/index.d.ts"
+      ],
       "token-list": [
         "./dist/token-list/index.d.ts"
       ],
@@ -180,6 +187,7 @@
     "decimal.js-light": "2.5.1",
     "lodash.flatmap": "4.5.0",
     "numeral": "2.0.6",
+    "seedrandom": "3.0.5",
     "serialijse": "0.3.0",
     "tiny-invariant": "1.3.1",
     "tiny-warning": "1.0.3",
@@ -192,20 +200,17 @@
     "@types/big.js": "6.2.0",
     "@types/numeral": "2.0.3",
     "@types/lodash.flatmap": "4.5.9",
+    "@types/seedrandom": "3.0.1",
     "typescript": "5.2.2",
     "viem": "1.21.4",
     "vitest": "0.34.6",
     "zod": "3.21.4"
   },
   "peerDependencies": {
-    "@sushiswap/tines": "*",
     "viem": "*",
     "zod": "*"
   },
   "peerDependenciesMeta": {
-    "@sushiswap/tines": {
-      "optional": true
-    },
     "viem": {
       "optional": true
     },

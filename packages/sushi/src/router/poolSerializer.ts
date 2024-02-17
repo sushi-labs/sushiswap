@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import path from 'path'
+import * as serializer from 'serialijse'
 import {
   BridgeBento,
   BridgeUnlimited,
@@ -11,8 +12,7 @@ import {
   RebaseInternal,
   StableSwapRPool,
   UniV3Pool,
-} from '@sushiswap/tines'
-import * as serializer from 'serialijse'
+} from 'sushi/tines'
 import {
   BentoBridgePoolCode,
   BentoPoolCode,

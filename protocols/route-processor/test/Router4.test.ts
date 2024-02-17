@@ -3,15 +3,6 @@ import {
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
-import {
-  BridgeBento,
-  // CurveMultitokenCore,
-  // CurveMultitokenPool,
-  RPool,
-  RouteStatus,
-  StableSwapRPool,
-  getBigInt,
-} from '@sushiswap/tines'
 import { setTokenBalance } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
@@ -55,6 +46,15 @@ import {
   Router,
   sETH,
 } from 'sushi/router'
+import {
+  BridgeBento,
+  // CurveMultitokenCore,
+  // CurveMultitokenPool,
+  RPool,
+  RouteStatus,
+  StableSwapRPool,
+  getBigInt,
+} from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import {
   Address,

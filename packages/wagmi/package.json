@@ -53,7 +53,6 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
-    "@sushiswap/tines": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@tanstack/react-query": "4.28.0",

@@ -1,13 +1,13 @@
+import { add, getUnixTime } from 'date-fns'
 import {
   BridgeBento,
   ConstantProductRPool,
   RToken,
   Rebase,
   StableSwapRPool,
+  convertTokenToBento,
   toShareBI,
-} from '@sushiswap/tines'
-import { convertTokenToBento } from '@sushiswap/tines'
-import { add, getUnixTime } from 'date-fns'
+} from 'sushi/tines'
 import { Address, PublicClient } from 'viem'
 import {
   balanceOfAbi,
@@ -30,9 +30,7 @@ import {
   filterTopPools,
   mapToken,
 } from '../lib/api'
-import { BentoBridgePoolCode } from '../pools/BentoBridge'
-import { BentoPoolCode } from '../pools/BentoPool'
-import type { PoolCode } from '../pools/PoolCode'
+import { BentoBridgePoolCode, BentoPoolCode, type PoolCode } from '../pools'
 import {
   TridentStaticPool,
   TridentStaticPoolFetcher,

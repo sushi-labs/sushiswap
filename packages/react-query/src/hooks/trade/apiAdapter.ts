@@ -1,5 +1,5 @@
-import { PoolType } from '@sushiswap/tines'
 import { Native, Token } from 'sushi/currency'
+import { PoolType } from 'sushi/tines'
 import z from 'zod'
 import type {
   legValidator as legValidator01,

@@ -1,4 +1,4 @@
-import type { MultiRoute, RouteLeg, UniV3Pool } from '@sushiswap/tines'
+import type { MultiRoute, RouteLeg, UniV3Pool } from 'sushi/tines'
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'

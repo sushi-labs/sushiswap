@@ -1,6 +1,5 @@
-import { ChainId } from '../../chain/index.js'
-
-import { LDO } from './tokens.js'
+import { ChainId } from '../../chain'
+import { LDO } from './tokens'
 
 export const GOVERNANCE = {
   [ChainId.ETHEREUM]: [LDO[ChainId.ETHEREUM]],

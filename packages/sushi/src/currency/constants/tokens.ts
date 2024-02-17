@@ -1,7 +1,6 @@
-import { ChainId } from '../../chain/index.js'
-
-import { Token } from '../Token.js'
-import { addressMapToTokenMap } from '../functions/address-map-to-token-map.js'
+import { ChainId } from '../../chain'
+import { Token } from '../Token'
+import { addressMapToTokenMap } from '../functions'
 
 import {
   AAVE_ADDRESS,
@@ -60,7 +59,7 @@ import {
   rETH2_ADDRESS,
   renBTC_ADDRESS,
   sETH2_ADDRESS,
-} from './token-addresses.js'
+} from './token-addresses'
 
 export const AMPL = addressMapToTokenMap(
   { decimals: 9, symbol: 'AMPL', name: 'Ampleforth' },

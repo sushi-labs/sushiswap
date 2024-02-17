@@ -1,7 +1,7 @@
-import { RPool, RToken, calcTokenAddressPrices } from '@sushiswap/tines'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { STABLES, WNATIVE } from 'sushi/currency'
+import { RPool, RToken, calcTokenAddressPrices } from 'sushi/tines'
 import { ExtractorClient } from '../../ExtractorClient'
 import { CHAIN_ID } from '../../config'
 import { Currency, allPricesSchema, singleAddressSchema } from './schema'

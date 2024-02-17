@@ -1,4 +1,4 @@
-import { RToken, UniV3Pool } from '@sushiswap/tines'
+import { RToken, UniV3Pool } from 'sushi/tines'
 import { Address, PublicClient } from 'viem'
 import { erc20Abi, tickLensAbi } from '../../abi'
 import { ChainId } from '../../chain'
@@ -6,8 +6,7 @@ import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config'
 import { Currency, Token, Type } from '../../currency'
 import { computeSushiSwapV3PoolAddress } from '../../pool'
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
-import type { PoolCode } from '../pools/PoolCode'
-import { UniV3PoolCode } from '../pools/UniV3Pool'
+import { type PoolCode, UniV3PoolCode } from '../pools'
 import { LiquidityProvider } from './LiquidityProvider'
 
 interface StaticPool {

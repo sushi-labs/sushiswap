@@ -1,9 +1,9 @@
 import invariant from 'tiny-invariant'
 import { Address, getAddress } from 'viem'
 
-import { Currency } from './Currency.js'
-import { type Type } from './Type.js'
-import { type SerializedToken, tokenSchema } from './zod.js'
+import { Currency } from './Currency'
+import { type Type } from './Type'
+import { type SerializedToken, tokenSchema } from './zod'
 
 /**
  * Represents an ERC20 token with a unique address and some metadata.

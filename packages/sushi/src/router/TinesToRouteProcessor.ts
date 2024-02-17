@@ -4,7 +4,7 @@ import {
   RouteLeg,
   RouteStatus,
   getBigInt,
-} from '@sushiswap/tines'
+} from 'sushi/tines'
 import { Hex } from 'viem'
 import { ChainId } from '../chain'
 import { HEXer } from './HEXer'

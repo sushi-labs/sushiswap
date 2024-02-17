@@ -1,4 +1,4 @@
-import { MultiRoute, RToken, RouteLeg, RouteStatus } from '@sushiswap/tines'
+import { MultiRoute, RToken, RouteLeg, RouteStatus } from 'sushi/tines'
 import { RPParams } from '.'
 
 function makeAPI02Token(token: RToken) {

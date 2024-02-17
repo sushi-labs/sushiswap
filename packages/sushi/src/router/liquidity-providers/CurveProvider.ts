@@ -1,4 +1,4 @@
-import { RToken, createCurvePoolsForMultipool } from '@sushiswap/tines'
+import { RToken, createCurvePoolsForMultipool } from 'sushi/tines'
 import {
   Address,
   ContractFunctionConfig,

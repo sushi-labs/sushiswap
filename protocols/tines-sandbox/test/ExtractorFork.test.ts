@@ -6,7 +6,6 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
-import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
@@ -25,6 +24,7 @@ import {
   PoolCode,
   Router,
 } from 'sushi/router'
+import { RouteStatus, getBigInt } from 'sushi/tines'
 import {
   http,
   Address,

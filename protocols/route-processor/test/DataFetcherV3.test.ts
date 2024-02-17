@@ -1,6 +1,3 @@
-import { CL_MAX_TICK } from '@sushiswap/tines'
-import { CL_MIN_TICK } from '@sushiswap/tines'
-import { UniV3Pool } from '@sushiswap/tines'
 import {
   UniV3Environment,
   UniV3PoolInfo,
@@ -18,6 +15,9 @@ import {
   NUMBER_OF_SURROUNDING_TICKS,
   UniV3PoolCode,
 } from 'sushi/router'
+import { CL_MAX_TICK } from 'sushi/tines'
+import { CL_MIN_TICK } from 'sushi/tines'
+import { UniV3Pool } from 'sushi/tines'
 import { createPublicClient } from 'viem'
 import { custom } from 'viem'
 import { hardhat } from 'viem/chains'

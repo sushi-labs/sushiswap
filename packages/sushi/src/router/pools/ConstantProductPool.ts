@@ -1,8 +1,4 @@
-import type {
-  ConstantProductRPool,
-  MultiRoute,
-  RouteLeg,
-} from '@sushiswap/tines'
+import type { ConstantProductRPool, MultiRoute, RouteLeg } from 'sushi/tines'
 
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'

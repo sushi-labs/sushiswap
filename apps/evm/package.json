@@ -30,7 +30,6 @@
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
-    "@sushiswap/tines": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",

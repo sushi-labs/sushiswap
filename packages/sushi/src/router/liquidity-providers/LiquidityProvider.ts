@@ -1,8 +1,7 @@
 import { PublicClient } from 'viem'
 import { ChainId, chainShortName } from '../../chain'
 import type { Token } from '../../currency'
-
-import type { PoolCode } from '../pools/PoolCode'
+import type { PoolCode } from '../pools'
 
 export enum LiquidityProviders {
   SushiSwapV2 = 'SushiSwapV2',

@@ -8,7 +8,7 @@ import {
   findMultiRouteExactIn,
   getBentoChainId,
   getBigInt,
-} from '@sushiswap/tines'
+} from 'sushi/tines'
 import { Address, Hex } from 'viem'
 import { ChainId } from '../chain'
 import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '../currency'

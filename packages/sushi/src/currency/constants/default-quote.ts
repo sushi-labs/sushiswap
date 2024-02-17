@@ -1,7 +1,6 @@
-import { ChainId } from '../../chain/index.js'
-
-import { Token } from '../Token.js'
-import { ARB, BUSD, GNO, OP, SUSHI, USDC, axlUSDC } from './tokens.js'
+import { ChainId } from '../../chain/index'
+import { Token } from '../Token'
+import { ARB, BUSD, GNO, OP, SUSHI, USDC, axlUSDC } from './tokens'
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],

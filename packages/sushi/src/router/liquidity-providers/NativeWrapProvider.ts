@@ -1,10 +1,9 @@
-import { BridgeUnlimited, RToken } from '@sushiswap/tines'
+import { BridgeUnlimited, RToken } from 'sushi/tines'
 import { PublicClient } from 'viem'
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { ChainId } from '../../chain'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../../currency'
-import { NativeWrapBridgePoolCode } from '../pools/NativeWrapBridge'
-import type { PoolCode } from '../pools/PoolCode'
+import { NativeWrapBridgePoolCode, type PoolCode } from '../pools'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 export class NativeWrapProvider extends LiquidityProvider {

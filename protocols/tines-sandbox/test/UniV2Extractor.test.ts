@@ -5,7 +5,6 @@ import {
   UniV2Extractor,
 } from '@sushiswap/extractor'
 import { TokenManager } from '@sushiswap/extractor/dist/TokenManager'
-import { RouteStatus } from '@sushiswap/tines'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
@@ -16,6 +15,7 @@ import {
   PoolCode,
   Router,
 } from 'sushi/router'
+import { RouteStatus } from 'sushi/tines'
 import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 

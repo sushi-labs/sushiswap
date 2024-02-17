@@ -1,13 +1,9 @@
 import { describe, expect, test } from 'vitest'
 
-import { ChainId } from '../chain/index.js'
-import { AddressMapper } from './AddressMapper.js'
-import {
-  SUSHI_ADDRESS,
-  USDC_ADDRESS,
-  WNATIVE_ADDRESS,
-} from './constants/index.js'
-import { TOKEN_MAP } from './constants/token-map.js'
+import { ChainId } from '../chain/index'
+import { AddressMapper } from './AddressMapper'
+import { SUSHI_ADDRESS, USDC_ADDRESS, WNATIVE_ADDRESS } from './constants'
+import { TOKEN_MAP } from './constants/token-map'
 
 const USDC_ETHEREUM_BRIDGE_LIST = {
   1: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',

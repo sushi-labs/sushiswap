@@ -6,7 +6,6 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
-import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
@@ -33,6 +32,7 @@ import {
   PoolCode,
   Router,
 } from 'sushi/router'
+import { RouteStatus, getBigInt } from 'sushi/tines'
 import { http, Address, Transport, createPublicClient } from 'viem'
 import {
   Chain,

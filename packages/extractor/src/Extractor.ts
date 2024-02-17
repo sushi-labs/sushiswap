@@ -67,7 +67,7 @@ export class Extractor {
     warningMessageHandler?: WarningMessageHandler
   }) {
     this.cacheDir = args.cacheDir
-    this.logging = args.logging
+    this.logging = Boolean(args.logging)
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,

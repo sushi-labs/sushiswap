@@ -1,6 +1,6 @@
-import { ChainId } from '../../chain/index.js'
-import { STARGATE_USDC, STARGATE_USDT } from '../../config/stargate.js'
-import { Token } from '../Token.js'
+import { ChainId } from '../../chain'
+import { STARGATE_USDC, STARGATE_USDT } from '../../config'
+import { Token } from '../Token'
 import {
   BUSD,
   DAI,
@@ -12,7 +12,7 @@ import {
   USD_PLUS,
   WORMHOLE_USDC,
   axlUSDC,
-} from './tokens.js'
+} from './tokens'
 
 const THUNDERCORE_ANY_USDT = new Token({
   chainId: ChainId.THUNDERCORE,

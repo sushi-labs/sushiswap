@@ -1,4 +1,4 @@
-import type { MultiRoute, RPool, RouteLeg } from '@sushiswap/tines'
+import type { MultiRoute, RPool, RouteLeg } from 'sushi/tines'
 import { LiquidityProviders } from '../liquidity-providers'
 
 // RPool extention for RP coding

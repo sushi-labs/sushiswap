@@ -111,9 +111,6 @@ importers:
       '@sushiswap/extractor':
         specifier: workspace:*
         version: link:../../packages/extractor
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
       '@wagmi/core':
         specifier: 1.4.13
         version: 1.4.13(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
@@ -175,9 +172,6 @@ importers:
       '@sushiswap/extractor':
         specifier: workspace:*
         version: link:../../packages/extractor
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
       '@wagmi/core':
         specifier: 1.4.5
         version: 1.4.5(react@18.2.0)(typescript@5.2.2)(viem@1.21.4)(zod@3.21.4)
@@ -291,9 +285,6 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
       '@vercel/node':
         specifier: 3.0.9
         version: 3.0.9
@@ -655,9 +646,6 @@ importers:
       '@sushiswap/tailwindcss-config':
         specifier: workspace:*
         version: link:../../config/tailwindcss
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -1254,9 +1242,6 @@ importers:
       '@sentry/node':
         specifier: 7.92.0
         version: 7.92.0
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../tines
       '@uniswap/v3-core':
         specifier: 1.0.1
         version: 1.0.1
@@ -1464,9 +1449,6 @@ importers:
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../dexie
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../tines
       '@tanstack/react-query':
         specifier: 4.28.0
         version: 4.28.0(react-dom@18.2.0)(react-native@0.72.5)(react@18.2.0)
@@ -1605,9 +1587,6 @@ importers:
       '@ethersproject/solidity':
         specifier: 5.7.0
         version: 5.7.0
-      '@sushiswap/tines':
-        specifier: '*'
-        version: link:../tines
       '@uniswap/token-lists':
         specifier: 1.0.0-beta.33
         version: 1.0.0-beta.33
@@ -1632,6 +1611,9 @@ importers:
       numeral:
         specifier: 2.0.6
         version: 2.0.6
+      seedrandom:
+        specifier: 3.0.5
+        version: 3.0.5
       serialijse:
         specifier: 0.3.0
         version: 0.3.0
@@ -1663,6 +1645,9 @@ importers:
       '@types/numeral':
         specifier: 2.0.3
         version: 2.0.3
+      '@types/seedrandom':
+        specifier: 3.0.1
+        version: 3.0.1
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1675,46 +1660,6 @@ importers:
       zod:
         specifier: 3.21.4
         version: 3.21.4
-
-  packages/tines:
-    dependencies:
-      seedrandom:
-        specifier: 3.0.5
-        version: 3.0.5
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/jest':
-        specifier: 29.5.5
-        version: 29.5.5
-      '@types/node':
-        specifier: '18'
-        version: 18.17.5
-      '@types/seedrandom':
-        specifier: 3.0.1
-        version: 3.0.1
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@18.17.5)
-      typescript:
-        specifier: 5.2.2
-        version: 5.2.2
-      viem:
-        specifier: 1.21.4
-        version: 1.21.4(typescript@5.2.2)(zod@3.21.4)
 
   packages/ui:
     dependencies:
@@ -1953,9 +1898,6 @@ importers:
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../steer-sdk
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../tines
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../ui
@@ -2063,9 +2005,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
       '@sushiswap/tines-sandbox':
         specifier: workspace:*
         version: link:../tines-sandbox
@@ -2207,9 +2146,6 @@ importers:
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
-      '@sushiswap/tines':
-        specifier: workspace:*
-        version: link:../../packages/tines
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
