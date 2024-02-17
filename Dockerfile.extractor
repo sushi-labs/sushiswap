@@ -24,7 +24,6 @@ COPY config/typescript config/typescript
 
 COPY packages/extractor packages/extractor
 COPY packages/sushi packages/sushi
-COPY packages/tines packages/tines
 
 COPY patches patches
 
