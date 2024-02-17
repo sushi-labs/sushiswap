@@ -1,5 +1,5 @@
-import type { BridgeUnlimited, MultiRoute, RouteLeg } from 'sushi/tines'
 import { ChainId } from '../../chain'
+import type { BridgeUnlimited, MultiRoute, RouteLeg } from '../../tines'
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'

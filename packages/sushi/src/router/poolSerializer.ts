@@ -1,6 +1,8 @@
 import * as fs from 'fs'
 import path from 'path'
 import * as serializer from 'serialijse'
+import { ChainId } from '../chain'
+import { Native } from '../currency'
 import {
   BridgeBento,
   BridgeUnlimited,
@@ -12,7 +14,7 @@ import {
   RebaseInternal,
   StableSwapRPool,
   UniV3Pool,
-} from 'sushi/tines'
+} from '../tines'
 import {
   BentoBridgePoolCode,
   BentoPoolCode,
@@ -21,9 +23,7 @@ import {
   NativeWrapBridgePoolCode,
   PoolCode,
   UniV3PoolCode,
-} from '.'
-import { ChainId } from '../chain'
-import { Native } from '../currency'
+} from './pools'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)

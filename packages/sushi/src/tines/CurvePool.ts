@@ -1,5 +1,5 @@
-import { abs } from 'sushi/math'
 import { Address } from 'viem'
+import { abs } from '../math'
 import { PoolType, RPool, RToken } from './RPool'
 import { getBigInt } from './Utils'
 

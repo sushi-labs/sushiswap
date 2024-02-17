@@ -1,13 +1,4 @@
 import { add, getUnixTime } from 'date-fns'
-import {
-  BridgeBento,
-  ConstantProductRPool,
-  RToken,
-  Rebase,
-  StableSwapRPool,
-  convertTokenToBento,
-  toShareBI,
-} from 'sushi/tines'
 import { Address, PublicClient } from 'viem'
 import {
   balanceOfAbi,
@@ -24,6 +15,15 @@ import {
   TridentChainId,
 } from '../../config'
 import { Token } from '../../currency'
+import {
+  BridgeBento,
+  ConstantProductRPool,
+  RToken,
+  Rebase,
+  StableSwapRPool,
+  convertTokenToBento,
+  toShareBI,
+} from '../../tines'
 import {
   PoolResponse2,
   filterOnDemandPools,

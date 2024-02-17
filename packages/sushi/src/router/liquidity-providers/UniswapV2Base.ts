@@ -1,11 +1,11 @@
 import { getCreate2Address } from '@ethersproject/address'
 import { add, getUnixTime } from 'date-fns'
-import { ConstantProductRPool, RToken } from 'sushi/tines'
 import { Address, Hex, PublicClient, encodePacked, keccak256 } from 'viem'
 import { getReservesAbi } from '../../abi'
 import { ChainId } from '../../chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '../../config'
 import { Token } from '../../currency'
+import { ConstantProductRPool, RToken } from '../../tines'
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import {
   PoolResponse2,

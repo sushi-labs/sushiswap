@@ -1,11 +1,11 @@
+import { Address, encodeAbiParameters } from 'viem'
 import {
   ConstantProductRPool,
   MultiRoute,
   RPool,
   RouteLeg,
   StableSwapRPool,
-} from 'sushi/tines'
-import { Address, encodeAbiParameters } from 'viem'
+} from '../../tines'
 import { HEXer } from '../HEXer'
 import { LiquidityProviders } from '../liquidity-providers'
 import { PoolCode } from './PoolCode'

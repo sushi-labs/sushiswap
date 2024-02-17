@@ -1,4 +1,3 @@
-import { RToken, createCurvePoolsForMultipool } from 'sushi/tines'
 import {
   Address,
   ContractFunctionConfig,
@@ -9,6 +8,7 @@ import {
 import { ChainId } from '../../chain'
 import { DAI, FRAX, LINK, USDC, USDT, WBTC, renBTC } from '../../config'
 import { Native, Token, Type } from '../../currency'
+import { RToken, createCurvePoolsForMultipool } from '../../tines'
 import { getCurrencyCombinations } from '../getCurrencyCombinations'
 import { CurvePoolCode } from '../pools/CurvePool'
 import { PoolCode } from '../pools/PoolCode'

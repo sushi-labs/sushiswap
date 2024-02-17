@@ -1,5 +1,4 @@
 import { Address } from 'viem'
-
 import {
   PoolType,
   RPool,

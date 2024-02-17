@@ -1,5 +1,5 @@
-import { MultiRoute, RToken, RouteLeg, RouteStatus } from 'sushi/tines'
-import { RPParams } from '.'
+import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines'
+import { RPParams } from './Router'
 
 function makeAPI02Token(token: RToken) {
   return {
