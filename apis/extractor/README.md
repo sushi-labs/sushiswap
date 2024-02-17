@@ -62,7 +62,7 @@ gcloud deploy apply --file=clouddeploy.yaml --region=us-east4 --project=sushi-ap
 ### Release
 
 ```bash
-gcloud deploy releases create 'sushi-api-$DATE-$TIME' --project=sushi-api-414412 --region=us-east4 --source=. --delivery-pipeline=sushi-api --images=extractor=IMAGE,router=IMAGE
+gcloud deploy releases create 'sushi-api-$DATE-$TIME' --project=sushi-api-414412 --region=us-east4 --source=. --delivery-pipeline=sushi-api --images=extractor=,router=
 ```
 
 ### View Router HPA
