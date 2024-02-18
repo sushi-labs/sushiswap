@@ -17,9 +17,7 @@ const extractor = new Extractor({
   },
 })
 
-import { performance } from 'perf_hooks'
-
-const start = performance.now()
+const start = Date.now()
 
 fetch('https://token-list.sushi.com')
   .then((res) => res.json() as Promise<TokenList>)
@@ -41,7 +39,7 @@ fetch('https://token-list.sushi.com')
   })
   .then(() => {
     const time = Date.now() - start
-    console.log('Preload complete', time / 1000, 'seconds')
+    console.log('Preload complete, took', time * 1000, 'seconds')
   })
   .catch((e) => {
     console.log('Error fetching tokens to preload')
