@@ -34,6 +34,9 @@ export const rpcUrls = {
   [ChainId.MOONBEAM]: [
     `https://lb.drpc.org/ogrpc?network=moonbeam&dkey=${drpcId}`,
   ],
+  [ChainId.MOONRIVER]: [
+    `https://lb.drpc.org/ogrpc?network=moonriver&dkey=${drpcId}`,
+  ],
   [ChainId.OPTIMISM]: [
     `https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`,
   ],

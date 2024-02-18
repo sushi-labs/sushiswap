@@ -1,4 +1,5 @@
 import { LogFilterType } from '@sushiswap/extractor'
+import { ChainId } from 'sushi/chain'
 import {
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
@@ -20,7 +21,6 @@ import {
   publicClientConfig,
 } from 'sushi/config'
 import { LiquidityProviders } from 'sushi/router'
-import { ChainId } from 'sushi/chain'
 
 import { type Address, createPublicClient } from 'viem'
 
@@ -487,6 +487,15 @@ export const EXTRACTOR_CONFIG = {
     // No V3 on Moonbeam?
     factoriesV3: [],
     tickHelperContract: '' as Address,
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+  },
+  [ChainId.MOONRIVER]: {
+    client: createPublicClient(publicClientConfig[ChainId.MOONRIVER]),
+    factoriesV2: [sushiswapV2Factory(ChainId.MOONRIVER)],
+    factoriesV3: [sushiswapV3Factory(ChainId.MOONRIVER)],
+    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.MOONRIVER],
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
