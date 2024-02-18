@@ -1,7 +1,7 @@
 import { PublicClient } from 'viem'
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { ChainId } from '../../chain'
-import { WNATIVE, WNATIVE_ADDRESS } from '../../config'
+import { WNATIVE, WNATIVE_ADDRESS } from '../../currency'
 import { Native } from '../../currency'
 import { BridgeUnlimited, RToken } from '../../tines'
 import { NativeWrapBridgePoolCode, type PoolCode } from '../pool-codes'

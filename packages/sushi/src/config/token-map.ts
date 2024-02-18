@@ -50,7 +50,7 @@ import {
   rETH2_ADDRESS,
   renBTC_ADDRESS,
   sETH2_ADDRESS,
-} from './token-addresses'
+} from '../currency'
 
 const THUNDERCORE_USDT_ADDRESS = {
   [ChainId.THUNDERCORE]: '0x0dcb0cb0120d355cde1ce56040be57add0185baa',

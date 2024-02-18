@@ -15,7 +15,7 @@ import {
   WBTC,
   WETH9,
   WNATIVE,
-} from './tokens'
+} from '../currency'
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ARBITRUM]: {

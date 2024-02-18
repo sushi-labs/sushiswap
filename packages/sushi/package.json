@@ -71,6 +71,10 @@
       "types": "./dist/router/index.d.ts",
       "default": "./dist/router/index.js"
     },
+    "./serializer": {
+      "types": "./dist/serializer/index.d.ts",
+      "default": "./dist/serializer/index.js"
+    },
     "./math": {
       "types": "./dist/math/index.d.ts",
       "default": "./dist/math/index.js"
@@ -137,6 +141,9 @@
       ],
       "log": [
         "./dist/log/index.d.ts"
+      ],
+      "serializer": [
+        "./dist/serializer/index.d.ts"
       ],
       "math": [
         "./dist/math/index.d.ts"

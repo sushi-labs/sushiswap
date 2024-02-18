@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { serializePoolCodesJSON } from 'sushi/router'
+import { serializePoolCodesJSON } from 'sushi/serializer'
 import { CHAIN_ID, POOLS_SERIALIZATION_INTERVAL } from '../../config'
 import extractor from '../../extractor'
 

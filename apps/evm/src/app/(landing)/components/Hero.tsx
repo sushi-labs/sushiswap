@@ -7,8 +7,7 @@ import { CurrencyInput } from '@sushiswap/wagmi/components/web3-input/Currency'
 import { motion } from 'framer-motion'
 import React, { FC, useEffect, useState } from 'react'
 import { ChainId } from 'sushi/chain'
-import { SUSHI } from 'sushi/config'
-import { Native } from 'sushi/currency'
+import { Native, SUSHI } from 'sushi/currency'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [

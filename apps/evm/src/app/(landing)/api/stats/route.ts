@@ -5,8 +5,8 @@ import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-  SUSHI_ADDRESS,
 } from 'sushi/config'
+import { SUSHI_ADDRESS } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 

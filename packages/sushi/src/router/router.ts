@@ -1,6 +1,6 @@
 import { Address, Hex } from 'viem'
 import { ChainId } from '../chain'
-import { WNATIVE, WNATIVE_ADDRESS } from '../config'
+import { WNATIVE, WNATIVE_ADDRESS } from '../currency'
 import { Token, Type } from '../currency'
 import {
   MultiRoute,

@@ -1,6 +1,5 @@
 import { ChainId } from '../chain'
-import { addressMapToTokenMap } from '../convert'
-import { Token } from '../currency'
+import { Token } from './Token'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
@@ -59,6 +58,32 @@ import {
   renBTC_ADDRESS,
   sETH2_ADDRESS,
 } from './token-addresses'
+
+function addressMapToTokenMap(
+  {
+    decimals,
+    symbol,
+    name,
+  }: {
+    decimals: number | string
+    symbol?: string | undefined
+    name?: string | undefined
+  },
+  map: Record<number | string, string>,
+) {
+  return Object.fromEntries(
+    Object.entries(map).map(([chainId, address]) => [
+      chainId,
+      new Token({
+        chainId,
+        address,
+        decimals,
+        symbol,
+        name,
+      }),
+    ]),
+  )
+}
 
 export const AMPL = addressMapToTokenMap(
   { decimals: 9, symbol: 'AMPL', name: 'Ampleforth' },

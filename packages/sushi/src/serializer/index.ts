@@ -1,8 +1,14 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import path from 'path'
 import serializer from 'serialijse'
-import { ChainId } from '../chain'
 import { Native } from '../currency'
+import {
+  BentoBridgePoolCode,
+  BentoPoolCode,
+  ConstantProductPoolCode,
+  CurvePoolCode,
+  NativeWrapBridgePoolCode,
+  PoolCode,
+  UniV3PoolCode,
+} from '../router'
 import {
   BridgeBento,
   BridgeUnlimited,
@@ -15,15 +21,10 @@ import {
   StableSwapRPool,
   UniV3Pool,
 } from '../tines'
-import {
-  BentoBridgePoolCode,
-  BentoPoolCode,
-  ConstantProductPoolCode,
-  CurvePoolCode,
-  NativeWrapBridgePoolCode,
-  PoolCode,
-  UniV3PoolCode,
-} from './pool-codes'
+
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import path from 'path'
+import { ChainId } from 'sushi/chain'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)
@@ -43,10 +44,9 @@ serializer.declarePersistable(CurveMultitokenPool)
 serializer.declarePersistable(CurveMultitokenCore)
 serializer.declarePersistable(Native)
 
-// default dir for pools snapshots
-const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')
+export { serializer }
 
-function makeSerializable(poolCodes: PoolCode[]) {
+export function makeSerializable(poolCodes: PoolCode[]) {
   poolCodes.forEach(({ pool }) => {
     pool.reserve0 = String(pool.reserve0) as unknown as bigint
     pool.reserve1 = String(pool.reserve1) as unknown as bigint
@@ -98,7 +98,7 @@ function makeSerializable(poolCodes: PoolCode[]) {
   })
 }
 
-function restoreAfterSerialization(poolCodes: PoolCode[]) {
+export function restoreAfterSerialization(poolCodes: PoolCode[]) {
   poolCodes.forEach(({ pool }) => {
     pool.reserve0 = BigInt(pool.reserve0)
     pool.reserve1 = BigInt(pool.reserve1)
@@ -149,6 +149,9 @@ export function deserializePoolCodesJSON(data: string): PoolCode[] {
   restoreAfterSerialization(poolCodes)
   return poolCodes
 }
+
+// default dir for pools snapshots
+const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')
 
 export async function savePoolSnapshot(
   poolCodes: PoolCode[],

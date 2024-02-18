@@ -6,7 +6,7 @@ import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
 } from 'sushi/config'
-import { WNATIVE_ADDRESS } from 'sushi/config'
+import { WNATIVE_ADDRESS } from 'sushi/currency'
 import { Amount, Native, Price } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { type Address, type Hex, stringify } from 'viem'

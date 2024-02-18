@@ -17,7 +17,7 @@ import {
   XSUSHI_ADDRESS,
   rETH2_ADDRESS,
   renBTC_ADDRESS,
-} from './token-addresses'
+} from '../currency/token-addresses'
 import {
   AAVE,
   APE,
@@ -44,7 +44,7 @@ import {
   YFI,
   renBTC,
   sETH2,
-} from './tokens'
+} from '../currency/tokens'
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }

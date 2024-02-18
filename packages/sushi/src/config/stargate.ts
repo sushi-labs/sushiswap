@@ -7,8 +7,8 @@ import {
   MAI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
-} from './token-addresses'
-import { BUSD, DAI, FRAX, MAI, USDC, USDT } from './tokens'
+} from '../currency'
+import { BUSD, DAI, FRAX, MAI, USDC, USDT } from '../currency'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,

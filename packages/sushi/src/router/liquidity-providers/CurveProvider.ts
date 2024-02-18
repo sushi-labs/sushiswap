@@ -6,7 +6,7 @@ import {
   parseAbi,
 } from 'viem'
 import { ChainId } from '../../chain'
-import { DAI, FRAX, LINK, USDC, USDT, WBTC, renBTC } from '../../config'
+import { DAI, FRAX, LINK, USDC, USDT, WBTC, renBTC } from '../../currency'
 import { Native, Token, Type } from '../../currency'
 import { RToken, createCurvePoolsForMultipool } from '../../tines'
 import { getCurrencyCombinations } from '../get-currency-combinations'

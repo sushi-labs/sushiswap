@@ -3,8 +3,9 @@
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
+import { masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
-import { SUSHI, SUSHI_ADDRESS } from 'sushi/config'
+import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
 import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
@@ -17,8 +18,6 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
-
-import { masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 import {
   MASTERCHEF_ADDRESS,

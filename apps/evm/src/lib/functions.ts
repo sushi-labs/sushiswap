@@ -1,14 +1,12 @@
 import { Pool, Protocol } from '@sushiswap/client'
 import { ChainId } from 'sushi/chain'
 import {
-  DAI,
   SushiSwapV3FeeAmount,
   TICK_SPACINGS,
-  USDC,
-  USDT,
-  WBTC,
 } from 'sushi/config'
-import { Native, Price, Token, Type, tryParseAmount } from 'sushi/currency'
+import { DAI, Native, Price, Token, Type, USDC,
+  USDT,
+  WBTC, tryParseAmount   } from 'sushi/currency'
 import {
   Position,
   SushiSwapV2Pool,
