@@ -181,6 +181,7 @@
     "dev": "tsc -w",
     "prepublishOnly": "pnpm build",
     "test": "vitest run -c ./test/vitest.config.ts",
+    "test:debug": "vitest --inspect-brk --no-threads run -c ./test/vitest.config.ts",
     "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },
   "dependencies": {
