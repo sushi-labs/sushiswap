@@ -1,21 +1,5 @@
 {{- $chainIds := .Values.chainIds }}
 {{- range $index, $value := $chainIds }}
-
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: extractor-{{ $value }}-pv
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /cache/extractor-{{ $value }}
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -52,21 +36,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: extractor-{{ $value }}-pvc-clone
-# spec:
-#   storageClassName: csi-hostpath-sc
-#   dataSource:
-#     name: extractor-{{ $value }}-pvc
-#     kind: PersistentVolumeClaim
-#   accessModes:
-#     - ReadWriteOncePod
-#   resources:
-#     requests:
-#       storage: 1Gi
-# ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -102,9 +71,6 @@ spec:
           volumeMounts:
             - mountPath: /app/cache
               name: extractor-{{ $value }}-pv-storage
-          # volumeMounts:
-          # - name: extractor-{{ $value }}-volume
-          #   mountPath: /app/cache
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"
