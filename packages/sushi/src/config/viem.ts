@@ -422,15 +422,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.BOBA]: {
     chain: boba,
-    transport: fallback(
-      [
-        http(boba.rpcUrls.default.http[0]),
-        http('https://lightning-replica.boba.network'),
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://mainnet.boba.network'),
   },
   [ChainId.BOBA_AVAX]: {
     chain: bobaAvax,
@@ -446,15 +438,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.BOBA_BNB]: {
     chain: bobaBnb,
-    transport: fallback(
-      [
-        http(bobaBnb.rpcUrls.default.http[0]),
-        http('https://replica.bnb.boba.network'),
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://bnb.boba.network'),
   },
   [ChainId.BSC]: {
     chain: bsc,
@@ -462,7 +446,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.BTTC]: {
     chain: bttc,
-    transport: http(bttc.rpcUrls.default.http[0]),
+    transport: http('https://rpc.bittorrentchain.io'),
   },
   [ChainId.CELO]: {
     chain: celo,
@@ -528,12 +512,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.THUNDERCORE]: {
     chain: thundercore,
-    transport: fallback(
-      thundercore.rpcUrls.default.http.map((url) => http(url)),
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://mainnet-rpc.thundercore.com'),
   },
   [ChainId.HAQQ]: {
     chain: haqq,
@@ -541,12 +520,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.CORE]: {
     chain: core,
-    transport: fallback(
-      core.rpcUrls.default.http.map((url) => http(url)),
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://rpc.coredao.org'),
   },
   [ChainId.TELOS]: {
     chain: telos,

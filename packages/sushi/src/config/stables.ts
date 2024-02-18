@@ -220,6 +220,7 @@ export const STABLES = {
     THUNDERCORE_ANY_USDT,
     THUNDERCORE_ANY_USDC,
   ],
+  [ChainId.CORE]: [USDC[ChainId.CORE], USDT[ChainId.CORE]],
   // TESTNETS
   [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   [ChainId.ROPSTEN]: [
