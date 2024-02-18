@@ -24,6 +24,9 @@ deploy:
     releases:
       - name: sushi-api
         chartPath: k8s/chart
+manifests:
+  rawYaml:
+    - k8s/vpa-recommender-extractor.yaml
 profiles:
 - name: local
 - name: staging

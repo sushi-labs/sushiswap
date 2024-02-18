@@ -7,6 +7,8 @@ kind: VerticalPodAutoscaler
 metadata:
   name: extractor-{{ $value }}-vpa
 spec:
+  recommenders:
+    - name: extractor
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
@@ -18,10 +20,10 @@ spec:
     containerPolicies:
       - containerName: extractor
         minAllowed:
-          cpu: 250m
-          memory: 500Mi
+          cpu: 100m
+          memory: 200Mi
         maxAllowed:
           cpu: 1000m
-          memory: 1000Mi
+          memory: 2000Mi
         controlledResources: ["cpu", "memory"]
 {{- end }}
