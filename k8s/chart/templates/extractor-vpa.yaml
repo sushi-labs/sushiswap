@@ -20,8 +20,8 @@ spec:
     containerPolicies:
       - containerName: extractor
         minAllowed:
-          cpu: 100m
-          memory: 200Mi
+          cpu: 250m
+          memory: 500Mi
         maxAllowed:
           cpu: 1000m
           memory: 2000Mi
