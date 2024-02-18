@@ -24,9 +24,8 @@ deploy:
     releases:
       - name: sushi-api
         chartPath: k8s/chart
-manifests:
-  rawYaml:
-    - k8s/vpa-recommender-extractor.yaml
+# manifests:
+#   rawYaml:
 profiles:
 - name: local
 - name: staging
@@ -36,7 +35,6 @@ profiles:
   manifests:
     rawYaml:
       - k8s/ingress-staging.yaml
-      - k8s/vpa-recommender-extractor.yaml
 - name: production
   build:
     googleCloudBuild:
@@ -44,4 +42,3 @@ profiles:
   manifests:
     rawYaml:
       - k8s/ingress-production.yaml
-      - k8s/vpa-recommender-extractor.yaml

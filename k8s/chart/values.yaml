@@ -9,6 +9,7 @@ chainIds:
   # - "314" # FILECOIN
   # - "1101" # POLYGON_ZKEVM
   # - "1284" # MOONBEAM
+  # - "1285" # MOONRIVER
   # - "1088" # METIS
   # - "2222" # KAVA
   # - "8453" # BASE 
