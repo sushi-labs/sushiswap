@@ -12,7 +12,7 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteOncePod
+    - ReadWriteOnce
   hostPath:
     path: /cache/extractor-{{ $value }}
 ---
@@ -21,13 +21,52 @@ kind: PersistentVolumeClaim
 metadata:
   name: extractor-{{ $value }}-pvc
 spec:
-  storageClassName: manual
+  storageClassName: csi-hostpath-sc
   accessModes:
-    - ReadWriteOncePod
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 500Mi
+      storage: 1Gi
 ---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: extractor-{{ $value }}-vs
+spec:
+  volumeSnapshotClassName: csi-hostpath-snapclass
+  source:
+    persistentVolumeClaimName: extractor-{{ $value }}-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: extractor-{{ $value }}-pvc-restore
+spec:
+  storageClassName: csi-hostpath-sc
+  dataSource:
+    name: extractor-{{ $value }}-vs
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: extractor-{{ $value }}-pvc-clone
+# spec:
+#   storageClassName: csi-hostpath-sc
+#   dataSource:
+#     name: extractor-{{ $value }}-pvc
+#     kind: PersistentVolumeClaim
+#   accessModes:
+#     - ReadWriteOncePod
+#   resources:
+#     requests:
+#       storage: 1Gi
+# ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -62,7 +101,7 @@ spec:
             timeoutSeconds: 3
           volumeMounts:
             - mountPath: /app/cache
-              name: extractor-{{ $value }}-pv
+              name: extractor-{{ $value }}-pv-storage
           # volumeMounts:
           # - name: extractor-{{ $value }}-volume
           #   mountPath: /app/cache
@@ -85,9 +124,9 @@ spec:
                   name: sushi-api
                   key: SENTRY_ENVIRONMENT
       volumes:
-        - name: extractor-{{ $value }}-pv
+        - name: extractor-{{ $value }}-pv-storage
           persistentVolumeClaim:
-            claimName: extractor-{{ $value }}-pvc
+            claimName: extractor-{{ $value }}-pvc-restore
       # volumes:
       # - name: extractor-{{ $value }}-volume
       #   hostPath:
