@@ -24,8 +24,9 @@ deploy:
     releases:
       - name: sushi-api
         chartPath: k8s/chart
-# manifests:
-#   rawYaml:
+manifests:
+  rawYaml:
+    - k8s/ingress-local.yaml
 profiles:
 - name: local
 - name: staging
