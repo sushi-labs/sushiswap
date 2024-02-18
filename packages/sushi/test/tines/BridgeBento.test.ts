@@ -1,4 +1,5 @@
 import seedrandom from 'seedrandom'
+import { describe, expect, it } from 'vitest'
 import { BridgeBento, RToken, getBigInt } from '../../src/tines'
 
 function calcPrecision(a: number, b: number): number {

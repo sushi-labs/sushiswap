@@ -189,6 +189,7 @@
     "@ethersproject/abi": "5.7.0",
     "@uniswap/token-lists": "1.0.0-beta.33",
     "@uniswap/v3-periphery": "1.4.4",
+    "@uniswap/v3-core": "1.0.1",
     "big.js": "6.1.1",
     "date-fns": "3.3.1",
     "decimal.js-light": "2.5.1",

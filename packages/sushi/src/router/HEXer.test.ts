@@ -1,3 +1,4 @@
+import { afterEach, describe, expect, it } from 'vitest'
 import { HEXer } from './HEXer'
 
 let HEXER = new HEXer()

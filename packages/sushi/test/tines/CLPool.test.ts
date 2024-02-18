@@ -1,5 +1,6 @@
 import { default as seedrandom } from 'seedrandom'
 import { Address } from 'viem'
+import { describe, expect, it } from 'vitest'
 import {
   CLRPool,
   CLTick,

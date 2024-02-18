@@ -1,4 +1,3 @@
-export * from './AddressMapper'
 export * from './Amount'
 // dont't export abstract currency
 // export * from './Currency'

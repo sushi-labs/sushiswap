@@ -32,9 +32,9 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
-          volumeMounts:
-          - name: extractor-{{ $value }}-storage
-            mountPath: /app/cache
+          # volumeMounts:
+          # - name: extractor-{{ $value }}-storage
+          #   mountPath: /app/cache
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"
@@ -53,8 +53,8 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: SENTRY_ENVIRONMENT
-      volumes:
-      - name: extractor-{{ $value }}-storage
-        hostPath:
-          path: /mnt/extractor-{{ $value }}-cache
+      # volumes:
+      # - name: extractor-{{ $value }}-storage
+      #   hostPath:
+      #     path: /mnt/extractor-{{ $value }}-cache
 {{- end }}

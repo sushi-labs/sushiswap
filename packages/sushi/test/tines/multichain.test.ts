@@ -1,4 +1,5 @@
 import seedrandom from 'seedrandom'
+import { expect, it } from 'vitest'
 import { NetworkInfo, findMultiRouteExactIn } from '../../src/tines'
 import {
   Network,

@@ -1,5 +1,5 @@
 import seedrandom from 'seedrandom'
-
+import { expect, it } from 'vitest'
 import {
   Graph,
   MultiRoute,
