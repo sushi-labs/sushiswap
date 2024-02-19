@@ -6,8 +6,9 @@ import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/ty
 import { BigNumber, Contract } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
+import { EthereumProvider } from 'hardhat/types'
 import { erc20Abi } from 'sushi/abi'
-import { Address, PublicClient, WalletClient } from 'viem'
+import { Address, PublicClient } from 'viem'
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it
@@ -67,12 +68,12 @@ function toPaddedRpcQuantity(x: NumberLike, bytesLength: number): string {
 async function getStorageAt(
   address: string,
   index: string,
-  client?: PublicClient,
+  provider?: EthereumProvider,
 ): Promise<string> {
-  if (!client) return getStorageAtLib(address, index)
+  if (!provider) return getStorageAtLib(address, index)
 
   const indexParam = toPaddedRpcQuantity(index, 32)
-  const data = await client.request({
+  const data = await provider.request({
     method: 'eth_getStorageAt',
     params: [address as Address, indexParam as Address, 'latest'],
   })
@@ -84,16 +85,14 @@ async function setStorageAt(
   address: string,
   index: string,
   value: NumberLike,
-  client?: WalletClient,
+  provider?: EthereumProvider,
 ): Promise<void> {
-  if (!client) return setStorageAtLib(address, index, value)
+  if (!provider) return setStorageAtLib(address, index, value)
 
   const indexParam = toRpcQuantity(index)
   const codeParam = toPaddedRpcQuantity(value, 32)
-  await client.request({
-    // @ts-ignore
+  await provider.request({
     method: 'hardhat_setStorageAt',
-    // @ts-ignore
     params: [address as Address, indexParam as Address, codeParam],
   })
 }
@@ -102,7 +101,8 @@ export async function setTokenBalance(
   token: string,
   user: string,
   balance: bigint,
-  client?: PublicClient & WalletClient,
+  client?: PublicClient,
+  provider?: EthereumProvider,
 ): Promise<boolean> {
   const setStorage = async (
     realContract: string,
@@ -115,15 +115,15 @@ export async function setTokenBalance(
       .toString(16)
       .padStart(64, '0')}`
     const slot = keccak256(slotData)
-    const previousValue0 = await getStorageAt(realContract, slot, client)
-    await setStorageAt(realContract, slot, value0, client)
+    const previousValue0 = await getStorageAt(realContract, slot, provider)
+    await setStorageAt(realContract, slot, value0, provider)
     // Vyper mapping
     const slotData2 = `0x${Number(slotNumber)
       .toString(16)
       .padStart(64, '0')}${user.padStart(64, '0')}`
     const slot2 = keccak256(slotData2)
-    const previousValue1 = await getStorageAt(realContract, slot2, client)
-    await setStorageAt(realContract, slot2, value1, client)
+    const previousValue1 = await getStorageAt(realContract, slot2, provider)
+    await setStorageAt(realContract, slot2, value1, provider)
     return [previousValue0, previousValue1]
   }
 
@@ -138,7 +138,20 @@ export async function setTokenBalance(
 
   const tokenContract = new Contract(token, erc20Abi, ethers.provider)
 
-  const balancePrimary = (await tokenContract.balanceOf(user)) as BigNumber
+  const getBalanace = async () => {
+    if (client) {
+      const balance = await client.readContract({
+        abi: erc20Abi,
+        address: token as Address,
+        functionName: 'balanceOf',
+        args: [`0x${user}` as Address],
+      })
+      return BigNumber.from(balance.toString())
+    } else
+      return ((await tokenContract) as Contract).balanceOf(user) as BigNumber
+  }
+
+  const balancePrimary = await getBalanace()
 
   for (let i = 0; i < 200; ++i) {
     //console.log('setTokenBalance', token, i)
@@ -148,7 +161,7 @@ export async function setTokenBalance(
       balance,
       balance,
     )
-    const resBalance = (await tokenContract.balanceOf(user)) as BigNumber
+    const resBalance = await getBalanace()
     //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
 
     if (!resBalance.isZero()) {

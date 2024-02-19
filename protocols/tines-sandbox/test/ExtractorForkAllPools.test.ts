@@ -19,6 +19,7 @@ import { PoolCode, Router } from '@sushiswap/router'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { CurveMultitokenPool, RToken, getBigInt } from '@sushiswap/tines'
 import { expect } from 'chai'
+import { EthereumProvider } from 'hardhat/types'
 import seedrandom from 'seedrandom'
 import { erc20Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
@@ -75,6 +76,7 @@ export function getRandomExp(rnd: () => number, min: number, max: number) {
 const DEFAULT_BALANCE = 1_000_000_000n
 async function prepareToken(
   client: PublicClient & WalletClient,
+  provider: EthereumProvider,
   token: RToken,
   user: Address,
   approveTo: Address,
@@ -88,7 +90,13 @@ async function prepareToken(
   if (balance > 0) return balance
 
   const initBalance = DEFAULT_BALANCE * 10n ** BigInt(token.decimals)
-  const res = await setTokenBalance(token.address, user, initBalance)
+  const res = await setTokenBalance(
+    token.address,
+    user,
+    initBalance,
+    client,
+    provider,
+  )
   expect(res).equal(
     true,
     `Wrong setTokenBalance for ${token.symbol} (${token.address})`,
@@ -140,6 +148,8 @@ async function makeSwap(
 ) {
   const snapshot = await takeSnapshot()
   const balanceBefore = await getBalance(client, tokens[1], user)
+  // const qqq = await getBalance(client, tokens[0], user)
+  // console.log('balanceBefore', qqq, tokens[0], user, pool)
 
   await client.writeContract({
     address: pool,
@@ -248,20 +258,36 @@ async function allPoolsTest(args: {
   const pools = extractor.getCurrentPoolCodes()
   for (let i = 0; i < pools.length; ++i) {
     const pool = pools[i].pool
+    process.stdout.write(`Pool ${pool.address} ... `)
     const testSeed = pool.address
     const rnd: () => number = seedrandom(testSeed) // random [0, 1)
 
-    const amount0 = await prepareToken(client, pool.token0, user, pool.address)
+    const amount0 = await prepareToken(
+      client,
+      forkProvider,
+      pool.token0,
+      user,
+      pool.address,
+    )
+    // console.log('amount0', amount0, pool.token0.address, user, pool.address)
     const amountInPortion0 = getRandomExp(rnd, 1e-5, 0.5)
     const amountIn0 = getBigInt(amountInPortion0 * Number(pool.getReserve0()))
-    expect(amountIn0).lessThan(Number(amount0))
+    expect(Number(amountIn0)).lessThan(Number(amount0))
     await checkPool(client, user, args.chainId, pools[i], amountIn0, true)
 
-    const amount1 = await prepareToken(client, pool.token1, user, pool.address)
+    const amount1 = await prepareToken(
+      client,
+      forkProvider,
+      pool.token1,
+      user,
+      pool.address,
+    )
     const amountInPortion1 = getRandomExp(rnd, 1e-5, 0.5)
     const amountIn1 = getBigInt(amountInPortion1 * Number(pool.getReserve1()))
-    expect(amountIn1).lessThan(Number(amount1))
+    expect(Number(amountIn1)).lessThan(Number(amount1))
     await checkPool(client, user, args.chainId, pools[i], amountIn1, false)
+
+    console.log('ok')
   }
 }
 
