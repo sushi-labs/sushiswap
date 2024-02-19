@@ -92,6 +92,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
           <ConcentratedPositionsTable
             chainId={pool.chainId as SushiSwapV3ChainId}
             poolId={pool.address as Address}
+            hideNewSmartPositionButton={!pool.hasEnabledSteerVault}
           />
         </PoolsFiltersProvider>
         <div className="py-4">

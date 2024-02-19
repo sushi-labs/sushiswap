@@ -328,8 +328,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       (yieldRate === YieldRatePeriod.MONTHLY
         ? 12
         : yieldRate === YieldRatePeriod.DAILY
-        ? 365
-        : 1)
+          ? 365
+          : 1)
 
     // make sure capitial efficiency is valid
     const sanitizedCE =
@@ -646,8 +646,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                                 {yieldRate === YieldRatePeriod.DAILY
                                   ? 'Daily Rate'
                                   : yieldRate === YieldRatePeriod.MONTHLY
-                                  ? 'Monthly Rate'
-                                  : 'APR'}
+                                    ? 'Monthly Rate'
+                                    : 'APR'}
                               </span>{' '}
                               (when in-range, excl. IL)
                             </span>

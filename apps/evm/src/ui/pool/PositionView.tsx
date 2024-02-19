@@ -40,7 +40,6 @@ import {
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useMemo, useState } from 'react'
-import useIsTickAtLimit from 'src/lib/hooks/useIsTickAtLimit'
 import { Chain } from 'sushi/chain'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { isAngleEnabledChainId } from 'sushi/config'
@@ -54,6 +53,7 @@ import {
   unwrapToken,
 } from '../../lib/functions'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
+import { useIsTickAtLimit } from '../../lib/pool/v3'
 import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
 import {

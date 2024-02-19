@@ -23,7 +23,7 @@ export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.LINEA,
   ChainId.HAQQ,
 ]
-export type SwapApiEnabledChainId = typeof SWAP_API_ENABLED_NETWORKS[number]
+export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (
   chainId: number,
 ): chainId is SwapApiEnabledChainId =>
@@ -55,7 +55,7 @@ export const CHAIN_IDS = [
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([
     ...PREFERRED_CHAINID_ORDER.filter((el) =>
-      CHAIN_IDS.includes(el as typeof CHAIN_IDS[number]),
+      CHAIN_IDS.includes(el as (typeof CHAIN_IDS)[number]),
     ),
     ...CHAIN_IDS,
   ]),
@@ -63,14 +63,14 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
   (
     c,
   ): c is Exclude<
-    typeof CHAIN_IDS[number],
-    typeof TESTNET_CHAIN_IDS[number] | typeof DISABLED_CHAIN_IDS[number]
+    (typeof CHAIN_IDS)[number],
+    (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
-    !TESTNET_CHAIN_IDS.includes(c as typeof TESTNET_CHAIN_IDS[number]) &&
-    !DISABLED_CHAIN_IDS.includes(c as typeof DISABLED_CHAIN_IDS[number]),
+    !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
-const DISABLED_ANALYTICS_CHAIN_IDS = [
+export const DISABLED_ANALYTICS_CHAIN_IDS = [
   ChainId.BOBA_AVAX,
   ChainId.KAVA,
   ChainId.MOONRIVER,
@@ -80,12 +80,12 @@ export const ANALYTICS_CHAIN_IDS = [
   ...SUPPORTED_CHAIN_IDS.filter(
     (el) =>
       !DISABLED_ANALYTICS_CHAIN_IDS.includes(
-        el as typeof DISABLED_ANALYTICS_CHAIN_IDS[number],
+        el as (typeof DISABLED_ANALYTICS_CHAIN_IDS)[number],
       ),
   ),
 ]
 
-export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
 export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId =>

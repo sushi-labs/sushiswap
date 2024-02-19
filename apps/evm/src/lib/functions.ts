@@ -20,7 +20,7 @@ import {
 } from 'sushi/pool'
 import { Bound } from './constants'
 import { useTicks } from './hooks'
-import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
+import { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
 
 export const isTridentConstantPool = (
   pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,

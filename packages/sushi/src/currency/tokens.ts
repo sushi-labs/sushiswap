@@ -51,8 +51,10 @@ import {
   WORMHOLE_WETH_ADDRESS,
   XSUSHI_ADDRESS,
   YFI_ADDRESS,
+  axlDAI_ADDRESS,
   axlETH_ADDRESS,
   axlUSDC_ADDRESS,
+  axlUSDT_ADDRESS,
   axlWBTC_ADDRESS,
   rETH2_ADDRESS,
   renBTC_ADDRESS,
@@ -626,6 +628,13 @@ export const WNATIVE = {
     symbol: 'WFIL',
     name: 'Wrapped FIL',
   }),
+  [ChainId.ZETACHAIN]: new Token({
+    chainId: ChainId.ZETACHAIN,
+    address: WNATIVE_ADDRESS[ChainId.ZETACHAIN],
+    decimals: 18,
+    symbol: 'WZETA',
+    name: 'Wrapped ZETA',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -655,6 +664,26 @@ export const axlUSDC: Record<keyof typeof axlUSDC_ADDRESS, Token> =
     },
     axlUSDC_ADDRESS,
   ) as Record<keyof typeof axlUSDC_ADDRESS, Token>
+
+export const axlUSDT: Record<keyof typeof axlUSDT_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 6,
+      symbol: 'axlUSDT',
+      name: 'Axelar Wrapped USDT',
+    },
+    axlUSDT_ADDRESS,
+  ) as Record<keyof typeof axlUSDT_ADDRESS, Token>
+
+export const axlDAI: Record<keyof typeof axlDAI_ADDRESS, Token> =
+  addressMapToTokenMap(
+    {
+      decimals: 18,
+      symbol: 'axlDAI',
+      name: 'Axelar Wrapped DAI',
+    },
+    axlDAI_ADDRESS,
+  ) as Record<keyof typeof axlDAI_ADDRESS, Token>
 
 export const axlETH: Record<keyof typeof axlETH_ADDRESS, Token> =
   addressMapToTokenMap(
@@ -856,3 +885,107 @@ export const WORMHOLE_WETH = addressMapToTokenMap(
   },
   WORMHOLE_WETH_ADDRESS,
 ) as Record<keyof typeof WORMHOLE_WETH_ADDRESS, Token>
+
+export const THUNDERCORE_ANY_USDT = new Token({
+  chainId: ChainId.THUNDERCORE,
+  address: '0x0dcb0cb0120d355cde1ce56040be57add0185baa',
+  decimals: 6,
+  symbol: 'anyUSDT',
+  name: 'Any Tether USD',
+})
+
+export const THUNDERCORE_ANY_USDC = new Token({
+  chainId: ChainId.THUNDERCORE,
+  address: '0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98',
+  decimals: 18,
+  symbol: 'anyUSDC',
+  name: 'Any USD Coin',
+})
+
+export const THUNDERCORE_ANY_BUSD = new Token({
+  chainId: ChainId.THUNDERCORE,
+  address: '0xb12c13e66ade1f72f71834f2fc5082db8c091358',
+  decimals: 18,
+  symbol: 'anyBUSD',
+  name: 'Any BUSD Token',
+})
+
+export const BTTC_BSC_BRIDGE_USDC = new Token({
+  chainId: ChainId.BTTC,
+  address: '0xca424b845497f7204d9301bd13ff87c0e2e86fcf',
+  decimals: 18,
+  symbol: 'USDC (BSC)',
+  name: 'USD Coin (BSC)',
+})
+export const BTTC_ETHEREUM_BRIDGE_USDC = new Token({
+  chainId: ChainId.BTTC,
+  address: '0xae17940943ba9440540940db0f1877f101d39e8b',
+  decimals: 6,
+  symbol: 'USDC (Ethereum)',
+  name: 'USD Coin (Ethereum)',
+})
+export const BTTC_TRON_BRIDGE_USDC = new Token({
+  chainId: ChainId.BTTC,
+  address: '0x935faa2fcec6ab81265b301a30467bbc804b43d3',
+  decimals: 6,
+  symbol: 'USDC (Tron)',
+  name: 'USD Coin (Tron)',
+})
+export const BTTC_BSC_BRIDGE_USDT = new Token({
+  chainId: ChainId.BTTC,
+  address: '0x9b5f27f6ea9bbd753ce3793a07cba3c74644330d',
+  decimals: 18,
+  symbol: 'USDT (BSC)',
+  name: 'Tether USD (BSC)',
+})
+export const BTTC_ETHEREUM_BRIDGE_USDT = new Token({
+  chainId: ChainId.BTTC,
+  address: '0xe887512ab8bc60bcc9224e1c3b5be68e26048b8b',
+  decimals: 6,
+  symbol: 'USDT (Ethereum)',
+  name: 'Tether USD (Ethereum)',
+})
+export const BTTC_TRON_BRIDGE_USDT = new Token({
+  chainId: ChainId.BTTC,
+  address: '0xdb28719f7f938507dbfe4f0eae55668903d34a15',
+  decimals: 6,
+  symbol: 'USDT (Tron)',
+  name: 'Tether USD (Tron)',
+})
+
+export const BASE_BRIDGE_USDC = new Token({
+  chainId: ChainId.BASE,
+  address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
+  decimals: 6,
+  symbol: 'USDbC',
+  name: 'USD Base Coin',
+})
+
+export const ZETA_ETH_BRIDGE_USDC = new Token({
+  chainId: ChainId.ZETACHAIN,
+  address: '0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a',
+  decimals: 6,
+  symbol: 'USDC.ETH',
+  name: 'ZetaChain ZRC20 USDC on ETH',
+})
+export const ZETA_BSC_BRIDGE_USDC = new Token({
+  chainId: ChainId.ZETACHAIN,
+  address: '0x05BA149A7bd6dC1F937fA9046A9e05C05f3b18b0',
+  decimals: 18,
+  symbol: 'USDC.BSC',
+  name: 'ZetaChain ZRC20 USDC on BSC',
+})
+export const ZETA_ETH_BRIDGE_USDT = new Token({
+  chainId: ChainId.ZETACHAIN,
+  address: '0x7c8dDa80bbBE1254a7aACf3219EBe1481c6E01d7',
+  decimals: 6,
+  symbol: 'USDT.ETH',
+  name: 'ZetaChain ZRC20 USDT on ETH',
+})
+export const ZETA_BSC_BRIDGE_USDT = new Token({
+  chainId: ChainId.ZETACHAIN,
+  address: '0x91d4F0D54090Df2D81e834c3c8CE71C6c865e79F',
+  decimals: 18,
+  symbol: 'USDT.BSC',
+  name: 'ZetaChain ZRC20 USDT on BSC',
+})

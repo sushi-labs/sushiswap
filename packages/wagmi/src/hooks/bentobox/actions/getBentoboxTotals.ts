@@ -65,13 +65,16 @@ export const getBentoboxTotals = async (
       allowFailure: false,
       contracts,
     }).then((results) =>
-      addresses.reduce((previousValue, currentValue, i) => {
-        previousValue[currentValue as Address] = {
-          elastic: results[i][0],
-          base: results[i][1],
-        }
-        return previousValue
-      }, {} as Record<Address, Rebase>),
+      addresses.reduce(
+        (previousValue, currentValue, i) => {
+          previousValue[currentValue as Address] = {
+            elastic: results[i][0],
+            base: results[i][1],
+          }
+          return previousValue
+        },
+        {} as Record<Address, Rebase>,
+      ),
     )
   } catch {
     return null

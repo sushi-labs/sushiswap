@@ -5,7 +5,7 @@ import { Chip, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { useConcentratedActiveLiquidity } from '../../../../lib/hooks/useConcentratedActiveLiquidity'
+import { useConcentratedActiveLiquidity } from '../../../../lib/pool/v3/use-concentrated-active-liquidity'
 
 interface SteerLiquidityInRangeChipProps {
   vault: Pool['steerVaults'][0]

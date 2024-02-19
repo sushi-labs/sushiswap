@@ -65,7 +65,10 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/steer-sdk": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "deepmerge-ts": "^4.3.0",
     "tslib": "latest",
@@ -75,7 +78,6 @@
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/tokens-api": "workspace:*",
-    "@sushiswap/token-price-api": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",

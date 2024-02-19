@@ -12,7 +12,6 @@ import {
   BentoBoxChainId,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
 } from '../../config'
 import { Token } from '../../currency'
 import {
@@ -86,11 +85,7 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: (() => void) | undefined
   unwatchBlockNumber?: () => void
 
-  constructor(
-    chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
-    web3Client: PublicClient,
-    isTest = false,
-  ) {
+  constructor(chainId: ChainId, web3Client: PublicClient, isTest = false) {
     super(chainId, web3Client, isTest)
     this.chainId = chainId
     if (

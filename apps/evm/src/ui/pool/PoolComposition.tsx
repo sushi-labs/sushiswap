@@ -1,7 +1,6 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { usePrices } from '@sushiswap/react-query'
 import {
   Card,
   CardContent,
@@ -15,7 +14,6 @@ import {
 import React, { FC } from 'react'
 import { usePoolGraphData, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
 interface PoolCompositionProps {
@@ -23,7 +21,6 @@ interface PoolCompositionProps {
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
-  const { data: prices } = usePrices({ chainId: pool.chainId })
   const { data, isLoading } = usePoolGraphData({
     poolAddress: pool.address,
     chainId: pool.chainId as ChainId,
@@ -37,16 +34,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
     <Card>
       <CardHeader>
         <CardTitle>Pool Liquidity</CardTitle>
-        <CardDescription>
-          {formatUSD(
-            (data?.liquidityNative ?? 0) *
-              Number(
-                prices?.[Native.onChain(pool.chainId).wrapped.address]?.toFixed(
-                  10,
-                ),
-              ),
-          )}
-        </CardDescription>
+        <CardDescription>{formatUSD(data?.liquidityUSD ?? 0)}</CardDescription>
       </CardHeader>
       <CardContent>
         <CardGroup>

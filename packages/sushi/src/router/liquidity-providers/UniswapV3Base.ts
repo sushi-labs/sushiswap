@@ -268,7 +268,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         ticksContracts,
       ])
 
-    const ticks: NonNullable<typeof tickResults[number]['result']>[] = []
+    const ticks: NonNullable<(typeof tickResults)[number]['result']>[] = []
     tickResults.forEach((t, i) => {
       const index = wordList[i]!.index
       ticks[index] = (ticks[index] || []).concat(t.result || [])

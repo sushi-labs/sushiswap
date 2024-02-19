@@ -24,6 +24,9 @@
       "./src/future/*.tsx",
       "./src/future/*/index.ts",
       "./src/future/*/index.tsx"
+    ],
+    "./configure": [
+      "./src/configure.ts"
     ]
   },
   "typesVersions": {
@@ -47,6 +50,7 @@
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@radix-ui/react-slot": "1.0.2",
+    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
@@ -72,7 +76,7 @@
     "@types/react-dom": "18.2.6",
     "@wagmi/core": "1.4.13",
     "eslint-config-sushi": "workspace:*",
-    "next": "13.4.19",
+    "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
@@ -82,7 +86,7 @@
   "peerDependencies": {
     "@sentry/nextjs": "7.92.0",
     "@wagmi/core": "1.4.13",
-    "next": "13.4.19",
+    "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "viem": "1.21.4",
@@ -112,6 +116,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "13.4.19"
+    "next": "14.1.0"
   }
 }

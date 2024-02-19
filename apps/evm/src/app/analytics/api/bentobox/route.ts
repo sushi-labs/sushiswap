@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { bentoBoxTokensSchema } from 'src/lib/schema'
 
-import { getBentoBoxTokens } from 'src/lib/analytics/api'
+import { getBentoBoxTokens } from 'src/lib/graph'
 
 export const revalidate = 3600
 

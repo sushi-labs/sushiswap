@@ -6,9 +6,10 @@ import { parseUnits } from 'viem'
 interface UsePrice {
   chainId: number | undefined
   address: string | undefined
+  enabled?: boolean
 }
 
-export const usePrice = ({ chainId, address }: UsePrice) => {
+export const usePrice = ({ chainId, address, enabled = true }: UsePrice) => {
   return useQuery({
     queryKey: [`https://api.sushi.com/price/v1/${chainId}/${address}`],
     queryFn: async () => {
@@ -20,7 +21,7 @@ export const usePrice = ({ chainId, address }: UsePrice) => {
         parseUnits('1', 18).toString(),
       )
     },
-    enabled: Boolean(chainId && address),
+    enabled: Boolean(chainId && address && enabled),
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
     refetchOnWindowFocus: false,

@@ -521,7 +521,7 @@ export const STARGATE_TOKEN = new Token({
 })
 
 export type StargateBridgeTokens =
-  typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
+  (typeof STARGATE_BRIDGE_TOKENS)[StargateChainId]
 
 export type StargateBridgeToken = StargateBridgeTokens[number]
 
@@ -537,7 +537,7 @@ export const STARGATE_SUPPORTED_CHAIN_IDS = [
   ChainId.LINEA,
 ] as const
 
-export type StargateChainId = typeof STARGATE_SUPPORTED_CHAIN_IDS[number]
+export type StargateChainId = (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]
 
 // https://stargateprotocol.gitbook.io/stargate/developers/stargate-chain-paths
 

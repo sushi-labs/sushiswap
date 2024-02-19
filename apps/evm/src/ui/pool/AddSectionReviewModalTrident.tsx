@@ -35,11 +35,13 @@ import {
   useSignature,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
+
 import {
   LiquidityInput,
   approveMasterContractAction,
   batchAction,
-} from 'src/lib/actions'
+} from 'src/lib/pool/trident'
+
 import { APPROVE_TAG_ADD_TRIDENT } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { TridentConstantPool, TridentStablePool } from 'sushi'

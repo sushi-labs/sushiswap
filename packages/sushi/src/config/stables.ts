@@ -1,93 +1,31 @@
 import { ChainId } from '../chain'
-import { Token } from '../currency'
 import {
+  BASE_BRIDGE_USDC,
+  BTTC_BSC_BRIDGE_USDC,
+  BTTC_BSC_BRIDGE_USDT,
+  BTTC_ETHEREUM_BRIDGE_USDC,
+  BTTC_ETHEREUM_BRIDGE_USDT,
+  BTTC_TRON_BRIDGE_USDC,
+  BTTC_TRON_BRIDGE_USDT,
   BUSD,
   DAI,
   FRAX,
   LUSD,
   MIM,
+  THUNDERCORE_ANY_BUSD,
+  THUNDERCORE_ANY_USDC,
+  THUNDERCORE_ANY_USDT,
   USDC,
   USDT,
   USD_PLUS,
   WORMHOLE_USDC,
+  ZETA_BSC_BRIDGE_USDC,
+  ZETA_BSC_BRIDGE_USDT,
+  ZETA_ETH_BRIDGE_USDC,
+  ZETA_ETH_BRIDGE_USDT,
   axlUSDC,
 } from '../currency'
 import { STARGATE_USDC, STARGATE_USDT } from './stargate'
-
-const THUNDERCORE_ANY_USDT = new Token({
-  chainId: ChainId.THUNDERCORE,
-  address: '0x0dcb0cb0120d355cde1ce56040be57add0185baa',
-  decimals: 6,
-  symbol: 'anyUSDT',
-  name: 'Any Tether USD',
-})
-
-const THUNDERCORE_ANY_USDC = new Token({
-  chainId: ChainId.THUNDERCORE,
-  address: '0xdc42728b0ea910349ed3c6e1c9dc06b5fb591f98',
-  decimals: 18,
-  symbol: 'anyUSDC',
-  name: 'Any USD Coin',
-})
-
-const THUNDERCORE_ANY_BUSD = new Token({
-  chainId: ChainId.THUNDERCORE,
-  address: '0xb12c13e66ade1f72f71834f2fc5082db8c091358',
-  decimals: 18,
-  symbol: 'anyBUSD',
-  name: 'Any BUSD Token',
-})
-
-const BTTC_BSC_BRIDGE_USDC = new Token({
-  chainId: ChainId.BTTC,
-  address: '0xca424b845497f7204d9301bd13ff87c0e2e86fcf',
-  decimals: 18,
-  symbol: 'USDC (BSC)',
-  name: 'USD Coin (BSC)',
-})
-const BTTC_ETHEREUM_BRIDGE_USDC = new Token({
-  chainId: ChainId.BTTC,
-  address: '0xae17940943ba9440540940db0f1877f101d39e8b',
-  decimals: 6,
-  symbol: 'USDC (Ethereum)',
-  name: 'USD Coin (Ethereum)',
-})
-const BTTC_TRON_BRIDGE_USDC = new Token({
-  chainId: ChainId.BTTC,
-  address: '0x935faa2fcec6ab81265b301a30467bbc804b43d3',
-  decimals: 6,
-  symbol: 'USDC (Tron)',
-  name: 'USD Coin (Tron)',
-})
-const BTTC_BSC_BRIDGE_USDT = new Token({
-  chainId: ChainId.BTTC,
-  address: '0x9b5f27f6ea9bbd753ce3793a07cba3c74644330d',
-  decimals: 18,
-  symbol: 'USDT (BSC)',
-  name: 'Tether USD (BSC)',
-})
-const BTTC_ETHEREUM_BRIDGE_USDT = new Token({
-  chainId: ChainId.BTTC,
-  address: '0xe887512ab8bc60bcc9224e1c3b5be68e26048b8b',
-  decimals: 6,
-  symbol: 'USDT (Ethereum)',
-  name: 'Tether USD (Ethereum)',
-})
-const BTTC_TRON_BRIDGE_USDT = new Token({
-  chainId: ChainId.BTTC,
-  address: '0xdb28719f7f938507dbfe4f0eae55668903d34a15',
-  decimals: 6,
-  symbol: 'USDT (Tron)',
-  name: 'Tether USD (Tron)',
-})
-
-const BASE_BRIDGE_USDC = new Token({
-  chainId: ChainId.BASE,
-  address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
-  decimals: 6,
-  symbol: 'USDbC',
-  name: 'USD Base Coin',
-})
 
 export const STABLES = {
   [ChainId.ARBITRUM]: [
@@ -221,6 +159,12 @@ export const STABLES = {
     THUNDERCORE_ANY_USDC,
   ],
   [ChainId.CORE]: [USDC[ChainId.CORE], USDT[ChainId.CORE]],
+  [ChainId.ZETACHAIN]: [
+    ZETA_BSC_BRIDGE_USDC,
+    ZETA_BSC_BRIDGE_USDT,
+    ZETA_ETH_BRIDGE_USDC,
+    ZETA_ETH_BRIDGE_USDT,
+  ],
   // TESTNETS
   [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   [ChainId.ROPSTEN]: [

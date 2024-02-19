@@ -1,9 +1,10 @@
+/// <reference lib="dom" />
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
 
 import { type Chain } from '../src/chain'
 import { ChainId } from '../src/chain/constants'
-;(async function () {
+;(async () => {
   const file = path.resolve(__dirname, '../src/chain/generated.ts')
   if (!existsSync(file)) {
     const chains = await fetch('https://chainid.network/chains.json').then(

@@ -1,4 +1,5 @@
-import { SteerVault, getSteerVault } from '@sushiswap/client'
+import { EVM_APP_BASE_URL, getSteerVault } from '@sushiswap/client'
+import { SteerVault } from '@sushiswap/client'
 import { getSteerVaultPositions, getTokenRatios } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
 import { deserialize, serialize } from '@wagmi/core'
@@ -54,8 +55,15 @@ function getAdjustment(vault: SteerVault): SteerStrategyGeneric['adjustment'] {
 }
 
 async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
+  const prices = await fetch(
+    `${EVM_APP_BASE_URL}/api/price/v2/${vault.chainId}`,
+  ).then((data) => data.json())
+
   const priceExtremes = getPriceExtremes(vault)
-  const tokenRatios = await getTokenRatios(vault)
+  const tokenRatios = await getTokenRatios({
+    vault,
+    prices,
+  })
   const adjustment = getAdjustment(vault)
   const positions =
     (await getSteerVaultPositions({

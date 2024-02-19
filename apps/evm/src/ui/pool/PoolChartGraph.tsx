@@ -209,9 +209,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: function (idx: number) {
-            return idx * 2
-          },
+          animationDelayUpdate: (idx: number) => idx * 2,
           data: yData,
         },
       ],

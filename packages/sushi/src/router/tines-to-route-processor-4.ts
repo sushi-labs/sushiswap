@@ -4,6 +4,7 @@ import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines'
 import { PoolCode } from './pool-codes/PoolCode'
 import {
   PermitData,
+  RouterLiquiditySource,
   TinesToRouteProcessor2,
   TokenType,
   getTokenType,
@@ -30,6 +31,7 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
     route: MultiRoute,
     toAddress: string,
     permits: PermitData[] = [],
+    source = RouterLiquiditySource.Sender,
   ): Hex | '' {
     // 0. Check for no route
     if (route.status === RouteStatus.NoWay || route.legs.length === 0) return ''
@@ -54,7 +56,12 @@ class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
             res += this.processNativeCode(token, route, toAddress)
             break
           case TokenType.ERC20:
-            res += this.processERC20Code(i > 0, token, route, toAddress)
+            res += this.processERC20Code(
+              i > 0 || source === RouterLiquiditySource.XSwap,
+              token,
+              route,
+              toAddress,
+            )
             break
           case TokenType.BENTO:
             res += this.processBentoCode(token, route, toAddress)
@@ -99,11 +106,12 @@ export function getRouteProcessor4Code(
   toAddress: string,
   pools: Map<string, PoolCode>,
   permits: PermitData[] = [],
+  source = RouterLiquiditySource.Sender,
 ): string {
   const rpc = new TinesToRouteProcessor4(
     routeProcessorAddress,
     route.fromToken.chainId as ChainId,
     pools,
   )
-  return rpc.getRouteProcessorCode(route, toAddress, permits)
+  return rpc.getRouteProcessorCode(route, toAddress, permits, source)
 }

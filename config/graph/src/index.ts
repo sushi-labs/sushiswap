@@ -11,7 +11,7 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
-export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
+export type TridentChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -36,12 +36,13 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.METIS,
   ChainId.BTTC,
   ChainId.FILECOIN,
+  ChainId.ZETACHAIN,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
 ] as const
 
-export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
+export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -67,8 +68,9 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.BTTC,
   ChainId.FILECOIN,
   ChainId.HAQQ,
+  ChainId.ZETACHAIN,
 ]
-export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_ENABLED_NETWORKS[number]
+export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(
   new Set([
@@ -96,6 +98,8 @@ export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 export const LINEA_HOST = 'graph-query.linea.build/subgraphs/name'
 export const HAQQ_HOST = 'haqq.graph.p2p.org/subgraphs/name'
+export const ZETACHAIN_HOST =
+  'api.goldsky.com/api/public/project_cls39ugcfyhbq01xl9tsf6g38/subgraphs'
 
 export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
 
@@ -133,6 +137,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.SCROLL]: 'Scroll',
   [ChainId.FILECOIN]: 'Filecoin',
   [ChainId.HAQQ]: 'HAQQ',
+  [ChainId.ZETACHAIN]: 'ZetaChain',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -168,6 +173,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.SCROLL]: STUDIO_HOST,
   [ChainId.FILECOIN]: FILECOIN_HOST,
   [ChainId.HAQQ]: HAQQ_HOST,
+  [ChainId.ZETACHAIN]: ZETACHAIN_HOST,
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -225,6 +231,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.SCROLL]: 'blocks-scroll/v0.0.1',
   [ChainId.FILECOIN]: 'sushiswap/blocks',
   [ChainId.HAQQ]: 'sushi/blocks-haqq',
+  [ChainId.ZETACHAIN]: 'blocks-zetachain/1.0.0/gn',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -299,6 +306,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.METIS]: 'sushi-v2/sushiswap-metis',
   [ChainId.BTTC]: 'sushi-v2/sushiswap-bttc',
   [ChainId.FILECOIN]: 'sushiswap/sushiswap-filecoin',
+  [ChainId.ZETACHAIN]: 'sushiswap-zetachain/1.0.0/gn',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
@@ -325,6 +333,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'sushi-v3/v3-bttc',
   [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
   [ChainId.HAQQ]: 'sushi/v3-haqq',
+  [ChainId.ZETACHAIN]: 'v3-zetachain/1.0.0/gn',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
@@ -431,37 +440,37 @@ export const STEER_ENABLED_NETWORKS = [
   ChainId.SCROLL,
 ] as const
 
-export type SteerChainId = typeof STEER_ENABLED_NETWORKS[number]
+export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
 
 export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
   [ChainId.POLYGON]:
-    'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-polygon',
+    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-polygon',
   [ChainId.BSC]:
-    'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-bsc',
+    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-bsc',
   [ChainId.OPTIMISM]:
-    'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-optimism',
+    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-optimism',
   [ChainId.ARBITRUM]:
-    'https://api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-arbitrum',
-  // [ChainId.Evmos]: 'https://subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-evmos/api',
+    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-arbitrum',
+  // [ChainId.Evmos]: 'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-evmos/api',
   [ChainId.THUNDERCORE]:
-    'https://subgraph.steer.finance/thundercore/subgraphs/name/steerprotocol/steer-thundercore',
+    'subgraph.steer.finance/thundercore/subgraphs/name/steerprotocol/steer-thundercore',
   [ChainId.METIS]:
-    'https://subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-metis/api',
+    'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-metis/api',
   [ChainId.BASE]:
-    'https://subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-base/api',
+    'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-base/api',
   [ChainId.AVALANCHE]:
-    'https://api.thegraph.com/subgraphs/name/rakeshbhatt10/avalance-test-subgraph',
+    'api.thegraph.com/subgraphs/name/rakeshbhatt10/avalance-test-subgraph',
   [ChainId.POLYGON_ZKEVM]:
     'http://13.228.90.202:8000/subgraphs/name/steerprotocol/steer-zkevm',
   [ChainId.CELO]:
-    'https://api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-test-celo',
+    'api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-test-celo',
   [ChainId.KAVA]:
-    'https://subgraph.steer.finance/kava/subgraphs/name/steerprotocol/steer-kava-evm',
+    'subgraph.steer.finance/kava/subgraphs/name/steerprotocol/steer-kava-evm',
   [ChainId.LINEA]:
-    'https://subgraph.steer.finance/linea/subgraphs/name/steerprotocol/steer-linea',
+    'subgraph.steer.finance/linea/subgraphs/name/steerprotocol/steer-linea',
   [ChainId.SCROLL]:
-    'https://subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
-  // [ChainId.MANTA]: 'https://subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
+    'subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
+  // [ChainId.MANTA]: 'subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
