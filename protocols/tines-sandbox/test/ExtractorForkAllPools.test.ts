@@ -34,7 +34,7 @@ import {
 } from 'viem'
 import { PublicClient } from 'viem'
 import { hardhat } from 'viem/chains'
-import { createHardhatProvider, setTokenBalance } from '../src'
+import { createHardhatProvider, setTokenBalance, takeSnapshotEnv } from '../src'
 
 function closeValues(
   _a: number | bigint,
@@ -81,13 +81,13 @@ async function prepareToken(
   user: Address,
   approveTo: Address,
 ): Promise<bigint> {
-  const balance = await client.readContract({
-    abi: erc20Abi,
-    address: token.address as Address,
-    functionName: 'balanceOf',
-    args: [user],
-  })
-  if (balance > 0) return balance
+  // const balance = await client.readContract({
+  //   abi: erc20Abi,
+  //   address: token.address as Address,
+  //   functionName: 'balanceOf',
+  //   args: [user],
+  // })
+  // if (balance > 0) return balance
 
   const initBalance = DEFAULT_BALANCE * 10n ** BigInt(token.decimals)
   const res = await setTokenBalance(
@@ -140,16 +140,15 @@ async function getBalance(
 // Makes real swap in the fork and checks consistency
 async function makeSwap(
   client: PublicClient & WalletClient,
+  provider: EthereumProvider,
   user: Address,
   pool: Address,
   tokens: [Address, Address], // [from, to]
   indexes: [number, number], // [from, to]
   amountIn: bigint,
 ) {
-  const snapshot = await takeSnapshot()
+  const snapshot = await takeSnapshotEnv(provider)
   const balanceBefore = await getBalance(client, tokens[1], user)
-  // const qqq = await getBalance(client, tokens[0], user)
-  // console.log('balanceBefore', qqq, tokens[0], user, pool)
 
   await client.writeContract({
     address: pool,
@@ -172,6 +171,7 @@ async function makeSwap(
 
 async function checkPool(
   client: PublicClient & WalletClient,
+  provider: EthereumProvider,
   user: Address,
   chainId: ChainId,
   pool: PoolCode,
@@ -206,6 +206,7 @@ async function checkPool(
   }
   const realOut = await makeSwap(
     client,
+    provider,
     user,
     pool.pool.address,
     tokens as [Address, Address],
@@ -273,7 +274,15 @@ async function allPoolsTest(args: {
     const amountInPortion0 = getRandomExp(rnd, 1e-5, 0.5)
     const amountIn0 = getBigInt(amountInPortion0 * Number(pool.getReserve0()))
     expect(Number(amountIn0)).lessThan(Number(amount0))
-    await checkPool(client, user, args.chainId, pools[i], amountIn0, true)
+    await checkPool(
+      client,
+      forkProvider,
+      user,
+      args.chainId,
+      pools[i],
+      amountIn0,
+      true,
+    )
 
     const amount1 = await prepareToken(
       client,
@@ -285,7 +294,15 @@ async function allPoolsTest(args: {
     const amountInPortion1 = getRandomExp(rnd, 1e-5, 0.5)
     const amountIn1 = getBigInt(amountInPortion1 * Number(pool.getReserve1()))
     expect(Number(amountIn1)).lessThan(Number(amount1))
-    await checkPool(client, user, args.chainId, pools[i], amountIn1, false)
+    await checkPool(
+      client,
+      forkProvider,
+      user,
+      args.chainId,
+      pools[i],
+      amountIn1,
+      false,
+    )
 
     console.log('ok')
   }
