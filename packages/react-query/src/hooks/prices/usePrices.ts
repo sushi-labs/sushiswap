@@ -32,9 +32,6 @@ export const usePrices = ({ chainId }: UsePrices) => {
     },
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
-    // staleTime: 900000, // 15 mins
-    // cacheTime: 3600000, // 1hr
-    refetchOnWindowFocus: false,
     enabled: Boolean(chainId),
   })
 }

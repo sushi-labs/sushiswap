@@ -14,7 +14,6 @@ export const usePrice = ({ chainId, address }: UsePrice) => {
     queryFn: async () => {
       const data = await fetch(
         `https://api.sushi.com/price/v1/${chainId}/${address}`,
-        // `http://localhost:3001/v2/${chainId}/${address}`,
       ).then((response) => response.json())
       return new Fraction(
         parseUnits(data.toFixed(18), 18).toString(),
@@ -24,8 +23,6 @@ export const usePrice = ({ chainId, address }: UsePrice) => {
     enabled: Boolean(chainId && address),
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
-    // staleTime: 900000, // 15 mins
-    // cacheTime: 3600000, // 1hr
     refetchOnWindowFocus: false,
   })
 }
