@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
-// import cors from 'cors'
+import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ExtractorClient } from './ExtractorClient'
@@ -58,7 +58,7 @@ async function start() {
   // TracingHandler creates a trace for every incoming request
   app.use(Sentry.Handlers.tracingHandler())
 
-  // app.use(cors())
+  app.use(cors())
 
   const cpuUsageStatistics = new CPUUsageStatistics(60_000)
   cpuUsageStatistics.start()
