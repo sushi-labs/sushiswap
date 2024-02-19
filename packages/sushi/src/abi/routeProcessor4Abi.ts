@@ -16,6 +16,17 @@ export const routeProcessor4Abi = [
     type: 'constructor',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amountOut',
+        type: 'uint256',
+      },
+    ],
+    name: 'MinimalOutputBalanceViolation',
+    type: 'error',
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -84,6 +95,29 @@ export const routeProcessor4Abi = [
     type: 'event',
   },
   {
+    inputs: [
+      {
+        internalType: 'int256',
+        name: 'amount0Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'int256',
+        name: 'amount1Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
+      },
+    ],
+    name: 'algebraSwapCallback',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'bentoBox',
     outputs: [
@@ -110,10 +144,52 @@ export const routeProcessor4Abi = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'int256',
+        name: 'amount0Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'int256',
+        name: 'amount1Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
+      },
+    ],
+    name: 'pancakeV3SwapCallback',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'pause',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'priviledgedUsers',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {

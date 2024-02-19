@@ -23,13 +23,8 @@ import {
   useState,
 } from 'react'
 import { ChainId, TestnetChainId } from 'sushi/chain'
-import {
-  Amount,
-  Native,
-  Type,
-  tryParseAmount,
-} from 'sushi/currency'
 import { defaultQuoteCurrency } from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'

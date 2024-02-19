@@ -13,7 +13,13 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "contributors": ["Ilya Lyalin", "Ola Stenberg", "LufyCZ", "JiroOno", "0xMasayoshi"],
+  "contributors": [
+    "Ilya Lyalin",
+    "Ola Stenberg",
+    "LufyCZ",
+    "JiroOno",
+    "0xMasayoshi"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -186,12 +192,12 @@
     "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },
   "dependencies": {
-    "@ethersproject/solidity": "5.7.0",
-    "@ethersproject/address": "5.7.0",
     "@ethersproject/abi": "5.7.0",
+    "@ethersproject/address": "5.7.0",
+    "@ethersproject/solidity": "5.7.0",
     "@uniswap/token-lists": "1.0.0-beta.33",
-    "@uniswap/v3-periphery": "1.4.4",
     "@uniswap/v3-core": "1.0.1",
+    "@uniswap/v3-periphery": "1.4.4",
     "big.js": "6.1.1",
     "date-fns": "3.3.1",
     "decimal.js-light": "2.5.1",
@@ -208,8 +214,8 @@
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
     "@types/big.js": "6.2.0",
-    "@types/numeral": "2.0.3",
     "@types/lodash.flatmap": "4.5.9",
+    "@types/numeral": "2.0.3",
     "@types/seedrandom": "3.0.1",
     "ts-node": "10.9.2",
     "typescript": "5.2.2",

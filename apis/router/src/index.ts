@@ -16,7 +16,7 @@ import {
 } from './config'
 import { CPUUsageStatistics } from './cpu-usage-statistics'
 import { priceByAddressHandler, pricesHandler } from './handlers/price'
-import swapHandler from './handlers/swap'
+import { swapV3_2, swapV4 } from './handlers/swap'
 import tokenHandler from './handlers/token'
 
 import process from 'node:process'
@@ -72,11 +72,12 @@ async function start() {
   })
 
   app.get(`/swap/v3.2/${CHAIN_ID}`, (req, res) => {
-    return swapHandler(client)(req, res)
+    return swapV3_2(client)(req, res)
   })
-  // app.get(`/swap/v4/${CHAIN_ID}`, (req, res) => {
-  //   return swapHandler(client)(req, res)
-  // })
+
+  app.get(`/swap/v4/${CHAIN_ID}`, (req, res) => {
+    return swapV4(client)(req, res)
+  })
 
   app.get(`/token/v1/${CHAIN_ID}/:address`, tokenHandler(client))
   app.get(`/price/v1/${CHAIN_ID}`, pricesHandler(client))

@@ -7,7 +7,10 @@ import {
 
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
-import { ROUTE_PROCESSOR_3_2_ADDRESS } from 'sushi/config'
+import {
+  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_4_ADDRESS,
+} from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { Address } from 'viem'
 import { ExtractorClient } from '../../ExtractorClient'
@@ -164,8 +167,14 @@ function handler(
   }
 }
 
-export default handler(
+export const swapV3_2 = handler(
   querySchema3_2,
   Router.routeProcessor3_2Params,
   ROUTE_PROCESSOR_3_2_ADDRESS,
+)
+
+export const swapV4 = handler(
+  querySchema3_2,
+  Router.routeProcessor4Params,
+  ROUTE_PROCESSOR_4_ADDRESS,
 )

@@ -18,7 +18,7 @@ export const Currency = {
   BITCOIN: 'BITCOIN',
 } as const
 
-export type Currency = typeof Currency[keyof typeof Currency]
+export type Currency = (typeof Currency)[keyof typeof Currency]
 
 interface Token {
   chainId: number
