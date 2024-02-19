@@ -1,41 +1,5 @@
 {{- $chainIds := .Values.chainIds }}
 {{- range $index, $value := $chainIds }}
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: extractor-{{ $value }}-pvc
-spec:
-  storageClassName: csi-hostpath-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: snapshot.storage.k8s.io/v1
-kind: VolumeSnapshot
-metadata:
-  name: extractor-{{ $value }}-vs
-spec:
-  volumeSnapshotClassName: csi-hostpath-snapclass
-  source:
-    persistentVolumeClaimName: extractor-{{ $value }}-pvc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: extractor-{{ $value }}-pvc-restore
-spec:
-  storageClassName: csi-hostpath-sc
-  dataSource:
-    name: extractor-{{ $value }}-vs
-    kind: VolumeSnapshot
-    apiGroup: snapshot.storage.k8s.io
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -68,9 +32,6 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
-          volumeMounts:
-            - mountPath: /app/cache
-              name: extractor-{{ $value }}-pv-storage
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"
@@ -89,12 +50,4 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: SENTRY_ENVIRONMENT
-      volumes:
-        - name: extractor-{{ $value }}-pv-storage
-          persistentVolumeClaim:
-            claimName: extractor-{{ $value }}-pvc-restore
-      # volumes:
-      # - name: extractor-{{ $value }}-volume
-      #   hostPath:
-      #     path: /cache/extractor-{{ $value }}
 {{- end }}
