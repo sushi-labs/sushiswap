@@ -1,5 +1,16 @@
 {{- $chainIds := .Values.chainIds }}
 {{- range $index, $value := $chainIds }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: extractor-{{ $value }}-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,6 +43,9 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
+          volumeMounts:
+            - mountPath: /app/cache
+              name: extractor-{{ $value }}-pv-storage
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"
@@ -50,4 +64,8 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: SENTRY_ENVIRONMENT
+      volumes:
+        - name: extractor-{{ $value }}-pv-storage
+          persistentVolumeClaim:
+            claimName: extractor-{{ $value }}-pvc
 {{- end }}
