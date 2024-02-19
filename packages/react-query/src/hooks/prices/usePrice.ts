@@ -10,10 +10,10 @@ interface UsePrice {
 
 export const usePrice = ({ chainId, address }: UsePrice) => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v2/${chainId}/${address}`],
+    queryKey: [`https://api.sushi.com/price/v1/${chainId}/${address}`],
     queryFn: async () => {
       const data = await fetch(
-        `https://token-price.sushi.com/v2/${chainId}/${address}`,
+        `https://api.sushi.com/price/v1/${chainId}/${address}`,
         // `http://localhost:3001/v2/${chainId}/${address}`,
       ).then((response) => response.json())
       return new Fraction(

@@ -10,11 +10,10 @@ interface UsePrices {
 
 export const usePrices = ({ chainId }: UsePrices) => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v2/${chainId}`],
+    queryKey: [`https://api.sushi.com/price/v1/${chainId}`],
     queryFn: async () => {
       const data: Record<string, number> = await fetch(
-        `https://token-price.sushi.com/v2/${chainId}`,
-        // `http://localhost:3001/v2/${chainId}`,
+        `https://api.sushi.com/price/v1/${chainId}`,
       ).then((response) => response.json())
       return Object.entries(data).reduce<Record<string, Fraction>>(
         (acc, [address, _price]) => {
