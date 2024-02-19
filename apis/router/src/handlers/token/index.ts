@@ -1,15 +1,11 @@
 import { Request, Response } from 'express'
 import { Type } from 'sushi/currency'
 import { ExtractorClient } from '../../ExtractorClient'
-import { CHAIN_ID } from '../../config'
 
 function handler(client: ExtractorClient) {
   return async (req: Request, res: Response) => {
     res.setHeader('Cache-Control', 's-maxage=3600')
     // console.log('HTTP: GET /token/:chainId/:address')
-    const chainId = req.params['chainId']
-    if (chainId === undefined || Number(chainId) !== CHAIN_ID)
-      return res.status(422).send(`Unsupported network ${chainId}`)
     const address = req.params['address']
     if (address === undefined) return res.status(422).send('No address param')
 

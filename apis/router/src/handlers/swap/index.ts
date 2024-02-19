@@ -4,12 +4,13 @@ import {
   RouterLiquiditySource,
   makeAPI02Object,
 } from 'sushi/router'
-
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_4_ADDRESS,
+  RouteProcessor3_2ChainId,
+  RouteProcessor4ChainId,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { Address } from 'viem'
@@ -45,7 +46,7 @@ async function processUnknownToken(
 function handler(
   qSchema: typeof querySchema3_2,
   rpCode: typeof Router.routeProcessor3_2Params,
-  rpAddress: Record<number, Address>,
+  rpAddress: Address,
 ) {
   return (client: ExtractorClient) => {
     return async (req: Request, res: Response) => {
@@ -144,13 +145,13 @@ function handler(
                 tokenIn,
                 tokenOut,
                 to,
-                rpAddress[chainId] as Address,
+                rpAddress as Address,
                 [],
                 maxPriceImpact,
                 source ?? RouterLiquiditySource.Sender,
               )
             : undefined,
-          rpAddress[chainId] as Address,
+            rpAddress as Address,
         )
 
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
@@ -170,11 +171,11 @@ function handler(
 export const swapV3_2 = handler(
   querySchema3_2,
   Router.routeProcessor3_2Params,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS[CHAIN_ID as RouteProcessor3_2ChainId],
 )
 
 export const swapV4 = handler(
   querySchema3_2,
   Router.routeProcessor4Params,
-  ROUTE_PROCESSOR_4_ADDRESS,
+  ROUTE_PROCESSOR_4_ADDRESS[CHAIN_ID as RouteProcessor4ChainId],
 )
