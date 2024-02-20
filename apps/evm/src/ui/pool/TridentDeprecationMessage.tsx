@@ -25,16 +25,15 @@ export const TridentDeprecationMessage = () => {
             only remove assets from Trident pools via the smart contract.
           </span>
         </div>
-        {/* TODO */}
-        {/* <a
-          href={''}
+        <a
+          href={'https://www.sushi.com/blog/faq-trident-deprecation'}
           target="_blank"
           rel="noopener noreferrer"
           className="cursor-pointer hover:underline flex gap-2 items-center whitespace-nowrap font-semibold justify-end"
         >
           Learn More
           <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-        </a> */}
+        </a>
       </div>
     </Message>
   )
