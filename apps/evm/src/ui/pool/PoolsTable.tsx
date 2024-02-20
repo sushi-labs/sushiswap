@@ -42,7 +42,7 @@ import { Native } from 'sushi/currency'
 import { useSWRConfig } from 'swr'
 
 import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
-import { isAngleEnabledChainId } from '../../config'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN_POOL,

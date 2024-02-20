@@ -34,6 +34,7 @@ import {
   Type,
   tryParseAmount,
 } from 'sushi/currency'
+import { withoutScientificNotation } from 'sushi/format'
 import { Rounding } from 'sushi/math'
 
 type FullRange = true
@@ -439,20 +440,40 @@ export function useConcentratedDerivedMintInfo({
         typeof existingPosition?.tickLower === 'number'
           ? existingPosition.tickLower
           : (invertPrice && rightBoundInput === true) ||
-            (!invertPrice && leftBoundInput === true)
-          ? tickSpaceLimits[Bound.LOWER]
-          : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, rightBoundInput.toString())
-          : tryParseTick(token0, token1, feeAmount, leftBoundInput.toString()),
+              (!invertPrice && leftBoundInput === true)
+            ? tickSpaceLimits[Bound.LOWER]
+            : invertPrice
+              ? tryParseTick(
+                  token1,
+                  token0,
+                  feeAmount,
+                  rightBoundInput.toString(),
+                )
+              : tryParseTick(
+                  token0,
+                  token1,
+                  feeAmount,
+                  leftBoundInput.toString(),
+                ),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? existingPosition.tickUpper
           : (invertPrice && leftBoundInput === true) ||
-            (!invertPrice && rightBoundInput === true)
-          ? tickSpaceLimits[Bound.UPPER]
-          : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, leftBoundInput.toString())
-          : tryParseTick(token0, token1, feeAmount, rightBoundInput.toString()),
+              (!invertPrice && rightBoundInput === true)
+            ? tickSpaceLimits[Bound.UPPER]
+            : invertPrice
+              ? tryParseTick(
+                  token1,
+                  token0,
+                  feeAmount,
+                  leftBoundInput.toString(),
+                )
+              : tryParseTick(
+                  token0,
+                  token1,
+                  feeAmount,
+                  rightBoundInput.toString(),
+                ),
     }
   }, [
     existingPosition,
@@ -876,36 +897,5 @@ export function useRangeHopCallbacks(
     getIncrementUpper,
     getSetFullRange: setFullRange,
     resetMintState,
-  }
-}
-
-/**
- * Convert scientific notation into decimal form, e.g. "-12.34e-5" => "-0.0001234",
- * @param value Number in scientific notation
- * @return Number in decimal form only
- */
-export function withoutScientificNotation(value: string): string | undefined {
-  if (!value.includes('e')) return value
-
-  if (!value.match(/^-?\d*\.?\d+(e[+-]?\d+)?$/)) return undefined
-
-  const [sign, absValue] = value.startsWith('-')
-    ? ['-', value.slice(1)]
-    : ['', value]
-  const [m, n] = absValue.split('e')
-  const [integer, fraction] = m.split('.')
-
-  const mantissa = (integer + (fraction ?? '')).replace(/^0+/, '')
-  const exponent = parseInt(n ?? 0) - (fraction ?? '').length
-
-  if (exponent >= 0) {
-    return sign + mantissa + '0'.repeat(exponent)
-  } else {
-    const i = mantissa.length + exponent
-    if (i > 0) {
-      return `${sign + mantissa.slice(0, i)}.${mantissa.slice(i) || 0}`
-    } else {
-      return `${sign}0.${'0'.repeat(-i)}${mantissa}`
-    }
   }
 }

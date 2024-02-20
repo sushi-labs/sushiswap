@@ -6,14 +6,15 @@ import { parseUnits } from 'viem'
 interface UsePrice {
   chainId: number | undefined
   address: string | undefined
+  enabled?: boolean
 }
 
-export const usePrice = ({ chainId, address }: UsePrice) => {
+export const usePrice = ({ chainId, address, enabled = true }: UsePrice) => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v2/${chainId}/${address}`],
+    queryKey: [`/api/price/v2/${chainId}/${address}`],
     queryFn: async () => {
       const data = await fetch(
-        `https://token-price.sushi.com/v2/${chainId}/${address}`,
+        `/api/price/v2/${chainId}/${address}`,
         // `http://localhost:3001/v2/${chainId}/${address}`,
       ).then((response) => response.json())
       return new Fraction(
@@ -21,7 +22,7 @@ export const usePrice = ({ chainId, address }: UsePrice) => {
         parseUnits('1', 18).toString(),
       )
     },
-    enabled: Boolean(chainId && address),
+    enabled: Boolean(chainId && address && enabled),
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
     // staleTime: 900000, // 15 mins

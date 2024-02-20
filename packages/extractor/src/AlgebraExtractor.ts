@@ -107,6 +107,7 @@ export class AlgebraExtractor {
   qualityChecker: AlgebraQualityChecker
   lastProcessdBlock = -1
   watchedPools = 0
+  started = false
 
   constructor(
     client: PublicClient,
@@ -178,14 +179,13 @@ export class AlgebraExtractor {
             this.lastProcessdBlock = Number(
               logs[logs.length - 1].blockNumber || 0,
             )
-        } catch (e) {
+        } catch (_e) {
           warnLog(
             this.multiCallAggregator.chainId,
-            `Block ${blockNumber} log process error: ${e}`,
+            `Block ${blockNumber} log process error`,
           )
         }
       } else {
-        this.logFilter.start()
         warnLog(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
@@ -200,7 +200,6 @@ export class AlgebraExtractor {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
-      this.logFilter.start()
 
       if (this.tokenManager.tokens.size === 0)
         await this.tokenManager.addCachedTokens()
@@ -245,11 +244,22 @@ export class AlgebraExtractor {
             factory,
           })
       })
-      cachedPools.forEach((p) => this.addPoolWatching(p, 'cache', false))
+      const promises = Array.from(cachedPools.values())
+        .map((p) => this.addPoolWatching(p, 'cache', false))
+        .filter((w) => w !== undefined)
+        .map((w) => (w as AlgebraPoolWatcher).statusAll())
+      Promise.allSettled(promises).then((_) => {
+        this.started = true
+        this.consoleLog(
+          `ExtractorAlg is ready (${Math.round(
+            performance.now() - startTime,
+          )}ms)`,
+        )
+      })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       warnLog(
         this.multiCallAggregator.chainId,
-        `ExtractorAlg was started (${Math.round(
+        `ExtractorAlg is started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
         'info',
@@ -265,10 +275,10 @@ export class AlgebraExtractor {
         return pool.processLog(l)
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
-    } catch (e) {
+    } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
-        `Log processing for pool ${l.address} throwed an exception ${e}`,
+        `Log processing for pool ${l.address} throwed an exception`,
       )
       return 'Exception!!!'
     }
@@ -344,41 +354,9 @@ export class AlgebraExtractor {
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factoriesFull.forEach((factory) => {
-          const addr = this.computeAlgebraAddress(factory, t0, t1)
-          const addrL = addr.toLowerCase() as Address
-          const pool = this.poolMap.get(addrL)
-          if (pool) {
-            prefetched.push(pool)
-            return
-          }
-          if (this.emptyAddressSet.has(addr)) return
-          const promise = this.multiCallAggregator
-            .callValue(
-              factory.address,
-              AlgebraFactory.abi as Abi,
-              'poolByPair',
-              [t0.address, t1.address],
-            )
-            .then(
-              (checkedAddress) => {
-                if (
-                  checkedAddress ===
-                  '0x0000000000000000000000000000000000000000'
-                ) {
-                  this.emptyAddressSet.add(addr)
-                  return
-                }
-                const watcher = this.addPoolWatching(
-                  { address: addr, token0: t0, token1: t1, factory },
-                  'request',
-                  true,
-                  startTime,
-                )
-                return watcher
-              },
-              () => undefined,
-            )
-          fetching.push(promise)
+          const res = this.getWatchersForTokenPair(factory, t0, t1, startTime)
+          if (res instanceof Promise) fetching.push(res)
+          else if (res !== undefined) prefetched.push(res)
         })
       }
     }
@@ -386,6 +364,69 @@ export class AlgebraExtractor {
       prefetched,
       fetching,
     }
+  }
+
+  getWatchersBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: AlgebraPoolWatcher[]
+    fetching: Promise<AlgebraPoolWatcher | undefined>[]
+  } {
+    const startTime = performance.now()
+    const prefetched: AlgebraPoolWatcher[] = []
+    const fetching: Promise<AlgebraPoolWatcher | undefined>[] = []
+    for (let i = 0; i < tokensUnique1.length; ++i) {
+      const t0 = tokensUnique1[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = 0; j < tokensUnique2.length; ++j) {
+        const t1 = tokensUnique2[j]
+        this.factoriesFull.forEach((factory) => {
+          const res = this.getWatchersForTokenPair(factory, t0, t1, startTime)
+          if (res instanceof Promise) fetching.push(res)
+          else if (res !== undefined) prefetched.push(res)
+        })
+      }
+    }
+    return {
+      prefetched,
+      fetching,
+    }
+  }
+
+  getWatchersForTokenPair(
+    factory: FactoryAlgebraFull,
+    t0: Token,
+    t1: Token,
+    startTime: number,
+  ): undefined | AlgebraPoolWatcher | Promise<AlgebraPoolWatcher | undefined> {
+    const addr = this.computeAlgebraAddress(factory, t0, t1)
+    const addrL = addr.toLowerCase() as Address
+    const pool = this.poolMap.get(addrL)
+    if (pool) return pool
+    if (this.emptyAddressSet.has(addr)) return
+    const promise = this.multiCallAggregator
+      .callValue(factory.address, AlgebraFactory.abi as Abi, 'poolByPair', [
+        t0.address,
+        t1.address,
+      ])
+      .then(
+        (checkedAddress) => {
+          if (checkedAddress === '0x0000000000000000000000000000000000000000') {
+            this.emptyAddressSet.add(addr)
+            return
+          }
+          const watcher = this.addPoolWatching(
+            { address: addr, token0: t0, token1: t1, factory },
+            'request',
+            true,
+            startTime,
+          )
+          return watcher
+        },
+        () => undefined,
+      )
+    return promise
   }
 
   async addPoolByAddress(address: Address) {
@@ -485,5 +526,9 @@ export class AlgebraExtractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`Alg-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }

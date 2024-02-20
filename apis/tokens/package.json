@@ -27,9 +27,9 @@
     "@sushiswap/wagmi-config": "workspace:*",
     "@upstash/redis": "1.22.1",
     "@vercel/node": "3.0.9",
-    "@wagmi/core": "1.4.5",
+    "@wagmi/core": "1.4.13",
     "sushi": "workspace:*",
-    "viem": "1.17.2",
+    "viem": "1.21.4",
     "zod": "3.21.4"
   },
   "devDependencies": {

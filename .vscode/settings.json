@@ -1,8 +1,8 @@
 {
   "editor.codeActionsOnSave": {
-    "quickfix.biome": true,
-    "source.organizeImports.biome": true,
-    "source.fixAll.eslint": true
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnPaste": false,
@@ -50,5 +50,10 @@
   },
   "[solidity]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "yaml.schemas": {
+    "https://www.artillery.io/schema.json": [
+      "file:///home/feedme/sushi/sushiswap/apis/extractor/test/load.yml"
+    ]
   }
 }

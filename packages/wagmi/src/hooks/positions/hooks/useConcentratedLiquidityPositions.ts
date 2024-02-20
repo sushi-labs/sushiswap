@@ -152,7 +152,9 @@ export const useConcentratedLiquidityPositions = ({
 
       return []
     },
-    refetchInterval: 3000,
-    enabled: Boolean(account && chainIds && enabled),
+    refetchInterval: Infinity,
+    enabled: Boolean(
+      account && chainIds && enabled && (prices || isPriceError),
+    ),
   })
 }

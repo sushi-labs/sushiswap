@@ -18,8 +18,8 @@ export const ToastInfo: FC<ToastInfo> = ({
   const txUrl = href
     ? href
     : txHash
-    ? Chain.from(chainId)?.getTxUrl(txHash)
-    : ''
+      ? Chain.from(chainId)?.getTxUrl(txHash)
+      : ''
   return (
     <>
       <ToastContent

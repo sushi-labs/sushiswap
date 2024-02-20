@@ -6,8 +6,8 @@ import React, { FC } from 'react'
 
 export const Stats: FC = () => {
   const isMounted = useIsMounted()
-  const { data } = useQuery(['api/stats'], () =>
-    fetch('api/stats').then((response) => response.json()),
+  const { data } = useQuery(['/api/stats'], () =>
+    fetch('/api/stats').then((response) => response.json()),
   )
   return (
     <section className="overflow-x-hidden">

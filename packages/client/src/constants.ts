@@ -7,7 +7,7 @@ export const EVM_APP_BASE_URL =
 export const TOKEN_PRICE_API =
   process.env['TOKEN_PRICES_API_V0_BASE_URL'] ||
   process.env['NEXT_PUBLIC_TOKEN_PRICES_API_V0_BASE_URL'] ||
-  'https://token-price.sushi.com'
+  '/api/price'
 
 export const TOKENS_API =
   process.env['TOKENS_API_V0_BASE_URL'] ||

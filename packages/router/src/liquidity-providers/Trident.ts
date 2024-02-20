@@ -9,7 +9,7 @@ import {
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
+  // TridentChainId,
 } from '@sushiswap/trident-sdk'
 import { add, getUnixTime } from 'date-fns'
 import {
@@ -85,11 +85,8 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
 
-  constructor(
-    chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
-    web3Client: PublicClient,
-  ) {
-    super(chainId, web3Client)
+  constructor(chainId: ChainId, web3Client: PublicClient, isTest = false) {
+    super(chainId, web3Client, isTest)
     this.chainId = chainId
     if (
       !(chainId in this.bentoBox) ||

@@ -4,6 +4,7 @@ import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
 
+import { isPromiseFulfilled } from 'sushi'
 import { BLACKLIST_TOKEN_IDS, DEFAULT_LIST_OF_LISTS } from 'sushi/token-list'
 import { useTokens } from '../tokens'
 import { otherTokenListValidator } from './validator'
@@ -21,9 +22,11 @@ export const useOtherTokenListsQuery = ({
   const tokenListQuery = useQuery({
     queryKey: ['otherTokenLists', { chainId }],
     queryFn: async () => {
-      const res = await Promise.all(
+      const res = await Promise.allSettled(
         DEFAULT_LIST_OF_LISTS.map((el) => fetch(el).then((res) => res.json())),
-      )
+      ).then((res) => {
+        return res.filter(isPromiseFulfilled).map((el) => el.value)
+      })
       return res
         .map((el) => otherTokenListValidator.parse(el))
         .flatMap((el) => el.tokens)

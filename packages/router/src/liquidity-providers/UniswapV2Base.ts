@@ -64,8 +64,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     web3Client: PublicClient,
     factory: Record<number, Address>,
     initCodeHash: Record<number, Hex>,
+    isTest = false,
   ) {
-    super(chainId, web3Client)
+    super(chainId, web3Client, isTest)
     this.factory = factory
     this.initCodeHash = initCodeHash
     if (!(chainId in this.factory) || !(chainId in this.initCodeHash)) {

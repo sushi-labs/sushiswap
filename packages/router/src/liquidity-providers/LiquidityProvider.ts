@@ -36,12 +36,14 @@ export abstract class LiquidityProvider {
   chainId: ChainId
   client: PublicClient
   lastUpdateBlock = 0
+  isTest = false
   readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
   readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 900
 
-  constructor(chainId: ChainId, client: PublicClient) {
+  constructor(chainId: ChainId, client: PublicClient, isTest = false) {
     this.chainId = chainId
     this.client = client
+    this.isTest = isTest
   }
 
   abstract getType(): LiquidityProviders

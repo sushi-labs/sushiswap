@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "LOCAL: Minikube",
+      "profile": "local",
+      "type": "cloudcode.kubernetes",
+      "request": "launch",
+      "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
+      "watch": false,
+      "cleanUp": true,
+      "portForward": true
+    },
+    {
+      "name": "STAGING: GKE",
+      "profile": "staging",
+      "type": "cloudcode.kubernetes",
+      "request": "launch",
+      "skaffoldConfig": "${workspaceFolder}/apis/extractor/skaffold.yaml",
+      "watch": false,
+      "cleanUp": false,
+      "portForward": true,
+      "imageRegistry": "gcr.io/extractor-410208"
+    }
+  ]
+}

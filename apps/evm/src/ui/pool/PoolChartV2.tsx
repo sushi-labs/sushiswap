@@ -28,7 +28,7 @@ interface PoolChartV2Props {
 }
 
 const PoolChartV2: FC<PoolChartV2Props> = ({ address, chainId }) => {
-  const [chart, setChart] = useState<typeof charts[number]>(charts[0])
+  const [chart, setChart] = useState<(typeof charts)[number]>(charts[0])
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
   return (
