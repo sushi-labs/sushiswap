@@ -33,7 +33,7 @@ const EXPLORE_NAVIGATION_LINKS: {
   {
     title: 'Bonds',
     href: '/bonds',
-    description: 'Earn interest by locking up your assets.',
+    description: 'Acquire vested tokens at a discount.',
   },
   {
     title: 'Stake',
