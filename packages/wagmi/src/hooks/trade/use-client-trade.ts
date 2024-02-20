@@ -10,10 +10,12 @@ import {
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_4_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
+  isRouteProcessor4ChainId,
   isRouteProcessorChainId,
 } from 'sushi/config'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
@@ -71,7 +73,8 @@ export const useClientTrade = (variables: UseTradeParams) => {
         (!isRouteProcessorChainId(chainId) &&
           !isRouteProcessor3ChainId(chainId) &&
           !isRouteProcessor3_1ChainId(chainId) &&
-          !isRouteProcessor3_2ChainId(chainId)) ||
+          !isRouteProcessor3_2ChainId(chainId) &&
+          !isRouteProcessor4ChainId(chainId)) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -125,7 +128,19 @@ ${logPools}
       let args = undefined
 
       if (recipient) {
-        if (isRouteProcessor3_2ChainId(chainId)) {
+        if (isRouteProcessor4ChainId(chainId)) {
+          console.debug('routeProcessor4Params')
+          args = Router.routeProcessor4Params(
+            poolsCodeMap,
+            route,
+            fromToken,
+            toToken,
+            recipient,
+            ROUTE_PROCESSOR_4_ADDRESS[chainId],
+            [],
+            +slippagePercentage / 100,
+          )
+        } else if (isRouteProcessor3_2ChainId(chainId)) {
           console.debug('routeProcessor3_2Params')
           args = Router.routeProcessor3_2Params(
             poolsCodeMap,
