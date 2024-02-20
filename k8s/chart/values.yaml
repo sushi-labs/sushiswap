@@ -21,3 +21,9 @@ chainIds:
   - "59144" # LINEA
   - "534352" # SCROLL
   - "1666600000" # HARMONY
+  - "199" # BTTC
+  - "108" # THUNDERCORE
+  - "40" # TELOS
+  - "288" # BOBA
+  - "56288" # BOBA BNB
+  - "7000" # ZETACHAIN
