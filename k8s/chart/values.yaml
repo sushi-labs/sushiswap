@@ -26,4 +26,5 @@ chainIds:
   - "40" # TELOS
   - "288" # BOBA
   - "56288" # BOBA BNB
+  - "1116" # CORE
   # - "7000" # ZETACHAIN
