@@ -43,6 +43,10 @@ export class BridgeBento extends RPool {
     }
   }
 
+  override uniqueID(): string {
+    return `${this.address}_${this.token0.symbol}_bento_bridge`
+  }
+
   override updateReserves(elastic: bigint, base: bigint) {
     this.reserve0 = elastic
     this.elastic = parseInt(elastic.toString())

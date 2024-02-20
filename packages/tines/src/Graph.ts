@@ -342,6 +342,7 @@ export class Edge {
         1 / this.amountInPrevious,
         1e-9,
       )
+      if (precision === Infinity) precision = 1e-9
       if (this.pool instanceof StableSwapRPool) {
         let price = this.pool.calcCurrentPriceWithoutFee(true)
         if (price < 1) price = 1 / price
