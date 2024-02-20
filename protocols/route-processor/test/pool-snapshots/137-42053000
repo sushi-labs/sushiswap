@@ -4376,7 +4376,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for SUSHI",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 314
         },
@@ -4435,7 +4435,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for WMATIC",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 318
         },
@@ -4494,7 +4494,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for WBTC",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 322
         },
@@ -4553,7 +4553,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for USDC",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 326
         },
@@ -4612,7 +4612,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for FRAX",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 330
         },
@@ -4671,7 +4671,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for WETH",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 334
         },
@@ -4730,7 +4730,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for DAI",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 338
         },
@@ -4789,7 +4789,7 @@
     {
       "c": "BridgeBento",
       "d": {
-        "address": "Bento bridge for USDT",
+        "address": "0x0319000133d3AdA02600f0875d2cf03D442C3367",
         "token0": {
           "o": 342
         },

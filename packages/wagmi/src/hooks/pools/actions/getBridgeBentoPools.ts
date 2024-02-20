@@ -42,7 +42,7 @@ export const getBridgeBentoPools = async (
     return [
       BridgeBentoState.EXISTS,
       new BridgeBento(
-        `Bento bridge for ${el.symbol}`,
+        BENTOBOX_ADDRESS[chainId],
         el as RToken,
         convertTokenToBento(el),
         elastic,
