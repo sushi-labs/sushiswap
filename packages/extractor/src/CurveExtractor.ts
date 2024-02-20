@@ -289,7 +289,11 @@ export class CurveExtractor {
       return p.usdTotal >= this.config.minPoolLiquidityLimitUSD
     })
     this.consoleLog(
-      `Pools with liquidity >= ${this.config.minPoolLiquidityLimitUSD}USD: ${pools.length}`,
+      `Pools with liquidity >= ${this.config.minPoolLiquidityLimitUSD}USD: ${
+        pools.length
+      }, total expected liquidity: ${Math.round(
+        pools.reduce((a, b) => a + b.usdTotal, 0),
+      )} USD`,
     )
 
     // let skip = true
