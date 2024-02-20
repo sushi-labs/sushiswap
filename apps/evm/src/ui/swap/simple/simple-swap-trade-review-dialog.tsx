@@ -63,7 +63,6 @@ import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
-import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -109,23 +108,23 @@ export const SimpleSwapTradeReviewDialog: FC<{
     address: isRouteProcessor4ChainId(chainId)
       ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
       : isRouteProcessor3_2ChainId(chainId)
-        ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
-        : isRouteProcessor3_1ChainId(chainId)
-          ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-          : isRouteProcessor3ChainId(chainId)
-            ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-            : isRouteProcessorChainId(chainId)
-              ? ROUTE_PROCESSOR_ADDRESS[chainId]
-              : undefined,
+      ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
+      : isRouteProcessor3_1ChainId(chainId)
+      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
+      : isRouteProcessor3ChainId(chainId)
+      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
+      : isRouteProcessorChainId(chainId)
+      ? ROUTE_PROCESSOR_ADDRESS[chainId]
+      : undefined,
     abi: (isRouteProcessor4ChainId(chainId)
       ? routeProcessor4Abi
       : isRouteProcessor3_2ChainId(chainId) ||
-          isRouteProcessor3_1ChainId(chainId) ||
-          isRouteProcessor3ChainId(chainId)
-        ? routeProcessor3Abi
-        : isRouteProcessorChainId(chainId)
-          ? routeProcessorAbi
-          : undefined) as any,
+        isRouteProcessor3_1ChainId(chainId) ||
+        isRouteProcessor3ChainId(chainId)
+      ? routeProcessor3Abi
+      : isRouteProcessorChainId(chainId)
+      ? routeProcessorAbi
+      : undefined) as any,
     functionName: trade?.functionName,
     args: trade?.writeArgs as any,
     enabled: Boolean(
@@ -439,8 +438,8 @@ export const SimpleSwapTradeReviewDialog: FC<{
                               trade?.priceImpact?.lessThan(ZERO)
                                 ? '+'
                                 : trade?.priceImpact?.greaterThan(ZERO)
-                                  ? '-'
-                                  : ''
+                                ? '-'
+                                : ''
                             }${Math.abs(
                               Number(trade?.priceImpact?.toFixed(2)),
                             )}%` ?? '-'
@@ -483,23 +482,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                         `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
                       )}
                     </List.KeyValue>
-                    {isSwap && (
-                      <List.KeyValue title="Route">
-                        {isFetching ? (
-                          <SkeletonText
-                            align="right"
-                            fontSize="sm"
-                            className="w-1/3"
-                          />
-                        ) : (
-                          <TradeRoutePathView trade={trade}>
-                            <Button size="sm" variant="link">
-                              Show route
-                            </Button>
-                          </TradeRoutePathView>
-                        )}
-                      </List.KeyValue>
-                    )}
                   </List.Control>
                 </List>
                 {recipient && (
@@ -541,18 +523,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
                       isError
                         ? 'red'
                         : warningSeverity(trade?.priceImpact) >= 3
-                          ? 'red'
-                          : 'blue'
+                        ? 'red'
+                        : 'blue'
                     }
                     testId="confirm-swap"
                   >
                     {isError
                       ? 'Shoot! Something went wrong :('
                       : isWrap
-                        ? 'Wrap'
-                        : isUnwrap
-                          ? 'Unwrap'
-                          : `Swap ${token0?.symbol} for ${token1?.symbol}`}
+                      ? 'Wrap'
+                      : isUnwrap
+                      ? 'Unwrap'
+                      : `Swap ${token0?.symbol} for ${token1?.symbol}`}
                   </Button>
                 </div>
               </DialogFooter>
