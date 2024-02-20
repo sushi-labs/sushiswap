@@ -1,7 +1,7 @@
 import {
   SushiSwapV2ChainId,
-  TridentChainId,
   SushiSwapV3ChainId,
+  TridentChainId,
 } from 'sushi/config'
 
 export type SwapChainId =

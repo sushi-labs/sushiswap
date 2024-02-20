@@ -10,7 +10,7 @@ const func: DeployFunction = async ({
   const { deploy } = deployments
   const { deployer } = await getNamedAccounts()
 
-  const chainId = await getChainId()
+  const _chainId = await getChainId()
 
   const args = ['0x0000000000000000000000000000000000000000', []]
 

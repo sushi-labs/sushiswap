@@ -1,8 +1,8 @@
 import { Interface } from '@ethersproject/abi'
 import ISelfPermit from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
+import { toHex } from '../../../convert'
 import { Token } from '../../../currency'
 import { BigintIsh } from '../../../math'
-import { toHex } from '../../../convert'
 
 export interface StandardPermitArguments {
   v: 0 | 1 | 27 | 28

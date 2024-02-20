@@ -71,9 +71,8 @@ export const useTradeQuery = (
     ],
     queryFn: async () => {
       const params = new URL(
-        SWAP_BASE_URL + getApiVersion(chainId) + `/${chainId}`,
+        `${SWAP_BASE_URL}${getApiVersion(chainId)}/${chainId}`,
       )
-
       // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',

@@ -1,9 +1,3 @@
-import {
-  NativeWrapProvider,
-  Router,
-  RouterLiquiditySource,
-  makeAPI02Object,
-} from 'sushi/router'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
@@ -13,6 +7,12 @@ import {
   RouteProcessor4ChainId,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
+import {
+  NativeWrapProvider,
+  Router,
+  RouterLiquiditySource,
+  makeAPI02Object,
+} from 'sushi/router'
 import { Address } from 'viem'
 import { ExtractorClient } from '../../ExtractorClient'
 import {
