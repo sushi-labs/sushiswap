@@ -1,8 +1,8 @@
-import { DataFetcher, RPParams, Router } from '@sushiswap/router'
-import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
+import { DataFetcher, RPParams, Router } from 'sushi/router'
+import { MultiRoute, RouteStatus } from 'sushi/tines'
 import { http, Address, PublicClient, createPublicClient } from 'viem'
 import { Chain, base } from 'viem/chains'
 

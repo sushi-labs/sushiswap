@@ -1,6 +1,7 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react/20/solid'
+import { SUSHISWAP_V3_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import {
   Button,
   Card,
@@ -11,14 +12,12 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui/components/slot'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-
-import { SUSHISWAP_V3_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,

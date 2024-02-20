@@ -1,5 +1,5 @@
-import { PoolType } from '@sushiswap/tines'
-import { Native, Token } from 'sushi/currency'
+import { Native, Token, type Type } from 'sushi/currency'
+import { PoolType } from 'sushi/tines'
 import z from 'zod'
 import type {
   legValidator as legValidator01,
@@ -86,8 +86,8 @@ function getApi1Leg(leg: leg2, tokens: token2[], chainId: number): leg1 {
 // converts API 2 to API 1 response
 export function apiAdapter02To01(
   res: swapApi2,
-  fromToken: Token | Native,
-  toToken: Token | Native,
+  fromToken: Type,
+  toToken: Type,
   to: string | undefined,
 ): swapApi1 {
   if (res.status === 'NoWay') {

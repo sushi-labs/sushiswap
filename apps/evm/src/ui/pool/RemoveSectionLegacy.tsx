@@ -5,7 +5,6 @@ import { useDebounce, useIsMounted } from '@sushiswap/hooks'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
   SushiSwapV2PoolState,
@@ -38,6 +37,7 @@ import {
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { encodeFunctionData } from 'viem'

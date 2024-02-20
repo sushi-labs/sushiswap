@@ -1,6 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { LinkInternal, classNames } from '@sushiswap/ui'
-import { Chip } from '@sushiswap/ui/components/chip'
+import { Chip, LinkInternal, classNames } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import type { FC } from 'react'
 import { isMediaVideo } from '../../lib/media'

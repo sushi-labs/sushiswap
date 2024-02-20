@@ -7,27 +7,24 @@ import {
   TokenManager,
 } from '@sushiswap/extractor'
 import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_INIT_CODE_HASH,
+  SushiSwapV3ChainId,
+} from 'sushi'
+import { ChainId } from 'sushi/chain'
+import { publicClientConfig } from 'sushi/config'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+import { Native, Token } from 'sushi/currency'
+import {
   ConstantProductPoolCode,
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
   Router,
-} from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { RouteStatus, getBigInt } from '@sushiswap/tines'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_INIT_CODE_HASH,
-} from '@sushiswap/v2-sdk'
-import {
-  POOL_INIT_CODE_HASH,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_INIT_CODE_HASH,
-  SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
-import { ChainId } from 'sushi/chain'
-import { Native, Token } from 'sushi/currency'
+} from 'sushi/router'
+import { RouteStatus, getBigInt } from 'sushi/tines'
 import {
   http,
   Address,
@@ -92,7 +89,7 @@ export function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chain],
   }
 }
 
@@ -315,8 +312,8 @@ const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
-    transport: config[ChainId.BSC].transport,
-    chain: config[ChainId.BSC].chain as Chain,
+    transport: publicClientConfig[ChainId.BSC].transport,
+    chain: publicClientConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
     tickHelperContract: TickLensContract[ChainId.BSC],

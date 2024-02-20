@@ -1,0 +1,58 @@
+{{- $chainIds := .Values.chainIds }}
+{{- range $index, $value := $chainIds }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: router-{{ $value }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: router-{{ $value }}
+  template:
+    metadata:
+      labels:
+        app: router-{{ $value }}
+    spec:
+      containers:
+        - name: router
+          image: router
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 6
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+          env:
+            - name: CHAIN_ID
+              value: "{{ $value }}"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: DRPC_ID
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: SENTRY_DSN
+            - name: SENTRY_ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: SENTRY_ENVIRONMENT
+{{- end }}

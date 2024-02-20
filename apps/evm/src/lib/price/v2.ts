@@ -1,13 +1,13 @@
+import { Address } from '@wagmi/core'
+import { ExtractorSupportedChainId, STABLES } from 'sushi/config'
+import { WNATIVE } from 'sushi/currency'
 import {
   ConstantProductRPool,
   RPool,
   type RToken,
   UniV3Pool,
   calcTokenPrices,
-} from '@sushiswap/tines'
-import { Address } from '@wagmi/core'
-import { type ExtractorSupportedChainId } from 'sushi/config'
-import { STABLES, WNATIVE } from 'sushi/currency'
+} from 'sushi/tines'
 import { type TokenInfo } from 'sushi/token-list'
 // import { isPromiseFulfilled } from 'sushi/validate'
 

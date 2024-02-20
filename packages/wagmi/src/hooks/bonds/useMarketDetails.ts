@@ -13,9 +13,9 @@ import {
   getVaultsReservesContracts,
 } from '@sushiswap/steer-sdk'
 import { useMemo } from 'react'
-import { Fraction } from 'sushi'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
+import { Fraction } from 'sushi/math'
 import { Address, getAddress } from 'viem'
 import { useContractReads } from 'wagmi'
 
@@ -65,7 +65,7 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
             vaultIds: [bond.quoteToken.vault.id],
           })[0],
         ]
-      : [],
+      : undefined,
     enabled: Boolean(enabled && bond.quoteToken.vault),
   })
 

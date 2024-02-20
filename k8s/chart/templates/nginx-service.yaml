@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+    worker_processes 1;
+    worker_rlimit_nofile 8192;
+    events {
+      worker_connections 4096;
+    }
+    http { 
+      {{- $chainIds := .Values.chainIds }}
+      {{- range $index, $value := $chainIds }}
+      upstream router-{{ $value }} {
+        zone upstreams 64K;
+        server router-{{ $value }};
+        keepalive 2;
+      }
+      {{- end }}
+      map $uri $proxy_pass {
+        ~^/(\w+)/(v(\d+\.)?(\d+\.)?(\*|\d+))\/(\d+)(/.*)? router-$6;
+      }
+      server { 
+        listen 80;
+        location / {
+          proxy_http_version 1.1;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header "Connection" "";
+          proxy_pass http://$proxy_pass;
+        }
+        location /health {
+          auth_basic off;
+          return 200;
+        }
+      } 
+    }

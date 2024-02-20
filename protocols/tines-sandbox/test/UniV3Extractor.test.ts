@@ -6,16 +6,6 @@ import {
   PoolInfo,
   UniV3Extractor,
 } from '@sushiswap/extractor'
-import {
-  LiquidityProviders,
-  NativeWrapProvider,
-  PoolCode,
-  Router,
-  UniswapV3Provider,
-} from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
-import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import { expect } from 'chai'
@@ -23,7 +13,16 @@ import { network } from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
 import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
+import {
+  LiquidityProviders,
+  NativeWrapProvider,
+  PoolCode,
+  Router,
+  UniswapV3Provider,
+} from 'sushi/router'
+import { RouteStatus, UniV3Pool } from 'sushi/tines'
 import {
   http,
   Address,
@@ -68,20 +67,23 @@ function uniswapFactory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash:
+      '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
   }
 }
 
 export const pancakeswapFactory: FactoryV3 = {
   address: '0x6e229c972d9f69c15bdc7b07f385d2025225e72b' as Address,
   provider: LiquidityProviders.UniswapV3,
-  initCodeHash: POOL_INIT_CODE_HASH,
+  initCodeHash:
+    '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
 }
 
 const kyberswapFactory: FactoryV3 = {
   address: '0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A' as Address,
   provider: LiquidityProviders.UniswapV3,
-  initCodeHash: POOL_INIT_CODE_HASH,
+  initCodeHash:
+    '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
 }
 
 const pools: PoolInfo[] = [

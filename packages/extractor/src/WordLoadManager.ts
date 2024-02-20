@@ -1,9 +1,9 @@
 import { EventEmitter } from 'node:events'
 
-import { NUMBER_OF_SURROUNDING_TICKS } from '@sushiswap/router'
-import { CLTick } from '@sushiswap/tines'
 import { Address } from 'abitype'
 import { tickLensAbi } from 'sushi/abi'
+import { NUMBER_OF_SURROUNDING_TICKS } from 'sushi/router'
+import { CLTick } from 'sushi/tines'
 
 import { Counter } from './Counter'
 import { MultiCallAggregator } from './MulticallAggregator'

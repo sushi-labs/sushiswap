@@ -1,8 +1,8 @@
-import { RouterLiquiditySource } from '@sushiswap/router'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
+import { RouterLiquiditySource } from 'sushi/router'
 import type { Address, GetFunctionArgs } from 'viem'
 import z from 'zod'
 

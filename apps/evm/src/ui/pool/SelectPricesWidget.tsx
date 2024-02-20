@@ -29,12 +29,6 @@ import {
 } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import {
-  FeeAmount,
-  SushiSwapV3ChainId,
-  getCapitalEfficiency,
-  getTokenRatio,
-} from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi'
 import React, {
@@ -47,7 +41,9 @@ import React, {
 } from 'react'
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type, tryParseAmount } from 'sushi/currency'
+import { getCapitalEfficiency, getTokenRatio } from 'sushi/pool'
 
 import { RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
@@ -96,7 +92,7 @@ interface SelectPricesWidget {
   token0: Type | undefined
   token1: Type | undefined
   poolAddress: string | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined
   children?: ReactNode

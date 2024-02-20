@@ -8,10 +8,10 @@ import {
   Carousel,
   Container,
 } from '@sushiswap/ui'
-import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useAccount } from '@sushiswap/wagmi'
 import React from 'react'
 import { ChainId } from 'sushi/chain'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 
 import { PositionCard, PositionCardSkeleton } from './PositionCard'
 import { PositionCardList } from './PositionCardList'

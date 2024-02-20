@@ -1,7 +1,7 @@
 'use client'
 
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC } from 'react'
+import { SushiSwapV3ChainId } from 'sushi/config'
 
 import { CreatePositionManual } from './CreatePositionManual'
 

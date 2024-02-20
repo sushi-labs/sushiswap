@@ -28,7 +28,7 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 
-  enabled: process.env.NEXT_PUBLIC_APP_ENV !== 'test',
+  enabled: Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN),
   environment: process.env.NEXT_PUBLIC_VERCEL_ENV
     ? process.env.NEXT_PUBLIC_VERCEL_ENV
     : 'local',

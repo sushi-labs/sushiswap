@@ -1,7 +1,7 @@
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { FeeAmount } from '@sushiswap/v3-sdk'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
 import { useCallback } from 'react'
+import { SushiSwapV3FeeAmount } from 'sushi/config'
 import { Amount, Token, Type } from 'sushi/currency'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
@@ -20,7 +20,7 @@ interface UseV3Migrate {
     percentageToMigrate: number
     token0: Token | undefined
     token1: Token | undefined
-    fee: FeeAmount
+    fee: SushiSwapV3FeeAmount
     tickLower: number | undefined
     tickUpper: number | undefined
     amount0Min: bigint | undefined
