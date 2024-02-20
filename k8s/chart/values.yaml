@@ -1,17 +1,23 @@
 chainIds: 
   - "1" # ETHEREUM
   - "10" # OPTIMISM
+  - "40" # TELOS
   - "56" # BSC
   - "100" # GNOSIS
+  - "108" # THUNDERCORE
   - "122" # FUSE
   - "137" # POLYGON
+  - "199" # BTTC
   - "250" # FANTOM
+  - "288" # BOBA
   - "314" # FILECOIN
   - "1101" # POLYGON_ZKEVM
+  - "1116" # CORE
   - "1284" # MOONBEAM
   - "1285" # MOONRIVER
   - "1088" # METIS
   - "2222" # KAVA
+  # - "7000" # ZETACHAIN
   - "8453" # BASE 
   - "11235" # HAQQ
   - "42161" # ARBITRUM
@@ -19,12 +25,6 @@ chainIds:
   - "42220" # CELO
   - "43114" # AVALANCHE
   - "59144" # LINEA
+  - "56288" # BOBA BNB
   - "534352" # SCROLL
   - "1666600000" # HARMONY
-  - "199" # BTTC
-  - "108" # THUNDERCORE
-  - "40" # TELOS
-  - "288" # BOBA
-  - "56288" # BOBA BNB
-  - "1116" # CORE
-  # - "7000" # ZETACHAIN

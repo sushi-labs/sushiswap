@@ -23,7 +23,7 @@ spec:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 6
+            failureThreshold: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
@@ -32,8 +32,12 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
+          resources:
+            requests:
+              memory: "2000Mi"
+              cpu: "1000m"
           volumeMounts:
-            - mountPath: /app/cache
+            - mountPath: /app/cacheq
               name: extractor-{{ $value }}-cache
           env:
             - name: CHAIN_ID
