@@ -7,8 +7,6 @@ kind: VerticalPodAutoscaler
 metadata:
   name: extractor-{{ $value }}-vpa
 spec:
-  recommenders:
-    - name: extractor
   targetRef:
     apiVersion: "apps/v1"
     kind: StatefulSet

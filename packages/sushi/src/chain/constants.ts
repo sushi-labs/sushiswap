@@ -50,7 +50,7 @@ export const ChainId = {
   SCROLL: 534352,
   ZETACHAIN: 7000,
 } as const
-export type ChainId = (typeof ChainId)[keyof typeof ChainId]
+export type ChainId = typeof ChainId[keyof typeof ChainId]
 
 export const TESTNET_CHAIN_IDS = [
   ChainId.ARBITRUM_TESTNET,
@@ -66,7 +66,7 @@ export const TESTNET_CHAIN_IDS = [
   ChainId.GÖRLI,
   ChainId.KOVAN,
 ] as const
-export type TestnetChainId = (typeof TESTNET_CHAIN_IDS)[number]
+export type TestnetChainId = typeof TESTNET_CHAIN_IDS[number]
 
 // export const isChainId = (chainId: number): chainId is ChainId => Object.values(ChainId).includes(chainId as ChainId)
 
@@ -124,4 +124,4 @@ export const ChainKey = {
   [ChainId.SCROLL]: 'scroll',
   [ChainId.ZETACHAIN]: 'zetachain',
 } as const
-export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
+export type ChainKey = typeof ChainKey[keyof typeof ChainKey]

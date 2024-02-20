@@ -440,7 +440,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
     // No V3 on Harmony?
     factoriesV3: [],
-    tickHelperContract: '' as Address,
+    tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
