@@ -79,7 +79,7 @@ async function start() {
   })
 
   app.get(`/token/v1/${CHAIN_ID}/:address`, tokenHandler(client))
-  
+
   app.get(`/price/v1/${CHAIN_ID}`, pricesHandler(client))
   app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler(client))
 

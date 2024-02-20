@@ -62,7 +62,6 @@ function handler(
           return res.status(422).send('Request parameters parsing error')
         }
         const {
-          chainId,
           tokenIn: _tokenIn,
           tokenOut: _tokenOut,
           amount,
@@ -73,19 +72,13 @@ function handler(
           maxPriceImpact,
         } = parsed.data
 
-        if (client.chainId !== chainId) {
-          requestStatistics.requestRejected(
-            ResponseRejectReason.UNSUPPORTED_NETWORK,
-          )
-          return res.status(422).send(`Network ${chainId} is not supported`)
-        }
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
           Date.now()
         ) {
           console.log('no fresh data')
           requestStatistics.requestRejected(ResponseRejectReason.NO_FRESH_DATA)
-          return res.status(500).send(`Network ${chainId} data timeout`)
+          return res.status(500).send(`Network ${CHAIN_ID} data timeout`)
         }
 
         type T = Type | undefined | Promise<Type | undefined>
@@ -121,7 +114,7 @@ function handler(
         const bestRoute = preferSushi
           ? Router.findSpecialRoute(
               poolCodesMap,
-              chainId,
+              CHAIN_ID as ChainId,
               tokenIn,
               amount,
               tokenOut,
@@ -129,7 +122,7 @@ function handler(
             )
           : Router.findBestRoute(
               poolCodesMap,
-              chainId,
+              CHAIN_ID as ChainId,
               tokenIn,
               amount,
               tokenOut,
@@ -151,7 +144,7 @@ function handler(
                 source ?? RouterLiquiditySource.Sender,
               )
             : undefined,
-            rpAddress as Address,
+          rpAddress as Address,
         )
 
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
