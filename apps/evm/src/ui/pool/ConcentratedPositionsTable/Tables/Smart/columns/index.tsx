@@ -119,7 +119,9 @@ export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>
-                      {"It will not accrue any fees and won't be readjusted."}
+                      {
+                        "This vault is deprecated. It will not accrue any fees and won't be readjusted."
+                      }
                     </p>
                   </TooltipContent>
                 </Tooltip>
