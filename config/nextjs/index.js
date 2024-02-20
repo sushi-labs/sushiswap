@@ -6,7 +6,7 @@ const defaultNextConfig = {
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   experimental: {
-    // webpackBuildWorker: true,
+    webpackBuildWorker: true,
     // Prepare for Next.js 14
     // optimizePackageImports: [
     //   '@heroicons/react-v1/solid',

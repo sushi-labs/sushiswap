@@ -81,8 +81,8 @@ export const Notification: FC<{
           notification.href
             ? notification.href
             : notification.txHash
-            ? Chain.from(notification.chainId)?.getTxUrl(notification.txHash)
-            : ''
+              ? Chain.from(notification.chainId)?.getTxUrl(notification.txHash)
+              : ''
         }
       >
         <div

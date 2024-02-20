@@ -18,7 +18,7 @@ import {
 import { Dots } from '@sushiswap/ui/components/dots'
 import React, { FC, memo, useMemo } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
-import { SushiSwapV3FeeAmount } from 'sushi'
+import { SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type } from 'sushi/currency'
 
 export const FEE_OPTIONS = [
@@ -64,7 +64,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
 
     const tvlDistribution = useMemo(() => {
       const tvlDistribution = new Map<
-        typeof FEE_OPTIONS[number]['value'],
+        (typeof FEE_OPTIONS)[number]['value'],
         number
       >()
 

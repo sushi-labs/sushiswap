@@ -15,13 +15,10 @@ import {
 import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { unwrapToken } from 'src/lib/functions'
-import {
-  NonfungiblePositionManager,
-  Position,
-  isSushiSwapV3ChainId,
-} from 'sushi'
 import { ChainId } from 'sushi/chain'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
+import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 interface ConcentratedLiquidityCollectButton {

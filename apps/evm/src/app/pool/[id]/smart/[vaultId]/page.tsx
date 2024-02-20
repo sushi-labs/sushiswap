@@ -1,4 +1,4 @@
-import { getSteerVault } from '@sushiswap/client'
+import { EVM_APP_BASE_URL, getSteerVault } from '@sushiswap/client'
 import { SteerVault } from '@sushiswap/client'
 import { getSteerVaultPositions, getTokenRatios } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
@@ -6,11 +6,10 @@ import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
-import { tickToPrice } from 'sushi'
-import { viemConfig } from 'sushi/config'
+import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber, unsanitize } from 'sushi/format'
-
+import { tickToPrice } from 'sushi/pool'
 import { createPublicClient } from 'viem'
 import {
   SteerStrategyComponents,
@@ -56,13 +55,22 @@ function getAdjustment(vault: SteerVault): SteerStrategyGeneric['adjustment'] {
 }
 
 async function getGenerics(vault: SteerVault): Promise<SteerStrategyGeneric> {
+  const prices = await fetch(
+    `${EVM_APP_BASE_URL}/api/price/v2/${vault.chainId}`,
+  ).then((data) => data.json())
+
   const priceExtremes = getPriceExtremes(vault)
-  const tokenRatios = await getTokenRatios(vault)
+  const tokenRatios = await getTokenRatios({
+    vault,
+    prices,
+  })
   const adjustment = getAdjustment(vault)
   const positions =
     (await getSteerVaultPositions({
       client: createPublicClient(
-        viemConfig[vault.pool.chainId as keyof typeof viemConfig]!,
+        publicClientConfig[
+          vault.pool.chainId as keyof typeof publicClientConfig
+        ]!,
       ),
       vaultId: vault.id,
     })) || []

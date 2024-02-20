@@ -2,7 +2,6 @@
 
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
-import { Position } from 'sushi'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
@@ -12,7 +11,8 @@ import {
   getPriceOrderingFromPositionForUI,
 } from 'src/lib/functions'
 import { usePriceInverter } from 'src/lib/hooks'
-import useIsTickAtLimit from 'src/lib/hooks/useIsTickAtLimit'
+import { useIsTickAtLimit } from 'src/lib/pool/v3'
+import { Position } from 'sushi/pool'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
   ({ original }) => {
@@ -96,8 +96,8 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
               invalidRange || !inRange
                 ? 'bg-red'
                 : closed
-                ? 'bg-slate-700'
-                : 'bg-green',
+                  ? 'bg-slate-700'
+                  : 'bg-green',
               'w-2 h-2 rounded-full',
             )}
           />

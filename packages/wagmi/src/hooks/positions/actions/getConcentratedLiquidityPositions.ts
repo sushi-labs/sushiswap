@@ -1,5 +1,6 @@
-import { SushiSwapV3ChainId, computeSushiSwapV3PoolAddress } from 'sushi'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV3ChainId } from 'sushi/config'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { erc20ABI, readContracts } from 'wagmi'
 
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'

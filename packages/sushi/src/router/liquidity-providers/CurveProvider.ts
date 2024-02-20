@@ -1,4 +1,3 @@
-import { RToken, createCurvePoolsForMultipool } from '@sushiswap/tines'
 import {
   Address,
   ContractFunctionConfig,
@@ -7,21 +6,12 @@ import {
   parseAbi,
 } from 'viem'
 import { ChainId } from '../../chain'
-import {
-  DAI,
-  FRAX,
-  LINK,
-  Native,
-  Token,
-  Type,
-  USDC,
-  USDT,
-  WBTC,
-  renBTC,
-} from '../../currency'
-import { getCurrencyCombinations } from '../getCurrencyCombinations'
-import { CurvePoolCode } from '../pools/CurvePool'
-import { PoolCode } from '../pools/PoolCode'
+import { DAI, FRAX, LINK, USDC, USDT, WBTC, renBTC } from '../../currency'
+import { Native, Token, Type } from '../../currency'
+import { RToken, createCurvePoolsForMultipool } from '../../tines'
+import { getCurrencyCombinations } from '../get-currency-combinations'
+import { CurvePoolCode } from '../pool-codes/CurvePool'
+import { PoolCode } from '../pool-codes/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 const stETH = new Token({
@@ -502,12 +492,12 @@ export class CurveProvider extends LiquidityProvider {
     const poolArray = Array.from(pools.entries())
     const poolsMulticall = <
       T extends ContractFunctionConfig<
-        typeof curvePoolABI[keyof typeof curvePoolABI]
+        (typeof curvePoolABI)[keyof typeof curvePoolABI]
       >['functionName'],
     >(
       functionName: T,
       args?: ContractFunctionConfig<
-        typeof curvePoolABI[keyof typeof curvePoolABI],
+        (typeof curvePoolABI)[keyof typeof curvePoolABI],
         T
       >['args'],
     ) => {

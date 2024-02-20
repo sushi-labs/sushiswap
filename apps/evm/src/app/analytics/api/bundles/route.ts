@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { getBundles } from '../../../../lib/analytics/api'
+import { getBundles } from '../../../../lib/graph'
 
 export const revalidate = 3600
 

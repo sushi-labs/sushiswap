@@ -6,7 +6,6 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
-import { RouteStatus, getBigInt } from '@sushiswap/tines'
 import {
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
@@ -23,7 +22,7 @@ import {
 } from 'sushi'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
-import { viemConfig } from 'sushi/config'
+import { publicClientConfig } from 'sushi/config'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import {
@@ -33,6 +32,7 @@ import {
   PoolCode,
   Router,
 } from 'sushi/router'
+import { RouteStatus, getBigInt } from 'sushi/tines'
 import { http, Address, Transport, createPublicClient } from 'viem'
 import {
   Chain,
@@ -220,8 +220,7 @@ async function startInfinitTest(args: {
       )
       if (route.status === RouteStatus.NoWay) {
         console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` +
-            timingLine,
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
         )
         continue
       }
@@ -263,9 +262,7 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools ` +
-            timingLine +
-            ` diff = ${diff > 0 ? '+' : ''}${diff} `,
+          } pools ${timingLine} diff = ${diff > 0 ? '+' : ''}${diff} `,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
@@ -401,8 +398,8 @@ it.skip('Extractor Polygon zkevm infinite work test', async () => {
 
 it.skip('Extractor AVALANCH infinite work test', async () => {
   await startInfinitTest({
-    transport: viemConfig[ChainId.AVALANCHE].transport,
-    chain: viemConfig[ChainId.AVALANCHE].chain as Chain,
+    transport: publicClientConfig[ChainId.AVALANCHE].transport,
+    chain: publicClientConfig[ChainId.AVALANCHE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.AVALANCHE),
       {
@@ -424,8 +421,8 @@ it.skip('Extractor AVALANCH infinite work test', async () => {
 
 it.skip('Extractor Base infinite work test', async () => {
   await startInfinitTest({
-    ...viemConfig[ChainId.BASE],
-    chain: viemConfig[ChainId.BASE].chain as Chain,
+    ...publicClientConfig[ChainId.BASE],
+    chain: publicClientConfig[ChainId.BASE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
       {
@@ -474,8 +471,8 @@ it.skip('Extractor Base infinite work test', async () => {
 
 it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
-    transport: viemConfig[ChainId.BSC].transport,
-    chain: viemConfig[ChainId.BSC].chain as Chain,
+    transport: publicClientConfig[ChainId.BSC].transport,
+    chain: publicClientConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
     tickHelperContract: TickLensContract[ChainId.BSC],

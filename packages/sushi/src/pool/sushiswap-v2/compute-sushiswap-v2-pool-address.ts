@@ -1,6 +1,6 @@
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256, pack } from '@ethersproject/solidity'
-import { Token } from 'sushi/currency'
+import { Token } from '../../currency'
 import invariant from 'tiny-invariant'
 
 import { SUSHISWAP_V2_INIT_CODE_HASH, SushiSwapV2ChainId } from '../../config'

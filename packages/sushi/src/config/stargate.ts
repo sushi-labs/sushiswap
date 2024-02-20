@@ -1,6 +1,5 @@
 import { ChainId } from '../chain'
-import { Token } from '../currency/Token.js'
-import { Type } from '../currency/Type.js'
+import { Token, Type } from '../currency'
 import {
   BUSD_ADDRESS,
   DAI_ADDRESS,
@@ -8,15 +7,8 @@ import {
   MAI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
-} from '../currency/constants/token-addresses.js'
-import {
-  BUSD,
-  DAI,
-  FRAX,
-  MAI,
-  USDC,
-  USDT,
-} from '../currency/constants/tokens.js'
+} from '../currency'
+import { BUSD, DAI, FRAX, MAI, USDC, USDT } from '../currency'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,
@@ -529,7 +521,7 @@ export const STARGATE_TOKEN = new Token({
 })
 
 export type StargateBridgeTokens =
-  typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
+  (typeof STARGATE_BRIDGE_TOKENS)[StargateChainId]
 
 export type StargateBridgeToken = StargateBridgeTokens[number]
 
@@ -545,7 +537,7 @@ export const STARGATE_SUPPORTED_CHAIN_IDS = [
   ChainId.LINEA,
 ] as const
 
-export type StargateChainId = typeof STARGATE_SUPPORTED_CHAIN_IDS[number]
+export type StargateChainId = (typeof STARGATE_SUPPORTED_CHAIN_IDS)[number]
 
 // https://stargateprotocol.gitbook.io/stargate/developers/stargate-chain-paths
 

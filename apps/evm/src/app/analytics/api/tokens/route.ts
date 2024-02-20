@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { GetTokensQuery, getTokens } from '../../../../lib/analytics/api'
+import { GetTokensQuery, getTokens } from '../../../../lib/graph'
 
 export const revalidate = 3600
 

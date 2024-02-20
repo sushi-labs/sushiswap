@@ -1,6 +1,5 @@
-import { SushiSwapV3ChainId } from 'sushi'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { getPublicClient } from 'wagmi/actions'
-
 import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
 

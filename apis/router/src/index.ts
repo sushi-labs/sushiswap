@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
-// import cors from 'cors'
+import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ExtractorClient } from './ExtractorClient'
@@ -16,7 +16,7 @@ import {
 } from './config'
 import { CPUUsageStatistics } from './cpu-usage-statistics'
 import { priceByAddressHandler, pricesHandler } from './handlers/price'
-import swapHandler from './handlers/swap'
+import { swapV3_2, swapV4 } from './handlers/swap'
 import tokenHandler from './handlers/token'
 
 import process from 'node:process'
@@ -58,7 +58,7 @@ async function start() {
   // TracingHandler creates a trace for every incoming request
   app.use(Sentry.Handlers.tracingHandler())
 
-  // app.use(cors())
+  app.use(cors())
 
   const cpuUsageStatistics = new CPUUsageStatistics(60_000)
   cpuUsageStatistics.start()
@@ -71,14 +71,15 @@ async function start() {
     return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
   })
 
-  app.get(`/swap/v1/${CHAIN_ID}`, (req, res) => {
-    return swapHandler(client)(req, res)
+  app.get(`/swap/v3.2/${CHAIN_ID}`, (req, res) => {
+    return swapV3_2(client)(req, res)
   })
-  // app.get(`/swap/v4/${CHAIN_ID}`, (req, res) => {
-  //   return swapHandler(client)(req, res)
-  // })
+  app.get(`/swap/v4/${CHAIN_ID}`, (req, res) => {
+    return swapV4(client)(req, res)
+  })
 
   app.get(`/token/v1/${CHAIN_ID}/:address`, tokenHandler(client))
+
   app.get(`/price/v1/${CHAIN_ID}`, pricesHandler(client))
   app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler(client))
 

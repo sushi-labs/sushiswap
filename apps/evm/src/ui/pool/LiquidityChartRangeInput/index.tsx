@@ -1,14 +1,11 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import {
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
-  getPriceRangeWithTokenRatio,
-} from 'sushi'
 import { format } from 'd3'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Price, Token, Type } from 'sushi/currency'
+import { getPriceRangeWithTokenRatio } from 'sushi/pool'
 import colors from 'tailwindcss/colors'
 
 import { Chart } from './Chart'

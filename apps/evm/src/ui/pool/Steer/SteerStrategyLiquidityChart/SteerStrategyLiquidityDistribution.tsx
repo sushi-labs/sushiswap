@@ -3,9 +3,9 @@
 import { Pool } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui'
-import { SushiSwapV3ChainId, tickToPrice } from 'sushi'
+import { SushiSwapV3ChainId } from 'sushi/config'
+import { tickToPrice } from 'sushi/pool'
 import React, { FC, useMemo } from 'react'
-
 import { useConcentratedDerivedMintInfo } from '../../ConcentratedLiquidityProvider'
 import { useDensityChartData } from '../../LiquidityChartRangeInput/hooks'
 import { SteerStrategyGeneric } from '../SteerStrategies'

@@ -1,7 +1,7 @@
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
 import { useCallback } from 'react'
-import { SushiSwapV3FeeAmount } from 'sushi'
+import { SushiSwapV3FeeAmount } from 'sushi/config'
 import { Amount, Token, Type } from 'sushi/currency'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'

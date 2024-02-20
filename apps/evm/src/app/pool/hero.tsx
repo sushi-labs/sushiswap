@@ -15,11 +15,12 @@ import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
 import { useNetwork } from '@sushiswap/wagmi'
 import { FC } from 'react'
-import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import {
+  SushiSwapV3ChainId,
   TridentChainId,
   isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
   isTridentChainId,
 } from 'sushi/config'
 
@@ -57,10 +58,10 @@ export const Hero: FC = () => {
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
                     ? `/pool/add?chainId=${chainId}`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                    ? `/pool/add/v2/${chainId}`
-                    : isTridentChainId(chainId as TridentChainId)
-                    ? `/pool/add/trident/${chainId}`
-                    : ''
+                      ? `/pool/add/v2/${chainId}`
+                      : isTridentChainId(chainId as TridentChainId)
+                        ? `/pool/add/trident/${chainId}`
+                        : ''
                 }
               >
                 I want to create a position
@@ -162,7 +163,7 @@ export const Hero: FC = () => {
         <div className="flex flex-col items-center gap-1 lg:items-end">
           <span className="font-semibold lg:text-sm">Need Help?</span>
           <Button icon={DiscordIcon} variant="link" size="sm" asChild>
-            <LinkExternal href="https://discord.gg/NVPXN4e">
+            <LinkExternal href="https://sushi.com/discord">
               Join our discord
             </LinkExternal>
           </Button>

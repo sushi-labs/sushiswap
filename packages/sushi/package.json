@@ -13,6 +13,13 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "contributors": [
+    "Ilya Lyalin",
+    "Ola Stenberg",
+    "LufyCZ",
+    "JiroOno",
+    "0xMasayoshi"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -70,6 +77,10 @@
       "types": "./dist/router/index.d.ts",
       "default": "./dist/router/index.js"
     },
+    "./serializer": {
+      "types": "./dist/serializer/index.d.ts",
+      "default": "./dist/serializer/index.js"
+    },
     "./math": {
       "types": "./dist/math/index.d.ts",
       "default": "./dist/math/index.js"
@@ -77,6 +88,10 @@
     "./sort": {
       "types": "./dist/sort/index.d.ts",
       "default": "./dist/sort/index.js"
+    },
+    "./tines": {
+      "types": "./dist/tines/index.d.ts",
+      "default": "./dist/tines/index.js"
     },
     "./token-list": {
       "types": "./dist/token-list/index.d.ts",
@@ -133,6 +148,9 @@
       "log": [
         "./dist/log/index.d.ts"
       ],
+      "serializer": [
+        "./dist/serializer/index.d.ts"
+      ],
       "math": [
         "./dist/math/index.d.ts"
       ],
@@ -144,6 +162,9 @@
       ],
       "sort": [
         "./dist/sort/index.d.ts"
+      ],
+      "tines": [
+        "./dist/tines/index.d.ts"
       ],
       "token-list": [
         "./dist/token-list/index.d.ts"
@@ -164,8 +185,10 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
+    "generate": "ts-node --skipProject ./scripts/generate.ts",
     "prepublishOnly": "pnpm build",
     "test": "vitest run -c ./test/vitest.config.ts",
+    "test:debug": "vitest --inspect-brk --no-threads run -c ./test/vitest.config.ts",
     "test:watch": "vitest dev -c ./test/vitest.config.ts"
   },
   "dependencies": {
@@ -180,6 +203,7 @@
     "decimal.js-light": "2.5.1",
     "lodash.flatmap": "4.5.0",
     "numeral": "2.0.6",
+    "seedrandom": "3.0.5",
     "serialijse": "0.3.0",
     "tiny-invariant": "1.3.1",
     "tiny-warning": "1.0.3",
@@ -192,20 +216,18 @@
     "@types/big.js": "6.2.0",
     "@types/lodash.flatmap": "4.5.9",
     "@types/numeral": "2.0.3",
+    "@types/seedrandom": "3.0.1",
+    "ts-node": "10.9.2",
     "typescript": "5.2.2",
     "viem": "1.21.4",
     "vitest": "0.34.6",
     "zod": "3.21.4"
   },
   "peerDependencies": {
-    "@sushiswap/tines": "*",
     "viem": "*",
     "zod": "*"
   },
   "peerDependenciesMeta": {
-    "@sushiswap/tines": {
-      "optional": true
-    },
     "viem": {
       "optional": true
     },

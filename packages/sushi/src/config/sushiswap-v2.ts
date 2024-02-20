@@ -35,6 +35,7 @@ export const SUSHISWAP_V2_SUPPORTED_CHAIN_IDS = [
   ChainId.METIS,
   ChainId.BTTC,
   ChainId.FILECOIN,
+  ChainId.ZETACHAIN,
   // Eth testnets
   ChainId.ROPSTEN,
   ChainId.RINKEBY,
@@ -44,7 +45,8 @@ export const SUSHISWAP_V2_SUPPORTED_CHAIN_IDS = [
 
 export const SushiSwapV2ChainIds = SUSHISWAP_V2_SUPPORTED_CHAIN_IDS
 
-export type SushiSwapV2ChainId = typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS[number]
+export type SushiSwapV2ChainId =
+  (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
 
 export const isSushiSwapV2ChainId = (
   chainId: ChainId,
@@ -127,6 +129,8 @@ export const SUSHISWAP_V2_INIT_CODE_HASH: Record<
     '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
   [ChainId.FILECOIN]:
     '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
+  [ChainId.ZETACHAIN]:
+    '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
   [ChainId.HAQQ]:
     '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
 }
@@ -172,6 +176,7 @@ export const SUSHISWAP_V2_FACTORY_ADDRESS: Record<
   [ChainId.METIS]: '0x580ED43F3BBa06555785C81c2957efCCa71f7483',
   [ChainId.BTTC]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
   [ChainId.FILECOIN]: '0x9B3336186a38E1b6c21955d112dbb0343Ee061eE',
+  [ChainId.ZETACHAIN]: '0x33d91116e0370970444B0281AB117e161fEbFcdD',
 }
 
 export const SUSHISWAP_V2_ROUTER_ADDRESS: Record<
@@ -217,4 +222,5 @@ export const SUSHISWAP_V2_ROUTER_ADDRESS: Record<
   [ChainId.BTTC]: '0x9B3336186a38E1b6c21955d112dbb0343Ee061eE',
   [ChainId.FILECOIN]: '0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e',
   [ChainId.HAQQ]: '0x9B3336186a38E1b6c21955d112dbb0343Ee061eE',
+  [ChainId.ZETACHAIN]: '0x1f2FCf1d036b375b384012e61D3AA33F8C256bbE',
 }

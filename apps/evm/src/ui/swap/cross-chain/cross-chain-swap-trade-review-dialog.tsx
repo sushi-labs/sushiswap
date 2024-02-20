@@ -434,8 +434,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                           trade?.priceImpact?.lessThan(ZERO)
                             ? '+'
                             : trade?.priceImpact?.greaterThan(ZERO)
-                            ? '-'
-                            : ''
+                              ? '-'
+                              : ''
                         }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
                       )}
                     </List.KeyValue>
@@ -491,8 +491,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                     isError
                       ? 'red'
                       : warningSeverity(trade?.priceImpact) >= 3
-                      ? 'red'
-                      : 'blue'
+                        ? 'red'
+                        : 'blue'
                   }
                   testId="confirm-swap"
                 >
@@ -541,8 +541,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                 {failedState(stepStates)
                   ? 'Try again'
                   : finishedState(stepStates)
-                  ? 'Make another swap'
-                  : 'Close'}
+                    ? 'Make another swap'
+                    : 'Close'}
               </Button>
             </DialogClose>
           </DialogFooter>

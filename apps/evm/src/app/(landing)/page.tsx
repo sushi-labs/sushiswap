@@ -4,7 +4,6 @@ import { useIsSmScreen } from '@sushiswap/hooks'
 import { Separator } from '@sushiswap/ui'
 import { MotionConfig } from 'framer-motion'
 import React from 'react'
-
 import {
   BuildFuture,
   BuildWealth,

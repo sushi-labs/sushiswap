@@ -6,7 +6,6 @@ import {
   PoolInfo,
   UniV3Extractor,
 } from '@sushiswap/extractor'
-import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
 import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
 import { expect } from 'chai'
@@ -23,6 +22,7 @@ import {
   Router,
   UniswapV3Provider,
 } from 'sushi/router'
+import { RouteStatus, UniV3Pool } from 'sushi/tines'
 import {
   http,
   Address,
@@ -676,7 +676,7 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff}`,
+          } pools diff = ${diff > 0 ? '+' : ''}${diff}`,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')

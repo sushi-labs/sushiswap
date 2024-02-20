@@ -10,8 +10,8 @@ import {
 } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
 import React from 'react'
-import { isSushiSwapV3ChainId } from 'sushi'
 import { ChainId } from 'sushi/chain'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 
 import { PositionCard, PositionCardSkeleton } from './PositionCard'
 import { PositionCardList } from './PositionCardList'

@@ -1,7 +1,7 @@
 {{- $chainIds := .Values.chainIds }}
 {{- range $index, $value := $chainIds }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: extractor-{{ $value }}
 spec:
@@ -23,7 +23,7 @@ spec:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 3
+            failureThreshold: 6
             periodSeconds: 10
           livenessProbe:
             httpGet:
@@ -32,6 +32,9 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
+          volumeMounts:
+            - mountPath: /app/cache
+              name: extractor-{{ $value }}-cache
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"
@@ -50,4 +53,12 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: SENTRY_ENVIRONMENT
+  volumeClaimTemplates:
+  - metadata:
+      name: extractor-{{ $value }}-cache
+    spec:
+      accessModes: ["ReadWriteOncePod"]
+      resources:
+        requests:
+          storage: 1Gi
 {{- end }}

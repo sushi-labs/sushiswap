@@ -16,14 +16,14 @@ import {
   WNATIVE,
 } from 'sushi/currency'
 import { DataFetcher, LiquidityProviders, PoolCode } from 'sushi/router'
-import { loadPoolSnapshot, savePoolSnapshot } from 'sushi/router'
+import { loadPoolSnapshot, savePoolSnapshot } from 'sushi/serializer'
 
 export async function getAllPoolCodes(
   dataFetcher: DataFetcher,
   chainId: ChainId,
   blockNumber: number | undefined,
 ): Promise<PoolCode[]> {
-  let poolCodes = loadPoolSnapshot(chainId, blockNumber)
+  let poolCodes = await loadPoolSnapshot(chainId, blockNumber)
   if (poolCodes === undefined) {
     const fetchedTokens: Token[] = [
       WNATIVE[chainId],
@@ -69,7 +69,7 @@ export async function getAllPoolCodes(
         }
       }
     }
-    savePoolSnapshot(poolCodes, chainId, blockNumber)
+    await savePoolSnapshot(poolCodes, chainId, blockNumber)
   }
   const providers = new Map<LiquidityProviders, number>()
   poolCodes.forEach((p) => {

@@ -59,6 +59,7 @@ export const SUSHISWAP_V3_FACTORY_ADDRESS: Record<
   [ChainId.BASE]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.SCROLL]: '0x46b3fdf7b5cde91ac049936bf0bdb12c5d22202e',
   [ChainId.FILECOIN]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+  [ChainId.ZETACHAIN]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
 } as const
 
 export const SUSHISWAP_V3_INIT_CODE_HASH: Record<
@@ -89,6 +90,7 @@ export const SUSHISWAP_V3_INIT_CODE_HASH: Record<
   [ChainId.BASE]: POOL_INIT_CODE_HASH,
   [ChainId.SCROLL]: POOL_INIT_CODE_HASH,
   [ChainId.FILECOIN]: POOL_INIT_CODE_HASH,
+  [ChainId.ZETACHAIN]: POOL_INIT_CODE_HASH,
 } as const
 
 export const SUSHISWAP_V3_POSTIION_MANAGER: Record<
@@ -121,6 +123,7 @@ export const SUSHISWAP_V3_POSTIION_MANAGER: Record<
   [ChainId.BASE]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
   [ChainId.SCROLL]: '0x0389879e0156033202C44BF784ac18fC02edeE4f',
   [ChainId.FILECOIN]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
+  [ChainId.ZETACHAIN]: '0xCdBCd51a5E8728E0AF4895ce5771b7d17fF71959',
 } as const
 
 export const SUSHISWAP_V3_TICK_LENS: Record<SushiSwapV3ChainId, `0x${string}`> =
@@ -151,6 +154,7 @@ export const SUSHISWAP_V3_TICK_LENS: Record<SushiSwapV3ChainId, `0x${string}`> =
     [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3',
     [ChainId.SCROLL]: '0x1f2FCf1d036b375b384012e61D3AA33F8C256bbE',
     [ChainId.FILECOIN]: '0x1be211D8DA40BC0ae8719c6663307Bfc987b1d6c',
+    [ChainId.ZETACHAIN]: '0xe43ca1Dee3F0fc1e2df73A0745674545F11A59F5',
   } as const
 
 export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
@@ -178,11 +182,13 @@ export const SUSHISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.KAVA,
   ChainId.METIS,
   ChainId.FILECOIN,
+  ChainId.ZETACHAIN,
 ] as const
 
 export const SushiSwapV3ChainIds = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
 
-export type SushiSwapV3ChainId = typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS[number]
+export type SushiSwapV3ChainId =
+  (typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
 export const isSushiSwapV3ChainId = (
   chainId: ChainId,

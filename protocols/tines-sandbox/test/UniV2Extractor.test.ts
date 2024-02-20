@@ -5,7 +5,6 @@ import {
   UniV2Extractor,
 } from '@sushiswap/extractor'
 import { TokenManager } from '@sushiswap/extractor/dist/TokenManager'
-import { RouteStatus } from '@sushiswap/tines'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
@@ -16,6 +15,7 @@ import {
   PoolCode,
   Router,
 } from 'sushi/router'
+import { RouteStatus } from 'sushi/tines'
 import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
@@ -132,7 +132,7 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff}`,
+          } pools diff = ${diff > 0 ? '+' : ''}${diff}`,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')

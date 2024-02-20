@@ -4,10 +4,14 @@ import {
   RouterLiquiditySource,
   makeAPI02Object,
 } from 'sushi/router'
-
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
-import { ROUTE_PROCESSOR_3_2_ADDRESS } from 'sushi/config'
+import {
+  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_4_ADDRESS,
+  RouteProcessor3_2ChainId,
+  RouteProcessor4ChainId,
+} from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { Address } from 'viem'
 import { ExtractorClient } from '../../ExtractorClient'
@@ -42,7 +46,7 @@ async function processUnknownToken(
 function handler(
   qSchema: typeof querySchema3_2,
   rpCode: typeof Router.routeProcessor3_2Params,
-  rpAddress: Record<number, Address>,
+  rpAddress: Address,
 ) {
   return (client: ExtractorClient) => {
     return async (req: Request, res: Response) => {
@@ -58,7 +62,6 @@ function handler(
           return res.status(422).send('Request parameters parsing error')
         }
         const {
-          chainId,
           tokenIn: _tokenIn,
           tokenOut: _tokenOut,
           amount,
@@ -69,19 +72,13 @@ function handler(
           maxPriceImpact,
         } = parsed.data
 
-        if (client.chainId !== chainId) {
-          requestStatistics.requestRejected(
-            ResponseRejectReason.UNSUPPORTED_NETWORK,
-          )
-          return res.status(422).send(`Network ${chainId} is not supported`)
-        }
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
           Date.now()
         ) {
           console.log('no fresh data')
           requestStatistics.requestRejected(ResponseRejectReason.NO_FRESH_DATA)
-          return res.status(500).send(`Network ${chainId} data timeout`)
+          return res.status(500).send(`Network ${CHAIN_ID} data timeout`)
         }
 
         type T = Type | undefined | Promise<Type | undefined>
@@ -117,7 +114,7 @@ function handler(
         const bestRoute = preferSushi
           ? Router.findSpecialRoute(
               poolCodesMap,
-              chainId,
+              CHAIN_ID as ChainId,
               tokenIn,
               amount,
               tokenOut,
@@ -125,7 +122,7 @@ function handler(
             )
           : Router.findBestRoute(
               poolCodesMap,
-              chainId,
+              CHAIN_ID as ChainId,
               tokenIn,
               amount,
               tokenOut,
@@ -141,13 +138,13 @@ function handler(
                 tokenIn,
                 tokenOut,
                 to,
-                rpAddress[chainId] as Address,
+                rpAddress as Address,
                 [],
                 maxPriceImpact,
                 source ?? RouterLiquiditySource.Sender,
               )
             : undefined,
-          rpAddress[chainId] as Address,
+          rpAddress as Address,
         )
 
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
@@ -164,8 +161,14 @@ function handler(
   }
 }
 
-export default handler(
+export const swapV3_2 = handler(
   querySchema3_2,
   Router.routeProcessor3_2Params,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
+  ROUTE_PROCESSOR_3_2_ADDRESS[CHAIN_ID as RouteProcessor3_2ChainId],
+)
+
+export const swapV4 = handler(
+  querySchema3_2,
+  Router.routeProcessor4Params,
+  ROUTE_PROCESSOR_4_ADDRESS[CHAIN_ID as RouteProcessor4ChainId],
 )

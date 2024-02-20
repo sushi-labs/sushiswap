@@ -40,7 +40,7 @@ export const PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS = [
 export const PancakeSwapV3ChainIds = PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS
 
 export type PancakeSwapV3ChainId =
-  typeof PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS[number]
+  (typeof PANCAKESWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
 export const isPancakeSwapV3ChainId = (
   chainId: ChainId,

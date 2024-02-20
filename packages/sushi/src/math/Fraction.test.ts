@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import Fraction from './Fraction.js'
+import Fraction from './Fraction'
 
 describe('Fraction', () => {
   describe('#quotient', () => {

@@ -1,6 +1,6 @@
 import type { Address } from 'viem'
-import type { ChainId } from '../chain/index.js'
-import { unsanitize } from './unsanitize.js'
+import type { ChainId } from '../chain'
+import { unsanitize } from './unsanitize'
 
 export const getIdFromChainIdAddress = (
   chainId: string | number,

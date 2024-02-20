@@ -99,8 +99,8 @@ export const ConnectButton: FC<ButtonProps> = ({
                 {connector.name === 'Safe'
                   ? 'Gnosis Safe'
                   : connector.name === 'WalletConnectLegacy'
-                  ? 'WalletConnect'
-                  : connector.name}
+                    ? 'WalletConnect'
+                    : connector.name}
               </DropdownMenuItem>
             )
           })}

@@ -1,16 +1,6 @@
 import { Pool, Protocol } from '@sushiswap/client'
-import {
-  Position,
-  SushiSwapV3FeeAmount,
-  TICK_SPACINGS,
-  TickMath,
-  encodeSqrtRatioX96,
-  nearestUsableTick,
-  priceToClosestTick,
-  tickToPrice,
-} from 'sushi'
-import { SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from 'sushi'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
 import {
   DAI,
   Native,
@@ -22,10 +12,20 @@ import {
   WBTC,
   tryParseAmount,
 } from 'sushi/currency'
-
+import {
+  Position,
+  SushiSwapV2Pool,
+  TickMath,
+  TridentConstantPool,
+  TridentStablePool,
+  encodeSqrtRatioX96,
+  nearestUsableTick,
+  priceToClosestTick,
+  tickToPrice,
+} from 'sushi/pool'
 import { Bound } from './constants'
 import { useTicks } from './hooks'
-import { TickProcessed } from './hooks/useConcentratedActiveLiquidity'
+import { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
 
 export const isTridentConstantPool = (
   pool: SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,

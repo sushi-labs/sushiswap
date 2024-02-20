@@ -2,7 +2,6 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { config } from 'hardhat'
 import { createProvider } from 'hardhat/internal/core/providers/construction'
@@ -11,6 +10,7 @@ import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
 import { DataFetcher, LiquidityProviders, RPParams, Router } from 'sushi/router'
+import { MultiRoute, RouteStatus } from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import {
   Address,
@@ -336,7 +336,7 @@ async function testTaxToken(args: {
   }
 }
 
-describe('RouteProcessor3_1 tax token test for BASE', async function () {
+describe('RouteProcessor3_1 tax token test for BASE', async () => {
   let env: TestEnvironment
 
   before(async () => {
@@ -348,7 +348,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
   })
 
   // Sell failes because LCRV token makes swap inside transfer. Buy is ok. Is fixed in RP3.2
-  it.skip('BASE <=> LCRV', async function () {
+  it.skip('BASE <=> LCRV', async () => {
     const LCRV = new Token({
       chainId: ChainId.BASE,
       address: '0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f',
@@ -363,7 +363,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
     })
   })
 
-  it('BASE <=> bpsTEST', async function () {
+  it('BASE <=> bpsTEST', async () => {
     const bpsTEST = new Token({
       chainId: ChainId.BASE,
       address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
@@ -379,7 +379,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
   })
 })
 
-describe('RouteProcessor3_1 tax token test for ETHEREUM', async function () {
+describe('RouteProcessor3_1 tax token test for ETHEREUM', async () => {
   let env: TestEnvironment
 
   before(async () => {
@@ -390,7 +390,7 @@ describe('RouteProcessor3_1 tax token test for ETHEREUM', async function () {
     )
   })
 
-  it('ETH => UniBot', async function () {
+  it('ETH => UniBot', async () => {
     const uniBOT = new Token({
       chainId: ChainId.ETHEREUM,
       address: '0xf819d9cb1c2a819fd991781a822de3ca8607c3c9',

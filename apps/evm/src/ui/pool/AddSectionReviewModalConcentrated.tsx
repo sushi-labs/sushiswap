@@ -14,12 +14,6 @@ import {
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  NonfungiblePositionManager,
-  Position,
-  SushiSwapV3FeeAmount,
-  isSushiSwapV3ChainId,
-} from 'sushi'
-import {
   getV3NonFungiblePositionManagerConractConfig,
   useAccount,
   useNetwork,
@@ -38,7 +32,9 @@ import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
+import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
+import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
@@ -172,8 +168,8 @@ export const AddSectionReviewModalConcentrated: FC<
       const useNative = token0.isNative
         ? token0
         : token1.isNative
-        ? token1
-        : undefined
+          ? token1
+          : undefined
       const { calldata, value } =
         hasExistingPosition && tokenId
           ? NonfungiblePositionManager.addCallParameters(position, {

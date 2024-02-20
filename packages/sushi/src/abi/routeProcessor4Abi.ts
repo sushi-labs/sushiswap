@@ -76,9 +76,27 @@ export const routeProcessor4Abi = [
   },
   {
     inputs: [
+<<<<<<< HEAD
       { internalType: 'int256', name: 'amount0Delta', type: 'int256' },
       { internalType: 'int256', name: 'amount1Delta', type: 'int256' },
       { internalType: 'bytes', name: 'data', type: 'bytes' },
+=======
+      {
+        internalType: 'int256',
+        name: 'amount0Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'int256',
+        name: 'amount1Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
+      },
+>>>>>>> api
     ],
     name: 'algebraSwapCallback',
     outputs: [],
@@ -103,9 +121,27 @@ export const routeProcessor4Abi = [
   },
   {
     inputs: [
+<<<<<<< HEAD
       { internalType: 'int256', name: 'amount0Delta', type: 'int256' },
       { internalType: 'int256', name: 'amount1Delta', type: 'int256' },
       { internalType: 'bytes', name: 'data', type: 'bytes' },
+=======
+      {
+        internalType: 'int256',
+        name: 'amount0Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'int256',
+        name: 'amount1Delta',
+        type: 'int256',
+      },
+      {
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
+      },
+>>>>>>> api
     ],
     name: 'pancakeV3SwapCallback',
     outputs: [],
@@ -128,12 +164,64 @@ export const routeProcessor4Abi = [
   },
   {
     inputs: [
+<<<<<<< HEAD
       { internalType: 'address', name: 'tokenIn', type: 'address' },
       { internalType: 'uint256', name: 'amountIn', type: 'uint256' },
       { internalType: 'address', name: 'tokenOut', type: 'address' },
       { internalType: 'uint256', name: 'amountOutMin', type: 'uint256' },
       { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'bytes', name: 'route', type: 'bytes' },
+=======
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'priviledgedUsers',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'tokenIn',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amountIn',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'tokenOut',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amountOutMin',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes',
+        name: 'route',
+        type: 'bytes',
+      },
+>>>>>>> api
     ],
     name: 'processRoute',
     outputs: [{ internalType: 'uint256', name: 'amountOut', type: 'uint256' }],

@@ -32,7 +32,7 @@ export async function getTokens({
       })),
     )
 
-  const tokensCombined = new Map<string, typeof tokens[0]>()
+  const tokensCombined = new Map<string, (typeof tokens)[0]>()
   tokens.forEach((token) => {
     const tokenCombined = tokensCombined.get(token.id)
 

@@ -1,12 +1,3 @@
-import {
-  BridgeBento,
-  ConstantProductRPool,
-  RToken,
-  Rebase,
-  StableSwapRPool,
-  toShareBI,
-} from '@sushiswap/tines'
-import { convertTokenToBento } from '@sushiswap/tines'
 import { add, getUnixTime } from 'date-fns'
 import { Address, PublicClient } from 'viem'
 import {
@@ -21,18 +12,28 @@ import {
   BentoBoxChainId,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
 } from '../../config'
 import { Token } from '../../currency'
+import {
+  BridgeBento,
+  ConstantProductRPool,
+  RToken,
+  Rebase,
+  StableSwapRPool,
+  convertTokenToBento,
+  toShareBI,
+} from '../../tines'
 import {
   PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
   mapToken,
 } from '../lib/api'
-import { BentoBridgePoolCode } from '../pools/BentoBridge'
-import { BentoPoolCode } from '../pools/BentoPool'
-import type { PoolCode } from '../pools/PoolCode'
+import {
+  BentoBridgePoolCode,
+  BentoPoolCode,
+  type PoolCode,
+} from '../pool-codes'
 import {
   TridentStaticPool,
   TridentStaticPoolFetcher,
@@ -84,11 +85,7 @@ export class TridentProvider extends LiquidityProvider {
   blockListener?: (() => void) | undefined
   unwatchBlockNumber?: () => void
 
-  constructor(
-    chainId: Extract<ChainId, BentoBoxChainId & TridentChainId>,
-    web3Client: PublicClient,
-    isTest = false,
-  ) {
+  constructor(chainId: ChainId, web3Client: PublicClient, isTest = false) {
     super(chainId, web3Client, isTest)
     this.chainId = chainId
     if (

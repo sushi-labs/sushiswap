@@ -1,13 +1,12 @@
-import { RToken, UniV3Pool } from '@sushiswap/tines'
 import { Address, PublicClient } from 'viem'
 import { erc20Abi, tickLensAbi } from '../../abi'
 import { ChainId } from '../../chain'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config'
 import { Currency, Token, Type } from '../../currency'
 import { computeSushiSwapV3PoolAddress } from '../../pool'
-import { getCurrencyCombinations } from '../getCurrencyCombinations'
-import type { PoolCode } from '../pools/PoolCode'
-import { UniV3PoolCode } from '../pools/UniV3Pool'
+import { RToken, UniV3Pool } from '../../tines'
+import { getCurrencyCombinations } from '../get-currency-combinations'
+import { type PoolCode, UniV3PoolCode } from '../pool-codes'
 import { LiquidityProvider } from './LiquidityProvider'
 
 interface StaticPool {
@@ -267,7 +266,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         ticksContracts,
       ])
 
-    const ticks: NonNullable<typeof tickResults[number]['result']>[] = []
+    const ticks: NonNullable<(typeof tickResults)[number]['result']>[] = []
     tickResults.forEach((t, i) => {
       const index = wordList[i]!.index
       ticks[index] = (ticks[index] || []).concat(t.result || [])

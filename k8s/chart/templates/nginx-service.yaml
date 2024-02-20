@@ -31,7 +31,7 @@ data:
       }
       {{- end }}
       map $uri $proxy_pass {
-        ~^/(\w+)/v(\d+\.)?(\d+\.)?(\*|\d+)/(\d+) router-$3;
+        ~^/(\w+)/(v(\d+\.)?(\d+\.)?(\*|\d+))\/(\d+)(/.*)? router-$6;
       }
       server { 
         listen 80;

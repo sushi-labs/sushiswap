@@ -57,19 +57,21 @@ import {
 import { unwrapToken } from 'src/lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { Chain, ChainId } from 'sushi/chain'
 import {
-  Position,
+  SushiSwapV2ChainId,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-  SushiSwapV3Pool,
-  TickMath,
-  priceToClosestTick,
-} from 'sushi'
-import { Chain, ChainId } from 'sushi/chain'
-import { SushiSwapV2ChainId } from 'sushi/config'
+} from 'sushi/config'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Fraction, ZERO } from 'sushi/math'
+import {
+  Position,
+  SushiSwapV3Pool,
+  TickMath,
+  priceToClosestTick,
+} from 'sushi/pool'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'

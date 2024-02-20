@@ -6,7 +6,7 @@ import {
   uniswapV2PairAbi,
   v3baseAbi,
 } from 'sushi/abi'
-import { viemConfig } from 'sushi/config'
+import { publicClientConfig } from 'sushi/config'
 import { type Address, type PublicClient, createPublicClient } from 'viem'
 
 import { type getPoolFromDB } from './pool'
@@ -221,7 +221,7 @@ export async function getUnindexedPool(
   ] as [number, Address]
   if (!chainId || !address) throw new Error('Invalid pool id.')
 
-  const cfg = viemConfig[chainId as keyof typeof viemConfig]
+  const cfg = publicClientConfig[chainId as keyof typeof publicClientConfig]
   if (!cfg) throw new Error('Invalid chain id.')
 
   const client = createPublicClient({
@@ -229,7 +229,7 @@ export async function getUnindexedPool(
     transport: cfg.transport,
   })
 
-  let lpTokenName
+  let lpTokenName: string
   try {
     const { name } = await getTokenInfo({ client, address: address })
     lpTokenName = name
@@ -261,8 +261,8 @@ export async function getUnindexedPool(
   const poolName = tokens.map(({ symbol }) => symbol).join('-')
 
   const [token0, token1] = tokens as [
-    typeof tokens[number],
-    typeof tokens[number],
+    (typeof tokens)[number],
+    (typeof tokens)[number],
   ]
 
   return {

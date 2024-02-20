@@ -11,7 +11,7 @@ import {
   TridentChainId,
 } from '../../config'
 import { Currency, Token } from '../../currency'
-import { getCurrencyCombinations } from '../getCurrencyCombinations'
+import { getCurrencyCombinations } from '../get-currency-combinations'
 
 export interface TridentStaticPool {
   address: Address

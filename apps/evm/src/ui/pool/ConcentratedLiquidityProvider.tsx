@@ -1,19 +1,5 @@
 'use client'
 
-import {
-  Position,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
-  SushiSwapV3Pool,
-  TICK_SPACINGS,
-  TickMath,
-  encodeSqrtRatioX96,
-  getPriceRangeWithTokenRatio,
-  nearestUsableTick,
-  priceToClosestTick,
-  priceToNumber,
-  tickToPrice,
-} from 'sushi'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import {
   FC,
@@ -27,6 +13,11 @@ import {
 import { Bound, Field } from 'src/lib/constants'
 import { getTickToPrice, tryParseTick } from 'src/lib/functions'
 import {
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+} from 'sushi/config'
+import {
   Amount,
   Currency,
   Price,
@@ -36,6 +27,17 @@ import {
 } from 'sushi/currency'
 import { withoutScientificNotation } from 'sushi/format'
 import { Rounding } from 'sushi/math'
+import {
+  Position,
+  SushiSwapV3Pool,
+  TickMath,
+  encodeSqrtRatioX96,
+  getPriceRangeWithTokenRatio,
+  nearestUsableTick,
+  priceToClosestTick,
+  priceToNumber,
+  tickToPrice,
+} from 'sushi/pool'
 
 type FullRange = true
 
@@ -440,20 +442,40 @@ export function useConcentratedDerivedMintInfo({
         typeof existingPosition?.tickLower === 'number'
           ? existingPosition.tickLower
           : (invertPrice && rightBoundInput === true) ||
-            (!invertPrice && leftBoundInput === true)
-          ? tickSpaceLimits[Bound.LOWER]
-          : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, rightBoundInput.toString())
-          : tryParseTick(token0, token1, feeAmount, leftBoundInput.toString()),
+              (!invertPrice && leftBoundInput === true)
+            ? tickSpaceLimits[Bound.LOWER]
+            : invertPrice
+              ? tryParseTick(
+                  token1,
+                  token0,
+                  feeAmount,
+                  rightBoundInput.toString(),
+                )
+              : tryParseTick(
+                  token0,
+                  token1,
+                  feeAmount,
+                  leftBoundInput.toString(),
+                ),
       [Bound.UPPER]:
         typeof existingPosition?.tickUpper === 'number'
           ? existingPosition.tickUpper
           : (invertPrice && leftBoundInput === true) ||
-            (!invertPrice && rightBoundInput === true)
-          ? tickSpaceLimits[Bound.UPPER]
-          : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, leftBoundInput.toString())
-          : tryParseTick(token0, token1, feeAmount, rightBoundInput.toString()),
+              (!invertPrice && rightBoundInput === true)
+            ? tickSpaceLimits[Bound.UPPER]
+            : invertPrice
+              ? tryParseTick(
+                  token1,
+                  token0,
+                  feeAmount,
+                  leftBoundInput.toString(),
+                )
+              : tryParseTick(
+                  token0,
+                  token1,
+                  feeAmount,
+                  rightBoundInput.toString(),
+                ),
     }
   }, [
     existingPosition,

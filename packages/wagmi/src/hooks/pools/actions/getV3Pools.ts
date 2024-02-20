@@ -1,15 +1,15 @@
-import { RToken, UniV3Pool } from '@sushiswap/tines'
+import { erc20Abi } from 'sushi/abi'
+import { uniswapV3PoolAbi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_TICK_LENS,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-  computeSushiSwapV3PoolAddress,
-} from 'sushi'
-import { erc20Abi } from 'sushi/abi'
-import { uniswapV3PoolAbi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
+} from 'sushi/config'
 import { Currency, Token, Type } from 'sushi/currency'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
+import { RToken, UniV3Pool } from 'sushi/tines'
 import { Address, readContracts } from 'wagmi'
 
 export enum V3PoolState {

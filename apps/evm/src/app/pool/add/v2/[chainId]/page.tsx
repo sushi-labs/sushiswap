@@ -22,22 +22,17 @@ import React, {
 import { DISABLED_CHAIN_IDS } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
+import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainId,
-  SushiSwapV2Pool,
-  isSushiSwapV2ChainId,
-} from 'sushi'
-import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
-import {
-  Amount,
-  Native,
-  Type,
   defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
+  isSushiSwapV2ChainId,
+} from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
+import { SushiSwapV2Pool } from 'sushi/pool'
 import { SWRConfig } from 'swr'
 
 import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
@@ -201,10 +196,10 @@ const _Add: FC<AddProps> = ({
       SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
         (chainId) =>
           !TESTNET_CHAIN_IDS.includes(
-            chainId as typeof TESTNET_CHAIN_IDS[number],
+            chainId as (typeof TESTNET_CHAIN_IDS)[number],
           ) &&
           !DISABLED_CHAIN_IDS.includes(
-            chainId as typeof DISABLED_CHAIN_IDS[number],
+            chainId as (typeof DISABLED_CHAIN_IDS)[number],
           ),
       ),
     [],

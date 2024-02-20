@@ -1,6 +1,5 @@
 'use client'
 
-import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS, isSushiSwapV3ChainId } from 'sushi'
 import {
   Address,
   useAccount,
@@ -8,6 +7,10 @@ import {
 } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
+import {
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { Writeable } from 'zod'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'

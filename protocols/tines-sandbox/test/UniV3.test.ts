@@ -1,7 +1,7 @@
-import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
 import { sushiV3PoolAbi } from 'sushi/abi'
+import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import { WalletClient } from 'viem'
 import { readContract } from 'viem/actions'

@@ -1,13 +1,12 @@
 import { ReactElement } from 'react'
+import { BentoBoxChainId, SushiSwapV2ChainId } from 'sushi/config'
+import { Type } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import {
-  SushiSwapV2ChainId,
   SushiSwapV2Pool,
   TridentConstantPool,
   TridentStablePool,
-} from 'sushi'
-import { BentoBoxChainId } from 'sushi/config'
-import { Type } from 'sushi/currency'
-import { Fee } from 'sushi/dex'
+} from 'sushi/pool'
 
 import {
   SushiSwapV2PoolState,

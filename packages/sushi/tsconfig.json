@@ -1,15 +1,21 @@
 {
   "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": ["src"],
-  "exclude": ["node_modules", "dist", ".turbo"],
+  "exclude": [
+    "node_modules", 
+    "dist", 
+    ".turbo",
+    "src/**/*.test.ts",
+    "src/**/*.test-d.ts",
+    "src/**/*.bench.ts"
+  ],
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
-    "target": "ES2022",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "resolveJsonModule": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   }
 }

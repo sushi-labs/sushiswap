@@ -23,9 +23,7 @@ COPY config/jest config/jest
 COPY config/typescript config/typescript
 
 COPY packages/extractor packages/extractor
-COPY packages/router packages/router
 COPY packages/sushi packages/sushi
-COPY packages/tines packages/tines
 
 COPY patches patches
 

@@ -65,11 +65,12 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/token-price-api": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/steer-sdk": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "deepmerge-ts": "^4.3.0",
-    "sushi": "workspace:*",
     "tslib": "latest",
     "viem": "1.21.4",
     "zod": "3.21.4"
@@ -83,16 +84,21 @@
     "@types/node": "18",
     "eslint": "8.43.0",
     "react": "18.2.0",
+    "sushi": "workspace:*",
     "swr": "2.1.5",
     "tsup": "7.2.0",
     "typescript": "5.2.2"
   },
   "peerDependencies": {
     "react": "*",
+    "sushi": "*",
     "swr": "*"
   },
   "peerDependenciesMeta": {
     "react": {
+      "optional": true
+    },
+    "sushi": {
       "optional": true
     },
     "swr": {

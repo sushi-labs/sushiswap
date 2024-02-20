@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId, SushiSwapV3Pool } from 'sushi'
-
+import { SushiSwapV3ChainId } from 'sushi/config'
+import { SushiSwapV3Pool } from 'sushi/pool'
 import { getConcentratedLiquidityPoolReserves } from '../actions'
 
 interface UseConcentratedLiquidityPoolReserves {

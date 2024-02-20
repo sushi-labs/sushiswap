@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getGraphPool } from 'src/lib/api'
+import { getGraphPool } from 'src/lib/graph'
 import { z } from 'zod'
 
 export const revalidate = 15

@@ -1,4 +1,4 @@
-import { MultiRoute } from '@sushiswap/tines'
+import { MultiRoute } from '../tines'
 
 // Example: https://www.anychart.com/products/anychart/gallery/Sankey_Diagram/Titanic_Survivors.php?theme=lightBlue
 // Data formate: [{from: 'First Class', to: 'Child', value: 6}, ....]

@@ -42,7 +42,7 @@ export const UNISWAP_V3_SUPPORTED_CHAIN_IDS = [
 
 export const UniswapV3ChainIds = UNISWAP_V3_SUPPORTED_CHAIN_IDS
 
-export type UniswapV3ChainId = typeof UNISWAP_V3_SUPPORTED_CHAIN_IDS[number]
+export type UniswapV3ChainId = (typeof UNISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
 
 export const isUniswapV3ChainId = (
   chainId: ChainId,

@@ -9,6 +9,7 @@ chainIds:
   - "314" # FILECOIN
   - "1101" # POLYGON_ZKEVM
   - "1284" # MOONBEAM
+  - "1285" # MOONRIVER
   - "1088" # METIS
   - "2222" # KAVA
   - "8453" # BASE 
@@ -20,3 +21,9 @@ chainIds:
   - "59144" # LINEA
   - "534352" # SCROLL
   - "1666600000" # HARMONY
+  - "199" # BTTC
+  - "108" # THUNDERCORE
+  - "40" # TELOS
+  - "288" # BOBA
+  - "56288" # BOBA BNB
+  # - "7000" # ZETACHAIN

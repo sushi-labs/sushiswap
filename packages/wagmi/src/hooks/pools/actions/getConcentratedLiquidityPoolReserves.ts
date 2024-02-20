@@ -1,9 +1,6 @@
-import {
-  SushiSwapV3ChainId,
-  SushiSwapV3Pool,
-  computeSushiSwapV3PoolAddress,
-} from 'sushi'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
+import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { Address } from 'wagmi'
 
 import { fetchBalance } from '@wagmi/core'

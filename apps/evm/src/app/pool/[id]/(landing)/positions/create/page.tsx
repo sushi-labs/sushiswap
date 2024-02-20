@@ -1,6 +1,6 @@
 import { Container, LinkInternal } from '@sushiswap/ui'
-import { isSushiSwapV3ChainId } from 'sushi'
-import { getChainIdAddressFromId, unsanitize } from 'sushi'
+import { isSushiSwapV3ChainId } from 'sushi/config'
+import { getChainIdAddressFromId, unsanitize } from 'sushi/format'
 import { ConcentratedLiquidityProvider } from '../../../../../../ui/pool/ConcentratedLiquidityProvider'
 import { NewPosition } from '../../../../../../ui/pool/NewPosition'
 

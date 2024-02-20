@@ -45,10 +45,10 @@ import {
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { format } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
-import { SushiSwapV3ChainId, SushiSwapV3Pool } from 'sushi'
 import { Chain } from 'sushi/chain'
-import { ANGLE_ENABLED_NETWORKS } from 'sushi/config'
+import { ANGLE_ENABLED_NETWORKS, SushiSwapV3ChainId } from 'sushi/config'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
+import { SushiSwapV3Pool } from 'sushi/pool'
 import { zeroAddress } from 'viem'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {

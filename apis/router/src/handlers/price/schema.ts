@@ -1,9 +1,9 @@
 import { ChainId } from 'sushi/chain'
 import {
   ExtractorSupportedChainId,
+  STABLES,
   isExtractorSupportedChainId,
 } from 'sushi/config'
-import { STABLES } from 'sushi/currency'
 import { getAddress } from 'viem'
 import z from 'zod'
 
@@ -14,7 +14,7 @@ export const Currency = {
   BITCOIN: 'BITCOIN',
 } as const
 
-export type Currency = typeof Currency[keyof typeof Currency]
+export type Currency = (typeof Currency)[keyof typeof Currency]
 
 export const allPricesSchema = z.object({
   chainId: z.coerce

@@ -12,19 +12,15 @@ import React, {
   useState,
 } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { ChainId } from 'sushi/chain'
 import {
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-  isSushiSwapV3ChainId,
-} from 'sushi'
-import { ChainId } from 'sushi/chain'
-import {
-  Native,
-  Token,
-  Type,
   currencyFromShortCurrencyName,
   isShortCurrencyName,
-} from 'sushi/currency'
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
+import { Native, Token, Type } from 'sushi/currency'
 import { isAddress } from 'viem'
 import { z } from 'zod'
 

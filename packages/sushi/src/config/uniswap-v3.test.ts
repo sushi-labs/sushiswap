@@ -1,7 +1,7 @@
 import { keccak256 } from '@ethersproject/solidity'
-import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
 import { describe, expect, it } from 'vitest'
 
+import IUniswapV3Pool from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
 import { ChainId } from '../chain'
 import { UNISWAP_V3_INIT_CODE_HASH } from './uniswap-v3'
 

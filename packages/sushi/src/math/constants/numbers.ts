@@ -1,4 +1,4 @@
-import Percent from '../Percent.js'
+import Percent from '../Percent'
 
 export const ZERO = 0n
 export const ONE = 1n

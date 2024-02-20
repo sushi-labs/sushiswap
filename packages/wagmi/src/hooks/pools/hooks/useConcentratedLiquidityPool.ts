@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type } from 'sushi/currency'
 
 import { getConcentratedLiquidityPool } from '../actions'
