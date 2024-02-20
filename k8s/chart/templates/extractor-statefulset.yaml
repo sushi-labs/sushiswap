@@ -64,5 +64,5 @@ spec:
       accessModes: ["ReadWriteOncePod"]
       resources:
         requests:
-          storage: 1Gi
+          storage: 100Mi
 {{- end }}

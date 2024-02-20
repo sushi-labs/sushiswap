@@ -41,7 +41,12 @@ export const isSwapApiEnabledChainId = (
 ): chainId is SwapApiEnabledChainId =>
   SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
 
-export const DISABLED_CHAIN_IDS = [ChainId.BOBA_AVAX] as const
+export const DISABLED_CHAIN_IDS = [
+  ChainId.BOBA_AVAX,
+  ChainId.PALM,
+  ChainId.HECO,
+  ChainId.OKEX,
+] as const
 
 const PREFERRED_CHAINID_ORDER = [
   ChainId.ETHEREUM,
