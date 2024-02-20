@@ -10,7 +10,7 @@ export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
   ChainId.BSC,
   ChainId.BTTC,
   ChainId.CELO,
-  // ChainId.CORE, // missing rp deployment?
+  ChainId.CORE,
   ChainId.ETHEREUM,
   ChainId.FANTOM,
   ChainId.FUSE,
