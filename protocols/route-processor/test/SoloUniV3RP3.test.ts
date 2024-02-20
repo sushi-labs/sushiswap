@@ -1,4 +1,3 @@
-import { LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
 import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
   createRandomUniV3Pool,
@@ -9,6 +8,7 @@ import { routeProcessor3Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
+import { LiquidityProviders, Router, UniV3PoolCode } from 'sushi/router'
 import { type Contract } from 'sushi/types'
 import {
   Address,

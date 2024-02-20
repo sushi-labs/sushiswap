@@ -70,7 +70,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.5.5",
-    "@types/node": "18",
+    "@types/node": "20",
     "@types/numeral": "2.0.2",
     "@wagmi/core": "1.4.13",
     "graphql": "16.6.0",

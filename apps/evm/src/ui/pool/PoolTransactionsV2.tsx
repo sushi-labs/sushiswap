@@ -11,11 +11,11 @@ import {
   DataTable,
 } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
 import {
   TX_AMOUNT_IN_V2_COLUMN,

@@ -5,17 +5,17 @@ import {
   UniV2Extractor,
 } from '@sushiswap/extractor'
 import { TokenManager } from '@sushiswap/extractor/dist/TokenManager'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+import { Native } from 'sushi/currency'
 import {
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
   Router,
-} from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { RouteStatus } from '@sushiswap/tines'
-import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
+} from 'sushi/router'
+import { RouteStatus } from 'sushi/tines'
 import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 

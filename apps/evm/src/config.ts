@@ -1,7 +1,9 @@
-import { TridentChainIds } from '@sushiswap/trident-sdk'
-import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
-import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import {
+  SushiSwapV2ChainIds,
+  SushiSwapV3ChainIds,
+  TridentChainIds,
+} from 'sushi/config'
 import { Currency } from 'sushi/currency'
 
 export const SWAP_API_ENABLED_NETWORKS = [
@@ -9,17 +11,29 @@ export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.ARBITRUM_NOVA,
   ChainId.AVALANCHE,
   ChainId.BASE,
+  ChainId.BOBA,
+  ChainId.BOBA_BNB,
   ChainId.BSC,
+  ChainId.BTTC,
   ChainId.CELO,
+  ChainId.CORE,
   ChainId.ETHEREUM,
   ChainId.FANTOM,
+  ChainId.FUSE,
   ChainId.GNOSIS,
+  ChainId.HAQQ,
+  ChainId.HARMONY,
+  ChainId.KAVA,
+  ChainId.LINEA,
+  ChainId.METIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.POLYGON_ZKEVM,
   ChainId.SCROLL,
-  ChainId.LINEA,
-  ChainId.HAQQ,
+  ChainId.TELOS,
+  ChainId.THUNDERCORE,
 ]
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (
@@ -27,7 +41,12 @@ export const isSwapApiEnabledChainId = (
 ): chainId is SwapApiEnabledChainId =>
   SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
 
-export const DISABLED_CHAIN_IDS = [ChainId.BOBA_AVAX] as const
+export const DISABLED_CHAIN_IDS = [
+  ChainId.BOBA_AVAX,
+  ChainId.PALM,
+  ChainId.HECO,
+  ChainId.OKEX,
+] as const
 
 const PREFERRED_CHAINID_ORDER = [
   ChainId.ETHEREUM,

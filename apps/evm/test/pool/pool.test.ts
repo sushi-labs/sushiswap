@@ -1,37 +1,34 @@
 import { Page } from '@playwright/test'
 import {
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
-  isTridentChainId,
-} from '@sushiswap/trident-sdk'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SushiSwapV2ChainId,
-  computeSushiSwapV2PoolAddress,
-  isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
-import {
-  FeeAmount,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-  computePoolAddress,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
   NextFixture,
   expect,
   test,
 } from 'next/experimental/testmode/playwright'
+import { SupportedChainId } from 'src/config'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SushiSwapV2ChainId,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+  isTridentChainId,
+} from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
-import { zeroAddress } from 'viem'
-
-import { SupportedChainId } from 'src/config'
+import {
+  computeSushiSwapV2PoolAddress,
+  computeSushiSwapV3PoolAddress,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
+} from 'sushi/pool'
 import { createERC20 } from 'test/erc20'
 import { interceptAnvil } from 'test/intercept-anvil'
+import { zeroAddress } from 'viem'
 
 interface TridentPoolArgs {
   token0: Type
@@ -202,7 +199,7 @@ test.describe('V3', () => {
       next,
       NATIVE_TOKEN.wrapped,
       FAKE_TOKEN,
-      FeeAmount.HIGH,
+      SushiSwapV3FeeAmount.HIGH,
       'SUSHISWAP_V3',
     )
 
@@ -240,13 +237,22 @@ test.describe('V3', () => {
       type: 'ADD',
     })
 
-    // console.log('Remove liquidity')
-    const poolAddress = computePoolAddress({
+    console.log('Remove liquidity')
+    await mockPoolApi(
+      page,
+      next,
+      NATIVE_TOKEN.wrapped,
+      FAKE_TOKEN,
+      SushiSwapV3FeeAmount.HIGH,
+      'SUSHISWAP_V3',
+    )
+
+    const poolAddress = computeSushiSwapV3PoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
-      fee: FeeAmount.HIGH,
+      fee: SushiSwapV3FeeAmount.HIGH,
     })
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
@@ -753,7 +759,7 @@ async function mockPoolApi(
     let address
 
     if (protocol === 'SUSHISWAP_V3') {
-      address = computePoolAddress({
+      address = computeSushiSwapV3PoolAddress({
         factoryAddress:
           SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
         tokenA,

@@ -1,10 +1,4 @@
 import {
-  LiquidityProviders,
-  PoolCode,
-  Router,
-  UniV3PoolCode,
-} from '@sushiswap/router'
-import {
   approve,
   approveTestTokensToAlgebraPerifery,
   createAlgebraIntegralPeriphery,
@@ -14,6 +8,12 @@ import {
   deployContract,
   expectCloseValues,
 } from '@sushiswap/tines-sandbox'
+import {
+  LiquidityProviders,
+  PoolCode,
+  Router,
+  UniV3PoolCode,
+} from 'sushi/router'
 import { Address, createPublicClient, custom, walletActions } from 'viem'
 import { hardhat } from 'viem/chains'
 

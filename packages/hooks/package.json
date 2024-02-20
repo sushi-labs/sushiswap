@@ -29,12 +29,11 @@
   "dependencies": {
     "@ethersproject/address": "5.7.0",
     "@ethersproject/providers": "5.7.2",
-    "copy-to-clipboard": "^3.3.1",
+    "copy-to-clipboard": "3.3.3",
     "react-responsive": "9.0.0-beta.10"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/jest": "29.5.5",

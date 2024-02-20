@@ -1,8 +1,8 @@
 import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
 
-import { PoolCode } from '@sushiswap/router'
 import { Token } from 'sushi/currency'
+import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
 
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'
@@ -37,6 +37,7 @@ export class Extractor {
   extractorAlg?: AlgebraExtractor
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
+  requestedPairs: Map<string, Set<string>> = new Map()
   readonly logFilter: LogFilter2
   cacheDir: string
   logging?: boolean
@@ -66,7 +67,7 @@ export class Extractor {
     warningMessageHandler?: WarningMessageHandler
   }) {
     this.cacheDir = args.cacheDir
-    this.logging = args.logging
+    this.logging = Boolean(args.logging)
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
@@ -304,6 +305,98 @@ export class Extractor {
     }
   }
 
+  addRequestedPair(t0: Token, t1: Token) {
+    if (t0.address > t1.address) {
+      const t = t0
+      t0 = t1
+      t1 = t
+    }
+    const set = this.requestedPairs.get(t0.address)
+    if (set === undefined)
+      this.requestedPairs.set(t0.address, new Set([t1.address]))
+    else set.add(t1.address)
+  }
+
+  async getPoolCodesBetweenTokenSets(
+    tokens1: Token[],
+    tokens2: Token[],
+  ): Promise<PoolCode[]> {
+    ++this.requestStartedNum
+    try {
+      const map1 = new Map<string, Token>()
+      tokens1.forEach((t) => map1.set(t.address, t))
+      const tokens1Unique = Array.from(map1.values())
+
+      const map2 = new Map<string, Token>()
+      tokens2.forEach((t) => {
+        if (map1.get(t.address) === undefined) map2.set(t.address, t)
+      })
+      const tokens2Unique = Array.from(map2.values())
+
+      let prefetchedAll: (PoolCode | undefined)[] = []
+      let fetchingAll: Promise<unknown>[] = []
+
+      if (this.extractorV2) {
+        const { prefetched, fetching } =
+          this.extractorV2.getPoolsBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(prefetched)
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      if (this.extractorV3) {
+        const { prefetched, fetching } =
+          this.extractorV3.getWatchersBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(
+          prefetched.map((w) => w.getPoolCode()),
+        )
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      if (this.extractorAlg) {
+        const { prefetched, fetching } =
+          this.extractorAlg.getWatchersBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(
+          prefetched.map((w) => w.getPoolCode()),
+        )
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      const fetchedAll = await Promise.allSettled(fetchingAll)
+      const res = prefetchedAll
+        .concat(
+          fetchedAll.map((p) => {
+            if (p.status === 'fulfilled') {
+              const value = p.value
+              if (value === undefined) return undefined
+              if (value instanceof PoolCode) return value
+              if (value instanceof UniV3PoolWatcher) return value.getPoolCode()
+              if (value instanceof AlgebraPoolWatcher)
+                return value.getPoolCode()
+            }
+          }),
+        )
+        .filter((p) => p !== undefined) as PoolCode[]
+
+      tokens1Unique.forEach((t0) => {
+        tokens2Unique.forEach((t1) => {
+          this.addRequestedPair(t0, t1)
+        })
+      })
+      ++this.requestFinishedNum
+      return res
+    } catch (e) {
+      ++this.requestFinishedNum
+      ++this.requestFailedNum
+      throw e
+    }
+  }
+
   getPoolCodesForTokensFull(tokens: Token[]): {
     prefetched: PoolCode[]
     fetchingNumber: number
@@ -338,6 +431,11 @@ export class Extractor {
 
         prefetched = prefetched.concat(poolsAlgPrefetched)
         fetchingNumber += poolsAlg.fetching.length
+      }
+      for (let i = 0; i < tokensUnique.length; ++i) {
+        for (let j = i + 1; j < tokensUnique.length; ++j) {
+          this.addRequestedPair(tokensUnique[i], tokensUnique[j])
+        }
       }
       ++this.requestFinishedNum
       return { prefetched, fetchingNumber }
@@ -424,6 +522,12 @@ export class Extractor {
           (pc) =>
             pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
         ) as PoolCode[]
+
+      for (let i = 0; i < tokensUnique.length; ++i) {
+        for (let j = i + 1; j < tokensUnique.length; ++j) {
+          this.addRequestedPair(tokensUnique[i], tokensUnique[j])
+        }
+      }
       ++this.requestFinishedNum
       return poolsV3.concat(poolsAlg).concat(poolsV2)
     } catch (e) {

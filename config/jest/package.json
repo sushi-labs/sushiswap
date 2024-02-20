@@ -23,6 +23,6 @@
     "jest-environment-jsdom": "29.7.0"
   },
   "devDependencies": {
-    "@types/node": "18"
+    "@types/node": "20"
   }
 }

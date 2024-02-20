@@ -1,10 +1,7 @@
 'use client'
 
-import {
-  TridentConstantPool,
-  computeTridentConstantPoolAddress,
-} from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
+import { TridentConstantPool, computeTridentConstantPoolAddress } from 'sushi'
 import {
   tridentConstantPoolAbi,
   tridentConstantPoolFactoryAbi,

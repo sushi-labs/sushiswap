@@ -1,8 +1,8 @@
-import { ConstantProductPoolCode, LiquidityProviders } from '@sushiswap/router'
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { computeSushiSwapV2PoolAddress } from '@sushiswap/v2-sdk'
+import { computeSushiSwapV2PoolAddress } from 'sushi'
 import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
+import { ConstantProductPoolCode, LiquidityProviders } from 'sushi/router'
+import { ConstantProductRPool, RToken } from 'sushi/tines'
 import { Address, Log, PublicClient, decodeEventLog, parseAbiItem } from 'viem'
 
 import { Counter } from './Counter'

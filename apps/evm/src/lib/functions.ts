@@ -1,17 +1,6 @@
 import { Pool, Protocol } from '@sushiswap/client'
-import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
-import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
-import {
-  FeeAmount,
-  Position,
-  TICK_SPACINGS,
-  TickMath,
-  encodeSqrtRatioX96,
-  nearestUsableTick,
-  priceToClosestTick,
-  tickToPrice,
-} from '@sushiswap/v3-sdk'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
 import {
   DAI,
   Native,
@@ -23,7 +12,17 @@ import {
   WBTC,
   tryParseAmount,
 } from 'sushi/currency'
-
+import {
+  Position,
+  SushiSwapV2Pool,
+  TickMath,
+  TridentConstantPool,
+  TridentStablePool,
+  encodeSqrtRatioX96,
+  nearestUsableTick,
+  priceToClosestTick,
+  tickToPrice,
+} from 'sushi/pool'
 import { Bound } from './constants'
 import { useTicks } from './hooks'
 import { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
@@ -103,7 +102,7 @@ export function tryParsePrice(
 export function tryParseTick(
   baseToken?: Token,
   quoteToken?: Token,
-  feeAmount?: FeeAmount,
+  feeAmount?: SushiSwapV3FeeAmount,
   value?: string,
 ): number | undefined {
   if (!baseToken || !quoteToken || !feeAmount || !value) {

@@ -1,9 +1,12 @@
-import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
-import { SushiSwapV2ChainId, SushiSwapV2Pool } from '@sushiswap/v2-sdk'
 import { ReactElement } from 'react'
-import { BentoBoxChainId } from 'sushi/config'
+import { BentoBoxChainId, SushiSwapV2ChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
+import {
+  SushiSwapV2Pool,
+  TridentConstantPool,
+  TridentStablePool,
+} from 'sushi/pool'
 
 import {
   SushiSwapV2PoolState,

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { getAddress } from 'viem'
+import { getAddress, isAddress } from 'viem'
 
 import { isPromiseFulfilled } from 'sushi'
 import { BLACKLIST_TOKEN_IDS, DEFAULT_LIST_OF_LISTS } from 'sushi/token-list'
@@ -48,7 +48,7 @@ export const useOtherTokenListsQuery = ({
 
     const _data = tokenListQuery.data.reduce<Record<string, Token>>(
       (acc, { chainId: _chainId, name, symbol, address, decimals }) => {
-        if (!_query || chainId !== _chainId) return acc
+        if (!_query || chainId !== _chainId || !isAddress(address)) return acc
         // Filter out dupes
         if (defaultTokenList[`${_chainId}:${getAddress(address)}`]) return acc
         if (blacklisted.includes(address.toLowerCase())) return acc

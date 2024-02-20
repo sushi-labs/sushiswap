@@ -12,7 +12,6 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
   SushiSwapV2PoolState,
@@ -34,6 +33,7 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useTransactionDeadline } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'

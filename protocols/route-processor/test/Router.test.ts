@@ -20,8 +20,8 @@
 //   USDT_ADDRESS,
 //   WNATIVE,
 // } from 'sushi/currency'
-// import { DataFetcher, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
-// import { BridgeBento, BridgeUnlimited, getBigNumber, RPool, StableSwapRPool } from '@sushiswap/tines'
+// import { DataFetcher, LiquidityProviders, PoolFilter, Router } from 'sushi/router'
+// import { BridgeBento, BridgeUnlimited, getBigNumber, RPool, StableSwapRPool } from 'sushi/tines'
 // import { expect } from 'chai'
 // import { BigNumber, Contract } from 'ethers'
 // import { ethers, network } from 'hardhat'

@@ -5,21 +5,19 @@ import { getCliffTimestamp } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
+  Button,
+  Card,
   CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   Collapsible,
   DialogTrigger,
   Explainer,
   LinkInternal,
   SkeletonText,
   classNames,
-} from '@sushiswap/ui'
-import {
-  Button,
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from '@sushiswap/ui'
 import {
   Checker,

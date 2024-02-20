@@ -5,7 +5,7 @@ import Image from 'next/image'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { cloudinaryImageLoader } from '../cloudinary'
+import { cloudinaryLogoImageLoader } from '../cloudinary'
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -35,13 +35,13 @@ const AvatarImage = React.forwardRef<
 
   return (
     <AvatarPrimitive.Image
-      src={cloudinaryImageLoader({ src, width: _width })}
+      src={cloudinaryLogoImageLoader({ src, width: _width })}
       asChild
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
     >
       <Image
-        loader={cloudinaryImageLoader}
+        loader={cloudinaryLogoImageLoader}
         alt="avatar"
         src={src}
         width={_width}

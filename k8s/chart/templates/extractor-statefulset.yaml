@@ -1,0 +1,68 @@
+{{- $chainIds := .Values.chainIds }}
+{{- range $index, $value := $chainIds }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: extractor-{{ $value }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-{{ $value }}
+  template:
+    metadata:
+      labels:
+        app: extractor-{{ $value }}
+    spec:
+      containers:
+        - name: extractor
+          image: extractor
+          ports:
+            - containerPort: 80
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 6
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "250m"
+          volumeMounts:
+            - mountPath: /app/cache
+              name: extractor-{{ $value }}-cache
+          env:
+            - name: CHAIN_ID
+              value: "{{ $value }}"
+            - name: DRPC_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: DRPC_ID
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: SENTRY_DSN
+            - name: SENTRY_ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: SENTRY_ENVIRONMENT
+  volumeClaimTemplates:
+  - metadata:
+      name: extractor-{{ $value }}-cache
+    spec:
+      accessModes: ["ReadWriteOncePod"]
+      resources:
+        requests:
+          storage: 100Mi
+{{- end }}
