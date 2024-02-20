@@ -20,7 +20,7 @@
     "@layerzerolabs/scan-client": "0.0.6",
     "@octokit/auth-app": "4.0.7",
     "@radix-ui/react-slot": "1.0.2",
-    "@sentry/nextjs": "7.92.0",
+    "@sentry/nextjs": "7.101.1",
     "@snapshot-labs/snapshot.js": "^0.9.8",
     "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/client": "workspace:*",
