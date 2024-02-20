@@ -289,6 +289,7 @@ export const ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS = [
   ChainId.TELOS,
   ChainId.BOBA,
   ChainId.BOBA_BNB,
+  ChainId.CORE,
 ] as const
 export type RouteProcessor4ChainId =
   (typeof ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS)[number]
@@ -324,6 +325,7 @@ export const ROUTE_PROCESSOR_4_ADDRESS: Record<
   [ChainId.TELOS]: '0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e',
   [ChainId.BOBA]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
   [ChainId.BOBA_BNB]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
+  [ChainId.CORE]: '0xCdBCd51a5E8728E0AF4895ce5771b7d17fF71959',
 } as const
 export const isRouteProcessor4ChainId = (
   chainId: ChainId,
