@@ -102,7 +102,9 @@ async function getQuoteToken({
     const token1PriceUSD = prices[getAddress(quoteVault.token1.address)]
 
     if (!token0PriceUSD || !token1PriceUSD)
-      throw new Error(`Missing token prices for vaultId: ${vaultId}`)
+      throw new Error(
+        `Missing token prices for vaultId: ${vaultId} (${quoteVault.token0.address}, ${quoteVault.token1.address})`,
+      )
 
     const reserve0USD =
       (Number(reserve0) / 10 ** quoteVault.token0.decimals) * token0PriceUSD

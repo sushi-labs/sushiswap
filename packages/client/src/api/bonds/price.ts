@@ -16,7 +16,10 @@ export async function getTokenPricesChainV2({
 }: {
   chainId: ChainId
 }): Promise<Record<string, number>> {
-  return fetch(`${EVM_APP_BASE_URL}/api/price/v2/${chainId}`).then((res) =>
-    res.json(),
-  )
+  return fetch(`https://api.sushi.com/price/v1/${chainId}`)
+    .then((res) => res.json())
+    .catch((e) => {
+      console.error('Error fetching token prices', chainId, e)
+      throw e
+    })
 }
