@@ -6,19 +6,20 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardGroup,
   CardHeader,
   CardItem,
+  CardLabel,
   CardTitle,
   Currency,
   Explainer,
   SkeletonText,
+  Toggle,
 } from '@sushiswap/ui'
-import { CardGroup, CardLabel } from '@sushiswap/ui'
-import { Toggle } from '@sushiswap/ui'
 import { useBondMarketDetails } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
-import { formatNumber, formatPercent, formatUSD } from 'sushi'
 import { Token } from 'sushi/currency'
+import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 interface BondsMarketDetails {
   bond: Bond
