@@ -13,7 +13,7 @@ import {
   getVaultsReservesContracts,
 } from '@sushiswap/steer-sdk'
 import { useMemo } from 'react'
-import { Fraction } from 'sushi'
+import { Fraction } from 'sushi/math'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { Address, getAddress } from 'viem'
