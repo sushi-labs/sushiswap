@@ -2,16 +2,19 @@ import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from 'sushi/config'
+import {
   ARB,
-  type Currency,
   DAI,
   FRAX,
   GNO,
   MATIC,
   MIM,
-  Native,
   SUSHI,
-  Token,
   USDC,
   USDT,
   WBTC,
@@ -28,13 +31,7 @@ import {
   axlUSDT,
   axlWBTC,
 } from 'sushi/currency'
-
-import {
-  STARGATE_USDC,
-  STARGATE_USDT,
-  STARGATE_WBTC,
-  STARGATE_WETH,
-} from 'sushi/config'
+import { type Currency, Native, Token } from 'sushi/currency'
 import { useLocalStorage } from './useLocalStorage'
 
 export const DEFAULT_BASES = {

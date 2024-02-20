@@ -1,10 +1,3 @@
-import {
-  CLTick,
-  CL_MAX_TICK,
-  CL_MIN_TICK,
-  RToken,
-  UniV3Pool,
-} from '@sushiswap/tines'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
@@ -17,6 +10,13 @@ import {
 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
+import {
+  CLTick,
+  CL_MAX_TICK,
+  CL_MIN_TICK,
+  RToken,
+  UniV3Pool,
+} from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import { Address, DeployContractParameters, Hex, WalletClient } from 'viem'
 import { readContract, waitForTransactionReceipt } from 'viem/actions'

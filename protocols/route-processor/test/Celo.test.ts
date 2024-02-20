@@ -1,12 +1,11 @@
-import { DataFetcher, Router } from '@sushiswap/router'
-import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Signer } from 'ethers'
 import { ethers } from 'hardhat'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, Type, USDC, WNATIVE } from 'sushi/currency'
-import { createPublicClient } from 'viem'
-import { http } from 'viem'
+import { DataFetcher, Router } from 'sushi/router'
+import { RouteStatus } from 'sushi/tines'
+import { http, Address, createPublicClient } from 'viem'
 import { hardhat } from 'viem/chains'
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
@@ -48,7 +47,7 @@ async function makeSwap(
       route,
       fromToken,
       toToken,
-      to,
+      to as Address,
       RouteProcessorAddr,
     )
 

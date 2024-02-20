@@ -65,7 +65,7 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
             vaultIds: [bond.quoteToken.vault.id],
           })[0],
         ]
-      : [],
+      : undefined,
     enabled: Boolean(enabled && bond.quoteToken.vault),
   })
 

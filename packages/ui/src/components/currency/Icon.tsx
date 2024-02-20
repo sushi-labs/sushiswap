@@ -113,7 +113,7 @@ export const Icon: FC<IconProps> = ({
   const avatar = (
     <Avatar style={{ width: rest.width, height: rest.height }}>
       <AvatarImage width={Number(rest.width) ?? 20} src={src} />
-      <AvatarFallback
+      {/* <AvatarFallback
         style={{
           background: hashStringToColor(
             `${currency.symbol} ${currency.name}` ?? '??',
@@ -122,7 +122,7 @@ export const Icon: FC<IconProps> = ({
         className="text-white"
       >
         {currency.symbol?.substring(0, 2)}
-      </AvatarFallback>
+      </AvatarFallback> */}
     </Avatar>
   )
 

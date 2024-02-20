@@ -1,13 +1,6 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import {
-  TridentChainId,
-  TridentChainIds,
-  TridentConstantPool,
-  TridentStablePool,
-  isTridentChainId,
-} from '@sushiswap/trident-sdk'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
@@ -39,16 +32,18 @@ import {
 } from 'src/lib/constants'
 import { isTridentConstantPool, isTridentStablePool } from 'src/lib/functions'
 import { ChainId } from 'sushi/chain'
-import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 import {
-  Native,
-  Type,
+  BENTOBOX_ADDRESS,
+  TridentChainId,
+  TridentChainIds,
   defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
+  isBentoBoxChainId,
+  isTridentChainId,
+} from 'sushi/config'
+import { Native, Type, tryParseAmount } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
+import { TridentConstantPool, TridentStablePool } from 'sushi/pool'
 import { SWRConfig } from 'swr'
-
 import { AddSectionReviewModalTrident } from '../../../../../ui/pool/AddSectionReviewModalTrident'
 import { CreateSectionReviewModalTrident } from '../../../../../ui/pool/CreateSectionReviewModalTrident'
 import { SelectFeeWidget } from '../../../../../ui/pool/SelectFeeWidget'

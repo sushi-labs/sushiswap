@@ -29,12 +29,6 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  NonfungiblePositionManager,
-  Position,
-  SushiSwapV3ChainId,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
   ConcentratedLiquidityPosition,
   getV3NonFungiblePositionManagerConractConfig,
   useNetwork,
@@ -53,8 +47,10 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import { unwrapToken } from 'src/lib/functions'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain } from 'sushi/chain'
+import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
+import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, UserRejectedRequestError } from 'viem'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 

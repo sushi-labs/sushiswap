@@ -1,9 +1,6 @@
-import {
-  SushiSwapV3ChainId,
-  SushiSwapV3Pool,
-  computePoolAddress,
-} from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
+import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { Address } from 'wagmi'
 
 import { fetchBalance } from '@wagmi/core'
@@ -16,7 +13,7 @@ export const getConcentratedLiquidityPoolReserves = async ({
   pool: SushiSwapV3Pool
   chainId: SushiSwapV3ChainId
 }) => {
-  const address = computePoolAddress({
+  const address = computeSushiSwapV3PoolAddress({
     factoryAddress: getV3FactoryContractConfig(chainId).address,
     tokenA: pool.token0,
     tokenB: pool.token1,

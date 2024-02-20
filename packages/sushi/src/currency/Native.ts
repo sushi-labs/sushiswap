@@ -1,11 +1,10 @@
 import invariant from 'tiny-invariant'
-import { natives } from '../chain/index.js'
-
-import { Currency } from './Currency.js'
-import { Token } from './Token.js'
-import { type Type } from './Type.js'
-import { WNATIVE } from './constants/tokens.js'
-import { type SerializedNative, nativeSchema } from './zod.js'
+import { natives } from '../chain'
+import { Currency } from './Currency'
+import { Token } from './Token'
+import { type Type } from './Type'
+import { WNATIVE } from './tokens'
+import { type SerializedNative, nativeSchema } from './zod'
 
 export class Native extends Currency {
   public readonly id: string

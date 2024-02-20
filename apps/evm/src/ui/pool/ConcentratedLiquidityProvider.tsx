@@ -1,19 +1,5 @@
 'use client'
 
-import {
-  FeeAmount,
-  Position,
-  SushiSwapV3ChainId,
-  SushiSwapV3Pool,
-  TICK_SPACINGS,
-  TickMath,
-  encodeSqrtRatioX96,
-  getPriceRangeWithTokenRatio,
-  nearestUsableTick,
-  priceToClosestTick,
-  priceToNumber,
-  tickToPrice,
-} from '@sushiswap/v3-sdk'
 import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import {
   FC,
@@ -27,6 +13,11 @@ import {
 import { Bound, Field } from 'src/lib/constants'
 import { getTickToPrice, tryParseTick } from 'src/lib/functions'
 import {
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+} from 'sushi/config'
+import {
   Amount,
   Currency,
   Price,
@@ -36,6 +27,17 @@ import {
 } from 'sushi/currency'
 import { withoutScientificNotation } from 'sushi/format'
 import { Rounding } from 'sushi/math'
+import {
+  Position,
+  SushiSwapV3Pool,
+  TickMath,
+  encodeSqrtRatioX96,
+  getPriceRangeWithTokenRatio,
+  nearestUsableTick,
+  priceToClosestTick,
+  priceToNumber,
+  tickToPrice,
+} from 'sushi/pool'
 
 type FullRange = true
 
@@ -236,7 +238,7 @@ export function useConcentratedDerivedMintInfo({
   token1: Type | undefined
   baseToken: Type | undefined
   chainId: SushiSwapV3ChainId
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   existingPosition?: Position
 }): {
   pool?: SushiSwapV3Pool | null
@@ -773,7 +775,7 @@ export function useConcentratedDerivedMintInfo({
 export function useRangeHopCallbacks(
   baseCurrency: Currency | undefined,
   quoteCurrency: Currency | undefined,
-  feeAmount: FeeAmount | undefined,
+  feeAmount: SushiSwapV3FeeAmount | undefined,
   tickLower: number | undefined,
   tickUpper: number | undefined,
   pool?: SushiSwapV3Pool | undefined | null,

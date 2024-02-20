@@ -1,8 +1,8 @@
 import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
 import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
-import { LiquidityProviders, PoolCode } from '@sushiswap/router'
 import { Abi } from 'abitype'
 import { Token } from 'sushi/currency'
+import { LiquidityProviders, PoolCode } from 'sushi/router'
 import {
   Address,
   Hex,

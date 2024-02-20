@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
-
 import {
   filterTokens,
   getSortedTokensByQuery,

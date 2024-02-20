@@ -1,4 +1,3 @@
-import { ADDRESS_ZERO } from '@sushiswap/v3-sdk'
 import { Address, useContractRead, useContractReads } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
@@ -12,6 +11,7 @@ import {
   StargateChainId,
 } from 'sushi/config'
 import { Amount, Currency } from 'sushi/currency'
+import { zeroAddress } from 'viem'
 
 export const useStargateBridgeFees = ({
   amount,
@@ -100,7 +100,7 @@ export const useStargateBridgeFees = ({
   }, [amount, stargatePoolResults])
 
   return useContractRead({
-    address: stargatePoolResults?.[1]?.result ?? ADDRESS_ZERO,
+    address: stargatePoolResults?.[1]?.result ?? zeroAddress,
     functionName: 'getFees',
     args: useMemo(
       () =>

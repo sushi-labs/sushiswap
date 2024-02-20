@@ -3,7 +3,6 @@
 import { Pool } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
   SushiSwapV2PoolState,
@@ -15,6 +14,7 @@ import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { tryParseAmount } from 'sushi/currency'
 import { useTokensFromPool } from '../../lib/hooks'
 

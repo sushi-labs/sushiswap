@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { log } from '.'
+import { log } from './log'
 
 vi.spyOn(global.console, 'log')
 

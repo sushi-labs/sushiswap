@@ -1,4 +1,3 @@
-import { TridentConstantPool, TridentStablePool } from '@sushiswap/trident-sdk'
 import {
   DialogConfirm,
   DialogContent,
@@ -45,6 +44,7 @@ import {
 
 import { APPROVE_TAG_ADD_TRIDENT } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { TridentConstantPool, TridentStablePool } from 'sushi'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import { BentoBoxChainId } from 'sushi/config'

@@ -1,6 +1,5 @@
 import { ChainId } from '../chain'
-import { Token } from '../currency/Token.js'
-import { Type } from '../currency/Type.js'
+import { Token, Type } from '../currency'
 import {
   BUSD_ADDRESS,
   DAI_ADDRESS,
@@ -8,15 +7,8 @@ import {
   MAI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
-} from '../currency/constants/token-addresses.js'
-import {
-  BUSD,
-  DAI,
-  FRAX,
-  MAI,
-  USDC,
-  USDT,
-} from '../currency/constants/tokens.js'
+} from '../currency'
+import { BUSD, DAI, FRAX, MAI, USDC, USDT } from '../currency'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,

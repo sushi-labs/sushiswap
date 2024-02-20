@@ -14,12 +14,6 @@ import {
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  FeeAmount,
-  NonfungiblePositionManager,
-  Position,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
   getV3NonFungiblePositionManagerConractConfig,
   useAccount,
   useNetwork,
@@ -38,7 +32,9 @@ import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
+import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
+import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, UserRejectedRequestError } from 'viem'
 
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
@@ -49,7 +45,7 @@ interface AddSectionReviewModalConcentratedProps
     'noLiquidity' | 'position' | 'price' | 'pricesAtTicks' | 'ticksAtLimit'
   > {
   chainId: ChainId
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined

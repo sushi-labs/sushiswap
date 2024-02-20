@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
-
-import { MAX_SAFE_INTEGER, ONE, TWO, ZERO } from '../constants/index.js'
+import { MAX_SAFE_INTEGER, ONE, TWO, ZERO } from '../constants'
 
 /**
  * Computes floor(sqrt(value))

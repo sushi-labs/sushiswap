@@ -1,8 +1,8 @@
-import { convertTokenToBento } from '@sushiswap/tines'
-import { BridgeBento, RToken, Rebase } from '@sushiswap/tines'
 import { balanceOfAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
+import { convertTokenToBento } from 'sushi/tines'
+import { BridgeBento, RToken, Rebase } from 'sushi/tines'
 import { Address, readContracts } from 'wagmi'
 
 export enum BridgeBentoState {
