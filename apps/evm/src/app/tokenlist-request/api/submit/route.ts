@@ -83,9 +83,7 @@ export async function POST(request: NextRequest) {
 
   // Get latest commit for the new branch
   const {
-    data: {
-      commit: { sha: latestIconsSha },
-    },
+    data: { commit: { sha: latestIconsSha } },
   } = await octoKit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
     owner,
     repo: 'list',

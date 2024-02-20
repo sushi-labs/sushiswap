@@ -81,7 +81,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "@types/node": "18",
+    "@types/node": "20",
     "eslint": "8.43.0",
     "react": "18.2.0",
     "sushi": "workspace:*",
