@@ -124,10 +124,15 @@ export class TokenManager {
       this.addToken(newToken)
       return newToken
     } catch (_e) {
+      warnLog(
+        this.client.client.chain?.id,
+        `Token downloading error ${address} ${_e}`,
+      )
+
       // In the chance that there is an error upon decoding the contract result,
       // it could be likely that the contract data is represented as bytes32 instead
       // of a string.
-      if (_e instanceof ContractFunctionExecutionError) {
+      try {
         const [decimals, symbol, name] = await Promise.all([
           this.client.callValue(address, erc20Abi_bytes32, 'decimals'),
           this.client.callValue(address, erc20Abi_bytes32, 'symbol'),
@@ -143,12 +148,13 @@ export class TokenManager {
         })
         this.addToken(newToken)
         return newToken
+      } catch (_e) {
+        warnLog(
+          this.client.client.chain?.id,
+          `Token bytes32 downloading error ${address} ${_e}`
+        )
       }
 
-      warnLog(
-        this.client.client.chain?.id,
-        `Token downloading error ${address}`,
-      )
       return undefined
     }
   }
