@@ -32,6 +32,10 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "250m"
           volumeMounts:
             - mountPath: /app/cache
               name: extractor-{{ $value }}-cache

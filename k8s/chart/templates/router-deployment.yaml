@@ -22,12 +22,13 @@ spec:
             - containerPort: 80
           resources:
             requests:
+              memory: "500Mi"
               cpu: "1000m"
           startupProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 3
+            failureThreshold: 6
             periodSeconds: 10
           livenessProbe:
             httpGet:
@@ -35,7 +36,7 @@ spec:
               port: 80
             failureThreshold: 3
             periodSeconds: 10
-            timeoutSeconds: 10
+            timeoutSeconds: 3
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"

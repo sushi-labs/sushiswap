@@ -230,7 +230,7 @@ export const EXTRACTOR_CONFIG = {
     factoriesV3: [
       uniswapV3Factory(ChainId.ETHEREUM),
       sushiswapV3Factory(ChainId.ETHEREUM),
-      // pancakeswapV3Factory(ChainId.ETHEREUM),
+      pancakeswapV3Factory(ChainId.ETHEREUM),
     ],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
     cacheDir: './cache',
