@@ -4,6 +4,7 @@ import { Amount, Native, type Type } from 'sushi/currency'
 import { getAddress } from 'viem'
 
 import { useTokens } from './tokens'
+import ms from 'ms'
 
 export const NativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
@@ -32,8 +33,8 @@ export const useBalancesQuery = (
         response.json(),
       )
     },
-    staleTime: 900000, // 15 mins
-    cacheTime: 3600000, // 1hr
+    staleTime: ms('15m'), // 15 mins
+    cacheTime: ms('1h'), // 1hr
     enabled: Boolean(chainId && account && enabled),
     select,
   })
