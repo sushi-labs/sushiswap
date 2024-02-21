@@ -24,8 +24,8 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              memory: "2Gi"
               cpu: "1000m"
+              memory: "4Gi"
           startupProbe:
             httpGet:
               path: /health

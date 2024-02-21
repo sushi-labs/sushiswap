@@ -67,6 +67,7 @@ spec:
       name: extractor-{{ $value }}-cache
     spec:
       accessModes: ["ReadWriteOncePod"]
+      storageClassName: "premium-rwo"
       resources:
         requests:
           storage: 250Mi
