@@ -60,8 +60,6 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: SENTRY_ENVIRONMENT
-      nodeSelector:
-        cloud.google.com/compute-class: Scale-Out
   volumeClaimTemplates:
   - metadata:
       name: extractor-{{ $value }}-cache
