@@ -19,13 +19,18 @@ const prices: Record<Currency, Record<string, number>> = {
   [Currency.BITCOIN]: {},
 }
 
-setInterval(() => {
+const run = () => {
   const currentTime = Date.now()
   const elapsedSinceLastLog = currentTime - lastLogTime
   const shouldLog = elapsedSinceLastLog >= logInterval
   updatePrices(CHAIN_ID as ChainId, Currency.USD, shouldLog)
-  // updatePrices(CHAIN_ID, Currency.NATIVE) // TODO: disabled for now, multiply by any other currency instead
-}, priceUpdateInterval * 1_000)
+   // updatePrices(CHAIN_ID, Currency.NATIVE) // TODO: disabled for now, multiply by any other currency instead
+}
+
+setTimeout(() => {
+  run()
+  setTimeout(run, priceUpdateInterval * 1_000);
+}, priceUpdateInterval * 1_000);
 
 export const pricesHandler = (_client: ExtractorClient) => {
   client = _client
