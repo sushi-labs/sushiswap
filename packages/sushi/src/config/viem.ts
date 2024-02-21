@@ -613,11 +613,6 @@ export const publicClientConfig: Record<
   },
   [ChainId.ZETACHAIN]: {
     chain: zetachain,
-    transport: fallback(
-      zetachain.rpcUrls.default.http.map((url) => http(url)),
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://zetachain-mainnet-archive.allthatnode.com:8545'),
   },
 } as const
