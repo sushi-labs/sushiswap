@@ -534,7 +534,9 @@ export const publicClientConfig: Record<
   },
   [ChainId.MOONRIVER]: {
     chain: moonriver,
-    transport: http(moonriver.rpcUrls.default.http[0]),
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=moonriver&dkey=${drpcId}`,
+    ),
   },
   [ChainId.OPTIMISM]: {
     chain: optimism,

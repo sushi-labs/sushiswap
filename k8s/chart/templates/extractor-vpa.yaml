@@ -18,10 +18,10 @@ spec:
     containerPolicies:
       - containerName: extractor
         minAllowed:
-          cpu: 250m
-          memory: 500Mi
+          cpu: "250m"
+          memory: "2Gi"
         maxAllowed:
-          cpu: 1000m
-          memory: 2000Mi
+          cpu: "1000m"
+          memory: "4Gi"
         controlledResources: ["cpu", "memory"]
 {{- end }}

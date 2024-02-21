@@ -19,25 +19,29 @@ spec:
           image: extractor
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "4Gi"
           startupProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 30
-            periodSeconds: 10
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 20
           livenessProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 3
             periodSeconds: 10
             timeoutSeconds: 3
-          resources:
-            requests:
-              memory: "2000Mi"
-              cpu: "1000m"
+            successThreshold: 1
+            failureThreshold: 3
           volumeMounts:
-            - mountPath: /app/cacheq
+            - mountPath: /app/cache
               name: extractor-{{ $value }}-cache
           env:
             - name: CHAIN_ID
