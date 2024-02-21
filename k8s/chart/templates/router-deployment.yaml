@@ -15,8 +15,8 @@ spec:
       labels:
         app: router-{{ $value }}
     spec:
-      nodeSelector: 
-        cloud.google.com/compute-class: "Scale-Out"
+      nodeSelector:
+        cloud.google.com/compute-class: Scale-Out
       containers:
         - name: router
           image: router
@@ -24,24 +24,24 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: "250m"
-              memory: "1Gi"
+              cpu: "1000m"
+              memory: "4Gi"
           startupProbe:
-            httpGet:
-              path: /health
-              port: 80
-            periodSeconds: 10
-            timeoutSeconds: 3
-            successThreshold: 1
             failureThreshold: 60
-          livenessProbe:
             httpGet:
               path: /health
               port: 80
             periodSeconds: 10
-            timeoutSeconds: 3
             successThreshold: 1
+            timeoutSeconds: 3
+          livenessProbe:
             failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
           env:
             - name: CHAIN_ID
               value: "{{ $value }}"
