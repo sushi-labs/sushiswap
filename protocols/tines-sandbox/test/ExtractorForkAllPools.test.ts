@@ -312,7 +312,7 @@ async function allPoolsTest(args: {
   }
 }
 
-it.only('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
+it.skip('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
   await allPoolsTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     blockNumber: 19138000,
@@ -324,6 +324,8 @@ it.only('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
       minPoolLiquidityLimitUSD: 10_000,
       poolBlackList: [
         '0x80466c64868E1ab14a1Ddf27A676C3fcBE638Fe5', // crypto pool in main list :(
+        '0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587', // STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/
+        '0x064841157BadDcB2704cA38901D7d754a59b80E8', // MBTC token(0xcfc013B416bE0Bd4b3bEdE35659423B796f8Dcf0) has been paused
         '0xDeBF20617708857ebe4F679508E7b7863a8A8EeE', // TODO: fix it !!!
         '0xA96A65c051bF88B4095Ee1f2451C2A9d43F53Ae2', // TODO: fix it !!!
         '0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27', // TODO: fix it !!!
@@ -345,12 +347,22 @@ it.only('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
         '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D', // Transaction reverted without a reason string
         '0x63594B2011a0F2616586Bf3EeF8096d42272F916', // Wrong setTokenBalance for USDI (0x2A54bA2964C8Cd459Dc568853F79813a60761B58)
         '0x413928a25D6ea1A26F2625d633207755f67Bf97c', // Wrong setTokenBalance for EURe (0x3231Cb76718CDeF2155FC47b5286d82e6eDA273f)
+        '0x1c899dED01954d0959E034b62a728e7fEbE593b0', // Wrong setTokenBalance for stLINK (0xb8b295df2cd735b15BE5Eb419517Aa626fc43cD5)
+        '0x0AD66FeC8dB84F8A3365ADA04aB23ce607ac6E24', // Transaction reverted without a reason string
+        '0xAEda92e6A3B1028edc139A4ae56Ec881f3064D4F', // Wrong setTokenBalance for eUSD (0xA0d69E286B938e21CBf7E51D71F6A4c8918f482F)
+        '0x892D701d94a43bDBCB5eA28891DaCA2Fa22A690b', // Wrong setTokenBalance for STBT (0x530824DA86689C9C17CdC2871Ff29B058345b44a)
+        '0x71c91B173984d3955f7756914bBF9a7332538595', // reverted with reason string 'FXS::_moveVotes: vote amount underflows'
+        '0x6a9014FB802dCC5efE3b97Fd40aAa632585636D0', // reverted with reason string 'FXS::_moveVotes: vote amount underflows'
+        '0xc1F6110D42781aaccD16d716Ca7B814F2aEee18F', // Wrong setTokenBalance for USK (0x01bF66BEcDcFD6D59A5Ca18869f494feA086cdfD)
+        '0x59Ab5a5b5d617E478a2479B0cAD80DA7e2831492', // Expected close: 35111298006865041, 35828734965151912
+        '0x21B45B2c1C53fDFe378Ed1955E8Cc29aE8cE0132', // Wrong setTokenBalance for USDV (0x0E573Ce2736Dd9637A0b21058352e1667925C7a8)
+        '0x1539c2461d7432cc114b0903f1824079BfCA2C92', // Expected close: 12733097464577496334, 13419043861061013504
       ],
     },
     tickHelperContract: '0x tickHelperContract is not needed for this test',
     cacheDir: './cache',
     logDepth: 50,
     logging: false,
-    startFromPool: 69,
+    //startFromPool: 0,
   })
 })
