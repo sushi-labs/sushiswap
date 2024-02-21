@@ -15,7 +15,7 @@ spec:
         app: extractor-{{ $value }}
     spec:
       nodeSelector: 
-        cloud.google.com/compute-class: "Balanced"
+        cloud.google.com/compute-class: "Scale-Out"
       containers:
         - name: extractor
           image: extractor
