@@ -1,4 +1,6 @@
+import type { ChainId } from 'sushi/chain'
 import { getChainIdAddressFromId } from 'sushi/format'
+import type { Address } from 'viem'
 import { type getSteerVaultFromDB } from '../../../api/steer-vault/vault'
 import { EVM_APP_BASE_URL } from '../../../constants'
 import { type GetApiInputFromOutput } from '../../../types'
@@ -15,13 +17,13 @@ export type GetSteerVaultArgs =
   | string
 
 export const getSteerVaultUrl = (args: GetSteerVaultArgs) => {
-  let chainId
-  let address
+  let chainId: ReturnType<typeof getChainIdAddressFromId>['chainId']
+  let address: ReturnType<typeof getChainIdAddressFromId>['address']
 
   if (typeof args === 'string') {
     ;({ chainId, address } = getChainIdAddressFromId(args))
   } else {
-    ;[chainId, address] = [args.chainId, args.address]
+    ;[chainId, address] = [args.chainId as ChainId, args.address as Address]
   }
 
   return `${EVM_APP_BASE_URL}/pool/api/steer-vault/${chainId}/${address}`

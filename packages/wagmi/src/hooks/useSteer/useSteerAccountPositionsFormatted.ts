@@ -33,7 +33,7 @@ export const useSteerAccountPositionsFormatted = ({
         chainIds: STEER_ENABLED_NETWORKS as unknown as number[],
         orderBy: 'reserveUSD',
         orderDir: 'desc',
-        isEnabled: true,
+        onlyEnabled: false,
       })
 
       const vaultIds = vaults.map((el) => el.id)

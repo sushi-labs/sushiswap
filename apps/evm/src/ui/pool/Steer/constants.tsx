@@ -14,7 +14,7 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
   [SteerStrategy.ClassicRebalance]: {
     name: 'Classic Rebalance Pool',
     description:
-      'This strategy makes a position of a fixed size centered around the current price. This position is maintained until the current price leaves the position range. The position then rebalances and makes a new position centered around the new current price. Factoring in the current price allows for reduced gas costs, only executing when the position is out of range.',
+      'This strategy makes a position of a fixed size centered around the current price. This position is maintained until the current price leaves the position range. The position then rebalances and makes a new position centered around the new current price.',
   },
   [SteerStrategy.DeltaNeutralStables]: {
     name: 'Delta Neutral Pool',
@@ -38,7 +38,7 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
   [SteerStrategy.MovingVolatilityChannelMedium]: {
     name: 'Moving Volatility Pool',
     description:
-      'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility and can help identify trends useful for providing liquidity. The Keltner Channel is a useful tool for LPs seeking to make informed decisions based on market volatility.',
+      'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility.',
   },
   [SteerStrategy.StaticStable]: {
     name: 'Stable Pool',
@@ -68,11 +68,11 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
   [SteerStrategy.KeltnerAlgo]: {
     name: 'Keltner Channel Pool',
     description:
-      'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility and can help identify trends useful for providing liquidity.',
+      'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility.',
   },
   [SteerStrategy.MovingVolatilityChannel]: {
     name: 'Moving Volatility Pool',
     description:
-      'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility and can help identify trends useful for providing liquidity. The Keltner Channel is a useful tool for LPs seeking to make informed decisions based on market volatility.',
+      'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility.',
   },
 }
