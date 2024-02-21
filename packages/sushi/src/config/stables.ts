@@ -62,8 +62,8 @@ export const STABLES = {
     USDT[ChainId.BSC],
     DAI[ChainId.BSC],
     BUSD[ChainId.BSC],
-    MIM[ChainId.BSC],
-    FRAX[ChainId.BSC],
+    // MIM[ChainId.BSC],
+    // FRAX[ChainId.BSC],
   ],
   [ChainId.BTTC]: [
     USDC[ChainId.BTTC],
