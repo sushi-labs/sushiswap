@@ -582,7 +582,10 @@ export const SmartPoolsTable = () => {
           enhancing trading efficiency by providing deeper liquidity around the
           current price, increasing Liquidity Providers (LP) fee earnings. To
           learn more about Smart Pools, click{' '}
-          <LinkExternal href="https://www.sushi.com/blog/faq-smart-pools">
+          <LinkExternal
+            href="https://www.sushi.com/blog/faq-smart-pools"
+            target="_blank"
+          >
             here
           </LinkExternal>
           .

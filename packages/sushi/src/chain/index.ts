@@ -117,6 +117,7 @@ export class Chain implements Chain {
         ...(this.explorers ?? []),
       ]
     } else if (data.chainId === ChainId.FILECOIN) {
+      this.name = 'Filecoin'
       this.explorers?.sort((explorer) => (explorer.name === 'Filfox' ? -1 : 1))
     } else if (data.chainId === ChainId.ZETACHAIN) {
       this.name = 'ZetaChain'

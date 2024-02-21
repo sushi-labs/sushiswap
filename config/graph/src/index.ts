@@ -37,6 +37,12 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.BTTC,
   ChainId.FILECOIN,
   ChainId.ZETACHAIN,
+  ChainId.THUNDERCORE,
+  ChainId.CORE,
+  ChainId.HAQQ,
+  ChainId.OPTIMISM,
+  // ChainId.LINEA,
+  // ChainId.POLYGON_ZKEVM,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -307,6 +313,10 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'sushi-v2/sushiswap-bttc',
   [ChainId.FILECOIN]: 'sushiswap/sushiswap-filecoin',
   [ChainId.ZETACHAIN]: 'sushiswap-zetachain/1.0.0/gn',
+  [ChainId.THUNDERCORE]: 'sushi-v2/sushiswap-thundercore',
+  [ChainId.CORE]: 'sushi-v2/sushiswap-core',
+  [ChainId.HAQQ]: 'sushi/sushiswap-haqq',
+  [ChainId.OPTIMISM]: 'sushi-subgraphs/sushiswap-optimism',
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
