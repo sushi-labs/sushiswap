@@ -312,7 +312,7 @@ async function allPoolsTest(args: {
   }
 }
 
-it.skip('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
+it.only('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
   await allPoolsTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     blockNumber: 19138000,
@@ -330,20 +330,27 @@ it.skip('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
         '0x2dded6Da1BF5DBdF597C45fcFaa3194e53EcfeAF', // TODO: fix it !!!
         '0x06364f10B501e868329afBc005b3492902d6C763', // TODO: fix it !!!
         '0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C', // TODO: fix it !!!
-        '0xC18cC39da8b11dA8c3541C598eE022258F9744da', // TODO: fix it !!! Wrong setTokenBalance for RSV (0x196f4727526eA7FB1e17b2071B3d8eAA38486988)
+        '0xC18cC39da8b11dA8c3541C598eE022258F9744da', // Wrong setTokenBalance for RSV (0x196f4727526eA7FB1e17b2071B3d8eAA38486988)
         '0xF9440930043eb3997fc70e1339dBb11F341de7A8', // TODO: fix it !!!
         '0x618788357D0EBd8A37e763ADab3bc575D54c2C7d', // TODO: fix it !!!
         '0xBfAb6FA95E0091ed66058ad493189D2cB29385E6', // TODO: fix it !!!
-        '0x8461A004b50d321CB22B7d034969cE6803911899', // TODO: fix it !!! Wrong setTokenBalance for sKRW (0x269895a3dF4D73b077Fc823dD6dA1B95f72Aaf9B)
+        '0x8461A004b50d321CB22B7d034969cE6803911899', // Wrong setTokenBalance for sKRW (0x269895a3dF4D73b077Fc823dD6dA1B95f72Aaf9B)
         '0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577', // Expected close: 3285358155081594300, 3285468191978248192
         '0x87650D7bbfC3A9F10587d7778206671719d9910D', // Transaction reverted without a reason string
         '0x8818a9bb44Fbf33502bE7c15c500d0C783B73067', // Wrong setTokenBalance for sJPY (0xF6b1C627e95BFc3c1b4c9B825a032Ff0fBf3e07d)
+        '0x3F1B0278A9ee595635B61817630cC19DE792f506', // Wrong setTokenBalance for sAUD (0xF48e200EAF9906362BB1442fca31e0835773b8B4)
+        '0xD6Ac1CB9019137a896343Da59dDE6d097F710538', // Wrong setTokenBalance for sGBP (0x97fe22E7341a0Cd8Db6F6C021A24Dc8f4DAD855F)
+        '0x9c2C8910F113181783c249d8F6Aa41b51Cde0f0c', // Wrong setTokenBalance for sCHF (0x0F83287FF768D1c1e17a42F44d644D7F22e8ee1d)
+        '0x8c524635d52bd7b1Bd55E062303177a7d916C046', // Transaction reverted without a reason string
+        '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D', // Transaction reverted without a reason string
+        '0x63594B2011a0F2616586Bf3EeF8096d42272F916', // Wrong setTokenBalance for USDI (0x2A54bA2964C8Cd459Dc568853F79813a60761B58)
+        '0x413928a25D6ea1A26F2625d633207755f67Bf97c', // Wrong setTokenBalance for EURe (0x3231Cb76718CDeF2155FC47b5286d82e6eDA273f)
       ],
     },
     tickHelperContract: '0x tickHelperContract is not needed for this test',
     cacheDir: './cache',
     logDepth: 50,
     logging: false,
-    //startFromPool: 45,
+    startFromPool: 69,
   })
 })
