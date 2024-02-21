@@ -10,8 +10,6 @@ import { Currency, allPricesSchema, singleAddressSchema } from './schema'
 let client: ExtractorClient
 
 const priceUpdateInterval = 30 // SECONDS
-const logInterval = 30 * 60 * 1000 // 30 MINUTES in milliseconds
-let lastLogTime = Date.now() // Initialize last log time, unix ms
 const prices: Record<Currency, Record<string, number>> = {
   [Currency.USD]: {},
   [Currency.NATIVE]: {},
@@ -19,18 +17,11 @@ const prices: Record<Currency, Record<string, number>> = {
   [Currency.BITCOIN]: {},
 }
 
-const run = () => {
-  const currentTime = Date.now()
-  const elapsedSinceLastLog = currentTime - lastLogTime
-  const shouldLog = elapsedSinceLastLog >= logInterval
-  updatePrices(CHAIN_ID as ChainId, Currency.USD, shouldLog)
-   // updatePrices(CHAIN_ID, Currency.NATIVE) // TODO: disabled for now, multiply by any other currency instead
-}
-
-setTimeout(() => {
-  run()
+function run() {
+  updatePrices(CHAIN_ID as ChainId, Currency.USD)
   setTimeout(run, priceUpdateInterval * 1_000);
-}, priceUpdateInterval * 1_000);
+}
+run()
 
 export const pricesHandler = (_client: ExtractorClient) => {
   client = _client
@@ -63,20 +54,16 @@ export const priceByAddressHandler = (_client: ExtractorClient) => {
 function updatePrices(
   chainId: ChainId,
   currency: Currency,
-  logging = false,
 ): void {
   try {
     const startTime = performance.now()
     const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
     prices[currency] = getPrices(chainId, currency, pools)
-    if (logging) {
-      console.log(
-        `updatePrices(${currency}) took ${
-          (performance.now() - startTime) / 1000
-        } seconds. Pool count: ${pools.length}`,
-      )
-      lastLogTime = startTime
-    }
+    console.log(
+      `updatePrices(${currency}) took ${
+        (performance.now() - startTime) / 1000
+      } seconds. Pool count: ${pools.length}`,
+    )
   } catch (e) {
     console.error(e)
   }
