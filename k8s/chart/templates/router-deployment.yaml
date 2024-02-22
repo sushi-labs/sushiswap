@@ -15,6 +15,8 @@ spec:
       labels:
         app: router-{{ $value }}
     spec:
+      # nodeSelector:
+      #   cloud.google.com/compute-class: Scale-Out
       containers:
         - name: router
           image: router
@@ -22,21 +24,22 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: "1000m"
-              memory: "1Gi"
+              cpu: "1"
+              ephemeral-storage: 1Gi
+              memory: 1Gi
           startupProbe:
-            failureThreshold: 60
             httpGet:
               path: /health
               port: 80
+            failureThreshold: 60
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 10
           livenessProbe:
-            failureThreshold: 3
             httpGet:
               path: /health
               port: 80
+            failureThreshold: 3
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 10
