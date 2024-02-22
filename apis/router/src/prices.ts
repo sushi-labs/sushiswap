@@ -27,29 +27,34 @@ export function updatePrices(client: ExtractorClient, currency = Currency.USD) {
     const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
     prices[currency] = getPrices(CHAIN_ID, currency, pools)
     console.log(
-      `updatePrices(${currency}): ${pools.length} pools (${Math.round(performance.now() - start)}ms cpu time)`,
+      `updatePrices(${currency}): ${pools.length} pools (${Math.round(
+        performance.now() - start,
+      )}ms cpu time)`,
     )
-    setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000);
+    setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
   } catch (e) {
     console.error(e)
     throw e
   }
 }
 
-function getPrices(chainId: ExtractorSupportedChainId, currency: Currency, pools: RPool[]) {
-  if (
-    currency === Currency.USD &&
-    STABLES[chainId] === undefined
-  ) {
+function getPrices(
+  chainId: ExtractorSupportedChainId,
+  currency: Currency,
+  pools: RPool[],
+) {
+  if (currency === Currency.USD && STABLES[chainId] === undefined) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
 
   const bases =
     currency === Currency.USD
-      ? (STABLES[chainId ] as unknown as RToken[])
+      ? (STABLES[chainId] as unknown as RToken[])
       : ([WNATIVE[chainId]] as unknown as RToken[])
 
-  const prices = calculateTokenPrices(bases, pools, 1000)
+  const minimumLiquidity = currency === Currency.USD ? 1000 : 1
+
+  const prices = calculateTokenPrices(bases, pools, minimumLiquidity)
 
   return prices
 }
@@ -57,7 +62,7 @@ function getPrices(chainId: ExtractorSupportedChainId, currency: Currency, pools
 function calculateTokenPrices(
   bases: RToken[],
   pools: RPool[],
-  minimumLiquidityUsd: number,
+  minimumLiquidity: number,
 ) {
   const prices: Map<string, Map<string, number>> = new Map()
   const allTokens: Set<string> = new Set()
@@ -67,7 +72,7 @@ function calculateTokenPrices(
     const currentPrices = calcTokenAddressPrices(
       pools,
       base,
-      minimumLiquidityUsd,
+      minimumLiquidity * 10 ** base.decimals,
       // true,
     )
     const currentPricesMap = new Map<string, number>()
