@@ -22,15 +22,20 @@ export const prices: Record<Currency, Record<string, number>> = {
 }
 
 export function updatePrices(client: ExtractorClient, currency = Currency.USD) {
-  const start = performance.now()
-  const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
-  prices[currency] = getPrices(CHAIN_ID, currency, pools)
-  console.log(
-    `updatePrices(${currency}): ${pools.length} pools (${Math.round(
-      performance.now() - start,
-    )}ms cpu time)`,
-  )
-  setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
+  try {
+    const start = performance.now()
+    const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
+    prices[currency] = getPrices(CHAIN_ID, currency, pools)
+    console.log(
+      `updatePrices(${currency}): ${pools.length} pools (${Math.round(
+        performance.now() - start,
+      )}ms cpu time)`,
+    )
+  } catch (e) {
+    console.log("updatePrices error", e)
+  } finally {
+    setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
+  }
 }
 
 function getPrices(
