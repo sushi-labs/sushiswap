@@ -468,15 +468,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.BOBA_AVAX]: {
     chain: bobaAvax,
-    transport: fallback(
-      [
-        http(bobaAvax.rpcUrls.default.http[0]),
-        http('https://replica.avax.boba.network'),
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://avax.boba.network'),
   },
   [ChainId.BOBA_BNB]: {
     chain: bobaBnb,
@@ -568,14 +560,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.TELOS]: {
     chain: telos,
-    transport: fallback(
-      [
-        http(telos.rpcUrls.default.http[0]),
-        http('https://rpc1.eu.telos.net/evm'),
-        http('https://rpc1.us.telos.net/evm'),
-      ],
-      { rank: true },
-    ),
+    transport: http('https://mainnet.telos.net/evm'),
   },
   [ChainId.PALM]: {
     chain: palm,
