@@ -25,7 +25,9 @@ if (!SENTRY_ENVIRONMENT) {
   throw new Error('SENTRY_ENVIRONMENT is not set')
 }
 
-export const CHAIN_ID = Number(process.env['CHAIN_ID']) as ExtractorSupportedChainId
+export const CHAIN_ID = Number(
+  process.env['CHAIN_ID'],
+) as ExtractorSupportedChainId
 if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
 }
