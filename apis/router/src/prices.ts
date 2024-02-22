@@ -22,20 +22,15 @@ export const prices: Record<Currency, Record<string, number>> = {
 }
 
 export function updatePrices(client: ExtractorClient, currency = Currency.USD) {
-  try {
-    const start = performance.now()
-    const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
-    prices[currency] = getPrices(CHAIN_ID, currency, pools)
-    console.log(
-      `updatePrices(${currency}): ${pools.length} pools (${Math.round(
-        performance.now() - start,
-      )}ms cpu time)`,
-    )
-    setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
-  } catch (e) {
-    console.error(e)
-    throw e
-  }
+  const start = performance.now()
+  const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
+  prices[currency] = getPrices(CHAIN_ID, currency, pools)
+  console.log(
+    `updatePrices(${currency}): ${pools.length} pools (${Math.round(
+      performance.now() - start,
+    )}ms cpu time)`,
+  )
+  setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
 }
 
 function getPrices(
@@ -43,10 +38,6 @@ function getPrices(
   currency: Currency,
   pools: RPool[],
 ) {
-  if (currency === Currency.USD && STABLES[chainId] === undefined) {
-    throw new Error(`ChainId ${chainId} has no stables configured`)
-  }
-
   const bases =
     currency === Currency.USD
       ? (STABLES[chainId] as unknown as RToken[])
