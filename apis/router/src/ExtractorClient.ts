@@ -86,7 +86,11 @@ export class ExtractorClient extends EventEmitter {
             this.tokenMap.size
           } tokens (${Math.round(performance.now() - start)}ms cpu time)`,
         )
+        let firstPoolsUpdate = this.lastUpdatedTimestamp === 0        
         this.lastUpdatedTimestamp = Date.now()
+        if (firstPoolsUpdate) {
+          this.emit('firstPoolsUpdate')
+        }
       } else {
         console.error(`Pool download failed, status=${resp.status}`)
       }
