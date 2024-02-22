@@ -1,4 +1,4 @@
-import { http, type Address, type PublicClientConfig, fallback } from 'viem'
+import { http, type Address, type PublicClientConfig } from 'viem'
 import {
   arbitrum,
   // arbitrumGoerli,
