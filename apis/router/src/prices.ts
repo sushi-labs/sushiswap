@@ -1,4 +1,3 @@
-import { ChainId } from 'sushi/chain'
 import { STABLES } from 'sushi/config'
 import { WNATIVE } from 'sushi/currency'
 import { RPool, RToken, calcTokenAddressPrices } from 'sushi/tines'
