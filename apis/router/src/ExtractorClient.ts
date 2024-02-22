@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events'
 import { ChainId } from 'sushi/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
@@ -22,7 +23,7 @@ function tokenPairId(t0: string | Type, t1: string | Type) {
   return id0 < id1 ? id0 + id1 : id1 + id0
 }
 
-export class ExtractorClient {
+export class ExtractorClient extends EventEmitter {
   chainId: ChainId
   extractorServer: string
   poolUpdateInterval: number
@@ -39,6 +40,7 @@ export class ExtractorClient {
     poolUpdateInterval: number,
     requestedPairsUpdateInterval: number,
   ) {
+    super()
     this.chainId = chainId
     this.extractorServer = extractorServer
     this.poolUpdateInterval = poolUpdateInterval

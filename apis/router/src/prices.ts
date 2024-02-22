@@ -1,4 +1,4 @@
-import { STABLES } from 'sushi/config'
+import { ExtractorSupportedChainId, STABLES } from 'sushi/config'
 import { WNATIVE } from 'sushi/currency'
 import { RPool, RToken, calcTokenAddressPrices } from 'sushi/tines'
 import { ExtractorClient } from './ExtractorClient'
@@ -36,18 +36,18 @@ export function updatePrices(client: ExtractorClient, currency = Currency.USD) {
   }
 }
 
-function getPrices(chainId: number, currency: Currency, pools: RPool[]) {
+function getPrices(chainId: ExtractorSupportedChainId, currency: Currency, pools: RPool[]) {
   if (
     currency === Currency.USD &&
-    STABLES[chainId as keyof typeof STABLES] === undefined
+    STABLES[chainId] === undefined
   ) {
     throw new Error(`ChainId ${chainId} has no stables configured`)
   }
 
   const bases =
     currency === Currency.USD
-      ? (STABLES[chainId as keyof typeof STABLES] as unknown as RToken[])
-      : ([WNATIVE[chainId as keyof typeof WNATIVE]] as unknown as RToken[])
+      ? (STABLES[chainId ] as unknown as RToken[])
+      : ([WNATIVE[chainId]] as unknown as RToken[])
 
   const prices = calculateTokenPrices(bases, pools, 1000)
 

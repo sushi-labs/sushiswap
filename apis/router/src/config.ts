@@ -1,4 +1,5 @@
 import { ChainId } from 'sushi/chain'
+import { ExtractorSupportedChainId, isExtractorSupportedChainId } from 'sushi/config'
 
 // If token is unknown - how much ms to wait it's pools from the extractor
 export const POOL_FETCH_TIMEOUT = 3_000
@@ -24,7 +25,7 @@ if (!SENTRY_ENVIRONMENT) {
   throw new Error('SENTRY_ENVIRONMENT is not set')
 }
 
-export const CHAIN_ID = Number(process.env['CHAIN_ID'])
+export const CHAIN_ID = Number(process.env['CHAIN_ID']) as ExtractorSupportedChainId
 if (!CHAIN_ID) {
   throw new Error('CHAIN_ID is not set')
 }
