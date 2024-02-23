@@ -1,3 +1,5 @@
+'use client'
+
 import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'

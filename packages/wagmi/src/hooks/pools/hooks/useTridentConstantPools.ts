@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { TridentConstantPool, computeTridentConstantPoolAddress } from 'sushi'
 import {
   tridentConstantPoolAbi,
@@ -8,8 +8,9 @@ import {
 } from 'sushi/abi'
 import { Amount, Currency, Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
-import { Address, useContractReads } from 'wagmi'
+import { useBlockNumber, useReadContracts } from 'wagmi'
 
+import { Address } from 'viem'
 import { TridentConstantPoolState } from '../actions'
 import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
 
@@ -28,14 +29,14 @@ interface UseGetTridentConstantPoolsReturn {
 }
 
 type Config = Omit<
-  NonNullable<Parameters<typeof useContractReads>['0']>,
+  NonNullable<Parameters<typeof useReadContracts>['0']>,
   'contracts'
 >
 
 export function useGetTridentConstantPools(
   chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config: Config = { enabled: true },
+  config: Config = { query: { enabled: true } },
 ): UseGetTridentConstantPoolsReturn {
   const contract = useTridentConstantPoolFactoryContract(chainId)
   const pairsUnique = useMemo<[Token, Token][]>(() => {
@@ -63,7 +64,8 @@ export function useGetTridentConstantPools(
     data: callStatePoolsCount,
     isLoading: callStatePoolsCountLoading,
     isError: callStatePoolsCountError,
-  } = useContractReads({
+    refetch: callStatePoolsCountRefetch,
+  } = useReadContracts({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
       address: contract?.address as Address,
@@ -71,8 +73,10 @@ export function useGetTridentConstantPools(
       functionName: 'poolsCount',
       args: el as [Address, Address],
     })),
-    enabled: Boolean(pairsUniqueAddr.length > 0 && config?.enabled),
-    watch: !config?.enabled,
+
+    query: {
+      enabled: Boolean(pairsUniqueAddr.length > 0 && config?.query?.enabled),
+    },
   })
 
   const callStatePoolsCountProcessed = useMemo(() => {
@@ -103,7 +107,8 @@ export function useGetTridentConstantPools(
     data: callStatePools,
     isLoading: callStatePoolsLoading,
     isError: callStatePoolsError,
-  } = useContractReads({
+    refetch: callStatePoolsRefetch,
+  } = useReadContracts({
     contracts: useMemo(() => {
       if (!callStatePoolsCountProcessed) return []
       return callStatePoolsCountProcessed.map((args) => ({
@@ -115,13 +120,14 @@ export function useGetTridentConstantPools(
       }))
     }, [callStatePoolsCountProcessed, chainId, contract?.address]),
 
-    enabled: Boolean(
-      callStatePoolsCountProcessed &&
-        callStatePoolsCountProcessed?.length > 0 &&
-        config?.enabled,
-    ),
-    watch: !config?.enabled,
-    select: (results) => results.map((r) => r.result),
+    query: {
+      enabled: Boolean(
+        callStatePoolsCountProcessed &&
+          callStatePoolsCountProcessed?.length > 0 &&
+          config?.query?.enabled,
+      ),
+      select: (results) => results.map((r) => r.result),
+    },
   })
 
   const pools = useMemo(() => {
@@ -163,12 +169,29 @@ export function useGetTridentConstantPools(
     data: reservesAndFees,
     isLoading: reservesAndFeesLoading,
     isError: reservesAndFeesError,
-  } = useContractReads({
+    refetch: reservesAndFeesRefetch,
+  } = useReadContracts({
     contracts,
-    enabled: poolsAddresses.length > 0 && config?.enabled,
-    watch: !config?.enabled,
-    select: (results) => results.map((r) => r.result),
+    query: {
+      enabled: poolsAddresses.length > 0 && config?.query?.enabled,
+      select: (results) => results.map((r) => r.result),
+    },
   })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      callStatePoolsCountRefetch()
+      callStatePoolsRefetch()
+      reservesAndFeesRefetch()
+    }
+  }, [
+    blockNumber,
+    callStatePoolsCountRefetch,
+    callStatePoolsRefetch,
+    reservesAndFeesRefetch,
+  ])
 
   return useMemo(() => {
     return {
@@ -272,18 +295,28 @@ export function useTridentConstantPools(
     [tridentConstantPoolFactory, input],
   )
 
-  const { data } = useContractReads({
+  const { data, refetch } = useReadContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address,
       abi: tridentConstantPoolAbi,
       functionName: 'getReserves' as const,
     })),
-    enabled: poolsAddresses.length > 0,
-    watch: true,
-    keepPreviousData: true,
-    select: (results) => results.map((r) => r.result),
+
+    query: {
+      enabled: poolsAddresses.length > 0,
+      keepPreviousData: true,
+      select: (results) => results.map((r) => r.result),
+    },
   })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      refetch()
+    }
+  }, [blockNumber, refetch])
 
   return useMemo(() => {
     if (poolsAddresses.length === 0)

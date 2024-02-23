@@ -17,7 +17,7 @@ import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
 import { Address, getAddress } from 'viem'
-import { useContractReads } from 'wagmi'
+import { useReadContracts } from 'wagmi'
 
 interface UseBondMarketDetails {
   bond: Bond
@@ -35,7 +35,7 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
     chainId: enabled ? bond.chainId : undefined,
   })
 
-  const { data: poolData } = useContractReads({
+  const { data: poolData } = useReadContracts({
     allowFailure: false,
     contracts: [
       {
@@ -51,22 +51,24 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
         address: bond.quoteToken.address,
       },
     ],
-    enabled: Boolean(enabled && bond.quoteToken.pool),
+    query: {
+      enabled: Boolean(enabled && bond.quoteToken.pool),
+    },
   })
 
-  const { data: vaultData } = useContractReads({
+  const { data: vaultData } = useReadContracts({
     allowFailure: false,
     contracts: bond.quoteToken.vault
       ? [
           getVaultsReservesContracts({
             vaultIds: [bond.quoteToken.vault.id],
-          })?.[0],
+          })[0],
           getTotalSuppliesContracts({
             vaultIds: [bond.quoteToken.vault.id],
           })[0],
         ]
       : undefined,
-    enabled: Boolean(enabled && bond.quoteToken.vault),
+    query: { enabled: Boolean(enabled && bond.quoteToken.vault) },
   })
 
   return useMemo(() => {
@@ -156,7 +158,7 @@ export const useBondMarketDetails = ({
     ] as const
   }, [bond.id, bond.chainId])
 
-  const { data } = useContractReads({
+  const { data } = useReadContracts({
     allowFailure: false,
     contracts,
     enabled: Boolean(enabled),

@@ -1,7 +1,7 @@
 'use client'
 
-import { useContractRead } from 'wagmi'
-
+import { useEffect } from 'react'
+import { useBlockNumber, useReadContract } from 'wagmi'
 import { getMulticall3ContractConfig } from '../contracts'
 
 // TODO: Readd direct export, not sure why it's not working
@@ -9,10 +9,21 @@ export const useCurrentBlockTimestamp = (
   chainId: number | undefined,
   enabled = true,
 ) => {
-  return useContractRead({
+  const query = useReadContract({
     ...getMulticall3ContractConfig(chainId),
     functionName: 'getCurrentBlockTimestamp',
-    enabled,
-    watch: true,
+    query: {
+      enabled,
+    },
   })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      query.refetch()
+    }
+  }, [blockNumber, query.refetch])
+
+  return query
 }

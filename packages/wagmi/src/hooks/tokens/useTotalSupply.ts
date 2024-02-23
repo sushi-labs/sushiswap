@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
-import { Address, erc20ABI, useContractReads } from 'wagmi'
+import { Address, erc20Abi } from 'viem'
+import { useBlockNumber, useReadContracts } from 'wagmi'
 
 function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {
   return token?.isToken && totalSupply
@@ -19,19 +20,28 @@ export const useMultipleTotalSupply = (
         return {
           address: token.wrapped.address as Address,
           chainId: token.chainId,
-          abi: erc20ABI,
+          abi: erc20Abi,
           functionName: 'totalSupply' as const,
         }
       }) || []
     )
   }, [tokens])
 
-  const { data } = useContractReads({
+  const { data, refetch } = useReadContracts({
     contracts,
-    enabled: tokens && tokens.length > 0,
-    watch: true,
-    keepPreviousData: true,
+    query: {
+      enabled: tokens && tokens.length > 0,
+      keepPreviousData: true,
+    },
   })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      refetch()
+    }
+  }, [blockNumber, refetch])
 
   return useMemo(() => {
     return data

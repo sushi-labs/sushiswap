@@ -1,6 +1,7 @@
 import {
+  AbiStateMutability,
   Address,
-  ContractFunctionConfig,
+  ContractFunctionParameters,
   PublicClient,
   getContract,
   parseAbi,
@@ -258,10 +259,11 @@ export async function getAllSupportedCurvePools(
     chainId as keyof typeof CURVE_FACTORY_ADDRESSES
   ]?.map(async (factory) => {
     const factoryContract = getContract({
-      address: factory as '0x${string}',
+      address: factory as `0x${string}`,
       abi: factoryABI,
-      // @ts-ignore
-      publicClient,
+      client: {
+        public: publicClient,
+      },
     })
 
     const poolNum = await factoryContract.read.pool_count()
@@ -491,13 +493,14 @@ export class CurveProvider extends LiquidityProvider {
   ): Promise<PoolCode[]> {
     const poolArray = Array.from(pools.entries())
     const poolsMulticall = <
-      T extends ContractFunctionConfig<
+      T extends ContractFunctionParameters<
         (typeof curvePoolABI)[keyof typeof curvePoolABI]
       >['functionName'],
     >(
       functionName: T,
-      args?: ContractFunctionConfig<
+      args?: ContractFunctionParameters<
         (typeof curvePoolABI)[keyof typeof curvePoolABI],
+        AbiStateMutability,
         T
       >['args'],
     ) => {

@@ -1,8 +1,10 @@
 'use client'
 
+import { useEffect } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
-import { Address, erc20ABI, useContractRead } from 'wagmi'
+import { Address, erc20Abi } from 'viem'
+import { useBlockNumber, useReadContract } from 'wagmi'
 
 interface UseTokenAllowance {
   token?: Token
@@ -19,18 +21,29 @@ export const useTokenAllowance = ({
   spender,
   enabled = true,
 }: UseTokenAllowance) => {
-  return useContractRead({
+  const query = useReadContract({
     chainId,
     address: token ? (token.address as Address) : undefined,
-    abi: erc20ABI,
+    abi: erc20Abi,
     functionName: 'allowance',
     args: [owner as Address, spender as Address],
-    watch: true,
-    enabled: Boolean(token && owner && spender && enabled && chainId),
-    select: (data) => {
-      if (token) {
-        return Amount.fromRawAmount(token, data.toString())
-      }
+    query: {
+      enabled: Boolean(token && owner && spender && enabled && chainId),
+      select: (data) => {
+        if (token) {
+          return Amount.fromRawAmount(token, data.toString())
+        }
+      },
     },
   })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      query.refetch()
+    }
+  }, [blockNumber, query.refetch])
+
+  return query
 }
