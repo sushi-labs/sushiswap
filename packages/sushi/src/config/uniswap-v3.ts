@@ -38,7 +38,7 @@ export const UNISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.BASE,
-  ChainId.MOONBEAM
+  ChainId.MOONBEAM,
 ] as const
 
 export const UniswapV3ChainIds = UNISWAP_V3_SUPPORTED_CHAIN_IDS

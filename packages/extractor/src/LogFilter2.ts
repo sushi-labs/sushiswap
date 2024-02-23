@@ -253,7 +253,7 @@ export class LogFilter2 {
                 params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
               })
               this.sortAndProcessLogs(block.hash, logs as Log[])
-            } catch (e) {             
+            } catch (e) {
               if (this.debug) console.debug(e)
               throw e
             }

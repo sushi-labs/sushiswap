@@ -78,7 +78,7 @@ export class Extractor {
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
       args.maxCallsInOneBatch ?? 0,
-      args.debug
+      args.debug,
     )
     this.tokenManager = new TokenManager(
       this.multiCallAggregator,
@@ -90,7 +90,7 @@ export class Extractor {
       args.logDepth,
       args.logType ?? LogFilterType.OneCall,
       args.logging,
-      args.debug
+      args.debug,
     )
     if (args.factoriesV2 && args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(

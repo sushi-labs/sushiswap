@@ -563,7 +563,7 @@ export const publicClientConfig: Record<
   [ChainId.TELOS]: {
     chain: telos,
     // transport: http(`https://lb.drpc.org/ogrpc?network=telos&dkey=${drpcId}`),
-    transport: http('https://rpc1.us.telos.net/evm')
+    transport: http('https://rpc1.us.telos.net/evm'),
   },
   [ChainId.PALM]: {
     chain: palm,
@@ -615,5 +615,4 @@ export const publicClientConfig: Record<
   //   chain: hedera,
   //   transport: http('')
   // }
-
 } as const

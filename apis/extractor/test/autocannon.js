@@ -10,7 +10,7 @@ const instance = autocannon(
     requests: [
       {
         method: 'GET',
-        path: '/pool-codes/1'
+        path: '/pool-codes/1',
       },
     ],
   },

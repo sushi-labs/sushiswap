@@ -32,7 +32,7 @@ export function updatePrices(client: ExtractorClient, currency = Currency.USD) {
       )}ms cpu time)`,
     )
   } catch (e) {
-    console.error("updatePrices error", e)
+    console.error('updatePrices error', e)
   } finally {
     setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
   }
@@ -46,7 +46,7 @@ function getPrices(
   const bases =
     currency === Currency.USD
       ? (STABLES[chainId] as unknown as RToken[])
-      : ([WNATIVE[chainId] as RToken])
+      : [WNATIVE[chainId] as RToken]
 
   const minimumLiquidity = currency === Currency.USD ? 1000 : 1
 
