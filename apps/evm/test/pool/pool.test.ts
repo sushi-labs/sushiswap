@@ -16,7 +16,6 @@ import {
   TridentChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
-  isTridentChainId,
 } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
@@ -29,15 +28,6 @@ import {
 import { createERC20 } from 'test/erc20'
 import { interceptAnvil } from 'test/intercept-anvil'
 import { zeroAddress } from 'viem'
-
-interface TridentPoolArgs {
-  token0: Type
-  token1: Type
-  amount0: string
-  amount1: string
-  fee: string
-  type: 'CREATE' | 'ADD'
-}
 
 interface V2PoolArgs {
   token0: Type
@@ -545,42 +535,42 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
 //   expect(page.getByText(regex))
 // }
 
-async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
-  await switchNetwork(page, CHAIN_ID)
+// async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
+//   await switchNetwork(page, CHAIN_ID)
 
-  const removeLiquidityTabSelector = page.locator(
-    `[testdata-id=${type.toLowerCase()}-tab]`,
-  )
-  await expect(removeLiquidityTabSelector).toBeVisible()
-  await removeLiquidityTabSelector.click()
+//   const removeLiquidityTabSelector = page.locator(
+//     `[testdata-id=${type.toLowerCase()}-tab]`,
+//   )
+//   await expect(removeLiquidityTabSelector).toBeVisible()
+//   await removeLiquidityTabSelector.click()
 
-  const maxButtonSelector = page.locator(
-    `[testdata-id=${type.toLowerCase()}-max-button]`,
-  )
+//   const maxButtonSelector = page.locator(
+//     `[testdata-id=${type.toLowerCase()}-max-button]`,
+//   )
 
-  await expect(maxButtonSelector).toBeVisible()
-  await expect(maxButtonSelector).toBeEnabled()
-  await maxButtonSelector.click()
-  if (type === 'STAKE') {
-    const approveSlpId = `${type.toLowerCase()}-approve-slp-button`
-    const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
-    await expect(approveSlpLocator).toBeVisible()
-    await expect(approveSlpLocator).toBeEnabled()
-    await approveSlpLocator.click()
-  }
+//   await expect(maxButtonSelector).toBeVisible()
+//   await expect(maxButtonSelector).toBeEnabled()
+//   await maxButtonSelector.click()
+//   if (type === 'STAKE') {
+//     const approveSlpId = `${type.toLowerCase()}-approve-slp-button`
+//     const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+//     await expect(approveSlpLocator).toBeVisible()
+//     await expect(approveSlpLocator).toBeEnabled()
+//     await approveSlpLocator.click()
+//   }
 
-  const actionSelector = page.locator(
-    `[testdata-id=${type.toLowerCase()}-liquidity-button]`,
-  )
-  await expect(actionSelector).toBeVisible()
-  await expect(actionSelector).toBeEnabled()
-  await actionSelector.click({ timeout: 2_000 })
+//   const actionSelector = page.locator(
+//     `[testdata-id=${type.toLowerCase()}-liquidity-button]`,
+//   )
+//   await expect(actionSelector).toBeVisible()
+//   await expect(actionSelector).toBeEnabled()
+//   await actionSelector.click({ timeout: 2_000 })
 
-  const regex = new RegExp(
-    `(Successfully ${type.toLowerCase()}d .* SLP tokens)`,
-  )
-  expect(page.getByText(regex))
-}
+//   const regex = new RegExp(
+//     `(Successfully ${type.toLowerCase()}d .* SLP tokens)`,
+//   )
+//   expect(page.getByText(regex))
+// }
 
 async function removeLiquidityV2(page: Page, _next: NextFixture) {
   await switchNetwork(page, CHAIN_ID)
