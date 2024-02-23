@@ -83,8 +83,8 @@ const getBentoTvl = async () => {
   const prices = await getAllPrices()
   return rebases.reduce((acc, cur) => {
     const price =
-      prices?.[cur.chainId]?.[cur.id] ||
-      prices?.[cur.chainId]?.[getAddress(cur.id)]
+      prices?.[cur.chainId as keyof typeof prices]?.[cur.id] ||
+      prices?.[cur.chainId as keyof typeof prices]?.[getAddress(cur.id)]
     if (!price) return acc
 
     return (
