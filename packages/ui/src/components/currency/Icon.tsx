@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 
-import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
+import { Avatar, AvatarImage } from '../avatar'
 import { LinkExternal } from '../link'
 
 const AvaxLogo = 'avax.svg'
@@ -30,6 +30,7 @@ const CoreLogo = 'core.svg'
 const IslmLogo = 'islm.svg'
 const FilecoinLogo = 'filecoin.svg'
 const ZetaLogo = 'zeta.svg'
+const CroLogo = 'cro.svg'
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
   [ChainId.KOVAN]: EthereumLogo,
@@ -77,25 +78,26 @@ const LOGO: Record<number, string> = {
   [ChainId.SCROLL]: EthereumLogo,
   [ChainId.FILECOIN]: FilecoinLogo,
   [ChainId.ZETACHAIN]: ZetaLogo,
+  [ChainId.CRONOS]: CroLogo,
 }
 
-function djb2(str: string) {
-  let hash = 5381
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) + hash + str.charCodeAt(i) /* hash * 33 + c */
-  }
-  return hash
-}
+// function djb2(str: string) {
+//   let hash = 5381
+//   for (let i = 0; i < str.length; i++) {
+//     hash = (hash << 5) + hash + str.charCodeAt(i) /* hash * 33 + c */
+//   }
+//   return hash
+// }
 
-function hashStringToColor(str: string) {
-  const hash = djb2(str)
-  const r = (hash & 0xff0000) >> 16
-  const g = (hash & 0x00ff00) >> 8
-  const b = hash & 0x0000ff
-  return `#${`0${r.toString(16)}`.substr(-2)}${`0${g.toString(16)}`.substr(
-    -2,
-  )}${`0${b.toString(16)}`.substr(-2)}`
-}
+// function hashStringToColor(str: string) {
+//   const hash = djb2(str)
+//   const r = (hash & 0xff0000) >> 16
+//   const g = (hash & 0x00ff00) >> 8
+//   const b = hash & 0x0000ff
+//   return `#${`0${r.toString(16)}`.substr(-2)}${`0${g.toString(16)}`.substr(
+//     -2,
+//   )}${`0${b.toString(16)}`.substr(-2)}`
+// }
 
 export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   currency: Currency

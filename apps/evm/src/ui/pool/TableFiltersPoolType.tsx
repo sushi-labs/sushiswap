@@ -28,12 +28,7 @@ import React, { FC, useCallback, useState, useTransition } from 'react'
 import { PROTOCOL_MAP } from '../../lib/constants'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
-export const POOL_TYPES = [
-  Protocol.SUSHISWAP_V3,
-  Protocol.SUSHISWAP_V2,
-  Protocol.BENTOBOX_STABLE,
-  Protocol.BENTOBOX_CLASSIC,
-]
+export const POOL_TYPES = [Protocol.SUSHISWAP_V3, Protocol.SUSHISWAP_V2]
 
 const POOL_DESCRIPTIONS = {
   [Protocol.SUSHISWAP_V3]:

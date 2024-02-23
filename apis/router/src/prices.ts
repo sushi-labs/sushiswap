@@ -31,10 +31,10 @@ export function updatePrices(client: ExtractorClient, currency = Currency.USD) {
         performance.now() - start,
       )}ms cpu time)`,
     )
-    setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
   } catch (e) {
-    console.error(e)
-    throw e
+    console.error('updatePrices error', e)
+  } finally {
+    setTimeout(() => updatePrices(client), priceUpdateInterval * 1_000)
   }
 }
 
@@ -43,14 +43,10 @@ function getPrices(
   currency: Currency,
   pools: RPool[],
 ) {
-  if (currency === Currency.USD && STABLES[chainId] === undefined) {
-    throw new Error(`ChainId ${chainId} has no stables configured`)
-  }
-
   const bases =
     currency === Currency.USD
       ? (STABLES[chainId] as unknown as RToken[])
-      : ([WNATIVE[chainId]] as unknown as RToken[])
+      : [WNATIVE[chainId] as RToken]
 
   const minimumLiquidity = currency === Currency.USD ? 1000 : 1
 

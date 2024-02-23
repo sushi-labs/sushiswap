@@ -32,10 +32,11 @@ async function start() {
     POOL_UPDATE_INTERVAL(CHAIN_ID as ChainId),
     REQUESTED_PAIRS_UPDATE_INTERVAL(CHAIN_ID as ChainId),
   )
-  client.start()
-
   updatePrices(client)
-
+  // client.on('firstPoolsUpdate', () =>{
+  //   updatePrices(client)
+  // })
+  client.start()
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,

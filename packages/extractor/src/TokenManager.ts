@@ -1,14 +1,7 @@
 import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import {
-  Address,
-  ContractFunctionExecutionError,
-  Hex,
-  hexToString,
-  trim,
-} from 'viem'
-
+import { Address, Hex, hexToString, trim } from 'viem'
 import { MultiCallAggregator } from './MulticallAggregator'
 import { PermanentCache } from './PermanentCache'
 import { warnLog } from './WarnLog'
@@ -21,12 +14,22 @@ interface TokenCacheRecord {
 }
 
 // For some tokens that are not 100% ERC-20:
-const SpecialTokens: Record<string, Omit<TokenCacheRecord, 'address'>> = {
-  // '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
-  //   name: 'Maker Token',
-  //   symbol: 'MKR',
-  //   decimals: 18,
-  // },
+const SpecialTokens: Record<
+  typeof ChainId.ETHEREUM,
+  Record<string, Omit<TokenCacheRecord, 'address'>>
+> = {
+  [ChainId.ETHEREUM]: {
+    // '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': {
+    //   name: 'Maker Token',
+    //   symbol: 'MKR',
+    //   decimals: 18,
+    // },
+    '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
+      name: 'DGD',
+      symbol: 'DGD',
+      decimals: 9,
+    },
+  },
 }
 
 export class TokenManager {
@@ -75,7 +78,8 @@ export class TokenManager {
     const addr = address.toLowerCase() as Address
     const cached = this.tokens.get(addr)
     if (cached !== undefined) return cached
-    const special = SpecialTokens[addr]
+    const special =
+      SpecialTokens?.[this.client.chainId as keyof typeof SpecialTokens]?.[addr]
     if (special) {
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
@@ -151,7 +155,7 @@ export class TokenManager {
       } catch (_e) {
         warnLog(
           this.client.client.chain?.id,
-          `Token bytes32 downloading error ${address} ${_e}`
+          `Token bytes32 downloading error ${address} ${_e}`,
         )
       }
 

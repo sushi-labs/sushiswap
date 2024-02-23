@@ -76,7 +76,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
           onKeyDown={onClick}
           className={classNames(
             className,
-            selected ? 'bg-primary' : '',
+            selected ? 'bg-secondary' : '',
             `group flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3 token-${currency?.symbol}`,
           )}
         >

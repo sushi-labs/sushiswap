@@ -105,6 +105,9 @@ importers:
       '@types/node':
         specifier: '20'
         version: 20.10.0
+      autocannon:
+        specifier: 7.14.0
+        version: 7.14.0
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.0)(typescript@5.2.2)
@@ -182,8 +185,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
       '@sushiswap/default-token-list':
-        specifier: ^42.0.0
-        version: 42.0.0
+        specifier: ^43.1.0
+        version: 43.1.0
       '@vercel/node':
         specifier: 3.0.9
         version: 3.0.9
@@ -210,8 +213,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/database
       '@sushiswap/default-token-list':
-        specifier: 41.4.0
-        version: 41.4.0
+        specifier: ^43.1.0
+        version: 43.1.0
       '@sushiswap/wagmi-config':
         specifier: workspace:*
         version: link:../../config/wagmi
@@ -5780,7 +5783,7 @@ packages:
       outdent: 0.5.0
       prettier: 2.8.1
       resolve-from: 5.0.0
-      semver: 7.5.4
+      semver: 7.6.0
     dev: true
 
   /@changesets/assemble-release-plan@5.2.4:
@@ -5791,7 +5794,7 @@ packages:
       '@changesets/get-dependents-graph': 1.3.6
       '@changesets/types': 5.2.1
       '@manypkg/get-packages': 1.1.3
-      semver: 7.5.4
+      semver: 7.6.0
     dev: true
 
   /@changesets/changelog-git@0.1.14:
@@ -5872,7 +5875,7 @@ packages:
       '@manypkg/get-packages': 1.1.3
       chalk: 2.4.2
       fs-extra: 7.0.1
-      semver: 7.5.4
+      semver: 7.6.0
     dev: true
 
   /@changesets/get-github-info@0.5.2:
@@ -9996,7 +9999,7 @@ packages:
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.5.4
+      semver: 7.6.0
       tar: 6.1.15
     transitivePeerDependencies:
       - encoding
@@ -10058,7 +10061,7 @@ packages:
     dependencies:
       '@types/debug': 4.1.8
       debug: 4.3.4(supports-color@8.1.1)
-      semver: 7.5.4
+      semver: 7.6.0
       superstruct: 1.0.3
     transitivePeerDependencies:
       - supports-color
@@ -10685,7 +10688,7 @@ packages:
       nopt: 7.2.0
       proc-log: 3.0.0
       read-package-json-fast: 3.0.2
-      semver: 7.5.4
+      semver: 7.6.0
       walk-up-path: 3.0.1
     dev: false
 
@@ -10739,7 +10742,7 @@ packages:
       natural-orderby: 2.0.3
       object-treeify: 1.1.33
       password-prompt: 1.1.3
-      semver: 7.5.4
+      semver: 7.6.0
       slice-ansi: 4.0.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
@@ -15319,7 +15322,7 @@ packages:
       pretty-hrtime: 1.0.3
       prompts: 2.4.2
       read-pkg-up: 7.0.1
-      semver: 7.5.4
+      semver: 7.6.0
       telejson: 7.2.0
       tiny-invariant: 1.3.1
       ts-dedent: 2.2.0
@@ -15427,7 +15430,7 @@ packages:
       memoizerific: 1.11.3
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      semver: 7.5.4
+      semver: 7.6.0
       store2: 2.14.2
       telejson: 7.2.0
       ts-dedent: 2.2.0
@@ -15452,7 +15455,7 @@ packages:
       memoizerific: 1.11.3
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      semver: 7.5.4
+      semver: 7.6.0
       store2: 2.14.2
       telejson: 7.2.0
       ts-dedent: 2.2.0
@@ -15740,12 +15743,8 @@ packages:
     resolution: {integrity: sha512-OQwr4BIYbF3FlMKYMslYhjGXXzdsduW+CfSTq86tUQZm9okJG4fKBmyA8ZYkZ+oW8dTDRuI5LGGidUYVQUFH7A==}
     dev: false
 
-  /@sushiswap/default-token-list@41.4.0:
-    resolution: {integrity: sha512-2mN2QxAeRWywsWrh598DKqKjOiHlsdi0OXlmcBIlHJY9DYbMz8lZFl9v/2sL3Xj8c1WQ0i9xyktfObv3hhn6KQ==}
-    dev: false
-
-  /@sushiswap/default-token-list@42.0.0:
-    resolution: {integrity: sha512-QVZQcie8PbPLEtoKCuAbDL1FPbw04IlR4S6sAGCYisYT4tL57UCXwog5QTYT9sIGSE/WE0ZI3QIcHRAKeIRlDA==}
+  /@sushiswap/default-token-list@43.1.0:
+    resolution: {integrity: sha512-QYZLGLsyDhA1rkf7EcvTjAihC+doqfetBFvJMavTF3EQ1k7AnwUHD+8vdq4yz3D1DldHd8qB0+cycdtXfDwngA==}
     dev: false
 
   /@swc/helpers@0.5.2:
@@ -16899,7 +16898,7 @@ packages:
       graphemer: 1.4.0
       ignore: 5.2.4
       natural-compare: 1.4.0
-      semver: 7.5.4
+      semver: 7.6.0
       ts-api-utils: 1.0.3(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
@@ -17024,7 +17023,7 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.5.4
+      semver: 7.6.0
       tsutils: 3.21.0(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
@@ -17044,7 +17043,7 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.5.4
+      semver: 7.6.0
       ts-api-utils: 1.0.3(typescript@5.2.2)
       typescript: 5.2.2
     transitivePeerDependencies:
@@ -17064,7 +17063,7 @@ packages:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.2.2)
       eslint: 8.56.0
       eslint-scope: 5.1.1
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -17083,7 +17082,7 @@ packages:
       '@typescript-eslint/types': 6.7.5
       '@typescript-eslint/typescript-estree': 6.7.5(typescript@5.2.2)
       eslint: 8.56.0
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -19242,7 +19241,7 @@ packages:
       mixpanel: 0.13.0
       opentracing: 0.14.7
       prom-client: 14.2.0
-      semver: 7.5.4
+      semver: 7.6.0
       uuid: 8.3.2
     transitivePeerDependencies:
       - aws-crt
@@ -19505,7 +19504,7 @@ packages:
       progress: 2.0.3
       reinterval: 1.1.0
       retimer: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.0
       subarg: 1.0.0
       timestring: 6.0.0
     dev: true
@@ -22113,7 +22112,7 @@ packages:
       postcss-modules-scope: 3.0.0(postcss@8.4.23)
       postcss-modules-values: 4.0.0(postcss@8.4.23)
       postcss-value-parser: 4.2.0
-      semver: 7.5.4
+      semver: 7.6.0
       webpack: 5.90.3(esbuild@0.18.20)
     dev: true
 
@@ -24532,7 +24531,7 @@ packages:
       read-pkg-up: 7.0.1
       regexp-tree: 0.1.27
       regjsparser: 0.10.0
-      semver: 7.5.4
+      semver: 7.6.0
       strip-indent: 3.0.0
     dev: false
 
@@ -28397,7 +28396,7 @@ packages:
       '@babel/parser': 7.23.0
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.0
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
 
@@ -28840,7 +28839,7 @@ packages:
       jest-util: 29.7.0
       natural-compare: 1.4.0
       pretty-format: 29.7.0
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
 
@@ -29294,7 +29293,7 @@ packages:
       jws: 3.2.2
       lodash: 4.17.21
       ms: 2.1.3
-      semver: 7.5.4
+      semver: 7.6.0
 
   /jsprim@1.4.2:
     resolution: {integrity: sha512-P2bSOMAc/ciLz6DzgjVlGJP9+BrJWu5UDGK70C2iweC5QBIeFf0ZXRvGjEj2uYgrY2MkAAhsSWHDWlFtEroZWw==}
@@ -30047,7 +30046,7 @@ packages:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.5.4
+      semver: 7.6.0
 
   /make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
@@ -31685,7 +31684,7 @@ packages:
     resolution: {integrity: sha512-2s6B2CWZM//kPgwnuI0KrYwNjfdByE25zvAaEpq9IH4zcNsarH8Ihu/UuX6XMPEogDAxkuUFeZn60pXNHAqn3A==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.5.4
+      semver: 7.6.0
     dev: false
 
   /node-abort-controller@3.1.1:
@@ -32947,7 +32946,7 @@ packages:
       cosmiconfig: 8.3.6(typescript@5.2.2)
       jiti: 1.19.1
       postcss: 8.4.23
-      semver: 7.5.4
+      semver: 7.6.0
       webpack: 5.90.3(esbuild@0.18.20)
     transitivePeerDependencies:
       - typescript
@@ -35459,7 +35458,7 @@ packages:
     resolution: {integrity: sha512-a2B9Y0KlNXl9u/vsW6sTIu9vGEpfKu2wRV6l1H3XEas/0gUIzGzBoP/IouTcUQbm9JWZLH3COxyn03TYlFax6w==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.5.4
+      semver: 7.6.0
     dev: true
 
   /sisteransi@1.0.5:
@@ -36317,7 +36316,7 @@ packages:
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.11.2
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
     dev: true

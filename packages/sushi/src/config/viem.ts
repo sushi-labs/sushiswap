@@ -1,4 +1,4 @@
-import { http, type Address, type PublicClientConfig, fallback } from 'viem'
+import { http, type Address, type PublicClientConfig } from 'viem'
 import {
   arbitrum,
   // arbitrumGoerli,
@@ -15,6 +15,8 @@ import {
   // bscTestnet,
   // canto,
   celo,
+  // ronin,
+  cronos,
   // celoAlfajores,
   // crossbell,
   // evmos,
@@ -468,15 +470,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.BOBA_AVAX]: {
     chain: bobaAvax,
-    transport: fallback(
-      [
-        http(bobaAvax.rpcUrls.default.http[0]),
-        http('https://replica.avax.boba.network'),
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://avax.boba.network'),
   },
   [ChainId.BOBA_BNB]: {
     chain: bobaBnb,
@@ -568,14 +562,8 @@ export const publicClientConfig: Record<
   },
   [ChainId.TELOS]: {
     chain: telos,
-    transport: fallback(
-      [
-        http(telos.rpcUrls.default.http[0]),
-        http('https://rpc1.eu.telos.net/evm'),
-        http('https://rpc1.us.telos.net/evm'),
-      ],
-      { rank: true },
-    ),
+    // transport: http(`https://lb.drpc.org/ogrpc?network=telos&dkey=${drpcId}`),
+    transport: http('https://rpc1.us.telos.net/evm'),
   },
   [ChainId.PALM]: {
     chain: palm,
@@ -615,4 +603,16 @@ export const publicClientConfig: Record<
     chain: zetachain,
     transport: http('https://zetachain-mainnet-archive.allthatnode.com:8545'),
   },
+  // [ChainId.RONIN]: {
+  //   chain: ronin,
+  //   transport: http('https://api-gateway.skymavis.com/rpc'),
+  // },
+  [ChainId.CRONOS]: {
+    chain: cronos,
+    transport: http(`https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`),
+  },
+  // [ChainId.HEDERA]: {
+  //   chain: hedera,
+  //   transport: http('')
+  // }
 } as const

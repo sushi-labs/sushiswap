@@ -1,5 +1,5 @@
 import { ChainId } from 'sushi/chain'
-import { ExtractorSupportedChainId } from 'sushi/config'
+import { ExtractorSupportedChainId, STABLES } from 'sushi/config'
 
 // If token is unknown - how much ms to wait it's pools from the extractor
 export const POOL_FETCH_TIMEOUT = 3_000
@@ -36,4 +36,8 @@ export const EXTRACTOR_SERVER =
   process.env['EXTRACTOR_SERVER'] || `http://extractor-${CHAIN_ID}-service`
 if (!EXTRACTOR_SERVER) {
   throw new Error('EXTRACTOR_SERVER is not set')
+}
+
+if (!Array.isArray(STABLES[CHAIN_ID]) || !STABLES[CHAIN_ID].length) {
+  throw new Error(`ChainId ${CHAIN_ID} has no stables configured`)
 }

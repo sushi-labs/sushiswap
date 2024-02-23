@@ -1,18 +1,17 @@
-{{- $chainIds := .Values.chainIds }}
-{{- range $index, $value := $chainIds }}
+{{- range .Values.chains }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: extractor-{{ $value }}
+  name: extractor-{{ .id }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: extractor-{{ $value }}
+      app: extractor-{{ .id }}
   template:
     metadata:
       labels:
-        app: extractor-{{ $value }}
+        app: extractor-{{ .id }}
     spec:
       containers:
         - name: extractor
@@ -41,10 +40,10 @@ spec:
             timeoutSeconds: 3
           volumeMounts:
             - mountPath: /app/cache
-              name: extractor-{{ $value }}-cache
+              name: extractor-{{ .id }}-cache
           env:
             - name: CHAIN_ID
-              value: "{{ $value }}"
+              value: "{{ .id }}"
             - name: DRPC_ID
               valueFrom:
                 secretKeyRef:
@@ -62,7 +61,7 @@ spec:
                   key: SENTRY_ENVIRONMENT
   volumeClaimTemplates:
   - metadata:
-      name: extractor-{{ $value }}-cache
+      name: extractor-{{ .id }}-cache
     spec:
       accessModes: ["ReadWriteOncePod"]
       resources:

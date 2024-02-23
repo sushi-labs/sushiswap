@@ -1,16 +1,13 @@
-
-
-{{- $chainIds := .Values.chainIds }}
-{{- range $index, $value := $chainIds }}
+{{- range .Values.chains }}
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: extractor-{{ $value }}-vpa
+  name: extractor-{{ .id }}-vpa
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: StatefulSet
-    name: extractor-{{ $value }}
+    name: extractor-{{ .id }}
   updatePolicy:
     updateMode: "Auto"
     minReplicas: 1
@@ -18,8 +15,8 @@ spec:
     containerPolicies:
       - containerName: extractor
         minAllowed:
-          cpu: "250m"
-          memory: "1Gi"
+          cpu: "500m"
+          memory: "2Gi"
         maxAllowed:
           cpu: "1000m"
           memory: "4Gi"
