@@ -20,11 +20,8 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: 100m
-              memory: 100Mi
-            limits:
               cpu: 1000m
-              memory: 1Gi
+              memory: 4Gi
           livenessProbe:
             failureThreshold: 3
             httpGet:

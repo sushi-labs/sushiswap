@@ -121,7 +121,7 @@ export const EXTRACTOR_CONFIG: Record<ExtractorSupportedChainId, ExtractorConfig
     tickHelperContractAlgebra: '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 100,
-    logging: true,
+    logging: true
   },
   [ChainId.BASE]: {
     client: createPublicClient(publicClientConfig[ChainId.BASE]),
@@ -610,8 +610,7 @@ export const EXTRACTOR_CONFIG: Record<ExtractorSupportedChainId, ExtractorConfig
     tickHelperContractAlgebra: '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
-    logging: true,
-    debug: true
+    logging: true
   },
   [ChainId.CRONOS]: {
     client: createPublicClient(publicClientConfig[ChainId.CRONOS]),
@@ -628,8 +627,7 @@ export const EXTRACTOR_CONFIG: Record<ExtractorSupportedChainId, ExtractorConfig
     tickHelperContractAlgebra: '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
-    logging: true,
-    debug: true
+    logging: true
   },
   // [ChainId.RONIN]: {
   //   client: createPublicClient(publicClientConfig[ChainId.RONIN]),

@@ -34,7 +34,7 @@ export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.SCROLL,
   ChainId.TELOS,
   ChainId.THUNDERCORE,
-  ChainId.CRONOS,
+  // ChainId.CRONOS,
 ]
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (
@@ -72,7 +72,7 @@ const SUSHI_CHAIN_IDS = Array.from(new Set([
 
 export const CHAIN_IDS = [
   ...SUSHI_CHAIN_IDS,
-  ChainId.CRONOS,
+  // ChainId.CRONOS,
 ] as const
 
 export const SUPPORTED_CHAIN_IDS = Array.from(

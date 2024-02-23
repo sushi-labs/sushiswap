@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "evm": "pnpm exec turbo run dev --filter evm",
     "build": "dotenv -- turbo run build",
     "changeset": "changeset",
     "changeset:release": "changeset publish",
