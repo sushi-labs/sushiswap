@@ -22,29 +22,11 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./chains": {
-      "types": "./dist/chains.d.ts",
-      "default": "./dist/chains.js"
-    },
-    "./providers": {
-      "types": "./dist/providers.d.ts",
-      "default": "./dist/providers.js"
-    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "chains": [
-        "./dist/chains.d.ts"
-      ],
-      "providers": [
-        "./dist/providers.d.ts"
-      ]
-    }
-  },
   "files": [
     "dist"
   ],
