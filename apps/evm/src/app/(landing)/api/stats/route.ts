@@ -1,9 +1,7 @@
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
-import { roundToNearestMinutes, sub } from 'date-fns'
 import { NextResponse } from 'next/server'
 import { DISABLED_ANALYTICS_CHAIN_IDS } from 'src/config'
-import { getPrices } from 'src/lib/price/v1'
 import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -81,11 +79,7 @@ const getBentoTvl = async () => {
     first: 1000,
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
-
-  const threeDaysAgo = sub(new Date(), { days: 3 })
-  const dateThreshold = roundToNearestMinutes(threeDaysAgo, { nearestTo: 10 })
-  const prices = await getPrices(dateThreshold)
-
+  const prices = await fetch("https://www.sushi.com/api/price").then((res) => res.json()) as Record<string, Record<string, number>>
   return rebases.reduce((acc, cur) => {
     const price =
       prices?.[cur.chainId]?.[cur.id] ||
