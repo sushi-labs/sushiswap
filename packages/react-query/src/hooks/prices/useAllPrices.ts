@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { Fraction } from 'sushi/math'
 import { getAddress, isAddress, parseUnits } from 'viem'
 
@@ -27,11 +28,11 @@ const hydrate = (data: Record<string, number>) => {
 
 export const useAllPrices = () => {
   return useQuery({
-    queryKey: ['/api/price/v1'],
+    queryKey: ['/api/price'],
     queryFn: async () =>
-      fetch('/api/price/v1').then((response) => response.json()),
-    staleTime: 900000, // 15 mins
-    cacheTime: 3600000, // 1hr
+      fetch('/api/price').then((response) => response.json()),
+    staleTime: ms('60s'),
+    cacheTime: ms('1h'),
     refetchOnWindowFocus: false,
     select: hydrate,
   })

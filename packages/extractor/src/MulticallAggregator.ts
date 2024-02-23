@@ -28,6 +28,7 @@ export class MultiCallAggregator {
   timer?: NodeJS.Timeout
   maxCallsInOneBatch: number
   chainId: ChainId
+  debug: boolean
 
   totalCalls = 0
   totalCallsProcessed = 0
@@ -37,10 +38,11 @@ export class MultiCallAggregator {
   totalMCallsFailed = 0
   totalTimeSpent = 0
 
-  constructor(client: PublicClient, maxCallsInOneBatch = 0) {
+  constructor(client: PublicClient, maxCallsInOneBatch = 0, debug = false) {
     this.client = client
     this.maxCallsInOneBatch = maxCallsInOneBatch
     this.chainId = client.chain?.id as ChainId
+    this.debug = debug
   }
 
   // aggregate several calls in one multicall
@@ -196,7 +198,9 @@ export class MultiCallAggregator {
     }
     if (res[0].status !== 'success') {
       // getBlockNumber Failed
-      const error = res[0].error.toString().substring(0, 1000)
+      const error = this.debug
+        ? res[0].error.toString()
+        : res[0].error.toString().substring(0, 1000)
       for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](error)
     } else {
       const blockNumber = res[0].result as number
