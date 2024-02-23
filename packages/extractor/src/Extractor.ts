@@ -25,7 +25,8 @@ export type ExtractorConfig = {
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logType?: LogFilterType
   logDepth: number
@@ -104,7 +105,7 @@ export class Extractor {
     if (args.factoriesV3 && args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
         this.client,
-        args.tickHelperContract,
+        args.tickHelperContractV3,
         args.factoriesV3,
         args.cacheDir,
         this.logFilter,
@@ -115,7 +116,7 @@ export class Extractor {
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
       this.extractorAlg = new AlgebraExtractor(
         this.client,
-        args.tickHelperContract,
+        args.tickHelperContractAlgebra,
         args.factoriesAlgebra,
         args.cacheDir,
         this.logFilter,
