@@ -1,14 +1,13 @@
-{{- $chainIds := .Values.chainIds }}
-{{- range $index, $value := $chainIds }}
+{{- range .Values.chains }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: router-{{ $value }}-hpa
+  name: router-{{ .id }}-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: router-{{ $value }}
+    name: router-{{ .id }}
   minReplicas: 1
   maxReplicas: 10
   behavior:
