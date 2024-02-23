@@ -29,6 +29,7 @@ export enum LiquidityProviders {
   LaserSwap = 'LaserSwap',
   BaseSwap = 'BaseSwap',
   AlgebraIntegral = 'AlgebraIntegral',
+  Solarbeam = 'Solarbeam'
 }
 
 export abstract class LiquidityProvider {

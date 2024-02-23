@@ -507,7 +507,16 @@ export const EXTRACTOR_CONFIG = {
   },
   [ChainId.MOONRIVER]: {
     client: createPublicClient(publicClientConfig[ChainId.MOONRIVER]),
-    factoriesV2: [sushiswapV2Factory(ChainId.MOONRIVER)],
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.MOONRIVER), 
+      {
+        address: '0x049581aEB6Fe262727f290165C29BDAB065a1B68' as Address,
+        provider: LiquidityProviders.Solarbeam,
+        fee: 0.003,
+        initCodeHash:
+          '0x9a100ded5f254443fbd264cb7e87831e398a8b642e061670a9bc35ba27293dbf',
+      }
+    ],
     factoriesV3: [sushiswapV3Factory(ChainId.MOONRIVER)],
     tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.MOONRIVER],
     cacheDir: './cache',
