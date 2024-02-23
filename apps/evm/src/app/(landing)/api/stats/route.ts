@@ -79,7 +79,9 @@ const getBentoTvl = async () => {
     first: 1000,
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
-  const prices = await fetch("https://www.sushi.com/api/price").then((res) => res.json()) as Record<string, Record<string, number>>
+  const prices = (await fetch('https://www.sushi.com/api/price').then((res) =>
+    res.json(),
+  )) as Record<string, Record<string, number>>
   return rebases.reduce((acc, cur) => {
     const price =
       prices?.[cur.chainId]?.[cur.id] ||

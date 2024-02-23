@@ -2,9 +2,6 @@ import { AbiEvent, Address } from 'abitype'
 import {
   Block,
   Filter,
-  GetFilterChangesErrorType,
-  GetFilterLogsErrorType,
-  GetLogsErrorType,
   Log,
   PublicClient,
   WatchBlocksReturnType,
@@ -253,7 +250,7 @@ export class LogFilter2 {
                 params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
               })
               this.sortAndProcessLogs(block.hash, logs as Log[])
-            } catch (e) {             
+            } catch (e) {
               if (this.debug) console.debug(e)
               throw e
             }

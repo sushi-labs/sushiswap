@@ -292,8 +292,20 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WORMHOLE_WETH[ChainId.MOONBEAM],
     WORMHOLE_WBTC[ChainId.MOONBEAM],
     FRAX[ChainId.MOONBEAM],
-    new Token({ chainId: ChainId.MOONBEAM, address: '0xFFfffffF7D2B0B761Af01Ca8e25242976ac0aD7D', decimals: 6, name: 'USD Coin', symbol: 'xcUSDC' }),
-    new Token({ chainId: ChainId.MOONBEAM, address: '0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d', decimals: 6, name: 'Tether USD', symbol: 'xcUSDT' })
+    new Token({
+      chainId: ChainId.MOONBEAM,
+      address: '0xFFfffffF7D2B0B761Af01Ca8e25242976ac0aD7D',
+      decimals: 6,
+      name: 'USD Coin',
+      symbol: 'xcUSDC',
+    }),
+    new Token({
+      chainId: ChainId.MOONBEAM,
+      address: '0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d',
+      decimals: 6,
+      name: 'Tether USD',
+      symbol: 'xcUSDT',
+    }),
   ],
   [ChainId.OPTIMISM]: [
     WNATIVE[ChainId.OPTIMISM],
@@ -458,5 +470,5 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WETH9[ChainId.CRONOS],
     WBTC[ChainId.CRONOS],
     USDC[ChainId.CRONOS],
-  ]
+  ],
 }

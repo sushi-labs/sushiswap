@@ -64,11 +64,9 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.HARMONY,
 ] as const
 
-const SUSHI_CHAIN_IDS = Array.from(new Set([
-  ...TridentChainIds,
-  ...SushiSwapV2ChainIds,
-  ...SushiSwapV3ChainIds
-]))
+const SUSHI_CHAIN_IDS = Array.from(
+  new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds]),
+)
 
 export const CHAIN_IDS = [
   ...SUSHI_CHAIN_IDS,

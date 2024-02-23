@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 import { Amount, Native, type Type } from 'sushi/currency'
 import { getAddress } from 'viem'
 
-import { useTokens } from './tokens'
 import ms from 'ms'
+import { useTokens } from './tokens'
 
 export const NativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
