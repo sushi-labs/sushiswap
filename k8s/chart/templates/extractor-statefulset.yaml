@@ -2,8 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: extractor-{{ .id }}
-  namespace: extractor
+  name: extractor-{{ .id }}=
 spec:
   replicas: 1
   selector:

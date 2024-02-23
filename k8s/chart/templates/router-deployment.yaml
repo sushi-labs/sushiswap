@@ -22,8 +22,11 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: "1"
+              cpu: "100m"
               ephemeral-storage: 1Gi
+              memory: 100Mi
+            limits:
+              cpu: 1000m
               memory: 1Gi
           startupProbe:
             httpGet:
