@@ -15,6 +15,7 @@ import {
   scroll,
   telos,
   zkSync,
+  cronos
 } from '@wagmi/core/chains'
 import { ChainId } from 'sushi/chain'
 
@@ -39,6 +40,7 @@ export const defaultChains: Chain[] = [
   // polygonMumbai,
   // sepolia,
   scroll,
+  cronos
 ]
 
 export const otherChains: Chain[] = [

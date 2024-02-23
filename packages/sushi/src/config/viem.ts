@@ -45,6 +45,8 @@ import {
   polygon,
   polygonZkEvm,
   scroll,
+  // ronin,
+  cronos,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -560,7 +562,8 @@ export const publicClientConfig: Record<
   },
   [ChainId.TELOS]: {
     chain: telos,
-    transport: http('https://mainnet.telos.net/evm'),
+    // transport: http(`https://lb.drpc.org/ogrpc?network=telos&dkey=${drpcId}`),
+    transport: http('https://rpc1.us.telos.net/evm')
   },
   [ChainId.PALM]: {
     chain: palm,
@@ -600,4 +603,17 @@ export const publicClientConfig: Record<
     chain: zetachain,
     transport: http('https://zetachain-mainnet-archive.allthatnode.com:8545'),
   },
+  // [ChainId.RONIN]: {
+  //   chain: ronin,
+  //   transport: http('https://api-gateway.skymavis.com/rpc'),
+  // },
+  [ChainId.CRONOS]: {
+    chain: cronos,
+    transport: http(`https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`),
+  },
+  // [ChainId.HEDERA]: {
+  //   chain: hedera,
+  //   transport: http('')
+  // }
+
 } as const

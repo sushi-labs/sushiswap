@@ -1,4 +1,4 @@
-import { LogFilterType } from '@sushiswap/extractor'
+import { LogFilterType, ExtractorConfig } from '@sushiswap/extractor'
 import { ChainId } from 'sushi/chain'
 import {
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
@@ -19,6 +19,7 @@ import {
   UNISWAP_V3_INIT_CODE_HASH,
   type UniswapV3ChainId,
   publicClientConfig,
+  ExtractorSupportedChainId,
 } from 'sushi/config'
 import { LiquidityProviders } from 'sushi/router'
 
@@ -61,7 +62,7 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   } as const
 }
 
-export const EXTRACTOR_CONFIG = {
+export const EXTRACTOR_CONFIG: Record<ExtractorSupportedChainId, ExtractorConfig> = {
   [ChainId.ARBITRUM]: {
     client: createPublicClient(publicClientConfig[ChainId.ARBITRUM]),
     factoriesV2: [
@@ -353,7 +354,7 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
+    // account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON]: {
@@ -527,10 +528,17 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.TELOS]),
     factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
     factoriesV3: [],
-    tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
+    factoriesAlgebra: [
+      {
+        address: '0xA09BAbf9A48003ae9b9333966a8Bda94d820D0d9'as Address,
+        provider: LiquidityProviders.Swapsicle
+      }
+    ],
+    tickHelperContract: '0x0389879e0156033202C44BF784ac18fC02edeE4f' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
+    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
 
   [ChainId.THUNDERCORE]: {
@@ -554,7 +562,34 @@ export const EXTRACTOR_CONFIG = {
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
+    debug: true
   },
+  [ChainId.CRONOS]: {
+    client: createPublicClient(publicClientConfig[ChainId.CRONOS]),
+    factoriesV2: [
+      {
+        address: '0x3B44B2a187a7b3824131F8db5a74194D0a42Fc15' as Address,
+        provider: LiquidityProviders.VVSStandard,
+        fee: 0.003,
+        initCodeHash: '0xa77ee1cc0f39570ddde947459e293d7ebc2c30ff4e8fc45860afdcb2c2d3dc17',
+      }
+    ],
+    factoriesV3: [],
+    tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+    debug: true
+  },
+  // [ChainId.RONIN]: {
+  //   client: createPublicClient(publicClientConfig[ChainId.RONIN]),
+  //   factoriesV2: [],
+  //   factoriesV3: [],
+  //   tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
+  //   cacheDir: './cache',
+  //   logDepth: 50,
+  //   logging: true,
+  // },
 }
 
 export const PORT = process.env['PORT'] || 80

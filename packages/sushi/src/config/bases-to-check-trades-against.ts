@@ -451,4 +451,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     ZETA_BSC_BRIDGE_USDC,
     ZETA_BSC_BRIDGE_USDT,
   ],
+  [ChainId.CRONOS]: [
+    WNATIVE[ChainId.CRONOS],
+    WETH9[ChainId.CRONOS],
+    WBTC[ChainId.CRONOS],
+    USDC[ChainId.CRONOS],
+  ]
 }

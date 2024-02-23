@@ -165,6 +165,7 @@ export const STABLES = {
     ZETA_ETH_BRIDGE_USDC,
     ZETA_ETH_BRIDGE_USDT,
   ],
+  [ChainId.CRONOS]: [USDC[ChainId.CRONOS]],
   // TESTNETS
   [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   [ChainId.ROPSTEN]: [

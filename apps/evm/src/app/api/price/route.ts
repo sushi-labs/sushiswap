@@ -1,7 +1,4 @@
-import { roundToNearestMinutes, sub } from 'date-fns'
 import { NextRequest } from 'next/server'
-
-import { getPrices } from 'src/lib/price/v1'
 import { isPromiseFulfilled } from 'sushi'
 import { EXTRACTOR_SUPPORTED_CHAIN_IDS, ExtractorSupportedChainId } from 'sushi/config'
 
@@ -18,7 +15,6 @@ export const schema = z.object({
     .nullable()
     .transform((transform) => transform ?? Currency.USD),
 })
-
 
 export const revalidate = 600
 

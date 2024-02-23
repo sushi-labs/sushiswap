@@ -20,6 +20,21 @@ import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
+export type ExtractorConfig = {
+  client: PublicClient
+  factoriesV2?: FactoryV2[]
+  factoriesV3?: FactoryV3[]
+  factoriesAlgebra?: FactoryAlgebra[]
+  tickHelperContract: Address
+  cacheDir: string
+  logType?: LogFilterType
+  logDepth: number
+  logging?: boolean
+  maxCallsInOneBatch?: number
+  warningMessageHandler?: WarningMessageHandler
+  debug?: boolean
+}
+
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
 
@@ -44,6 +59,7 @@ export class Extractor {
   requestStartedNum = 0
   requestFinishedNum = 0
   requestFailedNum = 0
+  debug?: boolean
 
   /// @param client
   /// @param factoriesV2 list of supported V2 factories
@@ -53,25 +69,15 @@ export class Extractor {
   //                  IMPORTANT: Use different cacheDir for Extractors with the same chainId
   /// @param logDepth the depth of logs to keep in memory for reorgs
   /// @param logging to write logs in console or not
-  constructor(args: {
-    client: PublicClient
-    factoriesV2?: FactoryV2[]
-    factoriesV3?: FactoryV3[]
-    factoriesAlgebra?: FactoryAlgebra[]
-    tickHelperContract: Address
-    cacheDir: string
-    logType?: LogFilterType
-    logDepth: number
-    logging?: boolean
-    maxCallsInOneBatch?: number
-    warningMessageHandler?: WarningMessageHandler
-  }) {
+  constructor(args: ExtractorConfig) {
     this.cacheDir = args.cacheDir
     this.logging = Boolean(args.logging)
+    this.debug = Boolean(args.debug)
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
       args.maxCallsInOneBatch ?? 0,
+      args.debug
     )
     this.tokenManager = new TokenManager(
       this.multiCallAggregator,
@@ -83,6 +89,7 @@ export class Extractor {
       args.logDepth,
       args.logType ?? LogFilterType.OneCall,
       args.logging,
+      args.debug
     )
     if (args.factoriesV2 && args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(

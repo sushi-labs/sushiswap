@@ -40,7 +40,7 @@ export class WordLoadManager extends EventEmitter {
     poolSpacing: number,
     tickHelperContract: Address,
     client: MultiCallAggregator,
-    counter?: Counter,
+    counter?: Counter
   ) {
     super()
     this.poolAddress = poolAddress

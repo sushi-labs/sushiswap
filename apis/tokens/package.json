@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/default-token-list": "41.4.0",
+    "@sushiswap/default-token-list": "^43.1.0",
     "@sushiswap/wagmi-config": "workspace:*",
     "@upstash/redis": "1.22.1",
     "@vercel/node": "3.0.9",

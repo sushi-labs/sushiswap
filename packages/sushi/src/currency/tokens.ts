@@ -635,6 +635,13 @@ export const WNATIVE = {
     symbol: 'WZETA',
     name: 'Wrapped ZETA',
   }),
+  [ChainId.CRONOS]: new Token({
+    chainId: ChainId.CRONOS,
+    address: WNATIVE_ADDRESS[ChainId.CRONOS],
+    decimals: 18,
+    symbol: 'WCRO',
+    name: 'Wrapped CRO',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(

@@ -94,6 +94,7 @@ export class LogFilter2 {
   blockProcessing = false
   filter: Filter | undefined
   logging: boolean
+  debug: boolean
 
   unWatchBlocks?: WatchBlocksReturnType
 
@@ -110,11 +111,13 @@ export class LogFilter2 {
     depth: number,
     logType: LogFilterType,
     logging?: boolean,
+    debug = false,
   ) {
     this.client = client
     this.depth = depth
     this.logType = logType
     this.logging = logging === true
+    this.debug = debug === true
   }
 
   addFilter(events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
@@ -241,11 +244,16 @@ export class LogFilter2 {
           10, // For example dRPC for BSC often 'forgets' recently returned watchBlock blocks. But 'recalls' at second request
           1000,
           async () => {
-            const logs = await this.client.transport.request({
-              method: 'eth_getLogs',
-              params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
-            })
-            this.sortAndProcessLogs(block.hash, logs as Log[])
+            try {
+              const logs = await this.client.transport.request({
+                method: 'eth_getLogs',
+                params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
+              })
+              this.sortAndProcessLogs(block.hash, logs as Log[])
+            } catch (e) {
+              if (this.debug) console.error(e)
+              throw e
+            }
           },
           backupPlan,
         )
