@@ -1,9 +1,5 @@
 import { NextRequest } from 'next/server'
-import { isPromiseFulfilled } from 'sushi'
-import {
-  EXTRACTOR_SUPPORTED_CHAIN_IDS,
-  ExtractorSupportedChainId,
-} from 'sushi/config'
+import { getAllPrices } from 'src/lib/get-all-prices'
 
 import { z } from 'zod'
 
