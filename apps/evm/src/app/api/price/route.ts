@@ -28,24 +28,7 @@ export async function GET(request: NextRequest) {
   if (!result.success) {
     return Response.json(result.error.format(), { status: 400 })
   }
-  const results = await Promise.allSettled(
-    EXTRACTOR_SUPPORTED_CHAIN_IDS.map((chainId) =>
-      fetch(`https://api.sushi.com/price/v1/${chainId}`).then((res) =>
-        res.json(),
-      ),
-    ),
-  )
-  const prices = results.reduce(
-    (previousValue, currentValue, i) => {
-      previousValue[EXTRACTOR_SUPPORTED_CHAIN_IDS[i]] = isPromiseFulfilled(
-        currentValue,
-      )
-        ? currentValue.value
-        : {}
-      return previousValue
-    },
-    {} as Record<ExtractorSupportedChainId, Record<string, number>>,
-  )
+  const prices = await getAllPrices()
   return Response.json(prices, {
     headers: {
       'Cache-Control': 'max-age=60, stale-while-revalidate=600',

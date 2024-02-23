@@ -2,6 +2,7 @@ import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { NextResponse } from 'next/server'
 import { DISABLED_ANALYTICS_CHAIN_IDS } from 'src/config'
+import { getAllPrices } from 'src/lib/get-all-prices'
 import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -79,9 +80,7 @@ const getBentoTvl = async () => {
     first: 1000,
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
-  const prices = (await fetch('https://www.sushi.com/api/price').then((res) =>
-    res.json(),
-  )) as Record<string, Record<string, number>>
+  const prices = await getAllPrices()
   return rebases.reduce((acc, cur) => {
     const price =
       prices?.[cur.chainId]?.[cur.id] ||
