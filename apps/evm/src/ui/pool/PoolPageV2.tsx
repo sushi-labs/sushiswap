@@ -3,8 +3,9 @@ import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
 import { ChainId } from 'sushi/chain'
 
-import { getPool } from '@sushiswap/client'
+import { Protocol, getPool } from '@sushiswap/client'
 import { FC } from 'react'
+import { ManageTridentLiquidityCard } from './ManageTridentLiquidityCard'
 import { PoolChartV2 } from './PoolChartV2'
 import { PoolComposition } from './PoolComposition'
 import { PoolMyRewards } from './PoolMyRewards'
@@ -14,6 +15,7 @@ import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
 import { PoolRewards } from './PoolRewards'
 import { PoolStats } from './PoolStats'
+import { TridentDeprecationMessage } from './TridentDeprecationMessage'
 import { UnknownTokenAlert } from './UnknownTokenAlert'
 
 interface PoolPageV2 {
@@ -25,10 +27,17 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool, tab }) => {
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4 space-y-4">
       <UnknownTokenAlert pool={pool} />
+      {pool.protocol !== Protocol.SUSHISWAP_V2 ? (
+        <TridentDeprecationMessage />
+      ) : null}
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            <ManageV2LiquidityCard pool={pool} tab={tab} />
+            {pool.protocol === Protocol.SUSHISWAP_V2 ? (
+              <ManageV2LiquidityCard pool={pool} tab={tab} />
+            ) : (
+              <ManageTridentLiquidityCard pool={pool} tab={tab} />
+            )}
           </div>
           <div className="flex flex-col gap-6">
             <PoolPositionProvider pool={pool}>
