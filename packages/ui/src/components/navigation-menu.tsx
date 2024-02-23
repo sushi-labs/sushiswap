@@ -90,7 +90,7 @@ const NavigationMenuViewport = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     className={classNames(
-      'absolute left-0 top-full flex w-full justify-center',
+      'absolute left-0 top-full flex w-full min-w-fit justify-center',
     )}
   >
     <NavigationMenuPrimitive.Viewport
