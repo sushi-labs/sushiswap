@@ -16,7 +16,6 @@ export const SteerLiquidityDistributionWidget: FC<
     <>
       <div className="flex justify-between">
         <CardTitle>Liquidity Distribution</CardTitle>
-
         <SteerLiquidityInRangeChip vault={vault} />
       </div>
       <SteerTokenDistributionBar vault={vault} />

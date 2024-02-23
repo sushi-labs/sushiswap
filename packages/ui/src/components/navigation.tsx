@@ -173,7 +173,7 @@ const Navigation: React.FC<NavProps> = ({
     <NavigationContainer variant={variant}>
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem className="block md:hidden">
+          <NavigationMenuItem className="block lg:hidden">
             <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="min-w-[240px] gap-3 p-4">
@@ -194,7 +194,7 @@ const Navigation: React.FC<NavProps> = ({
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             {legacyBehavior ? (
               <NavigationMenuLink
                 asChild
@@ -211,7 +211,7 @@ const Navigation: React.FC<NavProps> = ({
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             {legacyBehavior ? (
               <NavigationMenuLink
                 asChild
@@ -228,7 +228,7 @@ const Navigation: React.FC<NavProps> = ({
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             {legacyBehavior ? (
               <NavigationMenuLink
                 asChild
@@ -245,7 +245,7 @@ const Navigation: React.FC<NavProps> = ({
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             {legacyBehavior ? (
               <NavigationMenuLink
                 asChild
@@ -262,7 +262,7 @@ const Navigation: React.FC<NavProps> = ({
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             {legacyBehavior ? (
               <NavigationMenuLink
                 asChild
@@ -279,7 +279,7 @@ const Navigation: React.FC<NavProps> = ({
               </NavigationMenuLink>
             )}
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             <NavigationMenuTrigger>More</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="w-[400px] gap-3 p-4">
@@ -296,7 +296,7 @@ const Navigation: React.FC<NavProps> = ({
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             <NavigationMenuTrigger>Partners</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="w-[400px] gap-3 p-4">
@@ -313,7 +313,7 @@ const Navigation: React.FC<NavProps> = ({
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
+          <NavigationMenuItem className="hidden lg:block">
             <OnramperButton>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Buy Crypto

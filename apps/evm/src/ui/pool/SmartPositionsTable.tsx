@@ -29,15 +29,15 @@ const COLUMNS = [
   STEER_POSITION_SIZE_COLUMN,
   {
     id: 'totalApr1d',
-    header: 'APR',
+    header: 'APR (24h)',
     accessorFn: (row) =>
-      row.vault.apr * 100 +
+      row.vault.apr1d * 100 +
       row.vault.pool.incentives
         .filter((el) => +el.rewardPerDay > 0)
         .reduce((acc, cur) => acc + cur.apr * 100, 0),
     cell: (props) => {
       const totalAPR =
-        props.row.original.vault.apr * 100 +
+        props.row.original.vault.apr1d * 100 +
         props.row.original.vault.pool.incentives
           .filter((el) => +el.rewardPerDay > 0)
           .reduce((acc, cur) => acc + cur.apr * 100, 0)
@@ -58,7 +58,7 @@ const COLUMNS = [
           </TooltipProvider>
           <APRHoverCard
             pool={props.row.original.vault.pool}
-            smartPoolAPR={props.row.original.vault.apr}
+            smartPoolAPR={props.row.original.vault.apr1d}
           >
             <span className="underline decoration-dotted underline-offset-2">
               {formatPercent(totalAPR / 100)}
@@ -90,7 +90,6 @@ export const SmartPositionsTable = () => {
 
   const _positions = useMemo(() => (positions ? positions : []), [positions])
 
-  console.log(_positions)
   return (
     <Card>
       <CardHeader>
