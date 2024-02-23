@@ -12,7 +12,7 @@ const Currency = {
   NATIVE: 'NATIVE',
 } as const
 
-export const schema = z.object({
+const schema = z.object({
   currency: z
     .nativeEnum(Currency)
     .nullable()
