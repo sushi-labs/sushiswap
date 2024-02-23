@@ -41,8 +41,8 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.CORE,
   ChainId.HAQQ,
   ChainId.OPTIMISM,
+  ChainId.LINEA,
   ChainId.POLYGON_ZKEVM,
-  // ChainId.LINEA,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -317,6 +317,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.CORE]: 'sushi-v2/sushiswap-core',
   [ChainId.HAQQ]: 'sushi/sushiswap-haqq',
   [ChainId.OPTIMISM]: 'sushi-subgraphs/sushiswap-optimism',
+  [ChainId.LINEA]: 'sushiswap/sushiswap-linea',
   [ChainId.POLYGON_ZKEVM]: 'v2-polygon-zkevm/v0.0.1',
 } as const
 
