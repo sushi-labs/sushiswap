@@ -22,7 +22,7 @@ interface TokenCacheRecord {
 }
 
 // For some tokens that are not 100% ERC-20:
-const SpecialTokens: Record<ExtractorSupportedChainId, Record<string, Omit<TokenCacheRecord, 'address'>>> = {
+const SpecialTokens: Record<typeof ChainId.ETHEREUM, Record<string, Omit<TokenCacheRecord, 'address'>>> = {
   [ChainId.ETHEREUM]: {
     // '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': {
   //   name: 'Maker Token',
