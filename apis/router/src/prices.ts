@@ -65,6 +65,31 @@ function calculateTokenPrices(
   const bestPrices: Record<string, number> = {}
 
   bases.forEach((base) => {
+    if (allTokens.has(base.address)) {
+      // fast pricing using prices from the prev base. Tokensets should be the same
+      try {
+        const anotherBase = Array.from(prices.keys()).find(
+          (b) => prices.get(b)?.get(base.address) !== undefined,
+        )
+        const currentBasePrice = prices
+          .get(anotherBase as string)
+          ?.get(base.address)
+        if (currentBasePrice !== undefined && currentBasePrice > 1e-100) {
+          const priceMap = prices.get(anotherBase as string) as Map<
+            string,
+            number
+          >
+          const currentPrices: [string, number][] = Array.from(
+            priceMap.entries(),
+          ).map(([tokenAddr, tokenPrice]) => [
+            tokenAddr,
+            tokenPrice / currentBasePrice,
+          ])
+          prices.set(base.address, new Map(currentPrices))
+          return
+        }
+      } catch (_e) {} // just in case
+    }
     const currentPrices = calcTokenAddressPrices(
       pools,
       base,
