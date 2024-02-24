@@ -508,9 +508,9 @@ export class Graph {
       v.price = price
       const newEdges = v.edges.filter((e) => {
         if (processedVert.has(v.getNeibour(e) as Vertice)) return false
-        if (e.pool.alwaysAppropriateForPricing()) return true
-        const liquidity = price * parseInt(e.reserve(v).toString())
-        if (liquidity < minLiquidity) return false
+        const liquidity = price * Number(e.reserve(v))
+        if (!e.pool.alwaysAppropriateForPricing() && liquidity < minLiquidity)
+          return false
         edgeValues.set(e, liquidity)
         return true
       })
