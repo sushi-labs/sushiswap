@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
 
+import { Turnstile } from '@sushiswap/ui/components/scripts'
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 
@@ -66,6 +67,7 @@ export default function RootLayout({
             {children}
           </Providers>
           <Trackers />
+          <Turnstile />
         </div>
       </body>
     </html>

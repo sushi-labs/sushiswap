@@ -47,3 +47,31 @@ export const HotJar = () => {
     />
   )
 }
+
+export const Turnstile = () => {
+  return (
+    <>
+      <Script id="cf-turnstile-callback">
+        {`window.onloadTurnstileCallback = function () {
+          if ('${process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY}' === 'undefined') {
+            console.error('NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY undefined');
+            return;
+          }
+          window.turnstile.render('#cf-turnstile', {
+            sitekey: '${process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY}',
+            callback: (token) => fetch('/api/turnstile', {
+              method: 'POST',
+              body: JSON.stringify({ token })
+            }),
+          })
+        }`}
+      </Script>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
+        async={true}
+        defer={true}
+      />
+      <div id="cf-turnstile" />
+    </>
+  )
+}
