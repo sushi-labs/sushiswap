@@ -102,7 +102,7 @@ export const useTradeQuery = (
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
-      source !== undefined && params.searchParams.set('source', `${source}`)
+      if (source !== undefined) params.searchParams.set('source', `${source}`) 
 
       const res = await fetch(params.toString())
       // const json = deserialize(await res.json()) should cause react query error
