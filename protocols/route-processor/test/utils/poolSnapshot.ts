@@ -1,12 +1,16 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import { ChainId } from 'sushi/chain'
+import { PoolCode } from 'sushi/router'
 import {
-  PoolCode,
   makeSerializable,
   restoreAfterSerialization,
   serializer,
-} from 'sushi/router'
+} from 'sushi/serializer'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // default dir for pools snapshots
 const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')

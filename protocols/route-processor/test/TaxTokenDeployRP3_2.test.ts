@@ -3,8 +3,8 @@ import {
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
-import { config } from 'hardhat'
-import { createProvider } from 'hardhat/internal/core/providers/construction'
+import hre from 'hardhat'
+import { createProvider } from 'hardhat/internal/core/providers/construction.js'
 import { routeProcessor3Abi } from 'sushi/abi'
 import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
@@ -22,7 +22,11 @@ import {
 } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor3_2 from '../artifacts/contracts/RouteProcessor3_2.sol/RouteProcessor3_2.json'
+import RouteProcessor3_2 from '../artifacts/contracts/RouteProcessor3_2.sol/RouteProcessor3_2.json' assert {
+  type: 'json',
+}
+
+const { config } = hre
 
 async function createHardhatProvider(
   chainId: ChainId,

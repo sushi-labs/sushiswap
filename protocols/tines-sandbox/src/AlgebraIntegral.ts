@@ -1,11 +1,27 @@
-import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
-import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
-import AlgebraPoolDeployer from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json'
-import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/NonfungibleTokenPositionDescriptor.json'
-import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
-import TickLens from '@cryptoalgebra/integral-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json'
-import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json'
+import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json' assert {
+  type: 'json',
+}
+import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json' assert {
+  type: 'json',
+}
+import AlgebraPoolDeployer from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json' assert {
+  type: 'json',
+}
+import NonfungiblePositionManager from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json' assert {
+  type: 'json',
+}
+import NonfungibleTokenPositionDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/NonfungibleTokenPositionDescriptor.json' assert {
+  type: 'json',
+}
+import SwapRouter from '@cryptoalgebra/integral-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json' assert {
+  type: 'json',
+}
+import TickLens from '@cryptoalgebra/integral-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json' assert {
+  type: 'json',
+}
+import NFTDescriptor from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json' assert {
+  type: 'json',
+}
 import seedrandom from 'seedrandom'
 import { ChainId } from 'sushi/chain'
 import { Token, WNATIVE_ADDRESS } from 'sushi/currency'
@@ -24,14 +40,14 @@ import {
   WalletClient,
   getContractAddress,
 } from 'viem'
-import { TestTokens, approve, balanceOf } from './TestTokens'
+import { TestTokens, approve, balanceOf } from './TestTokens.js'
 import {
   getDeploymentAddress,
   getRndExp,
   getRndExpInt,
   getRndLinInt,
   getRndVariant,
-} from './utils'
+} from './utils.js'
 
 function linkContractLibraries(
   contract: {

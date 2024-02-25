@@ -2,11 +2,10 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import { setTokenBalance } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
-import { config, network } from 'hardhat'
+import hre from 'hardhat'
 import seedrandom from 'seedrandom'
 import { erc20Abi, routeProcessor3Abi, weth9Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
@@ -31,6 +30,7 @@ import {
   WNATIVE,
 } from 'sushi/currency'
 import { abs } from 'sushi/math'
+import { PoolCode } from 'sushi/router'
 import {
   CurvePoolCode,
   DataFetcher,
@@ -60,8 +60,12 @@ import {
 import { HDAccount, mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor3_2 from '../artifacts/contracts/RouteProcessor3_2.sol/RouteProcessor3_2.json'
-import { getAllPoolCodes } from './utils/getAllPoolCodes'
+import RouteProcessor3_2 from '../artifacts/contracts/RouteProcessor3_2.sol/RouteProcessor3_2.json' assert {
+  type: 'json',
+}
+import { getAllPoolCodes } from './utils/getAllPoolCodes.js'
+
+const { config, network } = hre
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false

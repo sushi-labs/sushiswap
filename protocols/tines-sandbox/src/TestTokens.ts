@@ -3,8 +3,9 @@ import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Address, Hex, PublicClient, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
-
-import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
+import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json' assert {
+  type: 'json',
+}
 
 const getDeploymentAddress = async (
   client: WalletClient,

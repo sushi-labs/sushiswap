@@ -141,7 +141,7 @@ export class DataFetcher {
           this.providers.push(provider)
         }
       } catch (e: unknown) {
-        console.warn(e)
+        // console.warn(e)
       }
     })
   }
@@ -170,7 +170,7 @@ export class DataFetcher {
     currency1: Type,
     excludePools?: Set<string>,
   ): Promise<void> {
-    console.log('PROVIDER COUNT', this.providers.length)
+    // console.log('PROVIDER COUNT', this.providers.length)
     // ensure that we only fetch the native wrap pools if the token is the native currency and wrapped native currency
     if (currency0.wrapped.equals(currency1.wrapped)) {
       const provider = this.providers.find(

@@ -28,7 +28,7 @@ import {
   getRndExpInt,
   tryCallAsync,
   updateTinesAlgebraPool,
-} from '../src'
+} from '../src/index.js'
 
 interface TestContext {
   chainId: ChainId
