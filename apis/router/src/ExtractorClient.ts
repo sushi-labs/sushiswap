@@ -1,3 +1,4 @@
+// import EventEmitter from 'node:events'
 import { ChainId } from 'sushi/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'

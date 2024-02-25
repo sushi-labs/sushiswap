@@ -4,7 +4,6 @@ import {
   Chain,
   type PublicClientConfig,
   Transport,
-  fallback,
 } from 'viem'
 import {
   arbitrum,
@@ -22,6 +21,8 @@ import {
   // bscTestnet,
   // canto,
   celo,
+  // ronin,
+  cronos,
   // celoAlfajores,
   // crossbell,
   // evmos,
@@ -458,15 +459,7 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`,
   ),
   [ChainId.BOBA]: http('https://mainnet.boba.network'),
-  [ChainId.BOBA_AVAX]: fallback(
-    [
-      http(bobaAvax.rpcUrls.default.http[0]),
-      http('https://replica.avax.boba.network'),
-    ],
-    {
-      rank: true,
-    },
-  ) as unknown as ReturnType<typeof http>,
+  [ChainId.BOBA_AVAX]: http('https://avax.boba.network'),
   [ChainId.BOBA_BNB]: http('https://bnb.boba.network'),
   [ChainId.BSC]: http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
   [ChainId.BTTC]: http('https://rpc.bittorrentchain.io'),
@@ -491,7 +484,9 @@ export const publicTransports = {
   [ChainId.MOONBEAM]: http(
     `https://lb.drpc.org/ogrpc?network=moonbeam&dkey=${drpcId}`,
   ),
-  [ChainId.MOONRIVER]: http(moonriver.rpcUrls.default.http[0]),
+  [ChainId.MOONRIVER]: http(
+    `https://lb.drpc.org/ogrpc?network=moonriver&dkey=${drpcId}`,
+  ),
   [ChainId.OPTIMISM]: http(
     `https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcId}`,
   ),
@@ -504,14 +499,7 @@ export const publicTransports = {
   [ChainId.THUNDERCORE]: http('https://mainnet-rpc.thundercore.com'),
   [ChainId.HAQQ]: http(`https://lb.drpc.org/ogrpc?network=haqq&dkey=${drpcId}`),
   [ChainId.CORE]: http('https://rpc.coredao.org'),
-  [ChainId.TELOS]: fallback(
-    [
-      http(telos.rpcUrls.default.http[0]),
-      http('https://rpc1.eu.telos.net/evm'),
-      http('https://rpc1.us.telos.net/evm'),
-    ],
-    { rank: true },
-  ) as unknown as ReturnType<typeof http>,
+  [ChainId.TELOS]: http('https://rpc1.us.telos.net/evm'),
   [ChainId.PALM]: http(palm.rpcUrls.default.http[0]),
   [ChainId.OKEX]: http(okc.rpcUrls.default.http[0]),
   [ChainId.HECO]: http(heco.rpcUrls.default.http[0]),
@@ -526,12 +514,12 @@ export const publicTransports = {
   [ChainId.FILECOIN]: http(
     `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
   ),
-  [ChainId.ZETACHAIN]: fallback(
-    zetachain.rpcUrls.default.http.map((url) => http(url)),
-    {
-      rank: true,
-    },
-  ) as unknown as ReturnType<typeof http>,
+  [ChainId.ZETACHAIN]: http(
+    'https://zetachain-mainnet-archive.allthatnode.com:8545',
+  ),
+  [ChainId.CRONOS]: http(
+    `https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`,
+  ),
 } as const satisfies Record<Exclude<ChainId, TestnetChainId>, Transport>
 
 export const publicChains = [
@@ -544,6 +532,7 @@ export const publicChains = [
   bsc,
   bttc,
   celo,
+  cronos,
   mainnet,
   fantom,
   fuse,
@@ -707,6 +696,10 @@ export const publicClientConfig = {
   [ChainId.ZETACHAIN]: {
     chain: zetachain,
     transport: publicTransports[ChainId.ZETACHAIN],
+  },
+  [ChainId.CRONOS]: {
+    chain: cronos,
+    transport: publicTransports[ChainId.CRONOS],
   },
 } as const satisfies Record<
   Exclude<ChainId, TestnetChainId>,

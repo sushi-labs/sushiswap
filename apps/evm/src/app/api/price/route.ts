@@ -1,9 +1,19 @@
-import { roundToNearestMinutes, sub } from 'date-fns'
 import { NextRequest } from 'next/server'
+import { getAllPrices } from 'src/lib/get-all-prices'
 
-import { getPrices } from 'src/lib/price/v1'
+import { z } from 'zod'
 
-import { schema } from './schema'
+const Currency = {
+  USD: 'USD',
+  NATIVE: 'NATIVE',
+} as const
+
+const schema = z.object({
+  currency: z
+    .nativeEnum(Currency)
+    .nullable()
+    .transform((transform) => transform ?? Currency.USD),
+})
 
 export const revalidate = 600
 
@@ -14,13 +24,8 @@ export async function GET(request: NextRequest) {
   if (!result.success) {
     return Response.json(result.error.format(), { status: 400 })
   }
-
-  const { currency } = result.data
-  const threeDaysAgo = sub(new Date(), { days: 3 })
-  const dateThreshold = roundToNearestMinutes(threeDaysAgo, { nearestTo: 10 })
-
-  const tokens = await getPrices(dateThreshold, currency)
-  return Response.json(tokens, {
+  const prices = await getAllPrices()
+  return Response.json(prices, {
     headers: {
       'Cache-Control': 'max-age=60, stale-while-revalidate=600',
     },

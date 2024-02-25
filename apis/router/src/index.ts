@@ -18,6 +18,7 @@ import { CPUUsageStatistics } from './cpu-usage-statistics'
 import { priceByAddressHandler, pricesHandler } from './handlers/price'
 import { swapV3_2, swapV4 } from './handlers/swap'
 import tokenHandler from './handlers/token'
+import { updatePrices } from './prices'
 
 import process from 'node:process'
 import requestStatistics from './request-statistics'
@@ -31,8 +32,11 @@ async function start() {
     POOL_UPDATE_INTERVAL(CHAIN_ID as ChainId),
     REQUESTED_PAIRS_UPDATE_INTERVAL(CHAIN_ID as ChainId),
   )
+  updatePrices(client)
+  // client.on('firstPoolsUpdate', () =>{
+  //   updatePrices(client)
+  // })
   client.start()
-
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
@@ -80,8 +84,8 @@ async function start() {
 
   app.get(`/token/v1/${CHAIN_ID}/:address`, tokenHandler(client))
 
-  app.get(`/price/v1/${CHAIN_ID}`, pricesHandler(client))
-  app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler(client))
+  app.get(`/price/v1/${CHAIN_ID}`, pricesHandler)
+  app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler)
 
   // The error handler must be registered before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler())

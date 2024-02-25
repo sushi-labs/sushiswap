@@ -115,6 +115,23 @@ export default [
     shortName: 'oeth',
   },
   {
+    chainId: 25,
+    explorers: [
+      {
+        name: 'Cronos Explorer',
+        url: 'https://explorer.cronos.org',
+        standard: 'none',
+      },
+    ],
+    nativeCurrency: {
+      name: 'Cronos',
+      symbol: 'CRO',
+      decimals: 18,
+    },
+    name: 'Cronos Mainnet',
+    shortName: 'cro',
+  },
+  {
     chainId: 40,
     explorers: [
       {

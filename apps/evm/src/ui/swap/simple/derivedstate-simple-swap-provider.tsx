@@ -352,8 +352,7 @@ const useDerivedStateSimpleSwap = () => {
 }
 
 const SWAP_API_BASE_URL =
-  process.env.SWAP_API_V0_BASE_URL ||
-  process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
+  process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL
 
 const useFallback = (chainId: ChainId) => {
   const [swapApi] = useSwapApi()

@@ -17,22 +17,21 @@ import {
 import Link from 'next/link'
 import { FC } from 'react'
 
-import { AddSectionLegacy } from './AddSectionLegacy'
 import { AddSectionStake } from './AddSectionStake'
 import { PoolPositionProvider } from './PoolPositionProvider'
 import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
-import { RemoveSectionLegacy } from './RemoveSectionLegacy'
+import { RemoveSectionTrident } from './RemoveSectionTrident'
 import { RemoveSectionUnstake } from './RemoveSectionUnstake'
 
-interface ManageV2LiquidityCardProps {
+interface ManageTridentLiquidityCard {
   pool: Pool
   tab?: 'stake' | 'unstake' | 'add' | 'remove'
 }
 
-export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
+export const ManageTridentLiquidityCard: FC<ManageTridentLiquidityCard> = ({
   pool,
-  tab = 'add',
+  tab = 'remove',
 }) => {
   const isFarm = pool.wasIncentivized || pool.isIncentivized
 
@@ -50,15 +49,6 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
       >
         <CardContent>
           <TabsList className="!flex">
-            <Link href={`/pool/${pool.id}/add`} className="flex flex-1">
-              <TabsTrigger
-                testdata-id="add-tab"
-                value="add"
-                className="flex flex-1"
-              >
-                Add
-              </TabsTrigger>
-            </Link>
             <Link href={`/pool/${pool.id}/remove`} className="flex flex-1">
               <TabsTrigger
                 testdata-id="remove-tab"
@@ -116,14 +106,9 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
         <PoolPositionProvider pool={pool}>
           <PoolPositionStakedProvider pool={pool}>
             <PoolPositionRewardsProvider pool={pool}>
-              <TabsContent value="add">
-                <CardContent>
-                  <AddSectionLegacy pool={pool} />
-                </CardContent>
-              </TabsContent>
               <TabsContent value="remove">
                 <CardContent>
-                  <RemoveSectionLegacy pool={pool} />
+                  <RemoveSectionTrident pool={pool} />
                 </CardContent>
               </TabsContent>
               <TabsContent value="stake">
