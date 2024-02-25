@@ -221,6 +221,7 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 1000,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    // maxBatchesSimultaniously: 5,
   },
   [ChainId.BTTC]: {
     client: createPublicClient(publicClientConfig[ChainId.BTTC]),

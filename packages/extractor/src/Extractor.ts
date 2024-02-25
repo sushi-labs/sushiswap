@@ -32,6 +32,7 @@ export type ExtractorConfig = {
   logDepth: number
   logging?: boolean
   maxCallsInOneBatch?: number
+  maxBatchesSimultaniously?: number
   warningMessageHandler?: WarningMessageHandler
   debug?: boolean
 }
@@ -78,6 +79,7 @@ export class Extractor {
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
       args.maxCallsInOneBatch ?? 0,
+      args.maxBatchesSimultaniously ?? 0,
       args.debug,
     )
     this.tokenManager = new TokenManager(

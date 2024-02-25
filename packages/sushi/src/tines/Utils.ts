@@ -86,3 +86,31 @@ export function getBigInt(value: number): bigint {
   const res = BigInt(mant) * 2n ** BigInt(shift)
   return value > 0 ? res : res * -1n
 }
+
+export function fastArrayMerge<T>(
+  base: [number, T][],
+  ins: [number, T][],
+): [number, T][] {
+  if (base.length === 0) {
+    return ins.sort((a, b) => a[0] - b[0])
+  }
+  // Now base is not empty
+
+  for (let i = ins.length - 1; i >= 0; --i) {
+    const value = (ins[i] as [number, T])[0]
+    let low = 0
+    let up = base.length
+    while (low < up) {
+      const middle = (low + up) >> 1
+      const diff = (base[middle] as [number, T])[0] - value
+      if (diff > 0) up = middle
+      else if (diff < 0) low = middle + 1
+      else {
+        low = middle
+        break
+      }
+    }
+    base.splice(low, 0, ins[i] as [number, T])
+  }
+  return base
+}
