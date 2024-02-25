@@ -588,20 +588,11 @@ export class Graph {
     minLiquidity = 0,
     logging = false,
   ) {
-    //const start1 = performance.now()
-    //const timeTotal = 0
     const processedVert = new Set<Vertice>()
     type ValuedEdge = [number, Edge]
     let nextEdges: ValuedEdge[] = []
 
     function addVertice(v: Vertice, price: number) {
-      // if (Math.abs(v.price / price - 1) > 1e-17)
-      //   console.log(
-      //     v.token.symbol,
-      //     price,
-      //     v.price,
-      //     Math.abs(v.price / price - 1),
-      //   )
       v.price = price
       const newEdges = v.edges
         .map((e) => {
@@ -615,9 +606,7 @@ export class Graph {
             liquidity >= minLiquidity ||
             (liquidity > 0 && e.pool.alwaysAppropriateForPricing()),
         )
-      //const start0 = performance.now()
       nextEdges = fastArrayMerge(nextEdges, newEdges)
-      //timeTotal += performance.now() - start0
       processedVert.add(v)
     }
 
@@ -646,26 +635,24 @@ export class Graph {
       const vPrice = this.getVert(n.baseToken)?.price || 0
       gasPrice.set(n.chainId, n.gasPrice * vPrice)
     })
+
     processedVert.forEach((v) => {
       const gasPriceChainId = gasPrice.get(v.token.chainId) as number
-      console.assert(
-        gasPriceChainId !== undefined,
-        `Error 427: token {${v.token.address} ${v.token.symbol}}` +
-          ` has unknown chainId ${v.token.chainId} (${typeof v.token
-            .chainId}).` +
-          `Known chainIds: ${Array.from(gasPrice.keys()).map(
-            (k) => `"${k}"(${typeof k})`,
-          )}`,
-      )
-      console.assert(
-        v.price !== 0,
-        `Error 428: token {${v.token.address} ${v.token.symbol} ${v.token.chainId}} was not priced`,
-      )
+      if (gasPriceChainId === undefined)
+        console.error(
+          `Error 427: token {${v.token.address} ${v.token.symbol}}` +
+            ` has unknown chainId ${v.token.chainId} (${typeof v.token
+              .chainId}).` +
+            `Known chainIds: ${Array.from(gasPrice.keys()).map(
+              (k) => `"${k}"(${typeof k})`,
+            )}`,
+        )
+      if (v.price === 0)
+        console.error(
+          `Error 428: token {${v.token.address} ${v.token.symbol} ${v.token.chainId}} was not priced`,
+        )
       v.gasPrice = gasPriceChainId / v.price
     })
-    //const timeTotal1 = performance.now() - start1
-    // console.log('ST2-Time0', timeTotal)
-    // console.log('ST2-Time1', timeTotal1)
   }
 
   // Set prices using greedy algorithm
