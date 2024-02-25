@@ -46,6 +46,10 @@ export class ExtractorClient {
     this.requestedPairsUpdateInterval = requestedPairsUpdateInterval
   }
 
+  get ready() {
+    return this.lastUpdatedTimestamp !== 0 
+  }
+
   start() {
     this.updatePools()
     this.updateRequestedPairs()
