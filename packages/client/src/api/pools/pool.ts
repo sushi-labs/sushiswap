@@ -1,7 +1,7 @@
 import type * as _ from '@prisma/client'
 
 import { type PoolApiSchema } from '../../pure/pools/pool/schema'
-import { getPoolsFromDB } from './pools/'
+import { getPoolsFromDB } from './pools'
 import { getUnindexedPool } from './unindexedPool'
 
 export async function getPoolFromDB(args: typeof PoolApiSchema._output) {
