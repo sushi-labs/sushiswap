@@ -72,7 +72,7 @@ async function start() {
   })
 
   app.get('/health', (_, res: Response) => {
-    return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
+    return res.status(client.ready ? 200 : 503).send()
   })
 
   app.get(`/swap/v3.2/${CHAIN_ID}`, (req, res) => {
