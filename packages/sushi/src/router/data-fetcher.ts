@@ -140,7 +140,7 @@ export class DataFetcher {
         ) {
           this.providers.push(provider)
         }
-      } catch (e: unknown) {
+      } catch (_e: unknown) {
         // console.warn(e)
       }
     })
