@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { TickMath } from './tickMath'
+import { TickMath } from './tickmath/index.js'
 
 describe('TickMath', () => {
   describe('#MIN_TICK', () => {

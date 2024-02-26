@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { ChainId } from '../../chain'
-import { TRIDENT_STABLE_POOL_FACTORY_ADDRESS } from '../../config'
+import { ChainId } from '../../chain/index.js'
+import { TRIDENT_STABLE_POOL_FACTORY_ADDRESS } from '../../config.js'
 import {
   Amount,
   Price,
@@ -8,10 +8,10 @@ import {
   USDC_ADDRESS,
   WETH9,
   WETH9_ADDRESS,
-} from '../../currency'
-import { InsufficientInputAmountError } from '../../dex'
-import { computeTridentStablePoolAddress } from './compute-trident-stable-pool-address'
-import { TridentStablePool } from './trident-stable-pool'
+} from '../../currency/index.js'
+import { InsufficientInputAmountError } from '../../dex.js'
+import { computeTridentStablePoolAddress } from './compute-trident-stable-pool-address.js'
+import { TridentStablePool } from './trident-stable-pool.js'
 
 describe('computePoolAddress', () => {
   it('should correctly compute the pool address', () => {

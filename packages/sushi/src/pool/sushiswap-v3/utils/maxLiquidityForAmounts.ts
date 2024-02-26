@@ -1,6 +1,6 @@
-import { BigintIsh } from '../../../math'
+import { BigintIsh } from '../../../math/index.js'
 
-import { Q96 } from '../internalConstants'
+import { Q96 } from '../internalConstants.js'
 
 /**
  * Returns an imprecise maximum amount of liquidity received for a given amount of token 0.

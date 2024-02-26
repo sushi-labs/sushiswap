@@ -55,7 +55,7 @@ import {
   zkSync,
   // zkSyncTestnet,
 } from 'viem/chains'
-import { ChainId, TestnetChainId } from '../chain'
+import { ChainId, TestnetChainId } from '../chain/index.js'
 
 export {
   arbitrum,

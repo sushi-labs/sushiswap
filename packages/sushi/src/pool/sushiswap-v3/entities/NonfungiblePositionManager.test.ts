@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../../config'
+import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../../config.js'
 import {
   Amount as CurrencyAmount,
   Native,
   Token,
   WETH9,
-} from '../../../currency'
-import { Percent } from '../../../math'
-import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
-import { NonfungiblePositionManager } from './NonfungiblePositionManager'
-import { Position } from './Position'
-import { SushiSwapV3Pool } from './SushiSwapV3Pool'
+} from '../../../currency/index.js'
+import { Percent } from '../../../math/index.js'
+import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96.js'
+import { NonfungiblePositionManager } from './NonfungiblePositionManager.js'
+import { Position } from './Position.js'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool.js'
 
 describe('NonfungiblePositionManager', () => {
   const token0 = new Token({

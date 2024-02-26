@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { Tick } from '../entities/Tick'
-import { TickList } from './tickList'
-import { TickMath } from './tickMath'
+import { Tick } from '../entities/Tick.js'
+import { TickList } from './tickList.js'
+import { TickMath } from './tickmath/index.js'
 
 describe('TickList', () => {
   let highTick: Tick

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import Percent from './Percent'
+import Percent from './Percent.js'
 
 describe('Percent', () => {
   describe('constructor', () => {

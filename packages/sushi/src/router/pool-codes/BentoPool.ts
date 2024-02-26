@@ -5,10 +5,10 @@ import {
   RPool,
   RouteLeg,
   StableSwapRPool,
-} from '../../tines'
-import { HEXer } from '../HEXer'
-import { LiquidityProviders } from '../liquidity-providers'
-import { PoolCode } from './PoolCode'
+} from '../../tines/index.js'
+import { HEXer } from '../HEXer.js'
+import { LiquidityProviders } from '../liquidity-providers/index.js'
+import { PoolCode } from './PoolCode.js'
 
 function getPoolTypeTicker(pool: RPool): string {
   if (pool instanceof ConstantProductRPool) return 'Classic'

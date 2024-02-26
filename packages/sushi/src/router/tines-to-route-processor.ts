@@ -1,8 +1,14 @@
 import { Hex } from 'viem'
-import { ChainId } from '../chain'
-import { MultiRoute, RToken, RouteLeg, RouteStatus, getBigInt } from '../tines'
-import { HEXer } from './HEXer'
-import { PoolCode } from './pool-codes/PoolCode'
+import { ChainId } from '../chain/index.js'
+import {
+  MultiRoute,
+  RToken,
+  RouteLeg,
+  RouteStatus,
+  getBigInt,
+} from '../tines/index.js'
+import { HEXer } from './HEXer.js'
+import { PoolCode } from './pool-codes/PoolCode.js'
 
 function last<T>(arr: T[]): T {
   return arr[arr.length - 1] as T

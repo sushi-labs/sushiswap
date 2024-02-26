@@ -1,9 +1,11 @@
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256, pack } from '@ethersproject/solidity'
 import invariant from 'tiny-invariant'
-import { Token } from '../../currency'
-
-import { SUSHISWAP_V2_INIT_CODE_HASH, SushiSwapV2ChainId } from '../../config'
+import {
+  SUSHISWAP_V2_INIT_CODE_HASH,
+  SushiSwapV2ChainId,
+} from '../../config/index.js'
+import { Token } from '../../currency/index.js'
 
 /**
  * Computes a pair address

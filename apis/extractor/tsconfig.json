@@ -9,5 +9,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ESNext",
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

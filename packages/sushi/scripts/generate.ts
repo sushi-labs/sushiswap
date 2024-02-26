@@ -1,10 +1,9 @@
 /// <reference lib="dom" />
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-
 import { fileURLToPath } from 'url'
-import { type Chain } from '../src/chain'
-import { ChainId } from '../src/chain/constants'
+import { ChainId } from '../src/chain/constants.js'
+import { type Chain } from '../src/chain/index.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)

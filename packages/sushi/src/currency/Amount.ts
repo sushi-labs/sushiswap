@@ -6,12 +6,12 @@ import {
   MAX_UINT256,
   Rounding,
   ZERO,
-} from '../math'
-import { Native } from './Native'
-import { Share } from './Share'
-import { Token } from './Token'
-import { type Type } from './Type'
-import { type SerializedAmount, amountSchema } from './zod'
+} from '../math/index.js'
+import { Native } from './Native.js'
+import { Share } from './Share.js'
+import { Token } from './Token.js'
+import { type Type } from './Type.js'
+import { type SerializedAmount, amountSchema } from './zod.js'
 
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T

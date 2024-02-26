@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 export const SUSHISWAP_V2_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,

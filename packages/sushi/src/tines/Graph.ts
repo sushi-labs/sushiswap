@@ -1,7 +1,13 @@
 import { Address } from 'viem'
-import { PoolType, RPool, RToken, setTokenId } from './RPool'
-import { StableSwapRPool } from './StableSwapPool'
-import { ASSERT, DEBUG, closeValues, fastArrayMerge, getBigInt } from './Utils'
+import { PoolType, RPool, RToken, setTokenId } from './RPool.js'
+import { StableSwapRPool } from './StableSwapPool.js'
+import {
+  ASSERT,
+  DEBUG,
+  closeValues,
+  fastArrayMerge,
+  getBigInt,
+} from './Utils.js'
 
 const ROUTER_DISTRIBUTION_PORTION = 65535
 

@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 // v1
 export const ROUTE_PROCESSOR_SUPPORTED_CHAIN_IDS = [

@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 export const TRIDENT_STABLE_POOL_FACTORY_ADDRESS = {
   [ChainId.ARBITRUM]: '0xc2fB256ABa36852DCcEA92181eC6b355f09A0288',

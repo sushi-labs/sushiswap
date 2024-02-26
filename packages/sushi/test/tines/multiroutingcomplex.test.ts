@@ -1,14 +1,14 @@
 import seedrandom from 'seedrandom'
 import { expect, it } from 'vitest'
+import { RPool } from '../../src/tines/RPool.js'
 import {
   Graph,
   MultiRoute,
   RouteStatus,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
-} from '../../src/tines'
-import { RPool } from '../../src/tines/RPool'
-import { checkRouteResult } from './snapshots/snapshot'
+} from '../../src/tines/index.js'
+import { checkRouteResult } from './snapshots/snapshot.js'
 import {
   MAX_POOL_IMBALANCE,
   Network,
@@ -19,7 +19,7 @@ import {
   createNetwork,
   expectCloseValues,
   getRandom,
-} from './utils'
+} from './utils.js'
 
 const testSeed = '1' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)

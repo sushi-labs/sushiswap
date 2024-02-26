@@ -1,7 +1,12 @@
 import seedrandom from 'seedrandom'
 import { Address } from 'viem'
 import { describe, expect, it } from 'vitest'
-import { CurvePool, RToken, closeValues, getBigInt } from '../../src/tines'
+import {
+  CurvePool,
+  RToken,
+  closeValues,
+  getBigInt,
+} from '../../src/tines/index.js'
 
 const token0 = {
   name: 'Token0',

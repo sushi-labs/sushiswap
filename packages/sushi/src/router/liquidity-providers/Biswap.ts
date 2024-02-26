@@ -1,8 +1,8 @@
 import { PublicClient } from 'viem'
-import { ChainId } from '../../chain'
+import { ChainId } from '../../chain/index.js'
 
-import { LiquidityProviders } from './LiquidityProvider'
-import { UniswapV2BaseProvider } from './UniswapV2Base'
+import { LiquidityProviders } from './LiquidityProvider.js'
+import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
 export class BiswapProvider extends UniswapV2BaseProvider {
   override fee = 0.002
