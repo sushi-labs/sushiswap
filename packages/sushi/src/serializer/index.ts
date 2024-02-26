@@ -1,4 +1,8 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import serializer from 'serialijse'
+import { ChainId } from 'sushi/chain'
 import { Native } from '../currency/index.js'
 import {
   BentoBridgePoolCode,
@@ -21,11 +25,6 @@ import {
   StableSwapRPool,
   UniV3Pool,
 } from '../tines/index.js'
-
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { ChainId } from 'sushi/chain'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)
