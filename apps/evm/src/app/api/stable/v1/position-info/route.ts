@@ -14,7 +14,7 @@ import { CORS } from '../../cors'
 import { getPool } from './getPool'
 import { getPosition } from './getPosition'
 
-export async function getPrices({
+async function getPrices({
   chainId,
 }: {
   chainId: ChainId
