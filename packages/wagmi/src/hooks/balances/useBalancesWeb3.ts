@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
-import { Address, isAddress, zeroAddress } from 'viem'
+import { Address, erc20Abi, isAddress, zeroAddress } from 'viem'
 
-import { erc20ABI, fetchBalance, readContracts } from '@wagmi/core'
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { createConfig, getBalance, readContracts } from '@wagmi/core'
 
 interface UseBalanceParams {
   chainId: ChainId | undefined
@@ -19,11 +20,14 @@ export const queryFnUseBalances = async ({
   account,
 }: Omit<UseBalanceParams, 'enabled'>) => {
   if (!account || !chainId || !currencies) return null
-  const native = await fetchBalance({
+
+  const config = createConfig(publicWagmiConfig)
+
+  const native = await getBalance(config, {
     address: account,
     chainId,
-    formatUnits: 'wei',
   })
+
   const [validatedTokens, validatedTokenAddresses] = currencies.reduce<
     [Token[], Address[]]
   >(
@@ -38,13 +42,13 @@ export const queryFnUseBalances = async ({
     [[], []],
   )
 
-  const data = await readContracts({
+  const data = await readContracts(config, {
     contracts: validatedTokenAddresses.map(
       (token) =>
         ({
           chainId,
           address: token,
-          abi: erc20ABI,
+          abi: erc20Abi,
           functionName: 'balanceOf',
           args: [account],
         }) as const,

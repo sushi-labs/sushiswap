@@ -1,10 +1,10 @@
-import { MockConnector } from '@wagmi/core/connectors/mock'
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
-import { http, createWalletClient } from 'viem'
+import { mock } from '@wagmi/connectors'
+import { http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 
-import { configureChains, createConfig } from 'wagmi'
+import { createConfig } from 'wagmi'
 
+import { ChainId } from 'sushi'
 import { accounts, testChains } from './constants'
 
 const anvilPort = String(
@@ -23,34 +23,26 @@ const testWalletIndex = Number(
 const localHttpUrl = `http://127.0.0.1:${anvilPort}`
 
 export const createTestConfig = () => {
-  const { publicClient } = configureChains(
-    testChains,
-    [
-      jsonRpcProvider({
-        rpc: () => ({
-          http: localHttpUrl,
-        }),
-      }),
+  const mockConnector = mock({
+    accounts: [
+      accounts.map((x) => privateKeyToAccount(x.privateKey))[testWalletIndex]
+        .publicKey,
     ],
-    {
-      pollingInterval: 1_000,
-    },
-  )
-  const mockConnector = new MockConnector({
-    options: {
-      walletClient: createWalletClient({
-        account: accounts.map((x) => privateKeyToAccount(x.privateKey))[
-          testWalletIndex
-        ],
-        transport: http(localHttpUrl),
-        chain: testChains.find((x) => x.id === chainId),
-        pollingInterval: 1_000,
-      }),
+    features: {
+      reconnect: true,
     },
   })
+
+  const chain = testChains.find((x) => x.id === chainId)!
+
   return createConfig({
-    publicClient,
-    autoConnect: true,
+    chains: [chain],
+    transports: {
+      [ChainId.ETHEREUM]: http(localHttpUrl),
+      [ChainId.POLYGON]: http(localHttpUrl),
+      [ChainId.ARBITRUM]: http(localHttpUrl),
+    },
+    pollingInterval: 1_000,
     connectors: [mockConnector],
   })
 }

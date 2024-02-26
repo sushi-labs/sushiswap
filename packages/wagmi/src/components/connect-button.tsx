@@ -40,12 +40,16 @@ export const ConnectButton: FC<ButtonProps> = ({
   children: _children,
   ...props
 }) => {
-  const { connectors, connect, pendingConnector } = useConnect()
+  const { connectors, connect, pending } = useConnect()
 
   const onSelect = useCallback(
     (connectorId: string) => {
+      const connector = connectors.find((el) => el.id === connectorId)
+
+      if (!connector) throw new Error('Connector not found')
+
       return connect({
-        connector: connectors.find((el) => el.id === connectorId),
+        connector,
       })
     },
     [connect, connectors],
@@ -69,7 +73,7 @@ export const ConnectButton: FC<ButtonProps> = ({
 
   // Pending confirmation state
   // Awaiting wallet confirmation
-  if (pendingConnector) {
+  if (pending) {
     return (
       <Button loading {...props}>
         Authorize Wallet

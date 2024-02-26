@@ -225,7 +225,7 @@ export async function getUnindexedPool(
   const client = createPublicClient({
     chain: cfg.chain,
     transport: cfg.transport,
-  })
+  }) as PublicClient
 
   let lpTokenName: string
   try {

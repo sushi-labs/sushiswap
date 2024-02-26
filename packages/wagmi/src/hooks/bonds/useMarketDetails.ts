@@ -12,12 +12,12 @@ import {
   getTotalSuppliesContracts,
   getVaultsReservesContracts,
 } from '@sushiswap/steer-sdk'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
 import { Address, getAddress } from 'viem'
-import { useReadContracts } from 'wagmi'
+import { useBlockNumber, useReadContracts } from 'wagmi'
 
 interface UseBondMarketDetails {
   bond: Bond
@@ -56,18 +56,16 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
     },
   })
 
+  const vaultContracts = useMemo(() => {
+    return [
+      getVaultsReservesContracts({ vaultIds: [bond.quoteToken.id] })[0],
+      getTotalSuppliesContracts({ vaultIds: [bond.quoteToken.id] })[0],
+    ] as const
+  }, [bond.quoteToken.id])
+
   const { data: vaultData } = useReadContracts({
     allowFailure: false,
-    contracts: bond.quoteToken.vault
-      ? [
-          getVaultsReservesContracts({
-            vaultIds: [bond.quoteToken.vault.id],
-          })[0],
-          getTotalSuppliesContracts({
-            vaultIds: [bond.quoteToken.vault.id],
-          })[0],
-        ]
-      : undefined,
+    contracts: vaultContracts,
     query: { enabled: Boolean(enabled && bond.quoteToken.vault) },
   })
 
@@ -158,12 +156,21 @@ export const useBondMarketDetails = ({
     ] as const
   }, [bond.id, bond.chainId])
 
-  const { data } = useReadContracts({
+  const { data, refetch } = useReadContracts({
     allowFailure: false,
     contracts,
-    enabled: Boolean(enabled),
-    watch: Boolean(enabled),
+    query: {
+      enabled: Boolean(enabled),
+    },
   })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      refetch()
+    }
+  }, [blockNumber, refetch])
 
   const [marketPrice, remainingCapacityBI, marketInfo, maxAmountAcceptedBI] =
     useMemo(() => data || [], [data])

@@ -1,9 +1,10 @@
 import { createClient } from '@sushiswap/database'
-import { createConfig, fetchToken } from '@wagmi/core'
-import { wagmiConfig } from 'sushi/config'
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { createConfig, getToken as getTokenFromContract } from '@wagmi/core'
+import { ChainId } from 'sushi'
 import { type Address } from 'viem'
 
-createConfig(wagmiConfig)
+const config = createConfig(publicWagmiConfig)
 
 // import * as defaultTokenList from '@sushiswap/default-token-list' assert { type: 'json' }
 
@@ -43,8 +44,8 @@ export async function getToken(chainId: number, address: string) {
     return token
   } catch {
     await client.$disconnect()
-    const tokenFromContract = await fetchToken({
-      chainId,
+    const tokenFromContract = await getTokenFromContract(config, {
+      chainId: chainId as ChainId,
       address: address as Address,
     }).catch(() => {
       return undefined

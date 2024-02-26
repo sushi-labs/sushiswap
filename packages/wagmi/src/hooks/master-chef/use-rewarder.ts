@@ -2,6 +2,7 @@
 
 import { ChefType } from '@sushiswap/client'
 import { useEffect, useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
 import { useBlockNumber, useReadContract, useReadContracts } from 'wagmi'
@@ -9,7 +10,7 @@ import { getMasterChefContractConfig } from './use-master-chef-contract'
 
 interface UseRewarderPayload {
   account: string | undefined
-  chainId: number
+  chainId: ChainId
   farmId: number
   rewardTokens: Token[]
   rewarderAddresses: string[]

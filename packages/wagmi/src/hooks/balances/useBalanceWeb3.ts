@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
-import { zeroAddress } from 'viem'
-import { Address } from 'wagmi'
+import { Address, zeroAddress } from 'viem'
 
 import { queryFnUseBalances } from './useBalancesWeb3'
 

@@ -1,13 +1,10 @@
 import {
-  getSteerVaultReserves,
-  getSteerVaultsReserves,
+  getVaultsReservesContracts,
+  getVaultsReservesSelect,
 } from '@sushiswap/steer-sdk'
-import { useQuery } from '@tanstack/react-query'
-import { getChainIdAddressFromId } from 'sushi'
-import { usePublicClient } from 'wagmi'
+import { useBlockNumber, useReadContracts, useSimulateContract } from 'wagmi'
 
-import { PublicClient } from 'viem'
-import { clientsFromIds } from './getClientsFromIds'
+import { useEffect, useMemo } from 'react'
 
 interface UseSteerVaultsReserves {
   vaultIds: string[] | undefined
@@ -18,21 +15,34 @@ export const useSteerVaultsReserves = ({
   vaultIds,
   enabled = true,
 }: UseSteerVaultsReserves) => {
-  const client = usePublicClient()
+  const contracts = useMemo(() => {
+    if (!vaultIds) return undefined
+    return getVaultsReservesContracts({ vaultIds })
+  }, [vaultIds])
 
-  return useQuery({
-    queryKey: ['useSteerVaultsReserves', { vaultIds, client }],
-    queryFn: () => {
-      if (!vaultIds) return null
+  const query = useReadContracts({
+    contracts,
+    query: {
+      enabled: Boolean(enabled && vaultIds),
+      select: (results) =>
+        results.flatMap(({ result }, i) => {
+          if (!result) return []
 
-      return getSteerVaultsReserves({
-        clients: clientsFromIds(vaultIds) as PublicClient[],
-        vaultIds: vaultIds,
-      })
+          // ! TODO: Fix when viem is updated
+          return getVaultsReservesSelect(vaultIds![i], result as any)
+        }),
     },
-    refetchInterval: 10000,
-    enabled: Boolean(enabled && vaultIds),
   })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      query.refetch()
+    }
+  }, [blockNumber, query.refetch])
+
+  return query
 }
 
 interface UseSteerVaultReserve {
@@ -44,15 +54,26 @@ export const useSteerVaultReserves = ({
   vaultId,
   enabled = true,
 }: UseSteerVaultReserve) => {
-  const client = usePublicClient({
-    chainId: vaultId ? getChainIdAddressFromId(vaultId).chainId : undefined,
+  const contract = useMemo(() => {
+    if (!vaultId) return undefined
+    return getVaultsReservesContracts({ vaultIds: [vaultId!] })[0]
+  }, [vaultId])
+
+  const query = useSimulateContract({
+    ...contract,
+    query: {
+      enabled: Boolean(enabled && vaultId),
+      select: ({ result }) => getVaultsReservesSelect(vaultId!, result),
+    },
   })
 
-  return useQuery({
-    queryKey: ['useSteerVaultsReserve', { vaultId, client }],
-    queryFn: () =>
-      vaultId ? getSteerVaultReserves({ client, vaultId: vaultId }) : null,
-    refetchInterval: 10000,
-    enabled: Boolean(enabled && vaultId),
-  })
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useEffect(() => {
+    if (blockNumber) {
+      query.refetch()
+    }
+  }, [blockNumber, query.refetch])
+
+  return query
 }

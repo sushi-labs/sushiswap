@@ -1,11 +1,12 @@
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { SendTransactionResult, waitForTransaction } from '@wagmi/core'
+import { SendTransactionReturnType } from '@wagmi/core'
 import { useCallback } from 'react'
 import { SushiSwapV3FeeAmount } from 'sushi/config'
 import { Amount, Token, Type } from 'sushi/currency'
-import { UserRejectedRequestError, encodeFunctionData } from 'viem'
-import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
+import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { V3Migrator } from '../abis/V3Migrator'
 import { V3MigrateAddress } from '../constants'
 import { V3MigrateChainId } from '../types'
@@ -44,7 +45,9 @@ export const useV3Migrate = ({
   chainId,
   enabled = true,
 }: UseV3Migrate) => {
-  const prepare = usePrepareContractWrite(
+  const client = usePublicClient<PublicWagmiConfig>()
+
+  const { data: simulation } = useSimulateContract(
     args.noLiquidity
       ? {
           ...V3MigrateContractConfig(chainId),
@@ -97,18 +100,20 @@ export const useV3Migrate = ({
                   ],
                 ] as readonly [readonly `0x${string}`[]])
               : undefined,
-          enabled: Boolean(
-            chainId &&
-              enabled &&
-              args.liquidityToMigrate &&
-              args.amount1Min &&
-              args.amount0Min &&
-              args.token0 &&
-              args.token1 &&
-              typeof args.tickLower === 'number' &&
-              typeof args.tickUpper === 'number' &&
-              args.deadline,
-          ),
+          query: {
+            enabled: Boolean(
+              chainId &&
+                enabled &&
+                args.liquidityToMigrate &&
+                args.amount1Min &&
+                args.amount0Min &&
+                args.token0 &&
+                args.token1 &&
+                typeof args.tickLower === 'number' &&
+                typeof args.tickUpper === 'number' &&
+                args.deadline,
+            ),
+          },
         }
       : {
           ...V3MigrateContractConfig(chainId),
@@ -143,55 +148,62 @@ export const useV3Migrate = ({
                   },
                 ]
               : undefined,
-          enabled: Boolean(
-            chainId &&
-              enabled &&
-              args.liquidityToMigrate &&
-              args.amount1Min &&
-              args.amount0Min &&
-              args.token0 &&
-              args.token1 &&
-              typeof args.tickLower === 'number' &&
-              typeof args.tickUpper === 'number' &&
-              args.deadline,
-          ),
+          query: {
+            enabled: Boolean(
+              chainId &&
+                enabled &&
+                args.liquidityToMigrate &&
+                args.amount1Min &&
+                args.amount0Min &&
+                args.token0 &&
+                args.token1 &&
+                typeof args.tickLower === 'number' &&
+                typeof args.tickUpper === 'number' &&
+                args.deadline,
+            ),
+          },
         },
   )
 
-  const onSettled = useCallback(
-    (data: SendTransactionResult | undefined, e: Error | null) => {
-      if (e instanceof Error) {
-        if (!(e instanceof UserRejectedRequestError)) {
-          createErrorToast(e.message, true)
-        }
-      }
+  const onSuccess = useCallback(
+    (data: SendTransactionReturnType) => {
+      if (!account) return
 
-      if (account && data) {
-        const ts = new Date().getTime()
-        void createToast({
-          account,
-          type: 'swap',
-          chainId: chainId,
-          txHash: data.hash,
-          promise: waitForTransaction({ hash: data.hash }),
-          summary: {
-            pending: 'Migrating your liquidity',
-            completed: 'Successfully migrated your liquidity',
-            failed: 'Failed to migrate liquidity',
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
-        })
-      }
+      const ts = new Date().getTime()
+      void createToast({
+        account,
+        type: 'swap',
+        chainId: chainId,
+        txHash: data,
+        promise: client.waitForTransactionReceipt({ hash: data }),
+        summary: {
+          pending: 'Migrating your liquidity',
+          completed: 'Successfully migrated your liquidity',
+          failed: 'Failed to migrate liquidity',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
     },
-    [account, chainId],
+    [account, chainId, client],
   )
 
+  const onError = useCallback((e: Error) => {
+    if (e instanceof Error) {
+      if (!(e instanceof UserRejectedRequestError)) {
+        createErrorToast(e.message, true)
+      }
+    }
+  }, [])
+
   return {
-    prepare,
-    write: useContractWrite({
-      ...prepare.config,
-      onSettled,
+    simulation,
+    write: useWriteContract({
+      ...simulation?.request,
+      mutation: {
+        onSuccess,
+        onError,
+      },
     }),
   }
 }

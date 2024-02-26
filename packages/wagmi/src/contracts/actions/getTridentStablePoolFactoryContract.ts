@@ -3,7 +3,7 @@ import {
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
 } from 'sushi/config'
-import { Address } from 'wagmi'
+import { Address } from 'viem'
 
 export const getTridentStablePoolFactoryContract = (
   chainId: number | undefined,

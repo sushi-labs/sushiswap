@@ -2,21 +2,24 @@
 
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useCallback, useMemo } from 'react'
+import { ChainId } from 'sushi'
 import { masterChefV1Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
   useAccount,
-  usePrepareSendTransaction,
+  usePublicClient,
   useSendTransaction,
+  useSimulateContract,
 } from 'wagmi'
-import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+import { SendTransactionReturnType } from 'wagmi/actions'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 import { getMasterChefContractConfig } from './use-master-chef-contract'
 
 interface UseMasterChefWithdrawParams {
-  chainId: number
+  chainId: ChainId
   chef: ChefType
   pid: number
   amount?: Amount<Token>
@@ -35,36 +38,40 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({
   enabled = true,
 }) => {
   const { address } = useAccount()
+  const client = usePublicClient<PublicWagmiConfig>()
 
-  const onSettled = useCallback(
-    (data: SendTransactionResult | undefined, error: Error | null) => {
-      if (error instanceof UserRejectedRequestError) {
-        createErrorToast(error?.message, true)
-      }
-      if (data && amount) {
-        const ts = new Date().getTime()
-        void createToast({
-          account: address,
-          type: 'burn',
-          chainId,
-          txHash: data.hash,
-          promise: waitForTransaction({ hash: data.hash }),
-          summary: {
-            pending: `Unstaking ${amount.toSignificant(6)} ${
-              amount.currency.symbol
-            } tokens`,
-            completed: `Successfully unstaked ${amount.toSignificant(6)} ${
-              amount.currency.symbol
-            } tokens`,
-            failed: `Something went wrong when unstaking ${amount.currency.symbol} tokens`,
-          },
-          groupTimestamp: ts,
-          timestamp: ts,
-        })
-      }
+  const onSuccess = useCallback(
+    (data: SendTransactionReturnType) => {
+      if (!amount) return
+
+      const ts = new Date().getTime()
+      void createToast({
+        account: address,
+        type: 'burn',
+        chainId,
+        txHash: data,
+        promise: client.waitForTransactionReceipt({ hash: data }),
+        summary: {
+          pending: `Unstaking ${amount.toSignificant(6)} ${
+            amount.currency.symbol
+          } tokens`,
+          completed: `Successfully unstaked ${amount.toSignificant(6)} ${
+            amount.currency.symbol
+          } tokens`,
+          failed: `Something went wrong when unstaking ${amount.currency.symbol} tokens`,
+        },
+        groupTimestamp: ts,
+        timestamp: ts,
+      })
     },
-    [amount, chainId, address],
+    [amount, client, chainId, address],
   )
+
+  const onError = useCallback((e: Error) => {
+    if (e instanceof UserRejectedRequestError) {
+      createErrorToast(e?.message, true)
+    }
+  }, [])
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
     if (!address || !chainId || !amount || !chef) return
@@ -102,14 +109,17 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({
     }
   }, [address, amount, chainId, chef, pid])
 
-  const { config } = usePrepareSendTransaction({
+  const { data: simulation } = useSimulateContract({
     ...prepare,
     chainId,
     enabled,
   })
 
   return useSendTransaction({
-    ...config,
-    onSettled,
+    ...simulation?.request,
+    mutation: {
+      onError,
+      onSuccess,
+    },
   })
 }

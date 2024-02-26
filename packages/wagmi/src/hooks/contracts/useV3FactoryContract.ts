@@ -1,8 +1,8 @@
-import { getContract } from '@wagmi/core'
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { SUSHISWAP_V3_FACTORY_ADDRESS, SushiSwapV3ChainId } from 'sushi/config'
-import { WalletClient } from 'viem'
-import { Address, usePublicClient, useWalletClient } from 'wagmi'
+import { Address, getContract } from 'viem'
+import { usePublicClient, useWalletClient } from 'wagmi'
 
 export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
   address: SUSHISWAP_V3_FACTORY_ADDRESS[chainId] as Address,
@@ -143,15 +143,16 @@ export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
 })
 
 export function useV3FactoryContract(chainId: SushiSwapV3ChainId | undefined) {
-  const publicClient = usePublicClient({ chainId })
+  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId })
   const { data: walletClient } = useWalletClient({ chainId })
 
+  // @ts-ignore
   return useMemo(() => {
     if (!chainId) return null
 
     return getContract({
-      ...getV3FactoryContractConfig(chainId),
-      walletClient: (walletClient as WalletClient) ?? publicClient,
+      ...(getV3FactoryContractConfig(chainId) as any),
+      client: walletClient || publicClient!,
     })
   }, [chainId, publicClient, walletClient])
 }

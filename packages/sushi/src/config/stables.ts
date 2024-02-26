@@ -182,16 +182,16 @@ export const STABLES = {
   ],
   [ChainId.CRONOS]: [USDC[ChainId.CRONOS]],
   // TESTNETS
-  [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
-  [ChainId.ROPSTEN]: [
-    USDC[ChainId.ROPSTEN],
-    USDT[ChainId.ROPSTEN],
-    DAI[ChainId.ROPSTEN],
-  ],
-  [ChainId.KOVAN]: [
-    USDC[ChainId.KOVAN],
-    USDT[ChainId.KOVAN],
-    DAI[ChainId.KOVAN],
-  ],
+  // [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
+  // [ChainId.ROPSTEN]: [
+  //   USDC[ChainId.ROPSTEN],
+  //   USDT[ChainId.ROPSTEN],
+  //   DAI[ChainId.ROPSTEN],
+  // ],
+  // [ChainId.KOVAN]: [
+  //   USDC[ChainId.KOVAN],
+  //   USDT[ChainId.KOVAN],
+  //   DAI[ChainId.KOVAN],
+  // ],
   [ChainId.POLYGON_TESTNET]: [USDC[ChainId.POLYGON_TESTNET]],
 } as const

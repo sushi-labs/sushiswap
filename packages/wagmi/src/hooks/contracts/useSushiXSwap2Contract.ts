@@ -1,15 +1,11 @@
 'use client'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { sushiXSwap2Abi } from 'sushi/abi'
-import {
-  SUSHIXSWAP_2_ADDRESS,
-  SushiXSwap2ChainId,
-  isSushiXSwap2ChainId,
-} from 'sushi/config'
-import { WalletClient } from 'viem'
+import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from 'sushi/config'
+import { getContract } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
-import { getContract } from 'wagmi/actions'
 
 export const getSushiXSwap2ContractConfig = (chainId: SushiXSwap2ChainId) => ({
   chainId,
@@ -20,15 +16,15 @@ export const getSushiXSwap2ContractConfig = (chainId: SushiXSwap2ChainId) => ({
 export function useSushiXSwap2Contract(
   chainId: SushiXSwap2ChainId | undefined,
 ) {
-  const publicClient = usePublicClient({ chainId })
+  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId })
   const { data: walletClient } = useWalletClient({ chainId })
 
   return useMemo(() => {
-    if (!chainId || !isSushiXSwap2ChainId(chainId)) return null
+    if (!chainId || (!publicClient && !walletClient)) return null
 
     return getContract({
-      ...getSushiXSwap2ContractConfig(chainId),
-      walletClient: (walletClient as WalletClient) ?? publicClient,
+      ...(getSushiXSwap2ContractConfig(chainId) as any),
+      client: walletClient || publicClient!,
     })
   }, [chainId, publicClient, walletClient])
 }

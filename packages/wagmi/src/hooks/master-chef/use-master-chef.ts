@@ -2,6 +2,7 @@
 
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useCallback, useEffect, useMemo } from 'react'
 import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
@@ -12,14 +13,11 @@ import {
   Config,
   useAccount,
   useBlockNumber,
-  useConfig,
+  usePublicClient,
   useReadContracts,
   useSendTransaction,
 } from 'wagmi'
-import {
-  SendTransactionErrorType,
-  waitForTransactionReceipt,
-} from 'wagmi/actions'
+import { SendTransactionErrorType } from 'wagmi/actions'
 import { SendTransactionData, SendTransactionVariables } from 'wagmi/query'
 import {
   MASTERCHEF_ADDRESS,
@@ -38,7 +36,7 @@ interface UseMasterChefReturn
 }
 
 interface UseMasterChefParams {
-  chainId: number
+  chainId: ChainId
   chef: ChefType
   pid: number
   token: Token
@@ -56,8 +54,8 @@ export const useMasterChef: UseMasterChef = ({
   token,
   enabled = true,
 }) => {
-  const config = useConfig()
   const { address } = useAccount()
+  const client = usePublicClient<PublicWagmiConfig>()
   const contract = useMasterChefContract(chainId, chef)
 
   const contracts = useMemo(() => {
@@ -238,34 +236,32 @@ export const useMasterChef: UseMasterChef = ({
     return [sushiBalance, balance, pendingSushi]
   }, [chainId, data, token])
 
-  const onSettled = useCallback(
-    (
-      data: SendTransactionData | undefined,
-      error: SendTransactionErrorType | null,
-    ) => {
-      if (error instanceof UserRejectedRequestError) {
-        createErrorToast(error?.message, true)
-      }
-      if (data) {
-        const ts = new Date().getTime()
-        void createToast({
-          account: address,
-          type: 'claimRewards',
-          chainId,
-          txHash: data,
-          promise: waitForTransactionReceipt(config, { hash: data }),
-          summary: {
-            pending: 'Claiming rewards',
-            completed: 'Successfully claimed rewards',
-            failed: 'Something went wrong when claiming rewards',
-          },
-          groupTimestamp: ts,
-          timestamp: ts,
-        })
-      }
+  const onSuccess = useCallback(
+    (data: SendTransactionData) => {
+      const ts = new Date().getTime()
+      void createToast({
+        account: address,
+        type: 'claimRewards',
+        chainId,
+        txHash: data,
+        promise: client.waitForTransactionReceipt({ hash: data }),
+        summary: {
+          pending: 'Claiming rewards',
+          completed: 'Successfully claimed rewards',
+          failed: 'Something went wrong when claiming rewards',
+        },
+        groupTimestamp: ts,
+        timestamp: ts,
+      })
     },
-    [chainId, address, config],
+    [chainId, address, client],
   )
+
+  const onError = useCallback((e: SendTransactionErrorType) => {
+    if (e instanceof UserRejectedRequestError) {
+      createErrorToast(e?.message, true)
+    }
+  }, [])
 
   const prepare = useMemo<
     SendTransactionVariables<Config, ChainId> | undefined
@@ -342,7 +338,8 @@ export const useMasterChef: UseMasterChef = ({
     isError: isWriteError,
   } = useSendTransaction({
     mutation: {
-      onSettled,
+      onSuccess,
+      onError,
     },
   })
 

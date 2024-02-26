@@ -8,16 +8,19 @@ import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
   useAccount,
-  usePrepareSendTransaction,
+  usePublicClient,
   useSendTransaction,
+  useSimulateContract,
 } from 'wagmi'
-import { SendTransactionResult, waitForTransaction } from 'wagmi/actions'
+import { SendTransactionReturnType } from 'wagmi/actions'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { ChainId } from 'sushi'
 import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefDepositParams {
-  chainId: number
+  chainId: ChainId
   chef: ChefType
   pid: number
   amount?: Amount<Token>
@@ -36,21 +39,27 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({
   enabled = true,
 }) => {
   const { address } = useAccount()
+  const client = usePublicClient<PublicWagmiConfig>()
   const contract = useMasterChefContract(chainId, chef)
 
-  const onSettled = useCallback(
-    (data: SendTransactionResult | undefined, error: Error | null) => {
-      if (error instanceof UserRejectedRequestError) {
-        createErrorToast(error?.message, true)
-      }
-      if (data && amount) {
+  const onError = useCallback((e: Error) => {
+    if (e instanceof UserRejectedRequestError) {
+      createErrorToast(e?.message, true)
+    }
+  }, [])
+
+  const onSuccess = useCallback(
+    (data: SendTransactionReturnType) => {
+      if (!amount) return
+
+      try {
         const ts = new Date().getTime()
-        createToast({
+        void createToast({
           account: address,
           type: 'mint',
           chainId,
-          txHash: data.hash,
-          promise: waitForTransaction({ hash: data.hash }),
+          txHash: data,
+          promise: client.waitForTransactionReceipt({ hash: data }),
           summary: {
             pending: `Staking ${amount.toSignificant(6)} ${
               amount.currency.symbol
@@ -63,9 +72,9 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({
           groupTimestamp: ts,
           timestamp: ts,
         })
-      }
+      } catch {}
     },
-    [amount, chainId, address],
+    [address, chainId, client, amount],
   )
 
   const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
@@ -93,14 +102,17 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({
     }
   }, [address, amount, chainId, chef, contract, pid])
 
-  const { config } = usePrepareSendTransaction({
+  const { data: simulation } = useSimulateContract({
     ...prepare,
     chainId,
     enabled,
   })
 
   return useSendTransaction({
-    ...config,
-    onSettled,
+    ...simulation?.request,
+    mutation: {
+      onSuccess,
+      onError,
+    },
   })
 }

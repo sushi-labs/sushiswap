@@ -9,15 +9,18 @@ import {
   arbitrum,
   // arbitrumGoerli,
   arbitrumNova,
+  arbitrumSepolia,
   // aurora,
   // auroraGoerli,
   avalanche,
+  avalancheFuji,
   //  avalancheFuji,
   base,
   boba,
   // bronos,
   // bronosTestnet,
   bsc,
+  bscTestnet,
   // bscTestnet,
   // canto,
   celo,
@@ -28,6 +31,7 @@ import {
   // evmos,
   //  evmosTestnet,
   fantom,
+  fantomTestnet,
   // fantomTestnet,
   // filecoinTestnet,
   foundry,
@@ -51,8 +55,10 @@ import {
   optimism,
   //  optimismGoerli,
   polygon,
+  polygonMumbai,
   polygonZkEvm,
   scroll,
+  sepolia,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -61,7 +67,7 @@ import {
   zkSync,
   // zkSyncTestnet,
 } from 'viem/chains'
-import { ChainId, TestnetChainId } from '../chain'
+import { ChainId } from '../chain'
 
 export {
   arbitrum,
@@ -520,7 +526,14 @@ export const publicTransports = {
   [ChainId.CRONOS]: http(
     `https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`,
   ),
-} as const satisfies Record<Exclude<ChainId, TestnetChainId>, Transport>
+  /* Testnets */
+  [ChainId.ARBITRUM_TESTNET]: http(''),
+  [ChainId.AVALANCHE_TESTNET]: http(''),
+  [ChainId.BSC_TESTNET]: http(''),
+  [ChainId.FANTOM_TESTNET]: http(''),
+  [ChainId.POLYGON_TESTNET]: http(''),
+  [ChainId.SEPOLIA]: http(''),
+} as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
   arbitrumNova,
@@ -558,6 +571,14 @@ export const publicChains = [
   scroll,
   filecoin,
   zetachain,
+
+  /* Testnets */
+  arbitrumSepolia,
+  avalancheFuji,
+  bscTestnet,
+  fantomTestnet,
+  polygonMumbai,
+  sepolia,
 ] as const satisfies Readonly<Chain[]>
 
 export const publicClientConfig = {
@@ -701,7 +722,32 @@ export const publicClientConfig = {
     chain: cronos,
     transport: publicTransports[ChainId.CRONOS],
   },
+  /* Testnets */
+  [ChainId.ARBITRUM_TESTNET]: {
+    chain: arbitrumSepolia,
+    transport: publicTransports[ChainId.ARBITRUM_TESTNET],
+  },
+  [ChainId.AVALANCHE_TESTNET]: {
+    chain: avalancheFuji,
+    transport: publicTransports[ChainId.AVALANCHE_TESTNET],
+  },
+  [ChainId.BSC_TESTNET]: {
+    chain: bscTestnet,
+    transport: publicTransports[ChainId.BSC_TESTNET],
+  },
+  [ChainId.FANTOM_TESTNET]: {
+    chain: fantomTestnet,
+    transport: publicTransports[ChainId.FANTOM_TESTNET],
+  },
+  [ChainId.POLYGON_TESTNET]: {
+    chain: polygonMumbai,
+    transport: publicTransports[ChainId.POLYGON_TESTNET],
+  },
+  [ChainId.SEPOLIA]: {
+    chain: sepolia,
+    transport: publicTransports[ChainId.SEPOLIA],
+  },
 } as const satisfies Record<
-  Exclude<ChainId, TestnetChainId>,
+  ChainId,
   PublicClientConfig & { chain: (typeof publicChains)[number] }
 >

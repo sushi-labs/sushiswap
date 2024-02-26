@@ -1,75 +1,65 @@
-import { captureMessage } from '@sentry/nextjs'
-import { allChains, allProviders } from '@sushiswap/wagmi-config'
-import { configureChains, createConfig } from 'wagmi'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { SafeConnector } from 'wagmi/connectors/safe'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import {
+  coinbaseWallet,
+  injected,
+  safe,
+  walletConnect,
+} from '@wagmi/connectors'
+import { ChainId } from 'sushi'
+import { createConfig } from 'wagmi'
+
+// Allow for custom polling intervals for each chain with a default
+const pollingInterval = new Proxy(
+  {
+    [ChainId.ETHEREUM]: 8000, // BT is 12s
+    [ChainId.POLYGON_ZKEVM]: 8000, // BT is 13s
+    [ChainId.FILECOIN]: 20000, // BT is 30s
+  } as Partial<Record<ChainId, number>>,
+  {
+    get: (target, name) =>
+      Object.hasOwn(target, name)
+        ? target[Number(name) as keyof typeof target]
+        : 4000,
+  },
+)
 
 export const createProductionConfig = () => {
-  const { chains, publicClient } = configureChains(allChains, allProviders, {
-    pollingInterval: 4_000,
-  })
   return createConfig({
-    publicClient,
-    logger: {
-      warn: (message) => {
-        captureMessage(message, 'warning')
-      },
-    },
-    autoConnect: true,
+    chains: publicWagmiConfig.chains,
+    transports: publicWagmiConfig.transports,
+    pollingInterval,
     connectors: [
-      new InjectedConnector({
-        chains,
-        options: {
-          shimDisconnect: true,
+      injected({
+        shimDisconnect: true,
+      }),
+      walletConnect({
+        showQrModal: true,
+        projectId: '187b0394dbf3b20ce7762592560eafd2',
+        metadata: {
+          name: 'Sushi',
+          description: 'Community home of DeFi',
+          url: 'https://www.sushi.com',
+          icons: ['https://www.sushi.com/icon.png'],
         },
       }),
-      new MetaMaskConnector({
-        chains,
-        options: {
-          shimDisconnect: true,
-          // shimChainChangedDisconnect: false,
-        },
-      }),
-      new WalletConnectConnector({
-        chains,
-        options: {
-          showQrModal: true,
-          projectId: '187b0394dbf3b20ce7762592560eafd2',
-          metadata: {
-            name: 'Sushi',
-            description: 'Community home of DeFi',
-            url: 'https://www.sushi.com',
-            icons: ['https://www.sushi.com/icon.png'],
-          },
-        },
-      }),
-      new CoinbaseWalletConnector({
+      coinbaseWallet({
         // TODO: Flesh out coinbase wallet connect options?
-        chains,
-        options: {
-          appName: 'Sushi 2.0',
-          appLogoUrl:
-            'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
-        },
+        appName: 'Sushi 2.0',
+        appLogoUrl:
+          'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
       }),
-      new SafeConnector({
-        chains,
-        options: {
-          // TODO: Other self-hosted safes for some networks?
-          allowedDomains: [
-            /gnosis-safe.io$/,
-            /app.safe.global$/,
-            /safe.fuse.io$/,
-            /multisig.moonbeam.network$/,
-            /safe.fantom.network$/,
-            /ui.celo-safe.io$/,
-            /multisig.harmony.one$/,
-          ],
-          debug: false,
-        },
+      safe({
+        // TODO: Other self-hosted safes for some networks?
+        allowedDomains: [
+          /gnosis-safe.io$/,
+          /app.safe.global$/,
+          /safe.fuse.io$/,
+          /multisig.moonbeam.network$/,
+          /safe.fantom.network$/,
+          /ui.celo-safe.io$/,
+          /multisig.harmony.one$/,
+        ],
+        debug: false,
       }),
     ],
   })
