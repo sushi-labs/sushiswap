@@ -18,8 +18,8 @@ enum TestMode {
   BOTH_UNKNOWN_TOKENS = 2,
 }
 
-const RPS = 400
-const TEST_MODE = TestMode.KNOWN_TOKENS
+const RPS = 30
+const TEST_MODE = TestMode.BOTH_UNKNOWN_TOKENS
 const SWAP_AMOUNT = 10
 
 const routerServers = [
@@ -33,8 +33,8 @@ const routerServers = [
   // 'http://localhost:1341',
   // 'http://localhost:1342',
 ]
-const chainId = 1
-const tokensFile = './tokens-1'
+const chainId = 56
+const tokensFile = './tokens-56'
 
 interface Token {
   address: string
@@ -69,7 +69,7 @@ let responseTimeAverage = 0
 
 let next_server = 0
 async function route(tokenIn: Token, tokenOut: Token, amount: bigint) {
-  const query = `/swap/v1/${chainId}?chainId=${chainId}&tokenIn=${
+  const query = `/swap/v4/${chainId}?chainId=${chainId}&tokenIn=${
     tokenIn.address
   }&tokenOut=${tokenOut.address}&amount=${amount.toString()}`
   const urlR = routerServers[next_server] + query
