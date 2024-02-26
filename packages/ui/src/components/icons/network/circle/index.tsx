@@ -33,6 +33,7 @@ import { PolygonZKCircle } from './PolygonZKCircle'
 import { ScrollCircle } from './ScrollCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { ZetaChainCircle } from './ZetaChainCircle'
 
 export * from './AptosCircle'
 export * from './ArbitrumCircle'
@@ -67,6 +68,7 @@ export * from './PolygonZKCircle'
 export * from './ScrollCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
+export * from './ZetaChainCircle'
 
 export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.ETHEREUM]: EthereumCircle,
@@ -102,4 +104,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.BASE]: BaseCircle,
   [ChainId.SCROLL]: ScrollCircle,
   [ChainId.FILECOIN]: FilecoinCircle,
+  [ChainId.ZETACHAIN]: ZetaChainCircle,
 }

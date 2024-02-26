@@ -5,12 +5,18 @@ import { ChainId } from 'sushi/chain'
 import {
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
+  isRouteProcessor4ChainId,
 } from 'sushi/config'
-import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
+import {
+  Amount,
+  Native,
+  Price,
+  type Type,
+  WNATIVE_ADDRESS,
+} from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
+import { RouterLiquiditySource } from 'sushi/router'
 import { type Address, type Hex, stringify } from 'viem'
-// import { deserialize } from 'wagmi'
-
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type {
@@ -18,19 +24,24 @@ import type {
   UseTradeQuerySelect,
   UseTradeReturnWriteArgs,
 } from './types'
-import { tradeValidator01 } from './validator01'
 import { tradeValidator02 } from './validator02'
 
-const SWAP_BASE_URL =
-  process.env['SWAP_API_V0_BASE_URL'] ||
-  process.env['NEXT_PUBLIC_SWAP_API_V0_BASE_URL'] ||
+const API_BASE_URL =
+  process.env['API_BASE_URL'] ||
+  process.env['NEXT_PUBLIC_API_BASE_URL'] ||
   'https://staging.sushi.com/swap'
 
-function getApiVersion(chainId: ChainId) {
-  if (isRouteProcessor3_2ChainId(chainId)) {
+function getApiVersion(
+  chainId: ChainId,
+  source: RouterLiquiditySource = RouterLiquiditySource.Sender,
+) {
+  if (source === RouterLiquiditySource.XSwap) {
     return '/v3.2'
-  }
-  if (isRouteProcessor3_1ChainId(chainId)) {
+  } else if (isRouteProcessor4ChainId(chainId)) {
+    return '/v4'
+  } else if (isRouteProcessor3_2ChainId(chainId)) {
+    return '/v3.2'
+  } else if (isRouteProcessor3_1ChainId(chainId)) {
     return '/v3.1'
   }
   return ''
@@ -62,12 +73,14 @@ export const useTradeQuery = (
         slippagePercentage,
         gasPrice,
         recipient,
+        source,
       },
     ],
     queryFn: async () => {
-      const params = new URL(SWAP_BASE_URL + getApiVersion(chainId))
-
-      params.searchParams.set('chainId', `${chainId}`)
+      const params = new URL(
+        `${API_BASE_URL}/swap${getApiVersion(chainId, source)}/${chainId}`,
+      )
+      // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',
         `${
@@ -89,29 +102,19 @@ export const useTradeQuery = (
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
-      source !== undefined && params.searchParams.set('source', `${source}`)
+      if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
       // const json = deserialize(await res.json()) should cause react query error
       const json = await res.json()
-
-      try {
-        // CC
-        return tradeValidator01.parse(json)
-      } catch (e) {
-        console.error('tradeValidator01 error', e)
-        try {
-          // Try  API 2.0
-          if (fromToken && toToken) {
-            const resp2 = tradeValidator02.parse(json)
-            const resp1 = apiAdapter02To01(resp2, fromToken, toToken, recipient)
-            return resp1
-          }
-        } catch (_e) {
-          console.error('tradeValidator02 error', _e)
-        }
-        throw e
-      }
+      const resp2 = tradeValidator02.parse(json)
+      const resp1 = apiAdapter02To01(
+        resp2,
+        fromToken as Type,
+        toToken as Type,
+        recipient,
+      )
+      return resp1
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,

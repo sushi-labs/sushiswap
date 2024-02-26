@@ -1,4 +1,4 @@
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { getPublicClient } from 'wagmi/actions'
 
 import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'

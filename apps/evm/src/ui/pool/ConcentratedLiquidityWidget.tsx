@@ -4,7 +4,6 @@ import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import {
   getV3NonFungiblePositionManagerContractConfig,
   useConcentratedPositionOwner,
@@ -13,7 +12,9 @@ import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type } from 'sushi/currency'
+import { Position } from 'sushi/pool'
 
 import { Bound, Field } from '../../lib/constants'
 import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
@@ -28,7 +29,7 @@ interface ConcentratedLiquidityWidget {
   account: string | undefined
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   setToken0?(token: Type): void
   setToken1?(token: Type): void
   tokensLoading: boolean

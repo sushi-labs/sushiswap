@@ -16,12 +16,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui/components/tooltip'
-import { SushiSwapV3Pool } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo } from 'react'
 import { unwrapToken } from 'src/lib/functions'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
+import { SushiSwapV3Pool } from 'sushi/pool'
 
 import { APRHoverCard } from './APRHoverCard'
 
@@ -107,18 +107,18 @@ export const PoolHeader: FC<PoolHeader> = ({
                   pool.protocol === 'SUSHISWAP_V3'
                     ? 'bg-blue/20 text-blue'
                     : pool.protocol === 'SUSHISWAP_V2'
-                    ? 'bg-pink/20 text-pink'
-                    : 'bg-green/20 text-green',
+                      ? 'bg-pink/20 text-pink'
+                      : 'bg-green/20 text-green',
                   'text-sm px-2 py-1 font-semibold rounded-full mt-0.5',
                 )}
               >
                 {pool.protocol === 'SUSHISWAP_V3'
                   ? 'V3'
                   : pool.protocol === 'SUSHISWAP_V2'
-                  ? 'V2'
-                  : pool.protocol === 'BENTOBOX_CLASSIC'
-                  ? 'Classic'
-                  : 'Stable'}
+                    ? 'V2'
+                    : pool.protocol === 'BENTOBOX_CLASSIC'
+                      ? 'Classic'
+                      : 'Stable'}
               </div>
             )}
           </div>

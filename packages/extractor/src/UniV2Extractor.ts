@@ -1,17 +1,16 @@
-import { ConstantProductPoolCode, LiquidityProviders } from '@sushiswap/router'
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { computeSushiSwapV2PoolAddress } from '@sushiswap/v2-sdk'
+import { computeSushiSwapV2PoolAddress } from 'sushi'
 import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
+import { ConstantProductPoolCode, LiquidityProviders } from 'sushi/router'
+import { ConstantProductRPool, RToken } from 'sushi/tines'
 import { Address, Log, PublicClient, decodeEventLog, parseAbiItem } from 'viem'
-
-import { Counter } from './Counter'
-import { LogFilter2 } from './LogFilter2'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { PermanentCache } from './PermanentCache'
-import { TokenManager } from './TokenManager'
-import { repeat } from './Utils'
-import { warnLog } from './WarnLog'
+import { Counter } from './Counter.js'
+import { LogFilter2 } from './LogFilter2.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { PermanentCache } from './PermanentCache.js'
+import { TokenManager } from './TokenManager.js'
+import { repeat } from './Utils.js'
+import { warnLog } from './WarnLog.js'
 
 export interface FactoryV2 {
   address: Address

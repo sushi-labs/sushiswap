@@ -1,8 +1,9 @@
-import { Pool } from '@sushiswap/client'
+import { Pool, Protocol } from '@sushiswap/client'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   NetworkIcon,
   Tooltip,
+  TooltipContent,
   TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
@@ -12,7 +13,7 @@ import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
-import React from 'react'
+import React, { FC, ReactNode } from 'react'
 import {
   formatNumber,
   formatPercent,
@@ -20,6 +21,7 @@ import {
   shortenAddress,
 } from 'sushi/format'
 
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { PositionWithPool } from '../../types'
 import { APRHoverCard } from './APRHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
@@ -269,13 +271,53 @@ export const NETWORK_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   },
 }
 
+const WithDeprecationNotice: FC<{ children: ReactNode }> = ({ children }) => {
+  return (
+    <div className="flex gap-1">
+      <div className="opacity-60">{children}</div>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <div className="bg-yellow/10 dark:text-yellow text-amber-900 whitespace-nowrap rounded-full flex gap-0.5 py-1 px-2 items-center text-xs">
+                <ExclamationCircleIcon width={12} height={12} /> Deprecated Soon
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="!bg-[#0f172a] !p-0 w-60 !border-0">
+            <div className="bg-gray-50 dark:bg-white/[0.02]">
+              <div className="flex flex-col gap-2.5 bg-yellow/10 dark:text-yellow text-amber-900 p-4 text-sm">
+                <span className="font-semibold">
+                  Pool soon to be deprecated
+                </span>
+                <span>
+                  Trident Pools will soon be deprecated, please remove your
+                  assets ASAP.
+                </span>
+              </div>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  )
+}
+
 export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
   PositionWithPool,
   unknown
 > = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCell {...props.row} />,
+  cell: (props) =>
+    props.row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC ||
+    props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE ? (
+      <WithDeprecationNotice>
+        <PoolNameCell {...props.row} />
+      </WithDeprecationNotice>
+    ) : (
+      <PoolNameCell {...props.row} />
+    ),
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -297,7 +339,15 @@ export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   accessorFn: (row) => row.pool.totalApr1d,
   cell: (props) => (
     <APRHoverCard pool={props.row.original.pool}>
-      <span className="underline decoration-dotted underline-offset-2">
+      <span
+        className={classNames(
+          props.row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC ||
+            props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE
+            ? 'opacity-60'
+            : '',
+          'underline decoration-dotted underline-offset-2',
+        )}
+      >
         {formatPercent(props.row.original.pool.totalApr1d)}
       </span>
     </APRHoverCard>
@@ -313,12 +363,22 @@ export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   accessorFn: (row) =>
     (Number(row.balance) / Number(row.pool.totalSupply)) *
     Number(row.pool.liquidityUSD),
-  cell: (props) =>
-    formatUSD(
-      (Number(props.row.original.balance) /
-        Number(props.row.original.pool.totalSupply)) *
-        Number(props.row.original.pool.liquidityUSD),
-    ),
+  cell: (props) => (
+    <span
+      className={
+        props.row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC ||
+        props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE
+          ? 'opacity-60'
+          : ''
+      }
+    >
+      {formatUSD(
+        (Number(props.row.original.balance) /
+          Number(props.row.original.pool.totalSupply)) *
+          Number(props.row.original.pool.liquidityUSD),
+      )}
+    </span>
+  ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

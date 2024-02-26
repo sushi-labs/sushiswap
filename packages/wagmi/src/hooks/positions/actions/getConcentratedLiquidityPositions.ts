@@ -1,5 +1,6 @@
-import { SushiSwapV3ChainId, computePoolAddress } from '@sushiswap/v3-sdk'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV3ChainId } from 'sushi/config'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { erc20ABI, readContracts } from 'wagmi'
 
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
@@ -107,7 +108,7 @@ export const getConcentratedLiquidityPositions = async ({
 
   return positions.filter(Boolean).map((el, i) => ({
     ...el,
-    address: computePoolAddress({
+    address: computeSushiSwapV3PoolAddress({
       factoryAddress: getV3FactoryContractConfig(el.chainId).address,
       tokenA: el.token0,
       tokenB: el.token1,

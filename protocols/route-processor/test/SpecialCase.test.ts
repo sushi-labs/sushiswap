@@ -1,6 +1,6 @@
-import { DataFetcher, LiquidityProviders, Router } from '@sushiswap/router'
 import { ChainId } from 'sushi/chain'
 import { FRAX, USDC } from 'sushi/currency'
+import { DataFetcher, LiquidityProviders, Router } from 'sushi/router'
 import { http, createPublicClient } from 'viem'
 import { mainnet } from 'viem/chains'
 

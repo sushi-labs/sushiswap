@@ -70,6 +70,7 @@ module.exports = {
         yellow: {
           DEFAULT: '#eab308',
         },
+        primary: 'var(--color)',
         secondary: 'var(--secondary)',
         muted: 'var(--muted)',
         'muted-foreground': 'var(--muted-foreground)',

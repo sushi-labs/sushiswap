@@ -2,7 +2,6 @@
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { UseTradeReturn } from '@sushiswap/react-query'
-import { Bridge, LiquidityProviders } from '@sushiswap/router'
 import {
   Button,
   DialogConfirm,
@@ -35,29 +34,35 @@ import {
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useRef } from 'react'
-import { routeProcessor3Abi, routeProcessorAbi } from 'sushi/abi'
+import {
+  routeProcessor3Abi,
+  routeProcessor4Abi,
+  routeProcessorAbi,
+} from 'sushi/abi'
 import { gasMargin } from 'sushi/calculate'
 import { Chain } from 'sushi/chain'
 import {
   ROUTE_PROCESSOR_3_1_ADDRESS,
   ROUTE_PROCESSOR_3_2_ADDRESS,
   ROUTE_PROCESSOR_3_ADDRESS,
+  ROUTE_PROCESSOR_4_ADDRESS,
   ROUTE_PROCESSOR_ADDRESS,
   isRouteProcessor3ChainId,
   isRouteProcessor3_1ChainId,
   isRouteProcessor3_2ChainId,
+  isRouteProcessor4ChainId,
   isRouteProcessorChainId,
 } from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
+import { Bridge, LiquidityProviders } from 'sushi/router'
 import { stringify } from 'viem'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import {
   warningSeverity,
   warningSeverityClassName,
 } from '../../../lib/swap/warningSeverity'
-import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -100,22 +105,26 @@ export const SimpleSwapTradeReviewDialog: FC<{
     isSuccess: isPrepareSuccess,
   } = usePrepareContractWrite({
     chainId: chainId,
-    address: isRouteProcessor3_2ChainId(chainId)
-      ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
-      : isRouteProcessor3_1ChainId(chainId)
-      ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-      : isRouteProcessor3ChainId(chainId)
-      ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-      : isRouteProcessorChainId(chainId)
-      ? ROUTE_PROCESSOR_ADDRESS[chainId]
-      : undefined,
-    abi: (isRouteProcessor3_2ChainId(chainId) ||
-    isRouteProcessor3_1ChainId(chainId) ||
-    isRouteProcessor3ChainId(chainId)
-      ? routeProcessor3Abi
-      : isRouteProcessorChainId(chainId)
-      ? routeProcessorAbi
-      : undefined) as any,
+    address: isRouteProcessor4ChainId(chainId)
+      ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
+      : isRouteProcessor3_2ChainId(chainId)
+        ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
+        : isRouteProcessor3_1ChainId(chainId)
+          ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
+          : isRouteProcessor3ChainId(chainId)
+            ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
+            : isRouteProcessorChainId(chainId)
+              ? ROUTE_PROCESSOR_ADDRESS[chainId]
+              : undefined,
+    abi: (isRouteProcessor4ChainId(chainId)
+      ? routeProcessor4Abi
+      : isRouteProcessor3_2ChainId(chainId) ||
+          isRouteProcessor3_1ChainId(chainId) ||
+          isRouteProcessor3ChainId(chainId)
+        ? routeProcessor3Abi
+        : isRouteProcessorChainId(chainId)
+          ? routeProcessorAbi
+          : undefined) as any,
     functionName: trade?.functionName,
     args: trade?.writeArgs as any,
     enabled: Boolean(
@@ -123,7 +132,8 @@ export const SimpleSwapTradeReviewDialog: FC<{
         (isRouteProcessorChainId(chainId) ||
           isRouteProcessor3ChainId(chainId) ||
           isRouteProcessor3_1ChainId(chainId) ||
-          isRouteProcessor3_2ChainId(chainId)) &&
+          isRouteProcessor3_2ChainId(chainId) ||
+          isRouteProcessor4ChainId(chainId)) &&
         approved &&
         trade?.route?.status !== 'NoWay' &&
         chain?.id === chainId &&
@@ -428,8 +438,8 @@ export const SimpleSwapTradeReviewDialog: FC<{
                               trade?.priceImpact?.lessThan(ZERO)
                                 ? '+'
                                 : trade?.priceImpact?.greaterThan(ZERO)
-                                ? '-'
-                                : ''
+                                  ? '-'
+                                  : ''
                             }${Math.abs(
                               Number(trade?.priceImpact?.toFixed(2)),
                             )}%` ?? '-'
@@ -472,23 +482,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
                         `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
                       )}
                     </List.KeyValue>
-                    {isSwap && (
-                      <List.KeyValue title="Route">
-                        {isFetching ? (
-                          <SkeletonText
-                            align="right"
-                            fontSize="sm"
-                            className="w-1/3"
-                          />
-                        ) : (
-                          <TradeRoutePathView trade={trade}>
-                            <Button size="sm" variant="link">
-                              Show route
-                            </Button>
-                          </TradeRoutePathView>
-                        )}
-                      </List.KeyValue>
-                    )}
                   </List.Control>
                 </List>
                 {recipient && (
@@ -530,18 +523,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
                       isError
                         ? 'red'
                         : warningSeverity(trade?.priceImpact) >= 3
-                        ? 'red'
-                        : 'blue'
+                          ? 'red'
+                          : 'blue'
                     }
                     testId="confirm-swap"
                   >
                     {isError
                       ? 'Shoot! Something went wrong :('
                       : isWrap
-                      ? 'Wrap'
-                      : isUnwrap
-                      ? 'Unwrap'
-                      : `Swap ${token0?.symbol} for ${token1?.symbol}`}
+                        ? 'Wrap'
+                        : isUnwrap
+                          ? 'Unwrap'
+                          : `Swap ${token0?.symbol} for ${token1?.symbol}`}
                   </Button>
                 </div>
               </DialogFooter>

@@ -2,10 +2,9 @@
 
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
-
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import LiquidityChartRangeInput from './LiquidityChartRangeInput'
 import { useDensityChartData } from './LiquidityChartRangeInput/hooks'

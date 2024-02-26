@@ -7,7 +7,6 @@ import {
   Rounding,
   ZERO,
 } from '../math/index.js'
-
 import { Native } from './Native.js'
 import { Share } from './Share.js'
 import { Token } from './Token.js'

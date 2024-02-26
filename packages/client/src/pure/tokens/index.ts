@@ -7,8 +7,8 @@ import { type GetApiInputFromOutput } from '../../types.js'
 export { TokensApiSchema }
 export type Token = Awaited<ReturnType<typeof _getTokens>>
 export type GetTokensArgs = GetApiInputFromOutput<
-  typeof TokensApiSchema['_input'],
-  typeof TokensApiSchema['_output']
+  (typeof TokensApiSchema)['_input'],
+  (typeof TokensApiSchema)['_output']
 >
 
 export const getTokensUrl = (/*args: GetTokensArgs*/) => {

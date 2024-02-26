@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-
 import { Amount } from './Amount.js'
 import { Native } from './Native.js'
 import { Token } from './Token.js'

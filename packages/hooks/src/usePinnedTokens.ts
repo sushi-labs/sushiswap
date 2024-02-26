@@ -2,16 +2,19 @@ import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from 'sushi/config'
+import {
   ARB,
-  type Currency,
   DAI,
   FRAX,
   GNO,
   MATIC,
   MIM,
-  Native,
   SUSHI,
-  Token,
   USDC,
   USDT,
   WBTC,
@@ -20,16 +23,15 @@ import {
   WORMHOLE_USDC,
   WORMHOLE_WBTC,
   WORMHOLE_WETH,
+  ZETA_ETH_BRIDGE_USDC,
+  ZETA_ETH_BRIDGE_USDT,
+  axlDAI,
+  axlETH,
   axlUSDC,
+  axlUSDT,
   axlWBTC,
 } from 'sushi/currency'
-
-import {
-  STARGATE_USDC,
-  STARGATE_USDT,
-  STARGATE_WBTC,
-  STARGATE_WETH,
-} from 'sushi/config'
+import { type Currency, Native, Token } from 'sushi/currency'
 import { useLocalStorage } from './useLocalStorage'
 
 export const DEFAULT_BASES = {
@@ -277,11 +279,11 @@ export const DEFAULT_BASES = {
   [ChainId.HAQQ]: [
     Native.onChain(ChainId.HAQQ),
     WNATIVE[ChainId.HAQQ],
-    WETH9[ChainId.HAQQ],
-    WBTC[ChainId.HAQQ],
-    USDC[ChainId.HAQQ],
-    USDT[ChainId.HAQQ],
-    DAI[ChainId.HAQQ],
+    axlETH[ChainId.HAQQ],
+    axlWBTC[ChainId.HAQQ],
+    axlUSDC[ChainId.HAQQ],
+    axlUSDT[ChainId.HAQQ],
+    axlDAI[ChainId.HAQQ],
   ],
   [ChainId.CORE]: [
     Native.onChain(ChainId.CORE),
@@ -327,6 +329,20 @@ export const DEFAULT_BASES = {
     WNATIVE[ChainId.FILECOIN],
     USDC[ChainId.FILECOIN],
     DAI[ChainId.FILECOIN],
+  ],
+  [ChainId.ZETACHAIN]: [
+    Native.onChain(ChainId.ZETACHAIN),
+    WNATIVE[ChainId.ZETACHAIN],
+    ZETA_ETH_BRIDGE_USDC,
+    ZETA_ETH_BRIDGE_USDT,
+    WETH9[ChainId.ZETACHAIN],
+  ],
+  [ChainId.CRONOS]: [
+    Native.onChain(ChainId.CRONOS),
+    WNATIVE[ChainId.CRONOS],
+    WETH9[ChainId.CRONOS],
+    WBTC[ChainId.CRONOS],
+    USDC[ChainId.CRONOS],
   ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const

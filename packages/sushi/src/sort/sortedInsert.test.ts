@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { sortedInsert } from './sortedInsert'
+import { sortedInsert } from './sortedInsert.js'
 
 describe('#sortedInsert', () => {
   const comp = (a: number, b: number) => a - b

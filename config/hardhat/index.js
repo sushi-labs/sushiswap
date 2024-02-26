@@ -10,12 +10,14 @@ require('hardhat-deploy-ethers')
 require('@matterlabs/hardhat-zksync-deploy')
 require('@matterlabs/hardhat-zksync-solc')
 
-const accounts = {
-  mnemonic:
-    process.env.MNEMONIC ||
-    'test test test test test test test test test test test junk',
-  accountsBalance: '990000000000000000000',
-}
+const accounts = process.env.PRIVATE_KEY
+  ? [process.env.PRIVATE_KEY]
+  : {
+      mnemonic:
+        process.env.MNEMONIC ||
+        'test test test test test test test test test test test junk',
+      accountsBalance: '990000000000000000000',
+    }
 
 /**
  * @type {import('hardhat/config').HardhatUserConfig}
@@ -27,8 +29,8 @@ module.exports.defaultConfig = {
         network: 'kava',
         chainId: 2222,
         urls: {
-          apiURL: 'https://explorer.kava.io/api',
-          browserURL: 'https://explorer.kava.io',
+          apiURL: 'https://kavascan.com/api',
+          browserURL: 'https://kavascan.com',
         },
       },
       {
@@ -45,6 +47,120 @@ module.exports.defaultConfig = {
         urls: {
           apiURL: 'https://api.scrollscan.com/api',
           browserURL: 'https://scrollscan.com/',
+        },
+      },
+      {
+        network: 'bttc',
+        chainId: 199,
+        urls: {
+          apiURL: 'https://api.bttcscan.com/api',
+          browserURL: 'https://bttcscan.com/',
+        },
+      },
+      {
+        network: 'cronos',
+        chainId: 25,
+        urls: {
+          apiURL: 'https://api.cronoscan.com/api',
+          browserURL: 'https://cronoscan.com/',
+        },
+      },
+      {
+        network: 'arbitrum-nova',
+        chainId: 42170,
+        urls: {
+          apiURL: 'https://api-nova.arbiscan.io/api',
+          browserURL: 'https://arbiscan.io/',
+        },
+      },
+      {
+        network: 'base',
+        chainId: 8453,
+        urls: {
+          apiURL: 'https://api.basescan.org/api',
+          browserURL: 'https://basescan.org',
+        },
+      },
+      {
+        network: 'linea',
+        chainId: 59144,
+        urls: {
+          apiURL: 'https://api.lineascan.build/api',
+          browserURL: 'https://api.lineascan.build',
+        },
+      },
+      {
+        network: 'celo',
+        chainId: 42220,
+        urls: {
+          apiURL: 'https://api.celoscan.io/api',
+          browserURL: 'https://celoscan.io',
+        },
+      },
+      {
+        network: 'haqq',
+        chainId: 11235,
+        urls: {
+          apiURL: 'https://explorer.haqq.network/api',
+          browserURL: 'https://explorer.haqq.network',
+        },
+      },
+      {
+        network: 'thundercore',
+        chainId: 108,
+        urls: {
+          apiURL: 'https://explorer-mainnet.thundercore.com/api',
+          browserURL: 'https://explorer-mainnet.thundercore.com',
+        },
+      },
+      {
+        network: 'zetachain',
+        chainId: 7000,
+        urls: {
+          apiURL: 'https://zetachain.blockscout.com/api',
+          browserURL: 'https://zetachain.blockscout.com',
+        },
+      },
+      {
+        network: 'fuse',
+        chainId: 122,
+        urls: {
+          apiURL: 'https://explorer.fuse.io/api',
+          browserURL: 'https://explorer.fuse.io',
+        },
+      },
+      {
+        network: 'polygonzkevm',
+        chainId: 1101,
+        urls: {
+          apiURL: 'https://api-zkevm.polygonscan.com/api',
+          browserURL: 'https://zkevm.polygonscan.com',
+        },
+      },
+      {
+        network: 'core',
+        chainId: 1116,
+        urls: {
+          apiURL: 'https://openapi.coredao.org/api',
+          browserURL: 'https://scan.coredao.org',
+        },
+      },
+      {
+        network: 'boba',
+        chainId: 288,
+        urls: {
+          apiURL:
+            'https://api.routescan.io/v2/network/mainnet/evm/288/etherscan',
+          browserURL: 'https://bobascan.com',
+        },
+      },
+      {
+        network: 'boba-bnb',
+        chainId: 56288,
+        urls: {
+          apiURL:
+            'https://api.routescan.io/v2/network/mainnet/evm/56288/etherscan',
+          browserURL: 'https://bobascan.com',
         },
       },
     ],
@@ -82,17 +198,28 @@ module.exports.defaultConfig = {
       // harmony
       harmony: process.env.HARMONY_API_KEY || '',
       harmonyTest: process.env.HARMONY_API_KEY || '',
-      // xdai and sokol don't need an API key, but you still need
-      // to specify one; any string placeholder will work
+      bttc: process.env.BTTC_API_KEY || '',
+      gnosis: process.env.GNOSIS_API_KEY || '',
+      scroll: process.env.SCROLL_API_KEY || '',
+      cronos: process.env.CRONOS_API_KEY || '',
+      'arbitrum-nova': process.env.ARBITRUM_NOVA_KEY || '',
+      base: process.env.BASE_API_KEY || '',
+      linea: process.env.LINEA_API_KEY || '',
+      celo: process.env.CELO_API_KEY || '',
+      polygonzkevm: process.env.POLYGONZKEVM_API_KEY || '',
+      core: process.env.CORE_API_KEY || '',
       xdai: 'api-key',
       sokol: 'api-key',
       aurora: 'api-key',
       auroraTestnet: 'api-key',
       metis: 'api-key',
-      // bobaAvax: 'api-key',
-      bttc: process.env.BTTC_API_KEY || '',
-      gnosis: process.env.GNOSIS_API_KEY || '',
-      scroll: process.env.SCROLL_API_KEY || '',
+      haqq: 'api-key',
+      kava: 'api-key',
+      thundercore: 'api-key',
+      zetachain: 'api-key',
+      fuse: 'api-key',
+      boba: 'api-key',
+      'boba-bnb': 'api-key',
     },
   },
   tenderly: {
@@ -460,19 +587,12 @@ module.exports.defaultConfig = {
       saveDeployments: true,
     },
     filecoin: {
-      url: 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1',
+      url: 'https://rpc.ankr.com/filecoin',
       accounts,
       chainId: 314,
       live: true,
       saveDeployments: true,
     },
-    // linea: {
-    //   url: '',
-    //   accounts,
-    //   chainId: ,
-    //   live: true,
-    //   saveDeployments: true,
-    // },
     haqq: {
       url: 'https://rpc.eth.haqq.network',
       accounts,
@@ -505,6 +625,20 @@ module.exports.defaultConfig = {
       url: 'https://rpc.scroll.io/',
       accounts,
       chainId: 534352,
+      live: true,
+      saveDeployments: true,
+    },
+    zetachain: {
+      url: 'https://zetachain-evm.blockpi.network/v1/rpc/public',
+      accounts,
+      chainId: 7000,
+      live: true,
+      saveDeployments: true,
+    },
+    cronos: {
+      url: 'https://cronos.blockpi.network/v1/rpc/public',
+      accounts,
+      chainId: 25,
       live: true,
       saveDeployments: true,
     },

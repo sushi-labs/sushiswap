@@ -6,8 +6,8 @@ import {
   MulticallContracts,
   PublicClient,
 } from 'viem'
-
-import { warnLog } from './WarnLog'
+import { delay } from './Utils.js'
+import { warnLog } from './WarnLog.js'
 
 const getBlockNumberAbi: Abi = [
   {
@@ -27,7 +27,9 @@ export class MultiCallAggregator {
   pendingRejects: ((arg: unknown) => void)[] = []
   timer?: NodeJS.Timeout
   maxCallsInOneBatch: number
+  maxBatchesSimultaniously: number
   chainId: ChainId
+  debug: boolean
 
   totalCalls = 0
   totalCallsProcessed = 0
@@ -36,11 +38,19 @@ export class MultiCallAggregator {
   totalMCallsProcessed = 0
   totalMCallsFailed = 0
   totalTimeSpent = 0
+  currentBatchInProgress = 0
 
-  constructor(client: PublicClient, maxCallsInOneBatch = 0) {
+  constructor(
+    client: PublicClient,
+    maxCallsInOneBatch = 0,
+    maxBatchesSimultaniously = 0,
+    debug = false,
+  ) {
     this.client = client
     this.maxCallsInOneBatch = maxCallsInOneBatch
+    this.maxBatchesSimultaniously = maxBatchesSimultaniously
     this.chainId = client.chain?.id as ChainId
+    this.debug = debug
   }
 
   // aggregate several calls in one multicall
@@ -169,7 +179,13 @@ export class MultiCallAggregator {
     for (;;) {
       this.totalCalls += pendingCalls.length - 1
       this.totalMCalls += 1
+      while (
+        this.maxBatchesSimultaniously !== 0 &&
+        this.currentBatchInProgress >= this.maxBatchesSimultaniously
+      )
+        await delay(1000) // too much current processing batches. Let's wait
       try {
+        this.currentBatchInProgress += 1
         res = await this.client.multicall({
           allowFailure: true,
           contracts: pendingCalls.map((c) => ({
@@ -179,7 +195,9 @@ export class MultiCallAggregator {
             args: c.args as Narrow<readonly unknown[] | undefined>,
           })),
         })
+        this.currentBatchInProgress -= 1
       } catch (_e) {
+        this.currentBatchInProgress -= 1
         this.totalCallsFailed += pendingCalls.length - 1
         this.totalMCallsFailed += 1
         // warnLog(
@@ -196,7 +214,9 @@ export class MultiCallAggregator {
     }
     if (res[0].status !== 'success') {
       // getBlockNumber Failed
-      const error = res[0].error.toString().substring(0, 1000)
+      const error = this.debug
+        ? res[0].error.toString()
+        : res[0].error.toString().substring(0, 1000)
       for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](error)
     } else {
       const blockNumber = res[0].result as number

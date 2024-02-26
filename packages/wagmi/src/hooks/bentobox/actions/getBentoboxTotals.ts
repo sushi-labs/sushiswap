@@ -1,7 +1,7 @@
-import { Rebase } from '@sushiswap/tines'
 import { bentoBoxV1TotalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Type as Currency } from 'sushi/currency'
+import { Rebase } from 'sushi/tines'
 import { Address, readContracts } from 'wagmi'
 
 const totalsMap = new Map<string, Rebase>()
@@ -65,13 +65,16 @@ export const getBentoboxTotals = async (
       allowFailure: false,
       contracts,
     }).then((results) =>
-      addresses.reduce((previousValue, currentValue, i) => {
-        previousValue[currentValue as Address] = {
-          elastic: results[i][0],
-          base: results[i][1],
-        }
-        return previousValue
-      }, {} as Record<Address, Rebase>),
+      addresses.reduce(
+        (previousValue, currentValue, i) => {
+          previousValue[currentValue as Address] = {
+            elastic: results[i][0],
+            base: results[i][1],
+          }
+          return previousValue
+        },
+        {} as Record<Address, Rebase>,
+      ),
     )
   } catch {
     return null

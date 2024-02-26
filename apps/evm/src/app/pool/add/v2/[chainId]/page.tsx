@@ -4,13 +4,6 @@ import { PlusIcon } from '@heroicons/react-v1/solid'
 import { FormSection } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Loader } from '@sushiswap/ui/components/loader'
-import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
-import {
-  SUSHISWAP_V2_ROUTER_ADDRESS,
-  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
-  SushiSwapV2ChainId,
-  isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
 import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
@@ -31,13 +24,15 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
-  Amount,
-  Native,
-  Type,
+  SUSHISWAP_V2_ROUTER_ADDRESS,
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SushiSwapV2ChainId,
   defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
+  isSushiSwapV2ChainId,
+} from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
+import { SushiSwapV2Pool } from 'sushi/pool'
 import { SWRConfig } from 'swr'
 
 import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
@@ -201,10 +196,10 @@ const _Add: FC<AddProps> = ({
       SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
         (chainId) =>
           !TESTNET_CHAIN_IDS.includes(
-            chainId as typeof TESTNET_CHAIN_IDS[number],
+            chainId as (typeof TESTNET_CHAIN_IDS)[number],
           ) &&
           !DISABLED_CHAIN_IDS.includes(
-            chainId as typeof DISABLED_CHAIN_IDS[number],
+            chainId as (typeof DISABLED_CHAIN_IDS)[number],
           ),
       ),
     [],

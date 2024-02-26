@@ -1,15 +1,16 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
-import cors from 'cors'
 import express, { type Express, type Response } from 'express'
-import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
-import extractor from './extractor'
-import poolCodes from './handlers/pool-codes'
-import poolCodesForToken from './handlers/pool-codes-for-token'
-import { priceByAddressHandler, pricesHandler } from './handlers/prices'
-import { v3, v3_1, v3_2 } from './handlers/swap'
-import requestStatistics from './request-statistics'
+import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config.js'
+import { CPUUsageStatistics } from './cpu-usage-statistics.js'
+import extractor from './extractor.js'
+import poolCodesBetween from './handlers/pool-codes-between/index.js'
+import poolCodesForToken from './handlers/pool-codes-for-token/index.js'
+import poolCodes from './handlers/pool-codes/index.js'
+import requestedPairs from './handlers/requested-pairs/index.js'
+import token from './handlers/token/index.js'
+import requestStatistics from './request-statistics.js'
 
 const app: Express = express()
 
@@ -30,6 +31,9 @@ Sentry.init({
   tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
 })
 
+const cpuUsageStatistics = new CPUUsageStatistics(60_000)
+cpuUsageStatistics.start()
+
 app.set('json replacer', (_key: string, value: any) =>
   typeof value === 'bigint' ? value.toString() : value,
 )
@@ -40,22 +44,15 @@ app.use(Sentry.Handlers.requestHandler())
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler())
 
-app.use(cors())
-
 app.get('/health', (_, res: Response) => {
   return res.status(extractor.isStarted() ? 200 : 503).send()
 })
 
-app.get('/pool-codes', poolCodes)
-
-app.get('/pool-codes-for-token', poolCodesForToken)
-
-app.get('/prices', pricesHandler)
-app.get('/prices/:address', priceByAddressHandler)
-
-app.get('/swap', v3)
-app.get('/swap/v3.1', v3_1)
-app.get('/swap/v3.2', v3_2)
+app.get('/token/:chainId/:address', token)
+app.get('/pool-codes/:chainId', poolCodes)
+app.get('/pool-codes-for-token/:chainId/:address', poolCodesForToken)
+app.get('/pool-codes-between/:chainId/:addr0/:addr1', poolCodesBetween)
+app.get('/requested-pairs/:chainId', requestedPairs)
 
 // app.get('/debug-sentry', function mainHandler(req, res) {
 //   throw new Error('My first Sentry error!')

@@ -10,8 +10,8 @@ import useSWR from 'swr'
 import { bentoBoxTokensSchema } from '../../../lib/schema'
 
 export type GetBentoBoxTokenArgs = GetApiInputFromOutput<
-  typeof bentoBoxTokensSchema['_input'],
-  typeof bentoBoxTokensSchema['_output']
+  (typeof bentoBoxTokensSchema)['_input'],
+  (typeof bentoBoxTokensSchema)['_output']
 >
 
 export type BentoBoxToken = NonNullable<

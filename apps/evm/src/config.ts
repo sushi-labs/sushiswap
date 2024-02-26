@@ -1,7 +1,9 @@
-import { TridentChainIds } from '@sushiswap/trident-sdk'
-import { SushiSwapV2ChainIds } from '@sushiswap/v2-sdk'
-import { SushiSwapV3ChainIds } from '@sushiswap/v3-sdk'
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import {
+  SushiSwapV2ChainIds,
+  SushiSwapV3ChainIds,
+  TridentChainIds,
+} from 'sushi/config'
 import { Currency } from 'sushi/currency'
 
 export const SWAP_API_ENABLED_NETWORKS = [
@@ -9,25 +11,43 @@ export const SWAP_API_ENABLED_NETWORKS = [
   ChainId.ARBITRUM_NOVA,
   ChainId.AVALANCHE,
   ChainId.BASE,
+  ChainId.BOBA,
+  ChainId.BOBA_BNB,
   ChainId.BSC,
+  ChainId.BTTC,
   ChainId.CELO,
+  ChainId.CORE,
   ChainId.ETHEREUM,
   ChainId.FANTOM,
+  ChainId.FUSE,
   ChainId.GNOSIS,
+  ChainId.HAQQ,
+  ChainId.HARMONY,
+  ChainId.KAVA,
+  ChainId.LINEA,
+  ChainId.METIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.POLYGON_ZKEVM,
   ChainId.SCROLL,
-  ChainId.LINEA,
-  ChainId.HAQQ,
+  ChainId.TELOS,
+  ChainId.THUNDERCORE,
+  // ChainId.CRONOS,
 ]
-export type SwapApiEnabledChainId = typeof SWAP_API_ENABLED_NETWORKS[number]
+export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (
   chainId: number,
 ): chainId is SwapApiEnabledChainId =>
   SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
 
-export const DISABLED_CHAIN_IDS = [ChainId.BOBA_AVAX] as const
+export const DISABLED_CHAIN_IDS = [
+  ChainId.BOBA_AVAX,
+  ChainId.PALM,
+  ChainId.HECO,
+  ChainId.OKEX,
+] as const
 
 const PREFERRED_CHAINID_ORDER = [
   ChainId.ETHEREUM,
@@ -44,16 +64,19 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.HARMONY,
 ] as const
 
+const SUSHI_CHAIN_IDS = Array.from(
+  new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds]),
+)
+
 export const CHAIN_IDS = [
-  ...TridentChainIds,
-  ...SushiSwapV2ChainIds,
-  ...SushiSwapV3ChainIds,
+  ...SUSHI_CHAIN_IDS,
+  // ChainId.CRONOS,
 ] as const
 
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([
     ...PREFERRED_CHAINID_ORDER.filter((el) =>
-      CHAIN_IDS.includes(el as typeof CHAIN_IDS[number]),
+      CHAIN_IDS.includes(el as (typeof CHAIN_IDS)[number]),
     ),
     ...CHAIN_IDS,
   ]),
@@ -61,11 +84,11 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
   (
     c,
   ): c is Exclude<
-    typeof CHAIN_IDS[number],
-    typeof TESTNET_CHAIN_IDS[number] | typeof DISABLED_CHAIN_IDS[number]
+    (typeof CHAIN_IDS)[number],
+    (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
-    !TESTNET_CHAIN_IDS.includes(c as typeof TESTNET_CHAIN_IDS[number]) &&
-    !DISABLED_CHAIN_IDS.includes(c as typeof DISABLED_CHAIN_IDS[number]),
+    !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
 )
 
 export const DISABLED_ANALYTICS_CHAIN_IDS = [
@@ -78,12 +101,12 @@ export const ANALYTICS_CHAIN_IDS = [
   ...SUPPORTED_CHAIN_IDS.filter(
     (el) =>
       !DISABLED_ANALYTICS_CHAIN_IDS.includes(
-        el as typeof DISABLED_ANALYTICS_CHAIN_IDS[number],
+        el as (typeof DISABLED_ANALYTICS_CHAIN_IDS)[number],
       ),
   ),
 ]
 
-export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
 export const isSupportedChainId = (
   chainId: number,
 ): chainId is SupportedChainId =>
