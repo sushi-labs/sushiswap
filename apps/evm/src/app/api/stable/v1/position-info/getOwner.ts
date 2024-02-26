@@ -1,8 +1,8 @@
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
+  publicClientConfig,
+} from 'sushi/config'
 import { createClient } from 'viem'
 import { readContract } from 'viem/contract'
 
@@ -35,7 +35,7 @@ export const getOwner = async ({
   tokenId: bigint
   chainId: SushiSwapV3ChainId
 }) => {
-  const client = createClient(config[chainId])
+  const client = createClient(publicClientConfig[chainId])
 
   const result = await readContract(client, {
     abi: abiShard,

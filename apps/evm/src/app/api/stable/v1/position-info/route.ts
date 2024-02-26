@@ -1,20 +1,31 @@
-import {
-  FeeAmount,
-  Position,
-  SushiSwapV3ChainId,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'src/lib/db'
-import { getPrices } from 'src/lib/price/v2'
-import { formatPercent } from 'sushi'
+import { Position, formatPercent } from 'sushi'
 import { ChainId } from 'sushi/chain'
+import {
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
 import { z } from 'zod'
 import { CORS } from '../../cors'
 import { getPool } from './getPool'
 import { getPosition } from './getPosition'
+
+export async function getPrices({
+  chainId,
+}: {
+  chainId: ChainId
+}): Promise<Record<string, number>> {
+  return fetch(`https://api.sushi.com/price/v1/${chainId}`)
+    .then((res) => res.json())
+    .catch((e) => {
+      console.error('Error fetching token prices', chainId, e)
+      throw e
+    })
+}
 
 const schema = z.object({
   chainId: z.coerce
@@ -53,9 +64,9 @@ export async function GET(request: NextRequest) {
       chainId: args.chainId,
       token0: new Token({ chainId: args.chainId, ...token0 }),
       token1: new Token({ chainId: args.chainId, ...token1 }),
-      feeAmount: position.fee as FeeAmount,
+      feeAmount: position.fee as SushiSwapV3FeeAmount,
     }),
-    getPrices(args.chainId, 'USD'),
+    getPrices({ chainId: args.chainId }),
   ])
 
   const { amount0, amount1 } = new Position({

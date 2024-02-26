@@ -1,11 +1,10 @@
+import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
-  FeeAmount,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SushiSwapV3ChainId,
-  SushiSwapV3Pool,
-  computePoolAddress,
-} from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
+  SushiSwapV3FeeAmount,
+  publicClientConfig,
+} from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { Address, createClient } from 'viem'
 import { multicall } from 'viem/contract'
@@ -59,12 +58,12 @@ export const getPool = async ({
 }: {
   token0: Token
   token1: Token
-  feeAmount: FeeAmount
+  feeAmount: SushiSwapV3FeeAmount
   chainId: SushiSwapV3ChainId
 }) => {
-  const client = createClient(config[chainId])
+  const client = createClient(publicClientConfig[chainId])
 
-  const poolAddress = computePoolAddress({
+  const poolAddress = computeSushiSwapV3PoolAddress({
     factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
     tokenA: token0,
     tokenB: token1,

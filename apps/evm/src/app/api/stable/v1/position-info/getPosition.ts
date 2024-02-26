@@ -2,12 +2,12 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3ChainId,
-  computePoolAddress,
-} from '@sushiswap/v3-sdk'
-
-import { config } from '@sushiswap/viem-config'
+  publicClientConfig,
+} from 'sushi/config'
 import { createClient } from 'viem'
 import { readContract } from 'viem/contract'
+
+import { computeSushiSwapV3PoolAddress } from 'sushi'
 import { getFees } from './getFees'
 import { getOwner } from './getOwner'
 
@@ -95,7 +95,7 @@ export const getPosition = async ({
   tokenId: bigint
   chainId: SushiSwapV3ChainId
 }) => {
-  const client = createClient(config[chainId])
+  const client = createClient(publicClientConfig[chainId])
 
   const owner = await getOwner({ tokenId, chainId })
 
@@ -126,7 +126,7 @@ export const getPosition = async ({
 
   return {
     id: tokenId.toString(),
-    address: computePoolAddress({
+    address: computeSushiSwapV3PoolAddress({
       factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
       tokenA: token0,
       tokenB: token1,

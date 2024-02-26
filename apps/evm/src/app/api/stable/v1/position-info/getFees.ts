@@ -1,8 +1,8 @@
 import {
   SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
+  publicClientConfig,
+} from 'sushi/config'
 import { Address, createClient } from 'viem'
 import { simulateContract } from 'viem/contract'
 
@@ -66,7 +66,7 @@ export const getFees = async ({
   owner: Address
   chainId: SushiSwapV3ChainId
 }) => {
-  const client = createClient(config[chainId])
+  const client = createClient(publicClientConfig[chainId])
 
   const { result } = await simulateContract(client, {
     abi: abiShard,

@@ -1,10 +1,9 @@
 import { Protocol } from '@sushiswap/client'
 import { createClient } from '@sushiswap/database'
-import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { NextRequest, NextResponse } from 'next/server'
 import { ChainId } from 'sushi/chain'
 import { isBentoBoxChainId } from 'sushi/config'
+import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { z } from 'zod'
 import { CORS } from '../../cors'
 
