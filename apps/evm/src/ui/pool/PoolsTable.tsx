@@ -307,7 +307,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
       tokenSymbols,
       isIncentivized: farmsOnly || undefined, // will filter farms out if set to false, undefined will be filtered out by the parser
       hasEnabledSteerVault: smartPoolsOnly || undefined, // will filter smart pools out if set to false, undefined will be filtered out by the parser
-      isWhitelisted: false, // can be added to filters later, need to put it here so fallback works
+      isWhitelisted: true, // can be added to filters later, need to put it here so fallback works
       orderBy: sorting[0]?.id,
       orderDir: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
       protocols,
