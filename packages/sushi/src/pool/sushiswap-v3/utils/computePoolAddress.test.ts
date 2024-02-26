@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SushiSwapV3FeeAmount } from '../../../config.js'
+import { SushiSwapV3FeeAmount } from '../../../config/index.js'
 import { Token } from '../../../currency/index.js'
 import { computeSushiSwapV3PoolAddress } from './computePoolAddress.js'
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ChainId } from '../../chain/index.js'
-import { TRIDENT_STABLE_POOL_FACTORY_ADDRESS } from '../../config.js'
+import { TRIDENT_STABLE_POOL_FACTORY_ADDRESS } from '../../config/index.js'
 import {
   Amount,
   Price,
@@ -9,7 +9,7 @@ import {
   WETH9,
   WETH9_ADDRESS,
 } from '../../currency/index.js'
-import { InsufficientInputAmountError } from '../../dex.js'
+import { InsufficientInputAmountError } from '../../dex/index.js'
 import { computeTridentStablePoolAddress } from './compute-trident-stable-pool-address.js'
 import { TridentStablePool } from './trident-stable-pool.js'
 

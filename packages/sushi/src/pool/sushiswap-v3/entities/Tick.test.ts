@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { TickMath } from '../utils/tickmath/index.js'
+import { TickMath } from '../utils/tickMath.js'
 import { Tick } from './Tick.js'
 
 describe('Tick', () => {

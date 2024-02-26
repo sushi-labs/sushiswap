@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { nearestUsableTick } from './nearestUsableTick.js'
-import { TickMath } from './tickmath/index.js'
+import { TickMath } from './tickMath.js'
 
 describe('#nearestUsableTick', () => {
   it('throws if tickSpacing is 0', () => {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../../config.js'
+import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../../config/index.js'
 import {
   Amount as CurrencyAmount,
   Token,
@@ -7,7 +7,7 @@ import {
 } from '../../../currency/index.js'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96.js'
 import { nearestUsableTick } from '../utils/nearestUsableTick.js'
-import { TickMath } from '../utils/tickmath/index.js'
+import { TickMath } from '../utils/tickMath.js'
 import { SushiSwapV3Pool } from './SushiSwapV3Pool.js'
 
 const ONE_ETHER = 10n ** 18n
