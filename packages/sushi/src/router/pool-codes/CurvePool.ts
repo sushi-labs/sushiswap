@@ -1,17 +1,17 @@
-import { ChainId } from '../../chain'
+import { ChainId } from '../../chain/index.js'
 import {
   CurveMultitokenPool,
   CurvePool,
   MultiRoute,
   RouteLeg,
-} from '../../tines'
-import { HEXer } from '../HEXer'
+} from '../../tines/index.js'
+import { HEXer } from '../HEXer.js'
 import {
   CURVE_NON_FACTORY_POOLS,
   CurvePoolType,
   LiquidityProviders,
-} from '../liquidity-providers'
-import { PoolCode } from './PoolCode'
+} from '../liquidity-providers/index.js'
+import { PoolCode } from './PoolCode.js'
 
 export class CurvePoolCode extends PoolCode {
   constructor(

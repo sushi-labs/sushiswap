@@ -1,3 +1,3 @@
-export * from './isPromiseFulfilled'
-export * from './isPromiseRejected'
-export * from './isZero'
+export * from './isPromiseFulfilled.js'
+export * from './isPromiseRejected.js'
+export * from './isZero.js'

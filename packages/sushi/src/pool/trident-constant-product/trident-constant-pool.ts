@@ -1,19 +1,18 @@
 import invariant from 'tiny-invariant'
-import { Amount, Price, Share, Token } from '../../currency'
+import {
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+} from '../../config/index.js'
+import { Amount, Price, Share, Token } from '../../currency/index.js'
 import {
   Fee,
   InsufficientInputAmountError,
   InsufficientReservesError,
   Pool,
-} from '../../dex'
-import { ONE, ZERO, sqrt } from '../../math'
-
-import {
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TridentChainId,
-} from '../../config'
-import { computeTridentConstantPoolAddress } from './compute-trident-constant-pool-address'
-import { SerializedConstantPool, tridentConstantPoolSchema } from './zod'
+} from '../../dex/index.js'
+import { ONE, ZERO, sqrt } from '../../math/index.js'
+import { computeTridentConstantPoolAddress } from './compute-trident-constant-pool-address.js'
+import { SerializedConstantPool, tridentConstantPoolSchema } from './zod.js'
 
 export class TridentConstantPool implements Pool {
   public readonly liquidityToken: Token

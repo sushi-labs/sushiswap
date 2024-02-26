@@ -1,6 +1,8 @@
-import { config } from 'hardhat'
-import { createProvider } from 'hardhat/internal/core/providers/construction'
+import hre from 'hardhat'
+import { createProvider } from 'hardhat/internal/core/providers/construction.js'
 import { ChainId } from 'sushi/chain'
+
+const { config } = hre
 
 export async function createHardhatProvider(
   chainId: ChainId,

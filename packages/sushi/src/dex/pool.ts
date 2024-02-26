@@ -1,6 +1,6 @@
-import { Amount, Token } from '../currency'
+import { Amount, Token } from '../currency/index.js'
 
-import { Fee } from './fee'
+import { Fee } from './fee.js'
 
 export abstract class Pool {
   public abstract readonly liquidityToken: Token

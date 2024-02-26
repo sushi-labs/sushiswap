@@ -1,22 +1,24 @@
 import { Interface } from '@ethersproject/abi'
-import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
+import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json' assert {
+  type: 'json',
+}
 import invariant from 'tiny-invariant'
 import { zeroAddress } from 'viem'
-import { toHex } from '../../../convert'
+import { toHex } from '../../../convert/index.js'
 import {
   Amount as CurrencyAmount,
   Currency,
   Native,
   Token,
-} from '../../../currency'
-import { BigintIsh, Percent } from '../../../math'
-import { validateAndParseAddress } from '../utils'
-import { MethodParameters } from '../utils/calldata'
-import { Multicall } from './Multicall'
-import { Payments } from './Payments'
-import { Position } from './Position'
-import { PermitOptions, SelfPermit } from './SelfPermit'
-import { SushiSwapV3Pool } from './SushiSwapV3Pool'
+} from '../../../currency/index.js'
+import { BigintIsh, Percent } from '../../../math/index.js'
+import { MethodParameters } from '../utils/calldata.js'
+import { validateAndParseAddress } from '../utils/index.js'
+import { Multicall } from './Multicall.js'
+import { Payments } from './Payments.js'
+import { Position } from './Position.js'
+import { PermitOptions, SelfPermit } from './SelfPermit.js'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool.js'
 
 const MaxUint128 = toHex(2n ** 128n - 1n)
 

@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 export const AMPL_ADDRESS = {
   [ChainId.ETHEREUM]: '0xD46bA6D942050d489DBd938a2C909A5d5039A161',

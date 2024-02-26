@@ -1,11 +1,11 @@
 import flatMap from 'lodash.flatmap'
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 import {
   ADDITIONAL_BASES,
   BASES_TO_CHECK_TRADES_AGAINST,
   CUSTOM_BASES,
-} from '../config'
-import { Token, Type } from '../currency'
+} from '../config/index.js'
+import { Token, Type } from '../currency/index.js'
 
 export function getCurrencyCombinations(
   chainId: ChainId,

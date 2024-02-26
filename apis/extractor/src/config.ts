@@ -221,6 +221,7 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 1000,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    // maxBatchesSimultaniously: 5,
   },
   [ChainId.BTTC]: {
     client: createPublicClient(publicClientConfig[ChainId.BTTC]),
@@ -550,12 +551,6 @@ export const EXTRACTOR_CONFIG: Record<
     client: createPublicClient(publicClientConfig[ChainId.MOONBEAM]),
     factoriesV2: [
       sushiswapV2Factory(ChainId.MOONBEAM),
-      // {
-      //   address: '0x51f9DBEd76f5Dcf209817f641b549aa82F35D23F'as Address,
-      //   provider: LiquidityProviders.Fraxswap,
-      //   fee: 0.003,
-      //   initCodeHash: ''
-      // },
       {
         address: '0x19B85ae92947E0725d5265fFB3389e7E4F191FDa' as Address,
         provider: LiquidityProviders.Solarbeam,
@@ -580,12 +575,6 @@ export const EXTRACTOR_CONFIG: Record<
     client: createPublicClient(publicClientConfig[ChainId.MOONRIVER]),
     factoriesV2: [
       sushiswapV2Factory(ChainId.MOONRIVER),
-      // {
-      //   address: '0x7FB05Ca29DAc7F5690E9b5AE0aF0415D579D7CD3'as Address,
-      //   provider: LiquidityProviders.Fraxswap,
-      //   fee: 0.003,
-      //   initCodeHash: ''
-      // },
       {
         address: '0x049581aEB6Fe262727f290165C29BDAB065a1B68' as Address,
         provider: LiquidityProviders.Solarbeam,

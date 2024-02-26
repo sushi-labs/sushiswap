@@ -1,5 +1,5 @@
-import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines'
-import { RPParams } from './router'
+import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines/index.js'
+import { RPParams } from './router.js'
 
 function makeAPI02Token(token: RToken) {
   return {

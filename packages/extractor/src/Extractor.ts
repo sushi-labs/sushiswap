@@ -1,22 +1,20 @@
 import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
-
 import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
-
-import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'
+import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
 import {
   AlgebraPoolWatcher,
   AlgebraPoolWatcherStatus,
-} from './AlgebraPoolWatcher'
-import { LogFilter2, LogFilterType } from './LogFilter2'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { TokenManager } from './TokenManager'
-import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
-import { FactoryV3, UniV3Extractor } from './UniV3Extractor'
-import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
-import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog'
+} from './AlgebraPoolWatcher.js'
+import { LogFilter2, LogFilterType } from './LogFilter2.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { TokenManager } from './TokenManager.js'
+import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
+import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
+import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
+import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -32,6 +30,7 @@ export type ExtractorConfig = {
   logDepth: number
   logging?: boolean
   maxCallsInOneBatch?: number
+  maxBatchesSimultaniously?: number
   warningMessageHandler?: WarningMessageHandler
   debug?: boolean
 }
@@ -78,6 +77,7 @@ export class Extractor {
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
       args.maxCallsInOneBatch ?? 0,
+      args.maxBatchesSimultaniously ?? 0,
       args.debug,
     )
     this.tokenManager = new TokenManager(

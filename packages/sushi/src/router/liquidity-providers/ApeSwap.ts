@@ -1,7 +1,7 @@
 import { PublicClient } from 'viem'
-import { ChainId } from '../../chain'
-import { LiquidityProviders } from './LiquidityProvider'
-import { UniswapV2BaseProvider } from './UniswapV2Base'
+import { ChainId } from '../../chain/index.js'
+import { LiquidityProviders } from './LiquidityProvider.js'
+import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
 export class ApeSwapProvider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {

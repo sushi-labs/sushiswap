@@ -2,11 +2,12 @@ import {
   getStorageAt,
   setStorageAt,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
+import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types.js'
 import { BigNumber, Contract } from 'ethers'
-import { keccak256 } from 'ethers/lib/utils'
-import { ethers } from 'hardhat'
+import hre from 'hardhat'
 import { erc20Abi } from 'sushi/abi'
+
+const { ethers } = hre
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it
@@ -44,14 +45,14 @@ export async function setTokenBalance(
     const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber)
       .toString(16)
       .padStart(64, '0')}`
-    const slot = keccak256(slotData)
+    const slot = ethers.utils.keccak256(slotData)
     const previousValue0 = await getStorageAt(realContract, slot)
     await setStorageAt(realContract, slot, value0)
     // Vyper mapping
     const slotData2 = `0x${Number(slotNumber)
       .toString(16)
       .padStart(64, '0')}${user.padStart(64, '0')}`
-    const slot2 = keccak256(slotData2)
+    const slot2 = ethers.utils.keccak256(slotData2)
     const previousValue1 = await getStorageAt(realContract, slot)
     await setStorageAt(realContract, slot2, value1)
     return [previousValue0, previousValue1]
