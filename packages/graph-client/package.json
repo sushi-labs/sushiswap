@@ -41,10 +41,10 @@
     "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
-    "@graphprotocol/client-cli": "3.0.0",
     "@graphprotocol/client-add-source-name": "2.0.0",
     "@graphprotocol/client-auto-pagination": "2.0.0",
     "@graphprotocol/client-auto-type-merging": "2.0.0",
+    "@graphprotocol/client-cli": "3.0.0",
     "@graphql-mesh/transform-filter-schema": "0.96.6",
     "@graphql-mesh/transform-prefix": "0.96.6",
     "@graphql-mesh/transform-prune": "0.96.6",

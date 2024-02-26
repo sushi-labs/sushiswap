@@ -16,13 +16,13 @@
   "license": "MIT",
   "author": "LufyCZ <me@lufy.cz>",
   "sideEffects": false,
+  "type": "module",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

@@ -47,7 +47,7 @@ export class ExtractorClient {
   }
 
   get ready() {
-    return this.lastUpdatedTimestamp !== 0 
+    return this.lastUpdatedTimestamp !== 0
   }
 
   start() {
