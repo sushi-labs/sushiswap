@@ -149,7 +149,7 @@ contract RouteProcessor4 is Ownable {
     address to,
     bytes memory route
   ) private returns (uint256 amountOut) {
-    uint256 balanceInInitial = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
+    uint256 balanceInInitial = tokenIn == NATIVE_ADDRESS ? 0 : IERC20(tokenIn).balanceOf(msg.sender);
     uint256 balanceOutInitial = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
 
     uint256 realAmountIn = amountIn;
@@ -175,7 +175,7 @@ contract RouteProcessor4 is Ownable {
       }
     }
 
-    uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? address(this).balance : IERC20(tokenIn).balanceOf(msg.sender);
+    uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? 0 : IERC20(tokenIn).balanceOf(msg.sender);
     require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
     
     uint256 balanceOutFinal = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);

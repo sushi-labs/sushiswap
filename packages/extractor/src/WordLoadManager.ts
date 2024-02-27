@@ -1,13 +1,11 @@
 import { EventEmitter } from 'node:events'
-
 import { Address } from 'abitype'
 import { tickLensAbi } from 'sushi/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from 'sushi/router'
 import { CLTick } from 'sushi/tines'
-
-import { Counter } from './Counter'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { warnLog } from './WarnLog'
+import { Counter } from './Counter.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { warnLog } from './WarnLog.js'
 
 interface WordState {
   blockNumber: number

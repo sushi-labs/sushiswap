@@ -1,6 +1,6 @@
 import z from 'zod'
-import { amountSchema } from '../../currency'
-import { Fee } from '../../dex'
+import { amountSchema } from '../../currency/index.js'
+import { Fee } from '../../dex/index.js'
 
 export const tridentStablePoolSchema = z.object({
   reserve0: amountSchema,

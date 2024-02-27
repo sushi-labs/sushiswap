@@ -1,8 +1,8 @@
-import type { MultiRoute, RouteLeg, UniV3Pool } from '../../tines'
+import type { MultiRoute, RouteLeg, UniV3Pool } from '../../tines/index.js'
 
-import { HEXer } from '../HEXer'
-import { LiquidityProviders } from '../liquidity-providers'
-import { PoolCode } from './PoolCode'
+import { HEXer } from '../HEXer.js'
+import { LiquidityProviders } from '../liquidity-providers/index.js'
+import { PoolCode } from './PoolCode.js'
 
 export class TridentCLPoolCode extends PoolCode {
   constructor(

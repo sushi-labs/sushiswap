@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
-import { MAX_UINT256 } from '../../../math'
+import { MAX_UINT256 } from '../../../math/index.js'
 
-import { mostSignificantBit } from './mostSignificantBit'
+import { mostSignificantBit } from './mostSignificantBit.js'
 
 function mulShift(val: bigint, mulBy: string): bigint {
   return (val * BigInt(mulBy)) >> 128n

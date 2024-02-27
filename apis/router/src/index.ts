@@ -1,10 +1,11 @@
 import 'dotenv/config'
 
+import process from 'node:process'
 import * as Sentry from '@sentry/node'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
-import { ExtractorClient } from './ExtractorClient'
+import { ExtractorClient } from './ExtractorClient.js'
 import {
   CHAIN_ID,
   EXTRACTOR_SERVER,
@@ -13,15 +14,13 @@ import {
   REQUESTED_PAIRS_UPDATE_INTERVAL,
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
-} from './config'
-import { CPUUsageStatistics } from './cpu-usage-statistics'
-import { priceByAddressHandler, pricesHandler } from './handlers/price'
-import { swapV3_2, swapV4 } from './handlers/swap'
-import tokenHandler from './handlers/token'
-import { updatePrices } from './prices'
-
-import process from 'node:process'
-import requestStatistics from './request-statistics'
+} from './config.js'
+import { CPUUsageStatistics } from './cpu-usage-statistics.js'
+import { priceByAddressHandler, pricesHandler } from './handlers/price/index.js'
+import { swapV3_2, swapV4 } from './handlers/swap/index.js'
+import tokenHandler from './handlers/token/index.js'
+import { updatePrices } from './prices.js'
+import requestStatistics from './request-statistics.js'
 
 async function start() {
   const app: Express = express()
@@ -72,7 +71,7 @@ async function start() {
   })
 
   app.get('/health', (_, res: Response) => {
-    return res.status(client.lastUpdatedTimestamp === 0 ? 503 : 200).send()
+    return res.status(client.ready ? 200 : 503).send()
   })
 
   app.get(`/swap/v3.2/${CHAIN_ID}`, (req, res) => {

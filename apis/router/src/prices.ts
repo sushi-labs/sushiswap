@@ -1,8 +1,8 @@
 import { ExtractorSupportedChainId, STABLES } from 'sushi/config'
 import { WNATIVE } from 'sushi/currency'
 import { RPool, RToken, calcTokenAddressPrices } from 'sushi/tines'
-import { ExtractorClient } from './ExtractorClient'
-import { CHAIN_ID } from './config'
+import { ExtractorClient } from './ExtractorClient.js'
+import { CHAIN_ID } from './config.js'
 
 export const Currency = {
   USD: 'USD',

@@ -1,7 +1,7 @@
 import { Address } from 'viem'
-import { abs } from '../math'
-import { PoolType, RPool, RToken } from './RPool'
-import { getBigInt } from './Utils'
+import { abs } from '../math/index.js'
+import { PoolType, RPool, RToken } from './RPool.js'
+import { getBigInt } from './Utils.js'
 
 export interface Rebase {
   elastic: bigint

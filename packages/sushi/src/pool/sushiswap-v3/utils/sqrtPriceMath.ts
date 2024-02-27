@@ -1,8 +1,7 @@
 import invariant from 'tiny-invariant'
-import { MAX_UINT256 } from '../../../math'
-
-import { Q96 } from '../internalConstants'
-import { FullMath } from './fullMath'
+import { MAX_UINT256 } from '../../../math/index.js'
+import { Q96 } from '../internalConstants.js'
+import { FullMath } from './fullMath.js'
 
 const MaxUint160 = 2n ** 160n - 1n
 

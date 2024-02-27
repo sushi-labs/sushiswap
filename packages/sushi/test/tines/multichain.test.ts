@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom'
 import { expect, it } from 'vitest'
-import { NetworkInfo, findMultiRouteExactIn } from '../../src/tines'
+import { NetworkInfo, findMultiRouteExactIn } from '../../src/tines/index.js'
 import {
   Network,
   TToken,
@@ -8,7 +8,7 @@ import {
   createMultipleNetworks,
   createMultipleNetworksWithStargateBridge,
   getRandom,
-} from './utils'
+} from './utils.js'
 
 function chooseRandomTokenWithChainId(
   rnd: () => number,

@@ -1,5 +1,4 @@
-import { ChainId } from '../chain'
-import { Native, Token, Type } from '../currency'
+import { ChainId } from '../chain/index.js'
 import {
   AGEUR,
   DAI,
@@ -7,15 +6,18 @@ import {
   LUSD,
   MAI,
   MIM,
+  Native,
   OP,
   SUSHI,
+  Token,
+  Type,
   UNI,
   USDC,
   USDT,
   WBTC,
   WETH9,
   WNATIVE,
-} from '../currency'
+} from '../currency/index.js'
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ARBITRUM]: {

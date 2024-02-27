@@ -1,5 +1,5 @@
-import { ChainId } from './constants'
-import raw from './generated'
+import { ChainId } from './constants.js'
+import raw from './generated.js'
 
 const additional = [] as const
 
@@ -217,6 +217,6 @@ export const chainName = Object.fromEntries(
   RAW.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name]),
 )
 
-export * from './constants'
+export * from './constants.js'
 
 export default chains

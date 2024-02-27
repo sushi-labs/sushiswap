@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { TickMath } from '../utils/tickMath'
-import { Tick } from './Tick'
+import { TickMath } from '../utils/tickMath.js'
+import { Tick } from './Tick.js'
 
 describe('Tick', () => {
   describe('constructor', () => {

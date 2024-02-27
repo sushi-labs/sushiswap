@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isSorted } from './isSorted'
+import { isSorted } from './isSorted.js'
 
 describe('#isSorted', () => {
   it('empty list', () => {

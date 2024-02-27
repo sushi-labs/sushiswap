@@ -19,32 +19,32 @@ import {
 export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] =
   async (root, args, context, info): Promise<Query['factoriesByChainIds']> => {
     return Promise.allSettled<Query['factoriesByChainIds'][]>([
+      // ...args.chainIds
+      //   .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+      //     TRIDENT_ENABLED_NETWORKS.includes(el),
+      //   )
+      //   .map((chainId) =>
+      //     context.Trident.Query.factories({
+      //       root,
+      //       args,
+      //       context: {
+      //         ...context,
+      //         chainId,
+      //         subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+      //         subgraphHost: SUBGRAPH_HOST[chainId],
+      //       },
+      //       info,
+      //     }).then((factories: Factory[]) => {
+      //       return factories?.length > 0
+      //         ? factories.map((factory) => ({
+      //             ...factory,
+      //             chainId,
+      //           }))
+      //         : []
+      //     }),
+      //   ),
       ...args.chainIds
-        .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] =>
-          TRIDENT_ENABLED_NETWORKS.includes(el),
-        )
-        .map((chainId) =>
-          context.Trident.Query.factories({
-            root,
-            args,
-            context: {
-              ...context,
-              chainId,
-              subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-              subgraphHost: SUBGRAPH_HOST[chainId],
-            },
-            info,
-          }).then((factories: Factory[]) => {
-            return factories?.length > 0
-              ? factories.map((factory) => ({
-                  ...factory,
-                  chainId,
-                }))
-              : []
-          }),
-        ),
-      ...args.chainIds
-        .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+        .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
           SUSHISWAP_ENABLED_NETWORKS.includes(el),
         )
         .map((chainId) =>

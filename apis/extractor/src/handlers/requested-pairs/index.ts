@@ -1,6 +1,9 @@
 import { Request, Response } from 'express'
-import { CHAIN_ID, REQUESTED_PAIRS_SERIALIZATION_INTERVAL } from '../../config'
-import extractor from '../../extractor'
+import {
+  CHAIN_ID,
+  REQUESTED_PAIRS_SERIALIZATION_INTERVAL,
+} from '../../config.js'
+import extractor from '../../extractor.js'
 
 let lastPairs: object = {}
 let lastPairsSerializationTime = 0

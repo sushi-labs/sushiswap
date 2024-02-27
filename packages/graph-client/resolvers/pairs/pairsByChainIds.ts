@@ -42,7 +42,7 @@ export const _pairsByChainIds = async (
   return Promise.all<Query['pairsByChainIds'][]>([
     ...args.chainIds
       .filter(
-        (chainId): chainId is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+        (chainId): chainId is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
           SUSHISWAP_ENABLED_NETWORKS.includes(chainId),
       )
       .map((chainId) =>
@@ -80,7 +80,7 @@ export const _pairsByChainIds = async (
         }),
       ),
     ...args.chainIds
-      .filter((chainId): chainId is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+      .filter((chainId): chainId is (typeof TRIDENT_ENABLED_NETWORKS)[number] =>
         TRIDENT_ENABLED_NETWORKS.includes(chainId),
       )
       .map((chainId) =>

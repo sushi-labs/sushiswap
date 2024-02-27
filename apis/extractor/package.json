@@ -16,6 +16,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",

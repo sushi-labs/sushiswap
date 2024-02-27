@@ -1,12 +1,12 @@
 import seedrandom from 'seedrandom'
 import { expect, it } from 'vitest'
-import { calcTokenPrices } from '../../src/tines'
+import { calcTokenPrices } from '../../src/tines/index.js'
 import {
   MAX_POOL_IMBALANCE,
   TToken,
   createNetwork,
   expectCloseValues,
-} from './utils'
+} from './utils.js'
 
 const GAS_PRICE = 50 * 1e-9
 

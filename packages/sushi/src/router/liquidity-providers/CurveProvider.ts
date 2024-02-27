@@ -6,14 +6,22 @@ import {
   getContract,
   parseAbi,
 } from 'viem'
-import { ChainId } from '../../chain'
-import { DAI, FRAX, LINK, USDC, USDT, WBTC, renBTC } from '../../currency'
-import { Native, Token, Type } from '../../currency'
-import { RToken, createCurvePoolsForMultipool } from '../../tines'
-import { getCurrencyCombinations } from '../get-currency-combinations'
-import { CurvePoolCode } from '../pool-codes/CurvePool'
-import { PoolCode } from '../pool-codes/PoolCode'
-import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
+import { ChainId } from '../../chain/index.js'
+import {
+  DAI,
+  FRAX,
+  LINK,
+  USDC,
+  USDT,
+  WBTC,
+  renBTC,
+} from '../../currency/index.js'
+import { Native, Token, Type } from '../../currency/index.js'
+import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
+import { getCurrencyCombinations } from '../get-currency-combinations.js'
+import { CurvePoolCode } from '../pool-codes/CurvePool.js'
+import { PoolCode } from '../pool-codes/PoolCode.js'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider.js'
 
 const stETH = new Token({
   chainId: 1,

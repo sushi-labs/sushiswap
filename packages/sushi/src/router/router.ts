@@ -1,7 +1,7 @@
 import { Address, Hex } from 'viem'
-import { ChainId } from '../chain'
-import { WNATIVE, WNATIVE_ADDRESS } from '../currency'
-import { Token, Type } from '../currency'
+import { ChainId } from '../chain/index.js'
+import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
+import { Token, Type } from '../currency/index.js'
 import {
   MultiRoute,
   NetworkInfo,
@@ -12,16 +12,16 @@ import {
   findMultiRouteExactIn,
   getBentoChainId,
   getBigInt,
-} from '../tines'
-import { LiquidityProviders } from './liquidity-providers'
-import { PoolCode } from './pool-codes'
-import { getRouteProcessorCode } from './tines-to-route-processor'
+} from '../tines/index.js'
+import { LiquidityProviders } from './liquidity-providers/index.js'
+import { PoolCode } from './pool-codes/index.js'
 import {
   PermitData,
   RouterLiquiditySource,
   getRouteProcessor2Code,
-} from './tines-to-route-processor-2'
-import { getRouteProcessor4Code } from './tines-to-route-processor-4'
+} from './tines-to-route-processor-2.js'
+import { getRouteProcessor4Code } from './tines-to-route-processor-4.js'
+import { getRouteProcessorCode } from './tines-to-route-processor.js'
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
@@ -34,6 +34,14 @@ function TokenToRToken(t: Type): RToken {
   }
   return nativeRToken
 }
+
+const isWrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
+  fromToken.isNative &&
+  toToken.wrapped.address === Native.onChain(toToken.chainId).wrapped.address
+const isUnwrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
+  toToken.isNative &&
+  fromToken.wrapped.address ===
+    Native.onChain(fromToken.chainId).wrapped.address
 
 export interface RPParams {
   tokenIn: Address
@@ -197,9 +205,12 @@ export class Router {
       toToken instanceof Token
         ? (toToken.address as Address)
         : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin =
-      (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
-      1_000_000n
+    const isWrapOrUnwap =
+      isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
+    const amountOutMin = isWrapOrUnwap
+      ? route.amountOutBI
+      : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+        1_000_000n
 
     return {
       tokenIn,
@@ -231,9 +242,12 @@ export class Router {
       toToken instanceof Token
         ? (toToken.address as Address)
         : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin =
-      (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
-      1_000_000n
+    const isWrapOrUnwap =
+      isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
+    const amountOutMin = isWrapOrUnwap
+      ? route.amountOutBI
+      : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+        1_000_000n
 
     return {
       tokenIn,
@@ -276,9 +290,12 @@ export class Router {
       toToken instanceof Token
         ? (toToken.address as Address)
         : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    const amountOutMin =
-      (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
-      1_000_000n
+    const isWrapOrUnwap =
+      isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
+    const amountOutMin = isWrapOrUnwap
+      ? route.amountOutBI
+      : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+        1_000_000n
 
     return {
       tokenIn,
