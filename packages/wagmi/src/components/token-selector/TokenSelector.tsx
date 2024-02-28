@@ -5,6 +5,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import {
   DEFAULT_BASES,
   useCustomTokens,
+  useDebounce,
   usePinnedTokens,
 } from '@sushiswap/hooks'
 import {
@@ -73,6 +74,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
 
+  const debouncedQuery = useDebounce(query, 250)
+
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
   const {
     data: pinnedTokenMap,
@@ -83,7 +86,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     chainId,
   })
   const { data: otherTokenMap, isLoading: isOtherTokensLoading } =
-    useOtherTokenListsQuery({ chainId, query })
+    useOtherTokenListsQuery({ chainId, query: debouncedQuery })
   const { data: pricesMap } = usePrices({ chainId })
   const {
     data: balancesMap,
@@ -113,7 +116,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     })
 
   const { data: sortedTokenList } = useSortedTokenList({
-    query,
+    query: debouncedQuery,
     customTokenMap: currencies ? {} : customTokenMap,
     tokenMap: currencies ? currencies : tokenMap,
     pricesMap,
