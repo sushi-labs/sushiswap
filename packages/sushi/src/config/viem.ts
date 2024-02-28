@@ -464,6 +464,10 @@ export const publicClientConfig: Record<
       `https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`,
     ),
   },
+  [ChainId.BASE]: {
+    chain: base,
+    transport: http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
+  },
   [ChainId.BOBA]: {
     chain: boba,
     transport: http('https://mainnet.boba.network'),
@@ -497,6 +501,12 @@ export const publicClientConfig: Record<
   [ChainId.FANTOM]: {
     chain: fantom,
     transport: http(`https://lb.drpc.org/ogrpc?network=fantom&dkey=${drpcId}`),
+  },
+  [ChainId.FILECOIN]: {
+    chain: filecoin,
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
+    ),
   },
   [ChainId.FUSE]: {
     chain: fuse,
@@ -585,20 +595,12 @@ export const publicClientConfig: Record<
     chain: linea,
     transport: http(`https://lb.drpc.org/ogrpc?network=linea&dkey=${drpcId}`),
   },
-  [ChainId.BASE]: {
-    chain: base,
-    transport: http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
-  },
+
   [ChainId.SCROLL]: {
     chain: scroll,
     transport: http(`https://lb.drpc.org/ogrpc?network=scroll&dkey=${drpcId}`),
   },
-  [ChainId.FILECOIN]: {
-    chain: filecoin,
-    transport: http(
-      `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
-    ),
-  },
+
   [ChainId.ZETACHAIN]: {
     chain: zetachain,
     transport: http('https://zetachain-mainnet-archive.allthatnode.com:8545'),
