@@ -642,15 +642,14 @@ export const getV3NonFungiblePositionManagerConractConfig = (
 export function useV3NonFungiblePositionManager(
   chainId: SushiSwapV3ChainId | undefined,
 ) {
-  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId })
-  const { data: walletClient } = useWalletClient({ chainId })
+  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+  const { data: walletClient } = useWalletClient({ chainId }) as any
 
-  // @ts-ignore
   return useMemo(() => {
     if (!chainId || (!publicClient && !walletClient)) return null
 
     return getContract({
-      ...(getV3NonFungiblePositionManagerConractConfig(chainId) as any),
+      ...getV3NonFungiblePositionManagerConractConfig(chainId),
       client: walletClient || publicClient!,
     })
   }, [chainId, publicClient, walletClient])

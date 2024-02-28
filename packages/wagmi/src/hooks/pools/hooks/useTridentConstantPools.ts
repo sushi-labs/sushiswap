@@ -8,8 +8,13 @@ import {
 } from 'sushi/abi'
 import { Amount, Currency, Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
-import { useBlockNumber, useReadContracts } from 'wagmi'
+import {
+  UseReadContractsParameters,
+  useBlockNumber,
+  useReadContracts,
+} from 'wagmi'
 
+import { TridentChainId } from 'sushi/config'
 import { Address } from 'viem'
 import { TridentConstantPoolState } from '../actions'
 import { useTridentConstantPoolFactoryContract } from './useTridentConstantPoolFactoryContract'
@@ -28,13 +33,10 @@ interface UseGetTridentConstantPoolsReturn {
   data: [TridentConstantPoolState, TridentConstantPool | null][]
 }
 
-type Config = Omit<
-  NonNullable<Parameters<typeof useReadContracts>['0']>,
-  'contracts'
->
+type Config = Omit<NonNullable<UseReadContractsParameters>, 'contracts'>
 
 export function useGetTridentConstantPools(
-  chainId: number | undefined,
+  chainId: TridentChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config: Config = { query: { enabled: true } },
 ): UseGetTridentConstantPoolsReturn {
@@ -246,7 +248,7 @@ export function useGetTridentConstantPools(
 }
 
 export function useTridentConstantPools(
-  chainId: number,
+  chainId: TridentChainId,
   pools: PoolInput[],
 ): [TridentConstantPoolState, TridentConstantPool | null][] {
   const tridentConstantPoolFactory =
@@ -350,7 +352,7 @@ export function useTridentConstantPools(
 }
 
 export function useTridentConstantPool(
-  chainId: number,
+  chainId: TridentChainId,
   tokenA: Currency | undefined,
   tokenB: Currency | undefined,
   fee: Fee,

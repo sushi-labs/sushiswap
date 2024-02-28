@@ -1,13 +1,17 @@
-import {
-  getSteerAccountPosition,
-  getSteerAccountPositions,
-} from '@sushiswap/steer-sdk'
-import { useQuery } from '@tanstack/react-query'
-import { getChainIdAddressFromId } from 'sushi'
-import { Address, usePublicClient } from 'wagmi'
+import { useBlockNumber, useReadContracts } from 'wagmi'
 
-import { PublicClient } from 'viem'
-import { clientsFromIds } from './getClientsFromIds'
+import {
+  getAccountPositions,
+  getBalanceOfsContracts,
+  getBalanceOfsSelect,
+  getTotalSuppliesContracts,
+  getTotalSuppliesSelect,
+  getVaultsReservesContracts,
+  getVaultsReservesSelect,
+} from '@sushiswap/steer-sdk'
+import { Address } from 'viem'
+
+import { useMemo } from 'react'
 
 interface UseSteerAccountPositions {
   account: Address | undefined
@@ -20,33 +24,94 @@ export const useSteerAccountPositions = ({
   account,
   enabled = true,
 }: UseSteerAccountPositions) => {
-  const client = usePublicClient()
-
-  return useQuery({
-    queryKey: ['useSteerAccountPositions', { vaultIds, account, client }],
-    queryFn: async () => {
-      if (!vaultIds || !account) return null
-
-      const data = await getSteerAccountPositions({
-        clients: clientsFromIds(vaultIds) as PublicClient[],
-        account,
-        vaultIds: vaultIds,
-      })
-
-      return data.map((el, i) => {
-        if (el) {
-          return {
-            ...el,
-            vaultId: vaultIds[i],
-          }
-        }
-
-        return null
-      })
+  const {
+    data: accountBalances,
+    isInitialLoading: isAccountBalancesLoading,
+    refetch: refetchAccountBalances,
+  } = useReadContracts({
+    contracts:
+      account && vaultIds
+        ? getBalanceOfsContracts({ account, vaultIds })
+        : undefined,
+    query: {
+      enabled: Boolean(enabled && account && vaultIds),
+      select: (results) => {
+        return results.flatMap((res, i) => {
+          if (!res.result) return []
+          return getBalanceOfsSelect(vaultIds![i], res.result)
+        })
+      },
     },
-    refetchInterval: 10000,
-    enabled: Boolean(enabled && account && vaultIds),
   })
+
+  const {
+    data: totalSupplies,
+    isInitialLoading: isTotalSuppliesLoading,
+    refetch: refetchTotalSupplies,
+  } = useReadContracts({
+    contracts: vaultIds ? getTotalSuppliesContracts({ vaultIds }) : undefined,
+    query: {
+      enabled: Boolean(enabled && vaultIds),
+      select: (results) => {
+        return results.flatMap((res, i) => {
+          if (!res.result) return []
+          return getTotalSuppliesSelect(vaultIds![i], res.result)
+        })
+      },
+    },
+  })
+
+  const {
+    data: vaultReserves,
+    isInitialLoading: isVaultReservesInitialLoading,
+    refetch: refetchVaultReserves,
+  } = useReadContracts({
+    contracts: vaultIds ? getVaultsReservesContracts({ vaultIds }) : undefined,
+    query: {
+      enabled: Boolean(enabled && vaultIds),
+      select: (results) => {
+        return results.flatMap((res, i) => {
+          if (!res.result) return []
+          return getVaultsReservesSelect(vaultIds![i], res.result)
+        })
+      },
+    },
+  })
+
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+
+  useMemo(() => {
+    if (blockNumber && blockNumber % 3n === 0n) {
+      refetchAccountBalances()
+      refetchTotalSupplies()
+      refetchVaultReserves()
+    }
+  }, [
+    blockNumber,
+    refetchAccountBalances,
+    refetchTotalSupplies,
+    refetchVaultReserves,
+  ])
+
+  const data = useMemo(() => {
+    if (!accountBalances || !totalSupplies || !vaultReserves) return undefined
+
+    const positions = getAccountPositions({
+      accountBalances,
+      totalSupplies,
+      vaultReserves,
+    })
+
+    return positions
+  }, [accountBalances, totalSupplies, vaultReserves])
+
+  return {
+    data,
+    isLoading:
+      isAccountBalancesLoading ||
+      isTotalSuppliesLoading ||
+      isVaultReservesInitialLoading,
+  }
 }
 
 interface UseSteerAccountPosition {
@@ -60,17 +125,14 @@ export const useSteerAccountPosition = ({
   account,
   enabled = true,
 }: UseSteerAccountPosition) => {
-  const client = usePublicClient({
-    chainId: vaultId ? getChainIdAddressFromId(vaultId).chainId : undefined,
+  const query = useSteerAccountPositions({
+    vaultIds: vaultId ? [vaultId] : undefined,
+    account,
+    enabled,
   })
 
-  return useQuery({
-    queryKey: ['useSteerAccountPosition', { vaultId, account }],
-    queryFn: () =>
-      account && vaultId
-        ? getSteerAccountPosition({ client, account, vaultId: vaultId })
-        : null,
-    refetchInterval: 10000,
-    enabled: Boolean(enabled && account && vaultId),
-  })
+  return {
+    ...query,
+    data: query.data?.[0],
+  }
 }

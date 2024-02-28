@@ -143,15 +143,14 @@ export const getV3FactoryContractConfig = (chainId: SushiSwapV3ChainId) => ({
 })
 
 export function useV3FactoryContract(chainId: SushiSwapV3ChainId | undefined) {
-  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId })
-  const { data: walletClient } = useWalletClient({ chainId })
+  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+  const { data: walletClient } = useWalletClient({ chainId }) as any
 
-  // @ts-ignore
   return useMemo(() => {
     if (!chainId) return null
 
     return getContract({
-      ...(getV3FactoryContractConfig(chainId) as any),
+      ...getV3FactoryContractConfig(chainId),
       client: walletClient || publicClient!,
     })
   }, [chainId, publicClient, walletClient])

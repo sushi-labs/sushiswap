@@ -1,12 +1,15 @@
+import { readContracts } from '@wagmi/core/actions'
 import { TridentConstantPool } from 'sushi'
 import {
   tridentConstantPoolAbi,
   tridentConstantPoolFactoryAbi,
 } from 'sushi/abi'
 import { Amount, Currency, Token } from 'sushi/currency'
-import { Address, readContracts } from 'wagmi'
-import { getContract } from 'wagmi/actions'
 
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { createConfig } from '@wagmi/core'
+import { TridentChainId, publicClientConfig } from 'sushi/config'
+import { Address, createPublicClient, getContract } from 'viem'
 import { getTridentConstantPoolFactoryContract } from '../../../contracts'
 import { pairsUnique } from './utils'
 
@@ -18,34 +21,35 @@ export enum TridentConstantPoolState {
 }
 
 interface PoolData {
-  address: string
+  address: Address
   token0: Token
   token1: Token
 }
 
 export const getTridentConstantPools = async (
-  chainId: number,
+  chainId: TridentChainId,
   currencies: [Currency | undefined, Currency | undefined][],
 ) => {
-  // if (!isConstantProductPoolFactoryChainId(chainId)) {
-  //   return []
-  // }
+  const config = createConfig(publicWagmiConfig)
+  const client = createPublicClient(publicClientConfig[chainId])
 
-  const contract = getContract(getTridentConstantPoolFactoryContract(chainId))
+  const contract = getContract({
+    ...getTridentConstantPoolFactoryContract(chainId),
+    client,
+  })
 
   const _pairsUnique = pairsUnique(currencies)
-  const _pairsUniqueAddr = _pairsUnique.map(([t0, t1]) => [
-    t0.address,
-    t1.address,
-  ])
+  const _pairsUniqueAddr = _pairsUnique.map(
+    ([t0, t1]) => [t0.address, t1.address] as const,
+  )
 
-  const callStatePoolsCount = await readContracts({
+  const callStatePoolsCount = await readContracts(config, {
     contracts: _pairsUniqueAddr.map((el) => ({
       chainId,
-      address: contract?.address as Address,
+      address: contract?.address,
       abi: tridentConstantPoolFactoryAbi,
       functionName: 'poolsCount',
-      args: el as [Address, Address],
+      args: el,
     })),
   })
 
@@ -53,7 +57,7 @@ export const getTridentConstantPools = async (
     callStatePoolsCount
       ?.map(
         (s, i) =>
-          [i, s.status === 'success' ? s.result : 0] as [number, bigint],
+          [i, s.status === 'success' ? s.result : 0n] as [number, bigint],
       )
       .filter(([, length]) => length)
       .map(
@@ -68,19 +72,22 @@ export const getTridentConstantPools = async (
 
   const pairsUniqueProcessed = callStatePoolsCount
     ?.map(
-      (s, i) => [i, s.status === 'success' ? s.result : 0] as [number, bigint],
+      (s, i) => [i, s.status === 'success' ? s.result : 0n] as [number, bigint],
     )
     .filter(([, length]) => length)
     .map(([i]) => [_pairsUnique[i][0], _pairsUnique[i][1]])
 
-  const callStatePools = await readContracts({
-    contracts: (callStatePoolsCountProcessed || []).map((args) => ({
-      chainId,
-      address: contract?.address as Address,
-      abi: tridentConstantPoolFactoryAbi,
-      functionName: 'getPools',
-      args,
-    })),
+  const callStatePools = await readContracts(config, {
+    contracts: callStatePoolsCountProcessed.map(
+      (args) =>
+        ({
+          chainId,
+          address: contract?.address,
+          abi: tridentConstantPoolFactoryAbi,
+          functionName: 'getPools',
+          args,
+        }) as const,
+    ),
   })
 
   const pools: PoolData[] = []
@@ -112,7 +119,7 @@ export const getTridentConstantPools = async (
     })),
   ]
 
-  const reservesAndFees = await readContracts({
+  const reservesAndFees = await readContracts(config, {
     contracts,
   })
 

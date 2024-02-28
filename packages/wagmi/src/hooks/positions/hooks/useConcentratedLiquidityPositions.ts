@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
 import { Position, SushiSwapV3Pool } from 'sushi/pool'
-import { Address } from 'wagmi'
 
+import { Address } from 'viem'
 import { getConcentratedLiquidityPool } from '../../pools'
 import {
   getTokenWithCacheQueryFn,

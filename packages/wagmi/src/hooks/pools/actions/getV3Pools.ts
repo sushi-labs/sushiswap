@@ -1,3 +1,6 @@
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { createConfig } from '@wagmi/core'
+import { readContracts } from '@wagmi/core/actions'
 import { erc20Abi } from 'sushi/abi'
 import { uniswapV3PoolAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
@@ -10,7 +13,7 @@ import {
 import { Currency, Token, Type } from 'sushi/currency'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { RToken, UniV3Pool } from 'sushi/tines'
-import { Address, readContracts } from 'wagmi'
+import { Address } from 'viem'
 
 export enum V3PoolState {
   LOADING = 'Loading',
@@ -129,13 +132,15 @@ export const getV3Pools = async (
           tokenA: currencyA.wrapped,
           tokenB: currencyB.wrapped,
           fee,
-        }) as Address,
+        }),
         abi: uniswapV3PoolAbi,
         functionName: 'slot0',
       }) as const,
   )
 
-  const slot0 = await readContracts({
+  const config = createConfig(publicWagmiConfig)
+
+  const slot0 = await readContracts(config, {
     contracts: slot0Contracts,
   })
 
@@ -243,19 +248,19 @@ export const getV3Pools = async (
     lowerTickResults,
     upperTickResults,
   ] = await Promise.all([
-    readContracts({
+    readContracts(config, {
       contracts: liquidityContracts,
     }),
-    readContracts({
+    readContracts(config, {
       contracts: token0Contracts,
     }),
-    readContracts({
+    readContracts(config, {
       contracts: token1Contracts,
     }),
-    readContracts({
+    readContracts(config, {
       contracts: lowerTicksContracts,
     }),
-    readContracts({
+    readContracts(config, {
       contracts: upperTicksContracts,
     }),
   ])

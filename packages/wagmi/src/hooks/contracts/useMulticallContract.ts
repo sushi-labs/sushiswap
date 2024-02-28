@@ -44,13 +44,13 @@ export const getMulticallContractConfig = (chainId: MulticallChainId) => ({
 })
 
 export function useMulticallContract(chainId: MulticallChainId | undefined) {
-  const client = usePublicClient<PublicWagmiConfig>({ chainId })
+  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as any
 
   return useMemo(() => {
-    if (!client || !chainId) return null
+    if (!chainId) return null
 
     return getContract({
-      ...(getMulticallContractConfig(chainId) as any),
+      ...getMulticallContractConfig(chainId),
       client,
     })
   }, [client, chainId])

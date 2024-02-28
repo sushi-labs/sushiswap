@@ -7,15 +7,15 @@ import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi'
 import { masterChefV1Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
-import { UserRejectedRequestError, encodeFunctionData } from 'viem'
+import { UserRejectedRequestError } from 'viem'
 import {
+  UseSimulateContractParameters,
   useAccount,
   usePublicClient,
-  useSendTransaction,
   useSimulateContract,
+  useWriteContract,
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
-import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 import { getMasterChefContractConfig } from './use-master-chef-contract'
 
 interface UseMasterChefWithdrawParams {
@@ -26,17 +26,13 @@ interface UseMasterChefWithdrawParams {
   enabled?: boolean
 }
 
-type UseMasterChefWithdraw = (
-  params: UseMasterChefWithdrawParams,
-) => ReturnType<typeof useSendTransaction>
-
-export const useMasterChefWithdraw: UseMasterChefWithdraw = ({
+export const useMasterChefWithdraw = ({
   chainId,
   amount,
   chef,
   pid,
   enabled = true,
-}) => {
+}: UseMasterChefWithdrawParams) => {
   const { address } = useAccount()
   const client = usePublicClient<PublicWagmiConfig>()
 
@@ -73,53 +69,55 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({
     }
   }, [])
 
-  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!address || !chainId || !amount || !chef) return
+  const prepare = useMemo(() => {
+    if (!address || !chainId || !amount || !chef) return {}
 
     if (getMasterChefContractConfig(chainId, chef)?.address) {
       let data
       switch (chef) {
         case ChefType.MasterChefV1:
-          data = encodeFunctionData({
+          data = {
             abi: masterChefV1Abi,
             functionName: 'withdraw',
             args: [BigInt(pid), BigInt(amount.quotient.toString())],
-          })
+          }
           break
         case ChefType.MasterChefV2:
-          data = encodeFunctionData({
+          data = {
             abi: masterChefV2Abi,
             functionName: 'withdraw',
             args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
-          })
+          }
           break
         case ChefType.MiniChef:
-          data = encodeFunctionData({
+          data = {
             abi: miniChefV2Abi,
             functionName: 'withdrawAndHarvest',
             args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
-          })
+          }
       }
 
       return {
-        from: address,
-        to: getMasterChefContractConfig(chainId, chef)?.address,
-        data,
-      }
+        account: address,
+        address: getMasterChefContractConfig(chainId, chef)?.address,
+        ...data,
+      } satisfies UseSimulateContractParameters
     }
   }, [address, amount, chainId, chef, pid])
 
   const { data: simulation } = useSimulateContract({
     ...prepare,
     chainId,
-    enabled,
+    query: { enabled },
   })
 
-  return useSendTransaction({
-    ...simulation?.request,
-    mutation: {
-      onError,
-      onSuccess,
-    },
-  })
+  return {
+    simulation,
+    write: useWriteContract({
+      mutation: {
+        onError,
+        onSuccess,
+      },
+    }),
+  }
 }

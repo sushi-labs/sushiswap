@@ -10,7 +10,7 @@ interface GetAccountPositions {
   }[]
 }
 
-function getAccountPositions({
+export function getAccountPositions({
   accountBalances,
   totalSupplies,
   vaultReserves,
@@ -60,7 +60,7 @@ function getAccountPositions({
   })
 }
 
-interface GetSteerAccountPosition {
+interface GetAccountPosition {
   vaultId: string
   accountBalance: bigint
   totalSupply: bigint
@@ -70,17 +70,15 @@ interface GetSteerAccountPosition {
   }
 }
 
-async function getSteerAccountPosition({
+export async function getAccountPosition({
   vaultId,
   accountBalance,
   totalSupply,
   vaultReserves,
-}: GetSteerAccountPosition) {
+}: GetAccountPosition) {
   return getAccountPositions({
     accountBalances: [{ vaultId, balance: accountBalance }],
     totalSupplies: [{ vaultId, totalSupply }],
     vaultReserves: [{ vaultId, ...vaultReserves }],
   })[0]
 }
-
-export { getSteerAccountPosition, getAccountPositions }

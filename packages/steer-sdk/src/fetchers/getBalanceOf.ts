@@ -47,10 +47,10 @@ export async function getBalanceOfs({
 export function getBalanceOfsSelect(
   vaultId: string,
   result: bigint,
-): { vaultId: string; balanceOf: bigint } {
+): { vaultId: string; balance: bigint } {
   return {
     vaultId,
-    balanceOf: result,
+    balance: result,
   }
 }
 
@@ -67,5 +67,5 @@ export async function getBalanceOf({ client, account, vaultId }: GetBalanceOf) {
     throw new Error(`Failed to fetch balance of for vault ${vaultId}`)
   }
 
-  return results[0]!.balanceOf
+  return results[0]!.balance
 }

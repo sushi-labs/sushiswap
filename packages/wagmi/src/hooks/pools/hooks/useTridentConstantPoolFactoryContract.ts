@@ -1,25 +1,31 @@
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { useMemo } from 'react'
 import { tridentConstantPoolFactoryAbi } from 'sushi/abi'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TridentChainId,
 } from 'sushi/config'
 import { getContract } from 'viem'
-import { Address, usePublicClient } from 'wagmi'
+import { usePublicClient } from 'wagmi'
 
 export const getTridentConstantPoolFactoryContract = (
-  chainId: number | undefined,
+  chainId: TridentChainId,
 ) => ({
-  address: (TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS?.[
-    chainId as TridentChainId
-  ] ?? '') as Address,
+  address: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[chainId],
   abi: tridentConstantPoolFactoryAbi,
 })
 
 export function useTridentConstantPoolFactoryContract(
-  chainId: number | undefined,
+  chainId: TridentChainId | undefined,
 ) {
-  return getContract({
-    ...getTridentConstantPoolFactoryContract(chainId),
-    publicClient: usePublicClient({ chainId }),
-  })
+  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+
+  return useMemo(() => {
+    if (!chainId) return null
+
+    return getContract({
+      ...getTridentConstantPoolFactoryContract(chainId),
+      client,
+    })
+  }, [client, chainId])
 }

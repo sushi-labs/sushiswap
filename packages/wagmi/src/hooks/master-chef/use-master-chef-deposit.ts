@@ -5,18 +5,18 @@ import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { useCallback, useMemo } from 'react'
 import { masterChefV1Abi, masterChefV2Abi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
-import { UserRejectedRequestError, encodeFunctionData } from 'viem'
+import { UserRejectedRequestError } from 'viem'
 import {
+  UseSimulateContractParameters,
   useAccount,
   usePublicClient,
-  useSendTransaction,
   useSimulateContract,
+  useWriteContract,
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ChainId } from 'sushi'
-import { UsePrepareSendTransactionConfig } from '../useSendTransaction'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefDepositParams {
@@ -27,17 +27,13 @@ interface UseMasterChefDepositParams {
   enabled?: boolean
 }
 
-type UseMasterChefDeposit = (
-  params: UseMasterChefDepositParams,
-) => ReturnType<typeof useSendTransaction>
-
-export const useMasterChefDeposit: UseMasterChefDeposit = ({
+export const useMasterChefDeposit = ({
   chainId,
   amount,
   chef,
   pid,
   enabled = true,
-}) => {
+}: UseMasterChefDepositParams) => {
   const { address } = useAccount()
   const client = usePublicClient<PublicWagmiConfig>()
   const contract = useMasterChefContract(chainId, chef)
@@ -77,42 +73,44 @@ export const useMasterChefDeposit: UseMasterChefDeposit = ({
     [address, chainId, client, amount],
   )
 
-  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
-    if (!address || !chainId || !amount || !contract) return
+  const prepare = useMemo(() => {
+    if (!address || !chainId || !amount || !contract) return {}
 
     let data
     if (chef === ChefType.MasterChefV1) {
-      data = encodeFunctionData({
+      data = {
         abi: masterChefV1Abi,
         functionName: 'deposit',
         args: [BigInt(pid), BigInt(amount.quotient.toString())],
-      })
+      }
     } else {
-      data = encodeFunctionData({
+      data = {
         abi: masterChefV2Abi,
         functionName: 'deposit',
         args: [BigInt(pid), BigInt(amount.quotient.toString()), address],
-      })
+      }
     }
 
     return {
       account: address,
-      to: contract.address,
-      data,
-    }
+      address: contract.address,
+      ...data,
+    } satisfies UseSimulateContractParameters
   }, [address, amount, chainId, chef, contract, pid])
 
   const { data: simulation } = useSimulateContract({
     ...prepare,
     chainId,
-    enabled,
+    query: { enabled },
   })
 
-  return useSendTransaction({
-    ...simulation?.request,
-    mutation: {
-      onSuccess,
-      onError,
-    },
-  })
+  return {
+    simulation,
+    write: useWriteContract({
+      mutation: {
+        onSuccess,
+        onError,
+      },
+    }).writeContract,
+  }
 }

@@ -17,14 +17,14 @@ export const getSushiSwapRouterContractConfig = (
 export function useSushiSwapRouterContract(
   chainId: SushiSwapV2ChainId | undefined,
 ) {
-  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId })
-  const { data: walletClient } = useWalletClient({ chainId })
+  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+  const { data: walletClient } = useWalletClient({ chainId }) as any
 
   return useMemo(() => {
     if (!chainId || (!publicClient && !walletClient)) return null
 
     return getContract({
-      ...(getSushiSwapRouterContractConfig(chainId) as any),
+      ...getSushiSwapRouterContractConfig(chainId),
       client: walletClient || publicClient!,
     })
   }, [chainId, publicClient, walletClient])

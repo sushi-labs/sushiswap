@@ -1,45 +1,47 @@
-'use client'
+// 'use client'
 
-import {
-  usePrepareSendTransaction,
-  useSendTransaction as useSendTransaction_,
-} from 'wagmi'
+// import {
+//   useSendTransaction as useSendTransaction_,
+//   useSimulateContract,
+// } from 'wagmi'
 
-export type UsePrepareSendTransactionConfig = Parameters<
-  typeof usePrepareSendTransaction
->['0']
-export type UseSendTransactionConfig = Parameters<
-  typeof useSendTransaction_
->['0']
+// export type useSimulateContractParameters = Parameters<
+//   typeof useSimulateContract
+// >['0']
+// export type UseSendTransactionConfig = Parameters<
+//   typeof useSendTransaction_
+// >['0']
 
-interface UseSendTransaction {
-  prepare?: UsePrepareSendTransactionConfig
-  send?: UseSendTransactionConfig
-  gasMargin?: boolean
-}
+// interface UseSendTransaction {
+//   prepare?: useSimulateContractParameters
+//   send?: UseSendTransactionConfig
+//   gasMargin?: boolean
+// }
 
-export function useSendTransaction({
-  prepare,
-  send,
-  gasMargin = false,
-}: UseSendTransaction) {
-  const { config } = usePrepareSendTransaction(prepare)
+// export function useSendTransaction({
+//   prepare,
+//   send,
+//   gasMargin = false,
+// }: UseSendTransaction) {
+//   const { data: simulation } = useSimulateContract(prepare)
 
-  const gas = gasMargin && config.gas ? (config.gas * 120n) / 100n : config.gas
+//   const simulatedGas = simulation?.request.gas
 
-  return useSendTransaction_({
-    ...config,
-    gas,
-    ...send,
-    onSettled: (data, e, variables, context) => {
-      // if (e?.code !== ErrorCode.ACTION_REJECTED) {
-      //   createErrorToast(e?.message, true)
-      // }
+//   const gas =
+//     gasMargin && simulatedGas ? (simulatedGas * 120n) / 100n : simulatedGas
 
-      if (send?.onSettled) {
-        send.onSettled(data, e, variables, context)
-      }
-    },
-    mode: 'prepared',
-  })
-}
+//   return useSendTransaction_({
+//     gas,
+//     mutation: {
+//       onSettled: (data, e, variables, context) => {
+//         // if (e?.code !== ErrorCode.ACTION_REJECTED) {
+//         //   createErrorToast(e?.message, true)
+//         // }
+
+//         if (send?.mutation?.onSettled) {
+//           send.mutation.onSettled(data, e, variables, context)
+//         }
+//       },
+//     },
+//   })
+// }

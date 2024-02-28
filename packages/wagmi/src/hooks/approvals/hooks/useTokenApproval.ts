@@ -40,10 +40,7 @@ export const useTokenApproval = ({
   spender,
   enabled = true,
   approveMax,
-}: UseTokenApprovalParams): [
-  ApprovalState,
-  ReturnType<typeof useWriteContract>,
-] => {
+}: UseTokenApprovalParams) => {
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
   const client = usePublicClient<PublicWagmiConfig>()
@@ -59,7 +56,7 @@ export const useTokenApproval = ({
     enabled: Boolean(amount?.currency?.isToken && enabled),
   })
 
-  const { data } = useSimulateContract({
+  const { data: simulation } = useSimulateContract({
     chainId: amount?.currency.chainId,
     abi: [
       {
@@ -138,14 +135,20 @@ export const useTokenApproval = ({
   }, [])
 
   const execute = useWriteContract({
-    ...data?.request,
+    // ...data?.request,
     mutation: {
       onError,
       onSuccess,
     },
   })
 
-  return useMemo(() => {
+  const write = useMemo(() => {
+    if (!execute.writeContract || !simulation?.request) return
+
+    return () => execute.writeContract(simulation.request)
+  }, [execute.writeContract, simulation?.request])
+
+  return useMemo<[ApprovalState, { write: undefined | (() => void) }]>(() => {
     let state = ApprovalState.UNKNOWN
     if (amount?.currency.isNative) state = ApprovalState.APPROVED
     else if (allowance && amount && allowance.greaterThan(amount))
@@ -157,6 +160,6 @@ export const useTokenApproval = ({
     else if (allowance && amount && allowance.lessThan(amount))
       state = ApprovalState.NOT_APPROVED
 
-    return [state, execute]
-  }, [allowance, amount, execute, isAllowanceLoading, pending])
+    return [state, { write }]
+  }, [allowance, amount, write, isAllowanceLoading, pending])
 }

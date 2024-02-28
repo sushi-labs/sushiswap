@@ -19,4 +19,4 @@ export * from './wallet'
 export * from './migrate'
 
 // legacy
-export { useSendTransaction as _useSendTransaction } from './useSendTransaction'
+// export { useSendTransaction as _useSendTransaction } from './useSendTransaction'

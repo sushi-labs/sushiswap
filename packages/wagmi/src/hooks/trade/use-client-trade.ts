@@ -22,7 +22,7 @@ import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { Router } from 'sushi/router'
 import { Address, Hex } from 'viem'
-import { useFeeData } from 'wagmi'
+import { useEstimateFeesPerGas } from 'wagmi'
 import { usePoolsCodeMap } from '../pools'
 
 export const useClientTrade = (variables: UseTradeParams) => {
@@ -38,7 +38,10 @@ export const useClientTrade = (variables: UseTradeParams) => {
     source,
   } = variables
 
-  const { data: feeData } = useFeeData({ chainId, enabled })
+  const { data: feeData } = useEstimateFeesPerGas({
+    chainId,
+    query: { enabled },
+  })
   const { data: price } = usePrice({
     chainId,
     address: WNATIVE_ADDRESS[chainId],

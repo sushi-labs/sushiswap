@@ -7,7 +7,11 @@ import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import { TridentStablePool, computeTridentStablePoolAddress } from 'sushi/pool'
-import { useBlockNumber, useReadContracts } from 'wagmi'
+import {
+  UseReadContractsParameters,
+  useBlockNumber,
+  useReadContracts,
+} from 'wagmi'
 
 import { Address } from 'viem'
 import { useBentoBoxTotals } from '../../bentobox'
@@ -34,13 +38,10 @@ interface PoolData {
   token1: Token
 }
 
-type Config = Omit<
-  NonNullable<Parameters<typeof useReadContracts>['0']>,
-  'contracts'
->
+type Config = Omit<NonNullable<UseReadContractsParameters>, 'contracts'>
 
 export function useGetTridentStablePools(
-  chainId: BentoBoxChainId | undefined,
+  chainId: TridentChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config: Config = { query: { enabled: true } },
 ): {
@@ -282,7 +283,7 @@ export function useGetTridentStablePools(
 }
 
 export function useTridentStablePools(
-  chainId: number,
+  chainId: TridentChainId,
   pools: PoolInput[],
 ): [TridentStablePoolState, TridentStablePool | null][] {
   const stablePoolFactory = useTridentStablePoolFactoryContract(chainId)
@@ -397,7 +398,7 @@ export function useTridentStablePools(
 }
 
 export function useTridentStablePool(
-  chainId: number,
+  chainId: TridentChainId,
   tokenA: Type | undefined,
   tokenB: Type | undefined,
   fee: Fee,

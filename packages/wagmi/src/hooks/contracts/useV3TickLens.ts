@@ -35,14 +35,13 @@ export const getV3TickLensContractConfig = (chainId: SushiSwapV3ChainId) => ({
 })
 
 export function useTickLensContract(chainId: SushiSwapV3ChainId | undefined) {
-  const client = usePublicClient({ chainId })
+  const client = usePublicClient({ chainId }) as any
 
-  // @ts-ignore
   return useMemo(() => {
-    if (!chainId || !client) return null
+    if (!chainId) return null
 
     return getContract({
-      ...(getV3TickLensContractConfig(chainId) as any),
+      ...getV3TickLensContractConfig(chainId),
       client,
     })
   }, [chainId, client])

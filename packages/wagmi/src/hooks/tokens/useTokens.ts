@@ -1,15 +1,22 @@
 'use client'
 
-import { QueryFunction } from '@tanstack/react-query'
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { QueryFunction, useQuery } from '@tanstack/react-query'
+import { createConfig } from '@wagmi/core'
+import {
+  GetTokenParameters,
+  GetTokenReturnType,
+  getToken,
+} from '@wagmi/core/actions'
 import { useMemo } from 'react'
-import { Address, useQuery } from 'wagmi'
-import { FetchTokenArgs, FetchTokenResult, fetchToken } from 'wagmi/actions'
+import { ChainId } from 'sushi'
+import { Address } from 'viem'
 
-type QueryKeyArgs = { tokens: Partial<FetchTokenArgs>[] }
+type QueryKeyArgs = { tokens: Partial<GetTokenParameters>[] }
 // type QueryKeyConfig = {}
 
-export type FetchTokensArgs = { tokens: FetchTokenArgs[] }
-export type FetchTokensResult = FetchTokenResult[]
+export type FetchTokensArgs = { tokens: GetTokenParameters[] }
+export type FetchTokensResult = GetTokenReturnType[]
 export type UseTokensArgs = Partial<FetchTokensArgs>
 export type UseTokensConfig = Partial<Parameters<typeof useQuery>['2']>
 
@@ -24,11 +31,14 @@ const queryFn: QueryFunction<
   if (!tokens) throw new Error('tokens is required')
   if (tokens.filter((el) => !el.address).length > 0)
     throw new Error('address is required')
+
+  const config = createConfig(publicWagmiConfig)
+
   return Promise.all(
     tokens.map((token) => {
-      return fetchToken({
+      return getToken(config, {
         address: token.address as Address,
-        chainId: token.chainId,
+        chainId: token.chainId as ChainId,
         formatUnits: token.formatUnits,
       })
     }),

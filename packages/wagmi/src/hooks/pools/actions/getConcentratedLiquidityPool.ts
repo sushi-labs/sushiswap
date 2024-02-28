@@ -1,8 +1,11 @@
 import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Token, Type } from 'sushi/currency'
 import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi/pool'
-import { Address, readContracts } from 'wagmi'
 
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { createConfig } from '@wagmi/core'
+import { readContracts } from '@wagmi/core/actions'
+import { Address } from 'viem'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 
 export const getConcentratedLiquidityPools = async ({
@@ -45,7 +48,9 @@ export const getConcentratedLiquidityPools = async ({
       }),
   )
 
-  const slot0s = await readContracts({
+  const config = createConfig(publicWagmiConfig)
+
+  const slot0s = await readContracts(config, {
     contracts: poolAddresses.map(
       (el) =>
         ({
@@ -89,7 +94,7 @@ export const getConcentratedLiquidityPools = async ({
     ),
   })
 
-  const liquidities = await readContracts({
+  const liquidities = await readContracts(config, {
     contracts: poolAddresses.map(
       (el) =>
         ({

@@ -90,13 +90,14 @@ export function useMasterChefContract(
   chainId: ChainId,
   chef: Omit<ChefType, 'Merkl'>,
 ) {
-  const client = usePublicClient({ chainId })
+  const client = usePublicClient({ chainId }) as any
 
   return useMemo(() => {
-    if (!client) return null
+    if (!chainId) return null
 
+    // @ts-ignore
     return getContract({
-      ...(getMasterChefContractConfig(chainId, chef) as any),
+      ...getMasterChefContractConfig(chainId, chef),
       client,
     })
   }, [chainId, client, chef])

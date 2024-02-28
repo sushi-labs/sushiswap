@@ -10,9 +10,11 @@ import {
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import { SushiSwapV2Pool, computeSushiSwapV2PoolAddress } from 'sushi/pool'
 import { Address } from 'viem'
-import { useBlockNumber, useReadContracts } from 'wagmi'
-
-type UseReadContractsConfig = Parameters<typeof useReadContracts>['0']
+import {
+  UseReadContractsParameters,
+  useBlockNumber,
+  useReadContracts,
+} from 'wagmi'
 
 export enum SushiSwapV2PoolState {
   LOADING = 'Loading',
@@ -20,6 +22,8 @@ export enum SushiSwapV2PoolState {
   EXISTS = 'Exists',
   INVALID = 'Invalid',
 }
+
+type Config = Omit<NonNullable<UseReadContractsParameters>, 'contracts'>
 
 function getSushiSwapV2Pools(
   chainId: SushiSwapV2ChainId | undefined,
@@ -72,7 +76,7 @@ interface UseSushiSwapV2PoolsReturn {
 export function useSushiSwapV2Pools(
   chainId: SushiSwapV2ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config?: Omit<NonNullable<UseReadContractsConfig>, 'contracts'>,
+  config?: Config,
 ): UseSushiSwapV2PoolsReturn {
   const [tokensA, tokensB, contracts] = useMemo(
     () => getSushiSwapV2Pools(chainId, currencies),
@@ -151,7 +155,7 @@ export function useSushiSwapV2Pool(
   chainId: SushiSwapV2ChainId,
   tokenA?: Currency,
   tokenB?: Currency,
-  config?: Omit<UseReadContractsConfig, 'contracts'>,
+  config?: Config,
 ): UseSushiSwapV2PoolReturn {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(
     () => [[tokenA, tokenB]],

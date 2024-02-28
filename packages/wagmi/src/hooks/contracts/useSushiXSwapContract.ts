@@ -14,15 +14,14 @@ export const getSushiXSwapContractConfig = (chainId: SushiXSwapChainId) => ({
 })
 
 export function useSushiXSwapContract(chainId: SushiXSwapChainId | undefined) {
-  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId })
-  const { data: walletClient } = useWalletClient({ chainId })
+  const publicClient = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+  const { data: walletClient } = useWalletClient({ chainId }) as any
 
-  // @ts-ignore
   return useMemo(() => {
     if (!chainId || (!publicClient && !walletClient)) return null
 
     return getContract({
-      ...(getSushiXSwapContractConfig(chainId) as any),
+      ...getSushiXSwapContractConfig(chainId),
       client: walletClient || publicClient!,
     })
   }, [chainId, publicClient, walletClient])

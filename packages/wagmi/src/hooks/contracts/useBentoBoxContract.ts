@@ -13,14 +13,14 @@ export const getBentoBoxContractConfig = (chainId: BentoBoxChainId) => ({
 })
 
 export function useBentoBoxContract(chainId: BentoBoxChainId | undefined) {
-  const client = usePublicClient<PublicWagmiConfig>({ chainId })
+  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as any
 
   return useMemo(() => {
-    if (!client || !chainId) return null
+    if (!chainId) return null
 
     return getContract({
       client,
-      ...(getBentoBoxContractConfig(chainId) as any),
+      ...getBentoBoxContractConfig(chainId),
     })
   }, [client, chainId])
 }
