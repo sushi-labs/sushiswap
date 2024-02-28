@@ -1,6 +1,7 @@
 const textEncoder = new TextEncoder()
 const textDecoder = new TextDecoder()
 const MAX_BYTE2_VALUE = (1 << 16) - 1
+const MAX_BYTE4_VALUE = 2 ** 32 - 1
 
 // TODO: try Uint16/32Array ot DataView instaed of manual work
 export class BinWriteStream {
@@ -9,6 +10,10 @@ export class BinWriteStream {
 
   constructor(primarySize = 2 ** 15) {
     this.data = new Uint8Array(primarySize)
+  }
+
+  getSerializedData(): Uint8Array {
+    return this.data.subarray(0, this.position)
   }
 
   ensurePlace(bytes: number) {
@@ -20,14 +25,14 @@ export class BinWriteStream {
   }
 
   uint8(num: number) {
-    if (num >> 8 !== 0 || !Number.isInteger(num))
+    if (num > 255 || !Number.isInteger(num))
       console.error(`uint8 serialization error ${num}`)
     this.ensurePlace(1)
     this.data[this.position++] = num
   }
 
   uint16(num: number) {
-    if (num >> 16 !== 0 || !Number.isInteger(num))
+    if (num > MAX_BYTE2_VALUE || !Number.isInteger(num))
       console.error(`uint16 serialization error ${num}`)
     this.ensurePlace(2)
     this.data[this.position++] = num % 256
@@ -35,7 +40,7 @@ export class BinWriteStream {
   }
 
   uint32(num: number) {
-    if (num >> 32 !== 0 || !Number.isInteger(num))
+    if (num > MAX_BYTE4_VALUE || !Number.isInteger(num))
       console.error(`uint32 serialization error ${num}`)
     this.ensurePlace(4)
     for (let i = 0; i < 4; ++i) {
@@ -77,7 +82,7 @@ export class BinWriteStream {
       s,
       this.data.subarray(
         this.position + 2,
-        Math.min(s.length * 2, MAX_BYTE2_VALUE),
+        this.position + 2 + Math.min(s.length * 2, MAX_BYTE2_VALUE),
       ),
     )
     if (read !== s.length)
@@ -160,10 +165,11 @@ export class BinReadStream {
     const len = this.uint8()
     this.ensurePlace(len)
     let res = 0n
-    for (let i = 0; i < len; ++i) {
+    for (let i = len - 1; i >= 0; --i) {
       res <<= 8n
-      res += BigInt(this.data[this.position++] as number)
+      res += BigInt(this.data[this.position + i] as number)
     }
+    this.position += len
     return res
   }
 
