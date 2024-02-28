@@ -112,7 +112,7 @@ export class BinWriteStream {
   }
 
   str16(s: string) {
-    return this.str16UTF16(s) // should be faster. A little bit longer, but size is not very critical
+    return this.str16UTF8(s) // should be faster
   }
 }
 
@@ -195,6 +195,6 @@ export class BinReadStream {
   }
 
   str16(): string {
-    return this.str16UTF16()
+    return this.str16UTF8()
   }
 }
