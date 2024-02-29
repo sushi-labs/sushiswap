@@ -23,6 +23,10 @@ const stringTestValues = [
   'все на борт!',
   'a long string rwkjfhrkjghkergfkksgdhjkfgshjkdgfkhjsdgfjhkgjfkhgdjhskjhekrhfjksbdfm💋hvbdmhvbdfh,vbfr',
 ]
+const addressTestValues = [
+  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
+]
 
 describe('Binary Serialization', () => {
   describe('Serialize & deserialize', () => {
@@ -132,6 +136,19 @@ describe('Binary Serialization', () => {
       expect(i).equals(testValues.length)
     })
 
+    it('address', () => {
+      const testValues = addressTestValues
+      const serializer = new BinWriteStream()
+      testValues.forEach((val) => serializer.address(val))
+      const deserializer = new BinReadStream(serializer.getSerializedData())
+      let i = 0
+      for (; deserializer.restBytes() > 0; ++i) {
+        const val = deserializer.address()
+        expect(val).equals(testValues[i])
+      }
+      expect(i).equals(testValues.length)
+    })
+
     it.skip('uint32 timing', () => {
       const SAMPLES = 10_000
       const testValues = uint32TestValues
@@ -229,6 +246,25 @@ describe('Binary Serialization', () => {
       console.log(
         `Deserialization str16UTF16 x${SAMPLES} timing = ${timeDes} ms`,
       )
+    })
+
+    it.skip('address timing', () => {
+      const SAMPLES = 10_000
+      const testValues = addressTestValues
+      const serializer = new BinWriteStream()
+      const startSer = performance.now()
+      for (let i = 0; i < SAMPLES; ++i) {
+        serializer.address(testValues[i % testValues.length])
+      }
+      const timeSer = performance.now() - startSer
+      console.log(`Serialization address x${SAMPLES} timing = ${timeSer} ms`)
+      const deserializer = new BinReadStream(serializer.getSerializedData())
+      const startDes = performance.now()
+      for (let i = 0; i < SAMPLES; ++i) {
+        deserializer.address()
+      }
+      const timeDes = performance.now() - startDes
+      console.log(`Deserialization address x${SAMPLES} timing = ${timeDes} ms`)
     })
   })
 })

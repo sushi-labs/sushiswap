@@ -116,6 +116,31 @@ export class BinWriteStream {
   str16(s: string) {
     return this.str16UTF8(s) // should be faster
   }
+
+  // addressCompact(s: string) {
+  //   if (s.length === 42) {
+  //     this.uint32(parseInt(s.substring(2, 10)))
+  //     this.uint32(parseInt(s.substring(10, 18)))
+  //     this.uint32(parseInt(s.substring(18, 26)))
+  //     this.uint32(parseInt(s.substring(26, 34)))
+  //     this.uint32(parseInt(s.substring(34, 42)))
+  //   }
+  // }
+
+  // not compact, but fast
+  address(s: string) {
+    this.ensurePlace(40)
+    if (s.length !== 42) s = `0x${s.substring(2).padStart(40, '0')}`
+    const { read, written } = textEncoder.encodeInto(
+      s.substring(2),
+      this.data.subarray(this.position, this.position + 40),
+    )
+    if (read !== 40 || written !== 40)
+      console.error(
+        `Address serialization error: ${read} symbols were read instead of 40`,
+      )
+    this.position += written
+  }
 }
 
 export class BinReadStream {
@@ -198,5 +223,13 @@ export class BinReadStream {
 
   str16(): string {
     return this.str16UTF8()
+  }
+
+  address(): string {
+    this.ensurePlace(40)
+    this.position += 40
+    return `0x${textDecoder.decode(
+      this.data.subarray(this.position - 40, this.position),
+    )}`
   }
 }
