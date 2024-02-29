@@ -5,6 +5,7 @@ import {
 } from '../src/serializer/BinarySerialization'
 
 const uint32TestValues = [0, 256, 0x2a3b4c5d]
+const uint24TestValues = [0, 256, 0x2a3b4c]
 const float64TestValues = [0, 256, 0x2a3b4c5d, 23423.654645e234, -1, -23432e-32]
 const bigintTestValues = [
   0n,
@@ -51,6 +52,19 @@ describe('Binary Serialization', () => {
       let i = 0
       for (; deserializer.restBytes() > 0; ++i) {
         const val = deserializer.uint16()
+        expect(val).equals(testValues[i])
+      }
+      expect(i).equals(testValues.length)
+    })
+
+    it('uint24', () => {
+      const testValues = uint24TestValues
+      const serializer = new BinWriteStream()
+      testValues.forEach((val) => serializer.uint24(val))
+      const deserializer = new BinReadStream(serializer.getSerializedData())
+      let i = 0
+      for (; deserializer.restBytes() > 0; ++i) {
+        const val = deserializer.uint24()
         expect(val).equals(testValues[i])
       }
       expect(i).equals(testValues.length)
