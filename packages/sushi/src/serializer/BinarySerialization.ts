@@ -5,6 +5,7 @@ const floatArrayAsUint8 = new Uint8Array(floatArray.buffer)
 const MAX_BYTE2_VALUE = (1 << 16) - 1
 const MAX_BYTE3_VALUE = (1 << 24) - 1
 const MAX_BYTE4_VALUE = 2 ** 32 - 1
+const INT24_SHIFT = 1 << 23
 
 // TODO: try Uint16/32Array ot DataView instaed of manual work
 export class BinWriteStream {
@@ -46,10 +47,15 @@ export class BinWriteStream {
     if (num > MAX_BYTE3_VALUE || !Number.isInteger(num))
       console.error(`uint24 serialization error ${num}`)
     this.ensurePlace(3)
-    for (let i = 0; i < 3; ++i) {
-      this.data[this.position++] = num % 256
-      num /= 256
-    }
+    this.data[this.position++] = num % 256
+    num /= 256
+    this.data[this.position++] = num % 256
+    num /= 256
+    this.data[this.position++] = num % 256
+  }
+
+  int24(num: number) {
+    this.uint24(num + INT24_SHIFT)
   }
 
   uint32(num: number) {
@@ -189,6 +195,10 @@ export class BinReadStream {
     const byte1 = this.data[this.position++] as number
     const byte2 = this.data[this.position++] as number
     return byte0 + 256 * (byte1 + 256 * byte2)
+  }
+
+  int24(): number {
+    return this.uint24() - INT24_SHIFT
   }
 
   uint32(): number {
