@@ -3,6 +3,7 @@ import {
   arbitrum,
   avalanche,
   bsc,
+  cronos,
   fantom,
   foundry,
   goerli,
@@ -39,6 +40,7 @@ export const defaultChains: Chain[] = [
   // polygonMumbai,
   // sepolia,
   scroll,
+  cronos,
 ]
 
 export const otherChains: Chain[] = [

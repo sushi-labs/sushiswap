@@ -1,4 +1,3 @@
-import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
@@ -38,13 +37,11 @@ export const useSortedTokenList = ({
   pricesMap,
   includeNative,
 }: Params) => {
-  const debouncedQuery = useDebounce(query, 250)
-
   return useQuery({
     queryKey: [
       'sortedTokenList',
       {
-        debouncedQuery,
+        query,
         tokenMap,
         customTokenMap,
         balancesMap,
@@ -71,28 +68,23 @@ export const useSortedTokenList = ({
       const _includeNative =
         includeNative &&
         chainId &&
-        (!debouncedQuery ||
-          debouncedQuery
+        (!query ||
+          query
             .toLowerCase()
             .includes(Native.onChain(chainId).symbol.toLowerCase()))
 
-      const filteredTokens: Token[] = filterTokens(
-        tokenMapValuesUniq,
-        debouncedQuery,
-      )
+      const filteredTokens: Token[] = filterTokens(tokenMapValuesUniq, query)
       const filteredCustomTokens: Token[] = filterTokens(
         customTokenMapValues,
-        debouncedQuery,
+        query,
       )
       const sortedTokens: Token[] = [
         ...filteredTokens,
         ...filteredCustomTokens,
       ].sort(tokenComparator(balancesMap, pricesMap))
 
-      const filteredSortedTokens = getSortedTokensByQuery(
-        sortedTokens,
-        debouncedQuery,
-      )
+      const filteredSortedTokens = getSortedTokensByQuery(sortedTokens, query)
+
       if (_includeNative)
         return [Native.onChain(chainId), ...filteredSortedTokens]
       return filteredSortedTokens

@@ -129,7 +129,7 @@ ${logPools}
 
       if (recipient) {
         if (isRouteProcessor4ChainId(chainId)) {
-          console.debug('routeProcessor4Params')
+          // console.debug('routeProcessor4Params')
           args = Router.routeProcessor4Params(
             poolsCodeMap,
             route,
@@ -141,7 +141,7 @@ ${logPools}
             +slippagePercentage / 100,
           )
         } else if (isRouteProcessor3_2ChainId(chainId)) {
-          console.debug('routeProcessor3_2Params')
+          // console.debug('routeProcessor3_2Params')
           args = Router.routeProcessor3_2Params(
             poolsCodeMap,
             route,
@@ -153,7 +153,7 @@ ${logPools}
             +slippagePercentage / 100,
           )
         } else if (isRouteProcessor3_1ChainId(chainId)) {
-          console.debug('routeProcessor3_1Params')
+          // console.debug('routeProcessor3_1Params')
           args = Router.routeProcessor3_1Params(
             poolsCodeMap,
             route,
@@ -165,7 +165,7 @@ ${logPools}
             +slippagePercentage / 100,
           )
         } else if (isRouteProcessor3ChainId(chainId)) {
-          console.debug('routeProcessor3Params')
+          // console.debug('routeProcessor3Params')
           args = Router.routeProcessor3Params(
             poolsCodeMap,
             route,

@@ -1,14 +1,14 @@
 import { Hex } from 'viem'
-import { ChainId } from '../chain'
-import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines'
-import { PoolCode } from './pool-codes/PoolCode'
+import { ChainId } from '../chain/index.js'
+import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines/index.js'
+import { PoolCode } from './pool-codes/PoolCode.js'
 import {
   PermitData,
   RouterLiquiditySource,
   TinesToRouteProcessor2,
   TokenType,
   getTokenType,
-} from './tines-to-route-processor-2'
+} from './tines-to-route-processor-2.js'
 
 class TinesToRouteProcessor4 extends TinesToRouteProcessor2 {
   // constructor(

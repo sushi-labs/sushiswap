@@ -5,15 +5,14 @@ import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import { WalletClient } from 'viem'
 import { readContract } from 'viem/actions'
-
+import { getTestConfig } from '../src/getTestConfig.js'
 import {
   UniV3Environment,
   UniV3PoolInfo,
   createRandomUniV3Pool,
   createUniV3EnvZero,
   createUniV3Pool,
-} from '../src'
-import { getTestConfig } from '../src/getTestConfig'
+} from '../src/index.js'
 
 // Map of fee to tickSpacing
 const feeAmountTickSpacing: number[] = []

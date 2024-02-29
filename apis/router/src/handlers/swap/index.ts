@@ -14,16 +14,16 @@ import {
   makeAPI02Object,
 } from 'sushi/router'
 import { Address } from 'viem'
-import { ExtractorClient } from '../../ExtractorClient'
+import { ExtractorClient } from '../../ExtractorClient.js'
 import {
   CHAIN_ID,
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
-} from '../../config'
+} from '../../config.js'
 import requestStatistics, {
   ResponseRejectReason,
-} from '../../request-statistics'
-import { querySchema3_2 } from './schema'
+} from '../../request-statistics.js'
+import { querySchema3_2 } from './schema.js'
 
 const nativeProvider = new NativeWrapProvider(
   CHAIN_ID as ChainId,

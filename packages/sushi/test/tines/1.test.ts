@@ -3,7 +3,7 @@ import {
   ConstantProductRPool,
   RouteStatus,
   findMultiRouteExactIn,
-} from '../../src/tines'
+} from '../../src/tines/index.js'
 
 // Reason of fail: too big Gas price
 it('real fail from production 1', () => {

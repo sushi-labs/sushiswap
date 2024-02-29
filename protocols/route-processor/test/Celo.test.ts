@@ -1,12 +1,14 @@
 import { expect } from 'chai'
 import { Signer } from 'ethers'
-import { ethers } from 'hardhat'
+import hre from 'hardhat'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, Type, USDC, WNATIVE } from 'sushi/currency'
 import { DataFetcher, Router } from 'sushi/router'
 import { RouteStatus } from 'sushi/tines'
 import { http, Address, createPublicClient } from 'viem'
 import { hardhat } from 'viem/chains'
+
+const { ethers } = hre
 
 //const RouteProcessorAddr = '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c'
 //const RouteProcessorAddr = '0x3e1116eA5034f5D73a7B530071709D54A4109F5f'

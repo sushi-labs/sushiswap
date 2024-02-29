@@ -1,4 +1,4 @@
-import { BigintIsh } from '../math'
+import { BigintIsh } from '../math/index.js'
 
 /**
  * Converts a big int to a hex string

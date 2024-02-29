@@ -1,5 +1,5 @@
-import { ChainId } from '../chain'
-import { Token } from '../currency'
+import { ChainId } from '../chain/index.js'
+import { Token } from '../currency/index.js'
 import {
   APE_ADDRESS,
   BCT_ADDRESS,
@@ -17,7 +17,7 @@ import {
   XSUSHI_ADDRESS,
   rETH2_ADDRESS,
   renBTC_ADDRESS,
-} from '../currency/token-addresses'
+} from '../currency/token-addresses.js'
 import {
   AAVE,
   APE,
@@ -44,7 +44,7 @@ import {
   YFI,
   renBTC,
   sETH2,
-} from '../currency/tokens'
+} from '../currency/tokens.js'
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }

@@ -3,15 +3,15 @@ import {
   tridentGetPoolsAbi,
   tridentPoolsCountAbi,
   tridentSwapFeeAbi,
-} from '../../abi'
-import { ChainId } from '../../chain'
+} from '../../abi/index.js'
+import { ChainId } from '../../chain/index.js'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
-} from '../../config'
-import { Currency, Token } from '../../currency'
-import { getCurrencyCombinations } from '../get-currency-combinations'
+} from '../../config/index.js'
+import { Currency, Token } from '../../currency/index.js'
+import { getCurrencyCombinations } from '../get-currency-combinations.js'
 
 export interface TridentStaticPool {
   address: Address

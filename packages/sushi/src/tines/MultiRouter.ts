@@ -4,8 +4,8 @@ import {
   NetworkInfo,
   NoWayMultiRoute,
   RouteStatus,
-} from './Graph'
-import { RPool, RToken, setTokenId } from './RPool'
+} from './Graph.js'
+import { RPool, RToken, setTokenId } from './RPool.js'
 
 // Assumes route is a single path
 function calcPriceImactWithoutFee(route: MultiRoute) {

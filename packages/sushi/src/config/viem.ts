@@ -1,4 +1,4 @@
-import { http, type Address, type PublicClientConfig, fallback } from 'viem'
+import { http, type Address, type PublicClientConfig } from 'viem'
 import {
   arbitrum,
   // arbitrumGoerli,
@@ -15,6 +15,8 @@ import {
   // bscTestnet,
   // canto,
   celo,
+  // ronin,
+  cronos,
   // celoAlfajores,
   // crossbell,
   // evmos,
@@ -53,7 +55,7 @@ import {
   zkSync,
   // zkSyncTestnet,
 } from 'viem/chains'
-import { ChainId, TestnetChainId } from '../chain'
+import { ChainId, TestnetChainId } from '../chain/index.js'
 
 export {
   arbitrum,
@@ -462,21 +464,17 @@ export const publicClientConfig: Record<
       `https://lb.drpc.org/ogrpc?network=avalanche&dkey=${drpcId}`,
     ),
   },
+  [ChainId.BASE]: {
+    chain: base,
+    transport: http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
+  },
   [ChainId.BOBA]: {
     chain: boba,
     transport: http('https://mainnet.boba.network'),
   },
   [ChainId.BOBA_AVAX]: {
     chain: bobaAvax,
-    transport: fallback(
-      [
-        http(bobaAvax.rpcUrls.default.http[0]),
-        http('https://replica.avax.boba.network'),
-      ],
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://avax.boba.network'),
   },
   [ChainId.BOBA_BNB]: {
     chain: bobaBnb,
@@ -503,6 +501,12 @@ export const publicClientConfig: Record<
   [ChainId.FANTOM]: {
     chain: fantom,
     transport: http(`https://lb.drpc.org/ogrpc?network=fantom&dkey=${drpcId}`),
+  },
+  [ChainId.FILECOIN]: {
+    chain: filecoin,
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
+    ),
   },
   [ChainId.FUSE]: {
     chain: fuse,
@@ -534,7 +538,9 @@ export const publicClientConfig: Record<
   },
   [ChainId.MOONRIVER]: {
     chain: moonriver,
-    transport: http(moonriver.rpcUrls.default.http[0]),
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=moonriver&dkey=${drpcId}`,
+    ),
   },
   [ChainId.OPTIMISM]: {
     chain: optimism,
@@ -566,14 +572,8 @@ export const publicClientConfig: Record<
   },
   [ChainId.TELOS]: {
     chain: telos,
-    transport: fallback(
-      [
-        http(telos.rpcUrls.default.http[0]),
-        http('https://rpc1.eu.telos.net/evm'),
-        http('https://rpc1.us.telos.net/evm'),
-      ],
-      { rank: true },
-    ),
+    // transport: http(`https://lb.drpc.org/ogrpc?network=telos&dkey=${drpcId}`),
+    transport: http('https://rpc1.us.telos.net/evm'),
   },
   [ChainId.PALM]: {
     chain: palm,
@@ -595,27 +595,26 @@ export const publicClientConfig: Record<
     chain: linea,
     transport: http(`https://lb.drpc.org/ogrpc?network=linea&dkey=${drpcId}`),
   },
-  [ChainId.BASE]: {
-    chain: base,
-    transport: http(`https://lb.drpc.org/ogrpc?network=base&dkey=${drpcId}`),
-  },
+
   [ChainId.SCROLL]: {
     chain: scroll,
     transport: http(`https://lb.drpc.org/ogrpc?network=scroll&dkey=${drpcId}`),
   },
-  [ChainId.FILECOIN]: {
-    chain: filecoin,
-    transport: http(
-      `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
-    ),
-  },
+
   [ChainId.ZETACHAIN]: {
     chain: zetachain,
-    transport: fallback(
-      zetachain.rpcUrls.default.http.map((url) => http(url)),
-      {
-        rank: true,
-      },
-    ),
+    transport: http('https://zetachain-mainnet-archive.allthatnode.com:8545'),
   },
+  // [ChainId.RONIN]: {
+  //   chain: ronin,
+  //   transport: http('https://api-gateway.skymavis.com/rpc'),
+  // },
+  [ChainId.CRONOS]: {
+    chain: cronos,
+    transport: http(`https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`),
+  },
+  // [ChainId.HEDERA]: {
+  //   chain: hedera,
+  //   transport: http('')
+  // }
 } as const

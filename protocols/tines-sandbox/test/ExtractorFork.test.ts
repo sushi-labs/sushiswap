@@ -6,16 +6,16 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
+import { ChainId } from 'sushi/chain'
 import {
+  BASES_TO_CHECK_TRADES_AGAINST,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SushiSwapV3ChainId,
-} from 'sushi'
-import { ChainId } from 'sushi/chain'
-import { publicClientConfig } from 'sushi/config'
-import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+  publicClientConfig,
+} from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import {
   ConstantProductPoolCode,
@@ -37,9 +37,11 @@ import {
   walletActions,
 } from 'viem'
 import { Chain, hardhat } from 'viem/chains'
-import { createHardhatProvider } from '../src'
-import { pancakeswapV3Factory } from './Extractor.test'
-import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
+import { createHardhatProvider } from '../src/index.js'
+import { pancakeswapV3Factory } from './Extractor.test.js'
+import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json' assert {
+  type: 'json',
+}
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -155,7 +157,8 @@ async function startInfinitTest(args: {
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -316,7 +319,8 @@ it.skip('Extractor BSC infinite work test', async () => {
     chain: publicClientConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
-    tickHelperContract: TickLensContract[ChainId.BSC],
+    tickHelperContractV3: TickLensContract[ChainId.BSC],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,

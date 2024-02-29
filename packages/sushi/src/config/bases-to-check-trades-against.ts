@@ -1,5 +1,5 @@
-import { ChainId } from '../chain'
-import { Token } from '../currency'
+import { ChainId } from '../chain/index.js'
+import { Token } from '../currency/index.js'
 import {
   AAVE,
   BUSD,
@@ -28,13 +28,13 @@ import {
   axlETH,
   axlUSDC,
   axlWBTC,
-} from '../currency'
+} from '../currency/index.js'
 import {
   STARGATE_USDC,
   STARGATE_USDT,
   STARGATE_WBTC,
   STARGATE_WETH,
-} from './stargate'
+} from './stargate.js'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
   readonly [chainId: number]: Token[]
@@ -292,6 +292,20 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WORMHOLE_WETH[ChainId.MOONBEAM],
     WORMHOLE_WBTC[ChainId.MOONBEAM],
     FRAX[ChainId.MOONBEAM],
+    new Token({
+      chainId: ChainId.MOONBEAM,
+      address: '0xFFfffffF7D2B0B761Af01Ca8e25242976ac0aD7D',
+      decimals: 6,
+      name: 'USD Coin',
+      symbol: 'xcUSDC',
+    }),
+    new Token({
+      chainId: ChainId.MOONBEAM,
+      address: '0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d',
+      decimals: 6,
+      name: 'Tether USD',
+      symbol: 'xcUSDT',
+    }),
   ],
   [ChainId.OPTIMISM]: [
     WNATIVE[ChainId.OPTIMISM],
@@ -450,5 +464,11 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     ZETA_ETH_BRIDGE_USDT,
     ZETA_BSC_BRIDGE_USDC,
     ZETA_BSC_BRIDGE_USDT,
+  ],
+  [ChainId.CRONOS]: [
+    WNATIVE[ChainId.CRONOS],
+    WETH9[ChainId.CRONOS],
+    WBTC[ChainId.CRONOS],
+    USDC[ChainId.CRONOS],
   ],
 }

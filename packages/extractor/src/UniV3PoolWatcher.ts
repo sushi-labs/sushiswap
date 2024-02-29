@@ -1,16 +1,14 @@
 import { EventEmitter } from 'node:events'
-
 import { Abi, Address, parseAbiItem } from 'abitype'
 import { erc20Abi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode, UniV3PoolCode } from 'sushi/router'
 import { CLTick, RToken, UniV3Pool } from 'sushi/tines'
 import { Log, decodeEventLog } from 'viem'
-
-import { Counter } from './Counter'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { warnLog } from './WarnLog'
-import { WordLoadManager } from './WordLoadManager'
+import { Counter } from './Counter.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { warnLog } from './WarnLog.js'
+import { WordLoadManager } from './WordLoadManager.js'
 
 interface UniV3PoolSelfState {
   blockNumber: number

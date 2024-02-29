@@ -6,9 +6,9 @@ import {
   MAX_UINT128,
   Rounding,
   ZERO,
-} from '../math'
-import { Amount } from './Amount'
-import { type Type } from './Type'
+} from '../math/index.js'
+import { Amount } from './Amount.js'
+import { type Type } from './Type.js'
 
 export class Share<T extends Type> extends Fraction {
   public readonly currency: T

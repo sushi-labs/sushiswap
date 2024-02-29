@@ -1,3 +1,3 @@
-export * from './compute-trident-stable-pool-address'
-export * from './trident-stable-pool'
-export * from './zod'
+export * from './compute-trident-stable-pool-address.js'
+export * from './trident-stable-pool.js'
+export * from './zod.js'

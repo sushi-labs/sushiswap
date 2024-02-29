@@ -1,6 +1,7 @@
-import { LogFilterType } from '@sushiswap/extractor'
+import { ExtractorConfig, LogFilterType } from '@sushiswap/extractor'
 import { ChainId } from 'sushi/chain'
 import {
+  ExtractorSupportedChainId,
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
   PANCAKESWAP_V3_FEE_SPACING_MAP,
@@ -21,7 +22,6 @@ import {
   publicClientConfig,
 } from 'sushi/config'
 import { LiquidityProviders } from 'sushi/router'
-
 import { type Address, createPublicClient } from 'viem'
 
 const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
@@ -61,7 +61,10 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   } as const
 }
 
-export const EXTRACTOR_CONFIG = {
+export const EXTRACTOR_CONFIG: Record<
+  ExtractorSupportedChainId,
+  ExtractorConfig
+> = {
   [ChainId.ARBITRUM]: {
     client: createPublicClient(publicClientConfig[ChainId.ARBITRUM]),
     factoriesV2: [
@@ -86,7 +89,9 @@ export const EXTRACTOR_CONFIG = {
       sushiswapV3Factory(ChainId.ARBITRUM),
       pancakeswapV3Factory(ChainId.ARBITRUM),
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logType: LogFilterType.Native,
@@ -97,7 +102,9 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.ARBITRUM_NOVA]),
     factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM_NOVA)],
     factoriesV3: [sushiswapV3Factory(ChainId.ARBITRUM_NOVA)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -115,7 +122,9 @@ export const EXTRACTOR_CONFIG = {
       },
     ],
     factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.AVALANCHE],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.AVALANCHE],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
@@ -137,7 +146,32 @@ export const EXTRACTOR_CONFIG = {
       uniswapV3Factory(ChainId.BASE),
       pancakeswapV3Factory(ChainId.BASE),
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.BOBA]: {
+    client: createPublicClient(publicClientConfig[ChainId.BOBA]),
+    factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
+    factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.BOBA_BNB]: {
+    client: createPublicClient(publicClientConfig[ChainId.BOBA_BNB]),
+    factoriesV2: [sushiswapV2Factory(ChainId.BOBA_BNB)],
+    factoriesV3: [],
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -180,17 +214,45 @@ export const EXTRACTOR_CONFIG = {
       sushiswapV3Factory(ChainId.BSC),
       pancakeswapV3Factory(ChainId.BSC),
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BSC],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BSC],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 1000,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    // maxBatchesSimultaniously: 5,
+  },
+  [ChainId.BTTC]: {
+    client: createPublicClient(publicClientConfig[ChainId.BTTC]),
+    factoriesV2: [sushiswapV2Factory(ChainId.BTTC)],
+    factoriesV3: [sushiswapV3Factory(ChainId.BTTC)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BTTC],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
   },
   [ChainId.CELO]: {
     client: createPublicClient(publicClientConfig[ChainId.CELO]),
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
-    tickHelperContract: '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
+    tickHelperContractV3:
+      '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.CORE]: {
+    client: createPublicClient(publicClientConfig[ChainId.CORE]),
+    factoriesV2: [sushiswapV2Factory(ChainId.CORE)],
+    factoriesV3: [sushiswapV3Factory(ChainId.CORE)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.CORE],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -232,7 +294,9 @@ export const EXTRACTOR_CONFIG = {
       sushiswapV3Factory(ChainId.ETHEREUM),
       pancakeswapV3Factory(ChainId.ETHEREUM),
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -273,7 +337,9 @@ export const EXTRACTOR_CONFIG = {
           '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
       },
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FANTOM],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FANTOM],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -282,7 +348,9 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.FUSE]),
     factoriesV2: [sushiswapV2Factory(ChainId.FUSE)],
     factoriesV3: [sushiswapV3Factory(ChainId.FUSE)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FUSE],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FUSE],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -291,7 +359,9 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.GNOSIS]),
     factoriesV2: [sushiswapV2Factory(ChainId.GNOSIS)],
     factoriesV3: [sushiswapV3Factory(ChainId.GNOSIS)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.GNOSIS],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.GNOSIS],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -299,6 +369,7 @@ export const EXTRACTOR_CONFIG = {
   [ChainId.OPTIMISM]: {
     client: createPublicClient(publicClientConfig[ChainId.OPTIMISM]),
     factoriesV2: [
+      sushiswapV2Factory(ChainId.OPTIMISM),
       // {
       //   address: '0xedfad3a0F42A8920B011bb0332aDe632e552d846' as Address,
       //   provider: LiquidityProviders.Elk,
@@ -310,11 +381,12 @@ export const EXTRACTOR_CONFIG = {
       uniswapV3Factory(ChainId.OPTIMISM),
       sushiswapV3Factory(ChainId.OPTIMISM),
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.OPTIMISM],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    account: '0x4200000000000000000000000000000000000006', // just a whale because optimism eth_call needs gas (
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON]: {
@@ -361,7 +433,9 @@ export const EXTRACTOR_CONFIG = {
       uniswapV3Factory(ChainId.POLYGON),
       sushiswapV3Factory(ChainId.POLYGON),
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
@@ -369,7 +443,9 @@ export const EXTRACTOR_CONFIG = {
   },
   [ChainId.POLYGON_ZKEVM]: {
     client: createPublicClient(publicClientConfig[ChainId.POLYGON_ZKEVM]),
-    factoriesV2: [],
+    factoriesV2: [
+      // sushiswapV2Factory(ChainId.POLYGON_ZKEVM)
+    ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.POLYGON_ZKEVM),
       pancakeswapV3Factory(ChainId.POLYGON_ZKEVM),
@@ -380,7 +456,9 @@ export const EXTRACTOR_CONFIG = {
           '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
       },
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON_ZKEVM],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.POLYGON_ZKEVM],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -391,7 +469,9 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.SCROLL]),
     factoriesV2: [sushiswapV2Factory(ChainId.SCROLL)],
     factoriesV3: [sushiswapV3Factory(ChainId.SCROLL)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -403,7 +483,9 @@ export const EXTRACTOR_CONFIG = {
       sushiswapV3Factory(ChainId.LINEA),
       pancakeswapV3Factory(ChainId.LINEA),
     ],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -412,7 +494,9 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.FILECOIN]),
     factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
     factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -421,7 +505,9 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.METIS]),
     factoriesV2: [sushiswapV2Factory(ChainId.METIS)],
     factoriesV3: [sushiswapV3Factory(ChainId.METIS)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.METIS],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.METIS],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -430,7 +516,9 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.HAQQ]),
     factoriesV2: [sushiswapV2Factory(ChainId.HAQQ)],
     factoriesV3: [sushiswapV3Factory(ChainId.HAQQ)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -440,7 +528,10 @@ export const EXTRACTOR_CONFIG = {
     factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
     // No V3 on Harmony?
     factoriesV3: [],
-    tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -449,26 +540,53 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.KAVA]),
     factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
     factoriesV3: [sushiswapV3Factory(ChainId.KAVA)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
   },
   [ChainId.MOONBEAM]: {
     client: createPublicClient(publicClientConfig[ChainId.MOONBEAM]),
-    factoriesV2: [sushiswapV2Factory(ChainId.MOONBEAM)],
-    // No V3 on Moonbeam?
-    factoriesV3: [],
-    tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.MOONBEAM),
+      {
+        address: '0x19B85ae92947E0725d5265fFB3389e7E4F191FDa' as Address,
+        provider: LiquidityProviders.Solarbeam,
+        fee: 0.003,
+        initCodeHash:
+          '0x9a100ded5f254443fbd264cb7e87831e398a8b642e061670a9bc35ba27293dbf',
+      },
+    ],
+    factoriesV3: [
+      // No SushiSwapV3 on Moonbeam?
+      uniswapV3Factory(ChainId.MOONBEAM),
+    ],
+    tickHelperContractV3:
+      '0x1f4F7b041895D9eB1A79be0896AF3E68e4160010' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
   },
   [ChainId.MOONRIVER]: {
     client: createPublicClient(publicClientConfig[ChainId.MOONRIVER]),
-    factoriesV2: [sushiswapV2Factory(ChainId.MOONRIVER)],
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.MOONRIVER),
+      {
+        address: '0x049581aEB6Fe262727f290165C29BDAB065a1B68' as Address,
+        provider: LiquidityProviders.Solarbeam,
+        fee: 0.003,
+        initCodeHash:
+          '0x9a100ded5f254443fbd264cb7e87831e398a8b642e061670a9bc35ba27293dbf',
+      },
+    ],
     factoriesV3: [sushiswapV3Factory(ChainId.MOONRIVER)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.MOONRIVER],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.MOONRIVER],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
@@ -477,56 +595,73 @@ export const EXTRACTOR_CONFIG = {
     client: createPublicClient(publicClientConfig[ChainId.TELOS]),
     factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
     factoriesV3: [],
-    tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
+    factoriesAlgebra: [
+      {
+        address: '0xA09BAbf9A48003ae9b9333966a8Bda94d820D0d9' as Address,
+        provider: LiquidityProviders.Swapsicle,
+      },
+    ],
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x9dE2dEA5c68898eb4cb2DeaFf357DFB26255a4aa' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
+    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
-  [ChainId.BOBA]: {
-    client: createPublicClient(publicClientConfig[ChainId.BOBA]),
-    factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-  },
-  [ChainId.BOBA_BNB]: {
-    client: createPublicClient(publicClientConfig[ChainId.BOBA_BNB]),
-    factoriesV2: [sushiswapV2Factory(ChainId.BOBA_BNB)],
-    factoriesV3: [],
-    tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-  },
-  [ChainId.BTTC]: {
-    client: createPublicClient(publicClientConfig[ChainId.BTTC]),
-    factoriesV2: [sushiswapV2Factory(ChainId.BTTC)],
-    factoriesV3: [sushiswapV3Factory(ChainId.BTTC)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.BTTC],
-    cacheDir: './cache',
-    logDepth: 50,
-    logging: true,
-  },
+
   [ChainId.THUNDERCORE]: {
     client: createPublicClient(publicClientConfig[ChainId.THUNDERCORE]),
-    factoriesV2: [],
+    factoriesV2: [sushiswapV2Factory(ChainId.THUNDERCORE)],
     factoriesV3: [sushiswapV3Factory(ChainId.THUNDERCORE)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.THUNDERCORE],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.THUNDERCORE],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
   },
-  [ChainId.CORE]: {
-    client: createPublicClient(publicClientConfig[ChainId.CORE]),
-    factoriesV2: [],
-    factoriesV3: [sushiswapV3Factory(ChainId.CORE)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.CORE],
+  [ChainId.ZETACHAIN]: {
+    client: createPublicClient(publicClientConfig[ChainId.ZETACHAIN]),
+    factoriesV2: [sushiswapV2Factory(ChainId.ZETACHAIN)],
+    factoriesV3: [sushiswapV3Factory(ChainId.ZETACHAIN)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ZETACHAIN],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
   },
+  [ChainId.CRONOS]: {
+    client: createPublicClient(publicClientConfig[ChainId.CRONOS]),
+    factoriesV2: [
+      {
+        address: '0x3B44B2a187a7b3824131F8db5a74194D0a42Fc15' as Address,
+        provider: LiquidityProviders.VVSStandard,
+        fee: 0.003,
+        initCodeHash:
+          '0xa77ee1cc0f39570ddde947459e293d7ebc2c30ff4e8fc45860afdcb2c2d3dc17',
+      },
+    ],
+    factoriesV3: [],
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  // [ChainId.RONIN]: {
+  //   client: createPublicClient(publicClientConfig[ChainId.RONIN]),
+  //   factoriesV2: [],
+  //   factoriesV3: [],
+  //   tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,
+  //   cacheDir: './cache',
+  //   logDepth: 50,
+  //   logging: true,
+  // },
 }
 
 export const PORT = process.env['PORT'] || 80

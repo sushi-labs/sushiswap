@@ -1,30 +1,62 @@
-chainIds: 
-  - "1" # ETHEREUM
-  - "10" # OPTIMISM
-  - "56" # BSC
-  - "100" # GNOSIS
-  - "122" # FUSE
-  - "137" # POLYGON
-  - "250" # FANTOM
-  - "314" # FILECOIN
-  - "1101" # POLYGON_ZKEVM
-  - "1284" # MOONBEAM
-  - "1285" # MOONRIVER
-  - "1088" # METIS
-  - "2222" # KAVA
-  - "8453" # BASE 
-  - "11235" # HAQQ
-  - "42161" # ARBITRUM
-  - "42170" # ARBITRUM_NOVA
-  - "42220" # CELO
-  - "43114" # AVALANCHE
-  - "59144" # LINEA
-  - "534352" # SCROLL
-  - "1666600000" # HARMONY
-  - "199" # BTTC
-  - "108" # THUNDERCORE
-  - "40" # TELOS
-  - "288" # BOBA
-  - "56288" # BOBA BNB
-  - "1116" # CORE
-  # - "7000" # ZETACHAIN
+
+chains:
+  - name: "ethereum"
+    id: "1"
+  - name: "optimism"
+    id: "10"
+  - name: "cronos"
+    id: "25"
+  - name: "telos"
+    id: "40"
+  - name: "bsc"
+    id: "56"
+  - name: "gnosis"
+    id: "100"
+  - name: "thundercore"
+    id: "108"
+  - name: "fuse"
+    id: "122"
+  - name: "polygon"
+    id: "137"
+  - name: "bttc"
+    id: "199"
+  - name: "fantom"
+    id: "250"
+  - name: "boba"
+    id: "288"
+  - name: "filecoin"
+    id: "314"
+  - name: "polygon-zkevm"
+    id: "1101"
+  - name: "core"
+    id: "1116"
+  - name: "moonbeam"
+    id: "1284"
+  - name: "moonriver"
+    id: "1285"
+  - name: "metis"
+    id: "1088"
+  - name: "kava"
+    id: "2222"
+  - name: "zetachain"
+    id: "7000"
+  - name: "base"
+    id: "8453"
+  - name: "haqq"
+    id: "11235"
+  - name: "arbitrum"
+    id: "42161"
+  - name: "arbitrum-nova"
+    id: "42170"
+  - name: "celo"
+    id: "42220"
+  - name: "avalanche"
+    id: "43114"
+  - name: "linea"
+    id: "59144"
+  - name: "boba-bnb"
+    id: "56288"
+  - name: "scroll"
+    id: "534352"
+  - name: "harmony"
+    id: "1666600000"

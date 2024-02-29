@@ -1,12 +1,11 @@
-{{- $chainIds := .Values.chainIds }}
-{{- range $index, $value := $chainIds }}
+{{- range .Values.chains }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: extractor-{{ $value }}-service
+  name: extractor-{{ .id }}-service
 spec:
   selector:
-    app: extractor-{{ $value }}
+    app: extractor-{{ .id }}
   type: ClusterIP
   ports:
     - port: 80

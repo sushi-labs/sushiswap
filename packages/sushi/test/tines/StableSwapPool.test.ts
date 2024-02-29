@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { abs } from '../../src/math'
-import { StableSwapRPool, closeValues, getBigInt } from '../../src/tines'
+import { abs } from '../../src/math/index.js'
+import {
+  StableSwapRPool,
+  closeValues,
+  getBigInt,
+} from '../../src/tines/index.js'
 
 const token0 = {
   name: 'Token0',

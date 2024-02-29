@@ -1,3 +1,3 @@
-export { computeHybridLiquidity } from './computeHybridLiquidity'
-export { convertTokenToBento } from './convertTokenToBento'
-export { getBentoChainId } from './getBentoChainId'
+export { computeHybridLiquidity } from './computeHybridLiquidity.js'
+export { convertTokenToBento } from './convertTokenToBento.js'
+export { getBentoChainId } from './getBentoChainId.js'

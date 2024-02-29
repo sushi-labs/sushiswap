@@ -1,5 +1,7 @@
 import { Address } from 'viem'
 import { describe, expect, it } from 'vitest'
+import { ConstantProductRPool } from '../../src/tines/PrimaryPools.js'
+import { RToken } from '../../src/tines/RPool.js'
 import {
   MultiRoute,
   RouteStatus,
@@ -7,10 +9,8 @@ import {
   findMultiRouteExactIn,
   findMultiRouteExactOut,
   getBigInt,
-} from '../../src/tines'
-import { ConstantProductRPool } from '../../src/tines/PrimaryPools'
-import { RToken } from '../../src/tines/RPool'
-import { checkRouteResult } from './snapshots/snapshot'
+} from '../../src/tines/index.js'
+import { checkRouteResult } from './snapshots/snapshot.js'
 
 const gasPrice = 1 * 200 * 1e-9
 

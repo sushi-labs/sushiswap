@@ -5,15 +5,15 @@ import {
   getReservesAbi,
   getStableReservesAbi,
   totalsAbi,
-} from '../../abi'
-import { type ChainId } from '../../chain'
+} from '../../abi/index.js'
+import { type ChainId } from '../../chain/index.js'
 import {
   BENTOBOX_ADDRESS,
   BentoBoxChainId,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-} from '../../config'
-import { Token } from '../../currency'
+} from '../../config/index.js'
+import { Token } from '../../currency/index.js'
 import {
   BridgeBento,
   ConstantProductRPool,
@@ -22,23 +22,23 @@ import {
   StableSwapRPool,
   convertTokenToBento,
   toShareBI,
-} from '../../tines'
+} from '../../tines/index.js'
 import {
   PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
   mapToken,
-} from '../lib/api'
+} from '../lib/api.js'
 import {
   BentoBridgePoolCode,
   BentoPoolCode,
   type PoolCode,
-} from '../pool-codes'
+} from '../pool-codes/index.js'
 import {
   TridentStaticPool,
   TridentStaticPoolFetcher,
-} from '../static-pool-fetcher/Trident'
-import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
+} from '../static-pool-fetcher/Trident.js'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider.js'
 
 export function convertToNumbers(arr: bigint[]): (number | undefined)[] {
   return arr.map((a) => {

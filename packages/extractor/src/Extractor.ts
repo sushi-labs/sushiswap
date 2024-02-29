@@ -1,24 +1,39 @@
 import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
-
 import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
-
-import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'
+import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
 import {
   AlgebraPoolWatcher,
   AlgebraPoolWatcherStatus,
-} from './AlgebraPoolWatcher'
-import { LogFilter2, LogFilterType } from './LogFilter2'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { TokenManager } from './TokenManager'
-import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
-import { FactoryV3, UniV3Extractor } from './UniV3Extractor'
-import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
-import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog'
+} from './AlgebraPoolWatcher.js'
+import { LogFilter2, LogFilterType } from './LogFilter2.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { TokenManager } from './TokenManager.js'
+import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
+import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
+import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
+import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+
+export type ExtractorConfig = {
+  client: PublicClient
+  factoriesV2?: FactoryV2[]
+  factoriesV3?: FactoryV3[]
+  factoriesAlgebra?: FactoryAlgebra[]
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
+  cacheDir: string
+  logType?: LogFilterType
+  logDepth: number
+  logging?: boolean
+  maxCallsInOneBatch?: number
+  maxBatchesSimultaniously?: number
+  warningMessageHandler?: WarningMessageHandler
+  debug?: boolean
+}
 
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
@@ -44,6 +59,7 @@ export class Extractor {
   requestStartedNum = 0
   requestFinishedNum = 0
   requestFailedNum = 0
+  debug?: boolean
 
   /// @param client
   /// @param factoriesV2 list of supported V2 factories
@@ -53,25 +69,16 @@ export class Extractor {
   //                  IMPORTANT: Use different cacheDir for Extractors with the same chainId
   /// @param logDepth the depth of logs to keep in memory for reorgs
   /// @param logging to write logs in console or not
-  constructor(args: {
-    client: PublicClient
-    factoriesV2?: FactoryV2[]
-    factoriesV3?: FactoryV3[]
-    factoriesAlgebra?: FactoryAlgebra[]
-    tickHelperContract: Address
-    cacheDir: string
-    logType?: LogFilterType
-    logDepth: number
-    logging?: boolean
-    maxCallsInOneBatch?: number
-    warningMessageHandler?: WarningMessageHandler
-  }) {
+  constructor(args: ExtractorConfig) {
     this.cacheDir = args.cacheDir
     this.logging = Boolean(args.logging)
+    this.debug = Boolean(args.debug)
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
       args.maxCallsInOneBatch ?? 0,
+      args.maxBatchesSimultaniously ?? 0,
+      args.debug,
     )
     this.tokenManager = new TokenManager(
       this.multiCallAggregator,
@@ -83,6 +90,7 @@ export class Extractor {
       args.logDepth,
       args.logType ?? LogFilterType.OneCall,
       args.logging,
+      args.debug,
     )
     if (args.factoriesV2 && args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
@@ -97,7 +105,7 @@ export class Extractor {
     if (args.factoriesV3 && args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
         this.client,
-        args.tickHelperContract,
+        args.tickHelperContractV3,
         args.factoriesV3,
         args.cacheDir,
         this.logFilter,
@@ -108,7 +116,7 @@ export class Extractor {
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
       this.extractorAlg = new AlgebraExtractor(
         this.client,
-        args.tickHelperContract,
+        args.tickHelperContractAlgebra,
         args.factoriesAlgebra,
         args.cacheDir,
         this.logFilter,

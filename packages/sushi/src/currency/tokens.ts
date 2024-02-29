@@ -1,5 +1,5 @@
-import { ChainId } from '../chain'
-import { Token } from './Token'
+import { ChainId } from '../chain/index.js'
+import { Token } from './Token.js'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
@@ -59,7 +59,7 @@ import {
   rETH2_ADDRESS,
   renBTC_ADDRESS,
   sETH2_ADDRESS,
-} from './token-addresses'
+} from './token-addresses.js'
 
 function addressMapToTokenMap(
   {
@@ -634,6 +634,13 @@ export const WNATIVE = {
     decimals: 18,
     symbol: 'WZETA',
     name: 'Wrapped ZETA',
+  }),
+  [ChainId.CRONOS]: new Token({
+    chainId: ChainId.CRONOS,
+    address: WNATIVE_ADDRESS[ChainId.CRONOS],
+    decimals: 18,
+    symbol: 'WCRO',
+    name: 'Wrapped CRO',
   }),
 } as const
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_UINT256 } from '../../../math'
-import { mostSignificantBit } from './mostSignificantBit'
+import { MAX_UINT256 } from '../../../math/index.js'
+import { mostSignificantBit } from './mostSignificantBit.js'
 
 describe('mostSignificantBit', () => {
   it('throws for zero', () => {

@@ -22,11 +22,10 @@ data:
       worker_connections 4096;
     }
     http { 
-      {{- $chainIds := .Values.chainIds }}
-      {{- range $index, $value := $chainIds }}
-      upstream router-{{ $value }} {
+      {{- range .Values.chains }}
+      upstream router-{{ .id }} {
         zone upstreams 64K;
-        server router-{{ $value }};
+        server router-{{ .id }};
         keepalive 2;
       }
       {{- end }}

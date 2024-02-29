@@ -1,4 +1,4 @@
-import { ONE, ZERO } from '../../../math'
+import { ONE, ZERO } from '../../../math/index.js'
 
 export abstract class LiquidityMath {
   /**

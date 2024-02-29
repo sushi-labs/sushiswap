@@ -29,7 +29,7 @@ async function providerTest(name, provider) {
       }),
     })
     const { result: logs } = await resp.json()
-    console.log(`Provider ${name} found logs: ${logs.length}`)
+    console.log(`Provider ${name} found logs: ${logs?.length}`)
     await delay(3000)
   }
 }

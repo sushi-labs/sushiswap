@@ -16,6 +16,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -44,6 +45,7 @@
     "@types/cors": "2.8.13",
     "@types/express": "4.17.17",
     "@types/node": "20",
+    "autocannon": "7.14.0",
     "ts-node": "10.9.2",
     "typescript": "5.2.2"
   }
