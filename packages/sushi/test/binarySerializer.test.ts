@@ -8,7 +8,7 @@ const uint32TestValues = [0, 256, 0x2a3b4c5d]
 const uint24TestValues = [0, 256, 0x2a3b4c]
 const int24TestValues = [0, 256, 0x2a3b4c, -1, -256, 1 << (23 - 1), -(1 << 23)]
 const float64TestValues = [0, 256, 0x2a3b4c5d, 23423.654645e234, -1, -23432e-32]
-const bigintTestValues = [
+const bigUIntTestValues = [
   0n,
   1n,
   255n,
@@ -16,6 +16,18 @@ const bigintTestValues = [
   1n << 15n,
   0x2a3b4c5dn,
   89758046378569170218934721n,
+]
+const bigIntTestValues = [
+  0n,
+  1n,
+  255n,
+  256n,
+  1n << 15n,
+  0x2a3b4c5dn,
+  89758046378569170218934721n,
+  -1n,
+  -256n,
+  -876347896796535897493567893465n,
 ]
 const stringTestValues = [
   '123',
@@ -125,14 +137,27 @@ describe('Binary Serialization', () => {
       expect(i).equals(testValues.length)
     })
 
-    it('bigint', () => {
-      const testValues = bigintTestValues
+    it('bigUInt', () => {
+      const testValues = bigUIntTestValues
       const serializer = new BinWriteStream()
       testValues.forEach((val) => serializer.bigUInt(val))
       const deserializer = new BinReadStream(serializer.getSerializedData())
       let i = 0
       for (; deserializer.restBytes() > 0; ++i) {
         const val = deserializer.bigUInt()
+        expect(val).equals(testValues[i])
+      }
+      expect(i).equals(testValues.length)
+    })
+
+    it('bigInt', () => {
+      const testValues = bigIntTestValues
+      const serializer = new BinWriteStream()
+      testValues.forEach((val) => serializer.bigInt(val))
+      const deserializer = new BinReadStream(serializer.getSerializedData())
+      let i = 0
+      for (; deserializer.restBytes() > 0; ++i) {
+        const val = deserializer.bigInt()
         expect(val).equals(testValues[i])
       }
       expect(i).equals(testValues.length)
@@ -215,9 +240,9 @@ describe('Binary Serialization', () => {
       console.log(`Deserialization float64 x${SAMPLES} timing = ${timeDes} ms`)
     })
 
-    it.skip('BigInt timing', () => {
+    it.skip('BigUInt timing', () => {
       const SAMPLES = 10_000
-      const testValues = bigintTestValues
+      const testValues = bigUIntTestValues
       const serializer = new BinWriteStream()
       const startSer = performance.now()
       for (let i = 0; i < SAMPLES; ++i) {

@@ -95,6 +95,17 @@ export class BinWriteStream {
     this.position += 256
   }
 
+  bigInt(num: bigint) {
+    if (num > 0) this.bigUInt(num)
+    else {
+      const pos = this.position
+      this.bigUInt(-num)
+      if ((this.data[pos] as number) > 127)
+        console.error('Serialization error: too huge negative bigint')
+      this.data[pos] += 128
+    }
+  }
+
   str16UTF8(s: string) {
     this.ensurePlace(s.length * 2 + 2)
     const { read, written } = textEncoder.encodeInto(
@@ -227,6 +238,19 @@ export class BinReadStream {
     }
     this.position += len
     return res
+  }
+
+  bigInt(): bigint {
+    const lenOrig = this.uint8()
+    const len = lenOrig & 127
+    this.ensurePlace(len)
+    let res = 0n
+    for (let i = len - 1; i >= 0; --i) {
+      res <<= 8n
+      res += BigInt(this.data[this.position + i] as number)
+    }
+    this.position += len
+    return len === lenOrig ? res : -res
   }
 
   str16UTF8(): string {
