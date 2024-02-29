@@ -24,6 +24,7 @@ import {
   IconButton,
   TextField,
   classNames,
+  gtagEvent,
 } from '@sushiswap/ui'
 import { Button, buttonIconVariants } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -75,6 +76,10 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const [open, setOpen] = useState(false)
 
   const debouncedQuery = useDebounce(query, 250)
+
+  useEffect(() => {
+    if (debouncedQuery) gtagEvent('token-search', { query: debouncedQuery })
+  }, [debouncedQuery])
 
   const { data: customTokenMap, mutate: customTokenMutate } = useCustomTokens()
   const {
