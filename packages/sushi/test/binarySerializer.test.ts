@@ -78,6 +78,21 @@ describe('Binary Serialization', () => {
       expect(i).equals(testValues.length)
     })
 
+    it('float64 not 8-aligned position', () => {
+      const testValues = float64TestValues
+      const serializer = new BinWriteStream()
+      serializer.uint8(123)
+      testValues.forEach((val) => serializer.float64(val))
+      const deserializer = new BinReadStream(serializer.getSerializedData())
+      deserializer.uint8()
+      let i = 0
+      for (; deserializer.restBytes() > 0; ++i) {
+        const val = deserializer.float64()
+        expect(val).equals(testValues[i])
+      }
+      expect(i).equals(testValues.length)
+    })
+
     it('bigint', () => {
       const testValues = bigintTestValues
       const serializer = new BinWriteStream()

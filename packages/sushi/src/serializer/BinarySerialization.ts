@@ -1,5 +1,7 @@
 const textEncoder = new TextEncoder()
 const textDecoder = new TextDecoder()
+const floatArray = new Float64Array(1)
+const floatArrayAsUint8 = new Uint8Array(floatArray.buffer)
 const MAX_BYTE2_VALUE = (1 << 16) - 1
 const MAX_BYTE4_VALUE = 2 ** 32 - 1
 
@@ -51,8 +53,8 @@ export class BinWriteStream {
 
   float64(num: number) {
     this.ensurePlace(8)
-    const floatArray = new Float64Array(this.data.buffer, this.position)
     floatArray[0] = num
+    this.data.set(floatArrayAsUint8, this.position)
     this.position += 8
   }
 
@@ -156,7 +158,7 @@ export class BinReadStream {
 
   float64(): number {
     this.ensurePlace(8)
-    const floatArray = new Float64Array(this.data.buffer, this.position)
+    floatArrayAsUint8.set(this.data.subarray(this.position, this.position + 8))
     this.position += 8
     return floatArray[0] as number
   }
