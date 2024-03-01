@@ -28,6 +28,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.SCROLL,
   ChainId.OPTIMISM,
   ChainId.LINEA,
+  ChainId.BLAST,
   ChainId.ZETACHAIN,
   ChainId.CORE,
   ChainId.FILECOIN,
@@ -52,6 +53,7 @@ const NEW_CHAINS: number[] = [
   ChainId.FILECOIN,
   ChainId.HAQQ,
   ChainId.ZETACHAIN,
+  ChainId.BLAST,
 ] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
