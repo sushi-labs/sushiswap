@@ -1,3 +1,5 @@
+import { Address } from 'viem'
+
 const textEncoder = new TextEncoder()
 const textDecoder = new TextDecoder()
 const floatArray = new Float64Array(1)
@@ -278,7 +280,7 @@ export class BinReadStream {
     return this.str16UTF8()
   }
 
-  address(): string {
+  address(): Address {
     this.ensurePlace(40)
     this.position += 40
     return `0x${textDecoder.decode(
