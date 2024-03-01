@@ -9,6 +9,8 @@ import {
   BTTC_TRON_BRIDGE_USDT,
   BUSD,
   DAI,
+  FILECOIN_CELER_BRIDGE_USDC,
+  FILECOIN_CELER_BRIDGE_USDT,
   FRAX,
   LUSD,
   MIM,
@@ -92,7 +94,12 @@ export const STABLES = {
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
   ],
-  [ChainId.FILECOIN]: [USDC[ChainId.FILECOIN], DAI[ChainId.FILECOIN]],
+  [ChainId.FILECOIN]: [
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+    FILECOIN_CELER_BRIDGE_USDC,
+    FILECOIN_CELER_BRIDGE_USDT,
+  ],
   [ChainId.FUSE]: [USDC[ChainId.FUSE], USDT[ChainId.FUSE], DAI[ChainId.FUSE]],
   [ChainId.GNOSIS]: [
     USDC[ChainId.GNOSIS],

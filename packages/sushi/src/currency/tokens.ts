@@ -996,3 +996,19 @@ export const ZETA_BSC_BRIDGE_USDT = new Token({
   symbol: 'USDT.BSC',
   name: 'ZetaChain ZRC20 USDT on BSC',
 })
+
+export const FILECOIN_CELER_BRIDGE_USDC = new Token({
+  chainId: ChainId.FILECOIN,
+  address: '0x2421db204968A367CC2C866CD057fA754Cb84EdF',
+  decimals: 6,
+  symbol: 'ceUSDC',
+  name: 'USD Coin (Celer)',
+})
+
+export const FILECOIN_CELER_BRIDGE_USDT = new Token({
+  chainId: ChainId.FILECOIN,
+  address: '0x422849b355039bc58f2780cc4854919fc9cfaf94',
+  decimals: 6,
+  symbol: 'ceUSDT',
+  name: 'Tether USD (Celer)',
+})
