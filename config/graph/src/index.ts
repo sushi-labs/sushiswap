@@ -354,7 +354,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.FILECOIN]: 'sushiswap/v3-filecoin',
   [ChainId.HAQQ]: 'sushi/v3-haqq',
   [ChainId.ZETACHAIN]: 'v3-zetachain/1.0.0/gn',
-  [ChainId.BLAST]: 'sushiwap/v3-blast/gn',
+  [ChainId.BLAST]: 'sushiswap/v3-blast/gn',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number, string> = {
