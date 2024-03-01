@@ -244,7 +244,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.FILECOIN]: 'sushiswap/blocks',
   [ChainId.HAQQ]: 'sushi/blocks-haqq',
   [ChainId.ZETACHAIN]: 'blocks-zetachain/1.0.0/gn',
-  [ChainId.BLAST]: 'sushiswap/blocks-sushiswap/gn',
+  [ChainId.BLAST]: 'sushiswap/blocks-blast/gn',
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
