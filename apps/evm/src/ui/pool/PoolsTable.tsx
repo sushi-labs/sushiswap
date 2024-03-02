@@ -320,7 +320,6 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     error,
     setSize,
   } = usePoolsInfinite({ args, shouldFetch: true, swrConfig: useSWRConfig() })
-
   console.log(error)
   const { data: poolCount } = usePoolCount({
     args,

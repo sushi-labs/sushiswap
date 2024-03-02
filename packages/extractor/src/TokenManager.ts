@@ -2,9 +2,9 @@ import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Address, Hex, hexToString, trim } from 'viem'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { PermanentCache } from './PermanentCache'
-import { warnLog } from './WarnLog'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { PermanentCache } from './PermanentCache.js'
+import { warnLog } from './WarnLog.js'
 
 interface TokenCacheRecord {
   address: Address

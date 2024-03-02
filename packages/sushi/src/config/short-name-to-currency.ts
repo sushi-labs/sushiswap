@@ -1,5 +1,4 @@
-import { ChainId } from '../chain'
-import { Native, Token, Type } from '../currency'
+import { ChainId } from '../chain/index.js'
 import {
   AGEUR,
   DAI,
@@ -7,15 +6,19 @@ import {
   LUSD,
   MAI,
   MIM,
+  Native,
   OP,
   SUSHI,
+  Token,
+  Type,
   UNI,
+  USDB,
   USDC,
   USDT,
   WBTC,
   WETH9,
   WNATIVE,
-} from '../currency'
+} from '../currency/index.js'
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ARBITRUM]: {
@@ -268,6 +271,11 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ZETACHAIN]: {
     NATIVE: Native.onChain(ChainId.ZETACHAIN),
     WNATIVE: WNATIVE[ChainId.ZETACHAIN],
+  },
+  [ChainId.BLAST]: {
+    NATIVE: Native.onChain(ChainId.BLAST),
+    WNATIVE: WNATIVE[ChainId.BLAST],
+    USDB: USDB[ChainId.BLAST],
   },
 } as const
 

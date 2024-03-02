@@ -1,5 +1,5 @@
-import { ChainId } from './constants'
-import raw from './generated'
+import { ChainId } from './constants.js'
+import raw from './generated.js'
 
 const additional = [] as const
 
@@ -128,6 +128,14 @@ export class Chain implements Chain {
           standard: 'EIP3091',
         },
       ]
+    } else if (data.chainId === ChainId.BLAST) {
+      this.explorers = [
+        {
+          name: 'Blast Explorer',
+          url: 'https://blastscan.io',
+          standard: 'EIP3091',
+        },
+      ]
     }
   }
   getTxUrl(txHash: string): string {
@@ -217,6 +225,6 @@ export const chainName = Object.fromEntries(
   RAW.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name]),
 )
 
-export * from './constants'
+export * from './constants.js'
 
 export default chains

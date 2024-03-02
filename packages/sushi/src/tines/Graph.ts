@@ -1,7 +1,13 @@
 import { Address } from 'viem'
-import { PoolType, RPool, RToken, setTokenId } from './RPool'
-import { StableSwapRPool } from './StableSwapPool'
-import { ASSERT, DEBUG, closeValues, getBigInt } from './Utils'
+import { PoolType, RPool, RToken, setTokenId } from './RPool.js'
+import { StableSwapRPool } from './StableSwapPool.js'
+import {
+  ASSERT,
+  DEBUG,
+  closeValues,
+  fastArrayMerge,
+  getBigInt,
+} from './Utils.js'
 
 const ROUTER_DISTRIBUTION_PORTION = 65535
 
@@ -492,7 +498,7 @@ export class Graph {
   }
 
   // Set prices using greedy algorithm
-  setPricesStable(
+  /*setPricesStable(
     from: Vertice,
     price: number,
     networks: NetworkInfo[],
@@ -508,9 +514,9 @@ export class Graph {
       v.price = price
       const newEdges = v.edges.filter((e) => {
         if (processedVert.has(v.getNeibour(e) as Vertice)) return false
-        if (e.pool.alwaysAppropriateForPricing()) return true
-        const liquidity = price * parseInt(e.reserve(v).toString())
-        if (liquidity < minLiquidity) return false
+        const liquidity = price * Number(e.reserve(v))
+        if (!e.pool.alwaysAppropriateForPricing() && liquidity < minLiquidity)
+          return false
         edgeValues.set(e, liquidity)
         return true
       })
@@ -567,6 +573,79 @@ export class Graph {
         v.price !== 0,
         `Error 428: token {${v.token.address} ${v.token.symbol} ${v.token.chainId}} was not priced`,
       )
+      v.gasPrice = gasPriceChainId / v.price
+    })
+  }*/
+
+  // Set prices using greedy algorithm
+  setPricesStable(
+    from: Vertice,
+    price: number,
+    networks: NetworkInfo[],
+    minLiquidity = 0,
+    logging = false,
+  ) {
+    const processedVert = new Set<Vertice>()
+    type ValuedEdge = [number, Edge]
+    let nextEdges: ValuedEdge[] = []
+
+    function addVertice(v: Vertice, price: number) {
+      v.price = price
+      const newEdges = v.edges
+        .filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
+        .map((e) => {
+          const liquidity = price * Number(e.reserve(v))
+          return [liquidity, e] as ValuedEdge
+        })
+        .filter(
+          ([liquidity, e]) =>
+            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
+        )
+      nextEdges = fastArrayMerge(nextEdges, newEdges)
+      processedVert.add(v)
+    }
+
+    if (logging)
+      console.log(`Pricing: Initial token ${from.token.symbol} price=${price}`)
+    addVertice(from, price)
+    while (nextEdges.length > 0) {
+      const [liquidity, bestEdge] = nextEdges.pop() as ValuedEdge
+      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
+        ? [bestEdge.vert1, bestEdge.vert0]
+        : [bestEdge.vert0, bestEdge.vert1]
+      if (processedVert.has(vTo)) continue
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(
+        vFrom === bestEdge.vert1,
+      )
+      if (logging)
+        console.log(
+          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}` +
+            ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${liquidity}`,
+        )
+      addVertice(vTo, vFrom.price * p)
+    }
+
+    const gasPrice = new Map<number | string | undefined, number>()
+    networks.forEach((n) => {
+      const vPrice = this.getVert(n.baseToken)?.price || 0
+      gasPrice.set(n.chainId, n.gasPrice * vPrice)
+    })
+
+    processedVert.forEach((v) => {
+      const gasPriceChainId = gasPrice.get(v.token.chainId) as number
+      if (gasPriceChainId === undefined)
+        console.error(
+          `Error 427: token {${v.token.address} ${v.token.symbol}}` +
+            ` has unknown chainId ${v.token.chainId} (${typeof v.token
+              .chainId}).` +
+            `Known chainIds: ${Array.from(gasPrice.keys()).map(
+              (k) => `"${k}"(${typeof k})`,
+            )}`,
+        )
+      if (v.price === 0)
+        console.error(
+          `Error 428: token {${v.token.address} ${v.token.symbol} ${v.token.chainId}} was not priced`,
+        )
       v.gasPrice = gasPriceChainId / v.price
     })
   }

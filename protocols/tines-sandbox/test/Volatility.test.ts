@@ -3,7 +3,7 @@ import { ChainId } from 'sushi/chain'
 import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
-import { RP3Address } from './Extractor.test'
+import { RP3Address } from './Extractor.test.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 

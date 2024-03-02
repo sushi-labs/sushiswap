@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Type } from 'sushi/currency'
-import { ExtractorClient } from '../../ExtractorClient'
+import { ExtractorClient } from '../../ExtractorClient.js'
 
 function handler(client: ExtractorClient) {
   return async (req: Request, res: Response) => {

@@ -1,8 +1,8 @@
 import { Hex } from 'viem'
-import { ChainId } from '../chain'
-import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines'
-import { HEXer } from './HEXer'
-import { PoolCode } from './pool-codes/PoolCode'
+import { ChainId } from '../chain/index.js'
+import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines/index.js'
+import { HEXer } from './HEXer.js'
+import { PoolCode } from './pool-codes/PoolCode.js'
 
 export enum TokenType {
   NATIVE = 'NATIVE',

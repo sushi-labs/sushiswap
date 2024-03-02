@@ -2,16 +2,15 @@ import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
 import express, { type Express, type Response } from 'express'
-import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config'
-import { CPUUsageStatistics } from './cpu-usage-statistics'
-import extractor from './extractor'
-
-import poolCodes from './handlers/pool-codes'
-import poolCodesBetween from './handlers/pool-codes-between'
-import poolCodesForToken from './handlers/pool-codes-for-token'
-import requestedPairs from './handlers/requested-pairs'
-import token from './handlers/token'
-import requestStatistics from './request-statistics'
+import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config.js'
+import { CPUUsageStatistics } from './cpu-usage-statistics.js'
+import extractor from './extractor.js'
+import poolCodesBetween from './handlers/pool-codes-between/index.js'
+import poolCodesForToken from './handlers/pool-codes-for-token/index.js'
+import poolCodes from './handlers/pool-codes/index.js'
+import requestedPairs from './handlers/requested-pairs/index.js'
+import token from './handlers/token/index.js'
+import requestStatistics from './request-statistics.js'
 
 const app: Express = express()
 

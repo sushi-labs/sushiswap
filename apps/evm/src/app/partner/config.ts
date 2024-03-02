@@ -36,6 +36,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.FILECOIN,
   ChainId.HAQQ,
   ChainId.ZETACHAIN,
+  ChainId.BLAST,
 ] as const
 
 export type SupportedChainIds = typeof SUPPORTED_CHAINS

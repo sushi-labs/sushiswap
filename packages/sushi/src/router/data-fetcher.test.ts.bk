@@ -2,17 +2,17 @@
 //  * @jest-environment node
 //  */
 // // Needed for viem, otherwise throwing "TextEncoder is not defined"
-// import { ChainId } from '../../chain'
-// import { Native, USDC } from '../../currency'
+// import { ChainId } from '../../chain/index.js'
+// import { Native, USDC } from '../../currency/index.js'
 // import { createClient } from '@sushiswap/database'
 // import { createPublicClient, http } from 'viem'
 // import { arbitrum, mainnet, polygon } from 'viem/chains'
 
-// import { DataFetcher } from './DataFetcher'
-// import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
-// import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
-// import { SushiProvider } from './liquidity-providers/Sushi'
-// import { TridentProvider } from './liquidity-providers/Trident'
+// import { DataFetcher } from './DataFetcher.js'
+// import { LiquidityProviders } from './liquidity-providers/LiquidityProvider.js'
+// import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider.js'
+// import { SushiProvider } from './liquidity-providers/Sushi.js'
+// import { TridentProvider } from './liquidity-providers/Trident.js'
 // jest.setTimeout(10000)
 
 // // const databaseClient = await createClient()

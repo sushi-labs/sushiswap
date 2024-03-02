@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Multicall } from './Multicall'
+import { Multicall } from './Multicall.js'
 
 describe('Multicall', () => {
   describe('#encodeMulticall', () => {

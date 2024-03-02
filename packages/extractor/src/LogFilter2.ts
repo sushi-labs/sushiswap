@@ -7,9 +7,8 @@ import {
   WatchBlocksReturnType,
   encodeEventTopics,
 } from 'viem'
-
-import { repeatAsync } from './Utils'
-import { warnLog } from './WarnLog'
+import { repeatAsync } from './Utils.js'
+import { warnLog } from './WarnLog.js'
 
 export enum LogFilterType {
   Native = 0, // getFilterChanges - is not supported widely

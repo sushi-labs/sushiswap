@@ -1,7 +1,5 @@
-import { ChainId } from '../chain'
-import { Token } from '../currency'
-import { AMPL_ADDRESS } from '../currency'
-import { DAI, WNATIVE } from '../currency'
+import { ChainId } from '../chain/index.js'
+import { AMPL_ADDRESS, DAI, Token, WNATIVE } from '../currency/index.js'
 
 /**
  * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these

@@ -7,18 +7,17 @@ import {
   TokenManager,
 } from '@sushiswap/extractor'
 import { expect } from 'chai'
+import { ChainId } from 'sushi/chain'
 import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SushiSwapV3ChainId,
   UNISWAP_V3_INIT_CODE_HASH,
-} from 'sushi'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_INIT_CODE_HASH,
-} from 'sushi'
-import { ChainId } from 'sushi/chain'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+} from 'sushi/config'
 import { Token } from 'sushi/currency'
 import {
   DataFetcher,
@@ -106,7 +105,8 @@ async function CompareTest(args: {
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   liquidityProviders: LiquidityProviders[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -215,7 +215,8 @@ it('Ethereum Extractor - DataFetcher compare test', async () => {
       LiquidityProviders.UniswapV3,
       LiquidityProviders.SushiSwapV3,
     ],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 50,
     RP3Address: RP3Address[ChainId.ETHEREUM],
@@ -239,7 +240,8 @@ it('Polygon Extractor - DataFetcher compare test', async () => {
       LiquidityProviders.SushiSwapV2,
       LiquidityProviders.UniswapV3,
     ],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 100,
     RP3Address: RP3Address[ChainId.ETHEREUM],
@@ -261,7 +263,8 @@ it('Arbitrum Extractor - DataFetcher compare test', async () => {
       //
       LiquidityProviders.UniswapV3,
     ],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     RP3Address: RP3Address[ChainId.ETHEREUM],

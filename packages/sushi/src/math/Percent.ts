@@ -1,7 +1,7 @@
-import { formatPercent } from '../format'
-import { type BigintIsh } from './BigintIsh'
-import Fraction from './Fraction'
-import Rounding from './Rounding'
+import { formatPercent } from '../format/index.js'
+import { type BigintIsh } from './BigintIsh.js'
+import Fraction from './Fraction.js'
+import Rounding from './Rounding.js'
 
 const ONE_HUNDRED = new Fraction(100n)
 

@@ -1,5 +1,7 @@
 import { Interface } from '@ethersproject/abi'
-import IMulticall from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IMulticall.sol/IMulticall.json'
+import IMulticall from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IMulticall.sol/IMulticall.json' assert {
+  type: 'json',
+}
 
 export abstract class Multicall {
   public static INTERFACE: Interface = new Interface(IMulticall.abi)

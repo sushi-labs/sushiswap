@@ -16,6 +16,7 @@
   },
   "license": "MIT",
   "author": "Ilya Lyalin <bretnwood@gmail.com>",
+  "type": "module",
   "scripts": {
     "artillery": "artillery run test/load.yml",
     "build": "tsc",

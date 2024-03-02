@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_UINT256 } from '../../../math'
-import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96'
-import { maxLiquidityForAmounts } from './maxLiquidityForAmounts'
+import { MAX_UINT256 } from '../../../math/index.js'
+import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96.js'
+import { maxLiquidityForAmounts } from './maxLiquidityForAmounts.js'
 
 describe('#maxLiquidityForAmounts', () => {
   describe('imprecise', () => {

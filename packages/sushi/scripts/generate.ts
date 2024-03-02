@@ -1,9 +1,12 @@
 /// <reference lib="dom" />
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
+import { ChainId } from '../src/chain/constants.js'
+import { type Chain } from '../src/chain/index.js'
 
-import { type Chain } from '../src/chain'
-import { ChainId } from '../src/chain/constants'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 ;(async () => {
   const file = path.resolve(__dirname, '../src/chain/generated.ts')
   if (!existsSync(file)) {

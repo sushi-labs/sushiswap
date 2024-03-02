@@ -27,7 +27,6 @@ import {
   walletActions,
 } from 'viem'
 import { Chain, hardhat } from 'viem/chains'
-
 import {
   AlgebraIntegralPeriphery,
   TestTokens,
@@ -43,9 +42,13 @@ import {
   createTestTokens,
   getDeploymentAddress,
   getInitCodeHash,
-} from '../src'
-import MultiCall3 from './Multicall3.sol/Multicall3.json'
-import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
+} from '../src/index.js'
+import MultiCall3 from './Multicall3.sol/Multicall3.json' assert {
+  type: 'json',
+}
+import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json' assert {
+  type: 'json',
+}
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -55,7 +58,8 @@ async function startInfinitTest(args: {
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -351,7 +355,8 @@ it('Extractor Hardhat Algebra test', async () => {
     factoriesAlgebra: [
       { address: factory, provider: LiquidityProviders.AlgebraIntegral },
     ],
-    tickHelperContract: tickLens,
+    tickHelperContractV3: '' as Address,
+    tickHelperContractAlgebra: tickLens,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,

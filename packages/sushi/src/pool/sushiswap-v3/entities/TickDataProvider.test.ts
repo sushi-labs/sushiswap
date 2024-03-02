@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { NoTickDataProvider } from './TickDataProvider'
+import { NoTickDataProvider } from './TickDataProvider.js'
 
 describe('TickDataProvider', () => {
   describe('NoTickDataProvider', () => {
