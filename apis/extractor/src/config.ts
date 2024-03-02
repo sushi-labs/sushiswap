@@ -696,17 +696,17 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV3: [
       sushiswapV3Factory(ChainId.BLAST),
       {
-        address: '0x48d0F09710794313f33619c95147F34458BF7C3b',
+        address: '0x71b08f13B3c3aF35aAdEb3949AFEb1ded1016127',
         provider: LiquidityProviders.Monoswap,
         initCodeHash:
           '0x7ea070216c7d9135010a36147394687bab92df4695e924000eed7c4b33eb922f',
       },
-      {
-        address: '0x71b08f13B3c3aF35aAdEb3949AFEb1ded1016127',
-        provider: LiquidityProviders.Thruster,
-        initCodeHash:
-          '0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d',
-      },
+      // {
+      //   address: '0x71b08f13B3c3aF35aAdEb3949AFEb1ded1016127',
+      //   provider: LiquidityProviders.Thruster,
+      //   initCodeHash:
+      //     '0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d',
+      // },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BLAST] as Address,
     tickHelperContractAlgebra:
