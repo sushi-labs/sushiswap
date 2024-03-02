@@ -671,6 +671,13 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0x376acff9b60b853f5ccc9f1caecb8dcf722793593330ac58aac8a880a3eb8b9e',
       },
+      {
+        address: '0xE27cb06A15230A7480d02956a3521E78C5bFD2D0' as Address,
+        provider: LiquidityProviders.Monoswap,
+        fee: 0.003,
+        initCodeHash:
+          '0xd1a99f7339108abbcc2eaa6478ee4a0394e2a63f04de08793721fb2f3eff5a38',
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.BLAST),
