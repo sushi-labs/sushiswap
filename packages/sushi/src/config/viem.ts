@@ -655,7 +655,7 @@ export const publicClientConfig: Record<
   },
   [ChainId.BLAST]: {
     chain: blast,
-    transport: http(blast.rpcUrls.default.http[0]),
+    transport: http(`https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`),
   },
   // [ChainId.HEDERA]: {
   //   chain: hedera,
