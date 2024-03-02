@@ -40,6 +40,7 @@ export enum LiquidityProviders {
   ThrusterV2 = 'ThrusterV2',
   ThrusterV3 = 'ThrusterV3',
   DyorV2 = 'DyorV2',
+  HyperBlast = 'HyperBlast',
 }
 
 export abstract class LiquidityProvider {

@@ -699,6 +699,20 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0xda2f1a903916d7de88d9357d27d763f123502a5d48e3b229d5fa049b3ffdeeb5',
       },
+      {
+        address: '0xD97fFc2041a8aB8f6bc4aeE7eE8ECA485381D088',
+        provider: LiquidityProviders.HyperBlast,
+        fee: 0.003,
+        initCodeHash:
+          '0x2e6ab686c26cf8ecf0a8c01a9fb0ef96dbd4631c04b03005350fa49e8f2f32f8',
+      },
+      {
+        address: '0xD97fFc2041a8aB8f6bc4aeE7eE8ECA485381D088',
+        provider: LiquidityProviders.HyperBlast,
+        fee: 0.003,
+        initCodeHash:
+          '0x2e6ab686c26cf8ecf0a8c01a9fb0ef96dbd4631c04b03005350fa49e8f2f32f8',
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.BLAST),
@@ -709,7 +723,8 @@ export const EXTRACTOR_CONFIG: Record<
           '0x7ea070216c7d9135010a36147394687bab92df4695e924000eed7c4b33eb922f',
       },
       {
-        address: '0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB',
+        address: '0x71b08f13B3c3aF35aAdEb3949AFEb1ded1016127',
+        deployer: '0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB',
         provider: LiquidityProviders.ThrusterV3,
         initCodeHash:
           '0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d',
