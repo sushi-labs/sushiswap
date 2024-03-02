@@ -30,7 +30,7 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.FILECOIN]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
       [ChainId.HAQQ]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
       [ChainId.ZETACHAIN]: '0xB45e53277a7e0F1D35f2a77160e91e25507f1763',
-      [ChainId.BLAST]: '0x0389879e0156033202C44BF784ac18fC02edeE4f',
+      [ChainId.BLAST]: '0x7680D4B43f3d1d54d6cfEeB2169463bFa7a6cf0d',
     } as const
     const initCodeHash = {
       [ChainId.ARBITRUM_NOVA]:
@@ -82,7 +82,7 @@ export class SushiSwapV3Provider extends UniswapV3BaseProvider {
       [ChainId.ZETACHAIN]:
         '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
       [ChainId.BLAST]:
-        '0x675ec316f612ccbea9973bb041b9392ccc9e7e8d3d3b383c6d7693d095c4a9a4',
+        '0x8e13daee7f5a62e37e71bf852bcd44e7d16b90617ed2b17c24c2ee62411c5bae',
     } as const
 
     const tickLens = {
