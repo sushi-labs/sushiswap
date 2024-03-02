@@ -702,7 +702,7 @@ export const EXTRACTOR_CONFIG: Record<
           '0x7ea070216c7d9135010a36147394687bab92df4695e924000eed7c4b33eb922f',
       },
       {
-        address: '0x71b08f13B3c3aF35aAdEb3949AFEb1ded1016127',
+        address: '0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB',
         provider: LiquidityProviders.ThrusterV3,
         initCodeHash:
           '0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d',
