@@ -40,6 +40,7 @@ import {
   TRIBE_ADDRESS,
   TUSD_ADDRESS,
   UNI_ADDRESS,
+  USDB_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
   USD_PLUS_ADDRESS,
@@ -642,6 +643,7 @@ export const WNATIVE = {
     symbol: 'WCRO',
     name: 'Wrapped CRO',
   }),
+  [ChainId.BLAST]: WETH9[ChainId.BLAST],
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -865,6 +867,15 @@ export const LINK = addressMapToTokenMap(
   },
   LINK_ADDRESS,
 ) as Record<keyof typeof LINK_ADDRESS, Token>
+
+export const USDB = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'USDB',
+    name: 'USD Blast',
+  },
+  USDB_ADDRESS,
+) as Record<keyof typeof USDB_ADDRESS, Token>
 
 export const WORMHOLE_USDC = addressMapToTokenMap(
   {

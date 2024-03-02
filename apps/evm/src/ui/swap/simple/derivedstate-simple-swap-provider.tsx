@@ -440,5 +440,6 @@ const useSimpleSwapTrade = () => {
 export {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
+  useFallback,
   useSimpleSwapTrade,
 }

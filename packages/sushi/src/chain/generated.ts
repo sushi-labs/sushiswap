@@ -924,6 +924,21 @@ export default [
     shortName: 'maticmum',
   },
   {
+    chainId: 81457,
+    explorers: [],
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    name: 'Blast',
+    shortName: 'blastmainnet',
+    parent: {
+      type: 'L2',
+      chain: 'eip155-1',
+    },
+  },
+  {
     chainId: 534352,
     explorers: [
       {

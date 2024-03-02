@@ -18,6 +18,7 @@ import {
   THUNDERCORE_ANY_USDC,
   THUNDERCORE_ANY_USDT,
   Token,
+  USDB,
   USDC,
   USDT,
   USD_PLUS,
@@ -188,6 +189,7 @@ export const STABLES = {
     ZETA_ETH_BRIDGE_USDT,
   ],
   [ChainId.CRONOS]: [USDC[ChainId.CRONOS]],
+  [ChainId.BLAST]: [USDB[ChainId.BLAST]],
   // TESTNETS
   [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   [ChainId.ROPSTEN]: [
