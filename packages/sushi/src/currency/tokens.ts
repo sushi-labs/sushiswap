@@ -1023,3 +1023,11 @@ export const FILECOIN_CELER_BRIDGE_USDT = new Token({
   symbol: 'ceUSDT',
   name: 'Tether USD (Celer)',
 })
+
+export const MUSD = new Token({
+  chainId: ChainId.BLAST,
+  address: '0x837fE561e9C5DFa73F607fDa679295DBC2Be5E40',
+  name: 'Monoswap USD',
+  symbol: 'MUSD',
+  decimals: 18,
+})

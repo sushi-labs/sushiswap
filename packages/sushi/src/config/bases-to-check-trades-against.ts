@@ -1,5 +1,5 @@
 import { ChainId } from '../chain/index.js'
-import { Token, USDB } from '../currency/index.js'
+import { MUSD, Token, USDB } from '../currency/index.js'
 import {
   AAVE,
   BUSD,
@@ -471,5 +471,5 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WBTC[ChainId.CRONOS],
     USDC[ChainId.CRONOS],
   ],
-  [ChainId.BLAST]: [WNATIVE[ChainId.BLAST], USDB[ChainId.BLAST]],
+  [ChainId.BLAST]: [WNATIVE[ChainId.BLAST], USDB[ChainId.BLAST], MUSD],
 }

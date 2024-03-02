@@ -14,6 +14,7 @@ import {
   FRAX,
   LUSD,
   MIM,
+  MUSD,
   THUNDERCORE_ANY_BUSD,
   THUNDERCORE_ANY_USDC,
   THUNDERCORE_ANY_USDT,
@@ -189,7 +190,7 @@ export const STABLES = {
     ZETA_ETH_BRIDGE_USDT,
   ],
   [ChainId.CRONOS]: [USDC[ChainId.CRONOS]],
-  [ChainId.BLAST]: [USDB[ChainId.BLAST]],
+  [ChainId.BLAST]: [USDB[ChainId.BLAST], MUSD],
   // TESTNETS
   [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   [ChainId.ROPSTEN]: [
