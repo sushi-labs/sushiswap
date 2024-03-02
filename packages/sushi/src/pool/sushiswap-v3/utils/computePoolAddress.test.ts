@@ -83,12 +83,12 @@ describe('#computePoolAddress', () => {
       name: 'Wrapped Ether',
     })
     const result = computeSushiSwapV3PoolAddress({
-      factoryAddress: '0x0389879e0156033202C44BF784ac18fC02edeE4f',
+      factoryAddress: '0x7680D4B43f3d1d54d6cfEeB2169463bFa7a6cf0d',
       fee: SushiSwapV3FeeAmount.MEDIUM,
       tokenA,
       tokenB,
     })
 
-    expect(result).toEqual('0xf07B0020e194c20015D20936dD4EADBA60d1BF56')
+    expect(result).toEqual('0xCd03572e7cFB94996beEbaA539234CE5c23AE1d6')
   })
 })
