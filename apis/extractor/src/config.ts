@@ -653,6 +653,41 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
   },
+  [ChainId.BLAST]: {
+    client: createPublicClient(publicClientConfig[ChainId.BLAST]),
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.BLAST),
+      {
+        address: '0x04C9f118d21e8B767D2e50C946f0cC9F6C367300' as Address,
+        provider: LiquidityProviders.SwapBlast,
+        fee: 0.001,
+        initCodeHash:
+          '0x89f2ba5c4e1e84307b0efac8ff56efab2786d9becd741ff83b1b6397de76dafc',
+      },
+      {
+        address: '0x66346aac17d0e61156AC5F2A934ccF2a9BDe4c65' as Address,
+        provider: LiquidityProviders.BlastDEX,
+        fee: 0.002,
+        initCodeHash:
+          '0x376acff9b60b853f5ccc9f1caecb8dcf722793593330ac58aac8a880a3eb8b9e',
+      },
+    ],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.BLAST),
+      {
+        address: '0x48d0F09710794313f33619c95147F34458BF7C3b',
+        provider: LiquidityProviders.Monoswap,
+        initCodeHash:
+          '0x7ea070216c7d9135010a36147394687bab92df4695e924000eed7c4b33eb922f',
+      },
+    ],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BLAST] as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   // [ChainId.RONIN]: {
   //   client: createPublicClient(publicClientConfig[ChainId.RONIN]),
   //   factoriesV2: [],

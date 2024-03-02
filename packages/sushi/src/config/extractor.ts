@@ -31,7 +31,7 @@ export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
   ChainId.THUNDERCORE,
   ChainId.ZETACHAIN,
   ChainId.CRONOS,
-  // ChainId.BLAST
+  ChainId.BLAST,
   // ChainId.ZKSYNC_ERA,
 ] as const
 
