@@ -57,6 +57,7 @@ export const rpcUrls = {
     'https://zetachain-mainnet-archive.allthatnode.com:8545',
   ],
   [ChainId.CRONOS]: [`https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`],
+  [ChainId.BLAST]: [`https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`],
 } as const
 
 export type RpcEnabledChainId = keyof typeof rpcUrls

@@ -33,6 +33,9 @@ export enum LiquidityProviders {
   Swapsicle = 'Swapsicle',
   VVSStandard = 'VVSStandard',
   Fraxswap = 'Fraxswap',
+  SwapBlast = 'SwapBlast',
+  BlastDEX = 'BlastDEX',
+  Monoswap = 'Monoswap',
 }
 
 export abstract class LiquidityProvider {
