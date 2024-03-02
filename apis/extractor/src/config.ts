@@ -697,7 +697,7 @@ export const EXTRACTOR_CONFIG: Record<
         provider: LiquidityProviders.DyorV2,
         fee: 0.025,
         initCodeHash:
-          '0x32a9ff5a51b653cbafe88e38c4da86b859135750d3ca435f0ce732c8e3bb8335',
+          '0xda2f1a903916d7de88d9357d27d763f123502a5d48e3b229d5fa049b3ffdeeb5',
       },
     ],
     factoriesV3: [
