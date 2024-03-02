@@ -39,6 +39,7 @@ export enum LiquidityProviders {
   MonoswapV3 = 'MonoswapV3',
   ThrusterV2 = 'ThrusterV2',
   ThrusterV3 = 'ThrusterV3',
+  DyorV2 = 'DyorV2',
 }
 
 export abstract class LiquidityProvider {
