@@ -64,25 +64,30 @@ export const getConcentratedLiquidityPositionFees = async ({
     const owner = owners[i].result
     if (!owner) return undefined
 
-    const result = await getPublicClient({
-      chainId: el.chainId,
-    }).simulateContract({
-      abi: abiShard,
-      address: getV3NonFungiblePositionManagerConractConfig(el.chainId).address,
-      functionName: 'collect',
-      args: [
-        {
-          tokenId: el.tokenId,
-          recipient: owner,
-          amount0Max: MAX_UINT128,
-          amount1Max: MAX_UINT128,
-        },
-      ],
-      account: owner,
-      value: 0n,
-    })
+    let result
 
-    if (result.result) {
+    try {
+      result = await getPublicClient({
+        chainId: el.chainId,
+      }).simulateContract({
+        abi: abiShard,
+        address: getV3NonFungiblePositionManagerConractConfig(el.chainId)
+          .address,
+        functionName: 'collect',
+        args: [
+          {
+            tokenId: el.tokenId,
+            recipient: owner,
+            amount0Max: MAX_UINT128,
+            amount1Max: MAX_UINT128,
+          },
+        ],
+        account: owner,
+        value: 0n,
+      })
+    } catch (_) {}
+
+    if (result?.result) {
       return [result.result[0], result.result[1]]
     } else {
       return [0n, 0n]
