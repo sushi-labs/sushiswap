@@ -4,7 +4,7 @@ import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { bentoBoxV1Abi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
-import { getContract } from 'viem'
+import { PublicClient, getContract } from 'viem'
 import { usePublicClient } from 'wagmi'
 
 export const getBentoBoxContractConfig = (chainId: BentoBoxChainId) => ({
@@ -13,7 +13,7 @@ export const getBentoBoxContractConfig = (chainId: BentoBoxChainId) => ({
 })
 
 export function useBentoBoxContract(chainId: BentoBoxChainId | undefined) {
-  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as PublicClient
 
   return useMemo(() => {
     if (!chainId) return null

@@ -104,13 +104,23 @@ export const useMasterChefDeposit = ({
     query: { enabled },
   })
 
+  const { writeContractAsync } = useWriteContract({
+    mutation: {
+      onSuccess,
+      onError,
+    },
+  })
+
+  const write = useMemo(() => {
+    if (!simulation || !writeContractAsync) return undefined
+
+    return async () => {
+      await writeContractAsync(simulation.request)
+    }
+  }, [simulation, writeContractAsync])
+
   return {
     simulation,
-    write: useWriteContract({
-      mutation: {
-        onSuccess,
-        onError,
-      },
-    }).writeContract,
+    write,
   }
 }

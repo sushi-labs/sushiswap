@@ -1,6 +1,7 @@
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig, fetchBalance, readContracts } from '@wagmi/core'
+import { createConfig, getBalance, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
+import { type ChainId } from 'sushi/chain'
 import { Address, erc20Abi } from 'viem'
 import { z } from 'zod'
 
@@ -11,7 +12,8 @@ const querySchema = z.object({
     .number()
     .int()
     .gte(0)
-    .lte(2 ** 256),
+    .lte(2 ** 256)
+    .transform((value) => value as ChainId),
   address: z.coerce.string(),
   tokens: z.array(z.coerce.string()).optional(),
 })
@@ -35,7 +37,7 @@ export async function GET(
   ).json()
   const tokens = tokensSchema.parse(data)
 
-  const balance = await fetchBalance(config, {
+  const balance = await getBalance(config, {
     chainId,
     address: address as Address,
   })

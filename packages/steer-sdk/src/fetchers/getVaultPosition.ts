@@ -69,10 +69,5 @@ export async function getVaultPositions({
   vaultId,
 }: GetVaultPositions) {
   const results = await getVaultsPositions({ client, vaultIds: [vaultId] })
-
-  if (!results[0]) {
-    throw new Error(`Failed to fetch positions for vault ${vaultId}`)
-  }
-
-  return results[0]
+  return results
 }

@@ -5,7 +5,7 @@ import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TridentChainId,
 } from 'sushi/config'
-import { getContract } from 'viem'
+import { PublicClient, getContract } from 'viem'
 import { usePublicClient } from 'wagmi'
 
 export const getTridentConstantPoolFactoryContract = (
@@ -18,7 +18,7 @@ export const getTridentConstantPoolFactoryContract = (
 export function useTridentConstantPoolFactoryContract(
   chainId: TridentChainId | undefined,
 ) {
-  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as PublicClient
 
   return useMemo(() => {
     if (!chainId) return null

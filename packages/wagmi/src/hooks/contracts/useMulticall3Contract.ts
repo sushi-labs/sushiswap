@@ -3,7 +3,7 @@
 import { PublicWagmiConfig, publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { multicall3Abi } from 'sushi/abi'
-import { getContract } from 'viem'
+import { PublicClient, getContract } from 'viem'
 import { usePublicClient } from 'wagmi'
 
 export type Multicall3ChainId =
@@ -18,7 +18,7 @@ export const getMulticall3ContractConfig = (
 })
 
 export function useMulticall3Contract(chainId: Multicall3ChainId | undefined) {
-  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as any
+  const client = usePublicClient<PublicWagmiConfig>({ chainId }) as PublicClient
 
   return useMemo(() => {
     if (!chainId) return null

@@ -21,7 +21,7 @@ export const useTokenRevokeApproval = ({
 }: UseTokenRevokeApproval) => {
   const [isPending, setPending] = useState(false)
   const client = usePublicClient<PublicWagmiConfig>()
-  const { data } = useSimulateContract({
+  const { data: simulation } = useSimulateContract({
     address: token?.wrapped.address as Address,
     abi: erc20Abi,
     chainId: token?.chainId,
@@ -72,18 +72,24 @@ export const useTokenRevokeApproval = ({
     }
   }, [])
 
-  const write = useWriteContract({
-    ...data?.request,
+  const { writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onError,
       onSuccess,
     },
   })
 
-  return useMemo(() => {
-    return {
-      ...write,
-      isPending,
+  const write = useMemo(() => {
+    if (!simulation) return undefined
+
+    return async () => {
+      await writeContractAsync(simulation.request)
     }
-  }, [isPending, write])
+  }, [simulation, writeContractAsync])
+
+  return {
+    ...rest,
+    write,
+    isPending: isPending || rest.isLoading,
+  }
 }

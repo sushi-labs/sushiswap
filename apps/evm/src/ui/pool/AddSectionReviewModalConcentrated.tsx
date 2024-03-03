@@ -14,19 +14,15 @@ import {
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
+  UseSimulateContractParameters,
   getV3NonFungiblePositionManagerConractConfig,
   useAccount,
-  useNetwork,
-  usePrepareSendTransaction,
+  usePublicClient,
   useSendTransaction,
+  useSimulateContract,
   useTransactionDeadline,
-  useWaitForTransaction,
+  useWaitForTransactionReceipt,
 } from '@sushiswap/wagmi'
-import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
@@ -35,8 +31,9 @@ import { Chain, ChainId } from 'sushi/chain'
 import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
-import { Hex, UserRejectedRequestError } from 'viem'
+import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
@@ -74,14 +71,14 @@ export const AddSectionReviewModalConcentrated: FC<
   pricesAtTicks,
   ticksAtLimit,
   tokenId,
-  onSuccess,
+  onSuccess: _onSuccess,
   successLink,
 }) => {
-  const { chain } = useNetwork()
-  const { address } = useAccount()
+  const { address, chain } = useAccount()
   const { data: deadline } = useTransactionDeadline({ chainId })
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
+  const client = usePublicClient<PublicWagmiConfig>()
 
   const isSorted =
     token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
@@ -122,20 +119,19 @@ export const AddSectionReviewModalConcentrated: FC<
 
   const hasExistingPosition = !!existingPosition
 
-  const onSettled = useCallback(
-    (data: SendTransactionResult | undefined, error: Error | null) => {
-      if (error instanceof UserRejectedRequestError) {
-        createErrorToast(error?.message, true)
-      }
-      if (!data || !token0 || !token1) return
+  const onSuccess = useCallback(
+    (hash: SendTransactionReturnType) => {
+      _onSuccess()
+
+      if (!token0 || !token1) return
 
       const ts = new Date().getTime()
       void createToast({
         account: address,
         type: 'mint',
         chainId,
-        txHash: data.hash,
-        promise: waitForTransaction({ hash: data.hash }),
+        txHash: hash,
+        promise: client.waitForTransactionReceipt({ hash }),
         summary: {
           pending: noLiquidity
             ? `Creating the ${token0.symbol}/${token1.symbol} liquidity pool`
@@ -151,49 +147,53 @@ export const AddSectionReviewModalConcentrated: FC<
         groupTimestamp: ts,
       })
     },
-    [token0, token1, address, chainId, noLiquidity],
+    [_onSuccess, token0, token1, address, chainId, client, noLiquidity],
   )
 
-  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+  const onError = useCallback((e: Error) => {
+    if (e instanceof UserRejectedRequestError) {
+      createErrorToast(e?.message, true)
+    }
+  }, [])
+
+  const prepare = useMemo(() => {
     if (
       !chainId ||
       !address ||
       !token0 ||
       !token1 ||
-      !isSushiSwapV3ChainId(chainId)
+      !isSushiSwapV3ChainId(chainId) ||
+      !position ||
+      !deadline
     )
-      return {}
+      return undefined
 
-    if (position && deadline) {
-      const useNative = token0.isNative
-        ? token0
-        : token1.isNative
-          ? token1
-          : undefined
-      const { calldata, value } =
-        hasExistingPosition && tokenId
-          ? NonfungiblePositionManager.addCallParameters(position, {
-              tokenId,
-              slippageTolerance,
-              deadline: deadline.toString(),
-              useNative,
-            })
-          : NonfungiblePositionManager.addCallParameters(position, {
-              slippageTolerance,
-              recipient: address,
-              deadline: deadline.toString(),
-              useNative,
-              createPool: noLiquidity,
-            })
+    const useNative = token0.isNative
+      ? token0
+      : token1.isNative
+        ? token1
+        : undefined
+    const { calldata, value } =
+      hasExistingPosition && tokenId
+        ? NonfungiblePositionManager.addCallParameters(position, {
+            tokenId,
+            slippageTolerance,
+            deadline: deadline.toString(),
+            useNative,
+          })
+        : NonfungiblePositionManager.addCallParameters(position, {
+            slippageTolerance,
+            recipient: address,
+            deadline: deadline.toString(),
+            useNative,
+            createPool: noLiquidity,
+          })
 
-      return {
-        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
-        data: calldata as Hex,
-        value: BigInt(value),
-      }
-    }
-
-    return {}
+    return {
+      address: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+      data: calldata as Hex,
+      value: BigInt(value),
+    } satisfies UseSimulateContractParameters
   }, [
     address,
     chainId,
@@ -207,10 +207,10 @@ export const AddSectionReviewModalConcentrated: FC<
     tokenId,
   ])
 
-  const { config, isError } = usePrepareSendTransaction({
-    ...prepare,
+  const { data: simulation, isError } = useSimulateContract({
+    ...(prepare as NonNullable<typeof prepare>),
     chainId,
-    enabled: chainId === chain?.id,
+    query: { enabled: chainId === chain?.id },
   })
 
   const {
@@ -218,13 +218,22 @@ export const AddSectionReviewModalConcentrated: FC<
     isLoading: isWritePending,
     data,
   } = useSendTransaction({
-    ...config,
-    chainId,
-    onSettled,
-    onSuccess,
+    mutation: {
+      onSuccess,
+      onError,
+    },
   })
 
-  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+  const send = useMemo(() => {
+    if (!sendTransactionAsync || !simulation) return undefined
+
+    return async (confirm: () => void) => {
+      await sendTransactionAsync(simulation.request)
+      confirm()
+    }
+  }, [sendTransactionAsync, simulation])
+
+  const { status } = useWaitForTransactionReceipt({ chainId, hash: data })
 
   return (
     <DialogProvider>
@@ -355,8 +364,8 @@ export const AddSectionReviewModalConcentrated: FC<
                 <Button
                   size="xl"
                   fullWidth
-                  loading={!sendTransactionAsync || isWritePending}
-                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
+                  loading={!send || isWritePending}
+                  onClick={() => send?.(confirm)}
                   disabled={isError}
                   testId="confirm-add-liquidity"
                   type="button"
@@ -379,7 +388,7 @@ export const AddSectionReviewModalConcentrated: FC<
         status={status}
         testId="add-concentrated-liquidity-confirmation-modal"
         successMessage={`You successfully added liquidity to the ${token0?.symbol}/${token1?.symbol} pair`}
-        txHash={data?.hash}
+        txHash={data}
         buttonLink={successLink}
         buttonText="View your position"
       />

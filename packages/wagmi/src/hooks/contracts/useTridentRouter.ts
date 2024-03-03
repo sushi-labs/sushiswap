@@ -12,7 +12,7 @@ export const getTridentRouterContractConfig = (chainId: TridentChainId) => ({
 })
 
 export function useTridentRouterContract(chainId: TridentChainId | undefined) {
-  const { data: walletClient } = useWalletClient() as any
+  const { data: walletClient } = useWalletClient()
 
   return useMemo(() => {
     if (!chainId || !walletClient) return null
