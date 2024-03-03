@@ -706,13 +706,6 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0x2e6ab686c26cf8ecf0a8c01a9fb0ef96dbd4631c04b03005350fa49e8f2f32f8',
       },
-      {
-        address: '0xD97fFc2041a8aB8f6bc4aeE7eE8ECA485381D088',
-        provider: LiquidityProviders.HyperBlast,
-        fee: 0.003,
-        initCodeHash:
-          '0x2e6ab686c26cf8ecf0a8c01a9fb0ef96dbd4631c04b03005350fa49e8f2f32f8',
-      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.BLAST),
