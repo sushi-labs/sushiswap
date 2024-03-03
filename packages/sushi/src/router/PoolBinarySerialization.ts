@@ -15,6 +15,7 @@ import {
 import {
   BridgeUnlimited,
   ConstantProductRPool,
+  CurveMultitokenCore,
   CurveMultitokenPool,
   RToken,
   UniV3Pool,
@@ -261,4 +262,266 @@ function readCurveRPools(
   const fee = stream.uint24() / FEE_FRACTIONS
   const A = stream.float64()
   return createCurvePoolsForMultipool(address, tokens, fee, A, reserves, rates)
+}
+
+export function comparePoolArrays(
+  poolsA: PoolCode[],
+  poolsB: PoolCode[],
+): boolean {
+  let res = true
+  const poolsAMap = new Map<string, PoolCode>()
+  poolsA.forEach((p) => poolsAMap.set(p.pool.uniqueID(), p))
+  const poolsBMap = new Map<string, PoolCode>()
+  poolsB.forEach((p) => poolsBMap.set(p.pool.uniqueID(), p))
+
+  Array.from(poolsAMap.values()).forEach((pA) => {
+    const pB = poolsBMap.get(pA.pool.uniqueID())
+    if (pB === undefined) {
+      console.log(`Set 2 has no pool ${pA.pool.uniqueID()}`)
+      res = false
+    } else res &&= comparePools(pA, pB)
+  })
+
+  Array.from(poolsBMap.values()).forEach((pB) => {
+    const pA = poolsAMap.get(pB.pool.uniqueID())
+    if (pA === undefined) {
+      console.log(`Set 1 has no pool ${pB.pool.uniqueID()}`)
+      res = false
+    }
+  })
+  return res
+}
+
+function comparePools(poolsA: PoolCode, poolsB: PoolCode): boolean {
+  let res = cmpObj(
+    poolsA,
+    poolsB,
+    ['liquidityProvider', 'poolName'],
+    `Pool ${poolsA.pool.uniqueID()} mismatch`,
+  )
+  if (poolsA instanceof ConstantProductPoolCode) {
+    if (!(poolsB instanceof ConstantProductPoolCode)) {
+      console.log(`PoolCode ${poolsA.pool.uniqueID()} poolType mismatch`)
+      res = false
+    } else {
+      if (!(poolsA.pool instanceof ConstantProductRPool)) {
+        console.log(`Set 1 pool ${poolsA.pool.uniqueID()} poolType mismatch`)
+        res = false
+      } else {
+        if (!(poolsB.pool instanceof ConstantProductRPool)) {
+          console.log(`Set 2 pool ${poolsB.pool.uniqueID()} poolType mismatch`)
+          res = false
+        } else {
+          if (!compareConstantProductRPool(poolsA.pool, poolsB.pool))
+            res = false
+        }
+      }
+    }
+  } else if (poolsA instanceof UniV3PoolCode) {
+    if (!(poolsB instanceof UniV3PoolCode)) {
+      console.log(`PoolCode ${poolsA.pool.uniqueID()} poolType mismatch`)
+      res = false
+    } else {
+      if (!(poolsA.pool instanceof UniV3Pool)) {
+        console.log(`Set 1 pool ${poolsA.pool.uniqueID()} poolType mismatch`)
+        res = false
+      } else {
+        if (!(poolsB.pool instanceof UniV3Pool)) {
+          console.log(`Set 2 pool ${poolsB.pool.uniqueID()} poolType mismatch`)
+          res = false
+        } else {
+          if (!compareUniV3Pool(poolsA.pool, poolsB.pool)) res = false
+        }
+      }
+    }
+  } else if (poolsA instanceof NativeWrapBridgePoolCode) {
+    if (!(poolsB instanceof NativeWrapBridgePoolCode)) {
+      console.log(`PoolCode ${poolsA.pool.uniqueID()} poolType mismatch`)
+      res = false
+    } else {
+      if (!(poolsA.pool instanceof BridgeUnlimited)) {
+        console.log(`Set 1 pool ${poolsA.pool.uniqueID()} poolType mismatch`)
+        res = false
+      } else {
+        if (!(poolsB.pool instanceof BridgeUnlimited)) {
+          console.log(`Set 2 pool ${poolsB.pool.uniqueID()} poolType mismatch`)
+          res = false
+        } else {
+          if (!compareBridgeUnlimited(poolsA.pool, poolsB.pool)) res = false
+        }
+      }
+    }
+  } else if (poolsA instanceof CurvePoolCode) {
+    if (!(poolsB instanceof CurvePoolCode)) {
+      console.log(`PoolCode ${poolsA.pool.uniqueID()} poolType mismatch`)
+      res = false
+    } else {
+      if (!(poolsA.pool instanceof CurveMultitokenPool)) {
+        console.log(`Set 1 pool ${poolsA.pool.uniqueID()} poolType mismatch`)
+        res = false
+      } else {
+        if (!(poolsB.pool instanceof CurveMultitokenPool)) {
+          console.log(`Set 2 pool ${poolsB.pool.uniqueID()} poolType mismatch`)
+          res = false
+        } else {
+          if (!compareCurveMultitokenPool(poolsA.pool, poolsB.pool)) res = false
+        }
+      }
+    }
+  }
+  return res
+}
+
+function compareConstantProductRPool(
+  poolA: ConstantProductRPool,
+  poolB: ConstantProductRPool,
+): boolean {
+  let res = cmpObj(
+    poolA,
+    poolB,
+    ['address', 'fee', 'reserve0', 'reserve1'],
+    `ConstantProductRPool ${poolA.address} mismatch`,
+  )
+  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
+  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
+  return res
+}
+
+function compareUniV3Pool(poolA: UniV3Pool, poolB: UniV3Pool): boolean {
+  let res = cmpObj(
+    poolA,
+    poolB,
+    [
+      'address',
+      'fee',
+      'reserve0',
+      'reserve1',
+      'nearestTick',
+      'liquidity',
+      'sqrtPriceX96',
+    ],
+    `UniV3Pool ${poolA.address} mismatch`,
+  )
+  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
+  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
+  res &&= cmpArrObj(
+    poolA.ticks,
+    poolB.ticks,
+    ['index', 'DLiquidity'],
+    `UniV3Pool ${poolA.address} mismatch ticks`,
+  )
+  return res
+}
+
+function compareBridgeUnlimited(
+  poolA: BridgeUnlimited,
+  poolB: BridgeUnlimited,
+): boolean {
+  let res = cmpObj(
+    poolA,
+    poolB,
+    ['address', 'fee'],
+    `BridgeUnlimited ${poolA.address} mismatch`,
+  )
+  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
+  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
+  return res
+}
+
+function compareCurveMultitokenPool(
+  poolA: CurveMultitokenPool,
+  poolB: CurveMultitokenPool,
+): boolean {
+  let res = cmpObj(
+    poolA,
+    poolB,
+    ['index0', 'index1'],
+    `CurveMultitokenPool ${poolA.address} mismatch`,
+  )
+  res &&= compareCurveMultitokenCore(poolA.core, poolB.core)
+  return res
+}
+
+function compareCurveMultitokenCore(
+  poolA: CurveMultitokenCore,
+  poolB: CurveMultitokenCore,
+): boolean {
+  let res = cmpObj(
+    poolA,
+    poolB,
+    ['address', 'fee', 'A'],
+    `CurveMultitokenCore ${poolA.address} mismatch`,
+  )
+  res &&= cmpArrObj(
+    poolA.tokens,
+    poolB.tokens,
+    ['address', 'name', 'symbol', 'decimals'],
+    `CurveMultitokenCore ${poolA.address} mismatch tokens`,
+  )
+  res &&= cmpArrVal(
+    poolA.reserves,
+    poolB.reserves,
+    `CurveMultitokenCore ${poolA.address} mismatch reserves`,
+  )
+  res &&= cmpArrVal(
+    poolA.rates,
+    poolB.rates,
+    `CurveMultitokenCore ${poolA.address} mismatch rates`,
+  )
+  return res
+}
+
+function compareTokens(
+  tokenA: RToken,
+  tokenB: RToken,
+  poolID: string,
+): boolean {
+  return cmpObj(
+    tokenA,
+    tokenB,
+    ['address', 'name', 'symbol', 'decimals'],
+    `Pool ${poolID} tokens mismatch`,
+  )
+}
+
+function cmpVal<T>(valA: T, valB: T, err: string): boolean {
+  if (valA !== valB) {
+    console.log(`<!!> ${err} ${valA} != ${valB}`)
+    return false
+  }
+  return true
+}
+
+function cmpObj(
+  A: Record<string, any>,
+  B: Record<string, any>,
+  fields: string[],
+  err: string,
+): boolean {
+  let res = true
+  fields.forEach((f) => {
+    res &&= cmpVal(A[f], B[f], `${err} ${f}`)
+  })
+  return res
+}
+
+function cmpArrVal<T>(A: T[], B: T[], err: string): boolean {
+  let res = cmpVal(A.length, B.length, `${err} length`)
+  A.forEach((m, i) => {
+    res &&= cmpVal(m, B[i] as T, `${err} ${i}`)
+  })
+  return res
+}
+
+function cmpArrObj<T extends Record<string, any>>(
+  A: T[],
+  B: T[],
+  fields: string[],
+  err: string,
+): boolean {
+  let res = cmpVal(A.length, B.length, `${err} length`)
+  A.forEach((m, i) => {
+    res &&= cmpObj(m, B[i] as T, fields, `${err} ${i}`)
+  })
+  return res
 }
