@@ -1,5 +1,7 @@
+import { Ratelimit } from '@upstash/ratelimit'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'src/lib/db'
+import { rateLimit } from 'src/lib/rate-limit'
 import { Position, formatPercent } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -19,7 +21,9 @@ async function getPrices({
 }: {
   chainId: ChainId
 }): Promise<Record<string, number>> {
-  return fetch(`https://api.sushi.com/price/v1/${chainId}`)
+  return fetch(`https://api.sushi.com/price/v1/${chainId}`, {
+    next: { revalidate: 0 },
+  })
     .then((res) => res.json())
     .catch((e) => {
       console.error('Error fetching token prices', chainId, e)
@@ -39,7 +43,18 @@ const schema = z.object({
   positionId: z.coerce.bigint().positive(),
 })
 
+export const revalidate = 30
+export const maxDuration = 10
+
 export async function GET(request: NextRequest) {
+  const ratelimit = rateLimit(Ratelimit.slidingWindow(200, '5 m'))
+  if (ratelimit) {
+    const { remaining } = await ratelimit.limit(request.ip || '127.0.0.1')
+    if (!remaining) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+  }
+
   const { searchParams } = new URL(request.url)
   const result = schema.safeParse(Object.fromEntries(searchParams))
 

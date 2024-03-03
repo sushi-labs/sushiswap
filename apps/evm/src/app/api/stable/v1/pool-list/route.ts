@@ -1,6 +1,8 @@
 import { Protocol } from '@sushiswap/client'
 import { createClient } from '@sushiswap/database'
+import { Ratelimit } from '@upstash/ratelimit'
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from 'src/lib/rate-limit'
 import { ChainId } from 'sushi/chain'
 import { isBentoBoxChainId } from 'sushi/config'
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
@@ -41,7 +43,18 @@ const schema = z.object({
     .optional(),
 })
 
+export const revalidate = 300
+export const maxDuration = 10
+
 export async function GET(request: NextRequest) {
+  const ratelimit = rateLimit(Ratelimit.slidingWindow(200, '1 h'))
+  if (ratelimit) {
+    const { remaining } = await ratelimit.limit(request.ip || '127.0.0.1')
+    if (!remaining) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+  }
+
   const { searchParams } = new URL(request.url)
   const result = schema.safeParse(Object.fromEntries(searchParams))
 
