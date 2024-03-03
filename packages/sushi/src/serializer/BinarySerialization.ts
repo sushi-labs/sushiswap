@@ -179,6 +179,21 @@ export class BinWriteStream {
       )
     this.position += written
   }
+
+  reserveUint16(): number {
+    this.ensurePlace(2)
+    const position = this.position
+    this.position += 2
+    return position
+  }
+
+  setLengthUint16(position: number) {
+    const value = this.position - position - 2
+    if (value > MAX_BYTE2_VALUE || !Number.isInteger(value))
+      console.error(`uint16 serialization error ${value}`)
+    this.data[position] = value % 256
+    this.data[position + 1] = value / 256
+  }
 }
 
 export class BinReadStream {
@@ -196,6 +211,11 @@ export class BinReadStream {
   ensurePlace(bytes: number) {
     if (this.position + bytes <= this.data.byteLength) return
     throw new Error('Out of stream')
+  }
+
+  skip(bytes: number) {
+    this.ensurePlace(bytes)
+    this.position += bytes
   }
 
   uint8(): number {

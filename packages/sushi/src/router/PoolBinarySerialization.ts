@@ -47,9 +47,11 @@ export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
   stream.uint24(tokenMap.size)
   Array.from(tokenMap.values()).forEach((t) => {
     stream.address(t.address)
+    const pos = stream.reserveUint16()
     stream.str16(t.name)
     stream.str16(t.symbol)
     stream.uint8(t.decimals)
+    stream.setLengthUint16(pos)
   })
   const tokenIndex = new Map<string, number>(
     Array.from(tokenMap.entries()).map((a, i) => [a[0], i]),
@@ -118,23 +120,33 @@ export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
 }
 
 // Deserialization - launching constructors
-export function deserializePoolsBinary(data: Uint8Array): PoolCode[] {
+export function deserializePoolsBinary(
+  data: Uint8Array,
+  existedTokens?: (a: string) => Token | undefined,
+): PoolCode[] {
   const stream = new BinReadStream(data)
   const chainId = stream.uint24() as ChainId
   const tokensNum = stream.uint24()
   const tokensArray: RToken[] = new Array(tokensNum)
   for (let i = 0; i < tokensNum; ++i) {
     const address = stream.address()
-    const name = stream.str16()
-    const symbol = stream.str16()
-    const decimals = stream.uint8()
-    tokensArray[i] = new Token({
-      chainId,
-      address,
-      name,
-      symbol,
-      decimals,
-    }) as RToken
+    const tokenRestDataLength = stream.uint16()
+    const token = existedTokens?.(address)
+    if (token) {
+      tokensArray[i] = token as RToken
+      stream.skip(tokenRestDataLength)
+    } else {
+      const name = stream.str16()
+      const symbol = stream.str16()
+      const decimals = stream.uint8()
+      tokensArray[i] = new Token({
+        chainId,
+        address,
+        name,
+        symbol,
+        decimals,
+      }) as RToken
+    }
   }
 
   const poolsNum = stream.uint24()
@@ -524,4 +536,17 @@ function cmpArrObj<T extends Record<string, any>>(
     res &&= cmpObj(m, B[i] as T, fields, `${err} ${i}`)
   })
   return res
+}
+
+export function testPoolSerialization(
+  poolsA: PoolCode[],
+  existedTokens?: (a: string) => Token | undefined,
+): boolean {
+  const t0 = performance.now()
+  const data = serializePoolsBinary(poolsA)
+  const t1 = performance.now()
+  const poolsB = deserializePoolsBinary(data, existedTokens)
+  const t2 = performance.now()
+  console.log('Bin Pool (de)serialilization', poolsA.length, t1 - t0, t2 - t1)
+  return comparePoolArrays(poolsA, poolsB)
 }
