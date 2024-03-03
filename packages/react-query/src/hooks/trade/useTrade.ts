@@ -191,7 +191,7 @@ export const useTrade = (variables: UseTradeParams) => {
             : undefined,
           priceImpact: data.route.priceImpact
             ? new Percent(Math.round(data.route.priceImpact * 10000), 10000)
-            : undefined,
+            : new Percent(0),
           amountIn,
           amountOut,
           minAmountOut: Amount.fromRawAmount(

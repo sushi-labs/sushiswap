@@ -505,8 +505,6 @@ export class Graph {
     minLiquidity = 0,
     logging = false,
   ) {
-    const start1 = performance.now()
-    let timeTotal = 0
     const processedVert = new Set<Vertice>()
     let nextEdges: Edge[] = []
     const edgeValues = new Map<Edge, number>()
@@ -522,7 +520,6 @@ export class Graph {
         edgeValues.set(e, liquidity)
         return true
       })
-      const start0 = performance.now()
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
       while (nextEdges.length && newEdges.length) {
@@ -531,7 +528,6 @@ export class Graph {
         else res.push(newEdges.shift() as Edge)
       }
       nextEdges = [...res, ...nextEdges, ...newEdges]
-      timeTotal += performance.now() - start0
       processedVert.add(v)
     }
 
@@ -579,11 +575,6 @@ export class Graph {
       )
       v.gasPrice = gasPriceChainId / v.price
     })
-    const timeTotal1 = performance.now() - start1
-    console.log('Time0', timeTotal)
-    console.log('Time1', timeTotal1)
-
-    this.setPricesStable2(from, price, networks, minLiquidity, logging)
   }*/
 
   // Set prices using greedy algorithm
@@ -601,16 +592,14 @@ export class Graph {
     function addVertice(v: Vertice, price: number) {
       v.price = price
       const newEdges = v.edges
+        .filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
         .map((e) => {
-          if (processedVert.has(v.getNeibour(e) as Vertice))
-            return [-1, e] as ValuedEdge
           const liquidity = price * Number(e.reserve(v))
           return [liquidity, e] as ValuedEdge
         })
         .filter(
           ([liquidity, e]) =>
-            liquidity >= minLiquidity ||
-            (liquidity > 0 && e.pool.alwaysAppropriateForPricing()),
+            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
         )
       nextEdges = fastArrayMerge(nextEdges, newEdges)
       processedVert.add(v)

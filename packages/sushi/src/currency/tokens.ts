@@ -7,6 +7,7 @@ import {
   ANKR_ADDRESS,
   APE_ADDRESS,
   ARB_ADDRESS,
+  BAL_ADDRESS,
   BCT_ADDRESS,
   BUSD_ADDRESS,
   COMP_ADDRESS,
@@ -18,8 +19,12 @@ import {
   FXS_ADDRESS,
   GALA_ADDRESS,
   GNO_ADDRESS,
+  GNS_ADDRESS,
+  GRT_ADDRESS,
   JPY_ADDRESS,
+  JUGNI_ADDRESS,
   KLIMA_ADDRESS,
+  KNCv2_ADDRESS,
   KP3R_ADDRESS,
   LDO_ADDRESS,
   LINK_ADDRESS,
@@ -30,19 +35,26 @@ import {
   MIM_ADDRESS,
   MKR_ADDRESS,
   NFTX_ADDRESS,
+  OCEAN_ADDRESS,
   OHM_ADDRESS,
   OP_ADDRESS,
   PRIMATE_ADDRESS,
   QUICK_ADDRESS,
+  RNDR_ADDRESS,
+  SAND_ADDRESS,
   SNX_ADDRESS,
+  STG_ADDRESS,
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
+  TEL_ADDRESS,
   TRIBE_ADDRESS,
   TUSD_ADDRESS,
   UNI_ADDRESS,
+  USDB_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
   USD_PLUS_ADDRESS,
+  WAVAX_ADDRESS,
   WBTC_ADDRESS,
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
@@ -91,6 +103,33 @@ export const AMPL = addressMapToTokenMap(
   { decimals: 9, symbol: 'AMPL', name: 'Ampleforth' },
   AMPL_ADDRESS,
 )
+
+export const SAND = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'SAND',
+    name: 'SAND',
+  },
+  SAND_ADDRESS,
+) as Record<keyof typeof SAND_ADDRESS, Token>
+
+export const STG = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'STG',
+    name: 'StargateToken',
+  },
+  STG_ADDRESS,
+) as Record<keyof typeof STG_ADDRESS, Token>
+
+export const GNS = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'GNS',
+    name: 'Gains Network',
+  },
+  GNS_ADDRESS,
+) as Record<keyof typeof GNS_ADDRESS, Token>
 
 export const MANA = addressMapToTokenMap(
   {
@@ -642,6 +681,7 @@ export const WNATIVE = {
     symbol: 'WCRO',
     name: 'Wrapped CRO',
   }),
+  [ChainId.BLAST]: WETH9[ChainId.BLAST],
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -857,6 +897,69 @@ export const OP = addressMapToTokenMap(
   OP_ADDRESS,
 ) as Record<keyof typeof OP_ADDRESS, Token>
 
+export const OCEAN = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'OCEAN',
+    name: 'Ocean Token',
+  },
+  OCEAN_ADDRESS,
+) as Record<keyof typeof OCEAN_ADDRESS, Token>
+
+export const BAL = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'BAL',
+    name: 'Balancer',
+  },
+  BAL_ADDRESS,
+) as Record<keyof typeof BAL_ADDRESS, Token>
+
+export const WAVAX = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'WAVAX',
+    name: 'Wrapped Avalanche Token',
+  },
+  WAVAX_ADDRESS,
+) as Record<keyof typeof WAVAX_ADDRESS, Token>
+
+export const KNCv2 = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'KNCv2',
+    name: 'Kyber Network Crystal V2',
+  },
+  KNCv2_ADDRESS,
+) as Record<keyof typeof KNCv2_ADDRESS, Token>
+
+export const GRT = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'GRT',
+    name: 'Graph Token',
+  },
+  GRT_ADDRESS,
+) as Record<keyof typeof GRT_ADDRESS, Token>
+
+export const TEL = addressMapToTokenMap(
+  {
+    decimals: 2,
+    symbol: 'TEL',
+    name: 'Telcoin',
+  },
+  TEL_ADDRESS,
+) as Record<keyof typeof TEL_ADDRESS, Token>
+
+export const RNDR = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'RNDR',
+    name: 'Render Token',
+  },
+  RNDR_ADDRESS,
+) as Record<keyof typeof RNDR_ADDRESS, Token>
+
 export const LINK = addressMapToTokenMap(
   {
     decimals: 18,
@@ -865,6 +968,15 @@ export const LINK = addressMapToTokenMap(
   },
   LINK_ADDRESS,
 ) as Record<keyof typeof LINK_ADDRESS, Token>
+
+export const USDB = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'USDB',
+    name: 'USD Blast',
+  },
+  USDB_ADDRESS,
+) as Record<keyof typeof USDB_ADDRESS, Token>
 
 export const WORMHOLE_USDC = addressMapToTokenMap(
   {
@@ -892,6 +1004,15 @@ export const WORMHOLE_WETH = addressMapToTokenMap(
   },
   WORMHOLE_WETH_ADDRESS,
 ) as Record<keyof typeof WORMHOLE_WETH_ADDRESS, Token>
+
+export const JUGNI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'JUGNI',
+    name: 'Jugni',
+  },
+  JUGNI_ADDRESS,
+) as Record<keyof typeof JUGNI_ADDRESS, Token>
 
 export const THUNDERCORE_ANY_USDT = new Token({
   chainId: ChainId.THUNDERCORE,
@@ -995,4 +1116,28 @@ export const ZETA_BSC_BRIDGE_USDT = new Token({
   decimals: 18,
   symbol: 'USDT.BSC',
   name: 'ZetaChain ZRC20 USDT on BSC',
+})
+
+export const FILECOIN_CELER_BRIDGE_USDC = new Token({
+  chainId: ChainId.FILECOIN,
+  address: '0x2421db204968A367CC2C866CD057fA754Cb84EdF',
+  decimals: 6,
+  symbol: 'ceUSDC',
+  name: 'USD Coin (Celer)',
+})
+
+export const FILECOIN_CELER_BRIDGE_USDT = new Token({
+  chainId: ChainId.FILECOIN,
+  address: '0x422849b355039bc58f2780cc4854919fc9cfaf94',
+  decimals: 6,
+  symbol: 'ceUSDT',
+  name: 'Tether USD (Celer)',
+})
+
+export const MUSD = new Token({
+  chainId: ChainId.BLAST,
+  address: '0x837fE561e9C5DFa73F607fDa679295DBC2Be5E40',
+  name: 'Monoswap USD',
+  symbol: 'MUSD',
+  decimals: 18,
 })

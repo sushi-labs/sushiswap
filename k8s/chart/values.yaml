@@ -56,6 +56,8 @@ chains:
     id: "59144"
   - name: "boba-bnb"
     id: "56288"
+  - name: "blast"
+    id: "81457"
   - name: "scroll"
     id: "534352"
   - name: "harmony"

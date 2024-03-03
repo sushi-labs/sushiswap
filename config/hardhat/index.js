@@ -163,6 +163,14 @@ module.exports.defaultConfig = {
           browserURL: 'https://bobascan.com',
         },
       },
+      {
+        network: 'blast',
+        chainId: 81457,
+        urls: {
+          apiURL: 'https://api.blastscan.io/api',
+          browserURL: 'https://blastscan.io',
+        },
+      },
     ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
@@ -208,6 +216,7 @@ module.exports.defaultConfig = {
       celo: process.env.CELO_API_KEY || '',
       polygonzkevm: process.env.POLYGONZKEVM_API_KEY || '',
       core: process.env.CORE_API_KEY || '',
+      blast: process.env.BLAST_API_KEY || '',
       xdai: 'api-key',
       sokol: 'api-key',
       aurora: 'api-key',
@@ -639,6 +648,13 @@ module.exports.defaultConfig = {
       url: 'https://cronos.blockpi.network/v1/rpc/public',
       accounts,
       chainId: 25,
+      live: true,
+      saveDeployments: true,
+    },
+    blast: {
+      url: 'https://rpc.blast.io',
+      accounts,
+      chainId: 81457,
       live: true,
       saveDeployments: true,
     },
