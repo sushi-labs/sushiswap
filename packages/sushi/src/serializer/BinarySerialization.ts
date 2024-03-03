@@ -1,13 +1,17 @@
 import { Address } from 'viem'
 
-const textEncoder = new TextEncoder()
-const textDecoder = new TextDecoder()
-const floatArray = new Float64Array(1)
-const floatArrayAsUint8 = new Uint8Array(floatArray.buffer)
 const MAX_BYTE2_VALUE = (1 << 16) - 1
 const MAX_BYTE3_VALUE = (1 << 24) - 1
 const MAX_BYTE4_VALUE = 2 ** 32 - 1
 const INT24_SHIFT = 1 << 23
+const TWO64 = 2n ** 64n
+
+const textEncoder = new TextEncoder()
+const textDecoder = new TextDecoder()
+const floatArray = new Float64Array(1)
+const floatArrayAsUint8 = new Uint8Array(floatArray.buffer)
+const bigUint64Array = new BigUint64Array(255)
+const bigUint64ArrayAsUint8 = new Uint8Array(bigUint64Array.buffer)
 
 // TODO: try Uint16/32Array ot DataView instaed of manual work
 export class BinWriteStream {
@@ -82,19 +86,23 @@ export class BinWriteStream {
       console.error(`Serialization error: Negative bigint value ${num}`)
       num = -num
     }
-    this.ensurePlace(257)
-    for (let i = 0, pos = this.position; i < 255; ++i) {
+    this.ensurePlace(2041)
+    for (let i = 0; i < 255; ++i) {
       if (num === 0n) {
         this.data[this.position] = i
-        this.position += i + 1
+        this.data.set(
+          bigUint64ArrayAsUint8.subarray(0, 8 * i),
+          this.position + 1,
+        )
+        this.position += 8 * i + 1
         return
       }
-      this.data[++pos] = Number(num % 256n)
-      num >>= 8n
+      bigUint64Array[i] = num % TWO64
+      num /= TWO64
     }
     console.error('Serialization error: too huge bigint')
     this.data[this.position] = 255
-    this.position += 256
+    this.position += 2041
   }
 
   bigInt(num: bigint) {
@@ -232,26 +240,32 @@ export class BinReadStream {
 
   bigUInt(): bigint {
     const len = this.uint8()
-    this.ensurePlace(len)
+    this.ensurePlace(len * 8)
+    bigUint64ArrayAsUint8.set(
+      this.data.subarray(this.position, this.position + len * 8),
+    )
     let res = 0n
     for (let i = len - 1; i >= 0; --i) {
-      res <<= 8n
-      res += BigInt(this.data[this.position + i] as number)
+      res *= TWO64
+      res += bigUint64Array[i] as bigint
     }
-    this.position += len
+    this.position += len * 8
     return res
   }
 
   bigInt(): bigint {
     const lenOrig = this.uint8()
     const len = lenOrig & 127
-    this.ensurePlace(len)
+    this.ensurePlace(len * 8)
+    bigUint64ArrayAsUint8.set(
+      this.data.subarray(this.position, this.position + len * 8),
+    )
     let res = 0n
     for (let i = len - 1; i >= 0; --i) {
-      res <<= 8n
-      res += BigInt(this.data[this.position + i] as number)
+      res *= TWO64
+      res += bigUint64Array[i] as bigint
     }
-    this.position += len
+    this.position += len * 8
     return len === lenOrig ? res : -res
   }
 
