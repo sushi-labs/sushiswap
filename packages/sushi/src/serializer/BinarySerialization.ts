@@ -109,12 +109,12 @@ export class BinWriteStream {
   }
 
   str16UTF8(s: string) {
-    this.ensurePlace(s.length * 2 + 2)
+    this.ensurePlace(s.length * 4 + 2)
     const { read, written } = textEncoder.encodeInto(
       s,
       this.data.subarray(
         this.position + 2,
-        this.position + 2 + Math.min(s.length * 2, MAX_BYTE2_VALUE),
+        this.position + 2 + Math.min(s.length * 4, MAX_BYTE2_VALUE),
       ),
     )
     if (read !== s.length)
