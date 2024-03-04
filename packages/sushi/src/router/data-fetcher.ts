@@ -1,33 +1,33 @@
 import { http, PublicClient, createPublicClient } from 'viem'
-import { ChainId, TestnetChainId } from '../chain'
-import { publicClientConfig } from '../config'
-import { Type } from '../currency'
-import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
-import { BiswapProvider } from './liquidity-providers/Biswap'
-import { CurveProvider } from './liquidity-providers/CurveProvider'
-import { DfynProvider } from './liquidity-providers/Dfyn'
-import { DovishV3Provider } from './liquidity-providers/DovishV3'
-import { ElkProvider } from './liquidity-providers/Elk'
-import { HoneySwapProvider } from './liquidity-providers/HoneySwap'
-import { JetSwapProvider } from './liquidity-providers/JetSwap'
-import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap'
+import { ChainId, TestnetChainId } from '../chain/index.js'
+import { publicClientConfig } from '../config/index.js'
+import { Type } from '../currency/index.js'
+import { ApeSwapProvider } from './liquidity-providers/ApeSwap.js'
+import { BiswapProvider } from './liquidity-providers/Biswap.js'
+import { CurveProvider } from './liquidity-providers/CurveProvider.js'
+import { DfynProvider } from './liquidity-providers/Dfyn.js'
+import { DovishV3Provider } from './liquidity-providers/DovishV3.js'
+import { ElkProvider } from './liquidity-providers/Elk.js'
+import { HoneySwapProvider } from './liquidity-providers/HoneySwap.js'
+import { JetSwapProvider } from './liquidity-providers/JetSwap.js'
+import { LaserSwapV2Provider } from './liquidity-providers/LaserSwap.js'
 import {
   LiquidityProvider,
   LiquidityProviders,
-} from './liquidity-providers/LiquidityProvider'
-import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
-import { NetSwapProvider } from './liquidity-providers/NetSwap'
-import { PancakeSwapProvider } from './liquidity-providers/PancakeSwap'
-import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
-import { SpookySwapProvider } from './liquidity-providers/SpookySwap'
-import { SushiSwapV2Provider } from './liquidity-providers/SushiSwapV2'
-import { SushiSwapV3Provider } from './liquidity-providers/SushiSwapV3'
-import { TraderJoeProvider } from './liquidity-providers/TraderJoe'
-import { TridentProvider } from './liquidity-providers/Trident'
-import { UbeSwapProvider } from './liquidity-providers/UbeSwap'
-import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
-import { UniswapV3Provider } from './liquidity-providers/UniswapV3'
-import type { PoolCode } from './pool-codes'
+} from './liquidity-providers/LiquidityProvider.js'
+import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider.js'
+import { NetSwapProvider } from './liquidity-providers/NetSwap.js'
+import { PancakeSwapProvider } from './liquidity-providers/PancakeSwap.js'
+import { QuickSwapProvider } from './liquidity-providers/QuickSwap.js'
+import { SpookySwapProvider } from './liquidity-providers/SpookySwap.js'
+import { SushiSwapV2Provider } from './liquidity-providers/SushiSwapV2.js'
+import { SushiSwapV3Provider } from './liquidity-providers/SushiSwapV3.js'
+import { TraderJoeProvider } from './liquidity-providers/TraderJoe.js'
+import { TridentProvider } from './liquidity-providers/Trident.js'
+import { UbeSwapProvider } from './liquidity-providers/UbeSwap.js'
+import { UniswapV2Provider } from './liquidity-providers/UniswapV2.js'
+import { UniswapV3Provider } from './liquidity-providers/UniswapV3.js'
+import type { PoolCode } from './pool-codes/index.js'
 
 // TODO: Should be a mode on the config for DataFetcher
 const isTest =
@@ -140,8 +140,8 @@ export class DataFetcher {
         ) {
           this.providers.push(provider)
         }
-      } catch (e: unknown) {
-        console.warn(e)
+      } catch (_e: unknown) {
+        // console.warn(e)
       }
     })
   }
@@ -170,7 +170,7 @@ export class DataFetcher {
     currency1: Type,
     excludePools?: Set<string>,
   ): Promise<void> {
-    console.log('PROVIDER COUNT', this.providers.length)
+    // console.log('PROVIDER COUNT', this.providers.length)
     // ensure that we only fetch the native wrap pools if the token is the native currency and wrapped native currency
     if (currency0.wrapped.equals(currency1.wrapped)) {
       const provider = this.providers.find(

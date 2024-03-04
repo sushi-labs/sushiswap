@@ -1,12 +1,16 @@
 import invariant from 'tiny-invariant'
-import { Amount as CurrencyAmount, Price, Token } from '../../../currency'
-import { BigintIsh, MAX_UINT256, Percent } from '../../../math'
-import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96'
-import { maxLiquidityForAmounts } from '../utils/maxLiquidityForAmounts'
-import { tickToPrice } from '../utils/priceTickConversions'
-import { SqrtPriceMath } from '../utils/sqrtPriceMath'
-import { TickMath } from '../utils/tickMath'
-import { SushiSwapV3Pool } from './SushiSwapV3Pool'
+import {
+  Amount as CurrencyAmount,
+  Price,
+  Token,
+} from '../../../currency/index.js'
+import { BigintIsh, MAX_UINT256, Percent } from '../../../math/index.js'
+import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96.js'
+import { maxLiquidityForAmounts } from '../utils/maxLiquidityForAmounts.js'
+import { tickToPrice } from '../utils/priceTickConversions.js'
+import { SqrtPriceMath } from '../utils/sqrtPriceMath.js'
+import { TickMath } from '../utils/tickMath.js'
+import { SushiSwapV3Pool } from './SushiSwapV3Pool.js'
 
 interface PositionConstructorArgs {
   pool: SushiSwapV3Pool

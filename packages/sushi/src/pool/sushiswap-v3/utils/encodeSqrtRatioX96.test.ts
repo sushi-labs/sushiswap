@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { Q96 } from '../internalConstants'
-import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96'
+import { Q96 } from '../internalConstants.js'
+import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96.js'
 
 describe('#encodeSqrtRatioX96', () => {
   it('1/1', () => {

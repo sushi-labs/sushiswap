@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { priceUpdateInterval, prices } from '../../prices'
-import { allPricesSchema, singleAddressSchema } from './schema'
+import { priceUpdateInterval, prices } from '../../prices.js'
+import { allPricesSchema, singleAddressSchema } from './schema.js'
 
 export const pricesHandler = (req: Request, res: Response) => {
   const { currency } = allPricesSchema.parse(req.params)

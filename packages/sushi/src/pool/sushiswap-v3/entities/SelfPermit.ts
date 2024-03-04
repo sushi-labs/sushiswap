@@ -1,8 +1,10 @@
 import { Interface } from '@ethersproject/abi'
-import ISelfPermit from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json'
-import { toHex } from '../../../convert'
-import { Token } from '../../../currency'
-import { BigintIsh } from '../../../math'
+import ISelfPermit from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISelfPermit.sol/ISelfPermit.json' assert {
+  type: 'json',
+}
+import { toHex } from '../../../convert/index.js'
+import { Token } from '../../../currency/index.js'
+import { BigintIsh } from '../../../math/index.js'
 
 export interface StandardPermitArguments {
   v: 0 | 1 | 27 | 28

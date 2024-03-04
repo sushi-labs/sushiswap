@@ -1,7 +1,7 @@
 import { PublicClient } from 'viem'
-import { ChainId, chainShortName } from '../../chain'
-import type { Token } from '../../currency'
-import type { PoolCode } from '../pool-codes'
+import { ChainId, chainShortName } from '../../chain/index.js'
+import type { Token } from '../../currency/index.js'
+import type { PoolCode } from '../pool-codes/index.js'
 
 export enum LiquidityProviders {
   SushiSwapV2 = 'SushiSwapV2',
@@ -33,6 +33,14 @@ export enum LiquidityProviders {
   Swapsicle = 'Swapsicle',
   VVSStandard = 'VVSStandard',
   Fraxswap = 'Fraxswap',
+  SwapBlast = 'SwapBlast',
+  BlastDEX = 'BlastDEX',
+  MonoswapV2 = 'MonoswapV2',
+  MonoswapV3 = 'MonoswapV3',
+  ThrusterV2 = 'ThrusterV2',
+  ThrusterV3 = 'ThrusterV3',
+  DyorV2 = 'DyorV2',
+  HyperBlast = 'HyperBlast',
 }
 
 export abstract class LiquidityProvider {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Address } from 'viem'
-import { CHAIN_ID } from '../../config'
-import extractor from '../../extractor'
+import { CHAIN_ID } from '../../config.js'
+import extractor from '../../extractor.js'
 
 async function handler(req: Request, res: Response) {
   res.setHeader('Cache-Control', 's-maxage=3600')

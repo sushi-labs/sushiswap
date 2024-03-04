@@ -5,7 +5,7 @@ import {
   RToken,
   TYPICAL_MINIMAL_LIQUIDITY,
   TYPICAL_SWAP_GAS_COST,
-} from './RPool'
+} from './RPool.js'
 
 export const CL_MIN_TICK = -887272
 export const CL_MAX_TICK = -CL_MIN_TICK - 1

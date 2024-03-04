@@ -17,6 +17,7 @@ import {
   SushiSwapV3DayDatasQuery,
   getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 const transformV3DayToSnapshot = (
   days: SushiSwapV3DayDatasQuery['uniswapDayDatas'],
@@ -130,5 +131,10 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
       return queries
     })
 
-    return Promise.all(queries).then((snapshots) => snapshots.flat())
+    return Promise.allSettled(queries).then((snapshots) =>
+      snapshots
+        .filter(isPromiseFulfilled)
+        .map((snapshot) => snapshot.value)
+        .flat(),
+    )
   }

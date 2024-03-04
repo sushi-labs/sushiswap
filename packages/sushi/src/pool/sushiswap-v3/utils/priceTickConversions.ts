@@ -1,8 +1,8 @@
-import { Price, Token } from '../../../currency'
+import { Price, Token } from '../../../currency/index.js'
 
-import { Q192 } from '../internalConstants'
-import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96'
-import { TickMath } from './tickMath'
+import { Q192 } from '../internalConstants.js'
+import { encodeSqrtRatioX96 } from './encodeSqrtRatioX96.js'
+import { TickMath } from './tickMath.js'
 
 /**
  * Returns a price object corresponding to the input tick and the base/quote token

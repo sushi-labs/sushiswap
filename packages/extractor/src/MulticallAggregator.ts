@@ -6,9 +6,8 @@ import {
   MulticallContracts,
   PublicClient,
 } from 'viem'
-
-import { delay } from './Utils'
-import { warnLog } from './WarnLog'
+import { delay } from './Utils.js'
+import { warnLog } from './WarnLog.js'
 
 const getBlockNumberAbi: Abi = [
   {

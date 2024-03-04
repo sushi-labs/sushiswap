@@ -1,8 +1,8 @@
 import { Address } from 'viem'
-import { abs } from '../math'
-import { PoolType, RPool, RToken } from './RPool'
-import { getBigInt, revertPositive } from './Utils'
-import { computeHybridLiquidity } from './functions'
+import { abs } from '../math/index.js'
+import { PoolType, RPool, RToken } from './RPool.js'
+import { getBigInt, revertPositive } from './Utils.js'
+import { computeHybridLiquidity } from './functions/index.js'
 
 export class ConstantProductRPool extends RPool {
   reserve0Number: number

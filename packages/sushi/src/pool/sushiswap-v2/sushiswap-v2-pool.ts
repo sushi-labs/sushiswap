@@ -1,18 +1,25 @@
 import invariant from 'tiny-invariant'
-import { chainName } from '../../chain'
-import { Amount, Price, Token } from '../../currency'
-import {
-  InsufficientInputAmountError,
-  InsufficientReservesError,
-} from '../../dex'
-import { BigintIsh, FIVE, ONE, ZERO, _997, _1000, sqrt } from '../../math'
-
+import { chainName } from '../../chain/index.js'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   isSushiSwapV2ChainId,
-} from '../../config'
-import { computeSushiSwapV2PoolAddress } from './compute-sushiswap-v2-pool-address'
-import { SerializedSushiSwapV2Pool, sushiSwapV2PoolSchema } from './zod'
+} from '../../config/index.js'
+import { Amount, Price, Token } from '../../currency/index.js'
+import {
+  InsufficientInputAmountError,
+  InsufficientReservesError,
+} from '../../dex/index.js'
+import {
+  BigintIsh,
+  FIVE,
+  ONE,
+  ZERO,
+  _997,
+  _1000,
+  sqrt,
+} from '../../math/index.js'
+import { computeSushiSwapV2PoolAddress } from './compute-sushiswap-v2-pool-address.js'
+import { SerializedSushiSwapV2Pool, sushiSwapV2PoolSchema } from './zod.js'
 
 export class SushiSwapV2Pool {
   public readonly liquidityToken: Token

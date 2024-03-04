@@ -1,5 +1,5 @@
-import { ChainId } from '../chain'
-import { Token } from '../currency'
+import { ChainId } from '../chain/index.js'
+import { Token } from '../currency/index.js'
 import {
   APE_ADDRESS,
   BCT_ADDRESS,
@@ -17,10 +17,11 @@ import {
   XSUSHI_ADDRESS,
   rETH2_ADDRESS,
   renBTC_ADDRESS,
-} from '../currency/token-addresses'
+} from '../currency/token-addresses.js'
 import {
   AAVE,
   APE,
+  BAL,
   BCT,
   COMP,
   CRV,
@@ -29,22 +30,34 @@ import {
   FRAX,
   FXS,
   GALA,
+  GNS,
+  GRT,
+  JUGNI,
   KLIMA,
+  KNCv2,
   KP3R,
   LDO,
   LINK,
   MANA,
   MKR,
+  OCEAN,
   PRIMATE,
+  QUICK,
+  RNDR,
+  SAND,
   SNX,
+  STG,
   SUSHI,
+  TEL,
   TRIBE,
+  UNI,
+  WAVAX,
   WBTC,
   XSUSHI,
   YFI,
   renBTC,
   sETH2,
-} from '../currency/tokens'
+} from '../currency/tokens.js'
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }
@@ -90,7 +103,21 @@ export const ADDITIONAL_BASES: {
       SNX[ChainId.POLYGON],
       CRV[ChainId.POLYGON],
       YFI[ChainId.POLYGON],
-      // ENJ[ChainId.POLYGON], // could not find on polygon
+      GNS[ChainId.POLYGON],
+      SAND[ChainId.POLYGON],
+      STG[ChainId.POLYGON],
+      UNI[ChainId.POLYGON],
+      SUSHI[ChainId.POLYGON],
+      RNDR[ChainId.POLYGON],
+      TEL[ChainId.POLYGON],
+      GRT[ChainId.POLYGON],
+      BAL[ChainId.POLYGON],
+      QUICK[ChainId.POLYGON],
+      OCEAN[ChainId.POLYGON],
+      XSUSHI[ChainId.POLYGON],
+      KNCv2[ChainId.POLYGON],
+      WAVAX[ChainId.POLYGON],
+      JUGNI[ChainId.POLYGON],
     ],
   },
   [ChainId.ARBITRUM]: {

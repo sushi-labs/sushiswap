@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { TickListDataProvider } from './TickListDataProvider'
+import { TickListDataProvider } from './TickListDataProvider.js'
 
 describe('TickListDataProvider', () => {
   describe('constructor', () => {

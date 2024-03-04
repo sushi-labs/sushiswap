@@ -1,5 +1,5 @@
-import { Currency, Price } from '../../../currency'
-import { Fraction } from '../../../math'
+import { Currency, Price } from '../../../currency/index.js'
+import { Fraction } from '../../../math/index.js'
 
 /**
  * Convert fraction to decimal number

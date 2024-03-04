@@ -1,5 +1,5 @@
 import { ChainId } from 'sushi/chain'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import { SUSHISWAP_V3_INIT_CODE_HASH, SushiSwapV3ChainId } from 'sushi/config'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { erc20ABI, readContracts } from 'wagmi'
 
@@ -113,6 +113,8 @@ export const getConcentratedLiquidityPositions = async ({
       tokenA: el.token0,
       tokenB: el.token1,
       fee: el.fee,
+      initCodeHashManualOverride:
+        SUSHISWAP_V3_INIT_CODE_HASH[el.chainId as SushiSwapV3ChainId],
     }),
     fees: fees ? fees[i] : undefined,
   })) as ConcentratedLiquidityPosition[]

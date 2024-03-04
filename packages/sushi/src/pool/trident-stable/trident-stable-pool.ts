@@ -2,17 +2,17 @@ import invariant from 'tiny-invariant'
 import {
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
-} from '../../config'
-import { Amount, Price, Share, Token } from '../../currency'
+} from '../../config/index.js'
+import { Amount, Price, Share, Token } from '../../currency/index.js'
 import {
   Fee,
   InsufficientInputAmountError,
   InsufficientReservesError,
   Pool,
-} from '../../dex'
-import { ZERO, sqrt } from '../../math'
-import { computeTridentStablePoolAddress } from './compute-trident-stable-pool-address'
-import { SerializedStablePool, tridentStablePoolSchema } from './zod'
+} from '../../dex/index.js'
+import { ZERO, sqrt } from '../../math/index.js'
+import { computeTridentStablePoolAddress } from './compute-trident-stable-pool-address.js'
+import { SerializedStablePool, tridentStablePoolSchema } from './zod.js'
 
 export interface Rebase {
   elastic: bigint

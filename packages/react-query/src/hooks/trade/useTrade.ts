@@ -102,7 +102,7 @@ export const useTradeQuery = (
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
-      source !== undefined && params.searchParams.set('source', `${source}`)
+      if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
       // const json = deserialize(await res.json()) should cause react query error
@@ -191,7 +191,7 @@ export const useTrade = (variables: UseTradeParams) => {
             : undefined,
           priceImpact: data.route.priceImpact
             ? new Percent(Math.round(data.route.priceImpact * 10000), 10000)
-            : undefined,
+            : new Percent(0),
           amountIn,
           amountOut,
           minAmountOut: Amount.fromRawAmount(

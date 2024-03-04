@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { serializePoolCodesJSON } from 'sushi/serializer'
-import { CHAIN_ID, POOLS_SERIALIZATION_INTERVAL } from '../../config'
-import extractor from '../../extractor'
+import { CHAIN_ID, POOLS_SERIALIZATION_INTERVAL } from '../../config.js'
+import extractor from '../../extractor.js'
 
 let lastPools: object = {}
 let lastPoolsSerializationTime = 0

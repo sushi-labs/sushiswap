@@ -9,7 +9,7 @@ import {
   findMultiRouteExactIn,
   findMultiRouteExactOut,
   getBigInt,
-} from '../../src/tines'
+} from '../../src/tines/index.js'
 
 const gasPrice = 1 * 200 * 1e-9
 

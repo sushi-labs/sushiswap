@@ -1,13 +1,13 @@
 import { Address, PublicClient } from 'viem'
-import { erc20Abi, tickLensAbi } from '../../abi'
-import { ChainId } from '../../chain'
-import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config'
-import { Currency, Token, Type } from '../../currency'
-import { computeSushiSwapV3PoolAddress } from '../../pool'
-import { RToken, UniV3Pool } from '../../tines'
-import { getCurrencyCombinations } from '../get-currency-combinations'
-import { type PoolCode, UniV3PoolCode } from '../pool-codes'
-import { LiquidityProvider } from './LiquidityProvider'
+import { erc20Abi, tickLensAbi } from '../../abi/index.js'
+import { ChainId } from '../../chain/index.js'
+import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config/index.js'
+import { Currency, Token, Type } from '../../currency/index.js'
+import { computeSushiSwapV3PoolAddress } from '../../pool/index.js'
+import { RToken, UniV3Pool } from '../../tines/index.js'
+import { getCurrencyCombinations } from '../get-currency-combinations.js'
+import { type PoolCode, UniV3PoolCode } from '../pool-codes/index.js'
+import { LiquidityProvider } from './LiquidityProvider.js'
 
 interface StaticPool {
   address: Address
