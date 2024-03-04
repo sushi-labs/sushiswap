@@ -2,7 +2,7 @@
 import { ChainId } from 'sushi/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
-import { PoolCode } from 'sushi/router'
+import { PoolCode, deserializePoolsBinary } from 'sushi/router'
 import { deserializePoolCodesJSON } from 'sushi/serializer'
 
 const DEBUG_PRINT = false
@@ -54,36 +54,37 @@ export class ExtractorClient {
   async updatePools() {
     try {
       if (DEBUG_PRINT)
-        console.log(`${this.extractorServer}/pool-codes/${this.chainId}`)
+        console.log(`${this.extractorServer}/pool-codes-bin/${this.chainId}`)
       const resp = await fetch(
-        `${this.extractorServer}/pool-codes/${this.chainId}`,
+        `${this.extractorServer}/pool-codes-bin/${this.chainId}`,
       )
       if (resp.status === 200) {
-        const data = await resp.text()
+        const data = await resp.arrayBuffer()
         const start = performance.now()
-        const pools = deserializePoolCodesJSON(data)
+        const { pools, newTokens, existedTokensNumber } =
+          deserializePoolsBinary(new Uint8Array(data), (addr: string) => {
+            return this.tokenMap.get(addr.toLowerCase())
+          })
         this.poolCodesMap.clear()
-        this.tokenMap.clear()
+        const remakeTokenMap = existedTokensNumber !== this.tokenMap.size
+        if (remakeTokenMap) this.tokenMap.clear()
+        else newTokens.forEach((t) => this.tokenMap.set(tokenId(t.address), t))
         pools.forEach((p) => {
           const t0 = p.pool.token0
-          const t0Id = tokenId(t0.address)
-          if (this.tokenMap.get(t0Id) === undefined)
-            this.tokenMap.set(t0Id, new Token({ ...t0, chainId: this.chainId }))
-
           const t1 = p.pool.token1
-          const t1Id = tokenId(t1.address)
-          if (this.tokenMap.get(t1Id) === undefined)
-            this.tokenMap.set(t1Id, new Token({ ...t1, chainId: this.chainId }))
+          if (remakeTokenMap) {
+            this.tokenMap.set(tokenId(t0.address), t0 as Token)
+            this.tokenMap.set(tokenId(t1.address), t1 as Token)
+          }
 
           const id = tokenPairId(t0.address, t1.address)
           const pl = this.poolCodesMap.get(id)
           if (pl === undefined) this.poolCodesMap.set(id, [p])
           else pl.push(p)
         })
+        const timing = Math.round(performance.now() - start)
         console.log(
-          `updatePools: ${this.poolCodesMap.size} pools and ${
-            this.tokenMap.size
-          } tokens (${Math.round(performance.now() - start)}ms cpu time)`,
+          `updatePools: ${this.poolCodesMap.size} pools and ${this.tokenMap.size} tokens (${timing}ms cpu time)`,
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {

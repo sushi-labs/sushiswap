@@ -29,9 +29,9 @@ async function handler(req: Request, res: Response) {
       )}ms`,
     )
   }
-  //res.set('Content-Type', 'application/octet-stream')
   res.setHeader('Content-Type', 'application/octet-stream')
-  return res.send(lastPoolsBlob)
+  res.set('Content-Type', 'application/octet-stream')
+  return res.end(lastPoolsBlob)
 }
 
 export default handler
