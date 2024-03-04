@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { serializePoolsBinary } from 'sushi'
+import { serializePoolsBinary } from 'sushi/router'
 import { CHAIN_ID, POOLS_SERIALIZATION_INTERVAL } from '../../config'
 import extractor from '../../extractor'
 

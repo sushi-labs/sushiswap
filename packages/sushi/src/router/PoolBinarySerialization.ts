@@ -1,17 +1,9 @@
-import {
-  ConstantProductPoolCode,
-  CurvePoolCode,
-  LiquidityProviders,
-  NativeWrapBridgePoolCode,
-  PoolCode,
-  UniV3PoolCode,
-} from '.'
-import { ChainId } from '..'
-import { Token } from '../currency'
+import { ChainId } from '../chain/index.js'
+import { Token } from '../currency/index.js'
 import {
   BinReadStream,
   BinWriteStream,
-} from '../serializer/BinarySerialization'
+} from '../serializer/BinarySerialization.js'
 import {
   BridgeUnlimited,
   ConstantProductRPool,
@@ -20,7 +12,15 @@ import {
   RToken,
   UniV3Pool,
   createCurvePoolsForMultipool,
-} from '../tines'
+} from '../tines/index.js'
+import { LiquidityProviders } from './liquidity-providers/index.js'
+import {
+  ConstantProductPoolCode,
+  CurvePoolCode,
+  NativeWrapBridgePoolCode,
+  PoolCode,
+  UniV3PoolCode,
+} from './pool-codes/index.js'
 
 enum PoolTypeIndex {
   Bridge = 0,
