@@ -133,6 +133,15 @@ export class BinWriteStream {
     this.position += written
   }
 
+  // works slower
+  // str16UTF8Buff(s: string) {
+  //   const data = Buffer.from(s, 'utf8')
+  //   this.ensurePlace(data.length + 2)
+  //   this.uint16(data.length)
+  //   this.data.set(data, this.position)
+  //   this.position += data.length
+  // }
+
   str16UTF16(s: string) {
     if (s.length >= MAX_BYTE2_VALUE) {
       console.error(
