@@ -8,6 +8,7 @@ import extractor from './extractor'
 
 import poolCodes from './handlers/pool-codes'
 import poolCodesBetween from './handlers/pool-codes-between'
+import poolCodesBin from './handlers/pool-codes-bin'
 import poolCodesForToken from './handlers/pool-codes-for-token'
 import requestedPairs from './handlers/requested-pairs'
 import token from './handlers/token'
@@ -51,6 +52,7 @@ app.get('/health', (_, res: Response) => {
 
 app.get('/token/:chainId/:address', token)
 app.get('/pool-codes/:chainId', poolCodes)
+app.get('/pool-codes-bin/:chainId', poolCodesBin)
 app.get('/pool-codes-for-token/:chainId/:address', poolCodesForToken)
 app.get('/pool-codes-between/:chainId/:addr0/:addr1', poolCodesBetween)
 app.get('/requested-pairs/:chainId', requestedPairs)
