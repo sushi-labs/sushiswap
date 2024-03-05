@@ -30,7 +30,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   ConcentratedLiquidityPosition,
-  getV3NonFungiblePositionManagerConractConfig,
+  getV3NonFungiblePositionManagerContractConfig,
   useNetwork,
   usePrepareSendTransaction,
   useSendTransaction,
@@ -192,7 +192,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       })
 
       return {
-        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
         data: calldata as Hex,
         value: BigInt(_value),
       }
