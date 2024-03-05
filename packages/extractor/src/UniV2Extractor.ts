@@ -5,6 +5,7 @@ import { ConstantProductPoolCode, LiquidityProviders } from 'sushi/router'
 import { ConstantProductRPool, RToken } from 'sushi/tines'
 import { Address, Log, PublicClient, decodeEventLog, parseAbiItem } from 'viem'
 import { Counter } from './Counter.js'
+import { HistoryManager } from './HistoryManager.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
@@ -77,6 +78,7 @@ export class UniV2Extractor {
   readonly logging: boolean
   readonly taskCounter: Counter
   readonly poolPermanentCache: PermanentCache<PoolCacheRecord>
+  readonly historyManager = new HistoryManager<Address>(10 * 60 * 1000)
   watchedPools = 0
   started = false
 
@@ -150,6 +152,7 @@ export class UniV2Extractor {
             } else {
               poolState.poolCode.pool.updateReserves(reserve0, reserve1)
               poolState.status = PoolStatus.ValidPool
+              this.historyManager.addRecord(l.address)
             }
           }
           ++eventKnown
@@ -175,6 +178,7 @@ export class UniV2Extractor {
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
+        this.historyManager.forgetAllHistory()
         Array.from(this.poolMap.values()).forEach((pc) =>
           this.updatePoolState(pc),
         )
@@ -258,6 +262,7 @@ export class UniV2Extractor {
       const [reserve0, reserve1] = reserves as [bigint, bigint]
       pool.updateReserves(reserve0, reserve1)
       poolState.status = PoolStatus.ValidPool
+      this.historyManager.addRecord(pool.address)
     } catch (_e) {
       warnLog(
         this.multiCallAggregator.chainId,
@@ -572,6 +577,7 @@ export class UniV2Extractor {
       ),
     }
     this.poolMap.set(args.address.toLowerCase(), poolState)
+    this.historyManager.addRecord(args.address)
     if (args.addToCache)
       this.poolPermanentCache.add({
         address: args.address,
@@ -595,6 +601,30 @@ export class UniV2Extractor {
         p.status === PoolStatus.UpdatingPool,
     ) as PoolStateValidPool[]
     return pools.map((p) => p.poolCode)
+  }
+
+  getCurrentPoolCodesUpdate(
+    fromMark: number,
+    newMark?: number,
+  ): ConstantProductPoolCode[] {
+    const updated = this.historyManager.getRecords(fromMark, newMark)
+    if (updated === undefined) return this.getCurrentPoolCodes()
+
+    const to = updated.records.length
+    const pools: ConstantProductPoolCode[] = []
+    const addedPools = new Set<Address>()
+    for (let i = updated.from; i < to; ++i) {
+      const addr = updated.records[i]
+      if (addedPools.has(addr)) continue
+      addedPools.add(addr)
+      const pool = this.poolMap.get(addr.toLowerCase())
+      if (
+        pool?.status === PoolStatus.ValidPool ||
+        pool?.status === PoolStatus.UpdatingPool
+      )
+        pools.push(pool.poolCode)
+    }
+    return pools
   }
 
   getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
