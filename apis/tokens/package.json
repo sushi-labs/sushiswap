@@ -29,7 +29,7 @@
     "@vercel/node": "3.0.9",
     "@wagmi/core": "2.6.5",
     "sushi": "workspace:*",
-    "viem": "2.7.15",
+    "viem": "2.7.18",
     "zod": "3.21.4"
   },
   "devDependencies": {

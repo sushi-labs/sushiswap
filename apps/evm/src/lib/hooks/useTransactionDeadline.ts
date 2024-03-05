@@ -2,13 +2,15 @@
 
 import { useCurrentBlockTimestamp } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
-import { chainsL2 } from 'sushi/chain'
+import { ChainId, chainsL2 } from 'sushi/chain'
 
 import { L2_DEADLINE_FROM_NOW } from '../constants'
 
 const TRANSACTION_DEADLINE = 30n
 
-export const useTransactionDeadline = (chainId: number): bigint | undefined => {
+export const useTransactionDeadline = (
+  chainId: ChainId,
+): bigint | undefined => {
   const { data: blockTimestamp } = useCurrentBlockTimestamp(chainId)
   return useMemo(() => {
     if (

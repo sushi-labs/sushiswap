@@ -35,7 +35,7 @@
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "sushi": "workspace:*",
-    "viem": "2.7.15",
+    "viem": "2.7.18",
     "wagmi": "2.5.7",
     "zod": "3.21.4"
   },

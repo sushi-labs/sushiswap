@@ -3,14 +3,14 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
-  Address,
   useAccount,
   useClientTrade,
+  useConfig,
   useFeeData,
-  useNetwork,
   useTokenWithCache,
-  watchNetwork,
+  watchAccount,
 } from '@sushiswap/wagmi'
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -26,7 +26,7 @@ import { ChainId, TestnetChainId } from 'sushi/chain'
 import { defaultQuoteCurrency } from 'sushi/config'
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { isAddress } from 'viem'
+import { Address, isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 import { useSwapApi } from '../../../lib/swap/useSwapApi'
@@ -78,8 +78,7 @@ interface DerivedStateSimpleSwapProviderProps {
 const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
   ({ children }) => {
     const { push } = useRouter()
-    const { address } = useAccount()
-    const { chain } = useNetwork()
+    const { address, chain } = useAccount()
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
@@ -251,13 +250,17 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
+    const config = useConfig<PublicWagmiConfig>()
+
     useEffect(() => {
-      const unwatch = watchNetwork(({ chain }) => {
-        if (!chain || chain.id === chainId) return
-        push(pathname, { scroll: false })
+      const unwatch = watchAccount(config, {
+        onChange: ({ chain }) => {
+          if (!chain || chain.id === chainId) return
+          push(pathname, { scroll: false })
+        },
       })
       return () => unwatch()
-    }, [chainId, pathname, push])
+    }, [config, chainId, pathname, push])
 
     // Derive token0
     const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(
@@ -424,15 +427,19 @@ const useSimpleSwapTrade = () => {
     },
   })
 
+  const config = useConfig<PublicWagmiConfig>()
+
   // Reset the fallback on network switch
   useEffect(() => {
-    const unwatch = watchNetwork(({ chain }) => {
-      if (chain) {
-        resetFallback()
-      }
+    const unwatch = watchAccount(config, {
+      onChange: ({ chain }) => {
+        if (chain) {
+          resetFallback()
+        }
+      },
     })
     return () => unwatch()
-  }, [resetFallback])
+  }, [config, resetFallback])
 
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
 }

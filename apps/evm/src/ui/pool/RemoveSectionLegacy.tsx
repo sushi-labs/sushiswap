@@ -6,22 +6,17 @@ import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
-  Address,
   SushiSwapV2PoolState,
+  UseCallParameters,
   getSushiSwapRouterContractConfig,
   useAccount,
-  useNetwork,
-  usePrepareSendTransaction,
+  useCall,
+  usePublicClient,
   useSendTransaction,
   useSushiSwapRouterContract,
   useSushiSwapV2Pool,
   useTotalSupply,
 } from '@sushiswap/wagmi'
-import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
@@ -40,8 +35,9 @@ import { ChainId } from 'sushi/chain'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { encodeFunctionData } from 'viem'
+import { SendTransactionReturnType, encodeFunctionData } from 'viem'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
@@ -52,11 +48,11 @@ interface RemoveSectionLegacyProps {
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
   withCheckerRoot(({ pool: _pool }) => {
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
-    const { chain } = useNetwork()
     const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
-    const { address } = useAccount()
-    const deadline = useTransactionDeadline(_pool.chainId)
+    const client = usePublicClient<PublicWagmiConfig>()
+    const { address, chain } = useAccount()
+    const deadline = useTransactionDeadline(_pool.chainId as ChainId)
     const contract = useSushiSwapRouterContract(
       _pool.chainId as SushiSwapV2ChainId,
     )
@@ -140,16 +136,19 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       [balance, percentToRemove],
     )
 
-    const onSettled = useCallback(
-      (data: SendTransactionResult | undefined) => {
-        if (!data || !chain?.id) return
+    const onSuccess = useCallback(
+      (hash: SendTransactionReturnType) => {
+        setPercentage('0')
+
+        if (!chain?.id) return
+
         const ts = new Date().getTime()
         void createToast({
           account: address,
           type: 'burn',
           chainId: chain.id,
-          txHash: data.hash,
-          promise: waitForTransaction({ hash: data.hash }),
+          txHash: hash,
+          promise: client.waitForTransactionReceipt({ hash }),
           summary: {
             pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
             completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
@@ -159,15 +158,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           groupTimestamp: ts,
         })
       },
-      [chain, token0.symbol, token1.symbol, address],
+      [client, chain, token0.symbol, token1.symbol, address],
     )
 
-    const [prepare, setPrepare] = useState<
-      UsePrepareSendTransactionConfig | undefined
-    >(undefined)
+    const [prepare, setPrepare] = useState<UseCallParameters | undefined>(
+      undefined,
+    )
 
     useEffect(() => {
-      const prep = async (): Promise<UsePrepareSendTransactionConfig> => {
+      const prep = async () => {
         if (
           !token0 ||
           !token1 ||
@@ -204,8 +203,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               ],
               args: [
                 token1IsNative
-                  ? (pool.token0.wrapped.address as Address)
-                  : (pool.token1.wrapped.address as Address),
+                  ? pool.token0.wrapped.address
+                  : pool.token1.wrapped.address,
                 balance.multiply(percentToRemoveDebounced).quotient,
                 token1IsNative
                   ? debouncedMinAmount0.quotient
@@ -222,8 +221,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           return {
             functionNames: ['removeLiquidity'],
             args: [
-              pool.token0.wrapped.address as Address,
-              pool.token1.wrapped.address as Address,
+              pool.token0.wrapped.address,
+              pool.token1.wrapped.address,
               balance.multiply(percentToRemoveDebounced).quotient,
               debouncedMinAmount0.quotient,
               debouncedMinAmount1.quotient,
@@ -234,14 +233,17 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         })()
 
         const safeGasEstimates = await Promise.all(
-          config.functionNames.map((methodName) =>
-            contract.estimateGas[methodName](config.args as any)
-              .then(gasMargin)
-              .catch((e) => {
-                console.error(e)
-                return undefined
-              }),
-          ),
+          config.functionNames.map(async (methodName) => {
+            try {
+              const estimatedGas: bigint = await (
+                contract.estimateGas[methodName] as any
+              )(config.args)
+              return gasMargin(estimatedGas)
+            } catch (e) {
+              console.error(e)
+              return undefined
+            }
+          }),
         )
 
         const indexOfSuccessfulEstimation = safeGasEstimates.findIndex(
@@ -261,7 +263,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               args: config.args as any,
             }),
             gas: safeGasEstimate,
-          }
+          } satisfies UseCallParameters
         }
       }
 
@@ -290,19 +292,26 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       percentage,
     ])
 
-    const { config } = usePrepareSendTransaction({
+    const { isError: isSimulationError } = useCall({
       ...prepare,
       chainId: _pool.chainId,
-      enabled: Boolean(approved && Number(percentage) > 0),
+      query: { enabled: Boolean(approved && Number(percentage) > 0) },
     })
 
-    const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-      ...config,
-      onSettled,
-      onSuccess: () => {
-        setPercentage('0')
-      },
-    })
+    const { sendTransactionAsync, isLoading: isWritePending } =
+      useSendTransaction({
+        mutation: {
+          onSuccess,
+        },
+      })
+
+    const send = useMemo(() => {
+      if (!prepare || isSimulationError) return undefined
+
+      return async () => {
+        await sendTransactionAsync(prepare as any)
+      }
+    }, [isSimulationError, prepare, sendTransactionAsync])
 
     return (
       <div>
@@ -333,7 +342,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                 size="default"
                 variant="outline"
                 fullWidth
-                chainId={_pool.chainId}
+                chainId={_pool.chainId as ChainId}
               >
                 <Checker.Guard
                   size="default"
@@ -350,17 +359,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                     contract={
                       getSushiSwapRouterContractConfig(
                         _pool.chainId as SushiSwapV2ChainId,
-                      ).address as Address
+                      ).address
                     }
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                       <Button
                         size="default"
-                        onClick={() => sendTransaction?.()}
+                        onClick={() => send?.()}
                         fullWidth
-                        disabled={
-                          !approved || isWritePending || !sendTransaction
-                        }
+                        disabled={!approved || isWritePending || !send}
                         testId="remove-liquidity"
                       >
                         {isWritePending ? (

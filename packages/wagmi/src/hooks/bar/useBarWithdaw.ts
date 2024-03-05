@@ -1,7 +1,7 @@
 'use client'
 
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { xsushiAbi } from 'sushi/abi'
 import { Amount, Token, XSUSHI_ADDRESS } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
@@ -21,11 +21,10 @@ interface UseBarWithdrawParams {
   enabled?: boolean
 }
 
-type useBarWithdraw = (
-  params: UseBarWithdrawParams,
-) => ReturnType<typeof useWriteContract>
-
-export const useBarWithdraw: useBarWithdraw = ({ amount, enabled = true }) => {
+export function useBarWithdraw({
+  amount,
+  enabled = true,
+}: UseBarWithdrawParams) {
   const { address } = useAccount()
   const client = usePublicClient<PublicWagmiConfig>()
 
@@ -58,7 +57,7 @@ export const useBarWithdraw: useBarWithdraw = ({ amount, enabled = true }) => {
     }
   }, [])
 
-  const { data } = useSimulateContract({
+  const { data: simulation } = useSimulateContract({
     address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
     abi: xsushiAbi,
     functionName: 'leave',
@@ -67,11 +66,20 @@ export const useBarWithdraw: useBarWithdraw = ({ amount, enabled = true }) => {
     query: { enabled },
   })
 
-  return useWriteContract({
-    ...data?.request,
+  const { writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onSuccess,
       onError,
     },
   })
+
+  const write = useMemo(() => {
+    if (!writeContractAsync || !simulation) return
+
+    return async () => {
+      await writeContractAsync(simulation.request)
+    }
+  }, [writeContractAsync, simulation])
+
+  return { ...rest, write }
 }

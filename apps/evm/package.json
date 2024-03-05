@@ -71,7 +71,7 @@
     "sushi": "workspace:*",
     "swr": "2.1.5",
     "tiny-invariant": "1.3.1",
-    "viem": "2.7.15",
+    "viem": "2.7.18",
     "wagmi": "2.5.7",
     "zod": "3.21.4"
   },
