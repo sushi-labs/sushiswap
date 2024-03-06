@@ -129,9 +129,8 @@ export class LogFilter2 {
   start() {
     if (this.unWatchBlocks) return // have been started
     if (this.logType === LogFilterType.Native) {
-      this.client
-        .createEventFilter({ events: this.eventsAll })
-        .then((filtr) => {
+      this.client.createEventFilter({ events: this.eventsAll }).then(
+        (filtr) => {
           this.consoleLog(`LogFilter ${filtr.id} was created`)
           this.filter = filtr as unknown as Filter
           this.unWatchBlocks = this.client.watchBlockNumber({
@@ -160,7 +159,13 @@ export class LogFilter2 {
               this.blockProcessing = false
             },
           })
-        })
+        },
+        (e) => {
+          const message = e instanceof Error ? e.message : e
+          warnLog(this.client.chain?.id, `LogFilter creation error: ${message}`)
+          this.start()
+        },
+      )
     } else {
       this.unWatchBlocks = this.client.watchBlocks({
         onBlock: async (block) => {
