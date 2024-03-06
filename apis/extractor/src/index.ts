@@ -15,11 +15,13 @@ import requestStatistics from './request-statistics.js'
 const app: Express = express()
 
 Sentry.init({
+  sampleRate: 1,
   dsn: SENTRY_DSN,
   environment: SENTRY_ENVIRONMENT,
   integrations: [
     // enable HTTP calls tracing
     new Sentry.Integrations.Http({
+      breadcrumbs: true,
       tracing: true,
     }),
     // enable Express.js middleware tracing
@@ -28,7 +30,8 @@ Sentry.init({
     }),
   ],
   // Performance Monitoring
-  tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+  enableTracing: true,
+  tracesSampleRate: 1,
 })
 
 const cpuUsageStatistics = new CPUUsageStatistics(60_000)
