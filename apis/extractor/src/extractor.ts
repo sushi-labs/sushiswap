@@ -12,8 +12,19 @@ const extractor = new Extractor({
     chain: ChainId | number | undefined,
     message: string,
     level: WarningLevel,
+    context?: string,
   ) => {
-    Sentry.captureMessage(`${chain}: ${message}`, level)
+    Sentry.captureMessage(
+      `${chain}: ${message}`,
+      context === undefined
+        ? level
+        : {
+            level,
+            contexts: {
+              trace: { data: { viem: context }, trace_id: '0', span_id: '0' },
+            },
+          },
+    )
   },
 })
 
