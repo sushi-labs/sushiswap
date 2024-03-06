@@ -23,6 +23,7 @@ import {
   QualityCheckerCallBackArg,
 } from './AlgebraQualityChecker.js'
 import { Counter } from './Counter.js'
+import { HistoryManager } from './HistoryManager.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
@@ -111,6 +112,7 @@ export class AlgebraExtractor {
   lastProcessdBlock = -1
   watchedPools = 0
   started = false
+  readonly historyManager = new HistoryManager<Address>(10 * 60 * 1000)
 
   constructor(
     client: PublicClient,
@@ -146,7 +148,13 @@ export class AlgebraExtractor {
       (arg: QualityCheckerCallBackArg) => {
         const addr = arg.ethalonPool.address.toLowerCase() as Address
         if (arg.ethalonPool !== this.poolMap.get(addr)) return false // checked pool was replaced during checking
-        if (arg.correctPool) this.poolMap.set(addr, arg.correctPool)
+        if (arg.correctPool) {
+          this.poolMap.set(addr, arg.correctPool)
+          this.historyManager.addRecord(arg.ethalonPool.address)
+          arg.correctPool.on('PoolCodeWasChanged', (w) => {
+            this.historyManager.addRecord((w as AlgebraPoolWatcher).address)
+          })
+        }
         this.consoleLog(
           `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
             `${arg.correctPool ? 'pool was updated ' : ''}` +
@@ -193,6 +201,7 @@ export class AlgebraExtractor {
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
+        this.historyManager.forgetAllHistory()
         Array.from(this.poolMap.values()).forEach((p) => p.updatePoolState())
       }
     })
@@ -325,6 +334,7 @@ export class AlgebraExtractor {
     )
     watcher.updatePoolState()
     this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
+    this.historyManager.addRecord(p.address)
     if (addToCache)
       this.poolPermanentCache.add({
         address: expectedPoolAddress,
@@ -340,6 +350,9 @@ export class AlgebraExtractor {
           `add pool ${expectedPoolAddress} (${delay}ms, ${source}), watched pools total: ${this.watchedPools}`,
         )
       }
+    })
+    watcher.on('PoolCodeWasChanged', (w) => {
+      this.historyManager.addRecord((w as AlgebraPoolWatcher).address)
     })
     return watcher
   }
@@ -494,6 +507,26 @@ export class AlgebraExtractor {
     return Array.from(this.poolMap.values())
       .map((p) => (p.isStable() ? p.getPoolCode() : undefined))
       .filter((pc) => pc !== undefined) as PoolCode[]
+  }
+
+  getCurrentPoolCodesUpdate(fromMark: number, newMark?: number): PoolCode[] {
+    const updated = this.historyManager.getRecords(fromMark, newMark)
+    if (updated === undefined) return this.getCurrentPoolCodes()
+
+    const to = updated.records.length
+    const pools: PoolCode[] = []
+    const addedPools = new Set<Address>()
+    for (let i = updated.from; i < to; ++i) {
+      const addr = updated.records[i]
+      if (addedPools.has(addr)) continue
+      addedPools.add(addr)
+      const pool = this.poolMap.get(addr.toLowerCase() as Address)
+      if (pool?.isStable()) {
+        const pc = pool.getPoolCode()
+        if (pc !== undefined) pools.push(pc)
+      }
+    }
+    return pools
   }
 
   getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
