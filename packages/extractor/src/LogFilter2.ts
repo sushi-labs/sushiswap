@@ -232,8 +232,13 @@ export class LogFilter2 {
     if (!this.blockFrame.add(block.number, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
-    const backupPlan = () => {
-      warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+    const backupPlan = (context?: string) => {
+      warnLog(
+        this.client.chain?.id,
+        `getLog failed for block ${block.hash}`,
+        'warning',
+        context,
+      )
       this.restart()
     }
 
@@ -294,10 +299,12 @@ export class LogFilter2 {
           this.client
             .getBlock({ blockHash: block.parentHash })
             .then((b) => this.addBlock(b, false)),
-        () =>
+        (e) =>
           warnLog(
             this.client.chain?.id,
-            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1',
+            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!',
+            'warning',
+            e,
           ),
       )
   }
