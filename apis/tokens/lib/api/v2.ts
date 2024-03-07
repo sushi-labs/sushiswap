@@ -1,9 +1,9 @@
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import type { Address } from '@wagmi/core'
 import { configureChains, createConfig, fetchToken } from '@wagmi/core'
-import { databaseClient, tokenSchema } from '../db.js'
 import { sql } from 'drizzle-orm'
 import { getAddress } from 'viem'
+import { databaseClient, tokenSchema } from '../db.js'
 
 const { publicClient } = configureChains(allChains, allProviders)
 createConfig({

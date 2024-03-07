@@ -1,11 +1,11 @@
 import {
-  pgTable,
   bigint,
-  varchar,
+  integer,
+  pgTable,
+  timestamp,
   unique,
   uuid,
-  integer,
-  timestamp,
+  varchar,
 } from 'drizzle-orm/pg-core'
 
 export const chain = pgTable('chain', {

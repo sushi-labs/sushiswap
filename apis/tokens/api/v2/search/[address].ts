@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-import { SearchTokenApiSchema } from '../../../lib/schemas/search/address.js'
 import { getTokensByAddress } from '../../../lib/api/v2.js'
+import { SearchTokenApiSchema } from '../../../lib/schemas/search/address.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   response.setHeader(
