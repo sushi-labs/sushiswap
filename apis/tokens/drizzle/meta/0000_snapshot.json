@@ -86,10 +86,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "token_chainId_address_unique": {
-          "columns": [
-            "chainId",
-            "address"
-          ],
+          "columns": ["chainId", "address"],
           "nullsNotDistinct": false,
           "name": "token_chainId_address_unique"
         }
