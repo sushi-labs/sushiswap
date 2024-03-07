@@ -627,6 +627,10 @@ export class UniV2Extractor {
     return pools
   }
 
+  isMarkExist(mark: number) {
+    return this.historyManager.isMarkExist(mark)
+  }
+
   getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
     const add = (token: RToken) => {
       const num = tokenMap.get(token as Token) || 0

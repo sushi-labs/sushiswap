@@ -32,8 +32,12 @@ enum PoolTypeIndex {
 const FEE_FRACTIONS = 10_000_000
 
 // Serialization of constructor params
-export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
+export function serializePoolsBinary(
+  pools: PoolCode[],
+  extraData?: string,
+): Uint8Array {
   const stream = new BinWriteStream()
+  stream.str16(extraData ?? '')
   stream.uint24(
     pools.length > 0 ? (pools[0]?.pool.token0.chainId as number) : 0,
   )
@@ -123,8 +127,14 @@ export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
 export function deserializePoolsBinary(
   data: Uint8Array,
   existedTokens?: (a: string) => Token | undefined,
-): { pools: PoolCode[]; newTokens: Token[]; existedTokensNumber: number } {
+): {
+  pools: PoolCode[]
+  newTokens: Token[]
+  existedTokensNumber: number
+  extraData: string
+} {
   const stream = new BinReadStream(data)
+  const extraData = stream.str16()
   const chainId = stream.uint24() as ChainId
   const tokensNum = stream.uint24()
   const tokensArray: RToken[] = new Array(tokensNum)
@@ -193,7 +203,7 @@ export function deserializePoolsBinary(
         console.error(`Deserealization: unknown pool type ${poolType}`)
     }
   }
-  return { pools, newTokens, existedTokensNumber }
+  return { pools, newTokens, existedTokensNumber, extraData }
 }
 
 function readCPRPool(
