@@ -1,9 +1,7 @@
--- Current sql file was generated after introspecting the database
--- If you want to run this migration please uncomment this code before executing migrations
-/*
 CREATE TABLE IF NOT EXISTS "chain" (
 	"chainId" bigint PRIMARY KEY NOT NULL,
-	"name" varchar(255) NOT NULL
+	"name" varchar(255) NOT NULL,
+	CONSTRAINT "chain_chainId_unique" UNIQUE("chainId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "token" (
@@ -17,5 +15,3 @@ CREATE TABLE IF NOT EXISTS "token" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "token_chainId_address_unique" UNIQUE("chainId","address")
 );
-
-*/

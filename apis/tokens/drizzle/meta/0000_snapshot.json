@@ -1,6 +1,6 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
+  "id": "f9c2c538-fa77-4f47-9c69-7bbde061f501",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -24,7 +24,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "chain_chainId_unique": {
+          "name": "chain_chainId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "chainId"
+          ]
+        }
+      }
     },
     "token": {
       "name": "token",
@@ -86,12 +94,12 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "token_chainId_address_unique": {
+          "name": "token_chainId_address_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "chainId",
             "address"
-          ],
-          "nullsNotDistinct": false,
-          "name": "token_chainId_address_unique"
+          ]
         }
       }
     }
@@ -99,8 +107,8 @@
   "enums": {},
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   }
 }
