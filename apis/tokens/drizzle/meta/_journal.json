@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709812198907,
+      "tag": "0000_flawless_zeigeist",
+      "breakpoints": true
+    }
+  ]
+}
