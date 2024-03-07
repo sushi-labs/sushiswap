@@ -28,9 +28,7 @@
         "chain_chainId_unique": {
           "name": "chain_chainId_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "chainId"
-          ]
+          "columns": ["chainId"]
         }
       }
     },
@@ -96,10 +94,7 @@
         "token_chainId_address_unique": {
           "name": "token_chainId_address_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "chainId",
-            "address"
-          ]
+          "columns": ["chainId", "address"]
         }
       }
     }
