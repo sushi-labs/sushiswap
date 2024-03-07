@@ -1,4 +1,5 @@
 // import EventEmitter from 'node:events'
+import { warnLog } from '@sushiswap/extractor'
 import { ChainId } from 'sushi/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
@@ -33,6 +34,7 @@ export class ExtractorClient {
   poolCodesMap: Map<string, PoolCode[]> = new Map()
   requestedPairs: Map<string, Set<string>> = new Map()
   fetchPoolsBetweenRequests: Set<string> = new Set()
+  dataStateId = 0
 
   constructor(
     chainId: ChainId,
@@ -57,29 +59,41 @@ export class ExtractorClient {
 
   async updatePools() {
     try {
-      if (DEBUG_PRINT)
-        console.log(`${this.extractorServer}/pool-codes-bin/${this.chainId}`)
-      const resp = await fetch(
-        `${this.extractorServer}/pool-codes-bin/${this.chainId}`,
-      )
+      const url = `${this.extractorServer}/pool-codes-bin/${this.chainId}?stateId=${this.dataStateId}`
+      if (DEBUG_PRINT) console.log(url)
+      const resp = await fetch(url)
       if (resp.status === 200) {
         const data = await resp.arrayBuffer()
         const start = performance.now()
-        const { pools, newTokens, existedTokensNumber } =
-          deserializePoolsBinary(new Uint8Array(data), (addr: string) => {
+        const { pools, extraData } = deserializePoolsBinary(
+          new Uint8Array(data),
+          (addr: string) => {
             return this.tokenMap.get(addr.toLowerCase())
-          })
-        this.poolCodesMap.clear()
-        const remakeTokenMap = existedTokensNumber !== this.tokenMap.size
-        if (remakeTokenMap) this.tokenMap.clear()
-        else newTokens.forEach((t) => this.tokenMap.set(tokenId(t.address), t))
+          },
+        )
+        const { stateId, prevStateId } = extraData
+        console.log(
+          `State: ${this.dataStateId} -> ${JSON.stringify(extraData)}`,
+        )
+        if (
+          stateId === undefined ||
+          prevStateId === undefined ||
+          (prevStateId !== 0 && prevStateId !== this.dataStateId)
+        )
+          warnLog(
+            this.chainId,
+            `Incorrect router state: ${this.dataStateId} -> ${extraData}`,
+            'error',
+          )
+        if (prevStateId === 0) {
+          this.poolCodesMap.clear()
+          this.tokenMap.clear()
+        }
         pools.forEach((p) => {
           const t0 = p.pool.token0
           const t1 = p.pool.token1
-          if (remakeTokenMap) {
-            this.tokenMap.set(tokenId(t0.address), t0 as Token)
-            this.tokenMap.set(tokenId(t1.address), t1 as Token)
-          }
+          this.tokenMap.set(tokenId(t0.address), t0 as Token)
+          this.tokenMap.set(tokenId(t1.address), t1 as Token)
 
           const id = tokenPairId(t0.address, t1.address)
           const pl = this.poolCodesMap.get(id)
@@ -88,14 +102,19 @@ export class ExtractorClient {
         })
         const timing = Math.round(performance.now() - start)
         console.log(
-          `updatePools: ${this.poolCodesMap.size} pools and ${this.tokenMap.size} tokens (${timing}ms cpu time)`,
+          `updatePools: ${pools.length}/${this.poolCodesMap.size} pools and ${this.tokenMap.size} tokens (${timing}ms cpu time)`,
         )
+        this.dataStateId = stateId
         this.lastUpdatedTimestamp = Date.now()
       } else {
-        console.error(`Pool download failed, status=${resp.status}`)
+        warnLog(
+          this.chainId,
+          `Pool download failed, status=${resp.status}`,
+          'error',
+        )
       }
     } catch (e) {
-      console.error(`Pool download failed, ${e}`)
+      warnLog(this.chainId, `Pool download failed, ${e}`, 'error')
     }
     setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }

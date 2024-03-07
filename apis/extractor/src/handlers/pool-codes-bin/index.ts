@@ -19,10 +19,11 @@ async function handler(req: Request, res: Response) {
   res.setHeader('Content-Type', 'application/octet-stream')
   res.set('Content-Type', 'application/octet-stream')
 
-  const { stateId } = querySchema.parse(req.query)
+  let { stateId } = querySchema.parse(req.query)
 
   const allPoolsSerialization =
     stateId === undefined || !extractor.isMarkExist(stateId)
+  if (allPoolsSerialization) stateId = 0
 
   // Return previous if it is fresh enough
   if (
@@ -38,7 +39,10 @@ async function handler(req: Request, res: Response) {
     stateId as number,
     newStateId,
   )
-  const data = serializePoolsBinary(poolCodes, newStateId.toString())
+  const data = serializePoolsBinary(poolCodes, {
+    stateId: newStateId,
+    prevStateId: stateId,
+  })
   if (allPoolsSerialization) {
     lastAllPoolsBlob = data
     lastAllPoolsSerializationTime = newStateId

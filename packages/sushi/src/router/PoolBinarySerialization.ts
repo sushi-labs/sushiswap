@@ -34,10 +34,10 @@ const FEE_FRACTIONS = 10_000_000
 // Serialization of constructor params
 export function serializePoolsBinary(
   pools: PoolCode[],
-  extraData?: string,
+  extraData?: any,
 ): Uint8Array {
   const stream = new BinWriteStream()
-  stream.str16(extraData ?? '')
+  stream.str16(JSON.stringify(extraData ?? {}))
   stream.uint24(
     pools.length > 0 ? (pools[0]?.pool.token0.chainId as number) : 0,
   )
@@ -131,10 +131,10 @@ export function deserializePoolsBinary(
   pools: PoolCode[]
   newTokens: Token[]
   existedTokensNumber: number
-  extraData: string
+  extraData: any
 } {
   const stream = new BinReadStream(data)
-  const extraData = stream.str16()
+  const extraData = JSON.parse(stream.str16())
   const chainId = stream.uint24() as ChainId
   const tokensNum = stream.uint24()
   const tokensArray: RToken[] = new Array(tokensNum)

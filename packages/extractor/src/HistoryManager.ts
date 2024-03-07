@@ -31,7 +31,7 @@ export class HistoryManager<T> {
   getRecords(fromMark: number, newMark?: number) {
     if (newMark) this.setMark(newMark)
     const markPlace = this.markPlace.get(fromMark)
-    if (!markPlace) return undefined
+    if (markPlace === undefined) return undefined
     return { records: this.records, from: markPlace - this.forgottenRecords }
   }
 
@@ -81,14 +81,14 @@ export class HistoryManager<T> {
 
   getDebugInfo(maxLength = 64): (number | T | string)[] {
     const res: (number | T | string)[] = []
-    let error = false
+    //let error = false
     for (let i = 0; i < this.marks.length; ++i) {
       const m = this.marks[i]
       res.push(m)
       const place = this.markPlace.get(m)
       if (place === undefined) {
         res.push('This mark has no place !!!')
-        error = true
+        //error = true
         break
       }
       const placeNext =
@@ -97,24 +97,25 @@ export class HistoryManager<T> {
           : this.markPlace.get(this.marks[i + 1])
       if (placeNext === undefined) {
         res.push('Next mark has no place !!!')
-        error = true
+        //error = true
         break
       }
-      for (let j = place; j < placeNext; ++j) {
-        const p = j - this.forgottenRecords
-        if (p < 0 || p >= this.records.length) {
-          res.push(`Wrong record index ${p}`)
-          error = true
-          break
-        }
-        res.push(this.records[p])
-      }
+      res.push(`<${placeNext - place}>`)
+      // for (let j = place; j < placeNext; ++j) {
+      //   const p = j - this.forgottenRecords
+      //   if (p < 0 || p >= this.records.length) {
+      //     res.push(`Wrong record index ${p}`)
+      //     error = true
+      //     break
+      //   }
+      //   res.push(this.records[p])
+      // }
     }
-    if (!error && res.length !== this.marks.length + this.records.length) {
-      res.push(
-        `Wrong result length: ${res.length} !== ${this.marks.length} + ${this.records.length}`,
-      )
-    }
+    // if (!error && res.length !== this.marks.length + this.records.length) {
+    //   res.push(
+    //     `Wrong result length: ${res.length} !== ${this.marks.length} + ${this.records.length}`,
+    //   )
+    // }
     if (maxLength > 0 && res.length > maxLength) {
       res.splice(maxLength / 2, res.length - maxLength - 1, '...')
     }
