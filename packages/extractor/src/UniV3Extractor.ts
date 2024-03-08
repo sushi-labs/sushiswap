@@ -10,7 +10,6 @@ import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from 'sushi/router'
 import { Address, Log, PublicClient } from 'viem'
 import { Counter } from './Counter.js'
-import { HistoryManager } from './HistoryManager.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
@@ -69,6 +68,7 @@ export class UniV3Extractor {
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   poolMap: Map<Address, UniV3PoolWatcher> = new Map()
+  poolMapUpdated: Map<string, UniV3PoolWatcher> = new Map()
   emptyAddressSet: Set<Address> = new Set()
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   otherFactoryPoolSet: Set<Address> = new Set()
@@ -80,7 +80,6 @@ export class UniV3Extractor {
   lastProcessdBlock = -1
   watchedPools = 0
   started = false
-  readonly historyManager = new HistoryManager<Address>(10 * 60 * 1000)
 
   constructor(
     client: PublicClient,
@@ -119,9 +118,12 @@ export class UniV3Extractor {
         if (arg.ethalonPool !== this.poolMap.get(addr)) return false // checked pool was replaced during checking
         if (arg.correctPool) {
           this.poolMap.set(addr, arg.correctPool)
-          this.historyManager.addRecord(arg.ethalonPool.address)
+          this.poolMapUpdated.set(addr, arg.correctPool)
           arg.correctPool.on('PoolCodeWasChanged', (w) => {
-            this.historyManager.addRecord((w as UniV3PoolWatcher).address)
+            this.poolMapUpdated.set(
+              (w as UniV3PoolWatcher).address.toLowerCase(),
+              w,
+            )
           })
         }
         this.consoleLog(
@@ -170,7 +172,6 @@ export class UniV3Extractor {
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
-        this.historyManager.forgetAllHistory()
         Array.from(this.poolMap.values()).forEach((p) => p.updatePoolState())
       }
     })
@@ -286,8 +287,8 @@ export class UniV3Extractor {
       this.taskCounter,
     )
     watcher.updatePoolState()
-    this.poolMap.set(p.address.toLowerCase() as Address, watcher) // lowercase because incoming events have lowcase addresses ((
-    this.historyManager.addRecord(p.address)
+    this.poolMap.set(addrL, watcher) // lowercase because incoming events have lowcase addresses ((
+    this.poolMapUpdated.set(addrL, watcher)
     if (addToCache)
       this.poolPermanentCache.add({
         address: expectedPoolAddress,
@@ -308,7 +309,7 @@ export class UniV3Extractor {
       }
     })
     watcher.on('PoolCodeWasChanged', (w) => {
-      this.historyManager.addRecord((w as UniV3PoolWatcher).address)
+      this.poolMapUpdated.set((w as UniV3PoolWatcher).address.toLowerCase(), w)
     })
     return watcher
   }
@@ -488,35 +489,20 @@ export class UniV3Extractor {
       .filter((pc) => pc !== undefined) as PoolCode[]
   }
 
+  // side effect: updated pools list is cleared
+  getUpdatedPoolCodes(): PoolCode[] {
+    const res = Array.from(this.poolMapUpdated.values())
+      .map((p) => p.getPoolCode())
+      .filter((pc) => pc !== undefined) as PoolCode[]
+    this.poolMapUpdated.clear()
+    return res
+  }
+
   // only for testing
   getStablePoolCodes(): PoolCode[] {
     return Array.from(this.poolMap.values())
       .map((p) => (p.isStable() ? p.getPoolCode() : undefined))
       .filter((pc) => pc !== undefined) as PoolCode[]
-  }
-
-  getCurrentPoolCodesUpdate(fromMark: number, newMark?: number): PoolCode[] {
-    const updated = this.historyManager.getRecords(fromMark, newMark)
-    if (updated === undefined) return this.getCurrentPoolCodes()
-
-    const to = updated.records.length
-    const pools: PoolCode[] = []
-    const addedPools = new Set<Address>()
-    for (let i = updated.from; i < to; ++i) {
-      const addr = updated.records[i]
-      if (addedPools.has(addr)) continue
-      addedPools.add(addr)
-      const pool = this.poolMap.get(addr.toLowerCase() as Address)
-      if (pool?.isStable()) {
-        const pc = pool.getPoolCode()
-        if (pc !== undefined) pools.push(pc)
-      }
-    }
-    return pools
-  }
-
-  isMarkExist(mark: number) {
-    return this.historyManager.isMarkExist(mark)
   }
 
   getTokensPoolsQuantity(tokenMap: Map<Token, number>) {

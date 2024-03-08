@@ -586,22 +586,12 @@ export class Extractor {
     return pools2.concat(pools3).concat(poolsAlg)
   }
 
-  getCurrentPoolCodesUpdate(fromMark: number, newMark?: number): PoolCode[] {
-    const pools2 =
-      this.extractorV2?.getCurrentPoolCodesUpdate(fromMark, newMark) ?? []
-    const pools3 =
-      this.extractorV3?.getCurrentPoolCodesUpdate(fromMark, newMark) ?? []
-    const poolsAlg =
-      this.extractorAlg?.getCurrentPoolCodesUpdate(fromMark, newMark) ?? []
+  // side effect: updated pools list is cleared
+  getCurrentPoolCodesUpdate(): PoolCode[] {
+    const pools2 = this.extractorV2?.getUpdatedPoolCodes() ?? []
+    const pools3 = this.extractorV3?.getUpdatedPoolCodes() ?? []
+    const poolsAlg = this.extractorAlg?.getUpdatedPoolCodes() ?? []
     return pools2.concat(pools3).concat(poolsAlg)
-  }
-
-  isMarkExist(mark: number): boolean {
-    let res = true
-    if (this.extractorV2) res &&= this.extractorV2.isMarkExist(mark)
-    if (this.extractorV3) res &&= this.extractorV3.isMarkExist(mark)
-    if (this.extractorAlg) res &&= this.extractorAlg.isMarkExist(mark)
-    return res
   }
 
   isStarted(): boolean {

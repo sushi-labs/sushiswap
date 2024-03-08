@@ -126,20 +126,23 @@ export function serializePoolsBinary(
 // Deserialization - launching constructors
 export function deserializePoolsBinary(
   data: Uint8Array,
+  start = 0,
   existedTokens?: (a: string) => Token | undefined,
 ): {
   pools: PoolCode[]
-  newTokens: Token[]
-  existedTokensNumber: number
+  // newTokens: Token[]
+  // existedTokensNumber: number
   extraData: any
+  finish: number
 } {
   const stream = new BinReadStream(data)
+  stream.skip(start)
   const extraData = JSON.parse(stream.str16())
   const chainId = stream.uint24() as ChainId
   const tokensNum = stream.uint24()
   const tokensArray: RToken[] = new Array(tokensNum)
-  const newTokens: Token[] = []
-  let existedTokensNumber = 0
+  // const newTokens: Token[] = []
+  // let existedTokensNumber = 0
   for (let i = 0; i < tokensNum; ++i) {
     const address = stream.address()
     const tokenRestDataLength = stream.uint16()
@@ -147,7 +150,6 @@ export function deserializePoolsBinary(
     if (token) {
       tokensArray[i] = token as RToken
       stream.skip(tokenRestDataLength)
-      ++existedTokensNumber
     } else {
       const name = stream.str16()
       const symbol = stream.str16()
@@ -159,7 +161,6 @@ export function deserializePoolsBinary(
         symbol,
         decimals,
       })
-      newTokens.push(token)
       tokensArray[i] = token as RToken
     }
   }
@@ -203,7 +204,7 @@ export function deserializePoolsBinary(
         console.error(`Deserealization: unknown pool type ${poolType}`)
     }
   }
-  return { pools, newTokens, existedTokensNumber, extraData }
+  return { pools, extraData, finish: stream.position }
 }
 
 function readCPRPool(
@@ -560,7 +561,7 @@ export function testPoolSerialization(
   const t0 = performance.now()
   const data = serializePoolsBinary(poolsA)
   const t1 = performance.now()
-  const { pools: poolsB } = deserializePoolsBinary(data, existedTokens)
+  const { pools: poolsB } = deserializePoolsBinary(data, 0, existedTokens)
   const t2 = performance.now()
   console.log('Bin Pool (de)serialilization', poolsA.length, t1 - t0, t2 - t1)
   return comparePoolArrays(poolsA, poolsB)
