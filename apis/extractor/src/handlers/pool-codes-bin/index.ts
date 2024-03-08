@@ -5,6 +5,7 @@ import extractor from '../../extractor.js'
 import { querySchema } from './schema.js'
 
 const MIN_STATE_UPDATE_INTERVAL = 2_000
+const REMOVE_HISTORY_BEFORE = 300_000
 
 interface State {
   id: number
@@ -16,11 +17,12 @@ const states: State[] = []
 let AllPoolsState: State | undefined = undefined
 
 function updateLastState(force = false): number {
-  const newStateId = Date.now()
+  let newStateId = Date.now()
   const lastStateId =
     states.length > 0 ? (states[states.length - 1]?.id as number) : 0
   if (!force && newStateId < lastStateId + MIN_STATE_UPDATE_INTERVAL)
     return lastStateId // updated recently
+  if (newStateId === lastStateId) ++newStateId // can be equal theoretically
   const newPools = extractor.getCurrentPoolCodesUpdate()
   const diff = serializePoolsBinary(newPools, {
     stateId: newStateId,
@@ -46,6 +48,17 @@ function makeNewAllPoolsBin(newstateId: number) {
     poolNum: pools.length,
   }
 }
+
+function cleanOldHistory() {
+  const removeBefore = Date.now() - REMOVE_HISTORY_BEFORE
+  for (let i = 0; i < states.length; ++i) {
+    if ((states[i] as State).id <= removeBefore) continue
+    if (i > 0) states.splice(0, i - 1)
+    break
+  }
+  setTimeout(() => cleanOldHistory(), REMOVE_HISTORY_BEFORE)
+}
+cleanOldHistory()
 
 function concatUint8Arrays(arrs: Uint8Array[]): Uint8Array {
   if (arrs.length === 1) return arrs[0] as Uint8Array
