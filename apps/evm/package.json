@@ -36,6 +36,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@covalenthq/client-sdk": "0.9.4",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",
     "@tanstack/react-query-persist-client": "4.28.0",
