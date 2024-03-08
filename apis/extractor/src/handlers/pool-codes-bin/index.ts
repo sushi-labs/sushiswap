@@ -6,16 +6,19 @@ import { querySchema } from './schema.js'
 
 const MIN_STATE_UPDATE_INTERVAL = 2_000
 
-const stateIds: number[] = []
-const diffBins: Uint8Array[] = []
-const poolNums: number[] = []
-let allPoolsBin: Uint8Array | undefined = undefined
-let allPoolsStateId = 0
+interface State {
+  id: number
+  diff: Uint8Array
+  poolNum: number
+}
+
+const states: State[] = []
+let AllPoolsState: State | undefined = undefined
 
 function updateLastState(force = false): number {
   const newStateId = Date.now()
   const lastStateId =
-    stateIds.length > 0 ? (stateIds[stateIds.length - 1] as number) : 0
+    states.length > 0 ? (states[states.length - 1]?.id as number) : 0
   if (!force && newStateId < lastStateId + MIN_STATE_UPDATE_INTERVAL)
     return lastStateId // updated recently
   const newPools = extractor.getCurrentPoolCodesUpdate()
@@ -23,27 +26,33 @@ function updateLastState(force = false): number {
     stateId: newStateId,
     prevStateId: lastStateId,
   })
-  stateIds.push(newStateId)
-  diffBins.push(diff)
-  poolNums.push(newPools.length)
+  states.push({
+    id: newStateId,
+    diff,
+    poolNum: newPools.length,
+  })
   return newStateId
 }
 
 function makeNewAllPoolsBin(newstateId: number) {
-  allPoolsStateId = newstateId
   const pools = extractor.getCurrentPoolCodes()
-  allPoolsBin = serializePoolsBinary(pools, {
-    stateId: allPoolsStateId,
+  const diff = serializePoolsBinary(pools, {
+    stateId: newstateId,
     prevStateId: 0,
   })
+  AllPoolsState = {
+    id: newstateId,
+    diff,
+    poolNum: pools.length,
+  }
 }
 
-function concatDiffs(diffs: Uint8Array[]): Uint8Array {
-  if (diffs.length === 1) return diffs[0] as Uint8Array
-  const length = diffs.reduce((a, b) => a + b.length, 0)
+function concatUint8Arrays(arrs: Uint8Array[]): Uint8Array {
+  if (arrs.length === 1) return arrs[0] as Uint8Array
+  const length = arrs.reduce((a, b) => a + b.length, 0)
   const res = new Uint8Array(length)
   let pos = 0
-  diffs.forEach((d) => {
+  arrs.forEach((d) => {
     res.set(d, pos)
     pos += d.length
   })
@@ -52,12 +61,12 @@ function concatDiffs(diffs: Uint8Array[]): Uint8Array {
 
 // i > j => arr[i] >= arr[j]
 // returns the index of the element in arr or -1
-function binarySearch(arr: number[], elem: number): number {
+function binarySearchState(stateId: number): number {
   let start = 0
-  let end = arr.length - 1
+  let end = states.length - 1
   while (start <= end) {
     const mid = Math.floor((start + end) / 2)
-    const diff = (arr[mid] as number) - elem
+    const diff = (states[mid]?.id as number) - stateId
     if (diff === 0) return mid
     else if (diff < 0) start = mid + 1
     else end = mid - 1
@@ -65,24 +74,26 @@ function binarySearch(arr: number[], elem: number): number {
   return -1
 }
 
-function getCombinedDiff(stateId: number): Uint8Array {
-  let from = binarySearch(stateIds, stateId)
+function getStateList(stateId: number): State[] {
+  const from = binarySearchState(stateId)
   if (from >= 0) {
     // state was found in the history
     updateLastState()
-    return concatDiffs(diffBins.slice(from + 1))
+    return states.slice(from + 1)
   }
   // unknown state
-  from = binarySearch(stateIds, allPoolsStateId)
-  if (from >= 0 && allPoolsBin !== undefined) {
-    // allpools is not stale
-    updateLastState()
-    return concatDiffs([allPoolsBin, ...diffBins.slice(from + 1)])
+  if (AllPoolsState) {
+    const from = binarySearchState(AllPoolsState.id)
+    if (from >= 0) {
+      // AllPoolsState is not stale
+      updateLastState()
+      return [AllPoolsState, ...states.slice(from + 1)]
+    }
   }
   // make new allPoolsBin
   const newstateId = updateLastState(true)
   makeNewAllPoolsBin(newstateId)
-  return allPoolsBin as Uint8Array
+  return [AllPoolsState as State]
 }
 
 async function handler(req: Request, res: Response) {
@@ -96,12 +107,12 @@ async function handler(req: Request, res: Response) {
 
   const { stateId } = querySchema.parse(req.query)
 
-  // const start = performance.now()
-  const data = getCombinedDiff(stateId ?? 0)
-  // const timing = Math.round(performance.now() - start)
-  // console.log(
-  //   `Pools binary serialization: ${poolCodes.length} pools ${timing}ms`,
-  // )
+  const start = performance.now()
+  const stateList = getStateList(stateId ?? 0)
+  const data = concatUint8Arrays(stateList.map((s) => s.diff))
+  const poolString = stateList.map((s) => s.poolNum.toString()).join('+')
+  const timing = Math.round(performance.now() - start)
+  console.log(`Pools binary serialization: ${poolString} pools ${timing}ms`)
 
   res.setHeader('Content-Type', 'application/octet-stream')
   res.set('Content-Type', 'application/octet-stream')
