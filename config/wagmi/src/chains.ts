@@ -331,10 +331,10 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://rpc.ankr.com/celo'],
+        http: ['https://forno.celo.org'],
       },
       public: {
-        http: ['https://rpc.ankr.com/celo'],
+        http: ['https://forno.celo.org'],
       },
     },
     blockExplorers: {
@@ -763,10 +763,10 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Filecoin', symbol: 'FIL', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://rpc.ankr.com/filecoin'],
+        http: ['https://node.filutils.com/rpc/v1'],
       },
       public: {
-        http: ['https://rpc.ankr.com/filecoin'],
+        http: ['https://node.filutils.com/rpc/v1'],
       },
     },
     contracts: {
@@ -826,7 +826,6 @@ export const otherChains: Chain[] = [
       default: {
         http: [
           'https://rpc.blast.io',
-          'https://rpc.ankr.com/blast',
           'https://blast.din.dev/rpc',
           'https://blastl2-mainnet.public.blastapi.io',
           'https://blast.blockpi.network/v1/rpc/public',
@@ -835,7 +834,6 @@ export const otherChains: Chain[] = [
       public: {
         http: [
           'https://rpc.blast.io',
-          'https://rpc.ankr.com/blast',
           'https://blast.din.dev/rpc',
           'https://blastl2-mainnet.public.blastapi.io',
           'https://blast.blockpi.network/v1/rpc/public',
