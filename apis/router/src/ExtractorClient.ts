@@ -63,48 +63,50 @@ export class ExtractorClient {
       if (DEBUG_PRINT) console.log(url)
       const resp = await fetch(url)
       if (resp.status === 200) {
-        const data = await resp.arrayBuffer()
+        const data = new Uint8Array(await resp.arrayBuffer())
         const start = performance.now()
-        const { pools, extraData } = deserializePoolsBinary(
-          new Uint8Array(data),
-          (addr: string) => {
+        let pos = 0
+        const poolNums: number[] = []
+        while (pos < data.byteLength) {
+          const {
+            pools,
+            extraData: { stateId, prevStateId },
+            finish,
+          } = deserializePoolsBinary(data, pos, (addr: string) => {
             return this.tokenMap.get(addr.toLowerCase())
-          },
-        )
-        const { stateId, prevStateId } = extraData
-        console.log(
-          `State: ${this.dataStateId} -> ${JSON.stringify(extraData)}`,
-        )
-        if (
-          stateId === undefined ||
-          prevStateId === undefined ||
-          (prevStateId !== 0 && prevStateId !== this.dataStateId)
-        )
-          warnLog(
-            this.chainId,
-            `Incorrect router state: ${this.dataStateId} -> ${extraData}`,
-            'error',
-          )
-        if (prevStateId === 0) {
-          this.poolCodesMap.clear()
-          this.tokenMap.clear()
-        }
-        pools.forEach((p) => {
-          const t0 = p.pool.token0
-          const t1 = p.pool.token1
-          this.tokenMap.set(tokenId(t0.address), t0 as Token)
-          this.tokenMap.set(tokenId(t1.address), t1 as Token)
+          })
+          pos = finish
+          if (prevStateId === 0) {
+            this.poolCodesMap.clear()
+            this.tokenMap.clear()
+          } else if (prevStateId !== this.dataStateId) {
+            warnLog(
+              this.chainId,
+              `Incorrect router state: ${this.dataStateId} -> ${prevStateId}`,
+              'error',
+            )
+          }
+          pools.forEach((p) => {
+            const t0 = p.pool.token0
+            const t1 = p.pool.token1
+            this.tokenMap.set(tokenId(t0.address), t0 as Token)
+            this.tokenMap.set(tokenId(t1.address), t1 as Token)
 
-          const id = tokenPairId(t0.address, t1.address)
-          const pl = this.poolCodesMap.get(id)
-          if (pl === undefined) this.poolCodesMap.set(id, [p])
-          else pl.push(p)
-        })
+            const id = tokenPairId(t0.address, t1.address)
+            const pl = this.poolCodesMap.get(id)
+            if (pl === undefined) this.poolCodesMap.set(id, [p])
+            else pl.push(p)
+          })
+          poolNums.push(pools.length)
+          console.log(`State: ${this.dataStateId} -> ${stateId}`)
+          this.dataStateId = stateId
+        }
         const timing = Math.round(performance.now() - start)
         console.log(
-          `updatePools: ${pools.length}/${this.poolCodesMap.size} pools and ${this.tokenMap.size} tokens (${timing}ms cpu time)`,
+          `updatePools: ${poolNums.map((n) => n.toString()).join('+')}/${
+            this.poolCodesMap.size
+          } pools and ${this.tokenMap.size} tokens (${timing}ms cpu time)`,
         )
-        this.dataStateId = stateId
         this.lastUpdatedTimestamp = Date.now()
       } else {
         warnLog(
