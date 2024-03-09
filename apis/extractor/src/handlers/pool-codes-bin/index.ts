@@ -1,11 +1,20 @@
+import { LogSender } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
-import { serializePoolsBinary } from 'sushi/router'
+import { Token } from 'sushi/currency'
+import {
+  PoolCode,
+  comparePoolArrays,
+  deserializePoolsBinary,
+  serializePoolsBinary,
+} from 'sushi/router'
 import { CHAIN_ID } from '../../config.js'
 import extractor from '../../extractor.js'
 import { querySchema } from './schema.js'
 
 const MIN_STATE_UPDATE_INTERVAL = 2_000
 const REMOVE_HISTORY_BEFORE = 300_000
+
+const logs = new LogSender(CHAIN_ID)
 
 interface State {
   id: number
@@ -133,3 +142,60 @@ async function handler(req: Request, res: Response) {
 }
 
 export default handler
+
+export class TestClient {
+  state = 0
+  poolCodesMap: Map<string, PoolCode> = new Map()
+  tokenMap: Map<string, Token> = new Map()
+  chainId?: number | string | undefined
+
+  updateAndCheck() {
+    const states = getStateList(this.state)
+    for (let i = 0; i < states.length; ++i) {
+      const {
+        pools,
+        extraData: { stateId, prevStateId },
+        finish,
+      } = deserializePoolsBinary(
+        states[i]?.diff as Uint8Array,
+        0,
+        (addr: string) => {
+          return this.tokenMap.get(addr)
+        },
+      )
+      if (pools.length > 0) {
+        if (this.chainId === undefined)
+          this.chainId = pools[0]?.pool.token0.chainId
+        else if (this.chainId !== pools[0]?.pool.token0.chainId)
+          logs.error(
+            `TestClient Wrong binary data length: expected ${states[i]?.diff.byteLength}, really read ${finish}`,
+          )
+      }
+      if (finish !== states[i]?.diff.byteLength)
+        logs.error(
+          `TestClient Wrong binary data length: expected ${states[i]?.diff.byteLength}, really read ${finish}`,
+        )
+      if (prevStateId === 0) {
+        this.poolCodesMap.clear()
+        this.tokenMap.clear()
+      } else if (prevStateId !== this.state) {
+        logs.error(
+          `TestClient incorrect router state: ${this.state} -> ${prevStateId}`,
+        )
+      }
+      pools.forEach((p) => {
+        const t0 = p.pool.token0
+        const t1 = p.pool.token1
+        this.tokenMap.set(t0.address, t0 as Token)
+        this.tokenMap.set(t1.address, t1 as Token)
+      })
+      this.state = stateId
+    }
+    const poolsReal = extractor.getCurrentPoolCodes()
+    const res = comparePoolArrays(
+      Array.from(this.poolCodesMap.values()),
+      poolsReal,
+    )
+    if (!res) logs.error('TestClient wrong pools compare')
+  }
+}

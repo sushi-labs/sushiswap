@@ -35,3 +35,19 @@ export function warnLog(
   console.warn(`${nowDate()}-${chain}: ${msg}`)
   if (warningMessageHandler) warningMessageHandler(chain, msg, level)
 }
+
+export class LogSender {
+  chain?: ChainId | number = undefined
+
+  constructor(chain: ChainId | number) {
+    this.chain = chain
+  }
+
+  warning(msg: string) {
+    warnLog(this.chain, msg)
+  }
+
+  error(msg: string) {
+    warnLog(this.chain, msg, 'error')
+  }
+}
