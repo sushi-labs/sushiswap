@@ -494,7 +494,7 @@ export class UniV3Extractor {
     const res = Array.from(this.poolMapUpdated.values())
       .map((p) => p.getPoolCode())
       .filter((pc) => pc !== undefined) as PoolCode[]
-    this.poolMapUpdated.clear()
+    res.forEach((p) => this.poolMapUpdated.delete(p.pool.address.toLowerCase()))
     return res
   }
 
