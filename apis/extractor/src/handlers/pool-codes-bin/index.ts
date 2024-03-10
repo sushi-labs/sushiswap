@@ -13,6 +13,7 @@ import { querySchema } from './schema.js'
 
 const MIN_STATE_UPDATE_INTERVAL = 2_000
 const REMOVE_HISTORY_BEFORE = 300_000
+const TEST_DIFFERENCE_CORRECTNESS = false
 
 const logs = new LogSender(CHAIN_ID)
 
@@ -42,6 +43,7 @@ function updateLastState(force = false): number {
     diff,
     poolNum: newPools.length,
   })
+  if (TEST_DIFFERENCE_CORRECTNESS) testClient.updateAndCheck()
   return newStateId
 }
 
@@ -143,13 +145,16 @@ async function handler(req: Request, res: Response) {
 
 export default handler
 
-export class TestClient {
+class TestClient {
   state = 0
   poolCodesMap: Map<string, PoolCode> = new Map()
   tokenMap: Map<string, Token> = new Map()
   chainId?: number | string | undefined
+  checking = false
 
   updateAndCheck() {
+    if (this.checking) return
+    this.checking = true
     const states = getStateList(this.state)
     for (let i = 0; i < states.length; ++i) {
       const {
@@ -159,9 +164,7 @@ export class TestClient {
       } = deserializePoolsBinary(
         states[i]?.diff as Uint8Array,
         0,
-        (addr: string) => {
-          return this.tokenMap.get(addr)
-        },
+        (addr: string) => this.tokenMap.get(addr),
       )
       if (pools.length > 0) {
         if (this.chainId === undefined)
@@ -188,6 +191,7 @@ export class TestClient {
         const t1 = p.pool.token1
         this.tokenMap.set(t0.address, t0 as Token)
         this.tokenMap.set(t1.address, t1 as Token)
+        this.poolCodesMap.set(p.pool.address, p)
       })
       this.state = stateId
     }
@@ -197,5 +201,8 @@ export class TestClient {
       poolsReal,
     )
     if (!res) logs.error('TestClient wrong pools compare')
+    this.checking = false
   }
 }
+
+const testClient = new TestClient()
