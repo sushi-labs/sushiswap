@@ -17,6 +17,7 @@ import {
   MATIC,
   MIM,
   SUSHI,
+  USDB,
   USDC,
   USDT,
   WBTC,
@@ -351,6 +352,7 @@ export const DEFAULT_BASES = {
     WBTC[ChainId.CRONOS],
     USDC[ChainId.CRONOS],
   ],
+  [ChainId.BLAST]: [Native.onChain(ChainId.BLAST), USDB[ChainId.BLAST]],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const satisfies Record<ChainId, Readonly<(Token | Native)[]>>
 

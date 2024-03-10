@@ -128,6 +128,14 @@ export class Chain implements Chain {
           standard: 'EIP3091',
         },
       ]
+    } else if (data.chainId === ChainId.BLAST) {
+      this.explorers = [
+        {
+          name: 'Blast Explorer',
+          url: 'https://blastscan.io',
+          standard: 'EIP3091',
+        },
+      ]
     }
   }
   getTxUrl(txHash: string): string {

@@ -6,6 +6,7 @@ import {
   OP,
   SUSHI,
   Token,
+  USDB,
   USDC,
   WETH9,
   axlUSDC,
@@ -76,4 +77,5 @@ export const defaultQuoteCurrency = {
   [ChainId.FILECOIN]: axlUSDC[ChainId.FILECOIN],
   [ChainId.ZETACHAIN]: WETH9[ChainId.ZETACHAIN],
   [ChainId.CRONOS]: WETH9[ChainId.CRONOS],
+  [ChainId.BLAST]: USDB[ChainId.BLAST],
 } as const

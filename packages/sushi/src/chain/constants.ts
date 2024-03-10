@@ -50,6 +50,7 @@ export const ChainId = {
   SCROLL: 534352,
   ZETACHAIN: 7000,
   CRONOS: 25,
+  BLAST: 81457,
   // RONIN: 2020,
 } as const
 export type ChainId = (typeof ChainId)[keyof typeof ChainId]
@@ -127,5 +128,6 @@ export const ChainKey = {
   [ChainId.SCROLL]: 'scroll',
   [ChainId.ZETACHAIN]: 'zetachain',
   [ChainId.CRONOS]: 'cronos',
+  [ChainId.BLAST]: 'blast',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]

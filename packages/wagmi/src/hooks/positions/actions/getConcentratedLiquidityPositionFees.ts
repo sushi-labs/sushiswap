@@ -2,7 +2,7 @@ import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { createConfig } from '@wagmi/core'
 import { simulateContract } from '@wagmi/core/actions'
 import { SushiSwapV3ChainId } from 'sushi/config'
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { getConcentratedPositionOwners } from '../../pools/actions/getConcentratedPositionOwner'
 
 const MAX_UINT128 = 2n ** 128n - 1n
@@ -68,22 +68,27 @@ export const getConcentratedLiquidityPositionFees = async ({
     const owner = owners[i].result
     if (!owner) return undefined
 
-    const result = await simulateContract(config, {
-      abi: abiShard,
-      address: getV3NonFungiblePositionManagerConractConfig(el.chainId).address,
-      functionName: 'collect',
-      args: [
-        {
-          tokenId: el.tokenId,
-          recipient: owner,
-          amount0Max: MAX_UINT128,
-          amount1Max: MAX_UINT128,
-        },
-      ],
-      account: owner,
-    } as const)
+    let result
 
-    if (result.result) {
+    try {
+      result = await simulateContract(config, {
+        abi: abiShard,
+        address: getV3NonFungiblePositionManagerContractConfig(el.chainId)
+          .address,
+        functionName: 'collect',
+        args: [
+          {
+            tokenId: el.tokenId,
+            recipient: owner,
+            amount0Max: MAX_UINT128,
+            amount1Max: MAX_UINT128,
+          },
+        ],
+        account: owner,
+      } as const)
+    } catch (_) {}
+
+    if (result?.result) {
       return [result.result[0], result.result[1]]
     } else {
       return [0n, 0n]

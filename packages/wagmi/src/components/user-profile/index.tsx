@@ -60,9 +60,7 @@ export const UserProfile: FC<ProfileProps> = () => {
             ) : null
             // <JazzIcon diameter={20} address={address} />
           }
-          <span className="hidden sm:block">
-            {shortenAddress(address, isSm ? 3 : 2)}
-          </span>
+          <span>{shortenAddress(address, isSm ? 3 : 2)}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent

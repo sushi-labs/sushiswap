@@ -80,6 +80,7 @@ const LOGO: Record<number, string> = {
   [ChainId.FILECOIN]: FilecoinLogo,
   [ChainId.ZETACHAIN]: ZetaLogo,
   [ChainId.CRONOS]: CroLogo,
+  [ChainId.BLAST]: EthereumLogo,
 }
 
 // function djb2(str: string) {

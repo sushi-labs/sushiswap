@@ -4,7 +4,7 @@ import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   ConcentratedLiquidityPosition,
   UseCallParameters,
-  getV3NonFungiblePositionManagerConractConfig,
+  getV3NonFungiblePositionManagerContractConfig,
   useAccount,
   useCall,
   usePublicClient,
@@ -75,7 +75,7 @@ export const ConcentratedLiquidityCollectButton: FC<
         })
 
       return {
-        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+        to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
         chainId,
         data: calldata as Hex,
         value: BigInt(value),

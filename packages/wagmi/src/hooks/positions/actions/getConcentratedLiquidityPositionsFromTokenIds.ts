@@ -5,7 +5,7 @@ import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { createConfig } from '@wagmi/core'
 import { readContracts } from '@wagmi/core/actions'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 
@@ -95,7 +95,8 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
 
   const results = await readContracts(config, {
     contracts: tokenIds.map((el) => ({
-      address: getV3NonFungiblePositionManagerConractConfig(el.chainId).address,
+      address: getV3NonFungiblePositionManagerContractConfig(el.chainId)
+        .address,
       abi: abiShard,
       chainId: el.chainId,
       functionName: 'positions',

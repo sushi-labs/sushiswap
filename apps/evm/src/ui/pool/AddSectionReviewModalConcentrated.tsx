@@ -15,7 +15,7 @@ import {
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   UseCallParameters,
-  getV3NonFungiblePositionManagerConractConfig,
+  getV3NonFungiblePositionManagerContractConfig,
   useAccount,
   useCall,
   usePublicClient,
@@ -190,7 +190,7 @@ export const AddSectionReviewModalConcentrated: FC<
           })
 
     return {
-      to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+      to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
       chainId,
       data: calldata as Hex,
       value: BigInt(value),
