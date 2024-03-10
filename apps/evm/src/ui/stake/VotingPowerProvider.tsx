@@ -212,7 +212,7 @@ export const VotingPowerProvider: FC<{
   const balances = useMemo(() => {
     if (
       !ethereumBalances ||
-      !votingPowerData?.vp_by_strategy?.length ||
+      !votingPowerData?.vp_by_strategy?.[1] ||
       !userStakedSLP
     ) {
       return undefined
@@ -234,7 +234,7 @@ export const VotingPowerProvider: FC<{
         }),
       ) as Amount<Type>,
     }
-  }, [ethereumBalances, userStakedSLP, votingPowerData.vp_by_strategy])
+  }, [ethereumBalances, userStakedSLP, votingPowerData?.vp_by_strategy])
 
   return (
     <Context.Provider
