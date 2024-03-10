@@ -309,6 +309,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       if (!prepare || isSimulationError) return undefined
 
       return async () => {
+        // TODO: Fix this
         await sendTransactionAsync(prepare as any)
       }
     }, [isSimulationError, prepare, sendTransactionAsync])

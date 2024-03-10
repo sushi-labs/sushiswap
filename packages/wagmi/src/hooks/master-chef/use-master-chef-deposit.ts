@@ -104,7 +104,7 @@ export const useMasterChefDeposit = ({
     query: { enabled },
   })
 
-  const { writeContractAsync } = useWriteContract({
+  const { writeContractAsync, ...rest } = useWriteContract({
     mutation: {
       onSuccess,
       onError,
@@ -120,7 +120,7 @@ export const useMasterChefDeposit = ({
   }, [simulation, writeContractAsync])
 
   return {
-    simulation,
+    ...rest,
     write,
   }
 }

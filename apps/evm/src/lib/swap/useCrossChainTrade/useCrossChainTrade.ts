@@ -1,6 +1,8 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import { readContract, useFeeData } from '@sushiswap/wagmi'
+import { createConfig, useFeeData } from '@sushiswap/wagmi'
+import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useQuery } from '@tanstack/react-query'
+import { getPublicClient } from '@wagmi/core/actions'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
 import { stargateAdapterAbi } from 'sushi/abi'
@@ -41,8 +43,14 @@ export const useCrossChainTrade = ({
   enabled,
   tradeId,
 }: UseCrossChainTradeParams) => {
-  const { data: feeData0 } = useFeeData({ chainId: network0, enabled })
-  const { data: feeData1 } = useFeeData({ chainId: network1, enabled })
+  const { data: feeData0 } = useFeeData({
+    chainId: network0,
+    query: { enabled },
+  })
+  const { data: feeData1 } = useFeeData({
+    chainId: network1,
+    query: { enabled },
+  })
 
   const bridgePath = useMemo(
     () =>
@@ -368,7 +376,11 @@ export const useCrossChainTrade = ({
         throw new Error('Crosschain swap not found.')
       }
 
-      let [fee] = (await readContract({
+      const client = getPublicClient(createConfig(publicWagmiConfig), {
+        chainId: network0,
+      })
+
+      let [fee] = await client.readContract({
         address: STARGATE_ADAPTER_ADDRESS[network0],
         abi: stargateAdapterAbi,
         functionName: 'getFee',
@@ -377,11 +389,10 @@ export const useCrossChainTrade = ({
           1, // functionType
           isDstSwap ? STARGATE_ADAPTER_ADDRESS[network1] : recipient, // receiver
           dstGasEst, // gasAmount
-          0, // dustAmount
-          isDstSwap ? dstPayload : '0x', // payload
+          0n, // dustAmount
+          isDstSwap ? dstPayload! : '0x', // payload
         ],
-        chainId: network0,
-      })) as [bigint]
+      })
 
       // Add 20% buffer to STG fee
       fee = (fee * 5n) / 4n

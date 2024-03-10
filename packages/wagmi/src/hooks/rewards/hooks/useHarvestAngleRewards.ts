@@ -1,5 +1,5 @@
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Address, UserRejectedRequestError } from 'viem'
 import {
@@ -34,7 +34,7 @@ export const useHarvestAngleRewards = ({
   enabled = true,
 }: UseHarvestAngleRewards) => {
   const { chain } = useAccount()
-  const simulation = useSimulateContract({
+  const { data: simulation } = useSimulateContract({
     chainId,
     abi: ERC1967Proxy,
     address: '0x3Ef3D8bA38EBe18DB133cEc108f4D14CE00Dd9Ae',
@@ -46,6 +46,7 @@ export const useHarvestAngleRewards = ({
       enabled: Boolean(enabled && args && chainId === chain?.id),
     },
   })
+
   const client = usePublicClient<PublicWagmiConfig>()
 
   const onSuccess = useCallback(
@@ -77,13 +78,27 @@ export const useHarvestAngleRewards = ({
     }
   }, [])
 
+  const {
+    writeContractAsync,
+    writeContract: _,
+    ...rest
+  } = useWriteContract({
+    mutation: {
+      onSuccess,
+      onError,
+    },
+  })
+
+  const write = useMemo(() => {
+    if (!simulation) return undefined
+
+    return async () => {
+      writeContractAsync(simulation.request)
+    }
+  }, [writeContractAsync, simulation])
+
   return {
-    simulation,
-    writeContract: useWriteContract({
-      mutation: {
-        onSuccess,
-        onError,
-      },
-    }).writeContract,
+    ...rest,
+    write,
   }
 }

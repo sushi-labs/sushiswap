@@ -111,13 +111,28 @@ export const useMasterChefWithdraw = ({
     query: { enabled },
   })
 
+  const {
+    writeContractAsync,
+    writeContract: _,
+    ...rest
+  } = useWriteContract({
+    mutation: {
+      onError,
+      onSuccess,
+    },
+  })
+
+  const write = useMemo(() => {
+    if (!simulation) return
+
+    return async (confirm?: () => void) => {
+      await writeContractAsync(simulation.request)
+      confirm?.()
+    }
+  }, [simulation, writeContractAsync])
+
   return {
-    simulation,
-    write: useWriteContract({
-      mutation: {
-        onError,
-        onSuccess,
-      },
-    }),
+    ...rest,
+    write,
   }
 }

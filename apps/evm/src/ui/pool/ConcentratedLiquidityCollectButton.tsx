@@ -128,7 +128,11 @@ export const ConcentratedLiquidityCollectButton: FC<
     },
   })
 
-  const { sendTransactionAsync, ...rest } = useSendTransaction({
+  const {
+    sendTransactionAsync,
+    sendTransaction: _,
+    ...rest
+  } = useSendTransaction({
     mutation: {
       onSuccess,
       onError,

@@ -17,6 +17,7 @@ import { Checker } from '@sushiswap/wagmi/systems/Checker'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
+import { type ChainId } from 'sushi/chain'
 import { usePoolPositionRewards } from './PoolPositionRewardsProvider'
 
 interface PoolMyRewardsProps {
@@ -58,7 +59,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
             variant="outline"
             size="default"
             fullWidth
-            chainId={pool.chainId}
+            chainId={pool.chainId as ChainId}
           >
             <Button
               disabled={!harvest}

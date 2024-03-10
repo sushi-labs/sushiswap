@@ -14,12 +14,12 @@ import {
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  UseSimulateContractParameters,
+  UseCallParameters,
   getV3NonFungiblePositionManagerConractConfig,
   useAccount,
+  useCall,
   usePublicClient,
   useSendTransaction,
-  useSimulateContract,
   useTransactionDeadline,
   useWaitForTransactionReceipt,
 } from '@sushiswap/wagmi'
@@ -190,10 +190,11 @@ export const AddSectionReviewModalConcentrated: FC<
           })
 
     return {
-      address: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+      to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+      chainId,
       data: calldata as Hex,
       value: BigInt(value),
-    } satisfies UseSimulateContractParameters
+    } satisfies UseCallParameters
   }, [
     address,
     chainId,
@@ -207,9 +208,8 @@ export const AddSectionReviewModalConcentrated: FC<
     tokenId,
   ])
 
-  const { data: simulation, isError } = useSimulateContract({
+  const { isError: isSimulationError } = useCall({
     ...(prepare as NonNullable<typeof prepare>),
-    chainId,
     query: { enabled: chainId === chain?.id },
   })
 
@@ -225,13 +225,13 @@ export const AddSectionReviewModalConcentrated: FC<
   })
 
   const send = useMemo(() => {
-    if (!sendTransactionAsync || !simulation) return undefined
+    if (!prepare || !isSimulationError) return undefined
 
     return async (confirm: () => void) => {
-      await sendTransactionAsync(simulation.request)
+      await sendTransactionAsync(prepare)
       confirm()
     }
-  }, [sendTransactionAsync, simulation])
+  }, [sendTransactionAsync, isSimulationError, prepare])
 
   const { status } = useWaitForTransactionReceipt({ chainId, hash: data })
 
@@ -366,11 +366,11 @@ export const AddSectionReviewModalConcentrated: FC<
                   fullWidth
                   loading={!send || isWritePending}
                   onClick={() => send?.(confirm)}
-                  disabled={isError}
+                  disabled={isSimulationError}
                   testId="confirm-add-liquidity"
                   type="button"
                 >
-                  {isError ? (
+                  {isSimulationError ? (
                     'Shoot! Something went wrong :('
                   ) : isWritePending ? (
                     <Dots>Confirm Add</Dots>

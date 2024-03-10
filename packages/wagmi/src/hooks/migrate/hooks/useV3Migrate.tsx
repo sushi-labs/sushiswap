@@ -142,21 +142,24 @@ export const useV3Migrate = ({
       }
     }, [args, chainId])
 
-  const { data: migrateSimulation } = useSimulateContract({
-    ...migrateContract,
-    query: {
-      enabled: Boolean(enabled && migrateContract),
-    },
-  })
+  const { data: migrateSimulation, isError: isMigrateError } =
+    useSimulateContract({
+      ...migrateContract,
+      query: {
+        enabled: Boolean(enabled && migrateContract),
+      },
+    })
 
-  const { data: multicallSimulation } = useSimulateContract({
-    ...multicallContract,
-    query: {
-      enabled: Boolean(enabled && multicallContract),
-    },
-  })
+  const { data: multicallSimulation, isError: isMulticallError } =
+    useSimulateContract({
+      ...multicallContract,
+      query: {
+        enabled: Boolean(enabled && multicallContract),
+      },
+    })
 
   const simulation = migrateSimulation || multicallSimulation
+  const isError = isMigrateError || isMulticallError
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {
@@ -189,14 +192,28 @@ export const useV3Migrate = ({
     }
   }, [])
 
+  const {
+    writeContractAsync,
+    writeContract: _,
+    ...rest
+  } = useWriteContract({
+    mutation: {
+      onSuccess,
+      onError,
+    },
+  })
+
+  const write = useMemo(() => {
+    if (!simulation) return undefined
+
+    return async () => {
+      await writeContractAsync(simulation.request)
+    }
+  }, [simulation, writeContractAsync])
+
   return {
-    simulation,
-    write: useWriteContract({
-      ...simulation?.request,
-      mutation: {
-        onSuccess,
-        onError,
-      },
-    }),
+    ...rest,
+    write,
+    isError,
   }
 }
