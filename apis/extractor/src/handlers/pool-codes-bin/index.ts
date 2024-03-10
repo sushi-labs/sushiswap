@@ -7,14 +7,51 @@ import {
   deserializePoolsBinary,
   serializePoolsBinary,
 } from 'sushi/router'
-import { CHAIN_ID } from '../../config.js'
+import { CHAIN_ID, POOLS_SERIALIZATION_INTERVAL } from '../../config.js'
 import extractor from '../../extractor.js'
 import { querySchema } from './schema.js'
 
 const MIN_STATE_UPDATE_INTERVAL = 2_000
 const REMOVE_HISTORY_BEFORE = 300_000
-const TEST_DIFFERENCE_CORRECTNESS = false
+const INCREMENTAL_MODE =
+  extractor.config['experimantalPoolIncrementalMode'] ?? false
+const TEST_INCREMENTAL_MODE_CORRECTNESS =
+  extractor.config['checkPoolIncrementalModeCorrectness'] ?? false
 
+// ======================== All pools sending ============================
+
+let lastPoolsBlob: Uint8Array = new Uint8Array(0)
+let lastPoolsSerializationTime = 0
+
+async function handlerAll(req: Request, res: Response) {
+  res.setHeader(
+    'Cache-Control',
+    'maxage=1, s-maxage=1, stale-while-revalidate=59',
+  )
+  const chainId = req.params['chainId']
+  if (chainId === undefined || Number(chainId) !== CHAIN_ID)
+    return res.status(422).send(`Unsupported network ${chainId}`)
+
+  if (
+    Date.now() - lastPoolsSerializationTime >
+    POOLS_SERIALIZATION_INTERVAL(CHAIN_ID)
+  ) {
+    const start = performance.now()
+    const poolCodes = extractor.getCurrentPoolCodes()
+    lastPoolsBlob = serializePoolsBinary(poolCodes)
+    lastPoolsSerializationTime = Date.now()
+    console.log(
+      `Pools binary serialization: ${poolCodes.length} pools ${Math.round(
+        performance.now() - start,
+      )}ms`,
+    )
+  }
+  res.setHeader('Content-Type', 'application/octet-stream')
+  res.set('Content-Type', 'application/octet-stream')
+  return res.end(lastPoolsBlob)
+}
+
+//============================= Only updated pools sended ============================
 const logs = new LogSender(CHAIN_ID)
 
 interface State {
@@ -43,7 +80,7 @@ function updateLastState(force = false): number {
     diff,
     poolNum: newPools.length,
   })
-  if (TEST_DIFFERENCE_CORRECTNESS) testClient.updateAndCheck()
+  if (TEST_INCREMENTAL_MODE_CORRECTNESS) testClient.updateAndCheck()
   return newStateId
 }
 
@@ -120,7 +157,7 @@ function getStateList(stateId: number): State[] {
   return [AllPoolsState as State]
 }
 
-async function handler(req: Request, res: Response) {
+async function handlerInc(req: Request, res: Response) {
   res.setHeader(
     'Cache-Control',
     'maxage=1, s-maxage=1, stale-while-revalidate=59',
@@ -142,8 +179,6 @@ async function handler(req: Request, res: Response) {
   res.set('Content-Type', 'application/octet-stream')
   return res.end(data)
 }
-
-export default handler
 
 class TestClient {
   state = 0
@@ -206,3 +241,10 @@ class TestClient {
 }
 
 const testClient = new TestClient()
+
+async function handler(req: Request, res: Response) {
+  if (INCREMENTAL_MODE) return handlerInc(req, res)
+  else return handlerAll(req, res)
+}
+
+export default handler

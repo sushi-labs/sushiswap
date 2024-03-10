@@ -307,7 +307,7 @@ export function comparePoolArrays(
     if (pB === undefined) {
       console.log(`Set 2 has no pool ${pA.pool.uniqueID()}`)
       res = false
-    } else res &&= comparePools(pA, pB)
+    } else res = comparePools(pA, pB) && res
   })
 
   Array.from(poolsBMap.values()).forEach((pB) => {
@@ -396,6 +396,8 @@ function comparePools(poolsA: PoolCode, poolsB: PoolCode): boolean {
         }
       }
     }
+  } else {
+    console.log('Unknown pool type')
   }
   return res
 }
@@ -410,8 +412,8 @@ function compareConstantProductRPool(
     ['address', 'fee', 'reserve0', 'reserve1'],
     `ConstantProductRPool ${poolA.address} mismatch`,
   )
-  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
-  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
+  res = compareTokens(poolA.token0, poolB.token0, poolA.uniqueID()) && res
+  res = compareTokens(poolA.token1, poolB.token1, poolA.uniqueID()) && res
   return res
 }
 
@@ -430,14 +432,15 @@ function compareUniV3Pool(poolA: UniV3Pool, poolB: UniV3Pool): boolean {
     ],
     `UniV3Pool ${poolA.address} mismatch`,
   )
-  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
-  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
-  res &&= cmpArrObj(
-    poolA.ticks,
-    poolB.ticks,
-    ['index', 'DLiquidity'],
-    `UniV3Pool ${poolA.address} mismatch ticks`,
-  )
+  res = compareTokens(poolA.token0, poolB.token0, poolA.uniqueID()) && res
+  res = compareTokens(poolA.token1, poolB.token1, poolA.uniqueID()) && res
+  res =
+    cmpArrObj(
+      poolA.ticks,
+      poolB.ticks,
+      ['index', 'DLiquidity'],
+      `UniV3Pool ${poolA.address} mismatch ticks`,
+    ) && res
   return res
 }
 
@@ -451,8 +454,8 @@ function compareBridgeUnlimited(
     ['address', 'fee'],
     `BridgeUnlimited ${poolA.address} mismatch`,
   )
-  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
-  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
+  res = compareTokens(poolA.token0, poolB.token0, poolA.uniqueID()) && res
+  res = compareTokens(poolA.token1, poolB.token1, poolA.uniqueID()) && res
   return res
 }
 
@@ -466,7 +469,7 @@ function compareCurveMultitokenPool(
     ['index0', 'index1'],
     `CurveMultitokenPool ${poolA.address} mismatch`,
   )
-  res &&= compareCurveMultitokenCore(poolA.core, poolB.core)
+  res = compareCurveMultitokenCore(poolA.core, poolB.core) && res
   return res
 }
 
@@ -480,22 +483,25 @@ function compareCurveMultitokenCore(
     ['address', 'fee', 'A'],
     `CurveMultitokenCore ${poolA.address} mismatch`,
   )
-  res &&= cmpArrObj(
-    poolA.tokens,
-    poolB.tokens,
-    ['address', 'name', 'symbol', 'decimals'],
-    `CurveMultitokenCore ${poolA.address} mismatch tokens`,
-  )
-  res &&= cmpArrVal(
-    poolA.reserves,
-    poolB.reserves,
-    `CurveMultitokenCore ${poolA.address} mismatch reserves`,
-  )
-  res &&= cmpArrVal(
-    poolA.rates,
-    poolB.rates,
-    `CurveMultitokenCore ${poolA.address} mismatch rates`,
-  )
+  res =
+    cmpArrObj(
+      poolA.tokens,
+      poolB.tokens,
+      ['address', 'name', 'symbol', 'decimals'],
+      `CurveMultitokenCore ${poolA.address} mismatch tokens`,
+    ) && res
+  res =
+    cmpArrVal(
+      poolA.reserves,
+      poolB.reserves,
+      `CurveMultitokenCore ${poolA.address} mismatch reserves`,
+    ) && res
+  res =
+    cmpArrVal(
+      poolA.rates,
+      poolB.rates,
+      `CurveMultitokenCore ${poolA.address} mismatch rates`,
+    ) && res
   return res
 }
 
@@ -528,7 +534,7 @@ function cmpObj(
 ): boolean {
   let res = true
   fields.forEach((f) => {
-    res &&= cmpVal(A[f], B[f], `${err} ${f}`)
+    res = cmpVal(A[f], B[f], `${err} ${f}`) && res
   })
   return res
 }
@@ -536,7 +542,7 @@ function cmpObj(
 function cmpArrVal<T>(A: T[], B: T[], err: string): boolean {
   let res = cmpVal(A.length, B.length, `${err} length`)
   A.forEach((m, i) => {
-    res &&= cmpVal(m, B[i] as T, `${err} ${i}`)
+    res = cmpVal(m, B[i] as T, `${err} ${i}`) && res
   })
   return res
 }
@@ -548,8 +554,9 @@ function cmpArrObj<T extends Record<string, any>>(
   err: string,
 ): boolean {
   let res = cmpVal(A.length, B.length, `${err} length`)
+  if (!res) return res
   A.forEach((m, i) => {
-    res &&= cmpObj(m, B[i] as T, fields, `${err} ${i}`)
+    res = cmpObj(m, B[i] as T, fields, `${err} ${i}`) && res
   })
   return res
 }
