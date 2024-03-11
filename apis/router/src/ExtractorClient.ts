@@ -98,7 +98,6 @@ export class ExtractorClient {
             else pl.push(p)
           })
           poolNums.push(pools.length)
-          console.log(`State: ${this.dataStateId} -> ${stateId}`)
           this.dataStateId = stateId
         }
         const timing = Math.round(performance.now() - start)

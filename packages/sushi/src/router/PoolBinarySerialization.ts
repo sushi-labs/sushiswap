@@ -71,8 +71,8 @@ export function serializePoolsBinary(
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually 0.003
-      stream.bigUInt(p.reserve0)
-      stream.bigUInt(p.reserve1)
+      stream.bigUInt(p.reserve0, p.address, 'res0')
+      stream.bigUInt(p.reserve1, p.address, 'res1')
     } else if (pc instanceof UniV3PoolCode) {
       const p = pc.pool as UniV3Pool
       stream.uint8(PoolTypeIndex.Concentrated)
@@ -80,12 +80,12 @@ export function serializePoolsBinary(
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
-      stream.bigUInt(p.reserve0)
-      stream.bigUInt(p.reserve1)
+      stream.bigUInt(p.reserve0, p.address, 'res0')
+      stream.bigUInt(p.reserve1, p.address, 'res1')
       //stream.uint32(p.tick) nearestTick instead of it
       stream.uint24(p.nearestTick)
-      stream.bigUInt(p.liquidity)
-      stream.bigUInt(p.sqrtPriceX96)
+      stream.bigUInt(p.liquidity, p.address, 'liquidity')
+      stream.bigUInt(p.sqrtPriceX96, p.address, 'price')
       stream.uint24(p.ticks.length)
       p.ticks.forEach((t) => {
         stream.int24(t.index)
@@ -110,7 +110,7 @@ export function serializePoolsBinary(
       stream.uint8(core.tokens.length)
       core.tokens.forEach((t, i) => {
         stream.uint24(tokenIndex.get(t.address) as number)
-        stream.bigUInt(core.reserves[i] as bigint)
+        stream.bigUInt(core.reserves[i] as bigint, core.address)
         stream.float64(core.rates[i] as number)
       })
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]

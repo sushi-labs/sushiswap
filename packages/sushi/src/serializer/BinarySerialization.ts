@@ -81,9 +81,11 @@ export class BinWriteStream {
     this.position += 8
   }
 
-  bigUInt(num: bigint) {
+  bigUInt(num: bigint, debug0 = '', debug1 = '') {
     if (num < 0) {
-      console.error(`Serialization error: Negative bigint value ${num}`)
+      console.error(
+        `Serialization error: Negative bigint value ${num} ${debug0} ${debug1}`,
+      )
       num = -num
     }
     this.ensurePlace(2041)
