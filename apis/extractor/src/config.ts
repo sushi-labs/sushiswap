@@ -222,6 +222,8 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
     // maxBatchesSimultaniously: 5,
+    experimantalPoolIncrementalMode: true, // Only changed pools are sent from Extractor to Router
+    checkPoolIncrementalModeCorrectness: true, // if experimantalPoolIncrementalMode then make correctness check (resourcefull)
   },
   [ChainId.BTTC]: {
     client: createPublicClient(publicClientConfig[ChainId.BTTC]),

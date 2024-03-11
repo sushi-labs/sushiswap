@@ -90,6 +90,7 @@ export enum AlgebraPoolWatcherStatus {
 
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
+// event PoolCodeWasChanged is emitted each time getPoolCode() returns another pool (lastPoolCode changed)
 export class AlgebraPoolWatcher extends EventEmitter {
   address: Address
   tickHelperContract: Address
@@ -131,7 +132,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
       busyCounter,
     )
     this.wordLoadManager.on('ticksChanged', () => {
-      this.lastPoolCode = undefined
+      this._poolWasChanged()
     })
     this.busyCounter = busyCounter
   }
@@ -182,7 +183,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             liquidity: liquidity as bigint,
             sqrtPriceX96: price,
           }
-          this.lastPoolCode = undefined
+          this._poolWasChanged()
 
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
           this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
@@ -234,7 +235,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, -amount)
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Burn': {
@@ -254,7 +255,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, -amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, amount)
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Collect': {
@@ -268,7 +269,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             this.state.reserve1 -= amount1
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Flash': {
@@ -282,7 +283,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             this.state.reserve1 += paid1
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Swap': {
@@ -302,7 +303,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             this.wordLoadManager.onPoolTickChange(this.state.tick, false)
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Fee': {
@@ -313,7 +314,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           const { fee } = data.args
           this.state.fee = fee
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       default:
@@ -375,5 +376,12 @@ export class AlgebraPoolWatcher extends EventEmitter {
     })
     await this.statusPromise
     this.statusPromise = undefined
+  }
+
+  private _poolWasChanged() {
+    if (this.lastPoolCode !== undefined) {
+      this.lastPoolCode = undefined
+      this.emit('PoolCodeWasChanged', this)
+    }
   }
 }
