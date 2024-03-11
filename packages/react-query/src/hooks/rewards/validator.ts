@@ -84,24 +84,35 @@ export const angleRewardsValidator = z.record(
       .optional(),
     validRewardTokens: z
       .array(
-        z.object({
-          minimumAmountPerEpoch: z.number(),
-          token: z.string(),
-          decimals: z.number(),
-          symbol: z.string(),
-        }),
+        z
+          .object({
+            minimumAmountPerEpoch: z.number(),
+            token: z.string(),
+            decimals: z.number(),
+            symbol: z.string(),
+          })
+          .catch(undefined as never),
+      )
+      .transform((tokens) =>
+        tokens.filter((token) => typeof token !== 'undefined'),
       )
       .optional(),
   }),
 )
 
 export const angleRewardTokensValidator = z.object({
-  validRewardTokens: z.array(
-    z.object({
-      minimumAmountPerEpoch: z.number(),
-      token: z.string(),
-      decimals: z.number(),
-      symbol: z.string(),
-    }),
-  ),
+  validRewardTokens: z
+    .array(
+      z
+        .object({
+          minimumAmountPerEpoch: z.number(),
+          token: z.string(),
+          decimals: z.number(),
+          symbol: z.string(),
+        })
+        .catch(undefined as never),
+    )
+    .transform((tokens) =>
+      tokens.filter((token) => typeof token !== 'undefined'),
+    ),
 })
