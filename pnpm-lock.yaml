@@ -1739,6 +1739,9 @@ importers:
       '@sushiswap/typescript-config':
         specifier: workspace:*
         version: link:../../config/typescript
+      '@types/gtag.js':
+        specifier: 0.0.19
+        version: 0.0.19
       '@types/react':
         specifier: 18.2.14
         version: 18.2.14
@@ -16074,6 +16077,10 @@ packages:
     resolution: {integrity: sha512-Sig0SNORX9fdW+bQuTEovKj3uHcUL6LQKbCrrqb1X7J6/ReAbhCXRAhc+SMejhLELFj2QcyuxmUooZ4bt5ReSw==}
     dependencies:
       '@types/node': 20.11.19
+
+  /@types/gtag.js@0.0.19:
+    resolution: {integrity: sha512-KHoDzrf9rSd0mooKN576PjExpdk/XRrNu4RQnmigsScSTSidwyOUe9kDrHz9UPKjiBrx2QEsSkexbJSgS0j72w==}
+    dev: true
 
   /@types/hast@2.3.5:
     resolution: {integrity: sha512-SvQi0L/lNpThgPoleH53cdjB3y9zpLlVjRbqB3rH8hx1jiRSBGAhyjV3H+URFjNVRqt2EdYNrbZE5IsGlNfpRg==}

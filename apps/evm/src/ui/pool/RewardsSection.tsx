@@ -37,7 +37,8 @@ export const RewardsSection: FC = () => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
   const { data, isInitialLoading } = useAngleRewardsMultipleChains({
-    chainIds: ANGLE_ENABLED_NETWORKS,
+    // chainIds: ANGLE_ENABLED_NETWORKS,
+    chainIds: [],
     account: address,
   })
 

@@ -66,4 +66,29 @@ describe('#computePoolAddress', () => {
 
     expect(resultA).toEqual(resultB)
   })
+
+  it('BLAST - should correctly compute the pool address', () => {
+    const tokenA = new Token({
+      chainId: 81457,
+      address: '0x4300000000000000000000000000000000000003',
+      decimals: 18,
+      symbol: 'USDB',
+      name: 'USD Blast',
+    })
+    const tokenB = new Token({
+      chainId: 81457,
+      address: '0x4300000000000000000000000000000000000004',
+      decimals: 18,
+      symbol: 'WETH',
+      name: 'Wrapped Ether',
+    })
+    const result = computeSushiSwapV3PoolAddress({
+      factoryAddress: '0x7680D4B43f3d1d54d6cfEeB2169463bFa7a6cf0d',
+      fee: SushiSwapV3FeeAmount.MEDIUM,
+      tokenA,
+      tokenB,
+    })
+
+    expect(result).toEqual('0xCd03572e7cFB94996beEbaA539234CE5c23AE1d6')
+  })
 })

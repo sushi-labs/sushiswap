@@ -1,7 +1,7 @@
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { useContractRead } from 'wagmi'
 
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 
 export const useConcentratedPositionOwner = ({
   chainId,
@@ -12,7 +12,7 @@ export const useConcentratedPositionOwner = ({
 }) => {
   return useContractRead({
     chainId,
-    address: getV3NonFungiblePositionManagerConractConfig(chainId).address,
+    address: getV3NonFungiblePositionManagerContractConfig(chainId).address,
     abi: [
       {
         inputs: [

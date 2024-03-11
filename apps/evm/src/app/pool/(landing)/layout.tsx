@@ -38,10 +38,7 @@ export default function TabsLayout({
               asChild
               size="sm"
             >
-              Smart Pools{' '}
-              <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                NEW
-              </div>
+              Smart Pools
             </PathnameButton>
           </LinkInternal>
           <LinkInternal
