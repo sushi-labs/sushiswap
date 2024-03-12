@@ -38,9 +38,7 @@ export function serializePoolsBinary(
 ): Uint8Array {
   const stream = new BinWriteStream()
   stream.str16(JSON.stringify(extraData ?? {}))
-  stream.uint24(
-    pools.length > 0 ? (pools[0]?.pool.token0.chainId as number) : 0,
-  )
+  stream.float64(Number(pools[0]?.pool.token0.chainId ?? 0))
   const CurveCoreSerialized = new Set<string>()
 
   const tokenMap = new Map<string, RToken>()
@@ -138,7 +136,7 @@ export function deserializePoolsBinary(
   const stream = new BinReadStream(data)
   stream.skip(start)
   const extraData = JSON.parse(stream.str16())
-  const chainId = stream.uint24() as ChainId
+  const chainId = stream.float64() as ChainId
   const tokensNum = stream.uint24()
   const tokensArray: RToken[] = new Array(tokensNum)
   // const newTokens: Token[] = []
