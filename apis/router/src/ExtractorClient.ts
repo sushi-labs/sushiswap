@@ -32,6 +32,7 @@ export class ExtractorClient {
   lastUpdatedTimestamp = 0
   tokenMap: Map<string, Token> = new Map()
   poolCodesMap: Map<string, PoolCode[]> = new Map()
+  totalPoolNumber = 0
   requestedPairs: Map<string, Set<string>> = new Map()
   fetchPoolsBetweenRequests: Set<string> = new Set()
   dataStateId = 0
@@ -79,6 +80,7 @@ export class ExtractorClient {
           if (prevStateId === 0) {
             this.poolCodesMap.clear()
             this.tokenMap.clear()
+            this.totalPoolNumber = 0
           } else if (prevStateId !== this.dataStateId) {
             warnLog(
               this.chainId,
@@ -94,8 +96,22 @@ export class ExtractorClient {
 
             const id = tokenPairId(t0.address, t1.address)
             const pl = this.poolCodesMap.get(id)
-            if (pl === undefined) this.poolCodesMap.set(id, [p])
-            else pl.push(p)
+            if (pl === undefined) {
+              this.poolCodesMap.set(id, [p])
+              ++this.totalPoolNumber
+            } else {
+              if (prevStateId !== 0) {
+                const addr = p.pool.address
+                const len = pl.length
+                for (let i = 0; i < len; ++i) {
+                  if ((pl[i] as PoolCode).pool.address !== addr) continue
+                  pl[i] = p
+                  return
+                }
+              }
+              pl.push(p)
+              ++this.totalPoolNumber
+            }
           })
           poolNums.push(pools.length)
           this.dataStateId = stateId
@@ -103,7 +119,7 @@ export class ExtractorClient {
         const timing = Math.round(performance.now() - start)
         console.log(
           `updatePools: ${poolNums.map((n) => n.toString()).join('+')}/${
-            this.poolCodesMap.size
+            this.totalPoolNumber
           } pools and ${this.tokenMap.size} tokens (${timing}ms cpu time)`,
         )
         this.lastUpdatedTimestamp = Date.now()

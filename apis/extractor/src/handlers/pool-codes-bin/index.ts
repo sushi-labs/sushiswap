@@ -38,7 +38,10 @@ async function handlerAll(req: Request, res: Response) {
   ) {
     const start = performance.now()
     const poolCodes = extractor.getCurrentPoolCodes()
-    lastPoolsBlob = serializePoolsBinary(poolCodes)
+    lastPoolsBlob = serializePoolsBinary(poolCodes, {
+      stateId: 1,
+      prevStateId: 0,
+    })
     lastPoolsSerializationTime = Date.now()
     console.log(
       `Pools binary serialization: ${poolCodes.length} pools ${Math.round(
