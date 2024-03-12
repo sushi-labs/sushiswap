@@ -12,6 +12,7 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
+  SpecialExtractorClientConfig,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   UNISWAP_V2_FACTORY_ADDRESS,
@@ -177,7 +178,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BSC]: {
-    client: createPublicClient(publicClientConfig[ChainId.BSC]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.BSC]),
     factoriesV2: [
       sushiswapV2Factory(ChainId.BSC),
       {
@@ -260,7 +261,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.ETHEREUM]: {
-    client: createPublicClient(publicClientConfig[ChainId.ETHEREUM]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.ETHEREUM]),
     factoriesV2: [
       {
         address: UNISWAP_V2_FACTORY_ADDRESS,
