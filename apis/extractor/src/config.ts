@@ -303,6 +303,7 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.FANTOM]: {
     client: createPublicClient(publicClientConfig[ChainId.FANTOM]),
@@ -441,6 +442,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
+    maxBatchesSimultaniously: 5,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON_ZKEVM]: {
