@@ -522,7 +522,9 @@ export const publicClientConfig: Record<
   },
   [ChainId.BSC]: {
     chain: bsc,
-    transport: http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`),
+    transport: http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`, {
+      timeout: 120_000,
+    }),
   },
   [ChainId.BTTC]: {
     chain: bttc,
@@ -536,6 +538,9 @@ export const publicClientConfig: Record<
     chain: mainnet,
     transport: http(
       `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
+      {
+        timeout: 120_000,
+      },
     ),
   },
   [ChainId.FANTOM]: {
