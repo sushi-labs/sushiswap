@@ -189,8 +189,13 @@ export class AlgebraPoolWatcher extends EventEmitter {
           this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
           break
         }
-      } catch (_e) {
-        warnLog(this.client.chainId, `Pool ${this.address} update failed`)
+      } catch (e) {
+        warnLog(
+          this.client.chainId,
+          `Alg Pool ${this.address} update failed`,
+          'error',
+          `${e}`,
+        )
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
