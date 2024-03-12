@@ -233,7 +233,7 @@ const COLUMNS = [
               </span>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Amount of liquidity staked in the vault.</p>
+              <p>Amount of liquidity deposited in the smart pool.</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
