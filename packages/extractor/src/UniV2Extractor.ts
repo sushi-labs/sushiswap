@@ -226,11 +226,13 @@ export class UniV2Extractor {
             addToCache: false,
             startTime,
           })
-        } catch (_e) {
+        } catch (e) {
           this.taskCounter.dec()
           warnLog(
             this.multiCallAggregator.chainId,
             `Ext2 pool ${r.address} reading from cache failed`,
+            'error',
+            `${e}`,
           )
           return
         }
