@@ -65,17 +65,18 @@ const DISCOURSE_PROPOSAL_ID = 8
 const SNAPSHOT_URL = 'https://hub.snapshot.org/graphql'
 
 async function fetchDiscourse<T>(path: string) {
-  const data = await fetchUrl<T>(DISCOURSE_BASE_URL + path, {
-    headers: {
-      'Api-Key': process.env.DISCOURSE_API_KEY ?? '',
-      'Api-Username': 'sushi',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  })
+  return Promise.resolve(undefined) as Promise<T | undefined>
+  // const data = await fetchUrl<T>(DISCOURSE_BASE_URL + path, {
+  //   headers: {
+  //     'Api-Key': process.env.DISCOURSE_API_KEY ?? '',
+  //     'Api-Username': 'sushi',
+  //     'Access-Control-Allow-Origin': '*',
+  //     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  //     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  //   },
+  // })
 
-  return data
+  // return data
 }
 
 export interface GovernanceItemsFilters {
