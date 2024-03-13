@@ -1,8 +1,12 @@
-import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json'
-import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json'
-import { LiquidityProviders, PoolCode } from '@sushiswap/router'
+import AlgebraFactory from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json' assert {
+  type: 'json',
+}
+import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json' assert {
+  type: 'json',
+}
 import { Abi } from 'abitype'
 import { Token } from 'sushi/currency'
+import { LiquidityProviders, PoolCode } from 'sushi/router'
 import {
   Address,
   Hex,
@@ -12,19 +16,18 @@ import {
   getAddress,
   keccak256,
 } from 'viem'
-
-import { AlgebraEventsAbi, AlgebraPoolWatcher } from './AlgebraPoolWatcher'
+import { AlgebraEventsAbi, AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
 import {
   AlgebraQualityChecker,
   PoolSyncState,
   QualityCheckerCallBackArg,
-} from './AlgebraQualityChecker'
-import { Counter } from './Counter'
-import { LogFilter2 } from './LogFilter2'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { PermanentCache } from './PermanentCache'
-import { TokenManager } from './TokenManager'
-import { warnLog } from './WarnLog'
+} from './AlgebraQualityChecker.js'
+import { Counter } from './Counter.js'
+import { LogFilter2 } from './LogFilter2.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { PermanentCache } from './PermanentCache.js'
+import { TokenManager } from './TokenManager.js'
+import { warnLog } from './WarnLog.js'
 
 export function getAlgebraPoolAddress(
   PoolDeployerAddress: string,

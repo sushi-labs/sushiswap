@@ -1,19 +1,44 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { Carousel } from '@sushiswap/ui'
+import { Carousel, SkeletonBox } from '@sushiswap/ui'
 import { FC, useCallback, useMemo } from 'react'
 
 import { SteerPoolCard } from './SteerPoolCard'
 
-export const SteerCarousel: FC<{ pool: Pool }> = ({ pool }) => {
+interface SteerCarousel {
+  pool?: Pool
+  isLoading?: boolean
+}
+
+export const SteerCarousel: FC<SteerCarousel> = ({
+  pool,
+  isLoading = false,
+}) => {
+  if (isLoading || !pool) {
+    return <_SteerCarouselLoading />
+  }
+
+  return <_SteerCarousel pool={pool} />
+}
+
+interface _SteerCarousel {
+  pool: Pool
+}
+
+const _SteerCarousel: FC<_SteerCarousel> = ({ pool }) => {
   const enabledVaults = useMemo(
     () => pool.steerVaults.filter((vault) => vault.isEnabled),
-    [pool.steerVaults],
+    [pool],
   )
+
   const render = useCallback(
     (vault: Pool['steerVaults'][0]) => {
-      return <SteerPoolCard key={vault.id} pool={pool} vault={vault} />
+      return (
+        <div className="w-[400px]">
+          <SteerPoolCard key={vault.id} pool={pool} vault={vault} />
+        </div>
+      )
     },
     [pool],
   )
@@ -30,6 +55,28 @@ export const SteerCarousel: FC<{ pool: Pool }> = ({ pool }) => {
       ) : (
         <>No smart pools found.</>
       )}
+    </div>
+  )
+}
+
+const _SteerCarouselLoading: FC = () => {
+  const slides = useMemo(() => [1, 2, 3], [])
+  const render = useCallback(() => {
+    return (
+      <div className="w-[400px]">
+        <SkeletonBox className="h-[651px] w-[400px]" />
+      </div>
+    )
+  }, [])
+
+  return (
+    <div className="pl-4">
+      <Carousel
+        containerWidth={1090}
+        slides={slides}
+        render={render}
+        className="px-2 mt-0 pt-0"
+      />
     </div>
   )
 }

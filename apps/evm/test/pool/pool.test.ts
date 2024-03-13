@@ -1,46 +1,33 @@
 import { Page } from '@playwright/test'
 import {
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
-  isTridentChainId,
-} from '@sushiswap/trident-sdk'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SushiSwapV2ChainId,
-  computeSushiSwapV2PoolAddress,
-  isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
-import {
-  FeeAmount,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
-  computePoolAddress,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
   NextFixture,
   expect,
   test,
 } from 'next/experimental/testmode/playwright'
+import { SupportedChainId } from 'src/config'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SushiSwapV2ChainId,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
-import { zeroAddress } from 'viem'
-
-import { SupportedChainId } from 'src/config'
+import {
+  computeSushiSwapV2PoolAddress,
+  computeSushiSwapV3PoolAddress,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
+} from 'sushi/pool'
 import { createERC20 } from 'test/erc20'
 import { interceptAnvil } from 'test/intercept-anvil'
-
-interface TridentPoolArgs {
-  token0: Type
-  token1: Type
-  amount0: string
-  amount1: string
-  fee: string
-  type: 'CREATE' | 'ADD'
-}
+import { zeroAddress } from 'viem'
 
 interface V2PoolArgs {
   token0: Type
@@ -202,7 +189,7 @@ test.describe('V3', () => {
       next,
       NATIVE_TOKEN.wrapped,
       FAKE_TOKEN,
-      FeeAmount.HIGH,
+      SushiSwapV3FeeAmount.HIGH,
       'SUSHISWAP_V3',
     )
 
@@ -240,133 +227,28 @@ test.describe('V3', () => {
       type: 'ADD',
     })
 
-    // console.log('Remove liquidity')
-    const poolAddress = computePoolAddress({
+    console.log('Remove liquidity')
+    await mockPoolApi(
+      page,
+      next,
+      NATIVE_TOKEN.wrapped,
+      FAKE_TOKEN,
+      SushiSwapV3FeeAmount.HIGH,
+      'SUSHISWAP_V3',
+    )
+
+    const poolAddress = computeSushiSwapV3PoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
       tokenA: NATIVE_TOKEN.wrapped,
       tokenB: FAKE_TOKEN,
-      fee: FeeAmount.HIGH,
+      fee: SushiSwapV3FeeAmount.HIGH,
     })
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
 
     await removeLiquidityV3(page, next)
   })
-})
-
-test.describe('Trident', () => {
-  test.skip(!isTridentChainId(CHAIN_ID))
-  test.beforeEach(async ({ page }) => {
-    const url = BASE_URL.concat(`/add/trident/${CHAIN_ID}`)
-    await page.goto(url)
-    await switchNetwork(page, CHAIN_ID)
-  })
-
-  test('Create, add & remove', async ({ page, next }) => {
-    test.slow()
-    await createOrAddTridentPool(page, next, {
-      // 0.01% fee is not created at block 42259027
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: Fee.DEFAULT.toString(),
-      type: 'CREATE',
-    })
-
-    await createOrAddTridentPool(page, next, {
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: Fee.DEFAULT.toString(),
-      type: 'ADD',
-    })
-
-    await mockPoolApi(
-      page,
-      next,
-      NATIVE_TOKEN.wrapped,
-      FAKE_TOKEN,
-      Fee.DEFAULT,
-      'BENTOBOX_CLASSIC',
-    )
-    const poolAddress = computeTridentConstantPoolAddress({
-      factoryAddress:
-        TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID as TridentChainId],
-      tokenA: NATIVE_TOKEN.wrapped,
-      tokenB: FAKE_TOKEN,
-      fee: Fee.DEFAULT,
-      twap: false,
-    })
-    const removeLiquidityUrl = BASE_URL.concat(
-      `/${CHAIN_ID}:${poolAddress}/remove`,
-    )
-    await page.goto(removeLiquidityUrl)
-    await removeLiquidityV2(page, next)
-  })
-
-  test.skip('Add, stake, unstake and remove', async ({ page, next }) => {
-    test.slow()
-    await createOrAddTridentPool(page, next, {
-      token0: NATIVE_TOKEN,
-      token1: FAKE_TOKEN,
-      amount0: '0.0001',
-      amount1: '0.0001',
-      fee: Fee.DEFAULT.toString(),
-      type: 'ADD',
-    })
-
-    const poolAddress = computeTridentConstantPoolAddress({
-      factoryAddress:
-        TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[CHAIN_ID as TridentChainId],
-      tokenA: NATIVE_TOKEN.wrapped,
-      tokenB: FAKE_TOKEN,
-      fee: Fee.DEFAULT,
-      twap: false,
-    })
-
-    await mockPoolApi(
-      page,
-      next,
-      NATIVE_TOKEN.wrapped,
-      FAKE_TOKEN,
-      Fee.DEFAULT,
-      'BENTOBOX_CLASSIC',
-    )
-
-    const addLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
-    await page.goto(addLiquidityUrl, { timeout: 25_000 })
-    await manageStaking(page, 'STAKE')
-
-    const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
-    await page.goto(removeLiquidityUrl, { timeout: 25_000 })
-    await manageStaking(page, 'UNSTAKE')
-    await page.reload({ timeout: 25_000 })
-    await removeLiquidityV2(page, next)
-  })
-
-  // test('Migrate', async ({ page }) => {
-  //   test.slow()
-  //   await createOrAddTridentPool(page, {
-  //     token0: NATIVE_TOKEN,
-  //     token1: USDC,
-  //     amount0: '0.0001',
-  //     amount1: '0.0001',
-  //     fee: '5',
-  //     type: 'ADD',
-  //   })
-
-  //   const addLiquidityUrl = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b')
-  //   await page.goto(addLiquidityUrl, { timeout: 25_000 })
-  //   await manageStaking(page, 'STAKE')
-
-  //   const migrateURL = BASE_URL.concat('/137:0x846fea3d94976ef9862040d9fba9c391aa75a44b/migrate')
-  //   await page.goto(migrateURL, { timeout: 25_000 })
-  //   await manageUnstakeAndClaim(page)
-  //   await migrateV2(page, { minPrice: '0.4', maxPrice: '1' })
-  // })
 })
 
 test.describe('V2', () => {
@@ -484,75 +366,6 @@ async function createOrAddLiquidityV3(
   expect(page.getByText(regex))
 }
 
-async function createOrAddTridentPool(
-  page: Page,
-  _next: NextFixture,
-  args: TridentPoolArgs,
-) {
-  await handleToken(page, args.token0, 'FIRST')
-  await handleToken(page, args.token1, 'SECOND')
-
-  const poolTypeSelector = page.locator('[testdata-id=pool-type-classic-pool]')
-  await expect(poolTypeSelector).toBeVisible()
-  await poolTypeSelector.click()
-  await page.locator(`[testdata-id=fee-option-${args.fee}]`).click()
-
-  const feeOptionSelector = page.locator(`[testdata-id=fee-option-${args.fee}]`)
-  await expect(feeOptionSelector).toBeVisible()
-  await feeOptionSelector.click()
-
-  await page
-    .locator('[testdata-id=add-liquidity-token0-input]')
-    .fill(args.amount0)
-  await page
-    .locator('[testdata-id=add-liquidity-token1-input]')
-    .fill(args.amount1)
-
-  if (args.type === 'CREATE') {
-    const approveBentoLocator = page.locator(
-      '[testdata-id=create-trident-approve-bentobox-button]',
-    )
-    await expect(approveBentoLocator).toBeVisible()
-    await expect(approveBentoLocator).toBeEnabled()
-    await approveBentoLocator.click()
-    // console.log('approveBentoLocator clicked', approveBentoLocator)
-  }
-  const approveTokenId =
-    args.type === 'CREATE'
-      ? `create-trident-approve-token${args.token0.isNative ? 1 : 0}-button`
-      : `add-liquidity-trident-approve-token${
-          args.token0.isNative ? 1 : 0
-        }-button`
-
-  // create-trident-approve-token1-button
-  // add-liquidity-trident-approve-token1-button
-  // console.log('approveTokenId', approveTokenId)
-  const approveTokenLocator = page.locator(`[testdata-id=${approveTokenId}]`)
-  await expect(approveTokenLocator).toBeVisible()
-  await expect(approveTokenLocator).toBeEnabled()
-  await approveTokenLocator.click()
-
-  const reviewSelector =
-    args.type === 'CREATE'
-      ? '[testdata-id=create-pool-button]'
-      : '[testdata-id=add-liquidity-button]'
-  const reviewButton = page.locator(reviewSelector)
-  await expect(reviewButton).toBeVisible()
-  await expect(reviewButton).toBeEnabled()
-  await reviewButton.click()
-
-  const confirmButton = page.locator(
-    '[testdata-id=confirm-add-liquidity-button]',
-  )
-  await expect(confirmButton).toBeVisible()
-  await expect(confirmButton).toBeEnabled()
-  await confirmButton.click()
-
-  const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
-  const regex = new RegExp(expectedText)
-  expect(page.getByText(regex))
-}
-
 async function createOrAddV2Pool(
   page: Page,
   _next: NextFixture,
@@ -655,7 +468,7 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
   await expect(confirmLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
   await confirmLiquidityLocator.click({ timeout: 5_000 })
 
-  const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
+  const regex = /('(Successfully removed liquidity from the .* pair)')/
   expect(page.getByText(regex))
 }
 
@@ -722,42 +535,42 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
 //   expect(page.getByText(regex))
 // }
 
-async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
-  await switchNetwork(page, CHAIN_ID)
+// async function manageStaking(page: Page, type: 'STAKE' | 'UNSTAKE') {
+//   await switchNetwork(page, CHAIN_ID)
 
-  const removeLiquidityTabSelector = page.locator(
-    `[testdata-id=${type.toLowerCase()}-tab]`,
-  )
-  await expect(removeLiquidityTabSelector).toBeVisible()
-  await removeLiquidityTabSelector.click()
+//   const removeLiquidityTabSelector = page.locator(
+//     `[testdata-id=${type.toLowerCase()}-tab]`,
+//   )
+//   await expect(removeLiquidityTabSelector).toBeVisible()
+//   await removeLiquidityTabSelector.click()
 
-  const maxButtonSelector = page.locator(
-    `[testdata-id=${type.toLowerCase()}-max-button]`,
-  )
+//   const maxButtonSelector = page.locator(
+//     `[testdata-id=${type.toLowerCase()}-max-button]`,
+//   )
 
-  await expect(maxButtonSelector).toBeVisible()
-  await expect(maxButtonSelector).toBeEnabled()
-  await maxButtonSelector.click()
-  if (type === 'STAKE') {
-    const approveSlpId = `${type.toLowerCase()}-approve-slp-button`
-    const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
-    await expect(approveSlpLocator).toBeVisible()
-    await expect(approveSlpLocator).toBeEnabled()
-    await approveSlpLocator.click()
-  }
+//   await expect(maxButtonSelector).toBeVisible()
+//   await expect(maxButtonSelector).toBeEnabled()
+//   await maxButtonSelector.click()
+//   if (type === 'STAKE') {
+//     const approveSlpId = `${type.toLowerCase()}-approve-slp-button`
+//     const approveSlpLocator = page.locator(`[testdata-id=${approveSlpId}]`)
+//     await expect(approveSlpLocator).toBeVisible()
+//     await expect(approveSlpLocator).toBeEnabled()
+//     await approveSlpLocator.click()
+//   }
 
-  const actionSelector = page.locator(
-    `[testdata-id=${type.toLowerCase()}-liquidity-button]`,
-  )
-  await expect(actionSelector).toBeVisible()
-  await expect(actionSelector).toBeEnabled()
-  await actionSelector.click({ timeout: 2_000 })
+//   const actionSelector = page.locator(
+//     `[testdata-id=${type.toLowerCase()}-liquidity-button]`,
+//   )
+//   await expect(actionSelector).toBeVisible()
+//   await expect(actionSelector).toBeEnabled()
+//   await actionSelector.click({ timeout: 2_000 })
 
-  const regex = new RegExp(
-    `(Successfully ${type.toLowerCase()}d .* SLP tokens)`,
-  )
-  expect(page.getByText(regex))
-}
+//   const regex = new RegExp(
+//     `(Successfully ${type.toLowerCase()}d .* SLP tokens)`,
+//   )
+//   expect(page.getByText(regex))
+// }
 
 async function removeLiquidityV2(page: Page, _next: NextFixture) {
   await switchNetwork(page, CHAIN_ID)
@@ -782,7 +595,7 @@ async function removeLiquidityV2(page: Page, _next: NextFixture) {
   await expect(removeLiquidityLocator).toBeEnabled()
   await removeLiquidityLocator.click()
 
-  const regex = new RegExp('(Successfully removed liquidity from the .* pair)')
+  const regex = /('(Successfully removed liquidity from the .* pair)')/
   expect(page.getByText(regex))
 }
 
@@ -936,7 +749,7 @@ async function mockPoolApi(
     let address
 
     if (protocol === 'SUSHISWAP_V3') {
-      address = computePoolAddress({
+      address = computeSushiSwapV3PoolAddress({
         factoryAddress:
           SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
         tokenA,

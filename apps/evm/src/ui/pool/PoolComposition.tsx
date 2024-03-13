@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { usePrices } from '@sushiswap/react-query'
+import { SkeletonText } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
@@ -12,10 +12,9 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui/components/card'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { usePoolGraphData, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
-import { Native } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
 interface PoolCompositionProps {
@@ -23,29 +22,31 @@ interface PoolCompositionProps {
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
-  const { data: prices } = usePrices({ chainId: pool.chainId })
-  const { data, isLoading } = usePoolGraphData({
+  const { data, isLoading: isPoolLoading } = usePoolGraphData({
     poolAddress: pool.address,
     chainId: pool.chainId as ChainId,
   })
+
+  const amounts = [data?.reserve0, data?.reserve1]
+
   const fiatValues = useTokenAmountDollarValues({
     chainId: pool.chainId,
-    amounts: [data?.reserve0, data?.reserve1],
+    amounts,
   })
+
+  const isLoading = isPoolLoading || fiatValues.length !== amounts.length
+
+  const [reserve0USD, reserve1USD, reserveUSD] = useMemo(() => {
+    if (isLoading) return [0, 0, 0]
+    return [fiatValues[0], fiatValues[1], fiatValues[0] + fiatValues[1]]
+  }, [fiatValues, isLoading])
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Pool Liquidity</CardTitle>
         <CardDescription>
-          {formatUSD(
-            (data?.liquidityNative ?? 0) *
-              Number(
-                prices?.[Native.onChain(pool.chainId).wrapped.address]?.toFixed(
-                  10,
-                ),
-              ),
-          )}
+          {isLoading ? <SkeletonText /> : <>{formatUSD(reserveUSD)}</>}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -54,12 +55,12 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={data?.reserve0}
-            fiatValue={formatUSD(fiatValues?.[0] || 0)}
+            fiatValue={formatUSD(reserve0USD)}
           />
           <CardCurrencyAmountItem
             isLoading={isLoading}
             amount={data?.reserve1}
-            fiatValue={formatUSD(fiatValues?.[1] || 0)}
+            fiatValue={formatUSD(reserve1USD)}
           />
         </CardGroup>
       </CardContent>

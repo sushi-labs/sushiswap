@@ -16,6 +16,7 @@ import {
 import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
+  useFallback,
   useSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 
@@ -25,6 +26,7 @@ export const SimpleSwapTradeStats: FC = () => {
     state: { chainId, swapAmountString, recipient },
   } = useDerivedStateSimpleSwap()
   const { isInitialLoading: isLoading, data: trade } = useSimpleSwapTrade()
+  const { isFallback } = useFallback(chainId)
   const loading = Boolean(isLoading && !trade?.writeArgs)
 
   return (
@@ -49,8 +51,8 @@ export const SimpleSwapTradeStats: FC = () => {
                 trade?.priceImpact?.lessThan(ZERO)
                   ? '+'
                   : trade?.priceImpact?.greaterThan(ZERO)
-                  ? '-'
-                  : ''
+                    ? '-'
+                    : ''
               }${Math.abs(Number(trade?.priceImpact?.toFixed(2)))}%`
             ) : null}
           </span>
@@ -96,6 +98,21 @@ export const SimpleSwapTradeStats: FC = () => {
             ) : trade?.gasSpent ? (
               `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
             ) : null}
+          </span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Routing source
+          </span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {loading || !trade ? (
+              <SkeletonBox className="h-4 py-0.5 w-[120px]" />
+            ) : !isFallback ? (
+              'SushiSwap API'
+            ) : (
+              'SushiSwap Client'
+            )}
           </span>
         </div>
 

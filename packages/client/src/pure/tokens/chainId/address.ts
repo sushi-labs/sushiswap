@@ -10,8 +10,8 @@ export type Token = Awaited<ReturnType<typeof _getToken>>
 // Slightly opinionated, adding string to support the chainId:address format
 export type GetTokenArgs =
   | GetApiInputFromOutput<
-      typeof TokenApiSchema['_input'],
-      typeof TokenApiSchema['_output']
+      (typeof TokenApiSchema)['_input'],
+      (typeof TokenApiSchema)['_output']
     >
   | string
 

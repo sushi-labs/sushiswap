@@ -1,15 +1,15 @@
-import { RToken, UniV3Pool } from '@sushiswap/tines'
-import {
-  FeeAmount,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_TICK_LENS,
-  SushiSwapV3ChainId,
-  computePoolAddress,
-} from '@sushiswap/v3-sdk'
 import { erc20Abi } from 'sushi/abi'
 import { uniswapV3PoolAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import {
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_TICK_LENS,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+} from 'sushi/config'
 import { Currency, Token, Type } from 'sushi/currency'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
+import { RToken, UniV3Pool } from 'sushi/tines'
 import { Address, readContracts } from 'wagmi'
 
 export enum V3PoolState {
@@ -23,7 +23,7 @@ interface PoolData {
   address: Address
   token0: Token
   token1: Token
-  fee: FeeAmount
+  fee: SushiSwapV3FeeAmount
   sqrtPriceX96: bigint
   activeTick: number
 }
@@ -32,18 +32,18 @@ interface PoolData {
  * The default factory tick spacings by fee amount.
  */
 export const TICK_SPACINGS = {
-  [FeeAmount.LOWEST]: 1,
-  [FeeAmount.LOW]: 10,
-  [FeeAmount.MEDIUM]: 60,
-  [FeeAmount.HIGH]: 200,
+  [SushiSwapV3FeeAmount.LOWEST]: 1,
+  [SushiSwapV3FeeAmount.LOW]: 10,
+  [SushiSwapV3FeeAmount.MEDIUM]: 60,
+  [SushiSwapV3FeeAmount.HIGH]: 200,
 } as const
 
 // TODO: figure out how many ticks we need depending on fee
 export const NUMBER_OF_SURROUNDING_TICKS = {
-  [FeeAmount.LOWEST]: 1000,
-  [FeeAmount.LOW]: 1000,
-  [FeeAmount.MEDIUM]: 1000,
-  [FeeAmount.HIGH]: 1000,
+  [SushiSwapV3FeeAmount.LOWEST]: 1000,
+  [SushiSwapV3FeeAmount.LOW]: 1000,
+  [SushiSwapV3FeeAmount.MEDIUM]: 1000,
+  [SushiSwapV3FeeAmount.HIGH]: 1000,
 } as const
 
 const tickLensAbi = [
@@ -70,7 +70,7 @@ const tickLensAbi = [
   },
 ] as const
 
-const getActiveTick = (tickCurrent: number, feeAmount: FeeAmount) =>
+const getActiveTick = (tickCurrent: number, feeAmount: SushiSwapV3FeeAmount) =>
   tickCurrent && feeAmount
     ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) *
       TICK_SPACINGS[feeAmount]
@@ -84,23 +84,26 @@ export const getV3Pools = async (
   chainId: ChainId,
   currencies: [Currency | undefined, Currency | undefined][],
 ) => {
-  const allCurrencyCombinationsWithAllFees: [Type, Type, FeeAmount][] =
-    currencies.reduce<[Currency, Currency, FeeAmount][]>(
-      (list, [tokenA, tokenB]) => {
-        if (tokenA !== undefined && tokenB !== undefined) {
-          return list.concat([
-            [tokenA, tokenB, FeeAmount.LOWEST],
-            [tokenA, tokenB, FeeAmount.LOW],
-            [tokenA, tokenB, FeeAmount.MEDIUM],
-            [tokenA, tokenB, FeeAmount.HIGH],
-          ])
-        }
-        return []
-      },
-      [],
-    )
+  const allCurrencyCombinationsWithAllFees: [
+    Type,
+    Type,
+    SushiSwapV3FeeAmount,
+  ][] = currencies.reduce<[Currency, Currency, SushiSwapV3FeeAmount][]>(
+    (list, [tokenA, tokenB]) => {
+      if (tokenA !== undefined && tokenB !== undefined) {
+        return list.concat([
+          [tokenA, tokenB, SushiSwapV3FeeAmount.LOWEST],
+          [tokenA, tokenB, SushiSwapV3FeeAmount.LOW],
+          [tokenA, tokenB, SushiSwapV3FeeAmount.MEDIUM],
+          [tokenA, tokenB, SushiSwapV3FeeAmount.HIGH],
+        ])
+      }
+      return []
+    },
+    [],
+  )
 
-  const filtered: [Token, Token, FeeAmount][] = []
+  const filtered: [Token, Token, SushiSwapV3FeeAmount][] = []
   allCurrencyCombinationsWithAllFees.forEach(
     ([currencyA, currencyB, feeAmount]) => {
       if (currencyA && currencyB && feeAmount) {
@@ -120,7 +123,7 @@ export const getV3Pools = async (
     ([currencyA, currencyB, fee]) =>
       ({
         chainId,
-        address: computePoolAddress({
+        address: computeSushiSwapV3PoolAddress({
           factoryAddress:
             SUSHISWAP_V3_FACTORY_ADDRESS[chainId as SushiSwapV3ChainId],
           tokenA: currencyA.wrapped,

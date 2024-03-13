@@ -1,15 +1,15 @@
-import { DataFetcher, Router } from '@sushiswap/router'
-import { RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Signer } from 'ethers'
-import { ethers } from 'hardhat'
+import hre from 'hardhat'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, Type } from 'sushi/currency'
+import { DataFetcher, Router } from 'sushi/router'
+import { RouteStatus } from 'sushi/tines'
 import { createPublicClient } from 'viem'
 import { http, Address } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import { RouteProcessor3__factory } from '../typechain'
+const { ethers } = hre
 
 const RouteProcessorAddr = '0xBBDe1d67297329148Fe1ED5e6B00114842728e65' // new Route Processor
 
@@ -50,11 +50,10 @@ async function makeSwap(
       to,
       RouteProcessorAddr,
     )
-    const RouteProcessorFactory =
-      await ethers.getContractFactory<RouteProcessor3__factory>(
-        'RouteProcessor3',
-        signer,
-      )
+    const RouteProcessorFactory = await ethers.getContractFactory(
+      'RouteProcessor3',
+      signer,
+    )
     const RouteProcessor = RouteProcessorFactory.attach(RouteProcessorAddr)
     const res = await RouteProcessor.callStatic.processRoute(
       rpParams.tokenIn,

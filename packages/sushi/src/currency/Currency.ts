@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
 import { ChainId } from '../chain/index.js'
-
 import { Native } from './Native.js'
 import { Token } from './Token.js'
 

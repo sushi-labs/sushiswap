@@ -23,13 +23,8 @@ import {
   useState,
 } from 'react'
 import { ChainId, TestnetChainId } from 'sushi/chain'
-import {
-  Amount,
-  Native,
-  Type,
-  defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
+import { defaultQuoteCurrency } from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
@@ -40,8 +35,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-    ? 'NATIVE'
-    : token.wrapped.address
+      ? 'NATIVE'
+      : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -357,8 +352,7 @@ const useDerivedStateSimpleSwap = () => {
 }
 
 const SWAP_API_BASE_URL =
-  process.env.SWAP_API_V0_BASE_URL ||
-  process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
+  process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL
 
 const useFallback = (chainId: ChainId) => {
   const [swapApi] = useSwapApi()
@@ -446,5 +440,6 @@ const useSimpleSwapTrade = () => {
 export {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
+  useFallback,
   useSimpleSwapTrade,
 }

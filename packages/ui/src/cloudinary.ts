@@ -24,6 +24,38 @@ export function cloudinaryImageLoader({
   )}`
 }
 
+export function cloudinaryLogoFetchLoader({
+  src,
+  width,
+  quality: _quality,
+}: ImageLoaderProps) {
+  const params = [
+    'f_auto',
+    'c_limit',
+    `w_${width}`,
+    // `q_${quality || 'auto'}`
+  ]
+  return `https://cdn.sushi.com/image/fetch/${params.join(
+    ',',
+  )}/d_unknown.png/${normalizeSrc(src)}`
+}
+
+export function cloudinaryLogoImageLoader({
+  src,
+  width,
+  quality: _quality,
+}: ImageLoaderProps) {
+  const params = [
+    'f_auto',
+    'c_limit',
+    `w_${width}`,
+    // `q_${quality || 'auto'}`
+  ]
+  return `https://cdn.sushi.com/image/upload/${params.join(
+    ',',
+  )}/d_unknown.png/${normalizeSrc(src)}`
+}
+
 // from next/image
 // function cloudinaryLoader({
 //   config,

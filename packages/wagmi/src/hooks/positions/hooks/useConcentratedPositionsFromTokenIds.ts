@@ -1,5 +1,5 @@
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useQuery } from '@tanstack/react-query'
+import { SushiSwapV3ChainId } from 'sushi/config'
 
 import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions'
 

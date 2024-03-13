@@ -3,6 +3,7 @@
 import { getPool } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { CardLabel, Separator, SkeletonText, classNames } from '@sushiswap/ui'
+import { Container, LinkInternal, Message } from '@sushiswap/ui'
 import {
   Card,
   CardContent,
@@ -12,7 +13,6 @@ import {
   CardTitle,
 } from '@sushiswap/ui/components/card'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import {
   Address,
   useConcentratedLiquidityPool,
@@ -20,9 +20,8 @@ import {
 } from '@sushiswap/wagmi'
 import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
-
-import { Container, LinkInternal, Message } from '@sushiswap/ui'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
@@ -93,6 +92,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
           <ConcentratedPositionsTable
             chainId={pool.chainId as SushiSwapV3ChainId}
             poolId={pool.address as Address}
+            hideNewSmartPositionButton={!pool.hasEnabledSteerVault}
           />
         </PoolsFiltersProvider>
         <div className="py-4">

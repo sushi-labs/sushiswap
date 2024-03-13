@@ -29,27 +29,19 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import {
-  FeeAmount,
-  Position,
-  SushiSwapV3ChainId,
-  SushiSwapV3Pool,
-  TickMath,
-  priceToClosestTick,
-} from '@sushiswap/v3-sdk'
 import {
   Address,
+  V3MigrateChainId,
+  V3MigrateContractConfig,
   getMasterChefContractConfig,
   useAccount,
   useMasterChefWithdraw,
   useSushiSwapV2Pool,
   useTotalSupply,
+  useTransactionDeadline,
+  useV3Migrate,
   useWaitForTransaction,
 } from '@sushiswap/wagmi'
-import { useTransactionDeadline } from '@sushiswap/wagmi'
-import { V3MigrateContractConfig, useV3Migrate } from '@sushiswap/wagmi'
-import { V3MigrateChainId } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
@@ -66,9 +58,20 @@ import { unwrapToken } from 'src/lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
+import {
+  SushiSwapV2ChainId,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+} from 'sushi/config'
 import { Amount, Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Fraction, ZERO } from 'sushi/math'
+import {
+  Position,
+  SushiSwapV3Pool,
+  TickMath,
+  priceToClosestTick,
+} from 'sushi/pool'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
@@ -79,7 +82,9 @@ export const MODAL_MIGRATE_ID = 'migrate-modal'
 
 export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const { address } = useAccount()
-  const [feeAmount, setFeeAmount] = useState<FeeAmount>(FeeAmount.LOWEST)
+  const [feeAmount, setFeeAmount] = useState<SushiSwapV3FeeAmount>(
+    SushiSwapV3FeeAmount.LOWEST,
+  )
   const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
   const [invertPrice, setInvertPrice] = useState(false)
   const [invertTokens, setInvertTokens] = useState(false)

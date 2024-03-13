@@ -140,7 +140,7 @@ const COLUMNS = [
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-                        🧑�🌾{' '}
+                        🧑🌾{' '}
                         {incentives.length > 1
                           ? `x ${incentives.length}`
                           : ''}{' '}
@@ -164,6 +164,11 @@ const COLUMNS = [
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              {original.isDeprecated && (
+                <div className="bg-red/50 dark:bg-red/80 text-[10px] px-2 rounded-full">
+                  Deprecated
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -252,15 +257,15 @@ const COLUMNS = [
   },
   {
     id: 'totalApr1d',
-    header: 'APR',
+    header: 'APR (24h)',
     accessorFn: (row) =>
-      row.apr * 100 +
+      row.apr1d * 100 +
       row.pool.incentives
         .filter((el) => +el.rewardPerDay > 0)
         .reduce((acc, cur) => acc + cur.apr * 100, 0),
     cell: (props) => {
       const totalAPR =
-        props.row.original.apr * 100 +
+        props.row.original.apr1d * 100 +
         props.row.original.pool.incentives
           .filter((el) => +el.rewardPerDay > 0)
           .reduce((acc, cur) => acc + cur.apr * 100, 0)
@@ -281,7 +286,7 @@ const COLUMNS = [
           </TooltipProvider>
           <APRHoverCard
             pool={props.row.original.pool}
-            smartPoolAPR={props.row.original.apr}
+            smartPoolAPR={props.row.original.apr1d}
           >
             <span className="underline decoration-dotted underline-offset-2">
               {formatPercent(totalAPR / 100)}
@@ -541,7 +546,7 @@ export const SmartPoolsTable = () => {
       chainIds: chainIds,
       orderBy: 'reserveUSD',
       orderDir: 'desc',
-      isEnabled: true,
+      onlyEnabled: true,
     },
   })
 
@@ -582,7 +587,10 @@ export const SmartPoolsTable = () => {
           enhancing trading efficiency by providing deeper liquidity around the
           current price, increasing Liquidity Providers (LP) fee earnings. To
           learn more about Smart Pools, click{' '}
-          <LinkExternal href="https://www.sushi.com/blog/faq-smart-pools">
+          <LinkExternal
+            href="https://www.sushi.com/blog/faq-smart-pools"
+            target="_blank"
+          >
             here
           </LinkExternal>
           .

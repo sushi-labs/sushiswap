@@ -7,7 +7,6 @@ import {
   Rounding,
   ZERO,
 } from '../math/index.js'
-
 import { Amount } from './Amount.js'
 import { type Type } from './Type.js'
 

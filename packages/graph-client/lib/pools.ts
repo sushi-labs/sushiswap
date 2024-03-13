@@ -91,24 +91,18 @@ export function parseArgs<T>(args?: Partial<T>) {
 }
 
 export const getPool = async (poolId: string): Promise<Pool> => {
-  return import('node-fetch').then(({ default: fetch }) =>
-    fetch(`${EVM_APP_BASE_URL}/api/v0?ids=${poolId}`)
-      .then((data: any) => data.json())
-      .then((data: any) => data[0]),
-  )
+  return fetch(`${EVM_APP_BASE_URL}/api/v0?ids=${poolId}`)
+    .then((data: any) => data.json())
+    .then((data: any) => data[0])
 }
 
 export const getPools = async (args?: GetPoolsArgs): Promise<Pool[]> => {
-  return import('node-fetch').then(({ default: fetch }) =>
-    fetch(`${EVM_APP_BASE_URL}/api/v0${parseArgs(args)}`).then((data: any) =>
-      data.json(),
-    ),
+  return fetch(`${EVM_APP_BASE_URL}/api/v0${parseArgs(args)}`).then(
+    (data: any) => data.json(),
   )
 }
 
 export const getPoolCount = async (args?: GetPoolsArgs): Promise<number> =>
-  import('node-fetch').then(({ default: fetch }) =>
-    fetch(`${EVM_APP_BASE_URL}/api/v0/count${parseArgs(args)}`)
-      .then((data: any) => data.json())
-      .then((data: any) => data.count),
-  )
+  fetch(`${EVM_APP_BASE_URL}/api/v0/count${parseArgs(args)}`)
+    .then((data: any) => data.json())
+    .then((data: any) => data.count)

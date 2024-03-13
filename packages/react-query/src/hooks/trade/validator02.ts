@@ -1,4 +1,4 @@
-import { PoolType } from '@sushiswap/tines'
+import { PoolType } from 'sushi/tines'
 import z from 'zod'
 
 export const tokenValidator = z.object({

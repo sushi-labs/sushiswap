@@ -59,9 +59,11 @@ export const Header: FC = () => {
   )
   const sortedProducts = products.sort((a, b) =>
     PRODUCTS_ORDER.indexOf(
-      a?.attributes?.slug as typeof PRODUCTS_ORDER[number],
+      a?.attributes?.slug as (typeof PRODUCTS_ORDER)[number],
     ) >
-    PRODUCTS_ORDER.indexOf(b?.attributes?.slug as typeof PRODUCTS_ORDER[number])
+    PRODUCTS_ORDER.indexOf(
+      b?.attributes?.slug as (typeof PRODUCTS_ORDER)[number],
+    )
       ? 1
       : -1,
   )

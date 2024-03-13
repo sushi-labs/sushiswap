@@ -1,4 +1,4 @@
-import { type getPoolsFromDB } from '../../../api/pools/pools/'
+import { type getPoolsFromDB } from '../../../api/pools/pools'
 import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
 import { type GetApiInputFromOutput } from '../../../types'
@@ -8,8 +8,8 @@ export { type PoolsApiSchema }
 export type Pools = Awaited<ReturnType<typeof getPoolsFromDB>>
 export type GetPoolsArgs =
   | GetApiInputFromOutput<
-      typeof PoolsApiSchema['_input'],
-      typeof PoolsApiSchema['_output']
+      (typeof PoolsApiSchema)['_input'],
+      (typeof PoolsApiSchema)['_output']
     >
   | undefined
 

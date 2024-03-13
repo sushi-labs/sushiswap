@@ -26,9 +26,9 @@ export function parseSteerArgs(
     })
   }
 
-  if ('isEnabled' in args && args.isEnabled !== undefined) {
+  if ('onlyEnabled' in args && args.onlyEnabled === true) {
     addFilter({
-      isEnabled: args.isEnabled,
+      isEnabled: true,
     })
   }
 

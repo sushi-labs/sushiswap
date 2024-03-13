@@ -15,7 +15,7 @@ import { formatPercent, shortenAddress } from 'sushi/format'
 import { useSushiBar } from './SushiBarProvider'
 
 export const BarHeader = () => {
-  const { apr, isLoading } = useSushiBar()
+  const { apy, isLoading } = useSushiBar()
 
   return (
     <div className="flex flex-col gap-6">
@@ -35,7 +35,9 @@ export const BarHeader = () => {
       </span>
       <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground">
         <div className="flex items-center gap-1.5">
-          <span className="tracking-tighter font-semibold">APR</span>
+          <span className="tracking-tighter font-semibold whitespace-nowrap">
+            APY (1m)
+          </span>
           {isLoading ? (
             <SkeletonText className="w-12" fontSize="default" />
           ) : (
@@ -43,11 +45,11 @@ export const BarHeader = () => {
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <span className="underline decoration-dotted underline-offset-2">
-                    {formatPercent(apr)}
+                    {formatPercent(apy)}
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  The APR displayed is algorithmic and subject to change.
+                  The APY displayed is algorithmic and subject to change.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -75,6 +77,18 @@ export const BarHeader = () => {
             </Button>
           </LinkExternal>
         </div>
+      </div>
+      <div>
+        <Button icon={ArrowTopRightOnSquareIcon} variant="secondary">
+          <a
+            target="_blank"
+            rel="noreferrer noopener noreferer"
+            href="https://www.sushi.com/blog/sushi-bar-faq"
+            className="!text-base"
+          >
+            Learn More
+          </a>
+        </Button>
       </div>
     </div>
   )

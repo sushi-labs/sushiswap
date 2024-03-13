@@ -1,17 +1,12 @@
 'use client'
 
-import {
-  FeeAmount,
-  TICK_SPACINGS,
-  TickMath,
-  nearestUsableTick,
-} from '@sushiswap/v3-sdk'
 import { useMemo } from 'react'
-
+import { SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
+import { TickMath, nearestUsableTick } from 'sushi/pool'
 import { Bound } from '../../constants'
 
 export function useIsTickAtLimit(
-  feeAmount: FeeAmount | undefined,
+  feeAmount: SushiSwapV3FeeAmount | undefined,
   tickLower: number | undefined,
   tickUpper: number | undefined,
 ) {
@@ -22,7 +17,7 @@ export function useIsTickAtLimit(
           ? tickLower ===
             nearestUsableTick(
               TickMath.MIN_TICK,
-              TICK_SPACINGS[feeAmount as FeeAmount],
+              TICK_SPACINGS[feeAmount as SushiSwapV3FeeAmount],
             )
           : undefined,
       [Bound.UPPER]:
@@ -30,7 +25,7 @@ export function useIsTickAtLimit(
           ? tickUpper ===
             nearestUsableTick(
               TickMath.MAX_TICK,
-              TICK_SPACINGS[feeAmount as FeeAmount],
+              TICK_SPACINGS[feeAmount as SushiSwapV3FeeAmount],
             )
           : undefined,
     }),
