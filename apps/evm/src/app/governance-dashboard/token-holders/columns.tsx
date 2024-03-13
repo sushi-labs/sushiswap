@@ -99,8 +99,8 @@ export const MONTHLY_CHANGE_COLUMN: ColumnDef<TokenHolder, unknown> = {
       change > 0
         ? 'text-green-400'
         : change < 0
-        ? 'text-red-400'
-        : 'text-slate-700 dark:text-gray-50'
+          ? 'text-red-400'
+          : 'text-slate-700 dark:text-gray-50'
     return (
       <span className={color}>
         {change.toLocaleString('EN', {
