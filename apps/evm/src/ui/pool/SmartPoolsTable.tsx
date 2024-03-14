@@ -532,7 +532,7 @@ const COLUMNS = [
 ] satisfies ColumnDef<SteerVault, unknown>[]
 
 export const SmartPoolsTable = () => {
-  const { chainIds, protocols, farmsOnly } = usePoolFilters()
+  const { tokenSymbols, chainIds, protocols, farmsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
@@ -547,6 +547,7 @@ export const SmartPoolsTable = () => {
       orderBy: 'reserveUSD',
       orderDir: 'desc',
       onlyEnabled: true,
+      tokenSymbols,
     },
   })
 
