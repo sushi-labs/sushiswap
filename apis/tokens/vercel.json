@@ -37,6 +37,20 @@
     {
       "source": "/v1/:chainId/:address",
       "destination": "/api/v1/:chainId/:address"
+    },
+    { "source": "/v2", "destination": "/api/v2" },
+    { "source": "/v2/:chainId", "destination": "/api/v2/:chainId" },
+    {
+      "source": "/v2/:chainId/:address",
+      "destination": "/api/v2/:chainId/:address"
+    },
+    {
+      "source": "/v2/:chainId/addresses",
+      "destination": "/api/v2/:chainId/addresses"
+    },
+    {
+      "source": "/v2/search/:address",
+      "destination": "/api/v2/search/:address"
     }
   ],
   "functions": {
@@ -79,6 +93,26 @@
     "api/v1/[chainId]/index.ts": {
       "memory": 256,
       "maxDuration": 15
+    },
+    "api/v2/[chainId]/[address].ts": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/v2/[chainId]/addresses.ts": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/v2/[chainId]/index.ts": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/v2/search/[address].ts": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/v2/index.ts": {
+      "memory": 256,
+      "maxDuration": 30
     }
   }
 }
