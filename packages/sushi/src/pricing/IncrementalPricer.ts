@@ -1,24 +1,23 @@
 import { Address } from 'viem'
 import { Token } from '../currency'
 import { RPool } from '../tines'
+import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph'
 
 class TokenInfo {
   address: Address
   parent: TokenInfo | undefined
-  children: TokenInfo[]
+  children: TokenInfo[] = []
   direction: boolean
   poolPrice: number
   changedPoolIndex?: number
 
   constructor(
     address: Address,
-    children: TokenInfo[],
     direction: boolean,
     poolPrice: number,
     parent?: TokenInfo,
   ) {
     this.address = address
-    this.children = children
     this.direction = direction
     this.poolPrice = poolPrice
     this.parent = parent
@@ -36,76 +35,81 @@ export class IncrementalPricer {
     this.minLiquidity = minLiquidity
   }
 
-  _recreatePricesFromScratch(baseToken: Token, _pools: RPool[]) {
+  isFullPricesRecalcNeeded() {}
+
+  _fullPricesRecalculation(
+    baseToken: Token,
+    price: number,
+    pools: RPool[],
+    logging = false,
+  ) {
     this.poolTokenMap.clear()
     this.tokenMap.clear()
     this.prices = {}
 
-    this.baseToken = new TokenInfo(baseToken.address, [], true, 1)
+    this.baseToken = new TokenInfo(baseToken.address, true, 1)
+    const baseVert = makePoolTokenGraph(pools, baseToken.address)
+    if (baseVert === undefined) return
 
-    /*const processedVert = new Set<string>()
-    type ValuedEdge = [number, Edge]
-    let nextEdges: ValuedEdge[] = []
-
-    function addVertice(v: Vertice, price: number) {
-      v.price = price
-      const newEdges = v.edges
-        .filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
-        .map((e) => {
-          const liquidity = price * Number(e.reserve(v))
-          return [liquidity, e] as ValuedEdge
-        })
-        .filter(
-          ([liquidity, e]) =>
-            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
-        )
-      nextEdges = fastArrayMerge(nextEdges, newEdges)
-      processedVert.add(v)
-    }
+    const nextEdges: PoolEdge[] = []
 
     if (logging)
-      console.log(`Pricing: Initial token ${from.token.symbol} price=${price}`)
-    addVertice(from, price)
+      console.log(`Pricing: Initial token ${baseToken.symbol} price=${price}`)
+    baseVert.obj = this.baseToken
+    this._addVertice(nextEdges, baseVert, price)
+
     while (nextEdges.length > 0) {
-      const [liquidity, bestEdge] = nextEdges.pop() as ValuedEdge
-      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
-        ? [bestEdge.vert1, bestEdge.vert0]
-        : [bestEdge.vert0, bestEdge.vert1]
-      if (processedVert.has(vTo)) continue
-      const p = bestEdge.pool.calcCurrentPriceWithoutFee(
-        vFrom === bestEdge.vert1,
-      )
+      const bestEdge = nextEdges.pop() as PoolEdge
+      let vFrom = bestEdge.token0
+      let vTo = bestEdge.token1
+      let direction = true
+      if (vTo.price !== undefined) {
+        if (vFrom.price !== undefined) continue // token already priced
+        const tmp = vFrom
+        vFrom = vTo
+        vTo = tmp
+        direction = false
+      }
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(!direction)
       if (logging)
         console.log(
-          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}` +
-            ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${liquidity}`,
+          `Pricing: + Token ${vTo.token} price=${(vFrom.price as number) * p}` +
+            ` from ${vFrom.token} pool=${bestEdge.pool.address} liquidity=${bestEdge.poolLiquidity}`,
         )
-      addVertice(vTo, vFrom.price * p)
+      vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
+      this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
+      this._addVertice(nextEdges, vTo, (vFrom.price as number) * p)
     }
+  }
 
-    const gasPrice = new Map<number | string | undefined, number>()
-    networks.forEach((n) => {
-      const vPrice = this.getVert(n.baseToken)?.price || 0
-      gasPrice.set(n.chainId, n.gasPrice * vPrice)
-    })
-
-    processedVert.forEach((v) => {
-      const gasPriceChainId = gasPrice.get(v.token.chainId) as number
-      if (gasPriceChainId === undefined)
-        console.error(
-          `Error 427: token {${v.token.address} ${v.token.symbol}}` +
-            ` has unknown chainId ${v.token.chainId} (${typeof v.token
-              .chainId}).` +
-            `Known chainIds: ${Array.from(gasPrice.keys()).map(
-              (k) => `"${k}"(${typeof k})`,
-            )}`,
-        )
-      if (v.price === 0)
-        console.error(
-          `Error 428: token {${v.token.address} ${v.token.symbol} ${v.token.chainId}} was not priced`,
-        )
-      v.gasPrice = gasPriceChainId / v.price
-    })*/
+  private _addVertice(nextEdges: PoolEdge[], v: TokenVert, price: number) {
+    v.price = price
+    this.tokenMap.set(v.token, v.obj as TokenInfo)
+    this.prices[v.token] = price
+    for (let i = v.pools.length - 1; i >= 0; --i) {
+      const edge = v.pools[i] as PoolEdge
+      if (v.getNeibour(edge).price !== undefined) continue // token already priced
+      const liquidity = price * Number(edge.reserve(v))
+      edge.poolLiquidity = liquidity
+      if (
+        liquidity >= this.minLiquidity ||
+        edge.pool.alwaysAppropriateForPricing()
+      ) {
+        let low = 0
+        let up = nextEdges.length
+        while (low < up) {
+          const middle = (low + up) >> 1
+          const diff = (nextEdges[middle]?.poolLiquidity as number) - liquidity
+          if (diff > 0) up = middle
+          else if (diff < 0) low = middle + 1
+          else {
+            low = middle
+            break
+          }
+        }
+        nextEdges.splice(low, 0, edge)
+      }
+    }
   }
 
   _updatePricesForPools(pools: RPool[]) {
@@ -206,7 +210,6 @@ export class IncrementalPricer {
     }
     const tokenInfo: TokenInfo = new TokenInfo(
       addrTo,
-      [],
       direction,
       pool.calcCurrentPriceWithoutFee(direction),
       this.tokenMap.get(addrFrom) as TokenInfo,

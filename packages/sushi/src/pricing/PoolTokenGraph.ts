@@ -4,9 +4,16 @@ import { RPool } from '../tines'
 export class TokenVert {
   token: Address
   pools: PoolEdge[] = []
+  price?: number | undefined
+  obj?: object | undefined
 
   constructor(token: Address) {
     this.token = token
+  }
+
+  getNeibour(edge: PoolEdge) {
+    const token0 = edge.token0
+    return token0 === this ? edge.token1 : token0
   }
 }
 
@@ -14,12 +21,18 @@ export class PoolEdge {
   pool: RPool
   token0: TokenVert
   token1: TokenVert
-  poolValue = 0
+  poolLiquidity = 0
 
   constructor(pool: RPool, token0: TokenVert, token1: TokenVert) {
     this.pool = pool
     this.token0 = token0
     this.token1 = token1
+  }
+
+  reserve(token: TokenVert) {
+    return token === this.token0
+      ? this.pool.getReserve0()
+      : this.pool.getReserve1()
   }
 }
 
