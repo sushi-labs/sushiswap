@@ -763,10 +763,18 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Filecoin', symbol: 'FIL', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://node.filutils.com/rpc/v1'],
+        http: [
+          'https://rpc.ankr.com/filecoin',
+          // 'https://node.filutils.com/rpc/v1',
+          // 'https://filecoin.chainup.net/rpc/v1',
+        ],
       },
       public: {
-        http: ['https://node.filutils.com/rpc/v1'],
+        http: [
+          'https://rpc.ankr.com/filecoin',
+          // 'https://node.filutils.com/rpc/v1',
+          // 'https://filecoin.chainup.net/rpc/v1',
+        ],
       },
     },
     contracts: {
