@@ -3,12 +3,17 @@ import { Token } from '../currency'
 import { RPool } from '../tines'
 import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph'
 
+const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
+const MAX_PRICABLE_LIQUIDITY = 100
+const MIN_PRICABLE_LIQUIDITY = 0.8
+
 class TokenInfo {
   address: Address
   parent: TokenInfo | undefined
   children: TokenInfo[] = []
   direction: boolean
   poolPrice: number
+  totalSuccessors = 0
   changedPoolIndex?: number
 
   constructor(
@@ -25,38 +30,58 @@ class TokenInfo {
 }
 
 export class IncrementalPricer {
-  baseToken?: TokenInfo
+  baseToken: TokenInfo
+  baseTokenPrice: number
   poolTokenMap: Map<string, TokenInfo> = new Map() // indexed by pool.uniqueID()
   tokenMap: Map<Address, TokenInfo> = new Map()
   prices: Record<string, number> = {}
   minLiquidity: number
 
-  constructor(minLiquidity: number) {
+  lastfullPricesRecalcDate = 0
+  fullPricesRecalcFlag = false
+
+  constructor(baseToken: Token, price: number, minLiquidity: number) {
+    this.baseToken = new TokenInfo(baseToken.address, true, 1)
+    this.baseTokenPrice = price
+    this.tokenMap.set(baseToken.address, this.baseToken)
+    this.prices[baseToken.address] = price
     this.minLiquidity = minLiquidity
   }
 
-  isFullPricesRecalcNeeded() {}
-
-  _fullPricesRecalculation(
-    baseToken: Token,
-    price: number,
-    pools: RPool[],
+  updatePrices(
+    updatedPools: RPool[],
+    allPoolsOnDemand: () => RPool[],
     logging = false,
   ) {
+    if (this.isFullPricesRecalcNeeded())
+      this._fullPricesRecalculation(allPoolsOnDemand(), logging)
+    else this._updatePricesForPools(updatedPools)
+  }
+
+  isFullPricesRecalcNeeded() {
+    return (
+      this.fullPricesRecalcFlag ||
+      Date.now() - this.lastfullPricesRecalcDate > FULL_RECALC_INTERVAL
+    )
+  }
+
+  private _fullPricesRecalculation(pools: RPool[], logging = false) {
     this.poolTokenMap.clear()
     this.tokenMap.clear()
     this.prices = {}
 
-    this.baseToken = new TokenInfo(baseToken.address, true, 1)
-    const baseVert = makePoolTokenGraph(pools, baseToken.address)
+    //this.baseToken = new TokenInfo(baseToken.address, true, 1)
+    const baseVert = makePoolTokenGraph(pools, this.baseToken.address)
     if (baseVert === undefined) return
 
     const nextEdges: PoolEdge[] = []
 
     if (logging)
-      console.log(`Pricing: Initial token ${baseToken.symbol} price=${price}`)
+      console.log(
+        `Pricing: Initial token ${this.baseToken.address} price=${this.baseTokenPrice}`,
+      )
     baseVert.obj = this.baseToken
-    this._addVertice(nextEdges, baseVert, price)
+    this._addVertice(nextEdges, baseVert, this.baseTokenPrice)
 
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as PoolEdge
@@ -80,6 +105,16 @@ export class IncrementalPricer {
       this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
       this._addVertice(nextEdges, vTo, (vFrom.price as number) * p)
     }
+
+    this._updateTotalSuccessor(this.baseToken)
+  }
+
+  private _updateTotalSuccessor(token: TokenInfo): number {
+    let count = 0
+    for (let i = token.children.length - 1; i >= 0; --i)
+      count += this._updateTotalSuccessor(token.children[i] as TokenInfo)
+    token.totalSuccessors = count
+    return count + 1
   }
 
   private _addVertice(nextEdges: PoolEdge[], v: TokenVert, price: number) {
@@ -112,15 +147,18 @@ export class IncrementalPricer {
     }
   }
 
-  _updatePricesForPools(pools: RPool[]) {
+  private _updatePricesForPools(pools: RPool[]) {
     // Auxiliary
     const tokens: (TokenInfo | undefined)[] = new Array(pools.length)
 
     // set changedPoolIndex for all tokens with changed price + create new priced tokens
     for (let i = pools.length - 1; i >= 0; --i) {
-      const token =
-        this.poolTokenMap.get(pools[i]?.uniqueID() as Address) ??
-        this._checkAndAddNewToken(pools[i] as RPool) // maybe create new priced token
+      const pool = pools[i] as RPool
+      const token = this.poolTokenMap.get(pool.uniqueID())
+      if (token) {
+        if (!this._isPoolStillPricable(pool, token))
+          this.fullPricesRecalcFlag = true
+      } else this._checkAndAddNewToken(pool) // maybe create new priced token
       if (token && token.changedPoolIndex === undefined) {
         tokens[i] = token
         token.changedPoolIndex = i
@@ -142,12 +180,12 @@ export class IncrementalPricer {
 
       // update price for firstChangedToken and all dependent tokens
       if (firstChangedToken)
-        this._updatePrices(firstChangedToken, 1, pools, tokens)
+        this._updatePricesForToken(firstChangedToken, 1, pools, tokens)
     }
   }
 
   // recursive function for token and subtokens prices updating
-  private _updatePrices(
+  private _updatePricesForToken(
     token: TokenInfo,
     priceMultiplicator: number,
     pools: RPool[],
@@ -170,12 +208,32 @@ export class IncrementalPricer {
     this.prices[token.address] *= priceMultiplicator
 
     for (let i = token.children.length - 1; i >= 0; --i)
-      this._updatePrices(
+      this._updatePricesForToken(
         token.children[i] as TokenInfo,
         priceMultiplicator,
         pools,
         tokens,
       )
+  }
+
+  private _isPoolStillPricable(pool: RPool, tokenInfo: TokenInfo) {
+    let token
+    let reserve
+    if (tokenInfo.direction) {
+      token = pool.token0
+      reserve = Number(pool.reserve0)
+    } else {
+      token = pool.token1
+      reserve = Number(pool.reserve1)
+    }
+    const price = this.prices[token.address] as number
+    const liquidity = (reserve * price) / 10 ** token.decimals
+    const minPricableLiquidity =
+      this.minLiquidity *
+      (MAX_PRICABLE_LIQUIDITY -
+        (MAX_PRICABLE_LIQUIDITY - MIN_PRICABLE_LIQUIDITY) /
+          (tokenInfo.totalSuccessors + 1))
+    return liquidity >= minPricableLiquidity
   }
 
   private _checkAndAddNewToken(pool: RPool): TokenInfo | undefined {
