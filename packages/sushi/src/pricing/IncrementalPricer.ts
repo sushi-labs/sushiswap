@@ -29,15 +29,16 @@ class TokenInfo {
   }
 }
 
-// Makes a structure for further incremental pricing having only changed pools
+// Calculates prices. 2 modes: full recalculate and incremental recalculating having only changed pools
 export class IncrementalPricer {
-  baseToken: TokenInfo
-  baseTokenPrice: number
-  poolTokenMap: Map<string, TokenInfo> = new Map() // indexed by pool.uniqueID()
-  tokenMap: Map<Address, TokenInfo> = new Map()
-  prices: Record<string, number> = {}
-  pricesSize = 0
-  minLiquidity: number
+  readonly baseToken: TokenInfo // pricing start
+  readonly baseTokenPrice: number // the price of baseToken
+  readonly minLiquidity: number // min liquidity pool should have to be used in pricing
+
+  readonly poolTokenMap: Map<string, TokenInfo> = new Map() // pool.uniqueID() => TokenInfo
+  readonly tokenMap: Map<Address, TokenInfo> = new Map() // token.address => TokenInfo
+  prices: Record<string, number> = {} // calculated prices token.address => <token price>
+  pricesSize = 0 // the number of calculated prices
 
   lastfullPricesRecalcDate = 0
   fullPricesRecalcFlag = false
@@ -74,7 +75,6 @@ export class IncrementalPricer {
     this.prices = {}
     this.pricesSize = 0
 
-    //this.baseToken = new TokenInfo(baseToken.address, true, 1)
     const baseVert = makePoolTokenGraph(pools, this.baseToken.address)
     if (baseVert === undefined) return 0
 
@@ -111,6 +111,7 @@ export class IncrementalPricer {
     }
 
     this._updateTotalSuccessor(this.baseToken)
+    this.lastfullPricesRecalcDate = Date.now()
     return this.pricesSize
   }
 
