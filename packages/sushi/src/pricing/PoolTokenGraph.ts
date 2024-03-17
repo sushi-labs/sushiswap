@@ -38,8 +38,8 @@ export class PoolEdge {
 
 export function makePoolTokenGraph(
   pools: RPool[],
-  baseToken: Address,
-): TokenVert | undefined {
+  baseTokens: Address[],
+): (TokenVert | undefined)[] {
   // const vertices: TokenVert = []
   // const edges: PoolEdge = []
   const tokens: Map<Address, TokenVert> = new Map()
@@ -65,5 +65,5 @@ export function makePoolTokenGraph(
     v1.pools.push(edge)
   })
 
-  return tokens.get(baseToken)
+  return baseTokens.map((t) => tokens.get(t))
 }

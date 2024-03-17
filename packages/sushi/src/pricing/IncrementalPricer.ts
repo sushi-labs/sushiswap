@@ -31,8 +31,8 @@ class TokenInfo {
 
 // Calculates prices. 2 modes: full recalculate and incremental recalculating having only changed pools
 export class IncrementalPricer {
-  readonly baseToken: TokenInfo // pricing start
-  readonly baseTokenPrice: number // the price of baseToken
+  readonly baseTokens: TokenInfo[] // pricing start
+  readonly baseTokenPrices: number[] // prices of baseTokens
   readonly minLiquidity: number // min liquidity pool should have to be used in pricing
 
   readonly poolTokenMap: Map<string, TokenInfo> = new Map() // pool.uniqueID() => TokenInfo
@@ -43,12 +43,15 @@ export class IncrementalPricer {
   lastfullPricesRecalcDate = 0
   fullPricesRecalcFlag = false
 
-  constructor(baseToken: Token, price: number, minLiquidity: number) {
-    this.baseToken = new TokenInfo(baseToken.address, true, 1)
-    this.baseTokenPrice = price
-    this.tokenMap.set(baseToken.address, this.baseToken)
-    this.prices[baseToken.address] = price
-    this.pricesSize = 1
+  constructor(baseTokens: Token[], prices: number[], minLiquidity: number) {
+    this.baseTokens = new Array(baseTokens.length)
+    this.baseTokenPrices = prices.slice()
+    baseTokens.forEach((t, i) => {
+      this.baseTokens[i] = new TokenInfo(t.address, true, 1)
+      // this.tokenMap.set(t.address, this.baseTokens[i] as TokenInfo)
+      // this.prices[t.address] = prices[i] as number  ????
+      // ++this.pricesSize
+    })
     this.minLiquidity = minLiquidity
   }
 
@@ -75,43 +78,59 @@ export class IncrementalPricer {
     this.prices = {}
     this.pricesSize = 0
 
-    const baseVert = makePoolTokenGraph(pools, this.baseToken.address)
-    if (baseVert === undefined) return 0
+    const baseVerts = makePoolTokenGraph(
+      pools,
+      this.baseTokens.map((t) => t.address),
+    )
+    baseVerts.forEach((baseVert, i) => {
+      const baseToken = this.baseTokens[i] as TokenInfo
+      if (this.prices[baseToken.address] !== undefined) return // the token already priced
 
-    const nextEdges: PoolEdge[] = []
-
-    if (logging)
-      console.log(
-        `Pricing: Initial token ${this.baseToken.address} price=${this.baseTokenPrice}`,
-      )
-    baseVert.obj = this.baseToken
-    this._addVertice(nextEdges, baseVert, this.baseTokenPrice)
-
-    while (nextEdges.length > 0) {
-      const bestEdge = nextEdges.pop() as PoolEdge
-      let vFrom = bestEdge.token0
-      let vTo = bestEdge.token1
-      let direction = true
-      if (vTo.price !== undefined) {
-        if (vFrom.price !== undefined) continue // token already priced
-        const tmp = vFrom
-        vFrom = vTo
-        vTo = tmp
-        direction = false
+      const baseTokenPrice = this.baseTokenPrices[i] as number
+      if (baseVert === undefined) {
+        // no pools with this token
+        this.tokenMap.set(baseToken.address, baseToken)
+        this.prices[baseToken.address] = baseTokenPrice
+        ++this.pricesSize
+        return
       }
-      const p = bestEdge.pool.calcCurrentPriceWithoutFee(!direction)
+
+      const nextEdges: PoolEdge[] = []
       if (logging)
         console.log(
-          `Pricing: + Token ${vTo.token} price=${(vFrom.price as number) * p}` +
-            ` from ${vFrom.token} pool=${bestEdge.pool.address} liquidity=${bestEdge.poolLiquidity}`,
+          `Pricing: Initial token ${baseVert.token} price=${baseTokenPrice}`,
         )
-      vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
-      this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
-      this._addVertice(nextEdges, vTo, (vFrom.price as number) * p)
-    }
+      baseVert.obj = this.baseTokens[i]
+      this._addVertice(nextEdges, baseVert, baseTokenPrice)
 
-    this._updateTotalSuccessor(this.baseToken)
-    this.lastfullPricesRecalcDate = Date.now()
+      while (nextEdges.length > 0) {
+        const bestEdge = nextEdges.pop() as PoolEdge
+        let vFrom = bestEdge.token0
+        let vTo = bestEdge.token1
+        let direction = true
+        if (vTo.price !== undefined) {
+          if (vFrom.price !== undefined) continue // token already priced
+          const tmp = vFrom
+          vFrom = vTo
+          vTo = tmp
+          direction = false
+        }
+        const p = bestEdge.pool.calcCurrentPriceWithoutFee(!direction)
+        if (logging)
+          console.log(
+            `Pricing: + Token ${vTo.token} price=${
+              (vFrom.price as number) * p
+            }` +
+              ` from ${vFrom.token} pool=${bestEdge.pool.address} liquidity=${bestEdge.poolLiquidity}`,
+          )
+        vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
+        this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
+        this._addVertice(nextEdges, vTo, (vFrom.price as number) * p)
+      }
+
+      this._updateTotalSuccessor(baseToken)
+      this.lastfullPricesRecalcDate = Date.now()
+    })
     return this.pricesSize
   }
 
