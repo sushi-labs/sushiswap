@@ -299,6 +299,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   const { data: receipt } = useTransaction({
     chainId: chainId1,
     hash: lzData?.dstTxHash as `0x${string}` | undefined,
+    query: {
+      enabled: Boolean(lzData?.dstTxHash),
+    },
   })
 
   useEffect(() => {
