@@ -82,7 +82,8 @@ export class IncrementalPricer {
       pools,
       this.baseTokens.map((t) => t.address),
     )
-    baseVerts.forEach((baseVert, i) => {
+    const sortedBaseVerts = this._sortBaseVerts(baseVerts)
+    sortedBaseVerts.forEach((baseVert, i) => {
       const baseToken = this.baseTokens[i] as TokenInfo
       if (this.prices[baseToken.address] !== undefined) return // the token already priced
 
@@ -132,6 +133,22 @@ export class IncrementalPricer {
       this.lastfullPricesRecalcDate = Date.now()
     })
     return this.pricesSize
+  }
+
+  // sorts baseVerts: the best the first
+  private _sortBaseVerts(baseVerts: (TokenVert | undefined)[]): TokenVert[] {
+    const tmp = baseVerts
+      .map((b, i) => {
+        if (b === undefined) return
+        const price = this.baseTokenPrices[i] as number
+        const reserve = b.pools.reduce(
+          (a, p) => a + price * Number(p.reserve(b)),
+          0,
+        )
+        return [reserve * price, b] as [number, TokenVert]
+      })
+      .filter((p) => p !== undefined) as [number, TokenVert][]
+    return tmp.sort((a, b) => b[0] - a[0]).map((a) => a[1])
   }
 
   private _updateTotalSuccessor(token: TokenInfo): number {
