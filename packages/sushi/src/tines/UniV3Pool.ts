@@ -96,6 +96,7 @@ export class UniV3Pool extends RPool {
     liquidity: bigint,
     sqrtPriceX96: bigint,
     ticks: CLTick[],
+    nearestTick?: number,
   ) {
     super(
       address,
@@ -120,7 +121,7 @@ export class UniV3Pool extends RPool {
 
       this.liquidity = liquidity
       this.sqrtPriceX96 = sqrtPriceX96
-      this.nearestTick = this._findTickForPrice(tick)
+      this.nearestTick = nearestTick ?? this._findTickForPrice(tick)
     } else {
       // for deserialization
       this.liquidity = undefined as unknown as bigint
