@@ -11,7 +11,8 @@ export const usePersistedSlippageError = ({
   useEffect(() => {
     if (
       error?.message.includes('Minimal ouput balance violation') ||
-      error?.message.includes('MinimalOutputBalanceViolation')
+      error?.message.includes('MinimalOutputBalanceViolation') ||
+      error?.message.includes('0x963b34a5')
     ) {
       setShow(true)
       setPersistedError(error)

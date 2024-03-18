@@ -19,15 +19,20 @@
   "type": "module",
   "scripts": {
     "check": "tsc --pretty --noEmit",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
+    "db-generate": "drizzle-kit generate:pg",
+    "db-pull": "drizzle-kit introspect:pg"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/default-token-list": "^43.1.0",
     "@sushiswap/wagmi-config": "workspace:*",
     "@upstash/redis": "1.22.1",
     "@vercel/node": "3.0.9",
     "@wagmi/core": "2.6.5",
+    "drizzle-orm": "^0.29.5",
+    "postgres": "^3.4.3",
     "sushi": "workspace:*",
     "viem": "2.7.18",
     "zod": "3.21.4"

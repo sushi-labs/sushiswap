@@ -391,8 +391,8 @@ export const filecoin = {
     symbol: 'FIL',
   },
   rpcUrls: {
-    default: { http: ['https://api.node.glif.io/rpc/v1'] },
-    public: { http: ['https://api.node.glif.io/rpc/v1'] },
+    default: { http: ['https://rpc.ankr.com/filecoin'] },
+    public: { http: ['https://rpc.ankr.com/filecoin'] },
   },
   blockExplorers: {
     default: { name: 'Filfox', url: 'https://filfox.info/en' },
@@ -799,3 +799,24 @@ export const publicClientConfig = {
   ChainId,
   PublicClientConfig & { chain: (typeof publicChains)[number] }
 >
+
+export const SpecialExtractorClientConfig: Record<
+  typeof ChainId.BSC | typeof ChainId.ETHEREUM,
+  PublicClientConfig
+> = {
+  [ChainId.BSC]: {
+    chain: bsc,
+    transport: http(`https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`, {
+      timeout: 120_000,
+    }),
+  },
+  [ChainId.ETHEREUM]: {
+    chain: mainnet,
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
+      {
+        timeout: 120_000,
+      },
+    ),
+  },
+} as const

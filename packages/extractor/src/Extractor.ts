@@ -33,7 +33,7 @@ export type ExtractorConfig = {
   maxBatchesSimultaniously?: number
   warningMessageHandler?: WarningMessageHandler
   debug?: boolean
-}
+} & Record<string, any>
 
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
@@ -60,6 +60,7 @@ export class Extractor {
   requestFinishedNum = 0
   requestFailedNum = 0
   debug?: boolean
+  config: ExtractorConfig
 
   /// @param client
   /// @param factoriesV2 list of supported V2 factories
@@ -70,6 +71,7 @@ export class Extractor {
   /// @param logDepth the depth of logs to keep in memory for reorgs
   /// @param logging to write logs in console or not
   constructor(args: ExtractorConfig) {
+    this.config = args
     this.cacheDir = args.cacheDir
     this.logging = Boolean(args.logging)
     this.debug = Boolean(args.debug)
@@ -573,7 +575,7 @@ export class Extractor {
     }
   }
 
-  getCurrentPoolCodes() {
+  getCurrentPoolCodes(): PoolCode[] {
     const pools2 = this.extractorV2
       ? this.extractorV2.getCurrentPoolCodes()
       : []
@@ -583,6 +585,14 @@ export class Extractor {
     const poolsAlg = this.extractorAlg
       ? this.extractorAlg.getCurrentPoolCodes()
       : []
+    return pools2.concat(pools3).concat(poolsAlg)
+  }
+
+  // side effect: updated pools list is cleared
+  getCurrentPoolCodesUpdate(): PoolCode[] {
+    const pools2 = this.extractorV2?.getUpdatedPoolCodes() ?? []
+    const pools3 = this.extractorV3?.getUpdatedPoolCodes() ?? []
+    const poolsAlg = this.extractorAlg?.getUpdatedPoolCodes() ?? []
     return pools2.concat(pools3).concat(poolsAlg)
   }
 
