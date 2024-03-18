@@ -191,6 +191,7 @@ export const AddSectionReviewModalConcentrated: FC<
 
     return {
       to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
+      account: address,
       chainId,
       data: calldata as Hex,
       value: BigInt(value),
@@ -225,7 +226,7 @@ export const AddSectionReviewModalConcentrated: FC<
   })
 
   const send = useMemo(() => {
-    if (!prepare || !isSimulationError) return undefined
+    if (!prepare || isSimulationError) return undefined
 
     return async (confirm: () => void) => {
       await sendTransactionAsync(prepare)
