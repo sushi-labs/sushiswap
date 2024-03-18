@@ -12,6 +12,7 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
+  SpecialExtractorClientConfig,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   UNISWAP_V2_FACTORY_ADDRESS,
@@ -177,7 +178,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BSC]: {
-    client: createPublicClient(publicClientConfig[ChainId.BSC]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.BSC]),
     factoriesV2: [
       sushiswapV2Factory(ChainId.BSC),
       {
@@ -221,7 +222,9 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 1000,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
-    // maxBatchesSimultaniously: 5,
+    maxBatchesSimultaniously: 5,
+    experimantalPoolIncrementalMode: true, // Only changed pools are sent from Extractor to Router
+    checkPoolIncrementalModeCorrectness: true, // if experimantalPoolIncrementalMode then make correctness check (resourcefull)
   },
   [ChainId.BTTC]: {
     client: createPublicClient(publicClientConfig[ChainId.BTTC]),
@@ -258,7 +261,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.ETHEREUM]: {
-    client: createPublicClient(publicClientConfig[ChainId.ETHEREUM]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.ETHEREUM]),
     factoriesV2: [
       {
         address: UNISWAP_V2_FACTORY_ADDRESS,
@@ -301,6 +304,7 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.FANTOM]: {
     client: createPublicClient(publicClientConfig[ChainId.FANTOM]),
@@ -439,6 +443,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
+    maxBatchesSimultaniously: 5,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON_ZKEVM]: {

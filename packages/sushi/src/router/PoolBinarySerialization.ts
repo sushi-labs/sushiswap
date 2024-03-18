@@ -32,11 +32,13 @@ enum PoolTypeIndex {
 const FEE_FRACTIONS = 10_000_000
 
 // Serialization of constructor params
-export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
+export function serializePoolsBinary(
+  pools: PoolCode[],
+  extraData?: any,
+): Uint8Array {
   const stream = new BinWriteStream()
-  stream.uint24(
-    pools.length > 0 ? (pools[0]?.pool.token0.chainId as number) : 0,
-  )
+  stream.str16(JSON.stringify(extraData ?? {}))
+  stream.float64(Number(pools[0]?.pool.token0.chainId ?? 0))
   const CurveCoreSerialized = new Set<string>()
 
   const tokenMap = new Map<string, RToken>()
@@ -67,8 +69,8 @@ export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually 0.003
-      stream.bigUInt(p.reserve0)
-      stream.bigUInt(p.reserve1)
+      stream.bigUInt(p.reserve0, p.address, 'res0')
+      stream.bigUInt(p.reserve1, p.address, 'res1')
     } else if (pc instanceof UniV3PoolCode) {
       const p = pc.pool as UniV3Pool
       stream.uint8(PoolTypeIndex.Concentrated)
@@ -76,12 +78,12 @@ export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
-      stream.bigUInt(p.reserve0)
-      stream.bigUInt(p.reserve1)
+      stream.bigUInt(p.reserve0, p.address, 'res0')
+      stream.bigUInt(p.reserve1, p.address, 'res1')
       //stream.uint32(p.tick) nearestTick instead of it
       stream.uint24(p.nearestTick)
-      stream.bigUInt(p.liquidity)
-      stream.bigUInt(p.sqrtPriceX96)
+      stream.bigUInt(p.liquidity, p.address, 'liquidity')
+      stream.bigUInt(p.sqrtPriceX96, p.address, 'price')
       stream.uint24(p.ticks.length)
       p.ticks.forEach((t) => {
         stream.int24(t.index)
@@ -106,7 +108,7 @@ export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
       stream.uint8(core.tokens.length)
       core.tokens.forEach((t, i) => {
         stream.uint24(tokenIndex.get(t.address) as number)
-        stream.bigUInt(core.reserves[i] as bigint)
+        stream.bigUInt(core.reserves[i] as bigint, core.address)
         stream.float64(core.rates[i] as number)
       })
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
@@ -122,14 +124,23 @@ export function serializePoolsBinary(pools: PoolCode[]): Uint8Array {
 // Deserialization - launching constructors
 export function deserializePoolsBinary(
   data: Uint8Array,
+  start = 0,
   existedTokens?: (a: string) => Token | undefined,
-): { pools: PoolCode[]; newTokens: Token[]; existedTokensNumber: number } {
+): {
+  pools: PoolCode[]
+  // newTokens: Token[]
+  // existedTokensNumber: number
+  extraData: any
+  finish: number
+} {
   const stream = new BinReadStream(data)
-  const chainId = stream.uint24() as ChainId
+  stream.skip(start)
+  const extraData = JSON.parse(stream.str16())
+  const chainId = stream.float64() as ChainId
   const tokensNum = stream.uint24()
   const tokensArray: RToken[] = new Array(tokensNum)
-  const newTokens: Token[] = []
-  let existedTokensNumber = 0
+  // const newTokens: Token[] = []
+  // let existedTokensNumber = 0
   for (let i = 0; i < tokensNum; ++i) {
     const address = stream.address()
     const tokenRestDataLength = stream.uint16()
@@ -137,7 +148,6 @@ export function deserializePoolsBinary(
     if (token) {
       tokensArray[i] = token as RToken
       stream.skip(tokenRestDataLength)
-      ++existedTokensNumber
     } else {
       const name = stream.str16()
       const symbol = stream.str16()
@@ -149,7 +159,6 @@ export function deserializePoolsBinary(
         symbol,
         decimals,
       })
-      newTokens.push(token)
       tokensArray[i] = token as RToken
     }
   }
@@ -193,7 +202,7 @@ export function deserializePoolsBinary(
         console.error(`Deserealization: unknown pool type ${poolType}`)
     }
   }
-  return { pools, newTokens, existedTokensNumber }
+  return { pools, extraData, finish: stream.position }
 }
 
 function readCPRPool(
@@ -296,7 +305,7 @@ export function comparePoolArrays(
     if (pB === undefined) {
       console.log(`Set 2 has no pool ${pA.pool.uniqueID()}`)
       res = false
-    } else res &&= comparePools(pA, pB)
+    } else res = comparePools(pA, pB) && res
   })
 
   Array.from(poolsBMap.values()).forEach((pB) => {
@@ -385,6 +394,8 @@ function comparePools(poolsA: PoolCode, poolsB: PoolCode): boolean {
         }
       }
     }
+  } else {
+    console.log('Unknown pool type')
   }
   return res
 }
@@ -399,8 +410,8 @@ function compareConstantProductRPool(
     ['address', 'fee', 'reserve0', 'reserve1'],
     `ConstantProductRPool ${poolA.address} mismatch`,
   )
-  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
-  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
+  res = compareTokens(poolA.token0, poolB.token0, poolA.uniqueID()) && res
+  res = compareTokens(poolA.token1, poolB.token1, poolA.uniqueID()) && res
   return res
 }
 
@@ -419,14 +430,15 @@ function compareUniV3Pool(poolA: UniV3Pool, poolB: UniV3Pool): boolean {
     ],
     `UniV3Pool ${poolA.address} mismatch`,
   )
-  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
-  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
-  res &&= cmpArrObj(
-    poolA.ticks,
-    poolB.ticks,
-    ['index', 'DLiquidity'],
-    `UniV3Pool ${poolA.address} mismatch ticks`,
-  )
+  res = compareTokens(poolA.token0, poolB.token0, poolA.uniqueID()) && res
+  res = compareTokens(poolA.token1, poolB.token1, poolA.uniqueID()) && res
+  res =
+    cmpArrObj(
+      poolA.ticks,
+      poolB.ticks,
+      ['index', 'DLiquidity'],
+      `UniV3Pool ${poolA.address} mismatch ticks`,
+    ) && res
   return res
 }
 
@@ -440,8 +452,8 @@ function compareBridgeUnlimited(
     ['address', 'fee'],
     `BridgeUnlimited ${poolA.address} mismatch`,
   )
-  res &&= compareTokens(poolA.token0, poolB.token0, poolA.uniqueID())
-  res &&= compareTokens(poolA.token1, poolB.token1, poolA.uniqueID())
+  res = compareTokens(poolA.token0, poolB.token0, poolA.uniqueID()) && res
+  res = compareTokens(poolA.token1, poolB.token1, poolA.uniqueID()) && res
   return res
 }
 
@@ -455,7 +467,7 @@ function compareCurveMultitokenPool(
     ['index0', 'index1'],
     `CurveMultitokenPool ${poolA.address} mismatch`,
   )
-  res &&= compareCurveMultitokenCore(poolA.core, poolB.core)
+  res = compareCurveMultitokenCore(poolA.core, poolB.core) && res
   return res
 }
 
@@ -469,22 +481,25 @@ function compareCurveMultitokenCore(
     ['address', 'fee', 'A'],
     `CurveMultitokenCore ${poolA.address} mismatch`,
   )
-  res &&= cmpArrObj(
-    poolA.tokens,
-    poolB.tokens,
-    ['address', 'name', 'symbol', 'decimals'],
-    `CurveMultitokenCore ${poolA.address} mismatch tokens`,
-  )
-  res &&= cmpArrVal(
-    poolA.reserves,
-    poolB.reserves,
-    `CurveMultitokenCore ${poolA.address} mismatch reserves`,
-  )
-  res &&= cmpArrVal(
-    poolA.rates,
-    poolB.rates,
-    `CurveMultitokenCore ${poolA.address} mismatch rates`,
-  )
+  res =
+    cmpArrObj(
+      poolA.tokens,
+      poolB.tokens,
+      ['address', 'name', 'symbol', 'decimals'],
+      `CurveMultitokenCore ${poolA.address} mismatch tokens`,
+    ) && res
+  res =
+    cmpArrVal(
+      poolA.reserves,
+      poolB.reserves,
+      `CurveMultitokenCore ${poolA.address} mismatch reserves`,
+    ) && res
+  res =
+    cmpArrVal(
+      poolA.rates,
+      poolB.rates,
+      `CurveMultitokenCore ${poolA.address} mismatch rates`,
+    ) && res
   return res
 }
 
@@ -496,7 +511,7 @@ function compareTokens(
   return cmpObj(
     tokenA,
     tokenB,
-    ['address', 'name', 'symbol', 'decimals'],
+    ['address', 'decimals'],
     `Pool ${poolID} tokens mismatch`,
   )
 }
@@ -517,7 +532,7 @@ function cmpObj(
 ): boolean {
   let res = true
   fields.forEach((f) => {
-    res &&= cmpVal(A[f], B[f], `${err} ${f}`)
+    res = cmpVal(A[f], B[f], `${err} ${f}`) && res
   })
   return res
 }
@@ -525,7 +540,7 @@ function cmpObj(
 function cmpArrVal<T>(A: T[], B: T[], err: string): boolean {
   let res = cmpVal(A.length, B.length, `${err} length`)
   A.forEach((m, i) => {
-    res &&= cmpVal(m, B[i] as T, `${err} ${i}`)
+    res = cmpVal(m, B[i] as T, `${err} ${i}`) && res
   })
   return res
 }
@@ -537,8 +552,9 @@ function cmpArrObj<T extends Record<string, any>>(
   err: string,
 ): boolean {
   let res = cmpVal(A.length, B.length, `${err} length`)
+  if (!res) return res
   A.forEach((m, i) => {
-    res &&= cmpObj(m, B[i] as T, fields, `${err} ${i}`)
+    res = cmpObj(m, B[i] as T, fields, `${err} ${i}`) && res
   })
   return res
 }
@@ -550,7 +566,7 @@ export function testPoolSerialization(
   const t0 = performance.now()
   const data = serializePoolsBinary(poolsA)
   const t1 = performance.now()
-  const { pools: poolsB } = deserializePoolsBinary(data, existedTokens)
+  const { pools: poolsB } = deserializePoolsBinary(data, 0, existedTokens)
   const t2 = performance.now()
   console.log('Bin Pool (de)serialilization', poolsA.length, t1 - t0, t2 - t1)
   return comparePoolArrays(poolsA, poolsB)
