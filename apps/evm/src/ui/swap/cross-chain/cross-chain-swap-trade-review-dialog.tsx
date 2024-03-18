@@ -494,7 +494,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                   loading={!write && !isError}
                   onClick={() => write?.(confirm)}
                   disabled={
-                    isWritePending || Boolean(+swapAmountString > 0) || isError
+                    isWritePending ||
+                    Boolean(!write && +swapAmountString > 0) ||
+                    isError
                   }
                   color={
                     isError
