@@ -1,5 +1,5 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import { createConfig, useFeeData } from '@sushiswap/wagmi'
+import { createConfig, useGasPrice } from '@sushiswap/wagmi'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useQuery } from '@tanstack/react-query'
 import { getPublicClient } from '@wagmi/core/actions'
@@ -43,11 +43,11 @@ export const useCrossChainTrade = ({
   enabled,
   tradeId,
 }: UseCrossChainTradeParams) => {
-  const { data: feeData0 } = useFeeData({
+  const { data: gasPrice0 } = useGasPrice({
     chainId: network0,
     query: { enabled },
   })
-  const { data: feeData1 } = useFeeData({
+  const { data: gasPrice1 } = useGasPrice({
     chainId: network1,
     query: { enabled },
   })
@@ -77,7 +77,7 @@ export const useCrossChainTrade = ({
     toToken: bridgePath?.srcBridgeToken,
     amount,
     slippagePercentage,
-    gasPrice: feeData0?.gasPrice,
+    gasPrice: gasPrice0,
     recipient: STARGATE_ADAPTER_ADDRESS[network0],
     enabled: Boolean(isSrcSwap && enabled && amount),
     carbonOffset: false,
@@ -167,7 +167,7 @@ export const useCrossChainTrade = ({
     fromToken: bridgePath?.dstBridgeToken,
     toToken: token1,
     slippagePercentage,
-    gasPrice: feeData1?.gasPrice,
+    gasPrice: gasPrice1,
     recipient,
     enabled: Boolean(isDstSwap && enabled && dstAmountIn),
     carbonOffset: false,
@@ -203,8 +203,8 @@ export const useCrossChainTrade = ({
           bridgeFees &&
           bridgeImpact &&
           dstAmountIn &&
-          feeData0?.gasPrice &&
-          feeData1?.gasPrice
+          gasPrice0 &&
+          gasPrice1
         )
       ) {
         throw new Error('useCrossChainTrade should not be enabled')
@@ -406,7 +406,7 @@ export const useCrossChainTrade = ({
 
       const srcGasFee = Amount.fromRawAmount(
         Native.onChain(network0),
-        srcGasEst * feeData0.gasPrice,
+        srcGasEst * gasPrice0,
       )
 
       const bridgeFee = Amount.fromRawAmount(Native.onChain(network0), fee)
@@ -446,8 +446,8 @@ export const useCrossChainTrade = ({
           amount &&
           bridgeFees &&
           bridgePath &&
-          feeData0 &&
-          feeData1,
+          gasPrice0 &&
+          gasPrice1,
       ) &&
       (isSrcSwap ? Boolean(srcTrade) : Boolean(srcAmountOut)) &&
       (isDstSwap ? Boolean(dstTrade) : Boolean(dstAmountIn)),
