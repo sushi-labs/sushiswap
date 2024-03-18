@@ -194,7 +194,6 @@ export const AddSectionReviewModalConcentrated: FC<
       chainId,
       data: calldata as Hex,
       value: BigInt(value),
-      query: { enabled: chainId === chain?.id },
     } as const satisfies UseCallParameters
   }, [
     address,
@@ -207,16 +206,12 @@ export const AddSectionReviewModalConcentrated: FC<
     token0,
     token1,
     tokenId,
-    chain?.id,
   ])
 
-  useMemo(() => {
-    console.log('position', position)
-  }, [position])
-
-  const { isError: isSimulationError } = useCall(
-    prepare as NonNullable<typeof prepare>,
-  )
+  const { isError: isSimulationError } = useCall({
+    ...(prepare as NonNullable<typeof prepare>),
+    query: { enabled: Boolean(prepare && chainId === chain?.id) },
+  })
 
   const {
     sendTransactionAsync,

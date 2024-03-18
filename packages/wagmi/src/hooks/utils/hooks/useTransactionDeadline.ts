@@ -13,7 +13,7 @@ interface UseTransactionDeadline {
 
 export const useTransactionDeadline = ({
   chainId,
-  enabled,
+  enabled = true,
 }: UseTransactionDeadline) => {
   const { data: currentBlockTimestampQuery } = useCurrentBlockTimestamp(
     chainId,
@@ -23,7 +23,7 @@ export const useTransactionDeadline = ({
   // currentBlockTimestampQuery is excluded from the dependencies array by design,
   // deadline should be updated every 60s, not on every block
   return useQuery({
-    queryKey: ['UseTransactionDeadline'],
+    queryKey: ['useTransactionDeadline'],
     queryFn: () => {
       const blockTimestamp = currentBlockTimestampQuery
       let data = undefined
