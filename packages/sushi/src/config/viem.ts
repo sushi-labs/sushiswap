@@ -588,7 +588,7 @@ export const publicChains = [
   bsc,
   bttc,
   blast,
-  celo,
+  celo as unknown as Omit<typeof mainnet, 'id'> & { id: 42220 },
   cronos,
   mainnet,
   fantom,
@@ -659,7 +659,7 @@ export const publicClientConfig = {
     transport: publicTransports[ChainId.BTTC],
   },
   [ChainId.CELO]: {
-    chain: celo,
+    chain: celo as unknown as typeof mainnet & { id: 42220 },
     transport: publicTransports[ChainId.CELO],
   },
   [ChainId.ETHEREUM]: {
