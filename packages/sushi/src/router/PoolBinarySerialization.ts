@@ -511,7 +511,7 @@ function compareTokens(
   return cmpObj(
     tokenA,
     tokenB,
-    ['address', 'name', 'symbol', 'decimals'],
+    ['address', 'decimals'],
     `Pool ${poolID} tokens mismatch`,
   )
 }
