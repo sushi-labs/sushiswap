@@ -213,12 +213,14 @@ function useWriteWithoutNative({
     return {
       account: address,
       address: contract.address,
+      chainId: chainId,
       abi: contract.abi,
       functionName: 'addLiquidity',
       args,
     } as const
   }, [
     address,
+    chainId,
     contract,
     deadline,
     input0,
