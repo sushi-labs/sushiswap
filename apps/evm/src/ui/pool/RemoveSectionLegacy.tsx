@@ -16,6 +16,7 @@ import {
   useSushiSwapRouterContract,
   useSushiSwapV2Pool,
   useTotalSupply,
+  useTransactionDeadline,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
@@ -26,7 +27,6 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
 import {
   useTokensFromPool,
-  useTransactionDeadline,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -52,7 +52,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const isMounted = useIsMounted()
     const client = usePublicClient<PublicWagmiConfig>()
     const { address, chain } = useAccount()
-    const deadline = useTransactionDeadline(_pool.chainId as ChainId)
+    const { data: deadline } = useTransactionDeadline({
+      chainId: _pool.chainId as ChainId,
+    })
     const contract = useSushiSwapRouterContract(
       _pool.chainId as SushiSwapV2ChainId,
     )

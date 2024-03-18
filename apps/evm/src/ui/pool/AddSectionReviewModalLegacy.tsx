@@ -21,6 +21,7 @@ import {
   usePublicClient,
   useSimulateContract,
   useSushiSwapRouterContract,
+  useTransactionDeadline,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from '@sushiswap/wagmi'
@@ -28,7 +29,6 @@ import { SendTransactionReturnType } from '@sushiswap/wagmi/actions'
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
-import { useTransactionDeadline } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { SushiSwapV2ChainId } from 'sushi/config'
@@ -285,7 +285,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     children,
     onSuccess: _onSuccess,
   }) => {
-    const deadline = useTransactionDeadline(chainId)
+    const { data: deadline } = useTransactionDeadline({ chainId })
     const { address } = useAccount()
     const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
     const [slippageTolerance] = useSlippageTolerance('addLiquidity')
