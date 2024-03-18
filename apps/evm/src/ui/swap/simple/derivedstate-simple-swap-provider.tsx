@@ -6,7 +6,7 @@ import {
   useAccount,
   useClientTrade,
   useConfig,
-  useFeeData,
+  useGasPrice,
   useTokenWithCache,
   watchAccount,
 } from '@sushiswap/wagmi'
@@ -392,7 +392,7 @@ const useSimpleSwapTrade = () => {
 
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: feeData } = useFeeData({ chainId })
+  const { data: gasPrice } = useGasPrice({ chainId })
 
   const apiTrade = useApiTrade({
     chainId,
@@ -401,7 +401,7 @@ const useSimpleSwapTrade = () => {
     amount: swapAmount,
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice,
+    gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
@@ -418,7 +418,7 @@ const useSimpleSwapTrade = () => {
     amount: swapAmount,
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice,
+    gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
