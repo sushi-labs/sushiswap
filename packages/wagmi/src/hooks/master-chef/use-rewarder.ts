@@ -1,6 +1,7 @@
 'use client'
 
 import { ChefType } from '@sushiswap/client'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
@@ -140,7 +141,9 @@ export const useRewarder: UseRewarder = ({
     types,
   ])
 
-  const { isError, isLoading, data, refetch } = useReadContracts({
+  const queryClient = useQueryClient()
+
+  const { isError, isLoading, data, ...query } = useReadContracts({
     contracts,
     allowFailure: true,
     query: {
@@ -154,9 +157,13 @@ export const useRewarder: UseRewarder = ({
 
   useEffect(() => {
     if (blockNumber) {
-      refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, refetch])
+  }, [blockNumber, queryClient, query.queryKey])
 
   return useMemo(() => {
     if (!data)

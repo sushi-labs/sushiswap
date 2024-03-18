@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/steer-sdk'
 import { useBlockNumber, useReadContracts, useSimulateContract } from 'wagmi'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 
 interface UseSteerVaultsReserves {
@@ -20,6 +21,7 @@ export const useSteerVaultsReserves = ({
     return getVaultsReservesContracts({ vaultIds })
   }, [vaultIds])
 
+  const queryClient = useQueryClient()
   const query = useReadContracts({
     contracts,
     query: {
@@ -38,9 +40,13 @@ export const useSteerVaultsReserves = ({
 
   useEffect(() => {
     if (blockNumber) {
-      query.refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, query.refetch])
+  }, [blockNumber, queryClient, query.queryKey])
 
   return query
 }
@@ -59,6 +65,7 @@ export const useSteerVaultReserves = ({
     return getVaultsReservesContracts({ vaultIds: [vaultId!] })[0]
   }, [vaultId])
 
+  const queryClient = useQueryClient()
   const query = useSimulateContract({
     ...contract,
     query: {
@@ -71,9 +78,13 @@ export const useSteerVaultReserves = ({
 
   useEffect(() => {
     if (blockNumber) {
-      query.refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, query.refetch])
+  }, [blockNumber, queryClient, query.queryKey])
 
   return query
 }

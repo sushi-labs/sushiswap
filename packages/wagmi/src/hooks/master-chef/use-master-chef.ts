@@ -3,6 +3,7 @@
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
@@ -194,8 +195,10 @@ export const useMasterChef: UseMasterChef = ({
     return []
   }, [address, chainId, chef, enabled, pid])
 
+  const queryClient = useQueryClient()
+
   // Can't type runtime...
-  const { data, isLoading, isError, refetch } = useReadContracts({
+  const { data, isLoading, isError, ...query } = useReadContracts({
     contracts,
     query: {
       enabled: contracts.length > 0 && enabled,
@@ -208,9 +211,13 @@ export const useMasterChef: UseMasterChef = ({
 
   useEffect(() => {
     if (watch && blockNumber) {
-      refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [refetch, blockNumber, watch])
+  }, [blockNumber, watch, queryClient, query.queryKey])
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined

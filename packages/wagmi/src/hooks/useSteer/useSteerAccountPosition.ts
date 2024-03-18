@@ -11,6 +11,7 @@ import {
 } from '@sushiswap/steer-sdk'
 import { Address } from 'viem'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 interface UseSteerAccountPositions {
@@ -24,10 +25,12 @@ export const useSteerAccountPositions = ({
   account,
   enabled = true,
 }: UseSteerAccountPositions) => {
+  const queryClient = useQueryClient()
+
   const {
     data: accountBalances,
     isInitialLoading: isAccountBalancesLoading,
-    refetch: refetchAccountBalances,
+    queryKey: accountBalancesQueryKey,
   } = useReadContracts({
     contracts:
       account && vaultIds
@@ -47,7 +50,7 @@ export const useSteerAccountPositions = ({
   const {
     data: totalSupplies,
     isInitialLoading: isTotalSuppliesLoading,
-    refetch: refetchTotalSupplies,
+    queryKey: totalSuppliesQueryKey,
   } = useReadContracts({
     contracts: vaultIds ? getTotalSuppliesContracts({ vaultIds }) : undefined,
     query: {
@@ -64,7 +67,7 @@ export const useSteerAccountPositions = ({
   const {
     data: vaultReserves,
     isInitialLoading: isVaultReservesInitialLoading,
-    refetch: refetchVaultReserves,
+    queryKey: vaultReservesQueryKey,
   } = useReadContracts({
     contracts: vaultIds ? getVaultsReservesContracts({ vaultIds }) : undefined,
     query: {
@@ -82,15 +85,20 @@ export const useSteerAccountPositions = ({
 
   useMemo(() => {
     if (blockNumber && blockNumber % 3n === 0n) {
-      refetchAccountBalances()
-      refetchTotalSupplies()
-      refetchVaultReserves()
+      ;[
+        accountBalancesQueryKey,
+        totalSuppliesQueryKey,
+        vaultReservesQueryKey,
+      ].forEach((key) =>
+        queryClient.invalidateQueries(key, {}, { cancelRefetch: false }),
+      )
     }
   }, [
     blockNumber,
-    refetchAccountBalances,
-    refetchTotalSupplies,
-    refetchVaultReserves,
+    queryClient,
+    accountBalancesQueryKey,
+    totalSuppliesQueryKey,
+    vaultReservesQueryKey,
   ])
 
   const data = useMemo(() => {

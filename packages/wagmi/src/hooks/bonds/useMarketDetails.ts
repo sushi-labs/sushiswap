@@ -12,6 +12,7 @@ import {
   getTotalSuppliesContracts,
   getVaultsReservesContracts,
 } from '@sushiswap/steer-sdk'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
@@ -156,7 +157,8 @@ export const useBondMarketDetails = ({
     ] as const
   }, [bond.id, bond.chainId])
 
-  const { data, refetch } = useReadContracts({
+  const queryClient = useQueryClient()
+  const { data, ...query } = useReadContracts({
     allowFailure: false,
     contracts,
     query: {
@@ -168,9 +170,13 @@ export const useBondMarketDetails = ({
 
   useEffect(() => {
     if (blockNumber) {
-      refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, refetch])
+  }, [blockNumber, queryClient, query.queryKey])
 
   const [marketPrice, remainingCapacityBI, marketInfo, maxAmountAcceptedBI] =
     useMemo(() => data || [], [data])

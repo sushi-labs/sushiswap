@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
 import { ChainId, chainsL2 } from 'sushi/chain'
 
+import { useQuery } from '@tanstack/react-query'
 import { useCurrentBlockTimestamp } from '../..'
 
 const L2_DEADLINE_FROM_NOW = 60n * 5n
@@ -15,31 +15,34 @@ export const useTransactionDeadline = ({
   chainId,
   enabled,
 }: UseTransactionDeadline) => {
-  const {
-    data: currentBlockTimestampQuery,
-    isLoading,
-    isError,
-  } = useCurrentBlockTimestamp(chainId, enabled)
+  const { data: currentBlockTimestampQuery } = useCurrentBlockTimestamp(
+    chainId,
+    enabled,
+  )
 
-  return useMemo(() => {
-    const blockTimestamp = currentBlockTimestampQuery
-    let data = undefined
-    if (
-      blockTimestamp &&
-      chainId &&
-      Object.keys(chainsL2).includes(chainId.toString())
-    ) {
-      data = blockTimestamp + L2_DEADLINE_FROM_NOW
-    }
+  // currentBlockTimestampQuery is excluded from the dependencies array by design,
+  // deadline should be updated every 60s, not on every block
+  return useQuery({
+    queryKey: ['UseTransactionDeadline'],
+    queryFn: () => {
+      const blockTimestamp = currentBlockTimestampQuery
+      let data = undefined
 
-    if (blockTimestamp) {
-      data = blockTimestamp + TTL * 60n
-    }
+      if (
+        blockTimestamp &&
+        chainId &&
+        Object.keys(chainsL2).includes(chainId.toString())
+      ) {
+        data = blockTimestamp + L2_DEADLINE_FROM_NOW
+      }
 
-    return {
-      data,
-      isLoading,
-      isError,
-    }
-  }, [chainId, currentBlockTimestampQuery, isError, isLoading])
+      if (blockTimestamp) {
+        data = blockTimestamp + TTL * 60n
+      }
+
+      return data
+    },
+    refetchInterval: 60_000,
+    enabled: Boolean(enabled && currentBlockTimestampQuery),
+  })
 }

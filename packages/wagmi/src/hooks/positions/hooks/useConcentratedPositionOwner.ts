@@ -37,7 +37,7 @@ export const useConcentratedPositionOwner = ({
     functionName: 'ownerOf',
     args: [BigInt(tokenId ? tokenId : 0)],
     query: {
-      enabled: Boolean(chainId) && Boolean(tokenId),
+      enabled: Boolean(chainId && tokenId),
     },
   } as const)
 

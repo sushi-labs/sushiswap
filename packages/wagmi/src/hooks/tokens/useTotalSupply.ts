@@ -1,5 +1,6 @@
 'use client'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import { Address, erc20Abi } from 'viem'
@@ -27,7 +28,9 @@ export const useMultipleTotalSupply = (
     )
   }, [tokens])
 
-  const { data, refetch } = useReadContracts({
+  const queryClient = useQueryClient()
+
+  const { data, ...query } = useReadContracts({
     contracts,
     query: {
       enabled: tokens && tokens.length > 0,
@@ -39,9 +42,13 @@ export const useMultipleTotalSupply = (
 
   useEffect(() => {
     if (blockNumber) {
-      refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, refetch])
+  }, [blockNumber, queryClient, query.queryKey])
 
   return useMemo(() => {
     return data

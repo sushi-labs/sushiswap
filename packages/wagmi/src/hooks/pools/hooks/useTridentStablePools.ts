@@ -13,6 +13,7 @@ import {
   useReadContracts,
 } from 'wagmi'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { Address } from 'viem'
 import { useBentoBoxTotals } from '../../bentobox'
 import { TridentStablePoolState } from '../actions'
@@ -83,11 +84,13 @@ export function useGetTridentStablePools(
     [pairsUnique],
   )
 
+  const queryClient = useQueryClient()
+
   const {
     data: callStatePoolsCount,
     isLoading: callStatePoolsCountLoading,
     isError: callStatePoolsCountError,
-    refetch: callStatePoolsCountRefetch,
+    queryKey: callStatePoolsCountQueryKey,
   } = useReadContracts({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
@@ -128,7 +131,7 @@ export function useGetTridentStablePools(
     data: callStatePools,
     isLoading: callStatePoolsLoading,
     isError: callStatePoolsError,
-    refetch: callStatePoolsRefetch,
+    queryKey: callStatePoolsQueryKey,
   } = useReadContracts({
     contracts: useMemo(() => {
       if (!callStatePoolsCountProcessed) return []
@@ -171,7 +174,7 @@ export function useGetTridentStablePools(
     data: reserves,
     isLoading: reservesLoading,
     isError: reservesError,
-    refetch: reservesRefetch,
+    queryKey: reservesQueryKey,
   } = useReadContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
@@ -194,7 +197,7 @@ export function useGetTridentStablePools(
     data: fees,
     isLoading: feesLoading,
     isError: feesError,
-    refetch: feesRefetch,
+    queryKey: feesQueryKey,
   } = useReadContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
@@ -212,17 +215,22 @@ export function useGetTridentStablePools(
 
   useEffect(() => {
     if (blockNumber) {
-      callStatePoolsCountRefetch()
-      callStatePoolsRefetch()
-      reservesRefetch()
-      feesRefetch()
+      ;[
+        callStatePoolsCountQueryKey,
+        callStatePoolsQueryKey,
+        reservesQueryKey,
+        feesQueryKey,
+      ].forEach((key) => {
+        queryClient.invalidateQueries(key, {}, { cancelRefetch: false })
+      })
     }
   }, [
     blockNumber,
-    callStatePoolsCountRefetch,
-    callStatePoolsRefetch,
-    reservesRefetch,
-    feesRefetch,
+    queryClient,
+    callStatePoolsCountQueryKey,
+    callStatePoolsQueryKey,
+    reservesQueryKey,
+    feesQueryKey,
   ])
 
   const { data: totals } = useBentoBoxTotals({
@@ -338,7 +346,9 @@ export function useTridentStablePools(
     [stablePoolFactory, input],
   )
 
-  const { data, refetch } = useReadContracts({
+  const queryClient = useQueryClient()
+
+  const { data, ...query } = useReadContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address: address as Address,
@@ -358,9 +368,13 @@ export function useTridentStablePools(
 
   useEffect(() => {
     if (blockNumber) {
-      refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, refetch])
+  }, [blockNumber, queryClient, query.queryKey])
 
   return useMemo(() => {
     if (poolsAddresses.length === 0)

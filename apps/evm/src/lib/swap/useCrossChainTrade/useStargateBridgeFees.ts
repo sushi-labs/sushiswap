@@ -3,6 +3,7 @@ import {
   useReadContract,
   useReadContracts,
 } from '@sushiswap/wagmi'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
 import {
@@ -33,6 +34,7 @@ const useStargatePool = ({
   dstBridgeToken,
   enabled = false,
 }: UseStargateBridgeFees) => {
+  const queryClient = useQueryClient()
   const query = useReadContracts({
     contracts: useMemo(
       () =>
@@ -97,9 +99,13 @@ const useStargatePool = ({
 
   useEffect(() => {
     if (blockNumber) {
-      query.refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, query])
+  }, [blockNumber, query.queryKey, queryClient])
 
   return query
 }
@@ -130,6 +136,7 @@ export const useStargateBridgeFees = ({
       : amount.asFraction.multiply(10n ** (sharedDecimals - localDecimals))
   }, [amount, stargatePoolResults])
 
+  const queryClient = useQueryClient()
   const query = useReadContract({
     address: stargatePoolResults?.[1]?.result ?? zeroAddress,
     functionName: 'getFees',
@@ -232,9 +239,13 @@ export const useStargateBridgeFees = ({
 
   useEffect(() => {
     if (blockNumber) {
-      query.refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, query])
+  }, [blockNumber, queryClient, query.queryKey])
 
   return query
 }

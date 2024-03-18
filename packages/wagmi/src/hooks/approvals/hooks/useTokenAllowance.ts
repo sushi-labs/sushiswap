@@ -1,5 +1,6 @@
 'use client'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
@@ -21,6 +22,7 @@ export const useTokenAllowance = ({
   spender,
   enabled = true,
 }: UseTokenAllowance) => {
+  const queryClient = useQueryClient()
   const query = useReadContract({
     chainId,
     address: token ? (token.address as Address) : undefined,
@@ -41,9 +43,13 @@ export const useTokenAllowance = ({
 
   useEffect(() => {
     if (blockNumber) {
-      query.refetch()
+      queryClient.invalidateQueries(
+        query.queryKey,
+        {},
+        { cancelRefetch: false },
+      )
     }
-  }, [blockNumber, query.refetch])
+  }, [blockNumber, queryClient, query.queryKey])
 
   return query
 }
