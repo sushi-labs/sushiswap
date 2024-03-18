@@ -143,7 +143,7 @@ export const useRewarder: UseRewarder = ({
 
   const queryClient = useQueryClient()
 
-  const { isError, isLoading, data, ...query } = useReadContracts({
+  const { isError, isLoading, data, queryKey } = useReadContracts({
     contracts,
     allowFailure: true,
     query: {
@@ -157,13 +157,9 @@ export const useRewarder: UseRewarder = ({
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(
-        query.queryKey,
-        {},
-        { cancelRefetch: false },
-      )
+      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
     }
-  }, [blockNumber, queryClient, query.queryKey])
+  }, [blockNumber, queryClient, queryKey])
 
   return useMemo(() => {
     if (!data)

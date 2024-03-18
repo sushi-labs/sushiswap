@@ -348,7 +348,7 @@ export function useTridentStablePools(
 
   const queryClient = useQueryClient()
 
-  const { data, ...query } = useReadContracts({
+  const { data, queryKey } = useReadContracts({
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address: address as Address,
@@ -368,13 +368,9 @@ export function useTridentStablePools(
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(
-        query.queryKey,
-        {},
-        { cancelRefetch: false },
-      )
+      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
     }
-  }, [blockNumber, queryClient, query.queryKey])
+  }, [blockNumber, queryClient, queryKey])
 
   return useMemo(() => {
     if (poolsAddresses.length === 0)

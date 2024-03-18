@@ -83,10 +83,9 @@ export function useSushiSwapV2Pools(
     () => getSushiSwapV2Pools(chainId, currencies),
     [chainId, currencies],
   )
-
   const queryClient = useQueryClient()
 
-  const { data, isLoading, isError, ...query } = useReadContracts({
+  const { data, isLoading, isError, queryKey } = useReadContracts({
     contracts: contracts,
     query: {
       enabled:
@@ -101,13 +100,9 @@ export function useSushiSwapV2Pools(
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(
-        query.queryKey,
-        {},
-        { cancelRefetch: false },
-      )
+      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
     }
-  }, [blockNumber, queryClient, query.queryKey])
+  }, [blockNumber, queryClient, queryKey])
 
   return useMemo(() => {
     if (contracts.length === 0)

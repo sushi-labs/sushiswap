@@ -139,8 +139,10 @@ export const useSteerAccountPosition = ({
     enabled,
   })
 
-  return {
-    ...query,
-    data: query.data?.[0],
-  }
+  return useMemo(() => {
+    return {
+      ...query,
+      data: query.data?.[0],
+    }
+  }, [query])
 }

@@ -158,7 +158,7 @@ export const useBondMarketDetails = ({
   }, [bond.id, bond.chainId])
 
   const queryClient = useQueryClient()
-  const { data, ...query } = useReadContracts({
+  const { data, queryKey } = useReadContracts({
     allowFailure: false,
     contracts,
     query: {
@@ -170,13 +170,9 @@ export const useBondMarketDetails = ({
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(
-        query.queryKey,
-        {},
-        { cancelRefetch: false },
-      )
+      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
     }
-  }, [blockNumber, queryClient, query.queryKey])
+  }, [blockNumber, queryClient, queryKey])
 
   const [marketPrice, remainingCapacityBI, marketInfo, maxAmountAcceptedBI] =
     useMemo(() => data || [], [data])
