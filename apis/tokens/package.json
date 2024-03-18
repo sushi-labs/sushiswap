@@ -34,7 +34,7 @@
     "drizzle-orm": "^0.29.5",
     "postgres": "^3.4.3",
     "sushi": "workspace:*",
-    "viem": "2.8.11",
+    "viem": "2.8.12",
     "zod": "3.21.4"
   },
   "devDependencies": {
