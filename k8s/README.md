@@ -88,3 +88,15 @@ kubectl rollout restart deployment/extractor-1
 ```bash
 kubectl scale --replicas=0 deployment --all && kubectl scale --replicas=0 statefulset --all
 ```
+
+### Shell
+
+```bash
+kubectl exec --stdin --tty extractor-56-0 -- /bin/bash
+```
+
+### Copy
+
+```bash
+kubectl cp -n default extractor-56-0:/app/cache ./cache
+```

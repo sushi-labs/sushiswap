@@ -24,7 +24,8 @@
     "dev": "tsc -w",
     "load-testing": "artillery run test/load.yml",
     "simulate": "ts-node --skipProject ./test/requestSimulation.ts",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "start-debug": "node dist/index.js"
   },
   "dependencies": {
     "@sentry/node": "7.101.1",
