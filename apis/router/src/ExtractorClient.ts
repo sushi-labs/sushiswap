@@ -1,7 +1,12 @@
 // import EventEmitter from 'node:events'
 import { warnLog } from '@sushiswap/extractor'
+import { IncrementalPricer } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  STABLES,
+} from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { PoolCode, deserializePoolsBinary } from 'sushi/router'
 import { deserializePoolCodesJSON } from 'sushi/serializer'
@@ -36,6 +41,7 @@ export class ExtractorClient {
   requestedPairs: Map<string, Set<string>> = new Map()
   fetchPoolsBetweenRequests: Set<string> = new Set()
   dataStateId = 0
+  pricer: IncrementalPricer
 
   constructor(
     chainId: ChainId,
@@ -47,6 +53,11 @@ export class ExtractorClient {
     this.extractorServer = extractorServer
     this.poolUpdateInterval = poolUpdateInterval
     this.requestedPairsUpdateInterval = requestedPairsUpdateInterval
+    this.pricer = new IncrementalPricer(
+      STABLES[chainId as keyof typeof STABLES].slice() ?? [],
+      STABLES[chainId as keyof typeof STABLES].map((_) => 1),
+      1000,
+    )
   }
 
   get ready() {
@@ -68,6 +79,7 @@ export class ExtractorClient {
         const start = performance.now()
         let pos = 0
         const poolNums: number[] = []
+        let allNewPools: PoolCode[] = []
         while (pos < data.byteLength) {
           const {
             pools,
@@ -113,14 +125,24 @@ export class ExtractorClient {
               ++this.totalPoolNumber
             }
           })
+          allNewPools = allNewPools.concat(pools)
           poolNums.push(pools.length)
           this.dataStateId = stateId
         }
+        const updatedPrices = this.pricer.updatePrices(
+          allNewPools.map((p) => p.pool),
+          () =>
+            Array.from(this.poolCodesMap.values())
+              .flat()
+              .map((p) => p.pool),
+        )
         const timing = Math.round(performance.now() - start)
         console.log(
-          `updatePools: ${poolNums.map((n) => n.toString()).join('+')}/${
+          `update: ${poolNums.map((n) => n.toString()).join('+')}/${
             this.totalPoolNumber
-          } pools and ${this.tokenMap.size} tokens (${timing}ms cpu time)`,
+          } pools, ${this.tokenMap.size} tokens, ${updatedPrices}/${
+            this.pricer.pricesSize
+          } prices (${timing}ms cpu time)`,
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {

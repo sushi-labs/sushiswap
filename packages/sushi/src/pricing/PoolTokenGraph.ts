@@ -43,7 +43,12 @@ export function makePoolTokenGraph(
   // const vertices: TokenVert = []
   // const edges: PoolEdge = []
   const tokens: Map<Address, TokenVert> = new Map()
+  const poolsDeduplication = new Set<string>()
   pools.forEach((p) => {
+    const poolId = p.address.toLowerCase()
+    if (poolsDeduplication.has(poolId)) return
+    poolsDeduplication.add(poolId)
+
     // TokenVert for p.token0 finding or creation
     const addr0 = p.token0.address as Address
     let v0 = tokens.get(addr0)
