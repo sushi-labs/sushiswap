@@ -211,8 +211,14 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
       if (!simulation || !adjustedGas) return undefined
 
       return async (confirm: () => void) => {
-        await writeContractAsync({ ...simulation.request, gas: adjustedGas })
-        confirm()
+        try {
+          await writeContractAsync({
+            ...simulation.request,
+            gas: adjustedGas,
+          })
+
+          confirm()
+        } catch {}
       }
     }, [writeContractAsync, simulation, adjustedGas])
 

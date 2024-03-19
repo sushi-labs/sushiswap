@@ -398,8 +398,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
     if (!writeContractAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
-      await writeContractAsync(simulation.request)
-      confirm()
+      try {
+        await writeContractAsync(simulation.request)
+        confirm()
+      } catch {}
     }
   }, [simulation, writeContractAsync])
 

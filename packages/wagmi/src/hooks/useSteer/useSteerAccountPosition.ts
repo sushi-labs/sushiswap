@@ -11,9 +11,8 @@ import {
 } from '@sushiswap/steer-sdk'
 import { Address } from 'viem'
 
-import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { DEFAULT_POLLING_INTERVAL } from '../../config'
+import { useWatchByInterval } from '../watch'
 
 interface UseSteerAccountPositions {
   account: Address | undefined
@@ -26,8 +25,6 @@ export const useSteerAccountPositions = ({
   account,
   enabled = true,
 }: UseSteerAccountPositions) => {
-  const queryClient = useQueryClient()
-
   const {
     data: accountBalances,
     isInitialLoading: isAccountBalancesLoading,
@@ -41,7 +38,7 @@ export const useSteerAccountPositions = ({
       enabled: Boolean(enabled && account && vaultIds),
       select: (results) => {
         return results.flatMap((res, i) => {
-          if (!res.result) return []
+          if (typeof res.result === 'undefined') return []
           return getBalanceOfsSelect(vaultIds![i], res.result)
         })
       },
@@ -58,7 +55,7 @@ export const useSteerAccountPositions = ({
       enabled: Boolean(enabled && vaultIds),
       select: (results) => {
         return results.flatMap((res, i) => {
-          if (!res.result) return []
+          if (typeof res.result === 'undefined') return []
           return getTotalSuppliesSelect(vaultIds![i], res.result)
         })
       },
@@ -75,33 +72,24 @@ export const useSteerAccountPositions = ({
       enabled: Boolean(enabled && vaultIds),
       select: (results) => {
         return results.flatMap((res, i) => {
-          if (!res.result) return []
+          if (typeof res.result === 'undefined') return []
           return getVaultsReservesSelect(vaultIds![i], res.result)
         })
       },
     },
   })
 
-  // Doesn't make sense to invalidate queries based on the block number, since
-  // there might be a wide array of chains involved
-  useMemo(() => {
-    const interval = setInterval(() => {
-      ;[
+  useWatchByInterval({
+    keys: useMemo(
+      () => [
         accountBalancesQueryKey,
         totalSuppliesQueryKey,
         vaultReservesQueryKey,
-      ].forEach((key) =>
-        queryClient.invalidateQueries(key, {}, { cancelRefetch: false }),
-      )
-    }, DEFAULT_POLLING_INTERVAL)
-
-    return () => clearInterval(interval)
-  }, [
-    queryClient,
-    accountBalancesQueryKey,
-    totalSuppliesQueryKey,
-    vaultReservesQueryKey,
-  ])
+      ],
+      [accountBalancesQueryKey, totalSuppliesQueryKey, vaultReservesQueryKey],
+    ),
+    interval: 10_000,
+  })
 
   const data = useMemo(() => {
     if (!accountBalances || !totalSupplies || !vaultReserves) return undefined

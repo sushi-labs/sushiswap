@@ -233,8 +233,14 @@ const CLAIM_CELL = ({ position }: { position: BondPosition }) => {
     if (!simulation || !adjustedGas) return undefined
 
     return async (confirm: () => void) => {
-      await writeContractAsync({ ...simulation.request, gas: adjustedGas })
-      confirm()
+      try {
+        await writeContractAsync({
+          ...simulation.request,
+          gas: adjustedGas,
+        })
+
+        confirm()
+      } catch {}
     }
   }, [simulation, writeContractAsync, adjustedGas])
 

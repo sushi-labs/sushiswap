@@ -138,6 +138,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   const prepare = useMemo(() => {
     if (
       !account ||
+      !position ||
       position?.steerTokenBalance === 0n ||
       !tokenAmountsDiscounted ||
       !isSteerChainId(chainId)
@@ -159,7 +160,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   }, [
     account,
     chainId,
-    position?.steerTokenBalance,
+    position,
     slippagePercent,
     tokenAmountsDiscounted,
     vault.address,
@@ -168,7 +169,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   const { data: simulation } = useSimulateContract({
     ...prepare,
     query: {
-      enabled: +value > 0 && chainId === chain?.id,
+      enabled: prepare && chainId === chain?.id,
     },
   })
 
@@ -183,7 +184,9 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
     if (!simulation) return undefined
 
     return async () => {
-      await writeContractAsync(simulation.request)
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
     }
   }, [simulation, writeContractAsync])
 

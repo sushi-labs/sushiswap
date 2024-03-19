@@ -27,7 +27,7 @@ export async function getVaultsMaxTickChanges({
   })
 
   return result.flatMap((res, i) => {
-    if (!res.result) return []
+    if (typeof res.result === 'undefined') return []
     return getVaultsMaxTickChangesSelect(vaultIds[i]!, res.result)
   })
 }

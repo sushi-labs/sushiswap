@@ -6,7 +6,7 @@ import {
   walletConnect,
 } from '@wagmi/connectors'
 import { ChainId } from 'sushi'
-import { createConfig } from 'wagmi'
+import { cookieStorage, createConfig, createStorage } from 'wagmi'
 
 export const DEFAULT_POLLING_INTERVAL = 4_000
 
@@ -65,7 +65,17 @@ export const createProductionConfig = () => {
         debug: false,
       }),
     ],
+    storage: createStorage({
+      storage: cookieStorage,
+    }),
+    ssr: true,
   })
 }
 
 export const config = createProductionConfig()
+
+declare module 'wagmi' {
+  interface Register {
+    config: typeof config
+  }
+}

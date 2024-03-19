@@ -150,13 +150,23 @@ export const useBentoBoxApproval = ({
     [address, chainId, client, refetch],
   )
 
-  const executeTransaction = useWriteContract({
+  const { writeContractAsync } = useWriteContract({
     ...simulation?.request,
     mutation: {
       onSuccess,
       onError: (e) => onError(e, 'error executing master contract approval'),
     },
   })
+
+  const executeTransaction = useMemo(() => {
+    if (!simulation) return undefined
+
+    return async () => {
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
+    }
+  }, [simulation, writeContractAsync])
 
   const executeSignature = useCallback(async () => {
     // console.log('execute', address, approvalData)
@@ -222,12 +232,9 @@ export const useBentoBoxApproval = ({
     else if (pending) state = ApprovalState.PENDING
     else if (isLoading) state = ApprovalState.LOADING
 
-    return [
-      state,
-      fallback ? void executeTransaction.writeContractAsync : executeSignature,
-    ]
+    return [state, fallback ? void executeTransaction : executeSignature]
   }, [
-    executeTransaction.writeContractAsync,
+    executeTransaction,
     approvalData,
     executeSignature,
     fallback,

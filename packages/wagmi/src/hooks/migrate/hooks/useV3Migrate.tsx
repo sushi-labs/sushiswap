@@ -207,7 +207,9 @@ export const useV3Migrate = ({
     if (!simulation) return undefined
 
     return async () => {
-      await writeContractAsync(simulation.request)
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
     }
   }, [simulation, writeContractAsync])
 

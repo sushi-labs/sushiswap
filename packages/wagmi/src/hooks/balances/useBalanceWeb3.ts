@@ -3,7 +3,7 @@ import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { Address, zeroAddress } from 'viem'
 
-import { useBalance } from 'wagmi'
+import { serialize, useBalance } from 'wagmi'
 import { useWatchByInterval } from '../watch'
 import { queryFnUseBalances } from './useBalancesWeb3'
 
@@ -29,7 +29,10 @@ export const useBalanceWeb3 = ({
   useWatchByInterval({ key: queryKey, interval: 10000 })
 
   return useQuery({
-    queryKey: ['useBalance', { chainId, currency, account }],
+    queryKey: [
+      'useBalance',
+      { chainId, currency, account, nativeBalance: serialize(nativeBalance) },
+    ],
     queryFn: async () => {
       if (!currency) return null
       const data = await queryFnUseBalances({

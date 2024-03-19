@@ -36,7 +36,7 @@ export async function getVaultsPositions({
   })
 
   return result.flatMap((res, i) => {
-    if (!res.result) return []
+    if (typeof res.result === 'undefined') return []
     return getVaultsPositionSelect(vaultIds[i]!, res.result)
   })
 }

@@ -23,7 +23,7 @@ import {
   publicClientConfig,
 } from 'sushi/config'
 import { LiquidityProviders } from 'sushi/router'
-import { type Address, PublicClient, createPublicClient } from 'viem'
+import { type Address, createPublicClient } from 'viem'
 
 const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
@@ -132,9 +132,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BASE]: {
-    client: createPublicClient(
-      publicClientConfig[ChainId.BASE],
-    ) as unknown as PublicClient,
+    client: createPublicClient(publicClientConfig[ChainId.BASE]),
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
       {
@@ -241,9 +239,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.CELO]: {
-    client: createPublicClient(
-      publicClientConfig[ChainId.CELO],
-    ) as unknown as PublicClient,
+    client: createPublicClient(publicClientConfig[ChainId.CELO]),
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
     tickHelperContractV3:
@@ -376,9 +372,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.OPTIMISM]: {
-    client: createPublicClient(
-      publicClientConfig[ChainId.OPTIMISM],
-    ) as unknown as PublicClient,
+    client: createPublicClient(publicClientConfig[ChainId.OPTIMISM]),
     factoriesV2: [
       sushiswapV2Factory(ChainId.OPTIMISM),
       // {

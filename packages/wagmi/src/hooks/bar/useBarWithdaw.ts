@@ -77,7 +77,9 @@ export function useBarWithdraw({
     if (!writeContractAsync || !simulation) return
 
     return async () => {
-      await writeContractAsync(simulation.request)
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
     }
   }, [writeContractAsync, simulation])
 

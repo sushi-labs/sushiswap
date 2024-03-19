@@ -71,7 +71,9 @@ export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
     if (!writeContractAsync || !simulation) return undefined
 
     return async () => {
-      await writeContractAsync(simulation.request)
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
     }
   }, [writeContractAsync, simulation])
 

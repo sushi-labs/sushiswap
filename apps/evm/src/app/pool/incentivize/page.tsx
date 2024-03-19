@@ -652,13 +652,16 @@ const Incentivize = withCheckerRoot(() => {
                                             if (
                                               !writeContractAsync ||
                                               !simulationData
-                                            )
+                                            ) {
                                               return
+                                            }
 
-                                            await writeContractAsync(
-                                              simulationData.request,
-                                            )
-                                            confirm()
+                                            try {
+                                              await writeContractAsync(
+                                                simulationData.request,
+                                              )
+                                              confirm()
+                                            } catch {}
                                           }}
                                           disabled={
                                             isIncentivizeLoading || isError

@@ -15,7 +15,6 @@ import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   SushiSwapV2PoolState,
   UseSimulateContractParameters,
-  UseWriteContractParameters,
   getSushiSwapRouterContractConfig,
   useAccount,
   usePublicClient,
@@ -49,7 +48,10 @@ interface UseAddSushiSwapV2 {
   minAmount0: Amount<Type> | undefined
   minAmount1: Amount<Type> | undefined
   deadline: bigint | undefined
-  mutation: UseWriteContractParameters['mutation']
+  mutation: {
+    onSuccess: (data: SendTransactionReturnType) => void
+    onError: (e: Error) => void
+  }
 }
 
 function useWriteWithNative({
@@ -128,6 +130,7 @@ function useWriteWithNative({
       enabled: Boolean(prepare),
     },
   })
+
   const {
     writeContractAsync,
     writeContract: _,
@@ -140,13 +143,16 @@ function useWriteWithNative({
     if (!writeContractAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
-      await writeContractAsync({
-        ...simulation.request,
-        gas: simulation.request.gas
-          ? gasMargin(simulation.request.gas)
-          : undefined,
-      })
-      confirm()
+      try {
+        await writeContractAsync({
+          ...simulation.request,
+          gas: simulation.request.gas
+            ? gasMargin(simulation.request.gas)
+            : undefined,
+        })
+
+        confirm()
+      } catch {}
     }
   }, [writeContractAsync, simulation])
 
@@ -228,7 +234,11 @@ function useWriteWithoutNative({
     },
   })
 
-  const { writeContractAsync, ...rest } = useWriteContract({
+  const {
+    writeContractAsync,
+    writeContract: _,
+    ...rest
+  } = useWriteContract({
     mutation,
   })
 
@@ -236,13 +246,16 @@ function useWriteWithoutNative({
     if (!writeContractAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
-      await writeContractAsync({
-        ...simulation.request,
-        gas: simulation.request.gas
-          ? gasMargin(simulation.request.gas)
-          : undefined,
-      })
-      confirm()
+      try {
+        await writeContractAsync({
+          ...simulation.request,
+          gas: simulation.request.gas
+            ? gasMargin(simulation.request.gas)
+            : undefined,
+        })
+
+        confirm()
+      } catch {}
     }
   }, [writeContractAsync, simulation])
 

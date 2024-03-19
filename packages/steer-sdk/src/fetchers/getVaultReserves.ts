@@ -40,10 +40,9 @@ export async function getVaultsReserves({
     contracts: getVaultsReservesContracts({ vaultIds }),
   })
 
-  // ! Fix type when viem is updated
   return result.map((res, i) => {
-    if (!res.result) return null
-    return getVaultsReservesSelect(vaultIds[i]!, res.result as any)
+    if (typeof res.result === 'undefined') return null
+    return getVaultsReservesSelect(vaultIds[i]!, res.result)
   })
 }
 

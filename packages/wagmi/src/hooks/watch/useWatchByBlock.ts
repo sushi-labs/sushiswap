@@ -5,16 +5,16 @@ import { useBlockNumber } from 'wagmi'
 
 type UseWatchByBlockKey = {
   key: QueryKey
-  keys: undefined
+  keys?: never
 }
 
 type UseWatchByBlockKeys = {
-  key: undefined
+  key?: never
   keys: QueryKey[]
 }
 
 type UseWatchByBlock = {
-  chainId: ChainId
+  chainId: ChainId | undefined
   // Refresh every modulo blocks
   modulo?: number
 } & (UseWatchByBlockKey | UseWatchByBlockKeys)

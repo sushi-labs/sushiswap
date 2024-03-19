@@ -172,8 +172,10 @@ export const BondsBuyReviewModal: FC<BondsBuyReviewModal> = ({
     if (!simulation || !address) return undefined
 
     return async (confirm: () => void) => {
-      await writeContractAsync(simulation.request)
-      confirm()
+      try {
+        await writeContractAsync(simulation.request)
+        confirm()
+      } catch {}
     }
   }, [address, writeContractAsync, simulation])
 

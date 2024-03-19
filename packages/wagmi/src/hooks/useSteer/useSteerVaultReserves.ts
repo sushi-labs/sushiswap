@@ -2,12 +2,13 @@ import {
   getVaultsReservesContracts,
   getVaultsReservesSelect,
 } from '@sushiswap/steer-sdk'
-import { useBlockNumber, useReadContracts, useSimulateContract } from 'wagmi'
+import { useReadContracts, useSimulateContract } from 'wagmi'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { getChainIdAddressFromId } from 'sushi'
 import { DEFAULT_POLLING_INTERVAL } from '../../config'
+import { useWatchByBlock } from '../watch'
 
 interface UseSteerVaultsReserves {
   vaultIds: string[] | undefined
@@ -32,8 +33,7 @@ export const useSteerVaultsReserves = ({
         results.flatMap(({ result }, i) => {
           if (!result) return []
 
-          // ! TODO: Fix when viem is updated
-          return getVaultsReservesSelect(vaultIds![i], result as any)
+          return getVaultsReservesSelect(vaultIds![i], result)
         }),
     },
   })
@@ -71,10 +71,9 @@ export const useSteerVaultReserves = ({
 
   const contract = useMemo(() => {
     if (!vaultId) return undefined
-    return getVaultsReservesContracts({ vaultIds: [vaultId!] })[0]
+    return getVaultsReservesContracts({ vaultIds: [vaultId] })[0]
   }, [vaultId])
 
-  const queryClient = useQueryClient()
   const query = useSimulateContract({
     ...contract,
     query: {
@@ -83,17 +82,7 @@ export const useSteerVaultReserves = ({
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ chainId, watch: true })
-
-  useEffect(() => {
-    if (blockNumber) {
-      queryClient.invalidateQueries(
-        query.queryKey,
-        {},
-        { cancelRefetch: false },
-      )
-    }
-  }, [blockNumber, queryClient, query.queryKey])
+  useWatchByBlock({ chainId, key: query.queryKey })
 
   return query
 }

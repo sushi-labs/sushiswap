@@ -39,7 +39,7 @@ export async function getBalanceOfs({
   })
 
   return result.flatMap((res, i) => {
-    if (!res.result) return []
+    if (typeof res.result === 'undefined') return []
     return getBalanceOfsSelect(vaultIds[i]!, res.result)
   })
 }

@@ -32,7 +32,7 @@ export async function getTotalSupplies({ client, vaultIds }: GetTotalSupplies) {
   })
 
   return result.flatMap((res, i) => {
-    if (!res.result) return []
+    if (typeof res.result === 'undefined') return []
     return getTotalSuppliesSelect(vaultIds[i]!, res.result)
   })
 }

@@ -278,7 +278,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   })
 
   const write = useMemo(() => {
-    if (!writeContractAsync || !simulation) return undefined
+    if (!simulation) return undefined
 
     return async (confirm: () => void) => {
       setStepStates({
@@ -288,7 +288,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       })
 
       confirm()
-      await writeContractAsync(simulation.request)
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
     }
   }, [writeContractAsync, simulation])
 

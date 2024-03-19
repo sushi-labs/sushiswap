@@ -93,7 +93,9 @@ export const useHarvestAngleRewards = ({
     if (!simulation) return undefined
 
     return async () => {
-      writeContractAsync(simulation.request)
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
     }
   }, [writeContractAsync, simulation])
 
