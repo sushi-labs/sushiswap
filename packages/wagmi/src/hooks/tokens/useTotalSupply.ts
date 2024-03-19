@@ -30,7 +30,7 @@ export const useMultipleTotalSupply = (
 
   const queryClient = useQueryClient()
 
-  const { data, ...query } = useReadContracts({
+  const { data, queryKey } = useReadContracts({
     contracts,
     query: {
       enabled: tokens && tokens.length > 0,
@@ -42,13 +42,9 @@ export const useMultipleTotalSupply = (
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(
-        query.queryKey,
-        {},
-        { cancelRefetch: false },
-      )
+      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
     }
-  }, [blockNumber, queryClient, query.queryKey])
+  }, [blockNumber, queryClient, queryKey])
 
   return useMemo(() => {
     return data

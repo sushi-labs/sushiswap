@@ -84,7 +84,6 @@ export function useSushiSwapV2Pools(
     () => getSushiSwapV2Pools(chainId, currencies),
     [chainId, currencies],
   )
-
   const queryClient = useQueryClient()
 
   const { data, isLoading, isError, queryKey } = useReadContracts({

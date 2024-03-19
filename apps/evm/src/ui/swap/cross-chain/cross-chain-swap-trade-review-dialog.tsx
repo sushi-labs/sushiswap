@@ -91,7 +91,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       tradeId,
     },
   } = useDerivedStateCrossChainSwap()
-  const client = usePublicClient<PublicWagmiConfig>({ chainId: chainId0 })
+  const client0 = usePublicClient<PublicWagmiConfig>({ chainId: chainId0 })
+  const client1 = usePublicClient<PublicWagmiConfig>({ chainId: chainId1 })
   const { data: trade, isFetching } = useCrossChainSwapTrade()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()
@@ -156,11 +157,17 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const onWriteSuccess = useCallback(
     async (hash: SendTransactionReturnType) => {
+      setStepStates({
+        source: StepState.Pending,
+        bridge: StepState.NotStarted,
+        dest: StepState.NotStarted,
+      })
+
       setSwapAmount('')
 
       if (!tradeRef?.current || !chainId0) return
 
-      const receiptPromise = client.waitForTransactionReceipt({ hash })
+      const receiptPromise = client0.waitForTransactionReceipt({ hash })
 
       groupTs.current = new Date().getTime()
       void createToast({
@@ -223,7 +230,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     [
       setSwapAmount,
       chainId0,
-      client,
+      client0,
       address,
       trade,
       refetchBalances,
@@ -280,13 +287,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         dest: StepState.NotStarted,
       })
 
-      await writeContractAsync(simulation.request)
       confirm()
-      setStepStates({
-        source: StepState.Pending,
-        bridge: StepState.NotStarted,
-        dest: StepState.NotStarted,
-      })
+      await writeContractAsync(simulation.request)
     }
   }, [writeContractAsync, simulation])
 
@@ -349,7 +351,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         type: 'swap',
         chainId: chainId1,
         txHash: receipt.hash,
-        promise: client.waitForTransactionReceipt({
+        promise: client1.waitForTransactionReceipt({
           hash: receipt.hash,
         }),
         summary: {
