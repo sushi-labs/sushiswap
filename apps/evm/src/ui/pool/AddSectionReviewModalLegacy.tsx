@@ -16,11 +16,10 @@ import {
   SushiSwapV2PoolState,
   UseSimulateContractParameters,
   UseWriteContractParameters,
+  getSushiSwapRouterContractConfig,
   useAccount,
-  useEstimateGas,
   usePublicClient,
   useSimulateContract,
-  useSushiSwapRouterContract,
   useTransactionDeadline,
   useWaitForTransactionReceipt,
   useWriteContract,
@@ -65,8 +64,6 @@ function useWriteWithNative({
   deadline,
   mutation,
 }: UseAddSushiSwapV2) {
-  const contract = useSushiSwapRouterContract(chainId)
-
   const prepare = useMemo(() => {
     if (
       !token0 ||
@@ -76,8 +73,7 @@ function useWriteWithNative({
       !address ||
       !minAmount0 ||
       !minAmount1 ||
-      !deadline ||
-      !contract
+      !deadline
     ) {
       return undefined
     }
@@ -103,6 +99,8 @@ function useWriteWithNative({
       deadline,
     ] as const
 
+    const contract = getSushiSwapRouterContractConfig(chainId)
+
     return {
       account: address,
       address: contract.address,
@@ -115,7 +113,6 @@ function useWriteWithNative({
   }, [
     address,
     chainId,
-    contract,
     deadline,
     input0,
     input1,
@@ -125,22 +122,12 @@ function useWriteWithNative({
     token1,
   ])
 
-  const { data: estimatedGas } = useEstimateGas({
-    ...prepare,
-    query: {
-      enabled: Boolean(prepare),
-    },
-  })
-
-  const adjustedGas = estimatedGas ? gasMargin(estimatedGas) : undefined
-
   const { data: simulation } = useSimulateContract({
     ...(prepare as NonNullable<typeof prepare>),
     query: {
       enabled: Boolean(prepare),
     },
   })
-
   const {
     writeContractAsync,
     writeContract: _,
@@ -150,13 +137,18 @@ function useWriteWithNative({
   })
 
   const write = useMemo(() => {
-    if (!writeContractAsync || !simulation || !adjustedGas) return undefined
+    if (!writeContractAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
-      await writeContractAsync({ ...simulation.request, gas: adjustedGas })
+      await writeContractAsync({
+        ...simulation.request,
+        gas: simulation.request.gas
+          ? gasMargin(simulation.request.gas)
+          : undefined,
+      })
       confirm()
     }
-  }, [writeContractAsync, simulation, adjustedGas])
+  }, [writeContractAsync, simulation])
 
   return { ...rest, write }
 }
@@ -173,8 +165,6 @@ function useWriteWithoutNative({
   deadline,
   mutation,
 }: UseAddSushiSwapV2) {
-  const contract = useSushiSwapRouterContract(chainId)
-
   const prepare = useMemo(() => {
     if (
       !token0 ||
@@ -184,8 +174,7 @@ function useWriteWithoutNative({
       !address ||
       !minAmount0 ||
       !minAmount1 ||
-      !deadline ||
-      !contract
+      !deadline
     ) {
       return undefined
     }
@@ -210,6 +199,8 @@ function useWriteWithoutNative({
       deadline,
     ] as const
 
+    const contract = getSushiSwapRouterContractConfig(chainId)
+
     return {
       account: address,
       address: contract.address,
@@ -221,7 +212,6 @@ function useWriteWithoutNative({
   }, [
     address,
     chainId,
-    contract,
     deadline,
     input0,
     input1,
@@ -230,15 +220,6 @@ function useWriteWithoutNative({
     token0,
     token1,
   ])
-
-  const { data: estimatedGas } = useEstimateGas({
-    ...prepare,
-    query: {
-      enabled: Boolean(prepare),
-    },
-  })
-
-  const adjustedGas = estimatedGas ? gasMargin(estimatedGas) : undefined
 
   const { data: simulation } = useSimulateContract({
     ...(prepare as NonNullable<typeof prepare>),
@@ -252,13 +233,18 @@ function useWriteWithoutNative({
   })
 
   const write = useMemo(() => {
-    if (!writeContractAsync || !simulation || !adjustedGas) return undefined
+    if (!writeContractAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
-      await writeContractAsync({ ...simulation.request, gas: adjustedGas })
+      await writeContractAsync({
+        ...simulation.request,
+        gas: simulation.request.gas
+          ? gasMargin(simulation.request.gas)
+          : undefined,
+      })
       confirm()
     }
-  }, [writeContractAsync, simulation, adjustedGas])
+  }, [writeContractAsync, simulation])
 
   return { ...rest, write }
 }

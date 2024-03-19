@@ -38,21 +38,23 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
           Total: {formatUSD(values.reduce((a, b) => a + b, 0))}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <CardGroup>
-          <CardLabel>Tokens</CardLabel>
-          {pendingRewards.map((reward, index) => {
-            return (
-              <CardCurrencyAmountItem
-                key={index}
-                isLoading={isLoading}
-                amount={reward}
-                fiatValue={formatUSD(values[index])}
-              />
-            )
-          })}
-        </CardGroup>
-      </CardContent>
+      {pendingRewards?.length ? (
+        <CardContent>
+          <CardGroup>
+            <CardLabel>Tokens</CardLabel>
+            {pendingRewards.map((reward, index) => {
+              return (
+                <CardCurrencyAmountItem
+                  key={index}
+                  isLoading={isLoading}
+                  amount={reward}
+                  fiatValue={formatUSD(values[index])}
+                />
+              )
+            })}
+          </CardGroup>
+        </CardContent>
+      ) : null}
       <CardFooter>
         <Checker.Connect variant="outline" size="default" fullWidth>
           <Checker.Network
@@ -62,7 +64,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {
             chainId={pool.chainId as ChainId}
           >
             <Button
-              disabled={!harvest}
+              disabled={!harvest || !pendingRewards?.length}
               fullWidth
               onClick={() => harvest?.()}
               size="default"

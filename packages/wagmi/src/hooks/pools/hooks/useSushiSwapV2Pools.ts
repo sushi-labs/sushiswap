@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffectDebugger } from '@sushiswap/hooks'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { uniswapV2PairAbi } from 'sushi/abi'
@@ -86,7 +87,7 @@ export function useSushiSwapV2Pools(
 
   const queryClient = useQueryClient()
 
-  const { data, isLoading, isError, ...query } = useReadContracts({
+  const { data, isLoading, isError, queryKey } = useReadContracts({
     contracts: contracts,
     query: {
       enabled:
@@ -101,13 +102,9 @@ export function useSushiSwapV2Pools(
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(
-        query.queryKey,
-        {},
-        { cancelRefetch: false },
-      )
+      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
     }
-  }, [blockNumber, queryClient, query.queryKey])
+  }, [blockNumber, queryClient, queryKey])
 
   return useMemo(() => {
     if (contracts.length === 0)
