@@ -187,7 +187,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           !underlying1 ||
           !address ||
           !pool ||
-          !balance ||
+          !amountToRemove ||
           !debouncedMinAmount0 ||
           !debouncedMinAmount1 ||
           !deadline ||
@@ -216,7 +216,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                 token1IsNative
                   ? pool.token0.wrapped.address
                   : pool.token1.wrapped.address,
-                balance.multiply(percentToRemoveDebounced).quotient,
+                amountToRemove.quotient,
                 token1IsNative
                   ? debouncedMinAmount0.quotient
                   : debouncedMinAmount1.quotient,
@@ -234,7 +234,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
             args: [
               pool.token0.wrapped.address,
               pool.token1.wrapped.address,
-              balance.multiply(percentToRemoveDebounced).quotient,
+              amountToRemove.quotient,
               debouncedMinAmount0.quotient,
               debouncedMinAmount1.quotient,
               address,
@@ -295,7 +295,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       underlying1,
       address,
       pool,
-      balance,
+      amountToRemove,
       debouncedMinAmount0,
       debouncedMinAmount1,
       deadline,
