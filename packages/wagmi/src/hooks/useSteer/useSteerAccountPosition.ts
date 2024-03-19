@@ -1,4 +1,4 @@
-import { useBlockNumber, useReadContracts } from 'wagmi'
+import { useReadContracts } from 'wagmi'
 
 import {
   getAccountPositions,
@@ -13,6 +13,7 @@ import { Address } from 'viem'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { DEFAULT_POLLING_INTERVAL } from '../../config'
 
 interface UseSteerAccountPositions {
   account: Address | undefined
@@ -81,10 +82,10 @@ export const useSteerAccountPositions = ({
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
-
+  // Doesn't make sense to invalidate queries based on the block number, since
+  // there might be a wide array of chains involved
   useMemo(() => {
-    if (blockNumber && blockNumber % 3n === 0n) {
+    const interval = setInterval(() => {
       ;[
         accountBalancesQueryKey,
         totalSuppliesQueryKey,
@@ -92,9 +93,10 @@ export const useSteerAccountPositions = ({
       ].forEach((key) =>
         queryClient.invalidateQueries(key, {}, { cancelRefetch: false }),
       )
-    }
+    }, DEFAULT_POLLING_INTERVAL)
+
+    return () => clearInterval(interval)
   }, [
-    blockNumber,
     queryClient,
     accountBalancesQueryKey,
     totalSuppliesQueryKey,

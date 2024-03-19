@@ -166,7 +166,10 @@ export const useBondMarketDetails = ({
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({
+    chainId: bond.chainId,
+    watch: true,
+  })
 
   useEffect(() => {
     if (blockNumber) {

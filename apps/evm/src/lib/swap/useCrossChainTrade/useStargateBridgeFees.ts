@@ -95,7 +95,10 @@ const useStargatePool = ({
     query: { enabled: Boolean(enabled && srcBridgeToken && dstBridgeToken) },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({
+    chainId: srcChainId,
+    watch: true,
+  })
 
   useEffect(() => {
     if (blockNumber) {
@@ -235,7 +238,10 @@ export const useStargateBridgeFees = ({
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({
+    chainId: srcChainId,
+    watch: true,
+  })
 
   useEffect(() => {
     if (blockNumber) {

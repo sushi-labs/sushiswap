@@ -19,7 +19,7 @@ export const useCurrentBlockTimestamp = (
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({ chainId, watch: true })
 
   useEffect(() => {
     if (blockNumber) {

@@ -183,7 +183,7 @@ export function useGetTridentConstantPools(
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({ chainId, watch: true })
 
   useEffect(() => {
     if (blockNumber) {
@@ -322,7 +322,7 @@ export function useTridentConstantPools(
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({ chainId, watch: true })
 
   useEffect(() => {
     if (blockNumber) {

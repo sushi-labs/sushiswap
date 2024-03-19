@@ -8,6 +8,8 @@ import {
 import { ChainId } from 'sushi'
 import { createConfig } from 'wagmi'
 
+export const DEFAULT_POLLING_INTERVAL = 4_000
+
 // Allow for custom polling intervals for each chain with a default
 const pollingInterval = new Proxy(
   {
@@ -16,10 +18,11 @@ const pollingInterval = new Proxy(
     [ChainId.FILECOIN]: 20000, // BT is 30s
   } as Partial<Record<ChainId, number>>,
   {
-    get: (target, name) =>
-      Object.hasOwn(target, name)
+    get: (target, name) => {
+      return Object.hasOwn(target, name)
         ? target[Number(name) as keyof typeof target]
-        : 4000,
+        : DEFAULT_POLLING_INTERVAL
+    },
   },
 )
 

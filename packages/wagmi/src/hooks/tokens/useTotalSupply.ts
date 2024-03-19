@@ -4,7 +4,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import { Address, erc20Abi } from 'viem'
-import { useBlockNumber, useReadContracts } from 'wagmi'
+import { useReadContracts } from 'wagmi'
+import { DEFAULT_POLLING_INTERVAL } from '../../config'
 
 function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {
   return token?.isToken && totalSupply
@@ -38,13 +39,14 @@ export const useMultipleTotalSupply = (
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
-
+  // Doesn't make sense to refresh based on one chain's blocknumber
   useEffect(() => {
-    if (blockNumber) {
+    const interval = setInterval(() => {
       queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
-    }
-  }, [blockNumber, queryClient, queryKey])
+    }, DEFAULT_POLLING_INTERVAL)
+
+    return () => clearInterval(interval)
+  }, [queryClient, queryKey])
 
   return useMemo(() => {
     return data

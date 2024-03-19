@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffectDebugger } from '@sushiswap/hooks'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { uniswapV2PairAbi } from 'sushi/abi'
@@ -97,7 +96,7 @@ export function useSushiSwapV2Pools(
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({ chainId, watch: true })
 
   useEffect(() => {
     if (blockNumber) {

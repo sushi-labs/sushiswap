@@ -6,6 +6,8 @@ import { useBlockNumber, useReadContracts, useSimulateContract } from 'wagmi'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
+import { getChainIdAddressFromId } from 'sushi'
+import { DEFAULT_POLLING_INTERVAL } from '../../config'
 
 interface UseSteerVaultsReserves {
   vaultIds: string[] | undefined
@@ -36,17 +38,19 @@ export const useSteerVaultsReserves = ({
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
-
+  // Doesn't make sense to invalidate queries based on the block number, since
+  // there might be a wide array of chains involved
   useEffect(() => {
-    if (blockNumber) {
+    const interval = setInterval(() => {
       queryClient.invalidateQueries(
         query.queryKey,
         {},
         { cancelRefetch: false },
       )
-    }
-  }, [blockNumber, queryClient, query.queryKey])
+    }, DEFAULT_POLLING_INTERVAL)
+
+    return () => clearInterval(interval)
+  }, [queryClient, query.queryKey])
 
   return query
 }
@@ -60,6 +64,11 @@ export const useSteerVaultReserves = ({
   vaultId,
   enabled = true,
 }: UseSteerVaultReserve) => {
+  const { chainId } = useMemo(
+    () => (vaultId ? getChainIdAddressFromId(vaultId) : { chainId: undefined }),
+    [vaultId],
+  )
+
   const contract = useMemo(() => {
     if (!vaultId) return undefined
     return getVaultsReservesContracts({ vaultIds: [vaultId!] })[0]
@@ -74,7 +83,7 @@ export const useSteerVaultReserves = ({
     },
   })
 
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { data: blockNumber } = useBlockNumber({ chainId, watch: true })
 
   useEffect(() => {
     if (blockNumber) {
