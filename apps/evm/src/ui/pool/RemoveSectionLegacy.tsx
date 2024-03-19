@@ -312,7 +312,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
 
       return async () => {
         // TODO: Fix this
-        await sendTransactionAsync(prepare as any)
+        try {
+          await sendTransactionAsync(prepare as any)
+        } catch {}
       }
     }, [isSimulationError, prepare, sendTransactionAsync])
 

@@ -339,11 +339,14 @@ export const AddSectionReviewModalTrident: FC<
   })
 
   const send = useMemo(() => {
-    if (!sendTransactionAsync || !prepare || isSimulationError) return undefined
+    if (!prepare || isSimulationError) return undefined
 
     return async (confirm: () => void) => {
-      await sendTransactionAsync(prepare)
-      confirm()
+      try {
+        await sendTransactionAsync(prepare)
+
+        confirm()
+      } catch {}
     }
   }, [isSimulationError, prepare, sendTransactionAsync])
 

@@ -140,10 +140,12 @@ export const ConcentratedLiquidityCollectButton: FC<
   })
 
   const send = useMemo(() => {
-    if (!sendTransactionAsync || isSimulationError || !prepare) return
+    if (isSimulationError || !prepare) return
 
     return async () => {
-      await sendTransactionAsync(prepare)
+      try {
+        await sendTransactionAsync(prepare)
+      } catch {}
     }
   }, [isSimulationError, prepare, sendTransactionAsync])
 

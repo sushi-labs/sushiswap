@@ -271,7 +271,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
         return {
           account: address,
           to: contract.address,
-          chainId: _pool.chainId,
+          chainId: _pool.chainId as ChainId,
           data: batchAction({
             actions,
           }),
@@ -312,7 +312,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
       if (!prepare || isSimulationError) return undefined
 
       return async () => {
-        await sendTransactionAsync(prepare)
+        try {
+          await sendTransactionAsync(prepare)
+        } catch {}
       }
     }, [sendTransactionAsync, isSimulationError, prepare])
 

@@ -345,8 +345,11 @@ export const CreateSectionReviewModalTrident: FC<
     if (!prepare || isSimulationError) return
 
     return async (confirm: () => void) => {
-      await sendTransactionAsync(prepare)
-      confirm()
+      try {
+        await sendTransactionAsync(prepare)
+
+        confirm()
+      } catch {}
     }
   }, [isSimulationError, prepare, sendTransactionAsync])
 
