@@ -1,8 +1,6 @@
 'use client'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { QueryFunction, useQuery } from '@tanstack/react-query'
-import { createConfig } from '@wagmi/core'
 import {
   GetTokenParameters,
   GetTokenReturnType,
@@ -11,6 +9,7 @@ import {
 import { useMemo } from 'react'
 import { ChainId } from 'sushi'
 import { Address } from 'viem'
+import { config } from '../../config'
 
 type QueryKeyArgs = { tokens: Partial<GetTokenParameters>[] }
 // type QueryKeyConfig = {}
@@ -31,8 +30,6 @@ const queryFn: QueryFunction<
   if (!tokens) throw new Error('tokens is required')
   if (tokens.filter((el) => !el.address).length > 0)
     throw new Error('address is required')
-
-  const config = createConfig(publicWagmiConfig)
 
   return Promise.all(
     tokens.map((token) => {

@@ -68,4 +68,4 @@ export const createProductionConfig = () => {
   })
 }
 
-// export const config = createWagmiConfig()
+export const config = createProductionConfig()

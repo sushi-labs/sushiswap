@@ -1,5 +1,3 @@
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig } from '@wagmi/core'
 import { readContracts } from '@wagmi/core/actions'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import {
@@ -9,6 +7,7 @@ import {
 } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import { SushiSwapV2Pool, computeSushiSwapV2PoolAddress } from 'sushi/pool'
+import { config } from '../../../config'
 
 export enum PairState {
   LOADING = 'Loading',
@@ -55,8 +54,6 @@ export const getSushiSwapV2Pools = async (
     abi: uniswapV2PairAbi,
     functionName: 'getReserves' as const,
   }))
-
-  const config = createConfig(publicWagmiConfig)
 
   const data = await readContracts(config, {
     contracts: contracts,

@@ -4,29 +4,34 @@ import { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import { Address, erc20Abi, isAddress, zeroAddress } from 'viem'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig, getBalance, readContracts } from '@wagmi/core'
+import { getBalance, readContracts } from '@wagmi/core'
+import { useBalance } from 'wagmi'
+import { GetBalanceReturnType } from 'wagmi/actions'
+import { config } from '../../config'
+import { useWatchByInterval } from '../watch'
 
-interface UseBalanceParams {
+interface QueryBalanceParams {
   chainId: ChainId | undefined
   currencies: (Type | undefined)[]
   account: Address | undefined
-  enabled?: boolean
+  nativeBalance?: GetBalanceReturnType
 }
 
 export const queryFnUseBalances = async ({
   chainId,
   currencies,
   account,
-}: Omit<UseBalanceParams, 'enabled'>) => {
+  nativeBalance,
+}: QueryBalanceParams) => {
   if (!account || !chainId || !currencies) return null
 
-  const config = createConfig(publicWagmiConfig)
-
-  const native = await getBalance(config, {
-    address: account,
-    chainId,
-  })
+  let native = nativeBalance
+  if (typeof native === 'undefined') {
+    native = await getBalance(config, {
+      address: account,
+      chainId,
+    })
+  }
 
   const [validatedTokens, validatedTokenAddresses] = currencies.reduce<
     [Token[], Address[]]
@@ -74,12 +79,27 @@ export const queryFnUseBalances = async ({
   return _data
 }
 
+interface UseBalanceParams {
+  chainId: ChainId | undefined
+  currencies: (Type | undefined)[]
+  account: Address | undefined
+  enabled?: boolean
+}
+
 export const useBalancesWeb3 = ({
   chainId,
   currencies,
   account,
   enabled = true,
 }: UseBalanceParams) => {
+  const { data: nativeBalance, queryKey } = useBalance({
+    chainId,
+    address: account,
+    query: { enabled },
+  })
+
+  useWatchByInterval({ key: queryKey, interval: 10000 })
+
   useEffect(() => {
     if (currencies && currencies.length > 100) {
       throw new Error(
@@ -90,7 +110,8 @@ export const useBalancesWeb3 = ({
 
   return useQuery({
     queryKey: ['useBalancesWeb3', { chainId, currencies, account }],
-    queryFn: () => queryFnUseBalances({ chainId, currencies, account }),
+    queryFn: () =>
+      queryFnUseBalances({ chainId, currencies, account, nativeBalance }),
     refetchInterval: 10000,
     enabled: Boolean(chainId && account && enabled && currencies),
   })

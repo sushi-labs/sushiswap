@@ -3,6 +3,8 @@ import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { Address, zeroAddress } from 'viem'
 
+import { useBalance } from 'wagmi'
+import { useWatchByInterval } from '../watch'
 import { queryFnUseBalances } from './useBalancesWeb3'
 
 interface UseBalanceParams {
@@ -18,6 +20,14 @@ export const useBalanceWeb3 = ({
   account,
   enabled = true,
 }: UseBalanceParams) => {
+  const { data: nativeBalance, queryKey } = useBalance({
+    chainId,
+    address: account,
+    query: { enabled },
+  })
+
+  useWatchByInterval({ key: queryKey, interval: 10000 })
+
   return useQuery({
     queryKey: ['useBalance', { chainId, currency, account }],
     queryFn: async () => {
@@ -26,6 +36,7 @@ export const useBalanceWeb3 = ({
         chainId,
         currencies: [currency],
         account,
+        nativeBalance,
       })
       return (
         data?.[currency.isNative ? zeroAddress : currency.wrapped.address] ??

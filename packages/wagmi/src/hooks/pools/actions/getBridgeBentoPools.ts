@@ -1,11 +1,10 @@
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { balanceOfAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { convertTokenToBento } from 'sushi/tines'
 import { BridgeBento, RToken, Rebase } from 'sushi/tines'
-import { createConfig } from 'wagmi'
 import { readContracts } from 'wagmi/actions'
+import { config } from '../../../config'
 
 export enum BridgeBentoState {
   LOADING = 'Loading',
@@ -19,8 +18,6 @@ export const getBridgeBentoPools = async (
   currencies: Token[],
   totals: Map<string, Rebase>,
 ) => {
-  const config = createConfig(publicWagmiConfig)
-
   const balances = await readContracts(config, {
     contracts: currencies.map(
       (currency) =>

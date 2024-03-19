@@ -6,10 +6,9 @@ import {
 } from 'sushi/abi'
 import { Amount, Currency, Token } from 'sushi/currency'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig } from '@wagmi/core'
 import { TridentChainId, publicClientConfig } from 'sushi/config'
 import { Address, createPublicClient, getContract } from 'viem'
+import { config } from '../../../config'
 import { getTridentConstantPoolFactoryContract } from '../../../contracts'
 import { pairsUnique } from './utils'
 
@@ -30,7 +29,6 @@ export const getTridentConstantPools = async (
   chainId: TridentChainId,
   currencies: [Currency | undefined, Currency | undefined][],
 ) => {
-  const config = createConfig(publicWagmiConfig)
   const client = createPublicClient(publicClientConfig[chainId])
 
   const contract = getContract({

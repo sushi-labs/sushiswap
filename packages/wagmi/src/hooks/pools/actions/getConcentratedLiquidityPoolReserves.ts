@@ -2,8 +2,8 @@ import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
 import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi/pool'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig, getBalance } from '@wagmi/core'
+import { getBalance } from '@wagmi/core'
+import { config } from '../../../config'
 import { getV3FactoryContractConfig } from '../../contracts'
 
 export const getConcentratedLiquidityPoolReserves = async ({
@@ -19,8 +19,6 @@ export const getConcentratedLiquidityPoolReserves = async ({
     tokenB: pool.token1,
     fee: pool.fee,
   })
-
-  const config = createConfig(publicWagmiConfig)
 
   const [balance1, balance2] = await Promise.all([
     getBalance(config, {

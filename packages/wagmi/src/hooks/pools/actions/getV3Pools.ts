@@ -1,5 +1,3 @@
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig } from '@wagmi/core'
 import { readContracts } from '@wagmi/core/actions'
 import { erc20Abi } from 'sushi/abi'
 import { uniswapV3PoolAbi } from 'sushi/abi'
@@ -14,6 +12,7 @@ import { Currency, Token, Type } from 'sushi/currency'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { RToken, UniV3Pool } from 'sushi/tines'
 import { Address } from 'viem'
+import { config } from '../../../config'
 
 export enum V3PoolState {
   LOADING = 'Loading',
@@ -137,8 +136,6 @@ export const getV3Pools = async (
         functionName: 'slot0',
       }) as const,
   )
-
-  const config = createConfig(publicWagmiConfig)
 
   const slot0 = await readContracts(config, {
     contracts: slot0Contracts,

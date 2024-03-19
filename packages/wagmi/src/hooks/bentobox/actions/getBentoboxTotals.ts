@@ -1,10 +1,10 @@
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig, readContracts } from '@wagmi/core'
+import { readContracts } from '@wagmi/core'
 import { bentoBoxV1TotalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Type as Currency } from 'sushi/currency'
 import { Rebase } from 'sushi/tines'
 import { Address } from 'viem'
+import { config } from '../../../config'
 
 const totalsMap = new Map<string, Rebase>()
 
@@ -28,8 +28,6 @@ export const getBentoboxTotalsMap = async (
   )
 
   try {
-    const config = createConfig(publicWagmiConfig)
-
     const totals = await readContracts(config, {
       allowFailure: false,
       contracts,
@@ -65,8 +63,6 @@ export const getBentoboxTotals = async (
   )
 
   try {
-    const config = createConfig(publicWagmiConfig)
-
     return readContracts(config, {
       allowFailure: false,
       contracts,

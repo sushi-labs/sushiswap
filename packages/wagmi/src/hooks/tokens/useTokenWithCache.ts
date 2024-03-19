@@ -1,13 +1,12 @@
 import { getToken, saveTokens } from '@sushiswap/dexie'
 import { useCustomTokens } from '@sushiswap/hooks'
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useQuery } from '@tanstack/react-query'
-import { createConfig } from '@wagmi/core'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Address, isAddress } from 'viem'
+import { config } from '../../config'
 
 interface UseTokenParams<T extends boolean> {
   chainId: ChainId | undefined
@@ -120,8 +119,6 @@ export const getTokenWithCacheQueryFn = async ({
 
     // Try fetching from wagmi
   } else if (chainId) {
-    const config = createConfig(publicWagmiConfig)
-
     const resp = await getTokenWeb3(config, {
       address: address as Address,
       chainId,

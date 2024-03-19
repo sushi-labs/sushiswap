@@ -2,10 +2,9 @@ import { ChainId } from 'sushi/chain'
 import { SUSHISWAP_V3_INIT_CODE_HASH, SushiSwapV3ChainId } from 'sushi/config'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig } from '@wagmi/core'
 import { readContracts } from '@wagmi/core/actions'
 import { erc20Abi } from 'viem'
+import { config } from '../../../config'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
 import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
@@ -47,8 +46,6 @@ export const getConcentratedLiquidityPositions = async ({
   chainIds: SushiSwapV3ChainId[]
 }) => {
   if (!account) return undefined
-
-  const config = createConfig(publicWagmiConfig)
 
   const result = await readContracts(config, {
     contracts: chainIds.map(

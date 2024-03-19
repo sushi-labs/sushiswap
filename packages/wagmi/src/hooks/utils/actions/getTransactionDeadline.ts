@@ -1,7 +1,7 @@
-import { createConfig, readContract } from '@wagmi/core'
+import { readContract } from '@wagmi/core'
 import { chainsL2 } from 'sushi/chain'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { config } from '../../../config'
 import {
   Multicall3ChainId,
   getMulticall3ContractConfig,
@@ -11,8 +11,6 @@ const L2_DEADLINE_FROM_NOW = 60n * 5n
 const TTL = 30n
 
 export const getTransactionDeadline = async (chainId: Multicall3ChainId) => {
-  const config = createConfig(publicWagmiConfig)
-
   const currentBlockTimestamp = await readContract(config, {
     ...getMulticall3ContractConfig(chainId),
     functionName: 'getCurrentBlockTimestamp',
