@@ -90,27 +90,29 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const currencyAToRemove = useMemo(
       () =>
         token0
-          ? percentToRemove?.greaterThan('0') && underlying0
+          ? percentToRemoveDebounced?.greaterThan('0') && underlying0
             ? Amount.fromRawAmount(
                 token0,
-                percentToRemove.multiply(underlying0.quotient).quotient || '0',
+                percentToRemoveDebounced.multiply(underlying0.quotient)
+                  .quotient || '0',
               )
             : Amount.fromRawAmount(token0, '0')
           : undefined,
-      [percentToRemove, token0, underlying0],
+      [percentToRemoveDebounced, token0, underlying0],
     )
 
     const currencyBToRemove = useMemo(
       () =>
         token1
-          ? percentToRemove?.greaterThan('0') && underlying1
+          ? percentToRemoveDebounced?.greaterThan('0') && underlying1
             ? Amount.fromRawAmount(
                 token1,
-                percentToRemove.multiply(underlying1.quotient).quotient || '0',
+                percentToRemoveDebounced.multiply(underlying1.quotient)
+                  .quotient || '0',
               )
             : Amount.fromRawAmount(token1, '0')
           : undefined,
-      [percentToRemove, token1, underlying1],
+      [percentToRemoveDebounced, token1, underlying1],
     )
 
     const [minAmount0, minAmount1] = useMemo(() => {
@@ -133,10 +135,16 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const debouncedMinAmount0 = useDebounce(minAmount0, 500)
     const debouncedMinAmount1 = useDebounce(minAmount1, 500)
 
-    const amountToRemove = useMemo(
-      () => balance?.multiply(percentToRemove),
-      [balance, percentToRemove],
-    )
+    const amountToRemove = useMemo(() => {
+      return balance &&
+        percentToRemoveDebounced &&
+        percentToRemoveDebounced.greaterThan('0')
+        ? Amount.fromRawAmount(
+            balance.currency,
+            percentToRemoveDebounced.multiply(balance.quotient).quotient,
+          )
+        : undefined
+    }, [balance, percentToRemoveDebounced])
 
     const onSuccess = useCallback(
       (hash: SendTransactionReturnType) => {
@@ -170,6 +178,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     useEffect(() => {
       const prep = async () => {
         if (
+          !approved ||
           !token0 ||
           !token1 ||
           !chain?.id ||
@@ -277,6 +286,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           console.error('remove prepare error', e)
         })
     }, [
+      approved,
       token0,
       token1,
       chain?.id,
