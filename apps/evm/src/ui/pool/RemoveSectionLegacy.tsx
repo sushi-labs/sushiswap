@@ -300,7 +300,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       debouncedMinAmount1,
       deadline,
       _pool.chainId,
-      percentToRemoveDebounced,
       percentage,
     ])
 
