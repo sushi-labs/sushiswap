@@ -1,11 +1,11 @@
-import { Chain, foundry, polygon } from 'viem/chains'
+import { publicChains } from 'sushi/config'
+import { foundry } from 'viem/chains'
 
-export const foundryPolygon = {
-  ...polygon,
+export const testChains = publicChains.map((chain) => ({
+  ...chain,
   rpcUrls: foundry.rpcUrls,
-} satisfies Chain
+})) as unknown as typeof publicChains
 
-export const testChains = [foundryPolygon] as const
 export type TestChainId = (typeof testChains)[number]['id']
 
 // Default accounts from Anvil

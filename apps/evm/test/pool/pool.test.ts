@@ -424,8 +424,8 @@ async function createOrAddV2Pool(
 }
 
 async function removeLiquidityV3(page: Page, _next: NextFixture) {
-  await connect(page)
   await page.goto(BASE_URL)
+  await connect(page)
   await page.locator('[testdata-id=my-positions-button]').click()
 
   const concentratedPositionTableSelector = page.locator(
