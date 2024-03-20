@@ -29,9 +29,23 @@ export async function GET(request: NextRequest) {
     })
 
     if (mints.length > 0) {
-      return NextResponse.json({ result: { isValid: true } })
+      return NextResponse.json(
+        { result: { isValid: true } },
+        {
+          headers: {
+            'Cache-Control': 'public, max-age=60, stale-while-revalidate=600',
+          },
+        },
+      )
     }
   } catch (_) {}
 
-  return NextResponse.json({ result: { isValid: false } })
+  return NextResponse.json(
+    { result: { isValid: false } },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=60, stale-while-revalidate=600',
+      },
+    },
+  )
 }
