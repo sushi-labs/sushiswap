@@ -1,1 +1,1 @@
-export * from './getTransactionDeadline'
+export { getTransactionDeadline } from './getTransactionDeadline'

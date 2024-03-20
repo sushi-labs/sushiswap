@@ -3,7 +3,7 @@ import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { Address, zeroAddress } from 'viem'
 
-import { serialize, useBalance } from 'wagmi'
+import { serialize, useBalance, useConfig } from 'wagmi'
 import { useWatchByInterval } from '../watch'
 import { queryFnUseBalances } from './useBalancesWeb3'
 
@@ -26,6 +26,8 @@ export const useBalanceWeb3 = ({
     query: { enabled },
   })
 
+  const config = useConfig()
+
   useWatchByInterval({ key: queryKey, interval: 10000 })
 
   return useQuery({
@@ -37,6 +39,7 @@ export const useBalanceWeb3 = ({
       if (!currency) return null
       const data = await queryFnUseBalances({
         chainId,
+        config,
         currencies: [currency],
         account,
         nativeBalance,

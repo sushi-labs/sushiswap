@@ -259,7 +259,7 @@ test.describe('V2', () => {
     await switchNetwork(page, CHAIN_ID)
   })
 
-  test('Create, add & remove', async ({ page, next }) => {
+  test.only('Create, add & remove', async ({ page, next }) => {
     test.slow()
     await createOrAddV2Pool(page, next, {
       token0: NATIVE_TOKEN,

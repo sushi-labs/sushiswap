@@ -5,9 +5,8 @@ import { Amount, Native, Token, Type } from 'sushi/currency'
 import { Address, erc20Abi, isAddress, zeroAddress } from 'viem'
 
 import { getBalance, readContracts } from '@wagmi/core'
-import { serialize, useBalance } from 'wagmi'
+import { Config, serialize, useBalance, useConfig } from 'wagmi'
 import { GetBalanceReturnType } from 'wagmi/actions'
-import { config } from '../../config'
 import { useWatchByInterval } from '../watch'
 
 interface QueryBalanceParams {
@@ -15,6 +14,7 @@ interface QueryBalanceParams {
   currencies: (Type | undefined)[]
   account: Address | undefined
   nativeBalance?: GetBalanceReturnType
+  config: Config
 }
 
 export const queryFnUseBalances = async ({
@@ -22,6 +22,7 @@ export const queryFnUseBalances = async ({
   currencies,
   account,
   nativeBalance,
+  config,
 }: QueryBalanceParams) => {
   if (!account || !chainId || !currencies) return null
 
@@ -98,6 +99,8 @@ export const useBalancesWeb3 = ({
     query: { enabled },
   })
 
+  const config = useConfig()
+
   useWatchByInterval({ key: queryKey, interval: 10000 })
 
   useEffect(() => {
@@ -114,7 +117,13 @@ export const useBalancesWeb3 = ({
       { chainId, currencies, account, nativeBalance: serialize(nativeBalance) },
     ],
     queryFn: () =>
-      queryFnUseBalances({ chainId, currencies, account, nativeBalance }),
+      queryFnUseBalances({
+        chainId,
+        currencies,
+        account,
+        nativeBalance,
+        config,
+      }),
     refetchInterval: 10000,
     enabled: Boolean(chainId && account && enabled && currencies),
   })
