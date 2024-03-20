@@ -1,14 +1,18 @@
 import { Address } from 'viem'
-import { RPool } from '../tines'
+import { RPool, RToken } from '../tines'
 
 export class TokenVert {
-  token: Address
+  address: Address
+  decExp: number
+  token: RToken
   pools: PoolEdge[] = []
   price?: number | undefined
   obj?: object | undefined
 
-  constructor(token: Address) {
+  constructor(token: RToken) {
     this.token = token
+    this.address = token.address as Address
+    this.decExp = 10 ** token.decimals
   }
 
   getNeibour(edge: PoolEdge) {
@@ -53,7 +57,7 @@ export function makePoolTokenGraph(
     const addr0 = p.token0.address as Address
     let v0 = tokens.get(addr0)
     if (v0 === undefined) {
-      v0 = new TokenVert(addr0)
+      v0 = new TokenVert(p.token0)
       tokens.set(addr0, v0)
     }
 
@@ -61,7 +65,7 @@ export function makePoolTokenGraph(
     const addr1 = p.token1.address as Address
     let v1 = tokens.get(addr1)
     if (v1 === undefined) {
-      v1 = new TokenVert(addr1)
+      v1 = new TokenVert(p.token1)
       tokens.set(addr1, v1)
     }
 

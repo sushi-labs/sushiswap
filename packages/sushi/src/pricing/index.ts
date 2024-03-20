@@ -1,1 +1,1 @@
-export * from './IncrementalPricer'
+export * from './IncrementalPricer.js'

@@ -1,7 +1,7 @@
 import { Address } from 'viem'
 import { Token } from '../currency'
-import { RPool } from '../tines'
-import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph'
+import { RPool, RToken } from '../tines'
+import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 
 const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
 const MAX_PRICABLE_LIQUIDITY = 100
@@ -9,6 +9,8 @@ const MIN_PRICABLE_LIQUIDITY = 0.8
 
 class TokenInfo {
   address: Address
+  decExp: number
+  token: RToken
   parent: TokenInfo | undefined
   children: TokenInfo[] = []
   direction: boolean
@@ -17,12 +19,14 @@ class TokenInfo {
   changedPoolIndex?: number
 
   constructor(
-    address: Address,
+    token: RToken,
     direction: boolean,
     poolPrice: number,
     parent?: TokenInfo,
   ) {
-    this.address = address
+    this.token = token
+    this.address = token.address as Address
+    this.decExp = 10 ** token.decimals
     this.direction = direction
     this.poolPrice = poolPrice
     this.parent = parent
@@ -47,10 +51,7 @@ export class IncrementalPricer {
     this.baseTokens = new Array(baseTokens.length)
     this.baseTokenPrices = prices.slice()
     baseTokens.forEach((t, i) => {
-      this.baseTokens[i] = new TokenInfo(t.address, true, 1)
-      // this.tokenMap.set(t.address, this.baseTokens[i] as TokenInfo)
-      // this.prices[t.address] = prices[i] as number  ????
-      // ++this.pricesSize
+      this.baseTokens[i] = new TokenInfo(t as RToken, true, 1)
     })
     this.minLiquidity = minLiquidity
   }
@@ -83,26 +84,26 @@ export class IncrementalPricer {
       this.baseTokens.map((t) => t.address),
     )
     const sortedBaseVerts = this._sortBaseVerts(baseVerts)
-    sortedBaseVerts.forEach((baseVert, i) => {
-      const baseToken = this.baseTokens[i] as TokenInfo
-      if (this.prices[baseToken.address] !== undefined) return // the token already priced
+    sortedBaseVerts.forEach(([baseVert, baseIndex]) => {
+      if (this.prices[baseVert.address] !== undefined) return // the token is already priced
 
-      const baseTokenPrice = this.baseTokenPrices[i] as number
-      if (baseVert === undefined) {
-        // no pools with this token
-        this.tokenMap.set(baseToken.address, baseToken)
-        this.prices[baseToken.address] = baseTokenPrice
-        ++this.pricesSize
-        return
-      }
+      const baseToken = this.baseTokens[baseIndex] as TokenInfo
+      const baseTokenPrice = this.baseTokenPrices[baseIndex] as number
+      // if (baseVert === undefined) {
+      //   // no pools with this token
+      //   this.tokenMap.set(baseToken.address, baseToken)
+      //   this.prices[baseToken.address] = baseTokenPrice
+      //   ++this.pricesSize
+      //   return
+      // }
 
       const nextEdges: PoolEdge[] = []
       if (logging)
         console.log(
-          `Pricing: Initial token ${baseVert.token} price=${baseTokenPrice}`,
+          `Pricing: Initial token ${baseVert.token.symbol} price=${baseTokenPrice}`,
         )
-      baseVert.obj = this.baseTokens[i]
-      this._addVertice(nextEdges, baseVert, baseTokenPrice)
+      baseVert.obj = baseToken
+      this._addVertice(nextEdges, baseVert, baseTokenPrice / baseVert.decExp)
 
       while (nextEdges.length > 0) {
         const bestEdge = nextEdges.pop() as PoolEdge
@@ -116,27 +117,30 @@ export class IncrementalPricer {
           vTo = tmp
           direction = false
         }
-        const p = bestEdge.pool.calcCurrentPriceWithoutFee(!direction)
+        const p =
+          (vFrom.price as number) *
+          bestEdge.pool.calcCurrentPriceWithoutFee(!direction)
         if (logging)
           console.log(
-            `Pricing: + Token ${vTo.token} price=${
-              (vFrom.price as number) * p
-            }` +
-              ` from ${vFrom.token} pool=${bestEdge.pool.address} liquidity=${bestEdge.poolLiquidity}`,
+            `Pricing: + Token ${vTo.token.symbol} price=${p * vTo.decExp}` +
+              ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${bestEdge.poolLiquidity}`,
           )
         vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
         this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
-        this._addVertice(nextEdges, vTo, (vFrom.price as number) * p)
+        this._addVertice(nextEdges, vTo, p)
       }
 
       this._updateTotalSuccessor(baseToken)
       this.lastfullPricesRecalcDate = Date.now()
+      this.fullPricesRecalcFlag = false
     })
     return this.pricesSize
   }
 
   // sorts baseVerts: the best the first
-  private _sortBaseVerts(baseVerts: (TokenVert | undefined)[]): TokenVert[] {
+  private _sortBaseVerts(
+    baseVerts: (TokenVert | undefined)[],
+  ): [TokenVert, number][] {
     const tmp = baseVerts
       .map((b, i) => {
         if (b === undefined) return
@@ -145,9 +149,13 @@ export class IncrementalPricer {
           (a, p) => a + price * Number(p.reserve(b)),
           0,
         )
-        return [reserve * price, b] as [number, TokenVert]
+        const decExp = this.baseTokens[i]?.decExp as number
+        return [(reserve * price) / decExp, [b, i]] as [
+          number,
+          [TokenVert, number],
+        ]
       })
-      .filter((p) => p !== undefined) as [number, TokenVert][]
+      .filter((p) => p !== undefined) as [number, [TokenVert, number]][]
     return tmp.sort((a, b) => b[0] - a[0]).map((a) => a[1])
   }
 
@@ -161,9 +169,23 @@ export class IncrementalPricer {
 
   private _addVertice(nextEdges: PoolEdge[], v: TokenVert, price: number) {
     v.price = price
-    this.tokenMap.set(v.token, v.obj as TokenInfo)
-    this.prices[v.token] = price
+    this.tokenMap.set(v.address, v.obj as TokenInfo)
+    this.prices[v.address] = price * v.decExp
     ++this.pricesSize
+    // if (nextEdges.length === 0) {
+    //   // optimization ???
+    //   nextEdges = v.pools
+    //     .filter((edge) => {
+    //       if (v.getNeibour(edge).price !== undefined) return false // token already priced
+    //       const liquidity = price * Number(edge.reserve(v))
+    //       edge.poolLiquidity = liquidity
+    //       return (
+    //         liquidity >= this.minLiquidity ||
+    //         edge.pool.alwaysAppropriateForPricing()
+    //       )
+    //     })
+    //     .sort((a, b) => a.poolLiquidity - b.poolLiquidity)
+    // }
     for (let i = v.pools.length - 1; i >= 0; --i) {
       const edge = v.pools[i] as PoolEdge
       if (v.getNeibour(edge).price !== undefined) continue // token already priced
@@ -243,7 +265,7 @@ export class IncrementalPricer {
     if (poolIndex !== undefined) {
       // update priceMultiplicator and poolPrice
       const newPoolPrice = pools[poolIndex]?.calcCurrentPriceWithoutFee(
-        token.direction,
+        !token.direction,
       ) as number
       priceMultiplicator = (priceMultiplicator / token.poolPrice) * newPoolPrice
       tokens[poolIndex] = undefined
@@ -281,6 +303,14 @@ export class IncrementalPricer {
       (MAX_PRICABLE_LIQUIDITY -
         (MAX_PRICABLE_LIQUIDITY - MIN_PRICABLE_LIQUIDITY) /
           (tokenInfo.totalSuccessors + 1))
+    if (liquidity < minPricableLiquidity)
+      console.log(
+        'Pool not pricable',
+        pool.address,
+        tokenInfo.direction,
+        tokenInfo.totalSuccessors,
+        liquidity,
+      )
     return liquidity >= minPricableLiquidity
   }
 
@@ -315,9 +345,9 @@ export class IncrementalPricer {
       addrTo = tmp
     }
     const tokenInfo: TokenInfo = new TokenInfo(
-      addrTo,
+      direction ? pool.token0 : pool.token1,
       direction,
-      pool.calcCurrentPriceWithoutFee(direction),
+      pool.calcCurrentPriceWithoutFee(!direction),
       this.tokenMap.get(addrFrom) as TokenInfo,
     )
     tokenInfo.parent?.children?.push(tokenInfo)
