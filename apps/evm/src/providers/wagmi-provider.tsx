@@ -1,5 +1,5 @@
 import {
-  WagmiConfig as _WagmiConfig,
+  WagmiProvider,
   createProductionConfig,
   createTestConfig,
 } from '@sushiswap/wagmi'
@@ -14,5 +14,5 @@ export const WagmiConfig: FC<{ children: ReactNode }> = ({ children }) => {
     () => (!isTest ? createProductionConfig() : createTestConfig()),
     [],
   )
-  return <_WagmiConfig config={config}>{children}</_WagmiConfig>
+  return <WagmiProvider config={config}>{children}</WagmiProvider>
 }

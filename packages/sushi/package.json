@@ -20,7 +20,6 @@
     "JiroOno",
     "0xMasayoshi"
   ],
-  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

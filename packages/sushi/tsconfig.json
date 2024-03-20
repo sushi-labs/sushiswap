@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig"],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": ["src"],
   "exclude": [
     "node_modules",
@@ -12,10 +12,6 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "lib": ["ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ESNext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

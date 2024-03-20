@@ -26,7 +26,7 @@ export const createTestConfig = () => {
   const mockConnector = mock({
     accounts: [
       accounts.map((x) => privateKeyToAccount(x.privateKey))[testWalletIndex]
-        .publicKey,
+        .address,
     ],
     features: {
       reconnect: true,

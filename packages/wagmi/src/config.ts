@@ -74,8 +74,8 @@ export const createProductionConfig = () => {
 
 export const config = createProductionConfig()
 
-declare module 'wagmi' {
-  interface Register {
-    config: typeof config
-  }
-}
+// declare module 'wagmi' {
+//   interface Register {
+//     config: typeof config
+//   }
+// }
