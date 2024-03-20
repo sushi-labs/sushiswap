@@ -5,7 +5,7 @@ import { Amount, Native, Token, Type } from 'sushi/currency'
 import { Address, erc20Abi, isAddress, zeroAddress } from 'viem'
 
 import { getBalance, readContracts } from '@wagmi/core'
-import { useBalance, serialize } from 'wagmi'
+import { serialize, useBalance } from 'wagmi'
 import { GetBalanceReturnType } from 'wagmi/actions'
 import { config } from '../../config'
 import { useWatchByInterval } from '../watch'
