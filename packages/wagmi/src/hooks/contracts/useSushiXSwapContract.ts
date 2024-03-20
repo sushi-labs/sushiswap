@@ -1,6 +1,5 @@
 'use client'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { sushiXSwapAbi } from 'sushi/abi'
 import { SUSHIXSWAP_ADDRESS, SushiXSwapChainId } from 'sushi/config'
@@ -14,7 +13,7 @@ export const getSushiXSwapContractConfig = (chainId: SushiXSwapChainId) => ({
 })
 
 export function useSushiXSwapContract(chainId: SushiXSwapChainId | undefined) {
-  const publicClient = usePublicClient<PublicWagmiConfig>({
+  const publicClient = usePublicClient({
     chainId,
   }) as PublicClient
   const { data: walletClient } = useWalletClient({ chainId })

@@ -1,16 +1,17 @@
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContracts } from '@wagmi/core'
 import { bentoBoxV1TotalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Type as Currency } from 'sushi/currency'
 import { Rebase } from 'sushi/tines'
 import { Address } from 'viem'
-import { config } from '../../../config'
 
 const totalsMap = new Map<string, Rebase>()
 
 export const getBentoboxTotalsMap = async (
   chainId: BentoBoxChainId,
   currencies: (Currency | undefined)[],
+  config: PublicWagmiConfig,
 ) => {
   const addresses = currencies
     .filter((currency): currency is Currency => Boolean(currency?.wrapped))
@@ -46,6 +47,7 @@ export const getBentoboxTotalsMap = async (
 export const getBentoboxTotals = async (
   chainId: BentoBoxChainId,
   currencies: (Currency | undefined)[],
+  config: PublicWagmiConfig,
 ) => {
   const addresses = currencies
     .filter((currency): currency is Currency => Boolean(currency?.wrapped))

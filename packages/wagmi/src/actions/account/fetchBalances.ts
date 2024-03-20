@@ -1,10 +1,10 @@
-import { readContracts } from '@wagmi/core'
+import { Config, readContracts } from '@wagmi/core'
 import { ChainId } from 'sushi/chain'
 import { Address, erc20Abi } from 'viem'
-import { config } from '../../config'
 
 export async function fetchBalances(
   args: { token: string; user: string; chainId: ChainId }[],
+  config: Config,
 ): Promise<Record<string, string>> {
   const balances = await readContracts(config, {
     allowFailure: true,

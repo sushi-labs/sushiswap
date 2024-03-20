@@ -38,7 +38,6 @@ import {
   useTransactionDeadline,
   useWaitForTransactionReceipt,
 } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { unwrapToken } from 'src/lib/functions'
@@ -73,7 +72,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   positionDetails,
 }) => {
   const { chain } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
   const [value, setValue] = useState<string>('0')
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
   const { data: deadline } = useTransactionDeadline({ chainId })

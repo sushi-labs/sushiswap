@@ -131,3 +131,6 @@ export const ChainKey = {
   [ChainId.BLAST]: 'blast',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
+
+export const isChainId = (chainId: number): chainId is ChainId =>
+  chainId in ChainId

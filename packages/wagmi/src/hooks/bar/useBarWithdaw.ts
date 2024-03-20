@@ -13,7 +13,6 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ChainId } from 'sushi/chain'
 
 interface UseBarWithdrawParams {
@@ -26,7 +25,7 @@ export function useBarWithdraw({
   enabled = true,
 }: UseBarWithdrawParams) {
   const { address } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {

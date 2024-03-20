@@ -5,7 +5,6 @@ import { useEffect, useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import { Address, erc20Abi } from 'viem'
 import { useReadContracts } from 'wagmi'
-import { DEFAULT_POLLING_INTERVAL } from '../../config'
 
 function bigIntToCurrencyAmount(totalSupply?: bigint, token?: Token) {
   return token?.isToken && totalSupply
@@ -43,7 +42,7 @@ export const useMultipleTotalSupply = (
   useEffect(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
-    }, DEFAULT_POLLING_INTERVAL)
+    }, 4_000)
 
     return () => clearInterval(interval)
   }, [queryClient, queryKey])

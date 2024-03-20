@@ -18,7 +18,6 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { getBentoBoxContractConfig } from '../..'
 import {
   useApprovedActions,
@@ -48,7 +47,7 @@ export const useBentoBoxApproval = ({
   const { signature } = useSignature(tag)
   const { setSignature } = useApprovedActions(tag)
   const { signTypedDataAsync } = useSignTypedData()
-  const client = usePublicClient<PublicWagmiConfig>({ chainId })
+  const client = usePublicClient({ chainId })
 
   const onError = useCallback((e: Error, msg: string) => {
     console.error(msg, e)

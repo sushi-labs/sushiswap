@@ -28,7 +28,6 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { log } from 'next-axiom'
 import React, {
@@ -89,7 +88,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
   const { data: trade, isFetching } = useSimpleSwapTrade()
   const { address, chain } = useAccount()
   const tradeRef = useRef<UseTradeReturn | null>(null)
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const refetchBalances = useBalanceWeb3Refetch()
 

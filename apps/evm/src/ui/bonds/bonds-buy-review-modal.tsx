@@ -26,7 +26,6 @@ import {
   useWriteContract,
 } from '@sushiswap/wagmi'
 import { useAccount, useWaitForTransactionReceipt } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { SendTransactionReturnType } from '@wagmi/core'
 import format from 'date-fns/format'
@@ -64,7 +63,7 @@ export const BondsBuyReviewModal: FC<BondsBuyReviewModal> = ({
   children,
 }) => {
   const { address, chain } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const { approved } = useApproved(APPROVE_TAG_BONDS)
 

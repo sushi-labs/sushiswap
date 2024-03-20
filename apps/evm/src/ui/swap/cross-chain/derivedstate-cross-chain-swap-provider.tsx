@@ -7,7 +7,6 @@ import {
   useTokenWithCache,
   watchAccount,
 } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -268,7 +267,7 @@ const DerivedstateCrossChainSwapProvider: FC<
     keepPreviousData: false,
   })
 
-  const config = useConfig<PublicWagmiConfig>()
+  const config = useConfig()
 
   useEffect(() => {
     const unwatch = watchAccount(config, {

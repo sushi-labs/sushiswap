@@ -2,7 +2,6 @@
 
 import { FC, ReactNode, useEffect } from 'react'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { watchAccount } from '@wagmi/core'
 import { useConfig } from 'wagmi'
 import { useApprovedActions } from './Provider'
@@ -14,7 +13,7 @@ interface SuccessProps {
 // If this gets mounted it sets checker approved to true
 const Success: FC<SuccessProps> = ({ children, tag }) => {
   const { setApproved } = useApprovedActions(tag)
-  const config = useConfig<PublicWagmiConfig>()
+  const config = useConfig()
 
   useEffect(() => {
     setApproved(true)

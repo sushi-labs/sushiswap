@@ -1,14 +1,14 @@
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { getPublicClient } from '@wagmi/core'
 import { readContracts } from '@wagmi/core/actions'
 import { TridentConstantPool } from 'sushi'
 import {
   tridentConstantPoolAbi,
   tridentConstantPoolFactoryAbi,
 } from 'sushi/abi'
+import { TridentChainId } from 'sushi/config'
 import { Amount, Currency, Token } from 'sushi/currency'
-
-import { TridentChainId, publicClientConfig } from 'sushi/config'
-import { Address, createPublicClient, getContract } from 'viem'
-import { config } from '../../../config'
+import { Address, getContract } from 'viem'
 import { getTridentConstantPoolFactoryContract } from '../../../contracts'
 import { pairsUnique } from './utils'
 
@@ -28,8 +28,9 @@ interface PoolData {
 export const getTridentConstantPools = async (
   chainId: TridentChainId,
   currencies: [Currency | undefined, Currency | undefined][],
+  config: PublicWagmiConfig,
 ) => {
-  const client = createPublicClient(publicClientConfig[chainId])
+  const client = getPublicClient(config, { chainId })
 
   const contract = getContract({
     ...getTridentConstantPoolFactoryContract(chainId),
@@ -41,7 +42,7 @@ export const getTridentConstantPools = async (
     ([t0, t1]) => [t0.address, t1.address] as const,
   )
 
-  const callStatePoolsCount = await readContracts(config, {
+  const callStatePoolsCount = await client.multicall({
     contracts: _pairsUniqueAddr.map((el) => ({
       chainId,
       address: contract?.address,

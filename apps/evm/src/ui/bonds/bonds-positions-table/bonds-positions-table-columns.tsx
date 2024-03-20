@@ -23,7 +23,6 @@ import {
   useSimulateContract,
   useWriteContract,
 } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
@@ -149,7 +148,7 @@ const CLAIM_CELL = ({ position }: { position: BondPosition }) => {
   const balance = Amount.fromRawAmount(token, position.balance)
 
   const { address, chain } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {

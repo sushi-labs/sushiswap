@@ -35,7 +35,6 @@ import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address, UserRejectedRequestError } from 'viem'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface UseAddSushiSwapV2 {
@@ -290,7 +289,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     const { address } = useAccount()
     const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
     const [slippageTolerance] = useSlippageTolerance('addLiquidity')
-    const client = usePublicClient<PublicWagmiConfig>()
+    const client = usePublicClient()
 
     const onSuccess = useCallback(
       (hash: SendTransactionReturnType) => {

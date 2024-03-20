@@ -45,6 +45,7 @@
     "@vercel/analytics": "1.1.1",
     "@vercel/edge-config": "0.4.1",
     "@wagmi/core": "2.6.9",
+    "@wagmi/connectors": "^4.1.14",
     "cors": "2.8.5",
     "d3": "7.8.4",
     "date-fns": "2.30.0",

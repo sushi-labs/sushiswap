@@ -42,7 +42,6 @@ import {
 } from 'viem'
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
 import { gasMargin, slippageAmount } from 'sushi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
@@ -63,7 +62,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
       vault,
     })
 
-    const client = usePublicClient<PublicWagmiConfig>()
+    const client = usePublicClient()
     const { address, chain } = useAccount()
     const [slippageTolerance] = useSlippageTolerance('addSteerLiquidity')
     const { approved } = useApproved(APPROVE_TAG_STEER)

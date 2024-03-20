@@ -37,7 +37,6 @@ import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { SendTransactionReturnType, encodeFunctionData } from 'viem'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
@@ -50,7 +49,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
     const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
-    const client = usePublicClient<PublicWagmiConfig>()
+    const client = usePublicClient()
     const { address, chain } = useAccount()
     const { data: deadline } = useTransactionDeadline({
       chainId: _pool.chainId as ChainId,

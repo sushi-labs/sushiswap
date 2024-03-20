@@ -15,7 +15,6 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ChainId } from 'sushi'
 import { useMasterChefContract } from './use-master-chef-contract'
 
@@ -35,7 +34,7 @@ export const useMasterChefDeposit = ({
   enabled = true,
 }: UseMasterChefDepositParams) => {
   const { address } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
   const contract = useMasterChefContract(chainId, chef)
 
   const onError = useCallback((e: Error) => {
