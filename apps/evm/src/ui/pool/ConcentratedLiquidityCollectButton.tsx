@@ -10,7 +10,6 @@ import {
   usePublicClient,
   useSendTransaction,
 } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { unwrapToken } from 'src/lib/functions'
 import { ChainId } from 'sushi/chain'
@@ -46,7 +45,7 @@ export const ConcentratedLiquidityCollectButton: FC<
   token1,
 }) => {
   const { chain } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const prepare = useMemo(() => {
     if (

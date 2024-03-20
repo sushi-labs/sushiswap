@@ -1,4 +1,3 @@
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { SUSHISWAP_V3_POSTIION_MANAGER, SushiSwapV3ChainId } from 'sushi/config'
 import { Address, PublicClient, getContract } from 'viem'
@@ -642,7 +641,7 @@ export const getV3NonFungiblePositionManagerContractConfig = (
 export function useV3NonFungiblePositionManager(
   chainId: SushiSwapV3ChainId | undefined,
 ) {
-  const publicClient = usePublicClient<PublicWagmiConfig>({
+  const publicClient = usePublicClient({
     chainId,
   }) as PublicClient
   const { data: walletClient } = useWalletClient({ chainId })

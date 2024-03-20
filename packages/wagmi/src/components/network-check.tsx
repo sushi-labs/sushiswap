@@ -2,7 +2,6 @@
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Chain, ChainId, chainName } from 'sushi/chain'
@@ -12,7 +11,7 @@ export const NetworkCheck: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const [open, setOpen] = useState(false)
   const isMounted = useIsMounted()
   const { chain } = useAccount()
-  const { switchChain } = useSwitchChain<PublicWagmiConfig>()
+  const { switchChain } = useSwitchChain()
 
   // Delay couple seconds
   useEffect(() => {

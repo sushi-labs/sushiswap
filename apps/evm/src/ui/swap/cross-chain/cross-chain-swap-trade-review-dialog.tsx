@@ -54,7 +54,6 @@ import {
   stringify,
 } from 'viem'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { UseCrossChainTradeReturn } from '../../../lib/swap/useCrossChainTrade/types'
@@ -91,8 +90,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       tradeId,
     },
   } = useDerivedStateCrossChainSwap()
-  const client0 = usePublicClient<PublicWagmiConfig>({ chainId: chainId0 })
-  const client1 = usePublicClient<PublicWagmiConfig>({ chainId: chainId1 })
+  const client0 = usePublicClient({ chainId: chainId0 })
+  const client1 = usePublicClient({ chainId: chainId1 })
   const { data: trade, isFetching } = useCrossChainSwapTrade()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const groupTs = useRef<number>()

@@ -1,14 +1,15 @@
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContract } from '@wagmi/core'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Address, erc20Abi } from 'viem'
-import { config } from '../../../config'
 
 interface GetTokenAllowance {
   chainId: ChainId
   token: Token
   owner: Address
   spender: Address
+  config: PublicWagmiConfig
 }
 
 export const getTokenAllowance = async ({
@@ -16,6 +17,7 @@ export const getTokenAllowance = async ({
   token,
   owner,
   spender,
+  config,
 }: GetTokenAllowance) => {
   const data = await readContract(config, {
     chainId,

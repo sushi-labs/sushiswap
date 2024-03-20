@@ -1,5 +1,6 @@
 'use client'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { QueryFunction, useQuery } from '@tanstack/react-query'
 import {
   GetTokenParameters,
@@ -9,9 +10,12 @@ import {
 import { useMemo } from 'react'
 import { ChainId } from 'sushi'
 import { Address } from 'viem'
-import { config } from '../../config'
+import { useConfig } from 'wagmi'
 
-type QueryKeyArgs = { tokens: Partial<GetTokenParameters>[] }
+type QueryKeyArgs = {
+  tokens: Partial<GetTokenParameters>[]
+  config: PublicWagmiConfig
+}
 // type QueryKeyConfig = {}
 
 export type FetchTokensArgs = { tokens: GetTokenParameters[] }
@@ -19,14 +23,14 @@ export type FetchTokensResult = GetTokenReturnType[]
 export type UseTokensArgs = Partial<FetchTokensArgs>
 export type UseTokensConfig = Partial<Parameters<typeof useQuery>['2']>
 
-function queryKey({ tokens }: QueryKeyArgs) {
-  return [{ entity: 'tokens', tokens: tokens || [] }] as const
+function queryKey({ tokens, config }: QueryKeyArgs) {
+  return [{ entity: 'tokens', tokens: tokens || [], config }] as const
 }
 
 const queryFn: QueryFunction<
   FetchTokensResult,
   ReturnType<typeof queryKey>
-> = ({ queryKey: [{ tokens }] }) => {
+> = ({ queryKey: [{ tokens, config }] }) => {
   if (!tokens) throw new Error('tokens is required')
   if (tokens.filter((el) => !el.address).length > 0)
     throw new Error('address is required')
@@ -52,6 +56,8 @@ export function useTokens({
   onSettled,
   onSuccess,
 }: UseTokensArgs & UseTokensConfig) {
+  const config = useConfig()
+
   const _enabled = useMemo(() => {
     return Boolean(
       tokens &&
@@ -66,7 +72,7 @@ export function useTokens({
     unknown,
     FetchTokensResult,
     ReturnType<typeof queryKey>
-  >(queryKey({ tokens }), queryFn, {
+  >(queryKey({ tokens, config }), queryFn, {
     cacheTime,
     enabled: _enabled,
     staleTime,

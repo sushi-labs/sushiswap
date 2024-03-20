@@ -10,7 +10,6 @@ import {
   useWriteContract,
 } from 'wagmi'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { SendTransactionReturnType } from 'wagmi/actions'
 import { DistributionCreator } from '../abis/DistributionCreator'
 
@@ -44,7 +43,7 @@ export const useIncentivizePoolWithRewards = ({
     },
   })
 
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const onError = useCallback((e: Error) => {
     if (e instanceof Error) {

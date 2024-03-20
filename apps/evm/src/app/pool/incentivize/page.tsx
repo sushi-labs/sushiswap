@@ -36,7 +36,6 @@ import {
 } from '@sushiswap/wagmi'
 import { DistributionCreator } from '@sushiswap/wagmi'
 import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
@@ -172,7 +171,7 @@ const Incentivize = withCheckerRoot(() => {
     ),
   })
 
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const sign = useCallback(async () => {
     const message = await client.readContract({

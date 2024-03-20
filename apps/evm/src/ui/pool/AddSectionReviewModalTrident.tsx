@@ -56,7 +56,6 @@ import {
   zeroAddress,
 } from 'viem'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
@@ -92,7 +91,7 @@ export const AddSectionReviewModalTrident: FC<
   const { signature } = useSignature(APPROVE_TAG_ADD_TRIDENT)
   const { setSignature } = useApprovedActions(APPROVE_TAG_ADD_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_ADD_TRIDENT)
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const liquidityToken = useMemo(() => {
     return new Token({

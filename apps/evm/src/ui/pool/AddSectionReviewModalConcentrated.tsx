@@ -33,7 +33,6 @@ import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
@@ -78,7 +77,7 @@ export const AddSectionReviewModalConcentrated: FC<
   const { data: deadline } = useTransactionDeadline({ chainId })
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const isSorted =
     token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)

@@ -1,7 +1,6 @@
 'use client'
 
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useCallback, useMemo, useState } from 'react'
 import { Token } from 'sushi/currency'
 import { Address, UserRejectedRequestError, erc20Abi } from 'viem'
@@ -20,7 +19,7 @@ export const useTokenRevokeApproval = ({
   token,
 }: UseTokenRevokeApproval) => {
   const [isPending, setPending] = useState(false)
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
   const { data: simulation } = useSimulateContract({
     address: token?.wrapped.address as Address,
     abi: erc20Abi,

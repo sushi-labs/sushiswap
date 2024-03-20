@@ -1,6 +1,5 @@
 'use client'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { watchAccount } from '@wagmi/core'
 import React, {
   FC,
@@ -67,7 +66,7 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
     [],
   )
 
-  const config = useConfig<PublicWagmiConfig>()
+  const config = useConfig()
 
   // Reset state when address/wallet changes
   useEffect(() => {

@@ -2,7 +2,6 @@
 
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi'
 import { masterChefV1Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
@@ -34,7 +33,7 @@ export const useMasterChefWithdraw = ({
   enabled = true,
 }: UseMasterChefWithdrawParams) => {
   const { address } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {

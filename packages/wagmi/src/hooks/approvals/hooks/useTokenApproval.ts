@@ -17,7 +17,6 @@ import {
   useWriteContract,
 } from 'wagmi'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useTokenAllowance } from './useTokenAllowance'
 
 export enum ApprovalState {
@@ -43,7 +42,7 @@ export const useTokenApproval = ({
 }: UseTokenApprovalParams) => {
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
   const {
     data: allowance,
     isLoading: isAllowanceLoading,

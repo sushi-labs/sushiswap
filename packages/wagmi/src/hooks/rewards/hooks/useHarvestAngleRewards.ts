@@ -10,7 +10,6 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ERC1967Proxy } from '../abis'
 
 interface UseHarvestAngleRewards {
@@ -47,7 +46,7 @@ export const useHarvestAngleRewards = ({
     },
   })
 
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {

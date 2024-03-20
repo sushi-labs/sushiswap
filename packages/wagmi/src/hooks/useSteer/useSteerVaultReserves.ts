@@ -7,7 +7,6 @@ import { useReadContracts, useSimulateContract } from 'wagmi'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { getChainIdAddressFromId } from 'sushi'
-import { DEFAULT_POLLING_INTERVAL } from '../../config'
 import { useWatchByBlock } from '../watch'
 
 interface UseSteerVaultsReserves {
@@ -47,7 +46,7 @@ export const useSteerVaultsReserves = ({
         {},
         { cancelRefetch: false },
       )
-    }, DEFAULT_POLLING_INTERVAL)
+    }, 4_000)
 
     return () => clearInterval(interval)
   }, [queryClient, query.queryKey])

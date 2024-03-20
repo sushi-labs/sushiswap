@@ -1,3 +1,4 @@
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContracts } from '@wagmi/core/actions'
 import { erc20Abi } from 'sushi/abi'
 import { uniswapV3PoolAbi } from 'sushi/abi'
@@ -12,7 +13,6 @@ import { Currency, Token, Type } from 'sushi/currency'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 import { RToken, UniV3Pool } from 'sushi/tines'
 import { Address } from 'viem'
-import { config } from '../../../config'
 
 export enum V3PoolState {
   LOADING = 'Loading',
@@ -85,6 +85,7 @@ const bitmapIndex = (tick: number, tickSpacing: number) => {
 export const getV3Pools = async (
   chainId: ChainId,
   currencies: [Currency | undefined, Currency | undefined][],
+  config: PublicWagmiConfig,
 ) => {
   const allCurrencyCombinationsWithAllFees: [
     Type,

@@ -1,4 +1,4 @@
-import { type PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ReactNode, useEffect } from 'react'
 import { ChainId } from 'sushi/chain'
 import { useEnsAddress } from 'wagmi'

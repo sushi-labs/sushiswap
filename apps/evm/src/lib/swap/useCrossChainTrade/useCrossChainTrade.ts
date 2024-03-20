@@ -1,8 +1,6 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import { createConfig, useGasPrice } from '@sushiswap/wagmi'
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
+import { useGasPrice, usePublicClient } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
-import { getPublicClient } from '@wagmi/core/actions'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
 import { stargateAdapterAbi } from 'sushi/abi'
@@ -43,6 +41,8 @@ export const useCrossChainTrade = ({
   enabled,
   tradeId,
 }: UseCrossChainTradeParams) => {
+  const client = usePublicClient({ chainId: network0 })
+
   const { data: gasPrice0 } = useGasPrice({
     chainId: network0,
     query: { enabled },
@@ -191,6 +191,7 @@ export const useCrossChainTrade = ({
         recipient,
         srcTrade,
         dstTrade,
+        client,
       },
     ],
     queryFn: async (): Promise<UseCrossChainTradeReturn> => {
@@ -375,10 +376,6 @@ export const useCrossChainTrade = ({
       } else {
         throw new Error('Crosschain swap not found.')
       }
-
-      const client = getPublicClient(createConfig(publicWagmiConfig), {
-        chainId: network0,
-      })
 
       let [fee] = await client.readContract({
         address: STARGATE_ADAPTER_ADDRESS[network0],

@@ -1,12 +1,13 @@
 import { getToken, saveTokens } from '@sushiswap/dexie'
 import { useCustomTokens } from '@sushiswap/hooks'
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Address, isAddress } from 'viem'
-import { config } from '../../config'
+import { useConfig } from 'wagmi'
 
 interface UseTokenParams<T extends boolean> {
   chainId: ChainId | undefined
@@ -62,6 +63,7 @@ interface GetTokenWithQueryCacheFn {
   address: string | undefined | null
   customTokens: Record<string, Token>
   hasToken: (cur: string | Token) => boolean
+  config: PublicWagmiConfig
 }
 
 export const getTokenWithCacheQueryFn = async ({
@@ -69,6 +71,7 @@ export const getTokenWithCacheQueryFn = async ({
   address,
   customTokens,
   hasToken,
+  config,
 }: GetTokenWithQueryCacheFn) => {
   // Try fetching from localStorage
   if (chainId && hasToken(`${chainId}:${address}`)) {
@@ -167,10 +170,18 @@ export const useTokenWithCache = <T extends boolean = false>({
     [chainId, withStatus],
   )
 
+  const config = useConfig()
+
   return useQuery({
     queryKey: ['token', { chainId, address }],
     queryFn: async () =>
-      getTokenWithCacheQueryFn({ chainId, address, customTokens, hasToken }),
+      getTokenWithCacheQueryFn({
+        chainId,
+        address,
+        customTokens,
+        hasToken,
+        config,
+      }),
     enabled: Boolean(enabled && chainId && address && isAddress(address)),
     select,
     keepPreviousData,

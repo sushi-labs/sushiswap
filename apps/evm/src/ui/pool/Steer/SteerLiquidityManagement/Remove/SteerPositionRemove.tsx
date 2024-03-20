@@ -27,7 +27,6 @@ import {
   useSteerAccountPosition,
   useWriteContract,
 } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { slippageAmount } from 'sushi'
 import { ChainId } from 'sushi/chain'
@@ -48,7 +47,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
 }) => {
   const { chainId } = vault as { chainId: ChainId }
 
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
   const { address: account, chain } = useAccount()
   const [value, setValue] = useState<string>('0')
   const [slippageTolerance] = useSlippageTolerance('removeSteerLiquidity')

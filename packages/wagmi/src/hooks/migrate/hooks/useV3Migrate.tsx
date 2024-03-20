@@ -11,7 +11,6 @@ import {
   useWriteContract,
 } from 'wagmi'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { V3Migrator } from '../abis/V3Migrator'
 import { V3MigrateAddress } from '../constants'
 import { V3MigrateChainId } from '../types'
@@ -50,7 +49,7 @@ export const useV3Migrate = ({
   chainId,
   enabled = true,
 }: UseV3Migrate) => {
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const { multicall: multicallContract, migrate: migrateContract } =
     useMemo(() => {

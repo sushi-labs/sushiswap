@@ -10,7 +10,6 @@ import {
   useTokenWithCache,
   watchAccount,
 } from '@sushiswap/wagmi'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -250,7 +249,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
-    const config = useConfig<PublicWagmiConfig>()
+    const config = useConfig()
 
     useEffect(() => {
       const unwatch = watchAccount(config, {
@@ -427,7 +426,7 @@ const useSimpleSwapTrade = () => {
     },
   })
 
-  const config = useConfig<PublicWagmiConfig>()
+  const config = useConfig()
 
   // Reset the fallback on network switch
   useEffect(() => {

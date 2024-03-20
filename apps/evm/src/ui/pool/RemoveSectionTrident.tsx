@@ -48,7 +48,6 @@ import { BentoBoxChainId, TridentChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { SendTransactionReturnType } from 'viem'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
@@ -60,7 +59,7 @@ interface RemoveSectionTridentProps {
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
   withCheckerRoot(({ pool: _pool }) => {
     const chainId = _pool.chainId as BentoBoxChainId
-    const client = usePublicClient<PublicWagmiConfig>()
+    const client = usePublicClient()
     const { address, chain } = useAccount()
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
     const isMounted = useIsMounted()

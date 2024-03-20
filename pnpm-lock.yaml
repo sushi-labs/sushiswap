@@ -575,6 +575,9 @@ importers:
       '@vercel/edge-config':
         specifier: 0.4.1
         version: 0.4.1
+      '@wagmi/connectors':
+        specifier: ^4.1.14
+        version: 4.1.18(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.6.9)(react-dom@18.2.0)(react-native@0.73.4)(react@18.2.0)(typescript@5.2.2)(viem@2.8.13)(zod@3.21.4)
       '@wagmi/core':
         specifier: 2.6.9
         version: 2.6.9(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@2.8.13)(zod@3.21.4)
@@ -1589,8 +1592,6 @@ importers:
         specifier: 3.21.4
         version: 3.21.4
 
-  packages/sushi/dist/_cjs: {}
-
   packages/ui:
     dependencies:
       '@fontsource-variable/inter':
@@ -1852,9 +1853,6 @@ importers:
       '@uniswap/v3-periphery':
         specifier: 1.4.1
         version: 1.4.1(hardhat@2.20.1)
-      '@wagmi/connectors':
-        specifier: ^4.1.14
-        version: 4.1.18(@types/react@18.2.14)(@wagmi/core@2.6.9)(react-dom@18.2.0)(react-native@0.73.4)(react@18.2.0)(typescript@5.2.2)(viem@2.8.13)(zod@3.21.4)
       next-themes:
         specifier: 0.2.1
         version: 0.2.1(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
@@ -17878,6 +17876,7 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
+    dev: true
 
   /@wagmi/connectors@4.1.18(@wagmi/core@2.6.9)(react-dom@18.2.0)(react-native@0.73.4)(react@18.2.0)(typescript@5.2.2)(viem@2.8.13):
     resolution: {integrity: sha512-K/iLH/Z8jwvgPAYESU/uCQtQBvcIR1Jrqk+t2uCDSxew/tYtkOo2yOjtaPuOb+xJ5OrMGg+0tVHhGChYXry9Ow==}

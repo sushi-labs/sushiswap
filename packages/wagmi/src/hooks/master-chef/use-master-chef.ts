@@ -2,7 +2,6 @@
 
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
@@ -11,7 +10,6 @@ import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
 import { Amount, Token } from 'sushi/currency'
 import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
 import {
-  Config,
   useAccount,
   useBlockNumber,
   usePublicClient,
@@ -19,7 +17,7 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { SendTransactionErrorType } from 'wagmi/actions'
-import { SendTransactionData, SendTransactionVariables } from 'wagmi/query'
+import { SendTransactionData } from 'wagmi/query'
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
@@ -56,7 +54,7 @@ export const useMasterChef: UseMasterChef = ({
   enabled = true,
 }) => {
   const { address } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
   const contract = useMasterChefContract(chainId, chef)
 
   const contracts = useMemo(() => {
@@ -65,7 +63,7 @@ export const useMasterChef: UseMasterChef = ({
     if (chainId === ChainId.ETHEREUM) {
       return [
         {
-          chainId: ChainId.ETHEREUM as number,
+          chainId: ChainId.ETHEREUM as ChainId,
           address: SUSHI_ADDRESS[chainId] as Address,
           abi: erc20Abi,
           functionName: 'balanceOf',
@@ -76,7 +74,7 @@ export const useMasterChef: UseMasterChef = ({
           ],
         } as const,
         {
-          chainId: ChainId.ETHEREUM as number,
+          chainId: ChainId.ETHEREUM as ChainId,
           address: (chef === ChefType.MasterChefV1
             ? MASTERCHEF_ADDRESS[chainId]
             : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
@@ -129,7 +127,7 @@ export const useMasterChef: UseMasterChef = ({
           args: [pid, address as Address],
         } as const,
         {
-          chainId: ChainId.ETHEREUM as number,
+          chainId: ChainId.ETHEREUM as ChainId,
           address: MASTERCHEF_V2_ADDRESS[chainId] as Address,
           abi: [
             {
@@ -266,9 +264,7 @@ export const useMasterChef: UseMasterChef = ({
     }
   }, [])
 
-  const prepare = useMemo<
-    SendTransactionVariables<Config, ChainId> | undefined
-  >(() => {
+  const prepare = useMemo(() => {
     if (!address || !chainId || !data || !contract) return
 
     switch (chef) {

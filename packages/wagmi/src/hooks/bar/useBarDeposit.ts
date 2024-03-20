@@ -13,7 +13,6 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ChainId } from 'sushi/chain'
 
 interface UseBarDepositParams {
@@ -23,7 +22,7 @@ interface UseBarDepositParams {
 
 export function useBarDeposit({ amount, enabled = true }: UseBarDepositParams) {
   const { address } = useAccount()
-  const client = usePublicClient<PublicWagmiConfig>()
+  const client = usePublicClient()
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {

@@ -6,7 +6,6 @@ import {
   NetworkSelectorOnSelectCallback,
 } from '@sushiswap/ui/components/network-selector'
 import { createErrorToast } from '@sushiswap/ui/components/toast'
-import { type PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import React, { FC, Suspense, useCallback } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'
@@ -18,7 +17,7 @@ export const HeaderNetworkSelector: FC<{
   onChange?(chainId: ChainId): void
 }> = ({ networks, selectedNetwork, onChange }) => {
   const isMounted = useIsMounted()
-  const { switchChainAsync } = useSwitchChain<PublicWagmiConfig>()
+  const { switchChainAsync } = useSwitchChain()
   const { chain } = useAccount()
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
