@@ -24,7 +24,7 @@ import {
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import { defaultQuoteCurrency } from 'sushi/config'
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
+import { Percent, ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
@@ -48,6 +48,7 @@ interface State {
     setTokens(token0: Type | string, token1: Type | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
+    setTokenTax(tax: Percent | false | undefined): void
   }
   state: {
     token0: Type | undefined
@@ -56,6 +57,7 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
+    tokenTax: Percent | false | undefined
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -80,6 +82,9 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     const { address, chain } = useAccount()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
+      undefined,
+    )
 
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user
@@ -308,6 +313,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               setTokens,
               switchTokens,
               setSwapAmount,
+              setTokenTax,
             },
             state: {
               recipient: address ?? '',
@@ -316,6 +322,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               swapAmount: tryParseAmount(swapAmountString, _token0),
               token0: _token0,
               token1: _token1,
+              tokenTax,
             },
             isLoading: token0Loading || token1Loading,
             isToken0Loading: token0Loading,
@@ -335,6 +342,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           token0Loading,
           token1,
           token1Loading,
+          tokenTax,
         ])}
       >
         {children}
@@ -385,7 +393,8 @@ const useFallback = (chainId: ChainId) => {
 const useSimpleSwapTrade = () => {
   const log = useLogger()
   const {
-    state: { token0, chainId, swapAmount, token1, recipient },
+    state: { token0, chainId, swapAmount, token1, recipient, tokenTax },
+    mutate: { setTokenTax },
   } = useDerivedStateSimpleSwap()
 
   const { isFallback, setIsFallback, resetFallback } = useFallback(chainId)
@@ -409,6 +418,7 @@ const useSimpleSwapTrade = () => {
       log.error('api trade error')
       setIsFallback(true)
     },
+    tokenTax,
   })
 
   const clientTrade = useClientTrade({
@@ -425,6 +435,7 @@ const useSimpleSwapTrade = () => {
     onError: () => {
       log.error('client trade error')
     },
+    tokenTax,
   })
 
   const config = useConfig()
@@ -447,6 +458,12 @@ const useSimpleSwapTrade = () => {
       window.isFallback = isFallback
     }
   }, [isFallback])
+
+  // Reset tokenTax when token0 or token1 changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    setTokenTax(undefined)
+  }, [token0, token1, setTokenTax])
 
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
 }
