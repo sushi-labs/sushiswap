@@ -44,6 +44,9 @@ export const useTokenApproval = ({
   const { address } = useAccount()
   const [pending, setPending] = useState(false)
   const client = usePublicClient<PublicWagmiConfig>()
+
+  console.log({ client })
+
   const {
     data: allowance,
     isLoading: isAllowanceLoading,

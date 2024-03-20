@@ -84,7 +84,7 @@ export const ConnectButton: FC<ButtonProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button {...props}>
+        <Button {...props} testId="connect">
           <span className="hidden sm:block">Connect Wallet</span>
           <span className="block sm:hidden">Connect</span>
         </Button>

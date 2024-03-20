@@ -174,6 +174,7 @@ test.describe('V3', () => {
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
     await page.goto(url)
+    await connect(page)
     await switchNetwork(page, CHAIN_ID)
   })
 
@@ -227,16 +228,6 @@ test.describe('V3', () => {
       type: 'ADD',
     })
 
-    console.log('Remove liquidity')
-    await mockPoolApi(
-      page,
-      next,
-      NATIVE_TOKEN.wrapped,
-      FAKE_TOKEN,
-      SushiSwapV3FeeAmount.HIGH,
-      'SUSHISWAP_V3',
-    )
-
     const poolAddress = computeSushiSwapV3PoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[CHAIN_ID as SushiSwapV3ChainId],
@@ -246,7 +237,6 @@ test.describe('V3', () => {
     })
     const removeLiquidityUrl = BASE_URL.concat(`/${CHAIN_ID}:${poolAddress}`)
     await page.goto(removeLiquidityUrl)
-
     await removeLiquidityV3(page, next)
   })
 })
@@ -256,10 +246,11 @@ test.describe('V2', () => {
   test.beforeEach(async ({ page }) => {
     const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
     await page.goto(url)
+    await connect(page)
     await switchNetwork(page, CHAIN_ID)
   })
 
-  test.only('Create, add & remove', async ({ page, next }) => {
+  test('Create, add & remove', async ({ page, next }) => {
     test.slow()
     await createOrAddV2Pool(page, next, {
       token0: NATIVE_TOKEN,
@@ -433,6 +424,7 @@ async function createOrAddV2Pool(
 }
 
 async function removeLiquidityV3(page: Page, _next: NextFixture) {
+  await connect(page)
   await page.goto(BASE_URL)
   await page.locator('[testdata-id=my-positions-button]').click()
 
@@ -573,6 +565,7 @@ async function removeLiquidityV3(page: Page, _next: NextFixture) {
 // }
 
 async function removeLiquidityV2(page: Page, _next: NextFixture) {
+  await connect(page)
   await switchNetwork(page, CHAIN_ID)
 
   // const removeLiquidityTabSelector = page.locator('[testdata-id=remove-tab]')
@@ -690,6 +683,17 @@ async function handleToken(
 
   // await expect token selector to contain symbol of selected token
   await expect(tokenSelector).toContainText(currency.symbol as string)
+}
+
+async function connect(page: Page) {
+  const connectSelector = page.locator('[testdata-id=connect-button]').first()
+  await expect(connectSelector).toBeVisible()
+  await expect(connectSelector).toBeEnabled()
+  await connectSelector.click()
+  const mockConnectSelector = page.getByText('Mock Connector')
+  await expect(mockConnectSelector).toBeVisible()
+  await expect(mockConnectSelector).toBeEnabled()
+  await mockConnectSelector.click()
 }
 
 async function switchNetwork(page: Page, chainId: number) {
