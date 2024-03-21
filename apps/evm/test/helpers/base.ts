@@ -37,21 +37,26 @@ export class BaseActions {
     await networkToSelect.click()
   }
 
-  async deployFakeToken(details: { chainId: number; name: string; symbol: string; decimals: number }) {
-    let fakeToken;
+  async deployFakeToken(details: {
+    chainId: number
+    name: string
+    symbol: string
+    decimals: number
+  }) {
+    let fakeToken
     try {
-        fakeToken = await createERC20({
-            chainId: details.chainId,
-            name: details.name,
-            symbol: details.symbol,
-            decimals: details.decimals,
-        });
-        console.log(`Token created: ${details.name} (${details.symbol})`);
-        return fakeToken;
+      fakeToken = await createERC20({
+        chainId: details.chainId,
+        name: details.name,
+        symbol: details.symbol,
+        decimals: details.decimals,
+      })
+      console.log(`Token created: ${details.name} (${details.symbol})`)
+      return fakeToken
     } catch (error) {
-        console.error('Error creating fake token', details, error);
-        throw new Error('Failed to create fake token');
+      console.error('Error creating fake token', details, error)
+      throw new Error('Failed to create fake token')
     }
-}
+  }
 
 }

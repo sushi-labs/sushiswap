@@ -9,32 +9,27 @@ import { Native, Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import { createERC20 } from 'test/erc20'
 import { PoolPage } from 'test/helpers/pool'
-import { interceptAnvil } from 'test/intercept-anvil'
+import {
+  createSnapshot,
+  interceptAnvil,
+  loadSnapshot,
+} from 'test/intercept-anvil'
+import { Address, zeroAddress } from 'viem'
 
 if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
   new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
+let SNAPSHOT_ID: Address = zeroAddress
 const CHAIN_ID = Number(
   process.env.NEXT_PUBLIC_CHAIN_ID as string,
 ) as SupportedChainId
 const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
-
+const BASE_URL = 'http://localhost:3000/pool'
 let FAKE_TOKEN: Token
 
-// let MOCK_TOKEN_1_DP: Token
-// let MOCK_TOKEN_6_DP: Token
-// let MOCK_TOKEN_8_DP: Token
-// let MOCK_TOKEN_18_DP: Token
-// const EVM_APP_BASE_URL =
-//   process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
-//   (process.env['NEXT_PUBLIC_VERCEL_URL']
-//     ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
-//     : 'http://localhost:3000')
-const BASE_URL = 'http://localhost:3000/pool'
-
-test.beforeAll(async () => {
-  // console.log('beforeAll pool tests')
+test.beforeEach(async ({ page, next }) => {
+  SNAPSHOT_ID = await createSnapshot(CHAIN_ID)
 
   try {
     FAKE_TOKEN = await createERC20({
@@ -43,30 +38,6 @@ test.beforeAll(async () => {
       symbol: 'FT',
       decimals: 18,
     })
-    // MOCK_TOKEN_1_DP = await createERC20({
-    //   chainId: CHAIN_ID,
-    //   name: 'MOCK_TOKEN_1_DP',
-    //   symbol: '1_DP',
-    //   decimals: 1,
-    // })
-    // MOCK_TOKEN_6_DP = await createERC20({
-    //   chainId: CHAIN_ID,
-    //   name: 'MOCK_TOKEN_6_DP',
-    //   symbol: '6_DP',
-    //   decimals: 6,
-    // })
-    // MOCK_TOKEN_8_DP = await createERC20({
-    //   chainId: CHAIN_ID,
-    //   name: 'MOCK_TOKEN_8_DP',
-    //   symbol: '8_DP',
-    //   decimals: 8,
-    // })
-    // MOCK_TOKEN_18_DP = await createERC20({
-    //   chainId: CHAIN_ID,
-    //   name: 'MOCK_TOKEN_18_DP',
-    //   symbol: '18_DP',
-    //   decimals: 18,
-    // })
   } catch (error) {
     console.error(
       'error creating fake token',
@@ -79,9 +50,6 @@ test.beforeAll(async () => {
       error,
     )
   }
-})
-
-test.beforeEach(async ({ page, next }) => {
   page.on('pageerror', (error) => {
     console.error(error)
   })
@@ -92,8 +60,6 @@ test.beforeEach(async ({ page, next }) => {
 
   try {
     await page.route('https://tokens.sushi.com/v0', async (route) => {
-      // const response = await route.fetch()
-      // const json = await response.json()
       await route.fulfill({
         json: [FAKE_TOKEN].map((token) => ({
           id: token.id,
@@ -125,6 +91,10 @@ test.beforeEach(async ({ page, next }) => {
   next.onFetch(() => {
     return 'continue'
   })
+})
+
+test.afterEach(async () => {
+  await loadSnapshot(CHAIN_ID, SNAPSHOT_ID)
 })
 
 // Tests will only work for polygon atm

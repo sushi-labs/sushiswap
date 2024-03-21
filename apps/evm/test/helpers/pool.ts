@@ -2,26 +2,25 @@ import { Page, expect } from '@playwright/test'
 import { NextFixture } from 'next/experimental/testmode/playwright'
 import { Native, Token, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
-import { BaseActions } from './base' // Adjust the import path as necessary
+import { BaseActions } from './base'; // Adjust the import path as necessary
 
 import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV2ChainId,
-  SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
+    SUSHISWAP_V2_FACTORY_ADDRESS,
+    SUSHISWAP_V3_FACTORY_ADDRESS,
+    SushiSwapV2ChainId,
+    SushiSwapV3ChainId,
+    SushiSwapV3FeeAmount,
+    TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+    TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+    TridentChainId,
 } from 'sushi/config'
 
 import {
-  computeSushiSwapV2PoolAddress,
-  computeSushiSwapV3PoolAddress,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
+    computeSushiSwapV2PoolAddress,
+    computeSushiSwapV3PoolAddress,
+    computeTridentConstantPoolAddress,
+    computeTridentStablePoolAddress,
 } from 'sushi'
-import { Fee } from 'sushi/dex'
 
 interface CreateV3PoolArgs {
   token0: Type
