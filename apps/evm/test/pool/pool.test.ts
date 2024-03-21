@@ -28,8 +28,11 @@ const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
 const BASE_URL = 'http://localhost:3000/pool'
 let FAKE_TOKEN: Token
 
-test.beforeEach(async ({ page, next }) => {
+test.beforeAll(async () => {
   SNAPSHOT_ID = await createSnapshot(CHAIN_ID)
+})
+
+test.beforeEach(async ({ page, next }) => {
 
   try {
     FAKE_TOKEN = await createERC20({
@@ -100,11 +103,35 @@ test.afterEach(async () => {
 // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.skip(!isSushiSwapV3ChainId(CHAIN_ID))
-  test('Create, add both sides, single side each token & remove', async ({
-    page,
-    next,
-  }) => {
-    test.slow()
+
+  test('Create', async ({ page, next }) => {
+    const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
+    const poolPage = new PoolPage(page, CHAIN_ID)
+
+    await poolPage.mockPoolApi(
+      next,
+      poolPage.nativeToken.wrapped,
+      FAKE_TOKEN,
+      SushiSwapV3FeeAmount.HIGH,
+      'SUSHISWAP_V3',
+    )
+
+    await poolPage.goTo(url)
+    await poolPage.connect()
+    await poolPage.switchNetwork(CHAIN_ID)
+
+    await poolPage.createV3Pool({
+      token0: NATIVE_TOKEN,
+      token1: FAKE_TOKEN,
+      startPrice: '0.5',
+      minPrice: '0.1',
+      maxPrice: '0.9',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+    })
+  })
+
+  test('Create a pool & add liquidity', async ({ page, next }) => {
     const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
     const poolPage = new PoolPage(page, CHAIN_ID)
 
@@ -138,6 +165,34 @@ test.describe('V3', () => {
       amount: '0.0001',
       amountBelongsToToken0: false,
     })
+  })
+
+  test('Create & remove liquidity', async ({ page, next }) => {
+    test.slow()
+    const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
+    const poolPage = new PoolPage(page, CHAIN_ID)
+
+    await poolPage.mockPoolApi(
+      next,
+      poolPage.nativeToken.wrapped,
+      FAKE_TOKEN,
+      SushiSwapV3FeeAmount.HIGH,
+      'SUSHISWAP_V3',
+    )
+
+    await poolPage.goTo(url)
+    await poolPage.connect()
+    await poolPage.switchNetwork(CHAIN_ID)
+
+    await poolPage.createV3Pool({
+      token0: NATIVE_TOKEN,
+      token1: FAKE_TOKEN,
+      startPrice: '0.5',
+      minPrice: '0.1',
+      maxPrice: '0.9',
+      amount: '0.0001',
+      amountBelongsToToken0: false,
+    })
 
     await poolPage.removeLiquidityV3(FAKE_TOKEN)
   })
@@ -146,8 +201,30 @@ test.describe('V3', () => {
 test.describe('V2', () => {
   test.skip(!isSushiSwapV2ChainId(CHAIN_ID))
 
-  test('Create, add & remove', async ({ page, next }) => {
-    test.slow()
+  test('Create', async ({ page, next }) => {
+    const poolPage = new PoolPage(page, CHAIN_ID)
+
+    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+    await poolPage.goTo(url)
+    await poolPage.connect()
+    await poolPage.switchNetwork(CHAIN_ID)
+    await poolPage.mockPoolApi(
+      next,
+      poolPage.nativeToken.wrapped,
+      FAKE_TOKEN,
+      Fee.DEFAULT,
+      'SUSHISWAP_V2',
+    )
+
+    await poolPage.createV2Pool({
+      token0: NATIVE_TOKEN,
+      token1: FAKE_TOKEN,
+      amount0: '1',
+      amount1: '1',
+    })
+  })
+
+  test('Create & add liquidity', async ({ page, next }) => {
     const poolPage = new PoolPage(page, CHAIN_ID)
 
     const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
@@ -174,6 +251,30 @@ test.describe('V2', () => {
       token1: FAKE_TOKEN,
       amount0: '10',
       amount1: '10',
+    })
+  })
+
+  test('Create & remove', async ({ page, next }) => {
+    test.slow()
+    const poolPage = new PoolPage(page, CHAIN_ID)
+
+    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+    await poolPage.goTo(url)
+    await poolPage.connect()
+    await poolPage.switchNetwork(CHAIN_ID)
+    await poolPage.mockPoolApi(
+      next,
+      poolPage.nativeToken.wrapped,
+      FAKE_TOKEN,
+      Fee.DEFAULT,
+      'SUSHISWAP_V2',
+    )
+
+    await poolPage.createV2Pool({
+      token0: NATIVE_TOKEN,
+      token1: FAKE_TOKEN,
+      amount0: '1',
+      amount1: '1',
     })
 
     await poolPage.removeLiquidityV2(FAKE_TOKEN)

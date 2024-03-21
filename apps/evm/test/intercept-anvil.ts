@@ -51,4 +51,5 @@ export async function loadSnapshot(chainId: number, snapshot: Address) {
     transport: http(url),
   })
   await client.revert({ id: snapshot })
+  console.log(`reset state to snapshot id: ${snapshot}`)
 }
