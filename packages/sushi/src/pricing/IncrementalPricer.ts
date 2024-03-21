@@ -4,8 +4,19 @@ import { RPool, RToken } from '../tines'
 import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 
 const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
-const MAX_PRICABLE_LIQUIDITY = 100
 const MIN_PRICABLE_LIQUIDITY = 0.8
+const MIN_VALUABLE_PRICE_CHANGE = 1.001 // don't recalc prices if change is lesser than 0.1%
+
+function makePricesRecalcForPool(
+  oldPoolPrice: number,
+  newPoolPrice: number,
+): boolean {
+  if (oldPoolPrice === 0 && newPoolPrice !== 0) return true
+  const diff = newPoolPrice / oldPoolPrice
+  return (
+    diff > MIN_VALUABLE_PRICE_CHANGE || diff < 1 / MIN_VALUABLE_PRICE_CHANGE
+  )
+}
 
 class TokenInfo {
   address: Address
@@ -30,6 +41,7 @@ class TokenInfo {
     this.direction = direction
     this.poolPrice = poolPrice
     this.parent = parent
+    if (parent) parent.children.push(this)
   }
 }
 
@@ -117,17 +129,17 @@ export class IncrementalPricer {
           vTo = tmp
           direction = false
         }
-        const p =
-          (vFrom.price as number) *
-          bestEdge.pool.calcCurrentPriceWithoutFee(!direction)
+        const p = bestEdge.pool.calcCurrentPriceWithoutFee(!direction)
         if (logging)
           console.log(
-            `Pricing: + Token ${vTo.token.symbol} price=${p * vTo.decExp}` +
+            `Pricing: + Token ${vTo.token.symbol} price=${
+              p * vTo.decExp * (vFrom.price as number)
+            }` +
               ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${bestEdge.poolLiquidity}`,
           )
         vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
         this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
-        this._addVertice(nextEdges, vTo, p)
+        this._addVertice(nextEdges, vTo, p * (vFrom.price as number))
       }
 
       this._updateTotalSuccessor(baseToken)
@@ -215,22 +227,29 @@ export class IncrementalPricer {
   private _updatePricesForPools(pools: RPool[]) {
     // Auxiliary
     const tokens: (TokenInfo | undefined)[] = new Array(pools.length)
+    let changedPrices = 0
 
     // set changedPoolIndex for all tokens with changed price + create new priced tokens
     for (let i = pools.length - 1; i >= 0; --i) {
       const pool = pools[i] as RPool
+      tokens[i] = undefined // not price-making pool or duplicated pool
       const token = this.poolTokenMap.get(pool.uniqueID())
       if (token) {
         if (!this._isPoolStillPricable(pool, token))
           this.fullPricesRecalcFlag = true
-      } else this._checkAndAddNewToken(pool) // maybe create new priced token
-      if (token && token.changedPoolIndex === undefined) {
-        tokens[i] = token
-        token.changedPoolIndex = i
-      } else tokens[i] = undefined // not price-making pool or duplicated pool
+        if (token.changedPoolIndex === undefined) {
+          const newPoolPrice = pool.calcCurrentPriceWithoutFee(!token.direction)
+          if (makePricesRecalcForPool(token.poolPrice, newPoolPrice)) {
+            tokens[i] = token
+            token.changedPoolIndex = i
+          }
+        }
+      } else if (this._checkAndAddNewToken(pool) !== undefined) {
+        // maybe create new priced token
+        ++changedPrices
+      }
     }
 
-    let changedPrices = 0
     for (let i = pools.length - 1; i >= 0; --i) {
       if (tokens[i] === undefined) continue // just for optimization
 
@@ -268,6 +287,10 @@ export class IncrementalPricer {
         !token.direction,
       ) as number
       priceMultiplicator = (priceMultiplicator / token.poolPrice) * newPoolPrice
+      if (token.totalSuccessors >= 100)
+        console.log(
+          `Change price ${token.token.symbol} ${priceMultiplicator} (+ ${token.totalSuccessors} subtokens)`,
+        )
       tokens[poolIndex] = undefined
       // @ts-ignore
       token.changedPoolIndex = undefined
@@ -291,27 +314,24 @@ export class IncrementalPricer {
     let reserve
     if (tokenInfo.direction) {
       token = pool.token0
-      reserve = Number(pool.reserve0)
+      reserve = Number(pool.getReserve0())
     } else {
       token = pool.token1
-      reserve = Number(pool.reserve1)
+      reserve = Number(pool.getReserve1())
     }
     const price = this.prices[token.address] as number
     const liquidity = (reserve * price) / 10 ** token.decimals
-    const minPricableLiquidity =
-      this.minLiquidity *
-      (MAX_PRICABLE_LIQUIDITY -
-        (MAX_PRICABLE_LIQUIDITY - MIN_PRICABLE_LIQUIDITY) /
-          (tokenInfo.totalSuccessors + 1))
-    if (liquidity < minPricableLiquidity)
+    if (liquidity < this.minLiquidity * MIN_PRICABLE_LIQUIDITY) {
       console.log(
-        'Pool not pricable',
+        'Pool is not pricable',
         pool.address,
         tokenInfo.direction,
         tokenInfo.totalSuccessors,
         liquidity,
       )
-    return liquidity >= minPricableLiquidity
+      return false
+    }
+    return true
   }
 
   private _checkAndAddNewToken(pool: RPool): TokenInfo | undefined {
@@ -337,24 +357,24 @@ export class IncrementalPricer {
     direction: boolean,
     priceFrom: number,
   ): TokenInfo {
-    let addrFrom = pool.token0.address as Address
-    let addrTo = pool.token1.address as Address
-    if (direction === false) {
-      const tmp = addrFrom
-      addrFrom = addrTo
-      addrTo = tmp
-    }
-    const tokenInfo: TokenInfo = new TokenInfo(
-      direction ? pool.token0 : pool.token1,
+    const [tokenFrom, tokenTo] = direction
+      ? [pool.token0, pool.token1]
+      : [pool.token1, pool.token0]
+    const tokenFromInfo = this.tokenMap.get(
+      tokenFrom.address as Address,
+    ) as TokenInfo
+    const poolPrice = pool.calcCurrentPriceWithoutFee(!direction)
+    const tokenToInfo: TokenInfo = new TokenInfo(
+      tokenTo,
       direction,
-      pool.calcCurrentPriceWithoutFee(!direction),
-      this.tokenMap.get(addrFrom) as TokenInfo,
+      poolPrice,
+      tokenFromInfo,
     )
-    tokenInfo.parent?.children?.push(tokenInfo)
-    this.poolTokenMap.set(pool.uniqueID(), tokenInfo)
-    this.tokenMap.set(addrTo, tokenInfo)
-    this.prices[addrTo] = priceFrom * tokenInfo.poolPrice
+    this.poolTokenMap.set(pool.uniqueID(), tokenToInfo)
+    this.tokenMap.set(tokenTo.address as Address, tokenToInfo)
+    this.prices[tokenTo.address as Address] =
+      (priceFrom / tokenFromInfo.decExp) * poolPrice * tokenToInfo.decExp
     ++this.pricesSize
-    return tokenInfo
+    return tokenToInfo
   }
 }
