@@ -58,5 +58,4 @@ export class BaseActions {
       throw new Error('Failed to create fake token')
     }
   }
-
 }
