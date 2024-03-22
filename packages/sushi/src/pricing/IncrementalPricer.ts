@@ -1,6 +1,6 @@
 import { Address } from 'viem'
 import { Token } from '../currency'
-import { RPool, RToken, calcTokenAddressPrices } from '../tines'
+import { RPool, RToken, calcTokenAddressPrices } from '../tines/index.js'
 import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 
 const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
@@ -8,7 +8,7 @@ const MIN_PRICABLE_LIQUIDITY = 0.8
 const MIN_VALUABLE_PRICE_CHANGE = 1.001 // don't recalc prices if change is lesser than 0.1%
 
 // for debugging
-const DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES = true
+const DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES = false
 
 function makePricesRecalcForPool(
   oldPoolPrice: number,
@@ -99,18 +99,13 @@ export class IncrementalPricer {
       this.baseTokens.map((t) => t.address),
     )
     const sortedBaseVerts = this._sortBaseVerts(baseVerts)
+    let firstBaseTokenPrices: Record<string, number> | undefined
+    let firstBasePricesSize = 0
     sortedBaseVerts.forEach(([baseVert, baseIndex]) => {
       if (this.prices[baseVert.address] !== undefined) return // the token is already priced
 
       const baseToken = this.baseTokens[baseIndex] as TokenInfo
       const baseTokenPrice = this.baseTokenPrices[baseIndex] as number
-      // if (baseVert === undefined) {
-      //   // no pools with this token
-      //   this.tokenMap.set(baseToken.address, baseToken)
-      //   this.prices[baseToken.address] = baseTokenPrice
-      //   ++this.pricesSize
-      //   return
-      // }
 
       const nextEdges: PoolEdge[] = []
       if (logging)
@@ -153,6 +148,13 @@ export class IncrementalPricer {
       this._updateTotalSuccessor(baseToken)
       this.lastfullPricesRecalcDate = Date.now()
       this.fullPricesRecalcFlag = false
+
+      if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
+        if (firstBaseTokenPrices === undefined) {
+          firstBaseTokenPrices = { ...this.prices }
+          firstBasePricesSize = this.pricesSize
+        }
+      }
     })
 
     if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
@@ -163,15 +165,27 @@ export class IncrementalPricer {
         this.minLiquidity * 10 ** baseToken.decimals,
       )
       const tinesTokens = Object.keys(tinesPrices)
-      if (tinesTokens.length !== this.pricesSize)
+      if (tinesTokens.length !== firstBasePricesSize)
         console.error(
-          `Pricing set error ${tinesTokens.length} != ${this.pricesSize}`,
+          `Pricing set error ${tinesTokens.length} != ${firstBasePricesSize}`,
         )
       tinesTokens.forEach((t) => {
-        if (tinesPrices[t] !== this.prices[t])
+        const price = firstBaseTokenPrices?.[t]
+        if (
+          price === undefined ||
+          Math.abs((tinesPrices[t] as number) / Number(price.toFixed(18)) - 1) >
+            1e-10
+        )
           console.error(
-            `Pricing error for token ${t} ${tinesPrices[t]} != ${this.prices[t]}`,
+            `Pricing error for token ${t} ${tinesPrices[t]} != ${price}`,
           )
+      })
+      Object.keys(firstBaseTokenPrices ?? {}).forEach((t) => {
+        if (tinesPrices[t] === undefined) {
+          console.error(
+            `Pricing error for token ${t} ${tinesPrices[t]} != ${firstBaseTokenPrices?.[t]}`,
+          )
+        }
       })
     }
     return this.pricesSize
@@ -181,11 +195,6 @@ export class IncrementalPricer {
   private _sortBaseVerts(
     baseVerts: (TokenVert | undefined)[],
   ): [TokenVert, number][] {
-    // if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
-    //   return (baseVerts.filter((b) => b !== undefined) as TokenVert[]).map(
-    //     (b, i) => [b, i],
-    //   )
-    // }
     const tmp = baseVerts
       .map((b, i) => {
         if (b === undefined) return
