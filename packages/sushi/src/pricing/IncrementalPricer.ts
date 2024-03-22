@@ -1,11 +1,14 @@
 import { Address } from 'viem'
 import { Token } from '../currency'
-import { RPool, RToken } from '../tines'
+import { RPool, RToken, calcTokenAddressPrices } from '../tines'
 import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 
 const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
 const MIN_PRICABLE_LIQUIDITY = 0.8
 const MIN_VALUABLE_PRICE_CHANGE = 1.001 // don't recalc prices if change is lesser than 0.1%
+
+// for debugging
+const DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES = true
 
 function makePricesRecalcForPool(
   oldPoolPrice: number,
@@ -140,12 +143,37 @@ export class IncrementalPricer {
         vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
         this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
         this._addVertice(nextEdges, vTo, p * (vFrom.price as number))
+        // console.log(
+        //   `Pool create ${
+        //     bestEdge.pool.address
+        //   } price=${p} r0=${bestEdge.pool.getReserve0()} r1=${bestEdge.pool.getReserve1()}`,
+        // )
       }
 
       this._updateTotalSuccessor(baseToken)
       this.lastfullPricesRecalcDate = Date.now()
       this.fullPricesRecalcFlag = false
     })
+
+    // if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
+    //   const baseToken = (sortedBaseVerts[0] as [TokenVert, number])[0].token
+    //   const tinesPrices = calcTokenAddressPrices(
+    //     pools,
+    //     baseToken,
+    //     this.minLiquidity * 10 ** baseToken.decimals,
+    //   )
+    //   const tinesTokens = Object.keys(tinesPrices)
+    //   if (tinesTokens.length !== this.pricesSize)
+    //     console.error(
+    //       `Pricing set error ${tinesTokens.length} != ${this.pricesSize}`,
+    //     )
+    //   tinesTokens.forEach((t) => {
+    //     if (tinesPrices[t] !== this.prices[t])
+    //       console.error(
+    //         `Pricing error for token ${t} ${tinesPrices[t]} != ${this.prices[t]}`,
+    //       )
+    //   })
+    // }
     return this.pricesSize
   }
 
@@ -153,6 +181,11 @@ export class IncrementalPricer {
   private _sortBaseVerts(
     baseVerts: (TokenVert | undefined)[],
   ): [TokenVert, number][] {
+    // if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
+    //   return (baseVerts.filter((b) => b !== undefined) as TokenVert[]).map(
+    //     (b, i) => [b, i],
+    //   )
+    // }
     const tmp = baseVerts
       .map((b, i) => {
         if (b === undefined) return
@@ -235,13 +268,23 @@ export class IncrementalPricer {
       tokens[i] = undefined // not price-making pool or duplicated pool
       const token = this.poolTokenMap.get(pool.uniqueID())
       if (token) {
-        if (!this._isPoolStillPricable(pool, token))
+        if (!this._isPoolStillPricable(pool, token)) {
+          if (token.totalSuccessors === 0) {
+            this._deleteChildlessToken(pool, token)
+            continue
+          }
           this.fullPricesRecalcFlag = true
+        }
         if (token.changedPoolIndex === undefined) {
           const newPoolPrice = pool.calcCurrentPriceWithoutFee(!token.direction)
           if (makePricesRecalcForPool(token.poolPrice, newPoolPrice)) {
             tokens[i] = token
             token.changedPoolIndex = i
+            // console.log(
+            //   `Pool update ${
+            //     pool.address
+            //   } price=${newPoolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
+            // )
           }
         }
       } else if (this._checkAndAddNewToken(pool) !== undefined) {
@@ -323,11 +366,11 @@ export class IncrementalPricer {
     const liquidity = (reserve * price) / 10 ** token.decimals
     if (liquidity < this.minLiquidity * MIN_PRICABLE_LIQUIDITY) {
       console.log(
-        'Pool is not pricable',
-        pool.address,
-        tokenInfo.direction,
-        tokenInfo.totalSuccessors,
-        liquidity,
+        `Pool ${pool.address} is not pricable (price: ${
+          tokenInfo.poolPrice
+        } => ${pool.calcCurrentPriceWithoutFee(
+          !tokenInfo.direction,
+        )}), r0=${pool.getReserve0()}, r1=${pool.getReserve1()} ${liquidity}`,
       )
       return false
     }
@@ -375,6 +418,22 @@ export class IncrementalPricer {
     this.prices[tokenTo.address as Address] =
       (priceFrom / tokenFromInfo.decExp) * poolPrice * tokenToInfo.decExp
     ++this.pricesSize
+    console.log(
+      `Pool added ${
+        pool.address
+      } price=${poolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
+    )
     return tokenToInfo
+  }
+
+  private _deleteChildlessToken(pool: RPool, token: TokenInfo) {
+    this.poolTokenMap.delete(pool.uniqueID())
+    this.tokenMap.delete(token.address)
+    delete this.prices[token.address]
+    --this.pricesSize
+    const place = token.parent?.children.indexOf(token)
+    if (place !== undefined && place >= 0)
+      token.parent?.children.splice(place, 1)
+    token.parent = undefined
   }
 }
