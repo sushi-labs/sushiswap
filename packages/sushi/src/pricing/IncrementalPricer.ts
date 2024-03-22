@@ -155,25 +155,25 @@ export class IncrementalPricer {
       this.fullPricesRecalcFlag = false
     })
 
-    // if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
-    //   const baseToken = (sortedBaseVerts[0] as [TokenVert, number])[0].token
-    //   const tinesPrices = calcTokenAddressPrices(
-    //     pools,
-    //     baseToken,
-    //     this.minLiquidity * 10 ** baseToken.decimals,
-    //   )
-    //   const tinesTokens = Object.keys(tinesPrices)
-    //   if (tinesTokens.length !== this.pricesSize)
-    //     console.error(
-    //       `Pricing set error ${tinesTokens.length} != ${this.pricesSize}`,
-    //     )
-    //   tinesTokens.forEach((t) => {
-    //     if (tinesPrices[t] !== this.prices[t])
-    //       console.error(
-    //         `Pricing error for token ${t} ${tinesPrices[t]} != ${this.prices[t]}`,
-    //       )
-    //   })
-    // }
+    if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
+      const baseToken = (sortedBaseVerts[0] as [TokenVert, number])[0].token
+      const tinesPrices = calcTokenAddressPrices(
+        pools,
+        baseToken,
+        this.minLiquidity * 10 ** baseToken.decimals,
+      )
+      const tinesTokens = Object.keys(tinesPrices)
+      if (tinesTokens.length !== this.pricesSize)
+        console.error(
+          `Pricing set error ${tinesTokens.length} != ${this.pricesSize}`,
+        )
+      tinesTokens.forEach((t) => {
+        if (tinesPrices[t] !== this.prices[t])
+          console.error(
+            `Pricing error for token ${t} ${tinesPrices[t]} != ${this.prices[t]}`,
+          )
+      })
+    }
     return this.pricesSize
   }
 
