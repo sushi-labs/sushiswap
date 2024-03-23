@@ -3,22 +3,22 @@ import { Token } from '../currency'
 import { RPool, RToken, calcTokenAddressPrices } from '../tines/index.js'
 import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 
+// for debugging
+const DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES = false
+const DEBUG_PARTIAL_UPDATE_AFTER_FULL_RECALC_CHECK = 0 // 0% pools for update - no check
+
 const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
 const MIN_PRICABLE_LIQUIDITY = 0.8
 const MIN_VALUABLE_PRICE_CHANGE = 1.001 // don't recalc prices if change is lesser than 0.1%
 
-// for debugging
-const DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES = false
-
 function makePricesRecalcForPool(
   oldPoolPrice: number,
   newPoolPrice: number,
+  sensability = MIN_VALUABLE_PRICE_CHANGE,
 ): boolean {
-  if (oldPoolPrice === 0 && newPoolPrice !== 0) return true
+  if (oldPoolPrice === 0) return newPoolPrice !== 0
   const diff = newPoolPrice / oldPoolPrice
-  return (
-    diff > MIN_VALUABLE_PRICE_CHANGE || diff < 1 / MIN_VALUABLE_PRICE_CHANGE
-  )
+  return diff > sensability || diff < 1 / sensability
 }
 
 class TokenInfo {
@@ -99,9 +99,7 @@ export class IncrementalPricer {
       this.baseTokens.map((t) => t.address),
     )
     const sortedBaseVerts = this._sortBaseVerts(baseVerts)
-    let firstBaseTokenPrices: Record<string, number> | undefined
-    let firstBasePricesSize = 0
-    sortedBaseVerts.forEach(([baseVert, baseIndex]) => {
+    sortedBaseVerts.forEach(([baseVert, baseIndex], i) => {
       if (this.prices[baseVert.address] !== undefined) return // the token is already priced
 
       const baseToken = this.baseTokens[baseIndex] as TokenInfo
@@ -149,45 +147,36 @@ export class IncrementalPricer {
       this.lastfullPricesRecalcDate = Date.now()
       this.fullPricesRecalcFlag = false
 
-      if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
-        if (firstBaseTokenPrices === undefined) {
-          firstBaseTokenPrices = { ...this.prices }
-          firstBasePricesSize = this.pricesSize
-        }
+      if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES && i === 0) {
+        const tinesPrices = calcTokenAddressPrices(
+          pools,
+          baseToken.token,
+          this.minLiquidity * baseToken.decExp,
+        )
+        comparePrices(
+          'Price full recalc',
+          this.prices,
+          this.pricesSize,
+          tinesPrices,
+        )
       }
     })
 
-    if (DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES) {
-      const baseToken = (sortedBaseVerts[0] as [TokenVert, number])[0].token
-      const tinesPrices = calcTokenAddressPrices(
-        pools,
-        baseToken,
-        this.minLiquidity * 10 ** baseToken.decimals,
+    if (DEBUG_PARTIAL_UPDATE_AFTER_FULL_RECALC_CHECK) {
+      const pricesBefore = { ...this.prices }
+      const pricesSizeBefore = this.pricesSize
+      const pn = Math.round(
+        (pools.length * DEBUG_PARTIAL_UPDATE_AFTER_FULL_RECALC_CHECK) / 100,
       )
-      const tinesTokens = Object.keys(tinesPrices)
-      if (tinesTokens.length !== firstBasePricesSize)
-        console.error(
-          `Pricing set error ${tinesTokens.length} != ${firstBasePricesSize}`,
-        )
-      tinesTokens.forEach((t) => {
-        const price = firstBaseTokenPrices?.[t]
-        if (
-          price === undefined ||
-          Math.abs((tinesPrices[t] as number) / Number(price.toFixed(18)) - 1) >
-            1e-10
-        )
-          console.error(
-            `Pricing error for token ${t} ${tinesPrices[t]} != ${price}`,
-          )
-      })
-      Object.keys(firstBaseTokenPrices ?? {}).forEach((t) => {
-        if (tinesPrices[t] === undefined) {
-          console.error(
-            `Pricing error for token ${t} ${tinesPrices[t]} != ${firstBaseTokenPrices?.[t]}`,
-          )
-        }
-      })
+      const newPools = pools.slice(0, pn)
+      const updatePrices = this._updatePricesForPools(newPools, 0.9) // sensability <1 means update prices for all pools
+      checkNotEqual(updatePrices, 0, 'Price upd check error')
+      checkEqual(pricesSizeBefore, this.pricesSize)
+      comparePrices('Price upd', pricesBefore, pricesSizeBefore, this.prices)
+      this.prices = pricesBefore
+      this.pricesSize = pricesSizeBefore
     }
+
     return this.pricesSize
   }
 
@@ -266,7 +255,10 @@ export class IncrementalPricer {
     }
   }
 
-  private _updatePricesForPools(pools: RPool[]) {
+  private _updatePricesForPools(
+    pools: RPool[],
+    sensability = MIN_VALUABLE_PRICE_CHANGE,
+  ) {
     // Auxiliary
     const tokens: (TokenInfo | undefined)[] = new Array(pools.length)
     let changedPrices = 0
@@ -286,7 +278,9 @@ export class IncrementalPricer {
         }
         if (token.changedPoolIndex === undefined) {
           const newPoolPrice = pool.calcCurrentPriceWithoutFee(!token.direction)
-          if (makePricesRecalcForPool(token.poolPrice, newPoolPrice)) {
+          if (
+            makePricesRecalcForPool(token.poolPrice, newPoolPrice, sensability)
+          ) {
             tokens[i] = token
             token.changedPoolIndex = i
             // console.log(
@@ -339,10 +333,6 @@ export class IncrementalPricer {
         !token.direction,
       ) as number
       priceMultiplicator = (priceMultiplicator / token.poolPrice) * newPoolPrice
-      if (token.totalSuccessors >= 100)
-        console.log(
-          `Change price ${token.token.symbol} ${priceMultiplicator} (+ ${token.totalSuccessors} subtokens)`,
-        )
       tokens[poolIndex] = undefined
       // @ts-ignore
       token.changedPoolIndex = undefined
@@ -427,11 +417,11 @@ export class IncrementalPricer {
     this.prices[tokenTo.address as Address] =
       (priceFrom / tokenFromInfo.decExp) * poolPrice * tokenToInfo.decExp
     ++this.pricesSize
-    console.log(
-      `Pool added ${
-        pool.address
-      } price=${poolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
-    )
+    // console.log(
+    //   `Pool added ${
+    //     pool.address
+    //   } price=${poolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
+    // )
     return tokenToInfo
   }
 
@@ -445,4 +435,40 @@ export class IncrementalPricer {
       token.parent?.children.splice(place, 1)
     token.parent = undefined
   }
+}
+
+function comparePrices(
+  errMsg: string,
+  prices0: Record<string, number>,
+  prices0Length: number,
+  prices1: Record<string, number>,
+  precision = 1e10,
+) {
+  const tokens0 = Object.keys(prices0)
+  checkEqual(tokens0.length, prices0Length, errMsg, 'pricesSize is incorrect')
+  tokens0.forEach((t) => {
+    const price = prices0?.[t]
+    if (
+      price === undefined ||
+      Math.abs((prices1[t] as number) / price - 1) > precision
+    )
+      console.error(
+        `${errMsg}: token ${t} wrong prices: ${prices1[t]} != ${price}`,
+      )
+  })
+  Object.keys(prices0).forEach((t) => {
+    if (prices1[t] === undefined) {
+      console.error(
+        `${errMsg}: token ${t} wrong prices: ${prices1[t]} != ${prices0?.[t]}`,
+      )
+    }
+  })
+}
+
+function checkEqual<T>(v0: T, v1: T, ...errMsg: string[]) {
+  if (v0 !== v1) console.error(`${errMsg.join(': ')}: ${v0} != ${v1}`)
+}
+
+function checkNotEqual<T>(v0: T, v1: T, ...errMsg: string[]) {
+  if (v0 === v1) console.error(`${errMsg.join(': ')}: ${v0} != ${v1}`)
 }
