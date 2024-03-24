@@ -6,6 +6,7 @@ import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 // for debugging
 const DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES = false
 const DEBUG_PARTIAL_UPDATE_AFTER_FULL_RECALC_CHECK = 0 // 0% pools for update - no check
+const DEBUG_COMPARE_PARTIAL_UPDATE_WITH_TINES_PRICES = true
 
 const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
 const MIN_PRICABLE_LIQUIDITY = 0.8
@@ -78,7 +79,44 @@ export class IncrementalPricer {
   ): number {
     if (this.isFullPricesRecalcNeeded())
       return this._fullPricesRecalculation(allPoolsOnDemand(), logging)
-    else return this._updatePricesForPools(updatedPools)
+    else {
+      const res = this._updatePricesForPools(
+        updatedPools,
+        DEBUG_COMPARE_PARTIAL_UPDATE_WITH_TINES_PRICES ? 0.9 : undefined,
+      )
+      if (DEBUG_COMPARE_PARTIAL_UPDATE_WITH_TINES_PRICES) {
+        const baseToken = this.baseTokens.find(
+          (b) => this.prices[b.address] === 1,
+        ) as TokenInfo
+        checkNotEqual(
+          baseToken,
+          undefined,
+          'Prices partial upd error: no basetoken found',
+        )
+        const tinesPrices = calcTokenAddressPrices(
+          allPoolsOnDemand(),
+          baseToken.token,
+          this.minLiquidity * baseToken.decExp,
+        )
+        // comparePrices(
+        //   'Prices partial upd',
+        //   this.prices,
+        //   this.pricesSize,
+        //   tinesPrices,
+        // )
+        const common = compareCommonPrices(
+          'Prices partial upd',
+          this.prices,
+          tinesPrices,
+        )
+        checkEqual(
+          Object.keys(tinesPrices).length,
+          common,
+          'Prices partial upd num',
+        )
+      }
+      return res
+    }
   }
 
   isFullPricesRecalcNeeded() {
@@ -136,11 +174,11 @@ export class IncrementalPricer {
         vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
         this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
         this._addVertice(nextEdges, vTo, p * (vFrom.price as number))
-        // console.log(
-        //   `Pool create ${
-        //     bestEdge.pool.address
-        //   } price=${p} r0=${bestEdge.pool.getReserve0()} r1=${bestEdge.pool.getReserve1()}`,
-        // )
+        console.log(
+          `Pool create ${bestEdge.pool.address} token ${vTo.address} price=${
+            p * (vFrom.price as number) * vTo.decExp
+          } liquidity=${bestEdge.poolLiquidity}`,
+        )
       }
 
       this._updateTotalSuccessor(baseToken)
@@ -154,7 +192,7 @@ export class IncrementalPricer {
           this.minLiquidity * baseToken.decExp,
         )
         comparePrices(
-          'Price full recalc',
+          'Prices full recalc',
           this.prices,
           this.pricesSize,
           tinesPrices,
@@ -170,9 +208,9 @@ export class IncrementalPricer {
       )
       const newPools = pools.slice(0, pn)
       const updatePrices = this._updatePricesForPools(newPools, 0.9) // sensability <1 means update prices for all pools
-      checkNotEqual(updatePrices, 0, 'Price upd check error')
+      checkNotEqual(updatePrices, 0, 'Prices upd check error')
       checkEqual(pricesSizeBefore, this.pricesSize)
-      comparePrices('Price upd', pricesBefore, pricesSizeBefore, this.prices)
+      comparePrices('Prices upd', pricesBefore, pricesSizeBefore, this.prices)
       this.prices = pricesBefore
       this.pricesSize = pricesSizeBefore
     }
@@ -363,7 +401,10 @@ export class IncrementalPricer {
     }
     const price = this.prices[token.address] as number
     const liquidity = (reserve * price) / 10 ** token.decimals
-    if (liquidity < this.minLiquidity * MIN_PRICABLE_LIQUIDITY) {
+    const minLiquidityK = DEBUG_COMPARE_PARTIAL_UPDATE_WITH_TINES_PRICES
+      ? 1
+      : MIN_PRICABLE_LIQUIDITY
+    if (liquidity < this.minLiquidity * minLiquidityK) {
       console.log(
         `Pool ${pool.address} is not pricable (price: ${
           tokenInfo.poolPrice
@@ -417,11 +458,11 @@ export class IncrementalPricer {
     this.prices[tokenTo.address as Address] =
       (priceFrom / tokenFromInfo.decExp) * poolPrice * tokenToInfo.decExp
     ++this.pricesSize
-    // console.log(
-    //   `Pool added ${
-    //     pool.address
-    //   } price=${poolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
-    // )
+    console.log(
+      `Pool added ${
+        pool.address
+      } price=${poolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
+    )
     return tokenToInfo
   }
 
@@ -442,27 +483,53 @@ function comparePrices(
   prices0: Record<string, number>,
   prices0Length: number,
   prices1: Record<string, number>,
-  precision = 1e10,
+  precision = 1e-10,
 ) {
   const tokens0 = Object.keys(prices0)
   checkEqual(tokens0.length, prices0Length, errMsg, 'pricesSize is incorrect')
   tokens0.forEach((t) => {
-    const price = prices0?.[t]
+    const price0 = prices0?.[t] as number
+    const price1 = prices1?.[t]
     if (
-      price === undefined ||
-      Math.abs((prices1[t] as number) / price - 1) > precision
+      price1 === undefined ||
+      (price0 === 0 && price1 !== 0) ||
+      Math.abs(price1 / price0 - 1) > precision
     )
       console.error(
-        `${errMsg}: token ${t} wrong prices: ${prices1[t]} != ${price}`,
+        `${errMsg}: token ${t} wrong prices: ${price0} != ${price1}`,
       )
   })
-  Object.keys(prices0).forEach((t) => {
-    if (prices1[t] === undefined) {
+  Object.keys(prices1).forEach((t) => {
+    if (prices0[t] === undefined) {
       console.error(
-        `${errMsg}: token ${t} wrong prices: ${prices1[t]} != ${prices0?.[t]}`,
+        `${errMsg}: token ${t} wrong prices: ${prices0[t]} != ${prices1[t]}`,
       )
     }
   })
+}
+
+export function compareCommonPrices(
+  errMsg: string,
+  prices0: Record<string, number>,
+  prices1: Record<string, number>,
+  precision = 1e-10,
+): number {
+  const tokens0 = Object.keys(prices0)
+  let quantity = 0
+  tokens0.forEach((t) => {
+    if (prices1[t] === undefined) return
+    ++quantity
+    const price0 = prices0?.[t] as number
+    const price1 = prices1?.[t] as number
+    if (
+      (price0 === 0 && price1 !== 0) ||
+      Math.abs(price1 / price0 - 1) > precision
+    )
+      console.error(
+        `${errMsg}: token ${t} wrong prices: ${price0} != ${price1}`,
+      )
+  })
+  return quantity
 }
 
 function checkEqual<T>(v0: T, v1: T, ...errMsg: string[]) {
