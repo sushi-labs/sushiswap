@@ -369,6 +369,7 @@ const useFallback = (chainId: ChainId) => {
   )
 
   const [isFallback, setIsFallback] = useState(initialFallbackState)
+  console.log({SWAP_API_BASE_URL,isFallback})
 
   const resetFallback = useCallback(() => {
     setIsFallback(initialFallbackState)

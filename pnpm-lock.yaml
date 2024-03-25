@@ -669,9 +669,6 @@ importers:
         specifier: 3.21.4
         version: 3.21.4
     devDependencies:
-      '@ethersproject/providers':
-        specifier: 5.7.2
-        version: 5.7.2
       '@next/eslint-plugin-next':
         specifier: 14.1.0
         version: 14.1.0
