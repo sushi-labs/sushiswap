@@ -1,7 +1,6 @@
 import { Log } from 'viem'
-
-import { AlgebraPoolWatcher } from './AlgebraPoolWatcher'
-import { warnLog } from './WarnLog'
+import { AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
+import { warnLog } from './WarnLog.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 

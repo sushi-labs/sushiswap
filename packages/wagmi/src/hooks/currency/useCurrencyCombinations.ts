@@ -1,9 +1,9 @@
 'use client'
 
-import { getCurrencyCombinations } from '@sushiswap/router'
 import { useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Token, Type } from 'sushi/currency'
+import { getCurrencyCombinations } from 'sushi/router'
 
 export function useCurrencyCombinations(
   chainId?: ChainId,

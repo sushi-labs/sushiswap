@@ -126,9 +126,9 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Total APR (24h)</StatLabel>
               <StatValue size="sm">
-                <APRHoverCard pool={vault.pool} smartPoolAPR={vault.apr}>
+                <APRHoverCard pool={vault.pool} smartPoolAPR={vault.apr1d}>
                   <span className="underline decoration-dotted underline-offset-2">
-                    {formatPercent(vault.apr + vault.pool.incentiveApr)}
+                    {formatPercent(vault.apr1d + vault.pool.incentiveApr)}
                   </span>
                 </APRHoverCard>
               </StatValue>
@@ -201,22 +201,24 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
               <SteerLiquidityInRangeChip vault={vault} />
             </div>
           </CardHeader>
-          <div className="px-6">
-            <div className="h-[200px] w-full bg-secondary rounded-xl flex items-center justify-center">
-              <SteerStrategyLiquidityDistribution
-                pool={vault.pool}
-                positions={positions}
-              />
-            </div>
+          <div className="px-6 h-[200px] w-full">
+            <SteerStrategyLiquidityDistribution
+              pool={vault.pool}
+              positions={positions}
+            />
           </div>
-          <div className="grid grid-cols-2">
-            <Stat className="p-6">
+          <div className="flex flex-row flex-wrap whitespace-nowrap gap-2 justify-between p-6">
+            <Stat>
               <StatLabel size="sm">Minimum price</StatLabel>
-              <StatValue size="sm">{priceExtremes.min} ETH/DAI</StatValue>
+              <StatValue size="sm">
+                {priceExtremes.min} {vault.token0.symbol}/{vault.token1.symbol}
+              </StatValue>
             </Stat>
-            <Stat className="p-6">
+            <Stat>
               <StatLabel size="sm">Maximum price</StatLabel>
-              <StatValue size="sm">{priceExtremes.max} ETH/DAI</StatValue>
+              <StatValue size="sm">
+                {priceExtremes.max} {vault.token0.symbol}/{vault.token1.symbol}
+              </StatValue>
             </Stat>
           </div>
         </Card>

@@ -3,6 +3,7 @@ import {
   arbitrum,
   avalanche,
   bsc,
+  cronos,
   fantom,
   foundry,
   goerli,
@@ -39,6 +40,7 @@ export const defaultChains: Chain[] = [
   // polygonMumbai,
   // sepolia,
   scroll,
+  cronos,
 ]
 
 export const otherChains: Chain[] = [
@@ -329,10 +331,10 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://rpc.ankr.com/celo'],
+        http: ['https://forno.celo.org'],
       },
       public: {
-        http: ['https://rpc.ankr.com/celo'],
+        http: ['https://forno.celo.org'],
       },
     },
     blockExplorers: {
@@ -761,16 +763,98 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Filecoin', symbol: 'FIL', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://rpc.ankr.com/filecoin'],
+        http: [
+          'https://rpc.ankr.com/filecoin',
+          // 'https://node.filutils.com/rpc/v1',
+          // 'https://filecoin.chainup.net/rpc/v1',
+        ],
       },
       public: {
-        http: ['https://rpc.ankr.com/filecoin'],
+        http: [
+          'https://rpc.ankr.com/filecoin',
+          // 'https://node.filutils.com/rpc/v1',
+          // 'https://filecoin.chainup.net/rpc/v1',
+        ],
       },
     },
     contracts: {
       multicall3: {
         address: '0x08ba1ac7f15f2215f27b5403a89bed22ceb70cfb',
         blockCreated: 2732870,
+      },
+    },
+  },
+  {
+    id: ChainId.ZETACHAIN,
+    name: 'ZetaChain',
+    network: 'zetachain',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Zeta',
+      symbol: 'ZETA',
+    },
+    rpcUrls: {
+      default: {
+        http: [
+          'https://zetachain-evm.blockpi.network/v1/rpc/public',
+          'https://zetachain-mainnet-archive.allthatnode.com:8545',
+          'https://zetachain.rpc.thirdweb.com',
+          'https://jsonrpc.zetachain.nodestake.org',
+        ],
+      },
+      public: {
+        http: [
+          'https://zetachain-evm.blockpi.network/v1/rpc/public',
+          'https://zetachain-mainnet-archive.allthatnode.com:8545',
+          'https://zetachain.rpc.thirdweb.com',
+          'https://jsonrpc.zetachain.nodestake.org',
+        ],
+      },
+    },
+    blockExplorers: {
+      default: { name: 'ZetaScan', url: 'https://explorer.zetachain.com/' },
+    },
+    contracts: {
+      multicall3: {
+        address: '0x039e87AB90205F9d87c5b40d4B28e2Be45dA4a20',
+        blockCreated: 1565755,
+      },
+    },
+  },
+  {
+    id: ChainId.BLAST,
+    name: 'Blast',
+    network: 'blast',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Ether',
+      symbol: 'ETH',
+    },
+    rpcUrls: {
+      default: {
+        http: [
+          'https://rpc.blast.io',
+          'https://blast.din.dev/rpc',
+          'https://blastl2-mainnet.public.blastapi.io',
+          'https://blast.blockpi.network/v1/rpc/public',
+        ],
+      },
+      public: {
+        http: [
+          'https://rpc.blast.io',
+          'https://blast.din.dev/rpc',
+          'https://blastl2-mainnet.public.blastapi.io',
+          'https://blast.blockpi.network/v1/rpc/public',
+        ],
+      },
+    },
+    blockExplorers: {
+      default: { name: 'BlastScan', url: 'https://blastscan.io/' },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 88189,
       },
     },
   },

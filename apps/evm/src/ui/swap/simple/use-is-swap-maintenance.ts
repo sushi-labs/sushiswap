@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { SwapEdgeConfig } from 'src/lib/edge/get-swap-edge-config'
+import { SwapEdgeConfig } from 'src/app/swap/(simple)/get-swap-edge-config'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
 
 export const useIsSwapMaintenance = () => {
   const { maintenance } = useEdgeConfig<SwapEdgeConfig>()
 
   return useQuery({
-    queryKey: ['useIsSwapMaintenance'],
+    queryKey: ['swap-maintenance'],
     queryFn: async () => {
       const resp = await fetch('/api/config/swap', {
         next: { revalidate: 60 },

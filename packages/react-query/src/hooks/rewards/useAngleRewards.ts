@@ -9,10 +9,7 @@ import { isAngleEnabledChainId } from 'sushi/config'
 
 import { usePrices } from '../prices'
 
-import {
-  angleRewardsBaseValidator,
-  angleRewardsPoolsValidator,
-} from './validator'
+import { angleRewardsPoolsValidator, angleRewardsValidator } from './validator'
 
 type TransformedRewardsPerToken = Record<
   string,
@@ -43,30 +40,34 @@ export type AngleRewardsPool = Omit<
 
 type TransformedPools = Record<string, AngleRewardsPool>
 
-interface UseAngleRewardsParams {
-  chainId: ChainId
+interface AngleRewardsQueryParams {
+  chainIds: ChainId[]
   account?: string | undefined
   enabled?: boolean
 }
 
 export const angleRewardsQueryFn = async ({
-  chainId,
+  chainIds,
   account,
-}: UseAngleRewardsParams) => {
-  let url = `https://api.angle.money/v1/merkl?chainId=${chainId}`
+}: AngleRewardsQueryParams) => {
+  const url = new URL('https://api.merkl.xyz/v2/merkl')
+  url.searchParams.set('AMMs', 'sushiswapv3')
+  chainIds.forEach((chainId) =>
+    url.searchParams.append('chainIds', chainId.toString()),
+  )
 
   if (account) {
-    url += `&user=${account}`
+    url.searchParams.set('user', account)
   }
 
   const res = await fetch(url)
   const json = await res.json()
-  return angleRewardsBaseValidator.parse(json[chainId])
+  return angleRewardsValidator.parse(json)
 }
 
 interface AngleRewardsSelect {
   chainId: ChainId
-  data: Awaited<ReturnType<typeof angleRewardsQueryFn>>
+  data: z.infer<typeof angleRewardsValidator>[number] | undefined
   prices: ReturnType<typeof usePrices>['data']
 }
 
@@ -75,7 +76,7 @@ export const angleRewardsSelect = ({
   data,
   prices,
 }: AngleRewardsSelect) => {
-  if (!data || !data.pools || !prices) return undefined
+  if (!data?.pools || !prices) return undefined
 
   const pools = Object.entries(data.pools).reduce<TransformedPools>(
     (acc, [a, b]) => {
@@ -91,7 +92,7 @@ export const angleRewardsSelect = ({
             > & { token: Token }
           >
         >((acc, el) => {
-          if (el.symbolRewardToken !== 'aglaMerkl') {
+          if (el.symbolRewardToken !== 'aglaMerkl' && !el.whitelist.length) {
             acc.push({
               ...el,
               token: new Token({
@@ -158,25 +159,24 @@ export const angleRewardsSelect = ({
     {},
   )
 
-  const unclaimedAmounts = Object.values(
-    Object.values(pools ?? []).reduce<Record<string, Amount<Token>>>(
-      (acc, cur) => {
-        Object.values(cur.rewardsPerToken).forEach((val) => {
-          const amount = acc[val.unclaimed.currency.address]
-          if (!amount) {
-            acc[val.unclaimed.currency.address] = val.unclaimed
-          } else {
-            acc[val.unclaimed.currency.address] = amount.add(val.unclaimed)
-          }
-        })
+  const unclaimed = Object.entries(data.transactionData ?? {}).reduce<
+    { amount: Amount<Token>; amountUSD: number }[]
+  >((accum, [address, transactionData]) => {
+    const token = data.validRewardTokens?.find(
+      (token) => token.token === address,
+    )
+    if (!token) return accum
 
-        return acc
-      },
-      {},
-    ),
-  )
+    const amount = Amount.fromRawAmount(
+      new Token({
+        chainId: Number(chainId),
+        address: token.token,
+        decimals: token.decimals,
+        symbol: token.symbol,
+      }),
+      transactionData.claim,
+    )
 
-  const unclaimed = unclaimedAmounts.map((amount) => {
     let amountUSD = 0
 
     const price = prices[amount.currency.wrapped.address]
@@ -188,11 +188,13 @@ export const angleRewardsSelect = ({
       amountUSD = 0
     }
 
-    return {
+    accum.push({
       amount,
       amountUSD,
-    }
-  })
+    })
+
+    return accum
+  }, [])
 
   const validRewardTokens = (data.validRewardTokens ?? [])
     .map((el) => {
@@ -220,6 +222,12 @@ export const angleRewardsSelect = ({
   }
 }
 
+interface UseAngleRewardsParams {
+  chainId: ChainId
+  account?: string | undefined
+  enabled?: boolean
+}
+
 export const useAngleRewards = ({
   chainId,
   account,
@@ -228,8 +236,10 @@ export const useAngleRewards = ({
   const { data: prices } = usePrices({ chainId })
   return useQuery({
     queryKey: ['getAngleRewards', { chainId, account }],
-    queryFn: async () => await angleRewardsQueryFn({ chainId, account }),
-    select: (data) => angleRewardsSelect({ chainId, data, prices }),
+    queryFn: async () =>
+      await angleRewardsQueryFn({ chainIds: [chainId], account }),
+    select: (data) =>
+      angleRewardsSelect({ chainId, data: data[chainId], prices }),
     staleTime: 15000, // 15 seconds
     cacheTime: 60000, // 1min
     enabled: Boolean(

@@ -1,5 +1,0 @@
-
-apiVersion: v2
-name: extractors
-description: A Helm chart for the extractor application
-version: 0.1.0

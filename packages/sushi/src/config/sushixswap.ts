@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 export const SUSHIXSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
@@ -10,7 +10,7 @@ export const SUSHIXSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.POLYGON,
 ] as const
 
-export type SushiXSwapChainId = typeof SUSHIXSWAP_SUPPORTED_CHAIN_IDS[number]
+export type SushiXSwapChainId = (typeof SUSHIXSWAP_SUPPORTED_CHAIN_IDS)[number]
 
 export const SUSHIXSWAP_ADDRESS: Record<SushiXSwapChainId, `0x${string}`> = {
   [ChainId.ARBITRUM]: '0x53b08DbD70327b7Ba3B7886Fc9987BC985d27262',
@@ -44,7 +44,8 @@ export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
   ChainId.SCROLL,
 ] as const
 
-export type SushiXSwap2ChainId = typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS[number]
+export type SushiXSwap2ChainId =
+  (typeof SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS)[number]
 
 export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.ETHEREUM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
@@ -83,23 +84,19 @@ export const STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS = [
 ] as const
 
 export type StargateAdapterChainId =
-  typeof STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS[number]
+  (typeof STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS)[number]
 
 export const STARGATE_ADAPTER_ADDRESS: Record<
   StargateAdapterChainId,
   `0x${string}`
 > = {
-  [ChainId.ETHEREUM]: '0xbF3B71decBCEFABB3210B9D8f18eC22e0556f5F0',
-  [ChainId.BSC]: '0x454714482cA38fBBcE7fC76D96Ba1CE2028A4fF6',
-  [ChainId.AVALANCHE]: '0x454714482cA38fBBcE7fC76D96Ba1CE2028A4fF6',
-  [ChainId.POLYGON]: '0xFF51a7C624Eb866917102707F3dA8bFb99Db8692',
-  [ChainId.ARBITRUM]: '0x2ABf469074dc0b54d793850807E6eb5Faf2625b1',
-  [ChainId.OPTIMISM]: '0x454714482cA38fBBcE7fC76D96Ba1CE2028A4fF6',
-  [ChainId.BASE]: '0xbF3B71decBCEFABB3210B9D8f18eC22e0556f5F0',
-  // [ChainId.FANTOM]: '0x2ABf469074dc0b54d793850807E6eb5Faf2625b1',
-  // [ChainId.LINEA]: '0x454714482cA38fBBcE7fC76D96Ba1CE2028A4fF6',
-  // [ChainId.KAVA]: '0xDf1cfEc0DCF05bf647FbfbE12ea550Baa102E195',
-  // [ChainId.METIS]: '0xA62eC622DbA415Aa94110739B1f951B1202Cf322',
+  [ChainId.ETHEREUM]: '0xD408a20f1213286fB3158a2bfBf5bFfAca8bF269',
+  [ChainId.BSC]: '0xFF51a7C624Eb866917102707F3dA8bFb99Db8692',
+  [ChainId.AVALANCHE]: '0xFF51a7C624Eb866917102707F3dA8bFb99Db8692',
+  [ChainId.POLYGON]: '0x1719DEf1BF8422a777f2442bcE704AC4Fb20c7f0',
+  [ChainId.ARBITRUM]: '0xFF51a7C624Eb866917102707F3dA8bFb99Db8692',
+  [ChainId.OPTIMISM]: '0xA62eC622DbA415Aa94110739B1f951B1202Cf322',
+  [ChainId.BASE]: '0xD408a20f1213286fB3158a2bfBf5bFfAca8bF269',
 } as const
 
 export const isStargateAdapterChainId = (
@@ -126,7 +123,7 @@ export const SQUID_ADAPTER_SUPPORTED_CHAIN_IDS = [
 ] as const
 
 export type SquidAdapterChainId =
-  typeof SQUID_ADAPTER_SUPPORTED_CHAIN_IDS[number]
+  (typeof SQUID_ADAPTER_SUPPORTED_CHAIN_IDS)[number]
 
 export const SQUID_ADAPTER_ADDRESS: Record<SquidAdapterChainId, `0x${string}`> =
   {

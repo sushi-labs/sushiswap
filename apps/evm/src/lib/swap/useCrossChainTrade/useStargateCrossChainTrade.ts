@@ -1,5 +1,4 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import { RouterLiquiditySource } from '@sushiswap/router'
 import { readContract, useFeeData } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
@@ -13,6 +12,7 @@ import {
 } from 'sushi/config'
 import { Amount, Currency, Native } from 'sushi/currency'
 import { Fraction, ONE, Percent, ZERO } from 'sushi/math'
+import { RouterLiquiditySource } from 'sushi/router'
 import {
   encodeAbiParameters,
   parseAbiParameters,

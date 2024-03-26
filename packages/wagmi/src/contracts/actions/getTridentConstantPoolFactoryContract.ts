@@ -1,8 +1,8 @@
+import { tridentConstantPoolFactoryAbi } from 'sushi/abi'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TridentChainId,
-} from '@sushiswap/trident-sdk'
-import { tridentConstantPoolFactoryAbi } from 'sushi/abi'
+} from 'sushi/config'
 import { Address } from 'wagmi'
 
 export const getTridentConstantPoolFactoryContract = (

@@ -4,16 +4,17 @@ import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { FeeAmount, Position, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import {
-  getV3NonFungiblePositionManagerConractConfig,
+  getV3NonFungiblePositionManagerContractConfig,
   useConcentratedPositionOwner,
 } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type } from 'sushi/currency'
+import { Position } from 'sushi/pool'
 
 import { Bound, Field } from '../../lib/constants'
 import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
@@ -28,7 +29,7 @@ interface ConcentratedLiquidityWidget {
   account: string | undefined
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   setToken0?(token: Type): void
   setToken1?(token: Type): void
   tokensLoading: boolean
@@ -144,11 +145,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
       <div
         className={classNames(
           !isPoolLoading &&
-          !isOwnerLoading &&
-          (tickLower === undefined ||
-            tickUpper === undefined ||
-            invalidPool ||
-            invalidRange)
+            !isOwnerLoading &&
+            (tickLower === undefined ||
+              tickUpper === undefined ||
+              invalidPool ||
+              invalidRange)
             ? 'opacity-40 pointer-events-none'
             : '',
           'flex flex-col gap-4',
@@ -257,7 +258,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
                 contract={
-                  getV3NonFungiblePositionManagerConractConfig(chainId).address
+                  getV3NonFungiblePositionManagerContractConfig(chainId).address
                 }
                 enabled={!depositADisabled}
               >
@@ -266,7 +267,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
                   contract={
-                    getV3NonFungiblePositionManagerConractConfig(chainId)
+                    getV3NonFungiblePositionManagerContractConfig(chainId)
                       .address
                   }
                   enabled={!depositBDisabled}

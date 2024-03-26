@@ -31,13 +31,8 @@ import {
   isStargateAdapterChainId,
   isSushiXSwap2ChainId,
 } from 'sushi/config'
-import {
-  Amount,
-  Native,
-  Type,
-  defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
+import { defaultQuoteCurrency } from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
 
@@ -45,8 +40,8 @@ const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
     ? token
     : token.isNative
-    ? 'NATIVE'
-    : token.wrapped.address
+      ? 'NATIVE'
+      : token.wrapped.address
 const getQuoteCurrency = (chainId: number) =>
   defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
     .address
@@ -286,8 +281,8 @@ const DerivedstateCrossChainSwapProvider: FC<
     isStargateAdapterChainId(chainId0) && isStargateAdapterChainId(chainId1)
       ? SushiXSwap2Adapter.Stargate
       : isSquidAdapterChainId(chainId0) && isSquidAdapterChainId(chainId1)
-      ? SushiXSwap2Adapter.Squid
-      : undefined
+        ? SushiXSwap2Adapter.Squid
+        : undefined
 
   useEffect(() => {
     const unwatch = watchNetwork(({ chain }) => {

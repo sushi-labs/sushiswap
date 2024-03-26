@@ -6,8 +6,7 @@ import {
   WatchBlocksReturnType,
   encodeEventTopics,
 } from 'viem'
-
-import { warnLog } from './WarnLog'
+import { warnLog } from './WarnLog.js'
 
 enum LogFilterType {
   OneCall = 0, // one eth_getLogs call for all topict - the most preferrable

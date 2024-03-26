@@ -5,7 +5,6 @@ import { useDebounce, useIsMounted } from '@sushiswap/hooks'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
   Address,
   SushiSwapV2PoolState,
@@ -38,6 +37,7 @@ import {
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { encodeFunctionData } from 'viem'
@@ -92,27 +92,29 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const currencyAToRemove = useMemo(
       () =>
         token0
-          ? percentToRemove?.greaterThan('0') && underlying0
+          ? percentToRemoveDebounced?.greaterThan('0') && underlying0
             ? Amount.fromRawAmount(
                 token0,
-                percentToRemove.multiply(underlying0.quotient).quotient || '0',
+                percentToRemoveDebounced.multiply(underlying0.quotient)
+                  .quotient || '0',
               )
             : Amount.fromRawAmount(token0, '0')
           : undefined,
-      [percentToRemove, token0, underlying0],
+      [percentToRemoveDebounced, token0, underlying0],
     )
 
     const currencyBToRemove = useMemo(
       () =>
         token1
-          ? percentToRemove?.greaterThan('0') && underlying1
+          ? percentToRemoveDebounced?.greaterThan('0') && underlying1
             ? Amount.fromRawAmount(
                 token1,
-                percentToRemove.multiply(underlying1.quotient).quotient || '0',
+                percentToRemoveDebounced.multiply(underlying1.quotient)
+                  .quotient || '0',
               )
             : Amount.fromRawAmount(token1, '0')
           : undefined,
-      [percentToRemove, token1, underlying1],
+      [percentToRemoveDebounced, token1, underlying1],
     )
 
     const [minAmount0, minAmount1] = useMemo(() => {
@@ -136,7 +138,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const debouncedMinAmount1 = useDebounce(minAmount1, 500)
 
     const amountToRemove = useMemo(
-      () => balance?.multiply(percentToRemove),
+      () =>
+        balance &&
+        percentToRemoveDebounced &&
+        percentToRemoveDebounced.greaterThan('0')
+          ? Amount.fromRawAmount(
+              balance.currency,
+              percentToRemoveDebounced.multiply(balance.quotient).quotient,
+            )
+          : undefined,
       [balance, percentToRemove],
     )
 
@@ -169,6 +179,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     useEffect(() => {
       const prep = async (): Promise<UsePrepareSendTransactionConfig> => {
         if (
+          !approved ||
           !token0 ||
           !token1 ||
           !chain?.id ||
@@ -177,7 +188,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           !underlying1 ||
           !address ||
           !pool ||
-          !balance ||
+          !amountToRemove ||
           !debouncedMinAmount0 ||
           !debouncedMinAmount1 ||
           !deadline ||
@@ -191,7 +202,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
             pool.token0.address ||
           Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
-        const config = (function () {
+        const config = (() => {
           if (withNative) {
             const token1IsNative =
               Native.onChain(_pool.chainId).wrapped.address ===
@@ -206,7 +217,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                 token1IsNative
                   ? (pool.token0.wrapped.address as Address)
                   : (pool.token1.wrapped.address as Address),
-                balance.multiply(percentToRemoveDebounced).quotient,
+                amountToRemove.quotient,
                 token1IsNative
                   ? debouncedMinAmount0.quotient
                   : debouncedMinAmount1.quotient,
@@ -224,7 +235,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
             args: [
               pool.token0.wrapped.address as Address,
               pool.token1.wrapped.address as Address,
-              balance.multiply(percentToRemoveDebounced).quotient,
+              amountToRemove.quotient,
               debouncedMinAmount0.quotient,
               debouncedMinAmount1.quotient,
               address,
@@ -273,6 +284,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           console.error('remove prepare error', e)
         })
     }, [
+      approved,
       token0,
       token1,
       chain?.id,
@@ -281,12 +293,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       underlying1,
       address,
       pool,
-      balance,
+      amountToRemove,
       debouncedMinAmount0,
       debouncedMinAmount1,
       deadline,
       _pool.chainId,
-      percentToRemoveDebounced,
       percentage,
     ])
 

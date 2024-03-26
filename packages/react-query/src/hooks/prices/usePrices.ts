@@ -8,13 +8,15 @@ interface UsePrices {
   chainId: number | undefined
 }
 
+const BASE_URL =
+  process.env['NEXT_PUBLIC_API_BASE_URL'] || 'https://api.sushi.com'
+
 export const usePrices = ({ chainId }: UsePrices) => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v2/${chainId}`],
+    queryKey: [`${BASE_URL}/price/v1/${chainId}`],
     queryFn: async () => {
       const data: Record<string, number> = await fetch(
-        `https://token-price.sushi.com/v2/${chainId}`,
-        // `http://localhost:3001/v2/${chainId}`,
+        `${BASE_URL}/price/v1/${chainId}`,
       ).then((response) => response.json())
       return Object.entries(data).reduce<Record<string, Fraction>>(
         (acc, [address, _price]) => {
@@ -33,9 +35,6 @@ export const usePrices = ({ chainId }: UsePrices) => {
     },
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
-    // staleTime: 900000, // 15 mins
-    // cacheTime: 3600000, // 1hr
-    refetchOnWindowFocus: false,
     enabled: Boolean(chainId),
   })
 }

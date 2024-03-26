@@ -1,11 +1,10 @@
-import { erc20Abi } from 'sushi/abi'
+import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { Address } from 'viem'
-
-import { MultiCallAggregator } from './MulticallAggregator'
-import { PermanentCache } from './PermanentCache'
-import { warnLog } from './WarnLog'
+import { Address, Hex, hexToString, trim } from 'viem'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { PermanentCache } from './PermanentCache.js'
+import { warnLog } from './WarnLog.js'
 
 interface TokenCacheRecord {
   address: Address
@@ -15,11 +14,21 @@ interface TokenCacheRecord {
 }
 
 // For some tokens that are not 100% ERC-20:
-const SpecialTokens: Record<string, Omit<TokenCacheRecord, 'address'>> = {
-  '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
-    name: 'Maker Token',
-    symbol: 'MKR',
-    decimals: 18,
+const SpecialTokens: Record<
+  typeof ChainId.ETHEREUM,
+  Record<string, Omit<TokenCacheRecord, 'address'>>
+> = {
+  [ChainId.ETHEREUM]: {
+    // '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': {
+    //   name: 'Maker Token',
+    //   symbol: 'MKR',
+    //   decimals: 18,
+    // },
+    '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
+      name: 'DGD',
+      symbol: 'DGD',
+      decimals: 9,
+    },
   },
 }
 
@@ -69,7 +78,8 @@ export class TokenManager {
     const addr = address.toLowerCase() as Address
     const cached = this.tokens.get(addr)
     if (cached !== undefined) return cached
-    const special = SpecialTokens[addr]
+    const special =
+      SpecialTokens?.[this.client.chainId as keyof typeof SpecialTokens]?.[addr]
     if (special) {
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
@@ -82,8 +92,27 @@ export class TokenManager {
       return newToken
     }
 
+    // try {
+    //   return await fetchToken_({ abi: erc20ABI })
+    // } catch (err) {
+    //   // In the chance that there is an error upon decoding the contract result,
+    //   // it could be likely that the contract data is represented as bytes32 instead
+    //   // of a string.
+    //   if (err instanceof ContractFunctionExecutionError) {
+    //     const { name, symbol, ...rest } = await fetchToken_({
+    //       abi: erc20ABI_bytes32,
+    //     })
+    //     return {
+    //       name: hexToString(trim(name as Hex, { dir: 'right' })),
+    //       symbol: hexToString(trim(symbol as Hex, { dir: 'right' })),
+    //       ...rest,
+    //     }
+    //   }
+    //   throw err
+    // }
+
     try {
-      const [decimals, symbol, name] = await Promise.allSettled([
+      const [decimals, symbol, name] = await Promise.all([
         this.client.callValue(address, erc20Abi, 'decimals'),
         this.client.callValue(address, erc20Abi, 'symbol'),
         this.client.callValue(address, erc20Abi, 'name'),
@@ -92,26 +121,44 @@ export class TokenManager {
       const newToken = new Token({
         chainId: this.client.client.chain?.id as ChainId,
         address: address,
-        decimals:
-          decimals.status === 'fulfilled'
-            ? Number(decimals.value as bigint)
-            : 18,
-        symbol:
-          symbol.status === 'fulfilled'
-            ? (symbol.value as string)
-            : `Unknown_${address.substring(2, 10)}`,
-        name:
-          name.status === 'fulfilled'
-            ? (name.value as string)
-            : `Unknown_${address.substring(2, 10)}`,
+        decimals: Number(decimals as bigint),
+        symbol: symbol as string,
+        name: name as string,
       })
       this.addToken(newToken)
       return newToken
     } catch (_e) {
       warnLog(
         this.client.client.chain?.id,
-        `Token downloading error ${address}`,
+        `Token downloading error ${address} ${_e}`,
       )
+
+      // In the chance that there is an error upon decoding the contract result,
+      // it could be likely that the contract data is represented as bytes32 instead
+      // of a string.
+      try {
+        const [decimals, symbol, name] = await Promise.all([
+          this.client.callValue(address, erc20Abi_bytes32, 'decimals'),
+          this.client.callValue(address, erc20Abi_bytes32, 'symbol'),
+          this.client.callValue(address, erc20Abi_bytes32, 'name'),
+        ])
+
+        const newToken = new Token({
+          chainId: this.client.client.chain?.id as ChainId,
+          address: address,
+          decimals: Number(decimals as bigint),
+          name: hexToString(trim(name as Hex, { dir: 'right' })),
+          symbol: hexToString(trim(symbol as Hex, { dir: 'right' })),
+        })
+        this.addToken(newToken)
+        return newToken
+      } catch (_e) {
+        warnLog(
+          this.client.client.chain?.id,
+          `Token bytes32 downloading error ${address} ${_e}`,
+        )
+      }
+
       return undefined
     }
   }

@@ -14,12 +14,13 @@ export const useAngleRewardTokens = ({
   return useQuery({
     queryKey: ['getAngleRewardTokens', { chainId }],
     queryFn: async () => {
-      const res = await (
-        await fetch(
-          `https://api.angle.money/v1/merkl?chainId=${chainId}&user=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`,
-        )
-      ).json()
-      const parsed = angleRewardTokensValidator.parse(res[chainId])
+      const url = new URL('https://api.merkl.xyz/v2/merkl')
+      url.searchParams.set('AMMs', 'sushiswapv3')
+      url.searchParams.set('chainIds', chainId.toString())
+
+      const res = await fetch(url)
+      const json = await res.json()
+      const parsed = angleRewardTokensValidator.parse(json[chainId])
 
       return parsed.validRewardTokens
         .map((el) => {

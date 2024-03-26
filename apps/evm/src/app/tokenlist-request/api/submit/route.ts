@@ -1,13 +1,13 @@
 import { createAppAuth } from '@octokit/auth-app'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
 import stringify from 'fast-json-stable-stringify'
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from 'octokit'
 import { ChainId, ChainKey } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 
+import { rateLimit } from 'src/lib/rate-limit'
 import { ApplyForTokenListTokenSchemaType } from '../../schema'
 
 const owner = 'sushiswap'
@@ -27,30 +27,10 @@ interface MutationParams extends ApplyForTokenListTokenSchemaType {
   tokenDecimals: number
 }
 
-// To allow for development without rate limiting
-let ratelimit: Ratelimit | undefined
-try {
-  if (!process.env.UPSTASH_REDIS_REST_URL)
-    throw new Error('UPSTASH_REDIS_REST_URL undefined')
-  if (!process.env.UPSTASH_REDIS_REST_TOKEN)
-    throw new Error('UPSTASH_REDIS_REST_TOKEN undefined')
-
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  })
-
-  ratelimit = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(5, '1 h'),
-  })
-} catch {
-  console.warn('Rate limit not enabled')
-}
-
 export const maxDuration = 15 // in seconds
 
 export async function POST(request: NextRequest) {
+  const ratelimit = rateLimit(Ratelimit.slidingWindow(5, '1 h'))
   if (ratelimit) {
     const { remaining } = await ratelimit.limit(request.ip || '127.0.0.1')
     if (!remaining) {
@@ -83,7 +63,9 @@ export async function POST(request: NextRequest) {
 
   // Get latest commit for the new branch
   const {
-    data: { commit: { sha: latestIconsSha } },
+    data: {
+      commit: { sha: latestIconsSha },
+    },
   } = await octoKit.request('GET /repos/{owner}/{repo}/branches/{branch}', {
     owner,
     repo: 'list',
@@ -94,7 +76,7 @@ export async function POST(request: NextRequest) {
   const displayName = tokenSymbol.toLowerCase().replace(/( )|(\.)/g, '_')
 
   // Find unused branch name
-  const branch = await (async function () {
+  const branch = await (async () => {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {

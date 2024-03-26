@@ -6,6 +6,7 @@ import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
 import { AvalancheCircle } from './AvalancheCircle'
 import { BaseCircle } from './BaseCircle'
 import { BinanceCircle } from './BinanceCircle'
+import { BlastCircle } from './BlastCircle'
 import { BobaAvaxCircle } from './BobaAvaxCircle'
 import { BobaBNBCircle } from './BobaBNBCircle'
 import { BobaCircle } from './BobaCircle'
@@ -33,12 +34,14 @@ import { PolygonZKCircle } from './PolygonZKCircle'
 import { ScrollCircle } from './ScrollCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
+import { ZetaChainCircle } from './ZetaChainCircle'
 
 export * from './AptosCircle'
 export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
 export * from './AvalancheCircle'
 export * from './BaseCircle'
+export * from './BlastCircle'
 export * from './BinanceCircle'
 export * from './BobaAvaxCircle'
 export * from './BobaBNBCircle'
@@ -67,6 +70,7 @@ export * from './PolygonZKCircle'
 export * from './ScrollCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
+export * from './ZetaChainCircle'
 
 export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.ETHEREUM]: EthereumCircle,
@@ -102,4 +106,6 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.BASE]: BaseCircle,
   [ChainId.SCROLL]: ScrollCircle,
   [ChainId.FILECOIN]: FilecoinCircle,
+  [ChainId.ZETACHAIN]: ZetaChainCircle,
+  [ChainId.BLAST]: BlastCircle,
 }

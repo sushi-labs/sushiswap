@@ -2,7 +2,12 @@
 
 pragma solidity 0.8.10;
 
+/** @notice Simple read stream */
 library InputStream {
+
+  /** @notice Creates stream from data
+   * @param data data
+   */
   function createStream(bytes memory data) internal pure returns (uint256 stream) {
     assembly {
       stream := mload(0x40)
@@ -13,6 +18,9 @@ library InputStream {
     }
   }
 
+  /** @notice Checks if stream is not empty
+   * @param stream stream
+   */
   function isNotEmpty(uint256 stream) internal pure returns (bool) {
     uint256 pos;
     uint256 finish;
@@ -23,6 +31,9 @@ library InputStream {
     return pos < finish;
   }
 
+  /** @notice Reads uint8 from the stream
+   * @param stream stream
+   */
   function readUint8(uint256 stream) internal pure returns (uint8 res) {
     assembly {
       let pos := mload(stream)
@@ -32,6 +43,9 @@ library InputStream {
     }
   }
 
+  /** @notice Reads uint16 from the stream
+   * @param stream stream
+   */
   function readUint16(uint256 stream) internal pure returns (uint16 res) {
     assembly {
       let pos := mload(stream)
@@ -41,6 +55,9 @@ library InputStream {
     }
   }
 
+  /** @notice Reads uint24 from the stream
+   * @param stream stream
+   */
   function readUint24(uint256 stream) internal pure returns (uint24 res) {
     assembly {
       let pos := mload(stream)
@@ -50,6 +67,9 @@ library InputStream {
     }
   }
 
+  /** @notice Reads uint32 from the stream
+   * @param stream stream
+   */
   function readUint32(uint256 stream) internal pure returns (uint32 res) {
     assembly {
       let pos := mload(stream)
@@ -59,6 +79,9 @@ library InputStream {
     }
   }
 
+  /** @notice Reads uint256 from the stream
+   * @param stream stream
+   */
   function readUint(uint256 stream) internal pure returns (uint256 res) {
     assembly {
       let pos := mload(stream)
@@ -68,6 +91,9 @@ library InputStream {
     }
   }
 
+  /** @notice Reads bytes32 from the stream
+   * @param stream stream
+   */
   function readBytes32(uint256 stream) internal pure returns (bytes32 res) {
     assembly {
       let pos := mload(stream)
@@ -77,6 +103,9 @@ library InputStream {
     }
   }
 
+  /** @notice Reads address from the stream
+   * @param stream stream
+   */
   function readAddress(uint256 stream) internal pure returns (address res) {
     assembly {
       let pos := mload(stream)
@@ -86,6 +115,9 @@ library InputStream {
     }
   }
 
+  /** @notice Reads bytes from the stream
+   * @param stream stream
+   */
   function readBytes(uint256 stream) internal pure returns (bytes memory res) {
     assembly {
       let pos := mload(stream)

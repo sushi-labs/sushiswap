@@ -11,11 +11,11 @@ import {
   DataTable,
 } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
 import {
   TX_AMOUNT_IN_V2_COLUMN,
@@ -192,7 +192,7 @@ function useTransactionsV2(
 
       return transactions.flatMap((transaction) => {
         const mints = (
-          transaction.mints as NonNullable<typeof transaction.mints[0]>[]
+          transaction.mints as NonNullable<(typeof transaction.mints)[0]>[]
         ).map((mint) => ({
           ...mint,
           sender: String(mint.sender),
@@ -202,7 +202,7 @@ function useTransactionsV2(
         }))
 
         const burns = (
-          transaction.burns as NonNullable<typeof transaction.burns[0]>[]
+          transaction.burns as NonNullable<(typeof transaction.burns)[0]>[]
         ).map((burn) => ({
           ...burn,
           sender: String(burn.sender),
@@ -212,7 +212,7 @@ function useTransactionsV2(
         }))
 
         const swaps = (
-          transaction.swaps as NonNullable<typeof transaction.swaps[0]>[]
+          transaction.swaps as NonNullable<(typeof transaction.swaps)[0]>[]
         ).map((swap) => ({
           ...swap,
           sender: String(swap.sender),

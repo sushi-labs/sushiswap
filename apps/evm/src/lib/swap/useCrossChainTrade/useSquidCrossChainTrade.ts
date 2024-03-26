@@ -7,8 +7,7 @@ import { Amount, Native, Token, Type, axlUSDC } from 'sushi/currency'
 import { Percent, ZERO_PERCENT } from 'sushi/math'
 import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 
-import { RouterLiquiditySource } from '@sushiswap/router'
-import { RToken } from '@sushiswap/tines'
+import { RouterLiquiditySource } from 'sushi'
 import { squidRouterAbi } from 'sushi/abi'
 import {
   SQUID_ADAPTER_ADDRESS,
@@ -16,6 +15,7 @@ import {
   SquidAdapterChainId,
   isSquidAdapterChainId,
 } from 'sushi/config'
+import { RToken } from 'sushi/tines'
 import { encodeFunctionData, stringify } from 'viem'
 import {
   TransactionType,
@@ -235,10 +235,10 @@ export const useSquidCrossChainTrade = ({
         !isSrcSwap && !isDstSwap
           ? TransactionType.Bridge
           : isSrcSwap && !isDstSwap
-          ? TransactionType.SwapAndBridge
-          : !isSrcSwap && isDstSwap
-          ? TransactionType.BridgeAndSwap
-          : TransactionType.CrossChainSwap
+            ? TransactionType.SwapAndBridge
+            : !isSrcSwap && isDstSwap
+              ? TransactionType.BridgeAndSwap
+              : TransactionType.CrossChainSwap
 
       if (isSrcSwap && srcTrade?.writeArgs) {
         const srcSwapData = encodeSwapData(

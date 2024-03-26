@@ -1,9 +1,9 @@
 'use client'
 
-import { computePoolAddress } from '@sushiswap/v3-sdk'
 import { useAccount, useConcentratedPositionInfo } from '@sushiswap/wagmi'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/hooks/contracts/useV3FactoryContract'
 import React, { FC, useMemo, useState } from 'react'
+import { computeSushiSwapV3PoolAddress } from 'sushi'
 import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
@@ -58,7 +58,7 @@ const _Add: FC = () => {
   const poolAddress = useMemo(
     () =>
       token0 && token1 && feeAmount && chainId
-        ? computePoolAddress({
+        ? computeSushiSwapV3PoolAddress({
             factoryAddress: getV3FactoryContractConfig(chainId).address,
             tokenA: token0.wrapped,
             tokenB: token1.wrapped,

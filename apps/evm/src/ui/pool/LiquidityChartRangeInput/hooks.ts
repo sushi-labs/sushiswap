@@ -1,18 +1,14 @@
-import { FeeAmount, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
 import { useMemo } from 'react'
-import {
-  TickProcessed,
-  useConcentratedActiveLiquidity,
-} from 'src/lib/hooks/useConcentratedActiveLiquidity'
+import { TickProcessed, useConcentratedActiveLiquidity } from 'src/lib/pool/v3'
+import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type } from 'sushi/currency'
-
 import { ChartEntry } from './types'
 
 interface UseDensityChartData {
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   enabled?: boolean
 }
 

@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import { Amount, Native, type Type } from 'sushi/currency'
 import { getAddress } from 'viem'
 
+import ms from 'ms'
 import { useTokens } from './tokens'
 
 export const NativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
@@ -18,7 +19,7 @@ interface UseBalances {
 }
 
 // const queryKey = ({ chainId, account }): { account: string; chainId: number } => [
-//   `https://balances.sushi.com/v0/${chainId}/${account}`,
+//   `/api/balance/v0/${chainId}/${account}`,
 // ]
 
 export const useBalancesQuery = (
@@ -26,14 +27,14 @@ export const useBalancesQuery = (
   select: UseBalancesQuerySelect,
 ) => {
   return useQuery({
-    queryKey: [`https://balances.sushi.com/v0/${chainId}/${account}`],
+    queryKey: [`/api/balance/v0/${chainId}/${account}`],
     queryFn: () => {
-      return fetch(`https://balances.sushi.com/v0/${chainId}/${account}`).then(
-        (response) => response.json(),
+      return fetch(`/api/balance/v0/${chainId}/${account}`).then((response) =>
+        response.json(),
       )
     },
-    staleTime: 900000, // 15 mins
-    cacheTime: 3600000, // 1hr
+    staleTime: ms('15m'), // 15 mins
+    cacheTime: ms('1h'), // 1hr
     enabled: Boolean(chainId && account && enabled),
     select,
   })

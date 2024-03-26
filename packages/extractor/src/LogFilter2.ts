@@ -7,9 +7,8 @@ import {
   WatchBlocksReturnType,
   encodeEventTopics,
 } from 'viem'
-
-import { repeatAsync } from './Utils'
-import { warnLog } from './WarnLog'
+import { repeatAsync } from './Utils.js'
+import { warnLog } from './WarnLog.js'
 
 export enum LogFilterType {
   Native = 0, // getFilterChanges - is not supported widely
@@ -94,6 +93,7 @@ export class LogFilter2 {
   blockProcessing = false
   filter: Filter | undefined
   logging: boolean
+  debug: boolean
 
   unWatchBlocks?: WatchBlocksReturnType
 
@@ -110,11 +110,13 @@ export class LogFilter2 {
     depth: number,
     logType: LogFilterType,
     logging?: boolean,
+    debug = false,
   ) {
     this.client = client
     this.depth = depth
     this.logType = logType
     this.logging = logging === true
+    this.debug = debug === true
   }
 
   addFilter(events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
@@ -127,9 +129,8 @@ export class LogFilter2 {
   start() {
     if (this.unWatchBlocks) return // have been started
     if (this.logType === LogFilterType.Native) {
-      this.client
-        .createEventFilter({ events: this.eventsAll })
-        .then((filtr) => {
+      this.client.createEventFilter({ events: this.eventsAll }).then(
+        (filtr) => {
           this.consoleLog(`LogFilter ${filtr.id} was created`)
           this.filter = filtr as unknown as Filter
           this.unWatchBlocks = this.client.watchBlockNumber({
@@ -158,7 +159,13 @@ export class LogFilter2 {
               this.blockProcessing = false
             },
           })
-        })
+        },
+        (e) => {
+          const message = e instanceof Error ? e.message : e
+          warnLog(this.client.chain?.id, `LogFilter creation error: ${message}`)
+          this.start()
+        },
+      )
     } else {
       this.unWatchBlocks = this.client.watchBlocks({
         onBlock: async (block) => {
@@ -230,8 +237,13 @@ export class LogFilter2 {
     if (!this.blockFrame.add(block.number, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
-    const backupPlan = () => {
-      warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+    const backupPlan = (context?: string) => {
+      warnLog(
+        this.client.chain?.id,
+        `getLog failed for block ${block.hash}`,
+        'warning',
+        context,
+      )
       this.restart()
     }
 
@@ -241,11 +253,16 @@ export class LogFilter2 {
           10, // For example dRPC for BSC often 'forgets' recently returned watchBlock blocks. But 'recalls' at second request
           1000,
           async () => {
-            const logs = await this.client.transport.request({
-              method: 'eth_getLogs',
-              params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
-            })
-            this.sortAndProcessLogs(block.hash, logs as Log[])
+            try {
+              const logs = await this.client.transport.request({
+                method: 'eth_getLogs',
+                params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
+              })
+              this.sortAndProcessLogs(block.hash, logs as Log[])
+            } catch (e) {
+              if (this.debug) console.debug(e)
+              throw e
+            }
           },
           backupPlan,
         )
@@ -287,10 +304,12 @@ export class LogFilter2 {
           this.client
             .getBlock({ blockHash: block.parentHash })
             .then((b) => this.addBlock(b, false)),
-        () =>
+        (e) =>
           warnLog(
             this.client.chain?.id,
-            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1',
+            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!',
+            'warning',
+            e,
           ),
       )
   }

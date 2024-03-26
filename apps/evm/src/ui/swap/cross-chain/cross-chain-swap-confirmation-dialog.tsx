@@ -92,7 +92,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
               'flex items-center gap-1',
             )}
           >
-            <Dots>to destination chain</Dots>
+            <Dots>to the destination chain</Dots>
             <ArrowTopRightOnSquareIcon width={16} height={16} />
           </a>
         </Button>{' '}

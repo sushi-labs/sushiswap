@@ -19,6 +19,7 @@ export const angleRewardsPoolsValidator = z.object({
       rewardToken: z.string(),
       symbolRewardToken: z.string(),
       unclaimed: z.number().optional(),
+      whitelist: z.array(z.string()),
     }),
   ),
   poolTotalLiquidity: z.number(),
@@ -59,43 +60,59 @@ export const angleRewardsPoolsValidator = z.object({
   userBalanceToken1: z.number().optional(),
 })
 
-export const angleRewardsBaseValidator = z.object({
-  feeRebate: z.number().optional(),
-  message: z.string().optional(),
-  pools: z.record(z.string(), angleRewardsPoolsValidator),
-  signed: z.boolean().optional(),
-  transactionData: z
-    .record(
-      z.string(),
-      z.object({
-        claim: z.string(),
-        leaf: z.string(),
-        token: z.string(),
-        proof: z.array(z.string()),
-      }),
-    )
-    .optional(),
-  validRewardTokens: z
-    .array(
-      z.object({
-        minimumAmountPerEpoch: z.number(),
-        token: z.string(),
-        decimals: z.number(),
-        symbol: z.string(),
-      }),
-    )
-    .optional(),
-})
-
-export const angleRewardsMultipleValidator = z.array(angleRewardsBaseValidator)
+export const angleRewardsValidator = z.record(
+  z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256),
+  z.object({
+    feeRebate: z.number().optional(),
+    message: z.string().optional(),
+    pools: z.record(z.string(), angleRewardsPoolsValidator),
+    signed: z.boolean().optional(),
+    transactionData: z
+      .record(
+        z.string(),
+        z.object({
+          claim: z.string(),
+          leaf: z.string(),
+          token: z.string(),
+          proof: z.array(z.string()),
+        }),
+      )
+      .optional(),
+    validRewardTokens: z
+      .array(
+        z
+          .object({
+            minimumAmountPerEpoch: z.number(),
+            token: z.string(),
+            decimals: z.number(),
+            symbol: z.string(),
+          })
+          .catch(undefined as never),
+      )
+      .transform((tokens) =>
+        tokens.filter((token) => typeof token !== 'undefined'),
+      )
+      .optional(),
+  }),
+)
 
 export const angleRewardTokensValidator = z.object({
-  validRewardTokens: z.array(
-    z.object({
-      minimumAmountPerEpoch: z.number(),
-      token: z.string(),
-      decimals: z.number(),
-      symbol: z.string(),
-    }),
-  ),
+  validRewardTokens: z
+    .array(
+      z
+        .object({
+          minimumAmountPerEpoch: z.number(),
+          token: z.string(),
+          decimals: z.number(),
+          symbol: z.string(),
+        })
+        .catch(undefined as never),
+    )
+    .transform((tokens) =>
+      tokens.filter((token) => typeof token !== 'undefined'),
+    ),
 })

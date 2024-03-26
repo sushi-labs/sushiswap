@@ -1,8 +1,14 @@
-import { Card, CardContent, Collapsible, StatValue } from '@sushiswap/ui'
-import { Stat, StatLabel } from '@sushiswap/ui'
-import { SushiSwapV2Pool } from '@sushiswap/v2-sdk'
+import {
+  Card,
+  CardContent,
+  Collapsible,
+  Stat,
+  StatLabel,
+  StatValue,
+} from '@sushiswap/ui'
 import { SushiSwapV2PoolState } from '@sushiswap/wagmi'
 import { FC, useMemo } from 'react'
+import { SushiSwapV2Pool } from 'sushi'
 import { Amount, Type } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 

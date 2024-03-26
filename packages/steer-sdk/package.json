@@ -28,6 +28,7 @@
     "./package.json": "./package.json"
   },
   "module": "./dist/index.js",
+  "source": "src/index.ts",
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
@@ -39,8 +40,9 @@
       ]
     }
   },
+  "typings": "dist/index.d.ts",
   "files": [
-    "./dist"
+    "dist/**"
   ],
   "scripts": {
     "build": "tsup src/index.ts src/abi/index.ts",
@@ -56,7 +58,6 @@
   },
   "dependencies": {
     "@steerprotocol/contracts": "2.1.0-beta.14",
-    "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "sushi": "workspace:*",
@@ -67,14 +68,14 @@
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
-    "@types/node": "18",
+    "@types/node": "20",
     "@wagmi/core": "1.4.13",
     "eslint": "8.43.0",
-    "next": "13.4.19",
+    "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsup": "7.1.0",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   },
   "peerDependencies": {
     "@wagmi/core": "1.4.13",
@@ -83,20 +84,14 @@
     "wagmi": "1.4.13"
   },
   "peerDependenciesMeta": {
-    "@wagmi/core": {
-      "optional": false
-    },
     "react": {
       "optional": true
     },
     "react-dom": {
       "optional": true
-    },
-    "wagmi": {
-      "optional": true
     }
   },
   "optionalDependencies": {
-    "next": "13.4.19"
+    "next": "14.1.0"
   }
 }

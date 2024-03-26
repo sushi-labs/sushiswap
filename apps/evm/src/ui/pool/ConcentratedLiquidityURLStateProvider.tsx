@@ -1,10 +1,5 @@
 'use client'
 
-import {
-  FeeAmount,
-  SushiSwapV3ChainId,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
 import { useNetwork } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -19,12 +14,13 @@ import React, {
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { ChainId } from 'sushi/chain'
 import {
-  Native,
-  Token,
-  Type,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
   currencyFromShortCurrencyName,
   isShortCurrencyName,
-} from 'sushi/currency'
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
+import { Native, Token, Type } from 'sushi/currency'
 import { isAddress } from 'viem'
 import { z } from 'zod'
 
@@ -41,8 +37,8 @@ export const queryParamsSchema = z.object({
   feeAmount: z.coerce
     .number()
     .int()
-    .default(FeeAmount.MEDIUM)
-    .transform((fee) => fee as FeeAmount),
+    .default(SushiSwapV3FeeAmount.MEDIUM)
+    .transform((fee) => fee as SushiSwapV3FeeAmount),
   tokenId: z.coerce
     .number()
     .int()
@@ -57,11 +53,11 @@ type State = {
   token0: Type | undefined
   token1: Type | undefined
   tokensLoading: boolean
-  feeAmount: FeeAmount
+  feeAmount: SushiSwapV3FeeAmount
   setNetwork(chainId: SushiSwapV3ChainId): void
   setToken0(currency: Type): void
   setToken1(currency: Type): void
-  setFeeAmount(feeAmount: FeeAmount): void
+  setFeeAmount(feeAmount: SushiSwapV3FeeAmount): void
   switchTokens(): void
 }
 
@@ -226,7 +222,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       }
       void push(`${pathname}?${_searchParams.toString()}`)
     }
-    const setFeeAmount = (feeAmount: FeeAmount) => {
+    const setFeeAmount = (feeAmount: SushiSwapV3FeeAmount) => {
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )

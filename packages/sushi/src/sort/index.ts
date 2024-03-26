@@ -1,1 +1,1 @@
-export * from './sortedInsert'
+export * from './sortedInsert.js'
