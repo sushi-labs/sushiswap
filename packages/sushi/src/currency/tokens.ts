@@ -37,6 +37,7 @@ import {
   NFTX_ADDRESS,
   OCEAN_ADDRESS,
   OHM_ADDRESS,
+  OPTICS_USDC_ADDRESS,
   OP_ADDRESS,
   PRIMATE_ADDRESS,
   QUICK_ADDRESS,
@@ -1013,6 +1014,15 @@ export const JUGNI = addressMapToTokenMap(
   },
   JUGNI_ADDRESS,
 ) as Record<keyof typeof JUGNI_ADDRESS, Token>
+
+export const OPTICS_USDC = addressMapToTokenMap(
+  {
+    decimals: 6,
+    symbol: 'USDC',
+    name: 'USD Coin (Optics)',
+  },
+  OPTICS_USDC_ADDRESS,
+) as Record<keyof typeof OPTICS_USDC_ADDRESS, Token>
 
 export const THUNDERCORE_ANY_USDT = new Token({
   chainId: ChainId.THUNDERCORE,
