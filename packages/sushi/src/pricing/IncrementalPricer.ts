@@ -6,7 +6,7 @@ import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 // for debugging
 const DEBUG_COMPARE_FULL_RECALC_WITH_TINES_PRICES = false
 const DEBUG_PARTIAL_UPDATE_AFTER_FULL_RECALC_CHECK = 0 // 0% pools for update - no check
-const DEBUG_COMPARE_PARTIAL_UPDATE_WITH_TINES_PRICES = true
+const DEBUG_COMPARE_PARTIAL_UPDATE_WITH_TINES_PRICES = false
 
 const FULL_RECALC_INTERVAL = 6 * 3600 * 1000
 const MIN_PRICABLE_LIQUIDITY = 0.8
@@ -98,22 +98,22 @@ export class IncrementalPricer {
           baseToken.token,
           this.minLiquidity * baseToken.decExp,
         )
-        // comparePrices(
-        //   'Prices partial upd',
-        //   this.prices,
-        //   this.pricesSize,
-        //   tinesPrices,
-        // )
-        const common = compareCommonPrices(
+        comparePrices(
           'Prices partial upd',
           this.prices,
+          this.pricesSize,
           tinesPrices,
         )
-        checkEqual(
-          Object.keys(tinesPrices).length,
-          common,
-          'Prices partial upd num',
-        )
+        // const common = compareCommonPrices(
+        //   'Prices partial upd',
+        //   this.prices,
+        //   tinesPrices,
+        // )
+        // checkEqual(
+        //   Object.keys(tinesPrices).length,
+        //   common,
+        //   'Prices partial upd num',
+        // )
       }
       return res
     }
@@ -174,11 +174,11 @@ export class IncrementalPricer {
         vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
         this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
         this._addVertice(nextEdges, vTo, p * (vFrom.price as number))
-        console.log(
-          `Pool create ${bestEdge.pool.address} token ${vTo.address} price=${
-            p * (vFrom.price as number) * vTo.decExp
-          } liquidity=${bestEdge.poolLiquidity}`,
-        )
+        // console.log(
+        //   `Pool create ${bestEdge.pool.address} token ${vTo.address} price=${
+        //     p * (vFrom.price as number) * vTo.decExp
+        //   } liquidity=${bestEdge.poolLiquidity}`,
+        // )
       }
 
       this._updateTotalSuccessor(baseToken)
@@ -405,13 +405,13 @@ export class IncrementalPricer {
       ? 1
       : MIN_PRICABLE_LIQUIDITY
     if (liquidity < this.minLiquidity * minLiquidityK) {
-      console.log(
-        `Pool ${pool.address} is not pricable (price: ${
-          tokenInfo.poolPrice
-        } => ${pool.calcCurrentPriceWithoutFee(
-          !tokenInfo.direction,
-        )}), r0=${pool.getReserve0()}, r1=${pool.getReserve1()} ${liquidity}`,
-      )
+      // console.log(
+      //   `Pool ${pool.address} is not pricable (price: ${
+      //     tokenInfo.poolPrice
+      //   } => ${pool.calcCurrentPriceWithoutFee(
+      //     !tokenInfo.direction,
+      //   )}), r0=${pool.getReserve0()}, r1=${pool.getReserve1()} ${liquidity}`,
+      // )
       return false
     }
     return true
@@ -458,11 +458,11 @@ export class IncrementalPricer {
     this.prices[tokenTo.address as Address] =
       (priceFrom / tokenFromInfo.decExp) * poolPrice * tokenToInfo.decExp
     ++this.pricesSize
-    console.log(
-      `Pool added ${
-        pool.address
-      } price=${poolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
-    )
+    // console.log(
+    //   `Pool added ${
+    //     pool.address
+    //   } price=${poolPrice} r0=${pool.getReserve0()} r1=${pool.getReserve1()}`,
+    // )
     return tokenToInfo
   }
 

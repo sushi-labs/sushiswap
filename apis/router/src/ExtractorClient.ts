@@ -183,7 +183,7 @@ export class ExtractorClient {
         console.log(
           `requested pairs update: ${pairs} pairs (${Math.round(
             performance.now() - start,
-          )}ms) cpu time`,
+          )}ms cpu time)`,
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
