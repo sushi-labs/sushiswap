@@ -10,6 +10,7 @@ import {
 import { Native, Token, Type } from 'sushi/currency'
 import { PoolCode, deserializePoolsBinary } from 'sushi/router'
 import { deserializePoolCodesJSON } from 'sushi/serializer'
+import { Address } from 'viem'
 
 const DEBUG_PRINT = false
 
@@ -364,5 +365,13 @@ export class ExtractorClient {
 
   getCurrentPoolCodes(): PoolCode[] {
     return Array.from(this.poolCodesMap.values()).flat()
+  }
+
+  getPrice(address: Address) {
+    return this.pricer.prices[address]
+  }
+
+  getPrices() {
+    return this.pricer.prices
   }
 }

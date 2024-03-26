@@ -22,6 +22,8 @@ import tokenHandler from './handlers/token/index.js'
 import { updatePrices } from './prices.js'
 import requestStatistics from './request-statistics.js'
 
+export let extractorClient: ExtractorClient | undefined
+
 async function start() {
   const app: Express = express()
 
@@ -31,6 +33,7 @@ async function start() {
     POOL_UPDATE_INTERVAL(CHAIN_ID as ChainId),
     REQUESTED_PAIRS_UPDATE_INTERVAL(CHAIN_ID as ChainId),
   )
+  extractorClient = client
   updatePrices(client)
   // client.on('firstPoolsUpdate', () =>{
   //   updatePrices(client)
