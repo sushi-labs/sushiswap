@@ -57,7 +57,8 @@
         "noNonNullAssertion": "off",
         "noParameterAssign": "off",
         "useShorthandArrayType": "error",
-        "noUselessElse": "off"
+        "noUselessElse": "off",
+        "noUnusedTemplateLiteral": "off"
       },
       "suspicious": {
         "noArrayIndexKey": "off",
