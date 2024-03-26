@@ -17,6 +17,7 @@ export type WarningMessageHandler = (
   chain: ChainId | number | undefined,
   message: string,
   level: WarningLevel,
+  context?: string,
 ) => void
 
 let warningMessageHandler: WarningMessageHandler | undefined
@@ -31,7 +32,24 @@ export function warnLog(
   chain: ChainId | number | undefined,
   msg: string,
   level: WarningLevel = 'warning',
+  context?: string,
 ) {
   console.warn(`${nowDate()}-${chain}: ${msg}`)
-  if (warningMessageHandler) warningMessageHandler(chain, msg, level)
+  if (warningMessageHandler) warningMessageHandler(chain, msg, level, context)
+}
+
+export class LogSender {
+  chain?: ChainId | number = undefined
+
+  constructor(chain: ChainId | number) {
+    this.chain = chain
+  }
+
+  warning(msg: string) {
+    warnLog(this.chain, msg)
+  }
+
+  error(msg: string) {
+    warnLog(this.chain, msg, 'error')
+  }
 }

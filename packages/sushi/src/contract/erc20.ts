@@ -1,4 +1,4 @@
-import { erc20Abi } from '../abi'
+import { erc20Abi } from '../abi/erc20Abi.js'
 
 export const erc20Contract = {
   abi: erc20Abi,

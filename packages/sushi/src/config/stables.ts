@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 import {
   BASE_BRIDGE_USDC,
   BTTC_BSC_BRIDGE_USDC,
@@ -9,12 +9,17 @@ import {
   BTTC_TRON_BRIDGE_USDT,
   BUSD,
   DAI,
+  FILECOIN_CELER_BRIDGE_USDC,
+  FILECOIN_CELER_BRIDGE_USDT,
   FRAX,
   LUSD,
   MIM,
+  MUSD,
   THUNDERCORE_ANY_BUSD,
   THUNDERCORE_ANY_USDC,
   THUNDERCORE_ANY_USDT,
+  Token,
+  USDB,
   USDC,
   USDT,
   USD_PLUS,
@@ -24,8 +29,8 @@ import {
   ZETA_ETH_BRIDGE_USDC,
   ZETA_ETH_BRIDGE_USDT,
   axlUSDC,
-} from '../currency'
-import { STARGATE_USDC, STARGATE_USDT } from './stargate'
+} from '../currency/index.js'
+import { STARGATE_USDC, STARGATE_USDT } from './stargate.js'
 
 export const STABLES = {
   [ChainId.ARBITRUM]: [
@@ -60,8 +65,8 @@ export const STABLES = {
   [ChainId.BSC]: [
     USDC[ChainId.BSC],
     USDT[ChainId.BSC],
-    DAI[ChainId.BSC],
     BUSD[ChainId.BSC],
+    DAI[ChainId.BSC],
     MIM[ChainId.BSC],
     FRAX[ChainId.BSC],
   ],
@@ -91,7 +96,12 @@ export const STABLES = {
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
   ],
-  [ChainId.FILECOIN]: [USDC[ChainId.FILECOIN], DAI[ChainId.FILECOIN]],
+  [ChainId.FILECOIN]: [
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+    FILECOIN_CELER_BRIDGE_USDC,
+    FILECOIN_CELER_BRIDGE_USDT,
+  ],
   [ChainId.FUSE]: [USDC[ChainId.FUSE], USDT[ChainId.FUSE], DAI[ChainId.FUSE]],
   [ChainId.GNOSIS]: [
     USDC[ChainId.GNOSIS],
@@ -117,6 +127,20 @@ export const STABLES = {
     WORMHOLE_USDC[ChainId.MOONBEAM],
     axlUSDC[ChainId.MOONBEAM],
     FRAX[ChainId.MOONBEAM],
+    new Token({
+      chainId: ChainId.MOONBEAM,
+      address: '0xFFfffffF7D2B0B761Af01Ca8e25242976ac0aD7D',
+      decimals: 6,
+      name: 'USD Coin',
+      symbol: 'xcUSDC',
+    }),
+    new Token({
+      chainId: ChainId.MOONBEAM,
+      address: '0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d',
+      decimals: 6,
+      name: 'Tether USD',
+      symbol: 'xcUSDT',
+    }),
   ],
   [ChainId.MOONRIVER]: [
     USDC[ChainId.MOONRIVER],
@@ -165,6 +189,8 @@ export const STABLES = {
     ZETA_ETH_BRIDGE_USDC,
     ZETA_ETH_BRIDGE_USDT,
   ],
+  [ChainId.CRONOS]: [USDC[ChainId.CRONOS]],
+  [ChainId.BLAST]: [USDB[ChainId.BLAST], MUSD],
   // TESTNETS
   [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   [ChainId.ROPSTEN]: [

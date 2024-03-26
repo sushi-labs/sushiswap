@@ -1,14 +1,13 @@
-{{- $chainIds := .Values.chainIds }}
-{{- range $index, $value := $chainIds }}
+{{- range .Values.chains }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: router-{{ $value }}
+  name: router-{{ .id }}
   labels:
-    app: router-{{ $value }}
+    app: router-{{ .id }}
 spec:
   selector:
-    app: router-{{ $value }}
+    app: router-{{ .id }}
   ports:
     - port: 80
       targetPort: 80

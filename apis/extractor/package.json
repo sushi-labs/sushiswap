@@ -16,6 +16,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
@@ -23,7 +24,8 @@
     "dev": "tsc -w",
     "load-testing": "artillery run test/load.yml",
     "simulate": "ts-node --skipProject ./test/requestSimulation.ts",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "start-debug": "node dist/index.js"
   },
   "dependencies": {
     "@sentry/node": "7.101.1",
@@ -44,6 +46,7 @@
     "@types/cors": "2.8.13",
     "@types/express": "4.17.17",
     "@types/node": "20",
+    "autocannon": "7.14.0",
     "ts-node": "10.9.2",
     "typescript": "5.2.2"
   }

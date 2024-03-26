@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PositionLibrary } from './position'
+import { PositionLibrary } from './position.js'
 
 describe('PositionLibrary', () => {
   describe('#getTokensOwed', () => {

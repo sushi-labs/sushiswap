@@ -5,7 +5,7 @@ import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import {
-  getV3NonFungiblePositionManagerConractConfig,
+  getV3NonFungiblePositionManagerContractConfig,
   useConcentratedPositionOwner,
 } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
@@ -258,7 +258,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
                 contract={
-                  getV3NonFungiblePositionManagerConractConfig(chainId).address
+                  getV3NonFungiblePositionManagerContractConfig(chainId).address
                 }
                 enabled={!depositADisabled}
               >
@@ -267,7 +267,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
                   contract={
-                    getV3NonFungiblePositionManagerConractConfig(chainId)
+                    getV3NonFungiblePositionManagerContractConfig(chainId)
                       .address
                   }
                   enabled={!depositBDisabled}

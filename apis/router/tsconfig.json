@@ -5,5 +5,11 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

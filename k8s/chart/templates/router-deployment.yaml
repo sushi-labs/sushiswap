@@ -1,20 +1,20 @@
-{{- $chainIds := .Values.chainIds }}
-{{- range $index, $value := $chainIds }}
-
+{{- range .Values.chains }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: router-{{ $value }}
+  name: router-{{ .id }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: router-{{ $value }}
+      app: router-{{ .id }}
   template:
     metadata:
       labels:
-        app: router-{{ $value }}
+        app: router-{{ .id }}
     spec:
+      # nodeSelector:
+      #   cloud.google.com/compute-class: Scale-Out
       containers:
         - name: router
           image: router
@@ -22,24 +22,27 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              memory: "500Mi"
-              cpu: "1000m"
+              cpu: 1000m
+              memory: 2Gi
           startupProbe:
             httpGet:
               path: /health
               port: 80
-            failureThreshold: 6
+            failureThreshold: 60
             periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
           livenessProbe:
             httpGet:
               path: /health
               port: 80
             failureThreshold: 3
             periodSeconds: 10
-            timeoutSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 10
           env:
             - name: CHAIN_ID
-              value: "{{ $value }}"
+              value: "{{ .id }}"
             - name: DRPC_ID
               valueFrom:
                 secretKeyRef:

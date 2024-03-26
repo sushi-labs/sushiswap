@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 const POOL_INIT_CODE_HASH =
   '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54'
@@ -38,6 +38,7 @@ export const UNISWAP_V3_SUPPORTED_CHAIN_IDS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.BASE,
+  ChainId.MOONBEAM,
 ] as const
 
 export const UniswapV3ChainIds = UNISWAP_V3_SUPPORTED_CHAIN_IDS
@@ -60,6 +61,7 @@ export const UNISWAP_V3_INIT_CODE_HASH: Record<
   [ChainId.BSC]: POOL_INIT_CODE_HASH,
   [ChainId.CELO]: POOL_INIT_CODE_HASH,
   [ChainId.BASE]: POOL_INIT_CODE_HASH,
+  [ChainId.MOONBEAM]: POOL_INIT_CODE_HASH,
 } as const
 
 export const UNISWAP_V3_FACTORY_ADDRESS: Record<
@@ -73,4 +75,5 @@ export const UNISWAP_V3_FACTORY_ADDRESS: Record<
   [ChainId.BSC]: '0xdB1d10011AD0Ff90774D0C6Bb92e5C5c8b4461F7',
   [ChainId.CELO]: '0xAfE208a311B21f13EF87E33A90049fC17A7acDEc',
   [ChainId.BASE]: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD',
+  [ChainId.MOONBEAM]: '0x28f1158795A3585CaAA3cD6469CD65382b89BB70',
 } as const

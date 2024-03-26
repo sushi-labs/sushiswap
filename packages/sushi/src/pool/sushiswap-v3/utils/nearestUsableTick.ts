@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
-
-import { TickMath } from './tickMath'
+import { TickMath } from './tickMath.js'
 
 /**
  * Returns the closest tick that is nearest a given tick and usable for the given tick spacing

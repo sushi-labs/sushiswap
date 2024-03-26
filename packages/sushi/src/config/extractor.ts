@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
@@ -13,6 +13,7 @@ export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
   ChainId.CORE,
   ChainId.ETHEREUM,
   ChainId.FANTOM,
+  ChainId.FILECOIN,
   ChainId.FUSE,
   ChainId.GNOSIS,
   ChainId.HAQQ,
@@ -28,7 +29,9 @@ export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
   ChainId.SCROLL,
   ChainId.TELOS,
   ChainId.THUNDERCORE,
-  // ChainId.ZETACHAIN,
+  ChainId.ZETACHAIN,
+  ChainId.CRONOS,
+  ChainId.BLAST,
   // ChainId.ZKSYNC_ERA,
 ] as const
 

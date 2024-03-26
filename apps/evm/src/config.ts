@@ -1,40 +1,14 @@
 import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
+  EXTRACTOR_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainIds,
   SushiSwapV3ChainIds,
   TridentChainIds,
 } from 'sushi/config'
 import { Currency } from 'sushi/currency'
 
-export const SWAP_API_ENABLED_NETWORKS = [
-  ChainId.ARBITRUM,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.AVALANCHE,
-  ChainId.BASE,
-  ChainId.BOBA,
-  ChainId.BOBA_BNB,
-  ChainId.BSC,
-  ChainId.BTTC,
-  ChainId.CELO,
-  ChainId.CORE,
-  ChainId.ETHEREUM,
-  ChainId.FANTOM,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
-  ChainId.HAQQ,
-  ChainId.HARMONY,
-  ChainId.KAVA,
-  ChainId.LINEA,
-  ChainId.METIS,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
-  ChainId.OPTIMISM,
-  ChainId.POLYGON,
-  ChainId.POLYGON_ZKEVM,
-  ChainId.SCROLL,
-  ChainId.TELOS,
-  ChainId.THUNDERCORE,
-]
+export const SWAP_API_ENABLED_NETWORKS = EXTRACTOR_SUPPORTED_CHAIN_IDS
+
 export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
 export const isSwapApiEnabledChainId = (
   chainId: number,
@@ -53,6 +27,8 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
+  ChainId.BLAST,
+  ChainId.ZETACHAIN,
   ChainId.OPTIMISM,
   ChainId.BSC,
   ChainId.THUNDERCORE,
@@ -63,10 +39,13 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.HARMONY,
 ] as const
 
+const SUSHI_CHAIN_IDS = Array.from(
+  new Set([...TridentChainIds, ...SushiSwapV2ChainIds, ...SushiSwapV3ChainIds]),
+)
+
 export const CHAIN_IDS = [
-  ...TridentChainIds,
-  ...SushiSwapV2ChainIds,
-  ...SushiSwapV3ChainIds,
+  ...SUSHI_CHAIN_IDS,
+  // ChainId.CRONOS,
 ] as const
 
 export const SUPPORTED_CHAIN_IDS = Array.from(

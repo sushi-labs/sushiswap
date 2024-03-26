@@ -7,7 +7,7 @@ import {
   closeValues,
   createCurvePoolsForMultipool,
   getBigInt,
-} from '../../src/tines'
+} from '../../src/tines/index.js'
 
 const token0 = {
   name: 'Token0',

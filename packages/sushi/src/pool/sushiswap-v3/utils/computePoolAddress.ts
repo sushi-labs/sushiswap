@@ -1,13 +1,12 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256 } from '@ethersproject/solidity'
-import { Token } from '../../../currency'
-
 import {
   SUSHISWAP_V3_INIT_CODE_HASH,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-} from '../../../config'
+} from '../../../config/index.js'
+import { Token } from '../../../currency/index.js'
 
 /**
  * Computes a pool address

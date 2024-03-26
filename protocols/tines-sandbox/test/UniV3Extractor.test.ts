@@ -3,13 +3,16 @@ import {
   FactoryV3,
   LogFilter2,
   LogFilterType,
-  PoolInfo,
   UniV3Extractor,
 } from '@sushiswap/extractor'
-import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
+import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json' assert {
+  type: 'json',
+}
+import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json' assert {
+  type: 'json',
+}
 import { expect } from 'chai'
-import { network } from 'hardhat'
+import hre from 'hardhat'
 import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
 import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
@@ -43,10 +46,11 @@ import {
   optimism,
   polygon,
 } from 'viem/chains'
+import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes.js'
+import { setTokenBalance } from '../src/index.js'
+import { UniswapV3FactoryAddress } from './Extractor.test.js'
 
-import { setTokenBalance } from '../src'
-import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
-import { UniswapV3FactoryAddress } from './Extractor.test'
+const { network } = hre
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -86,29 +90,31 @@ const kyberswapFactory: FactoryV3 = {
     '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
 }
 
-const pools: PoolInfo[] = [
+const pools = [
   {
-    address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168',
+    address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168' as Address,
     token0: DAI[ChainId.ETHEREUM],
     token1: USDC[ChainId.ETHEREUM],
     fee: 100,
     factory: uniswapFactory(ChainId.ETHEREUM),
   },
   {
-    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640' as Address,
     token0: USDC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 500,
     factory: uniswapFactory(ChainId.ETHEREUM),
   },
   {
-    address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD',
+    address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD' as Address,
     token0: WBTC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 3000,
     factory: uniswapFactory(ChainId.ETHEREUM),
   },
 ]
+
+type PoolInfo = (typeof pools)[number]
 
 const poolSet = new Set(pools.map((p) => p.address.toLowerCase()))
 

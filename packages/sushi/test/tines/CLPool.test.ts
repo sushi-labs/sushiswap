@@ -7,7 +7,7 @@ import {
   CL_MAX_TICK,
   CL_MIN_TICK,
   getBigInt,
-} from '../../src/tines'
+} from '../../src/tines/index.js'
 
 const testSeed = '2' // Change it to change random generator values
 const rnd: () => number = seedrandom(testSeed) // random [0, 1)

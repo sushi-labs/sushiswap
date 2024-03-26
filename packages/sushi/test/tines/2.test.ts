@@ -3,7 +3,7 @@ import {
   ConstantProductRPool,
   RouteStatus,
   findMultiRouteExactIn,
-} from '../../src/tines'
+} from '../../src/tines/index.js'
 
 // Tests that Tines doesn't fail if input token == output token
 it('token0 = token1', () => {

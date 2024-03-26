@@ -60,7 +60,7 @@ function useQuoteTokenPriceUSD(bond: Bond, enabled = true) {
       ? [
           getVaultsReservesContracts({
             vaultIds: [bond.quoteToken.vault.id],
-          })?.[0],
+          })[0],
           getTotalSuppliesContracts({
             vaultIds: [bond.quoteToken.vault.id],
           })[0],

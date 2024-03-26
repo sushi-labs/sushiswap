@@ -1,4 +1,4 @@
-import { subIn256 } from './tickLibrary'
+import { subIn256 } from './tickLibrary.js'
 
 const Q128 = 2n ** 128n
 

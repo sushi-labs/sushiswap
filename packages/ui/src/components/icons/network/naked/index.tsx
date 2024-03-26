@@ -6,6 +6,7 @@ import { ArbitrumNovaNaked } from './ArbitrumNovaNaked'
 import { AvalancheNaked } from './AvalancheNaked'
 import { BaseNaked } from './BaseNaked'
 import { BinanceNaked } from './BinanceNaked'
+import { BlastNaked } from './BlastNaked'
 import { BobaAvaxNaked } from './BobaAvaxNaked'
 import { BobaBNBNaked } from './BobaBNBNaked'
 import { BobaNaked } from './BobaNaked'
@@ -40,6 +41,7 @@ export * from './ArbitrumNovaNaked'
 export * from './AvalancheNaked'
 export * from './BaseNaked'
 export * from './BinanceNaked'
+export * from './BlastNaked'
 export * from './BobaAvaxNaked'
 export * from './BobaBNBNaked'
 export * from './BobaNaked'
@@ -103,4 +105,5 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.SCROLL]: ScrollNaked,
   [ChainId.FILECOIN]: FilecoinNaked,
   [ChainId.ZETACHAIN]: ZetaChainNaked,
+  [ChainId.BLAST]: BlastNaked,
 }

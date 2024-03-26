@@ -1,9 +1,11 @@
 import { Interface } from '@ethersproject/abi'
-import IPeripheryPaymentsWithFee from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json'
-import { toHex } from '../../../convert'
-import { Token } from '../../../currency'
-import { Percent } from '../../../math'
-import { validateAndParseAddress } from '../utils'
+import IPeripheryPaymentsWithFee from '@uniswap/v3-periphery/artifacts/contracts/interfaces/IPeripheryPaymentsWithFee.sol/IPeripheryPaymentsWithFee.json' assert {
+  type: 'json',
+}
+import { toHex } from '../../../convert/index.js'
+import { Token } from '../../../currency/index.js'
+import { Percent } from '../../../math/index.js'
+import { validateAndParseAddress } from '../utils/index.js'
 
 export interface FeeOptions {
   /**

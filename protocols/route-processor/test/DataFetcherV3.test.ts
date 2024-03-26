@@ -7,7 +7,7 @@ import {
   possibleFee,
 } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
-import { ethers, network } from 'hardhat'
+import hre from 'hardhat'
 import { ChainId } from 'sushi/chain'
 import {
   DataFetcher,
@@ -15,14 +15,12 @@ import {
   NUMBER_OF_SURROUNDING_TICKS,
   UniV3PoolCode,
 } from 'sushi/router'
-import { CL_MAX_TICK } from 'sushi/tines'
-import { CL_MIN_TICK } from 'sushi/tines'
-import { UniV3Pool } from 'sushi/tines'
-import { createPublicClient } from 'viem'
-import { custom } from 'viem'
+import { loadPoolSnapshot } from 'sushi/serializer'
+import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from 'sushi/tines'
+import { createPublicClient, custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import { loadPoolSnapshot } from './utils/poolSerializer'
+const { ethers, network } = hre
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 async function getDataFetcherData(

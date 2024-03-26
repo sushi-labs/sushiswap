@@ -1,7 +1,6 @@
 import { Log } from 'viem'
-
-import { UniV3PoolWatcher } from './UniV3PoolWatcher'
-import { warnLog } from './WarnLog'
+import { UniV3PoolWatcher } from './UniV3PoolWatcher.js'
+import { warnLog } from './WarnLog.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 

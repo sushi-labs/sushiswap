@@ -6,18 +6,17 @@
     "__tests__"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "__tests__"
   ],
   "compilerOptions": {
     "outDir": ".",
     "baseUrl": ".",
     "rootDir": ".",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "target": "ESNext",
-    "lib": [
-      "ESNext"
-    ],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,

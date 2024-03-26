@@ -115,6 +115,23 @@ export default [
     shortName: 'oeth',
   },
   {
+    chainId: 25,
+    explorers: [
+      {
+        name: 'Cronos Explorer',
+        url: 'https://explorer.cronos.org',
+        standard: 'none',
+      },
+    ],
+    nativeCurrency: {
+      name: 'Cronos',
+      symbol: 'CRO',
+      decimals: 18,
+    },
+    name: 'Cronos Mainnet',
+    shortName: 'cro',
+  },
+  {
     chainId: 40,
     explorers: [
       {
@@ -905,6 +922,21 @@ export default [
     },
     name: 'Mumbai',
     shortName: 'maticmum',
+  },
+  {
+    chainId: 81457,
+    explorers: [],
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    name: 'Blast',
+    shortName: 'blastmainnet',
+    parent: {
+      type: 'L2',
+      chain: 'eip155-1',
+    },
   },
   {
     chainId: 534352,

@@ -1,4 +1,4 @@
-import { ChainId } from '../chain'
+import { ChainId } from '../chain/index.js'
 
 export const nativeCurrencyIds = {
   [ChainId.ETHEREUM]: 'ETH',
@@ -51,4 +51,6 @@ export const nativeCurrencyIds = {
   // [ChainId.SEPOLIA]: 'ETH',
   [ChainId.FILECOIN]: 'FIL',
   [ChainId.ZETACHAIN]: 'ZETA',
+  [ChainId.CRONOS]: 'CRO',
+  [ChainId.BLAST]: 'ETH',
 } as const

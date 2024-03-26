@@ -1,5 +1,9 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import serializer from 'serialijse'
-import { Native } from '../currency'
+import { ChainId } from 'sushi/chain'
+import { Native } from '../currency/index.js'
 import {
   BentoBridgePoolCode,
   BentoPoolCode,
@@ -8,7 +12,7 @@ import {
   NativeWrapBridgePoolCode,
   PoolCode,
   UniV3PoolCode,
-} from '../router'
+} from '../router/index.js'
 import {
   BridgeBento,
   BridgeUnlimited,
@@ -20,11 +24,7 @@ import {
   RebaseInternal,
   StableSwapRPool,
   UniV3Pool,
-} from '../tines'
-
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import path from 'path'
-import { ChainId } from 'sushi/chain'
+} from '../tines/index.js'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)
@@ -149,6 +149,9 @@ export function deserializePoolCodesJSON(data: string): PoolCode[] {
   restoreAfterSerialization(poolCodes)
   return poolCodes
 }
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // default dir for pools snapshots
 const snapshotDirDefault = path.resolve(__dirname, '../pool-snapshots/')

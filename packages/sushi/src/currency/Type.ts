@@ -1,4 +1,4 @@
-import { Native } from './Native'
-import { Token } from './Token'
+import { Native } from './Native.js'
+import { Token } from './Token.js'
 
 export type Type = Native | Token

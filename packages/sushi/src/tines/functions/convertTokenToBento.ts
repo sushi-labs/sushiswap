@@ -1,6 +1,6 @@
-import { Token } from '../../currency'
-import { RToken } from '../RPool'
-import { getBentoChainId } from './getBentoChainId'
+import { Token } from '../../currency/index.js'
+import { RToken } from '../RPool.js'
+import { getBentoChainId } from './getBentoChainId.js'
 
 export function convertTokenToBento(token: Token): RToken {
   const t: RToken = { ...token } as RToken

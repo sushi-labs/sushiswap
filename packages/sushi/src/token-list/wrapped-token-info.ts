@@ -1,7 +1,7 @@
 import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { Address, getAddress, isAddress } from 'viem'
-import type { ChainId } from '../chain'
-import { Token, Type } from '../currency'
+import type { ChainId } from '../chain/index.js'
+import { Token, Type } from '../currency/index.js'
 
 type TagDetails = Tags[keyof Tags]
 

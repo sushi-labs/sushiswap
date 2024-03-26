@@ -1,6 +1,6 @@
-import { SushiSwapV3FeeAmount } from '../../../config'
-import { FullMath } from './fullMath'
-import { SqrtPriceMath } from './sqrtPriceMath'
+import { SushiSwapV3FeeAmount } from '../../../config/index.js'
+import { FullMath } from './fullMath.js'
+import { SqrtPriceMath } from './sqrtPriceMath.js'
 
 const MAX_FEE = 10n ** 6n
 

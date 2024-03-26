@@ -15,6 +15,7 @@ import {
   MATIC,
   MIM,
   SUSHI,
+  USDB,
   USDC,
   USDT,
   WBTC,
@@ -337,6 +338,14 @@ export const DEFAULT_BASES = {
     ZETA_ETH_BRIDGE_USDT,
     WETH9[ChainId.ZETACHAIN],
   ],
+  [ChainId.CRONOS]: [
+    Native.onChain(ChainId.CRONOS),
+    WNATIVE[ChainId.CRONOS],
+    WETH9[ChainId.CRONOS],
+    WBTC[ChainId.CRONOS],
+    USDC[ChainId.CRONOS],
+  ],
+  [ChainId.BLAST]: [Native.onChain(ChainId.BLAST), USDB[ChainId.BLAST]],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const
 

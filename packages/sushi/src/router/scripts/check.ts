@@ -1,11 +1,11 @@
 import https from 'https'
-import { ChainId } from '../../chain'
-import { USDC, USDT } from '../../currency'
-import { Token, Type } from '../../currency'
-import { MultiRoute } from '../../tines'
-import { DataFetcher } from '../data-fetcher'
-import { LiquidityProviders } from '../liquidity-providers'
-import { Router } from '../router'
+import { ChainId } from '../../chain/index.js'
+import { USDC, USDT } from '../../currency/index.js'
+import { Token, Type } from '../../currency/index.js'
+import { MultiRoute } from '../../tines/index.js'
+import { DataFetcher } from '../data-fetcher.js'
+import { LiquidityProviders } from '../liquidity-providers/index.js'
+import { Router } from '../router.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 

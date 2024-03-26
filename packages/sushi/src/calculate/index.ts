@@ -1,2 +1,2 @@
-export { gasMargin } from './gasMargin'
-export { slippageAmount } from './slippageAmount'
+export { gasMargin } from './gasMargin.js'
+export { slippageAmount } from './slippageAmount.js'
