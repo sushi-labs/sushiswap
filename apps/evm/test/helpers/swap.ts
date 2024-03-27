@@ -171,7 +171,9 @@ export class SwapPage extends BaseActions {
     await expect(swapFromBalance).toBeVisible()
     await expect(swapFromBalance).toBeEnabled()
     const swapFromBalanceBefore = await swapFromBalance.textContent()
-    const swapToBalance = this.page.locator('[testdata-id=swap-to-balance-button]')
+    const swapToBalance = this.page.locator(
+      '[testdata-id=swap-to-balance-button]',
+    )
     await expect(swapToBalance).toBeVisible()
     const swapToBalanceBefore = await swapToBalance.textContent()
 
