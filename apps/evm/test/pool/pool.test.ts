@@ -33,7 +33,6 @@ test.beforeAll(async () => {
 })
 
 test.beforeEach(async ({ page, next }) => {
-
   try {
     FAKE_TOKEN = await createERC20({
       chainId: CHAIN_ID,
