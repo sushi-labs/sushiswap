@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test'
+import { NextFixture } from 'next/experimental/testmode/playwright'
 import { Native, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 import { BaseActions } from './base' // Adjust the import path as necessary
@@ -157,29 +158,29 @@ export class SwapPage extends BaseActions {
     expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
   }
 
-  async maxSwap(page: Page, inputCurrency: Type, outputCurrency: Type) {
+  async maxSwap(inputCurrency: Type, outputCurrency: Type) {
     await this.handleToken(inputCurrency, 'INPUT')
     await this.handleToken(outputCurrency, 'OUTPUT')
 
-    await this.maxInput(page)
+    await this.maxInput(this.page)
 
     // Cache balances before swap
-    const swapFromBalance = page.locator(
+    const swapFromBalance = this.page.locator(
       '[testdata-id=swap-from-balance-button]',
     )
     await expect(swapFromBalance).toBeVisible()
     await expect(swapFromBalance).toBeEnabled()
     const swapFromBalanceBefore = await swapFromBalance.textContent()
-    const swapToBalance = page.locator('[testdata-id=swap-to-balance-button]')
+    const swapToBalance = this.page.locator('[testdata-id=swap-to-balance-button]')
     await expect(swapToBalance).toBeVisible()
     const swapToBalanceBefore = await swapToBalance.textContent()
 
     await this.approve(inputCurrency)
 
-    const swapButton = page.locator('[testdata-id=swap-button]')
+    const swapButton = this.page.locator('[testdata-id=swap-button]')
     await expect(swapButton).toBeVisible()
 
-    const priceImpactCheckbox = page.locator(
+    const priceImpactCheckbox = this.page.locator(
       '[testdata-id=price-impact-checkbox]',
     )
     while (!(await swapButton.isEnabled())) {
@@ -194,7 +195,7 @@ export class SwapPage extends BaseActions {
     await expect(swapButton).toBeEnabled()
     await swapButton.click()
 
-    const confirmSwap = page.locator('[testdata-id=confirm-swap-button]')
+    const confirmSwap = this.page.locator('[testdata-id=confirm-swap-button]')
     // const confirmSwap = page.getByRole('button', { name: `Swap ${inputCurrency.symbol} for ${outputCurrency.symbol}` })
     await expect(confirmSwap).toBeVisible()
     await expect(confirmSwap).toBeEnabled()
@@ -203,15 +204,15 @@ export class SwapPage extends BaseActions {
     const expectedSwappingText = new RegExp(
       `(Swapping .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`,
     )
-    expect(page.getByText(expectedSwappingText)).toBeVisible()
+    expect(this.page.getByText(expectedSwappingText)).toBeVisible()
 
     const expectedSwapText = new RegExp(
       `(Swap .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`,
     )
-    expect(page.getByText(expectedSwapText)).toBeVisible()
+    expect(this.page.getByText(expectedSwapText)).toBeVisible()
 
     // Make another swap
-    const makeAnotherSwap = page.locator(
+    const makeAnotherSwap = this.page.locator(
       '[testdata-id=make-another-swap-button]',
     )
     await expect(makeAnotherSwap).toBeVisible()
@@ -303,10 +304,12 @@ export class SwapPage extends BaseActions {
     )
   }
 
-  async mockWeb3Requests() {
-    await this.page.route('htttps://lb.drpc.org/*', async (route) => {
-      console.log('rerouted drpc to anvil ..')
-      route.continue({ url: 'http://127.0.0.1:8545' })
+  async mockWeb3Requests(next: NextFixture) {
+    next.onFetch((request) => {
+      if (request.url.includes('lb.drpc.org')) {
+        return fetch('http://127.0.0.1:8545/0', request)
+      }
+      return 'continue'
     })
   }
 }
