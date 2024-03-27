@@ -122,7 +122,10 @@ export const EXTRACTOR_CONFIG: Record<
           '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
       },
     ],
-    factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.AVALANCHE),
+      uniswapV3Factory(ChainId.AVALANCHE),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.AVALANCHE],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -544,7 +547,15 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.KAVA]: {
     client: createPublicClient(publicClientConfig[ChainId.KAVA]),
     factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.KAVA)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.KAVA),
+      {
+        address: '0x2dBB6254231C5569B6A4313c6C1F5Fe1340b35C2' as Address,
+        provider: LiquidityProviders.KinetixV3,
+        initCodeHash:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
