@@ -6,6 +6,7 @@ import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ExtractorClient } from './ExtractorClient.js'
+import swapRequestStatistics from './SwapRequestStatistics.js'
 import {
   CHAIN_ID,
   EXTRACTOR_SERVER,
@@ -21,7 +22,6 @@ import { priceByAddressHandler, pricesHandler } from './handlers/price/index.js'
 import { swapV3_2, swapV4 } from './handlers/swap/index.js'
 import tokenHandler from './handlers/token/index.js'
 import { updatePrices } from './prices.js'
-import requestStatistics from './request-statistics.js'
 
 export let extractorClient: ExtractorClient | undefined
 
@@ -61,7 +61,7 @@ async function start() {
     tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
 
-  requestStatistics.start()
+  swapRequestStatistics.start()
 
   // RequestHandler creates a separate execution context, so that all
   // transactions/spans/breadcrumbs are isolated across requests

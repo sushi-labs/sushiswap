@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
+import { RequestStatistics } from '../../RequestStatistics.js'
 import { CHAIN_ID, ROUTER_CONFIG } from '../../config.js'
 import { extractorClient } from '../../index.js'
 import { priceUpdateInterval, prices } from '../../prices.js'
-import { PricesRequestStatistics } from './PricesRequestStatistics.js'
 import { Currency, allPricesSchema, singleAddressSchema } from './schema.js'
 
-const priceStatistics = new PricesRequestStatistics(60_000) // update log once per min
+const priceStatistics = new RequestStatistics('Prices', 60_000) // update log once per min
 priceStatistics.start()
 
 export const pricesHandler = (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ export const pricesHandler = (req: Request, res: Response) => {
       currency === Currency.USD ? extractorClient?.getPrices() ?? {} : {},
     )
   else res.json(prices[currency])
-  priceStatistics.addAllPricesRequest()
+  priceStatistics.addAllRequest()
 }
 
 export const priceByAddressHandler = (req: Request, res: Response) => {
@@ -30,10 +30,10 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
       const price = extractorClient?.getPrice(address)
       if (price !== undefined) {
         res.json(price)
-        priceStatistics.addKnownPriceRequest()
+        priceStatistics.addKnownRequest()
       } else {
         res.json()
-        priceStatistics.addUnKnownPriceRequest()
+        priceStatistics.addUnKnownRequest()
       }
     } else res.json()
   } else {
@@ -42,10 +42,10 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
       prices[currency][address] === undefined
     ) {
       res.json()
-      priceStatistics.addUnKnownPriceRequest()
+      priceStatistics.addUnKnownRequest()
       return
     }
     res.json(prices[currency][address])
-    priceStatistics.addKnownPriceRequest()
+    priceStatistics.addKnownRequest()
   }
 }
