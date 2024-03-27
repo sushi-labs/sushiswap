@@ -18,8 +18,6 @@ export const useLayerZeroScanLink = ({
   txHash: string | undefined
   enabled?: boolean
 }) => {
-  console.log(tradeId, txHash)
-
   return useQuery({
     queryKey: ['lzLink', { txHash, network0, network1, tradeId }],
     queryFn: async () => {
@@ -31,6 +29,7 @@ export const useLayerZeroScanLink = ({
         const result = await client.getMessagesBySrcTxHash(txHash)
         if (result.messages.length > 0) {
           const { status, dstTxHash } = result.messages[0]
+
           return {
             link: `https://layerzeroscan.com/tx/${txHash}`,
             status,

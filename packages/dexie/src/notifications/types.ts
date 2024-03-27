@@ -1,3 +1,5 @@
+import type { ChainId } from 'sushi/chain'
+
 interface BaseNotification {
   account: string | `0x${string}` | undefined
   type:
@@ -21,7 +23,7 @@ interface BaseNotification {
     | 'createMultipleStream'
     | 'createVesting'
     | 'createMultipleVesting'
-  chainId: number
+  chainId: ChainId
   groupTimestamp: number
   timestamp: number
   href?: string
