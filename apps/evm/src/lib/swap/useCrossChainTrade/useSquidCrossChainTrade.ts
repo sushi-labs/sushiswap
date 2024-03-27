@@ -1,13 +1,8 @@
 import { UseTradeReturn, useTrade as useApiTrade } from '@sushiswap/react-query'
-import { useAccount, useFeeData } from '@sushiswap/wagmi'
+import { useAccount, useGasPrice } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
-import { Amount, Native, Token, Type, axlUSDC } from 'sushi/currency'
-import { Percent, ZERO_PERCENT } from 'sushi/math'
-import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
-
-import { RouterLiquiditySource } from 'sushi'
 import { squidRouterAbi } from 'sushi/abi'
 import {
   SQUID_ADAPTER_ADDRESS,
@@ -15,6 +10,9 @@ import {
   SquidAdapterChainId,
   isSquidAdapterChainId,
 } from 'sushi/config'
+import { Amount, Native, Token, Type, axlUSDC } from 'sushi/currency'
+import { Percent, ZERO_PERCENT } from 'sushi/math'
+import { RouterLiquiditySource } from 'sushi/router'
 import { RToken } from 'sushi/tines'
 import { encodeFunctionData, stringify } from 'viem'
 import {
@@ -26,6 +24,7 @@ import {
   getSquidRouteRequest,
   isSquidRouteProcessorEnabled,
 } from './SushiXSwap2'
+import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 import { useSquidRoute } from './useSquidRoute'
 
 export const useSquidCrossChainTrade = ({
@@ -42,8 +41,15 @@ export const useSquidCrossChainTrade = ({
   network0: SquidAdapterChainId
   network1: SquidAdapterChainId
 }) => {
-  const { data: feeData0 } = useFeeData({ chainId: network0, enabled })
-  const { data: feeData1 } = useFeeData({ chainId: network1, enabled })
+  const { data: gasPrice0 } = useGasPrice({
+    chainId: network0,
+    query: { enabled },
+  })
+  const { data: gasPrice1 } = useGasPrice({
+    chainId: network1,
+    query: { enabled },
+  })
+
   const { address } = useAccount()
 
   const { bridgePath, isSrcSwap, isDstSwap } = useMemo(() => {
@@ -80,7 +86,7 @@ export const useSquidCrossChainTrade = ({
     toToken: bridgePath?.srcBridgeToken,
     amount,
     slippagePercentage,
-    gasPrice: feeData0?.gasPrice,
+    gasPrice: gasPrice0,
     recipient: SQUID_ROUTER_ADDRESS[network0],
     enabled:
       enabled &&
@@ -100,7 +106,7 @@ export const useSquidCrossChainTrade = ({
     fromToken: bridgePath?.dstBridgeToken,
     toToken: token1,
     slippagePercentage,
-    gasPrice: feeData1?.gasPrice,
+    gasPrice: gasPrice1,
     recipient,
     enabled:
       enabled &&
@@ -188,8 +194,8 @@ export const useSquidCrossChainTrade = ({
           token1 &&
           amount &&
           bridgePath &&
-          feeData0?.gasPrice &&
-          feeData1?.gasPrice
+          gasPrice0 &&
+          gasPrice1
         )
       ) {
         throw new Error('useCrossChainTrade should not be enabled')
@@ -316,7 +322,7 @@ export const useSquidCrossChainTrade = ({
 
       const srcGasFee = Amount.fromRawAmount(
         Native.onChain(network0),
-        srcGasEstimate * feeData0.gasPrice,
+        srcGasEstimate * gasPrice0,
       )
 
       const gasSpent = srcGasFee.add(bridgeFee)
