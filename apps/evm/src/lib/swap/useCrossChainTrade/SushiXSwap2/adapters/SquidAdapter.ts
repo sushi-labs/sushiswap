@@ -6,25 +6,18 @@ import {
   SquidCallType,
 } from '@0xsquid/squid-types'
 import { UseTradeReturn } from '@sushiswap/react-query'
-import { erc20Abi, routeProcessor3_1Abi, squidRouterAbi } from 'sushi/abi'
+import { erc20Abi, routeProcessor4Abi, squidRouterAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
+  ROUTE_PROCESSOR_4_ADDRESS,
   SQUID_CHAIN_NAME,
   SQUID_ROUTER_ADDRESS,
   SquidAdapterChainId,
   SquidMulticallCall,
-  isRouteProcessor3ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessorChainId,
 } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import {
-  GetFunctionArgs,
+  WriteContractParameters,
   decodeFunctionData,
   encodeAbiParameters,
   encodeFunctionData,
@@ -37,18 +30,18 @@ export const isSquidRouteProcessorEnabled: Record<
   boolean
 > = {
   [ChainId.ETHEREUM]: true,
-  [ChainId.BSC]: false,
+  [ChainId.BSC]: true,
   [ChainId.AVALANCHE]: false,
   [ChainId.POLYGON]: true,
   [ChainId.ARBITRUM]: true,
   [ChainId.OPTIMISM]: true,
   [ChainId.BASE]: true,
   [ChainId.FANTOM]: true,
-  [ChainId.LINEA]: true,
+  [ChainId.LINEA]: false,
   [ChainId.KAVA]: false,
   [ChainId.MOONBEAM]: false,
   [ChainId.CELO]: false,
-  [ChainId.SCROLL]: false,
+  [ChainId.SCROLL]: true,
 }
 
 /*
@@ -217,13 +210,13 @@ export const getSquidRouteRequest = ({
     fromToken: useSrcTrade
       ? srcBridgeToken.address
       : token0.isNative
-      ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-      : token0.address,
+        ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+        : token0.address,
     toToken: useDstTrade
       ? dstBridgeToken.address
       : token1.isNative
-      ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-      : token1.address,
+        ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+        : token1.address,
     fromAmount: useSrcTrade
       ? (
           (srcTrade as UseTradeReturn).minAmountOut as Amount<Currency>
@@ -239,15 +232,8 @@ export const getSquidRouteRequest = ({
 
   // RouteProcessor dstHook
   if (useDstTrade && dstTrade?.writeArgs) {
-    const rpAddress = isRouteProcessor3_2ChainId(token1.chainId)
-      ? ROUTE_PROCESSOR_3_2_ADDRESS[token1.chainId]
-      : isRouteProcessor3_1ChainId(token1.chainId)
-      ? ROUTE_PROCESSOR_3_1_ADDRESS[token1.chainId]
-      : isRouteProcessor3ChainId(token1.chainId)
-      ? ROUTE_PROCESSOR_3_ADDRESS[token1.chainId]
-      : isRouteProcessorChainId(token1.chainId)
-      ? ROUTE_PROCESSOR_ADDRESS[token1.chainId]
-      : undefined
+    const rpAddress =
+      ROUTE_PROCESSOR_4_ADDRESS[token1.chainId as SquidAdapterChainId]
 
     if (rpAddress === undefined) throw new Error('RP not found')
 
@@ -278,10 +264,10 @@ export const getSquidRouteRequest = ({
           callType: SquidCallType.FULL_TOKEN_BALANCE,
           target: rpAddress,
           callData: encodeFunctionData({
-            abi: routeProcessor3_1Abi,
+            abi: routeProcessor4Abi,
             functionName: 'processRoute',
-            args: dstTrade?.writeArgs as GetFunctionArgs<
-              typeof routeProcessor3_1Abi,
+            args: dstTrade?.writeArgs as WriteContractParameters<
+              typeof routeProcessor4Abi,
               'processRoute'
             >['args'],
           }),
