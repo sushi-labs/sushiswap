@@ -12,6 +12,7 @@ import {
   POOL_UPDATE_INTERVAL,
   PORT,
   REQUESTED_PAIRS_UPDATE_INTERVAL,
+  ROUTER_CONFIG,
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
 } from './config.js'
@@ -34,7 +35,11 @@ async function start() {
     REQUESTED_PAIRS_UPDATE_INTERVAL(CHAIN_ID as ChainId),
   )
   extractorClient = client
-  updatePrices(client)
+  if (
+    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] !== true ||
+    ROUTER_CONFIG[CHAIN_ID]?.['checkPricesIncrementalModeCorrectness'] === true
+  )
+    updatePrices(client)
   // client.on('firstPoolsUpdate', () =>{
   //   updatePrices(client)
   // })

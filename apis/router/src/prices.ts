@@ -1,8 +1,10 @@
+import * as Sentry from '@sentry/node'
 import { ExtractorSupportedChainId, STABLES } from 'sushi/config'
 import { WNATIVE } from 'sushi/currency'
 import { RPool, RToken, calcTokenAddressPrices } from 'sushi/tines'
 import { ExtractorClient } from './ExtractorClient.js'
-import { CHAIN_ID } from './config.js'
+import { CHAIN_ID, ROUTER_CONFIG } from './config.js'
+import { extractorClient } from './index.js'
 //import { extractorClient } from './index.js'
 
 export const Currency = {
@@ -27,11 +29,33 @@ export function updatePrices(client: ExtractorClient, currency = Currency.USD) {
     const start = performance.now()
     const pools = client.getCurrentPoolCodes().map((pc) => pc.pool)
     prices[currency] = getPrices(CHAIN_ID, currency, pools)
-    console.log(
-      `updatePrices(${currency}): ${pools.length} pools (${Math.round(
-        performance.now() - start,
-      )}ms cpu time)`,
-    )
+    if (
+      currency === Currency.USD &&
+      ROUTER_CONFIG[CHAIN_ID]?.['checkPricesIncrementalModeCorrectness'] ===
+        true
+    ) {
+      const [diff, checked] = checkPrices(
+        prices[currency],
+        extractorClient?.getPrices(),
+        0.5,
+      )
+      if (diff > 1)
+        Sentry.captureMessage(
+          `${CHAIN_ID}: Price check failed: ${diff.toFixed(
+            1,
+          )}% of prices differing more than 0.5%`,
+        )
+      console.log(
+        `Price check: ${checked.toFixed(1)}% prices are common, ${diff.toFixed(
+          1,
+        )}% of prices differing more than 0.5%`,
+      )
+    } else
+      console.log(
+        `updatePrices(${currency}): ${pools.length} pools (${Math.round(
+          performance.now() - start,
+        )}ms cpu time)`,
+      )
   } catch (e) {
     console.error('updatePrices error', e)
   } finally {
@@ -153,6 +177,29 @@ function calculateTokenPrices(
 
 const hasPrice = (input: number | undefined): input is number =>
   input !== undefined
+
+// checks pricesEthalon and pricesCompared. Returns quantity of prices changed more than priceDifference %
+function checkPrices(
+  pricesEthalon: Record<string, number>,
+  pricesCompared: Record<string, number> | undefined,
+  priceDifference: number,
+): [number, number] {
+  if (pricesCompared === undefined) return [0, 0]
+  const ethalonTokens = Object.keys(pricesEthalon)
+  let totalNum = 0
+  let diffNum = 0
+  ethalonTokens.forEach((eT) => {
+    const eP = pricesEthalon[eT] as number
+    const cP = pricesCompared[eT]
+    if (cP === undefined || eP === 0) return
+    ++totalNum
+    if (Math.abs(cP / eP - 1) * 100 > priceDifference) ++diffNum
+  })
+  return [
+    totalNum > 0 ? (diffNum / totalNum) * 100 : 0,
+    ethalonTokens.length > 0 ? (totalNum / ethalonTokens.length) * 100 : 0,
+  ]
+}
 
 export function comparePrices(
   pricesEthalon: Record<string, number>,
