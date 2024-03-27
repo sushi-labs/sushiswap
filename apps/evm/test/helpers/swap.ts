@@ -301,9 +301,9 @@ export class SwapPage extends BaseActions {
   }
 
   async mockSwapApi(jsonFile: string) {
-    await this.page.route('https://mock-swap-api/swap/**/*', (route) =>
-      route.fulfill({ path: jsonFile }),
-    )
+    await this.page.route('https://mock-swap-api/swap/**/*', (route) => {
+      return route.fulfill({ path: jsonFile })
+    })
   }
 
   async mockWeb3Requests(next: NextFixture) {
