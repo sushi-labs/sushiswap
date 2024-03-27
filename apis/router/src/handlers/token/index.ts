@@ -1,6 +1,10 @@
 import { Request, Response } from 'express'
 import { Type } from 'sushi/currency'
 import { ExtractorClient } from '../../ExtractorClient.js'
+import { RequestStatistics } from '../../RequestStatistics.js'
+
+const tokenStatistics = new RequestStatistics('Tokens', 60_000) // update log once per min
+tokenStatistics.start()
 
 function handler(client: ExtractorClient) {
   return async (req: Request, res: Response) => {
@@ -12,9 +16,12 @@ function handler(client: ExtractorClient) {
     let token: Type | undefined | Promise<Type | undefined> =
       client.getToken(address)
     if (token instanceof Promise) token = await token
-    if (token === undefined)
+    if (token === undefined) {
+      tokenStatistics.addUnKnownRequest()
       return res.status(422).send(`Unknown token ${address}`)
+    }
 
+    tokenStatistics.addKnownRequest()
     return res.json({
       chainId: token.chainId,
       address: token.isNative
