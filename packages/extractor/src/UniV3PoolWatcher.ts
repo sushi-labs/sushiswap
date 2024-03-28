@@ -202,8 +202,8 @@ export class UniV3PoolWatcher extends EventEmitter {
           }
           this._poolWasChanged()
 
-          this.wordLoadManager.onPoolTickChange(this.state.tick, true)
           this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
+          this.wordLoadManager.onPoolTickChange(this.state.tick, true)
           break
         }
       } catch (e) {

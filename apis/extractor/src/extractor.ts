@@ -14,17 +14,32 @@ const extractor = new Extractor({
     level: WarningLevel,
     context?: string,
   ) => {
+    const lineEnd = context?.indexOf('\n') ?? -1
+    const errMsg =
+      lineEnd >= 0 ? context?.substring(0, Math.min(100, lineEnd)) : undefined
     Sentry.captureMessage(
-      `${chain}: ${message}`,
+      `${chain}: ${message}${errMsg !== undefined ? ` (${errMsg})` : ''}`,
       context === undefined
         ? level
         : {
             level,
             contexts: {
-              trace: { data: { viem: context }, trace_id: '0', span_id: '0' },
+              trace: { data: { context }, trace_id: '0', span_id: '0' },
             },
           },
     )
+    if (errMsg)
+      Sentry.captureMessage(
+        `${chain}: ${errMsg} (${message})`,
+        context === undefined
+          ? level
+          : {
+              level,
+              contexts: {
+                trace: { data: { context }, trace_id: '0', span_id: '0' },
+              },
+            },
+      )
   },
 })
 

@@ -161,10 +161,12 @@ export class UniV3Extractor {
             this.lastProcessdBlock = Number(
               logs[logs.length - 1].blockNumber || 0,
             )
-        } catch (_e) {
+        } catch (e) {
           warnLog(
             this.multiCallAggregator.chainId,
             `Block ${blockNumber} log process error`,
+            'error',
+            `${e}`,
           )
         }
       } else {
