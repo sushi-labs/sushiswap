@@ -499,7 +499,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.FILECOIN]: {
-    client: createPublicClient(publicClientConfig[ChainId.FILECOIN]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.FILECOIN]),
     factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
     factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
