@@ -32,5 +32,37 @@ export function parseSteerArgs(
     })
   }
 
+  if ('tokenSymbols' in args && Array.isArray(args.tokenSymbols)) {
+    if (args.tokenSymbols.length === 1) {
+      addFilter({
+        OR: [
+          { token0: { symbol: { contains: args.tokenSymbols[0] as string } } },
+          { token1: { symbol: { contains: args.tokenSymbols[0] as string } } },
+        ],
+      })
+    } else {
+      // Create every possible set of two
+      const sets = args.tokenSymbols.flatMap((token0, i, arr) =>
+        arr.slice(i + 1).map((token1) => [token0, token1] as const),
+      )
+      addFilter({
+        AND: [
+          {
+            OR: sets.flatMap((set) => [
+              {
+                token0: { symbol: { contains: set[0] } },
+                token1: { symbol: { contains: set[1] } },
+              },
+              {
+                token0: { symbol: { contains: set[1] } },
+                token1: { symbol: { contains: set[0] } },
+              },
+            ]),
+          },
+        ],
+      })
+    }
+  }
+
   return where
 }

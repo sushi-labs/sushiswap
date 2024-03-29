@@ -20,6 +20,7 @@ import {
 } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useMemo } from 'react'
 
+import Link from 'next/link'
 import { useConnect } from '../hooks'
 
 const Icons: Record<string, React.ElementType> = {
@@ -108,6 +109,27 @@ export const ConnectButton: FC<ButtonProps> = ({
               </DropdownMenuItem>
             )
           })}
+        </DropdownMenuGroup>
+        <DropdownMenuGroup>
+          <div className="text-xs dark:text-neutral-400 text-neutral-800 px-2 py-1 text-justify">
+            <span>{`Connecting a wallet means you accept Sushi Labs' `}</span>
+            <Link
+              href="/terms-of-service"
+              className="hover:text-neutral-500 font-semibold"
+              target="_blank"
+            >
+              Terms
+            </Link>
+            <span>{` and `}</span>
+            <Link
+              href="/privacy-policy"
+              className="hover:text-neutral-500 font-semibold"
+              target="_blank"
+            >
+              Privacy Policy
+            </Link>
+            <span>{`. (03.26.2024)`}</span>
+          </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

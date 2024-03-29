@@ -30,7 +30,7 @@ interface PoolsFiltersProvider {
 
 export const poolFiltersSchema = z.object({
   tokenSymbols: z.coerce.string().transform((symbols) => {
-    return symbols.split(',')
+    return symbols.split(',').filter((symbol) => symbol !== '')
   }),
   chainIds: z.coerce
     .string()

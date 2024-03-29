@@ -100,6 +100,8 @@ export const angleRewardsValidator = z.record(
   }),
 )
 
+export const angleRewardsMultipleValidator = z.array(angleRewardsValidator)
+
 export const angleRewardTokensValidator = z.object({
   validRewardTokens: z
     .array(

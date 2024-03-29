@@ -3,6 +3,7 @@ import { ChainId } from 'sushi/chain'
 
 import { useAllPrices } from '../prices'
 import { angleRewardsQueryFn, angleRewardsSelect } from './useAngleRewards'
+import { angleRewardsMultipleValidator } from './validator'
 
 interface UseAngleRewardsParams {
   chainIds: ChainId[]
@@ -19,19 +20,24 @@ export const useAngleRewardsMultipleChains = ({
     queryKey: ['getAngleRewardsMultiple', { chainIds, account, prices }],
     queryFn: async () => {
       if (account && prices) {
-        const res = await angleRewardsQueryFn({ chainIds, account })
+        const res = await Promise.all(
+          chainIds.map((chainId) =>
+            angleRewardsQueryFn({ chainIds: [chainId], account }),
+          ),
+        )
+        const parsed = angleRewardsMultipleValidator.parse(res)
 
-        return Object.entries(res)
-          .map(([key, value]) => {
+        return parsed
+          .map((el, i) => {
             const data = angleRewardsSelect({
-              chainId: +key as ChainId,
-              data: value,
-              prices: prices[key],
+              chainId: chainIds[i]!,
+              data: el[chainIds[i]!],
+              prices: prices[chainIds[i]!],
             })
 
             return data
               ? {
-                  chainId: +key as ChainId,
+                  chainId: chainIds[i]!,
                   ...data,
                 }
               : null

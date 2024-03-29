@@ -50,10 +50,10 @@ export const angleRewardsQueryFn = async ({
   chainIds,
   account,
 }: AngleRewardsQueryParams) => {
-  const url = new URL('https://api.angle.money/v2/merkl')
-  url.searchParams.set('AMMs[0]', 'sushiswapv3')
-  chainIds.forEach((chainId, i) =>
-    url.searchParams.set(`chainIds[${i}]`, chainId.toString()),
+  const url = new URL('https://api.merkl.xyz/v2/merkl')
+  url.searchParams.set('AMMs', 'sushiswapv3')
+  chainIds.forEach((chainId) =>
+    url.searchParams.append('chainIds', chainId.toString()),
   )
 
   if (account) {
@@ -159,25 +159,24 @@ export const angleRewardsSelect = ({
     {},
   )
 
-  const unclaimedAmounts = Object.values(
-    Object.values(pools ?? []).reduce<Record<string, Amount<Token>>>(
-      (acc, cur) => {
-        Object.values(cur.rewardsPerToken).forEach((val) => {
-          const amount = acc[val.unclaimed.currency.address]
-          if (!amount) {
-            acc[val.unclaimed.currency.address] = val.unclaimed
-          } else {
-            acc[val.unclaimed.currency.address] = amount.add(val.unclaimed)
-          }
-        })
+  const unclaimed = Object.entries(data.transactionData ?? {}).reduce<
+    { amount: Amount<Token>; amountUSD: number }[]
+  >((accum, [address, transactionData]) => {
+    const token = data.validRewardTokens?.find(
+      (token) => token.token === address,
+    )
+    if (!token) return accum
 
-        return acc
-      },
-      {},
-    ),
-  )
+    const amount = Amount.fromRawAmount(
+      new Token({
+        chainId: Number(chainId),
+        address: token.token,
+        decimals: token.decimals,
+        symbol: token.symbol,
+      }),
+      transactionData.claim,
+    )
 
-  const unclaimed = unclaimedAmounts.map((amount) => {
     let amountUSD = 0
 
     const price = prices[amount.currency.wrapped.address]
@@ -189,11 +188,13 @@ export const angleRewardsSelect = ({
       amountUSD = 0
     }
 
-    return {
+    accum.push({
       amount,
       amountUSD,
-    }
-  })
+    })
+
+    return accum
+  }, [])
 
   const validRewardTokens = (data.validRewardTokens ?? [])
     .map((el) => {
