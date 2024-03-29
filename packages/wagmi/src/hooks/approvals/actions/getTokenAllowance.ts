@@ -26,6 +26,5 @@ export const getTokenAllowance = async ({
     functionName: 'allowance',
     args: [owner, spender],
   })
-
   return Amount.fromRawAmount(token, data.toString())
 }

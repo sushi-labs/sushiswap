@@ -1,10 +1,8 @@
 import { mock } from '@wagmi/connectors'
-import { http } from 'viem'
-import { privateKeyToAccount } from 'viem/accounts'
-
-import { createConfig } from 'wagmi'
-
 import { ChainId } from 'sushi'
+import { http, HttpTransport } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
+import { createConfig } from 'wagmi'
 import { accounts, testChains } from './constants'
 
 const anvilPort = String(
@@ -33,15 +31,15 @@ export const createTestConfig = () => {
     },
   })
 
-  const chain = testChains.find((x) => x.id === chainId)!
-
   return createConfig({
-    chains: [chain],
-    transports: {
-      [ChainId.ETHEREUM]: http(localHttpUrl),
-      [ChainId.POLYGON]: http(localHttpUrl),
-      [ChainId.ARBITRUM]: http(localHttpUrl),
-    },
+    chains: testChains,
+    transports: testChains.reduce(
+      (acc, chain) => {
+        acc[chain.id] = http(localHttpUrl)
+        return acc
+      },
+      {} as Record<ChainId, HttpTransport>,
+    ),
     pollingInterval: 1_000,
     connectors: [mockConnector],
   })

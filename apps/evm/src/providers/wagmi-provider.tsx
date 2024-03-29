@@ -10,7 +10,6 @@ export const WagmiConfig: FC<{ children: ReactNode }> = ({ children }) => {
     if (isTest) {
       return createTestConfig() as unknown as PublicWagmiConfig
     }
-
     return createProductionConfig()
   }, [])
 
