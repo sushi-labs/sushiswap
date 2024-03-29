@@ -262,13 +262,17 @@ export class AlgebraExtractor {
       const promises = Array.from(cachedPools.values())
         .map((p) => this.addPoolWatching(p, 'cache', false))
         .filter((w) => w !== undefined)
-        .map((w) => (w as AlgebraPoolWatcher).statusAll())
-      Promise.allSettled(promises).then((_) => {
+        .map((w) => (w as AlgebraPoolWatcher).downloadFinished())
+      Promise.allSettled(promises).then((promises) => {
+        let failed = 0
+        promises.forEach((p) => {
+          if (p.status === 'rejected') ++failed
+        })
         this.started = true
         this.consoleLog(
-          `ExtractorAlg is ready (${Math.round(
-            performance.now() - startTime,
-          )}ms)`,
+          `ExtractorAlg is ready, ${failed}/${
+            promises.length
+          } pools failed (${Math.round(performance.now() - startTime)}ms)`,
         )
       })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)

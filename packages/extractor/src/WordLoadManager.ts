@@ -93,8 +93,8 @@ export class WordLoadManager extends EventEmitter {
         )
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
-      this.emit('isUpdated')
       this.downloadCycleIsStared = false
+      this.emit('isUpdated')
     }
   }
 

@@ -83,6 +83,7 @@ export const AlgebraEventsAbi = [
 ]
 
 export enum AlgebraPoolWatcherStatus {
+  Failed = 'Failed',
   Nothing = 'Nothing',
   Something = 'Something',
   All = 'All',
@@ -106,6 +107,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
   updatePoolStateGuard = false
   busyCounter?: Counter
   private lastPoolCode?: PoolCode
+  status: AlgebraPoolWatcherStatus = AlgebraPoolWatcherStatus.Nothing
 
   constructor(
     provider: LiquidityProviders,
@@ -185,8 +187,17 @@ export class AlgebraPoolWatcher extends EventEmitter {
           }
           this._poolWasChanged()
 
+          if (this.getStatus() === AlgebraPoolWatcherStatus.Nothing) {
+            this.wordLoadManager.once('ticksChanged', () => {
+              if (this.getStatus() === AlgebraPoolWatcherStatus.Nothing)
+                this.setStatus(AlgebraPoolWatcherStatus.Something)
+            })
+          }
+          this.wordLoadManager.once('isUpdated', () => {
+            this.setStatus(AlgebraPoolWatcherStatus.All)
+            this.emit('isUpdated')
+          })
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
-          this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
           break
         }
       } catch (e) {
@@ -196,6 +207,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           'error',
           `${e}`,
         )
+        this.setStatus(AlgebraPoolWatcherStatus.Failed)
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
@@ -363,24 +375,40 @@ export class AlgebraPoolWatcher extends EventEmitter {
   }
 
   getStatus(): AlgebraPoolWatcherStatus {
-    if (this.state === undefined) return AlgebraPoolWatcherStatus.Nothing
-    if (!this.wordLoadManager.downloadCycleIsStared)
-      return AlgebraPoolWatcherStatus.All
-    if (this.wordLoadManager.hasSomeTicksAround(this.state.tick))
-      return AlgebraPoolWatcherStatus.Something
-    return AlgebraPoolWatcherStatus.Nothing
+    return this.status
   }
 
-  statusPromise?: Promise<void>
-  async statusAll(): Promise<void> {
-    if (this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared)
-      return Promise.resolve()
-    if (this.statusPromise !== undefined) return this.statusPromise
-    this.statusPromise = new Promise((resolve) => {
-      this.wordLoadManager.once('isUpdated', () => resolve())
+  setStatus(status: AlgebraPoolWatcherStatus) {
+    if (status === this.status) return
+    this.status = status
+    if (
+      status === AlgebraPoolWatcherStatus.Failed &&
+      this.downloadFinishedPromiseReject
+    )
+      this.downloadFinishedPromiseReject()
+    if (
+      status === AlgebraPoolWatcherStatus.All &&
+      this.downloadFinishedPromiseResolve
+    )
+      this.downloadFinishedPromiseResolve()
+  }
+
+  downloadFinishedPromise?: Promise<void>
+  downloadFinishedPromiseResolve?: () => void
+  downloadFinishedPromiseReject?: () => void
+  async downloadFinished(): Promise<void> {
+    if (this.status === AlgebraPoolWatcherStatus.All) return Promise.resolve()
+    if (this.status === AlgebraPoolWatcherStatus.Failed) return Promise.reject()
+    if (this.downloadFinishedPromise !== undefined)
+      return this.downloadFinishedPromise
+    this.downloadFinishedPromise = new Promise((resolve, reject) => {
+      this.downloadFinishedPromiseResolve = resolve
+      this.downloadFinishedPromiseReject = reject
     })
-    await this.statusPromise
-    this.statusPromise = undefined
+    await this.downloadFinishedPromise
+    this.downloadFinishedPromise = undefined
+    this.downloadFinishedPromiseResolve = undefined
+    this.downloadFinishedPromiseReject = undefined
   }
 
   private _poolWasChanged() {
