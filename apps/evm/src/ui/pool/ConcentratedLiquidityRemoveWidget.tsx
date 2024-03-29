@@ -525,7 +525,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         chainId={chainId}
         status={status}
         testId="make-another-swap"
-        buttonText="Make another swap"
+        buttonText="Close"
         txHash={hash}
         successMessage={`You successfully removed liquidity from your ${position?.amount0.currency.symbol}/${position?.amount1.currency.symbol} position`}
       />

@@ -24,7 +24,7 @@ export function getAccountPositions({
     )
   }
 
-  const vaultIds = Object.keys(accountBalances)
+  const vaultIds = accountBalances.map((_) => _.vaultId)
 
   return vaultIds.flatMap((vaultId) => {
     const accountBalanceEl = accountBalances.find((_) => _.vaultId === vaultId)

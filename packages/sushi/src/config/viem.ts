@@ -570,12 +570,14 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`,
   ),
   /* Testnets */ // TODO: add testnet transports
-  [ChainId.ARBITRUM_TESTNET]: http(''),
-  [ChainId.AVALANCHE_TESTNET]: http(''),
-  [ChainId.BSC_TESTNET]: http(''),
-  [ChainId.FANTOM_TESTNET]: http(''),
-  [ChainId.POLYGON_TESTNET]: http(''),
-  [ChainId.SEPOLIA]: http(''),
+  [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
+  [ChainId.AVALANCHE_TESTNET]: http(
+    'https://api.avax-test.network/ext/bc/C/rpc',
+  ),
+  [ChainId.BSC_TESTNET]: http('https://bsc-testnet.public.blastapi.io'),
+  [ChainId.FANTOM_TESTNET]: http('https://rpc.testnet.fantom.network'),
+  [ChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
+  [ChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [

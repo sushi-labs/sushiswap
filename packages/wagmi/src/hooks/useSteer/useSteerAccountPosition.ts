@@ -94,11 +94,19 @@ export const useSteerAccountPositions = ({
   const data = useMemo(() => {
     if (!accountBalances || !totalSupplies || !vaultReserves) return undefined
 
+    console.log({
+      accountBalances,
+      totalSupplies,
+      vaultReserves,
+    })
+
     const positions = getAccountPositions({
       accountBalances,
       totalSupplies,
       vaultReserves,
     })
+
+    console.log(positions)
 
     return positions
   }, [accountBalances, totalSupplies, vaultReserves])

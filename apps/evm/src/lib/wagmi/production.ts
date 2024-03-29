@@ -1,3 +1,4 @@
+import { gtagEvent } from '@sushiswap/ui'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import {
   coinbaseWallet,
@@ -6,7 +7,9 @@ import {
   walletConnect,
 } from '@wagmi/connectors'
 import { ChainId } from 'sushi'
-import { cookieStorage, createConfig, createStorage } from 'wagmi'
+import { publicTransports } from 'sushi/config'
+import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
+import { Writeable } from 'zod'
 
 export const DEFAULT_POLLING_INTERVAL = 4_000
 
@@ -27,9 +30,28 @@ const pollingInterval = new Proxy(
 )
 
 export const createProductionConfig = () => {
+  const transports = Object.entries(publicTransports).reduce(
+    (acc, [chainId, transport]) => {
+      const transportUrl = transport({ chain: undefined }).value?.url!
+
+      acc[Number(chainId) as ChainId] = http(transportUrl, {
+        onFetchResponse(res) {
+          if (typeof window !== 'undefined') {
+            gtagEvent('drpc-response', {
+              pathname: window.location.pathname,
+              href: window.location.href,
+            })
+          }
+        },
+      })
+      return acc
+    },
+    {} as Writeable<typeof publicTransports>,
+  )
+
   return createConfig({
-    chains: publicWagmiConfig.chains,
-    transports: publicWagmiConfig.transports,
+    ...publicWagmiConfig,
+    transports,
     pollingInterval,
     connectors: [
       injected({

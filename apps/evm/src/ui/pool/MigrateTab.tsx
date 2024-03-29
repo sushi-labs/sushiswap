@@ -78,6 +78,115 @@ import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 import { SelectFeeConcentratedWidget } from './SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
 
+function MigrateUnstakeCard({ pool }: { pool: Pool }) {
+  const {
+    value0: stakedValue0,
+    value1: stakedValue1,
+    balance: stakedBalance,
+    underlying0: stakedUnderlying0,
+    underlying1: stakedUnderlying1,
+    isLoading: isStakedLoading,
+  } = usePoolPositionStaked()
+
+  const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
+
+  const { write: writeWithdraw, isLoading: isWritePending } =
+    useMasterChefWithdraw({
+      chainId: pool.chainId as ChainId,
+      amount: stakedBalance,
+      pid: pool.incentives?.[0]?.pid,
+      chef: pool.incentives?.[0]?.chefType,
+      enabled: Boolean(
+        approved &&
+          stakedBalance?.greaterThan(ZERO) &&
+          pool.incentives?.[0]?.pid &&
+          pool.incentives?.[0]?.chefType,
+      ),
+    })
+
+  const masterChefContract = useMemo(() => {
+    if (!pool.incentives.length) return undefined
+    if (pool.incentives[0].chefType === 'Merkl') return undefined
+
+    return getMasterChefContractConfig(
+      pool.chainId as ChainId,
+      pool.incentives[0]?.chefType,
+    )
+  }, [pool.chainId, pool.incentives])
+
+  if (!pool.wasIncentivized) return <></>
+
+  return (
+    <Card>
+      <CardOverlay show={Boolean(stakedBalance?.equalTo(ZERO))}>
+        Already unstaked. You{`'`}re all set! ✅
+      </CardOverlay>
+      <CardHeader>
+        <CardTitle>Unstake & Claim Rewards</CardTitle>
+        <CardDescription>
+          Please unstake & claim your rewards first before migrating.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <CardGroup className="max-w-[500px]">
+          <CardLabel>Staked position</CardLabel>
+          <CardCurrencyAmountItem
+            isLoading={isStakedLoading}
+            amount={stakedUnderlying0}
+            fiatValue={formatUSD(stakedValue0)}
+          />
+          <CardCurrencyAmountItem
+            isLoading={isStakedLoading}
+            amount={stakedUnderlying1}
+            fiatValue={formatUSD(stakedValue1)}
+          />
+        </CardGroup>
+      </CardContent>
+      <CardFooter>
+        <Checker.Guard
+          fullWidth={false}
+          size="default"
+          guardText="No staked balance found"
+          guardWhen={Boolean(stakedBalance?.equalTo(ZERO))}
+        >
+          <Checker.Connect fullWidth={false} size="default">
+            <Checker.Network
+              fullWidth={false}
+              size="default"
+              chainId={pool.chainId as ChainId}
+            >
+              <Checker.ApproveERC20
+                fullWidth={false}
+                size="default"
+                id="approve-token0"
+                amount={stakedBalance}
+                contract={masterChefContract?.address}
+                enabled={Boolean(masterChefContract?.address)}
+              >
+                <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
+                  <Button
+                    fullWidth={false}
+                    size="default"
+                    onClick={() => writeWithdraw?.()}
+                    disabled={!approved || isWritePending}
+                    testId="unstake-liquidity"
+                  >
+                    {isWritePending ? (
+                      <Dots>Confirm transaction</Dots>
+                    ) : (
+                      'Unstake & Claim Rewards'
+                    )}
+                  </Button>
+                </Checker.Success>
+              </Checker.ApproveERC20>
+            </Checker.Network>
+          </Checker.Connect>
+        </Checker.Guard>
+      </CardFooter>
+    </Card>
+  )
+}
+
 export const MODAL_MIGRATE_ID = 'migrate-modal'
 
 export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
@@ -85,7 +194,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const [feeAmount, setFeeAmount] = useState<SushiSwapV3FeeAmount>(
     SushiSwapV3FeeAmount.LOWEST,
   )
-  const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
   const [invertPrice, setInvertPrice] = useState(false)
   const [invertTokens, setInvertTokens] = useState(false)
   const [slippageTolerance] = useSlippageTolerance('addLiquidity')
@@ -127,28 +235,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const totalSupply = useTotalSupply(liquidityToken)
 
   // Harvest & Withdraw
-  const {
-    value0: stakedValue0,
-    value1: stakedValue1,
-    balance: stakedBalance,
-    underlying0: stakedUnderlying0,
-    underlying1: stakedUnderlying1,
-    isLoading: isStakedLoading,
-  } = usePoolPositionStaked()
-
-  const { write: writeWithdraw, isLoading: isWritePending } =
-    useMasterChefWithdraw({
-      chainId: pool.chainId as ChainId,
-      amount: stakedBalance,
-      pid: pool.incentives?.[0]?.pid,
-      chef: pool.incentives?.[0]?.chefType,
-      enabled: Boolean(
-        approved &&
-          stakedBalance?.greaterThan(ZERO) &&
-          pool.incentives?.[0]?.pid &&
-          pool.incentives?.[0]?.chefType,
-      ),
-    })
+  const { balance: stakedBalance } = usePoolPositionStaked()
 
   // this is just getLiquidityValue with the fee off, but for the passed pair
   const token0Value = useMemo(
@@ -410,83 +497,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   return (
     <DialogProvider>
-      <Card>
-        <CardOverlay show={Boolean(stakedBalance?.equalTo(ZERO))}>
-          Already unstaked. You{`'`}re all set! ✅
-        </CardOverlay>
-        <CardHeader>
-          <CardTitle>Unstake & Claim Rewards</CardTitle>
-          <CardDescription>
-            Please unstake & claim your rewards first before migrating.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CardGroup className="max-w-[500px]">
-            <CardLabel>Staked position</CardLabel>
-            <CardCurrencyAmountItem
-              isLoading={isStakedLoading || !stakedUnderlying0}
-              amount={stakedUnderlying0}
-              fiatValue={formatUSD(stakedValue0)}
-            />
-            <CardCurrencyAmountItem
-              isLoading={isStakedLoading || !stakedUnderlying1}
-              amount={stakedUnderlying1}
-              fiatValue={formatUSD(stakedValue1)}
-            />
-          </CardGroup>
-        </CardContent>
-        <CardFooter>
-          <Checker.Guard
-            fullWidth={false}
-            size="default"
-            guardText="No staked balance found"
-            guardWhen={Boolean(stakedBalance?.equalTo(ZERO))}
-          >
-            <Checker.Connect fullWidth={false} size="default">
-              <Checker.Network
-                fullWidth={false}
-                size="default"
-                chainId={pool.chainId as ChainId}
-              >
-                <Checker.ApproveERC20
-                  fullWidth={false}
-                  size="default"
-                  id="approve-token0"
-                  amount={stakedBalance}
-                  contract={
-                    getMasterChefContractConfig(
-                      pool.chainId as ChainId,
-                      pool.incentives[0]?.chefType,
-                    )?.address
-                  }
-                  enabled={Boolean(
-                    getMasterChefContractConfig(
-                      pool.chainId as ChainId,
-                      pool.incentives[0]?.chefType,
-                    )?.address,
-                  )}
-                >
-                  <Checker.Success tag={APPROVE_TAG_UNSTAKE}>
-                    <Button
-                      fullWidth={false}
-                      size="default"
-                      onClick={writeMigrate}
-                      disabled={!approved || isWritePending}
-                      testId="unstake-liquidity"
-                    >
-                      {isWritePending ? (
-                        <Dots>Confirm transaction</Dots>
-                      ) : (
-                        'Unstake & Claim Rewards'
-                      )}
-                    </Button>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
-              </Checker.Network>
-            </Checker.Connect>
-          </Checker.Guard>
-        </CardFooter>
-      </Card>
+      <MigrateUnstakeCard pool={pool} />
       <Card>
         <CardOverlay show={Boolean(stakedBalance?.greaterThan(ZERO))}>
           Please unstake first before migrating!
@@ -917,7 +928,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                         fullWidth
                                         size="xl"
                                         loading={isLoading && !isError}
-                                        onClick={() => writeWithdraw?.(confirm)}
+                                        onClick={() => writeMigrate?.(confirm)}
                                         disabled={isMigrateLoading || isError}
                                         color={isError ? 'red' : 'blue'}
                                         testId="migrate-confirm"

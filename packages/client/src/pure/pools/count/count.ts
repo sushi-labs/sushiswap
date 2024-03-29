@@ -2,6 +2,7 @@ import { type getPoolCountFromDB } from '../../../api/pools/count'
 import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
 import { type GetApiInputFromOutput } from '../../../types'
+import { get } from '../../../functions'
 import { type PoolCountApiSchema } from './schema'
 
 export { type PoolCountApiSchema }
@@ -20,5 +21,5 @@ export const getPoolCountUrl = (args: GetPoolCountArgs) => {
 export const getPoolCount = async (
   args: GetPoolCountArgs,
 ): Promise<PoolCount> => {
-  return fetch(getPoolCountUrl(args)).then((data) => data.json())
+  return get(getPoolCountUrl(args))
 }
