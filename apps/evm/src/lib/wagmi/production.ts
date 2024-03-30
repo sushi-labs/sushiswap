@@ -40,6 +40,7 @@ export const createProductionConfig = () => {
             gtagEvent('drpc-response', {
               pathname: window.location.pathname,
               href: window.location.href,
+              chainId,
             })
           }
         },
