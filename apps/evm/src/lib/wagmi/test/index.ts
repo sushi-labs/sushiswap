@@ -9,9 +9,9 @@ const anvilPort = String(
   process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545,
 )
 
-const chainId = Number(
-  process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137,
-)
+// const chainId = Number(
+//   process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137,
+// )
 const testWalletIndex = Number(
   process.env.TEST_WALLET_INDEX ||
     process.env.NEXT_PUBLIC_TEST_WALLET_INDEX ||

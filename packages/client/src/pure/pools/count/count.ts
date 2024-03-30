@@ -1,8 +1,8 @@
 import { type getPoolCountFromDB } from '../../../api/pools/count'
 import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
-import { type GetApiInputFromOutput } from '../../../types'
 import { get } from '../../../functions'
+import { type GetApiInputFromOutput } from '../../../types'
 import { type PoolCountApiSchema } from './schema'
 
 export { type PoolCountApiSchema }

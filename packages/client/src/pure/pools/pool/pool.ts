@@ -1,8 +1,8 @@
 import { getChainIdAddressFromId } from 'sushi'
 import { type getPoolFromDB } from '../../../api/pools/pool'
 import { EVM_APP_BASE_URL } from '../../../constants'
-import { type GetApiInputFromOutput } from '../../../types'
 import { get } from '../../../functions'
+import { type GetApiInputFromOutput } from '../../../types'
 import { type PoolApiSchema } from './schema'
 
 export { type PoolApiSchema }

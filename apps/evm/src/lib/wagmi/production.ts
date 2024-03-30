@@ -35,7 +35,7 @@ export const createProductionConfig = () => {
       const transportUrl = transport({ chain: undefined }).value?.url!
 
       acc[Number(chainId) as ChainId] = http(transportUrl, {
-        onFetchResponse(res) {
+        onFetchResponse(_res) {
           if (typeof window !== 'undefined') {
             gtagEvent('drpc-response', {
               pathname: window.location.pathname,
