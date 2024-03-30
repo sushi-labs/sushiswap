@@ -54,8 +54,11 @@ function handler(
       try {
         const statistics = swapRequestStatistics.requestProcessingStart()
 
-        const parsed = qSchema.safeParse(req.query)
-        if (!parsed.success) {
+        let parsed: ReturnType<typeof querySchema3_2.safeParse> | undefined
+        try {
+          parsed = qSchema.safeParse(req.query)
+        } catch (_e) {}
+        if (!parsed || !parsed.success) {
           swapRequestStatistics.requestRejected(
             ResponseRejectReason.WRONG_INPUT_PARAMS,
           )
