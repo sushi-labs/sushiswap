@@ -524,7 +524,7 @@ export class UniV2Extractor {
         this.multiCallAggregator.chainId,
         `Ext2 add pool ${addr} by log failed`,
         'error',
-        `${e},
+        `${e}`,
       )
       return
     }
