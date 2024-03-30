@@ -487,7 +487,7 @@ export class Extractor {
         watchersV3 = prefetched
         prefetched.forEach((w) => {
           if (w.getStatus() !== UniV3PoolWatcherStatus.All)
-            promises.push(w.statusAll())
+            promises.push(w.downloadFinished())
         })
         promises = promises.concat(
           fetching.map(async (p) => {
@@ -495,7 +495,7 @@ export class Extractor {
             if (w === undefined) return
             watchersV3.push(w)
             if (w.getStatus() !== UniV3PoolWatcherStatus.All)
-              await w.statusAll()
+              await w.downloadFinished()
           }),
         )
       }
@@ -506,7 +506,7 @@ export class Extractor {
         watchersAlg = prefetched
         prefetched.forEach((w) => {
           if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-            promises.push(w.statusAll())
+            promises.push(w.downloadFinished())
         })
         promises = promises.concat(
           fetching.map(async (p) => {
@@ -514,7 +514,7 @@ export class Extractor {
             if (w === undefined) return
             watchersAlg.push(w)
             if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-              await w.statusAll()
+              await w.downloadFinished()
           }),
         )
       }

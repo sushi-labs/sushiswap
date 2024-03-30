@@ -14,17 +14,32 @@ const extractor = new Extractor({
     level: WarningLevel,
     context?: string,
   ) => {
+    const details = context?.match(/Details: (.*)/)?.[1]
+    const error = context?.match(/^(.*)/)?.[1]?.substring(0, 100)
+    const errMsg = [details, error].filter((s) => s !== undefined).join('/')
     Sentry.captureMessage(
-      `${chain}: ${message}`,
+      `${chain}: ${message}${errMsg !== '' ? ` (${errMsg})` : ''}`,
       context === undefined
         ? level
         : {
             level,
             contexts: {
-              trace: { data: { viem: context }, trace_id: '0', span_id: '0' },
+              trace: { data: { context }, trace_id: '0', span_id: '0' },
             },
           },
     )
+    if (errMsg !== '')
+      Sentry.captureMessage(
+        `${chain}: ${errMsg} (${message})`,
+        context === undefined
+          ? level
+          : {
+              level,
+              contexts: {
+                trace: { data: { context }, trace_id: '0', span_id: '0' },
+              },
+            },
+      )
   },
 })
 

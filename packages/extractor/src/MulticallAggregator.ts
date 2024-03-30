@@ -197,7 +197,7 @@ export class MultiCallAggregator {
           })),
         })
         this.currentBatchInProgress -= 1
-      } catch (_e) {
+      } catch (e) {
         this.currentBatchInProgress -= 1
         this.totalCallsFailed += pendingCalls.length - 1
         this.totalMCallsFailed += 1
@@ -205,7 +205,7 @@ export class MultiCallAggregator {
         //   this.client.chain?.id,
         //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
         // )
-        warnLog(this.client.chain?.id, 'Multicall error')
+        warnLog(this.client.chain?.id, 'Multicall error', 'error', `${e}`)
         continue
       }
       this.totalCallsProcessed += pendingCalls.length - 1
@@ -215,18 +215,26 @@ export class MultiCallAggregator {
     }
     if (res[0].status !== 'success') {
       // getBlockNumber Failed
-      const error = this.debug
-        ? res[0].error.toString()
-        : res[0].error.toString().substring(0, 1000)
+      const error = this._errorMsg(
+        `getBlockNumber Failed: ${res[0].error.toString()}`,
+      )
       for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](error)
     } else {
       const blockNumber = res[0].result as number
       for (let i = 1; i < res.length; ++i) {
         if (res[i].status === 'success')
           pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
-        else pendingRejects[i - 1](res[i].error?.toString().substring(0, 1000))
+        else
+          pendingRejects[i - 1](this._errorMsg(res[i].error?.toString() || ''))
       }
     }
+  }
+
+  _errorMsg(error: string): string {
+    if (this.debug || error.length < 5000) return error
+    return `${error.substring(0, 2500)} ... ${error.substring(
+      error.length - 2500,
+    )}`
   }
 
   getBlockNumberContractAddress(): Address {

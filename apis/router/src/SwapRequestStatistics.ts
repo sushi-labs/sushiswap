@@ -7,7 +7,7 @@ export enum ResponseRejectReason {
   NO_FRESH_DATA = 5,
 }
 
-export class RequestStatistics {
+export class SwapRequestStatistics {
   totalInterval: number
   lastInterval: number
 
@@ -174,6 +174,6 @@ export class RequestStatistics {
   }
 }
 
-const requestStatistics = new RequestStatistics(60_000, 3_600_000)
+const swapRequestStatistics = new SwapRequestStatistics(60_000, 3_600_000)
 
-export default requestStatistics
+export default swapRequestStatistics

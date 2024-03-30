@@ -803,7 +803,7 @@ export const publicClientConfig = {
 >
 
 export const SpecialExtractorClientConfig: Record<
-  typeof ChainId.BSC | typeof ChainId.ETHEREUM,
+  typeof ChainId.BSC | typeof ChainId.ETHEREUM | typeof ChainId.FILECOIN,
   PublicClientConfig
 > = {
   [ChainId.BSC]: {
@@ -816,6 +816,15 @@ export const SpecialExtractorClientConfig: Record<
     chain: mainnet,
     transport: http(
       `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
+      {
+        timeout: 120_000,
+      },
+    ),
+  },
+  [ChainId.FILECOIN]: {
+    chain: filecoin,
+    transport: http(
+      `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
       {
         timeout: 120_000,
       },
