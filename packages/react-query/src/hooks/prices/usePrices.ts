@@ -6,12 +6,13 @@ import { getAddress, isAddress, parseUnits } from 'viem'
 
 interface UsePrices {
   chainId: number | undefined
+  enabled?: boolean
 }
 
 const BASE_URL =
   process.env['NEXT_PUBLIC_API_BASE_URL'] || 'https://api.sushi.com'
 
-export const usePrices = ({ chainId }: UsePrices) => {
+export const usePrices = ({ chainId, enabled = true }: UsePrices) => {
   return useQuery({
     queryKey: [`${BASE_URL}/price/v1/${chainId}`],
     queryFn: async () => {
@@ -35,6 +36,6 @@ export const usePrices = ({ chainId }: UsePrices) => {
     },
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
-    enabled: Boolean(chainId),
+    enabled: Boolean(chainId && enabled),
   })
 }

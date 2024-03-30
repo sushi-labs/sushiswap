@@ -71,7 +71,7 @@ describe('TridentConstantPool', () => {
         () =>
           new TridentConstantPool(
             Amount.fromRawAmount(USDC, '100'),
-            Amount.fromRawAmount(WETH9[3], '100'),
+            Amount.fromRawAmount(WETH9[137], '100'),
             30,
             true,
           ),
