@@ -3,6 +3,7 @@ import {
   SimulateContractErrorType,
   useSimulateContract,
 } from '@sushiswap/wagmi'
+import { useMemo } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import {
   routeProcessor3Abi,
@@ -105,15 +106,18 @@ export function useSimulateTrade({
     },
   })
 
-  return {
-    ...simulateTrade,
-    isError:
-      typeof tokenTax === 'undefined' && isMinOutError(simulateTrade.error)
-        ? false
-        : simulateTrade.isError,
-    error:
-      typeof tokenTax === 'undefined' && isMinOutError(simulateTrade.error)
-        ? null
-        : simulateTrade.error,
-  }
+  return useMemo(
+    () => ({
+      ...simulateTrade,
+      isError:
+        typeof tokenTax === 'undefined' && isMinOutError(simulateTrade.error)
+          ? false
+          : simulateTrade.isError,
+      error:
+        typeof tokenTax === 'undefined' && isMinOutError(simulateTrade.error)
+          ? null
+          : simulateTrade.error,
+    }),
+    [simulateTrade, tokenTax],
+  )
 }
