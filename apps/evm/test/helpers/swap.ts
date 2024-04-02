@@ -1,5 +1,4 @@
 import { Page, expect } from '@playwright/test'
-import { NextFixture } from 'next/experimental/testmode/playwright'
 import { Native, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 import { BaseActions } from './base' // Adjust the import path as necessary
@@ -306,12 +305,4 @@ export class SwapPage extends BaseActions {
     })
   }
 
-  async mockWeb3Requests(next: NextFixture) {
-    next.onFetch((request) => {
-      if (request.url.includes('lb.drpc.org')) {
-        return fetch('http://127.0.0.1:8545/0', request)
-      }
-      return 'continue'
-    })
-  }
 }

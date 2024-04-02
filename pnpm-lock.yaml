@@ -1592,8 +1592,6 @@ importers:
         specifier: 3.21.4
         version: 3.21.4
 
-  packages/sushi/dist/_cjs: {}
-
   packages/ui:
     dependencies:
       '@fontsource-variable/inter':
