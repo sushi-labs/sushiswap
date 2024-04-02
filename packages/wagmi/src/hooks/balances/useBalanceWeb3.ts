@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
-import { Address, http, zeroAddress } from 'viem'
+import { http, Address, zeroAddress } from 'viem'
 
 import { createConfig, serialize, useBalance } from 'wagmi'
+import { polygon } from 'wagmi/chains'
 import { useWatchByInterval } from '../watch'
 import { queryFnUseBalances } from './useBalancesWeb3'
-import { polygon } from 'wagmi/chains'
 
 interface UseBalanceParams {
   chainId: ChainId | undefined
@@ -27,7 +27,6 @@ export const useBalanceWeb3 = ({
     query: { enabled },
   })
 
-  
   const config = createConfig({
     chains: [polygon],
     transports: {

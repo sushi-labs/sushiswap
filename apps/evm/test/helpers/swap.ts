@@ -304,5 +304,4 @@ export class SwapPage extends BaseActions {
       return route.fulfill({ path: jsonFile })
     })
   }
-
 }
