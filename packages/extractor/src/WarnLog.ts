@@ -1,6 +1,7 @@
 import { ChainId } from 'sushi/chain'
+import { Logger } from './Logger.js'
 
-function nowDate(): string {
+function _nowDate(): string {
   const d = new Date()
   const year = (d.getFullYear() % 100).toString().padStart(2, '0')
   const month = (d.getMonth() + 1).toString().padStart(2, '0')
@@ -20,7 +21,7 @@ export type WarningMessageHandler = (
   context?: string,
 ) => void
 
-let warningMessageHandler: WarningMessageHandler | undefined
+export let warningMessageHandler: WarningMessageHandler | undefined
 
 export function setWarningMessageHandler(
   _warningMessageHandler: WarningMessageHandler | undefined,
@@ -29,19 +30,20 @@ export function setWarningMessageHandler(
 }
 
 export function warnLog(
-  chain: ChainId | number | undefined,
+  _chain: ChainId | number | undefined,
   msg: string,
   level: WarningLevel = 'warning',
   error?: unknown,
 ) {
-  console.warn(`${nowDate()}-${chain}: ${msg}`)
-  if (warningMessageHandler)
-    warningMessageHandler(
-      chain,
-      msg,
-      level,
-      error !== undefined ? `${error}` : undefined,
-    )
+  Logger.msg(msg, level, error)
+  // console.warn(`${nowDate()}-${chain}: ${msg}`)
+  // if (warningMessageHandler)
+  //   warningMessageHandler(
+  //     chain,
+  //     msg,
+  //     level,
+  //     error !== undefined ? `${error}` : undefined,
+  //   )
 }
 
 export class LogSender {

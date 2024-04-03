@@ -1,6 +1,7 @@
 export * from './AlgebraExtractor.js'
 export * from './Extractor.js'
 export * from './LogFilter2.js'
+export * from './Logger.js'
 export * from './MulticallAggregator.js'
 export * from './TokenManager.js'
 export * from './UniV2Extractor.js'
