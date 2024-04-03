@@ -9,9 +9,12 @@ const priceStatistics = new RequestStatistics('Prices', 60_000) // update log on
 priceStatistics.start()
 
 export const pricesHandler = (req: Request, res: Response) => {
-  const { currency } = allPricesSchema.parse(req.params)
+  const { currency, oldPrices } = allPricesSchema.parse(req.query)
   res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
-  if (ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true)
+  if (
+    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
+    oldPrices !== true
+  )
     res.json(
       currency === Currency.USD ? extractorClient?.getPrices() ?? {} : {},
     )

@@ -75,6 +75,9 @@ function extractorClientConfig(chainId: ChainId): PublicClientConfig {
     chain: publicClientConfig[chainId].chain as Chain,
     transport: http(url, {
       timeout: 120_000,
+      // onFetchResponse(response: Response) {
+      //   console.log(response.url, response.headers.get('x-drpc-trace-id'))
+      // },
     }),
   }
 }
