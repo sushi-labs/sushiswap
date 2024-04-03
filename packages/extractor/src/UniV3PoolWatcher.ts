@@ -222,7 +222,7 @@ export class UniV3PoolWatcher extends EventEmitter {
           this.client.chainId,
           `V3 Pool ${this.address} update failed`,
           'error',
-          `${e}`,
+          e,
         )
         this.setStatus(UniV3PoolWatcherStatus.Failed)
       }

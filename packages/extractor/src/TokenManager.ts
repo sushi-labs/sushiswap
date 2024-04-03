@@ -133,7 +133,7 @@ export class TokenManager {
             this.client.client.chain?.id,
             `Token bytes32 downloading error ${address}`,
             'error',
-            `${e}`,
+            e,
           )
         }
         return

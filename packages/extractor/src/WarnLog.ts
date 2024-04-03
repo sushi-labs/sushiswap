@@ -32,10 +32,16 @@ export function warnLog(
   chain: ChainId | number | undefined,
   msg: string,
   level: WarningLevel = 'warning',
-  context?: string,
+  error?: unknown,
 ) {
   console.warn(`${nowDate()}-${chain}: ${msg}`)
-  if (warningMessageHandler) warningMessageHandler(chain, msg, level, context)
+  if (warningMessageHandler)
+    warningMessageHandler(
+      chain,
+      msg,
+      level,
+      error !== undefined ? `${error}` : undefined,
+    )
 }
 
 export class LogSender {

@@ -205,7 +205,7 @@ export class MultiCallAggregator {
         //   this.client.chain?.id,
         //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
         // )
-        warnLog(this.client.chain?.id, 'Multicall error', 'error', `${e}`)
+        warnLog(this.client.chain?.id, 'Multicall error', 'error', e)
         continue
       }
       this.totalCallsProcessed += pendingCalls.length - 1

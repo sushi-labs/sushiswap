@@ -205,7 +205,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           this.client.chainId,
           `Alg Pool ${this.address} update failed`,
           'error',
-          `${e}`,
+          e,
         )
         this.setStatus(AlgebraPoolWatcherStatus.Failed)
       }

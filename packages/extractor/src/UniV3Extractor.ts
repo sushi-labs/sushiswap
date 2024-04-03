@@ -166,7 +166,7 @@ export class UniV3Extractor {
             this.multiCallAggregator.chainId,
             `Block ${blockNumber} log process error`,
             'error',
-            `${e}`,
+            e,
           )
         }
       } else {

@@ -89,7 +89,7 @@ export class WordLoadManager extends EventEmitter {
           this.client.chainId,
           `Pool ${this.poolAddress} ticks downloading failed`,
           'error',
-          `${e}`,
+          e,
         )
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()

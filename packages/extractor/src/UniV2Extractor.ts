@@ -232,7 +232,7 @@ export class UniV2Extractor {
             this.multiCallAggregator.chainId,
             `Ext2 pool ${r.address} reading from cache failed`,
             'error',
-            `${e}`,
+            e,
           )
           return
         }

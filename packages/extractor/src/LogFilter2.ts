@@ -237,7 +237,7 @@ export class LogFilter2 {
     if (!this.blockFrame.add(block.number, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
-    const backupPlan = (context?: string) => {
+    const backupPlan = (context?: unknown) => {
       warnLog(
         this.client.chain?.id,
         `getLog failed for block ${block.hash}`,

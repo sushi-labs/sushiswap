@@ -197,7 +197,7 @@ export class AlgebraExtractor {
             this.multiCallAggregator.chainId,
             `Block ${blockNumber} log process error`,
             'error',
-            `${e}`,
+            e,
           )
         }
       } else {
