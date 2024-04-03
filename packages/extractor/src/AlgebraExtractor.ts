@@ -24,10 +24,10 @@ import {
 } from './AlgebraQualityChecker.js'
 import { Counter } from './Counter.js'
 import { LogFilter2 } from './LogFilter2.js'
+import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import { TokenManager } from './TokenManager.js'
-import { warnLog } from './WarnLog.js'
 
 export function getAlgebraPoolAddress(
   PoolDeployerAddress: string,
@@ -166,7 +166,7 @@ export class AlgebraExtractor {
           arg.status !== PoolSyncState.Match &&
           arg.status !== PoolSyncState.ReservesMismatch
         )
-          warnLog(
+          Logger.error(
             this.multiCallAggregator.chainId,
             `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
               `${arg.correctPool ? 'pool was updated ' : ''}` +
@@ -193,15 +193,14 @@ export class AlgebraExtractor {
               logs[logs.length - 1].blockNumber || 0,
             )
         } catch (e) {
-          warnLog(
+          Logger.error(
             this.multiCallAggregator.chainId,
             `Block ${blockNumber} log process error`,
-            'error',
             e,
           )
         }
       } else {
-        warnLog(
+        Logger.error(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
@@ -276,12 +275,12 @@ export class AlgebraExtractor {
         )
       })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
-      warnLog(
-        this.multiCallAggregator.chainId,
-        `ExtractorAlg is started (${Math.round(
+      this.consoleLog(
+        `${
+          this.multiCallAggregator.chainId
+        }: ExtractorAlg is started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
-        'info',
       )
     }
   }
@@ -294,10 +293,11 @@ export class AlgebraExtractor {
         return pool.processLog(l)
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
-    } catch (_e) {
-      warnLog(
+    } catch (e) {
+      Logger.error(
         this.multiCallAggregator.chainId,
         `Log processing for pool ${l.address} throwed an exception`,
+        e,
       )
       return 'Exception!!!'
     }

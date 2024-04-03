@@ -7,8 +7,8 @@ import {
   MulticallContracts,
   PublicClient,
 } from 'viem'
+import { Logger } from './Logger.js'
 import { delay } from './Utils.js'
-import { warnLog } from './WarnLog.js'
 
 const getBlockNumberAbi: Abi = [
   {
@@ -201,11 +201,7 @@ export class MultiCallAggregator {
         this.currentBatchInProgress -= 1
         this.totalCallsFailed += pendingCalls.length - 1
         this.totalMCallsFailed += 1
-        // warnLog(
-        //   this.client.chain?.id,
-        //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
-        // )
-        warnLog(this.client.chain?.id, 'Multicall error', 'error', e)
+        Logger.error(this.client.chain?.id, 'Multicall error', e)
         continue
       }
       this.totalCallsProcessed += pendingCalls.length - 1

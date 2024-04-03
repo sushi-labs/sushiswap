@@ -5,7 +5,6 @@ import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 // import { TokenList } from 'sushi/token-list'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config.js'
 
-Logger.setChainId(CHAIN_ID)
 Logger.setLogsExternalHandler(
   (msg: string, level: LogsMessageLevel, context?: string) => {
     Sentry.captureMessage(

@@ -6,8 +6,8 @@ import { LiquidityProviders, PoolCode, UniV3PoolCode } from 'sushi/router'
 import { CLTick, RToken, UniV3Pool } from 'sushi/tines'
 import { Log, decodeEventLog } from 'viem'
 import { Counter } from './Counter.js'
+import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
-import { warnLog } from './WarnLog.js'
 import { WordLoadManager } from './WordLoadManager.js'
 
 interface UniV3PoolSelfState {
@@ -218,10 +218,9 @@ export class UniV3PoolWatcher extends EventEmitter {
           break
         }
       } catch (e) {
-        warnLog(
+        Logger.error(
           this.client.chainId,
           `V3 Pool ${this.address} update failed`,
-          'error',
           e,
         )
         this.setStatus(UniV3PoolWatcherStatus.Failed)

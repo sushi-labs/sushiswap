@@ -1,6 +1,7 @@
 import { ChainId } from 'sushi'
 
 export type LogsMessageLevel = 'info' | 'warning' | 'error'
+type CainIdExt = ChainId | number | undefined
 
 // Sentry
 export type LogsExternalHandler = (
@@ -10,28 +11,28 @@ export type LogsExternalHandler = (
 ) => void
 
 class LoggerClass {
-  private chainId?: ChainId
   private logsExternalHandler?: LogsExternalHandler
-
-  setChainId(chainId: ChainId) {
-    this.chainId = chainId
-  }
 
   setLogsExternalHandler(logsExternalHandler: LogsExternalHandler) {
     this.logsExternalHandler = logsExternalHandler
   }
 
-  info(message: string, error?: unknown) {
-    this.msg(message, 'info', error)
+  info(chainId: CainIdExt, message: string, error?: unknown) {
+    this.msg(chainId, message, 'info', error)
   }
-  warn(message: string, error?: unknown) {
-    this.msg(message, 'warning', error)
+  warn(chainId: CainIdExt, message: string, error?: unknown) {
+    this.msg(chainId, message, 'warning', error)
   }
-  error(message: string, error?: unknown) {
-    this.msg(message, 'error', error)
+  error(chainId: CainIdExt, message: string, error?: unknown) {
+    this.msg(chainId, message, 'error', error)
   }
-  msg(message: string, level: LogsMessageLevel, error?: unknown) {
-    console.warn(`${this._nowDate()}-${this.chainId}: ${message}`)
+  msg(
+    chainId: CainIdExt,
+    message: string,
+    level: LogsMessageLevel,
+    error?: unknown,
+  ) {
+    console.warn(`${this._nowDate()}-${chainId}: ${message}`)
     if (this.logsExternalHandler) {
       const context = error !== undefined ? `${error}` : undefined
       const details = context?.match(/Details: (.*)/)?.[1]
@@ -40,13 +41,13 @@ class LoggerClass {
         .filter((s) => s !== undefined)
         .join('/')
       this.logsExternalHandler(
-        `${this.chainId}: ${message}${errMsg !== '' ? ` (${errMsg})` : ''}`,
+        `${chainId}: ${message}${errMsg !== '' ? ` (${errMsg})` : ''}`,
         level,
         error !== undefined ? `${error}` : undefined,
       )
       if (errMsg !== '')
         this.logsExternalHandler(
-          `${this.chainId}: ${errMsg} (${message})`,
+          `${chainId}: ${errMsg} (${message})`,
           level,
           error !== undefined ? `${error}` : undefined,
         )
