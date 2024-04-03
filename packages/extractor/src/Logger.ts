@@ -43,13 +43,13 @@ class LoggerClass {
       this.logsExternalHandler(
         `${chainId}: ${message}${errMsg !== '' ? ` (${errMsg})` : ''}`,
         level,
-        error !== undefined ? `${error}` : undefined,
+        error !== undefined ? this._cutLongMessage(`${error}`) : undefined,
       )
       if (errMsg !== '')
         this.logsExternalHandler(
           `${chainId}: ${errMsg} (${message})`,
           level,
-          error !== undefined ? `${error}` : undefined,
+          error !== undefined ? this._cutLongMessage(`${error}`) : undefined,
         )
     }
   }
@@ -63,6 +63,13 @@ class LoggerClass {
     const min = d.getMinutes().toString().padStart(2, '0')
     const sec = d.getSeconds().toString().padStart(2, '0')
     return `${year}-${month}-${day}T${hours}:${min}:${sec}`
+  }
+
+  private _cutLongMessage(error: string): string {
+    if (error.length < 4000) return error
+    return `${error.substring(0, 2000)} *** ${error.substring(
+      error.length - 2000,
+    )}`
   }
 }
 

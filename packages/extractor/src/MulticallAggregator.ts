@@ -211,26 +211,15 @@ export class MultiCallAggregator {
     }
     if (res[0].status !== 'success') {
       // getBlockNumber Failed
-      const error = this._errorMsg(
-        `getBlockNumber Failed: ${res[0].error.toString()}`,
-      )
-      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](error)
+      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
     } else {
       const blockNumber = res[0].result as number
       for (let i = 1; i < res.length; ++i) {
         if (res[i].status === 'success')
           pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
-        else
-          pendingRejects[i - 1](this._errorMsg(res[i].error?.toString() || ''))
+        else pendingRejects[i - 1](res[i].error)
       }
     }
-  }
-
-  _errorMsg(error: string): string {
-    if (this.debug || error.length < 5000) return error
-    return `${error.substring(0, 2500)} ... ${error.substring(
-      error.length - 2500,
-    )}`
   }
 
   getBlockNumberContractAddress(): Address {
