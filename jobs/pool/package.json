@@ -1,0 +1,91 @@
+{
+  "name": "@sushiswap/pool-job",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pool jobs",
+  "keywords": [
+    "pool",
+    "job"
+  ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "jobs/pools"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "graphclient build --fileType js && rm -f .graphclient/package.json",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
+    "server": "tsx src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "jest --passWithNoTests",
+    "validate": "graphclient validate"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "dependencies": {
+    "@ethersproject/address": "5.7.0",
+    "@ethersproject/bignumber": "5.7.0",
+    "@graphprotocol/client-add-source-name": "2.0.0",
+    "@graphprotocol/client-auto-pagination": "2.0.0",
+    "@graphprotocol/client-auto-type-merging": "2.0.0",
+    "@graphprotocol/client-cli": "3.0.0",
+    "@graphql-mesh/cache-localforage": "0.94.1",
+    "@graphql-mesh/cross-helpers": "0.4.0",
+    "@graphql-mesh/graphql": "0.94.2",
+    "@graphql-mesh/http": "0.94.4",
+    "@graphql-mesh/merger-stitching": "0.94.1",
+    "@graphql-mesh/runtime": "0.94.1",
+    "@graphql-mesh/store": "0.94.1",
+    "@graphql-mesh/transform-filter-schema": "0.94.1",
+    "@graphql-mesh/transform-prefix": "0.94.2",
+    "@graphql-mesh/transform-type-merging": "0.94.1",
+    "@graphql-mesh/utils": "0.94.1",
+    "@graphql-tools/merge": "9.0.0",
+    "sushi": "workspace:*",
+    "@sushiswap/database": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/bonds-sdk": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
+    "@sushiswap/client": "workspace:*",
+    "@sushiswap/steer-sdk": "workspace:*",
+    "@wagmi/core": "2.6.9",
+    "@whatwg-node/fetch": "0.8.4",
+    "connect-timeout": "1.9.0",
+    "date-fns": "2.29.3",
+    "ethers": "5.7.2",
+    "express": "4.18.2",
+    "graphql": "16.6.0",
+    "lodash.zip": "4.2.0",
+    "tsx": "^4.7.1",
+    "viem": "2.8.13",
+    "zod": "3.21.4"
+  },
+  "devDependencies": {
+    "@sushiswap/jest-config": "workspace:*",
+    "@swc/core": "1.4.2",
+    "@swc/helpers": "0.5.6",
+    "@types/connect-timeout": "0.0.36",
+    "@types/express": "4.17.15",
+    "@types/lodash.zip": "4.2.7",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node18": "18.2.2",
+    "dotenv": "16.0.3",
+    "eslint": "8.43.0",
+    "jest": "29.3.1",
+    "typescript": "5.2.2"
+  }
+}
