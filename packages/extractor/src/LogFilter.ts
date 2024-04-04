@@ -6,7 +6,7 @@ import {
   WatchBlocksReturnType,
   encodeEventTopics,
 } from 'viem'
-import { warnLog } from './WarnLog.js'
+import { Logger } from './Logger.js'
 
 enum LogFilterType {
   OneCall = 0, // one eth_getLogs call for all topict - the most preferrable
@@ -173,7 +173,7 @@ export class LogFilter {
   addBlock(block: Block, isGoal: boolean) {
     const blockNumber = block.number === null ? null : Number(block.number)
     if (blockNumber === null || block.hash === null) {
-      warnLog(
+      Logger.error(
         this.client.chain?.id,
         `Incorrect block: number=${blockNumber} hash=${block.hash}`,
       )
@@ -185,7 +185,10 @@ export class LogFilter {
     this.blockHashMap.set(block.hash, block)
 
     const backupPlan = () => {
-      warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
+      Logger.error(
+        this.client.chain?.id,
+        `getLog failed for block ${block.hash}`,
+      )
       this.stop()
     }
 
@@ -228,7 +231,7 @@ export class LogFilter {
         )
         break
       default:
-        warnLog(
+        Logger.error(
           this.client.chain?.id,
           `Internal errror: Unknown Log Type: ${this.logType}`,
         )
@@ -242,7 +245,7 @@ export class LogFilter {
             .getBlock({ blockHash: block.parentHash })
             .then((b) => this.addBlock(b, false)),
         () =>
-          warnLog(
+          Logger.error(
             this.client.chain?.id,
             'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1',
           ),
@@ -277,7 +280,7 @@ export class LogFilter {
     for (let i = 0; i < downLine.length; ++i) {
       const l = this.logHashMap.get(downLine[i].hash || '')
       if (l === undefined) {
-        warnLog(this.client.chain?.id, 'Unexpected Error in LogFilter')
+        Logger.error(this.client.chain?.id, 'Unexpected Error in LogFilter')
         this.stop()
         return
       }

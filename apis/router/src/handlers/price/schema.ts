@@ -32,6 +32,7 @@ export const allPricesSchema = z.object({
     )
     .transform((chainId) => chainId as ExtractorSupportedChainId),
   currency: z.nativeEnum(Currency).default(Currency.USD),
+  oldPrices: z.optional(z.coerce.boolean()).default(false),
 })
 
 export const singleAddressSchema = z.object({

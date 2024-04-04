@@ -4,8 +4,8 @@ import { tickLensAbi } from 'sushi/abi'
 import { NUMBER_OF_SURROUNDING_TICKS } from 'sushi/router'
 import { CLTick } from 'sushi/tines'
 import { Counter } from './Counter.js'
+import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
-import { warnLog } from './WarnLog.js'
 
 interface WordState {
   blockNumber: number
@@ -85,11 +85,10 @@ export class WordLoadManager extends EventEmitter {
           }
         }
       } catch (e) {
-        warnLog(
+        Logger.error(
           this.client.chainId,
           `Pool ${this.poolAddress} ticks downloading failed`,
-          'error',
-          `${e}`,
+          e,
         )
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
