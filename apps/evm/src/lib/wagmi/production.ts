@@ -37,9 +37,15 @@ export const createProductionConfig = () => {
       acc[Number(chainId) as ChainId] = http(transportUrl, {
         onFetchResponse(_res) {
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
+            let fallback = 'undefined'
+            if (typeof window.isFallback !== 'undefined') {
+              fallback = window.isFallback ? 'true' : 'false'
+            }
+
             gtagEvent('drpc-response', {
               pathname: window.location.pathname,
               href: window.location.href,
+              fallback,
               chainId,
             })
           }

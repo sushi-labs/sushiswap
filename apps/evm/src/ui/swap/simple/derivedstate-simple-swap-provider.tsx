@@ -441,6 +441,13 @@ const useSimpleSwapTrade = () => {
     return () => unwatch()
   }, [config, resetFallback])
 
+  // Write the fallback value to the window object so it can be logged to GA
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.isFallback = isFallback
+    }
+  }, [isFallback])
+
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
 }
 
