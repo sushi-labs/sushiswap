@@ -18,22 +18,16 @@
       "symbol": "USDC",
       "name": "USD Coin (PoS)",
       "decimals": 6
-    },
-    {
-      "address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-      "symbol": "USDC",
-      "name": "USD Coin",
-      "decimals": 6
     }
   ],
   "tokenFrom": 0,
-  "tokenTo": 3,
-  "primaryPrice": 1.0299881411588608e-12,
-  "swapPrice": 1.02679886e-12,
-  "priceImpact": 0.003096425125120872,
+  "tokenTo": 2,
+  "primaryPrice": 8.9256093504231e-13,
+  "swapPrice": 8.9475609e-13,
+  "priceImpact": -0.0024593894618365475,
   "amountIn": "100000000000000000000",
-  "assumedAmountOut": "102679886",
-  "gasSpent": 310000,
+  "assumedAmountOut": "89475609",
+  "gasSpent": 160000,
   "route": [
     {
       "poolAddress": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
@@ -55,28 +49,17 @@
       "tokenTo": 2,
       "share": 1,
       "assumedAmountIn": "100000000000000000000",
-      "assumedAmountOut": "102688012"
-    },
-    {
-      "poolAddress": "0xc6bA44891Cd95eFC3929a428242f97bd9B735eB1",
-      "poolType": "Concentrated",
-      "poolName": "SushiSwapV3 0.05%",
-      "poolFee": 0.0005,
-      "tokenFrom": 2,
-      "tokenTo": 3,
-      "share": 1,
-      "assumedAmountIn": "102688012",
-      "assumedAmountOut": "102679886"
+      "assumedAmountOut": "89475609"
     }
   ],
   "routeProcessorAddr": "0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e",
   "routeProcessorArgs": {
     "tokenIn": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
     "amountIn": "100000000000000000000",
-    "tokenOut": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-    "amountOutMin": "102166486",
-    "to": "0xc86498822EF633F6e1E971484C56e3a087ECC333",
-    "routeCode": "0x0301ffff020146B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270010d500B1d8E8eF31E21C99d1Db9A6444d3ADf127001ffff0121988C9CFD08db3b5793c2C6782271dC947492510146B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e012791Bca1f2de4661ED88A30C99A7a9449Aa8417401ffff01c6bA44891Cd95eFC3929a428242f97bd9B735eB101c86498822EF633F6e1E971484C56e3a087ECC333",
+    "tokenOut": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    "amountOutMin": "89028230",
+    "to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "routeCode": "0x0301ffff020146B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270010d500B1d8E8eF31E21C99d1Db9A6444d3ADf127001ffff0121988C9CFD08db3b5793c2C6782271dC9474925101f39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     "value": "100000000000000000000"
   }
 }
