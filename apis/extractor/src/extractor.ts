@@ -6,7 +6,12 @@ import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config.js'
 
 Logger.setLogsExternalHandler(
-  (msg: string, level: LogsMessageLevel, context?: string) => {
+  (
+    msg: string,
+    level: LogsMessageLevel,
+    context?: string,
+    trace_id?: string,
+  ) => {
     Sentry.captureMessage(
       msg,
       context === undefined
@@ -14,7 +19,11 @@ Logger.setLogsExternalHandler(
         : {
             level,
             contexts: {
-              trace: { data: { context }, trace_id: '0', span_id: '0' },
+              trace: {
+                data: { context },
+                trace_id: trace_id ?? '0',
+                span_id: '0',
+              },
             },
           },
     )

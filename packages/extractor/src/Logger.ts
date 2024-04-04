@@ -1,4 +1,5 @@
 import { ChainId } from 'sushi'
+import { BaseError, BlockNotFoundError, HttpRequestError } from 'viem'
 
 export type LogsMessageLevel = 'info' | 'warning' | 'error'
 type CainIdExt = ChainId | number | undefined
@@ -8,6 +9,7 @@ export type LogsExternalHandler = (
   message: string,
   level: LogsMessageLevel,
   context?: string,
+  trace_id?: string,
 ) => void
 
 class LoggerClass {
@@ -34,6 +36,27 @@ class LoggerClass {
   ) {
     console.warn(`${this._nowDate()}-${chainId}: ${message}`)
     if (this.logsExternalHandler) {
+      if (error instanceof BlockNotFoundError) {
+        this.logsExternalHandler(`${chainId}: ${message}`, 'error', `${error}`)
+        return
+      }
+      if (error instanceof HttpRequestError) {
+        const errStr = `${error.status} - ${error.shortMessage} (${error.details})`
+        const traceId = error.headers?.get('x-drpc-trace-id') ?? undefined
+        this.logsExternalHandler(
+          `${chainId}: ${errStr} / ${message}`,
+          level,
+          this._cutLongMessage(`${error}`),
+          traceId,
+        )
+        this.logsExternalHandler(
+          `${chainId}: ${message} / ${errStr}`,
+          level,
+          this._cutLongMessage(`${error}`),
+          traceId,
+        )
+        return
+      }
       const context = error !== undefined ? `${error}` : undefined
       const details = context?.match(/Details: (.*)/)?.[1]
       const errorStr = context?.match(/^(.*)/)?.[1]?.substring(0, 100)
@@ -41,13 +64,13 @@ class LoggerClass {
         .filter((s) => s !== undefined)
         .join('/')
       this.logsExternalHandler(
-        `${chainId}: ${message}${errMsg !== '' ? ` (${errMsg})` : ''}`,
+        `${chainId}: ${message}${errMsg !== '' ? ` / ${errMsg}` : ''}`,
         level,
         error !== undefined ? this._cutLongMessage(`${error}`) : undefined,
       )
       if (errMsg !== '')
         this.logsExternalHandler(
-          `${chainId}: ${errMsg} (${message})`,
+          `${chainId}: ${errMsg} / ${message}`,
           level,
           error !== undefined ? this._cutLongMessage(`${error}`) : undefined,
         )
