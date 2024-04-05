@@ -1,7 +1,8 @@
 // @ts-nocheck
 
 import { test } from 'next/experimental/testmode/playwright'
-import { Native, USDC, USDT, WBTC } from 'sushi/currency'
+import { ChainId } from 'sushi/chain'
+import { Native, Token, USDC, USDT, WBTC } from 'sushi/currency'
 
 import { SupportedChainId } from 'src/config'
 import { SwapPage } from 'test/helpers/swap'
@@ -22,7 +23,16 @@ const url = 'http://localhost:3000/swap'
 const native = Native.onChain(chainId)
 const wnative = native.wrapped
 
-const usdc = USDC[chainId]
+const usdc =
+  chainId === ChainId.POLYGON
+    ? new Token({
+        chainId: ChainId.POLYGON,
+        address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+        symbol: 'USDC',
+        name: 'USD Coin (PoS)',
+        decimals: 6,
+      })
+    : USDC[chainId]
 const usdt = USDT[chainId]
 const wbtc = WBTC[chainId]
 // let snapshot: string
