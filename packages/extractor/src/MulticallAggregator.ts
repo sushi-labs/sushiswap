@@ -2,6 +2,7 @@ import { Abi, Narrow } from 'abitype'
 import { ChainId } from 'sushi/chain'
 import {
   Address,
+  BaseError,
   ContractFunctionArgs,
   ContractFunctionParameters,
   MulticallContracts,
@@ -177,7 +178,8 @@ export class MultiCallAggregator {
     })
     let res
     const startTime = performance.now()
-    for (;;) {
+    // 1 success call in enough, but in case of fail repeat up to 10 times
+    for (let i = 0; i < 10; ++i) {
       this.totalCalls += pendingCalls.length - 1
       this.totalMCalls += 1
       while (
@@ -189,6 +191,7 @@ export class MultiCallAggregator {
         this.currentBatchInProgress += 1
         res = await this.client.multicall({
           allowFailure: true,
+          batchSize: 0, // don't split
           contracts: pendingCalls.map((c) => ({
             address: c.address,
             abi: c.abi,
@@ -207,18 +210,32 @@ export class MultiCallAggregator {
       this.totalCallsProcessed += pendingCalls.length - 1
       this.totalMCallsProcessed += 1
       this.totalTimeSpent += performance.now() - startTime
+      if ((res[0].error as BaseError)?.details === 'out of gas') {
+        // random error, usually not repeatable, report it and try again
+        Logger.warn(
+          this.client.chain?.id,
+          `Multicall error (${res.length} calls), resending`,
+          res[0].error,
+        )
+        await delay(1000) // decreases the probability of fail
+        continue
+      }
       break
     }
-    if (res[0].status !== 'success') {
-      // getBlockNumber Failed
-      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
-    } else {
-      const blockNumber = res[0].result as number
-      for (let i = 1; i < res.length; ++i) {
-        if (res[i].status === 'success')
-          pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
-        else pendingRejects[i - 1](res[i].error)
+    if (res) {
+      if (res[0].status !== 'success') {
+        // getBlockNumber Failed
+        for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
+      } else {
+        const blockNumber = res[0].result as number
+        for (let i = 1; i < res.length; ++i) {
+          if (res[i].status === 'success')
+            pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
+          else pendingRejects[i - 1](res[i].error)
+        }
       }
+    } else {
+      Logger.error(this.client.chain?.id, 'Unexpected state in Multicall !!!')
     }
   }
 
