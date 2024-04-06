@@ -14,6 +14,7 @@ export function comparePrices(
   let totalShift = 0
   let maxR = 0
   const levelsEx = levels.map((_) => 0)
+  const priceDiff: [string, number, number, number][] = []
   ethalonTokens.forEach((eT) => {
     const eP = pricesEthalon[eT] as number
     const cP = pricesCompared[eT]
@@ -32,9 +33,17 @@ export function comparePrices(
         levels.forEach((l, i) => {
           if (r > l) levelsEx[i] += 1
         })
+        priceDiff.push([eT, r, eP, cP])
       }
     }
   })
+  console.log(
+    JSON.stringify(
+      priceDiff.sort((a, b) => a[1] - b[1]),
+      undefined,
+      '  ',
+    ),
+  )
   console.log(
     `Compared prices: ${totalNum}/${ethalonTokens.length}, avg diff ${(
       (totalR / totalNum) *
@@ -52,14 +61,13 @@ export function comparePrices(
   )
 }
 
-async function compareOldNewPrices(chainId: number) {
-  const resNew = await fetch(`https://api.sushi.com/price/v1/${chainId}`)
-  const pricesNew = await resNew.json()
-  const resOld = await fetch(
-    `https://api.sushi.com/price/v1/${chainId}?oldPrices=true`,
-  )
+async function compareOldNewPrices(server: string, chainId: number) {
+  const resOld = await fetch(`${server}/price/v1/${chainId}?oldPrices=true`)
   const pricesOld = await resOld.json()
+  const resNew = await fetch(`${server}/price/v1/${chainId}`)
+  const pricesNew = await resNew.json()
   comparePrices(pricesOld, pricesNew, [0.01, 0.005])
 }
 
-compareOldNewPrices(56)
+compareOldNewPrices('https://api.sushi.com', 56)
+//compareOldNewPrices('http://localhost:1338', 56)

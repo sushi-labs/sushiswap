@@ -529,6 +529,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
+    maxCallsInOneBatch: 30,
   },
   [ChainId.METIS]: {
     client: createPublicClient(extractorClientConfig(ChainId.METIS)),
@@ -645,6 +646,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
+    maxCallsInOneBatch: 100,
   },
 
   [ChainId.THUNDERCORE]: {
