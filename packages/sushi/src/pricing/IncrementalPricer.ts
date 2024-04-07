@@ -30,6 +30,8 @@ class TokenInfo {
   children: TokenInfo[] = []
   direction: boolean
   poolPrice: number
+  poolAddress?: Address | undefined
+  poolLiquidity?: number | undefined
   totalSuccessors = 0
   changedPoolIndex?: number
 
@@ -38,6 +40,8 @@ class TokenInfo {
     direction: boolean,
     poolPrice: number,
     parent?: TokenInfo,
+    poolAddress?: Address,
+    poolLiquidity?: number,
   ) {
     this.token = token
     this.address = token.address as Address
@@ -46,6 +50,8 @@ class TokenInfo {
     this.poolPrice = poolPrice
     this.parent = parent
     if (parent) parent.children.push(this)
+    this.poolAddress = poolAddress
+    this.poolLiquidity = poolLiquidity
   }
 }
 
@@ -119,6 +125,29 @@ export class IncrementalPricer {
     }
   }
 
+  reasoning(token: Address): string[] {
+    let ti = this.tokenMap.get(token)
+    if (ti === undefined) return ['Token is not priced']
+    const lines: string[] = []
+    while (ti !== undefined) {
+      const parentDecExp = ti.parent?.decExp ?? ti.decExp
+      lines.push(
+        `Token ${ti.token.symbol} (${ti.address}) price is ${
+          this.prices[ti.address]
+        }$`,
+      )
+      if (ti.poolAddress !== undefined) {
+        lines.push(
+          `Pool ${ti.poolAddress} liquidity ${Math.round(
+            ti.poolLiquidity ?? 0,
+          )}$ price ${(ti.poolPrice / parentDecExp) * ti.decExp}`,
+        )
+      }
+      ti = ti.parent
+    }
+    return lines.reverse()
+  }
+
   isFullPricesRecalcNeeded() {
     return (
       this.fullPricesRecalcFlag ||
@@ -171,7 +200,14 @@ export class IncrementalPricer {
             }` +
               ` from ${vFrom.token.symbol} pool=${bestEdge.pool.address} liquidity=${bestEdge.poolLiquidity}`,
           )
-        vTo.obj = new TokenInfo(vTo.token, direction, p, vFrom.obj as TokenInfo)
+        vTo.obj = new TokenInfo(
+          vTo.token,
+          direction,
+          p,
+          vFrom.obj as TokenInfo,
+          bestEdge.pool.address,
+          bestEdge.poolLiquidity,
+        )
         this.poolTokenMap.set(bestEdge.pool.uniqueID(), vTo.obj as TokenInfo)
         this._addVertice(nextEdges, vTo, p * (vFrom.price as number))
         // console.log(
@@ -401,6 +437,7 @@ export class IncrementalPricer {
     }
     const price = this.prices[token.address] as number
     const liquidity = (reserve * price) / 10 ** token.decimals
+    tokenInfo.poolLiquidity = liquidity
     const minLiquidityK = DEBUG_COMPARE_PARTIAL_UPDATE_WITH_TINES_PRICES
       ? 1
       : MIN_PRICABLE_LIQUIDITY
@@ -425,13 +462,13 @@ export class IncrementalPricer {
       const liquidity =
         (Number(pool.reserve0) * price0) / 10 ** pool.token0.decimals
       if (liquidity < this.minLiquidity) return // too low liquidity for pricing
-      return this._addNewToken(pool, true, price0)
+      return this._addNewToken(pool, true, price0, liquidity)
     } else {
       if (price0 !== undefined) return // both tokens are priced
       const liquidity =
         (Number(pool.reserve1) * price1) / 10 ** pool.token1.decimals
       if (liquidity < this.minLiquidity) return // too low liquidity for pricing
-      return this._addNewToken(pool, false, price1)
+      return this._addNewToken(pool, false, price1, liquidity)
     }
   }
 
@@ -439,6 +476,7 @@ export class IncrementalPricer {
     pool: RPool,
     direction: boolean,
     priceFrom: number,
+    liquidity: number,
   ): TokenInfo {
     const [tokenFrom, tokenTo] = direction
       ? [pool.token0, pool.token1]
@@ -452,6 +490,8 @@ export class IncrementalPricer {
       direction,
       poolPrice,
       tokenFromInfo,
+      pool.address,
+      liquidity,
     )
     this.poolTokenMap.set(pool.uniqueID(), tokenToInfo)
     this.tokenMap.set(tokenTo.address as Address, tokenToInfo)

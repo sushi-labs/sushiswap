@@ -9,26 +9,42 @@ const priceStatistics = new RequestStatistics('Prices', 60_000) // update log on
 priceStatistics.start()
 
 export const pricesHandler = (req: Request, res: Response) => {
-  const { currency, oldPrices } = allPricesSchema.parse(req.query)
-  res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
-  if (
-    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
-    oldPrices !== true
-  )
-    res.json(
-      currency === Currency.USD ? extractorClient?.getPrices() ?? {} : {},
-    )
-  else res.json(prices[currency])
-  priceStatistics.addAllRequest()
-}
-
-export const priceByAddressHandler = (req: Request, res: Response) => {
-  const { currency, address } = singleAddressSchema.parse({
+  const { currency, oldPrices } = allPricesSchema.parse({
     ...req.query,
     ...req.params,
   })
   res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
-  if (ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true) {
+  if (
+    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
+    oldPrices !== true
+  ) {
+    res.json(
+      currency === Currency.USD ? extractorClient?.getPrices() ?? {} : {},
+    )
+  } else res.json(prices[currency])
+  priceStatistics.addAllRequest()
+}
+
+export const priceByAddressHandler = (req: Request, res: Response) => {
+  const { currency, address, oldPrices, reasoning } = singleAddressSchema.parse(
+    {
+      ...req.query,
+      ...req.params,
+    },
+  )
+  res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
+  if (
+    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
+    oldPrices !== true
+  ) {
+    if (reasoning) {
+      res.send(
+        makeHTMLReasoning(
+          extractorClient?.getPriceReasoning(address) ?? ['Internal Error'],
+        ),
+      )
+      return
+    }
     if (currency === Currency.USD) {
       const price = extractorClient?.getPrice(address)
       if (price !== undefined) {
@@ -51,4 +67,15 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
     res.json(prices[currency][address])
     priceStatistics.addKnownRequest()
   }
+}
+
+function makeHTMLReasoning(reasoning: string[]) {
+  return `<html>
+    <head/>
+    <body>
+      <font face="Courier">
+      ${reasoning.map((r) => `<p>${r}</p>`).join('\n')}
+      </font>
+    </body>
+</html`.replace(/[^ ]*\$/g, (s) => `<b>${s}</b>`)
 }
