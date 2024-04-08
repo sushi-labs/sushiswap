@@ -1,16 +1,37 @@
-import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subHours, subMonths } from 'date-fns'
+import {
+  addSeconds,
+  getUnixTime,
+  startOfHour,
+  startOfMinute,
+  startOfSecond,
+  subDays,
+  subHours,
+  subMonths,
+} from 'date-fns'
 
-import type { Block, Resolvers, ResolverTypeWrapper } from '../../.graphclient/index.js'
+import type {
+  Block,
+  Resolvers,
+  ResolverTypeWrapper,
+} from '../../.graphclient/index.js'
 import { _blocksByChainIds, blocksByChainIds } from './blocksByChainIds.js'
 
 export const resolvers: Resolvers = {
   Block: {
-    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
+    chainId: (root, args, context, info) =>
+      Number(root.chainId || context.chainId || 1),
   },
   Query: {
     blocksByChainIds,
-    oneHourBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subHours(Date.now(), 1))))
+    oneHourBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subHours(Date.now(), 1))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -21,11 +42,18 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    twoHourBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subHours(Date.now(), 2))))
+    twoHourBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subHours(Date.now(), 2))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -36,11 +64,18 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    oneDayBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
+    oneDayBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subDays(Date.now(), 1))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -51,11 +86,18 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    twoDayBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 2))))
+    twoDayBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subDays(Date.now(), 2))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -66,11 +108,18 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    oneWeekBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 7))))
+    oneWeekBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subDays(Date.now(), 7))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -81,11 +130,18 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    twoWeekBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 14))))
+    twoWeekBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subDays(Date.now(), 14))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -96,11 +152,18 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    oneMonthBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subMonths(Date.now(), 1))))
+    oneMonthBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subMonths(Date.now(), 1))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -111,11 +174,18 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    twoMonthBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-      const date = startOfSecond(startOfMinute(startOfHour(subMonths(Date.now(), 2))))
+    twoMonthBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
+      const date = startOfSecond(
+        startOfMinute(startOfHour(subMonths(Date.now(), 2))),
+      )
       const start = getUnixTime(date)
       const end = getUnixTime(addSeconds(date, 600))
       return _blocksByChainIds(
@@ -126,10 +196,15 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
-    customBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
+    customBlocks: async (
+      root,
+      args,
+      context,
+      info,
+    ): Promise<ResolverTypeWrapper<Block>[]> => {
       const start = args.timestamp
       const end = start + 600
       return _blocksByChainIds(
@@ -139,7 +214,7 @@ export const resolvers: Resolvers = {
           where: { timestamp_gt: start, timestamp_lt: end },
         },
         context,
-        info
+        info,
       )
     },
   },

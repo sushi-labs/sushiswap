@@ -139,7 +139,7 @@ function createSubgraphConfig(protocol: Protocol) {
       name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
       protocol: Protocol.SUSHISWAP_V3,
     }))
-  } 
+  }
 
   throw new Error('Protocol not supported')
 }
@@ -377,9 +377,7 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
       pools2m,
     }
   } else {
-    console.warn(
-      'fetchPairs: config.version is not LEGACY or V3, skipping',
-    )
+    console.warn('fetchPairs: config.version is not LEGACY or V3, skipping')
   }
 }
 
