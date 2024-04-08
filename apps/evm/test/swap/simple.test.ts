@@ -50,6 +50,10 @@ test.beforeEach(async ({ page, next }) => {
     await route.fill({ success: true, data: { maintenance: false } })
   })
 
+  await page.route('https://localhost:3000/api/balance/v0', async (route) => {
+    await route.fill({ success: true, data: {} })
+  })
+
   await page.route('https://tokens.sushi.com/v0', async (route) => {
     await route.fulfill({
       json: [wnative, usdc, usdt, wbtc].map((token) => ({
