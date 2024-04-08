@@ -11,14 +11,14 @@ import {
 
 import type {
   Block,
-  Resolvers,
   ResolverTypeWrapper,
+  Resolvers,
 } from '../../.graphclient/index.js'
 import { _blocksByChainIds, blocksByChainIds } from './blocksByChainIds.js'
 
 export const resolvers: Resolvers = {
   Block: {
-    chainId: (root, args, context, info) =>
+    chainId: (root, _args, context, _info) =>
       Number(root.chainId || context.chainId || 1),
   },
   Query: {
