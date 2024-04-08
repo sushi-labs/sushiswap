@@ -1,68 +1,64 @@
 import { fetch } from '@whatwg-node/fetch'
-import { isPromiseFulfilled } from 'sushi'
-import { getChainIdAddressFromId } from 'sushi/format'
+import { getIdFromChainIdAddress } from 'sushi/format'
+import type { Address } from 'viem'
+import type { SteerChainId } from '../constants'
 
-interface GetVaultsAprs {
-  vaultIds: string[]
+interface GetVaultAprs {
+  chainId: SteerChainId
 }
 
-async function getApr(
-  chainId: number,
-  address: string,
-  interval?: number,
-): Promise<number | string> {
-  let url = `https://ro81h8hq6b.execute-api.us-east-1.amazonaws.com/pool/fee-apr?address=${address}&chain=${chainId}`
-  if (interval) {
-    url += `&interval=${interval}`
+type AprEntry = {
+  apr: string
+  vault: Address
+}
+
+type AprData = {
+  message: string
+  data: {
+    daily: AprEntry[]
+    weekly: AprEntry[]
+    monthly: AprEntry[]
+    default: AprEntry[]
   }
-
-  return fetch(url)
-    .then((res) => res.json())
-    .then((res) => res?.apr)
 }
 
-export async function getVaultsAprs({ vaultIds }: GetVaultsAprs) {
-  const results = await Promise.allSettled(
-    vaultIds.map(async (vaultId) => {
-      const { address, chainId } = getChainIdAddressFromId(vaultId)
-
-      const aprs = await Promise.all([
-        getApr(chainId, address),
-        getApr(chainId, address, 86400),
-        getApr(chainId, address, 604800),
-      ])
-
-      if (aprs.some((apr) => typeof apr === 'undefined')) {
-        throw new Error("Couldn't fetch APR")
-      }
-
-      const [apr, apr1d, apr1w] = aprs.map((apr) => Number(apr) / 100) as [
-        number,
-        number,
-        number,
-      ]
-
-      return {
-        apr,
-        apr1d,
-        apr1w,
-      }
-    }),
+export async function getVaultAprs({ chainId }: GetVaultAprs) {
+  const result = await fetch(
+    `https://vdly0xv0a5.execute-api.us-east-1.amazonaws.com/dev/fee-aprs?chainId=${chainId}&dex=sushi`,
   )
 
-  return results.map((r) => (isPromiseFulfilled(r) ? r.value : null))
-}
+  if (!result.ok)
+    throw new Error(`Failed to fetch aprs for chainId: ${chainId}`)
 
-interface GetVaultsApr {
-  vaultId: string
-}
+  const { message, data }: AprData = await result.json()
 
-export async function getVaultAprs({ vaultId }: GetVaultsApr) {
-  const results = await getVaultsAprs({ vaultIds: [vaultId] })
+  if (message !== 'Success')
+    throw new Error(`Failed to fetch aprs for chainId: ${chainId}`)
 
-  if (!results[0]) {
-    throw new Error(`Failed to fetch APR for vault ${vaultId}`)
+  const map = new Map<
+    string,
+    { apr1d?: number; apr1w?: number; apr1m?: number; apr?: number }
+  >()
+
+  for (const apr of data.daily) {
+    const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
+    map.set(vaultId, { apr1d: parseFloat(apr.apr) })
   }
 
-  return results[0]
+  for (const apr of data.weekly) {
+    const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
+    map.set(vaultId, { ...map.get(vaultId), apr1w: parseFloat(apr.apr) })
+  }
+
+  for (const apr of data.monthly) {
+    const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
+    map.set(vaultId, { ...map.get(vaultId), apr1m: parseFloat(apr.apr) })
+  }
+
+  for (const apr of data.default) {
+    const vaultId = getIdFromChainIdAddress(chainId, apr.vault)
+    map.set(vaultId, { ...map.get(vaultId), apr: parseFloat(apr.apr) })
+  }
+
+  return Object.fromEntries(map)
 }

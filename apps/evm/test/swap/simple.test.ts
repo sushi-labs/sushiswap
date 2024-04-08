@@ -23,16 +23,15 @@ const url = 'http://localhost:3000/swap'
 const native = Native.onChain(chainId)
 const wnative = native.wrapped
 
-const usdc =
-  chainId === ChainId.POLYGON
-    ? new Token({
-        chainId: ChainId.POLYGON,
-        address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-        symbol: 'USDC',
-        name: 'USD Coin (PoS)',
-        decimals: 6,
-      })
-    : USDC[chainId]
+const polygonBridgedUsdc = new Token({
+  chainId: ChainId.POLYGON,
+  address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  symbol: 'USDC.e',
+  name: 'USD Coin (PoS)',
+  decimals: 6,
+})
+
+const usdc = chainId === ChainId.POLYGON ? polygonBridgedUsdc : USDC[chainId]
 const usdt = USDT[chainId]
 const wbtc = WBTC[chainId]
 // let snapshot: string
@@ -49,6 +48,10 @@ test.beforeEach(async ({ page, next }) => {
 
   await page.route('https://localhost:3000/api/swap', async (route) => {
     await route.fill({ success: true, data: { maintenance: false } })
+  })
+
+  await page.route('https://localhost:3000/api/balance/v0', async (route) => {
+    await route.fill({ success: true, data: {} })
   })
 
   await page.route('https://tokens.sushi.com/v0', async (route) => {

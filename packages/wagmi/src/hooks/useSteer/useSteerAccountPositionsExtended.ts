@@ -3,7 +3,7 @@ import { useAllPrices } from '@sushiswap/react-query'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
 
-import { STEER_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import { useMemo } from 'react'
 import { useSteerAccountPositions } from './useSteerAccountPosition'
 
@@ -16,7 +16,7 @@ interface UseSteerAccountPositionsExtended {
 export const useSteerAccountPositionsExtended = ({
   account,
   enabled = true,
-  chainIds = [...STEER_ENABLED_NETWORKS],
+  chainIds = [...STEER_SUPPORTED_CHAIN_IDS],
 }: UseSteerAccountPositionsExtended) => {
   const { data: prices, isInitialLoading: isPricesLoading } = useAllPrices()
 
