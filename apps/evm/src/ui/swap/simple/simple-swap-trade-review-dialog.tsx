@@ -117,8 +117,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
   const onSwapSuccess = useCallback(
     async (hash: SendTransactionReturnType) => {
-      setSwapAmount('')
-
       if (!trade || !chainId) return
 
       try {
@@ -294,6 +292,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
           }
         }
       } finally {
+        setSwapAmount('')
         await refetchBalances()
       }
     },

@@ -18,7 +18,6 @@ import {
   Checker,
   UseSimulateContractParameters,
   useAccount,
-  useEstimateGas,
   usePublicClient,
   useSimulateContract,
   useWriteContract,
@@ -27,7 +26,6 @@ import { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import { useCallback, useMemo, useState } from 'react'
-import { gasMargin } from 'sushi'
 import { Amount, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import {
@@ -205,14 +203,14 @@ const CLAIM_CELL = ({ position }: { position: BondPosition }) => {
     claimable,
   ])
 
-  const { data: estimatedGas } = useEstimateGas({
-    ...prepare,
-    query: {
-      enabled: Boolean(address && chain?.id === position.chainId && claimable),
-    },
-  })
+  // const { data: estimatedGas } = useEstimateGas({
+  //   ...prepare,
+  //   query: {
+  //     enabled: Boolean(address && chain?.id === position.chainId && claimable),
+  //   },
+  // })
 
-  const adjustedGas = estimatedGas ? gasMargin(estimatedGas) : undefined
+  // const adjustedGas = estimatedGas ? gasMargin(estimatedGas) : undefined
 
   const { data: simulation, isError } = useSimulateContract({
     ...prepare,
@@ -229,19 +227,19 @@ const CLAIM_CELL = ({ position }: { position: BondPosition }) => {
   })
 
   const write = useMemo(() => {
-    if (!simulation || !adjustedGas) return undefined
+    if (!simulation /* || !adjustedGas*/) return undefined
 
     return async (confirm: () => void) => {
       try {
         await writeContractAsync({
           ...simulation.request,
-          gas: adjustedGas,
+          // gas: adjustedGas,
         })
 
         confirm()
       } catch {}
     }
-  }, [simulation, writeContractAsync, adjustedGas])
+  }, [simulation, writeContractAsync /*, adjustedGas/*/])
 
   return (
     <div className="w-full flex justify-center">

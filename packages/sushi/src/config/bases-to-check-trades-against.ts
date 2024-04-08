@@ -64,6 +64,13 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     QUICK[ChainId.POLYGON],
     LINK[ChainId.POLYGON],
     AAVE[ChainId.POLYGON],
+    new Token({
+      address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+      chainId: ChainId.POLYGON,
+      decimals: 6,
+      symbol: 'USD Coin',
+      name: 'USDC.e',
+    }),
   ],
   [ChainId.POLYGON_TESTNET]: [
     WNATIVE[ChainId.POLYGON_TESTNET],
