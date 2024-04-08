@@ -31,16 +31,16 @@ export const isSquidRouteProcessorEnabled: Record<
 > = {
   [ChainId.ETHEREUM]: true,
   [ChainId.BSC]: true,
-  [ChainId.AVALANCHE]: false,
+  [ChainId.AVALANCHE]: true,
   [ChainId.POLYGON]: true,
   [ChainId.ARBITRUM]: true,
   [ChainId.OPTIMISM]: true,
   [ChainId.BASE]: true,
   [ChainId.FANTOM]: true,
-  [ChainId.LINEA]: false,
-  [ChainId.KAVA]: false,
+  [ChainId.LINEA]: true,
+  [ChainId.KAVA]: true,
   [ChainId.MOONBEAM]: false,
-  [ChainId.CELO]: false,
+  [ChainId.CELO]: true,
   [ChainId.SCROLL]: true,
 }
 
