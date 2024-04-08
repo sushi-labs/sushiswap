@@ -7,8 +7,6 @@ import {
   SUSHISWAP_V3_ENABLED_NETWORKS,
   SUSHISWAP_V3_SUBGRAPH_NAME,
   SWAP_ENABLED_NETWORKS,
-  TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 import { ChainId } from 'sushi/chain'
@@ -141,19 +139,6 @@ function createSubgraphConfig(protocol: Protocol) {
       name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
       protocol: Protocol.SUSHISWAP_V3,
     }))
-  } else if (
-    protocol === Protocol.BENTOBOX_CLASSIC ||
-    protocol === Protocol.BENTOBOX_STABLE
-  ) {
-    return TRIDENT_ENABLED_NETWORKS.map((chainId) => {
-      const _chainId = chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
-      return {
-        chainId,
-        host: SUBGRAPH_HOST[_chainId],
-        name: TRIDENT_SUBGRAPH_NAME[_chainId],
-        protocol: Protocol.BENTOBOX_CLASSIC,
-      }
-    })
   }
 
   throw new Error('Protocol not supported')
@@ -275,30 +260,30 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
       pools1m,
       pools2m,
     ] = await Promise.all([
-      fetchLegacyOrTridentPairs(sdk, config),
+      fetchV2Pairs(sdk, config),
       blocks.oneHour
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneHour)
+        ? fetchV2Pairs(sdk, config, blocks.oneHour)
         : ([] as PairsQuery[]),
       blocks.twoHour
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoHour)
+        ? fetchV2Pairs(sdk, config, blocks.twoHour)
         : ([] as PairsQuery[]),
       blocks.oneDay
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneDay)
+        ? fetchV2Pairs(sdk, config, blocks.oneDay)
         : ([] as PairsQuery[]),
       blocks.twoDay
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoDay)
+        ? fetchV2Pairs(sdk, config, blocks.twoDay)
         : ([] as PairsQuery[]),
       blocks.oneWeek
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneWeek)
+        ? fetchV2Pairs(sdk, config, blocks.oneWeek)
         : ([] as PairsQuery[]),
       blocks.twoWeek
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoWeek)
+        ? fetchV2Pairs(sdk, config, blocks.twoWeek)
         : ([] as PairsQuery[]),
       blocks.oneMonth
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.oneMonth)
+        ? fetchV2Pairs(sdk, config, blocks.oneMonth)
         : ([] as PairsQuery[]),
       blocks.twoMonth
-        ? fetchLegacyOrTridentPairs(sdk, config, blocks.twoMonth)
+        ? fetchV2Pairs(sdk, config, blocks.twoMonth)
         : ([] as PairsQuery[]),
     ])
 
@@ -392,13 +377,11 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
       pools2m,
     }
   } else {
-    console.warn(
-      'fetchPairs: config.version is not LEGACY or TRIDENT or V3, skipping',
-    )
+    console.warn('fetchPairs: config.version is not LEGACY or V3, skipping')
   }
 }
 
-async function fetchLegacyOrTridentPairs(
+async function fetchV2Pairs(
   sdk: Sdk,
   config: SubgraphConfig,
   blockNumber?: number,
@@ -485,7 +468,7 @@ function transform(
   for (const result of queryResults) {
     const { chainId, data } = result
     if (isV2Query(data)) {
-      const { pools: v2Pools, tokens: v2Tokens } = transformLegacyOrTrident({
+      const { pools: v2Pools, tokens: v2Tokens } = transformV2({
         chainId,
         data,
       })
@@ -526,7 +509,7 @@ export const isV2Query = (data: V2Data | V3Data): data is V2Data =>
 export const isV3Query = (data: V2Data | V3Data): data is V3Data =>
   data.currentPools.some((d) => (d as V3PoolsQuery)?.pools !== undefined)
 
-function transformLegacyOrTrident(queryResult: {
+function transformV2(queryResult: {
   chainId: ChainId
   data: V2Data
 }) {
@@ -669,13 +652,6 @@ function transformLegacyOrTrident(queryResult: {
         let protocol: Protocol
         if (pair.source === 'LEGACY' && pair.type === 'CONSTANT_PRODUCT_POOL') {
           protocol = Protocol.SUSHISWAP_V2
-        } else if (
-          pair.source === 'TRIDENT' &&
-          pair.type === 'CONSTANT_PRODUCT_POOL'
-        ) {
-          protocol = Protocol.BENTOBOX_CLASSIC
-        } else if (pair.source === 'TRIDENT' && pair.type === 'STABLE_POOL') {
-          protocol = Protocol.BENTOBOX_STABLE
         } else {
           throw new Error('Unknown pool type')
         }
