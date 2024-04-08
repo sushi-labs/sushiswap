@@ -1,5 +1,9 @@
 import { ChainId } from 'sushi'
-import { BaseError, BlockNotFoundError, HttpRequestError } from 'viem'
+import {
+  BlockNotFoundError,
+  ContractFunctionExecutionError,
+  HttpRequestError,
+} from 'viem'
 
 export type LogsMessageLevel = 'info' | 'warning' | 'error'
 type CainIdExt = ChainId | number | undefined
@@ -37,7 +41,11 @@ class LoggerClass {
     console.warn(`${this._nowDate()}-${chainId}: ${message}`)
     if (this.logsExternalHandler) {
       if (error instanceof BlockNotFoundError) {
-        this.logsExternalHandler(`${chainId}: ${message}`, 'error', `${error}`)
+        this.logsExternalHandler(
+          `${chainId}: ${message}`,
+          'error',
+          this._cutLongMessage(`${error}`),
+        )
         return
       }
       if (error instanceof HttpRequestError) {
@@ -54,6 +62,17 @@ class LoggerClass {
           level,
           this._cutLongMessage(`${error}`),
           traceId,
+        )
+        return
+      }
+      if (
+        error instanceof ContractFunctionExecutionError &&
+        error.details === 'out of gas'
+      ) {
+        this.logsExternalHandler(
+          `${chainId}: ${message} / Out of Gas`,
+          'error',
+          this._cutLongMessage(`${error}`),
         )
         return
       }

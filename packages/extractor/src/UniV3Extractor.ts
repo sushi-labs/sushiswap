@@ -221,9 +221,7 @@ export class UniV3Extractor {
       })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       this.consoleLog(
-        `${
-          this.multiCallAggregator.chainId
-        }: ExtractorV3 is started (${Math.round(
+        `ExtractorV3 is started (${Math.round(
           performance.now() - startTime,
         )}ms)`,
       )

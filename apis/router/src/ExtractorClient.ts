@@ -369,6 +369,10 @@ export class ExtractorClient {
     return this.pricer.prices[address]
   }
 
+  getPriceReasoning(address: Address) {
+    return this.pricer.reasoning(address)
+  }
+
   getPrices() {
     return this.pricer.prices
   }

@@ -650,6 +650,98 @@ export class Graph {
     })
   }
 
+  getPriceReasoning(
+    from: RToken,
+    price: number,
+    token: Address,
+    minLiquidity = 0,
+  ): string[] {
+    type PricingStepInfo = {
+      parent: PricingStepInfo | undefined
+      vert: Vertice
+      price: number
+      liquidity: number
+      edge: Edge | undefined
+    }
+
+    const processedVert = new Set<Vertice>()
+    const vertToPricingInfo = new Map<Vertice | undefined, PricingStepInfo>()
+    type ValuedEdge = [number, Edge]
+    let nextEdges: ValuedEdge[] = []
+
+    function addVertice(
+      parent: Vertice | undefined,
+      v: Vertice,
+      price: number,
+      liquidity: number,
+      edge: Edge | undefined,
+    ) {
+      const newEdges = v.edges
+        .filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
+        .map((e) => {
+          const liquidity = price * Number(e.reserve(v))
+          return [liquidity, e] as ValuedEdge
+        })
+        .filter(
+          ([liquidity, e]) =>
+            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
+        )
+      nextEdges = fastArrayMerge(nextEdges, newEdges)
+      processedVert.add(v)
+      vertToPricingInfo.set(v, {
+        parent: vertToPricingInfo.get(parent),
+        vert: v,
+        price,
+        liquidity,
+        edge,
+      })
+    }
+
+    setTokenId(from)
+    addVertice(
+      undefined,
+      this.tokens.get(from.tokenId as string) as Vertice,
+      price / 10 ** from.decimals,
+      0,
+      undefined,
+    )
+    while (nextEdges.length > 0) {
+      const [liquidity, bestEdge] = nextEdges.pop() as ValuedEdge
+      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
+        ? [bestEdge.vert1, bestEdge.vert0]
+        : [bestEdge.vert0, bestEdge.vert1]
+      if (processedVert.has(vTo)) continue
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(
+        vFrom === bestEdge.vert1,
+      )
+      addVertice(vFrom, vTo, vFrom.price * p, liquidity, bestEdge)
+      if (vTo.token.address === token) {
+        const lines: string[] = []
+        let t = vertToPricingInfo.get(vTo)
+        while (t !== undefined) {
+          const dec = t.vert.token.decimals
+          const parentDecExp = t.parent?.vert.token.decimals ?? dec
+          lines.push(
+            `Token ${t.vert.token.symbol} (${t.vert.token.address}) price is ${
+              t.price * 10 ** dec
+            }$`,
+          )
+          if (t.edge !== undefined) {
+            lines.push(
+              `Pool ${t.edge.pool.address} liquidity ${Math.round(
+                t.liquidity,
+              )}$ price ${(p / 10 ** parentDecExp) * 10 ** dec}`,
+            )
+          }
+          t = t.parent
+        }
+        return lines.reverse()
+      }
+    }
+
+    return ['Token is not priced']
+  }
+
   // Set prices using greedy algorithm
   setPricesStableInsideChain(from: Vertice, price: number, gasPrice: number) {
     const processedVert = new Set()

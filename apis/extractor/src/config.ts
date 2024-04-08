@@ -31,8 +31,6 @@ import {
   createPublicClient,
 } from 'viem'
 
-const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
-
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
   return {
     address: SUSHISWAP_V2_FACTORY_ADDRESS[chainId],
@@ -118,7 +116,6 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 300,
     logType: LogFilterType.Native,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.ARBITRUM_NOVA]: {
     client: createPublicClient(extractorClientConfig(ChainId.ARBITRUM_NOVA)),
@@ -179,6 +176,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
+    maxCallsInOneBatch: 200,
   },
   [ChainId.BOBA]: {
     client: createPublicClient(extractorClientConfig(ChainId.BOBA)),
@@ -247,7 +245,6 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 1000,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
     maxBatchesSimultaniously: 5,
     experimantalPoolIncrementalMode: true, // Only changed pools are sent from Extractor to Router
     checkPoolIncrementalModeCorrectness: true, // if experimantalPoolIncrementalMode then make correctness check (resourcefull)
@@ -331,7 +328,6 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
     maxBatchesSimultaniously: 5,
   },
   [ChainId.FANTOM]: {
@@ -421,7 +417,6 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON]: {
     client: createPublicClient(extractorClientConfig(ChainId.POLYGON)),
@@ -474,7 +469,6 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 100,
     logging: true,
     maxBatchesSimultaniously: 5,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON_ZKEVM]: {
     client: createPublicClient(extractorClientConfig(ChainId.POLYGON_ZKEVM)),
@@ -535,6 +529,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
+    maxCallsInOneBatch: 60,
   },
   [ChainId.METIS]: {
     client: createPublicClient(extractorClientConfig(ChainId.METIS)),
@@ -651,7 +646,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    maxCallsInOneBatch: 100,
   },
 
   [ChainId.THUNDERCORE]: {
