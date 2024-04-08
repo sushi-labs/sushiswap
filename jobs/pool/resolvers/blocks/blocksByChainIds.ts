@@ -2,20 +2,27 @@
 import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryblocksByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient/index.js'
+import {
+  Query,
+  QueryResolvers,
+  QueryblocksByChainIdsArgs,
+  RequireFields,
+} from '../../.graphclient/index.js'
 import { BlocksTypes } from '../../.graphclient/sources/Blocks/types.js'
 
 export const _blocksByChainIds = async (
-  root = {},
+  root: any,
   args: RequireFields<QueryblocksByChainIdsArgs, 'skip' | 'first' | 'chainIds'>,
   context: BlocksTypes.Context,
-  info: GraphQLResolveInfo
+  info: GraphQLResolveInfo,
 ): Promise<Query['blocksByChainIds']> => {
   return Promise.all<Query['blocksByChainIds'][]>(
     args.chainIds
       .filter(
-        (chainId): chainId is keyof typeof BLOCKS_SUBGRAPH_NAME & keyof typeof SUBGRAPH_HOST =>
-          chainId in BLOCKS_SUBGRAPH_NAME
+        (
+          chainId,
+        ): chainId is keyof typeof BLOCKS_SUBGRAPH_NAME &
+          keyof typeof SUBGRAPH_HOST => chainId in BLOCKS_SUBGRAPH_NAME,
       )
       .map((chainId) => {
         return context.Blocks.Query.blocks({
@@ -36,7 +43,7 @@ export const _blocksByChainIds = async (
           // console.debug(`Blocks ${chainId}`, blocks)
           return blocks.map((block) => ({ ...block, chainId }))
         })
-      })
+      }),
   ).then((blocks) => blocks.flat())
 }
 
@@ -44,5 +51,6 @@ export const blocksByChainIds: QueryResolvers['blocksByChainIds'] = async (
   root,
   args,
   context,
-  info
-): Promise<Query['blocksByChainIds']> => _blocksByChainIds(root, args, context, info)
+  info,
+): Promise<Query['blocksByChainIds']> =>
+  _blocksByChainIds(root, args, context, info)
