@@ -19,7 +19,6 @@
     "@sushiswap/steer-vault-api",
     "@sushiswap/storybook",
     "@sushiswap/token-list-api",
-    "@sushiswap/token-price-api",
     "@sushiswap/tokens-api",
     "@sushiswap/ui",
     "@sushiswap/wagmi",
