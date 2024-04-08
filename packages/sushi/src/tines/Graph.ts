@@ -701,7 +701,7 @@ export class Graph {
     addVertice(
       undefined,
       this.tokens.get(from.tokenId as string) as Vertice,
-      price,
+      price / 10 ** from.decimals,
       0,
       undefined,
     )
@@ -722,7 +722,9 @@ export class Graph {
           const dec = t.vert.token.decimals
           const parentDecExp = t.parent?.vert.token.decimals ?? dec
           lines.push(
-            `Token ${t.vert.token.symbol} (${t.vert.token.address}) price is ${t.price}$`,
+            `Token ${t.vert.token.symbol} (${t.vert.token.address}) price is ${
+              t.price * 10 ** dec
+            }$`,
           )
           if (t.edge !== undefined) {
             lines.push(
