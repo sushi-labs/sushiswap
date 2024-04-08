@@ -138,7 +138,7 @@ export async function execute() {
     const prices = (
       await Promise.all(
         MERKL_SUPPORTED_NETWORKS.map((chainId) =>
-          fetch(`https://token-price.sushi.com/v1/${chainId}`).then(
+          fetch(`https://api.sushi.com/price/v1/${chainId}`).then(
             (data) => data.json() as Promise<PriceResponse>,
           ),
         ),
