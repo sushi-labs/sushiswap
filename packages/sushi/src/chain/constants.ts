@@ -72,7 +72,8 @@ export const TESTNET_CHAIN_IDS = [
 ] as const
 export type TestnetChainId = (typeof TESTNET_CHAIN_IDS)[number]
 
-// export const isChainId = (chainId: number): chainId is ChainId => Object.values(ChainId).includes(chainId as ChainId)
+export const isChainId = (chainId: number): chainId is ChainId =>
+  Object.values(ChainId).includes(chainId as ChainId)
 
 export const ChainKey = {
   [ChainId.ARBITRUM]: 'arbitrum',
@@ -131,6 +132,3 @@ export const ChainKey = {
   [ChainId.BLAST]: 'blast',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
-
-export const isChainId = (chainId: number): chainId is ChainId =>
-  chainId in ChainId

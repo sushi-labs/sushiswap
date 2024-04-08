@@ -106,16 +106,16 @@ export const useClientTrade = (variables: UseTradeParams) => {
         1, // 5% impact before dex aggregation
       )
 
-      const logPools = Array.from(poolsCodeMap.values())
-        .map(
-          (pc) =>
-            `* ${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`,
-        )
-        .join('')
-      console.debug(`
-Pools found ${poolsCodeMap.size}: 
-${logPools}
-`)
+      //       const logPools = Array.from(poolsCodeMap.values())
+      //         .map(
+      //           (pc) =>
+      //             `* ${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`,
+      //         )
+      //         .join('')
+      //       console.debug(`
+      // Pools found ${poolsCodeMap.size}:
+      // ${logPools}
+      // `)
 
       // const route = Router.findSushiRoute(
       //   poolsCodeMap,
@@ -179,7 +179,7 @@ ${logPools}
             source,
           )
         } else if (isRouteProcessorChainId(chainId)) {
-          console.debug('routeProcessorParams')
+          // console.debug('routeProcessorParams')
           args = Router.routeProcessorParams(
             poolsCodeMap,
             route,
@@ -228,7 +228,7 @@ ${logPools}
           value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         }
 
-        console.log({ writeArgs })
+        // console.log({ writeArgs })
 
         return new Promise((res) =>
           setTimeout(

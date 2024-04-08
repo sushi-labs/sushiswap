@@ -42,7 +42,8 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   const pools = useGraphPools(_positions)
 
   const isValidating =
-    !positions || !pools || (positions.length > 0 && pools.length === 0)
+    shouldFetch &&
+    (!positions || !pools || (positions.length > 0 && pools.length === 0))
 
   return useMemo(
     () => ({

@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { Page, expect } from '@playwright/test'
 import { createERC20 } from 'test/erc20'
 
 export class BaseActions {

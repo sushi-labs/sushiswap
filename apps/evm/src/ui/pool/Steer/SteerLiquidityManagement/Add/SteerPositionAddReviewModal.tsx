@@ -22,7 +22,6 @@ import { List } from '@sushiswap/ui/components/list/List'
 import {
   UseSimulateContractParameters,
   useAccount,
-  useEstimateGas,
   usePublicClient,
   useSimulateContract,
   useSteerAccountPosition,
@@ -43,7 +42,7 @@ import {
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
-import { gasMargin, slippageAmount } from 'sushi'
+import { slippageAmount } from 'sushi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
@@ -186,14 +185,14 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
       },
     })
 
-    const { data: estimatedGas } = useEstimateGas({
-      ...prepare,
-      query: {
-        enabled: Boolean(approved && chainId === chain?.id),
-      },
-    })
+    // const { data: estimatedGas } = useEstimateGas({
+    //   ...prepare,
+    //   query: {
+    //     enabled: Boolean(approved && chainId === chain?.id),
+    //   },
+    // })
 
-    const adjustedGas = estimatedGas ? gasMargin(estimatedGas) : undefined
+    // const adjustedGas = estimatedGas ? gasMargin(estimatedGas) : undefined
 
     const {
       writeContractAsync,
@@ -207,19 +206,19 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     })
 
     const write = useMemo(() => {
-      if (!simulation || !adjustedGas) return undefined
+      if (!simulation) return undefined
 
       return async (confirm: () => void) => {
         try {
           await writeContractAsync({
             ...simulation.request,
-            gas: adjustedGas,
+            // gas: adjustedGas,
           })
 
           confirm()
         } catch {}
       }
-    }, [writeContractAsync, simulation, adjustedGas])
+    }, [writeContractAsync, simulation /*, adjustedGas*/])
 
     const { status } = useWaitForTransactionReceipt({
       chainId: chainId,

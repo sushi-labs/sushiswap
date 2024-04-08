@@ -6,12 +6,14 @@ import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ExtractorClient } from './ExtractorClient.js'
+import swapRequestStatistics from './SwapRequestStatistics.js'
 import {
   CHAIN_ID,
   EXTRACTOR_SERVER,
   POOL_UPDATE_INTERVAL,
   PORT,
   REQUESTED_PAIRS_UPDATE_INTERVAL,
+  ROUTER_CONFIG,
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
 } from './config.js'
@@ -20,7 +22,8 @@ import { priceByAddressHandler, pricesHandler } from './handlers/price/index.js'
 import { swapV3_2, swapV4 } from './handlers/swap/index.js'
 import tokenHandler from './handlers/token/index.js'
 import { updatePrices } from './prices.js'
-import requestStatistics from './request-statistics.js'
+
+export let extractorClient: ExtractorClient | undefined
 
 async function start() {
   const app: Express = express()
@@ -31,7 +34,12 @@ async function start() {
     POOL_UPDATE_INTERVAL(CHAIN_ID as ChainId),
     REQUESTED_PAIRS_UPDATE_INTERVAL(CHAIN_ID as ChainId),
   )
-  updatePrices(client)
+  extractorClient = client
+  if (
+    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] !== true ||
+    ROUTER_CONFIG[CHAIN_ID]?.['checkPricesIncrementalModeCorrectness'] === true
+  )
+    updatePrices(client)
   // client.on('firstPoolsUpdate', () =>{
   //   updatePrices(client)
   // })
@@ -53,7 +61,7 @@ async function start() {
     tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
   })
 
-  requestStatistics.start()
+  swapRequestStatistics.start()
 
   // RequestHandler creates a separate execution context, so that all
   // transactions/spans/breadcrumbs are isolated across requests

@@ -41,10 +41,13 @@ export const PositionsTable: FC<PositionsTableProps> = ({
     pageSize: 10,
   })
 
-  const { data: positions, isValidating } = useUserPositions({
-    id: address,
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
+  const { data: positions, isValidating } = useUserPositions(
+    {
+      id: address,
+      chainIds: SUPPORTED_CHAIN_IDS,
+    },
+    !!address,
+  )
 
   const _positions = useMemo(() => {
     if (!positions) return []

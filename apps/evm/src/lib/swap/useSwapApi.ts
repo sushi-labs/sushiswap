@@ -1,3 +1,3 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 
-export const useSwapApi = () => useLocalStorage('swapApi', true)
+export const useSwapApi = () => useLocalStorage('swap-api', true)

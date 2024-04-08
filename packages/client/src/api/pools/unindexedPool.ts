@@ -227,6 +227,10 @@ export async function getUnindexedPool(
     transport: cfg.transport,
   }) as PublicClient
 
+  if (!(await client.getBytecode({ address }))) {
+    throw new Error('Invalid pool address.')
+  }
+
   let lpTokenName: string
   try {
     const { name } = await getTokenInfo({ client, address })

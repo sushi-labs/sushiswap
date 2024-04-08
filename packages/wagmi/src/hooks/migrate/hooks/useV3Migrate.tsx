@@ -205,9 +205,10 @@ export const useV3Migrate = ({
   const write = useMemo(() => {
     if (!simulation) return undefined
 
-    return async () => {
+    return async (confirm?: () => void) => {
       try {
         await writeContractAsync(simulation.request)
+        confirm?.()
       } catch {}
     }
   }, [simulation, writeContractAsync])

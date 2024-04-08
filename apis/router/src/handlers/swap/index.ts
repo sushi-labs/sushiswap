@@ -15,14 +15,14 @@ import {
 } from 'sushi/router'
 import { Address } from 'viem'
 import { ExtractorClient } from '../../ExtractorClient.js'
+import swapRequestStatistics, {
+  ResponseRejectReason,
+} from '../../SwapRequestStatistics.js'
 import {
   CHAIN_ID,
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
 } from '../../config.js'
-import requestStatistics, {
-  ResponseRejectReason,
-} from '../../request-statistics.js'
 import { querySchema3_2 } from './schema.js'
 
 const nativeProvider = new NativeWrapProvider(
@@ -52,11 +52,14 @@ function handler(
     return async (req: Request, res: Response) => {
       res.setHeader('Cache-Control', 's-maxage=2, stale-while-revalidate=28')
       try {
-        const statistics = requestStatistics.requestProcessingStart()
+        const statistics = swapRequestStatistics.requestProcessingStart()
 
-        const parsed = qSchema.safeParse(req.query)
-        if (!parsed.success) {
-          requestStatistics.requestRejected(
+        let parsed: ReturnType<typeof querySchema3_2.safeParse> | undefined
+        try {
+          parsed = qSchema.safeParse(req.query)
+        } catch (_e) {}
+        if (!parsed || !parsed.success) {
+          swapRequestStatistics.requestRejected(
             ResponseRejectReason.WRONG_INPUT_PARAMS,
           )
           return res.status(422).send('Request parameters parsing error')
@@ -77,7 +80,9 @@ function handler(
           Date.now()
         ) {
           console.log('no fresh data')
-          requestStatistics.requestRejected(ResponseRejectReason.NO_FRESH_DATA)
+          swapRequestStatistics.requestRejected(
+            ResponseRejectReason.NO_FRESH_DATA,
+          )
           return res.status(500).send(`Network ${CHAIN_ID} data timeout`)
         }
 
@@ -96,7 +101,7 @@ function handler(
         }
 
         if (!tokenIn || !tokenOut) {
-          requestStatistics.requestRejected(
+          swapRequestStatistics.requestRejected(
             ResponseRejectReason.UNSUPPORTED_TOKENS,
           )
           return res
@@ -149,10 +154,10 @@ function handler(
 
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
 
-        requestStatistics.requestWasProcessed(statistics, tokensAreKnown)
+        swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(json)
       } catch (e) {
-        requestStatistics.requestRejected(
+        swapRequestStatistics.requestRejected(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
         )
         throw e

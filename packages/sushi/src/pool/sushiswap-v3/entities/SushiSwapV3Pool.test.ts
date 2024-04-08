@@ -33,7 +33,7 @@ describe('SushiSwapV3Pool', () => {
       expect(() => {
         new SushiSwapV3Pool(
           USDC,
-          WETH9[3],
+          WETH9[137],
           SushiSwapV3FeeAmount.MEDIUM,
           encodeSqrtRatioX96(1, 1),
           0,

@@ -1,10 +1,11 @@
 import { useCustomTokens } from '@sushiswap/hooks'
-import { useAllPrices } from '@sushiswap/react-query'
+import { useAllPrices, usePrices } from '@sushiswap/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
 import { Position, SushiSwapV3Pool } from 'sushi/pool'
 
+import { useMemo } from 'react'
 import { Address } from 'viem'
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools'
@@ -37,11 +38,45 @@ export const useConcentratedLiquidityPositions = ({
   enabled = true,
 }: UseConcentratedLiquidityPositionsParams) => {
   const { data: customTokens, hasToken } = useCustomTokens()
-  const { data: prices, isError: isPriceError } = useAllPrices()
+
+  const {
+    data: allPrices,
+    isError: isAllPricesError,
+    isInitialLoading: isAllPricesInitialLoading,
+  } = useAllPrices({
+    enabled: chainIds.length > 1,
+  })
+  const {
+    data: chainPrices,
+    isError: isChainPricesError,
+    isInitialLoading: isChainPricesInitialLoading,
+  } = usePrices({
+    chainId: chainIds.length ? chainIds[0] : undefined,
+    enabled: chainIds.length === 1,
+  })
+
+  const prices = useMemo(() => {
+    if (chainIds.length > 1) {
+      return allPrices
+    }
+
+    if (chainIds.length === 1 && chainPrices) {
+      return {
+        [chainIds[0]]: chainPrices,
+      }
+    }
+  }, [allPrices, chainPrices, chainIds])
+  const isPriceInitialLoading =
+    isAllPricesInitialLoading || isChainPricesInitialLoading
+  const isPriceError = isAllPricesError || isChainPricesError
 
   const config = useConfig()
 
-  return useQuery({
+  const {
+    data: positions,
+    isError: isPositionsError,
+    isInitialLoading: isPositionsInitialLoading,
+  } = useQuery({
     queryKey: [
       'useConcentratedLiquidityPositions',
       { chainIds, account, prices },
@@ -161,4 +196,10 @@ export const useConcentratedLiquidityPositions = ({
       account && chainIds && enabled && (prices || isPriceError),
     ),
   })
+
+  return {
+    data: positions,
+    isError: isPositionsError || isPriceError,
+    isInitialLoading: isPositionsInitialLoading || isPriceInitialLoading,
+  }
 }

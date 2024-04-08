@@ -41,3 +41,10 @@ if (!EXTRACTOR_SERVER) {
 if (!Array.isArray(STABLES[CHAIN_ID]) || !STABLES[CHAIN_ID].length) {
   throw new Error(`ChainId ${CHAIN_ID} has no stables configured`)
 }
+
+export const ROUTER_CONFIG: Record<number, Record<string, any>> = {
+  [ChainId.BSC]: {
+    experimantalPriceIncrementalMode: true, // Only prices of changed pools are recalculated
+    checkPricesIncrementalModeCorrectness: true, // if experimantalPriceIncrementalMode then make correctness check (resourcefull)
+  },
+}
