@@ -159,24 +159,25 @@ export const angleRewardsSelect = ({
     {},
   )
 
-  const unclaimed = Object.entries(data.transactionData ?? {}).reduce<
-    { amount: Amount<Token>; amountUSD: number }[]
-  >((accum, [address, transactionData]) => {
-    const token = data.validRewardTokens?.find(
-      (token) => token.token === address,
-    )
-    if (!token) return accum
+  const unclaimedAmounts = Object.values(
+    Object.values(pools ?? []).reduce<Record<string, Amount<Token>>>(
+      (acc, cur) => {
+        Object.values(cur.rewardsPerToken).forEach((val) => {
+          const amount = acc[val.unclaimed.currency.address]
+          if (!amount) {
+            acc[val.unclaimed.currency.address] = val.unclaimed
+          } else {
+            acc[val.unclaimed.currency.address] = amount.add(val.unclaimed)
+          }
+        })
 
-    const amount = Amount.fromRawAmount(
-      new Token({
-        chainId: Number(chainId),
-        address: token.token,
-        decimals: token.decimals,
-        symbol: token.symbol,
-      }),
-      transactionData.claim,
-    )
+        return acc
+      },
+      {},
+    ),
+  )
 
+  const unclaimed = unclaimedAmounts.map((amount) => {
     let amountUSD = 0
 
     const price = prices[amount.currency.wrapped.address]
@@ -188,13 +189,11 @@ export const angleRewardsSelect = ({
       amountUSD = 0
     }
 
-    accum.push({
+    return {
       amount,
       amountUSD,
-    })
-
-    return accum
-  }, [])
+    }
+  })
 
   const validRewardTokens = (data.validRewardTokens ?? [])
     .map((el) => {
