@@ -116,6 +116,8 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 300,
     logType: LogFilterType.Native,
     logging: true,
+    maxCallsInOneBatch: 200,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.ARBITRUM_NOVA]: {
     client: createPublicClient(extractorClientConfig(ChainId.ARBITRUM_NOVA)),
