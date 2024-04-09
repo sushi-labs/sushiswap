@@ -660,6 +660,7 @@ export class Graph {
       parent: PricingStepInfo | undefined
       vert: Vertice
       price: number
+      poolPrice: number
       liquidity: number
       edge: Edge | undefined
     }
@@ -673,6 +674,7 @@ export class Graph {
       parent: Vertice | undefined,
       v: Vertice,
       price: number,
+      poolPrice: number,
       liquidity: number,
       edge: Edge | undefined,
     ) {
@@ -692,6 +694,7 @@ export class Graph {
         parent: vertToPricingInfo.get(parent),
         vert: v,
         price,
+        poolPrice,
         liquidity,
         edge,
       })
@@ -702,6 +705,7 @@ export class Graph {
       undefined,
       this.tokens.get(from.tokenId as string) as Vertice,
       price / 10 ** from.decimals,
+      1,
       0,
       undefined,
     )
@@ -714,7 +718,8 @@ export class Graph {
       const p = bestEdge.pool.calcCurrentPriceWithoutFee(
         vFrom === bestEdge.vert1,
       )
-      addVertice(vFrom, vTo, vFrom.price * p, liquidity, bestEdge)
+      const pPrice = vertToPricingInfo.get(vFrom)?.price as number
+      addVertice(vFrom, vTo, pPrice * p, p, liquidity, bestEdge)
       if (vTo.token.address === token) {
         const lines: string[] = []
         let t = vertToPricingInfo.get(vTo)
@@ -730,7 +735,7 @@ export class Graph {
             lines.push(
               `Pool ${t.edge.pool.address} liquidity ${Math.round(
                 t.liquidity,
-              )}$ price ${(p / 10 ** parentDecExp) * 10 ** dec}`,
+              )}$ price ${(t.poolPrice / 10 ** parentDecExp) * 10 ** dec}`,
             )
           }
           t = t.parent
