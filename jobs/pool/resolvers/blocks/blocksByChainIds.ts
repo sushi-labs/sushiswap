@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { BLOCKS_SUBGRAPH_URL, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
 import {
@@ -22,7 +22,7 @@ export const _blocksByChainIds = async (
         (
           chainId,
         ): chainId is keyof typeof BLOCKS_SUBGRAPH_URL &
-          keyof typeof SUBGRAPH_HOST => chainId in BLOCKS_SUBGRAPH_URL,
+          keyof typeof BLOCKS_SUBGRAPH_URL => chainId in BLOCKS_SUBGRAPH_URL,
       )
       .map((chainId) => {
         return context.Blocks.Query.blocks({

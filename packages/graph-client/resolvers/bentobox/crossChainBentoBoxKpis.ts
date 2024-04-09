@@ -1,4 +1,4 @@
-import { BENTOBOX_SUBGRAPH_URL, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BENTOBOX_SUBGRAPH_URL } from '@sushiswap/graph-config'
 
 import { ChainId } from 'sushi/chain'
 import { BentoBoxKpi, Resolvers } from '../../.graphclient/index.js'

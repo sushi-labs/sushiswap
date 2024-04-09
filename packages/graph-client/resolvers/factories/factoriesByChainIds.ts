@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'

@@ -1,5 +1,4 @@
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_URL,
   SushiSwapChainId,
   TRIDENT_SUBGRAPH_URL,

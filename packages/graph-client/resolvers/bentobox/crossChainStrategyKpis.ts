@@ -1,4 +1,4 @@
-import { BENTOBOX_SUBGRAPH_URL, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BENTOBOX_SUBGRAPH_URL } from '@sushiswap/graph-config'
 
 import { Resolvers, StrategyKpi } from '../../.graphclient/index.js'
 
@@ -8,7 +8,7 @@ export const crossChainStrategyKpis: Resolvers['Query']['crossChainStrategyKpis'
       (
         chainId,
       ): chainId is keyof typeof BENTOBOX_SUBGRAPH_URL &
-        keyof typeof SUBGRAPH_HOST => chainId in BENTOBOX_SUBGRAPH_URL,
+        keyof typeof BENTOBOX_SUBGRAPH_URL => chainId in BENTOBOX_SUBGRAPH_URL,
     )
 
     const kpis = await Promise.all(

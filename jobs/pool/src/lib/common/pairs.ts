@@ -1,5 +1,4 @@
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_URL,
   SushiSwapChainId,
   TRIDENT_SUBGRAPH_URL,
@@ -47,7 +46,7 @@ async function getExchangePairs(
 
 async function getTridentPairs(
   ids: string[],
-  chainId: keyof typeof SUBGRAPH_HOST & keyof typeof TRIDENT_SUBGRAPH_URL,
+  chainId: keyof typeof TRIDENT_SUBGRAPH_URL,
 ): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const url = TRIDENT_SUBGRAPH_URL[chainId]
