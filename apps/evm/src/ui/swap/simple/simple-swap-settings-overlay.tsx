@@ -8,7 +8,7 @@ export const SimpleSwapSettingsOverlay = () => {
       modules={[
         SettingsModule.SlippageTolerance,
         SettingsModule.CarbonOffset,
-        SettingsModule.SwapApi,
+        // SettingsModule.SwapApi,
       ]}
     />
   )
