@@ -1,8 +1,8 @@
 import {
   SUBGRAPH_HOST,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   SushiSwapChainId,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
   TridentChainId,
 } from '@sushiswap/graph-config'
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/graph-config'
@@ -27,11 +27,10 @@ const getExchangeTokens = async (
   chainId: SushiSwapChainId,
 ): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
-  if (!subgraphName) return []
+  const url = SUSHISWAP_SUBGRAPH_URL[chainId]
+  if (!url) return []
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    url,
   })
 
   const { tokens, bundle } = await sdk.Tokens({
@@ -53,11 +52,10 @@ const getTridentTokens = async (
   chainId: TridentChainId,
 ): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
-  if (!subgraphName) return []
+  const url = TRIDENT_SUBGRAPH_URL[chainId]
+  if (!url) return []
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    name: url,
   })
 
   const { tokens, bundle } = await sdk.Tokens({

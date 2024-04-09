@@ -3,9 +3,9 @@
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { chainName, chainShortName } from 'sushi/chain'
 
@@ -32,12 +32,8 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          subgraphName:
-            SUSHISWAP_SUBGRAPH_NAME[
-              args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
-            ],
-          subgraphHost:
-            SUBGRAPH_HOST[
+          url:
+            SUSHISWAP_SUBGRAPH_URL[
               args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
             ],
         },
@@ -52,12 +48,8 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          subgraphName:
-            TRIDENT_SUBGRAPH_NAME[
-              args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
-            ],
-          subgraphHost:
-            SUBGRAPH_HOST[
+          url:
+            TRIDENT_SUBGRAPH_URL[
               args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
             ],
         },

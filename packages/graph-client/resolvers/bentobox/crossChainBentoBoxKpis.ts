@@ -1,4 +1,4 @@
-import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BENTOBOX_SUBGRAPH_URL, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
 import { ChainId } from 'sushi/chain'
 import { BentoBoxKpi, Resolvers } from '../../.graphclient/index.js'
@@ -9,8 +9,8 @@ export const crossChainBentoBoxKpis: Resolvers['Query']['crossChainBentoBoxKpis'
       .filter(
         (
           chainId,
-        ): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME &
-          keyof typeof SUBGRAPH_HOST => chainId in BENTOBOX_SUBGRAPH_NAME,
+        ): chainId is keyof typeof BENTOBOX_SUBGRAPH_URL &
+          keyof typeof BENTOBOX_SUBGRAPH_URL => chainId in BENTOBOX_SUBGRAPH_URL,
       )
       // Kava subgraph doesn't have the bentoBoxKpis query
       .filter((chainId) => chainId !== ChainId.KAVA)
@@ -23,8 +23,7 @@ export const crossChainBentoBoxKpis: Resolvers['Query']['crossChainBentoBoxKpis'
           context: {
             ...context,
             chainId,
-            subgraphName: BENTOBOX_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: BENTOBOX_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((kpis: BentoBoxKpi[]) => {
