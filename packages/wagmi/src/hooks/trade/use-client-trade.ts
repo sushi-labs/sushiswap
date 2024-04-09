@@ -7,16 +7,8 @@ import { useQuery } from '@tanstack/react-query'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_4_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
-  isRouteProcessor3ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
   isRouteProcessor4ChainId,
-  isRouteProcessorChainId,
 } from 'sushi/config'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
 import { Fraction, Percent } from 'sushi/math'
@@ -73,11 +65,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
     queryFn: async () => {
       if (
         !poolsCodeMap ||
-        (!isRouteProcessorChainId(chainId) &&
-          !isRouteProcessor3ChainId(chainId) &&
-          !isRouteProcessor3_1ChainId(chainId) &&
-          !isRouteProcessor3_2ChainId(chainId) &&
-          !isRouteProcessor4ChainId(chainId)) ||
+        !isRouteProcessor4ChainId(chainId) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -142,54 +130,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
             recipient,
             ROUTE_PROCESSOR_4_ADDRESS[chainId],
             [],
-            +slippagePercentage / 100,
-          )
-        } else if (isRouteProcessor3_2ChainId(chainId)) {
-          // console.debug('routeProcessor3_2Params')
-          args = Router.routeProcessor3_2Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_3_2_ADDRESS[chainId],
-            [],
-            +slippagePercentage / 100,
-          )
-        } else if (isRouteProcessor3_1ChainId(chainId)) {
-          // console.debug('routeProcessor3_1Params')
-          args = Router.routeProcessor3_1Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
-            [],
-            +slippagePercentage / 100,
-          )
-        } else if (isRouteProcessor3ChainId(chainId)) {
-          // console.debug('routeProcessor3Params')
-          args = Router.routeProcessor3Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_3_ADDRESS[chainId],
-            [],
-            +slippagePercentage / 100,
-            source,
-          )
-        } else if (isRouteProcessorChainId(chainId)) {
-          // console.debug('routeProcessorParams')
-          args = Router.routeProcessorParams(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_ADDRESS[chainId],
             +slippagePercentage / 100,
           )
         }

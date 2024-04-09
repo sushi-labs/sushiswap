@@ -2,11 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
-import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessor4ChainId,
-} from 'sushi/config'
+import { isRouteProcessor4ChainId } from 'sushi/config'
 import {
   Amount,
   Native,
@@ -33,10 +29,6 @@ const API_BASE_URL =
 function getApiVersion(chainId: ChainId) {
   if (isRouteProcessor4ChainId(chainId)) {
     return '/v4'
-  } else if (isRouteProcessor3_2ChainId(chainId)) {
-    return '/v3.2'
-  } else if (isRouteProcessor3_1ChainId(chainId)) {
-    return '/v3.1'
   }
   return ''
 }

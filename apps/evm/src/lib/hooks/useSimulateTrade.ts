@@ -5,22 +5,10 @@ import {
 } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
+import { routeProcessor4Abi } from 'sushi/abi'
 import {
-  routeProcessor3Abi,
-  routeProcessor4Abi,
-  routeProcessorAbi,
-} from 'sushi/abi'
-import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_4_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
-  isRouteProcessor3ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
   isRouteProcessor4ChainId,
-  isRouteProcessorChainId,
 } from 'sushi/config'
 import { BaseError } from 'viem'
 import { getTokenTax } from '../swap/getTokenTax'
@@ -46,24 +34,8 @@ export function useSimulateTrade({
     chainId: chainId,
     address: isRouteProcessor4ChainId(chainId)
       ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
-      : isRouteProcessor3_2ChainId(chainId)
-        ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
-        : isRouteProcessor3_1ChainId(chainId)
-          ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-          : isRouteProcessor3ChainId(chainId)
-            ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-            : isRouteProcessorChainId(chainId)
-              ? ROUTE_PROCESSOR_ADDRESS[chainId]
-              : undefined,
-    abi: (isRouteProcessor4ChainId(chainId)
-      ? routeProcessor4Abi
-      : isRouteProcessor3_2ChainId(chainId) ||
-          isRouteProcessor3_1ChainId(chainId) ||
-          isRouteProcessor3ChainId(chainId)
-        ? routeProcessor3Abi
-        : isRouteProcessorChainId(chainId)
-          ? routeProcessorAbi
-          : undefined) as any,
+      : undefined,
+    abi: routeProcessor4Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs as any,
     value: trade?.value || 0n,
@@ -81,11 +53,7 @@ export function useSimulateTrade({
         enabled &&
         Boolean(
           trade?.writeArgs &&
-            (isRouteProcessorChainId(chainId) ||
-              isRouteProcessor3ChainId(chainId) ||
-              isRouteProcessor3_1ChainId(chainId) ||
-              isRouteProcessor3_2ChainId(chainId) ||
-              isRouteProcessor4ChainId(chainId)) &&
+            isRouteProcessor4ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
       onError: (error: SimulateContractErrorType) => {
