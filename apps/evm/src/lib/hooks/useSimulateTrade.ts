@@ -38,7 +38,7 @@ export function useSimulateTrade({
   enabled?: boolean
 }) {
   const {
-    state: { tokenTax, chainId },
+    state: { chainId },
     mutate: { setTokenTax },
   } = useDerivedStateSimpleSwap()
 
@@ -69,7 +69,11 @@ export function useSimulateTrade({
     value: trade?.value || 0n,
     query: {
       retry: (i, error) => {
-        if (typeof tokenTax === 'undefined' && isMinOutError(error))
+        if (
+          trade &&
+          typeof trade.tokenTax === 'undefined' &&
+          isMinOutError(error)
+        )
           return false
         return i < 3
       },
@@ -86,20 +90,20 @@ export function useSimulateTrade({
         ),
       onError: (error: SimulateContractErrorType) => {
         if (isMinOutError(error)) {
-          if (trade?.amountOut && typeof tokenTax === 'undefined') {
+          if (trade?.amountOut && typeof trade.tokenTax === 'undefined') {
             const _tokenTax = getTokenTax({
               error,
               expectedAmountOut: trade.amountOut,
             })
 
             setTokenTax(_tokenTax)
-          } else if (tokenTax !== false) {
+          } else if (trade && trade.tokenTax !== false) {
             setTokenTax(false)
           }
         }
       },
       onSuccess: () => {
-        if (typeof tokenTax === 'undefined') {
+        if (trade && typeof trade.tokenTax === 'undefined') {
           setTokenTax(false)
         }
       },
@@ -110,14 +114,18 @@ export function useSimulateTrade({
     () => ({
       ...simulateTrade,
       isError:
-        typeof tokenTax === 'undefined' && isMinOutError(simulateTrade.error)
+        trade &&
+        typeof trade.tokenTax === 'undefined' &&
+        isMinOutError(simulateTrade.error)
           ? false
           : simulateTrade.isError,
       error:
-        typeof tokenTax === 'undefined' && isMinOutError(simulateTrade.error)
+        trade &&
+        typeof trade.tokenTax === 'undefined' &&
+        isMinOutError(simulateTrade.error)
           ? null
           : simulateTrade.error,
     }),
-    [simulateTrade, tokenTax],
+    [simulateTrade, trade],
   )
 }
