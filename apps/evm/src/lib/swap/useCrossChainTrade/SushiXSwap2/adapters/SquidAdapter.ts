@@ -38,7 +38,7 @@ export const isSquidRouteProcessorEnabled: Record<
   [ChainId.BASE]: true,
   [ChainId.FANTOM]: true,
   [ChainId.LINEA]: true,
-  [ChainId.KAVA]: true,
+  // [ChainId.KAVA]: true,
   [ChainId.MOONBEAM]: false,
   [ChainId.CELO]: true,
   [ChainId.SCROLL]: true,
