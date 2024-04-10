@@ -11,17 +11,15 @@
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@sushiswap/balances-api",
     "@sushiswap/client",
-    "@sushiswap/pools-api",
     "@sushiswap/react-query",
     "@sushiswap/route-processor",
-    "@sushiswap/steer-vault-api",
     "@sushiswap/storybook",
     "@sushiswap/token-list-api",
     "@sushiswap/tokens-api",
     "@sushiswap/ui",
     "@sushiswap/wagmi",
+    "@sushiswap/pool-job",
     "academy",
     "blog",
     "evm"
