@@ -1,0 +1,65 @@
+{
+  "status": "Success",
+  "tokens": [
+    {
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "symbol": "MATIC",
+      "name": "MATIC",
+      "decimals": 18
+    },
+    {
+      "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "symbol": "WMATIC",
+      "name": "Wrapped Matic",
+      "decimals": 18
+    },
+    {
+      "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "symbol": "USDC",
+      "name": "USD Coin (PoS)",
+      "decimals": 6
+    }
+  ],
+  "tokenFrom": 0,
+  "tokenTo": 2,
+  "primaryPrice": 8.9256093504231e-13,
+  "swapPrice": 8.9475609e-13,
+  "priceImpact": -0.0024593894618365475,
+  "amountIn": "100000000000000000000",
+  "assumedAmountOut": "89475609",
+  "gasSpent": 160000,
+  "route": [
+    {
+      "poolAddress": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      "poolType": "Bridge",
+      "poolName": "Wrap",
+      "poolFee": 0,
+      "tokenFrom": 0,
+      "tokenTo": 1,
+      "share": 1,
+      "assumedAmountIn": "100000000000000000000",
+      "assumedAmountOut": "100000000000000000000"
+    },
+    {
+      "poolAddress": "0x21988C9CFD08db3b5793c2C6782271dC94749251",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.05%",
+      "poolFee": 0.0005,
+      "tokenFrom": 1,
+      "tokenTo": 2,
+      "share": 1,
+      "assumedAmountIn": "100000000000000000000",
+      "assumedAmountOut": "89475609"
+    }
+  ],
+  "routeProcessorAddr": "0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e",
+  "routeProcessorArgs": {
+    "tokenIn": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+    "amountIn": "100000000000000000000",
+    "tokenOut": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    "amountOutMin": "89028230",
+    "to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "routeCode": "0x0301ffff020146B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270010d500B1d8E8eF31E21C99d1Db9A6444d3ADf127001ffff0121988C9CFD08db3b5793c2C6782271dC9474925101f39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "value": "100000000000000000000"
+  }
+}

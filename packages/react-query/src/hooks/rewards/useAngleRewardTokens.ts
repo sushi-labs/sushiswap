@@ -14,9 +14,9 @@ export const useAngleRewardTokens = ({
   return useQuery({
     queryKey: ['getAngleRewardTokens', { chainId }],
     queryFn: async () => {
-      const url = new URL('https://api.angle.money/v2/merkl')
-      url.searchParams.set('AMMs[0]', 'sushiswapv3')
-      url.searchParams.set('chainIds[0]', chainId.toString())
+      const url = new URL('https://api.merkl.xyz/v2/merkl')
+      url.searchParams.set('AMMs', 'sushiswapv3')
+      url.searchParams.set('chainIds', chainId.toString())
 
       const res = await fetch(url)
       const json = await res.json()

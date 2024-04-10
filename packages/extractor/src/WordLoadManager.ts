@@ -84,15 +84,17 @@ export class WordLoadManager extends EventEmitter {
               this.downloadQueue.pop()
           }
         }
-      } catch (_e) {
+      } catch (e) {
         warnLog(
           this.client.chainId,
           `Pool ${this.poolAddress} ticks downloading failed`,
+          'error',
+          `${e}`,
         )
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
-      this.emit('isUpdated')
       this.downloadCycleIsStared = false
+      this.emit('isUpdated')
     }
   }
 

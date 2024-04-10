@@ -3,7 +3,6 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 
-import { TridentDeprecationMessage } from 'src/ui/pool/TridentDeprecationMessage'
 import { PositionsTab } from '../../../../ui/pool/PositionsTab'
 import { TableFiltersNetwork } from '../../../../ui/pool/TableFiltersNetwork'
 import { TableFiltersResetButton } from '../../../../ui/pool/TableFiltersResetButton'
@@ -17,7 +16,6 @@ export default function MyPositionsPage() {
         <TableFiltersNetwork />
         <TableFiltersResetButton />
       </div>
-      <TridentDeprecationMessage />
       <PositionsTab />
     </Container>
   )

@@ -41,6 +41,7 @@ export enum LiquidityProviders {
   ThrusterV3 = 'ThrusterV3',
   DyorV2 = 'DyorV2',
   HyperBlast = 'HyperBlast',
+  KinetixV3 = 'KinetixV3',
 }
 
 export abstract class LiquidityProvider {

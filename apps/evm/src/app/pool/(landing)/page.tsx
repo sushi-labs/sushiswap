@@ -1,7 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 
-import { TridentDeprecationMessage } from 'src/ui/pool/TridentDeprecationMessage'
 import { PoolsTable } from '../../../ui/pool/PoolsTable'
 import { TableFiltersSmartPoolsOnly } from '../../../ui/pool/TableFilterSmartPoolsOnly'
 import { TableFiltersFarmsOnly } from '../../../ui/pool/TableFiltersFarmsOnly'
@@ -21,7 +20,6 @@ export default async function PoolPage() {
         <TableFiltersSmartPoolsOnly />
         <TableFiltersResetButton />
       </div>
-      <TridentDeprecationMessage />
       <PoolsTable />
     </Container>
   )

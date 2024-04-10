@@ -23,7 +23,7 @@ import {
   publicClientConfig,
 } from 'sushi/config'
 import { LiquidityProviders } from 'sushi/router'
-import { type Address, createPublicClient } from 'viem'
+import { type Address, PublicClient, createPublicClient } from 'viem'
 
 const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
@@ -62,6 +62,7 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   } as const
 }
 
+// ! TODO: Fix casts when viem is updated
 export const EXTRACTOR_CONFIG: Record<
   ExtractorSupportedChainId,
   ExtractorConfig
@@ -122,7 +123,10 @@ export const EXTRACTOR_CONFIG: Record<
           '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
       },
     ],
-    factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.AVALANCHE),
+      uniswapV3Factory(ChainId.AVALANCHE),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.AVALANCHE],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -131,7 +135,9 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BASE]: {
-    client: createPublicClient(publicClientConfig[ChainId.BASE]),
+    client: createPublicClient(
+      publicClientConfig[ChainId.BASE],
+    ) as PublicClient,
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
       {
@@ -238,7 +244,9 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.CELO]: {
-    client: createPublicClient(publicClientConfig[ChainId.CELO]),
+    client: createPublicClient(
+      publicClientConfig[ChainId.CELO],
+    ) as unknown as PublicClient,
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
     tickHelperContractV3:
@@ -371,7 +379,9 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.OPTIMISM]: {
-    client: createPublicClient(publicClientConfig[ChainId.OPTIMISM]),
+    client: createPublicClient(
+      publicClientConfig[ChainId.OPTIMISM],
+    ) as PublicClient,
     factoriesV2: [
       sushiswapV2Factory(ChainId.OPTIMISM),
       // {
@@ -496,7 +506,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.FILECOIN]: {
-    client: createPublicClient(publicClientConfig[ChainId.FILECOIN]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.FILECOIN]),
     factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
     factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
@@ -544,7 +554,15 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.KAVA]: {
     client: createPublicClient(publicClientConfig[ChainId.KAVA]),
     factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.KAVA)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.KAVA),
+      {
+        address: '0x2dBB6254231C5569B6A4313c6C1F5Fe1340b35C2' as Address,
+        provider: LiquidityProviders.KinetixV3,
+        initCodeHash:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,

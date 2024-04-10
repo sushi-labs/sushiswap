@@ -1,5 +1,15 @@
 import { ChainId } from 'sushi/chain'
 
+const MAX_FIRST_PARTIAL: Partial<Record<ChainId, number>> = {
+  [ChainId.METIS]: 100,
+}
+
+export const MAX_FIRST = new Proxy(MAX_FIRST_PARTIAL, {
+  get: (target, name: any) => {
+    return name in target ? target[name as ChainId] : 1000
+  },
+}) as Record<ChainId, number>
+
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
@@ -120,7 +130,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'Ethereum',
   [ChainId.FANTOM]: 'Fantom',
   [ChainId.GNOSIS]: 'Gnosis',
-  [ChainId.GÖRLI]: 'Görli',
+  // [ChainId.GÖRLI]: 'Görli',
   [ChainId.HARMONY]: 'Harmony',
   [ChainId.MOONBEAM]: 'Moonbeam',
   [ChainId.MOONRIVER]: 'Moonriver',
@@ -161,7 +171,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.FANTOM]: GRAPH_HOST,
   [ChainId.FUSE]: GRAPH_HOST,
   [ChainId.GNOSIS]: GRAPH_HOST,
-  [ChainId.GÖRLI]: GRAPH_HOST,
+  // [ChainId.GÖRLI]: GRAPH_HOST,
   [ChainId.HARMONY]: GRAPH_HOST,
   [ChainId.KAVA]: KAVA_HOST,
   [ChainId.METIS]: METIS_HOST,
@@ -176,7 +186,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.BTTC]: SUSHI_HOST,
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
-  [ChainId.KOVAN]: '',
+  // [ChainId.KOVAN]: '',
   [ChainId.THUNDERCORE]: THUNDERCORE_HOST,
   [ChainId.CORE]: CORE_HOST,
   [ChainId.BASE]: STUDIO_HOST,
@@ -226,7 +236,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.HECO]: 'hecoblocks/heco',
   [ChainId.MOONRIVER]: 'sushiswap/moonriver-blocks',
   [ChainId.FUSE]: 'sushiswap/fuse-blocks',
-  [ChainId.KOVAN]: 'blocklytics/kovan-blocks',
+  // [ChainId.KOVAN]: 'blocklytics/kovan-blocks',
   [ChainId.MOONBEAM]: 'sushiswap/moonbeam-blocks',
   [ChainId.OPTIMISM]: 'beethovenxfi/optimism-blocks',
   [ChainId.KAVA]: 'sushiswap/blocks-kava',
@@ -262,7 +272,7 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.HECO]: 3,
   [ChainId.MOONRIVER]: 12.2,
   [ChainId.FUSE]: 5,
-  [ChainId.KOVAN]: 4,
+  // [ChainId.KOVAN]: 4,
   [ChainId.MOONBEAM]: 12.2,
   [ChainId.OPTIMISM]: 2,
   [ChainId.KAVA]: 6.3,
@@ -287,7 +297,6 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.GNOSIS]: 'sushiswap/xdai-exchange',
   [ChainId.MOONBEAM]: 'sushiswap/exchange-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
-  [ChainId.POLYGON]: 'sushiswap/matic-exchange',
   [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
@@ -423,7 +432,7 @@ export const FURO_ENABLED_NETWORKS = [
 // TODO: Make typesafe
 export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.ETHEREUM]: 'sushi-subgraphs/furo-ethereum',
-  [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',
+  // [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',
   [ChainId.ARBITRUM]: 'sushi-subgraphs/furo-arbitrum',
   [ChainId.AVALANCHE]: 'sushi-subgraphs/furo-avalanche',
   [ChainId.BSC]: 'sushi-subgraphs/furo-bsc',
@@ -443,55 +452,6 @@ export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
 export const CONCENTRATED_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'uniswap/uniswap-v3',
   [ChainId.ARBITRUM]: 'ianlapham/arbitrum-minimal',
-}
-
-export const STEER_ENABLED_NETWORKS = [
-  ChainId.POLYGON,
-  ChainId.AVALANCHE,
-  ChainId.OPTIMISM,
-  ChainId.ARBITRUM,
-  ChainId.BSC,
-  ChainId.CELO,
-  ChainId.BASE,
-  ChainId.THUNDERCORE,
-  ChainId.METIS,
-  ChainId.POLYGON_ZKEVM,
-  ChainId.KAVA,
-  ChainId.LINEA,
-  ChainId.SCROLL,
-] as const
-
-export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
-
-export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
-  [ChainId.POLYGON]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-polygon',
-  [ChainId.BSC]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-bsc',
-  [ChainId.OPTIMISM]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-optimism',
-  [ChainId.ARBITRUM]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-arbitrum',
-  // [ChainId.Evmos]: 'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-evmos/api',
-  [ChainId.THUNDERCORE]:
-    'subgraph.steer.finance/thundercore/subgraphs/name/steerprotocol/steer-thundercore',
-  [ChainId.METIS]:
-    'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-metis/api',
-  [ChainId.BASE]:
-    'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-base/api',
-  [ChainId.AVALANCHE]:
-    'api.thegraph.com/subgraphs/name/rakeshbhatt10/avalance-test-subgraph',
-  [ChainId.POLYGON_ZKEVM]:
-    'http://13.228.90.202:8000/subgraphs/name/steerprotocol/steer-zkevm',
-  [ChainId.CELO]:
-    'api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-test-celo',
-  [ChainId.KAVA]:
-    'subgraph.steer.finance/kava/subgraphs/name/steerprotocol/steer-kava-evm',
-  [ChainId.LINEA]:
-    'subgraph.steer.finance/linea/subgraphs/name/steerprotocol/steer-linea',
-  [ChainId.SCROLL]:
-    'subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
-  // [ChainId.MANTA]: 'subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM

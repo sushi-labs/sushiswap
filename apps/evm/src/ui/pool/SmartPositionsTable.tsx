@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 
-import { STEER_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import {
   SkeletonText,
   Tooltip,
@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { useAccount, useSteerAccountPositionsFormatted } from '@sushiswap/wagmi'
+import { useAccount, useSteerAccountPositionsExtended } from '@sushiswap/wagmi'
 import { formatPercent } from 'sushi'
 import { APRHoverCard } from './APRHoverCard'
 import {
@@ -83,9 +83,9 @@ export const SmartPositionsTable = () => {
     pageSize: 10,
   })
 
-  const { data: positions, isLoading } = useSteerAccountPositionsFormatted({
+  const { data: positions, isLoading } = useSteerAccountPositionsExtended({
     account: address,
-    chainIds: chainIds ? chainIds : [...STEER_ENABLED_NETWORKS],
+    chainIds: chainIds ? chainIds : [...STEER_SUPPORTED_CHAIN_IDS],
   })
 
   const _positions = useMemo(() => (positions ? positions : []), [positions])
