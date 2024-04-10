@@ -480,13 +480,19 @@ export class UniV2Extractor {
     try {
       if (trustedFactory) factory = trustedFactory
       else {
-        const factoryAddr = await repeat(2, () =>
-          this.multiCallAggregator.callValue(
-            addr,
-            tridentConstantPoolAbi,
-            'factory',
-          ),
-        )
+        let factoryAddr = 'no factory'
+        try {
+          factoryAddr = await repeat(2, () =>
+            this.multiCallAggregator.callValue(
+              addr,
+              tridentConstantPoolAbi,
+              'factory',
+            ),
+          )
+        } catch (_e) {
+          // just a contract with similar events as V2 pool but not v2 pool because has no factory
+          // normal situation, lets add it to ignore pools and don't send any error
+        }
         factory = this.factoryMap.get(
           (factoryAddr as string).toLowerCase() as Address,
         )
