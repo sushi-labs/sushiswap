@@ -18,7 +18,7 @@ const seo = {
       'A leading multi-chain DEX deployed on over 30 blockchains, featuring a unique cross-chain swap - SushiXSwap.',
     images: [
       {
-        url: 'https://cdn.sushi.com/image/upload/v1712761011/Sushi_Logo_Colour_400_4f103bce2e.png',
+        url: 'https://cdn.sushi.com/image/upload/v1712760987/Sushi_Logo_Colour_Fill_400_fe38d9418b.png',
         width: 400,
         height: 432,
         alt: 'Sushi',
