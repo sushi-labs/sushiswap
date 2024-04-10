@@ -218,6 +218,12 @@ export class UniV3Extractor {
             promises.length
           } pools failed (${Math.round(performance.now() - startTime)}ms)`,
         )
+        if (failed > 0) {
+          Logger.error(
+            this.multiCallAggregator.chainId,
+            `${failed}/${promises.length} pools load failed during ExtractorV3 starting`,
+          )
+        }
       })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       this.consoleLog(
