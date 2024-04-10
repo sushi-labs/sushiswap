@@ -10,7 +10,7 @@ const FormattedPrice: React.FC<FormattedNumberProps> = ({ number }) => {
     const integerPart = parts[0]
     const fractionalPart = parts[1]
 
-    const zeroGroups = fractionalPart.match(/(?:0+)/) // Match consecutive zeros
+    const zeroGroups = fractionalPart?.match(/(?:0+)/) // Match consecutive zeros
 
     if (integerPart !== '0' || !zeroGroups || zeroGroups[0].length <= 4) {
       // If no zero groups found or less than or equal to 4 zeros, return regular rendering
