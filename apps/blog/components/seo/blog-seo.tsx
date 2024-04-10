@@ -14,7 +14,7 @@ export const BlogSeo: FC = () => {
       dateModified={articlesData?.data[0].attributes?.updatedAt}
       datePublished={articlesData?.data[0].attributes?.publishedAt}
       description={SEO.description}
-      images={SEO.openGraph.images}
+      images={SEO.openGraph.images.map((image) => image.url)}
       title={SEO.title}
       type="Blog"
       url={SEO.openGraph.url}
