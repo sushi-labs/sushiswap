@@ -32,8 +32,6 @@ export async function GET(
     params,
   }: { params: { chainId: string; address: string; tokens?: string[] } },
 ) {
-  console.log('balance route')
-
   const { chainId, address } = querySchema.parse(params)
 
   try {

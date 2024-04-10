@@ -99,8 +99,6 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     refetch,
   } = useBalances({ chainId, account: address, enabled: open })
 
-  console.log({ balancesMap })
-
   const tokenMap = useMemo(() => {
     return {
       ...defaultTokenMap,
