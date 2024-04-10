@@ -1,8 +1,4 @@
-import {
-  BalanceItem,
-  ChainID as CovalentChainID,
-  CovalentClient,
-} from '@covalenthq/client-sdk'
+import { ChainID as CovalentChainID } from '@covalenthq/client-sdk'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { createConfig, getBalance, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
