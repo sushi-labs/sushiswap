@@ -44,7 +44,7 @@ class LoggerClass {
         this.logsExternalHandler(
           `${chainId}: ${message}`,
           'error',
-          this._cutLongMessage(`${error}`),
+          this._cutLongMessage(error),
         )
         return
       }
@@ -54,13 +54,13 @@ class LoggerClass {
         this.logsExternalHandler(
           `${chainId}: ${errStr} / ${message}`,
           level,
-          this._cutLongMessage(`${error}`),
+          this._cutLongMessage(error),
           traceId,
         )
         this.logsExternalHandler(
           `${chainId}: ${message} / ${errStr}`,
           level,
-          this._cutLongMessage(`${error}`),
+          this._cutLongMessage(error),
           traceId,
         )
         return
@@ -72,7 +72,7 @@ class LoggerClass {
         this.logsExternalHandler(
           `${chainId}: ${message} / Out of Gas`,
           'error',
-          this._cutLongMessage(`${error}`),
+          this._cutLongMessage(error),
         )
         return
       }
@@ -85,13 +85,13 @@ class LoggerClass {
       this.logsExternalHandler(
         `${chainId}: ${message}${errMsg !== '' ? ` / ${errMsg}` : ''}`,
         level,
-        error !== undefined ? this._cutLongMessage(`${error}`) : undefined,
+        error !== undefined ? this._cutLongMessage(error) : undefined,
       )
       if (errMsg !== '')
         this.logsExternalHandler(
           `${chainId}: ${errMsg} / ${message}`,
           level,
-          error !== undefined ? this._cutLongMessage(`${error}`) : undefined,
+          error !== undefined ? this._cutLongMessage(error) : undefined,
         )
     }
   }
@@ -107,11 +107,19 @@ class LoggerClass {
     return `${year}-${month}-${day}T${hours}:${min}:${sec}`
   }
 
-  private _cutLongMessage(error: string): string {
-    if (error.length < 4000) return error
-    return `${error.substring(0, 2000)} *** ${error.substring(
-      error.length - 2000,
-    )}`
+  errMessageCache = new Map<any, string>()
+  private _cutLongMessage(error: any): string {
+    let msg = this.errMessageCache.get(error)
+    if (msg) return msg
+    const errStr = `${error}`
+    msg =
+      errStr.length < 1000
+        ? errStr
+        : `${errStr.substring(0, 500)} *** ${errStr.substring(
+            errStr.length - 500,
+          )}`
+    this.errMessageCache.set(error, msg)
+    return msg
   }
 }
 
