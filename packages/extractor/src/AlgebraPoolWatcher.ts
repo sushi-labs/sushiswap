@@ -83,6 +83,7 @@ export const AlgebraEventsAbi = [
 ]
 
 export enum AlgebraPoolWatcherStatus {
+  Failed = 'Failed',
   Nothing = 'Nothing',
   Something = 'Something',
   All = 'All',
@@ -90,6 +91,7 @@ export enum AlgebraPoolWatcherStatus {
 
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
+// event PoolCodeWasChanged is emitted each time getPoolCode() returns another pool (lastPoolCode changed)
 export class AlgebraPoolWatcher extends EventEmitter {
   address: Address
   tickHelperContract: Address
@@ -105,6 +107,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
   updatePoolStateGuard = false
   busyCounter?: Counter
   private lastPoolCode?: PoolCode
+  status: AlgebraPoolWatcherStatus = AlgebraPoolWatcherStatus.Nothing
 
   constructor(
     provider: LiquidityProviders,
@@ -131,7 +134,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
       busyCounter,
     )
     this.wordLoadManager.on('ticksChanged', () => {
-      this.lastPoolCode = undefined
+      this._poolWasChanged()
     })
     this.busyCounter = busyCounter
   }
@@ -182,14 +185,29 @@ export class AlgebraPoolWatcher extends EventEmitter {
             liquidity: liquidity as bigint,
             sqrtPriceX96: price,
           }
-          this.lastPoolCode = undefined
+          this._poolWasChanged()
 
+          if (this.getStatus() === AlgebraPoolWatcherStatus.Nothing) {
+            this.wordLoadManager.once('ticksChanged', () => {
+              if (this.getStatus() === AlgebraPoolWatcherStatus.Nothing)
+                this.setStatus(AlgebraPoolWatcherStatus.Something)
+            })
+          }
+          this.wordLoadManager.once('isUpdated', () => {
+            this.setStatus(AlgebraPoolWatcherStatus.All)
+            this.emit('isUpdated')
+          })
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
-          this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
           break
         }
-      } catch (_e) {
-        warnLog(this.client.chainId, `Pool ${this.address} update failed`)
+      } catch (e) {
+        warnLog(
+          this.client.chainId,
+          `Alg Pool ${this.address} update failed`,
+          'error',
+          `${e}`,
+        )
+        this.setStatus(AlgebraPoolWatcherStatus.Failed)
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
@@ -234,7 +252,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, -amount)
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Burn': {
@@ -254,7 +272,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, -amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, amount)
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Collect': {
@@ -268,7 +286,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             this.state.reserve1 -= amount1
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Flash': {
@@ -282,7 +300,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             this.state.reserve1 += paid1
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Swap': {
@@ -302,7 +320,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
             this.wordLoadManager.onPoolTickChange(this.state.tick, false)
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Fee': {
@@ -313,7 +331,7 @@ export class AlgebraPoolWatcher extends EventEmitter {
           const { fee } = data.args
           this.state.fee = fee
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       default:
@@ -357,23 +375,46 @@ export class AlgebraPoolWatcher extends EventEmitter {
   }
 
   getStatus(): AlgebraPoolWatcherStatus {
-    if (this.state === undefined) return AlgebraPoolWatcherStatus.Nothing
-    if (!this.wordLoadManager.downloadCycleIsStared)
-      return AlgebraPoolWatcherStatus.All
-    if (this.wordLoadManager.hasSomeTicksAround(this.state.tick))
-      return AlgebraPoolWatcherStatus.Something
-    return AlgebraPoolWatcherStatus.Nothing
+    return this.status
   }
 
-  statusPromise?: Promise<void>
-  async statusAll(): Promise<void> {
-    if (this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared)
-      return Promise.resolve()
-    if (this.statusPromise !== undefined) return this.statusPromise
-    this.statusPromise = new Promise((resolve) => {
-      this.wordLoadManager.once('isUpdated', () => resolve())
+  setStatus(status: AlgebraPoolWatcherStatus) {
+    if (status === this.status) return
+    this.status = status
+    if (
+      status === AlgebraPoolWatcherStatus.Failed &&
+      this.downloadFinishedPromiseReject
+    )
+      this.downloadFinishedPromiseReject()
+    if (
+      status === AlgebraPoolWatcherStatus.All &&
+      this.downloadFinishedPromiseResolve
+    )
+      this.downloadFinishedPromiseResolve()
+  }
+
+  downloadFinishedPromise?: Promise<void>
+  downloadFinishedPromiseResolve?: () => void
+  downloadFinishedPromiseReject?: () => void
+  async downloadFinished(): Promise<void> {
+    if (this.status === AlgebraPoolWatcherStatus.All) return Promise.resolve()
+    if (this.status === AlgebraPoolWatcherStatus.Failed) return Promise.reject()
+    if (this.downloadFinishedPromise !== undefined)
+      return this.downloadFinishedPromise
+    this.downloadFinishedPromise = new Promise((resolve, reject) => {
+      this.downloadFinishedPromiseResolve = resolve
+      this.downloadFinishedPromiseReject = reject
     })
-    await this.statusPromise
-    this.statusPromise = undefined
+    await this.downloadFinishedPromise
+    this.downloadFinishedPromise = undefined
+    this.downloadFinishedPromiseResolve = undefined
+    this.downloadFinishedPromiseReject = undefined
+  }
+
+  private _poolWasChanged() {
+    if (this.lastPoolCode !== undefined) {
+      this.lastPoolCode = undefined
+      this.emit('PoolCodeWasChanged', this)
+    }
   }
 }

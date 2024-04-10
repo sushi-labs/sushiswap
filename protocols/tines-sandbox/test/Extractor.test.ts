@@ -1,3 +1,5 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
 import {
   Extractor,
   FactoryV2,
@@ -58,6 +60,7 @@ export const RP3Address = {
   [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
   [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
   [ChainId.BSC]: '0xd36990D74b947eC4Ad9f52Fe3D49d14AdDB51E44' as Address,
+  [ChainId.FILECOIN]: '0xcdbcd51a5e8728e0af4895ce5771b7d17ff71959' as Address,
 }
 
 export const TickLensContract = {
@@ -72,6 +75,9 @@ export const TickLensContract = {
   [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
   [ChainId.BSC]: '0xD9270014D396281579760619CCf4c3af0501A47C' as Address,
 }
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
@@ -491,5 +497,30 @@ it.skip('Extractor BSC infinite work test', async () => {
     logDepth: 300,
     logging: true,
     RP3Address: RP3Address[ChainId.BSC],
+  })
+})
+
+it.skip('Extractor Filecoin infinite work test', async () => {
+  await startInfinitTest({
+    transport: publicClientConfig[ChainId.FILECOIN].transport,
+    chain: publicClientConfig[ChainId.FILECOIN].chain as Chain,
+    factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
+    factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RP3Address: RP3Address[ChainId.FILECOIN],
+    checkTokens: [
+      new Token({
+        chainId: ChainId.FILECOIN,
+        address: '0xc396f2266dAE4A1C75cF96a51C0E5824Aec6f947',
+        symbol: 'FELON',
+        name: 'FELON',
+        decimals: 18,
+      }),
+    ],
   })
 })

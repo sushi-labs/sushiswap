@@ -3,13 +3,12 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
-  Address,
   useAccount,
   useClientTrade,
-  useFeeData,
-  useNetwork,
+  useConfig,
+  useGasPrice,
   useTokenWithCache,
-  watchNetwork,
+  watchAccount,
 } from '@sushiswap/wagmi'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -25,8 +24,8 @@ import {
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import { defaultQuoteCurrency } from 'sushi/config'
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { isAddress } from 'viem'
+import { Percent, ZERO } from 'sushi/math'
+import { Address, isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 import { useSwapApi } from '../../../lib/swap/useSwapApi'
@@ -49,6 +48,7 @@ interface State {
     setTokens(token0: Type | string, token1: Type | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
+    setTokenTax(tax: Percent | false | undefined): void
   }
   state: {
     token0: Type | undefined
@@ -57,6 +57,7 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
+    tokenTax: Percent | false | undefined
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -78,10 +79,12 @@ interface DerivedStateSimpleSwapProviderProps {
 const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
   ({ children }) => {
     const { push } = useRouter()
-    const { address } = useAccount()
-    const { chain } = useNetwork()
+    const { address, chain } = useAccount()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
+      undefined,
+    )
 
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user
@@ -251,13 +254,17 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
+    const config = useConfig()
+
     useEffect(() => {
-      const unwatch = watchNetwork(({ chain }) => {
-        if (!chain || chain.id === chainId) return
-        push(pathname, { scroll: false })
+      const unwatch = watchAccount(config, {
+        onChange: ({ chain }) => {
+          if (!chain || chain.id === chainId) return
+          push(pathname, { scroll: false })
+        },
       })
       return () => unwatch()
-    }, [chainId, pathname, push])
+    }, [config, chainId, pathname, push])
 
     // Derive token0
     const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(
@@ -306,6 +313,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               setTokens,
               switchTokens,
               setSwapAmount,
+              setTokenTax,
             },
             state: {
               recipient: address ?? '',
@@ -314,6 +322,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               swapAmount: tryParseAmount(swapAmountString, _token0),
               token0: _token0,
               token1: _token1,
+              tokenTax,
             },
             isLoading: token0Loading || token1Loading,
             isToken0Loading: token0Loading,
@@ -333,6 +342,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           token0Loading,
           token1,
           token1Loading,
+          tokenTax,
         ])}
       >
         {children}
@@ -382,14 +392,15 @@ const useFallback = (chainId: ChainId) => {
 const useSimpleSwapTrade = () => {
   const log = useLogger()
   const {
-    state: { token0, chainId, swapAmount, token1, recipient },
+    state: { token0, chainId, swapAmount, token1, recipient, tokenTax },
+    mutate: { setTokenTax },
   } = useDerivedStateSimpleSwap()
 
   const { isFallback, setIsFallback, resetFallback } = useFallback(chainId)
 
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: feeData } = useFeeData({ chainId })
+  const { data: gasPrice } = useGasPrice({ chainId })
 
   const apiTrade = useApiTrade({
     chainId,
@@ -398,7 +409,7 @@ const useSimpleSwapTrade = () => {
     amount: swapAmount,
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice,
+    gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
@@ -406,6 +417,7 @@ const useSimpleSwapTrade = () => {
       log.error('api trade error')
       setIsFallback(true)
     },
+    tokenTax,
   })
 
   const clientTrade = useClientTrade({
@@ -415,24 +427,42 @@ const useSimpleSwapTrade = () => {
     amount: swapAmount,
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice,
+    gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(isFallback && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
     onError: () => {
       log.error('client trade error')
     },
+    tokenTax,
   })
+
+  const config = useConfig()
 
   // Reset the fallback on network switch
   useEffect(() => {
-    const unwatch = watchNetwork(({ chain }) => {
-      if (chain) {
-        resetFallback()
-      }
+    const unwatch = watchAccount(config, {
+      onChange: ({ chain }) => {
+        if (chain) {
+          resetFallback()
+        }
+      },
     })
     return () => unwatch()
-  }, [resetFallback])
+  }, [config, resetFallback])
+
+  // Write the fallback value to the window object so it can be logged to GA
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.isFallback = isFallback
+    }
+  }, [isFallback])
+
+  // Reset tokenTax when token0 or token1 changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    setTokenTax(undefined)
+  }, [token0, token1, setTokenTax])
 
   return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
 }

@@ -1,9 +1,16 @@
 // import EventEmitter from 'node:events'
+import { warnLog } from '@sushiswap/extractor'
+import { IncrementalPricer } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  STABLES,
+} from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
-import { PoolCode } from 'sushi/router'
+import { PoolCode, deserializePoolsBinary } from 'sushi/router'
 import { deserializePoolCodesJSON } from 'sushi/serializer'
+import { Address } from 'viem'
 
 const DEBUG_PRINT = false
 
@@ -31,8 +38,11 @@ export class ExtractorClient {
   lastUpdatedTimestamp = 0
   tokenMap: Map<string, Token> = new Map()
   poolCodesMap: Map<string, PoolCode[]> = new Map()
+  totalPoolNumber = 0
   requestedPairs: Map<string, Set<string>> = new Map()
   fetchPoolsBetweenRequests: Set<string> = new Set()
+  dataStateId = 0
+  pricer: IncrementalPricer
 
   constructor(
     chainId: ChainId,
@@ -44,6 +54,11 @@ export class ExtractorClient {
     this.extractorServer = extractorServer
     this.poolUpdateInterval = poolUpdateInterval
     this.requestedPairsUpdateInterval = requestedPairsUpdateInterval
+    this.pricer = new IncrementalPricer(
+      STABLES[chainId as keyof typeof STABLES].slice() ?? [],
+      STABLES[chainId as keyof typeof STABLES].map((_) => 1),
+      1000,
+    )
   }
 
   get ready() {
@@ -57,44 +72,89 @@ export class ExtractorClient {
 
   async updatePools() {
     try {
-      if (DEBUG_PRINT)
-        console.log(`${this.extractorServer}/pool-codes/${this.chainId}`)
-      const resp = await fetch(
-        `${this.extractorServer}/pool-codes/${this.chainId}`,
-      )
+      const url = `${this.extractorServer}/pool-codes-bin/${this.chainId}?stateId=${this.dataStateId}`
+      if (DEBUG_PRINT) console.log(url)
+      const resp = await fetch(url)
       if (resp.status === 200) {
-        const data = await resp.text()
+        const data = new Uint8Array(await resp.arrayBuffer())
         const start = performance.now()
-        const pools = deserializePoolCodesJSON(data)
-        this.poolCodesMap.clear()
-        this.tokenMap.clear()
-        pools.forEach((p) => {
-          const t0 = p.pool.token0
-          const t0Id = tokenId(t0.address)
-          if (this.tokenMap.get(t0Id) === undefined)
-            this.tokenMap.set(t0Id, new Token({ ...t0, chainId: this.chainId }))
+        let pos = 0
+        const poolNums: number[] = []
+        let allNewPools: PoolCode[] = []
+        while (pos < data.byteLength) {
+          const {
+            pools,
+            extraData: { stateId, prevStateId },
+            finish,
+          } = deserializePoolsBinary(data, pos, (addr: string) => {
+            return this.tokenMap.get(addr.toLowerCase())
+          })
+          pos = finish
+          if (prevStateId === 0) {
+            this.poolCodesMap.clear()
+            this.tokenMap.clear()
+            this.totalPoolNumber = 0
+          } else if (prevStateId !== this.dataStateId) {
+            warnLog(
+              this.chainId,
+              `Incorrect router state: ${this.dataStateId} -> ${prevStateId}`,
+              'error',
+            )
+          }
+          pools.forEach((p) => {
+            const t0 = p.pool.token0
+            const t1 = p.pool.token1
+            this.tokenMap.set(tokenId(t0.address), t0 as Token)
+            this.tokenMap.set(tokenId(t1.address), t1 as Token)
 
-          const t1 = p.pool.token1
-          const t1Id = tokenId(t1.address)
-          if (this.tokenMap.get(t1Id) === undefined)
-            this.tokenMap.set(t1Id, new Token({ ...t1, chainId: this.chainId }))
-
-          const id = tokenPairId(t0.address, t1.address)
-          const pl = this.poolCodesMap.get(id)
-          if (pl === undefined) this.poolCodesMap.set(id, [p])
-          else pl.push(p)
-        })
+            const id = tokenPairId(t0.address, t1.address)
+            const pl = this.poolCodesMap.get(id)
+            if (pl === undefined) {
+              this.poolCodesMap.set(id, [p])
+              ++this.totalPoolNumber
+            } else {
+              if (prevStateId !== 0) {
+                const addr = p.pool.address
+                const len = pl.length
+                for (let i = 0; i < len; ++i) {
+                  if ((pl[i] as PoolCode).pool.address !== addr) continue
+                  pl[i] = p
+                  return
+                }
+              }
+              pl.push(p)
+              ++this.totalPoolNumber
+            }
+          })
+          allNewPools = allNewPools.concat(pools)
+          poolNums.push(pools.length)
+          this.dataStateId = stateId
+        }
+        const updatedPrices = this.pricer.updatePrices(
+          allNewPools.map((p) => p.pool),
+          () =>
+            Array.from(this.poolCodesMap.values())
+              .flat()
+              .map((p) => p.pool),
+        )
+        const timing = Math.round(performance.now() - start)
         console.log(
-          `updatePools: ${this.poolCodesMap.size} pools and ${
-            this.tokenMap.size
-          } tokens (${Math.round(performance.now() - start)}ms cpu time)`,
+          `update: ${poolNums.map((n) => n.toString()).join('+')}/${
+            this.totalPoolNumber
+          } pools, ${this.tokenMap.size} tokens, ${updatedPrices}/${
+            this.pricer.pricesSize
+          } prices (${timing}ms cpu time)`,
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
-        console.error(`Pool download failed, status=${resp.status}`)
+        warnLog(
+          this.chainId,
+          `Pool download failed, status=${resp.status}`,
+          'error',
+        )
       }
     } catch (e) {
-      console.error(`Pool download failed, ${e}`)
+      warnLog(this.chainId, `Pool download failed, ${e}`, 'error')
     }
     setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
@@ -124,7 +184,7 @@ export class ExtractorClient {
         console.log(
           `requested pairs update: ${pairs} pairs (${Math.round(
             performance.now() - start,
-          )}ms) cpu time`,
+          )}ms cpu time)`,
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
@@ -305,5 +365,13 @@ export class ExtractorClient {
 
   getCurrentPoolCodes(): PoolCode[] {
     return Array.from(this.poolCodesMap.values()).flat()
+  }
+
+  getPrice(address: Address) {
+    return this.pricer.prices[address]
+  }
+
+  getPrices() {
+    return this.pricer.prices
   }
 }

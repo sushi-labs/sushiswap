@@ -21,6 +21,7 @@ function getJump(index: number, positiveFirst: boolean): number {
   return positiveFirst ? res : -res
 }
 
+// event ticksChanged is emitted each time getMaxTickDiapason returns another value (this.words is changed)
 export class WordLoadManager extends EventEmitter {
   poolAddress: Address
   poolSpacing: number
@@ -83,15 +84,17 @@ export class WordLoadManager extends EventEmitter {
               this.downloadQueue.pop()
           }
         }
-      } catch (_e) {
+      } catch (e) {
         warnLog(
           this.client.chainId,
           `Pool ${this.poolAddress} ticks downloading failed`,
+          'error',
+          `${e}`,
         )
       }
       if (initialQueueLength > 0 && this.busyCounter) this.busyCounter.dec()
-      this.emit('isUpdated')
       this.downloadCycleIsStared = false
+      this.emit('isUpdated')
     }
   }
 
@@ -105,6 +108,7 @@ export class WordLoadManager extends EventEmitter {
       Array.from(this.words.keys()).forEach((index) => {
         if (index < minWord || index > maxWord) this.words.delete(index)
       })
+      this.emit('ticksChanged')
     }
 
     const direction = currentTickWord - minWord <= maxWord - currentTickWord
@@ -178,11 +182,13 @@ export class WordLoadManager extends EventEmitter {
       if (eventBlockNumber <= blockNumber) return
       if (ticks.length === 0 || tick < ticks[0].index) {
         ticks.unshift({ index: tick, DLiquidity: amount })
+        this.emit('ticksChanged')
         return
       }
       if (tick === ticks[0].index) {
         ticks[0].DLiquidity = ticks[0].DLiquidity + amount
         if (ticks[0].DLiquidity === 0n) ticks.splice(0, 1)
+        this.emit('ticksChanged')
         return
       }
 
@@ -196,10 +202,12 @@ export class WordLoadManager extends EventEmitter {
         else {
           ticks[middle].DLiquidity = ticks[middle].DLiquidity + amount
           if (ticks[middle].DLiquidity === 0n) ticks.splice(middle, 1)
+          this.emit('ticksChanged')
           return
         }
       }
       ticks.splice(start + 1, 0, { index: tick, DLiquidity: amount })
+      this.emit('ticksChanged')
     }
   }
 }

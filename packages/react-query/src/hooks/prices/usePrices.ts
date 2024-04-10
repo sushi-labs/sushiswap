@@ -6,14 +6,18 @@ import { getAddress, isAddress, parseUnits } from 'viem'
 
 interface UsePrices {
   chainId: number | undefined
+  enabled?: boolean
 }
 
-export const usePrices = ({ chainId }: UsePrices) => {
+const BASE_URL =
+  process.env['NEXT_PUBLIC_API_BASE_URL'] || 'https://api.sushi.com'
+
+export const usePrices = ({ chainId, enabled = true }: UsePrices) => {
   return useQuery({
-    queryKey: [`https://api.sushi.com/price/v1/${chainId}`],
+    queryKey: [`${BASE_URL}/price/v1/${chainId}`],
     queryFn: async () => {
       const data: Record<string, number> = await fetch(
-        `https://api.sushi.com/price/v1/${chainId}`,
+        `${BASE_URL}/price/v1/${chainId}`,
       ).then((response) => response.json())
       return Object.entries(data).reduce<Record<string, Fraction>>(
         (acc, [address, _price]) => {
@@ -32,6 +36,6 @@ export const usePrices = ({ chainId }: UsePrices) => {
     },
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
-    enabled: Boolean(chainId),
+    enabled: Boolean(chainId && enabled),
   })
 }

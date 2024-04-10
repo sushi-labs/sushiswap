@@ -28,7 +28,9 @@ const hydrate = (data: Record<string, number>) => {
   )
 }
 
-export const useAllPrices = () => {
+export const useAllPrices = (
+  { enabled = true }: { enabled?: boolean } = { enabled: true },
+) => {
   return useQuery({
     queryKey: ['/api/price'],
     queryFn: async () =>
@@ -37,5 +39,6 @@ export const useAllPrices = () => {
     cacheTime: ms('1h'),
     refetchOnWindowFocus: false,
     select: hydrate,
+    enabled,
   })
 }

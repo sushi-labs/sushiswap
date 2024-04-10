@@ -12,6 +12,7 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
+  SpecialExtractorClientConfig,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   UNISWAP_V2_FACTORY_ADDRESS,
@@ -22,7 +23,7 @@ import {
   publicClientConfig,
 } from 'sushi/config'
 import { LiquidityProviders } from 'sushi/router'
-import { type Address, createPublicClient } from 'viem'
+import { type Address, PublicClient, createPublicClient } from 'viem'
 
 const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
@@ -61,6 +62,7 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   } as const
 }
 
+// ! TODO: Fix casts when viem is updated
 export const EXTRACTOR_CONFIG: Record<
   ExtractorSupportedChainId,
   ExtractorConfig
@@ -121,7 +123,10 @@ export const EXTRACTOR_CONFIG: Record<
           '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
       },
     ],
-    factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.AVALANCHE),
+      uniswapV3Factory(ChainId.AVALANCHE),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.AVALANCHE],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -130,7 +135,9 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BASE]: {
-    client: createPublicClient(publicClientConfig[ChainId.BASE]),
+    client: createPublicClient(
+      publicClientConfig[ChainId.BASE],
+    ) as PublicClient,
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
       {
@@ -177,7 +184,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BSC]: {
-    client: createPublicClient(publicClientConfig[ChainId.BSC]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.BSC]),
     factoriesV2: [
       sushiswapV2Factory(ChainId.BSC),
       {
@@ -221,7 +228,9 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 1000,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
-    // maxBatchesSimultaniously: 5,
+    maxBatchesSimultaniously: 5,
+    experimantalPoolIncrementalMode: true, // Only changed pools are sent from Extractor to Router
+    checkPoolIncrementalModeCorrectness: true, // if experimantalPoolIncrementalMode then make correctness check (resourcefull)
   },
   [ChainId.BTTC]: {
     client: createPublicClient(publicClientConfig[ChainId.BTTC]),
@@ -235,7 +244,9 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.CELO]: {
-    client: createPublicClient(publicClientConfig[ChainId.CELO]),
+    client: createPublicClient(
+      publicClientConfig[ChainId.CELO],
+    ) as unknown as PublicClient,
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
     tickHelperContractV3:
@@ -258,7 +269,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.ETHEREUM]: {
-    client: createPublicClient(publicClientConfig[ChainId.ETHEREUM]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.ETHEREUM]),
     factoriesV2: [
       {
         address: UNISWAP_V2_FACTORY_ADDRESS,
@@ -301,6 +312,7 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.FANTOM]: {
     client: createPublicClient(publicClientConfig[ChainId.FANTOM]),
@@ -367,7 +379,9 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.OPTIMISM]: {
-    client: createPublicClient(publicClientConfig[ChainId.OPTIMISM]),
+    client: createPublicClient(
+      publicClientConfig[ChainId.OPTIMISM],
+    ) as PublicClient,
     factoriesV2: [
       sushiswapV2Factory(ChainId.OPTIMISM),
       // {
@@ -439,6 +453,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
+    maxBatchesSimultaniously: 5,
     maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON_ZKEVM]: {
@@ -491,7 +506,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.FILECOIN]: {
-    client: createPublicClient(publicClientConfig[ChainId.FILECOIN]),
+    client: createPublicClient(SpecialExtractorClientConfig[ChainId.FILECOIN]),
     factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
     factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
@@ -539,7 +554,15 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.KAVA]: {
     client: createPublicClient(publicClientConfig[ChainId.KAVA]),
     factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.KAVA)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.KAVA),
+      {
+        address: '0x2dBB6254231C5569B6A4313c6C1F5Fe1340b35C2' as Address,
+        provider: LiquidityProviders.KinetixV3,
+        initCodeHash:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -647,6 +670,83 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV3: [],
     tickHelperContractV3:
       '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.BLAST]: {
+    client: createPublicClient(publicClientConfig[ChainId.BLAST]),
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.BLAST),
+      {
+        address: '0x04C9f118d21e8B767D2e50C946f0cC9F6C367300' as Address,
+        provider: LiquidityProviders.SwapBlast,
+        fee: 0.001,
+        initCodeHash:
+          '0x89f2ba5c4e1e84307b0efac8ff56efab2786d9becd741ff83b1b6397de76dafc',
+      },
+      {
+        address: '0x66346aac17d0e61156AC5F2A934ccF2a9BDe4c65' as Address,
+        provider: LiquidityProviders.BlastDEX,
+        fee: 0.002,
+        initCodeHash:
+          '0x376acff9b60b853f5ccc9f1caecb8dcf722793593330ac58aac8a880a3eb8b9e',
+      },
+      {
+        address: '0xE27cb06A15230A7480d02956a3521E78C5bFD2D0' as Address,
+        provider: LiquidityProviders.MonoswapV2,
+        fee: 0.003,
+        initCodeHash:
+          '0xd1a99f7339108abbcc2eaa6478ee4a0394e2a63f04de08793721fb2f3eff5a38',
+      },
+      {
+        address: '0xb4A7D971D0ADea1c73198C97d7ab3f9CE4aaFA13' as Address,
+        provider: LiquidityProviders.ThrusterV2,
+        fee: 0.003,
+        initCodeHash:
+          '0x6f0346418750a1a53597a51ceff4f294b5f0e87f09715525b519d38ad3fab2cb',
+      },
+      {
+        address: '0x37836821a2c03c171fB1a595767f4a16e2b93Fc4' as Address,
+        provider: LiquidityProviders.ThrusterV2,
+        fee: 0.01,
+        initCodeHash:
+          '0x32a9ff5a51b653cbafe88e38c4da86b859135750d3ca435f0ce732c8e3bb8335',
+      },
+      {
+        address: '0xA1da7a7eB5A858da410dE8FBC5092c2079B58413',
+        provider: LiquidityProviders.DyorV2,
+        fee: 0.0025,
+        initCodeHash:
+          '0xda2f1a903916d7de88d9357d27d763f123502a5d48e3b229d5fa049b3ffdeeb5',
+      },
+      {
+        address: '0xD97fFc2041a8aB8f6bc4aeE7eE8ECA485381D088',
+        provider: LiquidityProviders.HyperBlast,
+        fee: 0.003,
+        initCodeHash:
+          '0x2e6ab686c26cf8ecf0a8c01a9fb0ef96dbd4631c04b03005350fa49e8f2f32f8',
+      },
+    ],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.BLAST),
+      {
+        address: '0x48d0F09710794313f33619c95147F34458BF7C3b',
+        provider: LiquidityProviders.MonoswapV3,
+        initCodeHash:
+          '0x7ea070216c7d9135010a36147394687bab92df4695e924000eed7c4b33eb922f',
+      },
+      {
+        address: '0x71b08f13B3c3aF35aAdEb3949AFEb1ded1016127',
+        deployer: '0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB',
+        provider: LiquidityProviders.ThrusterV3,
+        initCodeHash:
+          '0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d',
+      },
+    ],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BLAST] as Address,
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',

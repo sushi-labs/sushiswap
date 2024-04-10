@@ -22,9 +22,9 @@ export const rpcUrls = {
     `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
   ],
   [ChainId.FANTOM]: [`https://lb.drpc.org/ogrpc?network=fantom&dkey=${drpcId}`],
-  [ChainId.FILECOIN]: [
-    `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
-  ],
+  // [ChainId.FILECOIN]: [
+  //   `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
+  // ],
   [ChainId.FUSE]: [`https://lb.drpc.org/ogrpc?network=fuse&dkey=${drpcId}`],
   [ChainId.GNOSIS]: [`https://lb.drpc.org/ogrpc?network=gnosis&dkey=${drpcId}`],
   [ChainId.HARMONY]: [
@@ -57,6 +57,7 @@ export const rpcUrls = {
     'https://zetachain-mainnet-archive.allthatnode.com:8545',
   ],
   [ChainId.CRONOS]: [`https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`],
+  [ChainId.BLAST]: [`https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`],
 } as const
 
 export type RpcEnabledChainId = keyof typeof rpcUrls

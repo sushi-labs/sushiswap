@@ -23,6 +23,13 @@ export const SteerVaultsApiSchema = z.object({
       }
     })
     .optional(),
+  tokenSymbols: z
+    .string()
+    .transform((tokenSymbols) => tokenSymbols?.split(','))
+    .refine((tokenSymbols) => tokenSymbols.length <= 3, {
+      message: 'Can only use up to 3 tokenSymbols.',
+    })
+    .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('reserveUSD'),
   orderDir: z.enum(['asc', 'desc']).default('desc'),

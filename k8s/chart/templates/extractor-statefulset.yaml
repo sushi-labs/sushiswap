@@ -31,7 +31,7 @@ spec:
             successThreshold: 1
             timeoutSeconds: 3
           startupProbe:
-            failureThreshold: 60
+            failureThreshold: 100
             httpGet:
               path: /health
               port: 80

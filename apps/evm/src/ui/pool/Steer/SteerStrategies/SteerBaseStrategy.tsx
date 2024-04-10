@@ -208,15 +208,15 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
               positions={positions}
             />
           </div>
-          <div className="grid grid-cols-2">
-            <Stat className="p-6">
+          <div className="flex flex-row flex-wrap whitespace-nowrap gap-2 justify-between p-6">
+            <Stat>
               <StatLabel size="sm">Minimum price</StatLabel>
               <StatValue size="sm">
                 <FormattedPrice number={priceExtremes.min} />{' '}
                 {vault.token0.symbol}/{vault.token1.symbol}
               </StatValue>
             </Stat>
-            <Stat className="p-6">
+            <Stat>
               <StatLabel size="sm">Maximum price</StatLabel>
               <StatValue size="sm">
                 <FormattedPrice number={priceExtremes.max} />{' '}

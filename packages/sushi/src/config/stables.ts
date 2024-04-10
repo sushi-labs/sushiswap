@@ -9,13 +9,18 @@ import {
   BTTC_TRON_BRIDGE_USDT,
   BUSD,
   DAI,
+  FILECOIN_CELER_BRIDGE_USDC,
+  FILECOIN_CELER_BRIDGE_USDT,
   FRAX,
   LUSD,
   MIM,
+  MUSD,
+  OPTICS_USDC,
   THUNDERCORE_ANY_BUSD,
   THUNDERCORE_ANY_USDC,
   THUNDERCORE_ANY_USDT,
   Token,
+  USDB,
   USDC,
   USDT,
   USD_PLUS,
@@ -35,6 +40,7 @@ export const STABLES = {
     DAI[ChainId.ARBITRUM],
     MIM[ChainId.ARBITRUM],
     FRAX[ChainId.ARBITRUM],
+    axlUSDC[ChainId.ARBITRUM],
   ],
   [ChainId.ARBITRUM_NOVA]: [
     USDC[ChainId.ARBITRUM_NOVA],
@@ -47,6 +53,7 @@ export const STABLES = {
     DAI[ChainId.AVALANCHE],
     MIM[ChainId.AVALANCHE],
     FRAX[ChainId.AVALANCHE],
+    axlUSDC[ChainId.AVALANCHE],
   ],
   [ChainId.BASE]: [
     USDC[ChainId.BASE],
@@ -63,8 +70,9 @@ export const STABLES = {
     USDT[ChainId.BSC],
     BUSD[ChainId.BSC],
     DAI[ChainId.BSC],
-    MIM[ChainId.BSC],
+    //MIM[ChainId.BSC],
     FRAX[ChainId.BSC],
+    axlUSDC[ChainId.BSC],
   ],
   [ChainId.BTTC]: [
     USDC[ChainId.BTTC],
@@ -76,7 +84,13 @@ export const STABLES = {
     BTTC_ETHEREUM_BRIDGE_USDT,
     BTTC_TRON_BRIDGE_USDT,
   ],
-  [ChainId.CELO]: [USDC[ChainId.CELO], USDT[ChainId.CELO], DAI[ChainId.CELO]],
+  [ChainId.CELO]: [
+    USDC[ChainId.CELO],
+    USDT[ChainId.CELO],
+    DAI[ChainId.CELO],
+    OPTICS_USDC[ChainId.CELO],
+    axlUSDC[ChainId.CELO],
+  ],
   [ChainId.ETHEREUM]: [
     USDC[ChainId.ETHEREUM],
     USDT[ChainId.ETHEREUM],
@@ -92,7 +106,12 @@ export const STABLES = {
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
   ],
-  [ChainId.FILECOIN]: [USDC[ChainId.FILECOIN], DAI[ChainId.FILECOIN]],
+  [ChainId.FILECOIN]: [
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+    FILECOIN_CELER_BRIDGE_USDC,
+    FILECOIN_CELER_BRIDGE_USDT,
+  ],
   [ChainId.FUSE]: [USDC[ChainId.FUSE], USDT[ChainId.FUSE], DAI[ChainId.FUSE]],
   [ChainId.GNOSIS]: [
     USDC[ChainId.GNOSIS],
@@ -108,7 +127,11 @@ export const STABLES = {
   [ChainId.HAQQ]: [USDC[ChainId.HAQQ], USDT[ChainId.HAQQ], DAI[ChainId.HAQQ]],
   [ChainId.HECO]: [USDC[ChainId.HECO], USDT[ChainId.HECO], DAI[ChainId.HECO]],
   [ChainId.KAVA]: [axlUSDC[ChainId.KAVA], USDT[ChainId.KAVA]],
-  [ChainId.LINEA]: [USDC[ChainId.LINEA], DAI[ChainId.LINEA]],
+  [ChainId.LINEA]: [
+    USDC[ChainId.LINEA],
+    axlUSDC[ChainId.LINEA],
+    DAI[ChainId.LINEA],
+  ],
   [ChainId.METIS]: [
     USDC[ChainId.METIS],
     USDT[ChainId.METIS],
@@ -146,6 +169,7 @@ export const STABLES = {
     USDT[ChainId.OPTIMISM],
     DAI[ChainId.OPTIMISM],
     FRAX[ChainId.OPTIMISM],
+    axlUSDC[ChainId.OPTIMISM],
   ],
   [ChainId.POLYGON]: [
     USDC[ChainId.POLYGON],
@@ -153,6 +177,7 @@ export const STABLES = {
     DAI[ChainId.POLYGON],
     MIM[ChainId.POLYGON],
     FRAX[ChainId.POLYGON],
+    axlUSDC[ChainId.POLYGON],
   ],
   [ChainId.POLYGON_ZKEVM]: [
     USDC[ChainId.POLYGON_ZKEVM],
@@ -163,6 +188,7 @@ export const STABLES = {
     USDC[ChainId.SCROLL],
     USDT[ChainId.SCROLL],
     DAI[ChainId.SCROLL],
+    axlUSDC[ChainId.SCROLL],
   ],
   [ChainId.TELOS]: [USDC[ChainId.TELOS], USDT[ChainId.TELOS]],
   [ChainId.THUNDERCORE]: [
@@ -181,17 +207,18 @@ export const STABLES = {
     ZETA_ETH_BRIDGE_USDT,
   ],
   [ChainId.CRONOS]: [USDC[ChainId.CRONOS]],
+  [ChainId.BLAST]: [USDB[ChainId.BLAST], MUSD],
   // TESTNETS
-  [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
-  [ChainId.ROPSTEN]: [
-    USDC[ChainId.ROPSTEN],
-    USDT[ChainId.ROPSTEN],
-    DAI[ChainId.ROPSTEN],
-  ],
-  [ChainId.KOVAN]: [
-    USDC[ChainId.KOVAN],
-    USDT[ChainId.KOVAN],
-    DAI[ChainId.KOVAN],
-  ],
+  // [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
+  // [ChainId.ROPSTEN]: [
+  //   USDC[ChainId.ROPSTEN],
+  //   USDT[ChainId.ROPSTEN],
+  //   DAI[ChainId.ROPSTEN],
+  // ],
+  // [ChainId.KOVAN]: [
+  //   USDC[ChainId.KOVAN],
+  //   USDT[ChainId.KOVAN],
+  //   DAI[ChainId.KOVAN],
+  // ],
   [ChainId.POLYGON_TESTNET]: [USDC[ChainId.POLYGON_TESTNET]],
 } as const

@@ -6,6 +6,7 @@ import {
   OP,
   SUSHI,
   Token,
+  USDB,
   USDC,
   WETH9,
   axlUSDC,
@@ -13,10 +14,11 @@ import {
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
-  [ChainId.ROPSTEN]: SUSHI[ChainId.ROPSTEN],
-  [ChainId.RINKEBY]: SUSHI[ChainId.RINKEBY],
-  [ChainId.GÖRLI]: SUSHI[ChainId.GÖRLI],
-  [ChainId.KOVAN]: SUSHI[ChainId.KOVAN],
+  [ChainId.SEPOLIA]: USDC[ChainId.SEPOLIA],
+  // [ChainId.ROPSTEN]: SUSHI[ChainId.ROPSTEN],
+  // [ChainId.RINKEBY]: SUSHI[ChainId.RINKEBY],
+  // [ChainId.GÖRLI]: SUSHI[ChainId.GÖRLI],
+  // [ChainId.KOVAN]: SUSHI[ChainId.KOVAN],
   [ChainId.POLYGON]: SUSHI[ChainId.POLYGON],
   // [ChainId.POLYGON_TESTNET]: SUSHI[ChainId.POLYGON_TESTNET],
   [ChainId.FANTOM]: axlUSDC[ChainId.FANTOM],
@@ -75,4 +77,5 @@ export const defaultQuoteCurrency = {
   [ChainId.FILECOIN]: axlUSDC[ChainId.FILECOIN],
   [ChainId.ZETACHAIN]: WETH9[ChainId.ZETACHAIN],
   [ChainId.CRONOS]: WETH9[ChainId.CRONOS],
+  [ChainId.BLAST]: USDB[ChainId.BLAST],
 } as const
