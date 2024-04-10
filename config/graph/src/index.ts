@@ -120,8 +120,8 @@ export const ZETACHAIN_HOST =
   'api.goldsky.com/api/public/project_cls39ugcfyhbq01xl9tsf6g38/subgraphs'
 export const SUSHI_GOLDSKY_HOST =
   'api.goldsky.com/api/public/project_clslspm3c0knv01wvgfb2fqyq/subgraphs'
-  export const GOLDSKY_COMMUNITY_HOST =
-    'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
+export const GOLDSKY_COMMUNITY_HOST =
+  'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
 
 export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
 
@@ -200,7 +200,6 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.BLAST]: SUSHI_GOLDSKY_HOST,
 } as const
 
-
 export const BENTOBOX_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
   ChainId.POLYGON,
@@ -222,9 +221,10 @@ export const bentoBoxChainIds = BENTOBOX_ENABLED_NETWORKS
 
 export type BentoBoxChainId = (typeof BENTOBOX_ENABLED_NETWORKS)[number]
 
-export const isBentoBoxChainId = (chainId: ChainId): chainId is BentoBoxChainId =>
+export const isBentoBoxChainId = (
+  chainId: ChainId,
+): chainId is BentoBoxChainId =>
   BENTOBOX_ENABLED_NETWORKS.includes(chainId as BentoBoxChainId)
-
 
 export const BENTOBOX_SUBGRAPH_URL: Record<BentoBoxChainId, string> = {
   [ChainId.ETHEREUM]: `${GRAPH_HOST}/sushiswap/bentobox-ethereum`,
@@ -277,7 +277,6 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ZETACHAIN]: `${ZETACHAIN_HOST}/blocks-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_GOLDSKY_HOST}/sushiswap/blocks-blast/gn`,
 } as const
-
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.ETHEREUM]: 12,
@@ -340,8 +339,6 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BLAST]: `${SUSHI_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
 } as const
 
-
-
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/sushi-v3/v3-arbitrum-nova/gn`,
   [ChainId.ARBITRUM]: `${GRAPH_HOST}/sushi-v3/v3-arbitrum`,
@@ -370,7 +367,6 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BLAST]: `${SUSHI_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
 }
 
-
 export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.POLYGON]: `${GRAPH_HOST}/sushi-v2/trident-polygon`,
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushi-v2/trident-optimism`,
@@ -381,7 +377,6 @@ export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BSC]: `${GRAPH_HOST}/sushi-v2/trident-bsc`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v2/trident-avalanche`,
 } as const
-
 
 export const MINICHEF_SUBGRAPH_URL = {
   [ChainId.POLYGON]: `${GRAPH_HOST}/jiro-ono/minichef-staging-updates`, // new trident subgraph not synced yet
@@ -409,7 +404,8 @@ export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
 
 export const MASTERCHEF_V1_SUBGRAPH_URL =
   `${GRAPH_HOST}/jiro-ono/masterchef-staging` as const
-export const MASTERCHEF_V2_SUBGRAPH_URL = `${GRAPH_HOST}sushiswap/master-chefv2` as const
+export const MASTERCHEF_V2_SUBGRAPH_URL =
+  `${GRAPH_HOST}sushiswap/master-chefv2` as const
 
 export const FURO_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -465,7 +461,6 @@ export const isSushiSwapV3Chain = (
 ): chainId is SushiSwapV3ChainId =>
   Object.keys(SUSHISWAP_V3_SUBGRAPH_URL).map(Number).includes(chainId)
 
-  
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
   [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',

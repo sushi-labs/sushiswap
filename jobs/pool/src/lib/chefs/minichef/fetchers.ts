@@ -64,10 +64,10 @@ export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
     results.map(({ result }) =>
       result
         ? {
-          accSushiPerShare: result[0],
-          lastRewardTime: result[1],
-          allocPoint: result[2],
-        }
+            accSushiPerShare: result[0],
+            lastRewardTime: result[1],
+            allocPoint: result[2],
+          }
         : undefined,
     ),
   )
