@@ -1,16 +1,9 @@
 'use client'
 
-import { useAccount } from '@sushiswap/wagmi'
+import { useChainId } from '@sushiswap/wagmi'
 import { useTokenWithCache } from '@sushiswap/wagmi'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React, {
-  FC,
-  ReactNode,
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
+import React, { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { ChainId } from 'sushi/chain'
 import {
@@ -122,8 +115,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
     feeAmount: searchParams.get('feeAmount'),
     tokenId: searchParams.get('tokenId'),
   })
-  const { chain } = useAccount()
-  const [chainId] = useState(chain?.id)
+  const chainId = useChainId()
 
   const tmp = getChainIdFromUrl(chainIdFromUrl, chainId as ChainId)
   const _chainId = supportedNetworks?.includes(tmp) ? tmp : ChainId.ETHEREUM

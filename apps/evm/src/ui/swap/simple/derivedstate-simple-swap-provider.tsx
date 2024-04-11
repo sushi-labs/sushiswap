@@ -4,6 +4,7 @@ import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
   useAccount,
+  useChainId,
   useClientTrade,
   useConfig,
   useGasPrice,
@@ -79,7 +80,8 @@ interface DerivedStateSimpleSwapProviderProps {
 const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
   ({ children }) => {
     const { push } = useRouter()
-    const { address, chain } = useAccount()
+    const _chainId = useChainId()
+    const { address } = useAccount()
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
@@ -93,8 +95,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       if (!params.has('chainId'))
         params.set(
           'chainId',
-          (chain?.id && isSupportedChainId(chain.id)
-            ? chain.id
+          (isSupportedChainId(_chainId)
+            ? _chainId
             : ChainId.ETHEREUM
           ).toString(),
         )
@@ -105,7 +107,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
       }
       return params
-    }, [chain, searchParams])
+    }, [_chainId, searchParams])
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -125,8 +127,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     )
 
     // Update the URL with a new chainId
-    const setChainId = useCallback<{ (_chainId: number): void }>(
-      (chainId) => {
+    const setChainId = useCallback(
+      (chainId: number) => {
         console.log('setChainId', chainId)
         push(
           `${pathname}?${createQueryString([
@@ -284,12 +286,6 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         enabled: isAddress(defaultedParams.get('token1') as string),
         keepPreviousData: false,
       },
-    )
-
-    console.log(
-      'defaultedParams',
-      Array.from(defaultedParams.entries()),
-      Array.from(searchParams.entries()),
     )
 
     return (
