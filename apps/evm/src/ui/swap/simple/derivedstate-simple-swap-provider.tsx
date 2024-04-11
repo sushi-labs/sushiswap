@@ -9,7 +9,7 @@ import {
   useConfig,
   useGasPrice,
   useTokenWithCache,
-  watchAccount,
+  watchChainId,
 } from '@sushiswap/wagmi'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -256,12 +256,23 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
+    // console.log(_chainId, chainId)
+
+    // const { switchChain } = useSwitchChain()
+
+    // useEffect(() => {
+    //   if (_chainId !== chainId) {
+    //     // setChainId(chainId)
+    //     switchChain({ chainId })
+    //   }
+    // }, [_chainId, chainId, switchChain, setChainId])
+
     const config = useConfig()
 
     useEffect(() => {
-      const unwatch = watchAccount(config, {
-        onChange: ({ chain }) => {
-          if (!chain || chain.id === chainId) return
+      const unwatch = watchChainId(config, {
+        onChange: (newChainId) => {
+          if (newChainId === chainId) return
           push(pathname, { scroll: false })
         },
       })
@@ -437,9 +448,9 @@ const useSimpleSwapTrade = () => {
 
   // Reset the fallback on network switch
   useEffect(() => {
-    const unwatch = watchAccount(config, {
-      onChange: ({ chain }) => {
-        if (chain) {
+    const unwatch = watchChainId(config, {
+      onChange: (newChainId) => {
+        if (newChainId) {
           resetFallback()
         }
       },
