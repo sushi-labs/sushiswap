@@ -7,19 +7,11 @@ import { useQuery } from '@tanstack/react-query'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
   ROUTE_PROCESSOR_4_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
-  isRouteProcessor3ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
   isRouteProcessor4ChainId,
-  isRouteProcessorChainId,
 } from 'sushi/config'
 import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
-import { Percent } from 'sushi/math'
+import { Fraction, Percent } from 'sushi/math'
 import { Router } from 'sushi/router'
 import { Address, Hex } from 'viem'
 import { useGasPrice } from 'wagmi'
@@ -36,6 +28,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
     enabled,
     recipient,
     source,
+    tokenTax,
   } = variables
 
   const { data: gasPrice } = useGasPrice({ chainId, query: { enabled } })
@@ -66,16 +59,13 @@ export const useClientTrade = (variables: UseTradeParams) => {
         recipient,
         poolsCodeMap,
         source,
+        tokenTax,
       },
     ],
     queryFn: async () => {
       if (
         !poolsCodeMap ||
-        (!isRouteProcessorChainId(chainId) &&
-          !isRouteProcessor3ChainId(chainId) &&
-          !isRouteProcessor3_1ChainId(chainId) &&
-          !isRouteProcessor3_2ChainId(chainId) &&
-          !isRouteProcessor4ChainId(chainId)) ||
+        !isRouteProcessor4ChainId(chainId) ||
         !fromToken ||
         !amount ||
         !toToken ||
@@ -94,6 +84,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
           route: undefined,
           functionName: 'processRoute',
           value: undefined,
+          tokenTax: undefined,
         }
 
       const route = Router.findSpecialRoute(
@@ -141,54 +132,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
             [],
             +slippagePercentage / 100,
           )
-        } else if (isRouteProcessor3_2ChainId(chainId)) {
-          // console.debug('routeProcessor3_2Params')
-          args = Router.routeProcessor3_2Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_3_2_ADDRESS[chainId],
-            [],
-            +slippagePercentage / 100,
-          )
-        } else if (isRouteProcessor3_1ChainId(chainId)) {
-          // console.debug('routeProcessor3_1Params')
-          args = Router.routeProcessor3_1Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_3_1_ADDRESS[chainId],
-            [],
-            +slippagePercentage / 100,
-          )
-        } else if (isRouteProcessor3ChainId(chainId)) {
-          // console.debug('routeProcessor3Params')
-          args = Router.routeProcessor3Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_3_ADDRESS[chainId],
-            [],
-            +slippagePercentage / 100,
-            source,
-          )
-        } else if (isRouteProcessorChainId(chainId)) {
-          // console.debug('routeProcessorParams')
-          args = Router.routeProcessorParams(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_ADDRESS[chainId],
-            +slippagePercentage / 100,
-          )
         }
       }
 
@@ -199,7 +142,16 @@ export const useClientTrade = (variables: UseTradeParams) => {
         )
         const amountOut = Amount.fromRawAmount(
           toToken,
-          route.amountOutBI.toString(),
+          new Fraction(route.amountOutBI).multiply(
+            tokenTax ? new Percent(1).subtract(tokenTax) : 1,
+          ).quotient,
+        )
+        const minAmountOut = Amount.fromRawAmount(
+          toToken,
+          slippageAmount(
+            amountOut,
+            new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+          )[0],
         )
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
@@ -209,7 +161,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
               args.tokenIn as Address,
               args.amountIn,
               args.tokenOut as Address,
-              args.amountOutMin,
+              minAmountOut.quotient,
               args.to as Address,
               args.routeCode as Hex,
             ]
@@ -248,16 +200,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
                   : new Percent(0),
                 amountIn,
                 amountOut,
-                minAmountOut:
-                  typeof writeArgs?.[3] === 'bigint'
-                    ? Amount.fromRawAmount(toToken, writeArgs[3])
-                    : Amount.fromRawAmount(
-                        toToken,
-                        slippageAmount(
-                          amountOut,
-                          new Percent(Math.floor(0.5 * 100), 10_000),
-                        )[0],
-                      ),
+                minAmountOut,
                 gasSpent:
                   price && gasPrice
                     ? Amount.fromRawAmount(
@@ -280,6 +223,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
                   : 'processRoute',
                 writeArgs,
                 value,
+                tokenTax,
               }),
             250,
           ),

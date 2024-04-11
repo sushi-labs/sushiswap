@@ -1,5 +1,15 @@
 import { ChainId } from 'sushi/chain'
 
+const MAX_FIRST_PARTIAL: Partial<Record<ChainId, number>> = {
+  [ChainId.METIS]: 100,
+}
+
+export const MAX_FIRST = new Proxy(MAX_FIRST_PARTIAL, {
+  get: (target, name: any) => {
+    return name in target ? target[name as ChainId] : 1000
+  },
+}) as Record<ChainId, number>
+
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
@@ -442,55 +452,6 @@ export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
 export const CONCENTRATED_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'uniswap/uniswap-v3',
   [ChainId.ARBITRUM]: 'ianlapham/arbitrum-minimal',
-}
-
-export const STEER_ENABLED_NETWORKS = [
-  ChainId.POLYGON,
-  ChainId.AVALANCHE,
-  ChainId.OPTIMISM,
-  ChainId.ARBITRUM,
-  ChainId.BSC,
-  ChainId.CELO,
-  ChainId.BASE,
-  ChainId.THUNDERCORE,
-  ChainId.METIS,
-  ChainId.POLYGON_ZKEVM,
-  ChainId.KAVA,
-  ChainId.LINEA,
-  ChainId.SCROLL,
-] as const
-
-export type SteerChainId = (typeof STEER_ENABLED_NETWORKS)[number]
-
-export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
-  [ChainId.POLYGON]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-polygon',
-  [ChainId.BSC]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-bsc',
-  [ChainId.OPTIMISM]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-optimism',
-  [ChainId.ARBITRUM]:
-    'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-arbitrum',
-  // [ChainId.Evmos]: 'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-evmos/api',
-  [ChainId.THUNDERCORE]:
-    'subgraph.steer.finance/thundercore/subgraphs/name/steerprotocol/steer-thundercore',
-  [ChainId.METIS]:
-    'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-metis/api',
-  [ChainId.BASE]:
-    'subgraph.satsuma-prod.com/769a117cc018/steer/steer-protocol-base/api',
-  [ChainId.AVALANCHE]:
-    'api.thegraph.com/subgraphs/name/rakeshbhatt10/avalance-test-subgraph',
-  [ChainId.POLYGON_ZKEVM]:
-    'http://13.228.90.202:8000/subgraphs/name/steerprotocol/steer-zkevm',
-  [ChainId.CELO]:
-    'api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-test-celo',
-  [ChainId.KAVA]:
-    'subgraph.steer.finance/kava/subgraphs/name/steerprotocol/steer-kava-evm',
-  [ChainId.LINEA]:
-    'subgraph.steer.finance/linea/subgraphs/name/steerprotocol/steer-linea',
-  [ChainId.SCROLL]:
-    'subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
-  // [ChainId.MANTA]: 'subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
