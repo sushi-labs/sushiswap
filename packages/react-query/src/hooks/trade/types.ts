@@ -20,6 +20,7 @@ export interface UseTradeParams {
   enabled: boolean
   carbonOffset: boolean
   onError?(e: Error): void
+  tokenTax?: Percent | false | undefined
 }
 
 export type UseTradeReturnWriteArgs =
@@ -42,6 +43,7 @@ export interface UseTradeReturn {
   writeArgs: UseTradeReturnWriteArgs
   route: TradeType['route']
   value?: bigint | undefined
+  tokenTax: Percent | false | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn

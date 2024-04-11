@@ -24,7 +24,6 @@ import {
   useAccount,
   useBalanceWeb3Refetch,
   usePublicClient,
-  useSimulateContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from '@sushiswap/wagmi'
@@ -38,24 +37,8 @@ import React, {
   useMemo,
   useRef,
 } from 'react'
-import {
-  routeProcessor3Abi,
-  routeProcessor4Abi,
-  routeProcessorAbi,
-} from 'sushi/abi'
+import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { Chain } from 'sushi/chain'
-import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
-  ROUTE_PROCESSOR_4_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
-  isRouteProcessor3ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessor4ChainId,
-  isRouteProcessorChainId,
-} from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -106,45 +89,11 @@ export const SimpleSwapTradeReviewDialog: FC<{
     error,
     isFetching: isPrepareFetching,
     isSuccess: isPrepareSuccess,
-  } = useSimulateContract({
-    chainId: chainId,
-    address: isRouteProcessor4ChainId(chainId)
-      ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
-      : isRouteProcessor3_2ChainId(chainId)
-        ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
-        : isRouteProcessor3_1ChainId(chainId)
-          ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-          : isRouteProcessor3ChainId(chainId)
-            ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-            : isRouteProcessorChainId(chainId)
-              ? ROUTE_PROCESSOR_ADDRESS[chainId]
-              : undefined,
-    abi: (isRouteProcessor4ChainId(chainId)
-      ? routeProcessor4Abi
-      : isRouteProcessor3_2ChainId(chainId) ||
-          isRouteProcessor3_1ChainId(chainId) ||
-          isRouteProcessor3ChainId(chainId)
-        ? routeProcessor3Abi
-        : isRouteProcessorChainId(chainId)
-          ? routeProcessorAbi
-          : undefined) as any,
-    functionName: trade?.functionName,
-    args: trade?.writeArgs as any,
-    value: trade?.value || 0n,
-    query: {
-      enabled: Boolean(
-        trade?.writeArgs &&
-          (isRouteProcessorChainId(chainId) ||
-            isRouteProcessor3ChainId(chainId) ||
-            isRouteProcessor3_1ChainId(chainId) ||
-            isRouteProcessor3_2ChainId(chainId) ||
-            isRouteProcessor4ChainId(chainId)) &&
-          approved &&
-          trade?.route?.status !== 'NoWay' &&
-          chain?.id === chainId &&
-          token1?.chainId === chainId,
-      ),
-    },
+  } = useSimulateTrade({
+    trade,
+    enabled: Boolean(
+      approved && chain?.id === chainId && token1?.chainId === chainId,
+    ),
   })
 
   useEffect(() => {
@@ -168,8 +117,6 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
   const onSwapSuccess = useCallback(
     async (hash: SendTransactionReturnType) => {
-      setSwapAmount('')
-
       if (!trade || !chainId) return
 
       try {
@@ -345,6 +292,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
           }
         }
       } finally {
+        setSwapAmount('')
         await refetchBalances()
       }
     },
@@ -474,6 +422,17 @@ export const SimpleSwapTradeReviewDialog: FC<{
                               Number(trade?.priceImpact?.toFixed(2)),
                             )}%` ?? '-'
                           )}
+                        </span>
+                      </List.KeyValue>
+                    )}
+                    {isSwap && trade?.tokenTax && (
+                      <List.KeyValue
+                        title="Token tax"
+                        subtitle="
+                        Certain tokens incur a fee upon purchase or sale. Sushiswap does not collect any of these fees."
+                      >
+                        <span className="text-right text-yellow">
+                          {trade.tokenTax.toPercentageString()}
                         </span>
                       </List.KeyValue>
                     )}

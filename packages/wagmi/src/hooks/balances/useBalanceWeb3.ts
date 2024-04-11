@@ -50,6 +50,8 @@ export const useBalanceWeb3 = ({
       )
     },
     refetchInterval: 10000,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
     enabled: Boolean(chainId && account && enabled),
   })
 }

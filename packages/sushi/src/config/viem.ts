@@ -561,7 +561,7 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
   ),
   [ChainId.ZETACHAIN]: http(
-    'https://zetachain-mainnet-archive.allthatnode.com:8545',
+    `https://lb.drpc.org/ogrpc?network=zeta-chain&dkey=${drpcId}`,
   ),
   [ChainId.CRONOS]: http(
     `https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`,
