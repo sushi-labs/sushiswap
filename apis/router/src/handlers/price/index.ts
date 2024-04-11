@@ -1,5 +1,9 @@
 import { Request, Response } from 'express'
-import { STABLES } from 'sushi/config'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  STABLES,
+} from 'sushi/config'
 import { USDC, USDT } from 'sushi/currency'
 import { RPool, RToken, getTokenPriceReasoning } from 'sushi/tines'
 import { RequestStatistics } from '../../RequestStatistics.js'
@@ -60,6 +64,10 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
     } else res.json()
   } else {
     if (reasoning) {
+      const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID] ?? []
+      const additionalTrusted = Object.values(
+        ADDITIONAL_BASES[CHAIN_ID] ?? [],
+      ).flat()
       res.send(
         makeHTMLReasoning(
           getTokenPriceReasoning(
@@ -71,6 +79,7 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
               STABLES[CHAIN_ID][0]) as RToken,
             address,
             1000,
+            baseTrusted.concat(additionalTrusted) as RToken[],
           ),
         ),
       )

@@ -69,5 +69,5 @@ async function compareOldNewPrices(server: string, chainId: number) {
   comparePrices(pricesOld, pricesNew, [0.01, 0.005])
 }
 
-compareOldNewPrices('https://api.sushi.com', 56)
-//compareOldNewPrices('http://localhost:1338', 56)
+// compareOldNewPrices('https://api.sushi.com', 56)
+compareOldNewPrices('http://localhost:1338', 56)

@@ -452,6 +452,7 @@ export class Graph {
     baseTokenOrNetworks: RToken | NetworkInfo[],
     gasPriceSingleNetwork?: number,
     minPriceLiquidity = 0,
+    trustedForPricingTokens?: RToken[],
     priceLogging = false,
   ) {
     const networks: NetworkInfo[] = Array.isArray(baseTokenOrNetworks)
@@ -485,7 +486,14 @@ export class Graph {
     // })
     const startV = this.getVert(start)
     if (startV !== undefined)
-      this.setPricesStable(startV, 1, networks, minPriceLiquidity, priceLogging)
+      this.setPricesStable(
+        startV,
+        1,
+        networks,
+        minPriceLiquidity,
+        trustedForPricingTokens,
+        priceLogging,
+      )
   }
 
   getVert(t: RToken): Vertice | undefined {
@@ -498,99 +506,24 @@ export class Graph {
   }
 
   // Set prices using greedy algorithm
-  /*setPricesStable(
-    from: Vertice,
-    price: number,
-    networks: NetworkInfo[],
-    minLiquidity = 0,
-    logging = false,
-  ) {
-    const processedVert = new Set<Vertice>()
-    let nextEdges: Edge[] = []
-    const edgeValues = new Map<Edge, number>()
-    const value = (e: Edge): number => edgeValues.get(e) as number
-
-    function addVertice(v: Vertice, price: number) {
-      v.price = price
-      const newEdges = v.edges.filter((e) => {
-        if (processedVert.has(v.getNeibour(e) as Vertice)) return false
-        const liquidity = price * Number(e.reserve(v))
-        if (!e.pool.alwaysAppropriateForPricing() && liquidity < minLiquidity)
-          return false
-        edgeValues.set(e, liquidity)
-        return true
-      })
-      newEdges.sort((e1, e2) => value(e1) - value(e2))
-      const res: Edge[] = []
-      while (nextEdges.length && newEdges.length) {
-        if (value(nextEdges[0] as Edge) < value(newEdges[0] as Edge))
-          res.push(nextEdges.shift() as Edge)
-        else res.push(newEdges.shift() as Edge)
-      }
-      nextEdges = [...res, ...nextEdges, ...newEdges]
-      processedVert.add(v)
-    }
-
-    if (logging)
-      console.log(`Pricing: Initial token ${from.token.symbol} price=${price}`)
-    addVertice(from, price)
-    while (nextEdges.length > 0) {
-      const bestEdge = nextEdges.pop() as Edge
-      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
-        ? [bestEdge.vert1, bestEdge.vert0]
-        : [bestEdge.vert0, bestEdge.vert1]
-      if (processedVert.has(vTo)) continue
-      const p = bestEdge.pool.calcCurrentPriceWithoutFee(
-        vFrom === bestEdge.vert1,
-      )
-      if (logging)
-        console.log(
-          `Pricing: + Token ${vTo.token.symbol} price=${vFrom.price * p}` +
-            ` from ${vFrom.token.symbol} pool=${
-              bestEdge.pool.address
-            } liquidity=${edgeValues.get(bestEdge)}`,
-        )
-      addVertice(vTo, vFrom.price * p)
-    }
-
-    const gasPrice = new Map<number | string | undefined, number>()
-    networks.forEach((n) => {
-      const vPrice = this.getVert(n.baseToken)?.price || 0
-      gasPrice.set(n.chainId, n.gasPrice * vPrice)
-    })
-    processedVert.forEach((v) => {
-      const gasPriceChainId = gasPrice.get(v.token.chainId) as number
-      console.assert(
-        gasPriceChainId !== undefined,
-        `Error 427: token {${v.token.address} ${v.token.symbol}}` +
-          ` has unknown chainId ${v.token.chainId} (${typeof v.token
-            .chainId}).` +
-          `Known chainIds: ${Array.from(gasPrice.keys()).map(
-            (k) => `"${k}"(${typeof k})`,
-          )}`,
-      )
-      console.assert(
-        v.price !== 0,
-        `Error 428: token {${v.token.address} ${v.token.symbol} ${v.token.chainId}} was not priced`,
-      )
-      v.gasPrice = gasPriceChainId / v.price
-    })
-  }*/
-
-  // Set prices using greedy algorithm
   setPricesStable(
     from: Vertice,
     price: number,
     networks: NetworkInfo[],
     minLiquidity = 0,
+    trustedTokens?: RToken[],
     logging = false,
   ) {
     const processedVert = new Set<Vertice>()
     type ValuedEdge = [number, Edge]
     let nextEdges: ValuedEdge[] = []
+    const trustedTokensSet = new Set(trustedTokens?.map((t) => t.address) ?? [])
+    if (trustedTokens) trustedTokensSet.add(from.token.address)
 
     function addVertice(v: Vertice, price: number) {
       v.price = price
+      processedVert.add(v)
+      if (trustedTokens && !trustedTokensSet.has(v.token.address)) return
       const newEdges = v.edges
         .filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
         .map((e) => {
@@ -602,7 +535,6 @@ export class Graph {
             liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
         )
       nextEdges = fastArrayMerge(nextEdges, newEdges)
-      processedVert.add(v)
     }
 
     if (logging)
@@ -655,6 +587,7 @@ export class Graph {
     price: number,
     token: Address,
     minLiquidity = 0,
+    trustedTokens?: RToken[],
   ): string[] {
     type PricingStepInfo = {
       parent: PricingStepInfo | undefined
@@ -669,6 +602,8 @@ export class Graph {
     const vertToPricingInfo = new Map<Vertice | undefined, PricingStepInfo>()
     type ValuedEdge = [number, Edge]
     let nextEdges: ValuedEdge[] = []
+    const trustedTokensSet = new Set(trustedTokens?.map((t) => t.address) ?? [])
+    if (trustedTokens) trustedTokensSet.add(from.address)
 
     function addVertice(
       parent: Vertice | undefined,
@@ -678,6 +613,16 @@ export class Graph {
       liquidity: number,
       edge: Edge | undefined,
     ) {
+      processedVert.add(v)
+      vertToPricingInfo.set(v, {
+        parent: vertToPricingInfo.get(parent),
+        vert: v,
+        price,
+        poolPrice,
+        liquidity,
+        edge,
+      })
+      if (trustedTokens && !trustedTokensSet.has(v.token.address)) return
       const newEdges = v.edges
         .filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
         .map((e) => {
@@ -689,15 +634,6 @@ export class Graph {
             liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
         )
       nextEdges = fastArrayMerge(nextEdges, newEdges)
-      processedVert.add(v)
-      vertToPricingInfo.set(v, {
-        parent: vertToPricingInfo.get(parent),
-        vert: v,
-        price,
-        poolPrice,
-        liquidity,
-        edge,
-      })
     }
 
     setTokenId(from)

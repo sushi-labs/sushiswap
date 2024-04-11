@@ -54,9 +54,15 @@ export class ExtractorClient {
     this.extractorServer = extractorServer
     this.poolUpdateInterval = poolUpdateInterval
     this.requestedPairsUpdateInterval = requestedPairsUpdateInterval
+    const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
+    const additionalTrusted = Object.values(
+      ADDITIONAL_BASES[chainId] ?? [],
+    ).flat()
+    const stables = STABLES[chainId as keyof typeof STABLES].slice() ?? []
     this.pricer = new IncrementalPricer(
-      STABLES[chainId as keyof typeof STABLES].slice() ?? [],
-      STABLES[chainId as keyof typeof STABLES].map((_) => 1),
+      stables,
+      stables.map((_) => 1),
+      baseTrusted.concat(additionalTrusted),
       1000,
     )
   }
