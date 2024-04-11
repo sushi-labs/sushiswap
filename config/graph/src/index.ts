@@ -123,8 +123,6 @@ export const SUSHI_GOLDSKY_HOST =
 export const GOLDSKY_COMMUNITY_HOST =
   'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
 
-export const SUSHI_HOST = 'subgraphs.sushi.com/subgraphs/name'
-
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
   [ChainId.AVALANCHE]: 'Avalanche',
@@ -165,7 +163,7 @@ export const CHAIN_NAME: Record<number, string> = {
 
 export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
-  [ChainId.ARBITRUM_NOVA]: SUSHI_HOST,
+  [ChainId.ARBITRUM_NOVA]: SUSHI_GOLDSKY_HOST,
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
   [ChainId.CELO]: GRAPH_HOST,
@@ -183,9 +181,9 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.POLYGON_ZKEVM]: STUDIO_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
-  [ChainId.BOBA_AVAX]: SUSHI_HOST,
-  [ChainId.BOBA_BNB]: SUSHI_HOST,
-  [ChainId.BTTC]: SUSHI_HOST,
+  // [ChainId.BOBA_AVAX]: SUSHI_HOST,
+  [ChainId.BOBA_BNB]: SUSHI_GOLDSKY_HOST,
+  [ChainId.BTTC]: SUSHI_GOLDSKY_HOST,
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   // [ChainId.KOVAN]: '',
@@ -266,7 +264,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: `${GOLDSKY_COMMUNITY_HOST}/blocks/arbitrum-nova/gn`,
   [ChainId.BOBA]: `${GRAPH_HOST}/sushiswap/blocks-boba`,
   [ChainId.BOBA_BNB]: `${GOLDSKY_COMMUNITY_HOST}/blocks/boba-bnb/gn`,
-  [ChainId.BTTC]: `${SUSHI_HOST}/sushiswap/blocks-bttc`,
+  [ChainId.BTTC]: `${GOLDSKY_COMMUNITY_HOST}/blocks/bttc-mainnet/gn`,
   [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushiswap/blocks-thundercore/gn`,
   [ChainId.CORE]: `${CORE_HOST}/sushiswap/blocks-core`,
   [ChainId.BASE]: `${STUDIO_HOST}/blocks-base/v0.0.1`,
