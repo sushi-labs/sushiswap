@@ -20,7 +20,7 @@ interface UseHarvestAngleRewards {
   args:
     | UseSimulateContractParameters<
         typeof DistributionCreator,
-        'signAndCreateDistribution'
+        'createDistribution'
       >['args']
     | undefined
 }
@@ -36,7 +36,7 @@ export const useIncentivizePoolWithRewards = ({
     chainId,
     abi: DistributionCreator,
     address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
-    functionName: 'signAndCreateDistribution',
+    functionName: 'createDistribution',
     args: args ? args : undefined,
     query: {
       enabled: Boolean(enabled && args && chainId === chain?.id),
