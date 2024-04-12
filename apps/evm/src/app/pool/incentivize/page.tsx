@@ -489,6 +489,20 @@ const Incentivize = withCheckerRoot(() => {
             />
           </div>
           <Separator className="!my-10" />
+          <p
+            className={typographyVariants({
+              variant: 'muted',
+              className: 'text-sm',
+            })}
+          >
+            In order to incentivize a pool, you must review and agree to{' '}
+            <Button variant="link" asChild>
+              <LinkExternal href="https://docs.angle.money/merkl/incentivizor-tc">
+                Merkl's Terms & Conditions
+              </LinkExternal>
+            </Button>
+            .
+          </p>
           <Checker.Connect>
             <Checker.Network chainId={chainId}>
               <Checker.Guard guardWhen={!pool} guardText="Pool not found">
