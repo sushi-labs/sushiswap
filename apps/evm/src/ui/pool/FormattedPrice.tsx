@@ -1,51 +1,45 @@
 import React from 'react'
+import { withoutScientificNotation } from 'sushi'
 
-interface FormattedNumberProps {
-  number: string
+interface FormattedPriceProps {
+  number: string | undefined
 }
 
-const FormattedPrice: React.FC<FormattedNumberProps> = ({ number }) => {
-  const groupZeros = (numberStr: string): JSX.Element[] => {
-    const parts = numberStr.split('.')
-    const integerPart = parts[0]
-    const fractionalPart = parts[1]
+const FormattedPrice: React.FC<FormattedPriceProps> = ({ number }) => {
+  if (typeof number === 'undefined') return undefined
 
-    const zeroGroups = fractionalPart?.match(/(?:0+)/) // Match consecutive zeros
+  const numberStr = withoutScientificNotation(number)
 
-    if (integerPart !== '0' || !zeroGroups || zeroGroups[0].length <= 4) {
-      // If no zero groups found or less than or equal to 4 zeros, return regular rendering
-      return [<span key="integer">{number}</span>]
-    }
+  if (typeof numberStr === 'undefined') return undefined
 
-    const zeroCount = zeroGroups[0].length
+  const parts = numberStr.split('.')
+  const integerPart = parts[0]
+  const fractionalPart = parts[1]
 
-    const renderDigits = (digits: string): JSX.Element[] => {
-      return digits
-        .split('')
-        .map((digit, index) => <span key={index}>{digit}</span>)
-    }
+  const zeroGroups =
+    fractionalPart &&
+    fractionalPart.charAt(0) === '0' &&
+    fractionalPart.match(/(?:0+)/) // Match consecutive zeros
 
-    return [
-      <span key="before-decimal-group">{integerPart}.0</span>,
-      <span
-        key="decimal-count"
-        style={{
-          verticalAlign: 'sub',
-          fontSize: '0.8em',
-          top: '0.2em',
-          paddingInlineStart: '0.2em',
-          paddingInlineEnd: '0.2em',
-        }}
-      >
-        {zeroCount}
-      </span>,
-      <span key="after-decimal-group">
-        {renderDigits(fractionalPart.slice(zeroCount))}
-      </span>,
-    ]
+  if (
+    integerPart !== '0' ||
+    !zeroGroups ||
+    zeroGroups[0].length <= 4 ||
+    zeroGroups[0].length === fractionalPart.length
+  ) {
+    // If no zero groups found or less than or equal to 4 zeros, return regular rendering
+    return <span>{numberStr}</span>
   }
 
-  return <>{groupZeros(number)}</>
+  const zeroCount = zeroGroups[0].length
+
+  return (
+    <span>
+      {integerPart}.0
+      <sub>{zeroCount}</sub>
+      {fractionalPart.slice(zeroCount)}
+    </span>
+  )
 }
 
-export default FormattedPrice
+export { FormattedPrice }

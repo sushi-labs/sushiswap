@@ -21,7 +21,7 @@ import { formatPercent, formatUSD } from 'sushi/format'
 
 import { SteerStrategyComponent } from '.'
 import { APRHoverCard } from '../../APRHoverCard'
-import FormattedPrice from '../../FormattedPrice'
+import { FormattedPrice } from '../../FormattedPrice'
 import { SteerAPRChart } from '../SteerAPRChart'
 import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {
@@ -38,7 +38,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
   generic: { priceExtremes, tokenRatios, adjustment, positions },
 }) => {
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid md:grid-cols-2 gap-4">
       <div>
         <Card>
           <CardHeader>
