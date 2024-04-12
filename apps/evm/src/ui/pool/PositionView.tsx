@@ -63,6 +63,7 @@ import {
 import { ConcentratedLiquidityRemoveWidget } from './ConcentratedLiquidityRemoveWidget'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { DistributionDataTable } from './DistributionDataTable'
+import { FormattedPrice } from './FormattedPrice'
 
 const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
@@ -470,10 +471,12 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       title={
                         <>
                           1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                          {(inverted
-                            ? pool?.token1Price
-                            : pool?.token0Price
-                          )?.toSignificant(6)}{' '}
+                          <FormattedPrice
+                            number={(inverted
+                              ? pool?.token1Price
+                              : pool?.token0Price
+                            )?.toSignificant(6)}
+                          />{' '}
                           {unwrapToken(currencyQuote)?.symbol}
                         </>
                       }
@@ -515,11 +518,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '0'
                           ) : (
                             <>
-                              {formatTickPrice({
-                                price: priceLower,
-                                atLimit: tickAtLimit,
-                                direction: Bound.UPPER,
-                              })}{' '}
+                              <FormattedPrice
+                                number={formatTickPrice({
+                                  price: priceLower,
+                                  atLimit: tickAtLimit,
+                                  direction: Bound.UPPER,
+                                })}
+                              />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
@@ -593,16 +598,18 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '∞'
                           ) : (
                             <>
-                              {formatTickPrice({
-                                price: priceUpper,
-                                atLimit: tickAtLimit,
-                                direction: Bound.UPPER,
-                              })}{' '}
+                              <FormattedPrice
+                                number={formatTickPrice({
+                                  price: priceUpper,
+                                  atLimit: tickAtLimit,
+                                  direction: Bound.UPPER,
+                                })}
+                              />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
-                                    ( +
+                                    (
                                     {priceUpper
                                       ?.subtract(
                                         invert
