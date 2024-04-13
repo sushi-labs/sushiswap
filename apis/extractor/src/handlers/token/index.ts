@@ -16,6 +16,7 @@ async function handler(req: Request, res: Response) {
   if (token === undefined) {
     token = await tokenManager.findToken(address as Address)
   }
+  console.log('Should log error to sentry')
   Logger.error(1, 'Test log from token handler', 'context')
   if (token)
     return res.json({

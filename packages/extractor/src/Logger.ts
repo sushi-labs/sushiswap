@@ -40,6 +40,7 @@ class LoggerClass {
     trim = true,
   ) {
     console.warn(`${this._nowDate()}-${chainId}: ${message}`)
+    console.log('Logger logsExternalHandler', this.logsExternalHandler)
     if (this.logsExternalHandler) {
       if (error instanceof BlockNotFoundError) {
         this.logsExternalHandler(
