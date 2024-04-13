@@ -23,9 +23,9 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "compair-test": "ts-node --skip-project ./test/compair.ts",
-    "price-test": "npx tsx ./test/pricesCompare.ts",
     "dev": "tsc -w",
     "load-test": "npx tsx ./test/load.ts",
+    "price-test": "npx tsx ./test/pricesCompare.ts",
     "start": "node dist/index.js"
   },
   "dependencies": {
