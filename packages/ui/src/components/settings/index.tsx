@@ -23,19 +23,18 @@ import {
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
-import { SwapApi } from './SwapApi'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
-  SwapApi = 'SwapApi',
 }
 
 interface SettingsOverlayProps {
   children?: ReactNode
   modules: SettingsModule[]
+  externalModules?: FC[]
   options?: {
     slippageTolerance?: {
       storageKey?: string
@@ -47,6 +46,7 @@ interface SettingsOverlayProps {
 
 export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   modules,
+  externalModules,
   children,
   options,
 }) => {
@@ -112,23 +112,21 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
               </List.Control>
             </List>
           )}
-          {modules.length > 1 && (
-            <List className="!pt-0">
+          <List className="!pt-0">
+            <List.Control>
+              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
+              {modules.includes(SettingsModule.CarbonOffset) && (
+                <CarbonOffset />
+              )}
+            </List.Control>
+          </List>
+          {externalModules?.map((Module, index) => (
+            <List className="!pt-0" key={index}>
               <List.Control>
-                {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
-                {modules.includes(SettingsModule.CarbonOffset) && (
-                  <CarbonOffset />
-                )}
+                <Module />
               </List.Control>
             </List>
-          )}
-          {modules.includes(SettingsModule.SwapApi) && (
-            <List className="!pt-0">
-              <List.Control>
-                <SwapApi />
-              </List.Control>
-            </List>
-          )}
+          ))}
         </div>
       </DialogContent>
     </Dialog>
