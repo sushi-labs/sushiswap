@@ -1,6 +1,7 @@
 import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
+import { Logger, LogsMessageLevel } from '@sushiswap/extractor'
 import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config.js'
 import { CPUUsageStatistics } from './cpu-usage-statistics.js'
@@ -33,7 +34,33 @@ Sentry.init({
   // Performance Monitoring
   enableTracing: true,
   tracesSampleRate: 1,
+  debug: process.env['SENTRY_ENVIRONMENT'] !== 'production',
 })
+
+Logger.setLogsExternalHandler(
+  (
+    msg: string,
+    level: LogsMessageLevel,
+    context?: string,
+    trace_id?: string,
+  ) => {
+    Sentry.captureMessage(
+      msg,
+      context === undefined
+        ? level
+        : {
+            level,
+            contexts: {
+              trace: {
+                data: { context },
+                trace_id: trace_id ?? '0',
+                span_id: '0',
+              },
+            },
+          },
+    )
+  },
+)
 
 const cpuUsageStatistics = new CPUUsageStatistics(60_000)
 cpuUsageStatistics.start()
