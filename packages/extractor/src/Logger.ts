@@ -23,20 +23,21 @@ class LoggerClass {
     this.logsExternalHandler = logsExternalHandler
   }
 
-  info(chainId: CainIdExt, message: string, error?: unknown) {
-    this.msg(chainId, message, 'info', error)
+  info(chainId: CainIdExt, message: string, error?: unknown, trim = true) {
+    this.msg(chainId, message, 'info', error, trim)
   }
-  warn(chainId: CainIdExt, message: string, error?: unknown) {
-    this.msg(chainId, message, 'warning', error)
+  warn(chainId: CainIdExt, message: string, error?: unknown, trim = true) {
+    this.msg(chainId, message, 'warning', error, trim)
   }
-  error(chainId: CainIdExt, message: string, error?: unknown) {
-    this.msg(chainId, message, 'error', error)
+  error(chainId: CainIdExt, message: string, error?: unknown, trim = true) {
+    this.msg(chainId, message, 'error', error, trim)
   }
   msg(
     chainId: CainIdExt,
     message: string,
     level: LogsMessageLevel,
     error?: unknown,
+    trim = true,
   ) {
     console.warn(`${this._nowDate()}-${chainId}: ${message}`)
     if (this.logsExternalHandler) {
@@ -44,7 +45,7 @@ class LoggerClass {
         this.logsExternalHandler(
           `${chainId}: ${message}`,
           'error',
-          this._cutLongMessage(error),
+          this._cutLongMessage(error, trim),
         )
         return
       }
@@ -54,13 +55,13 @@ class LoggerClass {
         this.logsExternalHandler(
           `${chainId}: ${errStr} / ${message}`,
           level,
-          this._cutLongMessage(error),
+          this._cutLongMessage(error, trim),
           traceId,
         )
         this.logsExternalHandler(
           `${chainId}: ${message} / ${errStr}`,
           level,
-          this._cutLongMessage(error),
+          this._cutLongMessage(error, trim),
           traceId,
         )
         return
@@ -72,7 +73,7 @@ class LoggerClass {
         this.logsExternalHandler(
           `${chainId}: ${message} / Out of Gas`,
           'error',
-          this._cutLongMessage(error),
+          this._cutLongMessage(error, trim),
         )
         return
       }
@@ -85,13 +86,13 @@ class LoggerClass {
       this.logsExternalHandler(
         `${chainId}: ${message}${errMsg !== '' ? ` / ${errMsg}` : ''}`,
         level,
-        error !== undefined ? this._cutLongMessage(error) : undefined,
+        error !== undefined ? this._cutLongMessage(error, trim) : undefined,
       )
       if (errMsg !== '')
         this.logsExternalHandler(
           `${chainId}: ${errMsg} / ${message}`,
           level,
-          error !== undefined ? this._cutLongMessage(error) : undefined,
+          error !== undefined ? this._cutLongMessage(error, trim) : undefined,
         )
     }
   }
@@ -108,7 +109,8 @@ class LoggerClass {
   }
 
   errMessageCache = new Map<any, string>()
-  private _cutLongMessage(error: any): string {
+  private _cutLongMessage(error: any, cut: boolean): string {
+    if (!cut) return `${error}`
     let msg = this.errMessageCache.get(error)
     if (msg) return msg
     const errStr = `${error}`
