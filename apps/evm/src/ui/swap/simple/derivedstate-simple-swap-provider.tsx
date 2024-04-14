@@ -450,8 +450,6 @@ const useSimpleSwapTrade = () => {
     tokenTax,
   })
 
-  console.log(clientTrade)
-
   const config = useConfig()
 
   // Reset the fallback on network switch
