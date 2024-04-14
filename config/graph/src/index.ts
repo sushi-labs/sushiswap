@@ -353,7 +353,7 @@ export const SUSHISWAP_V3_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.POLYGON]: 'sushi-v3/v3-polygon',
   [ChainId.POLYGON_ZKEVM]: 'v3-polygon-zkevm/v0.0.2',
   [ChainId.THUNDERCORE]: 'sushi-v3/v3-thundercore',
-  [ChainId.CORE]: 'sushi-v3/v3-core',
+  [ChainId.CORE]: 'sushi-v3/v3-core-fix',
   [ChainId.BASE]: 'v3-base/v0.0.1',
   [ChainId.LINEA]: 'sushi-v3/v3-linea',
   [ChainId.SCROLL]: 'v3-scroll/v0.0.1',
