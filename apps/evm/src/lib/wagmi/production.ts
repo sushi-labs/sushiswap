@@ -38,8 +38,8 @@ export const createProductionConfig = () => {
         onFetchResponse(_res) {
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
             let fallback = 'undefined'
-            if (typeof window.isFallback !== 'undefined') {
-              fallback = window.isFallback ? 'true' : 'false'
+            if (typeof window.useSwapApi !== 'undefined') {
+              fallback = window.useSwapApi ? 'true' : 'false'
             }
 
             gtagEvent('drpc-response', {
