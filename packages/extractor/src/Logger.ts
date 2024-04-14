@@ -88,7 +88,7 @@ class LoggerClass {
         level,
         error !== undefined ? this._cutLongMessage(error, trim) : undefined,
       )
-      if (errMsg !== '')
+      if (details !== undefined)
         this.logsExternalHandler(
           `${chainId}: ${errMsg} / ${message}`,
           level,
