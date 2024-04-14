@@ -34,7 +34,7 @@ Sentry.init({
   // Performance Monitoring
   enableTracing: true,
   tracesSampleRate: 1,
-  debug: process.env['SENTRY_ENVIRONMENT'] !== 'production',
+  //debug: process.env['SENTRY_ENVIRONMENT'] !== 'production',
 })
 
 Logger.setLogsExternalHandler(

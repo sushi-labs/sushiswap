@@ -1,4 +1,3 @@
-import { Logger } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config.js'
@@ -16,8 +15,6 @@ async function handler(req: Request, res: Response) {
   if (token === undefined) {
     token = await tokenManager.findToken(address as Address)
   }
-  console.log('Should log error to sentry')
-  Logger.error(1, 'Test log from token handler', 'context')
   if (token)
     return res.json({
       chainId: token.chainId,

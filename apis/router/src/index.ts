@@ -64,16 +64,6 @@ async function start() {
     enableTracing: true,
     tracesSampleRate: 1,
   })
-  Sentry.captureMessage('Test message router 2', {
-    level: 'error',
-    contexts: {
-      trace: {
-        data: { context: 'context' },
-        trace_id: '0',
-        span_id: '0',
-      },
-    },
-  })
 
   Logger.setLogsExternalHandler(
     (

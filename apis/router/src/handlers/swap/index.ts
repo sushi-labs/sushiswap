@@ -1,4 +1,4 @@
-//import { Logger } from '@sushiswap/extractor'
+import { Logger } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
@@ -53,7 +53,7 @@ function handler(
   return (client: ExtractorClient) => {
     return async (req: Request, res: Response) => {
       res.setHeader('Cache-Control', 's-maxage=2, stale-while-revalidate=28')
-      //let parsedData: any = undefined
+      let parsedData: any = undefined
       let bestRoute: MultiRoute | undefined = undefined
       try {
         const statistics = swapRequestStatistics.requestProcessingStart()
@@ -78,7 +78,7 @@ function handler(
           preferSushi,
           maxPriceImpact,
         } = parsed.data
-        //parsedData = parsed.data
+        parsedData = parsed.data
 
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
@@ -160,31 +160,30 @@ function handler(
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
 
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
+        if (json.qqq === undefined) throw new Error('test')
         return res.json(json)
       } catch (e) {
         swapRequestStatistics.requestRejected(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
         )
 
-        // Sentry.captureMessage('Test message router 3', 'error')
+        const data: any = {}
+        try {
+          data.error = e instanceof Error ? e.stack : `${e}`
+          if (parsedData) data.params = parsedData
+          if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
+        } catch (_e) {}
+        Logger.error(
+          CHAIN_ID,
+          'Routing crashed',
+          JSON.stringify(data, (_key, value: any) =>
+            typeof value === 'bigint' ? value.toString() : value,
+          ),
+          false,
+        )
 
-        // const data: any = {}
-        // try {
-        //   data.error = e instanceof Error ? e.stack : `${e}`
-        //   if (parsedData) data.params = parsedData
-        //   if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
-        // } catch (_e) {}
-        // Logger.error(
-        //   CHAIN_ID,
-        //   'Routing crashed',
-        //   JSON.stringify(data, (_key, value: any) =>
-        //     typeof value === 'bigint' ? value.toString() : value,
-        //   ),
-        //   false,
-        // )
-
-        // return res.status(500).send('Internal server error: Routing crashed')
-        throw e
+        return res.status(500).send('Internal server error: Routing crashed')
+        //throw e
       }
     }
   }
