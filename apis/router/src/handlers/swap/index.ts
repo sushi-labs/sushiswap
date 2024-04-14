@@ -160,7 +160,6 @@ function handler(
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
 
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
-        if (json.qqq === undefined) throw new Error('test')
         return res.json(json)
       } catch (e) {
         swapRequestStatistics.requestRejected(
@@ -169,15 +168,18 @@ function handler(
 
         const data: any = {}
         try {
-          data.error = e instanceof Error ? e.stack : `${e}`
+          data.error = e instanceof Error ? e.stack?.split('\n') : `${e}`
           if (parsedData) data.params = parsedData
           if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
         } catch (_e) {}
         Logger.error(
           CHAIN_ID,
           'Routing crashed',
-          JSON.stringify(data, (_key, value: any) =>
-            typeof value === 'bigint' ? value.toString() : value,
+          JSON.stringify(
+            data,
+            (_key, value: any) =>
+              typeof value === 'bigint' ? value.toString() : value,
+            '  ',
           ),
           false,
         )
