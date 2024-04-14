@@ -450,6 +450,8 @@ const useSimpleSwapTrade = () => {
     tokenTax,
   })
 
+  console.log(clientTrade)
+
   const config = useConfig()
 
   // Reset the fallback on network switch
@@ -464,12 +466,12 @@ const useSimpleSwapTrade = () => {
     return () => unwatch()
   }, [config, resetFallback])
 
-  // Write the fallback value to the window object so it can be logged to GA
+  // Write the useSwapApi value to the window object so it can be logged to GA
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.isFallback = isFallback
+      window.useSwapApi = useSwapApi
     }
-  }, [isFallback])
+  }, [useSwapApi])
 
   // Reset tokenTax when token0 or token1 changes
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -477,7 +479,7 @@ const useSimpleSwapTrade = () => {
     setTokenTax(undefined)
   }, [token0, token1, setTokenTax])
 
-  return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
+  return (useSwapApi ? apiTrade : clientTrade) as ReturnType<typeof useApiTrade>
 }
 
 export {
