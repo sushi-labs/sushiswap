@@ -352,7 +352,7 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.POLYGON]: `${GRAPH_HOST}/sushi-v3/v3-polygon`,
   [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/v3-polygon-zkevm/v0.0.2`,
   [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v3/v3-thundercore`,
-  [ChainId.CORE]: `${CORE_HOST}/sushi-v3/v3-core`,
+  [ChainId.CORE]: `${CORE_HOST}/sushi-v3/v3-core-fix`,
   [ChainId.BASE]: `${STUDIO_HOST}/v3-base/v0.0.1`,
   [ChainId.LINEA]: `${LINEA_HOST}/sushi-v3/v3-linea`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/v3-scroll/v0.0.1`,
