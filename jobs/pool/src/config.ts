@@ -1,9 +1,6 @@
 import { ChainId } from 'sushi/chain'
 import { Address } from 'viem'
 
-export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
-export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
-
 export const MINICHEF_ADDRESS: Record<number | string, Address> = {
   [ChainId.POLYGON]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   [ChainId.GNOSIS]: '0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3',

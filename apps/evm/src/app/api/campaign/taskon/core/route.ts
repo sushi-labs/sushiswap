@@ -1,8 +1,5 @@
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import {
-  SUBGRAPH_HOST,
-  SUSHISWAP_V3_SUBGRAPH_NAME,
-} from '@sushiswap/graph-config'
+import { SUSHISWAP_V3_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { NextRequest, NextResponse } from 'next/server'
 import { ChainId } from 'sushi'
 import { getAddress } from 'viem'
@@ -20,8 +17,7 @@ export async function GET(request: NextRequest) {
   try {
     const { address } = schema.parse(params)
     const sdk = getBuiltGraphSDK({
-      subgraphHost: SUBGRAPH_HOST[ChainId.CORE],
-      subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[ChainId.CORE],
+      url: SUSHISWAP_V3_SUBGRAPH_URL[ChainId.CORE],
     })
 
     const { mints } = await sdk.V3Mints({

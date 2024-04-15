@@ -2,10 +2,7 @@
 
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import {
-  SUBGRAPH_HOST,
-  SUSHISWAP_V3_SUBGRAPH_NAME,
-} from '@sushiswap/graph-config'
+import { SUSHISWAP_V3_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import {
   Card,
   CardContent,
@@ -48,8 +45,7 @@ const fetchAll = async (
   opts: UseTransactionsV3Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
   })
 
   const { transactions } = await sdk.V3Transactions({
@@ -90,8 +86,7 @@ const fetchMints = async (
   opts: UseTransactionsV3Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
   })
 
   const { mints } = await sdk.V3Mints({
@@ -115,8 +110,7 @@ const fetchBurns = async (
   opts: UseTransactionsV3Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
   })
 
   const { burns } = await sdk.V3Burns({
@@ -140,8 +134,7 @@ const fetchSwaps = async (
   opts: UseTransactionsV3Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
   })
 
   const { swaps } = await sdk.V3Swaps({
@@ -165,8 +158,7 @@ const fetchCollects = async (
   opts: UseTransactionsV3Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
   })
 
   const { collects } = await sdk.V3Collects({

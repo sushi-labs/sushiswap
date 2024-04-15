@@ -2,14 +2,14 @@ sources:
   - name: Trident
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/trident-optimism}
+        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/sushi-v2/trident-optimism}
     transforms:
       - autoPagination:
           validateSchema: true
   - name: SushiSwapV2
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/sushiswap-ethereum}
+        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/sushi-v2/sushiswap-ethereum}
         retry: 2
     transforms:
       - autoPagination:
@@ -21,7 +21,7 @@ sources:
   - name: SushiSwapV3
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:olastenberg/v3-arbitrum}
+        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/olastenberg/v3-arbitrum}
     transforms:
       - autoPagination:
           validateSchema: true
@@ -47,7 +47,7 @@ sources:
   - name: MiniChef
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:jiro-ono/minichef-staging-updates}
+        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/jiro-ono/minichef-staging-updates}
     transforms:
       - prefix:
           value: MiniChef_
@@ -56,7 +56,7 @@ sources:
   - name: Blocks
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}
         retry: 3
   - name: Steer
     handler:
