@@ -169,70 +169,72 @@ async function extract(protocol: Protocol) {
     sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
   ])
 
-  for (const subgraph of subgraphs) {
-    const sdk = getBuiltGraphSDK({
-      chainId: subgraph.chainId,
-      api: subgraph.url,
-    })
-    const blocks: Blocks = {
-      oneHour:
-        Number(
-          oneHourBlocks.oneHourBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoHour:
-        Number(
-          twoHourBlocks.twoHourBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      oneDay:
-        Number(
-          oneDayBlocks.oneDayBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoDay:
-        Number(
-          twoDayBlocks.twoDayBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      oneWeek:
-        Number(
-          oneWeekBlocks.oneWeekBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoWeek:
-        Number(
-          twoWeekBlocks.twoWeekBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      oneMonth:
-        Number(
-          oneMonthBlocks.oneMonthBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoMonth:
-        Number(
-          twoMonthBlocks.twoMonthBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-    }
+  await Promise.allSettled(
+    subgraphs.map(async (subgraph) => {
+      const sdk = getBuiltGraphSDK({
+        chainId: subgraph.chainId,
+        api: subgraph.url,
+      })
+      const blocks: Blocks = {
+        oneHour:
+          Number(
+            oneHourBlocks.oneHourBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoHour:
+          Number(
+            twoHourBlocks.twoHourBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        oneDay:
+          Number(
+            oneDayBlocks.oneDayBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoDay:
+          Number(
+            twoDayBlocks.twoDayBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        oneWeek:
+          Number(
+            oneWeekBlocks.oneWeekBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoWeek:
+          Number(
+            twoWeekBlocks.twoWeekBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        oneMonth:
+          Number(
+            oneMonthBlocks.oneMonthBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoMonth:
+          Number(
+            twoMonthBlocks.twoMonthBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+      }
 
-    const pairs = await fetchPairs(sdk, subgraph, blocks)
-    if (pairs === undefined) {
-      console.warn('No pairs found, skipping')
-      continue
-    }
-    console.log(`${subgraph.url}, batches: ${pairs.currentPools.length}`)
-    result.push({ chainId: subgraph.chainId, data: pairs })
-  }
+      const pairs = await fetchPairs(sdk, subgraph, blocks)
+      if (pairs === undefined) {
+        console.warn('No pairs found, skipping')
+        return
+      }
+      console.log(`${subgraph.url}, batches: ${pairs.currentPools.length}`)
+      result.push({ chainId: subgraph.chainId, data: pairs })
+    }),
+  )
   return result
 }
 
