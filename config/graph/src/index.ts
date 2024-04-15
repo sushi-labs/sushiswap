@@ -265,7 +265,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BOBA]: `${GRAPH_HOST}/sushiswap/blocks-boba`,
   [ChainId.BOBA_BNB]: `${GOLDSKY_COMMUNITY_HOST}/blocks/boba-bnb/gn`,
   [ChainId.BTTC]: `${GOLDSKY_COMMUNITY_HOST}/blocks/bttc-mainnet/gn`,
-  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushiswap/blocks-thundercore/gn`,
+  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushiswap/blocks-thundercore`,
   [ChainId.CORE]: `${CORE_HOST}/sushiswap/blocks-core`,
   [ChainId.BASE]: `${STUDIO_HOST}/blocks-base/v0.0.1`,
   [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/blocks-linea`,
