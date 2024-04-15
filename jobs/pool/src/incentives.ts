@@ -2,7 +2,7 @@ import 'dotenv/config'
 import './lib/wagmi.js'
 
 import { Prisma, createDirectClient } from '@sushiswap/database'
-import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { MINICHEF_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 import { ChainId } from 'sushi/chain'
 
@@ -46,8 +46,8 @@ export async function execute() {
 }
 
 async function extract() {
-  const minichefsP = Object.keys(MINICHEF_SUBGRAPH_NAME).map((chainId) =>
-    getMinichef(Number(chainId) as keyof typeof MINICHEF_SUBGRAPH_NAME),
+  const minichefsP = Object.keys(MINICHEF_SUBGRAPH_URL).map((chainId) =>
+    getMinichef(Number(chainId) as keyof typeof MINICHEF_SUBGRAPH_URL),
   )
   const masterChefV1P = getMasterChefV1()
   const masterChefV2P = getMasterChefV2()
