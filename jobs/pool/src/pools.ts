@@ -172,7 +172,7 @@ async function extract(protocol: Protocol) {
   for (const subgraph of subgraphs) {
     const sdk = getBuiltGraphSDK({
       chainId: subgraph.chainId,
-      url: subgraph.url,
+      api: subgraph.url,
     })
     const blocks: Blocks = {
       oneHour:
