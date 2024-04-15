@@ -1,4 +1,4 @@
-import { Prisma, Protocol, createDirectClient } from '@sushiswap/database'
+import { Prisma, Protocol } from '@sushiswap/database'
 import {
   MAX_FIRST,
   SUSHISWAP_ENABLED_NETWORKS,
@@ -114,9 +114,6 @@ export async function execute(protocol: Protocol) {
     )
   } catch (e) {
     console.error(e)
-    await (await createDirectClient()).$disconnect()
-  } finally {
-    await (await createDirectClient()).$disconnect()
   }
 }
 
