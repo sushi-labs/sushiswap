@@ -70,7 +70,7 @@ export class QualityChecker {
             if (start === -1)
               return [newPool, PoolSyncState.TicksStartMismatch, 1, 0]
             if (ticks0.length < start + ticks1.length)
-              [newPool, PoolSyncState.TicksFinishMismatch]
+              return [newPool, PoolSyncState.TicksFinishMismatch, 1, 0]
             for (let i = 0; i < ticks1.length; ++i) {
               if (
                 ticks0[i + start].index !== ticks1[i].index ||
