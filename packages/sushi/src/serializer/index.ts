@@ -25,6 +25,7 @@ import {
   StableSwapRPool,
   UniV3Pool,
 } from '../tines/index.js'
+export * from './AddressValidation.js'
 
 // All classes registration - for deserialization
 serializer.declarePersistable(NativeWrapBridgePoolCode)
