@@ -1,4 +1,4 @@
-import { Logger } from '@sushiswap/extractor'
+import { Logger, safeSerialize } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import {
@@ -172,17 +172,7 @@ function handler(
           if (parsedData) data.params = parsedData
           if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
         } catch (_e) {}
-        Logger.error(
-          CHAIN_ID,
-          'Routing crashed',
-          JSON.stringify(
-            data,
-            (_key, value: any) =>
-              typeof value === 'bigint' ? value.toString() : value,
-            '  ',
-          ),
-          false,
-        )
+        Logger.error(CHAIN_ID, 'Routing crashed', safeSerialize(data), false)
 
         return res.status(500).send('Internal server error: Routing crashed')
         //throw e

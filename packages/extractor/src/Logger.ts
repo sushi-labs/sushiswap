@@ -134,3 +134,12 @@ class LoggerClass {
 }
 
 export const Logger = new LoggerClass()
+
+export function safeSerialize(data: any) {
+  return JSON.stringify(
+    data,
+    (_key, value: any) =>
+      typeof value === 'bigint' ? value.toString() : value,
+    '  ',
+  )
+}

@@ -142,6 +142,10 @@ export class WordLoadManager extends EventEmitter {
 
     const lowerUnknownTick =
       (minIndex + 1) * this.poolSpacing * 256 - this.poolSpacing
+    console.assert(
+      ticks.length === 0 || lowerUnknownTick < ticks[0].index,
+      'Error 85: unexpected min tick index',
+    )
     if (!(ticks.length === 0 || lowerUnknownTick < ticks[0].index))
       Logger.error(
         this.client.chainId,
@@ -149,7 +153,7 @@ export class WordLoadManager extends EventEmitter {
         new Error(
           `Pool: ${this.poolAddress}, minIndex: ${minIndex}, poolSpacing: ${
             this.poolSpacing
-          }, ticks: ${ticks.map((t) => t.index)}`,
+          }, ticks: ${ticks?.map((t) => t.index)}`,
         ),
       )
     ticks.unshift({
@@ -157,6 +161,10 @@ export class WordLoadManager extends EventEmitter {
       DLiquidity: 0n,
     })
     const upperUnknownTick = maxIndex * this.poolSpacing * 256
+    console.assert(
+      ticks[ticks.length - 1].index < upperUnknownTick,
+      'Error 91: unexpected max tick index',
+    )
     if (!(ticks[ticks.length - 1].index < upperUnknownTick))
       Logger.error(
         this.client.chainId,
@@ -166,7 +174,7 @@ export class WordLoadManager extends EventEmitter {
             this.poolAddress
           }, tick: ${tick}, minIndex: ${minIndex}, poolSpacing: ${
             this.poolSpacing
-          }, ticks: ${ticks.map((t) => t.index)}`,
+          }, ticks: ${ticks?.map((t) => t.index)}`,
         ),
       )
     ticks.push({
