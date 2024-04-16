@@ -77,6 +77,14 @@ class LoggerClass {
         )
         return
       }
+      if (error instanceof Error) {
+        this.logsExternalHandler(
+          `${chainId}: ${message}`,
+          'error',
+          JSON.stringify(error.stack?.split('\n'), undefined, '  '),
+        )
+        return
+      }
       const context = error !== undefined ? `${error}` : undefined
       const details = context?.match(/Details: (.*)/)?.[1]
       const errorStr = context?.match(/^(.*)/)?.[1]?.substring(0, 100)
