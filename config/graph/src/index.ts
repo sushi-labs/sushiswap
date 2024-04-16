@@ -116,6 +116,7 @@ export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 export const LINEA_HOST = 'graph-query.linea.build/subgraphs/name'
 export const HAQQ_HOST = 'haqq.graph.p2p.org/subgraphs/name'
+export const PCS_STUDIO_HOST = 'api.studio.thegraph.com/query/45376'
 export const ZETACHAIN_HOST =
   'api.goldsky.com/api/public/project_cls39ugcfyhbq01xl9tsf6g38/subgraphs'
 export const SUSHI_GOLDSKY_HOST =
@@ -245,7 +246,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ETHEREUM]: `${GRAPH_HOST}/blocklytics/ethereum-blocks`,
   [ChainId.GNOSIS]: `${GRAPH_HOST}/matthewlilley/xdai-blocks`,
   [ChainId.POLYGON]: `${GRAPH_HOST}/matthewlilley/polygon-blocks`,
-  [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/blocks-polygon-zkevm/v0.0.2`,
+  [ChainId.POLYGON_ZKEVM]: `${PCS_STUDIO_HOST}/polygon-zkevm-block/version/latest`,
   [ChainId.FANTOM]: `${GRAPH_HOST}/matthewlilley/fantom-blocks`,
   [ChainId.BSC]: `${GRAPH_HOST}/matthewlilley/bsc-blocks`,
   [ChainId.HARMONY]: `${GRAPH_HOST}/sushiswap/harmony-blocks`,
