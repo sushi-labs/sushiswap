@@ -5,6 +5,8 @@ import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
 
+import { headers } from 'next/headers'
+import { getWagmiInitialState } from 'src/lib/wagmi'
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 
@@ -32,6 +34,8 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
+  const initialWagmiState = getWagmiInitialState(headers().get('cookie'))
+
   return (
     // <html lang="en" className="[color-scheme:dark]">
     <html
@@ -61,7 +65,7 @@ export default function RootLayout({
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen" suppressHydrationWarning={true}>
         <div className="flex flex-col h-full">
-          <Providers>
+          <Providers initialWagmiState={initialWagmiState}>
             <SanctionedAddressDialog />
             {children}
           </Providers>
