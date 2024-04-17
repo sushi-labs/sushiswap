@@ -68,7 +68,7 @@
     "react-dom": "18.2.0",
     "sushi": "workspace:*",
     "typescript": "5.2.2",
-    "viem": "2.9.19",
+    "viem": "2.9.20",
     "wagmi": "2.5.20"
   },
   "peerDependencies": {
@@ -77,7 +77,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sushi": "*",
-    "viem": "2.9.19",
+    "viem": "2.9.20",
     "wagmi": "2.5.20"
   },
   "peerDependenciesMeta": {
