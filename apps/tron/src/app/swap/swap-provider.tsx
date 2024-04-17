@@ -1,29 +1,34 @@
 'use client'
 
-import { FC, createContext, useContext, useMemo } from 'react'
+import { FC, createContext, useContext, useMemo, useReducer } from 'react'
 
-interface State {
-  mutate: {}
-  state: {}
-  isLoading: boolean
-}
+type Action = { type: 'bar' }
+type Dispatch = (action: Action) => void
+type State = { foo: string }
+type SwapProviderProps = { children: React.ReactNode }
 
-const SwapContext = createContext<State>({} as State)
+const SwapContext = createContext<
+  { state: State; dispatch: Dispatch } | undefined
+>(undefined)
 
-interface SwapProviderProps {
-  children: React.ReactNode
+function swapReducer(_state: State, action: Action) {
+  switch (action.type) {
+    case 'bar': {
+      return { foo: 'bar' }
+    }
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`)
+    }
+  }
 }
 
 const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
+  const [state, dispatch] = useReducer(swapReducer, { foo: 'foo' })
   return (
     <SwapContext.Provider
       value={useMemo(() => {
-        return {
-          mutate: {},
-          state: {},
-          isLoading: false,
-        }
-      }, [])}
+        return { state, dispatch }
+      }, [state])}
     >
       {children}
     </SwapContext.Provider>
@@ -33,9 +38,7 @@ const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
 const useSwapContext = () => {
   const context = useContext(SwapContext)
   if (!context) {
-    throw new Error(
-      'Hook can only be used inside Simple Swap Derived State Context',
-    )
+    throw new Error('Hook can only be used inside Swap Provider')
   }
 
   return context
@@ -46,9 +49,9 @@ const useSwapState = () => {
   return context.state
 }
 
-const useSwapActions = () => {
+const useSwapDispatch = () => {
   const context = useSwapContext()
-  return context.mutate
+  return context.dispatch
 }
 
-export { SwapProvider, useSwapState, useSwapActions }
+export { SwapProvider, useSwapState, useSwapDispatch }
