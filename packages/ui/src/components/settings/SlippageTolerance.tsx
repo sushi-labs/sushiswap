@@ -150,7 +150,7 @@ export const SlippageTolerance: FC<{
               onValueChange={setSlippageTolerance}
               placeholder="Custom"
               id="slippage-tolerance"
-              maxDecimals={1}
+              maxDecimals={2}
               unit="%"
             />
           </div>
