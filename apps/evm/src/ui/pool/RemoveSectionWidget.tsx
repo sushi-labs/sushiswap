@@ -62,7 +62,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             options={{
               slippageTolerance: {
                 storageKey: 'removeLiquidity',
-                defaultValue: '0.5',
+                defaultValue: '0.1',
                 title: 'Remove Liquidity Slippage',
               },
             }}

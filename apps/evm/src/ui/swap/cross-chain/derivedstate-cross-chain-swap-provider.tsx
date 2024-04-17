@@ -379,7 +379,7 @@ const useCrossChainSwapTrade = () => {
     token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
     recipient: recipient as Address,
     enabled: Boolean(
       isSushiXSwap2ChainId(chainId0) &&
