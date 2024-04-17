@@ -329,7 +329,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BTTC]: `${SUSHI_GOLDSKY_HOST}/sushi-v2/sushiswap-bttc/gn`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/sushiswap-filecoin`,
   [ChainId.ZETACHAIN]: `${ZETACHAIN_HOST}/sushiswap-zetachain/1.0.0/gn`,
-  [ChainId.THUNDERCORE]: `${GRAPH_HOST}/sushi-v2/sushiswap-thundercore`,
+  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v2/sushiswap-thundercore`,
   [ChainId.CORE]: `${CORE_HOST}/sushi-v2/sushiswap-core`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/sushiswap-haqq`,
   [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/sushiswap-linea`,
