@@ -273,11 +273,11 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       const unwatch = watchChainId(config, {
         onChange: (newChainId) => {
           if (newChainId === chainId) return
-          push(pathname, { scroll: false })
+          setChainId(newChainId)
         },
       })
       return () => unwatch()
-    }, [config, chainId, pathname, push])
+    }, [config, chainId, setChainId])
 
     // Derive token0
     const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(
