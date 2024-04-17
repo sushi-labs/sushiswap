@@ -1,14 +1,15 @@
 'use client'
 
-import { useLocalStorage } from '@sushiswap/hooks'
 import React, { FC } from 'react'
 
-import { Label } from '../label'
-import { Switch } from '../switch'
-import { typographyVariants } from '../typography'
+import { Label, Switch, typographyVariants } from '@sushiswap/ui'
+import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SwapApi: FC = () => {
-  const [swapApi, setSwapApi] = useLocalStorage('swapApi', true)
+  const {
+    mutate: { setForceClient },
+    state: { forceClient },
+  } = useDerivedStateSimpleSwap()
 
   return (
     <div className="p-4 rounded-lg">
@@ -26,8 +27,8 @@ export const SwapApi: FC = () => {
           </span>
         </div>
         <Switch
-          checked={swapApi}
-          onCheckedChange={(checked) => setSwapApi(checked)}
+          checked={!forceClient}
+          onCheckedChange={(checked) => setForceClient(!checked)}
         />
       </div>
     </div>

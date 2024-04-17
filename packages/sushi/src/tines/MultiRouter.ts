@@ -1,3 +1,4 @@
+import { Address } from 'viem'
 import {
   Graph,
   MultiRoute,
@@ -238,6 +239,25 @@ export function calcTokenPrices(
     if (v.price !== 0) res.set(v.token, v.price)
   })
   return res
+}
+
+export function getTokenPriceReasoning(
+  pools: RPool[],
+  baseToken: RToken,
+  token: Address,
+  minPriceLiquidity = 0,
+  priceLogging = false,
+): string[] {
+  setTokenId(baseToken)
+  const g = new Graph(
+    pools,
+    baseToken,
+    baseToken,
+    0,
+    minPriceLiquidity,
+    priceLogging,
+  )
+  return g.getPriceReasoning(baseToken, 1, token, minPriceLiquidity)
 }
 
 export function calcTokenAddressPrices(

@@ -68,8 +68,8 @@
     "react-dom": "18.2.0",
     "sushi": "workspace:*",
     "typescript": "5.2.2",
-    "viem": "2.9.20",
-    "wagmi": "2.5.20"
+    "viem": "2.8.14",
+    "wagmi": "2.5.11"
   },
   "peerDependencies": {
     "@sentry/nextjs": "7.101.1",
@@ -77,8 +77,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sushi": "*",
-    "viem": "2.9.20",
-    "wagmi": "2.5.20"
+    "viem": "2.8.14",
+    "wagmi": "2.5.11"
   },
   "peerDependenciesMeta": {
     "react": {

@@ -5,7 +5,7 @@ export async function repeatAsync<RetType>(
   times: number,
   delayBetween: number,
   action: () => Promise<RetType>,
-  failed: (e?: string) => void,
+  failed: (e?: unknown) => void,
   print?: string,
 ) {
   let lastException
@@ -15,7 +15,7 @@ export async function repeatAsync<RetType>(
       if (print && i > 0) console.log(`attemps ${print}: ${i + 1}`)
       return ret
     } catch (e) {
-      lastException = e?.toString()
+      lastException = e
       if (delayBetween) await delay(delayBetween)
     }
   }

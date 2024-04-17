@@ -1,6 +1,5 @@
 import {
-  MINICHEF_SUBGRAPH_NAME,
-  SUBGRAPH_HOST,
+  MINICHEF_SUBGRAPH_URL,
   SushiSwapChainId,
   TridentChainId,
 } from '@sushiswap/graph-config'
@@ -115,21 +114,20 @@ export async function getRewarderInfos(
   chainId: SushiSwapChainId | TridentChainId,
 ) {
   const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
-  const subgraphName = (
-    MINICHEF_SUBGRAPH_NAME as Record<SushiSwapChainId | TridentChainId, string>
+  const url = (
+    MINICHEF_SUBGRAPH_URL as Record<SushiSwapChainId | TridentChainId, string>
   )[chainId]
-  if (!subgraphName) {
+  if (!url) {
     console.log(chainId, 'does not have a minichef subgraph!')
     return []
   }
 
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    url,
   })
 
   const { rewarders } = await sdk.MiniChefRewarders()
-  console.log(`Retrieved ${rewarders.length} rewarders from ${subgraphName}`)
+  console.log(`Retrieved ${rewarders.length} rewarders from ${url}`)
 
   return Promise.all(
     rewarders.map(async (rewarder) => {

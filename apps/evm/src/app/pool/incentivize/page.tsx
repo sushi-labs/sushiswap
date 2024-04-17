@@ -28,13 +28,12 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import {
+  AngleConditionsState,
+  useAcceptAngleConditions,
   useAccount,
   useConcentratedLiquidityPool,
-  usePublicClient,
-  useSignMessage,
   useWaitForTransactionReceipt,
 } from '@sushiswap/wagmi'
-import { DistributionCreator } from '@sushiswap/wagmi'
 import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
@@ -43,7 +42,7 @@ import {
   withCheckerRoot,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { format } from 'date-fns'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { ANGLE_ENABLED_NETWORKS, SushiSwapV3ChainId } from 'sushi/config'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
@@ -121,7 +120,7 @@ const Incentivize = withCheckerRoot(() => {
       : undefined
   }, [startDate, endDate])
 
-  const { data: signature, signMessage } = useSignMessage()
+  const [angleConditionsState, { write }] = useAcceptAngleConditions()
 
   const { data: angleRewardTokens, isLoading: angleRewardTokensLoading } =
     useAngleRewardTokens({ chainId })
@@ -140,7 +139,7 @@ const Incentivize = withCheckerRoot(() => {
   } = useIncentivizePoolWithRewards({
     account: address,
     args:
-      amount[0] && v3Address && rewardToken && epochs && startDate && signature
+      amount[0] && v3Address && rewardToken && epochs && startDate
         ? [
             {
               uniV3Pool: v3Address as Address,
@@ -162,26 +161,19 @@ const Incentivize = withCheckerRoot(() => {
               additionalData:
                 '0x0000000000000000000000000000000000000000000000000000000000000000',
             },
-            signature,
           ]
         : undefined,
     chainId: chainId as SushiSwapV3ChainId,
     enabled: Boolean(
-      amount[0] && v3Address && rewardToken && epochs && startDate && approved,
+      amount[0] &&
+        v3Address &&
+        rewardToken &&
+        epochs &&
+        startDate &&
+        approved &&
+        angleConditionsState === AngleConditionsState.ACCEPTED,
     ),
   })
-
-  const client = usePublicClient()
-
-  const sign = useCallback(async () => {
-    const message = await client.readContract({
-      abi: DistributionCreator,
-      address: '0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd',
-      functionName: 'message',
-    })
-
-    signMessage({ message })
-  }, [client, signMessage])
 
   const { status } = useWaitForTransactionReceipt({ chainId, hash: data })
 
@@ -497,6 +489,20 @@ const Incentivize = withCheckerRoot(() => {
             />
           </div>
           <Separator className="!my-10" />
+          <p
+            className={typographyVariants({
+              variant: 'muted',
+              className: 'text-sm',
+            })}
+          >
+            In order to incentivize a pool, you must review and agree to{' '}
+            <Button variant="link" asChild>
+              <LinkExternal href="https://docs.angle.money/merkl/incentivizor-tc">
+                Merkl's Terms & Conditions
+              </LinkExternal>
+            </Button>
+            .
+          </p>
           <Checker.Connect>
             <Checker.Network chainId={chainId}>
               <Checker.Guard guardWhen={!pool} guardText="Pool not found">
@@ -519,9 +525,21 @@ const Incentivize = withCheckerRoot(() => {
                           contract="0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd"
                         >
                           <Checker.Custom
-                            showChildren={Boolean(signature)}
-                            onClick={sign}
+                            showChildren={
+                              angleConditionsState ===
+                              AngleConditionsState.ACCEPTED
+                            }
+                            onClick={write!}
                             buttonText="Sign the terms & conditions"
+                            loading={[
+                              AngleConditionsState.PENDING,
+                              AngleConditionsState.LOADING,
+                              AngleConditionsState.UNKNOWN,
+                            ].includes(angleConditionsState)}
+                            disabled={
+                              angleConditionsState !==
+                                AngleConditionsState.NOT_ACCEPTED || !write
+                            }
                           >
                             <Checker.Success tag={APPROVE_TAG}>
                               <DialogReview>

@@ -25,7 +25,7 @@
     "load-testing": "artillery run test/load.yml",
     "simulate": "ts-node --skipProject ./test/requestSimulation.ts",
     "start": "node dist/index.js",
-    "start-debug": "node dist/index.js"
+    "start-debug": "node --inspect-brk dist/index.js"
   },
   "dependencies": {
     "@sentry/node": "7.101.1",
@@ -35,8 +35,8 @@
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "sushi": "workspace:*",
-    "viem": "2.9.20",
-    "wagmi": "2.5.20",
+    "viem": "2.8.14",
+    "wagmi": "2.5.11",
     "zod": "3.21.4"
   },
   "devDependencies": {

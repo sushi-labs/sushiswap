@@ -1,9 +1,8 @@
 import {
-  SUBGRAPH_HOST,
-  SUSHISWAP_SUBGRAPH_NAME,
-  SUSHISWAP_V3_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V3_SUBGRAPH_URL,
   SushiSwapV3ChainId,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
   isSushiSwapChain,
   isSushiSwapV3Chain,
   isTridentChain,
@@ -55,8 +54,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: TRIDENT_SUBGRAPH_URL[chainId],
           },
           info,
         })
@@ -81,8 +79,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: SUSHISWAP_SUBGRAPH_URL[chainId],
           },
           info,
         })
@@ -99,8 +96,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
 
     const fetchSushiSwapV3Snapshots = async (chainId: SushiSwapV3ChainId) => {
       const sdk = getBuiltGraphSDK({
-        subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
-        subgraphHost: SUBGRAPH_HOST[chainId],
+        url: SUSHISWAP_V3_SUBGRAPH_URL[chainId]
       })
 
       const { uniswapDayDatas } = await sdk.SushiSwapV3DayDatas({

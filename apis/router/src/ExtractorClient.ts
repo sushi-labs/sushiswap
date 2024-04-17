@@ -1,5 +1,5 @@
 // import EventEmitter from 'node:events'
-import { warnLog } from '@sushiswap/extractor'
+import { Logger } from '@sushiswap/extractor'
 import { IncrementalPricer } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -95,10 +95,9 @@ export class ExtractorClient {
             this.tokenMap.clear()
             this.totalPoolNumber = 0
           } else if (prevStateId !== this.dataStateId) {
-            warnLog(
+            Logger.error(
               this.chainId,
               `Incorrect router state: ${this.dataStateId} -> ${prevStateId}`,
-              'error',
             )
           }
           pools.forEach((p) => {
@@ -147,14 +146,13 @@ export class ExtractorClient {
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
-        warnLog(
+        Logger.error(
           this.chainId,
           `Pool download failed, status=${resp.status}`,
-          'error',
         )
       }
     } catch (e) {
-      warnLog(this.chainId, `Pool download failed, ${e}`, 'error')
+      Logger.error(this.chainId, `Pool download failed`, e)
     }
     setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
@@ -369,6 +367,10 @@ export class ExtractorClient {
 
   getPrice(address: Address) {
     return this.pricer.prices[address]
+  }
+
+  getPriceReasoning(address: Address) {
+    return this.pricer.reasoning(address)
   }
 
   getPrices() {

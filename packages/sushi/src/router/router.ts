@@ -1,4 +1,12 @@
-import { Address, Hex } from 'viem'
+import {
+  Address,
+  Hex,
+  encodeFunctionData,
+  prepareEncodeFunctionData,
+} from 'viem'
+import { routeProcessor2Abi } from '../abi/routeProcessor2Abi.js'
+import { routeProcessor4Abi } from '../abi/routeProcessor4Abi.js'
+import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
 import { Token, Type } from '../currency/index.js'
@@ -35,6 +43,19 @@ function TokenToRToken(t: Type): RToken {
   return nativeRToken
 }
 
+const RPprocessRouteEncodeData = prepareEncodeFunctionData({
+  abi: routeProcessorAbi,
+  functionName: 'processRoute',
+})
+const RP2processRouteEncodeData = prepareEncodeFunctionData({
+  abi: routeProcessor2Abi,
+  functionName: 'processRoute',
+})
+const RP4processRouteEncodeData = prepareEncodeFunctionData({
+  abi: routeProcessor4Abi,
+  functionName: 'processRoute',
+})
+
 const isWrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
   fromToken.isNative &&
   toToken.wrapped.address === Native.onChain(toToken.chainId).wrapped.address
@@ -50,6 +71,7 @@ export interface RPParams {
   amountOutMin: bigint
   to: Address
   routeCode: Hex
+  data: string
   value?: bigint | undefined
 }
 
@@ -212,13 +234,24 @@ export class Router {
       : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
         1_000_000n
 
+    const routeCode = getRouteProcessorCode(
+      route,
+      RPAddr,
+      to,
+      poolCodesMap,
+    ) as Hex
+    const data = encodeFunctionData({
+      ...RPprocessRouteEncodeData,
+      args: [tokenIn, route.amountInBI, tokenOut, amountOutMin, to, routeCode],
+    })
     return {
       tokenIn,
       amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessorCode(route, RPAddr, to, poolCodesMap) as Hex,
+      routeCode,
+      data,
       value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
@@ -249,20 +282,26 @@ export class Router {
       : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
         1_000_000n
 
+    const routeCode = getRouteProcessor2Code(
+      route,
+      RPAddr,
+      to,
+      poolCodesMap,
+      permits,
+      source,
+    ) as Hex
+    const data = encodeFunctionData({
+      ...RP2processRouteEncodeData,
+      args: [tokenIn, route.amountInBI, tokenOut, amountOutMin, to, routeCode],
+    })
     return {
       tokenIn,
       amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor2Code(
-        route,
-        RPAddr,
-        to,
-        poolCodesMap,
-        permits,
-        source,
-      ) as Hex,
+      routeCode,
+      data,
       value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }
@@ -297,20 +336,26 @@ export class Router {
       : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
         1_000_000n
 
+    const routeCode = getRouteProcessor4Code(
+      route,
+      RPAddr,
+      to,
+      poolCodesMap,
+      permits,
+      source,
+    ) as Hex
+    const data = encodeFunctionData({
+      ...RP4processRouteEncodeData,
+      args: [tokenIn, route.amountInBI, tokenOut, amountOutMin, to, routeCode],
+    })
     return {
       tokenIn,
       amountIn: route.amountInBI,
       tokenOut,
       amountOutMin,
       to,
-      routeCode: getRouteProcessor4Code(
-        route,
-        RPAddr,
-        to,
-        poolCodesMap,
-        permits,
-        source,
-      ) as Hex,
+      routeCode,
+      data,
       value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
   }

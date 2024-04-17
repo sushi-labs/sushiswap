@@ -6,11 +6,11 @@ import { ConstantProductRPool, RToken } from 'sushi/tines'
 import { Address, Log, PublicClient, decodeEventLog, parseAbiItem } from 'viem'
 import { Counter } from './Counter.js'
 import { LogFilter2 } from './LogFilter2.js'
+import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import { TokenManager } from './TokenManager.js'
 import { repeat } from './Utils.js'
-import { warnLog } from './WarnLog.js'
 
 export interface FactoryV2 {
   address: Address
@@ -180,7 +180,7 @@ export class UniV2Extractor {
           `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
         )
       } else {
-        warnLog(
+        Logger.error(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
@@ -228,11 +228,10 @@ export class UniV2Extractor {
           })
         } catch (e) {
           this.taskCounter.dec()
-          warnLog(
+          Logger.error(
             this.multiCallAggregator.chainId,
             `Ext2 pool ${r.address} reading from cache failed`,
-            'error',
-            `${e}`,
+            e,
           )
           return
         }
@@ -257,10 +256,9 @@ export class UniV2Extractor {
       readyForRouting(prevState.status) &&
       !readyForRouting(poolState.status)
     ) {
-      warnLog(
+      Logger.error(
         this.multiCallAggregator.chainId,
         `Unexpected situation: pool status ${prevState.status} -> ${poolState.status}`,
-        'error',
       )
     }
     this.poolMap.set(addr, poolState)
@@ -288,10 +286,11 @@ export class UniV2Extractor {
       pool.updateReserves(reserve0, reserve1)
       poolState.status = PoolStatus.ValidPool
       this.poolMapUpdated.set(pool.address.toLowerCase(), poolState.poolCode)
-    } catch (_e) {
-      warnLog(
+    } catch (e) {
+      Logger.error(
         this.multiCallAggregator.chainId,
         `Ext2 pool ${poolState.poolCode.pool.address} update fail`,
+        e,
       )
     }
     this.taskCounter.dec()
@@ -481,13 +480,19 @@ export class UniV2Extractor {
     try {
       if (trustedFactory) factory = trustedFactory
       else {
-        const factoryAddr = await repeat(2, () =>
-          this.multiCallAggregator.callValue(
-            addr,
-            tridentConstantPoolAbi,
-            'factory',
-          ),
-        )
+        let factoryAddr = 'no factory'
+        try {
+          factoryAddr = await repeat(2, () =>
+            this.multiCallAggregator.callValue(
+              addr,
+              tridentConstantPoolAbi,
+              'factory',
+            ),
+          )
+        } catch (_e) {
+          // just a contract with similar events as V2 pool but not v2 pool because has no factory
+          // normal situation, lets add it to ignore pools and don't send any error
+        }
         factory = this.factoryMap.get(
           (factoryAddr as string).toLowerCase() as Address,
         )
@@ -520,11 +525,10 @@ export class UniV2Extractor {
       token1 = tokens[1]
     } catch (e) {
       this.taskCounter.dec()
-      warnLog(
+      Logger.error(
         this.multiCallAggregator.chainId,
         `Ext2 add pool ${addr} by log failed`,
-        'error',
-        `${e}`,
+        e,
       )
       return
     }

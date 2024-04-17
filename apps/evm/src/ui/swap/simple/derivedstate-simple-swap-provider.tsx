@@ -29,7 +29,6 @@ import { Percent, ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
-import { useSwapApi } from '../../../lib/swap/useSwapApi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -50,6 +49,7 @@ interface State {
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
     setTokenTax(tax: Percent | false | undefined): void
+    setForceClient(forceClient: boolean): void
   }
   state: {
     token0: Type | undefined
@@ -59,6 +59,7 @@ interface State {
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
     tokenTax: Percent | false | undefined
+    forceClient: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -87,6 +88,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
       undefined,
     )
+    const [forceClient, setForceClient] = useState(false)
 
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user
@@ -321,6 +323,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               switchTokens,
               setSwapAmount,
               setTokenTax,
+              setForceClient,
             },
             state: {
               recipient: address ?? '',
@@ -330,6 +333,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               token0: _token0,
               token1: _token1,
               tokenTax,
+              forceClient,
             },
             isLoading: token0Loading || token1Loading,
             isToken0Loading: token0Loading,
@@ -350,6 +354,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           token1,
           token1Loading,
           tokenTax,
+          forceClient,
         ])}
       >
         {children}
@@ -372,8 +377,6 @@ const SWAP_API_BASE_URL =
   process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL
 
 const useFallback = (chainId: ChainId) => {
-  const [swapApi] = useSwapApi()
-
   const initialFallbackState = useMemo(
     () =>
       !isSwapApiEnabledChainId(chainId) ||
@@ -390,7 +393,7 @@ const useFallback = (chainId: ChainId) => {
   }, [initialFallbackState])
 
   return {
-    isFallback: !swapApi || isFallback,
+    isFallback,
     setIsFallback,
     resetFallback,
   }
@@ -399,7 +402,15 @@ const useFallback = (chainId: ChainId) => {
 const useSimpleSwapTrade = () => {
   const log = useLogger()
   const {
-    state: { token0, chainId, swapAmount, token1, recipient, tokenTax },
+    state: {
+      token0,
+      chainId,
+      swapAmount,
+      token1,
+      recipient,
+      tokenTax,
+      forceClient,
+    },
     mutate: { setTokenTax },
   } = useDerivedStateSimpleSwap()
 
@@ -408,6 +419,8 @@ const useSimpleSwapTrade = () => {
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: gasPrice } = useGasPrice({ chainId })
+
+  const useSwapApi = !isFallback && !forceClient
 
   const apiTrade = useApiTrade({
     chainId,
@@ -418,7 +431,7 @@ const useSimpleSwapTrade = () => {
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice,
     recipient: recipient as Address,
-    enabled: Boolean(!isFallback && swapAmount?.greaterThan(ZERO)),
+    enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
     onError: () => {
       log.error('api trade error')
@@ -436,7 +449,7 @@ const useSimpleSwapTrade = () => {
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice,
     recipient: recipient as Address,
-    enabled: Boolean(isFallback && swapAmount?.greaterThan(ZERO)),
+    enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
     onError: () => {
       log.error('client trade error')
@@ -458,12 +471,12 @@ const useSimpleSwapTrade = () => {
     return () => unwatch()
   }, [config, resetFallback])
 
-  // Write the fallback value to the window object so it can be logged to GA
+  // Write the useSwapApi value to the window object so it can be logged to GA
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.isFallback = isFallback
+      window.useSwapApi = useSwapApi
     }
-  }, [isFallback])
+  }, [useSwapApi])
 
   // Reset tokenTax when token0 or token1 changes
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -471,7 +484,7 @@ const useSimpleSwapTrade = () => {
     setTokenTax(undefined)
   }, [token0, token1, setTokenTax])
 
-  return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
+  return (useSwapApi ? apiTrade : clientTrade) as ReturnType<typeof useApiTrade>
 }
 
 export {

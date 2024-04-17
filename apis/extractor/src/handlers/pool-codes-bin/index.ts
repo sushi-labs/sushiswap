@@ -1,4 +1,4 @@
-import { LogSender } from '@sushiswap/extractor'
+import { Logger } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { Token } from 'sushi/currency'
 import {
@@ -55,7 +55,6 @@ async function handlerAll(req: Request, res: Response) {
 }
 
 //============================= Only updated pools sended ============================
-const logs = new LogSender(CHAIN_ID)
 
 interface State {
   id: number
@@ -208,19 +207,22 @@ class TestClient {
         if (this.chainId === undefined)
           this.chainId = pools[0]?.pool.token0.chainId
         else if (this.chainId !== pools[0]?.pool.token0.chainId)
-          logs.error(
+          Logger.error(
+            CHAIN_ID,
             `TestClient Wrong binary data length: expected ${states[i]?.diff.byteLength}, really read ${finish}`,
           )
       }
       if (finish !== states[i]?.diff.byteLength)
-        logs.error(
+        Logger.error(
+          CHAIN_ID,
           `TestClient Wrong binary data length: expected ${states[i]?.diff.byteLength}, really read ${finish}`,
         )
       if (prevStateId === 0) {
         this.poolCodesMap.clear()
         this.tokenMap.clear()
       } else if (prevStateId !== this.state) {
-        logs.error(
+        Logger.error(
+          CHAIN_ID,
           `TestClient incorrect router state: ${this.state} -> ${prevStateId}`,
         )
       }
@@ -238,7 +240,7 @@ class TestClient {
       Array.from(this.poolCodesMap.values()),
       poolsReal,
     )
-    if (!res) logs.error('TestClient wrong pools compare')
+    if (!res) Logger.error(CHAIN_ID, 'TestClient wrong pools compare')
     this.checking = false
   }
 }
