@@ -144,6 +144,7 @@ export const SushiPoolSelect = {
 
       isEnabled: true,
       wasEnabled: true,
+      isDeprecated: true,
 
       creator: true,
       admin: true,

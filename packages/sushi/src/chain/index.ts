@@ -1,5 +1,5 @@
-import { ChainId } from './constants'
-import raw from './generated'
+import { ChainId } from './constants.js'
+import raw from './generated.js'
 
 const additional = [] as const
 
@@ -23,41 +23,41 @@ export interface Chain {
   parent?: Parent
 }
 
-export interface Explorer {
+interface Explorer {
   name: string
   url: string
   standard: Standard
   icon?: string
 }
 
-export const Standard = {
+const Standard = {
   Eip3091: 'EIP3091',
   None: 'none',
 } as const
 
-export type Standard = (typeof Standard)[keyof typeof Standard]
+type Standard = (typeof Standard)[keyof typeof Standard]
 
-export interface NativeCurrency {
+interface NativeCurrency {
   name: string
   symbol: string
   decimals: number
 }
 
-export interface Parent {
+interface Parent {
   type: Type
   chain: string
   bridges?: Bridge[]
 }
 
-export interface Bridge {
+interface Bridge {
   url: string
 }
 
-export const Type = {
+const Type = {
   L2: 'L2',
   Shard: 'shard',
 } as const
-export type Type = (typeof Type)[keyof typeof Type]
+type Type = (typeof Type)[keyof typeof Type]
 
 // biome-ignore lint/suspicious/noUnsafeDeclarationMerging: explaination
 export class Chain implements Chain {
@@ -125,6 +125,14 @@ export class Chain implements Chain {
         {
           name: 'ZetaChain Mainnet Explorer',
           url: 'https://explorer.zetachain.com',
+          standard: 'EIP3091',
+        },
+      ]
+    } else if (data.chainId === ChainId.BLAST) {
+      this.explorers = [
+        {
+          name: 'Blast Explorer',
+          url: 'https://blastscan.io',
           standard: 'EIP3091',
         },
       ]
@@ -217,6 +225,6 @@ export const chainName = Object.fromEntries(
   RAW.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name]),
 )
 
-export * from './constants'
+export * from './constants.js'
 
 export default chains

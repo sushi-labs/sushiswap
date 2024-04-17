@@ -20,6 +20,7 @@ import {
 } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useMemo } from 'react'
 
+import Link from 'next/link'
 import { useConnect } from '../hooks'
 
 const Icons: Record<string, React.ElementType> = {
@@ -40,12 +41,16 @@ export const ConnectButton: FC<ButtonProps> = ({
   children: _children,
   ...props
 }) => {
-  const { connectors, connect, pendingConnector } = useConnect()
+  const { connectors, connect, pending } = useConnect()
 
   const onSelect = useCallback(
     (connectorId: string) => {
+      const connector = connectors.find((el) => el.id === connectorId)
+
+      if (!connector) throw new Error('Connector not found')
+
       return connect({
-        connector: connectors.find((el) => el.id === connectorId),
+        connector,
       })
     },
     [connect, connectors],
@@ -53,6 +58,9 @@ export const ConnectButton: FC<ButtonProps> = ({
 
   const _connectors = useMemo(() => {
     const conns = [...connectors]
+
+    console.log('conns', conns)
+
     const injected = conns.find((el) => el.id === 'injected')
 
     if (injected) {
@@ -69,7 +77,7 @@ export const ConnectButton: FC<ButtonProps> = ({
 
   // Pending confirmation state
   // Awaiting wallet confirmation
-  if (pendingConnector) {
+  if (pending) {
     return (
       <Button loading {...props}>
         Authorize Wallet
@@ -80,7 +88,7 @@ export const ConnectButton: FC<ButtonProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button {...props}>
+        <Button {...props} testId="connect">
           <span className="hidden sm:block">Connect Wallet</span>
           <span className="block sm:hidden">Connect</span>
         </Button>
@@ -104,6 +112,27 @@ export const ConnectButton: FC<ButtonProps> = ({
               </DropdownMenuItem>
             )
           })}
+        </DropdownMenuGroup>
+        <DropdownMenuGroup>
+          <div className="text-xs dark:text-neutral-400 text-neutral-800 px-2 py-1 text-justify">
+            <span>{`Connecting a wallet means you accept Sushi Labs' `}</span>
+            <Link
+              href="/terms-of-service"
+              className="hover:text-neutral-500 font-semibold"
+              target="_blank"
+            >
+              Terms
+            </Link>
+            <span>{` and `}</span>
+            <Link
+              href="/privacy-policy"
+              className="hover:text-neutral-500 font-semibold"
+              target="_blank"
+            >
+              Privacy Policy
+            </Link>
+            <span>{`. (03.26.2024)`}</span>
+          </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

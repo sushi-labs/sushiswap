@@ -1,9 +1,10 @@
-import { convertTokenToBento } from '@sushiswap/tines'
-import { BridgeBento, RToken, Rebase } from '@sushiswap/tines'
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { balanceOfAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { Address, readContracts } from 'wagmi'
+import { convertTokenToBento } from 'sushi/tines'
+import { BridgeBento, RToken, Rebase } from 'sushi/tines'
+import { readContracts } from 'wagmi/actions'
 
 export enum BridgeBentoState {
   LOADING = 'Loading',
@@ -16,16 +17,17 @@ export const getBridgeBentoPools = async (
   chainId: BentoBoxChainId,
   currencies: Token[],
   totals: Map<string, Rebase>,
+  config: PublicWagmiConfig,
 ) => {
-  const balances = await readContracts({
+  const balances = await readContracts(config, {
     contracts: currencies.map(
       (currency) =>
         ({
-          address: currency.wrapped.address as Address,
+          address: currency.wrapped.address,
           chainId,
           abi: balanceOfAbi,
           functionName: 'balanceOf',
-          args: [BENTOBOX_ADDRESS[chainId] as Address],
+          args: [BENTOBOX_ADDRESS[chainId]],
         }) as const,
     ),
   })
@@ -42,7 +44,7 @@ export const getBridgeBentoPools = async (
     return [
       BridgeBentoState.EXISTS,
       new BridgeBento(
-        `Bento bridge for ${el.symbol}`,
+        BENTOBOX_ADDRESS[chainId],
         el as RToken,
         convertTokenToBento(el),
         elastic,

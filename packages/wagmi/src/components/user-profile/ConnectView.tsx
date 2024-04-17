@@ -34,10 +34,11 @@ const Icons: Record<
 }
 
 export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
-  const { connectors, connect } = useConnect()
+  const { connectors, connectAsync } = useConnect()
 
   const _connectors = useMemo(() => {
     const conns = [...connectors]
+
     const injected = conns.find((el) => el.id === 'injected')
 
     if (injected) {
@@ -55,15 +56,17 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
   const _onSelect = useCallback(
     (connectorId: string) => {
       onSelect()
-      setTimeout(
-        () =>
-          connect({
-            connector: _connectors.find((el) => el.id === connectorId),
-          }),
-        250,
-      )
+      setTimeout(() => {
+        const connector = _connectors.find((el) => el.id === connectorId)
+
+        if (!connector) throw new Error('Connector not found')
+
+        connectAsync({
+          connector,
+        })
+      }, 250)
     },
-    [connect, _connectors, onSelect],
+    [connectAsync, _connectors, onSelect],
   )
 
   return (

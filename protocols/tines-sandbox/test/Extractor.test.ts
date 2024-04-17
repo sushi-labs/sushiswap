@@ -1,3 +1,5 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
 import {
   Extractor,
   FactoryV2,
@@ -6,35 +8,33 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import {
+  BASES_TO_CHECK_TRADES_AGAINST,
+  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
+  PANCAKESWAP_V3_FACTORY_ADDRESS,
+  PANCAKESWAP_V3_FEE_SPACING_MAP,
+  PANCAKESWAP_V3_INIT_CODE_HASH,
+  PancakeSwapV3ChainId,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_INIT_CODE_HASH,
+  SUSHISWAP_V3_TICK_LENS,
+  SushiSwapV3ChainId,
+  UNISWAP_V3_INIT_CODE_HASH,
+  publicClientConfig,
+} from 'sushi/config'
+import { Native, Token } from 'sushi/currency'
 import {
   ConstantProductPoolCode,
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
   Router,
-} from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { RouteStatus, getBigInt } from '@sushiswap/tines'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_INIT_CODE_HASH,
-} from '@sushiswap/v2-sdk'
-import {
-  PANCAKESWAP_V3_DEPLOYER_ADDRESS,
-  PANCAKESWAP_V3_FACTORY_ADDRESS,
-  PANCAKESWAP_V3_FEE_SPACING_MAP,
-  PANCAKESWAP_V3_INIT_CODE_HASH,
-  POOL_INIT_CODE_HASH,
-  PancakeSwapV3ChainId,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_INIT_CODE_HASH,
-  SUSHISWAP_V3_TICK_LENS,
-  SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
-import { routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { Native, Token } from 'sushi/currency'
+} from 'sushi/router'
+import { RouteStatus, getBigInt } from 'sushi/tines'
 import { http, Address, Transport, createPublicClient } from 'viem'
 import {
   Chain,
@@ -60,6 +60,7 @@ export const RP3Address = {
   [ChainId.AVALANCHE]: '0x717b7948AA264DeCf4D780aa6914482e5F46Da3e' as Address,
   [ChainId.BASE]: '0x0BE808376Ecb75a5CF9bB6D237d16cd37893d904' as Address,
   [ChainId.BSC]: '0xd36990D74b947eC4Ad9f52Fe3D49d14AdDB51E44' as Address,
+  [ChainId.FILECOIN]: '0xcdbcd51a5e8728e0af4895ce5771b7d17ff71959' as Address,
 }
 
 export const TickLensContract = {
@@ -74,6 +75,9 @@ export const TickLensContract = {
   [ChainId.BASE]: '0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3' as Address,
   [ChainId.BSC]: '0xD9270014D396281579760619CCf4c3af0501A47C' as Address,
 }
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export const UniswapV2FactoryAddress: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
@@ -110,7 +114,7 @@ function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash: UNISWAP_V3_INIT_CODE_HASH[chain],
   }
 }
 
@@ -140,7 +144,8 @@ async function startInfinitTest(args: {
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -281,7 +286,8 @@ it.skip('Extractor Ethereum infinite work test', async () => {
     chain: mainnet,
     factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
     factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -304,7 +310,8 @@ it.skip('Extractor Polygon infinite work test', async () => {
       },
     ],
     factoriesV3: [uniswapV3Factory(ChainId.POLYGON)],
-    tickHelperContract: TickLensContract[ChainId.POLYGON],
+    tickHelperContractV3: TickLensContract[ChainId.POLYGON],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
@@ -320,7 +327,8 @@ it.skip('Extractor Arbitrum infinite work test', async () => {
     chain: arbitrum,
     factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM)],
     factoriesV3: [uniswapV3Factory(ChainId.ARBITRUM)],
-    tickHelperContract: TickLensContract[ChainId.ARBITRUM],
+    tickHelperContractV3: TickLensContract[ChainId.ARBITRUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logType: LogFilterType.Native,
@@ -335,7 +343,8 @@ it.skip('Extractor Arbitrum Nova infinite work test', async () => {
     chain: arbitrumNova,
     factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM_NOVA)],
     factoriesV3: [sushiswapV3Factory(ChainId.ARBITRUM_NOVA)],
-    tickHelperContract: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
@@ -351,7 +360,8 @@ it.skip('Extractor Optimism infinite work test', async () => {
     chain: optimism,
     factoriesV2: [],
     factoriesV3: [uniswapV3Factory(ChainId.OPTIMISM)],
-    tickHelperContract: TickLensContract[ChainId.OPTIMISM],
+    tickHelperContractV3: TickLensContract[ChainId.OPTIMISM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -366,7 +376,8 @@ it.skip('Extractor Celo infinite work test', async () => {
     chain: celo,
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
-    tickHelperContract: TickLensContract[ChainId.CELO],
+    tickHelperContractV3: TickLensContract[ChainId.CELO],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -388,7 +399,8 @@ it.skip('Extractor Polygon zkevm infinite work test', async () => {
           '0xd3e7f58b9af034cfa7a0597e539bae7c6b393817a47a6fc1e1503cd6eaffe22a',
       },
     ],
-    tickHelperContract: TickLensContract[ChainId.POLYGON_ZKEVM],
+    tickHelperContractV3: TickLensContract[ChainId.POLYGON_ZKEVM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 1000,
     logType: LogFilterType.SelfFilter,
@@ -400,8 +412,8 @@ it.skip('Extractor Polygon zkevm infinite work test', async () => {
 
 it.skip('Extractor AVALANCH infinite work test', async () => {
   await startInfinitTest({
-    transport: config[ChainId.AVALANCHE].transport,
-    chain: config[ChainId.AVALANCHE].chain as Chain,
+    transport: publicClientConfig[ChainId.AVALANCHE].transport,
+    chain: publicClientConfig[ChainId.AVALANCHE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.AVALANCHE),
       {
@@ -413,7 +425,8 @@ it.skip('Extractor AVALANCH infinite work test', async () => {
       },
     ],
     factoriesV3: [sushiswapV3Factory(ChainId.AVALANCHE)],
-    tickHelperContract: TickLensContract[ChainId.AVALANCHE],
+    tickHelperContractV3: TickLensContract[ChainId.AVALANCHE],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 100,
     logging: true,
@@ -423,8 +436,8 @@ it.skip('Extractor AVALANCH infinite work test', async () => {
 
 it.skip('Extractor Base infinite work test', async () => {
   await startInfinitTest({
-    ...config[ChainId.BASE],
-    chain: config[ChainId.BASE].chain as Chain,
+    ...publicClientConfig[ChainId.BASE],
+    chain: publicClientConfig[ChainId.BASE].chain as Chain,
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
       {
@@ -439,7 +452,8 @@ it.skip('Extractor Base infinite work test', async () => {
       sushiswapV3Factory(ChainId.BASE),
       uniswapV3Factory(ChainId.BASE),
     ],
-    tickHelperContract: TickLensContract[ChainId.BASE],
+    tickHelperContractV3: TickLensContract[ChainId.BASE],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -473,14 +487,40 @@ it.skip('Extractor Base infinite work test', async () => {
 
 it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
-    transport: config[ChainId.BSC].transport,
-    chain: config[ChainId.BSC].chain as Chain,
+    transport: publicClientConfig[ChainId.BSC].transport,
+    chain: publicClientConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
-    tickHelperContract: TickLensContract[ChainId.BSC],
+    tickHelperContractV3: TickLensContract[ChainId.BSC],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
     RP3Address: RP3Address[ChainId.BSC],
+  })
+})
+
+it.skip('Extractor Filecoin infinite work test', async () => {
+  await startInfinitTest({
+    transport: publicClientConfig[ChainId.FILECOIN].transport,
+    chain: publicClientConfig[ChainId.FILECOIN].chain as Chain,
+    factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
+    factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RP3Address: RP3Address[ChainId.FILECOIN],
+    checkTokens: [
+      new Token({
+        chainId: ChainId.FILECOIN,
+        address: '0xc396f2266dAE4A1C75cF96a51C0E5824Aec6f947',
+        symbol: 'FELON',
+        name: 'FELON',
+        decimals: 18,
+      }),
+    ],
   })
 })

@@ -1,7 +1,7 @@
-import { SUSHISWAP_V3_TICK_LENS, SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { getContract } from '@wagmi/core'
 import { useMemo } from 'react'
-import { Address, usePublicClient } from 'wagmi'
+import { SUSHISWAP_V3_TICK_LENS, SushiSwapV3ChainId } from 'sushi/config'
+import { Address, getContract } from 'viem'
+import { usePublicClient } from 'wagmi'
 
 export const getV3TickLensContractConfig = (chainId: SushiSwapV3ChainId) => ({
   address: SUSHISWAP_V3_TICK_LENS[chainId] as Address,
@@ -35,14 +35,14 @@ export const getV3TickLensContractConfig = (chainId: SushiSwapV3ChainId) => ({
 })
 
 export function useTickLensContract(chainId: SushiSwapV3ChainId | undefined) {
-  const publicClient = usePublicClient({ chainId })
+  const client = usePublicClient({ chainId }) as any
 
   return useMemo(() => {
     if (!chainId) return null
 
     return getContract({
       ...getV3TickLensContractConfig(chainId),
-      walletClient: publicClient,
+      client,
     })
-  }, [chainId, publicClient])
+  }, [chainId, client])
 }

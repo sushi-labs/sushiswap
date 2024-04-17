@@ -3,13 +3,12 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
-  Address,
   useAccount,
   useClientTrade,
-  useFeeData,
-  useNetwork,
+  useConfig,
+  useGasPrice,
   useTokenWithCache,
-  watchNetwork,
+  watchAccount,
 } from '@sushiswap/wagmi'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -23,18 +22,12 @@ import {
   useState,
 } from 'react'
 import { ChainId, TestnetChainId } from 'sushi/chain'
-import {
-  Amount,
-  Native,
-  Type,
-  defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
-import { ZERO } from 'sushi/math'
-import { isAddress } from 'viem'
+import { defaultQuoteCurrency } from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
+import { Percent, ZERO } from 'sushi/math'
+import { Address, isAddress } from 'viem'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
-import { useSwapApi } from '../../../lib/swap/useSwapApi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -54,6 +47,8 @@ interface State {
     setTokens(token0: Type | string, token1: Type | string): void
     setSwapAmount(swapAmount: string): void
     switchTokens(): void
+    setTokenTax(tax: Percent | false | undefined): void
+    setForceClient(forceClient: boolean): void
   }
   state: {
     token0: Type | undefined
@@ -62,6 +57,8 @@ interface State {
     swapAmountString: string
     swapAmount: Amount<Type> | undefined
     recipient: string | undefined
+    tokenTax: Percent | false | undefined
+    forceClient: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -83,10 +80,13 @@ interface DerivedStateSimpleSwapProviderProps {
 const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
   ({ children }) => {
     const { push } = useRouter()
-    const { address } = useAccount()
-    const { chain } = useNetwork()
+    const { address, chain } = useAccount()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
+      undefined,
+    )
+    const [forceClient, setForceClient] = useState(false)
 
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user
@@ -256,13 +256,17 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
+    const config = useConfig()
+
     useEffect(() => {
-      const unwatch = watchNetwork(({ chain }) => {
-        if (!chain || chain.id === chainId) return
-        push(pathname, { scroll: false })
+      const unwatch = watchAccount(config, {
+        onChange: ({ chain }) => {
+          if (!chain || chain.id === chainId) return
+          push(pathname, { scroll: false })
+        },
       })
       return () => unwatch()
-    }, [chainId, pathname, push])
+    }, [config, chainId, pathname, push])
 
     // Derive token0
     const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(
@@ -311,6 +315,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               setTokens,
               switchTokens,
               setSwapAmount,
+              setTokenTax,
+              setForceClient,
             },
             state: {
               recipient: address ?? '',
@@ -319,6 +325,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
               swapAmount: tryParseAmount(swapAmountString, _token0),
               token0: _token0,
               token1: _token1,
+              tokenTax,
+              forceClient,
             },
             isLoading: token0Loading || token1Loading,
             isToken0Loading: token0Loading,
@@ -338,6 +346,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           token0Loading,
           token1,
           token1Loading,
+          tokenTax,
+          forceClient,
         ])}
       >
         {children}
@@ -357,12 +367,9 @@ const useDerivedStateSimpleSwap = () => {
 }
 
 const SWAP_API_BASE_URL =
-  process.env.SWAP_API_V0_BASE_URL ||
-  process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL
+  process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL
 
 const useFallback = (chainId: ChainId) => {
-  const [swapApi] = useSwapApi()
-
   const initialFallbackState = useMemo(
     () =>
       !isSwapApiEnabledChainId(chainId) ||
@@ -379,7 +386,7 @@ const useFallback = (chainId: ChainId) => {
   }, [initialFallbackState])
 
   return {
-    isFallback: !swapApi || isFallback,
+    isFallback,
     setIsFallback,
     resetFallback,
   }
@@ -388,14 +395,25 @@ const useFallback = (chainId: ChainId) => {
 const useSimpleSwapTrade = () => {
   const log = useLogger()
   const {
-    state: { token0, chainId, swapAmount, token1, recipient },
+    state: {
+      token0,
+      chainId,
+      swapAmount,
+      token1,
+      recipient,
+      tokenTax,
+      forceClient,
+    },
+    mutate: { setTokenTax },
   } = useDerivedStateSimpleSwap()
 
   const { isFallback, setIsFallback, resetFallback } = useFallback(chainId)
 
   const [slippageTolerance] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
-  const { data: feeData } = useFeeData({ chainId })
+  const { data: gasPrice } = useGasPrice({ chainId })
+
+  const useSwapApi = !isFallback && !forceClient
 
   const apiTrade = useApiTrade({
     chainId,
@@ -404,14 +422,15 @@ const useSimpleSwapTrade = () => {
     amount: swapAmount,
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice,
+    gasPrice,
     recipient: recipient as Address,
-    enabled: Boolean(!isFallback && swapAmount?.greaterThan(ZERO)),
+    enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
     onError: () => {
       log.error('api trade error')
       setIsFallback(true)
     },
+    tokenTax,
   })
 
   const clientTrade = useClientTrade({
@@ -421,30 +440,49 @@ const useSimpleSwapTrade = () => {
     amount: swapAmount,
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice,
+    gasPrice,
     recipient: recipient as Address,
-    enabled: Boolean(isFallback && swapAmount?.greaterThan(ZERO)),
+    enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),
     carbonOffset,
     onError: () => {
       log.error('client trade error')
     },
+    tokenTax,
   })
+
+  const config = useConfig()
 
   // Reset the fallback on network switch
   useEffect(() => {
-    const unwatch = watchNetwork(({ chain }) => {
-      if (chain) {
-        resetFallback()
-      }
+    const unwatch = watchAccount(config, {
+      onChange: ({ chain }) => {
+        if (chain) {
+          resetFallback()
+        }
+      },
     })
     return () => unwatch()
-  }, [resetFallback])
+  }, [config, resetFallback])
 
-  return (isFallback ? clientTrade : apiTrade) as ReturnType<typeof useApiTrade>
+  // Write the useSwapApi value to the window object so it can be logged to GA
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.useSwapApi = useSwapApi
+    }
+  }, [useSwapApi])
+
+  // Reset tokenTax when token0 or token1 changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    setTokenTax(undefined)
+  }, [token0, token1, setTokenTax])
+
+  return (useSwapApi ? apiTrade : clientTrade) as ReturnType<typeof useApiTrade>
 }
 
 export {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
+  useFallback,
   useSimpleSwapTrade,
 }

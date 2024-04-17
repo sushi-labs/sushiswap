@@ -1,30 +1,45 @@
-import { EVM_APP_BASE_URL, Pool } from '@sushiswap/client'
+'use client'
+
+import { Pool } from '@sushiswap/client'
+import { usePrices } from '@sushiswap/react-query'
 import { getTokenRatios } from '@sushiswap/steer-sdk'
+import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 
 interface SteerTokenDistributionBarProps {
   vault: Pool['steerVaults'][0]
 }
 
-export async function SteerTokenDistributionBar({
+export function SteerTokenDistributionBar({
   vault,
 }: SteerTokenDistributionBarProps) {
-  let tokenRatios = {
-    token0: 0,
-    token1: 0,
-  }
+  const { data: prices } = usePrices({ chainId: vault.chainId })
+  const { data: tokenRatios } = useQuery({
+    queryKey: ['tokenRatios', vault, prices],
+    queryFn: async () => {
+      if (!prices) return
 
-  try {
-    const prices = await fetch(
-      `${EVM_APP_BASE_URL}/api/price/v2/${vault.chainId}`,
-      {
-        next: { revalidate: 60 },
-      },
-    ).then((res) => res.json())
-    tokenRatios = await getTokenRatios({ vault, prices })
-  } catch (e) {
-    console.error(e)
-  }
+      const numPrices = Object.entries(prices).reduce<Record<string, number>>(
+        (acc, [key, value]) => {
+          acc[key] = Number(value.toFixed(18))
+          return acc
+        },
+        {},
+      )
+
+      try {
+        return getTokenRatios({ vault, prices: numPrices })
+      } catch (e) {
+        console.error(e)
+      }
+
+      return {
+        token0: 0,
+        token1: 0,
+      }
+    },
+    enabled: !!prices,
+  })
 
   return (
     <div>

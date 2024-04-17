@@ -2,7 +2,7 @@
 
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { SUSHISWAP_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import {
   Card,
   CardContent,
@@ -11,11 +11,11 @@ import {
   DataTable,
 } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
 import {
   TX_AMOUNT_IN_V2_COLUMN,
@@ -44,8 +44,7 @@ const fetchAll = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_SUBGRAPH_URL[chainId],
   })
 
   const { transactions } = await sdk.V2Transactions({
@@ -84,8 +83,7 @@ const fetchMints = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_SUBGRAPH_URL[chainId],
   })
 
   const { mints } = await sdk.V2Mints({
@@ -108,8 +106,7 @@ const fetchBurns = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_SUBGRAPH_URL[chainId],
   })
 
   const { burns } = await sdk.V2Burns({
@@ -137,8 +134,7 @@ const fetchSwaps = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    subgraphHost: SUBGRAPH_HOST[chainId],
-    subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+    url: SUSHISWAP_SUBGRAPH_URL[chainId],
   })
 
   const { swaps } = await sdk.V2Swaps({

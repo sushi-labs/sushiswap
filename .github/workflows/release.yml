@@ -28,7 +28,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 8.9.2
+          version: 8.15.3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3

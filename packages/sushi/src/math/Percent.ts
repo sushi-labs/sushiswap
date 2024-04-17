@@ -1,5 +1,4 @@
-import { formatPercent } from '../format'
-
+import { formatPercent } from '../format/index.js'
 import { type BigintIsh } from './BigintIsh.js'
 import Fraction from './Fraction.js'
 import Rounding from './Rounding.js'

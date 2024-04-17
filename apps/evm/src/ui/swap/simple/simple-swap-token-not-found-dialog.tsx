@@ -16,7 +16,8 @@ import {
 import { useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
-import { Native, Token, defaultQuoteCurrency } from 'sushi/currency'
+import { defaultQuoteCurrency } from 'sushi/config'
+import { Native, Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'

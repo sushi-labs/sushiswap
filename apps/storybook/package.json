@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@heroicons/react": "2.0.13",
-    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "8.9.1",

@@ -1,16 +1,14 @@
 import { EventEmitter } from 'node:events'
-
-import { LiquidityProviders, PoolCode, UniV3PoolCode } from '@sushiswap/router'
-import { CLTick, RToken, UniV3Pool } from '@sushiswap/tines'
 import { Abi, Address, parseAbiItem } from 'abitype'
 import { erc20Abi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
+import { LiquidityProviders, PoolCode, UniV3PoolCode } from 'sushi/router'
+import { CLTick, RToken, UniV3Pool } from 'sushi/tines'
 import { Log, decodeEventLog } from 'viem'
-
-import { Counter } from './Counter'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { warnLog } from './WarnLog'
-import { WordLoadManager } from './WordLoadManager'
+import { Counter } from './Counter.js'
+import { Logger } from './Logger.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { WordLoadManager } from './WordLoadManager.js'
 
 interface UniV3PoolSelfState {
   blockNumber: number
@@ -93,6 +91,7 @@ export const UniV3EventsAbi = [
 ]
 
 export enum UniV3PoolWatcherStatus {
+  Failed = 'Failed',
   Nothing = 'Nothing',
   Something = 'Something',
   All = 'All',
@@ -100,6 +99,7 @@ export enum UniV3PoolWatcherStatus {
 
 // TODO: more ticks and priority depending on resources
 // TODO: gather statistics how often (blockNumber < this.latestEventBlockNumber)
+// event PoolCodeWasChanged is emitted each time getPoolCode() returns another pool (lastPoolCode changed)
 export class UniV3PoolWatcher extends EventEmitter {
   address: Address
   tickHelperContract: Address
@@ -116,6 +116,7 @@ export class UniV3PoolWatcher extends EventEmitter {
   updatePoolStateGuard = false
   busyCounter?: Counter
   private lastPoolCode?: PoolCode
+  status: UniV3PoolWatcherStatus = UniV3PoolWatcherStatus.Nothing
 
   constructor(
     provider: LiquidityProviders,
@@ -146,7 +147,7 @@ export class UniV3PoolWatcher extends EventEmitter {
       busyCounter,
     )
     this.wordLoadManager.on('ticksChanged', () => {
-      this.lastPoolCode = undefined
+      this._poolWasChanged()
     })
     this.busyCounter = busyCounter
   }
@@ -201,14 +202,28 @@ export class UniV3PoolWatcher extends EventEmitter {
             liquidity: liquidity as bigint,
             sqrtPriceX96: sqrtPriceX96 as bigint,
           }
-          this.lastPoolCode = undefined
+          this._poolWasChanged()
 
+          if (this.getStatus() === UniV3PoolWatcherStatus.Nothing) {
+            this.wordLoadManager.once('ticksChanged', () => {
+              if (this.getStatus() === UniV3PoolWatcherStatus.Nothing)
+                this.setStatus(UniV3PoolWatcherStatus.Something)
+            })
+          }
+          this.wordLoadManager.once('isUpdated', () => {
+            this.setStatus(UniV3PoolWatcherStatus.All)
+            this.emit('isUpdated')
+          })
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
-          this.wordLoadManager.once('isUpdated', () => this.emit('isUpdated'))
           break
         }
-      } catch (_e) {
-        warnLog(this.client.chainId, `Pool ${this.address} update failed`)
+      } catch (e) {
+        Logger.error(
+          this.client.chainId,
+          `V3 Pool ${this.address} update failed`,
+          e,
+        )
+        this.setStatus(UniV3PoolWatcherStatus.Failed)
       }
       if (this.busyCounter) this.busyCounter.dec()
       this.updatePoolStateGuard = false
@@ -253,7 +268,7 @@ export class UniV3PoolWatcher extends EventEmitter {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, -amount)
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Burn': {
@@ -273,7 +288,7 @@ export class UniV3PoolWatcher extends EventEmitter {
           this.wordLoadManager.addTick(l.blockNumber, tickLower, -amount)
           this.wordLoadManager.addTick(l.blockNumber, tickUpper, amount)
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Collect':
@@ -288,7 +303,7 @@ export class UniV3PoolWatcher extends EventEmitter {
             this.state.reserve1 -= amount1
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Flash': {
@@ -302,7 +317,7 @@ export class UniV3PoolWatcher extends EventEmitter {
             this.state.reserve1 += paid1
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       case 'Swap': {
@@ -322,7 +337,7 @@ export class UniV3PoolWatcher extends EventEmitter {
             this.wordLoadManager.onPoolTickChange(this.state.tick, false)
           }
         }
-        this.lastPoolCode = undefined
+        this._poolWasChanged()
         break
       }
       default:
@@ -366,23 +381,46 @@ export class UniV3PoolWatcher extends EventEmitter {
   }
 
   getStatus(): UniV3PoolWatcherStatus {
-    if (this.state === undefined) return UniV3PoolWatcherStatus.Nothing
-    if (!this.wordLoadManager.downloadCycleIsStared)
-      return UniV3PoolWatcherStatus.All
-    if (this.wordLoadManager.hasSomeTicksAround(this.state.tick))
-      return UniV3PoolWatcherStatus.Something
-    return UniV3PoolWatcherStatus.Nothing
+    return this.status
   }
 
-  statusPromise?: Promise<void>
-  async statusAll(): Promise<void> {
-    if (this.state !== undefined && !this.wordLoadManager.downloadCycleIsStared)
-      return Promise.resolve()
-    if (this.statusPromise !== undefined) return this.statusPromise
-    this.statusPromise = new Promise((resolve) => {
-      this.wordLoadManager.once('isUpdated', () => resolve())
+  setStatus(status: UniV3PoolWatcherStatus) {
+    if (status === this.status) return
+    this.status = status
+    if (
+      status === UniV3PoolWatcherStatus.Failed &&
+      this.downloadFinishedPromiseReject
+    )
+      this.downloadFinishedPromiseReject()
+    if (
+      status === UniV3PoolWatcherStatus.All &&
+      this.downloadFinishedPromiseResolve
+    )
+      this.downloadFinishedPromiseResolve()
+  }
+
+  downloadFinishedPromise?: Promise<void>
+  downloadFinishedPromiseResolve?: () => void
+  downloadFinishedPromiseReject?: () => void
+  async downloadFinished(): Promise<void> {
+    if (this.status === UniV3PoolWatcherStatus.All) return Promise.resolve()
+    if (this.status === UniV3PoolWatcherStatus.Failed) return Promise.reject()
+    if (this.downloadFinishedPromise !== undefined)
+      return this.downloadFinishedPromise
+    this.downloadFinishedPromise = new Promise((resolve, reject) => {
+      this.downloadFinishedPromiseResolve = resolve
+      this.downloadFinishedPromiseReject = reject
     })
-    await this.statusPromise
-    this.statusPromise = undefined
+    await this.downloadFinishedPromise
+    this.downloadFinishedPromise = undefined
+    this.downloadFinishedPromiseResolve = undefined
+    this.downloadFinishedPromiseReject = undefined
+  }
+
+  private _poolWasChanged() {
+    if (this.lastPoolCode !== undefined) {
+      this.lastPoolCode = undefined
+      this.emit('PoolCodeWasChanged', this)
+    }
   }
 }

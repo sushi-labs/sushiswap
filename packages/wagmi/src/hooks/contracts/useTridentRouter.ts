@@ -1,28 +1,25 @@
 'use client'
 
-import { TRIDENT_ROUTER_ADDRESS, TridentChainId } from '@sushiswap/trident-sdk'
 import { useMemo } from 'react'
 import { tridentRouterAbi } from 'sushi/abi'
-import { WalletClient } from 'viem'
-import { Address, useWalletClient } from 'wagmi'
-import { getContract } from 'wagmi/actions'
+import { TRIDENT_ROUTER_ADDRESS, TridentChainId } from 'sushi/config'
+import { getContract } from 'viem'
+import { useWalletClient } from 'wagmi'
 
-export const getTridentRouterContractConfig = (
-  chainId: number | undefined,
-) => ({
-  address: (TRIDENT_ROUTER_ADDRESS[chainId as TridentChainId] ?? '') as Address,
+export const getTridentRouterContractConfig = (chainId: TridentChainId) => ({
+  address: TRIDENT_ROUTER_ADDRESS[chainId],
   abi: tridentRouterAbi,
 })
 
-export function useTridentRouterContract(chainId: number | undefined) {
+export function useTridentRouterContract(chainId: TridentChainId | undefined) {
   const { data: walletClient } = useWalletClient()
 
-  return useMemo(
-    () =>
-      getContract({
-        ...getTridentRouterContractConfig(chainId),
-        walletClient: walletClient as WalletClient,
-      }),
-    [walletClient, chainId],
-  )
+  return useMemo(() => {
+    if (!chainId || !walletClient) return null
+
+    return getContract({
+      ...getTridentRouterContractConfig(chainId),
+      client: walletClient,
+    })
+  }, [walletClient, chainId])
 }

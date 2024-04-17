@@ -6,28 +6,25 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
+import { ChainId } from 'sushi/chain'
+import {
+  BASES_TO_CHECK_TRADES_AGAINST,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_INIT_CODE_HASH,
+  SushiSwapV3ChainId,
+  publicClientConfig,
+} from 'sushi/config'
+import { Native, Token } from 'sushi/currency'
 import {
   ConstantProductPoolCode,
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
   Router,
-} from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { RouteStatus, getBigInt } from '@sushiswap/tines'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_INIT_CODE_HASH,
-} from '@sushiswap/v2-sdk'
-import {
-  POOL_INIT_CODE_HASH,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_INIT_CODE_HASH,
-  SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { config } from '@sushiswap/viem-config'
-import { ChainId } from 'sushi/chain'
-import { Native, Token } from 'sushi/currency'
+} from 'sushi/router'
+import { RouteStatus, getBigInt } from 'sushi/tines'
 import {
   http,
   Address,
@@ -40,9 +37,11 @@ import {
   walletActions,
 } from 'viem'
 import { Chain, hardhat } from 'viem/chains'
-import { createHardhatProvider } from '../src'
-import { pancakeswapV3Factory } from './Extractor.test'
-import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
+import { createHardhatProvider } from '../src/index.js'
+import { pancakeswapV3Factory } from './Extractor.test.js'
+import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json' assert {
+  type: 'json',
+}
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -92,7 +91,7 @@ export function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash: SUSHISWAP_V3_INIT_CODE_HASH[chain],
   }
 }
 
@@ -158,7 +157,8 @@ async function startInfinitTest(args: {
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -315,11 +315,12 @@ const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
 
 it.skip('Extractor BSC infinite work test', async () => {
   await startInfinitTest({
-    transport: config[ChainId.BSC].transport,
-    chain: config[ChainId.BSC].chain as Chain,
+    transport: publicClientConfig[ChainId.BSC].transport,
+    chain: publicClientConfig[ChainId.BSC].chain as Chain,
     factoriesV2: [],
     factoriesV3: [pancakeswapV3Factory(ChainId.BSC)],
-    tickHelperContract: TickLensContract[ChainId.BSC],
+    tickHelperContractV3: TickLensContract[ChainId.BSC],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     logging: true,

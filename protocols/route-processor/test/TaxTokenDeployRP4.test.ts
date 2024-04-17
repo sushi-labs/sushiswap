@@ -2,20 +2,15 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import {
-  DataFetcher,
-  LiquidityProviders,
-  RPParams,
-  Router,
-} from '@sushiswap/router'
-import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
-import { config } from 'hardhat'
-import { createProvider } from 'hardhat/internal/core/providers/construction'
+import hre from 'hardhat'
+import { createProvider } from 'hardhat/internal/core/providers/construction.js'
 import { routeProcessor3Abi } from 'sushi/abi'
 import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
+import { DataFetcher, LiquidityProviders, RPParams, Router } from 'sushi/router'
+import { MultiRoute, RouteStatus } from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import {
   Address,
@@ -27,7 +22,11 @@ import {
 } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json'
+import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json' assert {
+  type: 'json',
+}
+
+const { config } = hre
 
 async function createHardhatProvider(
   chainId: ChainId,

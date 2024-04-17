@@ -1,5 +1,4 @@
 import { Protocol } from '@sushiswap/database'
-import { config } from '@sushiswap/viem-config'
 import {
   erc20Abi,
   tridentConstantPoolAbi,
@@ -7,8 +6,10 @@ import {
   uniswapV2PairAbi,
   v3baseAbi,
 } from 'sushi/abi'
+import { publicClientConfig } from 'sushi/config'
 import { type Address, type PublicClient, createPublicClient } from 'viem'
 
+import { getChainIdAddressFromId } from 'sushi/format'
 import { type getPoolFromDB } from './pool'
 
 interface GetPoolArgs {
@@ -214,24 +215,25 @@ async function getV3Pool({ client, address }: GetPoolArgs): Promise<Pool> {
 export async function getUnindexedPool(
   poolId: string,
 ): Promise<Awaited<ReturnType<typeof getPoolFromDB>>> {
-  // TODO: Use validator
-  const [chainId, address] = [
-    Number(poolId.split(':')[0]),
-    poolId.split(':')[1],
-  ] as [number, Address]
-  if (!chainId || !address) throw new Error('Invalid pool id.')
+  const { chainId, address } = getChainIdAddressFromId(poolId)
 
-  const cfg = config[chainId as keyof typeof config]
-  if (!cfg) throw new Error('Invalid chain id.')
+  if (chainId in publicClientConfig === false)
+    throw new Error('Invalid chain id.')
+
+  const cfg = publicClientConfig[chainId as keyof typeof publicClientConfig]
 
   const client = createPublicClient({
     chain: cfg.chain,
     transport: cfg.transport,
-  })
+  }) as PublicClient
+
+  if (!(await client.getBytecode({ address }))) {
+    throw new Error('Invalid pool address.')
+  }
 
   let lpTokenName: string
   try {
-    const { name } = await getTokenInfo({ client, address: address })
+    const { name } = await getTokenInfo({ client, address })
     lpTokenName = name
   } catch (_e) {
     lpTokenName = 'V3'

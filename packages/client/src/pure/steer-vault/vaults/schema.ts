@@ -10,16 +10,24 @@ export const SteerVaultsApiSchema = z.object({
     .string()
     .transform((val) => val.split(',').map((v) => parseInt(v)))
     .optional(),
-  isEnabled: z.coerce
+  onlyEnabled: z.coerce
     .string()
     .transform((val) => {
-      if (val === 'true') {
-        return true
-      } else if (val === 'false') {
-        return false
-      } else {
-        throw new Error('isEnabled must true or false')
+      switch (val) {
+        case 'true':
+          return true
+        case 'false':
+          return false
+        default:
+          throw new Error('onlyEnabled must true or false')
       }
+    })
+    .optional(),
+  tokenSymbols: z
+    .string()
+    .transform((tokenSymbols) => tokenSymbols?.split(','))
+    .refine((tokenSymbols) => tokenSymbols.length <= 3, {
+      message: 'Can only use up to 3 tokenSymbols.',
     })
     .optional(),
   cursor: z.string().optional(),

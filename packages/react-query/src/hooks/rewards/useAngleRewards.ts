@@ -50,10 +50,10 @@ export const angleRewardsQueryFn = async ({
   chainIds,
   account,
 }: AngleRewardsQueryParams) => {
-  const url = new URL('https://api.angle.money/v2/merkl')
-  url.searchParams.set('AMMs[0]', 'sushiswapv3')
-  chainIds.forEach((chainId, i) =>
-    url.searchParams.set(`chainIds[${i}]`, chainId.toString()),
+  const url = new URL('https://api.merkl.xyz/v2/merkl')
+  url.searchParams.set('AMMs', 'sushiswapv3')
+  chainIds.forEach((chainId) =>
+    url.searchParams.append('chainIds', chainId.toString()),
   )
 
   if (account) {

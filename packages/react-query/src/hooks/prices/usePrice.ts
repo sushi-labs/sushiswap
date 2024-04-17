@@ -9,13 +9,15 @@ interface UsePrice {
   enabled?: boolean
 }
 
+const BASE_URL =
+  process.env['NEXT_PUBLIC_API_BASE_URL'] || 'https://api.sushi.com'
+
 export const usePrice = ({ chainId, address, enabled = true }: UsePrice) => {
   return useQuery({
-    queryKey: [`/api/price/v2/${chainId}/${address}`],
+    queryKey: [`${BASE_URL}/price/v1/${chainId}/${address}`],
     queryFn: async () => {
       const data = await fetch(
-        `/api/price/v2/${chainId}/${address}`,
-        // `http://localhost:3001/v2/${chainId}/${address}`,
+        `${BASE_URL}/price/v1/${chainId}/${address}`,
       ).then((response) => response.json())
       return new Fraction(
         parseUnits(data.toFixed(18), 18).toString(),
@@ -25,8 +27,6 @@ export const usePrice = ({ chainId, address, enabled = true }: UsePrice) => {
     enabled: Boolean(chainId && address && enabled),
     staleTime: ms('15s'),
     cacheTime: ms('1m'),
-    // staleTime: 900000, // 15 mins
-    // cacheTime: 3600000, // 1hr
     refetchOnWindowFocus: false,
   })
 }

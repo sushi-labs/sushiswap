@@ -28,6 +28,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.SCROLL,
   ChainId.OPTIMISM,
   ChainId.LINEA,
+  ChainId.BLAST,
   ChainId.ZETACHAIN,
   ChainId.CORE,
   ChainId.FILECOIN,
@@ -49,8 +50,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
 }
 
 const NEW_CHAINS: number[] = [
-  ChainId.FILECOIN,
-  ChainId.HAQQ,
+  ChainId.BLAST,
   ChainId.ZETACHAIN,
 ] satisfies ChainId[]
 

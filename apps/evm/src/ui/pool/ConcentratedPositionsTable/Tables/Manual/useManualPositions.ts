@@ -1,18 +1,15 @@
 'use client'
 
+import { useAccount, useConcentratedLiquidityPositions } from '@sushiswap/wagmi'
+import { useMemo } from 'react'
+import { ChainId } from 'sushi/chain'
 import {
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
-  Address,
-  useAccount,
-  useConcentratedLiquidityPositions,
-} from '@sushiswap/wagmi'
-import { useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
+} from 'sushi/config'
 import { Writeable } from 'zod'
 
+import { Address } from 'viem'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
 interface UseManualPositions {

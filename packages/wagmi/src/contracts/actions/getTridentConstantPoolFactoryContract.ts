@@ -1,15 +1,12 @@
+import { tridentConstantPoolFactoryAbi } from 'sushi/abi'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TridentChainId,
-} from '@sushiswap/trident-sdk'
-import { tridentConstantPoolFactoryAbi } from 'sushi/abi'
-import { Address } from 'wagmi'
+} from 'sushi/config'
 
 export const getTridentConstantPoolFactoryContract = (
-  chainId: number | undefined,
+  chainId: TridentChainId,
 ) => ({
-  address: (TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS?.[
-    chainId as TridentChainId
-  ] ?? '') as Address,
+  address: TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[chainId],
   abi: tridentConstantPoolFactoryAbi,
 })

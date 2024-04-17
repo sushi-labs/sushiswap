@@ -93,6 +93,7 @@ export async function getSteerVaultsFromDB(
 
       isEnabled: true,
       wasEnabled: true,
+      isDeprecated: true,
 
       creator: true,
       admin: true,

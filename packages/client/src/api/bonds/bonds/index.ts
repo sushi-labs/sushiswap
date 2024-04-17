@@ -10,13 +10,13 @@ import {
   type BondMarketsQueryVariables,
   getBuiltGraphSDK,
 } from '@sushiswap/graph-client'
-import { getSteerVaultReserves, getTotalSupply } from '@sushiswap/steer-sdk'
-import { config } from '@sushiswap/viem-config'
+import { getTotalSupply, getVaultReserves } from '@sushiswap/steer-sdk'
 import {
   getChainIdAddressFromId,
   getIdFromChainIdAddress,
   isPromiseFulfilled,
 } from 'sushi'
+import { publicClientConfig } from 'sushi/config'
 import { type Address, createPublicClient, getAddress } from 'viem'
 import { type BondsApiSchema } from '../../../pure/bonds/bonds/schema'
 import { type Pools, getPools } from '../../../pure/pools/pools/pools'
@@ -87,14 +87,16 @@ async function getQuoteToken({
   )
 
   if (quoteVault) {
-    const client = createPublicClient(config[bond.chainId as BondChainId])
+    const client = createPublicClient(
+      publicClientConfig[bond.chainId as BondChainId],
+    )
     const vaultId = getIdFromChainIdAddress(
       bond.chainId,
       quoteVault.address as Address,
     )
 
     const [{ reserve0, reserve1 }, totalSupply] = await Promise.all([
-      getSteerVaultReserves({ client, vaultId }),
+      getVaultReserves({ client, vaultId }),
       getTotalSupply({ client, vaultId }),
     ])
 
@@ -102,7 +104,9 @@ async function getQuoteToken({
     const token1PriceUSD = prices[getAddress(quoteVault.token1.address)]
 
     if (!token0PriceUSD || !token1PriceUSD)
-      throw new Error(`Missing token prices for vaultId: ${vaultId}`)
+      throw new Error(
+        `Missing token prices for vaultId: ${vaultId} (${quoteVault.token0.address}, ${quoteVault.token1.address})`,
+      )
 
     const reserve0USD =
       (Number(reserve0) / 10 ** quoteVault.token0.decimals) * token0PriceUSD
@@ -299,7 +303,9 @@ export async function getBondsFromSubgraph(
         vaultsS,
       ] = await Promise.allSettled([
         getMarketsPrices({
-          client: createPublicClient(config[chainId]),
+          client: createPublicClient(
+            publicClientConfig[chainId as BondChainId],
+          ),
           marketIds,
         }),
         // getReferrerFees({

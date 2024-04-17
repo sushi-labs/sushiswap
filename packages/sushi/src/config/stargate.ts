@@ -1,22 +1,20 @@
-import { ChainId } from '../chain'
-import { Token } from '../currency/Token.js'
-import { Type } from '../currency/Type.js'
-import {
-  BUSD_ADDRESS,
-  DAI_ADDRESS,
-  FRAX_ADDRESS,
-  MAI_ADDRESS,
-  USDC_ADDRESS,
-  USDT_ADDRESS,
-} from '../currency/constants/token-addresses.js'
+import { ChainId } from '../chain/index.js'
 import {
   BUSD,
+  BUSD_ADDRESS,
   DAI,
+  DAI_ADDRESS,
   FRAX,
+  FRAX_ADDRESS,
   MAI,
+  MAI_ADDRESS,
+  Token,
+  Type,
   USDC,
+  USDC_ADDRESS,
   USDT,
-} from '../currency/constants/tokens.js'
+  USDT_ADDRESS,
+} from '../currency/index.js'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,
@@ -145,7 +143,7 @@ export const STARGATE_WBTC = {
 export const STARGATE_USDC_ADDRESS = {
   [ChainId.ETHEREUM]: USDC_ADDRESS[ChainId.ETHEREUM],
   [ChainId.AVALANCHE]: USDC_ADDRESS[ChainId.AVALANCHE],
-  [ChainId.POLYGON]: USDC_ADDRESS[ChainId.POLYGON],
+  [ChainId.POLYGON]: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
   [ChainId.ARBITRUM]: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
   [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
   // [ChainId.FANTOM]: USDC_ADDRESS[ChainId.FANTOM],
@@ -158,7 +156,13 @@ export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> =
   {
     [ChainId.ETHEREUM]: USDC[ChainId.ETHEREUM],
     [ChainId.AVALANCHE]: USDC[ChainId.AVALANCHE],
-    [ChainId.POLYGON]: USDC[ChainId.POLYGON],
+    [ChainId.POLYGON]: new Token({
+      chainId: ChainId.POLYGON,
+      address: STARGATE_USDC_ADDRESS[ChainId.POLYGON],
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USD Coin',
+    }),
     [ChainId.ARBITRUM]: new Token({
       chainId: ChainId.ARBITRUM,
       address: STARGATE_USDC_ADDRESS[ChainId.ARBITRUM],

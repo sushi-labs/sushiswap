@@ -14,6 +14,7 @@
   },
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
+  "type": "module",
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
@@ -31,22 +32,18 @@
   "dependencies": {
     "@cryptoalgebra/integral-core": "0.2.0",
     "@cryptoalgebra/integral-periphery": "0.2.0",
-    "@sentry/node": "7.92.0",
-    "@sushiswap/router": "workspace:*",
-    "@sushiswap/tines": "workspace:*",
-    "@sushiswap/v2-sdk": "workspace:*",
-    "@sushiswap/v3-sdk": "workspace:*",
+    "@sentry/node": "7.101.1",
     "@uniswap/v3-core": "1.0.1",
     "abitype": "0.9.8",
     "sushi": "workspace:*",
-    "viem": "1.21.4"
+    "viem": "2.8.14"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/node18": "18.2.2",
     "@tsconfig/strictest": "2.0.2",
-    "@types/node": "18",
+    "@types/node": "20",
     "jest": "29.7.0",
     "typescript": "5.2.2"
   }

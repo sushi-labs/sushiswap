@@ -1,14 +1,13 @@
 import { useCustomTokens } from '@sushiswap/hooks'
-import { useAllPrices } from '@sushiswap/react-query'
-import {
-  Position,
-  SushiSwapV3ChainId,
-  SushiSwapV3Pool,
-} from '@sushiswap/v3-sdk'
+import { useAllPrices, usePrices } from '@sushiswap/react-query'
 import { useQuery } from '@tanstack/react-query'
+import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
-import { Address } from 'wagmi'
+import { Position, SushiSwapV3Pool } from 'sushi/pool'
 
+import { useMemo } from 'react'
+import { Address } from 'viem'
+import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPool } from '../../pools'
 import {
   getTokenWithCacheQueryFn,
@@ -39,9 +38,45 @@ export const useConcentratedLiquidityPositions = ({
   enabled = true,
 }: UseConcentratedLiquidityPositionsParams) => {
   const { data: customTokens, hasToken } = useCustomTokens()
-  const { data: prices, isError: isPriceError } = useAllPrices()
 
-  return useQuery({
+  const {
+    data: allPrices,
+    isError: isAllPricesError,
+    isInitialLoading: isAllPricesInitialLoading,
+  } = useAllPrices({
+    enabled: chainIds.length > 1,
+  })
+  const {
+    data: chainPrices,
+    isError: isChainPricesError,
+    isInitialLoading: isChainPricesInitialLoading,
+  } = usePrices({
+    chainId: chainIds.length ? chainIds[0] : undefined,
+    enabled: chainIds.length === 1,
+  })
+
+  const prices = useMemo(() => {
+    if (chainIds.length > 1) {
+      return allPrices
+    }
+
+    if (chainIds.length === 1 && chainPrices) {
+      return {
+        [chainIds[0]]: chainPrices,
+      }
+    }
+  }, [allPrices, chainPrices, chainIds])
+  const isPriceInitialLoading =
+    isAllPricesInitialLoading || isChainPricesInitialLoading
+  const isPriceError = isAllPricesError || isChainPricesError
+
+  const config = useConfig()
+
+  const {
+    data: positions,
+    isError: isPositionsError,
+    isInitialLoading: isPositionsInitialLoading,
+  } = useQuery({
     queryKey: [
       'useConcentratedLiquidityPositions',
       { chainIds, account, prices },
@@ -50,6 +85,7 @@ export const useConcentratedLiquidityPositions = ({
       const data = await getConcentratedLiquidityPositions({
         account: account,
         chainIds,
+        config,
       })
 
       if (data && (prices || isPriceError)) {
@@ -61,12 +97,14 @@ export const useConcentratedLiquidityPositions = ({
                 hasToken,
                 customTokens,
                 address: el.token0,
+                config,
               }),
               getTokenWithCacheQueryFn({
                 chainId: el.chainId,
                 hasToken,
                 customTokens,
                 address: el.token1,
+                config,
               }),
             ])
 
@@ -86,6 +124,7 @@ export const useConcentratedLiquidityPositions = ({
               token0,
               token1,
               feeAmount: el.fee,
+              config,
             })) as SushiSwapV3Pool
 
             const position = new Position({
@@ -157,4 +196,10 @@ export const useConcentratedLiquidityPositions = ({
       account && chainIds && enabled && (prices || isPriceError),
     ),
   })
+
+  return {
+    data: positions,
+    isError: isPositionsError || isPriceError,
+    isInitialLoading: isPositionsInitialLoading || isPriceInitialLoading,
+  }
 }

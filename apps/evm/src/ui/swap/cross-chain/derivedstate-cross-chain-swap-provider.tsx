@@ -3,9 +3,9 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   useAccount,
-  useNetwork,
+  useConfig,
   useTokenWithCache,
-  watchNetwork,
+  watchAccount,
 } from '@sushiswap/wagmi'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -23,13 +23,8 @@ import {
 import { useCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { ChainId } from 'sushi/chain'
 import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
-import {
-  Amount,
-  Native,
-  Type,
-  defaultQuoteCurrency,
-  tryParseAmount,
-} from 'sushi/currency'
+import { defaultQuoteCurrency } from 'sushi/config'
+import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
 
@@ -86,8 +81,7 @@ const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
 > = ({ children }) => {
   const { push } = useRouter()
-  const { address } = useAccount()
-  const { chain } = useNetwork()
+  const { address, chain } = useAccount()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
@@ -273,18 +267,22 @@ const DerivedstateCrossChainSwapProvider: FC<
     keepPreviousData: false,
   })
 
+  const config = useConfig()
+
   useEffect(() => {
-    const unwatch = watchNetwork(({ chain }) => {
-      if (
-        !chain ||
-        chain.id === chainId0 ||
-        !isSushiXSwap2ChainId(chain.id as ChainId)
-      )
-        return
-      push(pathname, { scroll: false })
+    const unwatch = watchAccount(config, {
+      onChange: ({ chain }) => {
+        if (
+          !chain ||
+          chain.id === chainId0 ||
+          !isSushiXSwap2ChainId(chain.id as ChainId)
+        )
+          return
+        push(pathname, { scroll: false })
+      },
     })
     return () => unwatch()
-  }, [chainId0, pathname, push])
+  }, [config, chainId0, pathname, push])
 
   return (
     <DerivedStateCrossChainSwapContext.Provider

@@ -5,14 +5,8 @@ import { Button } from '@sushiswap/ui/components'
 import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useEffect, useState } from 'react'
 import {
-  ROUTE_PROCESSOR_3_1_ADDRESS,
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_3_ADDRESS,
-  ROUTE_PROCESSOR_ADDRESS,
-  isRouteProcessor3ChainId,
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessorChainId,
+  ROUTE_PROCESSOR_4_ADDRESS,
+  isRouteProcessor4ChainId,
 } from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
@@ -79,15 +73,9 @@ export const _SimpleSwapTradeButton: FC<{
                   id="approve-erc20"
                   amount={swapAmount}
                   contract={
-                    isRouteProcessor3_2ChainId(chainId)
-                      ? ROUTE_PROCESSOR_3_2_ADDRESS[chainId]
-                      : isRouteProcessor3_1ChainId(chainId)
-                        ? ROUTE_PROCESSOR_3_1_ADDRESS[chainId]
-                        : isRouteProcessor3ChainId(chainId)
-                          ? ROUTE_PROCESSOR_3_ADDRESS[chainId]
-                          : isRouteProcessorChainId(chainId)
-                            ? ROUTE_PROCESSOR_ADDRESS[chainId]
-                            : undefined
+                    isRouteProcessor4ChainId(chainId)
+                      ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
+                      : undefined
                   }
                 >
                   <Checker.Success tag={APPROVE_TAG_SWAP}>

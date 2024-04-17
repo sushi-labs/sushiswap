@@ -1,7 +1,6 @@
 'use client'
 
 import { GiftIcon } from '@heroicons/react-v1/outline'
-import { TridentChainId, isTridentChainId } from '@sushiswap/trident-sdk'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Chip } from '@sushiswap/ui/components/chip'
@@ -14,14 +13,17 @@ import {
 } from '@sushiswap/ui/components/dropdown-menu'
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
-import { isSushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useNetwork } from '@sushiswap/wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'
+import {
+  SushiSwapV3ChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 
 export const Hero: FC = () => {
-  const { chain } = useNetwork()
+  const { chain } = useAccount()
   const chainId = chain?.id || ChainId.ETHEREUM
   return (
     <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-start mb-12">
@@ -55,9 +57,7 @@ export const Hero: FC = () => {
                     ? `/pool/add?chainId=${chainId}`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
                       ? `/pool/add/v2/${chainId}`
-                      : isTridentChainId(chainId as TridentChainId)
-                        ? `/pool/add/trident/${chainId}`
-                        : ''
+                      : ''
                 }
               >
                 I want to create a position
@@ -105,22 +105,6 @@ export const Hero: FC = () => {
                         </div>
                         <p className="text-sm leading-snug text-muted-foreground">
                           Provide liquidity to a V2 liquidity pool.
-                        </p>
-                      </LinkInternal>
-                    </DropdownMenuItem>
-                  ) : null}
-                  {isTridentChainId(chainId as ChainId) ? (
-                    <DropdownMenuItem asChild>
-                      <LinkInternal
-                        href={`/pool/add/trident/${chainId}`}
-                        className="flex flex-col !items-start gap-1 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-1 font-medium leading-none">
-                          Trident Position{' '}
-                          <Chip variant="secondary">Deprecated 💀</Chip>
-                        </div>
-                        <p className="text-sm leading-snug text-muted-foreground">
-                          Provide liquidity to a Trident liquidity pool.
                         </p>
                       </LinkInternal>
                     </DropdownMenuItem>
