@@ -37,7 +37,7 @@ async function start() {
   )
   extractorClient = client
   if (
-    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] !== true ||
+    ROUTER_CONFIG[CHAIN_ID]?.['priceIncrementalMode'] === false ||
     ROUTER_CONFIG[CHAIN_ID]?.['checkPricesIncrementalModeCorrectness'] === true
   )
     updatePrices(client)

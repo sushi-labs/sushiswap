@@ -22,7 +22,7 @@ export const pricesHandler = (req: Request, res: Response) => {
   })
   res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
   if (
-    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
+    ROUTER_CONFIG[CHAIN_ID]?.['priceIncrementalMode'] !== false &&
     oldPrices !== true
   ) {
     res.json(
@@ -41,7 +41,7 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
   )
   res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
   if (
-    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
+    ROUTER_CONFIG[CHAIN_ID]?.['priceIncrementalMode'] !== false &&
     oldPrices !== true
   ) {
     if (reasoning) {
