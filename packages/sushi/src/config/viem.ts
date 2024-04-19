@@ -558,7 +558,8 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=scroll&dkey=${drpcId}`,
   ),
   [ChainId.FILECOIN]: http(
-    `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
+    // `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
+    'https://fil-mainnet-1.rpc.laconic.com/rpc/v1',
   ),
   [ChainId.ZETACHAIN]: http(
     `https://lb.drpc.org/ogrpc?network=zeta-chain&dkey=${drpcId}`,
