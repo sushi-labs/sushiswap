@@ -136,8 +136,8 @@ export class UniV3Extractor {
               `${arg.correctPool ? 'pool was updated ' : ''}` +
               `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,
             safeSerialize({
-              oldPool: arg.ethalonPool,
-              newPool: arg.correctPool,
+              oldPool: arg.ethalonPool.debugState(),
+              newPool: arg.correctPool?.debugState(),
             }),
             false,
           )
