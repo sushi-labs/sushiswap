@@ -218,10 +218,10 @@
     "@types/lodash.flatmap": "4.5.9",
     "@types/numeral": "2.0.3",
     "@types/seedrandom": "3.0.1",
-    "@wagmi/core": "2.6.9",
+    "@wagmi/core": "2.6.17",
     "ts-node": "10.9.2",
     "typescript": "5.2.2",
-    "viem": "2.8.13",
+    "viem": "2.8.14",
     "vitest": "0.34.6",
     "zod": "3.21.4"
   },

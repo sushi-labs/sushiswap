@@ -1,16 +1,15 @@
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_V3_ENABLED_NETWORKS,
-  SUSHISWAP_V3_SUBGRAPH_NAME,
-  SushiSwapV3ChainId,
+  SUSHISWAP_V3_SUBGRAPH_URL,
+  SushiSwapV3ChainId
 } from '@sushiswap/graph-config'
 
+import { isPromiseFulfilled } from 'sushi/validate'
 import {
   Query,
   QueryResolvers,
   SUSHISWAP_V3_Factory,
 } from '../../.graphclient/index.js'
-import { isPromiseFulfilled } from 'sushi/validate'
 
 export const v3factoriesByChainIds: QueryResolvers['v3factoriesByChainIds'] =
   async (
@@ -31,16 +30,15 @@ export const v3factoriesByChainIds: QueryResolvers['v3factoriesByChainIds'] =
             context: {
               ...context,
               chainId,
-              subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
-              subgraphHost: SUBGRAPH_HOST[chainId],
+              url: SUSHISWAP_V3_SUBGRAPH_URL[chainId]
             },
             info,
           }).then((factories: SUSHISWAP_V3_Factory[]) => {
             return factories?.length > 0
               ? factories.map((factory) => ({
-                  ...factory,
-                  chainId,
-                }))
+                ...factory,
+                chainId,
+              }))
               : []
           })
         }),

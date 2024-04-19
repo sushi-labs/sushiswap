@@ -11,6 +11,7 @@ import { LiquidityProviders, PoolCode } from 'sushi/router'
 import { Address, Log, PublicClient } from 'viem'
 import { Counter } from './Counter.js'
 import { LogFilter2 } from './LogFilter2.js'
+import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import {
@@ -20,7 +21,6 @@ import {
 } from './QualityChecker.js'
 import { TokenManager } from './TokenManager.js'
 import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher.js'
-import { warnLog } from './WarnLog.js'
 
 export type FeeSpacingMap = Record<number, number>
 
@@ -135,7 +135,7 @@ export class UniV3Extractor {
           arg.status !== PoolSyncState.Match &&
           arg.status !== PoolSyncState.ReservesMismatch
         )
-          warnLog(
+          Logger.error(
             this.multiCallAggregator.chainId,
             `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
               `${arg.correctPool ? 'pool was updated ' : ''}` +
@@ -162,15 +162,14 @@ export class UniV3Extractor {
               logs[logs.length - 1].blockNumber || 0,
             )
         } catch (e) {
-          warnLog(
+          Logger.error(
             this.multiCallAggregator.chainId,
             `Block ${blockNumber} log process error`,
-            'error',
-            `${e}`,
+            e,
           )
         }
       } else {
-        warnLog(
+        Logger.error(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
@@ -219,6 +218,12 @@ export class UniV3Extractor {
             promises.length
           } pools failed (${Math.round(performance.now() - startTime)}ms)`,
         )
+        if (failed > 0) {
+          Logger.error(
+            this.multiCallAggregator.chainId,
+            `${failed}/${promises.length} pools load failed during ExtractorV3 starting`,
+          )
+        }
       })
       this.consoleLog(`${cachedPools.size} pools were taken from cache`)
       this.consoleLog(
@@ -237,10 +242,11 @@ export class UniV3Extractor {
         return pool.processLog(l)
       } else this.addPoolByAddress(l.address)
       return 'UnknPool'
-    } catch (_e) {
-      warnLog(
+    } catch (e) {
+      Logger.error(
         this.multiCallAggregator.chainId,
         `Log processing for pool ${l.address} throwed an exception`,
+        e,
       )
       return 'Exception!!!'
     }

@@ -85,6 +85,7 @@ export function makeAPI02Object(
       amountOutMin: rpParams.amountOutMin.toString(),
       to: rpParams.to,
       routeCode: rpParams.routeCode,
+      txdata: rpParams.data,
     }
     if (rpParams.value !== undefined)
       APIObj.routeProcessorArgs.value = rpParams.value.toString()

@@ -1,10 +1,10 @@
-// @ts-check
-/** @type {import('next-seo').DefaultSeoProps} */
-export default {
+import type { DefaultSeoProps } from 'next-seo'
+
+const seo = {
   titleTemplate: '%s | Sushi',
   title: 'Blog',
   defaultTitle: 'Blog',
-  description: 'All your DeFi needs in one ecosystem.',
+  description: 'Trade on 30+ chains with Sushi',
   twitter: {
     handle: '@sushiswap',
     site: '@sushiswap',
@@ -15,9 +15,18 @@ export default {
     type: 'website',
     title: 'Blog',
     description:
-      'Be a DeFi Chef with Sushi. Swap, earn, stack yields, lend, borrow, leverage all on one decentralized, community driven platform.',
-    images: [],
+      'A leading multi-chain DEX deployed on over 30 blockchains, featuring a unique cross-chain swap - SushiXSwap.',
+    images: [
+      {
+        url: 'https://cdn.sushi.com/image/upload/v1712760987/Sushi_Logo_Colour_Fill_400_fe38d9418b.png',
+        width: 400,
+        height: 432,
+        alt: 'Sushi',
+      },
+    ],
     site_name: 'Sushi',
     // locale: 'en_IE',
   },
-}
+} as const satisfies DefaultSeoProps
+
+export default seo

@@ -12,7 +12,6 @@ import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_INIT_CODE_HASH,
   SUSHISWAP_V3_TICK_LENS,
-  SpecialExtractorClientConfig,
   type SushiSwapV2ChainId,
   type SushiSwapV3ChainId,
   UNISWAP_V2_FACTORY_ADDRESS,
@@ -23,9 +22,14 @@ import {
   publicClientConfig,
 } from 'sushi/config'
 import { LiquidityProviders } from 'sushi/router'
-import { type Address, PublicClient, createPublicClient } from 'viem'
-
-const RPC_MAX_CALLS_IN_ONE_BATCH = 1000
+import {
+  http,
+  type Address,
+  Chain,
+  PublicClient,
+  type PublicClientConfig,
+  createPublicClient,
+} from 'viem'
 
 function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
   return {
@@ -62,13 +66,27 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   } as const
 }
 
+function extractorClientConfig(chainId: ChainId): PublicClientConfig {
+  const url = publicClientConfig[chainId]?.transport({})?.value?.url
+  if (url === undefined) throw new Error('extractorClientConfig: Unknown url')
+  return {
+    chain: publicClientConfig[chainId].chain as Chain,
+    transport: http(url, {
+      timeout: 120_000,
+      // onFetchResponse(response: Response) {
+      //   console.log(response.url, response.headers.get('x-drpc-trace-id'))
+      // },
+    }),
+  }
+}
+
 // ! TODO: Fix casts when viem is updated
 export const EXTRACTOR_CONFIG: Record<
   ExtractorSupportedChainId,
   ExtractorConfig
 > = {
   [ChainId.ARBITRUM]: {
-    client: createPublicClient(publicClientConfig[ChainId.ARBITRUM]),
+    client: createPublicClient(extractorClientConfig(ChainId.ARBITRUM)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.ARBITRUM),
       {
@@ -98,10 +116,11 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 300,
     logType: LogFilterType.Native,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    maxCallsInOneBatch: 200,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.ARBITRUM_NOVA]: {
-    client: createPublicClient(publicClientConfig[ChainId.ARBITRUM_NOVA]),
+    client: createPublicClient(extractorClientConfig(ChainId.ARBITRUM_NOVA)),
     factoriesV2: [sushiswapV2Factory(ChainId.ARBITRUM_NOVA)],
     factoriesV3: [sushiswapV3Factory(ChainId.ARBITRUM_NOVA)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ARBITRUM_NOVA],
@@ -112,7 +131,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.AVALANCHE]: {
-    client: createPublicClient(publicClientConfig[ChainId.AVALANCHE]),
+    client: createPublicClient(extractorClientConfig(ChainId.AVALANCHE)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.AVALANCHE),
       {
@@ -136,7 +155,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.BASE]: {
     client: createPublicClient(
-      publicClientConfig[ChainId.BASE],
+      extractorClientConfig(ChainId.BASE),
     ) as PublicClient,
     factoriesV2: [
       sushiswapV2Factory(ChainId.BASE),
@@ -159,9 +178,10 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
+    maxCallsInOneBatch: 200,
   },
   [ChainId.BOBA]: {
-    client: createPublicClient(publicClientConfig[ChainId.BOBA]),
+    client: createPublicClient(extractorClientConfig(ChainId.BOBA)),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
     factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
@@ -172,7 +192,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BOBA_BNB]: {
-    client: createPublicClient(publicClientConfig[ChainId.BOBA_BNB]),
+    client: createPublicClient(extractorClientConfig(ChainId.BOBA_BNB)),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA_BNB)],
     factoriesV3: [],
     tickHelperContractV3:
@@ -184,7 +204,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BSC]: {
-    client: createPublicClient(SpecialExtractorClientConfig[ChainId.BSC]),
+    client: createPublicClient(extractorClientConfig(ChainId.BSC)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.BSC),
       {
@@ -227,13 +247,12 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 1000,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
     maxBatchesSimultaniously: 5,
     experimantalPoolIncrementalMode: true, // Only changed pools are sent from Extractor to Router
     checkPoolIncrementalModeCorrectness: true, // if experimantalPoolIncrementalMode then make correctness check (resourcefull)
   },
   [ChainId.BTTC]: {
-    client: createPublicClient(publicClientConfig[ChainId.BTTC]),
+    client: createPublicClient(extractorClientConfig(ChainId.BTTC)),
     factoriesV2: [sushiswapV2Factory(ChainId.BTTC)],
     factoriesV3: [sushiswapV3Factory(ChainId.BTTC)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BTTC],
@@ -245,7 +264,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.CELO]: {
     client: createPublicClient(
-      publicClientConfig[ChainId.CELO],
+      extractorClientConfig(ChainId.CELO),
     ) as unknown as PublicClient,
     factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
@@ -258,7 +277,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.CORE]: {
-    client: createPublicClient(publicClientConfig[ChainId.CORE]),
+    client: createPublicClient(extractorClientConfig(ChainId.CORE)),
     factoriesV2: [sushiswapV2Factory(ChainId.CORE)],
     factoriesV3: [sushiswapV3Factory(ChainId.CORE)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.CORE],
@@ -269,7 +288,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.ETHEREUM]: {
-    client: createPublicClient(SpecialExtractorClientConfig[ChainId.ETHEREUM]),
+    client: createPublicClient(extractorClientConfig(ChainId.ETHEREUM)),
     factoriesV2: [
       {
         address: UNISWAP_V2_FACTORY_ADDRESS,
@@ -311,11 +330,10 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
     maxBatchesSimultaniously: 5,
   },
   [ChainId.FANTOM]: {
-    client: createPublicClient(publicClientConfig[ChainId.FANTOM]),
+    client: createPublicClient(extractorClientConfig(ChainId.FANTOM)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.FANTOM),
       {
@@ -357,7 +375,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.FUSE]: {
-    client: createPublicClient(publicClientConfig[ChainId.FUSE]),
+    client: createPublicClient(extractorClientConfig(ChainId.FUSE)),
     factoriesV2: [sushiswapV2Factory(ChainId.FUSE)],
     factoriesV3: [sushiswapV3Factory(ChainId.FUSE)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FUSE],
@@ -368,7 +386,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.GNOSIS]: {
-    client: createPublicClient(publicClientConfig[ChainId.GNOSIS]),
+    client: createPublicClient(extractorClientConfig(ChainId.GNOSIS)),
     factoriesV2: [sushiswapV2Factory(ChainId.GNOSIS)],
     factoriesV3: [sushiswapV3Factory(ChainId.GNOSIS)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.GNOSIS],
@@ -380,7 +398,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.OPTIMISM]: {
     client: createPublicClient(
-      publicClientConfig[ChainId.OPTIMISM],
+      extractorClientConfig(ChainId.OPTIMISM),
     ) as PublicClient,
     factoriesV2: [
       sushiswapV2Factory(ChainId.OPTIMISM),
@@ -401,10 +419,9 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON]: {
-    client: createPublicClient(publicClientConfig[ChainId.POLYGON]),
+    client: createPublicClient(extractorClientConfig(ChainId.POLYGON)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.POLYGON),
       {
@@ -454,10 +471,9 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 100,
     logging: true,
     maxBatchesSimultaniously: 5,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
   },
   [ChainId.POLYGON_ZKEVM]: {
-    client: createPublicClient(publicClientConfig[ChainId.POLYGON_ZKEVM]),
+    client: createPublicClient(extractorClientConfig(ChainId.POLYGON_ZKEVM)),
     factoriesV2: [
       // sushiswapV2Factory(ChainId.POLYGON_ZKEVM)
     ],
@@ -481,7 +497,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
 
   [ChainId.SCROLL]: {
-    client: createPublicClient(publicClientConfig[ChainId.SCROLL]),
+    client: createPublicClient(extractorClientConfig(ChainId.SCROLL)),
     factoriesV2: [sushiswapV2Factory(ChainId.SCROLL)],
     factoriesV3: [sushiswapV3Factory(ChainId.SCROLL)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
@@ -492,7 +508,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.LINEA]: {
-    client: createPublicClient(publicClientConfig[ChainId.LINEA]),
+    client: createPublicClient(extractorClientConfig(ChainId.LINEA)),
     // factoriesV2: [sushiswapV2Factory(ChainId.LINEA)], // no v2 on linea?
     factoriesV3: [
       sushiswapV3Factory(ChainId.LINEA),
@@ -506,7 +522,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.FILECOIN]: {
-    client: createPublicClient(SpecialExtractorClientConfig[ChainId.FILECOIN]),
+    client: createPublicClient(extractorClientConfig(ChainId.FILECOIN)),
     factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
     factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
@@ -515,9 +531,10 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
+    maxCallsInOneBatch: 60,
   },
   [ChainId.METIS]: {
-    client: createPublicClient(publicClientConfig[ChainId.METIS]),
+    client: createPublicClient(extractorClientConfig(ChainId.METIS)),
     factoriesV2: [sushiswapV2Factory(ChainId.METIS)],
     factoriesV3: [sushiswapV3Factory(ChainId.METIS)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.METIS],
@@ -528,7 +545,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.HAQQ]: {
-    client: createPublicClient(publicClientConfig[ChainId.HAQQ]),
+    client: createPublicClient(extractorClientConfig(ChainId.HAQQ)),
     factoriesV2: [sushiswapV2Factory(ChainId.HAQQ)],
     factoriesV3: [sushiswapV3Factory(ChainId.HAQQ)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.HAQQ],
@@ -539,7 +556,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.HARMONY]: {
-    client: createPublicClient(publicClientConfig[ChainId.HARMONY]),
+    client: createPublicClient(extractorClientConfig(ChainId.HARMONY)),
     factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
     // No V3 on Harmony?
     factoriesV3: [],
@@ -552,7 +569,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.KAVA]: {
-    client: createPublicClient(publicClientConfig[ChainId.KAVA]),
+    client: createPublicClient(extractorClientConfig(ChainId.KAVA)),
     factoriesV2: [sushiswapV2Factory(ChainId.KAVA)],
     factoriesV3: [
       sushiswapV3Factory(ChainId.KAVA),
@@ -571,7 +588,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.MOONBEAM]: {
-    client: createPublicClient(publicClientConfig[ChainId.MOONBEAM]),
+    client: createPublicClient(extractorClientConfig(ChainId.MOONBEAM)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.MOONBEAM),
       {
@@ -595,7 +612,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.MOONRIVER]: {
-    client: createPublicClient(publicClientConfig[ChainId.MOONRIVER]),
+    client: createPublicClient(extractorClientConfig(ChainId.MOONRIVER)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.MOONRIVER),
       {
@@ -615,7 +632,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.TELOS]: {
-    client: createPublicClient(publicClientConfig[ChainId.TELOS]),
+    client: createPublicClient(extractorClientConfig(ChainId.TELOS)),
     factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
     factoriesV3: [],
     factoriesAlgebra: [
@@ -631,11 +648,11 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    maxCallsInOneBatch: RPC_MAX_CALLS_IN_ONE_BATCH,
+    maxCallsInOneBatch: 100,
   },
 
   [ChainId.THUNDERCORE]: {
-    client: createPublicClient(publicClientConfig[ChainId.THUNDERCORE]),
+    client: createPublicClient(extractorClientConfig(ChainId.THUNDERCORE)),
     factoriesV2: [sushiswapV2Factory(ChainId.THUNDERCORE)],
     factoriesV3: [sushiswapV3Factory(ChainId.THUNDERCORE)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.THUNDERCORE],
@@ -646,7 +663,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.ZETACHAIN]: {
-    client: createPublicClient(publicClientConfig[ChainId.ZETACHAIN]),
+    client: createPublicClient(extractorClientConfig(ChainId.ZETACHAIN)),
     factoriesV2: [sushiswapV2Factory(ChainId.ZETACHAIN)],
     factoriesV3: [sushiswapV3Factory(ChainId.ZETACHAIN)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ZETACHAIN],
@@ -657,7 +674,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.CRONOS]: {
-    client: createPublicClient(publicClientConfig[ChainId.CRONOS]),
+    client: createPublicClient(extractorClientConfig(ChainId.CRONOS)),
     factoriesV2: [
       {
         address: '0x3B44B2a187a7b3824131F8db5a74194D0a42Fc15' as Address,
@@ -677,7 +694,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   [ChainId.BLAST]: {
-    client: createPublicClient(publicClientConfig[ChainId.BLAST]),
+    client: createPublicClient(extractorClientConfig(ChainId.BLAST)),
     factoriesV2: [
       sushiswapV2Factory(ChainId.BLAST),
       {
@@ -754,7 +771,7 @@ export const EXTRACTOR_CONFIG: Record<
     logging: true,
   },
   // [ChainId.RONIN]: {
-  //   client: createPublicClient(publicClientConfig[ChainId.RONIN]),
+  //   client: createPublicClient(extractorClientConfig(ChainId.RONIN]),
   //   factoriesV2: [],
   //   factoriesV3: [],
   //   tickHelperContract: '0x0000000000000000000000000000000000000000' as Address,

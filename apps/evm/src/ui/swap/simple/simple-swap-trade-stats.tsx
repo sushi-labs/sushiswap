@@ -88,6 +88,17 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
+        {trade?.tokenTax ? (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700 dark:text-slate-400">
+              Token tax
+            </span>
+            <span className="text-sm font-semibold text-yellow text-right">
+              {trade.tokenTax.toPercentageString()}
+            </span>
+          </div>
+        ) : null}
+
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Network fee

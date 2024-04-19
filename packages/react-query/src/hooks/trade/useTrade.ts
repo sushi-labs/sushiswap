@@ -2,11 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
-import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-  isRouteProcessor4ChainId,
-} from 'sushi/config'
+import { isRouteProcessor4ChainId } from 'sushi/config'
 import {
   Amount,
   Native,
@@ -14,7 +10,7 @@ import {
   type Type,
   WNATIVE_ADDRESS,
 } from 'sushi/currency'
-import { Percent, ZERO } from 'sushi/math'
+import { Fraction, Percent, ZERO } from 'sushi/math'
 import { type Address, type Hex, stringify } from 'viem'
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
@@ -33,10 +29,6 @@ const API_BASE_URL =
 function getApiVersion(chainId: ChainId) {
   if (isRouteProcessor4ChainId(chainId)) {
     return '/v4'
-  } else if (isRouteProcessor3_2ChainId(chainId)) {
-    return '/v3.2'
-  } else if (isRouteProcessor3_1ChainId(chainId)) {
-    return '/v3.1'
   }
   return ''
 }
@@ -132,6 +124,7 @@ export const useTrade = (variables: UseTradeParams) => {
     slippagePercentage,
     carbonOffset,
     gasPrice,
+    tokenTax,
   } = variables
   const { data: price } = usePrice({
     chainId,
@@ -143,7 +136,19 @@ export const useTrade = (variables: UseTradeParams) => {
       // console.log('data.args', data?.args)
       if (data && amount && data.route && fromToken && toToken) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
-        const amountOut = Amount.fromRawAmount(toToken, data.route.amountOutBI)
+        const amountOut = Amount.fromRawAmount(
+          toToken,
+          new Fraction(data.route.amountOutBI).multiply(
+            tokenTax ? new Percent(1).subtract(tokenTax) : 1,
+          ).quotient,
+        )
+        const minAmountOut = Amount.fromRawAmount(
+          toToken,
+          slippageAmount(
+            amountOut,
+            new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+          )[0],
+        )
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         let writeArgs: UseTradeReturnWriteArgs = data?.args
@@ -151,7 +156,7 @@ export const useTrade = (variables: UseTradeParams) => {
               data.args.tokenIn as Address,
               BigInt(data.args.amountIn),
               data.args.tokenOut as Address,
-              data.args.amountOutMin,
+              minAmountOut.quotient,
               data.args.to as Address,
               data.args.routeCode as Hex,
             ] as const)
@@ -188,13 +193,7 @@ export const useTrade = (variables: UseTradeParams) => {
             : new Percent(0),
           amountIn,
           amountOut,
-          minAmountOut: Amount.fromRawAmount(
-            toToken,
-            slippageAmount(
-              amountOut,
-              new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-            )[0],
-          ),
+          minAmountOut,
           gasSpent: gasSpent?.toSignificant(4),
           gasSpentUsd:
             price && gasSpent
@@ -206,6 +205,7 @@ export const useTrade = (variables: UseTradeParams) => {
             : 'processRoute',
           writeArgs,
           value,
+          tokenTax,
         }
       }
 
@@ -221,6 +221,7 @@ export const useTrade = (variables: UseTradeParams) => {
         route: undefined,
         functionName: 'processRoute',
         value: undefined,
+        tokenTax: undefined,
       }
     },
     [
@@ -232,6 +233,7 @@ export const useTrade = (variables: UseTradeParams) => {
       slippagePercentage,
       toToken,
       gasPrice,
+      tokenTax,
     ],
   )
 

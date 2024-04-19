@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BENTOBOX_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from 'sushi/validate'
 
 import { Query } from '../../.graphclient/index.js'
@@ -15,8 +15,8 @@ export const rebasesByChainIds = async (
   return Promise.allSettled<Query['rebasesByChainIds'][]>(
     args.chainIds
       .filter(
-        (chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME =>
-          chainId in BENTOBOX_SUBGRAPH_NAME,
+        (chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_URL =>
+          chainId in BENTOBOX_SUBGRAPH_URL,
       )
       .map((chainId) => {
         return context.BentoBox.Query.rebases({
@@ -25,8 +25,7 @@ export const rebasesByChainIds = async (
           context: {
             ...context,
             chainId,
-            subgraphName: BENTOBOX_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: BENTOBOX_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((rebases: BentoBoxTypes.Rebase[]) => {
