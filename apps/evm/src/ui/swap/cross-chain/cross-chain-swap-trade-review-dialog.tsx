@@ -352,9 +352,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         dest: StepState.Success,
       })
     }
-    if (axelarScanData?.status === 'executed') {
+    if (axelarScanData?.status === 'partial_success') {
       setStepStates((prev) => ({
         ...prev,
+        bridge: StepState.Success,
         dest: StepState.PartialSuccess,
       }))
     }
@@ -606,6 +607,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                   adapter={adapter}
                   txHash={hash}
                   dstTxHash={getDstTxHash(adapter, lzData, axelarScanData)}
+                  tradeRef={tradeRef}
                 />
               </div>
             </DialogDescription>

@@ -10,6 +10,7 @@ import {
   SushiXSwap2Adapter,
   TransactionType,
 } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
+import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
 import { Chain } from 'sushi/chain'
 import { STARGATE_TOKEN } from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
@@ -24,6 +25,7 @@ interface ConfirmationDialogContent {
   bridgeUrl?: string
   adapter?: SushiXSwap2Adapter
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
+  tradeRef: React.MutableRefObject<UseCrossChainTradeReturn | null>
 }
 
 export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
@@ -32,6 +34,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   adapter,
   dstTxHash,
   dialogState,
+  tradeRef,
 }) => {
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
@@ -104,8 +107,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   if (dialogState.dest === StepState.PartialSuccess) {
     return (
       <>
-        We {`couldn't`} swap {trade?.dstBridgeToken?.symbol} into{' '}
-        {token1?.symbol}, {trade?.dstBridgeToken?.symbol} has been send to{' '}
+        We {`couldn't`} swap {tradeRef?.current?.dstBridgeToken?.symbol} into{' '}
+        {token1?.symbol}, {tradeRef?.current?.dstBridgeToken?.symbol} has been
+        send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
             <a
