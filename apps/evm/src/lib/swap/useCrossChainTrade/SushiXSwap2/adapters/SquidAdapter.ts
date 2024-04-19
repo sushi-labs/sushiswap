@@ -17,6 +17,7 @@ import {
 } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import {
+  Hex,
   WriteContractParameters,
   decodeFunctionData,
   encodeAbiParameters,
@@ -55,7 +56,7 @@ export const encodeSquidBridgeParams = ({
   callData,
 }: {
   srcBridgeToken: Token
-  callData: `0x${string}`
+  callData: Hex
 }) => {
   return encodeAbiParameters(parseAbiParameters('address, bytes'), [
     srcBridgeToken.address,

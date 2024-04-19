@@ -64,11 +64,14 @@ export const useStargateCrossChainTrade = ({
     [enabled, token0, token1],
   )
 
+  // has swap on source chain
   const isSrcSwap = Boolean(
     token0 &&
       bridgePath?.srcBridgeToken &&
       !token0.equals(bridgePath.srcBridgeToken),
   )
+
+  // has swap on destination chain
   const isDstSwap = Boolean(
     token1 &&
       bridgePath?.dstBridgeToken &&

@@ -602,18 +602,10 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
               <div>
                 <ConfirmationDialogContent
                   dialogState={stepStates}
-                  bridgeUrl={
-                    adapter === SushiXSwap2Adapter.Stargate
-                      ? lzData?.link
-                      : axelarScanData?.link
-                  }
+                  bridgeUrl={getBridgeUrl(adapter, lzData, axelarScanData)}
                   adapter={adapter}
                   txHash={hash}
-                  dstTxHash={
-                    adapter === SushiXSwap2Adapter.Stargate
-                      ? lzData?.dstTxHash
-                      : axelarScanData?.dstTxHash
-                  }
+                  dstTxHash={getDstTxHash(adapter, lzData, axelarScanData)}
                 />
               </div>
             </DialogDescription>
@@ -645,3 +637,19 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     </DialogProvider>
   )
 }
+
+const getBridgeUrl = (
+  adapter: SushiXSwap2Adapter | undefined,
+  lzData: Awaited<ReturnType<typeof useLayerZeroScanLink>>['data'],
+  axelarScanData: Awaited<ReturnType<typeof useAxelarScanLink>>['data'],
+) =>
+  adapter === SushiXSwap2Adapter.Stargate ? lzData?.link : axelarScanData?.link
+
+const getDstTxHash = (
+  adapter: SushiXSwap2Adapter | undefined,
+  lzData: Awaited<ReturnType<typeof useLayerZeroScanLink>>['data'],
+  axelarScanData: Awaited<ReturnType<typeof useAxelarScanLink>>['data'],
+) =>
+  adapter === SushiXSwap2Adapter.Stargate
+    ? lzData?.dstTxHash
+    : axelarScanData?.dstTxHash

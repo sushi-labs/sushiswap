@@ -96,28 +96,7 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
             <ArrowTopRightOnSquareIcon width={16} height={16} />
           </a>
         </Button>{' '}
-        <span className="flex items-center gap-1">
-          powered by{' '}
-          {adapter === SushiXSwap2Adapter.Stargate ? (
-            <>
-              <div className="min-h-4 min-w-4">
-                <Currency.Icon
-                  currency={STARGATE_TOKEN}
-                  width={16}
-                  height={16}
-                />
-              </div>{' '}
-              Stargate
-            </>
-          ) : (
-            <>
-              <div className="min-h-4 min-w-4">
-                <SquidIcon width={16} height={16} />
-              </div>{' '}
-              Squid
-            </>
-          )}
-        </span>
+        <CrossChainAdapter adapter={adapter} />
       </>
     )
   }
@@ -190,6 +169,31 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   }
 
   return <span />
+}
+
+const CrossChainAdapter = ({
+  adapter,
+}: { adapter: SushiXSwap2Adapter | undefined }) => {
+  return (
+    <span className="flex items-center gap-1">
+      powered by{' '}
+      {adapter === SushiXSwap2Adapter.Stargate ? (
+        <>
+          <div className="min-h-4 min-w-4">
+            <Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />
+          </div>{' '}
+          Stargate
+        </>
+      ) : (
+        <>
+          <div className="min-h-4 min-w-4">
+            <SquidIcon width={16} height={16} />
+          </div>{' '}
+          Squid
+        </>
+      )}
+    </span>
+  )
 }
 
 export enum StepState {

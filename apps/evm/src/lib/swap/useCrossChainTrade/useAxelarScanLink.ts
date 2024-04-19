@@ -1,9 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
-import {
-  SQUID_ADAPTER_SUPPORTED_CHAIN_IDS,
-  SquidAdapterChainId,
-} from 'sushi/config'
 import { useSquid } from './useSquid'
 
 export const useAxelarScanLink = ({
@@ -24,16 +20,7 @@ export const useAxelarScanLink = ({
   return useQuery({
     queryKey: ['axelarScanLink', { txHash, network0, network1, tradeId }],
     queryFn: async () => {
-      if (
-        txHash &&
-        SQUID_ADAPTER_SUPPORTED_CHAIN_IDS.includes(
-          network0 as SquidAdapterChainId,
-        ) &&
-        SQUID_ADAPTER_SUPPORTED_CHAIN_IDS.includes(
-          network1 as SquidAdapterChainId,
-        ) &&
-        squid
-      ) {
+      if (txHash && squid) {
         return squid.getStatus({ transactionId: txHash }).then((data) => ({
           link: data.axelarTransactionUrl,
           status: data.squidTransactionStatus,

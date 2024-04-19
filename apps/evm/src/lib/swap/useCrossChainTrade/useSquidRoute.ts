@@ -15,7 +15,7 @@ export const useSquidRoute = (
       return routeResponse?.route
     },
     enabled: enabled && Boolean(squid && params),
-    staleTime: 10000,
+    refetchInterval: 10000,
     retry: false,
   })
 }

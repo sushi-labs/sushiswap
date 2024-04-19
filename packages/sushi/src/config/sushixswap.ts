@@ -37,7 +37,7 @@ export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
   ChainId.FANTOM,
   ChainId.LINEA,
-  ChainId.KAVA,
+  // ChainId.KAVA,
   // ChainId.METIS,
   ChainId.MOONBEAM,
   ChainId.CELO,
@@ -57,7 +57,7 @@ export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.FANTOM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.LINEA]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  [ChainId.KAVA]: '0xD5607d184b1D6ecbA94A07c217497FE9346010D9',
+  // [ChainId.KAVA]: '0xD5607d184b1D6ecbA94A07c217497FE9346010D9',
   // [ChainId.METIS]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.MOONBEAM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.CELO]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
@@ -77,10 +77,6 @@ export const STARGATE_ADAPTER_SUPPORTED_CHAIN_IDS = [
   ChainId.ARBITRUM,
   ChainId.OPTIMISM,
   ChainId.BASE,
-  // ChainId.FANTOM,
-  // ChainId.LINEA,
-  // ChainId.KAVA,
-  // ChainId.METIS,
 ] as const
 
 export type StargateAdapterChainId =

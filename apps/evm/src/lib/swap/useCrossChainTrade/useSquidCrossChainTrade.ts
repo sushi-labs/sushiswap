@@ -14,7 +14,7 @@ import { Amount, Native, Token, Type, axlUSDC } from 'sushi/currency'
 import { Percent, ZERO_PERCENT } from 'sushi/math'
 import { RouterLiquiditySource } from 'sushi/router'
 import { RToken } from 'sushi/tines'
-import { encodeFunctionData, stringify } from 'viem'
+import { Hex, encodeFunctionData, stringify } from 'viem'
 import {
   TransactionType,
   decodeSquidRouterCallData,
@@ -61,12 +61,14 @@ export const useSquidCrossChainTrade = ({
           }
         : undefined
 
+    // has swap on source chain
     const isSrcSwap = Boolean(
       token0 &&
         bridgePath?.srcBridgeToken &&
         !token0.equals(bridgePath.srcBridgeToken),
     )
 
+    // has swap on destination chain
     const isDstSwap = Boolean(
       token1 &&
         bridgePath?.dstBridgeToken &&
@@ -120,38 +122,36 @@ export const useSquidCrossChainTrade = ({
     },
   })
 
-  const squidRouteRequest = useMemo(
-    () =>
-      enabled
-        ? getSquidRouteRequest({
-            token0,
-            token1,
-            amount,
-            fromAddress: address,
-            toAddress: recipient,
-            bridgePath,
-            slippagePercentage,
-            isSrcSwap,
-            isDstSwap,
-            srcTrade,
-            dstTrade,
-          })
-        : undefined,
-    [
-      enabled,
-      token0,
-      token1,
-      amount,
-      address,
-      recipient,
-      bridgePath,
-      slippagePercentage,
-      isSrcSwap,
-      isDstSwap,
-      srcTrade,
-      dstTrade,
-    ],
-  )
+  const squidRouteRequest = useMemo(() => {
+    return enabled
+      ? getSquidRouteRequest({
+          token0,
+          token1,
+          amount,
+          fromAddress: address,
+          toAddress: recipient,
+          bridgePath,
+          slippagePercentage,
+          isSrcSwap,
+          isDstSwap,
+          srcTrade,
+          dstTrade,
+        })
+      : undefined
+  }, [
+    enabled,
+    token0,
+    token1,
+    amount,
+    address,
+    recipient,
+    bridgePath,
+    slippagePercentage,
+    isSrcSwap,
+    isDstSwap,
+    srcTrade,
+    dstTrade,
+  ])
 
   const { data: squidRoute, error: squidError } = useSquidRoute(
     squidRouteRequest,
@@ -289,7 +289,7 @@ export const useSquidCrossChainTrade = ({
             to: recipient,
             adapterData: encodeSquidBridgeParams({
               srcBridgeToken,
-              callData: squidRoute.transactionRequest?.data as `0x${string}`,
+              callData: squidRoute.transactionRequest?.data as Hex,
             }),
           }),
           recipient, // refundAddress

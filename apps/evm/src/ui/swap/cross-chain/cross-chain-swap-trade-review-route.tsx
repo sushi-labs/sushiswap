@@ -14,7 +14,8 @@ export const CrossChainSwapTradeReviewRoute = () => {
   const {
     state: { adapter, chainId0, token0, token1, chainId1 },
   } = useDerivedStateCrossChainSwap()
-  const { data: trade, isLoading: isTradeLoading } = useCrossChainSwapTrade()
+  const { data: trade, isInitialLoading: isTradeLoading } =
+    useCrossChainSwapTrade()
 
   return (
     <div className="px-3 flex justify-between w-full">
@@ -23,14 +24,14 @@ export const CrossChainSwapTradeReviewRoute = () => {
           From: {Chain.fromChainId(chainId0)?.name?.toUpperCase()}
         </span>
         <div className="flex flex-col gap-2">
-          {isTradeLoading || !trade ? (
+          {isTradeLoading || !trade?.srcBridgeToken || !token0 ? (
             <SkeletonText fontSize="xs" />
           ) : (
             <span className="text-xs font-medium overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Swap {token0?.symbol} to {trade.srcBridgeToken?.symbol}
+              Swap {token0.symbol} to {trade.srcBridgeToken.symbol}
             </span>
           )}
-          {isTradeLoading || !trade ? (
+          {isTradeLoading || !trade?.srcTrade ? (
             <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
           ) : trade.srcTrade ? (
             <TradeRoutePathView trade={trade.srcTrade}>
@@ -50,24 +51,12 @@ export const CrossChainSwapTradeReviewRoute = () => {
         <span className="bg-blue w-2 h-2 rounded-full" />
       </div>
       <div className="p-3 grow flex flex-col gap-2.5 items-center overflow-hidden">
-        {adapter === SushiXSwap2Adapter.Stargate ? (
-          <span className="flex items-center text-[10px] text-muted-foreground gap-1">
-            Via
-            <Currency.Icon currency={STARGATE_TOKEN} width={10} height={10} />
-            Stargate
-          </span>
-        ) : (
-          <span className="flex items-center text-[10px] text-muted-foreground gap-1">
-            Via
-            <SquidIcon width={10} height={10} />
-            Squid
-          </span>
-        )}
-        {isTradeLoading || !trade ? (
+        <CrossChainAdapter adapter={adapter} />
+        {isTradeLoading || !trade?.srcBridgeToken ? (
           <SkeletonText fontSize="xs" />
         ) : (
           <span className="text-xs font-medium overflow-hidden overflow-ellipsis whitespace-nowrap">
-            Bridge {trade.srcBridgeToken?.symbol}
+            Bridge {trade.srcBridgeToken.symbol}
           </span>
         )}
       </div>
@@ -81,14 +70,14 @@ export const CrossChainSwapTradeReviewRoute = () => {
           To: {Chain.fromChainId(chainId1)?.name?.toUpperCase()}
         </span>
         <div className="flex flex-col gap-2">
-          {isTradeLoading || !trade ? (
+          {isTradeLoading || !trade?.dstBridgeToken || !token1 ? (
             <SkeletonText fontSize="xs" />
           ) : (
             <span className="text-xs font-medium overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Swap {trade.dstBridgeToken?.symbol} to {token1?.symbol}
+              Swap {trade.dstBridgeToken.symbol} to {token1.symbol}
             </span>
           )}
-          {isTradeLoading || !trade ? (
+          {isTradeLoading || !trade?.dstTrade ? (
             <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
           ) : trade.dstTrade ? (
             <TradeRoutePathView trade={trade.dstTrade}>
@@ -103,5 +92,23 @@ export const CrossChainSwapTradeReviewRoute = () => {
         </div>
       </div>
     </div>
+  )
+}
+
+const CrossChainAdapter = ({
+  adapter,
+}: { adapter: SushiXSwap2Adapter | undefined }) => {
+  return adapter === SushiXSwap2Adapter.Stargate ? (
+    <span className="flex items-center text-[10px] text-muted-foreground gap-1">
+      Via
+      <Currency.Icon currency={STARGATE_TOKEN} width={10} height={10} />
+      Stargate
+    </span>
+  ) : (
+    <span className="flex items-center text-[10px] text-muted-foreground gap-1">
+      Via
+      <SquidIcon width={10} height={10} />
+      Squid
+    </span>
   )
 }

@@ -1,3 +1,4 @@
+import { Hex } from 'viem'
 import { ChainId } from '../chain'
 
 export const SquidIntegratorId = 'sushiswap-sdk'
@@ -63,8 +64,8 @@ export enum SquidMulticallCallType {
 
 export type SquidMulticallCall = {
   callType: SquidMulticallCallType
-  target: `0x${string}`
+  target: Hex
   value: bigint
-  callData: `0x${string}`
-  payload: `0x${string}`
+  callData: Hex
+  payload: Hex
 }
