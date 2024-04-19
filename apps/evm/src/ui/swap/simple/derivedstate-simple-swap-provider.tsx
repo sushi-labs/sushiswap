@@ -428,7 +428,7 @@ const useSimpleSwapTrade = () => {
     toToken: token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
@@ -446,7 +446,7 @@ const useSimpleSwapTrade = () => {
     toToken: token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),

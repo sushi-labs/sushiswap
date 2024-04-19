@@ -239,7 +239,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                           options={{
                             slippageTolerance: {
                               storageKey: 'addLiquidity',
-                              defaultValue: '0.5',
+                              defaultValue: '0.1',
                               title: 'Add Liquidity Slippage',
                             },
                           }}

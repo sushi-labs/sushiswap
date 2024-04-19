@@ -76,7 +76,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSlippageTolerance('0.5')
+                        setSlippageTolerance('0.1')
                       }}
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"
