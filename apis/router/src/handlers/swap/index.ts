@@ -14,6 +14,7 @@ import {
   RouterLiquiditySource,
   makeAPI02Object,
 } from 'sushi/router'
+import { isAddressFast } from 'sushi/serializer'
 import { MultiRoute } from 'sushi/tines'
 import { Address } from 'viem'
 import { ExtractorClient } from '../../ExtractorClient.js'
@@ -79,6 +80,17 @@ function handler(
           maxPriceImpact,
         } = parsed.data
         parsedData = parsed.data
+
+        if (!isAddressFast(_tokenIn))
+          return res
+            .status(422)
+            .send(`Incorrect address for tokenIn: ${_tokenIn}`)
+        if (!isAddressFast(_tokenOut))
+          return res
+            .status(422)
+            .send(`Incorrect address for tokenOut: ${_tokenOut}`)
+        if (to !== undefined && !isAddressFast(to))
+          return res.status(422).send(`Incorrect address for 'to': ${to}`)
 
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <

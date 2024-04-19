@@ -5,7 +5,9 @@ import {
   STABLES,
 } from 'sushi/config'
 import { USDC, USDT } from 'sushi/currency'
+import { isAddressFast } from 'sushi/serializer'
 import { RPool, RToken, getTokenPriceReasoning } from 'sushi/tines'
+import { Address, checksumAddress } from 'viem'
 import { RequestStatistics } from '../../RequestStatistics.js'
 import { CHAIN_ID, ROUTER_CONFIG } from '../../config.js'
 import { extractorClient } from '../../index.js'
@@ -33,12 +35,22 @@ export const pricesHandler = (req: Request, res: Response) => {
 }
 
 export const priceByAddressHandler = (req: Request, res: Response) => {
-  const { currency, address, oldPrices, reasoning } = singleAddressSchema.parse(
-    {
-      ...req.query,
-      ...req.params,
-    },
-  )
+  const {
+    currency,
+    address: _address,
+    oldPrices,
+    reasoning,
+  } = singleAddressSchema.parse({
+    ...req.query,
+    ...req.params,
+  })
+
+  if (!isAddressFast(_address)) {
+    res.status(422).send(`Incorrect address ${_address}`)
+    return
+  }
+  const address = checksumAddress(_address as Address)
+
   res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
   if (
     ROUTER_CONFIG[CHAIN_ID]?.['priceIncrementalMode'] !== false &&
