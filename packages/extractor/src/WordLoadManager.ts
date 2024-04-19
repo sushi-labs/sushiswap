@@ -146,16 +146,19 @@ export class WordLoadManager extends EventEmitter {
       ticks.length === 0 || lowerUnknownTick < ticks[0].index,
       'Error 85: unexpected min tick index',
     )
-    if (!(ticks.length === 0 || lowerUnknownTick < ticks[0].index))
-      Logger.error(
-        this.client.chainId,
-        'Unexpected min tick index',
-        new Error(
-          `Pool: ${this.poolAddress}, minIndex: ${minIndex}, poolSpacing: ${
-            this.poolSpacing
-          }, ticks: ${ticks?.map((t) => t.index)}`,
-        ),
-      )
+    if (!(ticks.length === 0 || lowerUnknownTick < ticks[0].index)) {
+      try {
+        Logger.error(
+          this.client.chainId,
+          'Unexpected min tick index',
+          new Error(
+            `Pool: ${this.poolAddress}, minIndex: ${minIndex}, poolSpacing: ${this.poolSpacing}, lowerUnknownTick: ${lowerUnknownTick}, tick: ${ticks[0].index}`,
+          ),
+        )
+      } catch (e) {
+        Logger.error(this.client.chainId, 'Unexpected error', e)
+      }
+    }
     ticks.unshift({
       index: lowerUnknownTick,
       DLiquidity: 0n,
@@ -165,18 +168,23 @@ export class WordLoadManager extends EventEmitter {
       ticks[ticks.length - 1].index < upperUnknownTick,
       'Error 91: unexpected max tick index',
     )
-    if (!(ticks[ticks.length - 1].index < upperUnknownTick))
-      Logger.error(
-        this.client.chainId,
-        'Unexpected max tick index',
-        new Error(
-          `Pool: ${
-            this.poolAddress
-          }, tick: ${tick}, minIndex: ${minIndex}, poolSpacing: ${
-            this.poolSpacing
-          }, ticks: ${ticks?.map((t) => t.index)}`,
-        ),
-      )
+    if (!(ticks[ticks.length - 1].index < upperUnknownTick)) {
+      try {
+        Logger.error(
+          this.client.chainId,
+          'Unexpected max tick index',
+          new Error(
+            `Pool: ${
+              this.poolAddress
+            }, tick: ${tick}, minIndex: ${minIndex}, poolSpacing: ${
+              this.poolSpacing
+            }, ticks: ${ticks?.map((t) => t.index)}`,
+          ),
+        )
+      } catch (e) {
+        Logger.error(this.client.chainId, 'Unexpected error', e)
+      }
+    }
     ticks.push({
       index: upperUnknownTick,
       DLiquidity: 0n,
