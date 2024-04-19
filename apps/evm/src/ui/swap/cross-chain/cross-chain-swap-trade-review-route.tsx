@@ -31,9 +31,9 @@ export const CrossChainSwapTradeReviewRoute = () => {
               Swap {token0.symbol} to {trade.srcBridgeToken.symbol}
             </span>
           )}
-          {isTradeLoading || !trade?.srcTrade ? (
+          {isTradeLoading ? (
             <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
-          ) : trade.srcTrade ? (
+          ) : trade?.srcTrade ? (
             <TradeRoutePathView trade={trade.srcTrade}>
               <button
                 type="button"
@@ -77,9 +77,9 @@ export const CrossChainSwapTradeReviewRoute = () => {
               Swap {trade.dstBridgeToken.symbol} to {token1.symbol}
             </span>
           )}
-          {isTradeLoading || !trade?.dstTrade ? (
+          {isTradeLoading ? (
             <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
-          ) : trade.dstTrade ? (
+          ) : trade?.dstTrade ? (
             <TradeRoutePathView trade={trade.dstTrade}>
               <button
                 type="button"
