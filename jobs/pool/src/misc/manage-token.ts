@@ -1,8 +1,8 @@
 import '../lib/wagmi.js'
 
 import { isAddress } from '@ethersproject/address'
-import { createDirectClient } from '@sushiswap/database'
 import { fetchToken } from '@wagmi/core'
+import { client } from 'src/lib/prisma.js'
 import { ChainId, chainIds, chains } from 'sushi/chain'
 import { Address } from 'viem'
 import { config } from '../lib/wagmi.js'
@@ -39,7 +39,6 @@ class Token {
 }
 
 export async function main() {
-  const client = await createDirectClient()
   // const token = new Token(56288, '0x4a2c2838c3907D024916c3f4Fe07832745Ae4bec', 'APPROVED')
   const token = new Token(1, '0x', 'DISAPPROVED')
   try {
@@ -107,9 +106,6 @@ export async function main() {
     }
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
-  } finally {
-    await client.$disconnect()
   }
 }
 

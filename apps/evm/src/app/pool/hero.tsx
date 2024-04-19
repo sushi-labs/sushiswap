@@ -13,7 +13,7 @@ import {
 } from '@sushiswap/ui/components/dropdown-menu'
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
-import { useAccount } from '@sushiswap/wagmi'
+import { useChainId } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
@@ -23,8 +23,8 @@ import {
 } from 'sushi/config'
 
 export const Hero: FC = () => {
-  const { chain } = useAccount()
-  const chainId = chain?.id || ChainId.ETHEREUM
+  const chainId = useChainId()
+
   return (
     <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-start mb-12">
       <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">

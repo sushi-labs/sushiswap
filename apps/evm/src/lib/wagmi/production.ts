@@ -38,8 +38,8 @@ export const createProductionConfig = () => {
         onFetchResponse(_res) {
           if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
             let fallback = 'undefined'
-            if (typeof window.isFallback !== 'undefined') {
-              fallback = window.isFallback ? 'true' : 'false'
+            if (typeof window.useSwapApi !== 'undefined') {
+              fallback = window.useSwapApi ? 'true' : 'false'
             }
 
             gtagEvent('drpc-response', {
@@ -61,9 +61,13 @@ export const createProductionConfig = () => {
     transports,
     pollingInterval,
     connectors: [
-      injected({
-        shimDisconnect: true,
-      }),
+      ...(typeof window !== 'undefined' && window.ethereum !== undefined
+        ? [
+            injected({
+              shimDisconnect: true,
+            }),
+          ]
+        : []),
       walletConnect({
         showQrModal: true,
         projectId: '187b0394dbf3b20ce7762592560eafd2',
@@ -80,19 +84,24 @@ export const createProductionConfig = () => {
         appLogoUrl:
           'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
       }),
-      safe({
-        // TODO: Other self-hosted safes for some networks?
-        allowedDomains: [
-          /gnosis-safe.io$/,
-          /app.safe.global$/,
-          /safe.fuse.io$/,
-          /multisig.moonbeam.network$/,
-          /safe.fantom.network$/,
-          /ui.celo-safe.io$/,
-          /multisig.harmony.one$/,
-        ],
-        debug: false,
-      }),
+      // only allow in iframe
+      ...(typeof window !== 'undefined' && window.parent !== window
+        ? [
+            safe({
+              // TODO: Other self-hosted safes for some networks?
+              allowedDomains: [
+                /gnosis-safe.io$/,
+                /app.safe.global$/,
+                /safe.fuse.io$/,
+                /multisig.moonbeam.network$/,
+                /safe.fantom.network$/,
+                /ui.celo-safe.io$/,
+                /multisig.harmony.one$/,
+              ],
+              debug: false,
+            }),
+          ]
+        : []),
     ],
     storage: createStorage({
       storage: cookieStorage,

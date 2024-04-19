@@ -14,7 +14,8 @@ import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
 import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
-import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog.js'
+
+const DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -31,7 +32,6 @@ export type ExtractorConfig = {
   logging?: boolean
   maxCallsInOneBatch?: number
   maxBatchesSimultaniously?: number
-  warningMessageHandler?: WarningMessageHandler
   debug?: boolean
 } & Record<string, any>
 
@@ -78,7 +78,7 @@ export class Extractor {
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
-      args.maxCallsInOneBatch ?? 0,
+      args.maxCallsInOneBatch ?? DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH,
       args.maxBatchesSimultaniously ?? 0,
       args.debug,
     )
@@ -126,7 +126,6 @@ export class Extractor {
         this.multiCallAggregator,
         this.tokenManager,
       )
-    setWarningMessageHandler(args.warningMessageHandler)
   }
 
   /// @param tokensBaseSet Prefetch all pools between these tokens

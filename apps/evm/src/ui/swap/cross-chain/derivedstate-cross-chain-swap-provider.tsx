@@ -3,6 +3,7 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   useAccount,
+  useChainId,
   useConfig,
   useTokenWithCache,
   watchAccount,
@@ -81,7 +82,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   DerivedStateCrossChainSwapProviderProps
 > = ({ children }) => {
   const { push } = useRouter()
-  const { address, chain } = useAccount()
+  const chainId = useChainId()
+  const { address } = useAccount()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
@@ -94,10 +96,7 @@ const DerivedstateCrossChainSwapProvider: FC<
     if (!params.has('chainId0'))
       params.set(
         'chainId0',
-        (chain?.id && isSushiXSwap2ChainId(chain.id as ChainId)
-          ? chain.id
-          : ChainId.ETHEREUM
-        ).toString(),
+        (isSushiXSwap2ChainId(chainId) ? chainId : ChainId.ETHEREUM).toString(),
       )
     if (!params.has('chainId1'))
       params.set(
@@ -111,7 +110,7 @@ const DerivedstateCrossChainSwapProvider: FC<
       params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))
 
     return params
-  }, [chain, searchParams])
+  }, [chainId, searchParams])
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -151,8 +150,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   }, [pathname, push, defaultedParams])
 
   // Update the URL with new from chainId
-  const setChainId0 = useCallback<{ (chainId: number): void }>(
-    (chainId) => {
+  const setChainId0 = useCallback(
+    (chainId: number) => {
       if (defaultedParams.get('chainId1') === chainId.toString()) {
         switchTokens()
       } else {
@@ -170,8 +169,8 @@ const DerivedstateCrossChainSwapProvider: FC<
   )
 
   // Update the URL with new to chainId
-  const setChainId1 = useCallback<{ (chainId: number): void }>(
-    (chainId) => {
+  const setChainId1 = useCallback(
+    (chainId: number) => {
       if (defaultedParams.get('chainId0') === chainId.toString()) {
         switchTokens()
       } else {

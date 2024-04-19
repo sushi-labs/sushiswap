@@ -2,9 +2,9 @@ import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Address, Hex, hexToString, trim } from 'viem'
+import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
-import { warnLog } from './WarnLog.js'
 
 interface TokenCacheRecord {
   address: Address
@@ -19,11 +19,6 @@ const SpecialTokens: Record<
   Record<string, Omit<TokenCacheRecord, 'address'>>
 > = {
   [ChainId.ETHEREUM]: {
-    // '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2': {
-    //   name: 'Maker Token',
-    //   symbol: 'MKR',
-    //   decimals: 18,
-    // },
     '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': {
       name: 'DGD',
       symbol: 'DGD',
@@ -102,7 +97,7 @@ export class TokenManager {
       ])
       if (decimalsR.status === 'rejected') {
         // most probable there is no token at this address
-        warnLog(
+        Logger.error(
           this.client.client.chain?.id,
           `Unexisted token request ${address}`,
         )
@@ -129,11 +124,10 @@ export class TokenManager {
           this.addToken(newToken)
           return newToken
         } catch (e) {
-          warnLog(
+          Logger.error(
             this.client.client.chain?.id,
             `Token bytes32 downloading error ${address}`,
-            'error',
-            `${e}`,
+            e,
           )
         }
         return
@@ -149,11 +143,10 @@ export class TokenManager {
       this.addToken(newToken)
       return newToken
     } catch (e) {
-      warnLog(
+      Logger.error(
         this.client.client.chain?.id,
         `Token downloading error ${address}`,
-        'error',
-        `${e}`,
+        e,
       )
     }
   }

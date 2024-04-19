@@ -58,6 +58,9 @@ export const ConnectButton: FC<ButtonProps> = ({
 
   const _connectors = useMemo(() => {
     const conns = [...connectors]
+
+    console.log('conns', conns)
+
     const injected = conns.find((el) => el.id === 'injected')
 
     if (injected) {

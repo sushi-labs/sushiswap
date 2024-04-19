@@ -1,4 +1,5 @@
-import { Prisma, createDirectClient } from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
+import { client } from 'src/lib/prisma'
 import { ChainId } from 'sushi'
 import { Address } from 'viem'
 
@@ -6,7 +7,6 @@ export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {
     return
   }
-  const client = await createDirectClient()
   const created = await client.token.createMany({
     data: tokens,
     skipDuplicates: true,
@@ -14,8 +14,6 @@ export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (created.count > 0) {
     console.log(`LOAD - Created ${created.count} tokens. `)
   }
-
-  await client.$disconnect()
 }
 
 export async function getMissingTokens(
@@ -24,7 +22,6 @@ export async function getMissingTokens(
   if (tokens.length === 0) {
     return []
   }
-  const client = await createDirectClient()
   const tokensFound = await client.token.findMany({
     select: {
       id: true,
@@ -39,8 +36,6 @@ export async function getMissingTokens(
       },
     },
   })
-
-  await client.$disconnect()
 
   return tokens
     .filter(

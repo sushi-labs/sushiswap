@@ -38,6 +38,7 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
 
   const _connectors = useMemo(() => {
     const conns = [...connectors]
+
     const injected = conns.find((el) => el.id === 'injected')
 
     if (injected) {

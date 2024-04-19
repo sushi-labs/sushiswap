@@ -61,7 +61,7 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "2.6.9",
+    "@wagmi/core": "2.6.17",
     "@whatwg-node/fetch": "0.8.4",
     "connect-timeout": "1.9.0",
     "date-fns": "2.29.3",
@@ -71,7 +71,7 @@
     "lodash.zip": "4.2.0",
     "sushi": "workspace:*",
     "tsx": "^4.7.1",
-    "viem": "2.8.13",
+    "viem": "2.8.14",
     "zod": "3.21.4"
   },
   "devDependencies": {

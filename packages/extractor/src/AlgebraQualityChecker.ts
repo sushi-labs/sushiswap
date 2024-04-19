@@ -1,6 +1,6 @@
 import { Log } from 'viem'
 import { AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
-import { warnLog } from './WarnLog.js'
+import { Logger } from './Logger.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -88,9 +88,9 @@ export class AlgebraQualityChecker {
           return [undefined, PoolSyncState.Match, 1, 1]
         }
       }
-      warnLog(pool.client.chainId, 'Quality check timeout error')
-    } catch (_e) {
-      warnLog(pool.client.chainId, 'Quality check error')
+      Logger.error(pool.client.chainId, 'Quality check timeout error')
+    } catch (e) {
+      Logger.error(pool.client.chainId, 'Quality check error', e)
     }
     return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }

@@ -1,9 +1,9 @@
-import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { FURO_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
 
 describe('Furo Tokens', () => {
   const sdk = getBuiltGraphSDK()
-  const chainIds = Object.keys(FURO_SUBGRAPH_NAME).map((key) => Number(key))
+  const chainIds = Object.keys(FURO_SUBGRAPH_URL).map((key) => Number(key))
 
   it.skip('should return some tokens with liquidity', async () => {
     const { tokens } = await sdk.furoTokensByChainIds({
