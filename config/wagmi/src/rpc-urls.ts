@@ -25,6 +25,7 @@ export const rpcUrls = {
   // [ChainId.FILECOIN]: [
   //   `https://lb.drpc.org/ogrpc?network=filecoin&dkey=${drpcId}`,
   // ],
+  [ChainId.FILECOIN]: ['https://fil-mainnet-1.rpc.laconic.com/rpc/v1'],
   [ChainId.FUSE]: [`https://lb.drpc.org/ogrpc?network=fuse&dkey=${drpcId}`],
   [ChainId.GNOSIS]: [`https://lb.drpc.org/ogrpc?network=gnosis&dkey=${drpcId}`],
   [ChainId.HARMONY]: [
