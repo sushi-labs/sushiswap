@@ -158,7 +158,7 @@ export class ExtractorClient {
         )
       }
     } catch (e) {
-      Logger.error(this.chainId, `Pool download failed`, e)
+      Logger.error(this.chainId, 'ExtractorClient: updatePools failed', e)
     }
     setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
@@ -192,10 +192,17 @@ export class ExtractorClient {
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
-        console.error(`Request pairs download failed, status=${resp.status}`)
+        Logger.error(
+          this.chainId,
+          `ExtractorClient: request pairs download failed, status=${resp.status}`,
+        )
       }
     } catch (e) {
-      console.error(`Pool download failed, ${e}`)
+      Logger.error(
+        this.chainId,
+        'ExtractorClient: updateRequestedPairs failed',
+        e,
+      )
     }
     setTimeout(
       () => this.updateRequestedPairs(),
@@ -252,10 +259,12 @@ export class ExtractorClient {
         console.log(`Fetch pool codes between: ${pools.length} pools`)
       return pools
     } catch (e) {
-      console.error(
-        `Error /pool-codes-between/${this.chainId}/${tokenAddr(t0)}/${tokenAddr(
-          t1,
-        )}: ${e}`,
+      Logger.error(
+        this.chainId,
+        `ExtractorClient: fetchPoolsBetween failed for ${tokenAddr(
+          t0,
+        )}/${tokenAddr(t1)}`,
+        e,
       )
       this.fetchPoolsBetweenRequests.delete(id)
       return
@@ -290,7 +299,11 @@ export class ExtractorClient {
         console.log(`Fetch pool codes for token: ${pools.length} pools`)
       return pools
     } catch (e) {
-      console.error(`Error /pool-codes-for-token/${this.chainId}/${addr}: ${e}`)
+      Logger.error(
+        this.chainId,
+        `ExtractorClient: fetchTokenPools failed for ${addr}`,
+        e,
+      )
       return
     }
   }
@@ -336,7 +349,11 @@ export class ExtractorClient {
       const data = (await resp.json()) as Token
       return new Token(data)
     } catch (e) {
-      console.error(`Error /token/${this.chainId}/${addr}: ${e}`)
+      Logger.error(
+        this.chainId,
+        `ExtractorClient: fetchToken failed for ${addr}`,
+        e,
+      )
       return
     }
   }
