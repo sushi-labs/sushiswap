@@ -504,7 +504,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       title="Price impact"
                       subtitle="The impact your trade has on the market price of this pool."
                     >
-                      {isFetching ? (
+                      {isFetching || !trade?.priceImpact ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
