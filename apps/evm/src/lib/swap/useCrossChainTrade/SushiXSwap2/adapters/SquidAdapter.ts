@@ -238,18 +238,18 @@ export const getSquidRouteRequest = ({
 
     if (rpAddress === undefined) throw new Error('RP not found')
 
-    // Grant approval of dstBridgeToken to RouteProcessor & call ProcessRoute()
+    // Transfer dstBridgeToken to RouteProcessor & call ProcessRoute()
     routeRequest.postHook = {
       chainType: ChainType.EVM,
       calls: [
-        // Grant approval of dstBridgeToken to RouteProcessor
+        // Transfer full balance of dstBridgeToken to RouteProcessor
         {
           chainType: ChainType.EVM,
           callType: SquidCallType.FULL_TOKEN_BALANCE,
           target: dstBridgeToken.address,
           callData: encodeFunctionData({
             abi: erc20Abi,
-            functionName: 'approve',
+            functionName: 'transfer',
             args: [rpAddress, 0n],
           }),
           value: '0',
@@ -262,7 +262,7 @@ export const getSquidRouteRequest = ({
         // Invoke RouteProcessor.processRoute()
         {
           chainType: ChainType.EVM,
-          callType: SquidCallType.FULL_TOKEN_BALANCE,
+          callType: SquidCallType.DEFAULT,
           target: rpAddress,
           callData: encodeFunctionData({
             abi: routeProcessor4Abi,
@@ -274,8 +274,8 @@ export const getSquidRouteRequest = ({
           }),
           value: '0',
           payload: {
-            tokenAddress: bridgePath.dstBridgeToken.address,
-            inputPos: 1,
+            tokenAddress: zeroAddress,
+            inputPos: 0,
           },
           estimatedGas: (
             1.2 * (dstTrade?.route?.gasSpent as number) +
