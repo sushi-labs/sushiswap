@@ -1,9 +1,8 @@
-import { UseQueryResult, useQueries } from '@tanstack/react-query'
 import { SupportedNetwork, chains } from 'config/chains'
-import fromPairs from 'lodash.frompairs'
 import { useMemo } from 'react'
-import { Token } from './tokenType'
+import { Token } from '../tokenType'
 import { useNetwork } from './useNetwork'
+import { usePairsReserves } from './usePairsReserves'
 
 export enum PairState {
   LOADING = 'Loading',
@@ -17,84 +16,6 @@ export type Pair = {
   tokenAmounts: string[]
   token0: Token
   token1: Token
-}
-
-interface UsePairReservesQueries {
-  pairAddresses: (string | undefined)[]
-  ledgerVersion?: number
-}
-
-export function usePairReservesQueries({
-  pairAddresses,
-  ledgerVersion,
-}: UsePairReservesQueries) {
-  const {
-    api: { fetchUrlPrefix },
-    contracts: { swap: swapContract },
-  } = useNetwork()
-
-  const pairReservesQueries = useQueries({
-    queries: useMemo(
-      () =>
-        pairAddresses.map((pairAddress) => ({
-          enabled: Boolean(pairAddress),
-          queryFn: async () => {
-            if (!pairAddress) throw new Error('No pair address')
-
-            let url = `${fetchUrlPrefix}/v1/accounts/${swapContract}/resource/${pairAddress}`
-            if (ledgerVersion) {
-              url += `?ledger_version=${ledgerVersion}`
-            }
-
-            const response = await fetch(url)
-            if (response.status === 200) {
-              const data = response.json()
-              return data
-            }
-            return {}
-          },
-          queryKey: [
-            {
-              entity: 'pairResource',
-              pairAddress,
-              ledgerVersion,
-              resourceType: swapContract,
-            },
-          ],
-          staleTime: Infinity,
-          // refetchInterval: 3000,
-        })),
-      [pairAddresses, ledgerVersion, swapContract, fetchUrlPrefix],
-    ),
-  }) as UseQueryResult<{
-    type: string
-    data: { reserve_x: string; reserve_y: string; block_timestamp_last: string }
-  }>[]
-
-  const pairReserves = useMemo(
-    () =>
-      fromPairs(
-        pairReservesQueries
-          .filter((p) => Boolean(p.data))
-          .map(
-            (p) =>
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              [p.data!.type, p.data] as [
-                string,
-                {
-                  type: string
-                  data: {
-                    reserve_x: string
-                    reserve_y: string
-                    block_timestamp_last: string
-                  }
-                },
-              ],
-          ),
-      ),
-    [pairReservesQueries],
-  )
-  return pairReserves || {}
 }
 
 interface UsePairs {
@@ -123,7 +44,10 @@ export default function usePairs({
     ],
     [tokens, network],
   )
-  const pairReserves = usePairReservesQueries({ pairAddresses, ledgerVersion })
+  const { data: pairReserves } = usePairsReserves({
+    pairAddresses,
+    ledgerVersion,
+  })
 
   return useMemo(() => {
     return tokens.map(([tokenA, tokenB]) => {

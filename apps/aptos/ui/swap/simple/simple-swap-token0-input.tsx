@@ -4,7 +4,7 @@ import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
-import { useSwapRouter } from 'utils/useSwapRouter'
+import { useSwapRouter } from 'utils/hooks/useSwapRouter'
 import { CurrencyInput } from '../../common/currency/currency-input/currency-input'
 
 export const SimpleSwapToken0Input = () => {

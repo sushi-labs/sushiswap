@@ -11,7 +11,7 @@ import {
   useMemo,
 } from 'react'
 import { parseArgs } from 'utils/parseArgs'
-import { useTypedSearchParams } from 'utils/useTypedSearchParams'
+import { useTypedSearchParams } from 'utils/hooks/useTypedSearchParams'
 import { z } from 'zod'
 type FilterContext = z.TypeOf<typeof poolFiltersSchema>
 

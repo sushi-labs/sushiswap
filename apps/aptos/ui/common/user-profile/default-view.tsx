@@ -11,8 +11,8 @@ import { networkNameToNetwork } from 'config/chains'
 import { Aptos } from 'lib/coins'
 import React, { Dispatch, SetStateAction } from 'react'
 import { formatUSD } from 'sushi/format'
-import { useNetwork } from 'utils/useNetwork'
-import { useStablePrice } from 'utils/useStablePrice'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { useStablePrice } from 'utils/hooks/useStablePrice'
 import { ProfileView } from './user-profile'
 
 interface Props {

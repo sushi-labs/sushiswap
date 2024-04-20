@@ -11,9 +11,9 @@ import { FC } from 'react'
 import { formatPercent } from 'sushi'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
-import { useNetwork } from 'utils/useNetwork'
-import { Pool } from 'utils/usePools'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { Pool } from 'utils/hooks/usePools'
+import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
 
 interface PoolHeader {
   row: Pool

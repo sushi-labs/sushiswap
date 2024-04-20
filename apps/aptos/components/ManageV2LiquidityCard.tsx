@@ -15,15 +15,19 @@ import {
 } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { FC, useMemo, useState } from 'react'
-import { useNetwork } from 'utils/useNetwork'
-import { useFarms, useIsFarm } from '../utils/useFarms'
-import { usePool } from '../utils/usePool'
-import { Pool } from '../utils/usePools'
-import { useTokenBalance } from '../utils/useTokenBalance'
-import { useTokensFromPools } from '../utils/useTokensFromPool'
-import { useTotalSupply } from '../utils/useTotalSupply'
-import { useUnderlyingTokenBalanceFromPool } from '../utils/useUnderlyingTokenBalanceFromPool'
-import { getPIdIndex, useUserHandle, useUserPool } from '../utils/useUserHandle'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { useFarms, useIsFarm } from '../utils/hooks/useFarms'
+import { usePool } from '../utils/hooks/usePool'
+import { Pool } from '../utils/hooks/usePools'
+import { useTokenBalance } from '../utils/hooks/useTokenBalance'
+import { useTokensFromPools } from '../utils/hooks/useTokensFromPool'
+import { useTotalSupply } from '../utils/hooks/useTotalSupply'
+import { useUnderlyingTokenBalanceFromPool } from '../utils/hooks/useUnderlyingTokenBalanceFromPool'
+import {
+  getPIdIndex,
+  useUserHandle,
+  useUserPool,
+} from '../utils/hooks/useUserHandle'
 import { AddSectionStake } from './AddSection/AddSectionStake'
 import { AddSectionWidget } from './AddSection/AddSectionWidget'
 import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
@@ -32,7 +36,7 @@ import { RemoveSectionUnstake } from './RemoveSection/RemoveSectionUnstake'
 export const ManageV2LiquidityCard: FC = () => {
   const [tab, setTab] = useState<string>('add')
   const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id)
+  const tokenAddress = decodeURIComponent(router?.id as string)
 
   const {
     contracts: { swap: swapContract },

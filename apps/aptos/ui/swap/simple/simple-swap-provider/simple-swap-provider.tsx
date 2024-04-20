@@ -10,9 +10,9 @@ import {
   useMemo,
   useReducer,
 } from 'react'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { getTokensWithoutKey } from 'utils/hooks/useTokens'
 import { Token } from 'utils/tokenType'
-import { useNetwork } from 'utils/useNetwork'
-import { getTokensWithoutKey } from 'utils/useTokens'
 
 interface SimpleSwapProvider {
   children: ReactNode

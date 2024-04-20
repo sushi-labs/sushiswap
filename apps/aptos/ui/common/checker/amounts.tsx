@@ -4,7 +4,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import { FC, useMemo } from 'react'
 import { ZERO } from 'sushi/math'
-import { useTokenBalances } from 'utils/useTokenBalance'
+import { useTokenBalances } from 'utils/hooks/useTokenBalance'
 
 interface AmountsProps extends ButtonProps {
   amounts: {
@@ -17,8 +17,6 @@ const Amounts: FC<AmountsProps> = ({
   type: _type,
   amounts,
   children,
-  fullWidth = true,
-  size = 'xl',
   ...props
 }) => {
   const { account } = useWallet()
@@ -32,7 +30,7 @@ const Amounts: FC<AmountsProps> = ({
   )
 
   const { data: balances } = useTokenBalances({
-    account: account?.address as string,
+    account: account?.address,
     currencies,
     refetchInterval: 2000,
   })
@@ -42,37 +40,27 @@ const Amounts: FC<AmountsProps> = ({
 
     return amounts.every((amount) => {
       const balance = balances[amount.currency]
-      if (!balance) return true
+      if (typeof balance !== 'number') return true
 
       return balance >= amount.amount
     })
   }, [amounts, balances])
 
-  if (!amountsAreDefined)
+  if (!amountsAreDefined) {
     return (
-      <Button
-        id="amount-checker"
-        disabled={true}
-        fullWidth={fullWidth}
-        size={size}
-        {...props}
-      >
+      <Button id="amount-checker" {...props} disabled>
         Enter Amount
       </Button>
     )
+  }
 
-  if (!sufficientBalance)
+  if (!sufficientBalance) {
     return (
-      <Button
-        id="amount-checker"
-        disabled={true}
-        fullWidth={fullWidth}
-        size={size}
-        {...props}
-      >
+      <Button id="amount-checker" {...props} disabled>
         Insufficient Balance
       </Button>
     )
+  }
 
   return <>{children}</>
 }

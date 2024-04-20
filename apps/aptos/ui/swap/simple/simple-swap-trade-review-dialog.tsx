@@ -26,9 +26,9 @@ import {
   useSimpleSwapState,
 } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { formatNumber } from 'utils/format-number'
-import { payloadArgs } from 'utils/payloadUtil'
-import { useNetwork } from 'utils/useNetwork'
-import { useSwapRouter } from 'utils/useSwapRouter'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { useSwapRouter } from 'utils/hooks/useSwapRouter'
+import { getSwapPayload } from 'utils/payload/get-swap-payload'
 import { Modal } from '../../../components/Modal/Modal'
 import { ModalType } from '../../../components/Modal/ModalProvider'
 import { CurrencyIcon } from '../../common/currency/currency-icon'
@@ -61,7 +61,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
 
   const swapToken = async (close: () => void) => {
     const provider = new Provider(networkNameToNetwork(network))
-    const payload: any = payloadArgs(
+    const payload = getSwapPayload(
       swapContract,
       parseInt(
         (parseFloat(String(amount)) *
@@ -74,12 +74,12 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
     setisTransactionPending(true)
     try {
       // sign and submit transaction to chain
-      const response: any = await signAndSubmitTransaction(payload)
+      const response = await signAndSubmitTransaction(payload)
       // wait for transaction
       await provider.waitForTransaction(response?.hash)
 
       //return from here if response is failed
-      if (!response?.success) return
+      if (!response?.output.success) return
       const toastId = `completed:${response?.hash}`
       createToast({
         summery: `Swap ${amount} ${token0.symbol} for ${parseFloat(
@@ -87,7 +87,6 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
         )} ${token1.symbol}`,
         toastId: toastId,
       })
-      setisTransactionPending(false)
       close()
       setAmount('')
     } catch (_e) {
@@ -172,7 +171,12 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                       {isPriceFetching ? (
                         <SkeletonBox className="h-4 py-0.5 w-[60px] rounded-md" />
                       ) : (
-                        <>{routes?.priceImpact ? -routes?.priceImpact : 0}%</>
+                        <>
+                          {routes?.priceImpact
+                            ? (-routes?.priceImpact).toFixed(4)
+                            : 0}
+                          %
+                        </>
                       )}
                     </span>
                   </List.KeyValue>

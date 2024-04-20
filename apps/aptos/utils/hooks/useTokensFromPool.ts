@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Token } from './tokenType'
+import { Token } from '../tokenType'
 import { Pool } from './usePools'
 import { useTokens } from './useTokens'
 

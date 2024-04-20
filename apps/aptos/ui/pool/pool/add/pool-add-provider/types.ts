@@ -1,4 +1,4 @@
-import { TokenPairReserve } from 'utils/swap-get-route/utilFunctions'
+import { PairReserve } from 'utils/hooks/usePairsReserves'
 import { Token } from 'utils/tokenType'
 
 export type State = {
@@ -12,7 +12,7 @@ export type State = {
   isTransactionPending: boolean
   isPriceFetching: boolean
   error: string
-  poolReserves: TokenPairReserve | null
+  poolReserves: PairReserve | null
   poolPairRatio: number | null
   slippageTolerance: number
   slippageAmount0: number
@@ -31,7 +31,7 @@ export type PoolApi = {
   setisTransactionPending(value: boolean): void
   setPriceFetching(value: boolean): void
   setError(value: string): void
-  setPoolReserves(value: TokenPairReserve | null): void
+  setPoolReserves(value: PairReserve | null): void
   setPoolPairRatio(value: number): void
   setSlippageAmount0(amount0: number): void
   setSlippageAmount1(amount1: number): void
@@ -49,7 +49,7 @@ export type Actions =
   | { type: 'setisTransactionPending'; value: boolean }
   | { type: 'setPriceFetching'; value: boolean }
   | { type: 'setError'; value: string }
-  | { type: 'setPoolReserves'; value: TokenPairReserve | null }
+  | { type: 'setPoolReserves'; value: PairReserve | null }
   | { type: 'setPoolPairRatio'; value: number }
   | { type: 'setSlippageTolerance'; value: number | string }
   | { type: 'setSlippageAmount0'; value: number }

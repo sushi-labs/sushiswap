@@ -1,8 +1,8 @@
 import { CardGroup, CardLabel } from '@sushiswap/ui'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
-import { Pool } from 'utils/usePools'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { Pool } from 'utils/hooks/usePools'
+import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
 
 interface PoolPositionProps {

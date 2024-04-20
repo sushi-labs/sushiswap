@@ -8,9 +8,9 @@ import React, { useMemo, useState } from 'react'
 import { createToast } from 'ui/common/toast'
 import { UserProfile } from 'ui/common/user-profile/user-profile'
 import { formatNumber } from 'utils/format-number'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { Pool } from 'utils/hooks/usePools'
 import { Token } from 'utils/tokenType'
-import { useNetwork } from 'utils/useNetwork'
-import { Pool } from 'utils/usePools'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface Props {

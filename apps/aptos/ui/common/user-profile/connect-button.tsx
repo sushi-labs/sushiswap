@@ -28,7 +28,7 @@ export function ConnectButton(props: ButtonProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          {wallets.map((wallet) => {
+          {wallets?.map((wallet) => {
             const Icon = WalletIcons[wallet.name]
             return (
               <DropdownMenuItem

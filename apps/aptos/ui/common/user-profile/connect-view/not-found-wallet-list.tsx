@@ -1,7 +1,7 @@
 import { Wallet } from '@aptos-labs/wallet-adapter-core'
 import { LinkExternal } from '@sushiswap/ui'
 import React, { SVGProps } from 'react'
-import { useNetwork } from 'utils/useNetwork'
+import { useNetwork } from 'utils/hooks/useNetwork'
 
 interface NotFoundWalletList {
   Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element | null>

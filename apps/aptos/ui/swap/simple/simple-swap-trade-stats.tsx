@@ -9,8 +9,8 @@ import {
 import React from 'react'
 import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { formatNumber } from 'utils/format-number'
-import { useNetwork } from 'utils/useNetwork'
-import { useSwapRouter } from 'utils/useSwapRouter'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { useSwapRouter } from 'utils/hooks/useSwapRouter'
 import { Modal } from '../../../components/Modal/Modal'
 import { SwapRoute } from '../swap-route'
 

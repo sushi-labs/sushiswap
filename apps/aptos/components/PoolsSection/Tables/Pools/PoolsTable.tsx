@@ -8,15 +8,15 @@ import {
 } from '@tanstack/react-table'
 import { usePoolFilters } from 'components/PoolFiltersProvider'
 import React, { useCallback, useMemo, useState } from 'react'
-import { useFarms } from 'utils/useFarms'
-import { useNetwork } from 'utils/useNetwork'
-import { Pool, usePools } from 'utils/usePools'
-import { APR_COLUMN, NAME_COLUMN, RESERVE_COLUMN, TVL_COLUMN } from './columns'
+import { useFarms } from 'utils/hooks/useFarms'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { Pool, usePools } from 'utils/hooks/usePools'
+import { NAME_COLUMN, RESERVE_COLUMN, TVL_COLUMN } from './columns'
 
 const COLUMNS = [
   NAME_COLUMN,
   TVL_COLUMN,
-  APR_COLUMN,
+  // APR_COLUMN,
   RESERVE_COLUMN,
 ] satisfies ColumnDef<Pool, unknown>[]
 
@@ -25,7 +25,7 @@ export const PoolsTable = () => {
 
   const { data: pools, isLoading } = usePools()
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'liquidityUSD', desc: true },
+    { id: 'TVL', desc: true },
   ])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,

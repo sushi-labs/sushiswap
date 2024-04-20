@@ -7,10 +7,10 @@ import {
   useMemo,
   useReducer,
 } from 'react'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { getTokensWithoutKey } from 'utils/hooks/useTokens'
 import { PoolReserve } from 'utils/swap-get-route/types'
 import { Token } from 'utils/tokenType'
-import { useNetwork } from 'utils/useNetwork'
-import { getTokensWithoutKey } from 'utils/useTokens'
 import { setAmount0 } from './actions/setAmount0'
 import { setAmount1 } from './actions/setAmount1'
 import { setPoolPairRatio } from './actions/setPoolPairRatio'

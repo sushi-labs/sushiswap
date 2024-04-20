@@ -1,7 +1,7 @@
 import { Token } from 'utils/tokenType'
-import { computeExactOutput } from './compute-exact-output'
-import { computePriceImpact } from './compute-price-impact'
-import { Route, Vertex } from './types'
+import { computeExactOutput } from '../compute-exact-output'
+import { computePriceImpact } from '../compute-price-impact'
+import { Route, Vertex } from '../types'
 
 interface GetBestRoute {
   amountIn: number
@@ -157,7 +157,7 @@ function findPossibleRoutes({
   // Add the current token to the current route
   currentRoute.push(tokenIn)
 
-  // If the current token is the desired tokenOut, add the current route to the routes verticesay
+  // If the current token is the desired tokenOut, add the current route to the routes vertices
   if (tokenIn === tokenOut) {
     routes.push([...currentRoute])
   } else {

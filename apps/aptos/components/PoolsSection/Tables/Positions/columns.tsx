@@ -1,6 +1,6 @@
 import { SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
-import { Pool } from 'utils/usePools'
+import { Pool } from 'utils/hooks/usePools'
 // import { PoolMyPositionAprCell } from './PoolPositionAPRCell'
 import { PoolMyPositionTVLCell } from './PoolPositionTVLCell'
 

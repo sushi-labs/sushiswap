@@ -1,4 +1,4 @@
-import { Token } from './tokenType'
+import { Token } from '../tokenType'
 const alwaysTrue = () => true
 
 export function createTokenFilterFunction<T extends Token>(

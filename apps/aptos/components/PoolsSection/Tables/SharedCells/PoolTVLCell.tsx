@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
-import { Pool } from 'utils/usePools'
-import { useStablePrice } from 'utils/useStablePrice'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { Pool } from 'utils/hooks/usePools'
+import { useStablePrice } from 'utils/hooks/useStablePrice'
+import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
 import { Row } from './types'
 
 export const PoolTVLCell: FC<Row<Pool>> = ({ row }) => {

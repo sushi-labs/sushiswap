@@ -2,8 +2,8 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
+import { usePools } from 'utils/hooks/usePools'
 import { getSwapRoute } from 'utils/swap-get-route'
-import { usePools } from 'utils/usePools'
 import { useNetwork } from './useNetwork'
 
 export function useSwapRouter() {

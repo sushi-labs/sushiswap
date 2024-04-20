@@ -16,10 +16,10 @@ import Link from 'next/link'
 import { FC, useCallback } from 'react'
 import { CurrencyInput } from 'ui/common/currency/currency-input/currency-input'
 import { createToast } from 'ui/common/toast'
-import { liquidityArgs } from 'utils/liquidityPayload'
-import { usePoolPairs } from 'utils/swap-get-route/utilFunctions'
-import { useAccount } from 'utils/useAccount'
-import { useNetwork } from 'utils/useNetwork'
+import { useAccount } from 'utils/hooks/useAccount'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { liquidityArgs } from 'utils/payload/get-add-liquidity-payload'
+import { usePoolPairs } from 'utils/swap-get-route/use-pool-pairs'
 import {
   usePoolActions,
   usePoolState,

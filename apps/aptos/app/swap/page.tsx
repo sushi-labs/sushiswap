@@ -5,8 +5,8 @@ import { Container } from '@sushiswap/ui'
 import Loading from 'app/loading'
 import React, { useEffect } from 'react'
 import { SimpleSwapWidget } from 'ui/swap/simple/simple-swap-widget'
+import { useAccount } from 'utils/hooks/useAccount'
 import requiredNetworkAlert from 'utils/requiredNetworkAlert'
-import { useAccount } from 'utils/useAccount'
 
 export default function SwapPage() {
   const { disconnect, network } = useWallet()

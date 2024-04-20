@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { formatPercent } from 'sushi/format'
-import { Pool } from 'utils/usePools'
+import { Pool } from 'utils/hooks/usePools'
 import { Row } from '../SharedCells/types'
 
 export const PoolMyPositionAprCell: FC<

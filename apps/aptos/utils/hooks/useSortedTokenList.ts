@@ -1,6 +1,6 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { Token } from './tokenType'
+import { Token } from '../tokenType'
 import {
   filterTokens,
   getSortedTokensByQuery,

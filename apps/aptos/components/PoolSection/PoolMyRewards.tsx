@@ -11,8 +11,8 @@ import { formatUSD } from 'sushi/format'
 import { createToast } from 'ui/common/toast'
 import { UserProfile } from 'ui/common/user-profile/user-profile'
 import { formatNumber } from 'utils/format-number'
-import { useNetwork } from 'utils/useNetwork'
-import { useStablePrice } from 'utils/useStablePrice'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { useStablePrice } from 'utils/hooks/useStablePrice'
 
 interface PoolMyRewards {
   reward: number

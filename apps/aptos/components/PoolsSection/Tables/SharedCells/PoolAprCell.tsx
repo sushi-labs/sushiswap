@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { formatPercent } from 'sushi/format'
-import { Pool } from 'utils/usePools'
+import { Pool } from 'utils/hooks/usePools'
 import { Row } from './types'
 
 export const PoolAprCell: FC<Row<Pool>> = () => {

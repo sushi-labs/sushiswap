@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
-import { useTokenWithCache } from 'utils/useTokenWithCache'
-import { useTokens } from 'utils/useTokens'
+import { useTokenWithCache } from 'utils/hooks/useTokenWithCache'
+import { useTokens } from 'utils/hooks/useTokens'
 import { Modal } from '../../components/Modal/Modal'
 import { ModalType } from '../../components/Modal/ModalProvider'
 import { CurrencyIcon } from '../common/currency/currency-icon'

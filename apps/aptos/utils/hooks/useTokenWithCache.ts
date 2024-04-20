@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { SupportedNetwork, chains } from 'config/chains'
-import { Token } from './tokenType'
+import { Token } from '../tokenType'
 import { useCustomTokens } from './useCustomTokens'
 import { useNetwork } from './useNetwork'
 

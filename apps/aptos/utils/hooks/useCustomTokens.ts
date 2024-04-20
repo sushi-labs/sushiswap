@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { useCallback, useMemo } from 'react'
-import { Token } from './tokenType'
+import { Token } from '../tokenType'
 import { Data } from './useTokens'
 
 export function useCustomTokens() {

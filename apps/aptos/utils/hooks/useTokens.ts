@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { SupportedNetwork } from 'config/chains'
 import { tokenlists } from 'config/tokenlists'
-import { Token } from './tokenType'
+import { Token } from '../tokenType'
 import { useNetwork } from './useNetwork'
 export type Data = {
   address: string

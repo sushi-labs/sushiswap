@@ -6,20 +6,10 @@ import { FC } from 'react'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ConnectButton } from 'ui/common/user-profile/connect-button'
 
-const Connect: FC<ButtonProps> = ({
-  children,
-  fullWidth = true,
-  size = 'xl',
-  ...props
-}) => {
+const Connect: FC<ButtonProps> = ({ children, ...props }) => {
   const { connected } = useWallet()
 
-  if (!connected)
-    return (
-      <ConnectButton fullWidth={fullWidth} size={size} {...props}>
-        Connect Wallet
-      </ConnectButton>
-    )
+  if (!connected) return <ConnectButton {...props} />
 
   return <>{children}</>
 }

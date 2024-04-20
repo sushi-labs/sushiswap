@@ -3,9 +3,9 @@ import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
-import { useFarms, useIsFarm } from 'utils/useFarms'
-import { Pool } from 'utils/usePools'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { useFarms, useIsFarm } from 'utils/hooks/useFarms'
+import { Pool } from 'utils/hooks/usePools'
+import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
 import { Row } from './types'
 
 export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { formatNumber } from './format-number'
+import { formatNumber } from '../format-number'
 import { FarmLP } from './useFarms'
 
 const SECONDS_PER_DAY = 86400

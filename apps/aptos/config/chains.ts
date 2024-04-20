@@ -1,12 +1,14 @@
 import { NetworkName } from '@aptos-labs/wallet-adapter-react'
 import { Network } from 'aptos'
+import { L0_USDC, USDC } from 'lib/coins'
+import { Token } from 'utils/tokenType'
 
 export const SUPPORTED_NETWORKS = [
   NetworkName.Testnet,
   NetworkName.Mainnet,
 ] as const
 
-export type SupportedNetwork = typeof SUPPORTED_NETWORKS[number]
+export type SupportedNetwork = (typeof SUPPORTED_NETWORKS)[number]
 
 export function isSupportedNetwork(
   network: NetworkName | undefined,
@@ -18,7 +20,7 @@ export function networkNameToNetwork(network: NetworkName): Network {
   return network === NetworkName.Testnet ? Network.TESTNET : Network.MAINNET
 }
 
-interface Config {
+export interface NetworkConfig {
   network: SupportedNetwork
   api: {
     fetchUrlPrefix: string
@@ -31,9 +33,10 @@ interface Config {
   other: {
     MSafeOrigin: string
   }
+  default_stable: Token
 }
 
-export const chains: Record<SupportedNetwork, Config> = {
+export const chains: Record<SupportedNetwork, NetworkConfig> = {
   [NetworkName.Testnet]: {
     network: NetworkName.Testnet,
     api: {
@@ -48,6 +51,7 @@ export const chains: Record<SupportedNetwork, Config> = {
     other: {
       MSafeOrigin: 'https://testnet.m-safe.io/',
     },
+    default_stable: USDC[NetworkName.Testnet],
   },
   [NetworkName.Mainnet]: {
     network: NetworkName.Mainnet,
@@ -62,5 +66,6 @@ export const chains: Record<SupportedNetwork, Config> = {
     other: {
       MSafeOrigin: 'https://app.m-safe.io',
     },
+    default_stable: L0_USDC[NetworkName.Mainnet],
   },
 }

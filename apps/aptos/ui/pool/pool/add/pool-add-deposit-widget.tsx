@@ -1,30 +1,56 @@
 'use client'
 
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { PlusIcon } from '@heroicons/react-v1/solid'
-import { FormSection } from '@sushiswap/ui'
+import { Button, FormSection } from '@sushiswap/ui'
+import { Provider } from 'aptos'
+import { AddSectionReviewModal } from 'components/Pool/AddSectionReviewModel'
+import { networkNameToNetwork } from 'config/chains'
 import { FC, useCallback, useMemo } from 'react'
 import { Checker } from 'ui/common/checker'
 import { CurrencyInput } from 'ui/common/currency/currency-input/currency-input'
+import { createToast } from 'ui/common/toast'
 import {
   usePoolActions,
   usePoolState,
 } from 'ui/pool/pool/add/pool-add-provider/pool-add-provider'
+import { useNetwork } from 'utils/hooks/useNetwork'
+import { liquidityArgs } from 'utils/payload/get-add-liquidity-payload'
 
 export const PoolAddDepositWidget: FC = () => {
-  const { setToken0, setToken1, setAmount0, setAmount1, setIndependentField } =
-    usePoolActions()
-  const { token0, token1, amount0, amount1 } = usePoolState()
+  const {
+    contracts: { swap: swapContract },
+    network,
+  } = useNetwork()
+  const { account, signAndSubmitTransaction } = useWallet()
+
+  const {
+    setToken0,
+    setToken1,
+    setAmount0,
+    setAmount1,
+    setIndependentField,
+    setisTransactionPending,
+  } = usePoolActions()
+  const {
+    token0,
+    token1,
+    amount0,
+    amount1,
+    slippageAmount0,
+    slippageAmount1,
+    poolReserves,
+    isTransactionPending,
+  } = usePoolState()
 
   const checkerAmounts = useMemo(() => {
     const tokens = [token0, token1]
     const amounts = [amount0, amount1]
 
-    return tokens
-      .map((token, i) => ({
-        currency: token.address,
-        amount: Number(amounts[i] || 0) / 10 ** token.decimals,
-      }))
-      .filter(({ amount }) => amount > 0)
+    return tokens.map((token, i) => ({
+      currency: token.address,
+      amount: Number(amounts[i] || 0) / 10 ** token.decimals,
+    }))
   }, [token0, token1, amount0, amount1])
 
   const _setAmount0 = useCallback(
@@ -79,8 +105,14 @@ export const PoolAddDepositWidget: FC = () => {
           className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
         />
       </div>
-      <Checker.Connect fullWidth>
-        <Checker.Amounts amounts={checkerAmounts}>buton</Checker.Amounts>
+      <Checker.Connect size="xl" fullWidth>
+        <Checker.Amounts size="xl" amounts={checkerAmounts} fullWidth>
+          <AddSectionReviewModal>
+            <Button size="xl" fullWidth>
+              Add Liquidity
+            </Button>
+          </AddSectionReviewModal>
+        </Checker.Amounts>
       </Checker.Connect>
     </FormSection>
   )

@@ -90,8 +90,16 @@ export function useTokenBalances({
       const balances = await Promise.allSettled(promises)
 
       return balances
-        .filter(isPromiseFulfilled)
-        .map((balance) => balance.value)
+        .map((balance, i) => {
+          if (isPromiseFulfilled(balance)) {
+            return balance.value
+          }
+
+          return {
+            currency: currencies[i],
+            balance: 0,
+          }
+        })
         .reduce<Record<string, number>>((acc, cur) => {
           acc[cur.currency] = cur.balance
           return acc

@@ -6,8 +6,8 @@ import { networkNameToNetwork } from 'config/chains'
 import { useParams } from 'next/navigation'
 import { FC, Fragment, useState } from 'react'
 import { createToast } from 'ui/common/toast'
+import { useNetwork } from 'utils/hooks/useNetwork'
 import { Token } from 'utils/tokenType'
-import { useNetwork } from 'utils/useNetwork'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
@@ -64,7 +64,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
 }) => {
   const [hover, setHover] = useState(false)
   const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id)
+  const tokenAddress = decodeURIComponent(router?.id as string)
   const [value, setValue] = useState('')
   const { signAndSubmitTransaction } = useWallet()
 
@@ -83,10 +83,11 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
 
     try {
       const response = await signAndSubmitTransaction({
-        type: 'entry_function_payload',
-        type_arguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
-        arguments: [parseInt(String(Number(value) * 10 ** decimals))],
-        function: `${masterchefContract}::masterchef::deposit`,
+        data: {
+          typeArguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
+          functionArguments: [parseInt(String(Number(value) * 10 ** decimals))],
+          function: `${masterchefContract}::masterchef::deposit`,
+        },
       })
       await provider.waitForTransaction(response?.hash)
       //return from here if response is failed

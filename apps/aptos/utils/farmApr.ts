@@ -1,4 +1,5 @@
 export const SECONDS_IN_YEAR = 31536000 // 365 * 24 * 60 * 60
+
 export default function getFarmApr(
   poolWeight: number,
   cakePriceUsd: number,

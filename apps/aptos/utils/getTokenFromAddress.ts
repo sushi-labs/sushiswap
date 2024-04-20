@@ -1,5 +1,5 @@
 import { SupportedNetwork } from 'config/chains'
-import { getTokensWithoutKey } from './useTokens'
+import { getTokensWithoutKey } from './hooks/useTokens'
 
 interface GetTokenFromAddress {
   address: string | null

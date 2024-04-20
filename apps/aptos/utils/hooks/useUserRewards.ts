@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import getAptosPerShare from './getAptosPerShare'
+import getAptosPerShare from '../getAptosPerShare'
 import { FarmLP } from './useFarms'
 import { UserStakes } from './useUserHandle'
 

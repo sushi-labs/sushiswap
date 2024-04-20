@@ -1,8 +1,8 @@
 import { SupportedNetwork, chains } from 'config/chains'
 import { baseTokens } from '../baseTokens'
+import { Pool } from '../hooks/usePools'
 import { Token } from '../tokenType'
-import { Pool } from '../usePools'
-import { getBestRoute } from './get-best-route'
+import { getBestRouteWithWorker } from './get-best-route'
 import { PoolInfo, PoolReserve, Vertex } from './types'
 
 interface GetSwapRoute {
@@ -129,7 +129,7 @@ export async function getSwapRoute({
     return data
   }, {})
 
-  const bestRoute = getBestRoute({
+  const bestRoute = getBestRouteWithWorker({
     amountIn,
     vertices,
     tokenGraph: graph,

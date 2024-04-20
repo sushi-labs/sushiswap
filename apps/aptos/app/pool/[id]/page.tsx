@@ -9,18 +9,22 @@ import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { PoolRewards } from 'components/PoolSection/PoolRewards'
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
+import { useFarms, useIsFarm } from 'utils/hooks/useFarms'
+import { usePool } from 'utils/hooks/usePool'
+import { useRewardsPerDay } from 'utils/hooks/useRewardsPerDay'
+import { useTotalSupply } from 'utils/hooks/useTotalSupply'
+import {
+  getPIdIndex,
+  useUserHandle,
+  useUserPool,
+} from 'utils/hooks/useUserHandle'
+import { useUserRewards } from 'utils/hooks/useUserRewards'
 import requiredNetworkAlert from 'utils/requiredNetworkAlert'
-import { useFarms, useIsFarm } from 'utils/useFarms'
-import { usePool } from 'utils/usePool'
-import { useRewardsPerDay } from 'utils/useRewardsPerDay'
-import { useTotalSupply } from 'utils/useTotalSupply'
-import { getPIdIndex, useUserHandle, useUserPool } from 'utils/useUserHandle'
-import { useUserRewards } from 'utils/useUserRewards'
 
 const Pool = () => {
   const router = useParams()
   const { account, network, disconnect } = useWallet()
-  const tokenAddress = decodeURIComponent(router?.id)
+  const tokenAddress = decodeURIComponent(router?.id as string)
   const { data: pool, isLoading: isPoolLoading } = usePool(tokenAddress)
   const { data: farms } = useFarms()
   const farmIndex = useIsFarm({ poolAddress: tokenAddress, farms })
@@ -48,6 +52,7 @@ const Pool = () => {
     farmIndex,
     coinInfo?.data?.decimals,
   )
+
   useEffect(() => {
     requiredNetworkAlert(network, disconnect)
   }, [network, disconnect])

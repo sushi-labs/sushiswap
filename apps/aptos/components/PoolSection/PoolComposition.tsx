@@ -10,9 +10,9 @@ import {
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 import { formatNumber } from 'utils/format-number'
-import { Pool } from 'utils/usePools'
-import { useStablePrice } from 'utils/useStablePrice'
-import { useTokensFromPools } from 'utils/useTokensFromPool'
+import { Pool } from 'utils/hooks/usePools'
+import { useStablePrice } from 'utils/hooks/useStablePrice'
+import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
 import { CardCurrencyAmountItem } from '../CardCurrencyAmountItem'
 
 interface PoolCompositionProps {

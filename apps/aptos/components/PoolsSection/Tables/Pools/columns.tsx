@@ -1,6 +1,6 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
-import { Pool } from 'utils/usePools'
+import { Pool } from 'utils/hooks/usePools'
 import { PoolAprCell } from '../SharedCells/PoolAprCell'
 import { PoolNameCell } from '../SharedCells/PoolNameCell'
 import { PoolReserveCell } from '../SharedCells/PoolReserveCell'

@@ -7,8 +7,8 @@ import {
   PopoverTrigger,
 } from '@sushiswap/ui'
 import React, { useState } from 'react'
-import { useTokenBalance } from 'utils/useTokenBalance'
-import { useTokens } from 'utils/useTokens'
+import { useTokenBalance } from 'utils/hooks/useTokenBalance'
+import { useTokens } from 'utils/hooks/useTokens'
 import { ConnectButton } from './connect-button'
 import { ConnectView } from './connect-view/connect-view'
 import { DefaultView } from './default-view'

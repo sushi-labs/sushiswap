@@ -1,7 +1,5 @@
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { CogIcon } from '@heroicons/react/24/outline'
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   IconButton,
   WidgetAction,
@@ -15,50 +13,30 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui/components/settings'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
-import { Provider } from 'aptos'
 import { AddLiquidityButton } from 'components/Pool/AddLiquidityButton'
-import { networkNameToNetwork } from 'config/chains'
 import { useParams } from 'next/navigation'
 import React, { FC, useCallback, useEffect } from 'react'
 import { CurrencyInput } from 'ui/common/currency/currency-input/currency-input'
-import { createToast } from 'ui/common/toast'
-import { liquidityArgs } from 'utils/liquidityPayload'
-import { useNetwork } from 'utils/useNetwork'
 import {
   usePoolActions,
   usePoolState,
 } from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
-import { usePoolPairs } from '../../utils/swap-get-route/utilFunctions'
-import { usePool } from '../../utils/usePool'
-import { Pool } from '../../utils/usePools'
-import { useTokensFromPools } from '../../utils/useTokensFromPool'
+import { usePool } from '../../utils/hooks/usePool'
+import { Pool } from '../../utils/hooks/usePools'
+import { useTokensFromPools } from '../../utils/hooks/useTokensFromPool'
+import { usePoolPairs } from '../../utils/swap-get-route/use-pool-pairs'
 import { AddSectionReviewModal } from '../Pool/AddSectionReviewModel'
-
-type PayloadType = {
-  type: string
-  type_arguments: string[]
-  arguments: number[]
-  function: string
-}
 
 export const AddSectionWidget: FC = () => {
   usePoolPairs()
 
   const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id)
+  const tokenAddress = decodeURIComponent(router?.id as string)
   const { data: pool } = usePool(tokenAddress)
 
   const { token0, token1 } = useTokensFromPools(pool as Pool)
 
-  const {
-    setToken0,
-    setToken1,
-    setAmount0,
-    setAmount1,
-    setisTransactionPending,
-    setSlippageAmount0,
-    setSlippageAmount1,
-  } = usePoolActions()
+  const { setToken0, setToken1, setAmount0, setAmount1 } = usePoolActions()
 
   const {
     token0: token0State,
@@ -66,12 +44,7 @@ export const AddSectionWidget: FC = () => {
     amount0,
     amount1,
     poolPairRatio,
-    poolReserves,
-    slippageAmount0,
-    slippageAmount1,
   } = usePoolState()
-
-  const [slippageAmount] = useSlippageTolerance()
 
   useEffect(() => {
     if (token0State.address !== token0.address) {
@@ -82,74 +55,9 @@ export const AddSectionWidget: FC = () => {
     }
   }, [token0, token1, setToken0, setToken1])
 
-  const {
-    network,
-    contracts: { swap: swapContract },
-  } = useNetwork()
-
-  const { account, signAndSubmitTransaction } = useWallet()
-
-  const addLiquidity = useCallback(
-    async (close: () => void) => {
-      const provider = new Provider(networkNameToNetwork(network))
-
-      const payload: PayloadType = liquidityArgs(
-        swapContract,
-        token0.address,
-        token1.address,
-        parseInt(String(Number(amount0) * 10 ** token0.decimals)),
-        parseInt(String(Number(amount1) * 10 ** token1.decimals)),
-        parseInt(String(Number(slippageAmount0) * 10 ** token0.decimals)),
-        parseInt(String(Number(slippageAmount1) * 10 ** token1.decimals)),
-      )
-      setisTransactionPending(true)
-      if (!account) return []
-      try {
-        const response: any = await signAndSubmitTransaction(payload)
-        await provider.waitForTransaction(response?.hash)
-        if (!response?.success) return
-        const toastId = `completed:${response?.hash}`
-        const summery = poolReserves
-          ? `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`
-          : `Created the ${token0.symbol}/${token1.symbol} liquidity pool`
-        createToast({
-          summery: summery,
-          toastId: toastId,
-        })
-        setisTransactionPending(false)
-        close()
-        setAmount0('')
-        setAmount1('')
-      } catch {
-        const toastId = `failed:${Math.random()}`
-        createToast({ summery: 'User rejected request', toastId: toastId })
-      } finally {
-        setisTransactionPending(false)
-      }
-    },
-    [
-      account,
-      poolReserves,
-      network,
-      token0,
-      token1,
-      amount0,
-      amount1,
-      swapContract,
-      amount0,
-      amount1,
-      slippageAmount0,
-      slippageAmount1,
-      setAmount0,
-      setAmount1,
-      setisTransactionPending,
-      signAndSubmitTransaction,
-    ],
-  )
-
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
-      if (poolReserves?.data) {
+      if (typeof poolPairRatio === 'number') {
         if (value) {
           const decimalDiff = token0.decimals - token1.decimals
 
@@ -167,12 +75,12 @@ export const AddSectionWidget: FC = () => {
         }
       }
     },
-    [poolPairRatio, poolReserves, token0, token1, setAmount1],
+    [poolPairRatio, token0, token1, setAmount1],
   )
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
-      if (poolReserves?.data) {
+      if (typeof poolPairRatio === 'number') {
         if (value) {
           const decimalDiff = token1.decimals - token0.decimals
 
@@ -191,7 +99,7 @@ export const AddSectionWidget: FC = () => {
         }
       }
     },
-    [poolPairRatio, poolReserves, token0, token1, setAmount0],
+    [poolPairRatio, token0, token1, setAmount0],
   )
 
   useEffect(() => {
@@ -229,7 +137,7 @@ export const AddSectionWidget: FC = () => {
         </WidgetAction>
       </WidgetHeader>
       <div className="flex flex-col gap-4">
-        <TradeInput
+        <CurrencyInput
           id={'liquidity-from'}
           token={token0}
           value={String(amount0)}
@@ -246,7 +154,7 @@ export const AddSectionWidget: FC = () => {
             />
           </div>
         </div>
-        <TradeInput
+        <CurrencyInput
           id={'liquidity-to'}
           token={token1}
           value={String(amount1)}
@@ -262,11 +170,9 @@ export const AddSectionWidget: FC = () => {
         />
       </WidgetFooter>
       <AddSectionReviewModal>
-        {({ close }) => (
-          <Button size="xl" fullWidth onClick={() => addLiquidity(close)}>
-            Add
-          </Button>
-        )}
+        <Button size="xl" fullWidth>
+          Add
+        </Button>
       </AddSectionReviewModal>
     </Widget>
   )

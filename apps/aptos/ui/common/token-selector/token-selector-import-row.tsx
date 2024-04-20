@@ -11,8 +11,8 @@ import {
 } from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
 import React, { FC, useCallback, useState } from 'react'
+import { useNetwork } from 'utils/hooks/useNetwork'
 import { Token } from 'utils/tokenType'
-import { useNetwork } from 'utils/useNetwork'
 import { CurrencyIcon } from '../currency/currency-icon'
 
 interface TokenSelectorImportRow {

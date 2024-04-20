@@ -1,8 +1,7 @@
-import { NetworkName } from '@aptos-labs/wallet-adapter-core'
-import { Aptos, L0_USDC, STABLECOINS, USDC } from 'lib/coins'
+import { Aptos, STABLECOINS } from 'lib/coins'
 import { useMemo } from 'react'
-import getCurrencyPrice from './getCurrencyPrice'
-import { Token } from './tokenType'
+import getCurrencyPrice from '../getCurrencyPrice'
+import { Token } from '../tokenType'
 import { useNetwork } from './useNetwork'
 import usePairs from './usePairs'
 
@@ -12,16 +11,9 @@ interface UseStablePrice {
 }
 
 export function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
-  const { network } = useNetwork()
+  const { network, default_stable } = useNetwork()
 
-  const defaultStable = useMemo(() => {
-    if (network === NetworkName.Testnet) {
-      return USDC[network]
-    }
-    return L0_USDC[network]
-  }, [network])
   const native = useMemo(() => Aptos[network], [network])
-
   const stableTokens = useMemo(() => STABLECOINS[network], [network])
 
   const [nativePairInfo, stableNativePairInfo] = usePairs({
@@ -33,9 +25,9 @@ export function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
             : currency,
           native,
         ],
-        [native, defaultStable],
+        [native, default_stable],
       ],
-      [native, defaultStable, currency],
+      [native, default_stable, currency],
     ),
     ledgerVersion,
   })
@@ -59,7 +51,7 @@ export function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
   return useMemo(() => {
     return getCurrencyPrice(
       currency,
-      defaultStable,
+      default_stable,
       native,
       stableTokens,
       nativePairInfo,
@@ -68,7 +60,7 @@ export function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
     )
   }, [
     currency,
-    defaultStable,
+    default_stable,
     nativePairInfo,
     stableNativePairInfo,
     stablePairsInfo,

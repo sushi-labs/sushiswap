@@ -1,5 +1,5 @@
-import { FarmLP } from './useFarms'
-import { ACC_SUSHI_PRECISION } from './useUserRewards'
+import { FarmLP } from './hooks/useFarms'
+import { ACC_SUSHI_PRECISION } from './hooks/useUserRewards'
 
 export default function getAptosPerShare(
   farms: FarmLP | undefined,

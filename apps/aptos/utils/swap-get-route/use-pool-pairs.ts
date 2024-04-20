@@ -4,7 +4,7 @@ import {
   usePoolActions,
   usePoolState,
 } from '../../ui/pool/pool/add/pool-add-provider/pool-add-provider'
-import { useNetwork } from '../useNetwork'
+import { useNetwork } from '../hooks/useNetwork'
 import { PoolReserve } from './types'
 
 export async function usePoolPairs() {

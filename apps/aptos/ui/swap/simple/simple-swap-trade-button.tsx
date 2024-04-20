@@ -3,8 +3,8 @@ import { warningSeverity } from 'lib/swap/warningSeverity'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Checker } from 'ui/common/checker'
 import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
-import { useIsSwapMaintenance } from 'utils/use-is-swap-maintenance'
-import { useSwapRouter } from 'utils/useSwapRouter'
+import { useIsSwapMaintenance } from 'utils/hooks/use-is-swap-maintenance'
+import { useSwapRouter } from 'utils/hooks/useSwapRouter'
 import { Modal } from '../../../components/Modal/Modal'
 
 export const SimpleSwapTradeButton = () => {
@@ -39,24 +39,30 @@ export const SimpleSwapTradeButton = () => {
               guardWhen={maintenance}
               guardText="Maintenance in progress"
               fullWidth
+              size="xl"
             >
               <Checker.Guard
                 guardWhen={Boolean(noRouteFound)}
                 guardText={noRouteFound}
                 fullWidth
+                size="xl"
               >
-                <Checker.Connect>
-                  <Checker.Amounts amounts={checkerAmount}>
+                <Checker.Connect fullWidth size="xl">
+                  <Checker.Amounts amounts={checkerAmount} fullWidth size="xl">
                     <Checker.Guard
                       guardWhen={
                         !checked && warningSeverity(routes?.priceImpact) > 3
                       }
                       guardText="Price impact too high"
                       variant="destructive"
+                      size="xl"
+                      fullWidth
                     >
                       <Checker.Guard
                         guardWhen={Boolean(error)}
                         guardText="An unknown error occurred"
+                        size="xl"
+                        fullWidth
                       >
                         <Button
                           size="xl"
