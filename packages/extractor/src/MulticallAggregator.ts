@@ -226,7 +226,7 @@ export class MultiCallAggregator {
         // getBlockNumber Failed
         for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
       } else {
-        const blockNumber = res[0].result as number
+        const blockNumber = Number(res[0].result)
         for (let i = 1; i < res.length; ++i) {
           if (res[i].status === 'success')
             pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })

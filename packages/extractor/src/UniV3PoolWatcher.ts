@@ -189,8 +189,9 @@ export class UniV3PoolWatcher extends EventEmitter {
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
           if (tickSpacing !== this.spacing)
-            throw new Error(
-              `Wrong spacing. Expected: ${this.spacing}. Real: ${tickSpacing}`,
+            Logger.error(
+              this.client.chainId,
+              `Wrong spacing. Expected: ${this.spacing}, real: ${tickSpacing}, pool: ${this.address}`,
             )
 
           const [sqrtPriceX96, tick] = slot0 as [bigint, number]
@@ -215,6 +216,7 @@ export class UniV3PoolWatcher extends EventEmitter {
             this.emit('isUpdated')
           })
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
+          this.latestEventBlockNumber = blockNumber
           break
         }
       } catch (e) {
