@@ -526,7 +526,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {isFetching ? (
+                      {isFetching || !trade?.minAmountOut ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
