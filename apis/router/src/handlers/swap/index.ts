@@ -91,6 +91,8 @@ function handler(
             .send(`Incorrect address for tokenOut: ${_tokenOut}`)
         if (to !== undefined && !isAddressFast(to))
           return res.status(422).send(`Incorrect address for 'to': ${to}`)
+        if (amount <= 0)
+          return res.status(422).send(`Amount must be positive: ${amount}`)
 
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
