@@ -269,6 +269,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     writeContractAsync,
     isLoading: isWritePending,
     data: hash,
+    reset,
   } = useWriteContract({
     mutation: {
       onSuccess: onWriteSuccess,
@@ -411,9 +412,11 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         type: 'swap',
         chainId: chainId1,
         txHash: receipt.hash,
-        promise: client1.waitForTransactionReceipt({
-          hash: receipt.hash,
-        }),
+        promise: client1
+          .waitForTransactionReceipt({
+            hash: receipt.hash,
+          })
+          .then(reset),
         summary: {
           pending: `Swapping ${
             tradeRef?.current?.dstBridgeToken?.symbol
