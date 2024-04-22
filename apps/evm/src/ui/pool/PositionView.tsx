@@ -30,19 +30,19 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
+import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { useAccount } from '@sushiswap/wagmi'
 import {
+  useAccount,
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
   useConcentratedPositionOwner,
   useTokenWithCache,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
-import React, { FC, useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
-import { SushiSwapV3ChainId } from 'sushi/config'
-import { isAngleEnabledChainId } from 'sushi/config'
+import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
@@ -470,10 +470,12 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       title={
                         <>
                           1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                          {(inverted
-                            ? pool?.token1Price
-                            : pool?.token0Price
-                          )?.toSignificant(6)}{' '}
+                          <FormattedPrice
+                            number={(inverted
+                              ? pool?.token1Price
+                              : pool?.token0Price
+                            )?.toSignificant(6)}
+                          />{' '}
                           {unwrapToken(currencyQuote)?.symbol}
                         </>
                       }
@@ -515,11 +517,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '0'
                           ) : (
                             <>
-                              {formatTickPrice({
-                                price: priceLower,
-                                atLimit: tickAtLimit,
-                                direction: Bound.UPPER,
-                              })}{' '}
+                              <FormattedPrice
+                                number={formatTickPrice({
+                                  price: priceLower,
+                                  atLimit: tickAtLimit,
+                                  direction: Bound.UPPER,
+                                })}
+                              />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
@@ -593,16 +597,18 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '∞'
                           ) : (
                             <>
-                              {formatTickPrice({
-                                price: priceUpper,
-                                atLimit: tickAtLimit,
-                                direction: Bound.UPPER,
-                              })}{' '}
+                              <FormattedPrice
+                                number={formatTickPrice({
+                                  price: priceUpper,
+                                  atLimit: tickAtLimit,
+                                  direction: Bound.UPPER,
+                                })}
+                              />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
-                                    ( +
+                                    (
                                     {priceUpper
                                       ?.subtract(
                                         invert
