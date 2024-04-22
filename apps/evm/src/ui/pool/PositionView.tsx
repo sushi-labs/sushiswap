@@ -33,10 +33,11 @@ import { Button } from '@sushiswap/ui/components/button'
 import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import {
-  useAccount, useConcentratedLiquidityPositionsFromTokenId,
+  useAccount,
+  useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
   useConcentratedPositionOwner,
-  useTokenWithCache
+  useTokenWithCache,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, useMemo, useState } from 'react'
