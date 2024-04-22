@@ -442,7 +442,7 @@ export const useStargateCrossChainTrade = ({
     },
     refetchOnWindowFocus: true,
     refetchInterval: 10000,
-    keepPreviousData: false,
+    keepPreviousData: !!amount,
     cacheTime: 0,
     enabled:
       enabled &&
