@@ -2,6 +2,7 @@
 
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
+import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
@@ -13,7 +14,6 @@ import {
 import { usePriceInverter } from 'src/lib/hooks'
 import { useIsTickAtLimit } from 'src/lib/pool/v3'
 import { Position } from 'sushi/pool'
-import { FormattedPrice } from './FormattedPrice'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
   ({ original }) => {

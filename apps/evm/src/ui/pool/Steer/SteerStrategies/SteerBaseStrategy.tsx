@@ -19,9 +19,9 @@ import {
 } from '@sushiswap/ui'
 import { formatPercent, formatUSD } from 'sushi/format'
 
+import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
 import { SteerStrategyComponent } from '.'
 import { APRHoverCard } from '../../APRHoverCard'
-import { FormattedPrice } from '../../FormattedPrice'
 import { SteerAPRChart } from '../SteerAPRChart'
 import { SteerLiquidityInRangeChip } from '../SteerLiquidityDistributionWidget/SteerLiquidityInRangeChip'
 import {

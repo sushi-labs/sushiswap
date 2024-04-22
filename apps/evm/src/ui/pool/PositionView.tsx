@@ -30,19 +30,18 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
+import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { useAccount } from '@sushiswap/wagmi'
 import {
-  useConcentratedLiquidityPositionsFromTokenId,
+  useAccount, useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
   useConcentratedPositionOwner,
-  useTokenWithCache,
+  useTokenWithCache
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
-import React, { FC, useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
-import { SushiSwapV3ChainId } from 'sushi/config'
-import { isAngleEnabledChainId } from 'sushi/config'
+import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
@@ -63,7 +62,6 @@ import {
 import { ConcentratedLiquidityRemoveWidget } from './ConcentratedLiquidityRemoveWidget'
 import { ConcentratedLiquidityWidget } from './ConcentratedLiquidityWidget'
 import { DistributionDataTable } from './DistributionDataTable'
-import { FormattedPrice } from './FormattedPrice'
 
 const Component: FC<{ id: string }> = ({ id }) => {
   const { address } = useAccount()
