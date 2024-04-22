@@ -522,7 +522,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                     </List.KeyValue>
                     <List.KeyValue
                       title={`Min. received after slippage (${
-                        slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
+                        slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance
                       }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >

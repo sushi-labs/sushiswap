@@ -23,7 +23,7 @@ import {
 export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
   const {
-    state: { chainId, swapAmountString, recipient },
+    state: { chainId, swapAmountString, recipient, forceClient },
   } = useDerivedStateSimpleSwap()
   const { isInitialLoading: isLoading, data: trade } = useSimpleSwapTrade()
   const { isFallback } = useFallback(chainId)
@@ -119,7 +119,7 @@ export const SimpleSwapTradeStats: FC = () => {
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading || !trade ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-            ) : !isFallback ? (
+            ) : !isFallback && !forceClient ? (
               'SushiSwap API'
             ) : (
               'SushiSwap Client'

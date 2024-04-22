@@ -114,7 +114,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     const slippagePercent = useMemo(() => {
       return new Percent(
         Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+          +(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) * 100,
         ),
         10_000,
       )

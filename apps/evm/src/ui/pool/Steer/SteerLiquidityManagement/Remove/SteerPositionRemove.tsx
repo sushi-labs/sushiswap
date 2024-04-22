@@ -56,7 +56,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   const slippagePercent = useMemo(() => {
     return new Percent(
       Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+        +(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) * 100,
       ),
       10_000,
     )
@@ -242,7 +242,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
               options={{
                 slippageTolerance: {
                   storageKey: 'removeSteerLiquidity',
-                  defaultValue: '0.5',
+                  defaultValue: '0.1',
                   title: 'Remove Liquidity Slippage',
                 },
               }}

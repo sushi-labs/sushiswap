@@ -440,7 +440,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                       <List.KeyValue
                         title={`Min. received after slippage (${
                           slippageTolerance === 'AUTO'
-                            ? '0.5'
+                            ? '0.1'
                             : slippageTolerance
                         }%)`}
                         subtitle="The minimum amount you are guaranteed to receive."
