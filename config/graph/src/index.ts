@@ -162,6 +162,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.HAQQ]: 'HAQQ',
   [ChainId.ZETACHAIN]: 'ZetaChain',
   [ChainId.BLAST]: 'Blast',
+  // [ChainId.SKALE_EUROPA]: 'Skale Europa',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -199,6 +200,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.HAQQ]: HAQQ_HOST,
   [ChainId.ZETACHAIN]: SUSHI_GOLDSKY_HOST,
   [ChainId.BLAST]: SUSHI_DEDICATED_GOLDSKY_HOST,
+  // [ChainId.SKALE_EUROPA]: SKALE_HOST
 } as const
 
 export const BENTOBOX_ENABLED_NETWORKS = [
@@ -278,6 +280,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/blocks-haqq`,
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/blocks-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/blocks-blast/gn`,
+  // [ChainId.SKALE_EUROPA]:
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -339,6 +342,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/sushiswap-linea`,
   [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/v2-polygon-zkevm/v0.0.1`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
+  // [ChainId.SKALE_EUROPA]:
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
@@ -367,6 +371,7 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/v3-haqq`,
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/v3-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
+  // [ChainId.SKALE_EUROPA]:
 }
 
 export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {

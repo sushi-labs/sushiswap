@@ -24,7 +24,7 @@ export class Native extends Currency {
     this.name = native.name
   }
   public get wrapped(): Token {
-    const wnative = WNATIVE[this.chainId]
+    const wnative = WNATIVE[this.chainId as keyof typeof WNATIVE]
     invariant(!!wnative, 'WRAPPED')
     return wnative
   }

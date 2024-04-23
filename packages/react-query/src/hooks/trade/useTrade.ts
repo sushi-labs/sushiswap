@@ -128,7 +128,7 @@ export const useTrade = (variables: UseTradeParams) => {
   } = variables
   const { data: price } = usePrice({
     chainId,
-    address: WNATIVE_ADDRESS[chainId],
+    address: WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS],
   })
 
   const select: UseTradeQuerySelect = useCallback(

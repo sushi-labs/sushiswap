@@ -1152,3 +1152,11 @@ export const MUSD = new Token({
   symbol: 'MUSD',
   decimals: 18,
 })
+
+export const SKL = new Token({
+  chainId: ChainId.SKALE_EUROPA,
+  address: '0xE0595a049d02b7674572b0d59cd4880Db60EDC50',
+  name: 'SKALE',
+  symbol: 'SKL',
+  decimals: 18,
+})

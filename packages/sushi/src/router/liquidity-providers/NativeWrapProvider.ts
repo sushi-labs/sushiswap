@@ -21,9 +21,9 @@ export class NativeWrapProvider extends LiquidityProvider {
       decimals: 18,
     }
     const bridge = new BridgeUnlimited(
-      WNATIVE_ADDRESS[chainId],
+      WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS],
       nativeRToken,
-      WNATIVE[chainId] as RToken,
+      WNATIVE[chainId as keyof typeof WNATIVE] as RToken,
       0,
       50_000,
     )

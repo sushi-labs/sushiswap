@@ -32,6 +32,7 @@ import { PalmNaked } from './PalmNaked'
 import { PolygonNaked } from './PolygonNaked'
 import { PolygonZKNaked } from './PolygonZKNaked'
 import { ScrollNaked } from './ScrollNaked'
+import { SkaleNaked } from './SkaleNaked'
 import { TelosNaked } from './TelosNaked'
 import { ThunderCoreNaked } from './ThunderCoreNaked'
 import { ZetaChainNaked } from './ZetaChainNaked'
@@ -67,6 +68,7 @@ export * from './PalmNaked'
 export * from './PolygonNaked'
 export * from './PolygonZKNaked'
 export * from './ScrollNaked'
+export * from './SkaleNaked'
 export * from './TelosNaked'
 export * from './ZetaChainNaked'
 
@@ -106,4 +108,5 @@ export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
   [ChainId.FILECOIN]: FilecoinNaked,
   [ChainId.ZETACHAIN]: ZetaChainNaked,
   [ChainId.BLAST]: BlastNaked,
+  [ChainId.SKALE_EUROPA]: SkaleNaked,
 }

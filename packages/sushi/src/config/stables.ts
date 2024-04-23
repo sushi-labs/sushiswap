@@ -208,6 +208,11 @@ export const STABLES = {
   ],
   [ChainId.CRONOS]: [USDC[ChainId.CRONOS]],
   [ChainId.BLAST]: [USDB[ChainId.BLAST], MUSD],
+  [ChainId.SKALE_EUROPA]: [
+    USDC[ChainId.SKALE_EUROPA],
+    USDT[ChainId.SKALE_EUROPA],
+    DAI[ChainId.SKALE_EUROPA],
+  ],
   // TESTNETS
   // [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   // [ChainId.ROPSTEN]: [

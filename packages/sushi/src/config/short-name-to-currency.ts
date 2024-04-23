@@ -8,6 +8,7 @@ import {
   MIM,
   Native,
   OP,
+  SKL,
   SUSHI,
   Token,
   Type,
@@ -276,6 +277,9 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     NATIVE: Native.onChain(ChainId.BLAST),
     WNATIVE: WNATIVE[ChainId.BLAST],
     USDB: USDB[ChainId.BLAST],
+  },
+  [ChainId.SKALE_EUROPA]: {
+    NATIVE: SKL,
   },
 } as const
 

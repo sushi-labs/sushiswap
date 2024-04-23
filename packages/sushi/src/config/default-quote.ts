@@ -78,4 +78,5 @@ export const defaultQuoteCurrency = {
   [ChainId.ZETACHAIN]: WETH9[ChainId.ZETACHAIN],
   [ChainId.CRONOS]: WETH9[ChainId.CRONOS],
   [ChainId.BLAST]: USDB[ChainId.BLAST],
+  [ChainId.SKALE_EUROPA]: USDC[ChainId.SKALE_EUROPA],
 } as const
