@@ -10,11 +10,10 @@ import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import '../interfaces/ICurve.sol';
 import './InputStream.sol';
-import './Approve.sol';
+import './Utils.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 address constant IMPOSSIBLE_POOL_ADDRESS = 0x0000000000000000000000000000000000000001;
 address constant INTERNAL_INPUT_SOURCE = 0x0000000000000000000000000000000000000000;
 
@@ -32,7 +31,8 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 /// @author Ilya Lyalin
 contract RouteProcessor5 is Ownable {
   using SafeERC20 for IERC20;
-  using Approve for IERC20;
+  using Utils for IERC20;
+  using Utils for address;
   using SafeERC20 for IERC20Permit;
   using InputStream for uint256;
 
@@ -117,6 +117,28 @@ contract RouteProcessor5 is Ownable {
   /// @param amountOutMin Minimum amount of the output token
   /// @return amountOut Actual amount of the output token
   function transferValueAndprocessRoute(
+    address transferValueTo,
+    uint256 amountValueTransfer,
+    address tokenIn,
+    uint256 amountIn,
+    address tokenOut,
+    uint256 amountOutMin,
+    address to,
+    bytes memory route
+  ) external payable lock returns (uint256 amountOut) {
+    transferValueTo.transferNative(amountValueTransfer);
+    return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
+  }
+
+  /// @notice Transfers some value of input tokens to <transferValueTo> and then processes the route
+  /// @param transferValueTo Address where the value should be transferred
+  /// @param amountValueTransfer How much value to transfer
+  /// @param tokenIn Address of the input token
+  /// @param amountIn Amount of the input token
+  /// @param tokenOut Address of the output token
+  /// @param amountOutMin Minimum amount of the output token
+  /// @return amountOut Actual amount of the output token
+  function processRouteWithTransferValueInput(
     address payable transferValueTo,
     uint256 amountValueTransfer,
     address tokenIn,
@@ -126,13 +148,31 @@ contract RouteProcessor5 is Ownable {
     address to,
     bytes memory route
   ) external payable lock returns (uint256 amountOut) {
-    (bool success, bytes memory returnBytes) = transferValueTo.call{value: amountValueTransfer}('');
-    if (!success) {
-      assembly {
-        revert(add(32, returnBytes), mload(returnBytes))
-      }
-    }
+    tokenIn.transferAnyFromSender(transferValueTo, amountValueTransfer);
     return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
+  }
+  
+  /// @notice processes the route and sends <amountValueTransfer> amount of output token to <transferValueTo>
+  /// @param transferValueTo Address where the value should be transferred
+  /// @param amountValueTransfer How much value to transfer
+  /// @param tokenIn Address of the input token
+  /// @param amountIn Amount of the input token
+  /// @param tokenOut Address of the output token
+  /// @param amountOutMin Minimum amount of the output token
+  /// @return amountOut Actual amount of the output token
+  function processRouteWithTransferValueOutput(
+    address payable transferValueTo,
+    uint256 amountValueTransfer,
+    address tokenIn,
+    uint256 amountIn,
+    address tokenOut,
+    uint256 amountOutMin,
+    address to,
+    bytes memory route
+  ) external payable lock returns (uint256 amountOut) {
+    amountOut = processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, address(this), route);
+    tokenOut.transferAny(transferValueTo, amountValueTransfer);
+    tokenOut.transferAny(to, amountOut - amountValueTransfer);
   }
 
   /// @notice Processes the route generated off-chain
@@ -149,8 +189,8 @@ contract RouteProcessor5 is Ownable {
     address to,
     bytes memory route
   ) private returns (uint256 amountOut) {
-    uint256 balanceInInitial = tokenIn == NATIVE_ADDRESS ? 0 : IERC20(tokenIn).balanceOf(msg.sender);
-    uint256 balanceOutInitial = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
+    uint256 balanceInInitial = tokenIn.anyBalanceOf(msg.sender);
+    uint256 balanceOutInitial = tokenOut.anyBalanceOf(to);
 
     uint256 realAmountIn = amountIn;
     {
@@ -175,10 +215,11 @@ contract RouteProcessor5 is Ownable {
       }
     }
 
-    uint256 balanceInFinal = tokenIn == NATIVE_ADDRESS ? 0 : IERC20(tokenIn).balanceOf(msg.sender);
-    require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
+    uint256 balanceInFinal = tokenIn.anyBalanceOf(msg.sender);
+    if (tokenIn != Utils.NATIVE_ADDRESS)
+      require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
     
-    uint256 balanceOutFinal = tokenOut == NATIVE_ADDRESS ? address(to).balance : IERC20(tokenOut).balanceOf(to);
+    uint256 balanceOutFinal = tokenOut.anyBalanceOf(to);
     if (balanceOutFinal < balanceOutInitial + amountOutMin)
       revert MinimalOutputBalanceViolation(balanceOutFinal - balanceOutInitial);
 
@@ -203,7 +244,7 @@ contract RouteProcessor5 is Ownable {
   /// @param stream Streamed program
   function processNative(uint256 stream) private returns (uint256 amountTotal) {
     amountTotal = address(this).balance;
-    distributeAndSwap(stream, address(this), NATIVE_ADDRESS, amountTotal);
+    distributeAndSwap(stream, address(this), Utils.NATIVE_ADDRESS, amountTotal);
   }
 
   /// @notice Processes ERC20 token from this contract balance:
@@ -299,8 +340,7 @@ contract RouteProcessor5 is Ownable {
         if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
         IWETH(tokenIn).withdraw(amountIn);
       }
-      (bool success,)= payable(to).call{value: amountIn}("");
-      require(success, "RouteProcessor.wrapNative: Native token transfer failed");
+      to.transferNative(amountIn);
     }
   }
 
@@ -465,7 +505,7 @@ contract RouteProcessor5 is Ownable {
     address tokenOut = stream.readAddress();
 
     uint256 amountOut;
-    if (tokenIn == NATIVE_ADDRESS) {
+    if (tokenIn == Utils.NATIVE_ADDRESS) {
       amountOut = ICurve(pool).exchange{value: amountIn}(fromIndex, toIndex, amountIn, 0);
     } else {
       if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
@@ -479,13 +519,6 @@ contract RouteProcessor5 is Ownable {
       }
     }
 
-    if (to != address(this)) {      
-      if(tokenOut == NATIVE_ADDRESS) {
-        (bool success,)= payable(to).call{value: amountOut}("");
-        require(success, "RouteProcessor.swapCurve: Native token transfer failed");
-      } else {
-        IERC20(tokenOut).safeTransfer(to, amountOut);
-      }
-    }
+    if (to != address(this)) tokenOut.transferAny(to, amountOut);
   }
 }
