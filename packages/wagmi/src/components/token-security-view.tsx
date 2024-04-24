@@ -125,8 +125,8 @@ export const TokenSecurityView = ({
                 {tokenSecurity?.[key] === undefined
                   ? 'Unknown'
                   : tokenSecurity[key]
-                  ? 'Yes'
-                  : 'No'}
+                    ? 'Yes'
+                    : 'No'}
               </div>
               <ExclamationTriangleIcon
                 width={14}
