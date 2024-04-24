@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
 
 export function useInterval(
@@ -16,7 +18,7 @@ export function useInterval(
   useEffect(() => {
     function tick() {
       const current = savedCallback.current
-      current && current()
+      current?.()
     }
 
     if (delay !== null) {

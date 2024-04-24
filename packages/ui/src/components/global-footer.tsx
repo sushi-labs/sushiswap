@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic'
 import { ReactNode, useCallback } from 'react'
-
 import { ExtractProps } from '../types'
 import { Container, ContainerProps } from './container'
 import {
@@ -23,12 +22,10 @@ export interface FooterProps
 const config: Record<
   string,
   | Record<string, { href: string; rel?: string; target?: string }>
-  | Array<
-      Record<
-        string,
-        Record<string, { href: string; rel?: string; target?: string }>
-      >
-    >
+  | Record<
+      string,
+      Record<string, { href: string; rel?: string; target?: string }>
+    >[]
 > = {
   Services: {
     Swap: { href: 'https://www.sushi.com/swap' },
@@ -48,7 +45,7 @@ const config: Record<
       rel: 'noopener noreferrer',
     },
     'Discord Support': {
-      href: 'https://discord.gg/NVPXN4e',
+      href: 'https://sushi.com/discord',
       target: '_blank',
       rel: 'noopener noreferrer',
     },
@@ -192,7 +189,7 @@ const Component = ({ children, maxWidth = '5xl', ...props }: FooterProps) => {
                 className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"
               />
             </LinkExternal>
-            <LinkExternal href="https://discord.gg/NVPXN4e">
+            <LinkExternal href="https://sushi.com/discord">
               <DiscordIcon
                 width={16}
                 className="text-gray-700 hover:text-gray-900 dark:text-slate-300 dark:hover:text-slate-50"

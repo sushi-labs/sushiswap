@@ -16,32 +16,27 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
+    "load-testing": "artillery run test/load.yml",
+    "simulate": "ts-node --skipProject ./test/requestSimulation.ts",
     "start": "node dist/index.js",
-    "test": "artillery run test/load.yml"
+    "start-debug": "node --inspect-brk dist/index.js"
   },
   "dependencies": {
-    "@sentry/node": "7.68.0",
+    "@sentry/node": "7.101.1",
     "@sushiswap/extractor": "workspace:*",
-    "@sushiswap/route-processor-sdk": "workspace:*",
-    "@sushiswap/router": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
-    "@sushiswap/v2-sdk": "workspace:*",
-    "@sushiswap/v3-sdk": "workspace:*",
-    "@sushiswap/viem-config": "workspace:*",
-    "@vercel/node": "3.0.7",
-    "@wagmi/core": "1.4.3",
+    "@wagmi/core": "2.6.17",
     "cors": "2.8.5",
     "dotenv": "16.3.1",
     "express": "4.18.2",
-    "express-rate-limit": "6.9.0",
     "sushi": "workspace:*",
-    "viem": "1.16.2",
-    "wagmi": "1.4.3",
+    "viem": "2.8.14",
+    "wagmi": "2.5.20",
     "zod": "3.21.4"
   },
   "devDependencies": {
@@ -50,8 +45,9 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/cors": "2.8.13",
     "@types/express": "4.17.17",
-    "@types/node": "18",
-    "artillery": "2.0.0-35",
+    "@types/node": "20",
+    "autocannon": "7.14.0",
+    "ts-node": "10.9.2",
     "typescript": "5.2.2"
   }
 }

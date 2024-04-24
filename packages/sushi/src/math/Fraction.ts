@@ -1,5 +1,4 @@
 import invariant from 'tiny-invariant'
-
 import Big from './Big.js'
 import { type BigintIsh } from './BigintIsh.js'
 import Decimal from './Decimal.js'

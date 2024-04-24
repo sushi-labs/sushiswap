@@ -1,19 +1,22 @@
 {
-  "extends": "@sushiswap/typescript-config/esm.json",
   "include": [
-    "lib", 
+    "lib",
     "resolvers",
-    "transformers"
+    "transformers",
+    "__tests__"
   ],
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules",
+    "__tests__"
+  ],
   "compilerOptions": {
     "outDir": ".",
     "baseUrl": ".",
     "rootDir": ".",
-    "target": "ESNext",
     "lib": ["ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ESNext",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
@@ -22,9 +25,5 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-  },
-  "ts-node": {
-    "swc": true,
-    "esm": true
   }
 }

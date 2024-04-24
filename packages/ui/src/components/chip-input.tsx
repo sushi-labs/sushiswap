@@ -3,7 +3,7 @@
 import { VariantProps } from 'class-variance-authority'
 import classNames from 'classnames'
 import * as React from 'react'
-import { FC, useEffect, useRef, useState, useTransition } from 'react'
+import { FC, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 
 import { IconComponent } from '../types'
 import { buttonIconVariants } from './button'
@@ -38,6 +38,17 @@ interface ChipInputProps
   maxValues?: number
 }
 
+function codeTranslator(code: string): string {
+  if (code === 'Enter') return '\n'
+  return code
+}
+
+function inputTranslator(value: string, code: string): string {
+  if (code === 'Enter') return `${value}\n`
+
+  return value
+}
+
 const ChipInput: FC<ChipInputProps> = ({
   className,
   icon: Icon,
@@ -46,15 +57,20 @@ const ChipInput: FC<ChipInputProps> = ({
   values,
   variant,
   onValueChange,
-  delimiters = [',', ';', ':', ' ', 'Enter', 'Tab'],
+  delimiters: _delimiters = [',', ';', ':', ' ', 'Enter', 'Tab'],
   mutateValue,
   maxValues,
   ...props
 }) => {
   const ref = useRef<HTMLInputElement>(null)
   const [state, setState] = useState(`${values.join(',')},`)
-  const [pending, startTransition] = useTransition()
-  const inputHasText = ref.current && ref.current.value !== ''
+  const [_pending, startTransition] = useTransition()
+  // const _inputHasText = ref.current && ref.current.value !== ''
+
+  const delimiters = useMemo(
+    () => _delimiters.map(codeTranslator),
+    [_delimiters],
+  )
 
   // Empty when reset
   useEffect(() => {
@@ -74,9 +90,11 @@ const ChipInput: FC<ChipInputProps> = ({
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!ref.current) return
 
-    const value = e.currentTarget.value
-    if (delimiters.includes(e.key)) {
-      setState((prev) => `${prev}${value}`)
+    const value = inputTranslator(e.currentTarget.value, e.key)
+    if (delimiters.includes(codeTranslator(e.key))) {
+      setState((prev) => {
+        return `${prev}${value}`
+      })
       ref.current.value = ''
     }
 

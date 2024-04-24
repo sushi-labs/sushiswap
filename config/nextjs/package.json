@@ -15,14 +15,15 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "index.js",
   "files": [
     "index.js"
   ],
   "devDependencies": {
-    "next": "13.4.19"
+    "next": "14.1.0"
   },
   "peerDependencies": {
-    "next": "13.4.19"
+    "next": "14.1.0"
   }
 }

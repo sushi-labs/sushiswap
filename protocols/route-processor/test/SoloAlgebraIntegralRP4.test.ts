@@ -1,10 +1,4 @@
 import {
-  LiquidityProviders,
-  PoolCode,
-  Router,
-  UniV3PoolCode,
-} from '@sushiswap/router'
-import {
   approve,
   approveTestTokensToAlgebraPerifery,
   createAlgebraIntegralPeriphery,
@@ -14,10 +8,18 @@ import {
   deployContract,
   expectCloseValues,
 } from '@sushiswap/tines-sandbox'
+import {
+  LiquidityProviders,
+  PoolCode,
+  Router,
+  UniV3PoolCode,
+} from 'sushi/router'
 import { Address, createPublicClient, custom, walletActions } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json'
+import RouteProcessor4 from '../artifacts/contracts/RouteProcessor4.sol/RouteProcessor4.json' assert {
+  type: 'json',
+}
 
 it('AlgebraIntegral RP4 Solo', async () => {
   const { provider, chainId } = await createHardhatProviderEmptyBlockchain(1)
@@ -55,7 +57,7 @@ it('AlgebraIntegral RP4 Solo', async () => {
 
   const pcMap: Map<string, PoolCode> = new Map()
   pcMap.set(
-    pool.pool.address,
+    pool.pool.uniqueID(),
     new UniV3PoolCode(
       pool.pool,
       LiquidityProviders.AlgebraIntegral,

@@ -1,4 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+bin
 
 # dependencies
 node_modules
@@ -43,6 +44,7 @@ yarn-error.log*
 
 # env
 .env
+skaffold.env
 
 # mesh
 .mesh
@@ -86,6 +88,7 @@ screenshots
 
 # playwright
 playwright-report
+test-results
 
 # Sentry
 .sentryclirc

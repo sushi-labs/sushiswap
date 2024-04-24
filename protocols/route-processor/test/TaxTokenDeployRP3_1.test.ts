@@ -2,32 +2,31 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
+import { expect } from 'chai'
+import hre from 'hardhat'
+import { createProvider } from 'hardhat/internal/core/providers/construction.js'
 import { routeProcessor3Abi } from 'sushi/abi'
 import { erc20Abi } from 'sushi/abi'
 import { ChainId, chainName } from 'sushi/chain'
 import { Native, Token } from 'sushi/currency'
-import {
-  DataFetcher,
-  LiquidityProviders,
-  Router,
-  RPParams,
-} from '@sushiswap/router'
-import { MultiRoute, RouteStatus } from '@sushiswap/tines'
+import { DataFetcher, LiquidityProviders, RPParams, Router } from 'sushi/router'
+import { MultiRoute, RouteStatus } from 'sushi/tines'
 import { type Contract } from 'sushi/types'
-import { expect } from 'chai'
-import { config } from 'hardhat'
-import { createProvider } from 'hardhat/internal/core/providers/construction'
 import {
   Address,
   Client,
+  Hex,
   createPublicClient,
   custom,
-  Hex,
   walletActions,
 } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json'
+import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json' assert {
+  type: 'json',
+}
+
+const { config } = hre
 
 async function createHardhatProvider(
   chainId: ChainId,
@@ -142,7 +141,7 @@ export async function checkTaxTokenTransfer(
 
 async function testTaxTokenBuy(
   env: TestEnvironment,
-  route: MultiRoute,
+  _route: MultiRoute,
   rpParams: RPParams,
   account: Address,
 ): Promise<bigint> {
@@ -271,7 +270,7 @@ async function testTaxToken(args: {
       args.env.userAddress,
     )
     const diff =
-      routeBuy.amountOutBI == 0n
+      routeBuy.amountOutBI === 0n
         ? -1
         : Number(amountOutReal - routeBuy.amountOutBI) / routeBuy.amountOut
     console.log(
@@ -280,7 +279,7 @@ async function testTaxToken(args: {
       } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff} `,
     )
   } catch (e) {
-    console.log('Routing failed. No connection ? ' + e)
+    console.log(`Routing failed. No connection ? ${e}`)
     expect(e).equal(undefined)
     return
   }
@@ -327,7 +326,7 @@ async function testTaxToken(args: {
       args.env.userAddress,
     )
     const diff =
-      routeSell.amountOutBI == 0n
+      routeSell.amountOutBI === 0n
         ? -1
         : Number(amountOutReal - routeSell.amountOutBI) / routeSell.amountOut
     console.log(
@@ -336,12 +335,12 @@ async function testTaxToken(args: {
       } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff} `,
     )
   } catch (e) {
-    console.log('Routing failed. No connection ? ' + e)
+    console.log(`Routing failed. No connection ? ${e}`)
     expect(e).equal(undefined)
   }
 }
 
-describe('RouteProcessor3_1 tax token test for BASE', async function () {
+describe('RouteProcessor3_1 tax token test for BASE', async () => {
   let env: TestEnvironment
 
   before(async () => {
@@ -353,7 +352,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
   })
 
   // Sell failes because LCRV token makes swap inside transfer. Buy is ok. Is fixed in RP3.2
-  it.skip('BASE <=> LCRV', async function () {
+  it.skip('BASE <=> LCRV', async () => {
     const LCRV = new Token({
       chainId: ChainId.BASE,
       address: '0x8b2060CC6E55Fa68204B3Bc8B226FC61B3512C1f',
@@ -368,7 +367,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
     })
   })
 
-  it('BASE <=> bpsTEST', async function () {
+  it('BASE <=> bpsTEST', async () => {
     const bpsTEST = new Token({
       chainId: ChainId.BASE,
       address: '0x93980959778166ccbB95Db7EcF52607240bc541e',
@@ -384,7 +383,7 @@ describe('RouteProcessor3_1 tax token test for BASE', async function () {
   })
 })
 
-describe('RouteProcessor3_1 tax token test for ETHEREUM', async function () {
+describe('RouteProcessor3_1 tax token test for ETHEREUM', async () => {
   let env: TestEnvironment
 
   before(async () => {
@@ -395,7 +394,7 @@ describe('RouteProcessor3_1 tax token test for ETHEREUM', async function () {
     )
   })
 
-  it('ETH => UniBot', async function () {
+  it('ETH => UniBot', async () => {
     const uniBOT = new Token({
       chainId: ChainId.ETHEREUM,
       address: '0xf819d9cb1c2a819fd991781a822de3ca8607c3c9',

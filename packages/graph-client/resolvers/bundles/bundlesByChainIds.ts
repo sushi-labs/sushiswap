@@ -1,11 +1,10 @@
 // @ts-nocheck
 
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 
 import { Bundle, Query, QueryResolvers } from '../../.graphclient/index.js'
@@ -28,8 +27,7 @@ export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (
           context: {
             ...context,
             chainId,
-            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: TRIDENT_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((bundles: Bundle[]) =>
@@ -52,8 +50,7 @@ export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (
           context: {
             ...context,
             chainId,
-            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: SUSHISWAP_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((bundles: Bundle[]) =>

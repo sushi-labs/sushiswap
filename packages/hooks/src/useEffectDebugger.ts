@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from 'react'
 
 import { usePrevious } from './usePrevious'
@@ -16,19 +18,15 @@ export const useEffectDebugger: UseEffectDebugger = (
   const previousDeps = usePrevious(dependencies, [])
 
   const changedDeps = dependencies.reduce(
-    (accum: any, dependency: string, index: number) => {
+    (acc: any, dependency: string, index: number) => {
       if (dependency !== previousDeps[index]) {
         const keyName = dependencyNames[index] || index
-        return {
-          ...accum,
-          [keyName]: {
-            before: previousDeps[index],
-            after: dependency,
-          },
+        acc[keyName] = {
+          before: previousDeps[index],
+          after: dependency,
         }
       }
-
-      return accum
+      return acc
     },
     {},
   )

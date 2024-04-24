@@ -67,6 +67,7 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({ address }) => {
               width="100%"
               title="Onramper widget"
               allow="accelerometer; autoplay; camera; gyroscope; payment"
+              sandbox="allow-scripts allow-popups allow-same-origin"
             />
           </div>
         </DialogPrimitive.Content>

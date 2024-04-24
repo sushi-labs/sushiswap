@@ -10,8 +10,8 @@ export const useBalancesRefetch = ({ chainId, account }: UseBalances) => {
   const queryClient = useQueryClient()
   return useCallback(async () => {
     return await queryClient.refetchQueries({
-      queryKey: [`https://balances.sushi.com/v0/${chainId}/${account}`],
+      queryKey: [`/api/balance/v0/${chainId}/${account}`],
       type: 'active',
     })
-  }, [queryClient])
+  }, [queryClient, chainId, account])
 }

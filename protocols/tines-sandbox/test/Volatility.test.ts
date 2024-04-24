@@ -1,9 +1,9 @@
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
-import { Address, createPublicClient, http } from 'viem'
+import { http, Address, createPublicClient } from 'viem'
 import { Chain, mainnet } from 'viem/chains'
 
-import { RP3Address } from './Extractor.test'
+import { RP3Address } from './Extractor.test.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -67,7 +67,7 @@ async function volatilityCheck(args: {
               )}s diff: ${sdiff}`,
             )
           }
-        } catch (e) {
+        } catch (_e) {
           console.log('Routing failed. No connection ?')
         }
         inProgress = false

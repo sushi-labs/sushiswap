@@ -1,8 +1,7 @@
+import type { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
+import { daysInYear, secondsInDay } from 'date-fns'
 import { ChainId } from 'sushi/chain'
 import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
-import type { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
-import type { Address } from '@wagmi/core'
-import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
 import {
@@ -64,10 +63,10 @@ export async function getMinichef(
     ])
 
     const [pairs, lpBalances] = await Promise.all([
-      getPairs(lpTokens, chainId),
+      getPairs(lpTokens.filter(Boolean) as string[], chainId),
       getTokenBalancesOf(
-        lpTokens,
-        MINICHEF_ADDRESS[chainId] as Address,
+        lpTokens.filter(Boolean) as string[],
+        MINICHEF_ADDRESS[chainId],
         chainId,
       ),
     ])
@@ -91,9 +90,13 @@ export async function getMinichef(
         if (!pool.pair || typeof pool.lpBalance !== 'number' || !pool.poolInfo)
           return acc
 
-        const sushiRewardPerDay =
+        let sushiRewardPerDay =
           sushiPerDay *
           (Number(pool.poolInfo.allocPoint) / Number(totalAllocPoint))
+
+        // Edge case for virtually disabled rewards
+        if (sushiRewardPerDay < 0.000001) sushiRewardPerDay = NaN
+
         const sushiRewardPerYearUSD =
           daysInYear * sushiRewardPerDay * sushiPriceUSD
 
@@ -102,7 +105,7 @@ export async function getMinichef(
 
         const incentives: Farm['incentives'] = []
 
-        if (!isNaN(sushiRewardPerDay)) {
+        if (!Number.isNaN(sushiRewardPerDay)) {
           incentives.push({
             apr: sushiRewardPerYearUSD / stakedLiquidityUSD,
             rewardPerDay: sushiRewardPerDay,
@@ -113,7 +116,7 @@ export async function getMinichef(
               symbol: SUSHI[chainId as keyof typeof SUSHI]?.symbol ?? '',
             },
             rewarder: {
-              address: MINICHEF_ADDRESS[chainId] as Address,
+              address: MINICHEF_ADDRESS[chainId],
               type: 'Primary',
             },
           })
@@ -151,7 +154,10 @@ export async function getMinichef(
               )
             }
 
-            if (!isNaN(rewardPerSecond)) {
+            // Edge case for virtually disabled rewards
+            if (rewardPerSecond < 0.000001) sushiRewardPerDay = NaN
+
+            if (!Number.isNaN(rewardPerSecond)) {
               const rewardPerDay = secondsInDay * rewardPerSecond
               const rewardPerYearUSD =
                 daysInYear * rewardPerDay * token.derivedUSD

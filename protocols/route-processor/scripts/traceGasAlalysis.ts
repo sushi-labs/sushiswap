@@ -21,7 +21,7 @@ function getStack(data: CodeTraceInfo, depth: number): string {
 
 function getStackAddr(data: CodeTraceInfo, depth: number): string {
   const val = getStack(data, depth)
-  return '0x' + val.substring(24)
+  return `0x${val.substring(24)}`
 }
 
 function getNumber(data: CodeTraceInfo, depth: number): number {
@@ -117,13 +117,13 @@ function printGasUsageRecursive(
           )} ${getCallFuncSelector(info)}`,
         )
         i =
-          printGasUsageRecursive(trace, i + 1, prefix + '  ', info.gasCost) + 1
-        console.log(`${prefix + '  '}call total ${info.gas - trace[i].gas} gas`)
+          printGasUsageRecursive(trace, i + 1, `${prefix}  `, info.gasCost) + 1
+        console.log(`${`${prefix}  `}call total ${info.gas - trace[i].gas} gas`)
         lastPrintedGas = trace[i].gas
         continue
       }
     }
-    if (info.op == 'RETURN' || info.op == 'REVERT' || info.op == 'STOP') {
+    if (info.op === 'RETURN' || info.op === 'REVERT' || info.op === 'STOP') {
       if (lastPrintedGas !== gasStart)
         console.log(`${prefix}${lastPrintedGas - info.gas} gas`)
       console.log(

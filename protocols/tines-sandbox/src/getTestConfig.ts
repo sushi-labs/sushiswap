@@ -1,20 +1,22 @@
+import hre from 'hardhat'
 import { ChainId } from 'sushi/chain'
-import { config, network } from 'hardhat'
 import {
   Client,
+  Hex,
   createPublicClient,
   custom,
-  Hex,
   testActions,
   walletActions,
 } from 'viem'
 import {
   HDAccount,
-  mnemonicToAccount,
   PrivateKeyAccount,
+  mnemonicToAccount,
   privateKeyToAccount,
 } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
+
+const { config, network } = hre
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 

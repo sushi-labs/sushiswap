@@ -1,7 +1,6 @@
 import { Log } from 'viem'
-
-import { UniV3PoolWatcher } from './UniV3PoolWatcher'
-import { warnLog } from './WarnLog'
+import { Logger } from './Logger.js'
+import { UniV3PoolWatcher } from './UniV3PoolWatcher.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -89,9 +88,9 @@ export class QualityChecker {
           return [undefined, PoolSyncState.Match, 1, 1]
         }
       }
-      warnLog(pool.client.chainId, 'Quality check timeout error')
+      Logger.error(pool.client.chainId, 'Quality check timeout error')
     } catch (e) {
-      warnLog(pool.client.chainId, `Quality check error: ${e}`)
+      Logger.error(pool.client.chainId, 'Quality check error', e)
     }
     return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }
@@ -112,6 +111,7 @@ export class QualityChecker {
           pool.token0,
           pool.token1,
           pool.fee,
+          pool.spacing,
           pool.client,
           pool.busyCounter,
         )

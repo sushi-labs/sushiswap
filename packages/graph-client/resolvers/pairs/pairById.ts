@@ -1,21 +1,20 @@
 // @ts-nocheck
 
-import { chainName, chainShortNameToChainId } from 'sushi/chain'
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   SUSHISWAP_V3_ENABLED_NETWORKS,
-  SUSHISWAP_V3_SUBGRAPH_NAME,
+  SUSHISWAP_V3_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
+import { chainName, chainShortNameToChainId } from 'sushi/chain'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
-  getBuiltGraphSDK,
   Pair,
   QueryResolvers,
+  getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { SushiSwapV3Types } from '../../.graphclient/sources/SushiSwapV3/types.js'
@@ -117,12 +116,10 @@ export const pairById: QueryResolvers['pairById'] = async (
         chainId,
         chainName: chainName[chainId],
         chainShortName: chainShortName[chainId],
-        subgraphName:
-          SUSHISWAP_SUBGRAPH_NAME[
-            chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
+        url:
+          SUSHISWAP_SUBGRAPH_URL[
+          chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
           ],
-        subgraphHost:
-          SUBGRAPH_HOST[chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
       },
       info,
     }).then((pair: SushiSwapTypes.Pair | null) => {
@@ -140,12 +137,10 @@ export const pairById: QueryResolvers['pairById'] = async (
         chainId,
         chainName: chainName[chainId],
         chainShortName: chainShortName[chainId],
-        subgraphName:
-          TRIDENT_SUBGRAPH_NAME[
-            chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
+        url:
+          TRIDENT_SUBGRAPH_URL[
+          chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
           ],
-        subgraphHost:
-          SUBGRAPH_HOST[chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
       },
       info,
     }).then((pair: TridentTypes.Pair | null) => {
@@ -155,11 +150,9 @@ export const pairById: QueryResolvers['pairById'] = async (
 
   const fetchSushiSwapV3Pair = async (block?: { number: number }) => {
     const sdk = getBuiltGraphSDK({
-      subgraphHost:
-        SUBGRAPH_HOST[chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
-      subgraphName:
-        SUSHISWAP_V3_SUBGRAPH_NAME[
-          chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
+      url:
+        SUSHISWAP_V3_SUBGRAPH_URL[
+        chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
         ],
     })
 

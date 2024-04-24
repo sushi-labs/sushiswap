@@ -1,12 +1,10 @@
 import {
-  isSushiSwapChain,
-  isTridentChain,
-  SUBGRAPH_HOST,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   SushiSwapChainId,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
   TridentChainId,
 } from '@sushiswap/graph-config'
+import { isSushiSwapChain, isTridentChain } from '@sushiswap/graph-config'
 
 import type { Farm } from '../types.js'
 import { divBigIntToNumber } from './utils.js'
@@ -23,11 +21,10 @@ async function getExchangePairs(
   chainId: SushiSwapChainId,
 ): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
-  if (!subgraphName) return []
+  const url = SUSHISWAP_SUBGRAPH_URL[chainId]
+  if (!url) return []
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    url,
   })
 
   const { pairs, bundle } = await sdk.Pairs({
@@ -49,14 +46,13 @@ async function getExchangePairs(
 
 async function getTridentPairs(
   ids: string[],
-  chainId: keyof typeof SUBGRAPH_HOST & keyof typeof TRIDENT_SUBGRAPH_NAME,
+  chainId: keyof typeof TRIDENT_SUBGRAPH_URL,
 ): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
-  if (!subgraphName) return []
+  const url = TRIDENT_SUBGRAPH_URL[chainId]
+  if (!url) return []
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    url,
   })
 
   const { pairs, bundle } = await sdk.Pairs({

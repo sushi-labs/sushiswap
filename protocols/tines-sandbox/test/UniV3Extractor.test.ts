@@ -1,53 +1,56 @@
 import { reset } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
-import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
 import {
   FactoryV3,
   LogFilter2,
   LogFilterType,
-  PoolInfo,
   UniV3Extractor,
 } from '@sushiswap/extractor'
+import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json' assert {
+  type: 'json',
+}
+import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json' assert {
+  type: 'json',
+}
+import { expect } from 'chai'
+import hre from 'hardhat'
+import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
+import { erc20Abi, routeProcessor2Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+import { DAI, Native, USDC, WBTC, WETH9, WNATIVE } from 'sushi/currency'
 import {
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
   Router,
   UniswapV3Provider,
-} from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { RouteStatus, UniV3Pool } from '@sushiswap/tines'
-import { POOL_INIT_CODE_HASH } from '@sushiswap/v3-sdk'
-import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import ISwapRouter from '@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json'
-import { expect } from 'chai'
-import { network } from 'hardhat'
-import { HardhatNetworkAccountUserConfig } from 'hardhat/types'
+} from 'sushi/router'
+import { RouteStatus, UniV3Pool } from 'sushi/tines'
 import {
+  http,
   Address,
+  CustomTransport,
+  Transaction,
+  WalletClient,
   createPublicClient,
   createWalletClient,
   custom,
-  CustomTransport,
-  http,
-  Transaction,
-  WalletClient,
 } from 'viem'
 import { Account, privateKeyToAccount } from 'viem/accounts'
 import {
+  Chain,
   arbitrum,
   celo,
-  Chain,
   hardhat,
   mainnet,
   optimism,
   polygon,
 } from 'viem/chains'
+import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes.js'
+import { setTokenBalance } from '../src/index.js'
+import { UniswapV3FactoryAddress } from './Extractor.test.js'
 
-import { setTokenBalance } from '../src'
-import { comparePoolCodes, isSubpool } from '../src/ComparePoolCodes'
-import { UniswapV3FactoryAddress } from './Extractor.test'
+const { network } = hre
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -68,45 +71,50 @@ function uniswapFactory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash:
+      '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
   }
 }
 
 export const pancakeswapFactory: FactoryV3 = {
   address: '0x6e229c972d9f69c15bdc7b07f385d2025225e72b' as Address,
   provider: LiquidityProviders.UniswapV3,
-  initCodeHash: POOL_INIT_CODE_HASH,
+  initCodeHash:
+    '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
 }
 
 const kyberswapFactory: FactoryV3 = {
   address: '0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A' as Address,
   provider: LiquidityProviders.UniswapV3,
-  initCodeHash: POOL_INIT_CODE_HASH,
+  initCodeHash:
+    '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
 }
 
-const pools: PoolInfo[] = [
+const pools = [
   {
-    address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168',
+    address: '0x5777d92f208679DB4b9778590Fa3CAB3aC9e2168' as Address,
     token0: DAI[ChainId.ETHEREUM],
     token1: USDC[ChainId.ETHEREUM],
     fee: 100,
     factory: uniswapFactory(ChainId.ETHEREUM),
   },
   {
-    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640',
+    address: '0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640' as Address,
     token0: USDC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 500,
     factory: uniswapFactory(ChainId.ETHEREUM),
   },
   {
-    address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD',
+    address: '0xCBCdF9626bC03E24f779434178A73a0B4bad62eD' as Address,
     token0: WBTC[ChainId.ETHEREUM],
     token1: WNATIVE[ChainId.ETHEREUM],
     fee: 3000,
     factory: uniswapFactory(ChainId.ETHEREUM),
   },
 ]
+
+type PoolInfo = (typeof pools)[number]
 
 const poolSet = new Set(pools.map((p) => p.address.toLowerCase()))
 
@@ -618,8 +626,8 @@ async function startInfinitTest(args: {
       nativeProvider
         .getCurrentPoolList()
         .forEach((p) => poolMap.set(p.pool.address, p))
-      const fromToken = Native.onChain(chainId),
-        toToken = tokens[i]
+      const fromToken = Native.onChain(chainId)
+      const toToken = tokens[i]
       const route = Router.findBestRoute(
         poolMap,
         chainId,
@@ -674,18 +682,18 @@ async function startInfinitTest(args: {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
             route.legs.length - 1
-          } pools` + ` diff = ${diff > 0 ? '+' : ''}${diff}`,
+          } pools diff = ${diff > 0 ? '+' : ''}${diff}`,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-      } catch (e) {
+      } catch (_e) {
         console.log('Routing failed. No connection ?')
       }
     }
   }
 }
 
-it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
+it.skip('UniV3 Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -696,7 +704,7 @@ it.skip('UniV3 Extractor Ethereum infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Polygon infinit work test', async () => {
+it.skip('UniV3 Extractor Polygon infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: polygon,
@@ -707,7 +715,7 @@ it.skip('UniV3 Extractor Polygon infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Arbitrum infinit work test', async () => {
+it.skip('UniV3 Extractor Arbitrum infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: arbitrum,
@@ -718,7 +726,7 @@ it.skip('UniV3 Extractor Arbitrum infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Optimism infinit work test', async () => {
+it.skip('UniV3 Extractor Optimism infinite work test', async () => {
   await startInfinitTest({
     providerURL: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_ID}`,
     chain: optimism,
@@ -730,7 +738,7 @@ it.skip('UniV3 Extractor Optimism infinit work test', async () => {
   })
 })
 
-it.skip('UniV3 Extractor Celo infinit work test', async () => {
+it.skip('UniV3 Extractor Celo infinite work test', async () => {
   await startInfinitTest({
     providerURL: 'https://forno.celo.org',
     chain: celo,

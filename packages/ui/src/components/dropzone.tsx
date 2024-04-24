@@ -24,8 +24,8 @@ export const Dropzone: FC<Dropzone> = ({
               isDragReject
                 ? 'bg-red-500 bg-opacity-[0.15] border-red'
                 : isDragActive
-                ? 'bg-blue-500 bg-opacity-[0.15] border-blue'
-                : 'dark:bg-white/[0.04] bg-black/[0.04] border-gray-300 dark:border-slate-700',
+                  ? 'bg-blue-500 bg-opacity-[0.15] border-blue'
+                  : 'dark:bg-white/[0.04] bg-black/[0.04] border-gray-300 dark:border-slate-700',
               'border-dashed border-2 rounded-2xl py-6 flex justify-center',
             )}
           >
@@ -50,7 +50,7 @@ export const Dropzone: FC<Dropzone> = ({
                   d="M390.8 32v400h-328V32h328m6.4-32H52.4C38 0 30.8 9.6 30.8 23.2V436c0 13.6 7.2 28 21.6 28h344.8c13.6 0 25.6-14.4 25.6-28V23.2c0-13.6-12-23.2-25.6-23.2z"
                 />
                 <g className="text-slate-500" fill="currentColor">
-                  <path d="M134 120h188.8c6.4 0 12-5.6 12-12s-5.6-12-12-12H134c-6.4 0-12 5.6-12 12s5.6 12 12 12zM134 184h108.8c6.4 0 12-5.6 12-12s-4.8-12-11.2-12H134c-6.4 0-12 5.6-12 12s5.6 12 12 12zM322.8 224H134c-6.4 0-12 9.6-12 16s5.6 16 12 16h188.8c6.4 0 12-9.6 12-16s-4.8-16-12-16zM243.6 296H134c-6.4 0-12 5.6-12 12s5.6 12 12 12h108.8c6.4 0 12-5.6 12-12 .8-6.4-4.8-12-11.2-12z"></path>
+                  <path d="M134 120h188.8c6.4 0 12-5.6 12-12s-5.6-12-12-12H134c-6.4 0-12 5.6-12 12s5.6 12 12 12zM134 184h108.8c6.4 0 12-5.6 12-12s-4.8-12-11.2-12H134c-6.4 0-12 5.6-12 12s5.6 12 12 12zM322.8 224H134c-6.4 0-12 9.6-12 16s5.6 16 12 16h188.8c6.4 0 12-9.6 12-16s-4.8-16-12-16zM243.6 296H134c-6.4 0-12 5.6-12 12s5.6 12 12 12h108.8c6.4 0 12-5.6 12-12 .8-6.4-4.8-12-11.2-12z" />
                 </g>
                 <circle
                   cx="345.2"
@@ -61,8 +61,8 @@ export const Dropzone: FC<Dropzone> = ({
                     isDragReject
                       ? 'text-red'
                       : isDragActive
-                      ? 'text-blue'
-                      : 'text-slate-600'
+                        ? 'text-blue'
+                        : 'text-slate-600'
                   }
                 />
                 <path
@@ -78,8 +78,8 @@ export const Dropzone: FC<Dropzone> = ({
                     isDragReject
                       ? 'text-red hover:text-red-400'
                       : isDragActive
-                      ? 'text-blue hover:text-blue-400'
-                      : 'text-gray-900 dark:text-slate-200',
+                        ? 'text-blue hover:text-blue-400'
+                        : 'text-gray-900 dark:text-slate-200',
                     'flex flex-col gap-1 outline-none relative cursor-pointer rounded-md font-medium hover:purple focus-within:outline-none',
                   )}
                 >
@@ -94,8 +94,8 @@ export const Dropzone: FC<Dropzone> = ({
                       isDragReject
                         ? 'text-red-200'
                         : isDragActive
-                        ? 'text-blue-200'
-                        : 'text-gray-500 dark:text-slate-500',
+                          ? 'text-blue-200'
+                          : 'text-gray-500 dark:text-slate-500',
                       'text-xs',
                     )}
                   >

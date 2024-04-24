@@ -1,14 +1,14 @@
-// import { PrismaClient, createClient } from "@sushiswap/database"
+// import { PrismaClient, createDirectClient } from "@sushiswap/database"
 
 // export async function whitelistTokens2() {
-//     const productionClient = await createClient({
+//     const productionClient = await createDirectClient({
 //       datasources: {
 //         db: {
 //             url: process.env.PRODUCTION_DATABASE_URL as string,
 //           },
 //         },
 //       })
-//       const previewClient = await createClient({
+//       const previewClient = await createDirectClient({
 //         datasources: {
 //           db: {
 //             url: process.env.PREVIEW_DATABASE_URL as string,

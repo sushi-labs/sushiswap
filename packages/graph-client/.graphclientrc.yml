@@ -9,21 +9,21 @@ sources:
   - name: BentoBox
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:matthewlilley/bentobox-ethereum}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/matthewlilley/bentobox-ethereum}
         retry: 3
     # transforms:
 
   - name: Blocks
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}
         retry: 3
-    transforms:
+    # transforms:
 
   - name: FuroStream
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-subgraphs/furo-ethereum}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-ethereum}
     transforms:
       - autoPagination:
           validateSchema: true
@@ -31,7 +31,7 @@ sources:
   - name: Exchange
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
         retry: 3
     transforms:
       # - addSourceName: true
@@ -46,7 +46,7 @@ sources:
   - name: SushiSwap
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:subgraph-qa/sushiswap-ethereum}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/subgraph-qa/sushiswap-ethereum}
         retry: 3
     transforms:
       - rename:
@@ -124,14 +124,14 @@ sources:
   - name: Trident
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-qa/trident-optimism}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-qa/trident-optimism}
         retry: 3
     transforms:
 
   - name: MasterChefV1
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:jiro-ono/masterchef-staging}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/jiro-ono/masterchef-staging}
         retry: 3
     transforms:
       - addSourceName: true
@@ -174,7 +174,7 @@ sources:
           includeTypes: false
           ignore:
             - _SubgraphErrorPolicy_
-  
+
   - name: GraphNode
     handler:
       graphql:
@@ -183,7 +183,7 @@ sources:
   - name: Concentrated
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/uniswap/uniswap-v3}
         retry: 3
     transforms:
       - prefix:
@@ -196,11 +196,24 @@ sources:
   - name: SushiSwapV3
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:uniswap/uniswap-v3}
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/uniswap/uniswap-v3}
         retry: 3
     transforms:
       - prefix:
           value: SUSHISWAP_V3_
+          includeRootOperations: true
+          includeTypes: true
+          ignore:
+            - _SubgraphErrorPolicy_
+
+  - name: Bonds
+    handler:
+      graphql:
+        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-mainnet}
+        retry: 3
+    transforms:
+      - prefix:
+          value: Bonds_
           includeRootOperations: true
           includeTypes: true
           ignore:
@@ -214,7 +227,7 @@ transforms:
   - addSourceName: true
 
 additionalTypeDefs: |
-  # Deprecated 
+  # Deprecated
   extend type deprecated_Token {
     chainId: BigInt!
   }
@@ -264,7 +277,7 @@ additionalTypeDefs: |
     address: String!
     amount: BigInt!
     pool: ChefUserPool
-  }  
+  }
   type RewardToken {
     address: String!
     symbol: String!
@@ -374,7 +387,7 @@ additionalTypeDefs: |
   # Query Extensions
   extend type Query {
     # Internal app
-    
+
     subgraphs(subgraphs: [SubgraphWithNode!]!, type: SubgraphType!): [Subgraph!]!
 
     crossChainBentoBoxKpis(
@@ -499,7 +512,7 @@ additionalTypeDefs: |
       orderDirection: OrderDirection
       block: Block_height
       pagination: Pagination
-      chainIds: [BigInt!]! 
+      chainIds: [BigInt!]!
     ): [Token!]!
     tokensByChainId(
       skip: Int = 0
@@ -518,7 +531,7 @@ additionalTypeDefs: |
       ids: [ID!]!
       block: Block_height
     ): [Token!]!
-    
+
     # CONCENTRADED
     ticksById(
       id: ID!

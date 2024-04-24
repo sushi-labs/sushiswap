@@ -1,8 +1,7 @@
-import { createClient, Prisma } from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
+import { client } from 'src/lib/prisma'
 
 export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
-  const client = await createClient()
-
   const vaultTokens = vaults.flatMap((vault) => [
     vault.token0Id,
     vault.token1Id,
@@ -56,6 +55,16 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE poolId
       END,
+      chainId = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.chainId}`,
+          ),
+          ' ',
+        )}
+        ELSE chainId
+      END,
       feeTier = CASE
         ${Prisma.join(
           vaultsToUpdate.map(
@@ -83,6 +92,15 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
           ' ',
         )}
         ELSE apr1d
+      END,
+      apr1w = CASE
+      ${Prisma.join(
+        vaultsToUpdate.map(
+          (update) => Prisma.sql`WHEN id = ${update.id} THEN ${update.apr1w}`,
+        ),
+        ' ',
+      )}
+        ELSE apr1w
       END,
       apr1m = CASE
         ${Prisma.join(
@@ -122,6 +140,16 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE reserve0
       END,
+      reserve0USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve0USD}`,
+          ),
+          ' ',
+        )}
+        ELSE reserve0USD
+      END,
       fees0 = CASE
         ${Prisma.join(
           vaultsToUpdate.map(
@@ -130,6 +158,16 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
           ' ',
         )}
         ELSE fees0
+      END,
+      fees0USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.fees0USD}`,
+          ),
+          ' ',
+        )}
+        ELSE fees0USD
       END,
       token1Id = CASE
         ${Prisma.join(
@@ -151,6 +189,16 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
         )}
         ELSE reserve1
       END,
+      reserve1USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.reserve1USD}`,
+          ),
+          ' ',
+        )}
+        ELSE reserve1USD
+      END,
       fees1 = CASE
         ${Prisma.join(
           vaultsToUpdate.map(
@@ -159,6 +207,36 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
           ' ',
         )}
         ELSE fees1
+      END,
+      fees1USD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.fees1USD}`,
+          ),
+          ' ',
+        )}
+        ELSE fees1USD
+      END,
+      reserveUSD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.reserveUSD}`,
+          ),
+          ' ',
+        )}
+        ELSE reserveUSD
+      END,
+      feesUSD = CASE
+        ${Prisma.join(
+          vaultsToUpdate.map(
+            (update) =>
+              Prisma.sql`WHEN id = ${update.id} THEN ${update.feesUSD}`,
+          ),
+          ' ',
+        )}
+        ELSE feesUSD
       END,
       strategy = CASE
         ${Prisma.join(
@@ -301,7 +379,34 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
     },
   })
 
-  await client.$disconnect()
-
   console.log(`LOAD - Updated ${updated} and created ${created.count} vaults. `)
+}
+
+export async function enableVaults(vaultIds: string[]) {
+  const enabled = await client.steerVault.updateMany({
+    data: {
+      isEnabled: true,
+      wasEnabled: true,
+    },
+    where: { id: { in: vaultIds } },
+  })
+
+  console.log(`LOAD - Deprecated ${enabled.count} vaults.`)
+}
+
+export async function deprecateVaults(vaultIds: string[]) {
+  const deprecated = await client.steerVault.updateMany({
+    data: {
+      apr: 0,
+      apr1d: 0,
+      apr1w: 0,
+      apr1m: 0,
+      apr1y: 0,
+      isDeprecated: true,
+      isEnabled: false,
+    },
+    where: { id: { in: vaultIds } },
+  })
+
+  console.log(`LOAD - Deprecated ${deprecated.count} vaults.`)
 }

@@ -1,13 +1,15 @@
-import { ChainId } from 'sushi/chain'
 import { Abi, Narrow } from 'abitype'
+import { ChainId } from 'sushi/chain'
 import {
   Address,
-  MulticallContract,
+  BaseError,
+  ContractFunctionArgs,
+  ContractFunctionParameters,
   MulticallContracts,
   PublicClient,
 } from 'viem'
-
-import { warnLog } from './WarnLog'
+import { Logger } from './Logger.js'
+import { delay } from './Utils.js'
 
 const getBlockNumberAbi: Abi = [
   {
@@ -22,17 +24,35 @@ const getBlockNumberAbi: Abi = [
 // aggregates several calls in one multicall
 export class MultiCallAggregator {
   client: PublicClient
-  pendingCalls: MulticallContracts<MulticallContract[]> = []
+  pendingCalls: ContractFunctionParameters[] = []
   pendingResolves: ((arg: any) => void)[] = []
   pendingRejects: ((arg: unknown) => void)[] = []
   timer?: NodeJS.Timeout
   maxCallsInOneBatch: number
+  maxBatchesSimultaniously: number
   chainId: ChainId
+  debug: boolean
 
-  constructor(client: PublicClient, maxCallsInOneBatch = 0) {
+  totalCalls = 0
+  totalCallsProcessed = 0
+  totalCallsFailed = 0
+  totalMCalls = 0
+  totalMCallsProcessed = 0
+  totalMCallsFailed = 0
+  totalTimeSpent = 0
+  currentBatchInProgress = 0
+
+  constructor(
+    client: PublicClient,
+    maxCallsInOneBatch = 0,
+    maxBatchesSimultaniously = 0,
+    debug = false,
+  ) {
     this.client = client
     this.maxCallsInOneBatch = maxCallsInOneBatch
+    this.maxBatchesSimultaniously = maxBatchesSimultaniously
     this.chainId = client.chain?.id as ChainId
+    this.debug = debug
   }
 
   // aggregate several calls in one multicall
@@ -108,7 +128,7 @@ export class MultiCallAggregator {
   }
 
   async callSameBlock(
-    calls: MulticallContracts<MulticallContract[]>,
+    calls: MulticallContracts<ContractFunctionArgs[]>,
   ): Promise<{ blockNumber: number; returnValues: unknown[] }> {
     if (calls.length === 0) return { blockNumber: -1, returnValues: [] }
     this.sheduleMulticall()
@@ -157,10 +177,21 @@ export class MultiCallAggregator {
       functionName: 'getBlockNumber',
     })
     let res
-    for (;;) {
+    const startTime = performance.now()
+    // 1 success call in enough, but in case of fail repeat up to 10 times
+    for (let i = 0; i < 10; ++i) {
+      this.totalCalls += pendingCalls.length - 1
+      this.totalMCalls += 1
+      while (
+        this.maxBatchesSimultaniously !== 0 &&
+        this.currentBatchInProgress >= this.maxBatchesSimultaniously
+      )
+        await delay(1000) // too much current processing batches. Let's wait
       try {
+        this.currentBatchInProgress += 1
         res = await this.client.multicall({
           allowFailure: true,
+          batchSize: 0, // don't split
           contracts: pendingCalls.map((c) => ({
             address: c.address,
             abi: c.abi,
@@ -168,26 +199,43 @@ export class MultiCallAggregator {
             args: c.args as Narrow<readonly unknown[] | undefined>,
           })),
         })
+        this.currentBatchInProgress -= 1
       } catch (e) {
-        // warnLog(
-        //   this.client.chain?.id,
-        //   `Multicall error ${pendingCalls.map((c) => `${c.address}:${c.functionName}(${c.args})`)}\n` + e
-        // )
-        warnLog(this.client.chain?.id, `Multicall error ${e}`)
+        this.currentBatchInProgress -= 1
+        this.totalCallsFailed += pendingCalls.length - 1
+        this.totalMCallsFailed += 1
+        Logger.error(this.client.chain?.id, 'Multicall error', e)
+        continue
+      }
+      this.totalCallsProcessed += pendingCalls.length - 1
+      this.totalMCallsProcessed += 1
+      this.totalTimeSpent += performance.now() - startTime
+      if ((res[0].error as BaseError)?.details === 'out of gas') {
+        // random error, usually not repeatable, report it and try again
+        Logger.warn(
+          this.client.chain?.id,
+          `Multicall error (${res.length} calls), resending`,
+          res[0].error,
+        )
+        await delay(1000) // decreases the probability of fail
         continue
       }
       break
     }
-    if (res[0].status !== 'success') {
-      // getBlockNumber Failed
-      for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
-    } else {
-      const blockNumber = res[0].result as number
-      for (let i = 1; i < res.length; ++i) {
-        if (res[i].status === 'success')
-          pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
-        else pendingRejects[i - 1](res[i].error)
+    if (res) {
+      if (res[0].status !== 'success') {
+        // getBlockNumber Failed
+        for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
+      } else {
+        const blockNumber = res[0].result as number
+        for (let i = 1; i < res.length; ++i) {
+          if (res[i].status === 'success')
+            pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })
+          else pendingRejects[i - 1](res[i].error)
+        }
       }
+    } else {
+      Logger.error(this.client.chain?.id, 'Unexpected state in Multicall !!!')
     }
   }
 

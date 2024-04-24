@@ -1,8 +1,7 @@
+import { SECONDS_BETWEEN_BLOCKS } from '@sushiswap/graph-config'
+import { daysInYear, secondsInDay } from 'date-fns'
 import { ChainId } from 'sushi/chain'
 import { SUSHI } from 'sushi/currency'
-import { SECONDS_BETWEEN_BLOCKS } from '@sushiswap/graph-config'
-import type { Address } from '@wagmi/core'
-import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MASTERCHEF_ADDRESS } from '../../../config.js'
 import { getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
@@ -39,7 +38,7 @@ export async function getMasterChefV1(): Promise<ChefReturn> {
     ),
     getTokenBalancesOf(
       poolInfos.map((pool) => pool.lpToken),
-      MASTERCHEF_ADDRESS[ChainId.ETHEREUM] as Address,
+      MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
       ChainId.ETHEREUM,
     ),
   ])
@@ -53,8 +52,12 @@ export async function getMasterChefV1(): Promise<ChefReturn> {
       )?.balance
       if (!pair || !lpBalance) return acc
 
-      const rewardPerDay =
+      let rewardPerDay =
         sushiPerDay * (Number(farm.allocPoint) / Number(totalAllocPoint))
+
+      // Edge case for virtually disabled rewards
+      if (rewardPerDay < 0.000001) rewardPerDay = 0
+
       const rewardPerYearUSD = daysInYear * rewardPerDay * sushiPriceUSD
 
       const incentives: Farm['incentives'] = [
@@ -70,7 +73,7 @@ export async function getMasterChefV1(): Promise<ChefReturn> {
             symbol: SUSHI[ChainId.ETHEREUM].symbol ?? '',
           },
           rewarder: {
-            address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM] as Address,
+            address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
             type: 'Primary',
           },
         },

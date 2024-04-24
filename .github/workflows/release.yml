@@ -5,7 +5,9 @@ on:
     branches:
       - master
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CI: true
@@ -26,7 +28,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 8.9.0
+          version: 8.15.3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3

@@ -1,35 +1,35 @@
-import { routeProcessor2Abi } from 'sushi/abi'
-import { Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryAlgebra,
   FactoryV2,
   FactoryV3,
-  getAlgebraPoolAddress,
   LogFilterType,
+  getAlgebraPoolAddress,
 } from '@sushiswap/extractor'
+import { routeProcessor2Abi } from 'sushi/abi'
+import { Token } from 'sushi/currency'
 import {
   ConstantProductPoolCode,
   LiquidityProviders,
   PoolCode,
   Router,
-} from '@sushiswap/router'
-import { findMultiRouteExactIn, RouteStatus, RToken } from '@sushiswap/tines'
+} from 'sushi/router'
+import { RToken, RouteStatus, findMultiRouteExactIn } from 'sushi/tines'
 import {
   Abi,
   Address,
-  createPublicClient,
-  custom,
   Hex,
   PublicClient,
   Transport,
-  walletActions,
   WalletClient,
+  createPublicClient,
+  custom,
+  walletActions,
 } from 'viem'
 import { Chain, hardhat } from 'viem/chains'
-
 import {
   AlgebraIntegralPeriphery,
+  TestTokens,
   algebraPoolBurn,
   algebraPoolMint,
   algebraPoolSwap,
@@ -42,10 +42,13 @@ import {
   createTestTokens,
   getDeploymentAddress,
   getInitCodeHash,
-  TestTokens,
-} from '../src'
-import MultiCall3 from './Multicall3.sol/Multicall3.json'
-import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json'
+} from '../src/index.js'
+import MultiCall3 from './Multicall3.sol/Multicall3.json' assert {
+  type: 'json',
+}
+import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json' assert {
+  type: 'json',
+}
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -55,7 +58,8 @@ async function startInfinitTest(args: {
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -77,7 +81,7 @@ async function startInfinitTest(args: {
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = 0; j < tokens.length; ++j) {
-        if (i == j) continue
+        if (i === j) continue
         await delay(1000)
         const time0 = performance.now()
         const pools0 = extractor.getPoolCodesForTokens(tokens)
@@ -92,13 +96,11 @@ async function startInfinitTest(args: {
           (p) => p instanceof ConstantProductPoolCode,
         ).length
         const pools1_3 = pools1.length - pools1_2
-        const timingLine =
-          `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(
-            time1 - time0,
-          )}ms` +
-          `, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(
-            time2 - time1,
-          )}ms`
+        const timingLine = `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(
+          time1 - time0,
+        )}ms, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(
+          time2 - time1,
+        )}ms`
 
         const pools = pools1
         const poolMap = new Map<string, PoolCode>()
@@ -115,8 +117,7 @@ async function startInfinitTest(args: {
         )
         if (route.status === RouteStatus.NoWay) {
           console.log(
-            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ` +
-              timingLine,
+            `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
           )
           continue
         }
@@ -159,9 +160,7 @@ async function startInfinitTest(args: {
           console.log(
             `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
               route.legs.length - 1
-            } pools ` +
-              timingLine +
-              ` diff = ${diff > 0 ? '+' : ''}${diff} `,
+            } pools ${timingLine} diff = ${diff > 0 ? '+' : ''}${diff} `,
           )
           if (Math.abs(Number(diff)) > 0.001)
             console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
@@ -184,7 +183,7 @@ async function simulateUserActivity(
   for (;;) {
     for (let i = 0; i < tokens.length; ++i)
       for (let j = 0; j < tokens.length; ++j) {
-        if (i == j) continue
+        if (i === j) continue
         await delay(delayValue)
         try {
           const amountIn = BigInt(1e12)
@@ -199,7 +198,7 @@ async function simulateUserActivity(
           console.log(
             `Swap simulation: ${amountIn} ${tokens[i].symbol} => ${amountOut} ${tokens[j].symbol} `,
           )
-        } catch (e) {
+        } catch (_e) {
           //
         }
       }
@@ -237,7 +236,7 @@ async function simulateUserActivity(
           console.log(
             `Mint simulation: ${tokens[i].symbol} => ${tokens[j].symbol} tokenId=${tokenId}`,
           )
-        } catch (e) {
+        } catch (_e) {
           // console.log(e)
         }
       }
@@ -252,7 +251,7 @@ async function simulateUserActivity(
           positions[i].liquidity,
         )
         console.log(`Burn simulation: ${positions[i].tokenId}`)
-      } catch (e) {
+      } catch (_e) {
         // console.log(e)
       }
     }
@@ -356,7 +355,8 @@ it('Extractor Hardhat Algebra test', async () => {
     factoriesAlgebra: [
       { address: factory, provider: LiquidityProviders.AlgebraIntegral },
     ],
-    tickHelperContract: tickLens,
+    tickHelperContractV3: '' as Address,
+    tickHelperContractAlgebra: tickLens,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,

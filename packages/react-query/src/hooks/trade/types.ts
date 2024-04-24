@@ -2,10 +2,11 @@ import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import type { Address, GetFunctionArgs } from 'viem'
+import { RouterLiquiditySource } from 'sushi/router'
+import type { Address, WriteContractParameters } from 'viem'
 import z from 'zod'
 
-import { legValidator, tradeValidator } from './validator'
+import { legValidator, tradeValidator01 } from './validator01'
 
 export interface UseTradeParams {
   chainId: ChainId
@@ -15,17 +16,19 @@ export interface UseTradeParams {
   gasPrice?: bigint | null | undefined
   slippagePercentage: string
   recipient: Address | undefined
+  source?: RouterLiquiditySource
   enabled: boolean
   carbonOffset: boolean
   onError?(e: Error): void
+  tokenTax?: Percent | false | undefined
 }
 
 export type UseTradeReturnWriteArgs =
-  | GetFunctionArgs<
+  | WriteContractParameters<
       typeof routeProcessor2Abi,
       'transferValueAndprocessRoute'
     >['args']
-  | GetFunctionArgs<typeof routeProcessor2Abi, 'processRoute'>['args']
+  | WriteContractParameters<typeof routeProcessor2Abi, 'processRoute'>['args']
   | undefined
 
 export interface UseTradeReturn {
@@ -40,8 +43,9 @@ export interface UseTradeReturn {
   writeArgs: UseTradeReturnWriteArgs
   route: TradeType['route']
   value?: bigint | undefined
+  tokenTax: Percent | false | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
-export type TradeType = z.infer<typeof tradeValidator>
+export type TradeType = z.infer<typeof tradeValidator01>
 export type TradeLegType = z.infer<typeof legValidator>

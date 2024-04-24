@@ -1,23 +1,25 @@
 import '../lib/wagmi.js'
 
 import { isAddress } from '@ethersproject/address'
-import { chainIds, chains } from 'sushi/chain'
-import { createClient } from '@sushiswap/database'
-import { Address, fetchToken } from '@wagmi/core'
+import { fetchToken } from '@wagmi/core'
+import { client } from 'src/lib/prisma.js'
+import { ChainId, chainIds, chains } from 'sushi/chain'
+import { Address } from 'viem'
+import { config } from '../lib/wagmi.js'
 
 class Token {
   id: string
-  chainId: number
-  address: string
+  chainId: ChainId
+  address: Address
   status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined
   isFeeOnTransfer: boolean | undefined
   isCommon: boolean | undefined
   constructor(
-    chainId: number,
-    address: string,
-    status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' = undefined,
-    isFeeOnTransfer: boolean = undefined,
-    isCommon: boolean = undefined,
+    chainId: ChainId,
+    address: Address,
+    status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined = undefined,
+    isFeeOnTransfer: boolean | undefined = undefined,
+    isCommon: boolean | undefined = undefined,
   ) {
     if (!isAddress(address)) {
       throw new Error(`Invalid address: ${address}`)
@@ -30,16 +32,15 @@ class Token {
     this.id = `${chainId}:${address.toLowerCase()}`
     this.chainId = chainId
     this.status = status
-    this.address = address.toLowerCase()
+    this.address = address.toLowerCase() as Address
     this.isFeeOnTransfer = isFeeOnTransfer
     this.isCommon = isCommon
   }
 }
 
 export async function main() {
-  const client = await createClient()
   // const token = new Token(56288, '0x4a2c2838c3907D024916c3f4Fe07832745Ae4bec', 'APPROVED')
-  const token = new Token(1234, '0x', 'DISAPPROVED')
+  const token = new Token(1, '0x', 'DISAPPROVED')
   try {
     const foundToken = await client.token.findFirst({
       where: {
@@ -105,22 +106,19 @@ export async function main() {
     }
   } catch (e) {
     console.error(e)
-    await client.$disconnect()
-  } finally {
-    await client.$disconnect()
   }
 }
 
 async function fetchTokenFromContract(token: Token) {
-  const tokenFromContract = await fetchToken({
+  const tokenFromContract = await fetchToken(config, {
     chainId: token.chainId,
-    address: token.address as Address,
+    address: token.address,
   })
   if (tokenFromContract) {
     return {
       address: tokenFromContract.address,
-      name: tokenFromContract.name,
-      symbol: tokenFromContract.symbol,
+      name: tokenFromContract.name!,
+      symbol: tokenFromContract.symbol!,
       decimals: tokenFromContract.decimals,
     }
   } else {

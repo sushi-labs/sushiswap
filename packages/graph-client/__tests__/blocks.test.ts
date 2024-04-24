@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK } from '..'
+import { getBuiltGraphSDK } from '../.graphclient/index.js'
 
 describe('Blocks', () => {
   const sdk = getBuiltGraphSDK()

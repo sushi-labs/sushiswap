@@ -1,17 +1,16 @@
+import { computeSushiSwapV2PoolAddress } from 'sushi'
 import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
-import { computeSushiSwapV2PoolAddress } from '@sushiswap/v2-sdk'
 import { Token } from 'sushi/currency'
-import { ConstantProductPoolCode, LiquidityProviders } from '@sushiswap/router'
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { Address, decodeEventLog, Log, parseAbiItem, PublicClient } from 'viem'
-
-import { Counter } from './Counter'
-import { LogFilter2 } from './LogFilter2'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { PermanentCache } from './PermanentCache'
-import { TokenManager } from './TokenManager'
-import { repeat } from './Utils'
-import { warnLog } from './WarnLog'
+import { ConstantProductPoolCode, LiquidityProviders } from 'sushi/router'
+import { ConstantProductRPool, RToken } from 'sushi/tines'
+import { Address, Log, PublicClient, decodeEventLog, parseAbiItem } from 'viem'
+import { Counter } from './Counter.js'
+import { LogFilter2 } from './LogFilter2.js'
+import { Logger } from './Logger.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { PermanentCache } from './PermanentCache.js'
+import { TokenManager } from './TokenManager.js'
+import { repeat } from './Utils.js'
 
 export interface FactoryV2 {
   address: Address
@@ -26,6 +25,10 @@ enum PoolStatus {
   AddingPool = 'AddingPool',
   ValidPool = 'ValidPool',
   UpdatingPool = 'UpdatingPool',
+}
+
+function readyForRouting(status?: PoolStatus) {
+  return status === PoolStatus.ValidPool || status === PoolStatus.UpdatingPool
 }
 
 interface PoolStateNotExist {
@@ -73,12 +76,14 @@ export class UniV2Extractor {
   readonly factoryMap: Map<string, FactoryV2> = new Map()
 
   readonly poolMap: Map<string, PoolState> = new Map()
+  readonly poolMapUpdated: Map<string, ConstantProductPoolCode> = new Map()
 
   readonly logFilter: LogFilter2
   readonly logging: boolean
   readonly taskCounter: Counter
   readonly poolPermanentCache: PermanentCache<PoolCacheRecord>
   watchedPools = 0
+  started = false
 
   /// @param client
   /// @param factories list of supported factories
@@ -150,6 +155,10 @@ export class UniV2Extractor {
             } else {
               poolState.poolCode.pool.updateReserves(reserve0, reserve1)
               poolState.status = PoolStatus.ValidPool
+              this.poolMapUpdated.set(
+                l.address.toLowerCase(),
+                poolState.poolCode,
+              )
             }
           }
           ++eventKnown
@@ -171,8 +180,7 @@ export class UniV2Extractor {
           `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
         )
       } else {
-        this.logFilter.start()
-        warnLog(
+        Logger.error(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
@@ -185,7 +193,6 @@ export class UniV2Extractor {
 
   async start() {
     const startTime = performance.now()
-    this.logFilter.start()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
 
@@ -221,9 +228,10 @@ export class UniV2Extractor {
           })
         } catch (e) {
           this.taskCounter.dec()
-          warnLog(
+          Logger.error(
             this.multiCallAggregator.chainId,
             `Ext2 pool ${r.address} reading from cache failed`,
+            e,
           )
           return
         }
@@ -233,13 +241,29 @@ export class UniV2Extractor {
     this.consoleLog(`${cachedPools.size} pools were taken from cache`)
     await Promise.allSettled(promises)
 
-    warnLog(
-      this.multiCallAggregator.chainId,
-      `ExtractorV2 was started (${Math.round(
+    this.consoleLog(
+      `ExtractorV2 is started and ready(${Math.round(
         performance.now() - startTime,
       )}ms)`,
-      'info',
     )
+    this.started = true
+  }
+
+  private setPoolState(addr: string, poolState: PoolState) {
+    const prevState = this.poolMap.get(addr)
+    if (
+      prevState !== undefined &&
+      readyForRouting(prevState.status) &&
+      !readyForRouting(poolState.status)
+    ) {
+      Logger.error(
+        this.multiCallAggregator.chainId,
+        `Unexpected situation: pool status ${prevState.status} -> ${poolState.status}`,
+      )
+    }
+    this.poolMap.set(addr, poolState)
+    if (readyForRouting(poolState.status))
+      this.poolMapUpdated.set(addr, (poolState as PoolStateValidPool).poolCode)
   }
 
   async updatePoolState(poolState: PoolState) {
@@ -261,10 +285,12 @@ export class UniV2Extractor {
       const [reserve0, reserve1] = reserves as [bigint, bigint]
       pool.updateReserves(reserve0, reserve1)
       poolState.status = PoolStatus.ValidPool
+      this.poolMapUpdated.set(pool.address.toLowerCase(), poolState.poolCode)
     } catch (e) {
-      warnLog(
+      Logger.error(
         this.multiCallAggregator.chainId,
         `Ext2 pool ${poolState.poolCode.pool.address} update fail`,
+        e,
       )
     }
     this.taskCounter.dec()
@@ -282,50 +308,9 @@ export class UniV2Extractor {
       for (let j = i + 1; j < tokensUnique.length; ++j) {
         const t1 = tokensUnique[j]
         this.factories.forEach((factory) => {
-          const addr = this.computeV2Address(factory, t0, t1)
-          const addrL = addr.toLowerCase()
-          const poolState = this.poolMap.get(addrL)
-          if (poolState) {
-            if (
-              poolState.status === PoolStatus.ValidPool ||
-              poolState.status === PoolStatus.UpdatingPool
-            )
-              prefetched.push(poolState.poolCode)
-            return
-          }
-          const startTime = performance.now()
-          const promise = this.multiCallAggregator
-            .callValue(addr, getReservesAbi, 'getReserves')
-            .then(
-              (reserves) => {
-                const poolState2 = this.poolMap.get(addrL)
-                if (poolState2) {
-                  // pool was created
-                  if (
-                    poolState2.status === PoolStatus.ValidPool ||
-                    poolState2.status === PoolStatus.UpdatingPool
-                  )
-                    return poolState2.poolCode
-                }
-                const [reserve0, reserve1] = reserves as [bigint, bigint]
-                return this.addPoolWatching({
-                  address: addr,
-                  token0: t0,
-                  token1: t1,
-                  reserve0,
-                  reserve1,
-                  factory,
-                  source: 'request',
-                  addToCache: true,
-                  startTime,
-                })
-              },
-              () => {
-                this.poolMap.set(addrL, { status: PoolStatus.NoPool })
-                return undefined
-              },
-            )
-          fetching.push(promise)
+          const res = this.getPoolForTokenPair(factory, t0, t1)
+          if (res instanceof Promise) fetching.push(res)
+          else prefetched.push(res)
         })
       }
     }
@@ -335,6 +320,81 @@ export class UniV2Extractor {
     }
   }
 
+  getPoolsBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: ConstantProductPoolCode[]
+    fetching: Promise<ConstantProductPoolCode | undefined>[]
+  } {
+    const prefetched: ConstantProductPoolCode[] = []
+    const fetching: Promise<ConstantProductPoolCode | undefined>[] = []
+    for (let i = 0; i < tokensUnique1.length; ++i) {
+      const t0 = tokensUnique1[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = 0; j < tokensUnique2.length; ++j) {
+        const t1 = tokensUnique2[j]
+        this.factories.forEach((factory) => {
+          const res = this.getPoolForTokenPair(factory, t0, t1)
+          if (res instanceof Promise) fetching.push(res)
+          else prefetched.push(res)
+        })
+      }
+    }
+    return {
+      prefetched,
+      fetching,
+    }
+  }
+
+  getPoolForTokenPair(
+    factory: FactoryV2,
+    t0: Token,
+    t1: Token,
+  ): ConstantProductPoolCode | Promise<ConstantProductPoolCode | undefined> {
+    const addr = this.computeV2Address(factory, t0, t1)
+    const addrL = addr.toLowerCase()
+    const poolState = this.poolMap.get(addrL)
+    if (poolState) {
+      if (readyForRouting(poolState.status))
+        return (poolState as PoolStateValidPool).poolCode
+    }
+    const startTime = performance.now()
+    this.taskCounter.inc()
+    const promise = this.multiCallAggregator
+      .callValue(addr, getReservesAbi, 'getReserves')
+      .then(
+        (reserves) => {
+          this.taskCounter.dec()
+          const poolState2 = this.poolMap.get(addrL)
+          if (poolState2) {
+            // pool was created
+            if (readyForRouting(poolState2.status))
+              return (poolState2 as PoolStateValidPool).poolCode
+          }
+          const [reserve0, reserve1] = reserves as [bigint, bigint]
+          return this.addPoolWatching({
+            address: addr,
+            token0: t0,
+            token1: t1,
+            reserve0,
+            reserve1,
+            factory,
+            source: 'request',
+            addToCache: true,
+            startTime,
+          })
+        },
+        () => {
+          this.setPoolState(addrL, { status: PoolStatus.NoPool })
+          this.taskCounter.dec()
+          return undefined
+        },
+      )
+    return promise
+  }
+
+  // Is not used now
   async addPoolsFromFactory(
     factoryAddr: Address,
     step = 1000,
@@ -381,7 +441,7 @@ export class UniV2Extractor {
             )
             const [res0, res1] = reserves as [bigint, bigint]
             return await this.addPoolByLog(addr as Address, res0, res1, factory)
-          } catch (e) {
+          } catch (_e) {
             return
           }
         })()
@@ -407,7 +467,7 @@ export class UniV2Extractor {
       }
       return
     }
-    this.poolMap.set(addrL, {
+    this.setPoolState(addrL, {
       status: PoolStatus.AddingPool,
       reserve0,
       reserve1,
@@ -420,24 +480,24 @@ export class UniV2Extractor {
     try {
       if (trustedFactory) factory = trustedFactory
       else {
-        const factoryAddr = await repeat(2, () =>
-          this.multiCallAggregator.callValue(
-            addr,
-            tridentConstantPoolAbi,
-            'factory',
-          ),
-        )
-
-        this.multiCallAggregator.callValue(
-          addr,
-          tridentConstantPoolAbi,
-          'factory',
-        )
+        let factoryAddr = 'no factory'
+        try {
+          factoryAddr = await repeat(2, () =>
+            this.multiCallAggregator.callValue(
+              addr,
+              tridentConstantPoolAbi,
+              'factory',
+            ),
+          )
+        } catch (_e) {
+          // just a contract with similar events as V2 pool but not v2 pool because has no factory
+          // normal situation, lets add it to ignore pools and don't send any error
+        }
         factory = this.factoryMap.get(
           (factoryAddr as string).toLowerCase() as Address,
         )
         if (!factory) {
-          this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
+          this.setPoolState(addrL, { status: PoolStatus.IgnorePool })
           this.consoleLog(`other factory pool ${addr}`)
           this.taskCounter.dec()
           return
@@ -465,9 +525,10 @@ export class UniV2Extractor {
       token1 = tokens[1]
     } catch (e) {
       this.taskCounter.dec()
-      warnLog(
+      Logger.error(
         this.multiCallAggregator.chainId,
-        `Ext2 add pool ${addr} by log failed: ${e}`,
+        `Ext2 add pool ${addr} by log failed`,
+        e,
       )
       return
     }
@@ -476,7 +537,7 @@ export class UniV2Extractor {
     if (!poolState2 || poolState2.status !== PoolStatus.AddingPool) return // pool status changed
 
     if (!token0 || !token1) {
-      this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
+      this.setPoolState(addrL, { status: PoolStatus.IgnorePool })
       this.consoleLog(`ignore pool ${addr} (adding error)`)
       return
     }
@@ -487,7 +548,7 @@ export class UniV2Extractor {
         token1,
       )
       if (expectedPoolAddress.toLowerCase() !== addrL) {
-        this.poolMap.set(addrL, { status: PoolStatus.IgnorePool })
+        this.setPoolState(addrL, { status: PoolStatus.IgnorePool })
         this.consoleLog(`fake pool ${addr}`)
         return
       }
@@ -540,7 +601,7 @@ export class UniV2Extractor {
         args.factory.provider,
       ),
     }
-    this.poolMap.set(args.address.toLowerCase(), poolState)
+    this.setPoolState(args.address.toLowerCase(), poolState)
     if (args.addToCache)
       this.poolPermanentCache.add({
         address: args.address,
@@ -552,18 +613,23 @@ export class UniV2Extractor {
     ++this.watchedPools
     if (args.source !== 'cache')
       this.consoleLog(
-        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}`,
+        `add pool ${args.address} (${delay}ms, ${args.source}), watched pools total: ${this.watchedPools}/${this.poolMap.size}`,
       )
     return poolState.poolCode
   }
 
   getCurrentPoolCodes(): ConstantProductPoolCode[] {
-    const pools = Array.from(this.poolMap.values()).filter(
-      (p) =>
-        p.status === PoolStatus.ValidPool ||
-        p.status === PoolStatus.UpdatingPool,
+    const pools = Array.from(this.poolMap.values()).filter((p) =>
+      readyForRouting(p.status),
     ) as PoolStateValidPool[]
     return pools.map((p) => p.poolCode)
+  }
+
+  // side effect: updated pools list is cleared
+  getUpdatedPoolCodes(): ConstantProductPoolCode[] {
+    const pools = Array.from(this.poolMapUpdated.values())
+    this.poolMapUpdated.clear()
+    return pools
   }
 
   getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
@@ -572,12 +638,9 @@ export class UniV2Extractor {
       tokenMap.set(token as Token, num + 1)
     }
     Array.from(this.poolMap.values()).forEach((p) => {
-      if (
-        p.status === PoolStatus.ValidPool ||
-        p.status === PoolStatus.UpdatingPool
-      ) {
-        add(p.poolCode.pool.token0)
-        add(p.poolCode.pool.token1)
+      if (readyForRouting(p.status)) {
+        add((p as PoolStateValidPool).poolCode.pool.token0)
+        add((p as PoolStateValidPool).poolCode.pool.token1)
       }
     })
   }
@@ -600,5 +663,9 @@ export class UniV2Extractor {
   consoleLog(log: string) {
     if (this.logging)
       console.log(`V2-${this.multiCallAggregator.chainId}: ${log}`)
+  }
+
+  isStarted() {
+    return this.started
   }
 }

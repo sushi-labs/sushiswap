@@ -29,6 +29,7 @@
         "ALCHEMY_ID",
         "DATABASE_URL",
         "REDIS_URL",
+        "NEXT_PUBLIC_POOLS_API_V0_BASE_URL",
         "POOLS_API_V0_BASE_URL",
         "TOKENS_API_V0_BASE_URL",
         "SWAP_API_V0_BASE_URL",
@@ -45,19 +46,26 @@
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build", "generate", "export"],
+      "dependsOn": ["^build", "generate"],
+      "dotEnv": [
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ],
       "cache": false,
       "persistent": true
     },
     "generate": {
-      "outputs": [".graphclient/**/*", "src/generated.ts", "typechain"],
+      "outputs": [
+        ".mesh/**/*",
+        ".graphclient/**/*",
+        "src/generated.ts",
+        "typechain"
+      ],
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "lint:fix": {
       "dependsOn": ["^build"],
       "outputs": []
     },
@@ -67,10 +75,11 @@
         "ALCHEMY_ID",
         "APP_ENV",
         "DATABASE_URL",
+        "NEXT_PUBLIC_POOLS_API_V0_BASE_URL",
         "POOLS_API_V0_BASE_URL",
         "REDIS_URL",
         "SWAP_API_V0_BASE_URL",
-        "TEST",
+        "APP_ENV",
         "TOKENS_API_V0_BASE_URL",
         "NEXT_PUBLIC_STRAPI_API_URL"
       ],

@@ -1,8 +1,8 @@
 import { db } from '../db.js'
 import {
-  isPromise,
   type PromiseNotification,
   type ResolvedNotification,
+  isPromise,
 } from './types.js'
 
 export const createNotification = async (

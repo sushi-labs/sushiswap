@@ -1,28 +1,32 @@
-import { routeProcessor3Abi } from 'sushi/abi'
-import { BENTOBOX_ADDRESS, BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
-import { LiquidityProviders, Router, UniV3PoolCode } from '@sushiswap/router'
-import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
 import {
   createRandomUniV3Pool,
   createUniV3EnvZero,
 } from '@sushiswap/tines-sandbox'
+import hre from 'hardhat'
+import { routeProcessor3Abi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
+import { Token } from 'sushi/currency'
+import { PoolCode } from 'sushi/router'
+import { LiquidityProviders, Router, UniV3PoolCode } from 'sushi/router'
 import { type Contract } from 'sushi/types'
-import { config, network } from 'hardhat'
 import {
   Address,
   Client,
+  Hex,
   createPublicClient,
   custom,
-  Hex,
   testActions,
   walletActions,
 } from 'viem'
 import { HDAccount, mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor3 from '../artifacts/contracts/RouteProcessor3.sol/RouteProcessor3.json'
+import RouteProcessor3 from '../artifacts/contracts/RouteProcessor3.sol/RouteProcessor3.json' assert {
+  type: 'json',
+}
+
+const { config, network } = hre
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 

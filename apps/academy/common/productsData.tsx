@@ -130,7 +130,7 @@ export const PRODUCTS_DATA = {
             </p>
             <p>
               Platforms that allow the usage of flash loans usually charge a fee
-              - for Bentobox it is 0.05%.
+              - for BentoBox it is 0.05%.
             </p>
             <p>
               Flash loans are particularly useful for arbitrage and
@@ -326,7 +326,7 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'What is triple yield? (Bentobox + Kashi + Onsen)',
+        question: 'What is triple yield? (BentoBox + Kashi + Onsen)',
         answer: (
           <div className="space-y-4">
             <p>
@@ -340,7 +340,7 @@ export const PRODUCTS_DATA = {
                 Lend out your funds via Kashi and earn interest from borrowers.
               </li>
               <li>
-                Idle assets automatically earn a small yield from Bentobox
+                Idle assets automatically earn a small yield from BentoBox
                 strategies.
               </li>
               <li>
@@ -354,7 +354,7 @@ export const PRODUCTS_DATA = {
             <ol className="pl-4 list-decimal">
               <li>Add liquidity on Trident and earn fees from all swaps.</li>
               <li>
-                Idle assets automatically earn a small yield from Bentobox
+                Idle assets automatically earn a small yield from BentoBox
                 strategies.
               </li>
               <li>
@@ -663,7 +663,7 @@ export const PRODUCTS_DATA = {
         ),
       },
       {
-        question: 'What is triple yield? (Bentobox + Kashi + Onsen)',
+        question: 'What is triple yield? (BentoBox + Kashi + Onsen)',
         answer: (
           <div className="space-y-4">
             <p>
@@ -677,7 +677,7 @@ export const PRODUCTS_DATA = {
                 Lend out your funds via Kashi and earn interest from borrowers.
               </li>
               <li>
-                Idle assets automatically earn a small yield from Bentobox
+                Idle assets automatically earn a small yield from BentoBox
                 strategies.
               </li>
               <li>
@@ -691,7 +691,7 @@ export const PRODUCTS_DATA = {
             <ol className="pl-4 list-decimal">
               <li>Add liquidity on Trident and earn fees from all swaps.</li>
               <li>
-                Idle assets automatically earn a small yield from Bentobox
+                Idle assets automatically earn a small yield from BentoBox
                 strategies.
               </li>
               <li>

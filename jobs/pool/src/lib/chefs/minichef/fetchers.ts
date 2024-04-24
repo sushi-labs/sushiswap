@@ -1,54 +1,55 @@
-import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
-import { ChainId } from 'sushi/chain'
 import {
-  MINICHEF_SUBGRAPH_NAME,
-  SUBGRAPH_HOST,
+  MINICHEF_SUBGRAPH_URL,
   SushiSwapChainId,
   TridentChainId,
 } from '@sushiswap/graph-config'
-import { Address, readContract, readContracts } from '@wagmi/core'
+import { readContract, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
+import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
+import { ChainId } from 'sushi/chain'
 
+import { config } from 'src/lib/wagmi.js'
+import { Address } from 'viem'
 import { MINICHEF_ADDRESS } from '../../../config.js'
 
 export async function getPoolLength(chainId: ChainId) {
   const poolLengthCall = {
-    address: MINICHEF_ADDRESS[chainId] as Address,
+    address: MINICHEF_ADDRESS[chainId],
     chainId: chainId,
     abi: miniChefAbi,
     functionName: 'poolLength',
   } as const
 
-  return readContract(poolLengthCall)
+  return readContract(config, poolLengthCall)
 }
 
 export async function getTotalAllocPoint(chainId: ChainId) {
   const totalAllocPointCall = {
-    address: MINICHEF_ADDRESS[chainId] as Address,
+    address: MINICHEF_ADDRESS[chainId],
     chainId: chainId,
     abi: miniChefAbi,
     functionName: 'totalAllocPoint',
   } as const
 
-  return readContract(totalAllocPointCall)
+  return readContract(config, totalAllocPointCall)
 }
 
 export async function getSushiPerSecond(chainId: ChainId) {
   const sushiPerSecondCall = {
-    address: MINICHEF_ADDRESS[chainId] as Address,
+    address: MINICHEF_ADDRESS[chainId],
     chainId: chainId,
     abi: miniChefAbi,
     functionName: 'sushiPerSecond',
   } as const
 
-  return readContract(sushiPerSecondCall)
+  return readContract(config, sushiPerSecondCall)
 }
 
 export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
   const poolInfoCalls = [...Array(Number(poolLength))].map(
     (_, i) =>
       ({
-        address: MINICHEF_ADDRESS[chainId] as Address,
+        address: MINICHEF_ADDRESS[chainId],
         args: [BigInt(i)],
         chainId: chainId,
         abi: miniChefAbi,
@@ -56,15 +57,19 @@ export async function getPoolInfos(poolLength: bigint, chainId: ChainId) {
       }) as const,
   )
 
-  return readContracts({
+  return readContracts(config, {
     allowFailure: true,
     contracts: poolInfoCalls,
   }).then((results) =>
-    results.map(({ result }) => ({
-      accSushiPerShare: result[0],
-      lastRewardTime: result[1],
-      allocPoint: result[2],
-    })),
+    results.map(({ result }) =>
+      result
+        ? {
+            accSushiPerShare: result[0],
+            lastRewardTime: result[1],
+            allocPoint: result[2],
+          }
+        : undefined,
+    ),
   )
 }
 
@@ -72,7 +77,7 @@ export async function getLpTokens(poolLength: bigint, chainId: ChainId) {
   const lpTokenCalls = [...Array(Number(poolLength))].map(
     (_, i) =>
       ({
-        address: MINICHEF_ADDRESS[chainId] as Address,
+        address: MINICHEF_ADDRESS[chainId],
         args: [BigInt(i)],
         chainId: chainId,
         abi: miniChefAbi,
@@ -80,7 +85,7 @@ export async function getLpTokens(poolLength: bigint, chainId: ChainId) {
       }) as const,
   )
 
-  return readContracts({
+  return readContracts(config, {
     allowFailure: true,
     contracts: lpTokenCalls,
   }).then((results) => results.map(({ result }) => result))
@@ -90,7 +95,7 @@ export async function getRewarders(poolLength: bigint, chainId: ChainId) {
   const rewarderCalls = [...Array(Number(poolLength))].map(
     (_, i) =>
       ({
-        address: MINICHEF_ADDRESS[chainId] as Address,
+        address: MINICHEF_ADDRESS[chainId],
         args: [BigInt(i)],
         chainId: chainId,
         abi: miniChefAbi,
@@ -98,7 +103,7 @@ export async function getRewarders(poolLength: bigint, chainId: ChainId) {
       }) as const,
   )
 
-  return readContracts({
+  return readContracts(config, {
     allowFailure: true,
     contracts: rewarderCalls,
   }).then((results) => results.map(({ result }) => result))
@@ -109,21 +114,20 @@ export async function getRewarderInfos(
   chainId: SushiSwapChainId | TridentChainId,
 ) {
   const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
-  const subgraphName = (
-    MINICHEF_SUBGRAPH_NAME as Record<SushiSwapChainId | TridentChainId, string>
+  const url = (
+    MINICHEF_SUBGRAPH_URL as Record<SushiSwapChainId | TridentChainId, string>
   )[chainId]
-  if (!subgraphName) {
+  if (!url) {
     console.log(chainId, 'does not have a minichef subgraph!')
     return []
   }
 
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    url,
   })
 
   const { rewarders } = await sdk.MiniChefRewarders()
-  console.log(`Retrieved ${rewarders.length} rewarders from ${subgraphName}`)
+  console.log(`Retrieved ${rewarders.length} rewarders from ${url}`)
 
   return Promise.all(
     rewarders.map(async (rewarder) => {
@@ -172,7 +176,7 @@ export async function getRewarderInfos(
           rewarder.id === '0x0000000000000000000000000000000000000000'
         ) {
           return {
-            id: rewarder.id,
+            id: rewarder.id as Address,
             rewardToken: rewarder.rewardToken,
             rewardPerSecond: BigInt(rewarder.rewardPerSecond),
           }
@@ -194,15 +198,15 @@ export async function getRewarderInfos(
             }) as const,
         )
 
-        const poolInfos = await readContracts({
+        const poolInfos = await readContracts(config, {
           allowFailure: true,
           contracts: poolInfoCalls,
         })
 
         const zipped = zip(poolIds, poolInfos)
         const successful = zipped
-          .filter(([, poolInfo]) => !!poolInfo.result)
-          .map(([poolId, poolInfo]) => [poolId, poolInfo.result] as const)
+          .filter(([, poolInfo]) => poolInfo?.result)
+          .map(([poolId, poolInfo]) => [poolId, poolInfo!.result!] as const)
 
         return {
           id: rewarder.id,
@@ -219,7 +223,7 @@ export async function getRewarderInfos(
           rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       } catch (error) {
-        console.log('error', ChainId[chainId], rewarder.id, error)
+        console.log('error', chainId, rewarder.id, error)
 
         // so that the script doesn't fail on new should-be-blacklisted pools
         return {

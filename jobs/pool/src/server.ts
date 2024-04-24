@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import { Protocol } from '@sushiswap/database'
 import timeout from 'connect-timeout'
 import express from 'express'
@@ -6,7 +8,6 @@ import { z } from 'zod'
 import { execute as incentives } from './incentives.js'
 import { execute as merklIncentives } from './merkl-incentives.js'
 import { execute as pools } from './pools.js'
-import { prices } from './price.js'
 import { steer } from './steer.js'
 
 const app = express()
@@ -65,20 +66,6 @@ app.get(
 )
 
 app.get(
-  '/prices',
-  async (req, res) => {
-    req.setTimeout(600_000)
-    try {
-      await prices()
-      res.sendStatus(200)
-    } catch (err) {
-      res.status(500).send(err)
-    }
-  },
-  timeout('600s'),
-)
-
-app.get(
   '/steer',
   async (req, res) => {
     req.setTimeout(600_000)
@@ -86,6 +73,7 @@ app.get(
       await steer()
       res.sendStatus(200)
     } catch (err) {
+      console.log(err)
       res.status(500).send(err)
     }
   },

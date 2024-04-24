@@ -6,7 +6,7 @@
 import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
-  dsn: 'https://55d403547a5655039a8f9eb2906a6121@o960777.ingest.sentry.io/4505784139776000',
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 0.1,
@@ -14,4 +14,6 @@ Sentry.init({
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   // debug: process.env.NODE_ENV !== 'production',
   debug: false,
+  enabled: Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN),
+  environment: process.env.VERCEL_ENV ? process.env.VERCEL_ENV : 'local',
 })

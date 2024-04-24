@@ -1,41 +1,34 @@
-import { calculateSlippageAmount } from '@sushiswap/amm'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
+import { isRouteProcessor4ChainId } from 'sushi/config'
 import {
   Amount,
   Native,
-  nativeCurrencyIds,
   Price,
+  type Type,
   WNATIVE_ADDRESS,
 } from 'sushi/currency'
-import { Percent, ZERO } from 'sushi/math'
-import {
-  isRouteProcessor3_1ChainId,
-  isRouteProcessor3_2ChainId,
-} from '@sushiswap/route-processor-sdk'
-import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
-import { stringify, type Hex, type Address } from 'viem'
-import { deserialize } from 'wagmi'
-
+import { Fraction, Percent, ZERO } from 'sushi/math'
+import { type Address, type Hex, stringify } from 'viem'
 import { usePrice } from '../prices'
+import { apiAdapter02To01 } from './apiAdapter'
 import type {
   UseTradeParams,
   UseTradeQuerySelect,
   UseTradeReturnWriteArgs,
 } from './types'
-import { tradeValidator } from './validator'
+import { tradeValidator02 } from './validator02'
 
-const SWAP_BASE_URL =
-  process.env['SWAP_API_V0_BASE_URL'] ||
-  process.env['NEXT_PUBLIC_SWAP_API_V0_BASE_URL'] ||
-  'https://swap.sushi.com'
+const API_BASE_URL =
+  process.env['API_BASE_URL'] ||
+  process.env['NEXT_PUBLIC_API_BASE_URL'] ||
+  'https://staging.sushi.com/swap'
 
 function getApiVersion(chainId: ChainId) {
-  if (isRouteProcessor3_2ChainId(chainId)) {
-    return '/v3.2'
-  }
-  if (isRouteProcessor3_1ChainId(chainId)) {
-    return '/v3.1'
+  if (isRouteProcessor4ChainId(chainId)) {
+    return '/v4'
   }
   return ''
 }
@@ -49,6 +42,7 @@ export const useTradeQuery = (
     gasPrice = 50n,
     slippagePercentage,
     recipient,
+    source,
     enabled,
     onError,
   }: UseTradeParams,
@@ -65,12 +59,14 @@ export const useTradeQuery = (
         slippagePercentage,
         gasPrice,
         recipient,
+        source,
       },
     ],
     queryFn: async () => {
-      const params = new URL(SWAP_BASE_URL + getApiVersion(chainId))
-
-      params.searchParams.set('chainId', `${chainId}`)
+      const params = new URL(
+        `${API_BASE_URL}/swap${getApiVersion(chainId)}/${chainId}`,
+      )
+      // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',
         `${
@@ -87,32 +83,24 @@ export const useTradeQuery = (
             : toToken?.wrapped.address
         }`,
       )
-      params.searchParams.set(
-        'fromTokenId',
-        `${
-          fromToken?.isNative
-            ? nativeCurrencyIds[chainId]
-            : fromToken?.wrapped.address
-        }`,
-      )
-      params.searchParams.set(
-        'toTokenId',
-        `${
-          toToken?.isNative
-            ? nativeCurrencyIds[chainId]
-            : toToken?.wrapped.address
-        }`,
-      )
       params.searchParams.set('amount', `${amount?.quotient.toString()}`)
       params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
+      if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
+      // const json = deserialize(await res.json()) should cause react query error
       const json = await res.json()
-      const deserialised = deserialize(json)
-      return tradeValidator.parse(deserialised)
+      const resp2 = tradeValidator02.parse(json)
+      const resp1 = apiAdapter02To01(
+        resp2,
+        fromToken as Type,
+        toToken as Type,
+        recipient,
+      )
+      return resp1
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
@@ -136,6 +124,7 @@ export const useTrade = (variables: UseTradeParams) => {
     slippagePercentage,
     carbonOffset,
     gasPrice,
+    tokenTax,
   } = variables
   const { data: price } = usePrice({
     chainId,
@@ -147,7 +136,19 @@ export const useTrade = (variables: UseTradeParams) => {
       // console.log('data.args', data?.args)
       if (data && amount && data.route && fromToken && toToken) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
-        const amountOut = Amount.fromRawAmount(toToken, data.route.amountOutBI)
+        const amountOut = Amount.fromRawAmount(
+          toToken,
+          new Fraction(data.route.amountOutBI).multiply(
+            tokenTax ? new Percent(1).subtract(tokenTax) : 1,
+          ).quotient,
+        )
+        const minAmountOut = Amount.fromRawAmount(
+          toToken,
+          slippageAmount(
+            amountOut,
+            new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+          )[0],
+        )
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         let writeArgs: UseTradeReturnWriteArgs = data?.args
@@ -155,7 +156,7 @@ export const useTrade = (variables: UseTradeParams) => {
               data.args.tokenIn as Address,
               BigInt(data.args.amountIn),
               data.args.tokenOut as Address,
-              data.args.amountOutMin,
+              minAmountOut.quotient,
               data.args.to as Address,
               data.args.routeCode as Hex,
             ] as const)
@@ -189,16 +190,10 @@ export const useTrade = (variables: UseTradeParams) => {
             : undefined,
           priceImpact: data.route.priceImpact
             ? new Percent(Math.round(data.route.priceImpact * 10000), 10000)
-            : undefined,
+            : new Percent(0),
           amountIn,
           amountOut,
-          minAmountOut: Amount.fromRawAmount(
-            toToken,
-            calculateSlippageAmount(
-              amountOut,
-              new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-            )[0],
-          ),
+          minAmountOut,
           gasSpent: gasSpent?.toSignificant(4),
           gasSpentUsd:
             price && gasSpent
@@ -210,6 +205,7 @@ export const useTrade = (variables: UseTradeParams) => {
             : 'processRoute',
           writeArgs,
           value,
+          tokenTax,
         }
       }
 
@@ -225,6 +221,7 @@ export const useTrade = (variables: UseTradeParams) => {
         route: undefined,
         functionName: 'processRoute',
         value: undefined,
+        tokenTax: undefined,
       }
     },
     [
@@ -236,6 +233,7 @@ export const useTrade = (variables: UseTradeParams) => {
       slippagePercentage,
       toToken,
       gasPrice,
+      tokenTax,
     ],
   )
 

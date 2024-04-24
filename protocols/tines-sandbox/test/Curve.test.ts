@@ -2,23 +2,23 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { erc20Abi } from 'sushi/abi'
-import {
-  createCurvePoolsForMultipool,
-  CurveMultitokenPool,
-  CurvePool,
-  getBigInt,
-  RPool,
-  RToken,
-} from '@sushiswap/tines'
-import { type Contract } from 'sushi/types'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { Address, parseAbi, WalletClient } from 'viem'
+import { erc20Abi } from 'sushi/abi'
+import {
+  CurveMultitokenPool,
+  CurvePool,
+  RPool,
+  RToken,
+  createCurvePoolsForMultipool,
+  getBigInt,
+} from 'sushi/tines'
+import { type Contract } from 'sushi/types'
+import { Address, WalletClient, parseAbi } from 'viem'
 import { readContract, simulateContract } from 'viem/actions'
 
-import { getTestConfig, TestConfig } from '../src/getTestConfig'
-import { setTokenBalance } from '../src/setTokenBalance'
+import { TestConfig, getTestConfig } from '../src/getTestConfig.js'
+import { setTokenBalance } from '../src/setTokenBalance.js'
 
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
@@ -26,6 +26,8 @@ enum CurvePoolType {
   LegacyV3 = 'LegacyV3',
   Factory = 'Factory',
 }
+
+const MulticoinPoolNumber = 10 // first pools in next array
 
 const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   // Multitoken
@@ -49,7 +51,12 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
     'busdv2',
     CurvePoolType.Legacy,
   ],
-  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.Legacy],
+  [
+    '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956',
+    'qusd',
+    CurvePoolType.Legacy,
+    1e-3,
+  ],
   // ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.Legacy], TODO: fix it
   ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.Legacy],
   ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.Legacy],
@@ -201,6 +208,7 @@ interface PoolInfo {
   poolContract: Contract<any>
   tokenContracts: (Contract<typeof erc20Abi> | undefined)[]
   poolTines: (CurvePool | CurveMultitokenPool | undefined)[][]
+  currentFlow: number[][][]
   user: Address
   snapshot: SnapshotRestorer
 }
@@ -332,7 +340,7 @@ async function createCurvePoolInfo(
         functionName: 'coins',
         args: [i],
       })
-    } catch (e) {
+    } catch (_e) {
       break
     }
     if (token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
@@ -421,6 +429,7 @@ async function createCurvePoolInfo(
       poolContract,
       tokenContracts,
       poolTines: [[undefined, poolTines]],
+      currentFlow: [[], [[0, 0]]],
       user: config.user.address,
       snapshot,
     }
@@ -433,11 +442,15 @@ async function createCurvePoolInfo(
       reserves,
     )
     const poolTines: (CurvePool | CurveMultitokenPool | undefined)[][] = []
+    const currentFlow: number[][][] = []
     let n = 0
     for (let i = 0; i < tokenContracts.length; ++i) {
       poolTines[i] = []
-      for (let j = i + 1; j < tokenContracts.length; ++j)
+      currentFlow[i] = []
+      for (let j = i + 1; j < tokenContracts.length; ++j) {
         poolTines[i][j] = pools[n++]
+        currentFlow[i][j] = [0, 0]
+      }
     }
     console.assert(n === pools.length)
 
@@ -447,6 +460,7 @@ async function createCurvePoolInfo(
       poolContract,
       tokenContracts,
       poolTines,
+      currentFlow,
       user: config.user.address,
       snapshot,
     }
@@ -520,6 +534,46 @@ async function checkSwap(
   expectCloseValues(realOutBI, expectedOut.out, precision)
 }
 
+// Makes real swap in the fork and checks consistency
+async function makeSwap(
+  config: TestConfig,
+  poolInfo: PoolInfo,
+  from: number,
+  to: number,
+  amountIn: number,
+) {
+  let balanceBefore = 0n
+  const tokenContractTo = poolInfo.tokenContracts[to]
+  if (tokenContractTo !== undefined) {
+    balanceBefore = await readContract(config.client, {
+      ...tokenContractTo,
+      functionName: 'balanceOf',
+      args: [poolInfo.user],
+    })
+  }
+  await (config.client as WalletClient).writeContract({
+    ...poolInfo.poolContract,
+    account: poolInfo.user,
+    functionName: 'exchange',
+    args: [BigInt(from), BigInt(to), getBigInt(amountIn), 0n],
+    chain: null,
+    value:
+      poolInfo.tokenContracts[from] === undefined ? getBigInt(amountIn) : 0n,
+  })
+
+  let balanceAfter = 0n
+  if (tokenContractTo !== undefined) {
+    balanceAfter = await readContract(config.client, {
+      ...tokenContractTo,
+      functionName: 'balanceOf',
+      args: [poolInfo.user],
+    })
+  }
+
+  const realOutBI = balanceAfter - balanceBefore
+  return realOutBI
+}
+
 async function forEachFactoryPool(
   config: TestConfig,
   func: (address: Address, factoryName: string) => Promise<void>,
@@ -570,7 +624,7 @@ async function processMultiTokenPool(
       poolType,
       BigInt(1e30),
     )
-  } catch (e) {
+  } catch (_e) {
     // return 'skipped (pool init error)'
   }
   if (!poolInfo || poolInfo.tokenContracts.length < 2)
@@ -614,6 +668,123 @@ async function processMultiTokenPool(
   return 'passed'
 }
 
+function getRandomPair(rnd: () => number, num: number): [number, number] {
+  const i = Math.floor(rnd() * num)
+  let j = Math.floor(rnd() * (num - 1))
+  if (j >= i) ++j
+  return [i, j]
+}
+
+async function checkMultipleSwapsFork(
+  config: TestConfig,
+  poolAddress: Address,
+  poolType: CurvePoolType,
+  precision: number,
+): Promise<string> {
+  const testSeed = poolAddress
+  const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+  let poolInfo
+  try {
+    poolInfo = await createCurvePoolInfo(
+      config,
+      poolAddress,
+      poolType,
+      BigInt(1e30),
+    )
+  } catch (_e) {
+    // return 'skipped (pool init error)'
+  }
+  if (!poolInfo || poolInfo.tokenContracts.length < 2)
+    return 'skipped (pool init error)'
+
+  const n = poolInfo.tokenContracts.length
+  const steps = 100
+
+  const flowInternal: number[][][] = []
+  for (let i = 0; i < n; ++i) {
+    flowInternal[i] = []
+    for (let j = i + 1; j < n; ++j) flowInternal[i][j] = [0, 0]
+  }
+  function addFlowInp(from: number, to: number, val?: number): number {
+    const flow = flowInternal[Math.min(from, to)][Math.max(from, to)]
+    flow[from < to ? 0 : 1] += val ?? 0
+    return flow[from < to ? 0 : 1]
+  }
+  function addFlowOut(from: number, to: number, val?: number): number {
+    const flow = flowInternal[Math.min(from, to)][Math.max(from, to)]
+    flow[from < to ? 1 : 0] += val ?? 0
+    return flow[from < to ? 1 : 0]
+  }
+
+  for (let s = 0; s < steps; ++s) {
+    const [from, to] = getRandomPair(rnd, n)
+    const pool = poolInfo.poolTines[Math.min(from, to)][
+      Math.max(from, to)
+    ] as RPool
+    const res0 = Number(pool.reserve0)
+    const res1 = Number(pool.reserve1)
+    if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
+
+    const amountIn = (from < to ? res0 : res1) * getRandomExp(rnd, 1e-6, 1e-3)
+    const expectedOut =
+      pool.calcOutByIn(Math.round(amountIn) + addFlowInp(from, to), from < to)
+        .out + addFlowOut(from, to)
+    const expectedIn =
+      pool.calcInByOut(
+        Math.round(expectedOut) - addFlowOut(from, to),
+        from < to,
+      ).inp - addFlowInp(from, to)
+    expectCloseValues(amountIn, expectedIn, precision)
+
+    if (from < to)
+      pool.setCurrentFlow(
+        addFlowInp(from, to, amountIn),
+        addFlowOut(from, to, -expectedOut),
+        0,
+      )
+    else
+      pool.setCurrentFlow(
+        addFlowOut(from, to, -expectedOut),
+        addFlowInp(from, to, amountIn),
+        0,
+      )
+  }
+
+  for (let i = 0; i < n; ++i)
+    for (let j = i + 1; j < n; ++j) poolInfo.poolTines[i][j].cleanTmpData()
+  poolInfo.snapshot.restore()
+
+  for (let i = 0; i < n; ++i) {
+    for (let j = i + 1; j < n; ++j) {
+      const direction = addFlowInp(i, j) >= 0
+      const [inp, outPrimary] = direction
+        ? [addFlowInp(i, j), -addFlowOut(i, j)]
+        : [addFlowOut(i, j), -addFlowInp(i, j)]
+      if (inp === 0) continue
+      const expectedOut = poolInfo.poolTines[i][j].calcOutByInReal(
+        inp,
+        direction,
+      )
+      const realOut = await makeSwap(
+        config,
+        poolInfo,
+        direction ? i : j,
+        direction ? j : i,
+        inp,
+      )
+      console.log(
+        `${direction ? i : j}->${
+          direction ? j : i
+        } prime=${outPrimary} final=${expectedOut}(${
+          expectedOut / outPrimary
+        }) real=${realOut}`,
+      )
+      expectCloseValues(expectedOut, realOut, precision)
+    }
+  }
+  return 'passed'
+}
+
 describe('Real Curve pools consistency check', () => {
   let config: TestConfig
 
@@ -637,11 +808,28 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
+  describe('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
+    const poolNumber = MulticoinPoolNumber
+    for (let i = 0; i < poolNumber; ++i) {
+      const [poolAddress, name, poolType, precision = 1e-7] =
+        NON_FACTORY_POOLS[i]
+      it(`${name} (${poolAddress}, ${poolType})`, async () => {
+        const result = await checkMultipleSwapsFork(
+          config,
+          poolAddress,
+          poolType,
+          precision,
+        )
+        expect(result).equal('passed')
+      })
+    }
+  })
+
   it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
-    let passed = 0,
-      i = 0
-    const startFrom = 0,
-      finishAt = 10
+    let passed = 0
+    let i = 0
+    const startFrom = 0
+    const finishAt = 10
     await forEachFactoryPool(
       config,
       async (poolAddress: Address, factoryName: string) => {

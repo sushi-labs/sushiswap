@@ -98,6 +98,6 @@ export type Data<T> = {
 }
 
 export type Collection<T> = {
-  data: Array<T>
+  data: T[]
   meta: Meta
 }

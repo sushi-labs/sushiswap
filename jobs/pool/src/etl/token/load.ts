@@ -1,10 +1,12 @@
-import { createClient, Prisma } from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
+import { client } from 'src/lib/prisma'
+import { ChainId } from 'sushi'
+import { Address } from 'viem'
 
 export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {
     return
   }
-  const client = await createClient()
   const created = await client.token.createMany({
     data: tokens,
     skipDuplicates: true,
@@ -15,12 +17,11 @@ export async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
 }
 
 export async function getMissingTokens(
-  tokens: { chainId: number; address: string }[],
+  tokens: { chainId: ChainId; address: Address }[],
 ) {
   if (tokens.length === 0) {
     return []
   }
-  const client = await createClient()
   const tokensFound = await client.token.findMany({
     select: {
       id: true,
@@ -35,11 +36,18 @@ export async function getMissingTokens(
       },
     },
   })
-  return tokens.filter(
-    (token) =>
-      !tokensFound.find(
-        (createdToken) =>
-          createdToken.id === `${token.chainId}:${token.address.toLowerCase()}`,
-      ),
-  )
+
+  return tokens
+    .filter(
+      (token) =>
+        !tokensFound.find(
+          (createdToken) =>
+            createdToken.id ===
+            `${token.chainId}:${token.address.toLowerCase()}`,
+        ),
+    )
+    .map((token) => ({
+      address: token.address,
+      chainId: token.chainId,
+    }))
 }

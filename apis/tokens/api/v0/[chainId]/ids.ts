@@ -1,22 +1,21 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { z } from 'zod'
 
 import { getTokenIdsByChainId } from '../../../lib/api.js'
-
-const schema = z.object({
-  chainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256),
-})
+import { TokenIdsApiSchema } from '../../../lib/schemas/chainId/ids.js'
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   response.setHeader(
     'Cache-Control',
     's-maxage=900, stale-while-revalidate=86400',
   )
-  const { chainId } = schema.parse(request.query)
+
+  const result = TokenIdsApiSchema.safeParse(request.query)
+  if (!result.success) {
+    return response.status(400).json(result.error.format())
+  }
+
+  const { chainId } = result.data
+
   const token = await getTokenIdsByChainId(chainId)
   return response.status(200).json(token.map(({ id }) => id))
 }

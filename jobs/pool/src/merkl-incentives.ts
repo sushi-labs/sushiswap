@@ -1,21 +1,18 @@
 import 'dotenv/config'
 import './lib/wagmi.js'
 
-import { ChainId } from 'sushi/chain'
-import {
-  ChefType,
-  createClient,
-  Prisma,
-  RewarderType,
-} from '@sushiswap/database'
-import { Address, fetchToken } from '@wagmi/core'
+import { ChefType, Prisma, RewarderType } from '@sushiswap/database'
+import { fetchToken } from '@wagmi/core'
 import { fetch } from '@whatwg-node/fetch'
 import { performance } from 'perf_hooks'
+import { ChainId } from 'sushi/chain'
 
+import { Address } from 'viem'
 import { filterIncentives } from './etl/incentive/index.js'
 import { mergeIncentives } from './etl/incentive/load.js'
 import { updatePoolsWithIncentivesTotalApr } from './etl/pool/index.js'
 import { createTokens, getMissingTokens } from './etl/token/load.js'
+import { config } from './lib/wagmi.js'
 
 const TEST_TOKENS = [{ name: 'Angle Merkl', symbol: 'anglaMerkl' }]
 const isTestToken = (token: TokenSuccess) =>
@@ -33,29 +30,70 @@ const isTokenErrorResponse = (
 ): token is TokenError => token.status === 'error'
 
 type MerklResponse = {
+  [chainId: string]: ChainData
+}
+
+type ChainData = {
   pools: {
-    [poolId: string]: {
-      chainId: number
-      aprs: {
-        [incentiveName: string]: number
-      }[]
-      distributionData: MerklDistribution[]
-      tvl: number
-    }
+    [poolId: string]: Pool
   }
+}
+
+type Pool = {
+  amm: number
+  ammAlgo: number
+  ammAlgoName: string
+  ammName: string
+  aprs: Record<string, number> // Changed from array to Record
+  chainId: number
+  decimalsToken0: number
+  decimalsToken1: number
+  disputeLive: boolean
+  distributionData: MerklDistribution[]
+  endOfDisputePeriod: number
+  meanAPR: number
+  pool: string
+  poolBalanceToken0: number
+  poolBalanceToken1: number
+  poolFee: number
+  poolTotalLiquidity: number
+  rewardsPerToken: Record<string, unknown> // Update this type based on the actual structure
+  symbolToken0: string
+  symbolToken1: string
+  tick: number
+  token0: string
+  token1: string
+  tvl: number
 }
 
 type MerklDistribution = {
   amount: number
-  start: number
-  end: number
-  token: string
-  isMock: boolean
+  apr: number
+  blacklist: string[]
+  breakdown: Record<string, unknown> // Adjust the type based on the actual structure
+  decimalsRewardToken: number
+  endTimestamp: number
+  id: string
+  isBoosted: boolean
   isLive: boolean
+  isMock: boolean
+  isOutOfRangeIncentivized: boolean
+  propFees: number
+  propToken0: number
+  propToken1: number
+  rewardToken: string
+  startTimestamp: number
+  symbolRewardToken: string
+  unclaimed: number
+  whitelist: string[]
 }
 
 type PriceResponse = {
   [token: string]: number
+}
+
+type PriceMap = {
+  [chainId: number]: PriceResponse
 }
 
 type TokenSuccess = {
@@ -95,17 +133,28 @@ export async function execute() {
     const prices = (
       await Promise.all(
         MERKL_SUPPORTED_NETWORKS.map((chainId) =>
-          fetch(`https://token-price.sushi.com/v1/${chainId}`).then(
+          fetch(`https://api.sushi.com/price/v1/${chainId}`).then(
             (data) => data.json() as Promise<PriceResponse>,
           ),
         ),
       )
-    ).reduce((acc, prices) => ({ ...acc, ...prices }), {})
+    ).reduce((acc: PriceMap, prices: PriceResponse, index: number) => {
+      const chainId = MERKL_SUPPORTED_NETWORKS[index]
+      acc[chainId] = Object.keys(prices).reduce((result, key) => {
+        result[key.toLowerCase()] = prices[key]
+        return result
+      }, {} as PriceResponse)
+      return acc
+    }, {})
 
     // TRANSFORM
     const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(
       merkls,
       prices,
+    )
+
+    console.log(
+      `TRANSFORM - ${incentivesToCreate.length} incentives to create, ${incentivesToUpdate.length} incentives to update, ${tokens.length} tokens to create.`,
     )
 
     // LOAD
@@ -121,21 +170,20 @@ export async function execute() {
     )
   } catch (e) {
     console.error(e)
-    await (await createClient()).$disconnect()
-  } finally {
-    await (await createClient()).$disconnect()
   }
 }
 
 async function extract() {
-  return await fetch('https://api.angle.money/v1/merkl').then(
-    (data) => data.json() as Promise<MerklResponse>,
-  )
+  const response = await fetch('https://api.angle.money/v2/merkl')
+  if (response.status !== 200) {
+    throw new Error('Failed to fetch merkl incentives.')
+  }
+  return response.json() as Promise<MerklResponse>
 }
 
 async function transform(
-  merkl: MerklResponse,
-  prices: PriceResponse,
+  response: MerklResponse,
+  prices: PriceMap,
 ): Promise<{
   incentivesToCreate: Prisma.IncentiveCreateManyInput[]
   incentivesToUpdate: Prisma.IncentiveCreateManyInput[]
@@ -143,21 +191,39 @@ async function transform(
 }> {
   let incentives: Prisma.IncentiveCreateManyInput[] = []
   const tokensToCreate: Prisma.TokenCreateManyInput[] = []
-  const rewardTokens: Map<string, { chainId: ChainId; address: string }> =
+  const rewardTokens: Map<string, { chainId: ChainId; address: Address }> =
     new Map()
-  if (merkl === undefined || merkl.pools === undefined) {
-    return
+
+  const pools: { address: string; pool: Pool }[] = []
+
+  for (const [chainId, value] of Object.entries(response)) {
+    if ((MERKL_SUPPORTED_NETWORKS as number[]).includes(Number(chainId))) {
+      const chainPools = Object.entries(value.pools).map(([address, pool]) => ({
+        address,
+        pool,
+      }))
+      pools.push(...chainPools)
+    }
   }
 
-  for (const [poolAddress, pool] of Object.entries(merkl.pools)) {
+  const sushiPools = pools.filter((item) => item.pool.ammName === 'SushiSwapV3')
+
+  if (
+    response === undefined ||
+    sushiPools === undefined ||
+    sushiPools.length === 0
+  ) {
+    return { incentivesToCreate: [], incentivesToUpdate: [], tokens: [] }
+  }
+  sushiPools.forEach(({ address, pool }) => {
     if (pool.distributionData.length > 0) {
       const rewardsByToken: Map<string, MerklDistribution[]> = new Map()
       // Group rewards by token
       for (const distributionData of pool.distributionData) {
-        if (!rewardsByToken.has(distributionData.token)) {
-          rewardsByToken.set(distributionData.token, [])
+        if (!rewardsByToken.has(distributionData.rewardToken)) {
+          rewardsByToken.set(distributionData.rewardToken, [])
         }
-        rewardsByToken.get(distributionData.token).push(distributionData)
+        rewardsByToken.get(distributionData.rewardToken)!.push(distributionData)
       }
 
       for (const [token, rewards] of rewardsByToken) {
@@ -165,22 +231,23 @@ async function transform(
           if (
             !distData.isLive ||
             distData.isMock ||
-            !(MERKL_SUPPORTED_NETWORKS as number[]).includes(pool.chainId)
+            !(MERKL_SUPPORTED_NETWORKS as number[]).includes(pool.chainId) ||
+            distData.whitelist.length > 0
           ) {
             return acc
           }
-          const duration = distData.end - distData.start
+          const duration = distData.endTimestamp - distData.startTimestamp
           const durationInDays = duration / 86400
           const amountPerDay = distData.amount / durationInDays
           return acc + amountPerDay
         }, 0)
 
-        const price = prices[token.toLowerCase()] ?? 0
+        const price = prices[pool.chainId][token.toLowerCase()] ?? 0
         const rewardPerYearUSD = 365 * rewardPerDay * price
         const apr = pool.tvl ? rewardPerYearUSD / pool.tvl : 0
 
         const incentive = Prisma.validator<Prisma.IncentiveCreateManyInput>()({
-          id: poolAddress
+          id: address
             .toLowerCase()
             .concat(':')
             .concat(token.toLowerCase())
@@ -188,7 +255,7 @@ async function transform(
             .concat('merkl'),
           chainId: pool.chainId,
           chefType: ChefType.Merkl,
-          apr: isNaN(apr) || apr === Infinity ? 0 : apr,
+          apr: Number.isNaN(apr) || apr === Infinity ? 0 : apr,
           rewardTokenId: pool.chainId
             .toString()
             .concat(':')
@@ -197,7 +264,7 @@ async function transform(
           poolId: pool.chainId
             .toString()
             .concat(':')
-            .concat(poolAddress.toLowerCase()),
+            .concat(address.toLowerCase()),
           pid: 0, // Does not exist for merkl
           rewarderAddress: '0x0000000000000000000000000000000000000000',
           rewarderType: RewarderType.Primary,
@@ -205,11 +272,11 @@ async function transform(
         incentives.push(incentive)
         rewardTokens.set(`${pool.chainId}:${token.toLowerCase()}`, {
           chainId: pool.chainId as ChainId,
-          address: token.toLowerCase(),
+          address: token.toLowerCase() as Address,
         })
       }
     }
-  }
+  })
 
   const missingTokens = await getMissingTokens(
     Array.from(rewardTokens.values()),
@@ -232,17 +299,16 @@ async function transform(
     console.log('TRANSFORM - All reward tokens already exist in db.')
   }
 
-  const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(
-    incentives,
-  )
+  const { incentivesToCreate, incentivesToUpdate } =
+    await filterIncentives(incentives)
   return { incentivesToCreate, incentivesToUpdate, tokens: tokensToCreate }
 }
 
 async function fetchTokenFromContract(token: {
-  chainId: number
-  address: string
+  chainId: ChainId
+  address: Address
 }): Promise<TokenSuccess | TokenError> {
-  const tokenFromContract = await fetchToken({
+  const tokenFromContract = await fetchToken(config, {
     chainId: token.chainId,
     address: token.address as Address,
   })
@@ -268,8 +334,8 @@ async function fetchTokenFromContract(token: {
           .concat(tokenFromContract.address.toLowerCase()),
         chainId: token.chainId,
         address: tokenFromContract.address.toString(),
-        name: tokenFromContract.name,
-        symbol: tokenFromContract.symbol,
+        name: tokenFromContract.name!,
+        symbol: tokenFromContract.symbol!,
         decimals: tokenFromContract.decimals,
       },
     }

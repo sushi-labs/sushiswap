@@ -1,5 +1,3 @@
-import { ChainId } from 'sushi/chain'
-import { Token } from 'sushi/currency'
 import {
   Extractor,
   FactoryV2,
@@ -8,28 +6,26 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
+import { expect } from 'chai'
+import { ChainId } from 'sushi/chain'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  SUSHISWAP_V2_INIT_CODE_HASH,
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_INIT_CODE_HASH,
+  SushiSwapV3ChainId,
+  UNISWAP_V3_INIT_CODE_HASH,
+} from 'sushi/config'
+import { Token } from 'sushi/currency'
 import {
   DataFetcher,
   LiquidityProviders,
   NativeWrapProvider,
-} from '@sushiswap/router'
-import {
-  ADDITIONAL_BASES,
-  BASES_TO_CHECK_TRADES_AGAINST,
-} from '@sushiswap/router-config'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SUSHISWAP_V2_INIT_CODE_HASH,
-} from '@sushiswap/v2-sdk'
-import {
-  POOL_INIT_CODE_HASH,
-  SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_INIT_CODE_HASH,
-  SushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import { expect } from 'chai'
-import { Address, createPublicClient, http, Transport } from 'viem'
-import { arbitrum, Chain, mainnet, polygon } from 'viem/chains'
+} from 'sushi/router'
+import { http, Address, Transport, createPublicClient } from 'viem'
+import { Chain, arbitrum, mainnet, polygon } from 'viem/chains'
 
 export const RP3Address = {
   [ChainId.ETHEREUM]: '0x827179dD56d07A7eeA32e3873493835da2866976' as Address,
@@ -90,7 +86,7 @@ function uniswapV3Factory(chain: ChainId): FactoryV3 {
   return {
     address: UniswapV3FactoryAddress[chain] as Address,
     provider: LiquidityProviders.UniswapV3,
-    initCodeHash: POOL_INIT_CODE_HASH,
+    initCodeHash: UNISWAP_V3_INIT_CODE_HASH[chain],
   }
 }
 
@@ -109,7 +105,8 @@ async function CompareTest(args: {
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   liquidityProviders: LiquidityProviders[]
-  tickHelperContract: Address
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -152,7 +149,7 @@ async function CompareTest(args: {
   let count = 0
   for (let i = 1; i < tokens.length; i += 2) {
     const j = i - 1
-    if (tokens[i].address == tokens[j].address) continue
+    if (tokens[i].address === tokens[j].address) continue
 
     const add0 = ADDITIONAL_BASES[chainId]?.[tokens[i].address] ?? []
     const add1 = ADDITIONAL_BASES[chainId]?.[tokens[j].address] ?? []
@@ -218,7 +215,8 @@ it('Ethereum Extractor - DataFetcher compare test', async () => {
       LiquidityProviders.UniswapV3,
       LiquidityProviders.SushiSwapV3,
     ],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 50,
     RP3Address: RP3Address[ChainId.ETHEREUM],
@@ -242,7 +240,8 @@ it('Polygon Extractor - DataFetcher compare test', async () => {
       LiquidityProviders.SushiSwapV2,
       LiquidityProviders.UniswapV3,
     ],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 100,
     RP3Address: RP3Address[ChainId.ETHEREUM],
@@ -264,7 +263,8 @@ it('Arbitrum Extractor - DataFetcher compare test', async () => {
       //
       LiquidityProviders.UniswapV3,
     ],
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 300,
     RP3Address: RP3Address[ChainId.ETHEREUM],

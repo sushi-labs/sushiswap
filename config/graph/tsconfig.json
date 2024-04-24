@@ -1,10 +1,14 @@
 {
-  "extends": "@sushiswap/typescript-config/node18.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig"],
   "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "skipLibCheck": true,
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ESNext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true

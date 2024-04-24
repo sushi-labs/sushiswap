@@ -1,1 +1,1 @@
-export { testRouterAbi } from './testRouterAbi'
+export { testRouterAbi } from './testRouterAbi.js'

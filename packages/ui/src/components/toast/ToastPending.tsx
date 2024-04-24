@@ -10,18 +10,18 @@ interface ToastPending extends ResolvedNotification {
 }
 
 export const ToastPending: FC<ToastPending> = ({
-  type,
+  type: _type,
   href,
   chainId,
   txHash,
-  onDismiss,
+  onDismiss: _onDismiss,
   summary,
 }) => {
   const txUrl = href
     ? href
     : txHash
-    ? Chain.from(chainId)?.getTxUrl(txHash)
-    : ''
+      ? Chain.from(chainId)?.getTxUrl(txHash)
+      : ''
   return (
     <>
       <ToastContent href={txUrl} summary={<Dots>{summary}</Dots>} />

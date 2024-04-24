@@ -1,19 +1,21 @@
-import { ChainId } from 'sushi/chain'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
+import { ChainId } from 'sushi/chain'
 import {
   Address,
+  PublicClient,
+  WalletClient,
   createPublicClient,
   custom,
-  PublicClient,
   walletActions,
-  WalletClient,
 } from 'viem'
 import { hardhat } from 'viem/chains'
 
 import {
   AlgebraIntegralPeriphery,
   AlgebraPoolInfo,
+  Range,
+  TestTokens,
   algebraPoolSwap,
   approveTestTokensToAlgebraPerifery,
   balanceOf,
@@ -24,11 +26,9 @@ import {
   createTestTokens,
   expectCloseValues,
   getRndExpInt,
-  Range,
-  TestTokens,
   tryCallAsync,
   updateTinesAlgebraPool,
-} from '../src'
+} from '../src/index.js'
 
 interface TestContext {
   chainId: ChainId
@@ -109,7 +109,7 @@ async function getAlgebraRandomSwapParams(
     maxRes = direction ? pool.res0Max - res0 : pool.res1Max - res1
   }
   maxRes = Math.min(maxRes, 1e35)
-  const amount = getRndExpInt(rnd, Math.pow(maxRes, 1 / 4), maxRes) + 1000
+  const amount = getRndExpInt(rnd, maxRes ** (1 / 4), maxRes) + 1000
   //console.log('current price:', price, 'amount:', amount, 'direction:', direction)
 
   return [amount, direction]

@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
 import { type BigintIsh, Fraction, Rounding } from '../math/index.js'
-
 import { Amount } from './Amount.js'
 import { type Type } from './Type.js'
 

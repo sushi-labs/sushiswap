@@ -21,7 +21,7 @@ const SUPPORTED_CHAIN_IDS = [
 
 export const TokenSecurityChainIds = SUPPORTED_CHAIN_IDS
 
-export type TokenSecurityChainId = typeof SUPPORTED_CHAIN_IDS[number]
+export type TokenSecurityChainId = (typeof SUPPORTED_CHAIN_IDS)[number]
 
 export const isTokenSecurityChainId = (
   chainId: ChainId,

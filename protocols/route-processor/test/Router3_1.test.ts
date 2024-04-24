@@ -2,13 +2,15 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
+import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
+import { setTokenBalance } from '@sushiswap/tines-sandbox'
+import { expect } from 'chai'
+import { signERC2612Permit } from 'eth-permit'
+import hre from 'hardhat'
+import seedrandom from 'seedrandom'
 import { erc20Abi, routeProcessor3Abi, weth9Abi } from 'sushi/abi'
-import {
-  BENTOBOX_ADDRESS,
-  BentoBoxChainId,
-  isBentoBoxChainId,
-} from '@sushiswap/bentobox-sdk'
 import { ChainId, chainName } from 'sushi/chain'
+import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import {
   DAI,
   DAI_ADDRESS,
@@ -28,7 +30,7 @@ import {
   WBTC_ADDRESS,
   WNATIVE,
 } from 'sushi/currency'
-import { abs } from 'sushi'
+import { abs } from 'sushi/math'
 import {
   CurvePoolCode,
   DataFetcher,
@@ -37,35 +39,33 @@ import {
   PermitData,
   PoolFilter,
   Router,
-} from '@sushiswap/router'
-import { PoolCode } from '@sushiswap/router/dist/pools/PoolCode'
+} from 'sushi/router'
 import {
   BridgeBento,
-  getBigInt,
-  RouteStatus,
   RPool,
+  RouteStatus,
   StableSwapRPool,
-} from '@sushiswap/tines'
-import { setTokenBalance } from '@sushiswap/tines-sandbox'
+  getBigInt,
+} from 'sushi/tines'
 import { type Contract } from 'sushi/types'
-import { expect } from 'chai'
-import { signERC2612Permit } from 'eth-permit'
-import { config, network } from 'hardhat'
-import seedrandom from 'seedrandom'
 import {
   Address,
   Client,
+  Hex,
   createPublicClient,
   custom,
-  Hex,
   testActions,
   walletActions,
 } from 'viem'
 import { HDAccount, mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
-import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json'
-import { getAllPoolCodes } from './utils/getAllPoolCodes'
+import RouteProcessor3_1 from '../artifacts/contracts/RouteProcessor3_1.sol/RouteProcessor3_1.json' assert {
+  type: 'json',
+}
+import { getAllPoolCodes } from './utils/getAllPoolCodes.js'
+
+const { config, network } = hre
 
 // Updating  pools' state allows to test DF updating ability, but makes tests very-very slow (
 const UPDATE_POOL_STATES = false
@@ -567,7 +567,7 @@ async function checkTransferAndRoute(
 }
 
 // skipped because took too long time. Unskip to check the RP
-describe('End-to-end RouteProcessor3_1 test', async function () {
+describe('End-to-end RouteProcessor3_1 test', async () => {
   let env: TestEnvironment
   let chainId: ChainId
   let intermidiateResult: [bigint | undefined, bigint] = [undefined, 1n]
@@ -601,7 +601,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
 
   if (network.config.chainId === 137) {
     // permit in FRAX is implemented only for POLYGON
-    it('Permit: Native => FRAX => Native', async function () {
+    it('Permit: Native => FRAX => Native', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       const token = FRAX[chainId as keyof typeof FRAX_ADDRESS]
@@ -632,7 +632,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
     })
   }
 
-  it('Native => SUSHI => Native', async function () {
+  it('Native => SUSHI => Native', async () => {
     await env.snapshot.restore()
     const usedPools = new Set<string>()
     intermidiateResult[0] = BigInt(1e6) * BigInt(1e18)
@@ -652,7 +652,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
     )
   })
 
-  it('Native => WrappedNative => Native', async function () {
+  it('Native => WrappedNative => Native', async () => {
     await env.snapshot.restore()
     const usedPools = new Set<string>()
     intermidiateResult[0] = BigInt(1e18)
@@ -672,7 +672,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
     )
   })
 
-  it('Trident Native => SUSHI => Native (Polygon only)', async function () {
+  it('Trident Native => SUSHI => Native (Polygon only)', async () => {
     if (chainId === ChainId.POLYGON) {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
@@ -696,7 +696,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
     }
   })
 
-  it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
+  it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async () => {
     const filter = (pool: RPool) =>
       pool instanceof StableSwapRPool || pool instanceof BridgeBento
 
@@ -742,7 +742,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
   })
 
   if (process.env.ALCHEMY_ID) {
-    it('V3,  Native => USDC => NATIVE', async function () {
+    it('V3,  Native => USDC => NATIVE', async () => {
       if (chainId === ChainId.POLYGON) {
         await env.snapshot.restore()
         const usedPools = new Set<string>()
@@ -777,7 +777,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
     }
   }
 
-  it.skip('Random swap test', async function () {
+  it.skip('Random swap test', async () => {
     let routeCounter = 0
     for (let i = 0; i < 1000; ++i) {
       await env.snapshot.restore()
@@ -806,7 +806,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
     }
   })
 
-  it('Special Router', async function () {
+  it('Special Router', async () => {
     await env.snapshot.restore()
 
     let pcMap
@@ -833,7 +833,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
   })
 
   if (network.config.chainId === ChainId.POLYGON) {
-    it('Transfer value and route 1', async function () {
+    it('Transfer value and route 1', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
@@ -860,7 +860,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
       )
     })
 
-    it('Transfer value and route 2', async function () {
+    it('Transfer value and route 2', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
@@ -894,7 +894,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
       )
     })
 
-    it('Transfer value and route 3 - check EOA', async function () {
+    it('Transfer value and route 3 - check EOA', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
@@ -922,7 +922,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
       )
     })
 
-    it('Transfer value and route 4 - not payable address', async function () {
+    it('Transfer value and route 4 - not payable address', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
@@ -936,7 +936,7 @@ describe('End-to-end RouteProcessor3_1 test', async function () {
           intermidiateResult,
           usedPools,
         )
-      } catch (e) {
+      } catch (_e) {
         throwed = true
       }
       expect(

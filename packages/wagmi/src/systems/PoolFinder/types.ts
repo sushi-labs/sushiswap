@@ -1,13 +1,12 @@
+import { ReactElement } from 'react'
+import { SushiSwapV2ChainId, TridentChainId } from 'sushi/config'
+import { Type } from 'sushi/currency'
+import { Fee } from 'sushi/dex'
 import {
-  Fee,
   SushiSwapV2Pool,
   TridentConstantPool,
   TridentStablePool,
-} from '@sushiswap/amm'
-import { BentoBoxChainId } from '@sushiswap/bentobox-sdk'
-import { Type } from 'sushi/currency'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
-import { ReactElement } from 'react'
+} from 'sushi/pool'
 
 import {
   SushiSwapV2PoolState,
@@ -19,7 +18,7 @@ export type ComponentsWrapperProps<T> = {
   children:
     | ReactElement<T>
     | Array<ReactElement<T> | undefined>
-    | Array<Array<ReactElement<T>> | ReactElement<T> | undefined>
+    | Array<ReactElement<T>[] | ReactElement<T> | undefined>
     | undefined
 }
 
@@ -41,7 +40,7 @@ export interface SushiSwapV2PoolFinderProps extends PoolFinderProps {
 }
 
 export interface TridentPoolFinderProps extends PoolFinderProps {
-  chainId: BentoBoxChainId
+  chainId: TridentChainId
   fee?: Fee
   twap?: boolean
 }

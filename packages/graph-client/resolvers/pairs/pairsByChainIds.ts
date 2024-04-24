@@ -1,18 +1,17 @@
 // @ts-nocheck
-import { ChainId } from 'sushi/chain'
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
+import { ChainId } from 'sushi/chain'
 
 import {
   Query,
-  QuerypairsByChainIdsArgs,
   QueryResolvers,
+  QuerypairsByChainIdsArgs,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
@@ -42,7 +41,7 @@ export const _pairsByChainIds = async (
   return Promise.all<Query['pairsByChainIds'][]>([
     ...args.chainIds
       .filter(
-        (chainId): chainId is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+        (chainId): chainId is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
           SUSHISWAP_ENABLED_NETWORKS.includes(chainId),
       )
       .map((chainId) =>
@@ -52,22 +51,21 @@ export const _pairsByChainIds = async (
             ...args,
             where: args?.where?.type_in
               ? {
-                  ...args.where,
-                  type_in: args.where.type_in.filter(
-                    (el) => el === 'CONSTANT_PRODUCT_POOL',
-                  ),
-                  id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
-                }
+                ...args.where,
+                type_in: args.where.type_in.filter(
+                  (el) => el === 'CONSTANT_PRODUCT_POOL',
+                ),
+                id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
+              }
               : {
-                  ...args.where,
-                  id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
-                },
+                ...args.where,
+                id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
+              },
           },
           context: {
             ...context,
             chainId,
-            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: SUSHISWAP_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((pairs: SushiSwapTypes.Pair[]) => {
@@ -80,7 +78,7 @@ export const _pairsByChainIds = async (
         }),
       ),
     ...args.chainIds
-      .filter((chainId): chainId is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+      .filter((chainId): chainId is (typeof TRIDENT_ENABLED_NETWORKS)[number] =>
         TRIDENT_ENABLED_NETWORKS.includes(chainId),
       )
       .map((chainId) =>
@@ -96,8 +94,7 @@ export const _pairsByChainIds = async (
           context: {
             ...context,
             chainId,
-            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: TRIDENT_SUBGRAPH_URL[chainId]
           },
           info,
         }).then((pairs: TridentTypes.Pair[]) => {

@@ -5,11 +5,13 @@
 import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
-  dsn: 'https://55d403547a5655039a8f9eb2906a6121@o960777.ingest.sentry.io/4505784139776000',
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Replay may only be enabled for the client-side
   integrations: [
     new Sentry.Replay({
+      maskAllInputs: false,
+      maskAllText: false,
       // Additional Replay configuration goes in here
     }),
   ],
@@ -25,4 +27,9 @@ Sentry.init({
   // plus for 100% of sessions with an error
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
+
+  enabled: Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN),
+  environment: process.env.NEXT_PUBLIC_VERCEL_ENV
+    ? process.env.NEXT_PUBLIC_VERCEL_ENV
+    : 'local',
 })

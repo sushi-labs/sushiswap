@@ -1,20 +1,20 @@
-import { AbiEvent } from 'abitype'
+import { AbiEvent, Address } from 'abitype'
 import {
   Block,
-  encodeEventTopics,
+  Filter,
   Log,
   PublicClient,
   WatchBlocksReturnType,
+  encodeEventTopics,
 } from 'viem'
-
-import { repeatAsync } from './Utils'
-import { warnLog } from './WarnLog'
+import { Logger } from './Logger.js'
+import { repeatAsync } from './Utils.js'
 
 export enum LogFilterType {
-  Native, // getFilterChanges - is not supported widely
-  OneCall, // one eth_getLogs call for all topict - the most preferrable
-  MultiCall, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
-  SelfFilter, // Topic filtering doesn't support for provider. Filtering on the client
+  Native = 0, // getFilterChanges - is not supported widely
+  OneCall = 1, // one eth_getLogs call for all topict - the most preferrable
+  MultiCall = 2, // separete eth_getLogs call for each topic - for those systems that fail at OneCall
+  SelfFilter = 3, // Topic filtering doesn't support for provider. Filtering on the client
 }
 
 class BlockFrame {
@@ -68,6 +68,18 @@ interface FilterMy {
   onNewLogs: (arg?: Log[]) => void // undefined if LogFilter is stopped
 }
 
+class BlockParams {
+  hash: Address | null
+  number: number | null
+  parentHash: Address
+
+  constructor(block: Block) {
+    this.hash = block.hash
+    this.number = block.number === null ? null : Number(block.number)
+    this.parentHash = block.parentHash
+  }
+}
+
 // - network fail/absence protection
 // - restores missed blocks
 // - correctly processes removed logs (like undos)
@@ -79,21 +91,32 @@ export class LogFilter2 {
   topicsAll: string[] = []
   filters: FilterMy[] = []
   blockProcessing = false
+  filter: Filter | undefined
+  logging: boolean
+  debug: boolean
 
   unWatchBlocks?: WatchBlocksReturnType
 
-  lastProcessedBlock?: Block
+  lastProcessedBlock?: BlockParams
   processedBlockHash: Set<string> = new Set()
-  nextGoalBlock?: Block
+  nextGoalBlock?: BlockParams
 
-  blockHashMap: Map<string, Block> = new Map()
+  blockHashMap: Map<string, BlockParams> = new Map()
   logHashMap: Map<string, Log[]> = new Map()
   blockFrame: BlockFrame = new BlockFrame()
 
-  constructor(client: PublicClient, depth: number, logType: LogFilterType) {
+  constructor(
+    client: PublicClient,
+    depth: number,
+    logType: LogFilterType,
+    logging?: boolean,
+    debug = false,
+  ) {
     this.client = client
     this.depth = depth
     this.logType = logType
+    this.logging = logging === true
+    this.debug = debug === true
   }
 
   addFilter(events: AbiEvent[], onNewLogs: (arg?: Log[]) => void) {
@@ -105,16 +128,20 @@ export class LogFilter2 {
 
   start() {
     if (this.unWatchBlocks) return // have been started
-    if (this.logType == LogFilterType.Native) {
-      this.client
-        .createEventFilter({ events: this.eventsAll })
-        .then((filter) => {
-          this.unWatchBlocks = this.client.watchBlocks({
-            onBlock: async () => {
+    if (this.logType === LogFilterType.Native) {
+      this.client.createEventFilter({ events: this.eventsAll }).then(
+        (filtr) => {
+          this.consoleLog(`LogFilter ${filtr.id} was created`)
+          this.filter = filtr as unknown as Filter
+          this.unWatchBlocks = this.client.watchBlockNumber({
+            onBlockNumber: async () => {
+              if (this.filter === undefined) return // preventing dead filter usage
               if (this.blockProcessing) return
               this.blockProcessing = true
               try {
-                const logs = await this.client.getFilterChanges({ filter })
+                const logs = await this.client.getFilterChanges({
+                  filter: this.filter,
+                })
                 this.filters.forEach((f) => {
                   const logsFiltered = logs.filter((l) =>
                     f.topics.includes(l.topics[0] ?? ''),
@@ -122,13 +149,22 @@ export class LogFilter2 {
                   if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
                 })
               } catch (e) {
-                warnLog(this.client.chain?.id, `getFilterChanges failed ${e}`)
-                this.stop()
+                Logger.error(
+                  this.client.chain?.id,
+                  `LogFilter ${this.filter.id} error`,
+                  e,
+                )
+                this.restart()
               }
               this.blockProcessing = false
             },
           })
-        })
+        },
+        (e) => {
+          Logger.error(this.client.chain?.id, `LogFilter creation error`, e)
+          this.start()
+        },
+      )
     } else {
       this.unWatchBlocks = this.client.watchBlocks({
         onBlock: async (block) => {
@@ -148,10 +184,17 @@ export class LogFilter2 {
     this.blockHashMap = new Map()
     this.logHashMap = new Map()
     this.blockFrame.deleteFrame()
+    this.filter = undefined
     if (signalStopping) this.filters.forEach((f) => f.onNewLogs()) // Signal about stopping
   }
 
-  setNewGoal(blockNumber: number, block: Block): boolean {
+  restart(signalStopping = true) {
+    this.stop(signalStopping)
+    this.start()
+  }
+
+  setNewGoal(block: BlockParams): boolean {
+    const blockNumber = block.number as number
     const deletedHashes = this.blockFrame.setFrame(
       blockNumber - this.depth,
       blockNumber + this.depth,
@@ -159,11 +202,12 @@ export class LogFilter2 {
     const initProcessedBlocksNumber = this.processedBlockHash.size
     deletedHashes.forEach((hash) => {
       this.blockHashMap.delete(hash)
+      this.logHashMap.set(hash, undefined as unknown as Log[]) // memory optimization
       this.logHashMap.delete(hash)
       this.processedBlockHash.delete(hash)
     })
     if (initProcessedBlocksNumber > 0 && this.processedBlockHash.size === 0) {
-      this.stop()
+      this.restart()
       return false
     }
     this.nextGoalBlock = block
@@ -178,23 +222,27 @@ export class LogFilter2 {
     this.processNewLogs()
   }
 
-  addBlock(block: Block, isGoal: boolean) {
-    const blockNumber = block.number === null ? null : Number(block.number)
-    if (blockNumber === null || block.hash === null) {
-      warnLog(
+  addBlock(_block: Block, isGoal: boolean) {
+    const block = new BlockParams(_block)
+    if (block.number === null || block.hash === null) {
+      Logger.error(
         this.client.chain?.id,
-        `Incorrect block: number=${blockNumber} hash=${block.hash}`,
+        `Incorrect block: number=${block.number} hash=${block.hash}`,
       )
       return
     }
-    if (isGoal) if (!this.setNewGoal(blockNumber, block)) return
+    if (isGoal) if (!this.setNewGoal(block)) return
     if (this.blockHashMap.has(block.hash)) return
-    if (!this.blockFrame.add(blockNumber, block.hash)) return
+    if (!this.blockFrame.add(block.number, block.hash)) return
     this.blockHashMap.set(block.hash, block)
 
-    const backupPlan = () => {
-      warnLog(this.client.chain?.id, `getLog failed for block ${block.hash}`)
-      this.stop()
+    const backupPlan = (context?: unknown) => {
+      Logger.error(
+        this.client.chain?.id,
+        `getLog failed for block ${block.hash}`,
+        context,
+      )
+      this.restart()
     }
 
     switch (this.logType) {
@@ -203,11 +251,16 @@ export class LogFilter2 {
           10, // For example dRPC for BSC often 'forgets' recently returned watchBlock blocks. But 'recalls' at second request
           1000,
           async () => {
-            const logs = await this.client.transport.request({
-              method: 'eth_getLogs',
-              params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
-            })
-            this.sortAndProcessLogs(block.hash, logs as Log[])
+            try {
+              const logs = await this.client.transport.request({
+                method: 'eth_getLogs',
+                params: [{ blockHash: block.hash, topics: [this.topicsAll] }],
+              })
+              this.sortAndProcessLogs(block.hash, logs as Log[])
+            } catch (e) {
+              if (this.debug) console.debug(e)
+              throw e
+            }
           },
           backupPlan,
         )
@@ -236,7 +289,7 @@ export class LogFilter2 {
         )
         break
       default:
-        warnLog(
+        Logger.error(
           this.client.chain?.id,
           `Internal errror: Unknown Log Type: ${this.logType}`,
         )
@@ -249,18 +302,19 @@ export class LogFilter2 {
           this.client
             .getBlock({ blockHash: block.parentHash })
             .then((b) => this.addBlock(b, false)),
-        () =>
-          warnLog(
+        (e) =>
+          Logger.error(
             this.client.chain?.id,
-            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!1',
+            'getBlock failed !!!!!!!!!!!!!!!!!!!!!!',
+            e,
           ),
       )
   }
 
   processNewLogs() {
     if (!this.unWatchBlocks) return
-    const upLine: Block[] = []
-    let cornerBlock: Block | undefined = this.nextGoalBlock
+    const upLine: BlockParams[] = []
+    let cornerBlock: BlockParams | undefined = this.nextGoalBlock
     for (;;) {
       if (cornerBlock === undefined)
         if (this.lastProcessedBlock) return
@@ -270,9 +324,9 @@ export class LogFilter2 {
       cornerBlock = this.blockHashMap.get(cornerBlock.parentHash)
     }
 
-    const downLine: Block[] = []
+    const downLine: BlockParams[] = []
     if (cornerBlock) {
-      let b: Block | undefined = this.lastProcessedBlock
+      let b: BlockParams | undefined = this.lastProcessedBlock
       for (;;) {
         if (b === undefined) return
         if (b.hash === cornerBlock.hash) break
@@ -285,8 +339,8 @@ export class LogFilter2 {
     for (let i = 0; i < downLine.length; ++i) {
       const l = this.logHashMap.get(downLine[i].hash || '')
       if (l === undefined) {
-        warnLog(this.client.chain?.id, 'Unexpected Error in LogFilter')
-        this.stop()
+        Logger.error(this.client.chain?.id, 'Unexpected Error in LogFilter')
+        this.restart()
         return
       }
       logs = logs.concat(
@@ -317,5 +371,9 @@ export class LogFilter2 {
       )
       if (logsFiltered.length > 0) f.onNewLogs(logsFiltered)
     })
+  }
+
+  consoleLog(log: string) {
+    if (this.logging) console.log(`V2-${this.client.chain?.id}: ${log}`)
   }
 }

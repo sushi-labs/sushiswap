@@ -1,5 +1,4 @@
 import { FileHandle, mkdir, open } from 'node:fs/promises'
-
 import path from 'path'
 
 type ResolveFunction = () => void
@@ -50,7 +49,7 @@ export class PermanentCache<CacheRecord> {
     let file
     try {
       file = await open(this.filePath)
-    } catch (e) {
+    } catch (_e) {
       this.lock.returnTurn()
       return []
     }
@@ -61,7 +60,7 @@ export class PermanentCache<CacheRecord> {
         .filter((r) => r !== '')
         .map((s) => JSON.parse(s) as CacheRecord)
       await file.close()
-    } catch (e) {
+    } catch (_e) {
       throw new Error(
         `Cache ${this.filePath} in incorrect! Please fix it or remove file`,
       )
@@ -78,13 +77,13 @@ export class PermanentCache<CacheRecord> {
         try {
           const dirName = path.dirname(this.filePath)
           mkdir(dirName, { recursive: true })
-        } catch (e) {
+        } catch (_e) {
           // do nothing
         }
         this.file = await open(this.filePath, 'a')
       }
-      await this.file.appendFile(JSON.stringify(record) + '\n')
-    } catch (e) {
+      await this.file.appendFile(`${JSON.stringify(record)}\n`)
+    } catch (_e) {
       // don't do anything
     }
     this.lock.returnTurn()

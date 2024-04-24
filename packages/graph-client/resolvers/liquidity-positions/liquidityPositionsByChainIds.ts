@@ -1,18 +1,17 @@
 // @ts-nocheck
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
 import { GraphQLResolveInfo } from 'graphql'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
   Query,
-  QueryliquidityPositionsByChainIdsArgs,
   QueryResolvers,
+  QueryliquidityPositionsByChainIdsArgs,
   RequireFields,
 } from '../../.graphclient/index.js'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
@@ -41,8 +40,7 @@ export const _liquidityPositionsByChainIds = async (
           context: {
             ...context,
             chainId,
-            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: SUSHISWAP_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((liquidityPositions: SushiSwapTypes.LiquidityPosition[]) => {
@@ -70,8 +68,7 @@ export const _liquidityPositionsByChainIds = async (
           context: {
             ...context,
             chainId,
-            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: TRIDENT_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((liquidityPositions: TridentTypes.LiquidityPosition[]) => {

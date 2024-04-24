@@ -1,4 +1,4 @@
-import { classNames, LinkExternal } from '@sushiswap/ui'
+import { LinkExternal, classNames } from '@sushiswap/ui'
 import {
   DiscordIcon,
   GithubIcon,
@@ -39,7 +39,7 @@ export const Hero: FC = () => {
         <LinkExternal href="https://twitter.com/sushiswap">
           <TwitterIcon {...heroIconProps} />
         </LinkExternal>
-        <LinkExternal href="https://discord.gg/NVPXN4e">
+        <LinkExternal href="https://sushi.com/discord">
           <DiscordIcon {...heroIconProps} />
         </LinkExternal>
         <LinkExternal href="https://www.youtube.com/c/SushiOfficial">

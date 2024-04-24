@@ -301,8 +301,8 @@ query SteerVaults($first: Int = 1000, $skip: Int = 0) {
   vaults: Steer_vaults(first: $first, skip: $skip) {
     id
     feeTier
-    reserve0: totalAmount0
-    reserve1: totalAmount1
+    reserve0: token0Balance
+    reserve1: token1Balance
     pool
     state
     payloadIpfs

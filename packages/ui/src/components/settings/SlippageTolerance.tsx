@@ -42,9 +42,9 @@ export const SlippageTolerance: FC<{
   )
 
   const isDangerous =
-    (!isNaN(+slippageTolerance) && +slippageTolerance >= 1.3) ||
-    (!isNaN(+slippageTolerance) &&
-      +slippageTolerance <= 0.1 &&
+    (!Number.isNaN(+slippageTolerance) && +slippageTolerance >= 1.3) ||
+    (!Number.isNaN(+slippageTolerance) &&
+      +slippageTolerance <= 0.05 &&
       +slippageTolerance > 0)
 
   return (
@@ -68,7 +68,7 @@ export const SlippageTolerance: FC<{
               <Switch
                 checked={slippageTolerance === 'AUTO'}
                 onCheckedChange={(checked) =>
-                  setSlippageTolerance(checked ? 'AUTO' : '0.5')
+                  setSlippageTolerance(checked ? 'AUTO' : '0.1')
                 }
               />
             </div>
@@ -108,11 +108,11 @@ export const SlippageTolerance: FC<{
               </HoverCardPrimitive.Portal>
             </Label>
             <span className="text-sm text-red mb-2">
-              {+slippageTolerance <= 0.1 && +slippageTolerance > 0
+              {+slippageTolerance <= 0.05 && +slippageTolerance >= 0
                 ? 'Your transaction may be reverted due to low slippage tolerance'
                 : isDangerous
-                ? 'Your transaction may be frontrun due to high slippage tolerance'
-                : undefined}
+                  ? 'Your transaction may be frontrun due to high slippage tolerance'
+                  : undefined}
             </span>
           </div>
           <span
@@ -121,7 +121,7 @@ export const SlippageTolerance: FC<{
               'text-sm font-semibold',
             )}
           >
-            {slippageTolerance === 'AUTO' ? '0.5%' : `${slippageTolerance}%`}
+            {slippageTolerance === 'AUTO' ? '0.1%' : `${slippageTolerance}%`}
           </span>
         </div>
         <Collapsible open={slippageTolerance !== 'AUTO'}>
@@ -150,7 +150,7 @@ export const SlippageTolerance: FC<{
               onValueChange={setSlippageTolerance}
               placeholder="Custom"
               id="slippage-tolerance"
-              maxDecimals={1}
+              maxDecimals={2}
               unit="%"
             />
           </div>

@@ -1,13 +1,12 @@
 // @ts-nocheck
 
-import { ChainId, chainName } from 'sushi/chain'
 import {
-  MASTERCHEF_V1_SUBGRAPH_NAME,
-  MASTERCHEF_V2_SUBGRAPH_NAME,
-  MINICHEF_SUBGRAPH_NAME,
-  SUBGRAPH_HOST,
+  MINICHEF_SUBGRAPH_URL,
+  MASTERCHEF_V1_SUBGRAPH_URL,
+  MASTERCHEF_V2_SUBGRAPH_URL
 } from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from 'sushi'
+import { ChainId, chainName } from 'sushi/chain'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 import { Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
 
@@ -28,8 +27,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
           context: {
             ...context,
             chainId: ChainId.ETHEREUM,
-            subgraphName: MASTERCHEF_V1_SUBGRAPH_NAME,
-            subgraphHost: SUBGRAPH_HOST[ChainId.ETHEREUM],
+            url: MASTERCHEF_V1_SUBGRAPH_URL,
           },
           info,
         }).then((users: Query['MASTERCHEF_V1_users']) => {
@@ -52,8 +50,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
           context: {
             ...context,
             chainId: ChainId.ETHEREUM,
-            subgraphName: MASTERCHEF_V2_SUBGRAPH_NAME,
-            subgraphHost: SUBGRAPH_HOST[ChainId.ETHEREUM],
+            url: MASTERCHEF_V2_SUBGRAPH_URL,
           },
           info,
         }).then((users: Query['MASTERCHEF_V2_users']) => {
@@ -73,8 +70,8 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
       ]),
     ...args.chainIds
       .filter(
-        (chainId): chainId is keyof typeof MINICHEF_SUBGRAPH_NAME =>
-          chainId in MINICHEF_SUBGRAPH_NAME,
+        (chainId): chainId is keyof typeof MINICHEF_SUBGRAPH_URL =>
+          chainId in MINICHEF_SUBGRAPH_URL,
       )
       .map(
         (chainId) =>
@@ -85,8 +82,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
             context: {
               ...context,
               chainId,
-              subgraphName: MINICHEF_SUBGRAPH_NAME[chainId],
-              subgraphHost: SUBGRAPH_HOST[chainId],
+              url: MINICHEF_SUBGRAPH_URL[chainId],
             },
             info,
           }).then((users: Query['MASTERCHEF_V1_users']) => {
@@ -103,7 +99,6 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
               chainName: chainName[chainId],
             }))
           }),
-        // fetcher({ chainId, subgraphName: MINICHEF_SUBGRAPH_NAME[chainId], subgraphHost: SUBGRAPH_HOST[chainId] })
       ),
   ]).then((promiseSettledResults) => {
     if (!Array.isArray(promiseSettledResults)) {
@@ -113,8 +108,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
     return promiseSettledResults
       .flat()
       .filter(isPromiseFulfilled)
-      .map((promiseFulfilled) => promiseFulfilled.value)
-      .flat()
+      .flatMap((promiseFulfilled) => promiseFulfilled.value)
     // .filter((user) => user.pool)
   })
 }

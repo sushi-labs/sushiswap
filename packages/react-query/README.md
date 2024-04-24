@@ -1,3 +1,3 @@
-# Next.js
+# React Query
 
-Next.js library
+React Query library

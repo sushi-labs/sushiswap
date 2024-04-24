@@ -1,5 +1,9 @@
 import * as Sentry from '@sentry/nextjs'
-import { QueryCache, QueryClient } from '@tanstack/react-query'
+import {
+  QueryCache,
+  QueryClient,
+  type QueryClientConfig,
+} from '@tanstack/react-query'
 
 const queryClientConfig = {
   defaultOptions: {
@@ -9,6 +13,7 @@ const queryClientConfig = {
   },
   queryCache: new QueryCache({
     onError: (error) => {
+      console.error('react query global onError', error)
       Sentry.captureException(error)
     },
   }),
@@ -26,9 +31,10 @@ const queryClientConfig = {
   // },
 }
 
-export const queryClient = new QueryClient(queryClientConfig)
+export const createQueryClient = (
+  config: QueryClientConfig | undefined = queryClientConfig,
+) => {
+  return new QueryClient(config)
+}
 
 export * from './hooks'
-
-// Re-export react-query
-// export * from '@tanstack/react-query'

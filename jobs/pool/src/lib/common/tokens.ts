@@ -1,15 +1,15 @@
-import { ChainId } from 'sushi/chain'
 import {
-  isSushiSwapChain,
-  isTridentChain,
-  SUBGRAPH_HOST,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   SushiSwapChainId,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
   TridentChainId,
 } from '@sushiswap/graph-config'
-import { Address, erc20ABI, readContracts } from '@wagmi/core'
+import { isSushiSwapChain, isTridentChain } from '@sushiswap/graph-config'
+import { readContracts } from '@wagmi/core'
+import { Chain, ChainId } from 'sushi/chain'
 
+import { Address, erc20Abi } from 'viem'
+import { config } from '../wagmi.js'
 import { divBigIntToNumber } from './utils.js'
 
 interface Token {
@@ -26,11 +26,10 @@ const getExchangeTokens = async (
   chainId: SushiSwapChainId,
 ): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
-  if (!subgraphName) return []
+  const url = SUSHISWAP_SUBGRAPH_URL[chainId]
+  if (!url) return []
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    url,
   })
 
   const { tokens, bundle } = await sdk.Tokens({
@@ -52,11 +51,10 @@ const getTridentTokens = async (
   chainId: TridentChainId,
 ): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
-  if (!subgraphName) return []
+  const url = TRIDENT_SUBGRAPH_URL[chainId]
+  if (!url) return []
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
-    name: subgraphName,
+    name: url,
   })
 
   const { tokens, bundle } = await sdk.Tokens({
@@ -117,7 +115,7 @@ export async function getTokenBalancesOf(
         address: token as Address,
         args: [address as Address],
         chainId: chainId,
-        abi: erc20ABI,
+        abi: erc20Abi,
         functionName: 'balanceOf',
       }) as const,
   )
@@ -127,17 +125,17 @@ export async function getTokenBalancesOf(
       ({
         address: token as Address,
         chainId: chainId,
-        abi: erc20ABI,
+        abi: erc20Abi,
         functionName: 'decimals',
       }) as const,
   )
 
   const [balancesOf, decimals] = await Promise.all([
-    readContracts({
+    readContracts(config, {
       allowFailure: true,
       contracts: balanceOfCalls,
     }),
-    readContracts({
+    readContracts(config, {
       allowFailure: true,
       contracts: decimalCalls,
     }),
@@ -148,9 +146,16 @@ export async function getTokenBalancesOf(
       const balance = balancesOf[i].result
       const decimal = decimals[i].result
 
-      if (balance === null || decimal === null) {
+      if (
+        balance === null ||
+        balance === undefined ||
+        decimal === null ||
+        decimal === undefined
+      ) {
         console.log(
-          `Balance / decimal fetch failed for ${token} on ${ChainId[chainId]}`,
+          `Balance / decimal fetch failed for ${token} on ${
+            Chain.from(chainId)?.shortName
+          }`,
         )
         return null
       }

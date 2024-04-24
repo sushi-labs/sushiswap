@@ -1,17 +1,17 @@
 // @ts-nocheck
-import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
 import {
   Query,
-  QueryblocksByChainIdsArgs,
   QueryResolvers,
+  QueryblocksByChainIdsArgs,
   RequireFields,
 } from '../../.graphclient/index.js'
 import { BlocksTypes } from '../../.graphclient/sources/Blocks/types.js'
 
 export const _blocksByChainIds = async (
-  root = {},
+  root: any,
   args: RequireFields<QueryblocksByChainIdsArgs, 'skip' | 'first' | 'chainIds'>,
   context: BlocksTypes.Context,
   info: GraphQLResolveInfo,
@@ -21,8 +21,8 @@ export const _blocksByChainIds = async (
       .filter(
         (
           chainId,
-        ): chainId is keyof typeof BLOCKS_SUBGRAPH_NAME &
-          keyof typeof SUBGRAPH_HOST => chainId in BLOCKS_SUBGRAPH_NAME,
+        ): chainId is keyof typeof BLOCKS_SUBGRAPH_URL &
+          keyof typeof BLOCKS_SUBGRAPH_URL => chainId in BLOCKS_SUBGRAPH_URL,
       )
       .map((chainId) => {
         return context.Blocks.Query.blocks({
@@ -31,8 +31,7 @@ export const _blocksByChainIds = async (
           context: {
             ...context,
             chainId,
-            subgraphName: BLOCKS_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            api: BLOCKS_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((blocks: BlocksTypes.Block[]) => {

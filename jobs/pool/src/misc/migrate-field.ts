@@ -1,5 +1,5 @@
-// import { createClient, Prisma } from '@sushiswap/database'
-// import { ChainId, chainName } from 'sushi/chain'
+// import { createDirectClient, Prisma } from '@sushiswap/database'
+// import { ChainId, chainName } from '@sushiswap/chain'
 // import { performance } from 'perf_hooks'
 
 //
@@ -7,7 +7,7 @@
 // export async function test() {
 //   try {
 //     const startTime = performance.now()
-//     const client = await createClient()
+//     const client = await createDirectClient()
 //     const incentives = await client.incentive.findMany({
 //       select: {
 //         id: true,
@@ -40,9 +40,9 @@
 //     console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 //   } catch (e) {
 //     console.error(e)
-//     await (await createClient()).$disconnect()
+//     await (await createDirectClient()).$disconnect()
 //   } finally {
-//     await (await createClient()).$disconnect()
+//     await (await createDirectClient()).$disconnect()
 //   }
 // }
 

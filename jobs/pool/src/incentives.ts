@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import './lib/wagmi.js'
 
-import { ChainId } from 'sushi/chain'
-import { createClient, Prisma } from '@sushiswap/database'
-import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { Prisma } from '@sushiswap/database'
+import { MINICHEF_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
+import { ChainId } from 'sushi/chain'
 
 import { filterIncentives } from './etl/incentive/index.js'
 import { mergeIncentives } from './etl/incentive/load.js'
@@ -23,9 +23,8 @@ export async function execute() {
     console.log(`EXTRACT - Extracted farms from ${farms.length} chains.`)
 
     // TRANSFORM
-    const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(
-      farms,
-    )
+    const { incentivesToCreate, incentivesToUpdate, tokens } =
+      await transform(farms)
 
     // // LOAD
     await createTokens(tokens)
@@ -40,15 +39,12 @@ export async function execute() {
     )
   } catch (e) {
     console.error(e)
-    await (await createClient()).$disconnect()
-  } finally {
-    await (await createClient()).$disconnect()
   }
 }
 
 async function extract() {
-  const minichefsP = Object.keys(MINICHEF_SUBGRAPH_NAME).map((chainId) =>
-    getMinichef(Number(chainId) as keyof typeof MINICHEF_SUBGRAPH_NAME),
+  const minichefsP = Object.keys(MINICHEF_SUBGRAPH_URL).map((chainId) =>
+    getMinichef(Number(chainId) as keyof typeof MINICHEF_SUBGRAPH_URL),
   )
   const masterChefV1P = getMasterChefV1()
   const masterChefV2P = getMasterChefV2()
@@ -121,7 +117,7 @@ async function transform(data: ChefReturn[]): Promise<{
           chainId: chainId,
           chefType: farm.chefType,
           apr:
-            isNaN(incentive.apr) || incentive.apr === Infinity
+            Number.isNaN(incentive.apr) || incentive.apr === Infinity
               ? 0
               : incentive.apr,
           rewardTokenId: chainId
@@ -141,9 +137,8 @@ async function transform(data: ChefReturn[]): Promise<{
     })
   })
 
-  const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(
-    incentives,
-  )
+  const { incentivesToCreate, incentivesToUpdate } =
+    await filterIncentives(incentives)
 
   return { incentivesToCreate, incentivesToUpdate, tokens }
 }

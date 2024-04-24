@@ -15,11 +15,14 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
+  "files": [
+    "jest-preset.js"
+  ],
   "dependencies": {
-    "jest-environment-jsdom": "29.3.1"
+    "jest-environment-jsdom": "29.7.0"
   },
   "devDependencies": {
-    "@sushiswap/eslint-config": "workspace:*",
-    "@types/node": "18"
+    "@types/node": "20"
   }
 }

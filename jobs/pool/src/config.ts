@@ -1,9 +1,7 @@
 import { ChainId } from 'sushi/chain'
+import { Address } from 'viem'
 
-export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
-export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
-
-export const MINICHEF_ADDRESS: Record<number | string, string> = {
+export const MINICHEF_ADDRESS: Record<number | string, Address> = {
   [ChainId.POLYGON]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   [ChainId.GNOSIS]: '0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3',
   [ChainId.HARMONY]: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
@@ -23,14 +21,14 @@ export const MINICHEF_ADDRESS: Record<number | string, string> = {
   [ChainId.BSC]: '0x5219C5E32b9FFf87F29d5A833832c29134464aaa',
 }
 
-export const MASTERCHEF_ADDRESS: Record<number | string, string> = {
+export const MASTERCHEF_ADDRESS: Record<number | string, Address> = {
   [ChainId.ETHEREUM]: '0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd',
-  [ChainId.ROPSTEN]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
-  [ChainId.RINKEBY]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
-  [ChainId.GÖRLI]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
-  [ChainId.KOVAN]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
+  // [ChainId.ROPSTEN]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
+  // [ChainId.RINKEBY]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
+  // [ChainId.GÖRLI]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
+  // [ChainId.KOVAN]: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
 }
 
-export const MASTERCHEF_V2_ADDRESS: Record<number | string, string> = {
+export const MASTERCHEF_V2_ADDRESS: Record<number | string, Address> = {
   [ChainId.ETHEREUM]: '0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d',
 }

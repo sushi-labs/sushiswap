@@ -1,24 +1,30 @@
-import { getAddress, isAddress } from '@ethersproject/address'
-import { parseUnits } from '@ethersproject/units'
-import { Fraction } from 'sushi'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
+import { withoutScientificNotation } from 'sushi/format'
+import { Fraction } from 'sushi/math'
+import { getAddress, isAddress, parseUnits } from 'viem'
 
 interface UsePrices {
   chainId: number | undefined
+  enabled?: boolean
 }
 
-export const usePrices = ({ chainId }: UsePrices) => {
+const BASE_URL =
+  process.env['NEXT_PUBLIC_API_BASE_URL'] || 'https://api.sushi.com'
+
+export const usePrices = ({ chainId, enabled = true }: UsePrices) => {
   return useQuery({
-    queryKey: [`https://token-price.sushi.com/v1/${chainId}`],
+    queryKey: [`${BASE_URL}/price/v1/${chainId}`],
     queryFn: async () => {
       const data: Record<string, number> = await fetch(
-        `https://token-price.sushi.com/v1/${chainId}`,
+        `${BASE_URL}/price/v1/${chainId}`,
       ).then((response) => response.json())
       return Object.entries(data).reduce<Record<string, Fraction>>(
-        (acc, [address, price]) => {
-          if (isAddress(address)) {
+        (acc, [address, _price]) => {
+          const price = withoutScientificNotation(_price.toFixed(18))
+          if (isAddress(address) && typeof price !== 'undefined') {
             acc[getAddress(address)] = new Fraction(
-              parseUnits(price.toFixed(18), 18).toString(),
+              parseUnits(price, 18).toString(),
               parseUnits('1', 18).toString(),
             )
           }
@@ -28,9 +34,8 @@ export const usePrices = ({ chainId }: UsePrices) => {
         {},
       )
     },
-    staleTime: 900000, // 15 mins
-    cacheTime: 3600000, // 1hr
-    refetchOnWindowFocus: false,
-    enabled: Boolean(chainId),
+    staleTime: ms('15s'),
+    cacheTime: ms('1m'),
+    enabled: Boolean(chainId && enabled),
   })
 }

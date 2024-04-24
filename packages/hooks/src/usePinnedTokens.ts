@@ -1,27 +1,43 @@
+'use client'
+
 import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
+import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from 'sushi/config'
+import {
   ARB,
-  Currency,
   DAI,
   FRAX,
   GNO,
   MATIC,
   MIM,
-  Native,
   SUSHI,
-  Token,
+  USDB,
   USDC,
   USDT,
   WBTC,
   WETH9,
   WNATIVE,
+  WORMHOLE_USDC,
+  WORMHOLE_WBTC,
+  WORMHOLE_WETH,
+  ZETA_ETH_BRIDGE_USDC,
+  ZETA_ETH_BRIDGE_USDT,
+  axlDAI,
+  axlETH,
+  axlUSDC,
+  axlUSDT,
+  axlWBTC,
 } from 'sushi/currency'
-import { useCallback, useEffect, useMemo } from 'react'
-
+import { type Currency, Native, Token } from 'sushi/currency'
 import { useLocalStorage } from './useLocalStorage'
 
-export const COMMON_BASES = {
+export const DEFAULT_BASES = {
   [ChainId.ETHEREUM]: [
     Native.onChain(ChainId.ETHEREUM),
     WNATIVE[ChainId.ETHEREUM],
@@ -31,10 +47,15 @@ export const COMMON_BASES = {
     USDT[ChainId.ETHEREUM],
     DAI[ChainId.ETHEREUM],
   ],
-  [ChainId.ROPSTEN]: [],
-  [ChainId.RINKEBY]: [],
-  [ChainId.GÖRLI]: [],
-  [ChainId.KOVAN]: [],
+  [ChainId.SEPOLIA]: [
+    Native.onChain(ChainId.SEPOLIA),
+    WNATIVE[ChainId.SEPOLIA],
+    USDC[ChainId.SEPOLIA],
+  ],
+  // [ChainId.ROPSTEN]: [],
+  // [ChainId.RINKEBY]: [],
+  // [ChainId.GÖRLI]: [],
+  // [ChainId.KOVAN]: [],
   [ChainId.GNOSIS]: [
     Native.onChain(ChainId.GNOSIS),
     WNATIVE[ChainId.GNOSIS],
@@ -96,11 +117,12 @@ export const COMMON_BASES = {
   [ChainId.FANTOM]: [
     Native.onChain(ChainId.FANTOM),
     WNATIVE[ChainId.FANTOM],
-    WBTC[ChainId.FANTOM],
-    WETH9[ChainId.FANTOM],
-    USDC[ChainId.FANTOM],
-    USDT[ChainId.FANTOM],
-    DAI[ChainId.FANTOM],
+    axlUSDC[ChainId.FANTOM],
+    STARGATE_USDC[ChainId.FANTOM],
+    STARGATE_USDT[ChainId.FANTOM],
+    STARGATE_WETH[ChainId.FANTOM],
+    STARGATE_WBTC[ChainId.FANTOM],
+    axlUSDC[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
   ],
   [ChainId.FANTOM_TESTNET]: [],
@@ -123,7 +145,7 @@ export const COMMON_BASES = {
     USDT[ChainId.HARMONY],
     DAI[ChainId.HARMONY],
   ],
-  [ChainId.HARMONY_TESTNET]: [],
+  // [ChainId.HARMONY_TESTNET]: [],
   [ChainId.HECO]: [
     Native.onChain(ChainId.HECO),
     WNATIVE[ChainId.HECO],
@@ -132,7 +154,7 @@ export const COMMON_BASES = {
     USDT[ChainId.HECO],
     DAI[ChainId.HECO],
   ],
-  [ChainId.HECO_TESTNET]: [],
+  // [ChainId.HECO_TESTNET]: [],
   [ChainId.OKEX]: [
     Native.onChain(ChainId.OKEX),
     WNATIVE[ChainId.OKEX],
@@ -141,7 +163,7 @@ export const COMMON_BASES = {
     USDT[ChainId.OKEX],
     DAI[ChainId.OKEX],
   ],
-  [ChainId.OKEX_TESTNET]: [],
+  // [ChainId.OKEX_TESTNET]: [],
   [ChainId.CELO]: [
     Native.onChain(ChainId.CELO),
     // WNATIVE[ChainId.CELO],
@@ -183,10 +205,10 @@ export const COMMON_BASES = {
   [ChainId.MOONBEAM]: [
     Native.onChain(ChainId.MOONBEAM),
     WNATIVE[ChainId.MOONBEAM],
-    WETH9[ChainId.MOONBEAM],
-    USDC[ChainId.MOONBEAM],
-    USDT[ChainId.MOONBEAM],
-    DAI[ChainId.MOONBEAM],
+    axlUSDC[ChainId.MOONBEAM],
+    WORMHOLE_USDC[ChainId.MOONBEAM],
+    WORMHOLE_WETH[ChainId.MOONBEAM],
+    WORMHOLE_WBTC[ChainId.MOONBEAM],
   ],
   [ChainId.OPTIMISM]: [
     Native.onChain(ChainId.OPTIMISM),
@@ -199,11 +221,10 @@ export const COMMON_BASES = {
   [ChainId.KAVA]: [
     Native.onChain(ChainId.KAVA),
     WNATIVE[ChainId.KAVA],
-    WBTC[ChainId.KAVA],
-    WETH9[ChainId.KAVA],
-    USDC[ChainId.KAVA],
+    axlWBTC[ChainId.KAVA],
+    STARGATE_WETH[ChainId.KAVA],
+    axlUSDC[ChainId.KAVA],
     USDT[ChainId.KAVA],
-    DAI[ChainId.KAVA],
   ],
   [ChainId.METIS]: [
     Native.onChain(ChainId.METIS),
@@ -266,11 +287,11 @@ export const COMMON_BASES = {
   [ChainId.HAQQ]: [
     Native.onChain(ChainId.HAQQ),
     WNATIVE[ChainId.HAQQ],
-    WETH9[ChainId.HAQQ],
-    WBTC[ChainId.HAQQ],
-    USDC[ChainId.HAQQ],
-    USDT[ChainId.HAQQ],
-    DAI[ChainId.HAQQ],
+    axlETH[ChainId.HAQQ],
+    axlWBTC[ChainId.HAQQ],
+    axlUSDC[ChainId.HAQQ],
+    axlUSDT[ChainId.HAQQ],
+    axlDAI[ChainId.HAQQ],
   ],
   [ChainId.CORE]: [
     Native.onChain(ChainId.CORE),
@@ -304,16 +325,44 @@ export const COMMON_BASES = {
     }),
     USDC[ChainId.BASE],
   ],
+  [ChainId.SCROLL]: [
+    Native.onChain(ChainId.SCROLL),
+    WNATIVE[ChainId.SCROLL],
+    USDC[ChainId.SCROLL],
+    USDT[ChainId.SCROLL],
+    WBTC[ChainId.SCROLL],
+  ],
+  [ChainId.FILECOIN]: [
+    Native.onChain(ChainId.FILECOIN),
+    WNATIVE[ChainId.FILECOIN],
+    USDC[ChainId.FILECOIN],
+    DAI[ChainId.FILECOIN],
+  ],
+  [ChainId.ZETACHAIN]: [
+    Native.onChain(ChainId.ZETACHAIN),
+    WNATIVE[ChainId.ZETACHAIN],
+    ZETA_ETH_BRIDGE_USDC,
+    ZETA_ETH_BRIDGE_USDT,
+    WETH9[ChainId.ZETACHAIN],
+  ],
+  [ChainId.CRONOS]: [
+    Native.onChain(ChainId.CRONOS),
+    WNATIVE[ChainId.CRONOS],
+    WETH9[ChainId.CRONOS],
+    WBTC[ChainId.CRONOS],
+    USDC[ChainId.CRONOS],
+  ],
+  [ChainId.BLAST]: [Native.onChain(ChainId.BLAST), USDB[ChainId.BLAST]],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
-} as const
+} as const satisfies Record<ChainId, Readonly<(Token | Native)[]>>
 
-const COMMON_BASES_IDS = Object.entries(COMMON_BASES).reduce<
-  Record<string, string[]>
->((acc, [chain, tokens]) => {
-  const chainId = chain
-  acc[chainId] = Array.from(new Set(tokens.map((token) => token.id)))
-  return acc
-}, {} as Record<ChainId, string[]>)
+// const DEFAULT_BASES_IDS = Object.entries(DEFAULT_BASES).reduce<
+//   Record<string, string[]>
+// >((acc, [chain, tokens]) => {
+//   const chainId = chain
+//   acc[chainId] = Array.from(new Set(tokens.map((token) => token.id)))
+//   return acc
+// }, {} as Record<ChainId, string[]>)
 
 function getAddress(address: string) {
   if (address === 'NATIVE') return 'NATIVE'
@@ -321,44 +370,42 @@ function getAddress(address: string) {
 }
 
 export const usePinnedTokens = () => {
-  const [value, setValue] = useLocalStorage(
-    'sushi.pinnedTokens',
-    COMMON_BASES_IDS,
+  const [pinnedTokens, setPinnedTokens] = useLocalStorage(
+    'sushi.pinned-tokens',
+    {} as Record<string, string[]>,
   )
-
-  useEffect(() => {
-    Object.entries(COMMON_BASES_IDS).forEach(([chainId, tokens]) => {
-      if (!value[chainId]) {
-        value[chainId] = tokens
-        setValue(value)
-      }
-    })
-  }, [value])
 
   const addPinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(
-        new Set([...value[chainId], `${chainId}:${getAddress(address)}`]),
-      )
-      setValue(value)
+      setPinnedTokens((value) => {
+        value[chainId] = Array.from(
+          new Set([
+            ...(value[chainId] || []),
+            `${chainId}:${getAddress(address)}`,
+          ]),
+        )
+        return value
+      })
     },
-    [setValue],
+    [setPinnedTokens],
   )
 
   const removePinnedToken = useCallback(
     (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
-      value[chainId] = Array.from(
-        new Set(
-          value[chainId].filter(
-            (token) => token !== `${chainId}:${getAddress(address)}`,
+      setPinnedTokens((value) => {
+        value[chainId] = Array.from(
+          new Set(
+            value[chainId].filter(
+              (token) => token !== `${chainId}:${getAddress(address)}`,
+            ),
           ),
-        ),
-      )
-      setValue(value)
+        )
+        return value
+      })
     },
-    [setValue],
+    [setPinnedTokens],
   )
 
   const hasToken = useCallback(
@@ -373,12 +420,14 @@ export const usePinnedTokens = () => {
           throw new Error('Address provided not a valid ERC20 address')
         }
 
-        return value?.[chainId]?.includes(`${chainId}:${getAddress(address)}`)
+        return pinnedTokens?.[chainId]?.includes(
+          `${chainId}:${getAddress(address)}`,
+        )
       }
 
-      return !!value?.[currency.chainId]?.includes(currency.id)
+      return !!pinnedTokens?.[currency.chainId]?.includes(currency.id)
     },
-    [value],
+    [pinnedTokens],
   )
 
   const mutate = useCallback(
@@ -391,9 +440,9 @@ export const usePinnedTokens = () => {
 
   return useMemo(() => {
     return {
-      data: value,
+      data: pinnedTokens,
       mutate,
       hasToken,
     }
-  }, [hasToken, mutate, value])
+  }, [hasToken, mutate, pinnedTokens])
 }
