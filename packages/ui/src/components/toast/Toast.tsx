@@ -45,7 +45,7 @@ export const createToast = (props: PromiseNotification) => {
         {
           ...TOAST_OPTIONS,
           toastId,
-          autoClose: 5000,
+          autoClose: 8000,
         },
       )
     })
@@ -110,7 +110,7 @@ export const createSuccessToast = (props: ResolvedNotification) => {
     {
       ...TOAST_OPTIONS,
       toastId,
-      autoClose: 5000,
+      autoClose: 8000,
     },
   )
 
@@ -122,7 +122,7 @@ export const createFailedToast = (props: ResolvedNotification) => {
   toast(<ToastFailed {...props} onDismiss={() => toast.dismiss(toastId)} />, {
     ...TOAST_OPTIONS,
     toastId,
-    autoClose: 5000,
+    autoClose: 8000,
   })
 
   return createNotification(props)
@@ -133,7 +133,7 @@ export const createInfoToast = (props: ResolvedNotification) => {
   toast(<ToastInfo {...props} onDismiss={() => toast.dismiss(toastId)} />, {
     ...TOAST_OPTIONS,
     toastId,
-    autoClose: 5000,
+    autoClose: 8000,
   })
 
   return createNotification(props)

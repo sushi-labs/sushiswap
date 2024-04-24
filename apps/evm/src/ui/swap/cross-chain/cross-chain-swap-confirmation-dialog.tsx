@@ -1,11 +1,16 @@
-import { Button } from '@sushiswap/ui'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+import { Button, SquidIcon, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
-import { TransactionType } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
+import {
+  SushiXSwap2Adapter,
+  TransactionType,
+} from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
+import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
 import { Chain } from 'sushi/chain'
 import { STARGATE_TOKEN } from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
@@ -17,15 +22,19 @@ import {
 interface ConfirmationDialogContent {
   txHash?: string
   dstTxHash?: string
-  lzUrl?: string
+  bridgeUrl?: string
+  adapter?: SushiXSwap2Adapter
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
+  tradeRef: React.MutableRefObject<UseCrossChainTradeReturn | null>
 }
 
 export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   txHash,
-  lzUrl,
+  bridgeUrl,
+  adapter,
   dstTxHash,
   dialogState,
+  tradeRef,
 }) => {
   const {
     state: { chainId0, chainId1, token0, token1, recipient },
@@ -80,18 +89,17 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
           <a
             target="_blank"
             rel="noreferrer noopener noreferer"
-            href={lzUrl || ''}
+            href={bridgeUrl}
+            className={classNames(
+              !bridgeUrl ? 'cursor-wait' : '',
+              'flex items-center gap-1',
+            )}
           >
             <Dots>to the destination chain</Dots>
+            <ArrowTopRightOnSquareIcon width={16} height={16} />
           </a>
         </Button>{' '}
-        <span className="flex items-center gap-1">
-          powered by{' '}
-          <div className="min-h-4 min-w-4">
-            <Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />
-          </div>{' '}
-          Stargate
-        </span>
+        <CrossChainAdapter adapter={adapter} />
       </>
     )
   }
@@ -99,8 +107,9 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   if (dialogState.dest === StepState.PartialSuccess) {
     return (
       <>
-        We {`couldn't`} swap {trade?.dstBridgeToken?.symbol} into{' '}
-        {token1?.symbol}, {trade?.dstBridgeToken?.symbol} has been send to{' '}
+        We {`couldn't`} swap {tradeRef?.current?.dstBridgeToken?.symbol} into{' '}
+        {token1?.symbol}, {tradeRef?.current?.dstBridgeToken?.symbol} has been
+        send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
             <a
@@ -164,6 +173,31 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
   }
 
   return <span />
+}
+
+const CrossChainAdapter = ({
+  adapter,
+}: { adapter: SushiXSwap2Adapter | undefined }) => {
+  return (
+    <span className="flex items-center gap-1">
+      powered by{' '}
+      {adapter === SushiXSwap2Adapter.Stargate ? (
+        <>
+          <div className="min-h-4 min-w-4">
+            <Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />
+          </div>{' '}
+          Stargate
+        </>
+      ) : (
+        <>
+          <div className="min-h-4 min-w-4">
+            <SquidIcon width={16} height={16} />
+          </div>{' '}
+          Squid
+        </>
+      )}
+    </span>
+  )
 }
 
 export enum StepState {

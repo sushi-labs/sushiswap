@@ -5,6 +5,7 @@ interface BaseNotification {
   type:
     | 'send'
     | 'stargate'
+    | 'squid'
     | 'swap'
     | 'mint'
     | 'burn'

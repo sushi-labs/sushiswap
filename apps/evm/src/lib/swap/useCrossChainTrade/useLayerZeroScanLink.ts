@@ -10,11 +10,13 @@ export const useLayerZeroScanLink = ({
   network0,
   network1,
   txHash,
+  enabled,
 }: {
   tradeId: string
   network0: ChainId
   network1: ChainId
   txHash: string | undefined
+  enabled?: boolean
 }) => {
   return useQuery({
     queryKey: ['lzLink', { txHash, network0, network1, tradeId }],
@@ -43,6 +45,6 @@ export const useLayerZeroScanLink = ({
       }
     },
     refetchInterval: 2000,
-    enabled: !!txHash,
+    enabled: enabled && !!txHash,
   })
 }
