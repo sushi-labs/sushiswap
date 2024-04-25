@@ -22,6 +22,7 @@ import { Token } from 'sushi/currency'
 const isTokenSecurityIssue = {
   // Contract security
   is_open_source: (value: TokenSecurity['is_open_source']) => value === false,
+  is_proxy: (value: TokenSecurity['is_proxy']) => value === true,
   is_mintable: (value: TokenSecurity['is_mintable']) => value === true,
   can_take_back_ownership: (value: TokenSecurity['can_take_back_ownership']) =>
     value === true,
@@ -31,8 +32,8 @@ const isTokenSecurityIssue = {
   // Trading security
   buy_tax: (value: TokenSecurity['buy_tax']) => value === true,
   sell_tax: (value: TokenSecurity['sell_tax']) => value === true,
-  cannot_buy: (value: TokenSecurity['cannot_buy']) => value === true,
-  cannot_sell_all: (value: TokenSecurity['cannot_sell_all']) => value === true,
+  is_buyable: (value: TokenSecurity['is_buyable']) => value === false,
+  is_sell_limit: (value: TokenSecurity['is_sell_limit']) => value === true,
   slippage_modifiable: (value: TokenSecurity['slippage_modifiable']) =>
     value === true,
   is_honeypot: (value: TokenSecurity['is_honeypot']) => value === true,
@@ -44,9 +45,12 @@ const isTokenSecurityIssue = {
   trading_cooldown: (value: TokenSecurity['trading_cooldown']) =>
     value === true,
   // Info security
-  is_true_token: (value: TokenSecurity['is_true_token']) => value === false,
+  is_fake_token: (value: TokenSecurity['is_fake_token']) => value === true,
   is_airdrop_scam: (value: TokenSecurity['is_airdrop_scam']) => value === true,
-}
+} as Record<
+  keyof TokenSecurity,
+  (value: TokenSecurity[keyof TokenSecurity]) => boolean
+>
 
 export const TokenSecurityView = ({
   tokenSecurityResponse,
@@ -62,16 +66,12 @@ export const TokenSecurityView = ({
     const issues: (keyof TokenSecurity)[] = []
     const nonIssues: (keyof TokenSecurity)[] = []
 
-    tokenSecurity &&
-      Object.entries(tokenSecurity).forEach(([key, value]) => {
-        if (
-          key in isTokenSecurityIssue &&
-          isTokenSecurityIssue[key as keyof typeof isTokenSecurityIssue](value)
-        )
-          issues.push(key as keyof TokenSecurity)
-        else if (key in isTokenSecurityIssue)
-          nonIssues.push(key as keyof TokenSecurity)
-      })
+    for (const [_key, value] of Object.entries(tokenSecurity || {})) {
+      const key = _key as keyof TokenSecurity
+      if (key in isTokenSecurityIssue && isTokenSecurityIssue[key](value))
+        issues.push(key)
+      else nonIssues.push(key)
+    }
 
     return { tokenSecurity, issues, nonIssues }
   }, [tokenSecurityResponse, token])
@@ -125,8 +125,8 @@ export const TokenSecurityView = ({
                 {tokenSecurity?.[key] === undefined
                   ? 'Unknown'
                   : tokenSecurity[key]
-                  ? 'Yes'
-                  : 'No'}
+                    ? 'Yes'
+                    : 'No'}
               </div>
               <ExclamationTriangleIcon
                 width={14}
