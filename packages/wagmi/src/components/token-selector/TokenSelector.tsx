@@ -291,7 +291,10 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 `${queryToken.chainId}:${queryToken.wrapped.address}`
               ] &&
               !tokenMap?.[`${queryToken.wrapped.address}`] && (
-                <TokenSelectorImportRow currency={queryToken} onImport={() => queryToken && handleImport(queryToken)} />
+                <TokenSelectorImportRow
+                  currency={queryToken}
+                  onImport={() => queryToken && handleImport(queryToken)}
+                />
               )}
             <TokenSelectorCurrencyList
               selected={selected}
