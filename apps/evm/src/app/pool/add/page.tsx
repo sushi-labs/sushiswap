@@ -5,7 +5,6 @@ import { GoPlusLabsIcon } from '@sushiswap/ui'
 import { useAccount, useConcentratedPositionInfo } from '@sushiswap/wagmi'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/hooks/contracts/useV3FactoryContract'
 import React, { FC, useMemo, useState } from 'react'
-import { TaxTokenDialog } from 'src/ui/pool/TaxTokenDialog'
 import { computeSushiSwapV3PoolAddress } from 'sushi'
 import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'
@@ -82,9 +81,6 @@ const _Add: FC = () => {
 
   return (
     <>
-      {token0 && isTokenSecurityChainId(token0.chainId) ? (
-        <TaxTokenDialog token0={token0} token1={token1} />
-      ) : null}
       {/*<div className="hidden lg:block">*/}
       {/*  <div className="lg:grid grid-cols-2 items-center gap-6 sticky top-[96px]">*/}
       {/*    <div className="col-span-2 flex gap-7">*/}

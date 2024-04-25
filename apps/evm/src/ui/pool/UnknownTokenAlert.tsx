@@ -8,7 +8,6 @@ import { useTokenWithCache } from '@sushiswap/wagmi'
 import { FC, useMemo } from 'react'
 import { shortenAddress } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import { TaxTokenDialog } from './TaxTokenDialog'
 
 interface UnknownTokenAlert {
   pool: Pool
@@ -58,12 +57,6 @@ export const UnknownTokenAlert: FC<UnknownTokenAlert> = ({ pool }) => {
 
   return (
     <>
-      {protocol === 'SUSHISWAP_V3' &&
-      tokenTo?.token &&
-      tokenFrom?.token &&
-      isTokenSecurityChainId(tokenFrom.token.chainId) ? (
-        <TaxTokenDialog token0={tokenFrom.token} token1={tokenTo.token} />
-      ) : null}
       <Message size="sm" variant="warning" className="relative">
         {`${
           token0NotInList && token1NotInList
