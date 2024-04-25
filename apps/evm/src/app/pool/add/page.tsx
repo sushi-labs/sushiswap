@@ -1,7 +1,5 @@
 'use client'
 
-import { isTokenSecurityChainId } from '@sushiswap/react-query'
-import { GoPlusLabsIcon } from '@sushiswap/ui'
 import { useAccount, useConcentratedPositionInfo } from '@sushiswap/wagmi'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/hooks/contracts/useV3FactoryContract'
 import React, { FC, useMemo, useState } from 'react'
@@ -205,14 +203,6 @@ const _Add: FC = () => {
         tokenId={tokenId}
         successLink={`/pools/${chainId}:${poolAddress}?activeTab=myPositions`}
       />
-      {token0?.chainId && isTokenSecurityChainId(token0.chainId) ? (
-        <div className="text-right">
-          <span className="text-xs text-muted-foreground">
-            Token security powered by GoPlus
-          </span>
-          <GoPlusLabsIcon width={16} height={20} className="inline-flex" />
-        </div>
-      ) : null}
     </>
   )
 }
