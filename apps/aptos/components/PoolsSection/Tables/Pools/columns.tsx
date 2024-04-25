@@ -1,6 +1,6 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
-import { Pool } from 'utils/hooks/usePools'
+import { PoolExtended } from 'lib/pool/hooks/use-pools-extended'
 import { PoolAprCell } from '../SharedCells/PoolAprCell'
 import { PoolNameCell } from '../SharedCells/PoolNameCell'
 import { PoolReserveCell } from '../SharedCells/PoolReserveCell'
@@ -9,7 +9,7 @@ import { PoolTVLCell } from '../SharedCells/PoolTVLCell'
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
 
-export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
+export const NAME_COLUMN: ColumnDef<PoolExtended, unknown> = {
   id: 'name',
   header: 'Name',
   cell: (props) => <PoolNameCell row={props.row.original} />,
@@ -28,7 +28,7 @@ export const NAME_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const RESERVE_COLUMN: ColumnDef<Pool, unknown> = {
+export const RESERVE_COLUMN: ColumnDef<PoolExtended, unknown> = {
   id: 'reserves',
   header: 'Reserves',
   cell: (props) => <PoolReserveCell row={props.row.original} />,
@@ -43,7 +43,7 @@ export const RESERVE_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const APR_COLUMN: ColumnDef<Pool, unknown> = {
+export const APR_COLUMN: ColumnDef<PoolExtended, unknown> = {
   id: 'apr',
   header: 'APR',
   cell: (props) => <PoolAprCell row={props.row.original} />,
@@ -58,9 +58,10 @@ export const APR_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'TVL',
+export const TVL_COLUMN: ColumnDef<PoolExtended, unknown> = {
+  id: 'reserveUSD',
   header: 'TVL',
+  accessorFn: (row) => row.reserveUSD,
   cell: (props) => <PoolTVLCell row={props.row.original} />,
   meta: {
     skeleton: (

@@ -9,7 +9,7 @@ import {
   usePoolState,
 } from 'ui/pool/pool/add/pool-add-provider/pool-add-provider'
 
-export const PoolAddSelectTokensWidget: FC = () => {
+export const PoolAddFormSelectTokensWidget: FC = () => {
   const { setToken0, setToken1 } = usePoolActions()
 
   const { token0, token1 } = usePoolState()

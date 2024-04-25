@@ -16,10 +16,11 @@ import {
 } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import { networkNameToNetwork } from 'config/chains'
+import { useSwap } from 'lib/swap/hooks/use-swap'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'lib/swap/warningSeverity'
+} from 'lib/swap/warning-severity'
 import React, { FC } from 'react'
 import {
   useSimpleSwapActions,
@@ -27,7 +28,6 @@ import {
 } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { formatNumber } from 'utils/format-number'
 import { useNetwork } from 'utils/hooks/useNetwork'
-import { useSwapRouter } from 'utils/hooks/useSwapRouter'
 import { getSwapPayload } from 'utils/payload/get-swap-payload'
 import { Modal } from '../../../components/Modal/Modal'
 import { ModalType } from '../../../components/Modal/ModalProvider'
@@ -48,7 +48,7 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
   const { account, signAndSubmitTransaction } = useWallet()
   const { setisTransactionPending, setAmount } = useSimpleSwapActions()
 
-  const { data: routes } = useSwapRouter()
+  const { data: routes } = useSwap()
 
   const minOutput = slippageAmount
     ? formatNumber(slippageAmount, token1 ? token1.decimals : 8)

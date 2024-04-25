@@ -2,8 +2,8 @@ import { Aptos, STABLECOINS } from 'lib/coins'
 import { useMemo } from 'react'
 import getCurrencyPrice from '../getCurrencyPrice'
 import { Token } from '../tokenType'
+import { usePoolsByTokens } from './use-pools-by-tokens'
 import { useNetwork } from './useNetwork'
-import usePairs from './usePairs'
 
 interface UseStablePrice {
   currency: Token
@@ -16,8 +16,8 @@ export function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
   const native = useMemo(() => Aptos[network], [network])
   const stableTokens = useMemo(() => STABLECOINS[network], [network])
 
-  const [nativePairInfo, stableNativePairInfo] = usePairs({
-    currencies: useMemo(
+  const [nativePairInfo, stableNativePairInfo] = usePoolsByTokens({
+    tokens: useMemo(
       () => [
         [
           currency && native.address === currency.address
@@ -32,12 +32,12 @@ export function useStablePrice({ currency, ledgerVersion }: UseStablePrice) {
     ledgerVersion,
   })
 
-  const stablePairsInfo = usePairs({
-    currencies: useMemo(
+  const stablePairsInfo = usePoolsByTokens({
+    tokens: useMemo(
       () =>
         stableTokens.map((stableToken) => {
           return [
-            stableToken && currency.address === stableToken.address
+            stableToken && currency?.address === stableToken.address
               ? undefined
               : currency,
             stableToken,

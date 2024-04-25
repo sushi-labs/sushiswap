@@ -43,10 +43,11 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
     setTransactionPending(true)
     try {
       const response = await signAndSubmitTransaction({
-        type: 'entry_function_payload',
-        type_arguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
-        arguments: [0],
-        function: `${masterchefContract}::masterchef::deposit`,
+        data: {
+          typeArguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
+          functionArguments: [0],
+          function: `${masterchefContract}::masterchef::deposit`,
+        },
       })
 
       await provider.waitForTransaction(response?.hash)

@@ -12,7 +12,7 @@ import { formatUSD } from 'sushi/format'
 import { formatNumber } from 'utils/format-number'
 import { Pool } from 'utils/hooks/usePools'
 import { useStablePrice } from 'utils/hooks/useStablePrice'
-import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
+import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
 import { CardCurrencyAmountItem } from '../CardCurrencyAmountItem'
 
 interface PoolCompositionProps {
@@ -20,7 +20,7 @@ interface PoolCompositionProps {
 }
 
 export const PoolComposition: FC<PoolCompositionProps> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPools(row)
+  const { token0, token1 } = useTokensFromPool(row)
 
   const token0Price = useStablePrice({ currency: token0 })
   const token1Price = useStablePrice({ currency: token1 })

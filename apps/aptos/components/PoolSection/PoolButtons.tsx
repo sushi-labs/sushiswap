@@ -32,7 +32,9 @@ export const PoolButtons: FC<PoolButtonsProps> = ({
         </Button>
       </LinkInternal>
       {isFarm && (
-        <LinkInternal href={`/pool/${decodeURIComponent(router?.id)}/stake`}>
+        <LinkInternal
+          href={`/pool/${decodeURIComponent(router?.id as string)}/stake`}
+        >
           <Button className="col-span-2" size="lg" color="default">
             Stake Liquidity
           </Button>

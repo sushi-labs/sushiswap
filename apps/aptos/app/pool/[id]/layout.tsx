@@ -10,7 +10,7 @@ export default function Layout({
   children,
 }: { children: React.ReactNode; params: { id: string } }) {
   const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id)
+  const tokenAddress = decodeURIComponent(router?.id as string)
   const { data: pool } = usePool(tokenAddress)
 
   return (

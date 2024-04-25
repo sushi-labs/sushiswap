@@ -91,7 +91,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({
       })
       await provider.waitForTransaction(response?.hash)
       //return from here if response is failed
-      if (!response?.success) return
+      if (!response?.output.success) return
       const toastId = `completed:${response?.hash}`
       createToast({
         summery: `Successfully staked ${value} ${lpTokenName} tokens`,

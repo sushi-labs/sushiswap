@@ -1,18 +1,18 @@
 import { TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
+import { PoolExtended } from 'lib/pool/hooks/use-pools-extended'
 import React, { FC } from 'react'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
 import { useFarms, useIsFarm } from 'utils/hooks/useFarms'
-import { Pool } from 'utils/hooks/usePools'
-import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
 import { Row } from './types'
 
-export const PoolNameCell: FC<Row<Pool>> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPools(row)
-  const lpAddress = row?.id
+export const PoolNameCell: FC<Row<PoolExtended>> = ({ row }) => {
+  const { token0, token1 } = row
+  const poolAddress = row?.id
+
   const { data: farms } = useFarms()
-  const isFarm = useIsFarm({ poolAddress: lpAddress, farms })
+  const isFarm = useIsFarm({ poolAddress, farms })
 
   return (
     <div className="flex items-center gap-1">

@@ -6,7 +6,7 @@ import { useNetwork } from 'utils/hooks/useNetwork'
 import { Pool } from 'utils/hooks/usePools'
 import { useStablePrice } from 'utils/hooks/useStablePrice'
 import { useTokenBalance } from 'utils/hooks/useTokenBalance'
-import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
+import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
 import { useTotalSupply } from 'utils/hooks/useTotalSupply'
 import { Row } from '../SharedCells/types'
 
@@ -15,7 +15,7 @@ export const PoolMyPositionTVLCell: FC<Row<Pool>> = ({ row }) => {
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const { token0, token1 } = useTokensFromPools(row)
+  const { token0, token1 } = useTokensFromPool(row)
   const tokenAddress = row?.id
   const { account } = useWallet()
 
@@ -27,7 +27,7 @@ export const PoolMyPositionTVLCell: FC<Row<Pool>> = ({ row }) => {
   })
 
   const { data: coinInfo } = useTotalSupply(
-    `${row?.data?.token_x_details.token_address},${row?.data?.token_y_details.token_address}`,
+    `${row?.data?.token_x_details.address},${row?.data?.token_y_details.address}`,
   )
 
   const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value

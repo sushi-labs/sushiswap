@@ -168,13 +168,13 @@ export const AddSectionReviewModal: FC<Props> = ({ children }) => {
               </div>
               <DialogFooter>
                 <Button
-                  size="xl"
                   disabled={false}
                   loading={false}
-                  fullWidth
                   onClick={() => addLiquidity(confirm)}
+                  fullWidth
+                  size="xl"
                 >
-                  Add
+                  Add Liquidity
                 </Button>
               </DialogFooter>
             </DialogContent>

@@ -2,7 +2,7 @@ import { SupportedNetwork, chains } from 'config/chains'
 import { useMemo } from 'react'
 import { Token } from '../tokenType'
 import { useNetwork } from './useNetwork'
-import { usePairsReserves } from './usePairsReserves'
+import { usePoolsReserves } from './usePoolsReserves'
 
 export enum PairState {
   LOADING = 'Loading',
@@ -18,25 +18,23 @@ export type Pair = {
   token1: Token
 }
 
-interface UsePairs {
-  currencies: [Token | undefined, Token | undefined][]
+interface UsePoolsByTokens {
+  tokens: [Token | undefined, Token | undefined][]
   ledgerVersion?: number
 }
 
-export default function usePairs({
-  currencies,
+export function usePoolsByTokens({
+  tokens,
   ledgerVersion,
-}: UsePairs): [PairState, Pair | null][] {
+}: UsePoolsByTokens): [PairState, Pair | null][] {
   const { network } = useNetwork()
 
-  const tokens = useMemo(() => currencies.map(([a, b]) => [a, b]), [currencies])
-
-  const pairAddresses = useMemo(
+  const poolAddresses = useMemo(
     () => [
       ...new Set(
-        tokens.map(([tokenA, tokenB]) => {
+        tokens.flatMap(([tokenA, tokenB]) => {
           if (!tokenA || !tokenB || tokenA.address === tokenB.address) {
-            return undefined
+            return []
           }
           return getReservesAddress(tokenA, tokenB, network)
         }),
@@ -44,8 +42,9 @@ export default function usePairs({
     ],
     [tokens, network],
   )
-  const { data: pairReserves } = usePairsReserves({
-    pairAddresses,
+
+  const { data: poolReserves } = usePoolsReserves({
+    poolAddresses,
     ledgerVersion,
   })
 
@@ -54,24 +53,24 @@ export default function usePairs({
       if (!tokenA || !tokenB || tokenA?.address === tokenB.address) {
         return [PairState.INVALID, null]
       }
-      const pairReservesAddress = getReservesAddress(tokenA, tokenB, network)
+      const poolReservesAddress = getReservesAddress(tokenA, tokenB, network)
 
-      if (pairReserves?.[pairReservesAddress]) {
+      if (poolReserves?.[poolReservesAddress]) {
         const [token0, token1] = sortToken(tokenA, tokenB)
         return [
           PairState.EXISTS,
           getPair(
             token0,
             token1,
-            pairReserves[pairReservesAddress].data.reserve_x,
-            pairReserves[pairReservesAddress].data.reserve_y,
+            poolReserves[poolReservesAddress].data.reserve_x,
+            poolReserves[poolReservesAddress].data.reserve_y,
             network,
           ),
         ]
       }
       return [PairState.NOT_EXISTS, null]
     })
-  }, [pairReserves, tokens, network])
+  }, [poolReserves, tokens, network])
 }
 
 export const getReservesAddress = (

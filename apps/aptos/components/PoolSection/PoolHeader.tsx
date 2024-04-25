@@ -1,19 +1,12 @@
 import { LinkExternal, classNames, typographyVariants } from '@sushiswap/ui'
-import {
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
 import { FC } from 'react'
-import { formatPercent } from 'sushi'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
 import { useNetwork } from 'utils/hooks/useNetwork'
 import { Pool } from 'utils/hooks/usePools'
-import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
+import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
 
 interface PoolHeader {
   row: Pool
@@ -25,7 +18,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const { token0, token1 } = useTokensFromPools(row)
+  const { token0, token1 } = useTokensFromPool(row)
 
   return (
     <div className="flex flex-col gap-6">
@@ -64,7 +57,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-y-5 gap-x-[32px] text-secondary-foreground mb-8 mt-1.5">
-        <div className="flex items-center gap-1.5">
+        {/* <div className="flex items-center gap-1.5">
           <span className="tracking-tighter font-semibold">APR</span>
           <TooltipProvider>
             <Tooltip delayDuration={0}>
@@ -78,7 +71,7 @@ export const PoolHeader: FC<PoolHeader> = ({ row }) => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </div>
+        </div> */}
         <div className="flex items-center gap-1.5">
           <span className="tracking-tighter font-semibold">Network</span>
           Aptos

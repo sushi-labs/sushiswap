@@ -27,8 +27,8 @@ export async function getSwapRoute({
 
   const tokens = pools.reduce<Set<string>>(
     (acc, pool) => {
-      acc.add(pool.data.token_x_details.token_address)
-      acc.add(pool.data.token_y_details.token_address)
+      acc.add(pool.data.token_x_details.address)
+      acc.add(pool.data.token_y_details.address)
       return acc
     },
     new Set([...baseTokens, tokenIn.address, tokenOut.address]),
@@ -129,7 +129,7 @@ export async function getSwapRoute({
     return data
   }, {})
 
-  const bestRoute = getBestRouteWithWorker({
+  const bestRoute = await getBestRouteWithWorker({
     amountIn,
     vertices,
     tokenGraph: graph,

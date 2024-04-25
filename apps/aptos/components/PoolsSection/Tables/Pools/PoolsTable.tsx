@@ -1,4 +1,3 @@
-import { useDebounce } from '@sushiswap/hooks'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import {
   ColumnDef,
@@ -7,10 +6,13 @@ import {
   TableState,
 } from '@tanstack/react-table'
 import { usePoolFilters } from 'components/PoolFiltersProvider'
+import {
+  type PoolExtended,
+  usePoolsExtended,
+} from 'lib/pool/hooks/use-pools-extended'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useFarms } from 'utils/hooks/useFarms'
 import { useNetwork } from 'utils/hooks/useNetwork'
-import { Pool, usePools } from 'utils/hooks/usePools'
 import { NAME_COLUMN, RESERVE_COLUMN, TVL_COLUMN } from './columns'
 
 const COLUMNS = [
@@ -18,19 +20,21 @@ const COLUMNS = [
   TVL_COLUMN,
   // APR_COLUMN,
   RESERVE_COLUMN,
-] satisfies ColumnDef<Pool, unknown>[]
+] satisfies ColumnDef<PoolExtended, unknown>[]
 
 export const PoolsTable = () => {
   const { tokenSymbols, farmsOnly } = usePoolFilters()
 
-  const { data: pools, isLoading } = usePools()
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'TVL', desc: true },
+    { id: 'reserveUSD', desc: true },
   ])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
+
+  const pools = usePoolsExtended()
+  const isLoading = !pools
 
   const { data: farms } = useFarms()
 
@@ -38,56 +42,44 @@ export const PoolsTable = () => {
     contracts: { swap: swapContract },
   } = useNetwork()
 
-  const farmFilter = useMemo(() => {
-    return pools?.filter((pool) => {
-      const lpAddress = pool.id
-      const _isFarm = farms?.data?.lps.indexOf(
-        `${swapContract}::swap::LPToken<${lpAddress}>`,
-      )
-      return _isFarm !== -1
-    })
-  }, [pools, farms, swapContract])
-
-  const rowLink = useCallback((row: Pool) => {
+  const rowLink = useCallback((row: PoolExtended) => {
     return `/pool/${row.id}`
   }, [])
 
-  const data = useMemo(
-    () =>
-      !farmsOnly
-        ? pools
-            ?.flat()
-            .filter((el) =>
-              tokenSymbols.length > 0
-                ? tokenSymbols.includes(
-                    el.data.token_x_details.symbol.toLowerCase(),
-                  ) ||
-                  tokenSymbols.includes(
-                    el.data.token_y_details.symbol.toLowerCase(),
-                  )
-                : true,
-            ) || []
-        : farmFilter?.flat() || [],
-    [pools, farmsOnly, farmFilter, tokenSymbols],
-  )
+  const filtered = useMemo(() => {
+    if (!pools) return []
 
-  const debouncedQuery = useDebounce(
-    tokenSymbols.join(' ').trimStart().toLowerCase(),
-    400,
-  )
+    return pools?.filter((pool) => {
+      if (farmsOnly) {
+        const isFarm = farms?.data?.lps.indexOf(
+          `${swapContract}::swap::LPToken<${pool.id}>`,
+        )
+        if (isFarm === -1) return false
+      }
 
-  const tableData = useMemo(() => {
-    if (debouncedQuery.split(' ')[0] === '') return data
-    return data.filter(
-      (pool) =>
-        debouncedQuery
-          ?.split(' ')
-          .includes(pool.data.token_x_details.symbol.toLowerCase()) ||
-        debouncedQuery
-          ?.split(' ')
-          .includes(pool.data.token_y_details.symbol.toLowerCase()),
-    )
-  }, [debouncedQuery, data])
+      if (tokenSymbols.length) {
+        if (
+          !tokenSymbols.every((symbol) => {
+            symbol = symbol.toLowerCase()
+
+            if (pool.token0.symbol.toLowerCase().includes(symbol)) {
+              return true
+            }
+
+            if (pool.token1.symbol.toLowerCase().includes(symbol)) {
+              return true
+            }
+
+            return false
+          })
+        ) {
+          return false
+        }
+      }
+
+      return true
+    })
+  }, [farms, swapContract, farmsOnly, tokenSymbols, pools])
 
   const state: Partial<TableState> = useMemo(() => {
     return {
@@ -101,9 +93,9 @@ export const PoolsTable = () => {
       <CardHeader>
         <CardTitle>
           Pools{' '}
-          {tableData?.length ? (
+          {filtered.length ? (
             <span className="text-gray-400 dark:text-slate-500">
-              ({tableData?.length})
+              ({filtered.length})
             </span>
           ) : null}
         </CardTitle>
@@ -115,7 +107,7 @@ export const PoolsTable = () => {
         loading={!pools && isLoading}
         linkFormatter={rowLink}
         columns={COLUMNS}
-        data={data}
+        data={filtered}
         pagination={true}
       />
     </Card>

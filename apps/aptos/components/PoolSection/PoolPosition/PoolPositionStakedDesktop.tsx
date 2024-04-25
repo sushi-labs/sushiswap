@@ -2,7 +2,7 @@ import { CardGroup, CardLabel } from '@sushiswap/ui'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 import { Pool } from 'utils/hooks/usePools'
-import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
+import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
 import { CardCurrencyAmountItem } from '../../CardCurrencyAmountItem'
 
 interface PoolPositionStakedDesktopProps {
@@ -22,7 +22,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
   value0,
   value1,
 }) => {
-  const { token0, token1 } = useTokensFromPools(row)
+  const { token0, token1 } = useTokensFromPool(row)
 
   return (
     <CardGroup>

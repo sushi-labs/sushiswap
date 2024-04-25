@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { SupportedNetwork, chains } from 'config/chains'
+import { Token } from 'utils/tokenType'
 import { useNetwork } from './useNetwork'
 
 export type Pool = {
@@ -26,18 +27,8 @@ export type Pool = {
     mint_cap: {
       dummy_field: boolean
     }
-    token_x_details: {
-      decimals: number
-      name: string
-      symbol: string
-      token_address: string
-    }
-    token_y_details: {
-      decimals: number
-      name: string
-      symbol: string
-      token_address: string
-    }
+    token_x_details: Token
+    token_y_details: Token
   }
 }
 
@@ -52,11 +43,28 @@ export async function fetchPoolsQueryFn({ network }: FetchPoolsQueryFn) {
 
   if (response.status === 200) {
     const data = await response.json()
-    const coinPair: Pool[] = data.filter((pair: Pool) => {
+    const coinPair: Pool[] = data.flatMap((pair: any) => {
+      if (!pair.type.includes(`::swap::TokenPairMetadata`)) {
+        return []
+      }
+
       pair.id = `${pair?.data?.token_x_details?.token_address}, ${pair?.data?.token_y_details?.token_address}`
-      return pair.type.includes(
-        `${chains[network].contracts.swap}::swap::TokenPairMetadata`,
-      )
+
+      pair.data.token_x_details = {
+        address: pair.data.token_x_details.token_address,
+        decimals: pair.data.token_x_details.decimals,
+        name: pair.data.token_x_details.name,
+        symbol: pair.data.token_x_details.symbol,
+      }
+
+      pair.data.token_y_details = {
+        address: pair.data.token_y_details.token_address,
+        decimals: pair.data.token_y_details.decimals,
+        name: pair.data.token_y_details.name,
+        symbol: pair.data.token_y_details.symbol,
+      }
+
+      return pair as Pool
     })
 
     return coinPair

@@ -3,19 +3,20 @@ import { NetworkConfig } from 'config/chains'
 import fromPairs from 'lodash.frompairs'
 import { useNetwork } from './useNetwork'
 
-interface UsePairsReserves {
-  pairAddresses: (string | undefined)[]
+interface UsePoolsReserves {
+  poolAddresses: string[] | undefined
   ledgerVersion?: number
 }
 
-interface GetPairReserves extends UsePairsReserves {
+interface GetPairReserves extends UsePoolsReserves {
+  poolAddresses: string[]
   network: NetworkConfig
 }
 
-export type PairReserve = Awaited<ReturnType<typeof getPairReserves>>[number]
+export type PoolReserve = Awaited<ReturnType<typeof getPoolReserves>>[number]
 
-export async function getPairReserves({
-  pairAddresses,
+export async function getPoolReserves({
+  poolAddresses,
   ledgerVersion,
   network,
 }: GetPairReserves) {
@@ -41,7 +42,7 @@ export async function getPairReserves({
     throw new Error('Failed to fetch pair reserves')
   }
 
-  const pairReservesQueries = await Promise.allSettled(pairAddresses.map(get))
+  const pairReservesQueries = await Promise.allSettled(poolAddresses.map(get))
 
   const pairReserves = pairReservesQueries.flatMap((p) => {
     if (p.status === 'fulfilled') {
@@ -69,17 +70,20 @@ export async function getPairReserves({
   )
 }
 
-export function usePairsReserves({
-  pairAddresses,
+export function usePoolsReserves({
+  poolAddresses,
   ledgerVersion,
-}: UsePairsReserves) {
+}: UsePoolsReserves) {
   const network = useNetwork()
 
   return useQuery({
-    queryKey: ['pairsReserves', { pairAddresses, ledgerVersion, network }],
-    queryFn: async () =>
-      getPairReserves({ pairAddresses, ledgerVersion, network }),
-    enabled: Boolean(pairAddresses),
+    queryKey: ['poolsReserves', { poolAddresses, ledgerVersion, network }],
+    queryFn: async () => {
+      if (!poolAddresses) throw new Error('No pool addresses')
+
+      return getPoolReserves({ poolAddresses, ledgerVersion, network })
+    },
+    enabled: Boolean(poolAddresses),
     staleTime: Infinity,
   })
 }

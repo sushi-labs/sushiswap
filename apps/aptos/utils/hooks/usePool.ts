@@ -19,6 +19,21 @@ export const getPoolQueryFn = async ({
   if (response.status === 200) {
     const pair = await response.json()
     pair.id = `${pair?.data?.token_x_details?.token_address}, ${pair?.data?.token_y_details?.token_address}`
+
+    pair.data.token_x_details = {
+      address: pair.data.token_x_details.token_address,
+      decimals: pair.data.token_x_details.decimals,
+      name: pair.data.token_x_details.name,
+      symbol: pair.data.token_x_details.symbol,
+    }
+
+    pair.data.token_y_details = {
+      address: pair.data.token_y_details.token_address,
+      decimals: pair.data.token_y_details.decimals,
+      name: pair.data.token_y_details.name,
+      symbol: pair.data.token_y_details.symbol,
+    }
+
     return pair as Pool
   }
 }

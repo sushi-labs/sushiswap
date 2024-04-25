@@ -107,17 +107,18 @@ export const RemoveSectionLegacy = ({
     if (!liquidityBalance) return
     try {
       const response = await signAndSubmitTransaction({
-        type: 'entry_function_payload',
-        type_arguments: [token0?.address, token1?.address],
-        arguments: [
-          Math.floor((liquidityBalance * +percentage) / 100),
-          minAmount0,
-          minAmount1,
-        ],
-        function: `${swapContract}::router::remove_liquidity`,
+        data: {
+          typeArguments: [token0?.address, token1?.address],
+          functionArguments: [
+            Math.floor((liquidityBalance * +percentage) / 100),
+            minAmount0,
+            minAmount1,
+          ],
+          function: `${swapContract}::router::remove_liquidity`,
+        },
       })
       await provider.waitForTransaction(response?.hash)
-      if (!response?.success) return
+      if (!response?.output.success) return
       const toastId = `success:${response?.hash}`
       createToast({
         summery: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,

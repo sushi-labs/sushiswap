@@ -1,10 +1,10 @@
 import { useIsMounted } from '@sushiswap/hooks'
+import { useSwap } from 'lib/swap/hooks/use-swap'
 import React, { useEffect, useTransition } from 'react'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
-import { useSwapRouter } from 'utils/hooks/useSwapRouter'
 import { CurrencyInput } from '../../common/currency/currency-input/currency-input'
 
 export const SimpleSwapToken0Input = () => {
@@ -23,7 +23,7 @@ export const SimpleSwapToken0Input = () => {
     setNoRouteFound,
   } = useSimpleSwapActions()
 
-  const { data: route, isFetching: isPriceFetching } = useSwapRouter()
+  const { data: route, isFetching: isPriceFetching } = useSwap()
 
   useEffect(() => {
     startTransition(() => {

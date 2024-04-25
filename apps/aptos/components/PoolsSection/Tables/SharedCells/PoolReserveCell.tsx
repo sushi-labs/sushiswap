@@ -1,16 +1,15 @@
+import { PoolExtended } from 'lib/pool/hooks/use-pools-extended'
 import React, { FC, useMemo } from 'react'
 import { formatNumber } from 'utils/format-number'
-import { Pool } from 'utils/hooks/usePools'
-import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
 import { Row } from './types'
 
-export const PoolReserveCell: FC<Row<Pool>> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPools(row)
+export const PoolReserveCell: FC<Row<PoolExtended>> = ({ row }) => {
+  const { token0, token1 } = row
 
-  const [reserve_x, reserve_y] = useMemo(() => {
+  const [reserve0, reserve1] = useMemo(() => {
     return [
-      formatNumber(Number(row?.data?.balance_x?.value), token0.decimals),
-      formatNumber(Number(row?.data?.balance_y?.value), token1.decimals),
+      formatNumber(Number(row?.reserve0), token0.decimals),
+      formatNumber(Number(row?.reserve1), token1.decimals),
     ]
   }, [row, token0, token1])
 
@@ -18,11 +17,11 @@ export const PoolReserveCell: FC<Row<Pool>> = ({ row }) => {
     <div className="flex items-center gap-1">
       <div className="flex flex-col gap-0.5">
         <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-          {parseFloat(reserve_x)} {token0?.symbol}{' '}
+          {parseFloat(reserve0)} {token0?.symbol}{' '}
           <span className="font-normal text-gray-900 dark:text-slate-500">
             /
           </span>{' '}
-          {parseFloat(reserve_y)} {token1?.symbol}{' '}
+          {parseFloat(reserve1)} {token1?.symbol}{' '}
         </span>
       </div>
     </div>

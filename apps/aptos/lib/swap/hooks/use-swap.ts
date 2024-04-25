@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { usePools } from 'utils/hooks/usePools'
 import { getSwapRoute } from 'utils/swap-get-route'
-import { useNetwork } from './useNetwork'
+import { useNetwork } from '../../../utils/hooks/useNetwork'
 
-export function useSwapRouter() {
+export function useSwap() {
   const { amount, token0, token1 } = useSimpleSwapState()
   const { account, connected } = useWallet()
   const { network } = useNetwork()

@@ -3,6 +3,10 @@ import { getBestRoute } from './get-best-route'
 self.onmessage = async ({
   data: args,
 }: MessageEvent<Parameters<typeof getBestRoute>>) => {
-  const result = getBestRoute(...args)
-  self.postMessage(result)
+  try {
+    const result = getBestRoute(...args)
+    self.postMessage(result)
+  } catch (e) {
+    self.postMessage(e)
+  }
 }

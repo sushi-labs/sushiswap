@@ -12,7 +12,7 @@ import { useNetwork } from 'utils/hooks/useNetwork'
 import { Pool } from 'utils/hooks/usePools'
 import { useStablePrice } from 'utils/hooks/useStablePrice'
 import { useTokenBalance } from 'utils/hooks/useTokenBalance'
-import { useTokensFromPools } from 'utils/hooks/useTokensFromPool'
+import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
 import { useTotalSupply } from 'utils/hooks/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from 'utils/hooks/useUnderlyingTokenBalanceFromPool'
 import { PoolPositionDesktop } from './PoolPositionDesktop'
@@ -29,7 +29,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
   isLoading,
   stakeAmount,
 }) => {
-  const { token0, token1 } = useTokensFromPools(row)
+  const { token0, token1 } = useTokensFromPool(row)
   const { account } = useWallet()
   const tokenAddress = row?.id
   const [reserve0, reserve1] = useMemo(() => {

@@ -20,7 +20,7 @@ import { useFarms, useIsFarm } from '../utils/hooks/useFarms'
 import { usePool } from '../utils/hooks/usePool'
 import { Pool } from '../utils/hooks/usePools'
 import { useTokenBalance } from '../utils/hooks/useTokenBalance'
-import { useTokensFromPools } from '../utils/hooks/useTokensFromPool'
+import { useTokensFromPool } from '../utils/hooks/useTokensFromPool'
 import { useTotalSupply } from '../utils/hooks/useTotalSupply'
 import { useUnderlyingTokenBalanceFromPool } from '../utils/hooks/useUnderlyingTokenBalanceFromPool'
 import {
@@ -56,7 +56,7 @@ export const ManageV2LiquidityCard: FC = () => {
     return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
   }, [pool])
 
-  const { token0, token1 } = useTokensFromPools(pool as Pool)
+  const { token0, token1 } = useTokensFromPool(pool as Pool)
 
   const { data: coinInfo } = useTotalSupply(tokenAddress)
 

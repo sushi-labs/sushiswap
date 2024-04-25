@@ -54,7 +54,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
   } = useNetwork()
 
   const router = useParams()
-  const tokenAddress = decodeURIComponent(router?.id)
+  const tokenAddress = decodeURIComponent(router?.id as string)
   const { signAndSubmitTransaction } = useWallet()
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
   const withdrawLiquidity = async () => {
@@ -65,20 +65,20 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
 
     try {
       const response = await signAndSubmitTransaction({
-        type: 'entry_function_payload',
-        type_arguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
-        arguments: [parseInt(String(Number(value) * 10 ** decimals))],
-        function: `${masterchefContract}::masterchef::withdraw`,
+        data: {
+          typeArguments: [`${swapContract}::swap::LPToken<${tokenAddress}>`],
+          functionArguments: [parseInt(String(Number(value) * 10 ** decimals))],
+          function: `${masterchefContract}::masterchef::withdraw`,
+        },
       })
       await provider.waitForTransaction(response?.hash)
       //return from here if response is failed
-      if (!response?.success) return
+      if (!response?.output.success) return
       const toastId = `completed:${response?.hash}`
       createToast({
         summery: `Successfully unstaked ${toRemove} ${lpTokenName} tokens`,
         toastId: toastId,
       })
-      setTransactionPending(false)
     } catch (err) {
       console.log(err)
       const toastId = `failed:${Math.random()}`

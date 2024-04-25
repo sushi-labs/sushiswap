@@ -2,15 +2,15 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Transition } from '@headlessui/react'
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
+import { useSwap } from 'lib/swap/hooks/use-swap'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'lib/swap/warningSeverity'
+} from 'lib/swap/warning-severity'
 import React from 'react'
 import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { formatNumber } from 'utils/format-number'
 import { useNetwork } from 'utils/hooks/useNetwork'
-import { useSwapRouter } from 'utils/hooks/useSwapRouter'
 import { Modal } from '../../../components/Modal/Modal'
 import { SwapRoute } from '../swap-route'
 
@@ -39,7 +39,7 @@ export const SimpleSwapTradeStats = () => {
     ? formatNumber(slippageAmount, token1 ? token1.decimals : 8)
     : 0
 
-  const { data: routes } = useSwapRouter()
+  const { data: routes } = useSwap()
 
   return (
     <Transition

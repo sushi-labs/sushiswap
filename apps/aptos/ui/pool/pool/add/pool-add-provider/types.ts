@@ -1,4 +1,4 @@
-import { PairReserve } from 'utils/hooks/usePairsReserves'
+import { PoolReserve } from 'utils/hooks/usePoolsReserves'
 import { Token } from 'utils/tokenType'
 
 export type State = {
@@ -12,7 +12,7 @@ export type State = {
   isTransactionPending: boolean
   isPriceFetching: boolean
   error: string
-  poolReserves: PairReserve | null
+  poolReserves: PoolReserve | null
   poolPairRatio: number | null
   slippageTolerance: number
   slippageAmount0: number
@@ -31,7 +31,7 @@ export type PoolApi = {
   setisTransactionPending(value: boolean): void
   setPriceFetching(value: boolean): void
   setError(value: string): void
-  setPoolReserves(value: PairReserve | null): void
+  setPoolReserves(value: PoolReserve | null): void
   setPoolPairRatio(value: number): void
   setSlippageAmount0(amount0: number): void
   setSlippageAmount1(amount1: number): void
@@ -49,7 +49,7 @@ export type Actions =
   | { type: 'setisTransactionPending'; value: boolean }
   | { type: 'setPriceFetching'; value: boolean }
   | { type: 'setError'; value: string }
-  | { type: 'setPoolReserves'; value: PairReserve | null }
+  | { type: 'setPoolReserves'; value: PoolReserve | null }
   | { type: 'setPoolPairRatio'; value: number }
   | { type: 'setSlippageTolerance'; value: number | string }
   | { type: 'setSlippageAmount0'; value: number }

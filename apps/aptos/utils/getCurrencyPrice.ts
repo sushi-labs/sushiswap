@@ -1,6 +1,6 @@
 import maxBy from 'lodash.maxby'
 import uniqBy from 'lodash.uniqby'
-import { Pair, PairState } from './hooks/usePairs'
+import { Pair, PairState } from './hooks/use-pools-by-tokens'
 import { Token } from './tokenType'
 
 export default function getCurrencyPrice(
