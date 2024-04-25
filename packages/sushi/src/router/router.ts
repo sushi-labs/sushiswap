@@ -360,6 +360,8 @@ export class Router {
     }
   }
 
+  static routeProcessor5Params = this.routeProcessor4Params
+
   // Human-readable route printing
   static routeToHumanString(
     poolCodesMap: Map<string, PoolCode>,
