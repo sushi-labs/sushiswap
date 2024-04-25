@@ -61,6 +61,7 @@ import {
   Client,
   HDAccount,
   Hex,
+  PublicClient,
   createPublicClient,
   custom,
   testActions,
@@ -91,13 +92,19 @@ function getRandomExp(rnd: () => number, min: number, max: number) {
 }
 
 async function setRouterPrimaryBalance(
-  _client: Client,
+  client: Client,
   router: Address,
   token?: Address,
   amount = 1n,
 ): Promise<boolean> {
   if (token) {
-    return await setTokenBalance(token, router, amount)
+    return await setTokenBalance(
+      token,
+      router,
+      amount,
+      client as PublicClient,
+      network.provider,
+    )
   }
   return false
 }
@@ -131,6 +138,7 @@ async function getTestEnvironment() {
   const user2 = mnemonicToAccount(accounts.mnemonic, { accountIndex: 1 })
 
   const chainId = network.config.chainId as ChainId
+  //await setRouterPrimaryBalance(client, user.address, USDC_ADDRESS[chainId])
   const dataFetcher = new DataFetcher(chainId, client)
 
   dataFetcher.startDataFetching()
