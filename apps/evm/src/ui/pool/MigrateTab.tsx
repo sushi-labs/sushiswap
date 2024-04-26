@@ -1,5 +1,6 @@
 'use client'
 
+import { CogIcon } from '@heroicons/react-v1/outline'
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Pool } from '@sushiswap/client'
 import {
@@ -24,14 +25,18 @@ import {
   DialogTitle,
   DialogTrigger,
   Dots,
+  IconButton,
   List,
   Message,
   Separator,
+  SettingsModule,
+  SettingsOverlay,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import {
   V3MigrateChainId,
   V3MigrateContractConfig,
+  getDefaultTTL,
   getMasterChefContractConfig,
   useAccount,
   useMasterChefWithdraw,
@@ -459,6 +464,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   const { approved: approvedMigrate } = useApproved(APPROVE_TAG_MIGRATE)
   const { data: deadline } = useTransactionDeadline({
+    storageKey: 'addLiquidity',
     chainId: pool.chainId as ChainId,
   })
 
@@ -718,9 +724,37 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                   </DialogTrigger>
                                   <DialogContent>
                                     <DialogHeader>
-                                      <DialogTitle>
-                                        Migrate Liquidity
-                                      </DialogTitle>
+                                      <div className="flex justify-between">
+                                        <DialogTitle>
+                                          Migrate Liquidity
+                                        </DialogTitle>
+                                        <SettingsOverlay
+                                          options={{
+                                            slippageTolerance: {
+                                              storageKey: 'addLiquidity',
+                                              defaultValue: '0.1',
+                                              title: 'Add Liquidity Slippage',
+                                            },
+                                            transactionDeadline: {
+                                              storageKey: 'addLiquidity',
+                                              defaultValue: getDefaultTTL(
+                                                pool.chainId as ChainId,
+                                              ).toString(),
+                                            },
+                                          }}
+                                          modules={[
+                                            SettingsModule.SlippageTolerance,
+                                            SettingsModule.TransactionDeadline,
+                                          ]}
+                                        >
+                                          <IconButton
+                                            name="Settings"
+                                            icon={CogIcon}
+                                            variant="secondary"
+                                            className="mr-12"
+                                          />
+                                        </SettingsOverlay>
+                                      </div>
                                       <DialogDescription>
                                         {token0?.symbol}/{token1?.symbol} •
                                         SushiSwap V3 • {feeAmount / 10000}%

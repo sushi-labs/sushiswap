@@ -52,6 +52,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const client = usePublicClient()
     const { address, chain } = useAccount()
     const { data: deadline } = useTransactionDeadline({
+      storageKey: 'removeLiquidity',
       chainId: _pool.chainId as ChainId,
     })
     const contract = useSushiSwapRouterContract(

@@ -30,6 +30,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   ConcentratedLiquidityPosition,
+  getDefaultTTL,
   getV3NonFungiblePositionManagerContractConfig,
   useAccount,
   useCall,
@@ -75,7 +76,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   const client = usePublicClient()
   const [value, setValue] = useState<string>('0')
   const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
-  const { data: deadline } = useTransactionDeadline({ chainId })
+  const { data: deadline } = useTransactionDeadline({
+    storageKey: 'removeLiquidity',
+    chainId,
+  })
   const debouncedValue = useDebounce(value, 300)
 
   const _onChange = useCallback(
@@ -338,8 +342,15 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                               defaultValue: '0.1',
                               title: 'Remove Liquidity Slippage',
                             },
+                            transactionDeadline: {
+                              storageKey: 'removeLiquidity',
+                              defaultValue: getDefaultTTL(chainId).toString(),
+                            },
                           }}
-                          modules={[SettingsModule.SlippageTolerance]}
+                          modules={[
+                            SettingsModule.SlippageTolerance,
+                            SettingsModule.TransactionDeadline,
+                          ]}
                         >
                           <IconButton
                             size="sm"
@@ -412,12 +423,38 @@ export const ConcentratedLiquidityRemoveWidget: FC<
               </CardFooter>
             </div>
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {token0?.symbol}/{token1?.symbol}
-                </DialogTitle>
-                <DialogDescription>Remove Liquidity</DialogDescription>
-              </DialogHeader>
+              <div className="flex justify-between">
+                <DialogHeader>
+                  <DialogTitle>
+                    {token0?.symbol}/{token1?.symbol}
+                  </DialogTitle>
+                  <DialogDescription>Remove Liquidity</DialogDescription>
+                </DialogHeader>
+                <SettingsOverlay
+                  options={{
+                    slippageTolerance: {
+                      storageKey: 'removeLiquidity',
+                      defaultValue: '0.1',
+                      title: 'Remove Liquidity Slippage',
+                    },
+                    transactionDeadline: {
+                      storageKey: 'removeLiquidity',
+                      defaultValue: getDefaultTTL(chainId).toString(),
+                    },
+                  }}
+                  modules={[
+                    SettingsModule.SlippageTolerance,
+                    SettingsModule.TransactionDeadline,
+                  ]}
+                >
+                  <IconButton
+                    name="Settings"
+                    icon={CogIcon}
+                    variant="secondary"
+                    className="mr-12"
+                  />
+                </SettingsOverlay>
+              </div>
               <div className="flex flex-col gap-4">
                 <List className="!pt-0">
                   <List.Control>

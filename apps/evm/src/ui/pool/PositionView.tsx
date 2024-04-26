@@ -33,6 +33,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import {
+  getDefaultTTL,
   useAccount,
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
@@ -242,10 +243,15 @@ const Component: FC<{ id: string }> = ({ id }) => {
                               defaultValue: '0.1',
                               title: 'Add Liquidity Slippage',
                             },
+                            transactionDeadline: {
+                              storageKey: 'addLiquidity',
+                              defaultValue: getDefaultTTL(chainId).toString(),
+                            },
                           }}
                           modules={[
                             SettingsModule.CustomTokens,
                             SettingsModule.SlippageTolerance,
+                            SettingsModule.TransactionDeadline,
                           ]}
                         >
                           <IconButton

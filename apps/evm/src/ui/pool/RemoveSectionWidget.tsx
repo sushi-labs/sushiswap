@@ -27,6 +27,7 @@ import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 
+import { getDefaultTTL } from '@sushiswap/wagmi'
 import { usePoolPosition } from './PoolPositionProvider'
 
 interface RemoveSectionWidgetProps {
@@ -42,6 +43,7 @@ interface RemoveSectionWidgetProps {
 }
 
 export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
+  chainId,
   percentage,
   setPercentage,
   token0Minimum,
@@ -65,8 +67,15 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                 defaultValue: '0.1',
                 title: 'Remove Liquidity Slippage',
               },
+              transactionDeadline: {
+                storageKey: 'removeLiquidity',
+                defaultValue: getDefaultTTL(chainId).toString(),
+              },
             }}
-            modules={[SettingsModule.SlippageTolerance]}
+            modules={[
+              SettingsModule.SlippageTolerance,
+              SettingsModule.TransactionDeadline,
+            ]}
           >
             <IconButton
               size="sm"
