@@ -138,7 +138,6 @@ async function getTestEnvironment() {
   const user2 = mnemonicToAccount(accounts.mnemonic, { accountIndex: 1 })
 
   const chainId = network.config.chainId as ChainId
-  //await setRouterPrimaryBalance(client, user.address, USDC_ADDRESS[chainId])
   const dataFetcher = new DataFetcher(chainId, client)
 
   dataFetcher.startDataFetching()
@@ -815,12 +814,12 @@ describe('End-to-end RouteProcessor5 test', async () => {
   }
 
   if (process.env.ALCHEMY_ID) {
-    it('V3,  Native => USDC => NATIVE', async () => {
+    it('V3 only,  Native => USDC => NATIVE', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       let amountAndBlock: [bigint | undefined, bigint] = [undefined, 1n]
       const amountIn =
-        chainId === ChainId.ETHEREUM ? 100 * 1e18 : 10_000_000 * 1e18
+        chainId === ChainId.ETHEREUM ? 100 * 1e18 : 100_000 * 1e18
       amountAndBlock[0] = BigInt(amountIn) // should be partial
       amountAndBlock = await updMakeSwap(
         env,
