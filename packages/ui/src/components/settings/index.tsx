@@ -23,12 +23,14 @@ import {
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
+import { TransactionDeadline } from './TransactionDeadline'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
+  TransactionDeadline = 'TransactionDeadline',
 }
 
 interface SettingsOverlayProps {
@@ -37,6 +39,11 @@ interface SettingsOverlayProps {
   externalModules?: FC[]
   options?: {
     slippageTolerance?: {
+      storageKey?: string
+      defaultValue?: string
+      title?: string
+    }
+    transactionDeadline?: {
       storageKey?: string
       defaultValue?: string
       title?: string
@@ -117,6 +124,9 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
               {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
               {modules.includes(SettingsModule.CarbonOffset) && (
                 <CarbonOffset />
+              )}
+              {modules.includes(SettingsModule.TransactionDeadline) && (
+                <TransactionDeadline options={options?.transactionDeadline} />
               )}
             </List.Control>
           </List>
