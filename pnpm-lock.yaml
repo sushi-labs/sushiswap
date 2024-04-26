@@ -1820,6 +1820,9 @@ importers:
       lodash.flatmap:
         specifier: 4.5.0
         version: 4.5.0
+      memoize-fs:
+        specifier: github:rouzwelt/memoize-fs#e5fcc9f6effc4ad087514372a53a49d380520ad5
+        version: github.com/rouzwelt/memoize-fs/e5fcc9f6effc4ad087514372a53a49d380520ad5
       numeral:
         specifier: 2.0.6
         version: 2.0.6
@@ -23474,7 +23477,7 @@ packages:
     requiresBuild: true
     dependencies:
       bn.js: 4.12.0
-      elliptic: 6.5.4
+      elliptic: 6.5.5
     optional: true
 
   /create-hash@1.2.0:
@@ -25003,7 +25006,6 @@ packages:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
-    optional: true
 
   /emittery@0.13.1:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
@@ -26639,7 +26641,7 @@ packages:
     deprecated: Deprecated in favor of '@metamask/eth-sig-util'
     dependencies:
       buffer: 5.7.1
-      elliptic: 6.5.4
+      elliptic: 6.5.5
       ethereumjs-abi: 0.6.5
       ethereumjs-util: 5.2.1
       tweetnacl: 1.0.3
@@ -26816,7 +26818,7 @@ packages:
     dependencies:
       bn.js: 4.12.0
       create-hash: 1.2.0
-      elliptic: 6.5.4
+      elliptic: 6.5.5
       ethereum-cryptography: 0.1.3
       rlp: 2.2.7
 
@@ -26825,7 +26827,7 @@ packages:
     dependencies:
       bn.js: 4.12.0
       create-hash: 1.2.0
-      elliptic: 6.5.4
+      elliptic: 6.5.5
       ethereum-cryptography: 0.1.3
       ethjs-util: 0.1.6
       rlp: 2.2.7
@@ -32202,6 +32204,11 @@ packages:
   /merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
+
+  /meriyah@4.4.2:
+    resolution: {integrity: sha512-fENZIbs4tscI3IGRGtPrCoW4H4oGzVQrQCVCGRv+92kFXKkvxr52ZNR684ICvDC/UBWg9ioGc2X6pMnWOtRYwA==}
+    engines: {node: '>=10.4.0'}
+    dev: false
 
   /merkle-patricia-tree@2.3.2:
     resolution: {integrity: sha512-81PW5m8oz/pz3GvsAwbauj7Y00rqm81Tzad77tHBwU7pIAtN+TJnMSOJhxBKflSVYhptMMb9RskhqHqrSm1V+g==}
@@ -40263,12 +40270,12 @@ packages:
     resolution: {integrity: sha512-PBdZ03m1kBnQ5cjjO0ZvJMJS+QsbyIcFwi4hY4U76OQsCO9JrOYjbCFgIF76ccFg9xnJo7ZHPkqyj1GqmdS7MA==}
     dependencies:
       call-bind: 1.0.7
-      define-properties: 1.2.0
+      define-properties: 1.2.1
       for-each: 0.3.3
       has-proto: 1.0.3
       has-symbols: 1.0.3
       object.getownpropertydescriptors: 2.1.6
-      safe-array-concat: 1.0.0
+      safe-array-concat: 1.1.2
 
   /util@0.12.5:
     resolution: {integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==}
@@ -41316,6 +41323,7 @@ packages:
 
   /web3-provider-engine@14.2.1:
     resolution: {integrity: sha512-iSv31h2qXkr9vrL6UZDm4leZMc32SjWJFGOp/D92JXfcEboCqraZyuExDkpxKw8ziTufXieNM7LSXNHzszYdJw==}
+    deprecated: 'This package has been deprecated, see the README for details: https://github.com/MetaMask/web3-provider-engine'
     dependencies:
       async: 2.6.4
       backoff: 2.5.0
@@ -42355,3 +42363,14 @@ packages:
     dependencies:
       bn.js: 4.12.0
       ethereumjs-util: 6.2.1
+
+  github.com/rouzwelt/memoize-fs/e5fcc9f6effc4ad087514372a53a49d380520ad5:
+    resolution: {tarball: https://codeload.github.com/rouzwelt/memoize-fs/tar.gz/e5fcc9f6effc4ad087514372a53a49d380520ad5}
+    name: memoize-fs
+    version: 3.0.0
+    engines: {node: '>= 10.13.0', npm: '>= 6.0.0'}
+    prepare: true
+    requiresBuild: true
+    dependencies:
+      meriyah: 4.4.2
+    dev: false
