@@ -70,10 +70,16 @@ import {
 import { mnemonicToAccount } from 'viem/accounts'
 import { hardhat } from 'viem/chains'
 
+import path from 'path'
+import { fileURLToPath } from 'url'
 import RouteProcessor5 from '../artifacts/contracts/RouteProcessor5.sol/RouteProcessor5.json' assert {
   type: 'json',
 }
 import { getAllPoolCodes } from './utils/getAllPoolCodes.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const snapshotDir = path.resolve(__dirname, './pool-snapshots/')
 
 const { config, network } = hre
 
@@ -149,6 +155,7 @@ async function getTestEnvironment() {
       chainId,
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,
+      snapshotDir,
     )
     poolList.forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
   }
