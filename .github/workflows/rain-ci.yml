@@ -16,11 +16,11 @@ jobs:
       - name: Build Sushi Lib
         run: nix develop -c pnpm exec turbo run build --filter=./packages/sushi
 
-      - name: Lint Sushi Lib
+      - name: Lint
         run: nix develop -c pnpm lint
 
-      - name: Pnpm Check Types
-        run: nix develop -c pnpm check
+      - name: Check Sushi Lib Types
+        run: nix develop -c pnpm exec turbo run check --filter=./packages/sushi
 
       - name: Test Sushi Lib
         run: nix develop -c pnpm exec turbo run test --filter=./packages/sushi
