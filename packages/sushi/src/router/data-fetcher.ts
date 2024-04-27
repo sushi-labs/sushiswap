@@ -31,7 +31,13 @@ import type { PoolCode } from './pool-codes/index.js'
 
 // options for data fetching, such as pinning block number and memoize
 export type DataFetcherOptions = {
+  /**
+   * The pinned block number when getting onchain data
+   * this option is usefull for reproducing the route,
+   * price, etc of a certain block
+   */
   blockNumber?: bigint
+  /** Determines if memoizer should be used or not */
   memoize?: boolean
 }
 
