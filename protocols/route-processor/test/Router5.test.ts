@@ -2,7 +2,11 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { setTokenBalance } from '@sushiswap/tines-sandbox'
+import {
+  getBalance,
+  setTokenBalance,
+  tokenContract,
+} from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
 import { signERC2612Permit } from 'eth-permit'
 import hre from 'hardhat'
@@ -509,14 +513,10 @@ async function checkTransferAndRoute(
   await dataUpdated(env, waitBlock)
 
   if (fromToken instanceof Token) {
-    await env.client.writeContract({
-      chain: null,
-      abi: erc20Abi,
-      address: fromToken.address as Address,
-      account: env.user.address,
-      functionName: 'approve',
-      args: [env.rp.address, amountIn],
-    })
+    await tokenContract(env.client, fromToken).write.approve(
+      [env.rp.address, amountIn],
+      { chain: null, account: env.user.address },
+    )
   }
 
   let pcMap: Map<string, PoolCode>
@@ -555,25 +555,11 @@ async function checkTransferAndRoute(
     address: env.user2.address,
   })
 
-  let balanceOutBIBefore: bigint
-  let toTokenContract: Contract<typeof weth9Abi> | undefined = undefined
-  if (toToken instanceof Token) {
-    toTokenContract = {
-      abi: weth9Abi,
-      address: toToken.address as Address,
-    }
-
-    balanceOutBIBefore = await env.client.readContract({
-      ...(toTokenContract as NonNullable<typeof toTokenContract>),
-      account: env.user.address,
-      functionName: 'balanceOf',
-      args: [env.user.address],
-    })
-  } else {
-    balanceOutBIBefore = await env.client.getBalance({
-      address: env.user.address,
-    })
-  }
+  const balanceOutBIBefore = await getBalance(
+    env.client,
+    toToken,
+    env.user.address,
+  )
   const tx = await env.client.writeContract({
     ...env.rp,
     chain: null,
@@ -601,22 +587,18 @@ async function checkTransferAndRoute(
     })
   }
 
-  let balanceOutBI: bigint
-  if (toTokenContract) {
-    balanceOutBI =
-      (await env.client.readContract({
-        ...(toTokenContract as NonNullable<typeof toTokenContract>),
-        account: env.user.address,
-        functionName: 'balanceOf',
-        args: [env.user.address],
-      })) - balanceOutBIBefore
-  } else {
-    balanceOutBI =
-      (await env.client.getBalance({ address: env.user.address })) -
-      balanceOutBIBefore
-    balanceOutBI = balanceOutBI + receipt.effectiveGasPrice * receipt.gasUsed
-    balanceOutBI = balanceOutBI + transferValue
-  }
+  const balanceOutBIAfter = await getBalance(
+    env.client,
+    toToken,
+    env.user.address,
+  )
+  const balanceOutBI =
+    toToken instanceof Token
+      ? balanceOutBIAfter - balanceOutBIBefore
+      : balanceOutBIAfter -
+        balanceOutBIBefore +
+        receipt.effectiveGasPrice * receipt.gasUsed +
+        transferValue
   expect(balanceOutBI >= rpParams.amountOutMin).equal(true)
 
   const balanceUser2After = await env.client.getBalance({
@@ -626,6 +608,117 @@ async function checkTransferAndRoute(
   expect(transferredValue === transferValue).equal(true)
 
   return [balanceOutBI, receipt.blockNumber]
+}
+
+async function checkTransferValueInput(
+  env: TestEnvironment,
+  fromToken: Type,
+  toToken: Type,
+  lastCallResult: bigint | [bigint | undefined, bigint],
+  usedPools: Set<string>,
+): Promise<[bigint | undefined, bigint]> {
+  const [amountIn, waitBlock] =
+    typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  await dataUpdated(env, waitBlock)
+
+  if (fromToken instanceof Token) {
+    await tokenContract(env.client, fromToken).write.approve(
+      [env.rp.address, amountIn],
+      { chain: null, account: env.user.address },
+    )
+  }
+
+  let pcMap: Map<string, PoolCode>
+  if (UPDATE_POOL_STATES) {
+    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  } else {
+    pcMap = new Map()
+    Array.from(env.poolCodes.entries()).forEach((e) => {
+      if (!usedPools.has(e[1].pool.address)) pcMap.set(e[0], e[1])
+    })
+  }
+
+  const transferValue = getBigInt(Number(amountIn) * 0.01) // let's take 1% of input
+  const route = Router.findBestRoute(
+    pcMap,
+    env.chainId,
+    fromToken,
+    amountIn - transferValue,
+    toToken,
+    30e9,
+  )
+  const rpParams = Router.routeProcessor5Params(
+    pcMap,
+    route,
+    fromToken,
+    toToken,
+    env.user.address,
+    env.rp.address,
+  )
+
+  const balanceUser2Before = await getBalance(
+    env.client,
+    fromToken,
+    env.user2.address,
+  )
+
+  const balanceOutBIBefore = await getBalance(
+    env.client,
+    toToken,
+    env.user.address,
+  )
+  const tx = await env.client.writeContract({
+    ...env.rp,
+    chain: null,
+    functionName: 'processRouteWithTransferValueInput',
+    args: [
+      env.user2.address,
+      transferValue,
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+    ],
+    account: env.user.address,
+    value:
+      rpParams.value === undefined ? undefined : rpParams.value + transferValue,
+  })
+  const receipt = await env.client.waitForTransactionReceipt({ hash: tx })
+
+  if (!UPDATE_POOL_STATES) {
+    route.legs.forEach((l) => {
+      if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
+        usedPools.add(l.poolAddress)
+      }
+    })
+  }
+
+  const balanceOutBIAfter = await getBalance(
+    env.client,
+    toToken,
+    env.user.address,
+  )
+  const balanceOutBI =
+    toToken instanceof Token
+      ? balanceOutBIAfter - balanceOutBIBefore
+      : balanceOutBIAfter -
+        balanceOutBIBefore +
+        receipt.effectiveGasPrice * receipt.gasUsed +
+        transferValue
+  expect(balanceOutBI >= rpParams.amountOutMin).equal(true)
+  const balanceUser2After = await getBalance(
+    env.client,
+    fromToken,
+    env.user2.address,
+  )
+  const transferredValue = balanceUser2After - balanceUser2Before
+  expect(transferredValue).equal(transferValue)
+
+  return [balanceOutBIAfter, receipt.blockNumber]
 }
 
 // skipped because took too long time. Unskip to check the RP
@@ -1033,6 +1126,34 @@ describe('End-to-end RouteProcessor5 test', async () => {
         throwed,
         'Transfer value to not payable address should fail',
       ).equal(true)
+    })
+
+    it.only('processRouteWithTransferValueInput Native => SUSHI => USDC => Native', async () => {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      intermidiateResult[0] = BigInt(1e18)
+      //env.user2.address = '0x0000000000000000000000000000000000000001'
+      intermidiateResult = await checkTransferValueInput(
+        env,
+        Native.onChain(chainId),
+        SUSHI_LOCAL,
+        intermidiateResult,
+        usedPools,
+      )
+      intermidiateResult = await checkTransferValueInput(
+        env,
+        SUSHI_LOCAL,
+        USDC_LOCAL,
+        intermidiateResult,
+        usedPools,
+      )
+      intermidiateResult = await checkTransferValueInput(
+        env,
+        USDC_LOCAL,
+        Native.onChain(chainId),
+        intermidiateResult,
+        usedPools,
+      )
     })
   }
 
