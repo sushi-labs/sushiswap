@@ -19,7 +19,7 @@ jobs:
       - name: Lint Sushi Lib
         run: nix develop -c pnpm lint
 
-      - name: Check
+      - name: Pnpm Check Types
         run: nix develop -c pnpm check
 
       - name: Test Sushi Lib
