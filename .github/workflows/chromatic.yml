@@ -1,12 +1,13 @@
 name: 'Chromatic'
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    paths:
-      - ".github/workflows/chromatic.yml"
-      - "config/tailwindcss/**"
-      - "packages/ui/**"
+  # pull_request:
+  #   types: [opened, synchronize]
+  #   paths:
+  #     - ".github/workflows/chromatic.yml"
+  #     - "config/tailwindcss/**"
+  #     - "packages/ui/**"
+  workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
