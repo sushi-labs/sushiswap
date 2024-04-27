@@ -31,7 +31,7 @@ import type { PoolCode } from './pool-codes/index.js'
 
 // options for data fetching, such as pinning block number and memoize
 export type DataFetcherOptions = {
-  blockNumber?: bigint,
+  blockNumber?: bigint
   memoize?: boolean
 }
 
@@ -189,9 +189,11 @@ export class DataFetcher {
             currency0.wrapped,
             currency1.wrapped,
             excludePools,
-            options
+            options,
           )
-        } catch { /**/ }
+        } catch {
+          /**/
+        }
       }
     } else {
       const [token0, token1] =

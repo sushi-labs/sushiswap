@@ -9,6 +9,7 @@ import {
 } from '../../config/index.js'
 import { Token } from '../../currency/index.js'
 import { ConstantProductRPool, RToken } from '../../tines/index.js'
+import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import {
   PoolResponse2,
@@ -16,10 +17,9 @@ import {
   filterTopPools,
   mapToken,
 } from '../lib/api.js'
+import { memoizer } from '../memoizer.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
-import { memoizer } from '../memoizer.js'
-import { DataFetcherOptions } from '../data-fetcher.js'
 
 interface PoolInfo {
   poolCode: PoolCode
@@ -222,7 +222,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall);
+    const multicallMemoize = await memoizer.fn(this.client.multicall)
 
     const multicallData = {
       multicallAddress: this.client.chain?.contracts?.multicall3
@@ -239,25 +239,23 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           }) as const,
       ),
     }
-    const reserves = options?.memoize 
-      ? await (multicallMemoize(multicallData) as Promise<any>)
-      .catch((e) => {
-        console.warn(
-          `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-            e.message
-          }`,
-        )
-        return undefined
-      })
-      : await this.client.multicall(multicallData)
-      .catch((e) => {
-        console.warn(
-          `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-            e.message
-          }`,
-        )
-        return undefined
-      })
+    const reserves = options?.memoize
+      ? await (multicallMemoize(multicallData) as Promise<any>).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+      : await this.client.multicall(multicallData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
 
     poolCodesToCreate.forEach((poolCode, i) => {
       const pool = poolCode.pool

@@ -18,12 +18,12 @@ import {
 } from '../../currency/index.js'
 import { Native, Token, Type } from '../../currency/index.js'
 import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
+import { DataFetcherOptions } from '../data-fetcher.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
+import { memoizer } from '../memoizer.js'
 import { CurvePoolCode } from '../pool-codes/CurvePool.js'
 import { PoolCode } from '../pool-codes/PoolCode.js'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider.js'
-import { DataFetcherOptions } from '../data-fetcher.js'
-import { memoizer } from '../memoizer.js'
 
 const stETH = new Token({
   chainId: 1,
@@ -386,8 +386,8 @@ export class CurveProvider extends LiquidityProvider {
     const pools: Map<Address, [CurvePoolType, Type[]]> = new Map()
     let currencyCombinations = getCurrencyCombinations(this.chainId, t0, t1)
 
-    const multicallMemoize = await memoizer.fn(this.client.multicall);
-    
+    const multicallMemoize = await memoizer.fn(this.client.multicall)
+
     for (let i = 0; currencyCombinations.length > 0; ++i) {
       const calls = (CURVE_FACTORY_ADDRESSES[this.chainId] ?? []).flatMap(
         (factory) =>
@@ -410,16 +410,19 @@ export class CurveProvider extends LiquidityProvider {
         blockNumber: options?.blockNumber,
         contracts: calls,
       }
-      const newFoundPools: ({
-          error?: undefined;
-          result: `0x${string}`;
-          status: "success";
-      } | {
-          error: Error;
-          result?: undefined;
-          status: "failure";
-      })[] = options?.memoize
-        ? await multicallMemoize(newfoundPoolsData) as any
+      const newFoundPools: (
+        | {
+            error?: undefined
+            result: `0x${string}`
+            status: 'success'
+          }
+        | {
+            error: Error
+            result?: undefined
+            status: 'failure'
+          }
+      )[] = options?.memoize
+        ? ((await multicallMemoize(newfoundPoolsData)) as any)
         : await this.client.multicall(newfoundPoolsData)
 
       newFoundPools.forEach((pool, i) => {
@@ -451,7 +454,7 @@ export class CurveProvider extends LiquidityProvider {
     options?: DataFetcherOptions,
   ): Promise<(number[] | undefined)[]> {
     if (this.chainId === ChainId.ETHEREUM) {
-      const multicallMemoize = await memoizer.fn(this.client.multicall);
+      const multicallMemoize = await memoizer.fn(this.client.multicall)
 
       const ratiosData = {
         multicallAddress: this.client.chain?.contracts?.multicall3
@@ -492,7 +495,7 @@ export class CurveProvider extends LiquidityProvider {
         ],
       } as any
       const ratios = options?.memoize
-        ? await multicallMemoize(ratiosData) as any
+        ? ((await multicallMemoize(ratiosData)) as any)
         : await this.client.multicall(ratiosData)
 
       return pools.map(([poolAddress]) => {
@@ -540,7 +543,7 @@ export class CurveProvider extends LiquidityProvider {
         T
       >['args'],
     ) => {
-      const multicallMemoize = await memoizer.fn(this.client.multicall);
+      const multicallMemoize = await memoizer.fn(this.client.multicall)
       const data = {
         multicallAddress: this.client.chain?.contracts?.multicall3
           ?.address as '0x${string}',
@@ -555,7 +558,7 @@ export class CurveProvider extends LiquidityProvider {
         })) as any,
       } as any
       return options?.memoize
-        ? multicallMemoize(data) as any
+        ? (multicallMemoize(data) as any)
         : this.client.multicall(data)
     }
     // const poolContract = getContract({
