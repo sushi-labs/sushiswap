@@ -13,14 +13,14 @@ jobs:
       - name: Install deps
         run: nix develop -c pnpm install --frozen-lockfile
 
-      - name: Build Sushi Lib
+      - name: Build ./packages/sushi
         run: nix develop -c pnpm exec turbo run build --filter=./packages/sushi
 
       - name: Lint
         run: nix develop -c pnpm lint
 
-      - name: Check Sushi Lib Types
+      - name: Check ./packages/sushi Types
         run: nix develop -c pnpm exec turbo run check --filter=./packages/sushi
 
-      - name: Test Sushi Lib
+      - name: Test ./packages/sushi
         run: nix develop -c pnpm exec turbo run test --filter=./packages/sushi
