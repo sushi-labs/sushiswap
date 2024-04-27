@@ -47,6 +47,7 @@ export enum LiquidityProviders {
   KinetixV3 = 'KinetixV3',
   Camelot = 'Camelot',
   Enosys = 'Enosys',
+  BlazeSwap = 'BlazeSwap',
 }
 
 export abstract class LiquidityProvider {
