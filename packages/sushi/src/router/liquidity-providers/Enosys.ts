@@ -10,7 +10,7 @@ import { StaticPool, UniswapV2BaseProvider } from './UniswapV2Base.js'
 // Enosys has multiple initCodeHashes, so it is required to override the pool address
 // calculations methods to use all the available initCodeHashes to generate multiple
 // pool addresses for a pair and then the wrong ones will be filtered out automatically
-// on multicall, just the as same for any other non existant calculated pool addresses
+// on multicall, just the same as any other non existant calculated pool addresses
 export class EnosysProvider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
