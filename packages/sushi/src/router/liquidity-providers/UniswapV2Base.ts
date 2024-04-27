@@ -1,7 +1,7 @@
 import { getCreate2Address } from '@ethersproject/address'
 import { add, getUnixTime } from 'date-fns'
 import { Address, Hex, PublicClient, encodePacked, keccak256 } from 'viem'
-import { getReservesAbi } from '../../abi/index.js'
+import { getReservesAbi as abi } from '../../abi/index.js'
 import { ChainId } from '../../chain/index.js'
 import {
   ADDITIONAL_BASES,
@@ -26,7 +26,7 @@ interface PoolInfo {
   validUntilTimestamp: number
 }
 
-interface StaticPool {
+export interface StaticPool {
   address: Address
   token0: Token
   token1: Token
@@ -59,6 +59,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   refreshAvailablePoolsTimestamp = getUnixTime(
     add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }),
   )
+  getReservesAbi: any = abi
 
   constructor(
     chainId: ChainId,
@@ -107,7 +108,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
             ({
               address: pool.address as Address,
               chainId: this.chainId,
-              abi: getReservesAbi,
+              abi,
               functionName: 'getReserves',
             }) as const,
         ),
@@ -234,7 +235,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           ({
             address: poolCode.pool.address as Address,
             chainId: this.chainId,
-            abi: getReservesAbi,
+            abi: this.getReservesAbi,
             functionName: 'getReserves',
           }) as const,
       ),
@@ -307,7 +308,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 ({
                   address: poolCode.pool.address as Address,
                   chainId: this.chainId,
-                  abi: getReservesAbi,
+                  abi,
                   functionName: 'getReserves',
                 }) as const,
             ),
@@ -330,7 +331,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
                 ({
                   address: poolCode.pool.address as Address,
                   chainId: this.chainId,
-                  abi: getReservesAbi,
+                  abi,
                   functionName: 'getReserves',
                 }) as const,
             ),

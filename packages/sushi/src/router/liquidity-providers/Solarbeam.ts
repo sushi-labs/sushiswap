@@ -3,22 +3,21 @@ import { ChainId } from '../../chain/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
-export class BiswapProvider extends UniswapV2BaseProvider {
-  override fee = 0.002
+export class SolarbeamProvider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
-      [ChainId.BSC]: '0x858E3312ed3A876947EA49d572A7C42DE08af7EE',
+      [ChainId.MOONBEAM]: '0x19B85ae92947E0725d5265fFB3389e7E4F191FDa',
     } as const
     const initCodeHash = {
-      [ChainId.BSC]:
-        '0xfea293c909d87cd4153593f077b76bb7e94340200f4ee84211ae8e4f9bd7ffdf',
+      [ChainId.MOONBEAM]:
+        '0x9a100ded5f254443fbd264cb7e87831e398a8b642e061670a9bc35ba27293dbf',
     } as const
     super(chainId, web3Client, factory, initCodeHash)
   }
   getType(): LiquidityProviders {
-    return LiquidityProviders.Biswap
+    return LiquidityProviders.Solarbeam
   }
   getPoolProviderName(): string {
-    return 'Biswap'
+    return 'Solarbeam'
   }
 }

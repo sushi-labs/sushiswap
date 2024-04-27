@@ -12,13 +12,14 @@ export enum LiquidityProviders {
   Trident = 'Trident',
   QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
-  PancakeSwap = 'PancakeSwap',
+  PancakeSwapV2 = 'PancakeSwapV2',
   PancakeSwapV3 = 'PancakeSwapV3',
   TraderJoe = 'TraderJoe',
   Dfyn = 'Dfyn',
   Elk = 'Elk',
   JetSwap = 'JetSwap',
-  SpookySwap = 'SpookySwap',
+  SpookySwapV2 = 'SpookySwapV2',
+  SpookySwapV3 = 'SpookySwapV3',
   NetSwap = 'NetSwap',
   NativeWrap = 'NativeWrap',
   HoneySwap = 'HoneySwap',
@@ -42,7 +43,10 @@ export enum LiquidityProviders {
   ThrusterV3 = 'ThrusterV3',
   DyorV2 = 'DyorV2',
   HyperBlast = 'HyperBlast',
+  KinetixV2 = 'KinetixV2',
   KinetixV3 = 'KinetixV3',
+  Camelot = 'Camelot',
+  Enosys = 'Enosys',
 }
 
 export abstract class LiquidityProvider {
