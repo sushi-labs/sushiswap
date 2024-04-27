@@ -12,6 +12,11 @@ import {
 import {
   ARB,
   DAI,
+  ENOSYS_APS,
+  ENOSYS_BNZ,
+  ENOSYS_EETH,
+  ENOSYS_EQNT,
+  ENOSYS_HLN,
   FRAX,
   GNO,
   MATIC,
@@ -353,6 +358,17 @@ export const DEFAULT_BASES = {
     USDC[ChainId.CRONOS],
   ],
   [ChainId.BLAST]: [Native.onChain(ChainId.BLAST), USDB[ChainId.BLAST]],
+  [ChainId.FLARE]: [
+    Native.onChain(ChainId.FLARE),
+    WNATIVE[ChainId.FLARE],
+    WETH9[ChainId.FLARE],
+    USDT[ChainId.FLARE],
+    ENOSYS_BNZ,
+    ENOSYS_EQNT,
+    ENOSYS_HLN,
+    ENOSYS_APS,
+    ENOSYS_EETH,
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const satisfies Record<ChainId, Readonly<(Token | Native)[]>>
 
