@@ -18,6 +18,8 @@ import {
 } from '../lib/api.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
+import { memoizer } from '../memoizer.js'
+import { DataFetcherOptions } from '../data-fetcher.js'
 
 interface PoolInfo {
   poolCode: PoolCode
@@ -160,6 +162,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>,
+    options?: DataFetcherOptions,
   ): Promise<void> {
     const topPoolAddresses = Array.from(this.topPools.keys())
     let pools =
@@ -219,21 +222,34 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    const reserves = await this.client
-      .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3
-          ?.address as Address,
-        allowFailure: true,
-        contracts: poolCodesToCreate.map(
-          (poolCode) =>
-            ({
-              address: poolCode.pool.address as Address,
-              chainId: this.chainId,
-              abi: getReservesAbi,
-              functionName: 'getReserves',
-            }) as const,
-        ),
+    const multicallMemoize = await memoizer.fn(this.client.multicall);
+
+    const multicallData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: poolCodesToCreate.map(
+        (poolCode) =>
+          ({
+            address: poolCode.pool.address as Address,
+            chainId: this.chainId,
+            abi: getReservesAbi,
+            functionName: 'getReserves',
+          }) as const,
+      ),
+    }
+    const reserves = options?.memoize 
+      ? await (multicallMemoize(multicallData) as Promise<any>)
+      .catch((e) => {
+        console.warn(
+          `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+            e.message
+          }`,
+        )
+        return undefined
       })
+      : await this.client.multicall(multicallData)
       .catch((e) => {
         console.warn(
           `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
@@ -536,8 +552,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>,
+    options?: DataFetcherOptions,
   ): Promise<void> {
-    await this.getOnDemandPools(t0, t1, excludePools)
+    await this.getOnDemandPools(t0, t1, excludePools, options)
   }
 
   /**
