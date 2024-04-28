@@ -1,5 +1,5 @@
+import { Token } from 'lib/types/token'
 import React from 'react'
-import { Token } from 'utils/tokenType'
 
 interface CurrencyIcon {
   currency: Token | undefined

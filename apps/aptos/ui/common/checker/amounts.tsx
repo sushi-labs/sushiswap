@@ -2,9 +2,9 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import { useTokenBalances } from 'lib/common/use-token-balances'
 import { FC, useMemo } from 'react'
 import { ZERO } from 'sushi/math'
-import { useTokenBalances } from 'utils/hooks/useTokenBalance'
 
 interface AmountsProps extends ButtonProps {
   amounts: {

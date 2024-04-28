@@ -16,10 +16,10 @@ import {
   WidgetTitle,
 } from '@sushiswap/ui'
 import { CardCurrencyAmountItem } from 'components/CardCurrencyAmountItem'
+import { useStablePrice } from 'lib/common/use-stable-price'
+import { Token as TokenType } from 'lib/types/token'
 import { FC, ReactNode } from 'react'
 import { formatUSD } from 'sushi'
-import { useStablePrice } from 'utils/hooks/useStablePrice'
-import { Token as TokenType } from 'utils/tokenType'
 
 interface RemoveSectionWidgetProps {
   title?: string

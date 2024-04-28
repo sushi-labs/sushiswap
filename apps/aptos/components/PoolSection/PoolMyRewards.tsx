@@ -4,15 +4,15 @@ import { Card, CardDescription, CardHeader } from '@sushiswap/ui'
 import { CardContent, CardGroup, CardItem, CardLabel } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import { networkNameToNetwork } from 'config/chains'
-import { Aptos } from 'lib/coins'
+import { Aptos } from 'config/coins'
+import { formatNumberWithDecimals } from 'lib/common/format-number-with-decimals'
+import { useNetwork } from 'lib/common/use-network'
+import { useStablePrice } from 'lib/common/use-stable-price'
 import { useParams } from 'next/navigation'
 import { FC, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import { createToast } from 'ui/common/toast'
 import { UserProfile } from 'ui/common/user-profile/user-profile'
-import { formatNumber } from 'utils/format-number'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { useStablePrice } from 'utils/hooks/useStablePrice'
 
 interface PoolMyRewards {
   reward: number
@@ -31,7 +31,8 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
 
   const aptosPrice = useStablePrice({ currency: Aptos[network] })
   const aptosPriceInUsd = aptosPrice
-    ? aptosPrice * parseFloat(formatNumber(reward, decimals as number))
+    ? aptosPrice *
+      parseFloat(formatNumberWithDecimals(reward, decimals as number))
     : 0
   const tokenAddress = decodeURIComponent(router?.id)
   const [isTransactionPending, setTransactionPending] = useState<boolean>(false)
@@ -98,7 +99,11 @@ export const PoolMyRewards: FC<PoolMyRewards> = ({ reward, decimals }) => {
             <span className="flex gap-1 font-semibold">
               {' '}
               {reward
-                ? parseFloat(String(formatNumber(reward, decimals as number)))
+                ? parseFloat(
+                    String(
+                      formatNumberWithDecimals(reward, decimals as number),
+                    ),
+                  )
                 : 0}{' '}
             </span>
           </CardItem>

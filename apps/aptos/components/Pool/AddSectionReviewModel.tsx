@@ -14,13 +14,13 @@ import {
 } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import { networkNameToNetwork } from 'config/chains'
+import { useNetwork } from 'lib/common/use-network'
+import { useStablePrice } from 'lib/common/use-stable-price'
+import { getAddLiquidityPayload } from 'lib/pool/get-add-liquidity-payload'
 import { FC, ReactNode, useCallback } from 'react'
 import { formatUSD } from 'sushi/format'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import { createToast } from 'ui/common/toast'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { useStablePrice } from 'utils/hooks/useStablePrice'
-import { getAddLiquidityPayload } from 'utils/payload/get-add-liquidity-payload'
 import {
   usePoolActions,
   usePoolState,

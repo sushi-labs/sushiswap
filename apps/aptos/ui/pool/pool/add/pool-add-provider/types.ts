@@ -1,5 +1,5 @@
-import { PoolReserve } from 'utils/hooks/usePoolsReserves'
-import { Token } from 'utils/tokenType'
+import { PoolReserve } from 'lib/pool/use-pools-reserves'
+import { Token } from 'lib/types/token'
 
 export type State = {
   token0: Token

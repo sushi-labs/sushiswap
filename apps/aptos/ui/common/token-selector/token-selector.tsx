@@ -9,6 +9,11 @@ import {
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { DialogHeader, DialogTitle, DialogTrigger } from '@sushiswap/ui'
 import { classNames } from '@sushiswap/ui'
+import { useBaseTokens } from 'lib/common/use-base-tokens'
+import { useCustomTokens } from 'lib/common/use-custom-tokens'
+import { useSortedTokenList } from 'lib/common/use-sorted-token-list'
+import { useTokenWithCache } from 'lib/common/use-token-with-cache'
+import { Token } from 'lib/types/token'
 import React, {
   CSSProperties,
   ReactElement,
@@ -18,11 +23,6 @@ import React, {
 } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { useCustomTokens } from 'utils/hooks/useCustomTokens'
-import { useSortedTokenList } from 'utils/hooks/useSortedTokenList'
-import { useTokenWithCache } from 'utils/hooks/useTokenWithCache'
-import { useTokens } from 'utils/hooks/useTokens'
-import { Token } from 'utils/tokenType'
 import { TokenSelectorImportRow } from './token-selector-import-row'
 import { TokenListItem } from './token-selector-list-item'
 
@@ -46,7 +46,7 @@ export default function TokenSelector({
 }: PropType) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const { data: tokens } = useTokens()
+  const { data: tokens } = useBaseTokens()
   const { data: customTokens, mutate: customTokenMutate } = useCustomTokens()
   const { data: queryToken, isInitialLoading: isQueryTokenLoading } =
     useTokenWithCache({

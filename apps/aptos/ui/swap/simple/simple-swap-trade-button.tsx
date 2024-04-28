@@ -1,10 +1,10 @@
 import { Button } from '@sushiswap/ui'
-import { useSwap } from 'lib/swap/hooks/use-swap'
+import { useIsSwapMaintenance } from 'lib/edge/use-is-swap-maintenance'
+import { useSwap } from 'lib/swap/use-swap'
 import { warningSeverity } from 'lib/swap/warning-severity'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Checker } from 'ui/common/checker'
 import { useSimpleSwapState } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
-import { useIsSwapMaintenance } from 'utils/hooks/use-is-swap-maintenance'
 import { Modal } from '../../../components/Modal/Modal'
 
 export const SimpleSwapTradeButton = () => {

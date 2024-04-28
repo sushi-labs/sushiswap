@@ -10,9 +10,9 @@ import {
   List,
 } from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
+import { useNetwork } from 'lib/common/use-network'
+import { Token } from 'lib/types/token'
 import React, { FC, useCallback, useState } from 'react'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { Token } from 'utils/tokenType'
 import { CurrencyIcon } from '../currency/currency-icon'
 
 interface TokenSelectorImportRow {

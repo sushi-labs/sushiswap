@@ -9,11 +9,11 @@ import {
   WidgetTitle,
   textFieldVariants,
 } from '@sushiswap/ui'
+import { Token } from 'lib/types/token'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
-import { Token } from 'utils/tokenType'
 
 interface AddSectionStakeWidgetProps {
   title?: string

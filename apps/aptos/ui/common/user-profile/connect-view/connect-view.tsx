@@ -24,14 +24,16 @@ export const WalletIcons: Record<
 
 export const ConnectView: FC<{ close(): void }> = ({ close }) => {
   const { wallets, connect } = useWallet()
+
   const onSelect = (name: WalletName) => {
     connect(name)
     close()
   }
+
   return (
     <List className="!p-0">
       <List.Control className="bg-gray-100 dark:!bg-slate-700">
-        {wallets.map((wallet) => {
+        {wallets?.map((wallet) => {
           if (wallet.readyState === 'Installed') {
             return (
               <List.MenuItem

@@ -1,12 +1,12 @@
 import { LinkExternal, classNames, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { networkNameToNetwork } from 'config/chains'
+import { useNetwork } from 'lib/common/use-network'
+import { Pool } from 'lib/pool/convert-pool-to-sushi-pool'
+import { useTokensFromPool } from 'lib/pool/use-tokens-from-pool'
 import { FC } from 'react'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import { CurrencyIconList } from 'ui/common/currency/currency-icon-list'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { Pool } from 'utils/hooks/usePools'
-import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
 
 interface PoolHeader {
   row: Pool

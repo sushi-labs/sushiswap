@@ -4,13 +4,13 @@ import { classNames } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import { networkNameToNetwork } from 'config/chains'
+import { formatNumberWithDecimals } from 'lib/common/format-number-with-decimals'
+import { useNetwork } from 'lib/common/use-network'
+import { Pool } from 'lib/pool/convert-pool-to-sushi-pool'
+import { Token } from 'lib/types/token'
 import React, { useMemo, useState } from 'react'
 import { createToast } from 'ui/common/toast'
 import { UserProfile } from 'ui/common/user-profile/user-profile'
-import { formatNumber } from 'utils/format-number'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { Pool } from 'utils/hooks/usePools'
-import { Token } from 'utils/tokenType'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
 interface Props {
@@ -48,7 +48,7 @@ export const RemoveSectionLegacy = ({
   }, [slippageTolerance])
 
   const [reserve0, reserve1] = useMemo(() => {
-    return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
+    return [pool?.reserve0, pool?.reserve1]
   }, [pool])
 
   const [percentage, setPercentage] = useState<string>('0')
@@ -145,8 +145,14 @@ export const RemoveSectionLegacy = ({
       reserve0={reserve0}
       reserve1={reserve1}
       totalSupply={totalSupply}
-      token0MinMinimum={formatNumber(minAmount0 as number, token0.decimals)}
-      token1MinMinimum={formatNumber(minAmount1 as number, token1.decimals)}
+      token0MinMinimum={formatNumberWithDecimals(
+        minAmount0 as number,
+        token0.decimals,
+      )}
+      token1MinMinimum={formatNumberWithDecimals(
+        minAmount1 as number,
+        token1.decimals,
+      )}
     >
       <>
         {connected ? (

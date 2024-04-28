@@ -159,18 +159,127 @@ const NavigationContainer: React.FC<NavContainerProps> = ({
   )
 }
 
+const navigationMenuItems = [
+  {
+    title: 'Swap',
+    href: '/swap',
+  },
+  {
+    title: 'Pools',
+    href: '/pool',
+  },
+  {
+    title: 'Bonds',
+    href: '/bonds',
+  },
+  {
+    title: 'Stake',
+    href: '/stake',
+  },
+  {
+    title: 'Pay',
+    href: '/furo',
+  },
+  {
+    title: 'Analytics',
+    href: '/analytics',
+  },
+  {
+    title: 'Blog',
+    href: '/blog',
+  },
+  {
+    title: 'Academy',
+    href: '/academy',
+  },
+  {
+    title: 'More',
+    items: TOOLS_NAVIGATION_LINKS,
+  },
+  {
+    title: 'Partners',
+    items: PARTNER_NAVIGATION_LINKS,
+  },
+] as const
+
 interface NavProps extends VariantProps<typeof navigationContainerVariants> {
+  leftElements?: (typeof navigationMenuItems)[number]['title'][]
   rightElement?: React.ReactNode
   legacyBehavior?: boolean
   showOnramper?: boolean
 }
 
 const Navigation: React.FC<NavProps> = ({
+  leftElements: _leftElements = navigationMenuItems.map((entry) => entry.title),
   rightElement,
   variant,
   legacyBehavior = false,
   showOnramper = true,
 }) => {
+  const leftElements = React.useMemo(() => {
+    const SimpleItem = (entry: (typeof navigationMenuItems)[number]) => {
+      if (!('href' in entry)) {
+        throw new Error('Invalid entry')
+      }
+
+      return (
+        <NavigationMenuItem key={entry.title} className="hidden md:block">
+          {legacyBehavior ? (
+            <NavigationMenuLink
+              asChild
+              className={navigationMenuTriggerStyle()}
+            >
+              <a href={entry.href}>{entry.title}</a>
+            </NavigationMenuLink>
+          ) : (
+            <NavigationMenuLink
+              href={entry.href}
+              className={navigationMenuTriggerStyle()}
+            >
+              {entry.title}
+            </NavigationMenuLink>
+          )}
+        </NavigationMenuItem>
+      )
+    }
+
+    const DropdownItem = (entry: (typeof navigationMenuItems)[number]) => {
+      if (!('items' in entry)) {
+        throw new Error('Invalid entry')
+      }
+
+      return (
+        <NavigationMenuItem key={entry.title} className="hidden md:block">
+          <NavigationMenuTrigger>{entry.title}</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="w-[400px] gap-3 p-4">
+              {entry.items.map((component) => (
+                <NavigationListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                  legacyBehavior={legacyBehavior}
+                >
+                  {component.description}
+                </NavigationListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      )
+    }
+
+    return _leftElements.map((el) => {
+      const entry = navigationMenuItems.find((entry) => entry.title === el)!
+
+      if ('href' in entry) {
+        return SimpleItem(entry)
+      } else {
+        return DropdownItem(entry)
+      }
+    })
+  }, [_leftElements, legacyBehavior])
+
   return (
     <NavigationContainer variant={variant}>
       <NavigationMenu>
@@ -196,125 +305,7 @@ const Navigation: React.FC<NavProps> = ({
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            {legacyBehavior ? (
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <a href="/swap">Swap</a>
-              </NavigationMenuLink>
-            ) : (
-              <NavigationMenuLink
-                href="/swap"
-                className={navigationMenuTriggerStyle()}
-              >
-                Swap
-              </NavigationMenuLink>
-            )}
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            {legacyBehavior ? (
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <a href="/pool">Pools</a>
-              </NavigationMenuLink>
-            ) : (
-              <NavigationMenuLink
-                href="/pool"
-                className={navigationMenuTriggerStyle()}
-              >
-                Pools
-              </NavigationMenuLink>
-            )}
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            {legacyBehavior ? (
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <a href="/bonds">Bonds</a>
-              </NavigationMenuLink>
-            ) : (
-              <NavigationMenuLink
-                href="/bonds"
-                className={navigationMenuTriggerStyle()}
-              >
-                Bonds
-              </NavigationMenuLink>
-            )}
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            {legacyBehavior ? (
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <a href="/stake">Stake</a>
-              </NavigationMenuLink>
-            ) : (
-              <NavigationMenuLink
-                href="/stake"
-                className={navigationMenuTriggerStyle()}
-              >
-                Stake
-              </NavigationMenuLink>
-            )}
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            {legacyBehavior ? (
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <a href="/furo">Pay</a>
-              </NavigationMenuLink>
-            ) : (
-              <NavigationMenuLink
-                href="/furo"
-                className={navigationMenuTriggerStyle()}
-              >
-                Pay
-              </NavigationMenuLink>
-            )}
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuTrigger>More</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="w-[400px] gap-3 p-4">
-                {TOOLS_NAVIGATION_LINKS.map((component) => (
-                  <NavigationListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                    legacyBehavior={legacyBehavior}
-                  >
-                    {component.description}
-                  </NavigationListItem>
-                ))}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuTrigger>Partners</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="w-[400px] gap-3 p-4">
-                {PARTNER_NAVIGATION_LINKS.map((component) => (
-                  <NavigationListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                    legacyBehavior={legacyBehavior}
-                  >
-                    {component.description}
-                  </NavigationListItem>
-                ))}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
+          {leftElements}
           {showOnramper ? (
             <NavigationMenuItem className="hidden md:block">
               <OnramperButton>

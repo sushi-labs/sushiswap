@@ -19,6 +19,7 @@ export const createToast = ({ summery, link = '', toastId }: Props) => {
     {
       ...TOAST_OPTIONS,
       toastId,
+      autoClose: 5000,
     },
   )
 }

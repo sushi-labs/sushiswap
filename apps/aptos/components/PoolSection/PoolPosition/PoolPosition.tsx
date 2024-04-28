@@ -6,15 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@sushiswap/ui'
+import { useNetwork } from 'lib/common/use-network'
+import { useStablePrice } from 'lib/common/use-stable-price'
+import { useTokenBalance } from 'lib/common/use-token-balances'
+import { useTotalSupply } from 'lib/common/use-total-supply'
+import { Pool } from 'lib/pool/convert-pool-to-sushi-pool'
+import { useTokensFromPool } from 'lib/pool/use-tokens-from-pool'
+import { useUnderlyingTokenBalanceFromPool } from 'lib/pool/use-underlying-token-balance-from-pool'
 import { FC, useMemo } from 'react'
 import { formatUSD } from 'sushi/format'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { Pool } from 'utils/hooks/usePools'
-import { useStablePrice } from 'utils/hooks/useStablePrice'
-import { useTokenBalance } from 'utils/hooks/useTokenBalance'
-import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
-import { useTotalSupply } from 'utils/hooks/useTotalSupply'
-import { useUnderlyingTokenBalanceFromPool } from 'utils/hooks/useUnderlyingTokenBalanceFromPool'
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 
@@ -33,7 +33,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
   const { account } = useWallet()
   const tokenAddress = row?.id
   const [reserve0, reserve1] = useMemo(() => {
-    return [row?.data?.balance_x?.value, row?.data?.balance_y?.value]
+    return [row?.reserve0, row?.reserve1]
   }, [row])
 
   const {
@@ -46,9 +46,11 @@ export const PoolPosition: FC<PoolPositionProps> = ({
     enabled: Boolean(swapContract && account?.address && tokenAddress),
     refetchInterval: 2000,
   })
+
   const { data: coinInfo, isLoading: isLoadingSupply } =
     useTotalSupply(tokenAddress)
   const totalSupply = coinInfo?.data?.supply?.vec?.[0]?.integer?.vec?.[0]?.value
+
   const [underlying0, underlying1] = useUnderlyingTokenBalanceFromPool({
     balance: LPBalance,
     reserve0: Number(reserve0),
@@ -57,6 +59,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
     token1,
     totalSupply: Number(totalSupply),
   })
+
   const [stakedUnderlying0, stakedUnderlying1] =
     useUnderlyingTokenBalanceFromPool({
       balance: stakeAmount,
@@ -66,8 +69,10 @@ export const PoolPosition: FC<PoolPositionProps> = ({
       token1,
       totalSupply: Number(totalSupply),
     })
+
   const token0Price = useStablePrice({ currency: token0 })
   const token1Price = useStablePrice({ currency: token1 })
+
   const token0UnstakedInUsd = token0Price
     ? token0Price * Number(underlying0)
     : 0
@@ -80,6 +85,7 @@ export const PoolPosition: FC<PoolPositionProps> = ({
   const token1StakedInUsd = token1Price
     ? token1Price * Number(stakedUnderlying1)
     : 0
+
   return (
     <Card>
       <CardHeader>

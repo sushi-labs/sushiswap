@@ -1,4 +1,4 @@
-import { isValidNumberInput } from 'utils/isValidNumberInput'
+import { isValidNumberInput } from 'lib/common/is-valid-number-input'
 import { Actions, State } from '../types'
 
 export function setAmount0(state: State, action: Actions): State {

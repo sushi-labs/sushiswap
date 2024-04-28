@@ -3,11 +3,11 @@ import { Transition } from '@headlessui/react'
 import { Button, Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import { networkNameToNetwork } from 'config/chains'
+import { useNetwork } from 'lib/common/use-network'
+import { Token } from 'lib/types/token'
 import { useParams } from 'next/navigation'
 import { FC, Fragment, useState } from 'react'
 import { createToast } from 'ui/common/toast'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { Token } from 'utils/tokenType'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {

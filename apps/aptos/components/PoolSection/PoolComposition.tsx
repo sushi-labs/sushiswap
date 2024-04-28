@@ -7,12 +7,12 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
+import { formatNumberWithDecimals } from 'lib/common/format-number-with-decimals'
+import { useStablePrice } from 'lib/common/use-stable-price'
+import { Pool } from 'lib/pool/convert-pool-to-sushi-pool'
+import { useTokensFromPool } from 'lib/pool/use-tokens-from-pool'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
-import { formatNumber } from 'utils/format-number'
-import { Pool } from 'utils/hooks/usePools'
-import { useStablePrice } from 'utils/hooks/useStablePrice'
-import { useTokensFromPool } from 'utils/hooks/useTokensFromPool'
 import { CardCurrencyAmountItem } from '../CardCurrencyAmountItem'
 
 interface PoolCompositionProps {
@@ -25,14 +25,15 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ row }) => {
   const token0Price = useStablePrice({ currency: token0 })
   const token1Price = useStablePrice({ currency: token1 })
 
-  const balanceX = formatNumber(
-    Number(row?.data?.balance_x?.value),
+  const balanceX = formatNumberWithDecimals(
+    Number(row?.reserve0),
     token0.decimals,
   )
-  const balanceY = formatNumber(
-    Number(row?.data?.balance_y?.value),
+  const balanceY = formatNumberWithDecimals(
+    Number(row?.reserve1),
     token1.decimals,
   )
+
   const token0PoolPrice = token0Price ? token0Price * Number(balanceX) : 0
   const token1PoolPrice = token1Price ? token1Price * Number(balanceY) : 0
 

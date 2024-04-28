@@ -13,21 +13,20 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
+import { useNetwork } from 'lib/common/use-network'
 import { useParams } from 'next/navigation'
 import { FC, useMemo, useState } from 'react'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { useFarms, useIsFarm } from '../utils/hooks/useFarms'
-import { usePool } from '../utils/hooks/usePool'
-import { Pool } from '../utils/hooks/usePools'
-import { useTokenBalance } from '../utils/hooks/useTokenBalance'
-import { useTokensFromPool } from '../utils/hooks/useTokensFromPool'
-import { useTotalSupply } from '../utils/hooks/useTotalSupply'
-import { useUnderlyingTokenBalanceFromPool } from '../utils/hooks/useUnderlyingTokenBalanceFromPool'
+import { useTokenBalance } from '../lib/common/use-token-balances'
+import { useTotalSupply } from '../lib/common/use-total-supply'
 import {
   getPIdIndex,
   useUserHandle,
   useUserPool,
-} from '../utils/hooks/useUserHandle'
+} from '../lib/common/use-user-handle'
+import { useFarms, useIsFarm } from '../lib/pool/farm/use-farms'
+import { usePool } from '../lib/pool/use-pool'
+import { useTokensFromPool } from '../lib/pool/use-tokens-from-pool'
+import { useUnderlyingTokenBalanceFromPool } from '../lib/pool/use-underlying-token-balance-from-pool'
 import { AddSectionStake } from './AddSection/AddSectionStake'
 import { AddSectionWidget } from './AddSection/AddSectionWidget'
 import { RemoveSectionLegacy } from './RemoveSection/RemoveSectionLegacy'
@@ -53,10 +52,10 @@ export const ManageV2LiquidityCard: FC = () => {
   const { data: pool } = usePool(tokenAddress)
 
   const [reserve0, reserve1] = useMemo(() => {
-    return [pool?.data?.balance_x?.value, pool?.data?.balance_y?.value]
+    return [pool?.reserve0, pool?.reserve1]
   }, [pool])
 
-  const { token0, token1 } = useTokensFromPool(pool as Pool)
+  const { token0, token1 } = useTokensFromPool(pool)
 
   const { data: coinInfo } = useTotalSupply(tokenAddress)
 
@@ -176,7 +175,7 @@ export const ManageV2LiquidityCard: FC = () => {
         </TabsContent>
         <TabsContent value="remove">
           <CardContent>
-            {pool ? (
+            {pool && token0 && token1 ? (
               <RemoveSectionLegacy
                 pool={pool}
                 liquidityBalance={LPBalance}
@@ -193,14 +192,16 @@ export const ManageV2LiquidityCard: FC = () => {
         </TabsContent>
         <TabsContent value="stake">
           <CardContent>
-            <AddSectionStake
-              balance={balance}
-              decimals={coinInfo?.data?.decimals}
-              lpTokenName={coinInfo?.data?.name}
-              token0={token0}
-              token1={token1}
-              price={lpPrice}
-            />
+            {token0 && token1 ? (
+              <AddSectionStake
+                balance={balance}
+                decimals={coinInfo?.data?.decimals}
+                lpTokenName={coinInfo?.data?.name}
+                token0={token0}
+                token1={token1}
+                price={lpPrice}
+              />
+            ) : null}
           </CardContent>
         </TabsContent>
         <TabsContent value="unstake">

@@ -1,6 +1,6 @@
 import { CardItem } from '@sushiswap/ui'
+import { Token } from 'lib/types/token'
 import React from 'react'
-import { Token } from 'utils/tokenType'
 import { CurrencyIcon } from '../ui/common/currency/currency-icon'
 
 interface CardCurrencyAmountItemProps

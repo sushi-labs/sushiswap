@@ -1,7 +1,7 @@
 import { NetworkName } from '@aptos-labs/wallet-adapter-react'
 import { Network } from 'aptos'
-import { L0_USDC, USDC } from 'lib/coins'
-import { Token } from 'utils/tokenType'
+import { L0_USDC, USDC } from 'config/coins'
+import { Token } from 'lib/types/token'
 
 export const SUPPORTED_NETWORKS = [
   NetworkName.Testnet,

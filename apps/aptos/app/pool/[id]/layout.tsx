@@ -4,7 +4,7 @@ import { Container } from '@sushiswap/ui'
 import { Breadcrumb } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import { PoolHeader } from '../../../components/PoolSection/PoolHeader'
-import { usePool } from '../../../utils/hooks/usePool'
+import { usePool } from '../../../lib/pool/use-pool'
 
 export default function Layout({
   children,

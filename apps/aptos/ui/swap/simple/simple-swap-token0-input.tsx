@@ -1,5 +1,5 @@
 import { useIsMounted } from '@sushiswap/hooks'
-import { useSwap } from 'lib/swap/hooks/use-swap'
+import { useSwap } from 'lib/swap/use-swap'
 import React, { useEffect, useTransition } from 'react'
 import {
   useSimpleSwapActions,

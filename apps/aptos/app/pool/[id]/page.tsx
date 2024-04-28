@@ -7,19 +7,19 @@ import { PoolComposition } from 'components/PoolSection/PoolComposition'
 import { PoolMyRewards } from 'components/PoolSection/PoolMyRewards'
 import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
 import { PoolRewards } from 'components/PoolSection/PoolRewards'
-import { useParams } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
-import { useFarms, useIsFarm } from 'utils/hooks/useFarms'
-import { usePool } from 'utils/hooks/usePool'
-import { useRewardsPerDay } from 'utils/hooks/useRewardsPerDay'
-import { useTotalSupply } from 'utils/hooks/useTotalSupply'
+import requiredNetworkAlert from 'lib/common/required-network-alert'
+import { useTotalSupply } from 'lib/common/use-total-supply'
 import {
   getPIdIndex,
   useUserHandle,
   useUserPool,
-} from 'utils/hooks/useUserHandle'
-import { useUserRewards } from 'utils/hooks/useUserRewards'
-import requiredNetworkAlert from 'utils/requiredNetworkAlert'
+} from 'lib/common/use-user-handle'
+import { useFarms, useIsFarm } from 'lib/pool/farm/use-farms'
+import { useRewardsPerDay } from 'lib/pool/farm/use-rewards-per-day'
+import { useUserRewards } from 'lib/pool/farm/use-user-rewards'
+import { usePool } from 'lib/pool/use-pool'
+import { useParams } from 'next/navigation'
+import { useEffect, useMemo } from 'react'
 
 const Pool = () => {
   const router = useParams()

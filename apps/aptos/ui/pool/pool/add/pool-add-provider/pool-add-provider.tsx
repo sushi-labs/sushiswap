@@ -1,4 +1,8 @@
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { getBaseTokensWithoutKey } from 'lib/common/use-base-tokens'
+import { useNetwork } from 'lib/common/use-network'
+import { PoolReserve } from 'lib/pool/use-pools-reserves'
+import { Token } from 'lib/types/token'
 import {
   FC,
   ReactNode,
@@ -7,10 +11,6 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { getTokensWithoutKey } from 'utils/hooks/useTokens'
-import { PoolReserve } from 'utils/swap-get-route/types'
-import { Token } from 'utils/tokenType'
 import { setAmount0 } from './actions/setAmount0'
 import { setAmount1 } from './actions/setAmount1'
 import { setPoolPairRatio } from './actions/setPoolPairRatio'
@@ -37,7 +37,7 @@ export const PoolProvider: FC<PoolProviderProps> = ({ children }) => {
 
   const { network } = useNetwork()
 
-  const baseTokens = getTokensWithoutKey({ network })
+  const baseTokens = getBaseTokensWithoutKey({ network })
 
   const reducer = (state: State, action: Actions): State => {
     switch (action.type) {

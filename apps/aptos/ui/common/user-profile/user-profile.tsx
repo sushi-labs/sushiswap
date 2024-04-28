@@ -6,9 +6,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@sushiswap/ui'
+import { useBaseTokens } from 'lib/common/use-base-tokens'
+import { useTokenBalance } from 'lib/common/use-token-balances'
 import React, { useState } from 'react'
-import { useTokenBalance } from 'utils/hooks/useTokenBalance'
-import { useTokens } from 'utils/hooks/useTokens'
 import { ConnectButton } from './connect-button'
 import { ConnectView } from './connect-view/connect-view'
 import { DefaultView } from './default-view'
@@ -24,7 +24,7 @@ export enum ProfileView {
 export function UserProfile() {
   const { account, connected } = useWallet()
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
-  const { data: tokens } = useTokens()
+  const { data: tokens } = useBaseTokens()
 
   const nativeCurr = tokens?.['0x1::aptos_coin::AptosCoin']
   const { data: balance } = useTokenBalance({

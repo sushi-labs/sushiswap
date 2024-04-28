@@ -1,7 +1,7 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import { Badge, classNames } from '@sushiswap/ui'
+import { Token } from 'lib/types/token'
 import React, { CSSProperties } from 'react'
-import { Token } from 'utils/tokenType'
 import { Modal } from '../../../components/Modal/Modal'
 import { CurrencyIcon } from '../currency/currency-icon'
 

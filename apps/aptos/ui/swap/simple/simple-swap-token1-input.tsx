@@ -1,16 +1,19 @@
+import { formatNumberWithDecimals } from 'lib/common/format-number-with-decimals'
 import React from 'react'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from 'ui/swap/simple/simple-swap-provider/simple-swap-provider'
-import { formatNumber } from 'utils/format-number'
 import { CurrencyInput } from '../../common/currency/currency-input/currency-input'
 
 export const SimpleSwapToken1Input = () => {
   const { token1, outputAmount, isPriceFetching } = useSimpleSwapState()
 
   const outputSwapTokenAmount = outputAmount
-    ? formatNumber(Number(outputAmount), token1 ? token1.decimals : 8)
+    ? formatNumberWithDecimals(
+        Number(outputAmount),
+        token1 ? token1.decimals : 8,
+      )
     : ''
 
   const { setToken1 } = useSimpleSwapActions()

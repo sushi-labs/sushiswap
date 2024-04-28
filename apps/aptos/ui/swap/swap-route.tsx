@@ -1,6 +1,6 @@
+import { useBaseTokens } from 'lib/common/use-base-tokens'
+import { useTokenWithCache } from 'lib/common/use-token-with-cache'
 import React, { useMemo } from 'react'
-import { useTokenWithCache } from 'utils/hooks/useTokenWithCache'
-import { useTokens } from 'utils/hooks/useTokens'
 import { Modal } from '../../components/Modal/Modal'
 import { ModalType } from '../../components/Modal/ModalProvider'
 import { CurrencyIcon } from '../common/currency/currency-icon'
@@ -51,7 +51,7 @@ const ComplexRoutePath = ({
   fromTokenAddress,
   toTokenAddress,
 }: ComplexRoutePath) => {
-  const { data: tokens } = useTokens()
+  const { data: tokens } = useBaseTokens()
 
   const { data: queryToken0 } = useTokenWithCache({ address: fromTokenAddress })
   const { data: queryToken1 } = useTokenWithCache({ address: toTokenAddress })

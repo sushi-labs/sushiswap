@@ -1,6 +1,9 @@
 'use client'
 
 import { useSlippageTolerance } from '@sushiswap/hooks'
+import { getBaseTokensWithoutKey } from 'lib/common/use-base-tokens'
+import { useNetwork } from 'lib/common/use-network'
+import { Token } from 'lib/types/token'
 import {
   FC,
   ReactNode,
@@ -10,9 +13,6 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import { useNetwork } from 'utils/hooks/useNetwork'
-import { getTokensWithoutKey } from 'utils/hooks/useTokens'
-import { Token } from 'utils/tokenType'
 
 interface SimpleSwapProvider {
   children: ReactNode
@@ -68,7 +68,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
 
   const { network } = useNetwork()
 
-  const baseTokens = getTokensWithoutKey({ network })
+  const baseTokens = getBaseTokensWithoutKey({ network })
 
   const reducer = (state: State, action: Actions) => {
     switch (action.type) {

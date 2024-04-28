@@ -3,7 +3,7 @@
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 
-import { PoolsFiltersProvider } from 'components/PoolFiltersProvider'
+import { PoolsFiltersProvider } from 'ui/pool/pools/filters/pool-filters-provider'
 import { PathnameButton } from '../../../components/PathnameButton'
 import { Hero } from '../hero'
 
