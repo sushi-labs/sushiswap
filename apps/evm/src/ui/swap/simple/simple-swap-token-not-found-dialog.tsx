@@ -1,10 +1,7 @@
 'use client'
 
 import { useCustomTokens } from '@sushiswap/hooks'
-import {
-  isTokenSecurityChainId,
-  useTokenSecurity,
-} from '@sushiswap/react-query'
+import { useTokenSecurity } from '@sushiswap/react-query'
 import {
   Button,
   Dialog,
@@ -19,7 +16,7 @@ import {
 import { TokenSecurityView, useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
-import { defaultQuoteCurrency } from 'sushi/config'
+import { defaultQuoteCurrency, isTokenSecurityChainId } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 

@@ -1,7 +1,4 @@
-import {
-  isTokenSecurityChainId,
-  useTokenSecurity,
-} from '@sushiswap/react-query'
+import { useTokenSecurity } from '@sushiswap/react-query'
 import {
   Dialog,
   DialogContent,
@@ -20,6 +17,7 @@ import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
+import { isTokenSecurityChainId } from 'sushi/config'
 import { TokenSecurityView } from '../token-security-view'
 
 interface TokenSelectorImportRow {
