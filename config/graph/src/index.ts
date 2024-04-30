@@ -351,7 +351,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
 
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-arbitrum-nova/gn`,
-  [ChainId.ARBITRUM]: `${GRAPH_HOST}/sushi-v3/v3-arbitrum`,
+  [ChainId.ARBITRUM]: `${STUDIO_HOST}/v3-arbitrum/v0.0.1`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v3/v3-avalanche`,
   [ChainId.BSC]: `${GRAPH_HOST}/sushi-v3/v3-bsc`,
   [ChainId.BOBA]: `${GRAPH_HOST}/sushi-v3/v3-boba`,

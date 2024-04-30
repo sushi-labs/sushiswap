@@ -15,7 +15,7 @@ import {
 import { ResolvedNotification } from '@sushiswap/dexie'
 import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { NetworkIcon, SquidIcon } from '@sushiswap/ui/components/icons'
 import { LinkExternal } from '@sushiswap/ui/components/link'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { TimeAgo } from '@sushiswap/ui/components/time-ago'
@@ -106,6 +106,9 @@ export const Notification: FC<{
                 width={20}
                 height={20}
               />
+            )}
+            {notification.type === 'squid' && (
+              <SquidIcon width={20} height={20} />
             )}
             {status === 'success' && notification.type === 'send' && (
               <ArrowRightIcon width={20} height={20} />
