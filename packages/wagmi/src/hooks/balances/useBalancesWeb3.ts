@@ -96,7 +96,7 @@ export const useBalancesWeb3 = ({
   const { data: nativeBalance, queryKey } = useBalance({
     chainId,
     address: account,
-    query: { enabled: enabled && chainId !== ChainId.SKALE_EUROPA },
+    query: { enabled },
   })
 
   const config = useConfig()

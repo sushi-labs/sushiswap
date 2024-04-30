@@ -279,7 +279,9 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     USDB: USDB[ChainId.BLAST],
   },
   [ChainId.SKALE_EUROPA]: {
-    NATIVE: SKL,
+    SKL: SKL,
+    ETH: WETH9[ChainId.SKALE_EUROPA],
+    USDC: USDC[ChainId.SKALE_EUROPA],
   },
 } as const
 
