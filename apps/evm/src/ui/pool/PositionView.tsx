@@ -1,6 +1,7 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -33,6 +34,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import {
+  getDefaultTTL,
   useAccount,
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
@@ -238,14 +240,20 @@ const Component: FC<{ id: string }> = ({ id }) => {
                         <SettingsOverlay
                           options={{
                             slippageTolerance: {
-                              storageKey: 'addLiquidity',
+                              storageKey:
+                                SlippageToleranceStorageKey.AddLiquidity,
                               defaultValue: '0.1',
                               title: 'Add Liquidity Slippage',
+                            },
+                            transactionDeadline: {
+                              storageKey: TTLStorageKey.AddLiquidity,
+                              defaultValue: getDefaultTTL(chainId).toString(),
                             },
                           }}
                           modules={[
                             SettingsModule.CustomTokens,
                             SettingsModule.SlippageTolerance,
+                            SettingsModule.TransactionDeadline,
                           ]}
                         >
                           <IconButton
