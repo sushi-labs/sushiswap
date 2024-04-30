@@ -3,6 +3,7 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Pool } from '@sushiswap/client'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -201,7 +202,9 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   )
   const [invertPrice, setInvertPrice] = useState(false)
   const [invertTokens, setInvertTokens] = useState(false)
-  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
 
   const {
     data: { token0: _token0, token1: _token1, liquidityToken },
@@ -464,7 +467,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
 
   const { approved: approvedMigrate } = useApproved(APPROVE_TAG_MIGRATE)
   const { data: deadline } = useTransactionDeadline({
-    storageKey: 'addLiquidity',
+    storageKey: TTLStorageKey.AddLiquidity,
     chainId: pool.chainId as ChainId,
   })
 
@@ -731,12 +734,14 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                         <SettingsOverlay
                                           options={{
                                             slippageTolerance: {
-                                              storageKey: 'addLiquidity',
+                                              storageKey:
+                                                SlippageToleranceStorageKey.AddLiquidity,
                                               defaultValue: '0.1',
                                               title: 'Add Liquidity Slippage',
                                             },
                                             transactionDeadline: {
-                                              storageKey: 'addLiquidity',
+                                              storageKey:
+                                                TTLStorageKey.AddLiquidity,
                                               defaultValue: getDefaultTTL(
                                                 pool.chainId as ChainId,
                                               ).toString(),

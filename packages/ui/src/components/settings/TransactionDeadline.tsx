@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { useTTL } from '@sushiswap/hooks'
+import { TTLStorageKey, useTTL } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import React, { FC, useCallback } from 'react'
 
@@ -14,14 +14,14 @@ import { Label } from '../label'
 import { TextField } from '../text-field'
 
 export const TransactionDeadline: FC<{
-  options?: {
-    storageKey?: string
+  options: {
+    storageKey: TTLStorageKey
     defaultValue?: string
     title?: string
   }
   className?: string
 }> = ({ options, className }) => {
-  const [ttl, setTTL] = useTTL(options?.storageKey)
+  const [ttl, setTTL] = useTTL(options.storageKey)
 
   const onChange = useCallback(
     (value: string) => {

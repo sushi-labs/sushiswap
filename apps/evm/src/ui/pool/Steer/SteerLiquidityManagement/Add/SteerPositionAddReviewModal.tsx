@@ -40,7 +40,10 @@ import {
   UserRejectedRequestError,
 } from 'viem'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
 import { slippageAmount } from 'sushi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
@@ -63,7 +66,9 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
 
     const client = usePublicClient()
     const { address, chain } = useAccount()
-    const [slippageTolerance] = useSlippageTolerance('addSteerLiquidity')
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.AddSteerLiquidity,
+    )
     const { approved } = useApproved(APPROVE_TAG_STEER)
 
     const { data: accountPosition } = useSteerAccountPosition({

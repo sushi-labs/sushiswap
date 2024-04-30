@@ -1,4 +1,4 @@
-import { useTTL } from '@sushiswap/hooks'
+import { TTLStorageKey, useTTL } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { ChainId, chainsL2 } from 'sushi/chain'
 import { useCurrentBlockTimestamp } from '../../block'
@@ -13,13 +13,13 @@ export const getDefaultTTL = (chainId: ChainId) => {
 interface UseTransactionDeadline {
   chainId: ChainId
   enabled?: boolean
-  storageKey?: string
+  storageKey: TTLStorageKey
 }
 
 export const useTransactionDeadline = ({
   chainId,
   enabled = true,
-  storageKey = 'ttl',
+  storageKey,
 }: UseTransactionDeadline) => {
   const { data: currentBlockTimestampQuery } = useCurrentBlockTimestamp(
     chainId,

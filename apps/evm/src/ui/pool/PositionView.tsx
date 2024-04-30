@@ -1,6 +1,7 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -239,12 +240,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                         <SettingsOverlay
                           options={{
                             slippageTolerance: {
-                              storageKey: 'addLiquidity',
+                              storageKey:
+                                SlippageToleranceStorageKey.AddLiquidity,
                               defaultValue: '0.1',
                               title: 'Add Liquidity Slippage',
                             },
                             transactionDeadline: {
-                              storageKey: 'addLiquidity',
+                              storageKey: TTLStorageKey.AddLiquidity,
                               defaultValue: getDefaultTTL(chainId).toString(),
                             },
                           }}

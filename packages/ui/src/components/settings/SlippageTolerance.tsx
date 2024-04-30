@@ -1,6 +1,9 @@
 import { RadioGroup } from '@headlessui/react'
 import { InformationCircleIcon } from '@heroicons/react/20/solid'
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import classNames from 'classnames'
 import React, { FC, useCallback } from 'react'
 
@@ -23,7 +26,7 @@ const TABS = ['0.1', '0.5', '1.0']
 
 export const SlippageTolerance: FC<{
   options?: {
-    storageKey?: string
+    storageKey?: SlippageToleranceStorageKey
     defaultValue?: string
     title?: string
   }

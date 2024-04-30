@@ -1,4 +1,5 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   DialogConfirm,
   DialogContent,
@@ -290,12 +291,14 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     onSuccess: _onSuccess,
   }) => {
     const { data: deadline } = useTransactionDeadline({
-      storageKey: 'addLiquidity',
+      storageKey: TTLStorageKey.AddLiquidity,
       chainId,
     })
     const { address } = useAccount()
     const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
-    const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.AddLiquidity,
+    )
     const client = usePublicClient()
 
     const onSuccess = useCallback(
@@ -407,12 +410,12 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   <SettingsOverlay
                     options={{
                       slippageTolerance: {
-                        storageKey: 'addLiquidity',
+                        storageKey: SlippageToleranceStorageKey.AddLiquidity,
                         defaultValue: '0.1',
                         title: 'Add Liquidity Slippage',
                       },
                       transactionDeadline: {
-                        storageKey: 'addLiquidity',
+                        storageKey: TTLStorageKey.AddLiquidity,
                         defaultValue: getDefaultTTL(chainId).toString(),
                       },
                     }}

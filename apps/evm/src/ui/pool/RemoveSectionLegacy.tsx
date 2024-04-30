@@ -1,7 +1,12 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { useDebounce, useIsMounted } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  TTLStorageKey,
+  useDebounce,
+  useIsMounted,
+} from '@sushiswap/hooks'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -52,13 +57,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const client = usePublicClient()
     const { address, chain } = useAccount()
     const { data: deadline } = useTransactionDeadline({
-      storageKey: 'removeLiquidity',
+      storageKey: TTLStorageKey.RemoveLiquidity,
       chainId: _pool.chainId as ChainId,
     })
     const contract = useSushiSwapRouterContract(
       _pool.chainId as SushiSwapV2ChainId,
     )
-    const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.RemoveLiquidity,
+    )
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(

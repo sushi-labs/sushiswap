@@ -1,7 +1,11 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react/24/outline'
-import { useDebounce } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  TTLStorageKey,
+  useDebounce,
+} from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -75,9 +79,11 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   const { chain } = useAccount()
   const client = usePublicClient()
   const [value, setValue] = useState<string>('0')
-  const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.RemoveLiquidity,
+  )
   const { data: deadline } = useTransactionDeadline({
-    storageKey: 'removeLiquidity',
+    storageKey: TTLStorageKey.RemoveLiquidity,
     chainId,
   })
   const debouncedValue = useDebounce(value, 300)
@@ -338,12 +344,13 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                         <SettingsOverlay
                           options={{
                             slippageTolerance: {
-                              storageKey: 'removeLiquidity',
+                              storageKey:
+                                SlippageToleranceStorageKey.RemoveLiquidity,
                               defaultValue: '0.1',
                               title: 'Remove Liquidity Slippage',
                             },
                             transactionDeadline: {
-                              storageKey: 'removeLiquidity',
+                              storageKey: TTLStorageKey.RemoveLiquidity,
                               defaultValue: getDefaultTTL(chainId).toString(),
                             },
                           }}
@@ -433,12 +440,12 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                 <SettingsOverlay
                   options={{
                     slippageTolerance: {
-                      storageKey: 'removeLiquidity',
+                      storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
                       defaultValue: '0.1',
                       title: 'Remove Liquidity Slippage',
                     },
                     transactionDeadline: {
-                      storageKey: 'removeLiquidity',
+                      storageKey: TTLStorageKey.RemoveLiquidity,
                       defaultValue: getDefaultTTL(chainId).toString(),
                     },
                   }}

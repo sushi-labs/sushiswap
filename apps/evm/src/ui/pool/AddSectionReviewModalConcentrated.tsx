@@ -1,4 +1,5 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
   Currency,
@@ -79,10 +80,12 @@ export const AddSectionReviewModalConcentrated: FC<
 }) => {
   const { address, chain } = useAccount()
   const { data: deadline } = useTransactionDeadline({
-    storageKey: 'addLiquidity',
+    storageKey: TTLStorageKey.AddLiquidity,
     chainId,
   })
-  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
   const client = usePublicClient()
 
@@ -265,12 +268,12 @@ export const AddSectionReviewModalConcentrated: FC<
                 <SettingsOverlay
                   options={{
                     slippageTolerance: {
-                      storageKey: 'addLiquidity',
+                      storageKey: SlippageToleranceStorageKey.AddLiquidity,
                       defaultValue: '0.1',
                       title: 'Add Liquidity Slippage',
                     },
                     transactionDeadline: {
-                      storageKey: 'addLiquidity',
+                      storageKey: TTLStorageKey.AddLiquidity,
                       defaultValue: getDefaultTTL(chainId).toString(),
                     },
                   }}

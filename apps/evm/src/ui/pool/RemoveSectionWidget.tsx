@@ -27,6 +27,7 @@ import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { getDefaultTTL } from '@sushiswap/wagmi'
 import { usePoolPosition } from './PoolPositionProvider'
 
@@ -63,12 +64,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           <SettingsOverlay
             options={{
               slippageTolerance: {
-                storageKey: 'removeLiquidity',
+                storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
                 defaultValue: '0.1',
                 title: 'Remove Liquidity Slippage',
               },
               transactionDeadline: {
-                storageKey: 'removeLiquidity',
+                storageKey: TTLStorageKey.RemoveLiquidity,
                 defaultValue: getDefaultTTL(chainId).toString(),
               },
             }}

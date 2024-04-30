@@ -1,5 +1,6 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { PlusIcon } from '@heroicons/react-v1/solid'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   WidgetAction,
   WidgetDescription,
@@ -55,12 +56,12 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
           <SettingsOverlay
             options={{
               slippageTolerance: {
-                storageKey: 'addLiquidity',
+                storageKey: SlippageToleranceStorageKey.AddLiquidity,
                 defaultValue: '0.1',
                 title: 'Add Liquidity Slippage',
               },
               transactionDeadline: {
-                storageKey: 'addLiquidity',
+                storageKey: TTLStorageKey.AddLiquidity,
                 defaultValue: getDefaultTTL(chainId).toString(),
               },
             }}
