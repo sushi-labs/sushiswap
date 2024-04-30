@@ -114,7 +114,6 @@ export const FILECOIN_HOST = 'sushi.laconic.com/subgraphs/name'
 export const STUDIO_HOST = 'api.studio.thegraph.com/query/32073'
 export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
-export const LINEA_HOST = 'graph-query.linea.build/subgraphs/name'
 export const HAQQ_HOST = 'haqq.graph.p2p.org/subgraphs/name'
 export const PCS_STUDIO_HOST = 'api.studio.thegraph.com/query/45376'
 export const SUSHI_GOLDSKY_HOST =
@@ -198,7 +197,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.THUNDERCORE]: THUNDERCORE_HOST,
   [ChainId.CORE]: CORE_HOST,
   [ChainId.BASE]: STUDIO_HOST,
-  [ChainId.LINEA]: LINEA_HOST,
+  [ChainId.LINEA]: DECENTRALIZED_NETWORK_HOST,
   [ChainId.SCROLL]: STUDIO_HOST,
   [ChainId.FILECOIN]: FILECOIN_HOST,
   [ChainId.HAQQ]: HAQQ_HOST,
@@ -277,7 +276,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushiswap/blocks-thundercore`,
   [ChainId.CORE]: `${CORE_HOST}/sushiswap/blocks-core`,
   [ChainId.BASE]: `${STUDIO_HOST}/blocks-base/v0.0.1`,
-  [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/blocks-linea`,
+  [ChainId.LINEA]: `${DECENTRALIZED_NETWORK_HOST}/4rj8wdVvkDGzj9w9UfT48zyXGQtLbULW4ygxDBG9Xza1`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/blocks-scroll/v0.0.1`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/blocks`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/blocks-haqq`,
@@ -341,7 +340,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v2/sushiswap-thundercore`,
   [ChainId.CORE]: `${CORE_HOST}/sushi-v2/sushiswap-core`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/sushiswap-haqq`,
-  [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/sushiswap-linea`,
+  [ChainId.LINEA]: `${DECENTRALIZED_NETWORK_HOST}/9ZQV5c7AG2bxp4TqBav73WADLVhixQahCQk5n4uoCgxm`,
   [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/v2-polygon-zkevm/v0.0.1`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
 } as const
