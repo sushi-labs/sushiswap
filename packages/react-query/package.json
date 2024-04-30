@@ -54,9 +54,9 @@
   },
   "devDependencies": {
     "@sentry/nextjs": "7.101.1",
-    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/ms": "0.7.34",
