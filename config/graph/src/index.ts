@@ -127,9 +127,9 @@ export const WAGMI_METIS_HOST = 'metis.graph.wagmi.com/subgraphs/name'
 export const METIS_0XGRAPH_HOST = 'metisapi.0xgraph.xyz/subgraphs/name'
 
 const SUSHI_DOMAIN_RESTRICTED_API_KEY = '5d5d00365d2b8f675e12952d6eb5b9b0'
-export const DECENTRALIZED_NETWORK_HOST = `https://gateway-arbitrum.network.thegraph.com/api/${
+export const DECENTRALIZED_NETWORK_HOST = `gateway-arbitrum.network.thegraph.com/api/${
   process.env['SUSHI_GRAPH_KEY'] ?? SUSHI_DOMAIN_RESTRICTED_API_KEY
-}/subgraphs/id/`
+}/subgraphs/id`
 
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
