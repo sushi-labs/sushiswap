@@ -126,6 +126,11 @@ export const GOLDSKY_COMMUNITY_HOST =
 export const WAGMI_METIS_HOST = 'metis.graph.wagmi.com/subgraphs/name'
 export const METIS_0XGRAPH_HOST = 'metisapi.0xgraph.xyz/subgraphs/name'
 
+const SUSHI_DOMAIN_RESTRICTED_API_KEY = '5d5d00365d2b8f675e12952d6eb5b9b0'
+export const DECENTRALIZED_NETWORK_HOST = `https://gateway-arbitrum.network.thegraph.com/api/${
+  process.env['SUSHI_GRAPH_KEY'] ?? SUSHI_DOMAIN_RESTRICTED_API_KEY
+}/subgraphs/id/`
+
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
   [ChainId.AVALANCHE]: 'Avalanche',
@@ -358,7 +363,7 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v3/v3-thundercore`,
   [ChainId.CORE]: `${CORE_HOST}/sushi-v3/v3-core-fix`,
   [ChainId.BASE]: `${STUDIO_HOST}/v3-base/v0.0.1`,
-  [ChainId.LINEA]: `${LINEA_HOST}/sushi-v3/v3-linea`,
+  [ChainId.LINEA]: `${DECENTRALIZED_NETWORK_HOST}/E2vqqvSzDdUiPP1r7PFnPKZQ34pAhNZjc6rEcdj3uE5t`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/v3-scroll/v0.0.1`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushi-v3/v3-kava`,
   [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/v3-metis`,
