@@ -158,14 +158,12 @@ export class Router {
     const networks: NetworkInfo[] = [
       {
         chainId: Number(chainId),
-        baseToken: WNATIVE[chainId as keyof typeof WNATIVE] as RToken,
+        baseToken: WNATIVE[chainId] as RToken,
         gasPrice: gasPrice as number,
       },
       {
         chainId: getBentoChainId(chainId),
-        baseToken: convertTokenToBento(
-          WNATIVE[chainId as keyof typeof WNATIVE],
-        ),
+        baseToken: convertTokenToBento(WNATIVE[chainId]),
         gasPrice: gasPrice as number,
       },
     ]

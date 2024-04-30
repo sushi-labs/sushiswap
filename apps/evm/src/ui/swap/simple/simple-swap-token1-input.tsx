@@ -1,6 +1,7 @@
 'use client'
 
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
+import { isWNativeSupported } from 'sushi/config'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTrade,
@@ -33,6 +34,7 @@ export const SimpleSwapToken1Input = () => {
       fetching={isFetching}
       disableMaxButton
       currencyLoading={tokenLoading}
+      allowNative={isWNativeSupported(chainId)}
     />
   )
 }

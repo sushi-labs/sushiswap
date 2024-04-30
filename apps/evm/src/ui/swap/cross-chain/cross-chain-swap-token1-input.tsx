@@ -11,7 +11,10 @@ import {
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Chain } from 'sushi/chain'
 
-import { SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
+import {
+  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
+  isWNativeSupported,
+} from 'sushi/config'
 import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
@@ -72,6 +75,7 @@ export const CrossChainSwapToken1Input = () => {
         disableMaxButton
         fetching={isFetching}
         currencyLoading={tokenLoading}
+        allowNative={isWNativeSupported(chainId1)}
       />
     </div>
   )

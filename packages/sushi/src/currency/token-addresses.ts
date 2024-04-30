@@ -1,3 +1,4 @@
+import { zeroAddress } from 'viem'
 import { ChainId } from '../chain/index.js'
 
 export const AMPL_ADDRESS = {
@@ -369,6 +370,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.ZETACHAIN]: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
   [ChainId.CRONOS]: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
   [ChainId.BLAST]: WETH9_ADDRESS[ChainId.BLAST],
+  [ChainId.SKALE_EUROPA]: zeroAddress,
 } as const
 
 export const SUSHI_ADDRESS = {

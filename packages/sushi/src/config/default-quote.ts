@@ -1,4 +1,4 @@
-import { ChainId } from '../chain/index.js'
+import { ChainId, natives } from '../chain/index.js'
 import {
   ARB,
   BUSD,
@@ -11,6 +11,11 @@ import {
   WETH9,
   axlUSDC,
 } from '../currency/index.js'
+
+export const defaultCurrency = {
+  ...natives,
+  [ChainId.SKALE_EUROPA]: WETH9[ChainId.SKALE_EUROPA],
+} as const
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],

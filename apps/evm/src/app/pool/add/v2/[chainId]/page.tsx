@@ -27,10 +27,12 @@ import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainId,
+  defaultCurrency,
   defaultQuoteCurrency,
   isSushiSwapV2ChainId,
+  isWNativeSupported,
 } from 'sushi/config'
-import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
+import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { SushiSwapV2Pool } from 'sushi/pool'
 import { SWRConfig } from 'swr'
@@ -44,14 +46,14 @@ export default function Page({ params }: { params: { chainId: string } }) {
   const router = useRouter()
   const [chainId, setChainId] = useState(+params.chainId as SushiSwapV2ChainId)
   const [token0, setToken0] = useState<Type | undefined>(
-    Native.onChain(chainId),
+    defaultCurrency[chainId as keyof typeof defaultCurrency],
   )
   const [token1, setToken1] = useState<Type | undefined>(
     defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
   )
 
   useEffect(() => {
-    setToken0(Native.onChain(chainId))
+    setToken0(defaultCurrency[chainId as keyof typeof defaultCurrency])
     setToken1(
       defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
     )
@@ -268,6 +270,7 @@ const _Add: FC<AddProps> = ({
         token1={token1}
         setToken0={_setToken0}
         setToken1={_setToken1}
+        includeNative={isWNativeSupported(chainId)}
       />
       <FormSection
         title="Deposit"
@@ -289,6 +292,7 @@ const _Add: FC<AddProps> = ({
               poolState === SushiSwapV2PoolState.INVALID
             }
             loading={poolState === SushiSwapV2PoolState.LOADING}
+            allowNative={isWNativeSupported(chainId)}
           />
           <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
             <button
@@ -316,6 +320,7 @@ const _Add: FC<AddProps> = ({
               poolState === SushiSwapV2PoolState.INVALID
             }
             loading={poolState === SushiSwapV2PoolState.LOADING}
+            allowNative={isWNativeSupported(chainId)}
           />
           <AddSectionPoolShareCardV2
             pool={pool}

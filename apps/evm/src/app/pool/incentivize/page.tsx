@@ -44,7 +44,11 @@ import {
 import { format } from 'date-fns'
 import { useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
-import { ANGLE_ENABLED_NETWORKS, SushiSwapV3ChainId } from 'sushi/config'
+import {
+  ANGLE_ENABLED_NETWORKS,
+  SushiSwapV3ChainId,
+  isWNativeSupported,
+} from 'sushi/config'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { SushiSwapV3Pool } from 'sushi/pool'
 import { Address, zeroAddress } from 'viem'
@@ -208,6 +212,7 @@ const Incentivize = withCheckerRoot(() => {
           token1={token1}
           setToken0={setToken0}
           setToken1={setToken1}
+          includeNative={isWNativeSupported(chainId)}
         />
         <SelectFeeConcentratedWidget
           title="What is the fee tier for this pool?"

@@ -23,7 +23,11 @@ import {
 } from 'react'
 import { useCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useCrossChainTrade'
 import { ChainId } from 'sushi/chain'
-import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
+import {
+  SushiXSwap2ChainId,
+  defaultCurrency,
+  isSushiXSwap2ChainId,
+} from 'sushi/config'
 import { defaultQuoteCurrency } from 'sushi/config'
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
@@ -35,9 +39,12 @@ const getTokenAsString = (token: Type | string) =>
     : token.isNative
       ? 'NATIVE'
       : token.wrapped.address
+const getDefaultCurrency = (chainId: number) =>
+  getTokenAsString(defaultCurrency[chainId as keyof typeof defaultCurrency])
 const getQuoteCurrency = (chainId: number) =>
-  defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
-    .address
+  getTokenAsString(
+    defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
+  )
 
 interface State {
   mutate: {
@@ -105,7 +112,8 @@ const DerivedstateCrossChainSwapProvider: FC<
           ? ChainId.ETHEREUM.toString()
           : ChainId.ARBITRUM.toString(),
       )
-    if (!params.has('token0')) params.set('token0', 'NATIVE')
+    if (!params.has('token0'))
+      params.set('token0', getDefaultCurrency(Number(params.get('chainId0'))))
     if (!params.has('token1'))
       params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))
 
@@ -159,7 +167,7 @@ const DerivedstateCrossChainSwapProvider: FC<
           `${pathname}?${createQueryString([
             { name: 'swapAmount', value: null },
             { name: 'chainId0', value: chainId.toString() },
-            { name: 'token0', value: 'NATIVE' },
+            { name: 'token0', value: getDefaultCurrency(chainId0) },
           ])}`,
           { scroll: false },
         )

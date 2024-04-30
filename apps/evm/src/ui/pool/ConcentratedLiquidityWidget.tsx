@@ -12,8 +12,12 @@ import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
-import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
-import { Type } from 'sushi/currency'
+import {
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  isWNativeSupported,
+} from 'sushi/config'
+import { Native, Type } from 'sushi/currency'
 import { Position } from 'sushi/pool'
 
 import { Bound, Field } from '../../lib/constants'
@@ -191,6 +195,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             currency={token0}
             disabled={depositADisabled}
             loading={tokensLoading || isOwnerLoading || isPoolLoading}
+            allowNative={isWNativeSupported(chainId)}
           />
         </div>
         <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
@@ -247,6 +252,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
             currency={token1}
             loading={tokensLoading || isOwnerLoading || isPoolLoading}
             disabled={depositBDisabled}
+            allowNative={isWNativeSupported(chainId)}
           />
         </div>
 

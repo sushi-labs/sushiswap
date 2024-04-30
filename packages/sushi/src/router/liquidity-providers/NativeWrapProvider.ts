@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem'
+import { PublicClient, zeroAddress } from 'viem'
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { ChainId } from '../../chain/index.js'
 import { WNATIVE, WNATIVE_ADDRESS } from '../../currency/index.js'
@@ -13,23 +13,27 @@ export class NativeWrapProvider extends LiquidityProvider {
   constructor(chainId: ChainId, client: PublicClient) {
     super(chainId, client)
     const native = Native.onChain(chainId)
-    const nativeRToken: RToken = {
-      address: '',
-      name: native.name,
-      symbol: native.symbol,
-      chainId: chainId,
-      decimals: 18,
+    if (native.wrapped.address === zeroAddress) {
+      this.poolCodes = []
+    } else {
+      const nativeRToken: RToken = {
+        address: '',
+        name: native.name,
+        symbol: native.symbol,
+        chainId: chainId,
+        decimals: 18,
+      }
+      const bridge = new BridgeUnlimited(
+        WNATIVE_ADDRESS[chainId],
+        nativeRToken,
+        WNATIVE[chainId] as RToken,
+        0,
+        50_000,
+      )
+      this.poolCodes = [
+        new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap),
+      ]
     }
-    const bridge = new BridgeUnlimited(
-      WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS],
-      nativeRToken,
-      WNATIVE[chainId as keyof typeof WNATIVE] as RToken,
-      0,
-      50_000,
-    )
-    this.poolCodes = [
-      new NativeWrapBridgePoolCode(bridge, LiquidityProviders.NativeWrap),
-    ]
     this.lastUpdateBlock = -1
   }
 

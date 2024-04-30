@@ -14,7 +14,7 @@ import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { Row } from '@tanstack/react-table'
 import React, { FC } from 'react'
-import { unwrapToken } from 'src/lib/functions'
+import { unwrapToken } from 'sushi/currency'
 
 import { DistributionDataTable } from './DistributionDataTable'
 

@@ -16,8 +16,8 @@ import {
 import { useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
-import { defaultQuoteCurrency } from 'sushi/config'
-import { Native, Token } from 'sushi/currency'
+import { defaultCurrency, defaultQuoteCurrency } from 'sushi/config'
+import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
@@ -77,7 +77,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
 
   const reset = useCallback(() => {
     setTokens(
-      Native.onChain(chainId),
+      defaultCurrency[chainId as keyof typeof defaultCurrency],
       defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
     )
   }, [chainId, setTokens])
