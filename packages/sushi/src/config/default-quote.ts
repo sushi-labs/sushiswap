@@ -3,6 +3,7 @@ import {
   ARB,
   BUSD,
   GNO,
+  Native,
   OP,
   SUSHI,
   Token,
@@ -13,7 +14,9 @@ import {
 } from '../currency/index.js'
 
 export const defaultCurrency = {
-  ...natives,
+  ...Object.fromEntries(
+    Object.keys(natives).map((key) => [key, Native.onChain(Number(key))]),
+  ),
   [ChainId.SKALE_EUROPA]: WETH9[ChainId.SKALE_EUROPA],
 } as const
 
