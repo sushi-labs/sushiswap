@@ -1,7 +1,22 @@
 import numeral from 'numeral'
 
-export const formatNumber = (value: any) => {
-  return numeral(value).format('(0.00a)')
+export const formatNumber = (
+  value: number | string,
+  inputString = '0.[00]a',
+) => {
+  if (typeof value === 'string') value = Number(value)
+
+  let negative = false
+  if (value < 0) {
+    negative = true
+    value = Math.abs(value)
+  }
+
+  if (value === 0) return '0.00'
+  if (value < 0.0001) return numeral(value).format('0.000000a')
+  if (value < 0.001) return numeral(value).format('0.0000a')
+  if (value < 0.01) return numeral(value).format('0.000a')
+  return `${negative ? '-' : ''}${numeral(value).format(inputString)}`
 }
 
 /**

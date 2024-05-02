@@ -31,7 +31,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
+import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import {
   getDefaultTTL,
@@ -478,7 +478,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       title={
                         <>
                           1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                          <FormattedPrice
+                          <FormattedNumber
                             number={(inverted
                               ? pool?.token1Price
                               : pool?.token0Price
@@ -525,7 +525,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '0'
                           ) : (
                             <>
-                              <FormattedPrice
+                              <FormattedNumber
                                 number={formatTickPrice({
                                   price: priceLower,
                                   atLimit: tickAtLimit,
@@ -605,7 +605,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '∞'
                           ) : (
                             <>
-                              <FormattedPrice
+                              <FormattedNumber
                                 number={formatTickPrice({
                                   price: priceUpper,
                                   atLimit: tickAtLimit,

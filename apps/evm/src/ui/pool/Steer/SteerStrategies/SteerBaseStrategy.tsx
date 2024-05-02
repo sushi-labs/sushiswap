@@ -19,7 +19,7 @@ import {
 } from '@sushiswap/ui'
 import { formatPercent, formatUSD } from 'sushi/format'
 
-import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
+import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
 import { SteerStrategyComponent } from '.'
 import { APRHoverCard } from '../../APRHoverCard'
 import { SteerAPRChart } from '../SteerAPRChart'
@@ -212,14 +212,14 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             <Stat>
               <StatLabel size="sm">Minimum price</StatLabel>
               <StatValue size="sm">
-                <FormattedPrice number={priceExtremes.min} />{' '}
+                <FormattedNumber number={priceExtremes.min} />{' '}
                 {vault.token0.symbol}/{vault.token1.symbol}
               </StatValue>
             </Stat>
             <Stat>
               <StatLabel size="sm">Maximum price</StatLabel>
               <StatValue size="sm">
-                <FormattedPrice number={priceExtremes.max} />{' '}
+                <FormattedNumber number={priceExtremes.max} />{' '}
                 {vault.token0.symbol}/{vault.token1.symbol}
               </StatValue>
             </Stat>
