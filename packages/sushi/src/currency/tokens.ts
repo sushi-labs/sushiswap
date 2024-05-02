@@ -50,6 +50,7 @@ import {
   TEL_ADDRESS,
   TRIBE_ADDRESS,
   TUSD_ADDRESS,
+  UDSP_ADDRESS,
   UNI_ADDRESS,
   USDB_ADDRESS,
   USDC_ADDRESS,
@@ -1029,6 +1030,15 @@ export const OPTICS_USDC = addressMapToTokenMap(
   },
   OPTICS_USDC_ADDRESS,
 ) as Record<keyof typeof OPTICS_USDC_ADDRESS, Token>
+
+export const USDP = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'USDP',
+    name: 'Pax Dollar',
+  },
+  UDSP_ADDRESS,
+) as Record<keyof typeof UDSP_ADDRESS, Token>
 
 export const THUNDERCORE_ANY_USDT = new Token({
   chainId: ChainId.THUNDERCORE,

@@ -639,3 +639,7 @@ export const AGEUR_ADDRESS = {
 export const JUGNI_ADDRESS = {
   [ChainId.POLYGON]: '0xE313bcB77dbA15F39Ff0B9cEABe140cedD0953cB',
 } as const
+
+export const UDSP_ADDRESS = {
+  [ChainId.SKALE_EUROPA]: '0x73d22d8a2D1f59Bf5Bcf62cA382481a2073FAF58',
+} as const

@@ -42,6 +42,7 @@ export enum LiquidityProviders {
   DyorV2 = 'DyorV2',
   HyperBlast = 'HyperBlast',
   KinetixV3 = 'KinetixV3',
+  Ruby = 'Ruby',
 }
 
 export abstract class LiquidityProvider {

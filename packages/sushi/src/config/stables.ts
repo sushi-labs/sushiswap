@@ -22,6 +22,7 @@ import {
   Token,
   USDB,
   USDC,
+  USDP,
   USDT,
   USD_PLUS,
   WORMHOLE_USDC,
@@ -212,6 +213,7 @@ export const STABLES = {
     USDC[ChainId.SKALE_EUROPA],
     USDT[ChainId.SKALE_EUROPA],
     DAI[ChainId.SKALE_EUROPA],
+    USDP[ChainId.SKALE_EUROPA],
   ],
   // TESTNETS
   // [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],

@@ -1,5 +1,5 @@
 import { ChainId } from '../chain/index.js'
-import { MUSD, SKL, Token, USDB } from '../currency/index.js'
+import { MUSD, SKL, Token, USDB, USDP } from '../currency/index.js'
 import {
   AAVE,
   BUSD,
@@ -484,6 +484,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.SKALE_EUROPA],
     USDC[ChainId.SKALE_EUROPA],
     DAI[ChainId.SKALE_EUROPA],
+    USDP[ChainId.SKALE_EUROPA],
     WETH9[ChainId.SKALE_EUROPA],
   ],
 }
