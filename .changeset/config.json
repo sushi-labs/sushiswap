@@ -22,6 +22,7 @@
     "@sushiswap/pool-job",
     "academy",
     "blog",
-    "evm"
+    "evm",
+    "tron"
   ]
 }
