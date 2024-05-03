@@ -708,9 +708,6 @@ importers:
       '@types/node':
         specifier: '20'
         version: 20.10.0
-      '@types/numeral':
-        specifier: 2.0.2
-        version: 2.0.2
       '@types/react':
         specifier: 18.2.14
         version: 18.2.14
@@ -1576,9 +1573,6 @@ importers:
       '@types/node':
         specifier: '20'
         version: 20.10.0
-      '@types/numeral':
-        specifier: 2.0.2
-        version: 2.0.2
       '@wagmi/core':
         specifier: 2.6.17
         version: 2.6.17(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@2.8.14)(zod@3.21.4)
@@ -1820,9 +1814,9 @@ importers:
       lodash.flatmap:
         specifier: 4.5.0
         version: 4.5.0
-      numeral:
-        specifier: 2.0.6
-        version: 2.0.6
+      numbro:
+        specifier: 2.5.0
+        version: 2.5.0
       seedrandom:
         specifier: 3.0.5
         version: 3.0.5
@@ -1857,9 +1851,6 @@ importers:
       '@types/lodash.flatmap':
         specifier: 4.5.9
         version: 4.5.9
-      '@types/numeral':
-        specifier: 2.0.3
-        version: 2.0.3
       '@types/seedrandom':
         specifier: 3.0.1
         version: 3.0.1
@@ -1881,8 +1872,6 @@ importers:
       zod:
         specifier: 3.21.4
         version: 3.21.4
-
-  packages/sushi/dist/_cjs: {}
 
   packages/ui:
     dependencies:
@@ -18159,14 +18148,6 @@ packages:
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
 
-  /@types/numeral@2.0.2:
-    resolution: {integrity: sha512-A8F30k2gYJ/6e07spSCPpkuZu79LCnkPTvqmIWQzNGcrzwFKpVOydG41lNt5wZXjSI149qjyzC2L1+F2PD/NUA==}
-    dev: true
-
-  /@types/numeral@2.0.3:
-    resolution: {integrity: sha512-37VDYvFbx/I+Ve1kwcDUq5+qvgNl+uy9YUZhBMJ6YWHBtr2+d6CAgdn4R81NqBlZbTpvLxJOTUhwbki7+90+qQ==}
-    dev: true
-
   /@types/parse-json@4.0.2:
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
 
@@ -33740,8 +33721,10 @@ packages:
       bn.js: 4.11.6
       strip-hex-prefix: 1.0.0
 
-  /numeral@2.0.6:
-    resolution: {integrity: sha512-qaKRmtYPZ5qdw4jWJD6bxEf1FJEqllJrwxCLIm0sQU/A7v2/czigzOb+C2uSiFsa9lBUzeH7M1oK+Q+OLxL3kA==}
+  /numbro@2.5.0:
+    resolution: {integrity: sha512-xDcctDimhzko/e+y+Q2/8i3qNC9Svw1QgOkSkQoO0kIPI473tR9QRbo2KP88Ty9p8WbPy+3OpTaAIzehtuHq+A==}
+    dependencies:
+      bignumber.js: 9.1.1
     dev: false
 
   /nwsapi@2.2.7:
