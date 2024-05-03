@@ -1,9 +1,6 @@
-import numeral from 'numeral'
+import numeral from 'numbro'
 
-export const formatNumber = (
-  value: number | string,
-  inputString = '0.[00]a',
-) => {
+export const formatNumber = (value: number | string, inputString = '0.00a') => {
   if (typeof value === 'string') value = Number(value)
 
   let negative = false
