@@ -1814,6 +1814,9 @@ importers:
       lodash.flatmap:
         specifier: 4.5.0
         version: 4.5.0
+      memoize-fs:
+        specifier: github:rouzwelt/memoize-fs#e5fcc9f6effc4ad087514372a53a49d380520ad5
+        version: github.com/rouzwelt/memoize-fs/e5fcc9f6effc4ad087514372a53a49d380520ad5
       numbro:
         specifier: 2.5.0
         version: 2.5.0
@@ -14979,7 +14982,6 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.3.1
       rollup: 3.29.4
-    dev: false
 
   /@rushstack/eslint-patch@1.3.3:
     resolution: {integrity: sha512-0xd7qez0AQ+MbHatZTlI1gu5vkG8r7MYRUJAHPAHJBmGLs16zpkrpAVLvjQKQOqaXPDUBwOiJzNc00znHSCVBw==}
@@ -16889,7 +16891,7 @@ packages:
       vite: ^3.0.0 || ^4.0.0
     dependencies:
       '@joshwooding/vite-plugin-react-docgen-typescript': 0.2.1(typescript@5.2.2)(vite@4.3.9)
-      '@rollup/pluginutils': 5.0.4(rollup@2.78.0)
+      '@rollup/pluginutils': 5.0.4(rollup@3.29.4)
       '@storybook/builder-vite': 7.4.6(typescript@5.2.2)(vite@4.3.9)
       '@storybook/react': 7.4.6(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
       '@vitejs/plugin-react': 3.1.0(vite@4.3.9)
@@ -32185,6 +32187,11 @@ packages:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
 
+  /meriyah@4.4.2:
+    resolution: {integrity: sha512-fENZIbs4tscI3IGRGtPrCoW4H4oGzVQrQCVCGRv+92kFXKkvxr52ZNR684ICvDC/UBWg9ioGc2X6pMnWOtRYwA==}
+    engines: {node: '>=10.4.0'}
+    dev: false
+
   /merkle-patricia-tree@2.3.2:
     resolution: {integrity: sha512-81PW5m8oz/pz3GvsAwbauj7Y00rqm81Tzad77tHBwU7pIAtN+TJnMSOJhxBKflSVYhptMMb9RskhqHqrSm1V+g==}
     dependencies:
@@ -41300,6 +41307,7 @@ packages:
 
   /web3-provider-engine@14.2.1:
     resolution: {integrity: sha512-iSv31h2qXkr9vrL6UZDm4leZMc32SjWJFGOp/D92JXfcEboCqraZyuExDkpxKw8ziTufXieNM7LSXNHzszYdJw==}
+    deprecated: 'This package has been deprecated, see the README for details: https://github.com/MetaMask/web3-provider-engine'
     dependencies:
       async: 2.6.4
       backoff: 2.5.0
@@ -42339,3 +42347,14 @@ packages:
     dependencies:
       bn.js: 4.12.0
       ethereumjs-util: 6.2.1
+
+  github.com/rouzwelt/memoize-fs/e5fcc9f6effc4ad087514372a53a49d380520ad5:
+    resolution: {tarball: https://codeload.github.com/rouzwelt/memoize-fs/tar.gz/e5fcc9f6effc4ad087514372a53a49d380520ad5}
+    name: memoize-fs
+    version: 3.0.0
+    engines: {node: '>= 10.13.0', npm: '>= 6.0.0'}
+    prepare: true
+    requiresBuild: true
+    dependencies:
+      meriyah: 4.4.2
+    dev: false
