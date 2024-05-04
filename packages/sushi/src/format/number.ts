@@ -1,7 +1,19 @@
-import numeral from 'numeral'
+import numeral from 'numbro'
 
-export const formatNumber = (value: any) => {
-  return numeral(value).format('(0.00a)')
+export const formatNumber = (value: any, inputString = '0.[00]a') => {
+  if (typeof value === 'string') value = Number(value)
+
+  let negative = false
+  if (value < 0) {
+    negative = true
+    value = Math.abs(value)
+  }
+
+  if (value === 0) return '0.00'
+  if (value < 0.0001) return numeral(value).format('0.[000000]a')
+  if (value < 0.001) return numeral(value).format('0.[0000]a')
+  if (value < 0.01) return numeral(value).format('0.[000]a')
+  return `${negative ? '-' : ''}${numeral(value).format(inputString)}`
 }
 
 /**

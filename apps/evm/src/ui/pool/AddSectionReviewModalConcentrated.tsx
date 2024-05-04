@@ -1,3 +1,5 @@
+import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
   Currency,
@@ -10,11 +12,15 @@ import {
   DialogReview,
   DialogTitle,
   Dots,
+  IconButton,
   List,
+  SettingsModule,
+  SettingsOverlay,
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   UseCallParameters,
+  getDefaultTTL,
   getV3NonFungiblePositionManagerContractConfig,
   useAccount,
   useCall,
@@ -32,7 +38,6 @@ import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
-
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
@@ -74,8 +79,13 @@ export const AddSectionReviewModalConcentrated: FC<
   successLink,
 }) => {
   const { address, chain } = useAccount()
-  const { data: deadline } = useTransactionDeadline({ chainId })
-  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+  const { data: deadline } = useTransactionDeadline({
+    storageKey: TTLStorageKey.AddLiquidity,
+    chainId,
+  })
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
   const client = usePublicClient()
 
@@ -245,15 +255,41 @@ export const AddSectionReviewModalConcentrated: FC<
           <>
             {children}
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {token0?.symbol}/{token1?.symbol}
-                </DialogTitle>
-                <DialogDescription>
-                  {' '}
-                  {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
-                </DialogDescription>
-              </DialogHeader>
+              <div className="flex justify-between">
+                <DialogHeader>
+                  <DialogTitle>
+                    {token0?.symbol}/{token1?.symbol}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {' '}
+                    {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
+                  </DialogDescription>
+                </DialogHeader>
+                <SettingsOverlay
+                  options={{
+                    slippageTolerance: {
+                      storageKey: SlippageToleranceStorageKey.AddLiquidity,
+                      defaultValue: '0.1',
+                      title: 'Add Liquidity Slippage',
+                    },
+                    transactionDeadline: {
+                      storageKey: TTLStorageKey.AddLiquidity,
+                      defaultValue: getDefaultTTL(chainId).toString(),
+                    },
+                  }}
+                  modules={[
+                    SettingsModule.SlippageTolerance,
+                    SettingsModule.TransactionDeadline,
+                  ]}
+                >
+                  <IconButton
+                    name="Settings"
+                    icon={CogIcon}
+                    variant="secondary"
+                    className="mr-12"
+                  />
+                </SettingsOverlay>
+              </div>
               <div className="flex flex-col gap-4">
                 <List className="!pt-0">
                   <List.Control>

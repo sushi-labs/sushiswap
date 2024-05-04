@@ -2,7 +2,7 @@
 
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
-import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
+import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
@@ -106,7 +106,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
             {fullRange ? (
               '0'
             ) : (
-              <FormattedPrice
+              <FormattedNumber
                 number={formatTickPrice({
                   price: priceLower,
                   atLimit: tickAtLimit,
@@ -130,7 +130,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
             {fullRange ? (
               '∞'
             ) : (
-              <FormattedPrice
+              <FormattedNumber
                 number={formatTickPrice({
                   price: priceUpper,
                   atLimit: tickAtLimit,
@@ -143,7 +143,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
         </div>
         <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
           Current:{' '}
-          <FormattedPrice
+          <FormattedNumber
             number={(inverted
               ? original.pool?.token1Price
               : original.pool?.token0Price

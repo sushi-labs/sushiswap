@@ -1,7 +1,11 @@
 'use client'
 
 import { Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  TTLStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import React, { FC, ReactNode, useState } from 'react'
 
 import { Button } from '../button'
@@ -23,12 +27,14 @@ import {
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
+import { TransactionDeadline } from './TransactionDeadline'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
+  TransactionDeadline = 'TransactionDeadline',
 }
 
 interface SettingsOverlayProps {
@@ -37,7 +43,12 @@ interface SettingsOverlayProps {
   externalModules?: FC[]
   options?: {
     slippageTolerance?: {
-      storageKey?: string
+      storageKey?: SlippageToleranceStorageKey
+      defaultValue?: string
+      title?: string
+    }
+    transactionDeadline?: {
+      storageKey: TTLStorageKey
       defaultValue?: string
       title?: string
     }
@@ -118,6 +129,10 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
               {modules.includes(SettingsModule.CarbonOffset) && (
                 <CarbonOffset />
               )}
+              {modules.includes(SettingsModule.TransactionDeadline) &&
+                options?.transactionDeadline && (
+                  <TransactionDeadline options={options.transactionDeadline} />
+                )}
             </List.Control>
           </List>
           {externalModules?.map((Module, index) => (
