@@ -1,6 +1,7 @@
 import { Pool, Protocol } from '@sushiswap/client'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
+  FormattedNumber,
   NetworkIcon,
   Tooltip,
   TooltipContent,
@@ -485,14 +486,20 @@ export const TX_AMOUNT_IN_V2_COLUMN = (
   cell: ({ row }) => {
     switch (row.original.type) {
       case TransactionType.Swap:
-        return `${row.original.amountIn.toPrecision(2)} ${
-          row.original.tokenIn.symbol
-        }`
+        return (
+          <span>
+            <FormattedNumber number={row.original.amountIn.toPrecision(2)} />{' '}
+            {row.original.tokenIn.symbol}
+          </span>
+        )
       case TransactionType.Mint:
       case TransactionType.Burn:
-        return `${row.original.amount0.toPrecision(6)} ${
-          row.original.pool.token0.symbol
-        }`
+        return (
+          <span>
+            <FormattedNumber number={row.original.amount0.toPrecision(6)} />{' '}
+            {row.original.pool.token0.symbol}
+          </span>
+        )
     }
   },
   meta: {
@@ -508,14 +515,22 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
   cell: ({ row }) => {
     switch (row.original.type) {
       case TransactionType.Swap:
-        return `${Math.abs(row.original.amountOut).toFixed(2)} ${
-          row.original.tokenOut.symbol
-        }`
+        return (
+          <span>
+            <FormattedNumber
+              number={Math.abs(row.original.amountOut).toPrecision(2)}
+            />{' '}
+            {row.original.tokenOut.symbol}
+          </span>
+        )
       case TransactionType.Mint:
       case TransactionType.Burn:
-        return `${row.original.amount1.toFixed(2)} ${
-          row.original.pool.token1.symbol
-        }`
+        return (
+          <span>
+            <FormattedNumber number={row.original.amount1.toPrecision(2)} />{' '}
+            {row.original.pool.token1.symbol}
+          </span>
+        )
     }
   },
   meta: {
@@ -580,12 +595,22 @@ export const TX_AMOUNT_IN_V3_COLUMN = (
             ? [row.pool.token0, row.pool.token1]
             : [row.pool.token1, row.pool.token0]
 
-        return `${Math.abs(amounts[0]).toPrecision(6)} ${tokens[0].symbol}`
+        return (
+          <span>
+            <FormattedNumber number={Math.abs(amounts[0]).toPrecision(6)} />{' '}
+            {tokens[0].symbol}
+          </span>
+        )
       }
       case TransactionTypeV3.Mint:
       case TransactionTypeV3.Burn:
       case TransactionTypeV3.Collect:
-        return `${row.amount0.toPrecision(6)} ${row.pool.token0.symbol}`
+        return (
+          <span>
+            <FormattedNumber number={row.amount0.toPrecision(6)} />{' '}
+            {row.pool.token0.symbol}
+          </span>
+        )
     }
   },
   meta: {
@@ -611,12 +636,22 @@ export const TX_AMOUNT_OUT_V3_COLUMN = (
             ? [row.pool.token0, row.pool.token1]
             : [row.pool.token1, row.pool.token0]
 
-        return `${Math.abs(amounts[1]).toFixed(2)} ${tokens[1].symbol}`
+        return (
+          <span>
+            <FormattedNumber number={Math.abs(amounts[1]).toPrecision(2)} />{' '}
+            {tokens[1].symbol}
+          </span>
+        )
       }
       case TransactionTypeV3.Mint:
       case TransactionTypeV3.Burn:
       case TransactionTypeV3.Collect:
-        return `${row.amount1.toFixed(2)} ${row.pool.token1.symbol}`
+        return (
+          <span>
+            <FormattedNumber number={row.amount1.toPrecision(2)} />{' '}
+            {row.pool.token1.symbol}
+          </span>
+        )
     }
   },
   meta: {
