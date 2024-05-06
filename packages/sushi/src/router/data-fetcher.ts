@@ -29,6 +29,18 @@ import { UniswapV2Provider } from './liquidity-providers/UniswapV2.js'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3.js'
 import type { PoolCode } from './pool-codes/index.js'
 
+// options for data fetching, such as pinning block number and memoize
+export type DataFetcherOptions = {
+  /**
+   * The pinned block number when getting onchain data
+   * this option is usefull for reproducing the route,
+   * price, etc of a certain block
+   */
+  blockNumber?: bigint
+  /** Determines if memoizer should be used or not */
+  memoize?: boolean
+}
+
 // TODO: Should be a mode on the config for DataFetcher
 const isTest =
   process.env['APP_ENV'] === 'test' ||
@@ -169,6 +181,7 @@ export class DataFetcher {
     currency0: Type,
     currency1: Type,
     excludePools?: Set<string>,
+    options?: DataFetcherOptions,
   ): Promise<void> {
     // console.log('PROVIDER COUNT', this.providers.length)
     // ensure that we only fetch the native wrap pools if the token is the native currency and wrapped native currency
@@ -177,11 +190,16 @@ export class DataFetcher {
         (p) => p.getType() === LiquidityProviders.NativeWrap,
       )
       if (provider) {
-        await provider.fetchPoolsForToken(
-          currency0.wrapped,
-          currency1.wrapped,
-          excludePools,
-        )
+        try {
+          await provider.fetchPoolsForToken(
+            currency0.wrapped,
+            currency1.wrapped,
+            excludePools,
+            options,
+          )
+        } catch {
+          /**/
+        }
       }
     } else {
       const [token0, token1] =
@@ -189,9 +207,9 @@ export class DataFetcher {
         currency0.wrapped.sortsBefore(currency1.wrapped)
           ? [currency0.wrapped, currency1.wrapped]
           : [currency1.wrapped, currency0.wrapped]
-      await Promise.all(
+      await Promise.allSettled(
         this.providers.map((p) =>
-          p.fetchPoolsForToken(token0, token1, excludePools),
+          p.fetchPoolsForToken(token0, token1, excludePools, options),
         ),
       )
     }

@@ -23,12 +23,14 @@ import {
   convertTokenToBento,
   toShareBI,
 } from '../../tines/index.js'
+import { DataFetcherOptions } from '../data-fetcher.js'
 import {
   PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
   mapToken,
 } from '../lib/api.js'
+import { memoizer } from '../memoizer.js'
 import {
   BentoBridgePoolCode,
   BentoPoolCode,
@@ -577,6 +579,7 @@ export class TridentProvider extends LiquidityProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>,
+    options?: DataFetcherOptions,
   ): Promise<void> {
     const topPoolAddresses = [
       ...Array.from(this.topClassicPools.keys()),
@@ -609,6 +612,7 @@ export class TridentProvider extends LiquidityProvider {
             this.chainId,
             t0,
             t1,
+            options,
           )
     if (excludePools)
       onDemandClassicPools = (onDemandClassicPools as PoolResponse2[]).filter(
@@ -723,105 +727,145 @@ export class TridentProvider extends LiquidityProvider {
       }
     })
 
-    const classicReservePromise = this.client
-      .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3
-          ?.address as Address,
-        allowFailure: true,
-        contracts: classicPoolCodesToCreate.map(
-          (pc) =>
-            ({
-              address: pc.pool.address as Address,
-              chainId: this.chainId,
-              abi: getReservesAbi,
-              functionName: 'getReserves',
-            }) as const,
-        ),
-      })
-      .catch((e) => {
-        console.warn(
-          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
-            e.message
-          }`,
-        )
-        return undefined
-      })
+    const multicallMemoize = await memoizer.fn(this.client.multicall)
 
-    const stableReservePromise = this.client
-      .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3
-          ?.address as Address,
-        allowFailure: true,
-        contracts: stablePoolCodesToCreate.map(
-          (pc) =>
-            ({
-              address: pc.pool.address as Address,
-              chainId: this.chainId,
-              abi: getStableReservesAbi,
-              functionName: 'getReserves',
-            }) as const,
-        ),
-      })
-      .catch((e) => {
-        console.warn(
-          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
-            e.message
-          }`,
+    const classicReservesPromiseData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: classicPoolCodesToCreate.map(
+        (pc) =>
+          ({
+            address: pc.pool.address as Address,
+            chainId: this.chainId,
+            abi: getReservesAbi,
+            functionName: 'getReserves',
+          }) as const,
+      ),
+    }
+    const classicReservePromise = options?.memoize
+      ? (multicallMemoize(classicReservesPromiseData) as Promise<any>).catch(
+          (e) => {
+            console.warn(
+              `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+                e.message
+              }`,
+            )
+            return undefined
+          },
         )
-        return undefined
-      })
+      : this.client.multicall(classicReservesPromiseData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
 
-    const totalsPromise = this.client
-      .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3
-          ?.address as Address,
-        allowFailure: true,
-        contracts: bridgesToCreate.map(
-          (b) =>
-            ({
-              args: [b.pool.token0.address as Address],
-              address: this.bentoBox[
-                this.chainId as BentoBoxChainId
-              ] as Address,
-              chainId: this.chainId,
-              abi: totalsAbi,
-              functionName: 'totals',
-            }) as const,
-        ),
-      })
-      .catch((e) => {
-        console.warn(
-          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
-            e.message
-          }`,
+    const stableReservePromiseData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: stablePoolCodesToCreate.map(
+        (pc) =>
+          ({
+            address: pc.pool.address as Address,
+            chainId: this.chainId,
+            abi: getStableReservesAbi,
+            functionName: 'getReserves',
+          }) as const,
+      ),
+    }
+    const stableReservePromise = options?.memoize
+      ? (multicallMemoize(stableReservePromiseData) as Promise<any>).catch(
+          (e) => {
+            console.warn(
+              `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+                e.message
+              }`,
+            )
+            return undefined
+          },
         )
-        return undefined
-      })
+      : this.client.multicall(stableReservePromiseData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
 
-    const balancesPromise = this.client
-      .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3
-          ?.address as Address,
-        allowFailure: true,
-        contracts: bridgesToCreate.map(
-          (b) =>
-            ({
-              args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
-              address: b.pool.token0.address as Address,
-              chainId: this.chainId,
-              abi: balanceOfAbi,
-              functionName: 'balanceOf',
-            }) as const,
-        ),
-      })
-      .catch((e) => {
-        console.warn(
-          `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
-            e.message
-          }`,
-        )
-        return undefined
-      })
+    const totalsPromiseData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: bridgesToCreate.map(
+        (b) =>
+          ({
+            args: [b.pool.token0.address as Address],
+            address: this.bentoBox[this.chainId as BentoBoxChainId] as Address,
+            chainId: this.chainId,
+            abi: totalsAbi,
+            functionName: 'totals',
+          }) as const,
+      ),
+    }
+    const totalsPromise = options?.memoize
+      ? (multicallMemoize(totalsPromiseData) as Promise<any>).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+      : this.client.multicall(totalsPromiseData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+
+    const balancesPromiseData = {
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: true,
+      blockNumber: options?.blockNumber,
+      contracts: bridgesToCreate.map(
+        (b) =>
+          ({
+            args: [this.bentoBox[this.chainId as BentoBoxChainId] as Address],
+            address: b.pool.token0.address as Address,
+            chainId: this.chainId,
+            abi: balanceOfAbi,
+            functionName: 'balanceOf',
+          }) as const,
+      ),
+    }
+    const balancesPromise = options?.memoize
+      ? (multicallMemoize(balancesPromiseData) as Promise<any>).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
+      : this.client.multicall(balancesPromiseData).catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
 
     const [classicReserves, stableReserves, totals, balances] =
       await Promise.all([
@@ -1139,8 +1183,9 @@ export class TridentProvider extends LiquidityProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>,
+    options?: DataFetcherOptions,
   ): Promise<void> {
-    await this.getOnDemandPools(t0, t1, excludePools)
+    await this.getOnDemandPools(t0, t1, excludePools, options)
   }
 
   getCurrentPoolList(t0: Token, t1: Token): PoolCode[] {

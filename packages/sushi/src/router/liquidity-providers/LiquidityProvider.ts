@@ -1,6 +1,7 @@
 import { PublicClient } from 'viem'
 import { ChainId, chainShortName } from '../../chain/index.js'
 import type { Token } from '../../currency/index.js'
+import { DataFetcherOptions } from '../data-fetcher.js'
 import type { PoolCode } from '../pool-codes/index.js'
 
 export enum LiquidityProviders {
@@ -79,6 +80,7 @@ export abstract class LiquidityProvider {
     t0: Token,
     t1: Token,
     excludePools?: Set<string>,
+    options?: DataFetcherOptions,
   ): Promise<void>
 
   /**
