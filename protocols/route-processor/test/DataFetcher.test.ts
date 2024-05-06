@@ -50,10 +50,25 @@ const chainIds = [
   ChainId.POLYGON,
   ChainId.FLARE,
   ChainId.BASE,
+  ChainId.HECO,
+  ChainId.OKEX,
+  ChainId.PALM,
+  ChainId.TELOS,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.THUNDERCORE,
+  ChainId.FILECOIN,
+  ChainId.HAQQ,
+  ChainId.CORE,
+  ChainId.ZKSYNC_ERA,
+  ChainId.LINEA,
+  ChainId.SCROLL,
+  ChainId.ZETACHAIN,
+  ChainId.CRONOS,
+  ChainId.BLAST,
 ]
 
 async function runTest() {
-  describe('DataFetcher Pools/Time check', async () => {
+  describe.only('DataFetcher Pools/Time check', async () => {
     chainIds.forEach((chainId) => {
       //if (chainId !== ChainId.OPTIMISM) return
       const chName = chainName[chainId]
@@ -85,6 +100,14 @@ async function runTest() {
           SUSHI[chainId as keyof typeof SUSHI],
           USDT[chainId as keyof typeof USDT],
           'SUSHI',
+          'USDT',
+        )
+        await testDF(
+          chName,
+          dataFetcher,
+          WNATIVE[chainId],
+          USDT[chainId as keyof typeof USDT],
+          'WNATIVE',
           'USDT',
         )
         dataFetcher.stopDataFetching()
