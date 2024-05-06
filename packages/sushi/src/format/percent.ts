@@ -1,4 +1,4 @@
-import numeral from 'numeral'
+import numeral from 'numbro'
 
 export const formatPercent = (value: any) => {
   let negative = false

@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool, Protocol } from '@sushiswap/client'
-import { useIsMounted } from '@sushiswap/hooks'
+import { SlippageToleranceStorageKey, useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
@@ -67,7 +67,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
     const { signature } = useSignature(APPROVE_TAG_REMOVE_TRIDENT)
     const { setSignature } = useApprovedActions(APPROVE_TAG_REMOVE_TRIDENT)
     const contract = useTridentRouterContract(_pool.chainId as TridentChainId)
-    const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.RemoveLiquidity,
+    )
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(

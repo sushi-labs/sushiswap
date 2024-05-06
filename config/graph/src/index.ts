@@ -116,12 +116,15 @@ export const THUNDERCORE_HOST = 'graph-node.thundercore.com/subgraphs/name'
 export const CORE_HOST = 'thegraph.coredao.org/subgraphs/name'
 export const LINEA_HOST = 'graph-query.linea.build/subgraphs/name'
 export const HAQQ_HOST = 'haqq.graph.p2p.org/subgraphs/name'
-export const ZETACHAIN_HOST =
-  'api.goldsky.com/api/public/project_cls39ugcfyhbq01xl9tsf6g38/subgraphs'
+export const PCS_STUDIO_HOST = 'api.studio.thegraph.com/query/45376'
 export const SUSHI_GOLDSKY_HOST =
+  'api.goldsky.com/api/public/project_cls39ugcfyhbq01xl9tsf6g38/subgraphs'
+export const SUSHI_DEDICATED_GOLDSKY_HOST =
   'api.goldsky.com/api/public/project_clslspm3c0knv01wvgfb2fqyq/subgraphs'
 export const GOLDSKY_COMMUNITY_HOST =
   'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
+export const WAGMI_METIS_HOST = 'metis.graph.wagmi.com/subgraphs/name'
+export const METIS_0XGRAPH_HOST = 'metisapi.0xgraph.xyz/subgraphs/name'
 
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
@@ -163,7 +166,7 @@ export const CHAIN_NAME: Record<number, string> = {
 
 export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
-  [ChainId.ARBITRUM_NOVA]: SUSHI_GOLDSKY_HOST,
+  [ChainId.ARBITRUM_NOVA]: SUSHI_DEDICATED_GOLDSKY_HOST,
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
   [ChainId.CELO]: GRAPH_HOST,
@@ -182,8 +185,8 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.POLYGON_ZKEVM]: STUDIO_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
   // [ChainId.BOBA_AVAX]: SUSHI_HOST,
-  [ChainId.BOBA_BNB]: SUSHI_GOLDSKY_HOST,
-  [ChainId.BTTC]: SUSHI_GOLDSKY_HOST,
+  [ChainId.BOBA_BNB]: SUSHI_DEDICATED_GOLDSKY_HOST,
+  [ChainId.BTTC]: SUSHI_DEDICATED_GOLDSKY_HOST,
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   // [ChainId.KOVAN]: '',
@@ -194,8 +197,8 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.SCROLL]: STUDIO_HOST,
   [ChainId.FILECOIN]: FILECOIN_HOST,
   [ChainId.HAQQ]: HAQQ_HOST,
-  [ChainId.ZETACHAIN]: ZETACHAIN_HOST,
-  [ChainId.BLAST]: SUSHI_GOLDSKY_HOST,
+  [ChainId.ZETACHAIN]: SUSHI_GOLDSKY_HOST,
+  [ChainId.BLAST]: SUSHI_DEDICATED_GOLDSKY_HOST,
 } as const
 
 export const BENTOBOX_ENABLED_NETWORKS = [
@@ -238,14 +241,14 @@ export const BENTOBOX_SUBGRAPH_URL: Record<BentoBoxChainId, string> = {
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushiswap/bentobox-optimism`,
   [ChainId.HARMONY]: `${GRAPH_HOST}/sushiswap/bentobox-harmony`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/bentobox-kava`,
-  [ChainId.BTTC]: `${SUSHI_GOLDSKY_HOST}/sushiswap/bentobox-bttc/gn`,
+  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/bentobox-bttc/gn`,
 }
 
 export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ETHEREUM]: `${GRAPH_HOST}/blocklytics/ethereum-blocks`,
   [ChainId.GNOSIS]: `${GRAPH_HOST}/matthewlilley/xdai-blocks`,
   [ChainId.POLYGON]: `${GRAPH_HOST}/matthewlilley/polygon-blocks`,
-  [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/blocks-polygon-zkevm/v0.0.2`,
+  [ChainId.POLYGON_ZKEVM]: `${PCS_STUDIO_HOST}/polygon-zkevm-block/version/latest`,
   [ChainId.FANTOM]: `${GRAPH_HOST}/matthewlilley/fantom-blocks`,
   [ChainId.BSC]: `${GRAPH_HOST}/matthewlilley/bsc-blocks`,
   [ChainId.HARMONY]: `${GRAPH_HOST}/sushiswap/harmony-blocks`,
@@ -260,20 +263,21 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.MOONBEAM]: `${GRAPH_HOST}/sushiswap/moonbeam-blocks`,
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/beethovenxfi/optimism-blocks`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/blocks-kava`,
-  [ChainId.METIS]: `${METIS_HOST}/sushiswap/blocks-metis`,
-  [ChainId.ARBITRUM_NOVA]: `${GOLDSKY_COMMUNITY_HOST}/blocks/arbitrum-nova/gn`,
+  // [ChainId.METIS]: `${METIS_HOST}/sushiswap/blocks-metis`,
+  [ChainId.METIS]: `${WAGMI_METIS_HOST}/blocks`,
+  [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/blocks/arbitrum-nova/gn`,
   [ChainId.BOBA]: `${GRAPH_HOST}/sushiswap/blocks-boba`,
-  [ChainId.BOBA_BNB]: `${GOLDSKY_COMMUNITY_HOST}/blocks/boba-bnb/gn`,
-  [ChainId.BTTC]: `${GOLDSKY_COMMUNITY_HOST}/blocks/bttc-mainnet/gn`,
-  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushiswap/blocks-thundercore/gn`,
+  [ChainId.BOBA_BNB]: `${SUSHI_GOLDSKY_HOST}/blocks/boba-bnb/gn`,
+  [ChainId.BTTC]: `${SUSHI_GOLDSKY_HOST}/blocks/bttc-mainnet/gn`,
+  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushiswap/blocks-thundercore`,
   [ChainId.CORE]: `${CORE_HOST}/sushiswap/blocks-core`,
   [ChainId.BASE]: `${STUDIO_HOST}/blocks-base/v0.0.1`,
   [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/blocks-linea`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/blocks-scroll/v0.0.1`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/blocks`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/blocks-haqq`,
-  [ChainId.ZETACHAIN]: `${ZETACHAIN_HOST}/blocks-zetachain/1.0.0/gn`,
-  [ChainId.BLAST]: `${SUSHI_GOLDSKY_HOST}/sushiswap/blocks-blast/gn`,
+  [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/blocks-zetachain/1.0.0/gn`,
+  [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/blocks-blast/gn`,
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -317,29 +321,29 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.MOONBEAM]: `${GRAPH_HOST}/sushi-v2/sushiswap-moonbeam`,
   [ChainId.MOONRIVER]: `${GRAPH_HOST}/sushi-v2/sushiswap-moonriver`,
   [ChainId.HARMONY]: `${GRAPH_HOST}/olastenberg/sushiswap-harmony-fix`,
-  [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/sushi-0m/sushiswap-arbitrum-nova/gn`,
+  [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-0m/sushiswap-arbitrum-nova/gn`,
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushi-subgraphs/sushiswap-optimism`,
   [ChainId.BOBA]: `${GRAPH_HOST}/sushi-v2/sushiswap-boba`,
   [ChainId.POLYGON]: `${GRAPH_HOST}/sushi-v2/sushiswap-polygon`,
-  [ChainId.BOBA_BNB]: `${SUSHI_GOLDSKY_HOST}/sushi-0m/sushiswap-boba-bnb/gn`,
+  [ChainId.BOBA_BNB]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-0m/sushiswap-boba-bnb/gn`,
   [ChainId.BASE]: `${STUDIO_HOST}/sushiswap-base/v0.0.1`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/sushiswap-scroll/v0.0.1`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushi-v2/sushiswap-kava`,
-  [ChainId.METIS]: `${METIS_HOST}/sushi-v2/sushiswap-metis`,
-  [ChainId.BTTC]: `${SUSHI_GOLDSKY_HOST}/sushi-v2/sushiswap-bttc/gn`,
+  [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/sushiswap-metis`,
+  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v2/sushiswap-bttc/gn`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/sushiswap-filecoin`,
-  [ChainId.ZETACHAIN]: `${ZETACHAIN_HOST}/sushiswap-zetachain/1.0.0/gn`,
-  [ChainId.THUNDERCORE]: `${GRAPH_HOST}/sushi-v2/sushiswap-thundercore`,
+  [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/sushiswap-zetachain/1.0.0/gn`,
+  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v2/sushiswap-thundercore`,
   [ChainId.CORE]: `${CORE_HOST}/sushi-v2/sushiswap-core`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/sushiswap-haqq`,
   [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/sushiswap-linea`,
   [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/v2-polygon-zkevm/v0.0.1`,
-  [ChainId.BLAST]: `${SUSHI_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
+  [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
-  [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/sushi-v3/v3-arbitrum-nova/gn`,
-  [ChainId.ARBITRUM]: `${GRAPH_HOST}/sushi-v3/v3-arbitrum`,
+  [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-arbitrum-nova/gn`,
+  [ChainId.ARBITRUM]: `${STUDIO_HOST}/v3-arbitrum/v0.0.1`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v3/v3-avalanche`,
   [ChainId.BSC]: `${GRAPH_HOST}/sushi-v3/v3-bsc`,
   [ChainId.BOBA]: `${GRAPH_HOST}/sushi-v3/v3-boba`,
@@ -357,12 +361,12 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.LINEA]: `${LINEA_HOST}/sushi-v3/v3-linea`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/v3-scroll/v0.0.1`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushi-v3/v3-kava`,
-  [ChainId.METIS]: `${METIS_HOST}/sushi-v3/v3-metis`,
-  [ChainId.BTTC]: `${SUSHI_GOLDSKY_HOST}/sushi-v3/v3-bttc/gn`,
+  [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/v3-metis`,
+  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-bttc/gn`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/v3-filecoin`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/v3-haqq`,
-  [ChainId.ZETACHAIN]: `${ZETACHAIN_HOST}/v3-zetachain/1.0.0/gn`,
-  [ChainId.BLAST]: `${SUSHI_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
+  [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/v3-zetachain/1.0.0/gn`,
+  [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
 }
 
 export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {
@@ -370,7 +374,7 @@ export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushi-v2/trident-optimism`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushi-qa/trident-kava`,
   [ChainId.METIS]: `${METIS_HOST}/sushi-v2/trident-metis`,
-  [ChainId.BTTC]: `${SUSHI_GOLDSKY_HOST}/sushi-v2/trident-bttc/gn`,
+  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v2/trident-bttc/gn`,
   [ChainId.ARBITRUM]: `${GRAPH_HOST}/sushi-v2/trident-arbitrum`,
   [ChainId.BSC]: `${GRAPH_HOST}/sushi-v2/trident-bsc`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v2/trident-avalanche`,
@@ -387,10 +391,10 @@ export const MINICHEF_SUBGRAPH_URL = {
   [ChainId.FANTOM]: `${GRAPH_HOST}/sushiswap/fantom-minichef`,
   [ChainId.MOONBEAM]: `${GRAPH_HOST}/sushiswap/moonbeam-minichef`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/kava-minichef`, //block subgraph not synced yet
-  [ChainId.METIS]: `${METIS_HOST}/sushiswap/metis-minichef`,
+  [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/minichef-metis`,
   [ChainId.BOBA]: `${GRAPH_HOST}/sushiswap/minichef-boba`,
-  [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/sushiswap/minichef-arbitrum-nova/gn`,
-  [ChainId.BTTC]: `${SUSHI_GOLDSKY_HOST}/sushiswap/minichef-bttc/gn`,
+  [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/minichef-arbitrum-nova/gn`,
+  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/minichef-bttc/gn`,
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushiswap/minichef-optimism`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushiswap/minichef-avalanche`,
   [ChainId.BSC]: `${GRAPH_HOST}/sushiswap/minichef-bsc`,

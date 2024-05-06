@@ -1,5 +1,6 @@
-import { Prisma, createDirectClient } from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
+import { client } from 'src/lib/prisma'
 
 function clipDecimal(value: any) {
   if (Number(value) >= 1e32) {
@@ -10,7 +11,6 @@ function clipDecimal(value: any) {
 
 export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
   if (pools.length === 0) return
-  const client = await createDirectClient()
   const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
       id: {
@@ -529,7 +529,6 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
       }),
     ])
 
-    await client.$disconnect()
     console.error(
       `LOAD - Updated ${updated} and created ${created.count} pools. `,
     )
@@ -539,7 +538,6 @@ export async function upsertPools(pools: Prisma.SushiPoolCreateManyInput[]) {
 }
 
 export async function updatePoolsWithIncentivesTotalApr() {
-  const client = await createDirectClient()
   const startTime = performance.now()
 
   const updatedPoolsCount = await client.$executeRaw`
@@ -559,8 +557,6 @@ export async function updatePoolsWithIncentivesTotalApr() {
 
   const endTime = performance.now()
 
-  await client.$disconnect()
-
   console.log(
     `LOAD - Updated ${updatedPoolsCount} pools with total APR (${(
       (endTime - startTime) /
@@ -570,7 +566,6 @@ export async function updatePoolsWithIncentivesTotalApr() {
 }
 
 export async function updatePoolsWithSteerVaults() {
-  const client = await createDirectClient()
   const startTime = performance.now()
 
   const poolsUpdatedCount = await client.$executeRaw`
@@ -590,8 +585,6 @@ export async function updatePoolsWithSteerVaults() {
   `
 
   const endTime = performance.now()
-
-  await client.$disconnect()
 
   console.log(
     `LOAD - Updated ${poolsUpdatedCount} pools with steer vaults (${(

@@ -1,12 +1,7 @@
 import 'dotenv/config'
 import './lib/wagmi.js'
 
-import {
-  ChefType,
-  Prisma,
-  RewarderType,
-  createDirectClient,
-} from '@sushiswap/database'
+import { ChefType, Prisma, RewarderType } from '@sushiswap/database'
 import { fetchToken } from '@wagmi/core'
 import { fetch } from '@whatwg-node/fetch'
 import { performance } from 'perf_hooks'
@@ -175,9 +170,6 @@ export async function execute() {
     )
   } catch (e) {
     console.error(e)
-    await (await createDirectClient()).$disconnect()
-  } finally {
-    await (await createDirectClient()).$disconnect()
   }
 }
 

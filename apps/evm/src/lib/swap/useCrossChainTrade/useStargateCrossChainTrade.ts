@@ -7,6 +7,7 @@ import { stargateAdapterAbi } from 'sushi/abi'
 import {
   STARGATE_ADAPTER_ADDRESS,
   STARGATE_CHAIN_ID,
+  StargateAdapterChainId,
   StargateChainId,
 } from 'sushi/config'
 import { Amount, Currency, Native } from 'sushi/currency'
@@ -30,7 +31,7 @@ import {
 import { UseCrossChainTradeParams, UseCrossChainTradeReturn } from './types'
 import { useStargateBridgeFees } from './useStargateBridgeFees'
 
-export const useCrossChainTrade = ({
+export const useStargateCrossChainTrade = ({
   network0,
   network1,
   token0,
@@ -40,7 +41,10 @@ export const useCrossChainTrade = ({
   recipient,
   enabled,
   tradeId,
-}: UseCrossChainTradeParams) => {
+}: Omit<UseCrossChainTradeParams, 'network0' | 'network1'> & {
+  network0: StargateAdapterChainId
+  network1: StargateAdapterChainId
+}) => {
   const client = usePublicClient({ chainId: network0 })
 
   const { data: gasPrice0 } = useGasPrice({
@@ -60,11 +64,14 @@ export const useCrossChainTrade = ({
     [enabled, token0, token1],
   )
 
+  // has swap on source chain
   const isSrcSwap = Boolean(
     token0 &&
       bridgePath?.srcBridgeToken &&
       !token0.equals(bridgePath.srcBridgeToken),
   )
+
+  // has swap on destination chain
   const isDstSwap = Boolean(
     token1 &&
       bridgePath?.dstBridgeToken &&
@@ -141,8 +148,10 @@ export const useCrossChainTrade = ({
 
     const bridgeImpact = new Percent(
       bridgeFee.quotient,
-      (isSrcSwap ? (srcTrade?.minAmountOut as Amount<Currency>) : amount)
-        .quotient,
+      bridgeFee.equalTo(0)
+        ? 1
+        : (isSrcSwap ? (srcTrade?.minAmountOut as Amount<Currency>) : amount)
+            .quotient,
     )
 
     return {
@@ -412,6 +421,8 @@ export const useCrossChainTrade = ({
 
       return {
         transactionType,
+        srcTrade,
+        dstTrade,
         srcBridgeToken,
         dstBridgeToken,
         priceImpact,
@@ -431,7 +442,7 @@ export const useCrossChainTrade = ({
     },
     refetchOnWindowFocus: true,
     refetchInterval: 10000,
-    keepPreviousData: false,
+    keepPreviousData: !!amount,
     cacheTime: 0,
     enabled:
       enabled &&
@@ -446,8 +457,8 @@ export const useCrossChainTrade = ({
           gasPrice0 &&
           gasPrice1,
       ) &&
-      (isSrcSwap ? Boolean(srcTrade) : Boolean(srcAmountOut)) &&
-      (isDstSwap ? Boolean(dstTrade) : Boolean(dstAmountIn)),
+      (isSrcSwap ? Boolean(srcTrade?.writeArgs) : Boolean(srcAmountOut)) &&
+      (isDstSwap ? Boolean(dstTrade?.writeArgs) : Boolean(dstAmountIn)),
     queryKeyHashFn: stringify,
   })
 }

@@ -2,7 +2,11 @@
 
 import { CogIcon } from '@heroicons/react-v1/solid'
 import { SteerVault } from '@sushiswap/client'
-import { useDebounce, useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useDebounce,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'
 import {
@@ -50,13 +54,15 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   const client = usePublicClient()
   const { address: account, chain } = useAccount()
   const [value, setValue] = useState<string>('0')
-  const [slippageTolerance] = useSlippageTolerance('removeSteerLiquidity')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.RemoveSteerLiquidity,
+  )
   const debouncedValue = useDebounce(value, 300)
 
   const slippagePercent = useMemo(() => {
     return new Percent(
       Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+        +(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) * 100,
       ),
       10_000,
     )
@@ -241,8 +247,8 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
             <SettingsOverlay
               options={{
                 slippageTolerance: {
-                  storageKey: 'removeSteerLiquidity',
-                  defaultValue: '0.5',
+                  storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
+                  defaultValue: '0.1',
                   title: 'Remove Liquidity Slippage',
                 },
               }}

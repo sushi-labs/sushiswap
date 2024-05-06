@@ -31,7 +31,7 @@ export const _blocksByChainIds = async (
           context: {
             ...context,
             chainId,
-            url: BLOCKS_SUBGRAPH_URL[chainId],
+            api: BLOCKS_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((blocks: BlocksTypes.Block[]) => {

@@ -56,6 +56,7 @@ import {
   zeroAddress,
 } from 'viem'
 
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
@@ -109,7 +110,9 @@ export const AddSectionReviewModalTrident: FC<
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const { data: rebases } = useBentoBoxTotals({ chainId, currencies: tokens })
   const contract = useTridentRouterContract(chainId)
-  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0

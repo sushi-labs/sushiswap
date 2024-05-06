@@ -2,7 +2,12 @@
 
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { usePrices } from '@sushiswap/react-query'
-import { Button, SkeletonText, typographyVariants } from '@sushiswap/ui'
+import {
+  Button,
+  FormattedNumber,
+  SkeletonText,
+  typographyVariants,
+} from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
 import { Price, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
@@ -69,7 +74,9 @@ export const SimpleSwapHeader = () => {
             <span className="font-normal">
               ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})
             </span>{' '}
-            = {price} {invert ? token1.symbol : token0.symbol}{' '}
+            =
+            <FormattedNumber number={price} />{' '}
+            {invert ? token1.symbol : token0.symbol}{' '}
             <span className="font-normal">
               ({formatUSD(invert ? token1FiatPrice : token0FiatPrice)})
             </span>

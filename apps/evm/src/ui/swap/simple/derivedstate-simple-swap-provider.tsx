@@ -4,11 +4,12 @@ import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
   useAccount,
+  useChainId,
   useClientTrade,
   useConfig,
   useGasPrice,
   useTokenWithCache,
-  watchAccount,
+  watchChainId,
 } from '@sushiswap/wagmi'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -80,7 +81,8 @@ interface DerivedStateSimpleSwapProviderProps {
 const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
   ({ children }) => {
     const { push } = useRouter()
-    const { address, chain } = useAccount()
+    const _chainId = useChainId()
+    const { address } = useAccount()
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
@@ -92,11 +94,11 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     // This handles the case where some params might not be provided by the user
     const defaultedParams = useMemo(() => {
       const params = new URLSearchParams(searchParams)
-      if (!params.has('chainId'))
+      if (!params.has('chainId') || !params.get('chainId'))
         params.set(
           'chainId',
-          (chain?.id && isSupportedChainId(chain.id)
-            ? chain.id
+          (isSupportedChainId(_chainId)
+            ? _chainId
             : ChainId.ETHEREUM
           ).toString(),
         )
@@ -107,7 +109,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
       }
       return params
-    }, [chain, searchParams])
+    }, [_chainId, searchParams])
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -127,8 +129,8 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     )
 
     // Update the URL with a new chainId
-    const setChainId = useCallback<{ (_chainId: number): void }>(
-      (chainId) => {
+    const setChainId = useCallback(
+      (chainId: number) => {
         console.log('setChainId', chainId)
         push(
           `${pathname}?${createQueryString([
@@ -256,17 +258,28 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       TestnetChainId
     >
 
+    // console.log(_chainId, chainId)
+
+    // const { switchChain } = useSwitchChain()
+
+    // useEffect(() => {
+    //   if (_chainId !== chainId) {
+    //     // setChainId(chainId)
+    //     switchChain({ chainId })
+    //   }
+    // }, [_chainId, chainId, switchChain, setChainId])
+
     const config = useConfig()
 
     useEffect(() => {
-      const unwatch = watchAccount(config, {
-        onChange: ({ chain }) => {
-          if (!chain || chain.id === chainId) return
-          push(pathname, { scroll: false })
+      const unwatch = watchChainId(config, {
+        onChange: (newChainId) => {
+          if (newChainId === chainId) return
+          setChainId(newChainId)
         },
       })
       return () => unwatch()
-    }, [config, chainId, pathname, push])
+    }, [config, chainId, setChainId])
 
     // Derive token0
     const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(
@@ -286,12 +299,6 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         enabled: isAddress(defaultedParams.get('token1') as string),
         keepPreviousData: false,
       },
-    )
-
-    console.log(
-      'defaultedParams',
-      Array.from(defaultedParams.entries()),
-      Array.from(searchParams.entries()),
     )
 
     return (
@@ -421,7 +428,7 @@ const useSimpleSwapTrade = () => {
     toToken: token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
@@ -439,7 +446,7 @@ const useSimpleSwapTrade = () => {
     toToken: token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),
@@ -454,9 +461,9 @@ const useSimpleSwapTrade = () => {
 
   // Reset the fallback on network switch
   useEffect(() => {
-    const unwatch = watchAccount(config, {
-      onChange: ({ chain }) => {
-        if (chain) {
+    const unwatch = watchChainId(config, {
+      onChange: (newChainId) => {
+        if (newChainId) {
           resetFallback()
         }
       },

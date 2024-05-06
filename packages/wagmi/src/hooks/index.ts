@@ -1,3 +1,5 @@
+'use client'
+
 export * from './approvals'
 export * from './balances'
 export * from './bar'
