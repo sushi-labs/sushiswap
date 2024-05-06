@@ -1138,23 +1138,23 @@ export class TridentProvider extends LiquidityProvider {
     this.topStablePools = new Map()
     this.bridges = new Map()
 
-    this.unwatchBlockNumber = this.client.watchBlockNumber({
-      onBlockNumber: (blockNumber) => {
-        this.lastUpdateBlock = Number(blockNumber)
-        if (!this.isInitialized) {
-          this.initialize()
-        } else {
-          this.updatePools()
-        }
-      },
-      onError: (error) => {
-        console.error(
-          `${this.getLogPrefix()} - Error watching block number: ${
-            error.message
-          }`,
-        )
-      },
-    })
+    // this.unwatchBlockNumber = this.client.watchBlockNumber({
+    //   onBlockNumber: (blockNumber) => {
+    //     this.lastUpdateBlock = Number(blockNumber)
+    //     if (!this.isInitialized) {
+    //       this.initialize()
+    //     } else {
+    //       this.updatePools()
+    //     }
+    //   },
+    //   onError: (error) => {
+    //     console.error(
+    //       `${this.getLogPrefix()} - Error watching block number: ${
+    //         error.message
+    //       }`,
+    //     )
+    //   },
+    // })
   }
 
   private removeStalePools() {

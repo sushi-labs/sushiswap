@@ -12,7 +12,9 @@ async function testDF(
 ) {
   if (!t0 || !t1) return
   const start = performance.now()
-  await dataFetcher.fetchPoolsForToken(t0, t1)
+  await dataFetcher.fetchPoolsForToken(t0, t1, undefined, {
+    fetchPoolsTimeout: 3000,
+  })
   const pools = dataFetcher.getCurrentPoolCodeMap(t0, t1)
   const time = Math.round(performance.now() - start)
   console.log(
@@ -27,31 +29,10 @@ async function testDF(
   })
 }
 
-const chainIds = [
-  ChainId.ARBITRUM_NOVA,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BOBA,
-  ChainId.BOBA_AVAX,
-  ChainId.BOBA_BNB,
-  ChainId.BSC,
-  ChainId.BTTC,
-  ChainId.CELO,
-  ChainId.ETHEREUM,
-  ChainId.FANTOM,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
-  ChainId.HARMONY,
-  ChainId.KAVA,
-  ChainId.METIS,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
-  ChainId.OPTIMISM,
-  ChainId.POLYGON,
-]
+const chainIds = Object.values(ChainId)
 
 async function runTest() {
-  describe('DataFetcher Pools/Time check', async () => {
+  describe.only('DataFetcher Pools/Time check', async () => {
     chainIds.forEach((chainId) => {
       //if (chainId !== ChainId.OPTIMISM) return
       const chName = chainName[chainId]
@@ -83,6 +64,14 @@ async function runTest() {
           SUSHI[chainId as keyof typeof SUSHI],
           USDT[chainId as keyof typeof USDT],
           'SUSHI',
+          'USDT',
+        )
+        await testDF(
+          chName,
+          dataFetcher,
+          WNATIVE[chainId],
+          USDT[chainId as keyof typeof USDT],
+          'WNATIVE',
           'USDT',
         )
         dataFetcher.stopDataFetching()

@@ -3,22 +3,22 @@ import { ChainId } from '../../chain/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
-export class BiswapProvider extends UniswapV2BaseProvider {
-  override fee = 0.002
+export class KinetixV2Provider extends UniswapV2BaseProvider {
+  override fee = 0.003
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
-      [ChainId.BSC]: '0x858E3312ed3A876947EA49d572A7C42DE08af7EE',
+      [ChainId.KAVA]: '0xE8E917BC80A26CDacc9aA42C0F4965d2E1Fa52da',
     } as const
     const initCodeHash = {
-      [ChainId.BSC]:
-        '0xfea293c909d87cd4153593f077b76bb7e94340200f4ee84211ae8e4f9bd7ffdf',
+      [ChainId.KAVA]:
+        '0x4b61b80b5bcfca0f9202f2aba1955b0cfda155e379cb36e0ab38598337c4c79a',
     } as const
     super(chainId, web3Client, factory, initCodeHash)
   }
   getType(): LiquidityProviders {
-    return LiquidityProviders.Biswap
+    return LiquidityProviders.KinetixV2
   }
   getPoolProviderName(): string {
-    return 'Biswap'
+    return 'KinetixV2'
   }
 }

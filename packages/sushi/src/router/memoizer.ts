@@ -1,6 +1,6 @@
 import memoize from 'memoize-fs'
 
-const serialize = (val: any) => {
+export const serialize = (val: any) => {
   const circRefColl: any[] = []
   return JSON.stringify(val, (_name, value) => {
     if (typeof value === 'function') {
@@ -19,7 +19,7 @@ const serialize = (val: any) => {
   })
 }
 
-const deserialize = (val: string) => {
+export const deserialize = (val: string) => {
   return JSON.parse(val, (_key, value) => {
     if (typeof value === 'string' && /^\d+n$/.test(value)) {
       return BigInt(value.slice(0, -1))
