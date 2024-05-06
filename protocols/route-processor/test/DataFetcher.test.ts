@@ -13,7 +13,7 @@ async function testDF(
   if (!t0 || !t1) return
   const start = performance.now()
   await dataFetcher.fetchPoolsForToken(t0, t1, undefined, {
-    fetchPoolsTimeout: 10000,
+    fetchPoolsTimeout: 3000,
   })
   const pools = dataFetcher.getCurrentPoolCodeMap(t0, t1)
   const time = Math.round(performance.now() - start)
