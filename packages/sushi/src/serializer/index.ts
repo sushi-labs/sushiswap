@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 // import { fileURLToPath } from 'url'
 import serializer from 'serialijse'
-import { ChainId } from 'sushi/chain'
+import { ChainId } from '../chain/index.js'
 import { Native } from '../currency/index.js'
 import {
   BentoBridgePoolCode,

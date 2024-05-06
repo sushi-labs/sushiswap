@@ -1,18 +1,18 @@
 name: Sushi - apps / evm
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    paths:
-      - ".github/workflows/apps-evm-e2e.yml"
-      - "apps/evm/**"
-      - "config/nextjs/**"
-      - "config/router/**"
-      - "config/tailwindcss/**"
-      - "config/typescript/**"
-      - "config/viem/**"
-      - "config/wagmi/**"
-      - "packages/**"
+  # pull_request:
+  #   types: [opened, synchronize]
+  #   paths:
+  #     - ".github/workflows/apps-evm-e2e.yml"
+  #     - "apps/evm/**"
+  #     - "config/nextjs/**"
+  #     - "config/router/**"
+  #     - "config/tailwindcss/**"
+  #     - "config/typescript/**"
+  #     - "config/viem/**"
+  #     - "config/wagmi/**"
+  #     - "packages/**"
   workflow_dispatch:
 
 env:

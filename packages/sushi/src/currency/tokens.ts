@@ -684,6 +684,13 @@ export const WNATIVE = {
     name: 'Wrapped CRO',
   }),
   [ChainId.BLAST]: WETH9[ChainId.BLAST],
+  [ChainId.FLARE]: new Token({
+    chainId: ChainId.FLARE,
+    address: WNATIVE_ADDRESS[ChainId.FLARE],
+    decimals: 18,
+    symbol: 'WFLR',
+    name: 'Wrapped FLR',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -802,7 +809,7 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
     USDT_ADDRESS,
   ) as Omit<
     Record<keyof typeof USDT_ADDRESS, Token>,
-    typeof ChainId.BSC & typeof ChainId.BSC_TESTNET
+    typeof ChainId.BSC & typeof ChainId.BSC_TESTNET & typeof ChainId.FLARE
   >),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
@@ -823,6 +830,13 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
     address: USDT_ADDRESS[ChainId.BOBA_BNB],
     decimals: 18,
     symbol: 'USDT',
+    name: 'Tether USD',
+  }),
+  [ChainId.FLARE]: new Token({
+    chainId: ChainId.FLARE,
+    address: USDT_ADDRESS[ChainId.FLARE],
+    decimals: 6,
+    symbol: 'eUSDT',
     name: 'Tether USD',
   }),
 }
@@ -1151,4 +1165,44 @@ export const MUSD = new Token({
   name: 'Monoswap USD',
   symbol: 'MUSD',
   decimals: 18,
+})
+
+export const ENOSYS_BNZ = new Token({
+  chainId: ChainId.FLARE,
+  address: '0xfD3449E8Ee31117a848D41Ee20F497a9bCb53164',
+  decimals: 18,
+  symbol: 'BNZ',
+  name: 'BonezCoin',
+})
+
+export const ENOSYS_EQNT = new Token({
+  chainId: ChainId.FLARE,
+  address: '0x60fDC7B744E886e96Aa0DEf5f69eE440dB9d8c77',
+  decimals: 18,
+  symbol: 'eQNT',
+  name: 'EnosysQuant',
+})
+
+export const ENOSYS_HLN = new Token({
+  chainId: ChainId.FLARE,
+  address: '0x140D8d3649Ec605CF69018C627fB44cCC76eC89f',
+  decimals: 18,
+  symbol: 'HLN',
+  name: 'Helion',
+})
+
+export const ENOSYS_APS = new Token({
+  chainId: ChainId.FLARE,
+  address: '0xff56eb5b1a7faa972291117e5e9565da29bc808d',
+  decimals: 18,
+  symbol: 'APS',
+  name: 'Apsis',
+})
+
+export const ENOSYS_EETH = new Token({
+  chainId: 14,
+  address: '0xa76dcddce60a442d69bac7158f3660f50921b122',
+  decimals: 18,
+  symbol: 'eETH',
+  name: 'Enosys ETH',
 })
