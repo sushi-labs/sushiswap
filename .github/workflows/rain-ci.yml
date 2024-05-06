@@ -23,5 +23,6 @@ jobs:
         run: nix develop -c pnpm exec turbo run check --filter=./packages/sushi
 
       - name: Test ./packages/sushi
-        run: nix develop -c pnpm exec turbo run test --filter=./packages/sushi
-          / pnpm exec turbo run test --filter=./protocols/route-processor
+        run: | 
+          nix develop -c pnpm exec turbo run test --filter=./packages/sushi
+          nix develop -c pnpm exec turbo run test --filter=./protocols/route-processor
