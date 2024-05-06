@@ -48,6 +48,7 @@ const chainIds = [
   ChainId.MOONRIVER,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
+  ChainId.FLARE,
 ]
 
 async function runTest() {
