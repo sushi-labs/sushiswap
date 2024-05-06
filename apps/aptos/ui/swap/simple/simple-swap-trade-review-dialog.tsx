@@ -3,7 +3,10 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { PlusIcon } from '@heroicons/react/24/outline'
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import {
   Badge,
   Button,
@@ -96,7 +99,9 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
       setisTransactionPending(false)
     }
   }
-  const [slippageTolerance] = useSlippageTolerance('swapSlippage')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.Swap,
+  )
 
   return (
     <>

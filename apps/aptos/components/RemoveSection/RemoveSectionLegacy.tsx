@@ -1,5 +1,8 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
@@ -36,7 +39,9 @@ export const RemoveSectionLegacy = ({
   totalSupply,
   isFarm,
 }: Props) => {
-  const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.RemoveLiquidity,
+  )
   const slippagePercent = useMemo(() => {
     return (
       Math.floor(

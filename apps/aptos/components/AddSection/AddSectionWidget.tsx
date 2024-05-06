@@ -1,4 +1,5 @@
 import { CogIcon } from '@heroicons/react/24/outline'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   ButtonProps,
   IconButton,
@@ -65,7 +66,7 @@ export const AddSectionWidget: FC = () => {
           <SettingsOverlay
             options={{
               slippageTolerance: {
-                storageKey: 'addLiquidity',
+                storageKey: SlippageToleranceStorageKey.AddLiquidity,
                 defaultValue: '0.5',
                 title: 'Add Liquidity Slippage',
               },

@@ -1,4 +1,5 @@
 import { CogIcon } from '@heroicons/react/24/outline'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   Button,
   Card,
@@ -71,7 +72,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           <SettingsOverlay
             options={{
               slippageTolerance: {
-                storageKey: 'removeLiquidity',
+                storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
                 defaultValue: '0.5',
                 title: 'Remove Liquidity Slippage',
               },
