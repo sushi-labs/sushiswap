@@ -59,6 +59,14 @@ async function runTest() {
         await testDF(
           chName,
           dataFetcher,
+          SUSHI[chainId as keyof typeof SUSHI],
+          USDT[chainId as keyof typeof USDT],
+          'SUSHI',
+          'USDT',
+        )
+        await testDF(
+          chName,
+          dataFetcher,
           WNATIVE[chainId],
           USDT[chainId as keyof typeof USDT],
           'WNATIVE',
