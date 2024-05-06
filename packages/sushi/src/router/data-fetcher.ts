@@ -63,7 +63,7 @@ export type DataFetcherOptions = {
   /** Determines if memoizer should be used or not */
   memoize?: boolean
   /** Determines a timeout (in ms) for fetching pools for a token pair */
-  fetchPoolsTimeout?: number,
+  fetchPoolsTimeout?: number
 }
 
 // TODO: Should be a mode on the config for DataFetcher
@@ -238,20 +238,20 @@ export class DataFetcher {
         try {
           options?.fetchPoolsTimeout
             ? await promiseTimeout(
-              provider.fetchPoolsForToken(
+                provider.fetchPoolsForToken(
+                  currency0.wrapped,
+                  currency1.wrapped,
+                  excludePools,
+                  options,
+                ),
+                options.fetchPoolsTimeout,
+              )
+            : await provider.fetchPoolsForToken(
                 currency0.wrapped,
                 currency1.wrapped,
                 excludePools,
                 options,
-              ),
-              options.fetchPoolsTimeout
-            )
-            : await provider.fetchPoolsForToken(
-              currency0.wrapped,
-              currency1.wrapped,
-              excludePools,
-              options,
-            )
+              )
         } catch {
           /**/
         }
@@ -262,24 +262,24 @@ export class DataFetcher {
         currency0.wrapped.sortsBefore(currency1.wrapped)
           ? [currency0.wrapped, currency1.wrapped]
           : [currency1.wrapped, currency0.wrapped]
-        try {
-          options?.fetchPoolsTimeout
-            ? await promiseTimeout(
+      try {
+        options?.fetchPoolsTimeout
+          ? await promiseTimeout(
               Promise.allSettled(
                 this.providers.map((p) =>
                   p.fetchPoolsForToken(token0, token1, excludePools, options),
                 ),
               ),
-              options.fetchPoolsTimeout
+              options.fetchPoolsTimeout,
             )
-            : await Promise.allSettled(
+          : await Promise.allSettled(
               this.providers.map((p) =>
                 p.fetchPoolsForToken(token0, token1, excludePools, options),
               ),
             )
-        } catch {
-          /**/
-        }
+      } catch {
+        /**/
+      }
     }
   }
 
