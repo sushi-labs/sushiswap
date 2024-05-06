@@ -707,12 +707,120 @@ async function checkTransferValueInput(
       ? balanceOutBIAfter - balanceOutBIBefore
       : balanceOutBIAfter -
         balanceOutBIBefore +
-        receipt.effectiveGasPrice * receipt.gasUsed +
-        transferValue
+        receipt.effectiveGasPrice * receipt.gasUsed //+transferValue
   expect(balanceOutBI >= rpParams.amountOutMin).equal(true)
   const balanceUser2After = await getBalance(
     env.client,
     fromToken,
+    env.user2.address,
+  )
+  const transferredValue = balanceUser2After - balanceUser2Before
+  expect(transferredValue).equal(transferValue)
+
+  return [balanceOutBIAfter, receipt.blockNumber]
+}
+
+async function checkTransferValueOutput(
+  env: TestEnvironment,
+  fromToken: Type,
+  toToken: Type,
+  lastCallResult: bigint | [bigint | undefined, bigint],
+  usedPools: Set<string>,
+): Promise<[bigint | undefined, bigint]> {
+  const [amountIn, waitBlock] =
+    typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  await dataUpdated(env, waitBlock)
+
+  if (fromToken instanceof Token) {
+    await tokenContract(env.client, fromToken).write.approve(
+      [env.rp.address, amountIn],
+      { chain: null, account: env.user.address },
+    )
+  }
+
+  let pcMap: Map<string, PoolCode>
+  if (UPDATE_POOL_STATES) {
+    await env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+    pcMap = env.dataFetcher.getCurrentPoolCodeMap(fromToken, toToken)
+  } else {
+    pcMap = new Map()
+    Array.from(env.poolCodes.entries()).forEach((e) => {
+      if (!usedPools.has(e[1].pool.address)) pcMap.set(e[0], e[1])
+    })
+  }
+
+  const route = Router.findBestRoute(
+    pcMap,
+    env.chainId,
+    fromToken,
+    amountIn,
+    toToken,
+    30e9,
+  )
+  const rpParams = Router.routeProcessor5Params(
+    pcMap,
+    route,
+    fromToken,
+    toToken,
+    env.rp.address, // !!!!!!!!!!!!!!!!!!!!! 'to' = rp
+    env.rp.address,
+  )
+  const transferValue = getBigInt(route.amountOut * 0.01) // let's take 1% of input
+
+  const balanceUser2Before = await getBalance(
+    env.client,
+    toToken,
+    env.user2.address,
+  )
+
+  const balanceOutBIBefore = await getBalance(
+    env.client,
+    toToken,
+    env.user.address,
+  )
+  const tx = await env.client.writeContract({
+    ...env.rp,
+    chain: null,
+    functionName: 'processRouteWithTransferValueOutput',
+    args: [
+      env.user2.address,
+      transferValue,
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      env.user.address, // !!!!!!!!!!!!!!!!!!!!! 'to' != rpParams.to
+      rpParams.routeCode,
+    ],
+    account: env.user.address,
+    value: rpParams.value,
+  })
+  const receipt = await env.client.waitForTransactionReceipt({ hash: tx })
+
+  if (!UPDATE_POOL_STATES) {
+    route.legs.forEach((l) => {
+      if (!(pcMap.get(l.uniqueId) instanceof NativeWrapBridgePoolCode)) {
+        usedPools.add(l.poolAddress)
+      }
+    })
+  }
+
+  const balanceOutBIAfter = await getBalance(
+    env.client,
+    toToken,
+    env.user.address,
+  )
+  const balanceOutBI =
+    toToken instanceof Token
+      ? balanceOutBIAfter - balanceOutBIBefore
+      : balanceOutBIAfter -
+        balanceOutBIBefore +
+        receipt.effectiveGasPrice * receipt.gasUsed //+transferValue
+  expect(balanceOutBI >= rpParams.amountOutMin - transferValue).equal(true)
+  const balanceUser2After = await getBalance(
+    env.client,
+    toToken,
     env.user2.address,
   )
   const transferredValue = balanceUser2After - balanceUser2Before
@@ -1081,6 +1189,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
+      const user2Original = env.user2.address
       env.user2.address = '0x0000000000000000000000000000000000000001'
       intermidiateResult = await checkTransferAndRoute(
         env,
@@ -1103,12 +1212,14 @@ describe('End-to-end RouteProcessor5 test', async () => {
         intermidiateResult,
         usedPools,
       )
+      env.user2.address = user2Original
     })
 
     it('Transfer value and route 4 - not payable address', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
+      const user2Original = env.user2.address
       env.user2.address = '0x597A9bc3b24C2A578CCb3aa2c2C62C39427c6a49'
       let throwed = false
       try {
@@ -1121,6 +1232,8 @@ describe('End-to-end RouteProcessor5 test', async () => {
         )
       } catch (_e) {
         throwed = true
+      } finally {
+        env.user2.address = user2Original
       }
       expect(
         throwed,
@@ -1128,11 +1241,10 @@ describe('End-to-end RouteProcessor5 test', async () => {
       ).equal(true)
     })
 
-    it.only('processRouteWithTransferValueInput Native => SUSHI => USDC => Native', async () => {
+    it('processRouteWithTransferValueInput Native => SUSHI => USDC => Native', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       intermidiateResult[0] = BigInt(1e18)
-      //env.user2.address = '0x0000000000000000000000000000000000000001'
       intermidiateResult = await checkTransferValueInput(
         env,
         Native.onChain(chainId),
@@ -1148,6 +1260,33 @@ describe('End-to-end RouteProcessor5 test', async () => {
         usedPools,
       )
       intermidiateResult = await checkTransferValueInput(
+        env,
+        USDC_LOCAL,
+        Native.onChain(chainId),
+        intermidiateResult,
+        usedPools,
+      )
+    })
+
+    it('processRouteWithTransferValueOutput Native => SUSHI => USDC => Native', async () => {
+      await env.snapshot.restore()
+      const usedPools = new Set<string>()
+      intermidiateResult[0] = BigInt(1e18)
+      intermidiateResult = await checkTransferValueOutput(
+        env,
+        Native.onChain(chainId),
+        SUSHI_LOCAL,
+        intermidiateResult,
+        usedPools,
+      )
+      intermidiateResult = await checkTransferValueOutput(
+        env,
+        SUSHI_LOCAL,
+        USDC_LOCAL,
+        intermidiateResult,
+        usedPools,
+      )
+      intermidiateResult = await checkTransferValueOutput(
         env,
         USDC_LOCAL,
         Native.onChain(chainId),
