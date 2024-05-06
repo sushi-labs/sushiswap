@@ -27,45 +27,7 @@ async function testDF(
   })
 }
 
-const chainIds = [
-  ChainId.ARBITRUM_NOVA,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BOBA,
-  ChainId.BOBA_AVAX,
-  ChainId.BOBA_BNB,
-  ChainId.BSC,
-  ChainId.BTTC,
-  ChainId.CELO,
-  ChainId.ETHEREUM,
-  ChainId.FANTOM,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
-  ChainId.HARMONY,
-  ChainId.KAVA,
-  ChainId.METIS,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
-  ChainId.OPTIMISM,
-  ChainId.POLYGON,
-  ChainId.FLARE,
-  ChainId.BASE,
-  ChainId.HECO,
-  ChainId.OKEX,
-  ChainId.PALM,
-  ChainId.TELOS,
-  ChainId.POLYGON_ZKEVM,
-  ChainId.THUNDERCORE,
-  ChainId.FILECOIN,
-  ChainId.HAQQ,
-  ChainId.CORE,
-  ChainId.ZKSYNC_ERA,
-  ChainId.LINEA,
-  ChainId.SCROLL,
-  ChainId.ZETACHAIN,
-  ChainId.CRONOS,
-  ChainId.BLAST,
-]
+const chainIds = Object.values(ChainId)
 
 async function runTest() {
   describe.only('DataFetcher Pools/Time check', async () => {
