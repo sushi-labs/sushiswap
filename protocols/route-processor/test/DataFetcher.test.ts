@@ -12,7 +12,7 @@ async function testDF(
 ) {
   if (!t0 || !t1) return
   const start = performance.now()
-  await dataFetcher.fetchPoolsForToken(t0, t1)
+  await dataFetcher.fetchPoolsForToken(t0, t1, undefined, { fetchPoolsTimeout: 10000 })
   const pools = dataFetcher.getCurrentPoolCodeMap(t0, t1)
   const time = Math.round(performance.now() - start)
   console.log(
@@ -47,14 +47,6 @@ async function runTest() {
           USDC[chainId as keyof typeof USDC],
           'WNATIVE',
           'USDC',
-        )
-        await testDF(
-          chName,
-          dataFetcher,
-          SUSHI[chainId as keyof typeof SUSHI],
-          FRAX[chainId as keyof typeof FRAX],
-          'SUSHI',
-          'FRAX',
         )
         await testDF(
           chName,

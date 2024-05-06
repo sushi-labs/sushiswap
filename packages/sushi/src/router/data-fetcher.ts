@@ -50,6 +50,7 @@ import { UniswapV3Provider } from './liquidity-providers/UniswapV3.js'
 import { VVSStandardProvider } from './liquidity-providers/VVSStandard.js'
 import { WagmiProvider } from './liquidity-providers/Wagmi.js'
 import type { PoolCode } from './pool-codes/index.js'
+import { promiseTimeout } from './timeout.js'
 
 // options for data fetching, such as pinning block number and memoize
 export type DataFetcherOptions = {
@@ -61,6 +62,8 @@ export type DataFetcherOptions = {
   blockNumber?: bigint
   /** Determines if memoizer should be used or not */
   memoize?: boolean
+  /** Determines a timeout (in ms) for fetching pools for a token pair */
+  fetchPoolsTimeout?: number,
 }
 
 // TODO: Should be a mode on the config for DataFetcher
@@ -233,12 +236,22 @@ export class DataFetcher {
       )
       if (provider) {
         try {
-          await provider.fetchPoolsForToken(
-            currency0.wrapped,
-            currency1.wrapped,
-            excludePools,
-            options,
-          )
+          options?.fetchPoolsTimeout
+            ? await promiseTimeout(
+              provider.fetchPoolsForToken(
+                currency0.wrapped,
+                currency1.wrapped,
+                excludePools,
+                options,
+              ),
+              options.fetchPoolsTimeout
+            )
+            : await provider.fetchPoolsForToken(
+              currency0.wrapped,
+              currency1.wrapped,
+              excludePools,
+              options,
+            )
         } catch {
           /**/
         }
@@ -249,11 +262,24 @@ export class DataFetcher {
         currency0.wrapped.sortsBefore(currency1.wrapped)
           ? [currency0.wrapped, currency1.wrapped]
           : [currency1.wrapped, currency0.wrapped]
-      await Promise.allSettled(
-        this.providers.map((p) =>
-          p.fetchPoolsForToken(token0, token1, excludePools, options),
-        ),
-      )
+        try {
+          options?.fetchPoolsTimeout
+            ? await promiseTimeout(
+              Promise.allSettled(
+                this.providers.map((p) =>
+                  p.fetchPoolsForToken(token0, token1, excludePools, options),
+                ),
+              ),
+              options.fetchPoolsTimeout
+            )
+            : await Promise.allSettled(
+              this.providers.map((p) =>
+                p.fetchPoolsForToken(token0, token1, excludePools, options),
+              ),
+            )
+        } catch {
+          /**/
+        }
     }
   }
 
