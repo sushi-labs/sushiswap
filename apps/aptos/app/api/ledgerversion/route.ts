@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 // Need to redeclare because the Aptos library tries to create a React context on import
 const SUPPORTED_NETWORKS = ['testnet', 'mainnet'] as const
-type SupportedNetwork = typeof SUPPORTED_NETWORKS[number]
+type SupportedNetwork = (typeof SUPPORTED_NETWORKS)[number]
 
 const chains = {
   testnet: 'https://fullnode.testnet.aptoslabs.com',
