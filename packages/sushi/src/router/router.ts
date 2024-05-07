@@ -332,7 +332,7 @@ export class Router {
     const isWrapOrUnwap =
       isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
     const amountOutMin = isWrapOrUnwap
-      ? route.amountOutBI
+      ? route.amountInBI
       : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
         1_000_000n
 
