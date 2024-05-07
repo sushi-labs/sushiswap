@@ -976,6 +976,47 @@ describe('End-to-end RouteProcessor5 test', async () => {
     })
   }
 
+  it('Swap with not 0 liquidity on ythe router. Native => USDC => USDT', async () => {
+    await env.snapshot.restore()
+    const usedPools = new Set<string>()
+
+    // transfer some native to RP
+    await env.client.call({
+      account: env.user,
+      to: env.rp.address,
+      value: getBigInt(1e18),
+    })
+
+    intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
+    intermidiateResult = await updMakeSwap(
+      env,
+      Native.onChain(chainId),
+      USDC[chainId as keyof typeof USDC_ADDRESS],
+      intermidiateResult,
+      usedPools,
+    )
+
+    // transfer some USDC to RP
+    const RPAmount = (intermidiateResult[0] as bigint) / 10n
+    expect(RPAmount).not.equal(0n)
+    intermidiateResult[0] = (intermidiateResult[0] as bigint) - RPAmount
+    await tokenContract(
+      env.client,
+      USDC[chainId as keyof typeof USDC_ADDRESS],
+    ).write.transfer([env.rp.address, RPAmount], {
+      chain: null,
+      account: env.user.address,
+    })
+
+    intermidiateResult = await updMakeSwap(
+      env,
+      USDC[chainId as keyof typeof USDC_ADDRESS],
+      USDT[chainId as keyof typeof USDT_ADDRESS],
+      intermidiateResult,
+      usedPools,
+    )
+  })
+
   if (network.config.chainId === 137) {
     // NoWay
     it.skip('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async () => {
