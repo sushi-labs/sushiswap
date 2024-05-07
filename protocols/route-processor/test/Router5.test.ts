@@ -52,6 +52,7 @@ import {
 } from 'sushi/router'
 import {
   BridgeBento,
+  MultiRoute,
   // CurveMultitokenCore,
   // CurveMultitokenPool,
   RPool,
@@ -289,6 +290,7 @@ async function makeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
+  checkRoute?: (a: MultiRoute) => boolean,
 ): Promise<[bigint, bigint] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -328,10 +330,12 @@ async function makeSwap(
   // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
   // const cc = route.legs
   //   .map((l) => {
-  //     if (pcMap.get(l.uniqueId)?.liquidityProvider == LiquidityProviders.CurveSwap)
-  //       return `${pcMap.get(l.uniqueId)?.poolName}: ${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${
-  //         l.poolAddress
-  //       }  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+  //     if (
+  //       pcMap.get(l.uniqueId)?.liquidityProvider == LiquidityProviders.CurveSwap
+  //     )
+  //       return `${pcMap.get(l.uniqueId)?.poolName}: ${l.tokenFrom.symbol} -> ${
+  //         l.tokenTo.symbol
+  //       }  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
   //   })
   //   .filter((s) => s !== undefined)
   // if (cc.length) console.log(cc.join('\n'))
@@ -339,8 +343,8 @@ async function makeSwap(
   //   'ROUTE:',
   //   route.legs.map(
   //     (l) =>
-  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
-  //   )
+  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`,
+  //   ),
   // )
   // const poolsS = new Map<string, [number, number][]>()
   // route.legs.forEach(l => {
@@ -364,6 +368,7 @@ async function makeSwap(
   //   })
   // }
 
+  if (checkRoute && checkRoute(route) === false) return
   if (route.status === RouteStatus.NoWay) {
     if (throwAtNoWay) throw new Error('NoWay')
     return
@@ -477,6 +482,7 @@ async function updMakeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
+  checkRoute?: (a: MultiRoute) => boolean,
 ): Promise<[bigint | undefined, bigint]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
@@ -495,6 +501,7 @@ async function updMakeSwap(
     poolFilter,
     permits,
     throwAtNoWay,
+    checkRoute,
   )
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -1126,6 +1133,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
           undefined,
           undefined,
           false, //throwAtNoWay
+          (r: MultiRoute) => r.legs.every((l) => l.assumedAmountOut > 500),
         )
         currentToken = nextToken
         if (
