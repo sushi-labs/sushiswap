@@ -290,7 +290,7 @@ async function makeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
-  checkRoute?: (a: MultiRoute) => boolean,
+  slippageIsOk?: (r: MultiRoute, slippage: number) => boolean,
 ): Promise<[bigint, bigint, number] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -368,7 +368,6 @@ async function makeSwap(
   //   })
   // }
 
-  if (checkRoute && checkRoute(route) === false) return
   if (route.status === RouteStatus.NoWay) {
     if (throwAtNoWay) throw new Error('NoWay')
     return
@@ -453,12 +452,15 @@ async function makeSwap(
   )
 
   if (abs(route.amountOutBI - balanceOutBI) > 10n) {
-    if (slippage < 0) {
+    if (
+      (slippageIsOk && !slippageIsOk(route, slippage / 10000)) ||
+      (!slippageIsOk && slippage < 0)
+    ) {
       console.log(`expected amountOut: ${route.amountOutBI.toString()}`)
       console.log(`real amountOut:     ${balanceOutBI.toString()}`)
       console.log(`slippage: ${slippage / 100}%`)
+      expect(true).equals(false)
     }
-    expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
   }
 
   return [balanceOutBI, receipt.blockNumber, slippage / 100]
@@ -482,7 +484,7 @@ async function updMakeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
-  checkRoute?: (a: MultiRoute) => boolean,
+  slippageIsOk?: (r: MultiRoute, slippage: number) => boolean,
 ): Promise<[bigint | undefined, bigint, number]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint'
@@ -503,7 +505,7 @@ async function updMakeSwap(
     poolFilter,
     permits,
     throwAtNoWay,
-    checkRoute,
+    slippageIsOk,
   )
   if (res === undefined) return [undefined, waitBlock, 0]
   else return res
@@ -1115,7 +1117,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
     }
   }
 
-  it.skip('Random swap test', async () => {
+  it.only('Random swap test', async () => {
     let routeCounter = 0
     for (let i = 0; i < 1000; ++i) {
       await env.snapshot.restore()
@@ -1142,7 +1144,21 @@ describe('End-to-end RouteProcessor5 test', async () => {
           undefined,
           undefined,
           false, //throwAtNoWay
-          (r: MultiRoute) => r.legs.every((l) => l.assumedAmountOut > 500),
+          (r: MultiRoute, slippage: number) => {
+            let minAmount = r.amountIn
+            let hasBentoTokens = false
+            r.legs.forEach((l) => {
+              minAmount = Math.min(l.assumedAmountOut, minAmount)
+              if (l.tokenTo.symbol.startsWith('Bento')) hasBentoTokens = true
+            })
+            if (hasBentoTokens) {
+              process.stdout.write('Bento ')
+              return slippage > -4 / minAmount // Bento has much liquidity we can sweep
+            }
+            if (slippage !== 0)
+              process.stdout.write(`Min route amount: ${minAmount} `)
+            return Math.abs(slippage) < 4 / minAmount
+          },
         )
         currentToken = nextToken
         if (
