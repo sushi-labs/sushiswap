@@ -291,7 +291,7 @@ async function makeSwap(
   permits: PermitData[] = [],
   throwAtNoWay = true,
   checkRoute?: (a: MultiRoute) => boolean,
-): Promise<[bigint, bigint] | undefined> {
+): Promise<[bigint, bigint, number] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token && permits.length === 0) {
@@ -461,7 +461,7 @@ async function makeSwap(
     expect(slippage).greaterThanOrEqual(0) // positive slippage could be if we 'gather' some liquidity on the route
   }
 
-  return [balanceOutBI, receipt.blockNumber]
+  return [balanceOutBI, receipt.blockNumber, slippage / 100]
 }
 
 async function dataUpdated(env: TestEnvironment, minBlockNumber: bigint) {
@@ -476,17 +476,19 @@ async function updMakeSwap(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: bigint | [bigint | undefined, bigint],
+  lastCallResult: bigint | [bigint | undefined, bigint, number],
   usedPools: Set<string> = new Set(),
   providers?: LiquidityProviders[],
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
   checkRoute?: (a: MultiRoute) => boolean,
-): Promise<[bigint | undefined, bigint]> {
+): Promise<[bigint | undefined, bigint, number]> {
   const [amountIn, waitBlock] =
-    typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
-  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+    typeof lastCallResult === 'bigint'
+      ? [lastCallResult, 1n, 0]
+      : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock, 0] // previous swap failed
 
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
@@ -503,7 +505,7 @@ async function updMakeSwap(
     throwAtNoWay,
     checkRoute,
   )
-  if (res === undefined) return [undefined, waitBlock]
+  if (res === undefined) return [undefined, waitBlock, 0]
   else return res
 }
 
@@ -511,12 +513,12 @@ async function checkTransferAndRoute(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: bigint | [bigint | undefined, bigint],
+  lastCallResult: bigint | [bigint | undefined, bigint, number],
   usedPools: Set<string>,
-): Promise<[bigint | undefined, bigint]> {
+): Promise<[bigint | undefined, bigint, number]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
-  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  if (amountIn === undefined) return [undefined, waitBlock, 0] // previous swap failed
   await dataUpdated(env, waitBlock)
 
   if (fromToken instanceof Token) {
@@ -614,19 +616,19 @@ async function checkTransferAndRoute(
   const transferredValue = balanceUser2After - balanceUser2Before
   expect(transferredValue === transferValue).equal(true)
 
-  return [balanceOutBI, receipt.blockNumber]
+  return [balanceOutBI, receipt.blockNumber, 0]
 }
 
 async function checkTransferValueInput(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: bigint | [bigint | undefined, bigint],
+  lastCallResult: bigint | [bigint | undefined, bigint, number],
   usedPools: Set<string>,
-): Promise<[bigint | undefined, bigint]> {
+): Promise<[bigint | undefined, bigint, number]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
-  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  if (amountIn === undefined) return [undefined, waitBlock, 0] // previous swap failed
   await dataUpdated(env, waitBlock)
 
   if (fromToken instanceof Token) {
@@ -724,19 +726,19 @@ async function checkTransferValueInput(
   const transferredValue = balanceUser2After - balanceUser2Before
   expect(transferredValue).equal(transferValue)
 
-  return [balanceOutBIAfter, receipt.blockNumber]
+  return [balanceOutBIAfter, receipt.blockNumber, 0]
 }
 
 async function checkTransferValueOutput(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: bigint | [bigint | undefined, bigint],
+  lastCallResult: bigint | [bigint | undefined, bigint, number],
   usedPools: Set<string>,
-): Promise<[bigint | undefined, bigint]> {
+): Promise<[bigint | undefined, bigint, number]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint' ? [lastCallResult, 1n] : lastCallResult
-  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  if (amountIn === undefined) return [undefined, waitBlock, 0] // previous swap failed
   await dataUpdated(env, waitBlock)
 
   if (fromToken instanceof Token) {
@@ -833,14 +835,18 @@ async function checkTransferValueOutput(
   const transferredValue = balanceUser2After - balanceUser2Before
   expect(transferredValue).equal(transferValue)
 
-  return [balanceOutBIAfter, receipt.blockNumber]
+  return [balanceOutBIAfter, receipt.blockNumber, 0]
 }
 
 // skipped because took too long time. Unskip to check the RP
 describe('End-to-end RouteProcessor5 test', async () => {
   let env: TestEnvironment
   let chainId: ChainId
-  let intermidiateResult: [bigint | undefined, bigint] = [undefined, 1n]
+  let intermidiateResult: [bigint | undefined, bigint, number] = [
+    undefined,
+    1n,
+    0,
+  ]
   let testTokensSet: (Type | undefined)[]
   let SUSHI_LOCAL: Token
   let USDC_LOCAL: Token
@@ -1073,7 +1079,11 @@ describe('End-to-end RouteProcessor5 test', async () => {
     it('V3 only,  Native => USDC => NATIVE', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
-      let amountAndBlock: [bigint | undefined, bigint] = [undefined, 1n]
+      let amountAndBlock: [bigint | undefined, bigint, number] = [
+        undefined,
+        1n,
+        0,
+      ]
       const amountIn =
         chainId === ChainId.ETHEREUM ? 100 * 1e18 : 100_000 * 1e18
       amountAndBlock[0] = BigInt(amountIn) // should be partial
@@ -1105,7 +1115,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
     }
   }
 
-  it.skip('Random swap test', async () => {
+  it.only('Random swap test', async () => {
     let routeCounter = 0
     for (let i = 0; i < 1000; ++i) {
       await env.snapshot.restore()
@@ -1115,13 +1125,12 @@ describe('End-to-end RouteProcessor5 test', async () => {
       intermidiateResult[0] = getBigInt(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
-        console.log(
-          'Round # ',
-          i + 1,
-          ' Total Route # ',
-          ++routeCounter,
-          `pools: ${env.poolCodes.size - usedPools.size}/${env.poolCodes.size}`,
-          `${testTokensSet[currentToken]?.symbol} => ${testTokensSet[nextToken]?.symbol}`,
+        process.stdout.write(
+          `Round # ${i + 1}, Total Route # ${++routeCounter}, ` +
+            `pools: ${env.poolCodes.size - usedPools.size}/${
+              env.poolCodes.size
+            } ` +
+            `${testTokensSet[currentToken]?.symbol} => ${testTokensSet[nextToken]?.symbol} ... `,
         )
         intermidiateResult = await updMakeSwap(
           env,
@@ -1140,8 +1149,11 @@ describe('End-to-end RouteProcessor5 test', async () => {
           currentToken === 0 ||
           intermidiateResult[0] === undefined ||
           intermidiateResult[0] <= 1000n
-        )
+        ) {
+          console.log('')
           break
+        }
+        console.log(`slippage: ${intermidiateResult[2]}%`)
       }
     }
   })
