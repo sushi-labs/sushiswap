@@ -405,21 +405,36 @@ async function makeSwap(
       address: env.user.address,
     })
   }
-  const tx = await env.client.writeContract({
-    chain: null,
-    ...env.rp,
-    functionName: 'processRoute',
-    args: [
-      rpParams.tokenIn as Address,
-      rpParams.amountIn,
-      rpParams.tokenOut as Address,
-      rpParams.amountOutMin,
-      rpParams.to,
-      rpParams.routeCode,
-    ],
-    account: env.user.address,
-    value: rpParams.value || 0n,
-  })
+
+  let tx
+  try {
+    tx = await env.client.writeContract({
+      chain: null,
+      ...env.rp,
+      functionName: 'processRoute',
+      args: [
+        rpParams.tokenIn as Address,
+        rpParams.amountIn,
+        rpParams.tokenOut as Address,
+        rpParams.amountOutMin,
+        rpParams.to,
+        rpParams.routeCode,
+      ],
+      account: env.user.address,
+      value: rpParams.value || 0n,
+    })
+  } catch (e) {
+    console.log('')
+    console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+    console.log(
+      'ROUTE:',
+      route.legs.map(
+        (l) =>
+          `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`,
+      ),
+    )
+    throw e
+  }
 
   const receipt = await env.client.waitForTransactionReceipt({ hash: tx })
 
@@ -456,6 +471,15 @@ async function makeSwap(
       (slippageIsOk && !slippageIsOk(route, slippage / 10000)) ||
       (!slippageIsOk && slippage < 0)
     ) {
+      console.log('')
+      console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
+      console.log(
+        'ROUTE:',
+        route.legs.map(
+          (l) =>
+            `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`,
+        ),
+      )
       console.log(`expected amountOut: ${route.amountOutBI.toString()}`)
       console.log(`real amountOut:     ${balanceOutBI.toString()}`)
       console.log(`slippage: ${slippage / 100}%`)
@@ -1117,7 +1141,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
     }
   }
 
-  it.only('Random swap test', async () => {
+  it('Random swap test', async () => {
     let routeCounter = 0
     for (let i = 0; i < 1000; ++i) {
       await env.snapshot.restore()
