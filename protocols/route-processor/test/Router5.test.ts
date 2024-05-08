@@ -53,6 +53,7 @@ import {
 import {
   BridgeBento,
   MultiRoute,
+  PoolType,
   // CurveMultitokenCore,
   // CurveMultitokenPool,
   RPool,
@@ -381,7 +382,7 @@ async function makeSwap(
     env.user.address,
     env.rp.address,
     permits,
-    0.01, // test has it's own slippage control, let the contract not fail
+    0.1, // test has it's own slippage control, let the contract not fail
   )
   if (rpParams === undefined) return
 
@@ -1172,13 +1173,37 @@ describe('End-to-end RouteProcessor5 test', async () => {
           (r: MultiRoute, slippage: number) => {
             let minAmount = r.amountIn
             let hasBentoTokens = false
+            let hasOverusedConcentrated = false
             r.legs.forEach((l) => {
-              minAmount = Math.min(l.assumedAmountOut, minAmount)
+              minAmount = Math.min(
+                l.assumedAmountOut,
+                l.assumedAmountIn,
+                minAmount,
+              )
               if (l.tokenTo.symbol.startsWith('Bento')) hasBentoTokens = true
+              if (l.poolType === PoolType.Concentrated) {
+                const pool = env.poolCodes.get(l.poolAddress)?.pool
+                if (pool) {
+                  try {
+                    pool.calcOutByIn(
+                      l.assumedAmountIn,
+                      l.tokenFrom.address === pool.token0.address,
+                    )
+                  } catch (_e) {
+                    hasOverusedConcentrated = true
+                  }
+                }
+              }
             })
             if (hasBentoTokens) {
+              // Bento has much liquidity we can sweep
               process.stdout.write('Bento ')
-              return slippage > -4 / minAmount // Bento has much liquidity we can sweep
+              return slippage > -4 / minAmount
+            }
+            if (hasOverusedConcentrated) {
+              // UniV3 pool can use ticks outside of ticks range known by router (usually ±10%)
+              process.stdout.write('UniV3 overuse ')
+              return slippage > -4 / minAmount
             }
             if (slippage !== 0)
               process.stdout.write(`Min route amount: ${minAmount} `)
