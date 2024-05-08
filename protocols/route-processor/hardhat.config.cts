@@ -38,6 +38,7 @@ const config: HardhatUserConfig = {
         accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
       },
       chainId: 137,
+      blockGasLimit: 1_000_000_000,
     },
     // hardhat: {
     //   forking: {
