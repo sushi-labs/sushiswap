@@ -24,6 +24,7 @@ import { Amount, Type } from 'sushi/currency'
 
 import { TTLStorageKey } from '@sushiswap/hooks'
 import { Address } from 'viem'
+import { useAccount, useBytecode } from 'wagmi'
 import {
   ApprovalState,
   PermitInfo,
@@ -63,6 +64,18 @@ const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
   ...props
 }) => {
   const [approvalType, setApprovalType] = useState(ApprovalType.Permit)
+
+  const { address } = useAccount()
+
+  useBytecode({
+    address,
+    query: {
+      onSuccess: (bytecode) => {
+        bytecode !== null && setApprovalType(ApprovalType.Approve)
+      },
+      refetchInterval: Infinity,
+    },
+  })
 
   const { setSignature } = useApprovedActions(tag)
 
