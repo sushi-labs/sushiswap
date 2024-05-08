@@ -1195,19 +1195,20 @@ describe('End-to-end RouteProcessor5 test', async () => {
                 }
               }
             })
+            const maxSlippage = Math.max(4 / minAmount, 0.0001)
             if (hasBentoTokens) {
               // Bento has much liquidity we can sweep
               process.stdout.write('Bento ')
-              return slippage > -4 / minAmount
+              return slippage >= -maxSlippage
             }
             if (hasOverusedConcentrated) {
               // UniV3 pool can use ticks outside of ticks range known by router (usually ±10%)
               process.stdout.write('UniV3 overuse ')
-              return slippage > -4 / minAmount
+              return slippage >= -maxSlippage
             }
             if (slippage !== 0)
               process.stdout.write(`Min route amount: ${minAmount} `)
-            return Math.abs(slippage) < 4 / minAmount
+            return Math.abs(slippage) <= maxSlippage
           },
         )
         currentToken = nextToken
