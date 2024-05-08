@@ -324,6 +324,13 @@ export const DEFAULT_BASES = {
       address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
     }),
     USDC[ChainId.BASE],
+    new Token({
+      chainId: ChainId.BASE,
+      symbol: 'OX',
+      name: 'OX Coin',
+      decimals: 18,
+      address: '0xba0Dda8762C24dA9487f5FA026a9B64b695A07Ea',
+    }),
   ],
   [ChainId.SCROLL]: [
     Native.onChain(ChainId.SCROLL),
