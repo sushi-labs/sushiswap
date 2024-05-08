@@ -153,6 +153,7 @@ const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
                 variant="ghost"
                 name="Select"
                 className="!h-full !w-full"
+                id={'select-approval-type'}
               >
                 <ChevronDownIcon className="h-4 w-4" />
               </Button>
@@ -177,7 +178,10 @@ const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
         </HoverCardContent>
       </HoverCard>
       <SelectContent className="w-80">
-        <SelectItem value={ApprovalType.Permit}>
+        <SelectItem
+          value={ApprovalType.Permit}
+          testdata-id={'approval-type-permit-button'}
+        >
           <div className="flex flex-col">
             <span className="font-semibold">
               Permit approval with signature
@@ -188,8 +192,12 @@ const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
             </span>
           </div>
         </SelectItem>
-        <SelectItem value={ApprovalType.Approve}>
-          <div className="flex flex-col">
+
+        <SelectItem
+          value={ApprovalType.Approve}
+          testdata-id={'approval-type-approve-button'}
+        >
+          <div>
             <span className="font-semibold">Approve one-time only</span>
             <span className="text-sm">
               You'll give your approval to spend {amount?.toSignificant(6)}{' '}
@@ -197,7 +205,10 @@ const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
             </span>
           </div>
         </SelectItem>
-        <SelectItem value={ApprovalType.ApproveMax}>
+        <SelectItem
+          value={ApprovalType.ApproveMax}
+          testdata-id={'approval-type-approve-max-button'}
+        >
           <div className="flex flex-col">
             <span className="font-semibold">Approve unlimited amount</span>
             <span className="text-sm">
