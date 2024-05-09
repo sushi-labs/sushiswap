@@ -23,7 +23,7 @@
     "size-contracts": "hardhat size-contracts",
     "test": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only --no-warnings=ExperimentalWarning' hardhat test",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" hardhat coverage",
-    "test:debug": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha --inspect-brk",
+    "test:debug": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only --no-warnings=ExperimentalWarning' cross-env TS_NODE_TRANSPILE_ONLY=1 mocha --inspect-brk",
     "test:gas": "cross-env REPORT_GAS=true yarn test",
     "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts"
   },

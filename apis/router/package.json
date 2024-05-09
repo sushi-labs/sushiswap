@@ -29,7 +29,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@sentry/node": "7.101.1",
+    "@sentry/node": "7.110.0",
     "@sushiswap/extractor": "workspace:*",
     "@wagmi/core": "2.6.17",
     "cors": "2.8.5",

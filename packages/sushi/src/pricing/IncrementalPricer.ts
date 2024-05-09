@@ -59,6 +59,8 @@ class TokenInfo {
 export class IncrementalPricer {
   readonly baseTokens: TokenInfo[] // pricing start
   readonly baseTokenPrices: number[] // prices of baseTokens
+  readonly trustedTokenSet: Set<Address>
+  readonly trustedTokensForTinesCheck: RToken[]
   readonly minLiquidity: number // min liquidity pool should have to be used in pricing
 
   readonly poolTokenMap: Map<string, TokenInfo> = new Map() // pool.uniqueID() => TokenInfo
@@ -69,12 +71,28 @@ export class IncrementalPricer {
   lastfullPricesRecalcDate = 0
   fullPricesRecalcFlag = false
 
-  constructor(baseTokens: Token[], prices: number[], minLiquidity: number) {
+  constructor(
+    baseTokens: Token[], // also are trusted
+    prices: number[],
+    trustedTokens: Token[],
+    minLiquidity: number,
+  ) {
     this.baseTokens = new Array(baseTokens.length)
     this.baseTokenPrices = prices.slice()
     baseTokens.forEach((t, i) => {
       this.baseTokens[i] = new TokenInfo(t as RToken, true, 1)
     })
+    this.trustedTokenSet = new Set()
+    const trustedTokenMap = new Map<Address, RToken>()
+    trustedTokens.forEach((t) => {
+      this.trustedTokenSet.add(t.address)
+      trustedTokenMap.set(t.address, t as RToken)
+    })
+    baseTokens.forEach((t) => {
+      this.trustedTokenSet.add(t.address)
+      trustedTokenMap.set(t.address, t as RToken)
+    })
+    this.trustedTokensForTinesCheck = Array.from(trustedTokenMap.values())
     this.minLiquidity = minLiquidity
   }
 
@@ -103,6 +121,7 @@ export class IncrementalPricer {
           allPoolsOnDemand(),
           baseToken.token,
           this.minLiquidity * baseToken.decExp,
+          this.trustedTokensForTinesCheck,
         )
         comparePrices(
           'Prices partial upd',
@@ -226,6 +245,7 @@ export class IncrementalPricer {
           pools,
           baseToken.token,
           this.minLiquidity * baseToken.decExp,
+          this.trustedTokensForTinesCheck,
         )
         comparePrices(
           'Prices full recalc',
@@ -303,6 +323,7 @@ export class IncrementalPricer {
     //     })
     //     .sort((a, b) => a.poolLiquidity - b.poolLiquidity)
     // }
+    if (!this.trustedTokenSet.has(v.address)) return // don't add tokens through untrusted tokens
     for (let i = v.pools.length - 1; i >= 0; --i) {
       const edge = v.pools[i] as PoolEdge
       if (v.getNeibour(edge).price !== undefined) continue // token already priced
@@ -459,12 +480,14 @@ export class IncrementalPricer {
     const price1 = this.prices[pool.token1.address]
     if (price1 === undefined) {
       if (price0 === undefined) return // both tokens are unpriced
+      if (!this.trustedTokenSet.has(pool.token0.address as Address)) return
       const liquidity =
         (Number(pool.reserve0) * price0) / 10 ** pool.token0.decimals
       if (liquidity < this.minLiquidity) return // too low liquidity for pricing
       return this._addNewToken(pool, true, price0, liquidity)
     } else {
       if (price0 !== undefined) return // both tokens are priced
+      if (!this.trustedTokenSet.has(pool.token1.address as Address)) return
       const liquidity =
         (Number(pool.reserve1) * price1) / 10 ** pool.token1.decimals
       if (liquidity < this.minLiquidity) return // too low liquidity for pricing

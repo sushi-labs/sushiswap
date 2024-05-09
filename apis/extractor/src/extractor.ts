@@ -1,34 +1,8 @@
-import * as Sentry from '@sentry/node'
-import { Extractor, Logger, LogsMessageLevel } from '@sushiswap/extractor'
+import { Extractor } from '@sushiswap/extractor'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 // import { Token } from 'sushi/currency'
 // import { TokenList } from 'sushi/token-list'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config.js'
-
-Logger.setLogsExternalHandler(
-  (
-    msg: string,
-    level: LogsMessageLevel,
-    context?: string,
-    trace_id?: string,
-  ) => {
-    Sentry.captureMessage(
-      msg,
-      context === undefined
-        ? level
-        : {
-            level,
-            contexts: {
-              trace: {
-                data: { context },
-                trace_id: trace_id ?? '0',
-                span_id: '0',
-              },
-            },
-          },
-    )
-  },
-)
 
 const extractor = new Extractor(EXTRACTOR_CONFIG[CHAIN_ID])
 

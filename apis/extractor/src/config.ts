@@ -248,8 +248,6 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 1000,
     logging: true,
     maxBatchesSimultaniously: 5,
-    experimantalPoolIncrementalMode: true, // Only changed pools are sent from Extractor to Router
-    checkPoolIncrementalModeCorrectness: true, // if experimantalPoolIncrementalMode then make correctness check (resourcefull)
   },
   [ChainId.BTTC]: {
     client: createPublicClient(extractorClientConfig(ChainId.BTTC)),

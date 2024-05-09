@@ -223,6 +223,7 @@ export function calcTokenPrices(
   pools: RPool[],
   baseToken: RToken,
   minPriceLiquidity = 0,
+  trustedForPricingTokens?: RToken[],
   priceLogging = false,
 ): Map<RToken, number> {
   setTokenId(baseToken)
@@ -232,6 +233,7 @@ export function calcTokenPrices(
     baseToken,
     0,
     minPriceLiquidity,
+    trustedForPricingTokens,
     priceLogging,
   )
   const res = new Map<RToken, number>()
@@ -246,6 +248,7 @@ export function getTokenPriceReasoning(
   baseToken: RToken,
   token: Address,
   minPriceLiquidity = 0,
+  trustedForPricingTokens?: RToken[],
   priceLogging = false,
 ): string[] {
   setTokenId(baseToken)
@@ -255,6 +258,7 @@ export function getTokenPriceReasoning(
     baseToken,
     0,
     minPriceLiquidity,
+    trustedForPricingTokens,
     priceLogging,
   )
   return g.getPriceReasoning(baseToken, 1, token, minPriceLiquidity)
@@ -264,6 +268,7 @@ export function calcTokenAddressPrices(
   pools: RPool[],
   baseToken: RToken,
   minPriceLiquidity = 0,
+  trustedForPricingTokens?: RToken[],
   priceLogging = false,
 ): Record<string, number> {
   setTokenId(baseToken)
@@ -273,6 +278,7 @@ export function calcTokenAddressPrices(
     baseToken,
     0,
     minPriceLiquidity,
+    trustedForPricingTokens,
     priceLogging,
   )
   const res: Record<string, number> = {}

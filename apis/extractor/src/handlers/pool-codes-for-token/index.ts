@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { serializePoolCodesJSON } from 'sushi/serializer'
+import { isAddressFast, serializePoolCodesJSON } from 'sushi/serializer'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config.js'
 import extractor from '../../extractor.js'
@@ -12,7 +12,11 @@ async function handler(req: Request, res: Response) {
   const _chainId = req.params['chainId']
   if (_chainId === undefined || Number(_chainId) !== CHAIN_ID)
     return res.status(422).send(`Unsupported network ${_chainId}`)
+
   const address = req.params['address'] as Address
+  if (!isAddressFast(address))
+    return res.status(422).send(`Incorrect address ${address}`)
+
   const tokenManager = extractor.tokenManager
   let token = tokenManager.getKnownToken(address as Address)
   if (token === undefined) {

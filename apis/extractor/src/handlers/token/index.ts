@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { isAddressFast } from 'sushi/serializer'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config.js'
 import extractor from '../../extractor.js'
@@ -9,7 +10,11 @@ async function handler(req: Request, res: Response) {
   const chainId = req.params['chainId']
   if (chainId === undefined || Number(chainId) !== CHAIN_ID)
     return res.status(422).send(`Unsupported network ${chainId}`)
+
   const address = req.params['address'] as Address
+  if (!isAddressFast(address))
+    return res.status(422).send(`Incorrect address ${address}`)
+
   const tokenManager = extractor.tokenManager
   let token = tokenManager.getKnownToken(address as Address)
   if (token === undefined) {

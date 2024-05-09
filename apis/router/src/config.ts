@@ -44,7 +44,7 @@ if (!Array.isArray(STABLES[CHAIN_ID]) || !STABLES[CHAIN_ID].length) {
 
 export const ROUTER_CONFIG: Record<number, Record<string, any>> = {
   [ChainId.BSC]: {
-    experimantalPriceIncrementalMode: true, // Only prices of changed pools are recalculated
-    checkPricesIncrementalModeCorrectness: true, // if experimantalPriceIncrementalMode then make correctness check (resourcefull)
+    //priceIncrementalMode: true, // Only prices of changed pools are recalculated
+    //checkPricesIncrementalModeCorrectness: true, // if priceIncrementalMode then make correctness check (resourcefull)
   },
 }

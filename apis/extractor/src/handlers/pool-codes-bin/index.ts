@@ -13,8 +13,7 @@ import { querySchema } from './schema.js'
 
 const MIN_STATE_UPDATE_INTERVAL = 2_000
 const REMOVE_HISTORY_BEFORE = 300_000
-const INCREMENTAL_MODE =
-  extractor.config['experimantalPoolIncrementalMode'] ?? false
+const INCREMENTAL_MODE = extractor.config['poolIncrementalMode'] ?? true
 const TEST_INCREMENTAL_MODE_CORRECTNESS =
   extractor.config['checkPoolIncrementalModeCorrectness'] ?? false
 
