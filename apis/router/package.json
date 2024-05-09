@@ -23,21 +23,21 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "compair-test": "ts-node --skip-project ./test/compair.ts",
-    "price-test": "npx tsx ./test/pricesCompare.ts",
     "dev": "tsc -w",
     "load-test": "npx tsx ./test/load.ts",
+    "price-test": "npx tsx ./test/pricesCompare.ts",
     "start": "node dist/index.js"
   },
   "dependencies": {
     "@sentry/node": "7.110.0",
     "@sushiswap/extractor": "workspace:*",
-    "@wagmi/core": "2.6.9",
+    "@wagmi/core": "2.6.17",
     "cors": "2.8.5",
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "sushi": "workspace:*",
     "viem": "2.8.14",
-    "wagmi": "2.5.11",
+    "wagmi": "2.5.20",
     "zod": "3.21.4"
   },
   "devDependencies": {

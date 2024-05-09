@@ -1,5 +1,6 @@
-import { Prisma, createDirectClient } from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
 import { performance } from 'perf_hooks'
+import { client } from 'src/lib/prisma'
 
 /**
  * Merges(Create/Update) incentives.
@@ -26,7 +27,6 @@ async function updateIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   }
   console.log(`LOAD - Preparing to update ${incentives.length} incentives`)
 
-  const client = await createDirectClient()
   const incentivesToUpdate = incentives.map((incentive) => {
     return client.incentive.update({
       select: {
@@ -46,8 +46,6 @@ async function updateIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   const updatedIncentives = await Promise.all(incentivesToUpdate)
   const endTime = performance.now()
 
-  await client.$disconnect()
-
   console.log(
     `LOAD - Updated ${updatedIncentives.length} incentives. (${(
       (endTime - startTime) /
@@ -64,8 +62,6 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
   let count = 0
   const batchSize = 500
   const startTime = performance.now()
-
-  const client = await createDirectClient()
 
   for (let i = 0; i < incentives.length; i += batchSize) {
     const created = await client.incentive.createMany({
@@ -85,8 +81,6 @@ async function createIncentives(incentives: Prisma.IncentiveCreateManyInput[]) {
 }
 
 async function hasIncentives() {
-  const client = await createDirectClient()
   const count = await client.incentive.count()
-  await client.$disconnect()
   return count > 0
 }

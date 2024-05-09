@@ -124,7 +124,7 @@ export class Chain implements Chain {
       this.explorers = [
         {
           name: 'ZetaChain Mainnet Explorer',
-          url: 'https://explorer.zetachain.com',
+          url: 'https://zetachain.blockscout.com',
           standard: 'EIP3091',
         },
       ]

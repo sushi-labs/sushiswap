@@ -42,6 +42,7 @@ export async function getStaticProps({
     return {
       props: {},
       notFound: true,
+      revalidate: 15,
     }
   }
 
@@ -51,6 +52,7 @@ export async function getStaticProps({
     return {
       props: {},
       notFound: false,
+      revalidate: 15,
     }
   }
 

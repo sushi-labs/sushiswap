@@ -1,8 +1,7 @@
-import { Prisma, createDirectClient } from '@sushiswap/database'
+import { Prisma } from '@sushiswap/database'
+import { client } from 'src/lib/prisma'
 
 export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
-  const client = await createDirectClient()
-
   const vaultTokens = vaults.flatMap((vault) => [
     vault.token0Id,
     vault.token1Id,
@@ -380,14 +379,10 @@ export async function upsertVaults(vaults: Prisma.SteerVaultCreateManyInput[]) {
     },
   })
 
-  await client.$disconnect()
-
   console.log(`LOAD - Updated ${updated} and created ${created.count} vaults. `)
 }
 
 export async function enableVaults(vaultIds: string[]) {
-  const client = await createDirectClient()
-
   const enabled = await client.steerVault.updateMany({
     data: {
       isEnabled: true,
@@ -396,14 +391,10 @@ export async function enableVaults(vaultIds: string[]) {
     where: { id: { in: vaultIds } },
   })
 
-  await client.$disconnect()
-
   console.log(`LOAD - Deprecated ${enabled.count} vaults.`)
 }
 
 export async function deprecateVaults(vaultIds: string[]) {
-  const client = await createDirectClient()
-
   const deprecated = await client.steerVault.updateMany({
     data: {
       apr: 0,
@@ -416,8 +407,6 @@ export async function deprecateVaults(vaultIds: string[]) {
     },
     where: { id: { in: vaultIds } },
   })
-
-  await client.$disconnect()
 
   console.log(`LOAD - Deprecated ${deprecated.count} vaults.`)
 }

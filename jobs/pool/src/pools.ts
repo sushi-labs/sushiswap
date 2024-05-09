@@ -1,11 +1,10 @@
-import { Prisma, Protocol, createDirectClient } from '@sushiswap/database'
+import { Prisma, Protocol } from '@sushiswap/database'
 import {
   MAX_FIRST,
-  SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   SUSHISWAP_V3_ENABLED_NETWORKS,
-  SUSHISWAP_V3_SUBGRAPH_NAME,
+  SUSHISWAP_V3_SUBGRAPH_URL,
   SWAP_ENABLED_NETWORKS,
 } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
@@ -22,8 +21,7 @@ import { createTokens } from './etl/token/load.js'
 
 interface SubgraphConfig {
   chainId: ChainId
-  host: string
-  name: string
+  url: string
   protocol: Protocol
 }
 
@@ -116,9 +114,6 @@ export async function execute(protocol: Protocol) {
     )
   } catch (e) {
     console.error(e)
-    await (await createDirectClient()).$disconnect()
-  } finally {
-    await (await createDirectClient()).$disconnect()
   }
 }
 
@@ -127,16 +122,14 @@ function createSubgraphConfig(protocol: Protocol) {
     return SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
       return {
         chainId,
-        host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
-        name: SUSHISWAP_SUBGRAPH_NAME[chainId],
+        url: SUSHISWAP_SUBGRAPH_URL[chainId],
         protocol: Protocol.SUSHISWAP_V2,
       }
     })
   } else if (protocol === Protocol.SUSHISWAP_V3) {
     return SUSHISWAP_V3_ENABLED_NETWORKS.map((chainId) => ({
       chainId,
-      host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
-      name: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
+      url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
       protocol: Protocol.SUSHISWAP_V3,
     }))
   }
@@ -176,71 +169,72 @@ async function extract(protocol: Protocol) {
     sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
   ])
 
-  for (const subgraph of subgraphs) {
-    const sdk = getBuiltGraphSDK({
-      chainId: subgraph.chainId,
-      host: subgraph.host,
-      name: subgraph.name,
-    })
-    const blocks: Blocks = {
-      oneHour:
-        Number(
-          oneHourBlocks.oneHourBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoHour:
-        Number(
-          twoHourBlocks.twoHourBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      oneDay:
-        Number(
-          oneDayBlocks.oneDayBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoDay:
-        Number(
-          twoDayBlocks.twoDayBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      oneWeek:
-        Number(
-          oneWeekBlocks.oneWeekBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoWeek:
-        Number(
-          twoWeekBlocks.twoWeekBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      oneMonth:
-        Number(
-          oneMonthBlocks.oneMonthBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-      twoMonth:
-        Number(
-          twoMonthBlocks.twoMonthBlocks.find(
-            (block) => block.chainId === subgraph.chainId,
-          )?.number,
-        ) ?? undefined,
-    }
+  await Promise.allSettled(
+    subgraphs.map(async (subgraph) => {
+      const sdk = getBuiltGraphSDK({
+        chainId: subgraph.chainId,
+        api: subgraph.url,
+      })
+      const blocks: Blocks = {
+        oneHour:
+          Number(
+            oneHourBlocks.oneHourBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoHour:
+          Number(
+            twoHourBlocks.twoHourBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        oneDay:
+          Number(
+            oneDayBlocks.oneDayBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoDay:
+          Number(
+            twoDayBlocks.twoDayBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        oneWeek:
+          Number(
+            oneWeekBlocks.oneWeekBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoWeek:
+          Number(
+            twoWeekBlocks.twoWeekBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        oneMonth:
+          Number(
+            oneMonthBlocks.oneMonthBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+        twoMonth:
+          Number(
+            twoMonthBlocks.twoMonthBlocks.find(
+              (block) => block.chainId === subgraph.chainId,
+            )?.number,
+          ) ?? undefined,
+      }
 
-    const pairs = await fetchPairs(sdk, subgraph, blocks)
-    if (pairs === undefined) {
-      console.warn('No pairs found, skipping')
-      continue
-    }
-    console.log(`${subgraph.name}, batches: ${pairs.currentPools.length}`)
-    result.push({ chainId: subgraph.chainId, data: pairs })
-  }
+      const pairs = await fetchPairs(sdk, subgraph, blocks)
+      if (pairs === undefined) {
+        console.warn('No pairs found, skipping')
+        return
+      }
+      console.log(`${subgraph.url}, batches: ${pairs.currentPools.length}`)
+      result.push({ chainId: subgraph.chainId, data: pairs })
+    }),
+  )
   return result
 }
 
@@ -288,7 +282,7 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
     ])
 
     console.log(
-      `${config.name} results by timeframe
+      `${config.url} results by timeframe
       * current: ${currentPools
         .map((p) => p.pairs.length)
         .reduce((a, b) => a + b, 0)}
@@ -352,7 +346,7 @@ async function fetchPairs(sdk: Sdk, config: SubgraphConfig, blocks: Blocks) {
     ])
 
     console.log(
-      `${config.name} results by timeframe
+      `${config.url} results by timeframe
       * current: ${currentPools
         .map((p) => p.pools.length)
         .reduce((a, b) => a + b, 0)}
@@ -386,7 +380,7 @@ async function fetchV2Pairs(
   config: SubgraphConfig,
   blockNumber?: number,
 ) {
-  console.log(`Loading data from ${config.host} ${config.name}`)
+  console.log(`Loading data from ${config.url}`)
   let cursor = ''
   const data: PairsQuery[] = []
   let count = 0
@@ -415,7 +409,7 @@ async function fetchV2Pairs(
       data.push(request)
     }
   } while (cursor !== '')
-  console.log(`EXTRACT: ${config.host}/${config.name} - ${count} pairs found.`)
+  console.log(`EXTRACT: ${config.url} - ${count} pairs found.`)
   return data
 }
 
@@ -424,7 +418,7 @@ async function fetchV3Pools(
   config: SubgraphConfig,
   blockNumber?: number,
 ) {
-  console.log(`Loading data from ${config.host} ${config.name}`)
+  console.log(`Loading data from ${config.url}`)
   let cursor = ''
   const data: V3PoolsQuery[] = []
   let count = 0
@@ -455,7 +449,7 @@ async function fetchV3Pools(
       data.push(request)
     }
   } while (cursor !== '')
-  console.log(`EXTRACT: ${config.host}/${config.name} - ${count} pairs found.`)
+  console.log(`EXTRACT: ${config.url} - ${count} pairs found.`)
   return data
 }
 

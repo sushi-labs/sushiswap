@@ -9,14 +9,14 @@ export const useSlippageTolerance = (
 ) => {
   const [slippageTolerance, setSlippageTolerance] = useLocalStorage<
     number | string
-  >(key, 0.5)
+  >(key, 0.1)
 
   return useMemo(
     () =>
       [
         new Percent(
           Math.floor(
-            Number(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) *
+            Number(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) *
               100,
           ),
           10_000,
