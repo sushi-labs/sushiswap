@@ -71,6 +71,7 @@ export const getConcentratedLiquidityPositionFees = async ({
 
     try {
       result = await simulateContract(config, {
+        chainId: el.chainId,
         abi: abiShard,
         address: getV3NonFungiblePositionManagerContractConfig(el.chainId)
           .address,
