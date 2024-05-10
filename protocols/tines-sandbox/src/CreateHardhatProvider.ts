@@ -23,6 +23,15 @@ export async function createHardhatProvider(
             url,
             blockNumber,
           },
+          accounts: {
+            mnemonic:
+              'test test test test test test test test test test test oooops',
+            path: "m/44'/60'/0'/0",
+            initialIndex: 0,
+            count: 20,
+            passphrase: '',
+            accountsBalance: `0x${(10n ** 50n).toString(16)}`,
+          },
         },
       },
     },

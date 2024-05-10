@@ -100,6 +100,7 @@ export class TokenManager {
         Logger.error(
           this.client.client.chain?.id,
           `Unexisted token request ${address}`,
+          new Error('Stack'),
         )
         return
       }

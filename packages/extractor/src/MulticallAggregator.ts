@@ -2,7 +2,6 @@ import { Abi, Narrow } from 'abitype'
 import { ChainId } from 'sushi/chain'
 import {
   Address,
-  BaseError,
   ContractFunctionArgs,
   ContractFunctionParameters,
   MulticallContracts,
@@ -210,7 +209,7 @@ export class MultiCallAggregator {
       this.totalCallsProcessed += pendingCalls.length - 1
       this.totalMCallsProcessed += 1
       this.totalTimeSpent += performance.now() - startTime
-      if ((res[0].error as BaseError)?.details === 'out of gas') {
+      if (res[0].status !== 'success') {
         // random error, usually not repeatable, report it and try again
         Logger.warn(
           this.client.chain?.id,
@@ -227,7 +226,7 @@ export class MultiCallAggregator {
         // getBlockNumber Failed
         for (let i = 1; i < res.length; ++i) pendingRejects[i - 1](res[0].error)
       } else {
-        const blockNumber = res[0].result as number
+        const blockNumber = Number(res[0].result)
         for (let i = 1; i < res.length; ++i) {
           if (res[i].status === 'success')
             pendingResolves[i - 1]({ blockNumber, returnValue: res[i].result })

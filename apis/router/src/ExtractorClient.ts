@@ -54,9 +54,15 @@ export class ExtractorClient {
     this.extractorServer = extractorServer
     this.poolUpdateInterval = poolUpdateInterval
     this.requestedPairsUpdateInterval = requestedPairsUpdateInterval
+    const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
+    const additionalTrusted = Object.values(
+      ADDITIONAL_BASES[chainId] ?? [],
+    ).flat()
+    const stables = STABLES[chainId as keyof typeof STABLES].slice() ?? []
     this.pricer = new IncrementalPricer(
-      STABLES[chainId as keyof typeof STABLES].slice() ?? [],
-      STABLES[chainId as keyof typeof STABLES].map((_) => 1),
+      stables,
+      stables.map((_) => 1),
+      baseTrusted.concat(additionalTrusted),
       1000,
     )
   }
@@ -148,11 +154,11 @@ export class ExtractorClient {
       } else {
         Logger.error(
           this.chainId,
-          `Pool download failed, status=${resp.status}`,
+          `ExtractorClient: Pool download failed, status=${resp.status}`,
         )
       }
     } catch (e) {
-      Logger.error(this.chainId, `Pool download failed`, e)
+      console.error('ExtractorClient: updatePools failed', e)
     }
     setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
@@ -186,10 +192,13 @@ export class ExtractorClient {
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
-        console.error(`Request pairs download failed, status=${resp.status}`)
+        Logger.error(
+          this.chainId,
+          `ExtractorClient: request pairs download failed, status=${resp.status}`,
+        )
       }
     } catch (e) {
-      console.error(`Pool download failed, ${e}`)
+      console.error('ExtractorClient: updateRequestedPairs failed', e)
     }
     setTimeout(
       () => this.updateRequestedPairs(),
@@ -247,9 +256,10 @@ export class ExtractorClient {
       return pools
     } catch (e) {
       console.error(
-        `Error /pool-codes-between/${this.chainId}/${tokenAddr(t0)}/${tokenAddr(
-          t1,
-        )}: ${e}`,
+        `ExtractorClient: fetchPoolsBetween failed for ${tokenAddr(
+          t0,
+        )}/${tokenAddr(t1)}`,
+        e,
       )
       this.fetchPoolsBetweenRequests.delete(id)
       return
@@ -284,7 +294,11 @@ export class ExtractorClient {
         console.log(`Fetch pool codes for token: ${pools.length} pools`)
       return pools
     } catch (e) {
-      console.error(`Error /pool-codes-for-token/${this.chainId}/${addr}: ${e}`)
+      console.error(
+        this.chainId,
+        `ExtractorClient: fetchTokenPools failed for ${addr}`,
+        e,
+      )
       return
     }
   }
@@ -330,7 +344,7 @@ export class ExtractorClient {
       const data = (await resp.json()) as Token
       return new Token(data)
     } catch (e) {
-      console.error(`Error /token/${this.chainId}/${addr}: ${e}`)
+      console.error(`ExtractorClient: fetchToken failed for ${addr}`, e)
       return
     }
   }
