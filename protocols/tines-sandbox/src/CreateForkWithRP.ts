@@ -9,7 +9,9 @@ import {
   walletActions,
 } from 'viem'
 import { hardhat } from 'viem/chains'
-import RouteProcessor4 from '../test/RouteProcessor4.sol/RouteProcessor4.json'
+import RouteProcessor4 from '../test/RouteProcessor4.sol/RouteProcessor4.json' assert {
+  type: 'json',
+}
 import { createHardhatProvider } from './CreateHardhatProvider.js'
 
 export async function createForkRouteProcessor4(
