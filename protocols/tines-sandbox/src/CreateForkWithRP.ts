@@ -54,6 +54,6 @@ export async function createForkRouteProcessor4(
   return {
     client,
     deployUser,
-    RouteProcessorAddress,
+    RouteProcessorAddress: RouteProcessorAddress as Address,
   }
 }
