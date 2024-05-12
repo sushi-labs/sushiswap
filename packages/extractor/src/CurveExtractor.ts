@@ -1,10 +1,10 @@
-import { CurvePoolCode, LiquidityProviders } from '@sushiswap/router'
+import { Token } from 'sushi/currency'
+import { CurvePoolCode, LiquidityProviders } from 'sushi/router'
 import {
   CurveMultitokenCore,
   RToken,
   createCurvePoolsForMultipool,
-} from '@sushiswap/tines'
-import { Token } from 'sushi/currency'
+} from 'sushi/tines'
 import {
   Address,
   Log,
@@ -13,11 +13,11 @@ import {
   parseAbi,
   parseAbiItem,
 } from 'viem'
-import { Counter } from './Counter'
-import { LogFilter2 } from './LogFilter2'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { TokenManager } from './TokenManager'
-import { warnLog } from './WarnLog'
+import { Counter } from './Counter.js'
+import { LogFilter2 } from './LogFilter2.js'
+import { Logger } from './Logger.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { TokenManager } from './TokenManager.js'
 
 const POOL_RATIO_UPDATE_INTERVAL = 30 * 60_000 // How often to update pools with ratio !== 1
 
@@ -218,7 +218,7 @@ export class CurveExtractor {
           `Block ${blockNumber} ${logs.length} logs, jobs: ${this.taskCounter.counter}`,
         )
       } else {
-        warnLog(
+        Logger.error(
           this.multiCallAggregator.chainId,
           'Log collecting failed. Pools refetching',
         )
@@ -266,7 +266,7 @@ export class CurveExtractor {
         }
         const poolList = data?.data?.poolData
         if (poolList === undefined) {
-          warnLog(
+          Logger.error(
             this.multiCallAggregator.chainId,
             `Crv pool list ${url} unexpected format`,
           )
@@ -277,7 +277,7 @@ export class CurveExtractor {
         })
         //poolList.forEach((p) => console.log(p.address, l))
       } catch (_e) {
-        warnLog(
+        Logger.error(
           this.multiCallAggregator.chainId,
           `Crv pool list ${url} reading failed`,
         )
@@ -394,7 +394,7 @@ export class CurveExtractor {
         this.tokenPairMap.set(a0 + a1, tokenPair)
       })
     } catch (_e) {
-      warnLog(
+      Logger.error(
         this.multiCallAggregator.chainId,
         `Pool ${poolAddress} adding error ${_e}`,
       )
