@@ -47,6 +47,11 @@ export function DataTableColumnHeader<TData, TValue>({
     }
   }, [column])
 
+  // When the header (=title) is undefined, it becomes a function, can't render functions...
+  if (typeof title !== 'string') {
+    title = ''
+  }
+
   if (!column.getCanSort()) {
     return (
       <div className={classNames(className)}>

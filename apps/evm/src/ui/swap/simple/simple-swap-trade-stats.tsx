@@ -1,14 +1,14 @@
 'use client'
 
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
-import { Address, useAccount } from '@sushiswap/wagmi'
+import { useAccount } from '@sushiswap/wagmi'
 import { AddressToEnsResolver } from '@sushiswap/wagmi/components/account/AddressToEnsResolver'
 import React, { FC } from 'react'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
-import { isAddress } from 'viem'
+import { Address, isAddress } from 'viem'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -16,15 +16,17 @@ import {
 import { TradeRoutePathView } from '../trade-route-path-view'
 import {
   useDerivedStateSimpleSwap,
+  useFallback,
   useSimpleSwapTrade,
 } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
   const {
-    state: { chainId, swapAmountString, recipient },
+    state: { chainId, swapAmountString, recipient, forceClient },
   } = useDerivedStateSimpleSwap()
   const { isInitialLoading: isLoading, data: trade } = useSimpleSwapTrade()
+  const { isFallback } = useFallback(chainId)
   const loading = Boolean(isLoading && !trade?.writeArgs)
 
   return (
@@ -86,6 +88,17 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
+        {trade?.tokenTax ? (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700 dark:text-slate-400">
+              Token tax
+            </span>
+            <span className="text-sm font-semibold text-yellow text-right">
+              {trade.tokenTax.toPercentageString()}
+            </span>
+          </div>
+        ) : null}
+
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">
             Network fee
@@ -96,6 +109,21 @@ export const SimpleSwapTradeStats: FC = () => {
             ) : trade?.gasSpent ? (
               `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
             ) : null}
+          </span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Routing source
+          </span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {loading || !trade ? (
+              <SkeletonBox className="h-4 py-0.5 w-[120px]" />
+            ) : !isFallback && !forceClient ? (
+              'SushiSwap API'
+            ) : (
+              'SushiSwap Client'
+            )}
           </span>
         </div>
 

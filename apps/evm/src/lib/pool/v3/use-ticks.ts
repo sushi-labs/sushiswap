@@ -1,27 +1,27 @@
 'use client'
 
-import {
-  FeeAmount,
-  SushiSwapV3ChainId,
-  TICK_SPACINGS,
-  computePoolAddress,
-  nearestUsableTick,
-} from '@sushiswap/v3-sdk'
-import { Address, useContractReads } from '@sushiswap/wagmi'
+import { useReadContracts } from '@sushiswap/wagmi'
 import {
   getV3FactoryContractConfig,
   getV3TickLensContractConfig,
   useConcentratedLiquidityPool,
 } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
+import {
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+} from 'sushi/config'
 import { Type } from 'sushi/currency'
+import { computeSushiSwapV3PoolAddress, nearestUsableTick } from 'sushi/pool'
+import { Address } from 'viem'
 import { Writeable } from 'zod'
 
 interface useTicksProps {
   token0: Type | undefined
   token1: Type | undefined
   chainId: SushiSwapV3ChainId
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   numSurroundingTicks?: number | undefined
   enabled?: boolean | undefined
 }
@@ -56,7 +56,7 @@ export function useTicks({
   const poolAddress = useMemo(
     () =>
       token0 && token1 && feeAmount && chainId
-        ? computePoolAddress({
+        ? computeSushiSwapV3PoolAddress({
             factoryAddress: getV3FactoryContractConfig(chainId).address,
             tokenA: token0.wrapped,
             tokenB: token1.wrapped,
@@ -106,10 +106,12 @@ export function useTicks({
     return reads
   }, [chainId, maxIndex, minIndex, poolAddress])
 
-  const reads = useContractReads({
+  const reads = useReadContracts({
     contracts: contractReads,
-    enabled: true,
     allowFailure: false,
+    query: {
+      enabled: true,
+    },
   })
 
   return useMemo(() => {

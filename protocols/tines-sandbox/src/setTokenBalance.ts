@@ -2,9 +2,8 @@ import {
   getStorageAt as getStorageAtLib,
   setStorageAt as setStorageAtLib,
 } from '@nomicfoundation/hardhat-network-helpers'
-import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types'
+import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types.js'
 import { BigNumber, Contract } from 'ethers'
-import { keccak256 } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { EthereumProvider } from 'hardhat/types'
 import { erc20Abi } from 'sushi/abi'
@@ -114,14 +113,14 @@ export async function setTokenBalance(
     const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber)
       .toString(16)
       .padStart(64, '0')}`
-    const slot = keccak256(slotData)
+    const slot = ethers.utils.keccak256(slotData)
     const previousValue0 = await getStorageAt(realContract, slot, provider)
     await setStorageAt(realContract, slot, value0, provider)
     // Vyper mapping
     const slotData2 = `0x${Number(slotNumber)
       .toString(16)
       .padStart(64, '0')}${user.padStart(64, '0')}`
-    const slot2 = keccak256(slotData2)
+    const slot2 = ethers.utils.keccak256(slotData2)
     const previousValue1 = await getStorageAt(realContract, slot2, provider)
     await setStorageAt(realContract, slot2, value1, provider)
     return [previousValue0, previousValue1]

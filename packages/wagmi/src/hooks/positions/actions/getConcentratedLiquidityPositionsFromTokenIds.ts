@@ -1,8 +1,10 @@
-import { SushiSwapV3ChainId, computePoolAddress } from '@sushiswap/v3-sdk'
-import { Address, readContracts } from 'wagmi'
+import { SushiSwapV3ChainId } from 'sushi/config'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { readContracts } from '@wagmi/core/actions'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 
@@ -85,13 +87,15 @@ const abiShard = [
 
 export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
+  config,
 }: {
   tokenIds: { chainId: SushiSwapV3ChainId; tokenId: bigint }[]
+  config: PublicWagmiConfig
 }): Promise<ConcentratedLiquidityPosition[]> => {
-  const results = await readContracts({
+  const results = await readContracts(config, {
     contracts: tokenIds.map((el) => ({
-      address: getV3NonFungiblePositionManagerConractConfig(el.chainId)
-        .address as Address,
+      address: getV3NonFungiblePositionManagerContractConfig(el.chainId)
+        .address,
       abi: abiShard,
       chainId: el.chainId,
       functionName: 'positions',
@@ -99,7 +103,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
     })),
   }).then((results) => results.map((el) => el.result))
 
-  const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
+  const fees = await getConcentratedLiquidityPositionFees({ tokenIds, config })
 
   return results
     .map((result, i) => {
@@ -123,7 +127,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
       ] = result
       return {
         id: tokenId.toString(),
-        address: computePoolAddress({
+        address: computeSushiSwapV3PoolAddress({
           factoryAddress: getV3FactoryContractConfig(chainId).address,
           tokenA: token0,
           tokenB: token1,

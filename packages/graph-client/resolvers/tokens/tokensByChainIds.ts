@@ -1,10 +1,9 @@
 // @ts-nocheck
 import {
-  SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { ChainId, chainName, chainShortName } from 'sushi/chain'
@@ -54,8 +53,7 @@ export const _tokensByChainIds = async (
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: TRIDENT_SUBGRAPH_URL[chainId],
           },
           info,
           // @ts-ignore
@@ -95,8 +93,7 @@ export const _tokensByChainIds = async (
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: SUSHISWAP_SUBGRAPH_URL[chainId],
           },
           info,
           // @ts-ignore

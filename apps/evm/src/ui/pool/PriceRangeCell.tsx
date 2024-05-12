@@ -2,7 +2,7 @@
 
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
-import { Position } from '@sushiswap/v3-sdk'
+import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
@@ -13,6 +13,7 @@ import {
 } from 'src/lib/functions'
 import { usePriceInverter } from 'src/lib/hooks'
 import { useIsTickAtLimit } from 'src/lib/pool/v3'
+import { Position } from 'sushi/pool'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
   ({ original }) => {
@@ -102,13 +103,17 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
             )}
           />
           <span className="whitespace-nowrap text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
-            {fullRange
-              ? '0'
-              : formatTickPrice({
+            {fullRange ? (
+              '0'
+            ) : (
+              <FormattedNumber
+                number={formatTickPrice({
                   price: priceLower,
                   atLimit: tickAtLimit,
                   direction: Bound.UPPER,
-                })}{' '}
+                })}
+              />
+            )}{' '}
             {currencyQuote?.symbol}
             <div className="flex items-center">
               <ArrowSmLeftIcon
@@ -122,22 +127,28 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
                 className="text-gray-500 dark:text-slate-500 ml-[-7px]"
               />
             </div>
-            {fullRange
-              ? '∞'
-              : formatTickPrice({
+            {fullRange ? (
+              '∞'
+            ) : (
+              <FormattedNumber
+                number={formatTickPrice({
                   price: priceUpper,
                   atLimit: tickAtLimit,
                   direction: Bound.UPPER,
-                })}{' '}
+                })}
+              />
+            )}{' '}
             {currencyQuote?.symbol}
           </span>
         </div>
         <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
           Current:{' '}
-          {(inverted
-            ? original.pool?.token1Price
-            : original.pool?.token0Price
-          )?.toSignificant(6)}{' '}
+          <FormattedNumber
+            number={(inverted
+              ? original.pool?.token1Price
+              : original.pool?.token0Price
+            )?.toSignificant(6)}
+          />{' '}
           {currencyQuote?.symbol} per {currencyBase?.symbol}{' '}
         </span>
       </div>

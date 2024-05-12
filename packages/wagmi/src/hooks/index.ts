@@ -1,3 +1,5 @@
+'use client'
+
 export * from './approvals'
 export * from './balances'
 export * from './bar'
@@ -17,6 +19,4 @@ export * from './useSteer'
 export * from './utils'
 export * from './wallet'
 export * from './migrate'
-
-// legacy
-export { useSendTransaction as _useSendTransaction } from './useSendTransaction'
+export * from './watch'

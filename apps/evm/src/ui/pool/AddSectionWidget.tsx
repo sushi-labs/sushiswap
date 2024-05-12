@@ -1,5 +1,6 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { PlusIcon } from '@heroicons/react-v1/solid'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   WidgetAction,
   WidgetDescription,
@@ -12,6 +13,7 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui/components/settings'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
+import { getDefaultTTL } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import React, { FC, ReactNode } from 'react'
 import { ChainId } from 'sushi/chain'
@@ -54,14 +56,19 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
           <SettingsOverlay
             options={{
               slippageTolerance: {
-                storageKey: 'addLiquidity',
-                defaultValue: '0.5',
+                storageKey: SlippageToleranceStorageKey.AddLiquidity,
+                defaultValue: '0.1',
                 title: 'Add Liquidity Slippage',
+              },
+              transactionDeadline: {
+                storageKey: TTLStorageKey.AddLiquidity,
+                defaultValue: getDefaultTTL(chainId).toString(),
               },
             }}
             modules={[
               SettingsModule.CustomTokens,
               SettingsModule.SlippageTolerance,
+              SettingsModule.TransactionDeadline,
             ]}
           >
             <IconButton

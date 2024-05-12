@@ -1,13 +1,13 @@
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { readContracts } from '@wagmi/core/actions'
+import { uniswapV2PairAbi } from 'sushi/abi'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SushiSwapV2ChainId,
-  SushiSwapV2Pool,
-  computeSushiSwapV2PoolAddress,
   isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
-import { uniswapV2PairAbi } from 'sushi/abi'
+} from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
-import { Address, readContracts } from 'wagmi'
+import { SushiSwapV2Pool, computeSushiSwapV2PoolAddress } from 'sushi/pool'
 
 export enum PairState {
   LOADING = 'Loading',
@@ -19,6 +19,7 @@ export enum PairState {
 export const getSushiSwapV2Pools = async (
   chainId: SushiSwapV2ChainId | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
+  config: PublicWagmiConfig,
 ): Promise<[PairState, SushiSwapV2Pool | null][]> => {
   const filtered = currencies.filter(
     (currencies): currencies is [Type, Type] => {
@@ -50,12 +51,12 @@ export const getSushiSwapV2Pools = async (
         SUSHISWAP_V2_FACTORY_ADDRESS[currencyA.chainId as SushiSwapV2ChainId],
       tokenA: currencyA.wrapped,
       tokenB: currencyB.wrapped,
-    }) as Address,
+    }),
     abi: uniswapV2PairAbi,
     functionName: 'getReserves' as const,
   }))
 
-  const data = await readContracts({
+  const data = await readContracts(config, {
     contracts: contracts,
   })
 

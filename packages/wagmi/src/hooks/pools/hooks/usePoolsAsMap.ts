@@ -1,23 +1,24 @@
-import {
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentConstantPool,
-  TridentStablePool,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
-  isTridentChainId,
-} from '@sushiswap/trident-sdk'
-import {
-  SUSHISWAP_V2_FACTORY_ADDRESS,
-  SushiSwapV2Pool,
-  computeSushiSwapV2PoolAddress,
-  isSushiSwapV2ChainId,
-} from '@sushiswap/v2-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
+import {
+  SUSHISWAP_V2_FACTORY_ADDRESS,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  isSushiSwapV2ChainId,
+  isTridentChainId,
+} from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
+import {
+  SushiSwapV2Pool,
+  TridentConstantPool,
+  TridentStablePool,
+  computeSushiSwapV2PoolAddress,
+  computeTridentConstantPoolAddress,
+  computeTridentStablePoolAddress,
+} from 'sushi/pool'
 
+import { useConfig } from 'wagmi'
 import { getAllPools } from '../actions'
 import { PoolType, UsePoolsParams } from '../types'
 
@@ -75,6 +76,8 @@ export const usePoolsAsMap = ({
 }: UsePoolsAsMapParams) => {
   const { chainId, currencyA, currencyB } = variables
 
+  const config = useConfig()
+
   return useQuery({
     queryKey: ['usePoolsAsMap', { chainId, currencyA, currencyB }],
     queryFn: async () => {
@@ -83,6 +86,7 @@ export const usePoolsAsMap = ({
         asMap: true,
         withCombinations: false,
         withBentoPools: false,
+        config,
       })
       const pools = [
         ...(data.sushiSwapV2Pools || []),

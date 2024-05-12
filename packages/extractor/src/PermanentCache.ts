@@ -1,5 +1,4 @@
 import { FileHandle, mkdir, open } from 'node:fs/promises'
-
 import path from 'path'
 
 type ResolveFunction = () => void

@@ -1,13 +1,4 @@
 import {
-  DataFetcher,
-  LiquidityProviders,
-  NUMBER_OF_SURROUNDING_TICKS,
-  UniV3PoolCode,
-} from '@sushiswap/router'
-import { CL_MAX_TICK } from '@sushiswap/tines'
-import { CL_MIN_TICK } from '@sushiswap/tines'
-import { UniV3Pool } from '@sushiswap/tines'
-import {
   UniV3Environment,
   UniV3PoolInfo,
   createRandomUniV3Pool,
@@ -16,13 +7,20 @@ import {
   possibleFee,
 } from '@sushiswap/tines-sandbox'
 import { expect } from 'chai'
-import { ethers, network } from 'hardhat'
+import hre from 'hardhat'
 import { ChainId } from 'sushi/chain'
-import { createPublicClient } from 'viem'
-import { custom } from 'viem'
+import {
+  DataFetcher,
+  LiquidityProviders,
+  NUMBER_OF_SURROUNDING_TICKS,
+  UniV3PoolCode,
+} from 'sushi/router'
+import { loadPoolSnapshot } from 'sushi/serializer'
+import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from 'sushi/tines'
+import { createPublicClient, custom } from 'viem'
 import { hardhat } from 'viem/chains'
 
-import { loadPoolSnapshot } from './utils/poolSerializer'
+const { ethers, network } = hre
 
 const POLLING_INTERVAL = process.env.ALCHEMY_ID ? 1_000 : 10_000
 async function getDataFetcherData(
@@ -127,7 +125,7 @@ describe('DataFetcher Uni V3', () => {
 
   before(async () => {
     env = await createUniV3EnvReal(ethers)
-    const poolCodes = loadPoolSnapshot(
+    const poolCodes = await loadPoolSnapshot(
       network.config.chainId as ChainId,
       (network.config as { forking: { blockNumber?: number } }).forking
         ?.blockNumber,

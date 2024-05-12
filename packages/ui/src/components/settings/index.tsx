@@ -1,7 +1,11 @@
 'use client'
 
 import { Cog6ToothIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  TTLStorageKey,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import React, { FC, ReactNode, useState } from 'react'
 
 import { Button } from '../button'
@@ -23,22 +27,28 @@ import {
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
-import { SwapApi } from './SwapApi'
+import { TransactionDeadline } from './TransactionDeadline'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
   SlippageTolerance = 'SlippageTolerance',
   ExpertMode = 'ExpertMode',
-  SwapApi = 'SwapApi',
+  TransactionDeadline = 'TransactionDeadline',
 }
 
 interface SettingsOverlayProps {
   children?: ReactNode
   modules: SettingsModule[]
+  externalModules?: FC[]
   options?: {
     slippageTolerance?: {
-      storageKey?: string
+      storageKey?: SlippageToleranceStorageKey
+      defaultValue?: string
+      title?: string
+    }
+    transactionDeadline?: {
+      storageKey: TTLStorageKey
       defaultValue?: string
       title?: string
     }
@@ -47,6 +57,7 @@ interface SettingsOverlayProps {
 
 export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   modules,
+  externalModules,
   children,
   options,
 }) => {
@@ -76,7 +87,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSlippageTolerance('0.5')
+                        setSlippageTolerance('0.1')
                       }}
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"
@@ -112,23 +123,25 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
               </List.Control>
             </List>
           )}
-          {modules.length > 1 && (
-            <List className="!pt-0">
-              <List.Control>
-                {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
-                {modules.includes(SettingsModule.CarbonOffset) && (
-                  <CarbonOffset />
+          <List className="!pt-0">
+            <List.Control>
+              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
+              {modules.includes(SettingsModule.CarbonOffset) && (
+                <CarbonOffset />
+              )}
+              {modules.includes(SettingsModule.TransactionDeadline) &&
+                options?.transactionDeadline && (
+                  <TransactionDeadline options={options.transactionDeadline} />
                 )}
-              </List.Control>
-            </List>
-          )}
-          {modules.includes(SettingsModule.SwapApi) && (
-            <List className="!pt-0">
+            </List.Control>
+          </List>
+          {externalModules?.map((Module, index) => (
+            <List className="!pt-0" key={index}>
               <List.Control>
-                <SwapApi />
+                <Module />
               </List.Control>
             </List>
-          )}
+          ))}
         </div>
       </DialogContent>
     </Dialog>

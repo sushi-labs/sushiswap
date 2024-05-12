@@ -1,19 +1,24 @@
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
-import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from '@sushiswap/v2-sdk'
-import { SUSHISWAP_V3_SUPPORTED_CHAIN_IDS } from '@sushiswap/v3-sdk'
-import { roundToNearestMinutes, sub } from 'date-fns'
 import { NextResponse } from 'next/server'
 import { DISABLED_ANALYTICS_CHAIN_IDS } from 'src/config'
-import { getPrices } from 'src/lib/price/v1'
-import { getPrice } from 'src/lib/price/v2'
+import { getAllPrices } from 'src/lib/get-all-prices'
 import { ChainId } from 'sushi/chain'
+import {
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+} from 'sushi/config'
 import { SUSHI_ADDRESS } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 
 const getSushiPriceUSD = async () => {
-  return getPrice(ChainId.ETHEREUM, SUSHI_ADDRESS[ChainId.ETHEREUM])
+  const url = `https://api.sushi.com/price/v1/1/${
+    SUSHI_ADDRESS[ChainId.ETHEREUM]
+  }`
+  const res = await fetch(url)
+  const json = await res.json()
+  return json
 }
 
 interface ExchangeData {
@@ -75,15 +80,11 @@ const getBentoTvl = async () => {
     first: 1000,
     chainIds: BENTOBOX_ENABLED_NETWORKS,
   })
-
-  const threeDaysAgo = sub(new Date(), { days: 3 })
-  const dateThreshold = roundToNearestMinutes(threeDaysAgo, { nearestTo: 10 })
-  const prices = await getPrices(dateThreshold)
-
+  const prices = await getAllPrices()
   return rebases.reduce((acc, cur) => {
     const price =
-      prices?.[cur.chainId]?.[cur.id] ||
-      prices?.[cur.chainId]?.[getAddress(cur.id)]
+      prices?.[cur.chainId as keyof typeof prices]?.[cur.id] ||
+      prices?.[cur.chainId as keyof typeof prices]?.[getAddress(cur.id)]
     if (!price) return acc
 
     return (

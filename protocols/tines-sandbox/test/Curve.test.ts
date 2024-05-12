@@ -2,6 +2,9 @@ import {
   SnapshotRestorer,
   takeSnapshot,
 } from '@nomicfoundation/hardhat-network-helpers'
+import { expect } from 'chai'
+import seedrandom from 'seedrandom'
+import { erc20Abi } from 'sushi/abi'
 import {
   CurveMultitokenPool,
   CurvePool,
@@ -9,16 +12,13 @@ import {
   RToken,
   createCurvePoolsForMultipool,
   getBigInt,
-} from '@sushiswap/tines'
-import { expect } from 'chai'
-import seedrandom from 'seedrandom'
-import { erc20Abi } from 'sushi/abi'
+} from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import { Address, WalletClient, parseAbi } from 'viem'
 import { readContract, simulateContract } from 'viem/actions'
 
-import { TestConfig, getTestConfig } from '../src/getTestConfig'
-import { setTokenBalance } from '../src/setTokenBalance'
+import { TestConfig, getTestConfig } from '../src/getTestConfig.js'
+import { setTokenBalance } from '../src/setTokenBalance.js'
 
 enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'

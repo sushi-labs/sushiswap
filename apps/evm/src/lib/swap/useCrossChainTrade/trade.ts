@@ -1,7 +1,7 @@
-import { MultiRoute, RToken } from '@sushiswap/tines'
 import { Amount, Price, Type as Currency } from 'sushi/currency'
 import { TradeType as Type, Version } from 'sushi/dex'
 import { Fraction, ONE, Percent, ZERO } from 'sushi/math'
+import { MultiRoute, RToken } from 'sushi/tines'
 import invariant from 'tiny-invariant'
 
 /**

@@ -1,4 +1,4 @@
-import numeral from 'numeral'
+import numeral from 'numbro'
 
 export const formatUSD = (
   value: string | number,

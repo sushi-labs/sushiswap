@@ -1,12 +1,9 @@
-import {
-  CLTick,
-  CL_MAX_TICK,
-  CL_MIN_TICK,
-  RToken,
-  UniV3Pool,
-} from '@sushiswap/tines'
-import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
+import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json' assert {
+  type: 'json',
+}
+import WETH9 from 'canonical-weth/build/contracts/WETH9.json' assert {
+  type: 'json',
+}
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
 import {
@@ -17,15 +14,28 @@ import {
 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
+import {
+  CLTick,
+  CL_MAX_TICK,
+  CL_MIN_TICK,
+  RToken,
+  UniV3Pool,
+} from 'sushi/tines'
 import { type Contract } from 'sushi/types'
 import { Address, DeployContractParameters, Hex, WalletClient } from 'viem'
 import { readContract, waitForTransactionReceipt } from 'viem/actions'
 
-import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json'
-import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json'
-import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json'
-import { testRouterAbi } from './abis'
-import { getDeploymentAddress, getRndLin, getRndLinInt } from './utils'
+import ERC20Mock from '../artifacts/contracts/ERC20Mock.sol/ERC20Mock.json' assert {
+  type: 'json',
+}
+import TestRouter from '../artifacts/contracts/TestRouter.sol/TestRouter.json' assert {
+  type: 'json',
+}
+import UniswapV3Factory from '../artifacts/contracts/UniswapV3FactoryFlat.sol/UniswapV3Factory.json' assert {
+  type: 'json',
+}
+import { testRouterAbi } from './abis/index.js'
+import { getDeploymentAddress, getRndLin, getRndLinInt } from './utils.js'
 
 const ZERO = 0n
 

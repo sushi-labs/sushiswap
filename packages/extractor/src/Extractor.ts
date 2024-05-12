@@ -1,25 +1,40 @@
 import { mkdir, open } from 'node:fs/promises'
 import path from 'node:path'
-
-import { PoolCode } from '@sushiswap/router'
 import { Token } from 'sushi/currency'
+import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
-
-import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor'
+import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
 import {
   AlgebraPoolWatcher,
   AlgebraPoolWatcherStatus,
-} from './AlgebraPoolWatcher'
-import { CurveConfig, CurveExtractor } from './CurveExtractor'
-import { LogFilter2, LogFilterType } from './LogFilter2'
-import { MultiCallAggregator } from './MulticallAggregator'
-import { TokenManager } from './TokenManager'
-import { FactoryV2, UniV2Extractor } from './UniV2Extractor'
-import { FactoryV3, UniV3Extractor } from './UniV3Extractor'
-import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher'
-import { WarningMessageHandler, setWarningMessageHandler } from './WarnLog'
+} from './AlgebraPoolWatcher.js'
+import { CurveExtractor } from './CurveExtractor.js'
+import { LogFilter2, LogFilterType } from './LogFilter2.js'
+import { MultiCallAggregator } from './MulticallAggregator.js'
+import { TokenManager } from './TokenManager.js'
+import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
+import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
+import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
+
+const DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+
+export type ExtractorConfig = {
+  client: PublicClient
+  factoriesV2?: FactoryV2[]
+  factoriesV3?: FactoryV3[]
+  factoriesAlgebra?: FactoryAlgebra[]
+  tickHelperContractV3: Address
+  tickHelperContractAlgebra: Address
+  cacheDir: string
+  logType?: LogFilterType
+  logDepth: number
+  logging?: boolean
+  maxCallsInOneBatch?: number
+  maxBatchesSimultaniously?: number
+  debug?: boolean
+} & Record<string, any>
 
 // TODO: cache for not-existed pools?
 // TODO: to fill address cache from pool cache
@@ -39,12 +54,15 @@ export class Extractor {
   extractorCurve?: CurveExtractor
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
+  requestedPairs: Map<string, Set<string>> = new Map()
   readonly logFilter: LogFilter2
   cacheDir: string
   logging?: boolean
   requestStartedNum = 0
   requestFinishedNum = 0
   requestFailedNum = 0
+  debug?: boolean
+  config: ExtractorConfig
 
   /// @param client
   /// @param factoriesV2 list of supported V2 factories
@@ -54,26 +72,17 @@ export class Extractor {
   //                  IMPORTANT: Use different cacheDir for Extractors with the same chainId
   /// @param logDepth the depth of logs to keep in memory for reorgs
   /// @param logging to write logs in console or not
-  constructor(args: {
-    client: PublicClient
-    factoriesV2?: FactoryV2[]
-    factoriesV3?: FactoryV3[]
-    factoriesAlgebra?: FactoryAlgebra[]
-    curveConfig?: CurveConfig
-    tickHelperContract: Address
-    cacheDir: string
-    logType?: LogFilterType
-    logDepth: number
-    logging?: boolean
-    maxCallsInOneBatch?: number
-    warningMessageHandler?: WarningMessageHandler
-  }) {
+  constructor(args: ExtractorConfig) {
+    this.config = args
     this.cacheDir = args.cacheDir
-    this.logging = args.logging
+    this.logging = Boolean(args.logging)
+    this.debug = Boolean(args.debug)
     this.client = args.client
     this.multiCallAggregator = new MultiCallAggregator(
       args.client,
-      args.maxCallsInOneBatch ?? 0,
+      args.maxCallsInOneBatch ?? DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH,
+      args.maxBatchesSimultaniously ?? 0,
+      args.debug,
     )
     this.tokenManager = new TokenManager(
       this.multiCallAggregator,
@@ -85,6 +94,7 @@ export class Extractor {
       args.logDepth,
       args.logType ?? LogFilterType.OneCall,
       args.logging,
+      args.debug,
     )
     if (args.factoriesV2 && args.factoriesV2.length > 0)
       this.extractorV2 = new UniV2Extractor(
@@ -99,7 +109,7 @@ export class Extractor {
     if (args.factoriesV3 && args.factoriesV3.length > 0)
       this.extractorV3 = new UniV3Extractor(
         this.client,
-        args.tickHelperContract,
+        args.tickHelperContractV3,
         args.factoriesV3,
         args.cacheDir,
         this.logFilter,
@@ -110,7 +120,7 @@ export class Extractor {
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
       this.extractorAlg = new AlgebraExtractor(
         this.client,
-        args.tickHelperContract,
+        args.tickHelperContractAlgebra,
         args.factoriesAlgebra,
         args.cacheDir,
         this.logFilter,
@@ -118,16 +128,6 @@ export class Extractor {
         this.multiCallAggregator,
         this.tokenManager,
       )
-    if (args.curveConfig)
-      this.extractorCurve = new CurveExtractor(
-        this.client,
-        args.curveConfig,
-        this.logFilter,
-        this.tokenManager,
-        args.logging !== undefined ? args.logging : false,
-        this.multiCallAggregator,
-      )
-    setWarningMessageHandler(args.warningMessageHandler)
   }
 
   /// @param tokensBaseSet Prefetch all pools between these tokens
@@ -323,6 +323,98 @@ export class Extractor {
     }
   }
 
+  addRequestedPair(t0: Token, t1: Token) {
+    if (t0.address > t1.address) {
+      const t = t0
+      t0 = t1
+      t1 = t
+    }
+    const set = this.requestedPairs.get(t0.address)
+    if (set === undefined)
+      this.requestedPairs.set(t0.address, new Set([t1.address]))
+    else set.add(t1.address)
+  }
+
+  async getPoolCodesBetweenTokenSets(
+    tokens1: Token[],
+    tokens2: Token[],
+  ): Promise<PoolCode[]> {
+    ++this.requestStartedNum
+    try {
+      const map1 = new Map<string, Token>()
+      tokens1.forEach((t) => map1.set(t.address, t))
+      const tokens1Unique = Array.from(map1.values())
+
+      const map2 = new Map<string, Token>()
+      tokens2.forEach((t) => {
+        if (map1.get(t.address) === undefined) map2.set(t.address, t)
+      })
+      const tokens2Unique = Array.from(map2.values())
+
+      let prefetchedAll: (PoolCode | undefined)[] = []
+      let fetchingAll: Promise<unknown>[] = []
+
+      if (this.extractorV2) {
+        const { prefetched, fetching } =
+          this.extractorV2.getPoolsBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(prefetched)
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      if (this.extractorV3) {
+        const { prefetched, fetching } =
+          this.extractorV3.getWatchersBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(
+          prefetched.map((w) => w.getPoolCode()),
+        )
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      if (this.extractorAlg) {
+        const { prefetched, fetching } =
+          this.extractorAlg.getWatchersBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(
+          prefetched.map((w) => w.getPoolCode()),
+        )
+        fetchingAll = fetchingAll.concat(fetching)
+      }
+      const fetchedAll = await Promise.allSettled(fetchingAll)
+      const res = prefetchedAll
+        .concat(
+          fetchedAll.map((p) => {
+            if (p.status === 'fulfilled') {
+              const value = p.value
+              if (value === undefined) return undefined
+              if (value instanceof PoolCode) return value
+              if (value instanceof UniV3PoolWatcher) return value.getPoolCode()
+              if (value instanceof AlgebraPoolWatcher)
+                return value.getPoolCode()
+            }
+          }),
+        )
+        .filter((p) => p !== undefined) as PoolCode[]
+
+      tokens1Unique.forEach((t0) => {
+        tokens2Unique.forEach((t1) => {
+          this.addRequestedPair(t0, t1)
+        })
+      })
+      ++this.requestFinishedNum
+      return res
+    } catch (e) {
+      ++this.requestFinishedNum
+      ++this.requestFailedNum
+      throw e
+    }
+  }
+
   getPoolCodesForTokensFull(tokens: Token[]): {
     prefetched: PoolCode[]
     fetchingNumber: number
@@ -362,6 +454,11 @@ export class Extractor {
         const poolsCurve = this.extractorCurve.getPoolsForTokens(tokensUnique)
         prefetched = prefetched.concat(poolsCurve.prefetched)
         // no fetching
+      }
+      for (let i = 0; i < tokensUnique.length; ++i) {
+        for (let j = i + 1; j < tokensUnique.length; ++j) {
+          this.addRequestedPair(tokensUnique[i], tokensUnique[j])
+        }
       }
       ++this.requestFinishedNum
       return { prefetched, fetchingNumber }
@@ -403,7 +500,7 @@ export class Extractor {
         watchersV3 = prefetched
         prefetched.forEach((w) => {
           if (w.getStatus() !== UniV3PoolWatcherStatus.All)
-            promises.push(w.statusAll())
+            promises.push(w.downloadFinished())
         })
         promises = promises.concat(
           fetching.map(async (p) => {
@@ -411,7 +508,7 @@ export class Extractor {
             if (w === undefined) return
             watchersV3.push(w)
             if (w.getStatus() !== UniV3PoolWatcherStatus.All)
-              await w.statusAll()
+              await w.downloadFinished()
           }),
         )
       }
@@ -422,7 +519,7 @@ export class Extractor {
         watchersAlg = prefetched
         prefetched.forEach((w) => {
           if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-            promises.push(w.statusAll())
+            promises.push(w.downloadFinished())
         })
         promises = promises.concat(
           fetching.map(async (p) => {
@@ -430,7 +527,7 @@ export class Extractor {
             if (w === undefined) return
             watchersAlg.push(w)
             if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-              await w.statusAll()
+              await w.downloadFinished()
           }),
         )
       }
@@ -448,6 +545,12 @@ export class Extractor {
           (pc) =>
             pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
         ) as PoolCode[]
+
+      for (let i = 0; i < tokensUnique.length; ++i) {
+        for (let j = i + 1; j < tokensUnique.length; ++j) {
+          this.addRequestedPair(tokensUnique[i], tokensUnique[j])
+        }
+      }
       ++this.requestFinishedNum
       return poolsV3.concat(poolsAlg).concat(poolsV2)
     } catch (e) {
@@ -501,6 +604,14 @@ export class Extractor {
       ? this.extractorCurve.getCurrentPoolCodes()
       : []
     return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
+  }
+
+  // side effect: updated pools list is cleared
+  getCurrentPoolCodesUpdate(): PoolCode[] {
+    const pools2 = this.extractorV2?.getUpdatedPoolCodes() ?? []
+    const pools3 = this.extractorV3?.getUpdatedPoolCodes() ?? []
+    const poolsAlg = this.extractorAlg?.getUpdatedPoolCodes() ?? []
+    return pools2.concat(pools3).concat(poolsAlg)
   }
 
   isStarted(): boolean {

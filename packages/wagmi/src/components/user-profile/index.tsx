@@ -12,7 +12,7 @@ import {
 import React, { FC, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
-import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
+import { useAccount, useChainId, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
@@ -28,7 +28,7 @@ export const UserProfile: FC<ProfileProps> = () => {
   const isMounted = useIsMounted()
   const { isSm } = useBreakpoint('sm')
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
-  const { chain } = useNetwork()
+  const chainId = useChainId()
   const { address, isConnected } = useAccount()
 
   const { data: name } = useEnsName({
@@ -37,11 +37,9 @@ export const UserProfile: FC<ProfileProps> = () => {
   })
 
   const { data: avatar } = useEnsAvatar({
-    name,
+    name: name || undefined,
     chainId: ChainId.ETHEREUM,
   })
-
-  const chainId = (chain?.id as ChainId) || ChainId.ETHEREUM
 
   if (!address || !isMounted) return <ConnectButton variant="secondary" />
 
@@ -61,9 +59,7 @@ export const UserProfile: FC<ProfileProps> = () => {
             ) : null
             // <JazzIcon diameter={20} address={address} />
           }
-          <span className="hidden sm:block">
-            {shortenAddress(address, isSm ? 3 : 2)}
-          </span>
+          <span>{shortenAddress(address, isSm ? 3 : 2)}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent

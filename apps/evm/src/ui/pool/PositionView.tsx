@@ -1,6 +1,7 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -30,24 +31,22 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
+import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { SushiSwapV3ChainId } from '@sushiswap/v3-sdk'
-import { useAccount } from '@sushiswap/wagmi'
 import {
+  getDefaultTTL,
+  useAccount,
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
   useConcentratedPositionOwner,
   useTokenWithCache,
 } from '@sushiswap/wagmi'
 import { Checker } from '@sushiswap/wagmi/systems'
-import React, { FC, useMemo, useState } from 'react'
-
-import { useIsTickAtLimit } from 'src/lib/pool/v3'
+import { FC, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
+import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-
-import { isAngleEnabledChainId } from 'sushi/config'
 import { getAddress } from 'viem'
 import { Bound } from '../../lib/constants'
 import {
@@ -56,6 +55,7 @@ import {
   unwrapToken,
 } from '../../lib/functions'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
+import { useIsTickAtLimit } from '../../lib/pool/v3'
 import { ConcentratedLiquidityCollectButton } from './ConcentratedLiquidityCollectButton'
 import { ConcentratedLiquidityHarvestButton } from './ConcentratedLiquidityHarvestButton'
 import {
@@ -240,14 +240,20 @@ const Component: FC<{ id: string }> = ({ id }) => {
                         <SettingsOverlay
                           options={{
                             slippageTolerance: {
-                              storageKey: 'addLiquidity',
-                              defaultValue: '0.5',
+                              storageKey:
+                                SlippageToleranceStorageKey.AddLiquidity,
+                              defaultValue: '0.1',
                               title: 'Add Liquidity Slippage',
+                            },
+                            transactionDeadline: {
+                              storageKey: TTLStorageKey.AddLiquidity,
+                              defaultValue: getDefaultTTL(chainId).toString(),
                             },
                           }}
                           modules={[
                             SettingsModule.CustomTokens,
                             SettingsModule.SlippageTolerance,
+                            SettingsModule.TransactionDeadline,
                           ]}
                         >
                           <IconButton
@@ -319,7 +325,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       account={address}
                       chainId={chainId}
                     >
-                      {({ sendTransaction, isLoading }) => (
+                      {({ send, isLoading }) => (
                         <Checker.Connect
                           variant="outline"
                           fullWidth
@@ -334,7 +340,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             <Button
                               fullWidth
                               disabled={isLoading}
-                              onClick={() => sendTransaction?.()}
+                              onClick={send}
                               size="default"
                             >
                               Collect
@@ -472,10 +478,12 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       title={
                         <>
                           1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                          {(inverted
-                            ? pool?.token1Price
-                            : pool?.token0Price
-                          )?.toSignificant(6)}{' '}
+                          <FormattedNumber
+                            number={(inverted
+                              ? pool?.token1Price
+                              : pool?.token0Price
+                            )?.toSignificant(6)}
+                          />{' '}
                           {unwrapToken(currencyQuote)?.symbol}
                         </>
                       }
@@ -517,11 +525,13 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '0'
                           ) : (
                             <>
-                              {formatTickPrice({
-                                price: priceLower,
-                                atLimit: tickAtLimit,
-                                direction: Bound.UPPER,
-                              })}{' '}
+                              <FormattedNumber
+                                number={formatTickPrice({
+                                  price: priceLower,
+                                  atLimit: tickAtLimit,
+                                  direction: Bound.UPPER,
+                                })}
+                              />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
@@ -595,16 +605,18 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '∞'
                           ) : (
                             <>
-                              {formatTickPrice({
-                                price: priceUpper,
-                                atLimit: tickAtLimit,
-                                direction: Bound.UPPER,
-                              })}{' '}
+                              <FormattedNumber
+                                number={formatTickPrice({
+                                  price: priceUpper,
+                                  atLimit: tickAtLimit,
+                                  direction: Bound.UPPER,
+                                })}
+                              />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
-                                    ( +
+                                    (
                                     {priceUpper
                                       ?.subtract(
                                         invert

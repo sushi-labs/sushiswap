@@ -2,7 +2,11 @@
 
 import { CogIcon } from '@heroicons/react-v1/solid'
 import { SteerVault } from '@sushiswap/client'
-import { useDebounce, useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  useDebounce,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'
 import {
@@ -20,21 +24,23 @@ import {
 } from '@sushiswap/ui'
 import {
   Checker,
-  SendTransactionResult,
+  UseSimulateContractParameters,
   useAccount,
-  useNetwork,
-  usePrepareSendTransaction,
-  useSendTransaction,
+  usePublicClient,
+  useSimulateContract,
   useSteerAccountPosition,
-  waitForTransaction,
+  useWriteContract,
 } from '@sushiswap/wagmi'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { slippageAmount } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
+import {
+  Address,
+  SendTransactionReturnType,
+  UserRejectedRequestError,
+} from 'viem'
 
 interface SteerPositionRemoveProps {
   vault: SteerVault
@@ -45,16 +51,18 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
 }) => {
   const { chainId } = vault as { chainId: ChainId }
 
-  const { chain } = useNetwork()
-  const { address: account } = useAccount()
+  const client = usePublicClient()
+  const { address: account, chain } = useAccount()
   const [value, setValue] = useState<string>('0')
-  const [slippageTolerance] = useSlippageTolerance('removeSteerLiquidity')
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.RemoveSteerLiquidity,
+  )
   const debouncedValue = useDebounce(value, 300)
 
   const slippagePercent = useMemo(() => {
     return new Percent(
       Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance) * 100,
+        +(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) * 100,
       ),
       10_000,
     )
@@ -103,20 +111,17 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
     return { token0Amount, token1Amount, steerTokenAmount }
   }, [position, tokenAmountsTotal, debouncedValue, token0, token1])
 
-  const onSettled = useCallback(
-    (data: SendTransactionResult | undefined, error: Error | null) => {
-      if (error instanceof UserRejectedRequestError) {
-        createErrorToast(error?.message, true)
-      }
-      if (!data) return
+  const onSuccess = useCallback(
+    (hash: SendTransactionReturnType) => {
+      setValue('0')
 
       const ts = new Date().getTime()
       void createToast({
         account,
         type: 'burn',
         chainId: chainId,
-        txHash: data.hash,
-        promise: waitForTransaction({ hash: data.hash }),
+        txHash: hash,
+        promise: client.waitForTransactionReceipt({ hash }),
         summary: {
           pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} smart pool`,
           completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} smart pool`,
@@ -126,59 +131,69 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
         groupTimestamp: ts,
       })
     },
-    [account, chainId, token0.symbol, token1.symbol],
+    [client, account, chainId, token0.symbol, token1.symbol],
   )
 
-  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+  const onError = useCallback((e: Error) => {
+    if (e instanceof UserRejectedRequestError) {
+      createErrorToast(e?.message, true)
+    }
+  }, [])
+
+  const prepare = useMemo(() => {
     if (
       !account ||
+      !position ||
       position?.steerTokenBalance === 0n ||
       !tokenAmountsDiscounted ||
       !isSteerChainId(chainId)
     )
-      return {}
+      return undefined
 
     return {
-      to: vault.address as Address,
-      data: encodeFunctionData({
-        abi: steerMultiPositionManager,
-        functionName: 'withdraw',
-        args: [
-          tokenAmountsDiscounted.steerTokenAmount,
-          slippageAmount(
-            tokenAmountsDiscounted.token0Amount,
-            slippagePercent,
-          )[0],
-          slippageAmount(
-            tokenAmountsDiscounted.token1Amount,
-            slippagePercent,
-          )[0],
-          account,
-        ],
-      }),
-    }
+      address: vault.address as Address,
+      chainId,
+      abi: steerMultiPositionManager,
+      functionName: 'withdraw',
+      args: [
+        tokenAmountsDiscounted.steerTokenAmount,
+        slippageAmount(tokenAmountsDiscounted.token0Amount, slippagePercent)[0],
+        slippageAmount(tokenAmountsDiscounted.token1Amount, slippagePercent)[0],
+        account,
+      ],
+    } satisfies UseSimulateContractParameters
   }, [
     account,
     chainId,
-    position?.steerTokenBalance,
+    position,
     slippagePercent,
     tokenAmountsDiscounted,
     vault.address,
   ])
 
-  const { config } = usePrepareSendTransaction({
+  const { data: simulation } = useSimulateContract({
     ...prepare,
-    chainId: chainId,
-    enabled: +value > 0 && chainId === chain?.id,
-  })
-
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    ...config,
-    onSettled,
-    onSuccess: () => {
-      setValue('0')
+    query: {
+      enabled: prepare && chainId === chain?.id,
     },
   })
+
+  const { writeContractAsync, isLoading: isWritePending } = useWriteContract({
+    mutation: {
+      onSuccess,
+      onError,
+    },
+  })
+
+  const write = useMemo(() => {
+    if (!simulation) return undefined
+
+    return async () => {
+      try {
+        await writeContractAsync(simulation.request)
+      } catch {}
+    }
+  }, [simulation, writeContractAsync])
 
   return (
     <div
@@ -232,8 +247,8 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
             <SettingsOverlay
               options={{
                 slippageTolerance: {
-                  storageKey: 'removeSteerLiquidity',
-                  defaultValue: '0.5',
+                  storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
+                  defaultValue: '0.1',
                   title: 'Remove Liquidity Slippage',
                 },
               }}
@@ -282,9 +297,9 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           <Button
             size="xl"
             loading={isWritePending}
-            disabled={+value === 0 || !sendTransaction}
+            disabled={+value === 0 || !write}
             fullWidth
-            onClick={() => sendTransaction?.()}
+            onClick={write}
             testId="remove-or-add-steer-liquidity"
           >
             {+value === 0 ? 'Enter Amount' : 'Remove'}

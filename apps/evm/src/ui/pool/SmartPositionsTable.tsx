@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 
-import { STEER_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import {
   SkeletonText,
   Tooltip,
@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { useAccount, useSteerAccountPositionsFormatted } from '@sushiswap/wagmi'
+import { useAccount, useSteerAccountPositionsExtended } from '@sushiswap/wagmi'
 import { formatPercent } from 'sushi'
 import { APRHoverCard } from './APRHoverCard'
 import {
@@ -29,15 +29,15 @@ const COLUMNS = [
   STEER_POSITION_SIZE_COLUMN,
   {
     id: 'totalApr1d',
-    header: 'APR',
+    header: 'APR (24h)',
     accessorFn: (row) =>
-      row.vault.apr * 100 +
+      row.vault.apr1d * 100 +
       row.vault.pool.incentives
         .filter((el) => +el.rewardPerDay > 0)
         .reduce((acc, cur) => acc + cur.apr * 100, 0),
     cell: (props) => {
       const totalAPR =
-        props.row.original.vault.apr * 100 +
+        props.row.original.vault.apr1d * 100 +
         props.row.original.vault.pool.incentives
           .filter((el) => +el.rewardPerDay > 0)
           .reduce((acc, cur) => acc + cur.apr * 100, 0)
@@ -58,7 +58,7 @@ const COLUMNS = [
           </TooltipProvider>
           <APRHoverCard
             pool={props.row.original.vault.pool}
-            smartPoolAPR={props.row.original.vault.apr}
+            smartPoolAPR={props.row.original.vault.apr1d}
           >
             <span className="underline decoration-dotted underline-offset-2">
               {formatPercent(totalAPR / 100)}
@@ -83,14 +83,13 @@ export const SmartPositionsTable = () => {
     pageSize: 10,
   })
 
-  const { data: positions, isLoading } = useSteerAccountPositionsFormatted({
+  const { data: positions, isLoading } = useSteerAccountPositionsExtended({
     account: address,
-    chainIds: chainIds ? chainIds : [...STEER_ENABLED_NETWORKS],
+    chainIds: chainIds ? chainIds : [...STEER_SUPPORTED_CHAIN_IDS],
   })
 
   const _positions = useMemo(() => (positions ? positions : []), [positions])
 
-  console.log(_positions)
   return (
     <Card>
       <CardHeader>

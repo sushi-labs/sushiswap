@@ -1,3 +1,5 @@
+import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Button,
   Currency,
@@ -10,37 +12,32 @@ import {
   DialogReview,
   DialogTitle,
   Dots,
+  IconButton,
   List,
+  SettingsModule,
+  SettingsOverlay,
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
-  FeeAmount,
-  NonfungiblePositionManager,
-  Position,
-  isSushiSwapV3ChainId,
-} from '@sushiswap/v3-sdk'
-import {
-  getV3NonFungiblePositionManagerConractConfig,
+  UseCallParameters,
+  getDefaultTTL,
+  getV3NonFungiblePositionManagerContractConfig,
   useAccount,
-  useNetwork,
-  usePrepareSendTransaction,
+  useCall,
+  usePublicClient,
   useSendTransaction,
   useTransactionDeadline,
-  useWaitForTransaction,
+  useWaitForTransactionReceipt,
 } from '@sushiswap/wagmi'
-import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
+import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { Hex, UserRejectedRequestError } from 'viem'
-
+import { NonfungiblePositionManager, Position } from 'sushi/pool'
+import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
@@ -49,7 +46,7 @@ interface AddSectionReviewModalConcentratedProps
     'noLiquidity' | 'position' | 'price' | 'pricesAtTicks' | 'ticksAtLimit'
   > {
   chainId: ChainId
-  feeAmount: FeeAmount | undefined
+  feeAmount: SushiSwapV3FeeAmount | undefined
   token0: Type | undefined
   token1: Type | undefined
   input0: Amount<Type> | undefined
@@ -78,14 +75,19 @@ export const AddSectionReviewModalConcentrated: FC<
   pricesAtTicks,
   ticksAtLimit,
   tokenId,
-  onSuccess,
+  onSuccess: _onSuccess,
   successLink,
 }) => {
-  const { chain } = useNetwork()
-  const { address } = useAccount()
-  const { data: deadline } = useTransactionDeadline({ chainId })
-  const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+  const { address, chain } = useAccount()
+  const { data: deadline } = useTransactionDeadline({
+    storageKey: TTLStorageKey.AddLiquidity,
+    chainId,
+  })
+  const [slippageTolerance] = useSlippageTolerance(
+    SlippageToleranceStorageKey.AddLiquidity,
+  )
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
+  const client = usePublicClient()
 
   const isSorted =
     token0 && token1 && token0.wrapped.sortsBefore(token1.wrapped)
@@ -126,20 +128,19 @@ export const AddSectionReviewModalConcentrated: FC<
 
   const hasExistingPosition = !!existingPosition
 
-  const onSettled = useCallback(
-    (data: SendTransactionResult | undefined, error: Error | null) => {
-      if (error instanceof UserRejectedRequestError) {
-        createErrorToast(error?.message, true)
-      }
-      if (!data || !token0 || !token1) return
+  const onSuccess = useCallback(
+    (hash: SendTransactionReturnType) => {
+      _onSuccess()
+
+      if (!token0 || !token1) return
 
       const ts = new Date().getTime()
       void createToast({
         account: address,
         type: 'mint',
         chainId,
-        txHash: data.hash,
-        promise: waitForTransaction({ hash: data.hash }),
+        txHash: hash,
+        promise: client.waitForTransactionReceipt({ hash }),
         summary: {
           pending: noLiquidity
             ? `Creating the ${token0.symbol}/${token1.symbol} liquidity pool`
@@ -155,49 +156,55 @@ export const AddSectionReviewModalConcentrated: FC<
         groupTimestamp: ts,
       })
     },
-    [token0, token1, address, chainId, noLiquidity],
+    [_onSuccess, token0, token1, address, chainId, client, noLiquidity],
   )
 
-  const prepare = useMemo<UsePrepareSendTransactionConfig>(() => {
+  const onError = useCallback((e: Error) => {
+    if (e instanceof UserRejectedRequestError) {
+      createErrorToast(e?.message, true)
+    }
+  }, [])
+
+  const prepare = useMemo(() => {
     if (
       !chainId ||
       !address ||
       !token0 ||
       !token1 ||
-      !isSushiSwapV3ChainId(chainId)
+      !isSushiSwapV3ChainId(chainId) ||
+      !position ||
+      !deadline
     )
-      return {}
+      return undefined
 
-    if (position && deadline) {
-      const useNative = token0.isNative
-        ? token0
-        : token1.isNative
-          ? token1
-          : undefined
-      const { calldata, value } =
-        hasExistingPosition && tokenId
-          ? NonfungiblePositionManager.addCallParameters(position, {
-              tokenId,
-              slippageTolerance,
-              deadline: deadline.toString(),
-              useNative,
-            })
-          : NonfungiblePositionManager.addCallParameters(position, {
-              slippageTolerance,
-              recipient: address,
-              deadline: deadline.toString(),
-              useNative,
-              createPool: noLiquidity,
-            })
+    const useNative = token0.isNative
+      ? token0
+      : token1.isNative
+        ? token1
+        : undefined
+    const { calldata, value } =
+      hasExistingPosition && tokenId
+        ? NonfungiblePositionManager.addCallParameters(position, {
+            tokenId,
+            slippageTolerance,
+            deadline: deadline.toString(),
+            useNative,
+          })
+        : NonfungiblePositionManager.addCallParameters(position, {
+            slippageTolerance,
+            recipient: address,
+            deadline: deadline.toString(),
+            useNative,
+            createPool: noLiquidity,
+          })
 
-      return {
-        to: getV3NonFungiblePositionManagerConractConfig(chainId).address,
-        data: calldata as Hex,
-        value: BigInt(value),
-      }
-    }
-
-    return {}
+    return {
+      to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
+      account: address,
+      chainId,
+      data: calldata as Hex,
+      value: BigInt(value),
+    } as const satisfies UseCallParameters
   }, [
     address,
     chainId,
@@ -211,10 +218,9 @@ export const AddSectionReviewModalConcentrated: FC<
     tokenId,
   ])
 
-  const { config, isError } = usePrepareSendTransaction({
-    ...prepare,
-    chainId,
-    enabled: chainId === chain?.id,
+  const { isError: isSimulationError } = useCall({
+    ...(prepare as NonNullable<typeof prepare>),
+    query: { enabled: Boolean(prepare && chainId === chain?.id) },
   })
 
   const {
@@ -222,13 +228,25 @@ export const AddSectionReviewModalConcentrated: FC<
     isLoading: isWritePending,
     data,
   } = useSendTransaction({
-    ...config,
-    chainId,
-    onSettled,
-    onSuccess,
+    mutation: {
+      onSuccess,
+      onError,
+    },
   })
 
-  const { status } = useWaitForTransaction({ chainId, hash: data?.hash })
+  const send = useMemo(() => {
+    if (!prepare || isSimulationError) return undefined
+
+    return async (confirm: () => void) => {
+      try {
+        await sendTransactionAsync(prepare)
+
+        confirm()
+      } catch {}
+    }
+  }, [sendTransactionAsync, isSimulationError, prepare])
+
+  const { status } = useWaitForTransactionReceipt({ chainId, hash: data })
 
   return (
     <DialogProvider>
@@ -237,15 +255,41 @@ export const AddSectionReviewModalConcentrated: FC<
           <>
             {children}
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {token0?.symbol}/{token1?.symbol}
-                </DialogTitle>
-                <DialogDescription>
-                  {' '}
-                  {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
-                </DialogDescription>
-              </DialogHeader>
+              <div className="flex justify-between">
+                <DialogHeader>
+                  <DialogTitle>
+                    {token0?.symbol}/{token1?.symbol}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {' '}
+                    {noLiquidity ? 'Create liquidity pool' : 'Add liquidity'}
+                  </DialogDescription>
+                </DialogHeader>
+                <SettingsOverlay
+                  options={{
+                    slippageTolerance: {
+                      storageKey: SlippageToleranceStorageKey.AddLiquidity,
+                      defaultValue: '0.1',
+                      title: 'Add Liquidity Slippage',
+                    },
+                    transactionDeadline: {
+                      storageKey: TTLStorageKey.AddLiquidity,
+                      defaultValue: getDefaultTTL(chainId).toString(),
+                    },
+                  }}
+                  modules={[
+                    SettingsModule.SlippageTolerance,
+                    SettingsModule.TransactionDeadline,
+                  ]}
+                >
+                  <IconButton
+                    name="Settings"
+                    icon={CogIcon}
+                    variant="secondary"
+                    className="mr-12"
+                  />
+                </SettingsOverlay>
+              </div>
               <div className="flex flex-col gap-4">
                 <List className="!pt-0">
                   <List.Control>
@@ -359,13 +403,13 @@ export const AddSectionReviewModalConcentrated: FC<
                 <Button
                   size="xl"
                   fullWidth
-                  loading={!sendTransactionAsync || isWritePending}
-                  onClick={() => sendTransactionAsync?.().then(() => confirm())}
-                  disabled={isError}
+                  loading={!send || isWritePending}
+                  onClick={() => send?.(confirm)}
+                  disabled={isSimulationError}
                   testId="confirm-add-liquidity"
                   type="button"
                 >
-                  {isError ? (
+                  {isSimulationError ? (
                     'Shoot! Something went wrong :('
                   ) : isWritePending ? (
                     <Dots>Confirm Add</Dots>
@@ -383,7 +427,7 @@ export const AddSectionReviewModalConcentrated: FC<
         status={status}
         testId="add-concentrated-liquidity-confirmation-modal"
         successMessage={`You successfully added liquidity to the ${token0?.symbol}/${token1?.symbol} pair`}
-        txHash={data?.hash}
+        txHash={data}
         buttonLink={successLink}
         buttonText="View your position"
       />

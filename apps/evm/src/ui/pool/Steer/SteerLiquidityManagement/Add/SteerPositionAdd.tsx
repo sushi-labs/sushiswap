@@ -8,6 +8,7 @@ import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import React, { FC, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import { APPROVE_TAG_STEER, Field } from 'src/lib/constants'
 import {
@@ -22,6 +23,8 @@ interface SteerPositionAddProps {
 }
 
 export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
+  const isMounted = useIsMounted()
+
   const {
     currencies,
     independentField,
@@ -86,59 +89,70 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
           />
         </div>
 
-        <Checker.Connect testId="connect" fullWidth>
-          <Checker.Network
-            testId="switch-network"
-            fullWidth
-            chainId={vault.chainId}
+        {isMounted ? (
+          <Checker.Guard
+            guardWhen={vault.isDeprecated}
+            guardText="Vault is deprecated"
           >
-            <Checker.Amounts
-              testId="check-amounts"
-              fullWidth
-              chainId={vault.chainId as ChainId}
-              amounts={amounts}
-            >
-              <Checker.ApproveERC20
+            <Checker.Connect testId="connect" fullWidth>
+              <Checker.Network
+                testId="switch-network"
                 fullWidth
-                id="approve-erc20-0"
-                amount={parsedAmounts?.[Field.CURRENCY_A]}
-                contract={
-                  STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
-                }
+                chainId={vault.chainId as ChainId}
               >
-                <Checker.ApproveERC20
+                <Checker.Amounts
+                  testId="check-amounts"
                   fullWidth
-                  id="approve-erc20-1"
-                  amount={parsedAmounts?.[Field.CURRENCY_B]}
-                  contract={
-                    STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
-                  }
+                  chainId={vault.chainId as ChainId}
+                  amounts={amounts}
                 >
-                  <Checker.Success tag={APPROVE_TAG_STEER}>
-                    <SteerPositionAddReviewModal
-                      vault={vault}
-                      onSuccess={() => {
-                        onFieldAInput('')
-                        onFieldBInput('')
-                      }}
-                      // successLink={successLink}
+                  <Checker.ApproveERC20
+                    fullWidth
+                    id="approve-erc20-0"
+                    amount={parsedAmounts?.[Field.CURRENCY_A]}
+                    contract={
+                      STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
+                    }
+                  >
+                    <Checker.ApproveERC20
+                      fullWidth
+                      id="approve-erc20-1"
+                      amount={parsedAmounts?.[Field.CURRENCY_B]}
+                      contract={
+                        STEER_PERIPHERY_ADDRESS[vault.chainId as SteerChainId]
+                      }
                     >
-                      <DialogTrigger asChild>
-                        <Button
-                          fullWidth
-                          size="xl"
-                          testId="add-steer-liquidity-preview"
+                      <Checker.Success tag={APPROVE_TAG_STEER}>
+                        <SteerPositionAddReviewModal
+                          vault={vault}
+                          onSuccess={() => {
+                            onFieldAInput('')
+                            onFieldBInput('')
+                          }}
+                          // successLink={successLink}
                         >
-                          Preview
-                        </Button>
-                      </DialogTrigger>
-                    </SteerPositionAddReviewModal>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
-              </Checker.ApproveERC20>
-            </Checker.Amounts>
-          </Checker.Network>
-        </Checker.Connect>
+                          <DialogTrigger asChild>
+                            <Button
+                              fullWidth
+                              size="xl"
+                              testId="add-steer-liquidity-preview"
+                            >
+                              Preview
+                            </Button>
+                          </DialogTrigger>
+                        </SteerPositionAddReviewModal>
+                      </Checker.Success>
+                    </Checker.ApproveERC20>
+                  </Checker.ApproveERC20>
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Connect>
+          </Checker.Guard>
+        ) : (
+          <Button fullWidth size="xl">
+            Connect
+          </Button>
+        )}
       </div>
     </CheckerProvider>
   )

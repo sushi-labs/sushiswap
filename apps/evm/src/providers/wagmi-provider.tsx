@@ -1,18 +1,23 @@
+'use client'
+
 import {
-  WagmiConfig as _WagmiConfig,
-  createProductionConfig,
-  createTestConfig,
+  State,
+  WagmiProvider,
+  // getChainId,
+  // switchChain,
+  // watchChainId,
 } from '@sushiswap/wagmi'
-import { type FC, type ReactNode, useMemo } from 'react'
+import { type FC, type ReactNode } from 'react'
+import { wagmiConfig } from 'src/lib/wagmi'
+// import { type ChainId } from 'sushi'
 
-const isTest = process.env.NEXT_PUBLIC_APP_ENV === 'test'
-
-// const config = !isTest ? createProductionConfig() : createTestConfig()
-
-export const WagmiConfig: FC<{ children: ReactNode }> = ({ children }) => {
-  const config = useMemo(
-    () => (!isTest ? createProductionConfig() : createTestConfig()),
-    [],
+export const WagmiConfig: FC<{
+  children: ReactNode
+  initialState: State | undefined
+}> = ({ children, initialState }) => {
+  return (
+    <WagmiProvider config={wagmiConfig} initialState={initialState}>
+      {children}
+    </WagmiProvider>
   )
-  return <_WagmiConfig config={config}>{children}</_WagmiConfig>
 }

@@ -9,8 +9,7 @@ import {
   parseAbiItem,
 } from 'viem'
 import { Chain, arbitrum, mainnet, optimism, polygon } from 'viem/chains'
-
-import { RP3Address } from './Extractor.test'
+import { RP3Address } from './Extractor.test.js'
 
 interface Diapason {
   from: number

@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { Dots } from '@sushiswap/ui'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { ConnectButton } from '../../components'
 
 const Connect: FC<ButtonProps> = ({
@@ -14,7 +15,16 @@ const Connect: FC<ButtonProps> = ({
   size = 'xl',
   ...props
 }) => {
+  const isMounted = useIsMounted()
+
   const { isDisconnected, isConnecting, isReconnecting } = useAccount()
+
+  if (!isMounted)
+    return (
+      <Button fullWidth={fullWidth} size={size} {...props}>
+        <div className="h-[1ch]" />
+      </Button>
+    )
 
   if (isConnecting || isReconnecting) {
     return (

@@ -1,9 +1,9 @@
-import { RouterLiquiditySource } from '@sushiswap/router'
 import { routeProcessor2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import type { Address, GetFunctionArgs } from 'viem'
+import { RouterLiquiditySource } from 'sushi/router'
+import type { Address, WriteContractParameters } from 'viem'
 import z from 'zod'
 
 import { legValidator, tradeValidator01 } from './validator01'
@@ -20,14 +20,15 @@ export interface UseTradeParams {
   enabled: boolean
   carbonOffset: boolean
   onError?(e: Error): void
+  tokenTax?: Percent | false | undefined
 }
 
 export type UseTradeReturnWriteArgs =
-  | GetFunctionArgs<
+  | WriteContractParameters<
       typeof routeProcessor2Abi,
       'transferValueAndprocessRoute'
     >['args']
-  | GetFunctionArgs<typeof routeProcessor2Abi, 'processRoute'>['args']
+  | WriteContractParameters<typeof routeProcessor2Abi, 'processRoute'>['args']
   | undefined
 
 export interface UseTradeReturn {
@@ -42,6 +43,7 @@ export interface UseTradeReturn {
   writeArgs: UseTradeReturnWriteArgs
   route: TradeType['route']
   value?: bigint | undefined
+  tokenTax: Percent | false | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn

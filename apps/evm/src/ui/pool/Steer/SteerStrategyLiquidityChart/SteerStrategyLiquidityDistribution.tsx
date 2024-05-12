@@ -3,9 +3,9 @@
 import { Pool } from '@sushiswap/client'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { SkeletonBox } from '@sushiswap/ui'
-import { SushiSwapV3ChainId, tickToPrice } from '@sushiswap/v3-sdk'
 import React, { FC, useMemo } from 'react'
-
+import { SushiSwapV3ChainId } from 'sushi/config'
+import { TickMath, tickToPrice } from 'sushi/pool'
 import { useConcentratedDerivedMintInfo } from '../../ConcentratedLiquidityProvider'
 import { useDensityChartData } from '../../LiquidityChartRangeInput/hooks'
 import { SteerStrategyGeneric } from '../SteerStrategies'
@@ -18,13 +18,27 @@ interface SteerStrategyLiquidityDistribution {
 
 export const SteerStrategyLiquidityDistribution: FC<
   SteerStrategyLiquidityDistribution
+> = (props) => {
+  return (
+    <div className="h-full w-full rounded-xl flex items-center justify-center">
+      <_SteerStrategyLiquidityDistribution {...props} />
+    </div>
+  )
+}
+
+const _SteerStrategyLiquidityDistribution: FC<
+  SteerStrategyLiquidityDistribution
 > = ({ pool, positions }) => {
   const { data: poolStats } = useConcentratedLiquidityPoolStats({
     chainId: pool.chainId as SushiSwapV3ChainId,
     address: pool.address,
   })
 
-  const { price, invertPrice, noLiquidity } = useConcentratedDerivedMintInfo({
+  const {
+    price,
+    invertPrice,
+    isLoading: isMintInfoLoading,
+  } = useConcentratedDerivedMintInfo({
     account: undefined,
     chainId: pool.chainId as SushiSwapV3ChainId,
     token0: poolStats?.token0,
@@ -34,15 +48,15 @@ export const SteerStrategyLiquidityDistribution: FC<
     existingPosition: undefined,
   })
 
-  const { isLoading, data } = useDensityChartData({
+  const { isLoading: isDensityDataLoading, data } = useDensityChartData({
     chainId: pool.chainId as SushiSwapV3ChainId,
     token0: poolStats?.token0,
     token1: poolStats?.token1,
     feeAmount: poolStats?.feeAmount,
   })
 
-  const steerRange = useMemo(() => {
-    if (!poolStats) return null
+  const [steerRange, rangeState] = useMemo(() => {
+    if (!poolStats) return [null, 'loading' as const]
 
     const min = Math.min(
       ...positions.map((position) => Number(position.lowerTick)),
@@ -51,20 +65,25 @@ export const SteerStrategyLiquidityDistribution: FC<
       ...positions.map((position) => Number(position.upperTick)),
     )
 
-    console.log(min, max)
-
-    return {
-      minPrice: Number(
-        tickToPrice(poolStats?.token0, poolStats?.token1, min).toSignificant(
-          12,
-        ),
-      ),
-      maxPrice: Number(
-        tickToPrice(poolStats?.token0, poolStats?.token1, max).toSignificant(
-          12,
-        ),
-      ),
+    if (min < TickMath.MIN_TICK || max > TickMath.MAX_TICK || min > max) {
+      return [null, 'invalid' as const]
     }
+
+    return [
+      {
+        minPrice: Number(
+          tickToPrice(poolStats?.token0, poolStats?.token1, min).toSignificant(
+            12,
+          ),
+        ),
+        maxPrice: Number(
+          tickToPrice(poolStats?.token0, poolStats?.token1, max).toSignificant(
+            12,
+          ),
+        ),
+      },
+      'valid' as const,
+    ]
   }, [positions, poolStats])
 
   const current = useMemo(() => {
@@ -73,22 +92,24 @@ export const SteerStrategyLiquidityDistribution: FC<
     return parseFloat((invertPrice ? price.invert() : price)?.toSignificant(8))
   }, [invertPrice, price])
 
-  return (
-    <>
-      {isLoading && <SkeletonBox className="w-full h-full" />}
+  const isLoading =
+    rangeState === 'loading' || isMintInfoLoading || isDensityDataLoading
 
-      {!noLiquidity &&
-        steerRange &&
-        !isLoading &&
-        data &&
-        current &&
-        poolStats && (
-          <SteerStrategyLiquidityDistributionChart
-            series={data}
-            current={current}
-            steerRange={steerRange}
-          />
-        )}
-    </>
+  if (isLoading) {
+    return <SkeletonBox className="w-full h-full" />
+  }
+
+  if (rangeState === 'invalid' || !data || !current || !steerRange) {
+    return <div className="text-slate-300 text-sm">Invalid data.</div>
+  }
+
+  return (
+    <div className="bg-secondary w-full h-full">
+      <SteerStrategyLiquidityDistributionChart
+        series={data}
+        current={current}
+        steerRange={steerRange}
+      />
+    </div>
   )
 }

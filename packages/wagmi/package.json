@@ -56,15 +56,8 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
-    "@sushiswap/router": "workspace:*",
-    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
-    "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident-sdk": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@sushiswap/v2-sdk": "workspace:*",
-    "@sushiswap/v3-sdk": "workspace:*",
-    "@sushiswap/viem-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-persist-client": "4.28.0",
@@ -75,29 +68,29 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sentry/nextjs": "7.92.0",
+    "@sentry/nextjs": "7.110.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.5.5",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
-    "@wagmi/core": "1.4.13",
+    "@wagmi/core": "2.6.17",
     "eslint-config-sushi": "workspace:*",
     "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.2.2",
-    "viem": "1.21.4",
-    "wagmi": "1.4.13"
+    "viem": "2.8.14",
+    "wagmi": "2.5.20"
   },
   "peerDependencies": {
-    "@sentry/nextjs": "7.92.0",
-    "@wagmi/core": "1.4.13",
+    "@sentry/nextjs": "7.101.1",
+    "@wagmi/core": "2.6.17",
     "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "viem": "1.21.4",
-    "wagmi": "1.4.13"
+    "viem": "2.8.14",
+    "wagmi": "2.5.20"
   },
   "peerDependenciesMeta": {
     "@sentry/nextjs": {

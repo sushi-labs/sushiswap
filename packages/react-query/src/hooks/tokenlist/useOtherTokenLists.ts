@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
-import { getAddress } from 'viem'
+import { isAddress } from 'viem'
 
 import { isPromiseFulfilled } from 'sushi'
 import { BLACKLIST_TOKEN_IDS, DEFAULT_LIST_OF_LISTS } from 'sushi/token-list'
@@ -34,7 +34,7 @@ export const useOtherTokenListsQuery = ({
     keepPreviousData: true,
     staleTime: 900000, // 15 mins
     cacheTime: 86400000, // 24hs
-    enabled: Boolean(defaultTokenList && query && chainId && query.length > 2),
+    enabled: Boolean(chainId),
     refetchOnWindowFocus: true,
   })
 
@@ -42,46 +42,55 @@ export const useOtherTokenListsQuery = ({
     return BLACKLIST_TOKEN_IDS.map((el) => el.toLowerCase())
   }, [])
 
-  return useMemo(() => {
-    const _query = query?.toLowerCase()
-    if (!defaultTokenList || !tokenListQuery.data) return {}
-
-    const _data = tokenListQuery.data.reduce<Record<string, Token>>(
-      (acc, { chainId: _chainId, name, symbol, address, decimals }) => {
-        if (!_query || chainId !== _chainId) return acc
-        // Filter out dupes
-        if (defaultTokenList[`${_chainId}:${getAddress(address)}`]) return acc
-        if (blacklisted.includes(address.toLowerCase())) return acc
-
-        if (
-          symbol.toLowerCase().includes(_query) ||
-          address.toLowerCase().toLowerCase() === _query
-        ) {
-          acc[`${_chainId}:${getAddress(address)}`] = new Token({
-            chainId: _chainId,
-            name,
-            symbol,
-            decimals,
-            address,
+  const filteredOtherTokens = useMemo(() => {
+    const _data =
+      !defaultTokenList || !tokenListQuery.data
+        ? undefined
+        : tokenListQuery.data.filter(({ chainId: _chainId, address }) => {
+            if (
+              chainId !== _chainId ||
+              !isAddress(address) ||
+              defaultTokenList[address] ||
+              blacklisted.includes(address.toLowerCase())
+            )
+              return false
+            return true
           })
-        }
-
-        return acc
-      },
-      {},
-    )
-
     return {
       ...tokenListQuery,
       data: _data,
     }
-  }, [
-    chainId,
-    query,
-    defaultTokenList,
-    tokenListQuery,
-    blacklisted,
-  ]) as typeof tokenListQuery & {
-    data: Record<string, Token>
-  }
+  }, [chainId, defaultTokenList, tokenListQuery, blacklisted])
+
+  return useMemo(() => {
+    const _query = query?.toLowerCase()
+
+    const _data =
+      !filteredOtherTokens.data || !_query || _query.length <= 2
+        ? {}
+        : filteredOtherTokens.data.reduce<Record<string, Token>>(
+            (acc, { chainId: _chainId, name, symbol, address, decimals }) => {
+              if (
+                symbol.toLowerCase().includes(_query) ||
+                address.toLowerCase() === _query
+              ) {
+                acc[address] = new Token({
+                  chainId: _chainId,
+                  name,
+                  symbol,
+                  decimals,
+                  address,
+                })
+              }
+
+              return acc
+            },
+            {},
+          )
+
+    return {
+      ...filteredOtherTokens,
+      data: _data,
+    }
+  }, [query, filteredOtherTokens])
 }

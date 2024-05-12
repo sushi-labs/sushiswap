@@ -1,28 +1,28 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { useDebounce, useIsMounted } from '@sushiswap/hooks'
+import {
+  SlippageToleranceStorageKey,
+  TTLStorageKey,
+  useDebounce,
+  useIsMounted,
+} from '@sushiswap/hooks'
 import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
-import { SushiSwapV2ChainId } from '@sushiswap/v2-sdk'
 import {
-  Address,
   SushiSwapV2PoolState,
+  UseCallParameters,
   getSushiSwapRouterContractConfig,
   useAccount,
-  useNetwork,
-  usePrepareSendTransaction,
+  useCall,
+  usePublicClient,
   useSendTransaction,
   useSushiSwapRouterContract,
   useSushiSwapV2Pool,
   useTotalSupply,
+  useTransactionDeadline,
 } from '@sushiswap/wagmi'
-import {
-  SendTransactionResult,
-  waitForTransaction,
-} from '@sushiswap/wagmi/actions'
-import { UsePrepareSendTransactionConfig } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
@@ -32,15 +32,15 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
 import {
   useTokensFromPool,
-  useTransactionDeadline,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
-import { encodeFunctionData } from 'viem'
+import { SendTransactionReturnType, encodeFunctionData } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
@@ -52,15 +52,20 @@ interface RemoveSectionLegacyProps {
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
   withCheckerRoot(({ pool: _pool }) => {
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
-    const { chain } = useNetwork()
     const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
-    const { address } = useAccount()
-    const deadline = useTransactionDeadline(_pool.chainId)
+    const client = usePublicClient()
+    const { address, chain } = useAccount()
+    const { data: deadline } = useTransactionDeadline({
+      storageKey: TTLStorageKey.RemoveLiquidity,
+      chainId: _pool.chainId as ChainId,
+    })
     const contract = useSushiSwapRouterContract(
       _pool.chainId as SushiSwapV2ChainId,
     )
-    const [slippageTolerance] = useSlippageTolerance('removeLiquidity')
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.RemoveLiquidity,
+    )
 
     const [percentage, setPercentage] = useState<string>('0')
     const percentToRemove = useMemo(
@@ -92,27 +97,29 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const currencyAToRemove = useMemo(
       () =>
         token0
-          ? percentToRemove?.greaterThan('0') && underlying0
+          ? percentToRemoveDebounced?.greaterThan('0') && underlying0
             ? Amount.fromRawAmount(
                 token0,
-                percentToRemove.multiply(underlying0.quotient).quotient || '0',
+                percentToRemoveDebounced.multiply(underlying0.quotient)
+                  .quotient || '0',
               )
             : Amount.fromRawAmount(token0, '0')
           : undefined,
-      [percentToRemove, token0, underlying0],
+      [percentToRemoveDebounced, token0, underlying0],
     )
 
     const currencyBToRemove = useMemo(
       () =>
         token1
-          ? percentToRemove?.greaterThan('0') && underlying1
+          ? percentToRemoveDebounced?.greaterThan('0') && underlying1
             ? Amount.fromRawAmount(
                 token1,
-                percentToRemove.multiply(underlying1.quotient).quotient || '0',
+                percentToRemoveDebounced.multiply(underlying1.quotient)
+                  .quotient || '0',
               )
             : Amount.fromRawAmount(token1, '0')
           : undefined,
-      [percentToRemove, token1, underlying1],
+      [percentToRemoveDebounced, token1, underlying1],
     )
 
     const [minAmount0, minAmount1] = useMemo(() => {
@@ -135,21 +142,30 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     const debouncedMinAmount0 = useDebounce(minAmount0, 500)
     const debouncedMinAmount1 = useDebounce(minAmount1, 500)
 
-    const amountToRemove = useMemo(
-      () => balance?.multiply(percentToRemove),
-      [balance, percentToRemove],
-    )
+    const amountToRemove = useMemo(() => {
+      return balance &&
+        percentToRemoveDebounced &&
+        percentToRemoveDebounced.greaterThan('0')
+        ? Amount.fromRawAmount(
+            balance.currency,
+            percentToRemoveDebounced.multiply(balance.quotient).quotient,
+          )
+        : undefined
+    }, [balance, percentToRemoveDebounced])
 
-    const onSettled = useCallback(
-      (data: SendTransactionResult | undefined) => {
-        if (!data || !chain?.id) return
+    const onSuccess = useCallback(
+      (hash: SendTransactionReturnType) => {
+        setPercentage('0')
+
+        if (!chain?.id) return
+
         const ts = new Date().getTime()
         void createToast({
           account: address,
           type: 'burn',
           chainId: chain.id,
-          txHash: data.hash,
-          promise: waitForTransaction({ hash: data.hash }),
+          txHash: hash,
+          promise: client.waitForTransactionReceipt({ hash }),
           summary: {
             pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
             completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
@@ -159,16 +175,17 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           groupTimestamp: ts,
         })
       },
-      [chain, token0.symbol, token1.symbol, address],
+      [client, chain, token0.symbol, token1.symbol, address],
     )
 
-    const [prepare, setPrepare] = useState<
-      UsePrepareSendTransactionConfig | undefined
-    >(undefined)
+    const [prepare, setPrepare] = useState<UseCallParameters | undefined>(
+      undefined,
+    )
 
     useEffect(() => {
-      const prep = async (): Promise<UsePrepareSendTransactionConfig> => {
+      const prep = async () => {
         if (
+          !approved ||
           !token0 ||
           !token1 ||
           !chain?.id ||
@@ -177,7 +194,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           !underlying1 ||
           !address ||
           !pool ||
-          !balance ||
+          !amountToRemove ||
           !debouncedMinAmount0 ||
           !debouncedMinAmount1 ||
           !deadline ||
@@ -204,9 +221,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               ],
               args: [
                 token1IsNative
-                  ? (pool.token0.wrapped.address as Address)
-                  : (pool.token1.wrapped.address as Address),
-                balance.multiply(percentToRemoveDebounced).quotient,
+                  ? pool.token0.wrapped.address
+                  : pool.token1.wrapped.address,
+                amountToRemove.quotient,
                 token1IsNative
                   ? debouncedMinAmount0.quotient
                   : debouncedMinAmount1.quotient,
@@ -222,9 +239,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           return {
             functionNames: ['removeLiquidity'],
             args: [
-              pool.token0.wrapped.address as Address,
-              pool.token1.wrapped.address as Address,
-              balance.multiply(percentToRemoveDebounced).quotient,
+              pool.token0.wrapped.address,
+              pool.token1.wrapped.address,
+              amountToRemove.quotient,
               debouncedMinAmount0.quotient,
               debouncedMinAmount1.quotient,
               address,
@@ -234,14 +251,17 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
         })()
 
         const safeGasEstimates = await Promise.all(
-          config.functionNames.map((methodName) =>
-            contract.estimateGas[methodName](config.args as any)
-              .then(gasMargin)
-              .catch((e) => {
-                console.error(e)
-                return undefined
-              }),
-          ),
+          config.functionNames.map(async (methodName) => {
+            try {
+              const estimatedGas: bigint = await (
+                contract.estimateGas[methodName] as any
+              )(config.args)
+              return gasMargin(estimatedGas)
+            } catch (e) {
+              console.error(e)
+              return undefined
+            }
+          }),
         )
 
         const indexOfSuccessfulEstimation = safeGasEstimates.findIndex(
@@ -261,7 +281,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
               args: config.args as any,
             }),
             gas: safeGasEstimate,
-          }
+          } satisfies UseCallParameters
         }
       }
 
@@ -273,6 +293,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           console.error('remove prepare error', e)
         })
     }, [
+      approved,
       token0,
       token1,
       chain?.id,
@@ -281,28 +302,37 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       underlying1,
       address,
       pool,
-      balance,
+      amountToRemove,
       debouncedMinAmount0,
       debouncedMinAmount1,
       deadline,
       _pool.chainId,
-      percentToRemoveDebounced,
       percentage,
     ])
 
-    const { config } = usePrepareSendTransaction({
+    const { isError: isSimulationError } = useCall({
       ...prepare,
       chainId: _pool.chainId,
-      enabled: Boolean(approved && Number(percentage) > 0),
+      query: { enabled: Boolean(approved && Number(percentage) > 0) },
     })
 
-    const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-      ...config,
-      onSettled,
-      onSuccess: () => {
-        setPercentage('0')
-      },
-    })
+    const { sendTransactionAsync, isLoading: isWritePending } =
+      useSendTransaction({
+        mutation: {
+          onSuccess,
+        },
+      })
+
+    const send = useMemo(() => {
+      if (!prepare || isSimulationError) return undefined
+
+      return async () => {
+        // TODO: Fix this
+        try {
+          await sendTransactionAsync(prepare as any)
+        } catch {}
+      }
+    }, [isSimulationError, prepare, sendTransactionAsync])
 
     return (
       <div>
@@ -333,7 +363,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                 size="default"
                 variant="outline"
                 fullWidth
-                chainId={_pool.chainId}
+                chainId={_pool.chainId as ChainId}
               >
                 <Checker.Guard
                   size="default"
@@ -350,17 +380,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                     contract={
                       getSushiSwapRouterContractConfig(
                         _pool.chainId as SushiSwapV2ChainId,
-                      ).address as Address
+                      ).address
                     }
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                       <Button
                         size="default"
-                        onClick={() => sendTransaction?.()}
+                        onClick={() => send?.()}
                         fullWidth
-                        disabled={
-                          !approved || isWritePending || !sendTransaction
-                        }
+                        disabled={!approved || isWritePending || !send}
                         testId="remove-liquidity"
                       >
                         {isWritePending ? (

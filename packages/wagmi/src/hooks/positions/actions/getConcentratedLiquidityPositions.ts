@@ -1,9 +1,12 @@
-import { SushiSwapV3ChainId, computePoolAddress } from '@sushiswap/v3-sdk'
 import { ChainId } from 'sushi/chain'
-import { erc20ABI, readContracts } from 'wagmi'
+import { SUSHISWAP_V3_INIT_CODE_HASH, SushiSwapV3ChainId } from 'sushi/config'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 
+import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { readContracts } from '@wagmi/core/actions'
+import { erc20Abi } from 'viem'
 import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
-import { getV3NonFungiblePositionManagerConractConfig } from '../../contracts/useV3NonFungiblePositionManager'
+import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
@@ -38,18 +41,20 @@ const abiShard = [
 export const getConcentratedLiquidityPositions = async ({
   account,
   chainIds,
+  config,
 }: {
   account: `0x${string}` | undefined
   chainIds: SushiSwapV3ChainId[]
+  config: PublicWagmiConfig
 }) => {
   if (!account) return undefined
 
-  const result = await readContracts({
+  const result = await readContracts(config, {
     contracts: chainIds.map(
       (el) =>
         ({
-          address: getV3NonFungiblePositionManagerConractConfig(el).address,
-          abi: erc20ABI,
+          address: getV3NonFungiblePositionManagerContractConfig(el).address,
+          abi: erc20Abi,
           chainId: el,
           functionName: 'balanceOf' as const,
           args: [account],
@@ -75,13 +80,13 @@ export const getConcentratedLiquidityPositions = async ({
     }
   })
 
-  const tokenIdResults = await readContracts({
+  const tokenIdResults = await readContracts(config, {
     contracts: tokenIdsArgs.map(
       ([_chainId, account, index]) =>
         ({
           chainId: _chainId,
           address:
-            getV3NonFungiblePositionManagerConractConfig(_chainId).address,
+            getV3NonFungiblePositionManagerContractConfig(_chainId).address,
           abi: abiShard,
           functionName: 'tokenOfOwnerByIndex' as const,
           args: [account, BigInt(index)],
@@ -102,16 +107,19 @@ export const getConcentratedLiquidityPositions = async ({
 
   const positions = await getConcentratedLiquidityPositionsFromTokenIds({
     tokenIds,
+    config,
   })
-  const fees = await getConcentratedLiquidityPositionFees({ tokenIds })
+  const fees = await getConcentratedLiquidityPositionFees({ tokenIds, config })
 
   return positions.filter(Boolean).map((el, i) => ({
     ...el,
-    address: computePoolAddress({
+    address: computeSushiSwapV3PoolAddress({
       factoryAddress: getV3FactoryContractConfig(el.chainId).address,
       tokenA: el.token0,
       tokenB: el.token1,
       fee: el.fee,
+      initCodeHashManualOverride:
+        SUSHISWAP_V3_INIT_CODE_HASH[el.chainId as SushiSwapV3ChainId],
     }),
     fees: fees ? fees[i] : undefined,
   })) as ConcentratedLiquidityPosition[]

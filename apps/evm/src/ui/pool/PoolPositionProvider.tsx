@@ -37,7 +37,7 @@ export const PoolPositionProvider: FC<{
 
   const {
     data: balance,
-    isLoading,
+    isInitialLoading: isLoading,
     isError,
   } = useBalanceWeb3({
     chainId: pool.chainId as ChainId,

@@ -5,7 +5,13 @@ import { getCliffTimestamp } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
+  Button,
+  Card,
   CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   Collapsible,
   DialogTrigger,
   Explainer,
@@ -14,18 +20,10 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import {
-  Button,
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@sushiswap/ui'
-import {
   Checker,
   Web3Input,
   useBondMarketDetails,
-  useNetwork,
+  useChainId,
 } from '@sushiswap/wagmi'
 import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import format from 'date-fns/format'
@@ -92,7 +90,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
     return [new Token(staleBond.quoteToken), new Token(staleBond.payoutToken)]
   }, [staleBond.quoteToken, staleBond.payoutToken])
 
-  const { chain } = useNetwork()
+  const chainId = useChainId()
 
   const { maxAmountAccepted, availableCapacity, marketPrice, discount } =
     useBondMarketDetails({
@@ -326,9 +324,7 @@ export const BondsWidget = ({ bond: staleBond }: { bond: Bond }) => {
               </Button>
             )}
             <Collapsible
-              open={
-                quoteAmount.greaterThan(0) && chain?.id === staleBond.chainId
-              }
+              open={quoteAmount.greaterThan(0) && chainId === staleBond.chainId}
               className="flex flex-col"
             >
               {isNegativeDiscount && (

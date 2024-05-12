@@ -1,9 +1,8 @@
 import {
-  SUBGRAPH_HOST,
-  SUSHISWAP_SUBGRAPH_NAME,
-  SUSHISWAP_V3_SUBGRAPH_NAME,
+  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V3_SUBGRAPH_URL,
   SushiSwapV3ChainId,
-  TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_URL,
   isSushiSwapChain,
   isSushiSwapV3Chain,
   isTridentChain,
@@ -17,6 +16,7 @@ import {
   SushiSwapV3DayDatasQuery,
   getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
+import { isPromiseFulfilled } from 'sushi/validate'
 
 const transformV3DayToSnapshot = (
   days: SushiSwapV3DayDatasQuery['uniswapDayDatas'],
@@ -54,8 +54,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: TRIDENT_SUBGRAPH_URL[chainId],
           },
           info,
         })
@@ -80,8 +79,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-            subgraphHost: SUBGRAPH_HOST[chainId],
+            url: SUSHISWAP_SUBGRAPH_URL[chainId],
           },
           info,
         })
@@ -98,8 +96,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
 
     const fetchSushiSwapV3Snapshots = async (chainId: SushiSwapV3ChainId) => {
       const sdk = getBuiltGraphSDK({
-        subgraphName: SUSHISWAP_V3_SUBGRAPH_NAME[chainId],
-        subgraphHost: SUBGRAPH_HOST[chainId],
+        url: SUSHISWAP_V3_SUBGRAPH_URL[chainId]
       })
 
       const { uniswapDayDatas } = await sdk.SushiSwapV3DayDatas({
@@ -130,5 +127,10 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
       return queries
     })
 
-    return Promise.all(queries).then((snapshots) => snapshots.flat())
+    return Promise.allSettled(queries).then((snapshots) =>
+      snapshots
+        .filter(isPromiseFulfilled)
+        .map((snapshot) => snapshot.value)
+        .flat(),
+    )
   }
