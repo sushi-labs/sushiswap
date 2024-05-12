@@ -10,7 +10,7 @@ import {
 } from 'viem'
 import { hardhat } from 'viem/chains'
 import RouteProcessor4 from '../test/RouteProcessor4.sol/RouteProcessor4.json'
-import { createHardhatProvider } from './CreateHardhatProvider'
+import { createHardhatProvider } from './CreateHardhatProvider.js'
 
 export async function createForkRouteProcessor4(
   providerUrl: string,
