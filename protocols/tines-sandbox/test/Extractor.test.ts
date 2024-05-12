@@ -30,6 +30,7 @@ import {
 import { Native, Token } from 'sushi/currency'
 import {
   ConstantProductPoolCode,
+  CurvePoolCode,
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
@@ -301,7 +302,8 @@ it.skip('Extractor Ethereum infinite work test (Curve only)', async () => {
         '0x80466c64868E1ab14a1Ddf27A676C3fcBE638Fe5', // crypto pool in main list :(
       ],
     },
-    tickHelperContract: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -553,7 +555,7 @@ it.skip('Extractor Filecoin infinite work test', async () => {
     logDepth: 300,
     logging: true,
     RP3Address: RP3Address[ChainId.FILECOIN],
-    checkTokens: [
+    checkTokens: async () => [
       new Token({
         chainId: ChainId.FILECOIN,
         address: '0xc396f2266dAE4A1C75cF96a51C0E5824Aec6f947',
