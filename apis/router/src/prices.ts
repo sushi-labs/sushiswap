@@ -1,5 +1,10 @@
 import * as Sentry from '@sentry/node'
-import { ExtractorSupportedChainId, STABLES } from 'sushi/config'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  ExtractorSupportedChainId,
+  STABLES,
+} from 'sushi/config'
 import { WNATIVE } from 'sushi/currency'
 import { RPool, RToken, calcTokenAddressPrices } from 'sushi/tines'
 import { ExtractorClient } from './ExtractorClient.js'
@@ -75,7 +80,17 @@ function getPrices(
 
   const minimumLiquidity = currency === Currency.USD ? 1000 : 1
 
-  const prices = calculateTokenPrices(bases, pools, minimumLiquidity)
+  const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
+  const additionalTrusted = Object.values(
+    ADDITIONAL_BASES[chainId] ?? [],
+  ).flat()
+
+  const prices = calculateTokenPrices(
+    bases,
+    pools,
+    minimumLiquidity,
+    baseTrusted.concat(additionalTrusted) as RToken[],
+  )
   //comparePrices(prices, extractorClient?.getPrices(), [0.01, 0.001])
   return prices
 }
@@ -84,6 +99,7 @@ function calculateTokenPrices(
   bases: RToken[],
   pools: RPool[],
   minimumLiquidity: number,
+  trustedTokens: RToken[],
 ) {
   const prices: Map<string, Map<string, number>> = new Map()
   const allTokens: Set<string> = new Set()
@@ -119,6 +135,7 @@ function calculateTokenPrices(
       pools,
       base,
       minimumLiquidity * 10 ** base.decimals,
+      trustedTokens,
       // true,
     )
     const currentPricesMap = new Map<string, number>()

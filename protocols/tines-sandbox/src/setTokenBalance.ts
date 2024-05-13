@@ -1,11 +1,13 @@
 import {
-  getStorageAt,
-  setStorageAt,
+  getStorageAt as getStorageAtLib,
+  setStorageAt as setStorageAtLib,
 } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types.js'
 import { BigNumber, Contract } from 'ethers'
 import hre from 'hardhat'
+import { EthereumProvider } from 'hardhat/types'
 import { erc20Abi } from 'sushi/abi'
+import { Address, PublicClient } from 'viem'
 
 const { ethers } = hre
 
@@ -30,10 +32,78 @@ const TokenProxyMap: Record<string, string> = {
 
 const cache: Record<string, number> = {}
 
+function toRpcQuantity(x: NumberLike): string {
+  let hex: string
+  if (typeof x === 'number' || typeof x === 'bigint') {
+    // TODO: check that number is safe
+    hex = `0x${x.toString(16)}`
+  } else if (typeof x === 'string') {
+    if (!x.startsWith('0x')) {
+      throw new Error('Only 0x-prefixed hex-encoded strings are accepted')
+    }
+    hex = x
+  } else if ('toHexString' in x) {
+    hex = x.toHexString()
+  } else if ('toString' in x) {
+    hex = x.toString(16)
+  } else {
+    throw new Error(`${x as any} cannot be converted to an RPC quantity`)
+  }
+
+  if (hex === '0x0') return hex
+
+  return hex.startsWith('0x') ? hex.replace(/0x0+/, '0x') : `0x${hex}`
+}
+
+function toPaddedRpcQuantity(x: NumberLike, bytesLength: number): string {
+  let rpcQuantity = toRpcQuantity(x)
+
+  if (rpcQuantity.length < 2 + 2 * bytesLength) {
+    const rpcQuantityWithout0x = rpcQuantity.slice(2)
+    rpcQuantity = `0x${rpcQuantityWithout0x.padStart(2 * bytesLength, '0')}`
+  }
+
+  return rpcQuantity
+}
+
+async function getStorageAt(
+  address: string,
+  index: string,
+  provider?: EthereumProvider,
+): Promise<string> {
+  if (!provider) return getStorageAtLib(address, index)
+
+  const indexParam = toPaddedRpcQuantity(index, 32)
+  const data = await provider.request({
+    method: 'eth_getStorageAt',
+    params: [address as Address, indexParam as Address, 'latest'],
+  })
+
+  return data as string
+}
+
+async function setStorageAt(
+  address: string,
+  index: string,
+  value: NumberLike,
+  provider?: EthereumProvider,
+): Promise<void> {
+  if (!provider) return setStorageAtLib(address, index, value)
+
+  const indexParam = toRpcQuantity(index)
+  const codeParam = toPaddedRpcQuantity(value, 32)
+  await provider.request({
+    method: 'hardhat_setStorageAt',
+    params: [address as Address, indexParam as Address, codeParam],
+  })
+}
+
 export async function setTokenBalance(
   token: string,
   user: string,
   balance: bigint,
+  client?: PublicClient,
+  provider?: EthereumProvider,
 ): Promise<boolean> {
   const setStorage = async (
     realContract: string,
@@ -46,15 +116,15 @@ export async function setTokenBalance(
       .toString(16)
       .padStart(64, '0')}`
     const slot = ethers.utils.keccak256(slotData)
-    const previousValue0 = await getStorageAt(realContract, slot)
-    await setStorageAt(realContract, slot, value0)
+    const previousValue0 = await getStorageAt(realContract, slot, provider)
+    await setStorageAt(realContract, slot, value0, provider)
     // Vyper mapping
     const slotData2 = `0x${Number(slotNumber)
       .toString(16)
       .padStart(64, '0')}${user.padStart(64, '0')}`
     const slot2 = ethers.utils.keccak256(slotData2)
-    const previousValue1 = await getStorageAt(realContract, slot)
-    await setStorageAt(realContract, slot2, value1)
+    const previousValue1 = await getStorageAt(realContract, slot2, provider)
+    await setStorageAt(realContract, slot2, value1, provider)
     return [previousValue0, previousValue1]
   }
 
@@ -69,16 +139,30 @@ export async function setTokenBalance(
 
   const tokenContract = new Contract(token, erc20Abi, ethers.provider)
 
-  const balancePrimary = (await tokenContract.balanceOf(user)) as BigNumber
+  const getBalanace = async () => {
+    if (client) {
+      const balance = await client.readContract({
+        abi: erc20Abi,
+        address: token as Address,
+        functionName: 'balanceOf',
+        args: [`0x${user}` as Address],
+      })
+      return BigNumber.from(balance.toString())
+    } else
+      return ((await tokenContract) as Contract).balanceOf(user) as BigNumber
+  }
+
+  const balancePrimary = await getBalanace()
 
   for (let i = 0; i < 200; ++i) {
+    //console.log('setTokenBalance', token, i)
     const [previousValue0, previousValue1] = await setStorage(
       realContract,
       i,
       balance,
       balance,
     )
-    const resBalance = (await tokenContract.balanceOf(user)) as BigNumber
+    const resBalance = await getBalanace()
     //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
 
     if (!resBalance.isZero()) {

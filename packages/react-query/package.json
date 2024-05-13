@@ -53,7 +53,7 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sentry/nextjs": "7.101.1",
+    "@sentry/nextjs": "7.110.0",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
@@ -72,7 +72,7 @@
     "wagmi": "2.5.20"
   },
   "peerDependencies": {
-    "@sentry/nextjs": "7.101.1",
+    "@sentry/nextjs": "7.110.0",
     "@sushiswap/client": "*",
     "next": "14.1.0",
     "react": "18.2.0",

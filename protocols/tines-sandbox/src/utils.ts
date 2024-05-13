@@ -1,5 +1,15 @@
 import { expect } from 'chai'
-import { Abi, Address, Hex, PublicClient, WalletClient } from 'viem'
+import { Native, Token } from 'sushi/currency'
+import {
+  Abi,
+  Address,
+  GetContractReturnType,
+  Hex,
+  PublicClient,
+  WalletClient,
+  erc20Abi,
+  getContract,
+} from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 
 function closeValues(
@@ -95,4 +105,28 @@ export async function deployContract(
       args,
     }),
   )
+}
+
+export function tokenContract(
+  client: PublicClient & WalletClient,
+  token: Token | Address,
+): GetContractReturnType<typeof erc20Abi, PublicClient & WalletClient> {
+  return getContract({
+    address: token instanceof Token ? token.address : token,
+    abi: erc20Abi,
+    client: { public: client, wallet: client },
+  })
+}
+
+export async function getBalance(
+  client: PublicClient & WalletClient,
+  token: Token | Native | Address,
+  user: Address,
+): Promise<bigint> {
+  if (token instanceof Native)
+    token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+  else if (token instanceof Token) token = token.address
+  if (token.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+    return client.getBalance({ address: user })
+  return tokenContract(client, token).read.balanceOf([user])
 }
