@@ -29,6 +29,7 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   const { unmount } = rest
   const { isMd } = useBreakpoint('md')
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Minddeft
   useEffect(() => {
     register()
     return () => {
@@ -59,6 +60,7 @@ export const ModalPanel: FC<ModalPanelProps> = ({
     }
   }, [isMd, isOpen])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Minddeft
   useEffect(syncScrollLockSafeArea, [isOpen])
 
   return (

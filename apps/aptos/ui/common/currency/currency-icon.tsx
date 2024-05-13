@@ -20,10 +20,15 @@ function hashStringToColor(str: string) {
   const r = (hash & 0xff0000) >> 16
   const g = (hash & 0x00ff00) >> 8
   const b = hash & 0x0000ff
+
   return (
+    // biome-ignore lint/style/useTemplate: Minddeft
     '#' +
+    // biome-ignore lint/style/useTemplate: Minddeft
     ('0' + r.toString(16)).substr(-2) +
+    // biome-ignore lint/style/useTemplate: Minddeft
     ('0' + g.toString(16)).substr(-2) +
+    // biome-ignore lint/style/useTemplate: Minddeft
     ('0' + b.toString(16)).substr(-2)
   )
 }

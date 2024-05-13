@@ -1,6 +1,7 @@
 'use client'
 
 import { parseArgs } from 'lib/common/parse-args'
+import { useTypedSearchParams } from 'lib/common/use-typed-search-params'
 import { useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -11,7 +12,6 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { useTypedSearchParams } from 'lib/common/use-typed-search-params'
 import { z } from 'zod'
 type FilterContext = z.TypeOf<typeof poolFiltersSchema>
 
