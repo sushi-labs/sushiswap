@@ -7,7 +7,8 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "TIMING=1 next lint",
+    "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
     "test": "npx playwright test"
   },
