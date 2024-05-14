@@ -4,10 +4,12 @@ import {
 } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types.js'
 import { BigNumber, Contract } from 'ethers'
-import { ethers } from 'hardhat'
+import hre from 'hardhat'
 import { EthereumProvider } from 'hardhat/types'
 import { erc20Abi } from 'sushi/abi'
 import { Address, PublicClient } from 'viem'
+
+const { ethers } = hre
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it

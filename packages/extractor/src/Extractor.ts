@@ -8,7 +8,7 @@ import {
   AlgebraPoolWatcher,
   AlgebraPoolWatcherStatus,
 } from './AlgebraPoolWatcher.js'
-import { CurveExtractor } from './CurveExtractor.js'
+import { CurveConfig, CurveExtractor } from './CurveExtractor.js'
 import { LogFilter2, LogFilterType } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { TokenManager } from './TokenManager.js'
@@ -25,6 +25,7 @@ export type ExtractorConfig = {
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
+  curveConfig?: CurveConfig
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   cacheDir: string
@@ -127,6 +128,15 @@ export class Extractor {
         args.logging !== undefined ? args.logging : false,
         this.multiCallAggregator,
         this.tokenManager,
+      )
+    if (args.curveConfig)
+      this.extractorCurve = new CurveExtractor(
+        this.client,
+        args.curveConfig,
+        this.logFilter,
+        this.tokenManager,
+        args.logging !== undefined ? args.logging : false,
+        this.multiCallAggregator,
       )
   }
 

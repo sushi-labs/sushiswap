@@ -307,7 +307,7 @@ export class CurveExtractor {
     return pools
   }
 
-  // true - new interface balances/coins, false - bad
+  // true - new interface balances/coins, false - old
   async detectPoolInterface(poolAddress: Address): Promise<boolean> {
     try {
       await this.multiCallAggregator.callValue(
