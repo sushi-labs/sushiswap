@@ -7,7 +7,7 @@ export const useSquid = () => {
     queryKey: ['squid'],
     queryFn: async () => {
       const squid = new Squid({
-        baseUrl: 'https://v2.api.squidrouter.com',
+        baseUrl: 'https://apiplus.squidrouter.com/',
         integratorId: SquidIntegratorId,
       })
 
