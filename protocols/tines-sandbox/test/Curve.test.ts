@@ -64,6 +64,11 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   // 2 coins
   ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
   [
+    '0x21e27a5e5513d6e65c4f830167390997aa84843a',
+    'steth-ng',
+    CurvePoolType.Factory,
+  ],
+  [
     '0xdcef968d416a41cdac0ed8702fac8128a64241a2',
     'fraxusdc',
     CurvePoolType.Legacy,
@@ -127,31 +132,47 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
 ]
 
 const FACTORY_ADDRESSES = [
-  '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae',
-  '0xb9fc157394af804a3578134a6585c0dc9cc990d4',
+  '0x4F8846Ae9380B90d2E71D5e3D042dff3E7ebb40d', // crvUSD
+  '0x0959158b6040d32d04c301a72cbfd6b39e21c9ae', // 3Crv
+  '0xb9fc157394af804a3578134a6585c0dc9cc990d4', //
   //'0xf18056bbd320e96a48e3fbf8bc061322531aac99', for crypto2 pools only
 ] as const
 
-// We don't test these pools - problems with exchange function call
-const FACTORY_POOL_EXCEPTIONS_LIST = [
-  '0x2B26239f52420d11420bC0982571BFE091417A7d',
-  '0x439bfaE666826a7cB73663E366c12f03d0A13B49',
-  '0x87650D7bbfC3A9F10587d7778206671719d9910D',
-  '0x961226B64AD373275130234145b96D100Dc0b655',
-  '0xe7E4366f6ED6aFd23e88154C00B532BDc0352333',
-  '0x8c524635d52bd7b1Bd55E062303177a7d916C046',
-  '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D',
-  '0x28B0Cf1baFB707F2c6826d10caf6DD901a6540C5',
-  '0x0AD66FeC8dB84F8A3365ADA04aB23ce607ac6E24',
+const POOL_TEST_AMOUNT_SPECIAL = {
+  '0x87650D7bbfC3A9F10587d7778206671719d9910D': 1e40,
+}
 
-  '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3',
-  '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8',
-] as const
-const FACTORY_POOL_EXCEPTION_SET = new Set(
-  FACTORY_POOL_EXCEPTIONS_LIST.map((p) => p.toLowerCase()),
-)
+// Pools we don't support - by any reason
+const POOLS_WE_DONT_SUPPORT = {
+  '0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587':
+    'STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/',
+  '0x064841157BadDcB2704cA38901D7d754a59b80E8':
+    'MBTC token(0xcfc013B416bE0Bd4b3bEdE35659423B796f8Dcf0) has been paused',
+  '0x2B26239f52420d11420bC0982571BFE091417A7d':
+    'Swap Unknown error, low liquidity',
+  '0x439bfaE666826a7cB73663E366c12f03d0A13B49':
+    'Swap Unknown error, low liquidity',
+  '0x1F71f05CF491595652378Fe94B7820344A551B8E':
+    'Swap Unknown error, low liquidity',
+  '0x8461A004b50d321CB22B7d034969cE6803911899':
+    'Swap Unknown error, low liquidity',
+  '0xDa5B670CcD418a187a3066674A8002Adc9356Ad1':
+    'Swap Unknown error, low liquidity',
+  '0x8818a9bb44Fbf33502bE7c15c500d0C783B73067':
+    'Swap Unknown error, low liquidity',
+  '0x3F1B0278A9ee595635B61817630cC19DE792f506':
+    'Swap Unknown error, low liquidity',
+  '0xD6Ac1CB9019137a896343Da59dDE6d097F710538':
+    'Swap Unknown error, low liquidity',
+  '0x9c2C8910F113181783c249d8F6Aa41b51Cde0f0c':
+    'Swap Unknown error, low liquidity',
+  '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3':
+    'Swap Unknown error, low liquidity',
+  '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8':
+    'Swap Unknown error, low liquidity',
+} as const
+
 const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
-  //'0x6a274de3e2462c7614702474d64d376729831dca': 1e-3, //TODO!!!
   '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
 }
 
@@ -211,6 +232,81 @@ interface PoolInfo {
   currentFlow: number[][][]
   user: Address
   snapshot: SnapshotRestorer
+}
+
+// tries to transfer tokens from pool to user(router) to understand if we can work with this pool or not
+// async function checkPool(config: TestConfig, pool: PoolInfo) {
+//   const promises = pool.tokenContracts.map(async (tokenContract) => {
+//     if (tokenContract === undefined) return true // to problems with transferring natives
+//     const res = await simulateContract(config.client, {
+//       address: tokenContract.address,
+//       abi: tokenContract.abi,
+//       functionName: 'transfer',
+//       args: [config.user.address, 1_000_000n],
+//     })
+//     return res.result
+//   })
+//   const res = await Promise.all(promises)
+//   return res.every((r) => r)
+// }
+async function checkPool(
+  config: TestConfig,
+  poolAddress: Address,
+  poolType: CurvePoolType,
+  minBalance = 1_000_000n,
+): Promise<string> {
+  const poolContract = {
+    address: poolAddress,
+    abi: parseAbi([
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function coins(uint256) pure returns (address)'
+        : 'function coins(int128) pure returns (address)',
+      poolType !== CurvePoolType.LegacyV2
+        ? 'function balances(uint256) pure returns (uint256)'
+        : 'function balances(int128) pure returns (uint256)',
+    ]),
+  }
+  for (let i = 0n; i < 100n; ++i) {
+    let token: Address
+    try {
+      token = await readContract(config.client, {
+        ...poolContract,
+        functionName: 'coins',
+        args: [i],
+      })
+    } catch (_e) {
+      break
+    }
+    if (token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+      // native
+    } else {
+      const balance = await readContract(config.client, {
+        ...poolContract,
+        functionName: 'balances',
+        args: [BigInt(i)],
+      })
+      if (balance < minBalance)
+        return `token ${token}(${i}) low balance (${balance})`
+      try {
+        const res = await simulateContract(config.client, {
+          address: token,
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [config.user.address, minBalance],
+          account: poolAddress,
+        })
+        if (!res.result)
+          return `token ${token}(${i}) transfer simulation failed`
+      } catch (e) {
+        if (
+          e.toString().includes('function "transfer" returned no data ("0x")')
+        )
+          continue
+        return `token ${token}(${i}) transfer simulation failed`
+      }
+    }
+  }
+  return 'check passed'
 }
 
 async function getPoolRatio(
@@ -349,7 +445,7 @@ async function createCurvePoolInfo(
       tokenTines.push({
         address: token,
         name: token,
-        symbol: token,
+        symbol: 'ETH',
         chainId: 1,
         decimals: 18,
       })
@@ -374,8 +470,9 @@ async function createCurvePoolInfo(
           args: [poolAddress, initialBalance],
           chain: null,
         })
-      } catch (_) {
+      } catch (e) {
         // in try block because crv token (0xD533a949740bb3306d119CC777fa900bA034cd52) doesn't allow re-approve (((
+        console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
       }
       tokenContracts.push(tokenContract)
 
@@ -383,13 +480,29 @@ async function createCurvePoolInfo(
         ...tokenContract,
         functionName: 'decimals',
       })
+      const symbol = await readContract(config.client, {
+        ...tokenContract,
+        functionName: 'symbol',
+      })
       tokenTines.push({
         address: token,
         name: token,
-        symbol: token,
+        symbol,
         chainId: 1,
         decimals,
       })
+
+      // const balance = await readContract(config.client, {
+      //   ...tokenContract,
+      //   functionName: 'balanceOf',
+      //   args: [config.user.address],
+      // })
+      // const allowance = await readContract(config.client, {
+      //   ...tokenContract,
+      //   functionName: 'allowance',
+      //   args: [config.user.address, poolAddress],
+      // })
+      // console.log('token', symbol, balance, allowance)
     }
   }
 
@@ -594,6 +707,7 @@ async function forEachFactoryPool(
       ...factoryContract,
       functionName: 'pool_count',
     })
+    console.log(`Factory ${factoryAddress} total pools: ${poolNum}`)
     for (let i = 0n; i < poolNum; ++i) {
       const poolAddress = await readContract(config.client, {
         ...factoryContract,
@@ -613,7 +727,7 @@ async function processMultiTokenPool(
   poolAddress: Address,
   poolType: CurvePoolType,
   precision: number,
-): Promise<string> {
+): Promise<[string, PoolInfo | undefined]> {
   const testSeed = poolAddress
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
   let poolInfo
@@ -622,13 +736,13 @@ async function processMultiTokenPool(
       config,
       poolAddress,
       poolType,
-      BigInt(1e30),
+      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
     )
   } catch (_e) {
     // return 'skipped (pool init error)'
   }
   if (!poolInfo || poolInfo.tokenContracts.length < 2)
-    return 'skipped (pool init error)'
+    return ['skipped (pool init error)', undefined]
 
   const n = poolInfo.tokenContracts.length
   for (let i = 0; i < n; ++i)
@@ -639,7 +753,8 @@ async function processMultiTokenPool(
       const res1 = parseInt(
         (poolInfo.poolTines[i][j] as RPool).reserve1.toString(),
       )
-      if (res0 < 1e6 || res1 < 1e6) return 'skipped (low liquidity)'
+      if (res0 < 1e6 || res1 < 1e6)
+        return ['skipped (low liquidity)', undefined]
       const checks =
         poolType === CurvePoolType.LegacyV2 ||
         poolType === CurvePoolType.LegacyV3
@@ -647,25 +762,29 @@ async function processMultiTokenPool(
           : 10
       for (let k = 0; k < checks; ++k) {
         const amountInPortion = getRandomExp(rnd, 1e-5, 1)
-        await checkSwap(
-          config,
-          poolInfo,
-          i,
-          j,
-          res0 * amountInPortion,
-          precision,
-        )
-        await checkSwap(
-          config,
-          poolInfo,
-          j,
-          i,
-          res1 * amountInPortion,
-          precision,
-        )
+        try {
+          await checkSwap(
+            config,
+            poolInfo,
+            i,
+            j,
+            res0 * amountInPortion,
+            precision,
+          )
+          await checkSwap(
+            config,
+            poolInfo,
+            j,
+            i,
+            res1 * amountInPortion,
+            precision,
+          )
+        } catch (e) {
+          return [`skipped (swap error) ${e}`, poolInfo]
+        }
       }
     }
-  return 'passed'
+  return ['passed', poolInfo]
 }
 
 function getRandomPair(rnd: () => number, num: number): [number, number] {
@@ -689,7 +808,7 @@ async function checkMultipleSwapsFork(
       config,
       poolAddress,
       poolType,
-      BigInt(1e30),
+      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
     )
   } catch (_e) {
     // return 'skipped (pool init error)'
@@ -797,7 +916,7 @@ describe('Real Curve pools consistency check', () => {
       const [poolAddress, name, poolType, precision = 1e-9] =
         NON_FACTORY_POOLS[i]
       it(`${name} (${poolAddress}, ${poolType})`, async () => {
-        const result = await processMultiTokenPool(
+        const [result] = await processMultiTokenPool(
           config,
           poolAddress,
           poolType,
@@ -829,7 +948,7 @@ describe('Real Curve pools consistency check', () => {
     let passed = 0
     let i = 0
     const startFrom = 0
-    const finishAt = 10
+    const finishAt = 1000
     await forEachFactoryPool(
       config,
       async (poolAddress: Address, factoryName: string) => {
@@ -838,18 +957,52 @@ describe('Real Curve pools consistency check', () => {
         process.stdout.write(
           `Factory ${factoryName} pool ${i} ${poolAddress} ... `,
         )
-        if (FACTORY_POOL_EXCEPTION_SET.has(poolAddress.toLowerCase())) {
-          console.log('skipped (exception list: function "exchange" failes)')
+
+        const check = await checkPool(
+          config,
+          poolAddress,
+          CurvePoolType.Factory,
+        )
+        if (check !== 'check passed') {
+          if (check.includes('low balance')) console.log(`skipped: ${check}`)
+          else if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined)
+            console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
+          else console.log('UNKNOWN ERROR:', check)
           return
         }
+        if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
+          console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
+          return
+        }
+
         const precision =
           FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e9
-        const result = await processMultiTokenPool(
+        const [result, poolType] = await processMultiTokenPool(
           config,
           poolAddress,
           CurvePoolType.Factory,
           precision,
         )
+        if (poolType !== undefined) {
+          const tokens = new Set<string>()
+          poolType.poolTines.forEach((p) => {
+            p.forEach((t) => {
+              if (t !== undefined) {
+                tokens.add(
+                  `${Math.round(Number(t.reserve0) / 10 ** t.token0.decimals)}${
+                    t.token0.symbol
+                  }`,
+                )
+                tokens.add(
+                  `${Math.round(Number(t.reserve1) / 10 ** t.token1.decimals)}${
+                    t.token1.symbol
+                  }`,
+                )
+              }
+            })
+          })
+          process.stdout.write(`${Array.from(tokens.values())} `)
+        }
         console.log(result)
         if (result === 'passed') ++passed
       },

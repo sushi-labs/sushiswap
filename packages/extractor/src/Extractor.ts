@@ -8,6 +8,7 @@ import {
   AlgebraPoolWatcher,
   AlgebraPoolWatcherStatus,
 } from './AlgebraPoolWatcher.js'
+import { CurveConfig, CurveExtractor } from './CurveExtractor.js'
 import { LogFilter2, LogFilterType } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { TokenManager } from './TokenManager.js'
@@ -24,6 +25,7 @@ export type ExtractorConfig = {
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
+  curveConfig?: CurveConfig
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   cacheDir: string
@@ -50,6 +52,7 @@ export class Extractor {
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
   extractorAlg?: AlgebraExtractor
+  extractorCurve?: CurveExtractor
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   requestedPairs: Map<string, Set<string>> = new Map()
@@ -126,6 +129,15 @@ export class Extractor {
         this.multiCallAggregator,
         this.tokenManager,
       )
+    if (args.curveConfig)
+      this.extractorCurve = new CurveExtractor(
+        this.client,
+        args.curveConfig,
+        this.logFilter,
+        this.tokenManager,
+        args.logging !== undefined ? args.logging : false,
+        this.multiCallAggregator,
+      )
   }
 
   /// @param tokensBaseSet Prefetch all pools between these tokens
@@ -137,6 +149,7 @@ export class Extractor {
         this.extractorV2?.start(),
         this.extractorV3?.start(),
         this.extractorAlg?.start(),
+        this.extractorCurve?.start(),
       ].filter((e) => e !== undefined),
     )
     await this.prefetch(tokensBaseSet, tokensAdditionalSet)
@@ -250,8 +263,11 @@ export class Extractor {
             .prefetched.map((w) => w.getPoolCode())
             .filter((pc) => pc !== undefined) as PoolCode[])
         : []
+      const poolsCurve = this.extractorCurve
+        ? this.extractorCurve.getPoolsForTokens(tokensUnique).prefetched
+        : []
       ++this.requestFinishedNum
-      return pools2.concat(pools3).concat(poolsAlg)
+      return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
     } catch (e) {
       ++this.requestFinishedNum
       ++this.requestFailedNum
@@ -305,6 +321,9 @@ export class Extractor {
             .fetching,
         )
       }
+      // curve doesn't need to be prefetched
+      //if (this.extractorCurve) {
+
       await Promise.allSettled(fetching)
       ++this.requestFinishedNum
     } catch (e) {
@@ -441,6 +460,11 @@ export class Extractor {
         prefetched = prefetched.concat(poolsAlgPrefetched)
         fetchingNumber += poolsAlg.fetching.length
       }
+      if (this.extractorCurve) {
+        const poolsCurve = this.extractorCurve.getPoolsForTokens(tokensUnique)
+        prefetched = prefetched.concat(poolsCurve.prefetched)
+        // no fetching
+      }
       for (let i = 0; i < tokensUnique.length; ++i) {
         for (let j = i + 1; j < tokensUnique.length; ++j) {
           this.addRequestedPair(tokensUnique[i], tokensUnique[j])
@@ -551,6 +575,8 @@ export class Extractor {
     if (this.extractorV2) this.extractorV2.getTokensPoolsQuantity(tokenMap)
     if (this.extractorV3) this.extractorV3.getTokensPoolsQuantity(tokenMap)
     if (this.extractorAlg) this.extractorAlg.getTokensPoolsQuantity(tokenMap)
+    if (this.extractorCurve)
+      this.extractorCurve.getTokensPoolsQuantity(tokenMap)
     return Array.from(tokenMap.entries()).sort(([, a], [, b]) => b - a)
   }
 
@@ -584,7 +610,10 @@ export class Extractor {
     const poolsAlg = this.extractorAlg
       ? this.extractorAlg.getCurrentPoolCodes()
       : []
-    return pools2.concat(pools3).concat(poolsAlg)
+    const poolsCurve = this.extractorCurve
+      ? this.extractorCurve.getCurrentPoolCodes()
+      : []
+    return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
   }
 
   // side effect: updated pools list is cleared
@@ -599,6 +628,7 @@ export class Extractor {
     if (this.extractorV2 && !this.extractorV2.isStarted()) return false
     if (this.extractorV3 && !this.extractorV3.isStarted()) return false
     if (this.extractorAlg && !this.extractorAlg.isStarted()) return false
+    if (this.extractorCurve && !this.extractorCurve.isStarted()) return false
     return true
   }
 }
