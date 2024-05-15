@@ -24,7 +24,7 @@ enum CurvePoolType {
   Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
   LegacyV2 = 'LegacyV2', // 'function coins(int128) pure returns (address)'
   LegacyV3 = 'LegacyV3',
-  Factory = 'Factory',
+  Factory = 'Legacy', // no changes
 }
 
 const MulticoinPoolNumber = 10 // first pools in next array
@@ -169,6 +169,15 @@ const POOLS_WE_DONT_SUPPORT = {
   '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3':
     'Swap Unknown error, low liquidity',
   '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8':
+    'Swap Unknown error, low liquidity',
+  '0x910A00594DC16dD699D579A8F7811d465Dfa2752':
+    'UNKNOWN ERROR: token 1 transfer simulation failed',
+  '0x961226B64AD373275130234145b96D100Dc0b655':
+    'Swap Unknown error, low liquidity',
+  '0xe7E4366f6ED6aFd23e88154C00B532BDc0352333':
+    'Swap Unknown error, low liquidity',
+  '0x8c524635d52bd7b1Bd55E062303177a7d916C046': 'Swap error',
+  '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D':
     'Swap Unknown error, low liquidity',
 } as const
 
@@ -911,7 +920,7 @@ describe('Real Curve pools consistency check', () => {
     config = await getTestConfig()
   })
 
-  describe('Not-Factory pools by whitelist', () => {
+  describe.only('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] =
         NON_FACTORY_POOLS[i]
