@@ -17,7 +17,7 @@ import {
   SushiSwapV3FeeAmount,
   isWNativeSupported,
 } from 'sushi/config'
-import { Native, Type } from 'sushi/currency'
+import { Type } from 'sushi/currency'
 import { Position } from 'sushi/pool'
 
 import { Bound, Field } from '../../lib/constants'
