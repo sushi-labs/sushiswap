@@ -181,18 +181,6 @@ const navigationMenuItems = [
     href: '/furo',
   },
   {
-    title: 'Analytics',
-    href: '/analytics',
-  },
-  {
-    title: 'Blog',
-    href: '/blog',
-  },
-  {
-    title: 'Academy',
-    href: '/academy',
-  },
-  {
     title: 'More',
     items: TOOLS_NAVIGATION_LINKS,
   },
