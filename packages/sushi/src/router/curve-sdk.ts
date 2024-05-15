@@ -24,6 +24,7 @@ const axFunctionsABI = parseAbi([
   'function get_virtual_price() pure returns (uint256)',
   'function ratio() pure returns (uint256)',
   'function getExchangeRate() pure returns (uint256)',
+  'function exchangeRateCurrent() pure returns (uint256)',
 ])
 
 export const METAPOOL_COIN_TO_BASEPOOL: Record<string, Address> = {
@@ -54,6 +55,7 @@ export async function detectCurvePoolType(
   }
 }
 
+// is needed to predict pool output
 export async function getPoolRatio(
   client: PublicClient,
   poolAddress: Address,
@@ -102,17 +104,13 @@ export async function getPoolRatio(
       // cUSDC
       const ratio0 = await client.readContract({
         address: '0x39aa39c021dfbae8fac545936693ac917d5e7563' as const,
-        abi: parseAbi([
-          'function exchangeRateCurrent() pure returns (uint256)',
-        ]),
+        abi: axFunctionsABI,
         functionName: 'exchangeRateCurrent',
       })
       // cDAI
       const ratio1 = await client.readContract({
         address: '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643' as const,
-        abi: parseAbi([
-          'function exchangeRateCurrent() pure returns (uint256)',
-        ]),
+        abi: axFunctionsABI,
         functionName: 'exchangeRateCurrent',
       })
       return (Number(ratio0) * 1e12) / Number(ratio1)
