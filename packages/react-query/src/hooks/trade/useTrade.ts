@@ -1,17 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
-import { isRouteProcessor4ChainId } from 'sushi/config'
-import {
-  Amount,
-  Native,
-  Price,
-  type Type,
-  WNATIVE_ADDRESS,
-} from 'sushi/currency'
+import { isRouteProcessor4ChainId, isWNativeSupported } from 'sushi/config'
+import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
-import { type Address, type Hex, stringify } from 'viem'
+import { type Address, type Hex, stringify, zeroAddress } from 'viem'
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type {
@@ -126,10 +120,17 @@ export const useTrade = (variables: UseTradeParams) => {
     gasPrice,
     tokenTax,
   } = variables
-  const { data: price } = usePrice({
+  const { data: _price } = usePrice({
     chainId,
-    address: WNATIVE_ADDRESS[chainId],
+    address: Native.onChain(chainId).wrapped.address,
+    enabled: isWNativeSupported(chainId),
   })
+
+  const price = useMemo(() => {
+    return Native.onChain(chainId).wrapped.address === zeroAddress
+      ? new Fraction(0)
+      : _price
+  }, [_price, chainId])
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {

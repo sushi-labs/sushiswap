@@ -28,6 +28,7 @@ import { ChainId } from 'sushi/chain'
 import {
   SquidAdapterChainId,
   StargateAdapterChainId,
+  defaultCurrency,
   isSquidAdapterChainId,
   isStargateAdapterChainId,
   isSushiXSwap2ChainId,
@@ -43,9 +44,12 @@ const getTokenAsString = (token: Type | string) =>
     : token.isNative
       ? 'NATIVE'
       : token.wrapped.address
+const getDefaultCurrency = (chainId: number) =>
+  getTokenAsString(defaultCurrency[chainId as keyof typeof defaultCurrency])
 const getQuoteCurrency = (chainId: number) =>
-  defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
-    .address
+  getTokenAsString(
+    defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
+  )
 
 interface State {
   mutate: {
@@ -114,7 +118,8 @@ const DerivedstateCrossChainSwapProvider: FC<
           ? ChainId.ETHEREUM.toString()
           : ChainId.ARBITRUM.toString(),
       )
-    if (!params.has('token0')) params.set('token0', 'NATIVE')
+    if (!params.has('token0'))
+      params.set('token0', getDefaultCurrency(Number(params.get('chainId0'))))
     if (!params.has('token1'))
       params.set('token1', getQuoteCurrency(Number(params.get('chainId1'))))
 
@@ -168,7 +173,7 @@ const DerivedstateCrossChainSwapProvider: FC<
           `${pathname}?${createQueryString([
             { name: 'swapAmount', value: null },
             { name: 'chainId0', value: chainId.toString() },
-            { name: 'token0', value: 'NATIVE' },
+            { name: 'token0', value: getDefaultCurrency(chainId0) },
           ])}`,
           { scroll: false },
         )

@@ -12,6 +12,7 @@ import {
   currencyFromShortCurrencyName,
   isShortCurrencyName,
   isSushiSwapV3ChainId,
+  isWNativeSupported,
 } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { isAddress } from 'viem'
@@ -75,7 +76,7 @@ const getTokenFromUrl = (
     return currencyFromShortCurrencyName(chainId, currencyId)
   } else if (currencyId && isAddress(currencyId) && token) {
     return token
-  } else if (!currencyId) {
+  } else if (!currencyId || !isWNativeSupported(chainId)) {
     return undefined
   } else {
     return Native.onChain(chainId ? chainId : ChainId.ETHEREUM)

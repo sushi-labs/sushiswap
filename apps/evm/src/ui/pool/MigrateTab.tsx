@@ -53,7 +53,6 @@ import {
   Bound,
   Field,
 } from 'src/lib/constants'
-import { unwrapToken } from 'src/lib/functions'
 import { useGraphPool, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
@@ -62,7 +61,7 @@ import {
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
 } from 'sushi/config'
-import { Amount, Price, tryParseAmount } from 'sushi/currency'
+import { Amount, Price, tryParseAmount, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { Fraction, ZERO } from 'sushi/math'
 import {

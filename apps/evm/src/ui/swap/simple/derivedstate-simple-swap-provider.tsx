@@ -23,7 +23,11 @@ import {
   useState,
 } from 'react'
 import { ChainId, TestnetChainId } from 'sushi/chain'
-import { defaultQuoteCurrency } from 'sushi/config'
+import {
+  defaultCurrency,
+  defaultQuoteCurrency,
+  isWNativeSupported,
+} from 'sushi/config'
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
@@ -36,9 +40,12 @@ const getTokenAsString = (token: Type | string) =>
     : token.isNative
       ? 'NATIVE'
       : token.wrapped.address
+const getDefaultCurrency = (chainId: number) =>
+  getTokenAsString(defaultCurrency[chainId as keyof typeof defaultCurrency])
 const getQuoteCurrency = (chainId: number) =>
-  defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency].wrapped
-    .address
+  getTokenAsString(
+    defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
+  )
 
 interface State {
   mutate: {
@@ -94,7 +101,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     // This handles the case where some params might not be provided by the user
     const defaultedParams = useMemo(() => {
       const params = new URLSearchParams(searchParams)
-      if (!params.has('chainId'))
+      if (!params.has('chainId') || !params.get('chainId'))
         params.set(
           'chainId',
           (isSupportedChainId(_chainId)
@@ -103,7 +110,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           ).toString(),
         )
       if (!params.has('token0')) {
-        params.set('token0', 'NATIVE')
+        params.set('token0', getDefaultCurrency(Number(params.get('chainId'))))
       }
       if (!params.has('token1')) {
         params.set('token1', getQuoteCurrency(Number(params.get('chainId'))))
@@ -136,7 +143,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           `${pathname}?${createQueryString([
             { name: 'swapAmount', value: null },
             { name: 'chainId', value: chainId.toString() },
-            { name: 'token0', value: 'NATIVE' },
+            { name: 'token0', value: getDefaultCurrency(chainId) },
             { name: 'token1', value: getQuoteCurrency(chainId) },
           ])}`,
           { scroll: false },
@@ -306,11 +313,13 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         value={useMemo(() => {
           const swapAmountString = defaultedParams.get('swapAmount') || ''
           const _token0 =
-            defaultedParams.get('token0') === 'NATIVE'
+            defaultedParams.get('token0') === 'NATIVE' &&
+            isWNativeSupported(chainId)
               ? Native.onChain(chainId)
               : token0
           const _token1 =
-            defaultedParams.get('token1') === 'NATIVE'
+            defaultedParams.get('token1') === 'NATIVE' &&
+            isWNativeSupported(chainId)
               ? Native.onChain(chainId)
               : token1
 
