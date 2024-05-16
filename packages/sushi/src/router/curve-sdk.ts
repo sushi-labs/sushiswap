@@ -67,6 +67,7 @@ export async function detectCurvePoolType(
     client.readContract({
       address: poolAddress,
       abi: curvePoolABI[CurvePoolType.TypeC],
+      // @ts-ignore
       functionName: 'A_precise',
     }),
   ])

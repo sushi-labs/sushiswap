@@ -8,9 +8,9 @@ import {
   RouteLeg,
 } from '../../tines/index.js'
 import { HEXer } from '../HEXer.js'
+import { CurvePoolType } from '../curve-sdk.js'
 import {
   CURVE_NON_FACTORY_POOLS,
-  CurvePoolType,
   LiquidityProviders,
 } from '../liquidity-providers/index.js'
 import { PoolCode } from './PoolCode.js'
@@ -57,7 +57,7 @@ export class CurvePoolCode extends PoolCode {
             leg.tokenFrom.chainId as ChainId
           ] as [Address, CurvePoolType, Type[]][]
           const poolInfo = pools[index] as [Address, CurvePoolType, Type[]]
-          if (poolInfo[1] !== CurvePoolType.Legacy) poolType = 1
+          if (poolInfo[1] !== CurvePoolType.TypeC) poolType = 1
         }
       }
     } else poolType = this.poolType

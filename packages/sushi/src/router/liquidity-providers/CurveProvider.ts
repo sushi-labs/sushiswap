@@ -18,6 +18,7 @@ import {
 } from '../../currency/index.js'
 import { Native, Token, Type } from '../../currency/index.js'
 import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
+import { CurvePoolType, curvePoolABI } from '../curve-sdk.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { CurvePoolCode } from '../pool-codes/CurvePool.js'
 import { PoolCode } from '../pool-codes/PoolCode.js'
@@ -143,13 +144,6 @@ const HBTC = new Token({
   name: 'Huobi BTC',
 })
 
-export enum CurvePoolType {
-  Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
-  LegacyV2 = 'LegacyV2', // 'function coins(int128) pure returns (address)'
-  LegacyV3 = 'LegacyV3',
-  Factory = 'Factory',
-}
-
 const ETH = Native.onChain(ChainId.ETHEREUM)
 export const CURVE_NON_FACTORY_POOLS: Record<
   number,
@@ -159,13 +153,13 @@ export const CURVE_NON_FACTORY_POOLS: Record<
     [
       // 3pool
       '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
-      CurvePoolType.LegacyV3,
+      CurvePoolType.TypeB,
       [DAI[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM], USDT[ChainId.ETHEREUM]],
     ],
     [
       // susd
       '0xa5407eae9ba41422680e2e00537571bcc53efbfd',
-      CurvePoolType.LegacyV2,
+      CurvePoolType.TypeA,
       [
         DAI[ChainId.ETHEREUM],
         USDC[ChainId.ETHEREUM],
@@ -175,70 +169,70 @@ export const CURVE_NON_FACTORY_POOLS: Record<
     ],
     [
       '0xdc24316b9ae028f1497c275eb9192a3ea0f67022',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [ETH, stETH],
     ],
     [
       '0xdcef968d416a41cdac0ed8702fac8128a64241a2',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [FRAX[ChainId.ETHEREUM], USDC[ChainId.ETHEREUM]],
     ],
     [
       '0xf253f83aca21aabd2a20553ae0bf7f65c755a07f',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [WBTC[ChainId.ETHEREUM], sBTC],
     ],
     [
       '0xc5424b857f758e906013f3555dad202e4bdb4567',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [ETH, sETH],
     ],
     [
       '0xa1f8a6807c402e4a15ef4eba36528a3fed24e577',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [ETH, frxETH],
     ],
     [
       '0x0ce6a5ff5217e38315f87032cf90686c96627caa',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [EURS, sEUR],
     ],
     [
       '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [ETH, ankrETH],
     ],
     [
       '0xeb16ae0052ed37f479f7fe63849198df1765a733',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [aDAI, aSUSD],
     ],
     [
       '0xf9440930043eb3997fc70e1339dbb11f341de7a8',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [ETH, rETH],
     ],
     [
       '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56',
-      CurvePoolType.LegacyV2,
+      CurvePoolType.TypeA,
       [cDAI, cUSDC],
     ],
     [
       '0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0',
-      CurvePoolType.Legacy,
+      CurvePoolType.TypeC,
       [LINK[ChainId.ETHEREUM], sLINK],
     ],
     [
       '0x4ca9b3063ec5866a4b82e437059d2c43d1be596f',
-      CurvePoolType.LegacyV3,
+      CurvePoolType.TypeB,
       [HBTC, WBTC[ChainId.ETHEREUM]],
     ],
     [
       '0x93054188d876f558f4a66b2ef1d97d16edf0895b',
-      CurvePoolType.LegacyV2,
+      CurvePoolType.TypeA,
       [renBTC[ChainId.ETHEREUM], WBTC[ChainId.ETHEREUM]],
     ],
-    // Low liquidity ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', CurvePoolType.Legacy],
+    // Low liquidity ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', CurvePoolType.TypeC],
   ],
 }
 
@@ -277,7 +271,7 @@ export async function getAllSupportedCurvePools(
     const poolNum = await factoryContract.read.pool_count()
     for (let i = 0n; i < poolNum; ++i) {
       const poolAddress = await factoryContract.read.pool_list([i])
-      result.set(poolAddress, CurvePoolType.Factory)
+      result.set(poolAddress, CurvePoolType.TypeC)
     }
   })
   // @ts-ignore
@@ -289,32 +283,6 @@ export async function getAllSupportedCurvePools(
   return result
 }
 
-const curvePoolABI = {
-  [CurvePoolType.Factory]: parseAbi([
-    'function A() pure returns (uint256)',
-    'function fee() pure returns (uint256)',
-    'function coins(uint256) pure returns (address)',
-    'function balances(uint256) pure returns (uint256)',
-  ] as const),
-  [CurvePoolType.Legacy]: parseAbi([
-    'function A() pure returns (uint256)',
-    'function fee() pure returns (uint256)',
-    'function coins(uint256) pure returns (address)',
-    'function balances(uint256) pure returns (uint256)',
-  ] as const),
-  [CurvePoolType.LegacyV2]: parseAbi([
-    'function A() pure returns (uint256)',
-    'function fee() pure returns (uint256)',
-    'function coins(int128) pure returns (address)',
-    'function balances(int128) pure returns (uint256)',
-  ] as const),
-  [CurvePoolType.LegacyV3]: parseAbi([
-    'function A() pure returns (uint256)',
-    'function fee() pure returns (uint256)',
-    'function coins(uint256) pure returns (address)',
-    'function balances(uint256) pure returns (uint256)',
-  ] as const),
-} as const
 /*
 async function getCurvePoolCode(publicClient: PublicClient, poolAddress: string, poolType: CurvePoolType, token0: Type, token1: Type): Promise<PoolCode> {
   const poolContract = getContract({
@@ -409,7 +377,7 @@ export class CurveProvider extends LiquidityProvider {
           excludePools?.has(pool.result) !== true
         )
           pools.set(pool.result, [
-            CurvePoolType.Factory,
+            CurvePoolType.TypeC,
             currencyCombinations[i]!,
           ])
       })
