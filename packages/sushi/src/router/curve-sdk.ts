@@ -1,22 +1,37 @@
 import { Address, PublicClient, parseAbi } from 'viem'
 
 export enum CurvePoolType {
+  // the most old
+  // 'function balances(int128) pure returns (uint256)',
   TypeA = 'TypeA',
+  // 'function balances(uint256) pure returns (uint256)',
   TypeB = 'TypeB',
+  // 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
+  TypeC = 'TypeC',
 }
 
 export const curvePoolABI = {
   [CurvePoolType.TypeA]: parseAbi([
     'function A() pure returns (uint256)',
     'function fee() pure returns (uint256)',
-    'function coins(uint256) pure returns (address)',
-    'function balances(uint256) pure returns (uint256)',
+    'function coins(int128) pure returns (address)',
+    'function balances(int128) pure returns (uint256)',
+    'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
   ] as const),
   [CurvePoolType.TypeB]: parseAbi([
     'function A() pure returns (uint256)',
     'function fee() pure returns (uint256)',
-    'function coins(int128) pure returns (address)',
-    'function balances(int128) pure returns (uint256)',
+    'function coins(uint256) pure returns (address)',
+    'function balances(uint256) pure returns (uint256)',
+    'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
+  ] as const),
+  [CurvePoolType.TypeC]: parseAbi([
+    'function A() pure returns (uint256)',
+    'function fee() pure returns (uint256)',
+    'function coins(uint256) pure returns (address)',
+    'function balances(uint256) pure returns (uint256)',
+    'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)',
+    'function A_precise() returns (uint256)', // just a test of this type of pool
   ] as const),
 }
 
@@ -42,17 +57,22 @@ export async function detectCurvePoolType(
   client: PublicClient,
   poolAddress: Address,
 ): Promise<CurvePoolType> {
-  try {
-    await client.readContract({
+  const probe = await Promise.allSettled([
+    client.readContract({
       address: poolAddress,
-      abi: curvePoolABI[CurvePoolType.TypeA],
+      abi: curvePoolABI[CurvePoolType.TypeB],
       functionName: 'balances',
       args: [0n],
-    })
-    return CurvePoolType.TypeA
-  } catch (_e) {
-    return CurvePoolType.TypeB
-  }
+    }),
+    client.readContract({
+      address: poolAddress,
+      abi: curvePoolABI[CurvePoolType.TypeC],
+      functionName: 'A_precise',
+    }),
+  ])
+  if (probe[1].status === 'fulfilled') return CurvePoolType.TypeC
+  if (probe[0].status === 'fulfilled') return CurvePoolType.TypeB
+  return CurvePoolType.TypeA
 }
 
 // is needed to predict pool output
