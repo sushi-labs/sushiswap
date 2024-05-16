@@ -1,5 +1,10 @@
 'use client'
 
+import {
+  InterfaceElementName,
+  SwapEventName,
+  sendAnalyticsEvent,
+} from '@sushiswap/analytics'
 import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
 import {
   Button,
@@ -43,7 +48,19 @@ export const TradeRoutePathView: FC<{
 }> = ({ children, trade }) => {
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger
+        asChild
+        onClick={() =>
+          sendAnalyticsEvent(
+            SwapEventName.SWAP_AUTOROUTER_VISUALIZATION_EXPANDED,
+            {
+              element: InterfaceElementName.AUTOROUTER_VISUALIZATION_ROW,
+            },
+          )
+        }
+      >
+        {children}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Route</DialogTitle>

@@ -1,0 +1,86 @@
+{
+    "name": "@sushiswap/analytics",
+    "version": "0.0.0",
+    "description": "Sushi Analytics",
+    "keywords": [
+      "sushi",
+      "analytics"
+    ],
+    "homepage": "https://www.sushi.com",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/sushiswap/sushiswap.git",
+      "directory": "packages/analytics"
+    },
+    "license": "MIT",
+    "author": "Masayoshi <masayoshi@sushi.com>",
+    "sideEffects": true,
+    "type": "module",
+    "exports": {
+      ".": "./dist/index.js",
+      "./*": [
+        "./dist/*.js",
+        "./dist/*/index.js"
+      ]
+    },
+    "typesVersions": {
+      "*": {
+        "*": [
+          "src/*",
+          "src/*/index"
+        ]
+      }
+    },
+    "files": [
+      "dist"
+    ],
+    "scripts": {
+      "build": "tsc",
+      "check": "tsc --pretty --noEmit",
+      "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+      "dev": "tsc --watch",
+      "test": "jest --passWithNoTests"
+    },
+    "devDependencies": {
+      "@sentry/nextjs": "7.101.1",
+      "@tsconfig/esm": "1.0.4",
+      "@tsconfig/strictest": "2.0.2",
+      "@types/ms": "0.7.34",
+      "@types/react": "18.2.14",
+      "@types/react-dom": "18.2.6",
+      "next": "14.1.1",
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "sushi": "workspace:*",
+      "typescript": "5.2.2"
+    },
+    "peerDependencies": {
+      "@sentry/nextjs": "7.101.1",
+      "@sushiswap/client": "*",
+      "next": "14.1.1",
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "sushi": "*"
+    },
+    "peerDependenciesMeta": {
+      "@sushiswap/client": {
+        "optional": true
+      },
+      "react": {
+        "optional": false
+      },
+      "react-dom": {
+        "optional": false
+      },
+      "sushi": {
+        "optional": true
+      },
+      "viem": {
+        "optional": true
+      },
+      "wagmi": {
+        "optional": true
+      }
+    }
+  }
+  

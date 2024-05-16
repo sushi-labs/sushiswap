@@ -3,6 +3,12 @@ import {
   ChevronRightIcon,
 } from '@heroicons/react/24/outline'
 import {
+  BrowserEvent,
+  InterfaceElementName,
+  InterfaceEventName,
+  TraceEvent,
+} from '@sushiswap/analytics'
+import {
   CoinbaseWalletIcon,
   FrameIcon,
   GnosisSafeIcon,
@@ -14,7 +20,6 @@ import {
 } from '@sushiswap/ui/components/icons'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { FC, ReactNode, SVGProps, useCallback, useMemo } from 'react'
-
 import { useConnect } from '../../hooks'
 
 const Icons: Record<
@@ -74,19 +79,26 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
       {/* <List.Label>Wallet</List.Label> */}
       <List.Control className="bg-gray-100 dark:!bg-slate-700">
         {_connectors.map((connector) => (
-          <List.MenuItem
-            onClick={() => _onSelect(connector.id)}
-            icon={Icons[connector.name]}
-            title={
-              connector.name === 'Safe'
-                ? 'Gnosis Safe'
-                : connector.name === 'WalletConnectLegacy'
-                  ? 'WalletConnect'
-                  : connector.name
-            }
-            key={connector.id}
-            hoverIcon={ChevronRightIcon}
-          />
+          <TraceEvent
+            events={[BrowserEvent.onClick]}
+            name={InterfaceEventName.WALLET_SELECTED}
+            properties={{ wallet_type: connector.name }}
+            element={InterfaceElementName.WALLET_TYPE_OPTION}
+          >
+            <List.MenuItem
+              onClick={() => _onSelect(connector.id)}
+              icon={Icons[connector.name]}
+              title={
+                connector.name === 'Safe'
+                  ? 'Gnosis Safe'
+                  : connector.name === 'WalletConnectLegacy'
+                    ? 'WalletConnect'
+                    : connector.name
+              }
+              key={connector.id}
+              hoverIcon={ChevronRightIcon}
+            />
+          </TraceEvent>
         ))}
       </List.Control>
     </List>

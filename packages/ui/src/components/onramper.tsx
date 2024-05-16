@@ -12,6 +12,7 @@ import React, {
   useState,
 } from 'react'
 
+import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/analytics'
 import classNames from 'classnames'
 import { Dialog, DialogOverlay, DialogPrimitive } from './dialog'
 import { IconButton } from './iconbutton'
@@ -21,6 +22,7 @@ export const OnramperButton: FC<{ children: ReactNode; className?: string }> =
     const { setOpen } = useOnramperContext()
 
     const onClick = useCallback(() => {
+      sendAnalyticsEvent(InterfaceEventName.FIAT_ONRAMP_WIDGET_OPENED)
       setOpen(true)
     }, [setOpen])
 

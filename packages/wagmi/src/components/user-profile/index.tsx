@@ -1,5 +1,6 @@
 'use client'
 
+import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/analytics'
 import { useIsMounted } from '@sushiswap/hooks'
 import { useBreakpoint } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
@@ -45,7 +46,12 @@ export const UserProfile: FC<ProfileProps> = () => {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger
+        asChild
+        onClick={() =>
+          sendAnalyticsEvent(InterfaceEventName.ACCOUNT_DROPDOWN_BUTTON_CLICKED)
+        }
+      >
         <Button variant="secondary">
           {
             avatar ? (

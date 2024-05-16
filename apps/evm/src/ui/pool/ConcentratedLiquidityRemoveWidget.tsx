@@ -2,6 +2,12 @@
 
 import { CogIcon } from '@heroicons/react/24/outline'
 import {
+  LiquidityEventName,
+  LiquiditySource,
+  sendAnalyticsEvent,
+  useTrace,
+} from '@sushiswap/analytics'
+import {
   SlippageToleranceStorageKey,
   TTLStorageKey,
   useDebounce,
@@ -97,11 +103,25 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     [onChange],
   )
 
+  const trace = useTrace()
+
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {
       setValue('0')
 
       if (!position) return
+
+      sendAnalyticsEvent(LiquidityEventName.REMOVE_LIQUIDITY_SUBMITTED, {
+        chain_id: chainId,
+        txHash: hash,
+        address: account,
+        source: LiquiditySource.V3,
+        label: [
+          position.amount0.currency.symbol,
+          position.amount1.currency.symbol,
+        ].join('/'),
+        ...trace,
+      })
 
       const ts = new Date().getTime()
       void createToast({
@@ -119,7 +139,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         groupTimestamp: ts,
       })
     },
-    [client, position, account, chainId],
+    [client, position, account, chainId, trace],
   )
 
   const onError = useCallback((e: Error) => {

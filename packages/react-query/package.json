@@ -43,6 +43,7 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
+    "@sushiswap/analytics": "workspace:*",
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@tanstack/react-query": "4.28.0",

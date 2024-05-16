@@ -6,6 +6,12 @@ import {
   InboxArrowDownIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
+import {
+  BrowserEvent,
+  InterfaceElementName,
+  InterfaceEventName,
+  TraceEvent,
+} from '@sushiswap/analytics'
 import { usePrice } from '@sushiswap/react-query'
 import {
   ClipboardController,
@@ -97,13 +103,19 @@ export const DefaultView: FC<DefaultProps> = ({
               />
             </LinkExternal>
 
-            <IconButton
-              size="sm"
-              icon={ArrowLeftOnRectangleIcon}
-              onClick={() => disconnect()}
-              description="Disconnect"
-              name="Disconnect"
-            />
+            <TraceEvent
+              events={[BrowserEvent.onClick]}
+              name={InterfaceEventName.DISCONNECT_WALLET_BUTTON_CLICKED}
+              element={InterfaceElementName.DISCONNECT_WALLET_BUTTON}
+            >
+              <IconButton
+                size="sm"
+                icon={ArrowLeftOnRectangleIcon}
+                onClick={() => disconnect()}
+                description="Disconnect"
+                name="Disconnect"
+              />
+            </TraceEvent>
           </div>
         </div>
         <div className="flex flex-col gap-2 justify-center items-center">

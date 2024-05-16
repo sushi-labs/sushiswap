@@ -50,6 +50,7 @@
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@radix-ui/react-slot": "1.0.2",
+    "@sushiswap/analytics": "workspace:*",
     "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/dexie": "workspace:*",

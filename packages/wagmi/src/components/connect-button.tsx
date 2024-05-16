@@ -1,4 +1,10 @@
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
+import {
+  BrowserEvent,
+  InterfaceElementName,
+  InterfaceEventName,
+  TraceEvent,
+} from '@sushiswap/analytics'
 import { Button, ButtonProps } from '@sushiswap/ui/components/button'
 import {
   DropdownMenu,
@@ -18,9 +24,8 @@ import {
   WalletConnectIcon,
   XDEFIWalletIcon,
 } from '@sushiswap/ui/components/icons'
-import React, { FC, useCallback, useMemo } from 'react'
-
 import Link from 'next/link'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useConnect } from '../hooks'
 
 const Icons: Record<string, React.ElementType> = {
@@ -94,25 +99,31 @@ export const ConnectButton: FC<ButtonProps> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuGroup>
-          {_connectors.map((connector) => {
-            const Icon =
-              connector.name in Icons ? Icons[connector.name] : Icons.Injected
-            return (
-              <DropdownMenuItem
-                onClick={() => onSelect(connector.id)}
-                key={connector.id}
-              >
-                <Icon className="w-4 h-4 mr-2" />
-                {connector.name === 'Safe'
-                  ? 'Gnosis Safe'
-                  : connector.name === 'WalletConnectLegacy'
-                    ? 'WalletConnect'
-                    : connector.name}
-              </DropdownMenuItem>
-            )
-          })}
-        </DropdownMenuGroup>
+        <TraceEvent
+          events={[BrowserEvent.onClick]}
+          name={InterfaceEventName.CONNECT_WALLET_BUTTON_CLICKED}
+          element={InterfaceElementName.CONNECT_WALLET_BUTTON}
+        >
+          <DropdownMenuGroup>
+            {_connectors.map((connector) => {
+              const Icon =
+                connector.name in Icons ? Icons[connector.name] : Icons.Injected
+              return (
+                <DropdownMenuItem
+                  onClick={() => onSelect(connector.id)}
+                  key={connector.id}
+                >
+                  <Icon className="w-4 h-4 mr-2" />
+                  {connector.name === 'Safe'
+                    ? 'Gnosis Safe'
+                    : connector.name === 'WalletConnectLegacy'
+                      ? 'WalletConnect'
+                      : connector.name}
+                </DropdownMenuItem>
+              )
+            })}
+          </DropdownMenuGroup>
+        </TraceEvent>
         <DropdownMenuGroup>
           <div className="text-xs dark:text-neutral-400 text-neutral-800 px-2 py-1 text-justify">
             <span>{`Connecting a wallet means you accept Sushi Labs' `}</span>

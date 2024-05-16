@@ -1,4 +1,4 @@
-// import { withSentryConfig } from '@sentry/nextjs'
+import { withSentryConfig } from '@sentry/nextjs'
 import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
@@ -90,59 +90,59 @@ const nextConfig = {
       },
     ]
   },
-  // sentry: {
-  //   hideSourceMaps: true,
-  //   widenClientFileUpload: true,
-  //   automaticVercelMonitors: true,
-  // },
+  sentry: {
+    hideSourceMaps: true,
+    widenClientFileUpload: true,
+    // automaticVercelMonitors: true,
+  },
 }
 
 /** @type {import('@sentry/nextjs').SentryWebpackPluginOptions} */
-// const sentryWebpackPluginOptions = {
-//   // Additional config options for the Sentry webpack plugin. Keep in mind that
-//   // the following options are set automatically, and overriding them is not
-//   // recommended:
-//   //   release, url, configFile, stripPrefix, urlPrefix, include, ignore
+const sentryWebpackPluginOptions = {
+  // Additional config options for the Sentry webpack plugin. Keep in mind that
+  // the following options are set automatically, and overriding them is not
+  // recommended:
+  //   release, url, configFile, stripPrefix, urlPrefix, include, ignore
 
-//   org: 'sushi-j9',
-//   project: 'evm',
+  org: 'sushi-j9',
+  project: 'evm',
 
-//   // An auth token is required for uploading source maps.
-//   authToken: process.env.SENTRY_AUTH_TOKEN,
+  // An auth token is required for uploading source maps.
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
-//   silent: true, // Suppresses all logs
+  silent: true, // Suppresses all logs
 
-//   // For all available options, see:
-//   // https://github.com/getsentry/sentry-webpack-plugin#options.
-// }
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options.
+}
 
-export default withAxiom(nextConfig)
+// export default withAxiom(nextConfig)
 
-// export default withSentryConfig(
-//   withAxiom(nextConfig),
-//   sentryWebpackPluginOptions,
-//   {
-//     hideSourceMaps: true,
-//     widenClientFileUpload: true,
-//     automaticVercelMonitors: true,
-//   },
-//   // {
-//   //   // For all available options, see:
-//   //   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+export default withSentryConfig(
+  withAxiom(nextConfig),
+  sentryWebpackPluginOptions,
+  {
+    hideSourceMaps: true,
+    widenClientFileUpload: true,
+    automaticVercelMonitors: true,
+  },
+  {
+    // For all available options, see:
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-//   //   // Upload a larger set of source maps for prettier stack traces (increases build time)
-//   //   widenClientFileUpload: true,
+    // Upload a larger set of source maps for prettier stack traces (increases build time)
+    widenClientFileUpload: true,
 
-//   //   // Transpiles SDK to be compatible with IE11 (increases bundle size)
-//   //   transpileClientSDK: false,
+    // Transpiles SDK to be compatible with IE11 (increases bundle size)
+    transpileClientSDK: false,
 
-//   //   // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-//   //   tunnelRoute: '/monitoring',
+    // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+    tunnelRoute: '/monitoring',
 
-//   //   // Hides source maps from generated client bundles
-//   //   hideSourceMaps: true,
+    // Hides source maps from generated client bundles
+    hideSourceMaps: true,
 
-//   //   // Automatically tree-shake Sentry logger statements to reduce bundle size
-//   //   disableLogger: true,
-//   // },
-// )
+    // Automatically tree-shake Sentry logger statements to reduce bundle size
+    disableLogger: true,
+  },
+)

@@ -1,3 +1,4 @@
+import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/analytics'
 import { gtagEvent } from '@sushiswap/ui'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import {
