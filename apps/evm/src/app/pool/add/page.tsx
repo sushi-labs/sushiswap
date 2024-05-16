@@ -4,6 +4,7 @@ import { useAccount, useConcentratedPositionInfo } from '@sushiswap/wagmi'
 import { getV3FactoryContractConfig } from '@sushiswap/wagmi/hooks/contracts/useV3FactoryContract'
 import React, { FC, useMemo, useState } from 'react'
 import { computeSushiSwapV3PoolAddress } from 'sushi'
+import { isWNativeSupported } from 'sushi/config'
 import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
@@ -174,6 +175,7 @@ const _Add: FC = () => {
         token1={token1}
         setToken0={setToken0}
         setToken1={setToken1}
+        includeNative={isWNativeSupported(chainId)}
       />
       <SelectFeeConcentratedWidget
         feeAmount={feeAmount}

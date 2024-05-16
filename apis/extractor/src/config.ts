@@ -768,6 +768,28 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
   },
+  [ChainId.SKALE_EUROPA]: {
+    client: createPublicClient(extractorClientConfig(ChainId.SKALE_EUROPA)),
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.SKALE_EUROPA),
+      {
+        address: '0x71f7BbbB33550fa5d70CA3F7eeAD87529f2DC3C8' as Address,
+        provider: LiquidityProviders.Ruby,
+        fee: 0.003,
+        initCodeHash:
+          '0xba9f7d123cf1f1b0f57891be300d90939d1a591af80a90cfb7e904a821927963',
+      },
+    ],
+    factoriesV3: [sushiswapV3Factory(ChainId.SKALE_EUROPA)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[
+      ChainId.SKALE_EUROPA
+    ] as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   // [ChainId.RONIN]: {
   //   client: createPublicClient(extractorClientConfig(ChainId.RONIN]),
   //   factoriesV2: [],

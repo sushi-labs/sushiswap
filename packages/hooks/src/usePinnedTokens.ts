@@ -16,6 +16,7 @@ import {
   GNO,
   MATIC,
   MIM,
+  SKL,
   SUSHI,
   USDB,
   USDC,
@@ -360,6 +361,11 @@ export const DEFAULT_BASES = {
     USDC[ChainId.CRONOS],
   ],
   [ChainId.BLAST]: [Native.onChain(ChainId.BLAST), USDB[ChainId.BLAST]],
+  [ChainId.SKALE_EUROPA]: [
+    SKL,
+    USDC[ChainId.SKALE_EUROPA],
+    WETH9[ChainId.SKALE_EUROPA],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const satisfies Record<ChainId, Readonly<(Token | Native)[]>>
 

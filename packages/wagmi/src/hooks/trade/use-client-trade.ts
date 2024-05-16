@@ -4,16 +4,18 @@ import {
   usePrice,
 } from '@sushiswap/react-query'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
   isRouteProcessor4ChainId,
+  isWNativeSupported,
 } from 'sushi/config'
-import { Amount, Native, Price, WNATIVE_ADDRESS } from 'sushi/currency'
+import { Amount, Native, Price } from 'sushi/currency'
 import { Fraction, Percent } from 'sushi/math'
 import { Router } from 'sushi/router'
-import { Address, Hex } from 'viem'
+import { Address, Hex, zeroAddress } from 'viem'
 import { useGasPrice } from 'wagmi'
 import { usePoolsCodeMap } from '../pools'
 
@@ -33,10 +35,18 @@ export const useClientTrade = (variables: UseTradeParams) => {
 
   const { data: gasPrice } = useGasPrice({ chainId, query: { enabled } })
 
-  const { data: price } = usePrice({
+  const { data: _price } = usePrice({
     chainId,
-    address: WNATIVE_ADDRESS[chainId],
+    address: Native.onChain(chainId).wrapped.address,
+    enabled: isWNativeSupported(chainId),
   })
+
+  const price = useMemo(() => {
+    return Native.onChain(chainId).wrapped.address === zeroAddress
+      ? new Fraction(0)
+      : _price
+  }, [_price, chainId])
+
   const { data: poolsCodeMap } = usePoolsCodeMap({
     chainId,
     currencyA: fromToken,
