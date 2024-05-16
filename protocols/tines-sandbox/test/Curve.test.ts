@@ -4,6 +4,7 @@ import {
 } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
+import { CurvePoolType } from 'sushi'
 import { erc20Abi } from 'sushi/abi'
 import {
   CurveMultitokenPool,
@@ -20,115 +21,76 @@ import { readContract, simulateContract } from 'viem/actions'
 import { TestConfig, getTestConfig } from '../src/getTestConfig.js'
 import { setTokenBalance } from '../src/setTokenBalance.js'
 
-enum CurvePoolType {
-  Legacy = 'Legacy', // 'exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) -> uint256'
-  LegacyV2 = 'LegacyV2', // 'function coins(int128) pure returns (address)'
-  LegacyV3 = 'LegacyV3',
-  Factory = 'Legacy', // no changes
-}
-
 const MulticoinPoolNumber = 10 // first pools in next array
 
 const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   // Multitoken
-  [
-    '0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7',
-    '3pool',
-    CurvePoolType.LegacyV3,
-  ],
-  ['0xed279fdd11ca84beef15af5d39bb4d4bee23f0ca', 'lusd', CurvePoolType.Legacy],
-  [
-    '0xa5407eae9ba41422680e2e00537571bcc53efbfd',
-    'susd',
-    CurvePoolType.LegacyV2,
-  ],
-  ['0xecd5e75afb02efa118af914515d6521aabd189f1', 'tusd', CurvePoolType.Legacy],
-  ['0xd632f22692fac7611d2aa1c0d552930d43caed3b', 'frax', CurvePoolType.Legacy],
-  ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.Legacy],
-  // ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.Legacy], TODO: fix it
-  [
-    '0x4807862aa8b2bf68830e4c8dc86d0e9a998e085a',
-    'busdv2',
-    CurvePoolType.Legacy,
-  ],
+  ['0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7', '3pool', CurvePoolType.TypeB],
+  ['0xed279fdd11ca84beef15af5d39bb4d4bee23f0ca', 'lusd', CurvePoolType.TypeC],
+  ['0xa5407eae9ba41422680e2e00537571bcc53efbfd', 'susd', CurvePoolType.TypeA],
+  ['0xecd5e75afb02efa118af914515d6521aabd189f1', 'tusd', CurvePoolType.TypeC],
+  ['0xd632f22692fac7611d2aa1c0d552930d43caed3b', 'frax', CurvePoolType.TypeC],
+  ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.TypeC],
+  // ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.TypeC], TODO: fix it
+  ['0x4807862aa8b2bf68830e4c8dc86d0e9a998e085a', 'busdv2', CurvePoolType.TypeC],
   [
     '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956',
     'qusd',
-    CurvePoolType.Legacy,
+    CurvePoolType.TypeC,
     1e-3,
   ],
-  // ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.Legacy], TODO: fix it
-  ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.Legacy],
-  ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.Legacy],
-  // ['0x52ea46506b9cc5ef470c5bf89f17dc28bb35d85c', 'usdt', CurvePoolType.LegacyV2], TODO: fix it
+  // ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.TypeC], TODO: fix it
+  ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.TypeC],
+  ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.TypeC],
+  // ['0x52ea46506b9cc5ef470c5bf89f17dc28bb35d85c', 'usdt', CurvePoolType.TypeA], TODO: fix it
   // 2 coins
-  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.Legacy],
+  ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.TypeC],
   [
     '0x21e27a5e5513d6e65c4f830167390997aa84843a',
     'steth-ng',
-    CurvePoolType.Factory,
+    CurvePoolType.TypeC,
   ],
   [
     '0xdcef968d416a41cdac0ed8702fac8128a64241a2',
     'fraxusdc',
-    CurvePoolType.Legacy,
+    CurvePoolType.TypeC,
   ],
   [
     '0x828b154032950c8ff7cf8085d841723db2696056',
     'stETH concentrated',
-    CurvePoolType.Factory,
+    CurvePoolType.TypeC,
   ],
-  ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2', CurvePoolType.Legacy],
-  [
-    '0x9d0464996170c6b9e75eed71c68b99ddedf279e8',
-    'cvxCRV',
-    CurvePoolType.Factory,
-  ],
-  ['0x453d92c7d4263201c69aacfaf589ed14202d83a4', 'yCRV', CurvePoolType.Factory],
-  ['0xc5424b857f758e906013f3555dad202e4bdb4567', 'seth', CurvePoolType.Legacy],
-  ['0x9848482da3ee3076165ce6497eda906e66bb85c5', 'pETH', CurvePoolType.Factory],
-  [
-    '0xf7b55c3732ad8b2c2da7c24f30a69f55c54fb717',
-    'cdCRV',
-    CurvePoolType.Factory,
-  ],
-  [
-    '0xc897b98272aa23714464ea2a0bd5180f1b8c0025',
-    'msETH',
-    CurvePoolType.Factory,
-  ],
-  [
-    '0xa1f8a6807c402e4a15ef4eba36528a3fed24e577',
-    'frxETH',
-    CurvePoolType.Legacy,
-  ],
-  ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', 'EURS', CurvePoolType.Legacy],
+  ['0xf253f83aca21aabd2a20553ae0bf7f65c755a07f', 'sbtc2', CurvePoolType.TypeC],
+  ['0x9d0464996170c6b9e75eed71c68b99ddedf279e8', 'cvxCRV', CurvePoolType.TypeC],
+  ['0x453d92c7d4263201c69aacfaf589ed14202d83a4', 'yCRV', CurvePoolType.TypeC],
+  ['0xc5424b857f758e906013f3555dad202e4bdb4567', 'seth', CurvePoolType.TypeC],
+  ['0x9848482da3ee3076165ce6497eda906e66bb85c5', 'pETH', CurvePoolType.TypeC],
+  ['0xf7b55c3732ad8b2c2da7c24f30a69f55c54fb717', 'cdCRV', CurvePoolType.TypeC],
+  ['0xc897b98272aa23714464ea2a0bd5180f1b8c0025', 'msETH', CurvePoolType.TypeC],
+  ['0xa1f8a6807c402e4a15ef4eba36528a3fed24e577', 'frxETH', CurvePoolType.TypeC],
+  ['0x0ce6a5ff5217e38315f87032cf90686c96627caa', 'EURS', CurvePoolType.TypeC],
   [
     '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2',
     'ankrETH',
-    CurvePoolType.Legacy,
+    CurvePoolType.TypeC,
   ],
   [
     '0xeb16ae0052ed37f479f7fe63849198df1765a733',
     'saave',
-    CurvePoolType.Legacy,
+    CurvePoolType.TypeC,
     1e-4,
   ],
-  ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.Legacy],
+  ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.TypeC],
   [
     '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56',
     'compound',
-    CurvePoolType.LegacyV2,
+    CurvePoolType.TypeA,
     1e-7,
   ],
-  ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', 'eurt', CurvePoolType.Legacy],
-  ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', 'link', CurvePoolType.Legacy],
-  [
-    '0x4ca9b3063ec5866a4b82e437059d2c43d1be596f',
-    'hbtc',
-    CurvePoolType.LegacyV3,
-  ],
-  ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', 'ren', CurvePoolType.LegacyV2],
+  ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', 'eurt', CurvePoolType.TypeC],
+  ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', 'link', CurvePoolType.TypeC],
+  ['0x4ca9b3063ec5866a4b82e437059d2c43d1be596f', 'hbtc', CurvePoolType.TypeB],
+  ['0x93054188d876f558f4a66b2ef1d97d16edf0895b', 'ren', CurvePoolType.TypeA],
 ]
 
 const FACTORY_ADDRESSES = [
@@ -267,10 +229,10 @@ async function checkPool(
   const poolContract = {
     address: poolAddress,
     abi: parseAbi([
-      poolType !== CurvePoolType.LegacyV2
+      poolType !== CurvePoolType.TypeA
         ? 'function coins(uint256) pure returns (address)'
         : 'function coins(int128) pure returns (address)',
-      poolType !== CurvePoolType.LegacyV2
+      poolType !== CurvePoolType.TypeA
         ? 'function balances(uint256) pure returns (uint256)'
         : 'function balances(int128) pure returns (uint256)',
     ]),
@@ -326,7 +288,7 @@ async function getPoolRatio(
   const pool = {
     address: poolAddress,
     abi: parseAbi([
-      poolType !== CurvePoolType.LegacyV2
+      poolType !== CurvePoolType.TypeA
         ? 'function coins(uint256) pure returns (address)'
         : 'function coins(int128) pure returns (address)',
     ]),
@@ -421,15 +383,15 @@ async function createCurvePoolInfo(
   const poolContract = {
     address: poolAddress,
     abi: parseAbi([
-      poolType !== CurvePoolType.LegacyV2 && poolType !== CurvePoolType.LegacyV3
+      poolType !== CurvePoolType.TypeA && poolType !== CurvePoolType.TypeB
         ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
         : 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
       'function A() pure returns (uint256)',
       'function fee() pure returns (uint256)',
-      poolType !== CurvePoolType.LegacyV2
+      poolType !== CurvePoolType.TypeA
         ? 'function coins(uint256) pure returns (address)'
         : 'function coins(int128) pure returns (address)',
-      poolType !== CurvePoolType.LegacyV2
+      poolType !== CurvePoolType.TypeA
         ? 'function balances(uint256) pure returns (uint256)'
         : 'function balances(int128) pure returns (uint256)',
     ]),
@@ -605,8 +567,8 @@ async function checkSwap(
   )
   let realOutBI: bigint
   if (
-    poolInfo.poolType !== CurvePoolType.LegacyV2 &&
-    poolInfo.poolType !== CurvePoolType.LegacyV3
+    poolInfo.poolType !== CurvePoolType.TypeA &&
+    poolInfo.poolType !== CurvePoolType.TypeB
   ) {
     realOutBI = (
       await simulateContract(config.client, {
@@ -765,8 +727,7 @@ async function processMultiTokenPool(
       if (res0 < 1e6 || res1 < 1e6)
         return ['skipped (low liquidity)', undefined]
       const checks =
-        poolType === CurvePoolType.LegacyV2 ||
-        poolType === CurvePoolType.LegacyV3
+        poolType === CurvePoolType.TypeA || poolType === CurvePoolType.TypeB
           ? 3
           : 10
       for (let k = 0; k < checks; ++k) {
@@ -967,11 +928,7 @@ describe('Real Curve pools consistency check', () => {
           `Factory ${factoryName} pool ${i} ${poolAddress} ... `,
         )
 
-        const check = await checkPool(
-          config,
-          poolAddress,
-          CurvePoolType.Factory,
-        )
+        const check = await checkPool(config, poolAddress, CurvePoolType.TypeC)
         if (check !== 'check passed') {
           if (check.includes('low balance')) console.log(`skipped: ${check}`)
           else if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined)
@@ -989,7 +946,7 @@ describe('Real Curve pools consistency check', () => {
         const [result, poolType] = await processMultiTokenPool(
           config,
           poolAddress,
-          CurvePoolType.Factory,
+          CurvePoolType.TypeC,
           precision,
         )
         if (poolType !== undefined) {
