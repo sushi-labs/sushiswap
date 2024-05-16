@@ -4,7 +4,7 @@ import {
 } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { CurvePoolType } from 'sushi'
+import { CurvePoolType, curvePoolABI, getPoolRatio } from 'sushi'
 import { erc20Abi } from 'sushi/abi'
 import {
   CurveMultitokenPool,
@@ -15,7 +15,7 @@ import {
   getBigInt,
 } from 'sushi/tines'
 import { type Contract } from 'sushi/types'
-import { Address, WalletClient, parseAbi } from 'viem'
+import { Address, PublicClient, WalletClient, parseAbi } from 'viem'
 import { readContract, simulateContract } from 'viem/actions'
 
 import { TestConfig, getTestConfig } from '../src/getTestConfig.js'
@@ -147,17 +147,6 @@ const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
   '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
 }
 
-const METAPOOL_COIN_TO_BASEPOOL: Record<Address, Address> = {
-  '0x6c3f90f043a72fa612cbac8115ee7e52bde6e490':
-    '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7', // 3-pool
-  '0x075b1bb99792c9e1041ba13afef80c91a1e70fb3':
-    '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714', // sBTC
-  '0x3175df0976dfa876431c2e9ee6bc45b65d3473cc':
-    '0xDcEF968d416a41Cdac0ED8702fAC8128A64241A2', // fraxUSD
-  '0x051d7e5609917bd9b73f04bac0ded8dd46a74301':
-    '0xf253f83AcA21aAbD2A20553AE0BF7F65C755A07F',
-}
-
 export function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
   const maxL = Math.log(max)
@@ -228,14 +217,7 @@ async function checkPool(
 ): Promise<string> {
   const poolContract = {
     address: poolAddress,
-    abi: parseAbi([
-      poolType !== CurvePoolType.TypeA
-        ? 'function coins(uint256) pure returns (address)'
-        : 'function coins(int128) pure returns (address)',
-      poolType !== CurvePoolType.TypeA
-        ? 'function balances(uint256) pure returns (uint256)'
-        : 'function balances(int128) pure returns (uint256)',
-    ]),
+    abi: curvePoolABI[poolType],
   }
   for (let i = 0n; i < 100n; ++i) {
     let token: Address
@@ -280,100 +262,6 @@ async function checkPool(
   return 'check passed'
 }
 
-async function getPoolRatio(
-  config: TestConfig,
-  poolAddress: Address,
-  poolType: CurvePoolType,
-): Promise<number> {
-  const pool = {
-    address: poolAddress,
-    abi: parseAbi([
-      poolType !== CurvePoolType.TypeA
-        ? 'function coins(uint256) pure returns (address)'
-        : 'function coins(int128) pure returns (address)',
-    ]),
-  }
-
-  const token1Address = await readContract(config.client, {
-    ...pool,
-    functionName: 'coins',
-    args: [1n],
-  })
-
-  const basePoolAddress = METAPOOL_COIN_TO_BASEPOOL[token1Address.toLowerCase()]
-  if (basePoolAddress !== undefined) {
-    const basePool = {
-      address: basePoolAddress,
-      abi: parseAbi(['function get_virtual_price() pure returns (uint256)']),
-    }
-
-    const price = await readContract(config.client, {
-      ...basePool,
-      functionName: 'get_virtual_price',
-    })
-    // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
-    return parseInt(price.toString()) / 1e18
-  }
-
-  // collection of freaks
-  switch (poolAddress.toLowerCase()) {
-    case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
-      //ankrETH pool
-      const ankrETH = {
-        address: '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb' as const,
-        abi: parseAbi(['function ratio() pure returns (uint256)']),
-      }
-
-      const ratio = await readContract(config.client, {
-        ...ankrETH,
-        functionName: 'ratio',
-      })
-      return 1e18 / parseInt(ratio.toString())
-    }
-    case '0xf9440930043eb3997fc70e1339dbb11f341de7a8': {
-      // rETH pool
-      const rETH = {
-        address: '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593' as const,
-        abi: parseAbi(['function getExchangeRate() pure returns (uint256)']),
-      }
-
-      const ratio = await readContract(config.client, {
-        ...rETH,
-        functionName: 'getExchangeRate',
-      })
-      return parseInt(ratio.toString()) / 1e18
-    }
-    case '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': {
-      // compound pool cUSDC-cDAI
-      const cUSDC = {
-        address: '0x39aa39c021dfbae8fac545936693ac917d5e7563' as const,
-        abi: parseAbi([
-          'function exchangeRateCurrent() pure returns (uint256)',
-        ]),
-      }
-
-      const cDAI = {
-        address: '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643' as const,
-        abi: parseAbi([
-          'function exchangeRateCurrent() pure returns (uint256)',
-        ]),
-      }
-
-      const ratio0 = await readContract(config.client, {
-        ...cUSDC,
-        functionName: 'exchangeRateCurrent',
-      })
-      const ratio1 = await readContract(config.client, {
-        ...cDAI,
-        functionName: 'exchangeRateCurrent',
-      })
-      return Number(ratio0 * BigInt(1e12)) / parseInt(ratio1.toString())
-    }
-    default:
-      return 1
-  }
-}
-
 async function createCurvePoolInfo(
   config: TestConfig,
   poolAddress: Address,
@@ -382,19 +270,7 @@ async function createCurvePoolInfo(
 ): Promise<PoolInfo> {
   const poolContract = {
     address: poolAddress,
-    abi: parseAbi([
-      poolType !== CurvePoolType.TypeA && poolType !== CurvePoolType.TypeB
-        ? 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns (uint256)'
-        : 'function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) payable returns ()',
-      'function A() pure returns (uint256)',
-      'function fee() pure returns (uint256)',
-      poolType !== CurvePoolType.TypeA
-        ? 'function coins(uint256) pure returns (address)'
-        : 'function coins(int128) pure returns (address)',
-      poolType !== CurvePoolType.TypeA
-        ? 'function balances(uint256) pure returns (uint256)'
-        : 'function balances(int128) pure returns (uint256)',
-    ]),
+    abi: curvePoolABI[poolType],
   }
 
   const tokenContracts: Array<Contract<typeof erc20Abi> | undefined> = []
@@ -504,7 +380,7 @@ async function createCurvePoolInfo(
       Number(A),
       reserves[0],
       reserves[1],
-      await getPoolRatio(config, poolAddress, poolType),
+      await getPoolRatio(config.client as PublicClient, poolAddress, poolType),
     )
 
     const snapshot = await takeSnapshot()
@@ -881,7 +757,7 @@ describe('Real Curve pools consistency check', () => {
     config = await getTestConfig()
   })
 
-  describe.only('Not-Factory pools by whitelist', () => {
+  describe('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] =
         NON_FACTORY_POOLS[i]
