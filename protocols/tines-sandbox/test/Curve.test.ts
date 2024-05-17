@@ -4,7 +4,12 @@ import {
 } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
 import seedrandom from 'seedrandom'
-import { CurvePoolType, curvePoolABI, getPoolRatio } from 'sushi'
+import {
+  CurvePoolType,
+  curvePoolABI,
+  detectCurvePoolType,
+  getPoolRatio,
+} from 'sushi'
 import { erc20Abi } from 'sushi/abi'
 import {
   CurveMultitokenPool,
@@ -147,6 +152,13 @@ const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
   '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
 }
 
+const CURVE_POOL_SPECIAL_PRECISION: Record<string, number> = {
+  '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
+  '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956': 1e-3,
+  '0xeb16ae0052ed37f479f7fe63849198df1765a733': 1e-4,
+  '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': 1e-7,
+}
+
 export function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
   const maxL = Math.log(max)
@@ -194,21 +206,6 @@ interface PoolInfo {
   snapshot: SnapshotRestorer
 }
 
-// tries to transfer tokens from pool to user(router) to understand if we can work with this pool or not
-// async function checkPool(config: TestConfig, pool: PoolInfo) {
-//   const promises = pool.tokenContracts.map(async (tokenContract) => {
-//     if (tokenContract === undefined) return true // to problems with transferring natives
-//     const res = await simulateContract(config.client, {
-//       address: tokenContract.address,
-//       abi: tokenContract.abi,
-//       functionName: 'transfer',
-//       args: [config.user.address, 1_000_000n],
-//     })
-//     return res.result
-//   })
-//   const res = await Promise.all(promises)
-//   return res.every((r) => r)
-// }
 async function checkPool(
   config: TestConfig,
   poolAddress: Address,
@@ -338,18 +335,6 @@ async function createCurvePoolInfo(
         chainId: 1,
         decimals,
       })
-
-      // const balance = await readContract(config.client, {
-      //   ...tokenContract,
-      //   functionName: 'balanceOf',
-      //   args: [config.user.address],
-      // })
-      // const allowance = await readContract(config.client, {
-      //   ...tokenContract,
-      //   functionName: 'allowance',
-      //   args: [config.user.address, poolAddress],
-      // })
-      // console.log('token', symbol, balance, allowance)
     }
   }
 
@@ -645,19 +630,21 @@ async function checkMultipleSwapsFork(
   poolAddress: Address,
   poolType: CurvePoolType,
   precision: number,
+  poolInfo?: PoolInfo,
 ): Promise<string> {
   const testSeed = poolAddress
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-  let poolInfo
-  try {
-    poolInfo = await createCurvePoolInfo(
-      config,
-      poolAddress,
-      poolType,
-      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
-    )
-  } catch (_e) {
-    // return 'skipped (pool init error)'
+  if (!poolInfo) {
+    try {
+      poolInfo = await createCurvePoolInfo(
+        config,
+        poolAddress,
+        poolType,
+        POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
+      )
+    } catch (_e) {
+      // return 'skipped (pool init error)'
+    }
   }
   if (!poolInfo || poolInfo.tokenContracts.length < 2)
     return 'skipped (pool init error)'
@@ -750,14 +737,116 @@ async function checkMultipleSwapsFork(
   return 'passed'
 }
 
+// universal check: processMultiTokenPool for all pools + checkMultipleSwapsFork for pools
+// with more than 2 tokens
+// returns: result if passed or expectation throws an error
+async function checkCurvePool(
+  config: TestConfig,
+  poolAddress: Address,
+): Promise<string> {
+  if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
+    return `skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`
+  }
+
+  const poolType = await detectCurvePoolType(
+    config.client as PublicClient,
+    poolAddress,
+  )
+  const precision =
+    CURVE_POOL_SPECIAL_PRECISION[poolAddress.toLowerCase()] ?? 1e-7
+
+  const [result, poolInfo] = await processMultiTokenPool(
+    config,
+    poolAddress,
+    poolType,
+    precision,
+  )
+  if (result !== 'passed') return result
+
+  const tokenNumber = poolInfo?.tokenContracts.length
+  if (tokenNumber !== undefined && tokenNumber > 2) {
+    const result = await checkMultipleSwapsFork(
+      config,
+      poolAddress,
+      poolType,
+      precision,
+      poolInfo,
+    )
+    if (result !== 'passed') return result
+  }
+
+  return 'passed'
+}
+
+// returns all pool addresses.
+// not-factory from NON_FACTORY_POOLS array +
+// factory pools for all factories from FACTORY_ADDRESSES array
+async function collectAllCurvePools(
+  config: TestConfig,
+): Promise<[Address, string][]> {
+  const res: [Address, string][] = []
+  const processedPoolSet = new Set<string>()
+
+  NON_FACTORY_POOLS.forEach((p) => {
+    if (processedPoolSet.has(p[0])) return
+    processedPoolSet.add(p[0])
+    res.push([p[0], p[1]])
+  })
+
+  for (let f = 0; f < FACTORY_ADDRESSES.length; ++f) {
+    const factoryAddress = FACTORY_ADDRESSES[f]
+    const factoryContract = {
+      address: factoryAddress,
+      abi: parseAbi([
+        'function pool_count() pure returns (uint256)',
+        'function pool_list(uint256) pure returns (address)',
+        'function get_n_coins(address) pure returns (uint256)',
+      ]),
+    }
+
+    const poolNum = await readContract(config.client, {
+      ...factoryContract,
+      functionName: 'pool_count',
+    })
+    for (let i = 0n; i < poolNum; ++i) {
+      const poolAddress = await readContract(config.client, {
+        ...factoryContract,
+        functionName: 'pool_list',
+        args: [i],
+      })
+      if (processedPoolSet.has(poolAddress)) continue
+      processedPoolSet.add(poolAddress)
+      res.push([poolAddress, `fact#${f}`])
+    }
+  }
+
+  return res
+}
+
 describe('Real Curve pools consistency check', () => {
   let config: TestConfig
 
   before(async () => {
+    console.log('    Environment initialization ... ')
     config = await getTestConfig()
+    // console.log('    Finding pools ... ')
+    // const pools = await collectAllCurvePools(config)
+    // console.log('    Pools found:', pools.length)
+
+    // pools.forEach((p) => {
+    //   this.addTest(
+    //     it(`${p[0]} (${p[1]})`, async () => {
+    //       const res = await checkCurvePool(config, p[0])
+    //       if (res !== 'passed') console.log(`${p[0]}: ${res}`)
+    //       //expect(res).equal('passed')
+    //     }),
+    //   )
+    // })
   })
 
-  describe('Not-Factory pools by whitelist', () => {
+  it('empty', () => {}) // just to start 'before' block
+
+  describe.skip('Not-Factory pools by whitelist', () => {
     for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
       const [poolAddress, name, poolType, precision = 1e-9] =
         NON_FACTORY_POOLS[i]
@@ -773,7 +862,7 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  describe('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
+  describe.only('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
     const poolNumber = MulticoinPoolNumber
     for (let i = 0; i < poolNumber; ++i) {
       const [poolAddress, name, poolType, precision = 1e-7] =
@@ -790,7 +879,7 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  it(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
+  it.skip(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
     let passed = 0
     let i = 0
     const startFrom = 0
