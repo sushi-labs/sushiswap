@@ -11,7 +11,8 @@
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
-    "test": "npx playwright test -c test/playwright.config.ts"
+    "test": "npx playwright test -c test/playwright.config.ts",
+    "generate-swaps": "tsx test/swap/scripts/generate-swaps.ts"
   },
   "dependencies": {
     "@aptos-labs/wallet-adapter-ant-design": "2.2.0",
@@ -130,6 +131,7 @@
     "schema-dts": "^1.1.2",
     "tailwindcss": "3.3.2",
     "typescript": "5.4.5",
+    "tsx": "^4.7.1",
     "unimported": "1.30.0"
   }
 }

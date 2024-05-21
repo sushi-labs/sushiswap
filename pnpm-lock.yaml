@@ -831,6 +831,9 @@ importers:
       tailwindcss:
         specifier: 3.3.2
         version: 3.3.2(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -46189,7 +46192,7 @@ snapshots:
   postcss-load-config@4.0.1(postcss@8.4.23)(ts-node@10.9.2(@types/node@20.10.0)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
-      yaml: 2.3.1
+      yaml: 2.4.1
     optionalDependencies:
       postcss: 8.4.23
       ts-node: 10.9.2(@swc/core@1.4.2)(@types/node@20.10.0)(typescript@5.4.5)
@@ -46197,7 +46200,7 @@ snapshots:
   postcss-load-config@4.0.1(postcss@8.4.23)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
-      yaml: 2.3.1
+      yaml: 2.4.1
     optionalDependencies:
       postcss: 8.4.23
       ts-node: 10.9.2(@types/node@20.12.7)(typescript@5.4.5)
@@ -46205,7 +46208,7 @@ snapshots:
   postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.1(@swc/core@1.4.2)(@types/node@20.10.0)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
-      yaml: 2.3.1
+      yaml: 2.4.1
     optionalDependencies:
       postcss: 8.4.31
       ts-node: 10.9.1(@swc/core@1.4.2)(@types/node@20.10.0)(typescript@5.4.5)
@@ -46213,7 +46216,7 @@ snapshots:
   postcss-load-config@4.0.1(postcss@8.4.31)(ts-node@10.9.2(@swc/core@1.4.2)(@types/node@20.10.0)(typescript@5.4.5)):
     dependencies:
       lilconfig: 2.1.0
-      yaml: 2.3.1
+      yaml: 2.4.1
     optionalDependencies:
       postcss: 8.4.31
       ts-node: 10.9.2(@swc/core@1.4.2)(@types/node@20.10.0)(typescript@5.4.5)
@@ -49594,7 +49597,7 @@ snapshots:
       fast-glob: 3.3.1
       glob-parent: 6.0.2
       is-glob: 4.0.3
-      jiti: 1.19.1
+      jiti: 1.21.0
       lilconfig: 2.1.0
       micromatch: 4.0.5
       normalize-path: 3.0.0
@@ -49607,7 +49610,7 @@ snapshots:
       postcss-nested: 6.0.1(postcss@8.4.23)
       postcss-selector-parser: 6.0.13
       postcss-value-parser: 4.2.0
-      resolve: 1.22.4
+      resolve: 1.22.8
       sucrase: 3.34.0
     transitivePeerDependencies:
       - ts-node
@@ -49622,7 +49625,7 @@ snapshots:
       fast-glob: 3.3.1
       glob-parent: 6.0.2
       is-glob: 4.0.3
-      jiti: 1.19.1
+      jiti: 1.21.0
       lilconfig: 2.1.0
       micromatch: 4.0.5
       normalize-path: 3.0.0
@@ -49635,7 +49638,7 @@ snapshots:
       postcss-nested: 6.0.1(postcss@8.4.23)
       postcss-selector-parser: 6.0.13
       postcss-value-parser: 4.2.0
-      resolve: 1.22.4
+      resolve: 1.22.8
       sucrase: 3.34.0
     transitivePeerDependencies:
       - ts-node
