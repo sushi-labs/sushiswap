@@ -120,6 +120,12 @@ const MERKL_SUPPORTED_NETWORKS = [
   ChainId.ARBITRUM,
   ChainId.CELO,
   ChainId.AVALANCHE,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.THUNDERCORE,
+  ChainId.CORE,
+  ChainId.BLAST,
+  ChainId.SCROLL,
+  ChainId.LINEA,
 ]
 
 export async function execute() {
