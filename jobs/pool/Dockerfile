@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Install git and pnpm
 RUN apk add --no-cache git libc6-compat grep python3 make g++
