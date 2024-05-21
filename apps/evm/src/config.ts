@@ -63,7 +63,8 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
     !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
-    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]) &&
+    c !== ChainId.SKALE_EUROPA,
 )
 
 export const DISABLED_ANALYTICS_CHAIN_IDS = [

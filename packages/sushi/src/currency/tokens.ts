@@ -50,6 +50,7 @@ import {
   TEL_ADDRESS,
   TRIBE_ADDRESS,
   TUSD_ADDRESS,
+  UDSP_ADDRESS,
   UNI_ADDRESS,
   USDB_ADDRESS,
   USDC_ADDRESS,
@@ -684,6 +685,11 @@ export const WNATIVE = {
     name: 'Wrapped CRO',
   }),
   [ChainId.BLAST]: WETH9[ChainId.BLAST],
+  [ChainId.SKALE_EUROPA]: new Token({
+    chainId: ChainId.SKALE_EUROPA,
+    address: WNATIVE_ADDRESS[ChainId.SKALE_EUROPA],
+    decimals: 0,
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -1025,6 +1031,15 @@ export const OPTICS_USDC = addressMapToTokenMap(
   OPTICS_USDC_ADDRESS,
 ) as Record<keyof typeof OPTICS_USDC_ADDRESS, Token>
 
+export const USDP = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'USDP',
+    name: 'Pax Dollar',
+  },
+  UDSP_ADDRESS,
+) as Record<keyof typeof UDSP_ADDRESS, Token>
+
 export const THUNDERCORE_ANY_USDT = new Token({
   chainId: ChainId.THUNDERCORE,
   address: '0x0dcb0cb0120d355cde1ce56040be57add0185baa',
@@ -1150,5 +1165,13 @@ export const MUSD = new Token({
   address: '0x837fE561e9C5DFa73F607fDa679295DBC2Be5E40',
   name: 'Monoswap USD',
   symbol: 'MUSD',
+  decimals: 18,
+})
+
+export const SKL = new Token({
+  chainId: ChainId.SKALE_EUROPA,
+  address: '0xE0595a049d02b7674572b0d59cd4880Db60EDC50',
+  name: 'SKALE',
+  symbol: 'SKL',
   decimals: 18,
 })

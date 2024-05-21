@@ -16,6 +16,7 @@ import {
   GNO,
   MATIC,
   MIM,
+  SKL,
   SUSHI,
   USDB,
   USDC,
@@ -324,6 +325,13 @@ export const DEFAULT_BASES = {
       address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
     }),
     USDC[ChainId.BASE],
+    new Token({
+      chainId: ChainId.BASE,
+      symbol: 'OX',
+      name: 'OX Coin',
+      decimals: 18,
+      address: '0xba0Dda8762C24dA9487f5FA026a9B64b695A07Ea',
+    }),
   ],
   [ChainId.SCROLL]: [
     Native.onChain(ChainId.SCROLL),
@@ -353,6 +361,11 @@ export const DEFAULT_BASES = {
     USDC[ChainId.CRONOS],
   ],
   [ChainId.BLAST]: [Native.onChain(ChainId.BLAST), USDB[ChainId.BLAST]],
+  [ChainId.SKALE_EUROPA]: [
+    SKL,
+    USDC[ChainId.SKALE_EUROPA],
+    WETH9[ChainId.SKALE_EUROPA],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const satisfies Record<ChainId, Readonly<(Token | Native)[]>>
 

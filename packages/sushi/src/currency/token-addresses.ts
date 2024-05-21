@@ -1,3 +1,4 @@
+import { zeroAddress } from 'viem'
 import { ChainId } from '../chain/index.js'
 
 export const AMPL_ADDRESS = {
@@ -198,6 +199,7 @@ export const WBTC_ADDRESS = {
   [ChainId.CELO]: '0xD629eb00dEced2a080B7EC630eF6aC117e614f1b',
   [ChainId.ZETACHAIN]: '0x13a0c5930c028511dc02665e7285134b6d11a5f4',
   [ChainId.CRONOS]: '0x062E66477Faf219F25D27dCED647BF57C3107d52',
+  [ChainId.SKALE_EUROPA]: '0xcb011E86DF014a46F4e3AC3F3cbB114A4EB80870',
 } as const
 
 export const UNI_ADDRESS = {
@@ -311,6 +313,7 @@ export const WETH9_ADDRESS = {
   [ChainId.ZETACHAIN]: '0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891',
   [ChainId.CRONOS]: '0xe44Fd7fCb2b1581822D0c862B68222998a0c299a',
   [ChainId.BLAST]: '0x4300000000000000000000000000000000000004',
+  [ChainId.SKALE_EUROPA]: '0xD2Aaa00700000000000000000000000000000000',
 } as const
 
 export const WNATIVE_ADDRESS = {
@@ -367,6 +370,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.ZETACHAIN]: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
   [ChainId.CRONOS]: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
   [ChainId.BLAST]: WETH9_ADDRESS[ChainId.BLAST],
+  [ChainId.SKALE_EUROPA]: zeroAddress,
 } as const
 
 export const SUSHI_ADDRESS = {
@@ -448,6 +452,7 @@ export const USDC_ADDRESS = {
   [ChainId.FILECOIN]: axlUSDC_ADDRESS[ChainId.FILECOIN],
   [ChainId.ZETACHAIN]: '0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a',
   [ChainId.CRONOS]: '0xc21223249CA28397B4B6541dfFaEcC539BfF0c59',
+  [ChainId.SKALE_EUROPA]: '0x5F795bb52dAC3085f578f4877D450e2929D2F13d',
 } as const
 
 export const USDT_ADDRESS = {
@@ -481,6 +486,7 @@ export const USDT_ADDRESS = {
   [ChainId.HAQQ]: axlUSDT_ADDRESS[ChainId.HAQQ],
   [ChainId.SCROLL]: '0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df',
   [ChainId.ZETACHAIN]: '0x7c8dDa80bbBE1254a7aACf3219EBe1481c6E01d7',
+  [ChainId.SKALE_EUROPA]: '0x1c0491E3396AD6a35f061c62387a95d7218FC515',
 } as const
 
 export const DAI_ADDRESS = {
@@ -509,6 +515,7 @@ export const DAI_ADDRESS = {
   [ChainId.BASE]: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
   [ChainId.SCROLL]: '0xcA77eB3fEFe3725Dc33bccB54eDEFc3D9f764f97',
   [ChainId.FILECOIN]: axlDAI_ADDRESS[ChainId.FILECOIN],
+  [ChainId.SKALE_EUROPA]: '0xD05C4be5f3be302d376518c9492EC0147Fa5A718',
 } as const
 
 export const MIM_ADDRESS = {
@@ -631,4 +638,8 @@ export const AGEUR_ADDRESS = {
 
 export const JUGNI_ADDRESS = {
   [ChainId.POLYGON]: '0xE313bcB77dbA15F39Ff0B9cEABe140cedD0953cB',
+} as const
+
+export const UDSP_ADDRESS = {
+  [ChainId.SKALE_EUROPA]: '0x73d22d8a2D1f59Bf5Bcf62cA382481a2073FAF58',
 } as const

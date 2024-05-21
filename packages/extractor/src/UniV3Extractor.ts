@@ -11,7 +11,7 @@ import { LiquidityProviders, PoolCode } from 'sushi/router'
 import { Address, Log, PublicClient } from 'viem'
 import { Counter } from './Counter.js'
 import { LogFilter2 } from './LogFilter2.js'
-import { Logger } from './Logger.js'
+import { Logger, safeSerialize } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import {
@@ -126,17 +126,23 @@ export class UniV3Extractor {
             )
           })
         }
-        this.consoleLog(
-          `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
-            `${arg.correctPool ? 'pool was updated ' : ''}` +
-            `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,
-        )
         if (
           arg.status !== PoolSyncState.Match &&
           arg.status !== PoolSyncState.ReservesMismatch
         )
           Logger.error(
             this.multiCallAggregator.chainId,
+            `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
+              `${arg.correctPool ? 'pool was updated ' : ''}` +
+              `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,
+            safeSerialize({
+              oldPool: arg.ethalonPool.debugState(),
+              newPool: arg.correctPool?.debugState(),
+            }),
+            false,
+          )
+        else
+          this.consoleLog(
             `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
               `${arg.correctPool ? 'pool was updated ' : ''}` +
               `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,

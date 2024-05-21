@@ -16,7 +16,10 @@ import { IconButton } from '@sushiswap/ui/components/iconbutton'
 import { List } from '@sushiswap/ui/components/list/List'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import chains, { ChainId } from 'sushi/chain'
+import { isWNativeSupported } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
+import { Fraction } from 'sushi/math'
+import { zeroAddress } from 'viem'
 import { useBalance, useDisconnect } from 'wagmi'
 import { ProfileView } from './ProfileView'
 
@@ -32,10 +35,17 @@ export const DefaultView: FC<DefaultProps> = ({
   setView,
 }) => {
   const { disconnect } = useDisconnect()
-  const { data: price } = usePrice({
+  const { data: _price } = usePrice({
     chainId,
     address: Native.onChain(chainId).wrapped.address,
+    enabled: isWNativeSupported(chainId),
   })
+
+  const price = useMemo(() => {
+    return Native.onChain(chainId).wrapped.address === zeroAddress
+      ? new Fraction(0)
+      : _price
+  }, [_price, chainId])
 
   const { data: _balance } = useBalance({
     address: address,

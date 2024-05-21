@@ -301,11 +301,6 @@ export default [
         url: 'https://bobascan.com',
         standard: 'none',
       },
-      {
-        name: 'Blockscout',
-        url: 'https://blockexplorer.boba.network',
-        standard: 'none',
-      },
     ],
     nativeCurrency: {
       name: 'Ether',
@@ -745,7 +740,7 @@ export default [
     explorers: [
       {
         name: 'Boba BNB block explorer',
-        url: 'https://blockexplorer.bnb.boba.network',
+        url: 'https://bobascan.com',
         standard: 'none',
       },
     ],
@@ -884,11 +879,6 @@ export default [
         url: 'https://scrollscan.com',
         standard: 'EIP3091',
       },
-      {
-        name: 'Blockscout',
-        url: 'https://blockscout.scroll.io',
-        standard: 'EIP3091',
-      },
     ],
     nativeCurrency: {
       name: 'Ether',
@@ -945,6 +935,32 @@ export default [
     },
     name: 'Harmony Mainnet Shard 0',
     shortName: 'hmy-s0',
+  },
+  {
+    chainId: 2046399126,
+    explorers: [
+      {
+        name: 'Blockscout',
+        url: 'https://elated-tan-skat.explorer.mainnet.skalenodes.com',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'sFUEL',
+      symbol: 'sFUEL',
+      decimals: 18,
+    },
+    name: 'SKALE Europa Hub',
+    shortName: 'europa',
+    parent: {
+      type: 'L2',
+      chain: 'eip155-1',
+      bridges: [
+        {
+          url: 'https://ruby.exchange/bridge.html',
+        },
+      ],
+    },
   },
   {
     chainId: 11297108109,

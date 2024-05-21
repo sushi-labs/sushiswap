@@ -1,7 +1,13 @@
 import { Request, Response } from 'express'
-import { STABLES } from 'sushi/config'
+import {
+  ADDITIONAL_BASES,
+  BASES_TO_CHECK_TRADES_AGAINST,
+  STABLES,
+} from 'sushi/config'
 import { USDC, USDT } from 'sushi/currency'
+import { isAddressFast } from 'sushi/serializer'
 import { RPool, RToken, getTokenPriceReasoning } from 'sushi/tines'
+import { Address, checksumAddress } from 'viem'
 import { RequestStatistics } from '../../RequestStatistics.js'
 import { CHAIN_ID, ROUTER_CONFIG } from '../../config.js'
 import { extractorClient } from '../../index.js'
@@ -18,7 +24,7 @@ export const pricesHandler = (req: Request, res: Response) => {
   })
   res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
   if (
-    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
+    ROUTER_CONFIG[CHAIN_ID]?.['priceIncrementalMode'] !== false &&
     oldPrices !== true
   ) {
     res.json(
@@ -29,15 +35,25 @@ export const pricesHandler = (req: Request, res: Response) => {
 }
 
 export const priceByAddressHandler = (req: Request, res: Response) => {
-  const { currency, address, oldPrices, reasoning } = singleAddressSchema.parse(
-    {
-      ...req.query,
-      ...req.params,
-    },
-  )
+  const {
+    currency,
+    address: _address,
+    oldPrices,
+    reasoning,
+  } = singleAddressSchema.parse({
+    ...req.query,
+    ...req.params,
+  })
+
+  if (!isAddressFast(_address)) {
+    res.status(422).send(`Incorrect address ${_address}`)
+    return
+  }
+  const address = checksumAddress(_address as Address)
+
   res.setHeader('Cache-Control', `maxage=${priceUpdateInterval}`)
   if (
-    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] === true &&
+    ROUTER_CONFIG[CHAIN_ID]?.['priceIncrementalMode'] !== false &&
     oldPrices !== true
   ) {
     if (reasoning) {
@@ -60,6 +76,10 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
     } else res.json()
   } else {
     if (reasoning) {
+      const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID] ?? []
+      const additionalTrusted = Object.values(
+        ADDITIONAL_BASES[CHAIN_ID] ?? [],
+      ).flat()
       res.send(
         makeHTMLReasoning(
           getTokenPriceReasoning(
@@ -71,6 +91,7 @@ export const priceByAddressHandler = (req: Request, res: Response) => {
               STABLES[CHAIN_ID][0]) as RToken,
             address,
             1000,
+            baseTrusted.concat(additionalTrusted) as RToken[],
           ),
         ),
       )

@@ -11,7 +11,10 @@ import {
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Chain } from 'sushi/chain'
 
-import { SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
+import {
+  SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
+  isWNativeSupported,
+} from 'sushi/config'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
 export const CrossChainSwapToken0Input = () => {
@@ -59,6 +62,7 @@ export const CrossChainSwapToken0Input = () => {
         currency={token0}
         loading={isLoading}
         currencyLoading={isLoading}
+        allowNative={isWNativeSupported(chainId0)}
       />
     </div>
   )

@@ -50,7 +50,9 @@ export class QualityChecker {
           pool.isStable() &&
           pool.state &&
           newPool.state &&
-          pool.latestEventBlockNumber === newPool.latestEventBlockNumber
+          pool.latestEventBlockNumber === newPool.latestEventBlockNumber &&
+          pool.updatePoolStateGuard === false &&
+          newPool.updatePoolStateGuard === false
         ) {
           //this.totalCheckCounter++
           if (pool.state.liquidity !== newPool.state.liquidity)
@@ -70,7 +72,7 @@ export class QualityChecker {
             if (start === -1)
               return [newPool, PoolSyncState.TicksStartMismatch, 1, 0]
             if (ticks0.length < start + ticks1.length)
-              [newPool, PoolSyncState.TicksFinishMismatch]
+              return [newPool, PoolSyncState.TicksFinishMismatch, 1, 0]
             for (let i = 0; i < ticks1.length; ++i) {
               if (
                 ticks0[i + start].index !== ticks1[i].index ||
@@ -88,9 +90,16 @@ export class QualityChecker {
           return [undefined, PoolSyncState.Match, 1, 1]
         }
       }
-      Logger.error(pool.client.chainId, 'Quality check timeout error')
+      Logger.error(
+        pool.client.chainId,
+        `Pool ${pool.address} quality check timeout error`,
+      )
     } catch (e) {
-      Logger.error(pool.client.chainId, 'Quality check error', e)
+      Logger.error(
+        pool.client.chainId,
+        `Pool ${pool.address} quality check error`,
+        e,
+      )
     }
     return [undefined, PoolSyncState.CheckFailed, 0, 0]
   }

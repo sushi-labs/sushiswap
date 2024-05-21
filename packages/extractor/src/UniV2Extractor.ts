@@ -120,65 +120,77 @@ export class UniV2Extractor {
     this.logFilter = logFilter
     logFilter.addFilter(UniV2EventsListenAbi, (logs?: Log[]) => {
       if (logs) {
-        let eventKnown = 0
-        let eventUnknown = 0
-        let eventIgnore = 0
-        let eventRemoved = 0
-        logs.forEach((l) => {
-          const {
-            args: { reserve0, reserve1 },
-          } = decodeEventLog({
-            abi: UniV2EventsListenAbi,
-            data: l.data,
-            topics: l.topics,
-          })
-          const poolState = this.poolMap.get(l.address.toLowerCase())
-          if (!poolState || poolState.status === PoolStatus.NoPool) {
-            ++eventUnknown
-            if (reserve0 !== undefined && reserve1 !== undefined)
-              this.addPoolByLog(l.address, reserve0, reserve1)
-            return
-          }
-          if (poolState.status === PoolStatus.IgnorePool) {
-            ++eventIgnore
-            return
-          }
-          if (l.removed) {
-            ++eventRemoved
-            this.updatePoolState(poolState)
-            return
-          }
-          if (reserve0 !== undefined && reserve1 !== undefined) {
-            if (poolState.status === PoolStatus.AddingPool) {
-              poolState.reserve0 = reserve0
-              poolState.reserve1 = reserve1
-            } else {
-              poolState.poolCode.pool.updateReserves(reserve0, reserve1)
-              poolState.status = PoolStatus.ValidPool
-              this.poolMapUpdated.set(
-                l.address.toLowerCase(),
-                poolState.poolCode,
-              )
+        try {
+          let eventKnown = 0
+          let eventUnknown = 0
+          let eventIgnore = 0
+          let eventRemoved = 0
+          logs.forEach((l) => {
+            const {
+              args: { reserve0, reserve1 },
+            } = decodeEventLog({
+              abi: UniV2EventsListenAbi,
+              data: l.data,
+              topics: l.topics,
+            })
+            const poolState = this.poolMap.get(l.address.toLowerCase())
+            if (!poolState || poolState.status === PoolStatus.NoPool) {
+              ++eventUnknown
+              if (reserve0 !== undefined && reserve1 !== undefined)
+                this.addPoolByLog(l.address, reserve0, reserve1)
+              return
             }
-          }
-          ++eventKnown
-        })
-        const blockNumber =
-          logs.length > 0
-            ? Number(logs[logs.length - 1].blockNumber || 0)
-            : '<undefined>'
-        const eventInfo = [
-          eventKnown > 0 ? `${eventKnown} known` : '',
-          eventIgnore > 0 ? `${eventIgnore} ignore` : '',
-          eventUnknown > 0 ? `${eventUnknown} unknown` : '',
-          eventRemoved > 0 ? `${eventRemoved} removed` : '',
-        ]
-          .filter((e) => e !== '')
-          .join(', ')
+            if (poolState.status === PoolStatus.IgnorePool) {
+              ++eventIgnore
+              return
+            }
+            if (l.removed) {
+              ++eventRemoved
+              this.updatePoolState(poolState)
+              return
+            }
+            if (reserve0 !== undefined && reserve1 !== undefined) {
+              if (poolState.status === PoolStatus.AddingPool) {
+                poolState.reserve0 = reserve0
+                poolState.reserve1 = reserve1
+              } else {
+                poolState.poolCode.pool.updateReserves(reserve0, reserve1)
+                poolState.status = PoolStatus.ValidPool
+                this.poolMapUpdated.set(
+                  l.address.toLowerCase(),
+                  poolState.poolCode,
+                )
+              }
+            }
+            ++eventKnown
+          })
+          const blockNumber =
+            logs.length > 0
+              ? Number(logs[logs.length - 1].blockNumber || 0)
+              : '<undefined>'
+          const eventInfo = [
+            eventKnown > 0 ? `${eventKnown} known` : '',
+            eventIgnore > 0 ? `${eventIgnore} ignore` : '',
+            eventUnknown > 0 ? `${eventUnknown} unknown` : '',
+            eventRemoved > 0 ? `${eventRemoved} removed` : '',
+          ]
+            .filter((e) => e !== '')
+            .join(', ')
 
-        this.consoleLog(
-          `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
-        )
+          this.consoleLog(
+            `Block ${blockNumber} ${logs.length} logs (${eventInfo}), jobs: ${this.taskCounter.counter}`,
+          )
+        } catch (e) {
+          const blockNumber =
+            logs?.length > 0
+              ? Number(logs[logs.length - 1]?.blockNumber || 0)
+              : '<undefined>'
+          Logger.error(
+            this.multiCallAggregator.chainId,
+            `Block ${blockNumber} logs processing crashed`,
+            e,
+          )
+        }
       } else {
         Logger.error(
           this.multiCallAggregator.chainId,

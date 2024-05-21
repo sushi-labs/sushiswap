@@ -11,10 +11,9 @@ import {
   useSendTransaction,
 } from '@sushiswap/wagmi'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
-import { unwrapToken } from 'src/lib/functions'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
-import { Amount, Type } from 'sushi/currency'
+import { Amount, Type, unwrapToken } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 

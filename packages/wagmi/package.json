@@ -68,7 +68,7 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sentry/nextjs": "7.101.1",
+    "@sentry/nextjs": "7.110.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.5.5",

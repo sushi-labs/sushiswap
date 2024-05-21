@@ -31,7 +31,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
+import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import {
   getDefaultTTL,
@@ -45,14 +45,13 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
-import { Amount } from 'sushi/currency'
+import { Amount, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 import { Bound } from '../../lib/constants'
 import {
   formatTickPrice,
   getPriceOrderingFromPositionForUI,
-  unwrapToken,
 } from '../../lib/functions'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
 import { useIsTickAtLimit } from '../../lib/pool/v3'
@@ -478,7 +477,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       title={
                         <>
                           1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                          <FormattedPrice
+                          <FormattedNumber
                             number={(inverted
                               ? pool?.token1Price
                               : pool?.token0Price
@@ -525,7 +524,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '0'
                           ) : (
                             <>
-                              <FormattedPrice
+                              <FormattedNumber
                                 number={formatTickPrice({
                                   price: priceLower,
                                   atLimit: tickAtLimit,
@@ -605,7 +604,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '∞'
                           ) : (
                             <>
-                              <FormattedPrice
+                              <FormattedNumber
                                 number={formatTickPrice({
                                   price: priceUpper,
                                   atLimit: tickAtLimit,

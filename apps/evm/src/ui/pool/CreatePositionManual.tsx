@@ -11,9 +11,9 @@ import {
 } from '@sushiswap/ui'
 import { useAccount } from '@sushiswap/wagmi'
 import React, { FC, useMemo, useState } from 'react'
-import { unwrapToken } from 'src/lib/functions'
 import { ConcentratedLiquidityWidget } from 'src/ui/pool/ConcentratedLiquidityWidget'
 import { SushiSwapV3ChainId } from 'sushi/config'
+import { unwrapToken } from 'sushi/currency'
 import { SelectPricesWidget } from './SelectPricesWidget'
 
 interface ManualProps {

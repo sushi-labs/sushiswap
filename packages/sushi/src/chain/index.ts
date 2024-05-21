@@ -136,6 +136,8 @@ export class Chain implements Chain {
           standard: 'EIP3091',
         },
       ]
+    } else if (data.chainId === ChainId.SKALE_EUROPA) {
+      this.name = 'Skale Europa'
     }
   }
   getTxUrl(txHash: string): string {

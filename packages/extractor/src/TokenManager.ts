@@ -31,6 +31,7 @@ export class TokenManager {
   client: MultiCallAggregator
   tokens: Map<Address, Token> = new Map()
   tokenPermanentCache: PermanentCache<TokenCacheRecord>
+  cacheTokensAddingPromise?: Promise<void>
 
   constructor(client: MultiCallAggregator, ...paths: string[]) {
     this.client = client
@@ -38,7 +39,14 @@ export class TokenManager {
   }
 
   async addCachedTokens() {
-    const cachedRecords = await this.tokenPermanentCache.getAllRecords()
+    if (this.cacheTokensAddingPromise) {
+      // protecting agains multiple cache reading
+      return await this.cacheTokensAddingPromise
+    }
+    const cachedRecordsPromise = this.tokenPermanentCache.getAllRecords()
+    this.cacheTokensAddingPromise =
+      cachedRecordsPromise as Promise<unknown> as Promise<void>
+    const cachedRecords = await cachedRecordsPromise
     cachedRecords.forEach((r) => {
       this.addToken(
         new Token({
@@ -100,6 +108,7 @@ export class TokenManager {
         Logger.error(
           this.client.client.chain?.id,
           `Unexisted token request ${address}`,
+          new Error('Stack'),
         )
         return
       }

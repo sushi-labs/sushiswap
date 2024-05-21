@@ -31,6 +31,7 @@ const IslmLogo = 'islm.svg'
 const FilecoinLogo = 'filecoin.svg'
 const ZetaLogo = 'zeta.svg'
 const CroLogo = 'cro.svg'
+
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
   [ChainId.SEPOLIA]: EthereumLogo,
