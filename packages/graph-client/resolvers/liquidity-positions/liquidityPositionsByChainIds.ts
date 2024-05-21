@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
@@ -30,7 +30,7 @@ export const _liquidityPositionsByChainIds = async (
     Query['liquidityPositionsByChainIds'][]
   >([
     ...args.chainIds
-      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
         SUSHISWAP_ENABLED_NETWORKS.includes(el),
       )
       .map((chainId) =>
@@ -40,7 +40,7 @@ export const _liquidityPositionsByChainIds = async (
           context: {
             ...context,
             chainId,
-            url: SUSHISWAP_SUBGRAPH_URL[chainId],
+            url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((liquidityPositions: SushiSwapTypes.LiquidityPosition[]) => {
@@ -58,7 +58,7 @@ export const _liquidityPositionsByChainIds = async (
         }),
       ),
     ...args.chainIds
-      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+      .filter((el): el is (typeof TRIDENT_ENABLED_NETWORKS)[number] =>
         TRIDENT_ENABLED_NETWORKS.includes(el),
       )
       .map((chainId) =>

@@ -2,7 +2,7 @@
 
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
@@ -31,10 +31,9 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          url:
-            SUSHISWAP_SUBGRAPH_URL[
-              args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]
-            ],
+          url: SUSHISWAP_V2_SUBGRAPH_URL[
+            args.chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+          ],
         },
         info,
       })
@@ -47,10 +46,9 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          url:
-            TRIDENT_SUBGRAPH_URL[
-              args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
-            ],
+          url: TRIDENT_SUBGRAPH_URL[
+            args.chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+          ],
         },
         info,
       })

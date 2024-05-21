@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
@@ -36,7 +36,7 @@ export const _tokensByChainIds = async (
   return Promise.all<Query['tokensByChainIds'][]>([
     ...args.chainIds
       .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-      .map((chainId: typeof TRIDENT_ENABLED_NETWORKS[number]) =>
+      .map((chainId: (typeof TRIDENT_ENABLED_NETWORKS)[number]) =>
         context.Trident.Query.tokens({
           root,
           // @ts-ignore
@@ -76,7 +76,7 @@ export const _tokensByChainIds = async (
       ),
     ...args.chainIds
       .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
-      .map((chainId: typeof SUSHISWAP_ENABLED_NETWORKS[number]) =>
+      .map((chainId: (typeof SUSHISWAP_ENABLED_NETWORKS)[number]) =>
         context.SushiSwap.Query.tokens({
           root,
           // @ts-ignore
@@ -93,7 +93,7 @@ export const _tokensByChainIds = async (
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            url: SUSHISWAP_SUBGRAPH_URL[chainId],
+            url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
           },
           info,
           // @ts-ignore

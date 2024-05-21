@@ -1,5 +1,5 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   SushiSwapChainId,
   TRIDENT_SUBGRAPH_URL,
   TridentChainId,
@@ -26,7 +26,7 @@ const getExchangeTokens = async (
   chainId: SushiSwapChainId,
 ): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const url = SUSHISWAP_SUBGRAPH_URL[chainId]
+  const url = SUSHISWAP_V2_SUBGRAPH_URL[chainId]
   if (!url) return []
   const sdk = getBuiltGraphSDK({
     url,

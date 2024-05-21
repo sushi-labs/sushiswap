@@ -1,9 +1,9 @@
 // @ts-nocheck
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_URL
+  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { ChainId } from 'sushi/chain'
@@ -51,21 +51,21 @@ export const _pairsByChainIds = async (
             ...args,
             where: args?.where?.type_in
               ? {
-                ...args.where,
-                type_in: args.where.type_in.filter(
-                  (el) => el === 'CONSTANT_PRODUCT_POOL',
-                ),
-                id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
-              }
+                  ...args.where,
+                  type_in: args.where.type_in.filter(
+                    (el) => el === 'CONSTANT_PRODUCT_POOL',
+                  ),
+                  id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
+                }
               : {
-                ...args.where,
-                id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
-              },
+                  ...args.where,
+                  id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
+                },
           },
           context: {
             ...context,
             chainId,
-            url: SUSHISWAP_SUBGRAPH_URL[chainId],
+            url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((pairs: SushiSwapTypes.Pair[]) => {
@@ -94,7 +94,7 @@ export const _pairsByChainIds = async (
           context: {
             ...context,
             chainId,
-            url: TRIDENT_SUBGRAPH_URL[chainId]
+            url: TRIDENT_SUBGRAPH_URL[chainId],
           },
           info,
         }).then((pairs: TridentTypes.Pair[]) => {

@@ -253,8 +253,6 @@ export const BENTOBOX_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/bentobox-bttc/gn`,
 }
 
-
-
 export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ETHEREUM]: `${DECENTRALIZED_NETWORK_HOST}/236pc6mnPH2EdGJxR5wunibyGsagq1JsSx5e2hx5tdoE`,
   [ChainId.GNOSIS]: `${DECENTRALIZED_NETWORK_HOST}/8ZD25Ff1efVjqHkGmPdgn7oevwe3FkSB7WFygyNEsAco`,
@@ -354,7 +352,6 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/sushiswap-skale-europa`,
 } as const
 
-
 export const SUSHISWAP_V2_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ETHEREUM]: `${DECENTRALIZED_NETWORK_HOST}/GyZ9MgVQkTWuXGMSd3LXESvpevE8S8aD3uktJh7kbVmc`,
   [ChainId.AVALANCHE]: `${DECENTRALIZED_NETWORK_HOST}/5DpWu6oLUEwKYLcya5fJf3MW5CE6yEMnZ8iwekmTNAbV`,
@@ -387,7 +384,6 @@ export const SUSHISWAP_V2_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/sushiswap-skale-europa`,
 } as const
-
 
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-arbitrum-nova/gn`,
@@ -487,7 +483,7 @@ export const FURO_SUBGRAPH_URL: Record<string, string> = {
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/furo-haqq`,
   [ChainId.CORE]: `${CORE_HOST}/sushi-subgraphs/furo-core`,
   [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-subgraphs/furo-thundercore`,
-  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-subgraphs/furo-bttc/gn`
+  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-subgraphs/furo-bttc/gn`,
 } as const
 
 export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
@@ -508,7 +504,7 @@ export const isTridentChain = (chainId: ChainId): chainId is TridentChainId =>
 export const isSushiSwapChain = (
   chainId: ChainId,
 ): chainId is SushiSwapChainId =>
-  Object.keys(SUSHISWAP_SUBGRAPH_URL).map(Number).includes(chainId)
+  Object.keys(SUSHISWAP_V2_SUBGRAPH_URL).map(Number).includes(chainId)
 
 export const isSushiSwapV3Chain = (
   chainId: ChainId,

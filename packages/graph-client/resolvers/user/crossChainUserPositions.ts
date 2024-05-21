@@ -21,7 +21,7 @@ export const crossChainUserPositions: QueryResolvers['crossChainUserPositions'] 
           chainIds: args.chainIds,
           where: {
             user: args.id.toLowerCase(),
-            balance_gt: 0,
+            liquidityTokenBalance_gt: 0,
           },
         }),
         sdk.CrossChainChefUser({

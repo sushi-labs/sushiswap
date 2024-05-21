@@ -2,21 +2,21 @@ fragment TokenFields on Token {
   id
   chainId
   name
-  liquidityUSD
+  # liquidityUSD
   symbol
   decimals
-  volumeUSD
-  feesUSD
-  price {
-    derivedNative
-  }
+  volumeUSD: tradeVolumeUSD
+  # feesUSD
+  # price {
+    # derivedNative
+  # }
 }
 
 query TokensByChainIds(
   $first: Int = 20
   $skip: Int = 0
   $where: Token_filter
-  $orderBy: Token_orderBy = liquidityUSD
+  $orderBy: Token_orderBy = tradeVolumeUSD
   $orderDirection: OrderDirection = desc
   $block: Block_height
   $pagination: Pagination

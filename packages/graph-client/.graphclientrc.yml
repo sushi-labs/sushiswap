@@ -43,10 +43,10 @@ sources:
           includeRootOperations: true
           includeTypes: true
 
-  - name: SushiSwap
+  - name: SushiSwapV2
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/subgraph-qa/sushiswap-ethereum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/v2-arbitrum/version/latest}
         retry: 3
     transforms:
       - rename:
@@ -121,12 +121,12 @@ sources:
       #       - queryFieldName: pairs
       #         keyField: id
 
-  - name: Trident
-    handler:
-      graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-qa/trident-optimism}
-        retry: 3
-    transforms:
+  # - name: Trident
+  #   handler:
+  #     graphql:
+  #       endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-qa/trident-optimism}
+  #       retry: 3
+  #   transforms:
 
   - name: MasterChefV1
     handler:
@@ -250,6 +250,14 @@ additionalTypeDefs: |
   #   combined: BigDecimal!
   # }
 
+  type BucketData {
+    id: ID!
+    date: BigInt!
+    volumeUSD: BigDecimal!
+    liquidityNative: BigDecimal!
+    liquidityUSD: BigDecimal!
+    transactionCount: BigInt!
+  }
   type UserPosition {
     id: ID!
     pool: String!
@@ -312,9 +320,6 @@ additionalTypeDefs: |
   extend type Bundle {
     chainId: BigInt!
   }
-  extend type Factory {
-    chainId: BigInt!
-  }
   extend type SUSHISWAP_V3_Factory {
     chainId: Int!
   }
@@ -325,17 +330,23 @@ additionalTypeDefs: |
     chainId: BigInt!
     source: String!
   }
-  extend type FactoryDaySnapshot {
+  extend type UniswapFactory {
     chainId: BigInt!
   }
   extend type Pair {
     chainId: BigInt!
+    swapFee: BigInt!
     address: String!
+    name: String!
+    liquidity: BigInt!
+    liquidityNative: BigDecimal!
+    liquidityUSD: BigDecimal!
     liquidity1dChange: BigDecimal
     liquidity1wChange: BigDecimal
     volume1d: BigDecimal
     volume1dChange: BigDecimal
     volume1w: BigDecimal
+    feesUSD: BigDecimal!
     fees1d: BigDecimal
     fees1w: BigDecimal
     fees1dChange: BigDecimal
@@ -426,7 +437,7 @@ additionalTypeDefs: |
     ): [Block!]!
     factoriesByChainIds(
       chainIds: [BigInt!]!
-    ): [Factory!]!
+    ): [UniswapFactory!]!
     v3factoriesByChainIds(
       chainIds: [BigInt!]!
     ): [SUSHISWAP_V3_Factory!]!
@@ -556,15 +567,15 @@ additionalTypeDefs: |
       id: ID!
       chainIds: [BigInt!]!
     ): [UserPosition!]!
-    factoryDaySnapshotsByChainIds(
+    uniswapDayDatasByChainIds(
       first: Int
       skip: Int
-      where: FactoryDaySnapshot_filter
-      orderBy: FactoryDaySnapshot_orderBy
+      where: UniswapDayData_filter
+      orderBy: UniswapDayData_orderBy
       orderDirection: OrderDirection
       block: Block_height
       chainIds: [BigInt!]!
-    ): [FactoryDaySnapshot!]!
+    ): [UniswapDayData!]!
     crossChainToken(id: ID! now: Int! chainId: BigInt!): Token!
     crossChainStats(
       first: Int

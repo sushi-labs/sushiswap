@@ -125,86 +125,87 @@ query deprecated_TokensAndBundle(
 #   }
 # }
 
-query CrossChainToken($id: ID!, $now: Int!, $chainId: BigInt!) {
-  crossChainToken(id: $id, now: $now, chainId: $chainId) {
-    id
-    chainId
-    name
-    liquidityUSD
-    symbol
-    decimals
-    volumeUSD
-    feesUSD
-    price {
-      derivedNative
-    }
-    source
-    pairs {
-      pair {
-        chainId
-        liquidityUSD
-        volume1w
-        swapFee
-        token0 {
-          name
-          id
-          decimals
-          symbol
-        }
-        token1 {
-          name
-          id
-          decimals
-          symbol
-        }
-        id
-        apr
-        feeApr
-        daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-          id
-          date
-          volumeUSD
-          apr
-        }
-      }
-    }
-  }
-}
+# query CrossChainToken($id: ID!, $now: Int!, $chainId: BigInt!) {
+#   crossChainToken(id: $id, now: $now, chainId: $chainId) {
+#     id
+#     chainId
+#     name
+#     #liquidityUSD #doesn't exist on v2
+#     symbol
+#     decimals
+#     # volumeUSD
+#     # feesUSD
+#     # price {
+#     #   derivedNative
+#     # }
+#     source
+#     pairs {
+#       pair {
+#         chainId
+#         liquidityUSD: reserveUSD
+#         volume1w
+#         swapFee
+#         token0 {
+#           name
+#           id
+#           decimals
+#           symbol
+#         }
+#         token1 {
+#           name
+#           id
+#           decimals
+#           symbol
+#         }
+#         id
+#         apr
+#         feeApr
+#         # TODO: Fix this
+#         # daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+#         #   id
+#         #   date
+#         #   volumeUSD
+#         #   apr
+#         # }
+#       }
+#     }
+#   }
+# }
 
-query CrossChainStats(
-  $first: Int = 1000
-  $skip: Int = 0
-  $where: Pair_filter
-  $orderBy: Pair_orderBy
-  $orderDirection: OrderDirection
-  $block: Block_height
-  $chainIds: [BigInt!]!
-  $now: Int!
-) {
-  crossChainStats(
-    first: $first
-    skip: $skip
-    where: $where
-    orderBy: $orderBy
-    orderDirection: $orderDirection
-    block: $block
-    chainIds: $chainIds
-    now: $now
-  ) {
-    chainId
-    hourSnapshots(skip: 1, first: 168, orderBy: date, orderDirection: desc) {
-      id
-      date
-      volumeUSD
-      liquidityUSD
-      apr
-    }
-    daySnapshots(skip: 1, first: 730, orderBy: date, orderDirection: desc) {
-      id
-      date
-      volumeUSD
-      liquidityUSD
-      apr
-    }
-  }
-}
+# query CrossChainStats(
+#   $first: Int = 1000
+#   $skip: Int = 0
+#   $where: Pair_filter
+#   $orderBy: Pair_orderBy
+#   $orderDirection: OrderDirection
+#   $block: Block_height
+#   $chainIds: [BigInt!]!
+#   $now: Int!
+# ) {
+#   crossChainStats(
+#     first: $first
+#     skip: $skip
+#     where: $where
+#     orderBy: $orderBy
+#     orderDirection: $orderDirection
+#     block: $block
+#     chainIds: $chainIds
+#     now: $now
+#   ) {
+#     chainId
+#     hourSnapshots(skip: 1, first: 168, orderBy: date, orderDirection: desc) {
+#       id
+#       date
+#       volumeUSD
+#       liquidityUSD
+#       apr
+#     }
+#     daySnapshots(skip: 1, first: 730, orderBy: date, orderDirection: desc) {
+#       id
+#       date
+#       volumeUSD
+#       liquidityUSD
+#       apr
+#     }
+#   }
+# }

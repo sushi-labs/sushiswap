@@ -2,7 +2,7 @@
 
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from 'sushi/validate'
 
@@ -27,7 +27,7 @@ export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] =
             context: {
               ...context,
               chainId,
-              url: SUSHISWAP_SUBGRAPH_URL[chainId],
+              url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
             },
             info,
           }).then((factories: Factory[]) => {

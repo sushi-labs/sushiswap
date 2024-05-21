@@ -1,19 +1,21 @@
 import { chainShortName } from 'sushi/chain'
 
-import type { Pair } from '../.graphclient/index.js'
-import type { Incentive } from '../lib/incentives.js'
+import type { BucketData, Pair } from '../.graphclient/index.js'
 
 export function transformPair({
   pair,
   pair1d,
   pair2d,
   pair1w,
+  hourlyBuckets,
+  dailyBuckets,
 }: {
   pair: Pair
   pair1d?: Pair
   pair2d?: Pair
   pair1w?: Pair
-  incentives?: Incentive[]
+  hourlyBuckets?: BucketData[]
+  dailyBuckets?: BucketData[]
 }) {
   const liquidity1dChange = pair1d
     ? pair.liquidityUSD / pair1d.liquidityUSD - 1
@@ -63,7 +65,10 @@ export function transformPair({
     pair1d && pair2d ? (volume2d / pair1d.liquidityUSD) * 100 : 0
   const utilisation1dChange = (utilisation1d / utilisation2d) * 100 - 100
 
-  const feeApr = pair?.apr
+  // TODO: calculate apr
+  // const feeApr = pair?.apr
+  const feeApr = 0
+
 
   return {
     ...pair,
@@ -85,5 +90,7 @@ export function transformPair({
     utilisation2d,
     utilisation1dChange,
     feeApr,
+    hourSnapshots: hourlyBuckets,
+    daySnapshots: dailyBuckets,
   }
 }

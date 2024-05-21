@@ -2,7 +2,7 @@ import { Prisma, Protocol } from '@sushiswap/database'
 import {
   MAX_FIRST,
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   SUSHISWAP_V3_ENABLED_NETWORKS,
   SUSHISWAP_V3_SUBGRAPH_URL,
   SWAP_ENABLED_NETWORKS,
@@ -122,7 +122,7 @@ function createSubgraphConfig(protocol: Protocol) {
     return SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
       return {
         chainId,
-        url: SUSHISWAP_SUBGRAPH_URL[chainId],
+        url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
         protocol: Protocol.SUSHISWAP_V2,
       }
     })
