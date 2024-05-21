@@ -76,19 +76,33 @@ export abstract class RPool {
     return this.reserve1
   }
 
-  // Returns [<output amount>, <gas consumption estimation>]
-  // Should throw if the rest of liquidity is lesser than minLiquidity
+  // Calculates pool output having amountIn input
+  // Returns [<output amount>, <gas consumption estimation>] for swap
+  // Should throw if the rest of liquidity after swap is lesser than minLiquidity
+  /// @param amountIn - input liquidity amount, wei
+  /// @param direction - true if token0->token1 swap, false otherwise
   abstract calcOutByIn(
     amountIn: number,
     direction: boolean,
   ): { out: number; gasSpent: number }
+
+  // Calculates pool input having amountOut output. Opposite to calcOutByIn
+  // Returns [<input amount>, <gas consumption estimation>]
+  // Should return Number.POSITIVE_INFINITY if pool can't return such amountOut
+  /// @param amountOut - output liquidity amount, wei
+  /// @param direction - true if token0->token1 swap, false otherwise
   abstract calcInByOut(
     amountOut: number,
     direction: boolean,
   ): { inp: number; gasSpent: number }
+
+  // Calculates current pool price without fee
+  /// @param direction - if true then how much token0 wei is in 1 token1 wei
   abstract calcCurrentPriceWithoutFee(direction: boolean): number
 
   // Should return real output, as close to the pool as possible. With rounding. No exceptions
+  /// @param amountIn - input liquidity amount, wei
+  /// @param direction - true if token0->token1 swap, false otherwise
   calcOutByInReal(amountIn: number, direction: boolean): number {
     return this.calcOutByIn(amountIn, direction).out
   }

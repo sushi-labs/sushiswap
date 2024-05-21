@@ -37,11 +37,12 @@ export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
   ChainId.FANTOM,
   ChainId.LINEA,
-  // ChainId.KAVA,
+  ChainId.KAVA,
   // ChainId.METIS,
   ChainId.MOONBEAM,
   ChainId.CELO,
   ChainId.SCROLL,
+  ChainId.FILECOIN,
 ] as const
 
 export type SushiXSwap2ChainId =
@@ -57,11 +58,12 @@ export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.BASE]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.FANTOM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.LINEA]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
-  // [ChainId.KAVA]: '0xD5607d184b1D6ecbA94A07c217497FE9346010D9',
+  [ChainId.KAVA]: '0xD5607d184b1D6ecbA94A07c217497FE9346010D9',
   // [ChainId.METIS]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.MOONBEAM]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.CELO]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.SCROLL]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.FILECOIN]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
 } as const
 
 export const isSushiXSwap2ChainId = (
@@ -112,10 +114,11 @@ export const SQUID_ADAPTER_SUPPORTED_CHAIN_IDS = [
   ChainId.BASE,
   ChainId.FANTOM,
   ChainId.LINEA,
-  // ChainId.KAVA,
+  ChainId.KAVA,
   ChainId.MOONBEAM,
   ChainId.CELO,
   ChainId.SCROLL,
+  ChainId.FILECOIN,
 ] as const
 
 export type SquidAdapterChainId =
@@ -132,10 +135,11 @@ export const SQUID_ADAPTER_ADDRESS: Record<SquidAdapterChainId, `0x${string}`> =
     [ChainId.BASE]: '0xFF51a7C624Eb866917102707F3dA8bFb99Db8692',
     [ChainId.FANTOM]: '0x454714482cA38fBBcE7fC76D96Ba1CE2028A4fF6',
     [ChainId.LINEA]: '0xbF3B71decBCEFABB3210B9D8f18eC22e0556f5F0',
-    // [ChainId.KAVA]: '0xEfb2b93B2a039A227459AAD0572a019Aba8eA69d',
+    [ChainId.KAVA]: '0xEfb2b93B2a039A227459AAD0572a019Aba8eA69d',
     [ChainId.MOONBEAM]: '0x02a480a258361c9Bc3eaacBd6473364C67adCD3a',
     [ChainId.CELO]: '0x02a480a258361c9Bc3eaacBd6473364C67adCD3a',
     [ChainId.SCROLL]: '0x02a480a258361c9Bc3eaacBd6473364C67adCD3a',
+    [ChainId.FILECOIN]: '0xd5607d184b1d6ecba94a07c217497fe9346010d9',
   } as const
 
 export const isSquidAdapterChainId = (

@@ -1,9 +1,10 @@
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { Rebase } from 'sushi'
 import { balanceOfAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { convertTokenToBento } from 'sushi/tines'
-import { BridgeBento, RToken, Rebase } from 'sushi/tines'
+import { BridgeBento, RToken } from 'sushi/tines'
 import { readContracts } from 'wagmi/actions'
 
 export enum BridgeBentoState {

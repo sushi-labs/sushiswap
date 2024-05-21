@@ -189,8 +189,9 @@ export class UniV3PoolWatcher extends EventEmitter {
           if (blockNumber < this.latestEventBlockNumber) continue // later events already have came
 
           if (tickSpacing !== this.spacing)
-            throw new Error(
-              `Wrong spacing. Expected: ${this.spacing}. Real: ${tickSpacing}`,
+            Logger.error(
+              this.client.chainId,
+              `Wrong spacing. Expected: ${this.spacing}, real: ${tickSpacing}, pool: ${this.address}`,
             )
 
           const [sqrtPriceX96, tick] = slot0 as [bigint, number]
@@ -215,6 +216,7 @@ export class UniV3PoolWatcher extends EventEmitter {
             this.emit('isUpdated')
           })
           this.wordLoadManager.onPoolTickChange(this.state.tick, true)
+          this.latestEventBlockNumber = blockNumber
           break
         }
       } catch (e) {
@@ -421,6 +423,31 @@ export class UniV3PoolWatcher extends EventEmitter {
     if (this.lastPoolCode !== undefined) {
       this.lastPoolCode = undefined
       this.emit('PoolCodeWasChanged', this)
+    }
+  }
+
+  debugState(): object {
+    return {
+      address: this.address,
+      token0: `${this.token0.symbol} (${this.token0.address})`,
+      token1: `${this.token1.symbol} (${this.token1.address})`,
+      fee: this.fee,
+      spacing: this.spacing,
+
+      blockNumber: this.state?.blockNumber,
+      reserve0: this.state?.reserve0,
+      reserve1: this.state?.reserve1,
+      tick: this.state?.tick,
+      liquidity: this.state?.liquidity,
+      sqrtPriceX96: this.state?.sqrtPriceX96,
+      latestEventBlockNumber: this.latestEventBlockNumber,
+      status: this.status,
+
+      worlds: Array.from(this.wordLoadManager.words.entries()).map((w) => ({
+        index: w[0],
+        blockNumber: w[1].blockNumber,
+        ticks: w[1].ticks.map((t) => [t.index, t.DLiquidity]),
+      })),
     }
   }
 }

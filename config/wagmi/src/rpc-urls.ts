@@ -59,6 +59,7 @@ export const rpcUrls = {
   ],
   [ChainId.CRONOS]: [`https://lb.drpc.org/ogrpc?network=cronos&dkey=${drpcId}`],
   [ChainId.BLAST]: [`https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`],
+  [ChainId.SKALE_EUROPA]: ['https://mainnet.skalenodes.com/v1/elated-tan-skat'],
 } as const
 
 export type RpcEnabledChainId = keyof typeof rpcUrls

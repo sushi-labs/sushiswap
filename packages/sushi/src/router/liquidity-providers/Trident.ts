@@ -14,11 +14,11 @@ import {
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
 } from '../../config/index.js'
 import { Token } from '../../currency/index.js'
+import { Rebase } from '../../pool/index.js'
 import {
   BridgeBento,
   ConstantProductRPool,
   RToken,
-  Rebase,
   StableSwapRPool,
   convertTokenToBento,
   toShareBI,

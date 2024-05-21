@@ -5,9 +5,8 @@ import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo } from 'react'
-import { unwrapToken } from 'src/lib/functions'
 import { ChainId } from 'sushi/chain'
-import { Type } from 'sushi/currency'
+import { Type, unwrapToken } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
 
 export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =

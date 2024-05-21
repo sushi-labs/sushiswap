@@ -1,12 +1,13 @@
 import { Address } from 'viem'
 import { abs } from '../math/index.js'
+import { Rebase } from '../pool/index.js'
 import { PoolType, RPool, RToken } from './RPool.js'
 import { getBigInt } from './Utils.js'
 
-export interface Rebase {
-  elastic: bigint
-  base: bigint
-}
+// export interface Rebase {
+//   elastic: bigint
+//   base: bigint
+// }
 
 export function toAmountBI(share: bigint, total: Rebase) {
   if (total.base === 0n || total.elastic === 0n) return share

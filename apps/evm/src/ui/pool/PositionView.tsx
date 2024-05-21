@@ -45,14 +45,13 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
-import { Amount } from 'sushi/currency'
+import { Amount, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 import { Bound } from '../../lib/constants'
 import {
   formatTickPrice,
   getPriceOrderingFromPositionForUI,
-  unwrapToken,
 } from '../../lib/functions'
 import { usePriceInverter, useTokenAmountDollarValues } from '../../lib/hooks'
 import { useIsTickAtLimit } from '../../lib/pool/v3'

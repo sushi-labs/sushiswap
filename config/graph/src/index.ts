@@ -54,6 +54,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.LINEA,
   ChainId.POLYGON_ZKEVM,
   ChainId.BLAST,
+  ChainId.SKALE_EUROPA,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -87,6 +88,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.HAQQ,
   ChainId.ZETACHAIN,
   ChainId.BLAST,
+  ChainId.SKALE_EUROPA,
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
@@ -125,6 +127,8 @@ export const GOLDSKY_COMMUNITY_HOST =
   'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
 export const WAGMI_METIS_HOST = 'metis.graph.wagmi.com/subgraphs/name'
 export const METIS_0XGRAPH_HOST = 'metisapi.0xgraph.xyz/subgraphs/name'
+export const SKALE_HOST =
+  'elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name'
 
 export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
@@ -162,6 +166,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.HAQQ]: 'HAQQ',
   [ChainId.ZETACHAIN]: 'ZetaChain',
   [ChainId.BLAST]: 'Blast',
+  [ChainId.SKALE_EUROPA]: 'Skale Europa',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -199,6 +204,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.HAQQ]: HAQQ_HOST,
   [ChainId.ZETACHAIN]: SUSHI_GOLDSKY_HOST,
   [ChainId.BLAST]: SUSHI_DEDICATED_GOLDSKY_HOST,
+  [ChainId.SKALE_EUROPA]: SKALE_HOST,
 } as const
 
 export const BENTOBOX_ENABLED_NETWORKS = [
@@ -278,6 +284,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/blocks-haqq`,
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/blocks-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/blocks-blast/gn`,
+  [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/blocks-skale-europa`,
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -328,7 +335,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BOBA_BNB]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-0m/sushiswap-boba-bnb/gn`,
   [ChainId.BASE]: `${STUDIO_HOST}/sushiswap-base/v0.0.1`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/sushiswap-scroll/v0.0.1`,
-  [ChainId.KAVA]: `${KAVA_HOST}/sushi-v2/sushiswap-kava`,
+  [ChainId.KAVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v2/sushiswap-kava/gn`,
   [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/sushiswap-metis`,
   [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v2/sushiswap-bttc/gn`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/sushiswap-filecoin`,
@@ -339,6 +346,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.LINEA]: `${LINEA_HOST}/sushiswap/sushiswap-linea`,
   [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/v2-polygon-zkevm/v0.0.1`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
+  [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/sushiswap-skale-europa`,
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
@@ -360,13 +368,14 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.BASE]: `${STUDIO_HOST}/v3-base/v0.0.1`,
   [ChainId.LINEA]: `${LINEA_HOST}/sushi-v3/v3-linea`,
   [ChainId.SCROLL]: `${STUDIO_HOST}/v3-scroll/v0.0.1`,
-  [ChainId.KAVA]: `${KAVA_HOST}/sushi-v3/v3-kava`,
+  [ChainId.KAVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-kava/gn`,
   [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/v3-metis`,
   [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-bttc/gn`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/v3-filecoin`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/v3-haqq`,
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/v3-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
+  [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v3-skale-europa`,
 }
 
 export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {

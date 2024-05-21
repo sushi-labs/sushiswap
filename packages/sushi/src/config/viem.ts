@@ -490,6 +490,37 @@ export const blast = {
   },
 } as const
 
+export const skaleEuropa = {
+  id: ChainId.SKALE_EUROPA,
+  name: 'Skale Europa',
+  network: 'skale-europa',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'SKALE Fuel',
+    symbol: 'sFUEL',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.skalenodes.com/v1/elated-tan-skat'],
+    },
+    public: {
+      http: ['https://mainnet.skalenodes.com/v1/elated-tan-skat'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Blockscout',
+      url: 'https://elated-tan-skat.explorer.mainnet.skalenodes.com/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 3113495,
+    },
+  },
+} as const
+
 // const alchemyId =
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
@@ -570,6 +601,9 @@ export const publicTransports = {
   [ChainId.BLAST]: http(
     `https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`,
   ),
+  [ChainId.SKALE_EUROPA]: http(
+    'https://mainnet.skalenodes.com/v1/elated-tan-skat',
+  ),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [ChainId.AVALANCHE_TESTNET]: http(
@@ -616,6 +650,7 @@ export const publicChains = [
   linea,
   base,
   scroll,
+  skaleEuropa,
   filecoin,
   zetachain,
 
@@ -772,6 +807,10 @@ export const publicClientConfig = {
   [ChainId.BLAST]: {
     chain: blast,
     transport: publicTransports[ChainId.BLAST],
+  },
+  [ChainId.SKALE_EUROPA]: {
+    chain: skaleEuropa,
+    transport: publicTransports[ChainId.SKALE_EUROPA],
   },
   /* Testnets */
   [ChainId.ARBITRUM_TESTNET]: {

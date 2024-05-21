@@ -2,6 +2,7 @@ import 'dotenv/config'
 
 import process from 'node:process'
 import * as Sentry from '@sentry/node'
+import { Logger, LogsMessageLevel } from '@sushiswap/extractor'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
@@ -36,7 +37,7 @@ async function start() {
   )
   extractorClient = client
   if (
-    ROUTER_CONFIG[CHAIN_ID]?.['experimantalPriceIncrementalMode'] !== true ||
+    ROUTER_CONFIG[CHAIN_ID]?.['priceIncrementalMode'] === false ||
     ROUTER_CONFIG[CHAIN_ID]?.['checkPricesIncrementalModeCorrectness'] === true
   )
     updatePrices(client)
@@ -45,11 +46,13 @@ async function start() {
   // })
   client.start()
   Sentry.init({
+    sampleRate: 1,
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
     integrations: [
       // enable HTTP calls tracing
       new Sentry.Integrations.Http({
+        breadcrumbs: true,
         tracing: true,
       }),
       // enable Express.js middleware tracing
@@ -58,8 +61,34 @@ async function start() {
       }),
     ],
     // Performance Monitoring
-    tracesSampleRate: 0.1, // Capture 10% of the transactions, reduce in production!,
+    enableTracing: true,
+    tracesSampleRate: 1,
   })
+
+  Logger.setLogsExternalHandler(
+    (
+      msg: string,
+      level: LogsMessageLevel,
+      context?: string,
+      trace_id?: string,
+    ) => {
+      Sentry.captureMessage(
+        msg,
+        context === undefined
+          ? level
+          : {
+              level,
+              contexts: {
+                trace: {
+                  data: { context },
+                  trace_id: trace_id ?? '0',
+                  span_id: '0',
+                },
+              },
+            },
+      )
+    },
+  )
 
   swapRequestStatistics.start()
 
