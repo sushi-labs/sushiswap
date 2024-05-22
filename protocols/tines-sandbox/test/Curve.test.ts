@@ -854,7 +854,7 @@ describe('Real Curve pools consistency check', function () {
     const pools = await collectAllCurvePools(config)
     console.log('    Pools found:', pools.length)
 
-    const start = 50
+    const start = 0
     const finish = pools.length + 1
     let skippedPoolCounter = 0
     pools.forEach((p, i) => {
