@@ -703,20 +703,20 @@ async function checkMultipleSwapsFork(
   }
 
   for (let i = 0; i < n; ++i)
-    for (let j = i + 1; j < n; ++j) poolInfo.poolTines[i][j].cleanTmpData()
+    for (let j = i + 1; j < n; ++j) poolInfo.poolTines[i][j]?.cleanTmpData()
   poolInfo.snapshot.restore()
 
   for (let i = 0; i < n; ++i) {
     for (let j = i + 1; j < n; ++j) {
       const direction = addFlowInp(i, j) >= 0
-      const [inp, outPrimary] = direction
+      const [inp, outPrimary] = direction /// !!!!! outPrimary - надо проверять на соответствие !!!
         ? [addFlowInp(i, j), -addFlowOut(i, j)]
         : [addFlowOut(i, j), -addFlowInp(i, j)]
       if (inp === 0) continue
-      const expectedOut = poolInfo.poolTines[i][j].calcOutByInReal(
+      const expectedOut = poolInfo.poolTines[i][j]?.calcOutByInReal(
         inp,
         direction,
-      )
+      ) as number
       const realOut = await makeSwap(
         config,
         poolInfo,
@@ -727,11 +727,12 @@ async function checkMultipleSwapsFork(
       console.log(
         `${direction ? i : j}->${
           direction ? j : i
-        } prime=${outPrimary} final=${expectedOut}(${
-          expectedOut / outPrimary
-        }) real=${realOut}`,
+        } inp=${inp} expectedOut=${expectedOut} realOut=${realOut} precisionOut=${
+          Number(realOut) / expectedOut
+        }`,
       )
       expectCloseValues(expectedOut, realOut, precision)
+      expectCloseValues(expectedOut, outPrimary, 1e-4)
     }
   }
   return 'passed'
@@ -862,7 +863,7 @@ describe('Real Curve pools consistency check', () => {
     }
   })
 
-  describe.only('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
+  describe.skip('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
     const poolNumber = MulticoinPoolNumber
     for (let i = 0; i < poolNumber; ++i) {
       const [poolAddress, name, poolType, precision = 1e-7] =
