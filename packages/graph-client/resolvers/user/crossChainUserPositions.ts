@@ -21,7 +21,7 @@ export const crossChainUserPositions: QueryResolvers['crossChainUserPositions'] 
           chainIds: args.chainIds,
           where: {
             user: args.id.toLowerCase(),
-            liquidityTokenBalance_gt: 0,
+            // liquidityTokenBalance_gt: 0,
           },
         }),
         sdk.CrossChainChefUser({
@@ -43,7 +43,7 @@ export const crossChainUserPositions: QueryResolvers['crossChainUserPositions'] 
     // Subgraph is unreliable currently, have to fetch from the chain directly
     const unstakedBalances = await fetchBalances(
       liquidityPositions.map((lp) => ({
-        token: lp.id.split('-')[0],
+        token: lp.id.slice(0, 42),
         chainId: lp.chainId,
         user: args.id,
       })),

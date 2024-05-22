@@ -1,7 +1,7 @@
 fragment LiquidityPositionFields on LiquidityPosition {
   id
   chainId
-  balance: liquidityTokenBalance
+  liquidityTokenBalance
   user {
     ...UserFields
   }

@@ -7,15 +7,15 @@ export function transformPair({
   pair1d,
   pair2d,
   pair1w,
-  hourSnapshots,
-  daySnapshots,
+  // hourSnapshots,
+  // daySnapshots,
 }: {
   pair: Pair
   pair1d?: Pair
   pair2d?: Pair
   pair1w?: Pair
-  hourSnapshots: BucketData[]
-  daySnapshots: BucketData[]
+  // hourSnapshots: BucketData[]
+  // daySnapshots: BucketData[]
 }) {
   const liquidity1dChange = pair1d
     ? pair.liquidityUSD / pair1d.liquidityUSD - 1
@@ -89,7 +89,7 @@ export function transformPair({
     utilisation2d,
     utilisation1dChange,
     feeApr,
-    hourSnapshots,
-    daySnapshots,
+    // hourSnapshots,
+    // daySnapshots,
   }
 }

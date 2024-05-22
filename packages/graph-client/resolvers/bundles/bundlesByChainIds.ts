@@ -44,7 +44,7 @@ export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (
         SUSHISWAP_ENABLED_NETWORKS.includes(el),
       )
       .map((chainId) =>
-        context.SushiSwap.Query.bundles({
+        context.SushiSwapV2.Query.bundles({
           root,
           args,
           context: {

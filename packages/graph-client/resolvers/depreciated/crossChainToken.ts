@@ -22,7 +22,7 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
   )
 
   const token: Token = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
-    ? await context.SushiSwap.Query.token({
+    ? await context.SushiSwapV2.Query.token({
         root,
         args,
         context: {

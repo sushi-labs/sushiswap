@@ -67,6 +67,7 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
       chainId,
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
+  console.log({reserves, fiatValues})
 
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">

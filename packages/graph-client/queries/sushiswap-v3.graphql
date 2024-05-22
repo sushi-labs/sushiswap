@@ -106,6 +106,46 @@ query SushiSwapV3Pool(
 
     createdAtTimestamp
     createdAtBlockNumber
+  }
+}
+
+query SushiSwapV3PoolWithBuckets(
+    $id: ID!
+    $block: SUSHISWAP_V3_Block_height,
+    $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  pool: SUSHISWAP_V3_pool(
+    id: $id,
+    block: $block, 
+    subgraphError: $subgraphError
+  ) {
+    id
+    token0 {
+      id
+      symbol
+      name
+      decimals
+    }
+    token1 {
+      id
+      symbol
+      name
+      decimals
+    }
+    feeTier
+    liquidity
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    feesUSD
+    txCount
+    totalValueLockedToken0
+    totalValueLockedToken1
+    totalValueLockedETH
+    totalValueLockedUSD
+
+    createdAtTimestamp
+    createdAtBlockNumber
 
     poolHourData(first: 168, orderBy: periodStartUnix, orderDirection: desc) {
       id
