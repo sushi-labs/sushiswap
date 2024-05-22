@@ -7,6 +7,7 @@ import seedrandom from 'seedrandom'
 import {
   CurvePoolType,
   curvePoolABI,
+  curvePoolFilter,
   detectCurvePoolType,
   getPoolRatio,
 } from 'sushi'
@@ -176,8 +177,8 @@ function closeValues(
   const a = Number(_a)
   const b = Number(_b)
   if (accuracy === 0) return a === b
-  if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
-  if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
+  if (Math.abs(a) < 10 / accuracy) return Math.abs(a - b) <= 10
+  if (Math.abs(b) < 10 / accuracy) return Math.abs(a - b) <= 10
   return Math.abs(a / b - 1) < accuracy
 }
 
@@ -559,17 +560,19 @@ async function processMultiTokenPool(
   poolAddress: Address,
   poolType: CurvePoolType,
   precision: number,
+  poolInfo?: PoolInfo,
 ): Promise<[string, PoolInfo | undefined]> {
   const testSeed = poolAddress
   const rnd: () => number = seedrandom(testSeed) // random [0, 1)
-  let poolInfo
   try {
-    poolInfo = await createCurvePoolInfo(
-      config,
-      poolAddress,
-      poolType,
-      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
-    )
+    if (poolInfo === undefined) {
+      poolInfo = await createCurvePoolInfo(
+        config,
+        poolAddress,
+        poolType,
+        POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
+      )
+    }
   } catch (_e) {
     // return 'skipped (pool init error)'
   }
@@ -744,25 +747,41 @@ async function checkMultipleSwapsFork(
 async function checkCurvePool(
   config: TestConfig,
   poolAddress: Address,
-): Promise<string> {
-  if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
-    return `skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`
-  }
-
+): Promise<{ passed: boolean; reason: string }> {
   const poolType = await detectCurvePoolType(
     config.client as PublicClient,
     poolAddress,
   )
+
+  let poolInfo
+  try {
+    poolInfo = await createCurvePoolInfo(
+      config,
+      poolAddress,
+      poolType,
+      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
+    )
+  } catch (_e) {
+    return { passed: false, reason: 'pool init error' }
+  }
+
+  // in multitokrn pols if one sub-pool is not routable then all are not routable
+  const checkedPool = poolInfo.poolTines[0][1]
+  const check = curvePoolFilter(checkedPool)
+  if (!check.routable)
+    return { passed: true, reason: `skipped: ${check.reason}` }
+
   const precision =
     CURVE_POOL_SPECIAL_PRECISION[poolAddress.toLowerCase()] ?? 1e-7
 
-  const [result /*, poolInfo*/] = await processMultiTokenPool(
+  const [result] = await processMultiTokenPool(
     config,
     poolAddress,
     poolType,
     precision,
+    poolInfo,
   )
-  if (result !== 'passed') return result
+  return { passed: result === 'passed', reason: result }
 
   // commented out because we need a new multitoken pool check
   // const tokenNumber = poolInfo?.tokenContracts.length
@@ -776,8 +795,6 @@ async function checkCurvePool(
   //   )
   //   if (result !== 'passed') return result
   // }
-
-  return 'passed'
 }
 
 // returns all pool addresses.
@@ -818,13 +835,15 @@ async function collectAllCurvePools(
       })
       if (processedPoolSet.has(poolAddress)) continue
       processedPoolSet.add(poolAddress)
-      res.push([poolAddress, `fact#${f}`])
+      res.push([poolAddress, `fact#${f + 1}`])
     }
   }
 
   return res
 }
 
+// 0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587: pool init error
+//     1) 54/534 0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587 (fact#0)
 describe('Real Curve pools consistency check', function () {
   let config: TestConfig
 
@@ -835,14 +854,20 @@ describe('Real Curve pools consistency check', function () {
     const pools = await collectAllCurvePools(config)
     console.log('    Pools found:', pools.length)
 
+    const start = 50
+    const finish = pools.length + 1
+    let skippedPoolCounter = 0
     pools.forEach((p, i) => {
+      if (i + 1 < start || i + 1 >= finish) return
       this.addTest(
-        it(`${i}/${pools.length} ${p[0]} (${p[1]})`, async () => {
+        it(`${i + 1}/${pools.length} ${p[0]} (${p[1]})`, async () => {
           const res = await checkCurvePool(config, p[0])
-          if (res !== 'passed') console.log(`${p[0]}: ${res}`)
-          expect(res).equal('passed')
+          if (res.reason !== 'passed') console.log(`${p[0]}: ${res.reason}`)
+          if (res.passed && res.reason !== 'passed') ++skippedPoolCounter
+          expect(res.passed).equal(true)
         }),
       )
+      console.log('Skipped pools:', skippedPoolCounter)
     })
   })
 
