@@ -143,6 +143,18 @@ export async function getPoolRatio(
 }
 
 // should a pool or not participate in routing
+export function curvePoolFilterByAddress(pool: Address): {
+  routable: boolean
+  reason: string
+} {
+  const check = _curvePoolFilterByAddress(pool)
+  return {
+    routable: check === '',
+    reason: check,
+  }
+}
+
+// should a pool or not participate in routing
 export function curvePoolFilter(pool: RPool): {
   routable: boolean
   reason: string
@@ -150,13 +162,13 @@ export function curvePoolFilter(pool: RPool): {
   const check = _curvePoolFilter(pool)
   return {
     routable: check === '',
-    reason: 'low liquidity',
+    reason: check,
   }
 }
 
 // should a pool or not participate in routing
-function _curvePoolFilter(pool: RPool): string {
-  switch (pool.address) {
+function _curvePoolFilterByAddress(pool: Address): string {
+  switch (pool) {
     case '0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587':
       return 'STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/'
     case '0x064841157BadDcB2704cA38901D7d754a59b80E8':
@@ -200,6 +212,13 @@ function _curvePoolFilter(pool: RPool): string {
     case '0x50B0D9171160d6EB8Aa39E090Da51E7e078E81c4': // 249/534
       return 'Temporary unsupported: pool init error'
   }
+  return ''
+}
+
+// should a pool or not participate in routing
+function _curvePoolFilter(pool: RPool): string {
+  const addrCheck = _curvePoolFilterByAddress(pool.address)
+  if (addrCheck !== '') return addrCheck
   const res0 = Number(pool.reserve0) / 10 ** pool.token0.decimals
   const res1 = Number(pool.reserve1) / 10 ** pool.token1.decimals
   if (res0 < 1 || res1 < 1) return 'low liquidity'

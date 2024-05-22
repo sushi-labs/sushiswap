@@ -8,6 +8,7 @@ import {
   CurvePoolType,
   curvePoolABI,
   curvePoolFilter,
+  curvePoolFilterByAddress,
   detectCurvePoolType,
   getPoolRatio,
 } from 'sushi'
@@ -748,6 +749,10 @@ async function checkCurvePool(
   config: TestConfig,
   poolAddress: Address,
 ): Promise<{ passed: boolean; reason: string }> {
+  const check1 = curvePoolFilterByAddress(poolAddress)
+  if (!check1.routable)
+    return { passed: true, reason: `skipped: ${check1.reason}` }
+
   const poolType = await detectCurvePoolType(
     config.client as PublicClient,
     poolAddress,
@@ -767,9 +772,9 @@ async function checkCurvePool(
 
   // in multitokrn pols if one sub-pool is not routable then all are not routable
   const checkedPool = poolInfo.poolTines[0][1]
-  const check = curvePoolFilter(checkedPool)
-  if (!check.routable)
-    return { passed: true, reason: `skipped: ${check.reason}` }
+  const check2 = curvePoolFilter(checkedPool)
+  if (!check2.routable)
+    return { passed: true, reason: `skipped: ${check2.reason}` }
 
   const precision =
     CURVE_POOL_SPECIAL_PRECISION[poolAddress.toLowerCase()] ?? 1e-7
