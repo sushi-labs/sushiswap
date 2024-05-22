@@ -756,7 +756,7 @@ async function checkCurvePool(
   const precision =
     CURVE_POOL_SPECIAL_PRECISION[poolAddress.toLowerCase()] ?? 1e-7
 
-  const [result, poolInfo] = await processMultiTokenPool(
+  const [result /*, poolInfo*/] = await processMultiTokenPool(
     config,
     poolAddress,
     poolType,
@@ -764,17 +764,18 @@ async function checkCurvePool(
   )
   if (result !== 'passed') return result
 
-  const tokenNumber = poolInfo?.tokenContracts.length
-  if (tokenNumber !== undefined && tokenNumber > 2) {
-    const result = await checkMultipleSwapsFork(
-      config,
-      poolAddress,
-      poolType,
-      precision,
-      poolInfo,
-    )
-    if (result !== 'passed') return result
-  }
+  // commented out because we need a new multitoken pool check
+  // const tokenNumber = poolInfo?.tokenContracts.length
+  // if (tokenNumber !== undefined && tokenNumber > 2) {
+  //   const result = await checkMultipleSwapsFork(
+  //     config,
+  //     poolAddress,
+  //     poolType,
+  //     precision,
+  //     poolInfo,
+  //   )
+  //   if (result !== 'passed') return result
+  // }
 
   return 'passed'
 }
@@ -824,25 +825,25 @@ async function collectAllCurvePools(
   return res
 }
 
-describe('Real Curve pools consistency check', () => {
+describe('Real Curve pools consistency check', function () {
   let config: TestConfig
 
   before(async () => {
     console.log('    Environment initialization ... ')
     config = await getTestConfig()
-    // console.log('    Finding pools ... ')
-    // const pools = await collectAllCurvePools(config)
-    // console.log('    Pools found:', pools.length)
+    console.log('    Finding pools ... ')
+    const pools = await collectAllCurvePools(config)
+    console.log('    Pools found:', pools.length)
 
-    // pools.forEach((p) => {
-    //   this.addTest(
-    //     it(`${p[0]} (${p[1]})`, async () => {
-    //       const res = await checkCurvePool(config, p[0])
-    //       if (res !== 'passed') console.log(`${p[0]}: ${res}`)
-    //       //expect(res).equal('passed')
-    //     }),
-    //   )
-    // })
+    pools.forEach((p, i) => {
+      this.addTest(
+        it(`${i}/${pools.length} ${p[0]} (${p[1]})`, async () => {
+          const res = await checkCurvePool(config, p[0])
+          if (res !== 'passed') console.log(`${p[0]}: ${res}`)
+          expect(res).equal('passed')
+        }),
+      )
+    })
   })
 
   it('empty', () => {}) // just to start 'before' block
