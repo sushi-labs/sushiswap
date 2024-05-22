@@ -26,7 +26,6 @@ interface PoolChartProps {
     | PoolChartType.Volume
     | PoolChartType.Fees
     | PoolChartType.TVL
-    | PoolChartType.APR
   period: PoolChartPeriod
   address: string
   chainId: ChainId
@@ -64,9 +63,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
             acc[1].push(Number(cur.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
             acc[1].push(Number(cur.liquidityUSD))
-          } else if (chart === PoolChartType.APR) {
-            acc[1].push(Number(cur.apr))
-          }
+          } 
         }
         return acc
       },

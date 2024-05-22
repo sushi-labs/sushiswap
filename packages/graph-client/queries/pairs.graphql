@@ -3,7 +3,7 @@ fragment PairFields on Pair {
   chainId
   address
   # type
-  # swapFee EXTEND..
+  swapFee
   # twapEnabled
   name
   token0 {
@@ -22,9 +22,12 @@ fragment PairFields on Pair {
   createdAtTimestamp
   reserve0
   reserve1
-  liquidity: totalSupply
-  liquidityUSD: reserveUSD
-  liquidityNative: reserveETH
+  totalSupply
+  reserveUSD
+  reserveETH
+  liquidity
+  liquidityUSD
+  liquidityNative
   # token0Price
   # token1Price
   volumeUSD
@@ -32,6 +35,23 @@ fragment PairFields on Pair {
   volumeToken1
   feesUSD
   txCount
+
+  hourSnapshots {
+    id
+    date
+    volumeUSD
+    liquidityUSD
+    liquidityNative   
+    transactionCount
+  }
+  daySnapshots {
+    id
+    date
+    volumeUSD
+    liquidityUSD
+    liquidityNative   
+    transactionCount
+  }
 }
 
 fragment TimeTravelPairFields on Pair {
@@ -100,7 +120,7 @@ query PairsByChainIds(
 }
 
 
-query SushiSwapV2PoolHourData($first: Int = 1000, $skip: Int, $orderBy: PairHourData_orderBy, $orderDirection: OrderDirection, $where: PairHourData_filter) {
+query V2PoolHourData($first: Int = 1000, $skip: Int, $orderBy: PairHourData_orderBy, $orderDirection: OrderDirection, $where: PairHourData_filter) {
   pairHourDatas: pairHourDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
     id
     hourStartUnix
@@ -121,7 +141,7 @@ query SushiSwapV2PoolHourData($first: Int = 1000, $skip: Int, $orderBy: PairHour
 }
 
 
-query SushiSwapV2PoolDayData($first: Int = 1000, $skip: Int, $orderBy: PairDayData_orderBy, $orderDirection: OrderDirection, $where: PairDayData_filter) {
+query V2PoolDayData($first: Int = 1000, $skip: Int, $orderBy: PairDayData_orderBy, $orderDirection: OrderDirection, $where: PairDayData_filter) {
   pairDayDatas: pairDayDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
     id
     date

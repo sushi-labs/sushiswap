@@ -357,6 +357,8 @@ additionalTypeDefs: |
     txCount1dChange: BigDecimal
     txCount1w: BigDecimal
     feeApr: BigDecimal
+    daySnapshots: [BucketData]!
+    hourSnapshots: [BucketData]!
   }
   extend type LiquidityPosition {
     chainId: BigInt!

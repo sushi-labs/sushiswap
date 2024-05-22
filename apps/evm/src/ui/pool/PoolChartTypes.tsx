@@ -5,7 +5,6 @@ export enum PoolChartType {
   Volume = 'Volume',
   TVL = 'TVL',
   Fees = 'Fees',
-  APR = 'APR',
   Depth = 'Depth',
 }
 

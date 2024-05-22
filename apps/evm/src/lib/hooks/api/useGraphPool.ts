@@ -21,7 +21,6 @@ export const useGraphPool = (pool: Pool) => {
   } = useSWR<Pair>(getGraphPoolUrl(pool.id), async (url) =>
     fetch(url).then((data) => data.json()),
   )
-  console.log({graphPool})
 
   const { token0, token1, liquidityToken } = useTokensFromPool(pool)
 

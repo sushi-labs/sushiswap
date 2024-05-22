@@ -5,23 +5,19 @@ import {
   SUSHISWAP_V2_SUBGRAPH_URL,
   SUSHISWAP_V3_ENABLED_NETWORKS,
   SUSHISWAP_V3_SUBGRAPH_URL,
-  TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { chainName, chainShortNameToChainId } from 'sushi/chain'
+import { withoutScientificNotation } from 'sushi/format'
 import { isPromiseFulfilled } from 'sushi/validate'
-
 import {
   BucketData,
   Pair,
   QueryResolvers,
   getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
-import { SushiSwapV3Types } from '../../.graphclient/sources/SushiSwapV3/types.js'
 import { SushiSwapV2Types } from '../../.graphclient/sources/SushiSwapV2/types.js'
+import { SushiSwapV3Types } from '../../.graphclient/sources/SushiSwapV3/types.js'
 import { transformPair } from '../../transformers/index.js'
-import { tr } from 'date-fns/locale'
 
 const sdk = getBuiltGraphSDK()
 
@@ -40,10 +36,20 @@ const transformV3PoolToPair = (
   token0: pool.token0,
   token1: pool.token1,
   source: 'SUSHISWAP_V3',
-  reserve0: (Number(pool.totalValueLockedToken0) * 10 ** pool.token0.decimals)
+  reserve0: withoutScientificNotation(
+    (
+      Number(pool.totalValueLockedToken0) *
+      10 ** pool.token0.decimals
+    ).toFixed(),
+  )
     .toString()
     .split('.')[0],
-  reserve1: (Number(pool.totalValueLockedToken1) * 10 ** pool.token1.decimals)
+  reserve1: withoutScientificNotation(
+    (
+      Number(pool.totalValueLockedToken1) *
+      10 ** pool.token1.decimals
+    ).toFixed(),
+  )
     .toString()
     .split('.')[0],
   liquidity: pool.liquidity,
@@ -131,15 +137,21 @@ export const pairById: QueryResolvers['pairById'] = async (
         type: 'ALL',
         swapFee: 30,
         twapEnabled: true,
-        reserve0: (Number(pair.reserve0) * 10 ** pair.token0.decimals)
+        reserve0: withoutScientificNotation(
+          (Number(pair.reserve0) * 10 ** pair.token0.decimals).toFixed(),
+        )
           .toString()
           .split('.')[0],
-        reserve1: (Number(pair.reserve1) * 10 ** pair.token1.decimals)
+        reserve1: withoutScientificNotation(
+          (Number(pair.reserve1) * 10 ** pair.token1.decimals).toFixed(),
+        )
           .toString()
           .split('.')[0],
         name: pair.token0.symbol + '-' + pair.token1.symbol,
         source: 'SUSHISWAP_V2',
-        liquidity: (Number(pair.totalSupply) * 10 ** 18)
+        liquidity: withoutScientificNotation(
+          (Number(pair.totalSupply) * 10 ** 18).toFixed(),
+        )
           .toString()
           .split('.')[0],
         liquidityUSD: pair.reserveUSD,
@@ -150,75 +162,55 @@ export const pairById: QueryResolvers['pairById'] = async (
       }
     })
 
-  // const fetchV2DayBuckets = async () =>
-  //   context.SushiSwapV2.Query.SushiSwapV2PoolDayDataQuery({
-  //     root,
-  //     args: {
-  //       ...args,
-  //       id: address.toLowerCase(),
-  //       where: {
-  //         pairAddress: address.toLowerCase(),
-  //       },
-  //       orderBy: 'date',
-  //       orderDirection: 'desc',
-  //     },
-  //     context: {
-  //       ...context,
-  //       now,
-  //       chainId,
-  //       chainName: chainName[chainId],
-  //       chainShortName: chainShortName[chainId],
-  //       url: SUSHISWAP_V2_SUBGRAPH_URL[
-  //         chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
-  //       ],
-  //     },
-  //     info,
-  //   }).then((bucket: SushiSwapTypes.SushiSwapV2PoolDayData | null) => {
-  //     if (!bucket) return bucket
-  //     return {
-  //       id: bucket.id,
-  //       date: bucket.date,
-  //       volumeUSD: bucket.volumeUSD,
-  //       liquidityUSD: bucket.liquidityUSD,
-  //       liquidityNative: 0,
-  //       transactionCount: bucket.hourlyTxns,
-  //     }
-  //   })
+  const fetchV2DayBuckets = async () => {
+    const sdk = getBuiltGraphSDK({
+      url: SUSHISWAP_V2_SUBGRAPH_URL[
+        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+      ],
+    })
 
-  // const fetchV2DayHourBuckets = async () =>
-  //   context.SushiSwapV2.Query.SushiSwapV2PoolHourDataQuery({
-  //     root,
-  //     args: {
-  //       ...args,
-  //       id: address.toLowerCase(),
-  //       where: {
-  //         pairAddress: address.toLowerCase(),
-  //       },
-  //       orderBy: 'date',
-  //       orderDirection: 'desc',
-  //     },
-  //     context: {
-  //       ...context,
-  //       now,
-  //       chainId,
-  //       chainName: chainName[chainId],
-  //       chainShortName: chainShortName[chainId],
-  //       url: SUSHISWAP_V2_SUBGRAPH_URL[
-  //         chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
-  //       ],
-  //     },
-  //     info,
-  //   }).then((bucket: SushiSwapTypes.SushiSwapV2PoolHourDataQuery | null) => {
-  //     if (!bucket) return bucket
-  //     return {
-  //       id: bucket.id,
-  //       date: bucket.date,
-  //       volumeUSD: bucket.volumeUSD,
-  //       liquidityUSD: bucket.liquidityUSD,
-  //       liquidityNative: 0,
-  //       transactionCount: bucket.hourlyTxns,
-  //     }
-  //   })
+    const { pairDayDatas } = await sdk.V2PoolDayData({
+      first: 730,
+      where: {
+        pairAddress: address.toLowerCase(),
+      },
+      orderBy: 'date',
+      orderDirection: 'desc',
+    })
+    return pairDayDatas.map((bucket) => ({
+      id: bucket.id,
+      date: bucket.date,
+      volumeUSD: bucket.dailyVolumeUSD,
+      liquidityUSD: bucket.reserveUSD,
+      liquidityNative: 0,
+      transactionCount: bucket.dailyTxns,
+    }))
+  }
+
+  const fetchV2DayHourBuckets = async () => {
+    const sdk = getBuiltGraphSDK({
+      url: SUSHISWAP_V2_SUBGRAPH_URL[
+        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+      ],
+    })
+
+    const { pairHourDatas } = await sdk.V2PoolHourData({
+      first: 168,
+      where: {
+        pair: address.toLowerCase(),
+      },
+      orderBy: 'hourStartUnix',
+      orderDirection: 'desc',
+    })
+    return pairHourDatas.map((bucket) => ({
+      id: bucket.id,
+      date: bucket.hourStartUnix,
+      volumeUSD: bucket.hourlyVolumeUSD,
+      liquidityUSD: bucket.reserveUSD,
+      liquidityNative: 0,
+      transactionCount: bucket.hourlyTxns,
+    }))
+  }
 
   const fetchSushiSwapV3Pair = async (block?: { number: number }) => {
     const sdk = getBuiltGraphSDK({
@@ -236,7 +228,7 @@ export const pairById: QueryResolvers['pairById'] = async (
   }
 
   // const fetchIsV2Pool = async() =>
-  //   context.SushiSwap.Query.PairOnlyId({
+  //   context.SushiSwapV2.Query.PairOnlyId({
   //     root,
   //     args: { ...args, id: address.toLowerCase() },
   //     context: {
@@ -274,43 +266,37 @@ export const pairById: QueryResolvers['pairById'] = async (
     })
   }
 
-  // const bucketFetcher = async (isV2: boolean) => {
-  //   const fetches: ReturnType<typeof fetchSushiSwapPair>[] = []
+  const bucketFetcher = async (isV2: boolean) => {
+    // const fetches: ReturnType<BucketData>[] = []
 
-  //   if (isV2 && SUSHISWAP_ENABLED_NETWORKS.includes(chainId)) {
-  //     fetches.push(fetchV2DayHourBuckets())
-  //     fetches.push(fetchV2DayBuckets())
-  //   }
+    if (isV2 && SUSHISWAP_ENABLED_NETWORKS.includes(chainId)) {
+      // fetches.push(fetchV2DayHourBuckets())
+      // fetches.push(fetchV2DayBuckets())
+      const [ hourSnapshots, daySnapshots ] = await Promise.all([
+        fetchV2DayHourBuckets(),
+        fetchV2DayBuckets(),
+      ])
+      return { hourSnapshots, daySnapshots }
+    }
 
-  //   // if (!isV2 && SUSHISWAP_V3_ENABLED_NETWORKS.includes(chainId)) {
-  //   //   fetches.push(fetchV3DayHourBuckets())
-  //   //   fetches.push(fetchV3DayBuckets())
-  //   // }
+    // if (!isV2 && SUSHISWAP_V3_ENABLED_NETWORKS.includes(chainId)) {
+    //   fetches.push(fetchV3DayHourBuckets())
+    //   fetches.push(fetchV3DayBuckets())
+    // }
 
-  //   const [hourSnapshots, daySnapshots] = await Promise.all(
-  //     fetches,
-  //   )
-  //   // .then((results) => {
-  //   //   return results.map((result) => result?.status === 'fulfilled')
-  //   //     ? result.value
-  //   //     : []
-  //   // })
-
-  //   return { hourSnapshots, daySnapshots }
-  // }
+  }
 
   // ping and check if the pair exists in V2, if not assume it's v3
 
   // const isPoolV2 = await fetchIsV2Pool()
   // console.log({ isPoolV2 })
-  const [pair, pair1d, pair2d, pair1w] = await Promise.all([
+  const [pair, pair1d, pair2d, pair1w, buckets] = await Promise.all([
     poolFetcher(true),
     poolFetcher(true, oneDayBlock),
     poolFetcher(true, twoDayBlock),
     poolFetcher(true, oneWeekBlock),
-    // bucketFetcher(isPoolV2),
+    bucketFetcher(true),
   ])
-  console.log({ pair })
   if (!pair) return null
 
   return transformPair({
@@ -318,7 +304,7 @@ export const pairById: QueryResolvers['pairById'] = async (
     pair1d,
     pair2d,
     pair1w,
-    // hourlyBuckets: buckets.hourSnapshots,
-    // dailyBuckets: buckets.daySnapshots,
+    daySnapshots: buckets.daySnapshots,
+    hourSnapshots: buckets.hourSnapshots,
   })
 }
