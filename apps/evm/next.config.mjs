@@ -2,12 +2,15 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
+import withBundleAnalyzer from '@next/bundle-analyzer'
+const bundleAnalyzer = withBundleAnalyzer({ enabled: true })
+
 const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
 const BLOG_URL = process.env.BLOG_URL || 'https://blog.sushi.com'
 const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
   logging: {
     fetches: {
@@ -95,7 +98,7 @@ const nextConfig = {
   //   widenClientFileUpload: true,
   //   automaticVercelMonitors: true,
   // },
-}
+})
 
 /** @type {import('@sentry/nextjs').SentryWebpackPluginOptions} */
 // const sentryWebpackPluginOptions = {

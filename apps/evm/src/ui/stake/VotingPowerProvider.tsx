@@ -1,6 +1,5 @@
 'use client'
 
-import snapshot from '@snapshot-labs/snapshot.js'
 import {
   MASTERCHEF_ADDRESS,
   useAccount,
@@ -88,6 +87,9 @@ export const VotingPowerProvider: FC<{
     queryKey: ['snapshot-scores', address],
     queryFn: async () => {
       if (!address) throw new Error()
+
+      // The import is unnecessarily big and gets bundled with the whole app
+      const snapshot = (await import('@snapshot-labs/snapshot.js')).default
 
       const resp = await snapshot.utils.getVp(
         address,

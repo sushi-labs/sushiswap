@@ -180,19 +180,6 @@ sources:
       graphql:
         endpoint: https://{context.node:api.thegraph.com/index-node/graphql}
 
-  - name: Concentrated
-    handler:
-      graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/uniswap/uniswap-v3}
-        retry: 3
-    transforms:
-      - prefix:
-          value: CONCENTRATED_
-          includeRootOperations: true
-          includeTypes: true
-          ignore:
-            - _SubgraphErrorPolicy_
-
   - name: SushiSwapV3
     handler:
       graphql:
@@ -532,15 +519,10 @@ additionalTypeDefs: |
       block: Block_height
     ): [Token!]!
 
-    # CONCENTRADED
-    ticksById(
-      id: ID!
-    ): [CONCENTRATED_Tick!]!
-
     poolsByTokenPair(
       tokenId0: String!
       tokenId1: String!
-    ): [CONCENTRATED_Pool!]!
+    ): [SUSHISWAP_V3_Pool!]!
 
     # TODO: REFACTOR BELOW
     crossChainChefUser(

@@ -1,6 +1,4 @@
-import {
-  SUSHISWAP_V3_SUBGRAPH_URL
-} from '@sushiswap/graph-config'
+import { SUSHISWAP_V3_SUBGRAPH_URL } from '@sushiswap/graph-config'
 
 import { Query, QueryResolvers } from '../../.graphclient/index.js'
 
@@ -19,7 +17,7 @@ export const poolsByTokenPair: QueryResolvers['poolsByTokenPair'] = async (
   const tokenAddresses = [tokenAddress0, tokenAddress1].sort()
 
   const fetch = (lastId: string) =>
-    context.Concentrated.Query.CONCENTRATED_pools({
+    context.SushiSwapV3.Query.SUSHISWAP_V3_pools({
       root,
       args: {
         first: MAX_FIRST,
@@ -34,7 +32,7 @@ export const poolsByTokenPair: QueryResolvers['poolsByTokenPair'] = async (
       context: {
         ...context,
         chainId: Number(chainId),
-        url: SUSHISWAP_V3_SUBGRAPH_URL[chainId]
+        url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
       },
       info,
     })
