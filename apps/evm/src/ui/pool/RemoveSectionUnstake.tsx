@@ -17,14 +17,14 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
-import { useMasterChefWithdraw } from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
-import { withCheckerRoot } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useMemo, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { ZERO } from 'sushi/math'
 import { useSWRConfig } from 'swr'
 
+import { useMasterChefWithdraw } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-withdraw'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { withCheckerRoot } from 'src/lib/wagmi/systems/Checker/Provider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 
 interface AddSectionStakeProps {

@@ -1,17 +1,17 @@
 'use client'
 
 import { ChefType, Pool } from '@sushiswap/client'
-import {
-  RewarderType,
-  useAccount,
-  useMasterChef,
-  useRewarder,
-} from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { incentiveRewardToToken } from 'src/lib/functions'
 import { useTokenAmountDollarValues, useTokensFromPool } from 'src/lib/hooks'
+import { useMasterChef } from 'src/lib/wagmi/hooks/master-chef/use-master-chef'
+import {
+  RewarderType,
+  useRewarder,
+} from 'src/lib/wagmi/hooks/master-chef/use-rewarder'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
+import { useAccount } from 'wagmi'
 
 interface PoolPositionRewardsContext {
   pendingRewards: (Amount<Token> | undefined)[]

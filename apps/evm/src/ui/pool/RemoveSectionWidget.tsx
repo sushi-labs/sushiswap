@@ -28,7 +28,7 @@ import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
-import { getDefaultTTL } from '@sushiswap/wagmi'
+import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { usePoolPosition } from './PoolPositionProvider'
 
 interface RemoveSectionWidgetProps {

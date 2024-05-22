@@ -6,7 +6,6 @@ import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { Address } from 'viem'
 import {
   NAME_COLUMN_V3,
@@ -15,6 +14,7 @@ import {
   PRICE_RANGE_COLUMN,
 } from '../../../columns'
 import { useManualPositions } from './useManualPositions'
+import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 
 const COLUMNS = [
   NAME_COLUMN_V3,

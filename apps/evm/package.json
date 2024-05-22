@@ -37,7 +37,6 @@
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@sushiswap/wagmi": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@tanstack/react-query": "4.28.0",
     "@tanstack/react-query-devtools": "4.28.0",

@@ -34,24 +34,6 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import {
-  V3MigrateChainId,
-  V3MigrateContractConfig,
-  getDefaultTTL,
-  getMasterChefContractConfig,
-  useAccount,
-  useMasterChefWithdraw,
-  useSushiSwapV2Pool,
-  useTotalSupply,
-  useTransactionDeadline,
-  useV3Migrate,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
-import {
-  useApproved,
-  withCheckerRoot,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
 import React, { FC, useMemo, useState } from 'react'
 import {
   APPROVE_TAG_MIGRATE,
@@ -61,6 +43,24 @@ import {
 } from 'src/lib/constants'
 import { useGraphPool, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { getMasterChefContractConfig } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-contract'
+import { useMasterChefWithdraw } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-withdraw'
+import {
+  V3MigrateContractConfig,
+  useV3Migrate,
+} from 'src/lib/wagmi/hooks/migrate/hooks/useV3Migrate'
+import { V3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
+import { useSushiSwapV2Pool } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import {
+  getDefaultTTL,
+  useTransactionDeadline,
+} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  useApproved,
+  withCheckerRoot,
+} from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain, ChainId } from 'sushi/chain'
 import {
   SushiSwapV2ChainId,
@@ -77,6 +77,7 @@ import {
   priceToClosestTick,
 } from 'sushi/pool'
 import { Address } from 'viem'
+import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'

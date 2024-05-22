@@ -27,22 +27,20 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
+import { format } from 'date-fns'
+import { useMemo, useState } from 'react'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
   AngleConditionsState,
   useAcceptAngleConditions,
-  useAccount,
-  useConcentratedLiquidityPool,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
-import { useIncentivizePoolWithRewards } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
-import { Checker } from '@sushiswap/wagmi/systems'
+} from 'src/lib/wagmi/hooks/rewards/hooks/useAcceptAngleConditions'
+import { useIncentivizePoolWithRewards } from 'src/lib/wagmi/hooks/rewards/hooks/useIncentivizePoolWithRewards'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   useApproved,
   withCheckerRoot,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
-import { format } from 'date-fns'
-import { useMemo, useState } from 'react'
+} from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain } from 'sushi/chain'
 import {
   ANGLE_ENABLED_NETWORKS,
@@ -52,6 +50,7 @@ import {
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { SushiSwapV3Pool } from 'sushi/pool'
 import { Address, zeroAddress } from 'viem'
+import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
 import {
   ConcentratedLiquidityURLStateProvider,
@@ -503,7 +502,7 @@ const Incentivize = withCheckerRoot(() => {
             In order to incentivize a pool, you must review and agree to{' '}
             <Button variant="link" asChild>
               <LinkExternal href="https://docs.angle.money/merkl/incentivizor-tc">
-                Merkl's Terms & Conditions
+                {`Merkl's Terms & Conditions`}
               </LinkExternal>
             </Button>
             .

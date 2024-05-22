@@ -5,14 +5,12 @@ import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui/components/container'
 import { List } from '@sushiswap/ui/components/list/List'
-import {
-  useAccount,
-  useRP2ExploitCheck,
-  useRP2ExploitClaimFinder,
-} from '@sushiswap/wagmi'
-import { ConnectButton } from '@sushiswap/wagmi/components'
 import React, { Fragment } from 'react'
 
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useRP2ExploitCheck } from 'src/lib/wagmi/hooks/exploits/hooks/useRP2ExploitCheck'
+import { useRP2ExploitClaimFinder } from 'src/lib/wagmi/hooks/exploits/hooks/useRP2ExploitClaimFinder'
+import { useAccount } from 'wagmi'
 import { ClaimItem } from '../components/ClaimItem'
 import { Header } from '../components/Header'
 import { RevokeItem } from '../components/RevokeItem'

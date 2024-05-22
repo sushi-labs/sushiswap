@@ -12,24 +12,6 @@ import {
   Dots,
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  PoolFinderType,
-  UseCallParameters,
-  useAccount,
-  useBentoBoxTotals,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useTridentConstantPoolFactoryContract,
-  useTridentRouterContract,
-  useTridentStablePoolFactoryContract,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
-import {
-  useApproved,
-  useApprovedActions,
-  useSignature,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 
 import {
@@ -47,7 +29,12 @@ import {
   computeTridentStablePoolAddress,
 } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import { BentoBoxChainId, TridentChainId } from 'sushi/config'
+import {
+  BentoBoxChainId,
+  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+} from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import {
@@ -60,6 +47,22 @@ import {
   zeroAddress,
 } from 'viem'
 
+import { useBentoBoxTotals } from 'src/lib/wagmi/hooks/bentobox/hooks/useBentoBoxTotals'
+import { useTridentRouterContract } from 'src/lib/wagmi/hooks/contracts/useTridentRouter'
+import {
+  useApproved,
+  useApprovedActions,
+  useSignature,
+} from 'src/lib/wagmi/systems/Checker/Provider'
+import { PoolFinderType } from 'src/lib/wagmi/systems/PoolFinder/types'
+import {
+  UseCallParameters,
+  useAccount,
+  useCall,
+  usePublicClient,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface CreateSectionReviewModalTridentProps {
@@ -83,8 +86,8 @@ export const CreateSectionReviewModalTrident: FC<
   const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
   const contract = useTridentRouterContract(chainId)
   const constantProductPoolFactory =
-    useTridentConstantPoolFactoryContract(chainId)
-  const stablePoolFactory = useTridentStablePoolFactoryContract(chainId)
+    TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[chainId]
+  const stablePoolFactory = TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId]
 
   const { data: totals } = useBentoBoxTotals({
     chainId,

@@ -13,7 +13,6 @@ import {
 } from '@sushiswap/ui/components/dropdown-menu'
 import { DiscordIcon } from '@sushiswap/ui/components/icons'
 import { SelectIcon } from '@sushiswap/ui/components/select'
-import { useChainId } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
@@ -21,6 +20,7 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
+import { useChainId } from 'wagmi'
 
 export const Hero: FC = () => {
   const chainId = useChainId()

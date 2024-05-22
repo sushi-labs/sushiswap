@@ -29,8 +29,6 @@ import {
 } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import { useAccount } from '@sushiswap/wagmi'
-import { useConcentratedLiquidityPositionsFromTokenId } from '@sushiswap/wagmi'
 import React, {
   FC,
   ReactNode,
@@ -58,6 +56,8 @@ import {
   useRangeHopCallbacks,
 } from './ConcentratedLiquidityProvider'
 import LiquidityChartRangeInput from './LiquidityChartRangeInput'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import { useAccount } from 'wagmi'
 
 enum PriceRange {
   FULL_RANGE = 0,

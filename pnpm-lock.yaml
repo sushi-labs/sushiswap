@@ -726,9 +726,6 @@ importers:
       '@sushiswap/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@sushiswap/wagmi':
-        specifier: workspace:*
-        version: link:../../packages/wagmi
       '@sushiswap/wagmi-config':
         specifier: workspace:*
         version: link:../../config/wagmi

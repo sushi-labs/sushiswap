@@ -1,5 +1,4 @@
 import { UseTradeReturn, useTrade as useApiTrade } from '@sushiswap/react-query'
-import { useAccount, useGasPrice } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
@@ -15,6 +14,7 @@ import { Percent, ZERO_PERCENT } from 'sushi/math'
 import { RouterLiquiditySource } from 'sushi/router'
 import { RToken } from 'sushi/tines'
 import { Hex, encodeFunctionData, stringify } from 'viem'
+import { useAccount, useGasPrice } from 'wagmi'
 import {
   TransactionType,
   decodeSquidRouterCallData,

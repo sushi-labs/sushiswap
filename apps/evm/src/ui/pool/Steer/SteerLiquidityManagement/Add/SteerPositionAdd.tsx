@@ -4,13 +4,14 @@ import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SteerVault } from '@sushiswap/client'
 import { STEER_PERIPHERY_ADDRESS, SteerChainId } from '@sushiswap/steer-sdk'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
-import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import React, { FC, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { Checker, Web3Input } from '@sushiswap/wagmi'
 import { APPROVE_TAG_STEER, Field } from 'src/lib/constants'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import {
   useSteerPositionAddActions,
   useSteerPositionAddDerivedInfo,

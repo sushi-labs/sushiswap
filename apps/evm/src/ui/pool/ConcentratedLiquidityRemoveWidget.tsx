@@ -32,26 +32,28 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  ConcentratedLiquidityPosition,
-  getDefaultTTL,
-  getV3NonFungiblePositionManagerContractConfig,
-  useAccount,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useTransactionDeadline,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { getV3NonFungiblePositionManagerContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3NonFungiblePositionManager'
+import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import {
+  getDefaultTTL,
+  useTransactionDeadline,
+} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'
 import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, unwrapToken } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import {
+  useCall,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import { useAccount } from 'wagmi'
+import { usePublicClient } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 
 interface ConcentratedLiquidityRemoveWidget {

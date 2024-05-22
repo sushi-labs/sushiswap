@@ -1,13 +1,13 @@
 import { Protocol } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui/components/slot'
-import { useAccount } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useUserPositions } from 'src/lib/hooks'
 import { PositionWithPool } from 'src/types'
 
+import { useAccount } from 'wagmi'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN,

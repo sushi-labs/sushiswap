@@ -13,10 +13,10 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui/components/card'
-import { Checker } from '@sushiswap/wagmi/systems/Checker'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { type ChainId } from 'sushi/chain'
 import { usePoolPositionRewards } from './PoolPositionRewardsProvider'
 

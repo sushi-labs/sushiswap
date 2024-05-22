@@ -2,7 +2,6 @@
 
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components'
-import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useEffect, useState } from 'react'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
@@ -19,6 +18,7 @@ import {
 } from './derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 
 export const SimpleSwapTradeButton: FC = () => {
   return (

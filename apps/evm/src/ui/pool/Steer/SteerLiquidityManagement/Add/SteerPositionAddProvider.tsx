@@ -2,7 +2,6 @@
 
 import type { SteerVault } from '@sushiswap/client'
 import { useSteerVault } from '@sushiswap/client/hooks'
-import { useSteerVaultReserves } from '@sushiswap/wagmi'
 import {
   FC,
   ReactNode,
@@ -12,6 +11,7 @@ import {
   useReducer,
 } from 'react'
 import { Field } from 'src/lib/constants'
+import { useSteerVaultReserves } from 'src/lib/wagmi/hooks/useSteer/useSteerVaultReserves'
 import { Amount, Currency, Token, tryParseAmount } from 'sushi/currency'
 
 interface State {

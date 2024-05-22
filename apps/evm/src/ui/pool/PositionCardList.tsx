@@ -1,9 +1,9 @@
 import { Protocol } from '@sushiswap/client'
-import { useAccount } from '@sushiswap/wagmi'
 import React, { FC, ReactNode } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useUserPositions } from 'src/lib/hooks'
 import { PositionWithPool } from 'src/types'
+import { useAccount } from 'wagmi'
 
 interface PositionCardList {
   children({

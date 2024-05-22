@@ -12,24 +12,6 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  TridentConstantPoolState,
-  TridentStablePoolState,
-  UseCallParameters,
-  useAccount,
-  useBentoBoxTotals,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useTotalSupply,
-  useTridentRouterContract,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
-import {
-  useApproved,
-  useApprovedActions,
-  useSignature,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 
 import {
@@ -57,6 +39,24 @@ import {
 } from 'viem'
 
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
+import { useBentoBoxTotals } from 'src/lib/wagmi/hooks/bentobox/hooks/useBentoBoxTotals'
+import { useTridentRouterContract } from 'src/lib/wagmi/hooks/contracts/useTridentRouter'
+import { TridentConstantPoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentConstantPools'
+import { TridentStablePoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentStablePools'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import {
+  useApproved,
+  useApprovedActions,
+  useSignature,
+} from 'src/lib/wagmi/systems/Checker/Provider'
+import {
+  UseCallParameters,
+  useAccount,
+  useCall,
+  usePublicClient,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {

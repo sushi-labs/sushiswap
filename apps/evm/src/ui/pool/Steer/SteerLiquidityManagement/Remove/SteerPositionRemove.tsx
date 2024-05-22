@@ -22,16 +22,9 @@ import {
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
-import {
-  Checker,
-  UseSimulateContractParameters,
-  useAccount,
-  usePublicClient,
-  useSimulateContract,
-  useSteerAccountPosition,
-  useWriteContract,
-} from '@sushiswap/wagmi'
 import React, { FC, useCallback, useMemo, useState } from 'react'
+import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/useSteer/useSteerAccountPosition'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { slippageAmount } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
@@ -41,6 +34,13 @@ import {
   SendTransactionReturnType,
   UserRejectedRequestError,
 } from 'viem'
+import {
+  UseSimulateContractParameters,
+  useAccount,
+  usePublicClient,
+  useSimulateContract,
+  useWriteContract,
+} from 'wagmi'
 
 interface SteerPositionRemoveProps {
   vault: SteerVault

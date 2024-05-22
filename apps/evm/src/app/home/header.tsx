@@ -1,10 +1,10 @@
 'use client'
 
 import { Navigation } from '@sushiswap/ui/components/navigation'
-import { WagmiHeaderComponents } from '@sushiswap/wagmi/components'
 import React, { FC } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 
 export const Header: FC = () => {
   return (

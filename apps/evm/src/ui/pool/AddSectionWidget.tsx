@@ -13,9 +13,9 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui/components/settings'
 import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
-import { getDefaultTTL } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import React, { FC, ReactNode } from 'react'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 

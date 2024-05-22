@@ -1,12 +1,9 @@
 'use client'
 
-import { useReadContracts } from '@sushiswap/wagmi'
-import {
-  getV3FactoryContractConfig,
-  getV3TickLensContractConfig,
-  useConcentratedLiquidityPool,
-} from '@sushiswap/wagmi'
 import { useMemo } from 'react'
+import { getV3FactoryContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3FactoryContract'
+import { getV3TickLensContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3TickLens'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
@@ -15,6 +12,7 @@ import {
 import { Type } from 'sushi/currency'
 import { computeSushiSwapV3PoolAddress, nearestUsableTick } from 'sushi/pool'
 import { Address } from 'viem'
+import { useReadContracts } from 'wagmi'
 import { Writeable } from 'zod'
 
 interface useTicksProps {

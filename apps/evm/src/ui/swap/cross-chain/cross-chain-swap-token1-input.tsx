@@ -8,7 +8,6 @@ import {
   NetworkSelector,
   SelectIcon,
 } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Chain } from 'sushi/chain'
 
 import {
@@ -19,6 +18,7 @@ import {
   useCrossChainSwapTrade,
   useDerivedStateCrossChainSwap,
 } from './derivedstate-cross-chain-swap-provider'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 
 export const CrossChainSwapToken1Input = () => {
   const {

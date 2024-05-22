@@ -15,8 +15,9 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Icon } from '@sushiswap/ui/components/currency/Icon'
 import { List } from '@sushiswap/ui/components/list'
-import { TokenSecurityView, useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useMemo } from 'react'
+import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { Chain } from 'sushi/chain'
 import {
   defaultCurrency,

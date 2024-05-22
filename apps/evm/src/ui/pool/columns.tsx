@@ -11,7 +11,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
 import React, { FC, ReactNode } from 'react'
@@ -41,6 +40,7 @@ import {
 import { PriceRangeCell } from './PriceRangeCell'
 import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
 import { RewardsV3NameCell } from './RewardsV3NameCell'
+import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 
 export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   id: 'poolName',

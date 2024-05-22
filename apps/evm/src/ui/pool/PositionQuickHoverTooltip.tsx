@@ -3,13 +3,13 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { LinkInternal } from '@sushiswap/ui/components/link'
 import { List } from '@sushiswap/ui/components/list'
-import { useAccount, useSwitchChain } from '@sushiswap/wagmi'
 import React, { FC, useCallback } from 'react'
 import { PositionWithPool } from 'src/types'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 
 import { ChainId } from 'sushi/chain'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { PoolPositionProvider, usePoolPosition } from './PoolPositionProvider'
 import {
   PoolPositionRewardsProvider,

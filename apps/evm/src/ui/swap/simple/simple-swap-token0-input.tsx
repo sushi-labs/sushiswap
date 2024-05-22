@@ -1,8 +1,8 @@
 'use client'
 
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi/config'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 
 export const SimpleSwapToken0Input = () => {
   const {

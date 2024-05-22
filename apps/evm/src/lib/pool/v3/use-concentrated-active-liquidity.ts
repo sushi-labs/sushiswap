@@ -1,6 +1,5 @@
 'use client'
 
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import {
   SushiSwapV3ChainId,
@@ -10,6 +9,7 @@ import {
 import { Type } from 'sushi/currency'
 import { tickToPrice } from 'sushi/pool'
 
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import computeSurroundingTicks from '../../functions'
 import { useTicks } from './use-ticks'
 

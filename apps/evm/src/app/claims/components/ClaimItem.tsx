@@ -7,17 +7,15 @@ import { Button } from '@sushiswap/ui/components/button'
 import { Currency } from '@sushiswap/ui/components/currency'
 import { NetworkIcon } from '@sushiswap/ui/components/icons'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import {
-  useRP2ExploitClaim,
-  useRP2ExploitIsClaimed,
-  useTokenAllowance,
-  useTokenRevokeApproval,
-  useTokenWithCache,
-} from '@sushiswap/wagmi'
-import { RP2ClaimChainId } from '@sushiswap/wagmi'
-import { RP2MerkleTreeClaimSchema } from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useMemo } from 'react'
+import { useTokenAllowance } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenAllowance'
+import { useTokenRevokeApproval } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenRevokeApproval'
+import { RP2MerkleTreeClaimSchema } from 'src/lib/wagmi/hooks/exploits/constants'
+import { useRP2ExploitClaim } from 'src/lib/wagmi/hooks/exploits/hooks/useRP2ExploitClaim'
+import { useRP2ExploitIsClaimed } from 'src/lib/wagmi/hooks/exploits/hooks/useRP2ExploitIsClaimed'
+import { type RP2ClaimChainId } from 'src/lib/wagmi/hooks/exploits/types'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ROUTE_PROCESSOR_2_ADDRESS } from 'sushi/config'
 import { Amount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'

@@ -1,6 +1,5 @@
 'use client'
 
-import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import {
   FC,
   ReactNode,
@@ -12,6 +11,7 @@ import {
 } from 'react'
 import { Bound, Field } from 'src/lib/constants'
 import { getTickToPrice, tryParseTick } from 'src/lib/functions'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,

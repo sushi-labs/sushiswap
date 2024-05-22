@@ -2,7 +2,6 @@
 
 import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useEffect, useState } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { SUSHIXSWAP_2_ADDRESS, SushiXSwap2ChainId } from 'sushi/config'
@@ -14,6 +13,7 @@ import {
   useDerivedStateCrossChainSwap,
 } from './derivedstate-cross-chain-swap-provider'
 import { useIsCrossChainSwapMaintenance } from './use-is-cross-chain-swap-maintenance'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 
 export const CrossChainSwapTradeButton: FC = () => {
   const { data: maintenance } = useIsCrossChainSwapMaintenance()

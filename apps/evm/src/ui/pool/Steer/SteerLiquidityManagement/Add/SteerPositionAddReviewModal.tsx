@@ -19,16 +19,6 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { List } from '@sushiswap/ui/components/list/List'
-import {
-  UseSimulateContractParameters,
-  useAccount,
-  usePublicClient,
-  useSimulateContract,
-  useSteerAccountPosition,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from '@sushiswap/wagmi'
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
@@ -45,7 +35,14 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
+import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/useSteer/useSteerAccountPosition'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { slippageAmount } from 'sushi'
+import { UseSimulateContractParameters, usePublicClient } from 'wagmi'
+import { useAccount } from 'wagmi'
+import { useSimulateContract } from 'wagmi'
+import { useWaitForTransactionReceipt } from 'wagmi'
+import { useWriteContract } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'

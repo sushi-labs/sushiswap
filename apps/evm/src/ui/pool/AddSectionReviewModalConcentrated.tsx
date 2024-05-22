@@ -18,26 +18,28 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  UseCallParameters,
-  getDefaultTTL,
-  getV3NonFungiblePositionManagerContractConfig,
-  useAccount,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useTransactionDeadline,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { getV3NonFungiblePositionManagerContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3NonFungiblePositionManager'
+import {
+  getDefaultTTL,
+  useTransactionDeadline,
+} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Chain, ChainId } from 'sushi/chain'
 import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import {
+  UseCallParameters,
+  useAccount,
+  useCall,
+  usePublicClient,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps

@@ -1,10 +1,9 @@
 'use client'
 
-import { useChainId } from '@sushiswap/wagmi'
-import { useTokenWithCache } from '@sushiswap/wagmi'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId } from 'sushi/chain'
 import {
   SushiSwapV3ChainId,
@@ -16,6 +15,7 @@ import {
 } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { isAddress } from 'viem'
+import { useChainId } from 'wagmi'
 import { z } from 'zod'
 
 export const queryParamsSchema = z.object({

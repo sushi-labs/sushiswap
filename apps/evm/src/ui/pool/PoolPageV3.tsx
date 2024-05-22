@@ -13,10 +13,6 @@ import {
   CardTitle,
 } from '@sushiswap/ui/components/card'
 import { Toggle } from '@sushiswap/ui/components/toggle'
-import {
-  useConcentratedLiquidityPool,
-  useConcentratedLiquidityPoolReserves,
-} from '@sushiswap/wagmi'
 import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { SushiSwapV3ChainId } from 'sushi/config'
@@ -28,6 +24,8 @@ import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { PoolsFiltersProvider } from './PoolsFiltersProvider'
 import { StatisticsCharts } from './StatisticsChart'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
+import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 
 enum Granularity {
   Day = 0,

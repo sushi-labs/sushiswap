@@ -1,8 +1,8 @@
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
 import { Button } from '@sushiswap/ui'
-import { useAccount } from '@sushiswap/wagmi'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'
+import { useAccount } from 'wagmi'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 const ClaimSFuelButton = () => {

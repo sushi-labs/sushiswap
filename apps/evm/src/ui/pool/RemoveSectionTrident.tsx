@@ -5,28 +5,6 @@ import { SlippageToleranceStorageKey, useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
 import { createToast } from '@sushiswap/ui/components/toast'
-import {
-  TridentConstantPoolState,
-  TridentStablePoolState,
-  UseCallParameters,
-  getTridentRouterContractConfig,
-  useAccount,
-  useBentoBoxTotals,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useTotalSupply,
-  useTridentConstantPool,
-  useTridentRouterContract,
-  useTridentStablePool,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
-import {
-  useApproved,
-  useApprovedActions,
-  useSignature,
-  withCheckerRoot,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_TRIDENT } from 'src/lib/constants'
 import {
@@ -48,7 +26,31 @@ import { BentoBoxChainId, TridentChainId } from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 
+import { useBentoBoxTotals } from 'src/lib/wagmi/hooks/bentobox/hooks/useBentoBoxTotals'
+import {
+  getTridentRouterContractConfig,
+  useTridentRouterContract,
+} from 'src/lib/wagmi/hooks/contracts/useTridentRouter'
+import { TridentConstantPoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentConstantPools'
+import { TridentStablePoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentStablePools'
+import { useTridentConstantPool } from 'src/lib/wagmi/hooks/pools/hooks/useTridentConstantPools'
+import { useTridentStablePool } from 'src/lib/wagmi/hooks/pools/hooks/useTridentStablePools'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  useApproved,
+  useApprovedActions,
+  useSignature,
+  withCheckerRoot,
+} from 'src/lib/wagmi/systems/Checker/Provider'
 import { SendTransactionReturnType } from 'viem'
+import {
+  UseCallParameters,
+  useAccount,
+  useCall,
+  usePublicClient,
+  useSendTransaction,
+} from 'wagmi'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 

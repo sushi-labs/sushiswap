@@ -1,13 +1,13 @@
 'use client'
 
 import { ChefType, Pool } from '@sushiswap/client'
-import { useMasterChef } from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
   useGraphPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
+import { useMasterChef } from 'src/lib/wagmi/hooks/master-chef/use-master-chef'
 import { ChainId } from 'sushi/chain'
 import { Amount, Currency, Token } from 'sushi/currency'
 

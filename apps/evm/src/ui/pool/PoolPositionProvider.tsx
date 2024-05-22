@@ -1,16 +1,16 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { useAccount } from '@sushiswap/wagmi'
-import { useBalanceWeb3 } from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
   useGraphPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
+import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
+import { useAccount } from 'wagmi'
 
 interface PoolPositionContext {
   balance: Amount<Type> | null | undefined

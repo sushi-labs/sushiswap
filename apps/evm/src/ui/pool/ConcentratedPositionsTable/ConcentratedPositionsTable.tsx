@@ -12,12 +12,12 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui/components/slot'
-import { useAccount } from '@sushiswap/wagmi'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
-import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
+import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { SushiSwapV3ChainId } from 'sushi/config'
+import { useAccount } from 'wagmi'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,

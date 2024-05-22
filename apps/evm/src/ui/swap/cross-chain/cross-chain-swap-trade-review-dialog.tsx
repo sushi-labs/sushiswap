@@ -24,15 +24,6 @@ import {
   createInfoToast,
   createToast,
 } from '@sushiswap/ui/components/toast'
-import {
-  getSushiXSwap2ContractConfig,
-  useAccount,
-  useBalanceWeb3Refetch,
-  usePublicClient,
-  useSimulateContract,
-  useTransaction,
-  useWriteContract,
-} from '@sushiswap/wagmi'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, {
@@ -54,14 +45,23 @@ import {
   stringify,
 } from 'viem'
 
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
 import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
 import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
 import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
+import { getSushiXSwap2ContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiXSwap2Contract'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Native } from 'sushi/currency'
+import {
+  useAccount,
+  useSimulateContract,
+  useTransaction,
+  useWriteContract,
+} from 'wagmi'
+import { usePublicClient } from 'wagmi'
 import {
   ConfirmationDialogContent,
   Divider,
