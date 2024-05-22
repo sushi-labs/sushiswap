@@ -10,7 +10,6 @@ import { chainName, chainShortNameToChainId } from 'sushi/chain'
 import { withoutScientificNotation } from 'sushi/format'
 import { isPromiseFulfilled } from 'sushi/validate'
 import {
-  BucketData,
   Pair,
   QueryResolvers,
   getBuiltGraphSDK,
@@ -18,7 +17,6 @@ import {
 import { SushiSwapV2Types } from '../../.graphclient/sources/SushiSwapV2/types.js'
 import { SushiSwapV3Types } from '../../.graphclient/sources/SushiSwapV3/types.js'
 import { transformPair } from '../../transformers/index.js'
-import { is } from 'date-fns/locale'
 
 const sdk = getBuiltGraphSDK()
 
@@ -92,6 +90,21 @@ export const pairById: QueryResolvers['pairById'] = async (
   context,
   info,
 ): Promise<Pair | null> => {
+
+
+  const fetchIsV2Pool = async () => {
+    const sdk = getBuiltGraphSDK({
+      url: SUSHISWAP_V2_SUBGRAPH_URL[
+        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+      ],
+    })
+
+    const { pair } = await sdk.PairOnlyId({
+      id: address.toLowerCase(),
+    })
+    return pair && pair.id ? true : false
+  }
+
   const now = Date.now()
 
   const [chainShortName, address] = args.id.split(':') as [string, string]
@@ -108,10 +121,12 @@ export const pairById: QueryResolvers['pairById'] = async (
     {
       oneWeekBlocks: [oneWeekBlock],
     },
+    isPoolV2
   ] = await Promise.all([
     sdk.OneDayBlocks({ chainIds: [chainId] }),
     sdk.TwoDayBlocks({ chainIds: [chainId] }),
     sdk.OneWeekBlocks({ chainIds: [chainId] }),
+    fetchIsV2Pool()
   ])
 
   const fetchSushiSwapPair = async (block?: { number: number }) =>
@@ -232,18 +247,6 @@ export const pairById: QueryResolvers['pairById'] = async (
     return transformV3PoolToPair(pool, chainId)
   }
 
-  const fetchIsV2Pool = async () => {
-    const sdk = getBuiltGraphSDK({
-      url: SUSHISWAP_V2_SUBGRAPH_URL[
-        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
-      ],
-    })
-
-    const { pair } = await sdk.PairOnlyId({
-      id: address.toLowerCase(),
-    })
-    return pair && pair.id ? true : false
-  }
 
   const poolFetcher = async (isV2: boolean, block?: { number: number }) => {
     const fetches: ReturnType<typeof fetchSushiSwapPair>[] = []
@@ -276,9 +279,6 @@ export const pairById: QueryResolvers['pairById'] = async (
     return { hourSnapshots: [], daySnapshots: [] }
   }
 
-  // ping and check if the pair exists in V2, if not assume it's v3
-
-  const isPoolV2 = await fetchIsV2Pool()
   const [pair, pair1d, pair2d, pair1w, buckets] = await Promise.all([
     poolFetcher(isPoolV2),
     poolFetcher(isPoolV2, oneDayBlock),
