@@ -62,7 +62,7 @@ export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
   [ChainId.AVALANCHE]:
     'api.thegraph.com/subgraphs/name/rakeshbhatt10/avalance-test-subgraph',
   [ChainId.POLYGON_ZKEVM]:
-    'http://13.228.90.202:8000/subgraphs/name/steerprotocol/steer-zkevm',
+    'subgraph.steer.finance/zkevm/subgraphs/name/steerprotocol/steer-zkevm',
   [ChainId.CELO]:
     'api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-test-celo',
   [ChainId.KAVA]:

@@ -7,7 +7,7 @@ import {
   getVaultAprs,
   getVerifiedVaults,
 } from '@sushiswap/steer-sdk'
-import { getIdFromChainIdAddress, isPromiseFulfilled } from 'sushi'
+import { chainName, getIdFromChainIdAddress, isPromiseFulfilled } from 'sushi'
 import { TickMath } from 'sushi/pool'
 
 import { Address } from 'viem'
@@ -74,7 +74,12 @@ async function deprecate() {
 
 async function extract() {
   const result = await Promise.allSettled(
-    STEER_SUPPORTED_CHAIN_IDS.map(extractChain),
+    STEER_SUPPORTED_CHAIN_IDS.map((chainId) =>
+      extractChain(chainId).catch((e) => {
+        console.log('Steer: Extract failed for chain', chainName[chainId])
+        throw e
+      }),
+    ),
   )
 
   return result.filter(isPromiseFulfilled).map((r) => r.value)

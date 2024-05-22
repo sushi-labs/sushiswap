@@ -82,6 +82,6 @@
     }
   },
   "optionalDependencies": {
-    "next": "14.0.4"
+    "next": "14.1.1"
   }
 }
