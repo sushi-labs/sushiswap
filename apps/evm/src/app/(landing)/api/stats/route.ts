@@ -44,8 +44,8 @@ const getV2Data = async () => {
       .reduce<ExchangeData>(
         (acc, cur) => {
           return {
-            tvlUSD: acc.tvlUSD + Number(cur.liquidityUSD),
-            volumeUSD: acc.volumeUSD + Number(cur.volumeUSD),
+            tvlUSD: acc.tvlUSD + Number(cur.totalLiquidityUSD),
+            volumeUSD: acc.volumeUSD + Number(cur.totalVolumeUSD),
             pairCount: acc.pairCount + Number(cur.pairCount),
           }
         },
@@ -60,8 +60,8 @@ const getV2Data = async () => {
       .reduce<ExchangeData>(
         (acc, cur) => {
           return {
-            tvlUSD: acc.tvlUSD + Number(cur.liquidityUSD),
-            volumeUSD: acc.volumeUSD + Number(cur.volumeUSD),
+            tvlUSD: acc.tvlUSD + Number(cur.totalLiquidityUSD),
+            volumeUSD: acc.volumeUSD + Number(cur.totalVolumeUSD),
             pairCount: acc.pairCount + Number(cur.pairCount),
           }
         },

@@ -67,7 +67,7 @@ export const getPoolsByTokenPair = async (
 
   if (chainId0 !== chainId1) throw Error('Tokens must be on the same chain')
 
-  const { pools } = await sdk.PoolsByTokenPair({
+  const { pools } = await sdk.V3PoolsByTokenPair({
     tokenId0,
     tokenId1,
   })
@@ -165,11 +165,9 @@ export const getFuroTokens = async (
       ...(query.tokenSymbols &&
         query.tokenSymbols?.length > 0 && {
           where: {
-            token_: {
-              or: query.tokenSymbols.map((symbol) => ({
-                symbol_contains_nocase: symbol,
-              })),
-            },
+            or: query.tokenSymbols.map((symbol) => ({
+              symbol_contains_nocase: symbol,
+            })),
           },
         }),
       // orderBy,
@@ -182,39 +180,6 @@ export const getFuroTokens = async (
     throw new Error(error as string)
   }
 }
-
-export const getToken = async (id: string) => {
-  // TODO: fix
-  const { crossChainToken: token } = await sdk.CrossChainToken({
-    id: id.includes(':') ? id.split(':')[1] : id,
-    chainId: id.split(':')[0],
-    now: Math.round(new Date().getTime() / 1000),
-  })
-
-  return token
-}
-
-export type GetTokenCountQuery = Partial<{
-  networks: string
-}>
-
-// export const getTokenCount = async (query?: GetTokenCountQuery) => {
-//   const { factories } = await sdk.Factories({
-//     chainIds: SUPPORTED_CHAIN_IDS,
-//   })
-
-//   const chainIds = query?.networks
-//     ? JSON.parse(query.networks)
-//     : SUPPORTED_CHAIN_IDS
-
-//   return factories.reduce((sum, cur) => {
-//     if (chainIds.includes(cur.chainId)) {
-//       sum = sum + Number(cur.tokenCount)
-//     }
-
-//     return sum
-//   }, 0)
-// }
 
 export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks

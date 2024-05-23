@@ -1,14 +1,12 @@
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
-import { SushiSwapV2Pool, TridentConstantPool, TridentStablePool } from 'sushi'
+import { SushiSwapV2Pool } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { TradeType } from 'sushi/dex'
-import { BridgeBento, UniV3Pool } from 'sushi/tines'
+import { UniV3Pool } from 'sushi/tines'
 
 export enum PoolType {
   SushiSwapV2Pool = 'SushiSwapV2',
-  TridentConstantPool = 'TridentConstant',
-  TridentStablePool = 'TridentStable',
 }
 
 export interface UsePoolsParams {
@@ -24,8 +22,5 @@ export interface UsePoolsParams {
 
 export type UsePoolsReturn = {
   sushiSwapV2Pools: SushiSwapV2Pool[] | undefined
-  tridentConstantPools: TridentConstantPool[] | undefined
-  tridentStablePools: TridentStablePool[] | undefined
-  bridgeBentoPools: BridgeBento[] | undefined
   sushiSwapV3Pools: UniV3Pool[] | undefined
 }

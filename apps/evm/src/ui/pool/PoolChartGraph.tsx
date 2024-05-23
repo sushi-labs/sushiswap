@@ -14,7 +14,7 @@ import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
 import { ChainId } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi/format'
+import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
@@ -52,14 +52,14 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
       (acc, cur) => {
-        if (cur.date * 1000 >= currentDate - chartPeriods[period]) {
-          acc[0].push(cur.date)
+        if (cur?.date * 1000 >= currentDate - chartPeriods[period]) {
+          acc[0].push(cur?.date)
           if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur.volumeUSD * Number(swapFee)))
+            acc[1].push(Number(cur?.volumeUSD * Number(swapFee)))
           } else if (chart === PoolChartType.Volume) {
-            acc[1].push(Number(cur.volumeUSD))
+            acc[1].push(Number(cur?.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
-            acc[1].push(Number(cur.liquidityUSD))
+            acc[1].push(Number(cur?.liquidityUSD))
           }
         }
         return acc
@@ -83,11 +83,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       const nameNodes = document.getElementsByClassName('hoveredItemName')
 
       if (valueNodes[0]) {
-        if (chart === PoolChartType.APR) {
-          valueNodes[0].innerHTML = formatPercent(value)
-        } else {
-          valueNodes[0].innerHTML = formatUSD(value)
-        }
+        valueNodes[0].innerHTML = formatUSD(value)
       }
 
       if (valueNodes[1]) {
@@ -128,11 +124,9 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${
-              chart === PoolChartType.APR
-                ? formatPercent(params[0].value)
-                : formatUSD(params[0].value)
-            }</span>
+            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${formatUSD(
+              params[0].value,
+            )}</span>
             <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
@@ -185,10 +179,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       series: [
         {
           name: 'Volume',
-          type:
-            chart === PoolChartType.TVL || chart === PoolChartType.APR
-              ? 'line'
-              : 'bar',
+          type: chart === PoolChartType.TVL ? 'line' : 'bar',
           smooth: true,
           xAxisIndex: 0,
           yAxisIndex: 0,
@@ -216,9 +207,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       <CardHeader>
         <CardTitle>
           <span className="hoveredItemValue">
-            {chart === PoolChartType.APR
-              ? formatPercent(yData[yData.length - 1])
-              : formatUSD(yData[yData.length - 1])}
+            {formatUSD(yData[yData.length - 1])}
           </span>{' '}
           {chart === PoolChartType.Volume && (
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">

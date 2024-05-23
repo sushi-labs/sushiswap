@@ -10,20 +10,12 @@ import { getGraphPools } from '../../graph'
 function transformGraphPool(
   graphPool: Awaited<ReturnType<typeof getGraphPools>>[0],
 ): Pool {
-  let protocol: Protocol = Protocol.SUSHISWAP_V2
-  // if (graphPool.source === 'LEGACY') protocol = Protocol.SUSHISWAP_V2
-  if (graphPool.source === 'TRIDENT') {
-    if (graphPool.type === 'CONSTANT_PRODUCT_POOL')
-      protocol = Protocol.BENTOBOX_CLASSIC
-    if (graphPool.type === 'STABLE_POOL') protocol = Protocol.BENTOBOX_STABLE
-  }
-
   return {
     id: graphPool.id,
     address: graphPool.address,
     name: graphPool.name,
     chainId: graphPool.chainId,
-    protocol: protocol,
+    protocol: Protocol.SUSHISWAP_V2,
     swapFee: Number(graphPool.swapFee) / 10000,
     twapEnabled: false,
     totalSupply: String(graphPool.liquidity),
@@ -130,8 +122,8 @@ export const useGraphPools = (poolIds: string[]): Pools => {
             totalSupply: String(graphPool.liquidity),
             liquidityUSD: String(graphPool.liquidityUSD),
             volumeUSD: String(graphPool.volumeUSD),
-            feeApr: Number(graphPool.apr),
-            totalApr: Number(graphPool.apr) + pool.incentiveApr,
+            feeApr: Number(pool.feeApr1d),
+            totalApr: Number(pool.feeApr1d) + pool.incentiveApr,
           }
         })
         .filter((pool) => pool !== undefined) as Pools

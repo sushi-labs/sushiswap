@@ -479,6 +479,11 @@ additionalTypeDefs: |
       ids: [ID!]!
       block: Block_height
     ): [Token!]!
+    
+    poolsByTokenPair(
+      tokenId0: String!
+      tokenId1: String!
+    ): [SUSHISWAP_V3_Pool!]!
     crossChainChefUser(
       skip: Int = 0
       first: Int = 100

@@ -2,14 +2,10 @@ fragment TokenFields on Token {
   id
   chainId
   name
-  # liquidityUSD
+  totalLiquidity
   symbol
   decimals
   volumeUSD: tradeVolumeUSD
-  # feesUSD
-  # price {
-    # derivedNative
-  # }
 }
 
 query TokensByChainIds(
