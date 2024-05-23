@@ -215,6 +215,7 @@ export const STABLES = {
     DAI[ChainId.SKALE_EUROPA],
     USDP[ChainId.SKALE_EUROPA],
   ],
+  [ChainId.ROOTSTOCK]: [USDT[ChainId.ROOTSTOCK], DAI[ChainId.ROOTSTOCK]],
   // TESTNETS
   // [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   // [ChainId.ROPSTEN]: [

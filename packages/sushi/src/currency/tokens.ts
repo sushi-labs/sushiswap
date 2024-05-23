@@ -331,14 +331,26 @@ export const OHM = addressMapToTokenMap(
   OHM_ADDRESS,
 ) as Record<keyof typeof OHM_ADDRESS, Token>
 
-export const WBTC = addressMapToTokenMap(
-  {
-    decimals: 8,
-    symbol: 'WBTC',
+export const WBTC = {
+  ...(addressMapToTokenMap(
+    {
+      decimals: 8,
+      symbol: 'WBTC',
+      name: 'Wrapped BTC',
+    },
+    WBTC_ADDRESS,
+  ) as Omit<
+    Record<keyof typeof WBTC_ADDRESS, Token>,
+    typeof ChainId.ROOTSTOCK
+  >),
+  [ChainId.ROOTSTOCK]: new Token({
+    chainId: ChainId.ROOTSTOCK,
+    address: WBTC_ADDRESS[ChainId.ROOTSTOCK],
+    decimals: 18,
     name: 'Wrapped BTC',
-  },
-  WBTC_ADDRESS,
-) as Record<keyof typeof WBTC_ADDRESS, Token>
+    symbol: 'WRBTC',
+  }),
+}
 
 export const UNI = addressMapToTokenMap(
   {
@@ -690,6 +702,7 @@ export const WNATIVE = {
     address: WNATIVE_ADDRESS[ChainId.SKALE_EUROPA],
     decimals: 0,
   }),
+  [ChainId.ROOTSTOCK]: WBTC[ChainId.ROOTSTOCK],
 } as const
 
 export const SUSHI = addressMapToTokenMap(
@@ -780,7 +793,7 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
     USDC_ADDRESS,
   ) as Omit<
     Record<keyof typeof USDC_ADDRESS, Token>,
-    typeof ChainId.BSC & typeof ChainId.BSC_TESTNET
+    typeof ChainId.BSC & typeof ChainId.BSC_TESTNET & typeof ChainId.ROOTSTOCK
   >),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
@@ -796,6 +809,13 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
     symbol: 'USDC',
     name: 'USD Coin',
   }),
+  [ChainId.ROOTSTOCK]: new Token({
+    chainId: ChainId.ROOTSTOCK,
+    address: USDC_ADDRESS[ChainId.ROOTSTOCK],
+    decimals: 18,
+    symbol: 'rUSDC',
+    name: 'rUSDC',
+  }),
 } as const
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -808,7 +828,7 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
     USDT_ADDRESS,
   ) as Omit<
     Record<keyof typeof USDT_ADDRESS, Token>,
-    typeof ChainId.BSC & typeof ChainId.BSC_TESTNET
+    typeof ChainId.BSC & typeof ChainId.BSC_TESTNET & typeof ChainId.ROOTSTOCK
   >),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
@@ -830,6 +850,13 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
     decimals: 18,
     symbol: 'USDT',
     name: 'Tether USD',
+  }),
+  [ChainId.ROOTSTOCK]: new Token({
+    chainId: ChainId.ROOTSTOCK,
+    address: USDT_ADDRESS[ChainId.ROOTSTOCK],
+    decimals: 18,
+    symbol: 'rUSDT',
+    name: 'rUSDT',
   }),
 }
 

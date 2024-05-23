@@ -55,6 +55,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.POLYGON_ZKEVM,
   ChainId.BLAST,
   ChainId.SKALE_EUROPA,
+  ChainId.ROOTSTOCK,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -89,6 +90,7 @@ export const SUSHISWAP_V3_ENABLED_NETWORKS = [
   ChainId.ZETACHAIN,
   ChainId.BLAST,
   ChainId.SKALE_EUROPA,
+  ChainId.ROOTSTOCK,
 ]
 export type SushiSwapV3ChainId = (typeof SUSHISWAP_V3_ENABLED_NETWORKS)[number]
 
@@ -167,6 +169,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ZETACHAIN]: 'ZetaChain',
   [ChainId.BLAST]: 'Blast',
   [ChainId.SKALE_EUROPA]: 'Skale Europa',
+  [ChainId.ROOTSTOCK]: 'Rootstock',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -205,6 +208,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.ZETACHAIN]: SUSHI_GOLDSKY_HOST,
   [ChainId.BLAST]: SUSHI_DEDICATED_GOLDSKY_HOST,
   [ChainId.SKALE_EUROPA]: SKALE_HOST,
+  [ChainId.ROOTSTOCK]: SUSHI_DEDICATED_GOLDSKY_HOST,
 } as const
 
 export const BENTOBOX_ENABLED_NETWORKS = [
@@ -285,6 +289,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/blocks-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/blocks-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/blocks-skale-europa`,
+  [ChainId.ROOTSTOCK]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/blocks-rootstock/gn`,
 } as const
 
 export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
@@ -347,6 +352,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.POLYGON_ZKEVM]: `${STUDIO_HOST}/v2-polygon-zkevm/v0.0.1`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/sushiswap-skale-europa`,
+  [ChainId.ROOTSTOCK]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-rootstock/gn`,
 } as const
 
 export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
@@ -376,6 +382,7 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/v3-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v3-skale-europa`,
+  [ChainId.ROOTSTOCK]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-rootstock/gn`,
 }
 
 export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {

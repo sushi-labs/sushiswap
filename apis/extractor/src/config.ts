@@ -790,6 +790,17 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
   },
+  [ChainId.ROOTSTOCK]: {
+    client: createPublicClient(extractorClientConfig(ChainId.ROOTSTOCK)),
+    factoriesV2: [sushiswapV2Factory(ChainId.ROOTSTOCK)],
+    factoriesV3: [sushiswapV3Factory(ChainId.ROOTSTOCK)],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ROOTSTOCK] as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   // [ChainId.RONIN]: {
   //   client: createPublicClient(extractorClientConfig(ChainId.RONIN]),
   //   factoriesV2: [],
