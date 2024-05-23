@@ -138,15 +138,16 @@ export const getBentoBoxTokens = async (
 ) => {
   try {
     const { rebases } = await sdk.RebasesByChainIds({
-      ...(query.tokenSymbols && query.tokenSymbols?.length > 0 && {
-        where: {
-          token_: {
-            or: query.tokenSymbols.map((symbol) => ({
-              symbol_contains_nocase: symbol,
-            })),
+      ...(query.tokenSymbols &&
+        query.tokenSymbols?.length > 0 && {
+          where: {
+            token_: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+            },
           },
-        },
-      }),
+        }),
       chainIds: query.chainIds,
     })
 
@@ -161,15 +162,16 @@ export const getFuroTokens = async (
 ) => {
   try {
     const { tokens } = await sdk.furoTokensByChainIds({
-      ...(query.tokenSymbols && query.tokenSymbols?.length > 0 && {
-        where: {
-          token_: {
-            or: query.tokenSymbols.map((symbol) => ({
-              symbol_contains_nocase: symbol,
-            })),
+      ...(query.tokenSymbols &&
+        query.tokenSymbols?.length > 0 && {
+          where: {
+            token_: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+            },
           },
-        },
-      }),
+        }),
       // orderBy,
       // orderDirection,
       chainIds: query.chainIds,

@@ -22,10 +22,7 @@ import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
 interface PoolChartProps {
-  chart:
-    | PoolChartType.Volume
-    | PoolChartType.Fees
-    | PoolChartType.TVL
+  chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
   address: string
   chainId: ChainId
@@ -63,7 +60,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
             acc[1].push(Number(cur.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
             acc[1].push(Number(cur.liquidityUSD))
-          } 
+          }
         }
         return acc
       },

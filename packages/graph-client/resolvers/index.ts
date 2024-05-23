@@ -4,7 +4,6 @@ import type { Resolvers } from '../.graphclient/index.js'
 import { resolvers as bentobox } from './bentobox/index.js'
 import { resolvers as blocks } from './blocks/index.js'
 import { resolvers as bundles } from './bundles/index.js'
-import { resolvers as concentrated } from './concentrated/index.js'
 import { resolvers as deprecated } from './depreciated/index.js'
 import { resolvers as factories } from './factories/index.js'
 import { resolvers as furo } from './furo/index.js'
@@ -20,7 +19,6 @@ export const resolvers: Resolvers = mergeResolvers([
   bentobox,
   blocks,
   bundles,
-  concentrated,
   deprecated,
   factories,
   liquidityPositions,

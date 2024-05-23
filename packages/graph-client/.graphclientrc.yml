@@ -2,46 +2,32 @@ sources:
   - name: xSUSHI
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushi-labs/xsushi
+        endpoint: https://api.studio.thegraph.com/query/32073/xsushi/v0.0.1
         retry: 3
     # transforms:
 
   - name: BentoBox
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/matthewlilley/bentobox-ethereum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1}
         retry: 3
     # transforms:
 
   - name: Blocks
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/72545/ethereum-blocks/version/latest}
         retry: 3
     # transforms:
 
   - name: FuroStream
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-ethereum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1}
     transforms:
       - autoPagination:
           validateSchema: true
 
-  - name: Exchange
-    handler:
-      graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
-        retry: 3
-    transforms:
-      # - addSourceName: true
-      - autoPagination:
-          if: false
-          validateSchema: false
-      - prefix:
-          value: deprecated_
-          includeRootOperations: true
-          includeTypes: true
 
   - name: SushiSwapV2
     handler:
@@ -121,17 +107,10 @@ sources:
       #       - queryFieldName: pairs
       #         keyField: id
 
-  # - name: Trident
-  #   handler:
-  #     graphql:
-  #       endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-qa/trident-optimism}
-  #       retry: 3
-  #   transforms:
-
   - name: MasterChefV1
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/jiro-ono/masterchef-staging}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/masterchef/version/latest}
         retry: 3
     transforms:
       - addSourceName: true
@@ -162,7 +141,7 @@ sources:
   - name: MasterChefV2
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chefv2
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/master-chefv2/version/latest}
         retry: 3
     transforms:
       - addSourceName: true
@@ -180,23 +159,10 @@ sources:
       graphql:
         endpoint: https://{context.node:api.thegraph.com/index-node/graphql}
 
-  - name: Concentrated
-    handler:
-      graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/uniswap/uniswap-v3}
-        retry: 3
-    transforms:
-      - prefix:
-          value: CONCENTRATED_
-          includeRootOperations: true
-          includeTypes: true
-          ignore:
-            - _SubgraphErrorPolicy_
-
   - name: SushiSwapV3
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/uniswap/uniswap-v3}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/v3-ethereum/version/latest}
         retry: 3
     transforms:
       - prefix:
@@ -227,29 +193,7 @@ transforms:
   - addSourceName: true
 
 additionalTypeDefs: |
-  # Deprecated
-  extend type deprecated_Token {
-    chainId: BigInt!
-  }
-  extend type deprecated_Pair {
-    chainId: BigInt!
-  }
-  extend type deprecated_LiquidityPosition {
-    chainId: BigInt!
-  }
-
   # Custom types
-
-  # type User {
-  #   id: ID!
-  #   positions: [Position!]!
-  # }
-  # type Apr {
-  #   fee: BigDecimal!
-  #   incentive: BigDecimal!
-  #   combined: BigDecimal!
-  # }
-
   type BucketData {
     id: ID!
     date: BigInt!
@@ -535,16 +479,6 @@ additionalTypeDefs: |
       ids: [ID!]!
       block: Block_height
     ): [Token!]!
-
-    # CONCENTRADED
-    ticksById(
-      id: ID!
-    ): [CONCENTRATED_Tick!]!
-
-    poolsByTokenPair(
-      tokenId0: String!
-      tokenId1: String!
-    ): [CONCENTRATED_Pool!]!
     crossChainChefUser(
       skip: Int = 0
       first: Int = 100
