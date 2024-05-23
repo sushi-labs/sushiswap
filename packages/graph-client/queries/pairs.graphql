@@ -39,22 +39,6 @@ fragment PairFields on Pair {
   aprUpdatedAtTimestamp
 }
 
-fragment TimeTravelPairFields on Pair {
-  id
-  reserve0
-  reserve1
-  liquidity
-  liquidityUSD
-  liquidityNative
-  volumeUSD
-  volumeNative
-  volumeToken0
-  volumeToken1
-  feesNative
-  feesUSD
-  apr
-}
-
 query PairsByChainId(
   $first: Int
   $skip: Int

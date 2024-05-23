@@ -316,6 +316,9 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.SCROLL]: 3,
 } as const
 
+export const SUSHI_BAR_SUBGRAPH_URL =
+  'api.thegraph.com/subgraphs/name/sushiswap/sushi-bar' as const
+
 export const SUSHISWAP_SUBGRAPH_URL: Record<SushiSwapChainId, string> = {
   [ChainId.ETHEREUM]: `${GRAPH_HOST}/sushi-v2/sushiswap-ethereum`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v2/sushiswap-avalanche`,

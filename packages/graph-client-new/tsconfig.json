@@ -19,6 +19,12 @@
             "tadaTurboLocation": "./src/subgraphs/blocks/blocks-cache.d.ts"
           },
           {
+            "name": "sushi-bar",
+            "schema": "./src/subgraphs/sushi-bar/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/sushi-bar/sushi-bar-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/sushi-bar/sushi-bar-cache.d.ts"
+          },
+          {
             "name": "sushi-v2",
             "schema": "./src/subgraphs/sushi-v2/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/sushi-v2/sushi-v2-env.d.ts",

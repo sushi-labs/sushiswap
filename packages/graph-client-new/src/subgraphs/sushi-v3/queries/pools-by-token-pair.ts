@@ -43,7 +43,7 @@ export type GetSushiV3PoolsByTokenPair = {
   token1: `0x${string}`
 }
 
-export async function getSushiV3DayDatas(
+export async function getSushiV3PoolsByTokenPair(
   chainId: SushiSwapV3ChainId,
   _variables: GetSushiV3PoolsByTokenPair,
 ) {
@@ -74,6 +74,6 @@ export async function getSushiV3DayDatas(
   return []
 }
 
-export type SushiV3DayDatas = NonNullable<
+export type SushiV3PoolsByTokenPair = NonNullable<
   ResultOf<typeof SushiV3PoolsByTokenPairQuery>
 >['pools']
