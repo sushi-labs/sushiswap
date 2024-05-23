@@ -1,0 +1,37 @@
+{
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig"],
+  "include": ["src"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "resolveJsonModule": true,
+    "target": "ES2020",
+    "plugins": [ 
+      { 
+        "name": "@0no-co/graphqlsp", 
+        "schemas": [
+          {
+            "name": "blocks",
+            "schema": "./src/subgraphs/blocks/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/blocks/blocks-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/blocks/blocks-cache.d.ts"
+          },
+          {
+            "name": "sushi-v2",
+            "schema": "./src/subgraphs/sushi-v2/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/sushi-v2/sushi-v2-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/sushi-v2/sushi-v2-cache.d.ts"
+          },
+          {
+            "name": "sushi-v3",
+            "schema": "./src/subgraphs/sushi-v3/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/sushi-v3/sushi-v3-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/sushi-v3/sushi-v3-cache.d.ts"
+          },
+        ]
+      } 
+    ] 
+  }
+}

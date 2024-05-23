@@ -1,0 +1,84 @@
+{
+  "name": "@sushiswap/graph-client-new",
+  "version": "0.0.0",
+  "description": "Graph Client",
+  "keywords": [
+    "sushi",
+    "graph",
+    "subgraph"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/graph-client-new"
+  },
+  "license": "MIT",
+  "author": "LufyCZ <me@lufy.cz>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./abi": {
+      "types": "./dist/abi/index.d.ts",
+      "import": "./dist/abi/index.js",
+      "default": "./dist/abi/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "module": "./dist/index.js",
+  "source": "src/index.ts",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "src/index"
+      ],
+      "abi": [
+        "src/abi/index"
+      ]
+    }
+  },
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build:types": "gql.tada generate output && gql.tada turbo",
+    "build": "pnpm build:types && tsc",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc --watch",
+    "lint": "TIMING=1 eslint src",
+    "lint:fix": "TIMING=1 eslint src --fix",
+    "prepublishOnly": "pnpm build",
+    "update-schemas": "tsx scripts/update-schemas.ts"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "dependencies": {
+    "@sushiswap/graph-config": "workspace:*",
+    "gql.tada": "^1.7.5",
+    "graphql-request": "^7.0.1",
+    "sushi": "workspace:*"
+  },
+  "devDependencies": {
+    "@0no-co/graphqlsp": "^1.12.3",
+    "@sushiswap/jest-config": "workspace:*",
+    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/strictest": "2.0.2",
+    "@types/node": "20",
+    "eslint": "8.43.0",
+    "fetch-graphql-schema": "^0.2.1",
+    "graphql-fetch-schema": "^1.1.0",
+    "graphql-js-schema-fetch": "^1.1.2",
+    "tsx": "^4.7.1",
+    "typescript": "5.2.2"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "2.10.2"
+  }
+}

@@ -316,7 +316,7 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
   [ChainId.SCROLL]: 3,
 } as const
 
-export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
+export const SUSHISWAP_SUBGRAPH_URL: Record<SushiSwapChainId, string> = {
   [ChainId.ETHEREUM]: `${GRAPH_HOST}/sushi-v2/sushiswap-ethereum`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v2/sushiswap-avalanche`,
   [ChainId.ARBITRUM]: `${GRAPH_HOST}/sushi-v2/sushiswap-arbitrum`,
@@ -349,7 +349,7 @@ export const SUSHISWAP_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/sushiswap-skale-europa`,
 } as const
 
-export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
+export const SUSHISWAP_V3_SUBGRAPH_URL: Record<SushiSwapV3ChainId, string> = {
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-arbitrum-nova/gn`,
   [ChainId.ARBITRUM]: `${STUDIO_HOST}/v3-arbitrum/v0.0.1`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v3/v3-avalanche`,
@@ -378,7 +378,7 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v3-skale-europa`,
 }
 
-export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {
+export const TRIDENT_SUBGRAPH_URL: Record<TridentChainId, string> = {
   [ChainId.POLYGON]: `${GRAPH_HOST}/sushi-v2/trident-polygon`,
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushi-v2/trident-optimism`,
   [ChainId.KAVA]: `${KAVA_HOST}/sushi-qa/trident-kava`,
