@@ -2,9 +2,7 @@
 
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL,
-  TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL
 } from '@sushiswap/graph-config'
 import { chainName, chainShortName } from 'sushi/chain'
 
@@ -21,37 +19,21 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
     res.json(),
   )
 
-  const token: Token = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
-    ? await context.SushiSwapV2.Query.token({
-        root,
-        args,
-        context: {
-          ...context,
-          now: args.now,
-          chainId: args.chainId,
-          chainName: chainName[args.chainId],
-          chainShortName: chainShortName[args.chainId],
-          url: SUSHISWAP_V2_SUBGRAPH_URL[
-            args.chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
-          ],
-        },
-        info,
-      })
-    : await context.Trident.Query.token({
-        root,
-        args,
-        context: {
-          ...context,
-          now: args.now,
-          chainId: args.chainId,
-          chainName: chainName[args.chainId],
-          chainShortName: chainShortName[args.chainId],
-          url: TRIDENT_SUBGRAPH_URL[
-            args.chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
-          ],
-        },
-        info,
-      })
+  const token: Token = context.SushiSwapV2.Query.token({
+    root,
+    args,
+    context: {
+      ...context,
+      now: args.now,
+      chainId: args.chainId,
+      chainName: chainName[args.chainId],
+      chainShortName: chainShortName[args.chainId],
+      url: SUSHISWAP_V2_SUBGRAPH_URL[
+        args.chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+      ],
+    },
+    info,
+  })
 
   return {
     ...token,
@@ -59,9 +41,7 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
     chainId: args.chainId,
     chainName: chainName[args.chainId],
     chainShortName: chainShortName[args.chainId],
-    source: SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
-      ? 'LEGACY'
-      : 'TRIDENT',
+    source: 'SUSHISWAP_V2',
     // @ts-ignore
     pairs: token.pairs
       ? token.pairs.map(({ pair }) => {

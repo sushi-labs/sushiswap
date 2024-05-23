@@ -2,36 +2,43 @@ query Factories($chainIds: [BigInt!]!) {
   factories: factoriesByChainIds(chainIds: $chainIds) {
     id
     chainId
-    liquidityUSD: totalLiquidityUSD
-    volumeUSD: totalVolumeUSD
+    totalLiquidityUSD
+    totalVolumeUSD
     pairCount
-    # tokenCount
   }
 }
 
-# query UniswapDayDatas(
-#   $first: Int = 365
-#   $skip: Int = 0
-#   $where: UniswapDayData_filter
-#   $orderBy: UniswapDayData_orderBy = date
-#   $orderDirection: OrderDirection = desc
-#   $block: Block_height
-#   $chainIds: [BigInt!]!
-# ) {
-#   factoryDaySnapshots: factoryDaySnapshotsByChainIds(
-#     first: $first
-#     skip: $skip
-#     where: $where
-#     orderBy: $orderBy
-#     orderDirection: $orderDirection
-#     block: $block
-#     chainIds: $chainIds
-#   ) {
-#     chainId
-#     id
-#     date
-#     volumeUSD
-#     liquidityUSD
-#     feesUSD
-#   }
-# }
+query UniswapDayDatas(
+  $first: Int = 365
+  $skip: Int = 0
+  $where: UniswapDayData_filter
+  $orderBy: UniswapDayData_orderBy = date
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $chainIds: [BigInt!]!
+) {
+  factoryDaySnapshots: factoryDaySnapshotsByChainIds(
+    first: $first
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
+  ) {
+    chainId
+    id
+    date
+
+    dailyVolumeETH
+    dailyVolumeUSD
+    dailyVolumeUntracked
+
+    totalVolumeETH
+    totalLiquidityETH
+    totalVolumeUSD
+    totalLiquidityUSD
+    
+    txCount
+  }
+}

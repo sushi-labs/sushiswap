@@ -7,7 +7,6 @@ import {
 import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
-  UniswapFactory,
   Query,
   QueryResolvers,
   Resolvers,
@@ -21,7 +20,7 @@ export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] =
           SUSHISWAP_ENABLED_NETWORKS.includes(el),
         )
         .map((chainId) =>
-          context.SushiSwap.Query.factories({
+          context.SushiSwapV2.Query.uniswapFactories({
             root,
             args,
             context: {
