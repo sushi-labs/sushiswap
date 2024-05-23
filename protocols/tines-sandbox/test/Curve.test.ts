@@ -28,9 +28,7 @@ import { readContract, simulateContract } from 'viem/actions'
 import { TestConfig, getTestConfig } from '../src/getTestConfig.js'
 import { setTokenBalance } from '../src/setTokenBalance.js'
 
-const MulticoinPoolNumber = 10 // first pools in next array
-
-const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
+const NON_FACTORY_POOLS: [Address, string, CurvePoolType][] = [
   // Multitoken
   ['0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7', '3pool', CurvePoolType.TypeB],
   ['0xed279fdd11ca84beef15af5d39bb4d4bee23f0ca', 'lusd', CurvePoolType.TypeC],
@@ -40,12 +38,7 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.TypeC],
   ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.TypeC], //TODO: fix it
   ['0x4807862aa8b2bf68830e4c8dc86d0e9a998e085a', 'busdv2', CurvePoolType.TypeC],
-  [
-    '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956',
-    'qusd',
-    CurvePoolType.TypeC,
-    1e-3, // ???
-  ],
+  ['0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956', 'qusd', CurvePoolType.TypeC],
   ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.TypeC], // TODO: fix it
   ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.TypeC],
   ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.TypeC],
@@ -81,18 +74,12 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
     'ankrETH',
     CurvePoolType.TypeC,
   ],
-  [
-    '0xeb16ae0052ed37f479f7fe63849198df1765a733',
-    'saave',
-    CurvePoolType.TypeC,
-    1e-4, // ???
-  ],
+  ['0xeb16ae0052ed37f479f7fe63849198df1765a733', 'saave', CurvePoolType.TypeC],
   ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.TypeC],
   [
     '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56',
     'compound',
     CurvePoolType.TypeA,
-    1e-7,
   ],
   ['0xfd5db7463a3ab53fd211b4af195c5bccc1a03890', 'eurt', CurvePoolType.TypeC],
   ['0xf178c0b5bb7e7abf4e12a4838c7b7c5ba2c623c0', 'link', CurvePoolType.TypeC],
@@ -111,52 +98,9 @@ const POOL_TEST_AMOUNT_SPECIAL = {
   '0x87650D7bbfC3A9F10587d7778206671719d9910D': 1e40,
 }
 
-// Pools we don't support - by any reason
-const POOLS_WE_DONT_SUPPORT = {
-  '0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587':
-    'STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/',
-  '0x064841157BadDcB2704cA38901D7d754a59b80E8':
-    'MBTC token(0xcfc013B416bE0Bd4b3bEdE35659423B796f8Dcf0) has been paused',
-  '0x2B26239f52420d11420bC0982571BFE091417A7d':
-    'Swap Unknown error, low liquidity',
-  '0x439bfaE666826a7cB73663E366c12f03d0A13B49':
-    'Swap Unknown error, low liquidity',
-  '0x1F71f05CF491595652378Fe94B7820344A551B8E':
-    'Swap Unknown error, low liquidity',
-  '0x8461A004b50d321CB22B7d034969cE6803911899':
-    'Swap Unknown error, low liquidity',
-  '0xDa5B670CcD418a187a3066674A8002Adc9356Ad1':
-    'Swap Unknown error, low liquidity',
-  '0x8818a9bb44Fbf33502bE7c15c500d0C783B73067':
-    'Swap Unknown error, low liquidity',
-  '0x3F1B0278A9ee595635B61817630cC19DE792f506':
-    'Swap Unknown error, low liquidity',
-  '0xD6Ac1CB9019137a896343Da59dDE6d097F710538':
-    'Swap Unknown error, low liquidity',
-  '0x9c2C8910F113181783c249d8F6Aa41b51Cde0f0c':
-    'Swap Unknown error, low liquidity',
-  '0xc8a7C1c4B748970F57cA59326BcD49F5c9dc43E3':
-    'Swap Unknown error, low liquidity',
-  '0xf03bD3cfE85f00bF5819AC20f0870cE8a8d1F0D8':
-    'Swap Unknown error, low liquidity',
-  '0x910A00594DC16dD699D579A8F7811d465Dfa2752':
-    'UNKNOWN ERROR: token 1 transfer simulation failed',
-  '0x961226B64AD373275130234145b96D100Dc0b655':
-    'Swap Unknown error, low liquidity',
-  '0xe7E4366f6ED6aFd23e88154C00B532BDc0352333':
-    'Swap Unknown error, low liquidity',
-  '0x8c524635d52bd7b1Bd55E062303177a7d916C046': 'Swap error',
-  '0xD652c40fBb3f06d6B58Cb9aa9CFF063eE63d465D':
-    'Swap Unknown error, low liquidity',
-} as const
-
-const FACTORY_POOL_PRECISION_SPECIAL: Record<Address, number> = {
-  '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
-}
-
 const CURVE_POOL_SPECIAL_PRECISION: Record<string, number> = {
   '0x5a59fd6018186471727faaeae4e57890abc49b08': 1e-8,
-  '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956': 1e-3,
+  '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956': 1e-3, // ??????
   '0xeb16ae0052ed37f479f7fe63849198df1765a733': 1e-4,
   '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': 1e-7,
 }
@@ -206,59 +150,6 @@ interface PoolInfo {
   currentFlow: number[][][]
   user: Address
   snapshot: SnapshotRestorer
-}
-
-async function checkPool(
-  config: TestConfig,
-  poolAddress: Address,
-  poolType: CurvePoolType,
-  minBalance = 1_000_000n,
-): Promise<string> {
-  const poolContract = {
-    address: poolAddress,
-    abi: curvePoolABI[poolType],
-  }
-  for (let i = 0n; i < 100n; ++i) {
-    let token: Address
-    try {
-      token = await readContract(config.client, {
-        ...poolContract,
-        functionName: 'coins',
-        args: [i],
-      })
-    } catch (_e) {
-      break
-    }
-    if (token === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-      // native
-    } else {
-      const balance = await readContract(config.client, {
-        ...poolContract,
-        functionName: 'balances',
-        args: [BigInt(i)],
-      })
-      if (balance < minBalance)
-        return `token ${token}(${i}) low balance (${balance})`
-      try {
-        const res = await simulateContract(config.client, {
-          address: token,
-          abi: erc20Abi,
-          functionName: 'transfer',
-          args: [config.user.address, minBalance],
-          account: poolAddress,
-        })
-        if (!res.result)
-          return `token ${token}(${i}) transfer simulation failed`
-      } catch (e) {
-        if (
-          e.toString().includes('function "transfer" returned no data ("0x")')
-        )
-          continue
-        return `token ${token}(${i}) transfer simulation failed`
-      }
-    }
-  }
-  return 'check passed'
 }
 
 async function createCurvePoolInfo(
@@ -522,41 +413,6 @@ async function makeSwap(
   return realOutBI
 }
 
-async function forEachFactoryPool(
-  config: TestConfig,
-  func: (address: Address, factoryName: string) => Promise<void>,
-) {
-  const processedPoolSet = new Set<string>()
-  for (let f = 0; f < FACTORY_ADDRESSES.length; ++f) {
-    const factoryAddress = FACTORY_ADDRESSES[f]
-    const factoryContract = {
-      address: factoryAddress,
-      abi: parseAbi([
-        'function pool_count() pure returns (uint256)',
-        'function pool_list(uint256) pure returns (address)',
-        'function get_n_coins(address) pure returns (uint256)',
-      ]),
-    }
-
-    const poolNum = await readContract(config.client, {
-      ...factoryContract,
-      functionName: 'pool_count',
-    })
-    console.log(`Factory ${factoryAddress} total pools: ${poolNum}`)
-    for (let i = 0n; i < poolNum; ++i) {
-      const poolAddress = await readContract(config.client, {
-        ...factoryContract,
-        functionName: 'pool_list',
-        args: [i],
-      })
-      if (processedPoolSet.has(poolAddress)) continue
-      processedPoolSet.add(poolAddress)
-      //const coins = await factoryContract.get_n_coins(poolAddress)
-      await func(poolAddress, `#${f}`)
-    }
-  }
-}
-
 async function processMultiTokenPool(
   config: TestConfig,
   poolAddress: Address,
@@ -630,7 +486,8 @@ function getRandomPair(rnd: () => number, num: number): [number, number] {
   return [i, j]
 }
 
-async function checkMultipleSwapsFork(
+// is not used currently because multitoken tests should be re-made in absolutely other way
+export async function checkMultipleSwapsFork(
   config: TestConfig,
   poolAddress: Address,
   poolType: CurvePoolType,
@@ -876,99 +733,4 @@ describe('Real Curve pools consistency check', function () {
   })
 
   it('empty', () => {}) // just to start 'before' block
-
-  describe.skip('Not-Factory pools by whitelist', () => {
-    for (let i = 0; i < NON_FACTORY_POOLS.length; ++i) {
-      const [poolAddress, name, poolType, precision = 1e-9] =
-        NON_FACTORY_POOLS[i]
-      it(`${name} (${poolAddress}, ${poolType})`, async () => {
-        const [result] = await processMultiTokenPool(
-          config,
-          poolAddress,
-          poolType,
-          precision,
-        )
-        expect(result).equal('passed')
-      })
-    }
-  })
-
-  describe.skip('Not-Factory pools by whitelist with >2 tokens - multiple swap test', () => {
-    const poolNumber = MulticoinPoolNumber
-    for (let i = 0; i < poolNumber; ++i) {
-      const [poolAddress, name, poolType, precision = 1e-7] =
-        NON_FACTORY_POOLS[i]
-      it(`${name} (${poolAddress}, ${poolType})`, async () => {
-        const result = await checkMultipleSwapsFork(
-          config,
-          poolAddress,
-          poolType,
-          precision,
-        )
-        expect(result).equal('passed')
-      })
-    }
-  })
-
-  it.skip(`Factory Pools (${FACTORY_ADDRESSES.length} factories)`, async () => {
-    let passed = 0
-    let i = 0
-    const startFrom = 0
-    const finishAt = 1000
-    await forEachFactoryPool(
-      config,
-      async (poolAddress: Address, factoryName: string) => {
-        if (++i < startFrom) return
-        if (i > finishAt) return
-        process.stdout.write(
-          `Factory ${factoryName} pool ${i} ${poolAddress} ... `,
-        )
-
-        const check = await checkPool(config, poolAddress, CurvePoolType.TypeC)
-        if (check !== 'check passed') {
-          if (check.includes('low balance')) console.log(`skipped: ${check}`)
-          else if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined)
-            console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
-          else console.log('UNKNOWN ERROR:', check)
-          return
-        }
-        if (POOLS_WE_DONT_SUPPORT[poolAddress] !== undefined) {
-          console.log(`skipped: ${POOLS_WE_DONT_SUPPORT[poolAddress]}`)
-          return
-        }
-
-        const precision =
-          FACTORY_POOL_PRECISION_SPECIAL[poolAddress.toLowerCase()] || 1e9
-        const [result, poolType] = await processMultiTokenPool(
-          config,
-          poolAddress,
-          CurvePoolType.TypeC,
-          precision,
-        )
-        if (poolType !== undefined) {
-          const tokens = new Set<string>()
-          poolType.poolTines.forEach((p) => {
-            p.forEach((t) => {
-              if (t !== undefined) {
-                tokens.add(
-                  `${Math.round(Number(t.reserve0) / 10 ** t.token0.decimals)}${
-                    t.token0.symbol
-                  }`,
-                )
-                tokens.add(
-                  `${Math.round(Number(t.reserve1) / 10 ** t.token1.decimals)}${
-                    t.token1.symbol
-                  }`,
-                )
-              }
-            })
-          })
-          process.stdout.write(`${Array.from(tokens.values())} `)
-        }
-        console.log(result)
-        if (result === 'passed') ++passed
-      },
-    )
-    console.log('passed', passed)
-  })
 })
