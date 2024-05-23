@@ -2,8 +2,6 @@
 import {
   SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_V2_SUBGRAPH_URL,
-  TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { ChainId, chainName, chainShortName } from 'sushi/chain'

@@ -513,7 +513,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -525,7 +525,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -537,7 +537,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -549,7 +549,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -561,7 +561,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -573,7 +573,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -585,7 +585,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -597,7 +597,7 @@ function transformV2(queryResult: {
       .map((pool) => [
         pool.id,
         {
-          feesUSD: Number(pool.feesUSD),
+          feesUSD: Number(pool.volumeUSD * 0.003),
           volumeUSD: Number(pool.volumeUSD),
           liquidityUSD: Number(pool.liquidityUSD),
         },
@@ -643,39 +643,34 @@ function transformV2(queryResult: {
           .slice(0, 15)
           .concat('-')
           .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-        let protocol: Protocol
-        if (pair.source === 'LEGACY' && pair.type === 'CONSTANT_PRODUCT_POOL') {
-          protocol = Protocol.SUSHISWAP_V2
-        } else {
-          throw new Error('Unknown pool type')
-        }
+        const protocol = Protocol.SUSHISWAP_V2
 
         const currentVolumeUSD = Number(pair.volumeUSD)
         const currentLiquidityUSD = Number(pair.liquidityUSD)
-        const currentFeesUSD = Number(pair.feesUSD)
+        const currentFeesUSD = Number(pair.volumeUSD * 0.003)
 
         const feeApr1h = calculateFeeApr(
           AprTimeRange.ONE_HOUR,
           oneHourData.get(pair.id)?.feesUSD ?? currentFeesUSD,
-          pair.feesUSD,
+          currentFeesUSD,
           pair.liquidityUSD,
         )
         const feeApr1d = calculateFeeApr(
           AprTimeRange.ONE_DAY,
           oneDayData.get(pair.id)?.feesUSD ?? currentFeesUSD,
-          pair.feesUSD,
+          currentFeesUSD,
           pair.liquidityUSD,
         )
         const feeApr1w = calculateFeeApr(
           AprTimeRange.ONE_WEEK,
           oneWeekData.get(pair.id)?.feesUSD ?? currentFeesUSD,
-          pair.feesUSD,
+          currentFeesUSD,
           pair.liquidityUSD,
         )
         const feeApr1m = calculateFeeApr(
           AprTimeRange.ONE_MONTH,
           oneMonthData.get(pair.id)?.feesUSD ?? currentFeesUSD,
-          pair.feesUSD,
+          currentFeesUSD,
           pair.liquidityUSD,
         )
 
@@ -764,8 +759,8 @@ function transformV2(queryResult: {
           name: name,
           protocol,
           chainId: queryResult.chainId,
-          swapFee: Number(pair.swapFee) / 10_000,
-          twapEnabled: pair.twapEnabled,
+          swapFee: 0.003,
+          twapEnabled: true,
           token0Id: queryResult.chainId
             .toString()
             .concat(':')
@@ -781,7 +776,7 @@ function transformV2(queryResult: {
           liquidityNative: pair.liquidityNative,
           volumeUSD: currentVolumeUSD,
           feesUSD: currentFeesUSD,
-          volumeNative: pair.volumeNative,
+          volumeNative: 0, // DOES NOT EXIST IN V2 anymore
           token0Price: pair.token0Price,
           token1Price: pair.token1Price,
           ...(oneHourData.get(pair.id)?.feesUSD && { fees1h }),

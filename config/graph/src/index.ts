@@ -260,7 +260,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.POLYGON_ZKEVM]: `${DECENTRALIZED_NETWORK_HOST}/5o79YFzT5h4v7oq5w2eHUytYj24Z96P1HzZbK25gw2Ug`,
   [ChainId.FANTOM]: `${DECENTRALIZED_NETWORK_HOST}/3drjZDpA9hAuYGA19ttEkhW432mVe2XHy5YarBDVYHbz`, // TODO: MIGHT NEED TO BE REPLACED. 2024-05-23: 52% synced
   [ChainId.BSC]: `${DECENTRALIZED_NETWORK_HOST}/9dSPXfKXaqYpoGAPXx96LyDF1VYR8PiT6HA7HRKEGRdS`,
-  [ChainId.HARMONY]: `${DECENTRALIZED_NETWORK_HOST}/8QXwz5CYpYRwgqzU9TyofQKDUXWYDVLZ5es49zr2dLPY`,  // TODO: MIGHT NEED TO BE REPLACED. 2024-05-23: 88% synced
+  [ChainId.HARMONY]: `${DECENTRALIZED_NETWORK_HOST}/8QXwz5CYpYRwgqzU9TyofQKDUXWYDVLZ5es49zr2dLPY`, // TODO: MIGHT NEED TO BE REPLACED. 2024-05-23: 88% synced
   [ChainId.AVALANCHE]: `${DECENTRALIZED_NETWORK_HOST}/97YH6dMhGcXoTvVwDAML6GxYm9hBh7PCz6WPscUkrFhv`,
   [ChainId.CELO]: `${DECENTRALIZED_NETWORK_HOST}/68pKaceT6yxMc2EgBbptM1rVksY5NDKu2AsTQaP4z3ER`,
   [ChainId.ARBITRUM]: `${DECENTRALIZED_NETWORK_HOST}/5jebsN6RBioFWQX7LP2N8r55nL4QPAyeKc6GzDA1Pt5H`, // TODO: MIGHT NEED TO BE REPLACED. 2024-05-23: 36% synced
@@ -414,17 +414,6 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v3-skale-europa`,
 }
 
-export const TRIDENT_SUBGRAPH_URL: Record<number, string> = {
-  [ChainId.POLYGON]: `${GRAPH_HOST}/sushi-v2/trident-polygon`,
-  [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushi-v2/trident-optimism`,
-  [ChainId.KAVA]: `${KAVA_HOST}/sushi-qa/trident-kava`,
-  [ChainId.METIS]: `${METIS_HOST}/sushi-v2/trident-metis`,
-  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v2/trident-bttc/gn`,
-  [ChainId.ARBITRUM]: `${GRAPH_HOST}/sushi-v2/trident-arbitrum`,
-  [ChainId.BSC]: `${GRAPH_HOST}/sushi-v2/trident-bsc`,
-  [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v2/trident-avalanche`,
-} as const
-
 export const MINICHEF_SUBGRAPH_URL = {
   [ChainId.POLYGON]: `${DECENTRALIZED_NETWORK_HOST}/DaSTfQbRTQq63HYGuAWusisUj23PFuisbhxHkjRHknex`,
   [ChainId.GNOSIS]: `${DECENTRALIZED_NETWORK_HOST}/FhtxFSxNCjVGknieajtwEzjruGFhTcAW9tWuADQ3tzNK`,
@@ -497,9 +486,6 @@ export const CONCENTRATED_SUBGRAPH_NAME: Record<number, string> = {
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]
-
-export const isTridentChain = (chainId: ChainId): chainId is TridentChainId =>
-  Object.keys(TRIDENT_SUBGRAPH_URL).map(Number).includes(chainId)
 
 export const isSushiSwapChain = (
   chainId: ChainId,
