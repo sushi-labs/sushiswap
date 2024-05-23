@@ -10,6 +10,7 @@ import {
   curvePoolFilter,
   curvePoolFilterByAddress,
   detectCurvePoolType,
+  gatherPoolsFromCurveAPI,
   getPoolRatio,
 } from 'sushi'
 import { erc20Abi } from 'sushi/abi'
@@ -685,7 +686,7 @@ async function collectAllCurvePools(
   return res
 }
 
-describe('Real Curve pools consistency check', function () {
+describe('Real Curve pools consistency check (from whitelist)', function () {
   let config: TestConfig
 
   before(async () => {
@@ -697,19 +698,59 @@ describe('Real Curve pools consistency check', function () {
 
     const start = 0
     const finish = pools.length + 1
-    let skippedPoolCounter = 0
     pools.forEach((p, i) => {
       if (i + 1 < start || i + 1 >= finish) return
       this.addTest(
         it(`${i + 1}/${pools.length} ${p[0]} (${p[1]})`, async () => {
           const res = await checkCurvePool(config, p[0])
           if (res.reason !== 'passed') console.log(`${p[0]}: ${res.reason}`)
-          if (res.passed && res.reason !== 'passed') ++skippedPoolCounter
           expect(res.passed).equal(true)
         }),
       )
     })
-    console.log('Skipped pools:', skippedPoolCounter)
+  })
+
+  it('empty', () => {}) // just to start 'before' block
+})
+
+const CurvePoolListNames = [
+  'main', // all not-factory pools, including 3pool
+  //'crypto', // all not-factory crypro pools
+  'factory', // pools of factories 0x0959158b6040d32d04c301a72cbfd6b39e21c9ae(3CRV) and 0xb9fc157394af804a3578134a6585c0dc9cc990d4 (EUR)
+  'factory-crvusd', // pools for factory 0x4F8846Ae9380B90d2E71D5e3D042dff3E7ebb40d (crvUSD)
+  //'factory-eywa',   // legacy - 0 pools
+  //'factory-crypto',
+  //'factory-tricrypto',
+  // 'factory-stable-ng',   // stable pools new generation
+]
+
+describe.only('Real Curve pools consistency check (from CurveAPI)', function () {
+  let config: TestConfig
+
+  before(async () => {
+    console.log('    Environment initialization ... ')
+    config = await getTestConfig()
+    console.log('    Finding pools ... ')
+    const pools = (
+      await gatherPoolsFromCurveAPI(
+        CurvePoolListNames,
+        'https://api.curve.fi/api/getPools/ethereum',
+      )
+    ).map((p) => [p.address, `api:${p.poolList}`] as [Address, string])
+    console.log('    Pools found:', pools.length)
+
+    const start = 0
+    const finish = pools.length + 1
+    pools.forEach((p, i) => {
+      if (i + 1 < start || i + 1 >= finish) return
+      this.addTest(
+        it(`${i + 1}/${pools.length} ${p[0]} (${p[1]})`, async () => {
+          const res = await checkCurvePool(config, p[0])
+          if (res.reason !== 'passed') console.log(`${p[0]}: ${res.reason}`)
+          expect(res.passed).equal(true)
+        }),
+      )
+    })
   })
 
   it('empty', () => {}) // just to start 'before' block

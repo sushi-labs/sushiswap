@@ -230,3 +230,43 @@ function _curvePoolFilter(pool: RPool): string {
   if (res0 < 1 || res1 < 1) return 'low liquidity'
   return ''
 }
+
+export interface APIPoolInfo {
+  poolList: string
+  address: Address
+  symbol: string
+  usdTotal: number
+  coins: {
+    address: Address
+    decimals: string
+    usdPrice: number
+    poolBalance: string
+  }[]
+}
+
+export async function gatherPoolsFromCurveAPI(
+  poolLists: string[],
+  apiUrl: string,
+  blackList?: string[],
+): Promise<APIPoolInfo[]> {
+  const urlPrefix = apiUrl.endsWith('/') ? apiUrl : `${apiUrl}/`
+  const _blackList = blackList ?? []
+
+  const poolMap = new Map<string, APIPoolInfo>()
+  for (const l in poolLists) {
+    const url = urlPrefix + poolLists[l]
+    // @ts-ignore
+    const dataResp = await fetch(url)
+    const data = (await dataResp.json()) as {
+      data?: { poolData?: APIPoolInfo[] }
+    }
+    const poolList = data?.data?.poolData
+    if (poolList === undefined) continue
+    poolList.forEach((p) => {
+      p.poolList = poolLists[l] as string
+      if (!_blackList.includes(p.address)) poolMap.set(p.address, p)
+    })
+  }
+
+  return Array.from(poolMap.values())
+}
