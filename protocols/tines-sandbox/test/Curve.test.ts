@@ -38,18 +38,18 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
   ['0xecd5e75afb02efa118af914515d6521aabd189f1', 'tusd', CurvePoolType.TypeC],
   ['0xd632f22692fac7611d2aa1c0d552930d43caed3b', 'frax', CurvePoolType.TypeC],
   ['0x43b4fdfd4ff969587185cdb6f0bd875c5fc83f8c', 'alusd', CurvePoolType.TypeC],
-  // ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.TypeC], TODO: fix it
+  ['0x618788357d0ebd8a37e763adab3bc575d54c2c7d', 'rai', CurvePoolType.TypeC], //TODO: fix it
   ['0x4807862aa8b2bf68830e4c8dc86d0e9a998e085a', 'busdv2', CurvePoolType.TypeC],
   [
     '0x4f062658eaaf2c1ccf8c8e36d6824cdf41167956',
     'qusd',
     CurvePoolType.TypeC,
-    1e-3,
+    1e-3, // ???
   ],
-  // ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.TypeC], TODO: fix it
+  ['0xdebf20617708857ebe4f679508e7b7863a8a8eee', 'aave', CurvePoolType.TypeC], // TODO: fix it
   ['0x5a6a4d54456819380173272a5e8e9b9904bdf41b', 'mim', CurvePoolType.TypeC],
   ['0x8474ddbe98f5aa3179b3b3f5942d724afcdec9f6', 'musd', CurvePoolType.TypeC],
-  // ['0x52ea46506b9cc5ef470c5bf89f17dc28bb35d85c', 'usdt', CurvePoolType.TypeA], TODO: fix it
+  ['0x52ea46506b9cc5ef470c5bf89f17dc28bb35d85c', 'usdt', CurvePoolType.TypeA], // TODO: fix it
   // 2 coins
   ['0xdc24316b9ae028f1497c275eb9192a3ea0f67022', 'steth', CurvePoolType.TypeC],
   [
@@ -85,7 +85,7 @@ const NON_FACTORY_POOLS: [Address, string, CurvePoolType, number?][] = [
     '0xeb16ae0052ed37f479f7fe63849198df1765a733',
     'saave',
     CurvePoolType.TypeC,
-    1e-4,
+    1e-4, // ???
   ],
   ['0xf9440930043eb3997fc70e1339dbb11f341de7a8', 'reth', CurvePoolType.TypeC],
   [
@@ -316,9 +316,10 @@ async function createCurvePoolInfo(
           args: [poolAddress, initialBalance],
           chain: null,
         })
-      } catch (e) {
-        // in try block because crv token (0xD533a949740bb3306d119CC777fa900bA034cd52) doesn't allow re-approve (((
-        console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
+      } catch (_e) {
+        // in try block because some tokens 0xD533a949740bb3306d119CC777fa900bA034cd52
+        // or 0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c doesn't allow re-approve (((
+        //console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
       }
       tokenContracts.push(tokenContract)
 
@@ -847,8 +848,6 @@ async function collectAllCurvePools(
   return res
 }
 
-// 0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587: pool init error
-//     1) 54/534 0x707EAe1CcFee0B8fef07D3F18EAFD1246762d587 (fact#0)
 describe('Real Curve pools consistency check', function () {
   let config: TestConfig
 
@@ -872,8 +871,8 @@ describe('Real Curve pools consistency check', function () {
           expect(res.passed).equal(true)
         }),
       )
-      console.log('Skipped pools:', skippedPoolCounter)
     })
+    console.log('Skipped pools:', skippedPoolCounter)
   })
 
   it('empty', () => {}) // just to start 'before' block
