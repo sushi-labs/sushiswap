@@ -1,12 +1,15 @@
 import { ChainId } from 'sushi/chain'
-import { SUSHISWAP_V3_INIT_CODE_HASH, SushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_INIT_CODE_HASH,
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  SushiSwapV3ChainId,
+} from 'sushi/config'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContracts } from '@wagmi/core/actions'
 import { erc20Abi } from 'viem'
-import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
-import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 import { getConcentratedLiquidityPositionsFromTokenIds } from './getConcentratedLiquidityPositionsFromTokenIds'
@@ -53,7 +56,7 @@ export const getConcentratedLiquidityPositions = async ({
     contracts: chainIds.map(
       (el) =>
         ({
-          address: getV3NonFungiblePositionManagerContractConfig(el).address,
+          address: SUSHISWAP_V3_POSTIION_MANAGER[el],
           abi: erc20Abi,
           chainId: el,
           functionName: 'balanceOf' as const,
@@ -85,8 +88,7 @@ export const getConcentratedLiquidityPositions = async ({
       ([_chainId, account, index]) =>
         ({
           chainId: _chainId,
-          address:
-            getV3NonFungiblePositionManagerContractConfig(_chainId).address,
+          address: SUSHISWAP_V3_POSTIION_MANAGER[_chainId],
           abi: abiShard,
           functionName: 'tokenOfOwnerByIndex' as const,
           args: [account, BigInt(index)],
@@ -114,7 +116,7 @@ export const getConcentratedLiquidityPositions = async ({
   return positions.filter(Boolean).map((el, i) => ({
     ...el,
     address: computeSushiSwapV3PoolAddress({
-      factoryAddress: getV3FactoryContractConfig(el.chainId).address,
+      factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[el.chainId],
       tokenA: el.token0,
       tokenB: el.token1,
       fee: el.fee,

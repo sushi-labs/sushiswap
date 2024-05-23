@@ -2,7 +2,11 @@
 
 import { useEffect, useMemo } from 'react'
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
-import { TridentChainId, isTridentChainId } from 'sushi/config'
+import {
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+  isTridentChainId,
+} from 'sushi/config'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
@@ -17,7 +21,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Address } from 'viem'
 import { useBentoBoxTotals } from '../../bentobox/hooks/useBentoBoxTotals'
 import { TridentStablePoolState } from '../actions/getTridentStablePools'
-import { useTridentStablePoolFactoryContract } from './useTridentStablePoolFactoryContract'
 
 interface Rebase {
   base: bigint
@@ -50,7 +53,7 @@ export function useGetTridentStablePools(
   isError: boolean
   data: [TridentStablePoolState, TridentStablePool | null][]
 } {
-  const contract = useTridentStablePoolFactoryContract(chainId)
+  const contract = chainId ? TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId] : null
   const pairsUnique = useMemo(() => {
     const pairsMap = new Map<string, [Token, Token]>()
     currencies.map(([c1, c2]) => {
@@ -94,7 +97,7 @@ export function useGetTridentStablePools(
   } = useReadContracts({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
-      address: contract?.address as Address,
+      address: contract as Address,
       abi: tridentStablePoolFactoryAbi,
       functionName: 'poolsCount' as const,
       args: el as [Address, Address],
@@ -137,12 +140,12 @@ export function useGetTridentStablePools(
       if (!callStatePoolsCountProcessed) return []
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
-        address: contract?.address as Address,
+        address: contract as Address,
         abi: tridentStablePoolFactoryAbi,
         functionName: 'getPools' as const,
         args,
       }))
-    }, [callStatePoolsCountProcessed, chainId, contract?.address]),
+    }, [callStatePoolsCountProcessed, chainId, contract]),
     query: {
       enabled: Boolean(
         callStatePoolsCountProcessed &&
@@ -294,7 +297,7 @@ export function useTridentStablePools(
   chainId: TridentChainId,
   pools: PoolInput[],
 ): [TridentStablePoolState, TridentStablePool | null][] {
-  const stablePoolFactory = useTridentStablePoolFactoryContract(chainId)
+  const stablePoolFactory = TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId]
 
   const input = useMemo(
     () =>
@@ -309,7 +312,7 @@ export function useTridentStablePools(
                 twap !== undefined &&
                 currencyA.chainId === currencyB.chainId &&
                 !currencyA.wrapped.equals(currencyB.wrapped) &&
-                stablePoolFactory?.address &&
+                stablePoolFactory &&
                 total0 &&
                 total1,
             )
@@ -325,7 +328,7 @@ export function useTridentStablePools(
             total1,
           ],
         ),
-    [stablePoolFactory?.address, pools],
+    [stablePoolFactory, pools],
   )
 
   const poolsAddresses = useMemo(
@@ -334,7 +337,7 @@ export function useTridentStablePools(
         ? input.reduce<string[]>((acc, [tokenA, tokenB, fee]) => {
             acc.push(
               computeTridentStablePoolAddress({
-                factoryAddress: stablePoolFactory.address,
+                factoryAddress: stablePoolFactory,
                 tokenA,
                 tokenB,
                 fee,

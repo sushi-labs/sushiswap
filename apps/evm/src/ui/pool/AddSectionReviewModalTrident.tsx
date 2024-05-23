@@ -25,7 +25,11 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { TridentConstantPool, TridentStablePool } from 'sushi'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
-import { BentoBoxChainId, TridentChainId } from 'sushi/config'
+import {
+  BentoBoxChainId,
+  TRIDENT_ROUTER_ADDRESS,
+  TridentChainId,
+} from 'sushi/config'
 import { Amount, Token, Type } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import {
@@ -40,7 +44,6 @@ import {
 
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { useBentoBoxTotals } from 'src/lib/wagmi/hooks/bentobox/hooks/useBentoBoxTotals'
-import { useTridentRouterContract } from 'src/lib/wagmi/hooks/contracts/useTridentRouter'
 import { TridentConstantPoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentConstantPools'
 import { TridentStablePoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentStablePools'
 import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
@@ -49,6 +52,7 @@ import {
   useApprovedActions,
   useSignature,
 } from 'src/lib/wagmi/systems/Checker/Provider'
+import { tridentRouterAbi } from 'sushi/abi'
 import {
   UseCallParameters,
   useAccount,
@@ -109,7 +113,7 @@ export const AddSectionReviewModalTrident: FC<
   const totalSupply = useTotalSupply(liquidityToken)
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const { data: rebases } = useBentoBoxTotals({ chainId, currencies: tokens })
-  const contract = useTridentRouterContract(chainId)
+  const contractAddress = TRIDENT_ROUTER_ADDRESS[chainId]
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
   )
@@ -231,7 +235,7 @@ export const AddSectionReviewModalTrident: FC<
         !token0 ||
         !token1 ||
         !chainId ||
-        !contract ||
+        !contractAddress ||
         !input0 ||
         !input1 ||
         !address ||
@@ -277,7 +281,7 @@ export const AddSectionReviewModalTrident: FC<
 
       if (liquidityInput.length === 0) return
       return {
-        to: contract.address,
+        to: contractAddress,
         account: address,
         chainId,
         data: batchAction({
@@ -286,7 +290,7 @@ export const AddSectionReviewModalTrident: FC<
               signature: signature,
             }),
             encodeFunctionData({
-              ...contract,
+              abi: tridentRouterAbi,
               functionName: 'addLiquidity',
               args: [
                 liquidityInput,
@@ -308,7 +312,7 @@ export const AddSectionReviewModalTrident: FC<
     token0,
     token1,
     chainId,
-    contract,
+    contractAddress,
     input0,
     input1,
     address,

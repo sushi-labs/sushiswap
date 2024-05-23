@@ -1,12 +1,14 @@
 import { TridentStablePool } from 'sushi'
 import { tridentStablePoolAbi, tridentStablePoolFactoryAbi } from 'sushi/abi'
-import { TridentChainId } from 'sushi/config'
+import {
+  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
+  TridentChainId,
+} from 'sushi/config'
 import { Amount, Currency, Token } from 'sushi/currency'
 
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
-import { Address, getContract } from 'viem'
-import { getPublicClient, readContracts } from 'wagmi/actions'
-import { getTridentStablePoolFactoryContract } from '../../../contracts/actions/getTridentStablePoolFactoryContract'
+import { Address } from 'viem'
+import { readContracts } from 'wagmi/actions'
 import { pairsUnique } from './utils'
 
 export enum TridentStablePoolState {
@@ -28,12 +30,7 @@ export const getTridentStablePools = async (
   totals: Map<string, { base: bigint; elastic: bigint }>,
   config: PublicWagmiConfig,
 ) => {
-  const client = getPublicClient(config, { chainId })
-
-  const contract = getContract({
-    ...getTridentStablePoolFactoryContract(chainId),
-    client,
-  })
+  const contract = TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId]
 
   const _pairsUnique = pairsUnique(currencies)
   const _pairsUniqueAddr = _pairsUnique.map(
@@ -45,7 +42,7 @@ export const getTridentStablePools = async (
       (el) =>
         ({
           chainId,
-          address: contract?.address,
+          address: contract,
           abi: tridentStablePoolFactoryAbi,
           functionName: 'poolsCount',
           args: el,
@@ -80,7 +77,7 @@ export const getTridentStablePools = async (
       (args) =>
         ({
           chainId,
-          address: contract?.address,
+          address: contract,
           abi: tridentStablePoolFactoryAbi,
           functionName: 'getPools',
           args,

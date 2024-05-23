@@ -34,7 +34,6 @@ import { Button } from '@sushiswap/ui/components/button'
 import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { getV3NonFungiblePositionManagerContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {
   getDefaultTTL,
@@ -42,7 +41,11 @@ import {
 } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'
-import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  SushiSwapV3ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { Amount, Type, unwrapToken } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
@@ -205,7 +208,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       })
 
       return {
-        to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
+        to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
         data: calldata as Hex,
         value: BigInt(_value),
       }

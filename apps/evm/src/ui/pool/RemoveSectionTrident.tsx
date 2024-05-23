@@ -22,15 +22,15 @@ import {
 } from 'src/lib/pool/trident/actions'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
-import { BentoBoxChainId, TridentChainId } from 'sushi/config'
+import {
+  BentoBoxChainId,
+  TRIDENT_ROUTER_ADDRESS,
+  TridentChainId,
+} from 'sushi/config'
 import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 
 import { useBentoBoxTotals } from 'src/lib/wagmi/hooks/bentobox/hooks/useBentoBoxTotals'
-import {
-  getTridentRouterContractConfig,
-  useTridentRouterContract,
-} from 'src/lib/wagmi/hooks/contracts/useTridentRouter'
 import { TridentConstantPoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentConstantPools'
 import { TridentStablePoolState } from 'src/lib/wagmi/hooks/pools/actions/getTridentStablePools'
 import { useTridentConstantPool } from 'src/lib/wagmi/hooks/pools/hooks/useTridentConstantPools'
@@ -68,7 +68,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
     const { approved } = useApproved(APPROVE_TAG_REMOVE_TRIDENT)
     const { signature } = useSignature(APPROVE_TAG_REMOVE_TRIDENT)
     const { setSignature } = useApprovedActions(APPROVE_TAG_REMOVE_TRIDENT)
-    const contract = useTridentRouterContract(_pool.chainId as TridentChainId)
+    const contractAddress =
+      TRIDENT_ROUTER_ADDRESS[_pool.chainId as TridentChainId]
     const [slippageTolerance] = useSlippageTolerance(
       SlippageToleranceStorageKey.RemoveLiquidity,
     )
@@ -210,7 +211,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
           !token0 ||
           !token1 ||
           !_pool.chainId ||
-          !contract ||
+          !contractAddress ||
           !minAmount0 ||
           !minAmount1 ||
           !address ||
@@ -252,7 +253,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
           burnLiquidityAction({
             address: pool.liquidityToken.address,
             amount: slpAmountToRemove.quotient,
-            recipient: indexOfWETH >= 0 ? contract.address : address,
+            recipient: indexOfWETH >= 0 ? contractAddress : address,
             liquidityOutput,
             receiveToWallet: true,
           }),
@@ -273,7 +274,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
 
         return {
           account: address,
-          to: contract.address,
+          to: contractAddress,
           chainId: _pool.chainId as ChainId,
           data: batchAction({
             actions,
@@ -288,7 +289,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
       token0,
       token1,
       _pool.chainId,
-      contract,
+      contractAddress,
       minAmount0,
       minAmount1,
       address,
@@ -368,11 +369,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
                     fullWidth
                     chainId={chainId}
                     id="remove-liquidity-trident-approve-bentobox"
-                    masterContract={
-                      getTridentRouterContractConfig(
-                        _pool.chainId as TridentChainId,
-                      ).address
-                    }
+                    masterContract={contractAddress}
                   >
                     <Checker.ApproveERC20
                       size="default"
@@ -380,11 +377,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> =
                       fullWidth
                       id="approve-remove-liquidity-slp"
                       amount={slpAmountToRemove}
-                      contract={
-                        getTridentRouterContractConfig(
-                          _pool.chainId as TridentChainId,
-                        ).address
-                      }
+                      contract={contractAddress}
                     >
                       <Checker.Success tag={APPROVE_TAG_REMOVE_TRIDENT}>
                         <Button

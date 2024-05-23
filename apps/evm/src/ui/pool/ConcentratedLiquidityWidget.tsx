@@ -7,6 +7,7 @@ import { Button } from '@sushiswap/ui/components/button'
 import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   isWNativeSupported,
@@ -15,7 +16,6 @@ import { Type } from 'sushi/currency'
 import { Position } from 'sushi/pool'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { getV3NonFungiblePositionManagerContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3NonFungiblePositionManager'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Bound, Field } from '../../lib/constants'
@@ -261,19 +261,14 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
-                contract={
-                  getV3NonFungiblePositionManagerContractConfig(chainId).address
-                }
+                contract={SUSHISWAP_V3_POSTIION_MANAGER[chainId]}
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
-                  contract={
-                    getV3NonFungiblePositionManagerContractConfig(chainId)
-                      .address
-                  }
+                  contract={SUSHISWAP_V3_POSTIION_MANAGER[chainId]}
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated

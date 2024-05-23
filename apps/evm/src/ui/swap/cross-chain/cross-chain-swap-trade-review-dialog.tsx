@@ -36,7 +36,11 @@ import React, {
   useState,
 } from 'react'
 import { Chain, chainName } from 'sushi/chain'
-import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
+import {
+  SUSHIXSWAP_2_ADDRESS,
+  SushiXSwap2ChainId,
+  isSushiXSwap2ChainId,
+} from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
@@ -52,8 +56,8 @@ import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScan
 import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
-import { getSushiXSwap2ContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiXSwap2Contract'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { sushiXSwap2Abi } from 'sushi/abi'
 import { Native } from 'sushi/currency'
 import {
   useAccount,
@@ -119,7 +123,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     isError,
     error,
   } = useSimulateContract({
-    ...getSushiXSwap2ContractConfig(chainId0 as SushiXSwap2ChainId),
+    address: SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId],
+    abi: sushiXSwap2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     value: trade?.value ?? 0n,

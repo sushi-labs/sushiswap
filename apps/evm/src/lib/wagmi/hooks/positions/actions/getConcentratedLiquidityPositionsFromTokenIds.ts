@@ -1,10 +1,12 @@
-import { SushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  SushiSwapV3ChainId,
+} from 'sushi/config'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
 
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContracts } from '@wagmi/core/actions'
-import { getV3FactoryContractConfig } from '../../contracts/useV3FactoryContract'
-import { getV3NonFungiblePositionManagerContractConfig } from '../../contracts/useV3NonFungiblePositionManager'
 import { ConcentratedLiquidityPosition } from '../types'
 import { getConcentratedLiquidityPositionFees } from './getConcentratedLiquidityPositionFees'
 
@@ -94,8 +96,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
 }): Promise<ConcentratedLiquidityPosition[]> => {
   const results = await readContracts(config, {
     contracts: tokenIds.map((el) => ({
-      address: getV3NonFungiblePositionManagerContractConfig(el.chainId)
-        .address,
+      address: SUSHISWAP_V3_POSTIION_MANAGER[el.chainId],
       abi: abiShard,
       chainId: el.chainId,
       functionName: 'positions',
@@ -128,7 +129,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
       return {
         id: tokenId.toString(),
         address: computeSushiSwapV3PoolAddress({
-          factoryAddress: getV3FactoryContractConfig(chainId).address,
+          factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
           tokenA: token0,
           tokenB: token1,
           fee: fee,

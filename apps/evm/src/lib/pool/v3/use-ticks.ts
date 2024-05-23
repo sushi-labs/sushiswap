@@ -1,10 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
-import { getV3FactoryContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3FactoryContract'
-import { getV3TickLensContractConfig } from 'src/lib/wagmi/hooks/contracts/useV3TickLens'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import {
+  SUSHISWAP_V3_FACTORY_ADDRESS,
+  SUSHISWAP_V3_TICK_LENS,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   TICK_SPACINGS,
@@ -27,6 +27,42 @@ interface useTicksProps {
 const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
 }
+
+const getPopulatedTicksInWordAbiShard = [
+  {
+    inputs: [
+      { internalType: 'address', name: 'pool', type: 'address' },
+      {
+        internalType: 'int16',
+        name: 'tickBitmapIndex',
+        type: 'int16',
+      },
+    ],
+    name: 'getPopulatedTicksInWord',
+    outputs: [
+      {
+        components: [
+          { internalType: 'int24', name: 'tick', type: 'int24' },
+          {
+            internalType: 'int128',
+            name: 'liquidityNet',
+            type: 'int128',
+          },
+          {
+            internalType: 'uint128',
+            name: 'liquidityGross',
+            type: 'uint128',
+          },
+        ],
+        internalType: 'struct ITickLens.PopulatedTick[]',
+        name: 'populatedTicks',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
 
 export function useTicks({
   token0,
@@ -55,7 +91,7 @@ export function useTicks({
     () =>
       token0 && token1 && feeAmount && chainId
         ? computeSushiSwapV3PoolAddress({
-            factoryAddress: getV3FactoryContractConfig(chainId).address,
+            factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
             tokenA: token0.wrapped,
             tokenB: token1.wrapped,
             fee: feeAmount,
@@ -94,7 +130,8 @@ export function useTicks({
     ) {
       for (let i = minIndex; i <= maxIndex; i++) {
         reads.push({
-          ...getV3TickLensContractConfig(chainId),
+          address: SUSHISWAP_V3_TICK_LENS[chainId],
+          abi: getPopulatedTicksInWordAbiShard,
           chainId,
           functionName: 'getPopulatedTicksInWord',
           args: [poolAddress as Address, i],

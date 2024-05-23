@@ -4,8 +4,7 @@ import { ChefType } from '@sushiswap/client'
 import { useMemo } from 'react'
 import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
-import { Address, getContract } from 'viem'
-import { usePublicClient } from 'wagmi'
+import { Address } from 'viem'
 
 // TODO move to package
 export const MASTERCHEF_ADDRESS = {
@@ -90,15 +89,9 @@ export function useMasterChefContract(
   chainId: ChainId,
   chef: Omit<ChefType, 'Merkl'>,
 ) {
-  const client = usePublicClient({ chainId }) as any
-
   return useMemo(() => {
     if (!chainId) return null
 
-    // @ts-ignore
-    return getContract({
-      ...getMasterChefContractConfig(chainId, chef),
-      client,
-    })
-  }, [chainId, client, chef])
+    return getMasterChefContractConfig(chainId, chef)
+  }, [chainId, chef])
 }

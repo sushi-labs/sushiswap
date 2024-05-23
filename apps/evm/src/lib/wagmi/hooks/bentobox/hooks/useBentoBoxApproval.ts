@@ -18,12 +18,12 @@ import {
 } from 'wagmi'
 import { SendTransactionReturnType } from 'wagmi/actions'
 
+import { bentoBoxV1Abi } from 'sushi/abi'
 import {
   useApprovedActions,
   useSignature,
 } from '../../../systems/Checker/Provider'
 import { ApprovalState } from '../../approvals/hooks/useTokenApproval'
-import { getBentoBoxContractConfig } from '../../contracts/useBentoBoxContract'
 
 interface UseBentoboxApprovalParams {
   enabled?: boolean
@@ -68,14 +68,16 @@ export const useBentoBoxApproval = ({
     queryFn: async () => {
       if (masterContract && address) {
         const isApproved = await client.readContract({
-          ...getBentoBoxContractConfig(chainId),
+          abi: bentoBoxV1Abi,
+          address: BENTOBOX_ADDRESS[chainId],
           functionName: 'masterContractApproved',
           args: [masterContract, address],
         })
 
         if (!isApproved) {
           const nonces = await client.readContract({
-            ...getBentoBoxContractConfig(chainId),
+            abi: bentoBoxV1Abi,
+            address: BENTOBOX_ADDRESS[chainId],
             functionName: 'nonces',
             args: [address],
           })
@@ -93,7 +95,8 @@ export const useBentoBoxApproval = ({
   })
 
   const { data: simulation } = useSimulateContract({
-    ...getBentoBoxContractConfig(chainId),
+    abi: bentoBoxV1Abi,
+    address: BENTOBOX_ADDRESS[chainId],
     chainId,
     functionName: 'setMasterContractApproval',
     args:

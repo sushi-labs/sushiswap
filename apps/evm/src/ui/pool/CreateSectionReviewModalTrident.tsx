@@ -32,6 +32,7 @@ import { ChainId } from 'sushi/chain'
 import {
   BentoBoxChainId,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
+  TRIDENT_ROUTER_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
   TridentChainId,
 } from 'sushi/config'
@@ -48,13 +49,13 @@ import {
 } from 'viem'
 
 import { useBentoBoxTotals } from 'src/lib/wagmi/hooks/bentobox/hooks/useBentoBoxTotals'
-import { useTridentRouterContract } from 'src/lib/wagmi/hooks/contracts/useTridentRouter'
 import {
   useApproved,
   useApprovedActions,
   useSignature,
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { PoolFinderType } from 'src/lib/wagmi/systems/PoolFinder/types'
+import { tridentRouterAbi } from 'sushi/abi'
 import {
   UseCallParameters,
   useAccount,
@@ -84,7 +85,7 @@ export const CreateSectionReviewModalTrident: FC<
   const { signature } = useSignature(APPROVE_TAG_CREATE_TRIDENT)
   const { setSignature } = useApprovedActions(APPROVE_TAG_CREATE_TRIDENT)
   const { approved } = useApproved(APPROVE_TAG_CREATE_TRIDENT)
-  const contract = useTridentRouterContract(chainId)
+  const contractAddress = TRIDENT_ROUTER_ADDRESS[chainId]
   const constantProductPoolFactory =
     TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[chainId]
   const stablePoolFactory = TRIDENT_STABLE_POOL_FACTORY_ADDRESS[chainId]
@@ -139,7 +140,7 @@ export const CreateSectionReviewModalTrident: FC<
     switch (poolType) {
       case PoolFinderType.Classic:
         return computeTridentConstantPoolAddress({
-          factoryAddress: factory.address,
+          factoryAddress: factory,
           tokenA: token0.wrapped,
           tokenB: token1.wrapped,
           fee: fee,
@@ -147,7 +148,7 @@ export const CreateSectionReviewModalTrident: FC<
         }) as Address
       case PoolFinderType.Stable:
         return computeTridentStablePoolAddress({
-          factoryAddress: factory.address,
+          factoryAddress: factory,
           tokenA: token0.wrapped,
           tokenB: token1.wrapped,
           fee: fee,
@@ -166,13 +167,13 @@ export const CreateSectionReviewModalTrident: FC<
         input1 &&
         totalSupply &&
         pool &&
-        contract &&
+        contractAddress &&
         totals?.[token0.wrapped.address] &&
         totals?.[token1.wrapped.address],
     )
   }, [
     chain?.id,
-    contract,
+    contractAddress,
     factory,
     input0,
     input1,
@@ -227,7 +228,7 @@ export const CreateSectionReviewModalTrident: FC<
         !input1 ||
         !totalSupply ||
         !pool ||
-        !contract ||
+        !contractAddress ||
         !totals?.[token0.wrapped.address] ||
         !totals?.[token1.wrapped.address] ||
         !address
@@ -271,7 +272,7 @@ export const CreateSectionReviewModalTrident: FC<
 
       return {
         account: address,
-        to: contract.address,
+        to: contractAddress,
         value: value ?? 0n,
         data: batchAction({
           actions: [
@@ -280,12 +281,12 @@ export const CreateSectionReviewModalTrident: FC<
             }),
             deployNewPoolAction({
               assets: [input0.currency, input1.currency],
-              factory: factory.address,
+              factory: factory,
               feeTier: fee,
               twap: false,
             }),
             encodeFunctionData({
-              ...contract,
+              abi: tridentRouterAbi,
               functionName: 'addLiquidity',
               args: [
                 liquidityInput,
@@ -311,7 +312,7 @@ export const CreateSectionReviewModalTrident: FC<
   }, [
     address,
     chain?.id,
-    contract,
+    contractAddress,
     factory,
     fee,
     input0,

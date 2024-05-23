@@ -2,11 +2,9 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { multicall3Abi } from 'sushi/abi'
 import { useBlockNumber, useReadContract } from 'wagmi'
-import {
-  Multicall3ChainId,
-  getMulticall3ContractConfig,
-} from '../contracts/useMulticall3Contract'
+import { MULTICALL_3_ADDRESS, Multicall3ChainId } from '../contracts/multicall3'
 
 // TODO: Readd direct export, not sure why it's not working
 export const useCurrentBlockTimestamp = (
@@ -15,7 +13,8 @@ export const useCurrentBlockTimestamp = (
 ) => {
   const queryClient = useQueryClient()
   const query = useReadContract({
-    ...getMulticall3ContractConfig(chainId),
+    address: MULTICALL_3_ADDRESS[chainId],
+    abi: multicall3Abi,
     functionName: 'getCurrentBlockTimestamp',
     query: {
       enabled,
