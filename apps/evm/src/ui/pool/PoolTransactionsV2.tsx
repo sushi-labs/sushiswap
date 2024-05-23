@@ -213,8 +213,12 @@ function useTransactionsV2(
           ...swap,
           sender: String(swap.sender),
           to: String(swap.to),
-          amountIn: Number(swap.amount0In !== '0'? swap.amount0In : swap.amount1In),
-          amountOut: Number(swap.amount0Out !== '0'? swap.amount0Out : swap.amount1Out),
+          amountIn: Number(
+            swap.amount0In !== '0' ? swap.amount0In : swap.amount1In,
+          ),
+          amountOut: Number(
+            swap.amount0Out !== '0' ? swap.amount0Out : swap.amount1Out,
+          ),
           type: TransactionType.Swap as const,
         }))
 

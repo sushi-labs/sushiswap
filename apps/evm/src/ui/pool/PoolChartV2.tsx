@@ -11,7 +11,7 @@ import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
 const charts = [
   PoolChartType.Volume,
   PoolChartType.TVL,
-  PoolChartType.Fees
+  PoolChartType.Fees,
 ] as const
 const periods = [
   PoolChartPeriod.Day,

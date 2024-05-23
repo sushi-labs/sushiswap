@@ -16,13 +16,11 @@ import {
   ComponentsWrapperProps,
   PoolExistenceStateAction,
   PoolStateUnion,
-  SushiSwapV2PoolFinderProps
+  SushiSwapV2PoolFinderProps,
 } from './types'
 
 interface Props {
-  components: ReactElement<
-    ComponentsWrapperProps<SushiSwapV2PoolFinderProps>
-  >
+  components: ReactElement<ComponentsWrapperProps<SushiSwapV2PoolFinderProps>>
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
@@ -73,5 +71,5 @@ export const PoolFinder: typeof Controller & {
   SushiSwapV2Pool: typeof SushiSwapV2Pool
 } = Object.assign(Controller, {
   Components: ComponentsWrapper,
-  SushiSwapV2Pool
+  SushiSwapV2Pool,
 })

@@ -66,9 +66,7 @@ export const usePoolsAsMap = ({
         withBentoPools: false,
         config,
       })
-      const pools = [
-        ...(data.sushiSwapV2Pools || []),
-      ]
+      const pools = [...(data.sushiSwapV2Pools || [])]
       return pools.reduce<
         Record<
           string,

@@ -1,9 +1,7 @@
 import { ReactElement } from 'react'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import {
-  SushiSwapV2Pool,
-} from 'sushi/pool'
+import { SushiSwapV2Pool } from 'sushi/pool'
 
 import { SushiSwapV2PoolState } from '../../hooks'
 
