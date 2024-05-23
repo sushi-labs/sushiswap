@@ -23,7 +23,7 @@ import {
   createToast,
 } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo, useState } from 'react'
-import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/useSteer/useSteerAccountPosition'
+import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/steer/useSteerAccountPosition'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { slippageAmount } from 'sushi'
 import { ChainId } from 'sushi/chain'

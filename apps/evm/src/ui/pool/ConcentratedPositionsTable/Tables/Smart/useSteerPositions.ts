@@ -3,7 +3,7 @@
 import { usePool, useSteerVaults } from '@sushiswap/client/hooks'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
-import { useSteerAccountPositions } from 'src/lib/wagmi/hooks/useSteer/useSteerAccountPosition'
+import { useSteerAccountPositions } from 'src/lib/wagmi/hooks/steer/useSteerAccountPosition'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'

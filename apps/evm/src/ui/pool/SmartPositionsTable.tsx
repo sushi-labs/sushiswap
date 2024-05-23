@@ -12,7 +12,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { useSteerAccountPositionsExtended } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
 import { formatPercent } from 'sushi'
+import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
 import {
   STEER_NAME_COLUMN,
@@ -21,8 +23,6 @@ import {
 } from './ConcentratedPositionsTable/Tables/Smart/columns'
 import { SteerPosition } from './ConcentratedPositionsTable/Tables/Smart/useSteerPositions'
 import { usePoolFilters } from './PoolsFiltersProvider'
-import { useAccount } from 'wagmi'
-import { useSteerAccountPositionsExtended } from 'src/lib/wagmi/hooks/useSteer/useSteerAccountPositionsExtended'
 
 const COLUMNS = [
   STEER_NAME_COLUMN,

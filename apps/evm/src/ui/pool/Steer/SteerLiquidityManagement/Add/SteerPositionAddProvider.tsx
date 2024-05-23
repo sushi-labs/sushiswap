@@ -11,7 +11,7 @@ import {
   useReducer,
 } from 'react'
 import { Field } from 'src/lib/constants'
-import { useSteerVaultReserves } from 'src/lib/wagmi/hooks/useSteer/useSteerVaultReserves'
+import { useSteerVaultReserves } from 'src/lib/wagmi/hooks/steer/useSteerVaultReserves'
 import { Amount, Currency, Token, tryParseAmount } from 'sushi/currency'
 
 interface State {

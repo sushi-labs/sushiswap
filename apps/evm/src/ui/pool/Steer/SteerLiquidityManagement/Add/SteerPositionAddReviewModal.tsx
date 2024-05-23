@@ -35,7 +35,7 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
-import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/useSteer/useSteerAccountPosition'
+import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/steer/useSteerAccountPosition'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { slippageAmount } from 'sushi'
 import { UseSimulateContractParameters, usePublicClient } from 'wagmi'
