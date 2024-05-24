@@ -45,7 +45,7 @@ export async function getSushiV2Tokens({
     return result.tokens
   }
 
-  return []
+  throw new Error('Failed to fetch tokens')
 }
 
 export type SushiV2Tokens = NonNullable<

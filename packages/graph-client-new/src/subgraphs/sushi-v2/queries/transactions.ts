@@ -73,7 +73,7 @@ export async function getSushiV2Transactions({
     return result.transactions
   }
 
-  return []
+  throw new Error('Failed to fetch transactions')
 }
 
 export type SushiV2Transactions = NonNullable<

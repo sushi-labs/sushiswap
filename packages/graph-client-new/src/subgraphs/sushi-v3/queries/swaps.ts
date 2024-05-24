@@ -48,7 +48,7 @@ export async function getSushiV3Swaps({
     return result.swaps
   }
 
-  return []
+  throw new Error('Failed to fetch swaps')
 }
 
 export type SushiV3Swaps = NonNullable<

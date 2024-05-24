@@ -72,7 +72,7 @@ export async function getSushiV3PoolsByTokenPair({
     return result.pools
   }
 
-  return []
+  throw new Error('Failed to fetch pools')
 }
 
 export type SushiV3PoolsByTokenPair = NonNullable<

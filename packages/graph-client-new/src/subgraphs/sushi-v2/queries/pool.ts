@@ -35,7 +35,7 @@ export async function getSushiV2Pool({
     return result.pool
   }
 
-  throw new Error('No pool found')
+  throw new Error(`Failed to fetch pool ${chainId}:${variables.id}`)
 }
 
 export type SushiV2Pool = NonNullable<ResultOf<typeof SushiV2PoolQuery>>['pool']

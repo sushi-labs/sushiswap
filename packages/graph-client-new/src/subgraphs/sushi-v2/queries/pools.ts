@@ -40,7 +40,7 @@ export async function getSushiV2Pools({
     return result.pools
   }
 
-  return []
+  throw new Error('Failed to fetch pools')
 }
 
 export type SushiV2Pools = NonNullable<

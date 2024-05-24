@@ -49,7 +49,7 @@ export async function getSushiV3Mints({
     return result.mints
   }
 
-  return []
+  throw new Error('Failed to fetch mints')
 }
 
 export type SushiV3Mints = NonNullable<

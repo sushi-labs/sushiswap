@@ -45,7 +45,7 @@ export async function getSushiV2LiquidityPositions({
     return result.liquidityPositions
   }
 
-  return []
+  throw new Error('Failed to fetch liquidity positions')
 }
 
 export type SushiV2LiquidityPositions = NonNullable<

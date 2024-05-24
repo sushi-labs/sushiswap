@@ -47,7 +47,7 @@ export async function getSushiV2Mints({
     return result.mints
   }
 
-  return []
+  throw new Error('Failed to fetch mints')
 }
 
 export type SushiV2Mints = NonNullable<

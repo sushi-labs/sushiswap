@@ -46,7 +46,7 @@ export async function getSushiV3Collects({
     return result.collects
   }
 
-  return []
+  throw new Error('Failed to fetch collects')
 }
 
 export type SushiV3Collects = NonNullable<

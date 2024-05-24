@@ -48,7 +48,7 @@ export async function getSushiV3Burns({
     return result.burns
   }
 
-  return []
+  throw new Error('Failed to fetch burns')
 }
 
 export type SushiV3Burns = NonNullable<

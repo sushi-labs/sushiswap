@@ -38,7 +38,7 @@ export async function getSushiV3Factory({
     return result.factories[0]!
   }
 
-  throw new Error('No factory found')
+  throw new Error('Failed to fetch factory')
 }
 
 export type SushiV3Factory = NonNullable<

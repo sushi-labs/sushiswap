@@ -43,7 +43,7 @@ export async function getSushiV3DayDatas({
     return result.uniswapDayDatas
   }
 
-  return []
+  throw new Error('Failed to fetch day datas')
 }
 
 export type SushiV3DayDatas = NonNullable<
