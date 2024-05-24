@@ -616,6 +616,7 @@ export const publicTransports = {
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
+  mainnet,
   arbitrumNova,
   arbitrum,
   avalanche,
@@ -627,7 +628,6 @@ export const publicChains = [
   blast,
   celo as unknown as Omit<typeof mainnet, 'id'> & { id: 42220 },
   cronos,
-  mainnet,
   fantom,
   fuse,
   gnosis,
