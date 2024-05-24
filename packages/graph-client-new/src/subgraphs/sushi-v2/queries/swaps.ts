@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/graph-config'
 import type { ResultOf, VariablesOf } from 'gql.tada'
 
+import type { ChainIdVariable } from 'src/chainId'
 import { requestPaged } from 'src/lib/request-paged'
 import { graphql } from '../graphql'
 
@@ -32,12 +33,13 @@ export const SushiV2SwapsQuery = graphql(`
   }
 `)
 
-export type GetSushiV2Swaps = VariablesOf<typeof SushiV2SwapsQuery>
+export type GetSushiV2Swaps = VariablesOf<typeof SushiV2SwapsQuery> &
+  ChainIdVariable<SushiSwapChainId>
 
-export async function getSushiV2Swaps(
-  chainId: SushiSwapChainId,
-  variables: GetSushiV2Swaps,
-) {
+export async function getSushiV2Swaps({
+  chainId,
+  ...variables
+}: GetSushiV2Swaps) {
   const url = `https://${SUSHISWAP_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({

@@ -5,6 +5,7 @@ import {
 import type { ResultOf, VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
+import type { ChainIdVariable } from 'src/chainId'
 import { graphql } from '../graphql'
 
 export const SushiV3PoolsByTokenPairQuery = graphql(`
@@ -41,12 +42,12 @@ export const SushiV3PoolsByTokenPairQuery = graphql(`
 export type GetSushiV3PoolsByTokenPair = {
   token0: `0x${string}`
   token1: `0x${string}`
-}
+} & ChainIdVariable<SushiSwapV3ChainId>
 
-export async function getSushiV3PoolsByTokenPair(
-  chainId: SushiSwapV3ChainId,
-  _variables: GetSushiV3PoolsByTokenPair,
-) {
+export async function getSushiV3PoolsByTokenPair({
+  chainId,
+  ..._variables
+}: GetSushiV3PoolsByTokenPair) {
   const url = `https://${SUSHISWAP_V3_SUBGRAPH_URL[chainId]}`
 
   const tokens = [_variables.token0, _variables.token1].sort() as [
