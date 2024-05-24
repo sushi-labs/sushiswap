@@ -80,7 +80,7 @@ export const getBundles = async () => {
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
-  return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId' >>>(
+  return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId'>>>(
     (acc, cur) => {
       acc[cur.chainId] = cur
       return acc
