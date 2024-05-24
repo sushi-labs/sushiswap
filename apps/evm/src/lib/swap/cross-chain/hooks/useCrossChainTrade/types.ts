@@ -3,7 +3,7 @@ import { SushiXSwap2ChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { Address } from 'viem'
-import { TransactionType } from './SushiXSwap2'
+import { SushiXSwapTransactionType } from '../../lib'
 
 export interface UseCrossChainTradeParams {
   tradeId: string
@@ -29,7 +29,7 @@ export interface UseCrossChainTradeReturn {
   writeArgs: (string | object)[] | undefined
   route: { status: string }
   value: bigint | undefined
-  transactionType: TransactionType | undefined
+  transactionType: SushiXSwapTransactionType | undefined
   srcBridgeToken: Type | undefined
   dstBridgeToken: Type | undefined
   srcTrade: UseTradeReturn | undefined

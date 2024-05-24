@@ -20,7 +20,7 @@ const API_BASE_URL =
   process.env['NEXT_PUBLIC_API_BASE_URL'] ||
   'https://staging.sushi.com/swap'
 
-function getApiVersion(chainId: ChainId) {
+export function getTradeQueryApiVersion(chainId: ChainId) {
   if (isRouteProcessor4ChainId(chainId)) {
     return '/v4'
   }
@@ -58,7 +58,7 @@ export const useTradeQuery = (
     ],
     queryFn: async () => {
       const params = new URL(
-        `${API_BASE_URL}/swap${getApiVersion(chainId)}/${chainId}`,
+        `${API_BASE_URL}/swap${getTradeQueryApiVersion(chainId)}/${chainId}`,
       )
       // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(

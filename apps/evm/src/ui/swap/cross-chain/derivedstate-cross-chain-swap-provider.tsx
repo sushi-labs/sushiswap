@@ -5,6 +5,7 @@ import {
   useAccount,
   useChainId,
   useConfig,
+  useGasPrice,
   useTokenWithCache,
   watchAccount,
 } from '@sushiswap/wagmi'
@@ -21,13 +22,11 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
-import { useSquidCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useSquidCrossChainTrade'
-import { useStargateCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useStargateCrossChainTrade'
+import { useCrossChainTrade } from 'src/lib/hooks'
+import { SushiXSwap2Adapter } from 'src/lib/swap/cross-chain/lib'
 import { ChainId } from 'sushi/chain'
 import {
-  SquidAdapterChainId,
-  StargateAdapterChainId,
+  SushiXSwap2ChainId,
   defaultCurrency,
   isSquidAdapterChainId,
   isStargateAdapterChainId,
@@ -382,7 +381,7 @@ const useDerivedStateCrossChainSwap = () => {
 const useCrossChainSwapTrade = () => {
   const {
     state: {
-      tradeId,
+      // tradeId,
       token0,
       chainId0,
       chainId1,
@@ -392,36 +391,60 @@ const useCrossChainSwapTrade = () => {
       adapter,
     },
   } = useDerivedStateCrossChainSwap()
+
   const [slippageTolerance] = useSlippageTolerance()
 
-  const stargateCrossChainTrade = useStargateCrossChainTrade({
-    tradeId,
-    network0: chainId0 as StargateAdapterChainId,
-    network1: chainId1 as StargateAdapterChainId,
-    token0,
-    token1,
+  const { address } = useAccount()
+
+  const { data: srcGasPrice } = useGasPrice({
+    chainId: chainId0,
+    query: { enabled: swapAmount?.greaterThan(ZERO) },
+  })
+  const { data: dstGasPrice } = useGasPrice({
+    chainId: chainId1,
+    query: { enabled: swapAmount?.greaterThan(ZERO) },
+  })
+
+  const stargateCrossChainTrade = useCrossChainTrade({
+    adapter: SushiXSwap2Adapter.Stargate,
+    srcChainId: chainId0 as SushiXSwap2ChainId,
+    dstChainId: chainId1 as SushiXSwap2ChainId,
+    srcGasPrice: srcGasPrice,
+    dstGasPrice: dstGasPrice,
+    tokenIn: token0,
+    tokenOut: token1,
     amount: swapAmount,
     slippagePercentage:
       slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
-    recipient: recipient as Address,
-    enabled: Boolean(
-      adapter === SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),
-    ),
+    from: address,
+    recipient: (recipient as Address | undefined) || address,
+    query: {
+      refetchInterval: 15000,
+      enabled:
+        adapter === SushiXSwap2Adapter.Stargate &&
+        swapAmount?.greaterThan(ZERO),
+    },
   })
 
-  const squidCrossChainTrade = useSquidCrossChainTrade({
-    tradeId,
-    network0: chainId0 as SquidAdapterChainId,
-    network1: chainId1 as SquidAdapterChainId,
-    token0,
-    token1,
+  const squidCrossChainTrade = useCrossChainTrade({
+    adapter: SushiXSwap2Adapter.Squid,
+    srcChainId: chainId0 as SushiXSwap2ChainId,
+    dstChainId: chainId1 as SushiXSwap2ChainId,
+    srcGasPrice: srcGasPrice,
+    dstGasPrice: dstGasPrice,
+    tokenIn: token0,
+    tokenOut: token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    recipient: recipient as Address,
-    enabled: Boolean(
-      adapter !== SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),
-    ),
+      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+    from: address,
+    recipient: recipient as Address | undefined,
+    query: {
+      refetchInterval: 15000,
+      enabled:
+        adapter !== SushiXSwap2Adapter.Stargate &&
+        swapAmount?.greaterThan(ZERO),
+    },
   })
 
   return adapter === SushiXSwap2Adapter.Stargate

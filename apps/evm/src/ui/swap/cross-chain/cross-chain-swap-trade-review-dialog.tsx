@@ -56,10 +56,10 @@ import {
 
 import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
-import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
-import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
-import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
-import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
+import { UseCrossChainTradeResult } from 'src/lib/hooks'
+import { useAxelarScanLink } from 'src/lib/swap/cross-chain/hooks/useAxelarScanLink'
+import { useLayerZeroScanLink } from 'src/lib/swap/cross-chain/hooks/useLayerZeroScanLink'
+import { SushiXSwap2Adapter } from 'src/lib/swap/cross-chain/lib'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Native } from 'sushi/currency'
 import {
@@ -112,7 +112,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     dest: StepState.Success,
   })
 
-  const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
+  const tradeRef = useRef<UseCrossChainTradeResult | null>(null)
 
   const {
     data: simulation,
@@ -122,7 +122,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     ...getSushiXSwap2ContractConfig(chainId0 as SushiXSwap2ChainId),
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    value: trade?.value ?? 0n,
+    value: BigInt(trade?.value ?? 0),
     query: {
       enabled: Boolean(
         isSushiXSwap2ChainId(chainId0) &&
@@ -131,7 +131,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           trade?.writeArgs.length > 0 &&
           chain?.id === chainId0 &&
           approved &&
-          trade?.route?.status !== 'NoWay',
+          trade?.status !== 'NoWay',
       ),
     },
   })
@@ -529,14 +529,14 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {isFetching || !trade?.minAmountOut ? (
+                      {isFetching || !trade?.amountOutMin ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
                           className="w-1/2"
                         />
                       ) : (
-                        `${trade?.minAmountOut?.toSignificant(6)} ${
+                        `${trade?.amountOutMin?.toSignificant(6)} ${
                           token1?.symbol
                         }`
                       )}

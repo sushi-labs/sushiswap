@@ -1,7 +1,7 @@
 'use client'
 
 import { Currency, SkeletonBox, SkeletonText, SquidIcon } from '@sushiswap/ui'
-import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
+import { SushiXSwap2Adapter } from 'src/lib/swap/cross-chain/lib'
 import { Chain } from 'sushi/chain'
 import { STARGATE_TOKEN } from 'sushi/config'
 import { TradeRoutePathView } from '../trade-route-path-view'
@@ -31,7 +31,7 @@ export const CrossChainSwapTradeReviewRoute = () => {
               Swap {token0.symbol} to {trade.srcBridgeToken.symbol}
             </span>
           )}
-          {isTradeLoading ? (
+          {/* {isTradeLoading ? (
             <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
           ) : trade?.srcTrade ? (
             <TradeRoutePathView trade={trade.srcTrade}>
@@ -42,7 +42,7 @@ export const CrossChainSwapTradeReviewRoute = () => {
                 View Route
               </button>
             </TradeRoutePathView>
-          ) : null}
+          ) : null} */}
         </div>
       </div>
       <div className="flex items-center opacity-20 -ml-1 gap-1">
@@ -77,7 +77,7 @@ export const CrossChainSwapTradeReviewRoute = () => {
               Swap {trade.dstBridgeToken.symbol} to {token1.symbol}
             </span>
           )}
-          {isTradeLoading ? (
+          {/* {isTradeLoading ? (
             <SkeletonBox className="h-2.5 py-0.5 w-[80px]" />
           ) : trade?.dstTrade ? (
             <TradeRoutePathView trade={trade.dstTrade}>
@@ -88,7 +88,7 @@ export const CrossChainSwapTradeReviewRoute = () => {
                 View Route
               </button>
             </TradeRoutePathView>
-          ) : null}
+          ) : null} */}
         </div>
       </div>
     </div>

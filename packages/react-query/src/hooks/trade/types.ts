@@ -1,5 +1,6 @@
-import { routeProcessor2Abi } from 'sushi/abi'
+import { routeProcessor2Abi, sushiXSwap2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import type { SushiXSwap2ChainId } from 'sushi/config'
 import { Amount, Price, type Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { RouterLiquiditySource } from 'sushi/router'
@@ -7,6 +8,38 @@ import type { Address, WriteContractParameters } from 'viem'
 import z from 'zod'
 
 import { legValidator, tradeValidator01 } from './validator01'
+
+export interface UseCrossChainTradeParams {
+  srcChainId: SushiXSwap2ChainId
+  dstChainId: SushiXSwap2ChainId
+  fromToken: Type | undefined
+  toToken: Type | undefined
+  amount: Amount<Type> | undefined
+  gasPrice?: bigint | null | undefined
+  slippagePercentage: string
+  recipient: Address | undefined
+  enabled: boolean
+  onError?(e: Error): void
+}
+
+export type UseCrossChainTradeReturnWriteArgs =
+  | WriteContractParameters<typeof sushiXSwap2Abi, 'swapAndBridge'>['args']
+  | WriteContractParameters<typeof sushiXSwap2Abi, 'bridge'>['args']
+  | undefined
+
+export interface UseCrossChainTradeReturn {
+  swapPrice: Price<Type, Type> | undefined
+  priceImpact: Percent | undefined
+  amountIn: Amount<Type> | undefined
+  amountOut: Amount<Type> | undefined
+  minAmountOut: Amount<Type> | undefined
+  gasSpent: string | undefined
+  gasSpentUsd: string | undefined
+  functionName: 'swapAndBridge' | 'bridge'
+  writeArgs: UseCrossChainTradeReturnWriteArgs
+  route: TradeType['route']
+  value?: bigint | undefined
+}
 
 export interface UseTradeParams {
   chainId: ChainId

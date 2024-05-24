@@ -6,11 +6,11 @@ import { CheckMarkIcon } from '@sushiswap/ui/components/icons/CheckmarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui/components/loader'
 import { FC, ReactNode } from 'react'
+import { UseCrossChainTradeResult } from 'src/lib/hooks'
 import {
   SushiXSwap2Adapter,
-  TransactionType,
-} from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
-import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
+  SushiXSwapTransactionType,
+} from 'src/lib/swap/cross-chain/lib'
 import { Chain } from 'sushi/chain'
 import { STARGATE_TOKEN } from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
@@ -25,7 +25,7 @@ interface ConfirmationDialogContent {
   bridgeUrl?: string
   adapter?: SushiXSwap2Adapter
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
-  tradeRef: React.MutableRefObject<UseCrossChainTradeReturn | null>
+  tradeRef: React.MutableRefObject<UseCrossChainTradeResult | null>
 }
 
 export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
@@ -43,9 +43,10 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
 
   const swapOnDest =
     trade?.transactionType &&
-    [TransactionType.BridgeAndSwap, TransactionType.CrossChainSwap].includes(
-      trade.transactionType,
-    )
+    [
+      SushiXSwapTransactionType.BridgeAndSwap,
+      SushiXSwapTransactionType.CrossChainSwap,
+    ].includes(trade.transactionType)
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>
