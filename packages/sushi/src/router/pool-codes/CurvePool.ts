@@ -1,4 +1,6 @@
+import { Address } from 'viem'
 import { ChainId } from '../../chain/index.js'
+import { Type } from '../../currency/Type.js'
 import {
   CurveMultitokenPool,
   CurvePool,
@@ -14,12 +16,15 @@ import {
 import { PoolCode } from './PoolCode.js'
 
 export class CurvePoolCode extends PoolCode {
+  poolType: number
   constructor(
     pool: CurvePool | CurveMultitokenPool,
     liquidityProvider: LiquidityProviders,
     providerName: string,
+    poolType?: number,
   ) {
     super(pool, liquidityProvider, `${providerName} ${(pool?.fee || 0) * 100}%`)
+    this.poolType = poolType || 1
   }
 
   override getStartPoint(): string {
@@ -42,18 +47,20 @@ export class CurvePoolCode extends PoolCode {
     // supports only 2-token pools currently
 
     let poolType = 0
-    if (leg.tokenFrom.chainId !== undefined) {
-      const index = CURVE_NON_FACTORY_POOLS[
-        leg.tokenFrom.chainId as ChainId
-      ]!.findIndex(([addr]) => addr === this.pool.address)
-      if (
-        index >= 0 &&
-        CURVE_NON_FACTORY_POOLS[leg.tokenFrom.chainId as ChainId]![
-          index
-        ]![1] !== CurvePoolType.Legacy
-      )
-        poolType = 1
-    }
+    if (this.poolType !== undefined) {
+      if (leg.tokenFrom.chainId !== undefined) {
+        const index = CURVE_NON_FACTORY_POOLS[
+          leg.tokenFrom.chainId as ChainId
+        ]?.findIndex(([addr]) => addr === this.pool.address)
+        if (index !== undefined && index >= 0) {
+          const pools = CURVE_NON_FACTORY_POOLS[
+            leg.tokenFrom.chainId as ChainId
+          ] as [Address, CurvePoolType, Type[]][]
+          const poolInfo = pools[index] as [Address, CurvePoolType, Type[]]
+          if (poolInfo[1] !== CurvePoolType.Legacy) poolType = 1
+        }
+      }
+    } else poolType = this.poolType
 
     const [index0, index1] =
       this.pool instanceof CurveMultitokenPool

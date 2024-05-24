@@ -11,8 +11,10 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { Signature } from 'viem'
+import { SignTypedDataParameters, type Signature as _Signature } from 'viem'
 import { useConfig } from 'wagmi'
+
+type Signature = _Signature & Partial<SignTypedDataParameters>
 
 type CheckerContext = {
   setApproved: (tag: string, approved: boolean) => void

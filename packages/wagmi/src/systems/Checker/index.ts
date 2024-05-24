@@ -8,6 +8,10 @@ import {
   ApproveERC20Multiple,
   ApproveERC20MultipleProps,
 } from './ApproveERC20Multiple'
+import {
+  ApproveERC20WithPermit,
+  ApproveERC20WithPermitProps,
+} from './ApproveERC20WithPermit'
 import { Connect } from './Connect'
 import { Custom, CustomProps } from './Custom'
 import { Guard, GuardProps } from './Guard'
@@ -22,6 +26,7 @@ export type CheckerProps = {
   Custom: FC<CustomProps>
   ApproveERC20: ComponentType<ApproveERC20Props>
   ApproveERC20Multiple: ComponentType<ApproveERC20MultipleProps>
+  ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps>
   Connect: ComponentType<ButtonProps>
   ApproveBentobox: ComponentType<ApproveBentoboxProps>
   Success: FC<SuccessProps>
@@ -36,6 +41,7 @@ export const Checker: CheckerProps = {
   Custom,
   ApproveERC20,
   ApproveERC20Multiple,
+  ApproveERC20WithPermit,
   ApproveBentobox,
   Success,
   Root,

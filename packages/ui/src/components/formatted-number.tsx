@@ -1,11 +1,11 @@
 import React from 'react'
-import { withoutScientificNotation } from 'sushi'
+import { formatNumber, withoutScientificNotation } from 'sushi'
 
-interface FormattedPriceProps {
+interface FormattedNumberProps {
   number: string | undefined
 }
 
-const FormattedPrice: React.FC<FormattedPriceProps> = ({ number }) => {
+const FormattedNumber: React.FC<FormattedNumberProps> = ({ number }) => {
   if (typeof number === 'undefined') return undefined
 
   const numberStr = withoutScientificNotation(number)
@@ -28,7 +28,7 @@ const FormattedPrice: React.FC<FormattedPriceProps> = ({ number }) => {
     zeroGroups[0].length === fractionalPart.length
   ) {
     // If no zero groups found or less than or equal to 4 zeros, return regular rendering
-    return <span>{numberStr}</span>
+    return <span>{formatNumber(numberStr)}</span>
   }
 
   const zeroCount = zeroGroups[0].length
@@ -42,4 +42,4 @@ const FormattedPrice: React.FC<FormattedPriceProps> = ({ number }) => {
   )
 }
 
-export { FormattedPrice }
+export { FormattedNumber }

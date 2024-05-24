@@ -1,6 +1,7 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Card,
@@ -30,9 +31,10 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
-import { FormattedPrice } from '@sushiswap/ui/components/formatted-price'
+import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import {
+  getDefaultTTL,
   useAccount,
   useConcentratedLiquidityPositionsFromTokenId,
   useConcentratedPositionInfo,
@@ -237,14 +239,20 @@ const Component: FC<{ id: string }> = ({ id }) => {
                         <SettingsOverlay
                           options={{
                             slippageTolerance: {
-                              storageKey: 'addLiquidity',
+                              storageKey:
+                                SlippageToleranceStorageKey.AddLiquidity,
                               defaultValue: '0.1',
                               title: 'Add Liquidity Slippage',
+                            },
+                            transactionDeadline: {
+                              storageKey: TTLStorageKey.AddLiquidity,
+                              defaultValue: getDefaultTTL(chainId).toString(),
                             },
                           }}
                           modules={[
                             SettingsModule.CustomTokens,
                             SettingsModule.SlippageTolerance,
+                            SettingsModule.TransactionDeadline,
                           ]}
                         >
                           <IconButton
@@ -469,7 +477,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       title={
                         <>
                           1 {unwrapToken(currencyBase)?.symbol} ={' '}
-                          <FormattedPrice
+                          <FormattedNumber
                             number={(inverted
                               ? pool?.token1Price
                               : pool?.token0Price
@@ -516,7 +524,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '0'
                           ) : (
                             <>
-                              <FormattedPrice
+                              <FormattedNumber
                                 number={formatTickPrice({
                                   price: priceLower,
                                   atLimit: tickAtLimit,
@@ -596,7 +604,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             '∞'
                           ) : (
                             <>
-                              <FormattedPrice
+                              <FormattedNumber
                                 number={formatTickPrice({
                                   price: priceUpper,
                                   atLimit: tickAtLimit,

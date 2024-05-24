@@ -391,7 +391,7 @@ export async function enableVaults(vaultIds: string[]) {
     where: { id: { in: vaultIds } },
   })
 
-  console.log(`LOAD - Deprecated ${enabled.count} vaults.`)
+  console.log(`LOAD - Enabled ${enabled.count} vaults.`)
 }
 
 export async function deprecateVaults(vaultIds: string[]) {

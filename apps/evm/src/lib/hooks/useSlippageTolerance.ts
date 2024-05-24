@@ -1,11 +1,11 @@
 'use client'
 
-import { useLocalStorage } from '@sushiswap/hooks'
+import { SlippageToleranceStorageKey, useLocalStorage } from '@sushiswap/hooks'
 import { useMemo } from 'react'
 import { Percent } from 'sushi/math'
 
 export const useSlippageTolerance = (
-  key: string | undefined = 'swapSlippage',
+  key: SlippageToleranceStorageKey = SlippageToleranceStorageKey.Swap,
 ) => {
   const [slippageTolerance, setSlippageTolerance] = useLocalStorage<
     number | string

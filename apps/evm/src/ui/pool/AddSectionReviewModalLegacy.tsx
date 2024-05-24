@@ -1,3 +1,5 @@
+import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   DialogConfirm,
   DialogContent,
@@ -8,6 +10,9 @@ import {
   DialogReview,
   DialogTitle,
   DialogTrigger,
+  IconButton,
+  SettingsModule,
+  SettingsOverlay,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { Dots } from '@sushiswap/ui/components/dots'
@@ -15,6 +20,7 @@ import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
 import {
   SushiSwapV2PoolState,
   UseSimulateContractParameters,
+  getDefaultTTL,
   getSushiSwapRouterContractConfig,
   useAccount,
   usePublicClient,
@@ -34,7 +40,6 @@ import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address, UserRejectedRequestError } from 'viem'
-
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface UseAddSushiSwapV2 {
@@ -285,10 +290,15 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     children,
     onSuccess: _onSuccess,
   }) => {
-    const { data: deadline } = useTransactionDeadline({ chainId })
+    const { data: deadline } = useTransactionDeadline({
+      storageKey: TTLStorageKey.AddLiquidity,
+      chainId,
+    })
     const { address } = useAccount()
     const { approved } = useApproved(APPROVE_TAG_ADD_LEGACY)
-    const [slippageTolerance] = useSlippageTolerance('addLiquidity')
+    const [slippageTolerance] = useSlippageTolerance(
+      SlippageToleranceStorageKey.AddLiquidity,
+    )
     const client = usePublicClient()
 
     const onSuccess = useCallback(
@@ -390,12 +400,38 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             <>
               <DialogTrigger asChild>{children}</DialogTrigger>
               <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add liquidity</DialogTitle>
-                  <DialogDescription>
-                    Please review your entered details.
-                  </DialogDescription>
-                </DialogHeader>
+                <div className="flex justify-between">
+                  <DialogHeader>
+                    <DialogTitle>Add liquidity</DialogTitle>
+                    <DialogDescription>
+                      Please review your entered details.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <SettingsOverlay
+                    options={{
+                      slippageTolerance: {
+                        storageKey: SlippageToleranceStorageKey.AddLiquidity,
+                        defaultValue: '0.1',
+                        title: 'Add Liquidity Slippage',
+                      },
+                      transactionDeadline: {
+                        storageKey: TTLStorageKey.AddLiquidity,
+                        defaultValue: getDefaultTTL(chainId).toString(),
+                      },
+                    }}
+                    modules={[
+                      SettingsModule.SlippageTolerance,
+                      SettingsModule.TransactionDeadline,
+                    ]}
+                  >
+                    <IconButton
+                      name="Settings"
+                      icon={CogIcon}
+                      variant="secondary"
+                      className="mr-12"
+                    />
+                  </SettingsOverlay>
+                </div>
                 <AddSectionReviewModal
                   chainId={chainId as BentoBoxChainId}
                   input0={input0}
