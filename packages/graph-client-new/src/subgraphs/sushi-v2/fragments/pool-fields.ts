@@ -1,7 +1,7 @@
 import { graphql } from '../graphql'
 
 export const PoolFieldsFragment = graphql(`
-  fragment PoolFields on Pair {
+  fragment PoolFields on Pair @_unmask {
     id
     type
     swapFee

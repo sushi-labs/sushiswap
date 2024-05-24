@@ -2,7 +2,7 @@ import {
   SUSHISWAP_V3_SUBGRAPH_URL,
   type SushiSwapV3ChainId,
 } from '@sushiswap/graph-config'
-import type { ResultOf, VariablesOf } from 'gql.tada'
+import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
 import type { ChainIdVariable } from 'src/chainId'
@@ -75,6 +75,6 @@ export async function getSushiV3PoolsByTokenPair({
   throw new Error('Failed to fetch pools')
 }
 
-export type SushiV3PoolsByTokenPair = NonNullable<
-  ResultOf<typeof SushiV3PoolsByTokenPairQuery>
->['pools']
+export type SushiV3PoolsByTokenPair = Awaited<
+  ReturnType<typeof getSushiV3PoolsByTokenPair>
+>

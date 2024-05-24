@@ -1,5 +1,5 @@
 import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
-import type { ResultOf, VariablesOf } from 'gql.tada'
+import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
 import type { ChainIdVariable } from 'src/chainId'
@@ -33,4 +33,4 @@ export async function getBlocks({ chainId, ...variables }: GetBlocks) {
   return result
 }
 
-export type Blocks = NonNullable<ResultOf<typeof BlocksQuery>>
+export type Blocks = Awaited<ReturnType<typeof getBlocks>>

@@ -2,7 +2,7 @@ import {
   SUSHISWAP_V3_SUBGRAPH_URL,
   type SushiSwapV3ChainId,
 } from '@sushiswap/graph-config'
-import type { ResultOf, VariablesOf } from 'gql.tada'
+import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
 import type { ChainIdVariable } from 'src/chainId'
@@ -41,6 +41,4 @@ export async function getSushiV3Factory({
   throw new Error('Failed to fetch factory')
 }
 
-export type SushiV3Factory = NonNullable<
-  ResultOf<typeof SushiV3FactoriesQuery>
->['factories'][number]
+export type SushiV3Factory = Awaited<ReturnType<typeof getSushiV3Factory>>

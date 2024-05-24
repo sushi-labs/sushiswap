@@ -1,5 +1,5 @@
 import { SUSHI_BAR_SUBGRAPH_URL } from '@sushiswap/graph-config'
-import type { ResultOf, VariablesOf } from 'gql.tada'
+import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
 import { graphql } from '../graphql'
@@ -36,4 +36,4 @@ export async function getSushiBar(variables: GetSushiBar) {
   throw new Error('No bar')
 }
 
-export type SushiBar = NonNullable<ResultOf<typeof SushiBarQuery>>['xsushi']
+export type SushiBar = Awaited<ReturnType<typeof getSushiBar>>

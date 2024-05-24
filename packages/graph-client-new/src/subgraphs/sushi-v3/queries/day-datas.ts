@@ -2,7 +2,7 @@ import {
   SUSHISWAP_V3_SUBGRAPH_URL,
   type SushiSwapV3ChainId,
 } from '@sushiswap/graph-config'
-import type { ResultOf, VariablesOf } from 'gql.tada'
+import type { VariablesOf } from 'gql.tada'
 
 import type { ChainIdVariable } from 'src/chainId'
 import { requestPaged } from 'src/lib/request-paged'
@@ -46,6 +46,4 @@ export async function getSushiV3DayDatas({
   throw new Error('Failed to fetch day datas')
 }
 
-export type SushiV3DayDatas = NonNullable<
-  ResultOf<typeof SushiV3DayDatasQuery>
->['uniswapDayDatas']
+export type SushiV3DayDatas = Awaited<ReturnType<typeof getSushiV3DayDatas>>

@@ -2,7 +2,7 @@ import {
   SUSHISWAP_SUBGRAPH_URL,
   type SushiSwapChainId,
 } from '@sushiswap/graph-config'
-import type { ResultOf, VariablesOf } from 'gql.tada'
+import type { VariablesOf } from 'gql.tada'
 
 import type { ChainIdVariable } from 'src/chainId'
 import { requestPaged } from 'src/lib/request-paged'
@@ -76,6 +76,6 @@ export async function getSushiV2Transactions({
   throw new Error('Failed to fetch transactions')
 }
 
-export type SushiV2Transactions = NonNullable<
-  ResultOf<typeof SushiV2TransactionsQuery>
->['transactions']
+export type SushiV2Transactions = Awaited<
+  ReturnType<typeof getSushiV2Transactions>
+>
