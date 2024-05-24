@@ -5,7 +5,10 @@ import {
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
-import type { ChainIdVariable } from 'src/chainId'
+import { addChainId } from 'src/lib/modifiers/add-chain-id'
+import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
+import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
 
 export const SushiV3PoolQuery = graphql(`
@@ -71,8 +74,10 @@ export async function getSushiV3Pool({
 
   const result = await request(url, SushiV3PoolQuery, variables)
 
-  if (result) {
-    return result.pool
+  if (result.pool) {
+    return convertIdToMultichainId(
+      copyIdToAddress(addChainId(chainId, result.pool)),
+    )
   }
 
   throw new Error(`Failed to fetch pool ${chainId}:${variables.id}`)

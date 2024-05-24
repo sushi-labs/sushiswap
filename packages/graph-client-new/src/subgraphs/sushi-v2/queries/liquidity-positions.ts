@@ -4,8 +4,12 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
-import type { ChainIdVariable } from 'src/chainId'
+import { addChainId } from 'src/lib/modifiers/add-chain-id'
+import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
+import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
+import type { Hex } from 'src/lib/types/hex'
 import { graphql } from '../graphql'
 
 export const SushiV2LiquidityPositionsQuery = graphql(`
@@ -42,7 +46,18 @@ export async function getSushiV2LiquidityPositions({
   })
 
   if (result) {
-    return result.liquidityPositions
+    return result.liquidityPositions.map((position) => {
+      const pool = convertIdToMultichainId(
+        copyIdToAddress(addChainId(chainId, position.pair)),
+      )
+
+      return {
+        id: position.id,
+        balance: position.balance,
+        pool,
+        user: position.user.id as Hex,
+      }
+    })
   }
 
   throw new Error('Failed to fetch liquidity positions')

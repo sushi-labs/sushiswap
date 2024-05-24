@@ -2,7 +2,7 @@ import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
-import type { ChainIdVariable } from 'src/chainId'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { ChainId } from 'sushi/chain'
 import { graphql } from '../graphql'
 

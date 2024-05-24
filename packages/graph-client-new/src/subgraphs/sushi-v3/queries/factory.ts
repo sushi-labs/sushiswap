@@ -5,7 +5,10 @@ import {
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
-import type { ChainIdVariable } from 'src/chainId'
+import { addChainId } from 'src/lib/modifiers/add-chain-id'
+import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
+import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
 
 export const SushiV3FactoriesQuery = graphql(`
@@ -34,8 +37,10 @@ export async function getSushiV3Factory({
     variables,
   })
 
-  if (result) {
-    return result.factories[0]!
+  if (result.factories[0]) {
+    return convertIdToMultichainId(
+      copyIdToAddress(addChainId(chainId, result.factories[0])),
+    )
   }
 
   throw new Error('Failed to fetch factory')

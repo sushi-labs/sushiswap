@@ -4,8 +4,11 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
-import type { ChainIdVariable } from 'src/chainId'
+import { addChainId } from 'src/lib/modifiers/add-chain-id'
+import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
+import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
 
 export const SushiV2TokensQuery = graphql(`
@@ -42,7 +45,9 @@ export async function getSushiV2Tokens({
   })
 
   if (result) {
-    return result.tokens
+    return result.tokens.map((token) =>
+      convertIdToMultichainId(copyIdToAddress(addChainId(chainId, token))),
+    )
   }
 
   throw new Error('Failed to fetch tokens')

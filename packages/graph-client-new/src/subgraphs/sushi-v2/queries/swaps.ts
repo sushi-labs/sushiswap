@@ -4,8 +4,8 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
-import type { ChainIdVariable } from 'src/chainId'
 import { requestPaged } from 'src/lib/request-paged'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
 
 export const SushiV2SwapsQuery = graphql(`

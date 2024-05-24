@@ -1,4 +1,4 @@
-import type { ChainIdVariable } from 'src/chainId'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { ChainId } from 'sushi/chain'
 
 type FetchMultichain<

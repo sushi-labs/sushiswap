@@ -4,8 +4,11 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
-import type { ChainIdVariable } from 'src/chainId'
+import { addChainId } from 'src/lib/modifiers/add-chain-id'
+import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
+import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { PoolFieldsFragment } from '../fragments/pool-fields'
 import { graphql } from '../graphql'
 
@@ -37,7 +40,9 @@ export async function getSushiV2Pools({
   })
 
   if (result) {
-    return result.pools
+    return result.pools.map((pool) =>
+      convertIdToMultichainId(copyIdToAddress(addChainId(chainId, pool))),
+    )
   }
 
   throw new Error('Failed to fetch pools')

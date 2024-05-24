@@ -4,8 +4,9 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
-import type { ChainIdVariable } from 'src/chainId'
+import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { requestPaged } from 'src/lib/request-paged'
+import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
 
 export const SushiV3MintsQuery = graphql(`
@@ -46,7 +47,7 @@ export async function getSushiV3Mints({
   })
 
   if (result) {
-    return result.mints
+    return result.mints.map((mint) => addChainId(chainId, mint))
   }
 
   throw new Error('Failed to fetch mints')

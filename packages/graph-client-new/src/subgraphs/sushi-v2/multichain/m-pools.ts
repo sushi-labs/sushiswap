@@ -1,6 +1,6 @@
 import { SUSHISWAP_ENABLED_NETWORKS } from '@sushiswap/graph-config'
-import type { ChainIdsInsteadOfChainId } from 'src/chainId'
 import { fetchMultichain } from 'src/lib/fetch-multichain'
+import type { ChainIdsInsteadOfChainId } from 'src/lib/types/chainId'
 import { type GetSushiV2Pools, getSushiV2Pools } from '..'
 
 export type GetSushiV2MPools = ChainIdsInsteadOfChainId<GetSushiV2Pools>
