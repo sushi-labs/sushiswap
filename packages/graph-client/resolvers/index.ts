@@ -13,6 +13,7 @@ import { resolvers as masterchef } from './masterchef/index.js'
 import { resolvers as pairs } from './pairs/index.js'
 import { resolvers as tokens } from './tokens/index.js'
 import { resolvers as user } from './user/index.js'
+import { resolvers as v3 } from './v3/index.js'
 
 // export const resolvers: Resolvers = mergeResolvers<MeshResolvedSource, MeshContext>([
 export const resolvers: Resolvers = mergeResolvers([
@@ -28,4 +29,5 @@ export const resolvers: Resolvers = mergeResolvers([
   user,
   furo,
   graphnode,
+  v3
 ])
