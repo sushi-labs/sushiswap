@@ -41,7 +41,7 @@
     "lodash.maxby": "^4.6.0",
     "lodash.once": "^4.1.1",
     "lodash.uniqby": "^4.7.0",
-    "next": "14.1.0",
+    "next": "14.2.3",
     "next-axiom": "0.17.0",
     "next-themes": "^0.2.1",
     "petra-plugin-wallet-adapter": "^0.4.5",
