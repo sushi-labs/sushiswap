@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/bonds-sdk": "workspace:*",
     "gql.tada": "^1.7.5",
     "graphql-request": "^7.0.1",
     "sushi": "workspace:*"

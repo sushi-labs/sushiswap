@@ -1793,6 +1793,9 @@ importers:
 
   packages/graph-client-new:
     dependencies:
+      '@sushiswap/bonds-sdk':
+        specifier: workspace:*
+        version: link:../bonds-sdk
       '@sushiswap/graph-config':
         specifier: workspace:*
         version: link:../../config/graph

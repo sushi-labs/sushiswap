@@ -19,6 +19,12 @@
             "tadaTurboLocation": "./src/subgraphs/blocks/blocks-cache.d.ts"
           },
           {
+            "name": "bonds",
+            "schema": "./src/subgraphs/bonds/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/bonds/bonds-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/bonds/bonds-cache.d.ts"
+          },
+          {
             "name": "master-chef-v1",
             "schema": "./src/subgraphs/master-chef-v1/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/master-chef-v1/master-chef-v1-env.d.ts",

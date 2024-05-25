@@ -1,3 +1,4 @@
+import { BONDS_SUBGRAPH_URL } from '@sushiswap/bonds-sdk'
 import {
   BLOCKS_SUBGRAPH_URL,
   MASTERCHEF_V1_SUBGRAPH_URL,
@@ -14,6 +15,7 @@ import fetchSchema from 'graphql-fetch-schema'
 
 const schemas = {
   blocks: BLOCKS_SUBGRAPH_URL[1],
+  bonds: BONDS_SUBGRAPH_URL[1],
   'master-chef-v1': MASTERCHEF_V1_SUBGRAPH_URL,
   'master-chef-v2': MASTERCHEF_V2_SUBGRAPH_URL,
   'mini-chef': MINICHEF_SUBGRAPH_URL[137],
