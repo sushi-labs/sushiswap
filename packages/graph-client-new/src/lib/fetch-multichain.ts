@@ -1,36 +1,33 @@
-import type { ChainIdVariable } from 'src/lib/types/chainId'
-import type { ChainId } from 'sushi/chain'
+import type { FetchError } from './fetch-error'
 
 type FetchMultichain<
-  C extends ChainId,
-  A extends { [key: string]: any } & ChainIdVariable<C>,
+  ARG extends { [key: string]: any },
   RET extends Promise<unknown[]>,
 > = {
-  chainIds: C[]
-  fetch: (variables: A) => RET
-  variables: Omit<A, 'chainId'>
+  chainIds: ARG['chainId'][]
+  fetch: (variables: ARG) => RET
+  variables: Omit<ARG, 'chainId'>
 }
 
 export async function fetchMultichain<
-  C extends ChainId,
-  A extends { [key: string]: any } & ChainIdVariable<C>,
+  ARG extends { [key: string]: any },
   RET extends Promise<unknown[]>,
 >({
   chainIds,
   fetch,
   variables,
-}: FetchMultichain<C, A, RET>): Promise<{
+}: FetchMultichain<ARG, RET>): Promise<{
   data: Awaited<RET>
-  errors: any[]
+  errors: FetchError[]
 }> {
   const promises = await Promise.allSettled(
     chainIds.map((chainId) => {
-      return fetch({ ...(variables as A), chainId })
+      return fetch({ ...(variables as ARG), chainId })
     }),
   )
 
   const data = [] as Awaited<RET>
-  const errors = []
+  const errors = [] as FetchError[]
 
   for (const promise of promises) {
     if (promise.status === 'fulfilled') {

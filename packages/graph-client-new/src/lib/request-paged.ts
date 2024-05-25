@@ -2,6 +2,7 @@ import { MAX_FIRST } from '@sushiswap/graph-config'
 import type { ResultOf, TadaDocumentNode, VariablesOf } from 'gql.tada'
 import _request from 'graphql-request'
 import type { ChainId } from 'sushi/chain'
+import { FetchError } from './fetch-error'
 
 interface RequestPaged<T extends TadaDocumentNode<Record<string, unknown>>> {
   chainId: ChainId
@@ -49,18 +50,21 @@ export async function requestPaged<T extends TadaDocumentNode>({
   }
 
   if ('orderBy' in variables) {
-    throw new Error('orderBy is not allowed in requestPaged')
+    throw new FetchError(chainId, 'orderBy is not allowed in requestPaged')
   }
 
   if ('orderDirection' in variables) {
-    throw new Error('orderDirection is not allowed in requestPaged')
+    throw new FetchError(
+      chainId,
+      'orderDirection is not allowed in requestPaged',
+    )
   }
 
   const querySelection = (query as any)?.definitions?.[0]?.selectionSet
     ?.selections?.[0]
 
   if (!querySelection) {
-    throw new Error('Query selection not found')
+    throw new FetchError(chainId, 'Query selection not found')
   }
 
   // We need the id value to paginate
@@ -69,12 +73,12 @@ export async function requestPaged<T extends TadaDocumentNode>({
       return s.name.value === 'id'
     })
   ) {
-    throw new Error('Id not found in query selection')
+    throw new FetchError(chainId, 'Id not found in query selection')
   }
 
   const key = querySelection?.name?.value as keyof ResultOf<T>
   if (!key) {
-    throw new Error('Key not found')
+    throw new FetchError(chainId, 'Key not found')
   }
 
   let lastSize = maxFirst

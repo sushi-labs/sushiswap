@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
+import { FetchError } from 'src/lib/fetch-error'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
@@ -45,7 +46,7 @@ export async function getSushiV2Pools({
     )
   }
 
-  throw new Error('Failed to fetch pools')
+  throw new FetchError(chainId, 'Failed to fetch pools')
 }
 
 export type SushiV2Pools = Awaited<ReturnType<typeof getSushiV2Pools>>

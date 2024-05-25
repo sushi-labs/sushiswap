@@ -317,7 +317,7 @@ export const SECONDS_BETWEEN_BLOCKS: Record<number, number> = {
 } as const
 
 export const SUSHI_BAR_SUBGRAPH_URL =
-  'api.thegraph.com/subgraphs/name/sushiswap/sushi-bar' as const
+  'api.thegraph.com/subgraphs/name/sushi-labs/xsushi' as const
 
 export const SUSHISWAP_SUBGRAPH_URL: Record<SushiSwapChainId, string> = {
   [ChainId.ETHEREUM]: `${GRAPH_HOST}/sushi-v2/sushiswap-ethereum`,
@@ -392,7 +392,34 @@ export const TRIDENT_SUBGRAPH_URL: Record<TridentChainId, string> = {
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushi-v2/trident-avalanche`,
 } as const
 
-export const MINICHEF_SUBGRAPH_URL = {
+export const MINICHEF_ENABLED_NETWORKS = [
+  ChainId.POLYGON,
+  ChainId.GNOSIS,
+  // ChainId.HARMONY,
+  ChainId.ARBITRUM,
+  ChainId.CELO,
+  ChainId.MOONRIVER,
+  ChainId.FUSE,
+  ChainId.FANTOM,
+  ChainId.MOONBEAM,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.BOBA,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.BTTC,
+  ChainId.OPTIMISM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+] as const
+
+export type MiniChefChainId = (typeof MINICHEF_ENABLED_NETWORKS)[number]
+
+export const isMiniChefChainId = (
+  chainId: ChainId,
+): chainId is MiniChefChainId =>
+  MINICHEF_ENABLED_NETWORKS.includes(chainId as MiniChefChainId)
+
+export const MINICHEF_SUBGRAPH_URL: Record<MiniChefChainId, string> = {
   [ChainId.POLYGON]: `${GRAPH_HOST}/jiro-ono/minichef-staging-updates`, // new trident subgraph not synced yet
   [ChainId.GNOSIS]: `${GRAPH_HOST}/jiro-ono/gnosis-minichef-staging`,
   // [ChainId.HARMONY]: `${GRAPH_HOST}/sushiswap/harmony-minichef`, // subgraph broken
@@ -410,7 +437,7 @@ export const MINICHEF_SUBGRAPH_URL = {
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/sushiswap/minichef-optimism`,
   [ChainId.AVALANCHE]: `${GRAPH_HOST}/sushiswap/minichef-avalanche`,
   [ChainId.BSC]: `${GRAPH_HOST}/sushiswap/minichef-bsc`,
-} as const
+}
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME =
   'jiro-ono/masterchef-staging' as const
@@ -419,7 +446,7 @@ export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
 export const MASTERCHEF_V1_SUBGRAPH_URL =
   `${GRAPH_HOST}/jiro-ono/masterchef-staging` as const
 export const MASTERCHEF_V2_SUBGRAPH_URL =
-  `${GRAPH_HOST}sushiswap/master-chefv2` as const
+  `${GRAPH_HOST}/sushiswap/master-chefv2` as const
 
 export const FURO_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,

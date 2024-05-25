@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
+import { FetchError } from 'src/lib/fetch-error'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
@@ -50,7 +51,7 @@ export async function getSushiV3Mints({
     return result.mints.map((mint) => addChainId(chainId, mint))
   }
 
-  throw new Error('Failed to fetch mints')
+  throw new FetchError(chainId, 'Failed to fetch mints')
 }
 
 export type SushiV3Mints = Awaited<ReturnType<typeof getSushiV3Mints>>

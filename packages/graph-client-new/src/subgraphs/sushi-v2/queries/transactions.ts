@@ -4,6 +4,7 @@ import {
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
+import { FetchError } from 'src/lib/fetch-error'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
@@ -73,7 +74,7 @@ export async function getSushiV2Transactions({
     return result.transactions
   }
 
-  throw new Error('Failed to fetch transactions')
+  throw new FetchError(chainId, 'Failed to fetch transactions')
 }
 
 export type SushiV2Transactions = Awaited<

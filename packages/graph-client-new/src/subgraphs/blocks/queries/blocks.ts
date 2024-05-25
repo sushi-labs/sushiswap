@@ -2,6 +2,7 @@ import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
+import { FetchError } from 'src/lib/fetch-error'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { ChainId } from 'sushi/chain'
 import { graphql } from '../graphql'
@@ -24,7 +25,9 @@ export type GetBlocks = VariablesOf<typeof BlocksQuery> &
 export async function getBlocks({ chainId, ...variables }: GetBlocks) {
   const baseUrl = BLOCKS_SUBGRAPH_URL[chainId]
 
-  if (!baseUrl) throw new Error(`No subgraph URL for chainId ${chainId}`)
+  if (!baseUrl) {
+    throw new FetchError(chainId, `No subgraph URL for chainId ${chainId}`)
+  }
 
   const url = `https://${baseUrl}`
 

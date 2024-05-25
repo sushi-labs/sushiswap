@@ -1,5 +1,8 @@
 import {
   BLOCKS_SUBGRAPH_URL,
+  MASTERCHEF_V1_SUBGRAPH_URL,
+  MASTERCHEF_V2_SUBGRAPH_URL,
+  MINICHEF_SUBGRAPH_URL,
   SUSHISWAP_SUBGRAPH_URL,
   SUSHISWAP_V3_SUBGRAPH_URL,
   SUSHI_BAR_SUBGRAPH_URL,
@@ -11,6 +14,9 @@ import fetchSchema from 'graphql-fetch-schema'
 
 const schemas = {
   blocks: BLOCKS_SUBGRAPH_URL[1],
+  'master-chef-v1': MASTERCHEF_V1_SUBGRAPH_URL,
+  'master-chef-v2': MASTERCHEF_V2_SUBGRAPH_URL,
+  'mini-chef': MINICHEF_SUBGRAPH_URL[137],
   'sushi-bar': SUSHI_BAR_SUBGRAPH_URL,
   'sushi-v2': SUSHISWAP_SUBGRAPH_URL[1],
   'sushi-v3': SUSHISWAP_V3_SUBGRAPH_URL[1],
@@ -46,6 +52,8 @@ const res = await Promise.all(
     updateSchema(schema as keyof typeof schemas),
   ),
 )
+
+fs.rmSync('./schema.graphql')
 
 res.forEach((r) => {
   if (r.success) {

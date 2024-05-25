@@ -2,6 +2,7 @@ import { SUSHI_BAR_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
+import { FetchError } from 'src/lib/fetch-error'
 import { graphql } from '../graphql'
 
 export const SushiBarQuery = graphql(
@@ -33,7 +34,7 @@ export async function getSushiBar(variables: GetSushiBar) {
     return result.xsushi
   }
 
-  throw new Error('No bar')
+  throw new FetchError(1, 'No bar')
 }
 
 export type SushiBar = Awaited<ReturnType<typeof getSushiBar>>
