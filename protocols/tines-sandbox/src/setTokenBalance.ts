@@ -137,45 +137,29 @@ export async function setTokenBalance(
 ): Promise<boolean> {
   //Promise<MapSlotInfo | undefined> {
   const userPadded = user.substring(2).padStart(64, '0')
-  const setStorageSolidity = async (
-    realContract: string,
+
+  // ideas: arb user (balance is always 0)
+  const checkSlot = async (
+    dataContract: string,
     slotNumber: number,
-    value: NumberLike,
-  ): Promise<string> => {
-    // Solidity mapping
-    const slotData = `0x${userPadded}${Number(slotNumber)
-      .toString(16)
-      .padStart(64, '0')}`
+    mappingStyle: MappingStyle,
+    currentBalance: bigint,
+    value: bigint,
+  ): Promise<boolean> => {
+    const slotPadded = Number(slotNumber).toString(16).padStart(64, '0')
+    const slotData =
+      mappingStyle === MappingStyle.Solidity
+        ? `0x${userPadded}${slotPadded}`
+        : `0x${slotPadded}${userPadded}`
     const slot = ethers.utils.keccak256(slotData)
-    const previousValue = await getStorageAt(realContract, slot, provider)
-    await setStorageAt(realContract, slot, value, provider)
-    return previousValue
-  }
-  const setStorageVyper = async (
-    realContract: string,
-    slotNumber: number,
-    value: NumberLike,
-  ): Promise<string> => {
-    // Solidity mapping
-    const slotData = `0x${Number(slotNumber)
-      .toString(16)
-      .padStart(64, '0')}${userPadded}`
-    const slot = ethers.utils.keccak256(slotData)
-    const previousValue = await getStorageAt(realContract, slot, provider)
-    await setStorageAt(realContract, slot, value, provider)
-    return previousValue
-  }
-  const setStorage = async (
-    realContract: string,
-    slotNumber: number,
-    value0: NumberLike,
-    value1: NumberLike,
-  ) => {
-    const [previousValue0, previousValue1] = await Promise.all([
-      setStorageSolidity(realContract, slotNumber, value0),
-      setStorageVyper(realContract, slotNumber, value1),
-    ])
-    return [previousValue0, previousValue1]
+    const previousValue = await getStorageAt(dataContract, slot, provider)
+    // await setStorageAt(dataContract, slot, currentBalance + 1n, provider)
+    await setStorageAt(dataContract, slot, value, provider)
+    const newBalance = await getBalance(token, user, client)
+    if (newBalance === currentBalance)
+      await setStorageAt(dataContract, slot, previousValue, provider) // revert previous values back
+    //console.log('check', slotNumber, currentBalance, newBalance)
+    return newBalance !== currentBalance
   }
 
   const realContract = tokenData ?? TokenProxyMap[token.toLowerCase()] ?? token
@@ -229,8 +213,28 @@ export async function setTokenBalance(
 
   const balancePrimary = await getBalance(token, user, client)
   for (let i = 0; i < 200; ++i) {
+    if (
+      await checkSlot(
+        realContract,
+        i,
+        MappingStyle.Solidity,
+        balancePrimary,
+        balance,
+      )
+    )
+      return true
+    if (
+      await checkSlot(
+        realContract,
+        i,
+        MappingStyle.Vyper,
+        balancePrimary,
+        balance,
+      )
+    )
+      return true
     //console.log('setTokenBalance', token, i)
-    const [previousValue0, previousValue1] = await setStorage(
+    /*const [previousValue0, previousValue1] = await setStorage(
       realContract,
       i,
       balance,
@@ -244,7 +248,7 @@ export async function setTokenBalance(
         return true
       }
     }
-    await setStorage(realContract, i, previousValue0, previousValue1) // revert previous values back
+    await setStorage(realContract, i, previousValue0, previousValue1) // revert previous values back*/
 
     if (realContract === token) {
       // try to find an address of implementation contract
