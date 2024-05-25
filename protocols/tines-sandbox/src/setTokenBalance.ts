@@ -13,7 +13,7 @@ const { ethers } = hre
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it
-const TokenProxyMap: Record<string, string> = {
+const TokenProxyMap: Record<string, Address> = {
   '0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6':
     '0x4F6296455F8d754c19821cF1EC8FeBF2cD456E67', // Ethereum sBTC
   '0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb':
@@ -121,30 +121,43 @@ export enum MappingStyle {
   Vyper = 0,
 }
 
-export interface MapSlotInfo {
+export interface BalanceSlotInfo {
   contract: Address
   balanceSlot: number
   mappingStyle: MappingStyle
 }
 
-export async function setTokenBalance(
+async function setBalance(
+  slot: BalanceSlotInfo,
+  user: Address,
+  value: bigint,
+  provider?: EthereumProvider,
+) {
+  const userPadded = user.substring(2).padStart(64, '0')
+  const slotPadded = Number(slot.balanceSlot).toString(16).padStart(64, '0')
+  const slotData =
+    slot.mappingStyle === MappingStyle.Solidity
+      ? `0x${userPadded}${slotPadded}`
+      : `0x${slotPadded}${userPadded}`
+  const slotNumber = ethers.utils.keccak256(slotData)
+  await setStorageAt(slot.contract, slotNumber, value, provider)
+}
+
+async function findBalanceSlot(
   token: Address,
   user: Address,
-  balance: bigint,
+  balance: bigint, // TODO: remove!
   client?: PublicClient,
   provider?: EthereumProvider,
   tokenData?: Address,
-): Promise<boolean> {
-  //Promise<MapSlotInfo | undefined> {
+): Promise<BalanceSlotInfo | undefined> {
   const userPadded = user.substring(2).padStart(64, '0')
 
-  // ideas: arb user (balance is always 0)
   const checkSlot = async (
     dataContract: string,
     slotNumber: number,
     mappingStyle: MappingStyle,
     currentBalance: bigint,
-    value: bigint,
   ): Promise<boolean> => {
     const slotPadded = Number(slotNumber).toString(16).padStart(64, '0')
     const slotData =
@@ -153,22 +166,13 @@ export async function setTokenBalance(
         : `0x${slotPadded}${userPadded}`
     const slot = ethers.utils.keccak256(slotData)
     const previousValue = await getStorageAt(dataContract, slot, provider)
-    // await setStorageAt(dataContract, slot, currentBalance + 1n, provider)
-    await setStorageAt(dataContract, slot, value, provider)
+    await setStorageAt(dataContract, slot, currentBalance + 1n, provider)
     const newBalance = await getBalance(token, user, client)
-    if (newBalance === currentBalance)
-      await setStorageAt(dataContract, slot, previousValue, provider) // revert previous values back
-    //console.log('check', slotNumber, currentBalance, newBalance)
+    await setStorageAt(dataContract, slot, previousValue, provider) // revert previous values back
     return newBalance !== currentBalance
   }
 
-  const realContract = tokenData ?? TokenProxyMap[token.toLowerCase()] ?? token
-
-  // const cashedSlot = cache[token.toLowerCase()]
-  // if (cashedSlot !== undefined) {
-  //   await setStorage(realContract, cashedSlot, balance, balance)
-  //   return true
-  // }
+  const dataContract = tokenData ?? TokenProxyMap[token.toLowerCase()] ?? token
 
   const tryBalanceOf = async (
     slotNumber: number,
@@ -177,7 +181,7 @@ export async function setTokenBalance(
     // Solidity mapping
     const slot = `0x${Number(slotNumber).toString(16).padStart(64, '0')}`
     //const slot = ethers.utils.keccak256(slotData)
-    const val = await getStorageAt(realContract, slot, provider)
+    const val = await getStorageAt(dataContract, slot, provider)
     if (!val.startsWith('0x000000000000000000000000')) return
     const address = `0x${val.substring(26)}` as Address
     if (address.startsWith('0x000000000000')) return // to low value
@@ -213,48 +217,24 @@ export async function setTokenBalance(
 
   const balancePrimary = await getBalance(token, user, client)
   for (let i = 0; i < 200; ++i) {
-    if (
-      await checkSlot(
-        realContract,
-        i,
-        MappingStyle.Solidity,
-        balancePrimary,
-        balance,
-      )
-    )
-      return true
-    if (
-      await checkSlot(
-        realContract,
-        i,
-        MappingStyle.Vyper,
-        balancePrimary,
-        balance,
-      )
-    )
-      return true
-    //console.log('setTokenBalance', token, i)
-    /*const [previousValue0, previousValue1] = await setStorage(
-      realContract,
-      i,
-      balance,
-      balance,
-    )
-    const resBalance = await getBalance(token, user, client)
-
-    if (resBalance !== 0n) {
-      if (resBalance === balance || resBalance !== balancePrimary) {
-        //cache[token.toLowerCase()] = i
-        return true
+    if (await checkSlot(dataContract, i, MappingStyle.Solidity, balancePrimary))
+      return {
+        contract: dataContract,
+        balanceSlot: i,
+        mappingStyle: MappingStyle.Solidity,
       }
-    }
-    await setStorage(realContract, i, previousValue0, previousValue1) // revert previous values back*/
+    if (await checkSlot(dataContract, i, MappingStyle.Vyper, balancePrimary))
+      return {
+        contract: dataContract,
+        balanceSlot: i,
+        mappingStyle: MappingStyle.Vyper,
+      }
 
-    if (realContract === token) {
+    if (dataContract === token) {
       // try to find an address of implementation contract
       const addr = await tryBalanceOf(i, client)
       if (addr !== undefined) {
-        const res = await setTokenBalance(
+        const res = await findBalanceSlot(
           token,
           user,
           balance,
@@ -266,5 +246,16 @@ export async function setTokenBalance(
       }
     }
   }
-  return false
+}
+
+export async function setTokenBalance(
+  token: Address,
+  user: Address,
+  balance: bigint,
+  client?: PublicClient,
+  provider?: EthereumProvider,
+): Promise<boolean> {
+  const slotInfo = await findBalanceSlot(token, user, balance, client, provider)
+  if (slotInfo) await setBalance(slotInfo, user, balance, provider)
+  return slotInfo !== undefined
 }
