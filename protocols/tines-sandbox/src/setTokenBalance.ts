@@ -30,7 +30,7 @@ const TokenProxyMap: Record<string, string> = {
     '0xc42B14e49744538e3C239f8ae48A1Eaaf35e68a0', // Ethereum GUSD
 }
 
-const cache: Record<string, number> = {}
+// const cache: Record<string, number> = {}
 
 function toRpcQuantity(x: NumberLike): string {
   let hex: string
@@ -116,60 +116,116 @@ async function getBalance(
   }
 }
 
+export enum MappingStyle {
+  Solidity = 0,
+  Vyper = 0,
+}
+
+export interface MapSlotInfo {
+  contract: Address
+  balanceSlot: number
+  mappingStyle: MappingStyle
+}
+
 export async function setTokenBalance(
   token: Address,
   user: Address,
   balance: bigint,
   client?: PublicClient,
   provider?: EthereumProvider,
+  tokenData?: Address,
 ): Promise<boolean> {
+  //Promise<MapSlotInfo | undefined> {
   const userPadded = user.substring(2).padStart(64, '0')
+  const setStorageSolidity = async (
+    realContract: string,
+    slotNumber: number,
+    value: NumberLike,
+  ): Promise<string> => {
+    // Solidity mapping
+    const slotData = `0x${userPadded}${Number(slotNumber)
+      .toString(16)
+      .padStart(64, '0')}`
+    const slot = ethers.utils.keccak256(slotData)
+    const previousValue = await getStorageAt(realContract, slot, provider)
+    await setStorageAt(realContract, slot, value, provider)
+    return previousValue
+  }
+  const setStorageVyper = async (
+    realContract: string,
+    slotNumber: number,
+    value: NumberLike,
+  ): Promise<string> => {
+    // Solidity mapping
+    const slotData = `0x${Number(slotNumber)
+      .toString(16)
+      .padStart(64, '0')}${userPadded}`
+    const slot = ethers.utils.keccak256(slotData)
+    const previousValue = await getStorageAt(realContract, slot, provider)
+    await setStorageAt(realContract, slot, value, provider)
+    return previousValue
+  }
   const setStorage = async (
     realContract: string,
     slotNumber: number,
     value0: NumberLike,
     value1: NumberLike,
   ) => {
-    // Solidity mapping
-    const slotData = `0x${userPadded}${Number(slotNumber)
-      .toString(16)
-      .padStart(64, '0')}`
-    const slot = ethers.utils.keccak256(slotData)
-    const previousValue0 = await getStorageAt(realContract, slot, provider)
-    await setStorageAt(realContract, slot, value0, provider)
-    // Vyper mapping
-    const slotData2 = `0x${Number(slotNumber)
-      .toString(16)
-      .padStart(64, '0')}${userPadded}`
-    const slot2 = ethers.utils.keccak256(slotData2)
-    const previousValue1 = await getStorageAt(realContract, slot2, provider)
-    await setStorageAt(realContract, slot2, value1, provider)
+    const [previousValue0, previousValue1] = await Promise.all([
+      setStorageSolidity(realContract, slotNumber, value0),
+      setStorageVyper(realContract, slotNumber, value1),
+    ])
     return [previousValue0, previousValue1]
   }
 
-  const realContract = TokenProxyMap[token.toLowerCase()] ?? token
+  const realContract = tokenData ?? TokenProxyMap[token.toLowerCase()] ?? token
 
-  const cashedSlot = cache[token.toLowerCase()]
-  if (cashedSlot !== undefined) {
-    await setStorage(realContract, cashedSlot, balance, balance)
-    return true
-  }
-
-  // const tryBalanceOf = async (
-  //   realContract: string,
-  //   slotNumber: number,
-  //   client?: PublicClient,
-  // ): Promise<Address | undefined> => {
-  //   // Solidity mapping
-  //   const slot = `0x${Number(slotNumber).toString(16).padStart(64, '0')}`
-  //   const val = await getStorageAt(realContract, slot, provider)
-  //   if (!val.startsWith('0x000000000000000000000000')) return
-  //   const address = `0x${val.substring(26)}` as Address
-  //   try {
-  //     await getBalance(address, address, client)
-  //     return address
-  //   } catch (_e) {}
+  // const cashedSlot = cache[token.toLowerCase()]
+  // if (cashedSlot !== undefined) {
+  //   await setStorage(realContract, cashedSlot, balance, balance)
+  //   return true
   // }
+
+  const tryBalanceOf = async (
+    slotNumber: number,
+    client?: PublicClient,
+  ): Promise<Address | undefined> => {
+    // Solidity mapping
+    const slot = `0x${Number(slotNumber).toString(16).padStart(64, '0')}`
+    //const slot = ethers.utils.keccak256(slotData)
+    const val = await getStorageAt(realContract, slot, provider)
+    if (!val.startsWith('0x000000000000000000000000')) return
+    const address = `0x${val.substring(26)}` as Address
+    if (address.startsWith('0x000000000000')) return // to low value
+    try {
+      await getBalance(address, address, client)
+      /*const tokenContract = new Contract(
+        address,
+        [
+          {
+            type: 'function',
+            name: 'balance',
+            stateMutability: 'view',
+            inputs: [
+              {
+                name: 'account',
+                type: 'address',
+              },
+            ],
+            outputs: [
+              {
+                name: '',
+                type: 'uint256',
+              },
+            ],
+          },
+        ],
+        ethers.provider,
+      )
+      const balance = await tokenContract.balance(user)*/
+      return address
+    } catch (_e) {}
+  }
 
   const balancePrimary = await getBalance(token, user, client)
   for (let i = 0; i < 200; ++i) {
@@ -184,11 +240,27 @@ export async function setTokenBalance(
 
     if (resBalance !== 0n) {
       if (resBalance === balance || resBalance !== balancePrimary) {
-        cache[token.toLowerCase()] = i
+        //cache[token.toLowerCase()] = i
         return true
       }
     }
     await setStorage(realContract, i, previousValue0, previousValue1) // revert previous values back
+
+    if (realContract === token) {
+      // try to find an address of implementation contract
+      const addr = await tryBalanceOf(i, client)
+      if (addr !== undefined) {
+        const res = await setTokenBalance(
+          token,
+          user,
+          balance,
+          client,
+          provider,
+          addr,
+        )
+        if (res) return res
+      }
+    }
   }
   return false
 }
