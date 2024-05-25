@@ -3,7 +3,7 @@ import {
   setStorageAt as setStorageAtLib,
 } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types.js'
-import { BigNumber, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import hre from 'hardhat'
 import { EthereumProvider } from 'hardhat/types'
 import { erc20Abi } from 'sushi/abi'
@@ -98,13 +98,32 @@ async function setStorageAt(
   })
 }
 
+async function getBalance(
+  token: Address,
+  user: Address,
+  client?: PublicClient,
+): Promise<bigint> {
+  if (client) {
+    return await client.readContract({
+      abi: erc20Abi,
+      address: token as Address,
+      functionName: 'balanceOf',
+      args: [user],
+    })
+  } else {
+    const tokenContract = new Contract(token, erc20Abi, ethers.provider)
+    return BigInt((await tokenContract.balanceOf(user)).toString())
+  }
+}
+
 export async function setTokenBalance(
-  token: string,
-  user: string,
+  token: Address,
+  user: Address,
   balance: bigint,
   client?: PublicClient,
   provider?: EthereumProvider,
 ): Promise<boolean> {
+  const userPadded = user.substring(2).padStart(64, '0')
   const setStorage = async (
     realContract: string,
     slotNumber: number,
@@ -112,7 +131,7 @@ export async function setTokenBalance(
     value1: NumberLike,
   ) => {
     // Solidity mapping
-    const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber)
+    const slotData = `0x${userPadded}${Number(slotNumber)
       .toString(16)
       .padStart(64, '0')}`
     const slot = ethers.utils.keccak256(slotData)
@@ -121,14 +140,13 @@ export async function setTokenBalance(
     // Vyper mapping
     const slotData2 = `0x${Number(slotNumber)
       .toString(16)
-      .padStart(64, '0')}${user.padStart(64, '0')}`
+      .padStart(64, '0')}${userPadded}`
     const slot2 = ethers.utils.keccak256(slotData2)
     const previousValue1 = await getStorageAt(realContract, slot2, provider)
     await setStorageAt(realContract, slot2, value1, provider)
     return [previousValue0, previousValue1]
   }
 
-  if (user.startsWith('0x')) user = user.substring(2)
   const realContract = TokenProxyMap[token.toLowerCase()] ?? token
 
   const cashedSlot = cache[token.toLowerCase()]
@@ -137,23 +155,23 @@ export async function setTokenBalance(
     return true
   }
 
-  const tokenContract = new Contract(token, erc20Abi, ethers.provider)
+  // const tryBalanceOf = async (
+  //   realContract: string,
+  //   slotNumber: number,
+  //   client?: PublicClient,
+  // ): Promise<Address | undefined> => {
+  //   // Solidity mapping
+  //   const slot = `0x${Number(slotNumber).toString(16).padStart(64, '0')}`
+  //   const val = await getStorageAt(realContract, slot, provider)
+  //   if (!val.startsWith('0x000000000000000000000000')) return
+  //   const address = `0x${val.substring(26)}` as Address
+  //   try {
+  //     await getBalance(address, address, client)
+  //     return address
+  //   } catch (_e) {}
+  // }
 
-  const getBalanace = async () => {
-    if (client) {
-      const balance = await client.readContract({
-        abi: erc20Abi,
-        address: token as Address,
-        functionName: 'balanceOf',
-        args: [`0x${user}` as Address],
-      })
-      return BigNumber.from(balance.toString())
-    } else
-      return ((await tokenContract) as Contract).balanceOf(user) as BigNumber
-  }
-
-  const balancePrimary = await getBalanace()
-
+  const balancePrimary = await getBalance(token, user, client)
   for (let i = 0; i < 200; ++i) {
     //console.log('setTokenBalance', token, i)
     const [previousValue0, previousValue1] = await setStorage(
@@ -162,14 +180,10 @@ export async function setTokenBalance(
       balance,
       balance,
     )
-    const resBalance = await getBalanace()
-    //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
+    const resBalance = await getBalance(token, user, client)
 
-    if (!resBalance.isZero()) {
-      if (
-        resBalance.toString() === balance.toString() ||
-        !resBalance.eq(balancePrimary)
-      ) {
+    if (resBalance !== 0n) {
+      if (resBalance === balance || resBalance !== balancePrimary) {
         cache[token.toLowerCase()] = i
         return true
       }
