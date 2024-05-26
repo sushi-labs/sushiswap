@@ -159,21 +159,20 @@ async function findBalanceSlot(
   provider?: EthereumProvider,
   tokenData?: Address,
 ): Promise<BalanceSlotInfo | undefined> {
+  const dataContract = tokenData ?? TokenProxyMap[token.toLowerCase()] ?? token
+  const balancePrimary = await getBalance(token, user, client)
+
   const checkSlot = async (
-    dataContract: string,
     slotNumber: number,
     mappingStyle: MappingStyle,
-    currentBalance: bigint,
   ): Promise<boolean> => {
     const slot = getMapSlotNumber(user, slotNumber, mappingStyle)
     const previousValue = await getStorageAt(dataContract, slot, provider)
-    await setStorageAt(dataContract, slot, currentBalance + 1n, provider)
+    await setStorageAt(dataContract, slot, balancePrimary + 1n, provider)
     const newBalance = await getBalance(token, user, client)
     await setStorageAt(dataContract, slot, previousValue, provider) // revert previous values back
-    return newBalance !== currentBalance
+    return newBalance !== balancePrimary
   }
-
-  const dataContract = tokenData ?? TokenProxyMap[token.toLowerCase()] ?? token
 
   const tryBalanceOf = async (
     slotNumber: number,
@@ -214,15 +213,14 @@ async function findBalanceSlot(
     } catch (_e) {}
   }
 
-  const balancePrimary = await getBalance(token, user, client)
   for (let i = 0; i < 200; ++i) {
-    if (await checkSlot(dataContract, i, MappingStyle.Solidity, balancePrimary))
+    if (await checkSlot(i, MappingStyle.Solidity))
       return {
         contract: dataContract,
         balanceSlot: i,
         mappingStyle: MappingStyle.Solidity,
       }
-    if (await checkSlot(dataContract, i, MappingStyle.Vyper, balancePrimary))
+    if (await checkSlot(i, MappingStyle.Vyper))
       return {
         contract: dataContract,
         balanceSlot: i,
