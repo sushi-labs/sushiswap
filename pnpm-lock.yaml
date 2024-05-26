@@ -1799,9 +1799,6 @@ importers:
       '@sushiswap/graph-config':
         specifier: workspace:*
         version: link:../../config/graph
-      '@wagmi/core':
-        specifier: 2.10.2
-        version: 2.10.2(@types/react@18.2.14)(react@18.2.0)(typescript@5.2.2)(viem@2.10.11)
       gql.tada:
         specifier: ^1.7.5
         version: 1.7.5(graphql@16.6.0)(svelte@4.2.17)(typescript@5.2.2)
@@ -1811,6 +1808,9 @@ importers:
       sushi:
         specifier: workspace:*
         version: link:../sushi
+      viem:
+        specifier: 2.10.11
+        version: 2.10.11(typescript@5.2.2)(zod@3.21.4)
     devDependencies:
       '@0no-co/graphqlsp':
         specifier: ^1.12.3
