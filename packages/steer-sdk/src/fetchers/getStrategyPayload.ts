@@ -1,4 +1,3 @@
-import { fetch } from '@whatwg-node/fetch'
 import { isPromiseFulfilled } from 'sushi/validate'
 
 interface Payload {

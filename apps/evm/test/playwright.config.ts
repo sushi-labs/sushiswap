@@ -129,7 +129,7 @@ const config: PlaywrightTestConfig = {
         'NEXT_PUBLIC_APP_ENV=test',
         `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
         'NEXT_PUBLIC_API_BASE_URL=https://mock-swap-api',
-        'npm run start -- --experimental-test-proxy',
+        'npm run start',
       ].join(' '),
       port: 3000,
       timeout: 120_000,

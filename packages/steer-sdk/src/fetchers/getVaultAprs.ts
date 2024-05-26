@@ -1,4 +1,3 @@
-import { fetch } from '@whatwg-node/fetch'
 import { getIdFromChainIdAddress } from 'sushi/format'
 import type { Address } from 'viem'
 import type { SteerChainId } from '../constants'

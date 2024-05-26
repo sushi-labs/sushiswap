@@ -1,4 +1,3 @@
-import { fetch } from '@whatwg-node/fetch'
 import { isPromiseFulfilled } from 'sushi'
 import { getChainIdAddressFromId } from 'sushi/format'
 
