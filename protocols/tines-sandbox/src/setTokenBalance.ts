@@ -127,19 +127,27 @@ export interface BalanceSlotInfo {
   mappingStyle: MappingStyle
 }
 
+function getMapSlotNumber(
+  user: Address,
+  mapSlot: number,
+  mappingStyle: MappingStyle,
+) {
+  const userPadded = user.substring(2).padStart(64, '0')
+  const slotPadded = Number(mapSlot).toString(16).padStart(64, '0')
+  const slotData =
+    mappingStyle === MappingStyle.Solidity
+      ? `0x${userPadded}${slotPadded}`
+      : `0x${slotPadded}${userPadded}`
+  return ethers.utils.keccak256(slotData)
+}
+
 async function setBalance(
   slot: BalanceSlotInfo,
   user: Address,
   value: bigint,
   provider?: EthereumProvider,
 ) {
-  const userPadded = user.substring(2).padStart(64, '0')
-  const slotPadded = Number(slot.balanceSlot).toString(16).padStart(64, '0')
-  const slotData =
-    slot.mappingStyle === MappingStyle.Solidity
-      ? `0x${userPadded}${slotPadded}`
-      : `0x${slotPadded}${userPadded}`
-  const slotNumber = ethers.utils.keccak256(slotData)
+  const slotNumber = getMapSlotNumber(user, slot.balanceSlot, slot.mappingStyle)
   await setStorageAt(slot.contract, slotNumber, value, provider)
 }
 
@@ -151,20 +159,13 @@ async function findBalanceSlot(
   provider?: EthereumProvider,
   tokenData?: Address,
 ): Promise<BalanceSlotInfo | undefined> {
-  const userPadded = user.substring(2).padStart(64, '0')
-
   const checkSlot = async (
     dataContract: string,
     slotNumber: number,
     mappingStyle: MappingStyle,
     currentBalance: bigint,
   ): Promise<boolean> => {
-    const slotPadded = Number(slotNumber).toString(16).padStart(64, '0')
-    const slotData =
-      mappingStyle === MappingStyle.Solidity
-        ? `0x${userPadded}${slotPadded}`
-        : `0x${slotPadded}${userPadded}`
-    const slot = ethers.utils.keccak256(slotData)
+    const slot = getMapSlotNumber(user, slotNumber, mappingStyle)
     const previousValue = await getStorageAt(dataContract, slot, provider)
     await setStorageAt(dataContract, slot, currentBalance + 1n, provider)
     const newBalance = await getBalance(token, user, client)
@@ -178,13 +179,11 @@ async function findBalanceSlot(
     slotNumber: number,
     client?: PublicClient,
   ): Promise<Address | undefined> => {
-    // Solidity mapping
     const slot = `0x${Number(slotNumber).toString(16).padStart(64, '0')}`
-    //const slot = ethers.utils.keccak256(slotData)
     const val = await getStorageAt(dataContract, slot, provider)
     if (!val.startsWith('0x000000000000000000000000')) return
     const address = `0x${val.substring(26)}` as Address
-    if (address.startsWith('0x000000000000')) return // to low value
+    if (address.startsWith('0x000000000000')) return // too low value
     try {
       await getBalance(address, address, client)
       /*const tokenContract = new Contract(
