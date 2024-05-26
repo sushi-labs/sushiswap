@@ -1,8 +1,11 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
 import {
   getStorageAt as getStorageAtLib,
   setStorageAt as setStorageAtLib,
 } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types.js'
+import { PermanentCache } from '@sushiswap/extractor'
 import { Contract } from 'ethers'
 import hre from 'hardhat'
 import { EthereumProvider } from 'hardhat/types'
@@ -118,7 +121,7 @@ async function getBalance(
 
 export enum MappingStyle {
   Solidity = 0,
-  Vyper = 0,
+  Vyper = 1,
 }
 
 export interface BalanceSlotInfo {
@@ -245,6 +248,57 @@ async function findBalanceSlot(
   }
 }
 
+type TokenSlotRecord =
+  | [Address]
+  | [Address, number, number]
+  | [Address, Address, number, number]
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const cache = new PermanentCache<TokenSlotRecord>(__dirname, './setTokenCache')
+const cachedMap = new Map<Address, BalanceSlotInfo | undefined>()
+
+async function initCache() {
+  const records = await cache.getAllRecords()
+  records.forEach((r) => {
+    if (r.length === 1) cachedMap.set(r[0], undefined)
+    else if (r.length === 3)
+      cachedMap.set(r[0], {
+        contract: r[0],
+        balanceSlot: r[1],
+        mappingStyle: r[2] as MappingStyle,
+      })
+    else if (r.length === 4)
+      cachedMap.set(r[0], {
+        contract: r[1],
+        balanceSlot: r[2],
+        mappingStyle: r[3] as MappingStyle,
+      })
+  })
+}
+initCache()
+
+async function addCacheRecord(
+  token: Address,
+  slotInfo: BalanceSlotInfo | undefined,
+) {
+  cachedMap.set(token, slotInfo)
+  if (slotInfo === undefined) await cache.add([token])
+  else if (token === slotInfo.contract)
+    await cache.add([
+      token,
+      slotInfo.balanceSlot,
+      slotInfo.mappingStyle as number,
+    ])
+  else
+    await cache.add([
+      token,
+      slotInfo.contract,
+      slotInfo.balanceSlot,
+      slotInfo.mappingStyle as number,
+    ])
+}
+
 export async function setTokenBalance(
   token: Address,
   user: Address,
@@ -252,7 +306,11 @@ export async function setTokenBalance(
   client?: PublicClient,
   provider?: EthereumProvider,
 ): Promise<boolean> {
-  const slotInfo = await findBalanceSlot(token, user, balance, client, provider)
+  let slotInfo = cachedMap.get(token)
+  if (!slotInfo && !cachedMap.has(token)) {
+    slotInfo = await findBalanceSlot(token, user, balance, client, provider)
+    await addCacheRecord(token, slotInfo)
+  }
   if (slotInfo) await setBalance(slotInfo, user, balance, provider)
   return slotInfo !== undefined
 }

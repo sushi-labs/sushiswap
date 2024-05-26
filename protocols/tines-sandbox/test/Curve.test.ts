@@ -724,7 +724,7 @@ const CurvePoolListNames = [
   // 'factory-stable-ng',   // stable pools new generation
 ]
 
-describe.only('Real Curve pools consistency check (from CurveAPI)', function () {
+describe('Real Curve pools consistency check (from CurveAPI)', function () {
   let config: TestConfig
 
   before(async () => {
