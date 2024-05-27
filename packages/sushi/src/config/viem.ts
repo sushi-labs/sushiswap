@@ -57,6 +57,7 @@ import {
   polygon,
   polygonMumbai,
   polygonZkEvm,
+  rootstock,
   scroll,
   sepolia,
   // polygonMumbai,
@@ -111,6 +112,7 @@ export {
   //  optimismGoerli,
   polygon,
   polygonZkEvm,
+  rootstock,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -604,6 +606,7 @@ export const publicTransports = {
   [ChainId.SKALE_EUROPA]: http(
     'https://mainnet.skalenodes.com/v1/elated-tan-skat',
   ),
+  [ChainId.ROOTSTOCK]: http('https://public-node.rsk.co'),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [ChainId.AVALANCHE_TESTNET]: http(
@@ -639,6 +642,7 @@ export const publicChains = [
   moonriver,
   polygon,
   polygonZkEvm,
+  rootstock,
   thundercore,
   haqq,
   core,
@@ -812,6 +816,11 @@ export const publicClientConfig = {
     chain: skaleEuropa,
     transport: publicTransports[ChainId.SKALE_EUROPA],
   },
+  [ChainId.ROOTSTOCK]: {
+    chain: rootstock,
+    transport: publicTransports[ChainId.ROOTSTOCK],
+  },
+
   /* Testnets */
   [ChainId.ARBITRUM_TESTNET]: {
     chain: arbitrumSepolia,
