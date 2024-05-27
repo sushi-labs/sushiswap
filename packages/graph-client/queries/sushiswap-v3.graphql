@@ -35,6 +35,46 @@ query SushiSwapV3Pool(
 
     createdAtTimestamp
     createdAtBlockNumber
+  }
+}
+
+query SushiSwapV3PoolWithBuckets(
+    $id: ID!
+    $block: SUSHISWAP_V3_Block_height,
+    $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  pool: SUSHISWAP_V3_pool(
+    id: $id,
+    block: $block, 
+    subgraphError: $subgraphError
+  ) {
+    id
+    token0 {
+      id
+      symbol
+      name
+      decimals
+    }
+    token1 {
+      id
+      symbol
+      name
+      decimals
+    }
+    feeTier
+    liquidity
+    volumeToken0
+    volumeToken1
+    volumeUSD
+    feesUSD
+    txCount
+    totalValueLockedToken0
+    totalValueLockedToken1
+    totalValueLockedETH
+    totalValueLockedUSD
+
+    createdAtTimestamp
+    createdAtBlockNumber
 
     poolHourData(first: 168, orderBy: periodStartUnix, orderDirection: desc) {
       id
@@ -69,7 +109,8 @@ query SushiSwapV3DayDatas($first: Int = 1000, $skip: Int, $orderBy: SUSHISWAP_V3
   }
 }
 
-query PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
+
+query V3PoolsByTokenPair($tokenId0: String!, $tokenId1: String!) {
   pools: poolsByTokenPair(tokenId0: $tokenId0, tokenId1: $tokenId1) {
     id
     feeTier

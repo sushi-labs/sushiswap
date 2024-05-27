@@ -12,7 +12,6 @@ const charts = [
   PoolChartType.Volume,
   PoolChartType.TVL,
   PoolChartType.Fees,
-  PoolChartType.APR,
 ] as const
 const periods = [
   PoolChartPeriod.Day,

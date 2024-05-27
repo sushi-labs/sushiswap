@@ -1,9 +1,7 @@
 // @ts-nocheck
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
-  TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { ChainId, chainName, chainShortName } from 'sushi/chain'
@@ -14,8 +12,7 @@ import {
   QuerytokensByChainIdsArgs,
   Token,
 } from '../../.graphclient/index.js'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
+import { SushiSwapV2Types } from '../../.graphclient/sources/SushiSwap/types.js'
 import { page } from '../../lib/page.js'
 
 const BLACKLIST = {
@@ -29,55 +26,15 @@ const getBlacklist = (chainId: ChainId, id_not_in?: string[]) =>
 export const _tokensByChainIds = async (
   root = {},
   args: QuerytokensByChainIdsArgs,
-  context: SushiSwapTypes.Context & TridentTypes.Context,
+  context: SushiSwapV2Types.Context,
   info: GraphQLResolveInfo,
 ): Promise<Query['tokensByChainIds']> => {
   // @ts-ignore
   return Promise.all<Query['tokensByChainIds'][]>([
     ...args.chainIds
-      .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-      .map((chainId: typeof TRIDENT_ENABLED_NETWORKS[number]) =>
-        context.Trident.Query.tokens({
-          root,
-          // @ts-ignore
-          args: {
-            ...args,
-            where: {
-              ...args.where,
-              id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
-            },
-          },
-          context: {
-            ...context,
-            // @ts-ignore
-            chainId,
-            chainName: chainName[chainId],
-            chainShortName: chainShortName[chainId],
-            url: TRIDENT_SUBGRAPH_URL[chainId],
-          },
-          info,
-          // @ts-ignore
-        }).then((tokens: Token[]) => {
-          if (!Array.isArray(tokens)) {
-            console.error(`Trident tokens query failed on ${chainId}`, tokens)
-            return []
-          }
-          return tokens.length > 0
-            ? tokens.map((token) => ({
-                ...token,
-                id: `${chainShortName[chainId]}:${token.id}`,
-                chainId,
-                chainName: chainName[chainId],
-                chainShortName: chainShortName[chainId],
-                source: 'TRIDENT',
-              }))
-            : []
-        }),
-      ),
-    ...args.chainIds
       .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
-      .map((chainId: typeof SUSHISWAP_ENABLED_NETWORKS[number]) =>
-        context.SushiSwap.Query.tokens({
+      .map((chainId: (typeof SUSHISWAP_ENABLED_NETWORKS)[number]) =>
+        context.SushiSwapV2.Query.tokens({
           root,
           // @ts-ignore
           args: {
@@ -93,7 +50,7 @@ export const _tokensByChainIds = async (
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            url: SUSHISWAP_SUBGRAPH_URL[chainId],
+            url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
           },
           info,
           // @ts-ignore

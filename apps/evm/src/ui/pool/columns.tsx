@@ -488,8 +488,16 @@ export const TX_AMOUNT_IN_V2_COLUMN = (
       case TransactionType.Swap:
         return (
           <span>
-            <FormattedNumber number={row.original.amountIn.toPrecision(2)} />{' '}
-            {row.original.tokenIn.symbol}
+            <FormattedNumber
+              number={
+                row.original.amount0In !== '0'
+                  ? row.original.amount0In
+                  : row.original.amount1In
+              }
+            />{' '}
+            {row.original.amount0In !== '0'
+              ? row.original.pool.token0.symbol
+              : row.original.pool.token1.symbol}
           </span>
         )
       case TransactionType.Mint:
@@ -518,9 +526,15 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
         return (
           <span>
             <FormattedNumber
-              number={Math.abs(row.original.amountOut).toPrecision(2)}
+              number={Math.abs(
+                row.original.amount0Out !== '0'
+                  ? row.original.amount0Out
+                  : row.original.amount1Out,
+              ).toPrecision(2)}
             />{' '}
-            {row.original.tokenOut.symbol}
+            {row.original.amount0Out !== '0'
+              ? row.original.pool.token0.symbol
+              : row.original.pool.token1.symbol}
           </span>
         )
       case TransactionType.Mint:

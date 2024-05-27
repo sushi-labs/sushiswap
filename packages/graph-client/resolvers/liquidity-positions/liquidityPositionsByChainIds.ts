@@ -1,9 +1,7 @@
 // @ts-nocheck
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
-  TRIDENT_ENABLED_NETWORKS,
-  TRIDENT_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL
 } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { isPromiseFulfilled } from 'sushi/validate'
@@ -14,8 +12,8 @@ import {
   QueryliquidityPositionsByChainIdsArgs,
   RequireFields,
 } from '../../.graphclient/index.js'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types.js'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types.js'
+import { SushiSwapV2Types } from '../../.graphclient/sources/SushiSwapV2/types.js'
+
 
 export const _liquidityPositionsByChainIds = async (
   root = {},
@@ -23,58 +21,30 @@ export const _liquidityPositionsByChainIds = async (
     QueryliquidityPositionsByChainIdsArgs,
     'skip' | 'first' | 'chainIds'
   >,
-  context: SushiSwapTypes.Context & TridentTypes.Context,
+  context: SushiSwapV2Types.Context,
   info: GraphQLResolveInfo,
 ) => {
   const liquidityPositions = await Promise.allSettled<
     Query['liquidityPositionsByChainIds'][]
   >([
     ...args.chainIds
-      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
         SUSHISWAP_ENABLED_NETWORKS.includes(el),
       )
       .map((chainId) =>
-        context.SushiSwap.Query.liquidityPositions({
+        context.SushiSwapV2.Query.liquidityPositions({
           root,
           args,
           context: {
             ...context,
             chainId,
-            url: SUSHISWAP_SUBGRAPH_URL[chainId],
+            url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
           },
           info,
-        }).then((liquidityPositions: SushiSwapTypes.LiquidityPosition[]) => {
+        }).then((liquidityPositions: SushiSwapV2Types.LiquidityPosition[]) => {
           if (!Array.isArray(liquidityPositions)) {
             console.error(
               `SushiSwap liquidityPositions query failed on ${chainId}`,
-              liquidityPositions,
-            )
-            return []
-          }
-          return liquidityPositions.map((liquidityPosition) => ({
-            ...liquidityPosition,
-            chainId,
-          }))
-        }),
-      ),
-    ...args.chainIds
-      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] =>
-        TRIDENT_ENABLED_NETWORKS.includes(el),
-      )
-      .map((chainId) =>
-        context.Trident.Query.liquidityPositions({
-          root,
-          args,
-          context: {
-            ...context,
-            chainId,
-            url: TRIDENT_SUBGRAPH_URL[chainId],
-          },
-          info,
-        }).then((liquidityPositions: TridentTypes.LiquidityPosition[]) => {
-          if (!Array.isArray(liquidityPositions)) {
-            console.error(
-              `Trident liquidityPositions query failed on ${chainId}`,
               liquidityPositions,
             )
             return []

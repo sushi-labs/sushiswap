@@ -2,18 +2,17 @@ query Factories($chainIds: [BigInt!]!) {
   factories: factoriesByChainIds(chainIds: $chainIds) {
     id
     chainId
-    liquidityUSD
-    volumeUSD
+    totalLiquidityUSD
+    totalVolumeUSD
     pairCount
-    tokenCount
   }
 }
 
-query FactoryDaySnapshots(
+query UniswapDayDatas(
   $first: Int = 365
   $skip: Int = 0
-  $where: FactoryDaySnapshot_filter
-  $orderBy: FactoryDaySnapshot_orderBy = date
+  $where: UniswapDayData_filter
+  $orderBy: UniswapDayData_orderBy = date
   $orderDirection: OrderDirection = desc
   $block: Block_height
   $chainIds: [BigInt!]!
@@ -30,8 +29,16 @@ query FactoryDaySnapshots(
     chainId
     id
     date
-    volumeUSD
-    liquidityUSD
-    feesUSD
+
+    dailyVolumeETH
+    dailyVolumeUSD
+    dailyVolumeUntracked
+
+    totalVolumeETH
+    totalLiquidityETH
+    totalVolumeUSD
+    totalLiquidityUSD
+    
+    txCount
   }
 }

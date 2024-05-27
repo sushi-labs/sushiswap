@@ -19,6 +19,7 @@ steps:
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     env:
       - 'DATABASE_URL=${_DATABASE_URL}'
+      - 'SUSHI_GRAPH_KEY=${_SUSHI_GRAPH_KEY}'
       - 'DPRC_ID=${_DPRC_ID}'
     args:
       - run
@@ -29,6 +30,7 @@ steps:
       - '--region'
       - us-central1
       - '--set-env-vars=DATABASE_URL=$_DATABASE_URL'
+      - '--set-env-vars=SUSHI_GRAPH_KEY=$_SUSHI_GRAPH_KEY'
       - '--set-env-vars=DPRC_ID=$_DPRC_ID'
     id: Update Cloud Run Service
     entrypoint: gcloud

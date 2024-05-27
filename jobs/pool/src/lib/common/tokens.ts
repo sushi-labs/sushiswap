@@ -1,14 +1,12 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   SushiSwapChainId,
-  TRIDENT_SUBGRAPH_URL,
-  TridentChainId,
 } from '@sushiswap/graph-config'
-import { isSushiSwapChain, isTridentChain } from '@sushiswap/graph-config'
 import { readContracts } from '@wagmi/core'
 import { Chain, ChainId } from 'sushi/chain'
 
 import { Address, erc20Abi } from 'viem'
+import { getTokenPrices } from '../price.js'
 import { config } from '../wagmi.js'
 import { divBigIntToNumber } from './utils.js'
 
@@ -26,77 +24,30 @@ const getExchangeTokens = async (
   chainId: SushiSwapChainId,
 ): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const url = SUSHISWAP_SUBGRAPH_URL[chainId]
+  const url = SUSHISWAP_V2_SUBGRAPH_URL[chainId]
   if (!url) return []
   const sdk = getBuiltGraphSDK({
     url,
   })
+  const [result, tokenPrices] = await Promise.all([
+    sdk.Tokens({
+      where: { id_in: ids.map((id) => id.toLowerCase()) },
+    }),
+    getTokenPrices({ chainId }),
+  ])
 
-  const { tokens, bundle } = await sdk.Tokens({
-    where: { id_in: ids.map((id) => id.toLowerCase()) },
-  })
-
-  return tokens.map((token) => ({
+  return result.tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
     name: token.name,
     decimals: Number(token.decimals),
     liquidity: Number(token.liquidity),
-    derivedUSD: token.price.derivedNative * bundle?.nativePrice,
+    derivedUSD: tokenPrices[token.id.toLowerCase()] || 0,
   }))
 }
 
-const getTridentTokens = async (
-  ids: string[],
-  chainId: TridentChainId,
-): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const url = TRIDENT_SUBGRAPH_URL[chainId]
-  if (!url) return []
-  const sdk = getBuiltGraphSDK({
-    name: url,
-  })
-
-  const { tokens, bundle } = await sdk.Tokens({
-    where: { id_in: ids.map((id) => id.toLowerCase()) },
-  })
-
-  return tokens.map((token) => ({
-    id: token.id,
-    symbol: token.symbol,
-    name: token.name,
-    decimals: Number(token.decimals),
-    liquidity: divBigIntToNumber(token.liquidity, token.decimals),
-    derivedUSD: token.price?.derivedNative * bundle?.nativePrice,
-  }))
-}
-
-export const getTokens = async (
-  ids: string[],
-  chainId: SushiSwapChainId | TridentChainId,
-) => {
-  const [exchangeTokens, tridentTokens] = await Promise.all([
-    isSushiSwapChain(chainId) ? getExchangeTokens(ids, chainId) : [],
-    isTridentChain(chainId) ? getTridentTokens(ids, chainId) : [],
-  ])
-
-  const betterTokens = ids
-    .map((id) => {
-      const exchangeToken = exchangeTokens.find(
-        (token) => token.id === id.toLowerCase(),
-      )
-      const tridentToken = tridentTokens.find(
-        (token) => token.id === id.toLowerCase(),
-      )
-      if (exchangeToken && tridentToken)
-        return exchangeToken.liquidity > tridentToken.liquidity
-          ? exchangeToken
-          : tridentToken
-      return exchangeToken ?? tridentToken ?? undefined
-    })
-    .filter((token) => token !== undefined) as Token[]
-
-  return betterTokens
+export const getTokens = async (ids: string[], chainId: SushiSwapChainId) => {
+  return await getExchangeTokens(ids, chainId)
 }
 
 export async function getTokenBalancesOf(

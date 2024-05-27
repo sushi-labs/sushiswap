@@ -4,7 +4,6 @@ import type { Resolvers } from '../.graphclient/index.js'
 import { resolvers as bentobox } from './bentobox/index.js'
 import { resolvers as blocks } from './blocks/index.js'
 import { resolvers as bundles } from './bundles/index.js'
-import { resolvers as concentrated } from './concentrated/index.js'
 import { resolvers as deprecated } from './depreciated/index.js'
 import { resolvers as factories } from './factories/index.js'
 import { resolvers as furo } from './furo/index.js'
@@ -14,13 +13,13 @@ import { resolvers as masterchef } from './masterchef/index.js'
 import { resolvers as pairs } from './pairs/index.js'
 import { resolvers as tokens } from './tokens/index.js'
 import { resolvers as user } from './user/index.js'
+import { resolvers as v3 } from './v3/index.js'
 
 // export const resolvers: Resolvers = mergeResolvers<MeshResolvedSource, MeshContext>([
 export const resolvers: Resolvers = mergeResolvers([
   bentobox,
   blocks,
   bundles,
-  concentrated,
   deprecated,
   factories,
   liquidityPositions,
@@ -30,4 +29,5 @@ export const resolvers: Resolvers = mergeResolvers([
   user,
   furo,
   graphnode,
+  v3
 ])

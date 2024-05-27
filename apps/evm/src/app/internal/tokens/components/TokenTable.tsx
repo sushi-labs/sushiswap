@@ -53,9 +53,9 @@ function useColumns() {
       },
       enableHiding: true,
     }),
-    columnHelper.accessor('liquidityUSD', {
+    columnHelper.accessor('totalLiquidity', {
       header: 'Liquidity',
-      cell: (info) => formatUSD(info.getValue()),
+      cell: (info) => info.getValue(),
       enableHiding: true,
     }),
     columnHelper.accessor('volumeUSD', {

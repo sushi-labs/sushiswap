@@ -2,7 +2,7 @@
 
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUSHISWAP_SUBGRAPH_URL } from '@sushiswap/graph-config'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import {
   Card,
   CardContent,
@@ -44,7 +44,7 @@ const fetchAll = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
+    url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
   })
 
   const { transactions } = await sdk.V2Transactions({
@@ -83,7 +83,7 @@ const fetchMints = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
+    url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
   })
 
   const { mints } = await sdk.V2Mints({
@@ -106,7 +106,7 @@ const fetchBurns = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
+    url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
   })
 
   const { burns } = await sdk.V2Burns({
@@ -134,7 +134,7 @@ const fetchSwaps = async (
   opts: UseTransactionsV2Opts,
 ) => {
   const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
+    url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
   })
 
   const { swaps } = await sdk.V2Swaps({
@@ -213,8 +213,12 @@ function useTransactionsV2(
           ...swap,
           sender: String(swap.sender),
           to: String(swap.to),
-          amountIn: Number(swap.amountIn),
-          amountOut: Number(swap.amountOut),
+          amountIn: Number(
+            swap.amount0In !== '0' ? swap.amount0In : swap.amount1In,
+          ),
+          amountOut: Number(
+            swap.amount0Out !== '0' ? swap.amount0Out : swap.amount1Out,
+          ),
           type: TransactionType.Swap as const,
         }))
 

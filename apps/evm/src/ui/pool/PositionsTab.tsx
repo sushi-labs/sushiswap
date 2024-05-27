@@ -42,26 +42,6 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
     ),
   },
   {
-    id: 'trident-stable',
-    value: 'stable',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍱</span>
-        <span>Trident Stable</span>
-      </div>
-    ),
-  },
-  {
-    id: 'trident-classic',
-    value: 'classic',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍱</span>
-        <span>Trident Classic</span>
-      </div>
-    ),
-  },
-  {
     id: 'sushiswap-smart',
     value: 'smart',
     children: (
@@ -112,18 +92,6 @@ export const PositionsTab = () => {
         <TabsContent value="v2">
           <PositionsTable
             protocol={Protocol.SUSHISWAP_V2}
-            rowLink={(row) => `/pool/${row.pool.id}`}
-          />
-        </TabsContent>
-        <TabsContent value="stable">
-          <PositionsTable
-            protocol={Protocol.BENTOBOX_STABLE}
-            rowLink={(row) => `/pool/${row.pool.id}`}
-          />
-        </TabsContent>
-        <TabsContent value="classic">
-          <PositionsTable
-            protocol={Protocol.BENTOBOX_CLASSIC}
             rowLink={(row) => `/pool/${row.pool.id}`}
           />
         </TabsContent>

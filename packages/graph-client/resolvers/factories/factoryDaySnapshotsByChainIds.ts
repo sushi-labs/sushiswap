@@ -1,22 +1,20 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
-  SUSHISWAP_V3_SUBGRAPH_URL,
-  SushiSwapV3ChainId,
-  TRIDENT_SUBGRAPH_URL,
-  isSushiSwapChain,
-  isSushiSwapV3Chain,
-  isTridentChain,
+    SUSHISWAP_V2_SUBGRAPH_URL,
+    SUSHISWAP_V3_SUBGRAPH_URL,
+    SushiSwapV3ChainId,
+    isSushiSwapChain,
+    isSushiSwapV3Chain
 } from '@sushiswap/graph-config'
 import { ChainId, chainName, chainShortName } from 'sushi/chain'
 
-import {
-  FactoryDaySnapshot,
-  Query,
-  QueryResolvers,
-  SushiSwapV3DayDatasQuery,
-  getBuiltGraphSDK,
-} from '../../.graphclient/index.js'
 import { isPromiseFulfilled } from 'sushi/validate'
+import {
+    Query,
+    QueryResolvers,
+    SushiSwapV3DayDatasQuery,
+    UniswapDayData,
+    getBuiltGraphSDK,
+} from '../../.graphclient/index.js'
 
 const transformV3DayToSnapshot = (
   days: SushiSwapV3DayDatasQuery['uniswapDayDatas'],
@@ -26,15 +24,16 @@ const transformV3DayToSnapshot = (
     chainId: chainId,
     id: day.id,
     date: day.date,
-    volumeNative: day.volumeETH,
-    volumeUSD: day.volumeUSD,
-    untrackedVolumeUSD: day.volumeUSDUntracked,
-    liquidityNative: 0,
-    liquidityUSD: day.tvlUSD,
-    feesNative: 0,
-    feesUSD: day.feesUSD,
-    transactionCount: day.txCount,
-    factory: null,
+
+    dailyVolumeUSD: day.volumeUSD,
+    dailyVolumeUntracked: day.volumeUSDUntracked,
+    dailyVolumeETH: day.volumeETH,
+
+    totalLiquidityUSD: day.tvlUSD,
+    totalVolumeUSD: 0,
+    totalVolumeETH: 0,
+    totalLiquidityETH: 0,
+    txCount: day.txCount,
   }))
 
 export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsByChainIds'] =
@@ -44,34 +43,11 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
     context,
     info,
   ): Promise<Query['factoryDaySnapshotsByChainIds']> => {
-    const fetchTridentSnapshots = async (chainId: number) => {
-      const snapshots: FactoryDaySnapshot[] =
-        await context.Trident.Query.factoryDaySnapshots({
-          root,
-          args,
-          context: {
-            ...context,
-            chainId,
-            chainName: chainName[chainId],
-            chainShortName: chainShortName[chainId],
-            url: TRIDENT_SUBGRAPH_URL[chainId],
-          },
-          info,
-        })
 
-      return (
-        snapshots?.map((snapshot) => ({
-          ...snapshot,
-          chainId,
-          chainName: chainName[chainId],
-          chainShortName: chainShortName[chainId],
-        })) || []
-      )
-    }
 
     const fetchSushiSwapV2Snapshots = async (chainId: number) => {
-      const snapshots: FactoryDaySnapshot[] =
-        await context.SushiSwap.Query.factoryDaySnapshots({
+      const snapshots: UniswapDayData[] =
+        await context.SushiSwapV2.Query.uniswapDayDatas({
           root,
           args,
           context: {
@@ -79,7 +55,7 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
-            url: SUSHISWAP_SUBGRAPH_URL[chainId],
+            url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
           },
           info,
         })
@@ -96,25 +72,20 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
 
     const fetchSushiSwapV3Snapshots = async (chainId: SushiSwapV3ChainId) => {
       const sdk = getBuiltGraphSDK({
-        url: SUSHISWAP_V3_SUBGRAPH_URL[chainId]
+        url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
       })
 
       const { uniswapDayDatas } = await sdk.SushiSwapV3DayDatas({
         first: args.first,
         skip: args.skip,
-        orderBy: args.orderBy === 'liquidityUSD' ? 'tvlUSD' : 'date',
+        orderBy: args.orderBy === 'totalLiquidityUSD' ? 'tvlUSD' : 'date',
         orderDirection: args.orderDirection,
       })
-
       return transformV3DayToSnapshot(uniswapDayDatas, chainId)
     }
 
     const queries = args.chainIds.flatMap((chainId: ChainId) => {
       const queries: Promise<Query['factoryDaySnapshotsByChainIds']>[] = []
-
-      if (isTridentChain(chainId)) {
-        queries.push(fetchTridentSnapshots(chainId))
-      }
 
       if (isSushiSwapChain(chainId)) {
         queries.push(fetchSushiSwapV2Snapshots(chainId))

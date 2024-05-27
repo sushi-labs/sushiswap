@@ -16,7 +16,7 @@ export async function getTokens({
   const tokens = await sdk
     .TokensByChainIds({
       chainIds,
-      orderBy: 'liquidityUSD',
+      orderBy: 'tradeVolumeUSD',
       where: { symbol_contains_nocase: filter },
     })
     .then(({ tokens }) =>
@@ -40,9 +40,8 @@ export async function getTokens({
       tokensCombined.set(token.id, {
         ...token,
         volumeUSD: Number(token.volumeUSD) + Number(tokenCombined.volumeUSD),
-        liquidityUSD:
-          Number(token.liquidityUSD) + Number(tokenCombined.liquidityUSD),
-        feesUSD: Number(token.feesUSD) + Number(tokenCombined.feesUSD),
+        totalLiquidity:
+          Number(token.totalLiquidity) + Number(tokenCombined.totalLiquidity),
       })
     } else {
       tokensCombined.set(token.id, token)

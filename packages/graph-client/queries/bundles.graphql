@@ -2,6 +2,6 @@ query Bundles($chainIds: [BigInt!]!) {
   bundles: bundlesByChainIds(chainIds: $chainIds) {
     id
     chainId
-    nativePrice
+    ethPrice
   }
 }

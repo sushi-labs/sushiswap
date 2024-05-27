@@ -1,14 +1,7 @@
 import { ReactElement } from 'react'
-import { SushiSwapV2ChainId, TridentChainId } from 'sushi/config'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { Fee } from 'sushi/dex'
-import {
-  SushiSwapV2Pool,
-  TridentConstantPool,
-  TridentStablePool,
-} from 'sushi/pool'
-import { TridentConstantPoolState } from '../../hooks/pools/actions/getTridentConstantPools'
-import { TridentStablePoolState } from '../../hooks/pools/actions/getTridentStablePools'
+import { SushiSwapV2Pool } from 'sushi/pool'
 import { SushiSwapV2PoolState } from '../../hooks/pools/hooks/useSushiSwapV2Pools'
 
 export type ComponentsWrapperProps<T> = {
@@ -36,16 +29,7 @@ export interface SushiSwapV2PoolFinderProps extends PoolFinderProps {
   enabled: boolean
 }
 
-export interface TridentPoolFinderProps extends PoolFinderProps {
-  chainId: TridentChainId
-  fee?: Fee
-  twap?: boolean
-}
-
-export type PoolStateUnion = [
-  SushiSwapV2PoolState | TridentConstantPoolState | TridentStablePoolState,
-  SushiSwapV2Pool | TridentConstantPool | TridentStablePool | null,
-]
+export type PoolStateUnion = [SushiSwapV2PoolState, SushiSwapV2Pool | null]
 
 export enum PoolFinderType {
   Classic = 'Classic',

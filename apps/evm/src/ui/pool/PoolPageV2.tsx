@@ -3,9 +3,8 @@ import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
 import { ChainId } from 'sushi/chain'
 
-import { Protocol, getPool } from '@sushiswap/client'
+import { getPool } from '@sushiswap/client'
 import { FC } from 'react'
-import { ManageTridentLiquidityCard } from './ManageTridentLiquidityCard'
 import { PoolChartV2 } from './PoolChartV2'
 import { PoolComposition } from './PoolComposition'
 import { PoolMyRewards } from './PoolMyRewards'
@@ -29,11 +28,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool, tab }) => {
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <div>
-            {pool.protocol === Protocol.SUSHISWAP_V2 ? (
-              <ManageV2LiquidityCard pool={pool} tab={tab} />
-            ) : (
-              <ManageTridentLiquidityCard pool={pool} tab={tab} />
-            )}
+            <ManageV2LiquidityCard pool={pool} tab={tab} />
           </div>
           <div className="flex flex-col gap-6">
             <PoolPositionProvider pool={pool}>

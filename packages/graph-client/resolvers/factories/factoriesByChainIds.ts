@@ -2,12 +2,11 @@
 
 import {
   SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from 'sushi/validate'
 
 import {
-  Factory,
   Query,
   QueryResolvers,
   Resolvers,
@@ -21,13 +20,13 @@ export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] =
           SUSHISWAP_ENABLED_NETWORKS.includes(el),
         )
         .map((chainId) =>
-          context.SushiSwap.Query.factories({
+          context.SushiSwapV2.Query.uniswapFactories({
             root,
             args,
             context: {
               ...context,
               chainId,
-              url: SUSHISWAP_SUBGRAPH_URL[chainId],
+              url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
             },
             info,
           }).then((factories: Factory[]) => {
@@ -52,7 +51,7 @@ export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] =
   }
 
 export const resolvers: Resolvers = {
-  Factory: {
+  UniswapFactory: {
     chainId: (root, args, context, info) =>
       Number(root.chainId || context.chainId || 1),
   },

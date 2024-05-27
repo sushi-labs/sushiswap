@@ -1,15 +1,8 @@
 sources:
-  - name: Trident
-    handler:
-      graphql:
-        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/sushi-v2/trident-optimism}
-    transforms:
-      - autoPagination:
-          validateSchema: true
   - name: SushiSwapV2
     handler:
       graphql:
-        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/sushi-v2/sushiswap-ethereum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/v2-arbitrum/version/latest}
         retry: 2
     transforms:
       - autoPagination:
@@ -21,7 +14,7 @@ sources:
   - name: SushiSwapV3
     handler:
       graphql:
-        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/olastenberg/v3-arbitrum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/v3-ethereum/version/latest}
     transforms:
       - autoPagination:
           validateSchema: true
@@ -38,7 +31,7 @@ sources:
   - name: MasterChef
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/masterchef-v2-ethereum
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/master-chefv2/version/latest}
     transforms:
       - prefix:
           value: MasterChef_
@@ -47,7 +40,7 @@ sources:
   - name: MiniChef
     handler:
       graphql:
-        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/jiro-ono/minichef-staging-updates}
+        endpoint: https://{context.api:api.studio.thegraph.com/query/32073/minichef-arbitrum/version/latest}
     transforms:
       - prefix:
           value: MiniChef_
@@ -56,7 +49,7 @@ sources:
   - name: Blocks
     handler:
       graphql:
-        endpoint: https://{context.api:api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/72545/ethereum-blocks/version/latest}
         retry: 3
   - name: Steer
     handler:

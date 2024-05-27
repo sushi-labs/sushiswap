@@ -2,51 +2,37 @@ sources:
   - name: xSUSHI
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushi-labs/xsushi
+        endpoint: https://api.studio.thegraph.com/query/32073/xsushi/v0.0.1
         retry: 3
     # transforms:
 
   - name: BentoBox
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/matthewlilley/bentobox-ethereum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1}
         retry: 3
     # transforms:
 
   - name: Blocks
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/72545/ethereum-blocks/version/latest}
         retry: 3
     # transforms:
 
   - name: FuroStream
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-subgraphs/furo-ethereum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1}
     transforms:
       - autoPagination:
           validateSchema: true
 
-  - name: Exchange
-    handler:
-      graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
-        retry: 3
-    transforms:
-      # - addSourceName: true
-      - autoPagination:
-          if: false
-          validateSchema: false
-      - prefix:
-          value: deprecated_
-          includeRootOperations: true
-          includeTypes: true
 
-  - name: SushiSwap
+  - name: SushiSwapV2
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/subgraph-qa/sushiswap-ethereum}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/v2-arbitrum/version/latest}
         retry: 3
     transforms:
       - rename:
@@ -121,17 +107,10 @@ sources:
       #       - queryFieldName: pairs
       #         keyField: id
 
-  - name: Trident
-    handler:
-      graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/sushi-qa/trident-optimism}
-        retry: 3
-    transforms:
-
   - name: MasterChefV1
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/jiro-ono/masterchef-staging}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/masterchef/version/latest}
         retry: 3
     transforms:
       - addSourceName: true
@@ -162,7 +141,7 @@ sources:
   - name: MasterChefV2
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chefv2
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/master-chefv2/version/latest}
         retry: 3
     transforms:
       - addSourceName: true
@@ -183,7 +162,7 @@ sources:
   - name: SushiSwapV3
     handler:
       graphql:
-        endpoint: https://{context.url:api.thegraph.com/subgraphs/name/uniswap/uniswap-v3}
+        endpoint: https://{context.url:api.studio.thegraph.com/query/32073/v3-ethereum/version/latest}
         retry: 3
     transforms:
       - prefix:
@@ -214,29 +193,15 @@ transforms:
   - addSourceName: true
 
 additionalTypeDefs: |
-  # Deprecated
-  extend type deprecated_Token {
-    chainId: BigInt!
-  }
-  extend type deprecated_Pair {
-    chainId: BigInt!
-  }
-  extend type deprecated_LiquidityPosition {
-    chainId: BigInt!
-  }
-
   # Custom types
-
-  # type User {
-  #   id: ID!
-  #   positions: [Position!]!
-  # }
-  # type Apr {
-  #   fee: BigDecimal!
-  #   incentive: BigDecimal!
-  #   combined: BigDecimal!
-  # }
-
+  type BucketData {
+    id: ID!
+    date: BigInt!
+    volumeUSD: BigDecimal!
+    liquidityNative: BigDecimal!
+    liquidityUSD: BigDecimal!
+    transactionCount: BigInt!
+  }
   type UserPosition {
     id: ID!
     pool: String!
@@ -299,9 +264,6 @@ additionalTypeDefs: |
   extend type Bundle {
     chainId: BigInt!
   }
-  extend type Factory {
-    chainId: BigInt!
-  }
   extend type SUSHISWAP_V3_Factory {
     chainId: Int!
   }
@@ -312,17 +274,26 @@ additionalTypeDefs: |
     chainId: BigInt!
     source: String!
   }
-  extend type FactoryDaySnapshot {
+  extend type UniswapFactory {
+    chainId: BigInt!
+  }
+  extend type UniswapDayData {
     chainId: BigInt!
   }
   extend type Pair {
     chainId: BigInt!
+    swapFee: BigInt!
     address: String!
+    name: String!
+    liquidity: BigInt!
+    liquidityNative: BigDecimal!
+    liquidityUSD: BigDecimal!
     liquidity1dChange: BigDecimal
     liquidity1wChange: BigDecimal
     volume1d: BigDecimal
     volume1dChange: BigDecimal
     volume1w: BigDecimal
+    feesUSD: BigDecimal!
     fees1d: BigDecimal
     fees1w: BigDecimal
     fees1dChange: BigDecimal
@@ -333,6 +304,8 @@ additionalTypeDefs: |
     txCount1dChange: BigDecimal
     txCount1w: BigDecimal
     feeApr: BigDecimal
+    daySnapshots: [BucketData]!
+    hourSnapshots: [BucketData]!
   }
   extend type LiquidityPosition {
     chainId: BigInt!
@@ -413,7 +386,7 @@ additionalTypeDefs: |
     ): [Block!]!
     factoriesByChainIds(
       chainIds: [BigInt!]!
-    ): [Factory!]!
+    ): [UniswapFactory!]!
     v3factoriesByChainIds(
       chainIds: [BigInt!]!
     ): [SUSHISWAP_V3_Factory!]!
@@ -473,18 +446,6 @@ additionalTypeDefs: |
       ids: [ID!]!
       block: Block_height
     ): [Pair!]!
-    # pairWithIncentives(
-    #   id: ID!
-    # ): PairWithIncentives!
-    # pairsWithIncentives(
-    #   ids: [ID!]
-    #   skip: Int = 0
-    #   first: Int = 100
-    #   where: Pair_filter
-    #   orderBy: Pair_orderBy
-    #   orderDirection: OrderDirection
-    #   chainIds: [BigInt!]!
-    # ): [PairWithIncentives!]!
     rebasesByChainIds(
       skip: Int = 0
       first: Int = 100
@@ -518,13 +479,11 @@ additionalTypeDefs: |
       ids: [ID!]!
       block: Block_height
     ): [Token!]!
-
+    
     poolsByTokenPair(
       tokenId0: String!
       tokenId1: String!
     ): [SUSHISWAP_V3_Pool!]!
-
-    # TODO: REFACTOR BELOW
     crossChainChefUser(
       skip: Int = 0
       first: Int = 100
@@ -541,12 +500,12 @@ additionalTypeDefs: |
     factoryDaySnapshotsByChainIds(
       first: Int
       skip: Int
-      where: FactoryDaySnapshot_filter
-      orderBy: FactoryDaySnapshot_orderBy
+      where: UniswapDayData_filter
+      orderBy: UniswapDayData_orderBy
       orderDirection: OrderDirection
       block: Block_height
       chainIds: [BigInt!]!
-    ): [FactoryDaySnapshot!]!
+    ): [UniswapDayData!]!
     crossChainToken(id: ID! now: Int! chainId: BigInt!): Token!
     crossChainStats(
       first: Int

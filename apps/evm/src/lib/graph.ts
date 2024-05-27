@@ -67,7 +67,7 @@ export const getPoolsByTokenPair = async (
 
   if (chainId0 !== chainId1) throw Error('Tokens must be on the same chain')
 
-  const { pools } = await sdk.PoolsByTokenPair({
+  const { pools } = await sdk.V3PoolsByTokenPair({
     tokenId0,
     tokenId1,
   })
@@ -80,12 +80,13 @@ export const getBundles = async () => {
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
-  return bundles.reduce<
-    Record<number, Pick<Bundle, 'id' | 'chainId' | 'nativePrice'>>
-  >((acc, cur) => {
-    acc[cur.chainId] = cur
-    return acc
-  }, {})
+  return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId'>>>(
+    (acc, cur) => {
+      acc[cur.chainId] = cur
+      return acc
+    },
+    {},
+  )
 }
 
 export type GetTokensQuery = Omit<
@@ -111,7 +112,7 @@ export const getTokens = async (query?: GetTokensQuery) => {
         : 20
     const skip = 0
     const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
-    const orderBy = query?.orderBy || 'liquidityUSD'
+    const orderBy = query?.orderBy || 'tradeVolumeUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks
       ? JSON.parse(query.networks)
@@ -137,13 +138,16 @@ export const getBentoBoxTokens = async (
 ) => {
   try {
     const { rebases } = await sdk.RebasesByChainIds({
-      where: {
-        token_: {
-          or: query.tokenSymbols?.map((symbol) => ({
-            symbol_contains_nocase: symbol,
-          })),
-        },
-      },
+      ...(query.tokenSymbols &&
+        query.tokenSymbols?.length > 0 && {
+          where: {
+            token_: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+            },
+          },
+        }),
       chainIds: query.chainIds,
     })
 
@@ -158,11 +162,14 @@ export const getFuroTokens = async (
 ) => {
   try {
     const { tokens } = await sdk.furoTokensByChainIds({
-      where: {
-        or: query.tokenSymbols?.map((symbol) => ({
-          symbol_contains_nocase: symbol,
-        })),
-      },
+      ...(query.tokenSymbols &&
+        query.tokenSymbols?.length > 0 && {
+          where: {
+            or: query.tokenSymbols.map((symbol) => ({
+              symbol_contains_nocase: symbol,
+            })),
+          },
+        }),
       // orderBy,
       // orderDirection,
       chainIds: query.chainIds,
@@ -174,43 +181,11 @@ export const getFuroTokens = async (
   }
 }
 
-export const getToken = async (id: string) => {
-  const { crossChainToken: token } = await sdk.CrossChainToken({
-    id: id.includes(':') ? id.split(':')[1] : id,
-    chainId: id.split(':')[0],
-    now: Math.round(new Date().getTime() / 1000),
-  })
-
-  return token
-}
-
-export type GetTokenCountQuery = Partial<{
-  networks: string
-}>
-
-export const getTokenCount = async (query?: GetTokenCountQuery) => {
-  const { factories } = await sdk.Factories({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-
-  const chainIds = query?.networks
-    ? JSON.parse(query.networks)
-    : SUPPORTED_CHAIN_IDS
-
-  return factories.reduce((sum, cur) => {
-    if (chainIds.includes(cur.chainId)) {
-      sum = sum + Number(cur.tokenCount)
-    }
-
-    return sum
-  }, 0)
-}
-
 export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks
     ? JSON.parse(query.networks)
     : SUPPORTED_CHAIN_IDS
-  const { factoryDaySnapshots } = await sdk.FactoryDaySnapshots({
+  const { factoryDaySnapshots } = await sdk.UniswapDayDatas({
     chainIds: chainIds,
     first: 1000,
   })
@@ -223,10 +198,10 @@ export const getCharts = async (query?: { networks: string }) => {
       snapshot.date,
       value
         ? [
-            value[0] + Number(snapshot.liquidityUSD),
-            value[1] + Number(snapshot.volumeUSD),
+            value[0] + Number(snapshot.totalLiquidityUSD),
+            value[1] + Number(snapshot.dailyVolumeUSD),
           ]
-        : [Number(snapshot.liquidityUSD), Number(snapshot.volumeUSD)],
+        : [Number(snapshot.totalLiquidityUSD), Number(snapshot.dailyVolumeUSD)],
     )
   }
 

@@ -2,9 +2,9 @@ fragment PairFields on Pair {
   id
   chainId
   address
-  type
+  # type
   swapFee
-  twapEnabled
+  # twapEnabled
   name
   token0 {
     name
@@ -18,25 +18,61 @@ fragment PairFields on Pair {
     decimals
     symbol
   }
-  source
-  createdAtBlock
+  createdAtBlockNumber
   createdAtTimestamp
   reserve0
   reserve1
+  totalSupply
+  reserveUSD
+  reserveETH
   liquidity
   liquidityUSD
   liquidityNative
   # token0Price
   # token1Price
   volumeUSD
-  volumeNative
   volumeToken0
   volumeToken1
-  feesNative
   feesUSD
   txCount
-  apr
-  aprUpdatedAtTimestamp
+
+  hourSnapshots {
+    id
+    date
+    volumeUSD
+    liquidityUSD
+    liquidityNative   
+    transactionCount
+  }
+  daySnapshots {
+    id
+    date
+    volumeUSD
+    liquidityUSD
+    liquidityNative   
+    transactionCount
+  }
+}
+
+fragment TimeTravelPairFields on Pair {
+  id
+  reserve0
+  reserve1
+  totalSupply
+  reserveUSD
+  reserveETH
+  volumeUSD
+  volumeToken0
+  volumeToken1
+  feesUSD
+}
+
+
+
+query PairOnlyId($id: ID!) {
+  pair(id: $id) {
+    id
+  }
 }
 
 query PairsByChainId(
@@ -83,6 +119,47 @@ query PairsByChainIds(
   }
 }
 
+
+query V2PoolHourData($first: Int = 1000, $skip: Int, $orderBy: PairHourData_orderBy, $orderDirection: OrderDirection, $where: PairHourData_filter) {
+  pairHourDatas: pairHourDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+    id
+    hourStartUnix
+    pair {
+      id
+    }
+
+    reserve0
+    reserve1
+    totalSupply
+    reserveUSD
+
+    hourlyVolumeToken0
+    hourlyVolumeToken1
+    hourlyVolumeUSD
+    hourlyTxns
+  }
+}
+
+
+query V2PoolDayData($first: Int = 1000, $skip: Int, $orderBy: PairDayData_orderBy, $orderDirection: OrderDirection, $where: PairDayData_filter) {
+  pairDayDatas: pairDayDatas(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+    id
+    date
+    pairAddress
+
+    reserve0
+    reserve1
+    totalSupply
+    reserveUSD
+
+    dailyVolumeToken0
+    dailyVolumeToken1
+    dailyVolumeUSD
+    dailyTxns
+  }
+}
+
+
 query PairById($id: ID!) {
   pair: pairById(id: $id) {
     ...PairFields
@@ -97,34 +174,15 @@ query PairById($id: ID!) {
     txCount1d
     txCount1dChange
     txCount1w
-    apr
     feeApr
-    hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
-      id
-      date
-      volumeUSD
-      liquidityNative
-      liquidityUSD
-      transactionCount
-      apr
-    }
-    daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
-      id
-      date
-      volumeUSD
-      liquidityNative
-      liquidityUSD
-      transactionCount
-      apr
-    }
   }
 }
 
 query V2Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_orderBy = timestamp, $orderDir: OrderDirection = desc, $where: Transaction_filter) {
   transactions: v2Transactions(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDir, where: $where) {
     id
-    createdAtTimestamp
-    createdAtBlock
+    createdAtTimestamp: timestamp
+    createdAtBlock: blockNumber
     mints {
       id
       sender
@@ -147,14 +205,10 @@ query V2Transactions($first: Int = 100, $skip: Int = 0, $orderBy: Transaction_or
       id
       sender
       to
-      amountIn
-      tokenIn {
-        symbol
-      }
-      amountOut
-      tokenOut {
-        symbol
-      }
+      amount0In
+      amount1In
+      amount0Out
+      amount1Out
       amountUSD
       logIndex
     }
@@ -172,8 +226,8 @@ query V2Burns($first: Int = 100, $skip: Int = 0, $orderBy: Burn_orderBy = timest
     logIndex
     transaction {
       id
-      createdAtTimestamp
-      createdAtBlock
+      createdAtTimestamp: timestamp
+      createdAtBlock: blockNumber
     }
   }
 }
@@ -189,8 +243,8 @@ query V2Mints($first: Int = 100, $skip: Int = 0, $orderBy: Mint_orderBy = timest
     logIndex
     transaction {
       id
-      createdAtTimestamp
-      createdAtBlock
+      createdAtTimestamp: timestamp
+      createdAtBlock: blockNumber
     }
   }
 }
@@ -200,79 +254,16 @@ query V2Swaps($first: Int = 100, $skip: Int = 0, $orderBy: Swap_orderBy = timest
     id
     sender
     to
-    amountIn
-    tokenIn {
-      symbol
-    }
-    amountOut
-    tokenOut {
-      symbol
-    }
+    amount0In
+    amount1In
+    amount0Out
+    amount1Out
     amountUSD
     logIndex
     transaction {
       id
-      createdAtTimestamp
-      createdAtBlock
+      createdAtTimestamp: timestamp
+      createdAtBlock: blockNumber
     }
   }
 }
-
-# fragment PairWithIncentivesFields on PairWithIncentives {
-#   ...PairFields
-#   # liquidityPositions {
-#   #    id
-#   # }
-#   # liquidityPositionSnapshots {
-#   #   id
-#   # }
-#   incentives {
-#     id
-#     # currency { id symbol name decimals }
-#     apr
-#   }
-# }
-
-# query PairWithIncentives(
-#   $first: Int
-#   $skip: Int
-#   # $where: PairWithIncentives_filter
-#   # $orderBy: PairWithIncentives_orderBy
-#   # $orderDirection: OrderDirection
-#   $block: Block_height
-#   $chainIds: [Int!]!
-# ) {
-#   pairWithIncentives(
-#     first: $first
-#     skip: $skip
-#     # where: $where
-#     # orderBy: $orderBy
-#     # orderDirection: $orderDirection
-#     block: $block
-#     chainIds: $chainIds
-#   ) {
-#     ...PairWithIncentivesFields
-#   }
-# }
-
-# query PairWithIncentives(
-#   $first: Int
-#   $skip: Int
-#   # $where: PairWithIncentives_filter
-#   # $orderBy: PairWithIncentives_orderBy
-#   # $orderDirection: OrderDirection
-#   $block: Block_height
-#   $chainIds: [Int!]!
-# ) {
-#   pairWithIncentives(
-#     first: $first
-#     skip: $skip
-#     # where: $where
-#     # orderBy: $orderBy
-#     # orderDirection: $orderDirection
-#     block: $block
-#     chainIds: $chainIds
-#   ) {
-#     ...PairWithIncentivesFields
-#   }
-# }

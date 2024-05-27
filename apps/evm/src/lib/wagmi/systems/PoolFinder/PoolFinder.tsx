@@ -12,20 +12,15 @@ import {
 import { SushiSwapV2PoolState } from '../../hooks/pools/hooks/useSushiSwapV2Pools'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { SushiSwapV2Pool } from './SushiSwapV2Pool'
-import { TridentConstantPool } from './TridentConstantPool'
-import { TridentStablePool } from './TridentStablePool'
 import {
   ComponentsWrapperProps,
   PoolExistenceStateAction,
   PoolStateUnion,
   SushiSwapV2PoolFinderProps,
-  TridentPoolFinderProps,
 } from './types'
 
 interface Props {
-  components: ReactElement<
-    ComponentsWrapperProps<SushiSwapV2PoolFinderProps | TridentPoolFinderProps>
-  >
+  components: ReactElement<ComponentsWrapperProps<SushiSwapV2PoolFinderProps>>
   children({ pool }: { pool: PoolStateUnion }): ReactNode
 }
 
@@ -74,11 +69,7 @@ const Controller: FC<Props> = ({ components, children }) => {
 export const PoolFinder: typeof Controller & {
   Components: typeof ComponentsWrapper
   SushiSwapV2Pool: typeof SushiSwapV2Pool
-  TridentConstantPool: typeof TridentConstantPool
-  TridentStablePool: typeof TridentStablePool
 } = Object.assign(Controller, {
   Components: ComponentsWrapper,
   SushiSwapV2Pool,
-  TridentConstantPool,
-  TridentStablePool,
 })
