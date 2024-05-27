@@ -166,7 +166,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.HAQQ]: 'HAQQ',
   [ChainId.ZETACHAIN]: 'ZetaChain',
   [ChainId.BLAST]: 'Blast',
-  [ChainId.SKALE_EUROPA]: 'Skale Europa',
+  [ChainId.SKALE_EUROPA]: 'SKALE Europa',
 } as const
 
 export const SUBGRAPH_HOST: Record<number, string> = {
