@@ -1,7 +1,7 @@
-import { http, Block, createPublicClient, parseAbiItem } from 'viem'
+import { http, createPublicClient, parseAbiItem } from 'viem'
 import { arbitrum } from 'viem/chains'
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+const delay = async (ms) => new Promise((res) => setTimeout(res, ms))
 
 const events = [
   parseAbiItem('event Sync(uint112 reserve0, uint112 reserve1)'),
@@ -29,7 +29,7 @@ const events = [
   ),
 ]
 
-async function providerTest(provider: string) {
+async function providerTest(provider) {
   const client = createPublicClient({
     chain: arbitrum,
     transport: http(provider),
@@ -41,7 +41,7 @@ async function providerTest(provider: string) {
     .then((filter) => {
       console.log(`New LogFilter was created: ${filter.id}`)
       const unWatchBlocks = client.watchBlocks({
-        onBlock: async (block: Block) => {
+        onBlock: async (block) => {
           try {
             const logs = await client.getFilterChanges({ filter })
             //if (Math.random() < 1 / 5) throw new Error('Test error')
@@ -63,6 +63,8 @@ async function providerTest(provider: string) {
   await delay(1000 * 3600)
 }
 
-providerTest(
-  `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${process.env.DRPC_ID}`,
+const network = process.argv[process.argv.length - 1]
+
+await providerTest(
+  `https://lb.drpc.org/ogrpc?network=${network}&dkey=${process.env.DRPC_ID}`,
 )
