@@ -13,7 +13,7 @@
     "test": "npx playwright test -c test/playwright.config.ts"
   },
   "dependencies": {
-    "@0xsquid/sdk": "^2.8.10",
+    "@0xsquid/sdk": "^2.8.11",
     "@covalenthq/client-sdk": "0.9.4",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
@@ -59,7 +59,7 @@
     "lodash.once": "4.1.1",
     "lodash.zip": "4.2.0",
     "nanoid": "4.0.0",
-    "next": "14.1.1",
+    "next": "14.2.3",
     "next-axiom": "1.1.1",
     "next-themes": "0.2.1",
     "octokit": "2.1.0",
@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "@0xsquid/squid-types": "^0.1.59",
-    "@next/eslint-plugin-next": "14.1.1",
+    "@next/eslint-plugin-next": "14.2.3",
     "@playwright/test": "1.37.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
@@ -96,7 +96,7 @@
     "@types/react-virtualized-auto-sizer": "1.0.1",
     "@viem/anvil": "0.0.6",
     "autoprefixer": "10.4.14",
-    "eslint-config-next": "14.1.1",
+    "eslint-config-next": "14.2.3",
     "eslint-config-sushi": "workspace:*",
     "postcss": "8.4.23",
     "tailwindcss": "3.3.2",
