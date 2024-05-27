@@ -1,6 +1,5 @@
-// @ts-nocheck
-import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
+import { BLOCKS_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import {
   Query,

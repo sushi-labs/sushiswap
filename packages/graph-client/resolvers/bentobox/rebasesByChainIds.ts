@@ -1,10 +1,10 @@
 // @ts-nocheck
 
-import { BENTOBOX_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from 'sushi/validate'
 
 import { Query } from '../../.graphclient/index.js'
 import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types.js'
+import { BENTOBOX_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 export const rebasesByChainIds = async (
   root,

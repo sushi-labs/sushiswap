@@ -1,8 +1,3 @@
-import {
-  MINICHEF_ENABLED_NETWORKS,
-  SUSHISWAP_ENABLED_NETWORKS,
-  isMiniChefChainId,
-} from '@sushiswap/graph-config'
 import type { ChainIdsVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
 import { fetchMultichain } from 'src/multichain/fetch-multichain'
@@ -10,7 +5,12 @@ import {
   type GetSushiV2LiquidityPositions,
   getSushiV2LiquidityPositions,
 } from 'src/subgraphs/sushi-v2'
-import { isSushiSwapV2ChainId } from 'sushi/config'
+import {
+  MINICHEF_SUPPORTED_CHAIN_IDS,
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  isMiniChefChainId,
+  isSushiSwapV2ChainId,
+} from 'sushi/config'
 import type { GetChefUserPositions } from './chef-user-positions'
 
 export type GetCombinedUserPositions = {
@@ -25,7 +25,10 @@ export type GetCombinedUserPositions = {
  */
 export async function getCombinedUserPositions({
   chainIds = [
-    ...new Set([...SUSHISWAP_ENABLED_NETWORKS, ...MINICHEF_ENABLED_NETWORKS]),
+    ...new Set([
+      ...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+      ...MINICHEF_SUPPORTED_CHAIN_IDS,
+    ]),
   ],
   user,
 }: GetCombinedUserPositions) {

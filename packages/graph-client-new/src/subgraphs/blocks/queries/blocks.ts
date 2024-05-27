@@ -1,10 +1,10 @@
-import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
 import { FetchError } from 'src/lib/fetch-error'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { ChainId } from 'sushi/chain'
+import { BLOCKS_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { graphql } from '../graphql'
 
 export const BlocksQuery = graphql(

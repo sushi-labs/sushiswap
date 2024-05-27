@@ -1,7 +1,6 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react/20/solid'
-import { SUSHISWAP_V3_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import {
   Button,
   Card,
@@ -16,7 +15,10 @@ import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  SushiSwapV3ChainId,
+} from 'sushi/config'
 import { useAccount } from 'wagmi'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
@@ -57,7 +59,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
 
     const chainIds = useMemo(() => {
       if (chainId) return [chainId] as SushiSwapV3ChainId[]
-      return SUSHISWAP_V3_ENABLED_NETWORKS
+      return [...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS]
     }, [chainId])
 
     const [paginationState, setPaginationState] = useState<PaginationState>({

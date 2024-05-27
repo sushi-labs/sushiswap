@@ -1,9 +1,7 @@
-import {
-  SUSHISWAP_V3_SUBGRAPH_URL,
-  type SushiSwapV3ChainId,
-} from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
+import type { SushiSwapV3ChainId } from 'sushi/config'
+import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import { FetchError } from 'src/lib/fetch-error'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'

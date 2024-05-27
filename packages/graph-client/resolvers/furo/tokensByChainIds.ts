@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { FURO_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { isPromiseFulfilled } from 'sushi/validate'
 
@@ -11,6 +10,7 @@ import {
   RequireFields,
 } from '../../.graphclient/index.js'
 import { FuroStreamTypes } from '../../.graphclient/sources/FuroStream/types.js'
+import { FURO_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 export const _furoTokensByChainIds = async (
   root = {},

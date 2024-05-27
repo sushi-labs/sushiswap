@@ -1,15 +1,16 @@
 import { Prisma, Protocol } from '@sushiswap/database'
-import {
-  MAX_FIRST,
-  SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL,
-  SUSHISWAP_V3_ENABLED_NETWORKS,
-  SUSHISWAP_V3_SUBGRAPH_URL,
-  SWAP_ENABLED_NETWORKS,
-} from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 import { ChainId } from 'sushi/chain'
 
+import {
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+} from 'sushi/config'
+import {
+  MAX_FIRST,
+  SUSHISWAP_V2_SUBGRAPH_URL,
+  SUSHISWAP_V3_SUBGRAPH_URL,
+} from 'sushi/config/subgraph'
 import {
   PairsQuery,
   Sdk,
@@ -66,6 +67,13 @@ enum AprTimeRange {
   ONE_MONTH = 'ONE_MONTH',
 }
 
+const SWAP_SUPPORTED_CHAIN_IDS = Array.from(
+  new Set([
+    ...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+    ...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  ]),
+)
+
 export async function execute(protocol: Protocol) {
   try {
     const startTime = performance.now()
@@ -119,7 +127,7 @@ export async function execute(protocol: Protocol) {
 
 function createSubgraphConfig(protocol: Protocol) {
   if (protocol === Protocol.SUSHISWAP_V2) {
-    return SUSHISWAP_ENABLED_NETWORKS.map((chainId) => {
+    return SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.map((chainId) => {
       return {
         chainId,
         url: SUSHISWAP_V2_SUBGRAPH_URL[chainId],
@@ -127,7 +135,7 @@ function createSubgraphConfig(protocol: Protocol) {
       }
     })
   } else if (protocol === Protocol.SUSHISWAP_V3) {
-    return SUSHISWAP_V3_ENABLED_NETWORKS.map((chainId) => ({
+    return SUSHISWAP_V3_SUPPORTED_CHAIN_IDS.map((chainId) => ({
       chainId,
       url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
       protocol: Protocol.SUSHISWAP_V3,
@@ -159,14 +167,14 @@ async function extract(protocol: Protocol) {
     oneMonthBlocks,
     twoMonthBlocks,
   ] = await Promise.all([
-    sdk.OneHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoHourBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.OneDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoDayBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.OneWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoWeekBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.OneMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
-    sdk.TwoMonthBlocks({ chainIds: SWAP_ENABLED_NETWORKS }),
+    sdk.OneHourBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
+    sdk.TwoHourBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
+    sdk.OneDayBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
+    sdk.TwoDayBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
+    sdk.OneWeekBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
+    sdk.TwoWeekBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
+    sdk.OneMonthBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
+    sdk.TwoMonthBlocks({ chainIds: SWAP_SUPPORTED_CHAIN_IDS }),
   ])
 
   await Promise.allSettled(

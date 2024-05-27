@@ -1,12 +1,6 @@
 // @ts-nocheck
 
-import {
-  SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL,
-  SUSHISWAP_V3_ENABLED_NETWORKS,
-  SUSHISWAP_V3_SUBGRAPH_URL,
-} from '@sushiswap/graph-config'
-import { chainName, chainShortNameToChainId } from 'sushi/chain'
+import { type ChainId, chainName, chainShortNameToChainId } from 'sushi/chain'
 import { withoutScientificNotation } from 'sushi/format'
 import { isPromiseFulfilled } from 'sushi/validate'
 import {
@@ -17,6 +11,16 @@ import {
 import { SushiSwapV2Types } from '../../.graphclient/sources/SushiSwapV2/types.js'
 import { SushiSwapV3Types } from '../../.graphclient/sources/SushiSwapV3/types.js'
 import { transformPair } from '../../transformers/index.js'
+import {
+  SUSHISWAP_V2_SUBGRAPH_URL,
+  SUSHISWAP_V3_SUBGRAPH_URL,
+} from 'sushi/config/subgraph'
+import {
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 
 const sdk = getBuiltGraphSDK()
 
@@ -90,12 +94,10 @@ export const pairById: QueryResolvers['pairById'] = async (
   context,
   info,
 ): Promise<Pair | null> => {
-
-
   const fetchIsV2Pool = async () => {
     const sdk = getBuiltGraphSDK({
       url: SUSHISWAP_V2_SUBGRAPH_URL[
-        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+        chainId as (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
       ],
     })
 
@@ -121,12 +123,12 @@ export const pairById: QueryResolvers['pairById'] = async (
     {
       oneWeekBlocks: [oneWeekBlock],
     },
-    isPoolV2
+    isPoolV2,
   ] = await Promise.all([
     sdk.OneDayBlocks({ chainIds: [chainId] }),
     sdk.TwoDayBlocks({ chainIds: [chainId] }),
     sdk.OneWeekBlocks({ chainIds: [chainId] }),
-    fetchIsV2Pool()
+    fetchIsV2Pool(),
   ])
 
   const fetchSushiSwapPair = async (block?: { number: number }) =>
@@ -140,7 +142,7 @@ export const pairById: QueryResolvers['pairById'] = async (
         chainName: chainName[chainId],
         chainShortName: chainShortName[chainId],
         url: SUSHISWAP_V2_SUBGRAPH_URL[
-          chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+          chainId as (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
         ],
       },
       info,
@@ -181,7 +183,7 @@ export const pairById: QueryResolvers['pairById'] = async (
   const fetchV2DayBuckets = async () => {
     const sdk = getBuiltGraphSDK({
       url: SUSHISWAP_V2_SUBGRAPH_URL[
-        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+        chainId as (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
       ],
     })
 
@@ -206,7 +208,7 @@ export const pairById: QueryResolvers['pairById'] = async (
   const fetchV2DayHourBuckets = async () => {
     const sdk = getBuiltGraphSDK({
       url: SUSHISWAP_V2_SUBGRAPH_URL[
-        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+        chainId as (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
       ],
     })
 
@@ -231,7 +233,7 @@ export const pairById: QueryResolvers['pairById'] = async (
   const fetchSushiSwapV3Pair = async (block?: { number: number }) => {
     const sdk = getBuiltGraphSDK({
       url: SUSHISWAP_V3_SUBGRAPH_URL[
-        chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+        chainId as (typeof SUSHISWAP_V3_SUPPORTED_CHAIN_IDS)[number]
       ],
     })
 
@@ -247,15 +249,14 @@ export const pairById: QueryResolvers['pairById'] = async (
     return transformV3PoolToPair(pool, chainId)
   }
 
-
   const poolFetcher = async (isV2: boolean, block?: { number: number }) => {
     const fetches: ReturnType<typeof fetchSushiSwapPair>[] = []
 
-    if (isV2 && SUSHISWAP_ENABLED_NETWORKS.includes(chainId)) {
+    if (isV2 && isSushiSwapV2ChainId(chainId as ChainId)) {
       fetches.push(fetchSushiSwapPair(block))
     }
 
-    if (!isV2 && SUSHISWAP_V3_ENABLED_NETWORKS.includes(chainId)) {
+    if (!isV2 && isSushiSwapV3ChainId(chainId as ChainId)) {
       fetches.push(fetchSushiSwapV3Pair(block))
     }
 
@@ -269,7 +270,7 @@ export const pairById: QueryResolvers['pairById'] = async (
   }
 
   const bucketFetcher = async (isV2: boolean) => {
-    if (isV2 && SUSHISWAP_ENABLED_NETWORKS.includes(chainId)) {
+    if (isV2 && SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(chainId)) {
       const [hourSnapshots, daySnapshots] = await Promise.all([
         fetchV2DayHourBuckets(),
         fetchV2DayBuckets(),

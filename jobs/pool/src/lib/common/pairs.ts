@@ -1,8 +1,5 @@
-import {
-  SUSHISWAP_V2_SUBGRAPH_URL,
-  SushiSwapChainId,
-} from '@sushiswap/graph-config'
-
+import { SushiSwapV2ChainId } from 'sushi/config'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import type { Farm } from '../types.js'
 import { divBigIntToNumber } from './utils.js'
 
@@ -15,7 +12,7 @@ interface Pair {
 
 async function getExchangePairs(
   ids: string[],
-  chainId: SushiSwapChainId,
+  chainId: SushiSwapV2ChainId,
 ): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const url = SUSHISWAP_V2_SUBGRAPH_URL[chainId]
@@ -41,6 +38,6 @@ async function getExchangePairs(
   })
 }
 
-export async function getPairs(ids: string[], chainId: SushiSwapChainId) {
+export async function getPairs(ids: string[], chainId: SushiSwapV2ChainId) {
   return await getExchangePairs(ids, chainId)
 }

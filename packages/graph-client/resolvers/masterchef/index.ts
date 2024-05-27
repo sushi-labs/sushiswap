@@ -1,14 +1,13 @@
 // @ts-nocheck
 
-import {
-  MINICHEF_SUBGRAPH_URL,
-  MASTERCHEF_V1_SUBGRAPH_URL,
-  MASTERCHEF_V2_SUBGRAPH_URL
-} from '@sushiswap/graph-config'
 import { ChainId, chainName } from 'sushi/chain'
 import { isPromiseFulfilled } from 'sushi/validate'
 
 import { Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
+import {
+  MASTERCHEF_V1_SUBGRAPH_URL,
+  MINICHEF_SUBGRAPH_URL,
+} from 'sushi/config/subgraph'
 
 export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
   root,
@@ -73,32 +72,28 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
         (chainId): chainId is keyof typeof MINICHEF_SUBGRAPH_URL =>
           chainId in MINICHEF_SUBGRAPH_URL,
       )
-      .map(
-        (chainId) =>
-          // Weird that we're doing this....
-          context.MasterChefV1.Query.MASTERCHEF_V1_users({
-            root,
-            args,
-            context: {
-              ...context,
-              chainId,
-              url: MINICHEF_SUBGRAPH_URL[chainId],
-            },
-            info,
-          }).then((users: Query['MASTERCHEF_V1_users']) => {
-            if (!Array.isArray(users)) {
-              console.error(
-                `MiniChefV2 users query failed on ${chainId}`,
-                users,
-              )
-              return []
-            }
-            return users.map((user) => ({
-              ...user,
-              chainId,
-              chainName: chainName[chainId],
-            }))
-          }),
+      .map((chainId) =>
+        // Weird that we're doing this....
+        context.MasterChefV1.Query.MASTERCHEF_V1_users({
+          root,
+          args,
+          context: {
+            ...context,
+            chainId,
+            url: MINICHEF_SUBGRAPH_URL[chainId],
+          },
+          info,
+        }).then((users: Query['MASTERCHEF_V1_users']) => {
+          if (!Array.isArray(users)) {
+            console.error(`MiniChefV2 users query failed on ${chainId}`, users)
+            return []
+          }
+          return users.map((user) => ({
+            ...user,
+            chainId,
+            chainName: chainName[chainId],
+          }))
+        }),
       ),
   ]).then((promiseSettledResults) => {
     if (!Array.isArray(promiseSettledResults)) {

@@ -41,6 +41,10 @@
       "types": "./dist/config/index.d.ts",
       "default": "./dist/config/index.js"
     },
+    "./config/subgraph": {
+      "types": "./dist/config/subgraph/index.d.ts",
+      "default": "./dist/config/subgraph/index.js"
+    },
     "./contract": {
       "types": "./dist/contract/index.d.ts",
       "default": "./dist/contract/index.js"
@@ -123,6 +127,9 @@
       ],
       "config": [
         "./dist/config/index.d.ts"
+      ],
+      "config/subgraph": [
+        "./dist/config/subgraph/index.d.ts"
       ],
       "contract": [
         "./dist/contract/index.d.ts"

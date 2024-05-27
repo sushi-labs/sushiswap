@@ -1,23 +1,16 @@
 // @ts-nocheck
-
-import {
-  SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL,
-} from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from 'sushi/validate'
 
-import {
-  Query,
-  QueryResolvers,
-  Resolvers,
-} from '../../.graphclient/index.js'
+import { Query, QueryResolvers, Resolvers } from '../../.graphclient/index.js'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 
 export const factoriesByChainIds: QueryResolvers['factoriesByChainIds'] =
   async (root, args, context, info): Promise<Query['factoriesByChainIds']> => {
     return Promise.allSettled<Query['factoriesByChainIds'][]>([
       ...args.chainIds
-        .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
-          SUSHISWAP_ENABLED_NETWORKS.includes(el),
+        .filter((el): el is (typeof SUSHISWAP_SUPPORTED_CHAIN_IDS)[number] =>
+          SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(el),
         )
         .map((chainId) =>
           context.SushiSwapV2.Query.uniswapFactories({

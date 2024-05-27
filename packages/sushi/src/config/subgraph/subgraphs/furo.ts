@@ -1,0 +1,27 @@
+import { ChainId } from '../../../chain/index.js'
+import { FuroChainId } from '../../furo.js'
+import {
+  CORE_HOST,
+  DECENTRALIZED_NETWORK_HOST,
+  HAQQ_HOST,
+  SUSHI_DEDICATED_GOLDSKY_HOST,
+  THUNDERCORE_HOST,
+} from '../hosts.js'
+
+export const FURO_SUBGRAPH_URL: Record<FuroChainId, string> = {
+  [ChainId.ETHEREUM]: `${DECENTRALIZED_NETWORK_HOST}/D8vYJpKN5SEHUkUWKSuorsL6FRt7hAQMnywnC4e93ygf`,
+  [ChainId.ARBITRUM]: `${DECENTRALIZED_NETWORK_HOST}/8eHhPeKDr646JH5KUBBcabAJzkWmLfu6pqBtpXQHa37F`,
+  [ChainId.AVALANCHE]: `${DECENTRALIZED_NETWORK_HOST}/8LVoX3JPEVAak8T8GoEfdJudMoP2bsGwd9tszJxo3Rnx`,
+  [ChainId.BSC]: `${DECENTRALIZED_NETWORK_HOST}/2wBYezghRA3hEJLQB4njUZGDNxCdU3u2gsLP5yVvBqKk`,
+  [ChainId.FANTOM]: `${DECENTRALIZED_NETWORK_HOST}/E98zSR5UZBGBgQe2SSLZ5R6yj5GPqKDJcQJNDHTeV3cS`,
+  [ChainId.GNOSIS]: `${DECENTRALIZED_NETWORK_HOST}/5ToxB5xubMh9osdEDeX98JBAyzUVwkReGXAT1CzQhZCB`,
+  [ChainId.HARMONY]: `${DECENTRALIZED_NETWORK_HOST}/9D9C3ppoDE1zuZk5adznngKomLYS8NnC9zxniSS8vzgH`,
+  [ChainId.MOONBEAM]: `${DECENTRALIZED_NETWORK_HOST}/HJxpcsmaPV3L6PsqGFBHLczeMnL7bEgmL1D65edGx8pf`,
+  [ChainId.MOONRIVER]: `${DECENTRALIZED_NETWORK_HOST}/9ZqdKjfu7o9dX1RThXHDV9EqMn5CTvgpsPKKbpANg8yC`,
+  [ChainId.OPTIMISM]: `${DECENTRALIZED_NETWORK_HOST}/8KnsmppMf9k6Qvyixxwmny7dYugTV7XT4htHTfyq3d69`,
+  [ChainId.POLYGON]: `${DECENTRALIZED_NETWORK_HOST}/4KsDNsyJjKX6bjwVNJQmJ7Dm3wovYXSX37UR39rNaMX4`,
+  [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/furo-haqq`,
+  [ChainId.CORE]: `${CORE_HOST}/sushi-subgraphs/furo-core`,
+  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-subgraphs/furo-thundercore`,
+  [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-subgraphs/furo-bttc/gn`,
+}

@@ -1,20 +1,22 @@
-import {
-    SUSHISWAP_V2_SUBGRAPH_URL,
-    SUSHISWAP_V3_SUBGRAPH_URL,
-    SushiSwapV3ChainId,
-    isSushiSwapChain,
-    isSushiSwapV3Chain
-} from '@sushiswap/graph-config'
 import { ChainId, chainName, chainShortName } from 'sushi/chain'
 
 import { isPromiseFulfilled } from 'sushi/validate'
 import {
-    Query,
-    QueryResolvers,
-    SushiSwapV3DayDatasQuery,
-    UniswapDayData,
-    getBuiltGraphSDK,
+  Query,
+  QueryResolvers,
+  SushiSwapV3DayDatasQuery,
+  UniswapDayData,
+  getBuiltGraphSDK,
 } from '../../.graphclient/index.js'
+import {
+  SUSHISWAP_V2_SUBGRAPH_URL,
+  SUSHISWAP_V3_SUBGRAPH_URL,
+} from 'sushi/config/subgraph'
+import {
+  SushiSwapV3ChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 
 const transformV3DayToSnapshot = (
   days: SushiSwapV3DayDatasQuery['uniswapDayDatas'],
@@ -43,8 +45,6 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
     context,
     info,
   ): Promise<Query['factoryDaySnapshotsByChainIds']> => {
-
-
     const fetchSushiSwapV2Snapshots = async (chainId: number) => {
       const snapshots: UniswapDayData[] =
         await context.SushiSwapV2.Query.uniswapDayDatas({
@@ -87,11 +87,11 @@ export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsB
     const queries = args.chainIds.flatMap((chainId: ChainId) => {
       const queries: Promise<Query['factoryDaySnapshotsByChainIds']>[] = []
 
-      if (isSushiSwapChain(chainId)) {
+      if (isSushiSwapV2ChainId(chainId)) {
         queries.push(fetchSushiSwapV2Snapshots(chainId))
       }
 
-      if (isSushiSwapV3Chain(chainId)) {
+      if (isSushiSwapV3ChainId(chainId)) {
         queries.push(fetchSushiSwapV3Snapshots(chainId))
       }
 

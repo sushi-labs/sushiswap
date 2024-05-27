@@ -1,10 +1,7 @@
-import {
-  SUSHISWAP_V2_SUBGRAPH_URL,
-  type SushiSwapChainId,
-} from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
+import type { SushiSwapV2ChainId } from 'sushi/config'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
-import { FetchError } from 'src/lib/fetch-error'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
@@ -29,7 +26,7 @@ export const SushiV2MintsQuery = graphql(`
 `)
 
 export type GetSushiV2Mints = VariablesOf<typeof SushiV2MintsQuery> &
-  ChainIdVariable<SushiSwapChainId>
+  ChainIdVariable<SushiSwapV2ChainId>
 
 export async function getSushiV2Mints({
   chainId,
@@ -44,11 +41,7 @@ export async function getSushiV2Mints({
     variables,
   })
 
-  if (result) {
-    return result.mints
-  }
-
-  throw new FetchError(chainId, 'Failed to fetch mints')
+  return result.mints
 }
 
 export type SushiV2Mints = Awaited<ReturnType<typeof getSushiV2Mints>>

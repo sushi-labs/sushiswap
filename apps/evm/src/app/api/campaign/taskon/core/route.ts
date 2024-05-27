@@ -1,7 +1,7 @@
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUSHISWAP_V3_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { NextRequest, NextResponse } from 'next/server'
-import { ChainId } from 'sushi'
+import { ChainId } from 'sushi/chain'
+import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { getAddress } from 'viem'
 import { z } from 'zod'
 

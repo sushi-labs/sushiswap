@@ -1,8 +1,8 @@
-import { SUSHI_BAR_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 
 import { FetchError } from 'src/lib/fetch-error'
+import { SUSHI_BAR_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { graphql } from '../graphql'
 
 export const SushiBarQuery = graphql(

@@ -2,7 +2,6 @@
 
 import { Pool } from '@sushiswap/client'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUSHISWAP_V3_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import {
   Card,
   CardContent,
@@ -17,6 +16,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 
+import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,

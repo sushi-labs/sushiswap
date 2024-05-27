@@ -1,11 +1,11 @@
-import { MASTERCHEF_V2_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
+import { ChainId } from 'sushi/chain'
+import { MASTERCHEF_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
-import { ChainId } from 'sushi/chain'
 import { graphql } from '../graphql'
 
 export const MasterChefV2UserPositionsQuery = graphql(

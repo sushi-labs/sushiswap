@@ -1,11 +1,8 @@
-import {
-  SUSHISWAP_V3_SUBGRAPH_URL,
-  type SushiSwapV3ChainId,
-} from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
+import type { SushiSwapV3ChainId } from 'sushi/config'
+import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
-import { FetchError } from 'src/lib/fetch-error'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
@@ -73,15 +70,11 @@ export async function getSushiV3PoolsByTokenPair({
     variables,
   })
 
-  if (result) {
-    return result.pools.map((pool) =>
-      convertIdToMultichainId(
-        copyIdToAddress(addChainId(chainId, pool as typeof pool & { id: Hex })),
-      ),
-    )
-  }
-
-  throw new FetchError(chainId, 'Failed to fetch pools')
+  return result.pools.map((pool) =>
+    convertIdToMultichainId(
+      copyIdToAddress(addChainId(chainId, pool as typeof pool & { id: Hex })),
+    ),
+  )
 }
 
 export type SushiV3PoolsByTokenPair = Awaited<

@@ -43,7 +43,7 @@ import {
 } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain } from 'sushi/chain'
 import {
-  ANGLE_ENABLED_NETWORKS,
+  ANGLE_SUPPORTED_CHAIN_IDS,
   SushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
@@ -65,7 +65,7 @@ const APPROVE_TAG = 'approve-incentivize'
 export default function Page() {
   return (
     <ConcentratedLiquidityURLStateProvider
-      supportedNetworks={ANGLE_ENABLED_NETWORKS}
+      supportedNetworks={ANGLE_SUPPORTED_CHAIN_IDS}
     >
       <ConcentratedLiquidityProvider>
         <Incentivize />
@@ -202,7 +202,7 @@ const Incentivize = withCheckerRoot(() => {
           title="On which network would you like to add rewards?"
           selectedNetwork={chainId}
           onSelect={setNetwork}
-          networks={ANGLE_ENABLED_NETWORKS}
+          networks={ANGLE_SUPPORTED_CHAIN_IDS}
         />
         <SelectTokensWidget
           title="Which token pair would you like to incentivize?"

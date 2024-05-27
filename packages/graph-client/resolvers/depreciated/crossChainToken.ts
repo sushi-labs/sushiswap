@@ -1,13 +1,10 @@
 // @ts-nocheck
-
-import {
-  SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL
-} from '@sushiswap/graph-config'
 import { chainName, chainShortName } from 'sushi/chain'
 
 import { QueryResolvers, Token } from '../../.graphclient/index.js'
 import { FarmAPI } from '../../lib/incentives.js'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 
 export const crossChainToken: QueryResolvers['crossChainToken'] = async (
   root,
@@ -29,7 +26,7 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (
       chainName: chainName[args.chainId],
       chainShortName: chainShortName[args.chainId],
       url: SUSHISWAP_V2_SUBGRAPH_URL[
-        args.chainId as (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+        args.chainId as (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]
       ],
     },
     info,

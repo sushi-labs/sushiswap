@@ -1,8 +1,7 @@
-import {
-  SUSHISWAP_V2_SUBGRAPH_URL,
-  type SushiSwapChainId,
-} from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
+import type { Hex } from 'src/lib/types/hex'
+import { type SushiSwapV2ChainId, publicClientConfig } from 'sushi/config'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { createPublicClient, erc20Abi } from 'viem'
 
 import { FetchError } from 'src/lib/fetch-error'
@@ -11,8 +10,6 @@ import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multich
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
-import type { Hex } from 'src/lib/types/hex'
-import { publicClientConfig } from 'sushi/config'
 import { graphql } from '../graphql'
 
 export const SushiV2LiquidityPositionsQuery = graphql(`
@@ -33,7 +30,7 @@ export const SushiV2LiquidityPositionsQuery = graphql(`
 export type GetSushiV2LiquidityPositions = VariablesOf<
   typeof SushiV2LiquidityPositionsQuery
 > &
-  ChainIdVariable<SushiSwapChainId>
+  ChainIdVariable<SushiSwapV2ChainId>
 
 export async function getSushiV2LiquidityPositions({
   chainId,

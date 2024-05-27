@@ -1,7 +1,5 @@
-import {
-  BENTOBOX_ENABLED_NETWORKS,
-  FURO_ENABLED_NETWORKS,
-} from '@sushiswap/graph-config'
+import { FURO_SUPPORTED_CHAIN_IDS } from 'node_modules/sushi/dist/config/furo'
+import { BENTOBOX_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 import { z } from 'zod'
 
 export const bentoBoxTokensSchema = z.object({
@@ -12,7 +10,7 @@ export const bentoBoxTokensSchema = z.object({
   chainIds: z
     .string()
     .optional()
-    .default(BENTOBOX_ENABLED_NETWORKS.join(','))
+    .default(BENTOBOX_SUPPORTED_CHAIN_IDS.join(','))
     .transform((val) => val.split(',').map((v) => parseInt(v))),
 })
 
@@ -28,6 +26,6 @@ export const furoTokensSchema = z.object({
   chainIds: z
     .string()
     .optional()
-    .default(FURO_ENABLED_NETWORKS.join(','))
+    .default(FURO_SUPPORTED_CHAIN_IDS.join(','))
     .transform((val) => val.split(',').map((v) => parseInt(v))),
 })

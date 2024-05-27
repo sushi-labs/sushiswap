@@ -1,10 +1,8 @@
-import {
-  SUSHISWAP_V2_SUBGRAPH_URL,
-  SushiSwapChainId,
-} from '@sushiswap/graph-config'
 import { readContracts } from '@wagmi/core'
 import { Chain, ChainId } from 'sushi/chain'
 
+import { SushiSwapV2ChainId } from 'sushi/config'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { Address, erc20Abi } from 'viem'
 import { getTokenPrices } from '../price.js'
 import { config } from '../wagmi.js'
@@ -21,7 +19,7 @@ interface Token {
 
 const getExchangeTokens = async (
   ids: string[],
-  chainId: SushiSwapChainId,
+  chainId: SushiSwapV2ChainId,
 ): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const url = SUSHISWAP_V2_SUBGRAPH_URL[chainId]
@@ -46,7 +44,7 @@ const getExchangeTokens = async (
   }))
 }
 
-export const getTokens = async (ids: string[], chainId: SushiSwapChainId) => {
+export const getTokens = async (ids: string[], chainId: SushiSwapV2ChainId) => {
   return await getExchangeTokens(ids, chainId)
 }
 

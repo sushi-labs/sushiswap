@@ -1,7 +1,6 @@
 'use client'
 
 import { XIcon } from '@heroicons/react-v1/outline'
-import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { DataTable } from '@sushiswap/ui'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import { createColumnHelper } from '@tanstack/react-table'
@@ -31,7 +30,7 @@ function useColumns() {
               width={20}
               height={20}
             />
-            <div>{CHAIN_NAME[chainId] ?? chainName[chainId]}</div>
+            <div>{chainName[chainId]}</div>
           </div>
         )
       },

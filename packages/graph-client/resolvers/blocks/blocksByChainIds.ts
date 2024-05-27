@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { BLOCKS_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
 import {
@@ -9,6 +8,7 @@ import {
   RequireFields,
 } from '../../.graphclient/index.js'
 import { BlocksTypes } from '../../.graphclient/sources/Blocks/types.js'
+import { BLOCKS_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 export const _blocksByChainIds = async (
   root = {},

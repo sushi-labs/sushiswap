@@ -1,10 +1,12 @@
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { BENTOBOX_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import { fetchMultichain } from '@sushiswap/graph-client-new/multichain'
+import { getSushiV2Factory } from '@sushiswap/graph-client-new/sushi-v2'
 import { NextResponse } from 'next/server'
 import { DISABLED_ANALYTICS_CHAIN_IDS } from 'src/config'
 import { getAllPrices } from 'src/lib/get-all-prices'
 import { ChainId } from 'sushi/chain'
 import {
+  BENTOBOX_SUPPORTED_CHAIN_IDS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
 } from 'sushi/config'
@@ -29,6 +31,16 @@ interface ExchangeData {
 
 const getV2Data = async () => {
   const sdk = getBuiltGraphSDK()
+
+  // const { data } = await fetchMultichain({
+  //   chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
+  //     (c) =>
+  //       !DISABLED_ANALYTICS_CHAIN_IDS.includes(
+  //         c as (typeof DISABLED_ANALYTICS_CHAIN_IDS)[number],
+  //       ),
+  //   ),
+  //   fetch: getSushiV2Factory,
+  // })
 
   const { factories } = await sdk.Factories({
     chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
@@ -79,7 +91,7 @@ const getBentoTvl = async () => {
   const sdk = getBuiltGraphSDK()
   const { rebases } = await sdk.RebasesByChainIds({
     first: 1000,
-    chainIds: BENTOBOX_ENABLED_NETWORKS,
+    chainIds: BENTOBOX_SUPPORTED_CHAIN_IDS,
   })
   const prices = await getAllPrices()
   return rebases.reduce((acc, cur) => {

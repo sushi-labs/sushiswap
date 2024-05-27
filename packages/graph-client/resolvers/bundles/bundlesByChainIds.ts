@@ -1,11 +1,7 @@
 // @ts-nocheck
-
-import {
-  SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL,
-} from '@sushiswap/graph-config'
-
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { Bundle, Query, QueryResolvers } from '../../.graphclient/index.js'
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from 'node_modules/sushi/dist/config/sushiswap-v2.js'
 
 export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (
   root,
@@ -15,8 +11,8 @@ export const bundlesByChainIds: QueryResolvers['bundlesByChainIds'] = async (
 ) => {
   return Promise.all<Query['bundlesByChainIds']>([
     ...args.chainIds
-      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
-        SUSHISWAP_ENABLED_NETWORKS.includes(el),
+      .filter((el): el is (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number] =>
+        SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(el),
       )
       .map((chainId) =>
         context.SushiSwapV2.Query.bundles({

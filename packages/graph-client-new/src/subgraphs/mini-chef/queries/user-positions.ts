@@ -1,7 +1,3 @@
-import {
-  MINICHEF_SUBGRAPH_URL,
-  type MiniChefChainId,
-} from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
 
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
@@ -9,6 +5,8 @@ import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multich
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
+import type { MiniChefChainId } from 'sushi/config'
+import { MINICHEF_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { graphql } from '../graphql'
 
 export const MiniChefUserPositionsQuery = graphql(

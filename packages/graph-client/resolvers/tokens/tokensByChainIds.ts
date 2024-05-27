@@ -1,8 +1,4 @@
 // @ts-nocheck
-import {
-  SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL,
-} from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { ChainId, chainName, chainShortName } from 'sushi/chain'
 
@@ -14,6 +10,8 @@ import {
 } from '../../.graphclient/index.js'
 import { SushiSwapV2Types } from '../../.graphclient/sources/SushiSwap/types.js'
 import { page } from '../../lib/page.js'
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
+import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 const BLACKLIST = {
   [ChainId.ARBITRUM]: ['0xeba61eb686b515fae79a96118f140924a634ab23'],
@@ -32,8 +30,8 @@ export const _tokensByChainIds = async (
   // @ts-ignore
   return Promise.all<Query['tokensByChainIds'][]>([
     ...args.chainIds
-      .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
-      .map((chainId: (typeof SUSHISWAP_ENABLED_NETWORKS)[number]) =>
+      .filter((el) => SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(el))
+      .map((chainId: (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number]) =>
         context.SushiSwapV2.Query.tokens({
           root,
           // @ts-ignore

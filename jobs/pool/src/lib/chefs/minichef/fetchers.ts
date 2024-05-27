@@ -1,14 +1,11 @@
-import {
-  MINICHEF_SUBGRAPH_URL,
-  SushiSwapChainId,
-  TridentChainId,
-} from '@sushiswap/graph-config'
 import { readContract, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
 import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
 import { config } from 'src/lib/wagmi.js'
+import { MiniChefChainId } from 'sushi/config'
+import { MINICHEF_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { Address } from 'viem'
 import { MINICHEF_ADDRESS } from '../../../config.js'
 
@@ -110,13 +107,9 @@ export async function getRewarders(poolLength: bigint, chainId: ChainId) {
 }
 
 // TODO: Fix type
-export async function getRewarderInfos(
-  chainId: SushiSwapChainId | TridentChainId,
-) {
+export async function getRewarderInfos(chainId: MiniChefChainId) {
   const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
-  const url = (
-    MINICHEF_SUBGRAPH_URL as Record<SushiSwapChainId | TridentChainId, string>
-  )[chainId]
+  const url = MINICHEF_SUBGRAPH_URL[chainId]
   if (!url) {
     console.log(chainId, 'does not have a minichef subgraph!')
     return []

@@ -31,7 +31,6 @@
     "@sushiswap/dexie": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-client-new": "workspace:*",
-    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/react-query": "workspace:*",

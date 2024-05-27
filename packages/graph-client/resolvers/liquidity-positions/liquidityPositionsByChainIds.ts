@@ -1,8 +1,4 @@
 // @ts-nocheck
-import {
-  SUSHISWAP_ENABLED_NETWORKS,
-  SUSHISWAP_V2_SUBGRAPH_URL
-} from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 import { isPromiseFulfilled } from 'sushi/validate'
 
@@ -13,7 +9,7 @@ import {
   RequireFields,
 } from '../../.graphclient/index.js'
 import { SushiSwapV2Types } from '../../.graphclient/sources/SushiSwapV2/types.js'
-
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 
 export const _liquidityPositionsByChainIds = async (
   root = {},
@@ -28,8 +24,8 @@ export const _liquidityPositionsByChainIds = async (
     Query['liquidityPositionsByChainIds'][]
   >([
     ...args.chainIds
-      .filter((el): el is (typeof SUSHISWAP_ENABLED_NETWORKS)[number] =>
-        SUSHISWAP_ENABLED_NETWORKS.includes(el),
+      .filter((el): el is (typeof SUSHISWAP_V2_SUPPORTED_CHAIN_IDS)[number] =>
+        SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.includes(el),
       )
       .map((chainId) =>
         context.SushiSwapV2.Query.liquidityPositions({
