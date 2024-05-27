@@ -332,7 +332,6 @@ it.skip('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
         '0x2dded6Da1BF5DBdF597C45fcFaa3194e53EcfeAF', // TODO: fix it !!!
         '0x06364f10B501e868329afBc005b3492902d6C763', // TODO: fix it !!!
         '0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C', // TODO: fix it !!!
-        '0xC18cC39da8b11dA8c3541C598eE022258F9744da', // Wrong setTokenBalance for RSV (0x196f4727526eA7FB1e17b2071B3d8eAA38486988)
         '0xF9440930043eb3997fc70e1339dBb11F341de7A8', // TODO: fix it !!!
         '0x618788357D0EBd8A37e763ADab3bc575D54c2C7d', // TODO: fix it !!!
         '0xBfAb6FA95E0091ed66058ad493189D2cB29385E6', // TODO: fix it !!!

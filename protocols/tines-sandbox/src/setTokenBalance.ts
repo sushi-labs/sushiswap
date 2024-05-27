@@ -187,8 +187,8 @@ async function findBalanceSlot(
     const address = `0x${val.substring(26)}` as Address
     if (address.startsWith('0x000000000000')) return // too low value
     try {
-      await getBalance(address, address, client)
-      /*const tokenContract = new Contract(
+      /*await getBalance(address, address, client)
+      const tokenContract = new Contract(
         address,
         [
           {
@@ -211,7 +211,7 @@ async function findBalanceSlot(
         ],
         ethers.provider,
       )
-      const balance = await tokenContract.balance(user)*/
+      await tokenContract.balance(user)*/
       return address
     } catch (_e) {}
   }
