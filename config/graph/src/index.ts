@@ -125,6 +125,7 @@ export const SUSHI_DEDICATED_GOLDSKY_HOST =
 export const GOLDSKY_COMMUNITY_HOST =
   'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
 export const WAGMI_METIS_HOST = 'metis.graph.wagmi.com/subgraphs/name'
+export const WAGMI_KAVA_HOST = 'kava.graph.wagmi.com/subgraphs/name'
 export const METIS_0XGRAPH_HOST = 'metisapi.0xgraph.xyz/subgraphs/name'
 export const SKALE_HOST =
   'elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name'
@@ -272,8 +273,8 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.MOONBEAM]: `${DECENTRALIZED_NETWORK_HOST}/EiNGUdnwqk8yA4xVEu9nyTmfCyK7Cxj9xaFjYCKkHnzf`,
   [ChainId.OPTIMISM]: `${DECENTRALIZED_NETWORK_HOST}/HsWM1oAXHGWdkH8bK98UrW38PvyPx6Q4waRow2LT8mcp`, // TODO: MIGHT NEED TO BE REPLACED. 2024-05-23: 62% synced
   [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/blocks-kava`,
-  // [ChainId.METIS]: `${METIS_HOST}/sushiswap/blocks-metis`,
-  [ChainId.METIS]: `${WAGMI_METIS_HOST}/blocks`,
+  [ChainId.METIS]: `${METIS_HOST}/sushiswap/blocks-metis`,
+  // [ChainId.METIS]: `${WAGMI_METIS_HOST}/blocks`,
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/blocks/arbitrum-nova/gn`,
   [ChainId.BOBA]: `${DECENTRALIZED_NETWORK_HOST}/5d1ZCJQCEqsfCqLRRU5iQ9ewg79tuNqZLPMkgUcpmLsD`,
   [ChainId.BOBA_BNB]: `${SUSHI_GOLDSKY_HOST}/blocks/boba-bnb/gn`,
@@ -428,7 +429,7 @@ export const MINICHEF_SUBGRAPH_URL = {
   [ChainId.OPTIMISM]: `${DECENTRALIZED_NETWORK_HOST}/5DVXnbAu4uqKLbczLeAErLsLyQdxoZ1BjvCn1buWyZf8`,
   [ChainId.AVALANCHE]: `${DECENTRALIZED_NETWORK_HOST}/8M2Tyj1bVFp9paR9rcysn17V9Y1MbMgL9YEZQ5q4aSZH`,
   [ChainId.BSC]: `${DECENTRALIZED_NETWORK_HOST}/CuaMtyA7JyzEf5mqsrWBwhdfLFfz1QU2js17R77wAyYB`,
-  [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/kava-minichef`,
+  [ChainId.KAVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/minichef-kava/gn`,
   [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/minichef-metis`,
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/minichef-arbitrum-nova/gn`,
   [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/minichef-bttc/gn`,

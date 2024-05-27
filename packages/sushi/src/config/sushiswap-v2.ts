@@ -68,6 +68,7 @@ export const SUSHISWAP_V2_INIT_CODE_HASH: Record<
   [ChainId.ETHEREUM]:
     '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
   // [ChainId.ROPSTEN]:
+
   //   '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
   // [ChainId.RINKEBY]:
   //   '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
