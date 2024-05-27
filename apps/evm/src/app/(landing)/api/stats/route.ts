@@ -29,6 +29,7 @@ interface ExchangeData {
 
 const getV2Data = async () => {
   const sdk = getBuiltGraphSDK()
+
   const { factories } = await sdk.Factories({
     chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS.filter(
       (c) =>

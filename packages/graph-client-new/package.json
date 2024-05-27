@@ -16,28 +16,34 @@
   "author": "LufyCZ <me@lufy.cz>",
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+    "./*": {
+      "types": "./dist/subgraphs/*/index.d.ts",
+      "import": "./dist/subgraphs/*/index.js",
+      "default": "./dist/subgraphs/*/index.js"
     },
-    "./abi": {
-      "types": "./dist/abi/index.d.ts",
-      "import": "./dist/abi/index.js",
-      "default": "./dist/abi/index.js"
+    "./multichain": {
+      "types": "./dist/multichain/index.d.ts",
+      "import": "./dist/multichain/index.js",
+      "default": "./dist/multichain/index.js"
+    },
+    "./composite/*": {
+      "types": "./dist/composite/*.d.ts",
+      "import": "./dist/composite/*.js",
+      "default": "./dist/composite/*.js"
     },
     "./package.json": "./package.json"
   },
-  "module": "./dist/index.js",
-  "source": "src/index.ts",
-  "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
       ".": [
-        "src/index"
+        "src/subgraphs/**/*",
+        "src/lib/**/*"
       ],
-      "abi": [
-        "src/abi/index"
+      "./multichain": [
+        "src/multichain/*"
+      ],
+      "./composite": [
+        "src/composite/*"
       ]
     }
   },
@@ -47,7 +53,8 @@
   ],
   "scripts": {
     "build:types": "gql.tada generate output && gql.tada turbo",
-    "build": "pnpm build:types && tsc",
+    "build:compile": "tsc && tsc-alias -p tsconfig.json",
+    "build": "pnpm build:types && pnpm build:compile",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
@@ -77,6 +84,7 @@
     "fetch-graphql-schema": "^0.2.1",
     "graphql-fetch-schema": "^1.1.0",
     "graphql-js-schema-fetch": "^1.1.2",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.7.1",
     "typescript": "5.2.2"
   }

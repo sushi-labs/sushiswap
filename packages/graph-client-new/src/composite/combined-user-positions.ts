@@ -3,9 +3,9 @@ import {
   SUSHISWAP_ENABLED_NETWORKS,
   isMiniChefChainId,
 } from '@sushiswap/graph-config'
-import { fetchMultichain } from 'src/lib/fetch-multichain'
 import type { ChainIdsVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
+import { fetchMultichain } from 'src/multichain/fetch-multichain'
 import {
   type GetSushiV2LiquidityPositions,
   getSushiV2LiquidityPositions,
