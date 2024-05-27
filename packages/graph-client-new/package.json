@@ -52,9 +52,9 @@
     "dist/**"
   ],
   "scripts": {
-    "build:types": "gql.tada generate output && gql.tada turbo",
-    "build:compile": "tsc && tsc-alias -p tsconfig.json",
     "build": "pnpm build:types && pnpm build:compile",
+    "build:compile": "tsc && tsc-alias -p tsconfig.json",
+    "build:types": "gql.tada generate output && gql.tada turbo",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
