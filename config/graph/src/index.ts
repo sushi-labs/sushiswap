@@ -126,6 +126,7 @@ export const SUSHI_DEDICATED_GOLDSKY_HOST =
 export const GOLDSKY_COMMUNITY_HOST =
   'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
 export const WAGMI_METIS_HOST = 'metis.graph.wagmi.com/subgraphs/name'
+export const WAGMI_KAVA_HOST = 'kava.graph.wagmi.com/subgraphs/name'
 export const METIS_0XGRAPH_HOST = 'metisapi.0xgraph.xyz/subgraphs/name'
 export const SKALE_HOST =
   'elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name'
@@ -268,7 +269,7 @@ export const BLOCKS_SUBGRAPH_URL: Record<number, string> = {
   // [ChainId.KOVAN]: `${GRAPH_HOST}/blocklytics/kovan-blocks`,
   [ChainId.MOONBEAM]: `${GRAPH_HOST}/sushiswap/moonbeam-blocks`,
   [ChainId.OPTIMISM]: `${GRAPH_HOST}/beethovenxfi/optimism-blocks`,
-  [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/blocks-kava`,
+  [ChainId.KAVA]: `${WAGMI_KAVA_HOST}/blocks`,
   // [ChainId.METIS]: `${METIS_HOST}/sushiswap/blocks-metis`,
   [ChainId.METIS]: `${WAGMI_METIS_HOST}/blocks`,
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/blocks/arbitrum-nova/gn`,
@@ -399,7 +400,7 @@ export const MINICHEF_SUBGRAPH_URL = {
   [ChainId.FUSE]: `${GRAPH_HOST}/sushiswap/fuse-minichef`,
   [ChainId.FANTOM]: `${GRAPH_HOST}/sushiswap/fantom-minichef`,
   [ChainId.MOONBEAM]: `${GRAPH_HOST}/sushiswap/moonbeam-minichef`,
-  [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/kava-minichef`, //block subgraph not synced yet
+  [ChainId.KAVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/minichef-kava/gn`,
   [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/minichef-metis`,
   [ChainId.BOBA]: `${GRAPH_HOST}/sushiswap/minichef-boba`,
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/minichef-arbitrum-nova/gn`,
