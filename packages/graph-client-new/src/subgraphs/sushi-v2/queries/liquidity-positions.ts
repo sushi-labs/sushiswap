@@ -1,5 +1,5 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   type SushiSwapChainId,
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
@@ -19,7 +19,7 @@ export const SushiV2LiquidityPositionsQuery = graphql(`
   query LiquidityPositions($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: LiquidityPosition_orderBy, $orderDirection: OrderDirection, $where: LiquidityPosition_filter) {
     liquidityPositions(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
       id
-      balance
+      balance: liquidityTokenBalance
       pair {
         id
       }
@@ -40,7 +40,7 @@ export async function getSushiV2LiquidityPositions({
   ...variables
 }: GetSushiV2LiquidityPositions) {
   try {
-    const url = `https://${SUSHISWAP_SUBGRAPH_URL[chainId]}`
+    const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
     const result = await requestPaged({
       chainId,

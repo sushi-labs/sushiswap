@@ -1,5 +1,5 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   type SushiSwapChainId,
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
@@ -31,7 +31,7 @@ export async function getSushiV2Pool({
   chainId,
   ...variables
 }: GetSushiV2Pool) {
-  const url = `https://${SUSHISWAP_SUBGRAPH_URL[chainId]}`
+  const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   const result = await request(url, SushiV2PoolQuery, variables)
 

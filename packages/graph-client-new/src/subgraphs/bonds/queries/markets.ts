@@ -6,6 +6,7 @@ import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multich
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
+import type { Hex } from 'src/lib/types/hex'
 import { graphql } from '../graphql'
 
 export const BondMarketsQuery = graphql(
@@ -68,11 +69,21 @@ export async function getBondMarkets({
 
   return result.markets.map((market) => {
     const quoteToken = convertIdToMultichainId(
-      copyIdToAddress(addChainId(chainId, market.quoteToken)),
+      copyIdToAddress(
+        addChainId(
+          chainId,
+          market.quoteToken as typeof market.quoteToken & { id: Hex },
+        ),
+      ),
     )
 
     const payoutToken = convertIdToMultichainId(
-      copyIdToAddress(addChainId(chainId, market.payoutToken)),
+      copyIdToAddress(
+        addChainId(
+          chainId,
+          market.payoutToken as typeof market.payoutToken & { id: Hex },
+        ),
+      ),
     )
 
     return {

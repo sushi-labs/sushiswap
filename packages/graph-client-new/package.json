@@ -70,6 +70,7 @@
     "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "gql.tada": "^1.7.5",
+    "graphql": "16.6.0",
     "graphql-request": "^7.0.1",
     "sushi": "workspace:*",
     "viem": "2.10.11"
@@ -81,9 +82,6 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
     "eslint": "8.43.0",
-    "fetch-graphql-schema": "^0.2.1",
-    "graphql-fetch-schema": "^1.1.0",
-    "graphql-js-schema-fetch": "^1.1.2",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.7.1",
     "typescript": "5.2.2"

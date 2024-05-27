@@ -1,5 +1,5 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   type SushiSwapChainId,
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
@@ -17,14 +17,10 @@ export const SushiV2TokensQuery = graphql(`
     tokens(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
       id
       name
-      liquidityUSD
       symbol
       decimals
-      volumeUSD
-      feesUSD
-      price {
-        derivedNative
-      }
+      tradeVolumeUSD
+      totalLiquidity
     }
   }
 `)
@@ -36,7 +32,7 @@ export async function getSushiV2Tokens({
   chainId,
   ...variables
 }: GetSushiV2Tokens) {
-  const url = `https://${SUSHISWAP_SUBGRAPH_URL[chainId]}`
+  const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
     chainId,

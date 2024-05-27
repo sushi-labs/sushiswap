@@ -1,5 +1,5 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   type SushiSwapChainId,
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
@@ -14,10 +14,11 @@ import { graphql } from '../graphql'
 
 export const SushiV2FactoriesQuery = graphql(`
   query Factories {
-    factories(first: 1) {
+    factories: uniswapFactories(first: 1) {
       id
-      liquidityUSD
-      volumeUSD
+      totalLiquidityUSD
+      untrackedVolumeUSD
+      totalVolumeUSD
       poolCount: pairCount
     }
   }
@@ -30,7 +31,7 @@ export async function getSushiV2Factory({
   chainId,
   ...variables
 }: GetSushiV2Factory) {
-  const url = `https://${SUSHISWAP_SUBGRAPH_URL[chainId]}`
+  const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   const result = await request({
     url,

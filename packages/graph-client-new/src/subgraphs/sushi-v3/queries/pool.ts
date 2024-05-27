@@ -10,6 +10,7 @@ import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
+import type { Hex } from 'src/lib/types/hex'
 import { graphql } from '../graphql'
 
 export const SushiV3PoolQuery = graphql(`
@@ -77,7 +78,9 @@ export async function getSushiV3Pool({
 
   if (result.pool) {
     return convertIdToMultichainId(
-      copyIdToAddress(addChainId(chainId, result.pool)),
+      copyIdToAddress(
+        addChainId(chainId, result.pool as typeof result.pool & { id: Hex }),
+      ),
     )
   }
 

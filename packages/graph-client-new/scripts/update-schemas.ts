@@ -1,27 +1,18 @@
 import { BONDS_SUBGRAPH_URL } from '@sushiswap/bonds-sdk'
-import {
-  BLOCKS_SUBGRAPH_URL,
-  MASTERCHEF_V1_SUBGRAPH_URL,
-  MASTERCHEF_V2_SUBGRAPH_URL,
-  MINICHEF_SUBGRAPH_URL,
-  SUSHISWAP_SUBGRAPH_URL,
-  SUSHISWAP_V3_SUBGRAPH_URL,
-  SUSHI_BAR_SUBGRAPH_URL,
-} from '@sushiswap/graph-config'
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql'
 
 import fs from 'fs'
 
-import fetchSchema from 'graphql-fetch-schema'
-
 const schemas = {
-  blocks: BLOCKS_SUBGRAPH_URL[1],
+  blocks: 'api.studio.thegraph.com/query/72545/ethereum-blocks/v0.0.2',
   bonds: BONDS_SUBGRAPH_URL[1],
-  'master-chef-v1': MASTERCHEF_V1_SUBGRAPH_URL,
-  'master-chef-v2': MASTERCHEF_V2_SUBGRAPH_URL,
-  'mini-chef': MINICHEF_SUBGRAPH_URL[137],
-  'sushi-bar': SUSHI_BAR_SUBGRAPH_URL,
-  'sushi-v2': SUSHISWAP_SUBGRAPH_URL[1],
-  'sushi-v3': SUSHISWAP_V3_SUBGRAPH_URL[1],
+  'master-chef-v1': 'api.studio.thegraph.com/query/32073/masterchef/v0.0.1',
+  'master-chef-v2': 'api.studio.thegraph.com/query/32073/master-chefv2/v0.0.1',
+  'mini-chef':
+    'api.studio.thegraph.com/query/32073/minichef-arbitrum/version/latest',
+  'sushi-bar': 'api.studio.thegraph.com/query/32073/xsushi/v0.0.1',
+  'sushi-v2': 'api.studio.thegraph.com/query/32073/v2-arbitrum/v0.0.5',
+  'sushi-v3': 'api.studio.thegraph.com/query/32073/v3-arbitrum/v0.0.1',
 } as const satisfies Record<string, string>
 
 async function updateSchema(schema: keyof typeof schemas) {
@@ -29,12 +20,20 @@ async function updateSchema(schema: keyof typeof schemas) {
   const url = schemas[schema]
 
   try {
-    const [{ contents }] = await fetchSchema.default(`https://${url}/`, {
-      json: false,
-      graphql: true,
+    const res = await fetch(`https://${url}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: 'https://sushi.com',
+      },
+      body: JSON.stringify({
+        query: getIntrospectionQuery(),
+      }),
     })
 
-    fs.writeFileSync(path, contents)
+    const content = printSchema(buildClientSchema((await res.json()).data))
+
+    fs.writeFileSync(path, content)
   } catch (e) {
     return {
       schema,
@@ -55,7 +54,9 @@ const res = await Promise.all(
   ),
 )
 
-fs.rmSync('./schema.graphql')
+if (fs.statSync('./schema.graphql', { throwIfNoEntry: false })) {
+  fs.rmSync('./schema.graphql')
+}
 
 res.forEach((r) => {
   if (r.success) {

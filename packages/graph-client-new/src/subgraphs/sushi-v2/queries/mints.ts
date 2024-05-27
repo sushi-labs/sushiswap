@@ -1,5 +1,5 @@
 import {
-  SUSHISWAP_SUBGRAPH_URL,
+  SUSHISWAP_V2_SUBGRAPH_URL,
   type SushiSwapChainId,
 } from '@sushiswap/graph-config'
 import type { VariablesOf } from 'gql.tada'
@@ -21,8 +21,8 @@ export const SushiV2MintsQuery = graphql(`
       logIndex
       transaction {
         id
-        createdAtTimestamp
-        createdAtBlock
+        createdAtTimestamp: timestamp
+        createdAtBlock: blockNumber
       }
     }
   }
@@ -35,7 +35,7 @@ export async function getSushiV2Mints({
   chainId,
   ...variables
 }: GetSushiV2Mints) {
-  const url = `https://${SUSHISWAP_SUBGRAPH_URL[chainId]}`
+  const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
     chainId,

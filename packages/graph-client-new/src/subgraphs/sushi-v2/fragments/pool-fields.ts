@@ -3,10 +3,6 @@ import { graphql } from '../graphql'
 export const PoolFieldsFragment = graphql(`
   fragment PoolFields on Pair @_unmask {
     id
-    type
-    swapFee
-    twapEnabled
-    name
     token0 {
       name
       id
@@ -19,22 +15,19 @@ export const PoolFieldsFragment = graphql(`
       decimals
       symbol
     }
-    source
-    createdAtBlock
+    createdAtBlockNumber
     createdAtTimestamp
     reserve0
     reserve1
-    liquidity
-    liquidityUSD
-    liquidityNative
+    totalSupply
+    reserveUSD
+    reserveETH
+    trackedReserveETH
+    # token0Price
+    # token1Price
     volumeUSD
-    volumeNative
     volumeToken0
     volumeToken1
-    feesNative
-    feesUSD
     txCount
-    apr
-    aprUpdatedAtTimestamp
   }
 `)
