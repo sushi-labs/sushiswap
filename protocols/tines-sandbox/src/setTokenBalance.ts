@@ -31,6 +31,8 @@ const TokenProxyMap: Record<string, Address> = {
     '0x05a9CBe762B36632b3594DA4F082340E0e5343e8', // Ethereum sUSD
   '0x056fd409e1d7a124bd7017459dfea2f387b6d5cd':
     '0xc42B14e49744538e3C239f8ae48A1Eaaf35e68a0', // Ethereum GUSD
+  '0x269895a3df4d73b077fc823dd6da1b95f72aaf9b':
+    '0x93B6e9FbBd2c32a0DC3C2B943B7C3CBC2fE23730', // Ethereum sKRW (->target->tokenState->balanceOf)
 }
 
 // const cache: Record<string, number> = {}
@@ -187,8 +189,8 @@ async function findBalanceSlot(
     const address = `0x${val.substring(26)}` as Address
     if (address.startsWith('0x000000000000')) return // too low value
     try {
-      /*await getBalance(address, address, client)
-      const tokenContract = new Contract(
+      await getBalance(address, address, client)
+      /*const tokenContract = new Contract(
         address,
         [
           {

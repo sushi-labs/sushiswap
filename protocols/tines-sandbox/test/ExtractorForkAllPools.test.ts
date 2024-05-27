@@ -335,7 +335,6 @@ it.skip('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
         '0xF9440930043eb3997fc70e1339dBb11F341de7A8', // TODO: fix it !!!
         '0x618788357D0EBd8A37e763ADab3bc575D54c2C7d', // TODO: fix it !!!
         '0xBfAb6FA95E0091ed66058ad493189D2cB29385E6', // TODO: fix it !!!
-        '0x8461A004b50d321CB22B7d034969cE6803911899', // Wrong setTokenBalance for sKRW (0x269895a3dF4D73b077Fc823dD6dA1B95f72Aaf9B)
         '0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577', // Expected close: 3285358155081594300, 3285468191978248192
         '0x87650D7bbfC3A9F10587d7778206671719d9910D', // Transaction reverted without a reason string
         '0x8818a9bb44Fbf33502bE7c15c500d0C783B73067', // Wrong setTokenBalance for sJPY (0xF6b1C627e95BFc3c1b4c9B825a032Ff0fBf3e07d)
