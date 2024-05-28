@@ -34,7 +34,7 @@ export const BONDS_SUBGRAPH_URL: Record<BondChainId, string> = {
   [ChainId.ETHEREUM]:
     'api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-mainnet',
   [ChainId.BSC]:
-    'subgraph.satsuma-prod.com/beb9c043f4ac/spaces-team/bond-protocol-bsc/api',
+    'api.goldsky.com/api/public/project_clu16lu24lqh201x9f0qh135t/subgraphs/bond-protocol-bsc/0.0.1/gn',
   [ChainId.ARBITRUM]:
     'api.thegraph.com/subgraphs/name/bond-protocol/bond-protocol-arbitrum-mainnet',
   [ChainId.OPTIMISM]:
