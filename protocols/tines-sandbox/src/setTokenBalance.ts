@@ -10,7 +10,7 @@ import { Contract } from 'ethers'
 import hre from 'hardhat'
 import { EthereumProvider } from 'hardhat/types'
 import { erc20Abi } from 'sushi/abi'
-import { Address, PublicClient } from 'viem'
+import { Address, PublicClient, parseAbi } from 'viem'
 
 const { ethers } = hre
 
@@ -156,6 +156,38 @@ async function setBalance(
   await setStorageAt(slot.contract, slotNumber, value, provider)
 }
 
+const functionsABI = parseAbi([
+  'function target() view returns (address)',
+  'function tokenState() view returns (address)',
+] as const)
+
+async function syntheticsTokenDataBase(
+  token: Address,
+  client?: PublicClient,
+): Promise<Address | undefined> {
+  try {
+    if (client) {
+      const addr1 = await client.readContract({
+        address: token,
+        abi: functionsABI,
+        functionName: 'target',
+      })
+      const addr2 = await client.readContract({
+        address: addr1,
+        abi: functionsABI,
+        functionName: 'tokenState',
+      })
+      return addr2
+    } else {
+      const contr1 = new Contract(token, functionsABI, ethers.provider)
+      const addr1 = await contr1.target()
+      const contr2 = new Contract(addr1, functionsABI, ethers.provider)
+      const addr2 = await contr2.tokenState()
+      return addr2
+    }
+  } catch (_e) {}
+}
+
 async function findBalanceSlot(
   token: Address,
   user: Address,
@@ -164,7 +196,11 @@ async function findBalanceSlot(
   provider?: EthereumProvider,
   tokenData?: Address,
 ): Promise<BalanceSlotInfo | undefined> {
-  const dataContract = tokenData ?? TokenProxyMap[token.toLowerCase()] ?? token
+  const dataContract =
+    tokenData ??
+    TokenProxyMap[token.toLowerCase()] ??
+    (await syntheticsTokenDataBase(token, client)) ??
+    token
   const balancePrimary = await getBalance(token, user, client)
 
   const checkSlot = async (
