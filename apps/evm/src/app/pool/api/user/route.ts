@@ -1,17 +1,23 @@
 import { NextResponse } from 'next/server'
 import { getUser } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
+import { isSushiSwapV2ChainId } from 'sushi/config'
+import { Address } from 'viem'
 import { z } from 'zod'
 
 export const revalidate = 15
 
 const schema = z.object({
-  id: z.string(),
-  chainIds: z
-    .nullable(z.string())
-    .transform((chainIds) =>
-      chainIds?.split(',').map((chainId) => Number(chainId) as ChainId),
-    ),
+  id: z
+    .string()
+    .refine((id) => id.startsWith('0x'))
+    .transform((id) => id.toLowerCase() as Address),
+  chainIds: z.nullable(z.string()).transform((chainIds) =>
+    chainIds
+      ?.split(',')
+      .map((chainId) => Number(chainId) as ChainId)
+      .filter(isSushiSwapV2ChainId),
+  ),
 })
 
 // export const dynamic = 'auto'

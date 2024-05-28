@@ -6,6 +6,7 @@ import fs from 'fs'
 const schemas = {
   blocks: 'api.studio.thegraph.com/query/72545/ethereum-blocks/v0.0.2',
   bonds: BONDS_SUBGRAPH_URL[1],
+  furo: 'api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
   'master-chef-v1': 'api.studio.thegraph.com/query/32073/masterchef/v0.0.1',
   'master-chef-v2': 'api.studio.thegraph.com/query/32073/master-chefv2/v0.0.1',
   'mini-chef':

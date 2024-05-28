@@ -1,5 +1,7 @@
 import { getSushiV3Transactions } from '../src/subgraphs/sushi-v3/queries/transactions'
 
-const a = await getSushiV3Transactions(1, { first: 2001 })
+// const a = await getSushiV3Transactions({ chainId: 1, first: 2001 })
 
-console.log(a.length)
+// console.log(a[0])
+
+import '../src/lib/request'

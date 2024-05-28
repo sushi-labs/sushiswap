@@ -1,4 +1,5 @@
 export * from './queries/burns'
+export * from './queries/day-datas'
 export * from './queries/factory'
 export * from './queries/liquidity-positions'
 export * from './queries/mints'

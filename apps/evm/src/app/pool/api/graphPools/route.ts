@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getGraphPools } from 'src/lib/graph'
+import { getV2GraphPools } from 'src/lib/graph'
 import { z } from 'zod'
 
 export const revalidate = 60
@@ -15,6 +15,6 @@ export async function GET(request: Request) {
   if (!result.success) {
     return new Response(result.error.message, { status: 422 })
   }
-  const pool = await getGraphPools(result.data.ids)
+  const pool = await getV2GraphPools(result.data.ids)
   return NextResponse.json(pool)
 }

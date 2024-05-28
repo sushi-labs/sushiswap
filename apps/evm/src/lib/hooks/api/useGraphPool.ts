@@ -1,7 +1,7 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { Pair } from '@sushiswap/graph-client'
+import { SushiV2Pool } from '@sushiswap/graph-client-new/sushi-v2'
 import { useMemo } from 'react'
 import { Amount } from 'sushi/currency'
 import useSWR from 'swr'
@@ -18,7 +18,7 @@ export const useGraphPool = (pool: Pool) => {
     isLoading,
     isValidating,
     error,
-  } = useSWR<Pair>(getGraphPoolUrl(pool.id), async (url) =>
+  } = useSWR<SushiV2Pool>(getGraphPoolUrl(pool.id), async (url) =>
     fetch(url).then((data) => data.json()),
   )
 
@@ -33,8 +33,8 @@ export const useGraphPool = (pool: Pool) => {
         token0,
         token1,
         liquidityToken,
-        liquidityNative: graphPool ? Number(graphPool?.liquidityNative) : null,
-        liquidityUSD: graphPool ? Number(graphPool?.liquidityUSD) : null,
+        liquidityNative: graphPool ? Number(graphPool?.reserveETH) : null,
+        liquidityUSD: graphPool ? Number(graphPool?.reserveUSD) : null,
         liquidity1dChange: graphPool
           ? Number(graphPool?.liquidity1dChange ?? 0)
           : null,
@@ -60,7 +60,7 @@ export const useGraphPool = (pool: Pool) => {
             : null,
         totalSupply:
           liquidityToken && graphPool
-            ? Amount.fromRawAmount(liquidityToken, graphPool.liquidity)
+            ? Amount.fromRawAmount(liquidityToken, graphPool.totalSupply)
             : null,
       },
     }

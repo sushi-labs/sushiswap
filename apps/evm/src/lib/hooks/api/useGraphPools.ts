@@ -5,21 +5,21 @@ import { useMemo } from 'react'
 import useSWR from 'swr'
 
 import { usePools } from '@sushiswap/client/hooks'
-import { getGraphPools } from '../../graph'
+import { getV2GraphPools } from '../../graph'
 
 function transformGraphPool(
-  graphPool: Awaited<ReturnType<typeof getGraphPools>>[0],
+  graphPool: Awaited<ReturnType<typeof getV2GraphPools>>[0],
 ): Pool {
   return {
     id: graphPool.id,
     address: graphPool.address,
-    name: graphPool.name,
+    name: `${graphPool.token0.symbol}-${graphPool.token1.symbol}`,
     chainId: graphPool.chainId,
     protocol: Protocol.SUSHISWAP_V2,
-    swapFee: Number(graphPool.swapFee) / 10000,
+    swapFee: 30 / 10000,
     twapEnabled: false,
-    totalSupply: String(graphPool.liquidity),
-    liquidityUSD: String(graphPool.liquidityUSD),
+    totalSupply: String(graphPool.totalSupply),
+    liquidityUSD: String(graphPool.reserveUSD),
     volumeUSD: String(graphPool.volumeUSD),
     feeApr1h: 0,
     feeApr1d: 0,
@@ -58,14 +58,14 @@ function transformGraphPool(
       address: graphPool.token0.id,
       name: graphPool.token0.name,
       symbol: graphPool.token0.symbol,
-      decimals: graphPool.token0.decimals,
+      decimals: Number(graphPool.token0.decimals),
     },
     token1: {
       id: `${graphPool.chainId}:${graphPool.token1.id}`,
       address: graphPool.token1.id,
       name: graphPool.token1.name,
       symbol: graphPool.token1.symbol,
-      decimals: graphPool.token1.decimals,
+      decimals: Number(graphPool.token1.decimals),
     },
     incentives: [],
     hasEnabledSteerVault: false,
@@ -85,9 +85,9 @@ export const useGraphPools = (poolIds: string[]): Pools => {
     data: graphPools,
     isLoading: isGraphPoolsLoading,
     error: graphPoolsError,
-  } = useSWR<Awaited<ReturnType<typeof getGraphPools>>>(
+  } = useSWR<Awaited<ReturnType<typeof getV2GraphPools>>>(
     poolIds.length > 0 ? getGraphPoolsUrl(poolIds) : null,
-    async () => getGraphPools(poolIds),
+    async () => getV2GraphPools(poolIds),
   )
 
   const {
@@ -119,8 +119,8 @@ export const useGraphPools = (poolIds: string[]): Pools => {
 
           return {
             ...pool,
-            totalSupply: String(graphPool.liquidity),
-            liquidityUSD: String(graphPool.liquidityUSD),
+            totalSupply: String(graphPool.totalSupply),
+            liquidityUSD: String(graphPool.reserveUSD),
             volumeUSD: String(graphPool.volumeUSD),
             feeApr: Number(pool.feeApr1d),
             totalApr: Number(pool.feeApr1d) + pool.incentiveApr,

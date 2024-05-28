@@ -59,8 +59,8 @@ export async function getSushiV3PoolsByTokenPair({
 
   const variables: VariablesOf<typeof SushiV3PoolsByTokenPairQuery> = {
     where: {
-      token0: tokens[0],
-      token1: tokens[1],
+      token0: tokens[0].toLowerCase(),
+      token1: tokens[1].toLowerCase(),
     },
   }
 

@@ -49,7 +49,7 @@ export const SUSHISWAP_V2_SUPPORTED_CHAIN_IDS = [
   // ChainId.RINKEBY,
   // ChainId.GÖRLI,
   // ChainId.KOVAN,
-]
+] as const
 
 export const SushiSwapV2ChainIds = SUSHISWAP_V2_SUPPORTED_CHAIN_IDS
 

@@ -52,7 +52,7 @@
     "dist/**"
   ],
   "scripts": {
-    "build:types": "gql.tada generate output && gql.tada turbo",
+    "build:types": "rm -rf src/subgraphs/*/*.d.ts && gql.tada generate output && gql.tada turbo",
     "build:compile": "tsc && tsc-alias -p tsconfig.json",
     "build": "pnpm build:types && pnpm build:compile",
     "check": "tsc --pretty --noEmit",
@@ -71,6 +71,7 @@
     "gql.tada": "^1.7.5",
     "graphql": "16.6.0",
     "graphql-request": "^7.0.1",
+    "json-bigint": "^1.0.0",
     "sushi": "workspace:*",
     "viem": "2.10.11"
   },
@@ -79,6 +80,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
+    "@types/json-bigint": "^1.0.4",
     "@types/node": "20",
     "eslint": "8.43.0",
     "tsc-alias": "^1.8.10",

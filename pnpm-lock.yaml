@@ -1775,6 +1775,9 @@ importers:
       graphql-request:
         specifier: ^7.0.1
         version: 7.0.1(graphql@16.6.0)
+      json-bigint:
+        specifier: ^1.0.0
+        version: 1.0.0
       sushi:
         specifier: workspace:*
         version: link:../sushi
@@ -1794,6 +1797,9 @@ importers:
       '@tsconfig/strictest':
         specifier: 2.0.2
         version: 2.0.2
+      '@types/json-bigint':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@types/node':
         specifier: '20'
         version: 20.12.7
@@ -19673,6 +19679,10 @@ packages:
       parse5: 7.1.2
     dev: false
 
+  /@types/json-bigint@1.0.4:
+    resolution: {integrity: sha512-ydHooXLbOmxBbubnA7Eh+RpBzuaIiQjh8WGJYQB50JFGFrdxW7JzVlyEV7fAXw0T2sqJ1ysTneJbiyNLqZRAag==}
+    dev: true
+
   /@types/json-schema@7.0.12:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
 
@@ -34623,7 +34633,6 @@ packages:
     resolution: {integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==}
     dependencies:
       bignumber.js: 9.1.1
-    dev: true
 
   /json-buffer@3.0.0:
     resolution: {integrity: sha512-CuUqjv0FUZIdXkHPI8MezCnFCdaTAacej1TZYulLoAg1h/PhwkdXFN4V/gzY4g+fMBCOV2xF+rp7t2XD2ns/NQ==}

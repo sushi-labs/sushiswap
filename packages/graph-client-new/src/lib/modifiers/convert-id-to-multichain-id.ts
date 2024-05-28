@@ -1,6 +1,6 @@
 import type { ChainId } from 'sushi/chain'
 
-type ReturnType<T extends { chainId: ChainId }> = T & {
+type ReturnType<T extends { chainId: ChainId }> = Omit<T, 'id'> & {
   id: `${string}:${string}`
   // id: `${T['chainId']}:${string}`
 }

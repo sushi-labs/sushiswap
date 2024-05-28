@@ -7,6 +7,7 @@ export function copyIdToAddress<
 >(object: T): ReturnType<T> {
   Object.defineProperty(object, 'address', {
     value: object.id,
+    enumerable: true,
   })
   return object as ReturnType<T>
 }

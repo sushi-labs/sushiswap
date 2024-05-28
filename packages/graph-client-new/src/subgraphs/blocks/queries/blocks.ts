@@ -33,7 +33,11 @@ export async function getBlocks({ chainId, ...variables }: GetBlocks) {
 
   const result = await request(url, BlocksQuery, variables)
 
-  return result
+  return result.blocks.map((block) => ({
+    id: block.id,
+    number: Number(block.number),
+    timestamp: Number(block.timestamp),
+  }))
 }
 
 export type Blocks = Awaited<ReturnType<typeof getBlocks>>

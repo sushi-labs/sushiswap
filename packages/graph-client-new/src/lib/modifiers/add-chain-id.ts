@@ -10,6 +10,7 @@ export function addChainId<
 >(chainId: C, object: T): ReturnType<C, T> {
   Object.defineProperty(object, 'chainId', {
     value: chainId,
+    enumerable: true,
   })
   return object as ReturnType<C, T>
 }
