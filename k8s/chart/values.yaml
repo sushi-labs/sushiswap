@@ -6,6 +6,8 @@ chains:
     id: "10"
   - name: "cronos"
     id: "25"
+  - name: "rootstock"
+    id: "30"
   - name: "telos"
     id: "40"
   - name: "bsc"
