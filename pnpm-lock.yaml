@@ -1565,6 +1565,9 @@ importers:
       prisma:
         specifier: 5.6.0
         version: 5.6.0
+      sushi:
+        specifier: workspace:*
+        version: link:../sushi
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -1788,6 +1791,9 @@ importers:
       '@0no-co/graphqlsp':
         specifier: ^1.12.3
         version: 1.12.3(graphql@16.6.0)(typescript@5.2.2)
+      '@sushiswap/database':
+        specifier: workspace:*
+        version: link:../database
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest

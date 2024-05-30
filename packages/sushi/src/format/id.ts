@@ -5,7 +5,7 @@ import { unsanitize } from './unsanitize.js'
 export const getIdFromChainIdAddress = (
   chainId: string | number,
   address: Address,
-) => `${chainId}:${address.toLowerCase()}`
+) => `${chainId}:${address.toLowerCase()}` as `${string}:${Address}`
 
 export const getChainIdAddressFromId = (id: string) => {
   const [chainId, address] = unsanitize(id).split(':') as [string, Address]
