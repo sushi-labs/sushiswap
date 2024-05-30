@@ -526,6 +526,8 @@ export const skaleEuropa = {
 // const alchemyId =
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
+const getBlockId =
+  process.env['GETBLOCK_ID'] || process.env['NEXT_PUBLIC_GETBLOCK_ID']
 
 export const publicTransports = {
   [ChainId.ARBITRUM_NOVA]: http(
@@ -606,7 +608,11 @@ export const publicTransports = {
   [ChainId.SKALE_EUROPA]: http(
     'https://mainnet.skalenodes.com/v1/elated-tan-skat',
   ),
-  [ChainId.ROOTSTOCK]: http('https://public-node.rsk.co'),
+  [ChainId.ROOTSTOCK]: http(
+    getBlockId
+      ? `https://go.getblock.io/${getBlockId}`
+      : 'https://public-node.rsk.co',
+  ),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [ChainId.AVALANCHE_TESTNET]: http(
