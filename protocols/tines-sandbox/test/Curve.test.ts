@@ -137,7 +137,7 @@ async function createCurvePoolInfo(
   config: TestConfig,
   poolAddress: Address,
   poolType: CurvePoolType,
-  initialBalance: bigint,
+  initialBalance?: bigint,
 ): Promise<PoolInfo> {
   const poolContract = {
     address: poolAddress,
@@ -168,30 +168,33 @@ async function createCurvePoolInfo(
         decimals: 18,
       })
     } else {
-      const res = await setTokenBalance(
-        token,
-        config.user.address,
-        initialBalance,
-      )
-      //console.log(token, res)
-      expect(res).equal(true, `Wrong setTokenBalance for ${token}`)
-
       const tokenContract = {
         address: token,
         abi: erc20Abi,
       }
-      try {
-        await (config.client as WalletClient).writeContract({
-          ...tokenContract,
-          account: config.user.address,
-          functionName: 'approve',
-          args: [poolAddress, initialBalance],
-          chain: null,
-        })
-      } catch (_e) {
-        // in try block because some tokens 0xD533a949740bb3306d119CC777fa900bA034cd52
-        // or 0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c doesn't allow re-approve (((
-        //console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
+
+      if (initialBalance !== undefined) {
+        const res = await setTokenBalance(
+          token,
+          config.user.address,
+          initialBalance,
+        )
+        //console.log(token, res)
+        expect(res).equal(true, `Wrong setTokenBalance for ${token}`)
+
+        try {
+          await (config.client as WalletClient).writeContract({
+            ...tokenContract,
+            account: config.user.address,
+            functionName: 'approve',
+            args: [poolAddress, initialBalance],
+            chain: null,
+          })
+        } catch (_e) {
+          // in try block because some tokens 0xD533a949740bb3306d119CC777fa900bA034cd52
+          // or 0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c doesn't allow re-approve (((
+          //console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
+        }
       }
       tokenContracts.push(tokenContract)
 
@@ -283,6 +286,44 @@ async function createCurvePoolInfo(
       currentFlow,
       user: config.user.address,
       snapshot,
+    }
+  }
+}
+
+async function prepareTokens(
+  config: TestConfig,
+  tokens: Address[],
+  poolAddress: Address,
+  initialBalance: bigint,
+) {
+  for (let i = 0; i < tokens.length; ++i) {
+    const token = tokens[i]
+
+    try {
+      const res = await setTokenBalance(
+        token,
+        config.user.address,
+        initialBalance,
+      )
+      //console.log(token, res)
+      expect(res).equal(true, `Wrong setTokenBalance for ${token}`)
+    } catch (_e) {
+      throw new Error(`token ${token} setTokenBalance failed`)
+    }
+
+    try {
+      await (config.client as WalletClient).writeContract({
+        address: token,
+        abi: erc20Abi,
+        account: config.user.address,
+        functionName: 'approve',
+        args: [poolAddress, initialBalance],
+        chain: null,
+      })
+    } catch (_e) {
+      // in try block because some tokens 0xD533a949740bb3306d119CC777fa900bA034cd52
+      // or 0x43b4FdFD4Ff969587185cDB6f0BD875c5Fc83f8c doesn't allow re-approve (((
+      //console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
     }
   }
 }
@@ -603,17 +644,28 @@ async function checkCurvePool(
       config,
       poolAddress,
       poolType,
-      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
+      //POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
     )
   } catch (_e) {
     return { passed: false, reason: 'pool init error' }
   }
 
-  // in multitokrn pols if one sub-pool is not routable then all are not routable
+  // in multitoken pools if one sub-pool is not routable then all are not routable
   const checkedPool = poolInfo.poolTines[0][1]
   const check2 = curvePoolFilter(checkedPool)
   if (!check2.routable)
     return { passed: true, reason: `skipped: ${check2.reason}` }
+
+  try {
+    await prepareTokens(
+      config,
+      (poolInfo as PoolInfo).tokenContracts.map((c) => c?.address) as Address[],
+      poolAddress,
+      POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
+    )
+  } catch (e) {
+    return { passed: false, reason: e.message }
+  }
 
   const precision =
     CURVE_POOL_SPECIAL_PRECISION[poolAddress.toLowerCase()] ?? 1e-7
