@@ -52,9 +52,9 @@
     "dist/**"
   ],
   "scripts": {
-    "build:types": "rm -rf src/subgraphs/*/*.d.ts && gql.tada generate output && gql.tada turbo",
-    "build:compile": "tsc && tsc-alias -p tsconfig.json",
     "build": "pnpm build:types && pnpm build:compile",
+    "build:compile": "tsc && tsc-alias -p tsconfig.json",
+    "build:types": "rm -rf src/subgraphs/*/*.d.ts && gql.tada generate output && gql.tada turbo",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
@@ -77,8 +77,8 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.3",
-    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/database": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/json-bigint": "^1.0.4",
