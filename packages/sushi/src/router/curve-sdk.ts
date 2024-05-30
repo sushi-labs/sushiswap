@@ -41,6 +41,7 @@ const axFunctionsABI = parseAbi([
   'function ratio() pure returns (uint256)',
   'function getExchangeRate() pure returns (uint256)',
   'function exchangeRateCurrent() pure returns (uint256)',
+  'function stored_rates() view returns (uint256, uint256)',
 ])
 
 export const METAPOOL_COIN_TO_BASEPOOL: Record<string, Address> = {
@@ -100,6 +101,15 @@ export async function getPoolRatio(
     // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
     return Number(price) / 1e18
   }
+
+  try {
+    const [r0, r1] = await client.readContract({
+      address: poolAddress,
+      abi: axFunctionsABI,
+      functionName: 'stored_rates',
+    })
+    return Number(r1) / Number(r0)
+  } catch (_e) {}
 
   // collection of freaks
   switch (poolAddress.toLowerCase()) {
@@ -183,12 +193,12 @@ function _curvePoolFilterByAddress(pool: Address): string {
     //   return 'Temporary unsupported: pool init error'
     // case '0x2dabF79E16ceb92B651651f47b6E835C9DB5828A': // 58/537
     //   return 'Temporary unsupported: pool init error'
-    case '0x69B6dA941E6A8960f480709281b87B1C32fF8366': // 60/537
-      return 'Temporary unsupported: swap error'
-    case '0xfEF79304C80A694dFd9e603D624567D470e1a0e7': // 61/537
-      return 'Temporary unsupported: swap error'
-    case '0x1539c2461d7432cc114b0903f1824079BfCA2C92': // 62/537
-      return 'Temporary unsupported: swap error'
+    // case '0x69B6dA941E6A8960f480709281b87B1C32fF8366': // 60/537
+    //   return 'Temporary unsupported: swap error'
+    // case '0xfEF79304C80A694dFd9e603D624567D470e1a0e7': // 61/537
+    //   return 'Temporary unsupported: swap error'
+    // case '0x1539c2461d7432cc114b0903f1824079BfCA2C92': // 62/537
+    //   return 'Temporary unsupported: swap error'
     case '0x2B26239f52420d11420bC0982571BFE091417A7d': // 80/537
       return 'Temporary unsupported: swap error'
     // case '0x8461A004b50d321CB22B7d034969cE6803911899': // 179/537
