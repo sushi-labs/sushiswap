@@ -1,7 +1,10 @@
 import type { ChainIdsVariable } from 'src/lib/types/chainId'
 import { fetchMultichain } from 'src/multichain'
 import { getSushiV2DayDatas } from 'src/subgraphs/sushi-v2/queries/day-datas'
-import { getSushiV3DayDatas } from 'src/subgraphs/sushi-v3/queries/day-datas'
+import {
+  getSushiV3DayDatas,
+  type SushiV3DayDatas,
+} from 'src/subgraphs/sushi-v3/queries/day-datas'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
@@ -28,7 +31,9 @@ export async function getSushiDayDatas({
     chainIds: sushiSwapV2ChainIds,
     fetch: getSushiV2DayDatas,
     variables: {
-      first: Infinity,
+      first: 1000,
+      orderBy: 'date',
+      orderDirection: 'desc',
     },
   })
 
@@ -37,7 +42,9 @@ export async function getSushiDayDatas({
     chainIds: sushiSwapV3ChainIds,
     fetch: getSushiV3DayDatas,
     variables: {
-      first: Infinity,
+      first: 1000,
+      orderBy: 'date',
+      orderDirection: 'desc',
     },
   })
 
@@ -46,8 +53,22 @@ export async function getSushiDayDatas({
     { data: sushiSwapV3DayDatas, errors: sushiSwapV3DayDatasErrors },
   ] = await Promise.all([v2p, v3p])
 
-  const data = sushiSwapV3DayDatas
+  const data: SushiV3DayDatas = []
+  sushiSwapV3DayDatas.forEach((dayData) => {
+    if (Number(dayData.volumeUSD) > 1_000_000_000) return // Skip volume if it's too high, MEV txs on ethereum can cause this
+    data.push({
+      id: dayData.id,
+      date: dayData.date,
+      volumeUSD: dayData.volumeUSD,
+      volumeUSDUntracked: dayData.volumeUSDUntracked,
+      volumeETH: dayData.volumeETH,
+      tvlUSD: dayData.tvlUSD,
+      txCount: dayData.txCount,
+      feesUSD: '0',
+    })
+  })
   sushiSwapV2DayDatas.forEach((dayData) => {
+    if (Number(dayData.dailyVolumeUSD) > 1_000_000_000) return // Skip volume if it's too high, MEV txs on ethereum can cause this
     data.push({
       id: dayData.id,
       date: dayData.date,

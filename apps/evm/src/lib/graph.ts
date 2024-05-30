@@ -104,17 +104,25 @@ export const getFuroTokens = async (
   query: (typeof furoTokensSchema)['_output'],
 ) => {
   try {
+    const variables =
+      query?.tokenSymbols && query.tokenSymbols?.length > 0
+        ? {
+            where: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+              liquidityShares_gt: '0',
+            },
+          }
+        : {
+            where: {
+              liquidityShares_gt: '0',
+            },
+          }
     const { data: tokens } = await fetchMultichain({
       chainIds: query.chainIds,
       fetch: _getFuroTokens,
-      variables: {
-        where: {
-          or:
-            query?.tokenSymbols?.map((symbol) => ({
-              symbol_contains_nocase: symbol,
-            })) || [],
-        },
-      },
+      variables,
     })
 
     return tokens
@@ -122,6 +130,39 @@ export const getFuroTokens = async (
     throw new Error(error as string)
   }
 }
+
+
+// export const getBentoBoxTokens = async (
+//   query: (typeof bentoBoxTokensSchema)['_output'],
+// ) => {
+//   try {
+//     const variables =
+//       query?.tokenSymbols && query.tokenSymbols?.length > 0
+//         ? {
+//             where: {
+//               or: query.tokenSymbols.map((symbol) => ({
+//                 symbol_contains_nocase: symbol,
+//               })),
+//               liquidityShares_gt: '0',
+//             },
+//           }
+//         : {
+//             where: {
+//               liquidityShares_gt: '0',
+//             },
+//           }
+//     const { data: tokens } = await fetchMultichain({
+//       chainIds: query.chainIds,
+//       fetch: _getBentoBoxTokens,
+//       variables,
+//     })
+
+//     return tokens
+//   } catch (error) {
+//     throw new Error(error as string)
+//   }
+// }
+
 
 export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks

@@ -28,7 +28,6 @@ export function transformPoolV2ToStd<T extends RequiredBase>(
     name: `${pool.token0.symbol}-${pool.token1.symbol}`,
 
     swapFee: 0.003,
-    twapEnabled: true,
 
     protocol: SushiSwapProtocol.SUSHISWAP_V2,
 
