@@ -3,7 +3,7 @@ import {
   isFuroChainId,
 } from 'node_modules/sushi/dist/config/furo'
 import { ChainId } from 'sushi/chain'
-import { BENTOBOX_SUPPORTED_CHAIN_IDS } from 'sushi/config'
+import { BENTOBOX_SUPPORTED_CHAIN_IDS, isBentoBoxChainId } from 'sushi/config'
 import { z } from 'zod'
 
 export const bentoBoxTokensSchema = z.object({
@@ -15,7 +15,8 @@ export const bentoBoxTokensSchema = z.object({
     .string()
     .optional()
     .default(BENTOBOX_SUPPORTED_CHAIN_IDS.join(','))
-    .transform((val) => val.split(',').map((v) => parseInt(v))),
+    .transform((val) => val.split(',').map((v) => parseInt(v) as ChainId))
+    .transform((chainIds) => chainIds.filter(isBentoBoxChainId)),
 })
 
 export const furoTokensSchema = z.object({

@@ -36,6 +36,12 @@
             "tadaTurboLocation": "./src/subgraphs/furo/furo-cache.d.ts"
           },
           {
+            "name": "bentobox",
+            "schema": "./src/subgraphs/bentobox/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/bentobox/bentobox-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/bentobox/bentobox-cache.d.ts"
+          },
+          {
             "name": "master-chef-v1",
             "schema": "./src/subgraphs/master-chef-v1/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/master-chef-v1/master-chef-v1-env.d.ts",

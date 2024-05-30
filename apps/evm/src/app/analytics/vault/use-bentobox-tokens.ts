@@ -37,7 +37,7 @@ function useBentoBoxTokens(args: GetBentoBoxTokenArgs) {
           const token = new Token({
             chainId: rebase.chainId,
             decimals: rebase.token.decimals,
-            address: rebase.id,
+            address: rebase.id.split(':')[1],
             symbol: rebase.token.symbol,
             name: rebase.token.name,
           })
