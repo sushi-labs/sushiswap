@@ -292,12 +292,14 @@ async function createCurvePoolInfo(
 
 async function prepareTokens(
   config: TestConfig,
-  tokens: Address[],
+  poolInfo: PoolInfo,
   poolAddress: Address,
   initialBalance: bigint,
 ) {
+  const tokens = poolInfo.tokenContracts.map((c) => c?.address)
   for (let i = 0; i < tokens.length; ++i) {
     const token = tokens[i]
+    if (token === undefined) continue // native
 
     try {
       const res = await setTokenBalance(
@@ -326,6 +328,7 @@ async function prepareTokens(
       //console.log(`Failed to approve token ${tokenContract.address}: ${e}`)
     }
   }
+  poolInfo.snapshot = await takeSnapshot()
 }
 
 async function checkSwap(
@@ -659,7 +662,7 @@ async function checkCurvePool(
   try {
     await prepareTokens(
       config,
-      (poolInfo as PoolInfo).tokenContracts.map((c) => c?.address) as Address[],
+      poolInfo,
       poolAddress,
       POOL_TEST_AMOUNT_SPECIAL[poolAddress] ?? BigInt(1e30),
     )
