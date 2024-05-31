@@ -2,6 +2,7 @@
 
 import { SlippageToleranceStorageKey, useLocalStorage } from '@sushiswap/hooks'
 import { useMemo } from 'react'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Percent } from 'sushi/math'
 
 export const useSlippageTolerance = (
@@ -9,15 +10,18 @@ export const useSlippageTolerance = (
 ) => {
   const [slippageTolerance, setSlippageTolerance] = useLocalStorage<
     number | string
-  >(key, 0.1)
+  >(key, DEFAULT_SLIPPAGE)
 
   return useMemo(
     () =>
       [
         new Percent(
           Math.floor(
-            Number(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) *
-              100,
+            Number(
+              slippageTolerance === 'AUTO'
+                ? DEFAULT_SLIPPAGE
+                : slippageTolerance,
+            ) * 100,
           ),
           10_000,
         ),

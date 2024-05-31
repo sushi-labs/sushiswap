@@ -39,6 +39,7 @@ import React, {
 } from 'react'
 import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { Chain } from 'sushi/chain'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -440,7 +441,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                       <List.KeyValue
                         title={`Min. received after slippage (${
                           slippageTolerance === 'AUTO'
-                            ? '0.1'
+                            ? DEFAULT_SLIPPAGE
                             : slippageTolerance
                         }%)`}
                         subtitle="The minimum amount you are guaranteed to receive."

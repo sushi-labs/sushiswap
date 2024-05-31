@@ -44,7 +44,11 @@ import {
 import { Checker } from '@sushiswap/wagmi/systems'
 import { FC, useMemo, useState } from 'react'
 import { Chain } from 'sushi/chain'
-import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
+import {
+  DEFAULT_SLIPPAGE,
+  SushiSwapV3ChainId,
+  isAngleEnabledChainId,
+} from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
@@ -241,7 +245,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             slippageTolerance: {
                               storageKey:
                                 SlippageToleranceStorageKey.AddLiquidity,
-                              defaultValue: '0.1',
+                              defaultValue: DEFAULT_SLIPPAGE,
                               title: 'Add Liquidity Slippage',
                             },
                             transactionDeadline: {

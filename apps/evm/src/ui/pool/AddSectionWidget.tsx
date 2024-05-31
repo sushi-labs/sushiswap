@@ -17,6 +17,7 @@ import { getDefaultTTL } from '@sushiswap/wagmi'
 import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import React, { FC, ReactNode } from 'react'
 import { ChainId } from 'sushi/chain'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Type } from 'sushi/currency'
 
 interface AddSectionWidgetProps {
@@ -57,7 +58,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
             options={{
               slippageTolerance: {
                 storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                defaultValue: '0.1',
+                defaultValue: DEFAULT_SLIPPAGE,
                 title: 'Add Liquidity Slippage',
               },
               transactionDeadline: {

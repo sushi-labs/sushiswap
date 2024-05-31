@@ -26,6 +26,7 @@ import { useSquidCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useSqui
 import { useStargateCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useStargateCrossChainTrade'
 import { ChainId } from 'sushi/chain'
 import {
+  DEFAULT_SLIPPAGE,
   SquidAdapterChainId,
   StargateAdapterChainId,
   defaultCurrency,
@@ -402,7 +403,7 @@ const useCrossChainSwapTrade = () => {
     token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+      slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance,
     recipient: recipient as Address,
     enabled: Boolean(
       adapter === SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),
@@ -417,7 +418,7 @@ const useCrossChainSwapTrade = () => {
     token1,
     amount: swapAmount,
     slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+      slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance,
     recipient: recipient as Address,
     enabled: Boolean(
       adapter !== SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),

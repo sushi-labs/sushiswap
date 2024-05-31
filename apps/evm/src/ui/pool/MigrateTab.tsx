@@ -63,6 +63,7 @@ import { useGraphPool, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
 import {
+  DEFAULT_SLIPPAGE,
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
@@ -735,7 +736,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                             slippageTolerance: {
                                               storageKey:
                                                 SlippageToleranceStorageKey.AddLiquidity,
-                                              defaultValue: '0.1',
+                                              defaultValue: DEFAULT_SLIPPAGE,
                                               title: 'Add Liquidity Slippage',
                                             },
                                             transactionDeadline: {

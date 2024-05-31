@@ -29,6 +29,7 @@ import { ZERO } from 'sushi/math'
 
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import { getDefaultTTL } from '@sushiswap/wagmi'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { usePoolPosition } from './PoolPositionProvider'
 
 interface RemoveSectionWidgetProps {
@@ -65,7 +66,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             options={{
               slippageTolerance: {
                 storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
-                defaultValue: '0.1',
+                defaultValue: DEFAULT_SLIPPAGE,
                 title: 'Remove Liquidity Slippage',
               },
               transactionDeadline: {

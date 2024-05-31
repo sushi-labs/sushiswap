@@ -34,6 +34,7 @@ import {
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { slippageAmount } from 'sushi'
 import { ChainId } from 'sushi/chain'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import {
@@ -62,7 +63,8 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   const slippagePercent = useMemo(() => {
     return new Percent(
       Math.floor(
-        +(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) * 100,
+        +(slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance) *
+          100,
       ),
       10_000,
     )
@@ -248,7 +250,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
               options={{
                 slippageTolerance: {
                   storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
-                  defaultValue: '0.1',
+                  defaultValue: DEFAULT_SLIPPAGE,
                   title: 'Remove Liquidity Slippage',
                 },
               }}

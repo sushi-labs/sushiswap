@@ -46,6 +46,7 @@ import {
 } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
 import { slippageAmount } from 'sushi'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
@@ -119,7 +120,9 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     const slippagePercent = useMemo(() => {
       return new Percent(
         Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) * 100,
+          +(slippageTolerance === 'AUTO'
+            ? DEFAULT_SLIPPAGE
+            : slippageTolerance) * 100,
         ),
         10_000,
       )

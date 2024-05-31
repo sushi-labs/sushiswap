@@ -45,7 +45,11 @@ import React, {
   useState,
 } from 'react'
 import { Chain, chainName } from 'sushi/chain'
-import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
+import {
+  DEFAULT_SLIPPAGE,
+  SushiXSwap2ChainId,
+  isSushiXSwap2ChainId,
+} from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
@@ -525,7 +529,9 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                     </List.KeyValue>
                     <List.KeyValue
                       title={`Min. received after slippage (${
-                        slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance
+                        slippageTolerance === 'AUTO'
+                          ? DEFAULT_SLIPPAGE
+                          : slippageTolerance
                       }%)`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
