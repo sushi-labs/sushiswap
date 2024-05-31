@@ -77,9 +77,10 @@ function handler(
           source,
           to,
           preferSushi,
-          maxPriceImpact,
+          maxPriceImpact: _maxPriceImpact,
         } = parsed.data
         parsedData = parsed.data
+        const maxPriceImpact = _maxPriceImpact ?? 0.005
 
         if (!isAddressFast(_tokenIn))
           return res
@@ -143,6 +144,7 @@ function handler(
               amount,
               tokenOut,
               gasPrice ?? 30e9,
+              maxPriceImpact * 100,
             )
           : Router.findBestRoute(
               poolCodesMap,
@@ -152,6 +154,12 @@ function handler(
               tokenOut,
               gasPrice ?? 30e9,
             )
+
+        if (
+          bestRoute.priceImpact === undefined ||
+          bestRoute.priceImpact > maxPriceImpact
+        )
+          bestRoute = Router.NoWayMultiRoute(tokenIn, tokenOut)
 
         const json = makeAPI02Object(
           bestRoute,
