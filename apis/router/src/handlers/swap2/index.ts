@@ -1,12 +1,7 @@
 import { Logger, safeSerialize } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
-import {
-  ROUTE_PROCESSOR_3_2_ADDRESS,
-  ROUTE_PROCESSOR_4_ADDRESS,
-  RouteProcessor3_2ChainId,
-  RouteProcessor4ChainId,
-} from 'sushi/config'
+import { ROUTE_PROCESSOR_4_ADDRESS, RouteProcessor4ChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import {
   NativeWrapProvider,
@@ -26,7 +21,7 @@ import {
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
 } from '../../config.js'
-import { querySchema3_2 } from './schema.js'
+import { querySchema4_2 } from './schema.js'
 
 const nativeProvider = new NativeWrapProvider(
   CHAIN_ID as ChainId,
@@ -47,8 +42,8 @@ async function processUnknownToken(
 }
 
 function handler(
-  qSchema: typeof querySchema3_2,
-  rpCode: typeof Router.routeProcessor3_2Params,
+  qSchema: typeof querySchema4_2,
+  rpCode: typeof Router.routeProcessor4Params,
   rpAddress: Address,
 ) {
   return (client: ExtractorClient) => {
@@ -59,7 +54,7 @@ function handler(
       try {
         const statistics = swapRequestStatistics.requestProcessingStart()
 
-        let parsed: ReturnType<typeof querySchema3_2.safeParse> | undefined
+        let parsed: ReturnType<typeof querySchema4_2.safeParse> | undefined
         try {
           parsed = qSchema.safeParse(req.query)
         } catch (_e) {}
@@ -78,8 +73,10 @@ function handler(
           to,
           preferSushi,
           maxPriceImpact,
+          maxSlippage: _maxSlippage,
         } = parsed.data
         parsedData = parsed.data
+        const maxSlippage = _maxSlippage ?? 0.005 // default value
 
         if (!isAddressFast(_tokenIn))
           return res
@@ -143,6 +140,7 @@ function handler(
               amount,
               tokenOut,
               gasPrice ?? 30e9,
+              maxPriceImpact === undefined ? undefined : maxPriceImpact * 100,
             )
           : Router.findBestRoute(
               poolCodesMap,
@@ -152,6 +150,12 @@ function handler(
               tokenOut,
               gasPrice ?? 30e9,
             )
+
+        if (
+          maxPriceImpact !== undefined &&
+          (bestRoute.priceImpact ?? 0) > maxPriceImpact
+        )
+          bestRoute = Router.NoWayMultiRoute(tokenIn, tokenOut)
 
         const json = makeAPI02Object(
           bestRoute,
@@ -164,7 +168,7 @@ function handler(
                 to,
                 rpAddress as Address,
                 [],
-                maxPriceImpact,
+                maxSlippage,
                 source ?? RouterLiquiditySource.Sender,
               )
             : undefined,
@@ -195,14 +199,8 @@ function handler(
   }
 }
 
-export const swapV3_2 = handler(
-  querySchema3_2,
-  Router.routeProcessor3_2Params,
-  ROUTE_PROCESSOR_3_2_ADDRESS[CHAIN_ID as RouteProcessor3_2ChainId],
-)
-
-export const swapV4 = handler(
-  querySchema3_2,
+export const swapV4_2 = handler(
+  querySchema4_2,
   Router.routeProcessor4Params,
   ROUTE_PROCESSOR_4_ADDRESS[CHAIN_ID as RouteProcessor4ChainId],
 )
