@@ -13,6 +13,7 @@ import { Token, Type } from '../currency/index.js'
 import {
   MultiRoute,
   NetworkInfo,
+  NoWayMultiRoute,
   RPool,
   RToken,
   RouteStatus,
@@ -204,6 +205,9 @@ export class Router {
         poolName: poolCodesMap.get(l.poolAddress)?.poolName ?? 'Unknown Pool',
       })),
     }
+  }
+  static NoWayMultiRoute(fromToken: Type, toToken: Type) {
+    return NoWayMultiRoute(TokenToRToken(fromToken), TokenToRToken(toToken))
   }
 
   static routeProcessorParams(
