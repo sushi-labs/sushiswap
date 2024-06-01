@@ -8,6 +8,7 @@ import {
   MIM,
   Native,
   OP,
+  SKL,
   SUSHI,
   Token,
   Type,
@@ -276,6 +277,17 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     NATIVE: Native.onChain(ChainId.BLAST),
     WNATIVE: WNATIVE[ChainId.BLAST],
     USDB: USDB[ChainId.BLAST],
+  },
+  [ChainId.SKALE_EUROPA]: {
+    SKL: SKL,
+    ETH: WETH9[ChainId.SKALE_EUROPA],
+    USDC: USDC[ChainId.SKALE_EUROPA],
+  },
+  [ChainId.ROOTSTOCK]: {
+    NATIVE: Native.onChain(ChainId.ROOTSTOCK),
+    WNATIVE: WNATIVE[ChainId.ROOTSTOCK],
+    WBTC: Native.onChain(ChainId.ROOTSTOCK),
+    WETH: WETH9[ChainId.ROOTSTOCK],
   },
 } as const
 

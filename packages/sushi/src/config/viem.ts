@@ -57,6 +57,7 @@ import {
   polygon,
   polygonMumbai,
   polygonZkEvm,
+  rootstock,
   scroll,
   sepolia,
   // polygonMumbai,
@@ -111,6 +112,7 @@ export {
   //  optimismGoerli,
   polygon,
   polygonZkEvm,
+  rootstock,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -490,9 +492,42 @@ export const blast = {
   },
 } as const
 
+export const skaleEuropa = {
+  id: ChainId.SKALE_EUROPA,
+  name: 'Skale Europa',
+  network: 'skale-europa',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'SKALE Fuel',
+    symbol: 'sFUEL',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://mainnet.skalenodes.com/v1/elated-tan-skat'],
+    },
+    public: {
+      http: ['https://mainnet.skalenodes.com/v1/elated-tan-skat'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Blockscout',
+      url: 'https://elated-tan-skat.explorer.mainnet.skalenodes.com/',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 3113495,
+    },
+  },
+} as const
+
 // const alchemyId =
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
+const getBlockId =
+  process.env['GETBLOCK_ID'] || process.env['NEXT_PUBLIC_GETBLOCK_ID']
 
 export const publicTransports = {
   [ChainId.ARBITRUM_NOVA]: http(
@@ -570,6 +605,14 @@ export const publicTransports = {
   [ChainId.BLAST]: http(
     `https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`,
   ),
+  [ChainId.SKALE_EUROPA]: http(
+    'https://mainnet.skalenodes.com/v1/elated-tan-skat',
+  ),
+  [ChainId.ROOTSTOCK]: http(
+    getBlockId
+      ? `https://go.getblock.io/${getBlockId}`
+      : 'https://public-node.rsk.co',
+  ),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [ChainId.AVALANCHE_TESTNET]: http(
@@ -582,6 +625,7 @@ export const publicTransports = {
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
+  mainnet,
   arbitrumNova,
   arbitrum,
   avalanche,
@@ -593,7 +637,6 @@ export const publicChains = [
   blast,
   celo as unknown as Omit<typeof mainnet, 'id'> & { id: 42220 },
   cronos,
-  mainnet,
   fantom,
   fuse,
   gnosis,
@@ -605,6 +648,7 @@ export const publicChains = [
   moonriver,
   polygon,
   polygonZkEvm,
+  rootstock,
   thundercore,
   haqq,
   core,
@@ -616,6 +660,7 @@ export const publicChains = [
   linea,
   base,
   scroll,
+  skaleEuropa,
   filecoin,
   zetachain,
 
@@ -773,6 +818,15 @@ export const publicClientConfig = {
     chain: blast,
     transport: publicTransports[ChainId.BLAST],
   },
+  [ChainId.SKALE_EUROPA]: {
+    chain: skaleEuropa,
+    transport: publicTransports[ChainId.SKALE_EUROPA],
+  },
+  [ChainId.ROOTSTOCK]: {
+    chain: rootstock,
+    transport: publicTransports[ChainId.ROOTSTOCK],
+  },
+
   /* Testnets */
   [ChainId.ARBITRUM_TESTNET]: {
     chain: arbitrumSepolia,

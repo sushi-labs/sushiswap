@@ -20,6 +20,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.PALM,
   ChainId.HECO,
   ChainId.OKEX,
+  ChainId.ROOTSTOCK,
 ] as const
 
 const PREFERRED_CHAINID_ORDER = [
@@ -27,6 +28,7 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
+  ChainId.ROOTSTOCK,
   ChainId.BLAST,
   ChainId.ZETACHAIN,
   ChainId.OPTIMISM,
@@ -63,7 +65,8 @@ export const SUPPORTED_CHAIN_IDS = Array.from(
     (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
   > =>
     !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
-    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]) &&
+    c !== ChainId.SKALE_EUROPA,
 )
 
 export const DISABLED_ANALYTICS_CHAIN_IDS = [

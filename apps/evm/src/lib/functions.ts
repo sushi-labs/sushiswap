@@ -6,7 +6,6 @@ import {
   Native,
   Price,
   Token,
-  Type,
   USDC,
   USDT,
   WBTC,
@@ -192,13 +191,6 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
     quote: token1,
     base: token0,
   }
-}
-
-export const unwrapToken = (currency: Type) => {
-  return currency.wrapped.address ===
-    Native.onChain(currency.chainId).wrapped.address
-    ? Native.onChain(currency.chainId)
-    : currency
 }
 
 const PRICE_FIXED_DIGITS = 8

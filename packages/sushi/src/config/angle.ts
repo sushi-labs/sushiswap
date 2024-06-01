@@ -5,11 +5,15 @@ export const ANGLE_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
   ChainId.OPTIMISM,
   ChainId.POLYGON,
-  // ChainId.POLYGON_ZKEVM,
+  ChainId.POLYGON_ZKEVM,
   ChainId.BASE,
   // ChainId.THUNDERCORE,
   // ChainId.CORE,
-  // ChainId.GNOSIS
+  ChainId.GNOSIS,
+  ChainId.BLAST,
+  ChainId.SCROLL,
+  ChainId.LINEA,
+  ChainId.BSC,
 ]
 export type AngleEnabledChainId = (typeof ANGLE_ENABLED_NETWORKS)[number]
 export const isAngleEnabledChainId = (

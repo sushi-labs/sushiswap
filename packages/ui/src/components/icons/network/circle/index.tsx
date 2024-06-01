@@ -31,7 +31,9 @@ import { OptimismCircle } from './OptimismCircle'
 import { PalmCircle } from './PalmCircle'
 import { PolygonCircle } from './PolygonCircle'
 import { PolygonZKCircle } from './PolygonZKCircle'
+import { RootstockCircle } from './RootstockCircle'
 import { ScrollCircle } from './ScrollCircle'
+import { SkaleCircle } from './SkaleCircle'
 import { TelosCircle } from './TelosCircle'
 import { ThunderCoreCircle } from './ThunderCoreCircle'
 import { ZetaChainCircle } from './ZetaChainCircle'
@@ -67,7 +69,9 @@ export * from './OptimismCircle'
 export * from './PalmCircle'
 export * from './PolygonCircle'
 export * from './PolygonZKCircle'
+export * from './RootstockCircle'
 export * from './ScrollCircle'
+export * from './SkaleCircle'
 export * from './TelosCircle'
 export * from './ThunderCoreCircle'
 export * from './ZetaChainCircle'
@@ -108,4 +112,6 @@ export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
   [ChainId.FILECOIN]: FilecoinCircle,
   [ChainId.ZETACHAIN]: ZetaChainCircle,
   [ChainId.BLAST]: BlastCircle,
+  [ChainId.SKALE_EUROPA]: SkaleCircle,
+  [ChainId.ROOTSTOCK]: RootstockCircle,
 }

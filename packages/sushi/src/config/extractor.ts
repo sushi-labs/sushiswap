@@ -32,6 +32,8 @@ export const EXTRACTOR_SUPPORTED_CHAIN_IDS = [
   ChainId.ZETACHAIN,
   ChainId.CRONOS,
   ChainId.BLAST,
+  ChainId.SKALE_EUROPA,
+  ChainId.ROOTSTOCK,
   // ChainId.ZKSYNC_ERA,
 ] as const
 

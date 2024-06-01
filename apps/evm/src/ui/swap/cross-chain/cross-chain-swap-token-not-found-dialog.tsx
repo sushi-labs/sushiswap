@@ -18,8 +18,12 @@ import { List } from '@sushiswap/ui/components/list'
 import { TokenSecurityView, useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
-import { defaultQuoteCurrency, isTokenSecurityChainId } from 'sushi/config'
-import { Native, Token } from 'sushi/currency'
+import {
+  defaultCurrency,
+  defaultQuoteCurrency,
+  isTokenSecurityChainId,
+} from 'sushi/config'
+import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 
@@ -78,7 +82,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
 
   const reset = useCallback(() => {
     setTokens(
-      Native.onChain(chainId0),
+      defaultCurrency[chainId0 as keyof typeof defaultCurrency],
       defaultQuoteCurrency[chainId1 as keyof typeof defaultQuoteCurrency],
     )
   }, [chainId0, chainId1, setTokens])

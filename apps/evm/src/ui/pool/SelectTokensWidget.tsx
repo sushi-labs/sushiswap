@@ -14,6 +14,7 @@ interface SelectTokensWidget {
   setToken0(token: Type): void
   setToken1(token: Type): void
   title?: string
+  includeNative?: boolean
 }
 
 export const SelectTokensWidget: FC<SelectTokensWidget> = ({
@@ -22,6 +23,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({
   token1,
   setToken0,
   setToken1,
+  includeNative,
 }) => {
   return (
     <FormSection
@@ -34,6 +36,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({
           selected={token0}
           chainId={chainId}
           onSelect={setToken0}
+          includeNative={includeNative}
         >
           <Button
             variant="secondary"
@@ -61,6 +64,7 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({
           selected={token1}
           chainId={chainId}
           onSelect={setToken1}
+          includeNative={includeNative}
         >
           <Button
             variant="secondary"

@@ -11,6 +11,8 @@ import { Dots } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui/components/button'
 import { createToast } from '@sushiswap/ui/components/toast'
 import {
+  PermitInfo,
+  PermitType,
   SushiSwapV2PoolState,
   UseCallParameters,
   getSushiSwapRouterContractConfig,
@@ -26,6 +28,7 @@ import {
 import { Checker } from '@sushiswap/wagmi/systems'
 import {
   useApproved,
+  useSignature,
   withCheckerRoot,
 } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -45,6 +48,12 @@ import { SendTransactionReturnType, encodeFunctionData } from 'viem'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
+const REMOVE_V2_LIQUIDITY_PERMIT_INFO: PermitInfo = {
+  version: '1',
+  name: 'SushiSwap LP Token',
+  type: PermitType.AMOUNT,
+}
+
 interface RemoveSectionLegacyProps {
   pool: Pool
 }
@@ -52,6 +61,7 @@ interface RemoveSectionLegacyProps {
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
   withCheckerRoot(({ pool: _pool }) => {
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
+    const { signature } = useSignature(APPROVE_TAG_REMOVE_LEGACY)
     const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
     const client = usePublicClient()
@@ -203,17 +213,62 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           return
         }
 
-        const withNative =
+        const token1IsNative =
           Native.onChain(_pool.chainId).wrapped.address ===
-            pool.token0.address ||
+          pool.token1.wrapped.address
+
+        const withNative =
+          token1IsNative ||
           Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
 
         const config = (() => {
-          if (withNative) {
-            const token1IsNative =
-              Native.onChain(_pool.chainId).wrapped.address ===
-              pool.token1.wrapped.address
+          if (signature?.message?.deadline) {
+            if (withNative) {
+              return {
+                functionNames: [
+                  'removeLiquidityETHWithPermit',
+                  'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens',
+                ],
+                args: [
+                  token1IsNative
+                    ? pool.token0.wrapped.address
+                    : pool.token1.wrapped.address,
+                  amountToRemove.quotient,
+                  token1IsNative
+                    ? debouncedMinAmount0.quotient
+                    : debouncedMinAmount1.quotient,
+                  token1IsNative
+                    ? debouncedMinAmount1.quotient
+                    : debouncedMinAmount0.quotient,
+                  address,
+                  signature.message.deadline,
+                  false,
+                  signature.v,
+                  signature.r,
+                  signature.s,
+                ],
+              } as const
+            }
 
+            return {
+              functionNames: ['removeLiquidityWithPermit'],
+              args: [
+                pool.token0.wrapped.address,
+                pool.token1.wrapped.address,
+                amountToRemove.quotient,
+                debouncedMinAmount0.quotient,
+                debouncedMinAmount1.quotient,
+                address,
+                signature.message.deadline,
+                false,
+                signature.v,
+                signature.r,
+                signature.s,
+              ],
+            } as const
+          }
+
+          if (withNative) {
             return {
               functionNames: [
                 'removeLiquidityETH',
@@ -308,12 +363,15 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       deadline,
       _pool.chainId,
       percentage,
+      signature,
     ])
 
     const { isError: isSimulationError } = useCall({
       ...prepare,
       chainId: _pool.chainId,
-      query: { enabled: Boolean(approved && Number(percentage) > 0) },
+      query: {
+        enabled: Boolean(approved && Number(percentage) > 0),
+      },
     })
 
     const { sendTransactionAsync, isLoading: isWritePending } =
@@ -371,7 +429,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                   guardWhen={+percentage <= 0}
                   guardText="Enter amount"
                 >
-                  <Checker.ApproveERC20
+                  <Checker.ApproveERC20WithPermit
                     size="default"
                     variant="outline"
                     fullWidth
@@ -382,6 +440,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                         _pool.chainId as SushiSwapV2ChainId,
                       ).address
                     }
+                    permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
+                    tag={APPROVE_TAG_REMOVE_LEGACY}
+                    ttlStorageKey={TTLStorageKey.RemoveLiquidity}
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                       <Button
@@ -398,7 +459,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                         )}
                       </Button>
                     </Checker.Success>
-                  </Checker.ApproveERC20>
+                  </Checker.ApproveERC20WithPermit>
                 </Checker.Guard>
               </Checker.Network>
             </Checker.Guard>

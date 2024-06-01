@@ -1,16 +1,25 @@
-import { ChainId } from '../chain/index.js'
+import { ChainId, natives } from '../chain/index.js'
 import {
   ARB,
   BUSD,
   GNO,
+  Native,
   OP,
   SUSHI,
   Token,
   USDB,
   USDC,
+  USDT,
   WETH9,
   axlUSDC,
 } from '../currency/index.js'
+
+export const defaultCurrency = {
+  ...Object.fromEntries(
+    Object.keys(natives).map((key) => [key, Native.onChain(Number(key))]),
+  ),
+  [ChainId.SKALE_EUROPA]: WETH9[ChainId.SKALE_EUROPA],
+} as const
 
 export const defaultQuoteCurrency = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
@@ -78,4 +87,6 @@ export const defaultQuoteCurrency = {
   [ChainId.ZETACHAIN]: WETH9[ChainId.ZETACHAIN],
   [ChainId.CRONOS]: WETH9[ChainId.CRONOS],
   [ChainId.BLAST]: USDB[ChainId.BLAST],
+  [ChainId.SKALE_EUROPA]: USDC[ChainId.SKALE_EUROPA],
+  [ChainId.ROOTSTOCK]: USDT[ChainId.ROOTSTOCK],
 } as const
