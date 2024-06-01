@@ -20,6 +20,7 @@ export const DISABLED_CHAIN_IDS = [
   ChainId.PALM,
   ChainId.HECO,
   ChainId.OKEX,
+  ChainId.ROOTSTOCK,
 ] as const
 
 const PREFERRED_CHAINID_ORDER = [
