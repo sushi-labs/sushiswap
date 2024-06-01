@@ -26,6 +26,9 @@ import { type Contract } from 'sushi/types'
 import { Address, PublicClient, WalletClient, parseAbi } from 'viem'
 import { readContract, simulateContract } from 'viem/actions'
 
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { PoolReporter } from '../src/PoolReporter.js'
 import { TestConfig, getTestConfig } from '../src/getTestConfig.js'
 import { setTokenBalance } from '../src/setTokenBalance.js'
 
@@ -85,6 +88,10 @@ const CURVE_POOL_SPECIAL_PRECISION: Record<string, number> = {
   '0xeb16ae0052ed37f479f7fe63849198df1765a733': 1e-4,
   '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': 1e-7,
 }
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const poolReporter = new PoolReporter(__dirname)
 
 export function getRandomExp(rnd: () => number, min: number, max: number) {
   const minL = Math.log(min)
@@ -779,7 +786,7 @@ const CurvePoolListNames = [
   // 'factory-stable-ng',   // stable pools new generation
 ]
 
-describe('Real Curve pools consistency check (from CurveAPI)', function () {
+describe.only('Real Curve pools consistency check (from CurveAPI)', function () {
   let config: TestConfig
 
   before(async () => {
@@ -801,6 +808,7 @@ describe('Real Curve pools consistency check (from CurveAPI)', function () {
       this.addTest(
         it(`${i + 1}/${pools.length} ${p[0]} (${p[1]})`, async () => {
           const res = await checkCurvePool(config, p[0])
+          await poolReporter.reportPoolTest(p[0], res.passed, res.reason)
           if (res.reason !== 'passed') console.log(`${p[0]}: ${res.reason}`)
           expect(res.passed).equal(true)
         }),

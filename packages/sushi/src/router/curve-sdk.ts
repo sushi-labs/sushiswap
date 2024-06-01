@@ -183,44 +183,6 @@ function _curvePoolFilterByAddress(pool: Address): string {
       return 'STBT token - exclusively designed for accredited investors https://stbt.matrixdock.com/'
     case '0x064841157BadDcB2704cA38901D7d754a59b80E8':
       return 'MBTC token(0xcfc013B416bE0Bd4b3bEdE35659423B796f8Dcf0) has been paused'
-    // case '0x618788357d0ebd8a37e763adab3bc575d54c2c7d': // 7/537
-    //   return 'Temporary unsupported: swap error'
-    // case '0xdebf20617708857ebe4f679508e7b7863a8a8eee': // 10/537
-    //   return 'Temporary unsupported: swap error'
-    // case '0x52ea46506b9cc5ef470c5bf89f17dc28bb35d85c': // 13/537
-    //   return 'Temporary unsupported: swap error'
-    // case '0xAe9e8c9A548505c9ad22a412354186151363c09e': // 49/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x2dabF79E16ceb92B651651f47b6E835C9DB5828A': // 58/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x2B26239f52420d11420bC0982571BFE091417A7d': // 80/537
-    //   return 'Temporary unsupported: swap error'
-    // case '0x8461A004b50d321CB22B7d034969cE6803911899': // 179/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x621F13Bf667207335C601F8C89eA5eC260bAdA9A': // 181/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0xDa5B670CcD418a187a3066674A8002Adc9356Ad1': // 184/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x6A274dE3e2462c7614702474D64d376729831dCa': // 186/537
-    //   return 'Temporary unsupported: swap error'
-    // case '0x3CFAa1596777CAD9f5004F9a0c443d912E262243': // 190/537
-    //   return 'Temporary unsupported: ???'
-    // case '0x8818a9bb44Fbf33502bE7c15c500d0C783B73067': // 193/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x3F1B0278A9ee595635B61817630cC19DE792f506': // 194/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0xD6Ac1CB9019137a896343Da59dDE6d097F710538': // 195/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x9c2C8910F113181783c249d8F6Aa41b51Cde0f0c': // 196/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0xFB9a265b5a1f52d97838Ec7274A0b1442efAcC87': // 221/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x8ed10E4e307822b969BCDaffD49095235f6F892b': // 245/537
-    //   return 'Temporary unsupported: ???'
-    // case '0x97aEB34ac6561146DD9cE191EFD5634F6465DeF4': // 250/537
-    //   return 'Temporary unsupported: pool init error'
-    // case '0x50B0D9171160d6EB8Aa39E090Da51E7e078E81c4': // 252/537
-    //   return 'Temporary unsupported: pool init error'
   }
   return ''
 }
