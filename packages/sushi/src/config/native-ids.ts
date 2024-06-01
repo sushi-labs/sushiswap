@@ -55,4 +55,5 @@ export const nativeCurrencyIds = {
   [ChainId.CRONOS]: 'CRO',
   [ChainId.BLAST]: 'ETH',
   [ChainId.SKALE_EUROPA]: 'sFUEL',
+  [ChainId.ROOTSTOCK]: 'RBTC',
 } as const
