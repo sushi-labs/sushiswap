@@ -27,6 +27,7 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.ARBITRUM,
   ChainId.BASE,
   ChainId.POLYGON,
+  ChainId.ROOTSTOCK,
   ChainId.BLAST,
   ChainId.ZETACHAIN,
   ChainId.OPTIMISM,
