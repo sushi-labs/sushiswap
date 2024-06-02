@@ -808,7 +808,12 @@ describe.only('Real Curve pools consistency check (from CurveAPI)', function () 
       this.addTest(
         it(`${i + 1}/${pools.length} ${p[0]} (${p[1]})`, async () => {
           const res = await checkCurvePool(config, p[0])
-          await poolReporter.reportPoolTest(p[0], res.passed, res.reason)
+          await poolReporter.reportPoolTest(
+            p[0],
+            p[1],
+            res.passed && !res.reason.startsWith('skipped'),
+            res.reason,
+          )
           if (res.reason !== 'passed') console.log(`${p[0]}: ${res.reason}`)
           expect(res.passed).equal(true)
         }),

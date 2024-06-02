@@ -22,12 +22,22 @@ export class PoolReporter {
       if (!this.fileNegative)
         this.fileNegative = await open(path.resolve(this.dir, 'blacklist'), 'w')
     } catch (_e) {}
-    console.log(path.resolve(this.dir, 'whitelist'))
   }
 
-  async reportPoolTest(pool: string, res: boolean, reason?: string) {
+  async reportPoolTest(
+    pool: string,
+    list: string,
+    res: boolean,
+    reason?: string,
+  ) {
     await this._openFiles()
     if (res) await this.filePositive?.appendFile(`${pool}\n`)
-    else await this.fileNegative?.appendFile(`${pool} // ${reason}\n`)
+    else {
+      if (reason) {
+        const len = reason.indexOf('\n')
+        if (len >= 0) reason = reason.substring(0, len)
+      }
+      await this.fileNegative?.appendFile(`${pool} (${list}) - ${reason}\n`)
+    }
   }
 }
