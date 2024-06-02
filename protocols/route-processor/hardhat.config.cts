@@ -18,13 +18,13 @@ const config: HardhatUserConfig = {
     //   forking: {
     //     enabled: true,
     //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-    //     blockNumber: 18526020,
+    //     blockNumber: 20000000,
     //   },
     //   accounts: {
     //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
     //   },
     //   chainId: 1,
-    //   blockGasLimit: 1_000_000_000
+    //   blockGasLimit: 1_000_000_000,
     // },
     hardhat: {
       forking: {
