@@ -1496,6 +1496,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
     const amountInForTest: Record<Address, number> = {
       '0x0ce6a5ff5217e38315f87032cf90686c96627caa': 1e16,
       '0x93054188d876f558f4a66b2ef1d97d16edf0895b': 1e10,
+      '0xf253f83aca21aabd2a20553ae0bf7f65c755a07f': 1e16,
     }
 
     const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
