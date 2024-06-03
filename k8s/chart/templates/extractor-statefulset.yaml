@@ -49,6 +49,11 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: DRPC_ID
+            - name: RSK_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: RSK_ID
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
