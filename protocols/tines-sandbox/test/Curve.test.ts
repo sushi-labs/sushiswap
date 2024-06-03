@@ -169,7 +169,7 @@ async function createCurvePoolInfo(
       tokenContracts.push(undefined)
       tokenTines.push({
         address: token,
-        name: token,
+        name: 'ETH',
         symbol: 'ETH',
         chainId: 1,
         decimals: 18,
@@ -213,9 +213,13 @@ async function createCurvePoolInfo(
         ...tokenContract,
         functionName: 'symbol',
       })
+      const name = await readContract(config.client, {
+        ...tokenContract,
+        functionName: 'name',
+      })
       tokenTines.push({
         address: token,
-        name: token,
+        name,
         symbol,
         chainId: 1,
         decimals,
@@ -808,12 +812,28 @@ describe('Real Curve pools consistency check (from CurveAPI)', function () {
       this.addTest(
         it(`${i + 1}/${pools.length} ${p[0]} (${p[1]})`, async () => {
           const res = await checkCurvePool(config, p[0])
+          const tokMap = new Map<string, RToken>()
+          res.poolInfo?.poolTines
+            .flat()
+            .flat()
+            .forEach((p) => {
+              if (p !== undefined) {
+                tokMap.set(p.token0.address, p.token0)
+                tokMap.set(p.token1.address, p.token1)
+              }
+            })
           await poolReporter.reportPoolTest(
             p[0],
             p[1],
             res.passed && !res.reason.startsWith('skipped'),
             res.reason,
-            res.poolInfo?.tokenContracts.map((tc) => tc?.address),
+            res.poolInfo?.poolType,
+            res.poolInfo?.tokenContracts.map(
+              (tc) =>
+                tokMap.get(
+                  tc?.address ?? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+                ) as RToken,
+            ),
           )
           if (res.reason !== 'passed') console.log(`${p[0]}: ${res.reason}`)
           expect(res.passed).equal(true)

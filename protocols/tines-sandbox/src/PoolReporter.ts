@@ -1,5 +1,6 @@
 import { FileHandle, mkdir, open } from 'node:fs/promises'
 import path from 'path'
+import { CurvePoolType, RToken } from 'sushi'
 
 export class PoolReporter {
   dir: string
@@ -29,16 +30,21 @@ export class PoolReporter {
     list: string,
     res: boolean,
     reason?: string,
-    tokens?: (string | undefined)[],
+    poolType?: CurvePoolType,
+    tokens?: RToken[],
   ) {
     await this._openFiles()
     if (res) {
-      tokens = tokens ?? []
-      tokens = tokens.map(
-        (t) => t ?? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      ) as string[]
-      const poolInfo = { pool, tokens }
-      await this.filePositive?.appendFile(`${JSON.stringify(poolInfo)},\n`)
+      const toks = tokens?.map((t) => ({
+        address: t.address,
+        name: t.name,
+        symbol: t.symbol,
+        decimals: t.decimals,
+      }))
+      const poolInfo = { pool, poolType, tokens: toks }
+      await this.filePositive?.appendFile(
+        `${JSON.stringify(poolInfo, undefined, '  ')},\n`,
+      )
     } else {
       if (reason) {
         const len = reason.indexOf('\n')
