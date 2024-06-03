@@ -43,4 +43,5 @@ export const SUSHISWAP_V2_SUBGRAPH_URL: Record<SushiSwapV2ChainId, string> = {
   [ChainId.POLYGON_ZKEVM]: `${DECENTRALIZED_NETWORK_HOST}/6QS4nmWq9Wv6WPQRk1F7RJnnKcAcUBhzaiF9ZHfkUcp4`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v2-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v2-skale-europa`,
+  [ChainId.ROOTSTOCK]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/sushiswap-rootstock/gn`,
 }

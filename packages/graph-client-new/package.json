@@ -55,7 +55,7 @@
     "build": "pnpm build:types && pnpm build:compile",
     "build:compile": "tsc && tsc-alias -p tsconfig.json",
     "build:types": "rm -rf src/subgraphs/*/*.d.ts && gql.tada generate output && gql.tada turbo",
-    "check": "tsc --pretty --noEmit",
+    "check": "pnpm build:types && tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
     "lint": "TIMING=1 eslint src",
