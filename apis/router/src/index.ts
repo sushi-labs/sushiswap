@@ -127,7 +127,7 @@ async function start() {
   app.get(`/price/v1/${CHAIN_ID}`, pricesHandler)
   app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler)
 
-  app.get(`/pool-codes-bin/${CHAIN_ID}`, async (_req, _res) => {
+  app.get(`/pool-codes-bin/v4/${CHAIN_ID}`, async (_req, _res) => {
     const url = `${client.extractorServer}/pool-codes-bin/${client.chainId}`
     const res = await fetch(url)
     const data = new Uint8Array(await res.arrayBuffer())
