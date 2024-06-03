@@ -38,5 +38,9 @@ export async function GET(request: Request) {
   }
   const args = result.data
   const data = await getUser(args)
-  return NextResponse.json(data)
+  return NextResponse.json(data, {
+    headers: {
+      'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
+    },
+  })
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { Pools, parseArgs } from '@sushiswap/client'
-import { UserPosition } from '@sushiswap/graph-client'
+import { CombinedV2UserPosition } from '@sushiswap/graph-client-new/composite/combined-user-positions'
 import { useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import useSWR from 'swr'
@@ -18,28 +18,28 @@ export function getUserPositionsUrl(args: GetUserArgs) {
   return `/pool/api/user/${parseArgs(args)}`
 }
 
-const transformPositions = (positions?: UserPosition[], pools?: Pools) =>
+const transformPositions = (positions?: CombinedV2UserPosition[], pools?: Pools) =>
   positions && pools
     ? positions
         .map((position) => {
-          const pool = pools.find((pool) => pool.id === position.pool)
-
+          const pool = pools.find((pool) => pool.id === position.id)
           return { ...position, pool }
         })
-        .filter((position): position is PositionWithPool => !!position.pool)
+        .filter((position): position is PositionWithPool => !!position.id)
     : undefined
 
 export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
-  const { data: positions } = useSWR<UserPosition[]>(
+  const { data: positions } = useSWR<CombinedV2UserPosition[]>(
     shouldFetch && args.id ? getUserPositionsUrl(args) : null,
     async (url) => fetch(url).then((data) => data.json()),
   )
 
   const _positions = useMemo(
-    () => positions?.map((position) => position.pool) || [],
+    () => positions?.map((position) => position.id) || [],
     [positions],
   )
   const pools = useGraphPools(_positions)
+  console.log({pools})
 
   const isValidating =
     shouldFetch &&

@@ -37,7 +37,7 @@ export function useFuroTokens(args: GetFuroTokenArgs) {
           const token = new Token({
             chainId: furoToken.chainId,
             decimals: furoToken.decimals,
-            address: furoToken.id,
+            address: furoToken.id.split(':')[1],
             symbol: furoToken.symbol,
             name: furoToken.name,
           })

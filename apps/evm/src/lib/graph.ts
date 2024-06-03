@@ -1,6 +1,7 @@
 import { getCombinedUserPositions } from '@sushiswap/graph-client-new/composite/combined-user-positions'
 import { getSushiDayDatas } from '@sushiswap/graph-client-new/composite/sushi-day-datas'
 import { getFuroTokens as _getFuroTokens } from '@sushiswap/graph-client-new/furo'
+import { getRebases as _getRebases } from '@sushiswap/graph-client-new/bentobox'
 import { fetchMultichain } from '@sushiswap/graph-client-new/multichain'
 import {
   getSushiV2Pool,
@@ -16,7 +17,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { Address } from 'viem'
-import { furoTokensSchema } from './schema'
+import { bentoBoxTokensSchema, furoTokensSchema } from './schema'
 
 export async function getUser(args: {
   id?: Address
@@ -104,20 +105,59 @@ export const getFuroTokens = async (
   query: (typeof furoTokensSchema)['_output'],
 ) => {
   try {
+    const variables =
+      query?.tokenSymbols && query.tokenSymbols?.length > 0
+        ? {
+            where: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+              liquidityShares_gt: '0',
+            },
+          }
+        : {
+            where: {
+              liquidityShares_gt: '0',
+            },
+          }
     const { data: tokens } = await fetchMultichain({
       chainIds: query.chainIds,
       fetch: _getFuroTokens,
-      variables: {
-        where: {
-          or:
-            query?.tokenSymbols?.map((symbol) => ({
-              symbol_contains_nocase: symbol,
-            })) || [],
-        },
-      },
+      variables,
     })
 
     return tokens
+  } catch (error) {
+    throw new Error(error as string)
+  }
+}
+
+export const getBentoBoxTokens = async (
+  query: (typeof bentoBoxTokensSchema)['_output'],
+) => {
+  try {
+    const variables =
+      query?.tokenSymbols && query.tokenSymbols?.length > 0
+        ? {
+            where: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+              base_gt: '0',
+            },
+          }
+        : {
+            where: {
+              base_gt: '0',
+            },
+          }
+    const { data: rebases } = await fetchMultichain({
+      chainIds: query.chainIds,
+      fetch: _getRebases,
+      variables,
+    })
+
+    return rebases
   } catch (error) {
     throw new Error(error as string)
   }

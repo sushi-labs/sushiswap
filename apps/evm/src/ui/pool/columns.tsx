@@ -362,7 +362,7 @@ export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   id: 'value',
   header: 'Value',
   accessorFn: (row) =>
-    (Number(row.balance) / Number(row.pool.totalSupply)) *
+    (Number(row.unstakedBalance) / Number(row.pool.totalSupply)) *
     Number(row.pool.liquidityUSD),
   cell: (props) => (
     <span
@@ -374,7 +374,7 @@ export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
       }
     >
       {formatUSD(
-        (Number(props.row.original.balance) /
+        (Number(props.row.original.unstakedBalance) /
           Number(props.row.original.pool.totalSupply)) *
           Number(props.row.original.pool.liquidityUSD),
       )}

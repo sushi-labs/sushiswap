@@ -10,8 +10,8 @@ export type SwapChainId =
   | SushiSwapV3ChainId
 
 import { Pool } from '@sushiswap/client'
-import { UserPosition } from '@sushiswap/graph-client'
+import { CombinedV2UserPosition } from '@sushiswap/graph-client-new/composite/combined-user-positions'
 
-export interface PositionWithPool extends Omit<UserPosition, 'pool'> {
+export interface PositionWithPool extends Omit<CombinedV2UserPosition, 'pool'> {
   pool: Pool
 }

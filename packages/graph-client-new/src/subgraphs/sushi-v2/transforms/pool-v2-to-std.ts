@@ -1,7 +1,10 @@
 import type { ResultOf } from 'gql.tada'
 import type { PoolFieldsFragment } from 'src/subgraphs/sushi-v2/fragments/pool-fields'
 import type { SushiSwapV2ChainId } from 'sushi/config'
-import { getIdFromChainIdAddress } from 'sushi/format'
+import {
+  getIdFromChainIdAddress,
+  withoutScientificNotation,
+} from 'sushi/format'
 import { type SushiPoolV2, SushiSwapProtocol } from 'sushi/types'
 
 type ToPick =
@@ -31,9 +34,19 @@ export function transformPoolV2ToStd<T extends RequiredBase>(
 
     protocol: SushiSwapProtocol.SUSHISWAP_V2,
 
-    reserve0: BigInt(pool.reserve0),
-    reserve1: BigInt(pool.reserve1),
-    liquidity: BigInt(pool.totalSupply),
+    // reserve0: BigInt(pool.reserve0),
+    // reserve1: BigInt(pool.reserve1),
+
+    reserve0: withoutScientificNotation(
+      (Number(pool.reserve0) * 10 ** Number(pool.token0.decimals)).toFixed(),
+    )!,
+    reserve1: withoutScientificNotation(
+      (Number(pool.reserve1) * 10 ** Number(pool.token1.decimals)).toFixed(),
+    )!,
+
+    liquidity: withoutScientificNotation(
+      (Number(pool.totalSupply) * 10 ** 18).toFixed(),
+    )!,
     liquidityUSD: Number(pool.liquidityUSD),
 
     volumeUSD: Number(pool.volumeUSD),
@@ -56,6 +69,6 @@ export function transformPoolV2ToStd<T extends RequiredBase>(
       symbol: pool.token1.symbol,
     },
 
-    txCount: BigInt(pool.txCount),
+    txCount: pool.txCount.toString(),
   }
 }
