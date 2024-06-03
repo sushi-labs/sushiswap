@@ -808,7 +808,10 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.ROOTSTOCK]: {
     client: createPublicClient(extractorClientConfig(ChainId.ROOTSTOCK)),
     factoriesV2: [sushiswapV2Factory(ChainId.ROOTSTOCK)],
-    factoriesV3: [sushiswapV3Factory(ChainId.ROOTSTOCK)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.ROOTSTOCK),
+      uniswapV3Factory(ChainId.ROOTSTOCK),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ROOTSTOCK] as Address,
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
