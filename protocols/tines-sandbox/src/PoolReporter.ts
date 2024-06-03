@@ -29,10 +29,17 @@ export class PoolReporter {
     list: string,
     res: boolean,
     reason?: string,
+    tokens?: (string | undefined)[],
   ) {
     await this._openFiles()
-    if (res) await this.filePositive?.appendFile(`${pool}\n`)
-    else {
+    if (res) {
+      tokens = tokens ?? []
+      tokens = tokens.map(
+        (t) => t ?? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      ) as string[]
+      const poolInfo = { pool, tokens }
+      await this.filePositive?.appendFile(`${JSON.stringify(poolInfo)},\n`)
+    } else {
       if (reason) {
         const len = reason.indexOf('\n')
         if (len >= 0) reason = reason.substring(0, len)

@@ -638,7 +638,7 @@ export async function checkMultipleSwapsFork(
 async function checkCurvePool(
   config: TestConfig,
   poolAddress: Address,
-): Promise<{ passed: boolean; reason: string }> {
+): Promise<{ passed: boolean; reason: string; poolInfo?: PoolInfo }> {
   const check1 = curvePoolFilterByAddress(poolAddress)
   if (!check1.routable)
     return { passed: true, reason: `skipped: ${check1.reason}` }
@@ -664,7 +664,7 @@ async function checkCurvePool(
   const checkedPool = poolInfo.poolTines[0][1]
   const check2 = curvePoolFilter(checkedPool)
   if (!check2.routable)
-    return { passed: true, reason: `skipped: ${check2.reason}` }
+    return { passed: true, reason: `skipped: ${check2.reason}`, poolInfo }
 
   try {
     await prepareTokens(
@@ -687,7 +687,7 @@ async function checkCurvePool(
     precision,
     poolInfo,
   )
-  return { passed: result === 'passed', reason: result }
+  return { passed: result === 'passed', reason: result, poolInfo }
 
   // commented out because we need a new multitoken pool check
   // const tokenNumber = poolInfo?.tokenContracts.length
@@ -786,7 +786,7 @@ const CurvePoolListNames = [
   // 'factory-stable-ng',   // stable pools new generation
 ]
 
-describe.only('Real Curve pools consistency check (from CurveAPI)', function () {
+describe('Real Curve pools consistency check (from CurveAPI)', function () {
   let config: TestConfig
 
   before(async () => {
@@ -813,6 +813,7 @@ describe.only('Real Curve pools consistency check (from CurveAPI)', function () 
             p[1],
             res.passed && !res.reason.startsWith('skipped'),
             res.reason,
+            res.poolInfo?.tokenContracts.map((tc) => tc?.address),
           )
           if (res.reason !== 'passed') console.log(`${p[0]}: ${res.reason}`)
           expect(res.passed).equal(true)
