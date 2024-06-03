@@ -13,9 +13,9 @@ export type SushiPoolBase = {
   swapFee: number
   // twapEnabled: boolean
 
-  reserve0: bigint
-  reserve1: bigint
-  liquidity: bigint
+  reserve0: string
+  reserve1: string
+  liquidity: string
 
   liquidityUSD: number
 
@@ -26,7 +26,7 @@ export type SushiPoolBase = {
   // token0Price: bigint
   // token1Price: bigint
 
-  txCount: bigint
+  txCount: string
 
   protocol: SushiSwapProtocol
 }

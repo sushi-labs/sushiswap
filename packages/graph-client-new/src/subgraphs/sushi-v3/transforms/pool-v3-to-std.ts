@@ -44,9 +44,9 @@ export function transformPoolV3ToStd<T extends RequiredBase>(
 
     protocol: SushiSwapProtocol.SUSHISWAP_V3,
 
-    reserve0: BigInt(pool.reserve0),
-    reserve1: BigInt(pool.reserve1),
-    liquidity: BigInt(pool.liquidity),
+    reserve0: pool.reserve0,
+    reserve1: pool.reserve1,
+    liquidity: pool.liquidity,
     liquidityUSD: Number(pool.liquidityUSD),
 
     volumeUSD: Number(pool.volumeUSD),
@@ -69,6 +69,6 @@ export function transformPoolV3ToStd<T extends RequiredBase>(
       symbol: pool.token1.symbol,
     },
 
-    txCount: BigInt(pool.txCount),
+    txCount: pool.txCount,
   }
 }

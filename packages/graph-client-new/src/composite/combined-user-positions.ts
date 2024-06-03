@@ -10,6 +10,7 @@ import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   isMiniChefChainId,
   isSushiSwapV2ChainId,
+  type SushiSwapV2ChainId,
 } from 'sushi/config'
 import type { GetChefUserPositions } from './chef-user-positions'
 
@@ -40,9 +41,10 @@ export async function getCombinedUserPositions({
     chainIds: sushiSwapChainIds,
     fetch: getSushiV2LiquidityPositions,
     variables: {
-      first: Infinity,
+      first: 1000,
       where: {
         user,
+        liquidityTokenBalance_gt: '0',
       },
     },
   })
@@ -53,7 +55,7 @@ export async function getCombinedUserPositions({
       chainIds: miniChefChainIds,
       fetch: getSushiV2LiquidityPositions,
       variables: {
-        first: Infinity,
+        first: 1000,
         where: {
           user,
         },
@@ -91,4 +93,13 @@ export async function getCombinedUserPositions({
   ]
 
   return { data, errors }
+}
+
+export type CombinedV2UserPosition = {
+  user: `0x${string}`
+  unstakedBalance: string
+  stakedBalance: string
+  chainId: SushiSwapV2ChainId
+  address: `0x${string}`
+  id: `${string}:${string}`
 }
