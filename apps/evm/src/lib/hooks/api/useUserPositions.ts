@@ -18,7 +18,10 @@ export function getUserPositionsUrl(args: GetUserArgs) {
   return `/pool/api/user/${parseArgs(args)}`
 }
 
-const transformPositions = (positions?: CombinedV2UserPosition[], pools?: Pools) =>
+const transformPositions = (
+  positions?: CombinedV2UserPosition[],
+  pools?: Pools,
+) =>
   positions && pools
     ? positions
         .map((position) => {
@@ -39,7 +42,7 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
     [positions],
   )
   const pools = useGraphPools(_positions)
-  console.log({pools})
+  console.log({ pools })
 
   const isValidating =
     shouldFetch &&
