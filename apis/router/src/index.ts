@@ -127,6 +127,11 @@ async function start() {
   app.get(`/price/v1/${CHAIN_ID}`, pricesHandler)
   app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler)
 
+  app.get(`/pool-codes-bin/${CHAIN_ID}`, async (_req) => {
+    const url = `${client.extractorServer}/pool-codes-bin/${client.chainId}`
+    return fetch(url)
+  })
+
   // The error handler must be registered before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler())
 
