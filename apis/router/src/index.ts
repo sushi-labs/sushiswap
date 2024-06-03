@@ -127,11 +127,12 @@ async function start() {
   app.get(`/price/v1/${CHAIN_ID}`, pricesHandler)
   app.get(`/price/v1/${CHAIN_ID}/:address`, priceByAddressHandler)
 
-  app.get(`/pool-codes-bin/${CHAIN_ID}`, async (_req, res) => {
+  app.get(`/pool-codes-bin/${CHAIN_ID}`, async (_req, _res) => {
     const url = `${client.extractorServer}/pool-codes-bin/${client.chainId}`
-    const body = await fetch(url).then((r) => r.body)
-    res.setHeader('Content-Type', 'application/octet-stream')
-    res.end(body)
+    const res = await fetch(url)
+    const data = new Uint8Array(await res.arrayBuffer())
+    _res.setHeader('Content-Type', 'application/octet-stream')
+    _res.end(data)
   })
 
   // The error handler must be registered before any other error middleware and after all controllers
