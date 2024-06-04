@@ -47,11 +47,7 @@ import { Checker } from '@sushiswap/wagmi/systems'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain } from 'sushi/chain'
-import {
-  DEFAULT_SLIPPAGE,
-  SushiSwapV3ChainId,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
+import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, unwrapToken } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
@@ -349,7 +345,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                             slippageTolerance: {
                               storageKey:
                                 SlippageToleranceStorageKey.RemoveLiquidity,
-                              defaultValue: DEFAULT_SLIPPAGE,
                               title: 'Remove Liquidity Slippage',
                             },
                             transactionDeadline: {
@@ -444,7 +439,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                   options={{
                     slippageTolerance: {
                       storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
-                      defaultValue: DEFAULT_SLIPPAGE,
                       title: 'Remove Liquidity Slippage',
                     },
                     transactionDeadline: {

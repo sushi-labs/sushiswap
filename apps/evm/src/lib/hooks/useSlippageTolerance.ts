@@ -25,7 +25,10 @@ export const useSlippageTolerance = (
           ),
           10_000,
         ),
-        setSlippageTolerance,
+        {
+          slippageTolerance,
+          setSlippageTolerance,
+        },
       ] as const,
     [slippageTolerance, setSlippageTolerance],
   )

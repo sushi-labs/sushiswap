@@ -35,7 +35,7 @@ import { FC, ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
-import { DEFAULT_SLIPPAGE, SushiSwapV2ChainId } from 'sushi/config'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
@@ -411,7 +411,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                     options={{
                       slippageTolerance: {
                         storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                        defaultValue: DEFAULT_SLIPPAGE,
                         title: 'Add Liquidity Slippage',
                       },
                       transactionDeadline: {

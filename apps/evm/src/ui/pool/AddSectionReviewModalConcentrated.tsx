@@ -34,11 +34,7 @@ import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain, ChainId } from 'sushi/chain'
-import {
-  DEFAULT_SLIPPAGE,
-  SushiSwapV3FeeAmount,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
+import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { NonfungiblePositionManager, Position } from 'sushi/pool'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
@@ -273,7 +269,6 @@ export const AddSectionReviewModalConcentrated: FC<
                   options={{
                     slippageTolerance: {
                       storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                      defaultValue: DEFAULT_SLIPPAGE,
                       title: 'Add Liquidity Slippage',
                     },
                     transactionDeadline: {
