@@ -123,7 +123,7 @@ export const DefaultView: FC<DefaultProps> = ({
             onClick={() => setView(ProfileView.Transactions)}
             hoverIconProps={{ width: 20, height: 20 }}
           />
-          <OnramperButton className="w-full">
+          <OnramperButton className="w-full" chainId={chainId}>
             <List.MenuItem
               icon={CreditCardIcon}
               title="Buy Crypto"

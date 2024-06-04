@@ -13,23 +13,45 @@ import React, {
 } from 'react'
 
 import classNames from 'classnames'
+import Link from 'next/link'
+import { ChainId } from 'sushi'
 import { Dialog, DialogOverlay, DialogPrimitive } from './dialog'
 import { IconButton } from './iconbutton'
 
-export const OnramperButton: FC<{ children: ReactNode; className?: string }> =
-  ({ children, className }) => {
-    const { setOpen } = useOnramperContext()
+const TRANSAK_OVERRIDE_CHAIN_IDS = [ChainId.SKALE_EUROPA] as const
 
-    const onClick = useCallback(() => {
-      setOpen(true)
-    }, [setOpen])
+type TransakOverrideChainId = (typeof TRANSAK_OVERRIDE_CHAIN_IDS)[number]
 
-    return (
-      <Slot onClick={onClick} className={className}>
-        {children}
-      </Slot>
-    )
-  }
+export const isTransakOverrideChainId = (
+  chainId: number | undefined,
+): chainId is TransakOverrideChainId =>
+  TRANSAK_OVERRIDE_CHAIN_IDS.includes(chainId as TransakOverrideChainId)
+
+export const OnramperButton: FC<{
+  children: ReactNode
+  className?: string
+  chainId?: number
+}> = ({ children, className, chainId }) => {
+  const { setOpen } = useOnramperContext()
+
+  const onClick = useCallback(() => {
+    setOpen(true)
+  }, [setOpen])
+
+  return isTransakOverrideChainId(chainId) ? (
+    <Link
+      href={'https://global.transak.com/'}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Slot className={className}>{children}</Slot>
+    </Link>
+  ) : (
+    <Slot onClick={onClick} className={className}>
+      {children}
+    </Slot>
+  )
+}
 
 interface OnramperPanelProps {
   address?: string
