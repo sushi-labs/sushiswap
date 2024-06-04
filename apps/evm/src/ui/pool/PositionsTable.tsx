@@ -1,4 +1,3 @@
-import { Protocol } from '@sushiswap/client'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui/components/slot'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
@@ -22,7 +21,6 @@ const COLUMNS = [
 ] satisfies ColumnDef<PositionWithPool, unknown>[]
 
 interface PositionsTableProps {
-  protocol: Protocol
   onRowClick?(row: PositionWithPool): void
   rowLink?(row: PositionWithPool): string
 }
@@ -30,7 +28,6 @@ interface PositionsTableProps {
 const tableState = { sorting: [{ id: 'value', desc: true }] }
 
 export const PositionsTable: FC<PositionsTableProps> = ({
-  protocol,
   onRowClick,
   rowLink,
 }) => {
@@ -65,8 +62,8 @@ export const PositionsTable: FC<PositionsTableProps> = ({
     const chainFiltered = searchFiltered.filter((el) =>
       chainIds.includes(el.chainId),
     )
-    return chainFiltered.filter((el) => el.pool?.protocol === protocol)
-  }, [positions, tokenSymbols, chainIds, protocol])
+    return chainFiltered
+  }, [positions, tokenSymbols, chainIds])
 
   const rowRenderer = useCallback(
     (row: Row<PositionWithPool>, rowNode: ReactNode) => {
@@ -102,7 +99,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
         data={_positions}
         pagination={true}
         onPaginationChange={setPaginationState}
-        state={{
+        state={{  
           ...tableState,
           pagination: paginationState,
         }}

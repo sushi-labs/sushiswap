@@ -1,4 +1,3 @@
-import { Protocol } from '@sushiswap/client'
 import React, { FC, ReactNode } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useUserPositions } from 'src/lib/hooks'
@@ -13,7 +12,7 @@ interface PositionCardList {
 }
 
 const value = (position: PositionWithPool) =>
-  (Number(position.balance + position.stakedBalance) /
+  (Number(position.unstakedBalance + position.stakedBalance) /
     Number(position.pool.totalSupply)) *
   Number(position.pool.liquidityUSD)
 
@@ -30,7 +29,6 @@ export const PositionCardList: FC<PositionCardList> = ({ children }) => {
         positions: isValidating
           ? new Array(6).fill(null)
           : (userPositions || [])
-              .filter((el) => el.pool.protocol === Protocol.SUSHISWAP_V2)
               .sort((a, b) => value(b) - value(a)),
         isLoading: isValidating,
       })}

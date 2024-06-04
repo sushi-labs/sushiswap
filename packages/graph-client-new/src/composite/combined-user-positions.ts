@@ -4,6 +4,7 @@ import { fetchMultichain } from 'src/multichain/fetch-multichain'
 import {
   type GetSushiV2LiquidityPositions,
   getSushiV2LiquidityPositions,
+  type SushiV2Pools,
 } from 'src/subgraphs/sushi-v2'
 import {
   MINICHEF_SUPPORTED_CHAIN_IDS,
@@ -69,23 +70,25 @@ export async function getCombinedUserPositions({
     ]),
   )
 
-  const data = poolIds.map((poolId) => {
-    const sushiSwapPosition = sushiSwapV2LiquidityPositions.find(
-      (position) => position.pool.id === poolId,
-    )
-    const chefPosition = chefUserPositions.find(
-      (position) => position.pool.id === poolId,
-    )
+  const data = poolIds
+    .map((poolId) => {
+      const sushiSwapPosition = sushiSwapV2LiquidityPositions.find(
+        (position) => position.pool.id === poolId,
+      )
+      const chefPosition = chefUserPositions.find(
+        (position) => position.pool.id === poolId,
+      )
 
-    const pool = sushiSwapPosition?.pool ?? chefPosition?.pool
-
-    return {
-      ...pool,
-      user,
-      unstakedBalance: sushiSwapPosition?.balance ?? '0',
-      stakedBalance: chefPosition?.balance ?? '0',
-    }
-  })
+      const pool = sushiSwapPosition?.pool ?? chefPosition?.pool
+      if (!pool) return null 
+      return {
+        ...pool,
+        user,
+        unstakedBalance: sushiSwapPosition?.balance ?? '0',
+        stakedBalance: chefPosition?.balance ?? '0',
+      }
+    })
+    .filter((p) => p !== null) as CombinedV2UserPosition[]
 
   const errors = [
     ...sushiSwapV2LiquidityPositionErrors,

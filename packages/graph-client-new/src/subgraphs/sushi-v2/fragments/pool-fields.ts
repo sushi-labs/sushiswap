@@ -21,6 +21,7 @@ export const PoolFieldsFragment = graphql(`
     reserve1
     totalSupply
     liquidityUSD: reserveUSD
+    liquidityNative: reserveETH
     # token0Price
     # token1Price
     volumeUSD

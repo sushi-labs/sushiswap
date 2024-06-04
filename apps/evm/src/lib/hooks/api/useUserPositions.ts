@@ -1,45 +1,32 @@
 'use client'
 
-import { Pools, parseArgs } from '@sushiswap/client'
-import { CombinedV2UserPosition } from '@sushiswap/graph-client-new/composite/combined-user-positions'
+import { parseArgs } from '@sushiswap/client'
 import { useMemo } from 'react'
+import { PositionWithPool } from 'src/types'
 import { ChainId } from 'sushi/chain'
 import useSWR from 'swr'
 
-import { PositionWithPool } from '../../../types'
-import { useGraphPools } from './useGraphPools'
 
 export interface GetUserArgs {
   id?: string
   chainIds?: ChainId[]
 }
 
-export function getUserPositionsUrl(args: GetUserArgs) {
-  return `/pool/api/user/${parseArgs(args)}`
+export function getUserPositionsWithPoolsUrl(args: GetUserArgs) {
+  return `/pool/api/user-with-pools/${parseArgs(args)}`
 }
 
-const transformPositions = (positions?: CombinedV2UserPosition[], pools?: Pools) =>
-  positions && pools
-    ? positions
-        .map((position) => {
-          const pool = pools.find((pool) => pool.id === position.id)
-          return { ...position, pool }
-        })
-        .filter((position): position is PositionWithPool => !!position.id)
-    : undefined
 
 export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
-  const { data: positions } = useSWR<CombinedV2UserPosition[]>(
-    shouldFetch && args.id ? getUserPositionsUrl(args) : null,
+  const { data: positions } = useSWR<PositionWithPool[]>(
+    shouldFetch && args.id ? getUserPositionsWithPoolsUrl(args) : null,
     async (url) => fetch(url).then((data) => data.json()),
   )
-
-  const _positions = useMemo(
-    () => positions?.map((position) => position.id) || [],
+  
+  const pools = useMemo(
+    () => positions?.map((position) => position.pool) || [],
     [positions],
   )
-  const pools = useGraphPools(_positions)
-  console.log({pools})
 
   const isValidating =
     shouldFetch &&
@@ -48,7 +35,7 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   return useMemo(
     () => ({
       data: !isValidating
-        ? transformPositions(positions, pools)?.filter((position) =>
+        ? positions?.filter((position) =>
             Array.isArray(args.chainIds)
               ? args.chainIds?.includes(position.chainId as ChainId)
               : true,
@@ -56,6 +43,7 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
         : undefined,
       isValidating,
     }),
-    [args.chainIds, isValidating, pools, positions],
+    [args.chainIds, isValidating, positions],
   )
 }
+

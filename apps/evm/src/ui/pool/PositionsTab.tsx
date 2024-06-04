@@ -91,7 +91,6 @@ export const PositionsTab = () => {
         </TabsContent>
         <TabsContent value="v2">
           <PositionsTable
-            protocol={Protocol.SUSHISWAP_V2}
             rowLink={(row) => `/pool/${row.pool.id}`}
           />
         </TabsContent>
