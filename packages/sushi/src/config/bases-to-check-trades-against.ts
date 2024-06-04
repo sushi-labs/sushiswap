@@ -487,4 +487,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDP[ChainId.SKALE_EUROPA],
     WETH9[ChainId.SKALE_EUROPA],
   ],
+  [ChainId.ROOTSTOCK]: [
+    WNATIVE[ChainId.ROOTSTOCK],
+    WETH9[ChainId.ROOTSTOCK],
+    USDT[ChainId.ROOTSTOCK],
+  ],
 }

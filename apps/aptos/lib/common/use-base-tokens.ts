@@ -10,7 +10,13 @@ export const fetchBaseTokensQueryFn = async ({
   const baseTokens = tokenlists[network].tokens
 
   return baseTokens.reduce<Record<string, Token>>(
-    (acc, { address, decimals, name, symbol, logoURI }) => {
+    (acc, { address, decimals, name, symbol: _symbol, logoURI, ...rest }) => {
+      let symbol: string = _symbol
+
+      if ('panoraSymbol' in rest) {
+        symbol = rest.panoraSymbol
+      }
+
       acc[address] = {
         name,
         decimals,

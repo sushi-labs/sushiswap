@@ -10,7 +10,7 @@ import {
 import { chainName, getIdFromChainIdAddress, isPromiseFulfilled } from 'sushi'
 import { TickMath } from 'sushi/pool'
 
-import { Address } from 'viem'
+import { Address, getAddress } from 'viem'
 import { getBuiltGraphSDK } from '../.graphclient/index.js'
 import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import {
@@ -139,8 +139,8 @@ async function extractChain(chainId: SteerChainId) {
 
       const payload = payloads[i]
 
-      const token0Price = prices[vault.token0] || 0
-      const token1Price = prices[vault.token1] || 0
+      const token0Price = prices[getAddress(vault.token0)] || 0
+      const token1Price = prices[getAddress(vault.token1)] || 0
 
       const reserve0USD = pool
         ? (Number(vault.reserve0) / 10 ** pool.token0.decimals) * token0Price

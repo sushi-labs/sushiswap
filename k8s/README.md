@@ -37,6 +37,7 @@ gcloud config set project sushi-api-414412
 ```bash
 kubectl create secret generic sushi-api \
     --from-literal=DRPC_ID=XXX \
+    --from-literal=GETBLOCK_ID=XXX \
     --from-literal=SENTRY_DSN=XXX \
     --from-literal=SENTRY_ENVIRONMENT=XXX
 ```
