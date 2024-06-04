@@ -60,7 +60,7 @@ export const useGraphPool = (pool: Pool) => {
             : null,
         totalSupply:
           liquidityToken && graphPool
-            ? Amount.fromRawAmount(liquidityToken, graphPool.totalSupply)
+            ? Amount.fromRawAmount(liquidityToken, graphPool.liquidity)
             : null,
       },
     }
