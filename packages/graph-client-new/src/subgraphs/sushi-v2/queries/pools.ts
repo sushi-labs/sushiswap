@@ -10,6 +10,7 @@ import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { PoolFieldsFragment } from '../fragments/pool-fields'
 import { graphql } from '../graphql'
+import { getIdFromChainIdAddress } from 'sushi'
 
 export const SushiV2PoolsQuery = graphql(
   `
@@ -39,9 +40,26 @@ export async function getSushiV2Pools({
   })
 
   if (result) {
-    return result.pools.map((pool) =>
-      convertIdToMultichainId(copyIdToAddress(addChainId(chainId, pool))),
-    )
+    return result.pools.map((pool) => ({
+      ...convertIdToMultichainId(copyIdToAddress(addChainId(chainId, pool))),
+      name: `${pool.token0.symbol}-${pool.token1.symbol}`,
+      token0: {
+        id: getIdFromChainIdAddress(chainId, pool.token0.id),
+        address: pool.token0.id,
+        chainId,
+        decimals: Number(pool.token0.decimals),
+        name: pool.token0.name,
+        symbol: pool.token0.symbol,
+      },
+      token1: {
+        id: getIdFromChainIdAddress(chainId, pool.token1.id),
+        address: pool.token1.id,
+        chainId,
+        decimals: Number(pool.token1.decimals),
+        name: pool.token1.name,
+        symbol: pool.token1.symbol,
+      },
+    }))
   }
 
   throw new FetchError(chainId, 'Failed to fetch pools')

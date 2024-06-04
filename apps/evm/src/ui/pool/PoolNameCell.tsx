@@ -45,7 +45,9 @@ export const ProtocolBadge: Record<Protocol, JSX.Element> = {
 export const PoolNameCell: FC<Row<PositionWithPool>> = ({ original }) => {
   const { token0, token1 } = useTokensFromPool(original.pool)
 
-  const incentives = original.pool.incentives.filter((i) => i.rewardPerDay > 0)
+  const incentives = original.pool?.incentives?.filter(
+    (i) => i.rewardPerDay > 0,
+  )
 
   return (
     <div className="flex items-center gap-5">

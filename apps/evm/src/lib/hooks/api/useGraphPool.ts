@@ -34,7 +34,7 @@ export const useGraphPool = (pool: Pool) => {
         token1,
         liquidityToken,
         liquidityNative: graphPool ? Number(graphPool?.reserveETH) : null,
-        liquidityUSD: graphPool ? Number(graphPool?.reserveUSD) : null,
+        liquidityUSD: graphPool ? Number(graphPool?.liquidityUSD) : null,
         liquidity1dChange: graphPool
           ? Number(graphPool?.liquidity1dChange ?? 0)
           : null,
