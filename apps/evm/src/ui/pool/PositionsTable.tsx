@@ -99,7 +99,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
         data={_positions}
         pagination={true}
         onPaginationChange={setPaginationState}
-        state={{  
+        state={{
           ...tableState,
           pagination: paginationState,
         }}

@@ -90,9 +90,7 @@ export const PositionsTab = () => {
           <ConcentratedPositionsTable hideNewPositionButton={true} />
         </TabsContent>
         <TabsContent value="v2">
-          <PositionsTable
-            rowLink={(row) => `/pool/${row.pool.id}`}
-          />
+          <PositionsTable rowLink={(row) => `/pool/${row.pool.id}`} />
         </TabsContent>
         <TabsContent value="smart">
           <SmartPositionsTable />
