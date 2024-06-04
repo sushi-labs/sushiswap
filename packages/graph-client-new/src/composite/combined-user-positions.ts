@@ -4,7 +4,6 @@ import { fetchMultichain } from 'src/multichain/fetch-multichain'
 import {
   type GetSushiV2LiquidityPositions,
   getSushiV2LiquidityPositions,
-  type SushiV2Pools,
 } from 'src/subgraphs/sushi-v2'
 import {
   MINICHEF_SUPPORTED_CHAIN_IDS,

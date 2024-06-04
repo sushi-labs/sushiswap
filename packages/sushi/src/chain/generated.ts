@@ -75,6 +75,29 @@ export default [
     shortName: 'cro',
   },
   {
+    chainId: 30,
+    explorers: [
+      {
+        name: 'Rootstock Explorer',
+        url: 'https://explorer.rsk.co',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'blockscout',
+        url: 'https://rootstock.blockscout.com',
+        icon: 'blockscout',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'Smart Bitcoin',
+      symbol: 'RBTC',
+      decimals: 18,
+    },
+    name: 'Rootstock Mainnet',
+    shortName: 'rsk',
+  },
+  {
     chainId: 40,
     explorers: [
       {

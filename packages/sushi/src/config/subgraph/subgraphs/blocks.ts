@@ -4,12 +4,12 @@ import {
   DECENTRALIZED_NETWORK_HOST,
   FILECOIN_HOST,
   HAQQ_HOST,
-  KAVA_HOST,
   METIS_0XGRAPH_HOST,
   SKALE_HOST,
   SUSHI_DEDICATED_GOLDSKY_HOST,
   SUSHI_GOLDSKY_HOST,
   THUNDERCORE_HOST,
+  WAGMI_KAVA_HOST,
 } from '../hosts.js'
 
 export const BLOCKS_SUBGRAPH_URL: Partial<Record<ChainId, string>> = {
@@ -30,7 +30,7 @@ export const BLOCKS_SUBGRAPH_URL: Partial<Record<ChainId, string>> = {
   // [ChainId.KOVAN]: `${GRAPH_HOST}/blocklytics/kovan-blocks`,
   [ChainId.MOONBEAM]: `${DECENTRALIZED_NETWORK_HOST}/EiNGUdnwqk8yA4xVEu9nyTmfCyK7Cxj9xaFjYCKkHnzf`,
   [ChainId.OPTIMISM]: `${DECENTRALIZED_NETWORK_HOST}/HsWM1oAXHGWdkH8bK98UrW38PvyPx6Q4waRow2LT8mcp`, // TODO: MIGHT NEED TO BE REPLACED. 2024-05-23: 62% synced
-  [ChainId.KAVA]: `${KAVA_HOST}/sushiswap/blocks-kava`,
+  [ChainId.KAVA]: `${WAGMI_KAVA_HOST}/sushiswap/blocks-kava`,
   [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/blocks-metis`,
   // [ChainId.METIS]: `${WAGMI_METIS_HOST}/blocks`,
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/blocks/arbitrum-nova/gn`,
@@ -47,4 +47,5 @@ export const BLOCKS_SUBGRAPH_URL: Partial<Record<ChainId, string>> = {
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/blocks-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/blocks-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/blocks-skale-europa`,
+  [ChainId.ROOTSTOCK]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/blocks-rootstock/gn`,
 }

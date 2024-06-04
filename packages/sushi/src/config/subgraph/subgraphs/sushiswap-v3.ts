@@ -39,4 +39,5 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<SushiSwapV3ChainId, string> = {
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/v3-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v3-skale-europa`,
+  [ChainId.ROOTSTOCK]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-rootstock/gn`,
 }
