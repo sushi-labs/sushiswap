@@ -79,7 +79,7 @@ export async function getCombinedUserPositions({
       )
 
       const pool = sushiSwapPosition?.pool ?? chefPosition?.pool
-      if (!pool) return null 
+      if (!pool) return null
       return {
         ...pool,
         user,

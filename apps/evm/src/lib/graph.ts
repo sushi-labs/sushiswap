@@ -205,7 +205,6 @@ export const getCharts = async (query?: { networks: string }) => {
   return [tvl, vol]
 }
 
-
 export function transformGraphPool(
   graphPool: Awaited<ReturnType<typeof getV2GraphPools>>[0],
 ): Pool {

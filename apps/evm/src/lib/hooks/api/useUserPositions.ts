@@ -6,7 +6,6 @@ import { PositionWithPool } from 'src/types'
 import { ChainId } from 'sushi/chain'
 import useSWR from 'swr'
 
-
 export interface GetUserArgs {
   id?: string
   chainIds?: ChainId[]
@@ -16,13 +15,12 @@ export function getUserPositionsWithPoolsUrl(args: GetUserArgs) {
   return `/pool/api/user-with-pools/${parseArgs(args)}`
 }
 
-
 export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
   const { data: positions } = useSWR<PositionWithPool[]>(
     shouldFetch && args.id ? getUserPositionsWithPoolsUrl(args) : null,
     async (url) => fetch(url).then((data) => data.json()),
   )
-  
+
   const pools = useMemo(
     () => positions?.map((position) => position.pool) || [],
     [positions],
@@ -46,4 +44,3 @@ export function useUserPositions(args: GetUserArgs, shouldFetch = true) {
     [args.chainIds, isValidating, positions],
   )
 }
-

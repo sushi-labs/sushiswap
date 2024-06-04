@@ -28,8 +28,7 @@ export const PositionCardList: FC<PositionCardList> = ({ children }) => {
       {children({
         positions: isValidating
           ? new Array(6).fill(null)
-          : (userPositions || [])
-              .sort((a, b) => value(b) - value(a)),
+          : (userPositions || []).sort((a, b) => value(b) - value(a)),
         isLoading: isValidating,
       })}
     </>
