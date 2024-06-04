@@ -82,16 +82,12 @@ export async function detectCurvePoolType(
 export async function getPoolRatio(
   client: PublicClient,
   poolAddress: Address,
-  poolType: CurvePoolType,
-): Promise<number> {
-  const token1Address = await client.readContract({
-    address: poolAddress,
-    abi: curvePoolABI[poolType],
-    functionName: 'coins',
-    args: [1n],
-  })
+  tokens: Address[],
+): Promise<number[]> {
+  if (tokens.length > 2) return tokens.map((_t) => 1)
 
-  const basePoolAddress = METAPOOL_COIN_TO_BASEPOOL[token1Address.toLowerCase()]
+  const basePoolAddress =
+    METAPOOL_COIN_TO_BASEPOOL[(tokens[1] as Address).toLowerCase()]
   if (basePoolAddress !== undefined) {
     const price = await client.readContract({
       address: basePoolAddress,
@@ -99,7 +95,7 @@ export async function getPoolRatio(
       functionName: 'get_virtual_price',
     })
     // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
-    return Number(price) / 1e18
+    return [1, Number(price) / 1e18]
   }
 
   try {
@@ -108,7 +104,7 @@ export async function getPoolRatio(
       abi: axFunctionsABI,
       functionName: 'stored_rates',
     })
-    return Number(r1) / Number(r0)
+    return [1, Number(r1) / Number(r0)]
   } catch (_e) {}
 
   // collection of freaks
@@ -120,7 +116,7 @@ export async function getPoolRatio(
         abi: axFunctionsABI,
         functionName: 'ratio',
       })
-      return 1e18 / Number(ratio)
+      return [1, 1e18 / Number(ratio)]
     }
     case '0xf9440930043eb3997fc70e1339dbb11f341de7a8': {
       // rETH pool
@@ -129,7 +125,7 @@ export async function getPoolRatio(
         abi: axFunctionsABI,
         functionName: 'getExchangeRate',
       })
-      return Number(ratio) / 1e18
+      return [1, Number(ratio) / 1e18]
     }
     case '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': {
       // compound pool cUSDC-cDAI
@@ -145,10 +141,10 @@ export async function getPoolRatio(
         abi: axFunctionsABI,
         functionName: 'exchangeRateCurrent',
       })
-      return (Number(ratio0) * 1e12) / Number(ratio1)
+      return [Number(ratio1), Number(ratio0) * 1e12]
     }
     default:
-      return 1
+      return [1, 1]
   }
 }
 

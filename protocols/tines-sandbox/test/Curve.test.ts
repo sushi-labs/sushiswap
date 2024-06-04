@@ -245,59 +245,40 @@ async function createCurvePoolInfo(
     ),
   )
 
-  if (tokenContracts.length === 2) {
-    const poolTines = new CurvePool(
+  const pools = createCurvePoolsForMultipool(
+    poolAddress,
+    tokenTines,
+    Number(fee) / 1e10,
+    Number(A),
+    reserves,
+    await getPoolRatio(
+      config.client as PublicClient,
       poolAddress,
-      tokenTines[0],
-      tokenTines[1],
-      Number(fee) / 1e10,
-      Number(A),
-      reserves[0],
-      reserves[1],
-      await getPoolRatio(config.client as PublicClient, poolAddress, poolType),
-    )
+      tokenTines.map((t) => t.address as Address),
+    ),
+  )
+  const poolTines: (CurvePool | CurveMultitokenPool | undefined)[][] = []
+  const currentFlow: number[][][] = []
+  let n = 0
+  for (let i = 0; i < tokenContracts.length; ++i) {
+    poolTines[i] = []
+    currentFlow[i] = []
+    for (let j = i + 1; j < tokenContracts.length; ++j) {
+      poolTines[i][j] = pools[n++]
+      currentFlow[i][j] = [0, 0]
+    }
+  }
+  console.assert(n === pools.length)
 
-    const snapshot = await takeSnapshot()
-    return {
-      poolType,
-      poolContract,
-      tokenContracts,
-      poolTines: [[undefined, poolTines]],
-      currentFlow: [[], [[0, 0]]],
-      user: config.user.address,
-      snapshot,
-    }
-  } else {
-    const pools = createCurvePoolsForMultipool(
-      poolAddress,
-      tokenTines,
-      Number(fee) / 1e10,
-      Number(A),
-      reserves,
-    )
-    const poolTines: (CurvePool | CurveMultitokenPool | undefined)[][] = []
-    const currentFlow: number[][][] = []
-    let n = 0
-    for (let i = 0; i < tokenContracts.length; ++i) {
-      poolTines[i] = []
-      currentFlow[i] = []
-      for (let j = i + 1; j < tokenContracts.length; ++j) {
-        poolTines[i][j] = pools[n++]
-        currentFlow[i][j] = [0, 0]
-      }
-    }
-    console.assert(n === pools.length)
-
-    const snapshot = await takeSnapshot()
-    return {
-      poolType,
-      poolContract,
-      tokenContracts,
-      poolTines,
-      currentFlow,
-      user: config.user.address,
-      snapshot,
-    }
+  const snapshot = await takeSnapshot()
+  return {
+    poolType,
+    poolContract,
+    tokenContracts,
+    poolTines,
+    currentFlow,
+    user: config.user.address,
+    snapshot,
   }
 }
 
