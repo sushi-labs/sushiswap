@@ -16,7 +16,7 @@ export const SushiV2TokensQuery = graphql(`
       name
       symbol
       decimals
-      tradeVolumeUSD
+      volumeUSD: tradeVolumeUSD
       totalLiquidity
     }
   }

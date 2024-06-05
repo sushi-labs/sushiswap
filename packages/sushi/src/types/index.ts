@@ -1,4 +1,5 @@
 export * from './sushi-pool/index'
+export * from './sushi-position/index'
 export type * from './address'
 export type * from './contract'
 export type * from './id'
