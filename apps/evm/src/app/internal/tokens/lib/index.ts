@@ -40,8 +40,8 @@ export async function getTokens({
     if (tokenCombined) {
       tokensCombined.set(token.id, {
         ...token,
-        tradeVolumeUSD: String(
-          Number(token.tradeVolumeUSD) + Number(tokenCombined.tradeVolumeUSD),
+        volumeUSD: String(
+          Number(token.volumeUSD) + Number(tokenCombined.volumeUSD),
         ),
         totalLiquidity: String(
           Number(token.totalLiquidity) + Number(tokenCombined.totalLiquidity),

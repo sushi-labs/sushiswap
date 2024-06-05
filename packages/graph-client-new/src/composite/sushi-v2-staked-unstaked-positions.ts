@@ -10,21 +10,29 @@ import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   isMiniChefChainId,
   isSushiSwapV2ChainId,
-  type SushiSwapV2ChainId,
 } from 'sushi/config'
+import type {
+  SushiPoolV2,
+  SushiPositionStaked,
+  SushiPositionWithPool,
+} from 'sushi/types'
 import type { GetChefUserPositions } from './chef-user-positions'
 
-export type GetCombinedUserPositions = {
+export type GetSushiV2StakedUnstakedPositions = {
   user: Hex
 } & ChainIdsVariable<
   | NonNullable<GetChefUserPositions['chainIds']>[number]
   | GetSushiV2LiquidityPositions['chainId']
 >
 
+export type SushiV2StakedUnstakedPosition = SushiPositionStaked<
+  SushiPositionWithPool<SushiPoolV2>
+>
+
 /**
  * @brief Get staked AND unstaked user positions
  */
-export async function getCombinedUserPositions({
+export async function getSushiV2StakedUnstakedPositions({
   chainIds = [
     ...new Set([
       ...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -32,7 +40,7 @@ export async function getCombinedUserPositions({
     ]),
   ],
   user,
-}: GetCombinedUserPositions) {
+}: GetSushiV2StakedUnstakedPositions) {
   const sushiSwapChainIds = chainIds.filter(isSushiSwapV2ChainId)
   const {
     data: sushiSwapV2LiquidityPositions,
@@ -81,13 +89,13 @@ export async function getCombinedUserPositions({
       const pool = sushiSwapPosition?.pool ?? chefPosition?.pool
       if (!pool) return null
       return {
-        ...pool,
         user,
-        unstakedBalance: sushiSwapPosition?.balance ?? '0',
-        stakedBalance: chefPosition?.balance ?? '0',
+        unstakedBalance: BigInt(sushiSwapPosition?.balance ?? '0'),
+        stakedBalance: BigInt(chefPosition?.balance ?? '0'),
+        pool,
       }
     })
-    .filter((p) => p !== null) as CombinedV2UserPosition[]
+    .filter((p) => p !== null) as SushiV2StakedUnstakedPosition[]
 
   const errors = [
     ...sushiSwapV2LiquidityPositionErrors,
@@ -95,13 +103,4 @@ export async function getCombinedUserPositions({
   ]
 
   return { data, errors }
-}
-
-export type CombinedV2UserPosition = {
-  user: `0x${string}`
-  unstakedBalance: string
-  stakedBalance: string
-  chainId: SushiSwapV2ChainId
-  address: `0x${string}`
-  id: `${string}:${string}`
 }

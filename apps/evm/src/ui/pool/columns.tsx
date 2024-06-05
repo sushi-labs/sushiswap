@@ -1,10 +1,9 @@
-import { Pool, Protocol } from '@sushiswap/client'
+import { Pool } from '@sushiswap/client'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   FormattedNumber,
   NetworkIcon,
   Tooltip,
-  TooltipContent,
   TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
@@ -13,7 +12,7 @@ import {
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
-import React, { FC, ReactNode } from 'react'
+import React from 'react'
 import {
   formatNumber,
   formatPercent,
@@ -21,8 +20,8 @@ import {
   shortenAddress,
 } from 'sushi/format'
 
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
-import { PositionWithPool } from '../../types'
+import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
+import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { APRHoverCard } from './APRHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
 import { PoolNameCell, PoolNameCellPool } from './PoolNameCell'
@@ -40,7 +39,6 @@ import {
 import { PriceRangeCell } from './PriceRangeCell'
 import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
 import { RewardsV3NameCell } from './RewardsV3NameCell'
-import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 
 export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   id: 'poolName',
@@ -256,24 +254,25 @@ export const FEES_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const NETWORK_COLUMN: ColumnDef<PositionWithPool, unknown> = {
-  id: 'network',
-  header: 'Network',
-  cell: (props) => (
-    <NetworkIcon
-      type="naked"
-      chainId={props.row.original.chainId}
-      width={26}
-      height={26}
-    />
-  ),
-  meta: {
-    skeleton: <SkeletonCircle radius={26} />,
-  },
-}
+export const NETWORK_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> =
+  {
+    id: 'network',
+    header: 'Network',
+    cell: (props) => (
+      <NetworkIcon
+        type="naked"
+        chainId={props.row.original.pool.chainId}
+        width={26}
+        height={26}
+      />
+    ),
+    meta: {
+      skeleton: <SkeletonCircle radius={26} />,
+    },
+  }
 
 export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
-  PositionWithPool,
+  SushiV2StakedUnstakedPosition,
   unknown
 > = {
   id: 'name',
@@ -294,7 +293,7 @@ export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
   },
 }
 
-export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
+export const APR_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> = {
   id: 'apr',
   header: 'APR',
   accessorFn: (row) => row.pool.totalApr1d,
@@ -312,33 +311,21 @@ export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   },
 }
 
-export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
+export const VALUE_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> = {
   id: 'value',
   header: 'Value',
   accessorFn: (row) =>
-    (Number(row.unstakedBalance) / Number(row.pool.totalSupply)) *
+    (Number(row.unstakedBalance) / Number(row.pool.liquidity)) *
     Number(row.pool.liquidityUSD),
   cell: (props) => (
     <span>
       {formatUSD(
         (Number(props.row.original.unstakedBalance) /
-          Number(props.row.original.pool.totalSupply)) *
+          Number(props.row.original.pool.liquidity)) *
           Number(props.row.original.pool.liquidityUSD),
       )}
     </span>
   ),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const VOLUME_COLUMN: ColumnDef<PositionWithPool, unknown> = {
-  id: 'volume',
-  header: 'Volume (24h)',
-  cell: (props) =>
-    formatUSD(props.row.original.pool.volume1d).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.pool.volume1d),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },

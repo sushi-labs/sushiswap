@@ -3,9 +3,10 @@ import { Slot } from '@sushiswap/ui/components/slot'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { useUserPositions } from 'src/lib/hooks'
-import { PositionWithPool } from 'src/types'
+import { useSushiV2UserPositions } from 'src/lib/hooks'
 
+import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
+import type { SushiSwapV2ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
@@ -18,11 +19,11 @@ const COLUMNS = [
   NAME_COLUMN_POSITION_WITH_POOL,
   VALUE_COLUMN,
   APR_COLUMN,
-] satisfies ColumnDef<PositionWithPool, unknown>[]
+] satisfies ColumnDef<SushiV2StakedUnstakedPosition, unknown>[]
 
 interface PositionsTableProps {
-  onRowClick?(row: PositionWithPool): void
-  rowLink?(row: PositionWithPool): string
+  onRowClick?(row: SushiV2StakedUnstakedPosition): void
+  rowLink?(row: SushiV2StakedUnstakedPosition): string
 }
 
 const tableState = { sorting: [{ id: 'value', desc: true }] }
@@ -38,9 +39,9 @@ export const PositionsTable: FC<PositionsTableProps> = ({
     pageSize: 10,
   })
 
-  const { data: positions, isValidating } = useUserPositions(
+  const { data: positions, isLoading } = useSushiV2UserPositions(
     {
-      id: address,
+      user: address!,
       chainIds: SUPPORTED_CHAIN_IDS,
     },
     !!address,
@@ -60,13 +61,13 @@ export const PositionsTable: FC<PositionsTableProps> = ({
         : true,
     )
     const chainFiltered = searchFiltered.filter((el) =>
-      chainIds.includes(el.chainId),
+      (chainIds as SushiSwapV2ChainId[]).includes(el.pool.chainId),
     )
     return chainFiltered
   }, [positions, tokenSymbols, chainIds])
 
   const rowRenderer = useCallback(
-    (row: Row<PositionWithPool>, rowNode: ReactNode) => {
+    (row: Row<SushiV2StakedUnstakedPosition>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -92,7 +93,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
         </CardTitle>
       </CardHeader>
       <DataTable
-        loading={isValidating}
+        loading={isLoading}
         rowRenderer={rowRenderer}
         linkFormatter={rowLink}
         columns={COLUMNS}
