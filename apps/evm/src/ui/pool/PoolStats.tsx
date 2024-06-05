@@ -12,7 +12,7 @@ import {
 import { SkeletonText } from '@sushiswap/ui/components/skeleton'
 import { FC } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 interface PoolStats {
@@ -22,7 +22,7 @@ interface PoolStats {
 export const PoolStats: FC<PoolStats> = ({ pool }) => {
   const { data, isLoading } = usePoolGraphData({
     poolAddress: pool.address,
-    chainId: pool.chainId as ChainId,
+    chainId: pool.chainId as SushiSwapV2ChainId,
   })
 
   return (

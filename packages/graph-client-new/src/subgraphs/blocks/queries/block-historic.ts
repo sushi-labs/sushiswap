@@ -38,7 +38,7 @@ export async function getBlockHistoric({
     chainId,
     first: 1,
     orderBy: 'timestamp',
-    orderDirection: 'desc',
+    orderDirection: 'asc',
     where: {
       timestamp_gte: String(target),
     },

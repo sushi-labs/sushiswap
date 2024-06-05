@@ -1,17 +1,15 @@
 'use client'
 
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
+import { getSushiHistoricPool } from '@sushiswap/graph-client-new/composite/sushi-historic-pool'
 import { useQuery } from '@tanstack/react-query'
-import { ChainId, chainShortName } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
 
 interface UsePoolGraphDataParams {
   poolAddress: string
-  chainId: ChainId
+  chainId: SushiSwapV2ChainId
   enabled?: boolean
 }
-
-const sdk = getBuiltGraphSDK()
 
 export const usePoolGraphData = ({
   poolAddress,
@@ -21,14 +19,15 @@ export const usePoolGraphData = ({
   return useQuery({
     queryKey: ['usePoolGraphData', { poolAddress, chainId }],
     queryFn: async () => {
-      const { pair } = await sdk.PairById({
-        id: `${chainShortName[chainId]}:${poolAddress}`,
+      const pair = await getSushiHistoricPool({
+        chainId,
+        id: poolAddress,
       })
 
       if (pair) {
         const token0 = new Token({
           chainId: pair.chainId,
-          address: pair.token0.id,
+          address: pair.token0.address,
           decimals: pair.token0.decimals,
           symbol: pair.token0.symbol,
           name: pair.token0.name,
@@ -36,7 +35,7 @@ export const usePoolGraphData = ({
 
         const token1 = new Token({
           chainId: pair.chainId,
-          address: pair.token1.id,
+          address: pair.token1.address,
           decimals: pair.token1.decimals,
           symbol: pair.token1.symbol,
           name: pair.token1.name,
@@ -48,17 +47,17 @@ export const usePoolGraphData = ({
           swapFee: Number(pair.swapFee),
           reserve0: Amount.fromRawAmount(token0, pair.reserve0),
           reserve1: Amount.fromRawAmount(token1, pair.reserve1),
-          liquidityNative: Number(pair.liquidityNative),
+          liquidityNative: 0,
           liquidityUSD: Number(pair.liquidityUSD),
-          liquidity1dChange: Number(pair.liquidity1dChange ?? 0),
-          fees1d: Number(pair.fees1d ?? 0),
-          fees1dChange: Number(pair.fees1dChange ?? 0),
-          volume1d: Number(pair.volume1d ?? 0),
-          volume1dChange: Number(pair.volume1dChange ?? 0),
-          txCount1d: Number(pair.txCount1d ?? 0),
-          txCount1dChange: Number(pair.txCount1dChange ?? 0),
-          hourSnapshots: pair.hourSnapshots,
-          daySnapshots: pair.daySnapshots,
+          liquidity1dChange: 0,
+          fees1d: Number(pair.feesUSD1d),
+          fees1dChange: Number(pair.feesUSD1dChange),
+          volume1d: Number(pair.volumeUSD1d),
+          volume1dChange: Number(pair.volumeUSD1dChange),
+          txCount1d: Number(pair.txCount1d),
+          txCount1dChange: Number(pair.txCount1dChange),
+          hourSnapshots: pair.poolHourData,
+          daySnapshots: pair.poolDayData,
         }
       }
 

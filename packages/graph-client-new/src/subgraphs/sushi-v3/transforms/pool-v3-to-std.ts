@@ -1,8 +1,16 @@
 import type { ResultOf } from 'gql.tada'
 import type { PoolFieldsFragment } from 'src/subgraphs/sushi-v3/fragments/pool-fields'
 import type { SushiSwapV3ChainId } from 'sushi/config'
-import { getIdFromChainIdAddress } from 'sushi/format'
-import { type Address, type PoolV3, SushiSwapProtocol } from 'sushi/types'
+import {
+  getIdFromChainIdAddress,
+  withoutScientificNotation,
+} from 'sushi/format'
+import {
+  type Address,
+  type PoolBase,
+  type PoolV3,
+  SushiSwapProtocol,
+} from 'sushi/types'
 
 type ToPick =
   | 'id'
@@ -26,7 +34,7 @@ type RequiredBase = Pick<ResultOf<typeof PoolFieldsFragment>, ToPick>
 export function transformPoolV3ToStd<T extends RequiredBase>(
   pool: T,
   chainId: SushiSwapV3ChainId,
-): PoolV3 {
+): PoolV3<PoolBase> {
   return {
     id: getIdFromChainIdAddress(chainId, pool.id as Address),
     address: pool.id as Address,
@@ -44,8 +52,12 @@ export function transformPoolV3ToStd<T extends RequiredBase>(
 
     protocol: SushiSwapProtocol.SUSHISWAP_V3,
 
-    reserve0: pool.reserve0,
-    reserve1: pool.reserve1,
+    reserve0: withoutScientificNotation(
+      (Number(pool.reserve0) * 10 ** Number(pool.token0.decimals)).toFixed(),
+    )!,
+    reserve1: withoutScientificNotation(
+      (Number(pool.reserve1) * 10 ** Number(pool.token1.decimals)).toFixed(),
+    )!,
     liquidity: pool.liquidity,
     liquidityUSD: Number(pool.liquidityUSD),
 

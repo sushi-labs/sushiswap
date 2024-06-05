@@ -2,11 +2,11 @@
 
 import { Card } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
-import { ChainId } from 'sushi/chain'
 
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
+import { SushiSwapV2ChainId } from 'sushi/config'
 
 const charts = [
   PoolChartType.Volume,
@@ -23,7 +23,7 @@ const periods = [
 
 interface PoolChartV2Props {
   address: string
-  chainId: ChainId
+  chainId: SushiSwapV2ChainId
 }
 
 const PoolChartV2: FC<PoolChartV2Props> = ({ address, chainId }) => {

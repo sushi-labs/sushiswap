@@ -13,19 +13,20 @@ import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
+
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
+import { SushiSwapV2ChainId } from 'sushi/config'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
   address: string
-  chainId: ChainId
+  chainId: SushiSwapV2ChainId
 }
 
 const tailwind = resolveConfig(tailwindConfig)

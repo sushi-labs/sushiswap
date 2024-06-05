@@ -15,6 +15,7 @@ import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
 import { PoolRewards } from './PoolRewards'
 import { PoolStats } from './PoolStats'
 import { UnknownTokenAlert } from './UnknownTokenAlert'
+import { SushiSwapV2ChainId } from 'sushi/config'
 
 interface PoolPageV2 {
   pool: Awaited<ReturnType<typeof getPool>>
@@ -48,7 +49,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool, tab }) => {
           <div>
             <PoolChartV2
               address={pool.address}
-              chainId={pool.chainId as ChainId}
+              chainId={pool.chainId as SushiSwapV2ChainId}
             />
           </div>
           <div className="flex flex-col gap-6">
