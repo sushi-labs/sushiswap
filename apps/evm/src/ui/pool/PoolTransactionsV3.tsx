@@ -1,7 +1,6 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import {
   Card,
   CardContent,
@@ -16,7 +15,6 @@ import React, { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 
-import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,
@@ -24,6 +22,13 @@ import {
   TX_ORIGIN_V3_COLUMN,
   TX_TIME_V3_COLUMN,
 } from './columns'
+import {
+  getSushiV3Burns,
+  getSushiV3Collects,
+  getSushiV3Mints,
+  getSushiV3Swaps,
+  getSushiV3Transactions,
+} from '@sushiswap/graph-client-new/sushi-v3'
 
 export enum TransactionTypeV3 {
   Mint = 'Mint',
@@ -44,11 +49,8 @@ const fetchAll = async (
   chainId: SushiSwapV3ChainId,
   opts: UseTransactionsV3Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
-  })
-
-  const { transactions } = await sdk.V3Transactions({
+  const transactions = await getSushiV3Transactions({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: {
@@ -75,6 +77,8 @@ const fetchAll = async (
         },
       ],
     },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return transactions
@@ -85,14 +89,13 @@ const fetchMints = async (
   chainId: SushiSwapV3ChainId,
   opts: UseTransactionsV3Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
-  })
-
-  const { mints } = await sdk.V3Mints({
+  const mints = await getSushiV3Mints({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: { pool: poolId.toLowerCase() },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return mints.map((mint) => ({
@@ -109,14 +112,13 @@ const fetchBurns = async (
   chainId: SushiSwapV3ChainId,
   opts: UseTransactionsV3Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
-  })
-
-  const { burns } = await sdk.V3Burns({
+  const burns = await getSushiV3Burns({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: { pool: poolId.toLowerCase() },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return burns.map((burn) => ({
@@ -133,14 +135,13 @@ const fetchSwaps = async (
   chainId: SushiSwapV3ChainId,
   opts: UseTransactionsV3Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
-  })
-
-  const { swaps } = await sdk.V3Swaps({
+  const swaps = await getSushiV3Swaps({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: { pool: poolId.toLowerCase() },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return swaps.map((swap) => ({
@@ -157,14 +158,13 @@ const fetchCollects = async (
   chainId: SushiSwapV3ChainId,
   opts: UseTransactionsV3Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_V3_SUBGRAPH_URL[chainId],
-  })
-
-  const { collects } = await sdk.V3Collects({
+  const collects = await getSushiV3Collects({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: { pool: poolId.toLowerCase() },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return collects.map((collect) => ({
