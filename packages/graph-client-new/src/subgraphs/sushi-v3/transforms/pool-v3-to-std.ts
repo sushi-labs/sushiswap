@@ -1,7 +1,10 @@
 import type { ResultOf } from 'gql.tada'
 import type { PoolFieldsFragment } from 'src/subgraphs/sushi-v3/fragments/pool-fields'
 import type { SushiSwapV3ChainId } from 'sushi/config'
-import { getIdFromChainIdAddress, withoutScientificNotation } from 'sushi/format'
+import {
+  getIdFromChainIdAddress,
+  withoutScientificNotation,
+} from 'sushi/format'
 import { type Address, type SushiPoolV3, SushiSwapProtocol } from 'sushi/types'
 
 type ToPick =
