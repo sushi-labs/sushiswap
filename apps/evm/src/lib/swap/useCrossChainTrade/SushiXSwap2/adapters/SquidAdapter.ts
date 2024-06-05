@@ -224,10 +224,7 @@ export const getSquidRouteRequest = ({
           (srcTrade as UseTradeReturn).minAmountOut as Amount<Currency>
         ).quotient.toString()
       : amount.quotient.toString(),
-    slippageConfig: {
-      slippage: Number(slippagePercentage),
-      autoMode: 1,
-    },
+    slippage: +slippagePercentage,
     prefer: [DexName.SUSHISWAP_V3, DexName.SUSHISWAP],
     quoteOnly: !fromAddress || !toAddress,
   }

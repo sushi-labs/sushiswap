@@ -13,7 +13,7 @@
     "test": "npx playwright test -c test/playwright.config.ts"
   },
   "dependencies": {
-    "@0xsquid/sdk": "^2.8.11",
+    "@0xsquid/sdk": "2.8.12",
     "@covalenthq/client-sdk": "0.9.4",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
@@ -79,7 +79,7 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@0xsquid/squid-types": "^0.1.59",
+    "@0xsquid/squid-types": "0.1.75",
     "@next/eslint-plugin-next": "14.2.3",
     "@playwright/test": "1.37.0",
     "@sushiswap/jest-config": "workspace:*",
