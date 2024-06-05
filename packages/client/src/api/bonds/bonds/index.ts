@@ -58,7 +58,7 @@ async function getQuoteToken({
   if (quotePool) {
     const priceUSD =
       Number(quotePool.liquidityUSD) /
-      (Number(quotePool.totalSupply) / 10 ** Number(bond.quoteToken.decimals))
+      (Number(quotePool.liquidity) / 10 ** Number(bond.quoteToken.decimals))
 
     return {
       ...base,
@@ -75,7 +75,7 @@ async function getQuoteToken({
           address: quotePool.token1.address as Address,
           chainId: bond.chainId,
         },
-        liquidity: Number(quotePool.totalSupply),
+        liquidity: quotePool.liquidity,
         liquidityUSD: Number(quotePool.liquidityUSD),
         protocol: quotePool.protocol,
       },

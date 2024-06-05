@@ -1,6 +1,5 @@
 'use client'
 
-import { Protocol } from '@sushiswap/client'
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui/components/badge'
 import { Currency } from '@sushiswap/ui/components/currency'
@@ -14,33 +13,34 @@ import {
 import { Row } from '@tanstack/react-table'
 import { FC } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
 import { formatNumber } from 'sushi/format'
 
+import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
-  MaybeNestedPool,
-  PoolBase,
-  PoolWithIncentives,
+  type MaybeNestedPool,
+  type PoolBase,
+  type PoolWithIncentives,
+  SushiSwapProtocol,
   unnestPool,
 } from 'sushi'
 
-export const ProtocolBadge: Record<Protocol, JSX.Element> = {
-  [Protocol.BENTOBOX_STABLE]: (
-    <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-      Trident Stable
-    </div>
-  ),
-  [Protocol.BENTOBOX_CLASSIC]: (
-    <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-      Trident Classic
-    </div>
-  ),
-  [Protocol.SUSHISWAP_V2]: (
+export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
+  // [Protocol.BENTOBOX_STABLE]: (
+  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+  //     Trident Stable
+  //   </div>
+  // ),
+  // [Protocol.BENTOBOX_CLASSIC]: (
+  //   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
+  //     Trident Classic
+  //   </div>
+  // ),
+  [SushiSwapProtocol.SUSHISWAP_V2]: (
     <div className="whitespace-nowrap bg-pink/20 text-pink text-[10px] px-2 rounded-full">
       V2
     </div>
   ),
-  [Protocol.SUSHISWAP_V3]: (
+  [SushiSwapProtocol.SUSHISWAP_V3]: (
     <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
       V3
     </div>
@@ -48,7 +48,7 @@ export const ProtocolBadge: Record<Protocol, JSX.Element> = {
 }
 
 export const PoolNameCell: FC<
-  Row<MaybeNestedPool<PoolWithIncentives<PoolBase>>>
+  Row<MaybeNestedPool<PoolHasSteerVaults<PoolWithIncentives<PoolBase>>>>
 > = ({ original }) => {
   const pool = unnestPool(original)
 

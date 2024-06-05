@@ -5,7 +5,7 @@ import {
   getIdFromChainIdAddress,
   withoutScientificNotation,
 } from 'sushi/format'
-import { type PoolV2, SushiSwapProtocol } from 'sushi/types'
+import { type PoolBase, type PoolV2, SushiSwapProtocol } from 'sushi/types'
 
 type ToPick =
   | 'id'
@@ -20,10 +20,10 @@ type ToPick =
 
 type RequiredBase = Pick<ResultOf<typeof PoolFieldsFragment>, ToPick>
 
-export function transformPoolV2ToStd<T extends RequiredBase>(
+export function transformPoolV2ToBase<T extends RequiredBase>(
   pool: T,
   chainId: SushiSwapV2ChainId,
-): PoolV2 {
+): PoolV2<PoolBase> {
   return {
     id: getIdFromChainIdAddress(chainId, pool.id),
     address: pool.id,
@@ -37,16 +37,22 @@ export function transformPoolV2ToStd<T extends RequiredBase>(
     // reserve0: BigInt(pool.reserve0),
     // reserve1: BigInt(pool.reserve1),
 
-    reserve0: withoutScientificNotation(
-      (Number(pool.reserve0) * 10 ** Number(pool.token0.decimals)).toFixed(),
-    )!,
-    reserve1: withoutScientificNotation(
-      (Number(pool.reserve1) * 10 ** Number(pool.token1.decimals)).toFixed(),
-    )!,
+    reserve0: BigInt(
+      withoutScientificNotation(
+        (Number(pool.reserve0) * 10 ** Number(pool.token0.decimals)).toFixed(),
+      )!,
+    ),
+    reserve1: BigInt(
+      withoutScientificNotation(
+        (Number(pool.reserve1) * 10 ** Number(pool.token1.decimals)).toFixed(),
+      )!,
+    ),
 
-    liquidity: withoutScientificNotation(
-      (Number(pool.totalSupply) * 10 ** 18).toFixed(),
-    )!,
+    liquidity: BigInt(
+      withoutScientificNotation(
+        (Number(pool.totalSupply) * 10 ** 18).toFixed(),
+      )!,
+    ),
     liquidityUSD: Number(pool.liquidityUSD),
 
     volumeUSD: Number(pool.volumeUSD),
@@ -69,6 +75,6 @@ export function transformPoolV2ToStd<T extends RequiredBase>(
       symbol: pool.token1.symbol,
     },
 
-    txCount: pool.txCount.toString(),
+    txCount: Number(pool.txCount),
   }
 }

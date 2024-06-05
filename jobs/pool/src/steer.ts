@@ -7,7 +7,12 @@ import {
   getVaultAprs,
   getVerifiedVaults,
 } from '@sushiswap/steer-sdk'
-import { chainName, getIdFromChainIdAddress, isPromiseFulfilled } from 'sushi'
+import {
+  ID,
+  chainName,
+  getIdFromChainIdAddress,
+  isPromiseFulfilled,
+} from 'sushi'
 import { TickMath } from 'sushi/pool'
 
 import { Address, getAddress } from 'viem'
@@ -104,7 +109,7 @@ async function extractChain(chainId: SteerChainId) {
   while (poolIds.length > 0) {
     const poolIdsChunk = poolIds.splice(0, 100)
     const poolsChunk = await getPools({
-      ids: poolIdsChunk,
+      ids: poolIdsChunk as ID[],
       chainIds: [chainId],
     })
     pools.push(...poolsChunk)

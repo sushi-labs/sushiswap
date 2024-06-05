@@ -38,7 +38,7 @@ interface UseMasterChefParams {
   chainId: ChainId
   chef: ChefType
   pid: number
-  token: Token
+  token: Token | undefined
   enabled?: boolean
   watch?: boolean
 }
@@ -218,10 +218,9 @@ export const useMasterChef: UseMasterChef = ({
     const _balance = data?.[1] ? (data?.[1] as [bigint, bigint])[0] : undefined
 
     const _pendingSushi = data?.[2] ? data?.[2] : undefined
-    const balance = Amount.fromRawAmount(
-      token,
-      _balance ? _balance.toString() : 0,
-    )
+    const balance = token
+      ? Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
+      : undefined
     const pendingSushi = SUSHI[chainId as keyof typeof SUSHI]
       ? Amount.fromRawAmount(
           SUSHI[chainId as keyof typeof SUSHI],

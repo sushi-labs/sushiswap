@@ -59,7 +59,9 @@ export const RewardsSection: FC = () => {
   const positions = useMemo(() => {
     const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
     return (data ?? [])
-      .filter((el) => chainIds.includes(el.chainId))
+      .filter((el) =>
+        chainIds.includes(el.chainId as (typeof chainIds)[number]),
+      )
       .flatMap((el) => {
         return Object.values(el.pools ?? {})
           .filter(

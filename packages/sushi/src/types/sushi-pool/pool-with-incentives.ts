@@ -1,3 +1,4 @@
+import type { ChainId } from 'sushi/chain'
 import type {
   Address,
   PoolId,
@@ -20,7 +21,8 @@ export enum ChefType {
 
 export type Incentive = {
   id: string
-  chainId: number
+  chainId: ChainId
+  apr: number
   rewarderAddress: Address
   rewardPerDay: number
   rewardToken: Token

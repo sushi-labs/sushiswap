@@ -3,48 +3,29 @@ import request from 'graphql-request'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
-import { addChainId } from 'src/lib/modifiers/add-chain-id'
-import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
-import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
-import type { Hex } from 'src/lib/types/hex'
+import { PoolFieldsFragment } from 'src/subgraphs/sushi-v3/fragments/pool-fields'
+import { transformPoolV3ToBase } from 'src/subgraphs/sushi-v3/transforms/pool-v3-to-base'
+import type { PoolBase, PoolV3 } from 'sushi/types'
 import { graphql } from '../graphql'
 
-export const SushiV3PoolsByTokenPairQuery = graphql(`
+export const SushiV3PoolsByTokenPairQuery = graphql(
+  `
   query PoolsByTokenPair($where: Pool_filter!) {
     pools(first: 1000, where: $where) {
-      id
-      feeTier
-      liquidity
-      sqrtPrice
-      feeGrowthGlobal0X128
-      feeGrowthGlobal1X128
-      token0Price
-      token1Price
-      tick
-      observationIndex
-      volumeToken0
-      volumeToken1
-      volumeUSD
-      untrackedVolumeUSD
-      feesUSD
-      collectedFeesToken0
-      collectedFeesToken1
-      collectedFeesUSD
-      totalValueLockedToken0
-      totalValueLockedToken1
-      totalValueLockedETH
-      totalValueLockedUSD
-      totalValueLockedUSDUntracked
-      liquidityProviderCount
+      ...PoolFields
     }
   }
-`)
+`,
+  [PoolFieldsFragment],
+)
 
 export type GetSushiV3PoolsByTokenPair = {
   token0: `0x${string}`
   token1: `0x${string}`
 } & ChainIdVariable<SushiSwapV3ChainId>
+
+export type SushiV3PoolsByTokenPair = PoolV3<PoolBase>
 
 export async function getSushiV3PoolsByTokenPair({
   chainId,
@@ -70,13 +51,5 @@ export async function getSushiV3PoolsByTokenPair({
     variables,
   })
 
-  return result.pools.map((pool) =>
-    convertIdToMultichainId(
-      copyIdToAddress(addChainId(chainId, pool as typeof pool & { id: Hex })),
-    ),
-  )
+  return result.pools.map((pool) => transformPoolV3ToBase(pool, chainId))
 }
-
-export type SushiV3PoolsByTokenPair = Awaited<
-  ReturnType<typeof getSushiV3PoolsByTokenPair>
->

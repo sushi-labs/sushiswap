@@ -12,6 +12,7 @@ import {
   isSushiSwapV2ChainId,
 } from 'sushi/config'
 import type {
+  PoolBase,
   PoolV2,
   SushiPositionStaked,
   SushiPositionWithPool,
@@ -26,7 +27,7 @@ export type GetSushiV2StakedUnstakedPositions = {
 >
 
 export type SushiV2StakedUnstakedPosition = SushiPositionStaked<
-  SushiPositionWithPool<PoolV2>
+  SushiPositionWithPool<PoolV2<PoolBase>>
 >
 
 /**

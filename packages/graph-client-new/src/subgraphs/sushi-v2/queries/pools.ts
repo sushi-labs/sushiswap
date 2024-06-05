@@ -3,14 +3,11 @@ import type { SushiSwapV2ChainId } from 'sushi/config'
 import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import { FetchError } from 'src/lib/fetch-error'
-import { addChainId } from 'src/lib/modifiers/add-chain-id'
-import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
-import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
+import { transformPoolV2ToBase } from 'src/subgraphs/sushi-v2/transforms/pool-v2-to-base'
 import { PoolFieldsFragment } from '../fragments/pool-fields'
 import { graphql } from '../graphql'
-import { getIdFromChainIdAddress } from 'sushi'
 
 export const SushiV2PoolsQuery = graphql(
   `
@@ -40,26 +37,7 @@ export async function getSushiV2Pools({
   })
 
   if (result) {
-    return result.pools.map((pool) => ({
-      ...convertIdToMultichainId(copyIdToAddress(addChainId(chainId, pool))),
-      name: `${pool.token0.symbol}-${pool.token1.symbol}`,
-      token0: {
-        id: getIdFromChainIdAddress(chainId, pool.token0.id),
-        address: pool.token0.id,
-        chainId,
-        decimals: Number(pool.token0.decimals),
-        name: pool.token0.name,
-        symbol: pool.token0.symbol,
-      },
-      token1: {
-        id: getIdFromChainIdAddress(chainId, pool.token1.id),
-        address: pool.token1.id,
-        chainId,
-        decimals: Number(pool.token1.decimals),
-        name: pool.token1.name,
-        symbol: pool.token1.symbol,
-      },
-    }))
+    return result.pools.map((pool) => transformPoolV2ToBase(pool, chainId))
   }
 
   throw new FetchError(chainId, 'Failed to fetch pools')

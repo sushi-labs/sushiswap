@@ -1,7 +1,7 @@
 'use client'
 
-import type { SteerVault } from '@sushiswap/client'
 import { useSteerVault } from '@sushiswap/client/hooks'
+import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   FC,
   ReactNode,
@@ -132,10 +132,7 @@ export function useSteerPositionAddDerivedInfo({
   const [currencyA, currencyB] = useMemo(() => {
     if (!vault) return []
 
-    return [
-      new Token({ chainId: vault.pool.chainId, ...vault.pool.token0 }),
-      new Token({ chainId: vault.pool.chainId, ...vault.pool.token1 }),
-    ]
+    return [new Token(vault.token0), new Token(vault.token1)]
   }, [vault])
 
   // currencies

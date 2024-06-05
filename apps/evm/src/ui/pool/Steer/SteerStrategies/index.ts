@@ -1,7 +1,8 @@
-import { SteerVault } from '@sushiswap/client'
-import { SteerStrategy } from '@sushiswap/client'
+import { SteerStrategy } from '@sushiswap/database'
 import { FC } from 'react'
 
+import { SteerVault, SteerVaultWithPool } from '@sushiswap/steer-sdk'
+import type { PoolBase, PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { SteerBaseStrategy } from './SteerBaseStrategy'
 
 export interface SteerStrategyGeneric {
@@ -25,7 +26,10 @@ export interface SteerStrategyGeneric {
 }
 
 export type SteerStrategyComponent = FC<{
-  vault: SteerVault
+  vault: SteerVaultWithPool<
+    SteerVault,
+    PoolWithIncentives<PoolWithFeeAprs<PoolBase>>
+  >
   generic: SteerStrategyGeneric
 }>
 

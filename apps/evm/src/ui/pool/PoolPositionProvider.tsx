@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
   useGraphPool,
@@ -10,6 +9,7 @@ import {
 import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
+import type { PoolId } from 'sushi/types'
 import { useAccount } from 'wagmi'
 
 interface PoolPositionContext {
@@ -25,7 +25,7 @@ interface PoolPositionContext {
 const Context = createContext<PoolPositionContext | undefined>(undefined)
 
 export const PoolPositionProvider: FC<{
-  pool: Pool
+  pool: PoolId
   children: ReactNode
   watch?: boolean
 }> = ({ pool, children }) => {

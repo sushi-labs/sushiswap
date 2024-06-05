@@ -1,7 +1,7 @@
-import type { Address, PoolBase } from 'sushi/types'
+import type { Address, PoolId } from 'sushi/types'
 
 export type SushiPositionBase = {
   user: Address
   unstakedBalance: bigint
-  pool: Pick<PoolBase, 'id' | 'address' | 'chainId' | 'protocol'>
+  pool: PoolId
 }

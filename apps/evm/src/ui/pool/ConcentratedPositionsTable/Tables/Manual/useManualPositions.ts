@@ -43,7 +43,9 @@ export const useManualPositions = ({
     data: useMemo(() => {
       const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
       return (manualPositions || [])
-        ?.filter((el) => chainIds.includes(el.chainId))
+        ?.filter((el) =>
+          chainIds.includes(el.chainId as (typeof chainIds)[number]),
+        )
         .filter((el) =>
           _tokenSymbols.length > 0
             ? _tokenSymbols.some((symbol) => {

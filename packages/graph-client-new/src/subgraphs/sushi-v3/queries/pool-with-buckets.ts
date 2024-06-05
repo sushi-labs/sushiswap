@@ -2,13 +2,13 @@ import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
-import type { PoolV3, PoolWithBuckets } from 'sushi/types'
+import type { PoolBase, PoolV3, PoolWithBuckets } from 'sushi/types'
 
 import { FetchError } from 'src/lib/fetch-error'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { PoolFieldsFragment } from 'src/subgraphs/sushi-v3/fragments/pool-fields'
 import { transformBucketsV3ToStd } from 'src/subgraphs/sushi-v3/transforms/bucket-v3-to-std'
-import { transformPoolV3ToStd } from 'src/subgraphs/sushi-v3/transforms/pool-v3-to-std'
+import { transformPoolV3ToBase } from 'src/subgraphs/sushi-v3/transforms/pool-v3-to-base'
 import { graphql } from '../graphql'
 
 export const SushiV3PoolBucketsQuery = graphql(
@@ -45,7 +45,7 @@ export type GetSushiV3PoolBuckets = VariablesOf<
 > &
   ChainIdVariable<SushiSwapV3ChainId>
 
-export type SushiV3PoolBuckets = PoolWithBuckets<PoolV3>
+export type SushiV3PoolBuckets = PoolWithBuckets<PoolV3<PoolBase>>
 
 export async function getSushiV3PoolBuckets({
   chainId,
@@ -57,7 +57,7 @@ export async function getSushiV3PoolBuckets({
 
   if (result.pool) {
     return {
-      ...transformPoolV3ToStd(result.pool, chainId),
+      ...transformPoolV3ToBase(result.pool, chainId),
       poolHourData: transformBucketsV3ToStd(result.pool.poolHourData),
       poolDayData: transformBucketsV3ToStd(result.pool.poolDayData),
     }

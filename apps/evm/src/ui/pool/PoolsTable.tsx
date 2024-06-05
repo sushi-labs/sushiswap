@@ -11,7 +11,7 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import { GetPoolsArgs, Pool, Protocol } from '@sushiswap/client'
+import { GetPoolsArgs } from '@sushiswap/client'
 import {
   Button,
   Card,
@@ -42,7 +42,14 @@ import { Native } from 'sushi/currency'
 import { useSWRConfig } from 'swr'
 
 import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
+import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { isAngleEnabledChainId } from 'sushi/config'
+import {
+  PoolBase,
+  PoolHistory,
+  PoolIfIncentivized,
+  unnestPool,
+} from 'sushi/types'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
   APR_COLUMN,
@@ -51,17 +58,21 @@ import {
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_1M_COLUMN,
-  VOLUME_7D_COLUMN,
+  VOLUME_1W_COLUMN,
 } from './columns'
+
+type RequiredPool = PoolHasSteerVaults<
+  PoolIfIncentivized<PoolHistory<PoolBase>>
+>
 
 const COLUMNS = [
   NAME_COLUMN_POOL,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
-  VOLUME_7D_COLUMN,
+  VOLUME_1W_COLUMN,
   VOLUME_1M_COLUMN,
-  FEES_COLUMN,
   APR_COLUMN,
+  FEES_COLUMN,
   {
     id: 'actions',
     cell: ({ row }) =>
@@ -197,16 +208,6 @@ const COLUMNS = [
           <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuLabel>
               {row.original.token0.symbol} / {row.original.token1.symbol}
-              {row.original.protocol === Protocol.BENTOBOX_STABLE && (
-                <Chip variant="green" className="ml-2">
-                  Trident Stable
-                </Chip>
-              )}
-              {row.original.protocol === Protocol.BENTOBOX_CLASSIC && (
-                <Chip variant="green" className="ml-2">
-                  Trident Classic
-                </Chip>
-              )}
               {row.original.protocol === 'SUSHISWAP_V2' && (
                 <Chip variant="pink" className="ml-2">
                   SushiSwap V2
@@ -287,11 +288,11 @@ const COLUMNS = [
       disableLink: true,
       skeleton: <SkeletonText fontSize="lg" />,
     },
-  },
-] satisfies ColumnDef<Pool, unknown>[]
+  } satisfies ColumnDef<RequiredPool, unknown>,
+] as ColumnDef<RequiredPool, unknown>[]
 
 interface PositionsTableProps {
-  onRowClick?(row: Pool): void
+  onRowClick?(row: RequiredPool): void
 }
 
 export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
@@ -325,6 +326,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
     shouldFetch: true,
     swrConfig: useSWRConfig(),
   })
+
   const data = useMemo(() => pools?.flat() || [], [pools])
 
   const state: Partial<TableState> = useMemo(() => {
@@ -338,7 +340,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
   }, [data?.length, sorting])
 
   const rowRenderer = useCallback(
-    (row: Row<Pool>, rowNode: ReactNode) => {
+    (row: Row<RequiredPool>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -379,7 +381,9 @@ export const PoolsTable: FC<PositionsTableProps> = ({ onRowClick }) => {
           state={state}
           onSortingChange={setSorting}
           loading={!pools && isValidating}
-          linkFormatter={(row) => `/pool/${row.chainId}%3A${row.address}`}
+          linkFormatter={(row) =>
+            `/pool/${unnestPool(row).chainId}%3A${unnestPool(row).address}`
+          }
           rowRenderer={rowRenderer}
           columns={COLUMNS}
           data={data}

@@ -1,8 +1,8 @@
-import type { PoolBase } from 'sushi/types'
+import type { PoolId } from 'sushi/types'
 import { SushiPositionBase } from './sushi-position-base'
 
 export type SushiPositionWithPool<
-  Pool extends PoolBase = PoolBase,
+  Pool extends PoolId = PoolId,
   Position extends SushiPositionBase = SushiPositionBase,
 > = Omit<Position, 'pool'> & {
   pool: Pool

@@ -530,12 +530,12 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                     size="sm"
                     onClick={() => setInvertPrice((prev) => !prev)}
                   >
-                    1 {invertPrice ? _token1.symbol : _token0.symbol} ={' '}
+                    1 {invertPrice ? _token1!.symbol : _token0!.symbol} ={' '}
                     {invertPrice
                       ? `${v2SpotPrice?.invert()?.toSignificant(6)} ${
-                          _token0.symbol
+                          _token0!.symbol
                         }`
-                      : `${v2SpotPrice?.toSignificant(6)} ${_token1.symbol}`}
+                      : `${v2SpotPrice?.toSignificant(6)} ${_token1!.symbol}`}
                   </Button>
                 </div>
               ) : (
@@ -553,12 +553,12 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                       size="sm"
                       onClick={() => setInvertPrice((prev) => !prev)}
                     >
-                      1 {invertPrice ? _token1.symbol : _token0.symbol} ={' '}
+                      1 {invertPrice ? _token1!.symbol : _token0!.symbol} ={' '}
                       {invertPrice
                         ? `${v3SpotPrice?.invert()?.toSignificant(6)} ${
-                            _token0.symbol
+                            _token0!.symbol
                           }`
-                        : `${v3SpotPrice?.toSignificant(6)} ${_token1.symbol}`}
+                        : `${v3SpotPrice?.toSignificant(6)} ${_token1!.symbol}`}
                     </Button>
                   </div>
                 ) : (

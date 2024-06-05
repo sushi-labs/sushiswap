@@ -1,5 +1,3 @@
-'use client'
-
 import {
   CardDescription,
   Currency,
@@ -12,7 +10,6 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
-import { ChainId } from 'sushi/chain'
 import { tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 
@@ -85,7 +82,7 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
                 ? pool.incentives.map((el, i) => {
                     const amount = tryParseAmount(
                       el.rewardPerDay.toString(),
-                      incentiveRewardToToken(el.chainId as ChainId, el),
+                      incentiveRewardToToken(el.chainId, el),
                     )
                     if (!amount) return null
 

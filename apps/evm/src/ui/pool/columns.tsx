@@ -1,4 +1,3 @@
-import { Pool } from '@sushiswap/client'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   FormattedNumber,
@@ -21,10 +20,14 @@ import {
 } from 'sushi/format'
 
 import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
+import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
   PoolBase,
+  PoolHistory1D,
+  PoolHistory1M,
+  PoolHistory1W,
   PoolWithAprs,
   PoolWithIncentives,
 } from 'sushi'
@@ -138,7 +141,7 @@ export const NETWORK_COLUMN_POOL: ColumnDef<PoolBase, unknown> = {
 }
 
 export const NAME_COLUMN_POOL: ColumnDef<
-  MaybeNestedPool<PoolWithIncentives<PoolBase>>,
+  MaybeNestedPool<PoolHasSteerVaults<PoolWithIncentives<PoolBase>>>,
   unknown
 > = {
   id: 'name',
@@ -175,74 +178,59 @@ export const TVL_COLUMN: ColumnDef<PoolBase, unknown> = {
   },
 }
 
-export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1h',
-  header: 'Volume (1h)',
-  accessorFn: (row) => row.volume1h,
-  sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1h) - Number(rowB.volume1h),
-  cell: (props) =>
-    formatUSD(props.row.original.volume1h).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.volume1h),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1d',
+export const VOLUME_1D_COLUMN: ColumnDef<PoolHistory1D, unknown> = {
+  id: 'volumeUSD1d',
   header: 'Volume (24h)',
-  accessorFn: (row) => row.volume1d,
+  accessorFn: (row) => row.volumeUSD1d,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1d) - Number(rowB.volume1d),
+    Number(rowA.volumeUSD1d) - Number(rowB.volumeUSD1d),
   cell: (props) =>
-    formatUSD(props.row.original.volume1d).includes('NaN')
+    formatUSD(props.row.original.volumeUSD1d).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.volume1d),
+      : formatUSD(props.row.original.volumeUSD1d),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1w',
+export const VOLUME_1W_COLUMN: ColumnDef<PoolHistory1W, unknown> = {
+  id: 'volumeUSD1w',
   header: 'Volume (1w)',
-  accessorFn: (row) => row.volume1w,
+  accessorFn: (row) => row.volumeUSD1w,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1w) - Number(rowB.volume1w),
+    Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
   cell: (props) =>
-    formatUSD(props.row.original.volume1w).includes('NaN')
+    formatUSD(props.row.original.volumeUSD1w).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.volume1w),
+      : formatUSD(props.row.original.volumeUSD1w),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1m',
+export const VOLUME_1M_COLUMN: ColumnDef<PoolHistory1M, unknown> = {
+  id: 'volumeUSD1m',
   header: 'Volume (1m)',
-  accessorFn: (row) => row.volume1m,
+  accessorFn: (row) => row.volumeUSD1m,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1m) - Number(rowB.volume1m),
+    Number(rowA.volumeUSD1m) - Number(rowB.volumeUSD1m),
   cell: (props) =>
-    formatUSD(props.row.original.volume1m).includes('NaN')
+    formatUSD(props.row.original.volumeUSD1m).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.volume1m),
+      : formatUSD(props.row.original.volumeUSD1m),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const FEES_COLUMN: ColumnDef<Pool, unknown> = {
+export const FEES_COLUMN: ColumnDef<PoolHistory1D, unknown> = {
   id: 'fees1d',
   header: 'Fees (24h)',
-  accessorFn: (row) => row.fees1d,
+  accessorFn: (row) => row.feesUSD1d,
   cell: (props) =>
-    formatUSD(props.row.original.fees1d).includes('NaN')
+    formatUSD(props.row.original.feesUSD1d).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.fees1d),
+      : formatUSD(props.row.original.feesUSD1d),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -437,8 +425,8 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
             <FormattedNumber
               number={Math.abs(
                 row.original.amount0Out !== '0'
-                  ? row.original.amount0Out
-                  : row.original.amount1Out,
+                  ? Number(row.original.amount0Out)
+                  : Number(row.original.amount1Out),
               ).toPrecision(2)}
             />{' '}
             {row.original.amount0Out !== '0'

@@ -1,18 +1,18 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { SushiV2Pool } from '@sushiswap/graph-client-new/sushi-v2'
 import { useMemo } from 'react'
 import { Amount } from 'sushi/currency'
 import useSWR from 'swr'
 
-import { useTokensFromPool } from '../useTokensFromPool'
+import type { PoolId } from 'sushi'
+import { getTokensFromPool } from '../useTokensFromPool'
 
 export function getGraphPoolUrl(poolId: string) {
   return `/pools/api/graphPool/${poolId}`
 }
 
-export const useGraphPool = (pool: Pool) => {
+export const useGraphPool = (pool: PoolId) => {
   const {
     data: graphPool,
     isLoading,
@@ -22,7 +22,16 @@ export const useGraphPool = (pool: Pool) => {
     fetch(url).then((data) => data.json()),
   )
 
-  const { token0, token1, liquidityToken } = useTokensFromPool(pool)
+  const { token0, token1, liquidityToken } = useMemo(() => {
+    if (!graphPool)
+      return {
+        token0: undefined,
+        token1: undefined,
+        liquidityToken: undefined,
+      }
+
+    return getTokensFromPool(graphPool)
+  }, [graphPool])
 
   return useMemo(() => {
     return {

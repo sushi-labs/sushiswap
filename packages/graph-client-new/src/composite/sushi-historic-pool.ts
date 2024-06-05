@@ -10,7 +10,13 @@ import {
 } from 'src/subgraphs/sushi-v3/queries/pool'
 import { getSushiV3PoolBuckets } from 'src/subgraphs/sushi-v3/queries/pool-with-buckets'
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
-import type { PoolHistory, PoolV2, PoolV3, PoolWithBuckets } from 'sushi/types'
+import type {
+  PoolBase,
+  PoolHistory1D,
+  PoolV2,
+  PoolV3,
+  PoolWithBuckets,
+} from 'sushi/types'
 import { isPromiseFulfilled } from 'sushi/validate'
 
 export type GetSushiHistoricPool = Omit<
@@ -18,7 +24,9 @@ export type GetSushiHistoricPool = Omit<
   'block'
 >
 
-type Result = PoolHistory<PoolWithBuckets<PoolV2 | PoolV3>>
+type Result = PoolHistory1D<
+  PoolWithBuckets<PoolV2<PoolBase> | PoolV3<PoolBase>>
+>
 
 async function fetchSushiV2Pool({
   chainId,
@@ -28,7 +36,7 @@ async function fetchSushiV2Pool({
     throw new Error(`ChainId ${chainId} is not a SushiSwap V2 chain`)
   }
 
-  return await getSushiV2Pool({ chainId, ...variables })
+  return getSushiV2Pool({ chainId, ...variables })
 }
 
 async function fetchSushiV3Pool({
@@ -139,8 +147,8 @@ export async function getSushiHistoricPool({
 }
 
 const calculateValueChange = (
-  current: string | number | undefined,
-  previous: string | number | undefined,
+  current: string | number | bigint | undefined,
+  previous: string | number | bigint | undefined,
 ) => {
   const _current = Number(current)
   const _previous = Number(previous)
@@ -149,9 +157,9 @@ const calculateValueChange = (
 }
 
 const calculatePercentageChange = (
-  current: string | number | undefined,
-  previous: string | number | undefined,
-  previous2: string | number | undefined,
+  current: string | number | bigint | undefined,
+  previous: string | number | bigint | undefined,
+  previous2: string | number | bigint | undefined,
 ) => {
   const _current = Number(current)
   const _previous = Number(previous)

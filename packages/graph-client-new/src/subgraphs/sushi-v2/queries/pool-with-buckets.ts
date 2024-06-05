@@ -7,8 +7,8 @@ import { FetchError } from 'src/lib/fetch-error'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
 import { transformBucketsV2ToStd } from 'src/subgraphs/sushi-v2/transforms/bucket-v2-to-std'
-import { transformPoolV2ToStd } from 'src/subgraphs/sushi-v2/transforms/pool-v2-to-std'
-import type { PoolV2, PoolWithBuckets } from 'sushi/types'
+import { transformPoolV2ToBase } from 'src/subgraphs/sushi-v2/transforms/pool-v2-to-base'
+import type { PoolBase, PoolV2, PoolWithBuckets } from 'sushi/types'
 import { PoolFieldsFragment } from '../fragments/pool-fields'
 import { graphql } from '../graphql'
 
@@ -45,7 +45,7 @@ export type GetSushiV2PoolBuckets = Omit<
 > &
   ChainIdVariable<SushiSwapV2ChainId>
 
-export type SushiV2PoolBuckets = PoolWithBuckets<PoolV2>
+export type SushiV2PoolBuckets = PoolWithBuckets<PoolV2<PoolBase>>
 
 export async function getSushiV2PoolBuckets({
   chainId,
@@ -67,7 +67,7 @@ export async function getSushiV2PoolBuckets({
 
   if (result.pool) {
     return {
-      ...transformPoolV2ToStd(result.pool, chainId),
+      ...transformPoolV2ToBase(result.pool, chainId),
       poolHourData: transformBucketsV2ToStd(result.pool.poolHourData),
       poolDayData: transformBucketsV2ToStd(result.poolDayData),
     }

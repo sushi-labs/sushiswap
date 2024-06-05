@@ -31,7 +31,7 @@ type ToPick =
 
 type RequiredBase = Pick<ResultOf<typeof PoolFieldsFragment>, ToPick>
 
-export function transformPoolV3ToStd<T extends RequiredBase>(
+export function transformPoolV3ToBase<T extends RequiredBase>(
   pool: T,
   chainId: SushiSwapV3ChainId,
 ): PoolV3<PoolBase> {
@@ -52,13 +52,17 @@ export function transformPoolV3ToStd<T extends RequiredBase>(
 
     protocol: SushiSwapProtocol.SUSHISWAP_V3,
 
-    reserve0: withoutScientificNotation(
-      (Number(pool.reserve0) * 10 ** Number(pool.token0.decimals)).toFixed(),
-    )!,
-    reserve1: withoutScientificNotation(
-      (Number(pool.reserve1) * 10 ** Number(pool.token1.decimals)).toFixed(),
-    )!,
-    liquidity: pool.liquidity,
+    reserve0: BigInt(
+      withoutScientificNotation(
+        (Number(pool.reserve0) * 10 ** Number(pool.token0.decimals)).toFixed(),
+      )!,
+    ),
+    reserve1: BigInt(
+      withoutScientificNotation(
+        (Number(pool.reserve1) * 10 ** Number(pool.token1.decimals)).toFixed(),
+      )!,
+    ),
+    liquidity: BigInt(pool.liquidity),
     liquidityUSD: Number(pool.liquidityUSD),
 
     volumeUSD: Number(pool.volumeUSD),
@@ -81,6 +85,6 @@ export function transformPoolV3ToStd<T extends RequiredBase>(
       symbol: pool.token1.symbol,
     },
 
-    txCount: pool.txCount,
+    txCount: Number(pool.txCount),
   }
 }

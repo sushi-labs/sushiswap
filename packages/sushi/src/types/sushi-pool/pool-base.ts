@@ -9,9 +9,9 @@ export type PoolBase<T extends PoolId = PoolId> = T & {
   swapFee: number
   // twapEnabled: boolean
 
-  reserve0: string
-  reserve1: string
-  liquidity: string
+  reserve0: bigint
+  reserve1: bigint
+  liquidity: bigint
 
   liquidityUSD: number
 
@@ -22,5 +22,5 @@ export type PoolBase<T extends PoolId = PoolId> = T & {
   // token0Price: bigint
   // token1Price: bigint
 
-  txCount: string
+  txCount: number
 }

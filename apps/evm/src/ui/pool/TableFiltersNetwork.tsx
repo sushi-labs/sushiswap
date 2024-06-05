@@ -17,7 +17,7 @@ import {
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { Chain, ChainId } from 'sushi/chain'
+import { Chain } from 'sushi/chain'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
@@ -34,7 +34,7 @@ export const TableFiltersNetwork: FC = () => {
   const values = pending ? localValue : isAllThenNone(chainIds)
 
   const onClick = useCallback(
-    (chainId: ChainId) => {
+    (chainId: (typeof chainIds)[number]) => {
       let _newValues: number[]
       if (localValue.includes(chainId)) {
         _newValues = localValue.filter((el) => el !== chainId)
@@ -46,7 +46,7 @@ export const TableFiltersNetwork: FC = () => {
       startTransition(() => {
         setFilters((prev) => {
           if (prev.chainIds?.includes(chainId)) {
-            const chains = prev.chainIds.filter((el) => el !== chainId)
+            const chains = prev.chainIds!.filter((el) => el !== chainId)
             return { ...prev, chainIds: chains }
           } else {
             return { ...prev, chainIds: [...(prev.chainIds ?? []), chainId] }
@@ -102,7 +102,9 @@ export const TableFiltersNetwork: FC = () => {
               <CommandItem
                 key={chainId}
                 value={`${chainId}`}
-                onSelect={(currentValue) => onClick(+currentValue as ChainId)}
+                onSelect={(currentValue) =>
+                  onClick(+currentValue as (typeof chainIds)[number])
+                }
                 className="py-2 pl-8 pr-2"
               >
                 {values.includes(chainId) ? (
