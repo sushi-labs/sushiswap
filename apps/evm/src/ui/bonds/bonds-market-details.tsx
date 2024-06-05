@@ -83,7 +83,7 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
             }
           >
             {typeof payoutTokenPriceUSD === 'number' ? (
-              formatUSD(payoutTokenPriceUSD)
+              formatUSD(payoutTokenPriceUSD, '$0.000a')
             ) : (
               <SkeletonText fontSize="sm" />
             )}
@@ -97,7 +97,7 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
             }
           >
             {typeof discountedPrice === 'number' ? (
-              formatUSD(discountedPrice)
+              formatUSD(discountedPrice, '$0.000a')
             ) : (
               <SkeletonText fontSize="sm" />
             )}

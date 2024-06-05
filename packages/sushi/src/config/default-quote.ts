@@ -9,6 +9,7 @@ import {
   Token,
   USDB,
   USDC,
+  USDT,
   WETH9,
   axlUSDC,
 } from '../currency/index.js'
@@ -87,4 +88,5 @@ export const defaultQuoteCurrency = {
   [ChainId.CRONOS]: WETH9[ChainId.CRONOS],
   [ChainId.BLAST]: USDB[ChainId.BLAST],
   [ChainId.SKALE_EUROPA]: USDC[ChainId.SKALE_EUROPA],
+  [ChainId.ROOTSTOCK]: USDT[ChainId.ROOTSTOCK],
 } as const

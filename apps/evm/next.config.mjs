@@ -21,6 +21,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/',
+        permanent: true,
+        destination: '/swap',
+      },
+      {
         source: '/discord{/}?',
         permanent: true,
         destination: 'https://discord.gg/SDPH8SNVZW',

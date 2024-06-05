@@ -366,6 +366,12 @@ export const DEFAULT_BASES = {
     USDC[ChainId.SKALE_EUROPA],
     WETH9[ChainId.SKALE_EUROPA],
   ],
+  [ChainId.ROOTSTOCK]: [
+    Native.onChain(ChainId.ROOTSTOCK),
+    WNATIVE[ChainId.ROOTSTOCK],
+    WETH9[ChainId.ROOTSTOCK],
+    USDT[ChainId.ROOTSTOCK],
+  ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const satisfies Record<ChainId, Readonly<(Token | Native)[]>>
 

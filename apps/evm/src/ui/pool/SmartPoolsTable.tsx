@@ -214,8 +214,6 @@ const COLUMNS = [
     id: 'liquidityUSD',
     header: 'TVL',
     accessorFn: (row) => row.reserveUSD,
-    sortingFn: ({ original: rowA }, { original: rowB }) =>
-      Number(rowA.pool.liquidityUSD) - Number(rowB.pool.liquidityUSD),
     cell: ({ row: { original } }) => (
       <span className="flex gap-2">
         <span className="text-muted-foreground">

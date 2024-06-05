@@ -283,6 +283,12 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     ETH: WETH9[ChainId.SKALE_EUROPA],
     USDC: USDC[ChainId.SKALE_EUROPA],
   },
+  [ChainId.ROOTSTOCK]: {
+    NATIVE: Native.onChain(ChainId.ROOTSTOCK),
+    WNATIVE: WNATIVE[ChainId.ROOTSTOCK],
+    WBTC: Native.onChain(ChainId.ROOTSTOCK),
+    WETH: WETH9[ChainId.ROOTSTOCK],
+  },
 } as const
 
 export type ShortCurrencyNameChainId =
