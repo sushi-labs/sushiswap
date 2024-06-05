@@ -26,6 +26,8 @@ export const SKALE_HOST =
   'elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name'
 
 const SUSHI_DOMAIN_RESTRICTED_API_KEY = '5d5d00365d2b8f675e12952d6eb5b9b0'
-export const DECENTRALIZED_NETWORK_HOST = `gateway-arbitrum.network.thegraph.com/api/${
-  process.env['SUSHI_GRAPH_KEY'] ?? SUSHI_DOMAIN_RESTRICTED_API_KEY
-}/subgraphs/id`
+const DECENTRALIZED_NETWORK_KEY =
+  process.env['SUSHI_GRAPH_KEY'] ||
+  process.env['NEXT_PUBLIC_SUSHI_GRAPH_KEY'] ||
+  SUSHI_DOMAIN_RESTRICTED_API_KEY
+export const DECENTRALIZED_NETWORK_HOST = `gateway-arbitrum.network.thegraph.com/api/${DECENTRALIZED_NETWORK_KEY}/subgraphs/id`

@@ -14,7 +14,7 @@ import {
 } from '@sushiswap/ui/components/card'
 import React, { FC, useMemo } from 'react'
 import { usePoolGraphData, useTokenAmountDollarValues } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
 
 interface PoolCompositionProps {
@@ -24,7 +24,7 @@ interface PoolCompositionProps {
 export const PoolComposition: FC<PoolCompositionProps> = ({ pool }) => {
   const { data, isLoading: isPoolLoading } = usePoolGraphData({
     poolAddress: pool.address,
-    chainId: pool.chainId as ChainId,
+    chainId: pool.chainId as SushiSwapV2ChainId,
   })
 
   const amounts = [data?.reserve0, data?.reserve1]
