@@ -22,7 +22,12 @@ import {
   TX_CREATED_TIME_V2_COLUMN,
   TX_SENDER_V2_COLUMN,
 } from './columns'
-import { getSushiV2Burns, getSushiV2Mints, getSushiV2Swaps, getSushiV2Transactions } from '@sushiswap/graph-client-new/sushi-v2'
+import {
+  getSushiV2Burns,
+  getSushiV2Mints,
+  getSushiV2Swaps,
+  getSushiV2Transactions,
+} from '@sushiswap/graph-client-new/sushi-v2'
 
 export enum TransactionType {
   Mint = 'Mint',
@@ -42,7 +47,6 @@ const fetchAll = async (
   chainId: SushiSwapV2ChainId,
   opts: UseTransactionsV2Opts,
 ) => {
-
   const transactions = await getSushiV2Transactions({
     chainId,
     first: opts.first,
@@ -81,7 +85,6 @@ const fetchMints = async (
   chainId: SushiSwapV2ChainId,
   opts: UseTransactionsV2Opts,
 ) => {
-
   const mints = await getSushiV2Mints({
     chainId,
     first: opts.first,
@@ -104,7 +107,6 @@ const fetchBurns = async (
   chainId: SushiSwapV2ChainId,
   opts: UseTransactionsV2Opts,
 ) => {
-
   const burns = await getSushiV2Burns({
     chainId,
     first: opts.first,
