@@ -1,6 +1,6 @@
-import { SushiPoolBase } from 'sushi/types'
+import { PoolId } from 'sushi/types'
 
-export type SushiPoolHistory<T extends SushiPoolBase> = T & {
+export type PoolHistory<T extends PoolId = PoolId> = T & {
   liquidityUSD1dChange: number
   liquidityUSD1wChange: number
 

@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   CardDescription,
   Currency,
@@ -17,11 +16,14 @@ import { ChainId } from 'sushi/chain'
 import { tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 
+import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi'
 import { incentiveRewardToToken } from '../../lib/functions'
+
+type RequiredPool = PoolWithIncentives<PoolWithFeeAprs>
 
 interface APRHoverCardProps {
   children: ReactNode
-  pool: Pool
+  pool: RequiredPool
   showEmissions?: boolean
   smartPoolAPR?: number
 }

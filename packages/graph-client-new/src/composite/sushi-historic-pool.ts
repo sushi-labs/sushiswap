@@ -10,12 +10,7 @@ import {
 } from 'src/subgraphs/sushi-v3/queries/pool'
 import { getSushiV3PoolBuckets } from 'src/subgraphs/sushi-v3/queries/pool-with-buckets'
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
-import type {
-  SushiPoolHistory,
-  SushiPoolV2,
-  SushiPoolV3,
-  SushiPoolWithBuckets,
-} from 'sushi/types'
+import type { PoolHistory, PoolV2, PoolV3, PoolWithBuckets } from 'sushi/types'
 import { isPromiseFulfilled } from 'sushi/validate'
 
 export type GetSushiHistoricPool = Omit<
@@ -23,7 +18,7 @@ export type GetSushiHistoricPool = Omit<
   'block'
 >
 
-type Result = SushiPoolHistory<SushiPoolWithBuckets<SushiPoolV2 | SushiPoolV3>>
+type Result = PoolHistory<PoolWithBuckets<PoolV2 | PoolV3>>
 
 async function fetchSushiV2Pool({
   chainId,

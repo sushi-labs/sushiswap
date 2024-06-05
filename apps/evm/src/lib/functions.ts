@@ -1,4 +1,5 @@
-import { Pool, Protocol } from '@sushiswap/client'
+import { Protocol } from '@sushiswap/client'
+import type { Incentive } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
 import {
@@ -51,7 +52,7 @@ export const isTridentPoolProtocol = (protocol: Protocol) =>
 
 export const incentiveRewardToToken = (
   chainId: ChainId,
-  incentive: Pool['incentives'][0],
+  incentive: Incentive,
 ): Token => {
   return new Token({
     chainId,

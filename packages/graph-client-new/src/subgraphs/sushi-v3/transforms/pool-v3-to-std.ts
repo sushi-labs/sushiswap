@@ -2,7 +2,7 @@ import type { ResultOf } from 'gql.tada'
 import type { PoolFieldsFragment } from 'src/subgraphs/sushi-v3/fragments/pool-fields'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { getIdFromChainIdAddress } from 'sushi/format'
-import { type Address, type SushiPoolV3, SushiSwapProtocol } from 'sushi/types'
+import { type Address, type PoolV3, SushiSwapProtocol } from 'sushi/types'
 
 type ToPick =
   | 'id'
@@ -26,7 +26,7 @@ type RequiredBase = Pick<ResultOf<typeof PoolFieldsFragment>, ToPick>
 export function transformPoolV3ToStd<T extends RequiredBase>(
   pool: T,
   chainId: SushiSwapV3ChainId,
-): SushiPoolV3 {
+): PoolV3 {
   return {
     id: getIdFromChainIdAddress(chainId, pool.id as Address),
     address: pool.id as Address,

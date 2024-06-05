@@ -1,6 +1,6 @@
 import type { ResultOf } from 'gql.tada'
 import type { SushiV2PoolBucketsQuery } from 'src/subgraphs/sushi-v2/queries/pool-with-buckets'
-import type { SushiPoolBucket } from 'sushi/types'
+import type { PoolBucket } from 'sushi/types'
 
 type FetchedBucket = NonNullable<
   ResultOf<typeof SushiV2PoolBucketsQuery>['pool']
@@ -8,11 +8,11 @@ type FetchedBucket = NonNullable<
 
 export function transformBucketsV2ToStd(
   buckets: FetchedBucket[],
-): SushiPoolBucket[] {
+): PoolBucket[] {
   return buckets.map(transformBucketV2ToStd)
 }
 
-export function transformBucketV2ToStd(bucket: FetchedBucket): SushiPoolBucket {
+export function transformBucketV2ToStd(bucket: FetchedBucket): PoolBucket {
   return {
     id: bucket.id,
     date: Number(bucket.date),

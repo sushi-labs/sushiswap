@@ -9,14 +9,10 @@ import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client-new/compo
 import type { SushiSwapV2ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import { usePoolFilters } from './PoolsFiltersProvider'
-import {
-  APR_COLUMN,
-  NAME_COLUMN_POSITION_WITH_POOL,
-  VALUE_COLUMN,
-} from './columns'
+import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
 
 const COLUMNS = [
-  NAME_COLUMN_POSITION_WITH_POOL,
+  NAME_COLUMN_POOL,
   VALUE_COLUMN,
   APR_COLUMN,
 ] satisfies ColumnDef<SushiV2StakedUnstakedPosition, unknown>[]

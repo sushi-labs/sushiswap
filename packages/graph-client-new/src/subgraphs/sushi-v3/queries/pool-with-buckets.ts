@@ -2,7 +2,7 @@ import type { VariablesOf } from 'gql.tada'
 import request from 'graphql-request'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
-import type { SushiPoolV3, SushiPoolWithBuckets } from 'sushi/types'
+import type { PoolV3, PoolWithBuckets } from 'sushi/types'
 
 import { FetchError } from 'src/lib/fetch-error'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
@@ -45,7 +45,7 @@ export type GetSushiV3PoolBuckets = VariablesOf<
 > &
   ChainIdVariable<SushiSwapV3ChainId>
 
-export type SushiV3PoolBuckets = SushiPoolWithBuckets<SushiPoolV3>
+export type SushiV3PoolBuckets = PoolWithBuckets<PoolV3>
 
 export async function getSushiV3PoolBuckets({
   chainId,

@@ -5,7 +5,7 @@ import {
   getIdFromChainIdAddress,
   withoutScientificNotation,
 } from 'sushi/format'
-import { type SushiPoolV2, SushiSwapProtocol } from 'sushi/types'
+import { type PoolV2, SushiSwapProtocol } from 'sushi/types'
 
 type ToPick =
   | 'id'
@@ -23,7 +23,7 @@ type RequiredBase = Pick<ResultOf<typeof PoolFieldsFragment>, ToPick>
 export function transformPoolV2ToStd<T extends RequiredBase>(
   pool: T,
   chainId: SushiSwapV2ChainId,
-): SushiPoolV2 {
+): PoolV2 {
   return {
     id: getIdFromChainIdAddress(chainId, pool.id),
     address: pool.id,

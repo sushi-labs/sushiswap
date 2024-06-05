@@ -1,11 +1,7 @@
-import type { ChainId } from 'sushi/chain'
-import type { Address, ID, SushiSwapProtocol, Token } from 'sushi/types'
+import type { PoolId, Token } from 'sushi/types'
 
-export type SushiPoolBase = {
-  id: ID
-  address: Address
+export type PoolBase<T extends PoolId = PoolId> = T & {
   name: string
-  chainId: ChainId
 
   token0: Token
   token1: Token
@@ -27,6 +23,4 @@ export type SushiPoolBase = {
   // token1Price: bigint
 
   txCount: string
-
-  protocol: SushiSwapProtocol
 }

@@ -22,9 +22,16 @@ import {
 
 import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import type {
+  MaybeNestedPool,
+  PoolBase,
+  PoolWithAprs,
+  PoolWithIncentives,
+} from 'sushi'
+import { unnestPool } from 'sushi/types'
 import { APRHoverCard } from './APRHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
-import { PoolNameCell, PoolNameCellPool } from './PoolNameCell'
+import { PoolNameCell } from './PoolNameCell'
 import { PoolNameCellV3 } from './PoolNameCellV3'
 import {
   Transaction,
@@ -114,7 +121,7 @@ export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
     },
   }
 
-export const NETWORK_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+export const NETWORK_COLUMN_POOL: ColumnDef<PoolBase, unknown> = {
   id: 'network',
   header: 'Network',
   cell: (props) => (
@@ -130,10 +137,13 @@ export const NETWORK_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+export const NAME_COLUMN_POOL: ColumnDef<
+  MaybeNestedPool<PoolWithIncentives<PoolBase>>,
+  unknown
+> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCellPool pool={props.row.original} />,
+  cell: (props) => <PoolNameCell {...props.row} />,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -150,7 +160,7 @@ export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   size: 300,
 }
 
-export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
+export const TVL_COLUMN: ColumnDef<PoolBase, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
@@ -160,22 +170,6 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
     formatUSD(props.row.original.liquidityUSD).includes('NaN')
       ? '$0.00'
       : formatUSD(props.row.original.liquidityUSD),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const APR_COLUMN_POOL: ColumnDef<Pool, unknown> = {
-  id: 'totalApr1d',
-  header: 'APR',
-  accessorFn: (row) => row.totalApr1d,
-  cell: (props) => (
-    <APRHoverCard pool={props.row.original}>
-      <span className="underline decoration-dotted underline-offset-2">
-        {formatPercent(props.row.original.totalApr1d)}
-      </span>
-    </APRHoverCard>
-  ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -271,38 +265,19 @@ export const NETWORK_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> =
     },
   }
 
-export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
-  SushiV2StakedUnstakedPosition,
+export const APR_COLUMN: ColumnDef<
+  MaybeNestedPool<PoolWithIncentives<PoolWithAprs>>,
   unknown
 > = {
-  id: 'name',
-  header: 'Name',
-  cell: (props) => <PoolNameCell {...props.row} />,
-  meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
-          <SkeletonCircle radius={26} className="-ml-[12px]" />
-        </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
-  },
-}
-
-export const APR_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> = {
-  id: 'apr',
+  id: 'totalApr1d',
   header: 'APR',
-  accessorFn: (row) => row.pool.totalApr1d,
+  accessorFn: (row) => unnestPool(row).totalApr1d,
   cell: (props) => (
-    <APRHoverCard pool={props.row.original.pool}>
+    <APRHoverCard pool={unnestPool(props.row.original)}>
       <span
         className={classNames('underline decoration-dotted underline-offset-2')}
       >
-        {formatPercent(props.row.original.pool.totalApr1d)}
+        {formatPercent(unnestPool(props.row.original).totalApr1d)}
       </span>
     </APRHoverCard>
   ),

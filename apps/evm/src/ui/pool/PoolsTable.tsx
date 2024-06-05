@@ -45,7 +45,7 @@ import { usePoolCount, usePoolsInfinite } from '@sushiswap/client/hooks'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import {
-  APR_COLUMN_POOL,
+  APR_COLUMN,
   FEES_COLUMN,
   NAME_COLUMN_POOL,
   TVL_COLUMN,
@@ -61,7 +61,7 @@ const COLUMNS = [
   VOLUME_7D_COLUMN,
   VOLUME_1M_COLUMN,
   FEES_COLUMN,
-  APR_COLUMN_POOL,
+  APR_COLUMN,
   {
     id: 'actions',
     cell: ({ row }) =>
