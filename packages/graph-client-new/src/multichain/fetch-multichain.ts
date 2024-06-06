@@ -11,7 +11,7 @@ export type FetchMultichain<
   ARG extends { [key: string]: any },
   RET extends Promise<unknown>,
 > = {
-  chainIds: ARG['chainId'][]
+  chainIds: Readonly<ARG['chainId'][]>
   fetch: (variables: ARG) => RET
 } & Variables<ARG>
 
