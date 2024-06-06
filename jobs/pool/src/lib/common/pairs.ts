@@ -1,7 +1,8 @@
 import { SushiSwapV2ChainId } from 'sushi/config'
-import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import type { Farm } from '../types.js'
 import { divBigIntToNumber } from './utils.js'
+import { getSushiV2Pools } from '@sushiswap/graph-client-new/sushi-v2'
+import { Address } from 'viem'
 
 interface Pair {
   id: string
@@ -14,25 +15,16 @@ async function getExchangePairs(
   ids: string[],
   chainId: SushiSwapV2ChainId,
 ): Promise<Pair[]> {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const url = SUSHISWAP_V2_SUBGRAPH_URL[chainId]
-  if (!url) return []
-  const sdk = getBuiltGraphSDK({
-    url,
-  })
-
-  const { pairs, bundle } = await sdk.Pairs({
+  const pairs = await getSushiV2Pools({
+    chainId,
     first: ids.length,
-    where: { id_in: ids.map((id) => id.toLowerCase()) },
+    where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
   })
-
   return pairs.map((pair) => {
-    const liquidityUSD = pair.liquidityUSD * bundle?.ethPrice
-
     return {
       id: pair.id,
       totalSupply: divBigIntToNumber(BigInt(pair.liquidity), 18),
-      liquidityUSD: liquidityUSD,
+      liquidityUSD: pair.liquidityUSD,
       type: 'Legacy',
     }
   })

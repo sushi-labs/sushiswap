@@ -2,6 +2,7 @@ import { readContract, readContracts } from '@wagmi/core'
 import { masterChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
+import { getMasterChefV2Rewarders } from '@sushiswap/graph-client-new/master-chef-v2'
 import { config } from 'src/lib/wagmi.js'
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
 
@@ -95,14 +96,11 @@ export async function getRewarders(poolLength: number) {
 }
 
 export async function getRewarderInfos() {
-  const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
-  const sdk = getBuiltGraphSDK()
-
-  const { rewarders } = await sdk.MasterChefV2Rewarders()
+  const rewarders = await getMasterChefV2Rewarders({})
 
   return rewarders.map((rewarder) => ({
     id: rewarder.id,
-    rewardToken: rewarder.rewardToken as string,
+    rewardToken: rewarder.address,
     rewardPerSecond: BigInt(rewarder.rewardPerSecond),
   }))
 }

@@ -3,9 +3,9 @@ import zip from 'lodash.zip'
 import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
+import { getMiniChefRewarders } from '@sushiswap/graph-client-new/mini-chef'
 import { config } from 'src/lib/wagmi.js'
 import { MiniChefChainId } from 'sushi/config'
-import { MINICHEF_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { Address } from 'viem'
 import { MINICHEF_ADDRESS } from '../../../config.js'
 
@@ -106,21 +106,9 @@ export async function getRewarders(poolLength: bigint, chainId: ChainId) {
   }).then((results) => results.map(({ result }) => result))
 }
 
-// TODO: Fix type
 export async function getRewarderInfos(chainId: MiniChefChainId) {
-  const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
-  const url = MINICHEF_SUBGRAPH_URL[chainId]
-  if (!url) {
-    console.log(chainId, 'does not have a minichef subgraph!')
-    return []
-  }
-
-  const sdk = getBuiltGraphSDK({
-    url,
-  })
-
-  const { rewarders } = await sdk.MiniChefRewarders()
-  console.log(`Retrieved ${rewarders.length} rewarders from ${url}`)
+  const rewarders = await getMiniChefRewarders({ chainId })
+  console.log(`Retrieved ${rewarders.length} rewarders from ${chainId}`)
 
   return Promise.all(
     rewarders.map(async (rewarder) => {
@@ -170,7 +158,7 @@ export async function getRewarderInfos(chainId: MiniChefChainId) {
         ) {
           return {
             id: rewarder.id as Address,
-            rewardToken: rewarder.rewardToken,
+            rewardToken: rewarder.address,
             rewardPerSecond: BigInt(rewarder.rewardPerSecond),
           }
         }
@@ -212,7 +200,7 @@ export async function getRewarderInfos(chainId: MiniChefChainId) {
             acc += allocPoint
             return acc
           }, 0n),
-          rewardToken: rewarder.rewardToken,
+          rewardToken: rewarder.address,
           rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       } catch (error) {
@@ -221,7 +209,7 @@ export async function getRewarderInfos(chainId: MiniChefChainId) {
         // so that the script doesn't fail on new should-be-blacklisted pools
         return {
           id: rewarder.id,
-          rewardToken: rewarder.rewardToken,
+          rewardToken: rewarder.address,
           rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       }

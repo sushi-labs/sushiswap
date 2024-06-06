@@ -1,8 +1,8 @@
 import { readContracts } from '@wagmi/core'
 import { Chain, ChainId } from 'sushi/chain'
 
+import { getSushiV2Tokens } from '@sushiswap/graph-client-new/sushi-v2'
 import { SushiSwapV2ChainId } from 'sushi/config'
-import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { Address, erc20Abi } from 'viem'
 import { getTokenPrices } from '../price.js'
 import { config } from '../wagmi.js'
@@ -21,25 +21,20 @@ const getExchangeTokens = async (
   ids: string[],
   chainId: SushiSwapV2ChainId,
 ): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const url = SUSHISWAP_V2_SUBGRAPH_URL[chainId]
-  if (!url) return []
-  const sdk = getBuiltGraphSDK({
-    url,
-  })
-  const [result, tokenPrices] = await Promise.all([
-    sdk.Tokens({
-      where: { id_in: ids.map((id) => id.toLowerCase()) },
+  const [tokens, tokenPrices] = await Promise.all([
+    getSushiV2Tokens({
+      chainId,
+      where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
     }),
     getTokenPrices({ chainId }),
   ])
 
-  return result.tokens.map((token) => ({
+  return tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
     name: token.name,
     decimals: Number(token.decimals),
-    liquidity: Number(token.liquidity),
+    liquidity: Number(token.totalLiquidity),
     derivedUSD: tokenPrices[token.id.toLowerCase()] || 0,
   }))
 }
