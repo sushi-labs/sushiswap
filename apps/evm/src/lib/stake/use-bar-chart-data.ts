@@ -1,14 +1,14 @@
 'use client'
 
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { useQuery } from '@tanstack/react-query'
-
-const sdk = getBuiltGraphSDK()
+import { getSushiBarHistory } from '@sushiswap/graph-client-new/sushi-bar'
 
 export const useBarChartData = (enabled = true) => {
   return useQuery({
     queryKey: ['useBarChartData'],
-    queryFn: async () => await sdk.BarHistory(),
+    queryFn: async () => await getSushiBarHistory({
+      
+    }),
     keepPreviousData: true,
     staleTime: 0,
     cacheTime: 86400000, // 24hs
