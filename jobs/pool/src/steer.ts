@@ -66,9 +66,7 @@ async function deprecate() {
       data.filter((el) => el.type === 'VAULT'),
     )
 
-  await deprecateVaults(
-    deprecatedVaults.map((vault) => vault.id)
-  )
+  await deprecateVaults(deprecatedVaults.map((vault) => vault.id))
 }
 
 async function extract() {
