@@ -33,20 +33,16 @@ import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-import { Percent } from 'sushi/math'
 import {
   Address,
   SendTransactionReturnType,
   UserRejectedRequestError,
 } from 'viem'
 
-import {
-  SlippageToleranceStorageKey,
-  useSlippageTolerance,
-} from '@sushiswap/hooks'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { slippageAmount } from 'sushi'
-import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
@@ -67,7 +63,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
 
     const client = usePublicClient()
     const { address, chain } = useAccount()
-    const [slippageTolerance] = useSlippageTolerance(
+    const [slippagePercent] = useSlippageTolerance(
       SlippageToleranceStorageKey.AddSteerLiquidity,
     )
     const { approved } = useApproved(APPROVE_TAG_STEER)
@@ -116,17 +112,6 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     )
 
     // const hasExistingPosition = !!existingPosition
-
-    const slippagePercent = useMemo(() => {
-      return new Percent(
-        Math.floor(
-          +(slippageTolerance === 'AUTO'
-            ? DEFAULT_SLIPPAGE
-            : slippageTolerance) * 100,
-        ),
-        10_000,
-      )
-    }, [slippageTolerance])
 
     const onSuccess = useCallback(
       (hash: SendTransactionReturnType) => {
