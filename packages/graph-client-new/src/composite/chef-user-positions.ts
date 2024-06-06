@@ -37,10 +37,8 @@ type CombinedPosition = (
 )[number]
 
 export type ChefPosition = Omit<CombinedPosition, 'pool'> & {
-  pool:
-    | (Omit<CombinedPosition['pool'], 'chainId'> &
-        ChainIdVariable<NonNullable<CombinedPosition['pool']>['chainId']>)
-    | null
+  pool: Omit<CombinedPosition['pool'], 'chainId'> &
+    ChainIdVariable<NonNullable<CombinedPosition['pool']>['chainId']>
 }
 
 export async function getChefUserPositions({

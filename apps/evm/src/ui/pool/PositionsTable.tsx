@@ -1,25 +1,25 @@
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { Slot } from '@sushiswap/ui/components/slot'
-import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
+import { DisplayColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 
-import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
-import type { SushiSwapV2ChainId } from 'sushi/config'
+import type { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { useAccount } from 'wagmi'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
 
+// ! Column types have to be checked manually
 const COLUMNS = [
   NAME_COLUMN_POOL,
   VALUE_COLUMN,
   APR_COLUMN,
-] satisfies ColumnDef<SushiV2StakedUnstakedPosition, unknown>[]
+] as DisplayColumnDef<UserWithPool, unknown>[]
 
 interface PositionsTableProps {
-  onRowClick?(row: SushiV2StakedUnstakedPosition): void
-  rowLink?(row: SushiV2StakedUnstakedPosition): string
+  onRowClick?(row: UserWithPool): void
+  rowLink?(row: UserWithPool): string
 }
 
 const tableState = { sorting: [{ id: 'value', desc: true }] }
@@ -56,14 +56,16 @@ export const PositionsTable: FC<PositionsTableProps> = ({
           })
         : true,
     )
+
     const chainFiltered = searchFiltered.filter((el) =>
-      (chainIds as SushiSwapV2ChainId[]).includes(el.pool.chainId),
+      chainIds.includes(el.pool.chainId as (typeof chainIds)[number]),
     )
+
     return chainFiltered
   }, [positions, tokenSymbols, chainIds])
 
   const rowRenderer = useCallback(
-    (row: Row<SushiV2StakedUnstakedPosition>, rowNode: ReactNode) => {
+    (row: Row<UserWithPool>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot

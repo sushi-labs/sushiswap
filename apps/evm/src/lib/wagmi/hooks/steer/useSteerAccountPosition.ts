@@ -12,13 +12,16 @@ import {
 import { Address } from 'viem'
 
 import { useMemo } from 'react'
+import type { ID } from 'sushi/types'
 import { useWatchByInterval } from '../watch/useWatchByInterval'
 
 interface UseSteerAccountPositions {
   account: Address | undefined
-  vaultIds: string[] | undefined
+  vaultIds: ID[] | undefined
   enabled?: boolean
 }
+
+export type SteerAccountPosition = ReturnType<typeof getAccountPositions>[0]
 
 export const useSteerAccountPositions = ({
   vaultIds,
@@ -94,19 +97,11 @@ export const useSteerAccountPositions = ({
   const data = useMemo(() => {
     if (!accountBalances || !totalSupplies || !vaultReserves) return undefined
 
-    console.log({
-      accountBalances,
-      totalSupplies,
-      vaultReserves,
-    })
-
     const positions = getAccountPositions({
       accountBalances,
       totalSupplies,
       vaultReserves,
     })
-
-    console.log(positions)
 
     return positions
   }, [accountBalances, totalSupplies, vaultReserves])
@@ -122,7 +117,7 @@ export const useSteerAccountPositions = ({
 
 interface UseSteerAccountPosition {
   account: Address | undefined
-  vaultId: string | undefined
+  vaultId: ID | undefined
   enabled?: boolean
 }
 

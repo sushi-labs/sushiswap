@@ -1,8 +1,8 @@
 import type { ChainId } from 'sushi/chain'
+import type { ID } from 'sushi/types'
 
 type ReturnType<T extends { chainId: ChainId }> = Omit<T, 'id'> & {
-  id: `${string}:${string}`
-  // id: `${T['chainId']}:${string}`
+  id: ID
 }
 
 export function convertIdToMultichainId<

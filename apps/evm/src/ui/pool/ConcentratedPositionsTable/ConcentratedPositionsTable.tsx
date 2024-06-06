@@ -76,7 +76,11 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     const _positions = useMemo(() => {
       const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
       return (positions || [])
-        ?.filter((el) => filterChainIds.includes(el.chainId))
+        ?.filter((el) =>
+          filterChainIds.includes(
+            el.chainId as (typeof filterChainIds)[number],
+          ),
+        )
         .filter((el) =>
           _tokenSymbols.length > 0
             ? _tokenSymbols.some((symbol) => {

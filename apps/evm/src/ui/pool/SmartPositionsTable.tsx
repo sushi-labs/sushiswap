@@ -12,7 +12,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { useSteerAccountPositionsExtended } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
+import {
+  SteerAccountPositionExtended,
+  useSteerAccountPositionsExtended,
+} from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
 import { formatPercent } from 'sushi'
 import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
@@ -21,7 +24,6 @@ import {
   STEER_POSITION_SIZE_COLUMN,
   STEER_STRATEGY_COLUMN,
 } from './ConcentratedPositionsTable/Tables/Smart/columns'
-import { SteerPosition } from './ConcentratedPositionsTable/Tables/Smart/useSteerPositions'
 import { usePoolFilters } from './PoolsFiltersProvider'
 
 const COLUMNS = [
@@ -31,17 +33,12 @@ const COLUMNS = [
   {
     id: 'totalApr1d',
     header: 'APR (24h)',
-    accessorFn: (row) =>
-      row.vault.apr1d * 100 +
-      row.vault.pool.incentives
-        .filter((el) => +el.rewardPerDay > 0)
-        .reduce((acc, cur) => acc + cur.apr * 100, 0),
+    accessorFn: (row) => (row.vault.apr1d + row.vault.pool.incentiveApr) * 100,
     cell: (props) => {
       const totalAPR =
-        props.row.original.vault.apr1d * 100 +
-        props.row.original.vault.pool.incentives
-          .filter((el) => +el.rewardPerDay > 0)
-          .reduce((acc, cur) => acc + cur.apr * 100, 0)
+        (props.row.original.vault.apr1d +
+          props.row.original.vault.pool.incentiveApr) *
+        100
 
       return (
         <div className="flex gap-1">
@@ -72,7 +69,7 @@ const COLUMNS = [
       skeleton: <SkeletonText fontSize="lg" />,
     },
   },
-] satisfies ColumnDef<SteerPosition, unknown>[]
+] satisfies ColumnDef<SteerAccountPositionExtended, unknown>[]
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
@@ -107,7 +104,7 @@ export const SmartPositionsTable = () => {
           `/pool/${row.vault.pool.id}/smart/${row.vault.id}`
         }
         columns={COLUMNS}
-        data={_positions as SteerPosition[]}
+        data={_positions}
         pagination={true}
         onPaginationChange={setPaginationState}
         state={{

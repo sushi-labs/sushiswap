@@ -1,24 +1,24 @@
-import { getCombinedUserPositions } from '@sushiswap/graph-client-new/composite/combined-user-positions'
-import { getSushiDayDatas } from '@sushiswap/graph-client-new/composite/sushi-day-datas'
-import { getFuroTokens as _getFuroTokens } from '@sushiswap/graph-client-new/furo'
 import { getRebases as _getRebases } from '@sushiswap/graph-client-new/bentobox'
+import { getSushiDayDatas } from '@sushiswap/graph-client-new/composite/sushi-day-datas'
+import { getSushiV2StakedUnstakedPositions } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
+import { getFuroTokens as _getFuroTokens } from '@sushiswap/graph-client-new/furo'
 import { fetchMultichain } from '@sushiswap/graph-client-new/multichain'
 import {
+  SushiV2Pools,
   getSushiV2Pool,
   getSushiV2Pools,
 } from '@sushiswap/graph-client-new/sushi-v2'
 import { getSushiV3PoolsByTokenPair } from '@sushiswap/graph-client-new/sushi-v3'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { getChainIdAddressFromId } from 'sushi'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
+import { getChainIdAddressFromId } from 'sushi/format'
 import { Address } from 'viem'
 import { bentoBoxTokensSchema, furoTokensSchema } from './schema'
-import { Pool, Protocol } from '@prisma/client'
 
 export async function getUser(args: {
   id?: Address
@@ -26,7 +26,7 @@ export async function getUser(args: {
 }) {
   if (!args.id) return []
 
-  const { data } = await getCombinedUserPositions({
+  const { data } = await getSushiV2StakedUnstakedPositions({
     chainIds: args.chainIds || [...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS],
     user: args.id.toLowerCase() as Address,
   })
@@ -74,7 +74,7 @@ export const getV2GraphPools = async (ids: string[]) => {
     pools
       .map((pool) => ({ ...pool, id: `${pool.chainId}:${pool.address}` }))
       // To prevent possible (although unlikely) collisions
-      .filter((pool) => ids.includes(pool.id))
+      .filter((pool) => ids.includes(pool.id)) as SushiV2Pools
   )
 }
 
@@ -203,71 +203,4 @@ export const getCharts = async (query?: { networks: string }) => {
   })
 
   return [tvl, vol]
-}
-
-export function transformGraphPool(
-  graphPool: Awaited<ReturnType<typeof getV2GraphPools>>[0],
-): Pool {
-  return {
-    id: graphPool.id,
-    address: graphPool.address,
-    name: `${graphPool.token0.symbol}-${graphPool.token1.symbol}`,
-    chainId: graphPool.chainId,
-    protocol: Protocol.SUSHISWAP_V2,
-    swapFee: 30 / 10000,
-    twapEnabled: false,
-    totalSupply: String(graphPool.totalSupply),
-    liquidityUSD: String(graphPool.liquidityUSD),
-    volumeUSD: String(graphPool.volumeUSD),
-    feeApr1h: 0,
-    feeApr1d: 0,
-    feeApr1w: 0,
-    feeApr1m: 0,
-    totalApr1h: 0,
-    totalApr1d: 0,
-    totalApr1w: 0,
-    totalApr1m: 0,
-    incentiveApr: 0,
-    isIncentivized: false,
-    wasIncentivized: false,
-    fees1h: '0',
-    fees1d: '0',
-    fees1w: '0',
-    fees1m: '0',
-    feesChange1h: 0,
-    feesChange1d: 0,
-    feesChange1w: 0,
-    feesChange1m: 0,
-    volume1h: '0',
-    volume1d: '0',
-    volume1w: '0',
-    volume1m: '0',
-    volumeChange1h: 0,
-    volumeChange1d: 0,
-    volumeChange1w: 0,
-    volumeChange1m: 0,
-    liquidityUSDChange1h: 0,
-    liquidityUSDChange1d: 0,
-    liquidityUSDChange1w: 0,
-    liquidityUSDChange1m: 0,
-    isBlacklisted: false,
-    token0: {
-      id: `${graphPool.chainId}:${graphPool.token0.id}`,
-      address: graphPool.token0.id,
-      name: graphPool.token0.name,
-      symbol: graphPool.token0.symbol,
-      decimals: Number(graphPool.token0.decimals),
-    },
-    token1: {
-      id: `${graphPool.chainId}:${graphPool.token1.id}`,
-      address: graphPool.token1.id,
-      name: graphPool.token1.name,
-      symbol: graphPool.token1.symbol,
-      decimals: Number(graphPool.token1.decimals),
-    },
-    incentives: [],
-    hasEnabledSteerVault: false,
-    hadEnabledSteerVault: false,
-    steerVaults: [],
-  } satisfies Pool
 }

@@ -6,6 +6,7 @@ import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
+import { SushiSwapProtocol } from 'sushi'
 import { graphql } from '../graphql'
 
 export const MasterChefV2UserPositionsQuery = graphql(
@@ -14,7 +15,7 @@ export const MasterChefV2UserPositionsQuery = graphql(
     positions: users(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
       id
       address
-      amount
+      balance: amount
       pool {
         id: pair
       }
@@ -39,19 +40,22 @@ export async function getMasterChefV2UserPositions({
     variables,
   })
 
-  return result.positions.map((position) => {
-    let pool = null
+  return result.positions.flatMap((position) => {
+    if (!position.pool) {
+      return []
+    }
 
-    if (position.pool) {
-      pool = convertIdToMultichainId(
+    const pool = {
+      ...convertIdToMultichainId(
         copyIdToAddress(addChainId(ChainId.ETHEREUM, position.pool)),
-      )
+      ),
+      protocol: SushiSwapProtocol.SUSHISWAP_V2,
     }
 
     return {
       id: position.id,
       address: position.address,
-      amount: position.amount,
+      balance: position.balance,
       pool,
     }
   })

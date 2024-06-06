@@ -9,11 +9,21 @@ import type {
   SteerVaultWithPool,
 } from '@sushiswap/steer-sdk'
 import type { SushiSwapV3ChainId } from 'sushi/config'
-import type { Address, ID, PoolId, SushiSwapV3Protocol } from 'sushi/types'
+import type {
+  Address,
+  ID,
+  PoolIfIncentivized,
+  PoolSwapFee,
+  PoolWithAprs,
+  SushiSwapV3Protocol,
+} from 'sushi/types'
 import { type SteerVaultsApiSchema } from '../../pure/steer-vault/vaults/schema'
 import { parseSteerArgs } from './parse'
 
-type Vaults = SteerVaultWithPool<SteerVault, PoolId>[]
+type Vaults = SteerVaultWithPool<
+  SteerVault,
+  PoolWithAprs<PoolSwapFee<PoolIfIncentivized>>
+>[]
 
 export async function getSteerVaultsFromDB(
   args: typeof SteerVaultsApiSchema._output,
@@ -50,6 +60,22 @@ export async function getSteerVaultsFromDB(
           address: true,
           chainId: true,
           protocol: true,
+
+          swapFee: true,
+
+          incentiveApr: true,
+          isIncentivized: true,
+          wasIncentivized: true,
+
+          feeApr1h: true,
+          feeApr1d: true,
+          feeApr1w: true,
+          feeApr1m: true,
+
+          totalApr1h: true,
+          totalApr1d: true,
+          totalApr1w: true,
+          totalApr1m: true,
         },
       },
       feeTier: true,
@@ -125,6 +151,22 @@ export async function getSteerVaultsFromDB(
       address: vault.pool.address as Address,
       chainId: vault.pool.chainId as SushiSwapV3ChainId,
       protocol: vault.pool.protocol as SushiSwapV3Protocol,
+
+      incentiveApr: vault.pool.incentiveApr,
+      isIncentivized: vault.pool.isIncentivized,
+      wasIncentivized: vault.pool.wasIncentivized,
+
+      feeApr1h: vault.pool.feeApr1h,
+      feeApr1d: vault.pool.feeApr1d,
+      feeApr1w: vault.pool.feeApr1w,
+      feeApr1m: vault.pool.feeApr1m,
+
+      totalApr1h: vault.pool.totalApr1h,
+      totalApr1d: vault.pool.totalApr1d,
+      totalApr1w: vault.pool.totalApr1w,
+      totalApr1m: vault.pool.totalApr1m,
+
+      swapFee: Number(vault.pool.swapFee),
     },
 
     feeTier: vault.feeTier,

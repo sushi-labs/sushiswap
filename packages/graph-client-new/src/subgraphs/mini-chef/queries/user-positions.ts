@@ -7,6 +7,7 @@ import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { MiniChefChainId } from 'sushi/config'
 import { MINICHEF_SUBGRAPH_URL } from 'sushi/config/subgraph'
+import { SushiSwapProtocol } from 'sushi/types'
 import { graphql } from '../graphql'
 
 export const MiniChefUserPositionsQuery = graphql(
@@ -15,7 +16,7 @@ export const MiniChefUserPositionsQuery = graphql(
     positions: users(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
       id
       address
-      amount
+      balance: amount
       pool {
         id: pair
       }
@@ -42,19 +43,22 @@ export async function getMiniChefUserPositions({
     variables,
   })
 
-  return result.positions.map((position) => {
-    let pool = null
+  return result.positions.flatMap((position) => {
+    if (!position.pool) {
+      return []
+    }
 
-    if (position.pool) {
-      pool = convertIdToMultichainId(
+    const pool = {
+      ...convertIdToMultichainId(
         copyIdToAddress(addChainId(chainId, position.pool)),
-      )
+      ),
+      protocol: SushiSwapProtocol.SUSHISWAP_V2,
     }
 
     return {
       id: position.id,
       address: position.address,
-      amount: position.amount,
+      balance: position.balance,
       pool,
     }
   })

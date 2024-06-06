@@ -28,8 +28,11 @@ import type {
   PoolHistory1D,
   PoolHistory1M,
   PoolHistory1W,
+  PoolIfIncentivized,
   PoolWithAprs,
   PoolWithIncentives,
+  SushiPositionStaked,
+  SushiPositionWithPool,
 } from 'sushi'
 import { unnestPool } from 'sushi/types'
 import { APRHoverCard } from './APRHoverCard'
@@ -141,12 +144,13 @@ export const NETWORK_COLUMN_POOL: ColumnDef<PoolBase, unknown> = {
 }
 
 export const NAME_COLUMN_POOL: ColumnDef<
-  MaybeNestedPool<PoolHasSteerVaults<PoolWithIncentives<PoolBase>>>,
+  MaybeNestedPool<PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>>,
   unknown
 > = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCell {...props.row} />,
+
+  cell: (props) => <PoolNameCell pool={unnestPool(props.row.original)} />,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -168,7 +172,7 @@ export const TVL_COLUMN: ColumnDef<PoolBase, unknown> = {
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.liquidityUSD) - Number(rowB.liquidityUSD),
+    rowA.liquidityUSD - rowB.liquidityUSD,
   cell: (props) =>
     formatUSD(props.row.original.liquidityUSD).includes('NaN')
       ? '$0.00'
@@ -183,7 +187,7 @@ export const VOLUME_1D_COLUMN: ColumnDef<PoolHistory1D, unknown> = {
   header: 'Volume (24h)',
   accessorFn: (row) => row.volumeUSD1d,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volumeUSD1d) - Number(rowB.volumeUSD1d),
+    rowA.volumeUSD1d - rowB.volumeUSD1d,
   cell: (props) =>
     formatUSD(props.row.original.volumeUSD1d).includes('NaN')
       ? '$0.00'
@@ -223,7 +227,7 @@ export const VOLUME_1M_COLUMN: ColumnDef<PoolHistory1M, unknown> = {
   },
 }
 
-export const FEES_COLUMN: ColumnDef<PoolHistory1D, unknown> = {
+export const FEES_COLUMN = {
   id: 'fees1d',
   header: 'Fees (24h)',
   accessorFn: (row) => row.feesUSD1d,
@@ -234,29 +238,25 @@ export const FEES_COLUMN: ColumnDef<PoolHistory1D, unknown> = {
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
-}
+} as const satisfies ColumnDef<PoolHistory1D, unknown>
 
-export const NETWORK_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> =
-  {
-    id: 'network',
-    header: 'Network',
-    cell: (props) => (
-      <NetworkIcon
-        type="naked"
-        chainId={props.row.original.pool.chainId}
-        width={26}
-        height={26}
-      />
-    ),
-    meta: {
-      skeleton: <SkeletonCircle radius={26} />,
-    },
-  }
+export const NETWORK_COLUMN = {
+  id: 'network',
+  header: 'Network',
+  cell: (props) => (
+    <NetworkIcon
+      type="naked"
+      chainId={props.row.original.pool.chainId}
+      width={26}
+      height={26}
+    />
+  ),
+  meta: {
+    skeleton: <SkeletonCircle radius={26} />,
+  },
+} as const satisfies ColumnDef<SushiV2StakedUnstakedPosition, unknown>
 
-export const APR_COLUMN: ColumnDef<
-  MaybeNestedPool<PoolWithIncentives<PoolWithAprs>>,
-  unknown
-> = {
+export const APR_COLUMN = {
   id: 'totalApr1d',
   header: 'APR',
   accessorFn: (row) => unnestPool(row).totalApr1d,
@@ -272,9 +272,12 @@ export const APR_COLUMN: ColumnDef<
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
-}
+} as const satisfies ColumnDef<
+  MaybeNestedPool<PoolWithIncentives<PoolWithAprs>>,
+  unknown
+>
 
-export const VALUE_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> = {
+export const VALUE_COLUMN = {
   id: 'value',
   header: 'Value',
   accessorFn: (row) =>
@@ -292,7 +295,10 @@ export const VALUE_COLUMN: ColumnDef<SushiV2StakedUnstakedPosition, unknown> = {
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
-}
+} as const satisfies ColumnDef<
+  SushiPositionWithPool<PoolBase, SushiPositionStaked>,
+  unknown
+>
 
 export const NAME_COLUMN_V3: ColumnDef<
   ConcentratedLiquidityPositionWithV3Pool,
