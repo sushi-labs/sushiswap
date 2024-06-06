@@ -2,8 +2,8 @@ import type { ChainIdsVariable } from 'src/lib/types/chainId'
 import { fetchMultichain } from 'src/multichain'
 import { getSushiV2DayDatas } from 'src/subgraphs/sushi-v2/queries/day-datas'
 import {
-  getSushiV3DayDatas,
   type SushiV3DayDatas,
+  getSushiV3DayDatas,
 } from 'src/subgraphs/sushi-v3/queries/day-datas'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,

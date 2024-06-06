@@ -12,6 +12,7 @@ const schemas = {
   'master-chef-v2': 'api.studio.thegraph.com/query/32073/master-chefv2/v0.0.1',
   'mini-chef':
     'api.studio.thegraph.com/query/32073/minichef-arbitrum/version/latest',
+  steer: 'api.thegraph.com/subgraphs/name/steerprotocol/steer-protocol-polygon',
   'sushi-bar': 'api.studio.thegraph.com/query/32073/xsushi/v0.0.1',
   'sushi-v2': 'api.studio.thegraph.com/query/32073/v2-arbitrum/v0.0.5',
   'sushi-v3': 'api.studio.thegraph.com/query/32073/v3-arbitrum/v0.0.1',

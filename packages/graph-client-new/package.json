@@ -72,6 +72,7 @@
     "graphql": "16.6.0",
     "graphql-request": "^7.0.1",
     "json-bigint": "^1.0.0",
+    "@sushiswap/steer-sdk": "workspace:*",
     "sushi": "workspace:*",
     "viem": "2.10.11"
   },

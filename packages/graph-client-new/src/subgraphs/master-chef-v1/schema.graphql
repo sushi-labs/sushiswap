@@ -397,7 +397,7 @@ type Pool {
   sushiHarvestedUSD: BigDecimal!
 }
 
-type PoolHistory1D {
+type PoolHistory {
   id: ID!
   pool: Pool!
   slpBalance: BigDecimal!
@@ -414,7 +414,7 @@ type PoolHistory1D {
   sushiHarvestedUSD: BigDecimal!
 }
 
-input PoolHistory1D_filter {
+input PoolHistory_filter {
   id: ID
   id_not: ID
   id_gt: ID
@@ -543,11 +543,11 @@ input PoolHistory1D_filter {
 
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
-  and: [PoolHistory1D_filter]
-  or: [PoolHistory1D_filter]
+  and: [PoolHistory_filter]
+  or: [PoolHistory_filter]
 }
 
-enum PoolHistory1D_orderBy {
+enum PoolHistory_orderBy {
   id
   pool
   pool__id
@@ -899,7 +899,7 @@ type Query {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Pool!]!
-  PoolHistory1D(
+  poolHistory(
     id: ID!
 
     """
@@ -911,13 +911,13 @@ type Query {
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): PoolHistory1D
+  ): PoolHistory
   poolHistories(
     skip: Int = 0
     first: Int = 100
-    orderBy: PoolHistory1D_orderBy
+    orderBy: PoolHistory_orderBy
     orderDirection: OrderDirection
-    where: PoolHistory1D_filter
+    where: PoolHistory_filter
 
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -928,7 +928,7 @@ type Query {
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [PoolHistory1D!]!
+  ): [PoolHistory!]!
   user(
     id: ID!
 
@@ -1055,7 +1055,7 @@ type Subscription {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Pool!]!
-  PoolHistory1D(
+  poolHistory(
     id: ID!
 
     """
@@ -1067,13 +1067,13 @@ type Subscription {
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): PoolHistory1D
+  ): PoolHistory
   poolHistories(
     skip: Int = 0
     first: Int = 100
-    orderBy: PoolHistory1D_orderBy
+    orderBy: PoolHistory_orderBy
     orderDirection: OrderDirection
-    where: PoolHistory1D_filter
+    where: PoolHistory_filter
 
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -1084,7 +1084,7 @@ type Subscription {
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): [PoolHistory1D!]!
+  ): [PoolHistory!]!
   user(
     id: ID!
 

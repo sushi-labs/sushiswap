@@ -279,11 +279,6 @@ query SteerVaults($first: Int = 1000, $skip: Int = 0) {
       upperTick
     }
     createdAt
-    annualPercentageYield
-    annualPercentageDailyYield
-    annualPercentageMonthlyYield
-    annualPercentageYearlyYield
-    annualFeeARR
     token0
     token1
     fees0

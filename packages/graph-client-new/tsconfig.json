@@ -60,6 +60,12 @@
             "tadaTurboLocation": "./src/subgraphs/mini-chef/mini-chef-cache.d.ts"
           },
           {
+            "name": "steer",
+            "schema": "./src/subgraphs/steer/schema.graphql",
+            "tadaOutputLocation": "./src/subgraphs/steer/steer-env.d.ts",
+            "tadaTurboLocation": "./src/subgraphs/steer/steer-cache.d.ts"
+          },
+          {
             "name": "sushi-bar",
             "schema": "./src/subgraphs/sushi-bar/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/sushi-bar/sushi-bar-env.d.ts",
