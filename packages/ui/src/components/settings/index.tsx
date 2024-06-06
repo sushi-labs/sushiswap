@@ -8,6 +8,7 @@ import {
 } from '@sushiswap/hooks'
 import React, { FC, ReactNode, useState } from 'react'
 
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Button } from '../button'
 import {
   Dialog,
@@ -87,7 +88,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSlippageTolerance('0.1')
+                        setSlippageTolerance(DEFAULT_SLIPPAGE)
                       }}
                       className="!rounded-full -mr-1.5 !bg-opacity-50"
                       iconPosition="end"

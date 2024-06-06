@@ -1,6 +1,5 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   Button,
@@ -38,6 +37,7 @@ import React, {
   useRef,
 } from 'react'
 import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
@@ -67,7 +67,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
   } = useDerivedStateSimpleSwap()
 
   const { approved } = useApproved(APPROVE_TAG_SWAP)
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance()
   const { data: trade, isFetching } = useSimpleSwapTrade()
   const { address, chain } = useAccount()
   const tradeRef = useRef<UseTradeReturn | null>(null)
@@ -110,10 +110,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
     log.error('swap prepare error', {
       route: stringify(trade?.route),
-      slippageTolerance,
+      slippageTolerance: slippagePercent.toPercentageString(),
       error: stringify(error),
     })
-  }, [error, slippageTolerance, trade?.route])
+  }, [error, slippagePercent, trade?.route])
 
   const onSwapSuccess = useCallback(
     async (hash: SendTransactionReturnType) => {
@@ -438,11 +438,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                     )}
                     {isSwap && (
                       <List.KeyValue
-                        title={`Min. received after slippage (${
-                          slippageTolerance === 'AUTO'
-                            ? '0.1'
-                            : slippageTolerance
-                        }%)`}
+                        title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
                         subtitle="The minimum amount you are guaranteed to receive."
                       >
                         {isFetching ? (
