@@ -21,7 +21,6 @@ import {
   getTotalAllocPoint,
 } from './fetchers.js'
 
-
 export async function getMinichef(
   chainId: MiniChefChainId,
 ): Promise<ChefReturn> {
