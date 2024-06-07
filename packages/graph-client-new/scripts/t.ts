@@ -1,5 +1,5 @@
-import { getSushiV3Transactions } from '../src/subgraphs/sushi-v3/queries/transactions'
+import { getSushiV3Pools } from '../src/subgraphs/sushi-v3/queries/pools'
 
-const a = await getSushiV3Transactions({ chainId: 1, first: 2001 })
+const a = await getSushiV3Pools({ chainId: 8453, first: Infinity })
 
-console.log(a[0])
+console.log("v3 pools:", a.length)

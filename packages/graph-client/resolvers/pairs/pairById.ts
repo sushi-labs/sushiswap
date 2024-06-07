@@ -69,7 +69,7 @@ const transformV3PoolToPair = (
   reserveETH: pool.totalValueLockedETH,
   reserveUSD: pool.totalValueLockedUSD,
   createdAtTimestamp: pool.createdAtTimestamp,
-  createdAtBlockNumber: pool.createdAtBlockNumber,
+  createdAtBlockNumber: 0,
   hourSnapshots: pool.poolHourData.map((hourData) => ({
     id: hourData.id,
     date: hourData.periodStartUnix,

@@ -17,6 +17,8 @@ type ToPick =
   | 'liquidityUSD'
   | 'volumeUSD'
   | 'txCount'
+  | 'token0Price'
+  | 'token1Price'
 
 type RequiredBase = Pick<ResultOf<typeof PoolFieldsFragment>, ToPick>
 
@@ -74,7 +76,8 @@ export function transformPoolV2ToBase<T extends RequiredBase>(
       name: pool.token1.name,
       symbol: pool.token1.symbol,
     },
-
-    txCount: Number(pool.txCount),
+    token0Price: Number(pool.token0Price),
+    token1Price: Number(pool.token1Price),
+    txCount: Number(pool.txCount)
   }
 }

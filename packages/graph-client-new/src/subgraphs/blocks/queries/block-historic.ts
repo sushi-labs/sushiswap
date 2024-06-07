@@ -50,5 +50,8 @@ export async function getBlockHistoric({
     throw new Error('Block not found')
   }
 
-  return block
+  return {
+    chainId,
+    ...block,
+  }
 }

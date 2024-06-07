@@ -28,6 +28,8 @@ type ToPick =
   | 'observationIndex'
   | 'sqrtPrice'
   | 'tick'
+  | 'token0Price'
+  | 'token1Price'
 
 type RequiredBase = Pick<ResultOf<typeof PoolFieldsFragment>, ToPick>
 
@@ -48,7 +50,7 @@ export function transformPoolV3ToBase<T extends RequiredBase>(
     feeGrowthGlobal1X128: BigInt(pool.feeGrowthGlobal1X128),
     observationIndex: BigInt(pool.observationIndex),
     sqrtPrice: BigInt(pool.sqrtPrice),
-    tick: BigInt(pool.tick),
+    tick: BigInt(pool.tick ?? 0),
 
     protocol: SushiSwapProtocol.SUSHISWAP_V3,
 
@@ -84,6 +86,9 @@ export function transformPoolV3ToBase<T extends RequiredBase>(
       name: pool.token1.name,
       symbol: pool.token1.symbol,
     },
+
+    token0Price: Number(pool.token0Price),
+    token1Price: Number(pool.token1Price),
 
     txCount: Number(pool.txCount),
   }

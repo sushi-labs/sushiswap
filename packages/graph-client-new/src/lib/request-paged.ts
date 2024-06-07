@@ -68,13 +68,15 @@ export async function requestPaged<T extends TadaDocumentNode>({
   }
 
   // We need the id value to paginate
-  if (
-    !querySelection.selectionSet.selections.find((s: any) => {
-      return s.name.value === 'id'
-    })
-  ) {
-    throw new FetchError(chainId, 'Id not found in query selection')
-  }
+
+  // TODO: this is wrong, this is always throwing with first: Infinity variable.
+  // if (
+  //   !querySelection.selectionSet.selections.find((s: any) => {
+  //     return s.name.value === 'id'
+  //   })
+  // ) {
+  //   throw new FetchError(chainId, 'Id not found in query selection')
+  // }
 
   const key = querySelection?.name?.value as keyof ResultOf<T>
   if (!key) {

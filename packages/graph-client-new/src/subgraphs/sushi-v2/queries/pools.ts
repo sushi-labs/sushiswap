@@ -13,7 +13,7 @@ import { graphql } from '../graphql'
 export const SushiV2PoolsQuery = graphql(
   `
   query Pools($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: Pair_orderBy, $orderDirection: OrderDirection, $where: Pair_filter) {
-    pools: pairs(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+    pairs(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
       ...PoolFields
     }
   }
@@ -40,7 +40,7 @@ export async function getSushiV2Pools({
   })
 
   if (result) {
-    return result.pools.map((pool) => transformPoolV2ToBase(pool, chainId))
+    return result.pairs.map((pool) => transformPoolV2ToBase(pool, chainId))
   }
 
   throw new FetchError(chainId, 'Failed to fetch pools')

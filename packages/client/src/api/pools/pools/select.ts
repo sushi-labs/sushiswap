@@ -11,6 +11,8 @@ export const SushiPoolSelect = {
   liquidityUSD: true,
   reserve0: true,
   reserve1: true,
+  token0Price: true,
+  token1Price: true,
   volumeUSD: true,
   feeApr1h: true,
   feeApr1d: true,

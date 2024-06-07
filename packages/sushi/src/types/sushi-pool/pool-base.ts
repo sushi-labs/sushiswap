@@ -19,8 +19,8 @@ export type PoolBase<T extends PoolId = PoolId> = T & {
 
   feesUSD: number
 
-  // token0Price: bigint
-  // token1Price: bigint
+  token0Price: number
+  token1Price: number
 
   txCount: number
 }

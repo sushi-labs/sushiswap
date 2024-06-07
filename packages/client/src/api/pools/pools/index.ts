@@ -188,6 +188,8 @@ export async function getPoolsFromDB(
     totalApr1d: pool.totalApr1d,
     totalApr1w: pool.totalApr1w,
     totalApr1m: pool.totalApr1m,
+    token0Price: Number(pool.token0Price),
+    token1Price: Number(pool.token1Price)
   }))
 
   if (args.ids && args.ids.length > poolsTransformed.length) {
