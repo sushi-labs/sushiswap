@@ -1,5 +1,12 @@
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { createConfig, getBalance, sendTransaction } from '@wagmi/core'
+import {
+  SendTransactionParameters,
+  createConfig,
+  getBalance,
+  getTransactionCount,
+  prepareTransactionRequest,
+  sendTransaction,
+} from '@wagmi/core'
 import { NextRequest, NextResponse } from 'next/server'
 import { ChainId } from 'sushi'
 import { Hex, getAddress } from 'viem'
@@ -18,6 +25,21 @@ const schema = z.object({
   address: z.string().transform((address) => getAddress(address)),
 })
 
+const trySendTransaction = async (
+  config: Parameters<typeof prepareTransactionRequest>[0],
+  params: SendTransactionParameters,
+) => {
+  const nonce = await getTransactionCount(config, {
+    chainId: params.chainId,
+    address: account.address,
+  })
+  const tx = await sendTransaction(config, {
+    ...params,
+    nonce,
+  })
+  return tx
+}
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: { address: string } },
@@ -33,7 +55,7 @@ export async function GET(
     if (balance.value > MAX_BALANCE_AMOUNT)
       throw new Error('User balance exceeds limit')
 
-    const tx = await sendTransaction(config, {
+    const tx = await trySendTransaction(config, {
       chainId: ChainId.SKALE_EUROPA,
       account,
       to: address,
@@ -43,14 +65,14 @@ export async function GET(
     return NextResponse.json(tx, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=60',
+        'Cache-Control': 'public, max-age=5, stale-while-revalidate=60',
       },
     })
   } catch (e) {
     return NextResponse.json(e instanceof Error ? e.message : undefined, {
       status: 500,
       headers: {
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=60',
+        'Cache-Control': 'public, max-age=5, stale-while-revalidate=60',
       },
     })
   }

@@ -1,3 +1,5 @@
+'use client'
+
 import { createConfig, getBalance, useAccount } from '@sushiswap/wagmi'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useQuery } from '@tanstack/react-query'
@@ -19,9 +21,17 @@ export const useSkaleEuropaFaucet = () => {
         address: address as Address,
       })
 
-      if (balance.value > MAX_BALANCE_AMOUNT) return
+      if (balance.value > MAX_BALANCE_AMOUNT) return false
 
-      return await fetch(`/api/faucet/skale-europa/${address}`)
+      const response = await fetch(`/api/faucet/skale-europa/${address}`)
+
+      const json = await response.json()
+
+      if (json.status !== 200) {
+        throw new Error(json)
+      }
+
+      return true
     },
     staleTime: Infinity,
     enabled: Boolean(chainId === ChainId.SKALE_EUROPA && address),
