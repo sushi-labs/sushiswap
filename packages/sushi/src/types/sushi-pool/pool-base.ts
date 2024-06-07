@@ -1,12 +1,11 @@
-import type { PoolId, Token } from 'sushi/types'
+import type { PoolId, PoolSwapFee, Token } from 'sushi/types'
 
-export type PoolBase<T extends PoolId = PoolId> = T & {
+export type PoolBase<T extends PoolId = PoolId> = PoolSwapFee<T> & {
   name: string
 
   token0: Token
   token1: Token
 
-  swapFee: number
   // twapEnabled: boolean
 
   reserve0: bigint

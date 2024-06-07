@@ -10,7 +10,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
-import { Protocol, SteerVault, SteerVaults } from '@sushiswap/client'
+import { SteerVault, SteerVaults } from '@sushiswap/client'
 import {
   Badge,
   Button,
@@ -51,6 +51,13 @@ import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 import { useSteerVaults } from '@sushiswap/client/hooks'
+import { SteerVaultWithPool } from '@sushiswap/steer-sdk'
+import {
+  PoolBase,
+  PoolHistory1D,
+  PoolIfIncentivized,
+  PoolWithAprs,
+} from 'sushi'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
@@ -74,10 +81,6 @@ const COLUMNS = [
         decimals: original.token1.decimals,
         symbol: original.token1.symbol,
       })
-
-      const incentives = original.pool.incentives.filter(
-        (i) => i.rewardPerDay > 0,
-      )
 
       return (
         <div className="flex items-center gap-5">
@@ -141,9 +144,6 @@ const COLUMNS = [
                     <TooltipTrigger asChild>
                       <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
                         🧑🌾{' '}
-                        {incentives.length > 1
-                          ? `x ${incentives.length}`
-                          : ''}{' '}
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -244,11 +244,11 @@ const COLUMNS = [
   {
     id: 'fees1d',
     header: 'Fees (24h)',
-    accessorFn: (row) => row.pool.fees1d,
+    accessorFn: (row) => row.pool.feesUSD1d,
     cell: (props) =>
-      formatUSD(props.row.original.pool.fees1d).includes('NaN')
+      formatUSD(props.row.original.pool.feesUSD1d).includes('NaN')
         ? '$0.00'
-        : formatUSD(props.row.original.pool.fees1d),
+        : formatUSD(props.row.original.pool.feesUSD1d),
     meta: {
       skeleton: <SkeletonText fontSize="lg" />,
     },
@@ -256,17 +256,10 @@ const COLUMNS = [
   {
     id: 'totalApr1d',
     header: 'APR (24h)',
-    accessorFn: (row) =>
-      row.apr1d * 100 +
-      row.pool.incentives
-        .filter((el) => +el.rewardPerDay > 0)
-        .reduce((acc, cur) => acc + cur.apr * 100, 0),
+    accessorFn: (row) => (row.apr1d + row.pool.incentiveApr) * 100,
     cell: (props) => {
       const totalAPR =
-        props.row.original.apr1d * 100 +
-        props.row.original.pool.incentives
-          .filter((el) => +el.rewardPerDay > 0)
-          .reduce((acc, cur) => acc + cur.apr * 100, 0)
+        (props.row.original.apr1d + props.row.original.pool.incentiveApr) * 100
 
       return (
         <div className="flex gap-1">
@@ -433,16 +426,6 @@ const COLUMNS = [
           <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuLabel>
               {row.original.token0.symbol} / {row.original.token1.symbol}
-              {row.original.pool.protocol === Protocol.BENTOBOX_STABLE && (
-                <Chip variant="green" className="ml-2">
-                  Trident Stable
-                </Chip>
-              )}
-              {row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC && (
-                <Chip variant="green" className="ml-2">
-                  Trident Classic
-                </Chip>
-              )}
               {row.original.pool.protocol === 'SUSHISWAP_V2' && (
                 <Chip variant="pink" className="ml-2">
                   SushiSwap V2
@@ -527,7 +510,13 @@ const COLUMNS = [
       skeleton: <SkeletonText fontSize="lg" />,
     },
   },
-] satisfies ColumnDef<SteerVault, unknown>[]
+] satisfies ColumnDef<
+  SteerVaultWithPool<
+    SteerVault,
+    PoolIfIncentivized<PoolWithAprs<PoolHistory1D<PoolBase>>>
+  >,
+  unknown
+>[]
 
 export const SmartPoolsTable = () => {
   const { tokenSymbols, chainIds, protocols, farmsOnly } = usePoolFilters()
@@ -556,11 +545,11 @@ export const SmartPoolsTable = () => {
     }
   }, [sorting, pagination])
 
-  const _vaults: SteerVaults = useMemo(
+  const _vaults = useMemo(
     () =>
       vaults
         ? vaults
-            .filter((el) => (farmsOnly ? el.pool.incentives.length > 0 : true))
+            .filter((el) => (farmsOnly ? el.pool.isIncentivized : true))
             .filter((el) =>
               protocols.length > 0
                 ? protocols.includes(el.pool.protocol)

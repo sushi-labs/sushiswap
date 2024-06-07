@@ -1,3 +1,4 @@
+import { FetchError } from 'src/lib/fetch-error'
 import type { ChainIdsVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
 import { fetchMultichain } from 'src/multichain/fetch-multichain'
@@ -5,6 +6,7 @@ import {
   type GetSushiV2LiquidityPositions,
   getSushiV2LiquidityPositions,
 } from 'src/subgraphs/sushi-v2'
+import { ChainId } from 'sushi/chain'
 import {
   MINICHEF_SUPPORTED_CHAIN_IDS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -12,12 +14,14 @@ import {
   isSushiSwapV2ChainId,
 } from 'sushi/config'
 import type {
-  PoolBase,
   PoolV2,
   SushiPositionStaked,
   SushiPositionWithPool,
 } from 'sushi/types'
-import type { GetChefUserPositions } from './chef-user-positions'
+import {
+  type GetChefUserPositions,
+  getChefUserPositions,
+} from './chef-user-positions'
 
 export type GetSushiV2StakedUnstakedPositions = {
   user: Hex
@@ -27,7 +31,7 @@ export type GetSushiV2StakedUnstakedPositions = {
 >
 
 export type SushiV2StakedUnstakedPosition = SushiPositionStaked<
-  SushiPositionWithPool<PoolV2<PoolBase>>
+  SushiPositionWithPool<PoolV2>
 >
 
 /**
@@ -41,7 +45,10 @@ export async function getSushiV2StakedUnstakedPositions({
     ]),
   ],
   user,
-}: GetSushiV2StakedUnstakedPositions) {
+}: GetSushiV2StakedUnstakedPositions): Promise<{
+  data: SushiV2StakedUnstakedPosition[]
+  errors: FetchError[]
+}> {
   const sushiSwapChainIds = chainIds.filter(isSushiSwapV2ChainId)
   const {
     data: sushiSwapV2LiquidityPositions,
@@ -58,16 +65,16 @@ export async function getSushiV2StakedUnstakedPositions({
     },
   })
 
-  const miniChefChainIds = chainIds.filter(isMiniChefChainId)
+  const chefChainIds = [
+    ...chainIds.filter(isMiniChefChainId),
+    ...(chainIds.includes(ChainId.ETHEREUM) ? [ChainId.ETHEREUM] : []),
+  ]
   const { data: chefUserPositions, errors: chefUserPositionErrors } =
-    await fetchMultichain({
-      chainIds: miniChefChainIds,
-      fetch: getSushiV2LiquidityPositions,
-      variables: {
-        first: 1000,
-        where: {
-          user,
-        },
+    await getChefUserPositions({
+      chainIds: chefChainIds,
+      where: {
+        address: user,
+        amount_gt: '0',
       },
     })
 
@@ -88,7 +95,9 @@ export async function getSushiV2StakedUnstakedPositions({
       )
 
       const pool = sushiSwapPosition?.pool ?? chefPosition?.pool
+
       if (!pool) return null
+
       return {
         user,
         unstakedBalance: BigInt(sushiSwapPosition?.balance ?? '0'),
@@ -96,7 +105,7 @@ export async function getSushiV2StakedUnstakedPositions({
         pool,
       }
     })
-    .filter((p) => p !== null) as SushiV2StakedUnstakedPosition[]
+    .filter((p): p is NonNullable<typeof p> => p !== null)
 
   const errors = [
     ...sushiSwapV2LiquidityPositionErrors,

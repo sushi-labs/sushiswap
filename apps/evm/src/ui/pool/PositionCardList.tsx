@@ -1,5 +1,5 @@
-import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
 import React, { FC, ReactNode } from 'react'
+import type { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 import { useAccount } from 'wagmi'
@@ -9,12 +9,12 @@ interface PositionCardList {
     positions,
     isLoading,
   }: {
-    positions: SushiV2StakedUnstakedPosition[]
+    positions: UserWithPool[]
     isLoading: boolean
   }): ReactNode
 }
 
-const value = (position: SushiV2StakedUnstakedPosition) =>
+const value = (position: UserWithPool) =>
   (Number(position.unstakedBalance + position.stakedBalance) /
     Number(position.pool.liquidity)) *
   Number(position.pool.liquidityUSD)

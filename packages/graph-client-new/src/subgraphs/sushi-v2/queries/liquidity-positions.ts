@@ -10,6 +10,7 @@ import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multich
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
+import { SushiSwapProtocol } from 'sushi/types'
 import { graphql } from '../graphql'
 
 export const SushiV2LiquidityPositionsQuery = graphql(`
@@ -47,9 +48,12 @@ export async function getSushiV2LiquidityPositions({
     })
 
     const transformed = result.liquidityPositions.map((position) => {
-      const pool = convertIdToMultichainId(
-        copyIdToAddress(addChainId(chainId, position.pair)),
-      )
+      const pool = {
+        ...convertIdToMultichainId(
+          copyIdToAddress(addChainId(chainId, position.pair)),
+        ),
+        protocol: SushiSwapProtocol.SUSHISWAP_V2,
+      }
 
       return {
         id: position.id,

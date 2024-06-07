@@ -1,8 +1,15 @@
 import { getPools } from '@sushiswap/client'
+import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { NextResponse } from 'next/server'
-import { getUser, getV2GraphPools, transformGraphPool } from 'src/lib/graph'
+import { getUser, getV2GraphPools } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
+import type {
+  PoolBase,
+  PoolIfIncentivized,
+  SushiPositionStaked,
+  SushiPositionWithPool,
+} from 'sushi/types'
 import { Address } from 'viem'
 import { z } from 'zod'
 
@@ -21,6 +28,11 @@ const schema = z.object({
   ),
 })
 
+export type UserWithPool = SushiPositionWithPool<
+  PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>,
+  SushiPositionStaked
+>
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
@@ -32,7 +44,7 @@ export async function GET(request: Request) {
   }
   const args = result.data
   const data = await getUser(args)
-  const poolIds = data.map((position) => position.id)
+  const poolIds = data.map((position) => position.pool.id)
 
   const [graphPoolsPromise, dbPoolsPromise] = await Promise.allSettled([
     getV2GraphPools(poolIds),
@@ -40,39 +52,38 @@ export async function GET(request: Request) {
       ids: poolIds,
     }),
   ])
+
   const graphPools =
     graphPoolsPromise.status === 'fulfilled' ? graphPoolsPromise.value : []
   const dbPools =
     dbPoolsPromise.status === 'fulfilled' ? dbPoolsPromise.value : []
 
-  const userPositions =
-    data
-      .map((position) => {
-        const pool = dbPools?.find((pool) => pool.id === position.id)
-        const graphPool = graphPools?.find(
-          (graphPool) => graphPool.id === position.address,
-        )
+  const userPositions = data
+    .map((position) => {
+      const dbPool = dbPools?.find((pool) => pool.id === position.pool.id)
+      const graphPool = graphPools?.find(
+        (graphPool) => graphPool.id === position.pool.id,
+      )
 
-        if (!pool && !graphPool) return undefined
+      const pool: PoolIfIncentivized<PoolBase> | undefined =
+        dbPool || graphPool
+          ? {
+              ...graphPool!,
+              isIncentivized: true,
+              wasIncentivized: true,
+            }
+          : undefined
 
-        if (!graphPool) return { ...position, pool }
-        if (!pool) return { ...position, pool: transformGraphPool(graphPool) }
+      if (!pool) return undefined
 
-        return {
-          ...position,
-          pool: {
-            ...pool,
-            totalSupply: String(graphPool.totalSupply),
-            liquidityUSD: String(graphPool.liquidityUSD),
-            volumeUSD: String(graphPool.volumeUSD),
-            feeApr: Number(pool.feeApr1d),
-            totalApr: Number(pool.feeApr1d) + pool.incentiveApr,
-          },
-        }
-      })
-      .filter((pool) => pool !== undefined) ?? []
+      return {
+        ...position,
+        pool,
+      }
+    })
+    .filter((pool): pool is NonNullable<typeof pool> => pool !== undefined)
 
-  return NextResponse.json(userPositions, {
+  return NextResponse.json(userPositions satisfies UserWithPool[], {
     headers: {
       'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
     },

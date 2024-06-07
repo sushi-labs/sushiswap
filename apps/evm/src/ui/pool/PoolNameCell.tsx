@@ -10,18 +10,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui/components/tooltip'
-import { Row } from '@tanstack/react-table'
 import { FC } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { formatNumber } from 'sushi/format'
 
 import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
-  type MaybeNestedPool,
   type PoolBase,
-  type PoolWithIncentives,
+  type PoolIfIncentivized,
   SushiSwapProtocol,
-  unnestPool,
 } from 'sushi'
 
 export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
@@ -47,14 +44,14 @@ export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
   ),
 }
 
-export const PoolNameCell: FC<
-  Row<MaybeNestedPool<PoolHasSteerVaults<PoolWithIncentives<PoolBase>>>>
-> = ({ original }) => {
-  const pool = unnestPool(original)
-
+export const PoolNameCell: FC<{
+  pool: PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>
+}> = ({ pool }) => {
   const { token0, token1 } = useTokensFromPool(pool)
 
-  const incentives = pool.incentives?.filter((i) => i.rewardPerDay > 0)
+  const isIncentivized = 'isIncentivized' in pool && pool.isIncentivized
+  const hasEnabledVault =
+    'hasEnabledSteerVault' in pool && pool.hasEnabledSteerVault
 
   return (
     <div className="flex items-center gap-5">
@@ -110,14 +107,12 @@ export const PoolNameCell: FC<
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          {pool.isIncentivized && (
+          {isIncentivized && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-                    🧑‍🌾 {incentives.length > 1
-                      ? `x ${incentives.length}`
-                      : ''}{' '}
+                    🧑‍🌾{' '}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -126,7 +121,7 @@ export const PoolNameCell: FC<
               </Tooltip>
             </TooltipProvider>
           )}
-          {pool.hasEnabledSteerVault && (
+          {hasEnabledVault && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

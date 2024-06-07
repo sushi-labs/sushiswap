@@ -13,6 +13,10 @@ interface UseSteerAccountPositionsExtended {
   chainIds?: number[]
 }
 
+export type SteerAccountPositionExtended = NonNullable<
+  ReturnType<typeof useSteerAccountPositionsExtended>['data']
+>[0]
+
 export const useSteerAccountPositionsExtended = ({
   account,
   enabled = true,
@@ -43,8 +47,8 @@ export const useSteerAccountPositionsExtended = ({
 
       if (!vault) return []
 
-      const token0 = new Token({ chainId: vault.chainId, ...vault.token0 })
-      const token1 = new Token({ chainId: vault.chainId, ...vault.token1 })
+      const token0 = new Token(vault.token0)
+      const token1 = new Token(vault.token1)
 
       const token0Price = prices?.[String(vault.chainId)]?.[token0.address] || 0
       const token1Price = prices?.[String(vault.chainId)]?.[token1.address] || 0
@@ -62,6 +66,8 @@ export const useSteerAccountPositionsExtended = ({
       return {
         ...position,
         vault,
+        token0,
+        token1,
         token0Amount,
         token1Amount,
         token0AmountUSD,
