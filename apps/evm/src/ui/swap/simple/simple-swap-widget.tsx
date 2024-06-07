@@ -2,7 +2,6 @@
 
 import { CrossChainBanner } from '../cross-chain-banner'
 import { SwapModeButtons } from '../swap-mode-buttons'
-import { SimpleSwapAdditionalButton } from './simple-swap-additional-button'
 import { SimpleSwapBridgeBanner } from './simple-swap-bridge-banner'
 import { SimpleSwapHeader } from './simple-swap-header'
 import { SimpleSwapSettingsOverlay } from './simple-swap-settings-overlay'
@@ -30,7 +29,6 @@ export const SimpleSwapWidget = () => {
       <div className="flex flex-col">
         <SimpleSwapToken1Input />
         <SimpleSwapTradeButton />
-        <SimpleSwapAdditionalButton />
       </div>
       <SimpleSwapTradeStats />
       <SimpleSwapTokenNotFoundDialog />
