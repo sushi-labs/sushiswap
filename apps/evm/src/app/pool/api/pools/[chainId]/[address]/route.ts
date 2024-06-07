@@ -1,4 +1,5 @@
 import { PoolApiSchema, getPoolFromDB } from '@sushiswap/client/api'
+import { JSONStringify } from 'json-with-bigint'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../../cors'
 
@@ -26,5 +27,9 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch pool' }, { status: 500 })
   }
 
-  return NextResponse.json(pool, { headers: CORS })
+  const stringified = JSONStringify(pool)
+  return new NextResponse(stringified, {
+    status: 200,
+    headers: { 'content-type': 'application/json', ...CORS },
+  })
 }

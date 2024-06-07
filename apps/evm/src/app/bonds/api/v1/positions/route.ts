@@ -2,6 +2,7 @@ import {
   BondsPositionsApiSchema,
   getBondPositionsFromSubgraph,
 } from '@sushiswap/client/api'
+import { JSONStringify } from 'json-with-bigint'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../cors'
 
@@ -19,7 +20,12 @@ export async function GET(request: Request) {
 
   try {
     const positions = await getBondPositionsFromSubgraph(result.data)
-    return NextResponse.json(positions, { headers: CORS })
+
+    const stringified = JSONStringify(positions)
+    return new NextResponse(stringified, {
+      status: 200,
+      headers: { 'content-type': 'application/json', ...CORS },
+    })
   } catch (e) {
     return NextResponse.json(e, { headers: CORS })
   }

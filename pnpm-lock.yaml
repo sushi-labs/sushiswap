@@ -780,6 +780,9 @@ importers:
       ioredis:
         specifier: 5.3.2
         version: 5.3.2
+      json-with-bigint:
+        specifier: ^2.1.2
+        version: 2.1.2
       lodash.once:
         specifier: 4.1.1
         version: 4.1.1
@@ -1485,6 +1488,9 @@ importers:
       deepmerge-ts:
         specifier: ^4.3.0
         version: 4.3.0
+      json-with-bigint:
+        specifier: ^2.1.2
+        version: 2.1.2
       tslib:
         specifier: latest
         version: 2.6.2
@@ -34342,6 +34348,10 @@ packages:
 
   /json-to-graphql-query@2.2.5:
     resolution: {integrity: sha512-5Nom9inkIMrtY992LMBBG1Zaekrc10JaRhyZgprwHBVMDtRgllTvzl0oBbg13wJsVZoSoFNNMaeIVQs0P04vsA==}
+    dev: false
+
+  /json-with-bigint@2.1.2:
+    resolution: {integrity: sha512-ntVByusL5D7N3Cfka28x1KeKNwMDATNjvT0BBGb4JqErX/K/Cj5X0euRvMXFthFxWSvJzqtj5/3qMcKZLgvoIQ==}
     dev: false
 
   /json2mq@0.2.0:

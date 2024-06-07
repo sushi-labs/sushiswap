@@ -1,6 +1,7 @@
 import { SteerVaultApiSchema, getSteerVaultFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../../cors'
+import { JSONStringify } from 'json-with-bigint'
 
 export const revalidate = 15
 
@@ -18,5 +19,9 @@ export async function GET(
   }
 
   const vault = await getSteerVaultFromDB(result.data)
-  return NextResponse.json(vault, { headers: CORS })
+  const stringified = JSONStringify(vault)
+  return new NextResponse(stringified, {
+    status: 200,
+    headers: { 'content-type': 'application/json', ...CORS },
+  })
 }
