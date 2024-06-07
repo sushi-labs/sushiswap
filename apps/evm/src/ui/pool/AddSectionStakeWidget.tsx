@@ -27,7 +27,7 @@ interface AddSectionStakeWidgetProps {
   setValue(value: string): void
   reserve0: Amount<Type> | null
   reserve1: Amount<Type> | null
-  liquidityToken: Token
+  liquidityToken: Token | undefined
   children: ReactNode
   isFarm?: boolean
   isIncentivized?: boolean

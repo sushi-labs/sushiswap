@@ -86,7 +86,7 @@ export const getMasterChefContractConfig = (
 }
 
 export function useMasterChefContract(
-  chainId: ChainId,
+  chainId: ChainId | undefined,
   chef: Omit<ChefType, 'Merkl'>,
 ) {
   return useMemo(() => {

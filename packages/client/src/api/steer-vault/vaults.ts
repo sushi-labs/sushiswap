@@ -12,6 +12,9 @@ import type { SushiSwapV3ChainId } from 'sushi/config'
 import type {
   Address,
   ID,
+  PoolBase,
+  PoolHistory1D,
+  PoolId,
   PoolIfIncentivized,
   PoolSwapFee,
   PoolWithAprs,
@@ -22,22 +25,33 @@ import { parseSteerArgs } from './parse'
 
 type Vaults = SteerVaultWithPool<
   SteerVault,
-  PoolWithAprs<PoolSwapFee<PoolIfIncentivized>>
+  PoolWithAprs<
+    PoolHistory1D<
+      PoolSwapFee<PoolIfIncentivized<PoolId & Pick<PoolBase, 'liquidityUSD'>>>
+    >
+  >
 >[]
 
 export async function getSteerVaultsFromDB(
   args: typeof SteerVaultsApiSchema._output,
 ): Promise<Vaults> {
-  const take = args.take
-  const orderBy: Prisma.SteerVaultOrderByWithRelationInput = {
-    [args.orderBy]: args.orderDir,
+  let take = 9999
+  if ('take' in args) {
+    take = args.take
   }
+
+  let orderBy: Prisma.SteerVaultOrderByWithRelationInput = {}
+
+  if ('orderBy' in args) {
+    orderBy = { [args.orderBy]: args.orderDir }
+  }
+
   const where: Prisma.SteerVaultWhereInput = parseSteerArgs(args)
 
   let skip = 0
   let cursor: { cursor: Prisma.SteerVaultWhereUniqueInput } | object = {}
 
-  if (args.cursor) {
+  if ('cursor' in args) {
     skip = 1
     cursor = { cursor: { id: args.cursor } }
   }
@@ -62,6 +76,14 @@ export async function getSteerVaultsFromDB(
           protocol: true,
 
           swapFee: true,
+
+          liquidityUSD: true,
+
+          liquidityUSDChange1d: true,
+          volume1d: true,
+          volumeChange1d: true,
+          fees1d: true,
+          feesChange1d: true,
 
           incentiveApr: true,
           isIncentivized: true,
@@ -152,6 +174,19 @@ export async function getSteerVaultsFromDB(
       chainId: vault.pool.chainId as SushiSwapV3ChainId,
       protocol: vault.pool.protocol as SushiSwapV3Protocol,
 
+      liquidityUSD: Number(vault.pool.liquidityUSD),
+
+      liquidityUSD1dChange: vault.pool.liquidityUSDChange1d,
+
+      volumeUSD1d: Number(vault.pool.volume1d),
+      volumeUSD1dChange: vault.pool.volumeChange1d,
+
+      feesUSD1d: Number(vault.pool.fees1d),
+      feesUSD1dChange: vault.pool.feesChange1d,
+
+      txCount1d: 0,
+      txCount1dChange: 0,
+
       incentiveApr: vault.pool.incentiveApr,
       isIncentivized: vault.pool.isIncentivized,
       wasIncentivized: vault.pool.wasIncentivized,
@@ -213,8 +248,8 @@ export async function getSteerVaultsFromDB(
 
     performanceFee: vault.performanceFee,
 
-    lowerTick: BigInt(vault.lowerTick),
-    upperTick: BigInt(vault.upperTick),
+    lowerTick: vault.lowerTick,
+    upperTick: vault.upperTick,
 
     adjustmentFrequency: vault.adjustmentFrequency,
     lastAdjustmentTimestamp: vault.lastAdjustmentTimestamp,

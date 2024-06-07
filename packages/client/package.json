@@ -67,7 +67,7 @@
   "dependencies": {
     "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/graph-client-new": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "deepmerge-ts": "^4.3.0",

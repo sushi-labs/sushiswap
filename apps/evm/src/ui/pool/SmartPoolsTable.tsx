@@ -10,7 +10,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
-import { SteerVault, SteerVaults } from '@sushiswap/client'
+import { SteerVaults } from '@sushiswap/client'
 import {
   Badge,
   Button,
@@ -51,13 +51,6 @@ import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 import { useSteerVaults } from '@sushiswap/client/hooks'
-import { SteerVaultWithPool } from '@sushiswap/steer-sdk'
-import {
-  PoolBase,
-  PoolHistory1D,
-  PoolIfIncentivized,
-  PoolWithAprs,
-} from 'sushi'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
@@ -510,13 +503,7 @@ const COLUMNS = [
       skeleton: <SkeletonText fontSize="lg" />,
     },
   },
-] satisfies ColumnDef<
-  SteerVaultWithPool<
-    SteerVault,
-    PoolIfIncentivized<PoolWithAprs<PoolHistory1D<PoolBase>>>
-  >,
-  unknown
->[]
+] satisfies ColumnDef<SteerVaults[number], unknown>[]
 
 export const SmartPoolsTable = () => {
   const { tokenSymbols, chainIds, protocols, farmsOnly } = usePoolFilters()

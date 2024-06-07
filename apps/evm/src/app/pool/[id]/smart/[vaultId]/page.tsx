@@ -23,14 +23,8 @@ import {
 function getPriceExtremes(
   vault: SteerVault,
 ): SteerStrategyGeneric['priceExtremes'] {
-  const token0 = new Token({
-    chainId: vault.pool.chainId,
-    ...vault.pool.token0,
-  })
-  const token1 = new Token({
-    chainId: vault.pool.chainId,
-    ...vault.pool.token1,
-  })
+  const token0 = new Token(vault.token0)
+  const token1 = new Token(vault.token1)
 
   let lowerPrice = tickToPrice(token0, token1, vault.lowerTick).toSignificant(7)
   let upperPrice = tickToPrice(token0, token1, vault.upperTick).toSignificant(7)

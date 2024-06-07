@@ -702,9 +702,6 @@ importers:
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../../packages/dexie
-      '@sushiswap/graph-client':
-        specifier: workspace:*
-        version: link:../../packages/graph-client
       '@sushiswap/graph-client-new':
         specifier: workspace:*
         version: link:../../packages/graph-client-new
@@ -1476,9 +1473,9 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database
-      '@sushiswap/graph-client':
+      '@sushiswap/graph-client-new':
         specifier: workspace:*
-        version: link:../graph-client
+        version: link:../graph-client-new
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../steer-sdk

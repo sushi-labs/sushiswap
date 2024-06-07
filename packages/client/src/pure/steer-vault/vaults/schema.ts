@@ -1,3 +1,5 @@
+import { getChainIdAddressFromId } from 'sushi/format'
+import type { ID } from 'sushi/types'
 import { z } from 'zod'
 
 export const SteerVaultsApiSchema = z.object({
@@ -29,6 +31,11 @@ export const SteerVaultsApiSchema = z.object({
     .refine((tokenSymbols) => tokenSymbols.length <= 3, {
       message: 'Can only use up to 3 tokenSymbols.',
     })
+    .optional(),
+  poolId: z
+    .string()
+    .refine(getChainIdAddressFromId)
+    .transform((id) => id.toLowerCase() as ID)
     .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('reserveUSD'),

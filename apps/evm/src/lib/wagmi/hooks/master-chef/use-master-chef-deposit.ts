@@ -19,7 +19,7 @@ import { ChainId } from 'sushi'
 import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefDepositParams {
-  chainId: ChainId
+  chainId: ChainId | undefined
   chef: ChefType
   pid: number
   amount?: Amount<Token>
@@ -45,7 +45,7 @@ export const useMasterChefDeposit = ({
 
   const onSuccess = useCallback(
     (data: SendTransactionReturnType) => {
-      if (!amount) return
+      if (!amount || !chainId) return
 
       try {
         const ts = new Date().getTime()

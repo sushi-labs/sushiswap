@@ -1,12 +1,12 @@
 'use client'
 
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
-import { Rebase } from '@sushiswap/graph-client'
+import type { BentoBoxRebases } from '@sushiswap/graph-client-new/bentobox'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
-import useSWR from 'swr'
 
+import { useQuery } from '@tanstack/react-query'
 import { bentoBoxTokensSchema } from '../../../lib/schema'
 
 export type GetBentoBoxTokenArgs = GetApiInputFromOutput<
@@ -22,10 +22,11 @@ export const getBentoBoxTokensUrl = (args: GetBentoBoxTokenArgs) =>
   `/analytics/api/bentobox${parseArgs(args)}`
 
 function useBentoBoxTokens(args: GetBentoBoxTokenArgs) {
-  const { data: rebases, isValidating } = useSWR<Rebase[]>(
-    getBentoBoxTokensUrl(args),
-    (url) => fetch(url).then((data) => data.json()),
-  )
+  const { data: rebases, isInitialLoading } = useQuery<BentoBoxRebases>({
+    queryKey: [getBentoBoxTokensUrl(args)],
+    queryFn: () =>
+      fetch(getBentoBoxTokensUrl(args)).then((data) => data.json()),
+  })
 
   const { data: prices, isLoading } = useAllPrices()
 
@@ -63,7 +64,7 @@ function useBentoBoxTokens(args: GetBentoBoxTokenArgs) {
         }),
       [rebases, prices],
     ),
-    isLoading: isLoading || isValidating,
+    isLoading: isLoading || isInitialLoading,
   }
 }
 

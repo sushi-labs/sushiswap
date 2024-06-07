@@ -6,10 +6,11 @@ export type SteerVault<T extends SteerVaultId = SteerVaultId> = T & {
   feeTier: number
   performanceFee: number
 
+  adjustmentFrequency: number
   lastAdjustmentTimestamp: number
 
-  lowerTick: bigint
-  upperTick: bigint
+  lowerTick: number
+  upperTick: number
 
   apr: number
   apr1d: number

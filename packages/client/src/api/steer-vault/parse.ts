@@ -64,5 +64,13 @@ export function parseSteerArgs(
     }
   }
 
+  if ('poolId' in args && args.poolId !== undefined) {
+    addFilter({
+      pool: {
+        id: args.poolId,
+      },
+    })
+  }
+
   return where
 }
