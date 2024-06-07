@@ -19,7 +19,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { ROUTE_PROCESSOR_2_ADDRESS } from 'sushi/config'
 import { Amount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { z } from 'zod'
 
 interface ClaimItem {
@@ -35,6 +35,7 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
   })
   const { data: isClaimed, isLoading: checkIsClaimedLoading } =
     useRP2ExploitIsClaimed({ index: claim.index, chainId })
+
   const { write, isPending: isClaimPending } = useRP2ExploitClaim({
     claim,
     chainId,
@@ -56,7 +57,9 @@ export const ClaimItem: FC<ClaimItem> = ({ chainId, account, claim }) => {
 
   const amount = useMemo(
     () =>
-      token ? Amount.fromRawAmount(token, claim.amount.toString()) : undefined,
+      token
+        ? Amount.fromRawAmount(token, claim.amount.hex.toString())
+        : undefined,
     [claim.amount, token],
   )
 

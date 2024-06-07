@@ -2,7 +2,7 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
-import withBundleAnalyzer from '@next/bundle-analyzer'
+// import withBundleAnalyzer from '@next/bundle-analyzer'
 const bundleAnalyzer = (a) => a // withBundleAnalyzer({ enabled: true })
 
 const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'

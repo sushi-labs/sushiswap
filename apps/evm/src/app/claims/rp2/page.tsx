@@ -17,9 +17,11 @@ import { RevokeItem } from '../components/RevokeItem'
 
 const RP2ClaimPage = () => {
   const { address } = useAccount()
-  const claims = useRP2ExploitClaimFinder({
-    account: address,
-  })
+
+  const { data: claims, isInitialLoading: isClaimsLoading } =
+    useRP2ExploitClaimFinder({
+      account: address,
+    })
 
   const { data: tokens, isInitialLoading: isLoading } = useRP2ExploitCheck({
     account: address,
@@ -90,8 +92,12 @@ const RP2ClaimPage = () => {
                 <List.KeyValue flex title="No user connected">
                   <ConnectButton size="sm" />
                 </List.KeyValue>
-              ) : claims.length > 0 ? (
-                claims.map(([chainId, claim]) => (
+              ) : isClaimsLoading ? (
+                <List.KeyValue flex title="Loading">
+                  {' '}
+                </List.KeyValue>
+              ) : (claims?.length || 0) > 0 ? (
+                claims?.map(([chainId, claim]) => (
                   <ClaimItem
                     account={address}
                     key={claim.index}
