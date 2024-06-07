@@ -1,3 +1,4 @@
+import type { RequestOptions } from 'src/lib/request'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { ChainId } from 'sushi/chain'
 import { getBlocks } from './blocks'
@@ -12,16 +13,19 @@ type GetBlockHistoric = {
   yearsAgo?: number
 } & ChainIdVariable<ChainId>
 
-export async function getBlockHistoric({
-  chainId,
-  secsAgo = 0,
-  minsAgo = 0,
-  hoursAgo = 0,
-  daysAgo = 0,
-  weeksAgo = 0,
-  monthsAgo = 0,
-  yearsAgo = 0,
-}: GetBlockHistoric) {
+export async function getBlockHistoric(
+  {
+    chainId,
+    secsAgo = 0,
+    minsAgo = 0,
+    hoursAgo = 0,
+    daysAgo = 0,
+    weeksAgo = 0,
+    monthsAgo = 0,
+    yearsAgo = 0,
+  }: GetBlockHistoric,
+  options?: RequestOptions,
+) {
   const current = Math.floor(Date.now() / 1000)
   const ago =
     secsAgo +
@@ -34,15 +38,18 @@ export async function getBlockHistoric({
 
   const target = current - ago
 
-  const blocks = await getBlocks({
-    chainId,
-    first: 1,
-    orderBy: 'timestamp',
-    orderDirection: 'asc',
-    where: {
-      timestamp_gte: String(target),
+  const blocks = await getBlocks(
+    {
+      chainId,
+      first: 1,
+      orderBy: 'timestamp',
+      orderDirection: 'asc',
+      where: {
+        timestamp_gte: String(target),
+      },
     },
-  })
+    options,
+  )
 
   const block = blocks[0]
 

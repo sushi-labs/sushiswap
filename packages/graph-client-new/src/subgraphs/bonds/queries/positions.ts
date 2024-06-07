@@ -4,6 +4,7 @@ import { BONDS_SUBGRAPH_URL, type BondChainId } from '@sushiswap/bonds-sdk'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
@@ -36,10 +37,10 @@ export const BondUserPositionsQuery = graphql(
 export type GetBondUserPositions = VariablesOf<typeof BondUserPositionsQuery> &
   ChainIdVariable<BondChainId>
 
-export async function getBondUserPositions({
-  chainId,
-  ...variables
-}: GetBondUserPositions) {
+export async function getBondUserPositions(
+  { chainId, ...variables }: GetBondUserPositions,
+  options?: RequestOptions,
+) {
   const url = `https://${BONDS_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -47,6 +48,7 @@ export async function getBondUserPositions({
     url,
     query: BondUserPositionsQuery,
     variables,
+    options,
   })
 
   return result.positions.map((position) => {

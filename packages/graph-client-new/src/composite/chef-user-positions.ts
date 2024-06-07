@@ -1,5 +1,11 @@
 import type { ChainIdVariable, ChainIdsVariable } from 'src/lib/types/chainId'
+import {
+  MINICHEF_SUPPORTED_CHAIN_IDS,
+  type MiniChefChainId,
+  isMiniChefChainId,
+} from 'sushi/config'
 
+import type { RequestOptions } from 'src/lib/request'
 import {
   type GetMasterChefV1UserPositions,
   type MasterChefV1UserPositions,
@@ -16,11 +22,6 @@ import {
   getMiniChefUserPositions,
 } from 'src/subgraphs/mini-chef'
 import { ChainId } from 'sushi/chain'
-import {
-  MINICHEF_SUPPORTED_CHAIN_IDS,
-  type MiniChefChainId,
-  isMiniChefChainId,
-} from 'sushi/config'
 
 export type GetChefUserPositions = Omit<
   GetMasterChefV1UserPositions &
@@ -41,26 +42,32 @@ export type ChefPosition = Omit<CombinedPosition, 'pool'> & {
     ChainIdVariable<NonNullable<CombinedPosition['pool']>['chainId']>
 }
 
-export async function getChefUserPositions({
-  chainIds = [ChainId.ETHEREUM, ...MINICHEF_SUPPORTED_CHAIN_IDS],
-  ...variables
-}: GetChefUserPositions) {
+export async function getChefUserPositions(
+  {
+    chainIds = [ChainId.ETHEREUM, ...MINICHEF_SUPPORTED_CHAIN_IDS],
+    ...variables
+  }: GetChefUserPositions,
+  options?: RequestOptions,
+) {
   const miniChefChainIds = chainIds.filter(isMiniChefChainId)
 
   const masterChefPromises = chainIds.includes(ChainId.ETHEREUM)
     ? [
-        getMasterChefV1UserPositions(variables),
-        getMasterChefV2UserPositions(variables),
+        getMasterChefV1UserPositions(variables, options),
+        getMasterChefV2UserPositions(variables, options),
       ]
     : []
 
   const promises = await Promise.allSettled([
     ...masterChefPromises,
     ...miniChefChainIds.map((chainId) =>
-      getMiniChefUserPositions({
-        ...variables,
-        chainId,
-      }),
+      getMiniChefUserPositions(
+        {
+          ...variables,
+          chainId,
+        },
+        options,
+      ),
     ),
   ])
 

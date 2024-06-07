@@ -4,6 +4,7 @@ import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import type { PoolBase, PoolV2 } from 'sushi/types'
 
 import { FetchError } from 'src/lib/fetch-error'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { transformPoolV2ToBase } from 'src/subgraphs/sushi-v2/transforms/pool-v2-to-base'
@@ -26,10 +27,10 @@ export type GetSushiV2Pools = VariablesOf<typeof SushiV2PoolsQuery> &
 
 export type SushiV2Pools = PoolV2<PoolBase>[]
 
-export async function getSushiV2Pools({
-  chainId,
-  ...variables
-}: GetSushiV2Pools): Promise<SushiV2Pools> {
+export async function getSushiV2Pools(
+  { chainId, ...variables }: GetSushiV2Pools,
+  options?: RequestOptions,
+): Promise<SushiV2Pools> {
   const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -37,6 +38,7 @@ export async function getSushiV2Pools({
     url,
     query: SushiV2PoolsQuery,
     variables,
+    options,
   })
 
   if (result) {

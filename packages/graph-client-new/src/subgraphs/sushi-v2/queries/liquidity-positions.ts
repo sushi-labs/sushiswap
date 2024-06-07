@@ -1,16 +1,17 @@
 import type { VariablesOf } from 'gql.tada'
-import type { Hex } from 'src/lib/types/hex'
 import { type SushiSwapV2ChainId, publicClientConfig } from 'sushi/config'
 import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
+import { SushiSwapProtocol } from 'sushi/types'
 import { createPublicClient, erc20Abi } from 'viem'
 
 import { FetchError } from 'src/lib/fetch-error'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
-import { SushiSwapProtocol } from 'sushi/types'
+import type { Hex } from 'src/lib/types/hex'
 import { graphql } from '../graphql'
 
 export const SushiV2LiquidityPositionsQuery = graphql(`
@@ -33,10 +34,10 @@ export type GetSushiV2LiquidityPositions = VariablesOf<
 > &
   ChainIdVariable<SushiSwapV2ChainId>
 
-export async function getSushiV2LiquidityPositions({
-  chainId,
-  ...variables
-}: GetSushiV2LiquidityPositions) {
+export async function getSushiV2LiquidityPositions(
+  { chainId, ...variables }: GetSushiV2LiquidityPositions,
+  options?: RequestOptions,
+) {
   try {
     const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
@@ -45,6 +46,7 @@ export async function getSushiV2LiquidityPositions({
       url,
       query: SushiV2LiquidityPositionsQuery,
       variables,
+      options,
     })
 
     const transformed = result.liquidityPositions.map((position) => {

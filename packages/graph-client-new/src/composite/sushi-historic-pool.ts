@@ -1,3 +1,4 @@
+import type { RequestOptions } from 'src/lib/request'
 import { getBlockHistoric } from 'src/subgraphs/blocks/queries/block-historic'
 import {
   type GetSushiV2Pool,
@@ -28,46 +29,52 @@ type Result = PoolHistory1D<
   PoolWithBuckets<PoolV2<PoolBase> | PoolV3<PoolBase>>
 >
 
-async function fetchSushiV2Pool({
-  chainId,
-  ...variables
-}: GetSushiV2Pool | GetSushiV3Pool) {
+async function fetchSushiV2Pool(
+  { chainId, ...variables }: GetSushiV2Pool | GetSushiV3Pool,
+  options?: RequestOptions,
+) {
   if (!isSushiSwapV2ChainId(chainId)) {
     throw new Error(`ChainId ${chainId} is not a SushiSwap V2 chain`)
   }
 
-  return getSushiV2Pool({ chainId, ...variables })
+  return getSushiV2Pool({ chainId, ...variables }, options)
 }
 
-async function fetchSushiV3Pool({
-  chainId,
-  ...variables
-}: GetSushiV2Pool | GetSushiV3Pool) {
+async function fetchSushiV3Pool(
+  { chainId, ...variables }: GetSushiV2Pool | GetSushiV3Pool,
+  options?: RequestOptions,
+) {
   if (!isSushiSwapV3ChainId(chainId)) {
     throw new Error(`ChainId ${chainId} is not a SushiSwap V3 chain`)
   }
 
-  return getSushiV3Pool({ chainId, ...variables })
+  return getSushiV3Pool({ chainId, ...variables }, options)
 }
 
-export async function getSushiHistoricPool({
-  chainId,
-  ...variables
-}: GetSushiHistoricPool): Promise<Result> {
+export async function getSushiHistoricPool(
+  { chainId, ...variables }: GetSushiHistoricPool,
+  options?: RequestOptions,
+): Promise<Result> {
   const id = variables.id.toLowerCase()
 
   // FETCH
   const v2poolF = isSushiSwapV2ChainId(chainId)
-    ? getSushiV2PoolBuckets({
-        chainId,
-        id,
-      })
+    ? getSushiV2PoolBuckets(
+        {
+          chainId,
+          id,
+        },
+        options,
+      )
     : null
   const v3poolF = isSushiSwapV3ChainId(chainId)
-    ? getSushiV3PoolBuckets({
-        chainId,
-        id,
-      })
+    ? getSushiV3PoolBuckets(
+        {
+          chainId,
+          id,
+        },
+        options,
+      )
     : null
 
   const [v2poolS, v3poolS] = await Promise.allSettled([v2poolF, v3poolF])
@@ -84,16 +91,22 @@ export async function getSushiHistoricPool({
   const getPoolTimeAgo = async (
     ago: Omit<Parameters<typeof getBlockHistoric>[0], 'chainId'>,
   ) => {
-    return getBlockHistoric({
-      chainId,
-      ...ago,
-    })
+    return getBlockHistoric(
+      {
+        chainId,
+        ...ago,
+      },
+      options,
+    )
       .then(async (block) => {
-        return fetcher({
-          chainId,
-          id,
-          block: { number: block.number },
-        })
+        return fetcher(
+          {
+            chainId,
+            id,
+            block: { number: block.number },
+          },
+          options,
+        )
       })
       .catch(() => null)
   }

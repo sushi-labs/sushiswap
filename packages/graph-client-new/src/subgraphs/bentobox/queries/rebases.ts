@@ -5,6 +5,7 @@ import { BENTOBOX_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import { type RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
@@ -28,7 +29,10 @@ export const BentoBoxRebasesQuery = graphql(`
 export type GetRebases = VariablesOf<typeof BentoBoxRebasesQuery> &
   ChainIdVariable<BentoBoxChainId>
 
-export async function getRebases({ chainId, ...variables }: GetRebases) {
+export async function getRebases(
+  { chainId, ...variables }: GetRebases,
+  options?: RequestOptions,
+) {
   const url = `https://${BENTOBOX_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -36,6 +40,7 @@ export async function getRebases({ chainId, ...variables }: GetRebases) {
     url,
     query: BentoBoxRebasesQuery,
     variables,
+    options,
   })
 
   return result.rebases.map((rebase) =>

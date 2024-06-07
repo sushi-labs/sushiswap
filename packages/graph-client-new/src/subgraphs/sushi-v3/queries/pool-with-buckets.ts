@@ -1,10 +1,10 @@
 import type { VariablesOf } from 'gql.tada'
-import request from 'graphql-request'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import type { PoolBase, PoolV3, PoolWithBuckets } from 'sushi/types'
 
 import { FetchError } from 'src/lib/fetch-error'
+import { type RequestOptions, request } from 'src/lib/request'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { PoolFieldsFragment } from 'src/subgraphs/sushi-v3/fragments/pool-fields'
 import { transformBucketsV3ToStd } from 'src/subgraphs/sushi-v3/transforms/bucket-v3-to-std'
@@ -47,13 +47,16 @@ export type GetSushiV3PoolBuckets = VariablesOf<
 
 export type SushiV3PoolBuckets = PoolWithBuckets<PoolV3<PoolBase>>
 
-export async function getSushiV3PoolBuckets({
-  chainId,
-  ...variables
-}: GetSushiV3PoolBuckets): Promise<SushiV3PoolBuckets> {
+export async function getSushiV3PoolBuckets(
+  { chainId, ...variables }: GetSushiV3PoolBuckets,
+  options?: RequestOptions,
+): Promise<SushiV3PoolBuckets> {
   const url = `https://${SUSHISWAP_V3_SUBGRAPH_URL[chainId]}`
 
-  const result = await request(url, SushiV3PoolBucketsQuery, variables)
+  const result = await request(
+    { url, document: SushiV3PoolBucketsQuery, variables },
+    options,
+  )
 
   if (result.pool) {
     return {

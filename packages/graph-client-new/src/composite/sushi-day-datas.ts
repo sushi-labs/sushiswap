@@ -13,19 +13,23 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
+import type { RequestOptions } from 'src/lib/request'
 
 export type GetSushiDayDatas = {} & ChainIdsVariable<
   SushiSwapV2ChainId | SushiSwapV3ChainId
 >
 
-export async function getSushiDayDatas({
-  chainIds = Array.from(
-    new Set([
-      ...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
-      ...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-    ]),
-  ),
-}: GetSushiDayDatas) {
+export async function getSushiDayDatas(
+  {
+    chainIds = Array.from(
+      new Set([
+        ...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+        ...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+      ]),
+    ),
+  }: GetSushiDayDatas,
+  options?: RequestOptions,
+) {
   const sushiSwapV2ChainIds = chainIds.filter(isSushiSwapV2ChainId)
   const v2p = fetchMultichain({
     chainIds: sushiSwapV2ChainIds,
@@ -35,6 +39,7 @@ export async function getSushiDayDatas({
       orderBy: 'date',
       orderDirection: 'desc',
     },
+    options,
   })
 
   const sushiSwapV3ChainIds = chainIds.filter(isSushiSwapV3ChainId)
@@ -46,6 +51,7 @@ export async function getSushiDayDatas({
       orderBy: 'date',
       orderDirection: 'desc',
     },
+    options,
   })
 
   const [

@@ -5,6 +5,7 @@ import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
@@ -25,10 +26,10 @@ export const SushiV2TokensQuery = graphql(`
 export type GetSushiV2Tokens = VariablesOf<typeof SushiV2TokensQuery> &
   ChainIdVariable<SushiSwapV2ChainId>
 
-export async function getSushiV2Tokens({
-  chainId,
-  ...variables
-}: GetSushiV2Tokens) {
+export async function getSushiV2Tokens(
+  { chainId, ...variables }: GetSushiV2Tokens,
+  options?: RequestOptions,
+) {
   const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -36,6 +37,7 @@ export async function getSushiV2Tokens({
     url,
     query: SushiV2TokensQuery,
     variables,
+    options,
   })
 
   return result.tokens.map((token) =>

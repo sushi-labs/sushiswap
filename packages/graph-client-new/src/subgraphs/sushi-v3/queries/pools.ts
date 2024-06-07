@@ -8,6 +8,7 @@ import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { transformPoolV3ToBase } from 'src/subgraphs/sushi-v3/transforms/pool-v3-to-base'
 import { PoolFieldsFragment } from '../fragments/pool-fields'
 import { graphql } from '../graphql'
+import type { RequestOptions } from 'src/lib/request'
 
 export const SushiV3PoolsQuery = graphql(
   `
@@ -23,10 +24,10 @@ export const SushiV3PoolsQuery = graphql(
 export type GetSushiV3Pools = VariablesOf<typeof SushiV3PoolsQuery> &
   ChainIdVariable<SushiSwapV3ChainId>
 
-export async function getSushiV3Pools({
-  chainId,
-  ...variables
-}: GetSushiV3Pools) {
+export async function getSushiV3Pools(
+  { chainId, ...variables }: GetSushiV3Pools,
+  options?: RequestOptions,
+) {
   const url = `https://${SUSHISWAP_V3_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -34,6 +35,7 @@ export async function getSushiV3Pools({
     url,
     query: SushiV3PoolsQuery,
     variables,
+    options,
   })
 
   if (result) {

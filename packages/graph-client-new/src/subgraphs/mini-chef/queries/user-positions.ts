@@ -1,5 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 
+import type { RequestOptions } from 'src/lib/request'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
@@ -30,10 +31,10 @@ export type GetMiniChefUserPositions = VariablesOf<
 > &
   ChainIdVariable<MiniChefChainId>
 
-export async function getMiniChefUserPositions({
-  chainId,
-  ...variables
-}: GetMiniChefUserPositions) {
+export async function getMiniChefUserPositions(
+  { chainId, ...variables }: GetMiniChefUserPositions,
+  options?: RequestOptions,
+) {
   const url = `https://${MINICHEF_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -41,6 +42,7 @@ export async function getMiniChefUserPositions({
     url,
     query: MiniChefUserPositionsQuery,
     variables,
+    options,
   })
 
   return result.positions.flatMap((position) => {

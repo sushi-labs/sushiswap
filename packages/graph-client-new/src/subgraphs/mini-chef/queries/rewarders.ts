@@ -1,5 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { MiniChefChainId } from 'sushi/config'
@@ -11,8 +12,8 @@ export const MiniChefRewardersQuery = graphql(
 query MiniChefRewarders(
   $first: Int = 1000
   $skip: Int = 0
-  $where: MiniChef_Rewarder_filter
-  $block: MiniChef_Block_height
+  $where: Rewarder_filter
+  $block: Block_height
 ) {
   rewarders: rewarders(first: $first, skip: $skip, where: $where, block: $block) {
     id
@@ -27,10 +28,10 @@ query MiniChefRewarders(
 export type GetMiniChefRewarders = VariablesOf<typeof MiniChefRewardersQuery> &
   ChainIdVariable<MiniChefChainId>
 
-export async function getMiniChefRewarders({
-  chainId,
-  ...variables
-}: GetMiniChefRewarders) {
+export async function getMiniChefRewarders(
+  { chainId, ...variables }: GetMiniChefRewarders,
+  options?: RequestOptions,
+) {
   const url = `https://${MINICHEF_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -38,6 +39,7 @@ export async function getMiniChefRewarders({
     url,
     query: MiniChefRewardersQuery,
     variables,
+    options,
   })
 
   return result.rewarders.map((rewarder) => {

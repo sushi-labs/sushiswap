@@ -1,8 +1,8 @@
 import type { VariablesOf } from 'gql.tada'
-import request from 'graphql-request'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
+import { type RequestOptions, request } from 'src/lib/request'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { PoolFieldsFragment } from 'src/subgraphs/sushi-v3/fragments/pool-fields'
 import { transformPoolV3ToBase } from 'src/subgraphs/sushi-v3/transforms/pool-v3-to-base'
@@ -27,10 +27,10 @@ export type GetSushiV3PoolsByTokenPair = {
 
 export type SushiV3PoolsByTokenPair = PoolV3<PoolBase>
 
-export async function getSushiV3PoolsByTokenPair({
-  chainId,
-  ..._variables
-}: GetSushiV3PoolsByTokenPair) {
+export async function getSushiV3PoolsByTokenPair(
+  { chainId, ..._variables }: GetSushiV3PoolsByTokenPair,
+  options?: RequestOptions,
+) {
   const url = `https://${SUSHISWAP_V3_SUBGRAPH_URL[chainId]}`
 
   const tokens = [_variables.token0, _variables.token1].sort() as [
@@ -45,11 +45,14 @@ export async function getSushiV3PoolsByTokenPair({
     },
   }
 
-  const result = await request({
-    url,
-    document: SushiV3PoolsByTokenPairQuery,
-    variables,
-  })
+  const result = await request(
+    {
+      url,
+      document: SushiV3PoolsByTokenPairQuery,
+      variables,
+    },
+    options,
+  )
 
   return result.pools.map((pool) => transformPoolV3ToBase(pool, chainId))
 }

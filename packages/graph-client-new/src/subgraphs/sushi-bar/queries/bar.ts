@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
-import request from 'graphql-request'
 
 import { FetchError } from 'src/lib/fetch-error'
+import { type RequestOptions, request } from 'src/lib/request'
 import { SUSHI_BAR_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { graphql } from '../graphql'
 
@@ -25,10 +25,16 @@ export const SushiBarQuery = graphql(
 
 export type GetSushiBar = VariablesOf<typeof SushiBarQuery>
 
-export async function getSushiBar(variables: GetSushiBar) {
+export async function getSushiBar(
+  variables: GetSushiBar,
+  options?: RequestOptions,
+) {
   const url = `https://${SUSHI_BAR_SUBGRAPH_URL}`
 
-  const result = await request(url, SushiBarQuery, variables)
+  const result = await request(
+    { url, document: SushiBarQuery, variables },
+    options,
+  )
 
   if (result) {
     return result.xsushi

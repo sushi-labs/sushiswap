@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
-import request from 'graphql-request'
 
 import { FetchError } from 'src/lib/fetch-error'
+import { type RequestOptions, request } from 'src/lib/request'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { ChainId } from 'sushi/chain'
 import { BLOCKS_SUBGRAPH_URL } from 'sushi/config/subgraph'
@@ -22,7 +22,10 @@ export const BlocksQuery = graphql(
 export type GetBlocks = VariablesOf<typeof BlocksQuery> &
   ChainIdVariable<ChainId>
 
-export async function getBlocks({ chainId, ...variables }: GetBlocks) {
+export async function getBlocks(
+  { chainId, ...variables }: GetBlocks,
+  options?: RequestOptions,
+) {
   const baseUrl = BLOCKS_SUBGRAPH_URL[chainId]
 
   if (!baseUrl) {
@@ -31,7 +34,10 @@ export async function getBlocks({ chainId, ...variables }: GetBlocks) {
 
   const url = `https://${baseUrl}`
 
-  const result = await request(url, BlocksQuery, variables)
+  const result = await request(
+    { url, document: BlocksQuery, variables },
+    options,
+  )
 
   return result.blocks.map((block) => ({
     id: block.id,

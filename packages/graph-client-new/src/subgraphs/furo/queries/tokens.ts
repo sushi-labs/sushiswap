@@ -5,6 +5,7 @@ import { FURO_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
@@ -29,7 +30,10 @@ export const FuroTokensQuery = graphql(`
 export type GetFuroTokens = VariablesOf<typeof FuroTokensQuery> &
   ChainIdVariable<FuroChainId>
 
-export async function getFuroTokens({ chainId, ...variables }: GetFuroTokens) {
+export async function getFuroTokens(
+  { chainId, ...variables }: GetFuroTokens,
+  options?: RequestOptions,
+) {
   const url = `https://${FURO_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -37,6 +41,7 @@ export async function getFuroTokens({ chainId, ...variables }: GetFuroTokens) {
     url,
     query: FuroTokensQuery,
     variables,
+    options,
   })
 
   return result.tokens.map((token) =>

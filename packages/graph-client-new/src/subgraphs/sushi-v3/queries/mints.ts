@@ -7,6 +7,7 @@ import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
+import type { RequestOptions } from 'src/lib/request'
 
 export const SushiV3MintsQuery = graphql(`
   query Mints($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: Mint_orderBy, $orderDirection: OrderDirection, $where: Mint_filter) {
@@ -32,10 +33,10 @@ export const SushiV3MintsQuery = graphql(`
 export type GetSushiV3Mints = VariablesOf<typeof SushiV3MintsQuery> &
   ChainIdVariable<SushiSwapV3ChainId>
 
-export async function getSushiV3Mints({
-  chainId,
-  ...variables
-}: GetSushiV3Mints) {
+export async function getSushiV3Mints(
+  { chainId, ...variables }: GetSushiV3Mints,
+  options?: RequestOptions,
+) {
   const url = `https://${SUSHISWAP_V3_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -43,6 +44,7 @@ export async function getSushiV3Mints({
     url,
     query: SushiV3MintsQuery,
     variables,
+    options,
   })
 
   if (result) {

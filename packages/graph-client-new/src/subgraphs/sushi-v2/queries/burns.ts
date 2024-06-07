@@ -3,6 +3,7 @@ import type { SushiSwapV2ChainId } from 'sushi/config'
 import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import { FetchError } from 'src/lib/fetch-error'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
@@ -29,10 +30,10 @@ export const SushiV2BurnsQuery = graphql(`
 export type GetSushiV2Burns = VariablesOf<typeof SushiV2BurnsQuery> &
   ChainIdVariable<SushiSwapV2ChainId>
 
-export async function getSushiV2Burns({
-  chainId,
-  ...variables
-}: GetSushiV2Burns) {
+export async function getSushiV2Burns(
+  { chainId, ...variables }: GetSushiV2Burns,
+  options?: RequestOptions,
+) {
   const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -40,6 +41,7 @@ export async function getSushiV2Burns({
     url,
     query: SushiV2BurnsQuery,
     variables,
+    options,
   })
 
   if (result) {

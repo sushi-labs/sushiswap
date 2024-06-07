@@ -1,5 +1,5 @@
 import type { ResultOf, TadaDocumentNode, VariablesOf } from 'gql.tada'
-import _request from 'graphql-request'
+import { type RequestOptions, request as _request } from 'src/lib/request'
 import type { ChainId } from 'sushi/chain'
 import { MAX_FIRST } from 'sushi/config/subgraph'
 import { FetchError } from './fetch-error'
@@ -9,6 +9,7 @@ interface RequestPaged<T extends TadaDocumentNode<Record<string, unknown>>> {
   url: string
   query: T
   variables: VariablesOf<T>
+  options?: RequestOptions | undefined
 }
 
 type ResultOfValue<T extends TadaDocumentNode> =
@@ -18,8 +19,12 @@ function request<T extends TadaDocumentNode>(
   url: string,
   query: T,
   variables: VariablesOf<T>,
+  options?: RequestOptions,
 ): Promise<ResultOf<T>> {
-  return _request(url, query, variables as any) as Promise<ResultOf<T>>
+  return _request(
+    { url, document: query, variables: variables as any },
+    options,
+  ) as Promise<ResultOf<T>>
 }
 
 /**
@@ -37,6 +42,7 @@ export async function requestPaged<T extends TadaDocumentNode>({
   url,
   query,
   variables,
+  options,
 }: RequestPaged<T>) {
   const maxFirst = MAX_FIRST[chainId]
 
@@ -90,16 +96,21 @@ export async function requestPaged<T extends TadaDocumentNode>({
   while (lastSize === maxFirst) {
     const lastIdWhere: any = typeof lastId === 'string' ? { id_gt: lastId } : {}
 
-    const result = await request(url, query, {
-      ...variables,
-      first: maxFirst,
-      where: {
-        ...(variables?.['where'] ?? {}),
-        ...lastIdWhere,
+    const result = await request(
+      url,
+      query,
+      {
+        ...variables,
+        first: maxFirst,
+        where: {
+          ...(variables?.['where'] ?? {}),
+          ...lastIdWhere,
+        },
+        orderBy: 'id',
+        orderDirection: 'asc',
       },
-      orderBy: 'id',
-      orderDirection: 'asc',
-    }).then((r: ResultOf<T>) => {
+      options,
+    ).then((r: ResultOf<T>) => {
       if (!r) return null
       return Object.values(r)[0] as ResultOfValue<T>
     })

@@ -3,6 +3,7 @@ import type { VariablesOf } from 'gql.tada'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import { ChainId } from 'sushi/chain'
 import { MASTERCHEF_V1_SUBGRAPH_URL } from 'sushi/config/subgraph'
@@ -28,9 +29,10 @@ export type GetMasterChefV1UserPositions = VariablesOf<
   typeof MasterChefV1UserPositionsQuery
 >
 
-export async function getMasterChefV1UserPositions({
-  ...variables
-}: GetMasterChefV1UserPositions) {
+export async function getMasterChefV1UserPositions(
+  { ...variables }: GetMasterChefV1UserPositions,
+  options?: RequestOptions,
+) {
   const url = `https://${MASTERCHEF_V1_SUBGRAPH_URL}`
 
   const result = await requestPaged({
@@ -38,6 +40,7 @@ export async function getMasterChefV1UserPositions({
     url,
     query: MasterChefV1UserPositionsQuery,
     variables,
+    options,
   })
 
   return result.positions.flatMap((position) => {

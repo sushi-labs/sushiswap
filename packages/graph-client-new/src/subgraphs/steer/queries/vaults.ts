@@ -1,6 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { STEER_SUBGRAPH_URL, type SteerChainId } from '@sushiswap/steer-sdk'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { type Address, SushiSwapProtocol, getIdFromChainIdAddress } from 'sushi'
@@ -49,10 +50,10 @@ export const SteerVaultsQuery = graphql(`
 export type GetSteerVaults = VariablesOf<typeof SteerVaultsQuery> &
   ChainIdVariable<SteerChainId>
 
-export async function getSteerVaults({
-  chainId,
-  ...variables
-}: GetSteerVaults) {
+export async function getSteerVaults(
+  { chainId, ...variables }: GetSteerVaults,
+  options?: RequestOptions,
+) {
   const url = `https://${STEER_SUBGRAPH_URL[chainId]}`
 
   const result = await requestPaged({
@@ -60,6 +61,7 @@ export async function getSteerVaults({
     url,
     query: SteerVaultsQuery,
     variables,
+    options,
   })
 
   return result.vaults.map((vault) => ({

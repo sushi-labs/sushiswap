@@ -1,9 +1,9 @@
 import type { VariablesOf } from 'gql.tada'
-import request from 'graphql-request'
 import type { SushiSwapV2ChainId } from 'sushi/config'
 import { SUSHISWAP_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import { FetchError } from 'src/lib/fetch-error'
+import { type RequestOptions, request } from 'src/lib/request'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import type { Hex } from 'src/lib/types/hex'
 import { transformBucketsV2ToStd } from 'src/subgraphs/sushi-v2/transforms/bucket-v2-to-std'
@@ -47,10 +47,10 @@ export type GetSushiV2PoolBuckets = Omit<
 
 export type SushiV2PoolBuckets = PoolWithBuckets<PoolV2<PoolBase>>
 
-export async function getSushiV2PoolBuckets({
-  chainId,
-  ...variables
-}: GetSushiV2PoolBuckets): Promise<SushiV2PoolBuckets> {
+export async function getSushiV2PoolBuckets(
+  { chainId, ...variables }: GetSushiV2PoolBuckets,
+  options?: RequestOptions,
+): Promise<SushiV2PoolBuckets> {
   const url = `https://${SUSHISWAP_V2_SUBGRAPH_URL[chainId]}`
 
   if (variables?.dayDataFirst || 0 > 1000) {
@@ -59,11 +59,18 @@ export async function getSushiV2PoolBuckets({
     )
   }
 
-  const result = await request(url, SushiV2PoolBucketsQuery, {
-    ...variables,
-    id: variables.id.toLowerCase(),
-    id_Bytes: variables.id.toLowerCase() as Hex,
-  })
+  const result = await request(
+    {
+      url,
+      document: SushiV2PoolBucketsQuery,
+      variables: {
+        ...variables,
+        id: variables.id.toLowerCase(),
+        id_Bytes: variables.id.toLowerCase() as Hex,
+      },
+    },
+    options,
+  )
 
   if (result.pool) {
     return {

@@ -5,6 +5,7 @@ import { MASTERCHEF_V2_SUBGRAPH_URL } from 'sushi/config/subgraph'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
 import { convertIdToMultichainId } from 'src/lib/modifiers/convert-id-to-multichain-id'
 import { copyIdToAddress } from 'src/lib/modifiers/copy-id-to-address'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import { SushiSwapProtocol } from 'sushi'
 import { graphql } from '../graphql'
@@ -28,9 +29,10 @@ export type GetMasterChefV2UserPositions = VariablesOf<
   typeof MasterChefV2UserPositionsQuery
 >
 
-export async function getMasterChefV2UserPositions({
-  ...variables
-}: GetMasterChefV2UserPositions) {
+export async function getMasterChefV2UserPositions(
+  { ...variables }: GetMasterChefV2UserPositions,
+  options?: RequestOptions,
+) {
   const url = `https://${MASTERCHEF_V2_SUBGRAPH_URL}`
 
   const result = await requestPaged({
@@ -38,6 +40,7 @@ export async function getMasterChefV2UserPositions({
     url,
     query: MasterChefV2UserPositionsQuery,
     variables,
+    options,
   })
 
   return result.positions.flatMap((position) => {
