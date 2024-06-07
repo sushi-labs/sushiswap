@@ -21,10 +21,7 @@ export const useSkaleEuropaFaucet = () => {
 
       if (balance.value > MAX_BALANCE_AMOUNT) return
 
-      const url = new URL('/api/faucet/skale-europa', window.location.origin)
-      url.searchParams.set('address', address as Address)
-
-      return await fetch(url)
+      return await fetch(`/api/faucet/skale-europa/${address}`)
     },
     staleTime: Infinity,
     enabled: Boolean(chainId === ChainId.SKALE_EUROPA && address),

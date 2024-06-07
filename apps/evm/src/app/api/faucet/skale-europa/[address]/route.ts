@@ -18,9 +18,10 @@ const schema = z.object({
   address: z.string().transform((address) => getAddress(address)),
 })
 
-export async function GET(request: NextRequest) {
-  const params = Object.fromEntries(request.nextUrl.searchParams.entries())
-
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { address: string } },
+) {
   try {
     const { address } = schema.parse(params)
 
@@ -42,14 +43,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(tx, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=600',
+        'Cache-Control': 'public, max-age=60, stale-while-revalidate=60',
       },
     })
   } catch (e) {
     return NextResponse.json(e instanceof Error ? e.message : undefined, {
       status: 500,
       headers: {
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=600',
+        'Cache-Control': 'public, max-age=60, stale-while-revalidate=60',
       },
     })
   }
