@@ -7,6 +7,7 @@ import useSWR from 'swr'
 
 import type { PoolId } from 'sushi'
 import { getTokensFromPool } from '../useTokensFromPool'
+import { JSONParse } from 'json-with-bigint'
 
 export function getGraphPoolUrl(poolId: string) {
   return `/pools/api/graphPool/${poolId}`
@@ -19,7 +20,9 @@ export const useGraphPool = (pool: PoolId) => {
     isValidating,
     error,
   } = useSWR<SushiV2Pool>(getGraphPoolUrl(pool.id), async (url) =>
-    fetch(url).then((data) => data.json()),
+    fetch(url)
+      .then((data) => data.json())
+      .then((data) => JSONParse(data)),
   )
 
   const { token0, token1, liquidityToken } = useMemo(() => {

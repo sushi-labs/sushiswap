@@ -3,6 +3,7 @@
 import { parseArgs } from '@sushiswap/client'
 import type { GetSushiV2StakedUnstakedPositions } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
 import { useQuery } from '@tanstack/react-query'
+import { JSONParse } from 'json-with-bigint'
 import { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { ChainId } from 'sushi/chain'
 
@@ -24,7 +25,9 @@ export function useSushiV2UserPositions(
   return useQuery<UserWithPool[]>({
     queryKey: [getUserPositionsWithPoolsUrl(args)],
     queryFn: () =>
-      fetch(getUserPositionsWithPoolsUrl(args)).then((data) => data.json()),
+      fetch(getUserPositionsWithPoolsUrl(args))
+        .then((data) => data.json())
+        .then((data) => JSONParse(data)),
     enabled: Boolean(shouldFetch && args.user),
   })
 }
