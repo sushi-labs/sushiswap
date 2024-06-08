@@ -64,7 +64,7 @@ enum AprTimeRange {
 }
 
 const SUBGRAPH_REQUEST_OPTIONS = {
-  retries: 3, // should probably be a reasonable timeout as well?
+  retries: 10, // should probably be a reasonable timeout as well?
 }
 
 export async function execute(protocol: Protocol) {
@@ -129,12 +129,9 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
   const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
 
   const chainIds =
-    protocol === Protocol.SUSHISWAP_V2 ? [ChainId.ARBITRUM] : [ChainId.BASE] // leaving this here for testing, will remove later
-  // TODO: enable code below, commented out while testing
-  // const chainIds =
-  //   protocol === Protocol.SUSHISWAP_V2
-  //     ? SUSHISWAP_V2_SUPPORTED_CHAIN_IDS
-  //     : SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
+    protocol === Protocol.SUSHISWAP_V2
+      ? SUSHISWAP_V2_SUPPORTED_CHAIN_IDS
+      : SUSHISWAP_V3_SUPPORTED_CHAIN_IDS
 
   console.log(
     `EXTRACT - ${protocol} - Extracting from ${
@@ -270,6 +267,7 @@ async function fetchPairs(
         getSushiV2Pools(
           {
             chainId,
+            first: Infinity,
           },
           SUBGRAPH_REQUEST_OPTIONS,
         ),
