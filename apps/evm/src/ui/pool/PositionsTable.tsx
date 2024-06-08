@@ -37,7 +37,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
 
   const { data: positions, isLoading } = useSushiV2UserPositions(
     {
-      user: address!,
+      id: address!,
       chainIds: SUPPORTED_CHAIN_IDS,
     },
     !!address,
@@ -60,7 +60,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
     const chainFiltered = searchFiltered.filter((el) =>
       chainIds.includes(el.pool.chainId as (typeof chainIds)[number]),
     )
-
+    console.log({chainFiltered})
     return chainFiltered
   }, [positions, tokenSymbols, chainIds])
 

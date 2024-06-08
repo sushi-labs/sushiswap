@@ -28,7 +28,7 @@ export async function getUser(args: {
 
   const { data } = await getSushiV2StakedUnstakedPositions({
     chainIds: args.chainIds || [...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS],
-    user: args.id.toLowerCase() as Address,
+    id: args.id.toLowerCase() as Address,
   })
 
   return data

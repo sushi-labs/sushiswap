@@ -10,6 +10,7 @@ import { isSushiSwapV2ChainId } from 'sushi/config'
 import type {
   PoolBase,
   PoolIfIncentivized,
+  PoolWithAprs,
   SushiPositionStaked,
   SushiPositionWithPool,
 } from 'sushi/types'
@@ -41,7 +42,8 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
   const chainIds = searchParams.get('chainIds')
-  if (!id) return new Response(null, { status: 422 })
+
+  if (!id) return new Response('No user(id) provided', { status: 422 })
   const result = schema.safeParse({ id, chainIds })
   if (!result.success) {
     return new Response(result.error.message, { status: 400 })
@@ -49,6 +51,17 @@ export async function GET(request: Request) {
   const args = result.data
   const data = await getUser(args)
   const poolIds = data.map((position) => position.pool.id)
+
+  if (poolIds.length === 0) {
+    return new NextResponse(JSONStringify([]), {
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
+        'content-type': 'application/json',
+        ...CORS,
+      },
+    })
+  }
 
   const [graphPoolsPromise, dbPoolsPromise] = await Promise.allSettled([
     getV2GraphPools(poolIds),
@@ -69,12 +82,21 @@ export async function GET(request: Request) {
         (graphPool) => graphPool.id === position.pool.id,
       )
 
-      const pool: PoolIfIncentivized<PoolBase> | undefined =
+      const pool: PoolWithAprs<PoolIfIncentivized<PoolBase>> | undefined =
         dbPool || graphPool
           ? {
               ...graphPool!,
-              isIncentivized: true,
-              wasIncentivized: true,
+              isIncentivized: dbPool?.isIncentivized ?? false,
+              wasIncentivized: dbPool?.wasIncentivized ?? false,
+              incentiveApr: dbPool?.incentiveApr ?? 0,
+              feeApr1h: dbPool?.feeApr1h ?? 0,
+              feeApr1d: dbPool?.feeApr1d ?? 0,
+              feeApr1w: dbPool?.feeApr1w ?? 0,
+              feeApr1m: dbPool?.feeApr1m ?? 0,
+              totalApr1h: dbPool?.totalApr1h ?? 0,
+              totalApr1d: dbPool?.totalApr1d ?? 0,
+              totalApr1w: dbPool?.totalApr1w ?? 0,
+              totalApr1m: dbPool?.totalApr1m ?? 0,
             }
           : undefined
 

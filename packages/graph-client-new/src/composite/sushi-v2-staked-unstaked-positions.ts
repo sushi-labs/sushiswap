@@ -24,7 +24,7 @@ import {
 } from './chef-user-positions'
 
 export type GetSushiV2StakedUnstakedPositions = {
-  user: Hex
+  id: Hex
 } & ChainIdsVariable<
   | NonNullable<GetChefUserPositions['chainIds']>[number]
   | GetSushiV2LiquidityPositions['chainId']
@@ -44,7 +44,7 @@ export async function getSushiV2StakedUnstakedPositions({
       ...MINICHEF_SUPPORTED_CHAIN_IDS,
     ]),
   ],
-  user,
+  id,
 }: GetSushiV2StakedUnstakedPositions): Promise<{
   data: SushiV2StakedUnstakedPosition[]
   errors: FetchError[]
@@ -59,7 +59,7 @@ export async function getSushiV2StakedUnstakedPositions({
     variables: {
       first: 1000,
       where: {
-        user,
+        user: id,
         liquidityTokenBalance_gt: '0',
       },
     },
@@ -73,7 +73,7 @@ export async function getSushiV2StakedUnstakedPositions({
     await getChefUserPositions({
       chainIds: chefChainIds,
       where: {
-        address: user,
+        address: id,
         amount_gt: '0',
       },
     })
@@ -99,7 +99,7 @@ export async function getSushiV2StakedUnstakedPositions({
       if (!pool) return null
 
       return {
-        user,
+        user: id,
         unstakedBalance: BigInt(sushiSwapPosition?.balance ?? '0'),
         stakedBalance: BigInt(chefPosition?.balance ?? '0'),
         pool,

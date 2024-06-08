@@ -22,7 +22,7 @@ const value = (position: UserWithPool) =>
 export const PositionCardList: FC<PositionCardList> = ({ children }) => {
   const { address } = useAccount()
   const { data: userPositions, isLoading } = useSushiV2UserPositions({
-    user: address!,
+    id: address!,
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
