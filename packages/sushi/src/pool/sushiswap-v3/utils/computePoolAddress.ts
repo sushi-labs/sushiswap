@@ -1,7 +1,6 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { getCreate2Address } from '@ethersproject/address'
-import { keccak256 } from '@ethersproject/solidity'
-import { Address } from 'viem'
+import type { Address, Hex } from 'viem'
+import { getCreate2Address, keccak256 } from 'viem/utils'
 import {
   SUSHISWAP_V3_INIT_CODE_HASH,
   SushiSwapV3ChainId,
@@ -25,45 +24,42 @@ export function computeSushiSwapV3PoolAddress({
   fee,
   initCodeHashManualOverride,
 }: {
-  factoryAddress: string
+  factoryAddress: Address
   tokenA: Token | string
   tokenB: Token | string
   fee: SushiSwapV3FeeAmount
-  initCodeHashManualOverride?: string | undefined
+  initCodeHashManualOverride?: Address | undefined
 }): Address {
   if (typeof tokenA !== 'string' && typeof tokenB !== 'string') {
     const [token0, token1] = tokenA.sortsBefore(tokenB)
       ? [tokenA, tokenB]
       : [tokenB, tokenA] // does safety checks
-    return getCreate2Address(
-      factoryAddress,
-      keccak256(
-        ['bytes'],
-        [
-          defaultAbiCoder.encode(
-            ['address', 'address', 'uint24'],
-            [token0.address, token1.address, fee],
-          ),
-        ],
+
+    return getCreate2Address({
+      from: factoryAddress,
+      salt: keccak256(
+        defaultAbiCoder.encode(
+          ['address', 'address', 'uint24'],
+          [token0.address, token1.address, fee],
+        ) as Hex,
       ),
-      initCodeHashManualOverride ??
+      bytecodeHash:
+        initCodeHashManualOverride ??
         SUSHISWAP_V3_INIT_CODE_HASH[token0.chainId as SushiSwapV3ChainId],
-    ) as Address
+    })
   }
 
   // FIXME: We shouldn't even allow sending strings into here, this means we have to assume init code hash is always the same for every chain
-  return getCreate2Address(
-    factoryAddress,
-    keccak256(
-      ['bytes'],
-      [
-        defaultAbiCoder.encode(
-          ['address', 'address', 'uint24'],
-          [tokenA, tokenB, fee],
-        ),
-      ],
+  return getCreate2Address({
+    from: factoryAddress,
+    salt: keccak256(
+      defaultAbiCoder.encode(
+        ['address', 'address', 'uint24'],
+        [tokenA, tokenB, fee],
+      ) as Hex,
     ),
-    initCodeHashManualOverride ??
+    bytecodeHash:
+      initCodeHashManualOverride ??
       '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
-  ) as Address
+  })
 }

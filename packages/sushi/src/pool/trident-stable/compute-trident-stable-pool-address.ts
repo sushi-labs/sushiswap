@@ -1,8 +1,8 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { getCreate2Address } from '@ethersproject/address'
-import { keccak256 } from '@ethersproject/solidity'
-import { Token } from '../../currency/index.js'
-import { Fee } from '../../dex/index.js'
+import type { Address, Hex } from 'viem'
+import { getCreate2Address, keccak256 } from 'viem/utils'
+import type { Token } from '../../currency/index.js'
+import type { Fee } from '../../dex/index.js'
 
 export const computeTridentStablePoolAddress = ({
   factoryAddress,
@@ -10,7 +10,7 @@ export const computeTridentStablePoolAddress = ({
   tokenB,
   fee,
 }: {
-  factoryAddress: string
+  factoryAddress: Address
   tokenA: Token
   tokenB: Token
   fee: Fee
@@ -23,7 +23,7 @@ export const computeTridentStablePoolAddress = ({
   const deployData = defaultAbiCoder.encode(
     ['address', 'address', 'uint256'],
     [token0.address, token1.address, fee],
-  )
+  ) as Hex
 
   const STABLE_POOL_INIT_CODE_HASH =
     '0xf12c5d0bd466e168fefdf789d5c48040e038cb71f6b1bcc741e9ae57205f3906'
@@ -37,9 +37,9 @@ export const computeTridentStablePoolAddress = ({
 */
 
   // Compute pool address
-  return getCreate2Address(
-    factoryAddress,
-    keccak256(['bytes'], [deployData]),
-    STABLE_POOL_INIT_CODE_HASH,
-  )
+  return getCreate2Address({
+    from: factoryAddress,
+    salt: keccak256(deployData),
+    bytecodeHash: STABLE_POOL_INIT_CODE_HASH,
+  })
 }

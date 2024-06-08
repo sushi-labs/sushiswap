@@ -1,7 +1,6 @@
-import { getCreate2Address } from '@ethersproject/address'
-import { keccak256, pack } from '@ethersproject/solidity'
 import invariant from 'tiny-invariant'
-import { Address } from 'viem'
+import type { Address, Hex } from 'viem'
+import { encodePacked, getCreate2Address, keccak256 } from 'viem/utils'
 import {
   SUSHISWAP_V2_INIT_CODE_HASH,
   SushiSwapV2ChainId,
@@ -22,22 +21,27 @@ export const computeSushiSwapV2PoolAddress = ({
   tokenB,
   initCodeHashManualOverride,
 }: {
-  factoryAddress: string
+  factoryAddress: Address
   tokenA: Token
   tokenB: Token
-  initCodeHashManualOverride?: string
+  initCodeHashManualOverride?: Hex
 }): Address => {
   const [token0, token1] = tokenA.sortsBefore(tokenB)
     ? [tokenA, tokenB]
     : [tokenB, tokenA] // does safety checks
+
   invariant(token0.chainId === token1.chainId, 'CHAIN_ID')
-  return getCreate2Address(
-    factoryAddress,
-    keccak256(
-      ['bytes'],
-      [pack(['address', 'address'], [token0.address, token1.address])],
+
+  return getCreate2Address({
+    from: factoryAddress,
+    salt: keccak256(
+      encodePacked(
+        ['address', 'address'],
+        [token0.address, token1.address],
+      ) as Hex,
     ),
-    initCodeHashManualOverride ??
+    bytecodeHash:
+      initCodeHashManualOverride ??
       SUSHISWAP_V2_INIT_CODE_HASH[token0.chainId as SushiSwapV2ChainId],
-  ) as Address
+  })
 }
