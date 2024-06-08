@@ -1,4 +1,5 @@
 export * from './CurveProvider.js'
+export * from './CurveProviderWhitelist.js'
 export * from './LiquidityProvider.js'
 export * from './NativeWrapProvider.js'
 export * from './UniswapV3.js'

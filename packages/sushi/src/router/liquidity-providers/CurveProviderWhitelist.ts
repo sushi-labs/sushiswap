@@ -1,13 +1,7 @@
-import {
-  AbiStateMutability,
-  Address,
-  ContractFunctionParameters,
-  parseAbi,
-} from 'viem'
-import { ChainId } from '../../chain/index.js'
+import { AbiStateMutability, Address, ContractFunctionParameters } from 'viem'
 import { Native, Token, Type } from '../../currency/index.js'
 import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
-import { CurvePoolType, curvePoolABI } from '../curve-sdk.js'
+import { CurvePoolType, curvePoolABI, getPoolRatio } from '../curve-sdk.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { CurvePoolCode } from '../pool-codes/CurvePool.js'
 import { PoolCode } from '../pool-codes/PoolCode.js'
@@ -83,7 +77,20 @@ export class CurveProviderWhiteList extends LiquidityProvider {
   async getPoolRatio(
     pools: [string, [CurvePoolType, Type[]]][],
   ): Promise<(number[] | undefined)[]> {
-    if (this.chainId === ChainId.ETHEREUM) {
+    return await Promise.all(
+      pools.map((p) =>
+        getPoolRatio(
+          this.client,
+          p[0] as Address,
+          p[1][1].map((t) =>
+            t instanceof Token
+              ? t.address
+              : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+          ),
+        ),
+      ),
+    )
+    /*if (this.chainId === ChainId.ETHEREUM) {
       const ratios = await this.client.multicall({
         multicallAddress: this.client.chain?.contracts?.multicall3
           ?.address as '0x${string}',
@@ -146,7 +153,7 @@ export class CurveProviderWhiteList extends LiquidityProvider {
             return [1, 1]
         }
       })
-    } else return pools.map(() => [1, 1])
+    } else return pools.map(() => [1, 1])*/
   }
 
   async getCurvePoolCodes(

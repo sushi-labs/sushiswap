@@ -46,8 +46,8 @@ export class CurvePoolCode extends PoolCode {
   ): string {
     // supports only 2-token pools currently
 
-    let poolType = 0
-    if (this.poolType !== undefined) {
+    let poolType = this.poolType ?? 0
+    if (this.poolType === undefined) {
       if (leg.tokenFrom.chainId !== undefined) {
         const index = CURVE_NON_FACTORY_POOLS[
           leg.tokenFrom.chainId as ChainId
@@ -60,7 +60,7 @@ export class CurvePoolCode extends PoolCode {
           if (poolInfo[1] !== CurvePoolType.TypeC) poolType = 1
         }
       }
-    } else poolType = this.poolType
+    }
 
     const [index0, index1] =
       this.pool instanceof CurveMultitokenPool
