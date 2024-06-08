@@ -1,9 +1,11 @@
+import { JSONStringify } from 'json-with-bigint'
 import { NextResponse } from 'next/server'
 import { getUser } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { Address } from 'viem'
 import { z } from 'zod'
+import { CORS } from '../cors'
 
 export const revalidate = 15
 
@@ -38,9 +40,14 @@ export async function GET(request: Request) {
   }
   const args = result.data
   const data = await getUser(args)
-  return NextResponse.json(data, {
+
+  const stringified = JSONStringify(data)
+  return new NextResponse(stringified, {
+    status: 200,
     headers: {
       'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
+      'content-type': 'application/json',
+      ...CORS,
     },
   })
 }

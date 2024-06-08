@@ -3,7 +3,10 @@ import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { NextResponse } from 'next/server'
 import { getUser, getV2GraphPools } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
+
+import { JSONStringify } from 'json-with-bigint'
 import { isSushiSwapV2ChainId } from 'sushi/config'
+
 import type {
   PoolBase,
   PoolIfIncentivized,
@@ -12,6 +15,7 @@ import type {
 } from 'sushi/types'
 import { Address } from 'viem'
 import { z } from 'zod'
+import { CORS } from '../cors'
 
 export const revalidate = 15
 
@@ -82,10 +86,13 @@ export async function GET(request: Request) {
       }
     })
     .filter((pool): pool is NonNullable<typeof pool> => pool !== undefined)
-
-  return NextResponse.json(userPositions satisfies UserWithPool[], {
+  const stringified = JSONStringify(userPositions)
+  return new NextResponse(stringified, {
+    status: 200,
     headers: {
       'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
+      'content-type': 'application/json',
+      ...CORS,
     },
   })
 }
