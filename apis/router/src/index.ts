@@ -1,5 +1,6 @@
 import 'dotenv/config'
 
+import compression from 'compression'
 import process from 'node:process'
 import * as Sentry from '@sentry/node'
 import { Logger, LogsMessageLevel } from '@sushiswap/extractor'
@@ -99,6 +100,7 @@ async function start() {
   // TracingHandler creates a trace for every incoming request
   app.use(Sentry.Handlers.tracingHandler())
 
+  app.use(compression())
   app.use(cors())
 
   const cpuUsageStatistics = new CPUUsageStatistics(60_000)
