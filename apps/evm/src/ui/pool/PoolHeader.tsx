@@ -20,7 +20,7 @@ import React, { FC, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
-import { SushiSwapV3Pool } from 'sushi/pool'
+import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 
 import { APRHoverCard } from './APRHoverCard'
 

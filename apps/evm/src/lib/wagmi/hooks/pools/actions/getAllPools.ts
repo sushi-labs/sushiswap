@@ -1,7 +1,7 @@
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import { TradeType } from 'sushi/dex'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
 import { getCurrencyCombinations } from 'sushi/router'
 import { UniV3Pool } from 'sushi/tines'
 import { UsePoolsParams, UsePoolsReturn } from '../types'

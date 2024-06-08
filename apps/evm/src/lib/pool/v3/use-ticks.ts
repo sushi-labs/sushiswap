@@ -10,7 +10,10 @@ import {
   TICK_SPACINGS,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { computeSushiSwapV3PoolAddress, nearestUsableTick } from 'sushi/pool'
+import {
+  computeSushiSwapV3PoolAddress,
+  nearestUsableTick,
+} from 'sushi/pool/sushiswap-v3'
 import { Address } from 'viem'
 import { useReadContracts } from 'wagmi'
 import { Writeable } from 'zod'

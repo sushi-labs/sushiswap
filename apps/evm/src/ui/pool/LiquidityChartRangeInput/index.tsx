@@ -5,7 +5,7 @@ import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Price, Token, Type } from 'sushi/currency'
-import { getPriceRangeWithTokenRatio } from 'sushi/pool'
+import { getPriceRangeWithTokenRatio } from 'sushi/pool/sushiswap-v3'
 import colors from 'tailwindcss/colors'
 
 import { Chart } from './Chart'

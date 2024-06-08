@@ -9,7 +9,7 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/config'
 import { Amount, Type, unwrapToken } from 'sushi/currency'
-import { NonfungiblePositionManager, Position } from 'sushi/pool'
+import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
   UseCallParameters,

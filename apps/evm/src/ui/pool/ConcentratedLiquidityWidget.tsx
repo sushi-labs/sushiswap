@@ -13,7 +13,7 @@ import {
   isWNativeSupported,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { Position } from 'sushi/pool'
+import { Position } from 'sushi/pool/sushiswap-v3'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'

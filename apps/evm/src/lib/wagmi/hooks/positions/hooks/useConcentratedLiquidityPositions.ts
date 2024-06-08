@@ -3,18 +3,18 @@ import { useAllPrices, usePrices } from '@sushiswap/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
-import { Position, SushiSwapV3Pool } from 'sushi/pool'
+import { Position, SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 
 import { useMemo } from 'react'
 import { Address } from 'viem'
 import { useConfig } from 'wagmi'
-import { ConcentratedLiquidityPosition } from '../types'
-import { getConcentratedLiquidityPositions } from '../actions/getConcentratedLiquidityPositions'
+import { getConcentratedLiquidityPool } from '../../pools/actions/getConcentratedLiquidityPool'
 import {
   getTokenWithCacheQueryFn,
   getTokenWithQueryCacheHydrate,
 } from '../../tokens/useTokenWithCache'
-import { getConcentratedLiquidityPool } from '../../pools/actions/getConcentratedLiquidityPool'
+import { getConcentratedLiquidityPositions } from '../actions/getConcentratedLiquidityPositions'
+import { ConcentratedLiquidityPosition } from '../types'
 
 interface UseConcentratedLiquidityPositionsData
   extends ConcentratedLiquidityPosition {

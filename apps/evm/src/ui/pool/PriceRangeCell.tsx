@@ -13,7 +13,7 @@ import {
 import { usePriceInverter } from 'src/lib/hooks'
 import { useIsTickAtLimit } from 'src/lib/pool/v3'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { Position } from 'sushi/pool'
+import { Position } from 'sushi/pool/sushiswap-v3'
 
 export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
   ({ original }) => {

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { Position } from 'sushi/pool'
+import { Position } from 'sushi/pool/sushiswap-v3'
 import { stringify } from 'viem'
 
 import { useConfig } from 'wagmi'

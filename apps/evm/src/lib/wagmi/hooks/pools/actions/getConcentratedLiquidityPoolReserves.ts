@@ -1,6 +1,9 @@
 import { SUSHISWAP_V3_FACTORY_ADDRESS, SushiSwapV3ChainId } from 'sushi/config'
 import { Amount } from 'sushi/currency'
-import { SushiSwapV3Pool, computeSushiSwapV3PoolAddress } from 'sushi/pool'
+import {
+  SushiSwapV3Pool,
+  computeSushiSwapV3PoolAddress,
+} from 'sushi/pool/sushiswap-v3'
 
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { getBalance } from '@wagmi/core'

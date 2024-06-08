@@ -41,14 +41,16 @@ import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
 import { Type, tryParseAmount } from 'sushi/currency'
-import { getCapitalEfficiency, getTokenRatio } from 'sushi/pool'
+import { getCapitalEfficiency, getTokenRatio } from 'sushi/pool/sushiswap-v3'
 
 import { RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
 import { formatPercent } from 'sushi/format'
 import { Fraction } from 'sushi/math'
+import { useAccount } from 'wagmi'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
@@ -56,8 +58,6 @@ import {
   useRangeHopCallbacks,
 } from './ConcentratedLiquidityProvider'
 import LiquidityChartRangeInput from './LiquidityChartRangeInput'
-import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
-import { useAccount } from 'wagmi'
 
 enum PriceRange {
   FULL_RANGE = 0,

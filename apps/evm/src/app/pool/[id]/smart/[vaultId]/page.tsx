@@ -13,7 +13,7 @@ import { unstable_cache } from 'next/cache'
 import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber, unsanitize } from 'sushi/format'
-import { tickToPrice } from 'sushi/pool'
+import { tickToPrice } from 'sushi/pool/sushiswap-v3'
 import { PublicClient, createPublicClient } from 'viem'
 import {
   SteerStrategyComponents,

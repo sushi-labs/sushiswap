@@ -37,7 +37,7 @@ import {
   priceToClosestTick,
   priceToNumber,
   tickToPrice,
-} from 'sushi/pool'
+} from 'sushi/pool/sushiswap-v3'
 
 type FullRange = true
 

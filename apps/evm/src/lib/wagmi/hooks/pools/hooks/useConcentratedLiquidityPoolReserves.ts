@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
-import { SushiSwapV3Pool } from 'sushi/pool'
+import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPoolReserves } from '../actions/getConcentratedLiquidityPoolReserves'
 

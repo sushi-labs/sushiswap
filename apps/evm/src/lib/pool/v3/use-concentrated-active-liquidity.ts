@@ -7,7 +7,7 @@ import {
   TICK_SPACINGS,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { tickToPrice } from 'sushi/pool'
+import { tickToPrice } from 'sushi/pool/sushiswap-v3'
 
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import computeSurroundingTicks from '../../functions'

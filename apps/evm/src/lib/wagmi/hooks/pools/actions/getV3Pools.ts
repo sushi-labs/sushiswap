@@ -10,7 +10,7 @@ import {
   SushiSwapV3FeeAmount,
 } from 'sushi/config'
 import { Currency, Token, Type } from 'sushi/currency'
-import { computeSushiSwapV3PoolAddress } from 'sushi/pool'
+import { computeSushiSwapV3PoolAddress } from 'sushi/pool/sushiswap-v3'
 import { RToken, UniV3Pool } from 'sushi/tines'
 import { Address } from 'viem'
 

@@ -73,9 +73,9 @@
       "types": "./dist/log/index.d.ts",
       "default": "./dist/log/index.js"
     },
-    "./pool": {
-      "types": "./dist/pool/index.d.ts",
-      "default": "./dist/pool/index.js"
+    "./pool/*": {
+      "types": "./dist/pool/*/index.d.ts",
+      "default": "./dist/pool/*/index.js"
     },
     "./router": {
       "types": "./dist/router/index.d.ts",

@@ -75,7 +75,7 @@ import {
   SushiSwapV3Pool,
   TickMath,
   priceToClosestTick,
-} from 'sushi/pool'
+} from 'sushi/pool/sushiswap-v3'
 import { Address } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'

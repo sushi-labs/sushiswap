@@ -48,7 +48,7 @@ import {
   isWNativeSupported,
 } from 'sushi/config'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
-import { SushiSwapV3Pool } from 'sushi/pool'
+import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 import { Address, zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'

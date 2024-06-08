@@ -9,7 +9,10 @@ import {
   isSushiSwapV2ChainId,
 } from 'sushi/config'
 import { Amount, Currency, Token, Type } from 'sushi/currency'
-import { SushiSwapV2Pool, computeSushiSwapV2PoolAddress } from 'sushi/pool'
+import {
+  SushiSwapV2Pool,
+  computeSushiSwapV2PoolAddress,
+} from 'sushi/pool/sushiswap-v2'
 import { Address } from 'viem'
 import {
   UseReadContractsParameters,

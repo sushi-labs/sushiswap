@@ -30,18 +30,18 @@ import {
 } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
 import { SWRConfig } from 'swr'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/PoolFinder'
 import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
 import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from '../../../../../ui/pool/SelectTokensWidget'
-import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/PoolFinder'
 
 export default function Page({ params }: { params: { chainId: string } }) {
   const router = useRouter()

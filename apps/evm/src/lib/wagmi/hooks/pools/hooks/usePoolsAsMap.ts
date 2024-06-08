@@ -8,10 +8,8 @@ import { Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
 import {
   SushiSwapV2Pool,
-  TridentConstantPool,
-  TridentStablePool,
   computeSushiSwapV2PoolAddress,
-} from 'sushi/pool'
+} from 'sushi/pool/sushiswap-v2'
 
 import { useConfig } from 'wagmi'
 import { getAllPools } from '../actions/getAllPools'
@@ -67,12 +65,7 @@ export const usePoolsAsMap = ({
         config,
       })
       const pools = [...(data.sushiSwapV2Pools || [])]
-      return pools.reduce<
-        Record<
-          string,
-          SushiSwapV2Pool | TridentConstantPool | TridentStablePool
-        >
-      >((acc, cur) => {
+      return pools.reduce<Record<string, SushiSwapV2Pool>>((acc, cur) => {
         acc[cur.liquidityToken.address] = cur
         return acc
       }, {})
