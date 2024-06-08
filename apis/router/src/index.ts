@@ -1,9 +1,9 @@
 import 'dotenv/config'
 
-import compression from 'compression'
 import process from 'node:process'
 import * as Sentry from '@sentry/node'
 import { Logger, LogsMessageLevel } from '@sushiswap/extractor'
+import compression from 'compression'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
