@@ -86,32 +86,31 @@ export async function execute(protocol: Protocol) {
     // TRANSFORM
     const { tokens, pools } = transform(protocol, exchanges)
 
-    // TODO: enable code below, commented out while testing
-    // // LOAD
-    // const batchSize = 250
+    // LOAD
+    const batchSize = 250
 
-    // for (let i = 0; i < tokens.length; i += batchSize) {
-    //   const batch = tokens.slice(i, i + batchSize)
-    //   await createTokens(batch)
-    // }
-    // const concurrentBatches = 10
-    // for (let i = 0; i < pools.length; i += batchSize * concurrentBatches) {
-    //   const batches = []
-    //   for (let j = i; j < i + concurrentBatches * batchSize; j += batchSize) {
-    //     if (j > pools.length) {
-    //       break
-    //     }
-    //     batches.push(upsertPools(pools.slice(j, j + batchSize)))
-    //   }
-    //   const batchStartTime = performance.now()
-    //   await Promise.all(batches)
-    //   const batchEndTime = performance.now()
-    //   console.log(
-    //     `LOAD: ${protocol} - Batch completed in ${((batchEndTime - batchStartTime) / 1000).toFixed(
-    //       1,
-    //     )} seconds. `,
-    //   )
-    // }
+    for (let i = 0; i < tokens.length; i += batchSize) {
+      const batch = tokens.slice(i, i + batchSize)
+      await createTokens(batch)
+    }
+    const concurrentBatches = 10
+    for (let i = 0; i < pools.length; i += batchSize * concurrentBatches) {
+      const batches = []
+      for (let j = i; j < i + concurrentBatches * batchSize; j += batchSize) {
+        if (j > pools.length) {
+          break
+        }
+        batches.push(upsertPools(pools.slice(j, j + batchSize)))
+      }
+      const batchStartTime = performance.now()
+      await Promise.all(batches)
+      const batchEndTime = performance.now()
+      console.log(
+        `LOAD: ${protocol} - Batch completed in ${((batchEndTime - batchStartTime) / 1000).toFixed(
+          1,
+        )} seconds. `,
+      )
+    }
     const endTime = performance.now()
 
     console.log(
