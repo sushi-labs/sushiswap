@@ -63,6 +63,10 @@ enum AprTimeRange {
   ONE_MONTH = 'ONE_MONTH',
 }
 
+const SUBGRAPH_REQUEST_OPTIONS = {
+  retries: 3, // should probably be a reasonable timeout as well?
+}
+
 export async function execute(protocol: Protocol) {
   try {
     const startTime = performance.now()
@@ -123,10 +127,10 @@ export async function execute(protocol: Protocol) {
 
 async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
   const result: { chainId: ChainId; data: V2Data | V3Data }[] = []
-  
+
   const chainIds =
-    protocol === Protocol.SUSHISWAP_V2 ? [ChainId.BASE] : [ChainId.BASE] // leaving this here for testing, will remove later
-    // TODO: enable code below, commented out while testing
+    protocol === Protocol.SUSHISWAP_V2 ? [ChainId.ARBITRUM] : [ChainId.BASE] // leaving this here for testing, will remove later
+  // TODO: enable code below, commented out while testing
   // const chainIds =
   //   protocol === Protocol.SUSHISWAP_V2
   //     ? SUSHISWAP_V2_SUPPORTED_CHAIN_IDS
@@ -153,6 +157,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         hoursAgo: 1,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
 
     fetchMultichain({
@@ -161,6 +166,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         hoursAgo: 2,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
     fetchMultichain({
       chainIds,
@@ -168,6 +174,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         daysAgo: 1,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
     fetchMultichain({
       chainIds,
@@ -175,6 +182,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         daysAgo: 2,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
     fetchMultichain({
       chainIds,
@@ -182,6 +190,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         weeksAgo: 1,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
     fetchMultichain({
       chainIds,
@@ -189,6 +198,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         weeksAgo: 2,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
     fetchMultichain({
       chainIds,
@@ -196,6 +206,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         monthsAgo: 1,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
     fetchMultichain({
       chainIds,
@@ -203,6 +214,7 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
       variables: {
         monthsAgo: 2,
       },
+      options: SUBGRAPH_REQUEST_OPTIONS,
     }),
   ])
 
@@ -255,80 +267,107 @@ async function fetchPairs(
         pools1m,
         pools2m,
       ] = await Promise.all([
-        getSushiV2Pools({
-          chainId,
-        }),
+        getSushiV2Pools(
+          {
+            chainId,
+          },
+          SUBGRAPH_REQUEST_OPTIONS,
+        ),
         blocks.oneHour
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.oneHour,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.oneHour,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
         blocks.twoHour
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.twoHour,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.twoHour,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
         blocks.oneDay
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.oneDay,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.oneDay,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
         blocks.twoDay
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.twoDay,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.twoDay,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
         blocks.oneWeek
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.oneWeek,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.oneWeek,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
         blocks.twoWeek
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.twoWeek,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.twoWeek,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
         blocks.oneMonth
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.oneMonth,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.oneMonth,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
         blocks.twoMonth
-          ? getSushiV2Pools({
-              chainId,
-              block: {
-                number: blocks.twoMonth,
+          ? getSushiV2Pools(
+              {
+                chainId,
+                block: {
+                  number: blocks.twoMonth,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV2Pools),
       ])
 
@@ -367,81 +406,108 @@ async function fetchPairs(
         pools1m,
         pools2m,
       ] = await Promise.all([
-        getSushiV3Pools({
-          chainId: chainId as SushiSwapV3ChainId,
-          first: Infinity,
-        }),
+        getSushiV3Pools(
+          {
+            chainId: chainId as SushiSwapV3ChainId,
+            first: Infinity,
+          },
+          SUBGRAPH_REQUEST_OPTIONS,
+        ),
         blocks.oneHour
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.oneHour,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.oneHour,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
         blocks.twoHour
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.twoHour,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.twoHour,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
         blocks.oneDay
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.oneDay,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.oneDay,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
         blocks.twoDay
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.twoDay,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.twoDay,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
         blocks.oneWeek
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.oneWeek,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.oneWeek,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
         blocks.twoWeek
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.twoWeek,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.twoWeek,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
         blocks.oneMonth
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.oneMonth,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.oneMonth,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
         blocks.twoMonth
-          ? getSushiV3Pools({
-              chainId: chainId as SushiSwapV3ChainId,
-              block: {
-                number: blocks.twoMonth,
+          ? getSushiV3Pools(
+              {
+                chainId: chainId as SushiSwapV3ChainId,
+                block: {
+                  number: blocks.twoMonth,
+                },
+                first: Infinity,
               },
-              first: Infinity,
-            })
+              SUBGRAPH_REQUEST_OPTIONS,
+            )
           : ([] as SushiV3Pools),
       ])
 

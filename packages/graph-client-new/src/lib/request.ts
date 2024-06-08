@@ -32,7 +32,7 @@ export async function request<T, V extends object = object>(
   options: RequestOptions = {},
 ): Promise<T> {
   let remainingRetries = options.retries ?? 1
-
+  let errorMessage = ''
   while (remainingRetries > 0) {
     try {
       if (options.timeout) {
@@ -40,10 +40,11 @@ export async function request<T, V extends object = object>(
       } else {
         return await _request(params)
       }
-    } catch {
+    } catch (err: any) {
       remainingRetries--
+      errorMessage = err.message
     }
   }
 
-  throw new Error('Retries exceeded')
+  throw new Error(`Retries exceeded. Last error: ${errorMessage}`)
 }

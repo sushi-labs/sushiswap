@@ -1,3 +1,4 @@
+import { JSONStringify } from 'json-with-bigint'
 import { NextResponse } from 'next/server'
 import { getV2GraphPool } from 'src/lib/graph'
 import { z } from 'zod'
@@ -19,5 +20,9 @@ export async function GET(
   }
 
   const pool = await getV2GraphPool(result.data.id)
-  return NextResponse.json(pool)
+  const stringified = JSONStringify(pool)
+  return new NextResponse(stringified, {
+    status: 200,
+    headers: { 'content-type': 'application/json' },
+  })
 }
