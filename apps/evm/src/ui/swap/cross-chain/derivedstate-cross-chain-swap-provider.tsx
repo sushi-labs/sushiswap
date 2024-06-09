@@ -1,6 +1,5 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import { watchAccount } from '@wagmi/core'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -15,6 +14,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
 import { useSquidCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useSquidCrossChainTrade'
 import { useStargateCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useStargateCrossChainTrade'
@@ -388,7 +388,7 @@ const useCrossChainSwapTrade = () => {
       adapter,
     },
   } = useDerivedStateCrossChainSwap()
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance()
 
   const stargateCrossChainTrade = useStargateCrossChainTrade({
     tradeId,
@@ -397,8 +397,7 @@ const useCrossChainSwapTrade = () => {
     token0,
     token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     recipient: recipient as Address,
     enabled: Boolean(
       adapter === SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),
@@ -412,8 +411,7 @@ const useCrossChainSwapTrade = () => {
     token0,
     token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     recipient: recipient as Address,
     enabled: Boolean(
       adapter !== SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),

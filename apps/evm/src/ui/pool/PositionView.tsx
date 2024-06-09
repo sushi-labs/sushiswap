@@ -88,7 +88,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
     address: positionDetails?.token1,
   })
 
-  const { data: position, isLoading: isPositionLoading } =
+  const { data: position, isInitialLoading: isPositionLoading } =
     useConcentratedPositionInfo({
       chainId,
       token0,
@@ -239,7 +239,6 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             slippageTolerance: {
                               storageKey:
                                 SlippageToleranceStorageKey.AddLiquidity,
-                              defaultValue: '0.1',
                               title: 'Add Liquidity Slippage',
                             },
                             transactionDeadline: {

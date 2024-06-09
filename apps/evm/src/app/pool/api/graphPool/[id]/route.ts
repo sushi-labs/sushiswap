@@ -1,6 +1,6 @@
-import { JSONStringify } from 'json-with-bigint'
 import { NextResponse } from 'next/server'
 import { getV2GraphPool } from 'src/lib/graph'
+import { serialize } from 'sushi/bigint-serializer'
 import { z } from 'zod'
 
 export const revalidate = 15
@@ -20,7 +20,7 @@ export async function GET(
   }
 
   const pool = await getV2GraphPool(result.data.id)
-  const stringified = JSONStringify(pool)
+  const stringified = serialize(pool)
   return new NextResponse(stringified, {
     status: 200,
     headers: { 'content-type': 'application/json' },

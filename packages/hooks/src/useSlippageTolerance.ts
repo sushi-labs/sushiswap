@@ -1,5 +1,6 @@
 'use client'
 
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { useLocalStorage } from './useLocalStorage'
 
 export enum SlippageToleranceStorageKey {
@@ -13,4 +14,4 @@ export enum SlippageToleranceStorageKey {
 export const useSlippageTolerance = (
   key: SlippageToleranceStorageKey = SlippageToleranceStorageKey.Swap,
   defaultValue?: string,
-) => useLocalStorage(key, defaultValue || '0.1')
+) => useLocalStorage(key, defaultValue || DEFAULT_SLIPPAGE)

@@ -350,7 +350,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                             slippageTolerance: {
                               storageKey:
                                 SlippageToleranceStorageKey.RemoveLiquidity,
-                              defaultValue: '0.1',
                               title: 'Remove Liquidity Slippage',
                             },
                             transactionDeadline: {
@@ -445,7 +444,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                   options={{
                     slippageTolerance: {
                       storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
-                      defaultValue: '0.1',
                       title: 'Remove Liquidity Slippage',
                     },
                     transactionDeadline: {

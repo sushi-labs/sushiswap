@@ -60,7 +60,7 @@ export const PositionsTable: FC<PositionsTableProps> = ({
     const chainFiltered = searchFiltered.filter((el) =>
       chainIds.includes(el.pool.chainId as (typeof chainIds)[number]),
     )
-    console.log({chainFiltered})
+    console.log({ chainFiltered })
     return chainFiltered
   }, [positions, tokenSymbols, chainIds])
 

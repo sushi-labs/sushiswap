@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
-import { useBlockNumber, useReadContract, useReadContracts } from 'wagmi'
+import { useBlockNumber, useReadContracts } from 'wagmi'
 import { getMasterChefContractConfig } from './use-master-chef-contract'
 
 interface UseRewarderPayload {
@@ -19,20 +19,12 @@ interface UseRewarderPayload {
   chef: ChefType
   enabled?: boolean
 }
-
-interface UseRewarderData
-  extends Pick<ReturnType<typeof useReadContract>, 'isLoading' | 'isError'> {
-  data: (Amount<Token> | undefined)[]
-}
-
-type UseRewarder = (payload: UseRewarderPayload) => UseRewarderData
-
 export enum RewarderType {
   Primary = 'Primary',
   Secondary = 'Secondary',
 }
 
-export const useRewarder: UseRewarder = ({
+export const useRewarder = ({
   chainId,
   account,
   rewarderAddresses,
@@ -41,7 +33,7 @@ export const useRewarder: UseRewarder = ({
   farmId,
   chef,
   enabled,
-}) => {
+}: UseRewarderPayload) => {
   const config = getMasterChefContractConfig(chainId, chef)
 
   const contracts = useMemo(() => {
@@ -143,7 +135,7 @@ export const useRewarder: UseRewarder = ({
 
   const queryClient = useQueryClient()
 
-  const { isError, isLoading, data, queryKey } = useReadContracts({
+  const { data, queryKey, ...rest } = useReadContracts({
     contracts,
     allowFailure: true,
     query: {
@@ -161,38 +153,37 @@ export const useRewarder: UseRewarder = ({
     }
   }, [blockNumber, queryClient, queryKey])
 
-  return useMemo(() => {
-    if (!data)
-      return {
-        data: rewardTokens.map(() => undefined),
-        isLoading,
-        isError,
+  return {
+    data: useMemo(() => {
+      if (!data) {
+        return rewardTokens.map(() => undefined)
       }
 
-    // ! POSSIBLY BROKE IT, TEST
-    return {
-      data: data.reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
-        if (typeof result === 'bigint') {
-          acc.push(
-            result
-              ? Amount.fromRawAmount(rewardTokens[index], result)
-              : undefined,
-          )
-        } else if (typeof result !== 'undefined') {
-          acc.push(
-            ...result[1].map((rewardAmount, index2: number) => {
-              return Amount.fromRawAmount(
-                rewardTokens[index + index2],
-                rewardAmount,
-              )
-            }),
-          )
-        }
+      // ! POSSIBLY BROKE IT, TEST
+      return data.reduce<(Amount<Token> | undefined)[]>(
+        (acc, result, index) => {
+          if (typeof result === 'bigint') {
+            acc.push(
+              result
+                ? Amount.fromRawAmount(rewardTokens[index], result)
+                : undefined,
+            )
+          } else if (typeof result !== 'undefined') {
+            acc.push(
+              ...result[1].map((rewardAmount, index2: number) => {
+                return Amount.fromRawAmount(
+                  rewardTokens[index + index2],
+                  rewardAmount,
+                )
+              }),
+            )
+          }
 
-        return acc
-      }, []),
-      isLoading,
-      isError,
-    }
-  }, [data, isError, isLoading, rewardTokens])
+          return acc
+        },
+        [],
+      )
+    }, [data, rewardTokens]),
+    ...rest,
+  }
 }

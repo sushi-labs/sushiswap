@@ -65,7 +65,7 @@ export const usePoolGraphData = ({
     },
     keepPreviousData: true,
     staleTime: 0,
-    cacheTime: 86400000, // 24hs
+    cacheTime: 3600, // 1hr
     enabled: Boolean(poolAddress && chainId && enabled),
   })
 }

@@ -1,5 +1,7 @@
 'use client'
 
+import '../lib/serialization'
+
 import { State } from 'wagmi'
 
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'

@@ -106,9 +106,10 @@ export async function execute(protocol: Protocol) {
       await Promise.all(batches)
       const batchEndTime = performance.now()
       console.log(
-        `LOAD: ${protocol} - Batch completed in ${((batchEndTime - batchStartTime) / 1000).toFixed(
-          1,
-        )} seconds. `,
+        `LOAD: ${protocol} - Batch completed in ${(
+          (batchEndTime - batchStartTime) /
+          1000
+        ).toFixed(1)} seconds. `,
       )
     }
     const endTime = performance.now()

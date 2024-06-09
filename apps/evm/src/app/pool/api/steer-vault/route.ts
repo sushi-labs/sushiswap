@@ -3,8 +3,8 @@ import {
   getSteerVaultsFromDB,
 } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
+import { serialize } from 'sushi/bigint-serializer'
 import { CORS } from '../cors'
-import { JSONStringify } from 'json-with-bigint'
 
 export const revalidate = 15
 
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   }
 
   const vaults = await getSteerVaultsFromDB(result.data)
-  const stringified = JSONStringify(vaults)
+  const stringified = serialize(vaults)
   return new NextResponse(stringified, {
     status: 200,
     headers: { 'content-type': 'application/json', ...CORS },

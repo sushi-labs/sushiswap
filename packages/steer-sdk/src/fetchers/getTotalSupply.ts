@@ -1,6 +1,6 @@
 import { erc20Abi } from 'sushi/abi'
 import { getChainIdAddressFromId } from 'sushi/format'
-import type { PublicClient } from 'viem'
+import { zeroAddress, type PublicClient } from 'viem'
 
 interface GetTotalSuppliesContracts {
   vaultIds: string[]
@@ -16,6 +16,7 @@ export function getTotalSuppliesContracts({
       abi: erc20Abi,
       chainId,
       address,
+      account: zeroAddress,
       functionName: 'totalSupply' as const,
     }
   })

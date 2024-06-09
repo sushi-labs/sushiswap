@@ -4,23 +4,21 @@ import { notFound } from 'next/navigation'
 
 import { PoolPageV2 } from 'src/ui/pool/PoolPageV2'
 import { PoolPageV3 } from 'src/ui/pool/PoolPageV3'
-import { unsanitize } from 'sushi'
+import { deserialize, serialize, unsanitize } from 'sushi'
 
 export default async function PoolPage({
   params,
-  tab,
 }: {
-  params: { id: string }
-  tab: 'add' | 'remove' | 'unstake' | 'stake'
+  params: { id: string; tab: 'add' | 'remove' | 'unstake' | 'stake' }
 }) {
   const poolId = unsanitize(params.id)
   const pool = await unstable_cache(
-    async () => getPool(poolId),
+    async () => serialize(await getPool(poolId)),
     ['pool', poolId],
     {
       revalidate: 60 * 15,
     },
-  )()
+  )().then(deserialize<Awaited<ReturnType<typeof getPool>>>)
 
   if (!pool) {
     notFound()
@@ -30,5 +28,5 @@ export default async function PoolPage({
     return <PoolPageV3 pool={pool} />
   }
 
-  return <PoolPageV2 pool={pool} tab={tab} />
+  return <PoolPageV2 pool={pool} tab={params.tab} />
 }

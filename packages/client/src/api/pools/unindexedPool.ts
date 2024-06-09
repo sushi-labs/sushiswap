@@ -251,6 +251,6 @@ export async function getUnindexedPool(
     totalApr1w: 0,
     totalApr1m: 0,
     token0Price: 0,
-    token1Price: 0
+    token1Price: 0,
   } as Awaited<ReturnType<typeof getPoolFromDB>>
 }

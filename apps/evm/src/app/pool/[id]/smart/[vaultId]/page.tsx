@@ -6,7 +6,6 @@ import {
   getVaultPositions,
 } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
-import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
@@ -86,15 +85,13 @@ export default async function SteerVaultPage({
     ['steer-vault', vaultId],
     { revalidate: 60 * 15 },
   )()
-  const generics = deserialize(
-    await unstable_cache(
-      async () => serialize(await getGenerics(vault)),
-      ['steer-vault-generics', vaultId],
-      {
-        revalidate: 60 * 5,
-      },
-    )(),
-  ) as Awaited<ReturnType<typeof getGenerics>>
+  const generics = await unstable_cache(
+    async () => await getGenerics(vault),
+    ['steer-vault-generics', vaultId],
+    {
+      revalidate: 60 * 5,
+    },
+  )()
 
   const Component = SteerStrategyComponents[vault.strategy]
 

@@ -29,6 +29,10 @@
       "types": "./dist/abi/index.d.ts",
       "default": "./dist/abi/index.js"
     },
+    "./bigint-serializer": {
+      "types": "./dist/bigint-serializer/index.d.ts",
+      "default": "./dist/bigint-serializer/index.js"
+    },
     "./calculate": {
       "types": "./dist/calculate/index.d.ts",
       "default": "./dist/calculate/index.js"
@@ -118,6 +122,9 @@
     "*": {
       "abi": [
         "./dist/abi/index.d.ts"
+      ],
+      "bigint-serializer": [
+        "./dist/bigint-serializer/index.d.ts"
       ],
       "calculate": [
         "./dist/calculate/index.d.ts"
@@ -220,7 +227,6 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/big.js": "6.2.0",
     "@types/seedrandom": "3.0.1",
-    "@wagmi/core": "2.10.2",
     "typescript": "5.2.2",
     "viem": "2.10.11",
     "vitest": "0.34.6",

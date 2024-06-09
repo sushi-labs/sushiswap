@@ -6,6 +6,7 @@ import { Amount } from 'sushi/currency'
 import useSWR from 'swr'
 
 import type { PoolId } from 'sushi'
+import { deserialize } from 'sushi/bigint-serializer'
 import { getTokensFromPool } from '../useTokensFromPool'
 
 export function getGraphPoolUrl(poolId: string) {
@@ -19,8 +20,7 @@ export const useGraphPool = (pool: PoolId) => {
     isValidating,
     error,
   } = useSWR<SushiV2Pool>(getGraphPoolUrl(pool.id), async (url) =>
-    fetch(url)
-      .then((data) => data.json())
+    fetch(url).then(async (data) => deserialize(await data.text())),
   )
 
   const { token0, token1, liquidityToken } = useMemo(() => {

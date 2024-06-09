@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import { getUser, getV2GraphPools } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
 
-import { JSONStringify } from 'json-with-bigint'
+import { serialize } from 'sushi/bigint-serializer'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 
 import type {
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
   const poolIds = data.map((position) => position.pool.id)
 
   if (poolIds.length === 0) {
-    return new NextResponse(JSONStringify([]), {
+    return new NextResponse(serialize([]), {
       status: 200,
       headers: {
         'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
@@ -108,7 +108,7 @@ export async function GET(request: Request) {
       }
     })
     .filter((pool): pool is NonNullable<typeof pool> => pool !== undefined)
-  const stringified = JSONStringify(userPositions)
+  const stringified = serialize(userPositions)
   return new NextResponse(stringified, {
     status: 200,
     headers: {

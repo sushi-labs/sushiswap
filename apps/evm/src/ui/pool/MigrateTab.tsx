@@ -736,7 +736,6 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
                                             slippageTolerance: {
                                               storageKey:
                                                 SlippageToleranceStorageKey.AddLiquidity,
-                                              defaultValue: '0.1',
                                               title: 'Add Liquidity Slippage',
                                             },
                                             transactionDeadline: {

@@ -78,6 +78,6 @@ export function transformPoolV2ToBase<T extends RequiredBase>(
     },
     token0Price: Number(pool.token0Price),
     token1Price: Number(pool.token1Price),
-    txCount: Number(pool.txCount)
+    txCount: Number(pool.txCount),
   }
 }
