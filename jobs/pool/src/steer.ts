@@ -73,7 +73,11 @@ async function extract() {
   const result = await Promise.allSettled(
     STEER_SUPPORTED_CHAIN_IDS.map((chainId) =>
       extractChain(chainId).catch((e) => {
-        console.log('Steer: Extract failed for chain', chainName[chainId])
+        console.log(
+          'Steer: Extract failed for chain',
+          chainName[chainId],
+          e.message,
+        )
         throw e
       }),
     ),
@@ -86,10 +90,13 @@ async function extractChain(chainId: SteerChainId) {
   const { getPools } = await import('@sushiswap/client')
 
   const prices = await getTokenPrices({ chainId })
-  const vaults = await getSteerVaults({
-    chainId,
-    first: Infinity,
-  })
+  const vaults = await getSteerVaults(
+    {
+      chainId,
+      first: Infinity,
+    },
+    { retries: 3 },
+  )
 
   const poolIds = vaults
     .filter((vault) => !!vault.pool)
@@ -215,7 +222,7 @@ const StrategyTypes: Record<string, SteerStrategy> = {
 function transform(
   chainsWithVaults: Awaited<ReturnType<typeof extract>>,
 ): Prisma.SteerVaultCreateManyInput[] {
-  return chainsWithVaults.flatMap(({ chainId, vaults }) =>
+  const vaults = chainsWithVaults.flatMap(({ chainId, vaults }) =>
     vaults.flatMap((vault) => {
       // ! Missing strategies will be ignored
       const strategyType = vault?.payload?.strategyConfigData.name
@@ -248,13 +255,13 @@ function transform(
         apr1m: vault.apr1m || 0,
         apr1y: 0,
 
-        token0Id: `${chainId}:${vault.token0}`.toLowerCase(),
+        token0Id: vault.token0.id.toLowerCase(),
         reserve0: String(vault.reserve0),
         reserve0USD: vault.reserve0USD,
         fees0: String(vault.fees0),
         fees0USD: vault.fees0USD,
 
-        token1Id: `${chainId}:${vault.token1}`.toLowerCase(),
+        token1Id: vault.token1.id.toLowerCase(),
         reserve1: String(vault.reserve1),
         reserve1USD: vault.reserve1USD,
         fees1: String(vault.fees1),
@@ -288,4 +295,6 @@ function transform(
       } satisfies Prisma.SteerVaultCreateManyInput
     }),
   )
+  console.log(`TRANSFORM: ${vaults.length} vaults`)
+  return vaults
 }
