@@ -19,8 +19,16 @@ const parse = JSON.parse
 JSON.parse = (text: string, reviver?: (key: any, value: any) => any) => {
   return parse.bind(this)(text, (key, value_) => {
     let value = value_
-    if (value?.__type === 'bigint') value = BigInt(value.value)
-    return reviver?.(key, value) ?? value
+
+    if (value?.__type === 'bigint') {
+      value = BigInt(value.value)
+    }
+
+    if (reviver) {
+      return reviver(key, value)
+    }
+
+    return value
   })
 }
 

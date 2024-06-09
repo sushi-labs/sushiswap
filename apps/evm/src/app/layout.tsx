@@ -1,5 +1,7 @@
 import '@sushiswap/ui/index.css'
 
+import '../lib/serialization'
+
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
@@ -9,8 +11,6 @@ import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-add
 import { getWagmiInitialState } from 'src/lib/wagmi/config'
 import { Providers } from './providers'
 import { Trackers } from './trackers'
-
-import '../lib/serialization'
 
 const inter = Inter({
   subsets: ['latin'],
