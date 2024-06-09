@@ -36,6 +36,7 @@
         "TOKEN_LIST_PR_WEBHOOK_URL",
         "OCTOKIT_KEY",
         "NEXT_PUBLIC_STRAPI_API_URL",
+        "SUSHI_GRAPH_KEY",
         "NEXT_PUBLIC_SUSHI_GRAPH_KEY"
       ]
     },

@@ -1,4 +1,4 @@
-import { JSONParse } from 'json-with-bigint'
+import { deserialize } from 'sushi/bigint-serializer'
 
 export function parseArgs<T>(args?: Partial<T>) {
   if (!args) return ''
@@ -23,5 +23,7 @@ export async function get<T>(url: string): Promise<T> {
     throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
   }
 
-  return JSONParse<T>(await res.text())
+  const text = await res.text()
+
+  return deserialize<T>(text)
 }

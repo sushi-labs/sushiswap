@@ -10,6 +10,8 @@ import { getWagmiInitialState } from 'src/lib/wagmi/config'
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 
+import '../lib/serialization'
+
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
