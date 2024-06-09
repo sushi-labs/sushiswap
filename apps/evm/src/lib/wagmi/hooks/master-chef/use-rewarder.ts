@@ -161,28 +161,28 @@ export const useRewarder = ({
 
       // ! POSSIBLY BROKE IT, TEST
       return data.reduce<(Amount<Token> | undefined)[]>(
-          (acc, result, index) => {
-            if (typeof result === 'bigint') {
-              acc.push(
-                result
-                  ? Amount.fromRawAmount(rewardTokens[index], result)
-                  : undefined,
-              )
-            } else if (typeof result !== 'undefined') {
-              acc.push(
-                ...result[1].map((rewardAmount, index2: number) => {
-                  return Amount.fromRawAmount(
-                    rewardTokens[index + index2],
-                    rewardAmount,
-                  )
-                }),
-              )
-            }
+        (acc, result, index) => {
+          if (typeof result === 'bigint') {
+            acc.push(
+              result
+                ? Amount.fromRawAmount(rewardTokens[index], result)
+                : undefined,
+            )
+          } else if (typeof result !== 'undefined') {
+            acc.push(
+              ...result[1].map((rewardAmount, index2: number) => {
+                return Amount.fromRawAmount(
+                  rewardTokens[index + index2],
+                  rewardAmount,
+                )
+              }),
+            )
+          }
 
-            return acc
-          },
-          [],
-        )
+          return acc
+        },
+        [],
+      )
     }, [data, rewardTokens]),
     ...rest,
   }
