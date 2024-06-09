@@ -678,8 +678,8 @@ function transformV2(queryResult: {
     pools: queryResult.data.currentPools.map((pair) => {
       tokens.push(
         Prisma.validator<Prisma.TokenCreateManyInput>()({
-          id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
-          address: pair.token0.id,
+          id: pair.token0.id.toLowerCase(),
+          address: pair.token0.address.toLowerCase(),
           chainId: queryResult.chainId,
           name: pair.token0.name,
           symbol: pair.token0.symbol,
@@ -688,8 +688,8 @@ function transformV2(queryResult: {
       )
       tokens.push(
         Prisma.validator<Prisma.TokenCreateManyInput>()({
-          id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
-          address: pair.token1.id,
+          id: pair.token1.id.toLowerCase(),
+          address: pair.token1.address.toLowerCase(),
           chainId: queryResult.chainId,
           name: pair.token1.name,
           symbol: pair.token1.symbol,
@@ -814,21 +814,15 @@ function transformV2(queryResult: {
         : 0
 
       return {
-        id: queryResult.chainId.toString().concat(':').concat(pair.id),
-        address: pair.id,
+        id: pair.id.toLowerCase(),
+        address: pair.address.toLowerCase(),
         name: name,
         protocol,
         chainId: queryResult.chainId,
         swapFee: 0.003,
         twapEnabled: true,
-        token0Id: queryResult.chainId
-          .toString()
-          .concat(':')
-          .concat(pair.token0.id.toLowerCase()),
-        token1Id: queryResult.chainId
-          .toString()
-          .concat(':')
-          .concat(pair.token1.id.toLowerCase()),
+        token0Id: pair.token0.id.toLowerCase(),
+        token1Id: pair.token1.id.toLowerCase(),
         reserve0: pair.reserve0.toString(),
         reserve1: pair.reserve1.toString(),
         totalSupply: pair.liquidity.toString(),
@@ -838,7 +832,7 @@ function transformV2(queryResult: {
         feesUSD: currentFeesUSD,
         volumeNative: 0, // DOES NOT EXIST IN V2 anymore
         token0Price: pair.token0Price.toString(),
-        token1Price: pair.token0Price.toString(),
+        token1Price: pair.token1Price.toString(),
         ...(oneHourData.get(pair.id)?.feesUSD && { fees1h }),
         ...(oneDayData.get(pair.id)?.feesUSD && { fees1d }),
         ...(oneWeekData.get(pair.id)?.feesUSD && { fees1w }),
@@ -967,8 +961,8 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
   const poolsTransformed = queryResult.data.currentPools.map((pair) => {
     tokens.push(
       Prisma.validator<Prisma.TokenCreateManyInput>()({
-        id: queryResult.chainId.toString().concat(':').concat(pair.token0.id),
-        address: pair.token0.id,
+        id: pair.token0.id.toLowerCase(),
+        address: pair.token0.address.toLowerCase(),
         chainId: queryResult.chainId,
         name: pair.token0.name,
         symbol: pair.token0.symbol,
@@ -977,8 +971,8 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
     )
     tokens.push(
       Prisma.validator<Prisma.TokenCreateManyInput>()({
-        id: queryResult.chainId.toString().concat(':').concat(pair.token1.id),
-        address: pair.token1.id,
+        id: pair.token1.id.toLowerCase(),
+        address: pair.token1.address.toLowerCase(),
         chainId: queryResult.chainId,
         name: pair.token1.name,
         symbol: pair.token1.symbol,
@@ -1102,21 +1096,15 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
       : 0
 
     return {
-      id: queryResult.chainId.toString().concat(':').concat(pair.id),
-      address: pair.id,
+      id: pair.id.toLowerCase(),
+      address: pair.address.toLowerCase(),
       name: name,
       protocol: Protocol.SUSHISWAP_V3,
       chainId: queryResult.chainId,
       swapFee,
       twapEnabled: true,
-      token0Id: queryResult.chainId
-        .toString()
-        .concat(':')
-        .concat(pair.token0.id.toLowerCase()),
-      token1Id: queryResult.chainId
-        .toString()
-        .concat(':')
-        .concat(pair.token1.id.toLowerCase()),
+      token0Id: pair.token0.id.toLowerCase(),
+      token1Id: pair.token1.id.toLowerCase(),
       reserve0: pair.reserve0.toString(),
       reserve1: pair.reserve1.toString(),
       totalSupply: pair.liquidity.toString(),
