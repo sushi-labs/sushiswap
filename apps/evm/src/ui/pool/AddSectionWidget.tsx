@@ -57,7 +57,6 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
             options={{
               slippageTolerance: {
                 storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                defaultValue: '0.1',
                 title: 'Add Liquidity Slippage',
               },
               transactionDeadline: {

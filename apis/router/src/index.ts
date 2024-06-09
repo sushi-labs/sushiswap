@@ -3,6 +3,7 @@ import 'dotenv/config'
 import process from 'node:process'
 import * as Sentry from '@sentry/node'
 import { Logger, LogsMessageLevel } from '@sushiswap/extractor'
+import compression from 'compression'
 import cors from 'cors'
 import express, { type Express, type Response } from 'express'
 import { ChainId } from 'sushi/chain'
@@ -99,6 +100,7 @@ async function start() {
   // TracingHandler creates a trace for every incoming request
   app.use(Sentry.Handlers.tracingHandler())
 
+  app.use(compression())
   app.use(cors())
 
   const cpuUsageStatistics = new CPUUsageStatistics(60_000)

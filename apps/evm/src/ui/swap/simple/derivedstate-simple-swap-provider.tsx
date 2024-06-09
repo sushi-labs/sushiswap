@@ -1,6 +1,5 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import { watchChainId } from '@wagmi/core'
 import { useLogger } from 'next-axiom'
@@ -14,6 +13,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { useClientTrade } from 'src/lib/wagmi/hooks/trade/use-client-trade'
 import { ChainId, TestnetChainId } from 'sushi/chain'
@@ -420,7 +420,7 @@ const useSimpleSwapTrade = () => {
 
   const { isFallback, setIsFallback, resetFallback } = useFallback(chainId)
 
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: gasPrice } = useGasPrice({ chainId })
 
@@ -431,8 +431,7 @@ const useSimpleSwapTrade = () => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
@@ -449,8 +448,7 @@ const useSimpleSwapTrade = () => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),

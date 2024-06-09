@@ -1,6 +1,5 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import {
   DialogClose,
   DialogContent,
@@ -50,6 +49,7 @@ import {
 } from 'viem'
 
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
 import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
 import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
@@ -83,7 +83,7 @@ import {
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance()
   const { address, chain } = useAccount()
   const {
     mutate: { setTradeId, setSwapAmount },
@@ -529,9 +529,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       )}
                     </List.KeyValue>
                     <List.KeyValue
-                      title={`Min. received after slippage (${
-                        slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance
-                      }%)`}
+                      title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
                       {isFetching || !trade?.minAmountOut ? (
