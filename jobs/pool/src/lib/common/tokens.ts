@@ -25,12 +25,12 @@ const getExchangeTokens = async (
     getSushiV2Tokens({
       chainId,
       where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
-    }),
+    }, { retries: 3 }),
     getTokenPrices({ chainId }),
   ])
 
   return tokens.map((token) => ({
-    id: token.id,
+    id: token.address.toLowerCase(),
     symbol: token.symbol,
     name: token.name,
     decimals: Number(token.decimals),

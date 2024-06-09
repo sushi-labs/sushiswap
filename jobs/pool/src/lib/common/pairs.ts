@@ -19,10 +19,10 @@ async function getExchangePairs(
     chainId,
     first: ids.length,
     where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
-  })
+  }, { retries: 10 })
   return pairs.map((pair) => {
     return {
-      id: pair.id,
+      id: pair.address.toLowerCase(),
       totalSupply: divBigIntToNumber(BigInt(pair.liquidity), 18),
       liquidityUSD: pair.liquidityUSD,
       type: 'Legacy',

@@ -26,7 +26,7 @@ export async function execute() {
     const { incentivesToCreate, incentivesToUpdate, tokens } =
       await transform(farms)
 
-    // // LOAD
+    // LOAD
     await createTokens(tokens)
     await mergeIncentives(incentivesToCreate, incentivesToUpdate)
     await updatePoolsWithIncentivesTotalApr()
