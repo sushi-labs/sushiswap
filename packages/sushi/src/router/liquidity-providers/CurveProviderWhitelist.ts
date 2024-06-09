@@ -2,7 +2,6 @@ import { AbiStateMutability, Address, ContractFunctionParameters } from 'viem'
 import { Native, Token, Type } from '../../currency/index.js'
 import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
 import { CurvePoolType, curvePoolABI, getPoolRatio } from '../curve-sdk.js'
-import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { CurvePoolCode } from '../pool-codes/CurvePool.js'
 import { PoolCode } from '../pool-codes/PoolCode.js'
 import CurvePoolWhiteList from './CurvePoolsWhitelist.json'
@@ -46,11 +45,11 @@ export class CurveProviderWhiteList extends LiquidityProvider {
   }
 
   async getPoolsForTokens(
-    t0: Token,
-    t1: Token,
+    _t0: Token,
+    _t1: Token,
     excludePools?: Set<string>,
   ): Promise<Map<Address, [CurvePoolType, Type[]]>> {
-    const tokens = new Set(
+    /*const tokens = new Set(
       getCurrencyCombinations(this.chainId, t0, t1)
         .flat()
         .map((t) => t.address),
@@ -70,6 +69,11 @@ export class CurveProviderWhiteList extends LiquidityProvider {
           return
         }
       }
+    })*/
+    const pools: Map<Address, [CurvePoolType, Type[]]> = new Map()
+    this.poolsWhiteList.forEach((pool) => {
+      if (excludePools?.has(pool.pool) !== true)
+        pools.set(pool.pool, [pool.poolType, pool.tokens])
     })
     return pools
   }
