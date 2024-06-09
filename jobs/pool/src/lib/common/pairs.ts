@@ -15,11 +15,14 @@ async function getExchangePairs(
   ids: string[],
   chainId: SushiSwapV2ChainId,
 ): Promise<Pair[]> {
-  const pairs = await getSushiV2Pools({
-    chainId,
-    first: ids.length,
-    where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
-  }, { retries: 10 })
+  const pairs = await getSushiV2Pools(
+    {
+      chainId,
+      first: ids.length,
+      where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
+    },
+    { retries: 10 },
+  )
   return pairs.map((pair) => {
     return {
       id: pair.address.toLowerCase(),

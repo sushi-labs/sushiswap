@@ -22,10 +22,13 @@ const getExchangeTokens = async (
   chainId: SushiSwapV2ChainId,
 ): Promise<Token[]> => {
   const [tokens, tokenPrices] = await Promise.all([
-    getSushiV2Tokens({
-      chainId,
-      where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
-    }, { retries: 3 }),
+    getSushiV2Tokens(
+      {
+        chainId,
+        where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
+      },
+      { retries: 3 },
+    ),
     getTokenPrices({ chainId }),
   ])
 
