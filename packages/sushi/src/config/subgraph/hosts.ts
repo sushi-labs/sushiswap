@@ -30,4 +30,5 @@ const DECENTRALIZED_NETWORK_KEY =
   process.env['SUSHI_GRAPH_KEY'] ||
   process.env['NEXT_PUBLIC_SUSHI_GRAPH_KEY'] ||
   SUSHI_DOMAIN_RESTRICTED_API_KEY
-export const DECENTRALIZED_NETWORK_HOST = `gateway-arbitrum.network.thegraph.com/api/${DECENTRALIZED_NETWORK_KEY}/subgraphs/id`
+export const DECENTRALIZED_HOST_BY_SUBGRAPH_ID = `gateway-arbitrum.network.thegraph.com/api/${DECENTRALIZED_NETWORK_KEY}/subgraphs/id`
+export const DECENTRALIZED_HOST_BY_DEPLOYMENT_ID = `gateway-arbitrum.network.thegraph.com/api/${DECENTRALIZED_NETWORK_KEY}/deployments/id`
