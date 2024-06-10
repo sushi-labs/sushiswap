@@ -7,8 +7,8 @@ import type { ChainIdVariable } from 'src/lib/types/chainId'
 import {
   type Address,
   SushiSwapProtocol,
-  getIdFromChainIdAddress,
   TickMath,
+  getIdFromChainIdAddress,
 } from 'sushi'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { graphql } from '../graphql'

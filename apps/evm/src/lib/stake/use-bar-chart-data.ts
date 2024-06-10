@@ -1,7 +1,7 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { getSushiBarHistory } from '@sushiswap/graph-client-new/sushi-bar'
+import { useQuery } from '@tanstack/react-query'
 
 export const useBarChartData = (enabled = true) => {
   return useQuery({

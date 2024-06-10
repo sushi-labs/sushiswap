@@ -1,5 +1,5 @@
 import { getChainIdAddressFromId } from 'sushi/format'
-import { zeroAddress, type PublicClient } from 'viem'
+import { type PublicClient, zeroAddress } from 'viem'
 
 import { steerMultiPositionManager } from '../abi/steerMultiPositionManager.js'
 

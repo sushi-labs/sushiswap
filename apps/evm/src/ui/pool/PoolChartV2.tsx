@@ -3,10 +3,10 @@
 import { Card } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
-import { SushiSwapV2ChainId } from 'sushi/config'
 
 const charts = [
   PoolChartType.Volume,

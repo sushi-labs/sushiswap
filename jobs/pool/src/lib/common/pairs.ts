@@ -1,8 +1,8 @@
+import { getSushiV2Pools } from '@sushiswap/graph-client-new/sushi-v2'
 import { SushiSwapV2ChainId } from 'sushi/config'
+import { Address } from 'viem'
 import type { Farm } from '../types.js'
 import { divBigIntToNumber } from './utils.js'
-import { getSushiV2Pools } from '@sushiswap/graph-client-new/sushi-v2'
-import { Address } from 'viem'
 
 interface Pair {
   id: string

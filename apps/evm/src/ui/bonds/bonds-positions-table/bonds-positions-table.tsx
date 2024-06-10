@@ -12,13 +12,13 @@ import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
+import { useAccount } from 'wagmi'
 import {
   CLAIM_COLUMN,
   MATURITY_COLUMN,
   PAYOUT_AMOUNT_COLUMN,
   PAYOUT_ASSET_COLUMN,
 } from './bonds-positions-table-columns'
-import { useAccount } from 'wagmi'
 
 const COLUMNS = [
   PAYOUT_ASSET_COLUMN,

@@ -17,10 +17,10 @@ import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { useAccount } from 'wagmi'
 
 import { useIsMounted } from '@sushiswap/hooks'
+import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 import { TokenSelector } from '../../token-selector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
-import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 
 interface CurrencyInputProps {
   id?: string

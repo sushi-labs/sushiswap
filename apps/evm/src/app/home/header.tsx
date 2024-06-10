@@ -3,8 +3,8 @@
 import { Navigation } from '@sushiswap/ui/components/navigation'
 import React, { FC } from 'react'
 
-import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
+import { SUPPORTED_CHAIN_IDS } from '../../config'
 
 export const Header: FC = () => {
   return (

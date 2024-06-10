@@ -1,6 +1,6 @@
 import { erc20Abi } from 'sushi/abi'
 import { getChainIdAddressFromId } from 'sushi/format'
-import { zeroAddress, type PublicClient } from 'viem'
+import { type PublicClient, zeroAddress } from 'viem'
 
 interface GetTotalSuppliesContracts {
   vaultIds: string[]

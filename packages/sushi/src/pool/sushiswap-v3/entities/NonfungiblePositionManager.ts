@@ -1,6 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import invariant from 'tiny-invariant'
 import { zeroAddress } from 'viem'
+import { nonfungiblePositionManagerAbi } from '../../../abi/nonfungiblePositionManagerAbi.js'
 import { toHex } from '../../../convert/index.js'
 import {
   Amount as CurrencyAmount,
@@ -16,7 +17,6 @@ import { Payments } from './Payments.js'
 import { Position } from './Position.js'
 import { PermitOptions, SelfPermit } from './SelfPermit.js'
 import { SushiSwapV3Pool } from './SushiSwapV3Pool.js'
-import { nonfungiblePositionManagerAbi } from '../../../abi/nonfungiblePositionManagerAbi.js'
 
 const MaxUint128 = toHex(2n ** 128n - 1n)
 

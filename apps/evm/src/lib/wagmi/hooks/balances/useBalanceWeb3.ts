@@ -4,8 +4,8 @@ import { Type } from 'sushi/currency'
 import { Address, zeroAddress } from 'viem'
 
 import { serialize, useBalance, useConfig } from 'wagmi'
-import { queryFnUseBalances } from './useBalancesWeb3'
 import { useWatchByInterval } from '../watch/useWatchByInterval'
+import { queryFnUseBalances } from './useBalancesWeb3'
 
 interface UseBalanceParams {
   chainId: ChainId | undefined

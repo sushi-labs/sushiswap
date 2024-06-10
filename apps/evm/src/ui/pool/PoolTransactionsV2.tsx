@@ -16,18 +16,18 @@ import { Chain, ChainId } from 'sushi/chain'
 import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
 import {
+  getSushiV2Burns,
+  getSushiV2Mints,
+  getSushiV2Swaps,
+  getSushiV2Transactions,
+} from '@sushiswap/graph-client-new/sushi-v2'
+import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
   TX_AMOUNT_USD_V2_COLUMN,
   TX_CREATED_TIME_V2_COLUMN,
   TX_SENDER_V2_COLUMN,
 } from './columns'
-import {
-  getSushiV2Burns,
-  getSushiV2Mints,
-  getSushiV2Swaps,
-  getSushiV2Transactions,
-} from '@sushiswap/graph-client-new/sushi-v2'
 
 export enum TransactionType {
   Mint = 'Mint',

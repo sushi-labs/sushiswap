@@ -4,10 +4,10 @@ import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import { FetchError } from 'src/lib/fetch-error'
 import { addChainId } from 'src/lib/modifiers/add-chain-id'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
-import type { RequestOptions } from 'src/lib/request'
 
 export const SushiV3MintsQuery = graphql(`
   query Mints($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: Mint_orderBy, $orderDirection: OrderDirection, $where: Mint_filter) {

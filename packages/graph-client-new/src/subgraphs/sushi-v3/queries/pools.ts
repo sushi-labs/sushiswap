@@ -3,12 +3,12 @@ import type { SushiSwapV3ChainId } from 'sushi/config'
 import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
 import { FetchError } from 'src/lib/fetch-error'
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { transformPoolV3ToBase } from 'src/subgraphs/sushi-v3/transforms/pool-v3-to-base'
 import { PoolFieldsFragment } from '../fragments/pool-fields'
 import { graphql } from '../graphql'
-import type { RequestOptions } from 'src/lib/request'
 
 export const SushiV3PoolsQuery = graphql(
   `
