@@ -34,7 +34,7 @@ export const BLOCKS_SUBGRAPH_URL: Partial<Record<ChainId, string>> = {
   // [ChainId.OKEX]: `${GRAPH_HOST}/okexchain-blocks/oec`,
   // [ChainId.HECO]: `${GRAPH_HOST}/hecoblocks/heco`,
   // [ChainId.KOVAN]: `${GRAPH_HOST}/blocklytics/kovan-blocks`,
-  [ChainId.KAVA]: `${WAGMI_KAVA_HOST}/sushiswap/blocks-kava`,
+  [ChainId.KAVA]: `${WAGMI_KAVA_HOST}/blocks`,
   [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/blocks-metis`,
   // [ChainId.METIS]: `${WAGMI_METIS_HOST}/blocks`,
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_GOLDSKY_HOST}/blocks/arbitrum-nova/gn`,
