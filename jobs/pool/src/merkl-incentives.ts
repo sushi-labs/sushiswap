@@ -355,9 +355,9 @@ async function fetchTokenFromContract(token: {
     return errorResponse
   } catch (e: any) {
     const id = token.chainId
-    .toString()
-    .concat(':')
-    .concat(token.address.toLowerCase())
+      .toString()
+      .concat(':')
+      .concat(token.address.toLowerCase())
     console.error(`Error fetching token ${id}, error: ${e.message}`)
     return {
       status: 'error',
