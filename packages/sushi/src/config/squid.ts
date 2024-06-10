@@ -3,6 +3,8 @@ import { ChainId } from '../chain'
 
 export const SquidIntegratorId = 'sushiswap-sdk'
 
+export const SquidApiURL = 'https://apiplus.squidrouter.com/v2'
+
 export const SQUID_CHAIN_NAME = {
   [ChainId.ARBITRUM]: 'Arbitrum',
   [ChainId.AVALANCHE]: 'Avalanche',
