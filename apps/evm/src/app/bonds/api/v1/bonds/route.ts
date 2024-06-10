@@ -1,6 +1,7 @@
+import 'sushi/bigint-serializer'
+
 import { BondsApiSchema, getBondsFromSubgraph } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
-import { serialize } from 'sushi/bigint-serializer'
 import { CORS } from '../../cors'
 
 export const revalidate = 3
@@ -15,11 +16,10 @@ export async function GET(request: Request) {
 
   try {
     const bonds = await getBondsFromSubgraph(result.data)
-    const stringified = serialize(bonds)
 
-    return new NextResponse(stringified, {
+    return NextResponse.json(bonds, {
       status: 200,
-      headers: { 'content-type': 'application/json', ...CORS },
+      headers: CORS,
     })
   } catch (e) {
     return NextResponse.json(e, { headers: CORS })

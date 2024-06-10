@@ -1,6 +1,7 @@
+import 'sushi/bigint-serializer'
+
 import { PoolCountApiSchema, getPoolCountFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
-import { serialize } from 'sushi/bigint-serializer'
 import { CORS } from '../../cors'
 
 export const revalidate = 15
@@ -14,9 +15,7 @@ export async function GET(request: Request) {
   }
 
   const count = await getPoolCountFromDB(result.data)
-  const stringified = serialize(count)
-  return new NextResponse(stringified, {
-    status: 200,
-    headers: { 'content-type': 'application/json', ...CORS },
+  return NextResponse.json(count, {
+    headers: CORS,
   })
 }

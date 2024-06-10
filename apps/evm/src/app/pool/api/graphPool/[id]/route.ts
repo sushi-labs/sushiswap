@@ -1,6 +1,7 @@
+import 'sushi/bigint-serializer'
+
 import { NextResponse } from 'next/server'
 import { getV2GraphPool } from 'src/lib/graph'
-import { serialize } from 'sushi/bigint-serializer'
 import { z } from 'zod'
 
 export const revalidate = 15
@@ -20,9 +21,5 @@ export async function GET(
   }
 
   const pool = await getV2GraphPool(result.data.id)
-  const stringified = serialize(pool)
-  return new NextResponse(stringified, {
-    status: 200,
-    headers: { 'content-type': 'application/json' },
-  })
+  return NextResponse.json(pool)
 }

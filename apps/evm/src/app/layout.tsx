@@ -1,6 +1,6 @@
 import '@sushiswap/ui/index.css'
 
-import '../lib/serialization'
+import 'sushi/bigint-serializer'
 
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'

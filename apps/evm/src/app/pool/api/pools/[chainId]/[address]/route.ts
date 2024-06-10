@@ -1,6 +1,7 @@
+import 'sushi/bigint-serializer'
+
 import { PoolApiSchema, getPoolFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
-import { serialize } from 'sushi/bigint-serializer'
 import { CORS } from '../../../cors'
 
 export const revalidate = 15
@@ -27,9 +28,7 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch pool' }, { status: 500 })
   }
 
-  const stringified = serialize(pool)
-  return new NextResponse(stringified, {
-    status: 200,
-    headers: { 'content-type': 'application/json', ...CORS },
+  return NextResponse.json(pool, {
+    headers: CORS,
   })
 }

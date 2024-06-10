@@ -1,6 +1,7 @@
+import 'sushi/bigint-serializer'
+
 import { NextResponse } from 'next/server'
 import { getUser } from 'src/lib/graph'
-import { serialize } from 'sushi/bigint-serializer'
 import { ChainId } from 'sushi/chain'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { Address } from 'viem'
@@ -41,12 +42,9 @@ export async function GET(request: Request) {
   const args = result.data
   const data = await getUser(args)
 
-  const stringified = serialize(data)
-  return new NextResponse(stringified, {
-    status: 200,
+  return NextResponse.json(data, {
     headers: {
       'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
-      'content-type': 'application/json',
       ...CORS,
     },
   })

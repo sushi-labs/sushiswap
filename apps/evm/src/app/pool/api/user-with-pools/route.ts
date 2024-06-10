@@ -1,12 +1,12 @@
+import 'sushi/bigint-serializer'
+
 import { getPools } from '@sushiswap/client'
 import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { NextResponse } from 'next/server'
 import { getUser, getV2GraphPools } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
 
-import { serialize } from 'sushi/bigint-serializer'
 import { isSushiSwapV2ChainId } from 'sushi/config'
-
 import type {
   PoolBase,
   PoolIfIncentivized,
@@ -53,11 +53,10 @@ export async function GET(request: Request) {
   const poolIds = data.map((position) => position.pool.id)
 
   if (poolIds.length === 0) {
-    return new NextResponse(serialize([]), {
+    return NextResponse.json([], {
       status: 200,
       headers: {
         'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
-        'content-type': 'application/json',
         ...CORS,
       },
     })
@@ -108,12 +107,10 @@ export async function GET(request: Request) {
       }
     })
     .filter((pool): pool is NonNullable<typeof pool> => pool !== undefined)
-  const stringified = serialize(userPositions)
-  return new NextResponse(stringified, {
-    status: 200,
+
+  return NextResponse.json(userPositions, {
     headers: {
       'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
-      'content-type': 'application/json',
       ...CORS,
     },
   })

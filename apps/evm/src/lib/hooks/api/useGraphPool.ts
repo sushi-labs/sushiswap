@@ -1,12 +1,13 @@
 'use client'
 
+import 'sushi/bigint-serializer'
+
 import { SushiV2Pool } from '@sushiswap/graph-client-new/sushi-v2'
 import { useMemo } from 'react'
 import { Amount } from 'sushi/currency'
-import useSWR from 'swr'
 
+import { useQuery } from '@tanstack/react-query'
 import type { PoolId } from 'sushi'
-import { deserialize } from 'sushi/bigint-serializer'
 import { getTokensFromPool } from '../useTokensFromPool'
 
 export function getGraphPoolUrl(poolId: string) {
@@ -17,11 +18,15 @@ export const useGraphPool = (pool: PoolId) => {
   const {
     data: graphPool,
     isLoading,
-    isValidating,
     error,
-  } = useSWR<SushiV2Pool>(getGraphPoolUrl(pool.id), async (url) =>
-    fetch(url).then(async (data) => deserialize(await data.text())),
-  )
+  } = useQuery<SushiV2Pool>({
+    queryKey: [getGraphPoolUrl(pool.id)],
+    queryFn: async () => {
+      const res = await fetch(getGraphPoolUrl(pool.id))
+
+      return JSON.parse(await res.text())
+    },
+  })
 
   const { token0, token1, liquidityToken } = useMemo(() => {
     if (!graphPool)
@@ -37,7 +42,6 @@ export const useGraphPool = (pool: PoolId) => {
   return useMemo(() => {
     return {
       isLoading,
-      isValidating,
       error,
       data: {
         token0,
@@ -74,13 +78,5 @@ export const useGraphPool = (pool: PoolId) => {
             : null,
       },
     }
-  }, [
-    error,
-    graphPool,
-    isLoading,
-    isValidating,
-    liquidityToken,
-    token0,
-    token1,
-  ])
+  }, [error, graphPool, isLoading, liquidityToken, token0, token1])
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import '../lib/serialization'
+import 'sushi/bigint-serializer'
 
 import { State } from 'wagmi'
 
