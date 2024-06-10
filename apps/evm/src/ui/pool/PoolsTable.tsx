@@ -71,8 +71,8 @@ const COLUMNS = [
   VOLUME_1D_COLUMN,
   VOLUME_1W_COLUMN,
   VOLUME_1M_COLUMN,
-  APR_COLUMN,
   FEES_COLUMN,
+  APR_COLUMN,
   {
     id: 'actions',
     cell: ({ row }) =>
