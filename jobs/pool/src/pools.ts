@@ -64,7 +64,7 @@ enum AprTimeRange {
 }
 
 const SUBGRAPH_REQUEST_OPTIONS = {
-  retries: 3, // should probably be a reasonable timeout as well?
+  retries: 10, // can lower to 3 when bad indexer error is fixed by the graph
 }
 
 export async function execute(protocol: Protocol) {

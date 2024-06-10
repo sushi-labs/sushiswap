@@ -28,7 +28,9 @@ export async function getSushiDayDatas(
       ]),
     ),
   }: GetSushiDayDatas,
-  options?: RequestOptions,
+  options: RequestOptions = {
+    retries: 10,
+  },
 ) {
   const sushiSwapV2ChainIds = chainIds.filter(isSushiSwapV2ChainId)
   const v2p = fetchMultichain({
