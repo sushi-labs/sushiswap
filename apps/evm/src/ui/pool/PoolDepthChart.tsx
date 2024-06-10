@@ -6,13 +6,22 @@ import {
   CardTitle,
   Toggle,
 } from '@sushiswap/ui'
-import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import colors from 'tailwindcss/colors'
 
 import { ChartEntry } from './LiquidityChartRangeInput/types'
+
+import ReactEChartsCore from 'echarts-for-react/lib/core'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/markLine'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/visualMap'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
 
 interface PoolDepthChartProps {
   poolStats: NonNullable<
@@ -256,7 +265,11 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ReactECharts option={DEFAULT_OPTION} style={{ height: 405 }} />
+        <ReactEChartsCore
+          echarts={echarts}
+          option={DEFAULT_OPTION}
+          style={{ height: 405 }}
+        />
       </CardContent>
     </>
   )

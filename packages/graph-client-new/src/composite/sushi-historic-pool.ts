@@ -121,27 +121,26 @@ export async function getSushiHistoricPool(
   const pool2d = isPromiseFulfilled(pool2dS) ? pool2dS.value : null
 
   // TRANSFORM
-  const liquidityUSD1dChange = calculatePercentageChange(
+  const liquidityUSD1dChange = calculateRelativePercentageChange(
     pool.liquidityUSD,
     pool1d?.liquidityUSD,
-    pool2d?.liquidityUSD,
   )
 
   const volumeUSD1d = calculateValueChange(pool.volumeUSD, pool1d?.volumeUSD)
-  const volumeUSD1dChange = calculatePercentageChange(
+  const volumeUSD1dChange = calculateCumulativePercentageChange(
     pool.volumeUSD,
     pool1d?.volumeUSD,
     pool2d?.volumeUSD,
   )
 
   const feesUSD1d = calculateValueChange(pool.feesUSD, pool1d?.feesUSD)
-  const feesUSD1dChange = calculatePercentageChange(
+  const feesUSD1dChange = calculateCumulativePercentageChange(
     pool.feesUSD,
     pool1d?.feesUSD,
     pool2d?.feesUSD,
   )
   const txCount1d = calculateValueChange(pool.txCount, pool1d?.txCount)
-  const txCount1dChange = calculatePercentageChange(
+  const txCount1dChange = calculateCumulativePercentageChange(
     pool.txCount,
     pool1d?.txCount,
     pool2d?.txCount,
@@ -169,13 +168,14 @@ const calculateValueChange = (
   return _previous !== 0 ? _current - _previous : 0
 }
 
-const calculatePercentageChange = (
+const calculateCumulativePercentageChange = (
   current: string | number | bigint | undefined,
   previous: string | number | bigint | undefined,
-  previous2: string | number | bigint | undefined,
+  previous2?: string | number | bigint | undefined,
 ) => {
   const _current = Number(current)
   const _previous = Number(previous)
+
   const _previous2 = Number(previous2)
   if (_current === 0) return 0
   const change1 = _previous !== 0 ? _current - _previous : 0
@@ -183,4 +183,15 @@ const calculatePercentageChange = (
     _previous !== 0 && _previous2 !== 0 ? _previous - _previous2 : 0
   if (change2 === 0) return 0 // avoid division by 0
   return _previous !== 0 && _previous2 !== 0 ? change1 / change2 - 1 : 0
+}
+
+const calculateRelativePercentageChange = (
+  current: string | number | bigint | undefined,
+  previous?: string | number | bigint | undefined,
+) => {
+  const _current = Number(current)
+  const _previous = Number(previous)
+
+  if (_current === 0) return 0
+  return _previous !== 0 ? _current / _previous - 1 : 0
 }

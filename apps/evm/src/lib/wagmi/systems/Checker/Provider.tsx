@@ -72,7 +72,6 @@ const CheckerProvider: FC<ProviderProps> = ({ children }) => {
 
   // Reset state when address/wallet changes
   useEffect(() => {
-    console.log('reset state', initialState)
     const unwatchAccountListener = watchAccount(config, {
       onChange: () => setState(initialState),
     })

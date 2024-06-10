@@ -9,8 +9,6 @@ import {
 import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
 import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
 import { format } from 'date-fns'
-import ReactECharts from 'echarts-for-react'
-import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
 
@@ -21,6 +19,15 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
+
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/visualMap'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
@@ -46,7 +53,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     chainId,
   })
 
-  const swapFee = graphPair ? graphPair?.swapFee / 10000 : 0
+  const swapFee = graphPair ? graphPair?.swapFee : 0
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
@@ -124,6 +131,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           fontSize: 12,
           fontWeight: 600,
         },
+        axisPointer: {
+          lineStyle: {
+            type: 'dashed',
+          },
+        },
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
@@ -188,6 +200,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           smooth: true,
           xAxisIndex: 0,
           yAxisIndex: 0,
+          barWidth: '70%',
           itemStyle: {
             color: 'blue',
             normal: {
@@ -249,7 +262,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         ) : isError ? (
           <div className="h-[400px] w-full" />
         ) : (
-          <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
+          <ReactEchartsCore
+            echarts={echarts}
+            option={DEFAULT_OPTION}
+            style={{ height: 400 }}
+          />
         )}
       </CardContent>
     </>
