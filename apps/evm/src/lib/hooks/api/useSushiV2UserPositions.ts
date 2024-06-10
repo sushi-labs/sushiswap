@@ -24,7 +24,9 @@ export function useSushiV2UserPositions(
   return useQuery<UserWithPool[]>({
     queryKey: [getUserPositionsWithPoolsUrl(args)],
     queryFn: () =>
-      fetch(getUserPositionsWithPoolsUrl(args)).then((data) => data.json()),
+      fetch(getUserPositionsWithPoolsUrl(args))
+        .then((data) => data.text())
+        .then(JSON.parse),
     enabled: Boolean(shouldFetch && args.id),
   })
 }
