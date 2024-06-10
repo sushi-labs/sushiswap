@@ -11,7 +11,9 @@ import {
 import { Button } from '@sushiswap/ui/components/button'
 import {
   Command,
+  CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
 } from '@sushiswap/ui/components/command'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
@@ -97,13 +99,18 @@ export const TableFiltersNetwork: FC = () => {
         className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll"
       >
         <Command className="flex items-center gap-1">
+          <CommandInput
+            testdata-id="network-selector-input"
+            placeholder="Search network"
+          />
+          <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {SUPPORTED_CHAIN_IDS.map((chainId) => (
               <CommandItem
                 key={chainId}
-                value={`${chainId}`}
-                onSelect={(currentValue) =>
-                  onClick(+currentValue as (typeof chainIds)[number])
+                value={`${Chain.from(chainId)?.name}__${chainId}`}
+                onSelect={(value) =>
+                  onClick(+value.split('__')[1] as (typeof chainIds)[number])
                 }
                 className="py-2 pl-8 pr-2"
               >

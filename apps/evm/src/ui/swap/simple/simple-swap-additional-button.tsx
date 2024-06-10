@@ -1,3 +1,5 @@
+'use client'
+
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline'
 import { Button } from '@sushiswap/ui'
 import { FC } from 'react'
