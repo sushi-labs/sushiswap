@@ -2,10 +2,10 @@ import type { VariablesOf } from 'gql.tada'
 import type { SushiSwapV3ChainId } from 'sushi/config'
 import { SUSHISWAP_V3_SUBGRAPH_URL } from 'sushi/config/subgraph'
 
+import type { RequestOptions } from 'src/lib/request'
 import { requestPaged } from 'src/lib/request-paged'
 import type { ChainIdVariable } from 'src/lib/types/chainId'
 import { graphql } from '../graphql'
-import type { RequestOptions } from 'src/lib/request'
 
 export const SushiV3DayDatasQuery = graphql(`
   query DayDatas($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: UniswapDayData_orderBy, $orderDirection: OrderDirection, $where: UniswapDayData_filter) {
@@ -14,7 +14,6 @@ export const SushiV3DayDatasQuery = graphql(`
       date
       volumeUSD
       volumeUSDUntracked
-      volumeETH
       tvlUSD
       feesUSD
       txCount
@@ -39,7 +38,15 @@ export async function getSushiV3DayDatas(
     options,
   })
 
-  return result.uniswapDayDatas
+  return result.uniswapDayDatas.map((dayData) => ({
+    id: dayData.id,
+    date: dayData.date,
+    volumeUSD: Number(dayData.volumeUSD),
+    volumeUSDUntracked: Number(dayData.volumeUSDUntracked),
+    liquidityUSD: Number(dayData.tvlUSD),
+    feesUSD: Number(dayData.feesUSD),
+    txCount: Number(dayData.txCount),
+  }))
 }
 
 export type SushiV3DayDatas = Awaited<ReturnType<typeof getSushiV3DayDatas>>

@@ -1,3 +1,4 @@
+import type { RequestOptions } from 'src/lib/request'
 import type { ChainIdsVariable } from 'src/lib/types/chainId'
 import { fetchMultichain } from 'src/multichain'
 import { getSushiV2DayDatas } from 'src/subgraphs/sushi-v2/queries/day-datas'
@@ -13,7 +14,6 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import type { RequestOptions } from 'src/lib/request'
 
 export type GetSushiDayDatas = {} & ChainIdsVariable<
   SushiSwapV2ChainId | SushiSwapV3ChainId
@@ -59,33 +59,38 @@ export async function getSushiDayDatas(
     { data: sushiSwapV3DayDatas, errors: sushiSwapV3DayDatasErrors },
   ] = await Promise.all([v2p, v3p])
 
-  const data: SushiV3DayDatas = []
-  sushiSwapV3DayDatas.forEach((dayData) => {
+  const dataMap = new Map<number, SushiV3DayDatas[number]>()
+
+  const setOrAdd = (date: number, dayData: SushiV3DayDatas[number]) => {
     if (Number(dayData.volumeUSD) > 1_000_000_000) return // Skip volume if it's too high, MEV txs on ethereum can cause this
-    data.push({
-      id: dayData.id,
-      date: dayData.date,
-      volumeUSD: dayData.volumeUSD,
-      volumeUSDUntracked: dayData.volumeUSDUntracked,
-      volumeETH: dayData.volumeETH,
-      tvlUSD: dayData.tvlUSD,
-      txCount: dayData.txCount,
-      feesUSD: '0',
-    })
+
+    const existing = dataMap.get(date)
+
+    if (existing) {
+      dataMap.set(date, {
+        ...existing,
+        volumeUSD: existing.volumeUSD + dayData.volumeUSD,
+        volumeUSDUntracked:
+          existing.volumeUSDUntracked + dayData.volumeUSDUntracked,
+        liquidityUSD: existing.liquidityUSD + dayData.liquidityUSD,
+        txCount: existing.txCount + dayData.txCount,
+        feesUSD: existing.feesUSD + dayData.feesUSD,
+      })
+      return
+    }
+
+    dataMap.set(date, dayData)
+  }
+
+  sushiSwapV3DayDatas.forEach((dayData) => {
+    setOrAdd(dayData.date, dayData)
   })
+
   sushiSwapV2DayDatas.forEach((dayData) => {
-    if (Number(dayData.dailyVolumeUSD) > 1_000_000_000) return // Skip volume if it's too high, MEV txs on ethereum can cause this
-    data.push({
-      id: dayData.id,
-      date: dayData.date,
-      volumeUSD: dayData.dailyVolumeUSD,
-      volumeUSDUntracked: dayData.dailyVolumeUntracked,
-      volumeETH: dayData.dailyVolumeETH,
-      tvlUSD: dayData.totalLiquidityUSD,
-      txCount: dayData.txCount,
-      feesUSD: '0',
-    })
+    setOrAdd(dayData.date, dayData)
   })
+
+  const data = Array.from(dataMap.values())
 
   const errors = [...sushiSwapV2DayDataErrors, ...sushiSwapV3DayDatasErrors]
 

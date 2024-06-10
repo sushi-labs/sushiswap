@@ -181,10 +181,10 @@ export const getCharts = async (query?: { networks: string }) => {
       snapshot.date,
       value
         ? [
-            value[0] + Number(snapshot.tvlUSD),
+            value[0] + Number(snapshot.liquidityUSD),
             value[1] + Number(snapshot.volumeUSD),
           ]
-        : [Number(snapshot.tvlUSD), Number(snapshot.volumeUSD)],
+        : [Number(snapshot.liquidityUSD), Number(snapshot.volumeUSD)],
     )
   }
 

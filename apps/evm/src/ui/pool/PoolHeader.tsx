@@ -46,6 +46,7 @@ export const PoolHeader: FC<PoolHeader> = ({
 }) => {
   const [token0, token1] = useMemo(() => {
     if (!pool) return [undefined, undefined]
+
     if (pool instanceof SushiSwapV3Pool) {
       return [unwrapToken(pool.token0), unwrapToken(pool.token1)]
     }

@@ -14,7 +14,6 @@ export const SushiV2DayDatasQuery = graphql(`
       date
       dailyVolumeUSD
       dailyVolumeUntracked
-      dailyVolumeETH
       totalLiquidityUSD
       txCount
     }
@@ -38,7 +37,15 @@ export async function getSushiV2DayDatas(
     options,
   })
 
-  return result.uniswapDayDatas
+  return result.uniswapDayDatas.map((dayData) => ({
+    id: dayData.id,
+    date: dayData.date,
+    volumeUSD: Number(dayData.dailyVolumeUSD),
+    volumeUSDUntracked: Number(dayData.dailyVolumeUntracked),
+    liquidityUSD: Number(dayData.totalLiquidityUSD),
+    txCount: Number(dayData.txCount),
+    feesUSD: Number(dayData.totalLiquidityUSD) * 0.003,
+  }))
 }
 
 export type SushiV2DayDatas = Awaited<ReturnType<typeof getSushiV2DayDatas>>
