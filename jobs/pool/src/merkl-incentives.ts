@@ -314,42 +314,57 @@ async function fetchTokenFromContract(token: {
   chainId: ChainId
   address: Address
 }): Promise<TokenSuccess | TokenError> {
-  const tokenFromContract = await fetchToken(config, {
-    chainId: token.chainId,
-    address: token.address as Address,
-  })
-  const errorResponse: TokenError = {
-    status: 'error',
-    chainId: token.chainId,
-    token: {
-      id: token.chainId
-        .toString()
-        .concat(':')
-        .concat(token.address.toLowerCase()),
-    },
-  }
-
-  if (tokenFromContract) {
-    const response: TokenSuccess = {
-      status: 'ok',
+  try {
+    const tokenFromContract = await fetchToken(config, {
+      chainId: token.chainId,
+      address: token.address,
+    })
+    const errorResponse: TokenError = {
+      status: 'error',
       chainId: token.chainId,
       token: {
         id: token.chainId
           .toString()
           .concat(':')
-          .concat(tokenFromContract.address.toLowerCase()),
-        chainId: token.chainId,
-        address: tokenFromContract.address.toString(),
-        name: tokenFromContract.name!,
-        symbol: tokenFromContract.symbol!,
-        decimals: tokenFromContract.decimals,
+          .concat(token.address.toLowerCase()),
       },
     }
-    if (!isTestToken(response)) {
-      return response
-    } else {
-      return errorResponse
+
+    if (tokenFromContract?.decimals) {
+      const response: TokenSuccess = {
+        status: 'ok',
+        chainId: token.chainId,
+        token: {
+          id: token.chainId
+            .toString()
+            .concat(':')
+            .concat(tokenFromContract.address.toLowerCase()),
+          chainId: token.chainId,
+          address: tokenFromContract.address.toString(),
+          name: tokenFromContract.name!,
+          symbol: tokenFromContract.symbol!,
+          decimals: tokenFromContract.decimals,
+        },
+      }
+      if (!isTestToken(response)) {
+        return response
+      } else {
+        return errorResponse
+      }
     }
+    return errorResponse
+  } catch (e: any) {
+    const id = token.chainId
+    .toString()
+    .concat(':')
+    .concat(token.address.toLowerCase())
+    console.error(`Error fetching token ${id}, error: ${e.message}`)
+    return {
+      status: 'error',
+      chainId: token.chainId,
+      token: {
+        id,
+      },
+    } as TokenError
   }
-  return errorResponse
 }
