@@ -21,7 +21,7 @@ async function getExchangePairs(
       first: ids.length,
       where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
     },
-    { retries: 10 },
+    { retries: 3 },
   )
   return pairs.map((pair) => {
     return {

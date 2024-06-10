@@ -64,7 +64,7 @@ enum AprTimeRange {
 }
 
 const SUBGRAPH_REQUEST_OPTIONS = {
-  retries: 10, // should probably be a reasonable timeout as well?
+  retries: 3, // should probably be a reasonable timeout as well?
 }
 
 export async function execute(protocol: Protocol) {
