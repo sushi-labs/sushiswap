@@ -20,7 +20,7 @@ steps:
     env:
       - 'DATABASE_URL=${_DATABASE_URL}'
       - 'SUSHI_GRAPH_KEY=${_SUSHI_GRAPH_KEY}'
-      - 'DPRC_ID=${_DPRC_ID}'
+      - 'DRPC_ID=${_DRPC_ID}'
     args:
       - run
       - deploy
@@ -31,7 +31,7 @@ steps:
       - us-central1
       - '--set-env-vars=DATABASE_URL=$_DATABASE_URL'
       - '--set-env-vars=SUSHI_GRAPH_KEY=$_SUSHI_GRAPH_KEY'
-      - '--set-env-vars=DPRC_ID=$_DPRC_ID'
+      - '--set-env-vars=DRPC_ID=$_DRPC_ID'
     id: Update Cloud Run Service
     entrypoint: gcloud
 timeout: 3600s
