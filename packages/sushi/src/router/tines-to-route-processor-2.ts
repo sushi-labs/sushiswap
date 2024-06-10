@@ -19,7 +19,7 @@ export interface PermitData {
 }
 
 export function getTokenType(token: RToken): TokenType {
-  if (token.address === '') return TokenType.NATIVE
+  if (!token.address) return TokenType.NATIVE
   return typeof token.chainId === 'string' && token.chainId.startsWith('Bento')
     ? TokenType.BENTO
     : TokenType.ERC20

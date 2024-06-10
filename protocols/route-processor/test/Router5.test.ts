@@ -163,7 +163,16 @@ async function getTestEnvironment() {
         ?.blockNumber,
       snapshotDir,
     )
-    poolList.forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
+    // n<0 for bridges
+    const goodLiquidity = (n: bigint): boolean => n > 1000n || n < 0
+    poolList
+      .filter(
+        // filter out empty pools
+        ({ pool }) =>
+          goodLiquidity(pool.getReserve0()) &&
+          goodLiquidity(pool.getReserve1()),
+      )
+      .forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
   }
 
   const RouteProcessorTx = await client.deployContract({
