@@ -112,9 +112,11 @@ export class TinesToRouteProcessor2 {
     toAddress: string,
   ): string {
     const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
-    if (!outputLegs || outputLegs.length !== 1) {
+    if (!outputLegs) {
+      // || outputLegs.length !== 1) {
       throw new Error(
-        `Not 1 output pool for native token: ${outputLegs?.length}`,
+        //`Not 1 output pool for native token: ${outputLegs?.length}`,
+        'Not 1 output pool for native token: 0',
       )
     }
 
