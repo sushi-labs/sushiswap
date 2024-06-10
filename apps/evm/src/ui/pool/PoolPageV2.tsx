@@ -1,10 +1,10 @@
 import { Container, Separator } from '@sushiswap/ui'
 import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolTransactionsV2 } from 'src/ui/pool/PoolTransactionsV2'
-import { ChainId } from 'sushi/chain'
 
 import { getPool } from '@sushiswap/client'
 import { FC } from 'react'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { PoolChartV2 } from './PoolChartV2'
 import { PoolComposition } from './PoolComposition'
 import { PoolMyRewards } from './PoolMyRewards'
@@ -15,7 +15,6 @@ import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
 import { PoolRewards } from './PoolRewards'
 import { PoolStats } from './PoolStats'
 import { UnknownTokenAlert } from './UnknownTokenAlert'
-import { SushiSwapV2ChainId } from 'sushi/config'
 
 interface PoolPageV2 {
   pool: Awaited<ReturnType<typeof getPool>>
