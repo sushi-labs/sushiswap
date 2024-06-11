@@ -42,6 +42,8 @@ export const getV2GraphPool = async (id: string) => {
   const pool = await getSushiV2Pool({
     chainId: split.chainId,
     id: split.address,
+  }, {
+    retries: 3
   })
 
   return pool

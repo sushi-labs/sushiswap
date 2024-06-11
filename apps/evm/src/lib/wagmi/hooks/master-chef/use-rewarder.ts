@@ -135,7 +135,7 @@ export const useRewarder = ({
 
   const queryClient = useQueryClient()
 
-  const { data, queryKey, ...rest } = useReadContracts({
+  const { isError, isLoading, data, queryKey } = useReadContracts({
     contracts,
     allowFailure: true,
     query: {
@@ -153,37 +153,38 @@ export const useRewarder = ({
     }
   }, [blockNumber, queryClient, queryKey])
 
-  return {
-    data: useMemo(() => {
-      if (!data) {
-        return rewardTokens.map(() => undefined)
+  return useMemo(() => {
+    if (!data)
+      return {
+        data: rewardTokens.map(() => undefined),
+        isLoading,
+        isError,
       }
 
-      // ! POSSIBLY BROKE IT, TEST
-      return data.reduce<(Amount<Token> | undefined)[]>(
-        (acc, result, index) => {
-          if (typeof result === 'bigint') {
-            acc.push(
-              result
-                ? Amount.fromRawAmount(rewardTokens[index], result)
-                : undefined,
-            )
-          } else if (typeof result !== 'undefined') {
-            acc.push(
-              ...result[1].map((rewardAmount, index2: number) => {
-                return Amount.fromRawAmount(
-                  rewardTokens[index + index2],
-                  rewardAmount,
-                )
-              }),
-            )
-          }
+    // ! POSSIBLY BROKE IT, TEST
+    return {
+      data: data.reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
+        if (typeof result === 'bigint') {
+          acc.push(
+            result
+              ? Amount.fromRawAmount(rewardTokens[index], result)
+              : undefined,
+          )
+        } else if (typeof result !== 'undefined') {
+          acc.push(
+            ...result[1].map((rewardAmount, index2: number) => {
+              return Amount.fromRawAmount(
+                rewardTokens[index + index2],
+                rewardAmount,
+              )
+            }),
+          )
+        }
 
-          return acc
-        },
-        [],
-      )
-    }, [data, rewardTokens]),
-    ...rest,
-  }
+        return acc
+      }, []),
+      isLoading,
+      isError,
+    }
+  }, [data, isError, isLoading, rewardTokens])
 }
