@@ -22,7 +22,8 @@ export default async function PoolPage({
     },
   )()
 
-  if (!pool) {
+  // Rockstar C&D
+  if (!pool || pool.id === '42161:0x0a4f9962e24893a4a7567e52c1ce37d5482365de') {
     notFound()
   }
 

@@ -1,6 +1,5 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
 import {
   useAccount,
@@ -22,6 +21,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import {
   defaultCurrency,
@@ -425,7 +425,7 @@ const useSimpleSwapTrade = () => {
 
   const { isFallback, setIsFallback, resetFallback } = useFallback(chainId)
 
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance()
   const [carbonOffset] = useCarbonOffset()
   const { data: gasPrice } = useGasPrice({ chainId })
 
@@ -436,8 +436,7 @@ const useSimpleSwapTrade = () => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
@@ -454,8 +453,7 @@ const useSimpleSwapTrade = () => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),
