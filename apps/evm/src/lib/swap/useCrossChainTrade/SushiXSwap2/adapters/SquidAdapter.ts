@@ -225,7 +225,7 @@ export const getSquidRouteRequest = ({
         ).quotient.toString()
       : amount.quotient.toString(),
     slippage: +slippagePercentage,
-    prefer: [DexName.SUSHISWAP_V3, DexName.SUSHISWAP],
+    prefer: [DexName.SUSHISWAP_V3, DexName.SUSHISWAP_V2],
     quoteOnly: !fromAddress || !toAddress,
   }
 
