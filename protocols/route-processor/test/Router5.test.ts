@@ -157,7 +157,6 @@ const slippageIsOkDefault = (
     process.stdout.write('UniV3 overuse ')
     return slippage >= -maxSlippage
   }
-  if (slippage !== 0) process.stdout.write(`Min route amount: ${minAmount} `)
   return Math.abs(slippage) <= maxSlippage
 }
 
@@ -1219,6 +1218,23 @@ describe('End-to-end RouteProcessor5 test', async () => {
           undefined,
           undefined,
           false, //throwAtNoWay
+          (
+            r: MultiRoute,
+            slippage: number,
+            env: { poolCodes: Map<string, PoolCode> },
+          ) => {
+            let minAmount = r.amountIn
+            r.legs.forEach((l) => {
+              minAmount = Math.min(
+                l.assumedAmountOut,
+                l.assumedAmountIn,
+                minAmount,
+              )
+            })
+            if (slippage !== 0)
+              process.stdout.write(`Min route amount: ${minAmount} `)
+            return slippageIsOkDefault(r, slippage, env)
+          },
         )
         currentToken = nextToken
         if (
