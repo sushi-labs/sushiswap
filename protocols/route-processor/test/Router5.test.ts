@@ -121,6 +121,46 @@ async function setRouterPrimaryBalance(
   return false
 }
 
+const slippageIsOkDefault = (
+  r: MultiRoute,
+  slippage: number,
+  env: { poolCodes: Map<string, PoolCode> },
+) => {
+  let minAmount = r.amountIn
+  let hasBentoTokens = false
+  let hasOverusedConcentrated = false
+  r.legs.forEach((l) => {
+    minAmount = Math.min(l.assumedAmountOut, l.assumedAmountIn, minAmount)
+    if (l.tokenTo.symbol.startsWith('Bento')) hasBentoTokens = true
+    if (l.poolType === PoolType.Concentrated) {
+      const pool = env.poolCodes.get(l.poolAddress)?.pool
+      if (pool) {
+        try {
+          pool.calcOutByIn(
+            l.assumedAmountIn,
+            l.tokenFrom.address === pool.token0.address,
+          )
+        } catch (_e) {
+          hasOverusedConcentrated = true
+        }
+      }
+    }
+  })
+  const maxSlippage = Math.max(4 / minAmount, 0.0001)
+  if (hasBentoTokens) {
+    // Bento has much liquidity we can sweep
+    process.stdout.write('Bento ')
+    return slippage >= -maxSlippage
+  }
+  if (hasOverusedConcentrated) {
+    // UniV3 pool can use ticks outside of ticks range known by router (usually ±10%)
+    process.stdout.write('UniV3 overuse ')
+    return slippage >= -maxSlippage
+  }
+  if (slippage !== 0) process.stdout.write(`Min route amount: ${minAmount} `)
+  return Math.abs(slippage) <= maxSlippage
+}
+
 async function getTestEnvironment() {
   const client = createPublicClient({
     batch: {
@@ -300,7 +340,7 @@ async function makeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
-  slippageIsOk?: (r: MultiRoute, slippage: number) => boolean,
+  slippageIsOk = slippageIsOkDefault,
 ): Promise<[bigint, bigint, number] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -479,7 +519,7 @@ async function makeSwap(
 
   if (abs(route.amountOutBI - balanceOutBI) > 10n) {
     if (
-      (slippageIsOk && !slippageIsOk(route, slippage / 10000)) ||
+      (slippageIsOk && !slippageIsOk(route, slippage / 10000, env)) ||
       (!slippageIsOk && slippage < 0)
     ) {
       console.log('')
@@ -519,7 +559,7 @@ async function updMakeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
-  slippageIsOk?: (r: MultiRoute, slippage: number) => boolean,
+  slippageIsOk = slippageIsOkDefault,
 ): Promise<[bigint | undefined, bigint, number]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint'
@@ -1179,46 +1219,6 @@ describe('End-to-end RouteProcessor5 test', async () => {
           undefined,
           undefined,
           false, //throwAtNoWay
-          (r: MultiRoute, slippage: number) => {
-            let minAmount = r.amountIn
-            let hasBentoTokens = false
-            let hasOverusedConcentrated = false
-            r.legs.forEach((l) => {
-              minAmount = Math.min(
-                l.assumedAmountOut,
-                l.assumedAmountIn,
-                minAmount,
-              )
-              if (l.tokenTo.symbol.startsWith('Bento')) hasBentoTokens = true
-              if (l.poolType === PoolType.Concentrated) {
-                const pool = env.poolCodes.get(l.poolAddress)?.pool
-                if (pool) {
-                  try {
-                    pool.calcOutByIn(
-                      l.assumedAmountIn,
-                      l.tokenFrom.address === pool.token0.address,
-                    )
-                  } catch (_e) {
-                    hasOverusedConcentrated = true
-                  }
-                }
-              }
-            })
-            const maxSlippage = Math.max(4 / minAmount, 0.0001)
-            if (hasBentoTokens) {
-              // Bento has much liquidity we can sweep
-              process.stdout.write('Bento ')
-              return slippage >= -maxSlippage
-            }
-            if (hasOverusedConcentrated) {
-              // UniV3 pool can use ticks outside of ticks range known by router (usually ±10%)
-              process.stdout.write('UniV3 overuse ')
-              return slippage >= -maxSlippage
-            }
-            if (slippage !== 0)
-              process.stdout.write(`Min route amount: ${minAmount} `)
-            return Math.abs(slippage) <= maxSlippage
-          },
         )
         currentToken = nextToken
         if (
