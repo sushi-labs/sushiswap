@@ -39,9 +39,17 @@ import React, {
 } from 'react'
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { SushiSwapV3ChainId, SushiSwapV3FeeAmount } from 'sushi/config'
+import {
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+} from 'sushi/config'
 import { Type, tryParseAmount } from 'sushi/currency'
-import { getCapitalEfficiency, getTokenRatio } from 'sushi/pool/sushiswap-v3'
+import {
+  getCapitalEfficiency,
+  getTokenRatio,
+  tickToPrice,
+} from 'sushi/pool/sushiswap-v3'
 
 import { RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
@@ -64,6 +72,8 @@ enum PriceRange {
   BPS_20000 = 1,
   BPS_12000 = 2,
   BPS_10100 = 3,
+  LEFT_SIDE = 4,
+  RIGHT_SIDE = 5,
 }
 
 enum YieldRatePeriod {
@@ -212,6 +222,46 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     ],
   )
 
+  const setSingleSided = useCallback(
+    (side: 'left' | 'right') => {
+      if (!token0 || !token1 || !price || !feeAmount || !pool) return
+
+      getSetFullRange()
+
+      switch (side) {
+        case 'left': {
+          const newRightPrice = tickToPrice(
+            token0.wrapped,
+            token1.wrapped,
+            pool.tickCurrent + (invertPrice ? 1 : 0) * TICK_SPACINGS[feeAmount],
+          )
+          onRightRangeInput(newRightPrice.toFixed(6))
+          break
+        }
+        case 'right': {
+          const newLeftPrice = tickToPrice(
+            token0.wrapped,
+            token1.wrapped,
+            pool.tickCurrent + (invertPrice ? 0 : 1) * TICK_SPACINGS[feeAmount],
+          )
+          onLeftRangeInput(newLeftPrice.toFixed(6))
+          break
+        }
+      }
+    },
+    [
+      token0,
+      token1,
+      price,
+      feeAmount,
+      pool,
+      getSetFullRange,
+      invertPrice,
+      onRightRangeInput,
+      onLeftRangeInput,
+    ],
+  )
+
   const formattedAmounts: {
     [_formattedAmountsField in Field]: string
   } = useMemo(
@@ -279,8 +329,23 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         value: PriceRange.BPS_10100,
         onClick: () => setPriceRange(new Fraction(10100, 10000)),
       },
+      {
+        label: 'Single Sided (Left)',
+        value: PriceRange.LEFT_SIDE,
+        onClick: () => setSingleSided('left'),
+      },
+      {
+        label: 'Single Sided (Right)',
+        value: PriceRange.RIGHT_SIDE,
+        onClick: () => setSingleSided('right'),
+      },
     ],
-    [getSetFullRange, setPriceRange, setWeightLockedCurrencyBase],
+    [
+      getSetFullRange,
+      setPriceRange,
+      setWeightLockedCurrencyBase,
+      setSingleSided,
+    ],
   )
 
   const isSorted =
@@ -497,7 +562,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 )}
               </div>
               <div className="flex flex-1 justify-between">
-                <RadioGroup value={priceRange} className="gap-2 flex">
+                <RadioGroup value={priceRange} className="gap-2 flex flex-wrap">
                   {PRICE_RANGE_OPTIONS.map(({ value, label, onClick }) => (
                     <RadioGroup.Option value={value} key={value}>
                       <Toggle
