@@ -65,6 +65,11 @@ const nextConfig = {
         permanent: true,
         destination: '/pool/:path*',
       },
+      {
+        source: '/skale/swap',
+        permanent: true,
+        destination: '/swap?chainId=2046399126',
+      },
     ]
   },
   async rewrites() {

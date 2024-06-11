@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { ChainId, chainShortNameToChainId } from 'sushi/chain'
+import { chainShortNameToChainId } from 'sushi/chain'
 
 export const config = {
   matcher: ['/swap/:path*', '/pool/:path*', '/pools/:path*'],
@@ -23,12 +23,6 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url)
       }
     }
-  }
-
-  if (pathname.toLowerCase() === '/swap/skale') {
-    return NextResponse.redirect(
-      new URL(`/swap?chainId=${ChainId.SKALE_EUROPA}`, req.url),
-    )
   }
 
   if (pathname === '/swap/cross-chain' && search !== '') {
