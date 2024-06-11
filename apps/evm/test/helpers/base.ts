@@ -14,7 +14,7 @@ export class BaseActions {
       .first()
     await expect(connectSelector).toBeVisible()
     await expect(connectSelector).toBeEnabled()
-    await new Promise(f => setTimeout(f, 1000)); // delay 1s
+    await new Promise((f) => setTimeout(f, 1000)) // delay 1s
     await connectSelector.click()
     const mockConnectSelector = this.page.getByText('Mock Connector')
     await expect(mockConnectSelector).toBeVisible()
