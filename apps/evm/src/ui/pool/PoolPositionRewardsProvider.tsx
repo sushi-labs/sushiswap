@@ -93,7 +93,7 @@ export const _PoolPositionRewardsProvider: FC<
 
   const {
     data: pendingRewards,
-    isLoading,
+    isInitialLoading: isLoading,
     isError,
   } = useRewarder({
     chainId: pool.chainId as ChainId,
