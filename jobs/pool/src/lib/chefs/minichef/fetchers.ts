@@ -3,7 +3,7 @@ import zip from 'lodash.zip'
 import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
-import { getMiniChefRewarders } from '@sushiswap/graph-client-new/mini-chef'
+import { getMiniChefRewarders } from '@sushiswap/graph-client/mini-chef'
 import { config } from 'src/lib/wagmi.js'
 import { MiniChefChainId } from 'sushi/config'
 import { Address } from 'viem'

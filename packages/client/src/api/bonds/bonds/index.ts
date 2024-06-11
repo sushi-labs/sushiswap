@@ -8,7 +8,7 @@ import { createClient } from '@sushiswap/database'
 import {
   type GetBondMarkets,
   getBondMarkets,
-} from '@sushiswap/graph-client-new/bonds'
+} from '@sushiswap/graph-client/bonds'
 import { getTotalSupply, getVaultReserves } from '@sushiswap/steer-sdk'
 import {
   getChainIdAddressFromId,

@@ -1,7 +1,7 @@
 import { readContracts } from '@wagmi/core'
 import { Chain, ChainId } from 'sushi/chain'
 
-import { getSushiV2Tokens } from '@sushiswap/graph-client-new/sushi-v2'
+import { getSushiV2Tokens } from '@sushiswap/graph-client/sushi-v2'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { Address, erc20Abi } from 'viem'
 import { getTokenPrices } from '../price.js'

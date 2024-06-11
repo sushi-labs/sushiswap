@@ -714,9 +714,9 @@ importers:
       '@sushiswap/dexie':
         specifier: workspace:*
         version: link:../../packages/dexie
-      '@sushiswap/graph-client-new':
+      '@sushiswap/graph-client':
         specifier: workspace:*
-        version: link:../../packages/graph-client-new
+        version: link:../../packages/graph-client
       '@sushiswap/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
@@ -1305,9 +1305,9 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@sushiswap/graph-client-new':
+      '@sushiswap/graph-client':
         specifier: workspace:*
-        version: link:../../packages/graph-client-new
+        version: link:../../packages/graph-client
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../../packages/steer-sdk
@@ -1437,9 +1437,9 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database
-      '@sushiswap/graph-client-new':
+      '@sushiswap/graph-client':
         specifier: workspace:*
-        version: link:../graph-client-new
+        version: link:../graph-client
       '@sushiswap/steer-sdk':
         specifier: workspace:*
         version: link:../steer-sdk
@@ -1631,7 +1631,7 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
-  packages/graph-client-new:
+  packages/graph-client:
     dependencies:
       '@sushiswap/bonds-sdk':
         specifier: workspace:*

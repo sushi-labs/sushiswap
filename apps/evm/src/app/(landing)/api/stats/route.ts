@@ -1,6 +1,3 @@
-import { fetchMultichain } from '@sushiswap/graph-client-new/multichain'
-import { getSushiV2Factory } from '@sushiswap/graph-client-new/sushi-v2'
-import { getSushiV3Factory } from '@sushiswap/graph-client-new/sushi-v3'
 import { NextResponse } from 'next/server'
 import { DISABLED_ANALYTICS_CHAIN_IDS } from 'src/config'
 import { ChainId } from 'sushi/chain'
@@ -10,6 +7,9 @@ import {
 } from 'sushi/config'
 import { SUSHI_ADDRESS } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
+import { fetchMultichain } from '../../../../../../../packages/graph-client/dist/multichain'
+import { getSushiV2Factory } from '../../../../../../../packages/graph-client/dist/subgraphs/sushi-v2'
+import { getSushiV3Factory } from '../../../../../../../packages/graph-client/dist/subgraphs/sushi-v3'
 
 const getSushiPriceUSD = async () => {
   const url = `https://api.sushi.com/price/v1/1/${

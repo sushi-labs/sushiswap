@@ -1,5 +1,5 @@
 import { Prisma, SteerStrategy } from '@sushiswap/database'
-import { getSteerVaults } from '@sushiswap/graph-client-new/steer'
+import { getSteerVaults } from '@sushiswap/graph-client/steer'
 import {
   STEER_SUPPORTED_CHAIN_IDS,
   SteerChainId,

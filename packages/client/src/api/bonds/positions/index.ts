@@ -2,7 +2,7 @@ import { type BondChainId, isBondChainId } from '@sushiswap/bonds-sdk'
 import {
   type GetBondUserPositions,
   getBondUserPositions,
-} from '@sushiswap/graph-client-new/bonds'
+} from '@sushiswap/graph-client/bonds'
 import { getChainIdAddressFromId, isPromiseFulfilled } from 'sushi'
 import { getAddress } from 'viem'
 import { type BondsPositionsApiSchema } from '../../../pure/bonds/positions/schema'

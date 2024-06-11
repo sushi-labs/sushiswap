@@ -2,7 +2,7 @@ import { readContract, readContracts } from '@wagmi/core'
 import { masterChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
-import { getMasterChefV2Rewarders } from '@sushiswap/graph-client-new/master-chef-v2'
+import { getMasterChefV2Rewarders } from '@sushiswap/graph-client/master-chef-v2'
 import { config } from 'src/lib/wagmi.js'
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
 

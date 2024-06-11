@@ -1,4 +1,4 @@
-import { getSushiV2Pools } from '@sushiswap/graph-client-new/sushi-v2'
+import { getSushiV2Pools } from '@sushiswap/graph-client/sushi-v2'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { Address } from 'viem'
 import type { Farm } from '../types.js'

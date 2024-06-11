@@ -1,7 +1,7 @@
 'use client'
 
-import { getSushiBar } from '@sushiswap/graph-client-new/sushi-bar'
 import { useQuery } from '@tanstack/react-query'
+import { getSushiBar } from '../../../../../packages/graph-client/dist/subgraphs/sushi-bar'
 
 export const useBarData = (enabled = true) => {
   return useQuery({

@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import useSWR from 'swr'
 
-import { FuroTokens } from '@sushiswap/graph-client-new/furo'
+import { FuroTokens } from '../../../../../packages/graph-client/dist/subgraphs/furo'
 import { furoTokensSchema } from '../schema'
 
 export type GetFuroTokenArgs = GetApiInputFromOutput<

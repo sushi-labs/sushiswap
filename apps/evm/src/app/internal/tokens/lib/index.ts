@@ -1,8 +1,8 @@
-import { fetchMultichain } from '@sushiswap/graph-client-new/multichain'
-import { getSushiV2Tokens } from '@sushiswap/graph-client-new/sushi-v2'
 import { ChainId } from 'sushi/chain'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { SUSHI_DEFAULT_TOKEN_LIST } from 'sushi/token-list'
+import { fetchMultichain } from '../../../../../../../packages/graph-client/dist/multichain'
+import { getSushiV2Tokens } from '../../../../../../../packages/graph-client/dist/subgraphs/sushi-v2'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 

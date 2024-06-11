@@ -21,7 +21,7 @@ import {
   getSushiV3Mints,
   getSushiV3Swaps,
   getSushiV3Transactions,
-} from '@sushiswap/graph-client-new/sushi-v3'
+} from '../../../../../packages/graph-client/dist/subgraphs/sushi-v3'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,

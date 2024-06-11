@@ -9,16 +9,10 @@ import {
   SushiSwapV3ChainId,
 } from 'sushi/config'
 
-import { getBlockHistoric } from '@sushiswap/graph-client-new/blocks'
-import { fetchMultichain } from '@sushiswap/graph-client-new/multichain'
-import {
-  SushiV2Pools,
-  getSushiV2Pools,
-} from '@sushiswap/graph-client-new/sushi-v2'
-import {
-  SushiV3Pools,
-  getSushiV3Pools,
-} from '@sushiswap/graph-client-new/sushi-v3'
+import { getBlockHistoric } from '@sushiswap/graph-client/blocks'
+import { fetchMultichain } from '@sushiswap/graph-client/multichain'
+import { SushiV2Pools, getSushiV2Pools } from '@sushiswap/graph-client/sushi-v2'
+import { SushiV3Pools, getSushiV3Pools } from '@sushiswap/graph-client/sushi-v3'
 import { upsertPools } from './etl/pool/index.js'
 import { createTokens } from './etl/token/load.js'
 

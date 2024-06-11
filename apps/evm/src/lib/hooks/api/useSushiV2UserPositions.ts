@@ -1,10 +1,10 @@
 'use client'
 
 import { parseArgs } from '@sushiswap/client'
-import type { GetSushiV2StakedUnstakedPositions } from '@sushiswap/graph-client-new/composite/sushi-v2-staked-unstaked-positions'
 import { useQuery } from '@tanstack/react-query'
 import { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { ChainId } from 'sushi/chain'
+import type { GetSushiV2StakedUnstakedPositions } from '../../../../../../packages/graph-client/dist/composite/sushi-v2-staked-unstaked-positions'
 
 export interface GetUserArgs {
   id?: string
