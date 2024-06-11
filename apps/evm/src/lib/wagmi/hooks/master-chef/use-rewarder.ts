@@ -135,7 +135,7 @@ export const useRewarder = ({
 
   const queryClient = useQueryClient()
 
-  const { isError, isLoading, data, queryKey } = useReadContracts({
+  const { isError, isInitialLoading, data, queryKey } = useReadContracts({
     contracts,
     allowFailure: true,
     query: {
@@ -157,7 +157,7 @@ export const useRewarder = ({
     if (!data)
       return {
         data: rewardTokens.map(() => undefined),
-        isLoading,
+        isInitialLoading,
         isError,
       }
 
@@ -183,8 +183,8 @@ export const useRewarder = ({
 
         return acc
       }, []),
-      isLoading,
+      isInitialLoading,
       isError,
     }
-  }, [data, isError, isLoading, rewardTokens])
+  }, [data, isError, isInitialLoading, rewardTokens])
 }

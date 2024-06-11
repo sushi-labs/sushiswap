@@ -39,12 +39,15 @@ export const getV2GraphPool = async (id: string) => {
 
   if (!isSushiSwapV2ChainId(split.chainId)) throw Error('Invalid chain id')
 
-  const pool = await getSushiV2Pool({
-    chainId: split.chainId,
-    id: split.address,
-  }, {
-    retries: 3
-  })
+  const pool = await getSushiV2Pool(
+    {
+      chainId: split.chainId,
+      id: split.address,
+    },
+    {
+      retries: 3,
+    },
+  )
 
   return pool
 }
