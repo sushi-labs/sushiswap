@@ -21,7 +21,7 @@ spec:
           resources:
             requests:
               cpu: 1000m
-              memory: 4Gi
+              memory: 8Gi
           livenessProbe:
             failureThreshold: 3
             httpGet:
