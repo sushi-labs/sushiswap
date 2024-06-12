@@ -1,8 +1,3 @@
-import {
-  useBlockNumber,
-  useReadContract,
-  useReadContracts,
-} from '@sushiswap/wagmi'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { stargateFeeLibraryV03Abi, stargatePoolAbi } from 'sushi/abi'
@@ -17,6 +12,8 @@ import {
 } from 'sushi/config'
 import { Amount, Currency } from 'sushi/currency'
 import { Address, zeroAddress } from 'viem'
+import { useBlockNumber, useReadContract } from 'wagmi'
+import { useReadContracts } from 'wagmi'
 
 interface UseStargateBridgeFees {
   amount?: Amount<Currency>

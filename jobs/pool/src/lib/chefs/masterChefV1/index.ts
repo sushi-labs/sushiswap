@@ -1,8 +1,8 @@
-import { SECONDS_BETWEEN_BLOCKS } from '@sushiswap/graph-config'
 import { daysInYear, secondsInDay } from 'date-fns'
 import { ChainId } from 'sushi/chain'
 import { SUSHI } from 'sushi/currency'
 
+import { SECONDS_BETWEEN_BLOCKS } from 'sushi/config/subgraph'
 import { MASTERCHEF_ADDRESS } from '../../../config.js'
 import { getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import type { ChefReturn, Farm } from '../../types.js'

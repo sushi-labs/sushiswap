@@ -331,21 +331,27 @@ export class PoolPage extends BaseActions {
     // await expect(removeLiquidityTabSelector).toBeVisible()
     // await removeLiquidityTabSelector.click()
 
-    await this.page.locator('[testdata-id=remove-liquidity-max-button]').click()
-
-    const selectApprovalTypeId = 'select-approval-type-button'
-    const selectApprovalTypeLocator = this.page.locator(
-      `[testdata-id=${selectApprovalTypeId}]`,
+    await new Promise((f) => setTimeout(f, 1000)) // delay 1s
+    const removeMaxButtonSelector = this.page.locator(
+      '[testdata-id=remove-liquidity-max-button]',
     )
-    await expect(selectApprovalTypeLocator).toBeVisible()
-    await selectApprovalTypeLocator.click()
+    await expect(removeMaxButtonSelector).toBeVisible()
+    await removeMaxButtonSelector.click()
 
-    const selectApproveId = 'approval-type-approve-button'
-    const selectApproveLocator = this.page.locator(
-      `[testdata-id=${selectApproveId}]`,
-    )
-    await expect(selectApproveLocator).toBeVisible()
-    await selectApproveLocator.click()
+    // ENABLE AGAIN WHEN PERMIT IS USED
+    // const selectApprovalTypeId = 'select-approval-type-button'
+    // const selectApprovalTypeLocator = this.page.locator(
+    //   `[testdata-id=${selectApprovalTypeId}]`,
+    // )
+    // await expect(selectApprovalTypeLocator).toBeVisible()
+    // await selectApprovalTypeLocator.click()
+
+    // const selectApproveId = 'approval-type-approve-button'
+    // const selectApproveLocator = this.page.locator(
+    //   `[testdata-id=${selectApproveId}]`,
+    // )
+    // await expect(selectApproveLocator).toBeVisible()
+    // await selectApproveLocator.click()
 
     const approveSlpId = 'approve-remove-liquidity-slp-button'
     const approveSlpLocator = this.page.locator(`[testdata-id=${approveSlpId}]`)

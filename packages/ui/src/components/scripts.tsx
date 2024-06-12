@@ -19,6 +19,7 @@ export const GoogleAnalytics = () => {
           gtag('js', new Date());
           gtag('config', 'G-JW8KWJ48EF', {
             page_path: window.location.pathname,
+            cookie_flags: 'max-age=7200;secure;samesite=none'
           });
         `,
         }}

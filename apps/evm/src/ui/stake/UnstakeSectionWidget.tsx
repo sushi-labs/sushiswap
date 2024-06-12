@@ -8,8 +8,8 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi'
 import { ReactNode, useMemo } from 'react'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { ChainId } from 'sushi/chain'
 import { Amount, SUSHI, Type, XSUSHI } from 'sushi/currency'
 import { useSushiBar } from './SushiBarProvider'

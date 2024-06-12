@@ -30,28 +30,33 @@ import {
   SettingsOverlay,
   classNames,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  ConcentratedLiquidityPosition,
-  getDefaultTTL,
-  getV3NonFungiblePositionManagerContractConfig,
-  useAccount,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useTransactionDeadline,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
+import { Button } from '@sushiswap/ui'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import {
+  getDefaultTTL,
+  useTransactionDeadline,
+} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'
-import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  SushiSwapV3ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { Amount, Type, unwrapToken } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
-import { NonfungiblePositionManager, Position } from 'sushi/pool'
+import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import {
+  useCall,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import { useAccount } from 'wagmi'
+import { usePublicClient } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../lib/hooks'
 
 interface ConcentratedLiquidityRemoveWidget {
@@ -203,7 +208,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       })
 
       return {
-        to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
+        to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
         data: calldata as Hex,
         value: BigInt(_value),
       }

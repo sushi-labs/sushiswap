@@ -1,12 +1,12 @@
 'use client'
 
-import { useAccount, useConcentratedPositionInfo } from '@sushiswap/wagmi'
-import { getV3FactoryContractConfig } from '@sushiswap/wagmi/hooks/contracts/useV3FactoryContract'
 import React, { FC, useMemo, useState } from 'react'
+import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { computeSushiSwapV3PoolAddress } from 'sushi'
-import { isWNativeSupported } from 'sushi/config'
+import { SUSHISWAP_V3_FACTORY_ADDRESS, isWNativeSupported } from 'sushi/config'
 import { tryParseAmount } from 'sushi/currency'
 import { SWRConfig } from 'swr'
+import { useAccount } from 'wagmi'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 import { useTokenAmountDollarValues } from '../../../lib/hooks'
 import { ConcentratedLiquidityProvider } from '../../../ui/pool/ConcentratedLiquidityProvider'
@@ -60,7 +60,7 @@ const _Add: FC = () => {
     () =>
       token0 && token1 && feeAmount && chainId
         ? computeSushiSwapV3PoolAddress({
-            factoryAddress: getV3FactoryContractConfig(chainId).address,
+            factoryAddress: SUSHISWAP_V3_FACTORY_ADDRESS[chainId],
             tokenA: token0.wrapped,
             tokenB: token1.wrapped,
             fee: feeAmount,

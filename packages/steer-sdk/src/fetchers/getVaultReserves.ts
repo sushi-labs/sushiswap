@@ -1,5 +1,5 @@
 import { getChainIdAddressFromId } from 'sushi/format'
-import type { PublicClient } from 'viem'
+import { type PublicClient, zeroAddress } from 'viem'
 import { steerPeripheryAbi } from '../abi/steerPeripheryAbi'
 import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '../constants'
 
@@ -20,6 +20,7 @@ export function getVaultsReservesContracts({
     return {
       abi: steerPeripheryAbi,
       address: steerPeriphery,
+      account: zeroAddress,
       chainId,
       args: [address] as const,
       functionName: 'vaultBalancesByAddressWithFees' as const,

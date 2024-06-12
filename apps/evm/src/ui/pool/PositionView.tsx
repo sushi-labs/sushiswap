@@ -30,24 +30,22 @@ import {
   WidgetAction,
   classNames,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import {
-  getDefaultTTL,
-  useAccount,
-  useConcentratedLiquidityPositionsFromTokenId,
-  useConcentratedPositionInfo,
-  useConcentratedPositionOwner,
-  useTokenWithCache,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
+import { Button } from '@sushiswap/ui'
+import { FormattedNumber } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
+import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
+import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'
 import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
+import { useAccount } from 'wagmi'
 import { Bound } from '../../lib/constants'
 import {
   formatTickPrice,
@@ -90,7 +88,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
     address: positionDetails?.token1,
   })
 
-  const { data: position, isLoading: isPositionLoading } =
+  const { data: position, isInitialLoading: isPositionLoading } =
     useConcentratedPositionInfo({
       chainId,
       token0,

@@ -1,5 +1,4 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import { useGasPrice, usePublicClient } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
@@ -19,6 +18,7 @@ import {
   parseUnits,
   stringify,
 } from 'viem'
+import { useGasPrice, usePublicClient } from 'wagmi'
 import {
   STARGATE_DEFAULT_SLIPPAGE,
   TransactionType,

@@ -1,12 +1,12 @@
 'use client'
 
 import { GetApiInputFromOutput, parseArgs } from '@sushiswap/client'
-import { Furo_token } from '@sushiswap/graph-client'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import useSWR from 'swr'
 
+import { FuroTokens } from '../../../../../packages/graph-client/dist/subgraphs/furo'
 import { furoTokensSchema } from '../schema'
 
 export type GetFuroTokenArgs = GetApiInputFromOutput<
@@ -22,7 +22,7 @@ export const getFuroTokensUrl = (args: GetFuroTokenArgs) =>
   `/analytics/api/furoTokens${parseArgs(args)}`
 
 export function useFuroTokens(args: GetFuroTokenArgs) {
-  const { data: furoTokens, isValidating } = useSWR<Furo_token[]>(
+  const { data: furoTokens, isValidating } = useSWR<FuroTokens>(
     getFuroTokensUrl(args),
     (url) => fetch(url).then((data) => data.json()),
   )
@@ -37,7 +37,7 @@ export function useFuroTokens(args: GetFuroTokenArgs) {
           const token = new Token({
             chainId: furoToken.chainId,
             decimals: furoToken.decimals,
-            address: furoToken.id,
+            address: furoToken.id.split(':')[1],
             symbol: furoToken.symbol,
             name: furoToken.name,
           })

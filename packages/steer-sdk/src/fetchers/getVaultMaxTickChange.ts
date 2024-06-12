@@ -1,5 +1,5 @@
 import { getChainIdAddressFromId } from 'sushi/format'
-import type { PublicClient } from 'viem'
+import { type PublicClient, zeroAddress } from 'viem'
 
 import { steerMultiPositionManager } from '../abi/steerMultiPositionManager.js'
 
@@ -21,6 +21,7 @@ export async function getVaultsMaxTickChanges({
         abi: steerMultiPositionManager,
         chainId,
         address,
+        account: zeroAddress,
         functionName: 'maxTickChange' as const,
       }
     }),

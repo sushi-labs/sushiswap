@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui/components/tooltip'
+} from '@sushiswap/ui'
 import { FC } from 'react'
 
 export const FarmRewardsAvailableTooltip: FC = () => {

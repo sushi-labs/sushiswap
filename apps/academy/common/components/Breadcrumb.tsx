@@ -1,7 +1,5 @@
 import { ArrowLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
-import { LinkInternal } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { Container, IconButton, LinkInternal } from '@sushiswap/ui'
 import { getShareText } from 'common/helpers'
 import { GhostArticle } from 'lib/ghost'
 import { FC } from 'react'

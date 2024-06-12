@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 import { PoolApiSchema, getPoolFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../../cors'
@@ -26,5 +28,7 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch pool' }, { status: 500 })
   }
 
-  return NextResponse.json(pool, { headers: CORS })
+  return NextResponse.json(pool, {
+    headers: CORS,
+  })
 }

@@ -5,8 +5,8 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { NetworkSelector } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
 import React, { FC, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
@@ -18,7 +18,9 @@ import { Token, getTokens } from './lib'
 
 const TokensPage: FC = () => {
   const [filter, setFilter] = useState<string>('')
-  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
+  const [chainId, setChainId] = useState<
+    (typeof TOKENS_SUPPORTED_CHAIN_IDS)[number]
+  >(ChainId.ETHEREUM)
   const debouncedFilter = useDebounce(filter, 400)
 
   const { data: tokens } = useSWR<Token[]>(

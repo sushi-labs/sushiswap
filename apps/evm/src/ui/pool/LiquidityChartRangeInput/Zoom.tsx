@@ -2,7 +2,7 @@ import {
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
 } from '@heroicons/react/20/solid'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import {
   ScaleLinear,
   ZoomBehavior,

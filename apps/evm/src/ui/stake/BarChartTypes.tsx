@@ -1,4 +1,4 @@
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { Toggle } from '@sushiswap/ui'
 import React from 'react'
 
 export enum BarChartType {

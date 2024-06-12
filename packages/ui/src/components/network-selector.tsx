@@ -91,9 +91,6 @@ const NetworkSelector = <T extends number>({
                   <div className="flex items-center gap-2">
                     <AptosCircle width={22} height={22} />
                     Aptos
-                    <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                      NEW
-                    </div>
                   </div>
                 </CommandItem>
               </Link>

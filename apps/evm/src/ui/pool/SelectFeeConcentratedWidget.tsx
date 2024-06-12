@@ -15,7 +15,7 @@ import {
   LinkInternal,
   Toggle,
 } from '@sushiswap/ui'
-import { Dots } from '@sushiswap/ui/components/dots'
+import { Dots } from '@sushiswap/ui'
 import React, { FC, memo, useMemo } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { SushiSwapV3FeeAmount } from 'sushi/config'
@@ -71,19 +71,19 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
       if (!pools) return tvlDistribution
 
       const totalTvl = pools?.reduce(
-        (acc, pool) => acc + Number(pool.totalValueLockedUSD),
+        (acc, pool) => acc + Number(pool.liquidityUSD),
         0,
       )
 
       pools?.forEach((pool) => {
         if (
-          !FEE_OPTIONS.find((option) => option.value === Number(pool.feeTier))
+          !FEE_OPTIONS.find((option) => option.value === Number(pool.swapFee))
         )
           return
 
-        const tvlShare = pool.totalValueLockedUSD / totalTvl
+        const tvlShare = pool.liquidityUSD / totalTvl
         if (Number.isNaN(tvlShare)) return
-        tvlDistribution.set(Number(pool.feeTier), tvlShare)
+        tvlDistribution.set(Number(pool.swapFee), tvlShare)
       })
 
       return tvlDistribution

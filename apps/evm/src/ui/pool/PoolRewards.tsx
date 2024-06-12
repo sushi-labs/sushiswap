@@ -9,7 +9,7 @@ import {
   CardLabel,
   CardTitle,
 } from '@sushiswap/ui'
-import { Card, CardDescription } from '@sushiswap/ui/components/card'
+import { Card, CardDescription } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { incentiveRewardToToken } from 'src/lib/functions'
 import { ChainId } from 'sushi/chain'

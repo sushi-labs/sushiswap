@@ -1,21 +1,21 @@
 import { LinkInternal } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { Button } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui/components/tooltip'
+} from '@sushiswap/ui'
 import React, { FC } from 'react'
+import { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { useTokensFromPool } from 'src/lib/hooks'
-import { PositionWithPool } from 'src/types'
 import { Chain } from 'sushi/chain'
 import { formatNumber, formatUSD } from 'sushi/format'
 
 interface PositionCard {
-  position: PositionWithPool
+  position: UserWithPool
 }
 
 export const PositionCardSkeleton = () => {
@@ -44,12 +44,13 @@ export const PositionCardSkeleton = () => {
 export const PositionCard: FC<PositionCard> = ({ position }) => {
   const { token0, token1 } = useTokensFromPool(position.pool)
   const valueUSD =
-    (Number(position.balance) / Number(position.pool.totalSupply)) *
+    (Number(position.unstakedBalance) / Number(position.pool.liquidity)) *
     Number(position.pool.liquidityUSD)
+
   return (
     <div className="relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
       <span className="uppercase text-xs font-semibold dark:text-slate-400 text-gray-600">
-        {Chain.from(position.chainId)?.name}
+        {Chain.from(position.pool.chainId)?.name}
       </span>
       <h1 className="text-2xl font-semibold dark:text-white text-gray-900">
         {token0.symbol}/{token1.symbol}{' '}
@@ -76,9 +77,6 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
               <TooltipTrigger asChild>
                 <div className="whitespace-nowrap py-1 bg-green/20 text-green text-xs px-2 rounded-full">
                   🧑‍🌾{' '}
-                  {position.pool.incentives.length > 1
-                    ? `x ${position.pool.incentives.length}`
-                    : ''}{' '}
                 </div>
               </TooltipTrigger>
               <TooltipContent>

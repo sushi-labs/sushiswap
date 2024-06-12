@@ -11,12 +11,12 @@ import {
   Container,
   DataTable,
 } from '@sushiswap/ui'
-import { Carousel } from '@sushiswap/ui/components/carousel'
-import { useAccount } from '@sushiswap/wagmi'
+import { Carousel } from '@sushiswap/ui'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { FC, useCallback, useMemo, useState } from 'react'
-import { ANGLE_ENABLED_NETWORKS } from 'sushi/config'
+import { ANGLE_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 
+import { useAccount } from 'wagmi'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import { RewardSlide, RewardSlideSkeleton } from './RewardSlide'
 import {
@@ -37,7 +37,7 @@ export const RewardsSection: FC = () => {
   const { address } = useAccount()
   const { chainIds, tokenSymbols } = usePoolFilters()
   const { data, isInitialLoading } = useAngleRewardsMultipleChains({
-    chainIds: ANGLE_ENABLED_NETWORKS,
+    chainIds: ANGLE_SUPPORTED_CHAIN_IDS,
     account: address,
   })
 
@@ -59,7 +59,9 @@ export const RewardsSection: FC = () => {
   const positions = useMemo(() => {
     const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
     return (data ?? [])
-      .filter((el) => chainIds.includes(el.chainId))
+      .filter((el) =>
+        chainIds.includes(el.chainId as (typeof chainIds)[number]),
+      )
       .flatMap((el) => {
         return Object.values(el.pools ?? {})
           .filter(
@@ -87,7 +89,7 @@ export const RewardsSection: FC = () => {
     <>
       <Carousel<NonNullable<typeof chainsSorted>[0] | number>
         containerWidth={1280}
-        slides={chainsSorted || ANGLE_ENABLED_NETWORKS}
+        slides={chainsSorted || ANGLE_SUPPORTED_CHAIN_IDS}
         render={(row) =>
           typeof row === 'number' ? (
             <RewardSlideSkeleton />
