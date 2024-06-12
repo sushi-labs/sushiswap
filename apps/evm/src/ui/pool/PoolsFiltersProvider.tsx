@@ -11,7 +11,7 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { SUPPORTED_CHAIN_IDS, isSupportedChainId } from 'src/config'
 import { z } from 'zod'
 
 import { useTypedSearchParams } from '../../lib/hooks'
@@ -39,7 +39,8 @@ export const poolFiltersSchema = z.object({
       chainIds !== null && chainIds !== ','
         ? chainIds.split(',').map((chainId) => Number(chainId))
         : SUPPORTED_CHAIN_IDS,
-    ),
+    )
+    .transform((chainIds) => chainIds.filter(isSupportedChainId)),
   protocols: z
     .string()
     .transform((protocols) =>

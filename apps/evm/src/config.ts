@@ -7,13 +7,14 @@ import {
 } from 'sushi/config'
 import { Currency } from 'sushi/currency'
 
-export const SWAP_API_ENABLED_NETWORKS = EXTRACTOR_SUPPORTED_CHAIN_IDS
+export const SWAP_API_SUPPORTED_CHAIN_IDS = EXTRACTOR_SUPPORTED_CHAIN_IDS
 
-export type SwapApiEnabledChainId = (typeof SWAP_API_ENABLED_NETWORKS)[number]
+export type SwapApiEnabledChainId =
+  (typeof SWAP_API_SUPPORTED_CHAIN_IDS)[number]
 export const isSwapApiEnabledChainId = (
   chainId: number,
 ): chainId is SwapApiEnabledChainId =>
-  SWAP_API_ENABLED_NETWORKS.includes(chainId as SwapApiEnabledChainId)
+  SWAP_API_SUPPORTED_CHAIN_IDS.includes(chainId as SwapApiEnabledChainId)
 
 export const DISABLED_CHAIN_IDS = [
   ChainId.BOBA_AVAX,

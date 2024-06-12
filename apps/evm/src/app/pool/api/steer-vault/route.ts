@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 import {
   SteerVaultsApiSchema,
   getSteerVaultsFromDB,
@@ -18,5 +20,7 @@ export async function GET(request: Request) {
   }
 
   const vaults = await getSteerVaultsFromDB(result.data)
-  return NextResponse.json(vaults, { headers: CORS })
+  return NextResponse.json(vaults, {
+    headers: CORS,
+  })
 }

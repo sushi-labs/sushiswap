@@ -1,6 +1,6 @@
-import { getAddress } from '@ethersproject/address'
 import invariant from 'tiny-invariant'
 import warning from 'tiny-warning'
+import { getAddress } from 'viem/utils'
 
 // warns if addresses are not checksummed
 export function validateAndParseAddress(address: string): string {

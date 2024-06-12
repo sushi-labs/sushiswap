@@ -1,14 +1,11 @@
-import {
-  MINICHEF_SUBGRAPH_URL,
-  SushiSwapChainId,
-  TridentChainId,
-} from '@sushiswap/graph-config'
 import { readContract, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
 import { complexRewarderTimeAbi, miniChefAbi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
+import { getMiniChefRewarders } from '@sushiswap/graph-client/mini-chef'
 import { config } from 'src/lib/wagmi.js'
+import { MiniChefChainId } from 'sushi/config'
 import { Address } from 'viem'
 import { MINICHEF_ADDRESS } from '../../../config.js'
 
@@ -109,25 +106,9 @@ export async function getRewarders(poolLength: bigint, chainId: ChainId) {
   }).then((results) => results.map(({ result }) => result))
 }
 
-// TODO: Fix type
-export async function getRewarderInfos(
-  chainId: SushiSwapChainId | TridentChainId,
-) {
-  const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
-  const url = (
-    MINICHEF_SUBGRAPH_URL as Record<SushiSwapChainId | TridentChainId, string>
-  )[chainId]
-  if (!url) {
-    console.log(chainId, 'does not have a minichef subgraph!')
-    return []
-  }
-
-  const sdk = getBuiltGraphSDK({
-    url,
-  })
-
-  const { rewarders } = await sdk.MiniChefRewarders()
-  console.log(`Retrieved ${rewarders.length} rewarders from ${url}`)
+export async function getRewarderInfos(chainId: MiniChefChainId) {
+  const rewarders = await getMiniChefRewarders({ chainId })
+  console.log(`Retrieved ${rewarders.length} rewarders from ${chainId}`)
 
   return Promise.all(
     rewarders.map(async (rewarder) => {
@@ -177,7 +158,7 @@ export async function getRewarderInfos(
         ) {
           return {
             id: rewarder.id as Address,
-            rewardToken: rewarder.rewardToken,
+            rewardToken: rewarder.address,
             rewardPerSecond: BigInt(rewarder.rewardPerSecond),
           }
         }
@@ -219,7 +200,7 @@ export async function getRewarderInfos(
             acc += allocPoint
             return acc
           }, 0n),
-          rewardToken: rewarder.rewardToken,
+          rewardToken: rewarder.address,
           rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       } catch (error) {
@@ -228,7 +209,7 @@ export async function getRewarderInfos(
         // so that the script doesn't fail on new should-be-blacklisted pools
         return {
           id: rewarder.id,
-          rewardToken: rewarder.rewardToken,
+          rewardToken: rewarder.address,
           rewardPerSecond: BigInt(rewarder.rewardPerSecond),
         }
       }

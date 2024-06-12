@@ -6,13 +6,22 @@ import {
   CardTitle,
   Toggle,
 } from '@sushiswap/ui'
-import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import { useTheme } from 'next-themes'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import colors from 'tailwindcss/colors'
 
 import { ChartEntry } from './LiquidityChartRangeInput/types'
+
+import ReactEChartsCore from 'echarts-for-react/lib/core'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/markLine'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/visualMap'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
 
 interface PoolDepthChartProps {
   poolStats: NonNullable<
@@ -23,10 +32,11 @@ interface PoolDepthChartProps {
 }
 
 const getTvlUSD = (
-  liquidity: number | string,
-  totalSupply: number | string,
+  liquidity: number | bigint | string,
+  totalLiquidity: number | bigint | string,
   liquidityUSD: number | string,
-) => formatUSD((Number(liquidity) / Number(totalSupply)) * Number(liquidityUSD))
+) =>
+  formatUSD((Number(liquidity) / Number(totalLiquidity)) * Number(liquidityUSD))
 
 export const PoolDepthChart: FC<PoolDepthChartProps> = ({
   poolStats,
@@ -71,7 +81,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
       if (valueNodes[0]) {
         valueNodes[0].innerHTML = `${getTvlUSD(
           value[1],
-          Number(poolStats.totalSupply),
+          Number(poolStats.liquidity),
           Number(poolStats.liquidityUSD),
         )}`
       }
@@ -82,12 +92,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
         } per ${token0.symbol}`
       }
     },
-    [
-      poolStats.liquidityUSD,
-      poolStats.totalSupply,
-      token0.symbol,
-      token1.symbol,
-    ],
+    [poolStats.liquidityUSD, poolStats.liquidity, token0.symbol, token1.symbol],
   )
 
   const DEFAULT_OPTION = useMemo<EChartsOption>(
@@ -110,7 +115,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
 
           const tvlUSD = getTvlUSD(
             params[0].data[1],
-            poolStats.totalSupply,
+            poolStats.liquidity,
             poolStats.liquidityUSD,
           )
 
@@ -203,7 +208,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
       current,
       resolvedTheme,
       onMouseOver,
-      poolStats.totalSupply,
+      poolStats.liquidity,
       poolStats.liquidityUSD,
       token0.symbol,
       token1.symbol,
@@ -229,7 +234,7 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
             <span className="hoveredItemValue">
               {getTvlUSD(
                 currentLiquidity,
-                Number(poolStats.totalSupply),
+                Number(poolStats.liquidity),
                 Number(poolStats.liquidityUSD),
               )}
             </span>
@@ -260,7 +265,11 @@ export const PoolDepthChart: FC<PoolDepthChartProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ReactECharts option={DEFAULT_OPTION} style={{ height: 405 }} />
+        <ReactEChartsCore
+          echarts={echarts}
+          option={DEFAULT_OPTION}
+          style={{ height: 405 }}
+        />
       </CardContent>
     </>
   )

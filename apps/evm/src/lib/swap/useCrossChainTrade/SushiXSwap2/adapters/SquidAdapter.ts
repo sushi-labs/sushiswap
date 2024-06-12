@@ -1,8 +1,8 @@
 import {
   ChainType,
   DexName,
-  Hook,
-  RouteRequest,
+  type Hook,
+  type RouteRequest,
   SquidCallType,
 } from '@0xsquid/squid-types'
 import { UseTradeReturn } from '@sushiswap/react-query'

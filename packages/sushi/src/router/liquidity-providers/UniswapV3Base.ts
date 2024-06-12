@@ -1,4 +1,4 @@
-import { Address, PublicClient } from 'viem'
+import type { Address, Hex, PublicClient } from 'viem'
 import { erc20Abi, tickLensAbi } from '../../abi/index.js'
 import { ChainId } from '../../chain/index.js'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config/index.js'
@@ -48,14 +48,14 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
 
   isInitialized = false
   factory: Record<number, Address> = {}
-  initCodeHash: Record<number, string> = {}
+  initCodeHash: Record<number, Hex> = {}
   tickLens: Record<number, string> = {}
 
   constructor(
     chainId: ChainId,
     web3Client: PublicClient,
     factory: Record<number, Address>,
-    initCodeHash: Record<number, string>,
+    initCodeHash: Record<number, Hex>,
     tickLens: Record<number, string>,
     isTest = false,
   ) {

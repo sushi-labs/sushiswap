@@ -1,8 +1,8 @@
 'use client'
 
-import { getAddress, isAddress } from '@ethersproject/address'
 import { useCallback, useMemo } from 'react'
 import { Token } from 'sushi/currency'
+import { getAddress, isAddress } from 'viem/utils'
 
 import { useLocalStorage } from './useLocalStorage'
 

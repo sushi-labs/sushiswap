@@ -2,7 +2,7 @@
 
 import { Bond } from '@sushiswap/client'
 import { SkeletonText, classNames } from '@sushiswap/ui'
-import { useBondMarketDetails } from '@sushiswap/wagmi'
+import { useBondMarketDetails } from 'src/lib/wagmi/hooks/bonds/use-bond-market-details'
 import { formatPercent } from 'sushi/format'
 
 export const BondsMarketPageHeaderDiscount = ({ bond }: { bond: Bond }) => {

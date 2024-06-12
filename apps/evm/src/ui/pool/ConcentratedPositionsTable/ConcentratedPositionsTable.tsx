@@ -1,7 +1,6 @@
 'use client'
 
 import { PlusIcon } from '@heroicons/react/20/solid'
-import { SUSHISWAP_V3_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import {
   Button,
   Card,
@@ -11,13 +10,16 @@ import {
   LinkInternal,
   Switch,
 } from '@sushiswap/ui'
-import { Slot } from '@sushiswap/ui/components/slot'
-import { useAccount } from '@sushiswap/wagmi'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
-import { useConcentratedLiquidityPositions } from '@sushiswap/wagmi'
+import { Slot } from '@sushiswap/ui'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
+import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import {
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  SushiSwapV3ChainId,
+} from 'sushi/config'
+import { useAccount } from 'wagmi'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   NAME_COLUMN_V3,
@@ -57,7 +59,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
 
     const chainIds = useMemo(() => {
       if (chainId) return [chainId] as SushiSwapV3ChainId[]
-      return SUSHISWAP_V3_ENABLED_NETWORKS
+      return [...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS]
     }, [chainId])
 
     const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -74,7 +76,11 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     const _positions = useMemo(() => {
       const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
       return (positions || [])
-        ?.filter((el) => filterChainIds.includes(el.chainId))
+        ?.filter((el) =>
+          filterChainIds.includes(
+            el.chainId as (typeof filterChainIds)[number],
+          ),
+        )
         .filter((el) =>
           _tokenSymbols.length > 0
             ? _tokenSymbols.some((symbol) => {

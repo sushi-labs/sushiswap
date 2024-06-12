@@ -1,11 +1,12 @@
 import type { Protocol } from '@sushiswap/database' // Unused as a regular import, but type is being used for casting
+import type { ID } from 'sushi/types'
 import { z } from 'zod'
 
 export const PoolsApiSchema = z.object({
   take: z.coerce.number().int().lte(1000).default(20),
   ids: z
     .string()
-    .transform((ids) => ids?.split(',').map((id) => id.toLowerCase()))
+    .transform((ids) => ids?.split(',').map((id) => id.toLowerCase() as ID))
     .optional(),
   chainIds: z
     .string()

@@ -3,7 +3,7 @@
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { usePrices } from '@sushiswap/react-query'
 import { Button, typographyVariants } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui'
 import React, { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { Amount, Price, Token, tryParseAmount } from 'sushi/currency'

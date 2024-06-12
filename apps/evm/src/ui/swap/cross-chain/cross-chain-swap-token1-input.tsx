@@ -8,9 +8,9 @@ import {
   NetworkSelector,
   SelectIcon,
 } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
 import { Chain } from 'sushi/chain'
 
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import {
   SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
   isWNativeSupported,

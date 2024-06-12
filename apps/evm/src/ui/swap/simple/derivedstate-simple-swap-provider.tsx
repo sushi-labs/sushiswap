@@ -1,15 +1,7 @@
 'use client'
 
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import {
-  useAccount,
-  useChainId,
-  useClientTrade,
-  useConfig,
-  useGasPrice,
-  useTokenWithCache,
-  watchChainId,
-} from '@sushiswap/wagmi'
+import { watchChainId } from '@wagmi/core'
 import { useLogger } from 'next-axiom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -22,6 +14,8 @@ import {
   useState,
 } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { useClientTrade } from 'src/lib/wagmi/hooks/trade/use-client-trade'
 import { ChainId, TestnetChainId } from 'sushi/chain'
 import {
   defaultCurrency,
@@ -31,6 +25,7 @@ import {
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { Percent, ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
+import { useAccount, useChainId, useConfig, useGasPrice } from 'wagmi'
 import { isSupportedChainId, isSwapApiEnabledChainId } from '../../../config'
 import { useCarbonOffset } from '../../../lib/swap/useCarbonOffset'
 

@@ -3,25 +3,25 @@
 import { Disclosure } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
-import { List } from '@sushiswap/ui/components/list/List'
-import {
-  useAccount,
-  useRP2ExploitCheck,
-  useRP2ExploitClaimFinder,
-} from '@sushiswap/wagmi'
-import { ConnectButton } from '@sushiswap/wagmi/components'
+import { Container } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { Fragment } from 'react'
 
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useRP2ExploitCheck } from 'src/lib/wagmi/hooks/exploits/hooks/useRP2ExploitCheck'
+import { useRP2ExploitClaimFinder } from 'src/lib/wagmi/hooks/exploits/hooks/useRP2ExploitClaimFinder'
+import { useAccount } from 'wagmi'
 import { ClaimItem } from '../components/ClaimItem'
 import { Header } from '../components/Header'
 import { RevokeItem } from '../components/RevokeItem'
 
 const RP2ClaimPage = () => {
   const { address } = useAccount()
-  const claims = useRP2ExploitClaimFinder({
-    account: address,
-  })
+
+  const { data: claims, isInitialLoading: isClaimsLoading } =
+    useRP2ExploitClaimFinder({
+      account: address,
+    })
 
   const { data: tokens, isInitialLoading: isLoading } = useRP2ExploitCheck({
     account: address,
@@ -92,8 +92,12 @@ const RP2ClaimPage = () => {
                 <List.KeyValue flex title="No user connected">
                   <ConnectButton size="sm" />
                 </List.KeyValue>
-              ) : claims.length > 0 ? (
-                claims.map(([chainId, claim]) => (
+              ) : isClaimsLoading ? (
+                <List.KeyValue flex title="Loading">
+                  {' '}
+                </List.KeyValue>
+              ) : (claims?.length || 0) > 0 ? (
+                claims?.map(([chainId, claim]) => (
                   <ClaimItem
                     account={address}
                     key={claim.index}

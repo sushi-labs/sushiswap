@@ -1,28 +1,26 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { keccak256, pack } from '@ethersproject/solidity'
+import type { Hex } from 'viem'
+import { encodePacked, keccak256 } from 'viem/utils'
 
 export const computeInitCodeHash = ({
   creationCode,
   deployData,
   masterDeployerAddress,
 }: {
-  creationCode: string
+  creationCode: Hex
   deployData: string
   masterDeployerAddress: string
 }): string => {
   return keccak256(
-    ['bytes'],
-    [
-      pack(
-        ['bytes', 'bytes'],
-        [
-          creationCode,
-          defaultAbiCoder.encode(
-            ['bytes', 'address'],
-            [deployData, masterDeployerAddress],
-          ),
-        ],
-      ),
-    ],
+    encodePacked(
+      ['bytes', 'bytes'],
+      [
+        creationCode,
+        defaultAbiCoder.encode(
+          ['bytes', 'address'],
+          [deployData, masterDeployerAddress],
+        ) as Hex,
+      ],
+    ),
   )
 }

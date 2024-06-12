@@ -19,19 +19,12 @@ import {
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
-import {
-  UseSimulateContractParameters,
-  usePublicClient,
-  useSimulateContract,
-  useWriteContract,
-} from '@sushiswap/wagmi'
-import { useAccount, useWaitForTransactionReceipt } from '@sushiswap/wagmi'
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { SendTransactionReturnType } from '@wagmi/core'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_BONDS } from 'src/lib/constants'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import {
   Percent,
   formatPercent,
@@ -42,6 +35,14 @@ import {
 import { Chain } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { UserRejectedRequestError } from 'viem'
+import {
+  UseSimulateContractParameters,
+  useAccount,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi'
+import { usePublicClient } from 'wagmi'
 
 interface BondsBuyReviewModal {
   bond: Bond

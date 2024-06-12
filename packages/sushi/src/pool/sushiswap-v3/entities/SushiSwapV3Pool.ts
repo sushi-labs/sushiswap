@@ -1,4 +1,5 @@
 import invariant from 'tiny-invariant'
+import type { Address, Hex } from 'viem'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SushiSwapV3ChainId,
@@ -54,8 +55,8 @@ export class SushiSwapV3Pool {
     tokenA: Token,
     tokenB: Token,
     fee: SushiSwapV3FeeAmount,
-    initCodeHashManualOverride?: string,
-    factoryAddressOverride?: string,
+    initCodeHashManualOverride?: Hex,
+    factoryAddressOverride?: Address,
   ): string {
     return computeSushiSwapV3PoolAddress({
       factoryAddress:
