@@ -331,7 +331,9 @@ export class PoolPage extends BaseActions {
     // await expect(removeLiquidityTabSelector).toBeVisible()
     // await removeLiquidityTabSelector.click()
 
-    await this.page.locator('[testdata-id=remove-liquidity-max-button]').click()
+    const removeMaxButtonSelector = this.page.locator('[testdata-id=remove-liquidity-max-button]')
+    await expect(removeMaxButtonSelector).toBeVisible()
+    await removeMaxButtonSelector.click()
 
     // ENABLE AGAIN WHEN PERMIT IS USED
     // const selectApprovalTypeId = 'select-approval-type-button'
