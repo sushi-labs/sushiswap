@@ -116,12 +116,12 @@ export const useTokenPermit = ({
       ? {
           name: permitInfo.name,
           version: permitInfo.version,
-          chainId: BigInt(chainId),
+          chainId: chainId,
           verifyingContract: amount.currency.wrapped.address,
         }
       : ({
           name: permitInfo.name,
-          chainId: BigInt(chainId),
+          chainId: chainId,
           verifyingContract: amount.currency.wrapped.address,
         } as any)
     const message = allowed

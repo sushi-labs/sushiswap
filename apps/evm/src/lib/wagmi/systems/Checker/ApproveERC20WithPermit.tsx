@@ -199,7 +199,7 @@ const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
           value={ApprovalType.Approve}
           testdata-id={'approval-type-approve-button'}
         >
-          <div>
+          <div className="flex flex-col">
             <span className="font-semibold">Approve one-time only</span>
             <span className="text-sm">
               {`You'll give your approval to spend `}
