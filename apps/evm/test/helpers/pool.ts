@@ -332,7 +332,9 @@ export class PoolPage extends BaseActions {
     // await removeLiquidityTabSelector.click()
 
     await new Promise((f) => setTimeout(f, 1000)) // delay 1s
-    const removeMaxButtonSelector = this.page.locator('[testdata-id=remove-liquidity-max-button]')
+    const removeMaxButtonSelector = this.page.locator(
+      '[testdata-id=remove-liquidity-max-button]',
+    )
     await expect(removeMaxButtonSelector).toBeVisible()
     await removeMaxButtonSelector.click()
 
