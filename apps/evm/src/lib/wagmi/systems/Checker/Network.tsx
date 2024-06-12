@@ -2,7 +2,7 @@
 
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@sushiswap/ui'
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import { FC, ReactElement, ReactNode } from 'react'
 import { ChainId, chainName } from 'sushi/chain'
 import { useAccount, useSwitchChain } from 'wagmi'

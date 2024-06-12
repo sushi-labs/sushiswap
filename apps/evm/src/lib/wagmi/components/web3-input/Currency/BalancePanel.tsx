@@ -1,6 +1,6 @@
 import { classNames } from '@sushiswap/ui'
-import { WalletIcon } from '@sushiswap/ui/components/icons'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { WalletIcon } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import { FC, memo, useCallback } from 'react'
 import { Amount, Native, Type } from 'sushi/currency'
 

@@ -12,8 +12,8 @@ import {
   LinkExternal,
   OnramperButton,
 } from '@sushiswap/ui'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import { List } from '@sushiswap/ui/components/list/List'
+import { IconButton } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import chains, { ChainId } from 'sushi/chain'
 import { isWNativeSupported } from 'sushi/config'

@@ -33,7 +33,7 @@ import {
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
 import {
   APPROVE_TAG_MIGRATE,

@@ -1,4 +1,5 @@
-import { GetPoolsArgs, Protocol } from '@sushiswap/client'
+import type { GetPoolsArgs } from '@sushiswap/client'
+import { Protocol } from '@sushiswap/database'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 

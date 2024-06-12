@@ -1,5 +1,5 @@
 import { NativeAddress } from '@sushiswap/react-query'
-import { Currency } from '@sushiswap/ui/components/currency'
+import { Currency } from '@sushiswap/ui'
 import React, { FC, memo, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Native, Type } from 'sushi/currency'

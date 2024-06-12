@@ -1,7 +1,7 @@
 'use client'
 
 import { ChefType } from '@sushiswap/client'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'

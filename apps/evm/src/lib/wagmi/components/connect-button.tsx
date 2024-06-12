@@ -1,12 +1,12 @@
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@sushiswap/ui/components/dropdown-menu'
+} from '@sushiswap/ui'
 import {
   CoinbaseWalletIcon,
   FrameIcon,
@@ -17,7 +17,7 @@ import {
   TrustWalletIcon,
   WalletConnectIcon,
   XDEFIWalletIcon,
-} from '@sushiswap/ui/components/icons'
+} from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo } from 'react'
 
 import Link from 'next/link'

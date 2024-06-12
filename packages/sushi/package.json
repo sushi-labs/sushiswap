@@ -195,7 +195,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias -p tsconfig.json",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
@@ -227,6 +227,7 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/big.js": "6.2.0",
     "@types/seedrandom": "3.0.1",
+    "tsc-alias": "^1.8.10",
     "typescript": "5.2.2",
     "viem": "2.10.11",
     "vitest": "0.34.6",

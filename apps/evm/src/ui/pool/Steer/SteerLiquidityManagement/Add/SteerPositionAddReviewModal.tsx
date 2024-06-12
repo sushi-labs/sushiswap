@@ -19,9 +19,9 @@ import {
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { List } from '@sushiswap/ui/components/list/List'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'

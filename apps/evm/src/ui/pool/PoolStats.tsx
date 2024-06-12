@@ -9,7 +9,7 @@ import {
   CardTitle,
   classNames,
 } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui'
 import { FC } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
 import { SushiSwapV2ChainId } from 'sushi/config'

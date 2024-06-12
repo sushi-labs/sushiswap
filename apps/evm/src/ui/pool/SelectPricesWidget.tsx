@@ -27,8 +27,8 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { SkeletonText } from '@sushiswap/ui'
+import { Toggle } from '@sushiswap/ui'
 import React, {
   FC,
   ReactNode,

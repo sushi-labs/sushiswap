@@ -1,13 +1,13 @@
 import { LinkInternal } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { Button } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui/components/tooltip'
+} from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { useTokensFromPool } from 'src/lib/hooks'

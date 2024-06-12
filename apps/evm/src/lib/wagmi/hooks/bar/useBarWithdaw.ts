@@ -1,6 +1,6 @@
 'use client'
 
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
 import { xsushiAbi } from 'sushi/abi'
 import { Amount, Token, XSUSHI_ADDRESS } from 'sushi/currency'

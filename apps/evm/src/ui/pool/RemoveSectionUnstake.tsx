@@ -15,8 +15,8 @@ import {
   WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { ZERO } from 'sushi/math'

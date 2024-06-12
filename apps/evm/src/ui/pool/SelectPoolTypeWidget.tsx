@@ -3,7 +3,7 @@
 import { RadioGroup } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react-v1/solid'
 import { FormSection, classNames } from '@sushiswap/ui'
-import { CheckIcon } from '@sushiswap/ui/components/icons'
+import { CheckIcon } from '@sushiswap/ui'
 import React, { FC, memo } from 'react'
 import { PoolFinderType } from 'src/lib/wagmi/systems/PoolFinder/types'
 

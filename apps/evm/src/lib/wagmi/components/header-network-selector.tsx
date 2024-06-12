@@ -1,11 +1,8 @@
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/components/button'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import {
-  NetworkSelector,
-  NetworkSelectorOnSelectCallback,
-} from '@sushiswap/ui/components/network-selector'
-import { createErrorToast } from '@sushiswap/ui/components/toast'
+import { Button } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
+import { createErrorToast } from '@sushiswap/ui'
 import React, { FC, Suspense, useCallback } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { ProviderRpcError, UserRejectedRequestError } from 'viem'

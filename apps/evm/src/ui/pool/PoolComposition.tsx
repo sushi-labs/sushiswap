@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardLabel,
   CardTitle,
-} from '@sushiswap/ui/components/card'
+} from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { usePoolGraphData, useTokenAmountDollarValues } from 'src/lib/hooks'
 import { SushiSwapV2ChainId } from 'sushi/config'

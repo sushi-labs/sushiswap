@@ -16,9 +16,9 @@ import {
   SkeletonBox,
   SkeletonText,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { List } from '@sushiswap/ui/components/list/List'
+import { Button } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { FC, ReactNode, useMemo } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'

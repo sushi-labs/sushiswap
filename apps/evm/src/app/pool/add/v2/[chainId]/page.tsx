@@ -2,8 +2,8 @@
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { FormSection } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Loader } from '@sushiswap/ui/components/loader'
+import { Button } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import React, {
   Dispatch,

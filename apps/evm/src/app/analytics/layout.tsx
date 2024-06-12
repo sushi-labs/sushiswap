@@ -1,5 +1,5 @@
 import { Container, LinkInternal, typographyVariants } from '@sushiswap/ui'
-import { HotJar } from '@sushiswap/ui/components/scripts'
+import { HotJar } from '@sushiswap/ui'
 
 import { Header } from './header'
 import { Providers } from './providers'

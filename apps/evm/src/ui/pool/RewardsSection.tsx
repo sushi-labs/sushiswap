@@ -11,7 +11,7 @@ import {
   Container,
   DataTable,
 } from '@sushiswap/ui'
-import { Carousel } from '@sushiswap/ui/components/carousel'
+import { Carousel } from '@sushiswap/ui'
 import { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { ANGLE_SUPPORTED_CHAIN_IDS } from 'sushi/config'

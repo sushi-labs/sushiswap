@@ -1,12 +1,12 @@
 import { useBreakpoint } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
 import {
+  Container,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from '@sushiswap/ui/components/select'
+  classNames,
+} from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
 import { FC, useEffect, useLayoutEffect, useState } from 'react'
 

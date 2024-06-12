@@ -15,7 +15,7 @@ import {
   LinkInternal,
   Toggle,
 } from '@sushiswap/ui'
-import { Dots } from '@sushiswap/ui/components/dots'
+import { Dots } from '@sushiswap/ui'
 import React, { FC, memo, useMemo } from 'react'
 import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
 import { SushiSwapV3FeeAmount } from 'sushi/config'

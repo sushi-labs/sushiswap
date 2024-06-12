@@ -8,7 +8,7 @@ import {
   CardTitle,
   DataTable,
 } from '@sushiswap/ui'
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { Toggle } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'

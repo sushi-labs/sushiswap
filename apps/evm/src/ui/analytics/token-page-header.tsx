@@ -1,9 +1,9 @@
 // 'use client'
 
 // import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
-// import { Button } from '@sushiswap/ui/components/button'
-// import { Chip } from '@sushiswap/ui/components/chip'
-// import { Currency } from '@sushiswap/ui/components/currency'
+// import { Button } from '@sushiswap/ui'
+// import { Chip } from '@sushiswap/ui'
+// import { Currency } from '@sushiswap/ui'
 // import { useRouter } from 'next/router'
 // import { FC } from 'react'
 // import { formatUSD } from 'sushi/format'

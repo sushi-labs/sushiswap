@@ -2,13 +2,9 @@
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { useBreakpoint } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-// import { JazzIcon } from '@sushiswap/ui/components/icons/JazzIcon'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@sushiswap/ui/components/popover'
+import { Button } from '@sushiswap/ui'
+// import { JazzIcon } from '@sushiswap/ui'
+import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'

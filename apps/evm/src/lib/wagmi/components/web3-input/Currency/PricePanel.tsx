@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { SkeletonText } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { tryParseAmount } from 'sushi/currency'
 import { Fraction, ZERO } from 'sushi/math'

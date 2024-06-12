@@ -10,7 +10,7 @@ import {
   LinkInternal,
   Switch,
 } from '@sushiswap/ui'
-import { Slot } from '@sushiswap/ui/components/slot'
+import { Slot } from '@sushiswap/ui'
 import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'

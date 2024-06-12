@@ -1,10 +1,10 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
-import { Button } from '@sushiswap/ui/components/button'
-import { List } from '@sushiswap/ui/components/list/List'
+import { Button } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { Dispatch, FC, SetStateAction } from 'react'
 
 import { useClearNotifications, useNotifications } from '@sushiswap/dexie'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
+import { IconButton } from '@sushiswap/ui'
 import { NotificationGroup } from './NotificationGroup'
 import { ProfileView } from './ProfileView'
 

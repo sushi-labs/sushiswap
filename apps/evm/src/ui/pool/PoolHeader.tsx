@@ -15,7 +15,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui/components/tooltip'
+} from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token, unwrapToken } from 'sushi/currency'

@@ -1,15 +1,15 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/badge'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Badge } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui/components/tooltip'
+} from '@sushiswap/ui'
 import { FC } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { formatNumber } from 'sushi/format'

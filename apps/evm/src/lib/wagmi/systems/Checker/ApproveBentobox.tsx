@@ -10,7 +10,7 @@ import {
   HoverCardTrigger,
   LinkExternal,
 } from '@sushiswap/ui'
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import { FC } from 'react'
 import { BentoBoxChainId } from 'sushi/config'
 import { Address } from 'viem'

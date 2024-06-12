@@ -30,8 +30,8 @@ import {
   SettingsOverlay,
   classNames,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { Button } from '@sushiswap/ui'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
