@@ -5,10 +5,9 @@ import {
 } from '@heroicons/react-v1/solid'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
 import { LinkInternal, classNames } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { NetworkIcon } from '@sushiswap/ui/components/icons'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { useToken } from '@sushiswap/wagmi'
+import { Currency } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import chains, { ChainId, chainShortName } from 'sushi/chain'
 import { Native, Token, Type } from 'sushi/currency'
@@ -16,6 +15,7 @@ import { type TokenList } from 'sushi/token-list'
 import { isAddress } from 'viem'
 
 import { useQuery } from '@tanstack/react-query'
+import { useToken } from 'wagmi'
 import { SUPPORTED_CHAIN_IDS } from '../../../config'
 
 const EXAMPLE_CURRENCIES = [

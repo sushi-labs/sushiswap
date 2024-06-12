@@ -1,10 +1,9 @@
 import { createAppAuth } from '@octokit/auth-app'
-import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { Ratelimit } from '@upstash/ratelimit'
 import stringify from 'fast-json-stable-stringify'
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from 'octokit'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { ChainId, ChainKey, chainName } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 
 import { rateLimit } from 'src/lib/rate-limit'
@@ -214,7 +213,7 @@ export async function POST(request: NextRequest) {
     branch: branch,
     path: listPath,
     content: Buffer.from(JSON.stringify(newList, null, 2)).toString('base64'),
-    message: `Add ${displayName} on ${CHAIN_NAME[chainId].toLowerCase()}`,
+    message: `Add ${displayName} on ${chainName[chainId].toLowerCase()}`,
     sha: currentListData?.sha,
   })
 
@@ -227,7 +226,7 @@ export async function POST(request: NextRequest) {
     title: `Token: ${displayName}`,
     head: branch,
     base: 'master',
-    body: `Chain: ${CHAIN_NAME[chainId] ?? chainId}
+    body: `Chain: ${chainName[chainId] ?? chainId}
       Name: ${tokenName}
       Symbol: ${tokenSymbol}
       Decimals: ${tokenDecimals}
@@ -250,7 +249,7 @@ export async function POST(request: NextRequest) {
           description: 'New pull request',
           color: 5814783,
           author: {
-            name: `${tokenName} - ${CHAIN_NAME[chainId]}`,
+            name: `${tokenName} - ${chainName[chainId]}`,
             url: listPr,
             icon_url: `https://raw.githubusercontent.com/${owner}/list/${branch}/${imagePath}`,
           },
@@ -278,7 +277,7 @@ export async function POST(request: NextRequest) {
 
 async function getCoinGecko(chainId: ChainId, address: string) {
   return await fetch(
-    `https://api.coingecko.com/api/v3/coins/${CHAIN_NAME[
+    `https://api.coingecko.com/api/v3/coins/${chainName[
       chainId
     ].toLowerCase()}/contract/${address}`,
   )

@@ -27,6 +27,7 @@ import {
 } from './use-bentobox-tokens'
 
 import { usePoolFilters } from 'src/ui/pool'
+import { BentoBoxChainId, isBentoBoxChainId } from 'sushi/config'
 
 const COLUMNS: ColumnDef<BentoBoxToken, unknown>[] = [
   {
@@ -100,7 +101,7 @@ export const BentoBoxTokenTable: FC = () => {
 
   const args = useMemo<GetBentoBoxTokenArgs>(
     () => ({
-      chainIds,
+      chainIds: chainIds.filter(isBentoBoxChainId) as BentoBoxChainId[],
       tokenSymbols,
     }),
     [chainIds, tokenSymbols],

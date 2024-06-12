@@ -1,4 +1,4 @@
-import { RouteRequest, RouteResponse } from '@0xsquid/squid-types'
+import type { RouteRequest, RouteResponse } from '@0xsquid/squid-types'
 import { useQuery } from '@tanstack/react-query'
 import { SquidApiURL, SquidIntegratorId } from 'sushi/config'
 

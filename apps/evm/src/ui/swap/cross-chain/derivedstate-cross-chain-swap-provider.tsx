@@ -1,12 +1,6 @@
 'use client'
 
-import {
-  useAccount,
-  useChainId,
-  useConfig,
-  useTokenWithCache,
-  watchAccount,
-} from '@sushiswap/wagmi'
+import { watchAccount } from '@wagmi/core'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -24,6 +18,7 @@ import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
 import { useSquidCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useSquidCrossChainTrade'
 import { useStargateCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useStargateCrossChainTrade'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId } from 'sushi/chain'
 import {
   SquidAdapterChainId,
@@ -37,6 +32,7 @@ import { defaultQuoteCurrency } from 'sushi/config'
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
+import { useAccount, useChainId, useConfig } from 'wagmi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'

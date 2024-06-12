@@ -18,15 +18,6 @@ import {
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
-import {
-  SendTransactionReturnType,
-  useAccount,
-  useBalanceWeb3Refetch,
-  usePublicClient,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from '@sushiswap/wagmi'
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
 import { log } from 'next-axiom'
 import React, {
   FC,
@@ -38,12 +29,24 @@ import React, {
 } from 'react'
 import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { Bridge, LiquidityProviders } from 'sushi/router'
-import { UserRejectedRequestError, stringify } from 'viem'
+import {
+  SendTransactionReturnType,
+  UserRejectedRequestError,
+  stringify,
+} from 'viem'
+import {
+  useAccount,
+  usePublicClient,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import {
   warningSeverity,

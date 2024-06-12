@@ -2,12 +2,8 @@
 
 import { PlusIcon } from '@heroicons/react-v1/solid'
 import { FormSection } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Loader } from '@sushiswap/ui/components/loader'
-import { PoolFinder, SushiSwapV2PoolState } from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
-import { Checker } from '@sushiswap/wagmi/systems'
-import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
+import { Button } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import React, {
   Dispatch,
@@ -34,9 +30,14 @@ import {
 } from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { SushiSwapV2Pool } from 'sushi/pool'
+import { SushiSwapV2Pool } from 'sushi/pool/sushiswap-v2'
 import { SWRConfig } from 'swr'
 
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
+import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/PoolFinder'
 import { AddSectionPoolShareCardV2 } from 'src/ui/pool/AddSectionPoolShareCardV2'
 import { AddSectionReviewModalLegacy } from '../../../../../ui/pool/AddSectionReviewModalLegacy'
 import { SelectNetworkWidget } from '../../../../../ui/pool/SelectNetworkWidget'

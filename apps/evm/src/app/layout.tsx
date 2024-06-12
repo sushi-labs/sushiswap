@@ -1,12 +1,14 @@
 import '@sushiswap/ui/index.css'
 
-import { SanctionedAddressDialog } from '@sushiswap/wagmi/components/sanctioned-address-dialog'
+import 'sushi/bigint-serializer'
+
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
 
 import { headers } from 'next/headers'
-import { getWagmiInitialState } from 'src/lib/wagmi'
+import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-address-dialog'
+import { getWagmiInitialState } from 'src/lib/wagmi/config'
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 

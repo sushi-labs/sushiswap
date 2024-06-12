@@ -1,4 +1,3 @@
-import { Pool } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -15,14 +14,16 @@ import {
 import { FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi/format'
 
+import { SteerVault } from '@sushiswap/steer-sdk'
+import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { APRHoverCard } from '../APRHoverCard'
 import { SteerAPRChart } from './SteerAPRChart'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
 import { SteerStrategyConfig } from './constants'
 
 interface SteerPoolCardProps {
-  pool: Pool
-  vault: Pool['steerVaults'][0]
+  pool: PoolWithIncentives<PoolWithFeeAprs>
+  vault: SteerVault
 }
 
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {

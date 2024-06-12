@@ -1,12 +1,12 @@
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Container } from '@sushiswap/ui/components/container'
+import { Button } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui'
 import {
   DiscordIcon,
   GithubIcon,
   TwitterIcon,
   YoutubeIcon,
-} from '@sushiswap/ui/components/icons'
+} from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 const SUPPORT_CHANNELS = [

@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 import {
   SteerVaultCountApiSchema,
   getSteerVaultCountFromDB,
@@ -18,5 +20,7 @@ export async function GET(request: Request) {
   }
 
   const count = await getSteerVaultCountFromDB(result.data)
-  return NextResponse.json(count, { headers: CORS })
+  return NextResponse.json(count, {
+    headers: CORS,
+  })
 }

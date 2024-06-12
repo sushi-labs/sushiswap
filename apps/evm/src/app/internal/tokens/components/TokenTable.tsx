@@ -1,9 +1,8 @@
 'use client'
 
 import { XIcon } from '@heroicons/react-v1/outline'
-import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { DataTable } from '@sushiswap/ui'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
 import { createColumnHelper } from '@tanstack/react-table'
 import { FC } from 'react'
 import { ChainId, chainName } from 'sushi/chain'
@@ -31,7 +30,7 @@ function useColumns() {
               width={20}
               height={20}
             />
-            <div>{CHAIN_NAME[chainId] ?? chainName[chainId]}</div>
+            <div>{chainName[chainId]}</div>
           </div>
         )
       },
@@ -53,9 +52,9 @@ function useColumns() {
       },
       enableHiding: true,
     }),
-    columnHelper.accessor('liquidityUSD', {
+    columnHelper.accessor('totalLiquidity', {
       header: 'Liquidity',
-      cell: (info) => formatUSD(info.getValue()),
+      cell: (info) => info.getValue(),
       enableHiding: true,
     }),
     columnHelper.accessor('volumeUSD', {

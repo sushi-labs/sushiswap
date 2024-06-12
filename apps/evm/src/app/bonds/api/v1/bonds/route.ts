@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 import { BondsApiSchema, getBondsFromSubgraph } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../cors'
@@ -14,7 +16,11 @@ export async function GET(request: Request) {
 
   try {
     const bonds = await getBondsFromSubgraph(result.data)
-    return NextResponse.json(bonds, { headers: CORS })
+
+    return NextResponse.json(bonds, {
+      status: 200,
+      headers: CORS,
+    })
   } catch (e) {
     return NextResponse.json(e, { headers: CORS })
   }

@@ -1,4 +1,4 @@
-import { ResolvedNotification } from '@sushiswap/dexie'
+import type { ResolvedNotification } from '@sushiswap/dexie'
 import { FC } from 'react'
 import { Chain } from 'sushi/chain'
 

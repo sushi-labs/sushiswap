@@ -8,7 +8,7 @@ import { Abi } from 'abitype'
 import { computeSushiSwapV3PoolAddress } from 'sushi'
 import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from 'sushi/router'
-import { Address, Log, PublicClient } from 'viem'
+import type { Address, Hex, Log, PublicClient } from 'viem'
 import { Counter } from './Counter.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { Logger, safeSerialize } from './Logger.js'
@@ -34,7 +34,7 @@ export const uniswapFeeSpaceMap: FeeSpacingMap = {
 export interface FactoryV3 {
   address: Address
   provider: LiquidityProviders
-  initCodeHash: string
+  initCodeHash: Hex
   deployer?: Address
   feeSpacingMap?: FeeSpacingMap
 }

@@ -1,38 +1,38 @@
-import { Protocol } from '@sushiswap/client'
-import { useAccount } from '@sushiswap/wagmi'
 import React, { FC, ReactNode } from 'react'
+import type { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { useUserPositions } from 'src/lib/hooks'
-import { PositionWithPool } from 'src/types'
+import { useSushiV2UserPositions } from 'src/lib/hooks'
+import { useAccount } from 'wagmi'
 
 interface PositionCardList {
   children({
     positions,
     isLoading,
-  }: { positions: PositionWithPool[]; isLoading: boolean }): ReactNode
+  }: {
+    positions: UserWithPool[]
+    isLoading: boolean
+  }): ReactNode
 }
 
-const value = (position: PositionWithPool) =>
-  (Number(position.balance + position.stakedBalance) /
-    Number(position.pool.totalSupply)) *
+const value = (position: UserWithPool) =>
+  (Number(position.unstakedBalance + position.stakedBalance) /
+    Number(position.pool.liquidity)) *
   Number(position.pool.liquidityUSD)
 
 export const PositionCardList: FC<PositionCardList> = ({ children }) => {
   const { address } = useAccount()
-  const { data: userPositions, isValidating } = useUserPositions({
-    id: address,
+  const { data: userPositions, isLoading } = useSushiV2UserPositions({
+    id: address!,
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
   return (
     <>
       {children({
-        positions: isValidating
+        positions: isLoading
           ? new Array(6).fill(null)
-          : (userPositions || [])
-              .filter((el) => el.pool.protocol === Protocol.SUSHISWAP_V2)
-              .sort((a, b) => value(b) - value(a)),
-        isLoading: isValidating,
+          : (userPositions || []).sort((a, b) => value(b) - value(a)),
+        isLoading,
       })}
     </>
   )
