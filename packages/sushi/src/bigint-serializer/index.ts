@@ -15,18 +15,17 @@ if (!BigInt.prototype.toJSON) {
   })
 }
 
-const parse = JSON.parse
-JSON.parse = (text: string, reviver?: (key: any, value: any) => any) => {
-  return parse.bind(this)(text, (key, value_) => {
-    let value = value_
-    if (value?.__type === 'bigint') {
-      value = BigInt(value.value)
+const originalParse = JSON.parse;
+JSON.parse = (text, reviver) => {
+  return originalParse(text, function(key, value) {
+    if (value && typeof value === 'object' && value.__type === 'bigint') {
+      value = BigInt(value.value);
     }
     if (reviver) {
-      return reviver(key, value)
+      return reviver.call(this, key, value);
     }
-    return value
-  })
-}
+    return value;
+  });
+};
 
 export {}
