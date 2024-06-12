@@ -57,6 +57,7 @@ import {
   // CurveMultitokenCore,
   // CurveMultitokenPool,
   RPool,
+  RToken,
   RouteStatus,
   StableSwapRPool,
   getBigInt,
@@ -1546,5 +1547,58 @@ describe('End-to-end RouteProcessor5 test', async () => {
         )
       })
     }
+
+    const CURVE_POOLS_FOR_TEST = 20
+
+    function sortDecrByParam<T>(arr: T[], param: (t: T) => number): T[] {
+      let sortArr = arr.map((a) => [param(a), a]) as [number, T][]
+      sortArr = sortArr.sort((a, b) => b[0] - a[0])
+      return sortArr.map((s) => s[1])
+    }
+
+    function RToken2Type(t: RToken): Type {
+      if (t.address && t.address.length === 42)
+        return new Token({
+          chainId: Number(t.chainId ?? 1),
+          address: t.address,
+          symbol: t.symbol,
+          name: t.name,
+          decimals: t.decimals,
+        })
+      else return Native.onChain(Number(t.chainId ?? 1))
+    }
+
+    it.only(`Most liquidable ${CURVE_POOLS_FOR_TEST} Curve pools`, async () => {
+      const curvePools = Array.from(env.poolCodes.values())
+        .map((p) => p.pool)
+        .filter((p) => p.poolType() === PoolType.Curve)
+      const pools = sortDecrByParam(curvePools, (p) =>
+        Number(p.reserve0 + p.reserve1),
+      )
+      for (let i = 0; i < CURVE_POOLS_FOR_TEST && i < pools.length; ++i) {
+        const address = pools[i].address
+        const from = RToken2Type(pools[i].token0)
+        const to = RToken2Type(pools[i].token1)
+        console.log(i, from.symbol, '->', to.symbol)
+        await env.snapshot.restore()
+        const amoutIn = BigInt(amountInForTest[address] ?? 1e18)
+        if (from instanceof Token)
+          await setRouterPrimaryBalance(
+            env.client,
+            env.user.address,
+            from.address as Address,
+            amoutIn * 2n,
+          )
+        intermidiateResult[0] = amoutIn
+        intermidiateResult = await updMakeSwap(
+          env,
+          from,
+          to,
+          intermidiateResult,
+          undefined,
+          [LiquidityProviders.CurveSwap],
+        )
+      }
+    })
   }
 })
