@@ -667,8 +667,8 @@ importers:
   apps/evm:
     dependencies:
       '@0xsquid/sdk':
-        specifier: ^2.8.11
-        version: 2.8.11
+        specifier: 2.8.13
+        version: 2.8.13
       '@covalenthq/client-sdk':
         specifier: 0.9.4
         version: 0.9.4
@@ -857,8 +857,8 @@ importers:
         version: 3.21.4
     devDependencies:
       '@0xsquid/squid-types':
-        specifier: ^0.1.59
-        version: 0.1.59(typescript@5.2.2)
+        specifier: 0.1.78
+        version: 0.1.78(typescript@5.2.2)
       '@next/eslint-plugin-next':
         specifier: 14.2.3
         version: 14.2.3
@@ -2449,8 +2449,8 @@ packages:
       graphql: 16.6.0
       typescript: 5.2.2
 
-  /@0xsquid/sdk@2.8.11:
-    resolution: {integrity: sha512-hLTeMVJ9PCwBLEjDgDPsdxZM0UaJ6GfNlkHUSbNDK3a/k14uwDo68/BLkf78e6JuqugXFLDWMm0SDRN0QLuLcg==}
+  /@0xsquid/sdk@2.8.13:
+    resolution: {integrity: sha512-WGXe0pYupGH6zCWcKgtoyAK/k4D0xxbyBePmKP2IjcXOrRkRKncLZlz4brL5QF6G6362dZkmW40zbMkCwWEqvg==}
     dependencies:
       '@cosmjs/encoding': 0.31.3
       '@cosmjs/stargate': 0.31.3
@@ -2468,12 +2468,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@0xsquid/squid-types@0.1.59(typescript@5.2.2):
-    resolution: {integrity: sha512-RGzcIltKESbrFTpsA2zo/qpAvFGdMhmpyH1nD2wy17EzQPiWWg7q8BdkeSGSz+zIVPuIqHF49Ux7RXKaqp5gQA==}
+  /@0xsquid/squid-types@0.1.78(typescript@5.2.2):
+    resolution: {integrity: sha512-bO9ezyLjHUYvGP+q9WKx3Qtnn7ZaitGj3FMylagRUJkI01wXlZiZID0eIKMQnL4j8U3GUs7HhCx5pSgalB7zfw==}
     peerDependencies:
       typescript: 5.2.2
     dependencies:
-      '@axelar-network/axelarjs-sdk': 0.13.9
+      '@axelar-network/axelarjs-sdk': 0.16.1
       '@ethersproject/providers': 5.7.2
       typescript: 5.2.2
     transitivePeerDependencies:
@@ -3512,16 +3512,23 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@axelar-network/axelar-cgp-solidity@4.5.0:
-    resolution: {integrity: sha512-4F4rmHei0cmzeUR7/mW4Bap5rc/KlPV2crD9HA7HTRfl15mVcN6/3z8p+pAm9We6bOrQplNW9KBZ3HJFP3C1Gw==}
-    engines: {node: ^16.0.0 || ^18.0.0}
+  /@axelar-network/axelar-cgp-solidity@6.3.1:
+    resolution: {integrity: sha512-RJmcOQbj2VhQb8uqBtu0beNj4MKRVjiYj74wXu6QI/a4bJ5EwwZK3+uCbTVNM9Qc7LqJqObhtGQfKUnAXEFCHA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@axelar-network/axelar-gmp-sdk-solidity': 5.8.0
     dev: true
 
-  /@axelar-network/axelarjs-sdk@0.13.9:
-    resolution: {integrity: sha512-c7UooF1/2V51LAB936GOHRxMtautB7uGXW3QfeEufzoBAPx2Sfx2IB8pT7KHaohdY4zZUI8lVYRNogOVeZhjpg==}
+  /@axelar-network/axelar-gmp-sdk-solidity@5.8.0:
+    resolution: {integrity: sha512-ThiCWK7lhwmsipgjKkw8c0z0ubB9toRMV9X0tRVOXHHSknKp5DCFfatbCwjpSC5GZRa+61ciTSqJNtCc7j9YoQ==}
+    engines: {node: '>=18'}
+    dev: true
+
+  /@axelar-network/axelarjs-sdk@0.16.1:
+    resolution: {integrity: sha512-dhLe7yl3a37NxkZ1rEj7whMIANN/Ra+r8ZA10KvQ4LPRAHUNLGEcFwcbS9QaLRvDkKYFuJS2CCiJ86iYll1C7A==}
     requiresBuild: true
     dependencies:
-      '@axelar-network/axelar-cgp-solidity': 4.5.0
+      '@axelar-network/axelar-cgp-solidity': 6.3.1
       '@axelar-network/axelarjs-types': 0.33.0
       '@cosmjs/json-rpc': 0.30.1
       '@cosmjs/stargate': 0.31.0-alpha.1
@@ -6973,7 +6980,7 @@ packages:
       '@cosmjs/utils': 0.31.3
       '@noble/hashes': 1.4.0
       bn.js: 5.2.1
-      elliptic: 6.5.4
+      elliptic: 6.5.5
       libsodium-wrappers-sumo: 0.7.13
 
   /@cosmjs/encoding@0.31.3:
