@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'

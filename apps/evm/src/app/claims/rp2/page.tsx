@@ -3,8 +3,8 @@
 import { Disclosure } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react-v1/solid'
 import { LinkExternal, LinkInternal } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
-import { List } from '@sushiswap/ui/components/list/List'
+import { Container } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { Fragment } from 'react'
 
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'

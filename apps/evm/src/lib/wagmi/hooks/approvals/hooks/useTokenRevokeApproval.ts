@@ -1,6 +1,6 @@
 'use client'
 
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import { Token } from 'sushi/currency'
 import { Address, UserRejectedRequestError, erc20Abi } from 'viem'

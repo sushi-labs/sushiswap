@@ -9,9 +9,9 @@ import {
   DialogTrigger,
   Message,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Icon } from '@sushiswap/ui/components/currency/Icon'
-import { List } from '@sushiswap/ui/components/list/List'
+import { Button } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import { FC, useCallback, useState } from 'react'
 import { Chain } from 'sushi/chain'
 import { Token } from 'sushi/currency'
@@ -57,7 +57,12 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
         <div className="flex items-center w-full hover:bg-muted focus:bg-accent h-full rounded-lg px-3">
           <div className="flex flex-row items-center flex-grow gap-4">
             <div className="w-10 h-10">
-              <Icon disableLink currency={currency} width={40} height={40} />
+              <Currency.Icon
+                disableLink
+                currency={currency}
+                width={40}
+                height={40}
+              />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 dark:group-hover:text-white">

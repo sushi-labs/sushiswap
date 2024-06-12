@@ -2,8 +2,8 @@
 
 import { usePrice } from '@sushiswap/react-query'
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { Currency } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import {
   FC,
   useCallback,

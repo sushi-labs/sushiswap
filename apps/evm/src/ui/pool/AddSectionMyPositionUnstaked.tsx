@@ -1,4 +1,4 @@
-import { Currency } from '@sushiswap/ui/components/currency'
+import { Currency } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 

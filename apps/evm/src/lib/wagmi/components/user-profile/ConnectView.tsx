@@ -11,8 +11,8 @@ import {
   RabbyIcon,
   TrustWalletIcon,
   WalletConnectIcon,
-} from '@sushiswap/ui/components/icons'
-import { List } from '@sushiswap/ui/components/list/List'
+} from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { FC, ReactNode, SVGProps, useCallback, useMemo } from 'react'
 import { useConnect } from 'wagmi'
 

@@ -8,15 +8,15 @@ import {
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from '@sushiswap/ui/components/command'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
+} from '@sushiswap/ui'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { Chain } from 'sushi/chain'

@@ -11,17 +11,10 @@ import {
   WidgetDescription,
   WidgetFooter,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import {
-  SettingsModule,
-  SettingsOverlay,
-} from '@sushiswap/ui/components/settings'
-import {
-  Widget,
-  WidgetHeader,
-  WidgetTitle,
-} from '@sushiswap/ui/components/widget'
+import { Button } from '@sushiswap/ui'
+import { IconButton } from '@sushiswap/ui'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
+import { Widget, WidgetHeader, WidgetTitle } from '@sushiswap/ui'
 import React, { FC, ReactNode } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'

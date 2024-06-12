@@ -7,12 +7,9 @@ import {
   WidgetFooter,
   WidgetTitle,
 } from '@sushiswap/ui'
-import { IconButton } from '@sushiswap/ui/components/iconbutton'
-import {
-  SettingsModule,
-  SettingsOverlay,
-} from '@sushiswap/ui/components/settings'
-import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
+import { IconButton } from '@sushiswap/ui'
+import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
+import { Widget, WidgetHeader } from '@sushiswap/ui'
 import React, { FC, ReactNode } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'

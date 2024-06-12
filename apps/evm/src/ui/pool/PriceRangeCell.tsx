@@ -2,7 +2,7 @@
 
 import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
-import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
+import { FormattedNumber } from '@sushiswap/ui'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
 import { Bound } from 'src/lib/constants'

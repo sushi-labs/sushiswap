@@ -7,9 +7,9 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Explainer } from '@sushiswap/ui/components/explainer'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { Collapsible } from '@sushiswap/ui'
+import { Explainer } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'

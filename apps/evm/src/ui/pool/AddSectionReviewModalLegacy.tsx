@@ -14,9 +14,9 @@ import {
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'

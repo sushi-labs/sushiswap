@@ -1,5 +1,5 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'

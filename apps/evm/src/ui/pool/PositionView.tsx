@@ -30,9 +30,9 @@ import {
   WidgetAction,
   classNames,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { Button } from '@sushiswap/ui'
+import { FormattedNumber } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'

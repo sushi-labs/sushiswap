@@ -3,7 +3,7 @@
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {

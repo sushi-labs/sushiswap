@@ -10,13 +10,9 @@ import {
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-} from '@sushiswap/ui/components/command'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui'
+import { Command, CommandGroup, CommandItem } from '@sushiswap/ui'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
 import React, {
   FC,
   useCallback,

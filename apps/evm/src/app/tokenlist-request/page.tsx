@@ -20,7 +20,7 @@ import {
   TextField,
   typographyVariants,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import React, { useCallback, useEffect } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'

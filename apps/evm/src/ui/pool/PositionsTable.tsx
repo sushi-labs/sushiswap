@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
-import { Slot } from '@sushiswap/ui/components/slot'
+import { Slot } from '@sushiswap/ui'
 import { DisplayColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'

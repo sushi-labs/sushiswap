@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 interface GuardProps extends ButtonProps {

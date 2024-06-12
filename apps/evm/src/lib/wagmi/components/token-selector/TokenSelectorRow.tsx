@@ -12,8 +12,8 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { Badge } from '@sushiswap/ui/components/badge'
-import { Icon } from '@sushiswap/ui/components/currency/Icon'
+import { Badge } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
 import { Chain } from 'sushi/chain'
 import { Amount, Type } from 'sushi/currency'
@@ -96,7 +96,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                   }
                 >
                   <div className="w-10 h-10">
-                    <Icon
+                    <Currency.Icon
                       disableLink
                       currency={currency}
                       width={40}
@@ -106,7 +106,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
                 </Badge>
               ) : (
                 <div className="w-10 h-10">
-                  <Icon
+                  <Currency.Icon
                     disableLink
                     currency={currency}
                     width={40}

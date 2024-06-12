@@ -3,7 +3,7 @@
 // import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 // import { Token as GraphToken } from '@sushiswap/graph-client'
 // import { ClipboardController, LinkExternal } from '@sushiswap/ui'
-// import { Currency } from '@sushiswap/ui/components/currency'
+// import { Currency } from '@sushiswap/ui'
 // import {
 //   Table,
 //   TableBody,
@@ -11,7 +11,7 @@
 //   TableHead,
 //   TableHeader,
 //   TableRow,
-// } from '@sushiswap/ui/components/table'
+// } from '@sushiswap/ui'
 // import { FC } from 'react'
 // import { Chain } from 'sushi/chain'
 // import { shortenAddress } from 'sushi/format'

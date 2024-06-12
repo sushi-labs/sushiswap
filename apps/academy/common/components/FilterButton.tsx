@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import { Maybe } from '../../.mesh'
 
 interface FilterButton {

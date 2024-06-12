@@ -7,8 +7,8 @@ import {
   textFieldVariants,
   typographyVariants,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
+import { Button } from '@sushiswap/ui'
+import { Widget, WidgetHeader } from '@sushiswap/ui'
 import { FC, ReactNode, useMemo } from 'react'
 import {
   useTokenAmountDollarValues,

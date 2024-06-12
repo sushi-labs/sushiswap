@@ -11,8 +11,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@sushiswap/ui/components/card'
-import { Toggle } from '@sushiswap/ui/components/toggle'
+} from '@sushiswap/ui'
+import { Toggle } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'

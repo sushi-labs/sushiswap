@@ -1,6 +1,6 @@
 'use client'
 
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { ChainId } from 'sushi/chain'

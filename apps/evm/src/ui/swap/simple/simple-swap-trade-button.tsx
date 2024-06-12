@@ -1,7 +1,7 @@
 'use client'
 
 import { DialogTrigger } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components'
+import { Button } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {

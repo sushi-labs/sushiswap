@@ -13,16 +13,12 @@ import {
   DialogType,
   Message,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { List } from '@sushiswap/ui/components/list/List'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import {
-  createErrorToast,
-  createInfoToast,
-  createToast,
-} from '@sushiswap/ui/components/toast'
+import { Collapsible } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
+import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, {

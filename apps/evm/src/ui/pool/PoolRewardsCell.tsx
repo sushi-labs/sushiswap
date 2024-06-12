@@ -1,4 +1,4 @@
-import { Currency } from '@sushiswap/ui/components/currency'
+import { Currency } from '@sushiswap/ui'
 import { Row } from '@tanstack/react-table'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'

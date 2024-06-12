@@ -1,7 +1,7 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import { FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Chain, ChainId, chainName } from 'sushi/chain'

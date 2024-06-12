@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
 import React from 'react'

@@ -6,8 +6,8 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { CardDescription, CardTitle } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC, useCallback, useMemo } from 'react'
 import { formatNumber, formatPercent } from 'sushi/format'
