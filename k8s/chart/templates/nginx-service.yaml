@@ -29,10 +29,12 @@ data:
         keepalive 2;
       }
       {{- end }}
+      gzip on;
+      gzip_types application/json;
       map $uri $proxy_pass {
         ~^/(\w+)/(v(\d+\.)?(\d+\.)?(\*|\d+))\/(\d+)(/.*)? router-$6;
       }
-      server { 
+      server {
         listen 80;
         location / {
           proxy_http_version 1.1;
