@@ -217,7 +217,7 @@ contract RouteProcessor5 is Ownable {
 
     uint256 balanceInFinal = tokenIn.anyBalanceOf(msg.sender);
     if (tokenIn != Utils.NATIVE_ADDRESS)
-      require(balanceInFinal + amountIn + 1 >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
+      require(balanceInFinal + amountIn + 10 >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
     
     uint256 balanceOutFinal = tokenOut.anyBalanceOf(to);
     if (balanceOutFinal < balanceOutInitial + amountOutMin)
