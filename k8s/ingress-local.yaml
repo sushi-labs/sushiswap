@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   name: sushi-api-local-ingress
   annotations:
-    kubernetes.io/ingressClassName: "nginx"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/server-snippet: |
       gzip on;
       gzip_types application/json;
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:

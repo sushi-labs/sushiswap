@@ -3,7 +3,6 @@ kind: Ingress
 metadata:
   name: sushi-api-production-ingress
   annotations:
-    kubernetes.io/ingressClassName: "nginx"
     kubernetes.io/ingress.global-static-ip-name: "sushi-api-production-ip"
     networking.gke.io/managed-certificates: "sushi-api-production-managed-certificate"
     nginx.ingress.kubernetes.io/enable-cors: "true"
@@ -11,6 +10,7 @@ metadata:
       gzip on;
       gzip_types application/json;
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
