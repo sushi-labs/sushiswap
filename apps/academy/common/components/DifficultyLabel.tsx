@@ -1,5 +1,4 @@
-import { classNames } from '@sushiswap/ui'
-import { CircleIcon } from '@sushiswap/ui/components/icons'
+import { CircleIcon, classNames } from '@sushiswap/ui'
 import { DIFFICULTY_ELEMENTS } from 'common/helpers'
 import { FC } from 'react'
 import { Article } from 'types'

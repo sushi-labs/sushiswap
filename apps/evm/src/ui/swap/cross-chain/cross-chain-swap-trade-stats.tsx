@@ -7,11 +7,9 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Explainer } from '@sushiswap/ui/components/explainer'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
-import { useAccount } from '@sushiswap/wagmi'
-import { AddressToEnsResolver } from '@sushiswap/wagmi/components/account/AddressToEnsResolver'
+import { Collapsible } from '@sushiswap/ui'
+import { Explainer } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { Chain } from 'sushi/chain'
 import { Native } from 'sushi/currency'
@@ -19,6 +17,8 @@ import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { isAddress } from 'viem'
 
+import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
+import { useAccount } from 'wagmi'
 import {
   warningSeverity,
   warningSeverityClassName,

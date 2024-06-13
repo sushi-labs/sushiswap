@@ -14,7 +14,9 @@ export type GetSteerVaultsArgs =
   | undefined
 
 export const getSteerVaultsUrl = (args: GetSteerVaultsArgs) => {
-  return `${EVM_APP_BASE_URL}/pool/api/steer-vault${parseArgs(args)}`
+  return `${EVM_APP_BASE_URL}/pool/api/steer-vault${parseArgs<GetSteerVaultsArgs>(
+    args,
+  )}`
 }
 
 export const getSteerVaults = async (

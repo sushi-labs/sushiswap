@@ -3,17 +3,8 @@
 import { ChefType, Pool } from '@sushiswap/client'
 import { usePool } from '@sushiswap/client/hooks'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import {
-  getMasterChefContractConfig,
-  useMasterChefDeposit,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
-import {
-  useApproved,
-  withCheckerRoot,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
 import { FC, useMemo, useState } from 'react'
 import { APPROVE_TAG_STAKE } from 'src/lib/constants'
 import { useGraphPool } from 'src/lib/hooks'
@@ -22,6 +13,13 @@ import { tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { useSWRConfig } from 'swr'
 
+import { getMasterChefContractConfig } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-contract'
+import { useMasterChefDeposit } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-deposit'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  useApproved,
+  withCheckerRoot,
+} from 'src/lib/wagmi/systems/Checker/Provider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
@@ -67,7 +65,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(
 
     const { write, isLoading: isWritePending } = useMasterChefDeposit({
       amount: amounts[0],
-      chainId: liquidityToken.chainId,
+      chainId: liquidityToken?.chainId,
       chef: chefType,
       pid: farmId,
       enabled: Boolean(

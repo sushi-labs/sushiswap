@@ -1,13 +1,6 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
-import {
-  useAccount,
-  useChainId,
-  useConfig,
-  useTokenWithCache,
-  watchAccount,
-} from '@sushiswap/wagmi'
+import { watchAccount } from '@wagmi/core'
 import { nanoid } from 'nanoid'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -21,9 +14,11 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
 import { useSquidCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useSquidCrossChainTrade'
 import { useStargateCrossChainTrade } from 'src/lib/swap/useCrossChainTrade/useStargateCrossChainTrade'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId } from 'sushi/chain'
 import {
   SquidAdapterChainId,
@@ -37,6 +32,7 @@ import { defaultQuoteCurrency } from 'sushi/config'
 import { Amount, Native, Type, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
+import { useAccount, useChainId, useConfig } from 'wagmi'
 
 const getTokenAsString = (token: Type | string) =>
   typeof token === 'string'
@@ -392,7 +388,7 @@ const useCrossChainSwapTrade = () => {
       adapter,
     },
   } = useDerivedStateCrossChainSwap()
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance()
 
   const stargateCrossChainTrade = useStargateCrossChainTrade({
     tradeId,
@@ -401,8 +397,7 @@ const useCrossChainSwapTrade = () => {
     token0,
     token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     recipient: recipient as Address,
     enabled: Boolean(
       adapter === SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),
@@ -416,8 +411,7 @@ const useCrossChainSwapTrade = () => {
     token0,
     token1,
     amount: swapAmount,
-    slippagePercentage:
-      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
+    slippagePercentage: slippagePercent.toFixed(2),
     recipient: recipient as Address,
     enabled: Boolean(
       adapter !== SushiXSwap2Adapter.Stargate && swapAmount?.greaterThan(ZERO),

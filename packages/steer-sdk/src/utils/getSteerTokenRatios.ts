@@ -1,19 +1,11 @@
 import { getAddress } from 'viem'
+import type { SteerVault } from '../types/steer-vault'
 
 interface GetTokenRatiosProps {
-  vault: {
-    chainId: number
-    token0: {
-      address: string
-      decimals: number
-    }
-    token1: {
-      address: string
-      decimals: number
-    }
-    reserve0: string
-    reserve1: string
-  }
+  vault: Pick<
+    SteerVault,
+    'chainId' | 'token0' | 'token1' | 'reserve0' | 'reserve1'
+  >
   prices: Record<string, number>
 }
 

@@ -1,9 +1,5 @@
-'use client'
-
-import { Pool } from '@sushiswap/client'
 import {
   CardDescription,
-  Currency,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -13,15 +9,19 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
-import { ChainId } from 'sushi/chain'
-import { tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 
-import { incentiveRewardToToken } from '../../lib/functions'
+import type {
+  PoolIfIncentivized,
+  PoolWithFeeAprs,
+  PoolWithIncentiveApr,
+} from 'sushi'
+
+type RequiredPool = PoolIfIncentivized<PoolWithIncentiveApr<PoolWithFeeAprs>>
 
 interface APRHoverCardProps {
   children: ReactNode
-  pool: Pool
+  pool: RequiredPool
   showEmissions?: boolean
   smartPoolAPR?: number
 }
@@ -29,16 +29,12 @@ interface APRHoverCardProps {
 export const APRHoverCard: FC<APRHoverCardProps> = ({
   children,
   pool,
-  showEmissions = true,
   smartPoolAPR,
 }) => {
-  const totalAPR =
-    (typeof smartPoolAPR === 'number'
-      ? smartPoolAPR * 100
-      : pool.feeApr1d * 100) +
-    pool.incentives
-      .filter((el) => +el.rewardPerDay > 0)
-      .reduce((acc, cur) => acc + cur.apr * 100, 0)
+  const feeApr1d =
+    typeof smartPoolAPR === 'number' ? smartPoolAPR : pool.feeApr1d
+
+  const totalAPR = (feeApr1d + pool.incentiveApr) * 100
 
   const card = (
     <>
@@ -77,33 +73,6 @@ export const APRHoverCard: FC<APRHoverCardProps> = ({
               <span className="text-right text-sm">
                 {formatPercent(pool.incentiveApr)}
               </span>
-            </div>
-            <div className="flex flex-col items-end">
-              {pool.isIncentivized && showEmissions
-                ? pool.incentives.map((el, i) => {
-                    const amount = tryParseAmount(
-                      el.rewardPerDay.toString(),
-                      incentiveRewardToToken(el.chainId as ChainId, el),
-                    )
-                    if (!amount) return null
-
-                    return (
-                      <span
-                        key={i}
-                        className="flex gap-1 items-center text-[10px]"
-                      >
-                        +{' '}
-                        <Currency.Icon
-                          currency={amount?.currency}
-                          width={10}
-                          height={10}
-                        />
-                        {amount?.toSignificant(6)} {amount?.currency.symbol} per
-                        day
-                      </span>
-                    )
-                  })
-                : null}
             </div>
           </div>
           <div className="flex items-center gap-2">

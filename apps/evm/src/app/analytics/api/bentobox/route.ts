@@ -14,5 +14,9 @@ export async function GET(request: Request) {
     return new Response(result.error.message, { status: 422 })
   }
   const tokens = await getBentoBoxTokens(result.data)
-  return NextResponse.json(tokens)
+  return NextResponse.json(tokens, {
+    headers: {
+      'Cache-Control': 'public, max-age=60, stale-while-revalidate=600',
+    },
+  })
 }

@@ -27,10 +27,9 @@
     "preset": "@sushiswap/jest-config"
   },
   "dependencies": {
-    "@ethersproject/address": "5.7.0",
-    "@ethersproject/providers": "5.7.2",
     "copy-to-clipboard": "3.3.3",
-    "react-responsive": "9.0.0-beta.10"
+    "react-responsive": "9.0.0-beta.10",
+    "viem": "2.10.11"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

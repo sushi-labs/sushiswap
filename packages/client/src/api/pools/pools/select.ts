@@ -7,9 +7,12 @@ export const SushiPoolSelect = {
   chainId: true,
   protocol: true,
   swapFee: true,
-  twapEnabled: true,
   totalSupply: true,
   liquidityUSD: true,
+  reserve0: true,
+  reserve1: true,
+  token0Price: true,
+  token1Price: true,
   volumeUSD: true,
   feeApr1h: true,
   feeApr1d: true,
@@ -22,6 +25,7 @@ export const SushiPoolSelect = {
   incentiveApr: true,
   isIncentivized: true,
   wasIncentivized: true,
+  feesUSD: true,
   fees1h: true,
   fees1d: true,
   fees1w: true,
@@ -89,66 +93,6 @@ export const SushiPoolSelect = {
       id: true,
       address: true,
       chainId: true,
-
-      feeTier: true,
-
-      apr: true,
-      apr1d: true,
-      apr1w: true,
-      // apr1m: true,
-      // apr1y: true,
-
-      token0: {
-        select: {
-          id: true,
-          address: true,
-          name: true,
-          symbol: true,
-          decimals: true,
-        },
-      },
-      reserve0: true,
-      reserve0USD: true,
-      fees0: true,
-      fees0USD: true,
-
-      token1: {
-        select: {
-          id: true,
-          address: true,
-          name: true,
-          symbol: true,
-          decimals: true,
-        },
-      },
-      reserve1: true,
-      reserve1USD: true,
-      fees1: true,
-      fees1USD: true,
-
-      reserveUSD: true,
-      feesUSD: true,
-
-      strategy: true,
-      payloadHash: true,
-      // description: true,
-      // state: true
-
-      performanceFee: true,
-
-      lowerTick: true,
-      upperTick: true,
-
-      adjustmentFrequency: true,
-      lastAdjustmentTimestamp: true,
-
-      isEnabled: true,
-      wasEnabled: true,
-      isDeprecated: true,
-
-      creator: true,
-      admin: true,
-      manager: true,
     },
   },
 } as const satisfies Prisma.SushiPoolSelect

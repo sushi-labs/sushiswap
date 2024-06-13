@@ -7,6 +7,9 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: "sushi-api-staging-ip"
     networking.gke.io/managed-certificates: "sushi-api-staging-managed-certificate"
     nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      gzip on;
+      gzip_types application/json;
 spec:
   rules:
   - http:

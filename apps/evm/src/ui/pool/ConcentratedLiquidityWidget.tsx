@@ -3,23 +3,21 @@
 import { Transition } from '@headlessui/react'
 import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import { DialogTrigger, FormSection, Message, classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import {
-  getV3NonFungiblePositionManagerContractConfig,
-  useConcentratedPositionOwner,
-} from '@sushiswap/wagmi'
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
-import { Checker } from '@sushiswap/wagmi/systems'
+import { Button } from '@sushiswap/ui'
 import { FC, Fragment, useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   isWNativeSupported,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import { Position } from 'sushi/pool'
+import { Position } from 'sushi/pool/sushiswap-v3'
 
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Bound, Field } from '../../lib/constants'
 import { AddSectionReviewModalConcentrated } from './AddSectionReviewModalConcentrated'
 import {
@@ -263,19 +261,14 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = ({
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
-                contract={
-                  getV3NonFungiblePositionManagerContractConfig(chainId).address
-                }
+                contract={SUSHISWAP_V3_POSTIION_MANAGER[chainId]}
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
-                  contract={
-                    getV3NonFungiblePositionManagerContractConfig(chainId)
-                      .address
-                  }
+                  contract={SUSHISWAP_V3_POSTIION_MANAGER[chainId]}
                   enabled={!depositBDisabled}
                 >
                   <AddSectionReviewModalConcentrated

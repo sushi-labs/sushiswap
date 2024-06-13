@@ -3,12 +3,19 @@
 import { getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
 import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
-import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import React, { useMemo } from 'react'
 import ReactVirtualizedAutoSizer from 'react-virtualized-auto-sizer'
 import { formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
+
+import ReactEChartsCore from 'echarts-for-react/lib/core'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/visualMap'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
 
 const tailwind = resolveConfig(tailwindConfig)
 
@@ -48,6 +55,11 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
           </div>`
         },
         borderWidth: 0,
+      },
+      visualMap: {
+        show: false,
+        // @ts-ignore
+        color: [tailwind.theme.colors.blue['500']],
       },
       grid: {
         top: 2,
@@ -144,7 +156,11 @@ export function _SteerAPRChart({ timeseries, loading }: _SteerAPRChartProps) {
           {({ height, width }) => (
             <>
               {timeseries?.length ? (
-                <ReactECharts option={chartConfig} style={{ height, width }} />
+                <ReactEChartsCore
+                  echarts={echarts}
+                  option={chartConfig}
+                  style={{ height, width }}
+                />
               ) : (
                 <div
                   style={{ width, height }}

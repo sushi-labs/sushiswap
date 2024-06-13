@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import { HotJar } from '@sushiswap/ui/components/scripts'
+import { HotJar } from '@sushiswap/ui'
 import React from 'react'
 
 import { Header } from './header'

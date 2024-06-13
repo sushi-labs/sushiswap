@@ -1,7 +1,10 @@
 'use client'
 
-import { SteerVault } from '@sushiswap/client'
-import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '@sushiswap/steer-sdk'
+import {
+  STEER_PERIPHERY_ADDRESS,
+  SteerVault,
+  isSteerChainId,
+} from '@sushiswap/steer-sdk'
 import { steerPeripheryAbi } from '@sushiswap/steer-sdk/abi'
 import {
   Currency,
@@ -16,36 +19,30 @@ import {
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { List } from '@sushiswap/ui/components/list/List'
-import {
-  UseSimulateContractParameters,
-  useAccount,
-  usePublicClient,
-  useSimulateContract,
-  useSteerAccountPosition,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from '@sushiswap/wagmi'
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
-import { Chain, ChainId } from 'sushi/chain'
+import { Chain } from 'sushi/chain'
 import { Amount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
-import { Percent } from 'sushi/math'
 import {
   Address,
   SendTransactionReturnType,
   UserRejectedRequestError,
 } from 'viem'
 
-import {
-  SlippageToleranceStorageKey,
-  useSlippageTolerance,
-} from '@sushiswap/hooks'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/steer/useSteerAccountPosition'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { slippageAmount } from 'sushi'
+import { UseSimulateContractParameters, usePublicClient } from 'wagmi'
+import { useAccount } from 'wagmi'
+import { useSimulateContract } from 'wagmi'
+import { useWaitForTransactionReceipt } from 'wagmi'
+import { useWriteContract } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
@@ -59,14 +56,13 @@ interface SteerPositionAddReviewModalProps {
 
 export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
   ({ vault, onSuccess: _onSuccess, successLink, children }) => {
-    const { chainId } = vault as { chainId: ChainId }
     const { currencies, parsedAmounts } = useSteerPositionAddDerivedInfo({
       vault,
     })
 
     const client = usePublicClient()
     const { address, chain } = useAccount()
-    const [slippageTolerance] = useSlippageTolerance(
+    const [slippagePercent] = useSlippageTolerance(
       SlippageToleranceStorageKey.AddSteerLiquidity,
     )
     const { approved } = useApproved(APPROVE_TAG_STEER)
@@ -90,7 +86,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
       return [token0Amount, token1Amount]
     }, [accountPosition, currencies])
     const accountPositionValues = useTokenAmountDollarValues({
-      chainId: chainId,
+      chainId: vault.chainId,
       amounts: accountPositionAmountsArray,
     })
     const accountPositionValue = useMemo(
@@ -106,7 +102,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
       [parsedAmounts],
     )
     const newPositionValues = useTokenAmountDollarValues({
-      chainId: chainId,
+      chainId: vault.chainId,
       amounts: parsedAmountsArray,
     })
     const newPositionValue = useMemo(
@@ -115,15 +111,6 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     )
 
     // const hasExistingPosition = !!existingPosition
-
-    const slippagePercent = useMemo(() => {
-      return new Percent(
-        Math.floor(
-          +(slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance) * 100,
-        ),
-        10_000,
-      )
-    }, [slippageTolerance])
 
     const onSuccess = useCallback(
       (hash: SendTransactionReturnType) => {
@@ -135,7 +122,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
         void createToast({
           account: address,
           type: 'mint',
-          chainId: chainId,
+          chainId: vault.chainId,
           txHash: hash,
           promise: client.waitForTransactionReceipt({ hash }),
           summary: {
@@ -147,7 +134,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
           groupTimestamp: ts,
         })
       },
-      [client, currencies, address, chainId, _onSuccess],
+      [client, currencies, address, vault.chainId, _onSuccess],
     )
 
     const onError = useCallback((e: Error) => {
@@ -157,13 +144,18 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     }, [])
 
     const prepare = useMemo(() => {
-      if (!address || !currencies || !parsedAmounts || !isSteerChainId(chainId))
+      if (
+        !address ||
+        !currencies ||
+        !parsedAmounts ||
+        !isSteerChainId(vault.chainId)
+      )
         return undefined
 
       return {
-        address: STEER_PERIPHERY_ADDRESS[chainId],
+        address: STEER_PERIPHERY_ADDRESS[vault.chainId],
         abi: steerPeripheryAbi,
-        chainId,
+        chainId: vault.chainId,
         functionName: 'deposit',
         args: [
           vault.address as Address,
@@ -176,7 +168,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
       } satisfies UseSimulateContractParameters
     }, [
       address,
-      chainId,
+      vault.chainId,
       currencies,
       parsedAmounts,
       slippagePercent,
@@ -186,7 +178,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     const { data: simulation, isError } = useSimulateContract({
       ...prepare,
       query: {
-        enabled: Boolean(approved && chainId === chain?.id),
+        enabled: Boolean(approved && vault.chainId === chain?.id),
       },
     })
 
@@ -226,7 +218,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
     }, [writeContractAsync, simulation /*, adjustedGas*/])
 
     const { status } = useWaitForTransactionReceipt({
-      chainId: chainId,
+      chainId: vault.chainId,
       hash,
     })
 
@@ -247,7 +239,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
                   <List className="!pt-0">
                     <List.Control>
                       <List.KeyValue flex title="Network">
-                        {Chain.from(chainId)!.name}
+                        {Chain.from(vault.chainId)!.name}
                       </List.KeyValue>
                     </List.Control>
                   </List>
@@ -324,7 +316,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
           )}
         </DialogReview>
         <DialogConfirm
-          chainId={chainId as ChainId}
+          chainId={vault.chainId}
           status={status}
           testId="add-concentrated-liquidity-confirmation-modal"
           successMessage={`You successfully added liquidity to the ${vault.token0.symbol}/${vault.token1.symbol} pair`}

@@ -7,12 +7,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@sushiswap/ui/components/card'
+} from '@sushiswap/ui'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
 import { SkeletonText } from '@sushiswap/ui'
-import { ConnectButton, useAccount } from '@sushiswap/wagmi'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'wagmi'
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { usePoolPosition } from './PoolPositionProvider'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'

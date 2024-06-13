@@ -1,9 +1,9 @@
 'use client'
 
 import { DialogTrigger } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components'
-import { Checker } from '@sushiswap/wagmi/systems'
+import { Button } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
   isRouteProcessor4ChainId,

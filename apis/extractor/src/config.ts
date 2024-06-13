@@ -645,7 +645,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.TELOS]: {
     client: createPublicClient(extractorClientConfig(ChainId.TELOS)),
-    factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
+    factoriesV2: [],
     factoriesV3: [],
     factoriesAlgebra: [
       {
