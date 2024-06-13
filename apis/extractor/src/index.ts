@@ -2,7 +2,6 @@ import 'dotenv/config'
 
 import * as Sentry from '@sentry/node'
 import { Logger, LogsMessageLevel } from '@sushiswap/extractor'
-import compression from 'compression'
 import express, { type Express, type Response } from 'express'
 import { CHAIN_ID, PORT, SENTRY_DSN, SENTRY_ENVIRONMENT } from './config.js'
 import { CPUUsageStatistics } from './cpu-usage-statistics.js'
@@ -75,8 +74,6 @@ app.set('json replacer', (_key: string, value: any) =>
 app.use(Sentry.Handlers.requestHandler())
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler())
-
-app.use(compression())
 
 app.get('/health', (_, res: Response) => {
   return res.status(extractor.isStarted() ? 200 : 503).send()
