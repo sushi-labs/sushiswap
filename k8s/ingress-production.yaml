@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/server-snippet: |
       gzip on;
-      gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+      gzip_types application/json;
 spec:
   rules:
   - http:
