@@ -18,3 +18,11 @@ spec:
             name: nginx-service
             port:
               number: 80
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: sushi-api-staging-managed-certificate
+spec:
+  domains:
+    - staging.sushi.com

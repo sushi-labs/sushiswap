@@ -6,6 +6,7 @@ metadata:
     kubernetes.io/ingressClassName: "nginx"
     kubernetes.io/ingress.global-static-ip-name: "sushi-api-production-ip"
     networking.gke.io/managed-certificates: "sushi-api-production-managed-certificate"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
   rules:
   - http:
@@ -17,3 +18,11 @@ spec:
             name: nginx-service
             port:
               number: 80
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: sushi-api-production-managed-certificate
+spec:
+  domains:
+    - api.sushi.com
