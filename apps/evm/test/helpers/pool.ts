@@ -10,16 +10,11 @@ import {
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
 } from 'sushi/config'
 
 import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
 } from 'sushi'
 
 interface CreateV3PoolArgs {
@@ -494,7 +489,7 @@ export class PoolPage extends BaseActions {
         hasEnabledSteerVault: false,
         steerVaults: [],
       }
-      console.log({url: request.url.toLowerCase()})
+      console.log({ url: request.url.toLowerCase() })
 
       if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
         // console.log('RETURN POOLS MOCK')
