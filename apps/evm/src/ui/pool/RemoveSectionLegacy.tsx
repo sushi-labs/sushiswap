@@ -22,10 +22,10 @@ import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { SendTransactionReturnType, encodeFunctionData } from 'viem'
 
-// import {
-//   PermitInfo,
-//   PermitType,
-// } from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
+import {
+  PermitInfo,
+  PermitType,
+} from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
 import {
   getSushiSwapRouterContractConfig,
   useSushiSwapRouterContract,
@@ -52,11 +52,11 @@ import {
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
-// const REMOVE_V2_LIQUIDITY_PERMIT_INFO: PermitInfo = {
-//   version: '1',
-//   name: 'SushiSwap LP Token',
-//   type: PermitType.AMOUNT,
-// }
+const REMOVE_V2_LIQUIDITY_PERMIT_INFO: PermitInfo = {
+  version: '1',
+  name: 'SushiSwap LP Token',
+  type: PermitType.AMOUNT,
+}
 
 interface RemoveSectionLegacyProps {
   pool: Pool
@@ -433,7 +433,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                   guardWhen={+percentage <= 0}
                   guardText="Enter amount"
                 >
-                  <Checker.ApproveERC20
+                  <Checker.ApproveERC20WithPermit
                     size="default"
                     variant="outline"
                     fullWidth
@@ -444,9 +444,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                         _pool.chainId as SushiSwapV2ChainId,
                       ).address
                     }
-                    // permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
-                    // tag={APPROVE_TAG_REMOVE_LEGACY}
-                    // ttlStorageKey={TTLStorageKey.RemoveLiquidity}
+                    permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
+                    tag={APPROVE_TAG_REMOVE_LEGACY}
+                    ttlStorageKey={TTLStorageKey.RemoveLiquidity}
                   >
                     <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
                       <Button
@@ -463,7 +463,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                         )}
                       </Button>
                     </Checker.Success>
-                  </Checker.ApproveERC20>
+                  </Checker.ApproveERC20WithPermit>
                 </Checker.Guard>
               </Checker.Network>
             </Checker.Guard>
