@@ -494,7 +494,7 @@ export class PoolPage extends BaseActions {
         hasEnabledSteerVault: false,
         steerVaults: [],
       }
-      console.log({url: request.url.toLowerCase()})
+      console.log({ url: request.url.toLowerCase() })
 
       if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
         // console.log('RETURN POOLS MOCK')
