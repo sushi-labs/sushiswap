@@ -41,7 +41,6 @@ import {
 import { abs } from 'sushi/math'
 import { PoolCode } from 'sushi/router'
 import {
-  CURVE_NON_FACTORY_POOLS,
   DataFetcher,
   LiquidityProviders,
   NativeWrapBridgePoolCode,
@@ -54,8 +53,6 @@ import {
   BridgeBento,
   MultiRoute,
   PoolType,
-  // CurveMultitokenCore,
-  // CurveMultitokenPool,
   RPool,
   RToken,
   RouteStatus,
@@ -377,46 +374,6 @@ async function makeSwap(
     providers,
     poolFilter,
   )
-  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
-  // const cc = route.legs
-  //   .map((l) => {
-  //     if (
-  //       pcMap.get(l.uniqueId)?.liquidityProvider == LiquidityProviders.CurveSwap
-  //     )
-  //       return `${pcMap.get(l.uniqueId)?.poolName}: ${l.tokenFrom.symbol} -> ${
-  //         l.tokenTo.symbol
-  //       }  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
-  //   })
-  //   .filter((s) => s !== undefined)
-  // if (cc.length) console.log(cc.join('\n'))
-  // console.log(
-  //   'ROUTE:',
-  //   route.legs.map(
-  //     (l) =>
-  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`,
-  //   ),
-  // )
-  // const poolsS = new Map<string, [number, number][]>()
-  // route.legs.forEach(l => {
-  //   const pool = pcMap.get(l.uniqueId)?.pool
-  //   if (pool instanceof CurveMultitokenPool) {
-  //     const prev: [number, number][] = poolsS.get(pool.core.address) ?? []
-  //     prev.push([pool.index0, pool.index1])
-  //     poolsS.set(pool.core.address, prev)
-  //   }
-  // })
-  // Array.from(poolsS.entries()).forEach(([addr, ind]) => {
-  //   if (ind.length >= 2)
-  //     ind.forEach(([i0, i1]) => console.log(`    ${addr} ${i0}-${i1}`))
-  // })
-  // if (route.fromToken.symbol !== 'ETH' && route.toToken.symbol !== 'ETH') {
-  //   route.legs.forEach(l => {
-  //     if (l.tokenFrom.symbol == 'ETH')
-  //     console.log(`    IN ${l.tokenFrom.symbol} ${l.absolutePortion} ${l.uniqueId} `)
-  //     if (l.tokenTo.symbol == 'ETH')
-  //     console.log(`    OUT ${l.tokenTo.symbol} ${l.uniqueId} `)
-  //   })
-  // }
 
   if (route.status === RouteStatus.NoWay) {
     if (throwAtNoWay) throw new Error('NoWay')
@@ -1519,33 +1476,10 @@ describe('End-to-end RouteProcessor5 test', async () => {
       )
     })
 
-    const amountInForTest: Record<Address, number> = {
-      '0x93054188d876f558f4a66b2ef1d97d16edf0895b': 1e10,
-    }
-
-    const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
-    for (let i = 0; i < pools.length; ++i) {
-      const [address, type, [from, to]] = pools[i]
-      it(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async () => {
-        await env.snapshot.restore()
-        const amoutIn = BigInt(amountInForTest[address] ?? 1e18)
-        if (from instanceof Token)
-          await setRouterPrimaryBalance(
-            env.client,
-            env.user.address,
-            from.address as Address,
-            amoutIn * 2n,
-          )
-        intermidiateResult[0] = amoutIn
-        intermidiateResult = await updMakeSwap(
-          env,
-          from,
-          to,
-          intermidiateResult,
-          undefined,
-          [LiquidityProviders.CurveSwap],
-        )
-      })
+    const amountInForTest: Record<Address, bigint> = {
+      '0xfC636D819d1a98433402eC9dEC633d864014F28C': BigInt(1e24),
+      '0x890f4e345B1dAED0367A877a1612f86A1f86985f': BigInt(1e22),
+      // ???? 114 '0xC18cC39da8b11dA8c3541C598eE022258F9744da': BigInt(1e20),
     }
 
     const CURVE_POOLS_FOR_TEST = 20
@@ -1573,15 +1507,18 @@ describe('End-to-end RouteProcessor5 test', async () => {
         .map((p) => p.pool)
         .filter((p) => p.poolType() === PoolType.Curve)
       const pools = sortDecrByParam(curvePools, (p) =>
-        Number(p.reserve0 + p.reserve1),
+        Number(p.getReserve0() + p.getReserve1()),
       )
       for (let i = 0; i < CURVE_POOLS_FOR_TEST && i < pools.length; ++i) {
-        const address = pools[i].address
         const from = RToken2Type(pools[i].token0)
         const to = RToken2Type(pools[i].token1)
-        console.log(i, from.symbol, '->', to.symbol)
+        console.log(i, from.symbol, '->', to.symbol, 'pool:', pools[i].address)
         await env.snapshot.restore()
-        const amoutIn = BigInt(amountInForTest[address] ?? 1e18)
+        const amoutIn =
+          amountInForTest[pools[i].address] ??
+          BigInt(
+            Math.min(1e18, Math.round(Number(pools[i].getReserve0()) / 10)),
+          )
         if (from instanceof Token)
           await setRouterPrimaryBalance(
             env.client,
