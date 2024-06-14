@@ -400,11 +400,7 @@ export class PoolPage extends BaseActions {
     token0: Token,
     token1: Token,
     fee: number,
-    protocol:
-      | 'SUSHISWAP_V2'
-      | 'SUSHISWAP_V3'
-      | 'BENTOBOX_STABLE'
-      | 'BENTOBOX_CLASSIC',
+    protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3',
   ) {
     next.onFetch((request) => {
       // console.log('REQUEST', request.url.toLowerCase())
@@ -429,25 +425,6 @@ export class PoolPage extends BaseActions {
             SUSHISWAP_V2_FACTORY_ADDRESS[this.chainId as SushiSwapV2ChainId],
           tokenA,
           tokenB,
-        }).toLowerCase()
-      } else if (protocol === 'BENTOBOX_CLASSIC') {
-        address = computeTridentConstantPoolAddress({
-          factoryAddress:
-            TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[
-              this.chainId as TridentChainId
-            ],
-          tokenA,
-          tokenB,
-          fee,
-          twap: false,
-        }).toLowerCase()
-      } else if (protocol === 'BENTOBOX_STABLE') {
-        address = computeTridentStablePoolAddress({
-          factoryAddress:
-            TRIDENT_STABLE_POOL_FACTORY_ADDRESS[this.chainId as TridentChainId],
-          tokenA,
-          tokenB,
-          fee,
         }).toLowerCase()
       } else {
         console.error('>>>>>>>>> UNKNOWN PROTOCOL')
@@ -518,6 +495,7 @@ export class PoolPage extends BaseActions {
         hasEnabledSteerVault: false,
         steerVaults: [],
       }
+      console.log({url: request.url.toLowerCase()})
 
       if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
         // console.log('RETURN POOLS MOCK')
@@ -552,7 +530,7 @@ export class PoolPage extends BaseActions {
       } else if (
         request.url.toLowerCase().endsWith('/pool/api/graphPools'.toLowerCase())
       ) {
-        // console.log('RETURN GRAPH POOLS MOCK')
+        console.log('RETURN GRAPH POOLS MOCK')
       }
     })
   }

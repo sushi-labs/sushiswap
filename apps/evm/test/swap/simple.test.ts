@@ -12,8 +12,8 @@ import {
   // loadSnapshot,
 } from 'test/intercept-anvil'
 
-if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
-  new Error('NEXT_PUBLIC_CHAIN_ID not set')
+if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string' || !process.env.NEXT_PUBLIC_CHAIN_ID) {
+  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
 const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as SupportedChainId
