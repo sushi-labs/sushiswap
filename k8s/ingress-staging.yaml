@@ -18,3 +18,13 @@ spec:
             name: nginx-service
             port:
               number: 80
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+data:
+  gzip-level: "5"
+  gzip-types: application/json
+  use-gzip: "true"

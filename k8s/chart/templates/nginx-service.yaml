@@ -31,6 +31,9 @@ data:
       {{- end }}
       gzip on;
       gzip_types application/json;
+      # brotli on;
+      # brotli_comp_level 4;
+      # brotli_types application/json;
       map $uri $proxy_pass {
         ~^/(\w+)/(v(\d+\.)?(\d+\.)?(\*|\d+))\/(\d+)(/.*)? router-$6;
       }
