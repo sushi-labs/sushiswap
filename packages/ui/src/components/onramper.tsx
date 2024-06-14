@@ -18,14 +18,18 @@ import { ChainId } from 'sushi'
 import { Dialog, DialogOverlay, DialogPrimitive } from './dialog'
 import { IconButton } from './iconbutton'
 
-const TRANSAK_OVERRIDE_CHAIN_IDS = [ChainId.SKALE_EUROPA] as const
+const ONRAMP_OVERRIDE_CHAIN_IDS = [ChainId.SKALE_EUROPA] as const
 
-type TransakOverrideChainId = (typeof TRANSAK_OVERRIDE_CHAIN_IDS)[number]
+const ONRAMP_OVERRIDE = {
+  [ChainId.SKALE_EUROPA]: 'https://portal.skale.space/onramp',
+} as const
 
-export const isTransakOverrideChainId = (
+type OnrampOverrideChainId = (typeof ONRAMP_OVERRIDE_CHAIN_IDS)[number]
+
+export const isOnrampOverrideChainId = (
   chainId: number | undefined,
-): chainId is TransakOverrideChainId =>
-  TRANSAK_OVERRIDE_CHAIN_IDS.includes(chainId as TransakOverrideChainId)
+): chainId is OnrampOverrideChainId =>
+  ONRAMP_OVERRIDE_CHAIN_IDS.includes(chainId as OnrampOverrideChainId)
 
 export const OnramperButton: FC<{
   children: ReactNode
@@ -38,9 +42,9 @@ export const OnramperButton: FC<{
     setOpen(true)
   }, [setOpen])
 
-  return isTransakOverrideChainId(chainId) ? (
+  return isOnrampOverrideChainId(chainId) ? (
     <Link
-      href={'https://global.transak.com/'}
+      href={ONRAMP_OVERRIDE[chainId]}
       target="_blank"
       rel="noopener noreferrer"
     >
