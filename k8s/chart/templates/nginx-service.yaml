@@ -29,8 +29,6 @@ data:
         keepalive 2;
       }
       {{- end }}
-      gzip on;
-      gzip_types application/json;
       # brotli on;
       # brotli_comp_level 4;
       # brotli_types application/json;
@@ -39,6 +37,10 @@ data:
       }
       server {
         listen 80;
+        gzip on;
+        gzip_types application/json;
+        gzip_proxied any;
+        gzip_vary on;
         location / {
           proxy_http_version 1.1;
           proxy_set_header Host $host;
