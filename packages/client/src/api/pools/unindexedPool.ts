@@ -1,16 +1,11 @@
 import { Protocol } from '@sushiswap/database'
-import {
-  erc20Abi,
-  tridentConstantPoolAbi,
-  tridentStablePoolAbi,
-  uniswapV2PairAbi,
-  v3baseAbi,
-} from 'sushi/abi'
+import { erc20Abi, uniswapV2PairAbi, v3baseAbi } from 'sushi/abi'
 import { publicClientConfig } from 'sushi/config'
 import { type Address, type PublicClient, createPublicClient } from 'viem'
 
 import { getChainIdAddressFromId } from 'sushi/format'
-import { type getPoolFromDB } from './pool'
+import { type ID, SushiSwapProtocol } from 'sushi/types'
+import type { getPoolFromDB } from './pool'
 
 interface GetPoolArgs {
   client: PublicClient
@@ -87,94 +82,6 @@ async function getV2Pool({ client, address }: GetPoolArgs): Promise<Pool> {
   }
 }
 
-async function getTridentStablePool({
-  client,
-  address,
-}: GetPoolArgs): Promise<Pool> {
-  const [token0, token1, totalSupply, swapFee] = await client.multicall({
-    allowFailure: false,
-    contracts: [
-      {
-        address: address,
-        abi: tridentStablePoolAbi,
-        functionName: 'token0',
-      },
-      {
-        address: address,
-        abi: tridentStablePoolAbi,
-        functionName: 'token1',
-      },
-      {
-        address: address,
-        abi: tridentStablePoolAbi,
-        functionName: 'totalSupply',
-      },
-      {
-        address: address,
-        abi: tridentStablePoolAbi,
-        functionName: 'swapFee',
-      },
-    ],
-  })
-
-  return {
-    tokens: [token0, token1],
-    totalSupply: totalSupply.toString(),
-    // 30 => 0.003%
-    swapFee: Number(swapFee) / 10000,
-    twapEnabled: false,
-    protocol: Protocol.BENTOBOX_STABLE,
-  }
-}
-
-async function getTridentConstantPool({
-  client,
-  address,
-}: GetPoolArgs): Promise<Pool> {
-  const [token0, token1, totalSupply, swapFee, reserves] =
-    await client.multicall({
-      allowFailure: false,
-      contracts: [
-        {
-          address: address,
-          abi: tridentConstantPoolAbi,
-          functionName: 'token0',
-        },
-        {
-          address: address,
-          abi: tridentConstantPoolAbi,
-          functionName: 'token1',
-        },
-        {
-          address: address,
-          abi: tridentConstantPoolAbi,
-          functionName: 'totalSupply',
-        },
-        {
-          address: address,
-          abi: tridentConstantPoolAbi,
-          functionName: 'swapFee',
-        },
-        {
-          address: address,
-          abi: tridentConstantPoolAbi,
-          functionName: 'getReserves',
-        },
-      ],
-    })
-
-  const twapEnabled = reserves[2] > 0
-
-  return {
-    tokens: [token0, token1],
-    totalSupply: totalSupply.toString(),
-    // 30 => 0.003%
-    swapFee: Number(swapFee) / 10000,
-    twapEnabled,
-    protocol: Protocol.BENTOBOX_CLASSIC,
-  }
-}
-
 async function getV3Pool({ client, address }: GetPoolArgs): Promise<Pool> {
   const [token0, token1, liquidity, fee] = await client.multicall({
     allowFailure: false,
@@ -213,7 +120,7 @@ async function getV3Pool({ client, address }: GetPoolArgs): Promise<Pool> {
 
 // Thought ReturnType would be enough, needed to wrap it to make TS happy
 export async function getUnindexedPool(
-  poolId: string,
+  poolId: ID,
 ): Promise<Awaited<ReturnType<typeof getPoolFromDB>>> {
   const { chainId, address } = getChainIdAddressFromId(poolId)
 
@@ -241,12 +148,6 @@ export async function getUnindexedPool(
 
   let poolFetcher: (args: GetPoolArgs) => Promise<Pool>
   switch (lpTokenName) {
-    case 'Sushi Stable LP Token':
-      poolFetcher = getTridentStablePool
-      break
-    case 'Sushi Constant Product LP Token':
-      poolFetcher = getTridentConstantPool
-      break
     case 'SushiSwap LP Token':
       poolFetcher = getV2Pool
       break
@@ -270,61 +171,86 @@ export async function getUnindexedPool(
   return {
     id: poolId,
     address,
+    chainId,
     name: poolName,
-    chainId: Number(chainId),
+
+    swapFee: pool.swapFee,
+
     token0: {
-      id: `${chainId}:${token0.address.toLowerCase()}`,
-      address: token0.address.toLowerCase(),
+      id: `${chainId}:${token0.address.toLowerCase()}` as ID,
+      address: token0.address.toLowerCase() as Address,
+      chainId,
       symbol: token0.symbol,
       name: token0.name,
       decimals: token0.decimals,
     },
     token1: {
-      id: `${chainId}:${token1.address.toLowerCase()}`,
-      address: token1.address.toLowerCase(),
+      id: `${chainId}:${token1.address.toLowerCase()}` as ID,
+      address: token1.address.toLowerCase() as Address,
+      chainId,
       symbol: token1.symbol,
       name: token1.name,
       decimals: token1.decimals,
     },
+
+    txCount: 0,
+    txCount1d: 0,
+    txCount1dChange: 0,
+    txCount1w: 0,
+    txCount1wChange: 0,
+    txCount1m: 0,
+    txCount1mChange: 0,
+
+    feesUSD: 0,
+    feesUSD1d: 0,
+    feesUSD1dChange: 0,
+    feesUSD1w: 0,
+    feesUSD1wChange: 0,
+    feesUSD1m: 0,
+    feesUSD1mChange: 0,
+
+    volumeUSD: 0,
+    volumeUSD1d: 0,
+    volumeUSD1dChange: 0,
+    volumeUSD1w: 0,
+    volumeUSD1wChange: 0,
+    volumeUSD1m: 0,
+    volumeUSD1mChange: 0,
+
+    reserve0: BigInt(0),
+    reserve1: BigInt(0),
+    liquidity: BigInt(pool.totalSupply),
+
+    liquidityUSD: 0,
+    liquidityUSD1d: 0,
+    liquidityUSD1dChange: 0,
+    liquidityUSD1wChange: 0,
+    liquidityUSD1mChange: 0,
+
+    protocol:
+      pool.protocol === 'SUSHISWAP_V2'
+        ? SushiSwapProtocol.SUSHISWAP_V2
+        : SushiSwapProtocol.SUSHISWAP_V3,
+
+    incentiveApr: 0,
+    incentives: [],
+    isIncentivized: false,
+    wasIncentivized: false,
+
     hasEnabledSteerVault: false,
     hadEnabledSteerVault: false,
     steerVaults: [],
-    liquidityUSD: '0',
-    volumeUSD: '0',
-    feesUSD: '0',
-    liquidityUSDChange1h: 0,
-    liquidityUSDChange1d: 0,
-    liquidityUSDChange1w: 0,
-    liquidityUSDChange1m: 0,
+
     feeApr1h: 0,
     feeApr1d: 0,
     feeApr1w: 0,
     feeApr1m: 0,
+
     totalApr1h: 0,
     totalApr1d: 0,
     totalApr1w: 0,
     totalApr1m: 0,
-    incentiveApr: 0,
-    isIncentivized: false,
-    wasIncentivized: false,
-    volume1h: '0',
-    volume1d: '0',
-    volume1w: '0',
-    volume1m: '0',
-    volumeChange1h: 0,
-    volumeChange1d: 0,
-    volumeChange1w: 0,
-    volumeChange1m: 0,
-    fees1h: '0',
-    fees1d: '0',
-    fees1w: '0',
-    fees1m: '0',
-    feesChange1h: 0,
-    feesChange1d: 0,
-    feesChange1w: 0,
-    feesChange1m: 0,
-    isBlacklisted: false,
-    incentives: [],
-    ...pool,
+    token0Price: 0,
+    token1Price: 0,
   } as Awaited<ReturnType<typeof getPoolFromDB>>
 }

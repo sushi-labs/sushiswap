@@ -1,9 +1,8 @@
 'use client'
 
 import { CogIcon } from '@heroicons/react-v1/solid'
-import { SteerVault } from '@sushiswap/client'
 import { SlippageToleranceStorageKey, useDebounce } from '@sushiswap/hooks'
-import { isSteerChainId } from '@sushiswap/steer-sdk'
+import { SteerVault, isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerMultiPositionManager } from '@sushiswap/steer-sdk/abi'
 import {
   Button,
@@ -18,26 +17,21 @@ import {
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSteerAccountPosition } from 'src/lib/wagmi/hooks/steer/useSteerAccountPosition'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { slippageAmount } from 'sushi'
+import { Amount, Token } from 'sushi/currency'
+import { Percent } from 'sushi/math'
+import { SendTransactionReturnType, UserRejectedRequestError } from 'viem'
 import {
-  Checker,
   UseSimulateContractParameters,
   useAccount,
   usePublicClient,
   useSimulateContract,
-  useSteerAccountPosition,
   useWriteContract,
-} from '@sushiswap/wagmi'
-import React, { FC, useCallback, useMemo, useState } from 'react'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { slippageAmount } from 'sushi'
-import { ChainId } from 'sushi/chain'
-import { Amount, Token } from 'sushi/currency'
-import { Percent } from 'sushi/math'
-import {
-  Address,
-  SendTransactionReturnType,
-  UserRejectedRequestError,
-} from 'viem'
+} from 'wagmi'
 
 interface SteerPositionRemoveProps {
   vault: SteerVault
@@ -46,8 +40,6 @@ interface SteerPositionRemoveProps {
 export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   vault,
 }) => {
-  const { chainId } = vault as { chainId: ChainId }
-
   const client = usePublicClient()
   const { address: account, chain } = useAccount()
   const [value, setValue] = useState<string>('0')
@@ -63,11 +55,11 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
     })
 
   const [token0, token1] = useMemo(() => {
-    const token0 = new Token({ chainId: chainId, ...vault.pool.token0 })
-    const token1 = new Token({ chainId: chainId, ...vault.pool.token1 })
+    const token0 = new Token(vault.token0)
+    const token1 = new Token(vault.token1)
 
     return [token0, token1]
-  }, [chainId, vault])
+  }, [vault])
 
   const tokenAmountsTotal = useMemo(() => {
     const token0Amount = Amount.fromRawAmount(
@@ -107,7 +99,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
       void createToast({
         account,
         type: 'burn',
-        chainId: chainId,
+        chainId: vault.chainId,
         txHash: hash,
         promise: client.waitForTransactionReceipt({ hash }),
         summary: {
@@ -119,7 +111,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
         groupTimestamp: ts,
       })
     },
-    [client, account, chainId, token0.symbol, token1.symbol],
+    [client, account, vault.chainId, token0.symbol, token1.symbol],
   )
 
   const onError = useCallback((e: Error) => {
@@ -134,13 +126,13 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
       !position ||
       position?.steerTokenBalance === 0n ||
       !tokenAmountsDiscounted ||
-      !isSteerChainId(chainId)
+      !isSteerChainId(vault.chainId)
     )
       return undefined
 
     return {
-      address: vault.address as Address,
-      chainId,
+      address: vault.address,
+      chainId: vault.chainId,
       abi: steerMultiPositionManager,
       functionName: 'withdraw',
       args: [
@@ -152,7 +144,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
     } satisfies UseSimulateContractParameters
   }, [
     account,
-    chainId,
+    vault.chainId,
     position,
     slippagePercent,
     tokenAmountsDiscounted,
@@ -162,7 +154,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   const { data: simulation } = useSimulateContract({
     ...prepare,
     query: {
-      enabled: prepare && chainId === chain?.id,
+      enabled: prepare && vault.chainId === chain?.id,
     },
   })
 
@@ -279,7 +271,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           fullWidth
           variant="outline"
           size="xl"
-          chainId={chainId}
+          chainId={vault.chainId}
         >
           <Button
             size="xl"

@@ -1,8 +1,8 @@
 import {
   ChainType,
   DexName,
-  Hook,
-  RouteRequest,
+  type Hook,
+  type RouteRequest,
   SquidCallType,
 } from '@0xsquid/squid-types'
 import { UseTradeReturn } from '@sushiswap/react-query'
@@ -225,11 +225,8 @@ export const getSquidRouteRequest = ({
           (srcTrade as UseTradeReturn).minAmountOut as Amount<Currency>
         ).quotient.toString()
       : amount.quotient.toString(),
-    slippageConfig: {
-      slippage: Number(slippagePercentage),
-      autoMode: 1,
-    },
-    prefer: [DexName.SUSHISWAP_V3, DexName.SUSHISWAP],
+    slippage: +slippagePercentage,
+    prefer: [DexName.SUSHISWAP_V3, DexName.SUSHISWAP_V2],
     quoteOnly: !fromAddress || !toAddress,
   }
 

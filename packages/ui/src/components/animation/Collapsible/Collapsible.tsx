@@ -1,3 +1,5 @@
+'use client'
+
 import { FC, ReactNode } from 'react'
 import { animated, useSpring } from 'react-spring'
 import useResizeObserver from 'use-resize-observer'

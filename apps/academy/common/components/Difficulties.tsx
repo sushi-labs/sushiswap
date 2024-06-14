@@ -1,7 +1,7 @@
 import { DIFFICULTY_ELEMENTS } from 'common/helpers'
 import { FC } from 'react'
 
-import { CircleIcon } from '@sushiswap/ui/components/icons'
+import { CircleIcon } from '@sushiswap/ui'
 import { DifficultyEntity } from '../../.mesh'
 
 interface Difficulties {

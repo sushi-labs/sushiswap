@@ -23,9 +23,9 @@ export const SushiBarProvider: FC<{
 
   const [sushiBalance, totalSupply, apy] = useMemo(
     () => [
-      tryParseAmount(data?.xsushi?.sushiSupply, SUSHI[ChainId.ETHEREUM]),
-      tryParseAmount(data?.xsushi?.xSushiSupply, XSUSHI[ChainId.ETHEREUM]),
-      data?.xsushi?.apr1m ? data.xsushi.apr1m * 12 : undefined,
+      tryParseAmount(data?.sushiSupply, SUSHI[ChainId.ETHEREUM]),
+      tryParseAmount(data?.xSushiSupply, XSUSHI[ChainId.ETHEREUM]),
+      data && data?.apr1m !== undefined ? Number(data.apr1m) * 12 : undefined,
     ],
     [data],
   )

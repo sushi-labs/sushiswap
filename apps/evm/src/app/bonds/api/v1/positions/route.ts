@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 import {
   BondsPositionsApiSchema,
   getBondPositionsFromSubgraph,
@@ -19,7 +21,10 @@ export async function GET(request: Request) {
 
   try {
     const positions = await getBondPositionsFromSubgraph(result.data)
-    return NextResponse.json(positions, { headers: CORS })
+
+    return NextResponse.json(positions, {
+      headers: CORS,
+    })
   } catch (e) {
     return NextResponse.json(e, { headers: CORS })
   }

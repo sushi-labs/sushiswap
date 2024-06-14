@@ -6,7 +6,7 @@ import {
   FantomCircle,
   OptimismCircle,
   PolygonCircle,
-} from '@sushiswap/ui/components/icons'
+} from '@sushiswap/ui'
 
 import {
   AcademyIcon,

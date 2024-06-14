@@ -1,4 +1,4 @@
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import Image from 'next/legacy/image'
 import React, { FC } from 'react'
 

@@ -12,11 +12,12 @@ import {
   Message,
   NetworkIcon,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Icon } from '@sushiswap/ui/components/currency/Icon'
-import { List } from '@sushiswap/ui/components/list'
-import { TokenSecurityView, useTokenWithCache } from '@sushiswap/wagmi'
+import { Button } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { useCallback, useMemo } from 'react'
+import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { Chain } from 'sushi/chain'
 import {
   defaultCurrency,
@@ -133,7 +134,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
             <div className="flex gap-4 pb-2">
               {token0 && token0NotInList ? (
                 <div className="relative pr-3">
-                  <Icon currency={token0} width={44} height={44} />
+                  <Currency.Icon currency={token0} width={44} height={44} />
                   <NetworkIcon
                     chainId={chainId0}
                     className="absolute bottom-0 right-0"
@@ -144,7 +145,7 @@ export const CrossChainSwapTokenNotFoundDialog = () => {
               ) : null}
               {token1 && token1NotInList ? (
                 <div className="relative pr-3">
-                  <Icon currency={token1} width={44} height={44} />
+                  <Currency.Icon currency={token1} width={44} height={44} />
                   <NetworkIcon
                     chainId={chainId1}
                     className="absolute bottom-0 right-0"

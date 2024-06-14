@@ -1,0 +1,5692 @@
+"""
+Marks the GraphQL type as indexable entity.  Each type that should be an entity is required to be annotated with this directive.
+"""
+directive @entity on OBJECT
+
+"""Defined a Subgraph ID for an object type"""
+directive @subgraphId(id: String!) on OBJECT
+
+"""
+creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API.
+"""
+directive @derivedFrom(field: String!) on FIELD_DEFINITION
+
+enum Aggregation_interval {
+  hour
+  day
+}
+
+type Balance {
+  id: ID!
+  token: Token!
+  user: User!
+  share: BigInt!
+}
+
+input Balance_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_contains_nocase: String
+  user_not_contains: String
+  user_not_contains_nocase: String
+  user_starts_with: String
+  user_starts_with_nocase: String
+  user_not_starts_with: String
+  user_not_starts_with_nocase: String
+  user_ends_with: String
+  user_ends_with_nocase: String
+  user_not_ends_with: String
+  user_not_ends_with_nocase: String
+  user_: User_filter
+  share: BigInt
+  share_not: BigInt
+  share_gt: BigInt
+  share_lt: BigInt
+  share_gte: BigInt
+  share_lte: BigInt
+  share_in: [BigInt!]
+  share_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Balance_filter]
+  or: [Balance_filter]
+}
+
+enum Balance_orderBy {
+  id
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  user
+  user__id
+  user__block
+  user__timestamp
+  share
+}
+
+type BentoBox {
+  """ BentoBox address """
+  id: ID!
+
+  """ Protocols that belong to this bento box """
+  protocols(skip: Int = 0, first: Int = 100, orderBy: Protocol_orderBy, orderDirection: OrderDirection, where: Protocol_filter): [Protocol!]
+
+  """ Users that belong to this bento box """
+  users(skip: Int = 0, first: Int = 100, orderBy: User_orderBy, orderDirection: OrderDirection, where: User_filter): [User!]
+
+  """ Tokens that belong to this bento box """
+  tokens(skip: Int = 0, first: Int = 100, orderBy: Token_orderBy, orderDirection: OrderDirection, where: Token_filter): [Token!]
+
+  """ Master contracts that belong to this bento box """
+  masterContracts(skip: Int = 0, first: Int = 100, orderBy: MasterContract_orderBy, orderDirection: OrderDirection, where: MasterContract_filter): [MasterContract!]!
+
+  """ Clones that belong to this bento box """
+  clones(skip: Int = 0, first: Int = 100, orderBy: Clone_orderBy, orderDirection: OrderDirection, where: Clone_filter): [Clone!]
+
+  """ Flash loans that belong to this bento box """
+  flashloans(skip: Int = 0, first: Int = 100, orderBy: FlashLoan_orderBy, orderDirection: OrderDirection, where: FlashLoan_filter): [FlashLoan!]
+
+  """ Transactions that belong to this bento box """
+  transactions(skip: Int = 0, first: Int = 100, orderBy: Transaction_orderBy, orderDirection: OrderDirection, where: Transaction_filter): [Transaction!]
+
+  """ Totals that belong to this bento box """
+  totals(skip: Int = 0, first: Int = 100, orderBy: Rebase_orderBy, orderDirection: OrderDirection, where: Rebase_filter): [Rebase!]
+}
+
+type BentoBoxDailyKpi {
+  """ created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
+  """
+  id: ID!
+
+  """ Start date """
+  date: Int!
+
+  """ Deposit count """
+  depositCount: BigInt!
+
+  """ Deposit count for the given timeframe """
+  newDepositCount: BigInt!
+
+  """ Withdraw count """
+  withdrawCount: BigInt!
+
+  """ Withdraw count for the given timeframe """
+  newWithdrawCount: BigInt!
+
+  """ Transfer count """
+  transferCount: BigInt!
+
+  """ Transfer count for the given timeframe """
+  newTransferCount: BigInt!
+
+  """ Protocol count """
+  protocolCount: BigInt!
+
+  """ Protocol count for the given timeframe """
+  newProtocolCount: BigInt!
+
+  """ User count """
+  userCount: BigInt!
+
+  """ User count for the given timeframe """
+  newUserCount: BigInt!
+
+  """ Token count """
+  tokenCount: BigInt!
+
+  """ Token count for the given timeframe """
+  newTokenCount: BigInt!
+
+  """ Master contract count """
+  masterContractCount: BigInt!
+
+  """ Master contract count for the given timeframe """
+  newMasterContractCount: BigInt!
+
+  """ Clone count """
+  cloneCount: BigInt!
+
+  """ Clone count for the given timeframe """
+  newCloneCount: BigInt!
+
+  """ Flash loan count """
+  flashloanCount: BigInt!
+
+  """ Flash loan count for the given timeframe """
+  newFlashloanCount: BigInt!
+
+  """ Transaction count """
+  transactionCount: BigInt!
+
+  """ Transaction count for the given timeframe """
+  newTransactionCount: BigInt!
+
+  """ Strategy count """
+  strategyCount: BigInt!
+
+  """ Strategy for the given timeframe """
+  newStrategyCount: BigInt!
+
+  """ Active strategy count """
+  activeStrategyCount: BigInt!
+
+  """ Active strategy count for the given timeframe """
+  newActiveStrategyCount: BigInt!
+
+  """ Pending strategy count """
+  pendingStrategyCount: BigInt!
+
+  """ Pending strategy count for the given timeframe """
+  newPendingStrategyCount: BigInt!
+}
+
+input BentoBoxDailyKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  depositCount: BigInt
+  depositCount_not: BigInt
+  depositCount_gt: BigInt
+  depositCount_lt: BigInt
+  depositCount_gte: BigInt
+  depositCount_lte: BigInt
+  depositCount_in: [BigInt!]
+  depositCount_not_in: [BigInt!]
+  newDepositCount: BigInt
+  newDepositCount_not: BigInt
+  newDepositCount_gt: BigInt
+  newDepositCount_lt: BigInt
+  newDepositCount_gte: BigInt
+  newDepositCount_lte: BigInt
+  newDepositCount_in: [BigInt!]
+  newDepositCount_not_in: [BigInt!]
+  withdrawCount: BigInt
+  withdrawCount_not: BigInt
+  withdrawCount_gt: BigInt
+  withdrawCount_lt: BigInt
+  withdrawCount_gte: BigInt
+  withdrawCount_lte: BigInt
+  withdrawCount_in: [BigInt!]
+  withdrawCount_not_in: [BigInt!]
+  newWithdrawCount: BigInt
+  newWithdrawCount_not: BigInt
+  newWithdrawCount_gt: BigInt
+  newWithdrawCount_lt: BigInt
+  newWithdrawCount_gte: BigInt
+  newWithdrawCount_lte: BigInt
+  newWithdrawCount_in: [BigInt!]
+  newWithdrawCount_not_in: [BigInt!]
+  transferCount: BigInt
+  transferCount_not: BigInt
+  transferCount_gt: BigInt
+  transferCount_lt: BigInt
+  transferCount_gte: BigInt
+  transferCount_lte: BigInt
+  transferCount_in: [BigInt!]
+  transferCount_not_in: [BigInt!]
+  newTransferCount: BigInt
+  newTransferCount_not: BigInt
+  newTransferCount_gt: BigInt
+  newTransferCount_lt: BigInt
+  newTransferCount_gte: BigInt
+  newTransferCount_lte: BigInt
+  newTransferCount_in: [BigInt!]
+  newTransferCount_not_in: [BigInt!]
+  protocolCount: BigInt
+  protocolCount_not: BigInt
+  protocolCount_gt: BigInt
+  protocolCount_lt: BigInt
+  protocolCount_gte: BigInt
+  protocolCount_lte: BigInt
+  protocolCount_in: [BigInt!]
+  protocolCount_not_in: [BigInt!]
+  newProtocolCount: BigInt
+  newProtocolCount_not: BigInt
+  newProtocolCount_gt: BigInt
+  newProtocolCount_lt: BigInt
+  newProtocolCount_gte: BigInt
+  newProtocolCount_lte: BigInt
+  newProtocolCount_in: [BigInt!]
+  newProtocolCount_not_in: [BigInt!]
+  userCount: BigInt
+  userCount_not: BigInt
+  userCount_gt: BigInt
+  userCount_lt: BigInt
+  userCount_gte: BigInt
+  userCount_lte: BigInt
+  userCount_in: [BigInt!]
+  userCount_not_in: [BigInt!]
+  newUserCount: BigInt
+  newUserCount_not: BigInt
+  newUserCount_gt: BigInt
+  newUserCount_lt: BigInt
+  newUserCount_gte: BigInt
+  newUserCount_lte: BigInt
+  newUserCount_in: [BigInt!]
+  newUserCount_not_in: [BigInt!]
+  tokenCount: BigInt
+  tokenCount_not: BigInt
+  tokenCount_gt: BigInt
+  tokenCount_lt: BigInt
+  tokenCount_gte: BigInt
+  tokenCount_lte: BigInt
+  tokenCount_in: [BigInt!]
+  tokenCount_not_in: [BigInt!]
+  newTokenCount: BigInt
+  newTokenCount_not: BigInt
+  newTokenCount_gt: BigInt
+  newTokenCount_lt: BigInt
+  newTokenCount_gte: BigInt
+  newTokenCount_lte: BigInt
+  newTokenCount_in: [BigInt!]
+  newTokenCount_not_in: [BigInt!]
+  masterContractCount: BigInt
+  masterContractCount_not: BigInt
+  masterContractCount_gt: BigInt
+  masterContractCount_lt: BigInt
+  masterContractCount_gte: BigInt
+  masterContractCount_lte: BigInt
+  masterContractCount_in: [BigInt!]
+  masterContractCount_not_in: [BigInt!]
+  newMasterContractCount: BigInt
+  newMasterContractCount_not: BigInt
+  newMasterContractCount_gt: BigInt
+  newMasterContractCount_lt: BigInt
+  newMasterContractCount_gte: BigInt
+  newMasterContractCount_lte: BigInt
+  newMasterContractCount_in: [BigInt!]
+  newMasterContractCount_not_in: [BigInt!]
+  cloneCount: BigInt
+  cloneCount_not: BigInt
+  cloneCount_gt: BigInt
+  cloneCount_lt: BigInt
+  cloneCount_gte: BigInt
+  cloneCount_lte: BigInt
+  cloneCount_in: [BigInt!]
+  cloneCount_not_in: [BigInt!]
+  newCloneCount: BigInt
+  newCloneCount_not: BigInt
+  newCloneCount_gt: BigInt
+  newCloneCount_lt: BigInt
+  newCloneCount_gte: BigInt
+  newCloneCount_lte: BigInt
+  newCloneCount_in: [BigInt!]
+  newCloneCount_not_in: [BigInt!]
+  flashloanCount: BigInt
+  flashloanCount_not: BigInt
+  flashloanCount_gt: BigInt
+  flashloanCount_lt: BigInt
+  flashloanCount_gte: BigInt
+  flashloanCount_lte: BigInt
+  flashloanCount_in: [BigInt!]
+  flashloanCount_not_in: [BigInt!]
+  newFlashloanCount: BigInt
+  newFlashloanCount_not: BigInt
+  newFlashloanCount_gt: BigInt
+  newFlashloanCount_lt: BigInt
+  newFlashloanCount_gte: BigInt
+  newFlashloanCount_lte: BigInt
+  newFlashloanCount_in: [BigInt!]
+  newFlashloanCount_not_in: [BigInt!]
+  transactionCount: BigInt
+  transactionCount_not: BigInt
+  transactionCount_gt: BigInt
+  transactionCount_lt: BigInt
+  transactionCount_gte: BigInt
+  transactionCount_lte: BigInt
+  transactionCount_in: [BigInt!]
+  transactionCount_not_in: [BigInt!]
+  newTransactionCount: BigInt
+  newTransactionCount_not: BigInt
+  newTransactionCount_gt: BigInt
+  newTransactionCount_lt: BigInt
+  newTransactionCount_gte: BigInt
+  newTransactionCount_lte: BigInt
+  newTransactionCount_in: [BigInt!]
+  newTransactionCount_not_in: [BigInt!]
+  strategyCount: BigInt
+  strategyCount_not: BigInt
+  strategyCount_gt: BigInt
+  strategyCount_lt: BigInt
+  strategyCount_gte: BigInt
+  strategyCount_lte: BigInt
+  strategyCount_in: [BigInt!]
+  strategyCount_not_in: [BigInt!]
+  newStrategyCount: BigInt
+  newStrategyCount_not: BigInt
+  newStrategyCount_gt: BigInt
+  newStrategyCount_lt: BigInt
+  newStrategyCount_gte: BigInt
+  newStrategyCount_lte: BigInt
+  newStrategyCount_in: [BigInt!]
+  newStrategyCount_not_in: [BigInt!]
+  activeStrategyCount: BigInt
+  activeStrategyCount_not: BigInt
+  activeStrategyCount_gt: BigInt
+  activeStrategyCount_lt: BigInt
+  activeStrategyCount_gte: BigInt
+  activeStrategyCount_lte: BigInt
+  activeStrategyCount_in: [BigInt!]
+  activeStrategyCount_not_in: [BigInt!]
+  newActiveStrategyCount: BigInt
+  newActiveStrategyCount_not: BigInt
+  newActiveStrategyCount_gt: BigInt
+  newActiveStrategyCount_lt: BigInt
+  newActiveStrategyCount_gte: BigInt
+  newActiveStrategyCount_lte: BigInt
+  newActiveStrategyCount_in: [BigInt!]
+  newActiveStrategyCount_not_in: [BigInt!]
+  pendingStrategyCount: BigInt
+  pendingStrategyCount_not: BigInt
+  pendingStrategyCount_gt: BigInt
+  pendingStrategyCount_lt: BigInt
+  pendingStrategyCount_gte: BigInt
+  pendingStrategyCount_lte: BigInt
+  pendingStrategyCount_in: [BigInt!]
+  pendingStrategyCount_not_in: [BigInt!]
+  newPendingStrategyCount: BigInt
+  newPendingStrategyCount_not: BigInt
+  newPendingStrategyCount_gt: BigInt
+  newPendingStrategyCount_lt: BigInt
+  newPendingStrategyCount_gte: BigInt
+  newPendingStrategyCount_lte: BigInt
+  newPendingStrategyCount_in: [BigInt!]
+  newPendingStrategyCount_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [BentoBoxDailyKpi_filter]
+  or: [BentoBoxDailyKpi_filter]
+}
+
+enum BentoBoxDailyKpi_orderBy {
+  id
+  date
+  depositCount
+  newDepositCount
+  withdrawCount
+  newWithdrawCount
+  transferCount
+  newTransferCount
+  protocolCount
+  newProtocolCount
+  userCount
+  newUserCount
+  tokenCount
+  newTokenCount
+  masterContractCount
+  newMasterContractCount
+  cloneCount
+  newCloneCount
+  flashloanCount
+  newFlashloanCount
+  transactionCount
+  newTransactionCount
+  strategyCount
+  newStrategyCount
+  activeStrategyCount
+  newActiveStrategyCount
+  pendingStrategyCount
+  newPendingStrategyCount
+}
+
+type BentoBoxHourlyKpi {
+  """ created by a prefix 'bentobox-hour-' and unix timestamp, e.g. 'bentobox-hour-1657270000'
+  """
+  id: ID!
+
+  """ Start date """
+  date: Int!
+
+  """ Deposit count """
+  depositCount: BigInt!
+
+  """ Deposit count for the given timeframe """
+  newDepositCount: BigInt!
+
+  """ Withdraw count """
+  withdrawCount: BigInt!
+
+  """ Withdraw count for the given timeframe """
+  newWithdrawCount: BigInt!
+
+  """ Transfer count """
+  transferCount: BigInt!
+
+  """ Transfer count for the given timeframe """
+  newTransferCount: BigInt!
+
+  """ Protocol count """
+  protocolCount: BigInt!
+
+  """ Protocol count for the given timeframe """
+  newProtocolCount: BigInt!
+
+  """ User count """
+  userCount: BigInt!
+
+  """ User count for the given timeframe """
+  newUserCount: BigInt!
+
+  """ Token count """
+  tokenCount: BigInt!
+
+  """ Token count for the given timeframe """
+  newTokenCount: BigInt!
+
+  """ Master contract count """
+  masterContractCount: BigInt!
+
+  """ Master contract count for the given timeframe """
+  newMasterContractCount: BigInt!
+
+  """ Clone count """
+  cloneCount: BigInt!
+
+  """ Clone count for the given timeframe """
+  newCloneCount: BigInt!
+
+  """ Flash loan count """
+  flashloanCount: BigInt!
+
+  """ Flash loan count for the given timeframe """
+  newFlashloanCount: BigInt!
+
+  """ Transaction count """
+  transactionCount: BigInt!
+
+  """ Transaction count for the given timeframe """
+  newTransactionCount: BigInt!
+
+  """ Strategy count """
+  strategyCount: BigInt!
+
+  """ Strategy for the given timeframe """
+  newStrategyCount: BigInt!
+
+  """ Active strategy count """
+  activeStrategyCount: BigInt!
+
+  """ Active strategy count given timeframe """
+  newActiveStrategyCount: BigInt!
+
+  """ Pending strategy count """
+  pendingStrategyCount: BigInt!
+
+  """ Pending strategy count given timeframe """
+  newPendingStrategyCount: BigInt!
+}
+
+input BentoBoxHourlyKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  depositCount: BigInt
+  depositCount_not: BigInt
+  depositCount_gt: BigInt
+  depositCount_lt: BigInt
+  depositCount_gte: BigInt
+  depositCount_lte: BigInt
+  depositCount_in: [BigInt!]
+  depositCount_not_in: [BigInt!]
+  newDepositCount: BigInt
+  newDepositCount_not: BigInt
+  newDepositCount_gt: BigInt
+  newDepositCount_lt: BigInt
+  newDepositCount_gte: BigInt
+  newDepositCount_lte: BigInt
+  newDepositCount_in: [BigInt!]
+  newDepositCount_not_in: [BigInt!]
+  withdrawCount: BigInt
+  withdrawCount_not: BigInt
+  withdrawCount_gt: BigInt
+  withdrawCount_lt: BigInt
+  withdrawCount_gte: BigInt
+  withdrawCount_lte: BigInt
+  withdrawCount_in: [BigInt!]
+  withdrawCount_not_in: [BigInt!]
+  newWithdrawCount: BigInt
+  newWithdrawCount_not: BigInt
+  newWithdrawCount_gt: BigInt
+  newWithdrawCount_lt: BigInt
+  newWithdrawCount_gte: BigInt
+  newWithdrawCount_lte: BigInt
+  newWithdrawCount_in: [BigInt!]
+  newWithdrawCount_not_in: [BigInt!]
+  transferCount: BigInt
+  transferCount_not: BigInt
+  transferCount_gt: BigInt
+  transferCount_lt: BigInt
+  transferCount_gte: BigInt
+  transferCount_lte: BigInt
+  transferCount_in: [BigInt!]
+  transferCount_not_in: [BigInt!]
+  newTransferCount: BigInt
+  newTransferCount_not: BigInt
+  newTransferCount_gt: BigInt
+  newTransferCount_lt: BigInt
+  newTransferCount_gte: BigInt
+  newTransferCount_lte: BigInt
+  newTransferCount_in: [BigInt!]
+  newTransferCount_not_in: [BigInt!]
+  protocolCount: BigInt
+  protocolCount_not: BigInt
+  protocolCount_gt: BigInt
+  protocolCount_lt: BigInt
+  protocolCount_gte: BigInt
+  protocolCount_lte: BigInt
+  protocolCount_in: [BigInt!]
+  protocolCount_not_in: [BigInt!]
+  newProtocolCount: BigInt
+  newProtocolCount_not: BigInt
+  newProtocolCount_gt: BigInt
+  newProtocolCount_lt: BigInt
+  newProtocolCount_gte: BigInt
+  newProtocolCount_lte: BigInt
+  newProtocolCount_in: [BigInt!]
+  newProtocolCount_not_in: [BigInt!]
+  userCount: BigInt
+  userCount_not: BigInt
+  userCount_gt: BigInt
+  userCount_lt: BigInt
+  userCount_gte: BigInt
+  userCount_lte: BigInt
+  userCount_in: [BigInt!]
+  userCount_not_in: [BigInt!]
+  newUserCount: BigInt
+  newUserCount_not: BigInt
+  newUserCount_gt: BigInt
+  newUserCount_lt: BigInt
+  newUserCount_gte: BigInt
+  newUserCount_lte: BigInt
+  newUserCount_in: [BigInt!]
+  newUserCount_not_in: [BigInt!]
+  tokenCount: BigInt
+  tokenCount_not: BigInt
+  tokenCount_gt: BigInt
+  tokenCount_lt: BigInt
+  tokenCount_gte: BigInt
+  tokenCount_lte: BigInt
+  tokenCount_in: [BigInt!]
+  tokenCount_not_in: [BigInt!]
+  newTokenCount: BigInt
+  newTokenCount_not: BigInt
+  newTokenCount_gt: BigInt
+  newTokenCount_lt: BigInt
+  newTokenCount_gte: BigInt
+  newTokenCount_lte: BigInt
+  newTokenCount_in: [BigInt!]
+  newTokenCount_not_in: [BigInt!]
+  masterContractCount: BigInt
+  masterContractCount_not: BigInt
+  masterContractCount_gt: BigInt
+  masterContractCount_lt: BigInt
+  masterContractCount_gte: BigInt
+  masterContractCount_lte: BigInt
+  masterContractCount_in: [BigInt!]
+  masterContractCount_not_in: [BigInt!]
+  newMasterContractCount: BigInt
+  newMasterContractCount_not: BigInt
+  newMasterContractCount_gt: BigInt
+  newMasterContractCount_lt: BigInt
+  newMasterContractCount_gte: BigInt
+  newMasterContractCount_lte: BigInt
+  newMasterContractCount_in: [BigInt!]
+  newMasterContractCount_not_in: [BigInt!]
+  cloneCount: BigInt
+  cloneCount_not: BigInt
+  cloneCount_gt: BigInt
+  cloneCount_lt: BigInt
+  cloneCount_gte: BigInt
+  cloneCount_lte: BigInt
+  cloneCount_in: [BigInt!]
+  cloneCount_not_in: [BigInt!]
+  newCloneCount: BigInt
+  newCloneCount_not: BigInt
+  newCloneCount_gt: BigInt
+  newCloneCount_lt: BigInt
+  newCloneCount_gte: BigInt
+  newCloneCount_lte: BigInt
+  newCloneCount_in: [BigInt!]
+  newCloneCount_not_in: [BigInt!]
+  flashloanCount: BigInt
+  flashloanCount_not: BigInt
+  flashloanCount_gt: BigInt
+  flashloanCount_lt: BigInt
+  flashloanCount_gte: BigInt
+  flashloanCount_lte: BigInt
+  flashloanCount_in: [BigInt!]
+  flashloanCount_not_in: [BigInt!]
+  newFlashloanCount: BigInt
+  newFlashloanCount_not: BigInt
+  newFlashloanCount_gt: BigInt
+  newFlashloanCount_lt: BigInt
+  newFlashloanCount_gte: BigInt
+  newFlashloanCount_lte: BigInt
+  newFlashloanCount_in: [BigInt!]
+  newFlashloanCount_not_in: [BigInt!]
+  transactionCount: BigInt
+  transactionCount_not: BigInt
+  transactionCount_gt: BigInt
+  transactionCount_lt: BigInt
+  transactionCount_gte: BigInt
+  transactionCount_lte: BigInt
+  transactionCount_in: [BigInt!]
+  transactionCount_not_in: [BigInt!]
+  newTransactionCount: BigInt
+  newTransactionCount_not: BigInt
+  newTransactionCount_gt: BigInt
+  newTransactionCount_lt: BigInt
+  newTransactionCount_gte: BigInt
+  newTransactionCount_lte: BigInt
+  newTransactionCount_in: [BigInt!]
+  newTransactionCount_not_in: [BigInt!]
+  strategyCount: BigInt
+  strategyCount_not: BigInt
+  strategyCount_gt: BigInt
+  strategyCount_lt: BigInt
+  strategyCount_gte: BigInt
+  strategyCount_lte: BigInt
+  strategyCount_in: [BigInt!]
+  strategyCount_not_in: [BigInt!]
+  newStrategyCount: BigInt
+  newStrategyCount_not: BigInt
+  newStrategyCount_gt: BigInt
+  newStrategyCount_lt: BigInt
+  newStrategyCount_gte: BigInt
+  newStrategyCount_lte: BigInt
+  newStrategyCount_in: [BigInt!]
+  newStrategyCount_not_in: [BigInt!]
+  activeStrategyCount: BigInt
+  activeStrategyCount_not: BigInt
+  activeStrategyCount_gt: BigInt
+  activeStrategyCount_lt: BigInt
+  activeStrategyCount_gte: BigInt
+  activeStrategyCount_lte: BigInt
+  activeStrategyCount_in: [BigInt!]
+  activeStrategyCount_not_in: [BigInt!]
+  newActiveStrategyCount: BigInt
+  newActiveStrategyCount_not: BigInt
+  newActiveStrategyCount_gt: BigInt
+  newActiveStrategyCount_lt: BigInt
+  newActiveStrategyCount_gte: BigInt
+  newActiveStrategyCount_lte: BigInt
+  newActiveStrategyCount_in: [BigInt!]
+  newActiveStrategyCount_not_in: [BigInt!]
+  pendingStrategyCount: BigInt
+  pendingStrategyCount_not: BigInt
+  pendingStrategyCount_gt: BigInt
+  pendingStrategyCount_lt: BigInt
+  pendingStrategyCount_gte: BigInt
+  pendingStrategyCount_lte: BigInt
+  pendingStrategyCount_in: [BigInt!]
+  pendingStrategyCount_not_in: [BigInt!]
+  newPendingStrategyCount: BigInt
+  newPendingStrategyCount_not: BigInt
+  newPendingStrategyCount_gt: BigInt
+  newPendingStrategyCount_lt: BigInt
+  newPendingStrategyCount_gte: BigInt
+  newPendingStrategyCount_lte: BigInt
+  newPendingStrategyCount_in: [BigInt!]
+  newPendingStrategyCount_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [BentoBoxHourlyKpi_filter]
+  or: [BentoBoxHourlyKpi_filter]
+}
+
+enum BentoBoxHourlyKpi_orderBy {
+  id
+  date
+  depositCount
+  newDepositCount
+  withdrawCount
+  newWithdrawCount
+  transferCount
+  newTransferCount
+  protocolCount
+  newProtocolCount
+  userCount
+  newUserCount
+  tokenCount
+  newTokenCount
+  masterContractCount
+  newMasterContractCount
+  cloneCount
+  newCloneCount
+  flashloanCount
+  newFlashloanCount
+  transactionCount
+  newTransactionCount
+  strategyCount
+  newStrategyCount
+  activeStrategyCount
+  newActiveStrategyCount
+  pendingStrategyCount
+  newPendingStrategyCount
+}
+
+type BentoBoxKpi {
+  """ BentoBox address """
+  id: ID!
+
+  """ Deposit count """
+  depositCount: BigInt!
+
+  """ Withdraw count """
+  withdrawCount: BigInt!
+
+  """ Transfer count """
+  transferCount: BigInt!
+
+  """ Protocol count """
+  protocolCount: BigInt!
+
+  """ User count """
+  userCount: BigInt!
+
+  """ Token count """
+  tokenCount: BigInt!
+
+  """ Master contract count """
+  masterContractCount: BigInt!
+
+  """ Clone count """
+  cloneCount: BigInt!
+
+  """ Flash loan count """
+  flashloanCount: BigInt!
+
+  """ Transaction count """
+  transactionCount: BigInt!
+
+  """ Strategy count """
+  strategyCount: BigInt!
+
+  """ Active strategy count """
+  activeStrategyCount: BigInt!
+
+  """ Pending strategy count """
+  pendingStrategyCount: BigInt!
+}
+
+input BentoBoxKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  depositCount: BigInt
+  depositCount_not: BigInt
+  depositCount_gt: BigInt
+  depositCount_lt: BigInt
+  depositCount_gte: BigInt
+  depositCount_lte: BigInt
+  depositCount_in: [BigInt!]
+  depositCount_not_in: [BigInt!]
+  withdrawCount: BigInt
+  withdrawCount_not: BigInt
+  withdrawCount_gt: BigInt
+  withdrawCount_lt: BigInt
+  withdrawCount_gte: BigInt
+  withdrawCount_lte: BigInt
+  withdrawCount_in: [BigInt!]
+  withdrawCount_not_in: [BigInt!]
+  transferCount: BigInt
+  transferCount_not: BigInt
+  transferCount_gt: BigInt
+  transferCount_lt: BigInt
+  transferCount_gte: BigInt
+  transferCount_lte: BigInt
+  transferCount_in: [BigInt!]
+  transferCount_not_in: [BigInt!]
+  protocolCount: BigInt
+  protocolCount_not: BigInt
+  protocolCount_gt: BigInt
+  protocolCount_lt: BigInt
+  protocolCount_gte: BigInt
+  protocolCount_lte: BigInt
+  protocolCount_in: [BigInt!]
+  protocolCount_not_in: [BigInt!]
+  userCount: BigInt
+  userCount_not: BigInt
+  userCount_gt: BigInt
+  userCount_lt: BigInt
+  userCount_gte: BigInt
+  userCount_lte: BigInt
+  userCount_in: [BigInt!]
+  userCount_not_in: [BigInt!]
+  tokenCount: BigInt
+  tokenCount_not: BigInt
+  tokenCount_gt: BigInt
+  tokenCount_lt: BigInt
+  tokenCount_gte: BigInt
+  tokenCount_lte: BigInt
+  tokenCount_in: [BigInt!]
+  tokenCount_not_in: [BigInt!]
+  masterContractCount: BigInt
+  masterContractCount_not: BigInt
+  masterContractCount_gt: BigInt
+  masterContractCount_lt: BigInt
+  masterContractCount_gte: BigInt
+  masterContractCount_lte: BigInt
+  masterContractCount_in: [BigInt!]
+  masterContractCount_not_in: [BigInt!]
+  cloneCount: BigInt
+  cloneCount_not: BigInt
+  cloneCount_gt: BigInt
+  cloneCount_lt: BigInt
+  cloneCount_gte: BigInt
+  cloneCount_lte: BigInt
+  cloneCount_in: [BigInt!]
+  cloneCount_not_in: [BigInt!]
+  flashloanCount: BigInt
+  flashloanCount_not: BigInt
+  flashloanCount_gt: BigInt
+  flashloanCount_lt: BigInt
+  flashloanCount_gte: BigInt
+  flashloanCount_lte: BigInt
+  flashloanCount_in: [BigInt!]
+  flashloanCount_not_in: [BigInt!]
+  transactionCount: BigInt
+  transactionCount_not: BigInt
+  transactionCount_gt: BigInt
+  transactionCount_lt: BigInt
+  transactionCount_gte: BigInt
+  transactionCount_lte: BigInt
+  transactionCount_in: [BigInt!]
+  transactionCount_not_in: [BigInt!]
+  strategyCount: BigInt
+  strategyCount_not: BigInt
+  strategyCount_gt: BigInt
+  strategyCount_lt: BigInt
+  strategyCount_gte: BigInt
+  strategyCount_lte: BigInt
+  strategyCount_in: [BigInt!]
+  strategyCount_not_in: [BigInt!]
+  activeStrategyCount: BigInt
+  activeStrategyCount_not: BigInt
+  activeStrategyCount_gt: BigInt
+  activeStrategyCount_lt: BigInt
+  activeStrategyCount_gte: BigInt
+  activeStrategyCount_lte: BigInt
+  activeStrategyCount_in: [BigInt!]
+  activeStrategyCount_not_in: [BigInt!]
+  pendingStrategyCount: BigInt
+  pendingStrategyCount_not: BigInt
+  pendingStrategyCount_gt: BigInt
+  pendingStrategyCount_lt: BigInt
+  pendingStrategyCount_gte: BigInt
+  pendingStrategyCount_lte: BigInt
+  pendingStrategyCount_in: [BigInt!]
+  pendingStrategyCount_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [BentoBoxKpi_filter]
+  or: [BentoBoxKpi_filter]
+}
+
+enum BentoBoxKpi_orderBy {
+  id
+  depositCount
+  withdrawCount
+  transferCount
+  protocolCount
+  userCount
+  tokenCount
+  masterContractCount
+  cloneCount
+  flashloanCount
+  transactionCount
+  strategyCount
+  activeStrategyCount
+  pendingStrategyCount
+}
+
+input BentoBox_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  protocols_: Protocol_filter
+  users_: User_filter
+  tokens_: Token_filter
+  masterContracts_: MasterContract_filter
+  clones_: Clone_filter
+  flashloans_: FlashLoan_filter
+  transactions_: Transaction_filter
+  totals_: Rebase_filter
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [BentoBox_filter]
+  or: [BentoBox_filter]
+}
+
+enum BentoBox_orderBy {
+  id
+  protocols
+  users
+  tokens
+  masterContracts
+  clones
+  flashloans
+  transactions
+  totals
+}
+
+scalar BigDecimal
+
+scalar BigInt
+
+input BlockChangedFilter {
+  number_gte: Int!
+}
+
+input Block_height {
+  hash: Bytes
+  number: Int
+  number_gte: Int
+}
+
+scalar Bytes
+
+type Clone {
+  """ Clone address """
+  id: ID!
+
+  """ BentoBox this clone belongs to """
+  bentoBox: BentoBox!
+
+  """ Master contract this clone belongs to """
+  masterContract: MasterContract!
+
+  """ Clone data """
+  data: Bytes!
+
+  """ Block number of this clone """
+  block: BigInt!
+
+  """ Timestamp of this clone """
+  timestamp: BigInt!
+}
+
+input Clone_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+  masterContract: String
+  masterContract_not: String
+  masterContract_gt: String
+  masterContract_lt: String
+  masterContract_gte: String
+  masterContract_lte: String
+  masterContract_in: [String!]
+  masterContract_not_in: [String!]
+  masterContract_contains: String
+  masterContract_contains_nocase: String
+  masterContract_not_contains: String
+  masterContract_not_contains_nocase: String
+  masterContract_starts_with: String
+  masterContract_starts_with_nocase: String
+  masterContract_not_starts_with: String
+  masterContract_not_starts_with_nocase: String
+  masterContract_ends_with: String
+  masterContract_ends_with_nocase: String
+  masterContract_not_ends_with: String
+  masterContract_not_ends_with_nocase: String
+  masterContract_: MasterContract_filter
+  data: Bytes
+  data_not: Bytes
+  data_gt: Bytes
+  data_lt: Bytes
+  data_gte: Bytes
+  data_lte: Bytes
+  data_in: [Bytes!]
+  data_not_in: [Bytes!]
+  data_contains: Bytes
+  data_not_contains: Bytes
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Clone_filter]
+  or: [Clone_filter]
+}
+
+enum Clone_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+  masterContract
+  masterContract__id
+  masterContract__approved
+  data
+  block
+  timestamp
+}
+
+type FlashLoan {
+  """ Concatenation of transaction and log index """
+  id: ID!
+
+  """ BentoBox this flash loan belongs to """
+  bentoBox: BentoBox!
+
+  """ Borrower address """
+  borrower: Bytes!
+
+  """ Receiver address """
+  receiver: Bytes!
+
+  """ Token this flash loan belongs to """
+  token: Token!
+
+  """ Amount of this flash loan """
+  amount: BigInt!
+
+  """ Fee amount of this flash loan """
+  feeAmount: BigInt!
+
+  """ Block number of this flash loan """
+  block: BigInt!
+
+  """ Timestamp of this flash loan """
+  timestamp: BigInt!
+}
+
+input FlashLoan_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+  borrower: Bytes
+  borrower_not: Bytes
+  borrower_gt: Bytes
+  borrower_lt: Bytes
+  borrower_gte: Bytes
+  borrower_lte: Bytes
+  borrower_in: [Bytes!]
+  borrower_not_in: [Bytes!]
+  borrower_contains: Bytes
+  borrower_not_contains: Bytes
+  receiver: Bytes
+  receiver_not: Bytes
+  receiver_gt: Bytes
+  receiver_lt: Bytes
+  receiver_gte: Bytes
+  receiver_lte: Bytes
+  receiver_in: [Bytes!]
+  receiver_not_in: [Bytes!]
+  receiver_contains: Bytes
+  receiver_not_contains: Bytes
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  amount: BigInt
+  amount_not: BigInt
+  amount_gt: BigInt
+  amount_lt: BigInt
+  amount_gte: BigInt
+  amount_lte: BigInt
+  amount_in: [BigInt!]
+  amount_not_in: [BigInt!]
+  feeAmount: BigInt
+  feeAmount_not: BigInt
+  feeAmount_gt: BigInt
+  feeAmount_lt: BigInt
+  feeAmount_gte: BigInt
+  feeAmount_lte: BigInt
+  feeAmount_in: [BigInt!]
+  feeAmount_not_in: [BigInt!]
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [FlashLoan_filter]
+  or: [FlashLoan_filter]
+}
+
+enum FlashLoan_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+  borrower
+  receiver
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  amount
+  feeAmount
+  block
+  timestamp
+}
+
+type Harvest {
+  """ Concatenation of strategy and block number """
+  id: ID!
+
+  """ The Token this harvest belongs to """
+  token: Token!
+
+  """ The Strategy this harvest belongs to """
+  strategy: Strategy!
+
+  """ The ProfitOrLoss of this harvest """
+  profitOrLoss: ProfitOrLoss
+
+  """ The InvestOrDivest of this harvest """
+  investOrDivest: InvestOrDivest
+
+  """ Block number of this harvest """
+  block: BigInt!
+
+  """ Timestamp of this harvest """
+  timestamp: BigInt!
+}
+
+input Harvest_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  strategy: String
+  strategy_not: String
+  strategy_gt: String
+  strategy_lt: String
+  strategy_gte: String
+  strategy_lte: String
+  strategy_in: [String!]
+  strategy_not_in: [String!]
+  strategy_contains: String
+  strategy_contains_nocase: String
+  strategy_not_contains: String
+  strategy_not_contains_nocase: String
+  strategy_starts_with: String
+  strategy_starts_with_nocase: String
+  strategy_not_starts_with: String
+  strategy_not_starts_with_nocase: String
+  strategy_ends_with: String
+  strategy_ends_with_nocase: String
+  strategy_not_ends_with: String
+  strategy_not_ends_with_nocase: String
+  strategy_: Strategy_filter
+  profitOrLoss: String
+  profitOrLoss_not: String
+  profitOrLoss_gt: String
+  profitOrLoss_lt: String
+  profitOrLoss_gte: String
+  profitOrLoss_lte: String
+  profitOrLoss_in: [String!]
+  profitOrLoss_not_in: [String!]
+  profitOrLoss_contains: String
+  profitOrLoss_contains_nocase: String
+  profitOrLoss_not_contains: String
+  profitOrLoss_not_contains_nocase: String
+  profitOrLoss_starts_with: String
+  profitOrLoss_starts_with_nocase: String
+  profitOrLoss_not_starts_with: String
+  profitOrLoss_not_starts_with_nocase: String
+  profitOrLoss_ends_with: String
+  profitOrLoss_ends_with_nocase: String
+  profitOrLoss_not_ends_with: String
+  profitOrLoss_not_ends_with_nocase: String
+  profitOrLoss_: ProfitOrLoss_filter
+  investOrDivest: String
+  investOrDivest_not: String
+  investOrDivest_gt: String
+  investOrDivest_lt: String
+  investOrDivest_gte: String
+  investOrDivest_lte: String
+  investOrDivest_in: [String!]
+  investOrDivest_not_in: [String!]
+  investOrDivest_contains: String
+  investOrDivest_contains_nocase: String
+  investOrDivest_not_contains: String
+  investOrDivest_not_contains_nocase: String
+  investOrDivest_starts_with: String
+  investOrDivest_starts_with_nocase: String
+  investOrDivest_not_starts_with: String
+  investOrDivest_not_starts_with_nocase: String
+  investOrDivest_ends_with: String
+  investOrDivest_ends_with_nocase: String
+  investOrDivest_not_ends_with: String
+  investOrDivest_not_ends_with_nocase: String
+  investOrDivest_: InvestOrDivest_filter
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Harvest_filter]
+  or: [Harvest_filter]
+}
+
+enum Harvest_orderBy {
+  id
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  strategy
+  strategy__id
+  strategy__block
+  strategy__timestamp
+  profitOrLoss
+  profitOrLoss__id
+  profitOrLoss__elastic
+  profitOrLoss__base
+  profitOrLoss__amount
+  profitOrLoss__block
+  profitOrLoss__timestamp
+  investOrDivest
+  investOrDivest__id
+  investOrDivest__elastic
+  investOrDivest__base
+  investOrDivest__amount
+  investOrDivest__block
+  investOrDivest__timestamp
+  block
+  timestamp
+}
+
+"8 bytes signed integer\n"
+scalar Int8
+
+type InvestOrDivest {
+  """ Concatenation of strategy and invest or divest count """
+  id: ID!
+
+  """ The Harvest this invest or divest belongs to """
+  harvest: Harvest!
+
+  """ The cached token elastic at time of invest or divest"""
+  elastic: BigInt!
+
+  """ The cached token base at time of invest or divest"""
+  base: BigInt!
+
+  """ Amount of invest or divest """
+  amount: BigInt!
+
+  """ Block number of this invest or divest """
+  block: BigInt!
+
+  """ Timestamp of this invest or divest """
+  timestamp: BigInt!
+}
+
+input InvestOrDivest_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  harvest: String
+  harvest_not: String
+  harvest_gt: String
+  harvest_lt: String
+  harvest_gte: String
+  harvest_lte: String
+  harvest_in: [String!]
+  harvest_not_in: [String!]
+  harvest_contains: String
+  harvest_contains_nocase: String
+  harvest_not_contains: String
+  harvest_not_contains_nocase: String
+  harvest_starts_with: String
+  harvest_starts_with_nocase: String
+  harvest_not_starts_with: String
+  harvest_not_starts_with_nocase: String
+  harvest_ends_with: String
+  harvest_ends_with_nocase: String
+  harvest_not_ends_with: String
+  harvest_not_ends_with_nocase: String
+  harvest_: Harvest_filter
+  elastic: BigInt
+  elastic_not: BigInt
+  elastic_gt: BigInt
+  elastic_lt: BigInt
+  elastic_gte: BigInt
+  elastic_lte: BigInt
+  elastic_in: [BigInt!]
+  elastic_not_in: [BigInt!]
+  base: BigInt
+  base_not: BigInt
+  base_gt: BigInt
+  base_lt: BigInt
+  base_gte: BigInt
+  base_lte: BigInt
+  base_in: [BigInt!]
+  base_not_in: [BigInt!]
+  amount: BigInt
+  amount_not: BigInt
+  amount_gt: BigInt
+  amount_lt: BigInt
+  amount_gte: BigInt
+  amount_lte: BigInt
+  amount_in: [BigInt!]
+  amount_not_in: [BigInt!]
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [InvestOrDivest_filter]
+  or: [InvestOrDivest_filter]
+}
+
+enum InvestOrDivest_orderBy {
+  id
+  harvest
+  harvest__id
+  harvest__block
+  harvest__timestamp
+  elastic
+  base
+  amount
+  block
+  timestamp
+}
+
+type MasterContract {
+  """ MasterContract address """
+  id: ID!
+
+  """ BentoBox this master contract belongs to """
+  bentoBox: BentoBox!
+
+  """ Clones that belong to this master contract """
+  clones(skip: Int = 0, first: Int = 100, orderBy: Clone_orderBy, orderDirection: OrderDirection, where: Clone_filter): [Clone!]
+
+  """ MasterContractApprovals that belong to this master contract """
+  masterContractApprovals(skip: Int = 0, first: Int = 100, orderBy: MasterContractApproval_orderBy, orderDirection: OrderDirection, where: MasterContractApproval_filter): [MasterContractApproval!]
+
+  """ MasterContract is whitelisted by Sushi Operations"""
+  approved: Boolean!
+}
+
+type MasterContractApproval {
+  """Concatenation of user adddress and master contract address"""
+  id: ID!
+
+  """ MasterContract this master contract approval belongs to """
+  masterContract: MasterContract!
+
+  """ User this master contract approval belongs to """
+  user: User!
+
+  """ If user has approved this master contract """
+  approved: Boolean!
+}
+
+input MasterContractApproval_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  masterContract: String
+  masterContract_not: String
+  masterContract_gt: String
+  masterContract_lt: String
+  masterContract_gte: String
+  masterContract_lte: String
+  masterContract_in: [String!]
+  masterContract_not_in: [String!]
+  masterContract_contains: String
+  masterContract_contains_nocase: String
+  masterContract_not_contains: String
+  masterContract_not_contains_nocase: String
+  masterContract_starts_with: String
+  masterContract_starts_with_nocase: String
+  masterContract_not_starts_with: String
+  masterContract_not_starts_with_nocase: String
+  masterContract_ends_with: String
+  masterContract_ends_with_nocase: String
+  masterContract_not_ends_with: String
+  masterContract_not_ends_with_nocase: String
+  masterContract_: MasterContract_filter
+  user: String
+  user_not: String
+  user_gt: String
+  user_lt: String
+  user_gte: String
+  user_lte: String
+  user_in: [String!]
+  user_not_in: [String!]
+  user_contains: String
+  user_contains_nocase: String
+  user_not_contains: String
+  user_not_contains_nocase: String
+  user_starts_with: String
+  user_starts_with_nocase: String
+  user_not_starts_with: String
+  user_not_starts_with_nocase: String
+  user_ends_with: String
+  user_ends_with_nocase: String
+  user_not_ends_with: String
+  user_not_ends_with_nocase: String
+  user_: User_filter
+  approved: Boolean
+  approved_not: Boolean
+  approved_in: [Boolean!]
+  approved_not_in: [Boolean!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [MasterContractApproval_filter]
+  or: [MasterContractApproval_filter]
+}
+
+enum MasterContractApproval_orderBy {
+  id
+  masterContract
+  masterContract__id
+  masterContract__approved
+  user
+  user__id
+  user__block
+  user__timestamp
+  approved
+}
+
+input MasterContract_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+  clones_: Clone_filter
+  masterContractApprovals_: MasterContractApproval_filter
+  approved: Boolean
+  approved_not: Boolean
+  approved_in: [Boolean!]
+  approved_not_in: [Boolean!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [MasterContract_filter]
+  or: [MasterContract_filter]
+}
+
+enum MasterContract_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+  clones
+  masterContractApprovals
+  approved
+}
+
+"""Defines the order direction, either ascending or descending"""
+enum OrderDirection {
+  asc
+  desc
+}
+
+type ProfitOrLoss {
+  """ Concatenation of strategy and profit or loss count """
+  id: ID!
+
+  """ The Harvest this profit or loss belongs to """
+  harvest: Harvest!
+
+  """ The cached token elastic at time of profit or loss"""
+  elastic: BigInt!
+
+  """ The cached token base at time of profit or loss"""
+  base: BigInt!
+
+  """ Amount of profit or loss """
+  amount: BigInt!
+
+  """ Block number of this profit or loss """
+  block: BigInt!
+
+  """ Timestamp of this profit or loss """
+  timestamp: BigInt!
+}
+
+input ProfitOrLoss_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  harvest: String
+  harvest_not: String
+  harvest_gt: String
+  harvest_lt: String
+  harvest_gte: String
+  harvest_lte: String
+  harvest_in: [String!]
+  harvest_not_in: [String!]
+  harvest_contains: String
+  harvest_contains_nocase: String
+  harvest_not_contains: String
+  harvest_not_contains_nocase: String
+  harvest_starts_with: String
+  harvest_starts_with_nocase: String
+  harvest_not_starts_with: String
+  harvest_not_starts_with_nocase: String
+  harvest_ends_with: String
+  harvest_ends_with_nocase: String
+  harvest_not_ends_with: String
+  harvest_not_ends_with_nocase: String
+  harvest_: Harvest_filter
+  elastic: BigInt
+  elastic_not: BigInt
+  elastic_gt: BigInt
+  elastic_lt: BigInt
+  elastic_gte: BigInt
+  elastic_lte: BigInt
+  elastic_in: [BigInt!]
+  elastic_not_in: [BigInt!]
+  base: BigInt
+  base_not: BigInt
+  base_gt: BigInt
+  base_lt: BigInt
+  base_gte: BigInt
+  base_lte: BigInt
+  base_in: [BigInt!]
+  base_not_in: [BigInt!]
+  amount: BigInt
+  amount_not: BigInt
+  amount_gt: BigInt
+  amount_lt: BigInt
+  amount_gte: BigInt
+  amount_lte: BigInt
+  amount_in: [BigInt!]
+  amount_not_in: [BigInt!]
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [ProfitOrLoss_filter]
+  or: [ProfitOrLoss_filter]
+}
+
+enum ProfitOrLoss_orderBy {
+  id
+  harvest
+  harvest__id
+  harvest__block
+  harvest__timestamp
+  elastic
+  base
+  amount
+  block
+  timestamp
+}
+
+type Protocol {
+  """ Protocol address """
+  id: ID!
+
+  """ BentoBox this protocol belongs to """
+  bentoBox: BentoBox!
+}
+
+input Protocol_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Protocol_filter]
+  or: [Protocol_filter]
+}
+
+enum Protocol_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+}
+
+type Query {
+  bentoBox(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBox
+  bentoBoxes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBox_orderBy
+    orderDirection: OrderDirection
+    where: BentoBox_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBox!]!
+  bentoBoxKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBoxKpi
+  bentoBoxKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBoxKpi_orderBy
+    orderDirection: OrderDirection
+    where: BentoBoxKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBoxKpi!]!
+  masterContract(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MasterContract
+  masterContracts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MasterContract_orderBy
+    orderDirection: OrderDirection
+    where: MasterContract_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MasterContract!]!
+  masterContractApproval(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MasterContractApproval
+  masterContractApprovals(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MasterContractApproval_orderBy
+    orderDirection: OrderDirection
+    where: MasterContractApproval_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MasterContractApproval!]!
+  clone(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Clone
+  clones(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Clone_orderBy
+    orderDirection: OrderDirection
+    where: Clone_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Clone!]!
+  token(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Token
+  tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Token_orderBy
+    orderDirection: OrderDirection
+    where: Token_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Token!]!
+  tokenKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenKpi
+  tokenKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenKpi_orderBy
+    orderDirection: OrderDirection
+    where: TokenKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenKpi!]!
+  tokenStrategy(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenStrategy
+  tokenStrategies(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenStrategy_orderBy
+    orderDirection: OrderDirection
+    where: TokenStrategy_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenStrategy!]!
+  strategy(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Strategy
+  strategies(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Strategy_orderBy
+    orderDirection: OrderDirection
+    where: Strategy_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Strategy!]!
+  strategyData(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyData
+  strategyDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyData_orderBy
+    orderDirection: OrderDirection
+    where: StrategyData_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyData!]!
+  strategyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyKpi
+  strategyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyKpi_orderBy
+    orderDirection: OrderDirection
+    where: StrategyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyKpi!]!
+  harvest(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Harvest
+  harvests(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Harvest_orderBy
+    orderDirection: OrderDirection
+    where: Harvest_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Harvest!]!
+  profitOrLoss(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ProfitOrLoss
+  profitOrLosses(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ProfitOrLoss_orderBy
+    orderDirection: OrderDirection
+    where: ProfitOrLoss_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ProfitOrLoss!]!
+  investOrDivest(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): InvestOrDivest
+  investOrDivests(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: InvestOrDivest_orderBy
+    orderDirection: OrderDirection
+    where: InvestOrDivest_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [InvestOrDivest!]!
+  rebase(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Rebase
+  rebases(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Rebase_orderBy
+    orderDirection: OrderDirection
+    where: Rebase_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Rebase!]!
+  flashLoan(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): FlashLoan
+  flashLoans(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: FlashLoan_orderBy
+    orderDirection: OrderDirection
+    where: FlashLoan_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [FlashLoan!]!
+  protocol(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Protocol
+  protocols(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Protocol_orderBy
+    orderDirection: OrderDirection
+    where: Protocol_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Protocol!]!
+  user(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): User
+  users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: User_orderBy
+    orderDirection: OrderDirection
+    where: User_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [User!]!
+  balance(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Balance
+  balances(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Balance_orderBy
+    orderDirection: OrderDirection
+    where: Balance_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Balance!]!
+  transaction(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Transaction
+  transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Transaction_orderBy
+    orderDirection: OrderDirection
+    where: Transaction_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Transaction!]!
+  bentoBoxHourlyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBoxHourlyKpi
+  bentoBoxHourlyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBoxHourlyKpi_orderBy
+    orderDirection: OrderDirection
+    where: BentoBoxHourlyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBoxHourlyKpi!]!
+  bentoBoxDailyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBoxDailyKpi
+  bentoBoxDailyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBoxDailyKpi_orderBy
+    orderDirection: OrderDirection
+    where: BentoBoxDailyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBoxDailyKpi!]!
+  strategyDailyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyDailyKpi
+  strategyDailyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyDailyKpi_orderBy
+    orderDirection: OrderDirection
+    where: StrategyDailyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyDailyKpi!]!
+  strategyHourlyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyHourlyKpi
+  strategyHourlyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyHourlyKpi_orderBy
+    orderDirection: OrderDirection
+    where: StrategyHourlyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyHourlyKpi!]!
+  tokenHourlyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenHourlyKpi
+  tokenHourlyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenHourlyKpi_orderBy
+    orderDirection: OrderDirection
+    where: TokenHourlyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenHourlyKpi!]!
+  tokenDailyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenDailyKpi
+  tokenDailyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenDailyKpi_orderBy
+    orderDirection: OrderDirection
+    where: TokenDailyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenDailyKpi!]!
+
+  """Access to subgraph metadata"""
+  _meta(block: Block_height): _Meta_
+}
+
+type Rebase {
+  """ Token address """
+  id: ID!
+
+  """ BentoBox this rebase belongs to """
+  bentoBox: BentoBox!
+
+  """ Token this rebase belongs to """
+  token: Token!
+
+  """ Base (Share) """
+  base: BigInt!
+
+  """ Elastic (Amount) """
+  elastic: BigInt!
+}
+
+input Rebase_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  base: BigInt
+  base_not: BigInt
+  base_gt: BigInt
+  base_lt: BigInt
+  base_gte: BigInt
+  base_lte: BigInt
+  base_in: [BigInt!]
+  base_not_in: [BigInt!]
+  elastic: BigInt
+  elastic_not: BigInt
+  elastic_gt: BigInt
+  elastic_lt: BigInt
+  elastic_gte: BigInt
+  elastic_lte: BigInt
+  elastic_in: [BigInt!]
+  elastic_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Rebase_filter]
+  or: [Rebase_filter]
+}
+
+enum Rebase_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  base
+  elastic
+}
+
+type Strategy {
+  """ Strategy address """
+  id: ID!
+
+  """ StrategyKpi of this strategy """
+  kpi: StrategyKpi!
+
+  """ Harvests which belong to this strategy """
+  harvests(skip: Int = 0, first: Int = 100, orderBy: Harvest_orderBy, orderDirection: OrderDirection, where: Harvest_filter): [Harvest!]
+
+  """ The Token this strategy belongs to """
+  token: Token!
+
+  """ Block number of this strategy """
+  block: BigInt!
+
+  """ Timestamp of this strategy """
+  timestamp: BigInt!
+}
+
+type StrategyDailyKpi {
+  """ created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
+  """
+  id: ID!
+
+  """ The Strategy this KPI belongs to """
+  strategy: Strategy!
+
+  """ Start date """
+  date: Int!
+
+  """ Harvest count """
+  harvestCount: BigInt!
+
+  """ Invest or divest count """
+  investOrDivestCount: BigInt!
+
+  """ Invest count """
+  investCount: BigInt!
+
+  """ Invested """
+  invested: BigInt!
+
+  """ Divest count """
+  divestCount: BigInt!
+
+  """ Divested"""
+  divested: BigInt!
+
+  """ Profit or loss count """
+  profitOrLossCount: BigInt!
+
+  """ Profit count """
+  profitCount: BigInt!
+
+  """ Loss count """
+  lossCount: BigInt!
+
+  """ Profit & Loss"""
+  profitAndLoss: BigInt!
+
+  """ APR """
+  apr: BigDecimal
+
+  """ Utilization """
+  utilization: BigDecimal
+
+  """ Harvest count for the given timeframe """
+  newHarvestCount: BigInt!
+
+  """ Invest or divest count for the given timeframe """
+  newInvestOrDivestCount: BigInt!
+
+  """ Invest count for the given timeframe """
+  newInvestCount: BigInt!
+
+  """ Invested for the given timeframe """
+  newInvested: BigInt!
+
+  """ Divest count for the given timeframe """
+  newDivestCount: BigInt!
+
+  """ Divested for the given timeframe """
+  newDivested: BigInt!
+
+  """ Profit or loss count for the given timeframe """
+  newProfitOrLossCount: BigInt!
+
+  """ Profit count for the given timeframe """
+  newProfitCount: BigInt!
+
+  """ Loss count for the given timeframe """
+  newLossCount: BigInt!
+
+  """ Profit & Los for the given timeframe """
+  newProfitAndLoss: BigInt!
+
+  """ APR for the given timeframe """
+  newApr: BigDecimal
+
+  """ Utilization for the given timeframe """
+  newUtilization: BigDecimal
+}
+
+input StrategyDailyKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  strategy: String
+  strategy_not: String
+  strategy_gt: String
+  strategy_lt: String
+  strategy_gte: String
+  strategy_lte: String
+  strategy_in: [String!]
+  strategy_not_in: [String!]
+  strategy_contains: String
+  strategy_contains_nocase: String
+  strategy_not_contains: String
+  strategy_not_contains_nocase: String
+  strategy_starts_with: String
+  strategy_starts_with_nocase: String
+  strategy_not_starts_with: String
+  strategy_not_starts_with_nocase: String
+  strategy_ends_with: String
+  strategy_ends_with_nocase: String
+  strategy_not_ends_with: String
+  strategy_not_ends_with_nocase: String
+  strategy_: Strategy_filter
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  harvestCount: BigInt
+  harvestCount_not: BigInt
+  harvestCount_gt: BigInt
+  harvestCount_lt: BigInt
+  harvestCount_gte: BigInt
+  harvestCount_lte: BigInt
+  harvestCount_in: [BigInt!]
+  harvestCount_not_in: [BigInt!]
+  investOrDivestCount: BigInt
+  investOrDivestCount_not: BigInt
+  investOrDivestCount_gt: BigInt
+  investOrDivestCount_lt: BigInt
+  investOrDivestCount_gte: BigInt
+  investOrDivestCount_lte: BigInt
+  investOrDivestCount_in: [BigInt!]
+  investOrDivestCount_not_in: [BigInt!]
+  investCount: BigInt
+  investCount_not: BigInt
+  investCount_gt: BigInt
+  investCount_lt: BigInt
+  investCount_gte: BigInt
+  investCount_lte: BigInt
+  investCount_in: [BigInt!]
+  investCount_not_in: [BigInt!]
+  invested: BigInt
+  invested_not: BigInt
+  invested_gt: BigInt
+  invested_lt: BigInt
+  invested_gte: BigInt
+  invested_lte: BigInt
+  invested_in: [BigInt!]
+  invested_not_in: [BigInt!]
+  divestCount: BigInt
+  divestCount_not: BigInt
+  divestCount_gt: BigInt
+  divestCount_lt: BigInt
+  divestCount_gte: BigInt
+  divestCount_lte: BigInt
+  divestCount_in: [BigInt!]
+  divestCount_not_in: [BigInt!]
+  divested: BigInt
+  divested_not: BigInt
+  divested_gt: BigInt
+  divested_lt: BigInt
+  divested_gte: BigInt
+  divested_lte: BigInt
+  divested_in: [BigInt!]
+  divested_not_in: [BigInt!]
+  profitOrLossCount: BigInt
+  profitOrLossCount_not: BigInt
+  profitOrLossCount_gt: BigInt
+  profitOrLossCount_lt: BigInt
+  profitOrLossCount_gte: BigInt
+  profitOrLossCount_lte: BigInt
+  profitOrLossCount_in: [BigInt!]
+  profitOrLossCount_not_in: [BigInt!]
+  profitCount: BigInt
+  profitCount_not: BigInt
+  profitCount_gt: BigInt
+  profitCount_lt: BigInt
+  profitCount_gte: BigInt
+  profitCount_lte: BigInt
+  profitCount_in: [BigInt!]
+  profitCount_not_in: [BigInt!]
+  lossCount: BigInt
+  lossCount_not: BigInt
+  lossCount_gt: BigInt
+  lossCount_lt: BigInt
+  lossCount_gte: BigInt
+  lossCount_lte: BigInt
+  lossCount_in: [BigInt!]
+  lossCount_not_in: [BigInt!]
+  profitAndLoss: BigInt
+  profitAndLoss_not: BigInt
+  profitAndLoss_gt: BigInt
+  profitAndLoss_lt: BigInt
+  profitAndLoss_gte: BigInt
+  profitAndLoss_lte: BigInt
+  profitAndLoss_in: [BigInt!]
+  profitAndLoss_not_in: [BigInt!]
+  apr: BigDecimal
+  apr_not: BigDecimal
+  apr_gt: BigDecimal
+  apr_lt: BigDecimal
+  apr_gte: BigDecimal
+  apr_lte: BigDecimal
+  apr_in: [BigDecimal!]
+  apr_not_in: [BigDecimal!]
+  utilization: BigDecimal
+  utilization_not: BigDecimal
+  utilization_gt: BigDecimal
+  utilization_lt: BigDecimal
+  utilization_gte: BigDecimal
+  utilization_lte: BigDecimal
+  utilization_in: [BigDecimal!]
+  utilization_not_in: [BigDecimal!]
+  newHarvestCount: BigInt
+  newHarvestCount_not: BigInt
+  newHarvestCount_gt: BigInt
+  newHarvestCount_lt: BigInt
+  newHarvestCount_gte: BigInt
+  newHarvestCount_lte: BigInt
+  newHarvestCount_in: [BigInt!]
+  newHarvestCount_not_in: [BigInt!]
+  newInvestOrDivestCount: BigInt
+  newInvestOrDivestCount_not: BigInt
+  newInvestOrDivestCount_gt: BigInt
+  newInvestOrDivestCount_lt: BigInt
+  newInvestOrDivestCount_gte: BigInt
+  newInvestOrDivestCount_lte: BigInt
+  newInvestOrDivestCount_in: [BigInt!]
+  newInvestOrDivestCount_not_in: [BigInt!]
+  newInvestCount: BigInt
+  newInvestCount_not: BigInt
+  newInvestCount_gt: BigInt
+  newInvestCount_lt: BigInt
+  newInvestCount_gte: BigInt
+  newInvestCount_lte: BigInt
+  newInvestCount_in: [BigInt!]
+  newInvestCount_not_in: [BigInt!]
+  newInvested: BigInt
+  newInvested_not: BigInt
+  newInvested_gt: BigInt
+  newInvested_lt: BigInt
+  newInvested_gte: BigInt
+  newInvested_lte: BigInt
+  newInvested_in: [BigInt!]
+  newInvested_not_in: [BigInt!]
+  newDivestCount: BigInt
+  newDivestCount_not: BigInt
+  newDivestCount_gt: BigInt
+  newDivestCount_lt: BigInt
+  newDivestCount_gte: BigInt
+  newDivestCount_lte: BigInt
+  newDivestCount_in: [BigInt!]
+  newDivestCount_not_in: [BigInt!]
+  newDivested: BigInt
+  newDivested_not: BigInt
+  newDivested_gt: BigInt
+  newDivested_lt: BigInt
+  newDivested_gte: BigInt
+  newDivested_lte: BigInt
+  newDivested_in: [BigInt!]
+  newDivested_not_in: [BigInt!]
+  newProfitOrLossCount: BigInt
+  newProfitOrLossCount_not: BigInt
+  newProfitOrLossCount_gt: BigInt
+  newProfitOrLossCount_lt: BigInt
+  newProfitOrLossCount_gte: BigInt
+  newProfitOrLossCount_lte: BigInt
+  newProfitOrLossCount_in: [BigInt!]
+  newProfitOrLossCount_not_in: [BigInt!]
+  newProfitCount: BigInt
+  newProfitCount_not: BigInt
+  newProfitCount_gt: BigInt
+  newProfitCount_lt: BigInt
+  newProfitCount_gte: BigInt
+  newProfitCount_lte: BigInt
+  newProfitCount_in: [BigInt!]
+  newProfitCount_not_in: [BigInt!]
+  newLossCount: BigInt
+  newLossCount_not: BigInt
+  newLossCount_gt: BigInt
+  newLossCount_lt: BigInt
+  newLossCount_gte: BigInt
+  newLossCount_lte: BigInt
+  newLossCount_in: [BigInt!]
+  newLossCount_not_in: [BigInt!]
+  newProfitAndLoss: BigInt
+  newProfitAndLoss_not: BigInt
+  newProfitAndLoss_gt: BigInt
+  newProfitAndLoss_lt: BigInt
+  newProfitAndLoss_gte: BigInt
+  newProfitAndLoss_lte: BigInt
+  newProfitAndLoss_in: [BigInt!]
+  newProfitAndLoss_not_in: [BigInt!]
+  newApr: BigDecimal
+  newApr_not: BigDecimal
+  newApr_gt: BigDecimal
+  newApr_lt: BigDecimal
+  newApr_gte: BigDecimal
+  newApr_lte: BigDecimal
+  newApr_in: [BigDecimal!]
+  newApr_not_in: [BigDecimal!]
+  newUtilization: BigDecimal
+  newUtilization_not: BigDecimal
+  newUtilization_gt: BigDecimal
+  newUtilization_lt: BigDecimal
+  newUtilization_gte: BigDecimal
+  newUtilization_lte: BigDecimal
+  newUtilization_in: [BigDecimal!]
+  newUtilization_not_in: [BigDecimal!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [StrategyDailyKpi_filter]
+  or: [StrategyDailyKpi_filter]
+}
+
+enum StrategyDailyKpi_orderBy {
+  id
+  strategy
+  strategy__id
+  strategy__block
+  strategy__timestamp
+  date
+  harvestCount
+  investOrDivestCount
+  investCount
+  invested
+  divestCount
+  divested
+  profitOrLossCount
+  profitCount
+  lossCount
+  profitAndLoss
+  apr
+  utilization
+  newHarvestCount
+  newInvestOrDivestCount
+  newInvestCount
+  newInvested
+  newDivestCount
+  newDivested
+  newProfitOrLossCount
+  newProfitCount
+  newLossCount
+  newProfitAndLoss
+  newApr
+  newUtilization
+}
+
+type StrategyData {
+  """ Token address """
+  id: ID!
+
+  """ Strategy start date """
+  strategyStartDate: BigInt!
+
+  """ Target percentage """
+  targetPercentage: BigInt!
+
+  """ BentoBox's understanding of the balance """
+  balance: BigInt!
+}
+
+input StrategyData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  strategyStartDate: BigInt
+  strategyStartDate_not: BigInt
+  strategyStartDate_gt: BigInt
+  strategyStartDate_lt: BigInt
+  strategyStartDate_gte: BigInt
+  strategyStartDate_lte: BigInt
+  strategyStartDate_in: [BigInt!]
+  strategyStartDate_not_in: [BigInt!]
+  targetPercentage: BigInt
+  targetPercentage_not: BigInt
+  targetPercentage_gt: BigInt
+  targetPercentage_lt: BigInt
+  targetPercentage_gte: BigInt
+  targetPercentage_lte: BigInt
+  targetPercentage_in: [BigInt!]
+  targetPercentage_not_in: [BigInt!]
+  balance: BigInt
+  balance_not: BigInt
+  balance_gt: BigInt
+  balance_lt: BigInt
+  balance_gte: BigInt
+  balance_lte: BigInt
+  balance_in: [BigInt!]
+  balance_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [StrategyData_filter]
+  or: [StrategyData_filter]
+}
+
+enum StrategyData_orderBy {
+  id
+  strategyStartDate
+  targetPercentage
+  balance
+}
+
+type StrategyHourlyKpi {
+  """ created by id, infix '-hour-' and unix timestamp, e.g. '0x00..00-hour-1657270000'
+  """
+  id: ID!
+
+  """ The Strategy this KPI belongs to """
+  strategy: Strategy!
+
+  """ Start date """
+  date: Int!
+
+  """ Harvest count """
+  harvestCount: BigInt!
+
+  """ Invest or divest count """
+  investOrDivestCount: BigInt!
+
+  """ Invest count """
+  investCount: BigInt!
+
+  """ Invested """
+  invested: BigInt!
+
+  """ Divest count """
+  divestCount: BigInt!
+
+  """ Divested"""
+  divested: BigInt!
+
+  """ Profit or loss count """
+  profitOrLossCount: BigInt!
+
+  """ Profit count """
+  profitCount: BigInt!
+
+  """ Loss count """
+  lossCount: BigInt!
+
+  """ Profit & Loss"""
+  profitAndLoss: BigInt!
+
+  """ APR """
+  apr: BigDecimal
+
+  """ Utilization """
+  utilization: BigDecimal
+
+  """ Harvest count for the given timeframe """
+  newHarvestCount: BigInt!
+
+  """ Invest or divest count for the given timeframe """
+  newInvestOrDivestCount: BigInt!
+
+  """ Invest count for the given timeframe """
+  newInvestCount: BigInt!
+
+  """ Invested for the given timeframe """
+  newInvested: BigInt!
+
+  """ Divest count for the given timeframe """
+  newDivestCount: BigInt!
+
+  """ Divested for the given timeframe """
+  newDivested: BigInt!
+
+  """ Profit or loss count for the given timeframe """
+  newProfitOrLossCount: BigInt!
+
+  """ Profit count for the given timeframe """
+  newProfitCount: BigInt!
+
+  """ Loss count for the given timeframe """
+  newLossCount: BigInt!
+
+  """ Profit & Los for the given timeframe """
+  newProfitAndLoss: BigInt!
+
+  """ APR for the given timeframe """
+  newApr: BigDecimal
+
+  """ Utilization for the given timeframe """
+  newUtilization: BigDecimal
+}
+
+input StrategyHourlyKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  strategy: String
+  strategy_not: String
+  strategy_gt: String
+  strategy_lt: String
+  strategy_gte: String
+  strategy_lte: String
+  strategy_in: [String!]
+  strategy_not_in: [String!]
+  strategy_contains: String
+  strategy_contains_nocase: String
+  strategy_not_contains: String
+  strategy_not_contains_nocase: String
+  strategy_starts_with: String
+  strategy_starts_with_nocase: String
+  strategy_not_starts_with: String
+  strategy_not_starts_with_nocase: String
+  strategy_ends_with: String
+  strategy_ends_with_nocase: String
+  strategy_not_ends_with: String
+  strategy_not_ends_with_nocase: String
+  strategy_: Strategy_filter
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  harvestCount: BigInt
+  harvestCount_not: BigInt
+  harvestCount_gt: BigInt
+  harvestCount_lt: BigInt
+  harvestCount_gte: BigInt
+  harvestCount_lte: BigInt
+  harvestCount_in: [BigInt!]
+  harvestCount_not_in: [BigInt!]
+  investOrDivestCount: BigInt
+  investOrDivestCount_not: BigInt
+  investOrDivestCount_gt: BigInt
+  investOrDivestCount_lt: BigInt
+  investOrDivestCount_gte: BigInt
+  investOrDivestCount_lte: BigInt
+  investOrDivestCount_in: [BigInt!]
+  investOrDivestCount_not_in: [BigInt!]
+  investCount: BigInt
+  investCount_not: BigInt
+  investCount_gt: BigInt
+  investCount_lt: BigInt
+  investCount_gte: BigInt
+  investCount_lte: BigInt
+  investCount_in: [BigInt!]
+  investCount_not_in: [BigInt!]
+  invested: BigInt
+  invested_not: BigInt
+  invested_gt: BigInt
+  invested_lt: BigInt
+  invested_gte: BigInt
+  invested_lte: BigInt
+  invested_in: [BigInt!]
+  invested_not_in: [BigInt!]
+  divestCount: BigInt
+  divestCount_not: BigInt
+  divestCount_gt: BigInt
+  divestCount_lt: BigInt
+  divestCount_gte: BigInt
+  divestCount_lte: BigInt
+  divestCount_in: [BigInt!]
+  divestCount_not_in: [BigInt!]
+  divested: BigInt
+  divested_not: BigInt
+  divested_gt: BigInt
+  divested_lt: BigInt
+  divested_gte: BigInt
+  divested_lte: BigInt
+  divested_in: [BigInt!]
+  divested_not_in: [BigInt!]
+  profitOrLossCount: BigInt
+  profitOrLossCount_not: BigInt
+  profitOrLossCount_gt: BigInt
+  profitOrLossCount_lt: BigInt
+  profitOrLossCount_gte: BigInt
+  profitOrLossCount_lte: BigInt
+  profitOrLossCount_in: [BigInt!]
+  profitOrLossCount_not_in: [BigInt!]
+  profitCount: BigInt
+  profitCount_not: BigInt
+  profitCount_gt: BigInt
+  profitCount_lt: BigInt
+  profitCount_gte: BigInt
+  profitCount_lte: BigInt
+  profitCount_in: [BigInt!]
+  profitCount_not_in: [BigInt!]
+  lossCount: BigInt
+  lossCount_not: BigInt
+  lossCount_gt: BigInt
+  lossCount_lt: BigInt
+  lossCount_gte: BigInt
+  lossCount_lte: BigInt
+  lossCount_in: [BigInt!]
+  lossCount_not_in: [BigInt!]
+  profitAndLoss: BigInt
+  profitAndLoss_not: BigInt
+  profitAndLoss_gt: BigInt
+  profitAndLoss_lt: BigInt
+  profitAndLoss_gte: BigInt
+  profitAndLoss_lte: BigInt
+  profitAndLoss_in: [BigInt!]
+  profitAndLoss_not_in: [BigInt!]
+  apr: BigDecimal
+  apr_not: BigDecimal
+  apr_gt: BigDecimal
+  apr_lt: BigDecimal
+  apr_gte: BigDecimal
+  apr_lte: BigDecimal
+  apr_in: [BigDecimal!]
+  apr_not_in: [BigDecimal!]
+  utilization: BigDecimal
+  utilization_not: BigDecimal
+  utilization_gt: BigDecimal
+  utilization_lt: BigDecimal
+  utilization_gte: BigDecimal
+  utilization_lte: BigDecimal
+  utilization_in: [BigDecimal!]
+  utilization_not_in: [BigDecimal!]
+  newHarvestCount: BigInt
+  newHarvestCount_not: BigInt
+  newHarvestCount_gt: BigInt
+  newHarvestCount_lt: BigInt
+  newHarvestCount_gte: BigInt
+  newHarvestCount_lte: BigInt
+  newHarvestCount_in: [BigInt!]
+  newHarvestCount_not_in: [BigInt!]
+  newInvestOrDivestCount: BigInt
+  newInvestOrDivestCount_not: BigInt
+  newInvestOrDivestCount_gt: BigInt
+  newInvestOrDivestCount_lt: BigInt
+  newInvestOrDivestCount_gte: BigInt
+  newInvestOrDivestCount_lte: BigInt
+  newInvestOrDivestCount_in: [BigInt!]
+  newInvestOrDivestCount_not_in: [BigInt!]
+  newInvestCount: BigInt
+  newInvestCount_not: BigInt
+  newInvestCount_gt: BigInt
+  newInvestCount_lt: BigInt
+  newInvestCount_gte: BigInt
+  newInvestCount_lte: BigInt
+  newInvestCount_in: [BigInt!]
+  newInvestCount_not_in: [BigInt!]
+  newInvested: BigInt
+  newInvested_not: BigInt
+  newInvested_gt: BigInt
+  newInvested_lt: BigInt
+  newInvested_gte: BigInt
+  newInvested_lte: BigInt
+  newInvested_in: [BigInt!]
+  newInvested_not_in: [BigInt!]
+  newDivestCount: BigInt
+  newDivestCount_not: BigInt
+  newDivestCount_gt: BigInt
+  newDivestCount_lt: BigInt
+  newDivestCount_gte: BigInt
+  newDivestCount_lte: BigInt
+  newDivestCount_in: [BigInt!]
+  newDivestCount_not_in: [BigInt!]
+  newDivested: BigInt
+  newDivested_not: BigInt
+  newDivested_gt: BigInt
+  newDivested_lt: BigInt
+  newDivested_gte: BigInt
+  newDivested_lte: BigInt
+  newDivested_in: [BigInt!]
+  newDivested_not_in: [BigInt!]
+  newProfitOrLossCount: BigInt
+  newProfitOrLossCount_not: BigInt
+  newProfitOrLossCount_gt: BigInt
+  newProfitOrLossCount_lt: BigInt
+  newProfitOrLossCount_gte: BigInt
+  newProfitOrLossCount_lte: BigInt
+  newProfitOrLossCount_in: [BigInt!]
+  newProfitOrLossCount_not_in: [BigInt!]
+  newProfitCount: BigInt
+  newProfitCount_not: BigInt
+  newProfitCount_gt: BigInt
+  newProfitCount_lt: BigInt
+  newProfitCount_gte: BigInt
+  newProfitCount_lte: BigInt
+  newProfitCount_in: [BigInt!]
+  newProfitCount_not_in: [BigInt!]
+  newLossCount: BigInt
+  newLossCount_not: BigInt
+  newLossCount_gt: BigInt
+  newLossCount_lt: BigInt
+  newLossCount_gte: BigInt
+  newLossCount_lte: BigInt
+  newLossCount_in: [BigInt!]
+  newLossCount_not_in: [BigInt!]
+  newProfitAndLoss: BigInt
+  newProfitAndLoss_not: BigInt
+  newProfitAndLoss_gt: BigInt
+  newProfitAndLoss_lt: BigInt
+  newProfitAndLoss_gte: BigInt
+  newProfitAndLoss_lte: BigInt
+  newProfitAndLoss_in: [BigInt!]
+  newProfitAndLoss_not_in: [BigInt!]
+  newApr: BigDecimal
+  newApr_not: BigDecimal
+  newApr_gt: BigDecimal
+  newApr_lt: BigDecimal
+  newApr_gte: BigDecimal
+  newApr_lte: BigDecimal
+  newApr_in: [BigDecimal!]
+  newApr_not_in: [BigDecimal!]
+  newUtilization: BigDecimal
+  newUtilization_not: BigDecimal
+  newUtilization_gt: BigDecimal
+  newUtilization_lt: BigDecimal
+  newUtilization_gte: BigDecimal
+  newUtilization_lte: BigDecimal
+  newUtilization_in: [BigDecimal!]
+  newUtilization_not_in: [BigDecimal!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [StrategyHourlyKpi_filter]
+  or: [StrategyHourlyKpi_filter]
+}
+
+enum StrategyHourlyKpi_orderBy {
+  id
+  strategy
+  strategy__id
+  strategy__block
+  strategy__timestamp
+  date
+  harvestCount
+  investOrDivestCount
+  investCount
+  invested
+  divestCount
+  divested
+  profitOrLossCount
+  profitCount
+  lossCount
+  profitAndLoss
+  apr
+  utilization
+  newHarvestCount
+  newInvestOrDivestCount
+  newInvestCount
+  newInvested
+  newDivestCount
+  newDivested
+  newProfitOrLossCount
+  newProfitCount
+  newLossCount
+  newProfitAndLoss
+  newApr
+  newUtilization
+}
+
+type StrategyKpi {
+  """ Strategy address """
+  id: ID!
+
+  """ Harvest count """
+  harvestCount: BigInt!
+
+  """ Invest or divest count """
+  investOrDivestCount: BigInt!
+
+  """ Invest count """
+  investCount: BigInt!
+
+  """ Invested """
+  invested: BigInt!
+
+  """ Divest count """
+  divestCount: BigInt!
+
+  """ Divested"""
+  divested: BigInt!
+
+  """ Profit or loss count """
+  profitOrLossCount: BigInt!
+
+  """ Profit count """
+  profitCount: BigInt!
+
+  """ Loss count """
+  lossCount: BigInt!
+
+  """ Profit & Loss"""
+  profitAndLoss: BigInt!
+
+  """ Isolated Strategy APR """
+  apr: BigDecimal
+
+  """ Utilization """
+  utilization: BigDecimal
+}
+
+input StrategyKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  harvestCount: BigInt
+  harvestCount_not: BigInt
+  harvestCount_gt: BigInt
+  harvestCount_lt: BigInt
+  harvestCount_gte: BigInt
+  harvestCount_lte: BigInt
+  harvestCount_in: [BigInt!]
+  harvestCount_not_in: [BigInt!]
+  investOrDivestCount: BigInt
+  investOrDivestCount_not: BigInt
+  investOrDivestCount_gt: BigInt
+  investOrDivestCount_lt: BigInt
+  investOrDivestCount_gte: BigInt
+  investOrDivestCount_lte: BigInt
+  investOrDivestCount_in: [BigInt!]
+  investOrDivestCount_not_in: [BigInt!]
+  investCount: BigInt
+  investCount_not: BigInt
+  investCount_gt: BigInt
+  investCount_lt: BigInt
+  investCount_gte: BigInt
+  investCount_lte: BigInt
+  investCount_in: [BigInt!]
+  investCount_not_in: [BigInt!]
+  invested: BigInt
+  invested_not: BigInt
+  invested_gt: BigInt
+  invested_lt: BigInt
+  invested_gte: BigInt
+  invested_lte: BigInt
+  invested_in: [BigInt!]
+  invested_not_in: [BigInt!]
+  divestCount: BigInt
+  divestCount_not: BigInt
+  divestCount_gt: BigInt
+  divestCount_lt: BigInt
+  divestCount_gte: BigInt
+  divestCount_lte: BigInt
+  divestCount_in: [BigInt!]
+  divestCount_not_in: [BigInt!]
+  divested: BigInt
+  divested_not: BigInt
+  divested_gt: BigInt
+  divested_lt: BigInt
+  divested_gte: BigInt
+  divested_lte: BigInt
+  divested_in: [BigInt!]
+  divested_not_in: [BigInt!]
+  profitOrLossCount: BigInt
+  profitOrLossCount_not: BigInt
+  profitOrLossCount_gt: BigInt
+  profitOrLossCount_lt: BigInt
+  profitOrLossCount_gte: BigInt
+  profitOrLossCount_lte: BigInt
+  profitOrLossCount_in: [BigInt!]
+  profitOrLossCount_not_in: [BigInt!]
+  profitCount: BigInt
+  profitCount_not: BigInt
+  profitCount_gt: BigInt
+  profitCount_lt: BigInt
+  profitCount_gte: BigInt
+  profitCount_lte: BigInt
+  profitCount_in: [BigInt!]
+  profitCount_not_in: [BigInt!]
+  lossCount: BigInt
+  lossCount_not: BigInt
+  lossCount_gt: BigInt
+  lossCount_lt: BigInt
+  lossCount_gte: BigInt
+  lossCount_lte: BigInt
+  lossCount_in: [BigInt!]
+  lossCount_not_in: [BigInt!]
+  profitAndLoss: BigInt
+  profitAndLoss_not: BigInt
+  profitAndLoss_gt: BigInt
+  profitAndLoss_lt: BigInt
+  profitAndLoss_gte: BigInt
+  profitAndLoss_lte: BigInt
+  profitAndLoss_in: [BigInt!]
+  profitAndLoss_not_in: [BigInt!]
+  apr: BigDecimal
+  apr_not: BigDecimal
+  apr_gt: BigDecimal
+  apr_lt: BigDecimal
+  apr_gte: BigDecimal
+  apr_lte: BigDecimal
+  apr_in: [BigDecimal!]
+  apr_not_in: [BigDecimal!]
+  utilization: BigDecimal
+  utilization_not: BigDecimal
+  utilization_gt: BigDecimal
+  utilization_lt: BigDecimal
+  utilization_gte: BigDecimal
+  utilization_lte: BigDecimal
+  utilization_in: [BigDecimal!]
+  utilization_not_in: [BigDecimal!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [StrategyKpi_filter]
+  or: [StrategyKpi_filter]
+}
+
+enum StrategyKpi_orderBy {
+  id
+  harvestCount
+  investOrDivestCount
+  investCount
+  invested
+  divestCount
+  divested
+  profitOrLossCount
+  profitCount
+  lossCount
+  profitAndLoss
+  apr
+  utilization
+}
+
+input Strategy_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  kpi: String
+  kpi_not: String
+  kpi_gt: String
+  kpi_lt: String
+  kpi_gte: String
+  kpi_lte: String
+  kpi_in: [String!]
+  kpi_not_in: [String!]
+  kpi_contains: String
+  kpi_contains_nocase: String
+  kpi_not_contains: String
+  kpi_not_contains_nocase: String
+  kpi_starts_with: String
+  kpi_starts_with_nocase: String
+  kpi_not_starts_with: String
+  kpi_not_starts_with_nocase: String
+  kpi_ends_with: String
+  kpi_ends_with_nocase: String
+  kpi_not_ends_with: String
+  kpi_not_ends_with_nocase: String
+  kpi_: StrategyKpi_filter
+  harvests_: Harvest_filter
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Strategy_filter]
+  or: [Strategy_filter]
+}
+
+enum Strategy_orderBy {
+  id
+  kpi
+  kpi__id
+  kpi__harvestCount
+  kpi__investOrDivestCount
+  kpi__investCount
+  kpi__invested
+  kpi__divestCount
+  kpi__divested
+  kpi__profitOrLossCount
+  kpi__profitCount
+  kpi__lossCount
+  kpi__profitAndLoss
+  kpi__apr
+  kpi__utilization
+  harvests
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  block
+  timestamp
+}
+
+type Subscription {
+  bentoBox(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBox
+  bentoBoxes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBox_orderBy
+    orderDirection: OrderDirection
+    where: BentoBox_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBox!]!
+  bentoBoxKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBoxKpi
+  bentoBoxKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBoxKpi_orderBy
+    orderDirection: OrderDirection
+    where: BentoBoxKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBoxKpi!]!
+  masterContract(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MasterContract
+  masterContracts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MasterContract_orderBy
+    orderDirection: OrderDirection
+    where: MasterContract_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MasterContract!]!
+  masterContractApproval(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): MasterContractApproval
+  masterContractApprovals(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: MasterContractApproval_orderBy
+    orderDirection: OrderDirection
+    where: MasterContractApproval_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [MasterContractApproval!]!
+  clone(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Clone
+  clones(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Clone_orderBy
+    orderDirection: OrderDirection
+    where: Clone_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Clone!]!
+  token(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Token
+  tokens(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Token_orderBy
+    orderDirection: OrderDirection
+    where: Token_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Token!]!
+  tokenKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenKpi
+  tokenKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenKpi_orderBy
+    orderDirection: OrderDirection
+    where: TokenKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenKpi!]!
+  tokenStrategy(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenStrategy
+  tokenStrategies(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenStrategy_orderBy
+    orderDirection: OrderDirection
+    where: TokenStrategy_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenStrategy!]!
+  strategy(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Strategy
+  strategies(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Strategy_orderBy
+    orderDirection: OrderDirection
+    where: Strategy_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Strategy!]!
+  strategyData(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyData
+  strategyDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyData_orderBy
+    orderDirection: OrderDirection
+    where: StrategyData_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyData!]!
+  strategyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyKpi
+  strategyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyKpi_orderBy
+    orderDirection: OrderDirection
+    where: StrategyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyKpi!]!
+  harvest(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Harvest
+  harvests(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Harvest_orderBy
+    orderDirection: OrderDirection
+    where: Harvest_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Harvest!]!
+  profitOrLoss(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ProfitOrLoss
+  profitOrLosses(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ProfitOrLoss_orderBy
+    orderDirection: OrderDirection
+    where: ProfitOrLoss_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ProfitOrLoss!]!
+  investOrDivest(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): InvestOrDivest
+  investOrDivests(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: InvestOrDivest_orderBy
+    orderDirection: OrderDirection
+    where: InvestOrDivest_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [InvestOrDivest!]!
+  rebase(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Rebase
+  rebases(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Rebase_orderBy
+    orderDirection: OrderDirection
+    where: Rebase_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Rebase!]!
+  flashLoan(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): FlashLoan
+  flashLoans(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: FlashLoan_orderBy
+    orderDirection: OrderDirection
+    where: FlashLoan_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [FlashLoan!]!
+  protocol(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Protocol
+  protocols(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Protocol_orderBy
+    orderDirection: OrderDirection
+    where: Protocol_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Protocol!]!
+  user(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): User
+  users(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: User_orderBy
+    orderDirection: OrderDirection
+    where: User_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [User!]!
+  balance(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Balance
+  balances(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Balance_orderBy
+    orderDirection: OrderDirection
+    where: Balance_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Balance!]!
+  transaction(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Transaction
+  transactions(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Transaction_orderBy
+    orderDirection: OrderDirection
+    where: Transaction_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Transaction!]!
+  bentoBoxHourlyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBoxHourlyKpi
+  bentoBoxHourlyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBoxHourlyKpi_orderBy
+    orderDirection: OrderDirection
+    where: BentoBoxHourlyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBoxHourlyKpi!]!
+  bentoBoxDailyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): BentoBoxDailyKpi
+  bentoBoxDailyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: BentoBoxDailyKpi_orderBy
+    orderDirection: OrderDirection
+    where: BentoBoxDailyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [BentoBoxDailyKpi!]!
+  strategyDailyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyDailyKpi
+  strategyDailyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyDailyKpi_orderBy
+    orderDirection: OrderDirection
+    where: StrategyDailyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyDailyKpi!]!
+  strategyHourlyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StrategyHourlyKpi
+  strategyHourlyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StrategyHourlyKpi_orderBy
+    orderDirection: OrderDirection
+    where: StrategyHourlyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StrategyHourlyKpi!]!
+  tokenHourlyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenHourlyKpi
+  tokenHourlyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenHourlyKpi_orderBy
+    orderDirection: OrderDirection
+    where: TokenHourlyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenHourlyKpi!]!
+  tokenDailyKpi(
+    id: ID!
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): TokenDailyKpi
+  tokenDailyKpis(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: TokenDailyKpi_orderBy
+    orderDirection: OrderDirection
+    where: TokenDailyKpi_filter
+
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [TokenDailyKpi!]!
+
+  """Access to subgraph metadata"""
+  _meta(block: Block_height): _Meta_
+}
+
+"A string representation of microseconds UNIX timestamp (16 digits)\n"
+scalar Timestamp
+
+type Token {
+  """ Token address """
+  id: ID!
+
+  """ The BentoBox this token belongs to """
+  bentoBox: BentoBox!
+
+  """ The Rebase that belongs to this token """
+  rebase: Rebase!
+
+  """ Strategies, past and present, which belong to this token """
+  strategies(skip: Int = 0, first: Int = 100, orderBy: Strategy_orderBy, orderDirection: OrderDirection, where: Strategy_filter): [Strategy!]
+
+  """ The Kpi which belong to this token """
+  kpi: TokenKpi!
+
+  """ Token symbol, if fetched successfully, else default to ??? """
+  symbol: String!
+
+  """ If the symbol was succesfully fetched """
+  symbolSuccess: Boolean!
+
+  """ Token name, if fetched successfully, else default to ??? """
+  name: String!
+
+  """ If the name was succesfully fetched """
+  nameSuccess: Boolean!
+
+  """ Token decimals, if fetched successfully, else default to 18 """
+  decimals: BigInt!
+
+  """ If the decimals was succesfully fetched """
+  decimalsSuccess: Boolean!
+}
+
+type TokenDailyKpi {
+  """ created by id, infix '-day-' and unix timestamp, e.g. '0x00..00-day-1657270000'
+  """
+  id: ID!
+
+  """ Token this KPI belongs to """
+  token: Token!
+
+  """ Liquidity """
+  liquidity: BigInt!
+
+  """ Liquidity for the given timeframe """
+  newLiquidity: BigInt!
+
+  """ Strategy count """
+  strategyCount: BigInt!
+
+  """ Strategy count for the given timeframe """
+  newStrategyCount: BigInt!
+}
+
+input TokenDailyKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  liquidity: BigInt
+  liquidity_not: BigInt
+  liquidity_gt: BigInt
+  liquidity_lt: BigInt
+  liquidity_gte: BigInt
+  liquidity_lte: BigInt
+  liquidity_in: [BigInt!]
+  liquidity_not_in: [BigInt!]
+  newLiquidity: BigInt
+  newLiquidity_not: BigInt
+  newLiquidity_gt: BigInt
+  newLiquidity_lt: BigInt
+  newLiquidity_gte: BigInt
+  newLiquidity_lte: BigInt
+  newLiquidity_in: [BigInt!]
+  newLiquidity_not_in: [BigInt!]
+  strategyCount: BigInt
+  strategyCount_not: BigInt
+  strategyCount_gt: BigInt
+  strategyCount_lt: BigInt
+  strategyCount_gte: BigInt
+  strategyCount_lte: BigInt
+  strategyCount_in: [BigInt!]
+  strategyCount_not_in: [BigInt!]
+  newStrategyCount: BigInt
+  newStrategyCount_not: BigInt
+  newStrategyCount_gt: BigInt
+  newStrategyCount_lt: BigInt
+  newStrategyCount_gte: BigInt
+  newStrategyCount_lte: BigInt
+  newStrategyCount_in: [BigInt!]
+  newStrategyCount_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [TokenDailyKpi_filter]
+  or: [TokenDailyKpi_filter]
+}
+
+enum TokenDailyKpi_orderBy {
+  id
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  liquidity
+  newLiquidity
+  strategyCount
+  newStrategyCount
+}
+
+type TokenHourlyKpi {
+  """ created by id, infix '-hour-' and unix timestamp, e.g. '0x00..00-hour-1657270000'
+  """
+  id: ID!
+
+  """ Token this KPI belongs to """
+  token: Token!
+
+  """ Liquidity """
+  liquidity: BigInt!
+
+  """ Liquidity for the given timeframe """
+  newLiquidity: BigInt!
+
+  """ Strategy count """
+  strategyCount: BigInt!
+
+  """ Strategy count for the given timeframe """
+  newStrategyCount: BigInt!
+}
+
+input TokenHourlyKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  liquidity: BigInt
+  liquidity_not: BigInt
+  liquidity_gt: BigInt
+  liquidity_lt: BigInt
+  liquidity_gte: BigInt
+  liquidity_lte: BigInt
+  liquidity_in: [BigInt!]
+  liquidity_not_in: [BigInt!]
+  newLiquidity: BigInt
+  newLiquidity_not: BigInt
+  newLiquidity_gt: BigInt
+  newLiquidity_lt: BigInt
+  newLiquidity_gte: BigInt
+  newLiquidity_lte: BigInt
+  newLiquidity_in: [BigInt!]
+  newLiquidity_not_in: [BigInt!]
+  strategyCount: BigInt
+  strategyCount_not: BigInt
+  strategyCount_gt: BigInt
+  strategyCount_lt: BigInt
+  strategyCount_gte: BigInt
+  strategyCount_lte: BigInt
+  strategyCount_in: [BigInt!]
+  strategyCount_not_in: [BigInt!]
+  newStrategyCount: BigInt
+  newStrategyCount_not: BigInt
+  newStrategyCount_gt: BigInt
+  newStrategyCount_lt: BigInt
+  newStrategyCount_gte: BigInt
+  newStrategyCount_lte: BigInt
+  newStrategyCount_in: [BigInt!]
+  newStrategyCount_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [TokenHourlyKpi_filter]
+  or: [TokenHourlyKpi_filter]
+}
+
+enum TokenHourlyKpi_orderBy {
+  id
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  liquidity
+  newLiquidity
+  strategyCount
+  newStrategyCount
+}
+
+type TokenKpi {
+  """ Token address """
+  id: ID!
+
+  """ Token that belongs to this Kpi """
+  token: Token!
+
+  """ Liquidity """
+  liquidity: BigInt!
+
+  """ Strategy count """
+  strategyCount: BigInt!
+
+  """ Token Strategy APR """
+  apr: BigDecimal
+}
+
+input TokenKpi_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  liquidity: BigInt
+  liquidity_not: BigInt
+  liquidity_gt: BigInt
+  liquidity_lt: BigInt
+  liquidity_gte: BigInt
+  liquidity_lte: BigInt
+  liquidity_in: [BigInt!]
+  liquidity_not_in: [BigInt!]
+  strategyCount: BigInt
+  strategyCount_not: BigInt
+  strategyCount_gt: BigInt
+  strategyCount_lt: BigInt
+  strategyCount_gte: BigInt
+  strategyCount_lte: BigInt
+  strategyCount_in: [BigInt!]
+  strategyCount_not_in: [BigInt!]
+  apr: BigDecimal
+  apr_not: BigDecimal
+  apr_gt: BigDecimal
+  apr_lt: BigDecimal
+  apr_gte: BigDecimal
+  apr_lte: BigDecimal
+  apr_in: [BigDecimal!]
+  apr_not_in: [BigDecimal!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [TokenKpi_filter]
+  or: [TokenKpi_filter]
+}
+
+enum TokenKpi_orderBy {
+  id
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  liquidity
+  strategyCount
+  apr
+}
+
+type TokenStrategy {
+  """ Token address """
+  id: ID!
+
+  """ The Token this strategy belongs to """
+  token: Token!
+
+  """ Strategy address """
+  strategy: Strategy
+
+  """ Pending strategy address """
+  pendingStrategy: Strategy
+
+  """ The Strategy data """
+  data: StrategyData!
+
+  """ The block number of this strategy """
+  block: BigInt!
+
+  """ The timestamp of this strategy """
+  timestamp: BigInt!
+}
+
+input TokenStrategy_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  strategy: String
+  strategy_not: String
+  strategy_gt: String
+  strategy_lt: String
+  strategy_gte: String
+  strategy_lte: String
+  strategy_in: [String!]
+  strategy_not_in: [String!]
+  strategy_contains: String
+  strategy_contains_nocase: String
+  strategy_not_contains: String
+  strategy_not_contains_nocase: String
+  strategy_starts_with: String
+  strategy_starts_with_nocase: String
+  strategy_not_starts_with: String
+  strategy_not_starts_with_nocase: String
+  strategy_ends_with: String
+  strategy_ends_with_nocase: String
+  strategy_not_ends_with: String
+  strategy_not_ends_with_nocase: String
+  strategy_: Strategy_filter
+  pendingStrategy: String
+  pendingStrategy_not: String
+  pendingStrategy_gt: String
+  pendingStrategy_lt: String
+  pendingStrategy_gte: String
+  pendingStrategy_lte: String
+  pendingStrategy_in: [String!]
+  pendingStrategy_not_in: [String!]
+  pendingStrategy_contains: String
+  pendingStrategy_contains_nocase: String
+  pendingStrategy_not_contains: String
+  pendingStrategy_not_contains_nocase: String
+  pendingStrategy_starts_with: String
+  pendingStrategy_starts_with_nocase: String
+  pendingStrategy_not_starts_with: String
+  pendingStrategy_not_starts_with_nocase: String
+  pendingStrategy_ends_with: String
+  pendingStrategy_ends_with_nocase: String
+  pendingStrategy_not_ends_with: String
+  pendingStrategy_not_ends_with_nocase: String
+  pendingStrategy_: Strategy_filter
+  data: String
+  data_not: String
+  data_gt: String
+  data_lt: String
+  data_gte: String
+  data_lte: String
+  data_in: [String!]
+  data_not_in: [String!]
+  data_contains: String
+  data_contains_nocase: String
+  data_not_contains: String
+  data_not_contains_nocase: String
+  data_starts_with: String
+  data_starts_with_nocase: String
+  data_not_starts_with: String
+  data_not_starts_with_nocase: String
+  data_ends_with: String
+  data_ends_with_nocase: String
+  data_not_ends_with: String
+  data_not_ends_with_nocase: String
+  data_: StrategyData_filter
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [TokenStrategy_filter]
+  or: [TokenStrategy_filter]
+}
+
+enum TokenStrategy_orderBy {
+  id
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  strategy
+  strategy__id
+  strategy__block
+  strategy__timestamp
+  pendingStrategy
+  pendingStrategy__id
+  pendingStrategy__block
+  pendingStrategy__timestamp
+  data
+  data__id
+  data__strategyStartDate
+  data__targetPercentage
+  data__balance
+  block
+  timestamp
+}
+
+input Token_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+  rebase: String
+  rebase_not: String
+  rebase_gt: String
+  rebase_lt: String
+  rebase_gte: String
+  rebase_lte: String
+  rebase_in: [String!]
+  rebase_not_in: [String!]
+  rebase_contains: String
+  rebase_contains_nocase: String
+  rebase_not_contains: String
+  rebase_not_contains_nocase: String
+  rebase_starts_with: String
+  rebase_starts_with_nocase: String
+  rebase_not_starts_with: String
+  rebase_not_starts_with_nocase: String
+  rebase_ends_with: String
+  rebase_ends_with_nocase: String
+  rebase_not_ends_with: String
+  rebase_not_ends_with_nocase: String
+  rebase_: Rebase_filter
+  strategies_: Strategy_filter
+  kpi: String
+  kpi_not: String
+  kpi_gt: String
+  kpi_lt: String
+  kpi_gte: String
+  kpi_lte: String
+  kpi_in: [String!]
+  kpi_not_in: [String!]
+  kpi_contains: String
+  kpi_contains_nocase: String
+  kpi_not_contains: String
+  kpi_not_contains_nocase: String
+  kpi_starts_with: String
+  kpi_starts_with_nocase: String
+  kpi_not_starts_with: String
+  kpi_not_starts_with_nocase: String
+  kpi_ends_with: String
+  kpi_ends_with_nocase: String
+  kpi_not_ends_with: String
+  kpi_not_ends_with_nocase: String
+  kpi_: TokenKpi_filter
+  symbol: String
+  symbol_not: String
+  symbol_gt: String
+  symbol_lt: String
+  symbol_gte: String
+  symbol_lte: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_contains: String
+  symbol_contains_nocase: String
+  symbol_not_contains: String
+  symbol_not_contains_nocase: String
+  symbol_starts_with: String
+  symbol_starts_with_nocase: String
+  symbol_not_starts_with: String
+  symbol_not_starts_with_nocase: String
+  symbol_ends_with: String
+  symbol_ends_with_nocase: String
+  symbol_not_ends_with: String
+  symbol_not_ends_with_nocase: String
+  symbolSuccess: Boolean
+  symbolSuccess_not: Boolean
+  symbolSuccess_in: [Boolean!]
+  symbolSuccess_not_in: [Boolean!]
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  nameSuccess: Boolean
+  nameSuccess_not: Boolean
+  nameSuccess_in: [Boolean!]
+  nameSuccess_not_in: [Boolean!]
+  decimals: BigInt
+  decimals_not: BigInt
+  decimals_gt: BigInt
+  decimals_lt: BigInt
+  decimals_gte: BigInt
+  decimals_lte: BigInt
+  decimals_in: [BigInt!]
+  decimals_not_in: [BigInt!]
+  decimalsSuccess: Boolean
+  decimalsSuccess_not: Boolean
+  decimalsSuccess_in: [Boolean!]
+  decimalsSuccess_not_in: [Boolean!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Token_filter]
+  or: [Token_filter]
+}
+
+enum Token_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+  rebase
+  rebase__id
+  rebase__base
+  rebase__elastic
+  strategies
+  kpi
+  kpi__id
+  kpi__liquidity
+  kpi__strategyCount
+  kpi__apr
+  symbol
+  symbolSuccess
+  name
+  nameSuccess
+  decimals
+  decimalsSuccess
+}
+
+type Transaction {
+  """ Concatenation of transaction hash and log index """
+  id: ID!
+
+  """ BentoBox this transaction belongs to """
+  bentoBox: BentoBox!
+
+  """ Transaction type """
+  type: TransactionType!
+
+  """ User from whom this transaction is made """
+  from: User!
+
+  """ User to whom the transaction is sent """
+  to: User!
+
+  """ Token this transaction belongs to """
+  token: Token!
+
+  """ Amount of this transaction """
+  amount: BigInt
+
+  """ Share of this transaction """
+  share: BigInt!
+
+  """ Block number of this transaction """
+  block: BigInt!
+
+  """ Timestamp of this transaction """
+  timestamp: BigInt!
+}
+
+enum TransactionType {
+  deposit
+  transfer
+  withdraw
+}
+
+input Transaction_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+  type: TransactionType
+  type_not: TransactionType
+  type_in: [TransactionType!]
+  type_not_in: [TransactionType!]
+  from: String
+  from_not: String
+  from_gt: String
+  from_lt: String
+  from_gte: String
+  from_lte: String
+  from_in: [String!]
+  from_not_in: [String!]
+  from_contains: String
+  from_contains_nocase: String
+  from_not_contains: String
+  from_not_contains_nocase: String
+  from_starts_with: String
+  from_starts_with_nocase: String
+  from_not_starts_with: String
+  from_not_starts_with_nocase: String
+  from_ends_with: String
+  from_ends_with_nocase: String
+  from_not_ends_with: String
+  from_not_ends_with_nocase: String
+  from_: User_filter
+  to: String
+  to_not: String
+  to_gt: String
+  to_lt: String
+  to_gte: String
+  to_lte: String
+  to_in: [String!]
+  to_not_in: [String!]
+  to_contains: String
+  to_contains_nocase: String
+  to_not_contains: String
+  to_not_contains_nocase: String
+  to_starts_with: String
+  to_starts_with_nocase: String
+  to_not_starts_with: String
+  to_not_starts_with_nocase: String
+  to_ends_with: String
+  to_ends_with_nocase: String
+  to_not_ends_with: String
+  to_not_ends_with_nocase: String
+  to_: User_filter
+  token: String
+  token_not: String
+  token_gt: String
+  token_lt: String
+  token_gte: String
+  token_lte: String
+  token_in: [String!]
+  token_not_in: [String!]
+  token_contains: String
+  token_contains_nocase: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_: Token_filter
+  amount: BigInt
+  amount_not: BigInt
+  amount_gt: BigInt
+  amount_lt: BigInt
+  amount_gte: BigInt
+  amount_lte: BigInt
+  amount_in: [BigInt!]
+  amount_not_in: [BigInt!]
+  share: BigInt
+  share_not: BigInt
+  share_gt: BigInt
+  share_lt: BigInt
+  share_gte: BigInt
+  share_lte: BigInt
+  share_in: [BigInt!]
+  share_not_in: [BigInt!]
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Transaction_filter]
+  or: [Transaction_filter]
+}
+
+enum Transaction_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+  type
+  from
+  from__id
+  from__block
+  from__timestamp
+  to
+  to__id
+  to__block
+  to__timestamp
+  token
+  token__id
+  token__symbol
+  token__symbolSuccess
+  token__name
+  token__nameSuccess
+  token__decimals
+  token__decimalsSuccess
+  amount
+  share
+  block
+  timestamp
+}
+
+type User {
+  """ User address """
+  id: ID!
+
+  """ BentoBox this user belongs to """
+  bentoBox: BentoBox!
+
+  """ MasterContractApprovals that belong to this user """
+  masterContractApprovals(skip: Int = 0, first: Int = 100, orderBy: MasterContractApproval_orderBy, orderDirection: OrderDirection, where: MasterContractApproval_filter): [MasterContractApproval!]
+
+  """ Balances that belong to this user """
+  balances(skip: Int = 0, first: Int = 100, orderBy: Balance_orderBy, orderDirection: OrderDirection, where: Balance_filter): [Balance!]
+
+  """ Block number of this user """
+  block: BigInt!
+
+  """ Timestamp of this user """
+  timestamp: BigInt!
+}
+
+input User_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bentoBox: String
+  bentoBox_not: String
+  bentoBox_gt: String
+  bentoBox_lt: String
+  bentoBox_gte: String
+  bentoBox_lte: String
+  bentoBox_in: [String!]
+  bentoBox_not_in: [String!]
+  bentoBox_contains: String
+  bentoBox_contains_nocase: String
+  bentoBox_not_contains: String
+  bentoBox_not_contains_nocase: String
+  bentoBox_starts_with: String
+  bentoBox_starts_with_nocase: String
+  bentoBox_not_starts_with: String
+  bentoBox_not_starts_with_nocase: String
+  bentoBox_ends_with: String
+  bentoBox_ends_with_nocase: String
+  bentoBox_not_ends_with: String
+  bentoBox_not_ends_with_nocase: String
+  bentoBox_: BentoBox_filter
+  masterContractApprovals_: MasterContractApproval_filter
+  balances_: Balance_filter
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [User_filter]
+  or: [User_filter]
+}
+
+enum User_orderBy {
+  id
+  bentoBox
+  bentoBox__id
+  masterContractApprovals
+  balances
+  block
+  timestamp
+}
+
+type _Block_ {
+  """The hash of the block"""
+  hash: Bytes
+
+  """The block number"""
+  number: Int!
+
+  """Integer representation of the timestamp stored in blocks for the chain"""
+  timestamp: Int
+
+  """The hash of the parent block"""
+  parentHash: Bytes
+}
+
+"""The type for the top-level _meta field"""
+type _Meta_ {
+  "Information about a specific subgraph block. The hash of the block\nwill be null if the _meta field has a block constraint that asks for\na block number. It will be filled if the _meta field has no block constraint\nand therefore asks for the latest  block\n"
+  block: _Block_!
+
+  """The deployment ID"""
+  deployment: String!
+
+  """If `true`, the subgraph encountered indexing errors at some past block"""
+  hasIndexingErrors: Boolean!
+}
+
+enum _SubgraphErrorPolicy_ {
+  """Data will be returned even if the subgraph has indexing errors"""
+  allow
+
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
+}

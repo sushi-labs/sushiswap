@@ -7,9 +7,8 @@ import {
   textFieldVariants,
   typographyVariants,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
-import { useTotalSupply } from '@sushiswap/wagmi'
+import { Button } from '@sushiswap/ui'
+import { Widget, WidgetHeader } from '@sushiswap/ui'
 import { FC, ReactNode, useMemo } from 'react'
 import {
   useTokenAmountDollarValues,
@@ -18,6 +17,7 @@ import {
 import { Amount, Token, Type, tryParseAmount } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
 import { usePoolPosition } from './PoolPositionProvider'
 
 interface AddSectionStakeWidgetProps {
@@ -27,7 +27,7 @@ interface AddSectionStakeWidgetProps {
   setValue(value: string): void
   reserve0: Amount<Type> | null
   reserve1: Amount<Type> | null
-  liquidityToken: Token
+  liquidityToken: Token | undefined
   children: ReactNode
   isFarm?: boolean
   isIncentivized?: boolean

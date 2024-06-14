@@ -6,30 +6,34 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { CardDescription, CardTitle } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import ReactECharts from 'echarts-for-react'
-import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
 import { usePoolGraphData } from 'src/lib/hooks'
-import { ChainId } from 'sushi/chain'
-import { formatPercent, formatUSD } from 'sushi/format'
+
+import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/visualMap'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
+
 interface PoolChartProps {
-  chart:
-    | PoolChartType.Volume
-    | PoolChartType.Fees
-    | PoolChartType.TVL
-    | PoolChartType.APR
+  chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
   address: string
-  chainId: ChainId
+  chainId: SushiSwapV2ChainId
 }
 
 const tailwind = resolveConfig(tailwindConfig)
@@ -40,12 +44,16 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   address,
   chainId,
 }) => {
-  const { data: graphPair, isLoading } = usePoolGraphData({
+  const {
+    data: graphPair,
+    isInitialLoading: isLoading,
+    isError,
+  } = usePoolGraphData({
     poolAddress: address,
     chainId,
   })
 
-  const swapFee = graphPair ? graphPair?.swapFee / 10000 : 0
+  const swapFee = graphPair ? graphPair?.swapFee : 0
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     const data =
@@ -56,16 +64,14 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
       (acc, cur) => {
-        if (cur.date * 1000 >= currentDate - chartPeriods[period]) {
-          acc[0].push(cur.date)
+        if (cur?.date * 1000 >= currentDate - chartPeriods[period]) {
+          acc[0].push(cur?.date)
           if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur.volumeUSD * Number(swapFee)))
+            acc[1].push(Number(cur?.volumeUSD * Number(swapFee)))
           } else if (chart === PoolChartType.Volume) {
-            acc[1].push(Number(cur.volumeUSD))
+            acc[1].push(Number(cur?.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
-            acc[1].push(Number(cur.liquidityUSD))
-          } else if (chart === PoolChartType.APR) {
-            acc[1].push(Number(cur.apr))
+            acc[1].push(Number(cur?.liquidityUSD))
           }
         }
         return acc
@@ -89,11 +95,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       const nameNodes = document.getElementsByClassName('hoveredItemName')
 
       if (valueNodes[0]) {
-        if (chart === PoolChartType.APR) {
-          valueNodes[0].innerHTML = formatPercent(value)
-        } else {
-          valueNodes[0].innerHTML = formatUSD(value)
-        }
+        valueNodes[0].innerHTML = formatUSD(value)
       }
 
       if (valueNodes[1]) {
@@ -129,16 +131,19 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
           fontSize: 12,
           fontWeight: 600,
         },
+        axisPointer: {
+          lineStyle: {
+            type: 'dashed',
+          },
+        },
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${
-              chart === PoolChartType.APR
-                ? formatPercent(params[0].value)
-                : formatUSD(params[0].value)
-            }</span>
+            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${formatUSD(
+              params[0].value,
+            )}</span>
             <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
@@ -191,13 +196,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
       series: [
         {
           name: 'Volume',
-          type:
-            chart === PoolChartType.TVL || chart === PoolChartType.APR
-              ? 'line'
-              : 'bar',
+          type: chart === PoolChartType.TVL ? 'line' : 'bar',
           smooth: true,
           xAxisIndex: 0,
           yAxisIndex: 0,
+          barWidth: '70%',
           itemStyle: {
             color: 'blue',
             normal: {
@@ -217,35 +220,35 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     [xData, chart, yData, onMouseOver, period],
   )
 
+  const defaultValue = yData[yData.length - 1] || 0
+
   return (
     <>
       <CardHeader>
         <CardTitle>
-          <span className="hoveredItemValue">
-            {chart === PoolChartType.APR
-              ? formatPercent(yData[yData.length - 1])
-              : formatUSD(yData[yData.length - 1])}
-          </span>{' '}
+          <span className="hoveredItemValue">{formatUSD(defaultValue)}</span>{' '}
           {chart === PoolChartType.Volume && (
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">
-                {formatUSD(Number(yData[yData.length - 1]) * Number(swapFee))}
+                {formatUSD(defaultValue * Number(swapFee))}
               </span>{' '}
               earned
             </span>
           )}
         </CardTitle>
         <CardDescription>
-          {xData.length ? (
+          {isLoading ? (
+            <SkeletonText fontSize="sm" />
+          ) : isError || !xData.length ? (
+            <div className="text-sm h-[1ch] w-full" />
+          ) : (
             <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
               {format(
                 new Date(xData[xData.length - 1] * 1000),
                 'dd MMM yyyy HH:mm',
               )}
             </div>
-          ) : (
-            <SkeletonText fontSize="sm" />
           )}
         </CardDescription>
       </CardHeader>
@@ -256,8 +259,14 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
               'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
             )}
           />
+        ) : isError ? (
+          <div className="h-[400px] w-full" />
         ) : (
-          <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
+          <ReactEchartsCore
+            echarts={echarts}
+            option={DEFAULT_OPTION}
+            style={{ height: 400 }}
+          />
         )}
       </CardContent>
     </>

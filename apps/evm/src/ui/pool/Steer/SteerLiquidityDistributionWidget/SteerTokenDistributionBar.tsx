@@ -1,13 +1,12 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { usePrices } from '@sushiswap/react-query'
-import { getTokenRatios } from '@sushiswap/steer-sdk'
+import { SteerVault, getTokenRatios } from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 
 interface SteerTokenDistributionBarProps {
-  vault: Pool['steerVaults'][0]
+  vault: SteerVault
 }
 
 export function SteerTokenDistributionBar({

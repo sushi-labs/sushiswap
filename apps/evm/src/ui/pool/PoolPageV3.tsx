@@ -11,14 +11,12 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@sushiswap/ui/components/card'
-import { Toggle } from '@sushiswap/ui/components/toggle'
-import {
-  useConcentratedLiquidityPool,
-  useConcentratedLiquidityPoolReserves,
-} from '@sushiswap/wagmi'
+} from '@sushiswap/ui'
+import { Toggle } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
+import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
 import { Address } from 'viem'
@@ -155,16 +153,16 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                       <div className="text-xl font-semibold">
                         {formatUSD(
                           granularity === Granularity.Week
-                            ? poolStats.volume1w
-                            : poolStats.volume1d ?? 0,
+                            ? poolStats.volumeUSD1w
+                            : poolStats.volumeUSD1d ?? 0,
                         )}{' '}
                         <span
                           className={classNames(
                             'text-xs',
                             poolStats[
                               granularity === Granularity.Week
-                                ? 'volumeChange1w'
-                                : 'volumeChange1d'
+                                ? 'volumeUSD1wChange'
+                                : 'volumeUSD1dChange'
                             ] > 0
                               ? 'text-green'
                               : 'text-red',
@@ -173,8 +171,8 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                           (
                           {poolStats[
                             granularity === Granularity.Week
-                              ? 'volumeChange1w'
-                              : 'volumeChange1d'
+                              ? 'volumeUSD1wChange'
+                              : 'volumeUSD1dChange'
                           ].toFixed(2)}
                           %)
                         </span>
@@ -189,16 +187,16 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                       <div className="text-xl font-semibold">
                         {formatUSD(
                           granularity === Granularity.Week
-                            ? poolStats.fees1w
-                            : poolStats.fees1d ?? 0,
+                            ? poolStats.feesUSD1w
+                            : poolStats.feesUSD1d ?? 0,
                         )}{' '}
                         <span
                           className={classNames(
                             'text-xs',
                             poolStats[
                               granularity === Granularity.Week
-                                ? 'feesChange1w'
-                                : 'feesChange1d'
+                                ? 'feesUSD1wChange'
+                                : 'feesUSD1dChange'
                             ] > 0
                               ? 'text-green'
                               : 'text-red',
@@ -207,8 +205,8 @@ const Pool: FC<{ pool: Awaited<ReturnType<typeof getPool>> }> = ({ pool }) => {
                           (
                           {poolStats[
                             granularity === Granularity.Week
-                              ? 'feesChange1w'
-                              : 'feesChange1d'
+                              ? 'feesUSD1wChange'
+                              : 'feesUSD1dChange'
                           ].toFixed(2)}
                           %)
                         </span>

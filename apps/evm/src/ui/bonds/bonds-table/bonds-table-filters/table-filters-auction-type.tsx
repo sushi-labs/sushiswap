@@ -16,13 +16,9 @@ import {
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-} from '@sushiswap/ui/components/command'
-import { CheckIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui'
+import { Command, CommandGroup, CommandItem } from '@sushiswap/ui'
+import { CheckIcon } from '@sushiswap/ui'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 import { useBondFilters, useSetBondFilters } from './bonds-filters-provider'
 

@@ -22,5 +22,9 @@ export async function GET(request: Request) {
     return new Response(result.error.message, { status: 422 })
   }
   const count = await getPoolCount(result.data)
-  return NextResponse.json(count)
+  return NextResponse.json(count, {
+    headers: {
+      'Cache-Control': 'public, max-age=60, stale-while-revalidate=600',
+    },
+  })
 }

@@ -1,5 +1,4 @@
 import {
-  BONDS_SUBGRAPH_URL,
   type BondChainId,
   getBondDiscount,
   getMarketIdFromChainIdAuctioneerMarket,
@@ -7,9 +6,9 @@ import {
 } from '@sushiswap/bonds-sdk'
 import { createClient } from '@sushiswap/database'
 import {
-  type BondMarketsQueryVariables,
-  getBuiltGraphSDK,
-} from '@sushiswap/graph-client'
+  type GetBondMarkets,
+  getBondMarkets,
+} from '@sushiswap/graph-client/bonds'
 import { getTotalSupply, getVaultReserves } from '@sushiswap/steer-sdk'
 import {
   getChainIdAddressFromId,
@@ -58,7 +57,7 @@ async function getQuoteToken({
   if (quotePool) {
     const priceUSD =
       Number(quotePool.liquidityUSD) /
-      (Number(quotePool.totalSupply) / 10 ** Number(bond.quoteToken.decimals))
+      (Number(quotePool.liquidity) / 10 ** Number(bond.quoteToken.decimals))
 
     return {
       ...base,
@@ -75,7 +74,7 @@ async function getQuoteToken({
           address: quotePool.token1.address as Address,
           chainId: bond.chainId,
         },
-        liquidity: Number(quotePool.totalSupply),
+        liquidity: quotePool.liquidity,
         liquidityUSD: Number(quotePool.liquidityUSD),
         protocol: quotePool.protocol,
       },
@@ -155,23 +154,25 @@ export async function getBondsFromSubgraph(
   const auctioneers =
     args.ids?.map(({ auctioneerAddress }) => auctioneerAddress) || null
   const marketIdFilter =
-    args.ids?.map(({ marketNumber }) => Number(marketNumber)) || null
+    args.ids?.map(({ marketNumber }) => String(marketNumber)) || null
 
   const auctionTypes = convertAuctionTypes(args.auctionTypes)
 
-  const query = {
-    first: args.take,
-    where: {
-      auctioneer_in: auctioneers,
-      marketId_in: marketIdFilter,
-      hasClosed: args.onlyOpen ? false : null,
-      type_in: auctionTypes,
-    },
-  } satisfies BondMarketsQueryVariables
+  const where: GetBondMarkets['where'] = {
+    type_in: auctionTypes,
+  }
 
-  Object.entries(query.where).map(([key, value]) => {
-    if (value === null) delete query.where[key as keyof typeof query.where]
-  })
+  if (auctioneers) {
+    where.auctioneer_in = auctioneers
+  }
+
+  if (marketIdFilter) {
+    where.marketId_in = marketIdFilter
+  }
+
+  if (args.onlyOpen) {
+    where.hasClosed = false
+  }
 
   const client = await createClient()
   const issuersP = client.bondIssuer
@@ -210,10 +211,12 @@ export async function getBondsFromSubgraph(
 
   const bonds = await Promise.allSettled(
     args.chainIds.map(async (chainId) => {
-      const sdk = getBuiltGraphSDK({ url: BONDS_SUBGRAPH_URL[chainId] })
-
-      const [{ bonds }, prices, issuers, bondDescriptions] = await Promise.all([
-        sdk.BondMarkets(query),
+      const [bonds, prices, issuers, bondDescriptions] = await Promise.all([
+        getBondMarkets({
+          chainId,
+          first: args.take,
+          where,
+        }),
         getTokenPricesChainV2({ chainId }),
         issuersP,
         bondDescriptionsP,
@@ -253,7 +256,7 @@ export async function getBondsFromSubgraph(
 
         if (
           marketIdFilter &&
-          !marketIdFilter?.includes(Number(bond.marketId))
+          !marketIdFilter?.includes(String(bond.marketId))
         ) {
           return false
         }

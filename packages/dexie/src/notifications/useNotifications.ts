@@ -2,7 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import groupBy from 'lodash.groupby'
 
 import { db } from '../db.js'
-import { type ResolvedNotification } from './types.js'
+import type { ResolvedNotification } from './types.js'
 
 export const useNotifications = ({
   account,
