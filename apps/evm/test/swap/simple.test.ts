@@ -12,7 +12,10 @@ import {
   // loadSnapshot,
 } from 'test/intercept-anvil'
 
-if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string' || !process.env.NEXT_PUBLIC_CHAIN_ID) {
+if (
+  typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string' ||
+  !process.env.NEXT_PUBLIC_CHAIN_ID
+) {
   throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
