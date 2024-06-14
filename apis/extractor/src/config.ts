@@ -192,6 +192,7 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
     maxCallsInOneBatch: 200,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.BOBA]: {
     client: createPublicClient(extractorClientConfig(ChainId.BOBA)),
