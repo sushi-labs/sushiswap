@@ -1502,7 +1502,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
       else return Native.onChain(Number(t.chainId ?? 1))
     }
 
-    it.only(`Most liquidable ${CURVE_POOLS_FOR_TEST} Curve pools`, async () => {
+    it(`Most liquidable ${CURVE_POOLS_FOR_TEST} Curve pools`, async () => {
       const curvePools = Array.from(env.poolCodes.values())
         .map((p) => p.pool)
         .filter((p) => p.poolType() === PoolType.Curve)
