@@ -109,13 +109,56 @@ test.beforeEach(async ({ page, next }) => {
     console.error('error mockking token api', error)
   }
 
+  // TEMP: Mock V2 POOL..
+  await page.route(
+    'http://localhost:3000/pools/api/graphPool/137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
+    async (route) => {
+      await route.fulfill({
+        json: {
+          id: '137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
+          address: '0x0b65273d824393e2f43357a4096e5ebd17c89629',
+          chainId: 137,
+          name: `WMATIC-FT`,
+          swapFee: 0.003,
+          protocol: 'SUSHISWAP_V2',
+          reserve0: {
+            __type: 'bigint',
+            value: '1000000000000000000',
+          },
+          reserve1: {
+            __type: 'bigint',
+            value: '1000000000000000000',
+          },
+          liquidity: {
+            __type: 'bigint',
+            value: '1000000000000000000',
+          },
+          liquidityUSD: 3537005.8867114577,
+          volumeUSD: 2636950185.8613586,
+          feesUSD: 7910850.557584076,
+          token0: {
+            id: '137:0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+            address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+            chainId: 137,
+            decimals: 18,
+            name: 'Wrapped Matic',
+            symbol: 'WMATIC',
+          },
+          token1: FAKE_TOKEN,
+          token0Price: 5779.222968513871,
+          token1Price: 0.00017303364231630437,
+          txCount: 4058470,
+        },
+      })
+    },
+  )
+
   await page.route('http://localhost:3000/api/**/*', async (route) => {
     await route.abort()
   })
   await page.route('http://localhost:3000/pool/api/**/*', async (route) => {
     await route.abort()
   })
-
   try {
     await interceptAnvil(page, next)
   } catch (error) {
@@ -184,6 +227,7 @@ test.describe('V2', () => {
     await poolPage.goTo(url)
     await poolPage.connect()
     await poolPage.switchNetwork(CHAIN_ID)
+
     await poolPage.mockPoolApi(
       next,
       poolPage.nativeToken.wrapped,

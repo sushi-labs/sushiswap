@@ -44,6 +44,7 @@ export const isSquidRouteProcessorEnabled: Record<
   [ChainId.CELO]: true,
   [ChainId.SCROLL]: true,
   [ChainId.FILECOIN]: true,
+  [ChainId.BLAST]: true,
 }
 
 /*

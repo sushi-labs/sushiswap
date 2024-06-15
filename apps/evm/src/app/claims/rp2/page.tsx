@@ -40,7 +40,7 @@ const RP2ClaimPage = () => {
             used across each iteration of Sushi’s AMM pools (v2, Trident, v3),
             and to also be used for future aggregating across other protocols
             (Uni, Pancake, etc.). The RouteProcessor2 contract was deployed to
-            14 networks including: Arbitrum, Arbitrum Nova, Avalanche, Boba,
+            15 networks including: Arbitrum, Arbitrum Nova, Avalanche, Boba,
             BSC, Ethereum, Fantom, Fuse, Gnosis, Moonbeam, Moonriver, Optimism,
             Polygon, and Polygon ZkEVM. Unfortunately the contract had a
             critical vulnerability. To read more about what happened, please
