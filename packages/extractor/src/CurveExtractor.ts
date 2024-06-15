@@ -1,5 +1,5 @@
 import { Token } from 'sushi/currency'
-import { CurvePoolCode, LiquidityProviders } from 'sushi/router'
+import { CurvePoolCode, CurvePoolType, LiquidityProviders } from 'sushi/router'
 import {
   CurveMultitokenCore,
   RToken,
@@ -382,7 +382,7 @@ export class CurveExtractor {
           p,
           LiquidityProviders.CurveSwap,
           'Curve',
-          1, //poolType, don't rely on pool.exchange return value
+          CurvePoolType.TypeC, // TODO !!!!!
         )
         this.poolMap.set(p.uniqueID(), poolCode)
         const [a0, a1] =

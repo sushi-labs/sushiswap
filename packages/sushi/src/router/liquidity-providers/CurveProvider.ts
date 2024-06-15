@@ -533,7 +533,13 @@ export class CurveProvider extends LiquidityProvider {
       )
 
       return poolTines.map(
-        (p) => new CurvePoolCode(p, this.getType(), this.getPoolProviderName()),
+        (p) =>
+          new CurvePoolCode(
+            p,
+            this.getType(),
+            this.getPoolProviderName(),
+            CurvePoolType.TypeC, // the most safe variant
+          ),
       )
     })
 

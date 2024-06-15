@@ -231,7 +231,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeB"
       }
     },
     {
@@ -399,7 +399,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeB"
       }
     },
     {
@@ -462,7 +462,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeB"
       }
     },
     {
@@ -525,7 +525,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -669,7 +669,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -815,7 +815,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -961,7 +961,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeB"
       }
     },
     {
@@ -1107,7 +1107,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -1253,7 +1253,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -1399,7 +1399,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -1545,7 +1545,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -1713,7 +1713,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -1776,7 +1776,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -1839,7 +1839,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -1983,7 +1983,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -2127,7 +2127,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -2317,7 +2317,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -2380,7 +2380,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -2443,7 +2443,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -2506,7 +2506,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -2569,7 +2569,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeA"
       }
     },
     {
@@ -2632,7 +2632,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -2778,7 +2778,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -2924,7 +2924,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -3070,7 +3070,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -3216,7 +3216,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -3362,7 +3362,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -3508,7 +3508,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -3654,7 +3654,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -3800,7 +3800,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -3946,7 +3946,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -4092,7 +4092,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -4238,7 +4238,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -4384,7 +4384,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -4530,7 +4530,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -4676,7 +4676,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -4822,7 +4822,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -4968,7 +4968,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -5114,7 +5114,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -5258,7 +5258,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -5404,7 +5404,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -5550,7 +5550,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -5696,7 +5696,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.03%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -5886,7 +5886,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.03%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -5949,7 +5949,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.03%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6012,7 +6012,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.03%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6075,7 +6075,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.03%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6138,7 +6138,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.03%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6201,7 +6201,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.03%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6347,7 +6347,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6493,7 +6493,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6637,7 +6637,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6783,7 +6783,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -6929,7 +6929,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -7073,7 +7073,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -7219,7 +7219,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -7365,7 +7365,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -7511,7 +7511,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -7657,7 +7657,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -7803,7 +7803,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -7949,7 +7949,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -8095,7 +8095,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -8241,7 +8241,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -8387,7 +8387,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -8533,7 +8533,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -8679,7 +8679,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -8825,7 +8825,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -8971,7 +8971,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -9117,7 +9117,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -9263,7 +9263,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -9409,7 +9409,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -9555,7 +9555,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -9701,7 +9701,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -9847,7 +9847,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -9993,7 +9993,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10161,7 +10161,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10224,7 +10224,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10287,7 +10287,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10433,7 +10433,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10579,7 +10579,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10725,7 +10725,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10893,7 +10893,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -10956,7 +10956,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -11019,7 +11019,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -11165,7 +11165,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -11311,7 +11311,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -11457,7 +11457,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -11603,7 +11603,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -11749,7 +11749,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -11895,7 +11895,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -12041,7 +12041,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -12187,7 +12187,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -12333,7 +12333,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -12479,7 +12479,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -12625,7 +12625,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -12771,7 +12771,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -12917,7 +12917,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -13063,7 +13063,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -13209,7 +13209,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -13355,7 +13355,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -13501,7 +13501,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -13647,7 +13647,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -13793,7 +13793,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -13939,7 +13939,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -14085,7 +14085,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -14231,7 +14231,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -14377,7 +14377,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -14523,7 +14523,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -14669,7 +14669,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -14815,7 +14815,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -14961,7 +14961,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15107,7 +15107,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15253,7 +15253,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15399,7 +15399,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15545,7 +15545,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15691,7 +15691,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15859,7 +15859,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15922,7 +15922,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -15985,7 +15985,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -16131,7 +16131,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -16277,7 +16277,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -16423,7 +16423,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -16569,7 +16569,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -16715,7 +16715,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -16861,7 +16861,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -17007,7 +17007,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -17153,7 +17153,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -17299,7 +17299,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -17445,7 +17445,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -17591,7 +17591,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -17737,7 +17737,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -17883,7 +17883,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.3%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -18029,7 +18029,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -18175,7 +18175,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -18321,7 +18321,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -18467,7 +18467,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -18613,7 +18613,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -18759,7 +18759,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -18949,7 +18949,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19012,7 +19012,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19075,7 +19075,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19138,7 +19138,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19201,7 +19201,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19264,7 +19264,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19410,7 +19410,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19556,7 +19556,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19702,7 +19702,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19848,7 +19848,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -19994,7 +19994,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -20140,7 +20140,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -20286,7 +20286,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -20432,7 +20432,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -20578,7 +20578,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -20724,7 +20724,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -20870,7 +20870,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -21016,7 +21016,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -21162,7 +21162,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -21308,7 +21308,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -21454,7 +21454,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.05%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -21600,7 +21600,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.1%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -21746,7 +21746,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -21892,7 +21892,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -22038,7 +22038,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -22184,7 +22184,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -22330,7 +22330,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.08%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -22476,7 +22476,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -22622,7 +22622,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -22768,7 +22768,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -22912,7 +22912,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -23058,7 +23058,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.1%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -23204,7 +23204,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -23350,7 +23350,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -23496,7 +23496,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -23642,7 +23642,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -23788,7 +23788,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.05%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -23934,7 +23934,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -24080,7 +24080,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -24226,7 +24226,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -24372,7 +24372,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -24518,7 +24518,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -24664,7 +24664,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -24808,7 +24808,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.05%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -24954,7 +24954,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -25100,7 +25100,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -25246,7 +25246,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.1%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -25392,7 +25392,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -25538,7 +25538,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -25684,7 +25684,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -25830,7 +25830,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -25976,7 +25976,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -26122,7 +26122,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -26268,7 +26268,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.2%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -26414,7 +26414,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -26560,7 +26560,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -26706,7 +26706,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.15%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -26852,7 +26852,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -26998,7 +26998,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -27144,7 +27144,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -27290,7 +27290,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -27436,7 +27436,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -27582,7 +27582,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -27728,7 +27728,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -27874,7 +27874,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -28020,7 +28020,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -28166,7 +28166,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -28312,7 +28312,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -28458,7 +28458,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -28604,7 +28604,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -28750,7 +28750,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -28896,7 +28896,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -29042,7 +29042,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -29188,7 +29188,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -29334,7 +29334,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -29480,7 +29480,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.02%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -29626,7 +29626,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -29772,7 +29772,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -29918,7 +29918,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.04%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -30064,7 +30064,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -30210,7 +30210,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {
@@ -30356,7 +30356,7 @@
         },
         "liquidityProvider": "CurveSwap",
         "poolName": "Curve 0.01%",
-        "poolType": 1
+        "poolType": "TypeC"
       }
     },
     {

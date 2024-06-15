@@ -11,6 +11,32 @@ export enum CurvePoolType {
   TypeC = 'TypeC',
 }
 
+// for serialization
+export function curvePoolType2Num(t: CurvePoolType): number {
+  switch (t) {
+    case CurvePoolType.TypeA:
+      return 2
+    case CurvePoolType.TypeB:
+      return 1
+    case CurvePoolType.TypeC:
+      return 0
+  }
+}
+
+// for deserialization
+export function curvePoolTypeFromNum(n: number): CurvePoolType {
+  switch (n) {
+    case 0:
+      return CurvePoolType.TypeC
+    case 1:
+      return CurvePoolType.TypeB
+    case 2:
+      return CurvePoolType.TypeA
+    default:
+      throw new Error(`Unknown curvePoolType: ${n}`)
+  }
+}
+
 export const curvePoolABI = {
   [CurvePoolType.TypeA]: parseAbi([
     'function A() pure returns (uint256)',
