@@ -1,10 +1,8 @@
 import { LinkExternal, classNames } from '@sushiswap/ui'
-import {
-  DiscordIcon,
-  GithubIcon,
-  TwitterIcon,
-  YoutubeIcon,
-} from '@sushiswap/ui/components/icons'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
+import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
+import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
+import { YoutubeIcon } from '@sushiswap/ui/icons/YoutubeIcon'
 import { FC } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'

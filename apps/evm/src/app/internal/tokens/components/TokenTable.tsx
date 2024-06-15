@@ -2,7 +2,8 @@
 
 import { XIcon } from '@heroicons/react-v1/outline'
 import { DataTable } from '@sushiswap/ui'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
+import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { createColumnHelper } from '@tanstack/react-table'
 import { FC } from 'react'
 import { ChainId, chainName } from 'sushi/chain'

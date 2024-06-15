@@ -1,6 +1,4 @@
-import { classNames } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
-import { LoadingOverlay } from '@sushiswap/ui/components/loader'
+import { Container, LoadingOverlay, classNames } from '@sushiswap/ui'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { GhostArticle, addBodyToArticle } from 'lib/ghost'
 import { ArticleSchema } from 'lib/validate'

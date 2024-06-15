@@ -4,10 +4,10 @@ import {
   Button,
   Collapsible,
   Label,
-  NetworkIcon,
   NetworkSelector,
   SelectIcon,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { Chain } from 'sushi/chain'
 
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'

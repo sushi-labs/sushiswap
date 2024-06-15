@@ -18,25 +18,24 @@
     "./index.css": "./index.css",
     "./date-picker.css": "./date-picker.css",
     "./tailwind.js": "./tailwind.js",
-    ".": [
-      "./dist/index.js"
-    ],
-    "./*": [
-      "./dist/*.js",
-      "./dist/*/index.js"
-    ],
-    "./future/*": [
-      "./dist/future/*.js",
-      "./dist/future/*/index.js"
-    ]
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./icons/*": {
+      "types": "./dist/icons/*.d.ts",
+      "import": "./dist/icons/*.js",
+      "default": "./dist/icons/*.js"
+    }
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/*",
-        "dist/*/index",
-        "dist/future/*",
-        "dist/future/*/index"
+      ".": [
+        "src/**/*"
+      ],
+      "./icons/*": [
+        "src/icons/*"
       ]
     }
   },

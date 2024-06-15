@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { format } from 'date-fns'
 import { GhostArticle } from 'lib/ghost'

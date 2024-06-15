@@ -1,12 +1,10 @@
-import {
-  ArbitrumCircle,
-  AvalancheCircle,
-  BinanceCircle,
-  EthereumCircle,
-  FantomCircle,
-  OptimismCircle,
-  PolygonCircle,
-} from '@sushiswap/ui'
+import { ArbitrumCircle } from '@sushiswap/ui/icons/network/circle/ArbitrumCircle'
+import { AvalancheCircle } from '@sushiswap/ui/icons/network/circle/AvalancheCircle'
+import { BinanceCircle } from '@sushiswap/ui/icons/network/circle/BinanceCircle'
+import { EthereumCircle } from '@sushiswap/ui/icons/network/circle/EthereumCircle'
+import { FantomCircle } from '@sushiswap/ui/icons/network/circle/FantomCircle'
+import { OptimismCircle } from '@sushiswap/ui/icons/network/circle/OptimismCircle'
+import { PolygonCircle } from '@sushiswap/ui/icons/network/circle/PolygonCircle'
 
 import {
   AcademyIcon,

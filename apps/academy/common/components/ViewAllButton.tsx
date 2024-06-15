@@ -1,6 +1,5 @@
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
-import { classNames } from '@sushiswap/ui'
-import { Button, ButtonProps } from '@sushiswap/ui/components/button'
+import { Button, ButtonProps, classNames } from '@sushiswap/ui'
 import React, { forwardRef } from 'react'
 
 interface ViewAllButton extends ButtonProps {

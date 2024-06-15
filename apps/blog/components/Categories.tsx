@@ -1,4 +1,4 @@
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { Toggle } from '@sushiswap/ui'
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useCallback } from 'react'
 import type { Category } from 'types'

@@ -1,7 +1,6 @@
 import {
   Badge,
   Currency,
-  NetworkIcon,
   SkeletonCircle,
   SkeletonText,
   Tooltip,
@@ -10,6 +9,7 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatNumber } from 'sushi/format'
 

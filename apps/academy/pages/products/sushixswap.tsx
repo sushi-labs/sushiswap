@@ -1,6 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { classNames } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import sushixswapImg from 'common/assets/sushixswap-img.png'
 import {
   ProductArticles,

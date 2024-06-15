@@ -1,13 +1,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@sushiswap/ui/components/select'
+import { Container } from '@sushiswap/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui'
 import { DEFAULT_SIDE_PADDING, SORTING_OPTIONS } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'

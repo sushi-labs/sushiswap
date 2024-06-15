@@ -1,4 +1,4 @@
-import { Chip } from '@sushiswap/ui/components/chip'
+import { Chip } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import type { FC } from 'react'
 import type { Article } from 'types'

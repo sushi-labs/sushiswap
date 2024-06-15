@@ -8,12 +8,12 @@ import {
   Button,
   Currency,
   Dots,
-  NetworkIcon,
   SkeletonText,
   classNames,
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'

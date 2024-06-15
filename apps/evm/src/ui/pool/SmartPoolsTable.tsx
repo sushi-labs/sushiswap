@@ -30,7 +30,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   LinkExternal,
-  NetworkIcon,
   SkeletonCircle,
   SkeletonText,
   Tooltip,
@@ -39,18 +38,19 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
   ColumnDef,
   PaginationState,
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
 import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 import { useSteerVaults } from '@sushiswap/client/hooks'
+import Link from 'next/link'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'

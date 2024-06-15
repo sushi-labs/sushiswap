@@ -11,10 +11,10 @@ import {
   DialogTitle,
   DialogTrigger,
   List,
-  NetworkIcon,
   SkeletonCircle,
   SkeletonText,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ChainId } from 'sushi/chain'
 import { Type, XSUSHI } from 'sushi/currency'
 import { Fraction } from 'sushi/math'

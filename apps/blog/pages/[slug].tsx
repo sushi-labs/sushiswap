@@ -1,4 +1,4 @@
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import { addBodyToArticle } from 'lib/ghost'
 import type { GhostArticle } from 'lib/ghost'
 import { ArticleSchema } from 'lib/validate'

@@ -2,9 +2,12 @@ import '@sushiswap/ui/index.css'
 import '../index.css'
 import '../variables.css'
 
-import { ThemeProvider } from '@sushiswap/ui'
-import { GlobalFooter } from '@sushiswap/ui/components/global-footer'
-import { GoogleAnalytics, HotJar } from '@sushiswap/ui/components/scripts'
+import {
+  GlobalFooter,
+  GoogleAnalytics,
+  HotJar,
+  ThemeProvider,
+} from '@sushiswap/ui'
 import { Analytics } from '@vercel/analytics/react'
 import { DefaultSeo } from 'next-seo'
 import type { AppContext, AppProps } from 'next/app'
@@ -69,7 +72,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <DefaultSeo {...SEO} />
         <Header />
         <Component {...pageProps} />
-        <GlobalFooter />
+        <GlobalFooter maxWidth={null} />
       </ThemeProvider>
       <GoogleAnalytics />
       <HotJar />

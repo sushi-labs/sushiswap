@@ -1,6 +1,6 @@
 import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
 import { ClipboardController } from '@sushiswap/ui'
-import { TwitterIcon } from '@sushiswap/ui/components/icons'
+import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
 import { getShareText } from 'common/helpers'
 import { GhostArticle } from 'lib/ghost'
 import { FC } from 'react'

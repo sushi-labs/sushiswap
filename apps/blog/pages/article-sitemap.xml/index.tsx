@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from 'next'
 import type { ISitemapField } from 'next-sitemap'
-import { getServerSideSitemap } from 'next-sitemap'
+import { getServerSideSitemapLegacy } from 'next-sitemap'
 import { getAllArticlesBySlug } from '../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     changefreq: 'never',
   }))
 
-  return getServerSideSitemap(ctx, fields)
+  return getServerSideSitemapLegacy(ctx, fields)
 }
 
 export default function Sitemap() {

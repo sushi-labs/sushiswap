@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo } from 'react'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'

@@ -1,6 +1,6 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
 import { classNames } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import onsenImg from 'common/assets/onsen-img.png'
 import {
   ProductArticles,

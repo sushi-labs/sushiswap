@@ -1,7 +1,6 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
-import { SushiIcon } from '@sushiswap/ui/components/icons'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,7 +9,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from '@sushiswap/ui/components/navigation-menu'
+} from '@sushiswap/ui'
+import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
 import Link from 'next/link'
 import React, { FC } from 'react'
 

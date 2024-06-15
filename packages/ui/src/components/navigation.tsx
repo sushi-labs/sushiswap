@@ -3,7 +3,7 @@ import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { SushiIcon } from './icons/SushiIcon'
+import { SushiIcon } from '../icons/SushiIcon'
 import { navigationMenuTriggerStyle } from './navigation-menu'
 import {
   NavigationMenu,

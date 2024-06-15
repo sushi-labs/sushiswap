@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { LinkInternal } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import type { InferGetServerSidePropsType } from 'next'
 import type { FC } from 'react'
 import { useState } from 'react'

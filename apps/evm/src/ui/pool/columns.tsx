@@ -1,7 +1,6 @@
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   FormattedNumber,
-  NetworkIcon,
   Tooltip,
   TooltipPrimitive,
   TooltipProvider,
@@ -9,6 +8,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
 import React from 'react'

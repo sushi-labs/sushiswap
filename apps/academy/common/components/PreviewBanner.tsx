@@ -1,6 +1,4 @@
-import { LinkInternal } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Container } from '@sushiswap/ui/components/container'
+import { Button, Container, LinkInternal } from '@sushiswap/ui'
 import { FC } from 'react'
 
 interface PreviewBanner {

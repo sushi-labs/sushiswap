@@ -1,6 +1,6 @@
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'

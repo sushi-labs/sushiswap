@@ -1,6 +1,5 @@
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
-import { LinkInternal, classNames } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui'
+import { Button, LinkInternal, classNames } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'

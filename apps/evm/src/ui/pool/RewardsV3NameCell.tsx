@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { Row } from '@tanstack/react-table'
 import React, { FC } from 'react'
 import { unwrapToken } from 'sushi/currency'
