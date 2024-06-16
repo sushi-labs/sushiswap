@@ -76,7 +76,7 @@ export * from './TelosCircle'
 export * from './ThunderCoreCircle'
 export * from './ZetaChainCircle'
 
-export const NETWORK_CIRCLE_ICON: Record<number, IconComponent> = {
+export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.ETHEREUM]: EthereumCircle,
   [ChainId.FANTOM]: FantomCircle,
   [ChainId.POLYGON]: PolygonCircle,

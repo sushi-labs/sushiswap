@@ -1,5 +1,5 @@
 import { Chip, LinkInternal, classNames } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { FC } from 'react'
 import { Article } from 'types'
 

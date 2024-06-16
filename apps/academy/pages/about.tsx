@@ -6,7 +6,7 @@ import sushidilly from 'common/assets/sushidilly.png'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { TriangleIcon } from 'common/icons'
 import { roadmapSections } from 'common/roadmap'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { NextPage } from 'next'
 import Image from 'next/legacy/image'
 

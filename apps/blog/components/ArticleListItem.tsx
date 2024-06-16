@@ -1,5 +1,5 @@
 import { Chip } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import type { FC } from 'react'
 import type { Article } from 'types'
 import { Image } from './Image'

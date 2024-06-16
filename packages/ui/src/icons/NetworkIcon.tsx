@@ -1,5 +1,6 @@
 import React, { FC, useMemo } from 'react'
 
+import { isChainId } from 'sushi/chain'
 import { IconProps } from '../types'
 import { NETWORK_CIRCLE_ICON, NETWORK_NAKED_ICON } from './network'
 
@@ -14,6 +15,8 @@ export const NetworkIcon: FC<Props> = ({
   ...props
 }) => {
   const Icon = useMemo(() => {
+    if (!isChainId(chainId)) return undefined
+
     if (type === 'naked') {
       return NETWORK_NAKED_ICON[chainId]
     }

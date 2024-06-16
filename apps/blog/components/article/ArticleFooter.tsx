@@ -1,6 +1,6 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import type { FC } from 'react'
 import type { Article } from 'types'
 

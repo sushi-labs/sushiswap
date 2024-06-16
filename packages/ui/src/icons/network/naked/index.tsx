@@ -74,7 +74,7 @@ export * from './SkaleNaked'
 export * from './TelosNaked'
 export * from './ZetaChainNaked'
 
-export const NETWORK_NAKED_ICON: Record<number, IconComponent> = {
+export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.ETHEREUM]: EthereumNaked,
   [ChainId.FANTOM]: FantomNaked,
   [ChainId.POLYGON]: PolygonNaked,

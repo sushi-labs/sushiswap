@@ -10,7 +10,7 @@ import {
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
-import { formatDistance } from 'date-fns'
+import formatDistance from 'date-fns/formatDistance'
 import React from 'react'
 import {
   formatNumber,
