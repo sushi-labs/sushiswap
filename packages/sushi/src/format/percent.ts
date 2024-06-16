@@ -1,5 +1,3 @@
-import numeral from 'numbro'
-
 export const formatPercent = (value: any) => {
   let negative = false
 
@@ -20,5 +18,9 @@ export const formatPercent = (value: any) => {
     return '>100000%'
   }
 
-  return `${negative ? '-' : ''}${numeral(value).format('(0.00%)')}`
+  value = value * 100
+
+  const decimalCount = Math.min(value.toString().split('.')[1]?.length || 0, 2)
+
+  return `${negative ? '-' : ''}${value.toFixed(decimalCount)}%`
 }

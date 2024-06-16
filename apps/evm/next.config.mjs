@@ -3,9 +3,9 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
 import withBundleAnalyzer from '@next/bundle-analyzer'
-// const bundleAnalyzer = withBundleAnalyzer({ enabled: false })
-// issue with the above..
-const bundleAnalyzer = withBundleAnalyzer({ enabled: true })
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: false && process.env.NODE_ENV !== 'development',
+})
 
 const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
 const BLOG_URL = process.env.BLOG_URL || 'https://blog.sushi.com'

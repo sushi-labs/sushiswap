@@ -1893,9 +1893,6 @@ importers:
       decimal.js-light:
         specifier: 2.5.1
         version: 2.5.1
-      numbro:
-        specifier: 2.5.0
-        version: 2.5.0
       seedrandom:
         specifier: 3.0.5
         version: 3.0.5
@@ -8939,7 +8936,7 @@ packages:
       yargs: 17.7.2
     optionalDependencies:
       node-libcurl: 4.0.0
-      uWebSockets.js: github.com/uNetworking/uWebSockets.js/1977b5039938ad863d42fc4958d48c17e5a1fa06
+      uWebSockets.js: github.com/uNetworking/uWebSockets.js/8fa05571bf6ea95be8966ad313d9d39453e381ae
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -35868,12 +35865,6 @@ packages:
       bn.js: 4.11.6
       strip-hex-prefix: 1.0.0
 
-  /numbro@2.5.0:
-    resolution: {integrity: sha512-xDcctDimhzko/e+y+Q2/8i3qNC9Svw1QgOkSkQoO0kIPI473tR9QRbo2KP88Ty9p8WbPy+3OpTaAIzehtuHq+A==}
-    dependencies:
-      bignumber.js: 9.1.1
-    dev: false
-
   /nwsapi@2.2.7:
     resolution: {integrity: sha512-ub5E4+FBPKwAZx0UwIQOjYWGHTEq5sPqHQNRN8Z9e4A7u3Tj1weLJsL59yH9vmvqEtBHaOmT6cYQKIZOxp35FQ==}
     dev: false
@@ -46801,10 +46792,10 @@ packages:
       bn.js: 4.12.0
       ethereumjs-util: 6.2.1
 
-  github.com/uNetworking/uWebSockets.js/1977b5039938ad863d42fc4958d48c17e5a1fa06:
-    resolution: {tarball: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/1977b5039938ad863d42fc4958d48c17e5a1fa06}
+  github.com/uNetworking/uWebSockets.js/8fa05571bf6ea95be8966ad313d9d39453e381ae:
+    resolution: {tarball: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/8fa05571bf6ea95be8966ad313d9d39453e381ae}
     name: uWebSockets.js
-    version: 20.43.0
+    version: 20.44.0
     requiresBuild: true
     dev: true
     optional: true

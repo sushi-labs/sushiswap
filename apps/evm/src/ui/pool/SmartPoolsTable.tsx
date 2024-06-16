@@ -47,7 +47,7 @@ import {
 } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
 import { Native, Token, unwrapToken } from 'sushi/currency'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi/format'
 
 import { useSteerVaults } from '@sushiswap/client/hooks'
 import Link from 'next/link'
@@ -123,7 +123,7 @@ const COLUMNS = [
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                      {formatNumber(original.pool.swapFee * 100)}%
+                      {formatPercent(original.pool.swapFee)}
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
