@@ -17,27 +17,32 @@ import {
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  UseCallParameters,
-  getDefaultTTL,
-  getV3NonFungiblePositionManagerContractConfig,
-  useAccount,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useTransactionDeadline,
-  useWaitForTransactionReceipt,
-} from '@sushiswap/wagmi'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import {
+  getDefaultTTL,
+  useTransactionDeadline,
+} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Chain, ChainId } from 'sushi/chain'
-import { SushiSwapV3FeeAmount, isSushiSwapV3ChainId } from 'sushi/config'
+import {
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  SushiSwapV3FeeAmount,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
 import { Amount, Type, tryParseAmount } from 'sushi/currency'
-import { NonfungiblePositionManager, Position } from 'sushi/pool'
+import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
 import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import {
+  UseCallParameters,
+  useAccount,
+  useCall,
+  usePublicClient,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 
 interface AddSectionReviewModalConcentratedProps
@@ -199,7 +204,7 @@ export const AddSectionReviewModalConcentrated: FC<
           })
 
     return {
-      to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
+      to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
       account: address,
       chainId,
       data: calldata as Hex,
@@ -269,7 +274,6 @@ export const AddSectionReviewModalConcentrated: FC<
                   options={{
                     slippageTolerance: {
                       storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                      defaultValue: '0.1',
                       title: 'Add Liquidity Slippage',
                     },
                     transactionDeadline: {

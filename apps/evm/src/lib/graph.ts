@@ -1,134 +1,140 @@
-import {
-  Bundle,
-  Pagination,
-  QuerytokensByChainIdsArgs,
-  getBuiltGraphSDK,
-} from '@sushiswap/graph-client'
-
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-
-import { ChainId, chainShortName } from 'sushi/chain'
-
+import {
+  SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
+  SushiSwapV2ChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
+import { getChainIdAddressFromId } from 'sushi/format'
+import { Address } from 'viem'
+import { getSushiDayDatas } from '../../../../packages/graph-client/dist/composite/sushi-day-datas'
+import { getSushiV2StakedUnstakedPositions } from '../../../../packages/graph-client/dist/composite/sushi-v2-staked-unstaked-positions'
+import { fetchMultichain } from '../../../../packages/graph-client/dist/multichain'
+import { getRebases as _getRebases } from '../../../../packages/graph-client/dist/subgraphs/bentobox'
+import { getFuroTokens as _getFuroTokens } from '../../../../packages/graph-client/dist/subgraphs/furo'
+import {
+  SushiV2Pools,
+  getSushiV2Pool,
+  getSushiV2Pools,
+} from '../../../../packages/graph-client/dist/subgraphs/sushi-v2'
+import { getSushiV3PoolsByTokenPair } from '../../../../packages/graph-client/dist/subgraphs/sushi-v3'
 import { bentoBoxTokensSchema, furoTokensSchema } from './schema'
 
-const sdk = getBuiltGraphSDK()
-
-export async function getUser(args: { id?: string; chainIds?: ChainId[] }) {
+export async function getUser(args: {
+  id?: Address
+  chainIds?: SushiSwapV2ChainId[]
+}) {
   if (!args.id) return []
-  const { crossChainUserPositions: user } = await sdk.CrossChainUserPositions({
-    chainIds: args.chainIds || SUPPORTED_CHAIN_IDS,
-    id: args.id.toLowerCase(),
+
+  const { data } = await getSushiV2StakedUnstakedPositions({
+    chainIds: args.chainIds || [...SUSHISWAP_V2_SUPPORTED_CHAIN_IDS],
+    id: args.id.toLowerCase() as Address,
   })
-  return user
+
+  return data
 }
 
-export const getGraphPool = async (id: string) => {
-  if (!id.includes(':')) throw Error('Invalid pair id')
-  // Migrating to new format, graph-client uses the deprecated one
-  const split = id.split(':')
-  const { pair } = await sdk.PairById({
-    id: `${chainShortName[split[0]]}:${split[1]}`,
-  })
-  return pair
+export const getV2GraphPool = async (id: string) => {
+  const split = getChainIdAddressFromId(id)
+
+  if (!isSushiSwapV2ChainId(split.chainId)) throw Error('Invalid chain id')
+
+  const pool = await getSushiV2Pool(
+    {
+      chainId: split.chainId,
+      id: split.address,
+    },
+    {
+      retries: 3,
+    },
+  )
+
+  return pool
 }
 
-export const getGraphPools = async (ids: string[]) => {
+export const getV2GraphPools = async (ids: string[]) => {
   if (!ids.every((id) => id.includes(':'))) throw Error('Invalid pair ids')
 
   // Migrating to new format, graph-client uses the deprecated one
-  const addresses = ids.map((id) => id.split(':')[1])
+  const addresses = ids.map((id) => id.split(':')[1]) as Address[]
 
   // PairsByIds would be better, not implemented though...
   // Need to hack around
-  const { pairs } = await sdk.PairsByChainIds({
-    chainIds: Array.from(new Set(ids.map((id) => Number(id.split(':')[0])))),
-    where: {
-      id_in: addresses,
+
+  const chainIds = Array.from(
+    new Set(ids.map((id) => Number(id.split(':')[0]))),
+  ) as SushiSwapV2ChainId[]
+
+  const { data: pools } = await fetchMultichain({
+    chainIds,
+    fetch: getSushiV2Pools,
+    variables: {
+      where: {
+        id_in: addresses,
+      },
     },
   })
 
   return (
-    pairs
-      .map((pair) => ({ ...pair, id: `${pair.chainId}:${pair.address}` }))
+    pools
+      .map((pool) => ({ ...pool, id: `${pool.chainId}:${pool.address}` }))
       // To prevent possible (although unlikely) collisions
-      .filter((pair) => ids.includes(pair.id))
+      .filter((pool) => ids.includes(pool.id)) as SushiV2Pools
   )
 }
 
-export const getPoolsByTokenPair = async (
+export const getV3PoolsByTokenPair = async (
   tokenId0: string,
   tokenId1: string,
 ) => {
-  const [chainId0, tokenAddress0] = tokenId0.split(':')
-  if (!chainId0 || !tokenAddress0) throw Error('Invalid token0 id')
-
-  const [chainId1, tokenAddress1] = tokenId1.split(':')
-  if (!chainId1 || !tokenAddress1) throw Error('Invalid token1 id')
+  const { chainId: chainId0, address: address0 } =
+    getChainIdAddressFromId(tokenId0)
+  const { chainId: chainId1, address: address1 } =
+    getChainIdAddressFromId(tokenId1)
 
   if (chainId0 !== chainId1) throw Error('Tokens must be on the same chain')
 
-  const { pools } = await sdk.PoolsByTokenPair({
-    tokenId0,
-    tokenId1,
+  if (!isSushiSwapV3ChainId(chainId0)) {
+    throw Error('Invalid chain id')
+  }
+
+  const pools = await getSushiV3PoolsByTokenPair({
+    chainId: chainId0,
+    token0: address0,
+    token1: address1,
   })
 
   return pools
 }
 
-export const getBundles = async () => {
-  const { bundles } = await sdk.Bundles({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-
-  return bundles.reduce<
-    Record<number, Pick<Bundle, 'id' | 'chainId' | 'nativePrice'>>
-  >((acc, cur) => {
-    acc[cur.chainId] = cur
-    return acc
-  }, {})
-}
-
-export type GetTokensQuery = Omit<
-  QuerytokensByChainIdsArgs,
-  'where' | 'pagination'
-> & {
-  networks: string
-  where?: string
-  pagination: string
-}
-
-export const getTokens = async (query?: GetTokensQuery) => {
+export const getFuroTokens = async (
+  query: (typeof furoTokensSchema)['_output'],
+) => {
   try {
-    const pagination: Pagination = query?.pagination
-      ? JSON.parse(query?.pagination)
-      : {
-          pageIndex: 0,
-          pageSize: 20,
-        }
-    const first =
-      pagination?.pageIndex && pagination?.pageSize
-        ? pagination.pageIndex * pagination.pageSize
-        : 20
-    const skip = 0
-    const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
-    const orderBy = query?.orderBy || 'liquidityUSD'
-    const orderDirection = query?.orderDirection || 'desc'
-    const chainIds = query?.networks
-      ? JSON.parse(query.networks)
-      : SUPPORTED_CHAIN_IDS
-    const { tokens } = await sdk.TokensByChainIds({
-      first,
-      skip,
-      pagination,
-      where,
-      orderBy,
-      orderDirection,
-      chainIds,
+    const variables =
+      query?.tokenSymbols && query.tokenSymbols?.length > 0
+        ? {
+            where: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+              liquidityShares_gt: '0',
+            },
+          }
+        : {
+            where: {
+              liquidityShares_gt: '0',
+            },
+          }
+    const { data: tokens } = await fetchMultichain({
+      chainIds: query.chainIds,
+      fetch: _getFuroTokens,
+      variables,
     })
+
     return tokens
-  } catch (error: any) {
-    console.error(error)
-    throw new Error(error)
+  } catch (error) {
+    throw new Error(error as string)
   }
 }
 
@@ -136,15 +142,25 @@ export const getBentoBoxTokens = async (
   query: (typeof bentoBoxTokensSchema)['_output'],
 ) => {
   try {
-    const { rebases } = await sdk.RebasesByChainIds({
-      where: {
-        token_: {
-          or: query.tokenSymbols?.map((symbol) => ({
-            symbol_contains_nocase: symbol,
-          })),
-        },
-      },
+    const variables =
+      query?.tokenSymbols && query.tokenSymbols?.length > 0
+        ? {
+            where: {
+              or: query.tokenSymbols.map((symbol) => ({
+                symbol_contains_nocase: symbol,
+              })),
+              base_gt: '0',
+            },
+          }
+        : {
+            where: {
+              base_gt: '0',
+            },
+          }
+    const { data: rebases } = await fetchMultichain({
       chainIds: query.chainIds,
+      fetch: _getRebases,
+      variables,
     })
 
     return rebases
@@ -153,71 +169,18 @@ export const getBentoBoxTokens = async (
   }
 }
 
-export const getFuroTokens = async (
-  query: (typeof furoTokensSchema)['_output'],
-) => {
-  try {
-    const { tokens } = await sdk.furoTokensByChainIds({
-      where: {
-        or: query.tokenSymbols?.map((symbol) => ({
-          symbol_contains_nocase: symbol,
-        })),
-      },
-      // orderBy,
-      // orderDirection,
-      chainIds: query.chainIds,
-    })
-
-    return tokens
-  } catch (error) {
-    throw new Error(error as string)
-  }
-}
-
-export const getToken = async (id: string) => {
-  const { crossChainToken: token } = await sdk.CrossChainToken({
-    id: id.includes(':') ? id.split(':')[1] : id,
-    chainId: id.split(':')[0],
-    now: Math.round(new Date().getTime() / 1000),
-  })
-
-  return token
-}
-
-export type GetTokenCountQuery = Partial<{
-  networks: string
-}>
-
-export const getTokenCount = async (query?: GetTokenCountQuery) => {
-  const { factories } = await sdk.Factories({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-
-  const chainIds = query?.networks
-    ? JSON.parse(query.networks)
-    : SUPPORTED_CHAIN_IDS
-
-  return factories.reduce((sum, cur) => {
-    if (chainIds.includes(cur.chainId)) {
-      sum = sum + Number(cur.tokenCount)
-    }
-
-    return sum
-  }, 0)
-}
-
 export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks
     ? JSON.parse(query.networks)
     : SUPPORTED_CHAIN_IDS
-  const { factoryDaySnapshots } = await sdk.FactoryDaySnapshots({
-    chainIds: chainIds,
-    first: 1000,
+
+  const { data: daySnapshots } = await getSushiDayDatas({
+    chainIds,
   })
 
   const dateSnapshotMap = new Map()
 
-  for (const snapshot of factoryDaySnapshots) {
+  for (const snapshot of daySnapshots) {
     const value = dateSnapshotMap.get(snapshot.date)
     dateSnapshotMap.set(
       snapshot.date,

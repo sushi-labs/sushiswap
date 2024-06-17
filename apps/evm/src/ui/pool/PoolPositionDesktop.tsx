@@ -1,9 +1,5 @@
 import { Pool } from '@sushiswap/client'
-import {
-  CardCurrencyAmountItem,
-  CardGroup,
-  CardLabel,
-} from '@sushiswap/ui/components/card'
+import { CardCurrencyAmountItem, CardGroup, CardLabel } from '@sushiswap/ui'
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 

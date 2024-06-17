@@ -1,8 +1,6 @@
 'use client'
 
 import { Pool } from '@sushiswap/client'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUSHISWAP_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import {
   Card,
   CardContent,
@@ -10,13 +8,19 @@ import {
   CardTitle,
   DataTable,
 } from '@sushiswap/ui'
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { Toggle } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { PaginationState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
+import {
+  getSushiV2Burns,
+  getSushiV2Mints,
+  getSushiV2Swaps,
+  getSushiV2Transactions,
+} from '../../../../../packages/graph-client/dist/subgraphs/sushi-v2'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -43,11 +47,8 @@ const fetchAll = async (
   chainId: SushiSwapV2ChainId,
   opts: UseTransactionsV2Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
-  })
-
-  const { transactions } = await sdk.V2Transactions({
+  const transactions = await getSushiV2Transactions({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: {
@@ -72,6 +73,8 @@ const fetchAll = async (
         },
       ],
     },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return transactions
@@ -82,14 +85,13 @@ const fetchMints = async (
   chainId: SushiSwapV2ChainId,
   opts: UseTransactionsV2Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
-  })
-
-  const { mints } = await sdk.V2Mints({
+  const mints = await getSushiV2Mints({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: { pair: poolId.toLowerCase() },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return mints.map((mint) => ({
@@ -105,19 +107,19 @@ const fetchBurns = async (
   chainId: SushiSwapV2ChainId,
   opts: UseTransactionsV2Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
-  })
-
-  const { burns } = await sdk.V2Burns({
+  const burns = await getSushiV2Burns({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: {
       pair: poolId.toLowerCase(),
-      amount0_not: null,
-      amount1_not: null,
-      sender_not: null,
+      // TODO: disbled for now, according to the types this can never be null so not sure if we need it anymore
+      // amount0_not: null,
+      // amount1_not: null,
+      // sender_not: null,
     },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return burns.map((burn) => ({
@@ -133,14 +135,13 @@ const fetchSwaps = async (
   chainId: SushiSwapV2ChainId,
   opts: UseTransactionsV2Opts,
 ) => {
-  const sdk = getBuiltGraphSDK({
-    url: SUSHISWAP_SUBGRAPH_URL[chainId],
-  })
-
-  const { swaps } = await sdk.V2Swaps({
+  const swaps = await getSushiV2Swaps({
+    chainId,
     first: opts.first,
     skip: opts?.skip ?? 0,
     where: { pair: poolId.toLowerCase() },
+    orderBy: 'timestamp',
+    orderDirection: 'desc',
   })
 
   return swaps.map((swap) => ({
@@ -213,8 +214,12 @@ function useTransactionsV2(
           ...swap,
           sender: String(swap.sender),
           to: String(swap.to),
-          amountIn: Number(swap.amountIn),
-          amountOut: Number(swap.amountOut),
+          amountIn: Number(
+            swap.amount0In !== '0' ? swap.amount0In : swap.amount1In,
+          ),
+          amountOut: Number(
+            swap.amount0Out !== '0' ? swap.amount0Out : swap.amount1Out,
+          ),
           type: TransactionType.Swap as const,
         }))
 

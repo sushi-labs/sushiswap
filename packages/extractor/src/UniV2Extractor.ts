@@ -3,7 +3,14 @@ import { getReservesAbi, tridentConstantPoolAbi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { ConstantProductPoolCode, LiquidityProviders } from 'sushi/router'
 import { ConstantProductRPool, RToken } from 'sushi/tines'
-import { Address, Log, PublicClient, decodeEventLog, parseAbiItem } from 'viem'
+import {
+  Address,
+  Hex,
+  Log,
+  PublicClient,
+  decodeEventLog,
+  parseAbiItem,
+} from 'viem'
 import { Counter } from './Counter.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { Logger } from './Logger.js'
@@ -16,7 +23,7 @@ export interface FactoryV2 {
   address: Address
   provider: LiquidityProviders
   fee: number
-  initCodeHash: string
+  initCodeHash: Hex
 }
 
 enum PoolStatus {

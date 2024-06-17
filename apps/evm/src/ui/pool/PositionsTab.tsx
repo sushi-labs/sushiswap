@@ -1,4 +1,3 @@
-import { Protocol } from '@sushiswap/client'
 import {
   Select,
   SelectContent,
@@ -38,26 +37,6 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
         <span>
           SushiSwap <sup>v2</sup>
         </span>
-      </div>
-    ),
-  },
-  {
-    id: 'trident-stable',
-    value: 'stable',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍱</span>
-        <span>Trident Stable</span>
-      </div>
-    ),
-  },
-  {
-    id: 'trident-classic',
-    value: 'classic',
-    children: (
-      <div className="flex items-center gap-2">
-        <span>🍱</span>
-        <span>Trident Classic</span>
       </div>
     ),
   },
@@ -110,22 +89,7 @@ export const PositionsTab = () => {
           <ConcentratedPositionsTable hideNewPositionButton={true} />
         </TabsContent>
         <TabsContent value="v2">
-          <PositionsTable
-            protocol={Protocol.SUSHISWAP_V2}
-            rowLink={(row) => `/pool/${row.pool.id}`}
-          />
-        </TabsContent>
-        <TabsContent value="stable">
-          <PositionsTable
-            protocol={Protocol.BENTOBOX_STABLE}
-            rowLink={(row) => `/pool/${row.pool.id}`}
-          />
-        </TabsContent>
-        <TabsContent value="classic">
-          <PositionsTable
-            protocol={Protocol.BENTOBOX_CLASSIC}
-            rowLink={(row) => `/pool/${row.pool.id}`}
-          />
+          <PositionsTable rowLink={(row) => `/pool/${row.pool.id}`} />
         </TabsContent>
         <TabsContent value="smart">
           <SmartPositionsTable />

@@ -43,6 +43,7 @@ export const SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS = [
   ChainId.CELO,
   ChainId.SCROLL,
   ChainId.FILECOIN,
+  ChainId.BLAST,
 ] as const
 
 export type SushiXSwap2ChainId =
@@ -64,6 +65,7 @@ export const SUSHIXSWAP_2_ADDRESS: Record<SushiXSwap2ChainId, `0x${string}`> = {
   [ChainId.CELO]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.SCROLL]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
   [ChainId.FILECOIN]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
+  [ChainId.BLAST]: '0x804b526e5bf4349819fe2db65349d0825870f8ee',
 } as const
 
 export const isSushiXSwap2ChainId = (
@@ -119,6 +121,7 @@ export const SQUID_ADAPTER_SUPPORTED_CHAIN_IDS = [
   ChainId.CELO,
   ChainId.SCROLL,
   ChainId.FILECOIN,
+  ChainId.BLAST,
 ] as const
 
 export type SquidAdapterChainId =
@@ -140,6 +143,7 @@ export const SQUID_ADAPTER_ADDRESS: Record<SquidAdapterChainId, `0x${string}`> =
     [ChainId.CELO]: '0x02a480a258361c9Bc3eaacBd6473364C67adCD3a',
     [ChainId.SCROLL]: '0x02a480a258361c9Bc3eaacBd6473364C67adCD3a',
     [ChainId.FILECOIN]: '0xd5607d184b1d6ecba94a07c217497fe9346010d9',
+    [ChainId.BLAST]: '0x09938716c4a086a4ebfe10377fdad96f32541303',
   } as const
 
 export const isSquidAdapterChainId = (

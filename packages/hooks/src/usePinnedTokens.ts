@@ -1,6 +1,5 @@
 'use client'
 
-import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
@@ -36,6 +35,7 @@ import {
   axlWBTC,
 } from 'sushi/currency'
 import { type Currency, Native, Token } from 'sushi/currency'
+import { getAddress as _getAddress, isAddress } from 'viem/utils'
 import { useLocalStorage } from './useLocalStorage'
 
 export const DEFAULT_BASES = {

@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from 'sushi/config'
-import { TickMath, nearestUsableTick } from 'sushi/pool'
+import { TickMath, nearestUsableTick } from 'sushi/pool/sushiswap-v3'
 import { Bound } from '../../constants'
 
 export function useIsTickAtLimit(

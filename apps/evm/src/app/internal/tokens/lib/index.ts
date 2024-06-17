@@ -1,6 +1,8 @@
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { ChainId } from 'sushi/chain'
+import { SushiSwapV2ChainId } from 'sushi/config'
 import { SUSHI_DEFAULT_TOKEN_LIST } from 'sushi/token-list'
+import { fetchMultichain } from '../../../../../../../packages/graph-client/dist/multichain'
+import { getSushiV2Tokens } from '../../../../../../../packages/graph-client/dist/subgraphs/sushi-v2'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 
@@ -8,29 +10,28 @@ export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 export async function getTokens({
   chainIds,
   filter,
-}: { chainIds: ChainId[]; filter?: string }) {
-  const sdk = getBuiltGraphSDK()
-
+}: { chainIds: SushiSwapV2ChainId[]; filter?: string }) {
   const defaultTokenList = await getDefaultTokenList()
 
-  const tokens = await sdk
-    .TokensByChainIds({
-      chainIds,
-      orderBy: 'liquidityUSD',
+  const { data } = await fetchMultichain({
+    chainIds,
+    fetch: getSushiV2Tokens,
+    variables: {
+      orderBy: 'tradeVolumeUSD',
       where: { symbol_contains_nocase: filter },
-    })
-    .then(({ tokens }) =>
-      tokens.map((token) => ({
-        ...token,
-        listEntry:
-          defaultTokenList.find(
-            (entry) =>
-              entry.address.toLowerCase() ===
-                token.id.toLowerCase().split(':')[1] &&
-              entry.chainId === token.chainId,
-          ) || null,
-      })),
-    )
+    },
+  })
+
+  const tokens = data.map((token) => ({
+    ...token,
+    listEntry:
+      defaultTokenList.find(
+        (entry) =>
+          entry.address.toLowerCase() ===
+            token.id.toLowerCase().split(':')[1] &&
+          entry.chainId === token.chainId,
+      ) || null,
+  }))
 
   const tokensCombined = new Map<string, (typeof tokens)[0]>()
   tokens.forEach((token) => {
@@ -39,10 +40,12 @@ export async function getTokens({
     if (tokenCombined) {
       tokensCombined.set(token.id, {
         ...token,
-        volumeUSD: Number(token.volumeUSD) + Number(tokenCombined.volumeUSD),
-        liquidityUSD:
-          Number(token.liquidityUSD) + Number(tokenCombined.liquidityUSD),
-        feesUSD: Number(token.feesUSD) + Number(tokenCombined.feesUSD),
+        volumeUSD: String(
+          Number(token.volumeUSD) + Number(tokenCombined.volumeUSD),
+        ),
+        totalLiquidity: String(
+          Number(token.totalLiquidity) + Number(tokenCombined.totalLiquidity),
+        ),
       })
     } else {
       tokensCombined.set(token.id, token)

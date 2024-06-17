@@ -8,21 +8,20 @@ import { unsanitize } from 'sushi'
 
 export default async function PoolPage({
   params,
-  tab,
 }: {
-  params: { id: string }
-  tab: 'add' | 'remove' | 'unstake' | 'stake'
+  params: { id: string; tab: 'add' | 'remove' | 'unstake' | 'stake' }
 }) {
   const poolId = unsanitize(params.id)
   const pool = await unstable_cache(
-    async () => getPool(poolId),
+    async () => await getPool(poolId),
     ['pool', poolId],
     {
       revalidate: 60 * 15,
     },
   )()
 
-  if (!pool) {
+  // Rockstar C&D
+  if (!pool || pool.id === '42161:0x0a4f9962e24893a4a7567e52c1ce37d5482365de') {
     notFound()
   }
 
@@ -30,5 +29,5 @@ export default async function PoolPage({
     return <PoolPageV3 pool={pool} />
   }
 
-  return <PoolPageV2 pool={pool} tab={tab} />
+  return <PoolPageV2 pool={pool} tab={params.tab} />
 }

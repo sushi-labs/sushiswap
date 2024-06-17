@@ -19,19 +19,17 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import {
-  Checker,
-  Web3Input,
-  useBondMarketDetails,
-  useChainId,
-} from '@sushiswap/wagmi'
-import { CheckerProvider } from '@sushiswap/wagmi/systems/Checker/Provider'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_BONDS } from 'src/lib/constants'
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { useBondMarketDetails } from 'src/lib/wagmi/hooks/bonds/use-bond-market-details'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/Provider'
 import { Amount, Token, tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
+import { useChainId } from 'wagmi'
 import { BondsBuyReviewModal } from './bonds-buy-review-modal'
 
 const GetTokens = ({ bond }: { bond: Bond }) => {

@@ -1,5 +1,5 @@
 import { getChainIdAddressFromId } from 'sushi/format'
-import type { PublicClient } from 'viem'
+import { type PublicClient, zeroAddress } from 'viem'
 
 import { steerMultiPositionManager } from '../abi/steerMultiPositionManager.js'
 
@@ -15,6 +15,7 @@ export function getVaultPositionsContracts({
 
     return {
       abi: steerMultiPositionManager,
+      account: zeroAddress,
       chainId,
       address,
       functionName: 'getPositions' as const,

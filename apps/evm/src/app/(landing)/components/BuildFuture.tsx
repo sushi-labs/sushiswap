@@ -1,5 +1,5 @@
 import { Button } from '@sushiswap/ui'
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { FC } from 'react'
 

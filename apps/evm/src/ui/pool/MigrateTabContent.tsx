@@ -7,12 +7,12 @@ import {
   Carousel,
   Container,
 } from '@sushiswap/ui'
-import { ConnectButton, useAccount } from '@sushiswap/wagmi'
 import React from 'react'
-import { ChainId } from 'sushi/chain'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 
 import { useIsMounted } from '@sushiswap/hooks'
+import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { useAccount } from 'wagmi'
 import { PositionCard, PositionCardSkeleton } from './PositionCard'
 import { PositionCardList } from './PositionCardList'
 
@@ -44,7 +44,7 @@ function MigrateTabContentPositions() {
           <Carousel
             slideWidth={320}
             slides={positions.filter((position) =>
-              isSushiSwapV3ChainId(position?.chainId as ChainId),
+              isSushiSwapV3ChainId(position?.pool.chainId),
             )}
             render={(position) => <PositionCard position={position} />}
             className="px-2"

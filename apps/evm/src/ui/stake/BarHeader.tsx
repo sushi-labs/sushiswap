@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@sushiswap/ui/components/tooltip'
+} from '@sushiswap/ui'
 import React from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 import { XSUSHI } from 'sushi/currency'

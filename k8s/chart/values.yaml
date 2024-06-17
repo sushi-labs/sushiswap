@@ -64,3 +64,5 @@ chains:
     id: "534352"
   - name: "harmony"
     id: "1666600000"
+  - name: "skale-europa"
+    id: "2046399126"

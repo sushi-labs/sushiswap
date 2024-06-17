@@ -1,8 +1,5 @@
 import { UseTradeReturn } from '@sushiswap/react-query'
-import {
-  SimulateContractErrorType,
-  useSimulateContract,
-} from '@sushiswap/wagmi'
+import { SimulateContractErrorType } from '@wagmi/core'
 import { useMemo } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { routeProcessor4Abi } from 'sushi/abi'
@@ -11,6 +8,7 @@ import {
   isRouteProcessor4ChainId,
 } from 'sushi/config'
 import { BaseError } from 'viem'
+import { useSimulateContract } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
 
 const isMinOutError = (error: SimulateContractErrorType | null) =>

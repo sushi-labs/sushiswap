@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 export function parseArgs<T>(args?: Partial<T>) {
   if (!args) return ''
   return Object.entries(args)
@@ -14,12 +16,12 @@ export function parseArgs<T>(args?: Partial<T>) {
     }, '?')
 }
 
-export async function get(url: string) {
+export async function get<T>(url: string): Promise<T> {
   const res = await fetch(url)
 
   if (!res.ok) {
     throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
   }
 
-  return res.json()
+  return res.json() as T
 }

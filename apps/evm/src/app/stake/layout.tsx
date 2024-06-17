@@ -1,5 +1,5 @@
 import { Container } from '@sushiswap/ui'
-import { HotJar } from '@sushiswap/ui/components/scripts'
+import { HotJar } from '@sushiswap/ui'
 import { BarHeader } from 'src/ui/stake'
 import { Header } from './header'
 import { Providers } from './providers'

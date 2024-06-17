@@ -6,7 +6,7 @@ import {
   FantomCircle,
   OptimismCircle,
   PolygonCircle,
-} from '@sushiswap/ui/components/icons'
+} from '@sushiswap/ui'
 
 import {
   AcademyIcon,
@@ -542,7 +542,7 @@ export const PRODUCTS_DATA = {
               A challenge for crosschain bridges so far has been finding a path
               with sufficient liquidity on both sides of a swap. We solve this
               problem by plugging into our own Sushi liquidity pools, which are
-              currently deployed on 14 chains. Being able to use this liquidity
+              currently deployed on 15 chains. Being able to use this liquidity
               guarantees our users to always receive the best price for any pair
               across all the chains.
             </p>

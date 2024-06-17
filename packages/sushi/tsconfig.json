@@ -16,6 +16,11 @@
     "declarationMap": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "sushi/types": [
+        "./src/types"
+      ]
+    }
   }
 }

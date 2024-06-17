@@ -1,4 +1,3 @@
-import flatMap from 'lodash.flatmap'
 import { ChainId } from '../chain/index.js'
 import {
   ADDITIONAL_BASES,
@@ -26,7 +25,7 @@ export function getCurrencyCombinations(
 
   const bases: Token[] = [...common, ...additionalA, ...additionalB]
 
-  const basePairs: [Token, Token][] = flatMap(bases, (base): [Token, Token][] =>
+  const basePairs: [Token, Token][] = bases.flatMap((base): [Token, Token][] =>
     bases.map((otherBase) => [base, otherBase]),
   )
 

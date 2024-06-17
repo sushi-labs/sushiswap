@@ -2,12 +2,17 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
+// import withBundleAnalyzer from '@next/bundle-analyzer'
+// const bundleAnalyzer = withBundleAnalyzer({ enabled: false })
+// issue with the above..
+const bundleAnalyzer = (a) => a // withBundleAnalyzer({ enabled: true })
+
 const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
 const BLOG_URL = process.env.BLOG_URL || 'https://blog.sushi.com'
 const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
   logging: {
     fetches: {
@@ -17,7 +22,6 @@ const nextConfig = {
   experimental: {
     testProxy: true,
   },
-  transpilePackages: ['@sushiswap/wagmi'],
   async redirects() {
     return [
       {
@@ -100,7 +104,7 @@ const nextConfig = {
   //   widenClientFileUpload: true,
   //   automaticVercelMonitors: true,
   // },
-}
+})
 
 /** @type {import('@sentry/nextjs').SentryWebpackPluginOptions} */
 // const sentryWebpackPluginOptions = {

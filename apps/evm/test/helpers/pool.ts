@@ -10,16 +10,11 @@ import {
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
-  TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
-  TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
 } from 'sushi/config'
 
 import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
-  computeTridentConstantPoolAddress,
-  computeTridentStablePoolAddress,
 } from 'sushi'
 
 interface CreateV3PoolArgs {
@@ -331,7 +326,11 @@ export class PoolPage extends BaseActions {
     // await expect(removeLiquidityTabSelector).toBeVisible()
     // await removeLiquidityTabSelector.click()
 
-    await this.page.locator('[testdata-id=remove-liquidity-max-button]').click()
+    const removeMaxButtonSelector = this.page.locator(
+      '[testdata-id=remove-liquidity-max-button]',
+    )
+    await expect(removeMaxButtonSelector).toBeVisible()
+    await removeMaxButtonSelector.click()
 
     const selectApprovalTypeId = 'select-approval-type-button'
     const selectApprovalTypeLocator = this.page.locator(
@@ -394,11 +393,7 @@ export class PoolPage extends BaseActions {
     token0: Token,
     token1: Token,
     fee: number,
-    protocol:
-      | 'SUSHISWAP_V2'
-      | 'SUSHISWAP_V3'
-      | 'BENTOBOX_STABLE'
-      | 'BENTOBOX_CLASSIC',
+    protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3',
   ) {
     next.onFetch((request) => {
       // console.log('REQUEST', request.url.toLowerCase())
@@ -423,25 +418,6 @@ export class PoolPage extends BaseActions {
             SUSHISWAP_V2_FACTORY_ADDRESS[this.chainId as SushiSwapV2ChainId],
           tokenA,
           tokenB,
-        }).toLowerCase()
-      } else if (protocol === 'BENTOBOX_CLASSIC') {
-        address = computeTridentConstantPoolAddress({
-          factoryAddress:
-            TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS[
-              this.chainId as TridentChainId
-            ],
-          tokenA,
-          tokenB,
-          fee,
-          twap: false,
-        }).toLowerCase()
-      } else if (protocol === 'BENTOBOX_STABLE') {
-        address = computeTridentStablePoolAddress({
-          factoryAddress:
-            TRIDENT_STABLE_POOL_FACTORY_ADDRESS[this.chainId as TridentChainId],
-          tokenA,
-          tokenB,
-          fee,
         }).toLowerCase()
       } else {
         console.error('>>>>>>>>> UNKNOWN PROTOCOL')
@@ -512,6 +488,7 @@ export class PoolPage extends BaseActions {
         hasEnabledSteerVault: false,
         steerVaults: [],
       }
+      console.log({ url: request.url.toLowerCase() })
 
       if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
         // console.log('RETURN POOLS MOCK')
@@ -546,7 +523,7 @@ export class PoolPage extends BaseActions {
       } else if (
         request.url.toLowerCase().endsWith('/pool/api/graphPools'.toLowerCase())
       ) {
-        // console.log('RETURN GRAPH POOLS MOCK')
+        console.log('RETURN GRAPH POOLS MOCK')
       }
     })
   }

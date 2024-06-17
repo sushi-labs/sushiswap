@@ -1,14 +1,9 @@
 'use client'
 
-import {
-  State,
-  WagmiProvider,
-  // getChainId,
-  // switchChain,
-  // watchChainId,
-} from '@sushiswap/wagmi'
 import { type FC, type ReactNode } from 'react'
-import { wagmiConfig } from 'src/lib/wagmi'
+import { wagmiConfig } from 'src/lib/wagmi/config'
+import { State } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 // import { type ChainId } from 'sushi'
 
 export const WagmiConfig: FC<{

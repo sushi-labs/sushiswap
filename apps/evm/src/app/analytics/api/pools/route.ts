@@ -28,5 +28,9 @@ export async function GET(request: Request) {
     return new Response(result.error.message, { status: 422 })
   }
   const pools = await getPools(result.data)
-  return NextResponse.json(pools)
+  return NextResponse.json(pools, {
+    headers: {
+      'Cache-Control': 'public, max-age=60, stale-while-revalidate=600',
+    },
+  })
 }

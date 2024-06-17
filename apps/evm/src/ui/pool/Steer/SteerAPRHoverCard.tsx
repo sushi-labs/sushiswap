@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   CardContent,
   CardDescription,
@@ -17,16 +16,17 @@ import {
   ReplyContent,
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
-import { ChainId } from 'sushi/chain'
 import { tryParseAmount } from 'sushi/currency'
 import { formatPercent } from 'sushi/format'
 
+import { SteerVault } from '@sushiswap/steer-sdk'
+import { PoolWithIncentives } from 'sushi'
 import { incentiveRewardToToken } from '../../../lib/functions'
 
 interface SteerAPRHoverCardProps {
   children: ReactNode
-  pool: Pool
-  vault: Pool['steerVaults'][0]
+  pool: PoolWithIncentives
+  vault: SteerVault
 }
 
 export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({
@@ -65,7 +65,7 @@ export const SteerAPRHoverCard: FC<SteerAPRHoverCardProps> = ({
                 {pool.incentives.map((el) => {
                   const amount = tryParseAmount(
                     el.rewardPerDay.toString(),
-                    incentiveRewardToToken(el.chainId as ChainId, el),
+                    incentiveRewardToToken(el.chainId, el),
                   )
                   if (!amount) return null
 

@@ -1,4 +1,4 @@
-import { SimulateContractErrorType } from '@sushiswap/wagmi'
+import { SimulateContractErrorType } from '@wagmi/core'
 import { Fraction, Percent } from 'sushi'
 import { Amount, Type } from 'sushi/currency'
 import { decodeErrorResult } from 'viem'

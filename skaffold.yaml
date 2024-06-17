@@ -36,6 +36,7 @@ profiles:
   manifests:
     rawYaml:
       - k8s/ingress-staging.yaml
+      - k8s/staging-managed-certificate.yaml
 - name: production
   build:
     googleCloudBuild:
@@ -43,3 +44,4 @@ profiles:
   manifests:
     rawYaml:
       - k8s/ingress-production.yaml
+      - k8s/production-managed-certificate.yaml

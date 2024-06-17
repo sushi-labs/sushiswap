@@ -1,3 +1,3 @@
 export * from './useGraphPool'
 export * from './usePoolGraphData'
-export * from './useUserPositions'
+export * from './useSushiV2UserPositions'
