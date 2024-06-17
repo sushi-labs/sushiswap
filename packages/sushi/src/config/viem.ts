@@ -605,7 +605,7 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`,
   ),
   [ChainId.SKALE_EUROPA]: http(
-    'https://mainnet.skalenodes.com/v1/elated-tan-skat',
+    'https://elated-tan-skat-archive.skalenodes.com:10072',
   ),
   [ChainId.ROOTSTOCK]: http(
     rskId
