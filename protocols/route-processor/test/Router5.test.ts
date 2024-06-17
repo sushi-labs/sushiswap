@@ -55,6 +55,7 @@ import {
   PoolType,
   RPool,
   RToken,
+  RouteLeg,
   RouteStatus,
   StableSwapRPool,
   getBigInt,
@@ -1155,8 +1156,9 @@ describe('End-to-end RouteProcessor5 test', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       let currentToken = 0
-      const rnd: () => number = seedrandom(`testSeed cc ${i}`) // random [0, 1)
+      const rnd: () => number = seedrandom(`testSeed ${i}`) // random [0, 1)
       intermidiateResult[0] = getBigInt(getRandomExp(rnd, 1e15, 1e24))
+      let routeLegs: RouteLeg[] = []
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
         process.stdout.write(
@@ -1181,6 +1183,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
             slippage: number,
             env: { poolCodes: Map<string, PoolCode> },
           ) => {
+            routeLegs = r.legs
             let minAmount = r.amountIn
             r.legs.forEach((l) => {
               minAmount = Math.min(
@@ -1204,6 +1207,16 @@ describe('End-to-end RouteProcessor5 test', async () => {
           break
         }
         console.log(`slippage: ${intermidiateResult[2]}%`)
+        routeLegs.forEach((l) => {
+          if (l.poolType === PoolType.Curve)
+            console.log(
+              'Curve',
+              l.poolAddress,
+              l.tokenFrom.symbol,
+              '->',
+              l.tokenTo.symbol,
+            )
+        })
       }
     }
   })
