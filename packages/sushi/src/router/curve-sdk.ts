@@ -1,4 +1,13 @@
-import { Address, PublicClient, parseAbi } from 'viem'
+import {
+  Abi,
+  Address,
+  ContractFunctionArgs,
+  ContractFunctionName,
+  PublicClient,
+  ReadContractParameters,
+  ReadContractReturnType,
+  parseAbi,
+} from 'viem'
 import { RPool } from '../tines'
 
 export enum CurvePoolType {
@@ -81,6 +90,14 @@ export const METAPOOL_COIN_TO_BASEPOOL: Record<string, Address> = {
     '0xf253f83AcA21aAbD2A20553AE0BF7F65C755A07F',
 }
 
+export type ReadContract = <
+  const abi extends Abi | readonly unknown[],
+  functionName extends ContractFunctionName<abi, 'pure' | 'view'>,
+  args extends ContractFunctionArgs<abi, 'pure' | 'view', functionName>,
+>(
+  _args: ReadContractParameters<abi, functionName, args>,
+) => Promise<ReadContractReturnType<abi, functionName, args>>
+
 export async function detectCurvePoolType(
   client: PublicClient,
   poolAddress: Address,
@@ -106,7 +123,7 @@ export async function detectCurvePoolType(
 
 // is needed to predict pool output
 export async function getPoolRatio(
-  client: PublicClient,
+  client: PublicClient | { readContract: ReadContract },
   poolAddress: Address,
   tokens: Address[],
 ): Promise<number[]> {
