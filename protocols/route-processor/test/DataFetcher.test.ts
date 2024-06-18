@@ -26,9 +26,7 @@ async function testDF(
   if (!t0 || !t1) return dexPools
 
   const start = performance.now()
-  await dataFetcher.fetchPoolsForToken(t0, t1, undefined, {
-    fetchPoolsTimeout: 60000,
-  })
+  await dataFetcher.fetchPoolsForToken(t0, t1, undefined)
   const pools = dataFetcher.getCurrentPoolCodeMap(t0, t1)
   const time = Math.round(performance.now() - start)
   console.log(
