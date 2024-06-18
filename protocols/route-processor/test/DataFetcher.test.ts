@@ -1,6 +1,16 @@
-import assert from 'assert';
+import assert from 'assert'
 import { ChainId, TESTNET_CHAIN_IDS, chainName } from 'sushi/chain'
-import { DAI, FRAX, SUSHI, Token, Type, USDB, USDC, USDT, WNATIVE } from 'sushi/currency'
+import {
+  DAI,
+  FRAX,
+  SUSHI,
+  Token,
+  Type,
+  USDB,
+  USDC,
+  USDT,
+  WNATIVE,
+} from 'sushi/currency'
 import { DataFetcher, LiquidityProviders } from 'sushi/router'
 
 async function testDF(
@@ -11,9 +21,9 @@ async function testDF(
   name0: string,
   name1: string,
 ): Promise<Record<string, number>> {
-  const dexPools: Record<string, number> = {};
+  const dexPools: Record<string, number> = {}
 
-  if (!t0 || !t1) return dexPools;
+  if (!t0 || !t1) return dexPools
 
   const start = performance.now()
   await dataFetcher.fetchPoolsForToken(t0, t1, undefined, {
@@ -25,7 +35,7 @@ async function testDF(
     `     found pools(${name0}-${name1}): ${pools.size} time=${time}ms`,
   )
   dataFetcher.providers.forEach((p) => {
-    const pooltype = p.getType();
+    const pooltype = p.getType()
     const poolCodes = p.getCurrentPoolList(t0 as Token, t1 as Token)
     if (poolCodes.length)
       console.log(
@@ -34,12 +44,13 @@ async function testDF(
 
     // exclude non uni based dexes
     if (
-      pooltype !== LiquidityProviders.Trident
-      && pooltype !== LiquidityProviders.CurveSwap
-      && pooltype !== LiquidityProviders.NativeWrap
-    ) dexPools[pooltype] = poolCodes.length;
+      pooltype !== LiquidityProviders.Trident &&
+      pooltype !== LiquidityProviders.CurveSwap &&
+      pooltype !== LiquidityProviders.NativeWrap
+    )
+      dexPools[pooltype] = poolCodes.length
   })
-  return dexPools;
+  return dexPools
 }
 
 // exclude test nets and chains with no pool or no dex
@@ -48,9 +59,11 @@ const excludedChains = [
   ChainId.HECO,
   ChainId.PALM,
   ChainId.BOBA_AVAX,
-  ChainId.ZKSYNC_ERA
+  ChainId.ZKSYNC_ERA,
 ]
-const chainIds = Object.values(ChainId).filter(v => excludedChains.every(e => v !== e))
+const chainIds = Object.values(ChainId).filter((v) =>
+  excludedChains.every((e) => v !== e),
+)
 
 async function runTest() {
   describe.only('DataFetcher Pools/Time check', async () => {
@@ -63,74 +76,92 @@ async function runTest() {
       it(`${chName}(${chainId})`, async () => {
         dataFetcher.startDataFetching()
         console.log(chName)
-        const allFoundPools = [];
-        allFoundPools.push(await testDF(
-          chName,
-          dataFetcher,
-          WNATIVE[chainId],
-          USDC[chainId as keyof typeof USDC],
-          'WNATIVE',
-          'USDC',
-        ))
-        allFoundPools.push(await testDF(
-          chName,
-          dataFetcher,
-          SUSHI[chainId as keyof typeof SUSHI],
-          FRAX[chainId as keyof typeof FRAX],
-          'SUSHI',
-          'FRAX',
-        ))
-        allFoundPools.push(await testDF(
-          chName,
-          dataFetcher,
-          SUSHI[chainId as keyof typeof SUSHI],
-          USDT[chainId as keyof typeof USDT],
-          'SUSHI',
-          'USDT',
-        ))
-        allFoundPools.push(await testDF(
-          chName,
-          dataFetcher,
-          WNATIVE[chainId],
-          USDT[chainId as keyof typeof USDT],
-          'WNATIVE',
-          'USDT',
-        ))
-        allFoundPools.push(await testDF(
-          chName,
-          dataFetcher,
-          WNATIVE[chainId],
-          USDB[chainId as keyof typeof USDB],
-          'WNATIVE',
-          'USDB',
-        ))
+        const allFoundPools = []
+        allFoundPools.push(
+          await testDF(
+            chName,
+            dataFetcher,
+            WNATIVE[chainId],
+            USDC[chainId as keyof typeof USDC],
+            'WNATIVE',
+            'USDC',
+          ),
+        )
+        allFoundPools.push(
+          await testDF(
+            chName,
+            dataFetcher,
+            SUSHI[chainId as keyof typeof SUSHI],
+            FRAX[chainId as keyof typeof FRAX],
+            'SUSHI',
+            'FRAX',
+          ),
+        )
+        allFoundPools.push(
+          await testDF(
+            chName,
+            dataFetcher,
+            SUSHI[chainId as keyof typeof SUSHI],
+            USDT[chainId as keyof typeof USDT],
+            'SUSHI',
+            'USDT',
+          ),
+        )
+        allFoundPools.push(
+          await testDF(
+            chName,
+            dataFetcher,
+            WNATIVE[chainId],
+            USDT[chainId as keyof typeof USDT],
+            'WNATIVE',
+            'USDT',
+          ),
+        )
+        allFoundPools.push(
+          await testDF(
+            chName,
+            dataFetcher,
+            WNATIVE[chainId],
+            USDB[chainId as keyof typeof USDB],
+            'WNATIVE',
+            'USDB',
+          ),
+        )
         // only for Elk dex on Moonriver
-        if (chainId === ChainId.MOONRIVER) allFoundPools.push(await testDF(
-          chName,
-          dataFetcher,
-          DAI[chainId as keyof typeof DAI],
-          new Token({
-            chainId: ChainId.MOONRIVER,
-            address: '0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C',
-            decimals: 18,
-            symbol: "ELK"
-          }),
-          'DAI',
-          'ELK',
-        ))
+        if (chainId === ChainId.MOONRIVER)
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              DAI[chainId as keyof typeof DAI],
+              new Token({
+                chainId: ChainId.MOONRIVER,
+                address: '0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C',
+                decimals: 18,
+                symbol: 'ELK',
+              }),
+              'DAI',
+              'ELK',
+            ),
+          )
         dataFetcher.stopDataFetching()
 
-        const fails = [];
-        const chainAllDexesKeys = Object.keys(allFoundPools[0]);
+        const fails = []
+        const chainAllDexesKeys = Object.keys(allFoundPools[0])
         for (let i = 0; i < chainAllDexesKeys.length; i++) {
-          const key = chainAllDexesKeys[i];
-          let dexPoolsCount = 0;
+          const key = chainAllDexesKeys[i]
+          let dexPoolsCount = 0
           for (let j = 0; j < allFoundPools.length; j++) {
-            dexPoolsCount += (allFoundPools[j][key] ?? 0);
+            dexPoolsCount += allFoundPools[j][key] ?? 0
           }
-          if (dexPoolsCount === 0) fails.push(key);
+          if (dexPoolsCount === 0) fails.push(key)
         }
-        if (fails.length) assert.fail(`did not find any pools on ${chName} chain for following dexes: ${fails.join(", ")}`);
+        if (fails.length)
+          assert.fail(
+            `did not find any pools on ${chName} chain for following dexes: ${fails.join(
+              ', ',
+            )}`,
+          )
       })
     })
   })
