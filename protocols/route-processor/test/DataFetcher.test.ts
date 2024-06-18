@@ -26,7 +26,9 @@ async function testDF(
   if (!t0 || !t1) return dexPools
 
   const start = performance.now()
-  await dataFetcher.fetchPoolsForToken(t0, t1, undefined)
+  await dataFetcher.fetchPoolsForToken(t0, t1, undefined, {
+    fetchPoolsTimeout: 60000,
+  })
   const pools = dataFetcher.getCurrentPoolCodeMap(t0, t1)
   const time = Math.round(performance.now() - start)
   console.log(
@@ -85,38 +87,43 @@ async function runTest() {
             'USDC',
           ),
         )
-        allFoundPools.push(
-          await testDF(
-            chName,
-            dataFetcher,
-            SUSHI[chainId as keyof typeof SUSHI],
-            FRAX[chainId as keyof typeof FRAX],
-            'SUSHI',
-            'FRAX',
-          ),
-        )
-        allFoundPools.push(
-          await testDF(
-            chName,
-            dataFetcher,
-            SUSHI[chainId as keyof typeof SUSHI],
-            USDT[chainId as keyof typeof USDT],
-            'SUSHI',
-            'USDT',
-          ),
-        )
-        allFoundPools.push(
-          await testDF(
-            chName,
-            dataFetcher,
-            WNATIVE[chainId],
-            USDT[chainId as keyof typeof USDT],
-            'WNATIVE',
-            'USDT',
-          ),
-        )
+
+        // only try remaining pairs in case there is a missing dex from the previous pairs results
+        if (hasMissingDex(allFoundPools))
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              SUSHI[chainId as keyof typeof SUSHI],
+              FRAX[chainId as keyof typeof FRAX],
+              'SUSHI',
+              'FRAX',
+            ),
+          )
+        if (hasMissingDex(allFoundPools))
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              SUSHI[chainId as keyof typeof SUSHI],
+              USDT[chainId as keyof typeof USDT],
+              'SUSHI',
+              'USDT',
+            ),
+          )
+        if (hasMissingDex(allFoundPools))
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              WNATIVE[chainId],
+              USDT[chainId as keyof typeof USDT],
+              'WNATIVE',
+              'USDT',
+            ),
+          )
         // only Blast chain
-        if (chainId === ChainId.BLAST)
+        if (chainId === ChainId.BLAST && hasMissingDex(allFoundPools))
           allFoundPools.push(
             await testDF(
               chName,
@@ -128,7 +135,7 @@ async function runTest() {
             ),
           )
         // only for Elk dex on Moonriver
-        if (chainId === ChainId.MOONRIVER)
+        if (chainId === ChainId.MOONRIVER && hasMissingDex(allFoundPools))
           allFoundPools.push(
             await testDF(
               chName,
@@ -165,6 +172,20 @@ async function runTest() {
       })
     })
   })
+}
+
+function hasMissingDex(dexPools: Record<string, number>[]): boolean {
+  const dexKeys = Object.keys(dexPools[0])
+  if (!dexKeys.length) return true
+  for (let i = 0; i < dexKeys.length; i++) {
+    const key = dexKeys[i]
+    let dexPoolsCount = 0
+    for (let j = 0; j < dexPools.length; j++) {
+      dexPoolsCount += dexPools[j][key] ?? 0
+    }
+    if (dexPoolsCount === 0) return true
+  }
+  return false
 }
 
 runTest()
