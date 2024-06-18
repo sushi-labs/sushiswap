@@ -37,7 +37,7 @@ export function transformPoolV3ToBase<T extends RequiredBase>(
   pool: T,
   chainId: SushiSwapV3ChainId,
 ): PoolV3<PoolBase> {
-  const swapFee = Number(pool.swapFee) / 10000
+  const swapFee = Number(pool.swapFee) / 1000000
 
   return {
     id: getIdFromChainIdAddress(chainId, pool.id as Address),
