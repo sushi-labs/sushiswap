@@ -50,6 +50,25 @@ async function testDF(
   return dexPools
 }
 
+// checks if all available dexes on a chain have found a pool or not and returns the missing dexes names
+function reportMissingDexes(reports: Record<string, number>[]): {
+  hasMissingDex: boolean
+  missingDexNames: string[]
+} {
+  const dexNames = reports.map((v) => Object.keys(v)).find((v) => v.length > 0)
+  if (!dexNames) return { hasMissingDex: true, missingDexNames: [] }
+
+  const missingDexNames = []
+  for (const name of dexNames) {
+    let poolsCount = 0
+    for (const element of reports) poolsCount += element[name] ?? 0
+    if (poolsCount === 0) missingDexNames.push(name)
+  }
+
+  if (missingDexNames.length) return { hasMissingDex: true, missingDexNames }
+  else return { hasMissingDex: false, missingDexNames }
+}
+
 // exclude test nets and chains with no pool or no dex
 const excludedChains = [
   ...TESTNET_CHAIN_IDS,
@@ -73,7 +92,11 @@ async function runTest() {
       it(`${chName}(${chainId})`, async () => {
         dataFetcher.startDataFetching()
         console.log(chName)
+
         const allFoundPools = []
+
+        // a pool with this pair is available in most dexes and chains, but some may not have this, so
+        // for those other pairs are tried if happened to find a missing dex from previous results
         allFoundPools.push(
           await testDF(
             chName,
@@ -85,42 +108,27 @@ async function runTest() {
           ),
         )
 
-        // try other pairs in case at least one dex found no pools
-        if (hasMissingDex(allFoundPools))
-          allFoundPools.push(
-            await testDF(
-              chName,
-              dataFetcher,
-              SUSHI[chainId as keyof typeof SUSHI],
-              FRAX[chainId as keyof typeof FRAX],
-              'SUSHI',
-              'FRAX',
-            ),
-          )
-        if (hasMissingDex(allFoundPools))
-          allFoundPools.push(
-            await testDF(
-              chName,
-              dataFetcher,
-              SUSHI[chainId as keyof typeof SUSHI],
-              USDT[chainId as keyof typeof USDT],
-              'SUSHI',
-              'USDT',
-            ),
-          )
-        if (hasMissingDex(allFoundPools))
+        // from here on, only try a new pair in case there is a missing dex from previous pair:
+        // only for Dfyn and JetSwap on fantom chain
+        if (
+          chainId === ChainId.FANTOM &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
           allFoundPools.push(
             await testDF(
               chName,
               dataFetcher,
               WNATIVE[chainId],
-              USDT[chainId as keyof typeof USDT],
+              DAI[chainId as keyof typeof DAI],
               'WNATIVE',
-              'USDT',
+              'DAI',
             ),
           )
         // only for Blast chain
-        if (chainId === ChainId.BLAST && hasMissingDex(allFoundPools))
+        if (
+          chainId === ChainId.BLAST &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
           allFoundPools.push(
             await testDF(
               chName,
@@ -131,8 +139,31 @@ async function runTest() {
               'USDB',
             ),
           )
-        // only for Elk dex on Moonriver
-        if (chainId === ChainId.MOONRIVER && hasMissingDex(allFoundPools))
+        // only for Moonbeam chain
+        if (
+          chainId === ChainId.MOONBEAM &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              new Token({
+                chainId: ChainId.MOONBEAM,
+                address: '0xA649325Aa7C5093d12D6F98EB4378deAe68CE23F',
+                decimals: 18,
+                symbol: 'BUSD',
+              }),
+              USDC[chainId as keyof typeof USDC],
+              'USDC',
+              'BUSD',
+            ),
+          )
+        // only for Elk dex on Moonriver since it only has 1 pool with these pair
+        if (
+          chainId === ChainId.MOONRIVER &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
           allFoundPools.push(
             await testDF(
               chName,
@@ -148,42 +179,55 @@ async function runTest() {
               'ELK',
             ),
           )
+        if (reportMissingDexes(allFoundPools).hasMissingDex)
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              WNATIVE[chainId],
+              USDT[chainId as keyof typeof USDT],
+              'WNATIVE',
+              'USDT',
+            ),
+          )
+        if (reportMissingDexes(allFoundPools).hasMissingDex)
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              SUSHI[chainId as keyof typeof SUSHI],
+              FRAX[chainId as keyof typeof FRAX],
+              'SUSHI',
+              'FRAX',
+            ),
+          )
+        if (reportMissingDexes(allFoundPools).hasMissingDex)
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              SUSHI[chainId as keyof typeof SUSHI],
+              USDT[chainId as keyof typeof USDT],
+              'SUSHI',
+              'USDT',
+            ),
+          )
+
         dataFetcher.stopDataFetching()
 
-        const fails = []
-        const chainAllDexesNames = allFoundPools.find(
-          (v) => Object.keys(v).length > 0,
-        )
-        if (!chainAllDexesNames)
-          assert.fail(`found no pools on ${chName} for all dexes`)
-        for (let i = 0; i < chainAllDexesNames.length; i++) {
-          const dexName = chainAllDexesNames[i]
-          let dexPoolsCount = 0
-          for (let j = 0; j < allFoundPools.length; j++) {
-            dexPoolsCount += allFoundPools[j][dexName] ?? 0
-          }
-          if (dexPoolsCount === 0) fails.push(dexName)
+        const { hasMissingDex, missingDexNames } =
+          reportMissingDexes(allFoundPools)
+        if (hasMissingDex) {
+          if (!missingDexNames.length)
+            assert.fail(`found no pools for all available dexes on ${chName}`)
+          else
+            assert.fail(
+              `found no pools on ${chName} for: ${missingDexNames.join(', ')}`,
+            )
         }
-        if (fails.length)
-          assert.fail(`found no pools on ${chName} for: ${fails.join(', ')}`)
       })
     })
   })
-}
-
-// checks if all available dexes on chain have found a pool or not
-function hasMissingDex(dexPools: Record<string, number>[]): boolean {
-  const dexKeys = dexPools.find((v) => Object.keys(v).length > 0)
-  if (!dexKeys) return true
-  for (let i = 0; i < dexKeys.length; i++) {
-    const key = dexKeys[i]
-    let dexPoolsCount = 0
-    for (let j = 0; j < dexPools.length; j++) {
-      dexPoolsCount += dexPools[j][key] ?? 0
-    }
-    if (dexPoolsCount === 0) return true
-  }
-  return false
 }
 
 runTest()

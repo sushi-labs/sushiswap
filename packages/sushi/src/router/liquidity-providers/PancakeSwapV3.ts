@@ -45,6 +45,6 @@ export class PancakeSwapV3Provider extends UniswapV3BaseProvider {
     return LiquidityProviders.PancakeSwapV3
   }
   getPoolProviderName(): string {
-    return 'PancackeSwapV3'
+    return 'PancakeSwapV3'
   }
 }

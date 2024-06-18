@@ -6,7 +6,7 @@ import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 export class ThrusterV3Provider extends UniswapV3BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
-      [ChainId.BLAST]: '0x71b08f13B3c3aF35aAdEb3949AFEb1ded1016127',
+      [ChainId.BLAST]: '0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB',
     } as const
     const initCodeHash = {
       [ChainId.BLAST]:
