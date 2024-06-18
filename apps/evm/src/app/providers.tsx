@@ -1,8 +1,10 @@
 'use client'
 
-import { State } from '@sushiswap/wagmi'
-import { WagmiStoreVersionCheck } from '@sushiswap/wagmi/components'
+import 'sushi/bigint-serializer'
 
+import { State } from 'wagmi'
+
+import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { QueryClientProvider } from '../providers/query-client-provider'
 import { WagmiConfig } from '../providers/wagmi-provider'
 

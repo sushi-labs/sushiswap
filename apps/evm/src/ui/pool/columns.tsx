@@ -1,20 +1,17 @@
-import { Pool, Protocol } from '@sushiswap/client'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   FormattedNumber,
   NetworkIcon,
   Tooltip,
-  TooltipContent,
   TooltipPrimitive,
   TooltipProvider,
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui/components/skeleton'
-import { ConcentratedLiquidityPositionWithV3Pool } from '@sushiswap/wagmi'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatDistance } from 'date-fns'
-import React, { FC, ReactNode } from 'react'
+import React from 'react'
 import {
   formatNumber,
   formatPercent,
@@ -22,11 +19,25 @@ import {
   shortenAddress,
 } from 'sushi/format'
 
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
-import { PositionWithPool } from '../../types'
+import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
+import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
+import type {
+  MaybeNestedPool,
+  PoolBase,
+  PoolHistory1D,
+  PoolHistory1M,
+  PoolHistory1W,
+  PoolIfIncentivized,
+  PoolWithAprs,
+  PoolWithIncentives,
+  SushiPositionStaked,
+  SushiPositionWithPool,
+} from 'sushi'
+import { unnestPool } from 'sushi/types'
+import { SushiV2StakedUnstakedPosition } from '../../../../../packages/graph-client/dist/composite/sushi-v2-staked-unstaked-positions'
 import { APRHoverCard } from './APRHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
-import { PoolNameCell, PoolNameCellPool } from './PoolNameCell'
+import { PoolNameCell } from './PoolNameCell'
 import { PoolNameCellV3 } from './PoolNameCellV3'
 import {
   Transaction,
@@ -116,7 +127,7 @@ export const REWARDS_V3_CLAIMABLE_COLUMN: ColumnDef<AngleRewardsPool, unknown> =
     },
   }
 
-export const NETWORK_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+export const NETWORK_COLUMN_POOL: ColumnDef<PoolBase, unknown> = {
   id: 'network',
   header: 'Network',
   cell: (props) => (
@@ -132,10 +143,14 @@ export const NETWORK_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
+export const NAME_COLUMN_POOL: ColumnDef<
+  MaybeNestedPool<PoolHasSteerVaults<PoolIfIncentivized<PoolBase, true>, true>>,
+  unknown
+> = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCellPool pool={props.row.original} />,
+
+  cell: (props) => <PoolNameCell pool={unnestPool(props.row.original)} />,
   meta: {
     skeleton: (
       <div className="flex items-center w-full gap-2">
@@ -152,12 +167,12 @@ export const NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   size: 300,
 }
 
-export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
+export const TVL_COLUMN: ColumnDef<PoolBase, unknown> = {
   id: 'liquidityUSD',
   header: 'TVL',
   accessorFn: (row) => row.liquidityUSD,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.liquidityUSD) - Number(rowB.liquidityUSD),
+    rowA.liquidityUSD - rowB.liquidityUSD,
   cell: (props) =>
     formatUSD(props.row.original.liquidityUSD).includes('NaN')
       ? '$0.00'
@@ -167,102 +182,71 @@ export const TVL_COLUMN: ColumnDef<Pool, unknown> = {
   },
 }
 
-export const APR_COLUMN_POOL: ColumnDef<Pool, unknown> = {
-  id: 'totalApr1d',
-  header: 'APR',
-  accessorFn: (row) => row.totalApr1d,
-  cell: (props) => (
-    <APRHoverCard pool={props.row.original}>
-      <span className="underline decoration-dotted underline-offset-2">
-        {formatPercent(props.row.original.totalApr1d)}
-      </span>
-    </APRHoverCard>
-  ),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const VOLUME_1H_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1h',
-  header: 'Volume (1h)',
-  accessorFn: (row) => row.volume1h,
-  sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1h) - Number(rowB.volume1h),
-  cell: (props) =>
-    formatUSD(props.row.original.volume1h).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.volume1h),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
-
-export const VOLUME_1D_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1d',
+export const VOLUME_1D_COLUMN: ColumnDef<PoolHistory1D, unknown> = {
+  id: 'volumeUSD1d',
   header: 'Volume (24h)',
-  accessorFn: (row) => row.volume1d,
+  accessorFn: (row) => row.volumeUSD1d,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1d) - Number(rowB.volume1d),
+    rowA.volumeUSD1d - rowB.volumeUSD1d,
   cell: (props) =>
-    formatUSD(props.row.original.volume1d).includes('NaN')
+    formatUSD(props.row.original.volumeUSD1d).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.volume1d),
+      : formatUSD(props.row.original.volumeUSD1d),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_7D_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1w',
+export const VOLUME_1W_COLUMN: ColumnDef<PoolHistory1W, unknown> = {
+  id: 'volumeUSD1w',
   header: 'Volume (1w)',
-  accessorFn: (row) => row.volume1w,
+  accessorFn: (row) => row.volumeUSD1w,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1w) - Number(rowB.volume1w),
+    Number(rowA.volumeUSD1w) - Number(rowB.volumeUSD1w),
   cell: (props) =>
-    formatUSD(props.row.original.volume1w).includes('NaN')
+    formatUSD(props.row.original.volumeUSD1w).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.volume1w),
+      : formatUSD(props.row.original.volumeUSD1w),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const VOLUME_1M_COLUMN: ColumnDef<Pool, unknown> = {
-  id: 'volume1m',
+export const VOLUME_1M_COLUMN: ColumnDef<PoolHistory1M, unknown> = {
+  id: 'volumeUSD1m',
   header: 'Volume (1m)',
-  accessorFn: (row) => row.volume1m,
+  accessorFn: (row) => row.volumeUSD1m,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    Number(rowA.volume1m) - Number(rowB.volume1m),
+    Number(rowA.volumeUSD1m) - Number(rowB.volumeUSD1m),
   cell: (props) =>
-    formatUSD(props.row.original.volume1m).includes('NaN')
+    formatUSD(props.row.original.volumeUSD1m).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.volume1m),
+      : formatUSD(props.row.original.volumeUSD1m),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
 }
 
-export const FEES_COLUMN: ColumnDef<Pool, unknown> = {
+export const FEES_COLUMN = {
   id: 'fees1d',
   header: 'Fees (24h)',
-  accessorFn: (row) => row.fees1d,
+  accessorFn: (row) => row.feesUSD1d,
   cell: (props) =>
-    formatUSD(props.row.original.fees1d).includes('NaN')
+    formatUSD(props.row.original.feesUSD1d).includes('NaN')
       ? '$0.00'
-      : formatUSD(props.row.original.fees1d),
+      : formatUSD(props.row.original.feesUSD1d),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
-}
+} as const satisfies ColumnDef<PoolHistory1D, unknown>
 
-export const NETWORK_COLUMN: ColumnDef<PositionWithPool, unknown> = {
+export const NETWORK_COLUMN = {
   id: 'network',
   header: 'Network',
   cell: (props) => (
     <NetworkIcon
       type="naked"
-      chainId={props.row.original.chainId}
+      chainId={props.row.original.pool.chainId}
       width={26}
       height={26}
     />
@@ -270,112 +254,40 @@ export const NETWORK_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   meta: {
     skeleton: <SkeletonCircle radius={26} />,
   },
-}
+} as const satisfies ColumnDef<SushiV2StakedUnstakedPosition, unknown>
 
-const WithDeprecationNotice: FC<{ children: ReactNode }> = ({ children }) => {
-  return (
-    <div className="flex gap-1">
-      <div className="opacity-60">{children}</div>
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <div className="bg-yellow/10 dark:text-yellow text-amber-900 whitespace-nowrap rounded-full flex gap-0.5 py-1 px-2 items-center text-xs">
-                <ExclamationCircleIcon width={12} height={12} /> Deprecated Soon
-              </div>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent className="!bg-[#0f172a] !p-0 w-60 !border-0">
-            <div className="bg-gray-50 dark:bg-white/[0.02]">
-              <div className="flex flex-col gap-2.5 bg-yellow/10 dark:text-yellow text-amber-900 p-4 text-sm">
-                <span className="font-semibold">
-                  Pool soon to be deprecated
-                </span>
-                <span>
-                  Trident Pools will soon be deprecated, please remove your
-                  assets ASAP.
-                </span>
-              </div>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-  )
-}
-
-export const NAME_COLUMN_POSITION_WITH_POOL: ColumnDef<
-  PositionWithPool,
-  unknown
-> = {
-  id: 'name',
-  header: 'Name',
-  cell: (props) =>
-    props.row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC ||
-    props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE ? (
-      <WithDeprecationNotice>
-        <PoolNameCell {...props.row} />
-      </WithDeprecationNotice>
-    ) : (
-      <PoolNameCell {...props.row} />
-    ),
-  meta: {
-    skeleton: (
-      <div className="flex items-center w-full gap-2">
-        <div className="flex items-center">
-          <SkeletonCircle radius={26} />
-          <SkeletonCircle radius={26} className="-ml-[12px]" />
-        </div>
-        <div className="flex flex-col w-full">
-          <SkeletonText fontSize="lg" />
-        </div>
-      </div>
-    ),
-  },
-}
-
-export const APR_COLUMN: ColumnDef<PositionWithPool, unknown> = {
-  id: 'apr',
+export const APR_COLUMN = {
+  id: 'totalApr1d',
   header: 'APR',
-  accessorFn: (row) => row.pool.totalApr1d,
+  accessorFn: (row) => unnestPool(row).totalApr1d,
   cell: (props) => (
-    <APRHoverCard pool={props.row.original.pool}>
+    <APRHoverCard pool={unnestPool(props.row.original)}>
       <span
-        className={classNames(
-          props.row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC ||
-            props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE
-            ? 'opacity-60'
-            : '',
-          'underline decoration-dotted underline-offset-2',
-        )}
+        className={classNames('underline decoration-dotted underline-offset-2')}
       >
-        {formatPercent(props.row.original.pool.totalApr1d)}
+        {formatPercent(unnestPool(props.row.original).totalApr1d)}
       </span>
     </APRHoverCard>
   ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
-}
+} as const satisfies ColumnDef<
+  MaybeNestedPool<PoolWithIncentives<PoolWithAprs>>,
+  unknown
+>
 
-export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
+export const VALUE_COLUMN = {
   id: 'value',
   header: 'Value',
   accessorFn: (row) =>
-    (Number(row.balance) / Number(row.pool.totalSupply)) *
+    (Number(row.unstakedBalance) / Number(row.pool.liquidity)) *
     Number(row.pool.liquidityUSD),
   cell: (props) => (
-    <span
-      className={
-        props.row.original.pool.protocol === Protocol.BENTOBOX_CLASSIC ||
-        props.row.original.pool.protocol === Protocol.BENTOBOX_STABLE
-          ? 'opacity-60'
-          : ''
-      }
-    >
+    <span>
       {formatUSD(
-        (Number(props.row.original.balance) /
-          Number(props.row.original.pool.totalSupply)) *
+        (Number(props.row.original.unstakedBalance) /
+          Number(props.row.original.pool.liquidity)) *
           Number(props.row.original.pool.liquidityUSD),
       )}
     </span>
@@ -383,19 +295,10 @@ export const VALUE_COLUMN: ColumnDef<PositionWithPool, unknown> = {
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
-}
-
-export const VOLUME_COLUMN: ColumnDef<PositionWithPool, unknown> = {
-  id: 'volume',
-  header: 'Volume (24h)',
-  cell: (props) =>
-    formatUSD(props.row.original.pool.volume1d).includes('NaN')
-      ? '$0.00'
-      : formatUSD(props.row.original.pool.volume1d),
-  meta: {
-    skeleton: <SkeletonText fontSize="lg" />,
-  },
-}
+} as const satisfies ColumnDef<
+  SushiPositionWithPool<PoolBase, SushiPositionStaked>,
+  unknown
+>
 
 export const NAME_COLUMN_V3: ColumnDef<
   ConcentratedLiquidityPositionWithV3Pool,
@@ -488,8 +391,16 @@ export const TX_AMOUNT_IN_V2_COLUMN = (
       case TransactionType.Swap:
         return (
           <span>
-            <FormattedNumber number={row.original.amountIn.toPrecision(2)} />{' '}
-            {row.original.tokenIn.symbol}
+            <FormattedNumber
+              number={
+                row.original.amount0In !== '0'
+                  ? row.original.amount0In
+                  : row.original.amount1In
+              }
+            />{' '}
+            {row.original.amount0In !== '0'
+              ? row.original.pool.token0.symbol
+              : row.original.pool.token1.symbol}
           </span>
         )
       case TransactionType.Mint:
@@ -518,9 +429,15 @@ export const TX_AMOUNT_OUT_V2_COLUMN = (
         return (
           <span>
             <FormattedNumber
-              number={Math.abs(row.original.amountOut).toPrecision(2)}
+              number={Math.abs(
+                row.original.amount0Out !== '0'
+                  ? Number(row.original.amount0Out)
+                  : Number(row.original.amount1Out),
+              ).toPrecision(2)}
             />{' '}
-            {row.original.tokenOut.symbol}
+            {row.original.amount0Out !== '0'
+              ? row.original.pool.token0.symbol
+              : row.original.pool.token1.symbol}
           </span>
         )
       case TransactionType.Mint:

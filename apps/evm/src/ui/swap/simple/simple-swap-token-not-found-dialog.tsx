@@ -13,7 +13,6 @@ import {
   List,
   Message,
 } from '@sushiswap/ui'
-import { TokenSecurityView, useTokenWithCache } from '@sushiswap/wagmi'
 import React, { useCallback, useMemo } from 'react'
 import { Chain } from 'sushi/chain'
 import {
@@ -24,6 +23,8 @@ import {
 import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
+import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTokenNotFoundDialog = () => {

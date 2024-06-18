@@ -11,12 +11,19 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import ReactECharts from 'echarts-for-react'
-import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
+
+import ReactEchartsCore from 'echarts-for-react'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/visualMap'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
 
 const tailwind = resolveConfig(tailwindConfig)
 
@@ -80,6 +87,11 @@ export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           color: tailwind.theme.colors.slate['50'],
           fontSize: 12,
           fontWeight: 600,
+        },
+        axisPointer: {
+          lineStyle: {
+            type: 'dashed',
+          },
         },
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
@@ -246,7 +258,11 @@ export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
       </CardHeader>
       <CardContent>
         {xData ? (
-          <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
+          <ReactEchartsCore
+            option={DEFAULT_OPTION}
+            echarts={echarts}
+            style={{ height: 400 }}
+          />
         ) : (
           <SkeletonBox
             className={classNames(

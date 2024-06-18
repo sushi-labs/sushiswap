@@ -25,7 +25,7 @@ import {
   Loader,
   classNames,
 } from '../index'
-import { CheckMarkIcon } from './icons/CheckmarkIcon'
+import { CheckMarkIcon } from './icons/CheckMarkIcon'
 import { FailedMarkIcon } from './icons/FailedMarkIcon'
 
 const dialogVariants = cva(

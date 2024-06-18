@@ -1,9 +1,10 @@
 'use client'
 
-import { useAccount, useBalanceWeb3 } from '@sushiswap/wagmi'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 import { ChainId } from 'sushi/chain'
 import { Amount, SUSHI, Type, XSUSHI } from 'sushi/currency'
+import { useAccount } from 'wagmi'
 
 interface BarBalanceContext {
   sushiBalance: Amount<Type>

@@ -1,5 +1,3 @@
-'use client'
-
 import { CrossChainBanner } from '../cross-chain-banner'
 import { SwapModeButtons } from '../swap-mode-buttons'
 import { SimpleSwapBridgeBanner } from './simple-swap-bridge-banner'

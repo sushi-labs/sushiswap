@@ -1,17 +1,16 @@
-import { Prisma, SteerStrategy, VaultState } from '@sushiswap/database'
+import { Prisma, SteerStrategy } from '@sushiswap/database'
+import { getSteerVaults } from '@sushiswap/graph-client/steer'
 import {
-  STEER_SUBGRAPH_URL,
   STEER_SUPPORTED_CHAIN_IDS,
   SteerChainId,
   getStrategiesPayloads,
   getVaultAprs,
   getVerifiedVaults,
 } from '@sushiswap/steer-sdk'
-import { chainName, getIdFromChainIdAddress, isPromiseFulfilled } from 'sushi'
-import { TickMath } from 'sushi/pool'
+import { ID, chainName, isPromiseFulfilled } from 'sushi'
+import { TickMath } from 'sushi/pool/sushiswap-v3'
 
-import { Address, getAddress } from 'viem'
-import { getBuiltGraphSDK } from '../.graphclient/index.js'
+import { getAddress } from 'viem'
 import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import {
   deprecateVaults,
@@ -67,16 +66,18 @@ async function deprecate() {
       data.filter((el) => el.type === 'VAULT'),
     )
 
-  await deprecateVaults(
-    deprecatedVaults.map((vault) => `${vault.chainId}:${vault.id}`),
-  )
+  await deprecateVaults(deprecatedVaults.map((vault) => vault.id))
 }
 
 async function extract() {
   const result = await Promise.allSettled(
     STEER_SUPPORTED_CHAIN_IDS.map((chainId) =>
       extractChain(chainId).catch((e) => {
-        console.log('Steer: Extract failed for chain', chainName[chainId])
+        console.log(
+          'Steer: Extract failed for chain',
+          chainName[chainId],
+          e.message,
+        )
         throw e
       }),
     ),
@@ -86,25 +87,27 @@ async function extract() {
 }
 
 async function extractChain(chainId: SteerChainId) {
-  const sdk = getBuiltGraphSDK({
-    url: STEER_SUBGRAPH_URL[chainId],
-  })
-
   const { getPools } = await import('@sushiswap/client')
 
   const prices = await getTokenPrices({ chainId })
-  const { vaults } = await sdk.SteerVaults()
+  const vaults = await getSteerVaults(
+    {
+      chainId,
+      first: Infinity,
+    },
+    { retries: 3 },
+  )
 
   const poolIds = vaults
     .filter((vault) => !!vault.pool)
-    .map((vault) => `${chainId}:${vault.pool.toLowerCase()}`)
+    .map((vault) => vault.pool.id)
 
   const pools = [] as Awaited<ReturnType<typeof getPools>>
 
   while (poolIds.length > 0) {
     const poolIdsChunk = poolIds.splice(0, 100)
     const poolsChunk = await getPools({
-      ids: poolIdsChunk,
+      ids: poolIdsChunk as ID[],
       chainIds: [chainId],
     })
     pools.push(...poolsChunk)
@@ -125,22 +128,19 @@ async function extractChain(chainId: SteerChainId) {
 
   const vaultsWithPayloads = await Promise.allSettled(
     vaults.map(async (vault, i) => {
-      const vaultId = getIdFromChainIdAddress(chainId, vault.id as Address)
-
-      const poolId = `${chainId}:${vault.pool.toLowerCase()}`
-      const pool = pools.find((pool) => pool.id === poolId)
+      const pool = pools.find((pool) => pool.id === vault.pool.id)
 
       const {
         apr1d = null,
         apr1w = null,
         apr1m = null,
         apr = null,
-      } = aprs[vaultId] || {}
+      } = aprs[vault.id] || {}
 
       const payload = payloads[i]
 
-      const token0Price = prices[getAddress(vault.token0)] || 0
-      const token1Price = prices[getAddress(vault.token1)] || 0
+      const token0Price = prices[getAddress(vault.token0.address)] || 0
+      const token1Price = prices[getAddress(vault.token1.address)] || 0
 
       const reserve0USD = pool
         ? (Number(vault.reserve0) / 10 ** pool.token0.decimals) * token0Price
@@ -161,9 +161,6 @@ async function extractChain(chainId: SteerChainId) {
 
       return {
         ...vault,
-        id: vaultId,
-        address: vault.id,
-        poolId,
         payload,
         apr1d,
         apr1w,
@@ -225,7 +222,7 @@ const StrategyTypes: Record<string, SteerStrategy> = {
 function transform(
   chainsWithVaults: Awaited<ReturnType<typeof extract>>,
 ): Prisma.SteerVaultCreateManyInput[] {
-  return chainsWithVaults.flatMap(({ chainId, vaults }) =>
+  const vaults = chainsWithVaults.flatMap(({ chainId, vaults }) =>
     vaults.flatMap((vault) => {
       // ! Missing strategies will be ignored
       const strategyType = vault?.payload?.strategyConfigData.name
@@ -235,26 +232,6 @@ function transform(
       if (!strategyType) {
         return []
       }
-
-      const lowTicks = vault.positions.flatMap((position) => position.lowerTick)
-      const lowestTick = Math.max(
-        lowTicks.reduce(
-          (lowest, tick) => (Number(tick) < lowest ? Number(tick) : lowest),
-          Number(lowTicks[0] || 0),
-        ),
-        TickMath.MIN_TICK,
-      )
-
-      const highTicks = vault.positions.flatMap(
-        (position) => position.upperTick,
-      )
-      const highestTick = Math.min(
-        highTicks.reduce(
-          (highest, tick) => (Number(tick) > highest ? Number(tick) : highest),
-          Number(highTicks[0] || 0),
-        ),
-        TickMath.MAX_TICK,
-      )
 
       let lastAdjustmentTimestamp = Math.floor(
         vault.payload!.strategyConfigData.epochStart,
@@ -268,7 +245,7 @@ function transform(
         address: vault.address.toLowerCase(),
         chainId: chainId,
 
-        poolId: vault.poolId,
+        poolId: vault.pool.id,
         feeTier: Number(vault.feeTier) / 1000000,
 
         // apr1d, apr1m, apr1y are from the subgraph and inaccurate
@@ -278,16 +255,16 @@ function transform(
         apr1m: vault.apr1m || 0,
         apr1y: 0,
 
-        token0Id: `${chainId}:${vault.token0}`.toLowerCase(),
-        reserve0: vault.reserve0 as string,
+        token0Id: vault.token0.id.toLowerCase(),
+        reserve0: String(vault.reserve0),
         reserve0USD: vault.reserve0USD,
-        fees0: vault.fees0 as string,
+        fees0: String(vault.fees0),
         fees0USD: vault.fees0USD,
 
-        token1Id: `${chainId}:${vault.token1}`.toLowerCase(),
-        reserve1: vault.reserve1 as string,
+        token1Id: vault.token1.id.toLowerCase(),
+        reserve1: String(vault.reserve1),
         reserve1USD: vault.reserve1USD,
-        fees1: vault.fees1 as string,
+        fees1: String(vault.fees1),
         fees1USD: vault.fees1USD,
 
         reserveUSD: vault.reserveUSD,
@@ -296,12 +273,16 @@ function transform(
         strategy: strategyType,
         payloadHash: vault.payloadIpfs,
         description: vault.payload!.strategyConfigData.description,
-        state: Object.values(VaultState)[vault.state],
+        state: 'PendingThreshold', // unused
 
         performanceFee: 0.15, // currently constant
 
-        lowerTick: lowestTick,
-        upperTick: highestTick,
+        lowerTick: vault.lowerTick
+          ? Number(vault.lowerTick)
+          : TickMath.MIN_TICK,
+        upperTick: vault.upperTick
+          ? Number(vault.upperTick)
+          : TickMath.MAX_TICK,
 
         adjustmentFrequency: Number(
           vault.payload!.strategyConfigData.epochLength,
@@ -314,4 +295,6 @@ function transform(
       } satisfies Prisma.SteerVaultCreateManyInput
     }),
   )
+  console.log(`TRANSFORM: ${vaults.length} vaults`)
+  return vaults
 }

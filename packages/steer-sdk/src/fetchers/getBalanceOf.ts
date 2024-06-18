@@ -1,6 +1,6 @@
 import { erc20Abi } from 'sushi/abi'
 import { getChainIdAddressFromId } from 'sushi/format'
-import type { Address, PublicClient } from 'viem'
+import { type Address, type PublicClient, zeroAddress } from 'viem'
 
 interface GetBalanceOfsContracts {
   account: Address
@@ -18,6 +18,7 @@ export function getBalanceOfsContracts({
       abi: erc20Abi,
       chainId,
       address,
+      account: zeroAddress,
       args: [account] as const,
       functionName: 'balanceOf' as const,
     }

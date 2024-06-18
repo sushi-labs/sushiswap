@@ -1,8 +1,7 @@
 'use client'
 
-import type { SteerVault } from '@sushiswap/client'
 import { useSteerVault } from '@sushiswap/client/hooks'
-import { useSteerVaultReserves } from '@sushiswap/wagmi'
+import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   FC,
   ReactNode,
@@ -12,6 +11,7 @@ import {
   useReducer,
 } from 'react'
 import { Field } from 'src/lib/constants'
+import { useSteerVaultReserves } from 'src/lib/wagmi/hooks/steer/useSteerVaultReserves'
 import { Amount, Currency, Token, tryParseAmount } from 'sushi/currency'
 
 interface State {
@@ -132,10 +132,7 @@ export function useSteerPositionAddDerivedInfo({
   const [currencyA, currencyB] = useMemo(() => {
     if (!vault) return []
 
-    return [
-      new Token({ chainId: vault.pool.chainId, ...vault.pool.token0 }),
-      new Token({ chainId: vault.pool.chainId, ...vault.pool.token1 }),
-    ]
+    return [new Token(vault.token0), new Token(vault.token1)]
   }, [vault])
 
   // currencies

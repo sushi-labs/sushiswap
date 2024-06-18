@@ -1,15 +1,21 @@
 import { ArrowDownIcon, MinusIcon, PlusIcon } from '@heroicons/react-v1/solid'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { LinkInternal } from '@sushiswap/ui/components/link'
-import { List } from '@sushiswap/ui/components/list'
-import { useAccount, useSwitchChain } from '@sushiswap/wagmi'
+import { Button } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { LinkInternal } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
-import { PositionWithPool } from 'src/types'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 
+import type {
+  PoolBase,
+  PoolWithAprs,
+  PoolWithIncentives,
+  SushiPositionStaked,
+  SushiPositionWithPool,
+} from 'sushi'
 import { ChainId } from 'sushi/chain'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { PoolPositionProvider, usePoolPosition } from './PoolPositionProvider'
 import {
   PoolPositionRewardsProvider,
@@ -21,7 +27,9 @@ import {
 } from './PoolPositionStakedProvider'
 
 interface PositionQuickHoverTooltipProps {
-  row: PositionWithPool
+  row: SushiPositionStaked<
+    SushiPositionWithPool<PoolWithAprs<PoolWithIncentives<PoolBase>>>
+  >
 }
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({

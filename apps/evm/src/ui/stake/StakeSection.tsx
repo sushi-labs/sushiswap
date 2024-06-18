@@ -1,13 +1,14 @@
 'use client'
 
 import { Button, Dots } from '@sushiswap/ui'
-import { Checker, useBarDeposit } from '@sushiswap/wagmi'
+import { useMemo, useState } from 'react'
+import { APPROVE_TAG_STAKE } from 'src/lib/constants'
+import { useBarDeposit } from 'src/lib/wagmi/hooks/bar/useBarDeposit'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
   CheckerProvider,
   useApproved,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
-import { useMemo, useState } from 'react'
-import { APPROVE_TAG_STAKE } from 'src/lib/constants'
+} from 'src/lib/wagmi/systems/Checker/Provider'
 import { ChainId } from 'sushi/chain'
 import { SUSHI, XSUSHI_ADDRESS, tryParseAmount } from 'sushi/currency'
 import { ZERO } from 'sushi/math'

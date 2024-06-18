@@ -192,11 +192,15 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
     maxCallsInOneBatch: 200,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.BOBA]: {
     client: createPublicClient(extractorClientConfig(ChainId.BOBA)),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.BOBA),
+      uniswapV3Factory(ChainId.BOBA),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -645,7 +649,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.TELOS]: {
     client: createPublicClient(extractorClientConfig(ChainId.TELOS)),
-    factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
+    factoriesV2: [],
     factoriesV3: [],
     factoriesAlgebra: [
       {
@@ -799,7 +803,10 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.ROOTSTOCK]: {
     client: createPublicClient(extractorClientConfig(ChainId.ROOTSTOCK)),
     factoriesV2: [sushiswapV2Factory(ChainId.ROOTSTOCK)],
-    factoriesV3: [sushiswapV3Factory(ChainId.ROOTSTOCK)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.ROOTSTOCK),
+      uniswapV3Factory(ChainId.ROOTSTOCK),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ROOTSTOCK] as Address,
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,

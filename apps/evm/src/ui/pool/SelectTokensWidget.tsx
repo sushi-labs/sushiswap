@@ -1,9 +1,9 @@
 import { FormSection } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { SelectIcon } from '@sushiswap/ui/components/select'
-import { TokenSelector } from '@sushiswap/wagmi/components/token-selector/TokenSelector'
+import { Button } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { SelectIcon } from '@sushiswap/ui'
 import React, { FC } from 'react'
+import { TokenSelector } from 'src/lib/wagmi/components/token-selector/TokenSelector'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 

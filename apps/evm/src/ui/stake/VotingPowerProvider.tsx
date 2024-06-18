@@ -1,15 +1,9 @@
 'use client'
 
-import snapshot from '@snapshot-labs/snapshot.js'
-import {
-  MASTERCHEF_ADDRESS,
-  useAccount,
-  useBalancesWeb3,
-  useReadContract,
-  useReadContracts,
-} from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
+import { useBalancesWeb3 } from 'src/lib/wagmi/hooks/balances/useBalancesWeb3'
+import { MASTERCHEF_ADDRESS } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-contract'
 import { erc20Abi, masterChefV1Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -22,6 +16,7 @@ import {
   tryParseAmount,
 } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
+import { useAccount, useReadContract, useReadContracts } from 'wagmi'
 
 const SnapshotStrategies = [
   {
@@ -88,6 +83,9 @@ export const VotingPowerProvider: FC<{
     queryKey: ['snapshot-scores', address],
     queryFn: async () => {
       if (!address) throw new Error()
+
+      // The import is unnecessarily big and gets bundled with the whole app
+      const snapshot = (await import('@snapshot-labs/snapshot.js')).default
 
       const resp = await snapshot.utils.getVp(
         address,

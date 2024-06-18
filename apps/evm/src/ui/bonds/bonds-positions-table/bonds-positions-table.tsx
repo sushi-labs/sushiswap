@@ -9,10 +9,10 @@ import {
 } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
-import { useAccount } from '@sushiswap/wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
+import { useAccount } from 'wagmi'
 import {
   CLAIM_COLUMN,
   MATURITY_COLUMN,

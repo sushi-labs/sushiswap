@@ -14,18 +14,11 @@ import {
   createErrorToast,
   createToast,
 } from '@sushiswap/ui'
-import {
-  Checker,
-  UseSimulateContractParameters,
-  useAccount,
-  usePublicClient,
-  useSimulateContract,
-  useWriteContract,
-} from '@sushiswap/wagmi'
 import { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import { useCallback, useMemo, useState } from 'react'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Amount, Token } from 'sushi/currency'
 import { formatUSD } from 'sushi/format'
 import {
@@ -33,6 +26,13 @@ import {
   SendTransactionReturnType,
   UserRejectedRequestError,
 } from 'viem'
+import {
+  type UseSimulateContractParameters,
+  useAccount,
+  usePublicClient,
+  useSimulateContract,
+  useWriteContract,
+} from 'wagmi'
 
 export const PAYOUT_ASSET_COLUMN: ColumnDef<BondPosition, unknown> = {
   id: 'payout-asset',

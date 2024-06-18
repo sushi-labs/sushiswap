@@ -1,5 +1,5 @@
 import { Button, List } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui/components/currency'
+import { Currency } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { BentoBoxChainId } from 'sushi/config'

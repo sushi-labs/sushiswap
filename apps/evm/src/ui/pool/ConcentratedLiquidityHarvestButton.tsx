@@ -1,8 +1,8 @@
 'use client'
 
 import { useAngleRewards } from '@sushiswap/react-query'
-import { useHarvestAngleRewards } from '@sushiswap/wagmi'
 import { FC, ReactElement, useMemo } from 'react'
+import { useHarvestAngleRewards } from 'src/lib/wagmi/hooks/rewards/hooks/useHarvestAngleRewards'
 import { ChainId } from 'sushi/chain'
 import { Address } from 'viem'
 

@@ -1,3 +1,5 @@
+'use client'
+
 import { XIcon } from '@heroicons/react-v1/solid'
 import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
 import { useLocalStorage } from '@sushiswap/hooks'

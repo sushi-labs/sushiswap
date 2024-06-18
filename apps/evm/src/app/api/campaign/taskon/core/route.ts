@@ -1,9 +1,8 @@
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
-import { SUSHISWAP_V3_SUBGRAPH_URL } from '@sushiswap/graph-config'
 import { NextRequest, NextResponse } from 'next/server'
-import { ChainId } from 'sushi'
+import { ChainId } from 'sushi/chain'
 import { getAddress } from 'viem'
 import { z } from 'zod'
+import { getSushiV3Mints } from '../../../../../../../../packages/graph-client/dist/subgraphs/sushi-v3'
 
 const schema = z.object({
   address: z.coerce.string().transform((address) => getAddress(address)),
@@ -16,12 +15,13 @@ export async function GET(request: NextRequest) {
 
   try {
     const { address } = schema.parse(params)
-    const sdk = getBuiltGraphSDK({
-      url: SUSHISWAP_V3_SUBGRAPH_URL[ChainId.CORE],
-    })
 
-    const { mints } = await sdk.V3Mints({
-      where: { origin: address, pool: poolAddress },
+    const mints = await getSushiV3Mints({
+      chainId: ChainId.CORE,
+      where: {
+        origin: address,
+        pool: poolAddress,
+      },
     })
 
     if (mints.length > 0) {

@@ -7,30 +7,7 @@ import {
   useDebounce,
   useIsMounted,
 } from '@sushiswap/hooks'
-import { Dots } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { createToast } from '@sushiswap/ui/components/toast'
-import {
-  PermitInfo,
-  PermitType,
-  SushiSwapV2PoolState,
-  UseCallParameters,
-  getSushiSwapRouterContractConfig,
-  useAccount,
-  useCall,
-  usePublicClient,
-  useSendTransaction,
-  useSushiSwapRouterContract,
-  useSushiSwapV2Pool,
-  useTotalSupply,
-  useTransactionDeadline,
-} from '@sushiswap/wagmi'
-import { Checker } from '@sushiswap/wagmi/systems'
-import {
-  useApproved,
-  useSignature,
-  withCheckerRoot,
-} from '@sushiswap/wagmi/systems/Checker/Provider'
+import { Button, Dots, createToast } from '@sushiswap/ui'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
 import {
@@ -45,6 +22,33 @@ import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { SendTransactionReturnType, encodeFunctionData } from 'viem'
 
+import {
+  PermitInfo,
+  PermitType,
+} from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
+import {
+  getSushiSwapRouterContractConfig,
+  useSushiSwapRouterContract,
+} from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
+import {
+  SushiSwapV2PoolState,
+  useSushiSwapV2Pool,
+} from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import { useTransactionDeadline } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
+import {
+  useApproved,
+  useSignature,
+  withCheckerRoot,
+} from 'src/lib/wagmi/systems/Checker/Provider'
+import {
+  UseCallParameters,
+  useAccount,
+  useCall,
+  usePublicClient,
+  useSendTransaction,
+} from 'wagmi'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 

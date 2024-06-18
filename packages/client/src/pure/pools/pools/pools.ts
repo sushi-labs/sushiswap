@@ -1,4 +1,4 @@
-import { type getPoolsFromDB } from '../../../api/pools/pools'
+import type { getPoolsFromDB } from '../../../api/pools/pools/index'
 import { EVM_APP_BASE_URL } from '../../../constants'
 import { parseArgs } from '../../../functions'
 import { get } from '../../../functions'

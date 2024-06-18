@@ -20,13 +20,13 @@ import {
   TextField,
   typographyVariants,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { useTokenWithCache } from '@sushiswap/wagmi'
+import { Button } from '@sushiswap/ui'
 import React, { useCallback, useEffect } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'
 import { Chain, ChainId } from 'sushi/chain'
 
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import {
   ApplyForTokenListListType,

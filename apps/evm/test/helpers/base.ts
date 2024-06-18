@@ -14,7 +14,7 @@ export class BaseActions {
       .first()
     await expect(connectSelector).toBeVisible()
     await expect(connectSelector).toBeEnabled()
-    await connectSelector.click()
+    await connectSelector.click({ delay: 500 }) // Delay the click, doesn't seem like mock connector is ready even thoughg it's visible & enabled
     const mockConnectSelector = this.page.getByText('Mock Connector')
     await expect(mockConnectSelector).toBeVisible()
     await expect(mockConnectSelector).toBeEnabled()

@@ -6,11 +6,9 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { CardDescription, CardTitle } from '@sushiswap/ui/components/card'
-import { SkeletonBox } from '@sushiswap/ui/components/skeleton'
+import { CardDescription, CardTitle } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import ReactECharts from 'echarts-for-react'
-import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo } from 'react'
 import { formatNumber, formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
@@ -19,6 +17,14 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { useBarChartData } from 'src/lib/stake'
 import { BarChartPeriod, chartPeriods } from './BarChartPeriods'
 import { BarChartType } from './BarChartTypes'
+
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/visualMap'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
 
 interface BarChartProps {
   chart: BarChartType.APR | BarChartType.TotalSupply
@@ -96,6 +102,11 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
         textStyle: {
           fontSize: 12,
           fontWeight: 600,
+        },
+        axisPointer: {
+          lineStyle: {
+            type: 'dashed',
+          },
         },
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
@@ -214,7 +225,11 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
             )}
           />
         ) : (
-          <ReactECharts option={DEFAULT_OPTION} style={{ height: 200 }} />
+          <ReactEchartsCore
+            echarts={echarts}
+            option={DEFAULT_OPTION}
+            style={{ height: 200 }}
+          />
         )}
       </CardContent>
     </>
