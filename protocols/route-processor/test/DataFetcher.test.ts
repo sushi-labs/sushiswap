@@ -33,20 +33,19 @@ async function testDF(
     `     found pools(${name0}-${name1}): ${pools.size} time=${time}ms`,
   )
   dataFetcher.providers.forEach((p) => {
-    const pooltype = p.getType()
+    const dexName = p.getType()
     const poolCodes = p.getCurrentPoolList(t0 as Token, t1 as Token)
     if (poolCodes.length)
       console.log(
         `          ${p.getPoolProviderName()} pools: ${poolCodes.length}`,
       )
-
-    // exclude non uni based dexes
+    // non uni based dexes
     if (
-      pooltype !== LiquidityProviders.Trident &&
-      pooltype !== LiquidityProviders.CurveSwap &&
-      pooltype !== LiquidityProviders.NativeWrap
+      dexName !== LiquidityProviders.Trident &&
+      dexName !== LiquidityProviders.CurveSwap &&
+      dexName !== LiquidityProviders.NativeWrap
     )
-      dexPools[pooltype] = poolCodes.length
+      dexPools[dexName] = poolCodes.length
   })
   return dexPools
 }
@@ -86,7 +85,7 @@ async function runTest() {
           ),
         )
 
-        // only try remaining pairs in case there is a missing dex from the previous pairs results
+        // try other pairs in case at least one dex found no pools
         if (hasMissingDex(allFoundPools))
           allFoundPools.push(
             await testDF(
@@ -120,7 +119,7 @@ async function runTest() {
               'USDT',
             ),
           )
-        // only Blast chain
+        // only for Blast chain
         if (chainId === ChainId.BLAST && hasMissingDex(allFoundPools))
           allFoundPools.push(
             await testDF(
@@ -152,26 +151,23 @@ async function runTest() {
         dataFetcher.stopDataFetching()
 
         const fails = []
-        const chainAllDexesKeys = Object.keys(allFoundPools[0])
-        for (let i = 0; i < chainAllDexesKeys.length; i++) {
-          const key = chainAllDexesKeys[i]
+        const chainAllDexesNames = Object.keys(allFoundPools[0])
+        for (let i = 0; i < chainAllDexesNames.length; i++) {
+          const dexName = chainAllDexesNames[i]
           let dexPoolsCount = 0
           for (let j = 0; j < allFoundPools.length; j++) {
-            dexPoolsCount += allFoundPools[j][key] ?? 0
+            dexPoolsCount += allFoundPools[j][dexName] ?? 0
           }
-          if (dexPoolsCount === 0) fails.push(key)
+          if (dexPoolsCount === 0) fails.push(dexName)
         }
         if (fails.length)
-          assert.fail(
-            `did not find any pools on ${chName} chain for following dexes: ${fails.join(
-              ', ',
-            )}`,
-          )
+          assert.fail(`found no pools on ${chName} for: ${fails.join(', ')}`)
       })
     })
   })
 }
 
+// checks if all available dexes on chain have found a pool or not
 function hasMissingDex(dexPools: Record<string, number>[]): boolean {
   const dexKeys = Object.keys(dexPools[0])
   if (!dexKeys.length) return true
