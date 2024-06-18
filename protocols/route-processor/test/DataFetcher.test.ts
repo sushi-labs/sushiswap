@@ -151,7 +151,11 @@ async function runTest() {
         dataFetcher.stopDataFetching()
 
         const fails = []
-        const chainAllDexesNames = Object.keys(allFoundPools[0])
+        const chainAllDexesNames = allFoundPools.find(
+          (v) => Object.keys(v).length > 0,
+        )
+        if (!chainAllDexesNames)
+          assert.fail(`found no pools on ${chName} for all dexes`)
         for (let i = 0; i < chainAllDexesNames.length; i++) {
           const dexName = chainAllDexesNames[i]
           let dexPoolsCount = 0
@@ -169,8 +173,8 @@ async function runTest() {
 
 // checks if all available dexes on chain have found a pool or not
 function hasMissingDex(dexPools: Record<string, number>[]): boolean {
-  const dexKeys = Object.keys(dexPools[0])
-  if (!dexKeys.length) return true
+  const dexKeys = dexPools.find((v) => Object.keys(v).length > 0)
+  if (!dexKeys) return true
   for (let i = 0; i < dexKeys.length; i++) {
     const key = dexKeys[i]
     let dexPoolsCount = 0
