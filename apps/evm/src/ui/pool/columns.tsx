@@ -94,7 +94,7 @@ export const REWARDS_V3_APR_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <span className="underline decoration-dotted underline-offset-2 flex items-center justify-end gap-1 text-sm text-gray-900 dark:text-slate-50">
-            {formatNumber(props.row.original.meanAPR)}%
+            {formatPercent((props.row.original.meanAPR ?? 0) / 100)}
           </span>
         </TooltipTrigger>
         <TooltipPrimitive.Portal>
