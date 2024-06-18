@@ -4,7 +4,7 @@ import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
 import { CurvePoolType, curvePoolABI, getPoolRatio } from '../curve-sdk.js'
 import { CurvePoolCode } from '../pool-codes/CurvePool.js'
 import { PoolCode } from '../pool-codes/PoolCode.js'
-import CurvePoolWhiteList from './CurvePoolsWhitelist.json'
+import { CurvePoolWhiteList } from './CurvePoolsWhitelist.js'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider.js'
 
 interface PoolWhitelistInfo {
@@ -33,7 +33,7 @@ export class CurveProviderWhiteList extends LiquidityProvider {
    */
   override startFetchPoolsData(): void {
     // simple implementation - no prefetching
-    this.poolsWhiteList = CurvePoolWhiteList.pools.map((p) => ({
+    this.poolsWhiteList = CurvePoolWhiteList.map((p) => ({
       pool: p.pool as Address,
       poolType: p.poolType as CurvePoolType,
       tokens: p.tokens.map((t) => {
