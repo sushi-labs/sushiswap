@@ -18,10 +18,14 @@ export class ElkProvider extends UniswapV2BaseProvider {
       [ChainId.ARBITRUM]: '0xA59B2044EAFD15ee4deF138D410d764c9023E1F0',
       [ChainId.OPTIMISM]: '0xedfad3a0F42A8920B011bb0332aDe632e552d846',
       [ChainId.KAVA]: '0xC012C4b3d253A8F22d5e4ADA67ea2236FF9778fc',
-      // [ChainId.BTTC]: '0xc06348AEE3f3E92eE452816E0D3F25C919F6fB04'
-      // [ChainId.HARMONY]: '0xCdde1AbfF5Ae3Cbfbdb55c1e866Ac56380e18720',
-      // [ChainId.HECO]: '0x997fCE9164D630CC58eE366d4D275B9D773d54A4',
-      // [ChainId.OKEX]: '0x1116f8B82028324f2065078b4ff6b47F1Cc22B97',
+      [ChainId.BTTC]: '0xc06348AEE3f3E92eE452816E0D3F25C919F6fB04',
+      [ChainId.HARMONY]: '0xCdde1AbfF5Ae3Cbfbdb55c1e866Ac56380e18720',
+      [ChainId.HECO]: '0x997fCE9164D630CC58eE366d4D275B9D773d54A4',
+      [ChainId.OKEX]: '0x997fCE9164D630CC58eE366d4D275B9D773d54A4',
+      [ChainId.CRONOS]: '0xEEa0e2830D09D8786Cb9F484cA20898b61819ef1',
+      [ChainId.METIS]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
+      [ChainId.BASE]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
+      [ChainId.LINEA]: '0xfbb4E52FEcc90924c79F980eb24a9794ae4aFFA4',
     } as const
     const initCodeHash = {
       [ChainId.AVALANCHE]:
@@ -48,10 +52,22 @@ export class ElkProvider extends UniswapV2BaseProvider {
         '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
       [ChainId.KAVA]:
         '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-      // [ChainId.BTTC]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-      // [ChainId.HARMONY]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-      // [ChainId.HECO]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-      // [ChainId.OKEX]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.BTTC]:
+        '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.HARMONY]:
+        '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.HECO]:
+        '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.OKEX]:
+        '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.CRONOS]:
+        '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.METIS]:
+        '0x074ce6e2b043b11e990c9b71d400ce5b2c39c96ddad65144d0a879d31c2bbaf9',
+      [ChainId.BASE]:
+        '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
+      [ChainId.LINEA]:
+        '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
     } as const
     super(chainId, web3Client, factory, initCodeHash)
   }
