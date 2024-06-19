@@ -14,15 +14,15 @@ import {
   FactoryV3,
   LogFilterType,
 } from '@sushiswap/extractor'
-import { PoolCode, Router } from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { CurveMultitokenPool, RToken, getBigInt } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { EthereumProvider } from 'hardhat/types'
 import seedrandom from 'seedrandom'
 import { erc20Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
+import { PoolCode, Router } from 'sushi/router'
+import { CurveMultitokenPool, RToken, getBigInt } from 'sushi/tines'
 import {
   Address,
   WalletClient,
@@ -33,7 +33,11 @@ import {
 } from 'viem'
 import { PublicClient } from 'viem'
 import { hardhat } from 'viem/chains'
-import { createHardhatProvider, setTokenBalance, takeSnapshotEnv } from '../src'
+import {
+  createHardhatProvider,
+  setTokenBalance,
+  takeSnapshotEnv,
+} from '../src/index.js'
 
 function closeValues(
   _a: number | bigint,

@@ -254,7 +254,7 @@ export class MultiCallAggregator {
   getReadContract(): ReadContract {
     const that = this
     function _readContract<
-      const abi extends Abi | readonly unknown[],
+      abi extends Abi | readonly unknown[],
       functionName extends ContractFunctionName<abi, 'pure' | 'view'>,
       args extends ContractFunctionArgs<abi, 'pure' | 'view', functionName>,
     >(

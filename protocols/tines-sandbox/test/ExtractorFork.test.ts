@@ -1,4 +1,7 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
 import {
+  CurveWhitelistConfig,
   Extractor,
   FactoryV2,
   FactoryV3,
@@ -27,7 +30,7 @@ import {
 import { RouteStatus, getBigInt } from 'sushi/tines'
 import { http, Address, Transport, createPublicClient } from 'viem'
 import { Chain } from 'viem/chains'
-import { createForkRouteProcessor4 } from '../src'
+import { createForkRouteProcessor4 } from '../src/index.js'
 import { pancakeswapV3Factory } from './Extractor.test.js'
 import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json' assert {
   type: 'json',
@@ -95,6 +98,9 @@ export function sushiswapV3Factory(chainId: SushiSwapV3ChainId) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 async function startInfinitTest(args: {
   transport?: Transport
   providerURL: string
@@ -103,6 +109,7 @@ async function startInfinitTest(args: {
   factoriesV3: FactoryV3[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
+  curveConfig?: CurveWhitelistConfig
   cacheDir: string
   logDepth: number
   logType?: LogFilterType
@@ -138,7 +145,8 @@ async function startInfinitTest(args: {
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
     extractor.extractorV2?.multiCallAggregator ||
-      (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
+      (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator) ||
+      extractor.extractorCurve?.multiCallAggregator,
     __dirname,
     `tokens-${client.chain?.id}`,
   )
@@ -191,6 +199,7 @@ async function startInfinitTest(args: {
         toToken,
         30e9,
       )
+      console.log(11, poolMap.size)
       if (route.status === RouteStatus.NoWay) {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
@@ -269,5 +278,23 @@ it.skip('Extractor BSC infinite work test', async () => {
     logDepth: 300,
     logging: true,
     providerURL: `https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcId}`,
+  })
+})
+
+it.skip('Extractor Ethereum infinite work test', async () => {
+  await startInfinitTest({
+    transport: publicClientConfig[ChainId.ETHEREUM].transport,
+    chain: publicClientConfig[ChainId.ETHEREUM].chain as Chain,
+    factoriesV2: [],
+    factoriesV3: [],
+    tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
+    tickHelperContractAlgebra: '' as Address,
+    curveConfig: {
+      minPoolLiquidityLimitUSD: 1000,
+    },
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    providerURL: `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
   })
 })
