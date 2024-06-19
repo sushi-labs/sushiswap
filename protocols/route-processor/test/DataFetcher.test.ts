@@ -39,7 +39,7 @@ async function testDF(
       console.log(
         `          ${p.getPoolProviderName()} pools: ${poolCodes.length}`,
       )
-    // non uni based dexes
+    // ignore non uni dexes
     if (
       dexName !== LiquidityProviders.Trident &&
       dexName !== LiquidityProviders.CurveSwap &&
