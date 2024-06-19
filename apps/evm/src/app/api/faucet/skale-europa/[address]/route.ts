@@ -32,6 +32,7 @@ const trySendTransaction = async (
   const nonce = await getTransactionCount(config, {
     chainId: params.chainId,
     address: account.address,
+    blockTag: 'pending',
   })
   const tx = await sendTransaction(config, {
     ...params,
