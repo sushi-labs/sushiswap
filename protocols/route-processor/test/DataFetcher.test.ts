@@ -1,12 +1,12 @@
 import assert from 'assert'
 import { ChainId, chainName } from 'sushi/chain'
 import {
-  // DAI,
+  DAI,
   FRAX,
   SUSHI,
   Token,
   Type,
-  // USDB,
+  USDB,
   USDC,
   USDT,
   WNATIVE,
@@ -110,75 +110,75 @@ async function runTest() {
 
         // from here on, only try a new pair in case there is a missing dex from previous pair:
         // only for Dfyn and JetSwap on fantom chain
-        // if (
-        //   chainId === ChainId.FANTOM &&
-        //   reportMissingDexes(allFoundPools).hasMissingDex
-        // )
-        //   allFoundPools.push(
-        //     await testDF(
-        //       chName,
-        //       dataFetcher,
-        //       WNATIVE[chainId],
-        //       DAI[chainId as keyof typeof DAI],
-        //       'WNATIVE',
-        //       'DAI',
-        //     ),
-        //   )
-        // // only for Blast chain
-        // if (
-        //   chainId === ChainId.BLAST &&
-        //   reportMissingDexes(allFoundPools).hasMissingDex
-        // )
-        //   allFoundPools.push(
-        //     await testDF(
-        //       chName,
-        //       dataFetcher,
-        //       WNATIVE[chainId],
-        //       USDB[chainId as keyof typeof USDB],
-        //       'WNATIVE',
-        //       'USDB',
-        //     ),
-        //   )
-        // // only for Moonbeam chain
-        // if (
-        //   chainId === ChainId.MOONBEAM &&
-        //   reportMissingDexes(allFoundPools).hasMissingDex
-        // )
-        //   allFoundPools.push(
-        //     await testDF(
-        //       chName,
-        //       dataFetcher,
-        //       new Token({
-        //         chainId: ChainId.MOONBEAM,
-        //         address: '0xA649325Aa7C5093d12D6F98EB4378deAe68CE23F',
-        //         decimals: 18,
-        //         symbol: 'BUSD',
-        //       }),
-        //       USDC[chainId as keyof typeof USDC],
-        //       'USDC',
-        //       'BUSD',
-        //     ),
-        //   )
-        // // only for Elk dex on Moonriver since it only has 1 pool with these pair
-        // if (
-        //   chainId === ChainId.MOONRIVER &&
-        //   reportMissingDexes(allFoundPools).hasMissingDex
-        // )
-        //   allFoundPools.push(
-        //     await testDF(
-        //       chName,
-        //       dataFetcher,
-        //       DAI[chainId as keyof typeof DAI],
-        //       new Token({
-        //         chainId: ChainId.MOONRIVER,
-        //         address: '0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C',
-        //         decimals: 18,
-        //         symbol: 'ELK',
-        //       }),
-        //       'DAI',
-        //       'ELK',
-        //     ),
-        //   )
+        if (
+          chainId === ChainId.FANTOM &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              WNATIVE[chainId],
+              DAI[chainId as keyof typeof DAI],
+              'WNATIVE',
+              'DAI',
+            ),
+          )
+        // only for Blast chain
+        if (
+          chainId === ChainId.BLAST &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              WNATIVE[chainId],
+              USDB[chainId as keyof typeof USDB],
+              'WNATIVE',
+              'USDB',
+            ),
+          )
+        // only for Moonbeam chain
+        if (
+          chainId === ChainId.MOONBEAM &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              new Token({
+                chainId: ChainId.MOONBEAM,
+                address: '0xA649325Aa7C5093d12D6F98EB4378deAe68CE23F',
+                decimals: 18,
+                symbol: 'BUSD',
+              }),
+              USDC[chainId as keyof typeof USDC],
+              'USDC',
+              'BUSD',
+            ),
+          )
+        // only for Elk dex on Moonriver since it only has 1 pool with these pair
+        if (
+          chainId === ChainId.MOONRIVER &&
+          reportMissingDexes(allFoundPools).hasMissingDex
+        )
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              DAI[chainId as keyof typeof DAI],
+              new Token({
+                chainId: ChainId.MOONRIVER,
+                address: '0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C',
+                decimals: 18,
+                symbol: 'ELK',
+              }),
+              'DAI',
+              'ELK',
+            ),
+          )
         // only for Elk dex on HECO
         if (
           chainId === ChainId.HECO &&
