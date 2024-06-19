@@ -69,7 +69,7 @@ function reportMissingDexes(reports: Record<string, number>[]): {
   else return { hasMissingDex: false, missingDexNames }
 }
 
-// exclude test nets and chains with no dex/pool
+// exclude testnets and unsupported chains (chains with no dex/pool)
 const excludedChains = [
   ...TESTNET_CHAIN_IDS,
   ChainId.HECO,
@@ -160,7 +160,7 @@ async function runTest() {
             ),
           )
 
-        // only for Elk dex on Moonriver since it only has 1 pool with these pair
+        // only for Elk dex on Moonriver since it only has 1 pool deployed which is with following pair
         if (
           chainId === ChainId.MOONRIVER &&
           reportMissingDexes(allFoundPools).hasMissingDex
