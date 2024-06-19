@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { ChainId, TESTNET_CHAIN_IDS, chainName } from 'sushi/chain'
+import { ChainId, chainName } from 'sushi/chain'
 import {
   DAI,
   FRAX,
