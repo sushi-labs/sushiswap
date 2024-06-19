@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { ChainId, chainName } from 'sushi/chain'
+import { ChainId, TESTNET_CHAIN_IDS, chainName } from 'sushi/chain'
 import {
   DAI,
   FRAX,
@@ -70,17 +70,17 @@ function reportMissingDexes(reports: Record<string, number>[]): {
 }
 
 // exclude test nets and chains with no pool or no dex
-// const excludedChains = [
-//   ...TESTNET_CHAIN_IDS,
-//   ChainId.HECO,
-//   ChainId.PALM,
-//   ChainId.BOBA_AVAX,
-//   ChainId.ZKSYNC_ERA,
-// ]
-// const chainIds = Object.values(ChainId).filter((v) =>
-//   excludedChains.every((e) => v !== e),
-// )
-const chainIds = [ChainId.HECO]
+const excludedChains = [
+  ...TESTNET_CHAIN_IDS,
+  ChainId.HECO,
+  ChainId.PALM,
+  ChainId.BOBA_AVAX,
+  ChainId.ZKSYNC_ERA,
+]
+const chainIds = Object.values(ChainId).filter((v) =>
+  excludedChains.every((e) => v !== e),
+)
+
 async function runTest() {
   describe.only('DataFetcher Pools/Time check', async () => {
     chainIds.forEach((chainId) => {
@@ -176,26 +176,6 @@ async function runTest() {
                 symbol: 'ELK',
               }),
               'DAI',
-              'ELK',
-            ),
-          )
-        // only for Elk dex on HECO
-        if (
-          chainId === ChainId.HECO &&
-          reportMissingDexes(allFoundPools).hasMissingDex
-        )
-          allFoundPools.push(
-            await testDF(
-              chName,
-              dataFetcher,
-              USDT[chainId as keyof typeof USDT],
-              new Token({
-                chainId: ChainId.HECO,
-                address: '0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C',
-                decimals: 18,
-                symbol: 'ELK',
-              }),
-              'USDT',
               'ELK',
             ),
           )
