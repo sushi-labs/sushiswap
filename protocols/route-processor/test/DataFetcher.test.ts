@@ -39,7 +39,7 @@ async function testDF(
       console.log(
         `          ${p.getPoolProviderName()} pools: ${poolCodes.length}`,
       )
-    // ignore non uni dexes
+    // ignore non uni protocol based dexes
     if (
       dexName !== LiquidityProviders.Trident &&
       dexName !== LiquidityProviders.CurveSwap &&
@@ -69,7 +69,7 @@ function reportMissingDexes(reports: Record<string, number>[]): {
   else return { hasMissingDex: false, missingDexNames }
 }
 
-// exclude test nets and chains with no pool or no dex
+// exclude test nets and chains with no dex/pool
 const excludedChains = [
   ...TESTNET_CHAIN_IDS,
   ChainId.HECO,
@@ -92,11 +92,10 @@ async function runTest() {
       it(`${chName}(${chainId})`, async () => {
         dataFetcher.startDataFetching()
         console.log(chName)
-
         const allFoundPools = []
 
         // a pool with this pair is available in most dexes and chains, but some may not have this, so
-        // for those other pairs are tried if happened to find a missing dex from previous results
+        // for those, other pairs are tried if there happened to be a missing dex from previous results
         allFoundPools.push(
           await testDF(
             chName,
@@ -108,7 +107,6 @@ async function runTest() {
           ),
         )
 
-        // from here on, only try a new pair in case there is a missing dex from previous pair:
         // only for Dfyn and JetSwap on fantom chain
         if (
           chainId === ChainId.FANTOM &&
@@ -124,6 +122,7 @@ async function runTest() {
               'DAI',
             ),
           )
+
         // only for Blast chain
         if (
           chainId === ChainId.BLAST &&
@@ -139,6 +138,7 @@ async function runTest() {
               'USDB',
             ),
           )
+
         // only for Moonbeam chain
         if (
           chainId === ChainId.MOONBEAM &&
@@ -159,6 +159,7 @@ async function runTest() {
               'BUSD',
             ),
           )
+
         // only for Elk dex on Moonriver since it only has 1 pool with these pair
         if (
           chainId === ChainId.MOONRIVER &&
@@ -179,6 +180,8 @@ async function runTest() {
               'ELK',
             ),
           )
+
+        // shared pairs for all chains and dexes
         if (reportMissingDexes(allFoundPools).hasMissingDex)
           allFoundPools.push(
             await testDF(
@@ -190,6 +193,7 @@ async function runTest() {
               'USDT',
             ),
           )
+
         if (reportMissingDexes(allFoundPools).hasMissingDex)
           allFoundPools.push(
             await testDF(
@@ -201,6 +205,7 @@ async function runTest() {
               'FRAX',
             ),
           )
+
         if (reportMissingDexes(allFoundPools).hasMissingDex)
           allFoundPools.push(
             await testDF(
