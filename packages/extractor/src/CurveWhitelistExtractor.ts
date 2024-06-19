@@ -118,6 +118,7 @@ export class CurveWhitelistExtractor {
   readonly coreMap: Map<string, CurveMultitokenCore> = new Map() // indexed by pool address
   readonly tokenPairMap: Map<string, CurvePoolCode[]> = new Map() // indexed by t0.address+t1.address
   readonly ratioPoolSet: Set<string> = new Set() // indexed by pool address
+  readonly poolMapUpdated: Map<string, CurvePoolCode> = new Map() // indexed by uniqueId
 
   readonly logFilter: LogFilter2
   readonly logging: boolean
@@ -185,6 +186,7 @@ export class CurveWhitelistExtractor {
   }
 
   async start() {
+    const startTime = performance.now()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
     await Promise.all(
@@ -205,6 +207,11 @@ export class CurveWhitelistExtractor {
       }
     }, this.config.ratioPoolsUpdateInterval ?? POOL_RATIO_UPDATE_INTERVAL)
     this.started = true
+    this.consoleLog(
+      `CurveWhitelistExtractor is started and ready(${Math.round(
+        performance.now() - startTime,
+      )}ms)`,
+    )
   }
 
   async addPool(
@@ -270,6 +277,7 @@ export class CurveWhitelistExtractor {
           poolType,
         )
         this.poolMap.set(p.uniqueID(), poolCode)
+        this.poolMapUpdated.set(p.uniqueID(), poolCode)
         const [a0, a1] =
           p.token0.address < p.token1.address
             ? [p.token0.address, p.token1.address]
@@ -381,6 +389,37 @@ export class CurveWhitelistExtractor {
       } catch (_e) {
         console.log(poolAddress, `${blocks} blocks - too much logs`)
       }
+    }
+  }
+
+  // side effect: updated pools list is cleared
+  getUpdatedPoolCodes(): CurvePoolCode[] {
+    const pools = Array.from(this.poolMapUpdated.values())
+    this.poolMapUpdated.clear()
+    return pools
+  }
+
+  getPoolsBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: CurvePoolCode[]
+    fetching: Promise<CurvePoolCode | undefined>[]
+  } {
+    let prefetched: CurvePoolCode[] = []
+    const fetching: Promise<CurvePoolCode | undefined>[] = []
+    for (let i = 0; i < tokensUnique1.length; ++i) {
+      const t0 = tokensUnique1[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = 0; j < tokensUnique2.length; ++j) {
+        const t1 = tokensUnique2[j]
+        const res = this.getPoolsForTokenPair(t0, t1)
+        prefetched = prefetched.concat(res)
+      }
+    }
+    return {
+      prefetched,
+      fetching,
     }
   }
 }
