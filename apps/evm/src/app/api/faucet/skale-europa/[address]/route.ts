@@ -17,9 +17,9 @@ const MAX_BALANCE_AMOUNT = 100000000000n // 0.0000001
 const DISTRIBUTION_AMOUNT = 5000000000000n // 0.000005
 
 const config = createConfig(publicWagmiConfig)
-const account = privateKeyToAccount(
-  process.env.SKALE_EUROPA_FAUCET_PRIVATE_KEY as Hex,
-)
+const account = process.env.SKALE_EUROPA_FAUCET_PRIVATE_KEY
+  ? privateKeyToAccount(process.env.SKALE_EUROPA_FAUCET_PRIVATE_KEY as Hex)
+  : undefined
 
 const schema = z.object({
   address: z.string().transform((address) => getAddress(address)),
@@ -29,6 +29,7 @@ const trySendTransaction = async (
   config: Parameters<typeof prepareTransactionRequest>[0],
   params: SendTransactionParameters,
 ) => {
+  if (!account) throw new Error('SKALE_EUROPA_FAUCET_PRIVATE_KEY not set')
   const nonce = await getTransactionCount(config, {
     chainId: params.chainId,
     address: account.address,
