@@ -233,7 +233,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           const newRightPrice = tickToPrice(
             token0.wrapped,
             token1.wrapped,
-            pool.tickCurrent + (invertPrice ? 1 : 0) * TICK_SPACINGS[feeAmount],
+            pool.tickCurrent +
+              (invertPrice ? 1 : -1) * TICK_SPACINGS[feeAmount],
           )
           onRightRangeInput(newRightPrice.toFixed(6))
           break
@@ -242,7 +243,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           const newLeftPrice = tickToPrice(
             token0.wrapped,
             token1.wrapped,
-            pool.tickCurrent + (invertPrice ? 0 : 1) * TICK_SPACINGS[feeAmount],
+            pool.tickCurrent +
+              (invertPrice ? -1 : 1) * TICK_SPACINGS[feeAmount],
           )
           onLeftRangeInput(newLeftPrice.toFixed(6))
           break
