@@ -14,9 +14,9 @@ export class TraderJoeProvider extends UniswapV2BaseProvider {
       [ChainId.AVALANCHE]:
         '0x0bbca9af0511ad1a1da383135cf3a8d2ac620e549ef9f6ae3a4c33c2fed0af91',
       [ChainId.ARBITRUM]:
-        '0x6c67ac67d0dad54be7b066edd9b4154fb5a0ab7d01232259b9ff26ebc1739ba2',
-      [ChainId.BSC]:
         '0x5c9d12e487d245c53fb0b8dd1ba2ccc48810e6b9671311502b8632e88b0d605b',
+      [ChainId.BSC]:
+        '0x75e986a1d8c57bd5530b4b59ab7dd63c4d4ad267f147e17774264956de33c282',
     } as const
     super(chainId, web3Client, factory, initCodeHash)
   }
