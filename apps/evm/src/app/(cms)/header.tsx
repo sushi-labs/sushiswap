@@ -1,5 +1,4 @@
-'use client'
-
+import { getDifficulties, getProducts } from '@sushiswap/graph-client/strapi'
 import {
   Container,
   EXPLORE_NAVIGATION_LINKS,
@@ -12,11 +11,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   // OnramperButton,
-  navigationMenuTriggerStyle,
+  buttonVariants,
 } from '@sushiswap/ui'
 // import { getDifficulties, getProducts } from 'lib/api'
-import React, { FC, useMemo } from 'react'
-import useSWR from 'swr'
+import React from 'react'
 import { DOCS_URL } from './constants'
 
 interface HeaderLink {
@@ -41,64 +39,42 @@ const PRODUCTS_ORDER = [
   'bentobox',
 ]
 
-export const Header: FC = () => {
-  // const { data: productsData } = useSWR(
-  //   '/products',
-  //   async () =>
-  //     (await getProducts({ filters: { show: { eq: true } } }))?.products,
-  // )
-  // const { data: difficultiesData } = useSWR(
-  //   '/difficulties',
-  //   async () => (await getDifficulties())?.difficulties,
-  // )
+export async function Header() {
+  const products = await getProducts()
+  const difficulties = await getDifficulties()
 
-  const productsData = { data: [] } as { data: any[] }
-  const difficultiesData = { data: [] } as { data: any[] }
-
-  const products = useMemo(() => productsData?.data ?? [], [productsData?.data])
-  const difficulties = useMemo(
-    () => difficultiesData?.data ?? [],
-    [difficultiesData?.data],
-  )
-  const sortedProducts = products.sort((a, b) =>
-    PRODUCTS_ORDER.indexOf(
-      a?.attributes?.slug as (typeof PRODUCTS_ORDER)[number],
-    ) >
-    PRODUCTS_ORDER.indexOf(
-      b?.attributes?.slug as (typeof PRODUCTS_ORDER)[number],
+  const sortedProducts = products
+    .sort((a, b) =>
+      PRODUCTS_ORDER.indexOf(a.slug as (typeof PRODUCTS_ORDER)[number]) >
+      PRODUCTS_ORDER.indexOf(b.slug as (typeof PRODUCTS_ORDER)[number])
+        ? 1
+        : -1,
     )
-      ? 1
-      : -1,
-  )
+    .filter((product) => product.slug !== 'miso')
 
-  const navData: HeaderSection[] = useMemo(
-    () => [
-      { title: 'Academy', href: '/' },
-      {
-        title: 'Products',
-        links: sortedProducts.map(({ attributes }) => ({
-          name: attributes?.longName as string,
-          href: `/academy/products/${attributes?.slug}`,
-        })),
-      },
-      {
-        title: 'Learn',
-        links: difficulties?.map(({ attributes }) => {
-          const isTechnical = attributes?.slug === 'technical'
-          return {
-            name: attributes?.shortDescription as string,
-            href: isTechnical
-              ? DOCS_URL
-              : `/articles?difficulty=${attributes?.slug}`,
-            isExternal: isTechnical,
-          }
-        }),
-      },
-      { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
-      { title: 'About', href: '/about' },
-    ],
-    [difficulties, sortedProducts],
-  )
+  const navData: HeaderSection[] = [
+    { title: 'Academy', href: '/' },
+    {
+      title: 'Products',
+      links: sortedProducts.map(({ longName, slug }) => ({
+        name: longName,
+        href: `/academy/products/${slug}`,
+      })),
+    },
+    {
+      title: 'Learn',
+      links: difficulties?.map(({ shortDescription, slug }) => {
+        const isTechnical = slug === 'technical'
+        return {
+          name: shortDescription,
+          href: isTechnical ? DOCS_URL : `/articles?difficulty=${slug}`,
+          isExternal: isTechnical,
+        }
+      }),
+    },
+    { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
+    { title: 'About', href: '/about' },
+  ]
 
   return (
     <Container maxWidth="6xl" className="mx-auto">
@@ -133,7 +109,7 @@ export const Header: FC = () => {
                   <NavigationMenuItem key={href}>
                     <NavigationMenuLink
                       href={href}
-                      className={navigationMenuTriggerStyle()}
+                      className={buttonVariants({ variant: 'ghost' })}
                     >
                       {title}
                     </NavigationMenuLink>

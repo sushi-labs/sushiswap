@@ -5,8 +5,6 @@ import { CategoryFilter } from './components/category-filter/category-filter'
 import { Hero } from './components/hero'
 import { SearchFilter } from './components/search-filter'
 
-export const revalidate = 900
-
 export default async function Page() {
   return (
     <BlogSearchProvider>

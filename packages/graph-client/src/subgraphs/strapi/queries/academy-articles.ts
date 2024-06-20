@@ -7,8 +7,8 @@ import { AuthorFieldsFragment } from 'src/subgraphs/strapi/fragments/author-fiel
 import { STRAPI_GRAPHQL_URL } from 'src/subgraphs/strapi/constants'
 import { transformImage } from 'src/subgraphs/strapi/transforms/transform-image'
 
-export const StrapiBlogArticlesQuery = graphql(
-  `query BlogArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $publicationState: PublicationState = LIVE, $sort: [String] = ["publishedAt:desc"]) {
+export const StrapiAcademyArticlesQuery = graphql(
+  `query AcademyArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $publicationState: PublicationState = LIVE, $sort: [String] = ["publishedAt:desc"]) {
     articles(filters: $filters, pagination: $pagination, publicationState: $publicationState, sort: $sort) {
       meta {
         pagination {
@@ -28,12 +28,29 @@ export const StrapiBlogArticlesQuery = graphql(
           ghostSlug
           updatedAt
           publishedAt
-          categories {
+          products {
             data {
               id
               attributes {
                 name
-                description
+                slug
+              }
+            }
+          }
+          topics {
+            data {
+              id
+              attributes {
+                name
+              }
+            }
+          }
+          difficulty {
+            data {
+              id
+              attributes {
+                name
+                label
                 slug
               }
             }
@@ -55,39 +72,39 @@ export const StrapiBlogArticlesQuery = graphql(
   [AuthorFieldsFragment, ImageFieldsFragment],
 )
 
-export type GetBlogArticles = Omit<
-  VariablesOf<typeof StrapiBlogArticlesQuery>,
+export type GetAcademyArticles = Omit<
+  VariablesOf<typeof StrapiAcademyArticlesQuery>,
   'filters'
 > & {
   filters?: Omit<
-    NonNullable<VariablesOf<typeof StrapiBlogArticlesQuery>['filters']>,
+    NonNullable<VariablesOf<typeof StrapiAcademyArticlesQuery>['filters']>,
     'articleType' | 'articleTypes'
   > | null
 }
 
-export type BlogArticleMeta = Awaited<
-  ReturnType<typeof getBlogArticles>
+export type AcademyArticleMeta = Awaited<
+  ReturnType<typeof getAcademyArticles>
 >['meta']
 
-export type BlogArticle = Awaited<
-  ReturnType<typeof getBlogArticles>
+export type AcademyArticle = Awaited<
+  ReturnType<typeof getAcademyArticles>
 >['articles'][number]
 
-export async function getBlogArticles(
-  _variables: GetBlogArticles = {},
+export async function getAcademyArticles(
+  _variables: GetAcademyArticles = {},
   options?: RequestOptions,
 ) {
-  const variables = _variables as VariablesOf<typeof StrapiBlogArticlesQuery>
+  const variables = _variables as VariablesOf<typeof StrapiAcademyArticlesQuery>
 
   if (!variables.filters) {
     variables.filters = {}
   }
-  variables.filters.articleType = { eq: 'blog' }
+  variables.filters.articleType = { eq: 'academy' }
 
   const result = await request(
     {
       url: STRAPI_GRAPHQL_URL,
-      document: StrapiBlogArticlesQuery,
+      document: StrapiAcademyArticlesQuery,
       variables,
     },
     options,
@@ -107,12 +124,21 @@ export async function getBlogArticles(
     slug: article.attributes.slug,
     updatedAt: article.attributes.updatedAt,
     publishedAt: article.attributes.publishedAt,
-    categories: article.attributes.categories!.data.map((category) => ({
-      id: category.id,
-      name: category.attributes.name,
-      description: category.attributes.description,
-      slug: category.attributes.slug,
+    products: article.attributes.products!.data.map((product) => ({
+      id: product.id,
+      name: product.attributes.name,
+      slug: product.attributes.slug,
     })),
+    topics: article.attributes.topics!.data.map((topic) => ({
+      id: topic.id,
+      name: topic.attributes.name,
+    })),
+    difficulty: {
+      id: article.attributes.difficulty!.data!.id,
+      name: article.attributes.difficulty!.data!.attributes.name,
+      label: article.attributes.difficulty!.data!.attributes.label,
+      slug: article.attributes.difficulty!.data!.attributes.slug,
+    },
     cover: transformImage(article.attributes.cover.data!),
     authors: article.attributes.authors!.data.map((author) => ({
       name: author.attributes.name,

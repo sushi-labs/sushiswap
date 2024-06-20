@@ -1,7 +1,7 @@
 'use client'
 
 import { Toggle } from '@sushiswap/ui'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { Category } from 'src/app/(cms)/lib/strapi/categories'
 import { useBlogSearch, useSetBlogSearch } from '../blog-search-provider'
 
@@ -13,21 +13,26 @@ export function CategoryFilterClient({ categories }: CategoryFilterClient) {
   const { categories: selectedCategories } = useBlogSearch()
   const setSearch = useSetBlogSearch()
 
+  const [localCategories, setLocalCategories] = useState(selectedCategories)
+
   const handleSelect = useCallback(
     (slug: string) => {
       const operation = selectedCategories?.includes(slug) ? 'remove' : 'add'
 
-      if (operation === 'add') {
-        setSearch((prev) => ({
-          ...prev,
-          categories: [...(prev.categories || []), slug],
-        }))
-      } else {
-        setSearch((prev) => ({
-          ...prev,
-          categories: prev.categories!.filter((el) => el !== slug),
-        }))
+      const prevToNew = (prev: string[], newSlug: string) => {
+        if (operation === 'add') {
+          return [...prev, newSlug]
+        } else {
+          return prev.filter((el) => el !== newSlug)
+        }
       }
+
+      setLocalCategories((prev) => prevToNew(prev || [], slug))
+
+      setSearch((prev) => ({
+        ...prev,
+        categories: prevToNew(prev.categories!, slug),
+      }))
     },
     [setSearch, selectedCategories],
   )
@@ -41,7 +46,7 @@ export function CategoryFilterClient({ categories }: CategoryFilterClient) {
             onPressedChange={() => {
               handleSelect(category.slug)
             }}
-            pressed={Boolean(selectedCategories?.includes(category.slug))}
+            pressed={Boolean(localCategories?.includes(category.slug))}
           >
             {category.name}
           </Toggle>
