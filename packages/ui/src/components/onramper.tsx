@@ -13,23 +13,49 @@ import React, {
 } from 'react'
 
 import classNames from 'classnames'
+import Link from 'next/link'
+import { ChainId } from 'sushi'
 import { Dialog, DialogOverlay, DialogPrimitive } from './dialog'
 import { IconButton } from './iconbutton'
 
-export const OnramperButton: FC<{ children: ReactNode; className?: string }> =
-  ({ children, className }) => {
-    const { setOpen } = useOnramperContext()
+const ONRAMP_OVERRIDE_CHAIN_IDS = [ChainId.SKALE_EUROPA] as const
 
-    const onClick = useCallback(() => {
-      setOpen(true)
-    }, [setOpen])
+const ONRAMP_OVERRIDE = {
+  [ChainId.SKALE_EUROPA]: 'https://portal.skale.space/onramp',
+} as const
 
-    return (
-      <Slot onClick={onClick} className={className}>
-        {children}
-      </Slot>
-    )
-  }
+type OnrampOverrideChainId = (typeof ONRAMP_OVERRIDE_CHAIN_IDS)[number]
+
+export const isOnrampOverrideChainId = (
+  chainId: number | undefined,
+): chainId is OnrampOverrideChainId =>
+  ONRAMP_OVERRIDE_CHAIN_IDS.includes(chainId as OnrampOverrideChainId)
+
+export const OnramperButton: FC<{
+  children: ReactNode
+  className?: string
+  chainId?: number
+}> = ({ children, className, chainId }) => {
+  const { setOpen } = useOnramperContext()
+
+  const onClick = useCallback(() => {
+    setOpen(true)
+  }, [setOpen])
+
+  return isOnrampOverrideChainId(chainId) ? (
+    <Link
+      href={ONRAMP_OVERRIDE[chainId]}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Slot className={className}>{children}</Slot>
+    </Link>
+  ) : (
+    <Slot onClick={onClick} className={className}>
+      {children}
+    </Slot>
+  )
+}
 
 interface OnramperPanelProps {
   address?: string

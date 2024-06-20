@@ -37,13 +37,15 @@ export function transformPoolV3ToBase<T extends RequiredBase>(
   pool: T,
   chainId: SushiSwapV3ChainId,
 ): PoolV3<PoolBase> {
+  const swapFee = Number(pool.swapFee) / 1000000
+
   return {
     id: getIdFromChainIdAddress(chainId, pool.id as Address),
     address: pool.id as Address,
     chainId,
     name: `${pool.token0.symbol}-${pool.token1.symbol}`,
 
-    swapFee: Number(pool.swapFee) / 10000,
+    swapFee: swapFee,
     // twapEnabled: pool.twapEnabled,
 
     feeGrowthGlobal0X128: BigInt(pool.feeGrowthGlobal0X128),
@@ -68,7 +70,7 @@ export function transformPoolV3ToBase<T extends RequiredBase>(
     liquidityUSD: Number(pool.liquidityUSD),
 
     volumeUSD: Number(pool.volumeUSD),
-    feesUSD: Number(pool.volumeUSD) * 0.003,
+    feesUSD: Number(pool.volumeUSD) * swapFee,
 
     token0: {
       id: getIdFromChainIdAddress(chainId, pool.token0.id as Address),

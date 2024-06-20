@@ -32,6 +32,7 @@ const PREFERRED_CHAINID_ORDER = [
   ChainId.ROOTSTOCK,
   ChainId.BLAST,
   ChainId.ZETACHAIN,
+  ChainId.SKALE_EUROPA,
   ChainId.OPTIMISM,
   ChainId.BSC,
   ChainId.THUNDERCORE,
