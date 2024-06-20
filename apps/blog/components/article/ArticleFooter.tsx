@@ -1,11 +1,11 @@
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import format from 'date-fns/format'
+import { Article } from 'lib/strapi/article'
 import type { FC } from 'react'
-import type { Article } from 'types'
 
 interface ArticleFooter {
-  articles?: Article[]
+  articles: Article[]
 }
 
 export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
@@ -18,17 +18,14 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
         {articles?.map((article) => (
           <article className="flex flex-col items-start" key={article.id}>
             <h3 className="order-1 text-lg font-semibold text-slate-200">
-              {article.attributes.title}
+              {article.title}
             </h3>
-            {article.attributes.publishedAt ? (
+            {article.publishedAt ? (
               <time
                 className="text-sm leading-7 text-slate-400"
-                dateTime={article.attributes.publishedAt}
+                dateTime={article.publishedAt}
               >
-                {format(
-                  new Date(article.attributes.publishedAt),
-                  'dd MMM yyyy',
-                )}
+                {format(new Date(article.publishedAt), 'dd MMM yyyy')}
               </time>
             ) : null}
             <Button
@@ -37,9 +34,7 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
               size="sm"
               variant="secondary"
             >
-              <LinkInternal href={`/${article.attributes.slug}`}>
-                Read more
-              </LinkInternal>
+              <LinkInternal href={`/${article.slug}`}>Read more</LinkInternal>
             </Button>
           </article>
         ))}

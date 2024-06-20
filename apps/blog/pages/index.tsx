@@ -3,26 +3,26 @@ import { useDebounce } from '@sushiswap/hooks'
 import { LinkInternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
+import { Article, getArticles } from 'lib/strapi/article'
+import { Category, getCategories } from 'lib/strapi/categories'
 import type { InferGetServerSidePropsType } from 'next'
 import type { FC } from 'react'
 import { useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { ArticleList, Card, Categories, Hero } from '../components'
 import BlogSeo from '../components/seo/blog-seo'
-import { getArticles, getCategories } from '../lib/api'
-import type { GhostArticle } from '../lib/ghost'
-import type { Article, Category, Collection } from '../types'
 
 export async function getStaticProps() {
   const [articles, categories] = await Promise.all([
-    getArticles({ pagination: { limit: 10 } }),
+    getArticles({ pagination: { start: 0, limit: 15 } }),
     getCategories(),
   ])
+
   return {
     props: {
       fallback: {
-        '/articles': articles.articles || [],
-        '/categories': categories.categories || [],
+        '/articles': articles || [],
+        '/categories': categories || [],
       },
     },
     revalidate: 60,
@@ -44,26 +44,24 @@ const _Home: FC = () => {
   const debouncedQuery = useDebounce(query, 200)
 
   const [selected, setSelected] = useState<string[]>([])
-  const { data: articlesData } = useSWR<Collection<GhostArticle>>('/articles')
-  const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
+  const { data: articles } = useSWR<Article[]>('/articles')
+  const { data: categories } = useSWR<Category[]>('/categories')
 
   const { data: filterData, isValidating } = useSWR(
     ['/articles', selected, debouncedQuery],
     async ([_url, _selected, _debouncedQuery]) => {
-      return (
-        await getArticles({
-          filters: {
-            ...(debouncedQuery && { title: { containsi: _debouncedQuery } }),
-            ...(selected.length > 0 && {
-              categories: {
-                id: {
-                  in: _selected,
-                },
+      return getArticles({
+        filters: {
+          ...(debouncedQuery && { title: { $containsi: _debouncedQuery } }),
+          ...(selected.length > 0 && {
+            categories: {
+              id: {
+                $in: _selected,
               },
-            }),
-          },
-        })
-      ).articles
+            },
+          }),
+        },
+      })
     },
     {
       revalidateOnFocus: false,
@@ -74,14 +72,8 @@ const _Home: FC = () => {
   )
 
   const loading = useDebounce(isValidating, 400)
-  const articles = articlesData?.data
-  const categories = categoriesData?.data
   const articleList =
-    selected && filterData?.data
-      ? filterData.data
-      : articles
-        ? articles
-        : undefined
+    selected && filterData ? filterData : articles ? articles : undefined
 
   return (
     <>
@@ -94,7 +86,7 @@ const _Home: FC = () => {
               <div className="order-2 w-full p-1 -ml-1 overflow-hidden md:order-1">
                 <div className="flex flex-wrap gap-3">
                   <Categories
-                    categories={categories || []}
+                    categories={categories || ([] as Category[])}
                     onSelect={setSelected}
                     selected={selected}
                   />
@@ -115,12 +107,12 @@ const _Home: FC = () => {
             {articleList ? (
               <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
                 <ArticleList
-                  articles={articleList as Article[]}
+                  articles={articleList}
                   loading={loading}
                   render={(article) => (
                     <Card
                       article={article}
-                      key={`article__left__${article.attributes.slug}`}
+                      key={`article__left__${article.slug}`}
                     />
                   )}
                 />

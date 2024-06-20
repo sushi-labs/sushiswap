@@ -186,17 +186,6 @@ query getGlobalSEO {
   }
 }
 
-query getPreviewPostBySlug($slug: String) {
-  articles(filters: { slug: { eq: $slug } }, publicationState: PREVIEW) {
-    data {
-      id
-      attributes {
-        slug
-      }
-    }
-  }
-}
-
 query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
   articles(pagination: $pagination, sort: "publishedAt:desc", filters: $filters) {
     meta {
@@ -206,6 +195,7 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
         pageSize
       }
     }
+    
     data {
       id
       attributes {

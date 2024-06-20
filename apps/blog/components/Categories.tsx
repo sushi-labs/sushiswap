@@ -1,7 +1,7 @@
 import { Toggle } from '@sushiswap/ui'
+import { Category } from 'lib/strapi/categories'
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useCallback } from 'react'
-import type { Category } from 'types'
 
 interface Categories {
   selected: string[]
@@ -28,17 +28,17 @@ export const Categories: FC<Categories> = ({
   return (
     <>
       {categories.map((category) => {
-        if (!category.id) return <></>
+        if (!category) return <></>
 
         return (
           <Toggle
             key={category.id}
             onPressedChange={() => {
-              handleSelect(category.id)
+              handleSelect(category.id.toString())
             }}
-            pressed={Boolean(selected.includes(category.id))}
+            pressed={Boolean(selected.includes(category.id.toString()))}
           >
-            {category.attributes.name}
+            {category.name}
           </Toggle>
         )
       })}

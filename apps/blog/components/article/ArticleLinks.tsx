@@ -1,10 +1,10 @@
 import { LinkIcon, MailIcon } from '@heroicons/react/outline'
 import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
+import { Article } from 'lib/strapi/article'
 import type { FC } from 'react'
-import type { Article } from 'types'
 
 interface ArticleLinks {
-  article?: Article
+  article: Article
 }
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
@@ -16,7 +16,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
       </h2>
       <div className="flex gap-5">
         <a
-          href={`http://twitter.com/share?url=https://www.sushi.com/blog/${article?.attributes.slug}`}
+          href={`http://twitter.com/share?url=https://www.sushi.com/blog/${article.slug}`}
           rel="noreferrer"
           target="_blank"
           title="Share on Twitter"
@@ -29,9 +29,9 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
         </a>
         <a
           href={`mailto:?subject=${encodeURI(
-            article?.attributes.title || '',
+            article.title || '',
           )}&body=Checkout this new SushiSwap Blog article ${encodeURI(
-            `https://www.sushi.com/blog/${article?.attributes.slug}`,
+            `https://www.sushi.com/blog/${article.slug}`,
           )}`}
           title="Share by Email"
         >
@@ -46,7 +46,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           height={20}
           onClick={() =>
             navigator.clipboard.writeText(
-              `https://www.sushi.com/blog/${article?.attributes.slug}`,
+              `https://www.sushi.com/blog/${article.slug}`,
             )
           }
           width={20}

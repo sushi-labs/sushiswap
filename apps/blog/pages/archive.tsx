@@ -2,28 +2,31 @@ import { ChevronLeftIcon, SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { LinkInternal } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui'
+import { Article, getArticles } from 'lib/strapi/article'
+import { ArticleMeta, getArticleMeta } from 'lib/strapi/articleMeta'
+import { Category, getCategories } from 'lib/strapi/categories'
 import type { InferGetServerSidePropsType } from 'next'
 import type { FC } from 'react'
 import { useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import type { Article, Category, Collection } from 'types'
 import {
   ArticleList,
   ArticleListItem,
   Categories,
   Pagination,
 } from '../components'
-import { getArticles, getCategories } from '../lib/api'
 
 export async function getStaticProps() {
   const articles = await getArticles()
   const categories = await getCategories()
+  const meta = await getArticleMeta()
 
   return {
     props: {
       fallback: {
-        '/articles': articles.articles || [],
-        '/categories': categories.categories || [],
+        '/articles': articles || [],
+        '/categories': categories || [],
+        '/meta': meta,
       },
     },
     revalidate: 1,
@@ -46,26 +49,25 @@ const _Archive: FC = () => {
   const debouncedQuery = useDebounce(query, 200)
 
   const [selected, setSelected] = useState<string[]>([])
-  const { data: articlesData } = useSWR<Collection<Article>>('/articles')
-  const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
+  const { data: articles } = useSWR<Article[]>('/articles')
+  const { data: categories } = useSWR<Category[]>('/categories')
+  const { data: meta } = useSWR<ArticleMeta>('/meta')
   const { data: filterData, isValidating } = useSWR(
     ['/articles', selected, debouncedQuery, page],
     async ([_url, selected, debouncedQuery, page]) => {
-      return (
-        await getArticles({
-          filters: {
-            ...(debouncedQuery && { title: { containsi: debouncedQuery } }),
-            ...(selected.length > 0 && {
-              categories: {
-                id: {
-                  in: selected,
-                },
+      return await getArticles({
+        filters: {
+          ...(debouncedQuery && { title: { containsi: debouncedQuery } }),
+          ...(selected.length > 0 && {
+            categories: {
+              id: {
+                in: selected,
               },
-            }),
-          },
-          pagination: { page, pageSize: 10 },
-        })
-      ).articles
+            },
+          }),
+        },
+        pagination: { page, pageSize: 10 },
+      })
     },
     {
       revalidateOnFocus: false,
@@ -77,16 +79,14 @@ const _Archive: FC = () => {
 
   const loading = useDebounce(isValidating, 300)
 
-  const articles = articlesData?.data
-  const categories = categoriesData?.data
   const articleList =
-    selected && filterData?.data ? filterData.data : articles ? articles : []
-  const articlesMeta =
-    selected && filterData?.meta
-      ? filterData.meta
-      : articlesData?.meta
-        ? articlesData.meta
-        : undefined
+    selected && filterData ? filterData : articles ? articles : []
+  // const articlesMeta =
+  //   selected && filterData?.meta
+  //     ? filterData.meta
+  //     : articlesData?.meta
+  //       ? articlesData.meta
+  //       : undefined
 
   return (
     <>
@@ -137,18 +137,18 @@ const _Archive: FC = () => {
                   render={(article) => (
                     <ArticleListItem
                       article={article}
-                      key={`article__left__${article.attributes.slug}`}
+                      key={`article__left__${article.slug}`}
                     />
                   )}
                 />
               ) : null}
             </div>
             <div className="flex justify-center">
-              {articlesMeta ? (
+              {meta ? (
                 <Pagination
                   onPage={setPage}
-                  page={articlesMeta.pagination.page}
-                  pages={articlesMeta.pagination.pageCount}
+                  page={page}
+                  pages={Math.ceil(meta.total / 10)}
                 />
               ) : null}
             </div>

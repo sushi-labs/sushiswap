@@ -1,11 +1,11 @@
 import { Container } from '@sushiswap/ui'
-import { addBodyToArticle } from 'lib/ghost'
-import type { GhostArticle } from 'lib/ghost'
-import { ArticleSchema } from 'lib/validate'
+import { WithGhostBody, addGhostBody } from 'lib/ghost/addGhostBody'
+import { Article, getArticle } from 'lib/strapi/article'
+import { getArticleSlugs } from 'lib/strapi/articleSlugs'
+import { getMoreArticles } from 'lib/strapi/moreArticles'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import type { FC } from 'react'
-import type { Article } from 'types'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -13,15 +13,13 @@ import {
   ArticleLinks,
   ArticleSeo,
   Breadcrumb,
-  PreviewBanner,
 } from '../components'
-import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
 export async function getStaticPaths() {
-  const allArticles = await getAllArticlesBySlug()
+  const allArticleSlugs = await getArticleSlugs()
   return {
-    paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article.attributes?.slug) acc.push(`/${article.attributes.slug}`)
+    paths: allArticleSlugs?.reduce<string[]>((acc, slug) => {
+      acc.push(`/${slug}`)
       return acc
     }, []),
     fallback: true,
@@ -30,13 +28,13 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({
   params,
-  preview = null,
 }: {
   params: { slug: string }
-  preview: Record<string, unknown> | null
 }) {
-  const data = await getArticleAndMoreArticles(params.slug, Boolean(preview))
-  const article = data.articles?.data[0]
+  const [article, moreArticles] = await Promise.all([
+    getArticle({ slug: params.slug }),
+    getMoreArticles(params.slug),
+  ])
 
   if (!article) {
     return {
@@ -46,42 +44,33 @@ export async function getStaticProps({
     }
   }
 
-  const parsedArticle = ArticleSchema.safeParse(article)
-
-  if (!parsedArticle.success) {
-    return {
-      props: {},
-      notFound: false,
-      revalidate: 15,
-    }
-  }
+  const articleWithBody = await addGhostBody(article, article.ghostSlug)
 
   return {
     props: {
-      article: await addBodyToArticle(parsedArticle.data),
-      latestArticles: data.moreArticles?.data,
-      preview: Boolean(preview),
-    },
+      article: articleWithBody,
+      latestArticles: moreArticles,
+    } satisfies ArticlePage,
     revalidate: 60,
   }
 }
 
 interface ArticlePage {
-  article?: GhostArticle
-  latestArticles?: Article[]
-  preview: boolean
+  article: WithGhostBody<Article>
+  latestArticles: Article[]
 }
 
-const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
+const ArticlePage: FC<ArticlePage> = ({ article, latestArticles }) => {
   const router = useRouter()
   if (!router.isFallback && !article) {
     return <ErrorPage statusCode={404} />
   }
 
+  if (!article) return null
+
   return (
     <>
-      <ArticleSeo article={article?.attributes} />
-      <PreviewBanner show={preview} />
+      <ArticleSeo article={article} />
       <Breadcrumb />
       <Container className="px-4 mx-auto my-16" maxWidth="2xl">
         <main>
@@ -91,7 +80,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             <div
               className="mt-12 prose !prose-invert prose-slate"
               dangerouslySetInnerHTML={{
-                __html: article?.attributes.body || '',
+                __html: article.body || '',
               }}
             />
             <ArticleLinks article={article} />

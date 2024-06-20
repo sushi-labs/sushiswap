@@ -1,7 +1,8 @@
 import { classNames } from '@sushiswap/ui'
+import { imageSchema } from 'lib/strapi/image'
 import NextImage from 'next/legacy/image'
 import type { FC } from 'react'
-import type { Image as ImageType } from 'types'
+import { z } from 'zod'
 import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 
 interface ImageProps {
@@ -11,12 +12,7 @@ interface ImageProps {
   layout?: 'fill' | 'responsive'
   objectFit?: 'cover' | 'contain'
   className?: string
-  image: {
-    attributes: Pick<
-      ImageType['attributes'],
-      'provider_metadata' | 'url' | 'width' | 'height' | 'alternativeText'
-    >
-  }
+  image: z.infer<typeof imageSchema>
 }
 
 export const Image: FC<ImageProps> = ({
@@ -28,11 +24,11 @@ export const Image: FC<ImageProps> = ({
   layout = 'fill',
   objectFit = 'cover',
 }) => {
-  if (!image.attributes.url) {
+  if (!image.url) {
     return <></>
   }
 
-  if (isMediaVideo(image.attributes.provider_metadata)) {
+  if (isMediaVideo(image.provider_metadata)) {
     return (
       <video
         autoPlay
@@ -44,14 +40,14 @@ export const Image: FC<ImageProps> = ({
       >
         <source
           src={getOptimizedMedia({
-            metadata: image.attributes.provider_metadata,
+            metadata: image.provider_metadata,
           })}
         />
       </video>
     )
   }
 
-  const { width: _width, height: _height, alternativeText } = image.attributes
+  const { width: _width, height: _height, alternativeText } = image
 
   return (
     <NextImage
@@ -62,7 +58,7 @@ export const Image: FC<ImageProps> = ({
       objectFit={objectFit}
       quality={quality}
       src={getOptimizedMedia({
-        metadata: image.attributes.provider_metadata,
+        metadata: image.provider_metadata,
         width,
         height,
       })}

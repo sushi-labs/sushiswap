@@ -1,23 +1,23 @@
+import { Article } from 'lib/strapi/article'
 import { ArticleJsonLd, NextSeo } from 'next-seo'
 import type { FC } from 'react'
-import type { GhostArticle } from '../../lib/ghost'
 import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
 
 interface ArticleSeoProps {
-  article?: GhostArticle['attributes']
+  article?: Article
 }
 
 export const ArticleSeo: FC<ArticleSeoProps> = ({ article }) => {
   if (!article) return <></>
 
   const cover = getOptimizedMedia({
-    metadata: article.cover.data.attributes.provider_metadata,
+    metadata: article.cover.provider_metadata,
   })
-  const coverAlt = article.cover.data.attributes.alternativeText
+  const coverAlt = article.cover.alternativeText
 
-  const authors = article.authors.data.map(({ attributes }) => ({
-    name: attributes.name,
-    url: `https://twitter.com/${attributes.handle}`,
+  const authors = article.authors.map(({ name, handle }) => ({
+    name: name,
+    url: `https://twitter.com/${handle}`,
   }))
 
   return (
@@ -25,7 +25,7 @@ export const ArticleSeo: FC<ArticleSeoProps> = ({ article }) => {
       <NextSeo
         description={article.description}
         openGraph={{
-          ...(isMediaVideo(article.cover.data.attributes.provider_metadata)
+          ...(isMediaVideo(article.cover.provider_metadata)
             ? {
                 videos: [{ url: cover }],
               }
@@ -36,17 +36,15 @@ export const ArticleSeo: FC<ArticleSeoProps> = ({ article }) => {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,
             authors: authors.map((author) => author.name),
-            tags: article.categories.data.reduce<string[]>((acc, el) => {
-              acc.push(el.attributes.name)
+            tags: article.categories.reduce<string[]>((acc, el) => {
+              acc.push(el.name)
               return acc
             }, []),
           },
         }}
         title={article.title}
         twitter={{
-          cardType: isMediaVideo(
-            article.cover.data.attributes.provider_metadata,
-          )
+          cardType: isMediaVideo(article.cover.provider_metadata)
             ? 'player'
             : 'summary_large_image',
         }}

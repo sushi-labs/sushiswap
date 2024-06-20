@@ -1,5 +1,5 @@
+import { Article } from 'lib/strapi/article'
 import type { FC, ReactNode } from 'react'
-import type { Article } from '../types'
 import { CardSkeleton } from './card/card-skeleton'
 
 interface ArticleListProps {

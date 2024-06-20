@@ -8,7 +8,6 @@ const bundleAnalyzer = withBundleAnalyzer({
 })
 
 const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
-const BLOG_URL = process.env.BLOG_URL || 'https://blog.sushi.com'
 const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 
 /** @type {import('next').NextConfig} */
@@ -81,14 +80,6 @@ const nextConfig = bundleAnalyzer({
       {
         source: '/academy/:path*',
         destination: `${ACADEMY_URL}/academy/:path*`,
-      },
-      {
-        source: '/blog',
-        destination: `${BLOG_URL}/blog`,
-      },
-      {
-        source: '/blog/:path*',
-        destination: `${BLOG_URL}/blog/:path*`,
       },
       {
         source: '/furo',

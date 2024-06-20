@@ -1,18 +1,17 @@
+import { Article } from 'lib/strapi/article'
 import { ArticleJsonLd } from 'next-seo'
 import type { FC } from 'react'
 import useSWR from 'swr'
-import type { ArticleEntityResponseCollection } from '../../.mesh'
 import SEO from '../../next-seo.config'
 
 export const BlogSeo: FC = () => {
-  const { data: articlesData } =
-    useSWR<ArticleEntityResponseCollection>('/articles')
+  const { data: articles } = useSWR<Article[]>('/articles')
 
   return (
     <ArticleJsonLd
       authorName="Sushi"
-      dateModified={articlesData?.data[0].attributes?.updatedAt}
-      datePublished={articlesData?.data[0].attributes?.publishedAt}
+      dateModified={articles?.[0].updatedAt}
+      datePublished={articles?.[0].publishedAt || ''}
       description={SEO.description}
       images={SEO.openGraph.images.map((image) => image.url)}
       title={SEO.title}

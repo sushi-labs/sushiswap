@@ -32,6 +32,7 @@
     "react-dom": "18.2.0",
     "react-markdown": "8.0.7",
     "sharp": "0.32.6",
+    "strapi-sdk-js": "2.3.3",
     "swr": "2.1.5",
     "zod": "3.21.4"
   },
