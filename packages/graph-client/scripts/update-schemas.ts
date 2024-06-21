@@ -16,6 +16,7 @@ const schemas = {
   'sushi-bar': 'api.studio.thegraph.com/query/32073/xsushi/v0.0.1',
   'sushi-v2': 'api.studio.thegraph.com/query/32073/v2-arbitrum/v0.0.5',
   'sushi-v3': 'api.studio.thegraph.com/query/32073/v3-arbitrum/v0.0.1',
+  'data-api': 'data-api-production-acb1.up.railway.app/graphql',
 } as const satisfies Record<string, string>
 
 async function updateSchema(schema: keyof typeof schemas) {

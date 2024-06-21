@@ -1,0 +1,102 @@
+type Change {
+  absolute1D: Float!
+  percent1D: Float!
+}
+
+type BalanceByChain {
+  id: ID!
+  networkName: String!
+  balance: Float!
+}
+
+type Portfolio {
+  id: ID!
+  balance: Float!
+  balanceByChains: [BalanceByChain]!
+  changes: Change!
+}
+
+type PortfolioPositions {
+  id: ID!
+  liquidityPositions: [PortfolioLiquidityPosition]
+  wallet: [PortfolioTokenPosition]
+}
+
+type TokenStatus {
+  verified: Boolean
+  isTrash: Boolean
+}
+
+type Token {
+  address: String!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  status: TokenStatus
+  logoUrl: String
+}
+
+type PortfolioLiquidityPosition {
+  id: ID!
+  chainId: Int!
+  protocol: String!
+  name: String!
+  source: String!
+  assets: [PortfolioLiquidityPositionAsset]!
+}
+
+type PortfolioLiquidityPositionAsset {
+  type: String!
+  amount: Float!
+  amountUSD: Float!
+  price: Float!
+  change: Change
+  token: Token!
+  updatedAt: String
+  updatedAtBlock: Float
+}
+
+type PortfolioTokenPosition {
+  id: ID!
+  chainId: Int!
+  balance: Float!
+  decimals: Int!
+  amount: Float!
+  amountUSD: Float!
+  price: Float!
+  change: Change!
+  token: Token!
+  updatedAt: String
+  updatedAtBlock: Float
+}
+
+type Pool {
+  id: ID!
+  name: String!
+  address: String!
+  createdAt: String!
+  swapFee: Float!
+  protocol: String!
+  token0Price: Float!
+  token1Price: Float!
+  token0Address: String!
+  token1Address: String!
+  token0PriceUSD: Float!
+  token1PriceUSD: Float!
+  liquidityUSD: Float!
+  txCount1h: Int!
+  txCount1d: Int!
+  feeUSD1h: Float!
+  feeUSD1d: Float!
+  volumeUSD1h: Float!
+  volumeUSD1d: Float!
+  feeApr1d: Float!
+  source: String!
+}
+
+type Query {
+  portfolio(id: ID!): Portfolio
+  portfolioLiquidityPositions(id: ID!): PortfolioPositions
+  portfolioWallet(id: ID!): PortfolioPositions
+  pools(chainId: ID!): [Pool]
+}
