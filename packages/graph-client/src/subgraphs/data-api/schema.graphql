@@ -72,6 +72,7 @@ type PortfolioTokenPosition {
 
 type Pool {
   id: ID!
+  chainId: Int!
   name: String!
   address: String!
   createdAt: String!
@@ -91,6 +92,11 @@ type Pool {
   volumeUSD1h: Float!
   volumeUSD1d: Float!
   feeApr1d: Float!
+  totalApr1d: Float!
+  incentiveApr: Float!
+  isSmartPool: Boolean!
+  isIncentivized: Boolean!
+  wasIncentivized: Boolean!
   source: String!
 }
 

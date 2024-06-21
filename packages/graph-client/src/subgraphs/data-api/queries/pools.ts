@@ -9,6 +9,7 @@ export const PoolsQuery = graphql(
   `
 query Pools($chainId: ID!) {
     pools(chainId: $chainId) {
+      chainId
       id
       name
       address
@@ -29,7 +30,11 @@ query Pools($chainId: ID!) {
       volumeUSD1h
       volumeUSD1d
       feeApr1d
+      totalApr1d
+      incentiveApr
       source
+      isIncentivized
+      isSmartPool
     }
   }
 `,
