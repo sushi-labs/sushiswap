@@ -1,4 +1,5 @@
 export const formatPercent = (value: any) => {
+  value = value ?? 0
   let negative = false
 
   if (value < 0) {

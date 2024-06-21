@@ -20,6 +20,7 @@ export const formatNumber = (
   value: string | number,
   maxDecimalPlaces = 2,
 ): string => {
+  value = value ?? 0
   if (typeof value === 'string') value = Number(value)
 
   let negative = false

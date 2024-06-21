@@ -21,6 +21,7 @@
 // }
 
 export const formatUSD = (value: string | number, inputString = '$0.00a') => {
+  value = value ?? 0
   if (typeof value === 'string') value = Number(value)
 
   let negative = false
