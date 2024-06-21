@@ -11,8 +11,6 @@ import {
   Currency,
   DataTable,
   NetworkIcon,
-  SkeletonCircle,
-  SkeletonText,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -20,19 +18,12 @@ import {
 } from '@sushiswap/ui'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId } from 'sushi/chain'
+import { Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { SushiSwapProtocol } from 'sushi/types'
 import { ProtocolBadge } from './PoolNameCell'
-import {
-  APR_COLUMN,
-  FEES_COLUMN,
-  TVL_COLUMN,
-  VOLUME_1D_COLUMN,
-  VOLUME_1M_COLUMN,
-  VOLUME_1W_COLUMN,
-} from './columns'
+import { APR_COLUMN, TVL_COLUMN, VOLUME_1D_COLUMN } from './columns'
 
 const COLUMNS = [
   {
@@ -40,27 +31,23 @@ const COLUMNS = [
     header: 'Name',
 
     cell: (props) => {
-      const { data: token0, isLoading: isToken0Loading } = useTokenWithCache({
-        chainId: props.row.original.chainId as ChainId,
-        address: props.row.original.token0Address,
-      })
+      const [token0, token1] = useMemo(
+        () => [
+          new Token({
+            chainId: props.row.original.chainId,
+            address: props.row.original.token0Address,
+            decimals: 0,
+          }),
+          new Token({
+            chainId: props.row.original.chainId,
+            address: props.row.original.token1Address,
+            decimals: 0,
+          }),
+        ],
+        [props.row.original],
+      )
 
-      const { data: token1, isLoading: isToken1Loading } = useTokenWithCache({
-        chainId: props.row.original.chainId as ChainId,
-        address: props.row.original.token1Address,
-      })
-
-      return isToken0Loading || isToken1Loading ? (
-        <div className="flex items-center w-full gap-2">
-          <div className="flex items-center">
-            <SkeletonCircle radius={26} />
-            <SkeletonCircle radius={26} className="-ml-[12px]" />
-          </div>
-          <div className="flex flex-col w-full">
-            <SkeletonText fontSize="lg" />
-          </div>
-        </div>
-      ) : (
+      return (
         <div className="flex items-center gap-5">
           <div className="flex min-w-[54px]">
             {token0 && token1 ? (
@@ -84,11 +71,12 @@ const COLUMNS = [
           </div>
           <div className="flex flex-col gap-0.5">
             <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-              {token0?.symbol}{' '}
+              {props.row.original.name}
+              {/* {token0?.symbol}{' '}
               <span className="font-normal text-gray-900 dark:text-slate-500">
                 /
               </span>{' '}
-              {token1?.symbol}{' '}
+              {token1?.symbol}{' '} */}
               <div
                 className={
                   'text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1'
