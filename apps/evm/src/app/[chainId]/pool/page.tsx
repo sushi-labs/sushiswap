@@ -14,7 +14,7 @@ export default async function PoolPage({
     async () => getPools({ chainId: params.chainId }),
     ['pools', params.chainId],
     {
-      revalidate: 60 * 15,
+      revalidate: 60 * 3,
     },
   )()
 
