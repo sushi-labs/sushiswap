@@ -21,18 +21,17 @@ import {
 } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import {
-  ConstantProductPoolCode,
   LiquidityProviders,
   NativeWrapProvider,
   PoolCode,
   Router,
 } from 'sushi/router'
-import { RouteStatus, getBigInt } from 'sushi/tines'
+import { RToken, RouteStatus, calcTokenPrices, getBigInt } from 'sushi/tines'
 import { http, Address, Transport, createPublicClient } from 'viem'
 import { Chain } from 'viem/chains'
-import { createForkRouteProcessor4 } from '../src/index.js'
+import { createForkRouteProcessor5 } from '../src/index.js'
 import { pancakeswapV3Factory } from './Extractor.test.js'
-import RouteProcessor4 from './RouteProcessor4.sol/RouteProcessor4.json' assert {
+import RouteProcessor5 from './RouteProcessor5.sol/RouteProcessor5.json' assert {
   type: 'json',
 }
 
@@ -125,8 +124,8 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const forkBlockNumber = await client.getBlockNumber()
-  const fork = await createForkRouteProcessor4(
+  const forkBlockNumber = 20139501n //await client.getBlockNumber()
+  const fork = await createForkRouteProcessor5(
     args.providerURL,
     forkBlockNumber,
     chainId,
@@ -151,39 +150,33 @@ async function startInfinitTest(args: {
     `tokens-${client.chain?.id}`,
   )
   await tokenManager.addCachedTokens()
-  const tokens =
-    args.checkTokens ??
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
-      Array.from(tokenManager.tokens.values()).slice(0, 100),
+
+  const pools = extractor.getCurrentPoolCodes()
+  const prices = calcTokenPrices(
+    pools.concat(nativeProvider.getCurrentPoolList()).map((p) => p.pool),
+    Native.onChain(chainId) as unknown as RToken,
+  )
+  const tokens = Array.from(prices.keys()).map((t) => {
+    if (
+      t.address === '' ||
+      t.address === undefined ||
+      t.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     )
+      return Native.onChain(t.chainId as number)
+    else
+      return new Token({
+        chainId: t.chainId as number,
+        address: t.address,
+        name: t.name,
+        symbol: t.symbol,
+        decimals: t.decimals,
+      })
+  })
+
   for (;;) {
     for (let i = 0; i < tokens.length; ++i) {
       await delay(1000)
-      const time0 = performance.now()
-      const pools0 = extractor.getPoolCodesForTokens(
-        BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]),
-      )
-      const time1 = performance.now()
-      const pools1 = await extractor.getPoolCodesForTokensAsync(
-        BASES_TO_CHECK_TRADES_AGAINST[chainId].concat([tokens[i]]),
-        2000,
-      )
-      const time2 = performance.now()
-      const pools0_2 = pools0.filter(
-        (p) => p instanceof ConstantProductPoolCode,
-      ).length
-      const pools0_3 = pools0.length - pools0_2
-      const pools1_2 = pools1.filter(
-        (p) => p instanceof ConstantProductPoolCode,
-      ).length
-      const pools1_3 = pools1.length - pools1_2
-      const timingLine = `sync: (${pools0_2}, ${pools0_3}) pools ${Math.round(
-        time1 - time0,
-      )}ms, async: (${pools1_2}, ${pools1_3}) pools ${Math.round(
-        time2 - time1,
-      )}ms`
-
-      const pools = pools1
+      const pools = extractor.getCurrentPoolCodes()
       const poolMap = new Map<string, PoolCode>()
       pools.forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       nativeProvider
@@ -191,6 +184,7 @@ async function startInfinitTest(args: {
         .forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       const fromToken = Native.onChain(chainId)
       const toToken = tokens[i]
+      debugger
       const route = Router.findBestRoute(
         poolMap,
         chainId,
@@ -202,11 +196,11 @@ async function startInfinitTest(args: {
 
       if (route.status === RouteStatus.NoWay) {
         console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
+          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`,
         )
         continue
       }
-      const rpParams = Router.routeProcessor4Params(
+      const rpParams = Router.routeProcessor5Params(
         poolMap,
         route,
         fromToken,
@@ -232,7 +226,7 @@ async function startInfinitTest(args: {
       try {
         const { result: amountOutReal } = (await fork.client.simulateContract({
           address: fork.RouteProcessorAddress,
-          abi: RouteProcessor4.abi,
+          abi: RouteProcessor5.abi,
           functionName: 'processRoute',
           args: [
             rpParams.tokenIn as Address,
@@ -252,8 +246,8 @@ async function startInfinitTest(args: {
             : Number(amountOutReal - amountOutExp) / route.amountOut
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
-            route.legs.length - 1
-          } pools ${timingLine} diff = ${diff > 0 ? '+' : ''}${diff} `,
+            route.legs.length
+          } pools diff = ${diff > 0 ? '+' : ''}${diff} `,
         )
         if (Math.abs(Number(diff)) > 0.001)
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
@@ -281,7 +275,7 @@ it.skip('Extractor BSC infinite work test', async () => {
   })
 })
 
-it.skip('Extractor Ethereum infinite work test', async () => {
+it.only('Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     transport: publicClientConfig[ChainId.ETHEREUM].transport,
     chain: publicClientConfig[ChainId.ETHEREUM].chain as Chain,
