@@ -185,10 +185,10 @@ async function startInfinitTest(args: {
 
       const pools = pools1
       const poolMap = new Map<string, PoolCode>()
-      pools.forEach((p) => poolMap.set(p.pool.address, p))
+      pools.forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       nativeProvider
         .getCurrentPoolList()
-        .forEach((p) => poolMap.set(p.pool.address, p))
+        .forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       const fromToken = Native.onChain(chainId)
       const toToken = tokens[i]
       const route = Router.findBestRoute(
@@ -199,7 +199,7 @@ async function startInfinitTest(args: {
         toToken,
         30e9,
       )
-      console.log(11, poolMap.size)
+
       if (route.status === RouteStatus.NoWay) {
         console.log(
           `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ${timingLine}`,
