@@ -104,6 +104,7 @@ async function startInfinitTest(args: {
   transport?: Transport
   providerURL: string
   chain: Chain
+  forkBlockNumber?: bigint
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
   tickHelperContractV3: Address
@@ -124,7 +125,8 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  const forkBlockNumber = 20139501n //await client.getBlockNumber()
+  const forkBlockNumber =
+    args.forkBlockNumber ?? (await client.getBlockNumber())
   const fork = await createForkRouteProcessor5(
     args.providerURL,
     forkBlockNumber,
@@ -136,18 +138,18 @@ async function startInfinitTest(args: {
     `RP4 deploy address: ${fork.RouteProcessorAddress} at block ${forkBlockNumber} chainId ${chainId}`,
   )
 
-  const extractor = new Extractor({ ...args, client })
+  const extractor = new Extractor({ ...args, client: fork.client })
   await extractor.start(
     BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []),
   )
 
-  const nativeProvider = new NativeWrapProvider(chainId, client)
+  const nativeProvider = new NativeWrapProvider(chainId, fork.client)
   const tokenManager = new TokenManager(
     extractor.extractorV2?.multiCallAggregator ||
       (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator) ||
       extractor.extractorCurve?.multiCallAggregator,
     __dirname,
-    `tokens-${client.chain?.id}`,
+    `tokens-${fork.client.chain?.id}`,
   )
   await tokenManager.addCachedTokens()
 
@@ -173,87 +175,84 @@ async function startInfinitTest(args: {
       })
   })
 
-  for (;;) {
-    for (let i = 0; i < tokens.length; ++i) {
-      await delay(1000)
-      const pools = extractor.getCurrentPoolCodes()
-      const poolMap = new Map<string, PoolCode>()
-      pools.forEach((p) => poolMap.set(p.pool.uniqueID(), p))
-      nativeProvider
-        .getCurrentPoolList()
-        .forEach((p) => poolMap.set(p.pool.uniqueID(), p))
-      const fromToken = Native.onChain(chainId)
-      const toToken = tokens[i]
-      debugger
-      const route = Router.findBestRoute(
-        poolMap,
-        chainId,
-        fromToken,
-        getBigInt(1e18),
-        toToken,
-        30e9,
+  for (let i = 0; i < tokens.length; ++i) {
+    await delay(1000)
+    const pools = extractor.getCurrentPoolCodes()
+    const poolMap = new Map<string, PoolCode>()
+    pools.forEach((p) => poolMap.set(p.pool.uniqueID(), p))
+    nativeProvider
+      .getCurrentPoolList()
+      .forEach((p) => poolMap.set(p.pool.uniqueID(), p))
+    const fromToken = Native.onChain(chainId)
+    const toToken = tokens[i]
+    const route = Router.findBestRoute(
+      poolMap,
+      chainId,
+      fromToken,
+      getBigInt(1e18),
+      toToken,
+      30e9,
+    )
+
+    if (route.status === RouteStatus.NoWay) {
+      console.log(
+        `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`,
       )
-
-      if (route.status === RouteStatus.NoWay) {
-        console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status}`,
-        )
-        continue
-      }
-      const rpParams = Router.routeProcessor5Params(
-        poolMap,
-        route,
-        fromToken,
-        toToken,
-        fork.RouteProcessorAddress,
-        fork.RouteProcessorAddress,
+      continue
+    }
+    const rpParams = Router.routeProcessor5Params(
+      poolMap,
+      route,
+      fromToken,
+      toToken,
+      fork.RouteProcessorAddress,
+      fork.RouteProcessorAddress,
+    )
+    if (rpParams === undefined) {
+      console.log(
+        `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`,
       )
-      if (rpParams === undefined) {
-        console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${route.status} ROUTE CREATION FAILED !!!`,
-        )
-        continue
-      }
+      continue
+    }
 
-      // console.log(
-      //   'ROUTE:',
-      //   route.legs.map(
-      //     (l) =>
-      //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
-      //   )
-      // )
+    // console.log(
+    //   'ROUTE:',
+    //   route.legs.map(
+    //     (l) =>
+    //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
+    //   )
+    // )
 
-      try {
-        const { result: amountOutReal } = (await fork.client.simulateContract({
-          address: fork.RouteProcessorAddress,
-          abi: RouteProcessor5.abi,
-          functionName: 'processRoute',
-          args: [
-            rpParams.tokenIn as Address,
-            BigInt(rpParams.amountIn.toString()),
-            rpParams.tokenOut as Address,
-            0n,
-            rpParams.to as Address,
-            rpParams.routeCode as Address, // !!!!
-          ],
-          value: BigInt(rpParams.value?.toString() as string),
-          account: args.account,
-        })) as { result: bigint }
-        const amountOutExp = BigInt(route.amountOutBI.toString())
-        const diff =
-          amountOutExp === 0n
-            ? amountOutReal - amountOutExp
-            : Number(amountOutReal - amountOutExp) / route.amountOut
-        console.log(
-          `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
-            route.legs.length
-          } pools diff = ${diff > 0 ? '+' : ''}${diff} `,
-        )
-        if (Math.abs(Number(diff)) > 0.001)
-          console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
-      } catch (e) {
-        console.log(`Routing failed. No connection ? ${e}`)
-      }
+    try {
+      const { result: amountOutReal } = (await fork.client.simulateContract({
+        address: fork.RouteProcessorAddress,
+        abi: RouteProcessor5.abi,
+        functionName: 'processRoute',
+        args: [
+          rpParams.tokenIn as Address,
+          BigInt(rpParams.amountIn.toString()),
+          rpParams.tokenOut as Address,
+          0n,
+          rpParams.to as Address,
+          rpParams.routeCode as Address, // !!!!
+        ],
+        value: BigInt(rpParams.value?.toString() as string),
+        account: args.account,
+      })) as { result: bigint }
+      const amountOutExp = BigInt(route.amountOutBI.toString())
+      const diff =
+        amountOutExp === 0n
+          ? amountOutReal - amountOutExp
+          : Number(amountOutReal - amountOutExp) / route.amountOut
+      console.log(
+        `Routing: ${fromToken.symbol} => ${toToken.symbol} ${
+          route.legs.length
+        } pools diff = ${diff > 0 ? '+' : ''}${diff} `,
+      )
+      if (Math.abs(Number(diff)) > 0.001)
+        console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
+    } catch (e) {
+      console.log(`Routing failed. No connection ? ${e}`)
     }
   }
 }
@@ -275,7 +274,7 @@ it.skip('Extractor BSC infinite work test', async () => {
   })
 })
 
-it.only('Extractor Ethereum infinite work test', async () => {
+it.skip('Extractor Ethereum infinite work test', async () => {
   await startInfinitTest({
     transport: publicClientConfig[ChainId.ETHEREUM].transport,
     chain: publicClientConfig[ChainId.ETHEREUM].chain as Chain,
@@ -289,6 +288,7 @@ it.only('Extractor Ethereum infinite work test', async () => {
     cacheDir: './cache',
     logDepth: 300,
     logging: true,
-    providerURL: `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcId}`,
+    providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+    forkBlockNumber: 20139500n,
   })
 })
