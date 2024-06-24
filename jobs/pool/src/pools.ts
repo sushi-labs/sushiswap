@@ -240,6 +240,24 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
   return result
 }
 
+async function tryGetSushiV2Pools(...args: Parameters<typeof getSushiV2Pools>) {
+  return getSushiV2Pools(...args).catch((e) => {
+    if (e instanceof Error) {
+      console.error(e.message)
+    }
+    return []
+  })
+}
+
+async function tryGetSushiV3Pools(...args: Parameters<typeof getSushiV3Pools>) {
+  return getSushiV3Pools(...args).catch((e) => {
+    if (e instanceof Error) {
+      console.error(e.message)
+    }
+    return []
+  })
+}
+
 async function fetchPairs(
   chainId: SushiSwapV2ChainId | SushiSwapV3ChainId,
   protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3',
@@ -258,7 +276,7 @@ async function fetchPairs(
         pools1m,
         pools2m,
       ] = await Promise.all([
-        getSushiV2Pools(
+        tryGetSushiV2Pools(
           {
             chainId,
             first: Infinity,
@@ -266,7 +284,7 @@ async function fetchPairs(
           SUBGRAPH_REQUEST_OPTIONS,
         ),
         blocks.oneHour
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -278,7 +296,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoHour
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -290,7 +308,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.oneDay
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -302,7 +320,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoDay
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -314,7 +332,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.oneWeek
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -326,7 +344,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoWeek
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -338,7 +356,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.oneMonth
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -350,7 +368,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoMonth
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -398,7 +416,7 @@ async function fetchPairs(
         pools1m,
         pools2m,
       ] = await Promise.all([
-        getSushiV3Pools(
+        tryGetSushiV3Pools(
           {
             chainId: chainId as SushiSwapV3ChainId,
             first: Infinity,
@@ -406,7 +424,7 @@ async function fetchPairs(
           SUBGRAPH_REQUEST_OPTIONS,
         ),
         blocks.oneHour
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -418,7 +436,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoHour
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -430,7 +448,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.oneDay
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -442,7 +460,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoDay
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -454,7 +472,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.oneWeek
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -466,7 +484,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoWeek
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -478,7 +496,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.oneMonth
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -490,7 +508,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoMonth
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -667,10 +685,15 @@ function transformV2(queryResult: {
     ]),
   )
 
+  const chainsToSkip = new Set<ChainId>()
   const tokens: Prisma.TokenCreateManyInput[] = []
 
   return {
-    pools: queryResult.data.currentPools.map((pair) => {
+    pools: queryResult.data.currentPools.flatMap((pair) => {
+      if (chainsToSkip.has(queryResult.chainId)) {
+        return []
+      }
+
       tokens.push(
         Prisma.validator<Prisma.TokenCreateManyInput>()({
           id: pair.token0.id.toLowerCase(),
@@ -703,6 +726,30 @@ function transformV2(queryResult: {
       const currentVolumeUSD = Number(pair.volumeUSD)
       const currentLiquidityUSD = Number(pair.liquidityUSD)
       const currentFeesUSD = Number(pair.volumeUSD * 0.003)
+
+      const anyNotCurrent =
+        oneHourData.get(pair.id) ||
+        twoHourData.get(pair.id) ||
+        oneDayData.get(pair.id) ||
+        twoDayData.get(pair.id) ||
+        oneWeekData.get(pair.id) ||
+        twoWeekData.get(pair.id) ||
+        oneMonthData.get(pair.id) ||
+        twoMonthData.get(pair.id)
+
+      // A way to prevent old data (thanks TheGraph!) from being added
+      if (anyNotCurrent && anyNotCurrent.volumeUSD > currentVolumeUSD) {
+        console.warn(
+          'Ignoring chain',
+          queryResult.chainId,
+          'Old Volume:',
+          anyNotCurrent.volumeUSD,
+          'Current Volume:',
+          currentVolumeUSD,
+        )
+        chainsToSkip.add(queryResult.chainId)
+        return []
+      }
 
       const feeApr1h = calculateFeeApr(
         AprTimeRange.ONE_HOUR,
@@ -952,8 +999,14 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
       },
     ]),
   )
+
+  const chainsToSkip = new Set<ChainId>()
   const tokens: Prisma.TokenCreateManyInput[] = []
-  const poolsTransformed = queryResult.data.currentPools.map((pair) => {
+  const poolsTransformed = queryResult.data.currentPools.flatMap((pair) => {
+    if (chainsToSkip.has(queryResult.chainId)) {
+      return []
+    }
+
     tokens.push(
       Prisma.validator<Prisma.TokenCreateManyInput>()({
         id: pair.token0.id.toLowerCase(),
@@ -985,6 +1038,30 @@ function transformV3(queryResult: { chainId: ChainId; data: V3Data }) {
     const currentVolumeUSD = Number(pair.volumeUSD)
     const currentLiquidityUSD = Number(pair.liquidityUSD)
     const currentFeesUSD = Number(pair.feesUSD)
+
+    const anyNotCurrent =
+      oneHourData.get(pair.id) ||
+      twoHourData.get(pair.id) ||
+      oneDayData.get(pair.id) ||
+      twoDayData.get(pair.id) ||
+      oneWeekData.get(pair.id) ||
+      twoWeekData.get(pair.id) ||
+      oneMonthData.get(pair.id) ||
+      twoMonthData.get(pair.id)
+
+    // A way to prevent old data (thanks TheGraph!) from being added
+    if (anyNotCurrent && anyNotCurrent.volumeUSD > currentVolumeUSD) {
+      console.warn(
+        'Ignoring chain',
+        queryResult.chainId,
+        'Old Volume:',
+        anyNotCurrent.volumeUSD,
+        'Current Volume:',
+        currentVolumeUSD,
+      )
+      chainsToSkip.add(queryResult.chainId)
+      return []
+    }
 
     const feeApr1h = calculateFeeApr(
       AprTimeRange.ONE_HOUR,
