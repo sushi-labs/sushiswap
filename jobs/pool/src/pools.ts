@@ -240,6 +240,24 @@ async function extract(protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3') {
   return result
 }
 
+async function tryGetSushiV2Pools(...args: Parameters<typeof getSushiV2Pools>) {
+  return getSushiV2Pools(...args).catch((e) => {
+    if (e instanceof Error) {
+      console.error(e.message)
+    }
+    return []
+  })
+}
+
+async function tryGetSushiV3Pools(...args: Parameters<typeof getSushiV3Pools>) {
+  return getSushiV3Pools(...args).catch((e) => {
+    if (e instanceof Error) {
+      console.error(e.message)
+    }
+    return []
+  })
+}
+
 async function fetchPairs(
   chainId: SushiSwapV2ChainId | SushiSwapV3ChainId,
   protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3',
@@ -258,7 +276,7 @@ async function fetchPairs(
         pools1m,
         pools2m,
       ] = await Promise.all([
-        getSushiV2Pools(
+        tryGetSushiV2Pools(
           {
             chainId,
             first: Infinity,
@@ -266,7 +284,7 @@ async function fetchPairs(
           SUBGRAPH_REQUEST_OPTIONS,
         ),
         blocks.oneHour
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -278,7 +296,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoHour
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -290,7 +308,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.oneDay
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -302,7 +320,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoDay
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -314,7 +332,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.oneWeek
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -326,7 +344,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoWeek
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -338,7 +356,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.oneMonth
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -350,7 +368,7 @@ async function fetchPairs(
             )
           : ([] as SushiV2Pools),
         blocks.twoMonth
-          ? getSushiV2Pools(
+          ? tryGetSushiV2Pools(
               {
                 chainId,
                 block: {
@@ -398,7 +416,7 @@ async function fetchPairs(
         pools1m,
         pools2m,
       ] = await Promise.all([
-        getSushiV3Pools(
+        tryGetSushiV3Pools(
           {
             chainId: chainId as SushiSwapV3ChainId,
             first: Infinity,
@@ -406,7 +424,7 @@ async function fetchPairs(
           SUBGRAPH_REQUEST_OPTIONS,
         ),
         blocks.oneHour
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -418,7 +436,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoHour
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -430,7 +448,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.oneDay
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -442,7 +460,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoDay
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -454,7 +472,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.oneWeek
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -466,7 +484,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoWeek
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -478,7 +496,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.oneMonth
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
@@ -490,7 +508,7 @@ async function fetchPairs(
             )
           : ([] as SushiV3Pools),
         blocks.twoMonth
-          ? getSushiV3Pools(
+          ? tryGetSushiV3Pools(
               {
                 chainId: chainId as SushiSwapV3ChainId,
                 block: {
