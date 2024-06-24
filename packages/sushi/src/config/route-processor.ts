@@ -296,7 +296,7 @@ export const ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS = [
   ChainId.CORE,
   ChainId.CRONOS,
   ChainId.BLAST,
-  ChainId.FLARE
+  ChainId.FLARE,
 ] as const
 export type RouteProcessor4ChainId =
   (typeof ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS)[number]
