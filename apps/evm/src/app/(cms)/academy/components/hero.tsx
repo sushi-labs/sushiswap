@@ -14,7 +14,7 @@ export function Hero() {
   return (
     <section
       className={classNames(
-        'flex sm:pt-[70px] flex-col items-center max-w-[870px] mx-auto pt-10 pb-8 sm:pb-12',
+        'flex flex-col items-center max-w-[870px] mx-auto',
         DEFAULT_SIDE_PADDING,
       )}
     >

@@ -7,7 +7,6 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
 
-const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
 const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 
 /** @type {import('next').NextConfig} */
@@ -78,14 +77,6 @@ const nextConfig = bundleAnalyzer({
   },
   async rewrites() {
     return [
-      {
-        source: '/academy',
-        destination: `${ACADEMY_URL}/academy`,
-      },
-      {
-        source: '/academy/:path*',
-        destination: `${ACADEMY_URL}/academy/:path*`,
-      },
       {
         source: '/furo',
         destination: `${FURO_URL}/furo`,

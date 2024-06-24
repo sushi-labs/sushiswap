@@ -50,18 +50,18 @@ export const Media: FC<MediaProps> = ({
 
   return (
     <NextImage
-      alt={alternativeText || ''}
-      className={className}
-      height={layout !== 'fill' ? height || _height || 400 : undefined}
-      layout={layout}
-      objectFit={objectFit}
       quality={quality}
+      className={className}
+      layout={layout}
+      height={layout !== 'fill' ? height || _height || 400 : undefined}
+      width={layout !== 'fill' ? width || _width || 640 : undefined}
+      objectFit={objectFit}
       src={getOptimizedMedia({
         metadata: image.provider_metadata,
         width,
         height,
       })}
-      width={layout !== 'fill' ? width || _width || 640 : undefined}
+      alt={alternativeText || ''}
     />
   )
 }

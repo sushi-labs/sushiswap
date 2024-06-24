@@ -31,28 +31,36 @@ export const academySearchSchema = z.object({
     .string()
     .optional()
     .transform((search) => search || undefined),
-  categories: z
+  category: z
     .string()
     .optional()
-    .transform((categories) =>
-      categories && categories !== ',' ? categories.split(',') : undefined,
-    ),
+    .transform((search) => search || undefined),
+  difficulty: z
+    .string()
+    .optional()
+    .transform((search) => search || undefined),
+  sorting: z
+    .string()
+    .optional()
+    .transform((search) => search || undefined),
 })
 
 export const AcademySearchProvider: FC<AcademySearchProvider> = ({
   children,
 }) => {
   const urlFilters = useTypedSearchParams(academySearchSchema.partial())
-  const { search, categories } = urlFilters
+  const { search, category, difficulty, sorting } = urlFilters
 
   return (
     <FilterContext.Provider
       value={useMemo(
         () => ({
           search: search,
-          categories: categories,
+          category: category,
+          difficulty: difficulty,
+          sorting: sorting,
         }),
-        [search, categories],
+        [search, category, difficulty, sorting],
       )}
     >
       {children}
@@ -75,9 +83,9 @@ export const useSetAcademySearch = () => {
 
   const setFilters: Dispatch<SetStateAction<typeof urlFilters>> = (filters) => {
     if (typeof filters === 'function') {
-      void push(parseArgs(filters(urlFilters)))
+      void push(parseArgs(filters(urlFilters)), { scroll: false })
     } else {
-      void push(parseArgs(filters))
+      void push(parseArgs(filters), { scroll: false })
     }
   }
 
