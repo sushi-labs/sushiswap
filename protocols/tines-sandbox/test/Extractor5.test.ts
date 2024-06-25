@@ -152,7 +152,6 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
-  debugger
   const extractor = new Extractor({ ...args, client })
   await extractor.start(
     BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []),
