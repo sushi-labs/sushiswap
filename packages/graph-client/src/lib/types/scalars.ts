@@ -3,5 +3,5 @@ export type Scalars = {
   BigDecimal: string
   Bytes: `0x${string}`
   DateTime: string
-  JSON: Record<string, unknown>
+  JSON: object
 }
