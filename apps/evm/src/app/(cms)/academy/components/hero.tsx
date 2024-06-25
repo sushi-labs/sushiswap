@@ -18,13 +18,13 @@ export function Hero() {
         DEFAULT_SIDE_PADDING,
       )}
     >
-      <div className="relative w-[280px] sm:w-[520px] h-[75px] sm:h-[135px] text-slate-50">
-        <h1 className="text-4xl sm:text-7xl absolute top-0 left-0">Sushi</h1>
-        <h1 className="text-4xl font-bold sm:text-7xl absolute bottom-0 right-0">
+      <div className="relative w-[320px] sm:w-[520px] h-[95px] sm:h-[135px] text-slate-50">
+        <h1 className="text-5xl sm:text-7xl absolute top-0 left-0">Sushi</h1>
+        <h1 className="text-5xl font-bold sm:text-7xl absolute bottom-0 right-0">
           Academy
         </h1>
       </div>
-      <span className="mt-3 text-sm text-center text-slate-500 sm:text-slate-300 sm:text-xl">
+      <span className="mt-3 text-sm text-center text-slate-300 sm:text-base md:text-xl">
         Demystifying DeFi - everything you need to know in one place. For
         beginners to advanced users, and everyone in between.
       </span>

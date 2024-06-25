@@ -19,7 +19,9 @@ interface ArticleListClient {
 }
 
 function Shell({ children }: { children: React.ReactNode[] }) {
-  return <div className="grid grid-cols-3 gap-8">{children}</div>
+  return (
+    <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-8">{children}</div>
+  )
 }
 
 export function ArticleListClient({
@@ -104,6 +106,7 @@ export function ArticleListClient({
           <Loader size={16} />
         </div>
       }
+      className="!overflow-visible"
     >
       <Shell>
         {articles.map((article) => (

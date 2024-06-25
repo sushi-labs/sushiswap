@@ -6,7 +6,8 @@ import Link from 'next/link'
 
 export function ViewMoreButton({
   includeFilters,
-}: { includeFilters?: boolean }) {
+  className,
+}: { includeFilters?: boolean; className?: string }) {
   const href =
     includeFilters && typeof window !== 'undefined'
       ? `/academy/explore${window.location.search || ''}`
@@ -18,7 +19,7 @@ export function ViewMoreButton({
         icon={PlusCircleIcon}
         iconProps={{ fill: '#3B7EF6' }}
         variant="secondary"
-        className="hidden sm:flex"
+        className={className}
       >
         View More
       </Button>

@@ -1,6 +1,5 @@
 import { getDifficulties, getProducts } from '@sushiswap/graph-client/strapi'
 import {
-  Container,
   EXPLORE_NAVIGATION_LINKS,
   NavigationContainer,
   NavigationListItem,
@@ -28,39 +27,34 @@ export interface HeaderSection {
   href?: string
   links?: HeaderLink[]
   isExternal?: boolean
+  className?: string
 }
 
-const PRODUCTS_ORDER = [
-  'trident',
-  'furo',
-  'sushixswap',
-  'onsen',
-  'kashi',
-  'bentobox',
-]
+const PRODUCTS_ORDER = ['furo', 'sushixswap', 'onsen', 'bentobox']
 
 export async function Header() {
-  const products = await getProducts()
-  const difficulties = await getDifficulties()
+  const [products, difficulties] = await Promise.all([
+    getProducts(),
+    getDifficulties(),
+  ])
 
-  const sortedProducts = products
-    .sort((a, b) =>
-      PRODUCTS_ORDER.indexOf(a.slug as (typeof PRODUCTS_ORDER)[number]) >
-      PRODUCTS_ORDER.indexOf(b.slug as (typeof PRODUCTS_ORDER)[number])
-        ? 1
-        : -1,
-    )
-    .filter((product) => product.slug !== 'miso')
+  const sortedProducts = products.sort((a, b) =>
+    PRODUCTS_ORDER.indexOf(a.slug as (typeof PRODUCTS_ORDER)[number]) >
+    PRODUCTS_ORDER.indexOf(b.slug as (typeof PRODUCTS_ORDER)[number])
+      ? 1
+      : -1,
+  )
 
   const navData: HeaderSection[] = [
     { title: 'Academy', href: '/academy' },
-    { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
+    { title: 'Blog', href: '/blog' },
     {
       title: 'Products',
       links: sortedProducts.map(({ longName, slug }) => ({
         name: longName,
         href: `/academy/products/${slug}`,
       })),
+      className: 'hidden md:flex',
     },
     {
       title: 'Learn',
@@ -72,73 +66,72 @@ export async function Header() {
           isExternal: isTechnical,
         }
       }),
+      className: 'hidden md:flex',
     },
   ]
 
   return (
-    <Container maxWidth="6xl" className="mx-auto">
-      <NavigationContainer variant="transparent">
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="w-[400px] gap-3 p-4">
-                  {EXPLORE_NAVIGATION_LINKS.map((component) => (
-                    <NavigationListItem
-                      legacyBehavior={true}
-                      key={component.title}
-                      title={component.title}
-                      href={component.href}
-                    >
-                      {component.description}
-                    </NavigationListItem>
-                  ))}
-                  {/* <OnramperButton>
+    <NavigationContainer variant="transparent">
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="w-[400px] gap-3 p-4">
+                {EXPLORE_NAVIGATION_LINKS.map((component) => (
+                  <NavigationListItem
+                    legacyBehavior={true}
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                  >
+                    {component.description}
+                  </NavigationListItem>
+                ))}
+                {/* <OnramperButton>
                     <NavigationListItem title="Buy Crypto">
                       Need to buy some more crypto?
                     </NavigationListItem>
                   </OnramperButton> */}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            {navData.map(({ title, href, links }) => {
-              if (href && !links) {
-                return (
-                  <NavigationMenuItem key={href}>
-                    <NavigationMenuLink
-                      href={href}
-                      className={buttonVariants({ variant: 'ghost' })}
-                    >
-                      {title}
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                )
-              }
-
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          {navData.map(({ title, href, links, className }) => {
+            if (href && !links) {
               return (
-                <NavigationMenuItem key={title}>
-                  <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="w-[400px] gap-3 p-4">
-                      {links?.map(({ name, href }) => (
-                        <NavigationListItem
-                          legacyBehavior={true}
-                          key={`${title}-${name}`}
-                          title={name.split('-')?.[0]}
-                          href={href}
-                        >
-                          {name.split('-')?.[1]}
-                        </NavigationListItem>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
+                <NavigationMenuItem key={href} className={className}>
+                  <NavigationMenuLink
+                    href={href}
+                    className={buttonVariants({ variant: 'ghost' })}
+                  >
+                    {title}
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
               )
-            })}
-          </NavigationMenuList>
-        </NavigationMenu>
-      </NavigationContainer>
-    </Container>
+            }
+
+            return (
+              <NavigationMenuItem key={title} className={className}>
+                <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="w-[400px] gap-3 p-4">
+                    {links?.map(({ name, href }) => (
+                      <NavigationListItem
+                        legacyBehavior={true}
+                        key={`${title}-${name}`}
+                        title={name.split('-')?.[0]}
+                        href={href}
+                      >
+                        {name.split('-')?.[1]}
+                      </NavigationListItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            )
+          })}
+        </NavigationMenuList>
+      </NavigationMenu>
+    </NavigationContainer>
   )
 }

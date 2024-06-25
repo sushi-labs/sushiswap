@@ -22,8 +22,8 @@ function Input({
     <input
       className={classNames(
         className,
-        'w-full text-sm truncate bg-transparent sm:text-lg border-none focus:ring-0',
-        'sm:placeholder:text-slate-400 placeholder:font-normal placeholder:text-slate-50 sm:font-medium',
+        'w-full truncate bg-transparent md:text-lg border-none focus:ring-0',
+        'placeholder:text-slate-400 placeholder:font-normal font-medium',
       )}
       type="text"
       placeholder={placeholder}
@@ -57,14 +57,14 @@ export function SearchBox() {
     >
       <>
         <Input
-          className="block lg:hidden"
+          className="block md:hidden"
           placeholder="Search"
           value={value}
           setValue={setValue}
           navigate={navigate}
         />
         <Input
-          className="lg:block hidden"
+          className="md:block hidden"
           placeholder="Search for the product/topic you want to learn about"
           value={value}
           setValue={setValue}

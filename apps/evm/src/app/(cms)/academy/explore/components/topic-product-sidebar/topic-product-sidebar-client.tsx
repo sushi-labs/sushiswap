@@ -1,15 +1,23 @@
 'use client'
 
 import type { Product, Topic } from '@sushiswap/graph-client/strapi'
-import { classNames } from '@sushiswap/ui'
 import { useCallback, useState } from 'react'
 import {
   useAcademySearch,
   useSetAcademySearch,
 } from '../../../components/academy-search-provider'
+import { TopicProductBarClientDesktop } from './topic-product-sidebar-client-desktop'
+import { TopicProductBarClientMobile } from './topic-product-sidebar-client-mobile'
 
 interface TopicProductBarClient {
   categories: (Topic | Product)[]
+}
+
+export interface TopicProductBarClientGeneric {
+  categories: (Topic | Product)[]
+  selectedValue: string | undefined
+  setValue: (value: string) => void
+  className?: string
 }
 
 export function TopicProductSidebarClient({
@@ -20,12 +28,11 @@ export function TopicProductSidebarClient({
 
   const [value, setValue] = useState<string | undefined>(selectedCategory)
 
-  const FilterButton = ({ category }: { category: Topic | Product }) => {
-    const isSelected = value === category.slug
+  const onSelect = useCallback(
+    (categorySlug: string) => {
+      const isSelected = categorySlug === value
 
-    const onClick = useCallback(() => {
-      const newCategory = isSelected ? undefined : category.slug
-
+      const newCategory = isSelected ? undefined : categorySlug
       setValue(newCategory)
 
       setFilters((filters) => {
@@ -34,27 +41,24 @@ export function TopicProductSidebarClient({
           category: newCategory,
         }
       })
-    }, [isSelected, category.slug])
-
-    return (
-      <div
-        onClick={onClick}
-        onKeyDown={onClick}
-        className={classNames(
-          'text-sm w-full cursor-pointer rounded-xl hover:bg-blue hover:bg-opacity-70 px-4 py-2',
-          isSelected && 'bg-blue bg-opacity-80',
-        )}
-      >
-        {category.name}
-      </div>
-    )
-  }
+    },
+    [setFilters, value],
+  )
 
   return (
-    <div className="flex-wrap gap-2 flex sm:gap-1">
-      {categories.map((category) => (
-        <FilterButton key={category.slug} category={category} />
-      ))}
-    </div>
+    <>
+      <TopicProductBarClientMobile
+        categories={categories}
+        selectedValue={value}
+        setValue={onSelect}
+        className="block md:hidden"
+      />
+      <TopicProductBarClientDesktop
+        categories={categories}
+        selectedValue={value}
+        setValue={onSelect}
+        className="hidden md:flex"
+      />
+    </>
   )
 }

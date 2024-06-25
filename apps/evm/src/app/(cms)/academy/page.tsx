@@ -33,13 +33,13 @@ export default async function Page() {
       <Container
         maxWidth="6xl"
         className={classNames(
-          'pb-16 mx-auto sm:pb-32 space-y-32 sm:pt-16 pt-8',
+          'pb-16 mx-auto sm:pb-32 space-y-16 md:space-y-32 sm:pt-16 pt-8',
           DEFAULT_SIDE_PADDING,
         )}
       >
-        <div className="flex items-center flex-col space-y-12">
+        <div className="flex items-center flex-col space-y-8 sm:space-y-12">
           <Hero />
-          <div className="w-3/4">
+          <div className="md:w-3/4">
             <SearchBox />
           </div>
         </div>

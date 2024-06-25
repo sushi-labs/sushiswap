@@ -14,8 +14,8 @@ export async function Hero() {
 
   return (
     <section className="bg-gradient-to-b from-slate-900 via-slate-800/15 to-blue/5">
-      <Container className="z-10 px-4 py-20 mx-auto" maxWidth="5xl">
-        <div className="relative pt-10">
+      <Container className="z-10 px-4 py-10 md:py-20 mx-auto" maxWidth="5xl">
+        <div className="relative md:pt-10">
           <ArticleHeader article={article} />
           <ArticleAuthors article={article} />
           <div className="mt-8">

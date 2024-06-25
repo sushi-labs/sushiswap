@@ -89,15 +89,11 @@ export function DifficultyFilterDropdownClient({
         </SelectContent>
       </Select>
       <div
-        className="h-5 w-5 !cursor-pointer"
+        className="md:h-5 h-[18px] md:w-5 w-[18px] !cursor-pointer"
         onClick={() => onSelect(value || '')}
         onKeyDown={() => onSelect(value || '')}
       >
-        <XMarkIcon
-          width={20}
-          height={20}
-          className={classNames(!value && 'hidden')}
-        />
+        <XMarkIcon className={classNames(!value && 'hidden')} />
       </div>
     </div>
   )

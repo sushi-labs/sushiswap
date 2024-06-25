@@ -10,14 +10,14 @@ export function ExplorePageHeader() {
         maxWidth="6xl"
         className={classNames(
           DEFAULT_SIDE_PADDING,
-          'flex items-center justify-between h-full gap-4 mx-auto',
+          'flex items-center justify-between h-full mx-auto',
         )}
       >
         <div className="absolute bottom-0 right-0 opacity-20">
           <LooperBg className="sm:w-[570px] sm:h-[226px] h-[113px] w-[285px]" />
         </div>
 
-        <div className="flex items-center justify-between h-full w-full z-10">
+        <div className="flex items-center justify-between h-full w-full z-10 gap-10">
           <div>
             <p className="text-sm sm:text-xl sm:font-medium">Articles</p>
             <p className="text-3xl sm:text-5xl sm:font-medium">
