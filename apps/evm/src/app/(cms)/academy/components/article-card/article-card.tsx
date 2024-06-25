@@ -4,6 +4,7 @@ import format from 'date-fns/format'
 import Link from 'next/link'
 import { Media } from 'src/app/(cms)/components/media'
 import { isMediaVideo } from 'src/app/(cms)/lib/media'
+import { DifficultyLabel } from '../difficulty-label'
 
 interface ArticleCard {
   article: AcademyArticle
@@ -32,7 +33,7 @@ export function ArticleCard({ article }: ArticleCard) {
         <div className="grid gap-4 p-6">
           <div className="flex items-center w-full gap-5">
             {product && <Chip variant="ghost">{product.name}</Chip>}
-            {/* <DifficultyLabel isCard article={article} /> */}
+            <DifficultyLabel isCard article={article} />
           </div>
 
           <p className="text-lg font-semibold  leading-5 text-slate-50 line-clamp-2">
