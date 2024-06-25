@@ -3,13 +3,14 @@ import { Container, classNames } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { Article, WithContext } from 'schema-dts'
-import { Media } from '../../components/media'
 import { DEFAULT_SIDE_PADDING } from '../../constants'
 import { getGhostBody } from '../../lib/ghost/ghost'
 import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
+import { ArticleList } from '../components/article-list/article-list'
+import { ViewMoreButton } from '../components/view-more-button'
 import { ArticleHeader } from './components/article-header'
-import { Breadcrumb } from './components/breadcrumb'
 import { ArticleLinks } from './components/article-links'
+import { Breadcrumb } from './components/breadcrumb'
 
 interface Props {
   params: {
@@ -25,6 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } = await getAcademyArticles({
     filters: { slug: { eq: params['article-slug'] } },
   })
+
+  if (!article) return {}
 
   const cover = getOptimizedMedia({
     metadata: article.cover.provider_metadata,
@@ -79,7 +82,7 @@ export default async function Page({ params }: Props) {
 
     const moreArticlesP = getAcademyArticles({
       filters: { slug: { ne: params['article-slug'] } },
-      pagination: { limit: 2 },
+      pagination: { limit: 3 },
     })
 
     article = (await articleP).articles[0]
@@ -135,11 +138,7 @@ export default async function Page({ params }: Props) {
         <Breadcrumb article={article} />
         <ArticleHeader article={article} />
 
-        <div
-          className={classNames(
-            'sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]',
-          )}
-        >
+        <div className="sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]">
           <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] sm:flex sticky h-fit top-28">
             <ArticleLinks article={article} />
             <hr className="border border-slate-200/5" />
@@ -151,6 +150,19 @@ export default async function Page({ params }: Props) {
               }}
             />
           </article>
+        </div>
+
+        <div className="space-y-8 flex justify-center items-center flex-col w-full">
+          <div className="space-y-10 w-full">
+            <span className="text-xl font-bold sm:text-2xl">
+              Similar Articles
+            </span>
+            <ArticleList
+              articles={moreArticles}
+              className="grid gap-5 md:gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))] w-full"
+            />
+          </div>
+          <ViewMoreButton />
         </div>
       </Container>
     </section>

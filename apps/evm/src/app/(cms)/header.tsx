@@ -53,7 +53,8 @@ export async function Header() {
     .filter((product) => product.slug !== 'miso')
 
   const navData: HeaderSection[] = [
-    { title: 'Academy', href: '/' },
+    { title: 'Academy', href: '/academy' },
+    { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
     {
       title: 'Products',
       links: sortedProducts.map(({ longName, slug }) => ({
@@ -67,13 +68,11 @@ export async function Header() {
         const isTechnical = slug === 'technical'
         return {
           name: shortDescription,
-          href: isTechnical ? DOCS_URL : `/articles?difficulty=${slug}`,
+          href: isTechnical ? DOCS_URL : `/academy/explore?difficulty=${slug}`,
           isExternal: isTechnical,
         }
       }),
     },
-    { title: 'Blog', href: 'https://www.sushi.com/blog', isExternal: true },
-    { title: 'About', href: '/about' },
   ]
 
   return (

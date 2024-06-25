@@ -49,7 +49,7 @@ export default async function Page() {
             <TopicProductBar />
             <DifficultyFilterBar />
           </div>
-          <div className="flex w-full flex-col justify-center space-y-10 items-center">
+          <div className="flex w-full flex-col justify-center space-y-8 items-center">
             <ArticleListFiltered
               initialArticles={articles}
               initialMeta={meta}
@@ -58,7 +58,7 @@ export default async function Page() {
             <ViewMoreButton includeFilters />
           </div>
         </div>
-        <div className="flex w-full flex-col justify-center space-y-10 items-center">
+        <div className="flex w-full flex-col justify-center space-y-8 items-center">
           <div className="space-y-10 w-full">
             <span className="text-xl font-bold sm:text-2xl">
               Latest Releases
