@@ -14,9 +14,14 @@ export function ArticleCard({ article }: ArticleCard) {
   const product = article.products[0]
 
   return (
-    <Link href={`/academy/${article.slug}`}>
-      <div className="relative h-[436px] sm:h-[446px] rounded-lg bg-slate-800/50 sm:bg-[#182030] overflow-hidden sm:ease-in-out sm:duration-300 sm:hover:scale-105 sm:hover:shadow-[4px_4px_27px_rgba(0,0,0,0.25)_0px_24px_24px_-16px_rgba(15,15,15,0.2)] sm:z-10 sm:hover:z-20">
-        <div className="relative h-[192px] sm:h-[202px]">
+    <Link href={`/academy/${article.slug}`} className="">
+      <div
+        className={classNames(
+          'relative h-[436px] sm:h-[446px] rounded-lg bg-slate-800/50 sm:bg-[#182030] overflow-hidden sm:z-10',
+          'sm:ease-in-out sm:duration-300 sm:hover:scale-105 sm:hover:shadow-[4px_4px_27px_rgba(0,0,0,0.25)_0px_24px_24px_-16px_rgba(15,15,15,0.2)] sm:hover:z-20',
+        )}
+      >
+        <div className="h-[192px] sm:h-[202px] relative">
           {article.cover ? (
             <Media
               className={classNames(

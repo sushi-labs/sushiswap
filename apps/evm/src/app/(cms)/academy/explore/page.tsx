@@ -24,12 +24,14 @@ export default async function Page() {
           maxWidth="6xl"
           className={classNames(
             DEFAULT_SIDE_PADDING,
-            'grid grid-cols-7 h-full gap-12 mx-auto sm:pt-12 pt-6 pb-16',
+            'grid grid-cols-7 h-full gap-12 mx-auto sm:pt-12 pt-6 pb-16 relative',
           )}
         >
-          <div className="col-span-2 space-y-12 sticky">
-            <SearchFilter />
-            <TopicProductSidebar />
+          <div className="col-span-2">
+            <div className="space-y-12 sticky top-12">
+              <SearchFilter />
+              <TopicProductSidebar />
+            </div>
           </div>
           <div className="space-y-12 w-full col-span-5 top-[104px]">
             <div className="flex flex-row items-center justify-between gap-4">

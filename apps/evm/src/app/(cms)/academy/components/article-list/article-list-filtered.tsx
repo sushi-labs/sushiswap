@@ -117,17 +117,20 @@ export function ArticleListFiltered({
   }
 
   return (
-    <InfiniteScroll
-      dataLength={articles.length}
-      next={fetchNextPage}
-      hasMore={infinite && articles.length < (meta?.total || -Infinity)}
-      loader={
-        <div className="flex justify-center w-full py-4">
-          <Loader size={16} />
-        </div>
-      }
-    >
-      <ArticleList articles={articles} className={className} />
-    </InfiniteScroll>
+    <div className="first:w-full">
+      <InfiniteScroll
+        dataLength={articles.length}
+        next={fetchNextPage}
+        hasMore={infinite && articles.length < (meta?.total || -Infinity)}
+        loader={
+          <div className="flex justify-center w-full py-4">
+            <Loader size={16} />
+          </div>
+        }
+        className="!overflow-visible"
+      >
+        <ArticleList articles={articles} className={className} />
+      </InfiniteScroll>
+    </div>
   )
 }
