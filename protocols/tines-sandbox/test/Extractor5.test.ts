@@ -152,6 +152,7 @@ async function startInfinitTest(args: {
   })
   const chainId = client.chain?.id as ChainId
 
+  debugger
   const extractor = new Extractor({ ...args, client })
   await extractor.start(
     BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []),
@@ -201,10 +202,10 @@ async function startInfinitTest(args: {
 
       const pools = pools1
       const poolMap = new Map<string, PoolCode>()
-      pools.forEach((p) => poolMap.set(p.pool.address, p))
+      pools.forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       nativeProvider
         .getCurrentPoolList()
-        .forEach((p) => poolMap.set(p.pool.address, p))
+        .forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       const fromToken = Native.onChain(chainId)
       const toToken = tokens[i]
       const route = Router.findBestRoute(
@@ -225,7 +226,7 @@ async function startInfinitTest(args: {
       route.legs.forEach((l) => {
         if (l.poolType === PoolType.Curve)
           console.log(
-            `Curve ${l.poolAddress} ${l.tokenFrom.symbol}=>${
+            `Curve pool: ${l.poolAddress} ${l.tokenFrom.symbol}=>${
               l.tokenTo.symbol
             } ${l.absolutePortion * 100}%`,
           )
