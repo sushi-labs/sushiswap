@@ -10,29 +10,11 @@ import { SteerPoolCard } from './SteerPoolCard'
 type RequiredPool = PoolWithIncentives<PoolWithFeeAprs>
 
 interface SteerCarousel {
-  pool?: RequiredPool
-  vaults?: SteerVault[]
-  isLoading?: boolean
-}
-
-export const SteerCarousel: FC<SteerCarousel> = ({
-  pool,
-  vaults,
-  isLoading = false,
-}) => {
-  if (isLoading || !pool || !vaults) {
-    return <_SteerCarouselLoading />
-  }
-
-  return <_SteerCarousel pool={pool} vaults={vaults} />
-}
-
-interface _SteerCarousel {
   pool: RequiredPool
   vaults: SteerVault[]
 }
 
-const _SteerCarousel: FC<_SteerCarousel> = ({ pool, vaults }) => {
+export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
   const enabledVaults = useMemo(
     () => vaults.filter((vault) => vault.isEnabled),
     [vaults],
@@ -65,7 +47,7 @@ const _SteerCarousel: FC<_SteerCarousel> = ({ pool, vaults }) => {
   )
 }
 
-const _SteerCarouselLoading: FC = () => {
+export const SteerCarouselLoading: FC = () => {
   const slides = useMemo(() => [1, 2, 3], [])
   const render = useCallback(() => {
     return (
