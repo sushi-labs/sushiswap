@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import {
+  CurveWhitelistConfig,
   Extractor,
   FactoryV2,
   FactoryV3,
@@ -34,7 +35,7 @@ import {
   PoolCode,
   Router,
 } from 'sushi/router'
-import { RouteStatus, getBigInt } from 'sushi/tines'
+import { PoolType, RouteStatus, getBigInt } from 'sushi/tines'
 import { http, Address, Hex, Transport, createPublicClient } from 'viem'
 import {
   Chain,
@@ -132,6 +133,7 @@ async function startInfinitTest(args: {
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
+  curveConfig?: CurveWhitelistConfig
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   cacheDir: string
@@ -219,6 +221,16 @@ async function startInfinitTest(args: {
         )
         continue
       }
+
+      route.legs.forEach((l) => {
+        if (l.poolType === PoolType.Curve)
+          console.log(
+            `Curve ${l.poolAddress} ${l.tokenFrom.symbol}=>${
+              l.tokenTo.symbol
+            } ${l.absolutePortion * 100}%`,
+          )
+      })
+
       const rpParams = Router.routeProcessor5Params(
         poolMap,
         route,
@@ -286,6 +298,9 @@ it.only('Extractor Ethereum infinite work test', async () => {
     factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
     tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
     tickHelperContractAlgebra: '' as Address,
+    curveConfig: {
+      minPoolLiquidityLimitUSD: 1000,
+    },
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
