@@ -396,8 +396,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       : _ratio
 
     const apr =
-      ((poolStats?.feeApr1d ?? 0) + (poolStats?.incentiveApr ?? 0)) /
-      100 /
+      (poolStats?.feeApr1d ?? 0) /
       (yieldRate === YieldRatePeriod.MONTHLY
         ? 12
         : yieldRate === YieldRatePeriod.DAILY
