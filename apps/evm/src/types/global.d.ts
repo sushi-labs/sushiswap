@@ -3,3 +3,5 @@ export declare global {
     useSwapApi?: boolean
   }
 }
+
+declare module '*.png'
