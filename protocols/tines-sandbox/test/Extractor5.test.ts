@@ -247,7 +247,7 @@ async function startInfinitTest(args: {
             rpParams.routeCode as Hex,
           ],
           value: BigInt(rpParams.value?.toString() as string),
-          account: args.account ?? '0x0000000000000000000000000000000000000777', // not 0x0 because of 'ERC20: transfer from the zero address' issue
+          account: args.account,
         })) as { result: bigint }
         const amountOutExp = BigInt(route.amountOutBI.toString())
         const diff =
