@@ -71,7 +71,7 @@ export async function Header() {
   ]
 
   return (
-    <NavigationContainer variant="transparent">
+    <NavigationContainer>
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
