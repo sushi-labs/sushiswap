@@ -500,6 +500,7 @@ export class Extractor {
       let poolsV2: PoolCode[] = []
       let watchersV3: UniV3PoolWatcher[] = []
       let watchersAlg: AlgebraPoolWatcher[] = []
+      let poolsCurve: PoolCode[] = []
       let promises: Promise<void>[] = []
 
       const tokenMap = new Map<string, Token>()
@@ -557,10 +558,10 @@ export class Extractor {
       if (this.extractorCurve) {
         const { prefetched, fetching } =
           this.extractorCurve.getPoolsForTokens(tokensUnique)
-        poolsV2 = prefetched
+        poolsCurve = prefetched
         promises = fetching.map(async (p) => {
           const pc = await p
-          if (pc !== undefined) poolsV2.push(pc)
+          if (pc !== undefined) poolsCurve.push(pc)
         })
       }
 
@@ -584,7 +585,7 @@ export class Extractor {
         }
       }
       ++this.requestFinishedNum
-      return poolsV3.concat(poolsAlg).concat(poolsV2)
+      return poolsV3.concat(poolsAlg).concat(poolsV2).concat(poolsCurve)
     } catch (e) {
       ++this.requestFinishedNum
       ++this.requestFailedNum
