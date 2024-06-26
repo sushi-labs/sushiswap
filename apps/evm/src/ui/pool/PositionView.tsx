@@ -536,12 +536,12 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     {formatPercent(
                                       priceLower
                                         ?.subtract(
-                                          invert
+                                          inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
                                         )
                                         .divide(
-                                          invert
+                                          inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
                                         )
@@ -558,12 +558,12 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                       {formatPercent(
                                         priceLower
                                           ?.subtract(
-                                            invert
+                                            inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
                                           )
                                           .divide(
-                                            invert
+                                            inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
                                           )
@@ -617,12 +617,12 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     {formatPercent(
                                       priceUpper
                                         ?.subtract(
-                                          invert
+                                          inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
                                         )
                                         .divide(
-                                          invert
+                                          inverted
                                             ? pool.token1Price
                                             : pool.token0Price,
                                         )
@@ -639,12 +639,12 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                       {formatPercent(
                                         priceUpper
                                           ?.subtract(
-                                            invert
+                                            inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
                                           )
                                           .divide(
-                                            invert
+                                            inverted
                                               ? pool.token1Price
                                               : pool.token0Price,
                                           )
