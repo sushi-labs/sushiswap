@@ -39,9 +39,9 @@ const connectors = connectorsForWallets(
     {
       groupName: 'Others',
       wallets: [
+        injectedWallet,
         metaMaskWallet,
         walletConnectWallet,
-        injectedWallet,
         coinbaseWallet,
         safeWallet,
         argentWallet,
