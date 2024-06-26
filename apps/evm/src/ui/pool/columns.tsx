@@ -284,12 +284,12 @@ export const VALUE_COLUMN = {
     (Number(row.unstakedBalance + row.stakedBalance) /
       Number(row.pool.liquidity)) *
     Number(row.pool.liquidityUSD),
-  cell: (props) => (
+  cell: ({ row: { original } }) => (
     <span>
       {formatUSD(
-        (Number(props.row.original.unstakedBalance) /
-          Number(props.row.original.pool.liquidity)) *
-          Number(props.row.original.pool.liquidityUSD),
+        (Number(original.unstakedBalance + original.stakedBalance) /
+          Number(original.pool.liquidity)) *
+          Number(original.pool.liquidityUSD),
       )}
     </span>
   ),
