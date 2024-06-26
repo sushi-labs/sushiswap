@@ -9,9 +9,9 @@ import {
   CardHeader,
   CardTitle,
   IconButton,
-  ShuffleIcon,
   Switch,
 } from '@sushiswap/ui'
+import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useCallback, useState, useTransition } from 'react'

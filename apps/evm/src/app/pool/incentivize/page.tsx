@@ -27,7 +27,7 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { useMemo, useState } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'

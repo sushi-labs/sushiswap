@@ -3,16 +3,15 @@ import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   ButtonProps,
   IconButton,
+  SettingsModule,
+  SettingsOverlay,
+  Widget,
   WidgetAction,
   WidgetDescription,
   WidgetFooter,
+  WidgetHeader,
   WidgetTitle,
 } from '@sushiswap/ui'
-import {
-  SettingsModule,
-  SettingsOverlay,
-} from '@sushiswap/ui/components/settings'
-import { Widget, WidgetHeader } from '@sushiswap/ui/components/widget'
 import { useParams } from 'next/navigation'
 import React, { FC, useEffect } from 'react'
 import { PoolAddCurrencyInput } from 'ui/pool/pool/add/pool-add-currency-input'

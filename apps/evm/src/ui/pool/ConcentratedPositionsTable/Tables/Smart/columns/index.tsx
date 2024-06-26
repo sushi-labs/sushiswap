@@ -1,7 +1,6 @@
 import {
   Badge,
   Currency,
-  NetworkIcon,
   SkeletonCircle,
   SkeletonText,
   Tooltip,
@@ -10,8 +9,9 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
-import { formatNumber } from 'sushi/format'
+import { formatNumber, formatPercent } from 'sushi/format'
 
 import { SteerAccountPositionExtended } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
 import { unwrapToken } from 'sushi/currency'
@@ -72,7 +72,7 @@ export const STEER_NAME_COLUMN: ColumnDef<
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                    {formatNumber(pool.swapFee * 100)}%
+                    {formatPercent(pool.swapFee)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>

@@ -1,4 +1,5 @@
-import { add, getUnixTime } from 'date-fns'
+import { add } from 'date-fns/add'
+import { getUnixTime } from 'date-fns/getUnixTime'
 import type { Address, Hex, PublicClient } from 'viem'
 import { encodePacked, getCreate2Address, keccak256 } from 'viem/utils'
 import { getReservesAbi } from '../../abi/index.js'

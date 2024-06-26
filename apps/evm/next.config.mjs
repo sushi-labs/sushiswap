@@ -2,13 +2,11 @@
 import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
-// import withBundleAnalyzer from '@next/bundle-analyzer'
-// const bundleAnalyzer = withBundleAnalyzer({ enabled: false })
-// issue with the above..
-const bundleAnalyzer = (a) => a // withBundleAnalyzer({ enabled: true })
+import withBundleAnalyzer from '@next/bundle-analyzer'
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: false && process.env.NODE_ENV !== 'development',
+})
 
-const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
-const BLOG_URL = process.env.BLOG_URL || 'https://blog.sushi.com'
 const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 
 /** @type {import('next').NextConfig} */
@@ -20,6 +18,7 @@ const nextConfig = bundleAnalyzer({
     },
   },
   experimental: {
+    ...defaultNextConfig.experimental,
     testProxy: true,
   },
   async redirects() {
@@ -78,22 +77,6 @@ const nextConfig = bundleAnalyzer({
   },
   async rewrites() {
     return [
-      {
-        source: '/academy',
-        destination: `${ACADEMY_URL}/academy`,
-      },
-      {
-        source: '/academy/:path*',
-        destination: `${ACADEMY_URL}/academy/:path*`,
-      },
-      {
-        source: '/blog',
-        destination: `${BLOG_URL}/blog`,
-      },
-      {
-        source: '/blog/:path*',
-        destination: `${BLOG_URL}/blog/:path*`,
-      },
       {
         source: '/furo',
         destination: `${FURO_URL}/furo`,

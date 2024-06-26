@@ -14,7 +14,7 @@ export function SteerTokenDistributionBar({
 }: SteerTokenDistributionBarProps) {
   const { data: prices } = usePrices({ chainId: vault.chainId })
   const { data: tokenRatios } = useQuery({
-    queryKey: ['tokenRatios', vault, prices],
+    queryKey: ['tokenRatios', JSON.stringify(vault), prices],
     queryFn: async () => {
       if (!prices) return
 

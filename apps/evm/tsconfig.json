@@ -27,6 +27,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "**/*.png",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"

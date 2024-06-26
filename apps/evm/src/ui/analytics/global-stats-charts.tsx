@@ -9,17 +9,17 @@ import {
   Button,
   Card,
   CardHeader,
-  CheckIcon,
   Chip,
   Command,
   CommandGroup,
   CommandItem,
-  NetworkIcon,
   Popover,
   PopoverContent,
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
+import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { Chain, ChainId } from 'sushi/chain'
 import { ANALYTICS_CHAIN_IDS } from '../../config'
 import { TVLChart } from './tvl-chart'

@@ -13,7 +13,6 @@ import {
   Label,
   LinkExternal,
   Message,
-  NetworkIcon,
   NetworkSelector,
   SelectIcon,
   Separator,
@@ -21,6 +20,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useCallback, useEffect } from 'react'
 import { DropzoneOptions, useDropzone } from 'react-dropzone'
 import { useForm } from 'react-hook-form'

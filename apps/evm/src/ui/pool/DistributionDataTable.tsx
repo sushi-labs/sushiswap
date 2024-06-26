@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { FC, useMemo } from 'react'
 
 import { rewardPerDay } from '../../lib/functions'
