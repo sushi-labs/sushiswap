@@ -15,7 +15,6 @@ import { gtagEvent } from '@sushiswap/ui'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { ChainId } from 'sushi'
 import { publicTransports } from 'sushi/config'
-import { blockTime } from 'test/constants'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import { Writeable } from 'zod'
 
