@@ -281,7 +281,8 @@ export const VALUE_COLUMN = {
   id: 'value',
   header: 'Value',
   accessorFn: (row) =>
-    (Number(row.unstakedBalance) / Number(row.pool.liquidity)) *
+    (Number(row.unstakedBalance + row.stakedBalance) /
+      Number(row.pool.liquidity)) *
     Number(row.pool.liquidityUSD),
   cell: (props) => (
     <span>
