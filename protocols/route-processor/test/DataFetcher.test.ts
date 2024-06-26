@@ -385,7 +385,7 @@ async function runTest() {
           }
         }
         assert.ok(
-          !!invalidDexes.length,
+          invalidDexes.length === 0,
           `invalid fees/ticks at ${chName} for: ${invalidDexes.join(', ')}`,
         )
 
