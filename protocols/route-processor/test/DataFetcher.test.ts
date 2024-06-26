@@ -374,17 +374,26 @@ async function runTest() {
 
         dataFetcher.stopDataFetching()
 
+        // univ3 based dexes should all have correct fees/ticks
+        const invalidDexes = []
         for (const dex of dataFetcher.providers) {
           const dexName = dex.getType()
           // if the current provider is univ3 type, ensure its fees and ticks
           if (UniV3LiquidityProviders.some((v) => v === dexName)) {
             const res = await (dex as UniswapV3BaseProvider).ensureFeeAndTicks()
-            assert.ok(res, `invalid fees/ticks for ${dexName} at ${chName}`)
+            if (!res) invalidDexes.push(dexName)
           }
         }
+        assert.ok(
+          !!invalidDexes.length,
+          `invalid fees/ticks at ${chName} for: ${invalidDexes.join(', ')}`,
+        )
 
         // should have found route
-        assert.ok(foundRouteReports.some((v) => v))
+        assert.ok(
+          foundRouteReports.some((v) => v),
+          'did not find any valid route',
+        )
 
         // should not have any missing dex
         const { hasMissingDex, missingDexNames } =

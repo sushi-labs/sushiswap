@@ -155,7 +155,7 @@ export const UniV2LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.Camelot,
   LiquidityProviders.Enosys,
   LiquidityProviders.BlazeSwap,
-]
+] as const
 
 export const UniV3LiquidityProviders = [
   LiquidityProviders.SushiSwapV3,

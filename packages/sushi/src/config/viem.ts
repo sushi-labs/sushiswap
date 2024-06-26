@@ -518,7 +518,7 @@ export const publicTransports = {
   [ChainId.GNOSIS]: http(gnosis.rpcUrls.default.http[0]),
   [ChainId.HARMONY]: http(harmonyOne.rpcUrls.default.http[0]),
   [ChainId.KAVA]: http(kava.rpcUrls.default.http[0]),
-  [ChainId.METIS]: http(metis.rpcUrls.default.http[0]),
+  [ChainId.METIS]: http('https://metis-mainnet.public.blastapi.io'),
   [ChainId.MOONBEAM]: http(moonbeam.rpcUrls.default.http[0]),
   [ChainId.MOONRIVER]: http(moonriver.rpcUrls.default.http[0]),
   [ChainId.OPTIMISM]: http(optimism.rpcUrls.default.http[0]),

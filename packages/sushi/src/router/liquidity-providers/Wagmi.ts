@@ -3,7 +3,27 @@ import { ChainId } from '../../chain/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
+enum WagmiFeeAmount {
+  /** 0.01% */
+  LOWEST = 500,
+  /** 0.15% */
+  LOW = 1500,
+  /** 0.3% */
+  MEDIUM = 3000,
+  /** 1% */
+  HIGH = 10000,
+}
+
+const WagmiTickSpacing: Record<WagmiFeeAmount, number> = {
+  500: 10,
+  1500: 0,
+  3000: 60,
+  10_000: 200,
+}
+
 export class WagmiProvider extends UniswapV3BaseProvider {
+  override FEE = WagmiFeeAmount
+  override TICK_SPACINGS = WagmiTickSpacing
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ETHEREUM]: '0xB9a14EE1cd3417f3AcC988F61650895151abde24',
@@ -32,6 +52,16 @@ export class WagmiProvider extends UniswapV3BaseProvider {
       [ChainId.METIS]: '0x428065998a96F82bf66A0A427A157429A6Fdd649',
     } as const
     super(chainId, web3Client, factory, initCodeHash, tickLens)
+
+    // ticks for Kava and Metis are different than other supported chains
+    if (chainId === ChainId.KAVA || chainId === ChainId.METIS) {
+      this.TICK_SPACINGS = {
+        500: 10,
+        1500: 30,
+        3000: 60,
+        10_000: 200,
+      }
+    }
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.Wagmi
