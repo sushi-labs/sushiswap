@@ -9,7 +9,6 @@ import {
   safeWallet,
   trustWallet,
   walletConnectWallet,
-  zerionWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
@@ -39,17 +38,12 @@ const pollingInterval = new Proxy(
 const connectors = connectorsForWallets(
   [
     {
+      groupName: 'Recommended',
+      wallets: [metaMaskWallet, coinbaseWallet, trustWallet],
+    },
+    {
       groupName: 'Others',
-      wallets: [
-        injectedWallet,
-        metaMaskWallet,
-        coinbaseWallet,
-        trustWallet,
-        zerionWallet,
-        argentWallet,
-        walletConnectWallet,
-        safeWallet,
-      ],
+      wallets: [injectedWallet, walletConnectWallet, argentWallet, safeWallet],
     },
   ],
   {
