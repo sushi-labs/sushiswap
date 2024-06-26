@@ -1,13 +1,24 @@
 {
-  "extends": ["//"],
-  "pipeline": {
+  "extends": [
+    "//"
+  ],
+  "tasks": {
     "build": {
-      "outputs": [".next/**", "!.next/cache/**"],
-      "dependsOn": ["^build"],
-      "env": [".env"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ],
+      "dependsOn": [
+        "^build"
+      ],
+      "env": [
+        ".env"
+      ]
     },
     "check": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     }
   }

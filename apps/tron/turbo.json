@@ -1,6 +1,8 @@
 {
-  "extends": ["//"],
-  "pipeline": {
+  "extends": [
+    "//"
+  ],
+  "tasks": {
     "build": {
       "inputs": [
         "public",
@@ -12,38 +14,53 @@
         "sentry.edge.config.ts",
         "sentry.server.config.ts",
         "tailwind.config.js",
-        "tsconfig.json"
-      ],
-      "outputs": [".next/**", "!.next/cache/**"],
-      "dependsOn": ["^build"],
-      "dotEnv": [
+        "tsconfig.json",
         ".env.production.local",
         ".env.local",
         ".env.production",
         ".env"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ],
+      "dependsOn": [
+        "^build"
       ]
     },
-
     "check": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^build"],
-      "dotEnv": [
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false,
+      "persistent": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
         ".env.development.local",
         ".env.local",
         ".env.development",
         ".env"
-      ],
-      "cache": false,
-      "persistent": true
+      ]
     },
     "test": {
-      "inputs": ["test/**"],
-      "outputs": ["test-results/**"],
-      "dependsOn": ["build"],
-      "dotEnv": [".env.test.local", ".env.test", ".env"]
+      "inputs": [
+        "test/**",
+        ".env.test.local",
+        ".env.test",
+        ".env"
+      ],
+      "outputs": [
+        "test-results/**"
+      ],
+      "dependsOn": [
+        "build"
+      ]
     }
   }
 }
