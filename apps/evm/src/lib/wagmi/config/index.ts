@@ -1,3 +1,5 @@
+'use client'
+
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { cookieToInitialState } from '@wagmi/core'
 import { createProductionConfig } from './production'
