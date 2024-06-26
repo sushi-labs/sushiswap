@@ -7,6 +7,7 @@ interface FormattedNumberProps {
 
 const FormattedNumber: React.FC<FormattedNumberProps> = ({ number }) => {
   if (typeof number === 'undefined') return undefined
+  if (number === '∞') return number
 
   const numberStr = withoutScientificNotation(number)
 

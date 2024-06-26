@@ -43,7 +43,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'
 import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { Bound } from '../../lib/constants'
@@ -525,7 +525,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                 number={formatTickPrice({
                                   price: priceLower,
                                   atLimit: tickAtLimit,
-                                  direction: Bound.UPPER,
+                                  direction: Bound.LOWER,
                                 })}
                               />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
