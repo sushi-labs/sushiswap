@@ -1,15 +1,15 @@
 import { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
-// import {
-//   PANCAKESWAP_V3_FEE_SPACING_MAP,
-//   PancakeSwapV3FeeAmount,
-// } from '../../config/index.js'
+import {
+  PANCAKESWAP_V3_FEE_SPACING_MAP,
+  PancakeSwapV3FeeAmount,
+} from '../../config/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
 export class PancakeSwapV3Provider extends UniswapV3BaseProvider {
-  // override FEE = PancakeSwapV3FeeAmount
-  // override TICK_SPACINGS = PANCAKESWAP_V3_FEE_SPACING_MAP
+  override FEE = PancakeSwapV3FeeAmount
+  override TICK_SPACINGS = PANCAKESWAP_V3_FEE_SPACING_MAP
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ARBITRUM]: '0x41ff9AA7e16B8B1a8a8dc4f0eFacd93D02d071c9',
