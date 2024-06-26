@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "//"
-  ],
+  "extends": ["//"],
   "tasks": {
     "build": {
       "outputs": [
@@ -10,40 +8,23 @@
         "cache/**",
         "!cache/solidity-files-cache.json"
       ],
-      "dependsOn": [
-        "^build",
-        "export"
-      ],
-      "env": [
-        "TS_NODE_TRANSPILE_ONLY"
-      ],
+      "dependsOn": ["^build", "export"],
+      "env": ["TS_NODE_TRANSPILE_ONLY"],
       "cache": true
     },
     "check": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "export": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "deployments/**"
-      ],
-      "outputs": [
-        "exports/**"
-      ],
+      "dependsOn": ["^build"],
+      "inputs": ["deployments/**"],
+      "outputs": ["exports/**"],
       "cache": true
     },
     "node": {
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "deployments/**"
-      ],
+      "dependsOn": ["build"],
+      "outputs": ["deployments/**"],
       "persistent": true
     }
   }

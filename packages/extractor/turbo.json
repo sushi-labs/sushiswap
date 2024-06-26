@@ -1,18 +1,9 @@
 {
-  "extends": [
-    "//"
-  ],
+  "extends": ["//"],
   "tasks": {
     "start": {
-      "dependsOn": [
-        "^build"
-      ],
-      "env": [
-        "PORT",
-        "ALCHEMY_ID",
-        "DRPC_ID",
-        "SENTRY_DSN"
-      ],
+      "dependsOn": ["^build"],
+      "env": ["PORT", "ALCHEMY_ID", "DRPC_ID", "SENTRY_DSN"],
       "cache": false,
       "persistent": true
     }

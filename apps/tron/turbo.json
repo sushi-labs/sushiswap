@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "//"
-  ],
+  "extends": ["//"],
   "tasks": {
     "build": {
       "inputs": [
@@ -20,24 +18,15 @@
         ".env.production",
         ".env"
       ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**"
-      ],
-      "dependsOn": [
-        "^build"
-      ]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": ["^build"]
     },
     "check": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "dev": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true,
       "inputs": [
@@ -49,18 +38,9 @@
       ]
     },
     "test": {
-      "inputs": [
-        "test/**",
-        ".env.test.local",
-        ".env.test",
-        ".env"
-      ],
-      "outputs": [
-        "test-results/**"
-      ],
-      "dependsOn": [
-        "build"
-      ]
+      "inputs": ["test/**", ".env.test.local", ".env.test", ".env"],
+      "outputs": ["test-results/**"],
+      "dependsOn": ["build"]
     }
   }
 }
