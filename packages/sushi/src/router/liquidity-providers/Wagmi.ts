@@ -15,10 +15,10 @@ enum WagmiFeeAmount {
 }
 
 const WagmiTickSpacing: Record<WagmiFeeAmount, number> = {
-  500: 10,
-  1500: 0,
-  3000: 60,
-  10_000: 200,
+  [WagmiFeeAmount.LOWEST]: 10,
+  [WagmiFeeAmount.LOW]: 30,
+  [WagmiFeeAmount.MEDIUM]: 60,
+  [WagmiFeeAmount.HIGH]: 200,
 }
 
 export class WagmiProvider extends UniswapV3BaseProvider {
@@ -52,16 +52,6 @@ export class WagmiProvider extends UniswapV3BaseProvider {
       [ChainId.METIS]: '0x428065998a96F82bf66A0A427A157429A6Fdd649',
     } as const
     super(chainId, web3Client, factory, initCodeHash, tickLens)
-
-    // ticks for Kava and Metis are different than other supported chains
-    if (chainId === ChainId.KAVA || chainId === ChainId.METIS) {
-      this.TICK_SPACINGS = {
-        500: 10,
-        1500: 30,
-        3000: 60,
-        10_000: 200,
-      }
-    }
   }
   getType(): LiquidityProviders {
     return LiquidityProviders.Wagmi

@@ -5,27 +5,7 @@ import { SushiSwapV3FeeAmount } from '../../config/sushiswap-v3.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
-enum ThrusterV3FeeAmount {
-  /** 0.01% */
-  LOWEST = 100,
-  /** 0.05% */
-  LOW = 500,
-  /** 0.3% */
-  MEDIUM = 3000,
-  /** 1% */
-  HIGH = 10000,
-}
-
-const ThrusterV3TickSpacing: Record<ThrusterV3FeeAmount, number> = {
-  100: 0,
-  500: 10,
-  3000: 60,
-  10_000: 200,
-}
-
 export class ThrusterV3Provider extends UniswapV3BaseProvider {
-  override FEE = ThrusterV3FeeAmount
-  override TICK_SPACINGS = ThrusterV3TickSpacing
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.BLAST]: '0xa08ae3d3f4dA51C22d3c041E468bdF4C61405AaB',
@@ -100,7 +80,8 @@ export class ThrusterV3Provider extends UniswapV3BaseProvider {
 
     // fetched fee map to ticks should match correctly with hardcoded literals in the dex
     return results.every(
-      (v, i) => this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v,
+      (v, i) =>
+        this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v || v === 0,
     )
   }
 }

@@ -3,27 +3,7 @@ import { ChainId } from '../../chain/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
-enum MonoswapV3FeeAmount {
-  /** 0.01% */
-  LOWEST = 100,
-  /** 0.05% */
-  LOW = 500,
-  /** 0.3% */
-  MEDIUM = 3000,
-  /** 1% */
-  HIGH = 10000,
-}
-
-const MonoswapV3TickSpacing: Record<MonoswapV3FeeAmount, number> = {
-  100: 0,
-  500: 10,
-  3000: 60,
-  10_000: 200,
-}
-
 export class MonoswapV3Provider extends UniswapV3BaseProvider {
-  override FEE = MonoswapV3FeeAmount
-  override TICK_SPACINGS = MonoswapV3TickSpacing
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.BLAST]: '0x48d0F09710794313f33619c95147F34458BF7C3b',

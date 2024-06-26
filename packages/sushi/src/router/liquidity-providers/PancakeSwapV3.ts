@@ -108,7 +108,9 @@ export class PancakeSwapV3Provider extends UniswapV3BaseProvider {
 
     // fetched fee map to ticks should match correctly with hardcoded literals in the dex
     return results.every(
-      (v, i) => this.TICK_SPACINGS[feeList[i] as PancakeSwapV3FeeAmount] === v,
+      (v, i) =>
+        this.TICK_SPACINGS[feeList[i] as PancakeSwapV3FeeAmount] === v ||
+        v === 0,
     )
   }
 }

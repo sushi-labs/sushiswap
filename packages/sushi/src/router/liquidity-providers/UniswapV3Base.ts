@@ -561,8 +561,10 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     })) as number[]
 
     // fetched fee map to ticks should match correctly with hardcoded literals in the dex
+    // a tick can be 0 if there is no pools deployed with that fee yet
     return results.every(
-      (v, i) => this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v,
+      (v, i) =>
+        this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v || v === 0,
     )
   }
 }
