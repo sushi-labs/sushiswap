@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { ChainId, TESTNET_CHAIN_IDS, chainName } from 'sushi/chain'
 import {
+  BUSD,
   DAI,
   FRAX,
   SUSHI,
@@ -75,6 +76,7 @@ function findRoute(
   fromToken: Type,
   toToken: Type,
   chainId: ChainId,
+  liquidityProviders?: LiquidityProviders[],
 ): boolean {
   try {
     // find the best route map
@@ -86,6 +88,7 @@ function findRoute(
       BigInt(`1${'0'.repeat(fromToken.decimals)}`),
       toToken,
       30e9,
+      liquidityProviders,
     )
     // call rp4 route data encoder to build route data
     Router.routeProcessor4Params(
@@ -152,6 +155,36 @@ async function runTest() {
             chainId,
           ),
         )
+
+        // only for pancakev3 with 0.2.5% fee pool pair
+        if (chainId === ChainId.BSC) {
+          const token = new Token({
+            chainId: ChainId.BSC,
+            address: '0x4BE35Ec329343d7d9F548d42B0F8c17FFfe07db4',
+            decimals: 18,
+            symbol: 'USDT.z',
+          })
+          allFoundPools.push(
+            await testDF(
+              chName,
+              dataFetcher,
+              token,
+              BUSD[chainId as keyof typeof BUSD],
+              'USDT.z',
+              'BUSD',
+            ),
+          )
+          // explicitly find route for pancakev3
+          const route = findRoute(
+            dataFetcher,
+            token,
+            BUSD[chainId as keyof typeof BUSD],
+            chainId,
+            [LiquidityProviders.PancakeSwapV3],
+          )
+          assert(route)
+          foundRouteReports.push(route)
+        }
 
         // only for Dfyn and JetSwap on fantom chain
         if (
