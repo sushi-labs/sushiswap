@@ -56,7 +56,7 @@ const formatValueWithSuffix = (
     maxDecimalPlaces,
   )
 
-  const formattedValue = value.toFixed(decimalCount)
+  const formattedValue = withoutScientificNotation(value.toFixed(decimalCount))
   return `${formattedValue}${suffixes[suffixIndex]}`
 }
 
