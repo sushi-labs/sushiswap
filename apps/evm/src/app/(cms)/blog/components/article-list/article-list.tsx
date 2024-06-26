@@ -8,5 +8,5 @@ export async function ArticleList() {
     pagination: { page: 0, pageSize: 9 },
   })
 
-  return <ArticleListClient initialArticles={articles} meta={meta} />
+  return <ArticleListClient initialArticles={articles} initialMeta={meta} />
 }

@@ -15,7 +15,7 @@ import { useBlogSearch } from '../blog-search-provider'
 
 interface ArticleListClient {
   initialArticles: BlogArticle[]
-  meta: BlogArticleMeta
+  initialMeta: BlogArticleMeta
 }
 
 function Shell({ children }: { children: React.ReactNode[] }) {
@@ -26,7 +26,7 @@ function Shell({ children }: { children: React.ReactNode[] }) {
 
 export function ArticleListClient({
   initialArticles,
-  meta,
+  initialMeta,
 }: ArticleListClient) {
   const { search, categories } = useBlogSearch()
 
@@ -36,9 +36,9 @@ export function ArticleListClient({
   const initialData = useMemo(() => {
     return {
       pageParams: [0],
-      pages: [initialArticles],
+      pages: [{ articles: initialArticles, meta: initialMeta }],
     }
-  }, [initialArticles])
+  }, [initialArticles, initialMeta])
 
   const queryClient = useQueryClient()
   useEffect(() => {
@@ -48,7 +48,7 @@ export function ArticleListClient({
   const { data, isLoading, isError, fetchNextPage } = useInfiniteQuery({
     queryKey: ['blog-articles-infinite', { search, categories }],
     queryFn: async ({ pageParam }) => {
-      const { articles } = await getBlogArticles({
+      const { articles, meta } = await getBlogArticles({
         pagination: { start: pageParam || 0, limit: pageSize },
         filters: {
           title: {
@@ -62,7 +62,7 @@ export function ArticleListClient({
         },
       })
 
-      return articles
+      return { articles, meta }
     },
     getNextPageParam: (_, pages) => pageSize * pages.length,
     staleTime: 3600,
@@ -75,8 +75,10 @@ export function ArticleListClient({
       return undefined
     }
 
-    return data.pages.flat()
+    return data.pages.flat().flatMap((page) => page.articles)
   }, [data])
+
+  const meta = data?.pages[0]?.meta
 
   if (isLoading) {
     return (
@@ -100,7 +102,7 @@ export function ArticleListClient({
     <InfiniteScroll
       dataLength={articles.length}
       next={fetchNextPage}
-      hasMore={articles.length < meta.total}
+      hasMore={articles.length < (meta?.total || -Infinity)}
       loader={
         <div className="flex justify-center w-full py-4">
           <Loader size={16} />
