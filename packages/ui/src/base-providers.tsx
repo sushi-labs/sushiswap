@@ -2,8 +2,8 @@
 
 import { FC, ReactNode } from 'react'
 
-import { ToastContainer } from './components/toast'
 import { ThemeProvider } from 'next-themes'
+import { ToastContainer } from './components/toast'
 
 interface BaseProvidersProps {
   children: ReactNode | ReactNode[]
