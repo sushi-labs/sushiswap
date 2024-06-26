@@ -24,7 +24,7 @@ const darkTheme: Theme = {
     modalBorder: '#00000000',
   },
   fonts: {
-    body: 'Inter',
+    body: 'var(--font-sans)',
   },
 }
 
@@ -38,6 +38,9 @@ const lightTheme: Theme = {
     modalBackground: '#ffffff',
     modalBackdrop: '#00000019',
     modalBorder: '#00000000',
+  },
+  fonts: {
+    body: 'var(--font-sans)',
   },
 }
 
