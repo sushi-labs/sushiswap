@@ -119,9 +119,12 @@ const excludedChains = [
   ChainId.BOBA_AVAX,
   ChainId.ZKSYNC_ERA,
 ]
-const chainIds = Object.values(ChainId).filter((v) =>
-  excludedChains.every((e) => v !== e),
-)
+const chainIds = Object.values(ChainId).filter((v) => {
+  if (excludedChains.every((e) => v !== e) && process?.env?.CHAIN) {
+    return v === ChainId[process.env.CHAIN as keyof typeof ChainId]
+  }
+  return false
+})
 
 async function runTest() {
   describe.only('DataFetcher Pools/Time check', async () => {

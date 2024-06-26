@@ -2,7 +2,7 @@ name: Rain CI
 on: [push]
 
 jobs:
-  install-build-lint-test:
+  router-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +21,61 @@ jobs:
 
       - name: Check ./packages/sushi Types
         run: nix develop -c pnpm exec turbo run check --filter=./packages/sushi
-
+      
       - name: Test ./packages/sushi
-        run: | 
-          nix develop -c pnpm exec turbo run test --filter=./packages/sushi
-          nix develop -c pnpm exec turbo run test --filter=./protocols/route-processor
+        run: nix develop -c pnpm exec turbo run test --filter=./packages/sushi
+
+  datafetcher-test:
+    strategy:
+      fail-fast: false
+      # chains to run datafetcher on (all supported chains)
+      matrix:
+        chain: [
+          ETHEREUM,
+          POLYGON,
+          FANTOM,
+          GNOSIS,
+          BSC,
+          ARBITRUM,
+          ARBITRUM_NOVA,
+          AVALANCHE,
+          HARMONY,
+          OKEX,
+          CELO,
+          MOONRIVER,
+          FUSE,
+          TELOS,
+          MOONBEAM,
+          OPTIMISM,
+          KAVA,
+          METIS,
+          BOBA,
+          BOBA_BNB,
+          BTTC,
+          POLYGON_ZKEVM,
+          THUNDERCORE,
+          FILECOIN,
+          HAQQ,
+          CORE,
+          LINEA,
+          BASE,
+          SCROLL,
+          ZETACHAIN,
+          CRONOS,
+          BLAST,
+          FLARE,
+        ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+
+      - name: Install deps
+        run: nix develop -c pnpm install --frozen-lockfile
+
+      - name: Test DataFecther
+        run: nix develop -c pnpm exec turbo run test --filter=./protocols/route-processor
+        env:
+          CHAIN: ${{ matrix.chain }}
