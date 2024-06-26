@@ -10,7 +10,7 @@ import {
   Toggle,
   classNames,
 } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'

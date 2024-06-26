@@ -48,7 +48,7 @@
     "@wagmi/core": "2.10.6",
     "jest": "29.7.0",
     "sushi": "workspace:*",
-    "typescript": "5.2.2"
+    "typescript": "5.4.5"
   },
   "peerDependencies": {
     "@wagmi/core": "*",

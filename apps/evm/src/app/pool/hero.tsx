@@ -11,8 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui'
 import { SelectIcon } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'
 import {

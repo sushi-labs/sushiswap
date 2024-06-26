@@ -42,7 +42,7 @@
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
-    "typescript": "5.2.2",
+    "typescript": "5.4.5",
     "vercel": "32.5.3"
   }
 }

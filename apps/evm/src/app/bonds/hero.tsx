@@ -3,7 +3,7 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { FC } from 'react'
 
 export const Hero: FC = () => {

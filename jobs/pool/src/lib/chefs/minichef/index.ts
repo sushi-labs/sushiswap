@@ -1,4 +1,4 @@
-import { daysInYear, secondsInDay } from 'date-fns'
+import { daysInYear, secondsInDay } from 'date-fns/constants'
 import { ChainId } from 'sushi/chain'
 import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
 

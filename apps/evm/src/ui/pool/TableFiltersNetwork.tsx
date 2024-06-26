@@ -16,7 +16,8 @@ import {
   CommandInput,
   CommandItem,
 } from '@sushiswap/ui'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
+import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { Chain } from 'sushi/chain'

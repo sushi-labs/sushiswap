@@ -12,7 +12,7 @@ import React, { FC } from 'react'
 import { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { Chain } from 'sushi/chain'
-import { formatNumber, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi/format'
 
 interface PositionCard {
   position: UserWithPool
@@ -55,7 +55,7 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
       <h1 className="text-2xl font-semibold dark:text-white text-gray-900">
         {token0.symbol}/{token1.symbol}{' '}
         <span className="text-sm text-gray-600 dark:text-slate-400">
-          {formatNumber(position.pool.swapFee * 100)}%
+          {formatPercent(position.pool.swapFee)}
         </span>
       </h1>
       <div className="flex flex-col gap-2 items-center py-7">

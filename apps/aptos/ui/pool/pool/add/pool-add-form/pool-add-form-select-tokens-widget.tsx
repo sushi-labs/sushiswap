@@ -1,6 +1,6 @@
 import { FormSection } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { SelectIcon } from '@sushiswap/ui/components/select'
+import { Button } from '@sushiswap/ui'
+import { SelectIcon } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { CurrencyIcon } from 'ui/common/currency/currency-icon'
 import TokenSelector from 'ui/common/token-selector/token-selector'

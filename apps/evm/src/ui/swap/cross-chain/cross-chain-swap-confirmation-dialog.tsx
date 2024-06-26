@@ -1,10 +1,8 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { Button, SquidIcon, classNames } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui'
-import { Dots } from '@sushiswap/ui'
-import { CheckMarkIcon } from '@sushiswap/ui'
-import { FailedMarkIcon } from '@sushiswap/ui'
-import { Loader } from '@sushiswap/ui'
+import { Button, Currency, Dots, Loader, classNames } from '@sushiswap/ui'
+import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
+import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
+import { SquidIcon } from '@sushiswap/ui/icons/SquidIcon'
 import { FC, ReactNode } from 'react'
 import {
   SushiXSwap2Adapter,
