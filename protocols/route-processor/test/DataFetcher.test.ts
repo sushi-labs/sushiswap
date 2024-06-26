@@ -1,7 +1,6 @@
 import assert from 'assert'
 import { ChainId, TESTNET_CHAIN_IDS, chainName } from 'sushi/chain'
 import {
-  BUSD,
   DAI,
   FRAX,
   SUSHI,
@@ -12,7 +11,13 @@ import {
   USDT,
   WNATIVE,
 } from 'sushi/currency'
-import { DataFetcher, LiquidityProviders, Router } from 'sushi/router'
+import {
+  DataFetcher,
+  LiquidityProviders,
+  Router,
+  UniV3LiquidityProviders,
+} from 'sushi/router'
+import { UniswapV3BaseProvider } from '../../../packages/sushi/dist/router/liquidity-providers/UniswapV3Base.js'
 
 async function testDF(
   _chainName: string,
@@ -169,26 +174,22 @@ async function runTest() {
               chName,
               dataFetcher,
               token,
-              BUSD[chainId as keyof typeof BUSD],
+              USDT[chainId as keyof typeof USDT],
               'USDT.z',
-              'BUSD',
+              'USDT',
             ),
           )
           const pcMap = dataFetcher.getCurrentPoolCodeMap(
             token,
-            BUSD[chainId as keyof typeof BUSD],
+            USDT[chainId as keyof typeof USDT],
           )
-          assert.ok(
-            !pcMap.get(
-              '0xB30b2030b2F950401aBCD69763e9D0F81958d72d'.toLowerCase(),
-            ),
-          )
+          assert.ok(!!pcMap.get('0xB30b2030b2F950401aBCD69763e9D0F81958d72d'))
 
           foundRouteReports.push(
             findRoute(
               dataFetcher,
               token,
-              BUSD[chainId as keyof typeof BUSD],
+              USDT[chainId as keyof typeof USDT],
               chainId,
               [LiquidityProviders.PancakeSwapV3],
             ),
@@ -372,6 +373,15 @@ async function runTest() {
         }
 
         dataFetcher.stopDataFetching()
+
+        for (const dex of dataFetcher.providers) {
+          const dexName = dex.getType()
+          // if the current provider is univ3 type, ensure its fees and ticks
+          if (UniV3LiquidityProviders.some((v) => v === dexName)) {
+            const res = await (dex as UniswapV3BaseProvider).ensureFeeAndTicks()
+            assert.ok(res, `invalid fees/ticks for ${dexName} at ${chName}`)
+          }
+        }
 
         // should have found route
         assert.ok(foundRouteReports.some((v) => v))

@@ -1,5 +1,5 @@
 import { Address, PublicClient } from 'viem'
-import { erc20Abi, tickLensAbi } from '../../abi/index.js'
+import { erc20Abi, tickLensAbi, uniswapV3FactoryAbi } from '../../abi/index.js'
 import { ChainId } from '../../chain/index.js'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config/index.js'
 import { Currency, Token, Type } from '../../currency/index.js'
@@ -535,5 +535,34 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   stopFetchPoolsData() {
     if (this.unwatchBlockNumber) this.unwatchBlockNumber()
     this.blockListener = undefined
+  }
+
+  async ensureFeeAndTicks(): Promise<boolean> {
+    const feeList = [
+      this.FEE.LOWEST,
+      this.FEE.LOW,
+      this.FEE.MEDIUM,
+      this.FEE.HIGH,
+    ] as number[]
+    const results = (await this.client.multicall({
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: false,
+      contracts: feeList.map(
+        (fee) =>
+          ({
+            chainId: this.chainId,
+            address: this.factory[this.chainId as keyof typeof this.factory]!,
+            abi: uniswapV3FactoryAbi,
+            functionName: 'feeAmountTickSpacing',
+            args: [fee],
+          }) as const,
+      ),
+    })) as number[]
+
+    // fetched fee map to ticks should match correctly with hardcoded literals in the dex
+    return results.every(
+      (v, i) => this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v,
+    )
   }
 }
