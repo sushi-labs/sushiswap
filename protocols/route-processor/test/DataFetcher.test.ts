@@ -174,16 +174,25 @@ async function runTest() {
               'BUSD',
             ),
           )
-          // explicitly find route for pancakev3
-          const route = findRoute(
-            dataFetcher,
+          const pcMap = dataFetcher.getCurrentPoolCodeMap(
             token,
             BUSD[chainId as keyof typeof BUSD],
-            chainId,
-            [LiquidityProviders.PancakeSwapV3],
           )
-          assert(route)
-          foundRouteReports.push(route)
+          assert.ok(
+            !pcMap.get(
+              '0xB30b2030b2F950401aBCD69763e9D0F81958d72d'.toLowerCase(),
+            ),
+          )
+
+          foundRouteReports.push(
+            findRoute(
+              dataFetcher,
+              token,
+              BUSD[chainId as keyof typeof BUSD],
+              chainId,
+              [LiquidityProviders.PancakeSwapV3],
+            ),
+          )
         }
 
         // only for Dfyn and JetSwap on fantom chain
