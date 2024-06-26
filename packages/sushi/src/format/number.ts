@@ -29,6 +29,7 @@ export const formatNumber = (
     value = Math.abs(value)
   }
 
+  if (value > 999_000_000_000_000) return '>999t'
   if (value === 0) return '0.00'
   if (value < 0.0001) return value.toFixed(6)
   if (value < 0.001) return value.toFixed(4)
@@ -56,7 +57,7 @@ const formatValueWithSuffix = (
     maxDecimalPlaces,
   )
 
-  const formattedValue = withoutScientificNotation(value.toFixed(decimalCount))
+  const formattedValue = value.toFixed(decimalCount)
   return `${formattedValue}${suffixes[suffixIndex]}`
 }
 
