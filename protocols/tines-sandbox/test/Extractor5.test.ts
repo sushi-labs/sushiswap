@@ -127,6 +127,8 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
+type GetTokenFunc = (e: Extractor) => Promise<Token[]>
+
 async function startInfinitTest(args: {
   transport?: Transport
   providerURL?: string
@@ -143,7 +145,7 @@ async function startInfinitTest(args: {
   maxCallsInOneBatch?: number
   RPAddress: Address
   account?: Address
-  checkTokens?: Token[]
+  checkTokens?: Token[] | GetTokenFunc
 }) {
   const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
@@ -153,9 +155,7 @@ async function startInfinitTest(args: {
   const chainId = client.chain?.id as ChainId
 
   const extractor = new Extractor({ ...args, client })
-  await extractor.start(
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []),
-  )
+  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
@@ -166,7 +166,9 @@ async function startInfinitTest(args: {
   )
   await tokenManager.addCachedTokens()
   const tokens =
-    args.checkTokens ??
+    (typeof args.checkTokens === 'function'
+      ? await args.checkTokens(extractor)
+      : args.checkTokens) ??
     BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
       Array.from(tokenManager.tokens.values()).slice(0, 100),
     )
@@ -290,12 +292,18 @@ async function startInfinitTest(args: {
   }
 }
 
-it.only('Extractor Ethereum infinite work test', async () => {
+it.only('Extractor Ethereum infinite work test (Curve)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.ETHEREUM),
+      uniswapV2Factory(ChainId.ETHEREUM),
+    ],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.ETHEREUM),
+      sushiswapV3Factory(ChainId.ETHEREUM),
+    ],
     tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
     tickHelperContractAlgebra: '' as Address,
     curveConfig: {
@@ -306,6 +314,31 @@ it.only('Extractor Ethereum infinite work test', async () => {
     logging: true,
     RPAddress: RPAddress[ChainId.ETHEREUM],
     account: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // weth to prevent 'ERC20: transfer from the zero address' issue
+    checkTokens: async (e: Extractor) => {
+      const curvePools = e
+        .getCurrentPoolCodes()
+        .map((p) => p.pool)
+        .filter((p) => p.poolType() === PoolType.Curve)
+      const tokens = curvePools
+        .flatMap((p) => [p.token0, p.token1])
+        .filter(
+          (t) =>
+            t.address &&
+            t.address.toLowerCase() !==
+              '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+        )
+        .map(
+          (t) =>
+            new Token({
+              chainId: ChainId.ETHEREUM,
+              ...t,
+            }),
+        )
+      const tokenMap = new Map<string, Token>()
+      tokens.forEach((t) => tokenMap.set(t.address, t))
+      console.log('Test tokens:', tokenMap.size)
+      return Array.from(tokenMap.values())
+    },
   })
 })
 
