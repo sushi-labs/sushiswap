@@ -1,7 +1,8 @@
 // Chip.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Chip, ChipProps, DiscordIcon } from '@sushiswap/ui'
+import { Chip, ChipProps } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import * as React from 'react'
 
 import { ViewGroup } from '../components/View'

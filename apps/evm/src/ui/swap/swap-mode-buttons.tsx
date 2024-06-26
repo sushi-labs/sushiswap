@@ -9,8 +9,8 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-  ShuffleIcon,
 } from '@sushiswap/ui'
+import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 

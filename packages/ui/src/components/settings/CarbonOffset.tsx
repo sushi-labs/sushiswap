@@ -4,7 +4,7 @@ import { useLocalStorage } from '@sushiswap/hooks'
 import React, { FC } from 'react'
 import { ChainId } from 'sushi/chain'
 
-import { NetworkIcon } from '../icons/NetworkIcon'
+import { NetworkIcon } from '../../icons/NetworkIcon'
 import { Label } from '../label'
 import { Switch } from '../switch'
 import { typographyVariants } from '../typography'

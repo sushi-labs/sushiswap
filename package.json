@@ -35,7 +35,7 @@
     "ts-jest": "29.1.1",
     "turbo": "1.12.4"
   },
-  "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e",
+  "packageManager": "pnpm@8.15.8",
   "engines": {
     "node": ">=20.x",
     "pnpm": "8.15.8"
@@ -44,7 +44,7 @@
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
       "graphql": "16.6.0",
-      "typescript": "5.2.2",
+      "typescript": "5.4.5",
       "@types/react": "18.2.14",
       "@types/react-dom": "18.2.6"
     },

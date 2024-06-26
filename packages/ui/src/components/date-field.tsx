@@ -7,7 +7,7 @@ import {
   default as ReactDatePicker,
 } from 'react-datepicker'
 
-import { CalendarIcon } from './icons'
+import { CalendarIcon } from '../icons/CalendarIcon'
 import { textFieldVariants } from './text-field'
 
 interface DateFieldProps

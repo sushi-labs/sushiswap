@@ -7,17 +7,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@sushiswap/ui'
-import {
-  CoinbaseWalletIcon,
-  FrameIcon,
-  GnosisSafeIcon,
-  LedgerIcon,
-  MetamaskIcon,
-  RabbyIcon,
-  TrustWalletIcon,
-  WalletConnectIcon,
-  XDEFIWalletIcon,
-} from '@sushiswap/ui'
+import { CoinbaseWalletIcon } from '@sushiswap/ui/icons/CoinbaseWalletIcon'
+import { FrameIcon } from '@sushiswap/ui/icons/FrameIcon'
+import { GnosisSafeIcon } from '@sushiswap/ui/icons/GnosisSafeIcon'
+import { LedgerIcon } from '@sushiswap/ui/icons/LedgerIcon'
+import { MetamaskIcon } from '@sushiswap/ui/icons/MetamaskIcon'
+import { RabbyIcon } from '@sushiswap/ui/icons/RabbyIcon'
+import { TrustWalletIcon } from '@sushiswap/ui/icons/TrustWalletIcon'
+import { WalletConnectIcon } from '@sushiswap/ui/icons/WalletConnectIcon'
+import { XDEFIWalletIcon } from '@sushiswap/ui/icons/XDEFIWalletIcon'
 import React, { FC, useCallback, useMemo } from 'react'
 
 import Link from 'next/link'

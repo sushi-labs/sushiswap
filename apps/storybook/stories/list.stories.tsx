@@ -1,7 +1,8 @@
 // List.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { DiscordIcon, List } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import * as React from 'react'
 
 const meta = {

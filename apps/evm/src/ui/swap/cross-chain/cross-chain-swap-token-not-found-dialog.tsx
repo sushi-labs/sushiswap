@@ -10,11 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
   Message,
-  NetworkIcon,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { useCallback, useMemo } from 'react'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
