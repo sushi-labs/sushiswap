@@ -55,15 +55,15 @@ export const WagmiConfig: FC<{
 }> = ({ children, cookie }) => {
   const initialState = getWagmiInitialState(cookie)
 
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   const rainbowKitTheme = useMemo(() => {
-    if (theme === 'dark') {
+    if (resolvedTheme === 'dark') {
       return darkTheme
     }
 
     return lightTheme
-  }, [theme])
+  }, [resolvedTheme])
 
   return (
     <WagmiProvider config={wagmiConfig} initialState={initialState}>
