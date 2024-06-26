@@ -82,7 +82,7 @@ export async function getBlogArticles(
   if (!variables.filters) {
     variables.filters = {}
   }
-  variables.filters.articleType = { eq: 'blog' }
+  variables.filters.articleTypes = { type: { eq: 'blog' } }
 
   const result = await request(
     {

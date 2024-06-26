@@ -99,7 +99,7 @@ export async function getAcademyArticles(
   if (!variables.filters) {
     variables.filters = {}
   }
-  variables.filters.articleType = { eq: 'academy' }
+  variables.filters.articleTypes = { type: { eq: 'academy' } }
 
   const result = await request(
     {
