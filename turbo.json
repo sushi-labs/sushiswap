@@ -26,21 +26,6 @@
         "!.next/cache/**",
         ".vercel/**/*",
         "dist/**/*"
-      ],
-      "env": [
-        "ALCHEMY_ID",
-        "DATABASE_URL",
-        "EDGE_CONFIG",
-        "REDIS_URL",
-        "NEXT_PUBLIC_POOLS_API_V0_BASE_URL",
-        "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL",
-        "SWAP_API_V0_BASE_URL",
-        "TOKEN_LIST_PR_WEBHOOK_URL",
-        "OCTOKIT_KEY",
-        "NEXT_PUBLIC_STRAPI_API_URL",
-        "SUSHI_GRAPH_KEY",
-        "NEXT_PUBLIC_SUSHI_GRAPH_KEY"
       ]
     },
     "clean": {
@@ -81,6 +66,7 @@
         "ALCHEMY_ID",
         "APP_ENV",
         "DATABASE_URL",
+        "DRPC_ID",
         "EDGE_CONFIG",
         "NEXT_PUBLIC_POOLS_API_V0_BASE_URL",
         "POOLS_API_V0_BASE_URL",
