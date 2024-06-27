@@ -39,7 +39,13 @@
       ]
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", "test/**", ".env.test.local", ".env.test", ".env"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "test/**",
+        ".env.test.local",
+        ".env.test",
+        ".env"
+      ],
       "outputs": ["test-results/**"],
       "dependsOn": ["build"]
     }
