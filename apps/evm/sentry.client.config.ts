@@ -2,34 +2,29 @@
 // The config you add here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-
-  // Replay may only be enabled for the client-side
-  integrations: [
-    new Sentry.Replay({
-      maskAllInputs: false,
-      maskAllText: false,
-      // Additional Replay configuration goes in here
-    }),
-  ],
+  dsn: "https://91baac7687326de04c80ee201540917d@o960777.ingest.us.sentry.io/4507232444350464",
 
   // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: 0.1,
+  tracesSampleRate: 1,
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  // debug: process.env.NODE_ENV !== 'production',
   debug: false,
 
-  // Capture Replay for 10% of all sessions,
-  // plus for 100% of sessions with an error
-  replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 
-  enabled: Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN),
-  environment: process.env.NEXT_PUBLIC_VERCEL_ENV
-    ? process.env.NEXT_PUBLIC_VERCEL_ENV
-    : 'local',
-})
+  // This sets the sample rate to be 10%. You may want this to be 100% while
+  // in development and sample at a lower rate in production
+  replaysSessionSampleRate: 0.1,
+
+  // You can remove this option if you're not planning to use the Sentry Session Replay feature:
+  integrations: [
+    Sentry.replayIntegration({
+      // Additional Replay configuration goes in here, for example:
+      maskAllText: true,
+      blockAllMedia: true,
+    }),
+  ],
+});
