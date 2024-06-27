@@ -69,7 +69,7 @@
         ".eslintignore",
         ".eslint.js",
         ".eslintrc.js"
-    ],
+      ],
       "dependsOn": ["^build"]
     },
     "start": {
