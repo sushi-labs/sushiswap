@@ -17,6 +17,8 @@
       "persistent": true
     },
     "build": {
+      "dependsOn": ["^build", "generate"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [
         "storybook-static/**",
         ".next/**/*",
@@ -24,7 +26,6 @@
         ".vercel/**/*",
         "dist/**/*"
       ],
-      "dependsOn": ["^build", "generate"],
       "env": [
         "ALCHEMY_ID",
         "DATABASE_URL",

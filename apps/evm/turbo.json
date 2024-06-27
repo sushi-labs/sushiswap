@@ -3,6 +3,7 @@
   "tasks": {
     "build": {
       "inputs": [
+        "$TURBO_DEFAULT$",
         "public",
         "src/**",
         "package.json",
