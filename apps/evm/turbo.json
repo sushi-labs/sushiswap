@@ -41,6 +41,15 @@
     "test": {
       "inputs": ["$TURBO_DEFAULT$", "test/**", ".env.test.local", ".env.test", ".env"],
       "outputs": ["test-results/**"],
+      "env": [
+        "ANVIL_BLOCK_NUMBER", 
+        "ANVIL_FORK_URL", 
+        "ANVIL_PORT", 
+        "APP_ENV", 
+        "API_BASE_URL",
+        "CHAIN_ID",
+        "EDGE_CONFIG"
+      ],
       "dependsOn": ["build"]
     }
   }
