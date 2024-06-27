@@ -1,9 +1,16 @@
 {
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "start": {
       "dependsOn": ["^build"],
-      "env": ["PORT", "ALCHEMY_ID", "DRPC_ID", "SENTRY_DSN"],
+      "env": [
+        "PORT",
+        "ALCHEMY_ID",
+        "DRPC_ID",
+        "RSK_ID",
+        "SENTRY_DSN",
+        "SENTRY_ENVIRONMENT"
+      ],
       "cache": false,
       "persistent": true
     }

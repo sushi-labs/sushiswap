@@ -41,6 +41,9 @@ importers:
       eslint:
         specifier: 8.43.0
         version: 8.43.0
+      eslint-config-turbo:
+        specifier: 2.0.5
+        version: 2.0.5(eslint@8.43.0)
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.10.0)
@@ -51,8 +54,8 @@ importers:
         specifier: 29.1.1
         version: 29.1.1(@babel/core@7.24.4)(jest@29.7.0)(typescript@5.4.5)
       turbo:
-        specifier: 1.12.4
-        version: 1.12.4
+        specifier: 2.0.5
+        version: 2.0.5
 
   apis/extractor:
     dependencies:
@@ -328,11 +331,11 @@ importers:
         specifier: 8.9.1
         version: 8.9.1(react-dom@18.2.0)(react@18.2.0)
       '@vercel/analytics':
-        specifier: 0.1.5
-        version: 0.1.5(react@18.2.0)
+        specifier: 1.3.1
+        version: 1.3.1(next@14.2.3)(react@18.2.0)
       '@vercel/edge-config':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: 1.2.0
+        version: 1.2.0
       aptos:
         specifier: ^1.11.0
         version: 1.21.0
@@ -470,7 +473,7 @@ importers:
         specifier: 1.0.2
         version: 1.0.2(@types/react@18.2.14)(react@18.2.0)
       '@rainbow-me/rainbowkit':
-        specifier: '2'
+        specifier: 2.1.2
         version: 2.1.2(@tanstack/react-query@4.28.0)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(viem@2.10.11)(wagmi@2.9.12)
       '@sentry/nextjs':
         specifier: 7.110.0
@@ -536,11 +539,11 @@ importers:
         specifier: 1.22.1
         version: 1.22.1
       '@vercel/analytics':
-        specifier: 1.1.1
-        version: 1.1.1
+        specifier: 1.3.1
+        version: 1.3.1(next@14.2.3)(react@18.2.0)
       '@vercel/edge-config':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: 1.2.0
+        version: 1.2.0
       '@wagmi/connectors':
         specifier: ^5.0.11
         version: 5.0.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.10.6)(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
@@ -853,11 +856,11 @@ importers:
         specifier: 8.9.1
         version: 8.9.1(react-dom@18.2.0)(react@18.2.0)
       '@vercel/analytics':
-        specifier: 1.1.1
-        version: 1.1.1
+        specifier: 1.3.1
+        version: 1.3.1(next@14.2.3)(react@18.2.0)
       '@vercel/edge-config':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: 1.2.0
+        version: 1.2.0
       lodash.once:
         specifier: 4.1.1
         version: 4.1.1
@@ -950,11 +953,14 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(eslint@8.57.0)(jest@29.7.0)(typescript@5.4.5)
       eslint-config-turbo:
-        specifier: 1.12.4
-        version: 1.12.4(eslint@8.57.0)
+        specifier: 2.0.5
+        version: 2.0.5(eslint@8.57.0)
       eslint-plugin-mdx:
         specifier: 2.2.0
         version: 2.2.0(eslint@8.57.0)
+      eslint-plugin-only-warn:
+        specifier: 1.1.0
+        version: 1.1.0
       eslint-plugin-storybook:
         specifier: 0.6.15
         version: 0.6.15(eslint@8.57.0)(typescript@5.4.5)
@@ -1163,12 +1169,6 @@ importers:
       dotenv:
         specifier: 16.0.3
         version: 16.0.3
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
-      jest:
-        specifier: 29.3.1
-        version: 29.3.1(@types/node@20.10.0)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -1250,9 +1250,6 @@ importers:
         specifier: 3.21.4
         version: 3.21.4
     devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
       '@sushiswap/tokens-api':
         specifier: workspace:*
         version: link:../../apis/tokens
@@ -1268,9 +1265,6 @@ importers:
       '@types/node':
         specifier: '20'
         version: 20.10.0
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -1452,9 +1446,6 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../database
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
       '@tsconfig/esm':
         specifier: 1.0.4
         version: 1.0.4
@@ -1467,9 +1458,6 @@ importers:
       '@types/node':
         specifier: '20'
         version: 20.12.7
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
       tsc-alias:
         specifier: ^1.8.10
         version: 1.8.10
@@ -1633,9 +1621,6 @@ importers:
         specifier: 14.2.3
         version: 14.2.3(@babel/core@7.24.4)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
       '@tsconfig/esm':
         specifier: 1.0.4
         version: 1.0.4
@@ -1648,9 +1633,6 @@ importers:
       '@wagmi/core':
         specifier: 2.10.6
         version: 2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -17363,17 +17345,19 @@ packages:
       '@vanilla-extract/css': 1.14.0
     dev: false
 
-  /@vercel/analytics@0.1.5(react@18.2.0):
-    resolution: {integrity: sha512-/k9N8Ea3Yc5A52GlkjzUEbi2vE/izClrOf++ryBkxEfrZM/OZwtHkdNw/QExZ1h/B67RCZLK7bCOnKKrhG7gTg==}
+  /@vercel/analytics@1.3.1(next@14.2.3)(react@18.2.0):
+    resolution: {integrity: sha512-xhSlYgAuJ6Q4WQGkzYTLmXwhYl39sWjoMA3nHxfkvG+WdBT25c563a7QhwwKivEOZtPJXifYHR1m2ihoisbWyA==}
     peerDependencies:
-      react: ^16.8||^17||^18
+      next: '>= 13'
+      react: ^18 || ^19
+    peerDependenciesMeta:
+      next:
+        optional: true
+      react:
+        optional: true
     dependencies:
+      next: 14.2.3(@babel/core@7.24.4)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
-    dev: false
-
-  /@vercel/analytics@1.1.1:
-    resolution: {integrity: sha512-+NqgNmSabg3IFfxYhrWCfB/H+RCUOCR5ExRudNG2+pcRehq628DJB5e1u1xqwpLtn4pAYii4D98w7kofORAGQA==}
-    dependencies:
       server-only: 0.0.1
     dev: false
 
@@ -17384,9 +17368,14 @@ packages:
     resolution: {integrity: sha512-NRIBwfcS0bUoUbRWlNGetqjvLSwgYH/BqKqDN7vK1g32p7dN96k0712COgaz6VFizAm9b0g6IG6hR6+hc0KCPg==}
     dev: false
 
-  /@vercel/edge-config@0.4.1:
-    resolution: {integrity: sha512-4Mc3H7lE+x4RrL17nY8CWeEorvJHbkNbQTy9p8H1tO7y11WeKj5xeZSr07wNgfWInKXDUwj5FZ3qd/jIzjPxug==}
+  /@vercel/edge-config@1.2.0:
+    resolution: {integrity: sha512-ouX+hJK4KzXE31Wi2Xs7IEXb+6gImcOXgeOT9P48YKsZb7oNG2uyhvKDDkAyOJ739AnCJ5tKxavXjIoit6dWtw==}
     engines: {node: '>=14.6'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.7.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
     dependencies:
       '@vercel/edge-config-fs': 0.1.0
     dev: false
@@ -18726,6 +18715,12 @@ packages:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  /acorn@8.12.0:
+    resolution: {integrity: sha512-RTvkC4w+KNXrM39/lWCUaG0IbRkWdCv7W/IOW9oU6SawyxulvkQy5HQPVTKxEjczcUvapcrw3cFx/60VN/NRNw==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+    dev: false
 
   /address@1.2.2:
     resolution: {integrity: sha512-4B/qKCfeE/ODUaAUpSwfzazo5x29WD4r3vXiWsB7I2mSDAihwEqKO+g8GELZUQSSAo5e1XTYh3ZVfLyxBc12nA==}
@@ -21745,7 +21740,7 @@ packages:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
       '@types/estree': 1.0.5
-      acorn: 8.11.3
+      acorn: 8.12.0
       estree-walker: 3.0.3
       periscopic: 3.1.0
     dev: false
@@ -24809,13 +24804,22 @@ packages:
       - supports-color
     dev: false
 
-  /eslint-config-turbo@1.12.4(eslint@8.57.0):
-    resolution: {integrity: sha512-5hqEaV6PNmAYLL4RTmq74OcCt8pgzOLnfDVPG/7PUXpQ0Mpz0gr926oCSFukywKKXjdum3VHD84S7Z9A/DqTAw==}
+  /eslint-config-turbo@2.0.5(eslint@8.43.0):
+    resolution: {integrity: sha512-iE/oD0ZBM6OQFbS/bKnc3UtqhMmJ1IEfqTQ0qCY1CauHm7gj85aRRX/1ydDYKLpu0RupBqzVPybsWxPif9rsig==}
+    peerDependencies:
+      eslint: '>6.6.0'
+    dependencies:
+      eslint: 8.43.0
+      eslint-plugin-turbo: 2.0.5(eslint@8.43.0)
+    dev: true
+
+  /eslint-config-turbo@2.0.5(eslint@8.57.0):
+    resolution: {integrity: sha512-iE/oD0ZBM6OQFbS/bKnc3UtqhMmJ1IEfqTQ0qCY1CauHm7gj85aRRX/1ydDYKLpu0RupBqzVPybsWxPif9rsig==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
       eslint: 8.57.0
-      eslint-plugin-turbo: 1.12.4(eslint@8.57.0)
+      eslint-plugin-turbo: 2.0.5(eslint@8.57.0)
     dev: false
 
   /eslint-import-resolver-alias@1.1.2(eslint-plugin-import@2.28.1):
@@ -25277,6 +25281,11 @@ packages:
       - supports-color
     dev: false
 
+  /eslint-plugin-only-warn@1.1.0:
+    resolution: {integrity: sha512-2tktqUAT+Q3hCAU0iSf4xAN1k9zOpjK5WO8104mB0rT/dGhOa09582HN5HlbxNbPRZ0THV7nLGvzugcNOSjzfA==}
+    engines: {node: '>=6'}
+    dev: false
+
   /eslint-plugin-playwright@0.16.0(eslint-plugin-jest@27.4.2)(eslint@8.57.0):
     resolution: {integrity: sha512-DcHpF0SLbNeh9MT4pMzUGuUSnJ7q5MWbP8sSEFIMS6j7Ggnduq8ghNlfhURgty4c1YFny7Ge9xYTO1FSAoV2Vw==}
     peerDependencies:
@@ -25441,8 +25450,17 @@ packages:
       '@microsoft/tsdoc-config': 0.16.2
     dev: false
 
-  /eslint-plugin-turbo@1.12.4(eslint@8.57.0):
-    resolution: {integrity: sha512-3AGmXvH7E4i/XTWqBrcgu+G7YKZJV/8FrEn79kTd50ilNsv+U3nS2IlcCrQB6Xm2m9avGD9cadLzKDR1/UF2+g==}
+  /eslint-plugin-turbo@2.0.5(eslint@8.43.0):
+    resolution: {integrity: sha512-nCTXZdaKmdRybBdjnMrDFG+ppLc9toUqB01Hf0pfhkQw8OoC29oJIVPsCSvuL/W58RKD02CNEUrwnVt57t36IQ==}
+    peerDependencies:
+      eslint: '>6.6.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 8.43.0
+    dev: true
+
+  /eslint-plugin-turbo@2.0.5(eslint@8.57.0):
+    resolution: {integrity: sha512-nCTXZdaKmdRybBdjnMrDFG+ppLc9toUqB01Hf0pfhkQw8OoC29oJIVPsCSvuL/W58RKD02CNEUrwnVt57t36IQ==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
@@ -30531,27 +30549,6 @@ packages:
       - ts-node
       - utf-8-validate
     dev: false
-
-  /jest@29.3.1(@types/node@20.10.0):
-    resolution: {integrity: sha512-6iWfL5DTT0Np6UYs/y5Niu7WIfNv/wRTtN5RSXt2DIEft3dx3zPuw/3WJQBCJfmEzvDiEKwoqMbGD9n49+qLSA==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 29.7.0
-      '@jest/types': 29.6.3
-      import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.10.0)
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - ts-node
-    dev: true
 
   /jest@29.7.0(@types/node@20.10.0):
     resolution: {integrity: sha512-NIy3oAFp9shda19hy4HK0HRTWKtPJmGdnvywu01nOqNC2vZg+Z+fvJDxpMQA88eb2I9EcafcdjYgsDthnYTvGw==}
@@ -39866,7 +39863,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
       '@jridgewell/trace-mapping': 0.3.25
       '@types/estree': 1.0.5
-      acorn: 8.11.3
+      acorn: 8.12.0
       aria-query: 5.3.0
       axobject-query: 4.0.0
       code-red: 1.0.4
@@ -40965,64 +40962,64 @@ packages:
     dependencies:
       safe-buffer: 5.2.1
 
-  /turbo-darwin-64@1.12.4:
-    resolution: {integrity: sha512-dBwFxhp9isTa9RS/fz2gDVk5wWhKQsPQMozYhjM7TT4jTrnYn0ZJMzr7V3B/M/T8QF65TbniW7w1gtgxQgX5Zg==}
+  /turbo-darwin-64@2.0.5:
+    resolution: {integrity: sha512-t/9XpWYIjOhIHUdwiR47SYBGYHkR1zWLxTkTNKZwCSn8BN0cfjPZ1BR6kcwYGxLGBhtl5GBf6A29nq2K7iwAjg==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64@1.12.4:
-    resolution: {integrity: sha512-1Uo5iI6xsJ1j9ObsqxYRsa3W26mEbUe6fnj4rQYV6kDaqYD54oAMJ6hM53q9rB8JvFxwdrUXGp3PwTw9A0qqkA==}
+  /turbo-darwin-arm64@2.0.5:
+    resolution: {integrity: sha512-//5y4RJvnal8CttOLBwlaBqblcQb1qTlIxLN+I8O3E3rPuvHOupNKB9ZJxYIQ8oWf8ns8Ec8cxQ0GSBLTJIMtA==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64@1.12.4:
-    resolution: {integrity: sha512-ONg2aSqKP7LAQOg7ysmU5WpEQp4DGNxSlAiR7um+LKtbmC/UxogbR5+T+Uuq6zGuQ5kJyKjWJ4NhtvUswOqBsA==}
+  /turbo-linux-64@2.0.5:
+    resolution: {integrity: sha512-LDtEDU2Gm8p3lKu//aHXZFRKUCVu68BNF9LQ+HmiCKFpNyK7khpMTxIAAUhDqt+AzlrbxtrxcCpCJaWg1JDjHg==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64@1.12.4:
-    resolution: {integrity: sha512-9FPufkwdgfIKg/9jj87Cdtftw8o36y27/S2vLN7FTR2pp9c0MQiTBOLVYadUr1FlShupddmaMbTkXEhyt9SdrA==}
+  /turbo-linux-arm64@2.0.5:
+    resolution: {integrity: sha512-84wdrzntErBNxkHcwHxiTZdaginQAxGPnwLTyZj8lpUYI7okPoxy3jKpUeMHN3adm3iDedl/x0mYSIvVVkmOiA==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64@1.12.4:
-    resolution: {integrity: sha512-2mOtxHW5Vjh/5rDVu/aFwsMzI+chs8XcEuJHlY1sYOpEymYTz+u6AXbnzRvwZFMrLKr7J7fQOGl+v96sLKbNdA==}
+  /turbo-windows-64@2.0.5:
+    resolution: {integrity: sha512-SgaFZ0VW6kHCJogLNuLEleAauAJx2Y48wazZGVRmBpgSUS2AylXesaBMhJaEScYqLz7mIRn6KOgwM8D4wTxI9g==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64@1.12.4:
-    resolution: {integrity: sha512-nOY5wae9qnxPOpT1fRuYO0ks6dTwpKMPV6++VkDkamFDLFHUDVM/9kmD2UTeh1yyrKnrZksbb9zmShhmfj1wog==}
+  /turbo-windows-arm64@2.0.5:
+    resolution: {integrity: sha512-foUxLOZoru0IRNIxm53fkfM4ubas9P0nTFjIcHtd+E8YHeogt8GqTweNre2e6ri1EHDo71emmuQgpuoFCOXZMg==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo@1.12.4:
-    resolution: {integrity: sha512-yUJ7elEUSToiGwFZogXpYKJpQ0BvaMbkEuQECIWtkBLcmWzlMOt6bActsIm29oN83mRU0WbzGt4e8H1KHWedhg==}
+  /turbo@2.0.5:
+    resolution: {integrity: sha512-+6+hcWr4nwuESlKqUc626HMOTd3QT8hUOc9QM45PP1d4nErGkNOgExm4Pcov3in7LTuadMnB0gcd/BuzkEDIPw==}
     hasBin: true
     optionalDependencies:
-      turbo-darwin-64: 1.12.4
-      turbo-darwin-arm64: 1.12.4
-      turbo-linux-64: 1.12.4
-      turbo-linux-arm64: 1.12.4
-      turbo-windows-64: 1.12.4
-      turbo-windows-arm64: 1.12.4
+      turbo-darwin-64: 2.0.5
+      turbo-darwin-arm64: 2.0.5
+      turbo-linux-64: 2.0.5
+      turbo-linux-arm64: 2.0.5
+      turbo-windows-64: 2.0.5
+      turbo-windows-arm64: 2.0.5
     dev: true
 
   /tweetnacl-util@0.15.1:
