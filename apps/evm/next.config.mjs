@@ -12,11 +12,6 @@ const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
   experimental: {
     ...defaultNextConfig.experimental,
     testProxy: true,
