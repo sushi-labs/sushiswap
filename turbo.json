@@ -3,12 +3,8 @@
   "globalEnv": ["APP_ENV"],
   "globalPassThroughEnv": ["GITHUB_TOKEN", "CI"],
   "globalDependencies": [
-    ".eslintignore",
-    ".eslint.js",
     ".npmrc",
     ".nvmrc",
-    ".prettierignore",
-    ".prettierrc.js",
     "tsconfig.json"
   ],
   "tasks": {
@@ -67,6 +63,13 @@
       "cache": false
     },
     "lint": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "biome.json",
+        ".eslintignore",
+        ".eslint.js",
+        ".eslintrc.js"
+    ],
       "dependsOn": ["^build"]
     },
     "start": {
