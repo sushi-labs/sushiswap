@@ -331,11 +331,11 @@ importers:
         specifier: 8.9.1
         version: 8.9.1(react-dom@18.2.0)(react@18.2.0)
       '@vercel/analytics':
-        specifier: 0.1.5
-        version: 0.1.5(react@18.2.0)
+        specifier: 1.3.1
+        version: 1.3.1(next@14.2.3)(react@18.2.0)
       '@vercel/edge-config':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: 1.2.0
+        version: 1.2.0
       aptos:
         specifier: ^1.11.0
         version: 1.21.0
@@ -539,11 +539,11 @@ importers:
         specifier: 1.22.1
         version: 1.22.1
       '@vercel/analytics':
-        specifier: 1.1.1
-        version: 1.1.1
+        specifier: 1.3.1
+        version: 1.3.1(next@14.2.3)(react@18.2.0)
       '@vercel/edge-config':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: 1.2.0
+        version: 1.2.0
       '@wagmi/connectors':
         specifier: ^5.0.11
         version: 5.0.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.10.6)(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
@@ -856,11 +856,11 @@ importers:
         specifier: 8.9.1
         version: 8.9.1(react-dom@18.2.0)(react@18.2.0)
       '@vercel/analytics':
-        specifier: 1.1.1
-        version: 1.1.1
+        specifier: 1.3.1
+        version: 1.3.1(next@14.2.3)(react@18.2.0)
       '@vercel/edge-config':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: 1.2.0
+        version: 1.2.0
       lodash.once:
         specifier: 4.1.1
         version: 4.1.1
@@ -17345,17 +17345,19 @@ packages:
       '@vanilla-extract/css': 1.14.0
     dev: false
 
-  /@vercel/analytics@0.1.5(react@18.2.0):
-    resolution: {integrity: sha512-/k9N8Ea3Yc5A52GlkjzUEbi2vE/izClrOf++ryBkxEfrZM/OZwtHkdNw/QExZ1h/B67RCZLK7bCOnKKrhG7gTg==}
+  /@vercel/analytics@1.3.1(next@14.2.3)(react@18.2.0):
+    resolution: {integrity: sha512-xhSlYgAuJ6Q4WQGkzYTLmXwhYl39sWjoMA3nHxfkvG+WdBT25c563a7QhwwKivEOZtPJXifYHR1m2ihoisbWyA==}
     peerDependencies:
-      react: ^16.8||^17||^18
+      next: '>= 13'
+      react: ^18 || ^19
+    peerDependenciesMeta:
+      next:
+        optional: true
+      react:
+        optional: true
     dependencies:
+      next: 14.2.3(@babel/core@7.24.4)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
-    dev: false
-
-  /@vercel/analytics@1.1.1:
-    resolution: {integrity: sha512-+NqgNmSabg3IFfxYhrWCfB/H+RCUOCR5ExRudNG2+pcRehq628DJB5e1u1xqwpLtn4pAYii4D98w7kofORAGQA==}
-    dependencies:
       server-only: 0.0.1
     dev: false
 
@@ -17366,9 +17368,14 @@ packages:
     resolution: {integrity: sha512-NRIBwfcS0bUoUbRWlNGetqjvLSwgYH/BqKqDN7vK1g32p7dN96k0712COgaz6VFizAm9b0g6IG6hR6+hc0KCPg==}
     dev: false
 
-  /@vercel/edge-config@0.4.1:
-    resolution: {integrity: sha512-4Mc3H7lE+x4RrL17nY8CWeEorvJHbkNbQTy9p8H1tO7y11WeKj5xeZSr07wNgfWInKXDUwj5FZ3qd/jIzjPxug==}
+  /@vercel/edge-config@1.2.0:
+    resolution: {integrity: sha512-ouX+hJK4KzXE31Wi2Xs7IEXb+6gImcOXgeOT9P48YKsZb7oNG2uyhvKDDkAyOJ739AnCJ5tKxavXjIoit6dWtw==}
     engines: {node: '>=14.6'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.7.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
     dependencies:
       '@vercel/edge-config-fs': 0.1.0
     dev: false
