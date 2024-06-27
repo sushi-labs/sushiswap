@@ -27,9 +27,7 @@
         ".vercel/**/*",
         "dist/**/*"
       ],
-      "env": [
-        "EDGE_CONFIG"
-      ]
+      "env": ["EDGE_CONFIG"]
     },
     "clean": {
       "cache": false
