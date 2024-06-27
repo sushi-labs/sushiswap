@@ -1169,12 +1169,6 @@ importers:
       dotenv:
         specifier: 16.0.3
         version: 16.0.3
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
-      jest:
-        specifier: 29.3.1
-        version: 29.3.1(@types/node@20.10.0)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -1256,9 +1250,6 @@ importers:
         specifier: 3.21.4
         version: 3.21.4
     devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
       '@sushiswap/tokens-api':
         specifier: workspace:*
         version: link:../../apis/tokens
@@ -1274,12 +1265,6 @@ importers:
       '@types/node':
         specifier: '20'
         version: 20.10.0
-      eslint:
-        specifier: 8.43.0
-        version: 8.43.0
-      eslint-config-sushi:
-        specifier: workspace:*
-        version: link:../../config/eslint
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -30695,27 +30680,6 @@ packages:
       - ts-node
       - utf-8-validate
     dev: false
-
-  /jest@29.3.1(@types/node@20.10.0):
-    resolution: {integrity: sha512-6iWfL5DTT0Np6UYs/y5Niu7WIfNv/wRTtN5RSXt2DIEft3dx3zPuw/3WJQBCJfmEzvDiEKwoqMbGD9n49+qLSA==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 29.7.0
-      '@jest/types': 29.6.3
-      import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.10.0)
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - ts-node
-    dev: true
 
   /jest@29.7.0(@types/node@20.10.0):
     resolution: {integrity: sha512-NIy3oAFp9shda19hy4HK0HRTWKtPJmGdnvywu01nOqNC2vZg+Z+fvJDxpMQA88eb2I9EcafcdjYgsDthnYTvGw==}
