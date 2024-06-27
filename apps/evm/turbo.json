@@ -5,7 +5,7 @@
       "inputs": [
         "$TURBO_DEFAULT$",
         "!test/**",
-        ".eslintrc",
+        "!.eslintrc",
         "!README.md",
         ".env.production.local",
         ".env.local",

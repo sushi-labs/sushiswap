@@ -26,6 +26,9 @@
         "!.next/cache/**",
         ".vercel/**/*",
         "dist/**/*"
+      ],
+      "env": [
+        "EDGE_CONFIG"
       ]
     },
     "clean": {
