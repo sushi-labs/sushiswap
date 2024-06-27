@@ -32,6 +32,7 @@ export async function GET(
     params,
   }: { params: { chainId: string; address: string; tokens?: string[] } },
 ) {
+  console.log('request', _req)
   const { chainId, address } = querySchema.parse(params)
 
   try {
@@ -40,6 +41,7 @@ export async function GET(
         chainId as CovalentChainID,
         address,
       )
+
     return Response.json(
       data.items.reduce(
         (previousValue, currentValue) => {
@@ -59,52 +61,49 @@ export async function GET(
     )
   } catch (e) {
     console.error("Couldn't fetch balances from covalent", e)
-
-    const res = await fetch(
-      `https://tokens.sushi.com/v0/${chainId}/addresses`,
-      {
-        next: { revalidate: 3600 },
-      },
-    )
-    const data = await res.json()
-    const tokens = tokensSchema.parse(data)
-
-    const balance = await getBalance(config, {
-      chainId,
-      address: address as Address,
-    })
-
-    const balances = await readContracts(config, {
-      allowFailure: true,
-      contracts: tokens.map(
-        (token) =>
-          ({
-            chainId,
-            address: token as Address,
-            abi: erc20Abi,
-            args: [address as Address],
-            functionName: 'balanceOf',
-          }) as const,
-      ),
-    })
-
-    const zipped = zip(
-      tokens,
-      balances.map((balance) => balance?.result || 0n),
-    )
-
-    const body = {
-      '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance.value.toString(),
-      ...Object.fromEntries(
-        zipped
-          .filter(([, balance]) => balance !== 0n)
-          .map(([token, balance]) => [token, balance?.toString()]),
-      ),
-    }
-    return Response.json(body, {
-      headers: {
-        'Cache-Control': 's-maxage=1, stale-while-revalidate=59',
-      },
-    })
   }
+
+  const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`, {
+    next: { revalidate: 3600 },
+  })
+  const data = await res.json()
+  const tokens = tokensSchema.parse(data)
+
+  const balance = await getBalance(config, {
+    chainId,
+    address: address as Address,
+  })
+
+  const balances = await readContracts(config, {
+    allowFailure: true,
+    contracts: tokens.map(
+      (token) =>
+        ({
+          chainId,
+          address: token as Address,
+          abi: erc20Abi,
+          args: [address as Address],
+          functionName: 'balanceOf',
+        }) as const,
+    ),
+  })
+
+  const zipped = zip(
+    tokens,
+    balances.map((balance) => balance?.result || 0n),
+  )
+
+  const body = {
+    '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance.value.toString(),
+    ...Object.fromEntries(
+      zipped
+        .filter(([, balance]) => balance !== 0n)
+        .map(([token, balance]) => [token, balance?.toString()]),
+    ),
+  }
+  return Response.json(body, {
+    headers: {
+      'Cache-Control': 's-maxage=1, stale-while-revalidate=59',
+    },
+  })
 }
