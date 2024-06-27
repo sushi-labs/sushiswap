@@ -81,7 +81,10 @@
         "REDIS_URL",
         "SWAP_API_V0_BASE_URL",
         "TOKENS_API_V0_BASE_URL",
-        "STRAPI_API_URL"
+        "STRAPI_API_URL",
+        "VERCEL_ENV",
+        "SENTRY_DSN",
+        "SENTRY_ENVIRONMENT"
       ],
       "cache": false,
       "persistent": true
