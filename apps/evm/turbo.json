@@ -48,10 +48,10 @@
       ],
       "outputs": ["test-results/**"],
       "env": [
-        "ANVIL_BLOCK_NUMBER", 
-        "ANVIL_FORK_URL", 
-        "ANVIL_PORT", 
-        "APP_ENV", 
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_FORK_URL",
+        "ANVIL_PORT",
+        "APP_ENV",
         "API_BASE_URL",
         "CHAIN_ID",
         "EDGE_CONFIG"
