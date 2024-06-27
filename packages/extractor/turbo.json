@@ -1,17 +1,15 @@
 {
-  "extends": [
-    "//"
-  ],
+  "extends": ["//"],
   "tasks": {
     "start": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "env": [
         "PORT",
         "ALCHEMY_ID",
         "DRPC_ID",
-        "SENTRY_DSN"
+        "RSK_ID",
+        "SENTRY_DSN",
+        "SENTRY_ENVIRONMENT"
       ],
       "cache": false,
       "persistent": true

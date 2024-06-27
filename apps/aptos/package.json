@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "check": "tsc --pretty --noEmit",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
     "dev": "next dev",
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",

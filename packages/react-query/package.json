@@ -69,7 +69,7 @@
     "sushi": "workspace:*",
     "typescript": "5.4.5",
     "viem": "2.10.11",
-    "wagmi": "2.9.12"
+    "wagmi": "2.10.7"
   },
   "peerDependencies": {
     "@sentry/nextjs": "7.110.0",
@@ -79,7 +79,7 @@
     "react-dom": "18.2.0",
     "sushi": "*",
     "viem": "2.10.11",
-    "wagmi": "2.9.12"
+    "wagmi": "2.10.7"
   },
   "peerDependenciesMeta": {
     "@sushiswap/client": {

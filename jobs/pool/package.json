@@ -25,15 +25,10 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "server": "tsx src/server.ts",
     "start": "tsx src/server.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
-  },
-  "jest": {
-    "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
     "@ethersproject/address": "5.7.0",
@@ -44,7 +39,7 @@
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "2.10.6",
+    "@wagmi/core": "2.11.5",
     "@whatwg-node/fetch": "0.8.4",
     "connect-timeout": "1.9.0",
     "date-fns": "2.29.3",
@@ -66,8 +61,6 @@
     "@types/express": "4.17.15",
     "@types/lodash.zip": "4.2.7",
     "dotenv": "16.0.3",
-    "eslint": "8.43.0",
-    "jest": "29.3.1",
     "typescript": "5.4.5"
   }
 }

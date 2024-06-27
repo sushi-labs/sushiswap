@@ -58,13 +58,8 @@
     "check": "pnpm build:types && tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "update-schemas": "tsx scripts/update-schemas.ts"
-  },
-  "jest": {
-    "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
     "@sushiswap/bonds-sdk": "workspace:*",
@@ -79,12 +74,10 @@
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.12.3",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/json-bigint": "^1.0.4",
     "@types/node": "20",
-    "eslint": "8.43.0",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.7.1",
     "typescript": "5.4.5"
