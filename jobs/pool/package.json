@@ -39,7 +39,7 @@
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "2.11.5",
+    "@wagmi/core": "2.10.6",
     "@whatwg-node/fetch": "0.8.4",
     "connect-timeout": "1.9.0",
     "date-fns": "2.29.3",

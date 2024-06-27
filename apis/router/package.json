@@ -31,7 +31,7 @@
   "dependencies": {
     "@sentry/node": "7.110.0",
     "@sushiswap/extractor": "workspace:*",
-    "@wagmi/core": "2.11.5",
+    "@wagmi/core": "2.10.6",
     "cors": "2.8.5",
     "dotenv": "16.3.1",
     "express": "4.18.2",

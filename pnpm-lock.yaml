@@ -66,8 +66,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/extractor
       '@wagmi/core':
-        specifier: 2.11.5
-        version: 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
+        specifier: 2.10.6
+        version: 2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -127,8 +127,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/extractor
       '@wagmi/core':
-        specifier: 2.11.5
-        version: 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
+        specifier: 2.10.6
+        version: 2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -231,8 +231,8 @@ importers:
         specifier: 3.0.9
         version: 3.0.9
       '@wagmi/core':
-        specifier: 2.11.5
-        version: 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
+        specifier: 2.10.6
+        version: 2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
       drizzle-orm:
         specifier: ^0.29.5
         version: 0.29.5(@neondatabase/serverless@0.9.0)(postgres@3.4.4)(react@18.2.0)
@@ -473,7 +473,7 @@ importers:
         specifier: 1.0.2
         version: 1.0.2(@types/react@18.2.14)(react@18.2.0)
       '@rainbow-me/rainbowkit':
-        specifier: '2'
+        specifier: 2.1.2
         version: 2.1.2(@tanstack/react-query@4.28.0)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(viem@2.10.11)(wagmi@2.10.7)
       '@sentry/nextjs':
         specifier: 7.110.0
@@ -546,10 +546,10 @@ importers:
         version: 0.4.1
       '@wagmi/connectors':
         specifier: ^5.0.11
-        version: 5.0.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.11.5)(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
+        version: 5.0.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.10.6)(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
       '@wagmi/core':
-        specifier: 2.11.5
-        version: 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
+        specifier: 2.10.6
+        version: 2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -1070,8 +1070,8 @@ importers:
         specifier: 2.0.2
         version: 2.0.2
       '@wagmi/core':
-        specifier: 2.11.5
-        version: 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)
+        specifier: 2.10.6
+        version: 2.10.6(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.10.0)
@@ -1109,8 +1109,8 @@ importers:
         specifier: workspace:*
         version: link:../../config/wagmi
       '@wagmi/core':
-        specifier: 2.11.5
-        version: 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
+        specifier: 2.10.6
+        version: 2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
       '@whatwg-node/fetch':
         specifier: 0.8.4
         version: 0.8.4
@@ -1631,8 +1631,8 @@ importers:
         specifier: '20'
         version: 20.10.0
       '@wagmi/core':
-        specifier: 2.11.5
-        version: 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)
+        specifier: 2.10.6
+        version: 2.10.6(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -17817,7 +17817,7 @@ packages:
     resolution: {integrity: sha512-DL3NmY2OFlqmYYrzp39yi3LDkKxa5vZVwxWdQ3rG0ekuWscHraeIbnI8t+aZK7qhYqEqWKTUdijadunb9pnrgA==}
     dev: false
 
-  /@wagmi/connectors@5.0.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.11.5)(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4):
+  /@wagmi/connectors@5.0.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.10.6)(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4):
     resolution: {integrity: sha512-uZPz6ESiju1Fpf/zLpaamyIiBBt3xUoVkx3fJZxNbqJjV2k8aEi20Hu/Y+30JV3+G90rfQiTit7xEtCB0pjU9g==}
     peerDependencies:
       '@wagmi/core': 2.10.6
@@ -17831,7 +17831,7 @@ packages:
       '@metamask/sdk': 0.20.5(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)
       '@safe-global/safe-apps-provider': 0.18.1(typescript@5.4.5)(zod@3.21.4)
       '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.4.5)(zod@3.21.4)
-      '@wagmi/core': 2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
+      '@wagmi/core': 2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
       '@walletconnect/ethereum-provider': 2.13.0(@types/react@18.2.14)(@upstash/redis@1.22.1)(react@18.2.0)
       '@walletconnect/modal': 2.6.2(@types/react@18.2.14)(react@18.2.0)
       cbw-sdk: /@coinbase/wallet-sdk@3.9.3
@@ -18045,6 +18045,58 @@ packages:
       - utf-8-validate
       - zod
     dev: false
+
+  /@wagmi/core@2.10.6(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4):
+    resolution: {integrity: sha512-Da1dgDEnszk/BTDEmIKnGVBDAJhanu6hl7Jmqmjgv1KhVt3V37xG8BV5TURjbGPQi2Y3xnb/PkCOo05gCP2Lww==}
+    peerDependencies:
+      '@tanstack/query-core': '>=5.0.0'
+      typescript: 5.4.5
+      viem: 2.x
+    peerDependenciesMeta:
+      '@tanstack/query-core':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      eventemitter3: 5.0.1
+      mipd: 0.0.5(typescript@5.4.5)(zod@3.21.4)
+      typescript: 5.4.5
+      viem: 2.10.11(typescript@5.4.5)(zod@3.21.4)
+      zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - immer
+      - react
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /@wagmi/core@2.10.6(react@18.2.0)(typescript@5.4.5)(viem@2.10.11):
+    resolution: {integrity: sha512-Da1dgDEnszk/BTDEmIKnGVBDAJhanu6hl7Jmqmjgv1KhVt3V37xG8BV5TURjbGPQi2Y3xnb/PkCOo05gCP2Lww==}
+    peerDependencies:
+      '@tanstack/query-core': '>=5.0.0'
+      typescript: 5.4.5
+      viem: 2.x
+    peerDependenciesMeta:
+      '@tanstack/query-core':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      eventemitter3: 5.0.1
+      mipd: 0.0.5(typescript@5.4.5)(zod@3.21.4)
+      typescript: 5.4.5
+      viem: 2.10.11(typescript@5.4.5)(zod@3.21.4)
+      zustand: 4.4.1(@types/react@18.2.14)(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - immer
+      - react
+      - utf-8-validate
+      - zod
+    dev: true
 
   /@wagmi/core@2.11.5(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.10.11):
     resolution: {integrity: sha512-RmtZQkNf/ozdngyDST33WLTdKQHny9SsiNmxln8G06pbnOuhO4dDhnXnfiJ8Lh9GVIfFsjlmtqzfAIo1/86dqg==}
