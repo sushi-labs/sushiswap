@@ -247,6 +247,7 @@
 0x21B45B2c1C53fDFe378Ed1955E8Cc29aE8cE0132 (api:factory) - token 0x0E573Ce2736Dd9637A0b21058352e1667925C7a8 setTokenBalance failed
 0x270d74e9Cc8DC75ef55d91c0D469E3285E581E77 (api:factory) - skipped: low liquidity
 0x3f67dc2AdBA4B1beB6A48c30AB3AFb1c1440d35B (api:factory) - skipped: low liquidity
+0xd82C2eB10F4895CABED6EDa6eeee234bd1A9838B (api:factory) - skipped: unpredictable rate_multipliers
 0x58B94400bdAd7b9ac8d5335E12eF96E8B4966b4a (api:factory-crvusd) - skipped: low liquidity
 0xAe9e8c9A548505c9ad22a412354186151363c09e (api:factory-crvusd) - skipped: low liquidity
 0x143B33AF57172E2FBF67F30B3A4d49e7f0199EeC (api:factory-crvusd) - skipped: low liquidity
