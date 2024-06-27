@@ -19,7 +19,16 @@
     },
     "build": {
       "dependsOn": ["^build", "generate"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!test/**",
+        "!.eslintrc",
+        "!README.md",
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
+      ],
       "outputs": [
         "storybook-static/**",
         ".next/**/*",
@@ -58,8 +67,7 @@
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
+      "dependsOn": ["^build"]
     },
     "start": {
       "dependsOn": ["^build", "generate", "export"],
@@ -69,26 +77,19 @@
         "DATABASE_URL",
         "DRPC_ID",
         "EDGE_CONFIG",
-        "NEXT_PUBLIC_POOLS_API_V0_BASE_URL",
+        "RSK_ID",
         "POOLS_API_V0_BASE_URL",
         "REDIS_URL",
         "SWAP_API_V0_BASE_URL",
         "TOKENS_API_V0_BASE_URL",
-        "NEXT_PUBLIC_STRAPI_API_URL"
+        "STRAPI_API_URL"
       ],
       "cache": false,
       "persistent": true
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": ["coverage/**/*"],
-      "env": []
-    },
-    "validate": {
-      "cache": true
-    },
-    "export": {
-      "cache": true
+      "outputs": ["coverage/**/*"]
     }
   }
 }

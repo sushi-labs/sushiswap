@@ -26,9 +26,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "server": "tsx src/server.ts",
-    "start": "tsx src/server.ts",
-    "test": "jest --passWithNoTests",
-    "validate": "graphclient validate"
+    "start": "tsx src/server.ts"
   },
   "dependencies": {
     "@ethersproject/address": "5.7.0",
