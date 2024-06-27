@@ -2,11 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [],
   "globalPassThroughEnv": [],
-  "globalDependencies": [
-    ".npmrc",
-    ".nvmrc",
-    "tsconfig.json"
-  ],
+  "globalDependencies": [".npmrc", ".nvmrc", "tsconfig.json"],
   "tasks": {
     "anvil": {
       "cache": false,
