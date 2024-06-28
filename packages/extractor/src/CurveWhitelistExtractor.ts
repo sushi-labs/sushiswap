@@ -115,7 +115,7 @@ export class CurveWhitelistExtractor {
 
   readonly poolMap: Map<string, CurvePoolCode> = new Map() // indexed by uniqueId
   readonly poolTypeMap: Map<string, CurvePoolType> = new Map() // indexed by  pool address
-  readonly coreMap: Map<string, CurveMultitokenCore> = new Map() // indexed by pool address
+  readonly coreMap: Map<string, CurveMultitokenCore> = new Map() // indexed by pool address.toLowerCase()
   readonly tokenPairMap: Map<string, CurvePoolCode[]> = new Map() // indexed by t0.address+t1.address
   readonly ratioPoolSet: Set<string> = new Set() // indexed by pool address
   readonly poolMapUpdated: Map<string, CurvePoolCode> = new Map() // indexed by uniqueId
@@ -149,13 +149,17 @@ export class CurveWhitelistExtractor {
     logFilter.addFilter(CurveEventsAbi, (logs?: Log[]) => {
       if (logs) {
         logs.forEach((l) => {
-          const core = this.coreMap.get(l.address)
-          if (core === undefined) return
+          const core = this.coreMap.get(l.address.toLowerCase())
+          if (core === undefined) {
+            console.log('Curve unknown pool:', l.address)
+            return
+          }
           const { eventName, args } = decodeEventLog({
             abi: CurveEventsAbi,
             data: l.data,
             topics: l.topics,
           })
+          console.log('Curve event', eventName, l.address)
           switch (eventName) {
             case 'TokenExchange':
             case 'TokenExchangeUnderlying': {
@@ -268,7 +272,7 @@ export class CurveWhitelistExtractor {
         balances as bigint[],
         ratio,
       )
-      this.coreMap.set(poolAddress, pools[0].core)
+      this.coreMap.set(poolAddress.toLowerCase(), pools[0].core)
       pools.forEach((p) => {
         const poolCode = new CurvePoolCode(
           p,
@@ -295,6 +299,7 @@ export class CurveWhitelistExtractor {
   }
 
   async updatePool(core: CurveMultitokenCore) {
+    console.log('Curve pool update', core.address)
     return await this.addPool(
       core.address as Address,
       core.tokens,
@@ -305,7 +310,9 @@ export class CurveWhitelistExtractor {
   async updateRatioPools() {
     await Promise.all(
       Array.from(this.ratioPoolSet.values()).map((pool) =>
-        this.updatePool(this.coreMap.get(pool) as CurveMultitokenCore),
+        this.updatePool(
+          this.coreMap.get(pool.toLowerCase()) as CurveMultitokenCore,
+        ),
       ),
     )
   }

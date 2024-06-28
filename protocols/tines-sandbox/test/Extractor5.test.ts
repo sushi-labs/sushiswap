@@ -301,8 +301,8 @@ it.only('Extractor Ethereum infinite work test (Curve)', async () => {
       uniswapV2Factory(ChainId.ETHEREUM),
     ],
     factoriesV3: [
-      uniswapV3Factory(ChainId.ETHEREUM),
-      sushiswapV3Factory(ChainId.ETHEREUM),
+      // uniswapV3Factory(ChainId.ETHEREUM),
+      // sushiswapV3Factory(ChainId.ETHEREUM),
     ],
     tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
     tickHelperContractAlgebra: '' as Address,
