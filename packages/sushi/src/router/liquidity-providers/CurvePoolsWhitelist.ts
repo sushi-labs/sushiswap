@@ -3017,6 +3017,26 @@ export const CurvePoolWhiteList = [
     ],
   },
   {
+    pool: '0xd82C2eB10F4895CABED6EDa6eeee234bd1A9838B',
+    poolType: 'TypeC',
+    tokens: [
+      {
+        chainId: 1,
+        address: '0xA35b1B31Ce002FBF2058D22F30f95D405200A15b',
+        name: 'ETHx',
+        symbol: 'ETHx',
+        decimals: 18,
+      },
+      {
+        chainId: 1,
+        address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+        name: 'Wrapped Ether',
+        symbol: 'WETH',
+        decimals: 18,
+      },
+    ],
+  },
+  {
     pool: '0xC73151DcA19ffF7A16aE421a9fb35455832d66d3',
     poolType: 'TypeC',
     tokens: [
