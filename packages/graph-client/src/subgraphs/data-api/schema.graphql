@@ -1,75 +1,3 @@
-type Change {
-  absolute1D: Float!
-  percent1D: Float!
-}
-
-type BalanceByChain {
-  id: ID!
-  networkName: String!
-  balance: Float!
-}
-
-type Portfolio {
-  id: ID!
-  balance: Float!
-  balanceByChains: [BalanceByChain]!
-  changes: Change!
-}
-
-type PortfolioPositions {
-  id: ID!
-  liquidityPositions: [PortfolioLiquidityPosition]
-  wallet: [PortfolioTokenPosition]
-}
-
-type TokenStatus {
-  verified: Boolean
-  isTrash: Boolean
-}
-
-type Token {
-  address: String!
-  name: String!
-  symbol: String!
-  decimals: Int!
-  status: TokenStatus
-  logoUrl: String
-}
-
-type PortfolioLiquidityPosition {
-  id: ID!
-  chainId: Int!
-  protocol: String!
-  name: String!
-  source: String!
-  assets: [PortfolioLiquidityPositionAsset]!
-}
-
-type PortfolioLiquidityPositionAsset {
-  type: String!
-  amount: Float!
-  amountUSD: Float!
-  price: Float!
-  change: Change
-  token: Token!
-  updatedAt: String
-  updatedAtBlock: Float
-}
-
-type PortfolioTokenPosition {
-  id: ID!
-  chainId: Int!
-  balance: Float!
-  decimals: Int!
-  amount: Float!
-  amountUSD: Float!
-  price: Float!
-  change: Change!
-  token: Token!
-  updatedAt: String
-  updatedAtBlock: Float
-}
-
 type Pool {
   id: ID!
   chainId: Int!
@@ -100,9 +28,98 @@ type Pool {
   source: String!
 }
 
+type SimpleToken {
+  id: String!
+  chain: String!
+  chainId: Int!
+  name: String!
+  symbol: String
+  decimals: Int!
+  logoUrl: String
+  protocolId: String!
+  price: Float!
+  isVerified: Boolean!
+  isCore: Boolean!
+  isWallet: Boolean!
+  timeAt: Int
+  amount: Float!
+  amountUSD: Float!
+}
+
+type PortfolioToken {
+  id: String!
+  chain: String!
+  chainId: Int!
+  name: String!
+  symbol: String
+  decimals: Int!
+  logoUrl: String
+  protocolId: String!
+  price: Float!
+  price24hChange: Float
+  isVerified: Boolean!
+  isCore: Boolean!
+  isWallet: Boolean!
+  timeAt: Int
+  amount: Float!
+  rawAmount: Float!
+  amountUSD: Float!
+}
+
+type V2PortfolioPosition {
+  id: String!
+  chainId: Int!
+  chain: String!
+  protocol: String!
+  protocolId: String!
+  protocolLogoUrl: String!
+  address: String!
+  swapFee: Float!
+  token0: SimpleToken!
+  token1: SimpleToken!
+  amountUSD: Float!
+  updatedAt: Int
+}
+
+enum RangeStatus {
+  IN_RANGE
+  OUT_OF_RANGE
+  UNKNOWN
+}
+
+type V3PortfolioPosition {
+  id: String!
+  chainId: Int!
+  chain: String!
+  protocol: String!
+  protocolId: String!
+  protocolLogoUrl: String!
+  address: String!
+  swapFee: Float!
+  positionId: Int!
+  range: RangeStatus!
+  token0: SimpleToken!
+  token1: SimpleToken!
+  rewards: [SimpleToken]!
+  amountUSD: Float!
+  updatedAt: Int
+}
+
+type PortfolioPositions {
+  totalUSD: Float!
+  v2Positions: [V2PortfolioPosition]!
+  v3Positions: [V3PortfolioPosition]!
+}
+
+type PortfolioWallet {
+  totalUSD: Float!
+  amountUSD24Change: Float!
+  percentageChange24h: Float!
+  tokens: [PortfolioToken]!
+}
+
 type Query {
-  portfolio(id: ID!): Portfolio
-  portfolioLiquidityPositions(id: ID!): PortfolioPositions
-  portfolioWallet(id: ID!): PortfolioPositions
+  portfolioWallet(id: ID!): PortfolioWallet!
+  portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   pools(chainId: ID!): [Pool]
 }
