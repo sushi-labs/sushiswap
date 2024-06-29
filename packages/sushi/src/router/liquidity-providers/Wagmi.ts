@@ -3,7 +3,27 @@ import { ChainId } from '../../chain/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV3BaseProvider } from './UniswapV3Base.js'
 
+enum WagmiFeeAmount {
+  /** 0.01% */
+  LOWEST = 500,
+  /** 0.15% */
+  LOW = 1500,
+  /** 0.3% */
+  MEDIUM = 3000,
+  /** 1% */
+  HIGH = 10000,
+}
+
+const WagmiTickSpacing: Record<WagmiFeeAmount, number> = {
+  [WagmiFeeAmount.LOWEST]: 10,
+  [WagmiFeeAmount.LOW]: 30,
+  [WagmiFeeAmount.MEDIUM]: 60,
+  [WagmiFeeAmount.HIGH]: 200,
+}
+
 export class WagmiProvider extends UniswapV3BaseProvider {
+  override FEE = WagmiFeeAmount
+  override TICK_SPACINGS = WagmiTickSpacing
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.ETHEREUM]: '0xB9a14EE1cd3417f3AcC988F61650895151abde24',

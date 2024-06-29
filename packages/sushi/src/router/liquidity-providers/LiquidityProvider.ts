@@ -123,3 +123,48 @@ export abstract class LiquidityProvider {
       .sort((first, second) => (first > second ? -1 : 1))
       .join(':')
 }
+
+export const UniV2LiquidityProviders: LiquidityProviders[] = [
+  LiquidityProviders.SushiSwapV2,
+  LiquidityProviders.UniswapV2,
+  LiquidityProviders.QuickSwap,
+  LiquidityProviders.ApeSwap,
+  LiquidityProviders.PancakeSwapV2,
+  LiquidityProviders.TraderJoe,
+  LiquidityProviders.Dfyn,
+  LiquidityProviders.Elk,
+  LiquidityProviders.JetSwap,
+  LiquidityProviders.SpookySwapV2,
+  LiquidityProviders.NetSwap,
+  LiquidityProviders.HoneySwap,
+  LiquidityProviders.UbeSwap,
+  LiquidityProviders.Biswap,
+  LiquidityProviders.LaserSwap,
+  LiquidityProviders.BaseSwap,
+  LiquidityProviders.Solarbeam,
+  LiquidityProviders.Swapsicle,
+  LiquidityProviders.VVSStandard,
+  LiquidityProviders.Fraxswap,
+  LiquidityProviders.SwapBlast,
+  LiquidityProviders.BlastDEX,
+  LiquidityProviders.MonoswapV2,
+  LiquidityProviders.ThrusterV2,
+  LiquidityProviders.DyorV2,
+  LiquidityProviders.HyperBlast,
+  LiquidityProviders.KinetixV2,
+  LiquidityProviders.Camelot,
+  LiquidityProviders.Enosys,
+  LiquidityProviders.BlazeSwap,
+]
+
+export const UniV3LiquidityProviders: LiquidityProviders[] = [
+  LiquidityProviders.SushiSwapV3,
+  LiquidityProviders.UniswapV3,
+  LiquidityProviders.DovishV3,
+  LiquidityProviders.KinetixV3,
+  LiquidityProviders.MonoswapV3,
+  LiquidityProviders.ThrusterV3,
+  LiquidityProviders.SpookySwapV3,
+  LiquidityProviders.PancakeSwapV3,
+  LiquidityProviders.Wagmi,
+]

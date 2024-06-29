@@ -1,5 +1,5 @@
 import { Address, PublicClient } from 'viem'
-import { erc20Abi, tickLensAbi } from '../../abi/index.js'
+import { erc20Abi, tickLensAbi, uniswapV3FactoryAbi } from '../../abi/index.js'
 import { ChainId } from '../../chain/index.js'
 import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../config/index.js'
 import { Currency, Token, Type } from '../../currency/index.js'
@@ -11,29 +11,34 @@ import { memoizer } from '../memoizer.js'
 import { type PoolCode, UniV3PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
 
+export interface UniV3FeeType {
+  readonly LOWEST: number
+  readonly LOW: number
+  readonly MEDIUM: number
+  readonly HIGH: number
+}
+
+export type UniV3TickSpacingType = {
+  readonly [key: UniV3FeeType[keyof UniV3FeeType]]: number
+}
+
 interface StaticPool {
   address: Address
   token0: Token
   token1: Token
-  fee: SushiSwapV3FeeAmount
+  fee: keyof UniV3TickSpacingType
 }
 
 interface V3Pool {
   address: Address
   token0: Token
   token1: Token
-  fee: SushiSwapV3FeeAmount
+  fee: keyof UniV3TickSpacingType
   sqrtPriceX96: bigint
   activeTick: number
 }
 
 export const NUMBER_OF_SURROUNDING_TICKS = 1000 // 10% price impact
-
-const getActiveTick = (tickCurrent: number, feeAmount: SushiSwapV3FeeAmount) =>
-  typeof tickCurrent === 'number' && feeAmount
-    ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) *
-      TICK_SPACINGS[feeAmount]
-    : undefined
 
 const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
@@ -42,6 +47,8 @@ const bitmapIndex = (tick: number, tickSpacing: number) => {
 type PoolFilter = { has: (arg: string) => boolean }
 
 export abstract class UniswapV3BaseProvider extends LiquidityProvider {
+  TICK_SPACINGS: UniV3TickSpacingType = TICK_SPACINGS
+  FEE: UniV3FeeType = SushiSwapV3FeeAmount
   poolsByTrade: Map<string, string[]> = new Map()
   pools: Map<string, PoolCode> = new Map()
 
@@ -75,6 +82,15 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       )
     }
   }
+
+  getActiveTick = (
+    tickCurrent: number,
+    feeAmount: UniV3FeeType[keyof UniV3FeeType],
+  ) =>
+    typeof tickCurrent === 'number' && feeAmount
+      ? Math.floor(tickCurrent / this.TICK_SPACINGS[feeAmount]!) *
+        this.TICK_SPACINGS[feeAmount]!
+      : undefined
 
   async fetchPoolsForToken(
     t0: Token,
@@ -165,7 +181,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       const tick = slot0[i]!.result?.[1]
       if (!sqrtPriceX96 || sqrtPriceX96 === 0n || typeof tick !== 'number')
         return
-      const activeTick = getActiveTick(tick, pool.fee)
+      const activeTick = this.getActiveTick(tick, pool.fee)
       if (typeof activeTick !== 'number') return
       existingPools.push({
         ...pool,
@@ -287,13 +303,13 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     const minIndexes = existingPools.map((pool) =>
       bitmapIndex(
         pool.activeTick - NUMBER_OF_SURROUNDING_TICKS,
-        TICK_SPACINGS[pool.fee],
+        this.TICK_SPACINGS[pool.fee]!,
       ),
     )
     const maxIndexes = existingPools.map((pool) =>
       bitmapIndex(
         pool.activeTick + NUMBER_OF_SURROUNDING_TICKS,
-        TICK_SPACINGS[pool.fee],
+        this.TICK_SPACINGS[pool.fee]!,
       ),
     )
 
@@ -383,7 +399,8 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       })).sort((a, b) => a.index - b.index)
 
       const lowerUnknownTick =
-        minIndexes[i]! * TICK_SPACINGS[pool.fee] * 256 - TICK_SPACINGS[pool.fee]
+        minIndexes[i]! * this.TICK_SPACINGS[pool.fee]! * 256 -
+        this.TICK_SPACINGS[pool.fee]!
       console.assert(
         poolTicks.length === 0 || lowerUnknownTick < poolTicks[0]!.index,
         'Error 236: unexpected min tick index',
@@ -393,7 +410,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         DLiquidity: 0n,
       })
       const upperUnknownTick =
-        (maxIndexes[i]! + 1) * TICK_SPACINGS[pool.fee] * 256
+        (maxIndexes[i]! + 1) * this.TICK_SPACINGS[pool.fee]! * 256
       console.assert(
         poolTicks[poolTicks.length - 1]!.index < upperUnknownTick,
         'Error 244: unexpected max tick index',
@@ -435,25 +452,23 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
     const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
 
-    const allCurrencyCombinationsWithAllFees: [
-      Type,
-      Type,
-      SushiSwapV3FeeAmount,
-    ][] = currencyCombinations.reduce<
-      [Currency, Currency, SushiSwapV3FeeAmount][]
-    >((list, [tokenA, tokenB]) => {
-      if (tokenA !== undefined && tokenB !== undefined) {
-        return list.concat([
-          [tokenA, tokenB, SushiSwapV3FeeAmount.LOWEST],
-          [tokenA, tokenB, SushiSwapV3FeeAmount.LOW],
-          [tokenA, tokenB, SushiSwapV3FeeAmount.MEDIUM],
-          [tokenA, tokenB, SushiSwapV3FeeAmount.HIGH],
-        ])
-      }
-      return []
-    }, [])
+    const allCurrencyCombinationsWithAllFees: [Type, Type, number][] =
+      currencyCombinations.reduce<[Currency, Currency, number][]>(
+        (list, [tokenA, tokenB]) => {
+          if (tokenA !== undefined && tokenB !== undefined) {
+            return list.concat([
+              [tokenA, tokenB, this.FEE.LOWEST],
+              [tokenA, tokenB, this.FEE.LOW],
+              [tokenA, tokenB, this.FEE.MEDIUM],
+              [tokenA, tokenB, this.FEE.HIGH],
+            ])
+          }
+          return []
+        },
+        [],
+      )
 
-    const filtered: [Token, Token, SushiSwapV3FeeAmount][] = []
+    const filtered: [Token, Token, number][] = []
     allCurrencyCombinationsWithAllFees.forEach(
       ([currencyA, currencyB, feeAmount]) => {
         if (currencyA && currencyB && feeAmount) {
@@ -520,5 +535,36 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   stopFetchPoolsData() {
     if (this.unwatchBlockNumber) this.unwatchBlockNumber()
     this.blockListener = undefined
+  }
+
+  async ensureFeeAndTicks(): Promise<boolean> {
+    const feeList = [
+      this.FEE.LOWEST,
+      this.FEE.LOW,
+      this.FEE.MEDIUM,
+      this.FEE.HIGH,
+    ] as number[]
+    const results = (await this.client.multicall({
+      multicallAddress: this.client.chain?.contracts?.multicall3
+        ?.address as Address,
+      allowFailure: false,
+      contracts: feeList.map(
+        (fee) =>
+          ({
+            chainId: this.chainId,
+            address: this.factory[this.chainId as keyof typeof this.factory]!,
+            abi: uniswapV3FactoryAbi,
+            functionName: 'feeAmountTickSpacing',
+            args: [fee],
+          }) as const,
+      ),
+    })) as number[]
+
+    // fetched fee map to ticks should match correctly with hardcoded literals in the dex
+    // a tick can be 0 if there is no pools deployed with that fee yet
+    return results.every(
+      (v, i) =>
+        this.TICK_SPACINGS[feeList[i] as SushiSwapV3FeeAmount] === v || v === 0,
+    )
   }
 }
