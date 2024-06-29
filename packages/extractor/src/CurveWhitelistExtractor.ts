@@ -151,7 +151,6 @@ export class CurveWhitelistExtractor {
         logs.forEach((l) => {
           const core = this.coreMap.get(l.address.toLowerCase())
           if (core === undefined) {
-            console.log('Curve unknown pool:', l.address)
             return
           }
           const { eventName, args } = decodeEventLog({
@@ -159,7 +158,6 @@ export class CurveWhitelistExtractor {
             data: l.data,
             topics: l.topics,
           })
-          console.log('Curve event', eventName, l.address)
           switch (eventName) {
             case 'TokenExchange':
             case 'TokenExchangeUnderlying': {
@@ -299,7 +297,6 @@ export class CurveWhitelistExtractor {
   }
 
   async updatePool(core: CurveMultitokenCore) {
-    console.log('Curve pool update', core.address)
     return await this.addPool(
       core.address as Address,
       core.tokens,
