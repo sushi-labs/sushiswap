@@ -5,7 +5,7 @@ import { CategoryFilter } from './components/category-filter/category-filter'
 import { Hero } from './components/hero'
 import { SearchFilter } from './components/search-filter'
 
-export default async function Page() {
+export default function Page() {
   return (
     <BlogSearchProvider>
       <Hero />

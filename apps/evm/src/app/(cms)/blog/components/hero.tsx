@@ -3,7 +3,7 @@ import { Button, Container, LinkInternal } from '@sushiswap/ui'
 import { ArticleAuthors } from './article-authors'
 import { ArticleHeader } from './article-header'
 
-export const revalidate = 900
+export const revalidate = 300
 
 export async function Hero() {
   const { articles } = await getBlogArticles({

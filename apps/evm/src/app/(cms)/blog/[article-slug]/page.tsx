@@ -26,6 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     filters: { slug: { eq: params['article-slug'] } },
   })
 
+  if (!article) {
+    return {}
+  }
+
   const cover = getOptimizedMedia({
     metadata: article.cover.provider_metadata,
   })

@@ -13,6 +13,8 @@ import { SearchBox } from './components/search-box'
 import { TopicProductBar } from './components/topic-product-bar/topic-product-bar'
 import { ViewMoreButton } from './components/view-more-button'
 
+export const revalidate = 300
+
 export default async function Page() {
   const { articles, meta } = await getAcademyArticles({
     pagination: { limit: 6 },
