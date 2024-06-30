@@ -7,7 +7,7 @@ import { PortfolioWalletInfo } from './PortfolioWalletTotal'
 
 function usePortfolioWallet(
   address: Address | undefined,
-  refetchInterval?: 600,
+  refetchInterval?: 600_000,
 ) {
   return useQuery({
     queryKey: ['portfolio-wallet', address],
@@ -27,7 +27,7 @@ export const PortfolioWallet = () => {
   const { data, isLoading } = usePortfolioWallet(id.address)
 
   return (
-    <div>
+    <>
       <PortfolioWalletInfo
         isLoading={isLoading}
         amountUSD24Change={data?.amountUSD24Change}
@@ -35,6 +35,6 @@ export const PortfolioWallet = () => {
         percentageChange24h={data?.percentageChange24h}
       />
       <PortfolioWalletTable isLoading={isLoading} data={data?.tokens ?? []} />
-    </div>
+    </>
   )
 }

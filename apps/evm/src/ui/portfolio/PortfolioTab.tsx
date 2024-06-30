@@ -11,6 +11,7 @@ import {
 } from '@sushiswap/ui';
 import React, { useState } from 'react';
 import { PortfolioWallet } from './WalletTable/PortfolioWallet';
+import { PortfolioPositions } from './PositionsTable/PortfolioPositions';
   
         
 
@@ -28,7 +29,7 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
     },
     {
       id: 'positions',
-      value: 'Positions',
+      value: 'positions',
       children: (
         <div className="flex items-center gap-2">
           <span>
@@ -39,7 +40,7 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
     },
     {
       id: 'activity',
-      value: 'Activity',
+      value: 'pctivity',
       children: (
         <div className="flex items-center gap-2">
           <span>Activity</span>
@@ -49,7 +50,7 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
   ]
   
   export const PortfolioTab = () => {
-    const [tab, setTab] = useState('v3')
+    const [tab, setTab] = useState('wallet')
   
     return (
       <div className="flex flex-col gap-4">
@@ -83,9 +84,9 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
           </div>
           <TabsContent value="wallet">
             <PortfolioWallet/>
-
           </TabsContent>
           <TabsContent value="positions">
+            <PortfolioPositions/>
           </TabsContent>
           <TabsContent value="activity">
           </TabsContent>
