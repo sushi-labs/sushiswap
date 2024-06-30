@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
-import { updateCounter } from '../database.js'
+import { updateEvent } from '../events.js'
 import { getNotifications } from '../functions/getNotifications.js'
 import type { ResolvedNotification } from '../types.js'
 
@@ -13,10 +13,15 @@ export const useNotifications = ({
     ResolvedNotification[] | undefined
   >(undefined)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Updates handled manually by `updateCounter`
   useEffect(() => {
-    getNotifications(account).then(setNotifications)
-  }, [account, updateCounter])
+    const update = () => getNotifications(account).then(setNotifications)
+    update()
+
+    addEventListener(updateEvent.type, update)
+    return () => {
+      removeEventListener(updateEvent.type, update)
+    }
+  }, [account])
 
   return useMemo(() => {
     if (!notifications) {

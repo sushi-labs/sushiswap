@@ -1,4 +1,5 @@
-import { getDatabase, onUpdate } from '../database.js'
+import { getDatabase } from '../database.js'
+import { updateEvent } from '../events.js'
 
 export async function clearNotifications({
   account,
@@ -28,5 +29,5 @@ export async function clearNotifications({
   }
 
   await Promise.allSettled(promises)
-  onUpdate()
+  dispatchEvent(updateEvent)
 }

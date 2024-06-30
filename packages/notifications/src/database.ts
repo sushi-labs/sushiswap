@@ -34,8 +34,3 @@ export async function getDatabase() {
 
   return _database
 }
-
-export let updateCounter = 0
-export function onUpdate() {
-  updateCounter++
-}

@@ -1,4 +1,5 @@
-import { getDatabase, onUpdate } from '../database.js'
+import { getDatabase } from '../database.js'
+import { updateEvent } from '../events.js'
 import {
   type PromiseNotification,
   type ResolvedNotification,
@@ -71,5 +72,5 @@ export async function addNotification(
     })
   }
 
-  onUpdate()
+  dispatchEvent(updateEvent)
 }
