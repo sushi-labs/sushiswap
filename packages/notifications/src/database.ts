@@ -1,4 +1,4 @@
-import { type DBSchema, openDB } from 'idb'
+import { type DBSchema, type IDBPDatabase, openDB } from 'idb'
 
 import type { ResolvedNotification } from './types'
 
@@ -10,12 +10,18 @@ interface NotificationDatabase extends DBSchema {
   }
 }
 
-export const database = await (async () => {
+let _database: IDBPDatabase<NotificationDatabase> | undefined = undefined
+
+export async function getDatabase() {
   if (typeof localStorage === 'undefined') {
     return
   }
 
-  return openDB<NotificationDatabase>('notifications', 1, {
+  if (_database) {
+    return _database
+  }
+
+  _database = await openDB<NotificationDatabase>('notifications', 1, {
     upgrade(db) {
       const notificationStore = db.createObjectStore('notifications', {
         keyPath: 'id',
@@ -25,7 +31,9 @@ export const database = await (async () => {
       notificationStore.createIndex('by-account', 'account')
     },
   })
-})()
+
+  return _database
+}
 
 export let updateCounter = 0
 export function onUpdate() {

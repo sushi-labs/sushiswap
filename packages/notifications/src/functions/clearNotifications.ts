@@ -1,8 +1,10 @@
-import { database, onUpdate } from '../database.js'
+import { getDatabase, onUpdate } from '../database.js'
 
 export async function clearNotifications({
   account,
 }: { account: string | `0x${string}` | undefined }) {
+  const database = await getDatabase()
+
   if (!database) {
     throw new Error('Database not initialized')
   }

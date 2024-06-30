@@ -1,8 +1,10 @@
-import { database } from '../database.js'
+import { getDatabase } from '../database.js'
 
 export async function getNotifications(
   account: string | `0x${string}` | undefined,
 ) {
+  const database = await getDatabase()
+
   if (!database) {
     throw new Error('Database not initialized')
   }

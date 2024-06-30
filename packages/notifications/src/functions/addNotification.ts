@@ -1,4 +1,4 @@
-import { database, onUpdate } from '../database.js'
+import { getDatabase, onUpdate } from '../database.js'
 import {
   type PromiseNotification,
   type ResolvedNotification,
@@ -8,6 +8,8 @@ import {
 export async function addNotification(
   notification: PromiseNotification | ResolvedNotification,
 ) {
+  const database = await getDatabase()
+
   if (!database) {
     throw new Error('Database not initialized')
   }
