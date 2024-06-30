@@ -125,9 +125,9 @@ query PortfolioPositions($id: ID!) {
 `,
 )
 
-export type getPortfolioPositions = VariablesOf<typeof PortfolioPositionsQuery>
+export type GetPortfolioPositions = VariablesOf<typeof PortfolioPositionsQuery>
 
-export async function getPortfolioPositions(variables: getPortfolioPositions, options?: RequestOptions) {
+export async function getPortfolioPositions(variables: GetPortfolioPositions, options?: RequestOptions) {
   const url = `https://data-api-production-acb1.up.railway.app/graphql/`
 
   const result = await request(

@@ -22,7 +22,7 @@ export const EnsToAddressResolver = ({
     if (result.data && props.query?.onSuccess) {
       props.query.onSuccess(result.data)
     }
-  }, [props.query?.onSuccess, result.data])
+  }, [props.query, props.query?.onSuccess, result.data])
 
   if (typeof children === 'function') {
     return children(result)

@@ -1,6 +1,4 @@
 import type { VariablesOf } from 'gql.tada'
-
-import { FetchError } from 'src/lib/fetch-error'
 import { type RequestOptions, request } from 'src/lib/request'
 // import { SUSHI_DATA_API_V0_URL } from 'sushi/config/subgraph'
 import { graphql } from '../graphql'
@@ -53,7 +51,7 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
     return result.pools
   }
 
-  throw new FetchError(1, 'No bar')
+  throw new Error('No pools')
 }
 
 export type PoolsV1 = Awaited<ReturnType<typeof getPools>>
