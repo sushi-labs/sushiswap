@@ -1,7 +1,7 @@
 import { getBlogArticles } from '@sushiswap/graph-client/strapi'
 import { ArticleListClient } from './article-list-client'
 
-export const revalidate = 900
+export const revalidate = 300
 
 export async function ArticleList() {
   const { articles, meta } = await getBlogArticles({
