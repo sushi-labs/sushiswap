@@ -18,7 +18,7 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui'
-import { CheckIcon } from '@sushiswap/ui'
+import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 
 import { PROTOCOL_MAP } from '../../lib/constants'

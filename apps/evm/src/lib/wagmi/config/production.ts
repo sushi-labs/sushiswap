@@ -1,11 +1,17 @@
+'use client'
+
+import { connectorsForWallets } from '@rainbow-me/rainbowkit'
+import {
+  argentWallet,
+  coinbaseWallet,
+  injectedWallet,
+  metaMaskWallet,
+  safeWallet,
+  trustWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
 import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import {
-  coinbaseWallet,
-  injected,
-  safe,
-  walletConnect,
-} from '@wagmi/connectors'
 import { ChainId } from 'sushi'
 import { publicTransports } from 'sushi/config'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
@@ -26,6 +32,23 @@ const pollingInterval = new Proxy(
         ? target[Number(name) as keyof typeof target]
         : DEFAULT_POLLING_INTERVAL
     },
+  },
+)
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'Recommended',
+      wallets: [metaMaskWallet, coinbaseWallet, trustWallet],
+    },
+    {
+      groupName: 'Others',
+      wallets: [injectedWallet, walletConnectWallet, argentWallet, safeWallet],
+    },
+  ],
+  {
+    appName: 'Sushi',
+    projectId: '3f44629277b155ef0caebf3dc705c4ba',
   },
 )
 
@@ -60,49 +83,7 @@ export const createProductionConfig = () => {
     ...publicWagmiConfig,
     transports,
     pollingInterval,
-    connectors: [
-      ...(typeof window !== 'undefined' && window.ethereum !== undefined
-        ? [
-            injected({
-              shimDisconnect: true,
-            }),
-          ]
-        : []),
-      walletConnect({
-        showQrModal: true,
-        projectId: '187b0394dbf3b20ce7762592560eafd2',
-        metadata: {
-          name: 'Sushi',
-          description: 'Community home of DeFi',
-          url: 'https://www.sushi.com',
-          icons: ['https://www.sushi.com/icon.png'],
-        },
-      }),
-      coinbaseWallet({
-        // TODO: Flesh out coinbase wallet connect options?
-        appName: 'Sushi 2.0',
-        appLogoUrl:
-          'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
-      }),
-      // only allow in iframe
-      ...(typeof window !== 'undefined' && window.parent !== window
-        ? [
-            safe({
-              // TODO: Other self-hosted safes for some networks?
-              allowedDomains: [
-                /gnosis-safe.io$/,
-                /app.safe.global$/,
-                /safe.fuse.io$/,
-                /multisig.moonbeam.network$/,
-                /safe.fantom.network$/,
-                /ui.celo-safe.io$/,
-                /multisig.harmony.one$/,
-              ],
-              debug: false,
-            }),
-          ]
-        : []),
-    ],
+    connectors,
     storage: createStorage({
       storage: cookieStorage,
     }),

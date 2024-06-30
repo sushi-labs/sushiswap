@@ -30,7 +30,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   LinkExternal,
-  NetworkIcon,
   SkeletonCircle,
   SkeletonText,
   Tooltip,
@@ -39,18 +38,19 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
   ColumnDef,
   PaginationState,
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
 import { Native, Token, unwrapToken } from 'sushi/currency'
-import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi/format'
 
 import { useSteerVaults } from '@sushiswap/client/hooks'
+import Link from 'next/link'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
@@ -123,7 +123,7 @@ const COLUMNS = [
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                      {formatNumber(original.pool.swapFee * 100)}%
+                      {formatPercent(original.pool.swapFee)}
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>

@@ -16,6 +16,7 @@ build
 dist
 robots.txt
 sitemap*.xml
+analyze/
 
 # misc
 .DS_Store
@@ -105,3 +106,6 @@ storybook-static
 
 # tines snapshots
 test/snapshots/
+
+# Sentry Config File
+.env.sentry-build-plugin

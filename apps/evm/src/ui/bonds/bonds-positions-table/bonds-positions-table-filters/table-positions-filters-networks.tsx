@@ -12,7 +12,8 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
+import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, {
   FC,
   useCallback,

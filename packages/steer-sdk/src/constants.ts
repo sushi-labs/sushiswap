@@ -69,10 +69,10 @@ export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
   [ChainId.SCROLL]:
     'subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
   [ChainId.FANTOM]:
-    'https://api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-protocol-fantom-test',
+    'api.thegraph.com/subgraphs/name/rakeshbhatt10/steer-protocol-fantom-test',
   [ChainId.BLAST]:
-    'https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-blast/1.1.1/gn',
+    'api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-blast/1.1.1/gn',
   // [ChainId.MANTA]: 'subgraph.steer.finance/manta/subgraphs/name/steerprotocol/steer-manta'
   [ChainId.ROOTSTOCK]:
-    'https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-rootstock/1.1.1/gn',
+    'api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-rootstock/1.1.1/gn',
 }

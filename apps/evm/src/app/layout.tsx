@@ -8,7 +8,6 @@ import React from 'react'
 
 import { headers } from 'next/headers'
 import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-address-dialog'
-import { getWagmiInitialState } from 'src/lib/wagmi/config'
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 
@@ -36,7 +35,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
-  const initialWagmiState = getWagmiInitialState(headers().get('cookie'))
+  const cookie = headers().get('cookie')
 
   return (
     // <html lang="en" className="[color-scheme:dark]">
@@ -67,7 +66,7 @@ export default function RootLayout({
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen" suppressHydrationWarning={true}>
         <div className="flex flex-col h-full">
-          <Providers initialWagmiState={initialWagmiState}>
+          <Providers cookie={cookie}>
             <SanctionedAddressDialog />
             {children}
           </Providers>

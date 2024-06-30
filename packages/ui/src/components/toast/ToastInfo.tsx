@@ -2,7 +2,7 @@ import type { ResolvedNotification } from '@sushiswap/dexie'
 import { FC } from 'react'
 import { Chain } from 'sushi/chain'
 
-import { HalfCircleIcon } from '../icons/HalfCircleIcon'
+import { HalfCircleIcon } from '../../icons/HalfCircleIcon'
 import { ToastContent } from './ToastContent'
 
 interface ToastInfo extends ResolvedNotification {

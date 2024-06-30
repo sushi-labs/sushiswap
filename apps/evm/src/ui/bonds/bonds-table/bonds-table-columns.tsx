@@ -2,11 +2,9 @@
 
 import { AuctionType } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
-// import { useIsMounted } from '@sushiswap/hooks'
 import {
   Badge,
   Currency,
-  NetworkIcon,
   SkeletonText,
   Tooltip,
   TooltipContent,
@@ -14,6 +12,8 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+// import { useIsMounted } from '@sushiswap/hooks'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import { formatPercent, formatUSD } from 'sushi'

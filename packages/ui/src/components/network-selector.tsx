@@ -4,6 +4,8 @@ import React, { ReactNode, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 
 import Link from 'next/link'
+import { NetworkIcon } from '../icons/NetworkIcon'
+import { AptosCircle } from '../icons/network/circle/AptosCircle'
 import {
   Command,
   CommandEmpty,
@@ -11,7 +13,6 @@ import {
   CommandInput,
   CommandItem,
 } from './command'
-import { AptosCircle, NetworkIcon } from './icons'
 import { Popover, PopoverContent, PopoverPrimitive } from './popover'
 
 export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
