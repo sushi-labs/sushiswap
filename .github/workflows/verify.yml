@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/install
       - name: Lint
-        run: pnpm lint --apply
+        run: pnpm lint:fix
       - uses: stefanzweifel/git-auto-commit-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

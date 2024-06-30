@@ -1,6 +1,6 @@
 {
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "start": {
       "dependsOn": ["build"],
       "env": ["ALCHEMY_ID", "DATABASE_URL"],

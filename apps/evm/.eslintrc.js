@@ -1,4 +1,3 @@
 module.exports = {
-  // extends: ['sushi/next'],
-  extends: 'next/core-web-vitals',
+  extends: ['next/core-web-vitals', 'turbo'],
 }

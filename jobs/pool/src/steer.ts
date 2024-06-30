@@ -124,7 +124,14 @@ async function extractChain(chainId: SteerChainId) {
     payloads.push(...payloadsChunk)
   }
 
-  const aprs = await getVaultAprs({ chainId })
+  let aprs
+
+  try {
+    aprs = await getVaultAprs({ chainId })
+  } catch (e: any) {
+    console.error(`Failed to fetch aprs for chainId: ${chainId}`, e.message)
+    aprs = {}
+  }
 
   const vaultsWithPayloads = await Promise.allSettled(
     vaults.map(async (vault, i) => {
