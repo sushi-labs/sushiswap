@@ -15,6 +15,7 @@ export const ANGLE_SUPPORTED_CHAIN_IDS = [
   ChainId.LINEA,
   ChainId.BSC,
   ChainId.SKALE_EUROPA,
+  ChainId.ROOTSTOCK,
 ]
 export type AngleEnabledChainId = (typeof ANGLE_SUPPORTED_CHAIN_IDS)[number]
 export const isAngleEnabledChainId = (

@@ -127,6 +127,7 @@ const MERKL_SUPPORTED_NETWORKS = [
   ChainId.SCROLL,
   ChainId.LINEA,
   ChainId.SKALE_EUROPA,
+  ChainId.ROOTSTOCK,
 ]
 
 export async function execute() {
