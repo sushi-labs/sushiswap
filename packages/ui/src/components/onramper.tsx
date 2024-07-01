@@ -12,7 +12,7 @@ import React, {
   useState,
 } from 'react'
 
-import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/analytics'
+import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import classNames from 'classnames'
 import Link from 'next/link'
 import { ChainId } from 'sushi'

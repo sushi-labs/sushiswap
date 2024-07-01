@@ -2,16 +2,16 @@
 
 import { CogIcon } from '@heroicons/react/24/outline'
 import {
-  LiquidityEventName,
-  LiquiditySource,
-  sendAnalyticsEvent,
-  useTrace,
-} from '@sushiswap/analytics'
-import {
   SlippageToleranceStorageKey,
   TTLStorageKey,
   useDebounce,
 } from '@sushiswap/hooks'
+import {
+  LiquidityEventName,
+  LiquiditySource,
+  sendAnalyticsEvent,
+  useTrace,
+} from '@sushiswap/telemetry'
 import {
   Card,
   CardContent,

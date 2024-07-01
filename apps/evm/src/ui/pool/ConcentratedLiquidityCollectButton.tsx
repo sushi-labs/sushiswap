@@ -4,7 +4,7 @@ import {
   LiquidityEventName,
   LiquiditySource,
   sendAnalyticsEvent,
-} from '@sushiswap/analytics'
+} from '@sushiswap/telemetry'
 import { createErrorToast, createToast } from '@sushiswap/ui'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'

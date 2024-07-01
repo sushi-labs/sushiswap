@@ -6,13 +6,13 @@ import {
   InboxArrowDownIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
+import { usePrice } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
-} from '@sushiswap/analytics'
-import { usePrice } from '@sushiswap/react-query'
+} from '@sushiswap/telemetry'
 import {
   ClipboardController,
   LinkExternal,

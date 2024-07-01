@@ -6,7 +6,7 @@ import {
   InterfaceElementName,
   SwapEventName,
   TraceEvent,
-} from '@sushiswap/analytics'
+} from '@sushiswap/telemetry'
 
 import { useDerivedStateCrossChainSwap } from './derivedstate-cross-chain-swap-provider'
 

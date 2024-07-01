@@ -1,5 +1,6 @@
 'use client'
 
+import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -9,8 +10,7 @@ import {
   TraceEvent,
   sendAnalyticsEvent,
   useTrace,
-} from '@sushiswap/analytics'
-import { UseTradeReturn } from '@sushiswap/react-query'
+} from '@sushiswap/telemetry'
 import {
   Button,
   DialogConfirm,

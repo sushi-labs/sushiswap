@@ -1,11 +1,11 @@
 'use client'
 
+import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
 import {
   InterfaceElementName,
   SwapEventName,
   sendAnalyticsEvent,
-} from '@sushiswap/analytics'
-import { TradeLegType, UseTradeReturn } from '@sushiswap/react-query'
+} from '@sushiswap/telemetry'
 import {
   Button,
   Currency,

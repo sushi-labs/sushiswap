@@ -1,12 +1,12 @@
 import { CogIcon } from '@heroicons/react-v1/outline'
+import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
+import { NativeAddress } from '@sushiswap/react-query'
 import {
   LiquidityEventName,
   LiquiditySource,
   sendAnalyticsEvent,
   useTrace,
-} from '@sushiswap/analytics'
-import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
-import { NativeAddress } from '@sushiswap/react-query'
+} from '@sushiswap/telemetry'
 import {
   Button,
   Currency,

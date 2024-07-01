@@ -1,11 +1,11 @@
 'use client'
 
+import { useLocalStorage } from '@sushiswap/hooks'
 import {
   InterfaceEventName,
   WalletConnectionResult,
   sendAnalyticsEvent,
-} from '@sushiswap/analytics'
-import { useLocalStorage } from '@sushiswap/hooks'
+} from '@sushiswap/telemetry'
 import { useCallback, useState } from 'react'
 import { Address } from 'viem'
 import {

@@ -3,14 +3,6 @@
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import {
-  BrowserEvent,
-  InterfaceElementName,
-  InterfaceEventName,
-  InterfaceModalName,
-  Trace,
-  TraceEvent,
-} from '@sushiswap/analytics'
-import {
   DEFAULT_BASES,
   useCustomTokens,
   useDebounce,
@@ -23,6 +15,14 @@ import {
   usePrices,
   useTokens,
 } from '@sushiswap/react-query'
+import {
+  BrowserEvent,
+  InterfaceElementName,
+  InterfaceEventName,
+  InterfaceModalName,
+  Trace,
+  TraceEvent,
+} from '@sushiswap/telemetry'
 import {
   Dialog,
   DialogContent,

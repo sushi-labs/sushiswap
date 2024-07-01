@@ -1,7 +1,7 @@
 'use client'
 
-import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/analytics'
 import { useIsMounted } from '@sushiswap/hooks'
+import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { useBreakpoint } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 // import { JazzIcon } from '@sushiswap/ui'

@@ -3,13 +3,13 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/20/solid'
+import { NativeAddress } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
-} from '@sushiswap/analytics'
-import { NativeAddress } from '@sushiswap/react-query'
+} from '@sushiswap/telemetry'
 import {
   IconButton,
   SkeletonText,

@@ -5,7 +5,7 @@ import {
   LiquidityEventName,
   sendAnalyticsEvent,
   useTrace,
-} from '@sushiswap/analytics'
+} from '@sushiswap/telemetry'
 import {
   Button,
   Card,

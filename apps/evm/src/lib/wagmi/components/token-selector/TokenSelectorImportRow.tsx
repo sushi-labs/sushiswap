@@ -1,10 +1,10 @@
+import { useTokenSecurity } from '@sushiswap/react-query'
 import {
   BrowserEvent,
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
-} from '@sushiswap/analytics'
-import { useTokenSecurity } from '@sushiswap/react-query'
+} from '@sushiswap/telemetry'
 import {
   Dialog,
   DialogContent,

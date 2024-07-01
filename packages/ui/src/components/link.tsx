@@ -1,4 +1,4 @@
-import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/analytics'
+import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import Link from 'next/link'
 import { AnchorHTMLAttributes, FC } from 'react'
 

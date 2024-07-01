@@ -1,6 +1,6 @@
 'use client'
 
-import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/analytics'
+import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { createErrorToast, createToast } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 // import * as Sentry from '@sentry/nextjs'

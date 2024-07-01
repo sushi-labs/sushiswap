@@ -2,12 +2,12 @@
 
 import { ChainId } from 'sushi/chain'
 
+import { usePrevious } from '@sushiswap/hooks'
 import {
   InterfaceEventName,
   WalletConnectionResult,
   sendAnalyticsEvent,
-} from '@sushiswap/analytics'
-import { usePrevious } from '@sushiswap/hooks'
+} from '@sushiswap/telemetry'
 import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'

@@ -7,7 +7,7 @@ import {
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
-} from '@sushiswap/analytics'
+} from '@sushiswap/telemetry'
 import { List } from '@sushiswap/ui'
 import { CoinbaseWalletIcon } from '@sushiswap/ui/icons/CoinbaseWalletIcon'
 import { FrameIcon } from '@sushiswap/ui/icons/FrameIcon'

@@ -2,7 +2,7 @@ import {
   SwapEventName,
   sendAnalyticsEvent,
   useTrace,
-} from '@sushiswap/analytics'
+} from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'

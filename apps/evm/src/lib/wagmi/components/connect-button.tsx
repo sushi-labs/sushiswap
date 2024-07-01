@@ -6,7 +6,7 @@ import {
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
-} from '@sushiswap/analytics'
+} from '@sushiswap/telemetry'
 import { Button, ButtonProps } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 import { useConnect } from '../hooks/wallet/useConnect'
