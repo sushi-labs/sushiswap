@@ -7,8 +7,8 @@ import React, {
   type SyntheticEvent,
 } from 'react'
 
-import { sendAnalyticsEvent } from '.'
 import { type ITraceContext, Trace, TraceContext } from './Trace'
+import { sendAnalyticsEvent } from './sendAnalyticsEvent'
 
 type TraceEventProps = {
   events: string[]

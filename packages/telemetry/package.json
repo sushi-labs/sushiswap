@@ -41,22 +41,18 @@
     "test": "jest --passWithNoTests"
   },
   "devDependencies": {
-    "@sentry/nextjs": "7.101.1",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
+    "@types/gtag.js": "0.0.19",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sushi": "workspace:*",
-    "typescript": "5.2.2"
+    "typescript": "5.4.5"
   },
   "peerDependencies": {
-    "@sentry/nextjs": "7.101.1",
-    "@sushiswap/client": "*",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "sushi": "*"
+    "react-dom": "18.2.0"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -64,15 +60,6 @@
     },
     "react-dom": {
       "optional": false
-    },
-    "sushi": {
-      "optional": true
-    },
-    "viem": {
-      "optional": true
-    },
-    "wagmi": {
-      "optional": true
     }
   }
 }

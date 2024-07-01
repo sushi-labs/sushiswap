@@ -8,7 +8,7 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { sendAnalyticsEvent } from '.'
+import { sendAnalyticsEvent } from './sendAnalyticsEvent'
 
 const DEFAULT_EVENT = 'Page Viewed'
 
