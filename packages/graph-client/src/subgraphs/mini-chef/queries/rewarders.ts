@@ -15,7 +15,7 @@ query MiniChefRewarders(
   $where: Rewarder_filter
   $block: Block_height
 ) {
-  rewarders: rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+  rewarders(first: $first, skip: $skip, where: $where, block: $block) {
     id
     rewardToken
     rewardPerSecond
