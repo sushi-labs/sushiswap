@@ -381,7 +381,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         dest: StepState.Success,
       })
     }
-
     if (lzData?.status === 'FAILED') {
       setStepStates((prev) => ({
         ...prev,
