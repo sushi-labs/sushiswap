@@ -3,7 +3,7 @@
   "tasks": {
     "start": {
       "dependsOn": ["build"],
-      "env": ["ALCHEMY_ID", "DATABASE_URL"],
+      "env": ["ALCHEMY_ID", "DATABASE_URL", "SUSHI_GRAPH_KEY"],
       "cache": false,
       "persistent": true
     },
