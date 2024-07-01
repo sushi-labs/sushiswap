@@ -2,8 +2,9 @@ import { getPortfolioPositions } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { PortfolioPositionTable } from './PortfolioPositionTable'
 import { PortfolioPositionInfo } from './PortfolioPositionTotal'
+import { PortfolioV2PositionTable } from './v2/PortfolioV2PositionTable'
+import { PortfolioV3PositionTable } from './v3/PortfolioV3PositionTable'
 
 function usePortfolioPositions(
   address: Address | undefined,
@@ -29,9 +30,13 @@ export const PortfolioPositions = () => {
   return (
     <>
       <PortfolioPositionInfo isLoading={isLoading} totalUSD={data?.totalUSD} />
-      <PortfolioPositionTable
+      <PortfolioV3PositionTable
         isLoading={isLoading}
-        data={data ? [...data.v2Positions, ...data.v3Positions] : []}
+        data={data ? data.v3Positions : []}
+      />
+      <PortfolioV2PositionTable
+        isLoading={isLoading}
+        data={data ? data.v2Positions : []}
       />
     </>
   )

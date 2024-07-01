@@ -1,6 +1,6 @@
 'use client'
 
-import { PortfolioPosition } from '@sushiswap/graph-client/data-api'
+import { PortfolioV3Position } from '@sushiswap/graph-client/data-api'
 import { DataTable, Slot } from '@sushiswap/ui'
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { FC, ReactNode, useCallback } from 'react'
@@ -10,22 +10,22 @@ const COLUMNS = [
   ICON_COLUMN,
   NAME_SYMBOL_AMOUNT_COLUMN,
   USD_COLUMN,
-] satisfies ColumnDef<PortfolioPosition, unknown>[]
+] satisfies ColumnDef<PortfolioV3Position, unknown>[]
 
-interface PortfolioPositionTableProps {
+interface PortfolioV3PositionTableProps {
   isLoading: boolean
-  data: PortfolioPosition[]
-  onRowClick?(row: PortfolioPosition): void
+  data: PortfolioV3Position[]
+  onRowClick?(row: PortfolioV3Position): void
 }
 
-export const PortfolioPositionTable: FC<PortfolioPositionTableProps> = ({
+export const PortfolioV3PositionTable: FC<PortfolioV3PositionTableProps> = ({
   isLoading,
   data,
   onRowClick,
 }) => {
 
   const rowRenderer = useCallback(
-    (row: Row<PortfolioPosition>, rowNode: ReactNode) => {
+    (row: Row<PortfolioV3Position>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -40,12 +40,12 @@ export const PortfolioPositionTable: FC<PortfolioPositionTableProps> = ({
     [onRowClick],
   )
 
-  if (isLoading) return <div>Loading...</div>
-  if (!data) return <div>No data</div>
+  if (isLoading) return <></>
+  if (!data) return <></>
 
   return (
     <DataTable
-      testId="portfolio-position-table"
+      testId="portfolio-v3-position-table"
       loading={isLoading}
       // linkFormatter={(row) =>
       //   `/pool/${row.chainId}:${
