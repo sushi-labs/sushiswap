@@ -2,11 +2,9 @@
 
 import { AuctionType } from '@sushiswap/bonds-sdk'
 import { Bond } from '@sushiswap/client'
-// import { useIsMounted } from '@sushiswap/hooks'
 import {
   Badge,
   Currency,
-  NetworkIcon,
   SkeletonText,
   Tooltip,
   TooltipContent,
@@ -14,6 +12,8 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+// import { useIsMounted } from '@sushiswap/hooks'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import { formatPercent, formatUSD } from 'sushi'
@@ -95,10 +95,10 @@ export const PRICE_COLUMN: ColumnDef<Bond, unknown> = {
   cell: ({ row: { original } }) => (
     <div className="flex flex-col space-y-1">
       <div className="text-sm font-medium">
-        {formatUSD(original.payoutToken.discountedPriceUSD)}
+        {formatUSD(original.payoutToken.discountedPriceUSD, '$0.000a')}
       </div>
       <div className="text-xs text-gray-500">
-        {formatUSD(original.payoutToken.priceUSD)} Market
+        {formatUSD(original.payoutToken.priceUSD, '$0.000a')} Market
       </div>
     </div>
   ),

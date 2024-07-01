@@ -10,7 +10,7 @@ import {
   Toggle,
   classNames,
 } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -83,6 +83,11 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           fontSize: 12,
           fontWeight: 600,
         },
+        axisPointer: {
+          lineStyle: {
+            type: 'dashed',
+          },
+        },
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
@@ -143,6 +148,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           type: 'bar',
           xAxisIndex: 0,
           yAxisIndex: 0,
+          barWidth: '70%',
           itemStyle: {
             color: 'blue',
             normal: {

@@ -1,11 +1,10 @@
-import { Toggle } from '@sushiswap/ui/components/toggle'
+import { Toggle } from '@sushiswap/ui'
 import React from 'react'
 
 export enum PoolChartType {
   Volume = 'Volume',
   TVL = 'TVL',
   Fees = 'Fees',
-  APR = 'APR',
   Depth = 'Depth',
 }
 

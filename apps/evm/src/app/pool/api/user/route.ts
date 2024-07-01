@@ -1,17 +1,26 @@
+import 'sushi/bigint-serializer'
+
 import { NextResponse } from 'next/server'
 import { getUser } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'
+import { isSushiSwapV2ChainId } from 'sushi/config'
+import { Address } from 'viem'
 import { z } from 'zod'
+import { CORS } from '../cors'
 
 export const revalidate = 15
 
 const schema = z.object({
-  id: z.string(),
-  chainIds: z
-    .nullable(z.string())
-    .transform((chainIds) =>
-      chainIds?.split(',').map((chainId) => Number(chainId) as ChainId),
-    ),
+  id: z
+    .string()
+    .refine((id) => id.startsWith('0x'))
+    .transform((id) => id.toLowerCase() as Address),
+  chainIds: z.nullable(z.string()).transform((chainIds) =>
+    chainIds
+      ?.split(',')
+      .map((chainId) => Number(chainId) as ChainId)
+      .filter(isSushiSwapV2ChainId),
+  ),
 })
 
 // export const dynamic = 'auto'
@@ -32,5 +41,11 @@ export async function GET(request: Request) {
   }
   const args = result.data
   const data = await getUser(args)
-  return NextResponse.json(data)
+
+  return NextResponse.json(data, {
+    headers: {
+      'Cache-Control': 'public, max-age=15, stale-while-revalidate=600',
+      ...CORS,
+    },
+  })
 }

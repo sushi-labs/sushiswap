@@ -27,10 +27,11 @@
   },
   "include": [
     "next-env.d.ts",
+    "**/*.png",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "src/app/global-error.tsx.old"  ],
   "exclude": [
     "node_modules"
   ]

@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
-import INonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import invariant from 'tiny-invariant'
 import { zeroAddress } from 'viem'
+import { nonfungiblePositionManagerAbi } from '../../../abi/nonfungiblePositionManagerAbi.js'
 import { toHex } from '../../../convert/index.js'
 import {
   Amount as CurrencyAmount,
@@ -173,7 +173,7 @@ export interface RemoveLiquidityOptions {
 
 export abstract class NonfungiblePositionManager {
   public static INTERFACE: Interface = new Interface(
-    INonfungiblePositionManager.abi,
+    nonfungiblePositionManagerAbi,
   )
 
   /**

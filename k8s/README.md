@@ -37,6 +37,7 @@ gcloud config set project sushi-api-414412
 ```bash
 kubectl create secret generic sushi-api \
     --from-literal=DRPC_ID=XXX \
+    --from-literal=RSK_ID=XXX \
     --from-literal=SENTRY_DSN=XXX \
     --from-literal=SENTRY_ENVIRONMENT=XXX
 ```
@@ -100,3 +101,15 @@ kubectl exec --stdin --tty extractor-56-0 -- /bin/bash
 ```bash
 kubectl cp -n default extractor-56-0:/app/cache ./cache
 ```
+
+### Port Forward
+
+https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/
+
+Example for downloading binary pool codes from the internal extractor API on base:
+
+```bash
+kubectl port-forward statefulset/extractor-8453 3000:80
+```
+
+http://localhost:3000/pool-codes-bin/8453

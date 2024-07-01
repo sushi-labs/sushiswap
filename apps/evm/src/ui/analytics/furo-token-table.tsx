@@ -8,13 +8,14 @@ import {
   CardTitle,
   Currency,
   DataTable,
-  NetworkIcon,
   SkeletonText,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, PaginationState, SortingState } from '@tanstack/react-table'
 import React, { FC, useMemo, useState } from 'react'
 import { formatNumber, formatUSD } from 'sushi/format'
 
+import { isFuroChainId } from 'sushi/config'
 import {
   FuroToken,
   GetFuroTokenArgs,
@@ -94,7 +95,7 @@ export const FuroTokenTable: FC = () => {
 
   const args = useMemo<GetFuroTokenArgs>(
     () => ({
-      chainIds,
+      chainIds: chainIds.filter(isFuroChainId),
       tokenSymbols,
     }),
     [chainIds, tokenSymbols],

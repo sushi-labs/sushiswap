@@ -1,49 +1,56 @@
 {
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": [
-        "public",
-        "src/**",
-        "package.json",
-        "next.config.mjs",
-        "postcss.config.js",
-        "sentry.client.config.ts",
-        "sentry.edge.config.ts",
-        "sentry.server.config.ts",
-        "tailwind.config.js",
-        "tsconfig.json"
-      ],
-      "outputs": [".next/**", "!.next/cache/**"],
-      "dependsOn": ["^build"],
-      "dotEnv": [
+        "$TURBO_DEFAULT$",
+        "!test/**",
+        "!.eslintrc",
+        "!README.md",
         ".env.production.local",
         ".env.local",
         ".env.production",
         ".env"
-      ]
+      ],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": ["^build"]
     },
-
     "check": {
       "dependsOn": ["^build"],
       "cache": false
     },
     "dev": {
       "dependsOn": ["^build"],
-      "dotEnv": [
+      "cache": false,
+      "persistent": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
         ".env.development.local",
         ".env.local",
         ".env.development",
         ".env"
-      ],
-      "cache": false,
-      "persistent": true
+      ]
     },
     "test": {
-      "inputs": ["test/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "test/**",
+        ".env.test.local",
+        ".env.test",
+        ".env"
+      ],
       "outputs": ["test-results/**"],
-      "dependsOn": ["build"],
-      "dotEnv": [".env.test.local", ".env.test", ".env"]
+      "env": [
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_FORK_URL",
+        "ANVIL_PORT",
+        "APP_ENV",
+        "API_BASE_URL",
+        "CHAIN_ID",
+        "DRPC_ID",
+        "EDGE_CONFIG"
+      ],
+      "dependsOn": ["build"]
     }
   }
 }

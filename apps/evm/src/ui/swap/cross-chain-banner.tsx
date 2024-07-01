@@ -9,9 +9,9 @@ import {
   CardHeader,
   CardTitle,
   IconButton,
-  ShuffleIcon,
   Switch,
 } from '@sushiswap/ui'
+import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useCallback, useState, useTransition } from 'react'
@@ -54,7 +54,7 @@ export const CrossChainBanner: FC = () => {
                 </motion.div>
               </CardTitle>
               <CardDescription>
-                Swap tokens natively across 14 chains including Ethereum,
+                Swap tokens natively across 15 chains including Ethereum,
                 Arbitrum, Optimism, Polygon, Base and more!{' '}
                 <a
                   target="_blank"

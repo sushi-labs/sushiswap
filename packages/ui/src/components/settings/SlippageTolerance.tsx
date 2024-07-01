@@ -7,6 +7,7 @@ import {
 import classNames from 'classnames'
 import React, { FC, useCallback } from 'react'
 
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { Collapsible } from '../animation'
 import { CardDescription, CardHeader, CardTitle } from '../card'
 import {
@@ -71,7 +72,7 @@ export const SlippageTolerance: FC<{
               <Switch
                 checked={slippageTolerance === 'AUTO'}
                 onCheckedChange={(checked) =>
-                  setSlippageTolerance(checked ? 'AUTO' : '0.1')
+                  setSlippageTolerance(checked ? 'AUTO' : DEFAULT_SLIPPAGE)
                 }
               />
             </div>
@@ -124,7 +125,9 @@ export const SlippageTolerance: FC<{
               'text-sm font-semibold',
             )}
           >
-            {slippageTolerance === 'AUTO' ? '0.1%' : `${slippageTolerance}%`}
+            {slippageTolerance === 'AUTO'
+              ? `${DEFAULT_SLIPPAGE}%`
+              : `${slippageTolerance}%`}
           </span>
         </div>
         <Collapsible open={slippageTolerance !== 'AUTO'}>

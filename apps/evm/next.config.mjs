@@ -2,24 +2,27 @@ import { withSentryConfig } from '@sentry/nextjs'
 import defaultNextConfig from '@sushiswap/nextjs-config'
 import { withAxiom } from 'next-axiom'
 
-const ACADEMY_URL = process.env.ACADEMY_URL || 'https://academy.sushi.com'
-const BLOG_URL = process.env.BLOG_URL || 'https://blog.sushi.com'
-const FURO_URL = process.env.FURO_URL || 'https://furo.sushi.com'
+import withBundleAnalyzer from '@next/bundle-analyzer'
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: false && process.env.NODE_ENV !== 'development',
+})
+
+const FURO_URL = 'https://furo.sushi.com'
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
   experimental: {
+    ...defaultNextConfig.experimental,
     testProxy: true,
   },
-  transpilePackages: ['@sushiswap/wagmi'],
   async redirects() {
     return [
+      {
+        source: '/',
+        permanent: true,
+        destination: '/swap',
+      },
       {
         source: '/discord{/}?',
         permanent: true,
@@ -60,26 +63,15 @@ const nextConfig = {
         permanent: true,
         destination: '/pool/:path*',
       },
+      {
+        source: '/skale/swap',
+        permanent: true,
+        destination: '/swap?chainId=2046399126',
+      },
     ]
   },
   async rewrites() {
     return [
-      {
-        source: '/academy',
-        destination: `${ACADEMY_URL}/academy`,
-      },
-      {
-        source: '/academy/:path*',
-        destination: `${ACADEMY_URL}/academy/:path*`,
-      },
-      {
-        source: '/blog',
-        destination: `${BLOG_URL}/blog`,
-      },
-      {
-        source: '/blog/:path*',
-        destination: `${BLOG_URL}/blog/:path*`,
-      },
       {
         source: '/furo',
         destination: `${FURO_URL}/furo`,
@@ -90,59 +82,39 @@ const nextConfig = {
       },
     ]
   },
-  sentry: {
-    hideSourceMaps: true,
-    widenClientFileUpload: true,
-    // automaticVercelMonitors: true,
-  },
-}
+})
 
-/** @type {import('@sentry/nextjs').SentryWebpackPluginOptions} */
-const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry webpack plugin. Keep in mind that
-  // the following options are set automatically, and overriding them is not
-  // recommended:
-  //   release, url, configFile, stripPrefix, urlPrefix, include, ignore
+export default withSentryConfig(withAxiom(nextConfig), {
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options
 
   org: 'sushi-j9',
   project: 'evm',
 
-  // An auth token is required for uploading source maps.
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-
-  silent: true, // Suppresses all logs
+  // Only print logs for uploading source maps in CI
+  silent: !process.env.CI,
 
   // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
-}
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-// export default withAxiom(nextConfig)
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
+  widenClientFileUpload: true,
 
-export default withSentryConfig(
-  withAxiom(nextConfig),
-  sentryWebpackPluginOptions,
-  {
-    hideSourceMaps: true,
-    widenClientFileUpload: true,
-    automaticVercelMonitors: true,
-  },
-  {
-    // For all available options, see:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+  // This can increase your server load as well as your hosting bill.
+  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+  // side errors will fail.
+  tunnelRoute: '/monitoring',
 
-    // Upload a larger set of source maps for prettier stack traces (increases build time)
-    widenClientFileUpload: true,
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
 
-    // Transpiles SDK to be compatible with IE11 (increases bundle size)
-    transpileClientSDK: false,
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  disableLogger: true,
 
-    // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-    tunnelRoute: '/monitoring',
-
-    // Hides source maps from generated client bundles
-    hideSourceMaps: true,
-
-    // Automatically tree-shake Sentry logger statements to reduce bundle size
-    disableLogger: true,
-  },
-)
+  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
+  // See the following for more information:
+  // https://docs.sentry.io/product/crons/
+  // https://vercel.com/docs/cron-jobs
+  automaticVercelMonitors: true,
+})

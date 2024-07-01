@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 import { PoolsApiSchema, getPoolsFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../cors'
@@ -13,5 +15,8 @@ export async function GET(request: Request) {
   }
 
   const pools = await getPoolsFromDB(result.data)
-  return NextResponse.json(pools, { headers: CORS })
+
+  return NextResponse.json(pools, {
+    headers: CORS,
+  })
 }

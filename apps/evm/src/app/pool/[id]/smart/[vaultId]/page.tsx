@@ -6,14 +6,13 @@ import {
   getVaultPositions,
 } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
-import { deserialize, serialize } from '@wagmi/core'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
 import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber, unsanitize } from 'sushi/format'
-import { tickToPrice } from 'sushi/pool'
+import { tickToPrice } from 'sushi/pool/sushiswap-v3'
 import { PublicClient, createPublicClient } from 'viem'
 import {
   SteerStrategyComponents,
@@ -23,14 +22,8 @@ import {
 function getPriceExtremes(
   vault: SteerVault,
 ): SteerStrategyGeneric['priceExtremes'] {
-  const token0 = new Token({
-    chainId: vault.pool.chainId,
-    ...vault.pool.token0,
-  })
-  const token1 = new Token({
-    chainId: vault.pool.chainId,
-    ...vault.pool.token1,
-  })
+  const token0 = new Token(vault.token0)
+  const token1 = new Token(vault.token1)
 
   let lowerPrice = tickToPrice(token0, token1, vault.lowerTick).toSignificant(7)
   let upperPrice = tickToPrice(token0, token1, vault.upperTick).toSignificant(7)
@@ -92,15 +85,13 @@ export default async function SteerVaultPage({
     ['steer-vault', vaultId],
     { revalidate: 60 * 15 },
   )()
-  const generics = deserialize(
-    await unstable_cache(
-      async () => serialize(await getGenerics(vault)),
-      ['steer-vault-generics', vaultId],
-      {
-        revalidate: 60 * 5,
-      },
-    )(),
-  ) as Awaited<ReturnType<typeof getGenerics>>
+  const generics = await unstable_cache(
+    async () => await getGenerics(vault),
+    ['steer-vault-generics', vaultId],
+    {
+      revalidate: 60 * 5,
+    },
+  )()
 
   const Component = SteerStrategyComponents[vault.strategy]
 

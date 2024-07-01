@@ -8,16 +8,19 @@ import {
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
+import { Button } from '@sushiswap/ui'
 import {
   Command,
+  CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
-} from '@sushiswap/ui/components/command'
-import { CheckIcon, NetworkIcon } from '@sushiswap/ui/components/icons'
+} from '@sushiswap/ui'
+import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC, useCallback, useState, useTransition } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { Chain, ChainId } from 'sushi/chain'
+import { Chain } from 'sushi/chain'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
@@ -34,7 +37,7 @@ export const TableFiltersNetwork: FC = () => {
   const values = pending ? localValue : isAllThenNone(chainIds)
 
   const onClick = useCallback(
-    (chainId: ChainId) => {
+    (chainId: (typeof chainIds)[number]) => {
       let _newValues: number[]
       if (localValue.includes(chainId)) {
         _newValues = localValue.filter((el) => el !== chainId)
@@ -46,7 +49,7 @@ export const TableFiltersNetwork: FC = () => {
       startTransition(() => {
         setFilters((prev) => {
           if (prev.chainIds?.includes(chainId)) {
-            const chains = prev.chainIds.filter((el) => el !== chainId)
+            const chains = prev.chainIds!.filter((el) => el !== chainId)
             return { ...prev, chainIds: chains }
           } else {
             return { ...prev, chainIds: [...(prev.chainIds ?? []), chainId] }
@@ -97,12 +100,19 @@ export const TableFiltersNetwork: FC = () => {
         className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll"
       >
         <Command className="flex items-center gap-1">
+          <CommandInput
+            testdata-id="network-selector-input"
+            placeholder="Search network"
+          />
+          <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
             {SUPPORTED_CHAIN_IDS.map((chainId) => (
               <CommandItem
                 key={chainId}
-                value={`${chainId}`}
-                onSelect={(currentValue) => onClick(+currentValue as ChainId)}
+                value={`${Chain.from(chainId)?.name}__${chainId}`}
+                onSelect={(value) =>
+                  onClick(+value.split('__')[1] as (typeof chainIds)[number])
+                }
                 className="py-2 pl-8 pr-2"
               >
                 {values.includes(chainId) ? (

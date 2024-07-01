@@ -1,6 +1,6 @@
 'use client'
 
-import { cloudinaryImageLoader } from '@sushiswap/ui/cloudinary'
+import { cloudinaryImageLoader } from '@sushiswap/ui'
 import Image from 'next/image'
 
 export const FarmerImage = () => {

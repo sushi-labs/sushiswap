@@ -12,8 +12,11 @@ import {
   // loadSnapshot,
 } from 'test/intercept-anvil'
 
-if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
-  new Error('NEXT_PUBLIC_CHAIN_ID not set')
+if (
+  typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string' ||
+  !process.env.NEXT_PUBLIC_CHAIN_ID
+) {
+  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
 const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as SupportedChainId
@@ -46,18 +49,18 @@ test.beforeEach(async ({ page, next }) => {
   })
   // await loadSnapshot(chainId, snapshot)
 
-  await page.route('https://localhost:3000/api/swap', async (route) => {
-    await route.fill({ success: true, data: { maintenance: false } })
+  await page.route('http://localhost:3000/api/swap', async (route) => {
+    await route.fallback({ json: { maintenance: false } })
   })
 
   await page.route(
-    'https://localhost:3000/api/balance/v0/**/*',
+    'http://localhost:3000/api/balance/v0/**/*',
     async (route) => {
-      await route.fill({ success: true, data: {} })
+      await route.fulfill({ json: {} })
     },
   )
 
-  await page.route('https://tokens.sushi.com/v0', async (route) => {
+  await page.route('http://tokens.sushi.com/v0', async (route) => {
     await route.fulfill({
       json: [wnative, usdc, usdt, wbtc].map((token) => ({
         id: token.id,

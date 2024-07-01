@@ -1,4 +1,5 @@
-import { add, getUnixTime } from 'date-fns'
+import { add } from 'date-fns/add'
+import { getUnixTime } from 'date-fns/getUnixTime'
 import { Address, PublicClient } from 'viem'
 import {
   balanceOfAbi,

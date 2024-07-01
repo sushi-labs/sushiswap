@@ -1,6 +1,13 @@
 'use client'
 
-import { useSlippageTolerance } from '@sushiswap/hooks'
+import {
+  BrowserEvent,
+  InterfaceElementName,
+  SwapEventName,
+  TraceEvent,
+  sendAnalyticsEvent,
+  useTrace,
+} from '@sushiswap/analytics'
 import {
   DialogClose,
   DialogContent,
@@ -14,25 +21,12 @@ import {
   DialogType,
   Message,
 } from '@sushiswap/ui'
-import { Collapsible } from '@sushiswap/ui/components/animation/Collapsible'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { List } from '@sushiswap/ui/components/list/List'
-import { SkeletonText } from '@sushiswap/ui/components/skeleton'
-import {
-  createErrorToast,
-  createInfoToast,
-  createToast,
-} from '@sushiswap/ui/components/toast'
-import {
-  getSushiXSwap2ContractConfig,
-  useAccount,
-  useBalanceWeb3Refetch,
-  usePublicClient,
-  useSimulateContract,
-  useTransaction,
-  useWriteContract,
-} from '@sushiswap/wagmi'
+import { Collapsible } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import { List } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
+import { createErrorToast, createInfoToast, createToast } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import { log } from 'next-axiom'
 import React, {
@@ -44,8 +38,23 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
+import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
+import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
+import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
+import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
+import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
+import { sushiXSwap2Abi } from 'sushi/abi'
 import { Chain, chainName } from 'sushi/chain'
-import { SushiXSwap2ChainId, isSushiXSwap2ChainId } from 'sushi/config'
+import {
+  SUSHIXSWAP_2_ADDRESS,
+  SushiXSwap2ChainId,
+  isSushiXSwap2ChainId,
+} from 'sushi/config'
+import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import {
@@ -53,23 +62,13 @@ import {
   UserRejectedRequestError,
   stringify,
 } from 'viem'
-
 import {
-  BrowserEvent,
-  InterfaceElementName,
-  SwapEventName,
-  TraceEvent,
-  sendAnalyticsEvent,
-  useTrace,
-} from '@sushiswap/analytics'
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
-import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
-import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
-import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
-import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
-import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
-import { warningSeverity } from 'src/lib/swap/warningSeverity'
-import { Native } from 'sushi/currency'
+  useAccount,
+  usePublicClient,
+  useSimulateContract,
+  useTransaction,
+  useWriteContract,
+} from 'wagmi'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -87,7 +86,7 @@ import {
 export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [slippageTolerance] = useSlippageTolerance()
+  const [slippagePercent] = useSlippageTolerance()
   const { address, chain } = useAccount()
   const {
     mutate: { setTradeId, setSwapAmount },
@@ -127,7 +126,8 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     isError,
     error,
   } = useSimulateContract({
-    ...getSushiXSwap2ContractConfig(chainId0 as SushiXSwap2ChainId),
+    address: SUSHIXSWAP_2_ADDRESS[chainId0 as SushiXSwap2ChainId],
+    abi: sushiXSwap2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
     value: trade?.value ?? 0n,
@@ -583,9 +583,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       )}
                     </List.KeyValue>
                     <List.KeyValue
-                      title={`Min. received after slippage (${
-                        slippageTolerance === 'AUTO' ? '0.1' : slippageTolerance
-                      }%)`}
+                      title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
                       {isFetching || !trade?.minAmountOut ? (

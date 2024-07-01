@@ -16,8 +16,8 @@ import {
   SkeletonText,
   Toggle,
 } from '@sushiswap/ui'
-import { useBondMarketDetails } from '@sushiswap/wagmi'
 import { FC, useMemo, useState } from 'react'
+import { useBondMarketDetails } from 'src/lib/wagmi/hooks/bonds/use-bond-market-details'
 import { Token } from 'sushi/currency'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
@@ -83,7 +83,7 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
             }
           >
             {typeof payoutTokenPriceUSD === 'number' ? (
-              formatUSD(payoutTokenPriceUSD)
+              formatUSD(payoutTokenPriceUSD, '$0.000a')
             ) : (
               <SkeletonText fontSize="sm" />
             )}
@@ -97,7 +97,7 @@ export const BondsMarketDetails: FC<BondsMarketDetails> = ({
             }
           >
             {typeof discountedPrice === 'number' ? (
-              formatUSD(discountedPrice)
+              formatUSD(discountedPrice, '$0.000a')
             ) : (
               <SkeletonText fontSize="sm" />
             )}

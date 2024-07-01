@@ -4,6 +4,8 @@ import React, { ReactNode, useMemo, useState } from 'react'
 import { Chain, ChainId } from 'sushi/chain'
 
 import Link from 'next/link'
+import { NetworkIcon } from '../icons/NetworkIcon'
+import { AptosCircle } from '../icons/network/circle/AptosCircle'
 import {
   Command,
   CommandEmpty,
@@ -11,7 +13,6 @@ import {
   CommandInput,
   CommandItem,
 } from './command'
-import { AptosCircle, NetworkIcon } from './icons'
 import { Popover, PopoverContent, PopoverPrimitive } from './popover'
 
 export type NetworkSelectorOnSelectCallback<T extends number = ChainId> = (
@@ -28,6 +29,7 @@ const PREFERRED_CHAINID_ORDER: ChainId[] = [
   ChainId.SCROLL,
   ChainId.OPTIMISM,
   ChainId.LINEA,
+  ChainId.ROOTSTOCK,
   ChainId.BLAST,
   ChainId.ZETACHAIN,
   ChainId.CORE,
@@ -51,8 +53,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
 
 const NEW_CHAINS: number[] = [
   ChainId.SKALE_EUROPA,
-  ChainId.BLAST,
-  ChainId.ZETACHAIN,
+  ChainId.ROOTSTOCK,
 ] satisfies ChainId[]
 
 const NetworkSelector = <T extends number>({
@@ -91,38 +92,37 @@ const NetworkSelector = <T extends number>({
                   <div className="flex items-center gap-2">
                     <AptosCircle width={22} height={22} />
                     Aptos
-                    <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                      NEW
-                    </div>
                   </div>
                 </CommandItem>
               </Link>
             ) : null}
-            {_networks.map((el) => (
-              <CommandItem
-                className="cursor-pointer"
-                testdata-id={`network-selector-${el}`}
-                value={`${Chain.from(el)?.name}__${el}`}
-                key={el}
-                onSelect={(value) =>
-                  onSelect(+value.split('__')[1] as T, () => setOpen(false))
-                }
-              >
-                <div className="flex items-center gap-2">
-                  <NetworkIcon chainId={el} width={22} height={22} />
-                  {NEW_CHAINS.includes(el) ? (
-                    <>
-                      {Chain.from(el)?.name}
-                      <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
-                        NEW
-                      </div>
-                    </>
-                  ) : (
-                    Chain.from(el)?.name
-                  )}
-                </div>
-              </CommandItem>
-            ))}
+            {_networks
+              .sort((a) => (NEW_CHAINS.includes(a) ? -1 : 0))
+              .map((el) => (
+                <CommandItem
+                  className="cursor-pointer"
+                  testdata-id={`network-selector-${el}`}
+                  value={`${Chain.from(el)?.name}__${el}`}
+                  key={el}
+                  onSelect={(value) =>
+                    onSelect(+value.split('__')[1] as T, () => setOpen(false))
+                  }
+                >
+                  <div className="flex items-center gap-2">
+                    <NetworkIcon chainId={el} width={22} height={22} />
+                    {NEW_CHAINS.includes(el) ? (
+                      <>
+                        {Chain.from(el)?.name}
+                        <div className="text-[10px] italic rounded-full px-[6px] bg-gradient-to-r from-blue to-pink text-white font-bold">
+                          NEW
+                        </div>
+                      </>
+                    ) : (
+                      Chain.from(el)?.name
+                    )}
+                  </div>
+                </CommandItem>
+              ))}
           </CommandGroup>
         </Command>
       </PopoverContent>

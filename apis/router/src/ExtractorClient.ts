@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 // import EventEmitter from 'node:events'
 import { Logger } from '@sushiswap/extractor'
 import { IncrementalPricer } from 'sushi'
@@ -71,18 +72,46 @@ export class ExtractorClient {
     return this.lastUpdatedTimestamp !== 0
   }
 
-  start() {
-    this.updatePools()
-    this.updateRequestedPairs()
+  isShapshotMode() {
+    return !this.extractorServer.startsWith('http')
   }
 
-  async updatePools() {
-    try {
+  start() {
+    this.updatePools()
+    if (!this.isShapshotMode()) this.updateRequestedPairs()
+  }
+
+  async getPoolSnapshot(): Promise<Uint8Array | number> {
+    if (!this.isShapshotMode()) {
       const url = `${this.extractorServer}/pool-codes-bin/${this.chainId}?stateId=${this.dataStateId}`
       if (DEBUG_PRINT) console.log(url)
       const resp = await fetch(url)
       if (resp.status === 200) {
         const data = new Uint8Array(await resp.arrayBuffer())
+        return data
+      } else return resp.status
+    } else {
+      // file snapshot - for debugging
+      try {
+        const buffer = fs.readFileSync(this.extractorServer)
+        const data = new Uint8Array(buffer)
+        return data
+      } catch (err) {
+        console.error(err)
+      }
+      return -1
+    }
+  }
+
+  async updatePools() {
+    try {
+      const data = await this.getPoolSnapshot()
+      if (data instanceof Uint8Array) {
+        // const url = `${this.extractorServer}/pool-codes-bin/${this.chainId}?stateId=${this.dataStateId}`
+        // if (DEBUG_PRINT) console.log(url)
+        // const resp = await fetch(url)
+        // if (resp.status === 200) {
+        //   const data = new Uint8Array(await resp.arrayBuffer())
         const start = performance.now()
         let pos = 0
         const poolNums: number[] = []
@@ -152,15 +181,17 @@ export class ExtractorClient {
         )
         this.lastUpdatedTimestamp = Date.now()
       } else {
-        Logger.error(
-          this.chainId,
-          `ExtractorClient: Pool download failed, status=${resp.status}`,
-        )
+        if (data >= 0)
+          Logger.error(
+            this.chainId,
+            `ExtractorClient: Pool download failed, status=${data}`,
+          )
       }
     } catch (e) {
       console.error('ExtractorClient: updatePools failed', e)
     }
-    setTimeout(() => this.updatePools(), this.poolUpdateInterval)
+    if (!this.isShapshotMode())
+      setTimeout(() => this.updatePools(), this.poolUpdateInterval)
   }
 
   async updateRequestedPairs() {
@@ -208,6 +239,7 @@ export class ExtractorClient {
 
   // fetch pools for the pair if we didn't do it previously
   async fetchPoolsBetween(t0: Type, t1: Type) {
+    if (this.isShapshotMode()) return
     if (t0.isNative || t1.isNative) return // natives locally is processed wrapped
     const id = tokenPairId(t0, t1)
     if (this.poolCodesMap.get(id) !== undefined) return
@@ -267,6 +299,7 @@ export class ExtractorClient {
   }
 
   async fetchTokenPools(t: string | Type) {
+    if (this.isShapshotMode()) return
     const addr = typeof t === 'string' ? t : tokenAddr(t)
     try {
       if (DEBUG_PRINT)
@@ -330,6 +363,7 @@ export class ExtractorClient {
   }
 
   async fetchToken(addr: string): Promise<Token | undefined> {
+    if (this.isShapshotMode()) return
     try {
       if (DEBUG_PRINT)
         console.log(`${this.extractorServer}/token/${this.chainId}/${addr}`)

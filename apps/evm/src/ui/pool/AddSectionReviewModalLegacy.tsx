@@ -21,32 +21,37 @@ import {
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Dots } from '@sushiswap/ui/components/dots'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
-import {
-  SushiSwapV2PoolState,
-  UseSimulateContractParameters,
-  getDefaultTTL,
-  getSushiSwapRouterContractConfig,
-  useAccount,
-  usePublicClient,
-  useSimulateContract,
-  useTransactionDeadline,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from '@sushiswap/wagmi'
-import { SendTransactionReturnType } from '@sushiswap/wagmi/actions'
-import { useApproved } from '@sushiswap/wagmi/systems/Checker/Provider'
+import { Button } from '@sushiswap/ui'
+import { Dots } from '@sushiswap/ui'
+import { createErrorToast, createToast } from '@sushiswap/ui'
 import { FC, ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { getSushiSwapRouterContractConfig } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
+import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import {
+  getDefaultTTL,
+  useTransactionDeadline,
+} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
 import { gasMargin, slippageAmount } from 'sushi/calculate'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { BentoBoxChainId } from 'sushi/config'
 import { Amount, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
-import { Address, UserRejectedRequestError } from 'viem'
+import {
+  Address,
+  SendTransactionReturnType,
+  UserRejectedRequestError,
+} from 'viem'
+import {
+  UseSimulateContractParameters,
+  usePublicClient,
+  useWriteContract,
+} from 'wagmi'
+import { useSimulateContract } from 'wagmi'
+import { useAccount } from 'wagmi'
+import { useWaitForTransactionReceipt } from 'wagmi'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface UseAddSushiSwapV2 {
@@ -444,7 +449,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                     options={{
                       slippageTolerance: {
                         storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                        defaultValue: '0.1',
                         title: 'Add Liquidity Slippage',
                       },
                       transactionDeadline: {

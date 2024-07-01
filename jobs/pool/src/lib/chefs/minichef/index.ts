@@ -1,8 +1,8 @@
-import type { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
-import { daysInYear, secondsInDay } from 'date-fns'
+import { daysInYear, secondsInDay } from 'date-fns/constants'
 import { ChainId } from 'sushi/chain'
 import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
 
+import { MiniChefChainId } from 'sushi/config'
 import { MINICHEF_ADDRESS } from '../../../config.js'
 import {
   divBigIntToNumber,
@@ -20,8 +20,9 @@ import {
   getSushiPerSecond,
   getTotalAllocPoint,
 } from './fetchers.js'
+
 export async function getMinichef(
-  chainId: SushiSwapChainId | TridentChainId,
+  chainId: MiniChefChainId,
 ): Promise<ChefReturn> {
   try {
     if (!(chainId in SUSHI)) {

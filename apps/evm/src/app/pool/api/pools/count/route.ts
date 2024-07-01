@@ -1,3 +1,5 @@
+import 'sushi/bigint-serializer'
+
 import { PoolCountApiSchema, getPoolCountFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../cors'
@@ -13,5 +15,7 @@ export async function GET(request: Request) {
   }
 
   const count = await getPoolCountFromDB(result.data)
-  return NextResponse.json(count, { headers: CORS })
+  return NextResponse.json(count, {
+    headers: CORS,
+  })
 }

@@ -1,6 +1,7 @@
-import { getCreate2Address } from '@ethersproject/address'
-import { add, getUnixTime } from 'date-fns'
-import { Address, Hex, PublicClient, encodePacked, keccak256 } from 'viem'
+import { add } from 'date-fns/add'
+import { getUnixTime } from 'date-fns/getUnixTime'
+import type { Address, Hex, PublicClient } from 'viem'
+import { encodePacked, getCreate2Address, keccak256 } from 'viem/utils'
 import { getReservesAbi } from '../../abi/index.js'
 import { ChainId } from '../../chain/index.js'
 import {
@@ -457,16 +458,17 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   _getPoolAddress(t1: Token, t2: Token): Address {
-    return getCreate2Address(
-      this.factory[this.chainId as keyof typeof this.factory]!,
-      keccak256(
+    return getCreate2Address({
+      from: this.factory[this.chainId as keyof typeof this.factory]!,
+      salt: keccak256(
         encodePacked(
           ['address', 'address'],
           [t1.address as Address, t2.address as Address],
         ),
       ),
-      this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]!,
-    ) as Address
+      bytecodeHash:
+        this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]!,
+    })
   }
 
   // TODO: Decide if this is worth keeping as fallback in case fetching top pools fails? only used on initial load.

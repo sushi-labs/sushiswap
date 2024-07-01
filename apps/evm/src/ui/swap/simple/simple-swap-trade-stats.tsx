@@ -1,14 +1,14 @@
 'use client'
 
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
-import { useAccount } from '@sushiswap/wagmi'
-import { AddressToEnsResolver } from '@sushiswap/wagmi/components/account/AddressToEnsResolver'
 import React, { FC } from 'react'
-import { Chain } from 'sushi/chain'
+import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
+import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { Address, isAddress } from 'viem'
+import { useAccount } from 'wagmi'
 import {
   warningSeverity,
   warningSeverityClassName,
@@ -104,7 +104,9 @@ export const SimpleSwapTradeStats: FC = () => {
             Network fee
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
+            {chainId === ChainId.SKALE_EUROPA ? (
+              'FREE'
+            ) : loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : trade?.gasSpent ? (
               `${trade.gasSpent} ${Native.onChain(chainId).symbol}`

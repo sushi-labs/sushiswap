@@ -20,7 +20,8 @@ import {
   ScrollArea,
 } from '@sushiswap/ui'
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
-import { Native, Token, Type } from 'sushi/currency'
+import { ChainId } from 'sushi/chain'
+import { Native, Token, Type, WETH9 } from 'sushi/currency'
 
 const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
   if (
@@ -136,7 +137,11 @@ export const ComplexRoutePath: FC<ComplexRoutePathProps> = ({
           width={16}
           height={16}
         />
-        <span className="truncate">{fromToken.symbol}</span>
+        <span className="truncate">
+          {fromToken.equals(WETH9[ChainId.SKALE_EUROPA])
+            ? WETH9[ChainId.SKALE_EUROPA].symbol
+            : fromToken.symbol}
+        </span>
       </div>
       <div className="flex flex-col col-span-4">
         <div className="z-[1] col-span-2 text-sm truncate">
@@ -148,7 +153,11 @@ export const ComplexRoutePath: FC<ComplexRoutePathProps> = ({
       </div>
       <div className="z-[1] font-medium col-span-4 text-sm flex items-center justify-end gap-2">
         <Currency.Icon disableLink currency={toToken} width={16} height={16} />
-        <span className="text-sm truncate">{toToken.symbol}</span>
+        <span className="text-sm truncate">
+          {toToken.equals(WETH9[ChainId.SKALE_EUROPA])
+            ? WETH9[ChainId.SKALE_EUROPA].symbol
+            : toToken.symbol}
+        </span>
       </div>
     </div>
   )

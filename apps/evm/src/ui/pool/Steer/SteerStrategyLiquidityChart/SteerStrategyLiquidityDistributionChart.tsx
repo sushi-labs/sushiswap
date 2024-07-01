@@ -1,10 +1,17 @@
-import ReactECharts, { EChartsOption } from 'echarts-for-react'
 import { useTheme } from 'next-themes'
 import React, { FC, useMemo, useState } from 'react'
 import ReactVirtualizedAutoSizer from 'react-virtualized-auto-sizer'
 import colors from 'tailwindcss/colors'
 
 import { ChartEntry } from '../../LiquidityChartRangeInput/types'
+
+import ReactEChartsCore from 'echarts-for-react/lib/core'
+import { EChartsOption } from 'echarts-for-react/lib/types'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/component/markArea'
+import 'echarts/lib/component/markLine'
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/visual/seriesColor'
 
 interface SteerStrategyLiquidityDistributionChart {
   series: ChartEntry[]
@@ -155,7 +162,11 @@ export const SteerStrategyLiquidityDistributionChart: FC<
       <div className="w-full h-full">
         <ReactVirtualizedAutoSizer>
           {({ height, width }) => (
-            <ReactECharts option={DEFAULT_OPTION} style={{ height, width }} />
+            <ReactEChartsCore
+              echarts={echarts}
+              option={DEFAULT_OPTION}
+              style={{ height, width }}
+            />
           )}
         </ReactVirtualizedAutoSizer>
       </div>

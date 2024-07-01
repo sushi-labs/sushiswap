@@ -44,7 +44,7 @@ export const angleRewardsPoolsValidator = z.object({
   poolBalanceToken1: z.number(),
   symbolToken0: z.string(),
   symbolToken1: z.string(),
-  tvl: z.number().nullable(),
+  tvl: z.number().nullable().default(0),
   almDetails: z
     .array(
       z.object({
@@ -55,7 +55,7 @@ export const angleRewardsPoolsValidator = z.object({
       }),
     )
     .optional(),
-  userTVL: z.number().optional().nullable(),
+  userTVL: z.number().optional().nullable().default(0),
   userBalanceToken0: z.number().optional(),
   userBalanceToken1: z.number().optional(),
 })

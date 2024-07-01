@@ -1,12 +1,7 @@
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Currency } from '@sushiswap/ui/components/currency'
-import { Loader } from '@sushiswap/ui/components/loader'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@sushiswap/ui/components/select'
+import { Currency } from '@sushiswap/ui'
+import { Loader } from '@sushiswap/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
 import Image from 'next/legacy/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'

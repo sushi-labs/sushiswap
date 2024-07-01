@@ -2,8 +2,8 @@
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { DiscordIcon } from '@sushiswap/ui/components/icons'
+import { Button } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { FC } from 'react'
 
 export const Hero: FC = () => {
@@ -18,9 +18,9 @@ export const Hero: FC = () => {
               className: 'max-w-[500px]',
             })}
           >
-            Acquire tokens at a discount from the current market price. Tokens
-            will be released according to their vesting schedule per bond
-            market.
+            Acquire digital assets through a permissionless auction format.
+            Asset listings may reflect market conditions, and terms apply. Sushi
+            does not issue any assets.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">

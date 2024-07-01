@@ -1,14 +1,13 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
-import { getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
+import { SteerVaultId, getSteerVaultAprTimeseries } from '@sushiswap/steer-sdk'
 import { useQuery } from '@tanstack/react-query'
 import React, { FC } from 'react'
 
 import { _SteerAPRChart } from './_SteerAPRChart'
 
 interface SteerAPRChartProps {
-  vault: Pool['steerVaults'][0]
+  vault: SteerVaultId
 }
 
 export const SteerAPRChart: FC<SteerAPRChartProps> = ({ vault }) => {

@@ -2,18 +2,17 @@
 
 import { GiftIcon } from '@heroicons/react-v1/outline'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
-import { Button } from '@sushiswap/ui/components/button'
-import { Chip } from '@sushiswap/ui/components/chip'
+import { Button } from '@sushiswap/ui'
+import { Chip } from '@sushiswap/ui'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@sushiswap/ui/components/dropdown-menu'
-import { DiscordIcon } from '@sushiswap/ui/components/icons'
-import { SelectIcon } from '@sushiswap/ui/components/select'
-import { useChainId } from '@sushiswap/wagmi'
+} from '@sushiswap/ui'
+import { SelectIcon } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
@@ -21,6 +20,7 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
+import { useChainId } from 'wagmi'
 
 export const Hero: FC = () => {
   const chainId = useChainId()

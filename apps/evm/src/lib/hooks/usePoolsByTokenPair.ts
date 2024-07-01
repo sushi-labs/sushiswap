@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getPoolsByTokenPair } from 'src/lib/graph'
+import { getV3PoolsByTokenPair } from 'src/lib/graph'
 
 function usePoolsByTokenPair(tokenId0?: string, tokenId1?: string) {
   return useQuery({
@@ -9,7 +9,10 @@ function usePoolsByTokenPair(tokenId0?: string, tokenId1?: string) {
     queryFn: () => {
       if (!tokenId0 || !tokenId1) return []
 
-      return getPoolsByTokenPair(tokenId0.toLowerCase(), tokenId1.toLowerCase())
+      return getV3PoolsByTokenPair(
+        tokenId0.toLowerCase(),
+        tokenId1.toLowerCase(),
+      )
     },
     enabled: !!tokenId0 && !!tokenId1,
   })

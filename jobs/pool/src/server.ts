@@ -10,6 +10,10 @@ import { execute as merklIncentives } from './merkl-incentives.js'
 import { execute as pools } from './pools.js'
 import { steer } from './steer.js'
 
+if (!process.env.SUSHI_GRAPH_KEY) {
+  throw new Error('SUSHI_GRAPH_KEY not set')
+}
+
 const app = express()
 
 const protocolSchema = z.object({

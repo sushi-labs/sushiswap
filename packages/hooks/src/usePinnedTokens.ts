@@ -1,6 +1,5 @@
 'use client'
 
-import { getAddress as _getAddress, isAddress } from '@ethersproject/address'
 import { useCallback, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
@@ -36,6 +35,7 @@ import {
   axlWBTC,
 } from 'sushi/currency'
 import { type Currency, Native, Token } from 'sushi/currency'
+import { getAddress as _getAddress, isAddress } from 'viem/utils'
 import { useLocalStorage } from './useLocalStorage'
 
 export const DEFAULT_BASES = {
@@ -365,6 +365,12 @@ export const DEFAULT_BASES = {
     SKL,
     USDC[ChainId.SKALE_EUROPA],
     WETH9[ChainId.SKALE_EUROPA],
+  ],
+  [ChainId.ROOTSTOCK]: [
+    Native.onChain(ChainId.ROOTSTOCK),
+    WNATIVE[ChainId.ROOTSTOCK],
+    WETH9[ChainId.ROOTSTOCK],
+    USDT[ChainId.ROOTSTOCK],
   ],
   // [ChainId.SEPOLIA]: [Native.onChain(ChainId.SEPOLIA), WNATIVE[ChainId.SEPOLIA]],
 } as const satisfies Record<ChainId, Readonly<(Token | Native)[]>>

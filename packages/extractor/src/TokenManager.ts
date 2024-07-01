@@ -14,15 +14,21 @@ interface TokenCacheRecord {
 }
 
 // For some tokens that are not 100% ERC-20:
-const SpecialTokens: Record<
-  typeof ChainId.ETHEREUM,
-  Record<string, Omit<TokenCacheRecord, 'address'>>
+const SpecialTokens: Partial<
+  Record<ChainId, Record<string, Omit<TokenCacheRecord, 'address'>>>
 > = {
   [ChainId.ETHEREUM]: {
     '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': {
       name: 'DGD',
       symbol: 'DGD',
       decimals: 9,
+    },
+  },
+  [ChainId.SKALE_EUROPA]: {
+    '0xD2Aaa00700000000000000000000000000000000': {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
     },
   },
 }

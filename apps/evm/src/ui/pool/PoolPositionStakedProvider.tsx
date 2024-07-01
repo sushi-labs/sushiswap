@@ -1,13 +1,14 @@
 'use client'
 
-import { ChefType, Pool } from '@sushiswap/client'
-import { useMasterChef } from '@sushiswap/wagmi'
+import { ChefType } from '@sushiswap/client'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
   useGraphPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
+import { useMasterChef } from 'src/lib/wagmi/hooks/master-chef/use-master-chef'
+import type { PoolId, PoolWithIncentives } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Currency, Token } from 'sushi/currency'
 
@@ -26,7 +27,7 @@ interface PoolPositionStakedContext {
 const Context = createContext<PoolPositionStakedContext | undefined>(undefined)
 
 interface PoolPositionStakedProviderProps {
-  pool: Pool
+  pool: PoolWithIncentives
   children: ReactNode
   watch?: boolean
 }
@@ -65,7 +66,7 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> =
   }
 
 interface _PoolPositionStakedProviderProps {
-  pool: Pool
+  pool: PoolId
   children: ReactNode
   farmId: number
   chefType: ChefType
@@ -82,6 +83,7 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   const {
     data: { reserve0, reserve1, totalSupply, liquidityToken },
   } = useGraphPool(pool)
+
   const { balance, isLoading, isError, isWritePending, isWriteError } =
     useMasterChef({
       chainId: pool.chainId as ChainId,

@@ -1,7 +1,6 @@
 import {
   Badge,
   Currency,
-  NetworkIcon,
   SkeletonCircle,
   SkeletonText,
   Tooltip,
@@ -10,35 +9,24 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
-import { formatNumber } from 'sushi/format'
+import { formatNumber, formatPercent } from 'sushi/format'
 
-import { Token, unwrapToken } from 'sushi/currency'
+import { SteerAccountPositionExtended } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
+import { unwrapToken } from 'sushi/currency'
 import { ProtocolBadge } from '../../../../PoolNameCell'
-import { SteerPosition } from '../useSteerPositions'
 import { SteerStrategyCell } from './SteerStrategyCell'
 
-export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
+export const STEER_NAME_COLUMN: ColumnDef<
+  SteerAccountPositionExtended,
+  unknown
+> = {
   id: 'name',
   header: 'Name',
   cell: ({ row: { original } }) => {
     const vault = original.vault
     const pool = vault.pool
-
-    const token0 = new Token({
-      chainId: original.chainId,
-      address: pool.token0.address,
-      decimals: pool.token0.decimals,
-      symbol: pool.token0.symbol,
-    })
-    const token1 = new Token({
-      chainId: original.chainId,
-      address: pool.token1.address,
-      decimals: pool.token1.decimals,
-      symbol: pool.token1.symbol,
-    })
-
-    const incentives = pool.incentives.filter((i) => i.rewardPerDay > 0)
 
     return (
       <div className="flex items-center gap-5">
@@ -51,18 +39,18 @@ export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
             }
           >
             <Currency.IconList iconWidth={26} iconHeight={26}>
-              <Currency.Icon disableLink currency={token0} />
-              <Currency.Icon disableLink currency={token1} />
+              <Currency.Icon disableLink currency={original.token0} />
+              <Currency.Icon disableLink currency={original.token1} />
             </Currency.IconList>
           </Badge>
         </div>
         <div className="flex flex-col gap-0.5">
           <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-            {unwrapToken(token0).symbol}{' '}
+            {unwrapToken(original.token0).symbol}{' '}
             <span className="font-normal text-gray-900 dark:text-slate-500">
               /
             </span>{' '}
-            {unwrapToken(token1).symbol}{' '}
+            {unwrapToken(original.token1).symbol}{' '}
             <div
               className={classNames(
                 'text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1',
@@ -84,7 +72,7 @@ export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                    {formatNumber(pool.swapFee * 100)}%
+                    {formatPercent(pool.swapFee)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -97,10 +85,7 @@ export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="whitespace-nowrap bg-green/20 text-green text-[10px] px-2 rounded-full">
-                      🧑🌾{' '}
-                      {incentives.length > 1
-                        ? `x ${incentives.length}`
-                        : ''}{' '}
+                      🧑🌾{'  '}
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -148,7 +133,10 @@ export const STEER_NAME_COLUMN: ColumnDef<SteerPosition, unknown> = {
   size: 300,
 }
 
-export const STEER_STRATEGY_COLUMN: ColumnDef<SteerPosition, unknown> = {
+export const STEER_STRATEGY_COLUMN: ColumnDef<
+  SteerAccountPositionExtended,
+  unknown
+> = {
   id: 'strategy',
   header: 'Strategy',
   cell: (props) => <SteerStrategyCell vault={props.row.original.vault} />,
@@ -162,7 +150,10 @@ export const STEER_STRATEGY_COLUMN: ColumnDef<SteerPosition, unknown> = {
   size: 300,
 }
 
-export const STEER_POSITION_SIZE_COLUMN: ColumnDef<SteerPosition, unknown> = {
+export const STEER_POSITION_SIZE_COLUMN: ColumnDef<
+  SteerAccountPositionExtended,
+  unknown
+> = {
   id: 'positionSize',
   header: 'Position Size',
   accessorFn: (row) => row.totalAmountUSD ?? 0,

@@ -4,13 +4,13 @@ import {
   Button,
   Collapsible,
   Label,
-  NetworkIcon,
   NetworkSelector,
   SelectIcon,
 } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi/components/web3-input'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { Chain } from 'sushi/chain'
 
+import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import {
   SUSHIXSWAP_2_SUPPORTED_CHAIN_IDS,
   isWNativeSupported,

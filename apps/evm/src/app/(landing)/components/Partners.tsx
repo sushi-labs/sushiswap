@@ -1,4 +1,4 @@
-import { Container } from '@sushiswap/ui/components/container'
+import { Container } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import {

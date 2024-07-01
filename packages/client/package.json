@@ -57,12 +57,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build"
-  },
-  "jest": {
-    "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
     "@sushiswap/bonds-sdk": "workspace:*",
@@ -71,23 +66,21 @@
     "@sushiswap/steer-sdk": "workspace:*",
     "@whatwg-node/fetch": "0.8.4",
     "deepmerge-ts": "^4.3.0",
+    "sushi": "workspace:*",
     "tslib": "latest",
-    "viem": "2.8.14",
+    "viem": "2.10.11",
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/tokens-api": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
-    "eslint": "8.43.0",
     "react": "18.2.0",
-    "sushi": "workspace:*",
     "swr": "2.1.5",
     "tsup": "7.2.0",
-    "typescript": "5.2.2"
+    "typescript": "5.4.5"
   },
   "peerDependencies": {
     "react": "*",

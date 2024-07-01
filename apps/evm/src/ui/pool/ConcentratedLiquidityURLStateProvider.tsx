@@ -1,10 +1,9 @@
 'use client'
 
-import { useChainId } from '@sushiswap/wagmi'
-import { useTokenWithCache } from '@sushiswap/wagmi'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId } from 'sushi/chain'
 import {
   SushiSwapV3ChainId,
@@ -16,6 +15,7 @@ import {
 } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { isAddress } from 'viem'
+import { useChainId } from 'wagmi'
 import { z } from 'zod'
 
 export const queryParamsSchema = z.object({
@@ -176,7 +176,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       _searchParams.set('chainId', chainId.toString())
       _searchParams.set('fromCurrency', fromCurrency)
       if (toCurrency) _searchParams.set('toCurrency', toCurrency)
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
     const setToken0 = (currency: Type) => {
@@ -195,7 +195,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           toCurrency === _fromCurrency || same ? fromCurrency : toCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
     const setToken1 = (currency: Type) => {
       const same = currency.wrapped.address === token0?.wrapped.address
@@ -213,14 +213,14 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           fromCurrency === _toCurrency || same ? toCurrency : fromCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
     const setFeeAmount = (feeAmount: SushiSwapV3FeeAmount) => {
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
       _searchParams.set('feeAmount', feeAmount.toString())
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
     const switchTokens = () => {
       const _searchParams = new URLSearchParams(
@@ -234,7 +234,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
         'toCurrency',
         !token0 || token0.isNative ? 'NATIVE' : token0.wrapped.address,
       )
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
     return {

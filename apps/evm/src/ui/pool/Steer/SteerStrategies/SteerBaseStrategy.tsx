@@ -19,7 +19,7 @@ import {
 } from '@sushiswap/ui'
 import { formatPercent, formatUSD } from 'sushi/format'
 
-import { FormattedNumber } from '@sushiswap/ui/components/formatted-number'
+import { FormattedNumber } from '@sushiswap/ui'
 import { SteerStrategyComponent } from '.'
 import { APRHoverCard } from '../../APRHoverCard'
 import { SteerAPRChart } from '../SteerAPRChart'

@@ -18,6 +18,7 @@ import {
   UNISWAP_V2_INIT_CODE_HASH,
   UNISWAP_V3_FACTORY_ADDRESS,
   UNISWAP_V3_INIT_CODE_HASH,
+  UniswapV2ChainId,
   type UniswapV3ChainId,
   publicClientConfig,
 } from 'sushi/config'
@@ -37,6 +38,15 @@ function sushiswapV2Factory(chainId: SushiSwapV2ChainId) {
     provider: LiquidityProviders.SushiSwapV2,
     fee: 0.003,
     initCodeHash: SUSHISWAP_V2_INIT_CODE_HASH[chainId],
+  } as const
+}
+
+function uniswapV2Factory(chainId: UniswapV2ChainId) {
+  return {
+    address: UNISWAP_V2_FACTORY_ADDRESS[chainId],
+    provider: LiquidityProviders.UniswapV2,
+    fee: 0.003,
+    initCodeHash: UNISWAP_V2_INIT_CODE_HASH,
   } as const
 }
 
@@ -88,6 +98,7 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.ARBITRUM]: {
     client: createPublicClient(extractorClientConfig(ChainId.ARBITRUM)),
     factoriesV2: [
+      uniswapV2Factory(ChainId.ARBITRUM),
       sushiswapV2Factory(ChainId.ARBITRUM),
       {
         address: '0xA102072A4C07F06EC3B4900FDC4C7B80b6c57429' as Address,
@@ -133,6 +144,7 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.AVALANCHE]: {
     client: createPublicClient(extractorClientConfig(ChainId.AVALANCHE)),
     factoriesV2: [
+      uniswapV2Factory(ChainId.AVALANCHE),
       sushiswapV2Factory(ChainId.AVALANCHE),
       {
         address: '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10' as Address,
@@ -158,6 +170,7 @@ export const EXTRACTOR_CONFIG: Record<
       extractorClientConfig(ChainId.BASE),
     ) as PublicClient,
     factoriesV2: [
+      uniswapV2Factory(ChainId.BASE),
       sushiswapV2Factory(ChainId.BASE),
       {
         address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
@@ -179,11 +192,15 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
     maxCallsInOneBatch: 200,
+    maxBatchesSimultaniously: 5,
   },
   [ChainId.BOBA]: {
     client: createPublicClient(extractorClientConfig(ChainId.BOBA)),
     factoriesV2: [sushiswapV2Factory(ChainId.BOBA)],
-    factoriesV3: [sushiswapV3Factory(ChainId.BOBA)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.BOBA),
+      uniswapV3Factory(ChainId.BOBA),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BOBA],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -206,6 +223,7 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.BSC]: {
     client: createPublicClient(extractorClientConfig(ChainId.BSC)),
     factoriesV2: [
+      uniswapV2Factory(ChainId.BSC),
       sushiswapV2Factory(ChainId.BSC),
       {
         address: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73' as Address,
@@ -264,7 +282,10 @@ export const EXTRACTOR_CONFIG: Record<
     client: createPublicClient(
       extractorClientConfig(ChainId.CELO),
     ) as unknown as PublicClient,
-    factoriesV2: [sushiswapV2Factory(ChainId.CELO)],
+    factoriesV2: [
+      uniswapV2Factory(ChainId.CELO),
+      sushiswapV2Factory(ChainId.CELO),
+    ],
     factoriesV3: [uniswapV3Factory(ChainId.CELO)],
     tickHelperContractV3:
       '0x5f115D9113F88e0a0Db1b5033D90D4a9690AcD3D' as Address,
@@ -288,12 +309,7 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.ETHEREUM]: {
     client: createPublicClient(extractorClientConfig(ChainId.ETHEREUM)),
     factoriesV2: [
-      {
-        address: UNISWAP_V2_FACTORY_ADDRESS,
-        provider: LiquidityProviders.UniswapV2,
-        fee: 0.003,
-        initCodeHash: UNISWAP_V2_INIT_CODE_HASH,
-      },
+      uniswapV2Factory(ChainId.ETHEREUM),
       sushiswapV2Factory(ChainId.ETHEREUM),
       {
         address: '0xBAe5dc9B19004883d0377419FeF3c2C8832d7d7B' as Address,
@@ -399,6 +415,7 @@ export const EXTRACTOR_CONFIG: Record<
       extractorClientConfig(ChainId.OPTIMISM),
     ) as PublicClient,
     factoriesV2: [
+      uniswapV2Factory(ChainId.OPTIMISM),
       sushiswapV2Factory(ChainId.OPTIMISM),
       // {
       //   address: '0xedfad3a0F42A8920B011bb0332aDe632e552d846' as Address,
@@ -421,6 +438,7 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.POLYGON]: {
     client: createPublicClient(extractorClientConfig(ChainId.POLYGON)),
     factoriesV2: [
+      uniswapV2Factory(ChainId.POLYGON),
       sushiswapV2Factory(ChainId.POLYGON),
       {
         address: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32' as Address,
@@ -631,7 +649,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.TELOS]: {
     client: createPublicClient(extractorClientConfig(ChainId.TELOS)),
-    factoriesV2: [sushiswapV2Factory(ChainId.TELOS)],
+    factoriesV2: [],
     factoriesV3: [],
     factoriesAlgebra: [
       {
@@ -694,6 +712,7 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.BLAST]: {
     client: createPublicClient(extractorClientConfig(ChainId.BLAST)),
     factoriesV2: [
+      uniswapV2Factory(ChainId.BLAST),
       sushiswapV2Factory(ChainId.BLAST),
       {
         address: '0x04C9f118d21e8B767D2e50C946f0cC9F6C367300' as Address,
@@ -770,20 +789,25 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.SKALE_EUROPA]: {
     client: createPublicClient(extractorClientConfig(ChainId.SKALE_EUROPA)),
-    factoriesV2: [
-      sushiswapV2Factory(ChainId.SKALE_EUROPA),
-      {
-        address: '0x71f7BbbB33550fa5d70CA3F7eeAD87529f2DC3C8' as Address,
-        provider: LiquidityProviders.Ruby,
-        fee: 0.003,
-        initCodeHash:
-          '0xba9f7d123cf1f1b0f57891be300d90939d1a591af80a90cfb7e904a821927963',
-      },
-    ],
+    factoriesV2: [sushiswapV2Factory(ChainId.SKALE_EUROPA)],
     factoriesV3: [sushiswapV3Factory(ChainId.SKALE_EUROPA)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[
       ChainId.SKALE_EUROPA
     ] as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
+  [ChainId.ROOTSTOCK]: {
+    client: createPublicClient(extractorClientConfig(ChainId.ROOTSTOCK)),
+    factoriesV2: [sushiswapV2Factory(ChainId.ROOTSTOCK)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.ROOTSTOCK),
+      uniswapV3Factory(ChainId.ROOTSTOCK),
+    ],
+    tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ROOTSTOCK] as Address,
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
     cacheDir: './cache',

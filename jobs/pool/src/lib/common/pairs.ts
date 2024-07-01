@@ -1,11 +1,6 @@
-import {
-  SUSHISWAP_SUBGRAPH_URL,
-  SushiSwapChainId,
-  TRIDENT_SUBGRAPH_URL,
-  TridentChainId,
-} from '@sushiswap/graph-config'
-import { isSushiSwapChain, isTridentChain } from '@sushiswap/graph-config'
-
+import { getSushiV2Pools } from '@sushiswap/graph-client/sushi-v2'
+import { SushiSwapV2ChainId } from 'sushi/config'
+import { Address } from 'viem'
 import type { Farm } from '../types.js'
 import { divBigIntToNumber } from './utils.js'
 
@@ -18,69 +13,26 @@ interface Pair {
 
 async function getExchangePairs(
   ids: string[],
-  chainId: SushiSwapChainId,
+  chainId: SushiSwapV2ChainId,
 ): Promise<Pair[]> {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const url = SUSHISWAP_SUBGRAPH_URL[chainId]
-  if (!url) return []
-  const sdk = getBuiltGraphSDK({
-    url,
-  })
-
-  const { pairs, bundle } = await sdk.Pairs({
-    first: ids.length,
-    where: { id_in: ids.map((id) => id.toLowerCase()) },
-  })
-
+  const pairs = await getSushiV2Pools(
+    {
+      chainId,
+      first: ids.length,
+      where: { id_in: ids.map((id) => id.toLowerCase() as Address) },
+    },
+    { retries: 3 },
+  )
   return pairs.map((pair) => {
-    const liquidityUSD = pair.liquidityNative * bundle?.nativePrice
-
     return {
-      id: pair.id,
+      id: pair.address.toLowerCase(),
       totalSupply: divBigIntToNumber(BigInt(pair.liquidity), 18),
-      liquidityUSD: liquidityUSD,
+      liquidityUSD: pair.liquidityUSD,
       type: 'Legacy',
     }
   })
 }
 
-async function getTridentPairs(
-  ids: string[],
-  chainId: keyof typeof TRIDENT_SUBGRAPH_URL,
-): Promise<Pair[]> {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
-  const url = TRIDENT_SUBGRAPH_URL[chainId]
-  if (!url) return []
-  const sdk = getBuiltGraphSDK({
-    url,
-  })
-
-  const { pairs, bundle } = await sdk.Pairs({
-    where: { id_in: ids.map((id) => id.toLowerCase()) },
-  })
-
-  return pairs.map((pair) => {
-    return {
-      id: pair.id,
-      totalSupply: divBigIntToNumber(BigInt(pair.liquidity), 18),
-      liquidityUSD: pair.liquidityNative * bundle?.nativePrice,
-      type: 'Trident',
-    }
-  })
-}
-
-// async function getKashiPairs(ids: string[], chainId: ChainId): Promise<Pair[]> {
-//   const { getBuiltGraphSDK } = await import('../../.graphclient')
-// }
-
-export async function getPairs(
-  ids: string[],
-  chainId: SushiSwapChainId | TridentChainId,
-) {
-  return (
-    await Promise.all([
-      isSushiSwapChain(chainId) ? getExchangePairs(ids, chainId) : [],
-      isTridentChain(chainId) ? getTridentPairs(ids, chainId) : [],
-    ])
-  ).flat()
+export async function getPairs(ids: string[], chainId: SushiSwapV2ChainId) {
+  return await getExchangePairs(ids, chainId)
 }

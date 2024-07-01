@@ -9,8 +9,8 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-  ShuffleIcon,
 } from '@sushiswap/ui'
+import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -50,7 +50,7 @@ export const SwapModeButtons = () => {
             <CardHeader>
               <CardTitle>Cross-chain Swap</CardTitle>
               <CardDescription>
-                Swap tokens natively across 14 chains including Ethereum,
+                Swap tokens natively across 15 chains including Ethereum,
                 Arbitrum, Optimism, Polygon, Base and more!
               </CardDescription>
             </CardHeader>

@@ -1,39 +1,27 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { Carousel, SkeletonBox } from '@sushiswap/ui'
 import { FC, useCallback, useMemo } from 'react'
 
+import { SteerVault } from '@sushiswap/steer-sdk'
+import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { SteerPoolCard } from './SteerPoolCard'
 
+type RequiredPool = PoolWithIncentives<PoolWithFeeAprs>
+
 interface SteerCarousel {
-  pool?: Pool
-  isLoading?: boolean
+  pool: RequiredPool
+  vaults: SteerVault[]
 }
 
-export const SteerCarousel: FC<SteerCarousel> = ({
-  pool,
-  isLoading = false,
-}) => {
-  if (isLoading || !pool) {
-    return <_SteerCarouselLoading />
-  }
-
-  return <_SteerCarousel pool={pool} />
-}
-
-interface _SteerCarousel {
-  pool: Pool
-}
-
-const _SteerCarousel: FC<_SteerCarousel> = ({ pool }) => {
+export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
   const enabledVaults = useMemo(
-    () => pool.steerVaults.filter((vault) => vault.isEnabled),
-    [pool],
+    () => vaults.filter((vault) => vault.isEnabled),
+    [vaults],
   )
 
   const render = useCallback(
-    (vault: Pool['steerVaults'][0]) => {
+    (vault: SteerVault) => {
       return (
         <div className="w-[400px]">
           <SteerPoolCard key={vault.id} pool={pool} vault={vault} />
@@ -59,7 +47,7 @@ const _SteerCarousel: FC<_SteerCarousel> = ({ pool }) => {
   )
 }
 
-const _SteerCarouselLoading: FC = () => {
+export const SteerCarouselLoading: FC = () => {
   const slides = useMemo(() => [1, 2, 3], [])
   const render = useCallback(() => {
     return (

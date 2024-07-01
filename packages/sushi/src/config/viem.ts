@@ -57,6 +57,7 @@ import {
   polygon,
   polygonMumbai,
   polygonZkEvm,
+  rootstock,
   scroll,
   sepolia,
   // polygonMumbai,
@@ -111,6 +112,7 @@ export {
   //  optimismGoerli,
   polygon,
   polygonZkEvm,
+  rootstock,
   // polygonMumbai,
   // sepolia,
   //  taraxa,
@@ -492,7 +494,7 @@ export const blast = {
 
 export const skaleEuropa = {
   id: ChainId.SKALE_EUROPA,
-  name: 'Skale Europa',
+  name: 'SKALE Europa',
   network: 'skale-europa',
   nativeCurrency: {
     decimals: 18,
@@ -524,6 +526,7 @@ export const skaleEuropa = {
 // const alchemyId =
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
+const rskId = process.env['RSK_ID'] || process.env['NEXT_PUBLIC_RSK_ID']
 
 export const publicTransports = {
   [ChainId.ARBITRUM_NOVA]: http(
@@ -604,6 +607,11 @@ export const publicTransports = {
   [ChainId.SKALE_EUROPA]: http(
     'https://mainnet.skalenodes.com/v1/elated-tan-skat',
   ),
+  [ChainId.ROOTSTOCK]: http(
+    rskId
+      ? `https://rpc.mainnet.rootstock.io/${rskId}`
+      : 'https://public-node.rsk.co',
+  ),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [ChainId.AVALANCHE_TESTNET]: http(
@@ -616,6 +624,7 @@ export const publicTransports = {
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
+  mainnet,
   arbitrumNova,
   arbitrum,
   avalanche,
@@ -627,7 +636,6 @@ export const publicChains = [
   blast,
   celo as unknown as Omit<typeof mainnet, 'id'> & { id: 42220 },
   cronos,
-  mainnet,
   fantom,
   fuse,
   gnosis,
@@ -639,6 +647,7 @@ export const publicChains = [
   moonriver,
   polygon,
   polygonZkEvm,
+  rootstock,
   thundercore,
   haqq,
   core,
@@ -812,6 +821,11 @@ export const publicClientConfig = {
     chain: skaleEuropa,
     transport: publicTransports[ChainId.SKALE_EUROPA],
   },
+  [ChainId.ROOTSTOCK]: {
+    chain: rootstock,
+    transport: publicTransports[ChainId.ROOTSTOCK],
+  },
+
   /* Testnets */
   [ChainId.ARBITRUM_TESTNET]: {
     chain: arbitrumSepolia,

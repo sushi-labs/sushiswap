@@ -14,11 +14,7 @@ export class BaseActions {
       .first()
     await expect(connectSelector).toBeVisible()
     await expect(connectSelector).toBeEnabled()
-    await connectSelector.click()
-    const mockConnectSelector = this.page.getByText('Mock Connector')
-    await expect(mockConnectSelector).toBeVisible()
-    await expect(mockConnectSelector).toBeEnabled()
-    await mockConnectSelector.click()
+    await connectSelector.click({ delay: 500 })
   }
 
   async switchNetwork(chainId: number) {

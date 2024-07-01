@@ -5,22 +5,24 @@ import {
   LiquiditySource,
   sendAnalyticsEvent,
 } from '@sushiswap/analytics'
-import { createErrorToast, createToast } from '@sushiswap/ui/components/toast'
+import { createErrorToast, createToast } from '@sushiswap/ui'
+import { FC, ReactElement, useCallback, useMemo } from 'react'
+import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import { ChainId } from 'sushi/chain'
 import {
-  ConcentratedLiquidityPosition,
+  SUSHISWAP_V3_POSTIION_MANAGER,
+  isSushiSwapV3ChainId,
+} from 'sushi/config'
+import { Amount, Type, unwrapToken } from 'sushi/currency'
+import { NonfungiblePositionManager, Position } from 'sushi/pool/sushiswap-v3'
+import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+import {
   UseCallParameters,
-  getV3NonFungiblePositionManagerContractConfig,
   useAccount,
   useCall,
   usePublicClient,
   useSendTransaction,
-} from '@sushiswap/wagmi'
-import { FC, ReactElement, useCallback, useMemo } from 'react'
-import { ChainId } from 'sushi/chain'
-import { isSushiSwapV3ChainId } from 'sushi/config'
-import { Amount, Type, unwrapToken } from 'sushi/currency'
-import { NonfungiblePositionManager, Position } from 'sushi/pool'
-import { Hex, SendTransactionReturnType, UserRejectedRequestError } from 'viem'
+} from 'wagmi'
 
 interface ConcentratedLiquidityCollectButton {
   positionDetails: ConcentratedLiquidityPosition | undefined
@@ -78,7 +80,7 @@ export const ConcentratedLiquidityCollectButton: FC<
         })
 
       return {
-        to: getV3NonFungiblePositionManagerContractConfig(chainId).address,
+        to: SUSHISWAP_V3_POSTIION_MANAGER[chainId],
         chainId,
         data: calldata as Hex,
         value: BigInt(value),
