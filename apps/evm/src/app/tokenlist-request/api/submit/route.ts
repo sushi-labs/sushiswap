@@ -31,7 +31,9 @@ export const maxDuration = 15 // in seconds
 export async function POST(request: NextRequest) {
   const ratelimit = rateLimit(Ratelimit.slidingWindow(5, '1 h'))
   if (ratelimit) {
-    const { remaining } = await ratelimit.limit(request.ip || '127.0.0.1')
+    const { remaining } = await ratelimit.limit(
+      request.ip || request.headers.get('x-real-ip') || '127.0.0.1',
+    )
     if (!remaining) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
