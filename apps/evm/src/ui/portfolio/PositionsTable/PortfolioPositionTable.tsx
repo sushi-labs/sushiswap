@@ -55,6 +55,7 @@ export const PortfolioPositionTable: FC<PortfolioPositionTableProps> = ({
       rowRenderer={rowRenderer}
       columns={COLUMNS}
       data={data.sort((a, b) => b.amountUSD - a.amountUSD)}
+      showColumnHeaders={false}
     />
   )
 }

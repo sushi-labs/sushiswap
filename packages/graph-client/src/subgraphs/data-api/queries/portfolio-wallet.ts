@@ -37,8 +37,7 @@ export const PortfolioWalletQuery = graphql(
 export type GetPortfolioWallet = VariablesOf<typeof PortfolioWalletQuery>
 
 export async function getPortfolioWallet(variables: GetPortfolioWallet, options?: RequestOptions) {
-  const url = `http://localhost:4000/graphql/`
-  // const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
 
   const result = await request(
     { url, document: PortfolioWalletQuery, variables },

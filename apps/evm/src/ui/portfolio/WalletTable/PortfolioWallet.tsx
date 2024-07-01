@@ -34,7 +34,10 @@ export const PortfolioWallet = () => {
         totalUSD={data?.totalUSD}
         percentageChange24h={data?.percentageChange24h}
       />
-      <PortfolioWalletTable isLoading={isLoading} data={data?.tokens ?? []} />
+      <PortfolioWalletTable 
+      isLoading={isLoading} 
+      data={data?.tokens ?? []
+      } />
     </>
   )
 }

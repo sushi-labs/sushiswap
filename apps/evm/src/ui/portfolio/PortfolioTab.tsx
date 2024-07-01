@@ -38,15 +38,15 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
         </div>
       ),
     },
-    {
-      id: 'activity',
-      value: 'pctivity',
-      children: (
-        <div className="flex items-center gap-2">
-          <span>Activity</span>
-        </div>
-      ),
-    },
+    // {
+    //   id: 'activity',
+    //   value: 'activity',
+    //   children: (
+    //     <div className="flex items-center gap-2">
+    //       <span>Activity</span>
+    //     </div>
+    //   ),
+    // },
   ]
   
   export const PortfolioTab = () => {
@@ -88,8 +88,8 @@ const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
           <TabsContent value="positions">
             <PortfolioPositions/>
           </TabsContent>
-          <TabsContent value="activity">
-          </TabsContent>
+          {/* <TabsContent value="activity">
+          </TabsContent> */}
         </Tabs>
       </div>
     )

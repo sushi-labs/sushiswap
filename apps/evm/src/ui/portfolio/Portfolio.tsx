@@ -45,10 +45,6 @@ export const Portfolio = () => {
               }}
             </AddressToEnsResolver>
           </SheetTitle>
-          {/* <SheetDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </SheetDescription> */}
         </SheetHeader>
         <PortfolioTab />
       </SheetContent>

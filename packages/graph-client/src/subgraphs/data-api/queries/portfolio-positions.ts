@@ -128,8 +128,7 @@ query PortfolioPositions($id: ID!) {
 export type GetPortfolioPositions = VariablesOf<typeof PortfolioPositionsQuery>
 
 export async function getPortfolioPositions(variables: GetPortfolioPositions, options?: RequestOptions) {
-  // const url = `https://data-api-production-acb1.up.railway.app/graphql/`
-    const url = `http://localhost:4000/graphql/`
+  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
 
   const result = await request(
     { url, document: PortfolioPositionsQuery, variables },

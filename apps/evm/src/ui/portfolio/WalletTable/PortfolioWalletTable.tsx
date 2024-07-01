@@ -67,6 +67,7 @@ export const PortfolioWalletTable: FC<PortfolioWalletTableProps> = ({
       rowRenderer={rowRenderer}
       columns={COLUMNS}
       data={data.sort((a, b) => b.amountUSD - a.amountUSD)}
+      showColumnHeaders={false}
     />
   )
 }
