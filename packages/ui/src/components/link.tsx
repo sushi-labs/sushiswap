@@ -1,3 +1,5 @@
+'use client'
+
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import Link from 'next/link'
 import { AnchorHTMLAttributes, FC } from 'react'
