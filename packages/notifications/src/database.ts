@@ -24,7 +24,6 @@ export async function getDatabase() {
   _database = await openDB<NotificationDatabase>('notifications', 1, {
     upgrade(db) {
       const notificationStore = db.createObjectStore('notifications', {
-        keyPath: 'id',
         autoIncrement: true,
       })
 
