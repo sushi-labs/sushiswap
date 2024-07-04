@@ -30,7 +30,8 @@ import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider.js'
 import { NetSwapProvider } from './liquidity-providers/NetSwap.js'
 import { PancakeSwapV2Provider } from './liquidity-providers/PancakeSwapV2.js'
 import { PancakeSwapV3Provider } from './liquidity-providers/PancakeSwapV3.js'
-import { QuickSwapProvider } from './liquidity-providers/QuickSwap.js'
+import { QuickSwapV2Provider } from './liquidity-providers/QuickSwapV2.js'
+import { QuickSwapV3Provider } from './liquidity-providers/QuickswapV3.js'
 import { SolarbeamProvider } from './liquidity-providers/Solarbeam.js'
 import { SpookySwapV2Provider } from './liquidity-providers/SpookySwapV2.js'
 import { SpookySwapV3Provider } from './liquidity-providers/SpookySwapV3.js'
@@ -170,7 +171,8 @@ export class DataFetcher {
       NetSwapProvider,
       PancakeSwapV2Provider,
       PancakeSwapV3Provider,
-      QuickSwapProvider,
+      QuickSwapV2Provider,
+      QuickSwapV3Provider,
       SolarbeamProvider,
       SpookySwapV2Provider,
       SpookySwapV3Provider,

@@ -151,7 +151,7 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
   switch (lp) {
     case LiquidityProviders.SushiSwapV2:
       return `${prefix}SUSHISWAP`
-    case LiquidityProviders.QuickSwap:
+    case LiquidityProviders.QuickSwapV2:
       return `${prefix}QUICKSWAP`
     case LiquidityProviders.Trident:
       return `${prefix}TRIDENT`

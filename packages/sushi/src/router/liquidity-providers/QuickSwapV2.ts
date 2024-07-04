@@ -3,7 +3,7 @@ import { ChainId } from '../../chain/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV2BaseProvider } from './UniswapV2Base.js'
 
-export class QuickSwapProvider extends UniswapV2BaseProvider {
+export class QuickSwapV2Provider extends UniswapV2BaseProvider {
   constructor(chainId: ChainId, web3Client: PublicClient) {
     const factory = {
       [ChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
@@ -15,9 +15,9 @@ export class QuickSwapProvider extends UniswapV2BaseProvider {
     super(chainId, web3Client, factory, initCodeHash)
   }
   getType(): LiquidityProviders {
-    return LiquidityProviders.QuickSwap
+    return LiquidityProviders.QuickSwapV2
   }
   getPoolProviderName(): string {
-    return 'QuickSwap'
+    return 'QuickSwapV2'
   }
 }

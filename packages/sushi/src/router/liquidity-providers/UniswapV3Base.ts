@@ -22,29 +22,29 @@ export type UniV3TickSpacingType = {
   readonly [key: UniV3FeeType[keyof UniV3FeeType]]: number
 }
 
-interface StaticPool {
+export interface StaticPoolUniV3 {
   address: Address
   token0: Token
   token1: Token
-  fee: keyof UniV3TickSpacingType
+  fee: UniV3FeeType[keyof UniV3FeeType]
 }
 
-interface V3Pool {
+export interface V3Pool {
   address: Address
   token0: Token
   token1: Token
-  fee: keyof UniV3TickSpacingType
+  fee: UniV3FeeType[keyof UniV3FeeType]
   sqrtPriceX96: bigint
   activeTick: number
 }
 
 export const NUMBER_OF_SURROUNDING_TICKS = 1000 // 10% price impact
 
-const bitmapIndex = (tick: number, tickSpacing: number) => {
+export const bitmapIndex = (tick: number, tickSpacing: number) => {
   return Math.floor(tick / tickSpacing / 256)
 }
 
-type PoolFilter = { has: (arg: string) => boolean }
+export type PoolFilter = { has: (arg: string) => boolean }
 
 export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   TICK_SPACINGS: UniV3TickSpacingType = TICK_SPACINGS
@@ -92,12 +92,12 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
         this.TICK_SPACINGS[feeAmount]!
       : undefined
 
-  async fetchPoolsForToken(
+  async fetchPoolData(
     t0: Token,
     t1: Token,
     excludePools?: Set<string> | PoolFilter,
     options?: DataFetcherOptions,
-  ): Promise<void> {
+  ): Promise<V3Pool[]> {
     let staticPools = this.getStaticPools(t0, t1)
     if (excludePools)
       staticPools = staticPools.filter((p) => !excludePools.has(p.address))
@@ -190,7 +190,24 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       })
     })
 
+    return existingPools
+  }
+
+  async fetchPoolsForToken(
+    t0: Token,
+    t1: Token,
+    excludePools?: Set<string> | PoolFilter,
+    options?: DataFetcherOptions,
+  ): Promise<void> {
+    const existingPools = await this.fetchPoolData(
+      t0,
+      t1,
+      excludePools,
+      options,
+    )
     if (existingPools.length === 0) return
+
+    const multicallMemoize = await memoizer.fn(this.client.multicall)
 
     const liquidityContractsData = {
       multicallAddress: this.client.chain?.contracts?.multicall3
@@ -449,7 +466,7 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
     )
   }
 
-  getStaticPools(t1: Token, t2: Token): StaticPool[] {
+  getStaticPools(t1: Token, t2: Token): StaticPoolUniV3[] {
     const currencyCombinations = getCurrencyCombinations(this.chainId, t1, t2)
 
     const allCurrencyCombinationsWithAllFees: [Type, Type, number][] =
