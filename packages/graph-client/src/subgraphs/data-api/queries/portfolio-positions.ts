@@ -16,6 +16,7 @@ query PortfolioPositions($id: ID!) {
       protocolId
       protocolLogoUrl
       address
+      name
       swapFee
       token0 {
         id
@@ -51,7 +52,6 @@ query PortfolioPositions($id: ID!) {
         amount
         amountUSD
       }
-      
       amountUSD
       updatedAt
     }
@@ -63,9 +63,8 @@ query PortfolioPositions($id: ID!) {
       protocolId
       protocolLogoUrl
       address
-      positionId
-      range
-      swapFee
+      name
+      
       token0 {
         id
         chain
@@ -100,7 +99,10 @@ query PortfolioPositions($id: ID!) {
         amount
         amountUSD
       }
-      rewards {
+      swapFee
+      positionId
+      range
+      fees {
         id
         chain
         chainId
@@ -117,6 +119,56 @@ query PortfolioPositions($id: ID!) {
         amount
         amountUSD
       }
+      amountUSD
+      updatedAt
+    }
+    smartPositions {
+      id
+      chainId
+      chain
+      protocol
+      protocolId
+      protocolLogoUrl
+      
+      token0 {
+        id
+        chain
+        chainId
+        name
+        symbol
+        decimals
+        logoUrl
+        protocolId
+        price
+        isVerified
+        isCore
+        isWallet
+        timeAt
+        amount
+        amountUSD
+      }
+      token1 {
+        id
+        chain
+        chainId
+        name
+        symbol
+        decimals
+        logoUrl
+        protocolId
+        price
+        isVerified
+        isCore
+        isWallet
+        timeAt
+        amount
+        amountUSD
+      }
+      address
+      name
+      vaultAddress
+      swapFee
+      strategy
       amountUSD
       updatedAt
     }

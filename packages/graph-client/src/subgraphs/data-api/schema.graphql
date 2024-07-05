@@ -74,6 +74,7 @@ type V2PortfolioPosition {
   protocolId: String!
   protocolLogoUrl: String!
   address: String!
+  name: String!
   swapFee: Float!
   token0: SimpleToken!
   token1: SimpleToken!
@@ -95,13 +96,46 @@ type V3PortfolioPosition {
   protocolId: String!
   protocolLogoUrl: String!
   address: String!
+  name: String!
   swapFee: Float!
   positionId: Int!
   range: RangeStatus!
   token0: SimpleToken!
   token1: SimpleToken!
-  rewards: [SimpleToken]!
+  fees: [SimpleToken]!
   amountUSD: Float!
+  updatedAt: Int
+}
+
+type PortfolioSmartPosition {
+  id: String!
+  chainId: Int!
+  chain: String!
+  protocol: String!
+  protocolId: String!
+  protocolLogoUrl: String!
+  address: String!
+  name: String!
+  vaultAddress: String!
+  swapFee: Float!
+  token0: SimpleToken!
+  token1: SimpleToken!
+  strategy: String!
+  amountUSD: Float!
+  updatedAt: Int
+}
+
+type FuroPosition {
+  id: String!
+  chainId: Int!
+  chain: String!
+  protocol: String!
+  protocolId: String!
+  protocolLogoUrl: String!
+  address: String!
+  name: String!
+  positionId: Int!
+  token: SimpleToken!
   updatedAt: Int
 }
 
@@ -109,6 +143,35 @@ type PortfolioPositions {
   totalUSD: Float!
   v2Positions: [V2PortfolioPosition]!
   v3Positions: [V3PortfolioPosition]!
+  smartPositions: [PortfolioSmartPosition]!
+}
+
+type PortfolioClaimables {
+  totalUSD: Float!
+  v2PositionClaimables: [V2PoolClaim]!
+  v3PositionClaimables: [V3PoolClaim]!
+  smartPositionClaimables: [SmartPoolClaim]!
+  furoClaimables: [FuroClaim]!
+}
+
+type V2PoolClaim {
+  position: V2PortfolioPosition!
+  token: SimpleToken!
+}
+
+type V3PoolClaim {
+  position: V3PortfolioPosition!
+  token: SimpleToken!
+}
+
+type SmartPoolClaim {
+  position: PortfolioSmartPosition!
+  token: SimpleToken!
+}
+
+type FuroClaim {
+  position: FuroPosition!
+  token: SimpleToken!
 }
 
 type PortfolioWallet {
@@ -121,5 +184,6 @@ type PortfolioWallet {
 type Query {
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
+  portfolioClaimables(id: ID!): PortfolioClaimables!
   pools(chainId: ID!): [Pool]
 }
