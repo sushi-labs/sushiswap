@@ -42,7 +42,7 @@ jobs:
           submodules: true
 
       # Has to be before setup node for caching to work
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
           version: ${{ matrix.pnpm-version }}
 
