@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
 
+import { ToastContainer } from '@sushiswap/notifications'
 import { headers } from 'next/headers'
 import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-address-dialog'
 import { Providers } from './providers'
