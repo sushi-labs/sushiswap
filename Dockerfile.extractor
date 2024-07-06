@@ -37,4 +37,4 @@ RUN pnpm exec turbo run build --filter=extractor-api
 
 EXPOSE 80
 
-CMD node /app/apis/extractor/dist/index.js
+CMD node --max-old-space-size=7168 /app/apis/extractor/dist/index.js
