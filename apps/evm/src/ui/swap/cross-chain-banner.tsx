@@ -1,7 +1,7 @@
 'use client'
 
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import { useLocalStorage } from '@sushiswap/hooks'
+import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import {
   Card,
   CardContent,
@@ -9,9 +9,9 @@ import {
   CardHeader,
   CardTitle,
   IconButton,
-  ShuffleIcon,
   Switch,
 } from '@sushiswap/ui'
+import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useCallback, useState, useTransition } from 'react'
@@ -21,6 +21,7 @@ export const CrossChainBanner: FC = () => {
     'xswap-banner-minimized',
     false,
   )
+  const isMounted = useIsMounted()
   const pathname = usePathname()
   const [, startTransition] = useTransition()
   const [checked, setChecked] = useState(pathname === '/swap/cross-chain')
@@ -41,7 +42,7 @@ export const CrossChainBanner: FC = () => {
 
   return (
     <AnimatePresence mode="popLayout">
-      {!minimized ? (
+      {!minimized && isMounted ? (
         <motion.div layout layoutId="container">
           <Card className="bg-gradient-to-r from-blue/20 to-pink/20">
             <CardHeader>

@@ -1,8 +1,8 @@
 import React from 'react'
-import { SteerCarousel } from 'src/ui/pool/Steer/SteerCarousel'
+import { SteerCarouselLoading } from 'src/ui/pool/Steer/SteerCarousel'
 
 const VaultOverviewLoadingPage = () => {
-  return <SteerCarousel isLoading={true} />
+  return <SteerCarouselLoading />
 }
 
 export default VaultOverviewLoadingPage

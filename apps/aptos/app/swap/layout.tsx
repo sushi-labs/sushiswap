@@ -1,4 +1,4 @@
-import { HotJar } from '@sushiswap/ui/components/scripts'
+import { HotJar } from '@sushiswap/ui'
 
 import { Providers } from './providers'
 

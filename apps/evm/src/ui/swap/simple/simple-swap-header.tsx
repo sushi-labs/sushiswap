@@ -43,7 +43,7 @@ export const SimpleSwapHeader = () => {
       : undefined
 
     let price
-    if (token0Price && token1Price) {
+    if (token0Price?.quotient && token1Price?.quotient) {
       price = new Price({
         baseAmount: token0Price,
         quoteAmount: token1Price,

@@ -1,3 +1,5 @@
+'use client'
+
 import { mock } from '@wagmi/connectors'
 import { ChainId } from 'sushi'
 import { http, HttpTransport } from 'viem'

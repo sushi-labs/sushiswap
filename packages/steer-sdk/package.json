@@ -49,12 +49,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
-    "lint": "TIMING=1 eslint src",
-    "lint:fix": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build"
-  },
-  "jest": {
-    "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
     "@steerprotocol/contracts": "2.1.0-beta.14",
@@ -64,16 +59,14 @@
     "viem": "2.10.11"
   },
   "devDependencies": {
-    "@sushiswap/jest-config": "workspace:*",
     "@tsconfig/esm": "1.0.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
     "@wagmi/core": "2.10.6",
-    "eslint": "8.43.0",
     "next": "14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.2.2"
+    "typescript": "5.4.5"
   },
   "peerDependencies": {
     "@wagmi/core": "2.10.6",

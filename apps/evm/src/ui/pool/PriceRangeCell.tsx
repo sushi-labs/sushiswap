@@ -110,7 +110,7 @@ export const PriceRangeCell: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
                 number={formatTickPrice({
                   price: priceLower,
                   atLimit: tickAtLimit,
-                  direction: Bound.UPPER,
+                  direction: Bound.LOWER,
                 })}
               />
             )}{' '}

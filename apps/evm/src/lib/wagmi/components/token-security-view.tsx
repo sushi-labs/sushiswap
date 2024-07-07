@@ -8,14 +8,8 @@ import {
   TokenSecurityMessage,
   TokenSecurityResponse,
 } from '@sushiswap/react-query'
-import {
-  Button,
-  Explainer,
-  GoPlusLabsIcon,
-  List,
-  SelectIcon,
-  classNames,
-} from '@sushiswap/ui'
+import { Button, Explainer, List, SelectIcon, classNames } from '@sushiswap/ui'
+import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
 import { useMemo, useState } from 'react'
 import { Token } from 'sushi/currency'
 

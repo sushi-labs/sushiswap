@@ -1,7 +1,6 @@
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import {
   FormattedNumber,
-  NetworkIcon,
   Tooltip,
   TooltipPrimitive,
   TooltipProvider,
@@ -9,8 +8,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
-import { formatDistance } from 'date-fns'
+import formatDistance from 'date-fns/formatDistance'
 import React from 'react'
 import {
   formatNumber,
@@ -79,7 +79,7 @@ export const REWARDS_V3_POSITION_SIZE_COLUMN: ColumnDef<
   id: 'positionSize',
   header: 'Position Size',
   accessorFn: (row) => row.userTVL ?? 0,
-  cell: (props) => `$${formatNumber(props.row.original.userTVL)}`,
+  cell: (props) => `$${formatNumber(props.row.original.userTVL || 0)}`,
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
@@ -281,14 +281,15 @@ export const VALUE_COLUMN = {
   id: 'value',
   header: 'Value',
   accessorFn: (row) =>
-    (Number(row.unstakedBalance) / Number(row.pool.liquidity)) *
+    (Number(row.unstakedBalance + row.stakedBalance) /
+      Number(row.pool.liquidity)) *
     Number(row.pool.liquidityUSD),
-  cell: (props) => (
+  cell: ({ row: { original } }) => (
     <span>
       {formatUSD(
-        (Number(props.row.original.unstakedBalance) /
-          Number(props.row.original.pool.liquidity)) *
-          Number(props.row.original.pool.liquidityUSD),
+        (Number(original.unstakedBalance + original.stakedBalance) /
+          Number(original.pool.liquidity)) *
+          Number(original.pool.liquidityUSD),
       )}
     </span>
   ),

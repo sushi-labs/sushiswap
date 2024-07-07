@@ -12,7 +12,7 @@ import { graphql } from '../graphql'
 
 export const SushiV2FactoriesQuery = graphql(`
   query Factories {
-    factories: uniswapFactories(first: 1) {
+    uniswapFactories(first: 1) {
       id
       totalLiquidityUSD
       untrackedVolumeUSD
@@ -40,9 +40,9 @@ export async function getSushiV2Factory(
     options,
   )
 
-  if (result.factories[0]) {
+  if (result.uniswapFactories[0]) {
     return convertIdToMultichainId(
-      copyIdToAddress(addChainId(chainId, result.factories[0])),
+      copyIdToAddress(addChainId(chainId, result.uniswapFactories[0])),
     )
   }
 

@@ -3,13 +3,13 @@
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { FC } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { formatNumber } from 'sushi/format'

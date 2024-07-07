@@ -43,7 +43,7 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain } from 'sushi/chain'
 import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
-import { formatUSD } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 import { Bound } from '../../lib/constants'
@@ -525,7 +525,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                 number={formatTickPrice({
                                   price: priceLower,
                                   atLimit: tickAtLimit,
-                                  direction: Bound.UPPER,
+                                  direction: Bound.LOWER,
                                 })}
                               />{' '}
                               {unwrapToken(currencyQuote)?.symbol}{' '}
@@ -533,20 +533,21 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
                                     (
-                                    {priceLower
-                                      ?.subtract(
-                                        invert
-                                          ? pool.token0Price
-                                          : pool.token1Price,
-                                      )
-                                      .divide(
-                                        invert
-                                          ? pool.token0Price
-                                          : pool.token1Price,
-                                      )
-                                      .multiply(100)
-                                      .toSignificant(2)}
-                                    %)
+                                    {formatPercent(
+                                      priceLower
+                                        ?.subtract(
+                                          inverted
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
+                                        .divide(
+                                          inverted
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
+                                        .toSignificant(4),
+                                    )}
+                                    )
                                   </span>
                                 </HoverCardTrigger>
                                 <HoverCardContent className="!p-0 max-w-[320px]">
@@ -554,22 +555,22 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     <CardTitle>Min. Price</CardTitle>
                                     <CardDescription>
                                       If the current price moves down{' '}
-                                      {priceLower
-                                        ?.subtract(
-                                          invert
-                                            ? pool.token0Price
-                                            : pool.token1Price,
-                                        )
-                                        .divide(
-                                          invert
-                                            ? pool.token0Price
-                                            : pool.token1Price,
-                                        )
-                                        .multiply(100)
-                                        .toSignificant(2)}
-                                      % from the current price, your position
-                                      will be 100%{' '}
-                                      {unwrapToken(currencyBase).symbol}
+                                      {formatPercent(
+                                        priceLower
+                                          ?.subtract(
+                                            inverted
+                                              ? pool.token1Price
+                                              : pool.token0Price,
+                                          )
+                                          .divide(
+                                            inverted
+                                              ? pool.token1Price
+                                              : pool.token0Price,
+                                          )
+                                          .toSignificant(4),
+                                      )}{' '}
+                                      from the current price, your position will
+                                      be 100% {unwrapToken(currencyBase).symbol}
                                     </CardDescription>
                                   </CardHeader>
                                 </HoverCardContent>
@@ -613,20 +614,21 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
                                     (
-                                    {priceUpper
-                                      ?.subtract(
-                                        invert
-                                          ? pool.token0Price
-                                          : pool.token1Price,
-                                      )
-                                      .divide(
-                                        invert
-                                          ? pool.token0Price
-                                          : pool.token1Price,
-                                      )
-                                      .multiply(100)
-                                      .toSignificant(2)}
-                                    %)
+                                    {formatPercent(
+                                      priceUpper
+                                        ?.subtract(
+                                          inverted
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
+                                        .divide(
+                                          inverted
+                                            ? pool.token1Price
+                                            : pool.token0Price,
+                                        )
+                                        .toSignificant(4),
+                                    )}
+                                    )
                                   </span>
                                 </HoverCardTrigger>
                                 <HoverCardContent className="!p-0 max-w-[320px]">
@@ -634,21 +636,22 @@ const Component: FC<{ id: string }> = ({ id }) => {
                                     <CardTitle>Max. Price</CardTitle>
                                     <CardDescription>
                                       If the current price moves up +
-                                      {priceUpper
-                                        ?.subtract(
-                                          invert
-                                            ? pool.token0Price
-                                            : pool.token1Price,
-                                        )
-                                        .divide(
-                                          invert
-                                            ? pool.token0Price
-                                            : pool.token1Price,
-                                        )
-                                        .multiply(100)
-                                        .toSignificant(2)}
-                                      % from the current price, your position
-                                      will be 100%{' '}
+                                      {formatPercent(
+                                        priceUpper
+                                          ?.subtract(
+                                            inverted
+                                              ? pool.token1Price
+                                              : pool.token0Price,
+                                          )
+                                          .divide(
+                                            inverted
+                                              ? pool.token1Price
+                                              : pool.token0Price,
+                                          )
+                                          .toSignificant(4),
+                                      )}{' '}
+                                      from the current price, your position will
+                                      be 100%{' '}
                                       {unwrapToken(currencyQuote).symbol}
                                     </CardDescription>
                                   </CardHeader>
