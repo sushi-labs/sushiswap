@@ -1,4 +1,4 @@
-# Sushi Monorepo
+# Sushi Monorepo 
 
 Sushi 2.0 🍣
 
