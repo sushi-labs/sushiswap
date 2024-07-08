@@ -10,12 +10,12 @@ import {
   CardTitle,
   Currency,
   DataTable,
-  NetworkIcon,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { ChainId } from 'sushi/chain'
