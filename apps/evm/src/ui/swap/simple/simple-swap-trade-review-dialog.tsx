@@ -1,5 +1,6 @@
 'use client'
 
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   BrowserEvent,
@@ -25,8 +26,6 @@ import {
   SkeletonBox,
   SkeletonText,
   classNames,
-  createErrorToast,
-  createToast,
 } from '@sushiswap/ui'
 import { log } from 'next-axiom'
 import React, {

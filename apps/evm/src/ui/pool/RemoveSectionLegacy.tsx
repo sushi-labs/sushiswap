@@ -7,13 +7,14 @@ import {
   useDebounce,
   useIsMounted,
 } from '@sushiswap/hooks'
+import { createToast } from '@sushiswap/notifications'
 import {
   LiquidityEventName,
   LiquiditySource,
   sendAnalyticsEvent,
   useTrace,
 } from '@sushiswap/telemetry'
-import { Button, Dots, createToast } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
 import {

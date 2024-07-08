@@ -1,10 +1,10 @@
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   LiquidityEventName,
   LiquiditySource,
   sendAnalyticsEvent,
   useTrace,
 } from '@sushiswap/telemetry'
-import { createErrorToast, createToast } from '@sushiswap/ui'
 import { SendTransactionReturnType } from '@wagmi/core'
 import { useCallback, useMemo } from 'react'
 import { SushiSwapV3FeeAmount } from 'sushi/config'

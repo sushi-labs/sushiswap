@@ -6,6 +6,7 @@ import {
   TTLStorageKey,
   useDebounce,
 } from '@sushiswap/hooks'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   LiquidityEventName,
   LiquiditySource,
@@ -37,7 +38,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { createErrorToast, createToast } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'

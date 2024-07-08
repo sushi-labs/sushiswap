@@ -2,6 +2,7 @@
   "name": "evm",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build",
     "check": "tsc --pretty --noEmit",
@@ -29,10 +30,10 @@
     "@sushiswap/bonds-sdk": "workspace:*",
     "@sushiswap/client": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/dexie": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/nextjs-config": "workspace:*",
+    "@sushiswap/notifications": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/steer-sdk": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
@@ -84,7 +85,7 @@
   "devDependencies": {
     "@0xsquid/squid-types": "0.1.78",
     "@next/eslint-plugin-next": "14.2.3",
-    "@playwright/test": "1.37.0",
+    "@playwright/test": "1.45.0",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tsconfig/next": "2.0.1",

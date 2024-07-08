@@ -15,6 +15,9 @@ patchedDependencies:
   '@viem/anvil@0.0.6':
     hash: eusculfp2fywcngsmmmriurpl4
     path: patches/@viem__anvil@0.0.6.patch
+  next@14.2.3:
+    hash: lgn7w2rh4gprdey4qlz3quyu4e
+    path: patches/next@14.2.3.patch
 
 importers:
 
@@ -315,6 +318,9 @@ importers:
       '@sushiswap/nextjs-config':
         specifier: workspace:*
         version: link:../../config/nextjs
+      '@sushiswap/notifications':
+        specifier: workspace:*
+        version: link:../../packages/notifications
       '@sushiswap/react-query':
         specifier: workspace:*
         version: link:../../packages/react-query
@@ -356,7 +362,7 @@ importers:
         version: 4.7.0
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       next-axiom:
         specifier: 0.17.0
         version: 0.17.0(next@14.2.3)
@@ -490,9 +496,6 @@ importers:
       '@sushiswap/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@sushiswap/dexie':
-        specifier: workspace:*
-        version: link:../../packages/dexie
       '@sushiswap/graph-client':
         specifier: workspace:*
         version: link:../../packages/graph-client
@@ -502,6 +505,9 @@ importers:
       '@sushiswap/nextjs-config':
         specifier: workspace:*
         version: link:../../config/nextjs
+      '@sushiswap/notifications':
+        specifier: workspace:*
+        version: link:../../packages/notifications
       '@sushiswap/react-query':
         specifier: workspace:*
         version: link:../../packages/react-query
@@ -588,7 +594,7 @@ importers:
         version: 4.0.0
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       next-axiom:
         specifier: 1.1.1
         version: 1.1.1(next@14.2.3)(react@18.2.0)
@@ -651,8 +657,8 @@ importers:
         specifier: 14.2.3
         version: 14.2.3
       '@playwright/test':
-        specifier: 1.37.0
-        version: 1.37.0
+        specifier: 1.45.0
+        version: 1.45.0
       '@sushiswap/jest-config':
         specifier: workspace:*
         version: link:../../config/jest
@@ -869,7 +875,7 @@ importers:
         version: 4.1.1
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       next-themes:
         specifier: 0.2.1
         version: 0.2.1(next@14.2.3)(react-dom@18.2.0)(react@18.2.0)
@@ -1035,7 +1041,7 @@ importers:
     devDependencies:
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
 
   config/tailwindcss:
     dependencies:
@@ -1190,7 +1196,7 @@ importers:
     optionalDependencies:
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@sushiswap/jest-config':
         specifier: workspace:*
@@ -1314,55 +1320,6 @@ importers:
       prisma:
         specifier: 5.6.0
         version: 5.6.0
-      sushi:
-        specifier: workspace:*
-        version: link:../sushi
-      typescript:
-        specifier: 5.4.5
-        version: 5.4.5
-
-  packages/dexie:
-    dependencies:
-      dexie:
-        specifier: 3.2.4
-        version: 3.2.4
-      dexie-react-hooks:
-        specifier: 1.1.6
-        version: 1.1.6(@types/react@18.2.14)(dexie@3.2.4)(react@18.2.0)
-      lodash.groupby:
-        specifier: 4.6.0
-        version: 4.6.0
-      next:
-        specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
-    devDependencies:
-      '@sushiswap/jest-config':
-        specifier: workspace:*
-        version: link:../../config/jest
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/strictest':
-        specifier: 2.0.2
-        version: 2.0.2
-      '@types/lodash.groupby':
-        specifier: 4.6.7
-        version: 4.6.7
-      '@types/react':
-        specifier: 18.2.14
-        version: 18.2.14
-      '@types/react-dom':
-        specifier: 18.2.6
-        version: 18.2.6
-      jest:
-        specifier: 29.7.0
-        version: 29.7.0(@types/node@20.10.0)
-      react:
-        specifier: 18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: 18.2.0
-        version: 18.2.0(react@18.2.0)
       sushi:
         specifier: workspace:*
         version: link:../sushi
@@ -1520,11 +1477,51 @@ importers:
         specifier: 5.4.5
         version: 5.4.5
 
+  packages/notifications:
+    dependencies:
+      '@heroicons/react':
+        specifier: 2.0.13
+        version: 2.0.13(react@18.2.0)
+      '@sushiswap/ui':
+        specifier: workspace:*
+        version: link:../ui
+      idb:
+        specifier: ^8.0.0
+        version: 8.0.0
+      nanoid:
+        specifier: 4.0.0
+        version: 4.0.0
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
+      react-toastify:
+        specifier: 9.1.3
+        version: 9.1.3(react-dom@18.2.0)(react@18.2.0)
+    devDependencies:
+      '@tsconfig/esm':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@tsconfig/strictest':
+        specifier: 2.0.2
+        version: 2.0.2
+      '@types/react':
+        specifier: 18.2.14
+        version: 18.2.14
+      '@types/react-dom':
+        specifier: 18.2.6
+        version: 18.2.6
+      sushi:
+        specifier: workspace:*
+        version: link:../sushi
+      typescript:
+        specifier: 5.4.5
+        version: 5.4.5
+
   packages/react-query:
     dependencies:
-      '@sushiswap/dexie':
-        specifier: workspace:*
-        version: link:../dexie
       '@sushiswap/hooks':
         specifier: workspace:*
         version: link:../hooks
@@ -1537,9 +1534,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: 4.28.0
         version: 4.28.0(@tanstack/react-query@4.28.0)(react-dom@18.2.0)(react@18.2.0)
-      idb-keyval:
-        specifier: 6.2.0
-        version: 6.2.0
       ms:
         specifier: 2.1.3
         version: 2.1.3
@@ -1582,7 +1576,7 @@ importers:
         version: 29.7.0(@types/node@20.10.0)
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -1625,7 +1619,7 @@ importers:
     optionalDependencies:
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       '@tsconfig/esm':
         specifier: 1.0.4
@@ -1660,9 +1654,6 @@ importers:
       '@uniswap/v3-core':
         specifier: 1.0.1
         version: 1.0.1
-      '@uniswap/v3-periphery':
-        specifier: 1.4.4
-        version: 1.4.4
       big.js:
         specifier: 6.1.1
         version: 6.1.1
@@ -1681,9 +1672,6 @@ importers:
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
-      tiny-warning:
-        specifier: 1.0.3
-        version: 1.0.3
       toformat:
         specifier: 2.0.0
         version: 2.0.0
@@ -1691,12 +1679,9 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
     devDependencies:
-      '@tsconfig/esm':
-        specifier: 1.0.4
-        version: 1.0.4
-      '@tsconfig/node18':
-        specifier: 18.2.2
-        version: 18.2.2
+      '@tsconfig/node20':
+        specifier: 20.1.4
+        version: 20.1.4
       '@tsconfig/strictest':
         specifier: 2.0.2
         version: 2.0.2
@@ -1826,9 +1811,6 @@ importers:
       '@react-hook/window-scroll':
         specifier: 1.3.0
         version: 1.3.0(react@18.2.0)
-      '@sushiswap/dexie':
-        specifier: workspace:*
-        version: link:../dexie
       '@sushiswap/hooks':
         specifier: workspace:*
         version: link:../hooks
@@ -1892,9 +1874,6 @@ importers:
       react-spring:
         specifier: 9.6.1
         version: 9.6.1(@react-three/fiber@8.16.2)(konva@9.3.6)(react-dom@18.2.0)(react-konva@16.8.6)(react-native@0.73.7)(react-zdog@1.2.2)(react@18.2.0)(three@0.163.0)(zdog@1.1.3)
-      react-toastify:
-        specifier: 9.1.3
-        version: 9.1.3(react-dom@18.2.0)(react@18.2.0)
       react-virtualized-auto-sizer:
         specifier: 1.0.7
         version: 1.0.7(react-dom@18.2.0)(react@18.2.0)
@@ -1940,7 +1919,7 @@ importers:
         version: 10.4.14(postcss@8.4.23)
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       postcss:
         specifier: 8.4.23
         version: 8.4.23
@@ -11199,15 +11178,12 @@ packages:
       playwright-core: 1.41.0
     dev: true
 
-  /@playwright/test@1.37.0:
-    resolution: {integrity: sha512-181WBLk4SRUyH1Q96VZl7BP6HcK0b7lbdeKisn3N/vnjitk+9HbdlFz/L5fey05vxaAhldIDnzo8KUoy8S3mmQ==}
-    engines: {node: '>=16'}
+  /@playwright/test@1.45.0:
+    resolution: {integrity: sha512-TVYsfMlGAaxeUllNkywbwek67Ncf8FRGn8ZlRdO291OL3NjG9oMbfVhyP82HQF0CZLMrYsvesqoUekxdWuF9Qw==}
+    engines: {node: '>=18'}
     hasBin: true
     dependencies:
-      '@types/node': 20.12.7
-      playwright-core: 1.37.0
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright: 1.45.0
 
   /@pmmmwh/react-refresh-webpack-plugin@0.5.13(react-refresh@0.11.0)(webpack-dev-server@4.15.2)(webpack@5.91.0):
     resolution: {integrity: sha512-odZVYXly+JwzYri9rKqqUAk0cY6zLpv4dxoKinhoJNShV36Gpxf+CyDIILJ4tYsJ1ZxIWs233Y39iVnynvDA/g==}
@@ -13928,7 +13904,7 @@ packages:
       '@sentry/vercel-edge': 7.101.1
       '@sentry/webpack-plugin': 1.21.0
       chalk: 3.0.0
-      next: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       resolve: 1.22.8
       rollup: 2.78.0
@@ -13959,7 +13935,7 @@ packages:
       '@sentry/vercel-edge': 7.110.0
       '@sentry/webpack-plugin': 1.21.0
       chalk: 3.0.0
-      next: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       resolve: 1.22.8
       rollup: 2.78.0
@@ -13990,7 +13966,7 @@ packages:
       '@sentry/vercel-edge': 8.13.0
       '@sentry/webpack-plugin': 2.20.1(webpack@5.91.0)
       chalk: 3.0.0
-      next: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       resolve: 1.22.8
       rollup: 3.29.4
       stacktrace-parser: 0.1.10
@@ -16556,6 +16532,10 @@ packages:
     resolution: {integrity: sha512-d6McJeGsuoRlwWZmVIeE8CUA27lu6jLjvv1JzqmpsytOYYbVi1tHZEnwCNVOXnj4pyLvneZlFlpXUK+X9wBWyw==}
     dev: true
 
+  /@tsconfig/node20@20.1.4:
+    resolution: {integrity: sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==}
+    dev: true
+
   /@tsconfig/strictest@2.0.2:
     resolution: {integrity: sha512-jt4jIsWKvUvuY6adJnQJlb/UR7DdjC8CjHI/OaSQruj2yX9/K6+KOvDt/vD6udqos/FUk5Op66CvYT7TBLYO5Q==}
     dev: true
@@ -17237,12 +17217,6 @@ packages:
 
   /@types/lodash.frompairs@4.0.9:
     resolution: {integrity: sha512-OZ7YqENr/kRqpDqXlU1RxGWSQ4Ha5gLFcz9v2OhxrrspHCeQ4PfC7SobvLJ8vCvftiEv7IEfZNpaLhHYkVB5SA==}
-    dependencies:
-      '@types/lodash': 4.14.197
-    dev: true
-
-  /@types/lodash.groupby@4.6.7:
-    resolution: {integrity: sha512-dFUR1pqdMgjIBbgPJ/8axJX6M1C7zsL+HF4qdYMQeJ7XOp0Qbf37I3zh9gpXr/ks6tgEYPDRqyZRAnFYvewYHQ==}
     dependencies:
       '@types/lodash': 4.14.197
     dev: true
@@ -18174,7 +18148,7 @@ packages:
       react:
         optional: true
     dependencies:
-      next: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       server-only: 0.0.1
     dev: false
@@ -24333,23 +24307,6 @@ packages:
       minimist: 1.2.8
     dev: true
 
-  /dexie-react-hooks@1.1.6(@types/react@18.2.14)(dexie@3.2.4)(react@18.2.0):
-    resolution: {integrity: sha512-xSblWtmPwhafWNWMECsW7zMMmBu8goH3QqTxEfwBNoNG1mgsM0oFclippev7ss9HhKICqBwTjgqpscci5Ed4mA==}
-    peerDependencies:
-      '@types/react': 18.2.14
-      dexie: ^3.2 || ^4.0.1-alpha
-      react: '>=16'
-    dependencies:
-      '@types/react': 18.2.14
-      dexie: 3.2.4
-      react: 18.2.0
-    dev: false
-
-  /dexie@3.2.4:
-    resolution: {integrity: sha512-VKoTQRSv7+RnffpOJ3Dh6ozknBqzWw/F3iqMdsZg958R0AS8AnY9x9d1lbwENr0gzeGJHXKcGhAMRaqys6SxqA==}
-    engines: {node: '>=6.0'}
-    dev: false
-
   /dezalgo@1.0.4:
     resolution: {integrity: sha512-rXSP0bf+5n0Qonsb+SVVfNfIsimO4HEtmnIpPHY8Q1UCzKlQrDMfdobr8nJOOsRgWCyMRqeSBQzmWUMq7zvVig==}
     dependencies:
@@ -29513,17 +29470,15 @@ packages:
     dependencies:
       postcss: 8.4.23
 
-  /idb-keyval@6.2.0:
-    resolution: {integrity: sha512-uw+MIyQn2jl3+hroD7hF8J7PUviBU7BPKWw4f/ISf32D4LoGu98yHjrzWWJDASu9QNrX10tCJqk9YY0ClWm8Ng==}
-    dependencies:
-      safari-14-idb-fix: 3.0.0
-    dev: false
-
   /idb-keyval@6.2.1:
     resolution: {integrity: sha512-8Sb3veuYCyrZL+VBt9LJfZjLUPWVvqn8tG28VqYNFCo43KHcKuq+b4EiXGeuaLAQWL2YmyDgMp2aSpH9JHsEQg==}
 
   /idb@7.1.1:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
+    dev: false
+
+  /idb@8.0.0:
+    resolution: {integrity: sha512-l//qvlAKGmQO31Qn7xdzagVPPaHTxXx199MhrAFuVBTPqydcPYBWjkrbv4Y0ktB+GmWOiwHl237UUOrLmQxLvw==}
     dev: false
 
   /identity-obj-proxy@3.0.0:
@@ -32408,10 +32363,6 @@ packages:
     resolution: {integrity: sha512-dvqe2I+cO5MzXCMhUnfYFa9MD+/760yx2aTAN1lqEcEkf896TxgrX373igVdqSJj6tQd0jnSLE1UMuKufqqxFw==}
     dev: false
 
-  /lodash.groupby@4.6.0:
-    resolution: {integrity: sha512-5dcWxm23+VAoz+awKmBaiBvzox8+RqMgFhi7UvX9DHZr2HdxHXM/Wrf8cfKpsW37RNrvtPn6hSwNqurSILbmJw==}
-    dev: false
-
   /lodash.isarguments@3.1.0:
     resolution: {integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==}
 
@@ -34209,7 +34160,7 @@ packages:
     peerDependencies:
       next: ^12.1.4 || ^13
     dependencies:
-      next: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       whatwg-fetch: 3.6.20
     dev: false
 
@@ -34220,7 +34171,7 @@ packages:
       next: '>=13.4'
       react: '>=18.0.0'
     dependencies:
-      next: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       remeda: 1.56.0
       whatwg-fetch: 3.6.17
@@ -34233,7 +34184,7 @@ packages:
       react: '*'
       react-dom: '*'
     dependencies:
-      next: 14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -34241,7 +34192,7 @@ packages:
   /next-tick@1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
 
-  /next@14.2.3(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.37.0)(react-dom@18.2.0)(react@18.2.0):
+  /next@14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-dowFkFTR8v79NPJO4QsBUtxv0g9BrS/phluVpMAt2ku7H+cbcBJlopXjkWlwxrk/xGqMemr7JkGPGemPrLLX7A==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -34261,7 +34212,7 @@ packages:
     dependencies:
       '@next/env': 14.2.3
       '@opentelemetry/api': 1.9.0
-      '@playwright/test': 1.37.0
+      '@playwright/test': 1.45.0
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
       caniuse-lite: 1.0.30001611
@@ -34283,6 +34234,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    patched: true
 
   /nice-try@1.0.5:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
@@ -35502,16 +35454,16 @@ packages:
       find-up: 3.0.0
     dev: false
 
-  /playwright-core@1.37.0:
-    resolution: {integrity: sha512-1c46jhTH/myQw6sesrcuHVtLoSNfJv8Pfy9t3rs6subY7kARv0HRw5PpyfPYPpPtQvBOmgbE6K+qgYUpj81LAA==}
-    engines: {node: '>=16'}
-    hasBin: true
-
   /playwright-core@1.41.0:
     resolution: {integrity: sha512-UGKASUhXmvqm2Lxa1fNr8sFwAtqjpgBRr9jQ7XBI8Rn5uFiEowGUGwrruUQsVPIom4bk7Lt+oLGpXobnXzrBIw==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
+
+  /playwright-core@1.45.0:
+    resolution: {integrity: sha512-lZmHlFQ0VYSpAs43dRq1/nJ9G/6SiTI7VPqidld9TDefL9tX87bTKExWZZUF5PeRyqtXqd8fQi2qmfIedkwsNQ==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   /playwright@1.41.0:
     resolution: {integrity: sha512-XOsfl5ZtAik/T9oek4V0jAypNlaCNzuKOwVhqhgYT3os6kH34PzbRb74F0VWcLYa5WFdnmxl7qyAHBXvPv7lqQ==}
@@ -35522,6 +35474,15 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /playwright@1.45.0:
+    resolution: {integrity: sha512-4z3ac3plDfYzGB6r0Q3LF8POPR20Z8D0aXcxbJvmfMgSSq1hkcgvFRXJk9rUq5H/MJ0Ktal869hhOdI/zUTeLA==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.45.0
+    optionalDependencies:
+      fsevents: 2.3.2
 
   /plimit-lit@1.6.1:
     resolution: {integrity: sha512-B7+VDyb8Tl6oMJT9oSO2CW8XC/T4UcJGrwOVoNGwOQsQYhlpfajmrMj5xeejqaASq3V/EqThyOeATEOMuSEXiA==}
@@ -39101,10 +39062,6 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       mri: 1.2.0
-
-  /safari-14-idb-fix@3.0.0:
-    resolution: {integrity: sha512-eBNFLob4PMq8JA1dGyFn6G97q3/WzNtFK4RnzT1fnLq+9RyrGknzYiM/9B12MnKAxuj1IXr7UKYtTNtjyKMBog==}
-    dev: false
 
   /safe-array-concat@1.0.0:
     resolution: {integrity: sha512-9dVEFruWIsnie89yym+xWTAYASdpw3CJV7Li/6zBewGf9z2i1j31rP6jnY0pHEO4QZh6N0K11bFjWmdR8UGdPQ==}

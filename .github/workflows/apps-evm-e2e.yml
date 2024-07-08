@@ -42,7 +42,7 @@ jobs:
           submodules: true
 
       # Has to be before setup node for caching to work
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
           version: ${{ matrix.pnpm-version }}
 
@@ -59,7 +59,8 @@ jobs:
         run: pnpm install --frozen-lockfile --prefer-offline
         
       - name: Install Playwright Browsers
-        run: npx playwright@1.37.0 install --with-deps chromium
+        run: pnpm playwright install --with-deps chromium
+        working-directory: ./apps/evm
 
       - name: Test
         run: pnpm exec turbo run test --filter evm
