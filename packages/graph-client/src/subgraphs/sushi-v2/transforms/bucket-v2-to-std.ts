@@ -3,7 +3,7 @@ import type { SushiV2PoolBucketsQuery } from 'src/subgraphs/sushi-v2/queries/poo
 import type { PoolBucket } from 'sushi/types'
 
 type FetchedBucket = NonNullable<
-  ResultOf<typeof SushiV2PoolBucketsQuery>['pool']
+  ResultOf<typeof SushiV2PoolBucketsQuery>['pair']
 >['poolHourData'][number]
 
 export function transformBucketsV2ToStd(

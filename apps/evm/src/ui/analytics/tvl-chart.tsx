@@ -10,7 +10,7 @@ import {
   Toggle,
   classNames,
 } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'

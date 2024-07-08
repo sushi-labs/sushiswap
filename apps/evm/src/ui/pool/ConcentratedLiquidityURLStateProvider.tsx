@@ -176,7 +176,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       _searchParams.set('chainId', chainId.toString())
       _searchParams.set('fromCurrency', fromCurrency)
       if (toCurrency) _searchParams.set('toCurrency', toCurrency)
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
     const setToken0 = (currency: Type) => {
@@ -195,7 +195,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           toCurrency === _fromCurrency || same ? fromCurrency : toCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
     const setToken1 = (currency: Type) => {
       const same = currency.wrapped.address === token0?.wrapped.address
@@ -213,14 +213,14 @@ export const ConcentratedLiquidityURLStateProvider: FC<
           fromCurrency === _toCurrency || same ? toCurrency : fromCurrency,
         )
       }
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
     const setFeeAmount = (feeAmount: SushiSwapV3FeeAmount) => {
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
       _searchParams.set('feeAmount', feeAmount.toString())
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
     const switchTokens = () => {
       const _searchParams = new URLSearchParams(
@@ -234,7 +234,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
         'toCurrency',
         !token0 || token0.isNative ? 'NATIVE' : token0.wrapped.address,
       )
-      void push(`${pathname}?${_searchParams.toString()}`)
+      void push(`${pathname}?${_searchParams.toString()}`, { scroll: false })
     }
 
     return {

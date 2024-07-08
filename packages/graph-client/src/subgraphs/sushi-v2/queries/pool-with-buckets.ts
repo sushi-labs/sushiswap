@@ -15,7 +15,7 @@ import { graphql } from '../graphql'
 export const SushiV2PoolBucketsQuery = graphql(
   `
   query PoolBuckets($id: ID!, $id_Bytes: Bytes!, $block: Block_height, $hourDataFirst: Int = 168, $dayDataFirst: Int = 1000) {
-    pool: pair(id: $id, block: $block) {
+    pair(id: $id, block: $block) {
       ...PoolFields
 
       poolHourData: pairHourData(first: $hourDataFirst, orderBy: hourStartUnix, orderDirection: desc) {
@@ -72,10 +72,10 @@ export async function getSushiV2PoolBuckets(
     options,
   )
 
-  if (result.pool) {
+  if (result.pair) {
     return {
-      ...transformPoolV2ToBase(result.pool, chainId),
-      poolHourData: transformBucketsV2ToStd(result.pool.poolHourData),
+      ...transformPoolV2ToBase(result.pair, chainId),
+      poolHourData: transformBucketsV2ToStd(result.pair.poolHourData),
       poolDayData: transformBucketsV2ToStd(result.poolDayData),
     }
   }

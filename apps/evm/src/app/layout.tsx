@@ -6,9 +6,9 @@ import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
 
+import { ToastContainer } from '@sushiswap/notifications'
 import { headers } from 'next/headers'
 import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-address-dialog'
-import { getWagmiInitialState } from 'src/lib/wagmi/config'
 import { Providers } from './providers'
 import { Trackers } from './trackers'
 
@@ -36,14 +36,14 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
-  const initialWagmiState = getWagmiInitialState(headers().get('cookie'))
+  const cookie = headers().get('cookie')
 
   return (
     // <html lang="en" className="[color-scheme:dark]">
     <html
       lang="en"
       className={`${inter.variable} ${roboto_mono.variable} dark`}
-      suppressHydrationWarning={true}
+      suppressHydrationWarning
     >
       <link
         rel="apple-touch-icon"
@@ -65,14 +65,14 @@ export default function RootLayout({
       <link rel="manifest" href="/site.webmanifest?v=1" />
       <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
-      <body className="h-screen" suppressHydrationWarning={true}>
-        <div className="flex flex-col h-full">
-          <Providers initialWagmiState={initialWagmiState}>
+      <body className="h-screen">
+        <Providers cookie={cookie}>
+          <div className="flex flex-col h-full">
             <SanctionedAddressDialog />
             {children}
-          </Providers>
-          <Trackers />
-        </div>
+          </div>
+        </Providers>
+        <Trackers />
       </body>
     </html>
   )

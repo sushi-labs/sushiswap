@@ -76,14 +76,14 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
       )
 
       pools?.forEach((pool) => {
-        if (
-          !FEE_OPTIONS.find((option) => option.value === Number(pool.swapFee))
+        const feeOption = FEE_OPTIONS.find(
+          (option) => option.value / 1_000_000 === pool.swapFee,
         )
-          return
+        if (!feeOption) return
 
         const tvlShare = pool.liquidityUSD / totalTvl
         if (Number.isNaN(tvlShare)) return
-        tvlDistribution.set(Number(pool.swapFee), tvlShare)
+        tvlDistribution.set(feeOption.value, tvlShare)
       })
 
       return tvlDistribution

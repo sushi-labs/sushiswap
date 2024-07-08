@@ -3,17 +3,16 @@
 import { bondFixedTermTellerAbi } from '@sushiswap/bonds-sdk/abi'
 import { BondPosition } from '@sushiswap/client'
 import { useIsMounted } from '@sushiswap/hooks'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   Badge,
   Button,
   Currency,
   Dots,
-  NetworkIcon,
   SkeletonText,
   classNames,
-  createErrorToast,
-  createToast,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'

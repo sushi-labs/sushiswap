@@ -230,21 +230,29 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
       switch (side) {
         case 'left': {
+          const current =
+            Math.floor(pool.tickCurrent / TICK_SPACINGS[feeAmount]) *
+            TICK_SPACINGS[feeAmount]
+
           const newRightPrice = tickToPrice(
             token0.wrapped,
             token1.wrapped,
-            pool.tickCurrent + (invertPrice ? 1 : 0) * TICK_SPACINGS[feeAmount],
+            current + (invertPrice ? 1 : 0) * TICK_SPACINGS[feeAmount],
           )
-          onRightRangeInput(newRightPrice.toFixed(6))
+          onRightRangeInput(newRightPrice.toFixed(18))
           break
         }
         case 'right': {
+          const current =
+            Math.ceil(pool.tickCurrent / TICK_SPACINGS[feeAmount]) *
+            TICK_SPACINGS[feeAmount]
+
           const newLeftPrice = tickToPrice(
             token0.wrapped,
             token1.wrapped,
-            pool.tickCurrent + (invertPrice ? 0 : 1) * TICK_SPACINGS[feeAmount],
+            current + (invertPrice ? -1 : 0) * TICK_SPACINGS[feeAmount],
           )
-          onLeftRangeInput(newLeftPrice.toFixed(6))
+          onLeftRangeInput(newLeftPrice.toFixed(18))
           break
         }
       }
@@ -388,8 +396,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       : _ratio
 
     const apr =
-      ((poolStats?.feeApr1d ?? 0) + (poolStats?.incentiveApr ?? 0)) /
-      100 /
+      (poolStats?.feeApr1d ?? 0) /
       (yieldRate === YieldRatePeriod.MONTHLY
         ? 12
         : yieldRate === YieldRatePeriod.DAILY

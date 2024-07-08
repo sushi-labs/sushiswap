@@ -494,7 +494,7 @@ export const blast = {
 
 export const skaleEuropa = {
   id: ChainId.SKALE_EUROPA,
-  name: 'Skale Europa',
+  name: 'SKALE Europa',
   network: 'skale-europa',
   nativeCurrency: {
     decimals: 18,
