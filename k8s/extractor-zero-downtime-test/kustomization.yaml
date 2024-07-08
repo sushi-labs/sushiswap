@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - extractor-service.yaml
+  - persistent-volume-class.yaml
+  - persistent-volume.yaml
+  - extractor-statefulset-zero-downtime.yaml

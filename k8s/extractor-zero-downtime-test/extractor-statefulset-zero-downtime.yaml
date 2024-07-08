@@ -1,0 +1,118 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: extractor-1-0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-1
+  template:
+    metadata:
+      labels:
+        app: extractor-1
+    spec:
+      containers:
+        - name: extractor
+          image: jeremyatsolidity/extractor:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 8Gi
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          startupProbe:
+            failureThreshold: 100
+            httpGet:
+              path: /health
+              port: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          volumeMounts:
+            - mountPath: /app/cache
+              name: extractor-1-cache
+          env:
+            - name: CHAIN_ID
+              value: '1'
+            - name: DRPC_ID
+              value: "example-drpc-id"
+            - name: RSK_ID
+              value: "example-rsk-id"
+            - name: SENTRY_DSN
+              value: "example-sentry-dsn"
+            - name: SENTRY_ENVIRONMENT
+              value: "example-sentry-environment"
+      volumes:
+        - name: extractor-1-cache
+          persistentVolumeClaim:
+            claimName: shared-pvc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: extractor-1-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extractor-1
+  template:
+    metadata:
+      labels:
+        app: extractor-1
+    spec:
+      containers:
+        - name: extractor
+          image: jeremyatsolidity/extractor:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 8Gi
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          startupProbe:
+            failureThreshold: 100
+            httpGet:
+              path: /health
+              port: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+          volumeMounts:
+            - mountPath: /app/cache
+              name: extractor-1-cache
+          env:
+            - name: CHAIN_ID
+              value: '1'
+            - name: DRPC_ID
+              value: "example-drpc-id"
+            - name: RSK_ID
+              value: "example-rsk-id"
+            - name: SENTRY_DSN
+              value: "example-sentry-dsn"
+            - name: SENTRY_ENVIRONMENT
+              value: "example-sentry-environment"
+      volumes:
+        - name: extractor-1-cache
+          persistentVolumeClaim:
+            claimName: shared-pvc
+
+  
