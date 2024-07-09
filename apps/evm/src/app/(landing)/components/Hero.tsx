@@ -9,7 +9,6 @@ import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
 import { ChainId } from 'sushi/chain'
 import { Native, SUSHI } from 'sushi/currency'
 
-
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
   { value0: '1', value1: '2812.18' },
