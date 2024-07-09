@@ -494,7 +494,7 @@ export const blast = {
 
 export const skaleEuropa = {
   id: ChainId.SKALE_EUROPA,
-  name: 'Skale Europa',
+  name: 'SKALE Europa',
   network: 'skale-europa',
   nativeCurrency: {
     decimals: 18,
@@ -605,7 +605,7 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`,
   ),
   [ChainId.SKALE_EUROPA]: http(
-    'https://mainnet.skalenodes.com/v1/elated-tan-skat',
+    'https://elated-tan-skat-archive-backup.skalenodes.com:10072',
   ),
   [ChainId.ROOTSTOCK]: http(
     rskId

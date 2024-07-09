@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { test } from 'next/experimental/testmode/playwright'
+import { test } from 'next/experimental/testmode/playwright.js'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, USDC, USDT, WBTC } from 'sushi/currency'
 
@@ -49,18 +49,18 @@ test.beforeEach(async ({ page, next }) => {
   })
   // await loadSnapshot(chainId, snapshot)
 
-  await page.route('https://localhost:3000/api/swap', async (route) => {
-    await route.fill({ success: true, data: { maintenance: false } })
+  await page.route('http://localhost:3000/api/swap', async (route) => {
+    await route.fallback({ json: { maintenance: false } })
   })
 
   await page.route(
-    'https://localhost:3000/api/balance/v0/**/*',
+    'http://localhost:3000/api/balance/v0/**/*',
     async (route) => {
-      await route.fill({ success: true, data: {} })
+      await route.fulfill({ json: {} })
     },
   )
 
-  await page.route('https://tokens.sushi.com/v0', async (route) => {
+  await page.route('http://tokens.sushi.com/v0', async (route) => {
     await route.fulfill({
       json: [wnative, usdc, usdt, wbtc].map((token) => ({
         id: token.id,

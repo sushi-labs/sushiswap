@@ -1,9 +1,9 @@
 {
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "start": {
       "dependsOn": ["build"],
-      "env": ["ALCHEMY_ID", "DATABASE_URL"],
+      "env": ["DRPC_ID", "DATABASE_URL", "SUSHI_GRAPH_KEY"],
       "cache": false,
       "persistent": true
     },

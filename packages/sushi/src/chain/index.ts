@@ -137,7 +137,7 @@ export class Chain implements Chain {
         },
       ]
     } else if (data.chainId === ChainId.SKALE_EUROPA) {
-      this.name = 'Skale Europa'
+      this.name = 'SKALE Europa'
     } else if (data.chainId === ChainId.ROOTSTOCK) {
       this.explorers?.sort((explorer) =>
         explorer.name === 'blockscout' ? -1 : 1,

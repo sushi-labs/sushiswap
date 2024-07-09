@@ -27,5 +27,5 @@ export default async function VaultOverviewPage({
     notFound()
   }
 
-  return <SteerCarousel pool={pool} />
+  return <SteerCarousel pool={pool} vaults={vaults} />
 }

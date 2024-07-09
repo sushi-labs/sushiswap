@@ -37,4 +37,6 @@ RUN pnpm exec turbo run build --filter=router-api
 
 EXPOSE 80
 
-CMD NODE_ENV=production node /app/apis/router/dist/index.js
+ENV NODE_ENV=production
+
+CMD node --max-old-space-size=$(expr $(echo "$(free -m)" | awk '/^Mem:/ {print $2}') - 512) /app/apis/router/dist/index.js

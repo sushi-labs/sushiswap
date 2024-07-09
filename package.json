@@ -17,6 +17,7 @@
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
     "preinstall": "npx -y only-allow pnpm",
     "lint": "biome check .",
+    "lint:fix": "biome check . --apply",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'jobs/*/package.json' 'packages/*/package.json' 'protocols/*/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'jobs/*/package.json' 'packages/*/package.json' 'protocols/*/package.json' --check",
     "test": "dotenv -- turbo run test --parallel",
@@ -30,12 +31,13 @@
     "@types/node": "20",
     "dotenv-cli": "6.0.0",
     "eslint": "8.43.0",
+    "eslint-config-turbo": "2.0.5",
     "jest": "29.7.0",
     "sort-package-json": "2.6.0",
     "ts-jest": "29.1.1",
-    "turbo": "1.12.4"
+    "turbo": "2.0.5"
   },
-  "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e",
+  "packageManager": "pnpm@8.15.8",
   "engines": {
     "node": ">=20.x",
     "pnpm": "8.15.8"
@@ -44,12 +46,13 @@
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
       "graphql": "16.6.0",
-      "typescript": "5.2.2",
+      "typescript": "5.4.5",
       "@types/react": "18.2.14",
       "@types/react-dom": "18.2.6"
     },
     "patchedDependencies": {
-      "@viem/anvil@0.0.6": "patches/@viem__anvil@0.0.6.patch"
+      "@viem/anvil@0.0.6": "patches/@viem__anvil@0.0.6.patch",
+      "next@14.2.3": "patches/next@14.2.3.patch"
     }
   }
 }

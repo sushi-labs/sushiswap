@@ -1,13 +1,13 @@
 import { classNames } from '@sushiswap/ui'
 import { Badge } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { Row } from '@tanstack/react-table'
 import { FC, useMemo } from 'react'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { ChainId } from 'sushi/chain'
 import { Type, unwrapToken } from 'sushi/currency'
-import { formatNumber } from 'sushi/format'
+import { formatPercent } from 'sushi/format'
 
 export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
   ({ original }) => {
@@ -59,7 +59,7 @@ export const PoolNameCellV3: FC<Row<ConcentratedLiquidityPositionWithV3Pool>> =
               V3
             </div>
             <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-              {formatNumber(original.fee / 10000)}%
+              {formatPercent(original.fee / 1000000)}
             </div>
           </div>
         </div>

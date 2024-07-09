@@ -1,9 +1,10 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { Collapsible, Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/AddressToEnsResolver'
-import { Chain } from 'sushi/chain'
+import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -22,6 +23,7 @@ import {
 
 export const SimpleSwapTradeStats: FC = () => {
   const { address } = useAccount()
+  const isMounted = useIsMounted()
   const {
     state: { chainId, swapAmountString, recipient, forceClient },
   } = useDerivedStateSimpleSwap()
@@ -104,7 +106,9 @@ export const SimpleSwapTradeStats: FC = () => {
             Network fee
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
+            {chainId === ChainId.SKALE_EUROPA ? (
+              'FREE'
+            ) : loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : trade?.gasSpent ? (
               `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
@@ -146,7 +150,8 @@ export const SimpleSwapTradeStats: FC = () => {
             )}
           </span>
         </div>
-        {recipient && isAddress(recipient) && (
+
+        {recipient && isAddress(recipient) && isMounted && (
           <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
             <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
               Recipient

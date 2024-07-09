@@ -8,9 +8,9 @@ import {
   CardTitle,
   Currency,
   DataTable,
-  NetworkIcon,
   SkeletonText,
 } from '@sushiswap/ui'
+import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import {
   ColumnDef,
   PaginationState,

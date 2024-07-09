@@ -96,7 +96,7 @@ export const PoolHeader: FC<PoolHeader> = ({
               })}
             >
               <LinkExternal
-                href={Chain.from(pool.chainId)?.getTokenUrl(address)}
+                href={Chain.from(pool.chainId)?.getAccountUrl(address)}
               >
                 {token0.symbol}/{token1.symbol}
               </LinkExternal>

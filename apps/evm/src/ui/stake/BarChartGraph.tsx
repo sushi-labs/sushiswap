@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import { CardDescription, CardTitle } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { FC, useCallback, useMemo } from 'react'
 import { formatNumber, formatPercent } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'

@@ -13,7 +13,7 @@ import { graphql } from '../graphql'
 export const MasterChefV1UserPositionsQuery = graphql(
   `
   query UserPositions($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: User_orderBy, $orderDirection: OrderDirection, $where: User_filter) {
-    positions: users(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+    users(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
       id
       address
       balance: amount
@@ -43,7 +43,7 @@ export async function getMasterChefV1UserPositions(
     options,
   })
 
-  return result.positions.flatMap((position) => {
+  return result.users.flatMap((position) => {
     if (!position.pool) {
       return []
     }

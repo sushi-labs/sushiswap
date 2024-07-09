@@ -1,5 +1,6 @@
 'use client'
 
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { UseTradeReturn } from '@sushiswap/react-query'
 import {
   Button,
@@ -15,8 +16,6 @@ import {
   SkeletonBox,
   SkeletonText,
   classNames,
-  createErrorToast,
-  createToast,
 } from '@sushiswap/ui'
 import { log } from 'next-axiom'
 import React, {
@@ -31,7 +30,7 @@ import { useSimulateTrade } from 'src/lib/hooks/useSimulateTrade'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
-import { Chain } from 'sushi/chain'
+import { Chain, ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 import { ZERO } from 'sushi/math'
@@ -458,9 +457,11 @@ export const SimpleSwapTradeReviewDialog: FC<{
                       </List.KeyValue>
                     )}
                     <List.KeyValue title="Network fee">
-                      {isFetching ||
-                      !trade?.gasSpent ||
-                      trade.gasSpent === '0' ? (
+                      {chainId === ChainId.SKALE_EUROPA ? (
+                        'FREE'
+                      ) : isFetching ||
+                        !trade?.gasSpent ||
+                        trade.gasSpent === '0' ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
