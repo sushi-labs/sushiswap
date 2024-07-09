@@ -66,6 +66,7 @@ export default function RootLayout({
       <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen">
+        <ToastContainer />
         <Providers cookie={cookie}>
           <div className="flex flex-col h-full">
             <SanctionedAddressDialog />
