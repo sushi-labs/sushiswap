@@ -1,3 +1,5 @@
+'use client'
+
 import { createQueryClient } from '@sushiswap/react-query'
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClientProvider as _QueryClientProvider } from '@tanstack/react-query'

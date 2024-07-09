@@ -550,6 +550,9 @@ importers:
       '@vercel/edge-config':
         specifier: 1.2.0
         version: 1.2.0(@opentelemetry/api@1.9.0)
+      '@vercel/speed-insights':
+        specifier: 1.0.12
+        version: 1.0.12(next@14.2.3)(react@18.2.0)
       '@wagmi/connectors':
         specifier: ^5.0.11
         version: 5.0.11(@types/react@18.2.14)(@upstash/redis@1.22.1)(@wagmi/core@2.10.6)(react-dom@18.2.0)(react-i18next@13.5.0)(react-native@0.73.7)(react@18.2.0)(rollup@3.29.4)(typescript@5.4.5)(viem@2.10.11)(zod@3.21.4)
@@ -18290,6 +18293,34 @@ packages:
   /@vercel/ruby@2.0.2:
     resolution: {integrity: sha512-MqFynhtZ905L210DWAbgkiEQEK39LTtp9eL2Nm6PjzhjNzU6hV0UfK8Z24vU9CC6J4mrUTTZx396fH7XTYJWqg==}
     dev: true
+
+  /@vercel/speed-insights@1.0.12(next@14.2.3)(react@18.2.0):
+    resolution: {integrity: sha512-ZGQ+a7bcfWJD2VYEp2R1LHvRAMyyaFBYytZXsfnbOMkeOvzGNVxUL7aVUvisIrTZjXTSsxG45DKX7yiw6nq2Jw==}
+    requiresBuild: true
+    peerDependencies:
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      react: ^18 || ^19
+      svelte: ^4
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
+    dependencies:
+      next: 14.2.3(patch_hash=lgn7w2rh4gprdey4qlz3quyu4e)(@babel/core@7.24.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.45.0)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+    dev: false
 
   /@vercel/static-build@2.0.10:
     resolution: {integrity: sha512-H3YM60+Jx/X9YbHrPaQYflJiSC5fQu9R39j+njIAQAQHiitiqFAnFEzQfOXSp52csb0uJ9XacL94vjzQ/T2S5w==}

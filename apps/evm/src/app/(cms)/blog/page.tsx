@@ -1,13 +1,13 @@
 import { Container } from '@sushiswap/ui'
 import { ArticleList } from './components/article-list/article-list'
-import { BlogSearchProvider } from './components/blog-search-provider'
+
 import { CategoryFilter } from './components/category-filter/category-filter'
 import { Hero } from './components/hero'
 import { SearchFilter } from './components/search-filter'
 
 export default function Page() {
   return (
-    <BlogSearchProvider>
+    <>
       <Hero />
       <div className="h-[0.5px] bg-accent w-full" />
       <Container
@@ -24,6 +24,6 @@ export default function Page() {
         </div>
         <ArticleList />
       </Container>
-    </BlogSearchProvider>
+    </>
   )
 }
