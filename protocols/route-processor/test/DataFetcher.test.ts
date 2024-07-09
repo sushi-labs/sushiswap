@@ -164,6 +164,19 @@ async function runTest() {
           ),
         )
 
+        // only for quickswapv3
+        if (chainId === ChainId.POLYGON) {
+          const foundRoute = findRoute(
+            dataFetcher,
+            WNATIVE[chainId],
+            USDC[chainId as keyof typeof USDC],
+            chainId,
+            [LiquidityProviders.QuickSwapV3],
+          )
+          assert.ok(foundRoute)
+          foundRouteReports.push(foundRoute)
+        }
+
         // only for pancakev3 with 0.2.5% fee pool pair
         if (chainId === ChainId.BSC) {
           const token = new Token({

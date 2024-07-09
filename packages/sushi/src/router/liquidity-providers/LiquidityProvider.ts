@@ -10,7 +10,8 @@ export enum LiquidityProviders {
   UniswapV2 = 'UniswapV2',
   UniswapV3 = 'UniswapV3',
   Trident = 'Trident',
-  QuickSwap = 'QuickSwap',
+  QuickSwapV2 = 'QuickSwapV2',
+  QuickSwapV3 = 'QuickSwapV3',
   ApeSwap = 'ApeSwap',
   PancakeSwapV2 = 'PancakeSwapV2',
   PancakeSwapV3 = 'PancakeSwapV3',
@@ -127,7 +128,7 @@ export abstract class LiquidityProvider {
 export const UniV2LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.SushiSwapV2,
   LiquidityProviders.UniswapV2,
-  LiquidityProviders.QuickSwap,
+  LiquidityProviders.QuickSwapV2,
   LiquidityProviders.ApeSwap,
   LiquidityProviders.PancakeSwapV2,
   LiquidityProviders.TraderJoe,
@@ -160,6 +161,7 @@ export const UniV2LiquidityProviders: LiquidityProviders[] = [
 export const UniV3LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.SushiSwapV3,
   LiquidityProviders.UniswapV3,
+  LiquidityProviders.QuickSwapV3,
   LiquidityProviders.DovishV3,
   LiquidityProviders.KinetixV3,
   LiquidityProviders.MonoswapV3,
