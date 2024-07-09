@@ -33,7 +33,7 @@ COPY pnpm-workspace.yaml pnpm-workspace.yaml
 COPY turbo.json turbo.json
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm exec turbo run build --filter=router-api
+RUN pnpm exec turbo run build --filter=@sushiswap/router-api
 
 EXPOSE 80
 
