@@ -19,6 +19,8 @@ import {
   shortenAddress,
 } from 'sushi/format'
 
+import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client/composite/sushi-v2-staked-unstaked-positions'
+import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client/composite/sushi-v2-staked-unstaked-positions'
 import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
@@ -33,8 +35,6 @@ import type {
   SushiPositionStaked,
   SushiPositionWithPool,
 } from 'sushi'
-import { unnestPool } from 'sushi/types'
-import { SushiV2StakedUnstakedPosition } from '../../../../../packages/graph-client/dist/composite/sushi-v2-staked-unstaked-positions'
 import { APRHoverCard } from './APRHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
 import { PoolNameCell } from './PoolNameCell'

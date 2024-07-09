@@ -1,8 +1,8 @@
+import { getSushiV3Mints } from '@sushiswap/graph-client/sushi-v3'
 import { NextRequest, NextResponse } from 'next/server'
 import { ChainId } from 'sushi/chain'
 import { getAddress } from 'viem'
 import { z } from 'zod'
-import { getSushiV3Mints } from '../../../../../../../../../packages/graph-client/dist/subgraphs/sushi-v3'
 
 const schema = z.object({
   address: z.coerce.string().transform((address) => getAddress(address)),
