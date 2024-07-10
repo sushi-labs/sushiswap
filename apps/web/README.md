@@ -1,6 +1,6 @@
-# EVM
+# Web
 
-EVM application
+Web application
 
 ```sh
 cp .env.example .env
