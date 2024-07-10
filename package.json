@@ -12,7 +12,6 @@
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",
     "enable-remote-caching": "turbo link",
-    "evm": "pnpm exec turbo run dev --filter evm",
     "format": "pnpm sort && biome format . --write",
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
     "preinstall": "npx -y only-allow pnpm",
@@ -21,7 +20,8 @@
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'jobs/*/package.json' 'packages/*/package.json' 'protocols/*/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'jobs/*/package.json' 'packages/*/package.json' 'protocols/*/package.json' --check",
     "test": "dotenv -- turbo run test --parallel",
-    "test-evm-app": "dotenv -- turbo run test --filter=evm"
+    "test-web-app": "dotenv -- turbo run test --filter=web",
+    "web": "pnpm exec turbo run dev --filter web"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.2",
