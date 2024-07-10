@@ -13,4 +13,5 @@ Sentry.init({
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,
+  enabled: process.env.NEXT_PUBLIC_APP_ENV !== 'test',
 })

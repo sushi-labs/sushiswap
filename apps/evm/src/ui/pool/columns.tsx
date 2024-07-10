@@ -1,4 +1,6 @@
+import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client/composite/sushi-v2-staked-unstaked-positions'
 import { AngleRewardsPool } from '@sushiswap/react-query'
+import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
   FormattedNumber,
   Tooltip,
@@ -12,14 +14,6 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef } from '@tanstack/react-table'
 import formatDistance from 'date-fns/formatDistance'
 import React from 'react'
-import {
-  formatNumber,
-  formatPercent,
-  formatUSD,
-  shortenAddress,
-} from 'sushi/format'
-
-import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import type {
   MaybeNestedPool,
@@ -33,8 +27,13 @@ import type {
   SushiPositionStaked,
   SushiPositionWithPool,
 } from 'sushi'
+import {
+  formatNumber,
+  formatPercent,
+  formatUSD,
+  shortenAddress,
+} from 'sushi/format'
 import { unnestPool } from 'sushi/types'
-import { SushiV2StakedUnstakedPosition } from '../../../../../packages/graph-client/dist/composite/sushi-v2-staked-unstaked-positions'
 import { APRHoverCard } from './APRHoverCard'
 import { ConcentratedLiquidityPositionAPRCell } from './ConcentratedLiquidityPositionAPRCell'
 import { PoolNameCell } from './PoolNameCell'

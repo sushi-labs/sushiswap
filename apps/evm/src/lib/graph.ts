@@ -1,3 +1,14 @@
+import { getRebases as _getRebases } from '@sushiswap/graph-client/bentobox'
+import { getSushiDayDatas } from '@sushiswap/graph-client/composite/sushi-day-datas'
+import { getSushiV2StakedUnstakedPositions } from '@sushiswap/graph-client/composite/sushi-v2-staked-unstaked-positions'
+import { getFuroTokens as _getFuroTokens } from '@sushiswap/graph-client/furo'
+import { fetchMultichain } from '@sushiswap/graph-client/multichain'
+import {
+  SushiV2Pools,
+  getSushiV2Pool,
+  getSushiV2Pools,
+} from '@sushiswap/graph-client/sushi-v2'
+import { getSushiV3PoolsByTokenPair } from '@sushiswap/graph-client/sushi-v3'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -7,17 +18,6 @@ import {
 } from 'sushi/config'
 import { getChainIdAddressFromId } from 'sushi/format'
 import { Address } from 'viem'
-import { getSushiDayDatas } from '../../../../packages/graph-client/dist/composite/sushi-day-datas'
-import { getSushiV2StakedUnstakedPositions } from '../../../../packages/graph-client/dist/composite/sushi-v2-staked-unstaked-positions'
-import { fetchMultichain } from '../../../../packages/graph-client/dist/multichain'
-import { getRebases as _getRebases } from '../../../../packages/graph-client/dist/subgraphs/bentobox'
-import { getFuroTokens as _getFuroTokens } from '../../../../packages/graph-client/dist/subgraphs/furo'
-import {
-  SushiV2Pools,
-  getSushiV2Pool,
-  getSushiV2Pools,
-} from '../../../../packages/graph-client/dist/subgraphs/sushi-v2'
-import { getSushiV3PoolsByTokenPair } from '../../../../packages/graph-client/dist/subgraphs/sushi-v3'
 import { bentoBoxTokensSchema, furoTokensSchema } from './schema'
 
 export async function getUser(args: {

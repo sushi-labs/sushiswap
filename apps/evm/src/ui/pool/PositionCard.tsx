@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
+import { UserWithPool } from 'src/app/(evm)/pool/api/user-with-pools/route'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { Chain } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'

@@ -1,9 +1,9 @@
 'use client'
 
+import { getSushiHistoricPool } from '@sushiswap/graph-client/composite/sushi-historic-pool'
 import { useQuery } from '@tanstack/react-query'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
-import { getSushiHistoricPool } from '../../../../../../packages/graph-client/dist/composite/sushi-historic-pool'
 
 interface UsePoolGraphDataParams {
   poolAddress: string
