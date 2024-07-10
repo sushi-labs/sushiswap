@@ -2,14 +2,10 @@ import '@sushiswap/ui/index.css'
 
 import 'sushi/bigint-serializer'
 
+import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
-
-import { ToastContainer } from '@sushiswap/notifications'
-import { headers } from 'next/headers'
-import { SanctionedAddressDialog } from 'src/lib/wagmi/components/sanctioned-address-dialog'
-import { Providers } from './providers'
 import { Trackers } from './trackers'
 
 const inter = Inter({
@@ -36,10 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
-  const cookie = headers().get('cookie')
-
   return (
-    // <html lang="en" className="[color-scheme:dark]">
     <html
       lang="en"
       className={`${inter.variable} ${roboto_mono.variable} dark`}
@@ -67,12 +60,7 @@ export default function RootLayout({
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen">
         <ToastContainer />
-        <Providers cookie={cookie}>
-          <div className="flex flex-col h-full">
-            <SanctionedAddressDialog />
-            {children}
-          </div>
-        </Providers>
+        {children}
         <Trackers />
       </body>
     </html>

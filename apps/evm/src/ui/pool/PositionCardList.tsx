@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import type { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
+import type { UserWithPool } from 'src/app/(evm)/pool/api/user-with-pools/route'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 import { useAccount } from 'wagmi'

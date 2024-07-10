@@ -1,6 +1,5 @@
 import { useIsMounted } from '@sushiswap/hooks'
-import { Container } from '@sushiswap/ui'
-import { SkeletonText } from '@sushiswap/ui'
+import { Container, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React, { FC } from 'react'
 

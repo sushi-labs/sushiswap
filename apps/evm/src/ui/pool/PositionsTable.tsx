@@ -5,7 +5,7 @@ import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 
-import type { UserWithPool } from 'src/app/pool/api/user-with-pools/route'
+import type { UserWithPool } from 'src/app/(evm)/pool/api/user-with-pools/route'
 import { useAccount } from 'wagmi'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'

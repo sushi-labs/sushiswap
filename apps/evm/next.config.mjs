@@ -72,6 +72,28 @@ const nextConfig = bundleAnalyzer({
   },
   async rewrites() {
     return [
+      // if the host is `aptos.sushi.com`,
+      // this rewrite will be applied
+      // {
+      //   source: '/:path*',
+      //   has: [
+      //     {
+      //       type: 'host',
+      //       value: 'aptos.sushi.com',
+      //     },
+      //   ],
+      //   destination: '/aptos/:path*',
+      // },
+      // {
+      //   source: '/:path*',
+      //   has: [
+      //     {
+      //       type: 'host',
+      //       value: 'pay.sushi.com',
+      //     },
+      //   ],
+      //   destination: '/pay/:path*',
+      // },
       {
         source: '/furo',
         destination: `${FURO_URL}/furo`,

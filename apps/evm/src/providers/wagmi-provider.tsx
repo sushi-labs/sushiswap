@@ -55,7 +55,7 @@ const Disclaimer: DisclaimerComponent = ({ Text, Link }) => (
 
 export const WagmiConfig: FC<{
   children: ReactNode
-  cookie: string | null
+  cookie?: string | null
 }> = ({ children, cookie }) => {
   const initialState = getWagmiInitialState(cookie)
   const isMounted = useIsMounted()

@@ -2,9 +2,9 @@
 
 import 'sushi/bigint-serializer'
 
+import { SushiV2Pool } from '@sushiswap/graph-client/sushi-v2'
 import { useMemo } from 'react'
 import { Amount } from 'sushi/currency'
-import { SushiV2Pool } from '../../../../../../packages/graph-client/dist/subgraphs/sushi-v2'
 
 import { useQuery } from '@tanstack/react-query'
 import type { PoolId } from 'sushi'

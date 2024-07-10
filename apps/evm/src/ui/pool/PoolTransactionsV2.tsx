@@ -20,7 +20,7 @@ import {
   getSushiV2Mints,
   getSushiV2Swaps,
   getSushiV2Transactions,
-} from '../../../../../packages/graph-client/dist/subgraphs/sushi-v2'
+} from '@sushiswap/graph-client/sushi-v2'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
