@@ -12,7 +12,6 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
