@@ -2,11 +2,11 @@ import '@sushiswap/ui/index.css'
 
 import 'sushi/bigint-serializer'
 
+import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
 import { Trackers } from './trackers'
-import { ToastContainer } from '@sushiswap/notifications'
 
 const inter = Inter({
   subsets: ['latin'],
