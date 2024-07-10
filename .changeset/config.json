@@ -18,10 +18,10 @@
     "@sushiswap/token-list-api",
     "@sushiswap/tokens-api",
     "@sushiswap/ui",
-    "@sushiswap/wagmi",
     "@sushiswap/pool-job",
-    "academy",
+    "aptos",
     "blog",
+    "tron",
     "web"
   ]
 }
