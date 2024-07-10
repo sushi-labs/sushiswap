@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
 import { Trackers } from './trackers'
+import { ToastContainer } from '@sushiswap/notifications'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -58,6 +59,7 @@ export default function RootLayout({
       <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
       <link rel="shortcut icon" href="/favicon.ico?v=1" />
       <body className="h-screen">
+        <ToastContainer />
         {children}
         <Trackers />
       </body>
