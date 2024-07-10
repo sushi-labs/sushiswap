@@ -17,11 +17,11 @@
     "@sushiswap/storybook",
     "@sushiswap/token-list-api",
     "@sushiswap/tokens-api",
+    "@sushiswap/notifications",
     "@sushiswap/ui",
     "@sushiswap/pool-job",
-    "aptos",
-    "blog",
-    "tron",
+    "@sushiswap/aptos",
+    "@sushiswap/tron",
     "web"
   ]
 }
