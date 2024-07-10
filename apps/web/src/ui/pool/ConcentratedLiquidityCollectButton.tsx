@@ -1,6 +1,11 @@
 'use client'
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
+import {
+  LiquidityEventName,
+  LiquiditySource,
+  sendAnalyticsEvent,
+} from '@sushiswap/telemetry'
 import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { ChainId } from 'sushi/chain'
@@ -145,9 +150,22 @@ export const ConcentratedLiquidityCollectButton: FC<
     return async () => {
       try {
         await sendTransactionAsync(prepare)
+        sendAnalyticsEvent(LiquidityEventName.COLLECT_LIQUIDITY_SUBMITTED, {
+          chain_id: prepare.chainId,
+          address: account,
+          source: LiquiditySource.V3,
+          label: [token0?.symbol, token1?.symbol].join('/'),
+        })
       } catch {}
     }
-  }, [isSimulationError, prepare, sendTransactionAsync])
+  }, [
+    isSimulationError,
+    prepare,
+    sendTransactionAsync,
+    account,
+    token0,
+    token1,
+  ])
 
   return children({ ...rest, send })
 }
