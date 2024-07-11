@@ -1,8 +1,9 @@
 // Button.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button, ButtonProps, DiscordIcon } from '@sushiswap/ui'
+import { Button, ButtonProps } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import * as React from 'react'
 import { ChainId } from 'sushi/chain'
 import { SUSHI } from 'sushi/currency'
@@ -88,8 +89,8 @@ export const Sizes = (args) => {
 }
 
 export const Loading = (args) => {
-  const items = [true, false].map((loading) => (
-    <React.Fragment key={loading}>
+  const items = [true, false].map((loading, i) => (
+    <React.Fragment key={i}>
       <Button {...args} key={loading} loading={loading}>
         {loading ? 'Loading' : 'Not Loading'}
       </Button>

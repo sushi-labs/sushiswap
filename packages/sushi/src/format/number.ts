@@ -1,6 +1,26 @@
-import numeral from 'numbro'
+// import numeral from 'numbro'
 
-export const formatNumber = (value: any, inputString = '0.[00]a') => {
+// export const formatNumber = (value: any, inputString = '0.[00]a') => {
+//   if (typeof value === 'string') value = Number(value)
+
+//   let negative = false
+//   if (value < 0) {
+//     negative = true
+//     value = Math.abs(value)
+//   }
+
+//   if (value === 0) return '0.00'
+//   if (value < 0.0001) return numeral(value).format('0.[000000]a')
+//   if (value < 0.001) return numeral(value).format('0.[0000]a')
+//   if (value < 0.01) return numeral(value).format('0.[000]a')
+//   return `${negative ? '-' : ''}${numeral(value).format(inputString)}`
+// }
+
+export const formatNumber = (
+  value: string | number,
+  maxDecimalPlaces = 2,
+): string => {
+  value = value ?? 0
   if (typeof value === 'string') value = Number(value)
 
   let negative = false
@@ -9,11 +29,36 @@ export const formatNumber = (value: any, inputString = '0.[00]a') => {
     value = Math.abs(value)
   }
 
+  if (value > 999_000_000_000_000) return '>999t'
   if (value === 0) return '0.00'
-  if (value < 0.0001) return numeral(value).format('0.[000000]a')
-  if (value < 0.001) return numeral(value).format('0.[0000]a')
-  if (value < 0.01) return numeral(value).format('0.[000]a')
-  return `${negative ? '-' : ''}${numeral(value).format(inputString)}`
+  if (value < 0.0001) return value.toFixed(6)
+  if (value < 0.001) return value.toFixed(4)
+  if (value < 0.01) return value.toFixed(3)
+
+  return `${negative ? '-' : ''}${formatValueWithSuffix(
+    value,
+    maxDecimalPlaces,
+  )}`
+}
+
+const formatValueWithSuffix = (
+  value: number,
+  maxDecimalPlaces: number,
+): string => {
+  const suffixes: string[] = ['', 'k', 'm', 'b', 't']
+  let suffixIndex = 0
+  while (value >= 1000 && suffixIndex < suffixes.length - 1) {
+    value /= 1000
+    suffixIndex++
+  }
+
+  const decimalCount = Math.min(
+    value.toString().split('.')[1]?.length || 0,
+    maxDecimalPlaces,
+  )
+
+  const formattedValue = value.toFixed(decimalCount)
+  return `${formattedValue}${suffixes[suffixIndex]}`
 }
 
 /**

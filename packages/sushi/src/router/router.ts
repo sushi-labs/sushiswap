@@ -8,6 +8,8 @@ import { routeProcessor2Abi } from '../abi/routeProcessor2Abi.js'
 import { routeProcessor4Abi } from '../abi/routeProcessor4Abi.js'
 import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
+import { ADDITIONAL_BASES } from '../config/additional-bases.js'
+import { BASES_TO_CHECK_TRADES_AGAINST } from '../config/bases-to-check-trades-against.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
 import { Token, Type } from '../currency/index.js'
 import {
@@ -189,6 +191,11 @@ export class Router {
 
     if (poolFilter) pools = pools.filter(poolFilter)
 
+    const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
+    const additionalTrusted = Object.values(
+      ADDITIONAL_BASES[chainId] ?? [],
+    ).flat()
+
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),
@@ -196,6 +203,8 @@ export class Router {
       pools,
       networks,
       gasPrice,
+      undefined,
+      baseTrusted.concat(additionalTrusted) as RToken[],
     )
 
     return {

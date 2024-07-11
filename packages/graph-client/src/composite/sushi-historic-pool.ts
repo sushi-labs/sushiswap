@@ -164,7 +164,9 @@ const calculateValueChange = (
 ) => {
   const _current = Number(current)
   const _previous = Number(previous)
-  if (_current === 0) return 0
+
+  if (_current === 0 || [_current, _previous].some((num) => isNaN(num)))
+    return 0
   return _previous !== 0 ? _current - _previous : 0
 }
 
@@ -175,9 +177,13 @@ const calculateCumulativePercentageChange = (
 ) => {
   const _current = Number(current)
   const _previous = Number(previous)
-
   const _previous2 = Number(previous2)
-  if (_current === 0) return 0
+
+  if (
+    _current === 0 ||
+    [_current, _previous, _previous2].some((num) => isNaN(num))
+  )
+    return 0
   const change1 = _previous !== 0 ? _current - _previous : 0
   const change2 =
     _previous !== 0 && _previous2 !== 0 ? _previous - _previous2 : 0
@@ -192,6 +198,7 @@ const calculateRelativePercentageChange = (
   const _current = Number(current)
   const _previous = Number(previous)
 
-  if (_current === 0) return 0
+  if (_current === 0 || [_current, _previous].some((num) => isNaN(num)))
+    return 0
   return _previous !== 0 ? _current / _previous - 1 : 0
 }

@@ -4,7 +4,7 @@ import { Transition } from '@headlessui/react'
 import classNames from 'classnames'
 import React, { FC, Fragment } from 'react'
 
-import { SushiIcon } from './icons/SushiIcon'
+import { SushiIcon } from '../icons/SushiIcon'
 
 interface LoaderProps extends React.ComponentProps<'svg'> {
   size?: number

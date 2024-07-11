@@ -1,0 +1,56 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!test/**",
+        "!.eslintrc",
+        "!README.md",
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
+      ],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "dependsOn": ["^build"]
+    },
+    "check": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env.development.local",
+        ".env.local",
+        ".env.development",
+        ".env"
+      ]
+    },
+    "test": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "test/**",
+        ".env.test.local",
+        ".env.test",
+        ".env"
+      ],
+      "outputs": ["test-results/**"],
+      "env": [
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_FORK_URL",
+        "ANVIL_PORT",
+        "APP_ENV",
+        "API_BASE_URL",
+        "CHAIN_ID",
+        "DRPC_ID",
+        "EDGE_CONFIG"
+      ],
+      "dependsOn": ["build"]
+    }
+  }
+}

@@ -22,7 +22,7 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: 1000m
+              cpu: 1250m
               memory: 2Gi
           startupProbe:
             httpGet:

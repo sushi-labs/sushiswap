@@ -88,13 +88,21 @@ export function findMultiRouteExactIn(
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number,
   flows?: number | number[],
+  trustedTokens?: RToken[],
 ): MultiRoute {
   try {
     pools = deduplicatePools(pools)
     checkChainId(pools, baseTokenOrNetworks)
     setTokenId(from, to)
     if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
-    const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
+    const g = new Graph(
+      pools,
+      from,
+      baseTokenOrNetworks,
+      gasPrice,
+      undefined,
+      trustedTokens,
+    )
 
     if (flows !== undefined)
       return g.findBestRouteExactIn(from, to, amountIn, flows)
@@ -186,12 +194,20 @@ export function findSingleRouteExactIn(
   pools: RPool[],
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number,
+  trustedTokens?: RToken[],
 ): MultiRoute {
   pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
   if (from.tokenId === to.tokenId) return NoWayMultiRoute(from, to)
-  const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
+  const g = new Graph(
+    pools,
+    from,
+    baseTokenOrNetworks,
+    gasPrice,
+    undefined,
+    trustedTokens,
+  )
 
   const out = g.findBestRouteExactIn(from, to, amountIn, 1)
   return out

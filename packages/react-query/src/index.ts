@@ -12,23 +12,13 @@ const queryClientConfig = {
     },
   },
   queryCache: new QueryCache({
-    onError: (error) => {
-      console.error('react query global onError', error)
-      Sentry.captureException(error)
+    onError: (error, query) => {
+      if (error instanceof Error) {
+        if (error.name === 'ConnectorNotConnectedError') return
+      }
+      Sentry.captureException(error, { data: { query } })
     },
   }),
-  // deprecated in next version so there's no point using
-  // logger: {
-  //   log: (message) => {
-  //     Sentry.captureMessage(message)
-  //   },
-  //   warn: (message) => {
-  //     Sentry.captureMessage(message)
-  //   },
-  //   error: (error) => {
-  //     Sentry.captureException(error)
-  //   },
-  // },
 }
 
 export const createQueryClient = (

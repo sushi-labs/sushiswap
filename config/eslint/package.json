@@ -11,18 +11,21 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
   "files": [
+    "index.js",
+    "library/index.js",
     "nextjs/index.js",
     "react/index.js"
   ],
   "dependencies": {
     "@vercel/style-guide": "5.0.1",
-    "eslint-config-turbo": "1.12.4",
+    "eslint-config-turbo": "2.0.5",
     "eslint-plugin-mdx": "2.2.0",
+    "eslint-plugin-only-warn": "1.1.0",
     "eslint-plugin-storybook": "0.6.15"
   },
   "devDependencies": {
     "@types/eslint": "8.44.4",
     "@types/node": "20",
-    "typescript": "5.2.2"
+    "typescript": "5.4.5"
   }
 }

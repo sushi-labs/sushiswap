@@ -1,6 +1,6 @@
 'use client'
 
-import { ButtonProps } from '@sushiswap/ui/components/button'
+import type { ButtonProps } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'

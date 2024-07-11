@@ -113,3 +113,11 @@ kubectl port-forward statefulset/extractor-8453 3000:80
 ```
 
 http://localhost:3000/pool-codes-bin/8453
+
+### Restart Router
+
+kubectl rollout restart deployment/router-1
+
+### Restart Extractor
+
+kubectl rollout restart statefulset/extractor-1

@@ -13,7 +13,7 @@ import { graphql } from '../graphql'
 export const BondUserPositionsQuery = graphql(
   `
   query UserPositions($first: Int = 1000, $skip: Int = 0, $block: Block_height, $orderBy: OwnerBalance_orderBy, $orderDirection: OrderDirection, $where: OwnerBalance_filter) {
-    positions: ownerBalances(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
+    ownerBalances(first: $first, skip: $skip, block: $block, orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
       id
       owner
       balance
@@ -51,7 +51,7 @@ export async function getBondUserPositions(
     options,
   })
 
-  return result.positions.map((position) => {
+  return result.ownerBalances.map((position) => {
     const bondTokenUnderlying = position.bondToken
       ? convertIdToMultichainId(
           copyIdToAddress(

@@ -1,22 +1,27 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["APP_ENV", "CI", "DEBUG", "NODE_ENV", "GITHUB_TOKEN"],
-  "globalDependencies": [
-    ".eslintignore",
-    ".eslint.js",
-    ".npmrc",
-    ".nvmrc",
-    ".prettierignore",
-    ".prettierrc.js",
-    "tsconfig.json"
-  ],
-  "pipeline": {
+  "globalEnv": [],
+  "globalPassThroughEnv": [],
+  "globalDependencies": [".npmrc", ".nvmrc", "tsconfig.json"],
+  "ui": "stream",
+  "tasks": {
     "anvil": {
       "cache": false,
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "ANVIL_PORT"],
       "persistent": true
     },
     "build": {
+      "dependsOn": ["^build", "generate"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!test/**",
+        "!.eslintrc",
+        "!README.md",
+        ".env.production.local",
+        ".env.local",
+        ".env.production",
+        ".env"
+      ],
       "outputs": [
         "storybook-static/**",
         ".next/**/*",
@@ -24,21 +29,7 @@
         ".vercel/**/*",
         "dist/**/*"
       ],
-      "dependsOn": ["^build", "generate"],
-      "env": [
-        "ALCHEMY_ID",
-        "DATABASE_URL",
-        "REDIS_URL",
-        "NEXT_PUBLIC_POOLS_API_V0_BASE_URL",
-        "POOLS_API_V0_BASE_URL",
-        "TOKENS_API_V0_BASE_URL",
-        "SWAP_API_V0_BASE_URL",
-        "TOKEN_LIST_PR_WEBHOOK_URL",
-        "OCTOKIT_KEY",
-        "NEXT_PUBLIC_STRAPI_API_URL",
-        "SUSHI_GRAPH_KEY",
-        "NEXT_PUBLIC_SUSHI_GRAPH_KEY"
-      ]
+      "env": ["EDGE_CONFIG"]
     },
     "clean": {
       "cache": false
@@ -49,14 +40,15 @@
     },
     "dev": {
       "dependsOn": ["^build", "generate"],
-      "dotEnv": [
+      "cache": false,
+      "persistent": true,
+      "inputs": [
+        "$TURBO_DEFAULT$",
         ".env.development.local",
         ".env.local",
         ".env.development",
         ".env"
-      ],
-      "cache": false,
-      "persistent": true
+      ]
     },
     "generate": {
       "outputs": [
@@ -68,36 +60,39 @@
       "cache": false
     },
     "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "biome.json",
+        ".eslintignore",
+        ".eslint.js",
+        ".eslintrc.js"
+      ],
+      "dependsOn": ["^build"]
     },
     "start": {
-      "dependsOn": ["^build", "generate", "export"],
+      "dependsOn": ["^build", "generate"],
       "env": [
         "ALCHEMY_ID",
         "APP_ENV",
         "DATABASE_URL",
-        "NEXT_PUBLIC_POOLS_API_V0_BASE_URL",
+        "DRPC_ID",
+        "EDGE_CONFIG",
+        "RSK_ID",
         "POOLS_API_V0_BASE_URL",
         "REDIS_URL",
         "SWAP_API_V0_BASE_URL",
-        "APP_ENV",
         "TOKENS_API_V0_BASE_URL",
-        "NEXT_PUBLIC_STRAPI_API_URL"
+        "STRAPI_API_URL",
+        "VERCEL_ENV",
+        "SENTRY_DSN",
+        "SENTRY_ENVIRONMENT"
       ],
       "cache": false,
       "persistent": true
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": ["coverage/**/*"],
-      "env": []
-    },
-    "validate": {
-      "cache": true
-    },
-    "export": {
-      "cache": true
+      "outputs": ["coverage/**/*"]
     }
   }
 }

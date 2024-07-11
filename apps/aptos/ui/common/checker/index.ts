@@ -1,4 +1,4 @@
-import { ButtonProps } from '@sushiswap/ui/components/button'
+import type { ButtonProps } from '@sushiswap/ui'
 import { ComponentType, FC } from 'react'
 
 import { Amounts, AmountsProps } from './amounts'

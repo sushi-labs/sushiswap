@@ -1,10 +1,11 @@
 import {
+  Button,
   Container,
-  DiscordIcon,
   LinkExternal,
+  LinkInternal,
   typographyVariants,
 } from '@sushiswap/ui'
-import { Button, LinkInternal } from '@sushiswap/ui'
+import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import { FC } from 'react'
 
 export const Hero: FC = () => {

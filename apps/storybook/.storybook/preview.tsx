@@ -1,5 +1,5 @@
 import { Preview } from '@storybook/react'
-import { ThemeProvider } from '@sushiswap/ui'
+import { BaseProviders } from '@sushiswap/ui'
 import '@sushiswap/ui/index.css'
 import React from 'react'
 import './style.css'
@@ -8,9 +8,9 @@ export const withThemeProvider = (Story, context) => {
   const theme = context.globals.theme
 
   return (
-    <ThemeProvider forcedTheme={theme}>
+    <BaseProviders forcedTheme={theme}>
       <Story {...context} />
-    </ThemeProvider>
+    </BaseProviders>
   )
 }
 

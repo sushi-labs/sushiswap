@@ -3,7 +3,7 @@ import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import { SushiIcon } from './icons/SushiIcon'
+import { SushiIcon } from '../icons/SushiIcon'
 import { navigationMenuTriggerStyle } from './navigation-menu'
 import {
   NavigationMenu,
@@ -195,6 +195,7 @@ interface NavProps extends VariantProps<typeof navigationContainerVariants> {
   rightElement?: React.ReactNode
   legacyBehavior?: boolean
   showOnramper?: boolean
+  chainId?: number
 }
 
 const Navigation: React.FC<NavProps> = ({
@@ -203,6 +204,7 @@ const Navigation: React.FC<NavProps> = ({
   variant,
   legacyBehavior = false,
   showOnramper = true,
+  chainId,
 }) => {
   const leftElements = React.useMemo(() => {
     const SimpleItem = (entry: (typeof navigationMenuItems)[number]) => {
@@ -285,7 +287,7 @@ const Navigation: React.FC<NavProps> = ({
                     {component.description}
                   </NavigationListItem>
                 ))}
-                <OnramperButton>
+                <OnramperButton chainId={chainId}>
                   <NavigationListItem title="Buy Crypto">
                     Need to buy some more crypto?
                   </NavigationListItem>
@@ -296,7 +298,7 @@ const Navigation: React.FC<NavProps> = ({
           {leftElements}
           {showOnramper ? (
             <NavigationMenuItem className="hidden md:block">
-              <OnramperButton>
+              <OnramperButton chainId={chainId}>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Buy Crypto
                 </NavigationMenuLink>
