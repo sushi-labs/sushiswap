@@ -13,7 +13,7 @@ https://pnpm.io/installation
 
 ### Dev
 
-`pnpm exec turbo run dev --filter=evm`
+`pnpm exec turbo run dev --filter=web`
 
 #### Vercel APIs
 

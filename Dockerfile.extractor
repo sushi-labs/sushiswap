@@ -37,4 +37,6 @@ RUN pnpm exec turbo run build --filter=extractor-api
 
 EXPOSE 80
 
-CMD node /app/apis/extractor/dist/index.js
+ENV NODE_ENV=production
+
+CMD node --max-old-space-size=$(expr $(echo "$(free -m)" | awk '/^Mem:/ {print $2}') - 512) /app/apis/extractor/dist/index.js

@@ -39,7 +39,6 @@ export const STABLES = {
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
     DAI[ChainId.ARBITRUM],
-    MIM[ChainId.ARBITRUM],
     FRAX[ChainId.ARBITRUM],
     axlUSDC[ChainId.ARBITRUM],
   ],
