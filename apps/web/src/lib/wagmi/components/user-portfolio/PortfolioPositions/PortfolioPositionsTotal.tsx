@@ -1,13 +1,12 @@
-import { classNames } from '@sushiswap/ui'
-import { FC } from 'react'
-import { formatUSD } from 'sushi'
+import React, { FC } from 'react'
+import { formatUSD } from 'sushi/format'
 
-interface PortfolioPositionInfoProps {
+interface PortfolioPositionsInfoProps {
   isLoading: boolean
   totalUSD: number | undefined
 }
 
-export const PortfolioPositionInfo: FC<PortfolioPositionInfoProps> = ({
+export const PortfolioPositionsInfo: FC<PortfolioPositionsInfoProps> = ({
   isLoading,
   totalUSD,
 }) => (
@@ -16,7 +15,7 @@ export const PortfolioPositionInfo: FC<PortfolioPositionInfoProps> = ({
       <div className="skeleton w-20 h-4" />
     ) : (
       <div className="flex flex-col w-full">
-        <span className={classNames('text-large font-semibold')}>
+        <span className="text-large font-semibold">
           {formatUSD(totalUSD ?? 0)}
         </span>
       </div>

@@ -11,7 +11,7 @@ import {
 import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
-import { UserProfile } from './user-profile'
+import { UserPortfolio } from './user-portfolio'
 
 interface WagmiHeaderComponentsProps {
   chainIds: ChainId[]
@@ -47,7 +47,7 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
         selectedNetwork={selectedNetwork}
         onChange={onChange}
       />
-      <UserProfile networks={chainIds} />
+      <UserPortfolio />
     </>
   )
 }

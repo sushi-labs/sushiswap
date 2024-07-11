@@ -1,10 +1,11 @@
 import { getPortfolioPositions } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
+import React from 'react'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
-import { PortfolioPositionInfo } from './PortfolioPositionTotal'
-import { PortfolioV2PositionTable } from './v2/PortfolioV2PositionTable'
-import { PortfolioV3PositionTable } from './v3/PortfolioV3PositionTable'
+import { PortfolioPositionsInfo } from './PortfolioPositionsTotal'
+import { PortfolioV2PositionsTable } from './v2/PortfolioV2PositionsTable'
+import { PortfolioV3PositionsTable } from './v3/PortfolioV3PositionsTable'
 
 function usePortfolioPositions(
   address: Address | undefined,
@@ -13,7 +14,6 @@ function usePortfolioPositions(
   return useQuery({
     queryKey: ['portfolio-positions', address],
     queryFn: async () => {
-      if (!address) return null
       const id = address as string
       const data = await getPortfolioPositions({ id })
       return data
@@ -28,16 +28,16 @@ export const PortfolioPositions = () => {
   const { data, isLoading } = usePortfolioPositions(id.address)
 
   return (
-    <>
-      <PortfolioPositionInfo isLoading={isLoading} totalUSD={data?.totalUSD} />
-      <PortfolioV3PositionTable
+    <div className="gap-y-20">
+      <PortfolioPositionsInfo isLoading={isLoading} totalUSD={data?.totalUSD} />
+      <PortfolioV3PositionsTable
         isLoading={isLoading}
-        data={data ? data.v3Positions : []}
+        data={data?.v3Positions}
       />
-      <PortfolioV2PositionTable
+      <PortfolioV2PositionsTable
         isLoading={isLoading}
-        data={data ? data.v2Positions : []}
+        data={data?.v2Positions}
       />
-    </>
+    </div>
   )
 }

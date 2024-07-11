@@ -12,7 +12,8 @@ export const HeaderNetworkSelector: FC<{
   networks: ChainId[]
   selectedNetwork?: ChainId
   onChange?(chainId: ChainId): void
-}> = ({ networks, selectedNetwork, onChange }) => {
+  hideNetworkName?: boolean
+}> = ({ networks, selectedNetwork, onChange, hideNetworkName = false }) => {
   const isMounted = useIsMounted()
   const { switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
@@ -55,7 +56,9 @@ export const HeaderNetworkSelector: FC<{
       <Button variant="secondary" testId="network-selector">
         <Suspense fallback={null}>
           <NetworkIcon chainId={selected} width={20} height={20} />
-          <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
+          {hideNetworkName ? null : (
+            <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
+          )}
         </Suspense>
       </Button>
     </NetworkSelector>

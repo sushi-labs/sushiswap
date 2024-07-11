@@ -1,43 +1,31 @@
 'use client'
 
-import { PortfolioWalletToken } from '@sushiswap/graph-client/data-api'
+import { PortfolioPosition } from '@sushiswap/graph-client/data-api'
 import { DataTable, Slot } from '@sushiswap/ui'
 import { ColumnDef, Row } from '@tanstack/react-table'
 import { FC, ReactNode, useCallback } from 'react'
-import {
-  NAME_SYMBOL_AMOUNT_COLUMN,
-  TOKEN_ICON_COLUMN,
-  USD_COLUMN,
-} from './columns'
-
+import React from 'react'
+import { ICON_COLUMN, NAME_SYMBOL_AMOUNT_COLUMN, USD_COLUMN } from './columns'
 
 const COLUMNS = [
-  TOKEN_ICON_COLUMN,
+  ICON_COLUMN,
   NAME_SYMBOL_AMOUNT_COLUMN,
   USD_COLUMN,
-] satisfies ColumnDef<PortfolioWalletToken, unknown>[]
+] satisfies ColumnDef<PortfolioPosition, unknown>[]
 
-// const tableState = { sorting: [{ id: 'amountUSD', desc: true }] }
-
-interface PortfolioWalletTableProps {
+interface PortfolioV2PositionsTableProps {
   isLoading: boolean
-  data: PortfolioWalletToken[]
-  onRowClick?(row: PortfolioWalletToken): void
+  data: PortfolioPosition[] | undefined
+  onRowClick?(row: PortfolioPosition): void
 }
 
-
-export const PortfolioWalletTable: FC<PortfolioWalletTableProps> = ({
+export const PortfolioV2PositionsTable: FC<PortfolioV2PositionsTableProps> = ({
   isLoading,
   data,
   onRowClick,
 }) => {
-  // const [paginationState, setPaginationState] = useState<PaginationState>({
-  //   pageIndex: 0,
-  //   pageSize: 10,
-  // })
-
   const rowRenderer = useCallback(
-    (row: Row<PortfolioWalletToken>, rowNode: ReactNode) => {
+    (row: Row<PortfolioPosition>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -52,12 +40,12 @@ export const PortfolioWalletTable: FC<PortfolioWalletTableProps> = ({
     [onRowClick],
   )
 
-  if (isLoading) return <div>Loading...</div>
-  if (!data) return <div>No data</div>
+  if (isLoading) return <></>
+  if (!data) return <></>
 
   return (
     <DataTable
-      testId="portfolio-wallet-table"
+      testId="portfolio-v2-positions-table"
       loading={isLoading}
       // linkFormatter={(row) =>
       //   `/pool/${row.chainId}:${

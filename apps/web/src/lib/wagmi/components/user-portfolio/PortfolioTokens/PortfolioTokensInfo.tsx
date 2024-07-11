@@ -1,15 +1,15 @@
 import { classNames } from '@sushiswap/ui'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
 
-interface PortfolioWalletInfoProps {
+interface PortfolioTokensInfoProps {
   isLoading: boolean
   percentageChange24h: number | undefined
   amountUSD24Change: number | undefined
   totalUSD: number | undefined
 }
 
-export const PortfolioWalletInfo: FC<PortfolioWalletInfoProps> = ({
+export const PortfolioTokensInfo: FC<PortfolioTokensInfoProps> = ({
   isLoading,
   percentageChange24h,
   amountUSD24Change,
@@ -23,7 +23,11 @@ export const PortfolioWalletInfo: FC<PortfolioWalletInfoProps> = ({
         <span className={classNames('text-large font-semibold')}>
           {formatUSD(totalUSD ?? 0)}
         </span>
-        <span className={classNames('font-normal text-gray-400 dark:text-slate-600')}>
+        <span
+          className={classNames(
+            'font-normal text-gray-400 dark:text-slate-600',
+          )}
+        >
           {(percentageChange24h ?? 0) > 0 ? '+' : '-'}
           {formatUSD(amountUSD24Change ?? 0)}
           <span

@@ -1,9 +1,10 @@
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
-import { formatUSD, formatPercent } from 'sushi/format'
+import { formatPercent, formatUSD } from 'sushi/format'
 
 import { QuestionMarkCircleIcon } from '@heroicons/react-v1/solid'
 import { PortfolioV3Position } from '@sushiswap/graph-client/data-api'
+import React from 'react'
 
 export const ICON_COLUMN: ColumnDef<PortfolioV3Position, unknown> = {
   id: 'icon',
