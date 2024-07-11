@@ -532,7 +532,8 @@ export class Graph {
         })
         .filter(
           ([liquidity, e]) =>
-            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
+            e.pool.alwaysAppropriateForPricing() ||
+            (liquidity >= minLiquidity && e.pool.isPoolAppropriateForPricing()),
         )
       nextEdges = fastArrayMerge(nextEdges, newEdges)
     }
@@ -631,7 +632,8 @@ export class Graph {
         })
         .filter(
           ([liquidity, e]) =>
-            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
+            e.pool.alwaysAppropriateForPricing() ||
+            (liquidity >= minLiquidity && e.pool.isPoolAppropriateForPricing()),
         )
       nextEdges = fastArrayMerge(nextEdges, newEdges)
     }

@@ -133,4 +133,10 @@ export abstract class RPool {
   poolType(): PoolType {
     return PoolType.Unknown
   }
+
+  isPoolAppropriateForPricing(): boolean {
+    return (
+      this.reserve0 >= this.minLiquidity && this.reserve1 >= this.minLiquidity
+    )
+  }
 }
