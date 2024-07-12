@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   Badge,
+  FormattedNumber,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { FC } from 'react'
@@ -53,8 +54,14 @@ export const PortfolioFuroClaimables: FC<PortfolioFuroClaimablesProps> = ({
               </div>
             </div>
           </div>
-          <div className="text-right text-sm font-medium">
-            {formatUSD(token.amountUSD)}
+          <div className="flex flex-col gap-y-1 text-right">
+            <div className="text-sm font-medium">
+              {formatUSD(token.amountUSD)}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              <FormattedNumber number={token.amount.toString()} />{' '}
+              {token.symbol}
+            </div>
           </div>
         </div>
       ))}
