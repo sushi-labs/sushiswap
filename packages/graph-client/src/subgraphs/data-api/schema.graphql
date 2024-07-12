@@ -1,3 +1,157 @@
+type Token {
+  id: ID!
+  address: String!
+  name: String!
+  symbol: String!
+  decimals: Int!
+}
+
+type DetailedPool {
+  id: ID!
+  chainId: Int!
+  name: String!
+  address: String!
+  createdAt: String!
+  swapFee: Float!
+  protocol: String!
+  token0: Token!
+  token1: Token!
+  source: String!
+  reserve0: Float!
+  reserve1: Float!
+  liquidity: Float!
+  volumeUSD: Float!
+  liquidityUSD: Float!
+  token0Price: Float!
+  token1Price: Float!
+  volumeUSD1d: Float!
+  feeUSD1d: Float!
+  txCount1d: Int!
+  feeApr1d: Float!
+  totalApr1d: Float!
+  volumeUSD1dChange: Float!
+  feeUSD1dChange: Float!
+  txCount1dChange: Float!
+  liquidityUSD1dChange: Float!
+  incentiveApr: Float!
+  hadSmartPool: Boolean!
+  hasSmartPool: Boolean!
+  isIncentivized: Boolean!
+  wasIncentivized: Boolean!
+  hourBuckets: [PoolBucket]!
+  dayBuckets: [PoolBucket]!
+}
+
+type PoolBucket {
+  id: ID!
+  date: Int!
+  volumeUSD: Float!
+  liquidityUSD: Float!
+  txCount: Int!
+  feesUSD: Float!
+}
+
+type V2Transaction {
+  id: ID!
+  createdAtBlock: String!
+  createdAtTimestamp: String!
+  swaps: [V2Swap]
+  burns: [V2Burn]
+  mints: [V2Mint]
+}
+
+type V2Burn {
+  id: ID!
+  logIndex: String
+  amountUSD: String
+  amount1: String
+  amount0: String
+  liquidity: String!
+  sender: ID
+  transaction: V2Transaction!
+}
+
+type V2Mint {
+  id: ID!
+  logIndex: String
+  amountUSD: String
+  amount1: String
+  amount0: String
+  liquidity: String!
+  sender: ID
+  transaction: V2Transaction!
+}
+
+type V2Swap {
+  id: ID!
+  logIndex: String
+  amountUSD: String!
+  amount1Out: String!
+  amount0Out: String!
+  amount1In: String!
+  amount0In: String!
+  to: ID!
+  sender: ID!
+  transaction: V2Transaction!
+}
+
+type V3Burn {
+  id: ID!
+  logIndex: String
+  amountUSD: String
+  amount1: String!
+  amount0: String!
+  amount: String!
+  origin: ID!
+  owner: ID
+  transaction: V3Transaction!
+}
+
+type V3Collect {
+  id: ID!
+  logIndex: String
+  amountUSD: String
+  amount1: String!
+  amount0: String!
+  owner: ID
+  transaction: V3Transaction!
+}
+
+type V3Mint {
+  id: ID!
+  logIndex: String
+  amountUSD: String
+  amount1: String!
+  amount0: String!
+  amount: String!
+  origin: ID!
+  sender: ID
+  owner: ID!
+  transaction: V3Transaction!
+}
+
+type V3Swap {
+  id: ID!
+  logIndex: String
+  amountUSD: String!
+  amount1: String!
+  amount0: String!
+  origin: ID!
+  recipient: ID!
+  sender: ID!
+  transaction: V3Transaction!
+}
+
+type V3Transaction {
+  id: ID!
+  blockNumber: String!
+  timestamp: String!
+  collects: [V3Collect]
+  swaps: [V3Swap]
+  burns: [V3Burn]
+  mints: [V3Mint]
+}
+
 type Pool {
   id: ID!
   chainId: Int!
@@ -181,9 +335,60 @@ type PortfolioWallet {
   tokens: [PortfolioToken]!
 }
 
+enum TransactionTokenType {
+  ERC20
+  NFT
+}
+
+type PortfolioTransactionToken {
+  id: String!
+  name: String!
+  symbol: String!
+  type: TransactionTokenType!
+  logoUrl: String
+  amount: Float!
+  isVerified: Boolean!
+  isCore: Boolean!
+  isSuspicious: Boolean!
+  isScam: Boolean!
+}
+
+enum PortfolioTransactionCategory {
+  SEND
+  RECEIVE
+  APPROVE
+  OTHER
+}
+
+type PortfolioTransaction {
+  chainId: Int
+  chain: String!
+  txHash: String!
+  functionName: String!
+  projectName: String
+  protocolLogo: String
+  category: PortfolioTransactionCategory!
+  receives: [PortfolioTransactionToken]!
+  sends: [PortfolioTransactionToken]!
+  approve: PortfolioTransactionToken
+  gasFeeNative: Float!
+  gasFeeUSD: Float!
+}
+
 type Query {
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
+  portfolioHistory(id: ID!): [PortfolioTransaction]!
   pools(chainId: ID!): [Pool]
+  pool(address: String!, chainId: Int!, protocol: String!): DetailedPool
+  v2Swaps(address: String!, chainId: Int!): [V2Swap]
+  v2Burns(address: String!, chainId: Int!): [V2Burn]
+  v2Mints(address: String!, chainId: Int!): [V2Mint]
+  v2Transactions(address: String!, chainId: Int!): [V2Transaction]
+  v3Swaps(address: String!, chainId: Int!): [V3Swap]
+  v3Burns(address: String!, chainId: Int!): [V3Burn]
+  v3Mints(address: String!, chainId: Int!): [V3Mint]
+  v3Collects(address: String!, chainId: Int!): [V3Collect]
+  v3Transactions(address: String!, chainId: Int!): [V3Transaction]
 }

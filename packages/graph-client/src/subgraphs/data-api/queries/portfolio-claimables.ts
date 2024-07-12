@@ -107,9 +107,26 @@ export const PortfolioClaimablesQuery = graphql(
             amountUSD
             updatedAt
           }
+          token {
+            id
+            chain
+            chainId
+            name
+            symbol
+            decimals
+            logoUrl
+            protocolId
+            price
+            isVerified
+            isCore
+            isWallet
+            timeAt
+            amount
+            amountUSD
+          }
         }
         smartPositionClaimables {
-                token {
+          token {
             id
             chain
             chainId
@@ -199,13 +216,19 @@ export async function getPortfolioClaimables(
   throw new Error('No portfolio positions')
 }
 
-export type PortfolioPositions = Awaited<
+export type PortfolioClaimables = Awaited<
   ReturnType<typeof getPortfolioClaimables>
 >
 
-export type PortfolioV2Claim = PortfolioPositions['v2PositionClaimables'][0]
-export type PortfolioV3Claim = PortfolioPositions['v3PositionClaimables'][0]
-export type PortfolioSmartPositionClaim = PortfolioPositions['smartPositionClaimables'][0]
-export type PortfolioFuroClaim = PortfolioPositions['furoClaimables'][0]
+export type PortfolioV2Claim = PortfolioClaimables['v2PositionClaimables'][0]
+export type PortfolioV3Claim = PortfolioClaimables['v3PositionClaimables'][0]
+export type PortfolioSmartPositionClaim =
+  PortfolioClaimables['smartPositionClaimables'][0]
+export type PortfolioFuroClaim = PortfolioClaimables['furoClaimables'][0]
 
-export type PortfolioClaim = PortfolioV2Claim['position'] | PortfolioV3Claim['position'] | PortfolioSmartPositionClaim['position'] | PortfolioFuroClaim['position']
+export type PortfolioFarmClaim =
+  | PortfolioV2Claim
+  | PortfolioV3Claim
+  | PortfolioSmartPositionClaim
+
+export type PortfolioClaim = PortfolioFarmClaim | PortfolioFuroClaim

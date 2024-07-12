@@ -12,8 +12,8 @@ import { useMemo, useState } from 'react'
 import { ChainId, shortenAddress } from 'sushi'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
-import { DefaultView } from './DefaultView'
-import { SettingsView } from './SettingsView'
+import { PortfolioDefaultView } from './PortfolioDefaultView'
+import { PortfolioSettingsView } from './PortfolioSettingsView'
 
 export enum PortfolioView {
   Default = 'Default',
@@ -38,10 +38,10 @@ export const UserPortfolio = () => {
   const content = useMemo(() => {
     switch (view) {
       case PortfolioView.Settings:
-        return <SettingsView setView={setView} />
+        return <PortfolioSettingsView setView={setView} />
       default:
         return (
-          <DefaultView
+          <PortfolioDefaultView
             setView={setView}
             ensName={ensName}
             isENSNameLoading={isENSNameLoading}

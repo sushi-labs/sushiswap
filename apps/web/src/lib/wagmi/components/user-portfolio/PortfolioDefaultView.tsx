@@ -19,7 +19,8 @@ import { HeaderNetworkSelector } from 'src/lib/wagmi/components/header-network-s
 import { ChainId, chains, shortenAddress } from 'sushi'
 import { useAccount, useDisconnect } from 'wagmi'
 import { GetEnsNameReturnType } from 'wagmi/actions'
-import { PortfolioView } from './'
+import { PortfolioView } from '.'
+import { PortfolioClaimables } from './portfolio-claimables'
 import { PortfolioPositions } from './portfolio-positions'
 import { PortfolioTokens } from './portfolio-tokens'
 
@@ -29,13 +30,13 @@ enum PortfolioTab {
   Claimable = 'Claimable',
 }
 
-interface DefaultProps {
+interface PortfolioDefaultProps {
   ensName: GetEnsNameReturnType | undefined
   isENSNameLoading: boolean
   setView: Dispatch<SetStateAction<PortfolioView>>
 }
 
-export const DefaultView: FC<DefaultProps> = ({
+export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
   setView,
   ensName,
   isENSNameLoading,
@@ -52,7 +53,7 @@ export const DefaultView: FC<DefaultProps> = ({
       case PortfolioTab.Positions:
         return <PortfolioPositions />
       case PortfolioTab.Claimable:
-        return null
+        return <PortfolioClaimables />
     }
   }, [tab])
 

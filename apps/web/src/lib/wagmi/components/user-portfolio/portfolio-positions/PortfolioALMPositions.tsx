@@ -10,11 +10,11 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
-interface PortfolioSmartPositionsProps {
+interface PortfolioALMPositionsProps {
   positions: PortfolioSmartPosition[]
 }
 
-export const PortfolioSmartPositions: FC<PortfolioSmartPositionsProps> = ({
+export const PortfolioALMPositions: FC<PortfolioALMPositionsProps> = ({
   positions,
 }) => (
   <AccordionItem value="alm" className="!border-0">

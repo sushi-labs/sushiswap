@@ -8,9 +8,9 @@ import { IconButton } from '@sushiswap/ui'
 import { Switch } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
-import { PortfolioView } from './'
+import { PortfolioView } from '.'
 
-interface SettingsViewProps {
+interface PortfolioSettingsViewProps {
   setView: Dispatch<SetStateAction<PortfolioView>>
 }
 
@@ -20,7 +20,9 @@ const map = {
   dark: <MoonIcon width={20} height={20} />,
 }
 
-export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
+export const PortfolioSettingsView: FC<PortfolioSettingsViewProps> = ({
+  setView,
+}) => {
   const { theme, setTheme } = useTheme()
   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
