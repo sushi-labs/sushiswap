@@ -68,7 +68,7 @@ export const UserPortfolio = () => {
           <span>{shortenAddress(address, isSm ? 3 : 2)}</span>
         </Button>
       </SheetTrigger>
-      <SheetContent hideClose className="!p-0 overflow-hidden">
+      <SheetContent hideClose className="!p-0">
         {content}
       </SheetContent>
     </Sheet>

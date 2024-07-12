@@ -20,8 +20,8 @@ import { ChainId, chains, shortenAddress } from 'sushi'
 import { useAccount, useDisconnect } from 'wagmi'
 import { GetEnsNameReturnType } from 'wagmi/actions'
 import { PortfolioView } from './'
-import { PortfolioPositions } from './PortfolioPositions'
-import { PortfolioTokens } from './PortfolioTokens'
+import { PortfolioPositions } from './portfolio-positions'
+import { PortfolioTokens } from './portfolio-tokens'
 
 enum PortfolioTab {
   Tokens = 'Tokens',
