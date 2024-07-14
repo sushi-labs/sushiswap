@@ -10,7 +10,7 @@ import {
 } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { PoolCode, deserializePoolsBinary } from 'sushi/router'
-import { deserializePoolCodesJSON } from 'sushi/serializer'
+//import { deserializePoolCodesJSON } from 'sushi/serializer'
 import { Address } from 'viem'
 
 const DEBUG_PRINT = false
@@ -274,6 +274,7 @@ export class ExtractorClient {
         return
       }
       //const data = await resp.text()
+      //const pools = deserializePoolCodesJSON(data)
       const data = new Uint8Array(await resp.arrayBuffer())
       const { pools } = deserializePoolsBinary(data)
       pools.forEach((p) => {
@@ -314,8 +315,10 @@ export class ExtractorClient {
         if (DEBUG_PRINT) console.log(`Responded: ${resp.status}`)
         return
       }
-      const data = await resp.text()
-      const pools = deserializePoolCodesJSON(data)
+      //const data = await resp.text()
+      //const pools = deserializePoolCodesJSON(data)
+      const data = new Uint8Array(await resp.arrayBuffer())
+      const { pools } = deserializePoolsBinary(data)
       pools.forEach((p) => {
         const t0 = p.pool.token0
         const t1 = p.pool.token1

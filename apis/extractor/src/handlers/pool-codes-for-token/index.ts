@@ -1,13 +1,14 @@
 import { Request, Response } from 'express'
+import { serializePoolsBinary } from 'sushi'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { isAddressFast, serializePoolCodesJSON } from 'sushi/serializer'
+import { isAddressFast } from 'sushi/serializer'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config.js'
 import extractor from '../../extractor.js'
 
 async function handler(req: Request, res: Response) {
-  res.setHeader('Cache-Control', 's-maxage=60')
+  //res.setHeader('Cache-Control', 's-maxage=60')
   // console.log('HTTP: GET /pools-for-token/:chainId/:address')
   const _chainId = req.params['chainId']
   if (_chainId === undefined || Number(_chainId) !== CHAIN_ID)
@@ -29,7 +30,10 @@ async function handler(req: Request, res: Response) {
       ADDITIONAL_BASES[CHAIN_ID]?.[token.wrapped.address] ?? []
     const tokens = Array.from(new Set([...common, ...additional]))
     const pools = await extractor.getPoolCodesBetweenTokenSets(tokens, [token])
-    return res.json(serializePoolCodesJSON(pools))
+    //return res.json(serializePoolCodesJSON(pools))
+    res.setHeader('Content-Type', 'application/octet-stream')
+    res.set('Content-Type', 'application/octet-stream')
+    return res.end(serializePoolsBinary(pools))
   } else return res.status(422).send(`Unknown token ${address}`)
 }
 
