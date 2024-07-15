@@ -2,13 +2,15 @@
 
 import {
   Button,
+  Dialog,
+  DialogContent,
+  DialogTrigger,
   Sheet,
   SheetContent,
   SheetTrigger,
   useBreakpoint,
 } from '@sushiswap/ui'
-import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { FC, ReactNode, useMemo, useState } from 'react'
 import { ChainId, shortenAddress } from 'sushi'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 import { ConnectButton } from '../connect-button'
@@ -18,6 +20,28 @@ import { PortfolioSettingsView } from './PortfolioSettingsView'
 export enum PortfolioView {
   Default = 'Default',
   Settings = 'Settings',
+}
+
+const ResponsivePortfolioWrapper: FC<{
+  content: ReactNode
+  trigger: ReactNode
+  isSm: boolean
+}> = ({ content, trigger, isSm }) => {
+  return isSm ? (
+    <Sheet>
+      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetContent hideClose className="!p-0">
+        {content}
+      </SheetContent>
+    </Sheet>
+  ) : (
+    <Dialog>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent hideClose className="!p-0 h-[calc(100%-16px)]">
+        {content}
+      </DialogContent>
+    </Dialog>
+  )
 }
 
 export const UserPortfolio = () => {
@@ -53,11 +77,11 @@ export const UserPortfolio = () => {
   if (!address) return <ConnectButton variant="secondary" />
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
+    <ResponsivePortfolioWrapper
+      trigger={
         <Button variant="secondary">
           {avatar ? (
-            <Image
+            <img
               alt="ens-avatar"
               src={avatar}
               width={20}
@@ -67,10 +91,9 @@ export const UserPortfolio = () => {
           ) : null}
           <span>{shortenAddress(address, isSm ? 3 : 2)}</span>
         </Button>
-      </SheetTrigger>
-      <SheetContent hideClose className="!p-0">
-        {content}
-      </SheetContent>
-    </Sheet>
+      }
+      content={content}
+      isSm={isSm}
+    />
   )
 }
