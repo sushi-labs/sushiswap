@@ -23,11 +23,13 @@ import { PortfolioView } from '.'
 import { PortfolioClaimables } from './portfolio-claimables'
 import { PortfolioPositions } from './portfolio-positions'
 import { PortfolioTokens } from './portfolio-tokens'
+import { PortfolioHistory } from './portolio-history'
 
 enum PortfolioTab {
   Tokens = 'Tokens',
   Positions = 'Positions',
   Claimable = 'Claimable',
+  History = 'History',
 }
 
 interface PortfolioDefaultProps {
@@ -54,6 +56,8 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
         return <PortfolioPositions />
       case PortfolioTab.Claimable:
         return <PortfolioClaimables />
+      case PortfolioTab.History:
+        return <PortfolioHistory />
     }
   }, [tab])
 

@@ -3,14 +3,14 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Badge,
   Currency,
   classNames,
 } from '@sushiswap/ui'
 import { BagIcon } from '@sushiswap/ui/icons/BagIcon'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC } from 'react'
+import { ChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
+import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
 interface PortfolioV3PositionsProps {
   positions: PortfolioV3Position[]
@@ -25,39 +25,26 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
     </AccordionTrigger>
     <AccordionContent className="cursor-default">
       {positions.map((position) => (
-        <div
+        <PortfolioInfoRow
           id={`${position.chainId}:${position.id}`}
-          className="flex justify-between items-center hover:bg-muted px-5 py-3 gap-x-4"
-        >
-          <div className="flex gap-x-4 items-center whitespace-nowrap overflow-hidden">
-            <div className="shrink-0">
-              <Badge
-                className="border-1 border-background bg-background rounded-full z-[11] right-[-0.225rem] bottom-[-0.225rem]"
-                position="bottom-right"
-                badgeContent={
-                  <NetworkIcon
-                    chainId={position.chainId}
-                    width={14}
-                    height={14}
-                  />
-                }
-              >
-                <Currency.IconList iconWidth={28} iconHeight={28}>
-                  <img
-                    className="rounded-full"
-                    src={position.token0.logoUrl}
-                    alt={position.token0.symbol}
-                  />
-                  <img
-                    className="rounded-full"
-                    src={position.token1.logoUrl}
-                    alt={position.token1.symbol}
-                  />
-                </Currency.IconList>
-              </Badge>
-            </div>
-            <div className="overflow-hidden flex flex-col gap-y-1">
-              <div className="text-sm font-medium overflow-ellipsis overflow-hidden">
+          chainId={position.chainId as ChainId}
+          icon={
+            <Currency.IconList iconWidth={24} iconHeight={24}>
+              <img
+                className="rounded-full"
+                src={position.token0.logoUrl}
+                alt={position.token0.symbol}
+              />
+              <img
+                className="rounded-full"
+                src={position.token1.logoUrl}
+                alt={position.token1.symbol}
+              />
+            </Currency.IconList>
+          }
+          leftContent={
+            <React.Fragment>
+              <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
                 {position.name}
               </div>
               <div className="flex items-center gap-x-1">
@@ -93,20 +80,22 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-1">
-            <div className="text-sm font-medium text-right">
-              {formatUSD(position.amountUSD)}
-            </div>
-            <div className="flex gap-x-0.5 items-center justify-end text-xs text-muted-foreground">
-              <BagIcon width={10} height={9} />
-              {formatUSD(
-                position.fees.reduce((sum, fee) => sum + fee.amountUSD, 0),
-              )}
-            </div>
-          </div>
-        </div>
+            </React.Fragment>
+          }
+          rightContent={
+            <React.Fragment>
+              <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
+                {formatUSD(position.amountUSD)}
+              </div>
+              <div className="text-xs text-muted-foreground flex gap-x-0.5 items-center justify-end overflow-hidden overflow-ellipsis">
+                <BagIcon width={10} height={9} />
+                {formatUSD(
+                  position.fees.reduce((sum, fee) => sum + fee.amountUSD, 0),
+                )}
+              </div>
+            </React.Fragment>
+          }
+        />
       ))}
     </AccordionContent>
   </AccordionItem>

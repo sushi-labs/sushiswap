@@ -3,12 +3,12 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Badge,
   Currency,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC } from 'react'
+import { ChainId } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
+import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
 interface PortfolioV2PositionssProps {
   positions: PortfolioV2Position[]
@@ -23,48 +23,37 @@ export const PortfolioV2Positions: FC<PortfolioV2PositionssProps> = ({
     </AccordionTrigger>
     <AccordionContent className="cursor-default">
       {positions.map((position) => (
-        <div
+        <PortfolioInfoRow
           id={`${position.chainId}:${position.id}`}
-          className="flex justify-between items-center hover:bg-muted px-5 py-3 gap-x-4"
-        >
-          <div className="flex gap-x-4 items-center whitespace-nowrap overflow-hidden">
-            <div className="shrink-0">
-              <Badge
-                className="border-1 border-background bg-background rounded-full z-[11] right-[-0.225rem] bottom-[-0.225rem]"
-                position="bottom-right"
-                badgeContent={
-                  <NetworkIcon
-                    chainId={position.chainId}
-                    width={14}
-                    height={14}
-                  />
-                }
-              >
-                <Currency.IconList iconWidth={28} iconHeight={28}>
-                  <img
-                    className="rounded-full"
-                    src={position.token0.logoUrl}
-                    alt={position.token0.symbol}
-                  />
-                  <img
-                    className="rounded-full"
-                    src={position.token1.logoUrl}
-                    alt={position.token1.symbol}
-                  />
-                </Currency.IconList>
-              </Badge>
-            </div>
-            <div className="overflow-hidden flex flex-col gap-y-1">
-              <div className="text-sm font-medium overflow-ellipsis overflow-hidden">
+          chainId={position.chainId as ChainId}
+          icon={
+            <Currency.IconList iconWidth={24} iconHeight={24}>
+              <img
+                className="rounded-full"
+                src={position.token0.logoUrl}
+                alt={position.token0.symbol}
+              />
+              <img
+                className="rounded-full"
+                src={position.token1.logoUrl}
+                alt={position.token1.symbol}
+              />
+            </Currency.IconList>
+          }
+          leftContent={
+            <React.Fragment>
+              <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
                 {position.name}
               </div>
-              <div className="text-muted-foreground text-xs">V2-0.30%</div>
-            </div>
-          </div>
-          <div className="text-right text-sm font-medium">
-            {formatUSD(position.amountUSD)}
-          </div>
-        </div>
+              <div className="text-xs text-muted-foreground">V2-0.30%</div>
+            </React.Fragment>
+          }
+          rightContent={
+            <span className="text-sm font-medium overflow-hidden overflow-ellipsis">
+              {formatUSD(position.amountUSD)}
+            </span>
+          }
+        />
       ))}
     </AccordionContent>
   </AccordionItem>
