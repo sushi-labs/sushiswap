@@ -129,7 +129,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
         </div>
         <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} hideNetworkName />
       </div>
-      <div className="flex px-4 gap-x-2">
+      <div className="flex px-4 gap-x-2 justify-center">
         {Object.values(PortfolioTab).map((_tab) => (
           <Button
             asChild
