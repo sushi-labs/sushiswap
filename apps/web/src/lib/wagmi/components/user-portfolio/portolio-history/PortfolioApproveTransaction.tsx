@@ -17,7 +17,7 @@ export const PortfolioApproveTransaction: FC<{ tx: PortfolioTransaction }> = ({
       chainId={tx.chainId as ChainId}
       icon={
         <div className="p-1.5 border border-primary rounded-full w-7 h-7">
-          <LockClosedIcon className="text-primary stroke-2" />
+          <LockClosedIcon className="stroke-2" />
         </div>
       }
       leftContent={

@@ -6,7 +6,7 @@ import { graphql } from '../graphql'
 export const PoolsQuery = graphql(
   `
 query Pools($chainId: ID!) {
-    pools(chainId: $chainId) {
+    topPools(chainId: $chainId) {
       chainId
       id
       name
@@ -48,7 +48,7 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
     options,
   )
   if (result) {
-    return result.pools
+    return result.topPools
   }
 
   throw new Error('No pools')
