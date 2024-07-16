@@ -330,8 +330,9 @@ export class IncrementalPricer {
       const liquidity = price * Number(edge.reserve(v))
       edge.poolLiquidity = liquidity
       if (
-        liquidity >= this.minLiquidity ||
-        edge.pool.alwaysAppropriateForPricing()
+        edge.pool.alwaysAppropriateForPricing() ||
+        (liquidity >= this.minLiquidity &&
+          edge.pool.isPoolAppropriateForPricing())
       ) {
         let low = 0
         let up = nextEdges.length
