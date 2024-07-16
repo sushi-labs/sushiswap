@@ -33,8 +33,10 @@ COPY pnpm-workspace.yaml pnpm-workspace.yaml
 COPY turbo.json turbo.json
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm exec turbo run build --filter=extractor-api
+RUN pnpm exec turbo run build --filter=@sushiswap/extractor-api
 
 EXPOSE 80
 
-CMD node /app/apis/extractor/dist/index.js
+ENV NODE_ENV=production
+
+CMD NODE_OPTIONS=--max-old-space-size=$(expr $(echo "$(free -m)" | awk '/^Mem:/ {print $2}') - 512) node /app/apis/extractor/dist/index.js

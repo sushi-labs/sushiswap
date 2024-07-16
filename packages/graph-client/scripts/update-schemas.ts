@@ -7,6 +7,7 @@ const schemas = {
   blocks: 'api.studio.thegraph.com/query/72545/ethereum-blocks/v0.0.2',
   bonds: BONDS_SUBGRAPH_URL[1],
   bentobox: 'api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1',
+  strapi: 'sushi-strapi-cms.herokuapp.com/graphql',
   furo: 'api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
   'master-chef-v1': 'api.studio.thegraph.com/query/32073/masterchef/v0.0.1',
   'master-chef-v2': 'api.studio.thegraph.com/query/32073/master-chefv2/v0.0.1',
@@ -35,6 +36,8 @@ async function updateSchema(schema: keyof typeof schemas) {
     })
 
     const content = printSchema(buildClientSchema((await res.json()).data))
+
+    fs.mkdirSync(`./src/subgraphs/${schema}`, { recursive: true })
 
     fs.writeFileSync(path, content)
   } catch (e) {

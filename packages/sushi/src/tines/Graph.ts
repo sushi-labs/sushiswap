@@ -484,7 +484,11 @@ export class Graph {
     //     this.setPricesStable(baseVert, n.baseTokenPrice, n.gasPrice, true)
     //   }
     // })
-    const startV = this.getVert(start)
+
+    // Lets try to price from the first trusted token first
+    const startV = this.getVert(
+      trustedForPricingTokens ? trustedForPricingTokens[0] ?? start : start,
+    )
     if (startV !== undefined)
       this.setPricesStable(
         startV,
@@ -532,7 +536,8 @@ export class Graph {
         })
         .filter(
           ([liquidity, e]) =>
-            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
+            e.pool.alwaysAppropriateForPricing() ||
+            (liquidity >= minLiquidity && e.pool.isPoolAppropriateForPricing()),
         )
       nextEdges = fastArrayMerge(nextEdges, newEdges)
     }
@@ -631,7 +636,8 @@ export class Graph {
         })
         .filter(
           ([liquidity, e]) =>
-            liquidity >= minLiquidity || e.pool.alwaysAppropriateForPricing(),
+            e.pool.alwaysAppropriateForPricing() ||
+            (liquidity >= minLiquidity && e.pool.isPoolAppropriateForPricing()),
         )
       nextEdges = fastArrayMerge(nextEdges, newEdges)
     }

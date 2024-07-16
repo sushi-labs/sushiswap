@@ -38,7 +38,7 @@ const getExchangeTokens = async (
     name: token.name,
     decimals: Number(token.decimals),
     liquidity: Number(token.totalLiquidity),
-    derivedUSD: tokenPrices[token.id.toLowerCase()] || 0,
+    derivedUSD: tokenPrices[token.address] || 0,
   }))
 }
 

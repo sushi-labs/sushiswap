@@ -1,4 +1,4 @@
-import { Dialog as HeadlessDialog } from '@headlessui/react/dist/components/dialog/dialog'
+import { Dialog as HeadlessDialog } from '@headlessui/react'
 import { ExtractProps } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { ModalPanel } from './ModalPanel'

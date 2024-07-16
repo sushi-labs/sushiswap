@@ -33,8 +33,10 @@ COPY pnpm-workspace.yaml pnpm-workspace.yaml
 COPY turbo.json turbo.json
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm exec turbo run build --filter=router-api
+RUN pnpm exec turbo run build --filter=@sushiswap/router-api
 
 EXPOSE 80
 
-CMD NODE_ENV=production node /app/apis/router/dist/index.js
+ENV NODE_ENV=production
+
+CMD NODE_OPTIONS=--max-old-space-size=$(expr $(echo "$(free -m)" | awk '/^Mem:/ {print $2}') - 512) node /app/apis/router/dist/index.js

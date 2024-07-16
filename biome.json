@@ -25,7 +25,7 @@
       "tsconfig.json",
       "tsconfig.*.json",
       "packages/graph-client",
-      "apps/evm/src/lib/wagmi/hooks/exploits/data/rp2-approvals.json",
+      "apps/web/src/lib/wagmi/hooks/exploits/data/rp2-approvals.json",
       "**/*-env.d.ts",
       "**/*-cache.d.ts"
     ]
