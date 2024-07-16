@@ -177,7 +177,7 @@ const CLAIM_CELL = ({ position }: { position: BondPosition }) => {
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof UserRejectedRequestError) {
+    if (!(e.cause instanceof UserRejectedRequestError)) {
       createErrorToast(e.message, true)
     }
   }, [])

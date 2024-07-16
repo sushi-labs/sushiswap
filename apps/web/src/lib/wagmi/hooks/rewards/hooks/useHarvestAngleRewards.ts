@@ -71,7 +71,7 @@ export const useHarvestAngleRewards = ({
 
   const onError = useCallback((e: Error) => {
     if (e instanceof Error) {
-      if (!(e instanceof UserRejectedRequestError)) {
+      if (!(e.cause instanceof UserRejectedRequestError)) {
         createErrorToast(e.message, true)
       }
     }
