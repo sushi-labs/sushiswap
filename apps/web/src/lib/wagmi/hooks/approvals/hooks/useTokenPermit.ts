@@ -152,7 +152,7 @@ export const useTokenPermit = ({
       setSignature({ ...hexToSignature(signedData), message, domain })
     } catch (e) {
       if (e instanceof Error) {
-        if (!(e instanceof UserRejectedRequestError)) {
+        if (!(e.cause instanceof UserRejectedRequestError)) {
           createErrorToast(e.message, true)
         }
       }

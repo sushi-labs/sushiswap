@@ -287,7 +287,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const onWriteError = useCallback(
     (e: Error) => {
-      if (e instanceof UserRejectedRequestError) {
+      if (e.cause instanceof UserRejectedRequestError) {
         onComplete()
         return
       }
