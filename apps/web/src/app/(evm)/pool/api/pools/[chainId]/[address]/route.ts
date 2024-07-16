@@ -2,6 +2,7 @@ import 'sushi/bigint-serializer'
 
 import { PoolApiSchema, getPoolFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
+import { ChefType } from 'sushi'
 import { CORS } from '../../../cors'
 
 export const revalidate = 15
@@ -22,7 +23,12 @@ export async function GET(
   let pool
 
   try {
-    pool = await getPoolFromDB(result.data)
+    pool = await getPoolFromDB(result.data).then((pool) => ({
+      ...pool,
+      incentives: pool.incentives.sort((a) =>
+        a.chefType === ChefType.MasterChefV2 ? -1 : 0,
+      ),
+    }))
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: 'Failed to fetch pool' }, { status: 500 })
