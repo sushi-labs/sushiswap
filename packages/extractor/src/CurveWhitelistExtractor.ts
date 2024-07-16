@@ -1,5 +1,12 @@
 import { Token } from 'sushi/currency'
-import { CurvePoolCode, CurvePoolType, LiquidityProviders } from 'sushi/router'
+import {
+  CurvePoolCode,
+  CurvePoolType,
+  CurvePoolWhiteList,
+  LiquidityProviders,
+  curvePoolABI,
+  getPoolRatio,
+} from 'sushi/router'
 import {
   CurveMultitokenCore,
   RToken,
@@ -20,17 +27,6 @@ import { MultiCallAggregator } from './MulticallAggregator.js'
 import { TokenManager } from './TokenManager.js'
 
 const POOL_RATIO_UPDATE_INTERVAL = 30 * 60_000 // How often to update pools with ratio !== 1
-
-const CurvePoolListNames = [
-  'main', // all not-factory pools, including 3pool
-  //'crypto', // all not-factory crypro pools
-  'factory', // pools of factories 0x0959158b6040d32d04c301a72cbfd6b39e21c9ae(3CRV) and 0xb9fc157394af804a3578134a6585c0dc9cc990d4 (EUR)
-  'factory-crvusd', // pools for factory 0x4F8846Ae9380B90d2E71D5e3D042dff3E7ebb40d (crvUSD)
-  //'factory-eywa',   // legacy - 0 pools
-  //'factory-crypto',
-  //'factory-tricrypto',
-  // 'factory-stable-ng',   // stable pools new generation
-]
 
 export const CurveEventsAbi = [
   parseAbiItem(
@@ -107,60 +103,22 @@ const CurveAllEventsAbi = parseAbi([
   'event Approval(address indexed owner, address indexed spender, uint256 value)',
 ])
 
-export interface CurveConfig {
-  api: string
+export interface CurveWhitelistConfig {
   minPoolLiquidityLimitUSD: number
-  poolBlackList?: Address[]
   ratioPoolsUpdateInterval?: number
 }
 
-interface APIPoolInfo {
-  address: Address
-  symbol: string
-  usdTotal: number
-  coins: {
-    address: Address
-    decimals: string
-    usdPrice: number
-    poolBalance: string
-  }[]
-}
-
-const ABICommonPart = parseAbi([
-  'function A() pure returns (uint256)',
-  'function fee() pure returns (uint256)',
-])
-const ABIBalance128 = parseAbi([
-  'function balances(int128) pure returns (uint256)',
-])
-const ABIBalance256 = parseAbi([
-  'function balances(uint256) pure returns (uint256)',
-])
-const ABIGetVirtualPrice = parseAbi([
-  'function get_virtual_price() pure returns (uint256)',
-])
-
-const METAPOOL_COIN_TO_BASEPOOL: Record<string, Address> = {
-  '0x6c3f90f043a72fa612cbac8115ee7e52bde6e490':
-    '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7', // 3-pool
-  '0x075b1bb99792c9e1041ba13afef80c91a1e70fb3':
-    '0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714', // sBTC
-  '0x3175df0976dfa876431c2e9ee6bc45b65d3473cc':
-    '0xDcEF968d416a41Cdac0ED8702fAC8128A64241A2', // fraxUSD
-  '0x051d7e5609917bd9b73f04bac0ded8dd46a74301':
-    '0xf253f83AcA21aAbD2A20553AE0BF7F65C755A07F',
-}
-
-export class CurveExtractor {
-  readonly config: CurveConfig
+export class CurveWhitelistExtractor {
+  readonly config: CurveWhitelistConfig
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
 
   readonly poolMap: Map<string, CurvePoolCode> = new Map() // indexed by uniqueId
-  readonly balancesType: Map<string, boolean> = new Map() // indexed by  pool address
-  readonly coreMap: Map<string, CurveMultitokenCore> = new Map() // indexed by pool address
+  readonly poolTypeMap: Map<string, CurvePoolType> = new Map() // indexed by  pool address
+  readonly coreMap: Map<string, CurveMultitokenCore> = new Map() // indexed by pool address.toLowerCase()
   readonly tokenPairMap: Map<string, CurvePoolCode[]> = new Map() // indexed by t0.address+t1.address
   readonly ratioPoolSet: Set<string> = new Set() // indexed by pool address
+  readonly poolMapUpdated: Map<string, CurvePoolCode> = new Map() // indexed by uniqueId
 
   readonly logFilter: LogFilter2
   readonly logging: boolean
@@ -172,7 +130,7 @@ export class CurveExtractor {
   /// @param logging to write logs in console or not
   constructor(
     client: PublicClient,
-    config: CurveConfig,
+    config: CurveWhitelistConfig,
     logFilter: LogFilter2,
     tokenManager: TokenManager,
     logging = true,
@@ -192,7 +150,9 @@ export class CurveExtractor {
       if (logs) {
         logs.forEach((l) => {
           const core = this.coreMap.get(l.address.toLowerCase())
-          if (core === undefined) return
+          if (core === undefined) {
+            return
+          }
           const { eventName, args } = decodeEventLog({
             abi: CurveEventsAbi,
             data: l.data,
@@ -228,16 +188,17 @@ export class CurveExtractor {
   }
 
   async start() {
+    const startTime = performance.now()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
-    const pools = await this.gatherCurvePools()
-    const balancesType = await Promise.all(
-      pools.map((p) => this.detectPoolInterface(p.address)),
-    )
     await Promise.all(
-      pools.map((p, i) => {
-        const tokens = p.coins.map((t) => t.address)
-        return this.addPool(p.address, tokens, balancesType[i])
+      CurvePoolWhiteList.map((p) => {
+        this.poolTypeMap.set(p.pool, p.poolType as CurvePoolType)
+        return this.addPool(
+          p.pool as Address,
+          p.tokens,
+          p.poolType as CurvePoolType,
+        )
       }),
     )
     this.consoleLog(`Found pools with ratio != 1: ${this.ratioPoolSet.size}`)
@@ -248,84 +209,17 @@ export class CurveExtractor {
       }
     }, this.config.ratioPoolsUpdateInterval ?? POOL_RATIO_UPDATE_INTERVAL)
     this.started = true
-  }
-
-  async gatherCurvePools(): Promise<APIPoolInfo[]> {
-    const api = this.config.api
-    const urlPrefix = api.endsWith('/') ? api : `${api}/`
-    const blackList = this.config.poolBlackList ?? []
-
-    const poolMap = new Map<string, APIPoolInfo>()
-    for (const l in CurvePoolListNames) {
-      const url = urlPrefix + CurvePoolListNames[l]
-      try {
-        // @ts-ignore
-        const dataResp = await fetch(url)
-        const data = (await dataResp.json()) as {
-          data?: { poolData?: APIPoolInfo[] }
-        }
-        const poolList = data?.data?.poolData
-        if (poolList === undefined) {
-          Logger.error(
-            this.multiCallAggregator.chainId,
-            `Crv pool list ${url} unexpected format`,
-          )
-          continue
-        }
-        poolList.forEach((p) => {
-          if (!blackList.includes(p.address)) poolMap.set(p.address, p)
-        })
-        //poolList.forEach((p) => console.log(p.address, l))
-      } catch (_e) {
-        Logger.error(
-          this.multiCallAggregator.chainId,
-          `Crv pool list ${url} reading failed`,
-        )
-      }
-    }
-    this.consoleLog(`Pools found: ${poolMap.size}`)
-
-    const pools = Array.from(poolMap.values()).filter((p) => {
-      return p.usdTotal >= this.config.minPoolLiquidityLimitUSD
-    })
     this.consoleLog(
-      `Pools with liquidity >= ${this.config.minPoolLiquidityLimitUSD}USD: ${
-        pools.length
-      }, total expected liquidity: ${Math.round(
-        pools.reduce((a, b) => a + b.usdTotal, 0),
-      )} USD`,
+      `CurveWhitelistExtractor is started and ready(${Math.round(
+        performance.now() - startTime,
+      )}ms)`,
     )
-
-    // let skip = true
-    // for (let i = 0; i < pools.length; ++i) {
-    //   //if (pools[i].address === '0x80466c64868E1ab14a1Ddf27A676C3fcBE638Fe5')
-    //     skip = false
-    //   if (skip) continue
-    //   await this.testEvents(pools[i].address)
-    // }
-
-    return pools
-  }
-
-  // true - new interface balances/coins, false - old
-  async detectPoolInterface(poolAddress: Address): Promise<boolean> {
-    try {
-      await this.multiCallAggregator.callValue(
-        poolAddress,
-        ABIBalance256,
-        'balances',
-        [0],
-      )
-      return true
-    } catch (_e) {
-      return false
-    }
   }
 
   async addPool(
     poolAddress: Address,
     tokenAddress: Address[] | RToken[],
-    balancesType: boolean,
+    poolType: CurvePoolType,
   ) {
     try {
       const tokens =
@@ -338,7 +232,7 @@ export class CurveExtractor {
           : (tokenAddress as RToken[])
       const balancesCalls = tokenAddress.map((_, i) => ({
         address: poolAddress,
-        abi: balancesType ? ABIBalance256 : ABIBalance128,
+        abi: curvePoolABI[poolType],
         functionName: 'balances',
         args: [i],
       }))
@@ -351,40 +245,41 @@ export class CurveExtractor {
         this.multiCallAggregator.callSameBlock([
           {
             address: poolAddress,
-            abi: ABICommonPart,
+            abi: curvePoolABI[poolType],
             functionName: 'A',
           },
           {
             address: poolAddress,
-            abi: ABICommonPart,
+            abi: curvePoolABI[poolType],
             functionName: 'fee',
           },
           ...balancesCalls,
         ]),
-        this.getPoolRatio(
+        getPoolRatio(
+          { readContract: this.multiCallAggregator.getReadContract() },
           poolAddress,
           tokens.map((t) => t.address) as Address[],
         ),
       ])
-      if (ratio !== 1) this.ratioPoolSet.add(poolAddress)
+      if (ratio.some((r) => r !== 1)) this.ratioPoolSet.add(poolAddress)
       const pools = createCurvePoolsForMultipool(
         poolAddress,
         tokens as RToken[],
         Number(fee) / 1e10,
         Number(A),
         balances as bigint[],
-        ratio !== 1 ? [1, ratio] : undefined,
+        ratio,
       )
       this.coreMap.set(poolAddress.toLowerCase(), pools[0].core)
-      this.balancesType.set(poolAddress, balancesType)
       pools.forEach((p) => {
         const poolCode = new CurvePoolCode(
           p,
           LiquidityProviders.CurveSwap,
           'Curve',
-          CurvePoolType.TypeC, // TODO !!!!!
+          poolType,
         )
         this.poolMap.set(p.uniqueID(), poolCode)
+        this.poolMapUpdated.set(p.uniqueID(), poolCode)
         const [a0, a1] =
           p.token0.address < p.token1.address
             ? [p.token0.address, p.token1.address]
@@ -405,7 +300,7 @@ export class CurveExtractor {
     return await this.addPool(
       core.address as Address,
       core.tokens,
-      this.balancesType.get(core.address) as boolean,
+      this.poolTypeMap.get(core.address) as CurvePoolType,
     )
   }
 
@@ -417,63 +312,6 @@ export class CurveExtractor {
         ),
       ),
     )
-  }
-
-  async getPoolRatio(
-    poolAddress: Address,
-    tokenAddress: Address[],
-  ): Promise<number> {
-    const basePoolAddress =
-      METAPOOL_COIN_TO_BASEPOOL[(tokenAddress[1] as Address).toLowerCase()]
-    if (basePoolAddress !== undefined) {
-      const price = (await this.multiCallAggregator.callValue(
-        basePoolAddress,
-        ABIGetVirtualPrice,
-        'get_virtual_price',
-      )) as bigint
-      // 1e18 is not always appropriate, but there is no way to find self.rate_multiplier value
-      return Number(price) / 1e18
-    }
-
-    // collection of freaks
-    switch (poolAddress.toLowerCase()) {
-      case '0xa96a65c051bf88b4095ee1f2451c2a9d43f53ae2': {
-        //ankrETH pool
-        const ratio = (await this.multiCallAggregator.callValue(
-          '0xE95A203B1a91a908F9B9CE46459d101078c2c3cb',
-          parseAbi(['function ratio() pure returns (uint256)']),
-          'ratio',
-        )) as bigint
-        return 1e18 / Number(ratio)
-      }
-      case '0xf9440930043eb3997fc70e1339dbb11f341de7a8': {
-        // rETH pool
-        const ratio = (await this.multiCallAggregator.callValue(
-          '0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593',
-          parseAbi(['function getExchangeRate() pure returns (uint256)']),
-          'getExchangeRate',
-        )) as bigint
-        return Number(ratio) / 1e18
-      }
-      case '0xa2b47e3d5c44877cca798226b7b8118f9bfb7a56': {
-        // compound pool cUSDC-cDAI
-        const [ratio0, ratio1] = (await Promise.all([
-          this.multiCallAggregator.callValue(
-            '0x39aa39c021dfbae8fac545936693ac917d5e7563', // cUSD
-            parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
-            'exchangeRateCurrent',
-          ),
-          this.multiCallAggregator.callValue(
-            '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643', // cDAI
-            parseAbi(['function exchangeRateCurrent() pure returns (uint256)']),
-            'exchangeRateCurrent',
-          ),
-        ])) as [bigint, bigint]
-        return (Number(ratio0) / Number(ratio1)) * 1e12
-      }
-      default:
-        return 1
-    }
   }
 
   getPoolsForTokenPair(t0: Token, t1: Token) {
@@ -555,6 +393,37 @@ export class CurveExtractor {
       } catch (_e) {
         console.log(poolAddress, `${blocks} blocks - too much logs`)
       }
+    }
+  }
+
+  // side effect: updated pools list is cleared
+  getUpdatedPoolCodes(): CurvePoolCode[] {
+    const pools = Array.from(this.poolMapUpdated.values())
+    this.poolMapUpdated.clear()
+    return pools
+  }
+
+  getPoolsBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: CurvePoolCode[]
+    fetching: Promise<CurvePoolCode | undefined>[]
+  } {
+    let prefetched: CurvePoolCode[] = []
+    const fetching: Promise<CurvePoolCode | undefined>[] = []
+    for (let i = 0; i < tokensUnique1.length; ++i) {
+      const t0 = tokensUnique1[i]
+      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
+      for (let j = 0; j < tokensUnique2.length; ++j) {
+        const t1 = tokensUnique2[j]
+        const res = this.getPoolsForTokenPair(t0, t1)
+        prefetched = prefetched.concat(res)
+      }
+    }
+    return {
+      prefetched,
+      fetching,
     }
   }
 }

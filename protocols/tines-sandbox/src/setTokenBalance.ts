@@ -1,19 +1,22 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
 import {
   getStorageAt as getStorageAtLib,
   setStorageAt as setStorageAtLib,
 } from '@nomicfoundation/hardhat-network-helpers'
 import { NumberLike } from '@nomicfoundation/hardhat-network-helpers/dist/src/types.js'
-import { BigNumber, Contract } from 'ethers'
+import { PermanentCache } from '@sushiswap/extractor'
+import { Contract } from 'ethers'
 import hre from 'hardhat'
 import { EthereumProvider } from 'hardhat/types'
 import { erc20Abi } from 'sushi/abi'
-import { Address, PublicClient } from 'viem'
+import { Address, PublicClient, parseAbi } from 'viem'
 
 const { ethers } = hre
 
 // Sometimes token contract is a proxy without delegate call
 // So, its storage is in other contract and we need to work with it
-const TokenProxyMap: Record<string, string> = {
+const TokenProxyMap: Record<string, Address> = {
   '0xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6':
     '0x4F6296455F8d754c19821cF1EC8FeBF2cD456E67', // Ethereum sBTC
   '0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb':
@@ -28,9 +31,11 @@ const TokenProxyMap: Record<string, string> = {
     '0x05a9CBe762B36632b3594DA4F082340E0e5343e8', // Ethereum sUSD
   '0x056fd409e1d7a124bd7017459dfea2f387b6d5cd':
     '0xc42B14e49744538e3C239f8ae48A1Eaaf35e68a0', // Ethereum GUSD
+  '0x269895a3df4d73b077fc823dd6da1b95f72aaf9b':
+    '0x93B6e9FbBd2c32a0DC3C2B943B7C3CBC2fE23730', // Ethereum sKRW (->target->tokenState->balanceOf)
 }
 
-const cache: Record<string, number> = {}
+// const cache: Record<string, number> = {}
 
 function toRpcQuantity(x: NumberLike): string {
   let hex: string
@@ -98,83 +103,252 @@ async function setStorageAt(
   })
 }
 
+async function getBalance(
+  token: Address,
+  user: Address,
+  client?: PublicClient,
+): Promise<bigint> {
+  if (client) {
+    return await client.readContract({
+      abi: erc20Abi,
+      address: token as Address,
+      functionName: 'balanceOf',
+      args: [user],
+    })
+  } else {
+    const tokenContract = new Contract(token, erc20Abi, ethers.provider)
+    return BigInt((await tokenContract.balanceOf(user)).toString())
+  }
+}
+
+export enum MappingStyle {
+  Solidity = 0,
+  Vyper = 1,
+}
+
+export interface BalanceSlotInfo {
+  contract: Address
+  balanceSlot: number
+  mappingStyle: MappingStyle
+}
+
+function getMapSlotNumber(
+  user: Address,
+  mapSlot: number,
+  mappingStyle: MappingStyle,
+) {
+  const userPadded = user.substring(2).padStart(64, '0')
+  const slotPadded = Number(mapSlot).toString(16).padStart(64, '0')
+  const slotData =
+    mappingStyle === MappingStyle.Solidity
+      ? `0x${userPadded}${slotPadded}`
+      : `0x${slotPadded}${userPadded}`
+  return ethers.utils.keccak256(slotData)
+}
+
+async function setBalance(
+  slot: BalanceSlotInfo,
+  user: Address,
+  value: bigint,
+  provider?: EthereumProvider,
+) {
+  const slotNumber = getMapSlotNumber(user, slot.balanceSlot, slot.mappingStyle)
+  await setStorageAt(slot.contract, slotNumber, value, provider)
+}
+
+const functionsABI = parseAbi([
+  'function target() view returns (address)',
+  'function tokenState() view returns (address)',
+] as const)
+
+async function syntheticsTokenDataBase(
+  token: Address,
+  client?: PublicClient,
+): Promise<Address | undefined> {
+  try {
+    if (client) {
+      const addr1 = await client.readContract({
+        address: token,
+        abi: functionsABI,
+        functionName: 'target',
+      })
+      const addr2 = await client.readContract({
+        address: addr1,
+        abi: functionsABI,
+        functionName: 'tokenState',
+      })
+      return addr2
+    } else {
+      const contr1 = new Contract(token, functionsABI, ethers.provider)
+      const addr1 = await contr1.target()
+      const contr2 = new Contract(addr1, functionsABI, ethers.provider)
+      const addr2 = await contr2.tokenState()
+      return addr2
+    }
+  } catch (_e) {}
+}
+
+async function findBalanceSlot(
+  token: Address,
+  user: Address,
+  balance: bigint, // TODO: remove!
+  client?: PublicClient,
+  provider?: EthereumProvider,
+  tokenData?: Address,
+): Promise<BalanceSlotInfo | undefined> {
+  const dataContract =
+    tokenData ??
+    TokenProxyMap[token.toLowerCase()] ??
+    (await syntheticsTokenDataBase(token, client)) ??
+    token
+  const balancePrimary = await getBalance(token, user, client)
+
+  const checkSlot = async (
+    slotNumber: number,
+    mappingStyle: MappingStyle,
+  ): Promise<boolean> => {
+    const slot = getMapSlotNumber(user, slotNumber, mappingStyle)
+    const previousValue = await getStorageAt(dataContract, slot, provider)
+    await setStorageAt(dataContract, slot, balancePrimary + 1n, provider)
+    const newBalance = await getBalance(token, user, client)
+    await setStorageAt(dataContract, slot, previousValue, provider) // revert previous values back
+    return newBalance !== balancePrimary
+  }
+
+  const tryBalanceOf = async (
+    slotNumber: number,
+    client?: PublicClient,
+  ): Promise<Address | undefined> => {
+    const slot = `0x${Number(slotNumber).toString(16).padStart(64, '0')}`
+    const val = await getStorageAt(dataContract, slot, provider)
+    if (!val.startsWith('0x000000000000000000000000')) return
+    const address = `0x${val.substring(26)}` as Address
+    if (address.startsWith('0x000000000000')) return // too low value
+    try {
+      await getBalance(address, address, client)
+      /*const tokenContract = new Contract(
+        address,
+        [
+          {
+            type: 'function',
+            name: 'balance',
+            stateMutability: 'view',
+            inputs: [
+              {
+                name: 'account',
+                type: 'address',
+              },
+            ],
+            outputs: [
+              {
+                name: '',
+                type: 'uint256',
+              },
+            ],
+          },
+        ],
+        ethers.provider,
+      )
+      await tokenContract.balance(user)*/
+      return address
+    } catch (_e) {}
+  }
+
+  for (let i = 0; i < 200; ++i) {
+    if (await checkSlot(i, MappingStyle.Solidity))
+      return {
+        contract: dataContract,
+        balanceSlot: i,
+        mappingStyle: MappingStyle.Solidity,
+      }
+    if (await checkSlot(i, MappingStyle.Vyper))
+      return {
+        contract: dataContract,
+        balanceSlot: i,
+        mappingStyle: MappingStyle.Vyper,
+      }
+
+    if (dataContract === token) {
+      // try to find an address of implementation contract
+      const addr = await tryBalanceOf(i, client)
+      if (addr !== undefined) {
+        const res = await findBalanceSlot(
+          token,
+          user,
+          balance,
+          client,
+          provider,
+          addr,
+        )
+        if (res) return res
+      }
+    }
+  }
+}
+
+type TokenSlotRecord =
+  | [Address]
+  | [Address, number, number]
+  | [Address, Address, number, number]
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const cache = new PermanentCache<TokenSlotRecord>(__dirname, './setTokenCache')
+const cachedMap = new Map<Address, BalanceSlotInfo | undefined>()
+
+async function initCache() {
+  const records = await cache.getAllRecords()
+  records.forEach((r) => {
+    if (r.length === 1) cachedMap.set(r[0], undefined)
+    else if (r.length === 3)
+      cachedMap.set(r[0], {
+        contract: r[0],
+        balanceSlot: r[1],
+        mappingStyle: r[2] as MappingStyle,
+      })
+    else if (r.length === 4)
+      cachedMap.set(r[0], {
+        contract: r[1],
+        balanceSlot: r[2],
+        mappingStyle: r[3] as MappingStyle,
+      })
+  })
+}
+initCache()
+
+async function addCacheRecord(
+  token: Address,
+  slotInfo: BalanceSlotInfo | undefined,
+) {
+  cachedMap.set(token, slotInfo)
+  if (slotInfo === undefined) await cache.add([token])
+  else if (token === slotInfo.contract)
+    await cache.add([
+      token,
+      slotInfo.balanceSlot,
+      slotInfo.mappingStyle as number,
+    ])
+  else
+    await cache.add([
+      token,
+      slotInfo.contract,
+      slotInfo.balanceSlot,
+      slotInfo.mappingStyle as number,
+    ])
+}
+
 export async function setTokenBalance(
-  token: string,
-  user: string,
+  token: Address,
+  user: Address,
   balance: bigint,
   client?: PublicClient,
   provider?: EthereumProvider,
 ): Promise<boolean> {
-  const setStorage = async (
-    realContract: string,
-    slotNumber: number,
-    value0: NumberLike,
-    value1: NumberLike,
-  ) => {
-    // Solidity mapping
-    const slotData = `0x${user.padStart(64, '0')}${Number(slotNumber)
-      .toString(16)
-      .padStart(64, '0')}`
-    const slot = ethers.utils.keccak256(slotData)
-    const previousValue0 = await getStorageAt(realContract, slot, provider)
-    await setStorageAt(realContract, slot, value0, provider)
-    // Vyper mapping
-    const slotData2 = `0x${Number(slotNumber)
-      .toString(16)
-      .padStart(64, '0')}${user.padStart(64, '0')}`
-    const slot2 = ethers.utils.keccak256(slotData2)
-    const previousValue1 = await getStorageAt(realContract, slot2, provider)
-    await setStorageAt(realContract, slot2, value1, provider)
-    return [previousValue0, previousValue1]
+  let slotInfo = cachedMap.get(token)
+  if (!slotInfo && !cachedMap.has(token)) {
+    slotInfo = await findBalanceSlot(token, user, balance, client, provider)
+    await addCacheRecord(token, slotInfo)
   }
-
-  if (user.startsWith('0x')) user = user.substring(2)
-  const realContract = TokenProxyMap[token.toLowerCase()] ?? token
-
-  const cashedSlot = cache[token.toLowerCase()]
-  if (cashedSlot !== undefined) {
-    await setStorage(realContract, cashedSlot, balance, balance)
-    return true
-  }
-
-  const tokenContract = new Contract(token, erc20Abi, ethers.provider)
-
-  const getBalanace = async () => {
-    if (client) {
-      const balance = await client.readContract({
-        abi: erc20Abi,
-        address: token as Address,
-        functionName: 'balanceOf',
-        args: [`0x${user}` as Address],
-      })
-      return BigNumber.from(balance.toString())
-    } else
-      return ((await tokenContract) as Contract).balanceOf(user) as BigNumber
-  }
-
-  const balancePrimary = await getBalanace()
-
-  for (let i = 0; i < 200; ++i) {
-    //console.log('setTokenBalance', token, i)
-    const [previousValue0, previousValue1] = await setStorage(
-      realContract,
-      i,
-      balance,
-      balance,
-    )
-    const resBalance = await getBalanace()
-    //console.log(i, '0x' + user.padStart(64, '0') + Number(i).toString(16).padStart(64, '0'), resBalance.toString())
-
-    if (!resBalance.isZero()) {
-      if (
-        resBalance.toString() === balance.toString() ||
-        !resBalance.eq(balancePrimary)
-      ) {
-        cache[token.toLowerCase()] = i
-        return true
-      }
-    }
-    await setStorage(realContract, i, previousValue0, previousValue1) // revert previous values back
-  }
-  return false
+  if (slotInfo) await setBalance(slotInfo, user, balance, provider)
+  return slotInfo !== undefined
 }

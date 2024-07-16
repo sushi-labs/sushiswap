@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import {
+  CurveWhitelistConfig,
   Extractor,
   FactoryV2,
   FactoryV3,
@@ -8,7 +9,7 @@ import {
   MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
-import { routeProcessor4Abi } from 'sushi/abi'
+import { routeProcessor5Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
   BASES_TO_CHECK_TRADES_AGAINST,
@@ -17,7 +18,6 @@ import {
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PANCAKESWAP_V3_INIT_CODE_HASH,
   PancakeSwapV3ChainId,
-  ROUTE_PROCESSOR_4_ADDRESS,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -35,8 +35,8 @@ import {
   PoolCode,
   Router,
 } from 'sushi/router'
-import { RouteStatus, getBigInt } from 'sushi/tines'
-import { http, Address, Transport, createPublicClient } from 'viem'
+import { PoolType, RouteStatus, getBigInt } from 'sushi/tines'
+import { http, Address, Hex, Transport, createPublicClient } from 'viem'
 import {
   Chain,
   arbitrum,
@@ -48,7 +48,9 @@ import {
   polygonZkEvm,
 } from 'viem/chains'
 
-const RPAddress = ROUTE_PROCESSOR_4_ADDRESS
+const RPAddress = {
+  [ChainId.ETHEREUM]: '0x3e1116ea5034f5d73a7b530071709d54a4109f5f' as Address, // test RP5 deployment
+}
 
 export const TickLensContract = {
   [ChainId.ETHEREUM]: '0xbfd8137f7d1516d3ea5ca83523914859ec47f573' as Address,
@@ -125,12 +127,15 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
+type GetTokenFunc = (e: Extractor) => Promise<Token[]>
+
 async function startInfinitTest(args: {
   transport?: Transport
   providerURL?: string
   chain: Chain
   factoriesV2: FactoryV2[]
   factoriesV3: FactoryV3[]
+  curveConfig?: CurveWhitelistConfig
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   cacheDir: string
@@ -140,7 +145,7 @@ async function startInfinitTest(args: {
   maxCallsInOneBatch?: number
   RPAddress: Address
   account?: Address
-  checkTokens?: Token[]
+  checkTokens?: Token[] | GetTokenFunc
 }) {
   const transport = args.transport ?? http(args.providerURL)
   const client = createPublicClient({
@@ -150,9 +155,7 @@ async function startInfinitTest(args: {
   const chainId = client.chain?.id as ChainId
 
   const extractor = new Extractor({ ...args, client })
-  await extractor.start(
-    BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(args.checkTokens ?? []),
-  )
+  await extractor.start(BASES_TO_CHECK_TRADES_AGAINST[chainId])
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
@@ -163,7 +166,9 @@ async function startInfinitTest(args: {
   )
   await tokenManager.addCachedTokens()
   const tokens =
-    args.checkTokens ??
+    (typeof args.checkTokens === 'function'
+      ? await args.checkTokens(extractor)
+      : args.checkTokens) ??
     BASES_TO_CHECK_TRADES_AGAINST[chainId].concat(
       Array.from(tokenManager.tokens.values()).slice(0, 100),
     )
@@ -198,10 +203,10 @@ async function startInfinitTest(args: {
 
       const pools = pools1
       const poolMap = new Map<string, PoolCode>()
-      pools.forEach((p) => poolMap.set(p.pool.address, p))
+      pools.forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       nativeProvider
         .getCurrentPoolList()
-        .forEach((p) => poolMap.set(p.pool.address, p))
+        .forEach((p) => poolMap.set(p.pool.uniqueID(), p))
       const fromToken = Native.onChain(chainId)
       const toToken = tokens[i]
       const route = Router.findBestRoute(
@@ -218,7 +223,17 @@ async function startInfinitTest(args: {
         )
         continue
       }
-      const rpParams = Router.routeProcessor4Params(
+
+      route.legs.forEach((l) => {
+        if (l.poolType === PoolType.Curve)
+          console.log(
+            `Curve pool: ${l.poolAddress} ${l.tokenFrom.symbol}=>${
+              l.tokenTo.symbol
+            } ${l.absolutePortion * 100}%`,
+          )
+      })
+
+      const rpParams = Router.routeProcessor5Params(
         poolMap,
         route,
         fromToken,
@@ -235,15 +250,15 @@ async function startInfinitTest(args: {
       try {
         const { result: amountOutReal } = (await client.simulateContract({
           address: args.RPAddress,
-          abi: routeProcessor4Abi,
+          abi: routeProcessor5Abi,
           functionName: 'processRoute',
           args: [
             rpParams.tokenIn as Address,
-            BigInt(rpParams.amountIn.toString()),
+            rpParams.amountIn,
             rpParams.tokenOut as Address,
             0n,
             rpParams.to as Address,
-            rpParams.routeCode as Address, // !!!!
+            rpParams.routeCode as Hex,
           ],
           value: BigInt(rpParams.value?.toString() as string),
           account: args.account,
@@ -262,23 +277,68 @@ async function startInfinitTest(args: {
           console.log('Routing: TOO BIG DIFFERENCE !!!!!!!!!!!!!!!!!!!!!')
       } catch (e) {
         console.log(`Routing failed. No connection ? ${e}`)
+        console.log(
+          Router.routeToHumanString(poolMap, route, fromToken, toToken),
+        )
+        console.log(
+          'ROUTE:',
+          route.legs.map(
+            (l) =>
+              `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`,
+          ),
+        )
       }
     }
   }
 }
 
-it.skip('Extractor Ethereum infinite work test', async () => {
+it.only('Extractor Ethereum infinite work test (Curve)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
-    factoriesV2: [sushiswapV2Factory(ChainId.ETHEREUM)],
-    factoriesV3: [], //uniswapV3Factory(ChainId.ETHEREUM)],
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.ETHEREUM),
+      uniswapV2Factory(ChainId.ETHEREUM),
+    ],
+    factoriesV3: [
+      // uniswapV3Factory(ChainId.ETHEREUM),
+      // sushiswapV3Factory(ChainId.ETHEREUM),
+    ],
     tickHelperContractV3: TickLensContract[ChainId.ETHEREUM],
     tickHelperContractAlgebra: '' as Address,
+    curveConfig: {
+      minPoolLiquidityLimitUSD: 1000,
+    },
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
     RPAddress: RPAddress[ChainId.ETHEREUM],
+    account: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // weth to prevent 'ERC20: transfer from the zero address' issue
+    checkTokens: async (e: Extractor) => {
+      const curvePools = e
+        .getCurrentPoolCodes()
+        .map((p) => p.pool)
+        .filter((p) => p.poolType() === PoolType.Curve)
+      const tokens = curvePools
+        .flatMap((p) => [p.token0, p.token1])
+        .filter(
+          (t) =>
+            t.address &&
+            t.address.toLowerCase() !==
+              '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+        )
+        .map(
+          (t) =>
+            new Token({
+              chainId: ChainId.ETHEREUM,
+              ...t,
+            }),
+        )
+      const tokenMap = new Map<string, Token>()
+      tokens.forEach((t) => tokenMap.set(t.address, t))
+      console.log('Test tokens:', tokenMap.size)
+      return Array.from(tokenMap.values())
+    },
   })
 })
 
@@ -519,7 +579,7 @@ it.skip('Extractor Filecoin infinite work test', async () => {
   })
 })
 
-it.only('Extractor Harmony infinite work test', async () => {
+it.skip('Extractor Harmony infinite work test', async () => {
   await startInfinitTest({
     ...publicClientConfig[ChainId.HARMONY],
     factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
