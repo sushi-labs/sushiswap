@@ -8,7 +8,7 @@ import {
   ReadContractReturnType,
   parseAbi,
 } from 'viem'
-import { RPool } from '../tines'
+import { RPool } from '../tines/index.js'
 
 export enum CurvePoolType {
   // the most old
