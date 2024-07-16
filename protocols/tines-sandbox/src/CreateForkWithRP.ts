@@ -147,7 +147,8 @@ export async function createForkWithRP(
     bytecode,
     account: deployUser,
     args: [
-      BENTOBOX_ADDRESS[chainId as keyof typeof BENTOBOX_ADDRESS] ?? '0x0000000000000000000000000000000000000000',
+      BENTOBOX_ADDRESS[chainId as keyof typeof BENTOBOX_ADDRESS] ??
+        '0x0000000000000000000000000000000000000000',
       [],
     ],
   })
