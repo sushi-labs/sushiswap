@@ -1,13 +1,14 @@
 import { Request, Response } from 'express'
+import { serializePoolsBinary } from 'sushi'
 import { ADDITIONAL_BASES } from 'sushi/config'
 import { Token } from 'sushi/currency'
-import { serializePoolCodesJSON } from 'sushi/serializer'
+//import { serializePoolCodesJSON } from 'sushi/serializer'
 import { Address } from 'viem'
 import { CHAIN_ID } from '../../config.js'
 import extractor from '../../extractor.js'
 
 async function handler(req: Request, res: Response) {
-  res.setHeader('Cache-Control', 's-maxage=60')
+  //res.setHeader('Cache-Control', 's-maxage=60')
   // console.log('HTTP: GET /pools-between/:chainId/:addr0/:addr1'
   const chainId = req.params['chainId']
   if (chainId === undefined || Number(chainId) !== CHAIN_ID)
@@ -29,7 +30,10 @@ async function handler(req: Request, res: Response) {
       [token0, ...additional0],
       [token1, ...additional1],
     )
-    return res.json(serializePoolCodesJSON(pools))
+    //return res.json(serializePoolCodesJSON(pools))
+    res.setHeader('Content-Type', 'application/octet-stream')
+    res.set('Content-Type', 'application/octet-stream')
+    return res.end(serializePoolsBinary(pools))
   }
 }
 
