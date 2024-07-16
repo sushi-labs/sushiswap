@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
-import { serializePoolCodesJSON } from 'sushi/serializer'
+//import { serializePoolCodesJSON } from 'sushi/serializer'
 import { CHAIN_ID, POOLS_SERIALIZATION_INTERVAL } from '../../config.js'
 import extractor from '../../extractor.js'
 
 let lastPools: object = {}
 let lastPoolsSerializationTime = 0
 
+// just for test
 async function handler(req: Request, res: Response) {
   res.setHeader(
     'Cache-Control',
@@ -21,7 +22,10 @@ async function handler(req: Request, res: Response) {
   ) {
     const start = performance.now()
     const poolCodes = extractor.getCurrentPoolCodes()
-    lastPools = serializePoolCodesJSON(poolCodes)
+    //lastPools = serializePoolCodesJSON(poolCodes)
+    lastPools = {
+      poolCodes,
+    }
     lastPoolsSerializationTime = Date.now()
     console.log(
       `Pools serialization: ${poolCodes.length} pools ${Math.round(

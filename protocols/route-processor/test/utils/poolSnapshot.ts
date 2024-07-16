@@ -7,7 +7,7 @@ import {
   makeSerializable,
   restoreAfterSerialization,
   serializer,
-} from 'sushi/serializer'
+} from './serializerJSON.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
