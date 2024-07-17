@@ -7,11 +7,13 @@ import { fetch } from '@whatwg-node/fetch'
 import { performance } from 'perf_hooks'
 import { ChainId } from 'sushi/chain'
 
-import { Address } from 'viem'
+import { ID, getIdFromChainIdAddress } from 'sushi'
+import { Address, getAddress } from 'viem'
 import { filterIncentives } from './etl/incentive/index.js'
 import { mergeIncentives } from './etl/incentive/load.js'
 import { updatePoolsWithIncentivesTotalApr } from './etl/pool/index.js'
 import { createTokens, getMissingTokens } from './etl/token/load.js'
+import { client } from './lib/prisma.js'
 import { config } from './lib/wagmi.js'
 
 const TEST_TOKENS = [{ name: 'Angle Merkl', symbol: 'anglaMerkl' }]
@@ -155,9 +157,11 @@ export async function execute() {
       return acc
     }, {})
 
+    const merklsWithMissingTvls = await addMissingTvls(merkls)
+
     // TRANSFORM
     const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(
-      merkls,
+      merklsWithMissingTvls,
       prices,
     )
 
@@ -181,12 +185,69 @@ export async function execute() {
   }
 }
 
+async function addMissingTvls(merkls: MerklResponse) {
+  const withTvls: MerklResponse = {}
+
+  const poolIdsWithMissingTvl = Object.entries(merkls).reduce(
+    (acc, [chainId, { pools }]) => {
+      Object.entries(pools).forEach(([address, pool]) => {
+        if (pool.tvl === null) {
+          acc.push(
+            getIdFromChainIdAddress(
+              Number(chainId),
+              address.toLowerCase() as Address,
+            ),
+          )
+        }
+      })
+
+      return acc
+    },
+    [] as ID[],
+  )
+
+  const poolsWithMissingTvl = await client.sushiPool.findMany({
+    select: {
+      id: true,
+      liquidityUSD: true,
+    },
+    where: {
+      id: {
+        in: poolIdsWithMissingTvl,
+      },
+    },
+  })
+
+  Object.entries(merkls).forEach(([chainId, { pools }]) => {
+    withTvls[chainId] = { pools: {} }
+
+    Object.entries(pools).forEach(([_address, pool]) => {
+      const address = getAddress(_address)
+
+      const poolId = getIdFromChainIdAddress(Number(chainId), address)
+      const poolWithTvl = poolsWithMissingTvl.find((pool) => pool.id === poolId)
+      if (poolWithTvl) {
+        withTvls[chainId].pools[address] = {
+          ...pool,
+          tvl: poolWithTvl.liquidityUSD.toNumber(),
+        }
+      } else {
+        withTvls[chainId].pools[address] = pool
+      }
+    })
+  })
+
+  return withTvls
+}
+
 async function extract() {
   const response = await fetch('https://api.angle.money/v2/merkl')
   if (response.status !== 200) {
     throw new Error('Failed to fetch merkl incentives.')
   }
-  return response.json() as Promise<MerklResponse>
+  const merkls = await response.json()
+
+  return merkls as MerklResponse
 }
 
 async function transform(
@@ -223,6 +284,7 @@ async function transform(
   ) {
     return { incentivesToCreate: [], incentivesToUpdate: [], tokens: [] }
   }
+
   sushiPools.forEach(({ address, pool }) => {
     if (pool.distributionData.length > 0) {
       const rewardsByToken: Map<string, MerklDistribution[]> = new Map()
