@@ -1,5 +1,5 @@
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
-import { SkeletonText, classNames } from '@sushiswap/ui'
+import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { formatPercent, formatUSD } from 'sushi/format'
@@ -35,8 +35,8 @@ export const PortfolioTokens = () => {
           <div className="flex flex-col gap-y-2">
             {isLoading ? (
               <>
-                <SkeletonText />
-                <SkeletonText />
+                <SkeletonText fontSize="lg" className="!w-1/3" />
+                <SkeletonText className="w-1/4" />
               </>
             ) : (
               <>
@@ -62,7 +62,29 @@ export const PortfolioTokens = () => {
           </div>
         </div>
       </div>
-      {data?.tokens.length ? (
+
+      {isLoading ? (
+        <div>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              id={i.toString()}
+              className="flex w-full items-center px-5 py-3 gap-x-5"
+            >
+              <SkeletonCircle radius={28} />
+              <div className="flex w-full justify-between items-center gap-x-3">
+                <div className="basis-3/4 flex flex-col gap-y-1">
+                  <SkeletonText fontSize="sm" />
+                  <SkeletonText fontSize="xs" />
+                </div>
+                <div className="basis-1/4 flex flex-col gap-y-1">
+                  <SkeletonText fontSize="sm" />
+                  <SkeletonText fontSize="xs" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : data?.tokens.length ? (
         <PortfolioTokensList tokens={data.tokens} />
       ) : null}
     </div>

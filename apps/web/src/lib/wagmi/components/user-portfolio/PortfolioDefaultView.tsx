@@ -77,7 +77,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
               <SkeletonCircle radius={40} />
             )}
             {!address || isENSNameLoading ? (
-              <SkeletonBox className="h-4 w-20" />
+              <SkeletonBox className="h-8 w-32" />
             ) : ensName ? (
               <div>
                 <div className="font-semibold">{ensName}</div>

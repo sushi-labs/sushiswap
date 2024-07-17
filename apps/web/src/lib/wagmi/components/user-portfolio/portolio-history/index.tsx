@@ -1,4 +1,5 @@
 import { getPortfolioHistory } from '@sushiswap/graph-client/data-api'
+import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
@@ -25,21 +26,44 @@ function usePortfolioHistory(
 
 export const PortfolioHistory = () => {
   const { address } = useAccount()
-  const { data } = usePortfolioHistory(address)
+  const { data, isLoading } = usePortfolioHistory(address)
 
   return (
     <div className="flex flex-col gap-y-5 h-full overflow-hidden">
       <div className="overflow-y-auto h-full cursor-default">
-        {data?.map((tx) =>
-          tx.category === 'APPROVE' ? (
-            <PortfolioApproveTransaction tx={tx} />
-          ) : tx.category === 'SEND' ? (
-            <PortfolioSendTransaction tx={tx} />
-          ) : tx.category === 'RECEIVE' ? (
-            <PortfolioReceiveTransaction tx={tx} />
-          ) : (
-            <PortfolioOtherTransaction tx={tx} />
-          ),
+        {isLoading ? (
+          <div>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                id={i.toString()}
+                className="flex w-full items-center px-5 py-3 gap-x-5"
+              >
+                <SkeletonCircle radius={28} />
+                <div className="flex w-full justify-between items-center gap-x-3">
+                  <div className="basis-3/4 flex flex-col gap-y-1">
+                    <SkeletonText fontSize="sm" />
+                    <SkeletonText fontSize="xs" />
+                  </div>
+                  <div className="basis-1/4 flex flex-col gap-y-1">
+                    <SkeletonText fontSize="sm" />
+                    <SkeletonText fontSize="xs" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          data?.map((tx) =>
+            tx.category === 'APPROVE' ? (
+              <PortfolioApproveTransaction tx={tx} />
+            ) : tx.category === 'SEND' ? (
+              <PortfolioSendTransaction tx={tx} />
+            ) : tx.category === 'RECEIVE' ? (
+              <PortfolioReceiveTransaction tx={tx} />
+            ) : (
+              <PortfolioOtherTransaction tx={tx} />
+            ),
+          )
         )}
       </div>
     </div>
