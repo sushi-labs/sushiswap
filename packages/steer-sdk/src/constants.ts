@@ -65,7 +65,7 @@ export const STEER_SUBGRAPH_URL: Record<SteerChainId, string> = {
   [ChainId.KAVA]:
     'subgraph.steer.finance/kava/subgraphs/name/steerprotocol/steer-kava-evm',
   [ChainId.LINEA]:
-  'https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-linea/1.1.2/gn',
+    'https://api.goldsky.com/api/public/project_clohj3ta78ok12nzs5m8yag0b/subgraphs/steer-protocol-linea/1.1.2/gn',
   [ChainId.SCROLL]:
     'subgraph.steer.finance/scroll/subgraphs/name/steerprotocol/steer-scroll',
   [ChainId.FANTOM]: `${DECENTRALIZED_HOST_BY_SUBGRAPH_ID}/9uyX2WDuaxmcYh11ehUhU68M9uSCp5FXVQV2w4LqbpbV`,
