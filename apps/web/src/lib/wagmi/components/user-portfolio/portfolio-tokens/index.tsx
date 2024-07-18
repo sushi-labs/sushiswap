@@ -36,7 +36,7 @@ export const PortfolioTokens = () => {
             {isLoading ? (
               <>
                 <SkeletonText fontSize="lg" className="!w-1/3" />
-                <SkeletonText className="w-1/4" />
+                <SkeletonText className="!w-1/2" />
               </>
             ) : (
               <>

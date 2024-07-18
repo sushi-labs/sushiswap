@@ -16,8 +16,8 @@ export const PortfolioSendTransaction: FC<{ tx: PortfolioTransaction }> = ({
       id={`${tx.chainId}:${tx.txHash}`}
       chainId={tx.chainId as ChainId}
       icon={
-        <div className="p-1.5 border border-primary rounded-full w-7 h-7">
-          <ArrowUpIcon className="stroke-2" />
+        <div className="p-1.5 bg-[#64748B] rounded-full w-7 h-7">
+          <ArrowUpIcon className="stroke-2 text-white" />
         </div>
       }
       leftContent={
@@ -40,8 +40,8 @@ export const PortfolioSendTransaction: FC<{ tx: PortfolioTransaction }> = ({
         </React.Fragment>
       }
       rightContent={
-        tx.sends.length ? (
-          <React.Fragment>
+        <React.Fragment>
+          {tx.sends.length ? (
             <div className="text-sm font-medium flex justify-end items-center gap-x-1 overflow-hidden">
               {tx.sends[0].logoUrl ? (
                 <div>
@@ -61,58 +61,14 @@ export const PortfolioSendTransaction: FC<{ tx: PortfolioTransaction }> = ({
                 {tx.sends[0].symbol}
               </span>
             </div>
-            <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
-              {format(fromUnixTime(tx.timestamp), 'yyyy/MM/dd HH:mm')}
-            </div>
-          </React.Fragment>
-        ) : null
+          ) : (
+            <div className="h-5" />
+          )}
+          <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
+            {format(fromUnixTime(tx.timestamp), 'yyyy/MM/dd HH:mm')}
+          </div>
+        </React.Fragment>
       }
     />
-    // <div
-    //   id={`${tx.chainId}:${tx.txHash}`}
-    //   className="flex justify-between items-center hover:bg-muted px-5 py-3 gap-x-4"
-    // >
-    //   <div className="flex gap-x-4 items-center whitespace-nowrap overflow-hidden">
-    //     <div className="flex-shrink-0">
-    //       <Badge
-    //         className="border-1 border-background bg-background rounded-full"
-    //         position="bottom-right"
-    //         badgeContent={
-    //           <NetworkIcon chainId={tx.chainId} width={14} height={14} />
-    //         }
-    //       >
-    //         <ArrowUpCircleIcon width={28} height={28} />
-    //       </Badge>
-    //     </div>
-    //     <div className="overflow-hidden flex flex-col gap-y-1">
-    //       <div className="text-sm font-medium overflow-ellipsis overflow-hidden">
-    //         Send
-    //       </div>
-    //       <div className="text-muted-foreground text-xs">
-    //         TxHash: {shortenHash(tx.txHash)}
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="text-right">
-    //     <div className="text-sm font-medium flex gap-x-1 items-center">
-    //       <div>
-    //         <img
-    //           src={tx.sends[0].logoUrl}
-    //           width={16}
-    //           height={16}
-    //           alt={tx.sends[0].symbol}
-    //         />
-    //       </div>
-    //       <span>
-    //         {'-'}
-    //         <FormattedNumber number={tx.sends[0].amount.toString()} />{' '}
-    //         {tx.sends[0].symbol}
-    //       </span>
-    //     </div>
-    //     <div className="text-xs text-muted-foreground">
-    //       {format(fromUnixTime(tx.timestamp), 'yyyy/MM/dd HH:mm')}
-    //     </div>
-    //   </div>
-    // </div>
   )
 }

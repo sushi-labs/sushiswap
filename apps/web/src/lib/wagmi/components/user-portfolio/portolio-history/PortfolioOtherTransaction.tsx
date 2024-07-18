@@ -1,9 +1,9 @@
-import { Square2StackIcon } from '@heroicons/react/24/outline'
+import { GlobeAltIcon, Square2StackIcon } from '@heroicons/react/24/outline'
 import { PortfolioTransaction } from '@sushiswap/graph-client/data-api'
 import { ClipboardController, FormattedNumber } from '@sushiswap/ui'
+import { SushiLiteIcon } from '@sushiswap/ui/icons/SushiLiteIcon'
 import { format, fromUnixTime } from 'date-fns'
-import React from 'react'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { ChainId } from 'sushi/chain'
 import { shortenHash } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
@@ -16,13 +16,15 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
       id={`${tx.chainId}:${tx.txHash}`}
       chainId={tx.chainId as ChainId}
       icon={
-        <img
-          className="rounded-full"
-          src={tx.protocolLogo}
-          width={28}
-          height={28}
-          alt={tx.projectName}
-        />
+        tx.projectName.toLowerCase().includes('sushi') ? (
+          <div className="p-1.5 bg-gradient-to-r from-[rgba(12,116,183,0.3)] to-[rgba(174,46,141,0.3)] rounded-full w-7 h-7">
+            <SushiLiteIcon className="text-white" />
+          </div>
+        ) : (
+          <div className="p-1.5 bg-[#64748B] rounded-full w-7 h-7">
+            <GlobeAltIcon className="stroke-2 text-white" />
+          </div>
+        )
       }
       leftContent={
         <React.Fragment>
@@ -44,8 +46,8 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
         </React.Fragment>
       }
       rightContent={
-        tx.sends.length ? (
-          <React.Fragment>
+        <React.Fragment>
+          {tx.sends.length ? (
             <div className="text-sm font-medium flex justify-end items-center gap-x-1 overflow-hidden">
               {tx.sends[0].logoUrl ? (
                 <div className="shrink-0">
@@ -65,12 +67,7 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
                 {tx.sends[0].symbol}
               </span>
             </div>
-            <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
-              {format(fromUnixTime(tx.timestamp), 'yyyy/MM/dd HH:mm')}
-            </div>
-          </React.Fragment>
-        ) : tx.receives.length ? (
-          <React.Fragment>
+          ) : tx.receives.length ? (
             <div className="text-sm font-medium flex justify-end items-center gap-x-1 overflow-hidden">
               {tx.receives[0].logoUrl ? (
                 <div className="shrink-0">
@@ -89,11 +86,13 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
                 {tx.receives[0].symbol}
               </span>
             </div>
-            <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
-              {format(fromUnixTime(tx.timestamp), 'yyyy/MM/dd HH:mm')}
-            </div>
-          </React.Fragment>
-        ) : null
+          ) : (
+            <div className="h-5" />
+          )}
+          <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
+            {format(fromUnixTime(tx.timestamp), 'yyyy/MM/dd HH:mm')}
+          </div>
+        </React.Fragment>
       }
     />
   )

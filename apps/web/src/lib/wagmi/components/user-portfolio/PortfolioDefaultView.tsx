@@ -4,6 +4,7 @@ import {
   DocumentDuplicateIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
+import { UserCircleIcon } from '@heroicons/react/24/solid'
 import {
   Button,
   ClipboardController,
@@ -67,12 +68,21 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
         <div>
           <div className="flex gap-x-2 items-center">
             {connector ? (
-              <Image
-                src={connector.icon ?? ''}
-                width="40"
-                height="40"
-                alt={connector.name}
-              />
+              connector.icon ? (
+                <Image
+                  src={connector.icon}
+                  width="40"
+                  height="40"
+                  className="p-1"
+                  alt={connector.name}
+                />
+              ) : (
+                <UserCircleIcon
+                  width={40}
+                  height={40}
+                  className="!text-primary opacity-50"
+                />
+              )
             ) : (
               <SkeletonCircle radius={40} />
             )}
@@ -129,7 +139,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
         </div>
         <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} hideNetworkName />
       </div>
-      <div className="flex px-4 gap-x-2 justify-center">
+      <div className="flex px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (
           <Button
             asChild

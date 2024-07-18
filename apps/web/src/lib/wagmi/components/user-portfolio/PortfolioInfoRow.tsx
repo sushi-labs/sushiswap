@@ -25,7 +25,7 @@ export const PortfolioInfoRow: FC<PortfolioInfoRow> = ({
     >
       <div className="shrink-0">
         <Badge
-          className="border-2 border-slate-900 bg-background rounded-full z-[11]"
+          className="border-2 border-background bg-background rounded-full z-[11]"
           position="bottom-right"
           badgeContent={
             <NetworkIcon chainId={chainId} width={14} height={14} />
