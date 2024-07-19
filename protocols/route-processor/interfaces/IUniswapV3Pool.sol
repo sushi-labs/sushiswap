@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma solidity 0.8.10;
+pragma solidity =0.8.25;
 
 interface IUniswapV3Pool {
   function token0() external returns (address);
