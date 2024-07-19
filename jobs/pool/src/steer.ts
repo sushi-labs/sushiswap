@@ -10,7 +10,6 @@ import {
 import { ID, chainName, isPromiseFulfilled } from 'sushi'
 import { TickMath } from 'sushi/pool/sushiswap-v3'
 
-import { getAddress } from 'viem'
 import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import {
   deprecateVaults,
