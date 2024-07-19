@@ -10,7 +10,6 @@ import {
 import { ID, chainName, isPromiseFulfilled } from 'sushi'
 import { TickMath } from 'sushi/pool/sushiswap-v3'
 
-import { getAddress } from 'viem'
 import { updatePoolsWithSteerVaults } from './etl/pool/load.js'
 import {
   deprecateVaults,
@@ -146,8 +145,8 @@ async function extractChain(chainId: SteerChainId) {
 
       const payload = payloads[i]
 
-      const token0Price = prices[getAddress(vault.token0.address)] || 0
-      const token1Price = prices[getAddress(vault.token1.address)] || 0
+      const token0Price = prices[vault.token0.address.toLowerCase()] || 0
+      const token1Price = prices[vault.token1.address.toLowerCase()] || 0
 
       const reserve0USD = pool
         ? (Number(vault.reserve0) / 10 ** pool.token0.decimals) * token0Price
