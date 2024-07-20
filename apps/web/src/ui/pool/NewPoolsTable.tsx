@@ -1,7 +1,7 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { PoolsV1 } from '@sushiswap/graph-client/data-api'
+import { TopPools } from '@sushiswap/graph-client/data-api'
 
 import {
   Badge,
@@ -181,11 +181,11 @@ const COLUMNS = [
         : formatUSD(props.row.original.feeUSD1d),
   },
   APR_COLUMN,
-] as ColumnDef<PoolsV1[number], unknown>[]
+] as ColumnDef<TopPools[number], unknown>[]
 
 interface PositionsTableProps {
-  pools: PoolsV1
-  onRowClick?(row: PoolsV1[number]): void
+  pools: TopPools
+  onRowClick?(row: TopPools[number]): void
 }
 
 export const NewPoolsTable: FC<PositionsTableProps> = ({
@@ -209,7 +209,7 @@ export const NewPoolsTable: FC<PositionsTableProps> = ({
   }, [data?.length, sorting])
 
   const rowRenderer = useCallback(
-    (row: Row<PoolsV1[number]>, rowNode: ReactNode) => {
+    (row: Row<TopPools[number]>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot

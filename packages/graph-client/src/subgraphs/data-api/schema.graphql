@@ -14,13 +14,15 @@ type SushiDayBuckets {
 }
 
 type Query {
-  dayBuckets(chainId: ID!): SushiDayBuckets!
-  topPools(chainId: ID!): [TopPool]
+  sushiDayBuckets(chainId: Int!): SushiDayBuckets!
+  topPools(chainId: Int!): [TopPool]
   pool(address: String!, chainId: Int!, protocol: String!): Pool
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
   portfolioHistory(id: ID!): [PortfolioTransaction]!
+  smartPool(chainId: Int!, vaultAddress: String!): BasicSmartPool!
+  smartPools(chainId: Int!): [BasicSmartPool]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
   v2LiquidityPositions(user: String!, chainId: Int!): [V2LiquidityPosition]!
@@ -325,6 +327,32 @@ type PortfolioTransaction {
   approve: PortfolioTransactionToken
   gasFeeNative: Float!
   gasFeeUSD: Float!
+}
+
+type BasicSmartPool {
+  id: ID!
+  chainId: Int!
+  address: String!
+  swapFee: Float!
+  protocol: String!
+  token0: Token!
+  token1: Token!
+  strategy: String
+  liquidityUSD: Float!
+  vaultLiquidityUSD: Float!
+  feeUSD1d: Float!
+  feeApr1d: Float!
+  feeAndIncentiveApr1d: Float!
+  stakedApr1d: Float!
+  stakedAndIncentiveApr1d: Float!
+  incentiveApr: Float!
+  wasIncentivized: Boolean!
+  isIncentivized: Boolean!
+  description: String!
+  lowerTick: Int!
+  upperTick: Int!
+  adjustmentFrequency: Int!
+  lastAdjustmentTimestamp: Int!
 }
 
 type SushiBarStats {

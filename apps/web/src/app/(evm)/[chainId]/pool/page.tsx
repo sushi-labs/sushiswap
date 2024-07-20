@@ -1,4 +1,4 @@
-import { getPools } from '@sushiswap/graph-client/data-api'
+import { getTopPools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import React from 'react'
@@ -11,8 +11,8 @@ export default async function PoolPage({
   params: { chainId: string }
 }) {
   const pools = await unstable_cache(
-    async () => getPools({ chainId: params.chainId }),
-    ['pools', params.chainId],
+    async () => getTopPools({ chainId: Number(params.chainId) }),
+    ['pools', params.chainId.toString()],
     {
       revalidate: 60 * 3,
     },

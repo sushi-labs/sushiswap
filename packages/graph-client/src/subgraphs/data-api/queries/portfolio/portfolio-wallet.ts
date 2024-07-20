@@ -1,7 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
-import { graphql } from '../graphql'
+import { graphql } from '../../graphql'
 
 export const PortfolioWalletQuery = graphql(
   `

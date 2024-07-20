@@ -1,11 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request'
 // import { SUSHI_DATA_API_V0_URL } from 'sushi/config/subgraph'
-import { graphql } from '../graphql'
+import { graphql } from '../../graphql'
 
 export const PoolsQuery = graphql(
   `
-query Pools($chainId: ID!) {
+query Pools($chainId: Int!) {
     topPools(chainId: $chainId) {
       chainId
       id
@@ -40,7 +40,7 @@ query Pools($chainId: ID!) {
 
 export type GetPools = VariablesOf<typeof PoolsQuery>
 
-export async function getPools(variables: GetPools, options?: RequestOptions) {
+export async function getTopPools(variables: GetPools, options?: RequestOptions) {
   const url = `https://data-api-production-acb1.up.railway.app/graphql/`
 
   const result = await request(
@@ -48,10 +48,10 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
     options,
   )
   if (result) {
-    return result.topPools
+    return result.topPools ?? []
   }
 
-  throw new Error('No pools')
+  throw new Error('No pools found')
 }
 
-export type PoolsV1 = Awaited<ReturnType<typeof getPools>>
+export type TopPools = Awaited<ReturnType<typeof getTopPools>>
