@@ -2,24 +2,24 @@
 
 import {
   CardContent,
+  CardDescription,
   CardHeader,
+  CardTitle,
+  SkeletonBox,
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { CardDescription, CardTitle } from '@sushiswap/ui'
-import { SkeletonBox } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import { FC, useCallback, useMemo } from 'react'
-import { usePoolGraphData } from 'src/lib/hooks'
 
 import { formatUSD } from 'sushi/format'
 import tailwindConfig from 'tailwind.config.js'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
-import { SushiSwapV2ChainId } from 'sushi/config'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
+import { PoolV1 } from '@sushiswap/graph-client/data-api'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/bar'
@@ -32,34 +32,20 @@ import 'echarts/lib/visual/seriesColor'
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  address: string
-  chainId: SushiSwapV2ChainId
+  pool: PoolV1 | null
 }
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const PoolChartGraph: FC<PoolChartProps> = ({
-  chart,
-  period,
-  address,
-  chainId,
-}) => {
-  const {
-    data: graphPair,
-    isInitialLoading: isLoading,
-    isError,
-  } = usePoolGraphData({
-    poolAddress: address,
-    chainId,
-  })
-
-  const swapFee = graphPair ? graphPair?.swapFee : 0
+export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
+  const isLoading = useMemo(() => !pool, [pool])
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
+    
     const data =
       (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-        ? graphPair?.hourSnapshots
-        : graphPair?.daySnapshots) || []
+        ? pool?.poolHourData
+        : pool?.poolDayData) || []
 
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
@@ -67,7 +53,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         if (cur?.date * 1000 >= currentDate - chartPeriods[period]) {
           acc[0].push(cur?.date)
           if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur?.volumeUSD * Number(swapFee)))
+            acc[1].push(Number(cur?.volumeUSD * Number(pool?.swapFee)))
           } else if (chart === PoolChartType.Volume) {
             acc[1].push(Number(cur?.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
@@ -80,13 +66,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
     )
 
     return [x.reverse(), y.reverse()]
-  }, [
-    chart,
-    graphPair?.hourSnapshots,
-    graphPair?.daySnapshots,
-    period,
-    swapFee,
-  ])
+  }, [chart, period, pool])
 
   // Transient update for performance
   const onMouseOver = useCallback(
@@ -100,7 +80,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
 
       if (valueNodes[1]) {
         if (chart === PoolChartType.Volume) {
-          valueNodes[1].innerHTML = formatUSD(value * Number(swapFee))
+          valueNodes[1].innerHTML = formatUSD(value * Number(pool?.swapFee))
         }
       }
 
@@ -115,7 +95,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         )
       }
     },
-    [period, chart, swapFee],
+    [period, chart, pool?.swapFee],
   )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
@@ -231,7 +211,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
             <span className="text-sm font-medium text-gray-600 dark:text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">
-                {formatUSD(defaultValue * Number(swapFee))}
+                {formatUSD(defaultValue * Number(pool?.swapFee))}
               </span>{' '}
               earned
             </span>
@@ -240,8 +220,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         <CardDescription>
           {isLoading ? (
             <SkeletonText fontSize="sm" />
-          ) : isError || !xData.length ? (
-            <div className="text-sm h-[1ch] w-full" />
           ) : (
             <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
               {format(
@@ -259,8 +237,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
               'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
             )}
           />
-        ) : isError ? (
-          <div className="h-[400px] w-full" />
         ) : (
           <ReactEchartsCore
             echarts={echarts}

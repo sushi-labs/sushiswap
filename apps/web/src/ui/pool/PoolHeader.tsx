@@ -1,7 +1,6 @@
 'use client'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { Pool as PoolV2 } from '@sushiswap/client'
 import {
   Button,
   Currency,
@@ -23,11 +22,12 @@ import { formatPercent, shortenAddress } from 'sushi/format'
 import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 
 import { APRHoverCard } from './APRHoverCard'
+import { PoolV1 } from '@sushiswap/graph-client/data-api'
 
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: SushiSwapV3Pool | null | undefined | PoolV2
+  pool: SushiSwapV3Pool | null | undefined | PoolV1
   apy?: {
     fees: number | undefined
     rewards: number | undefined
