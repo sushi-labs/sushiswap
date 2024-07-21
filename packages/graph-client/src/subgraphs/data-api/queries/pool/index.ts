@@ -1,2 +1,3 @@
 export * from './top-pools'
-export * from './pool'
+export * from './v2-pool'
+export * from './v3-pool'

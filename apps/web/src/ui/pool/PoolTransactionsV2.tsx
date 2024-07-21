@@ -15,7 +15,7 @@ import { Chain, ChainId } from 'sushi/chain'
 import { SushiSwapV2ChainId, isSushiSwapV2ChainId } from 'sushi/config'
 
 import {
-  PoolV1,
+  V2Pool,
   getSushiV2Burns,
   getSushiV2Mints,
   getSushiV2Swaps,
@@ -87,7 +87,7 @@ const fetchSwaps = async (address: string, chainId: SushiSwapV2ChainId) => {
 // Will only support the last 1k txs
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
 function useTransactionsV2(
-  pool: PoolV1 | undefined | null,
+  pool: V2Pool | undefined | null,
   poolId: string,
   opts: UseTransactionsV2Opts,
 ) {
@@ -175,7 +175,7 @@ function useTransactionsV2(
 type Transaction = NonNullable<ReturnType<typeof useTransactionsV2>['data']>[0]
 
 interface PoolTransactionsV2Props {
-  pool: PoolV1 | undefined | null
+  pool: V2Pool | undefined | null
   poolId: string
 }
 

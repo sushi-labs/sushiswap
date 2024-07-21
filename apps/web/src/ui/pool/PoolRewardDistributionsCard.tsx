@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { useAngleRewards } from '@sushiswap/react-query'
 import {
   Button,
@@ -22,9 +21,10 @@ import { getAddress } from 'viem'
 
 import { isAngleEnabledChainId } from 'sushi/config'
 import { DistributionDataTable } from './DistributionDataTable'
+import { V3Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolRewardDistributionsCardParams {
-  pool: Pool
+  pool: V3Pool
 }
 
 export const PoolRewardDistributionsCard: FC<

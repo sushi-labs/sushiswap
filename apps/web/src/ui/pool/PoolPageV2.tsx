@@ -7,10 +7,10 @@ import { PoolComposition } from './PoolComposition'
 import { PoolRewards } from './PoolRewards'
 import { PoolStats } from './PoolStats'
 import { UnknownTokenAlert } from './UnknownTokenAlert'
-import { getPool } from '@sushiswap/graph-client/data-api'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolPageV2 {
-  pool: Awaited<ReturnType<typeof getPool>>
+  pool: Awaited<V2Pool>
 
 }
 

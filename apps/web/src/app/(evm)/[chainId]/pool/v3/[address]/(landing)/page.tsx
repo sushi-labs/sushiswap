@@ -1,8 +1,8 @@
-import { getV2Pool } from '@sushiswap/graph-client/data-api'
+import { getV3Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
-import { PoolPageV2 } from 'src/ui/pool/PoolPageV2'
+import { PoolPageV3 } from 'src/ui/pool/PoolPageV3'
 
 export default async function PoolPage({
   params,
@@ -11,7 +11,7 @@ export default async function PoolPage({
 }) {
   const { chainId, address } = params
   const pool = await unstable_cache(
-    async () => await getV2Pool({ chainId: Number(chainId), address }),
+    async () => await getV3Pool({ chainId: Number(chainId), address }),
     ['pool', `${chainId}:${address}`],
     {
       revalidate: 60 * 3,
@@ -23,5 +23,5 @@ export default async function PoolPage({
     notFound()
   }
 
-  return <PoolPageV2 pool={pool} />
+  return <PoolPageV3 pool={pool} />
 }

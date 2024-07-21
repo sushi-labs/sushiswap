@@ -15,8 +15,9 @@ type SushiDayBuckets {
 
 type Query {
   sushiDayBuckets(chainId: Int!): SushiDayBuckets!
-  topPools(chainId: Int!): [TopPool]
-  pool(address: String!, chainId: Int!, protocol: String!): Pool
+  topPools(chainId: Int!): [TopPool]!
+  v2Pool(address: String!, chainId: Int!): V2Pool!
+  v3Pool(address: String!, chainId: Int!): V3Pool!
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
@@ -30,11 +31,11 @@ type Query {
   v2Burns(address: String!, chainId: Int!): [V2Burn]!
   v2Mints(address: String!, chainId: Int!): [V2Mint]!
   v2Transactions(address: String!, chainId: Int!): [V2Transaction]!
-  v3Swaps(address: String!, chainId: Int!): [V3Swap]
-  v3Burns(address: String!, chainId: Int!): [V3Burn]
-  v3Mints(address: String!, chainId: Int!): [V3Mint]
-  v3Collects(address: String!, chainId: Int!): [V3Collect]
-  v3Transactions(address: String!, chainId: Int!): [V3Transaction]
+  v3Swaps(address: String!, chainId: Int!): [V3Swap]!
+  v3Burns(address: String!, chainId: Int!): [V3Burn]!
+  v3Mints(address: String!, chainId: Int!): [V3Mint]!
+  v3Collects(address: String!, chainId: Int!): [V3Collect]!
+  v3Transactions(address: String!, chainId: Int!): [V3Transaction]!
 }
 
 type Token {
@@ -45,7 +46,7 @@ type Token {
   decimals: Int!
 }
 
-type Pool {
+type V2Pool {
   id: ID!
   chainId: Int!
   name: String!
@@ -56,9 +57,49 @@ type Pool {
   token0: Token!
   token1: Token!
   source: String!
-  reserve0: Float!
-  reserve1: Float!
-  liquidity: Float!
+  reserve0: String!
+  reserve1: String!
+  liquidity: String!
+  volumeUSD: Float!
+  liquidityUSD: Float!
+  token0Price: Float!
+  token1Price: Float!
+  volumeUSD1d: Float!
+  feeUSD1d: Float!
+  txCount1d: Int!
+  feeApr1d: Float!
+  totalApr1d: Float!
+  volumeUSD1dChange: Float!
+  feeUSD1dChange: Float!
+  txCount1dChange: Float!
+  liquidityUSD1dChange: Float!
+  incentiveApr: Float!
+  isIncentivized: Boolean!
+  wasIncentivized: Boolean!
+  incentives: [Incentive]!
+  hourBuckets: [PoolBucket]!
+  dayBuckets: [PoolBucket]!
+}
+
+type V3Pool {
+  id: ID!
+  chainId: Int!
+  name: String!
+  address: String!
+  createdAt: String!
+  swapFee: Float!
+  protocol: String!
+  token0: Token!
+  token1: Token!
+  source: String!
+  reserve0: String!
+  reserve1: String!
+  liquidity: String!
+  sqrtPrice: String!
+  tick: String!
+  observationIndex: String!
+  feeGrowthGlobal0X128: String!
+  feeGrowthGlobal1X128: String!
   volumeUSD: Float!
   liquidityUSD: Float!
   token0Price: Float!

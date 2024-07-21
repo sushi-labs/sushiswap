@@ -19,7 +19,7 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
-import { PoolV1 } from '@sushiswap/graph-client/data-api'
+import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/bar'
@@ -32,7 +32,7 @@ import 'echarts/lib/visual/seriesColor'
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  pool: PoolV1 | null
+  pool: V2Pool | V3Pool | null
 }
 
 const tailwind = resolveConfig(tailwindConfig)
