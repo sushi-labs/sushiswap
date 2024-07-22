@@ -52,7 +52,8 @@
     },
     "patchedDependencies": {
       "@viem/anvil@0.0.6": "patches/@viem__anvil@0.0.6.patch",
-      "next@14.2.3": "patches/next@14.2.3.patch"
+      "next@14.2.3": "patches/next@14.2.3.patch",
+      "@rainbow-me/rainbowkit@2.1.2": "patches/@rainbow-me__rainbowkit@2.1.2.patch"
     }
   }
 }

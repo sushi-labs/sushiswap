@@ -1,0 +1,30 @@
+diff --git a/dist/index.js b/dist/index.js
+index d1b71d6d0f74e56976f60d5de7aa4c49c9dfb57d..bde659494a9ed1453a27a55549f5266c0f25a6df 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1009,7 +1009,6 @@ function useIsMounted() {
+ import { useBalance } from "wagmi";
+ 
+ // src/hooks/useMainnetEnsAvatar.ts
+-import { normalize } from "viem/ens";
+ import { useEnsAvatar } from "wagmi";
+ import { mainnet as mainnet2 } from "wagmi/chains";
+ 
+@@ -1027,15 +1026,10 @@ function useIsMainnetConfigured() {
+ // src/hooks/useMainnetEnsAvatar.ts
+ function useMainnetEnsAvatar(name) {
+   const mainnetConfigured = useIsMainnetConfigured();
+-  const safeNormalize = (ensName) => {
+-    try {
+-      return normalize(ensName);
+-    } catch {
+-    }
+-  };
++  
+   const { data: ensAvatar } = useEnsAvatar({
+     chainId: mainnet2.id,
+-    name: name ? safeNormalize(name) : void 0,
++    name,
+     query: {
+       enabled: mainnetConfigured
+     }
