@@ -34,7 +34,7 @@ export function useSimulateTrade({
       ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
       : undefined,
     abi: routeProcessor4Abi,
-    functionName: trade?.functionName,
+    functionName: trade?.functionName || 'processRoute', // To make typescript happy
     args: trade?.writeArgs as any,
     value: trade?.value || 0n,
     query: {
@@ -51,6 +51,7 @@ export function useSimulateTrade({
         enabled &&
         Boolean(
           trade?.writeArgs &&
+            trade?.functionName &&
             isRouteProcessor4ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),

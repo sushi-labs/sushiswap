@@ -68,7 +68,7 @@
     "deepmerge-ts": "^4.3.0",
     "sushi": "workspace:*",
     "tslib": "latest",
-    "viem": "2.10.11",
+    "viem": "2.17.8",
     "zod": "3.21.4"
   },
   "devDependencies": {

@@ -225,7 +225,7 @@
     "@types/seedrandom": "3.0.1",
     "tsc-alias": "^1.8.10",
     "typescript": "5.4.5",
-    "viem": "2.10.11",
+    "viem": "2.17.8",
     "vitest": "0.34.6",
     "zod": "3.21.4"
   },
