@@ -17,35 +17,6 @@ query SushiBarStats {
     apr6m
     apr12m
   }
-  sushiBarStats {
-    hourSnapshots {
-      id
-      date
-      xSushiSupply
-      apr1m
-      apr3m
-      apr6m
-      apr12m
-    }
-    daySnapshots {
-      id
-      date
-      xSushiSupply
-      apr1m
-      apr3m
-      apr6m
-      apr12m
-    }
-    weekSnapshots {
-      id
-      date
-      xSushiSupply
-      apr1m
-      apr3m
-      apr6m
-      apr12m
-    }
-  }
 }
 
 `,
