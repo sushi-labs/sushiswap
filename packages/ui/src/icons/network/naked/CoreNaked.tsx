@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const CoreNaked: IconComponent = (props) => {
+export const CoreNaked: NakedNetworkIconComponent = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,6 +12,7 @@ export const CoreNaked: IconComponent = (props) => {
       version="1.1"
       {...props}
     >
+      {props.circle}
       <path
         fillRule="evenodd"
         clipRule="evenodd"
