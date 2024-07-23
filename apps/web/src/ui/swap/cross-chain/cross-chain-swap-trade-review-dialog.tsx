@@ -167,17 +167,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     }
   }, [error, trade])
 
-  const onComplete = useCallback(() => {
-    // Reset after half a second because of dialog close animation
-    setTimeout(() => {
-      setStepStates({
-        source: StepState.NotStarted,
-        bridge: StepState.NotStarted,
-        dest: StepState.NotStarted,
-      })
-    }, 500)
-  }, [])
-
   const trace = useTrace()
 
   const onWriteSuccess = useCallback(
@@ -285,16 +274,15 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const onWriteError = useCallback(
     (e: Error) => {
-      if (e.cause instanceof UserRejectedRequestError) {
-        onComplete()
-        return
-      }
-
       setStepStates({
         source: StepState.Failed,
         bridge: StepState.NotStarted,
         dest: StepState.NotStarted,
       })
+
+      if (e.cause instanceof UserRejectedRequestError) {
+        return
+      }
 
       createErrorToast(e.message, false)
 
@@ -307,7 +295,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         error: stringify(e),
       })
     },
-    [onComplete, trade],
+    [trade],
   )
 
   const {
