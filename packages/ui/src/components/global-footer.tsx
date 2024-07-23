@@ -2,15 +2,13 @@
 
 import dynamic from 'next/dynamic'
 import { ReactNode, useCallback } from 'react'
+import { DiscordIcon } from '../icons/DiscordIcon'
+import { GithubIcon } from '../icons/GithubIcon'
+import { InstagramIcon } from '../icons/InstagramIcon'
+import { SushiWithTextIcon } from '../icons/SushiWithTextIcon'
+import { TwitterIcon } from '../icons/TwitterIcon'
 import { ExtractProps } from '../types'
 import { Container, ContainerProps } from './container'
-import {
-  DiscordIcon,
-  GithubIcon,
-  InstagramIcon,
-  SushiWithTextIcon,
-  TwitterIcon,
-} from './icons'
 import { LinkExternal } from './link'
 
 export interface FooterProps

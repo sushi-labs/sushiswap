@@ -14,15 +14,15 @@ import {
   FactoryV3,
   LogFilterType,
 } from '@sushiswap/extractor'
-import { PoolCode, Router } from '@sushiswap/router'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { CurveMultitokenPool, RToken, getBigInt } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { EthereumProvider } from 'hardhat/types'
 import seedrandom from 'seedrandom'
 import { erc20Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 import { Token } from 'sushi/currency'
+import { PoolCode, Router } from 'sushi/router'
+import { CurveMultitokenPool, RToken, getBigInt } from 'sushi/tines'
 import {
   Address,
   WalletClient,
@@ -33,7 +33,11 @@ import {
 } from 'viem'
 import { PublicClient } from 'viem'
 import { hardhat } from 'viem/chains'
-import { createHardhatProvider, setTokenBalance, takeSnapshotEnv } from '../src'
+import {
+  createHardhatProvider,
+  setTokenBalance,
+  takeSnapshotEnv,
+} from '../src/index.js'
 
 function closeValues(
   _a: number | bigint,
@@ -332,11 +336,9 @@ it.skip('Extractor Ethereum allPoolsTest test (Curve only)', async () => {
         '0x2dded6Da1BF5DBdF597C45fcFaa3194e53EcfeAF', // TODO: fix it !!!
         '0x06364f10B501e868329afBc005b3492902d6C763', // TODO: fix it !!!
         '0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C', // TODO: fix it !!!
-        '0xC18cC39da8b11dA8c3541C598eE022258F9744da', // Wrong setTokenBalance for RSV (0x196f4727526eA7FB1e17b2071B3d8eAA38486988)
         '0xF9440930043eb3997fc70e1339dBb11F341de7A8', // TODO: fix it !!!
         '0x618788357D0EBd8A37e763ADab3bc575D54c2C7d', // TODO: fix it !!!
         '0xBfAb6FA95E0091ed66058ad493189D2cB29385E6', // TODO: fix it !!!
-        '0x8461A004b50d321CB22B7d034969cE6803911899', // Wrong setTokenBalance for sKRW (0x269895a3dF4D73b077Fc823dD6dA1B95f72Aaf9B)
         '0xa1F8A6807c402E4A15ef4EBa36528A3FED24E577', // Expected close: 3285358155081594300, 3285468191978248192
         '0x87650D7bbfC3A9F10587d7778206671719d9910D', // Transaction reverted without a reason string
         '0x8818a9bb44Fbf33502bE7c15c500d0C783B73067', // Wrong setTokenBalance for sJPY (0xF6b1C627e95BFc3c1b4c9B825a032Ff0fBf3e07d)

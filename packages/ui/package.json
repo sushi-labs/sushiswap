@@ -18,25 +18,24 @@
     "./index.css": "./index.css",
     "./date-picker.css": "./date-picker.css",
     "./tailwind.js": "./tailwind.js",
-    ".": [
-      "./dist/index.js"
-    ],
-    "./*": [
-      "./dist/*.js",
-      "./dist/*/index.js"
-    ],
-    "./future/*": [
-      "./dist/future/*.js",
-      "./dist/future/*/index.js"
-    ]
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./icons/*": {
+      "types": "./dist/icons/*.d.ts",
+      "import": "./dist/icons/*.js",
+      "default": "./dist/icons/*.js"
+    }
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/*",
-        "dist/*/index",
-        "dist/future/*",
-        "dist/future/*/index"
+      ".": [
+        "src/**/*"
+      ],
+      "./icons/*": [
+        "src/icons/*"
       ]
     }
   },
@@ -79,10 +78,10 @@
     "@radix-ui/react-toggle": "1.0.3",
     "@radix-ui/react-tooltip": "1.0.6",
     "@react-hook/window-scroll": "1.3.0",
-    "@sushiswap/dexie": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
+    "@sushiswap/telemetry": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",
     "@tailwindcss/typography": "0.5.9",
@@ -100,7 +99,6 @@
     "react-hook-form": "7.41.2",
     "react-jazzicon": "1.0.4",
     "react-spring": "9.6.1",
-    "react-toastify": "9.1.3",
     "react-virtualized-auto-sizer": "1.0.7",
     "react-window": "1.8.7",
     "tailwind-merge": "1.13.2",
@@ -123,8 +121,8 @@
     "react-dom": "18.2.0",
     "sushi": "workspace:*",
     "tailwindcss": "3.3.2",
-    "typescript": "5.2.2",
-    "wagmi": "2.5.20"
+    "typescript": "5.4.5",
+    "wagmi": "2.9.12"
   },
   "peerDependencies": {
     "next": "14.2.3",
@@ -132,7 +130,7 @@
     "react-dom": "18.2.0",
     "sushi": "*",
     "tailwindcss": "3.3.2",
-    "wagmi": "2.5.20"
+    "wagmi": "2.9.12"
   },
   "peerDependenciesMeta": {
     "next": {

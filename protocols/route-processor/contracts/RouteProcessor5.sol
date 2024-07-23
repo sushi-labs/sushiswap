@@ -217,7 +217,7 @@ contract RouteProcessor5 is Ownable {
 
     uint256 balanceInFinal = tokenIn.anyBalanceOf(msg.sender);
     if (tokenIn != Utils.NATIVE_ADDRESS)
-      require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
+      require(balanceInFinal + amountIn + 10 >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
     
     uint256 balanceOutFinal = tokenOut.anyBalanceOf(to);
     if (balanceOutFinal < balanceOutInitial + amountOutMin)
@@ -512,9 +512,9 @@ contract RouteProcessor5 is Ownable {
       IERC20(tokenIn).approveSafe(pool, amountIn);
       if (poolType == 0) amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
       else {
-        uint256 balanceBefore = IERC20(tokenOut).balanceOf(address(this));
+        uint256 balanceBefore = tokenOut.anyBalanceOf(address(this));
         ICurveLegacy(pool).exchange(fromIndex, toIndex, amountIn, 0);
-        uint256 balanceAfter = IERC20(tokenOut).balanceOf(address(this));
+        uint256 balanceAfter = tokenOut.anyBalanceOf(address(this));
         amountOut = balanceAfter - balanceBefore;
       }
     }

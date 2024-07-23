@@ -8,7 +8,10 @@ import {
   AlgebraPoolWatcher,
   AlgebraPoolWatcherStatus,
 } from './AlgebraPoolWatcher.js'
-import { CurveConfig, CurveExtractor } from './CurveExtractor.js'
+import {
+  CurveWhitelistConfig,
+  CurveWhitelistExtractor,
+} from './CurveWhitelistExtractor.js'
 import { LogFilter2, LogFilterType } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { TokenManager } from './TokenManager.js'
@@ -25,7 +28,7 @@ export type ExtractorConfig = {
   factoriesV2?: FactoryV2[]
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
-  curveConfig?: CurveConfig
+  curveConfig?: CurveWhitelistConfig
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   cacheDir: string
@@ -52,7 +55,7 @@ export class Extractor {
   extractorV2?: UniV2Extractor
   extractorV3?: UniV3Extractor
   extractorAlg?: AlgebraExtractor
-  extractorCurve?: CurveExtractor
+  extractorCurve?: CurveWhitelistExtractor
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   requestedPairs: Map<string, Set<string>> = new Map()
@@ -130,7 +133,7 @@ export class Extractor {
         this.tokenManager,
       )
     if (args.curveConfig)
-      this.extractorCurve = new CurveExtractor(
+      this.extractorCurve = new CurveWhitelistExtractor(
         this.client,
         args.curveConfig,
         this.logFilter,
@@ -395,6 +398,15 @@ export class Extractor {
         )
         fetchingAll = fetchingAll.concat(fetching)
       }
+      if (this.extractorCurve) {
+        const { prefetched, fetching } =
+          this.extractorCurve.getPoolsBetweenTokenSets(
+            tokens1Unique,
+            tokens2Unique,
+          )
+        prefetchedAll = prefetchedAll.concat(prefetched)
+        fetchingAll = fetchingAll.concat(fetching)
+      }
       const fetchedAll = await Promise.allSettled(fetchingAll)
       const res = prefetchedAll
         .concat(
@@ -488,6 +500,7 @@ export class Extractor {
       let poolsV2: PoolCode[] = []
       let watchersV3: UniV3PoolWatcher[] = []
       let watchersAlg: AlgebraPoolWatcher[] = []
+      let poolsCurve: PoolCode[] = []
       let promises: Promise<void>[] = []
 
       const tokenMap = new Map<string, Token>()
@@ -542,6 +555,16 @@ export class Extractor {
         )
       }
 
+      if (this.extractorCurve) {
+        const { prefetched, fetching } =
+          this.extractorCurve.getPoolsForTokens(tokensUnique)
+        poolsCurve = prefetched
+        promises = fetching.map(async (p) => {
+          const pc = await p
+          if (pc !== undefined) poolsCurve.push(pc)
+        })
+      }
+
       await Promise.any([Promise.allSettled(promises), delay(timeout)])
       const poolsV3 = watchersV3
         .map((w) => w.getPoolCode())
@@ -562,7 +585,7 @@ export class Extractor {
         }
       }
       ++this.requestFinishedNum
-      return poolsV3.concat(poolsAlg).concat(poolsV2)
+      return poolsV3.concat(poolsAlg).concat(poolsV2).concat(poolsCurve)
     } catch (e) {
       ++this.requestFinishedNum
       ++this.requestFailedNum
@@ -621,7 +644,8 @@ export class Extractor {
     const pools2 = this.extractorV2?.getUpdatedPoolCodes() ?? []
     const pools3 = this.extractorV3?.getUpdatedPoolCodes() ?? []
     const poolsAlg = this.extractorAlg?.getUpdatedPoolCodes() ?? []
-    return pools2.concat(pools3).concat(poolsAlg)
+    const poolsCurve = this.extractorCurve?.getUpdatedPoolCodes() ?? []
+    return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
   }
 
   isStarted(): boolean {

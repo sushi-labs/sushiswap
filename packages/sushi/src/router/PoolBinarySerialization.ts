@@ -13,6 +13,7 @@ import {
   UniV3Pool,
   createCurvePoolsForMultipool,
 } from '../tines/index.js'
+import { curvePoolType2Num, curvePoolTypeFromNum } from './curve-sdk.js'
 import { LiquidityProviders } from './liquidity-providers/index.js'
 import {
   ConstantProductPoolCode,
@@ -104,6 +105,7 @@ export function serializePoolsBinary(
       CurveCoreSerialized.add(core.address)
 
       stream.uint8(PoolTypeIndex.Curve)
+      stream.uint8(curvePoolType2Num(pc.poolType))
       stream.address(core.address)
       stream.uint8(core.tokens.length)
       core.tokens.forEach((t, i) => {
@@ -189,15 +191,18 @@ export function deserializePoolsBinary(
           liquidityProvider as LiquidityProviders,
         )
         break
-      case PoolTypeIndex.Curve:
+      case PoolTypeIndex.Curve: {
+        const curvePoolType = curvePoolTypeFromNum(stream.uint8())
         readCurveRPools(stream, tokensArray).forEach((p) => {
           pools[i++] = new CurvePoolCode(
             p,
             liquidityProvider as LiquidityProviders,
             liquidityProvider,
+            curvePoolType,
           )
         })
         break
+      }
       default:
         console.error(`Deserealization: unknown pool type ${poolType}`)
     }

@@ -22,6 +22,7 @@ module.exports = {
     './src/ui/**/*.{js,ts,jsx,tsx,mdx}',
     '../../packages/wagmi/src/**/*.{ts,tsx,mdx}',
     '../../packages/ui/src/**/*.{ts,tsx,mdx}',
+    '../../packages/notifications/src/**/*.{ts,tsx,mdx}',
   ],
   // content: [
   //   // app content

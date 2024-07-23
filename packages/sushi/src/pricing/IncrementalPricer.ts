@@ -1,5 +1,5 @@
 import { Address } from 'viem'
-import { Token } from '../currency'
+import { Token } from '../currency/Token.js'
 import { RPool, RToken, calcTokenAddressPrices } from '../tines/index.js'
 import { PoolEdge, TokenVert, makePoolTokenGraph } from './PoolTokenGraph.js'
 
@@ -330,8 +330,9 @@ export class IncrementalPricer {
       const liquidity = price * Number(edge.reserve(v))
       edge.poolLiquidity = liquidity
       if (
-        liquidity >= this.minLiquidity ||
-        edge.pool.alwaysAppropriateForPricing()
+        edge.pool.alwaysAppropriateForPricing() ||
+        (liquidity >= this.minLiquidity &&
+          edge.pool.isPoolAppropriateForPricing())
       ) {
         let low = 0
         let up = nextEdges.length

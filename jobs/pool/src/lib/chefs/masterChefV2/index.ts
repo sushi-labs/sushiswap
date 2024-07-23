@@ -1,8 +1,8 @@
-import { SECONDS_BETWEEN_BLOCKS } from '@sushiswap/graph-config'
-import { daysInYear, secondsInDay } from 'date-fns'
+import { daysInYear, secondsInDay } from 'date-fns/constants'
 import { ChainId } from 'sushi/chain'
 import { SUSHI } from 'sushi/currency'
 
+import { SECONDS_BETWEEN_BLOCKS } from 'sushi/config/subgraph'
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
 import {
   divBigIntToNumber,

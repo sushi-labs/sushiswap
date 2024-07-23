@@ -46,8 +46,8 @@ export const LINEA_LIST =
 // lower index == higher priority for token import
 export const DEFAULT_TOKEN_LIST_OF_TOKEN_LISTS_TO_DISPLAY: string[] = [
   SUSHI_DEFAULT_TOKEN_LIST,
-  UNI_LIST,
-  UNI_EXTENDED_LIST,
+  // UNI_LIST, // The specific IPFS gateway does not allow CORS
+  // UNI_EXTENDED_LIST,
   COMPOUND_LIST,
   COINGECKO_LIST,
   COINGECK_BASE_LIST,

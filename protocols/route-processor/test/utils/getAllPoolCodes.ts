@@ -16,7 +16,7 @@ import {
   WNATIVE,
 } from 'sushi/currency'
 import { DataFetcher, LiquidityProviders, PoolCode } from 'sushi/router'
-import { loadPoolSnapshot, savePoolSnapshot } from 'sushi/serializer'
+import { loadPoolSnapshot, savePoolSnapshot } from './poolSnapshot.js'
 
 export async function getAllPoolCodes(
   dataFetcher: DataFetcher,

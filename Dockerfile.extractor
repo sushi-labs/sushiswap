@@ -32,26 +32,11 @@ COPY pnpm-lock.yaml pnpm-lock.yaml
 COPY pnpm-workspace.yaml pnpm-workspace.yaml
 COPY turbo.json turbo.json
 
-# RUN turbo prune @sushiswap/extractor-api --docker
-
-# FROM base AS installer
-
-# RUN pnpm install --prod --frozen-lockfile
-# RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
-
-
-# FROM base AS builder
-
 RUN pnpm install --frozen-lockfile
-RUN pnpm exec turbo run build --filter=extractor-api
-
-# FROM base AS runner
-
-# COPY --from=installer /app/node_modules /app/node_modules
-# COPY --from=builder /app/apis/extractor/dist /app/apis/extractor/dist
-
-# COPY --from=builder /app /app
+RUN pnpm exec turbo run build --filter=@sushiswap/extractor-api
 
 EXPOSE 80
 
-CMD node /app/apis/extractor/dist/index.js
+ENV NODE_ENV=production
+
+CMD NODE_OPTIONS=--max-old-space-size=$(expr $(echo "$(free -m)" | awk '/^Mem:/ {print $2}') - 512) node /app/apis/extractor/dist/index.js

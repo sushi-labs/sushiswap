@@ -38,7 +38,11 @@ export const useApplyForTokenList = () => {
         }),
       })
 
-      return await data.json()
+      const json = await data.json()
+
+      if (data.status !== 200) throw new Error(json.error)
+
+      return json
     },
   })
 }

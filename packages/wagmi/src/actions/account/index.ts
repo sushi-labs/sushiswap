@@ -1,1 +1,0 @@
-export { fetchBalances } from './fetchBalances'

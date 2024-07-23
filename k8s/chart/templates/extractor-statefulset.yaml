@@ -20,8 +20,8 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: 1000m
-              memory: 4Gi
+              cpu: 1250m
+              memory: 8Gi
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -49,6 +49,11 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: DRPC_ID
+            - name: RSK_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sushi-api
+                  key: RSK_ID
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:

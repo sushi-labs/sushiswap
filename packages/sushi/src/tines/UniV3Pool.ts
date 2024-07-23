@@ -367,4 +367,10 @@ export class UniV3Pool extends RPool {
     const p = currentPrice * currentPrice
     return direction ? p : 1 / p
   }
+
+  override isPoolAppropriateForPricing(): boolean {
+    return (
+      super.isPoolAppropriateForPricing() && this.liquidity >= this.minLiquidity
+    )
+  }
 }

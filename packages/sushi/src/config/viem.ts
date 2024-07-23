@@ -494,7 +494,7 @@ export const blast = {
 
 export const skaleEuropa = {
   id: ChainId.SKALE_EUROPA,
-  name: 'Skale Europa',
+  name: 'SKALE Europa',
   network: 'skale-europa',
   nativeCurrency: {
     decimals: 18,
@@ -526,8 +526,7 @@ export const skaleEuropa = {
 // const alchemyId =
 //   process.env['ALCHEMY_ID'] || process.env['NEXT_PUBLIC_ALCHEMY_ID']
 const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
-const getBlockId =
-  process.env['GETBLOCK_ID'] || process.env['NEXT_PUBLIC_GETBLOCK_ID']
+const rskId = process.env['RSK_ID'] || process.env['NEXT_PUBLIC_RSK_ID']
 
 export const publicTransports = {
   [ChainId.ARBITRUM_NOVA]: http(
@@ -606,11 +605,11 @@ export const publicTransports = {
     `https://lb.drpc.org/ogrpc?network=blast&dkey=${drpcId}`,
   ),
   [ChainId.SKALE_EUROPA]: http(
-    'https://mainnet.skalenodes.com/v1/elated-tan-skat',
+    'https://elated-tan-skat-archive-backup.skalenodes.com:10072',
   ),
   [ChainId.ROOTSTOCK]: http(
-    getBlockId
-      ? `https://go.getblock.io/${getBlockId}`
+    rskId
+      ? `https://rpc.mainnet.rootstock.io/${rskId}`
       : 'https://public-node.rsk.co',
   ),
   /* Testnets */ // TODO: add testnet transports
