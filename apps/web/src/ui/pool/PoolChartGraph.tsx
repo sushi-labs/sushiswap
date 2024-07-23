@@ -19,7 +19,6 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
-import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/bar'
@@ -28,24 +27,36 @@ import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/visualMap'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/visual/seriesColor'
+import { usePoolGraphData } from 'src/lib/hooks'
+import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import { SushiSwapProtocol } from 'sushi'
 
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  pool: V2Pool | V3Pool | null
+  pool: V2Pool | V3Pool
+  protocol: SushiSwapProtocol
 }
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
-  const isLoading = useMemo(() => !pool, [pool])
+export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool, protocol }) => {
+  const {
+    data: buckets,
+    isInitialLoading: isLoading,
+  } = usePoolGraphData({
+    poolAddress: pool.address,
+    chainId: pool.chainId,
+    protocol,
+  })
+
 
   const [xData, yData]: [number[], number[]] = useMemo(() => {
     
     const data =
       (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
-        ? pool?.poolHourData
-        : pool?.poolDayData) || []
+        ? buckets?.hourBuckets
+        : buckets?.dayBuckets) || []
 
     const currentDate = Math.round(Date.now())
     const [x, y] = data.reduce<[number[], number[]]>(
@@ -53,7 +64,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
         if (cur?.date * 1000 >= currentDate - chartPeriods[period]) {
           acc[0].push(cur?.date)
           if (chart === PoolChartType.Fees) {
-            acc[1].push(Number(cur?.volumeUSD * Number(pool?.swapFee)))
+            acc[1].push(Number(cur?.feesUSD))
           } else if (chart === PoolChartType.Volume) {
             acc[1].push(Number(cur?.volumeUSD))
           } else if (chart === PoolChartType.TVL) {
@@ -66,7 +77,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chart, period, pool])
+  }, [chart, period, buckets])
 
   // Transient update for performance
   const onMouseOver = useCallback(
@@ -80,7 +91,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool }) => {
 
       if (valueNodes[1]) {
         if (chart === PoolChartType.Volume) {
-          valueNodes[1].innerHTML = formatUSD(value * Number(pool?.swapFee))
+          valueNodes[1].innerHTML = formatUSD(value * Number(pool.swapFee))
         }
       }
 

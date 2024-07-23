@@ -1,6 +1,6 @@
 'use client'
 
-import { PoolV1 } from '@sushiswap/graph-client/data-api'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardContent,
@@ -13,7 +13,7 @@ import { FC } from 'react'
 import { formatNumber, formatPercent, formatUSD } from 'sushi/format'
 
 interface PoolStats {
-  pool: PoolV1
+  pool: V2Pool
 }
 
 export const PoolStats: FC<PoolStats> = ({ pool }) => {

@@ -1,22 +1,39 @@
-import type { VariablesOf } from 'gql.tada'
+import type { SteerChainId } from '@sushiswap/steer-sdk'
 import { SteerStrategy } from '@sushiswap/steer-sdk'
+import type { VariablesOf } from 'gql.tada'
 import { request, type RequestOptions } from 'src/lib/request'
-import { graphql } from '../../graphql'
-import type { SteerChainId, SteerVault } from '@sushiswap/steer-sdk'
 import type { Address } from 'viem'
+import { graphql } from '../../graphql'
+import type { VaultV1 } from './vault'
 
 export const VaultsQuery = graphql(
   `
   query Vaults($chainId: Int!, $poolAddress: String!) {
-    vaults(chainId: $chainId, poolAddress: $poolAddress) {
+    vaults(chainId: $chainId, vaultAddress: $poolAddress) {
       id
       address
       chainId
       poolAddress
       feeTier
       performanceFee
+      token0 {
+        id
+        address
+        name
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        address
+        name
+        symbol
+        decimals
+      }
       adjustmentFrequency
       lastAdjustmentTimestamp
+      strategy
+      payloadHash
       lowerTick
       upperTick
       apr
@@ -32,26 +49,16 @@ export const VaultsQuery = graphql(
       fees1USD
       reserveUSD
       feesUSD
-      strategy
-      payloadHash
+      feeApr1d
+      feeAndIncentiveApr1d
+      stakedApr1d
+      stakedAndIncentiveApr1d
+      incentiveApr
+      wasIncentivized
+      isIncentivized
       isEnabled
       wasEnabled
       isDeprecated
-
-      token0 {
-        id
-        address
-        name
-        symbol
-        decimals
-      }
-      token1 {
-        id
-        address
-        name
-        symbol
-        decimals
-      }
     }
   }
 `,
@@ -69,7 +76,7 @@ export async function getVaults(
     { url, document: VaultsQuery, variables },
     options,
   )
-  if (result) {
+  if (result.vaults) {
     const vaults = result.vaults.map((v) => {
       const strategy = SteerStrategy[v.strategy as keyof typeof SteerStrategy]
       if (!strategy) return null
@@ -95,10 +102,10 @@ export async function getVaults(
           chainId: v.chainId as SteerChainId,
         },
         strategy,
-      } satisfies SteerVault
+      } satisfies VaultV1
     })
 
-    return vaults.filter((v) => v !== null) as SteerVault[]
+    return vaults.filter((v) => v !== null) as VaultV1[]
   }
 
   throw new Error('No smart pool found')

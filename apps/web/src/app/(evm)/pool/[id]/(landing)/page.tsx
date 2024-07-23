@@ -2,7 +2,6 @@ import { getPool } from '@sushiswap/client'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
-import { PoolPageV2 } from 'src/ui/pool/PoolPageV2'
 import { PoolPageV3 } from 'src/ui/pool/PoolPageV3'
 import { unsanitize } from 'sushi'
 

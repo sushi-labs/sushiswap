@@ -10,7 +10,6 @@ import {
   type PoolHistory1D,
   type PoolV2,
   type PoolWithAprs,
-  type PoolWithBuckets,
   type PoolWithIncentives
 } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
@@ -78,22 +77,6 @@ export const V2PoolQuery = graphql(
         pid
         rewarderAddress
         rewarderType
-      }
-      hourBuckets {
-        id
-        date
-        volumeUSD
-        liquidityUSD
-        txCount
-        feesUSD
-      }
-      dayBuckets {
-        id
-        date
-        volumeUSD
-        liquidityUSD
-        txCount
-        feesUSD
       }
     }
   }
@@ -187,10 +170,8 @@ export async function getV2Pool(
         rewarderAddress: incentive.rewarderAddress as Address,
         rewarderType: incentive.rewarderType as RewarderType,
       })),
-      poolHourData: result.v2Pool.hourBuckets,
-      poolDayData: pool.dayBuckets,
-    } satisfies PoolWithBuckets<
-      PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>>
+    } satisfies 
+      PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>
     >
   }
 

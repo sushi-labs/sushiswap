@@ -6,6 +6,7 @@ import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
 import { V3Pool } from '@sushiswap/graph-client/data-api'
+import { SushiSwapProtocol } from 'sushi'
 
 const statisticsChart = [
   PoolChartType.Volume,
@@ -53,7 +54,7 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
       {chart === PoolChartType.Depth ? (
         <LiquidityDepthWidget chainId={chainId} address={address} />
       ) : (
-        <PoolChartGraph chart={chart} period={period} pool={pool} />
+        <PoolChartGraph chart={chart} period={period} pool={pool} protocol={SushiSwapProtocol.SUSHISWAP_V3} />
       )}
     </Card>
   )

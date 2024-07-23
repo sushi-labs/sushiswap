@@ -5,7 +5,8 @@ import React, { FC, useState } from 'react'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
-import { PoolV1 } from '@sushiswap/graph-client/data-api'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
+import { SushiSwapProtocol } from 'sushi'
 
 const charts = [
   PoolChartType.Volume,
@@ -21,7 +22,7 @@ const periods = [
 ]
 
 interface PoolChartV2Props {
-  pool: PoolV1
+  pool: V2Pool
 }
 
 const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {
@@ -46,6 +47,7 @@ const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {
         chart={chart}
         period={period}
         pool={pool}
+        protocol={SushiSwapProtocol.SUSHISWAP_V2}
       />
     </Card>
   )

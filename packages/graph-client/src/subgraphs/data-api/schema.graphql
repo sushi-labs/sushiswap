@@ -18,13 +18,15 @@ type Query {
   topPools(chainId: Int!): [TopPool]!
   v2Pool(address: String!, chainId: Int!): V2Pool!
   v3Pool(address: String!, chainId: Int!): V3Pool!
+  v2PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
+  v3PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
   portfolioHistory(id: ID!): [PortfolioTransaction]!
   smartPools(chainId: Int!): [BasicSmartPool]!
   vault(chainId: Int!, vaultAddress: String!): Vault!
-  vaults(chainId: Int!, poolAddress: String!): [Vault]!
+  vaults(chainId: Int!, poolAddress: String!): [Vault!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
   v2LiquidityPositions(user: String!, chainId: Int!): [V2LiquidityPosition]!
@@ -78,8 +80,6 @@ type V2Pool {
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
   incentives: [Incentive]!
-  hourBuckets: [PoolBucket]!
-  dayBuckets: [PoolBucket]!
 }
 
 type V3Pool {
@@ -121,8 +121,6 @@ type V3Pool {
   wasIncentivized: Boolean!
   incentives: [Incentive]!
   vaults: [String]!
-  hourBuckets: [PoolBucket]!
-  dayBuckets: [PoolBucket]!
 }
 
 type Incentive {
@@ -175,6 +173,11 @@ type TopPool {
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
   source: String!
+}
+
+type PoolBuckets {
+  hourBuckets: [PoolBucket]!
+  dayBuckets: [PoolBucket]!
 }
 
 type SimpleToken {
