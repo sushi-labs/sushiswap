@@ -22,8 +22,9 @@ type Query {
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
   portfolioHistory(id: ID!): [PortfolioTransaction]!
-  smartPool(chainId: Int!, vaultAddress: String!): BasicSmartPool!
   smartPools(chainId: Int!): [BasicSmartPool]!
+  vault(chainId: Int!, vaultAddress: String!): Vault!
+  vaults(chainId: Int!, poolAddress: String!): [Vault]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
   v2LiquidityPositions(user: String!, chainId: Int!): [V2LiquidityPosition]!
@@ -389,11 +390,50 @@ type BasicSmartPool {
   incentiveApr: Float!
   wasIncentivized: Boolean!
   isIncentivized: Boolean!
-  description: String!
   lowerTick: Int!
   upperTick: Int!
   adjustmentFrequency: Int!
   lastAdjustmentTimestamp: Int!
+}
+
+type Vault {
+  id: ID!
+  address: String!
+  chainId: Int!
+  poolAddress: String!
+  feeTier: Float!
+  performanceFee: Float!
+  token0: Token!
+  token1: Token!
+  adjustmentFrequency: Int!
+  lastAdjustmentTimestamp: Int!
+  strategy: String!
+  payloadHash: String!
+  lowerTick: Int!
+  upperTick: Int!
+  apr: Float!
+  apr1d: Float!
+  apr1w: Float!
+  reserve0: String!
+  reserve0USD: Float!
+  fees0: String!
+  fees0USD: Float!
+  reserve1: String!
+  reserve1USD: Float!
+  fees1: String!
+  fees1USD: Float!
+  reserveUSD: Float!
+  feesUSD: Float!
+  feeApr1d: Float!
+  feeAndIncentiveApr1d: Float!
+  stakedApr1d: Float!
+  stakedAndIncentiveApr1d: Float!
+  incentiveApr: Float!
+  wasIncentivized: Boolean!
+  isIncentivized: Boolean!
+  isEnabled: Boolean!
+  wasEnabled: Boolean!
+  isDeprecated: Boolean!
 }
 
 type SushiBarStats {

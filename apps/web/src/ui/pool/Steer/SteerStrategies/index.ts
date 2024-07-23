@@ -1,14 +1,10 @@
-import { SteerStrategy } from '@sushiswap/database'
+import { SteerStrategy } from '@sushiswap/steer-sdk'
 import { FC } from 'react'
 
-import { SteerVault, SteerVaultWithPool } from '@sushiswap/steer-sdk'
-import type {
-  PoolIfIncentivized,
-  PoolSwapFee,
-  PoolWithFeeAprs,
-  PoolWithIncentiveApr,
-} from 'sushi/types'
+import { SteerVault } from '@sushiswap/steer-sdk'
+
 import { SteerBaseStrategy } from './SteerBaseStrategy'
+import { V3Pool } from '@sushiswap/graph-client/data-api'
 
 export interface SteerStrategyGeneric {
   tokenRatios: {
@@ -31,10 +27,8 @@ export interface SteerStrategyGeneric {
 }
 
 export type SteerStrategyComponent = FC<{
-  vault: SteerVaultWithPool<
-    SteerVault,
-    PoolIfIncentivized<PoolSwapFee<PoolWithIncentiveApr<PoolWithFeeAprs>>>
-  >
+  pool: V3Pool
+  vault: SteerVault
   generic: SteerStrategyGeneric
 }>
 

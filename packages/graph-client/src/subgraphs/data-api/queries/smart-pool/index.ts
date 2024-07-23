@@ -1,2 +1,3 @@
 export * from './smart-pools'
-export * from './smart-pool'
+export * from './vault'
+export * from './vaults'

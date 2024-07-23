@@ -3,15 +3,15 @@
 import { Carousel, SkeletonBox } from '@sushiswap/ui'
 import { FC, useCallback, useMemo } from 'react'
 
-import { SteerVault } from '@sushiswap/steer-sdk'
 import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { SteerPoolCard } from './SteerPoolCard'
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 
 type RequiredPool = PoolWithIncentives<PoolWithFeeAprs>
 
 interface SteerCarousel {
   pool: RequiredPool
-  vaults: SteerVault[]
+  vaults: VaultV1[]
 }
 
 export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
@@ -19,9 +19,8 @@ export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
     () => vaults.filter((vault) => vault.isEnabled),
     [vaults],
   )
-
   const render = useCallback(
-    (vault: SteerVault) => {
+    (vault: VaultV1) => {
       return (
         <div className="w-[400px]">
           <SteerPoolCard key={vault.id} pool={pool} vault={vault} />

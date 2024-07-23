@@ -48,7 +48,6 @@ import { useMemo, useState } from 'react'
 import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
 
-import { SteerStrategy } from '@prisma/client'
 import { SmartPoolsV1, getSmartPools } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
@@ -520,7 +519,7 @@ const COLUMNS = [
 ] satisfies ColumnDef<SmartPoolsV1[number], unknown>[]
 
 export const SmartPoolsTable = () => {
-  const { tokenSymbols, chainIds, protocols, farmsOnly } = usePoolFilters()
+  const { _tokenSymbols, chainIds, protocols, farmsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
@@ -528,16 +527,6 @@ export const SmartPoolsTable = () => {
     pageIndex: 0,
     pageSize: 10,
   })
-
-  // const { data: vaults, isValidating: isValidatingVaults } = useSteerVaults({
-  //   args: {
-  //     chainIds: chainIds,
-  //     orderBy: 'reserveUSD',
-  //     orderDir: 'desc',
-  //     onlyEnabled: true,
-  //     tokenSymbols,
-  //   },
-  // })
 
   const { data: vaults, isLoading: isValidatingVaults } = useQuery({
     queryKey: ['useSmartPools', { chainId: chainIds[0] }],
