@@ -4,7 +4,7 @@ import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
 import { SquidIcon } from '@sushiswap/ui/icons/SquidIcon'
 import { FC, ReactNode } from 'react'
-import { UseCrossChainTradeResult } from 'src/lib/hooks'
+import { UseCrossChainTradeReturn } from 'src/lib/hooks'
 import {
   SushiXSwap2Adapter,
   SushiXSwapTransactionType,
@@ -23,7 +23,7 @@ interface ConfirmationDialogContent {
   bridgeUrl?: string
   adapter?: SushiXSwap2Adapter
   dialogState: { source: StepState; bridge: StepState; dest: StepState }
-  tradeRef: React.MutableRefObject<UseCrossChainTradeResult | null>
+  tradeRef: React.MutableRefObject<UseCrossChainTradeReturn | null>
 }
 
 export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({

@@ -1,19 +1,19 @@
 import { NativeAddress, apiAdapter02To01 } from '@sushiswap/react-query'
 import { UseQueryOptions, useQuery } from '@tanstack/react-query'
 import {
-  SushiXSwap2Adapter,
-  SushiXSwapTransactionType,
-} from 'src/lib/swap/cross-chain'
-import {
   CrossChainTradeSchema,
   GetCrossChainTradeParams,
-} from 'src/lib/swap/cross-chain/actions/getCrossChainTrade'
+  SushiXSwap2Adapter,
+  SushiXSwapFunctionName,
+  SushiXSwapTransactionType,
+  SushiXSwapWriteArgs,
+} from 'src/lib/swap/cross-chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { RouteStatus } from 'sushi/tines'
 import { stringify } from 'viem'
 
-export interface UseCrossChainTradeResult {
+export interface UseCrossChainTradeReturn {
   status: RouteStatus
   adapter: SushiXSwap2Adapter
   tokenIn: Type
@@ -30,8 +30,8 @@ export interface UseCrossChainTradeResult {
   gasSpent?: string
   bridgeFee?: string
   srcGasFee?: string
-  functionName?: string
-  writeArgs?: (string | object)[]
+  functionName?: SushiXSwapFunctionName
+  writeArgs?: SushiXSwapWriteArgs
   value?: string
 }
 
@@ -45,7 +45,7 @@ export interface UseCrossChainTradeParms
   tokenOut?: Type
   amount?: Amount<Type>
   query?: Omit<
-    UseQueryOptions<UseCrossChainTradeResult>,
+    UseQueryOptions<UseCrossChainTradeReturn>,
     'queryFn' | 'queryKey'
   >
 }
@@ -56,10 +56,10 @@ export const useCrossChainTrade = ({
 }: UseCrossChainTradeParms) => {
   const { tokenIn, tokenOut, amount, slippagePercentage, ...rest } = params
 
-  return useQuery<UseCrossChainTradeResult>({
+  return useQuery<UseCrossChainTradeReturn>({
     ...query,
     queryKey: ['cross-chain', params],
-    queryFn: async () => {
+    queryFn: async (): Promise<UseCrossChainTradeReturn> => {
       if (!tokenIn || !tokenOut || !amount) throw new Error()
 
       const url = new URL('/api/cross-chain', window.location.origin)
@@ -87,13 +87,13 @@ export const useCrossChainTrade = ({
 
       const { status, adapter } = parsed
 
-      if (status === 'NoWay')
+      if (status === RouteStatus.NoWay)
         return {
           status,
           adapter,
           tokenIn,
           tokenOut,
-        } as UseCrossChainTradeResult
+        }
 
       const srcBridgeToken = new Token({
         ...parsed.srcBridgeToken,
@@ -108,7 +108,7 @@ export const useCrossChainTrade = ({
             parsed.srcTrade,
             tokenIn,
             srcBridgeToken,
-            parsed.srcTrade?.status !== 'NoWay'
+            parsed.srcTrade?.status !== RouteStatus.NoWay
               ? parsed.srcTrade?.routeProcessorArgs?.to
               : undefined,
           )
@@ -119,7 +119,7 @@ export const useCrossChainTrade = ({
             parsed.dstTrade,
             dstBridgeToken,
             tokenOut,
-            parsed.dstTrade.status !== 'NoWay'
+            parsed.dstTrade.status !== RouteStatus.NoWay
               ? parsed.dstTrade.routeProcessorArgs?.to
               : undefined,
           )
@@ -133,7 +133,7 @@ export const useCrossChainTrade = ({
         dstBridgeToken,
         amountIn: Amount.fromRawAmount(tokenIn, parsed.amountIn),
         amountOut: Amount.fromRawAmount(tokenOut, parsed.amountOut),
-        amountOutMin: Amount.fromRawAmount(tokenOut, parsed.minAmountOut),
+        amountOutMin: Amount.fromRawAmount(tokenOut, parsed.amountOutMin),
         srcTrade,
         dstTrade,
         priceImpact: new Percent(Math.round(parsed.priceImpact * 10000), 10000),
@@ -155,7 +155,7 @@ export const useCrossChainTrade = ({
               parsed.srcGasFee,
             ).toFixed(6)
           : undefined,
-      } as UseCrossChainTradeResult
+      }
     },
     enabled: query?.enabled !== false && Boolean(tokenIn && tokenOut && amount),
     queryKeyHashFn: stringify,

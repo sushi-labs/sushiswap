@@ -1,8 +1,13 @@
 import { tokenValidator, tradeValidator02 } from '@sushiswap/react-query'
 import { SushiXSwap2ChainId } from 'sushi/config'
+import { RouteStatus } from 'sushi/tines'
 import { Address } from 'viem'
 import { z } from 'zod'
-import { SushiXSwap2Adapter, SushiXSwapTransactionType } from '../lib'
+import {
+  SushiXSwap2Adapter,
+  SushiXSwapFunctionName,
+  SushiXSwapTransactionType,
+} from '../lib'
 import { getSquidCrossChainTrade } from './getSquidCrossChainTrade'
 import { getStargateCrossChainTrade } from './getStargateCrossChainTrade'
 
@@ -21,11 +26,11 @@ export interface GetCrossChainTradeParams {
 
 const CrossChainTradeNotFoundSchema = z.object({
   adapter: z.nativeEnum(SushiXSwap2Adapter),
-  status: z.enum(['NoWay']),
+  status: z.enum([RouteStatus.NoWay]),
 })
 
 const CrossChainTradeFoundSchema = z.object({
-  status: z.enum(['Success', 'Partial']),
+  status: z.enum([RouteStatus.Success, RouteStatus.Partial]),
   adapter: z.nativeEnum(SushiXSwap2Adapter),
   tokenIn: z.string(),
   tokenOut: z.string(),
@@ -37,7 +42,7 @@ const CrossChainTradeFoundSchema = z.object({
   }),
   amountIn: z.string(),
   amountOut: z.string(),
-  minAmountOut: z.string(),
+  amountOutMin: z.string(),
   priceImpact: z.number(),
   srcTrade: z.optional(tradeValidator02),
   dstTrade: z.optional(tradeValidator02),
@@ -45,7 +50,7 @@ const CrossChainTradeFoundSchema = z.object({
   gasSpent: z.optional(z.string()),
   bridgeFee: z.optional(z.string()),
   srcGasFee: z.optional(z.string()),
-  functionName: z.optional(z.string()),
+  functionName: z.optional(z.nativeEnum(SushiXSwapFunctionName)),
   writeArgs: z.optional(
     z.array(z.union([z.string(), z.object({}).passthrough()])),
   ),

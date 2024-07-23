@@ -20,7 +20,7 @@ import type {
 } from './types'
 import { tradeValidator02 } from './validator02'
 
-const API_BASE_URL =
+export const TRADE_API_BASE_URL =
   process.env['API_BASE_URL'] ||
   process.env['NEXT_PUBLIC_API_BASE_URL'] ||
   'https://staging.sushi.com/swap'
@@ -64,7 +64,9 @@ export const useTradeQuery = (
     ],
     queryFn: async () => {
       const params = new URL(
-        `${API_BASE_URL}/swap${getTradeQueryApiVersion(chainId)}/${chainId}`,
+        `${TRADE_API_BASE_URL}/swap${getTradeQueryApiVersion(
+          chainId,
+        )}/${chainId}`,
       )
       // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(

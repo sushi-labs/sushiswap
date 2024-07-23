@@ -6,7 +6,6 @@ import {
   SquidCallType,
 } from '@0xsquid/squid-types'
 import { NativeAddress, tradeValidator02 } from '@sushiswap/react-query'
-import { PoolType } from 'sushi'
 import { routeProcessor4Abi, squidRouterAbi } from 'sushi/abi'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
@@ -16,6 +15,7 @@ import {
 } from 'sushi/config'
 import { axlUSDC } from 'sushi/currency'
 import { RouterLiquiditySource } from 'sushi/router'
+import { PoolType, RouteStatus } from 'sushi/tines'
 import {
   Address,
   Hex,
@@ -27,6 +27,7 @@ import {
 import { z } from 'zod'
 import {
   SushiXSwap2Adapter,
+  SushiXSwapFunctionName,
   SushiXSwapTransactionType,
   decodeSquidRouterCallData,
   encodeRouteProcessorArgs,
@@ -100,12 +101,12 @@ export const getSquidCrossChainTrade = async ({
         })
       : undefined
 
-    if (useRPOnSrc && srcRPTrade?.status !== 'Success') {
+    if (useRPOnSrc && srcRPTrade?.status !== RouteStatus.Success) {
       throw new Error('getSquidCrossChainTrade: srcRPTrade failed')
     }
 
     const srcRPTradeAmountOutMin =
-      srcRPTrade?.status === 'Success'
+      srcRPTrade?.status === RouteStatus.Success
         ? (BigInt(srcRPTrade.assumedAmountOut) *
             BigInt((1 - +slippagePercentage) * 10_000)) /
           10_000n
@@ -127,7 +128,7 @@ export const getSquidCrossChainTrade = async ({
           })
         : undefined
 
-    if (useRPOnDst && dstRPTrade?.status !== 'Success') {
+    if (useRPOnDst && dstRPTrade?.status !== RouteStatus.Success) {
       throw new Error('getSquidCrossChainTrade: dstRPTrade failed')
     }
 
@@ -148,7 +149,7 @@ export const getSquidCrossChainTrade = async ({
 
     if (
       useRPOnDst &&
-      dstRPTrade?.status === 'Success' &&
+      dstRPTrade?.status === RouteStatus.Success &&
       dstRPTrade?.routeProcessorArgs
     ) {
       const rpAddress = ROUTE_PROCESSOR_4_ADDRESS[dstChainId]
@@ -211,7 +212,7 @@ export const getSquidCrossChainTrade = async ({
     const srcSquidTrade: z.infer<typeof tradeValidator02> | undefined =
       isSrcSwap && !useRPOnSrc
         ? {
-            status: 'Success',
+            status: RouteStatus.Success,
             tokens: [
               { ...squidRoute.estimate.fromToken },
               {
@@ -251,7 +252,7 @@ export const getSquidCrossChainTrade = async ({
     const dstSquidTrade: z.infer<typeof tradeValidator02> | undefined =
       isDstSwap && !useRPOnDst
         ? {
-            status: 'Success',
+            status: RouteStatus.Success,
             tokens: [
               { ...squidRoute.estimate.fromToken },
               {
@@ -302,22 +303,22 @@ export const getSquidCrossChainTrade = async ({
     console.log('squidRoute', squidRoute)
 
     const dstAmountOut =
-      useRPOnDst && dstRPTrade?.status === 'Success'
+      useRPOnDst && dstRPTrade?.status === RouteStatus.Success
         ? dstRPTrade.assumedAmountOut
         : squidRoute.estimate.toAmount
 
     const dstAmountOutMin =
-      useRPOnDst && dstRPTrade?.status === 'Success'
+      useRPOnDst && dstRPTrade?.status === RouteStatus.Success
         ? (BigInt(dstRPTrade.assumedAmountOut) *
             BigInt((1 - +slippagePercentage) * 10_000)) /
           10_000n
         : BigInt(squidRoute.estimate.toAmountMin)
 
     let priceImpact = 0
-    if (useRPOnSrc && srcRPTrade?.status === 'Success') {
+    if (useRPOnSrc && srcRPTrade?.status === RouteStatus.Success) {
       priceImpact += srcRPTrade.priceImpact
     }
-    if (useRPOnDst && dstRPTrade?.status === 'Success') {
+    if (useRPOnDst && dstRPTrade?.status === RouteStatus.Success) {
       priceImpact += dstRPTrade.priceImpact
     }
 
@@ -353,12 +354,12 @@ export const getSquidCrossChainTrade = async ({
 
     if (!recipient || !from) {
       return {
-        status: 'Success',
+        status: RouteStatus.Success,
         adapter: SushiXSwap2Adapter.Squid,
         priceImpact,
         amountIn: amount.toString(),
         amountOut: dstAmountOut,
-        minAmountOut: dstAmountOutMin.toString(),
+        amountOutMin: dstAmountOutMin.toString(),
         tokenIn,
         tokenOut,
         srcBridgeToken: serializedSrcBridgeToken,
@@ -371,7 +372,7 @@ export const getSquidCrossChainTrade = async ({
 
     if (
       useRPOnSrc &&
-      srcTrade?.status === 'Success' &&
+      srcTrade?.status === RouteStatus.Success &&
       srcTrade.routeProcessorArgs
     ) {
       const srcSwapData = encodeRouteProcessorArgs(srcTrade.routeProcessorArgs)
@@ -385,7 +386,7 @@ export const getSquidCrossChainTrade = async ({
           ? [squidCallData.args[0], 0, ...squidCallData.args.slice(2)]
           : undefined
 
-      functionName = 'swapAndBridge'
+      functionName = SushiXSwapFunctionName.SwapAndBridge
       writeArgs = [
         {
           refId: '0x0000',
@@ -408,7 +409,7 @@ export const getSquidCrossChainTrade = async ({
         '0x', // dstPayloadData
       ]
     } else {
-      functionName = 'bridge'
+      functionName = SushiXSwapFunctionName.Bridge
       writeArgs = [
         {
           refId: '0x0000',
@@ -445,7 +446,7 @@ export const getSquidCrossChainTrade = async ({
 
     const srcGasEstimate =
       BigInt(squidRoute.transactionRequest?.gasLimit ?? 0) +
-      (useRPOnSrc && srcTrade?.status === 'Success'
+      (useRPOnSrc && srcTrade?.status === RouteStatus.Success
         ? BigInt(srcTrade.gasSpent)
         : 0n)
 
@@ -457,7 +458,7 @@ export const getSquidCrossChainTrade = async ({
 
     return {
       adapter: SushiXSwap2Adapter.Squid,
-      status: 'Success',
+      status: RouteStatus.Success,
       transactionType,
       tokenIn,
       tokenOut,
@@ -465,7 +466,7 @@ export const getSquidCrossChainTrade = async ({
       dstBridgeToken: serializedDstBridgeToken,
       amountIn: amount.toString(),
       amountOut: dstAmountOut,
-      minAmountOut: dstAmountOutMin.toString(),
+      amountOutMin: dstAmountOutMin.toString(),
       srcTrade,
       dstTrade,
       priceImpact,
@@ -480,7 +481,7 @@ export const getSquidCrossChainTrade = async ({
     console.error(e)
     return {
       adapter: SushiXSwap2Adapter.Squid,
-      status: 'NoWay',
+      status: RouteStatus.NoWay,
     }
   }
 }

@@ -43,7 +43,7 @@ import React, {
   useState,
 } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
-import { UseCrossChainTradeResult } from 'src/lib/hooks'
+import { UseCrossChainTradeReturn } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import {
   SushiXSwap2Adapter,
@@ -125,7 +125,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     dest: StepState.Success,
   })
 
-  const tradeRef = useRef<UseCrossChainTradeResult | null>(null)
+  const tradeRef = useRef<UseCrossChainTradeReturn | null>(null)
 
   const {
     data: simulation,

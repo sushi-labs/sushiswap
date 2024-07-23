@@ -1,15 +1,13 @@
+import { sushiXSwap2Abi } from 'sushi/abi'
 import { Amount, Type } from 'sushi/currency'
-import { Address, Hex, encodeAbiParameters, parseAbiParameters } from 'viem'
+import {
+  Address,
+  Hex,
+  WriteContractParameters,
+  encodeAbiParameters,
+  parseAbiParameters,
+} from 'viem'
 import { SuccessfulTradeReturn } from '../actions/getTrade'
-
-interface BridgeParams {
-  refId: string
-  adapter: string
-  tokenIn: string
-  amountIn: Parameters<typeof BigInt>[0]
-  to: string
-  adapterData: string
-}
 
 export enum SushiXSwap2Adapter {
   Stargate = 'Stargate',
@@ -21,6 +19,30 @@ export enum SushiXSwapTransactionType {
   SwapAndBridge = 'SwapAndBridge',
   BridgeAndSwap = 'BridgeAndSwap',
   CrossChainSwap = 'CrossChainSwap',
+}
+
+export enum SushiXSwapFunctionName {
+  Bridge = 'bridge',
+  SwapAndBridge = 'swapAndBridge',
+}
+
+export type SushiXSwapWriteArgs =
+  | WriteContractParameters<
+      typeof sushiXSwap2Abi,
+      SushiXSwapFunctionName.Bridge
+    >['args']
+  | WriteContractParameters<
+      typeof sushiXSwap2Abi,
+      SushiXSwapFunctionName.SwapAndBridge
+    >['args']
+
+interface BridgeParams {
+  refId: string
+  adapter: string
+  tokenIn: string
+  amountIn: Parameters<typeof BigInt>[0]
+  to: string
+  adapterData: string
 }
 
 export const getBridgeParams = ({

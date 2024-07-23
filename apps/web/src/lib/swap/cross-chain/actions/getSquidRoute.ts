@@ -17,10 +17,8 @@ export const getSquidRoute = async (
 
   const json = await response.json()
 
-  console.log('squidRouteJSON', json)
-
   if (response.status !== 200) {
-    throw new Error(json.data.error)
+    throw new Error(json.message)
   }
 
   return json

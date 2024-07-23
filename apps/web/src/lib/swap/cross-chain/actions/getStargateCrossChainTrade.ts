@@ -16,6 +16,7 @@ import {
 import { Native } from 'sushi/currency'
 import { Fraction, ONE, ZERO } from 'sushi/math'
 import { RouterLiquiditySource } from 'sushi/router'
+import { RouteStatus } from 'sushi/tines'
 import {
   Address,
   createPublicClient,
@@ -25,6 +26,7 @@ import {
 import {
   STARGATE_DEFAULT_SLIPPAGE,
   SushiXSwap2Adapter,
+  SushiXSwapFunctionName,
   SushiXSwapTransactionType,
   encodeRouteProcessorArgs,
   encodeStargateTeleportParams,
@@ -91,12 +93,12 @@ export const getStargateCrossChainTrade = async ({
         })
       : undefined
 
-    if (isSrcSwap && srcTrade?.status !== 'Success') {
+    if (isSrcSwap && srcTrade?.status !== RouteStatus.Success) {
       throw new Error('getStaragetCrossChainTrade: srcTrade failed')
     }
 
     const srcTradeAmountOut =
-      isSrcSwap && srcTrade?.status === 'Success'
+      isSrcSwap && srcTrade?.status === RouteStatus.Success
         ? BigInt(srcTrade.assumedAmountOut)
         : undefined
 
@@ -118,14 +120,16 @@ export const getStargateCrossChainTrade = async ({
       Number(bridgeFeeAmount) /
       Number(
         isSrcSwap &&
-          srcTrade?.status === 'Success' &&
+          srcTrade?.status === RouteStatus.Success &&
           srcTrade.routeProcessorArgs
           ? BigInt(srcTrade.routeProcessorArgs.amountOutMin)
           : amount,
       )
 
     const srcAmountOut =
-      isSrcSwap && srcTrade?.status === 'Success' && srcTrade.routeProcessorArgs
+      isSrcSwap &&
+      srcTrade?.status === RouteStatus.Success &&
+      srcTrade.routeProcessorArgs
         ? BigInt(srcTrade.routeProcessorArgs.amountOutMin)
         : amount - bridgeFeeAmount
 
@@ -158,26 +162,26 @@ export const getStargateCrossChainTrade = async ({
         })
       : undefined
 
-    if (isDstSwap && dstTrade?.status !== 'Success') {
+    if (isDstSwap && dstTrade?.status !== RouteStatus.Success) {
       throw new Error('getStaragetCrossChainTrade: dstTrade failed')
     }
 
     const dstAmountOut =
-      isDstSwap && dstTrade?.status === 'Success'
+      isDstSwap && dstTrade?.status === RouteStatus.Success
         ? BigInt(dstTrade.assumedAmountOut)
         : dstAmountIn
 
     const dstAmountOutMin =
-      isDstSwap && dstTrade?.status === 'Success'
+      isDstSwap && dstTrade?.status === RouteStatus.Success
         ? (BigInt(dstTrade.assumedAmountOut) *
             BigInt((1 - +slippagePercentage) * 10_000)) /
           10_000n
         : dstAmountInMin
 
     let priceImpact = bridgeImpact
-    if (isSrcSwap && srcTrade?.status === 'Success')
+    if (isSrcSwap && srcTrade?.status === RouteStatus.Success)
       priceImpact += srcTrade.priceImpact
-    if (isDstSwap && dstTrade?.status === 'Success')
+    if (isDstSwap && dstTrade?.status === RouteStatus.Success)
       priceImpact += dstTrade.priceImpact
 
     const serializedSrcBridgeToken = {
@@ -197,11 +201,11 @@ export const getStargateCrossChainTrade = async ({
     if (!recipient) {
       return {
         adapter: SushiXSwap2Adapter.Stargate,
-        status: 'Success',
+        status: RouteStatus.Success,
         priceImpact,
         amountIn: amount.toString(),
         amountOut: dstAmountOut.toString(),
-        minAmountOut: dstAmountOutMin.toString(),
+        amountOutMin: dstAmountOutMin.toString(),
         tokenIn,
         tokenOut,
         srcBridgeToken: serializedSrcBridgeToken,
@@ -219,7 +223,7 @@ export const getStargateCrossChainTrade = async ({
 
     if (!isSrcSwap && !isDstSwap) {
       transactionType = SushiXSwapTransactionType.Bridge
-      functionName = 'bridge'
+      functionName = SushiXSwapFunctionName.Bridge
       writeArgs = [
         {
           refId: '0x0000',
@@ -246,13 +250,13 @@ export const getStargateCrossChainTrade = async ({
     } else if (
       isSrcSwap &&
       !isDstSwap &&
-      srcTrade?.status === 'Success' &&
+      srcTrade?.status === RouteStatus.Success &&
       srcTrade?.routeProcessorArgs
     ) {
       const srcSwapData = encodeRouteProcessorArgs(srcTrade.routeProcessorArgs)
 
       transactionType = SushiXSwapTransactionType.SwapAndBridge
-      functionName = 'swapAndBridge'
+      functionName = SushiXSwapFunctionName.SwapAndBridge
       writeArgs = [
         {
           refId: '0x0000',
@@ -279,7 +283,7 @@ export const getStargateCrossChainTrade = async ({
       ]
     } else if (
       !isSrcSwap &&
-      dstTrade?.status === 'Success' &&
+      dstTrade?.status === RouteStatus.Success &&
       dstTrade?.routeProcessorArgs
     ) {
       const dstSwapData = encodeRouteProcessorArgs(dstTrade.routeProcessorArgs)
@@ -296,7 +300,7 @@ export const getStargateCrossChainTrade = async ({
       )
 
       transactionType = SushiXSwapTransactionType.BridgeAndSwap
-      functionName = 'bridge'
+      functionName = SushiXSwapFunctionName.Bridge
       writeArgs = [
         {
           refId: '0x0000',
@@ -324,8 +328,8 @@ export const getStargateCrossChainTrade = async ({
     } else if (
       isSrcSwap &&
       isDstSwap &&
-      srcTrade?.status === 'Success' &&
-      dstTrade?.status === 'Success' &&
+      srcTrade?.status === RouteStatus.Success &&
+      dstTrade?.status === RouteStatus.Success &&
       srcTrade?.routeProcessorArgs &&
       dstTrade?.routeProcessorArgs
     ) {
@@ -343,7 +347,7 @@ export const getStargateCrossChainTrade = async ({
       dstGasEst = estimateStargateDstGas(dstTrade.gasSpent)
 
       transactionType = SushiXSwapTransactionType.CrossChainSwap
-      functionName = 'swapAndBridge'
+      functionName = SushiXSwapFunctionName.SwapAndBridge
       writeArgs = [
         {
           refId: '0x0000',
@@ -401,7 +405,8 @@ export const getStargateCrossChainTrade = async ({
 
     // est 500K gas for XSwapV2 call
     const srcGasEst =
-      500000n + BigInt(srcTrade?.status === 'Success' ? srcTrade?.gasSpent : 0)
+      500000n +
+      BigInt(srcTrade?.status === RouteStatus.Success ? srcTrade?.gasSpent : 0)
 
     const srcGasFee = srcGasPrice ? srcGasPrice * srcGasEst : srcGasEst
 
@@ -409,7 +414,7 @@ export const getStargateCrossChainTrade = async ({
 
     return {
       adapter: SushiXSwap2Adapter.Stargate,
-      status: 'Success',
+      status: RouteStatus.Success,
       transactionType,
       tokenIn,
       tokenOut,
@@ -417,7 +422,7 @@ export const getStargateCrossChainTrade = async ({
       dstBridgeToken: serializedDstBridgeToken,
       amountIn: amount.toString(),
       amountOut: dstAmountOut.toString(),
-      minAmountOut: dstAmountOutMin.toString(),
+      amountOutMin: dstAmountOutMin.toString(),
       srcTrade,
       dstTrade,
       priceImpact,
@@ -432,7 +437,7 @@ export const getStargateCrossChainTrade = async ({
     console.error(e)
     return {
       adapter: SushiXSwap2Adapter.Stargate,
-      status: 'NoWay',
+      status: RouteStatus.NoWay,
     }
   }
 }
