@@ -1,6 +1,5 @@
 'use client'
 
-import { useLocalStorage } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import {
   Dialog,
@@ -11,9 +10,56 @@ import {
   DialogTitle,
 } from '@sushiswap/ui'
 import { LinkExternal } from '@sushiswap/ui'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useAccount, useDisconnect } from 'wagmi'
 
 export const SanctionedAddressDialog = () => {
-  const [open, setOpen] = useLocalStorage('sanctionedAddress', false)
+  const [open, setOpen] = useState<boolean>(false)
+
+  const { disconnect } = useDisconnect()
+
+  const { address, connector, status } = useAccount()
+
+  const { data: isSanctioned } = useQuery({
+    queryKey: ['trmlabs', address],
+    queryFn: async () => {
+      const resp = await fetch(
+        'https://api.trmlabs.com/public/v1/sanctions/screening',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify([{ address }]),
+        },
+      )
+        .then((response) => response.json())
+        .then(
+          (
+            data: {
+              address: string
+              isSanctioned: boolean
+            }[],
+          ) => data[0],
+        )
+
+      return resp.isSanctioned
+    },
+    enabled:
+      status === 'connected' &&
+      typeof address !== 'undefined' &&
+      process.env.NODE_ENV === 'production',
+    staleTime: 3_600_000, // 1 hour
+    refetchOnWindowFocus: false,
+  })
+
+  useEffect(() => {
+    if (isSanctioned) {
+      disconnect({ connector })
+      setOpen(true)
+    }
+  }, [isSanctioned, disconnect, connector])
 
   return (
     <Dialog open={open} onOpenChange={() => setOpen(false)}>
