@@ -10,6 +10,7 @@ import { Token } from 'sushi/currency'
 import { LiquidityProviders, PoolCode } from 'sushi/router'
 import type { Address, Hex, Log, PublicClient } from 'viem'
 import { Counter } from './Counter.js'
+import { IExtractor } from './IExtractor.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { Logger, safeSerialize } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
@@ -61,7 +62,7 @@ interface PoolCacheRecord {
   factory: Address
 }
 
-export class UniV3Extractor {
+export class UniV3Extractor extends IExtractor {
   factories: FactoryV3[]
   factoryMap: Map<string, FactoryV3> = new Map()
   tickHelperContract: Address
@@ -91,6 +92,7 @@ export class UniV3Extractor {
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
   ) {
+    super()
     this.multiCallAggregator =
       multiCallAggregator || new MultiCallAggregator(client)
     this.tokenManager =
@@ -185,7 +187,7 @@ export class UniV3Extractor {
   }
 
   // TODO: stop ?
-  async start() {
+  override async start() {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
@@ -367,6 +369,22 @@ export class UniV3Extractor {
     }
   }
 
+  override getPoolsForTokens(tokensUnique: Token[]): {
+    prefetched: PoolCode[]
+    fetching: Promise<PoolCode | undefined>[]
+  } {
+    const { prefetched, fetching } = this.getWatchersForTokens(tokensUnique)
+    return {
+      prefetched: prefetched
+        .map((w) => w.getPoolCode())
+        .filter((p) => p !== undefined) as PoolCode[],
+      fetching: fetching.map(async (pr) => {
+        const w = await pr
+        return w === undefined ? undefined : w.getPoolCode()
+      }),
+    }
+  }
+
   getWatchersBetweenTokenSets(
     tokensUnique1: Token[],
     tokensUnique2: Token[],
@@ -402,6 +420,28 @@ export class UniV3Extractor {
     return {
       prefetched,
       fetching,
+    }
+  }
+
+  override getPoolsBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: PoolCode[]
+    fetching: Promise<PoolCode | undefined>[]
+  } {
+    const { prefetched, fetching } = this.getWatchersBetweenTokenSets(
+      tokensUnique1,
+      tokensUnique2,
+    )
+    return {
+      prefetched: prefetched
+        .map((w) => w.getPoolCode())
+        .filter((p) => p !== undefined) as PoolCode[],
+      fetching: fetching.map(async (pr) => {
+        const w = await pr
+        return w === undefined ? undefined : w.getPoolCode()
+      }),
     }
   }
 
@@ -501,14 +541,14 @@ export class UniV3Extractor {
     )
   }
 
-  getCurrentPoolCodes(): PoolCode[] {
+  override getCurrentPoolCodes(): PoolCode[] {
     return Array.from(this.poolMap.values())
       .map((p) => p.getPoolCode())
       .filter((pc) => pc !== undefined) as PoolCode[]
   }
 
   // side effect: updated pools list is cleared
-  getUpdatedPoolCodes(): PoolCode[] {
+  override getUpdatedPoolCodes(): PoolCode[] {
     const res = Array.from(this.poolMapUpdated.values())
       .map((p) => p.getPoolCode())
       .filter((pc) => pc !== undefined) as PoolCode[]
@@ -523,7 +563,7 @@ export class UniV3Extractor {
       .filter((pc) => pc !== undefined) as PoolCode[]
   }
 
-  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+  override getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
     const add = (token: Token) => {
       const num = tokenMap.get(token) || 0
       tokenMap.set(token, num + 1)
@@ -561,7 +601,7 @@ export class UniV3Extractor {
       console.log(`V3-${this.multiCallAggregator.chainId}: ${log}`)
   }
 
-  isStarted() {
+  override isStarted() {
     return this.started
   }
 }

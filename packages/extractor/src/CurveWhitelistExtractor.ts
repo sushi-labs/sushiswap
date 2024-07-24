@@ -21,6 +21,7 @@ import {
   parseAbiItem,
 } from 'viem'
 import { Counter } from './Counter.js'
+import { IExtractor } from './IExtractor.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
@@ -108,7 +109,7 @@ export interface CurveWhitelistConfig {
   ratioPoolsUpdateInterval?: number
 }
 
-export class CurveWhitelistExtractor {
+export class CurveWhitelistExtractor extends IExtractor {
   readonly config: CurveWhitelistConfig
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
@@ -136,6 +137,7 @@ export class CurveWhitelistExtractor {
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
   ) {
+    super()
     this.multiCallAggregator =
       multiCallAggregator || new MultiCallAggregator(client)
     this.config = config
@@ -187,7 +189,7 @@ export class CurveWhitelistExtractor {
     })
   }
 
-  async start() {
+  override async start() {
     const startTime = performance.now()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
@@ -322,7 +324,7 @@ export class CurveWhitelistExtractor {
     return this.tokenPairMap.get(a0 + a1) ?? []
   }
 
-  getPoolsForTokens(tokensUnique: Token[]): {
+  override getPoolsForTokens(tokensUnique: Token[]): {
     prefetched: CurvePoolCode[]
     fetching: Promise<CurvePoolCode | undefined>[]
   } {
@@ -340,7 +342,7 @@ export class CurveWhitelistExtractor {
     }
   }
 
-  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+  override getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
     const add = (token: RToken) => {
       const num = tokenMap.get(token as Token) || 0
       tokenMap.set(token as Token, num + 1)
@@ -351,11 +353,11 @@ export class CurveWhitelistExtractor {
     })
   }
 
-  getCurrentPoolCodes(): CurvePoolCode[] {
+  override getCurrentPoolCodes(): CurvePoolCode[] {
     return Array.from(this.poolMap.values())
   }
 
-  isStarted() {
+  override isStarted() {
     return this.started
   }
 
@@ -397,13 +399,13 @@ export class CurveWhitelistExtractor {
   }
 
   // side effect: updated pools list is cleared
-  getUpdatedPoolCodes(): CurvePoolCode[] {
+  override getUpdatedPoolCodes(): CurvePoolCode[] {
     const pools = Array.from(this.poolMapUpdated.values())
     this.poolMapUpdated.clear()
     return pools
   }
 
-  getPoolsBetweenTokenSets(
+  override getPoolsBetweenTokenSets(
     tokensUnique1: Token[],
     tokensUnique2: Token[],
   ): {
