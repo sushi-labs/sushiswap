@@ -16,7 +16,7 @@ import {
   SteerAccountPositionExtended,
   useSteerAccountPositionsExtended,
 } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
-import { formatPercent } from 'sushi'
+import { ChainId, formatPercent, SushiSwapProtocol } from 'sushi'
 import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
 import {
@@ -25,6 +25,7 @@ import {
   STEER_STRATEGY_COLUMN,
 } from './ConcentratedPositionsTable/Tables/Smart/columns'
 import { usePoolFilters } from './PoolsFiltersProvider'
+import { Address } from 'viem'
 
 const COLUMNS = [
   STEER_NAME_COLUMN,
@@ -33,12 +34,9 @@ const COLUMNS = [
   {
     id: 'totalApr1d',
     header: 'APR (24h)',
-    accessorFn: (row) => (row.vault.apr1d + row.vault.pool.incentiveApr) * 100,
+    accessorFn: (row) => row.vault.stakedAndIncentiveApr1d,
     cell: (props) => {
-      const totalAPR =
-        (props.row.original.vault.apr1d +
-          props.row.original.vault.pool.incentiveApr) *
-        100
+      const totalAPR = props.row.original.vault.stakedAndIncentiveApr1d
 
       return (
         <div className="flex gap-1">
@@ -46,7 +44,7 @@ const COLUMNS = [
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="line-through text-muted-foreground">
-                  {formatPercent(props.row.original.vault.pool.totalApr1d)}
+                  {formatPercent(props.row.original.vault.feeAndIncentiveApr1d)}
                 </span>
               </TooltipTrigger>
               <TooltipContent>
@@ -55,8 +53,18 @@ const COLUMNS = [
             </Tooltip>
           </TooltipProvider>
           <APRHoverCard
-            pool={props.row.original.vault.pool}
-            smartPoolAPR={props.row.original.vault.apr1d}
+            pool={{
+              id: props.row.original.id as `${string}:0x${string}`,
+              address: props.row.original.vault.poolAddress as Address,
+              chainId: props.row.original.vault.chainId as ChainId,
+
+              protocol: SushiSwapProtocol.SUSHISWAP_V3,
+              feeApr1d: props.row.original.vault.feeApr1d,
+              incentiveApr: props.row.original.vault.incentiveApr,
+              isIncentivized: props.row.original.vault.isIncentivized,
+              wasIncentivized: props.row.original.vault.wasIncentivized,
+            }}
+            smartPoolAPR={props.row.original.vault.stakedAndIncentiveApr1d}
           >
             <span className="underline decoration-dotted underline-offset-2">
               {formatPercent(totalAPR / 100)}
@@ -101,7 +109,7 @@ export const SmartPositionsTable = () => {
       <DataTable
         loading={isLoading}
         linkFormatter={(row) =>
-          `/pool/${row.vault.pool.id}/smart/${row.vault.id}`
+          `/pool/${row.vault.poolAddress}/smart/${row.vault.id}`
         }
         columns={COLUMNS}
         data={_positions}

@@ -58,6 +58,7 @@ import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'
 import { SteerStrategyConfig } from './Steer/constants'
+import { SteerStrategy } from '@sushiswap/steer-sdk'
 
 const COLUMNS = [
   {
@@ -519,7 +520,7 @@ const COLUMNS = [
 ] satisfies ColumnDef<SmartPoolsV1[number], unknown>[]
 
 export const SmartPoolsTable = () => {
-  const { _tokenSymbols, chainIds, protocols, farmsOnly } = usePoolFilters()
+  const { chainIds, protocols, farmsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])

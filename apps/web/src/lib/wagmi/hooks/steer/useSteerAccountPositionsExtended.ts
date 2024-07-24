@@ -1,4 +1,3 @@
-import { useSteerVaults } from '@sushiswap/client/hooks'
 import { useAllPrices } from '@sushiswap/react-query'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
@@ -6,6 +5,8 @@ import { Address } from 'viem'
 import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import { useMemo } from 'react'
 import { useSteerAccountPositions } from './useSteerAccountPosition'
+import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
+import {  ID } from 'sushi'
 
 interface UseSteerAccountPositionsExtended {
   account: Address | undefined
@@ -17,6 +18,11 @@ export type SteerAccountPositionExtended = NonNullable<
   ReturnType<typeof useSteerAccountPositionsExtended>['data']
 >[0]
 
+
+export type SteerAccountPositionVault = NonNullable<
+  ReturnType<typeof useSteerAccountPositionsExtended>['data']
+>[0]['vault']
+
 export const useSteerAccountPositionsExtended = ({
   account,
   enabled = true,
@@ -24,12 +30,14 @@ export const useSteerAccountPositionsExtended = ({
 }: UseSteerAccountPositionsExtended) => {
   const { data: prices, isInitialLoading: isPricesLoading } = useAllPrices()
 
-  const { data: vaults, isLoading: isVaultsLoading } = useSteerVaults({
-    args: { chainIds },
-    shouldFetch: Boolean(enabled && account),
-  })
 
-  const vaultIds = useMemo(() => vaults?.map((el) => el.id), [vaults])
+  const { data: smartPools, isLoading: isVaultsLoading } = useSmartPools(
+    { chainId: 137 }, // TODO: FIX
+    Boolean(enabled && account),
+  )
+
+
+  const vaultIds = useMemo(() => smartPools?.map((el) => el.id as ID) ?? [], [smartPools])
 
   const { data: positions, isLoading } = useSteerAccountPositions({
     account,
@@ -38,12 +46,12 @@ export const useSteerAccountPositionsExtended = ({
   })
 
   const data = useMemo(() => {
-    if (!vaults || !positions) return undefined
+    if (!smartPools || !positions) return undefined
 
     return positions.flatMap((position) => {
       if (position.steerTokenBalance <= 0n) return []
 
-      const vault = vaults.find((vault) => vault.id === position.id)
+      const vault = smartPools.find((vault) => vault.id === position.id)
 
       if (!vault) return []
 
@@ -75,7 +83,7 @@ export const useSteerAccountPositionsExtended = ({
         totalAmountUSD: token0AmountUSD + token1AmountUSD,
       }
     })
-  }, [vaults, prices, positions])
+  }, [smartPools, prices, positions])
 
   return {
     data,

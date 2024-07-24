@@ -43,6 +43,7 @@ type Query {
 
 type Token {
   id: ID!
+  chainId: Int!
   address: String!
   name: String!
   symbol: String!
@@ -79,7 +80,7 @@ type V2Pool {
   incentiveApr: Float!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
-  incentives: [Incentive]!
+  incentives: [Incentive!]!
 }
 
 type V3Pool {
@@ -119,8 +120,8 @@ type V3Pool {
   hasSmartPool: Boolean!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
-  incentives: [Incentive]!
-  vaults: [String]!
+  incentives: [Incentive!]!
+  vaults: [String!]!
 }
 
 type Incentive {
@@ -176,8 +177,8 @@ type TopPool {
 }
 
 type PoolBuckets {
-  hourBuckets: [PoolBucket]!
-  dayBuckets: [PoolBucket]!
+  hourBuckets: [PoolBucket!]!
+  dayBuckets: [PoolBucket!]!
 }
 
 type SimpleToken {
@@ -378,6 +379,7 @@ type BasicSmartPool {
   id: ID!
   chainId: Int!
   address: String!
+  poolAddress: String!
   swapFee: Float!
   protocol: String!
   token0: Token!
@@ -397,6 +399,9 @@ type BasicSmartPool {
   upperTick: Int!
   adjustmentFrequency: Int!
   lastAdjustmentTimestamp: Int!
+  isEnabled: Boolean!
+  wasEnabled: Boolean!
+  isDeprecated: Boolean!
 }
 
 type Vault {

@@ -93,3 +93,6 @@ export enum SteerStrategy {
   KeltnerAlgo = 'KeltnerAlgo',
   BollingerAlgo = 'BollingerAlgo',
 }
+
+export const isSteerStrategy = (strategy: string): strategy is SteerStrategy =>
+  Object.values(SteerStrategy).includes(strategy as SteerStrategy)
