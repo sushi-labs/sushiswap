@@ -9,7 +9,7 @@ import type { VaultV1 } from './vault'
 export const VaultsQuery = graphql(
   `
   query Vaults($chainId: Int!, $poolAddress: String!) {
-    vaults(chainId: $chainId, vaultAddress: $poolAddress) {
+    vaults(chainId: $chainId, poolAddress: $poolAddress) {
       id
       address
       chainId

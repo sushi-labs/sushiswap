@@ -9,13 +9,13 @@ type Bucket {
 }
 
 type SushiDayBuckets {
-  v2: [Bucket]!
-  v3: [Bucket]!
+  v2: [Bucket!]!
+  v3: [Bucket!]!
 }
 
 type Query {
   sushiDayBuckets(chainId: Int!): SushiDayBuckets!
-  topPools(chainId: Int!): [TopPool]!
+  topPools(chainId: Int!): [TopPool!]!
   v2Pool(address: String!, chainId: Int!): V2Pool!
   v3Pool(address: String!, chainId: Int!): V3Pool!
   v2PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
@@ -23,22 +23,22 @@ type Query {
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
-  portfolioHistory(id: ID!): [PortfolioTransaction]!
-  smartPools(chainId: Int!): [BasicSmartPool]!
+  portfolioHistory(id: ID!): [PortfolioTransaction!]!
+  smartPools(chainId: Int!): [BasicSmartPool!]!
   vault(chainId: Int!, vaultAddress: String!): Vault!
   vaults(chainId: Int!, poolAddress: String!): [Vault!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
-  v2LiquidityPositions(user: String!, chainId: Int!): [V2LiquidityPosition]!
-  v2Swaps(address: String!, chainId: Int!): [V2Swap]!
-  v2Burns(address: String!, chainId: Int!): [V2Burn]!
-  v2Mints(address: String!, chainId: Int!): [V2Mint]!
-  v2Transactions(address: String!, chainId: Int!): [V2Transaction]!
-  v3Swaps(address: String!, chainId: Int!): [V3Swap]!
-  v3Burns(address: String!, chainId: Int!): [V3Burn]!
-  v3Mints(address: String!, chainId: Int!): [V3Mint]!
-  v3Collects(address: String!, chainId: Int!): [V3Collect]!
-  v3Transactions(address: String!, chainId: Int!): [V3Transaction]!
+  v2LiquidityPositions(user: String!, chainId: Int!): [V2LiquidityPosition!]!
+  v2Swaps(address: String!, chainId: Int!): [V2Swap!]!
+  v2Burns(address: String!, chainId: Int!): [V2Burn!]!
+  v2Mints(address: String!, chainId: Int!): [V2Mint!]!
+  v2Transactions(address: String!, chainId: Int!): [V2Transaction!]!
+  v3Swaps(address: String!, chainId: Int!): [V3Swap!]!
+  v3Burns(address: String!, chainId: Int!): [V3Burn!]!
+  v3Mints(address: String!, chainId: Int!): [V3Mint!]!
+  v3Collects(address: String!, chainId: Int!): [V3Collect!]!
+  v3Transactions(address: String!, chainId: Int!): [V3Transaction!]!
 }
 
 type Token {
@@ -462,16 +462,16 @@ type SushiBarBucket {
 }
 
 type SushiBarHistory {
-  hourSnapshots: [SushiBarBucket]!
-  daySnapshots: [SushiBarBucket]!
-  weekSnapshots: [SushiBarBucket]!
+  hourSnapshots: [SushiBarBucket!]!
+  daySnapshots: [SushiBarBucket!]!
+  weekSnapshots: [SushiBarBucket!]!
 }
 
 type V2LiquidityPosition {
   user: String!
   stakedBalance: String!
   unstakedBalance: String!
-  pool: String!
+  pool: V2Pool!
 }
 
 type V2Burn {
