@@ -1,17 +1,18 @@
 import { Logger, safeSerialize } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
-import { ROUTE_PROCESSOR_4_ADDRESS, RouteProcessor4ChainId } from 'sushi/config'
+import { ROUTE_PROCESSOR_4_ADDRESS } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import {
   NativeWrapProvider,
+  PoolCode,
   Router,
   RouterLiquiditySource,
-  makeAPI02Object,
+  makeAPI03Object,
 } from 'sushi/router'
-import { isAddressFast } from 'sushi/serializer'
 import { MultiRoute } from 'sushi/tines'
 import { Address } from 'viem'
+import { z } from 'zod'
 import { ExtractorClient } from '../../ExtractorClient.js'
 import swapRequestStatistics, {
   ResponseRejectReason,
@@ -41,29 +42,29 @@ async function processUnknownToken(
   return token
 }
 
-function handler(
-  qSchema: typeof querySchema4_2,
-  rpCode: typeof Router.routeProcessor4Params,
-  rpAddress: Address,
-) {
+const handler = (
+  querySchema: typeof querySchema4_2,
+  routeProcessorParams: typeof Router.routeProcessor4Params,
+  routeProcessorAddress: Address,
+) => {
   return (client: ExtractorClient) => {
     return async (req: Request, res: Response) => {
       res.setHeader('Cache-Control', 's-maxage=2, stale-while-revalidate=28')
-      let parsedData: any = undefined
-      let bestRoute: MultiRoute | undefined = undefined
-      try {
-        const statistics = swapRequestStatistics.requestProcessingStart()
 
-        let parsed: ReturnType<typeof querySchema4_2.safeParse> | undefined
-        try {
-          parsed = qSchema.safeParse(req.query)
-        } catch (_e) {}
-        if (!parsed || !parsed.success) {
-          swapRequestStatistics.requestRejected(
-            ResponseRejectReason.WRONG_INPUT_PARAMS,
-          )
-          return res.status(422).send('Request parameters parsing error')
-        }
+      let poolCodesMap: Map<string, PoolCode> = new Map()
+      let bestRoute: MultiRoute | undefined = undefined
+
+      const statistics = swapRequestStatistics.requestProcessingStart()
+      const parsed = querySchema.safeParse(req.query)
+      if (!parsed.success) {
+        swapRequestStatistics.requestRejected(
+          ResponseRejectReason.WRONG_INPUT_PARAMS,
+        )
+        console.log(parsed.error.format())
+        return res.status(422).send('Request parameters parsing error')
+      }
+
+      try {
         const {
           tokenIn: _tokenIn,
           tokenOut: _tokenOut,
@@ -73,24 +74,8 @@ function handler(
           to,
           preferSushi,
           maxPriceImpact,
-          maxSlippage: _maxSlippage,
+          maxSlippage,
         } = parsed.data
-        parsedData = parsed.data
-        const maxSlippage = _maxSlippage ?? 0.005 // default value
-
-        if (!isAddressFast(_tokenIn))
-          return res
-            .status(422)
-            .send(`Incorrect address for tokenIn: ${_tokenIn}`)
-        if (!isAddressFast(_tokenOut))
-          return res
-            .status(422)
-            .send(`Incorrect address for tokenOut: ${_tokenOut}`)
-        if (to !== undefined && !isAddressFast(to))
-          return res.status(422).send(`Incorrect address for 'to': ${to}`)
-        if (amount <= 0)
-          return res.status(422).send(`Amount must be positive: ${amount}`)
-
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
           Date.now()
@@ -127,7 +112,7 @@ function handler(
             )
         }
 
-        const poolCodesMap = client.getKnownPoolsForTokens(tokenIn, tokenOut)
+        poolCodesMap = client.getKnownPoolsForTokens(tokenIn, tokenOut)
         nativeProvider
           .getCurrentPoolList()
           .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
@@ -135,7 +120,7 @@ function handler(
         bestRoute = preferSushi
           ? Router.findSpecialRoute(
               poolCodesMap,
-              CHAIN_ID as ChainId,
+              CHAIN_ID,
               tokenIn,
               amount,
               tokenOut,
@@ -144,7 +129,7 @@ function handler(
             )
           : Router.findBestRoute(
               poolCodesMap,
-              CHAIN_ID as ChainId,
+              CHAIN_ID,
               tokenIn,
               amount,
               tokenOut,
@@ -157,25 +142,28 @@ function handler(
         )
           bestRoute = Router.NoWayMultiRoute(tokenIn, tokenOut)
 
-        const json = makeAPI02Object(
+        const rpParams = to
+          ? routeProcessorParams(
+              poolCodesMap,
+              bestRoute,
+              tokenIn,
+              tokenOut,
+              to,
+              routeProcessorAddress,
+              [],
+              maxSlippage,
+              source ?? RouterLiquiditySource.Sender,
+            )
+          : undefined
+
+        const json = makeAPI03Object(
           bestRoute,
-          to
-            ? rpCode(
-                poolCodesMap,
-                bestRoute,
-                tokenIn,
-                tokenOut,
-                to,
-                rpAddress as Address,
-                [],
-                maxSlippage,
-                source ?? RouterLiquiditySource.Sender,
-              )
-            : undefined,
-          rpAddress as Address,
+          rpParams,
+          routeProcessorAddress,
+          poolCodesMap,
         )
 
-        // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
+        // we want to return { route, tx: { from, to, gas, gasPrice, data, value, } }
 
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(json)
@@ -184,16 +172,24 @@ function handler(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
         )
 
-        const data: any = {}
+        const data: {
+          error: string | string[] | undefined
+          params: z.infer<typeof querySchema4_2> | undefined
+          route: MultiRoute | undefined
+        } = {
+          error: e instanceof Error ? e.stack?.split('\n') : `${e}`,
+          params: undefined,
+          route: undefined,
+        }
         try {
           data.error = e instanceof Error ? e.stack?.split('\n') : `${e}`
-          if (parsedData) data.params = parsedData
-          if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
+          if (parsed.data) data.params = parsed.data
+          if (bestRoute)
+            data.route = makeAPI03Object(bestRoute, undefined, '', poolCodesMap)
         } catch (_e) {}
         Logger.error(CHAIN_ID, 'Routing crashed', safeSerialize(data), false)
 
         return res.status(500).send('Internal server error: Routing crashed')
-        //throw e
       }
     }
   }
@@ -202,5 +198,5 @@ function handler(
 export const swapV4_2 = handler(
   querySchema4_2,
   Router.routeProcessor4Params,
-  ROUTE_PROCESSOR_4_ADDRESS[CHAIN_ID as RouteProcessor4ChainId],
+  ROUTE_PROCESSOR_4_ADDRESS[CHAIN_ID],
 )
