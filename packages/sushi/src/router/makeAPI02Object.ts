@@ -11,15 +11,14 @@ function makeAPI02Token(token: RToken) {
   }
 }
 
-function makeAPI02Leg(
-  leg: RouteLeg & { poolName: string; liquidityProvider: LiquidityProviders },
-  tokens: TokenConvertor,
-) {
+function makeAPI02Leg(leg: RouteLeg, tokens: TokenConvertor) {
   return {
     poolAddress: leg.poolAddress,
     poolType: leg.poolType,
+    // @ts-ignore
     poolName: leg.poolName, // Don't know how, but it exists. Too long to recreate it from poolCodes
     poolFee: leg.poolFee,
+    // @ts-ignore
     liquidityProvider: leg.liquidityProvider,
     tokenFrom: tokens.getTokenIndex(leg.tokenFrom),
     tokenTo: tokens.getTokenIndex(leg.tokenTo),
