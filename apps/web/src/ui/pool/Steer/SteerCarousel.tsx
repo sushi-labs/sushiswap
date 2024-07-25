@@ -2,15 +2,12 @@
 
 import { Carousel, SkeletonBox } from '@sushiswap/ui'
 import { FC, useCallback, useMemo } from 'react'
-
-import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { SteerPoolCard } from './SteerPoolCard'
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
+import { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
 
-type RequiredPool = PoolWithIncentives<PoolWithFeeAprs>
 
 interface SteerCarousel {
-  pool: RequiredPool
+  pool: V3Pool
   vaults: VaultV1[]
 }
 

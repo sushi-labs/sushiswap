@@ -10,7 +10,7 @@ import {
   type PoolHistory1D,
   type PoolV2,
   type PoolWithAprs,
-  type PoolWithIncentives
+  type PoolWithIncentives,
 } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import type { Address } from 'viem'
@@ -96,86 +96,91 @@ export async function getV2Pool(
     throw new Error('Invalid chainId')
   }
 
-  const result = await request(
-    { url, document: V2PoolQuery, variables },
-    options,
-  )
-  if (result.v2Pool) {
-    const pool = result.v2Pool
-    return {
-      id: pool.id as `${string}:0x${string}`,
-      address: pool.address as Address,
-      chainId,
-      name: `${pool.token0.symbol}-${pool.token1.symbol}`,
-      swapFee: pool.swapFee,
-      protocol: SushiSwapProtocol.SUSHISWAP_V2,
-      reserve0: BigInt(pool.reserve0),
-      reserve1: BigInt(pool.reserve1),
-      liquidity: BigInt(pool.liquidity),
-      liquidityUSD: pool.liquidityUSD,
-
-      volumeUSD: pool.volumeUSD,
-      feesUSD: pool.volumeUSD * pool.swapFee,
-
-      token0: {
-        id: pool.token0.id as `${string}:0x${string}`,
-        address: pool.token0.address as Address,
+  try {
+    const result = await request(
+      { url, document: V2PoolQuery, variables },
+      options,
+    )
+    if (result.v2Pool) {
+      const pool = result.v2Pool
+      return {
+        id: pool.id as `${string}:0x${string}`,
+        address: pool.address as Address,
         chainId,
-        decimals: pool.token0.decimals,
-        name: pool.token0.name,
-        symbol: pool.token0.symbol,
-      },
-      token1: {
-        id: pool.token1.id as `${string}:0x${string}`,
-        address: pool.token1.address as Address,
-        chainId,
-        decimals: pool.token1.decimals,
-        name: pool.token1.name,
-        symbol: pool.token1.symbol,
-      },
-      token0Price: pool.token0Price,
-      token1Price: pool.token1Price,
-      txCount: pool.txCount1d,
+        name: `${pool.token0.symbol}-${pool.token1.symbol}`,
+        swapFee: pool.swapFee,
+        protocol: SushiSwapProtocol.SUSHISWAP_V2,
+        reserve0: BigInt(pool.reserve0),
+        reserve1: BigInt(pool.reserve1),
+        liquidity: BigInt(pool.liquidity),
+        liquidityUSD: pool.liquidityUSD,
 
-      volumeUSD1d: pool.volumeUSD1d,
-      feesUSD1d: pool.feeUSD1d,
-      txCount1d: pool.txCount1d,
-      liquidityUSD1dChange: pool.liquidityUSD1dChange,
-      volumeUSD1dChange: pool.volumeUSD1dChange,
-      feesUSD1dChange: pool.feeUSD1dChange,
-      txCount1dChange: pool.txCount1dChange,
+        volumeUSD: pool.volumeUSD,
+        feesUSD: pool.volumeUSD * pool.swapFee,
 
-      feeApr1d: pool.feeApr1d,
-      totalApr1d: pool.totalApr1d,
-      incentiveApr: pool.incentiveApr,
-      isIncentivized: pool.isIncentivized,
-      wasIncentivized: pool.wasIncentivized,
-
-      incentives: pool.incentives.map((incentive) => ({
-        id: incentive.id as `${string}:0x${string}`,
-        chainId,
-        chefType: incentive.chefType as ChefType,
-        apr: incentive.apr,
-        rewardToken: {
-          id: incentive.rewardToken.id as `${string}:0x${string}`,
-          address: incentive.rewardToken.address as Address,
+        token0: {
+          id: pool.token0.id as `${string}:0x${string}`,
+          address: pool.token0.address as Address,
           chainId,
-          decimals: incentive.rewardToken.decimals,
-          name: incentive.rewardToken.name,
-          symbol: incentive.rewardToken.symbol,
+          decimals: pool.token0.decimals,
+          name: pool.token0.name,
+          symbol: pool.token0.symbol,
         },
-        rewardPerDay: incentive.rewardPerDay,
-        poolAddress: incentive.poolAddress as Address,
-        pid: incentive.pid,
-        rewarderAddress: incentive.rewarderAddress as Address,
-        rewarderType: incentive.rewarderType as RewarderType,
-      })),
-    } satisfies 
-      PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>
-    >
-  }
+        token1: {
+          id: pool.token1.id as `${string}:0x${string}`,
+          address: pool.token1.address as Address,
+          chainId,
+          decimals: pool.token1.decimals,
+          name: pool.token1.name,
+          symbol: pool.token1.symbol,
+        },
+        token0Price: pool.token0Price,
+        token1Price: pool.token1Price,
+        txCount: pool.txCount1d,
 
-  throw new Error('No pool found')
+        volumeUSD1d: pool.volumeUSD1d,
+        feesUSD1d: pool.feeUSD1d,
+        txCount1d: pool.txCount1d,
+        liquidityUSD1dChange: pool.liquidityUSD1dChange,
+        volumeUSD1dChange: pool.volumeUSD1dChange,
+        feesUSD1dChange: pool.feeUSD1dChange,
+        txCount1dChange: pool.txCount1dChange,
+
+        feeApr1d: pool.feeApr1d,
+        totalApr1d: pool.totalApr1d,
+        incentiveApr: pool.incentiveApr,
+        isIncentivized: pool.isIncentivized,
+        wasIncentivized: pool.wasIncentivized,
+
+        incentives: pool.incentives.map((incentive) => ({
+          id: incentive.id as `${string}:0x${string}`,
+          chainId,
+          chefType: incentive.chefType as ChefType,
+          apr: incentive.apr,
+          rewardToken: {
+            id: incentive.rewardToken.id as `${string}:0x${string}`,
+            address: incentive.rewardToken.address as Address,
+            chainId,
+            decimals: incentive.rewardToken.decimals,
+            name: incentive.rewardToken.name,
+            symbol: incentive.rewardToken.symbol,
+          },
+          rewardPerDay: incentive.rewardPerDay,
+          poolAddress: incentive.poolAddress as Address,
+          pid: incentive.pid,
+          rewarderAddress: incentive.rewarderAddress as Address,
+          rewarderType: incentive.rewarderType as RewarderType,
+        })),
+      } satisfies PoolWithAprs<
+        PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>
+      >
+    }
+
+    throw new Error('No pool found')
+  } catch (_e) {
+    // console.error(e)
+    return null
+  }
 }
 
-export type V2Pool = Awaited<ReturnType<typeof getV2Pool>>
+export type V2Pool = NonNullable<Awaited<ReturnType<typeof getV2Pool>>>

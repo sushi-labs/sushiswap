@@ -15,6 +15,7 @@ import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber, unsanitize } from 'sushi/format'
 import { tickToPrice } from 'sushi/pool/sushiswap-v3'
+import notFound from '../../../../../not-found'
 import { PublicClient, createPublicClient } from 'viem'
 
 function getPriceExtremes(
@@ -109,6 +110,10 @@ export default async function SteerVaultPage({
   )()
 
   const Component = SteerStrategyComponents[vault.strategy]
+
+  if (!pool || !vault) {
+    return notFound()
+  }
 
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">

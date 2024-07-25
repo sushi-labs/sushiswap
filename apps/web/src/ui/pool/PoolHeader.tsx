@@ -22,12 +22,12 @@ import { formatPercent, shortenAddress } from 'sushi/format'
 import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 
 import { APRHoverCard } from './APRHoverCard'
-import { SmartPoolsV1, V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 
 type PoolHeader = {
   backUrl: string
   address: string
-  pool: SushiSwapV3Pool | null | undefined | V2Pool | V3Pool | SmartPoolsV1
+  pool: SushiSwapV3Pool | null | undefined | V2Pool | V3Pool
   apy?: {
     fees: number | undefined
     rewards: number | undefined

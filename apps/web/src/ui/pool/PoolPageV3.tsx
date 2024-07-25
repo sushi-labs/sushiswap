@@ -62,7 +62,7 @@ const Pool: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
       <div className="flex flex-col gap-6">
-        {pool.hasEnabledSteerVault && (
+        {pool?.hasEnabledSteerVault && (
           <Message variant="info" size="sm">
             {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
         allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
@@ -72,7 +72,7 @@ const Pool: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
             To create a smart pool position, click{' '}
             <LinkInternal
               shallow={true}
-              href={`/pool/${pool.id}/smart`}
+              href={`/pool/${address}/smart`}
               className="underline"
             >
               here
@@ -173,7 +173,7 @@ const Pool: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
           <Separator />
         </div>
         <PoolRewardDistributionsCard pool={pool} />
-        <PoolTransactionsV3 pool={pool} poolId={pool.address} />
+        <PoolTransactionsV3 pool={pool} poolId={address} />
       </div>
     </Container>
   )

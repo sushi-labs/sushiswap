@@ -20,6 +20,7 @@ type Query {
   v3Pool(address: String!, chainId: Int!): V3Pool!
   v2PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
   v3PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
+  v3PoolsByTokens(token0: String!, token1: String!, chainId: Int!): [V3BasePool!]!
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
@@ -122,6 +123,33 @@ type V3Pool {
   wasIncentivized: Boolean!
   incentives: [Incentive!]!
   vaults: [String!]!
+}
+
+type V3BasePool {
+  id: ID!
+  address: String!
+  chainId: Int!
+  protocol: String!
+  name: String!
+  createdAt: String!
+  swapFee: Float!
+  token0: Token!
+  token1: Token!
+  source: String!
+  reserve0: String!
+  reserve1: String!
+  liquidity: String!
+  token0Price: Float!
+  token1Price: Float!
+  sqrtPrice: String!
+  tick: String!
+  observationIndex: String!
+  feeGrowthGlobal0X128: String!
+  feeGrowthGlobal1X128: String!
+  volumeUSD: Float!
+  liquidityUSD: Float!
+  feesUSD: Float!
+  txCount: Int!
 }
 
 type Incentive {

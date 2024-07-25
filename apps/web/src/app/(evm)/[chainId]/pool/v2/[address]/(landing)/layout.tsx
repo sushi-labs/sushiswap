@@ -27,7 +27,7 @@ export default async function Layout({
   )()
 
   if (!pool) {
-    notFound()
+    return notFound()
   }
 
   const headersList = headers()

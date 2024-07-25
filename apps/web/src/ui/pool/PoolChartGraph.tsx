@@ -78,7 +78,6 @@ export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool, protoc
 
     return [x.reverse(), y.reverse()]
   }, [chart, period, buckets])
-
   // Transient update for performance
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {

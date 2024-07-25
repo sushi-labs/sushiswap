@@ -1,4 +1,3 @@
-import { SushiV2StakedUnstakedPosition } from '@sushiswap/graph-client/composite/sushi-v2-staked-unstaked-positions'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
@@ -253,7 +252,7 @@ export const NETWORK_COLUMN = {
   meta: {
     skeleton: <SkeletonCircle radius={26} />,
   },
-} as const satisfies ColumnDef<SushiV2StakedUnstakedPosition, unknown>
+} as const satisfies ColumnDef<V2Position, unknown>
 
 export const APR_COLUMN = {
   id: 'totalApr1d',

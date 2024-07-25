@@ -240,7 +240,7 @@ export const NewPoolsTable: FC<PositionsTableProps> = ({
         state={state}
         onSortingChange={setSorting}
         loading={!pools}
-        linkFormatter={(row) => `/pool/${row.chainId}%3A${row.address}`}
+        linkFormatter={(row) => `pool/${row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'}/${row.address}`}
         rowRenderer={rowRenderer}
         columns={COLUMNS}
         data={data}

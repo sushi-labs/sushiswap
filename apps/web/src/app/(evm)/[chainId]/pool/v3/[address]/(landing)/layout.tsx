@@ -27,7 +27,7 @@ export default async function Layout({
   )()
 
   if (!pool) {
-    notFound()
+    return notFound()
   }
 
   const headersList = headers()
@@ -40,7 +40,7 @@ export default async function Layout({
       <Container maxWidth="5xl" className="pt-10 px-4">
         <PoolHeader
           backUrl={referer?.includes('/pool?') ? referer?.toString() : '/pool'}
-          address={pool.address}
+          address={address}
           pool={pool}
           apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
         />

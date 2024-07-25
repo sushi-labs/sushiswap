@@ -3,8 +3,6 @@ import { HotJar } from '@sushiswap/ui'
 
 import { Header } from './header'
 
-import { GlobalStatsCharts } from 'src/ui/analytics/global-stats-charts'
-
 import { PathnameButton } from 'src/ui/pool'
 
 export const metadata = {
@@ -36,21 +34,10 @@ export default function AnalyticsLayout({
               </p>
             </div>
             <div className="mt-10">
-              <GlobalStatsCharts />
             </div>
           </Container>
           <Container maxWidth="7xl" className="px-4">
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <LinkInternal shallow={true} scroll={false} href={'/analytics'}>
-                <PathnameButton
-                  id="all-pools"
-                  pathname={'/analytics'}
-                  asChild
-                  size="sm"
-                >
-                  Pools
-                </PathnameButton>
-              </LinkInternal>
               <LinkInternal
                 shallow={true}
                 scroll={false}

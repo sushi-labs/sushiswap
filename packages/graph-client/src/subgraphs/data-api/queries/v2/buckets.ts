@@ -1,9 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
-import {
-  ChainId
-} from 'sushi'
+import { ChainId } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { graphql } from '../../graphql'
 export const V2PoolBucketsQuery = graphql(
@@ -43,19 +41,24 @@ export async function getV2PoolBuckets(
   if (!isSushiSwapV2ChainId(chainId)) {
     throw new Error('Invalid chainId')
   }
-
-  const result = await request(
-    { url, document: V2PoolBucketsQuery, variables },
-    options,
-  )
-  if (result.v2PoolBuckets) {
+  try {
+    const result = await request(
+      { url, document: V2PoolBucketsQuery, variables },
+      options,
+    )
+    if (result.v2PoolBuckets) {
+      return {
+        hourBuckets: result.v2PoolBuckets.hourBuckets.filter((b) => b !== null),
+        dayBuckets: result.v2PoolBuckets.dayBuckets.filter((b) => b !== null),
+      }
+    }
+    throw new Error('Invalid response')
+  } catch {
     return {
-      hourBuckets: result.v2PoolBuckets.hourBuckets.filter((b) => b !== null),
-      dayBuckets: result.v2PoolBuckets.dayBuckets.filter((b) => b !== null),
+      hourBuckets: [],
+      dayBuckets: [],
     }
   }
-
-  throw new Error('No buckets found')
 }
 
 export type V2PoolBuckets = Awaited<ReturnType<typeof getV2PoolBuckets>>
