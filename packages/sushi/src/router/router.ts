@@ -211,7 +211,9 @@ export class Router {
       ...route,
       legs: route.legs.map((l) => ({
         ...l,
-        poolName: poolCodesMap.get(l.poolAddress)?.poolName ?? 'Unknown Pool',
+        liquidityProvider:
+          poolCodesMap.get(l.uniqueId)?.poolName ?? 'Unknown LiquidityProvider',
+        poolName: poolCodesMap.get(l.uniqueId)?.poolName ?? 'Unknown Pool',
       })),
     }
   }

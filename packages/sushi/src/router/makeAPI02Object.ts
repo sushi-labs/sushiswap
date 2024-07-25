@@ -1,4 +1,5 @@
 import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines/index.js'
+import { LiquidityProviders } from './liquidity-providers/LiquidityProvider.js'
 import { RPParams } from './router.js'
 
 function makeAPI02Token(token: RToken) {
@@ -10,13 +11,16 @@ function makeAPI02Token(token: RToken) {
   }
 }
 
-function makeAPI02Leg(leg: RouteLeg, tokens: TokenConvertor) {
+function makeAPI02Leg(
+  leg: RouteLeg & { poolName: string; liquidityProvider: LiquidityProviders },
+  tokens: TokenConvertor,
+) {
   return {
     poolAddress: leg.poolAddress,
     poolType: leg.poolType,
-    // @ts-ignore
-    poolName: leg.poolName as string, // Don't know how, but it exists. Too long to recreate it from poolCodes
+    poolName: leg.poolName, // Don't know how, but it exists. Too long to recreate it from poolCodes
     poolFee: leg.poolFee,
+    liquidityProvider: leg.liquidityProvider,
     tokenFrom: tokens.getTokenIndex(leg.tokenFrom),
     tokenTo: tokens.getTokenIndex(leg.tokenTo),
     share: leg.absolutePortion,
