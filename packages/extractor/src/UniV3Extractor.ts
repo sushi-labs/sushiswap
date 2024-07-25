@@ -21,7 +21,11 @@ import {
   QualityCheckerCallBackArg,
 } from './QualityChecker.js'
 import { TokenManager } from './TokenManager.js'
-import { UniV3EventsAbi, UniV3PoolWatcher } from './UniV3PoolWatcher.js'
+import {
+  UniV3EventsAbi,
+  UniV3PoolWatcher,
+  UniV3PoolWatcherStatus,
+} from './UniV3PoolWatcher.js'
 
 export type FeeSpacingMap = Record<number, number>
 
@@ -380,7 +384,11 @@ export class UniV3Extractor extends IExtractor {
         .filter((p) => p !== undefined) as PoolCode[],
       fetching: fetching.map(async (pr) => {
         const w = await pr
-        return w === undefined ? undefined : w.getPoolCode()
+        if (w === undefined) return
+
+        if (w.getStatus() !== UniV3PoolWatcherStatus.All)
+          await w.downloadFinished()
+        return w.getPoolCode()
       }),
     }
   }
@@ -440,7 +448,11 @@ export class UniV3Extractor extends IExtractor {
         .filter((p) => p !== undefined) as PoolCode[],
       fetching: fetching.map(async (pr) => {
         const w = await pr
-        return w === undefined ? undefined : w.getPoolCode()
+        if (w === undefined) return
+
+        if (w.getStatus() !== UniV3PoolWatcherStatus.All)
+          await w.downloadFinished()
+        return w.getPoolCode()
       }),
     }
   }

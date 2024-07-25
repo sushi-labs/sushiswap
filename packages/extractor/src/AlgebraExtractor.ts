@@ -16,7 +16,11 @@ import {
   getAddress,
   keccak256,
 } from 'viem'
-import { AlgebraEventsAbi, AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
+import {
+  AlgebraEventsAbi,
+  AlgebraPoolWatcher,
+  AlgebraPoolWatcherStatus,
+} from './AlgebraPoolWatcher.js'
 import {
   AlgebraQualityChecker,
   PoolSyncState,
@@ -405,7 +409,11 @@ export class AlgebraExtractor extends IExtractor {
         .filter((p) => p !== undefined) as PoolCode[],
       fetching: fetching.map(async (pr) => {
         const w = await pr
-        return w === undefined ? undefined : w.getPoolCode()
+        if (w === undefined) return
+
+        if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
+          await w.downloadFinished()
+        return w.getPoolCode()
       }),
     }
   }
@@ -455,7 +463,11 @@ export class AlgebraExtractor extends IExtractor {
         .filter((p) => p !== undefined) as PoolCode[],
       fetching: fetching.map(async (pr) => {
         const w = await pr
-        return w === undefined ? undefined : w.getPoolCode()
+        if (w === undefined) return
+
+        if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
+          await w.downloadFinished()
+        return w.getPoolCode()
       }),
     }
   }
