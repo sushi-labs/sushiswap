@@ -5,8 +5,8 @@ import { Native, Token } from 'sushi/currency'
 
 export const getTokensFromPool = (pool: {
   id: string
-  token0: { address: string; name: string; decimals: string; symbol: string }
-  token1: { address: string; name: string; decimals: string; symbol: string }
+  token0: { address: string; name: string; decimals: number; symbol: string }
+  token1: { address: string; name: string; decimals: number; symbol: string }
   chainId: number
 }) => {
   const _token0 = new Token({
@@ -50,8 +50,8 @@ export const getTokensFromPool = (pool: {
 
 export const useTokensFromPool = (pool: {
   id: string
-  token0: { address: string; name: string; decimals: string; symbol: string }
-  token1: { address: string; name: string; decimals: string; symbol: string }
+  token0: { address: string; name: string; decimals: number; symbol: string }
+  token1: { address: string; name: string; decimals: number; symbol: string }
   chainId: number
 }) => {
   return useMemo(() => {

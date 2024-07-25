@@ -1,30 +1,25 @@
 'use client'
 
 import 'sushi/bigint-serializer'
-
-import { SushiV2Pool } from '@sushiswap/graph-client/sushi-v2'
 import { useMemo } from 'react'
 import { Amount } from 'sushi/currency'
 
 import { useQuery } from '@tanstack/react-query'
 import type { PoolId } from 'sushi'
 import { getTokensFromPool } from '../useTokensFromPool'
+import { getV2Pool, V2Pool } from '@sushiswap/graph-client/data-api'
 
-export function getGraphPoolUrl(poolId: string) {
-  return `/pools/api/graphPool/${poolId}`
-}
 
 export const useGraphPool = (pool: PoolId) => {
   const {
     data: graphPool,
     isLoading,
     error,
-  } = useQuery<SushiV2Pool>({
-    queryKey: [getGraphPoolUrl(pool.id)],
+  } = useQuery<V2Pool | null>({
+    queryKey: ['v2-pool', {...pool}],
     queryFn: async () => {
-      const res = await fetch(getGraphPoolUrl(pool.id))
-
-      return JSON.parse(await res.text())
+      const result = await getV2Pool({chainId: pool.chainId, address: pool.address})
+      return result
     },
   })
 
@@ -47,23 +42,7 @@ export const useGraphPool = (pool: PoolId) => {
         token0,
         token1,
         liquidityToken,
-        // liquidityNative: graphPool ? Number(graphPool?.reserveETH) : null,
         liquidityUSD: graphPool ? Number(graphPool?.liquidityUSD) : null,
-        // liquidity1dChange: graphPool
-        //   ? Number(graphPool?.liquidity1dChange ?? 0)
-        //   : null,
-        // fees1d: graphPool ? Number(graphPool?.fees1d ?? 0) : null,
-        // fees1dChange: graphPool ? Number(graphPool?.fees1dChange ?? 0) : null,
-        // volume1d: graphPool ? Number(graphPool?.volume1d ?? 0) : null,
-        // volume1dChange: graphPool
-        //   ? Number(graphPool?.volume1dChange ?? 0)
-        //   : null,
-        // txCount1d: graphPool ? Number(graphPool?.txCount1d ?? 0) : null,
-        // txCount1dChange: graphPool
-        //   ? Number(graphPool?.txCount1dChange ?? 0)
-        //   : null,
-        // hourSnapshots: graphPool?.hourSnapshots ?? null,
-        // daySnapshots: graphPool?.daySnapshots ?? null,
         reserve0:
           token0 && graphPool
             ? Amount.fromRawAmount(token0, graphPool.reserve0)
