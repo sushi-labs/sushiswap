@@ -16,10 +16,10 @@ function makeAPI02Leg(leg: RouteLeg, tokens: TokenConvertor) {
     poolAddress: leg.poolAddress,
     poolType: leg.poolType,
     // @ts-ignore
-    poolName: leg.poolName, // Don't know how, but it exists. Too long to recreate it from poolCodes
+    poolName: leg.poolName as string, // Don't know how, but it exists. Too long to recreate it from poolCodes
     poolFee: leg.poolFee,
     // @ts-ignore
-    liquidityProvider: leg.liquidityProvider,
+    liquidityProvider: leg.liquidityProvider as LiquidityProviders,
     tokenFrom: tokens.getTokenIndex(leg.tokenFrom),
     tokenTo: tokens.getTokenIndex(leg.tokenTo),
     share: leg.absolutePortion,
