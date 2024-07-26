@@ -1,7 +1,6 @@
 export * from './CurveExtractor.js'
 export * from './AlgebraExtractor.js'
 export * from './Extractor.js'
-export * from './ExtractorNew.js'
 export * from './LogFilter2.js'
 export * from './Logger.js'
 export * from './MulticallAggregator.js'
