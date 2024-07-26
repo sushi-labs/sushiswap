@@ -250,11 +250,11 @@ export class ExtractorNew {
       const res = this.projectExtractors.flatMap(
         (e) => e.getPoolsForTokens(tokensUnique).prefetched,
       )
-      console.log(
-        'EXTR DEBUG: getPoolCodesForTokens',
-        tokens.length,
-        res.length,
-      )
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokens',
+      //   tokens.length,
+      //   res.length,
+      // )
       return res
     } catch (e) {
       ++this.requestFinishedNum
@@ -288,14 +288,14 @@ export class ExtractorNew {
           (e) => e.getPoolsBetweenTokenSets(baseUnique, addUnique).fetching,
         ),
       ]
-      console.log(
-        'EXTR DEBUG: prefetch start ',
-        tokensBaseSet.length,
-        tokensAdditionalSet.length,
-        fetching.length,
-      )
+      // console.log(
+      //   'EXTR DEBUG: prefetch start ',
+      //   tokensBaseSet.length,
+      //   tokensAdditionalSet.length,
+      //   fetching.length,
+      // )
       await Promise.allSettled(fetching)
-      console.log('EXTR DEBUG: prefetch finish')
+      // console.log('EXTR DEBUG: prefetch finish')
       ++this.requestFinishedNum
     } catch (e) {
       ++this.requestFinishedNum
@@ -344,13 +344,13 @@ export class ExtractorNew {
         fetchingAll = fetchingAll.concat(fetching)
       })
 
-      console.log(
-        'EXTR DEBUG: getPoolCodesBetweenTokenSets start ',
-        tokens1.length,
-        tokens2.length,
-        prefetchedAll.length,
-        fetchingAll.length,
-      )
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesBetweenTokenSets start ',
+      //   tokens1.length,
+      //   tokens2.length,
+      //   prefetchedAll.length,
+      //   fetchingAll.length,
+      // )
 
       const fetchedAll = await Promise.allSettled(fetchingAll)
       const res = prefetchedAll
@@ -367,10 +367,10 @@ export class ExtractorNew {
           }),
         )
         .filter((p) => p !== undefined) as PoolCode[]
-      console.log(
-        'EXTR DEBUG: getPoolCodesBetweenTokenSets finished ',
-        res.length,
-      )
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesBetweenTokenSets finished ',
+      //   res.length,
+      // )
 
       tokens1Unique.forEach((t0) => {
         tokens2Unique.forEach((t1) => {
@@ -405,12 +405,12 @@ export class ExtractorNew {
         fetchingNumber += pools.fetching.length
       })
 
-      console.log(
-        'EXTR DEBUG: getPoolCodesForTokensFull ',
-        tokens.length,
-        prefetched.length,
-        fetchingNumber,
-      )
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokensFull ',
+      //   tokens.length,
+      //   prefetched.length,
+      //   fetchingNumber,
+      // )
 
       for (let i = 0; i < tokensUnique.length; ++i) {
         for (let j = i + 1; j < tokensUnique.length; ++j) {
@@ -454,21 +454,21 @@ export class ExtractorNew {
         )
       })
 
-      console.log(
-        'EXTR DEBUG: getPoolCodesForTokensAsync start',
-        tokens.length,
-        pools.length,
-        promises.length,
-      )
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokensAsync start',
+      //   tokens.length,
+      //   pools.length,
+      //   promises.length,
+      // )
 
       await Promise.any([Promise.allSettled(promises), delay(timeout)])
 
-      console.log(
-        'EXTR DEBUG: getPoolCodesForTokensAsync finish',
-        tokens.length,
-        pools.length,
-        promises.length,
-      )
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokensAsync finish',
+      //   tokens.length,
+      //   pools.length,
+      //   promises.length,
+      // )
 
       for (let i = 0; i < tokensUnique.length; ++i) {
         for (let j = i + 1; j < tokensUnique.length; ++j) {
