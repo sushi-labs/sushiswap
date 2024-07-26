@@ -53,7 +53,7 @@ export const useBentoBoxApproval = ({
     console.error(msg, e)
 
     if (e instanceof Error) {
-      if (!(e instanceof UserRejectedRequestError)) {
+      if (!(e.cause instanceof UserRejectedRequestError)) {
         createErrorToast(e.message, true)
       }
     }

@@ -96,6 +96,8 @@ contract RouteProcessor5 is Ownable {
   /// @param amountIn Amount of the input token
   /// @param tokenOut Address of the output token
   /// @param amountOutMin Minimum amount of the output token
+  /// @param to Where to transfer output tokens
+  /// @param route Route to process
   /// @return amountOut Actual amount of the output token
   function processRoute(
     address tokenIn,
@@ -217,7 +219,7 @@ contract RouteProcessor5 is Ownable {
 
     uint256 balanceInFinal = tokenIn.anyBalanceOf(msg.sender);
     if (tokenIn != Utils.NATIVE_ADDRESS)
-      require(balanceInFinal + amountIn >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
+      require(balanceInFinal + amountIn + 10 >= balanceInInitial, 'RouteProcessor: Minimal input balance violation');
     
     uint256 balanceOutFinal = tokenOut.anyBalanceOf(to);
     if (balanceOutFinal < balanceOutInitial + amountOutMin)
@@ -237,7 +239,9 @@ contract RouteProcessor5 is Ownable {
     uint8 v = stream.readUint8();
     bytes32 r = stream.readBytes32();
     bytes32 s = stream.readBytes32();
-    IERC20Permit(tokenIn).safePermit(msg.sender, address(this), value, deadline, v, r, s);
+    if (IERC20(tokenIn).allowance(msg.sender, address(this)) < value) {
+      IERC20Permit(tokenIn).safePermit(msg.sender, address(this), value, deadline, v, r, s);
+    }
   }
 
   /// @notice Processes native coin: call swap for all pools that swap from native coin
@@ -512,9 +516,9 @@ contract RouteProcessor5 is Ownable {
       IERC20(tokenIn).approveSafe(pool, amountIn);
       if (poolType == 0) amountOut = ICurve(pool).exchange(fromIndex, toIndex, amountIn, 0);
       else {
-        uint256 balanceBefore = IERC20(tokenOut).balanceOf(address(this));
+        uint256 balanceBefore = tokenOut.anyBalanceOf(address(this));
         ICurveLegacy(pool).exchange(fromIndex, toIndex, amountIn, 0);
-        uint256 balanceAfter = IERC20(tokenOut).balanceOf(address(this));
+        uint256 balanceAfter = tokenOut.anyBalanceOf(address(this));
         amountOut = balanceAfter - balanceBefore;
       }
     }

@@ -349,7 +349,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
   const onSwapError = useCallback(
     (e: Error) => {
-      if (e instanceof UserRejectedRequestError) {
+      if (e.cause instanceof UserRejectedRequestError) {
         return
       }
 

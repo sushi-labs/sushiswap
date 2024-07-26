@@ -1,5 +1,5 @@
 import { Token } from 'sushi/currency'
-import { CurvePoolCode, LiquidityProviders } from 'sushi/router'
+import { CurvePoolCode, CurvePoolType, LiquidityProviders } from 'sushi/router'
 import {
   CurveMultitokenCore,
   RToken,
@@ -191,7 +191,7 @@ export class CurveExtractor {
     logFilter.addFilter(CurveEventsAbi, (logs?: Log[]) => {
       if (logs) {
         logs.forEach((l) => {
-          const core = this.coreMap.get(l.address)
+          const core = this.coreMap.get(l.address.toLowerCase())
           if (core === undefined) return
           const { eventName, args } = decodeEventLog({
             abi: CurveEventsAbi,
@@ -375,14 +375,14 @@ export class CurveExtractor {
         balances as bigint[],
         ratio !== 1 ? [1, ratio] : undefined,
       )
-      this.coreMap.set(poolAddress, pools[0].core)
+      this.coreMap.set(poolAddress.toLowerCase(), pools[0].core)
       this.balancesType.set(poolAddress, balancesType)
       pools.forEach((p) => {
         const poolCode = new CurvePoolCode(
           p,
           LiquidityProviders.CurveSwap,
           'Curve',
-          1, //poolType, don't rely on pool.exchange return value
+          CurvePoolType.TypeC, // TODO !!!!!
         )
         this.poolMap.set(p.uniqueID(), poolCode)
         const [a0, a1] =
@@ -412,7 +412,9 @@ export class CurveExtractor {
   async updateRatioPools() {
     await Promise.all(
       Array.from(this.ratioPoolSet.values()).map((pool) =>
-        this.updatePool(this.coreMap.get(pool) as CurveMultitokenCore),
+        this.updatePool(
+          this.coreMap.get(pool.toLowerCase()) as CurveMultitokenCore,
+        ),
       ),
     )
   }

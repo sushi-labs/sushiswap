@@ -15,10 +15,10 @@ import {
   NUMBER_OF_SURROUNDING_TICKS,
   UniV3PoolCode,
 } from 'sushi/router'
-import { loadPoolSnapshot } from 'sushi/serializer'
 import { CL_MAX_TICK, CL_MIN_TICK, UniV3Pool } from 'sushi/tines'
 import { createPublicClient, custom } from 'viem'
 import { hardhat } from 'viem/chains'
+import { loadPoolSnapshot } from './utils/poolSnapshot.js'
 
 const { ethers, network } = hre
 

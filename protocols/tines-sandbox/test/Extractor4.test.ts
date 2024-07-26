@@ -487,7 +487,7 @@ it.skip('Extractor BSC infinite work test', async () => {
   })
 })
 
-it.only('Extractor Filecoin infinite work test', async () => {
+it.skip('Extractor Filecoin infinite work test', async () => {
   await startInfinitTest({
     transport: publicClientConfig[ChainId.FILECOIN].transport,
     chain: publicClientConfig[ChainId.FILECOIN].chain as Chain,
@@ -516,5 +516,21 @@ it.only('Extractor Filecoin infinite work test', async () => {
         decimals: 6,
       }),
     ],
+  })
+})
+
+it.only('Extractor Harmony infinite work test', async () => {
+  await startInfinitTest({
+    ...publicClientConfig[ChainId.HARMONY],
+    factoriesV2: [sushiswapV2Factory(ChainId.HARMONY)],
+    factoriesV3: [],
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RPAddress: RPAddress[ChainId.HARMONY],
   })
 })

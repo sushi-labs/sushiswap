@@ -258,7 +258,7 @@ export const useMasterChef: UseMasterChef = ({
   )
 
   const onError = useCallback((e: SendTransactionErrorType) => {
-    if (e instanceof UserRejectedRequestError) {
+    if (!(e.cause instanceof UserRejectedRequestError)) {
       createErrorToast(e?.message, true)
     }
   }, [])

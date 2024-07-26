@@ -114,7 +114,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
   )
 
   const onError = useCallback((e: Error) => {
-    if (e instanceof UserRejectedRequestError) {
+    if (!(e.cause instanceof UserRejectedRequestError)) {
       createErrorToast(e?.message, true)
     }
   }, [])

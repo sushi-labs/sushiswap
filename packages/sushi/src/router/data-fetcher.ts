@@ -4,7 +4,7 @@ import { publicClientConfig } from '../config/index.js'
 import { Type } from '../currency/index.js'
 import { ApeSwapProvider } from './liquidity-providers/ApeSwap.js'
 import { BiswapProvider } from './liquidity-providers/Biswap.js'
-import { CurveProvider } from './liquidity-providers/CurveProvider.js'
+import { CurveProviderWhiteList } from './liquidity-providers/CurveProviderWhitelist.js'
 import { DfynProvider } from './liquidity-providers/Dfyn.js'
 import { DovishV3Provider } from './liquidity-providers/DovishV3.js'
 import { ElkProvider } from './liquidity-providers/Elk.js'
@@ -112,7 +112,7 @@ export class DataFetcher {
     ;[
       ApeSwapProvider,
       BiswapProvider,
-      CurveProvider,
+      CurveProviderWhiteList,
       DfynProvider,
       DovishV3Provider,
       ElkProvider,

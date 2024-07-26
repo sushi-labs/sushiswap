@@ -14,7 +14,14 @@ export interface RToken {
 
 export function setTokenId(...tokens: RToken[]) {
   tokens.forEach((t) => {
-    if (!t.tokenId) t.tokenId = `${t.address || ''}_${t.chainId}`
+    if (!t.tokenId) {
+      if (
+        t.address &&
+        t.address.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+      )
+        t.tokenId = `_${t.chainId}`
+      else t.tokenId = `${t.address || ''}_${t.chainId}`
+    }
   })
 }
 
@@ -132,5 +139,11 @@ export abstract class RPool {
 
   poolType(): PoolType {
     return PoolType.Unknown
+  }
+
+  isPoolAppropriateForPricing(): boolean {
+    return (
+      this.reserve0 >= this.minLiquidity && this.reserve1 >= this.minLiquidity
+    )
   }
 }
