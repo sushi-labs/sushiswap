@@ -1,14 +1,19 @@
+import { NativeAddress } from '@sushiswap/react-query'
 import {
   STARGATE_CHAIN_ID,
+  STARGATE_CHAIN_PATHS,
   STARGATE_ETH_ADDRESS,
   STARGATE_POOL_ID,
+  STARGATE_USDC,
+  STARGATE_USDC_ADDRESS,
+  STARGATE_USDT,
+  STARGATE_USDT_ADDRESS,
   StargateAdapterChainId,
 } from 'sushi/config'
-import { Type } from 'sushi/currency'
-import { Percent } from 'sushi/math'
+import { Native, Type } from 'sushi/currency'
 import { Address, encodeAbiParameters, parseAbiParameters } from 'viem'
 
-export const STARGATE_DEFAULT_SLIPPAGE = new Percent(100, 10_000) // 1%
+export const STARGATE_SLIPPAGE_PERCENTAGE = 1 // 1%
 
 /*
     struct StargateTeleportParams {
@@ -85,4 +90,63 @@ export const encodeStargateTeleportParams = ({
 export const estimateStargateDstGas = (gasUsed: number) => {
   // estGas = (150K + gasSpentTines * 1.25)
   return BigInt(Math.floor(gasUsed * 1.25) + 150000)
+}
+
+export const getStargateBridgePath = ({
+  srcChainId,
+  dstChainId,
+  tokenIn,
+}: {
+  srcChainId: StargateAdapterChainId
+  dstChainId: StargateAdapterChainId
+  tokenIn: Address
+  tokenOut: Address
+}) => {
+  const srcChainPaths = STARGATE_CHAIN_PATHS[srcChainId]
+
+  // If srcCurrency is ETH, check for ETH path
+  if (
+    tokenIn.toLowerCase() === NativeAddress.toLowerCase() &&
+    srcChainId in STARGATE_ETH_ADDRESS
+  ) {
+    const ethPaths =
+      srcChainPaths[
+        STARGATE_ETH_ADDRESS[srcChainId as keyof typeof STARGATE_ETH_ADDRESS]
+      ]
+
+    if (
+      ethPaths.find((dstBridgeToken) => dstBridgeToken.chainId === dstChainId)
+    ) {
+      return {
+        srcBridgeToken: Native.onChain(srcChainId),
+        dstBridgeToken: Native.onChain(dstChainId),
+      }
+    }
+  }
+
+  // Else fallback to USDC/USDT
+  if (
+    srcChainId in STARGATE_USDC_ADDRESS ||
+    srcChainId in STARGATE_USDT_ADDRESS
+  ) {
+    const srcBridgeToken =
+      srcChainId in STARGATE_USDC
+        ? STARGATE_USDC[srcChainId as keyof typeof STARGATE_USDC]
+        : STARGATE_USDT[srcChainId as keyof typeof STARGATE_USDT]
+
+    const usdPaths = srcChainPaths[srcBridgeToken.address as Address]
+
+    const dstBridgeToken = usdPaths.find(
+      (dstBridgeToken) => dstBridgeToken.chainId === dstChainId,
+    )
+
+    if (dstBridgeToken) {
+      return {
+        srcBridgeToken,
+        dstBridgeToken,
+      }
+    }
+  }
+
+  return undefined
 }

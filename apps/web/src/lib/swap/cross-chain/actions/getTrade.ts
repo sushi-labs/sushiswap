@@ -4,6 +4,7 @@ import {
   getTradeQueryApiVersion,
   tradeValidator02,
 } from '@sushiswap/react-query'
+import { RouteStatus } from 'sushi/tines'
 import { Address } from 'viem'
 import { z } from 'zod'
 
@@ -18,7 +19,14 @@ export type GetTrade = Pick<
 
 export type GetTradeReturn = z.infer<typeof tradeValidator02>
 
-export type SuccessfulTradeReturn = Exclude<GetTradeReturn, { status: 'NoWay' }>
+export type SuccessfulTradeReturn = Extract<
+  GetTradeReturn,
+  { status: 'Success' | 'Partial' }
+>
+
+export const isSuccessfulTradeReturn = (
+  trade: GetTradeReturn,
+): trade is SuccessfulTradeReturn => trade.status === RouteStatus.Success
 
 export const getTrade = async ({
   chainId,

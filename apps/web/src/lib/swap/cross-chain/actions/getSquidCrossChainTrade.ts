@@ -5,7 +5,7 @@ import {
   RouteRequest,
   SquidCallType,
 } from '@0xsquid/squid-types'
-import { NativeAddress, tradeValidator02 } from '@sushiswap/react-query'
+import { NativeAddress } from '@sushiswap/react-query'
 import { routeProcessor4Abi, squidRouterAbi } from 'sushi/abi'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
@@ -15,7 +15,7 @@ import {
 } from 'sushi/config'
 import { axlUSDC } from 'sushi/currency'
 import { RouterLiquiditySource } from 'sushi/router'
-import { PoolType, RouteStatus } from 'sushi/tines'
+import { RouteStatus } from 'sushi/tines'
 import {
   Address,
   Hex,
@@ -24,14 +24,15 @@ import {
   erc20Abi,
   zeroAddress,
 } from 'viem'
-import { z } from 'zod'
 import {
   SushiXSwap2Adapter,
   SushiXSwapFunctionName,
   SushiXSwapTransactionType,
+  applySlippage,
   decodeSquidRouterCallData,
   encodeRouteProcessorArgs,
   encodeSquidBridgeParams,
+  getSquidTrade,
   isSquidRouteProcessorEnabled,
 } from '../lib'
 import {
@@ -39,7 +40,11 @@ import {
   GetCrossChainTradeParams,
 } from './getCrossChainTrade'
 import { getSquidRoute } from './getSquidRoute'
-import { getTrade } from './getTrade'
+import {
+  SuccessfulTradeReturn,
+  getTrade,
+  isSuccessfulTradeReturn,
+} from './getTrade'
 
 export const getSquidCrossChainTrade = async ({
   srcChainId,
@@ -88,7 +93,7 @@ export const getSquidCrossChainTrade = async ({
         Boolean(isSrcSwap ? useRPOnSrc : true),
     )
 
-    const srcRPTrade = useRPOnSrc
+    const _srcRPTrade = useRPOnSrc
       ? await getTrade({
           chainId: srcChainId,
           amount,
@@ -101,38 +106,38 @@ export const getSquidCrossChainTrade = async ({
         })
       : undefined
 
-    if (useRPOnSrc && srcRPTrade?.status !== RouteStatus.Success) {
+    if (useRPOnSrc && !isSuccessfulTradeReturn(_srcRPTrade!)) {
       throw new Error('getSquidCrossChainTrade: srcRPTrade failed')
     }
 
-    const srcRPTradeAmountOutMin =
-      srcRPTrade?.status === RouteStatus.Success
-        ? (BigInt(srcRPTrade.assumedAmountOut) *
-            BigInt((1 - +slippagePercentage) * 10_000)) /
-          10_000n
-        : undefined
+    const srcRPTrade = useRPOnSrc
+      ? (_srcRPTrade as SuccessfulTradeReturn)
+      : undefined
 
-    const dstAmountIn = useRPOnSrc ? (srcRPTradeAmountOutMin as bigint) : amount
+    const dstAmountIn = useRPOnSrc
+      ? BigInt(srcRPTrade!.assumedAmountOut)
+      : amount
 
-    const dstRPTrade =
-      useRPOnDst && dstAmountIn
-        ? await getTrade({
-            chainId: dstChainId,
-            amount: dstAmountIn,
-            fromToken: dstBridgeToken.address,
-            toToken: tokenOut,
-            slippagePercentage,
-            gasPrice: dstGasPrice,
-            recipient,
-            source: RouterLiquiditySource.XSwap,
-          })
-        : undefined
+    const _dstRPTrade = useRPOnDst
+      ? await getTrade({
+          chainId: dstChainId,
+          amount: dstAmountIn,
+          fromToken: dstBridgeToken.address,
+          toToken: tokenOut,
+          slippagePercentage,
+          gasPrice: dstGasPrice,
+          recipient,
+          source: RouterLiquiditySource.XSwap,
+        })
+      : undefined
 
-    if (useRPOnDst && dstRPTrade?.status !== RouteStatus.Success) {
+    if (useRPOnDst && !isSuccessfulTradeReturn(_dstRPTrade!)) {
       throw new Error('getSquidCrossChainTrade: dstRPTrade failed')
     }
 
-    console.log(dstRPTrade)
+    const dstRPTrade = useRPOnDst
+      ? (_dstRPTrade as SuccessfulTradeReturn)
+      : undefined
 
     const routeRequest: RouteRequest = {
       fromAddress: from ?? zeroAddress,
@@ -147,11 +152,7 @@ export const getSquidCrossChainTrade = async ({
       quoteOnly: !from || !recipient,
     }
 
-    if (
-      useRPOnDst &&
-      dstRPTrade?.status === RouteStatus.Success &&
-      dstRPTrade?.routeProcessorArgs
-    ) {
+    if (useRPOnDst && dstRPTrade?.routeProcessorArgs) {
       const rpAddress = ROUTE_PROCESSOR_4_ADDRESS[dstChainId]
 
       // Transfer dstBridgeToken to RouteProcessor & call ProcessRoute()
@@ -200,7 +201,7 @@ export const getSquidCrossChainTrade = async ({
               tokenAddress: zeroAddress,
               inputPos: 0,
             },
-            estimatedGas: (1.2 * dstRPTrade.gasSpent + 20_000).toString(),
+            estimatedGas: (1.2 * dstRPTrade!.gasSpent + 20_000).toString(),
           },
         ],
         description: `Swap ${tokenIn} -> ${tokenOut} on RouteProcessor`,
@@ -209,120 +210,36 @@ export const getSquidCrossChainTrade = async ({
 
     const { route: squidRoute } = await getSquidRoute(routeRequest)
 
-    const srcSquidTrade: z.infer<typeof tradeValidator02> | undefined =
+    const srcSquidTrade =
       isSrcSwap && !useRPOnSrc
-        ? {
-            status: RouteStatus.Success,
-            tokens: [
-              { ...squidRoute.estimate.fromToken },
-              {
-                ...srcBridgeToken.serialize(),
-                name: srcBridgeToken.name ?? '',
-                symbol: srcBridgeToken.symbol ?? '',
-              },
-            ],
-            tokenFrom: 0,
-            tokenTo: 1,
-            primaryPrice: +squidRoute.estimate.actions[0].exchangeRate,
-            swapPrice: +squidRoute.estimate.actions[0].exchangeRate,
-            priceImpact: +squidRoute.estimate.actions[0].priceImpact,
-            amountIn: squidRoute.estimate.actions[0].fromAmount,
-            assumedAmountOut: squidRoute.estimate.actions[0].toAmount,
-            gasSpent: +squidRoute.estimate.gasCosts.reduce((accum, cur) => {
-              accum = accum + Number(cur.amount)
-              return accum
-            }, 0),
-            route: [
-              {
-                poolAddress: SQUID_ROUTER_ADDRESS[srcChainId],
-                poolType: PoolType.Unknown,
-                poolName: 'Squid',
-                poolFee: 0,
-                tokenFrom: 0,
-                tokenTo: 1,
-                share: 0,
-                assumedAmountIn: squidRoute.estimate.actions[0].fromAmount,
-                assumedAmountOut: squidRoute.estimate.actions[0].toAmount,
-              },
-            ],
-          }
+        ? getSquidTrade(squidRoute.estimate.fromToken, srcBridgeToken)
         : undefined
 
-    const _dstSwapSquidActionIndex = srcSquidTrade ? 1 : 0
-    const dstSquidTrade: z.infer<typeof tradeValidator02> | undefined =
+    const dstSquidTrade =
       isDstSwap && !useRPOnDst
-        ? {
-            status: RouteStatus.Success,
-            tokens: [
-              { ...squidRoute.estimate.fromToken },
-              {
-                ...srcBridgeToken.serialize(),
-                name: srcBridgeToken.name ?? '',
-                symbol: srcBridgeToken.symbol ?? '',
-              },
-            ],
-            tokenFrom: 0,
-            tokenTo: 1,
-            primaryPrice:
-              +squidRoute.estimate.actions[_dstSwapSquidActionIndex]
-                .exchangeRate,
-            swapPrice:
-              +squidRoute.estimate.actions[_dstSwapSquidActionIndex]
-                .exchangeRate,
-            priceImpact:
-              +squidRoute.estimate.actions[_dstSwapSquidActionIndex]
-                .priceImpact,
-            amountIn:
-              squidRoute.estimate.actions[_dstSwapSquidActionIndex].fromAmount,
-            assumedAmountOut:
-              squidRoute.estimate.actions[_dstSwapSquidActionIndex].toAmount,
-            gasSpent: +squidRoute.estimate.gasCosts.reduce((accum, cur) => {
-              accum = accum + Number(cur.amount)
-              return accum
-            }, 0),
-            route: [
-              {
-                poolAddress: SQUID_ROUTER_ADDRESS[srcChainId],
-                poolType: PoolType.Unknown,
-                poolName: 'Squid',
-                poolFee: 0,
-                tokenFrom: 0,
-                tokenTo: 1,
-                share: 0,
-                assumedAmountIn:
-                  squidRoute.estimate.actions[_dstSwapSquidActionIndex]
-                    .fromAmount,
-                assumedAmountOut:
-                  squidRoute.estimate.actions[_dstSwapSquidActionIndex]
-                    .toAmount,
-              },
-            ],
-          }
+        ? getSquidTrade(dstBridgeToken, squidRoute.estimate.toToken)
         : undefined
 
-    console.log('squidRoute', squidRoute)
-
-    const dstAmountOut =
-      useRPOnDst && dstRPTrade?.status === RouteStatus.Success
-        ? dstRPTrade.assumedAmountOut
-        : squidRoute.estimate.toAmount
+    const dstAmountOut = useRPOnDst
+      ? BigInt(dstRPTrade!.assumedAmountOut)
+      : BigInt(squidRoute.estimate.toAmount)
 
     const dstAmountOutMin =
-      useRPOnDst && dstRPTrade?.status === RouteStatus.Success
-        ? (BigInt(dstRPTrade.assumedAmountOut) *
-            BigInt((1 - +slippagePercentage) * 10_000)) /
-          10_000n
-        : BigInt(squidRoute.estimate.toAmountMin)
+      useRPOnSrc && !isDstSwap
+        ? applySlippage(srcRPTrade!.assumedAmountOut, slippagePercentage)
+        : useRPOnDst
+          ? applySlippage(dstRPTrade!.assumedAmountOut, slippagePercentage)
+          : BigInt(squidRoute.estimate.toAmountMin)
 
     let priceImpact = 0
-    if (useRPOnSrc && srcRPTrade?.status === RouteStatus.Success) {
-      priceImpact += srcRPTrade.priceImpact
+    if (useRPOnSrc) {
+      priceImpact += srcRPTrade!.priceImpact
     }
-    if (useRPOnDst && dstRPTrade?.status === RouteStatus.Success) {
-      priceImpact += dstRPTrade.priceImpact
+    if (useRPOnDst) {
+      priceImpact += dstRPTrade!.priceImpact
     }
 
-    priceImpact += +squidRoute.estimate.aggregatePriceImpact
+    priceImpact += +squidRoute.estimate.aggregatePriceImpact / 100
 
     let writeArgs
     let functionName
@@ -338,44 +255,28 @@ export const getSquidCrossChainTrade = async ({
     const srcTrade = useRPOnSrc ? srcRPTrade : srcSquidTrade
     const dstTrade = useRPOnDst ? dstRPTrade : dstSquidTrade
 
-    const serializedSrcBridgeToken = {
-      ...srcBridgeToken.serialize(),
-      address: srcBridgeToken.isNative ? NativeAddress : srcBridgeToken.address,
-      name: srcBridgeToken.name ?? '',
-      symbol: srcBridgeToken.symbol ?? '',
-    }
-
-    const serializedDstBridgeToken = {
-      ...dstBridgeToken.serialize(),
-      address: dstBridgeToken.isNative ? NativeAddress : dstBridgeToken.address,
-      name: dstBridgeToken.name ?? '',
-      symbol: dstBridgeToken.symbol ?? '',
-    }
-
     if (!recipient || !from) {
       return {
         status: RouteStatus.Success,
         adapter: SushiXSwap2Adapter.Squid,
         priceImpact,
         amountIn: amount.toString(),
-        amountOut: dstAmountOut,
+        amountOut: dstAmountOut.toString(),
         amountOutMin: dstAmountOutMin.toString(),
         tokenIn,
         tokenOut,
-        srcBridgeToken: serializedSrcBridgeToken,
-        dstBridgeToken: serializedDstBridgeToken,
+        srcBridgeToken: srcBridgeToken.serialize(),
+        dstBridgeToken: dstBridgeToken.serialize(),
         srcTrade,
         dstTrade,
         transactionType,
       }
     }
 
-    if (
-      useRPOnSrc &&
-      srcTrade?.status === RouteStatus.Success &&
-      srcTrade.routeProcessorArgs
-    ) {
-      const srcSwapData = encodeRouteProcessorArgs(srcTrade.routeProcessorArgs)
+    if (useRPOnSrc) {
+      const srcSwapData = encodeRouteProcessorArgs(
+        (srcTrade as SuccessfulTradeReturn).routeProcessorArgs!,
+      )
 
       const squidCallData = decodeSquidRouterCallData(
         squidRoute.transactionRequest?.data as `0x${string}`,
@@ -428,8 +329,6 @@ export const getSquidCrossChainTrade = async ({
       ]
     }
 
-    console.log(squidRoute.estimate.feeCosts)
-
     // Add 10 % buffer
     const bridgeFee =
       (squidRoute.estimate.feeCosts.reduce(
@@ -446,9 +345,7 @@ export const getSquidCrossChainTrade = async ({
 
     const srcGasEstimate =
       BigInt(squidRoute.transactionRequest?.gasLimit ?? 0) +
-      (useRPOnSrc && srcTrade?.status === RouteStatus.Success
-        ? BigInt(srcTrade.gasSpent)
-        : 0n)
+      (useRPOnSrc ? BigInt((srcTrade as SuccessfulTradeReturn).gasSpent) : 0n)
 
     const srcGasFee = srcGasPrice
       ? srcGasPrice * srcGasEstimate
@@ -462,10 +359,10 @@ export const getSquidCrossChainTrade = async ({
       transactionType,
       tokenIn,
       tokenOut,
-      srcBridgeToken: serializedSrcBridgeToken,
-      dstBridgeToken: serializedDstBridgeToken,
+      srcBridgeToken: srcBridgeToken.serialize(),
+      dstBridgeToken: dstBridgeToken.serialize(),
       amountIn: amount.toString(),
-      amountOut: dstAmountOut,
+      amountOut: dstAmountOut.toString(),
       amountOutMin: dstAmountOutMin.toString(),
       srcTrade,
       dstTrade,

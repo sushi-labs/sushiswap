@@ -45,7 +45,7 @@ const schema = z.object({
     .optional(z.string())
     .transform((to) => (to ? getAddress(to) : undefined)),
   preferSushi: z.optional(z.coerce.boolean()),
-  maxPriceImpact: z.coerce
+  maxSlippage: z.coerce
     .number()
     .lt(1, 'maxPriceImpact should be lesser than 1')
     .gt(0, 'maxPriceImpact should be positive'),
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
 
   const getCrossChainTradeParams = {
     ...parsedParams,
-    slippagePercentage: (parsedParams.maxPriceImpact * 100).toString(),
+    slippagePercentage: (parsedParams.maxSlippage * 100).toString(),
   }
 
   const crossChainSwap = await (typeof adapter === 'undefined'

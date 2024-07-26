@@ -1,5 +1,4 @@
 import { sushiXSwap2Abi } from 'sushi/abi'
-import { Amount, Type } from 'sushi/currency'
 import {
   Address,
   Hex,
@@ -35,40 +34,6 @@ export type SushiXSwapWriteArgs =
       typeof sushiXSwap2Abi,
       SushiXSwapFunctionName.SwapAndBridge
     >['args']
-
-interface BridgeParams {
-  refId: string
-  adapter: string
-  tokenIn: string
-  amountIn: Parameters<typeof BigInt>[0]
-  to: string
-  adapterData: string
-}
-
-export const getBridgeParams = ({
-  refId = '0x0000',
-  adapter,
-  amountIn,
-  to,
-  adapterData,
-}: {
-  refId?: string
-  adapter: string
-  amountIn: Amount<Type>
-  to: string
-  adapterData: string
-}): BridgeParams => {
-  return {
-    refId,
-    adapter,
-    tokenIn: amountIn.currency.isNative
-      ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-      : amountIn.currency.address,
-    amountIn: amountIn.quotient.toString(),
-    to,
-    adapterData,
-  }
-}
 
 export const encodePayloadData = ({
   target,

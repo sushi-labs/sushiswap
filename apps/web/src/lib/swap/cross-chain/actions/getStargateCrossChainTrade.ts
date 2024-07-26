@@ -3,41 +3,38 @@ import { stargateAdapterAbi } from 'sushi/abi'
 import {
   STARGATE_ADAPTER_ADDRESS,
   STARGATE_CHAIN_ID,
-  STARGATE_CHAIN_PATHS,
-  STARGATE_ETH_ADDRESS,
-  STARGATE_USDC,
-  STARGATE_USDC_ADDRESS,
-  STARGATE_USDT,
-  STARGATE_USDT_ADDRESS,
   StargateAdapterChainId,
   isStargateAdapterChainId,
   publicClientConfig,
 } from 'sushi/config'
-import { Native } from 'sushi/currency'
-import { Fraction, ONE, ZERO } from 'sushi/math'
 import { RouterLiquiditySource } from 'sushi/router'
 import { RouteStatus } from 'sushi/tines'
 import {
-  Address,
   createPublicClient,
   encodeAbiParameters,
   parseAbiParameters,
 } from 'viem'
 import {
-  STARGATE_DEFAULT_SLIPPAGE,
+  STARGATE_SLIPPAGE_PERCENTAGE,
   SushiXSwap2Adapter,
   SushiXSwapFunctionName,
   SushiXSwapTransactionType,
+  applySlippage,
   encodeRouteProcessorArgs,
   encodeStargateTeleportParams,
   estimateStargateDstGas,
+  getStargateBridgePath,
 } from '../lib'
 import {
   CrossChainTradeSchemaType,
   GetCrossChainTradeParams,
 } from './getCrossChainTrade'
 import { getStargateFees } from './getStargateFees'
-import { getTrade } from './getTrade'
+import {
+  SuccessfulTradeReturn,
+  getTrade,
+  isSuccessfulTradeReturn,
+} from './getTrade'
 
 export const getStargateCrossChainTrade = async ({
   srcChainId,
@@ -77,7 +74,7 @@ export const getStargateCrossChainTrade = async ({
         : tokenOut.toLowerCase() !== dstBridgeToken.address.toLowerCase(),
     )
 
-    const srcTrade = isSrcSwap
+    const _srcTrade = isSrcSwap
       ? await getTrade({
           chainId: srcChainId,
           amount,
@@ -93,17 +90,16 @@ export const getStargateCrossChainTrade = async ({
         })
       : undefined
 
-    if (isSrcSwap && srcTrade?.status !== RouteStatus.Success) {
+    if (isSrcSwap && !isSuccessfulTradeReturn(_srcTrade!)) {
       throw new Error('getStaragetCrossChainTrade: srcTrade failed')
     }
 
-    const srcTradeAmountOut =
-      isSrcSwap && srcTrade?.status === RouteStatus.Success
-        ? BigInt(srcTrade.assumedAmountOut)
-        : undefined
+    const srcTrade = isSrcSwap
+      ? (_srcTrade as SuccessfulTradeReturn)
+      : undefined
 
     const bridgeFees = await getStargateFees({
-      amount: isSrcSwap ? (srcTradeAmountOut as bigint) : amount,
+      amount: isSrcSwap ? BigInt(srcTrade!.assumedAmountOut) : amount,
       srcBridgeToken,
       dstBridgeToken,
     })
@@ -118,28 +114,21 @@ export const getStargateCrossChainTrade = async ({
 
     const bridgeImpact =
       Number(bridgeFeeAmount) /
-      Number(
-        isSrcSwap &&
-          srcTrade?.status === RouteStatus.Success &&
-          srcTrade.routeProcessorArgs
-          ? BigInt(srcTrade.routeProcessorArgs.amountOutMin)
-          : amount,
-      )
+      Number(isSrcSwap ? srcTrade!.assumedAmountOut : amount)
 
     const srcAmountOut =
-      isSrcSwap &&
-      srcTrade?.status === RouteStatus.Success &&
-      srcTrade.routeProcessorArgs
-        ? BigInt(srcTrade.routeProcessorArgs.amountOutMin)
-        : amount - bridgeFeeAmount
+      (isSrcSwap ? BigInt(srcTrade!.assumedAmountOut) : amount) -
+      bridgeFeeAmount
 
-    const srcAmountOutMin = new Fraction(ONE)
-      .add(STARGATE_DEFAULT_SLIPPAGE)
-      .invert()
-      .multiply(srcAmountOut).quotient
+    const srcAmountOutMin = applySlippage(
+      isSrcSwap
+        ? applySlippage(srcTrade!.assumedAmountOut, slippagePercentage) -
+            bridgeFeeAmount
+        : srcAmountOut,
+      STARGATE_SLIPPAGE_PERCENTAGE,
+    )
 
     // adapted from amountSDtoLD in https://www.npmjs.com/package/@layerzerolabs/sg-sdk
-    // TODO: test thoroughly to/from BSC where srcBridgeToken.decimals !== dstBridgeToken.decimals
     const dstAmountIn =
       (srcAmountOut * 10n ** BigInt(dstBridgeToken.decimals)) /
       10n ** BigInt(srcBridgeToken.decimals)
@@ -147,7 +136,7 @@ export const getStargateCrossChainTrade = async ({
       (srcAmountOutMin * 10n ** BigInt(dstBridgeToken.decimals)) /
       10n ** BigInt(srcBridgeToken.decimals)
 
-    const dstTrade = isDstSwap
+    const _dstTrade = isDstSwap
       ? await getTrade({
           chainId: dstChainId,
           amount: dstAmountIn,
@@ -162,41 +151,25 @@ export const getStargateCrossChainTrade = async ({
         })
       : undefined
 
-    if (isDstSwap && dstTrade?.status !== RouteStatus.Success) {
+    if (isDstSwap && !isSuccessfulTradeReturn(_dstTrade!)) {
       throw new Error('getStaragetCrossChainTrade: dstTrade failed')
     }
 
-    const dstAmountOut =
-      isDstSwap && dstTrade?.status === RouteStatus.Success
-        ? BigInt(dstTrade.assumedAmountOut)
-        : dstAmountIn
+    const dstTrade = isDstSwap
+      ? (_dstTrade as SuccessfulTradeReturn)
+      : undefined
 
-    const dstAmountOutMin =
-      isDstSwap && dstTrade?.status === RouteStatus.Success
-        ? (BigInt(dstTrade.assumedAmountOut) *
-            BigInt((1 - +slippagePercentage) * 10_000)) /
-          10_000n
-        : dstAmountInMin
+    const dstAmountOut = isDstSwap
+      ? BigInt(dstTrade!.assumedAmountOut)
+      : dstAmountIn
+
+    const dstAmountOutMin = isDstSwap
+      ? applySlippage(dstTrade!.assumedAmountOut, slippagePercentage)
+      : dstAmountInMin
 
     let priceImpact = bridgeImpact
-    if (isSrcSwap && srcTrade?.status === RouteStatus.Success)
-      priceImpact += srcTrade.priceImpact
-    if (isDstSwap && dstTrade?.status === RouteStatus.Success)
-      priceImpact += dstTrade.priceImpact
-
-    const serializedSrcBridgeToken = {
-      ...srcBridgeToken.serialize(),
-      address: srcBridgeToken.isNative ? NativeAddress : srcBridgeToken.address,
-      name: srcBridgeToken.name ?? '',
-      symbol: srcBridgeToken.symbol ?? '',
-    }
-
-    const serializedDstBridgeToken = {
-      ...dstBridgeToken.serialize(),
-      address: dstBridgeToken.isNative ? NativeAddress : dstBridgeToken.address,
-      name: dstBridgeToken.name ?? '',
-      symbol: dstBridgeToken.symbol ?? '',
-    }
+    if (isSrcSwap) priceImpact += srcTrade!.priceImpact
+    if (isDstSwap) priceImpact += dstTrade!.priceImpact
 
     if (!recipient) {
       return {
@@ -208,8 +181,8 @@ export const getStargateCrossChainTrade = async ({
         amountOutMin: dstAmountOutMin.toString(),
         tokenIn,
         tokenOut,
-        srcBridgeToken: serializedSrcBridgeToken,
-        dstBridgeToken: serializedDstBridgeToken,
+        srcBridgeToken: srcBridgeToken.serialize(),
+        dstBridgeToken: dstBridgeToken.serialize(),
         srcTrade,
         dstTrade,
       }
@@ -218,7 +191,7 @@ export const getStargateCrossChainTrade = async ({
     let writeArgs
     let functionName
     let dstPayload
-    let dstGasEst = ZERO
+    let dstGasEst = 0n
     let transactionType
 
     if (!isSrcSwap && !isDstSwap) {
@@ -247,13 +220,10 @@ export const getStargateCrossChainTrade = async ({
         '0x', // swapPayload
         '0x', // payloadData
       ]
-    } else if (
-      isSrcSwap &&
-      !isDstSwap &&
-      srcTrade?.status === RouteStatus.Success &&
-      srcTrade?.routeProcessorArgs
-    ) {
-      const srcSwapData = encodeRouteProcessorArgs(srcTrade.routeProcessorArgs)
+    } else if (isSrcSwap && !isDstSwap) {
+      const srcSwapData = encodeRouteProcessorArgs(
+        srcTrade!.routeProcessorArgs!,
+      )
 
       transactionType = SushiXSwapTransactionType.SwapAndBridge
       functionName = SushiXSwapFunctionName.SwapAndBridge
@@ -281,14 +251,12 @@ export const getStargateCrossChainTrade = async ({
         '0x',
         '0x',
       ]
-    } else if (
-      !isSrcSwap &&
-      dstTrade?.status === RouteStatus.Success &&
-      dstTrade?.routeProcessorArgs
-    ) {
-      const dstSwapData = encodeRouteProcessorArgs(dstTrade.routeProcessorArgs)
+    } else if (!isSrcSwap) {
+      const dstSwapData = encodeRouteProcessorArgs(
+        dstTrade!.routeProcessorArgs!,
+      )
 
-      dstGasEst = estimateStargateDstGas(dstTrade.gasSpent)
+      dstGasEst = estimateStargateDstGas(dstTrade!.gasSpent)
 
       dstPayload = encodeAbiParameters(
         parseAbiParameters('address, bytes, bytes'),
@@ -325,16 +293,13 @@ export const getStargateCrossChainTrade = async ({
         dstSwapData,
         '0x', // dstPayload
       ]
-    } else if (
-      isSrcSwap &&
-      isDstSwap &&
-      srcTrade?.status === RouteStatus.Success &&
-      dstTrade?.status === RouteStatus.Success &&
-      srcTrade?.routeProcessorArgs &&
-      dstTrade?.routeProcessorArgs
-    ) {
-      const srcSwapData = encodeRouteProcessorArgs(srcTrade.routeProcessorArgs)
-      const dstSwapData = encodeRouteProcessorArgs(dstTrade.routeProcessorArgs)
+    } else if (isSrcSwap && isDstSwap) {
+      const srcSwapData = encodeRouteProcessorArgs(
+        srcTrade!.routeProcessorArgs!,
+      )
+      const dstSwapData = encodeRouteProcessorArgs(
+        dstTrade!.routeProcessorArgs!,
+      )
 
       dstPayload = encodeAbiParameters(
         parseAbiParameters('address, bytes, bytes'),
@@ -344,7 +309,7 @@ export const getStargateCrossChainTrade = async ({
           '0x', // payloadData
         ],
       )
-      dstGasEst = estimateStargateDstGas(dstTrade.gasSpent)
+      dstGasEst = estimateStargateDstGas(dstTrade!.gasSpent)
 
       transactionType = SushiXSwapTransactionType.CrossChainSwap
       functionName = SushiXSwapFunctionName.SwapAndBridge
@@ -379,7 +344,7 @@ export const getStargateCrossChainTrade = async ({
 
     const client = createPublicClient(publicClientConfig[srcChainId])
 
-    let [bridgeFee] = await client.readContract({
+    let [lzFee] = await client.readContract({
       address: STARGATE_ADAPTER_ADDRESS[srcChainId as StargateAdapterChainId],
       abi: stargateAdapterAbi,
       functionName: 'getFee',
@@ -395,22 +360,20 @@ export const getStargateCrossChainTrade = async ({
       ],
     })
 
-    // Add 20% buffer to STG fee
-    bridgeFee = (bridgeFee * 5n) / 4n
+    // Add 20% buffer to LZ fee
+    lzFee = (lzFee * 5n) / 4n
 
     const value =
       tokenIn.toLowerCase() === NativeAddress.toLowerCase()
-        ? BigInt(amount) + bridgeFee
-        : bridgeFee
+        ? BigInt(amount) + lzFee
+        : lzFee
 
     // est 500K gas for XSwapV2 call
-    const srcGasEst =
-      500000n +
-      BigInt(srcTrade?.status === RouteStatus.Success ? srcTrade?.gasSpent : 0)
+    const srcGasEst = 500000n + BigInt(srcTrade?.gasSpent ?? 0)
 
     const srcGasFee = srcGasPrice ? srcGasPrice * srcGasEst : srcGasEst
 
-    const gasSpent = srcGasFee + bridgeFee
+    const gasSpent = srcGasFee + lzFee
 
     return {
       adapter: SushiXSwap2Adapter.Stargate,
@@ -418,8 +381,8 @@ export const getStargateCrossChainTrade = async ({
       transactionType,
       tokenIn,
       tokenOut,
-      srcBridgeToken: serializedSrcBridgeToken,
-      dstBridgeToken: serializedDstBridgeToken,
+      srcBridgeToken: srcBridgeToken.serialize(),
+      dstBridgeToken: dstBridgeToken.serialize(),
       amountIn: amount.toString(),
       amountOut: dstAmountOut.toString(),
       amountOutMin: dstAmountOutMin.toString(),
@@ -427,7 +390,7 @@ export const getStargateCrossChainTrade = async ({
       dstTrade,
       priceImpact,
       gasSpent: gasSpent.toString(),
-      bridgeFee: bridgeFee.toString(),
+      bridgeFee: lzFee.toString(),
       srcGasFee: srcGasFee.toString(),
       writeArgs,
       functionName,
@@ -440,63 +403,4 @@ export const getStargateCrossChainTrade = async ({
       status: RouteStatus.NoWay,
     }
   }
-}
-
-export const getStargateBridgePath = ({
-  srcChainId,
-  dstChainId,
-  tokenIn,
-}: {
-  srcChainId: StargateAdapterChainId
-  dstChainId: StargateAdapterChainId
-  tokenIn: Address
-  tokenOut: Address
-}) => {
-  const srcChainPaths = STARGATE_CHAIN_PATHS[srcChainId]
-
-  // If srcCurrency is ETH, check for ETH path
-  if (
-    tokenIn.toLowerCase() === NativeAddress.toLowerCase() &&
-    srcChainId in STARGATE_ETH_ADDRESS
-  ) {
-    const ethPaths =
-      srcChainPaths[
-        STARGATE_ETH_ADDRESS[srcChainId as keyof typeof STARGATE_ETH_ADDRESS]
-      ]
-
-    if (
-      ethPaths.find((dstBridgeToken) => dstBridgeToken.chainId === dstChainId)
-    ) {
-      return {
-        srcBridgeToken: Native.onChain(srcChainId),
-        dstBridgeToken: Native.onChain(dstChainId),
-      }
-    }
-  }
-
-  // Else fallback to USDC/USDT
-  if (
-    srcChainId in STARGATE_USDC_ADDRESS ||
-    srcChainId in STARGATE_USDT_ADDRESS
-  ) {
-    const srcBridgeToken =
-      srcChainId in STARGATE_USDC
-        ? STARGATE_USDC[srcChainId as keyof typeof STARGATE_USDC]
-        : STARGATE_USDT[srcChainId as keyof typeof STARGATE_USDT]
-
-    const usdPaths = srcChainPaths[srcBridgeToken.address as Address]
-
-    const dstBridgeToken = usdPaths.find(
-      (dstBridgeToken) => dstBridgeToken.chainId === dstChainId,
-    )
-
-    if (dstBridgeToken) {
-      return {
-        srcBridgeToken,
-        dstBridgeToken,
-      }
-    }
-  }
-
-  return undefined
 }

@@ -1,4 +1,4 @@
-import { tokenValidator, tradeValidator02 } from '@sushiswap/react-query'
+import { tradeValidator02 } from '@sushiswap/react-query'
 import { SushiXSwap2ChainId } from 'sushi/config'
 import { RouteStatus } from 'sushi/tines'
 import { Address } from 'viem'
@@ -24,6 +24,24 @@ export interface GetCrossChainTradeParams {
   recipient?: Address
 }
 
+const currencyValidator = z.union([
+  z.object({
+    isNative: z.literal(true),
+    name: z.optional(z.string()),
+    symbol: z.optional(z.string()),
+    decimals: z.number(),
+    chainId: z.number(),
+  }),
+  z.object({
+    isNative: z.literal(false),
+    name: z.optional(z.string()),
+    symbol: z.optional(z.string()),
+    address: z.string(),
+    decimals: z.number(),
+    chainId: z.number(),
+  }),
+])
+
 const CrossChainTradeNotFoundSchema = z.object({
   adapter: z.nativeEnum(SushiXSwap2Adapter),
   status: z.enum([RouteStatus.NoWay]),
@@ -34,12 +52,8 @@ const CrossChainTradeFoundSchema = z.object({
   adapter: z.nativeEnum(SushiXSwap2Adapter),
   tokenIn: z.string(),
   tokenOut: z.string(),
-  srcBridgeToken: tokenValidator.extend({
-    chainId: z.coerce.number(),
-  }),
-  dstBridgeToken: tokenValidator.extend({
-    chainId: z.coerce.number(),
-  }),
+  srcBridgeToken: currencyValidator,
+  dstBridgeToken: currencyValidator,
   amountIn: z.string(),
   amountOut: z.string(),
   amountOutMin: z.string(),

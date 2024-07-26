@@ -73,7 +73,7 @@ export const useCrossChainTrade = ({
         tokenOut.isNative ? NativeAddress : tokenOut.address,
       )
       url.searchParams.set('amount', amount.quotient.toString())
-      url.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
+      url.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
 
       Object.entries(rest).forEach(([key, value]) => {
         value && url.searchParams.set(key, value.toString())
@@ -95,13 +95,13 @@ export const useCrossChainTrade = ({
           tokenOut,
         }
 
-      const srcBridgeToken = new Token({
-        ...parsed.srcBridgeToken,
-      })
+      const srcBridgeToken = parsed.srcBridgeToken.isNative
+        ? Native.deserialize(parsed.srcBridgeToken)
+        : Token.deserialize(parsed.srcBridgeToken)
 
-      const dstBridgeToken = new Token({
-        ...parsed.dstBridgeToken,
-      })
+      const dstBridgeToken = parsed.dstBridgeToken.isNative
+        ? Native.deserialize(parsed.dstBridgeToken)
+        : Token.deserialize(parsed.dstBridgeToken)
 
       const srcTrade = parsed.srcTrade
         ? apiAdapter02To01(
@@ -131,11 +131,11 @@ export const useCrossChainTrade = ({
         tokenOut,
         srcBridgeToken,
         dstBridgeToken,
+        srcTrade,
+        dstTrade,
         amountIn: Amount.fromRawAmount(tokenIn, parsed.amountIn),
         amountOut: Amount.fromRawAmount(tokenOut, parsed.amountOut),
         amountOutMin: Amount.fromRawAmount(tokenOut, parsed.amountOutMin),
-        srcTrade,
-        dstTrade,
         priceImpact: new Percent(Math.round(parsed.priceImpact * 10000), 10000),
         gasSpent: parsed.gasSpent
           ? Amount.fromRawAmount(
