@@ -1,10 +1,10 @@
-import { Extractor } from '@sushiswap/extractor'
+import { ExtractorNew } from '@sushiswap/extractor'
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
 // import { Token } from 'sushi/currency'
 // import { TokenList } from 'sushi/token-list'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config.js'
 
-const extractor = new Extractor(EXTRACTOR_CONFIG[CHAIN_ID])
+const extractor = new ExtractorNew(EXTRACTOR_CONFIG[CHAIN_ID])
 
 // const start = Date.now()
 // fetch('https://token-list.sushi.com')
