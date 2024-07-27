@@ -2,9 +2,9 @@
 
 import { Container } from '@sushiswap/ui'
 
-import { PoolFiltersFarmsOnly } from 'app/pool/ui/pools/filters/pool-filters-farms-only'
-import { PoolFiltersSearchToken } from 'app/pool/ui/pools/filters/pool-filters-search-token'
-import { PositionsTable } from 'app/pool/ui/pools/tables/positions/pool-positions-table'
+import { PoolFiltersFarmsOnly } from '~aptos/pool/ui/pools/filters/pool-filters-farms-only'
+import { PoolFiltersSearchToken } from '~aptos/pool/ui/pools/filters/pool-filters-search-token'
+import { PositionsTable } from '~aptos/pool/ui/pools/tables/positions/pool-positions-table'
 
 export default function MyPositionsPage() {
   return (

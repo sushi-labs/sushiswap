@@ -2,10 +2,10 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Container } from '@sushiswap/ui'
-import Loading from 'app/loading'
 import React, { useEffect } from 'react'
 import requiredNetworkAlert from '~aptos/(common)/lib/common/required-network-alert'
 import { useAccount } from '~aptos/(common)/lib/common/use-account'
+import Loading from '~aptos/loading'
 import { SimpleSwapWidget } from '~aptos/swap/ui/simple/simple-swap-widget'
 
 export default function SwapPage() {
