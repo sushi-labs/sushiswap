@@ -21,10 +21,6 @@
     "0xMasayoshi"
   ],
   "type": "module",
-  "main": "./dist/_cjs/index.js",
-  "module": "./dist/_esm/index.js",
-  "types": "./dist/_types/index.d.ts",
-  "typings": "./dist/_types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/_types/index.d.ts",
@@ -60,7 +56,6 @@
       "types": "./dist/_types/config/subgraph/index.d.ts",
       "import": "./dist/_esm/config/subgraph/index.js",
       "default": "./dist/_cjs/config/subgraph/index.js"
-
     },
     "./contract": {
       "types": "./dist/_types/contract/index.d.ts",
@@ -141,10 +136,12 @@
       "types": "./dist/_types/validate/index.d.ts",
       "import": "./dist/_esm/validate/index.js",
       "default": "./dist/_cjs/validate/index.js"
-
     },
     "./package.json": "./package.json"
   },
+  "main": "./dist/_cjs/index.js",
+  "module": "./dist/_esm/index.js",
+  "types": "./dist/_types/index.d.ts",
   "typesVersions": {
     "*": {
       "abi": [
@@ -215,12 +212,13 @@
       ]
     }
   },
+  "typings": "./dist/_types/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build2": "tsc && tsc-alias -p tsconfig.json",
     "build": "rm -rf dist && pnpm build:cjs && pnpm build:esm && pnpm build:types",
+    "build2": "tsc && tsc-alias -p tsconfig.json",
     "build:cjs": "tsc --project ./tsconfig.build.json --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
     "build:esm": "tsc --project ./tsconfig.build.json --module es2020 --outDir ./dist/_esm && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./dist/_esm/package.json",
     "build:types": "tsc --project ./tsconfig.build.json --module esnext --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap",
