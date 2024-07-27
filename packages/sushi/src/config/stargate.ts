@@ -9,7 +9,7 @@ import {
   MAI,
   MAI_ADDRESS,
   Token,
-  Type,
+  type Type,
   USDC,
   USDC_ADDRESS,
   USDT,

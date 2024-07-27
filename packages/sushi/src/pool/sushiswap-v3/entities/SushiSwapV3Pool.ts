@@ -2,7 +2,7 @@ import invariant from 'tiny-invariant'
 import type { Address, Hex } from 'viem'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SushiSwapV3ChainId,
+  type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   TICK_SPACINGS,
 } from '../../../config/index.js'
@@ -11,14 +11,17 @@ import {
   Price,
   Token,
 } from '../../../currency/index.js'
-import { BigintIsh } from '../../../math/index.js'
+import type { BigintIsh } from '../../../math/index.js'
 import { Q192 } from '../internalConstants.js'
 import { computeSushiSwapV3PoolAddress } from '../utils/computePoolAddress.js'
 import { LiquidityMath } from '../utils/liquidityMath.js'
 import { SwapMath } from '../utils/swapMath.js'
 import { TickMath } from '../utils/tickMath.js'
-import { Tick, TickConstructorArgs } from './Tick.js'
-import { NoTickDataProvider, TickDataProvider } from './TickDataProvider.js'
+import { Tick, type TickConstructorArgs } from './Tick.js'
+import {
+  NoTickDataProvider,
+  type TickDataProvider,
+} from './TickDataProvider.js'
 import { TickListDataProvider } from './TickListDataProvider.js'
 
 interface StepComputations {

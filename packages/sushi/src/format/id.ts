@@ -1,6 +1,6 @@
 import type { ChainId } from '../chain/index.js'
-import { Address } from '../types/address.js'
-import { ID } from '../types/id.js'
+import type { Address } from '../types/address.js'
+import type { ID } from '../types/id.js'
 import { unsanitize } from './unsanitize.js'
 
 export const getIdFromChainIdAddress = (

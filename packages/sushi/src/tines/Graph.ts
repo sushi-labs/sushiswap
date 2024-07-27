@@ -1,5 +1,5 @@
-import { Address } from 'viem'
-import { PoolType, RPool, RToken, setTokenId } from './RPool.js'
+import type { Address } from 'viem'
+import { PoolType, RPool, type RToken, setTokenId } from './RPool.js'
 import { StableSwapRPool } from './StableSwapPool.js'
 import {
   ASSERT,

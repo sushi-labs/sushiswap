@@ -1,7 +1,7 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { abs } from '../math/index.js'
-import { Rebase } from '../pool/index.js'
-import { PoolType, RPool, RToken } from './RPool.js'
+import type { Rebase } from '../pool/index.js'
+import { PoolType, RPool, type RToken } from './RPool.js'
 import { getBigInt } from './Utils.js'
 
 // export interface Rebase {

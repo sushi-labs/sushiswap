@@ -1,5 +1,5 @@
 import { ChainId } from '../../../chain/index.js'
-import { FuroChainId } from '../../furo.js'
+import type { FuroChainId } from '../../furo.js'
 import {
   CORE_HOST,
   DECENTRALIZED_HOST_BY_DEPLOYMENT_ID,

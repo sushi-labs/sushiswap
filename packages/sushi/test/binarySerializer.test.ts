@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   BinReadStream,
   BinWriteStream,
-} from '../src/serializer/BinarySerialization'
+} from '~sushi/serializer/BinarySerialization.js'
 
 const uint32TestValues = [0, 256, 0x2a3b4c5d]
 const uint24TestValues = [0, 256, 0x2a3b4c]

@@ -1,4 +1,4 @@
-import { Amount, Currency } from '../currency/index.js'
+import { Amount, type Currency } from '../currency/index.js'
 import { Fraction, Percent } from '../math/index.js'
 
 const ONE = new Fraction(1, 1)

@@ -1,22 +1,15 @@
 {
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
-  "include": ["src"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo",
-    "src/**/*.test.ts",
-    "src/**/*.test-d.ts",
-    "src/**/*.bench.ts"
-  ],
+  // This configuration is used for local development and type checking.
+  "extends": "./tsconfig.base.json",
+  "include": ["src", "test"],
+  "exclude": [],
+  "references": [{ "path": "./scripts/tsconfig.json" }],
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "verbatimModuleSyntax": false
+    "baseUrl": ".",
+    "paths": {
+      "~contracts/*": ["./contracts/*"],
+      "~sushi/*": ["./src/*"],
+      "~test/*": ["./test/*"]
+    }
   }
 }
