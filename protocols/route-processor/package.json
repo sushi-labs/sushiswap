@@ -5,7 +5,6 @@
   "description": "Router",
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
-  "type": "module",
   "files": [
     "artifacts",
     "contracts",
