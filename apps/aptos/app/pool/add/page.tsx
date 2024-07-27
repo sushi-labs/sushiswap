@@ -1,12 +1,12 @@
 'use client'
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import requiredNetworkAlert from 'lib/common/required-network-alert'
-import { usePoolPairs } from 'lib/swap/swap-get-route/use-pool-pairs'
 import React, { useEffect } from 'react'
 import { FC } from 'react'
-import { PoolAddFormSelectTokensWidget } from 'ui/pool/pool/add/pool-add-form/pool-add-form-select-tokens-widget'
-import { PoolAddFormWidget } from 'ui/pool/pool/add/pool-add-form/pool-add-form-widget'
+import requiredNetworkAlert from '~aptos/(common)/lib/common/required-network-alert'
+import { PoolAddFormSelectTokensWidget } from '~aptos/pool/ui/pool/add/pool-add-form/pool-add-form-select-tokens-widget'
+import { PoolAddFormWidget } from '~aptos/pool/ui/pool/add/pool-add-form/pool-add-form-widget'
+import { usePoolPairs } from '~aptos/swap/lib/swap-get-route/use-pool-pairs'
 
 export default function Page() {
   const { network, disconnect } = useWallet()

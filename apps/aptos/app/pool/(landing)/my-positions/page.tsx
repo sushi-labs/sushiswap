@@ -1,9 +1,10 @@
 'use client'
 
 import { Container } from '@sushiswap/ui'
-import { PoolFiltersFarmsOnly } from 'ui/pool/pools/filters/pool-filters-farms-only'
-import { PoolFiltersSearchToken } from '../../../../ui/pool/pools/filters/pool-filters-search-token'
-import { PositionsTable } from '../../../../ui/pool/pools/tables/positions/pool-positions-table'
+
+import { PoolFiltersFarmsOnly } from 'app/pool/ui/pools/filters/pool-filters-farms-only'
+import { PoolFiltersSearchToken } from 'app/pool/ui/pools/filters/pool-filters-search-token'
+import { PositionsTable } from 'app/pool/ui/pools/tables/positions/pool-positions-table'
 
 export default function MyPositionsPage() {
   return (

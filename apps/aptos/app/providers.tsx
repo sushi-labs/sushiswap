@@ -7,10 +7,10 @@ import { PontemWallet } from '@pontem/wallet-adapter-plugin'
 import { RiseWallet } from '@rise-wallet/wallet-adapter'
 import { BaseProviders } from '@sushiswap/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Modal } from 'components/Modal/Modal'
-import { chains } from 'config/chains'
 import { FewchaWallet } from 'fewcha-plugin-wallet-adapter'
 import { PetraWallet } from 'petra-plugin-wallet-adapter'
+import { Modal } from '~aptos/(common)/components/Modal/Modal'
+import { chains } from '~aptos/(common)/config/chains'
 
 const wallets = [
   new PetraWallet(),

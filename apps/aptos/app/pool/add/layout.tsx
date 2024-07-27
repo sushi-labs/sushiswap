@@ -1,6 +1,6 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
 
-import { BackButton } from '../../../ui/pool/back-button'
+import { BackButton } from '~aptos/pool/ui/back-button'
 
 export const metadata = {
   title: 'Pool 💦',

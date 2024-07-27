@@ -2,24 +2,24 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Container } from '@sushiswap/ui'
-import { ManageV2LiquidityCard } from 'components/ManageV2LiquidityCard'
-import { PoolComposition } from 'components/PoolSection/PoolComposition'
-import { PoolMyRewards } from 'components/PoolSection/PoolMyRewards'
-import { PoolPosition } from 'components/PoolSection/PoolPosition/PoolPosition'
-import { PoolRewards } from 'components/PoolSection/PoolRewards'
-import requiredNetworkAlert from 'lib/common/required-network-alert'
-import { useTotalSupply } from 'lib/common/use-total-supply'
+import { useParams } from 'next/navigation'
+import { useEffect, useMemo } from 'react'
+import { ManageV2LiquidityCard } from '~aptos/(common)/components/ManageV2LiquidityCard'
+import { PoolComposition } from '~aptos/(common)/components/PoolSection/PoolComposition'
+import { PoolMyRewards } from '~aptos/(common)/components/PoolSection/PoolMyRewards'
+import { PoolPosition } from '~aptos/(common)/components/PoolSection/PoolPosition/PoolPosition'
+import { PoolRewards } from '~aptos/(common)/components/PoolSection/PoolRewards'
+import requiredNetworkAlert from '~aptos/(common)/lib/common/required-network-alert'
+import { useTotalSupply } from '~aptos/(common)/lib/common/use-total-supply'
 import {
   getPIdIndex,
   useUserHandle,
   useUserPool,
-} from 'lib/common/use-user-handle'
-import { useFarms, useIsFarm } from 'lib/pool/farm/use-farms'
-import { useRewardsPerDay } from 'lib/pool/farm/use-rewards-per-day'
-import { useUserRewards } from 'lib/pool/farm/use-user-rewards'
-import { usePool } from 'lib/pool/use-pool'
-import { useParams } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+} from '~aptos/(common)/lib/common/use-user-handle'
+import { useFarms, useIsFarm } from '~aptos/pool/lib/farm/use-farms'
+import { useRewardsPerDay } from '~aptos/pool/lib/farm/use-rewards-per-day'
+import { useUserRewards } from '~aptos/pool/lib/farm/use-user-rewards'
+import { usePool } from '~aptos/pool/lib/use-pool'
 
 const Pool = () => {
   const router = useParams()

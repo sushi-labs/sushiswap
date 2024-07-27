@@ -3,8 +3,8 @@
 import { Container } from '@sushiswap/ui'
 import { Breadcrumb } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
-import { PoolHeader } from '../../../components/PoolSection/PoolHeader'
-import { usePool } from '../../../lib/pool/use-pool'
+import { PoolHeader } from '~aptos/(common)/components/PoolSection/PoolHeader'
+import { usePool } from '~aptos/pool/lib/use-pool'
 
 export default function Layout({
   children,

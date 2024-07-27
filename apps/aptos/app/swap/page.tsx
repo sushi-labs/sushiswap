@@ -3,10 +3,10 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Container } from '@sushiswap/ui'
 import Loading from 'app/loading'
-import requiredNetworkAlert from 'lib/common/required-network-alert'
-import { useAccount } from 'lib/common/use-account'
 import React, { useEffect } from 'react'
-import { SimpleSwapWidget } from 'ui/swap/simple/simple-swap-widget'
+import requiredNetworkAlert from '~aptos/(common)/lib/common/required-network-alert'
+import { useAccount } from '~aptos/(common)/lib/common/use-account'
+import { SimpleSwapWidget } from '~aptos/swap/ui/simple/simple-swap-widget'
 
 export default function SwapPage() {
   const { disconnect, network } = useWallet()

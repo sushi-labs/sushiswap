@@ -1,8 +1,9 @@
 'use client'
 
 import { Container } from '@sushiswap/ui'
-import { PoolFiltersSearchToken } from 'ui/pool/pools/filters/pool-filters-search-token'
-import { PoolsTable } from '../../../ui/pool/pools/tables/pools/PoolsTable'
+
+import { PoolFiltersSearchToken } from '../ui/pools/filters/pool-filters-search-token'
+import { PoolsTable } from '../ui/pools/tables/pools/PoolsTable'
 // import { TableFiltersFarmsOnly } from '../../../components/TableFiltersFarmsOnly'
 
 export default function Page() {

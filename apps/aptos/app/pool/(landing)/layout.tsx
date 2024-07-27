@@ -3,8 +3,8 @@
 import { Container, LinkInternal } from '@sushiswap/ui'
 import { useSearchParams } from 'next/navigation'
 
-import { PoolsFiltersProvider } from 'ui/pool/pools/filters/pool-filters-provider'
-import { PathnameButton } from '../../../components/PathnameButton'
+import { PathnameButton } from '~aptos/(common)/components/PathnameButton'
+import { PoolsFiltersProvider } from '~aptos/pool/ui/pools/filters/pool-filters-provider'
 import { Hero } from '../hero'
 
 export default function TabsLayout({
