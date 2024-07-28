@@ -1,7 +1,6 @@
-const _stringify = JSON.stringify
+const originalStringify = JSON.stringify
 const stringify = (value: any, replacer?: any, space?: string | number) => {
-  console.log('overriden stringify')
-  return _stringify(
+  return originalStringify(
     value,
     function (key: string, value: any) {
       if (typeof value === 'bigint') {
@@ -31,13 +30,12 @@ const stringify = (value: any, replacer?: any, space?: string | number) => {
 }
 JSON.stringify = stringify
 
-const _parse = JSON.parse
+const originalParse = JSON.parse
 const parse = (
   text: string,
   reviver?: (this: any, key: string, value: any) => any,
 ) => {
-  console.log('overriden parse')
-  return _parse(text, function (key: string, value: any) {
+  return originalParse(text, function (key: string, value: any) {
     if (value && typeof value === 'object' && value.__type === 'bigint') {
       value = BigInt(value.value)
     }
