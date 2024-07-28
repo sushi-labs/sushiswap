@@ -1,5 +1,4 @@
 import { test } from 'next/experimental/testmode/playwright.js'
-import { SupportedChainId } from 'src/config'
 import {
   SushiSwapV3FeeAmount,
   isSushiSwapV2ChainId,
@@ -15,9 +14,7 @@ if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
   new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
-const CHAIN_ID = Number(
-  process.env.NEXT_PUBLIC_CHAIN_ID as string,
-) as SupportedChainId
+const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID as string) as 137
 const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
 
 let FAKE_TOKEN: Token

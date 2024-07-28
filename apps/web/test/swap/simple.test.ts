@@ -1,5 +1,4 @@
 import { test } from 'next/experimental/testmode/playwright.js'
-import { SupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, USDC, USDT, WBTC } from 'sushi/currency'
 import { SwapPage } from 'test/helpers/swap'
@@ -16,7 +15,7 @@ if (
   throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
 }
 
-const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as SupportedChainId
+const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as 137
 
 const url = 'http://localhost:3000/swap'
 
