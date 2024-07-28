@@ -1,9 +1,9 @@
 import invariant from 'tiny-invariant'
 import { natives } from '../chain/index.js'
-import { Currency } from './Currency.js'
-import { Token } from './Token.js'
-import { type Type } from './Type.js'
+import { Currency } from './currency.js'
+import { Token } from './token.js'
 import { WNATIVE } from './tokens.js'
+import { type Type } from './type.js'
 import { type SerializedNative, nativeSchema } from './zod.js'
 
 export class Native extends Currency {

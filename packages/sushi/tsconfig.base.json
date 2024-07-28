@@ -4,11 +4,11 @@
     "compilerOptions": {
       // Incremental builds
       // NOTE: Enabling incremental builds speeds up `tsc`. Keep in mind though that it does not reliably bust the cache when the `tsconfig.json` file changes.
-      "incremental": true,
+      "incremental": false,
   
       // Type checking
       "strict": true,
-      "useDefineForClassFields": true, // Not enabled by default in `strict` mode unless we bump `target` to ES2022.
+      "useDefineForClassFields": false, // Not enabled by default in `strict` mode unless we bump `target` to ES2022.
       "noFallthroughCasesInSwitch": true, // Not enabled by default in `strict` mode.
       "noImplicitReturns": true, // Not enabled by default in `strict` mode.
       "useUnknownInCatchVariables": true, // TODO: This would normally be enabled in `strict` mode but would require some adjustments to the codebase.

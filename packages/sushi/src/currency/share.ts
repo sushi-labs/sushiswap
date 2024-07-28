@@ -7,8 +7,8 @@ import {
   Rounding,
   ZERO,
 } from '../math/index.js'
-import { Amount } from './Amount.js'
-import { type Type } from './Type.js'
+import { Amount } from './amount.js'
+import { type Type } from './type.js'
 
 export class Share<T extends Type> extends Fraction {
   public readonly currency: T

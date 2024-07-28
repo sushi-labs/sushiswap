@@ -7,10 +7,10 @@ import {
   Rounding,
   ZERO,
 } from '../math/index.js'
-import { Native } from './Native.js'
-import { Share } from './Share.js'
-import { Token } from './Token.js'
-import { type Type } from './Type.js'
+import { Native } from './native.js'
+import { Share } from './share.js'
+import { Token } from './token.js'
+import { type Type } from './type.js'
 import { type SerializedAmount, amountSchema } from './zod.js'
 
 export class Amount<T extends Type> extends Fraction {

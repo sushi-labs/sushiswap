@@ -1,8 +1,9 @@
-const originalStringify = JSON.stringify
-JSON.stringify = (value, replacer, space) => {
-  return originalStringify(
+const _stringify = JSON.stringify
+const stringify = (value: any, replacer?: any, space?: string | number) => {
+  console.log('overriden stringify')
+  return _stringify(
     value,
-    function (key, value) {
+    function (key: string, value: any) {
       if (typeof value === 'bigint') {
         // Check if the reviver supports BigInt
         try {
@@ -28,10 +29,15 @@ JSON.stringify = (value, replacer, space) => {
     space,
   )
 }
+JSON.stringify = stringify
 
-const originalParse = JSON.parse
-JSON.parse = (text, reviver) => {
-  return originalParse(text, function (key, value) {
+const _parse = JSON.parse
+const parse = (
+  text: string,
+  reviver?: (this: any, key: string, value: any) => any,
+) => {
+  console.log('overriden parse')
+  return _parse(text, function (key: string, value: any) {
     if (value && typeof value === 'object' && value.__type === 'bigint') {
       value = BigInt(value.value)
     }
@@ -41,5 +47,6 @@ JSON.parse = (text, reviver) => {
     return value
   })
 }
+JSON.parse = parse
 
-export {}
+export { parse, stringify }

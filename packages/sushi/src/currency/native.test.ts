@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { Native } from './Native.js'
-import { Token } from './Token.js'
+import { Native } from './native.js'
+import { Token } from './token.js'
 
 describe('Currency', () => {
   const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
