@@ -1,10 +1,7 @@
-// @ts-nocheck
-
 import { test } from 'next/experimental/testmode/playwright.js'
+import { SupportedChainId } from 'src/config'
 import { ChainId } from 'sushi/chain'
 import { Native, Token, USDC, USDT, WBTC } from 'sushi/currency'
-
-import { SupportedChainId } from 'src/config'
 import { SwapPage } from 'test/helpers/swap'
 import {
   // createSnapshot,
@@ -50,7 +47,7 @@ test.beforeEach(async ({ page, next }) => {
   // await loadSnapshot(chainId, snapshot)
 
   await page.route('http://localhost:3000/api/swap', async (route) => {
-    await route.fallback({ json: { maintenance: false } })
+    await route.fulfill({ json: { maintenance: false } })
   })
 
   await page.route(
@@ -76,7 +73,7 @@ test.beforeEach(async ({ page, next }) => {
   try {
     await interceptAnvil(page, next)
   } catch (_e) {
-    throw new Error('error intercepting anvil', _e)
+    throw new Error('error intercepting anvil')
   }
 
   next.onFetch(() => {

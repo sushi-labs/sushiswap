@@ -6,6 +6,7 @@ import { ToastContainer } from '@sushiswap/notifications'
 import type { Metadata } from 'next'
 import { Inter, Roboto_Mono } from 'next/font/google'
 import React from 'react'
+// import { Overrides } from './overrides'
 import { Trackers } from './trackers'
 
 const inter = Inter({

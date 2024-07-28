@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 import type { NextFixture } from 'next/experimental/testmode/playwright'
-import { http, Address, createTestClient } from 'viem'
+import { http, type Address, createTestClient } from 'viem'
 import { foundry } from 'viem/chains'
 
 const url = `http://127.0.0.1:8545/${process.env['TEST_PARALLEL_INDEX']}`
