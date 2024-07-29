@@ -49,6 +49,7 @@ export enum LiquidityProviders {
   Camelot = 'Camelot',
   Enosys = 'Enosys',
   BlazeSwap = 'BlazeSwap',
+  LynexV1 = 'LynexV1',
 }
 
 export abstract class LiquidityProvider {
@@ -156,6 +157,7 @@ export const UniV2LiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.Camelot,
   LiquidityProviders.Enosys,
   LiquidityProviders.BlazeSwap,
+  LiquidityProviders.LynexV1,
 ]
 
 export const UniV3LiquidityProviders: LiquidityProviders[] = [

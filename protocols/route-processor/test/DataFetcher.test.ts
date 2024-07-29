@@ -119,6 +119,7 @@ const excludedChains = [
   ChainId.BOBA_AVAX,
   ChainId.ZKSYNC_ERA,
 ]
+
 const chainIds = Object.values(ChainId).filter((v) => {
   if (excludedChains.every((e) => v !== e) && process?.env?.CHAIN) {
     return v === ChainId[process.env.CHAIN as keyof typeof ChainId]
