@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import { Button } from '@sushiswap/ui'
 import {
   Card,
@@ -19,9 +18,10 @@ import { formatUSD } from 'sushi/format'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { type ChainId } from 'sushi/chain'
 import { usePoolPositionRewards } from './PoolPositionRewardsProvider'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolMyRewardsProps {
-  pool: Pool
+  pool: V2Pool
 }
 
 export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pool }) => {

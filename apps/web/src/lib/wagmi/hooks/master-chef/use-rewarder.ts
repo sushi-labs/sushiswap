@@ -1,6 +1,5 @@
 'use client'
 
-import { ChefType } from '@sushiswap/client'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
@@ -8,6 +7,7 @@ import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
 import { useBlockNumber, useReadContracts } from 'wagmi'
 import { getMasterChefContractConfig } from './use-master-chef-contract'
+import { ChefType } from 'sushi'
 
 interface UseRewarderPayload {
   account: string | undefined

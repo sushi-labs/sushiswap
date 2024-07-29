@@ -1,14 +1,13 @@
 'use client'
 
-import { ChefType } from '@sushiswap/client'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
-  useGraphPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
+  useV2Pool,
 } from 'src/lib/hooks'
 import { useMasterChef } from 'src/lib/wagmi/hooks/master-chef/use-master-chef'
-import type { PoolId, PoolWithIncentives } from 'sushi'
+import type { ChefType, PoolId, PoolWithIncentives } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Currency, Token } from 'sushi/currency'
 
@@ -82,7 +81,7 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
 }) => {
   const {
     data: { reserve0, reserve1, totalSupply, liquidityToken },
-  } = useGraphPool(pool)
+  } = useV2Pool(pool)
 
   const { balance, isLoading, isError, isWritePending, isWriteError } =
     useMasterChef({

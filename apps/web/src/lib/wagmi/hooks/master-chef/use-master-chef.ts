@@ -1,6 +1,5 @@
 'use client'
 
-import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
@@ -24,6 +23,7 @@ import {
   MINICHEF_ADDRESS,
   useMasterChefContract,
 } from './use-master-chef-contract'
+import { ChefType } from 'sushi'
 
 interface UseMasterChefReturn
   extends Pick<ReturnType<typeof useReadContracts>, 'isLoading' | 'isError'> {

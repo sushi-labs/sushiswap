@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   Card,
   CardContent,
@@ -18,9 +17,10 @@ import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { usePoolPosition } from './PoolPositionProvider'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolPositionProps {
-  pool: Pool
+  pool: V2Pool
 }
 
 const PoolPositionDisconnected: FC = () => {

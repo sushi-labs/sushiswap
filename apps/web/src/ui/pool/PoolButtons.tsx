@@ -1,4 +1,3 @@
-import { Pool } from '@sushiswap/client'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import Link from 'next/link'
@@ -8,9 +7,10 @@ import { getAddress } from 'viem'
 
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolButtonsProps {
-  pool: Pool
+  pool: V2Pool
 }
 
 export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {

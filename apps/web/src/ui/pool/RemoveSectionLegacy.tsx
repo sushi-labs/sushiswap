@@ -1,6 +1,5 @@
 'use client'
 
-import { Pool } from '@sushiswap/client'
 import {
   SlippageToleranceStorageKey,
   TTLStorageKey,
@@ -58,6 +57,7 @@ import {
 } from 'wagmi'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 const REMOVE_V2_LIQUIDITY_PERMIT_INFO: PermitInfo = {
   version: '1',
@@ -66,7 +66,7 @@ const REMOVE_V2_LIQUIDITY_PERMIT_INFO: PermitInfo = {
 }
 
 interface RemoveSectionLegacyProps {
-  pool: Pool
+  pool: V2Pool
 }
 
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =

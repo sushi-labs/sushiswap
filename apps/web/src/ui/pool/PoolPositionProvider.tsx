@@ -2,9 +2,9 @@
 
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
-  useGraphPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
+  useV2Pool,
 } from 'src/lib/hooks'
 import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 import { ChainId } from 'sushi/chain'
@@ -33,7 +33,7 @@ export const PoolPositionProvider: FC<{
 
   const {
     data: { reserve0, reserve1, totalSupply, liquidityToken },
-  } = useGraphPool(pool)
+  } = useV2Pool(pool)
 
   const {
     data: balance,

@@ -1,6 +1,6 @@
 'use client'
 
-import { Protocol, parseArgs } from '@sushiswap/client'
+import { parseArgs } from '@sushiswap/client'
 import { useRouter } from 'next/navigation'
 import {
   Dispatch,
@@ -16,6 +16,7 @@ import { z } from 'zod'
 
 import { useTypedSearchParams } from '../../lib/hooks'
 import { POOL_TYPES } from './TableFiltersPoolType'
+import { SushiSwapProtocol } from 'sushi'
 
 type FilterContext = z.TypeOf<typeof poolFiltersSchema>
 
@@ -45,7 +46,7 @@ export const poolFiltersSchema = z.object({
     .string()
     .transform((protocols) =>
       protocols !== null && protocols !== ','
-        ? (protocols.split(',') as Protocol[])
+        ? (protocols.split(',') as SushiSwapProtocol[])
         : [],
     ),
   farmsOnly: z
