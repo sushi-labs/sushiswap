@@ -16,6 +16,7 @@ import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
 import { UniV3PoolWatcher } from './UniV3PoolWatcher.js'
+import { UniV4Config, UniV4Extractor } from './UniV4Extractor.js'
 
 const DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
@@ -27,6 +28,7 @@ export type ExtractorConfig = {
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
   curveConfig?: CurveWhitelistConfig
+  uinV4?: UniV4Config
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
   cacheDir: string
@@ -143,6 +145,15 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
         ),
+      )
+    if (args.uniV4)
+      this.projectExtractors.push(
+        new UniV4Extractor({
+          config: args.uniV4,
+          multiCallAggregator: this.multiCallAggregator,
+          tokenManager: this.tokenManager,
+          cacheDir: args.cacheDir,
+        }),
       )
   }
 

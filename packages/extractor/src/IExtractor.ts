@@ -2,7 +2,7 @@ import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 
 export abstract class IExtractor {
-  // Start extracting
+  // Starts extracting
   async start() {}
   abstract isStarted(): boolean
 

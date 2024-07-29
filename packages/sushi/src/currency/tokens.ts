@@ -468,7 +468,7 @@ export const WNATIVE = {
   [ChainId.SEPOLIA]: WETH9[ChainId.SEPOLIA],
   // [ChainId.ROPSTEN]: WETH9[ChainId.ROPSTEN],
   // [ChainId.RINKEBY]: WETH9[ChainId.RINKEBY],
-  // [ChainId.GÖRLI]: WETH9[ChainId.GÖRLI],
+  [ChainId.GÖRLI]: WETH9[ChainId.GÖRLI],
   // [ChainId.KOVAN]: WETH9[ChainId.KOVAN],
   [ChainId.OPTIMISM]: WETH9[ChainId.OPTIMISM],
   [ChainId.FANTOM]: new Token({

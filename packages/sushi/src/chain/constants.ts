@@ -2,7 +2,7 @@ export const ChainId = {
   ETHEREUM: 1,
   // ROPSTEN: 3,
   // RINKEBY: 4,
-  // GÖRLI: 5,
+  GÖRLI: 5,
   // KOVAN: 42,
   POLYGON: 137,
   POLYGON_TESTNET: 80001,

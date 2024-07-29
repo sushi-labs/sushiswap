@@ -621,6 +621,7 @@ export const publicTransports = {
   [ChainId.FANTOM_TESTNET]: http('https://rpc.testnet.fantom.network'),
   [ChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
   [ChainId.SEPOLIA]: http('https://sepolia.drpc.org'),
+  [ChainId.GÖRLI]: http('https://eth-goerli.api.onfinality.io/public'),
 } as const satisfies Record<ChainId, Transport>
 
 export const publicChains = [
@@ -850,6 +851,10 @@ export const publicClientConfig = {
   [ChainId.SEPOLIA]: {
     chain: sepolia,
     transport: publicTransports[ChainId.SEPOLIA],
+  },
+  [ChainId.GÖRLI]: {
+    chain: goerli as unknown as typeof mainnet,
+    transport: publicTransports[ChainId.GÖRLI],
   },
 } as const satisfies Record<
   ChainId,
