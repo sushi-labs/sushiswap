@@ -1,11 +1,15 @@
 import { Abi, Narrow } from 'abitype'
 import { ChainId } from 'sushi/chain'
+import { ReadContract } from 'sushi/router'
 import {
   Address,
   ContractFunctionArgs,
+  ContractFunctionName,
   ContractFunctionParameters,
   MulticallContracts,
   PublicClient,
+  ReadContractParameters,
+  ReadContractReturnType,
 } from 'viem'
 import { Logger } from './Logger.js'
 import { delay } from './Utils.js'
@@ -245,5 +249,24 @@ export class MultiCallAggregator {
       return '0x842eC2c7D803033Edf55E478F461FC547Bc54EB2'
     }
     return this.client.chain?.contracts?.multicall3?.address as Address
+  }
+
+  getReadContract(): ReadContract {
+    const that = this
+    function _readContract<
+      abi extends Abi | readonly unknown[],
+      functionName extends ContractFunctionName<abi, 'pure' | 'view'>,
+      args extends ContractFunctionArgs<abi, 'pure' | 'view', functionName>,
+    >(
+      a: ReadContractParameters<abi, functionName, args>,
+    ): Promise<ReadContractReturnType<abi, functionName, args>> {
+      return that.callValue(
+        a.address,
+        a.abi as Abi,
+        a.functionName,
+        a.args as unknown[],
+      )
+    }
+    return _readContract
   }
 }

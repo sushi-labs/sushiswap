@@ -1,5 +1,3 @@
-import 'sushi/bigint-serializer'
-
 import { BondsApiSchema, getBondsFromSubgraph } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../cors'

@@ -1,5 +1,3 @@
-import 'sushi/bigint-serializer'
-
 import {
   BondsPositionsApiSchema,
   getBondPositionsFromSubgraph,

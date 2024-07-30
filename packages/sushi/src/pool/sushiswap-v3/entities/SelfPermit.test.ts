@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { Token } from '../../../currency/index.js'
 import {
-  AllowedPermitArguments,
+  type AllowedPermitArguments,
   SelfPermit,
-  StandardPermitArguments,
+  type StandardPermitArguments,
 } from './SelfPermit.js'
 
 const token = new Token({

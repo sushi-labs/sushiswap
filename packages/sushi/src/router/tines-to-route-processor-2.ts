@@ -1,6 +1,11 @@
-import { Hex } from 'viem'
+import type { Hex } from 'viem'
 import { ChainId } from '../chain/index.js'
-import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines/index.js'
+import {
+  type MultiRoute,
+  type RToken,
+  type RouteLeg,
+  RouteStatus,
+} from '../tines/index.js'
 import { HEXer } from './HEXer.js'
 import { PoolCode } from './pool-codes/PoolCode.js'
 
@@ -19,7 +24,11 @@ export interface PermitData {
 }
 
 export function getTokenType(token: RToken): TokenType {
-  if (token.address === '') return TokenType.NATIVE
+  if (
+    !token.address ||
+    token.address.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+  )
+    return TokenType.NATIVE
   return typeof token.chainId === 'string' && token.chainId.startsWith('Bento')
     ? TokenType.BENTO
     : TokenType.ERC20
@@ -112,9 +121,11 @@ export class TinesToRouteProcessor2 {
     toAddress: string,
   ): string {
     const outputLegs = this.tokenOutputLegs.get(token.tokenId as string)
-    if (!outputLegs || outputLegs.length !== 1) {
+    if (!outputLegs) {
+      // || outputLegs.length !== 1) {
       throw new Error(
-        `Not 1 output pool for native token: ${outputLegs?.length}`,
+        //`Not 1 output pool for native token: ${outputLegs?.length}`,
+        'Not 1 output pool for native token: 0',
       )
     }
 

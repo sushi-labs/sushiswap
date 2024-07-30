@@ -16,13 +16,18 @@ import {
   getAddress,
   keccak256,
 } from 'viem'
-import { AlgebraEventsAbi, AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
+import {
+  AlgebraEventsAbi,
+  AlgebraPoolWatcher,
+  AlgebraPoolWatcherStatus,
+} from './AlgebraPoolWatcher.js'
 import {
   AlgebraQualityChecker,
   PoolSyncState,
   QualityCheckerCallBackArg,
 } from './AlgebraQualityChecker.js'
 import { Counter } from './Counter.js'
+import { IExtractor } from './IExtractor.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
@@ -92,7 +97,7 @@ interface PoolCacheRecord {
   factory: Address
 }
 
-export class AlgebraExtractor {
+export class AlgebraExtractor extends IExtractor {
   factories: FactoryAlgebra[]
   factoriesFull: FactoryAlgebraFull[] = []
   factoryMap: Map<string, FactoryAlgebraFull> = new Map()
@@ -123,6 +128,7 @@ export class AlgebraExtractor {
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
   ) {
+    super()
     this.multiCallAggregator =
       multiCallAggregator || new MultiCallAggregator(client)
     this.tokenManager =
@@ -210,7 +216,7 @@ export class AlgebraExtractor {
   }
 
   // TODO: stop ?
-  async start() {
+  override async start() {
     if (this.logProcessingStatus === LogsProcessing.NotStarted) {
       this.logProcessingStatus = LogsProcessing.Started
       const startTime = performance.now()
@@ -392,6 +398,26 @@ export class AlgebraExtractor {
     }
   }
 
+  override getPoolsForTokens(tokensUnique: Token[]): {
+    prefetched: PoolCode[]
+    fetching: Promise<PoolCode | undefined>[]
+  } {
+    const { prefetched, fetching } = this.getWatchersForTokens(tokensUnique)
+    return {
+      prefetched: prefetched
+        .map((w) => w.getPoolCode())
+        .filter((p) => p !== undefined) as PoolCode[],
+      fetching: fetching.map(async (pr) => {
+        const w = await pr
+        if (w === undefined) return
+
+        if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
+          await w.downloadFinished()
+        return w.getPoolCode()
+      }),
+    }
+  }
+
   getWatchersBetweenTokenSets(
     tokensUnique1: Token[],
     tokensUnique2: Token[],
@@ -417,6 +443,32 @@ export class AlgebraExtractor {
     return {
       prefetched,
       fetching,
+    }
+  }
+
+  override getPoolsBetweenTokenSets(
+    tokensUnique1: Token[],
+    tokensUnique2: Token[],
+  ): {
+    prefetched: PoolCode[]
+    fetching: Promise<PoolCode | undefined>[]
+  } {
+    const { prefetched, fetching } = this.getWatchersBetweenTokenSets(
+      tokensUnique1,
+      tokensUnique2,
+    )
+    return {
+      prefetched: prefetched
+        .map((w) => w.getPoolCode())
+        .filter((p) => p !== undefined) as PoolCode[],
+      fetching: fetching.map(async (pr) => {
+        const w = await pr
+        if (w === undefined) return
+
+        if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
+          await w.downloadFinished()
+        return w.getPoolCode()
+      }),
     }
   }
 
@@ -506,14 +558,14 @@ export class AlgebraExtractor {
     )
   }
 
-  getCurrentPoolCodes(): PoolCode[] {
+  override getCurrentPoolCodes(): PoolCode[] {
     return Array.from(this.poolMap.values())
       .map((p) => p.getPoolCode())
       .filter((pc) => pc !== undefined) as PoolCode[]
   }
 
   // side effect: updated pools list is cleared
-  getUpdatedPoolCodes(): PoolCode[] {
+  override getUpdatedPoolCodes(): PoolCode[] {
     const res = Array.from(this.poolMapUpdated.values())
       .map((p) => p.getPoolCode())
       .filter((pc) => pc !== undefined) as PoolCode[]
@@ -528,7 +580,7 @@ export class AlgebraExtractor {
       .filter((pc) => pc !== undefined) as PoolCode[]
   }
 
-  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+  override getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
     const add = (token: Token) => {
       const num = tokenMap.get(token) || 0
       tokenMap.set(token, num + 1)
@@ -563,7 +615,7 @@ export class AlgebraExtractor {
       console.log(`Alg-${this.multiCallAggregator.chainId}: ${log}`)
   }
 
-  isStarted() {
+  override isStarted() {
     return this.started
   }
 }

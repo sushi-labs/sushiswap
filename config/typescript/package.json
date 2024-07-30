@@ -17,11 +17,9 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
   "exports": {
-    "./base.json": "./base.json",
-    "./react-library.json": "./react-library.json"
+    "./base.json": "./base.json"
   },
   "files": [
-    "./base.json",
-    "./react-library.json"
+    "./base.json"
   ]
 }

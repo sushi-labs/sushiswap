@@ -41,7 +41,6 @@ import {
 import { abs } from 'sushi/math'
 import { PoolCode } from 'sushi/router'
 import {
-  CURVE_NON_FACTORY_POOLS,
   DataFetcher,
   LiquidityProviders,
   NativeWrapBridgePoolCode,
@@ -54,9 +53,9 @@ import {
   BridgeBento,
   MultiRoute,
   PoolType,
-  // CurveMultitokenCore,
-  // CurveMultitokenPool,
   RPool,
+  RToken,
+  RouteLeg,
   RouteStatus,
   StableSwapRPool,
   getBigInt,
@@ -121,6 +120,45 @@ async function setRouterPrimaryBalance(
   return false
 }
 
+const slippageIsOkDefault = (
+  r: MultiRoute,
+  slippage: number,
+  env: { poolCodes: Map<string, PoolCode> },
+) => {
+  let minAmount = r.amountIn
+  let hasBentoTokens = false
+  let hasOverusedConcentrated = false
+  r.legs.forEach((l) => {
+    minAmount = Math.min(l.assumedAmountOut, l.assumedAmountIn, minAmount)
+    if (l.tokenTo.symbol.startsWith('Bento')) hasBentoTokens = true
+    if (l.poolType === PoolType.Concentrated) {
+      const pool = env.poolCodes.get(l.poolAddress)?.pool
+      if (pool) {
+        try {
+          pool.calcOutByIn(
+            l.assumedAmountIn,
+            l.tokenFrom.address === pool.token0.address,
+          )
+        } catch (_e) {
+          hasOverusedConcentrated = true
+        }
+      }
+    }
+  })
+  const maxSlippage = Math.max(4 / minAmount, 0.0001)
+  if (hasBentoTokens) {
+    // Bento has much liquidity we can sweep
+    process.stdout.write('Bento ')
+    return slippage >= -maxSlippage
+  }
+  if (hasOverusedConcentrated) {
+    // UniV3 pool can use ticks outside of ticks range known by router (usually ±10%)
+    process.stdout.write('UniV3 overuse ')
+    return slippage >= -maxSlippage
+  }
+  return Math.abs(slippage) <= maxSlippage
+}
+
 async function getTestEnvironment() {
   const client = createPublicClient({
     batch: {
@@ -163,7 +201,16 @@ async function getTestEnvironment() {
         ?.blockNumber,
       snapshotDir,
     )
-    poolList.forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
+    // n<0 for bridges
+    const goodLiquidity = (n: bigint): boolean => n > 1000n || n < 0
+    poolList
+      .filter(
+        // filter out empty pools
+        ({ pool }) =>
+          goodLiquidity(pool.getReserve0()) &&
+          goodLiquidity(pool.getReserve1()),
+      )
+      .forEach((p) => poolCodes.set(p.pool.uniqueID(), p))
   }
 
   const RouteProcessorTx = await client.deployContract({
@@ -291,7 +338,7 @@ async function makeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
-  slippageIsOk?: (r: MultiRoute, slippage: number) => boolean,
+  slippageIsOk = slippageIsOkDefault,
 ): Promise<[bigint, bigint, number] | undefined> {
   // console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -328,46 +375,6 @@ async function makeSwap(
     providers,
     poolFilter,
   )
-  // console.log(Router.routeToHumanString(pcMap, route, fromToken, toToken))
-  // const cc = route.legs
-  //   .map((l) => {
-  //     if (
-  //       pcMap.get(l.uniqueId)?.liquidityProvider == LiquidityProviders.CurveSwap
-  //     )
-  //       return `${pcMap.get(l.uniqueId)?.poolName}: ${l.tokenFrom.symbol} -> ${
-  //         l.tokenTo.symbol
-  //       }  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`
-  //   })
-  //   .filter((s) => s !== undefined)
-  // if (cc.length) console.log(cc.join('\n'))
-  // console.log(
-  //   'ROUTE:',
-  //   route.legs.map(
-  //     (l) =>
-  //       `${l.tokenFrom.symbol} -> ${l.tokenTo.symbol}  ${l.poolAddress}  ${l.assumedAmountIn} -> ${l.assumedAmountOut}`,
-  //   ),
-  // )
-  // const poolsS = new Map<string, [number, number][]>()
-  // route.legs.forEach(l => {
-  //   const pool = pcMap.get(l.uniqueId)?.pool
-  //   if (pool instanceof CurveMultitokenPool) {
-  //     const prev: [number, number][] = poolsS.get(pool.core.address) ?? []
-  //     prev.push([pool.index0, pool.index1])
-  //     poolsS.set(pool.core.address, prev)
-  //   }
-  // })
-  // Array.from(poolsS.entries()).forEach(([addr, ind]) => {
-  //   if (ind.length >= 2)
-  //     ind.forEach(([i0, i1]) => console.log(`    ${addr} ${i0}-${i1}`))
-  // })
-  // if (route.fromToken.symbol !== 'ETH' && route.toToken.symbol !== 'ETH') {
-  //   route.legs.forEach(l => {
-  //     if (l.tokenFrom.symbol == 'ETH')
-  //     console.log(`    IN ${l.tokenFrom.symbol} ${l.absolutePortion} ${l.uniqueId} `)
-  //     if (l.tokenTo.symbol == 'ETH')
-  //     console.log(`    OUT ${l.tokenTo.symbol} ${l.uniqueId} `)
-  //   })
-  // }
 
   if (route.status === RouteStatus.NoWay) {
     if (throwAtNoWay) throw new Error('NoWay')
@@ -470,7 +477,7 @@ async function makeSwap(
 
   if (abs(route.amountOutBI - balanceOutBI) > 10n) {
     if (
-      (slippageIsOk && !slippageIsOk(route, slippage / 10000)) ||
+      (slippageIsOk && !slippageIsOk(route, slippage / 10000, env)) ||
       (!slippageIsOk && slippage < 0)
     ) {
       console.log('')
@@ -510,7 +517,7 @@ async function updMakeSwap(
   poolFilter?: PoolFilter,
   permits: PermitData[] = [],
   throwAtNoWay = true,
-  slippageIsOk?: (r: MultiRoute, slippage: number) => boolean,
+  slippageIsOk = slippageIsOkDefault,
 ): Promise<[bigint | undefined, bigint, number]> {
   const [amountIn, waitBlock] =
     typeof lastCallResult === 'bigint'
@@ -1149,8 +1156,9 @@ describe('End-to-end RouteProcessor5 test', async () => {
       await env.snapshot.restore()
       const usedPools = new Set<string>()
       let currentToken = 0
-      const rnd: () => number = seedrandom(`testSeed cc ${i}`) // random [0, 1)
+      const rnd: () => number = seedrandom(`testSeed ${i}`) // random [0, 1)
       intermidiateResult[0] = getBigInt(getRandomExp(rnd, 1e15, 1e24))
+      let routeLegs: RouteLeg[] = []
       for (;;) {
         const nextToken = getNextToken(rnd, currentToken)
         process.stdout.write(
@@ -1170,45 +1178,23 @@ describe('End-to-end RouteProcessor5 test', async () => {
           undefined,
           undefined,
           false, //throwAtNoWay
-          (r: MultiRoute, slippage: number) => {
+          (
+            r: MultiRoute,
+            slippage: number,
+            env: { poolCodes: Map<string, PoolCode> },
+          ) => {
+            routeLegs = r.legs
             let minAmount = r.amountIn
-            let hasBentoTokens = false
-            let hasOverusedConcentrated = false
             r.legs.forEach((l) => {
               minAmount = Math.min(
                 l.assumedAmountOut,
                 l.assumedAmountIn,
                 minAmount,
               )
-              if (l.tokenTo.symbol.startsWith('Bento')) hasBentoTokens = true
-              if (l.poolType === PoolType.Concentrated) {
-                const pool = env.poolCodes.get(l.poolAddress)?.pool
-                if (pool) {
-                  try {
-                    pool.calcOutByIn(
-                      l.assumedAmountIn,
-                      l.tokenFrom.address === pool.token0.address,
-                    )
-                  } catch (_e) {
-                    hasOverusedConcentrated = true
-                  }
-                }
-              }
             })
-            const maxSlippage = Math.max(4 / minAmount, 0.0001)
-            if (hasBentoTokens) {
-              // Bento has much liquidity we can sweep
-              process.stdout.write('Bento ')
-              return slippage >= -maxSlippage
-            }
-            if (hasOverusedConcentrated) {
-              // UniV3 pool can use ticks outside of ticks range known by router (usually ±10%)
-              process.stdout.write('UniV3 overuse ')
-              return slippage >= -maxSlippage
-            }
             if (slippage !== 0)
               process.stdout.write(`Min route amount: ${minAmount} `)
-            return Math.abs(slippage) <= maxSlippage
+            return slippageIsOkDefault(r, slippage, env)
           },
         )
         currentToken = nextToken
@@ -1221,6 +1207,16 @@ describe('End-to-end RouteProcessor5 test', async () => {
           break
         }
         console.log(`slippage: ${intermidiateResult[2]}%`)
+        routeLegs.forEach((l) => {
+          if (l.poolType === PoolType.Curve)
+            console.log(
+              'Curve',
+              l.poolAddress,
+              l.tokenFrom.symbol,
+              '->',
+              l.tokenTo.symbol,
+            )
+        })
       }
     }
   })
@@ -1493,17 +1489,49 @@ describe('End-to-end RouteProcessor5 test', async () => {
       )
     })
 
-    const amountInForTest: Record<Address, number> = {
-      '0x0ce6a5ff5217e38315f87032cf90686c96627caa': 1e16,
-      '0x93054188d876f558f4a66b2ef1d97d16edf0895b': 1e10,
+    const amountInForTest: Record<Address, bigint> = {
+      '0xfC636D819d1a98433402eC9dEC633d864014F28C': BigInt(1e24),
+      '0x890f4e345B1dAED0367A877a1612f86A1f86985f': BigInt(1e22),
+      // ???? 114 '0xC18cC39da8b11dA8c3541C598eE022258F9744da': BigInt(1e20),
     }
 
-    const pools = CURVE_NON_FACTORY_POOLS[ChainId.ETHEREUM]
-    for (let i = 0; i < pools.length; ++i) {
-      const [address, type, [from, to]] = pools[i]
-      it(`Curve pool ${address} ${type} ${from.symbol}->${to.symbol}`, async () => {
+    const CURVE_POOLS_FOR_TEST = 20
+
+    function sortDecrByParam<T>(arr: T[], param: (t: T) => number): T[] {
+      let sortArr = arr.map((a) => [param(a), a]) as [number, T][]
+      sortArr = sortArr.sort((a, b) => b[0] - a[0])
+      return sortArr.map((s) => s[1])
+    }
+
+    function RToken2Type(t: RToken): Type {
+      if (t.address && t.address.length === 42)
+        return new Token({
+          chainId: Number(t.chainId ?? 1),
+          address: t.address,
+          symbol: t.symbol,
+          name: t.name,
+          decimals: t.decimals,
+        })
+      else return Native.onChain(Number(t.chainId ?? 1))
+    }
+
+    it(`Most liquidable ${CURVE_POOLS_FOR_TEST} Curve pools`, async () => {
+      const curvePools = Array.from(env.poolCodes.values())
+        .map((p) => p.pool)
+        .filter((p) => p.poolType() === PoolType.Curve)
+      const pools = sortDecrByParam(curvePools, (p) =>
+        Number(p.getReserve0() + p.getReserve1()),
+      )
+      for (let i = 0; i < CURVE_POOLS_FOR_TEST && i < pools.length; ++i) {
+        const from = RToken2Type(pools[i].token0)
+        const to = RToken2Type(pools[i].token1)
+        console.log(i, from.symbol, '->', to.symbol, 'pool:', pools[i].address)
         await env.snapshot.restore()
-        const amoutIn = BigInt(amountInForTest[address] ?? 1e18)
+        const amoutIn =
+          amountInForTest[pools[i].address] ??
+          BigInt(
+            Math.min(1e18, Math.round(Number(pools[i].getReserve0()) / 10)),
+          )
         if (from instanceof Token)
           await setRouterPrimaryBalance(
             env.client,
@@ -1520,7 +1548,7 @@ describe('End-to-end RouteProcessor5 test', async () => {
           undefined,
           [LiquidityProviders.CurveSwap],
         )
-      })
-    }
+      }
+    })
   }
 })

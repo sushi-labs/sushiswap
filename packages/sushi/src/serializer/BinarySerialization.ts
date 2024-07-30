@@ -1,4 +1,4 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
 const MAX_BYTE2_VALUE = (1 << 16) - 1
 const MAX_BYTE3_VALUE = (1 << 24) - 1

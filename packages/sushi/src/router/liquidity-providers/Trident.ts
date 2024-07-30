@@ -1,6 +1,6 @@
 import { add } from 'date-fns/add'
 import { getUnixTime } from 'date-fns/getUnixTime'
-import { Address, PublicClient } from 'viem'
+import type { Address, PublicClient } from 'viem'
 import {
   balanceOfAbi,
   getReservesAbi,
@@ -10,22 +10,22 @@ import {
 import { type ChainId } from '../../chain/index.js'
 import {
   BENTOBOX_ADDRESS,
-  BentoBoxChainId,
+  type BentoBoxChainId,
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
 } from '../../config/index.js'
 import { Token } from '../../currency/index.js'
-import { Rebase } from '../../pool/index.js'
+import type { Rebase } from '../../pool/index.js'
 import {
   BridgeBento,
   ConstantProductRPool,
-  RToken,
+  type RToken,
   StableSwapRPool,
   convertTokenToBento,
   toShareBI,
 } from '../../tines/index.js'
 import {
-  PoolResponse2,
+  type PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
   mapToken,
@@ -36,7 +36,7 @@ import {
   type PoolCode,
 } from '../pool-codes/index.js'
 import {
-  TridentStaticPool,
+  type TridentStaticPool,
   TridentStaticPoolFetcher,
 } from '../static-pool-fetcher/Trident.js'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider.js'

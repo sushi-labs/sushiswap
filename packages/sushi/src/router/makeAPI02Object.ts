@@ -1,6 +1,10 @@
-import { MultiRoute, RToken, RouteLeg, RouteStatus } from '../tines/index.js'
-import { LiquidityProviders } from './liquidity-providers/LiquidityProvider.js'
-import { RPParams } from './router.js'
+import {
+  type MultiRoute,
+  type RToken,
+  type RouteLeg,
+  RouteStatus,
+} from '../tines/index.js'
+import type { RPParams } from './router.js'
 
 function makeAPI02Token(token: RToken) {
   return {

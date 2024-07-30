@@ -240,7 +240,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
 
         const withNative =
           token1IsNative ||
-          Native.onChain(_pool.chainId).wrapped.address === pool.token1.address
+          Native.onChain(_pool.chainId).wrapped.address === pool.token0.address
 
         const config = (() => {
           if (signature?.message?.deadline) {
@@ -455,6 +455,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
                     variant="outline"
                     fullWidth
                     id="approve-remove-liquidity-slp"
+                    chainId={_pool.chainId}
                     amount={amountToRemove}
                     contract={
                       getSushiSwapRouterContractConfig(

@@ -1,4 +1,4 @@
-import type { ChainId } from 'sushi/chain'
+import type { ChainId } from '../../chain/index.js'
 import type { Address } from '../address.js'
 import type { Token } from '../token.js'
 import type { PoolId } from './pool-id.js'

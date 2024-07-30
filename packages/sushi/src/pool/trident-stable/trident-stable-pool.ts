@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 import {
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
+  type TridentChainId,
 } from '../../config/index.js'
 import { Amount, Price, Share, Token } from '../../currency/index.js'
 import {
@@ -12,7 +12,7 @@ import {
 } from '../../dex/index.js'
 import { ZERO, sqrt } from '../../math/index.js'
 import { computeTridentStablePoolAddress } from './compute-trident-stable-pool-address.js'
-import { SerializedStablePool, tridentStablePoolSchema } from './zod.js'
+import { type SerializedStablePool, tridentStablePoolSchema } from './zod.js'
 
 export interface Rebase {
   elastic: bigint

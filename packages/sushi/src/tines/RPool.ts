@@ -1,4 +1,4 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
 export const TYPICAL_SWAP_GAS_COST = 60_000
 export const TYPICAL_MINIMAL_LIQUIDITY = 1000
@@ -14,7 +14,14 @@ export interface RToken {
 
 export function setTokenId(...tokens: RToken[]) {
   tokens.forEach((t) => {
-    if (!t.tokenId) t.tokenId = `${t.address || ''}_${t.chainId}`
+    if (!t.tokenId) {
+      if (
+        t.address &&
+        t.address.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+      )
+        t.tokenId = `_${t.chainId}`
+      else t.tokenId = `${t.address || ''}_${t.chainId}`
+    }
   })
 }
 

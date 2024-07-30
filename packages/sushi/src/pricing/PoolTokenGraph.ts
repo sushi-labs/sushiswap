@@ -1,4 +1,4 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import type { RPool, RToken } from '../tines/RPool.js'
 
 export class TokenVert {
