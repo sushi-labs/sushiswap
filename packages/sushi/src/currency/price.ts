@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 import { type BigintIsh, Fraction, Rounding } from '../math/index.js'
-import { Amount } from './Amount.js'
-import { type Type } from './Type.js'
+import { Amount } from './amount.js'
+import { type Type } from './type.js'
 
 export class Price<TBase extends Type, TQuote extends Type> extends Fraction {
   public readonly baseCurrency: TBase // input i.e. denominator

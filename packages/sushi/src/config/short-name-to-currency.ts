@@ -11,7 +11,7 @@ import {
   SKL,
   SUSHI,
   Token,
-  Type,
+  type Type,
   UNI,
   USDB,
   USDC,

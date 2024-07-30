@@ -1,5 +1,3 @@
-import 'sushi/bigint-serializer'
-
 import { SteerVaultApiSchema, getSteerVaultFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { CORS } from '../../../cors'

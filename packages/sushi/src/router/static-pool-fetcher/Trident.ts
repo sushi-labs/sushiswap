@@ -1,4 +1,4 @@
-import { Address, PublicClient } from 'viem'
+import type { Address, PublicClient } from 'viem'
 import {
   tridentGetPoolsAbi,
   tridentPoolsCountAbi,
@@ -8,9 +8,9 @@ import { ChainId } from '../../chain/index.js'
 import {
   TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS,
   TRIDENT_STABLE_POOL_FACTORY_ADDRESS,
-  TridentChainId,
+  type TridentChainId,
 } from '../../config/index.js'
-import { Currency, Token } from '../../currency/index.js'
+import { type Currency, Token } from '../../currency/index.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 
 export interface TridentStaticPool {

@@ -1,8 +1,7 @@
 import invariant from 'tiny-invariant'
 import { ChainId } from '../chain/index.js'
-import { Native } from './Native.js'
-import { Token } from './Token.js'
-
+import type { Token } from './token.js'
+import type { Type } from './type.js'
 /**
  * A currency is any fungible financial instrument, including Ether, all ERC20 tokens, and other chain-native currencies
  */
@@ -69,7 +68,7 @@ export abstract class Currency {
    * Returns whether this currency is functionally equivalent to the other currency
    * @param other the other currency
    */
-  public abstract equals(other: Native | Token): boolean
+  public abstract equals(other: Type): boolean
 
   /**
    * Return the wrapped version of this currency

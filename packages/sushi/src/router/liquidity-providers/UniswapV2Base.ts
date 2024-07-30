@@ -9,10 +9,10 @@ import {
   BASES_TO_CHECK_TRADES_AGAINST,
 } from '../../config/index.js'
 import { Token } from '../../currency/index.js'
-import { ConstantProductRPool, RToken } from '../../tines/index.js'
+import { ConstantProductRPool, type RToken } from '../../tines/index.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import {
-  PoolResponse2,
+  type PoolResponse2,
   filterOnDemandPools,
   filterTopPools,
   mapToken,

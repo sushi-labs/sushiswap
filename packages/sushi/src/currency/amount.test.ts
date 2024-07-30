@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { Amount } from './Amount.js'
-import { Native } from './Native.js'
-import { Token } from './Token.js'
-
 import { MAX_UINT256, Percent } from '../math/index.js'
+import { Amount } from './amount.js'
+import { Native } from './native.js'
+import { Token } from './token.js'
 
 describe('Amount', () => {
   const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'

@@ -1,11 +1,11 @@
 import {
-  Abi,
-  Address,
-  ContractFunctionArgs,
-  ContractFunctionName,
-  PublicClient,
-  ReadContractParameters,
-  ReadContractReturnType,
+  type Abi,
+  type Address,
+  type ContractFunctionArgs,
+  type ContractFunctionName,
+  type PublicClient,
+  type ReadContractParameters,
+  type ReadContractReturnType,
   parseAbi,
 } from 'viem'
 import { RPool } from '../tines/index.js'

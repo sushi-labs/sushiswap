@@ -1,11 +1,11 @@
 import https from 'https'
-import { ChainId } from '../../chain/index.js'
-import { USDC, USDT } from '../../currency/index.js'
-import { Token, Type } from '../../currency/index.js'
-import { MultiRoute } from '../../tines/index.js'
-import { DataFetcher } from '../data-fetcher.js'
-import { LiquidityProviders } from '../liquidity-providers/index.js'
-import { Router } from '../router.js'
+import { ChainId } from '../src/chain/index.js'
+import { USDC, USDT } from '../src/currency/index.js'
+import { Token, Type } from '../src/currency/index.js'
+import { DataFetcher } from '../src/router/data-fetcher.js'
+import { LiquidityProviders } from '../src/router/liquidity-providers/index.js'
+import { Router } from '../src/router/router.js'
+import { MultiRoute } from '../src/tines/index.js'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -32,7 +32,7 @@ async function getAPIObject(
           else result(r)
         })
       })
-      .on('error', (err) => {
+      .on('error', (err: unknown) => {
         reject(JSON.parse(err.message))
       })
   })

@@ -1,8 +1,5 @@
-import {
-  FURO_SUPPORTED_CHAIN_IDS,
-  isFuroChainId,
-} from 'node_modules/sushi/dist/config/furo'
 import { ChainId } from 'sushi/chain'
+import { FURO_SUPPORTED_CHAIN_IDS, isFuroChainId } from 'sushi/config'
 import { BENTOBOX_SUPPORTED_CHAIN_IDS, isBentoBoxChainId } from 'sushi/config'
 import { z } from 'zod'
 

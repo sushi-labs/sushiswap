@@ -1,7 +1,7 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
-import { PoolType, RPool, RToken } from './RPool.js'
-import { BridgeState, getStarGateFeesV04 } from './StarGateFeesV04.js'
+import { PoolType, RPool, type RToken } from './RPool.js'
+import { type BridgeState, getStarGateFeesV04 } from './StarGateFeesV04.js'
 import { getBigInt } from './Utils.js'
 
 export class BridgeStargateV04OneWay extends RPool {

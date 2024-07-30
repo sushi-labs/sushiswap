@@ -1,5 +1,4 @@
 import { ChainId } from '../chain/index.js'
-import { Token } from './Token.js'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
@@ -74,6 +73,7 @@ import {
   renBTC_ADDRESS,
   sETH2_ADDRESS,
 } from './token-addresses.js'
+import { Token } from './token.js'
 
 function addressMapToTokenMap(
   {

@@ -1,4 +1,4 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { Token } from '../../currency/index.js'
 
 export interface PoolResponse2 {

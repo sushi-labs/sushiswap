@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { BigintIsh } from '../../../math/index.js'
+import type { BigintIsh } from '../../../math/index.js'
 import { TickMath } from '../utils/index.js'
 
 export interface TickConstructorArgs {

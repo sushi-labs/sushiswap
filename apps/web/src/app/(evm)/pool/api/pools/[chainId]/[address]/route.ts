@@ -1,5 +1,3 @@
-import 'sushi/bigint-serializer'
-
 import { PoolApiSchema, getPoolFromDB } from '@sushiswap/client/api'
 import { NextResponse } from 'next/server.js'
 import { ChefType } from 'sushi'

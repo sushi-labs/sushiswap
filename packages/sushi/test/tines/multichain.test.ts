@@ -1,9 +1,12 @@
 import seedrandom from 'seedrandom'
 import { expect, it } from 'vitest'
-import { NetworkInfo, findMultiRouteExactIn } from '../../src/tines/index.js'
 import {
-  Network,
-  TToken,
+  type NetworkInfo,
+  findMultiRouteExactIn,
+} from '../../src/tines/index.js'
+import {
+  type Network,
+  type TToken,
   checkRoute,
   createMultipleNetworks,
   createMultipleNetworksWithStargateBridge,
