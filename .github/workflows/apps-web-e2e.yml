@@ -33,7 +33,7 @@ jobs:
         block-number: [55359656]
         chain-id: [137]
         node-version: [20]
-        pnpm-version: [9.6.0]
+        pnpm-version: [9.4.0]
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
