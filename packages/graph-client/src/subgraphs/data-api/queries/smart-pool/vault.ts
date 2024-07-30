@@ -1,9 +1,10 @@
-import type { VariablesOf } from 'gql.tada'
-import { SteerStrategy } from '@sushiswap/steer-sdk'
-import { request, type RequestOptions } from 'src/lib/request'
-import { graphql } from '../../graphql'
 import type { SteerChainId } from '@sushiswap/steer-sdk'
+import { SteerStrategy } from '@sushiswap/steer-sdk'
+import type { VariablesOf } from 'gql.tada'
+import { request, type RequestOptions } from 'src/lib/request'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
+import { graphql } from '../../graphql'
 
 export const VaultQuery = graphql(
   `
@@ -65,11 +66,8 @@ export const VaultQuery = graphql(
 
 export type GetVault = VariablesOf<typeof VaultQuery>
 
-export async function getVault(
-  variables: GetVault,
-  options?: RequestOptions,
-) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+export async function getVault(variables: GetVault, options?: RequestOptions) {
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: VaultQuery, variables },
@@ -79,29 +77,29 @@ export async function getVault(
     const vault = result.vault
     const strategy = SteerStrategy[vault.strategy as keyof typeof SteerStrategy]
     if (!strategy) throw new Error('No strategy found')
-      return {
-        ...vault,
+    return {
+      ...vault,
+      chainId: vault.chainId as SteerChainId,
+      id: `${vault.chainId}:${vault.id}` as `${string}:0x${string}`,
+      address: vault.address as Address,
+      reserve0: BigInt(vault.reserve0),
+      reserve1: BigInt(vault.reserve1),
+      fees0: BigInt(vault.fees0),
+      fees1: BigInt(vault.fees1),
+      token0: {
+        ...vault.token0,
+        id: `${vault.chainId}:${vault.token0.address}` as `${string}:0x${string}`,
+        address: vault.token0.address as Address,
         chainId: vault.chainId as SteerChainId,
-        id: `${vault.chainId}:${vault.id}` as `${string}:0x${string}`,
-        address: vault.address as Address,
-        reserve0: BigInt(vault.reserve0),
-        reserve1: BigInt(vault.reserve1),
-        fees0: BigInt(vault.fees0),
-        fees1: BigInt(vault.fees1),
-        token0: {
-          ...vault.token0,
-          id: `${vault.chainId}:${vault.token0.address}` as `${string}:0x${string}`,
-          address: vault.token0.address as Address,
-          chainId: vault.chainId as SteerChainId,
-        },
-        token1: {
-          ...vault.token1,
-          id: `${vault.chainId}:${vault.token1.address}` as `${string}:0x${string}`,
-          address: vault.token1.address as Address,
-          chainId: vault.chainId as SteerChainId,
-        },
-        strategy,
-      }
+      },
+      token1: {
+        ...vault.token1,
+        id: `${vault.chainId}:${vault.token1.address}` as `${string}:0x${string}`,
+        address: vault.token1.address as Address,
+        chainId: vault.chainId as SteerChainId,
+      },
+      strategy,
+    }
   }
 
   throw new Error('No smart pool found')

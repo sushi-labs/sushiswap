@@ -1,6 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 
 export const SushiBarHistory = graphql(
@@ -39,15 +40,13 @@ export const SushiBarHistory = graphql(
 `,
 )
 
-export type GetSushiBarHistory = VariablesOf<
-  typeof SushiBarHistory
->
+export type GetSushiBarHistory = VariablesOf<typeof SushiBarHistory>
 
 export async function getSushiBarHistory(
   variables: GetSushiBarHistory,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: SushiBarHistory, variables },
@@ -60,6 +59,4 @@ export async function getSushiBarHistory(
   throw new Error('No sushi bar history found')
 }
 
-export type SushiBarHistory = Awaited<
-  ReturnType<typeof getSushiBarHistory>
->
+export type SushiBarHistory = Awaited<ReturnType<typeof getSushiBarHistory>>

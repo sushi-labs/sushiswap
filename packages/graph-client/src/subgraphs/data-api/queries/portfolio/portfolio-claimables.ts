@@ -1,6 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 
 export const PortfolioClaimablesQuery = graphql(
@@ -203,7 +204,7 @@ export async function getPortfolioClaimables(
   variables: GetPortfolioClaimables,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: PortfolioClaimablesQuery, variables },

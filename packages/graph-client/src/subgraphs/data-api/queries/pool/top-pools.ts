@@ -1,6 +1,6 @@
 import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request'
-// import { SUSHI_DATA_API_V0_URL } from 'sushi/config/subgraph'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 
 export const PoolsQuery = graphql(
@@ -40,8 +40,11 @@ query Pools($chainId: Int!) {
 
 export type GetPools = VariablesOf<typeof PoolsQuery>
 
-export async function getTopPools(variables: GetPools, options?: RequestOptions) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+export async function getTopPools(
+  variables: GetPools,
+  options?: RequestOptions,
+) {
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: PoolsQuery, variables },

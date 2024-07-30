@@ -2,6 +2,7 @@ import type { SteerChainId } from '@sushiswap/steer-sdk'
 import { SteerStrategy } from '@sushiswap/steer-sdk'
 import type { VariablesOf } from 'gql.tada'
 import { request, type RequestOptions } from 'src/lib/request'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
 import { graphql } from '../../graphql'
 import type { VaultV1 } from './vault'
@@ -70,7 +71,7 @@ export async function getVaults(
   variables: GetVaults,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: VaultsQuery, variables },
@@ -110,4 +111,3 @@ export async function getVaults(
 
   throw new Error('No smart pool found')
 }
-

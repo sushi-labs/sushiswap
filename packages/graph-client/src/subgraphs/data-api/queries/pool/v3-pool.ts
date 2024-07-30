@@ -14,8 +14,10 @@ import {
   type PoolWithIncentives,
 } from 'sushi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
 import { graphql } from '../../graphql'
+
 export const V3PoolQuery = graphql(
   `
   query V3Pool($address: String!, $chainId: Int!) {
@@ -98,7 +100,7 @@ export async function getV3Pool(
   variables: GetV3Pool,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
   const chainId = Number(variables.chainId) as ChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {

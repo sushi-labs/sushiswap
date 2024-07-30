@@ -3,7 +3,9 @@ import { request, type RequestOptions } from 'src/lib/request'
 import { ChainId, ChefType, RewarderType, SushiSwapProtocol } from 'sushi'
 import { isSushiSwapV2ChainId } from 'sushi/config'
 import { getAddress, type Address } from 'viem'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
+
 export const V2PositionsQuery = graphql(
   `
 query V2PositionsQuery($user: String!, $chainId: Int!) {
@@ -72,7 +74,7 @@ export async function getV2Positions(
   variables: GetV2Positions,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
   const chainId = Number(variables.chainId) as ChainId
 
   if (!isSushiSwapV2ChainId(chainId)) {

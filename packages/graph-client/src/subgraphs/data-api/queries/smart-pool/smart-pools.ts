@@ -1,10 +1,11 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { request, type RequestOptions } from 'src/lib/request'
-import { graphql } from '../../graphql'
 import { isSteerStrategy, type SteerStrategy } from '@sushiswap/steer-sdk'
+import { request, type RequestOptions } from 'src/lib/request'
 import type { ChainId } from 'sushi'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
+import { graphql } from '../../graphql'
 
 export const SmartPoolsQuery = graphql(
   `
@@ -59,7 +60,7 @@ export async function getSmartPools(
   variables: GetSmartPools,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: SmartPoolsQuery, variables },

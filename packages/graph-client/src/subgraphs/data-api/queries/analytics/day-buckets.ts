@@ -2,6 +2,7 @@ import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
 import { graphql } from '../../graphql'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 
 export const AnalyticsDayBucketsQuery = graphql(
   `
@@ -33,7 +34,7 @@ export async function getAnalyticsDayBuckets(
   variables: GetAnalyticsDayBuckets,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: AnalyticsDayBucketsQuery, variables },

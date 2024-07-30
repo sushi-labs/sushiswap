@@ -1,6 +1,7 @@
 import type { VariablesOf } from 'gql.tada'
 
 import { request, type RequestOptions } from 'src/lib/request'
+import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 
 export const SushiV2SwapsQuery = graphql(`
@@ -30,7 +31,7 @@ export async function getSushiV2Swaps(
   { ...variables }: GetSushiV2Swaps,
   options?: RequestOptions,
 ) {
-  const url = `https://data-api-production-acb1.up.railway.app/graphql/`
+  const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
     { url, document: SushiV2SwapsQuery, variables },
