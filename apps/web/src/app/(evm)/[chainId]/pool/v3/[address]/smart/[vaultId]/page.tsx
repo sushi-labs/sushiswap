@@ -80,8 +80,8 @@ export default async function SteerVaultPage({
 
   const poolAddress = params.address.toLowerCase()
   const pool = await unstable_cache(
-    () =>
-      getV3Pool({
+    async () =>
+      await getV3Pool({
         chainId: Number(params.chainId),
         address: poolAddress,
       }),
@@ -93,14 +93,20 @@ export default async function SteerVaultPage({
   const vaultId = unsanitize(params.vaultId)
 
   const vault = await unstable_cache(
-    () =>
-      getVault({
+    async () =>
+     await getVault({
         chainId: Number(params.chainId),
         vaultAddress: params.vaultId,
       }),
     ['vault', `${params.chainId}:${params.vaultId}`],
     { revalidate: 60 * 15 },
   )()
+  
+  if (!pool || !vault) {
+    console.log({pool, vault})
+    return notFound()
+  }
+
   const generics = await unstable_cache(
     async () => await getGenerics(vault),
     ['steer-vault-generics', vaultId],
@@ -110,10 +116,6 @@ export default async function SteerVaultPage({
   )()
 
   const Component = SteerStrategyComponents[vault.strategy]
-
-  if (!pool || !vault) {
-    return notFound()
-  }
 
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">

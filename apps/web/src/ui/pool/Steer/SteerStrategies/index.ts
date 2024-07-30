@@ -1,10 +1,8 @@
 import { SteerStrategy } from '@sushiswap/steer-sdk'
 import { FC } from 'react'
 
-import { SteerVault } from '@sushiswap/steer-sdk'
-
 import { SteerBaseStrategy } from './SteerBaseStrategy'
-import { V3Pool } from '@sushiswap/graph-client/data-api'
+import { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
 
 export interface SteerStrategyGeneric {
   tokenRatios: {
@@ -28,7 +26,7 @@ export interface SteerStrategyGeneric {
 
 export type SteerStrategyComponent = FC<{
   pool: V3Pool
-  vault: SteerVault
+  vault: VaultV1
   generic: SteerStrategyGeneric
 }>
 

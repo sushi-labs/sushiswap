@@ -33,4 +33,4 @@ const DECENTRALIZED_NETWORK_KEY =
 export const DECENTRALIZED_HOST_BY_SUBGRAPH_ID = `gateway-arbitrum.network.thegraph.com/api/${DECENTRALIZED_NETWORK_KEY}/subgraphs/id`
 export const DECENTRALIZED_HOST_BY_DEPLOYMENT_ID = `gateway-arbitrum.network.thegraph.com/api/${DECENTRALIZED_NETWORK_KEY}/deployments/id`
 
-export const SUSHI_DATA_API_HOST = 'data-api-production-acb1.up.railway.app'
+export const SUSHI_DATA_API_HOST = 'data-api-production-acb1.up.railway.app/graphql'

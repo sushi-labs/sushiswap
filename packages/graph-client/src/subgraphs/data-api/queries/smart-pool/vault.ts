@@ -68,41 +68,45 @@ export type GetVault = VariablesOf<typeof VaultQuery>
 
 export async function getVault(variables: GetVault, options?: RequestOptions) {
   const url = `https://${SUSHI_DATA_API_HOST}`
-
-  const result = await request(
-    { url, document: VaultQuery, variables },
-    options,
-  )
-  if (result) {
-    const vault = result.vault
-    const strategy = SteerStrategy[vault.strategy as keyof typeof SteerStrategy]
-    if (!strategy) throw new Error('No strategy found')
-    return {
-      ...vault,
-      chainId: vault.chainId as SteerChainId,
-      id: `${vault.chainId}:${vault.id}` as `${string}:0x${string}`,
-      address: vault.address as Address,
-      reserve0: BigInt(vault.reserve0),
-      reserve1: BigInt(vault.reserve1),
-      fees0: BigInt(vault.fees0),
-      fees1: BigInt(vault.fees1),
-      token0: {
-        ...vault.token0,
-        id: `${vault.chainId}:${vault.token0.address}` as `${string}:0x${string}`,
-        address: vault.token0.address as Address,
+  try {
+    const result = await request(
+      { url, document: VaultQuery, variables },
+      options,
+    )
+    if (result) {
+      const vault = result.vault
+      const strategy =
+        SteerStrategy[vault.strategy as keyof typeof SteerStrategy]
+      if (!strategy) throw new Error('No strategy found')
+      return {
+        ...vault,
         chainId: vault.chainId as SteerChainId,
-      },
-      token1: {
-        ...vault.token1,
-        id: `${vault.chainId}:${vault.token1.address}` as `${string}:0x${string}`,
-        address: vault.token1.address as Address,
-        chainId: vault.chainId as SteerChainId,
-      },
-      strategy,
+        id: vault.id as `${string}:0x${string}`,
+        address: vault.address as Address,
+        reserve0: BigInt(vault.reserve0),
+        reserve1: BigInt(vault.reserve1),
+        fees0: BigInt(vault.fees0),
+        fees1: BigInt(vault.fees1),
+        token0: {
+          ...vault.token0,
+          id: `${vault.chainId}:${vault.token0.address}` as `${string}:0x${string}`,
+          address: vault.token0.address as Address,
+          chainId: vault.chainId as SteerChainId,
+        },
+        token1: {
+          ...vault.token1,
+          id: `${vault.chainId}:${vault.token1.address}` as `${string}:0x${string}`,
+          address: vault.token1.address as Address,
+          chainId: vault.chainId as SteerChainId,
+        },
+        strategy,
+      }
     }
-  }
 
-  throw new Error('No smart pool found')
+    throw new Error('No vault found')
+  } catch {
+    return null
+  }
 }
 
-export type VaultV1 = Awaited<ReturnType<typeof getVault>>
+export type VaultV1 = NonNullable<Awaited<ReturnType<typeof getVault>>>

@@ -4,7 +4,6 @@ import { PlusIcon } from '@heroicons/react-v1/solid'
 import {
   STEER_PERIPHERY_ADDRESS,
   SteerChainId,
-  SteerVault,
 } from '@sushiswap/steer-sdk'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
@@ -21,9 +20,10 @@ import {
   useSteerPositionAddState,
 } from './SteerPositionAddProvider'
 import { SteerPositionAddReviewModal } from './SteerPositionAddReviewModal'
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 
 interface SteerPositionAddProps {
-  vault: SteerVault
+  vault: VaultV1
 }
 
 export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {

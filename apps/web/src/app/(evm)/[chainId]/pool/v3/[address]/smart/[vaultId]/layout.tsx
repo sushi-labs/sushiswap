@@ -15,18 +15,18 @@ export default async function Layout({
 }) {
   const poolAddress = params.address.toLowerCase()
   const pool = await unstable_cache(
-    () =>
-      getV3Pool({
+    async () =>
+      await getV3Pool({
         chainId: Number(params.chainId),
         address: poolAddress,
       }),
-    ['pool', `${params.chainId}:${poolAddress}`],
+    ['v3-pool', `${params.chainId}:${poolAddress}`],
     { revalidate: 60 * 15 },
   )()
 
   const vault = await unstable_cache(
-    () =>
-      getVault({
+    async () =>
+      await getVault({
         chainId: Number(params.chainId),
         vaultAddress: params.vaultId,
       }),
@@ -35,6 +35,7 @@ export default async function Layout({
   )()
 
   if (!vault || !pool) {
+    console.log({pool, vault})
     notFound()
   }
 

@@ -3,7 +3,6 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   STEER_PERIPHERY_ADDRESS,
-  SteerVault,
   isSteerChainId,
 } from '@sushiswap/steer-sdk'
 import { steerPeripheryAbi } from '@sushiswap/steer-sdk/abi'
@@ -45,9 +44,10 @@ import { useWriteContract } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 
 interface SteerPositionAddReviewModalProps {
-  vault: SteerVault
+  vault: VaultV1
   onSuccess: () => void
   successLink?: string
   children: ReactNode

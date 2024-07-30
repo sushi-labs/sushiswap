@@ -1,7 +1,5 @@
 'use client'
 
-import { useSteerVault } from '@sushiswap/client/hooks'
-import type { SteerVault } from '@sushiswap/steer-sdk'
 import {
   FC,
   ReactNode,
@@ -13,6 +11,7 @@ import {
 import { Field } from 'src/lib/constants'
 import { useSteerVaultReserves } from 'src/lib/wagmi/hooks/steer/useSteerVaultReserves'
 import { Amount, Currency, Token, tryParseAmount } from 'sushi/currency'
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 
 interface State {
   independentField: Field
@@ -107,25 +106,13 @@ type UseSteerPositionAddInfoProps = {
   // account: string | undefined
 } & (
   | {
-      vaultId: string | undefined
-      vault?: undefined
-    }
-  | {
-      vaultId?: undefined
-      vault: SteerVault | undefined
+      vault: VaultV1 | undefined
     }
 )
 
 export function useSteerPositionAddDerivedInfo({
-  vault: vaultPassed,
-  vaultId,
+  vault,
 }: UseSteerPositionAddInfoProps) {
-  const { data: vaultFetched } = useSteerVault({
-    args: vaultId || '',
-    shouldFetch: !vaultPassed && !!vaultId,
-  })
-
-  const vault = vaultPassed || vaultFetched
 
   const { independentField, typedValue } = useSteerPositionAddState()
 

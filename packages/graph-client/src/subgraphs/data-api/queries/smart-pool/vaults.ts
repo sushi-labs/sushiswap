@@ -84,7 +84,7 @@ export async function getVaults(
       return {
         ...v,
         chainId: v.chainId as SteerChainId,
-        id: `${v.chainId}:${v.id}` as `${string}:0x${string}`,
+        id: v.id as `${string}:0x${string}`,
         address: v.address as Address,
         reserve0: BigInt(v.reserve0),
         reserve1: BigInt(v.reserve1),
