@@ -1,6 +1,17 @@
 import type { MultiRoute, RPool, RouteLeg } from '../../tines/index.js'
 import { LiquidityProviders } from '../liquidity-providers/index.js'
 
+// TODO: optimize RP6 if-else
+export enum RP6PoolType {
+  UniV2 = 0,
+  UniV3 = 1,
+  UniV4 = 2,
+  Curve = 3,
+  WrapNative = 4,
+  BentoBridge = 5,
+  Trident = 6,
+}
+
 // RPool extention for RP coding
 export abstract class PoolCode {
   pool: RPool
