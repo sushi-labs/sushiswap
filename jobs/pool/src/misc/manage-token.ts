@@ -12,14 +12,10 @@ class Token {
   chainId: ChainId
   address: Address
   status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined
-  isFeeOnTransfer: boolean | undefined
-  isCommon: boolean | undefined
   constructor(
     chainId: ChainId,
     address: Address,
     status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined = undefined,
-    isFeeOnTransfer: boolean | undefined = undefined,
-    isCommon: boolean | undefined = undefined,
   ) {
     if (!isAddress(address)) {
       throw new Error(`Invalid address: ${address}`)
@@ -33,8 +29,6 @@ class Token {
     this.chainId = chainId
     this.status = status
     this.address = address.toLowerCase() as Address
-    this.isFeeOnTransfer = isFeeOnTransfer
-    this.isCommon = isCommon
   }
 }
 
@@ -51,12 +45,6 @@ export async function main() {
       let data = {}
       if (token.status) {
         data = { status: token.status }
-      }
-      if (token.isFeeOnTransfer !== undefined) {
-        data = { ...data, isFeeOnTransfer: token.isFeeOnTransfer }
-      }
-      if (token.isCommon !== undefined) {
-        data = { ...data, isCommon: token.isCommon }
       }
       if (Object.keys(data).length === 0) {
         console.log(
@@ -77,8 +65,6 @@ export async function main() {
         SYMBOL: ${updatedToken.symbol} 
         DECIMALS: ${updatedToken.decimals}
         STATUS: ${updatedToken.status}
-        FOT: ${updatedToken.isFeeOnTransfer}
-        COMMON: ${updatedToken.isCommon}
         `)
     } else {
       const tokenFromContract = await fetchTokenFromContract(token)
@@ -88,8 +74,6 @@ export async function main() {
           chainId: token.chainId,
           ...tokenFromContract,
           status: token.status,
-          isFeeOnTransfer: token.isFeeOnTransfer,
-          isCommon: token.isCommon,
         },
       })
       console.log(`Token was not found in the database, the token was fetched from the contract and then created:  
@@ -100,8 +84,6 @@ export async function main() {
       SYMBOL: ${newToken.symbol} 
       DECIMALS: ${newToken.decimals}
       STATUS: ${newToken.status}
-      FOT: ${newToken.isFeeOnTransfer}
-      COMMON: ${newToken.isCommon}
       `)
     }
   } catch (e) {
