@@ -196,4 +196,3 @@ export async function test(
   ])
   return [parseInt(res2), res3.amountOut]
 }
-

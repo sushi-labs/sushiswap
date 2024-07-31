@@ -199,7 +199,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3),
               )
             ) {
               log.info('internal route', {
@@ -213,13 +213,13 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3))
+                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3))
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
               )
             ) {
               log.info('mix route', {
@@ -233,7 +233,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3))
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
               )
             ) {
               log.info('external route', {
@@ -263,7 +263,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
                   leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)
+                  leg.poolName.startsWith(LiquidityProviders.SushiSwapV3),
               )
             ) {
               log.error('internal route', {
@@ -276,13 +276,13 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
                   (leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3))
+                    leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
               ) &&
               trade?.route?.legs?.some(
                 (leg) =>
                   !leg.poolName.startsWith('Wrap') &&
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) ||
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3))
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
               )
             ) {
               log.error('mix route', {
@@ -295,7 +295,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 (leg) =>
                   leg.poolName.startsWith('Wrap') ||
                   (!leg.poolName.startsWith(LiquidityProviders.SushiSwapV2) &&
-                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3))
+                    !leg.poolName.startsWith(LiquidityProviders.SushiSwapV3)),
               )
             ) {
               log.error('external route', {

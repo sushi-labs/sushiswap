@@ -672,7 +672,6 @@ describe('End-to-end RouteProcessor3_2 test', async () => {
     )
   })
 
-
   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async () => {
     const filter = (pool: RPool) =>
       pool instanceof StableSwapRPool || pool instanceof BridgeBento

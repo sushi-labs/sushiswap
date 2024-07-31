@@ -999,7 +999,6 @@ describe('End-to-end RouteProcessor5 test', async () => {
     )
   })
 
-
   it('Swap with not 0 liquidity on ythe router. Native => USDC => USDT', async () => {
     await env.snapshot.restore()
     const usedPools = new Set<string>()

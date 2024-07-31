@@ -14,9 +14,7 @@ export const getAllPoolsCodeMap = async ({
     return new Map<string, PoolCode>()
   }
 
-  const sushiLiquidityProviders = [
-    LiquidityProviders.SushiSwapV2,
-  ]
+  const sushiLiquidityProviders = [LiquidityProviders.SushiSwapV2]
   if (isRouteProcessor4ChainId(chainId)) {
     sushiLiquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
