@@ -2,7 +2,7 @@ import { Address } from 'viem'
 import type { MultiRoute, RouteLeg, UniV4Pool } from '../../tines/index.js'
 import { HEXer } from '../HEXer.js'
 import { LiquidityProviders } from '../liquidity-providers/index.js'
-import { PoolCode, RP6PoolType } from './PoolCode.js'
+import { PoolCode, RPPoolType } from './PoolCode.js'
 
 export class UniV4PoolCode extends PoolCode {
   address: Address
@@ -33,7 +33,7 @@ export class UniV4PoolCode extends PoolCode {
     to: string,
   ): string {
     const code = new HEXer()
-      .uint8(RP6PoolType.UniV4)
+      .uint8(RPPoolType.UniV4)
       .address(this.address)
       .bytes32(this.pool.address) // id
       .bool(leg.tokenFrom.address === this.pool.token0.address)
