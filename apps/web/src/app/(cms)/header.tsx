@@ -80,7 +80,6 @@ export async function Header() {
               <ul className="w-[400px] gap-3 p-4">
                 {EXPLORE_NAVIGATION_LINKS.map((component) => (
                   <NavigationListItem
-                    legacyBehavior={true}
                     key={component.title}
                     title={component.title}
                     href={component.href}
@@ -117,7 +116,6 @@ export async function Header() {
                   <ul className="w-[400px] gap-3 p-4">
                     {links?.map(({ name, href }) => (
                       <NavigationListItem
-                        legacyBehavior={true}
                         key={`${title}-${name}`}
                         title={name.split('-')?.[0]}
                         href={href}

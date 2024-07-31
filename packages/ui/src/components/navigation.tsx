@@ -13,7 +13,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from './navigation-menu'
-import { OnramperButton } from './onramper'
 
 const EXPLORE_NAVIGATION_LINKS: {
   title: string
@@ -39,11 +38,6 @@ const EXPLORE_NAVIGATION_LINKS: {
     title: 'Stake',
     href: '/stake',
     description: 'Earn protocol fees by staking SUSHI.',
-  },
-  {
-    title: 'Pay',
-    href: '/furo',
-    description: 'Automate salaries and vesting schedules.',
   },
   {
     title: 'Analytics',
@@ -177,10 +171,6 @@ const navigationMenuItems = [
     href: '/stake',
   },
   {
-    title: 'Pay',
-    href: '/furo',
-  },
-  {
     title: 'More',
     items: TOOLS_NAVIGATION_LINKS,
   },
@@ -202,9 +192,7 @@ const Navigation: React.FC<NavProps> = ({
   leftElements: _leftElements = navigationMenuItems.map((entry) => entry.title),
   rightElement,
   variant,
-  legacyBehavior = false,
-  showOnramper = true,
-  chainId,
+  legacyBehavior = false
 }) => {
   const leftElements = React.useMemo(() => {
     const SimpleItem = (entry: (typeof navigationMenuItems)[number]) => {
@@ -287,24 +275,10 @@ const Navigation: React.FC<NavProps> = ({
                     {component.description}
                   </NavigationListItem>
                 ))}
-                <OnramperButton chainId={chainId}>
-                  <NavigationListItem title="Buy Crypto">
-                    Need to buy some more crypto?
-                  </NavigationListItem>
-                </OnramperButton>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
           {leftElements}
-          {showOnramper ? (
-            <NavigationMenuItem className="hidden md:block">
-              <OnramperButton chainId={chainId}>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Buy Crypto
-                </NavigationMenuLink>
-              </OnramperButton>
-            </NavigationMenuItem>
-          ) : null}
         </NavigationMenuList>
       </NavigationMenu>
       <div className="flex items-center gap-2">
