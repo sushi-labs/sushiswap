@@ -426,12 +426,17 @@ const useSimpleSwapTrade = () => {
 
   const useSwapApi = !isFallback && !forceClient
 
+  const adjustedSlippage = useMemo(
+    () => (tokenTax ? slippagePercent.add(tokenTax) : slippagePercent),
+    [slippagePercent, tokenTax],
+  )
+
   const apiTrade = useApiTrade({
     chainId,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
+    slippagePercentage: adjustedSlippage.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
@@ -448,7 +453,7 @@ const useSimpleSwapTrade = () => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
+    slippagePercentage: adjustedSlippage.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),

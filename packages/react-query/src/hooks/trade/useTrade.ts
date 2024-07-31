@@ -157,21 +157,23 @@ export const useTrade = (variables: UseTradeParams) => {
             tokenTax ? new Percent(1).subtract(tokenTax) : 1,
           ).quotient,
         )
-        const minAmountOut = Amount.fromRawAmount(
-          toToken,
-          slippageAmount(
-            amountOut,
-            new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-          )[0],
-        )
+        const minAmountOut = data.args?.amountOutMin
+          ? Amount.fromRawAmount(toToken, data.args.amountOutMin)
+          : Amount.fromRawAmount(
+              toToken,
+              slippageAmount(
+                Amount.fromRawAmount(toToken, data.route.amountOutBI),
+                new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+              )[0],
+            )
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         let writeArgs: UseTradeReturnWriteArgs = data?.args
           ? ([
               data.args.tokenIn as Address,
-              BigInt(data.args.amountIn),
+              data.args.amountIn,
               data.args.tokenOut as Address,
-              minAmountOut.quotient,
+              data.args.amountOutMin,
               data.args.to as Address,
               data.args.routeCode as Hex,
             ] as const)
@@ -221,6 +223,7 @@ export const useTrade = (variables: UseTradeParams) => {
           writeArgs,
           value,
           tokenTax,
+          txdata: data.txdata,
         }
       }
 
@@ -237,6 +240,7 @@ export const useTrade = (variables: UseTradeParams) => {
         functionName: 'processRoute',
         value: undefined,
         tokenTax: undefined,
+        txdata: undefined,
       }
     },
     [
