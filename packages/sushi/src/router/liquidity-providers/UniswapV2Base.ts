@@ -11,12 +11,6 @@ import {
 import { Token } from '../../currency/index.js'
 import { ConstantProductRPool, type RToken } from '../../tines/index.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
-import {
-  type PoolResponse2,
-  filterOnDemandPools,
-  filterTopPools,
-  mapToken,
-} from '../lib/api.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
 
@@ -33,16 +27,11 @@ interface StaticPool {
 }
 
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
-  readonly TOP_POOL_SIZE = 155
-  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
-  readonly ON_DEMAND_POOL_SIZE = 20
   readonly REFRESH_INITIAL_POOLS_INTERVAL = 60 // SECONDS
 
   topPools: Map<Address, PoolCode> = new Map()
   poolsByTrade: Map<string, Address[]> = new Map()
   onDemandPools: Map<Address, PoolInfo> = new Map()
-  availablePools: Map<Address, PoolResponse2> = new Map()
-  staticPools: Map<Address, PoolResponse2> = new Map()
 
   blockListener?: (() => void) | undefined
   unwatchBlockNumber?: () => void
@@ -52,9 +41,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   factory: Record<number, Address> = {}
   initCodeHash: Record<number, Hex> = {}
   latestPoolCreatedAtTimestamp = new Date()
-  discoverNewPoolsTimestamp = getUnixTime(
-    add(Date.now(), { seconds: this.REFRESH_INITIAL_POOLS_INTERVAL }),
-  )
+
   refreshAvailablePoolsTimestamp = getUnixTime(
     add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }),
   )
@@ -77,84 +64,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   async initialize() {
-    // TODO: retry logic, every X seconds? dont flag as true until the end of the function ideally. add isInitalizing? to avoid it being called twice before completed.
     this.isInitialized = true
-    const availablePools = await this.getInitialPools()
-    //console.debug(`${this.getLogPrefix()} - TOTAL POOLS: ${availablePools.size}`)
-
-    this.availablePools = availablePools
-
-    const topPools = filterTopPools(
-      Array.from(availablePools.values()),
-      this.TOP_POOL_SIZE,
-    )
-
-    if (topPools.length > 0) {
-      //console.debug(`${this.getLogPrefix()} - INIT: top pools found: ${topPools.length}`)
-    } else {
-      //console.debug(`${this.getLogPrefix()} - INIT: NO pools found.`)
-      //return []
-    }
-
-    const results = await this.client
-      .multicall({
-        multicallAddress: this.client.chain?.contracts?.multicall3
-          ?.address as Address,
-        allowFailure: true,
-        contracts: topPools.map(
-          (pool) =>
-            ({
-              address: pool.address as Address,
-              chainId: this.chainId,
-              abi: getReservesAbi,
-              functionName: 'getReserves',
-            }) as const,
-        ),
-      })
-      .catch((e) => {
-        console.warn(
-          `${this.getLogPrefix()} - INIT: multicall failed, message: ${
-            e.message
-          }`,
-        )
-        return undefined
-      })
-
-    topPools.forEach((pool, i) => {
-      const res0 = results?.[i]?.result?.[0]
-      const res1 = results?.[i]?.result?.[1]
-
-      if (res0 && res1) {
-        const token0 = mapToken(this.chainId, pool.token0) as RToken
-        const token1 = mapToken(this.chainId, pool.token1) as RToken
-        const rPool = new ConstantProductRPool(
-          pool.address,
-          token0,
-          token1,
-          this.fee,
-          res0,
-          res1,
-        )
-        const pc = new ConstantProductPoolCode(
-          rPool,
-          this.getType(),
-          this.getPoolProviderName(),
-        )
-        this.topPools.set(pool.address, pc)
-      } else {
-        console.error(
-          `${this.getLogPrefix()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${
-            pool.address
-          }`,
-        )
-      }
-    })
-
-    //console.debug(`${this.getLogPrefix()} - INIT, WATCHING ${this.topPools.size} POOLS`)
-  }
-
-  private async getInitialPools(): Promise<Map<Address, PoolResponse2>> {
-    return new Map()
   }
 
   async getOnDemandPools(
@@ -162,24 +72,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     t1: Token,
     excludePools?: Set<string>,
   ): Promise<void> {
-    const topPoolAddresses = Array.from(this.topPools.keys())
-    let pools =
-      topPoolAddresses.length > 0
-        ? filterOnDemandPools(
-            Array.from(this.availablePools.values()),
-            t0.address,
-            t1.address,
-            topPoolAddresses,
-            this.ON_DEMAND_POOL_SIZE,
-          )
-        : this.getStaticPools(t0, t1)
+    let pools = this.getStaticPools(t0, t1)
     if (excludePools)
       pools = (pools as StaticPool[]).filter(
         (p) => !excludePools.has(p.address),
       )
-
     if (pools.length === 0) {
-      //console.info(`${this.getLogPrefix()} - No on demand pools found for ${t0.symbol}/${t1.symbol}`)
       return
     }
 
@@ -270,44 +168,17 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   async updatePools() {
     if (this.isInitialized) {
       this.removeStalePools()
-      // The two calls below are Async functions, but we do not want them to block. If they find any pools they will be updated next interval
-      this.discoverNewPools()
       this.updateAvailablePools()
 
-      const initialPools = Array.from(this.topPools.values())
       const onDemandPools = Array.from(this.onDemandPools.values()).map(
         (pi) => pi.poolCode,
       )
 
-      if (initialPools.length === 0 && onDemandPools.length === 0) {
+      if (onDemandPools.length === 0) {
         return
       }
 
-      const [initialPoolsReserves, onDemandPoolsReserves] = await Promise.all([
-        this.client
-          .multicall({
-            multicallAddress: this.client.chain?.contracts?.multicall3
-              ?.address as Address,
-            allowFailure: true,
-            contracts: initialPools.map(
-              (poolCode) =>
-                ({
-                  address: poolCode.pool.address as Address,
-                  chainId: this.chainId,
-                  abi: getReservesAbi,
-                  functionName: 'getReserves',
-                }) as const,
-            ),
-          })
-          .catch((e) => {
-            console.warn(
-              `${this.getLogPrefix()} - UPDATE: initPools multicall failed, message: ${
-                e.message
-              }`,
-            )
-            return undefined
-          }),
-        this.client
+      const onDemandPoolsReserves = await this.client
           .multicall({
             multicallAddress: this.client.chain?.contracts?.multicall3
               ?.address as Address,
@@ -329,20 +200,13 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
               }`,
             )
             return undefined
-          }),
-      ])
+          })
 
-      this.updatePoolWithReserves(initialPools, initialPoolsReserves, 'INITIAL')
       this.updatePoolWithReserves(
         onDemandPools,
-        onDemandPoolsReserves,
-        'ON_DEMAND',
+        onDemandPoolsReserves
       )
     }
-  }
-
-  private async discoverNewPools() {
-    return
   }
 
   private async updateAvailablePools() {
@@ -353,65 +217,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.refreshAvailablePoolsTimestamp = getUnixTime(
       add(Date.now(), { seconds: this.FETCH_AVAILABLE_POOLS_AFTER_SECONDS }),
     )
-
-    const freshInitPools = await this.getInitialPools()
-
-    freshInitPools.forEach((updatedPool) => {
-      // Don't do `this.availablePools = freshInitPools`, in case the db requests for any reason fail, it shouldn't be completely overwritten.
-      this.availablePools.set(updatedPool.address, updatedPool)
-    })
-    this.prioritizeTopPools()
-  }
-
-  private prioritizeTopPools() {
-    const newTopPools = filterTopPools(
-      Array.from(this.availablePools.values()),
-      this.TOP_POOL_SIZE,
-    )
-
-    const currentTopPoolAddresses = Array.from(this.topPools.keys())
-    const newTopPoolAddresses = Array.from(
-      newTopPools.map((pool) => pool.address),
-    )
-    const poolsToRemove = currentTopPoolAddresses.filter(
-      (x) => !newTopPoolAddresses.includes(x),
-    )
-    const poolsToAdd = newTopPoolAddresses.filter(
-      (x) => !currentTopPoolAddresses.includes(x),
-    )
-
-    poolsToRemove.forEach((address) => {
-      this.topPools.delete(address)
-      //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Removed ${address} from top pools`)
-    })
-
-    poolsToAdd.forEach((address) => {
-      const poolsToCreate = this.availablePools.get(address)
-      if (poolsToCreate) {
-        const token0 = mapToken(this.chainId, poolsToCreate.token0) as RToken
-        const token1 = mapToken(this.chainId, poolsToCreate.token1) as RToken
-        const rPool = new ConstantProductRPool(
-          poolsToCreate.address,
-          token0,
-          token1,
-          this.fee,
-          0n,
-          0n,
-        )
-        const pc = new ConstantProductPoolCode(
-          rPool,
-          this.getType(),
-          this.getPoolProviderName(),
-        )
-        this.topPools.set(poolsToCreate.address, pc)
-
-        //console.log(`${this.getLogPrefix()} - PRIORITIZE POOLS: Added ${address} to top pools`)
-      } else {
-        console.warn(
-          `${this.getLogPrefix()} - PRIORITIZE POOLS: Could not find pool, unexpected state.`,
-        )
-      }
-    })
   }
 
   private updatePoolWithReserves(
@@ -430,7 +235,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
             }
         )[]
       | undefined,
-    type: 'INITIAL' | 'ON_DEMAND',
   ) {
     if (!reserves) return
     pools.forEach((poolCode, i) => {
@@ -449,7 +253,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         }
       } else {
         console.error(
-          `${this.getLogPrefix()} - ERROR UPDATING RESERVES for a ${type} pool, Failed to fetch reserves for pool: ${
+          `${this.getLogPrefix()} - ERROR UPDATING RESERVES for pool, Failed to fetch reserves for pool: ${
             pool.address
           }`,
         )
