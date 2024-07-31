@@ -663,30 +663,6 @@ describe('End-to-end RouteProcessor3 test', async () => {
     )
   })
 
-  it('Trident Native => SUSHI => Native (Polygon only)', async () => {
-    if (chainId === ChainId.POLYGON) {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
-      intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
-      intermidiateResult = await updMakeSwap(
-        env,
-        Native.onChain(chainId),
-        SUSHI[chainId],
-        intermidiateResult,
-        usedPools,
-        [LiquidityProviders.Trident],
-      )
-      intermidiateResult = await updMakeSwap(
-        env,
-        SUSHI[chainId],
-        Native.onChain(chainId),
-        intermidiateResult,
-        usedPools,
-        [LiquidityProviders.Trident],
-      )
-    }
-  })
-
   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async () => {
     const filter = (pool: RPool) =>
       pool instanceof StableSwapRPool || pool instanceof BridgeBento

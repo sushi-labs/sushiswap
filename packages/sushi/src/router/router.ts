@@ -100,7 +100,6 @@ export class Router {
         LiquidityProviders.NativeWrap,
         LiquidityProviders.SushiSwapV2,
         LiquidityProviders.SushiSwapV3,
-        LiquidityProviders.Trident,
       ],
     )
   }
@@ -126,7 +125,6 @@ export class Router {
         LiquidityProviders.NativeWrap,
         LiquidityProviders.SushiSwapV2,
         LiquidityProviders.SushiSwapV3,
-        LiquidityProviders.Trident,
       ],
     )
     // If the route is successful and the price impact is less than maxPriceImpact, then return the route
