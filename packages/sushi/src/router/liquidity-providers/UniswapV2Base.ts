@@ -179,33 +179,30 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
 
       const onDemandPoolsReserves = await this.client
-          .multicall({
-            multicallAddress: this.client.chain?.contracts?.multicall3
-              ?.address as Address,
-            allowFailure: true,
-            contracts: onDemandPools.map(
-              (poolCode) =>
-                ({
-                  address: poolCode.pool.address as Address,
-                  chainId: this.chainId,
-                  abi: getReservesAbi,
-                  functionName: 'getReserves',
-                }) as const,
-            ),
-          })
-          .catch((e) => {
-            console.warn(
-              `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
-                e.message
-              }`,
-            )
-            return undefined
-          })
+        .multicall({
+          multicallAddress: this.client.chain?.contracts?.multicall3
+            ?.address as Address,
+          allowFailure: true,
+          contracts: onDemandPools.map(
+            (poolCode) =>
+              ({
+                address: poolCode.pool.address as Address,
+                chainId: this.chainId,
+                abi: getReservesAbi,
+                functionName: 'getReserves',
+              }) as const,
+          ),
+        })
+        .catch((e) => {
+          console.warn(
+            `${this.getLogPrefix()} - UPDATE: on-demand pools multicall failed, message: ${
+              e.message
+            }`,
+          )
+          return undefined
+        })
 
-      this.updatePoolWithReserves(
-        onDemandPools,
-        onDemandPoolsReserves
-      )
+      this.updatePoolWithReserves(onDemandPools, onDemandPoolsReserves)
     }
   }
 

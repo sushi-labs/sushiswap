@@ -736,7 +736,6 @@ describe('End-to-end RouteProcessor4 test', async () => {
     )
   })
 
-
   if (network.config.chainId === 137) {
     // NoWay
     it.skip('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async () => {
