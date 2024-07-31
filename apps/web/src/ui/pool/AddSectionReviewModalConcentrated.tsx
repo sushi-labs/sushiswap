@@ -264,7 +264,7 @@ export const AddSectionReviewModalConcentrated: FC<
 
   const {
     sendTransactionAsync,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     data,
   } = useSendTransaction({
     mutation: {

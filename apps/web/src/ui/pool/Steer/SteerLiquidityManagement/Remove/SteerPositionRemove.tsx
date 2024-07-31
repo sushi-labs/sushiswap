@@ -157,7 +157,7 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
     },
   })
 
-  const { writeContractAsync, isLoading: isWritePending } = useWriteContract({
+  const { writeContractAsync, isPending: isWritePending } = useWriteContract({
     mutation: {
       onSuccess,
       onError,

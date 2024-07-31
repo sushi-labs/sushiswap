@@ -315,7 +315,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const {
     writeContractAsync,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     data: hash,
     reset,
   } = useWriteContract({

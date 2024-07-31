@@ -42,8 +42,7 @@ export const useSteerVaultsReserves = ({
   useEffect(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries(
-        query.queryKey,
-        {},
+        { queryKey: query.queryKey },
         { cancelRefetch: false },
       )
     }, 4_000)

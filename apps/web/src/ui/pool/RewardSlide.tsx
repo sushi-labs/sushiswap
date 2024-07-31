@@ -101,7 +101,7 @@ export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
             account={address}
             chainId={data.chainId}
           >
-            {({ write, isLoading }) => (
+            {({ write, isPending }) => (
               <Checker.Connect size="sm" variant="secondary">
                 <Checker.Network
                   size="sm"
@@ -111,7 +111,7 @@ export const RewardSlide: FC<RewardSlide> = ({ address, data }) => {
                   <Button
                     fullWidth={true}
                     size="sm"
-                    disabled={isLoading}
+                    disabled={isPending}
                     onClick={() => write?.()}
                   >
                     Claim

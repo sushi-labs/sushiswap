@@ -192,7 +192,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
 
     const {
       writeContractAsync,
-      isLoading: isWritePending,
+      isPending: isWritePending,
       data: hash,
     } = useWriteContract({
       mutation: {

@@ -15,7 +15,7 @@ const _UnstakeSection = () => {
     return tryParseAmount(input, XSUSHI[ChainId.ETHEREUM])
   }, [input])
 
-  const { write, isLoading: isWritePending } = useBarWithdraw({
+  const { write, isPending: isWritePending } = useBarWithdraw({
     amount: parsedInput,
     enabled: Boolean(parsedInput?.greaterThan(ZERO)),
   })

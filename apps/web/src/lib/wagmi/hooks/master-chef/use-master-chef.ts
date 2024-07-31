@@ -209,7 +209,7 @@ export const useMasterChef: UseMasterChef = ({
 
   useEffect(() => {
     if (watch && blockNumber) {
-      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
+      queryClient.invalidateQueries({ queryKey }, { cancelRefetch: false })
     }
   }, [blockNumber, watch, queryClient, queryKey])
 
@@ -332,7 +332,7 @@ export const useMasterChef: UseMasterChef = ({
 
   const {
     sendTransaction: _harvest,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     isError: isWriteError,
   } = useSendTransaction({
     mutation: {

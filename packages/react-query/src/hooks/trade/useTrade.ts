@@ -115,7 +115,7 @@ export const useTradeQuery = (
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
-    placeholderData: amount ? keepPreviousData : undefined,
+    ...(amount ? { placeholderData: keepPreviousData } : {}),
     gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,

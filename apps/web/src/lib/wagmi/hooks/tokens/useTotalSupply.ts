@@ -41,7 +41,7 @@ export const useMultipleTotalSupply = (
   // Doesn't make sense to refresh based on one chain's blocknumber
   useEffect(() => {
     const interval = setInterval(() => {
-      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
+      queryClient.invalidateQueries({ queryKey }, { cancelRefetch: false })
     }, 4_000)
 
     return () => clearInterval(interval)
