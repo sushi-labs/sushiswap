@@ -53,7 +53,7 @@ export async function getToken(chainId: number, address: string) {
         address: tokenFromContract.address,
         name: tokenFromContract.name,
         symbol: tokenFromContract.symbol,
-        decimals: tokenFromContract.decimals
+        decimals: tokenFromContract.decimals,
       }
     } else {
       throw new Error('Token not found')
@@ -103,7 +103,7 @@ export async function getTokensByChainId(chainId: number) {
       address: true,
       name: true,
       symbol: true,
-      decimals: true
+      decimals: true,
     },
     where: {
       AND: {
@@ -125,7 +125,7 @@ export async function getTokens() {
       chainId: true,
       name: true,
       symbol: true,
-      decimals: true
+      decimals: true,
     },
     where: {
       AND: {
@@ -205,7 +205,7 @@ export async function getCommonTokens(chainId: number) {
       address: true,
       name: true,
       symbol: true,
-      decimals: true
+      decimals: true,
     },
     where: {
       chainId,

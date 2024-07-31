@@ -95,9 +95,7 @@ export function filterOnDemandPools(
 
 export function filterTopPools(pools: PoolResponse2[], size: number) {
   const safePools = pools.filter(
-    (p) =>
-      p.token0.status === 'APPROVED' &&
-      p.token1.status === 'APPROVED'
+    (p) => p.token0.status === 'APPROVED' && p.token1.status === 'APPROVED',
   )
 
   const commonPools: PoolResponse2[] = []

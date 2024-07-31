@@ -15,7 +15,7 @@ class Token {
   constructor(
     chainId: ChainId,
     address: Address,
-    status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined = undefined
+    status: 'APPROVED' | 'DISAPPROVED' | 'UNKNOWN' | undefined = undefined,
   ) {
     if (!isAddress(address)) {
       throw new Error(`Invalid address: ${address}`)
@@ -73,7 +73,7 @@ export async function main() {
           id: token.id,
           chainId: token.chainId,
           ...tokenFromContract,
-          status: token.status
+          status: token.status,
         },
       })
       console.log(`Token was not found in the database, the token was fetched from the contract and then created:  
