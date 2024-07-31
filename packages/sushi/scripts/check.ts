@@ -1,13 +1,11 @@
 import https from 'https'
 import { ChainId } from '../src/chain/index.js'
-import { USDC, USDT } from '../src/currency/index.js'
 import { Token, Type } from '../src/currency/index.js'
 import { DataFetcher } from '../src/router/data-fetcher.js'
 import { LiquidityProviders } from '../src/router/liquidity-providers/index.js'
 import { Router } from '../src/router/router.js'
 import { MultiRoute } from '../src/tines/index.js'
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
 async function getAPIObject(
   url: string,
@@ -92,29 +90,6 @@ interface Environment {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // provider: any
   dataFetcher: DataFetcher
-}
-
-function getEnvironment(
-  chainId: ChainId,
-  lps: LiquidityProviders[],
-): Environment {
-  // let network
-  // switch (chainId) {
-  //   case ChainId.ETHEREUM:
-  //     network = 'mainnet'
-  //     break
-  //   case ChainId.POLYGON:
-  //     network = 'matic'
-  //     break
-  //   default:
-  // }
-  const dataFetcher = new DataFetcher(chainId)
-  dataFetcher.startDataFetching(lps)
-
-  return {
-    chainId,
-    dataFetcher,
-  }
 }
 
 async function route(
