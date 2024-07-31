@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem'
+import type { PublicClient } from 'viem'
 import { ChainId, chainShortName } from '../../chain/index.js'
 import type { Token } from '../../currency/index.js'
 import type { PoolCode } from '../pool-codes/index.js'

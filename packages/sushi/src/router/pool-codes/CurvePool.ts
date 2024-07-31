@@ -1,8 +1,8 @@
 import {
   CurveMultitokenPool,
   CurvePool,
-  MultiRoute,
-  RouteLeg,
+  type MultiRoute,
+  type RouteLeg,
 } from '../../tines/index.js'
 import { HEXer } from '../HEXer.js'
 import { CurvePoolType } from '../curve-sdk.js'

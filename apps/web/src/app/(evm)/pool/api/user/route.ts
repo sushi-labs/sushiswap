@@ -1,5 +1,3 @@
-import 'sushi/bigint-serializer'
-
 import { NextResponse } from 'next/server'
 import { getUser } from 'src/lib/graph'
 import { ChainId } from 'sushi/chain'

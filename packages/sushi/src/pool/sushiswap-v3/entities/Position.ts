@@ -4,7 +4,7 @@ import {
   Price,
   Token,
 } from '../../../currency/index.js'
-import { BigintIsh, MAX_UINT256, Percent } from '../../../math/index.js'
+import { type BigintIsh, MAX_UINT256, Percent } from '../../../math/index.js'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96.js'
 import { maxLiquidityForAmounts } from '../utils/maxLiquidityForAmounts.js'
 import { tickToPrice } from '../utils/priceTickConversions.js'

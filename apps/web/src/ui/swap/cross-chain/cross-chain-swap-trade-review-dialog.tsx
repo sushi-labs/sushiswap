@@ -43,11 +43,13 @@ import React, {
   useState,
 } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
+import { UseCrossChainTradeReturn } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
-import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
-import { useAxelarScanLink } from 'src/lib/swap/useCrossChainTrade/useAxelarScanLink'
-import { useLayerZeroScanLink } from 'src/lib/swap/useCrossChainTrade/useLayerZeroScanLink'
+import {
+  SushiXSwap2Adapter,
+  useAxelarScanLink,
+  useLayerZeroScanLink,
+} from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { useBalanceWeb3Refetch } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3Refetch'
 import { useApproved } from 'src/lib/wagmi/systems/Checker/Provider'
@@ -134,7 +136,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
     abi: sushiXSwap2Abi,
     functionName: trade?.functionName,
     args: trade?.writeArgs,
-    value: trade?.value ?? 0n,
+    value: BigInt(trade?.value ?? 0),
     query: {
       enabled: Boolean(
         isSushiXSwap2ChainId(chainId0) &&
@@ -143,7 +145,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
           trade?.writeArgs.length > 0 &&
           chain?.id === chainId0 &&
           approved &&
-          trade?.route?.status !== 'NoWay',
+          trade?.status !== 'NoWay',
       ),
     },
   })
@@ -155,7 +157,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       if (error.message.startsWith('user rejected transaction')) return
 
       sendAnalyticsEvent(SwapEventName.XSWAP_ESTIMATE_GAS_CALL_FAILED, {
-        route: stringify(trade?.route),
         error: error.message,
       })
 
@@ -165,17 +166,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
       })
     }
   }, [error, trade])
-
-  const onComplete = useCallback(() => {
-    // Reset after half a second because of dialog close animation
-    setTimeout(() => {
-      setStepStates({
-        source: StepState.NotStarted,
-        bridge: StepState.NotStarted,
-        dest: StepState.NotStarted,
-      })
-    }, 500)
-  }, [])
 
   const trace = useTrace()
 
@@ -193,7 +183,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
       sendAnalyticsEvent(SwapEventName.XSWAP_SIGNED, {
         ...trace,
-        route: stringify(trade?.route),
         txHash: hash,
       })
 
@@ -229,7 +218,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
             src_chain_id: trade?.amountIn?.currency?.chainId,
             dst_chain_id: trade?.amountOut?.currency?.chainId,
             transaction_type: trade?.transactionType,
-            route: stringify(trade?.route),
           })
           log.info('cross chain swap success (source)', {
             trade: stringify(trade),
@@ -241,7 +229,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
             src_chain_id: trade?.amountIn?.currency?.chainId,
             dst_chain_id: trade?.amountOut?.currency?.chainId,
             transaction_type: trade?.transactionType,
-            route: stringify(trade?.route),
           })
           log.error('cross chain swap failed (source)', {
             trade: stringify(trade),
@@ -287,21 +274,19 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
 
   const onWriteError = useCallback(
     (e: Error) => {
-      if (e.cause instanceof UserRejectedRequestError) {
-        onComplete()
-        return
-      }
-
       setStepStates({
         source: StepState.Failed,
         bridge: StepState.NotStarted,
         dest: StepState.NotStarted,
       })
 
+      if (e.cause instanceof UserRejectedRequestError) {
+        return
+      }
+
       createErrorToast(e.message, false)
 
       sendAnalyticsEvent(SwapEventName.XSWAP_ERROR, {
-        route: stringify(trade?.route),
         error: e instanceof Error ? e.message : undefined,
       })
 
@@ -310,7 +295,7 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
         error: stringify(e),
       })
     },
-    [onComplete, trade],
+    [trade],
   )
 
   const {
@@ -589,14 +574,14 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                       title={`Min. received after slippage (${slippagePercent.toPercentageString()})`}
                       subtitle="The minimum amount you are guaranteed to receive."
                     >
-                      {isFetching || !trade?.minAmountOut ? (
+                      {isFetching || !trade?.amountOutMin ? (
                         <SkeletonText
                           align="right"
                           fontSize="sm"
                           className="w-1/2"
                         />
                       ) : (
-                        `${trade?.minAmountOut?.toSignificant(6)} ${
+                        `${trade?.amountOutMin?.toSignificant(6)} ${
                           token1?.symbol
                         }`
                       )}
@@ -631,7 +616,6 @@ export const CrossChainSwapTradeReviewDialog: FC<{ children: ReactNode }> = ({
                   element={InterfaceElementName.CONFIRM_SWAP_BUTTON}
                   name={SwapEventName.XSWAP_SUBMITTED_BUTTON_CLICKED}
                   properties={{
-                    route: trade?.route,
                     ...trace,
                   }}
                 >

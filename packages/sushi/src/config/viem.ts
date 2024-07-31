@@ -1,9 +1,9 @@
 import {
   http,
   type Address,
-  Chain,
+  type Chain,
   type PublicClientConfig,
-  Transport,
+  type Transport,
 } from 'viem'
 import {
   arbitrum,

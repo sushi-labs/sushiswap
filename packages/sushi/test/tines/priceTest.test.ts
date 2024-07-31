@@ -3,7 +3,7 @@ import { expect, it } from 'vitest'
 import { calcTokenPrices } from '../../src/tines/index.js'
 import {
   MAX_POOL_IMBALANCE,
-  TToken,
+  type TToken,
   createNetwork,
   expectCloseValues,
 } from './utils.js'

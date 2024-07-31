@@ -1,5 +1,5 @@
-import { Native } from './Native.js'
-import { type Type } from './Type.js'
+import { Native } from './native.js'
+import { type Type } from './type.js'
 
 export const unwrapToken = (currency: Type) => {
   return currency.wrapped.address ===

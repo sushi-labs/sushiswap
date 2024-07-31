@@ -1,4 +1,4 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 
 export const TYPICAL_SWAP_GAS_COST = 60_000
 export const TYPICAL_MINIMAL_LIQUIDITY = 1000

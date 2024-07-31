@@ -1,9 +1,9 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 import {
   ConstantProductRPool,
   RPool,
-  RToken,
+  type RToken,
   RouteStatus,
   closeValues,
   findMultiRouteExactIn,

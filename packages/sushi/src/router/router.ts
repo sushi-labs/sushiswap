@@ -1,6 +1,6 @@
 import {
-  Address,
-  Hex,
+  type Address,
+  type Hex,
   encodeFunctionData,
   prepareEncodeFunctionData,
 } from 'viem'
@@ -11,13 +11,13 @@ import { ChainId } from '../chain/index.js'
 import { ADDITIONAL_BASES } from '../config/additional-bases.js'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '../config/bases-to-check-trades-against.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
-import { Token, Type } from '../currency/index.js'
+import { Token, type Type } from '../currency/index.js'
 import {
-  MultiRoute,
-  NetworkInfo,
+  type MultiRoute,
+  type NetworkInfo,
   NoWayMultiRoute,
   RPool,
-  RToken,
+  type RToken,
   RouteStatus,
   convertTokenToBento,
   findMultiRouteExactIn,
@@ -27,7 +27,7 @@ import {
 import { LiquidityProviders } from './liquidity-providers/index.js'
 import { PoolCode } from './pool-codes/index.js'
 import {
-  PermitData,
+  type PermitData,
   RouterLiquiditySource,
   getRouteProcessor2Code,
 } from './tines-to-route-processor-2.js'
