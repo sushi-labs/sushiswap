@@ -6,7 +6,6 @@ import { LiquidityProviders } from '../src/router/liquidity-providers/index.js'
 import { Router } from '../src/router/router.js'
 import { MultiRoute } from '../src/tines/index.js'
 
-
 async function getAPIObject(
   url: string,
   data: Record<string, string | number | undefined>,
