@@ -40,13 +40,11 @@ const bitmapIndex = (tick: number, tickSpacing: number) => {
 type PoolFilter = { has: (arg: string) => boolean }
 
 export abstract class UniswapV3BaseProvider extends LiquidityProvider {
-  poolsByTrade: Map<string, string[]> = new Map()
   pools: Map<string, PoolCode> = new Map()
 
   blockListener?: (() => void) | undefined
   unwatchBlockNumber?: () => void
 
-  isInitialized = false
   factory: Record<number, Address> = {}
   initCodeHash: Record<number, Hex> = {}
   tickLens: Record<number, string> = {}
@@ -338,11 +336,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
       transformedV3Pools.push(pc)
       this.pools.set(pool.address.toLowerCase(), pc)
     })
-
-    this.poolsByTrade.set(
-      this.getTradeId(t0, t1),
-      transformedV3Pools.map((pc) => pc.pool.address.toLowerCase()),
-    )
   }
 
   getStaticPools(t1: Token, t2: Token): StaticPool[] {
@@ -420,13 +413,6 @@ export abstract class UniswapV3BaseProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(): PoolCode[] {
-    // const tradeId = this.getTradeId(t0, t1)
-    // const poolsByTrade = this.poolsByTrade.get(tradeId) ?? []
-    // return poolsByTrade
-    //   ? Array.from(this.pools)
-    //       .filter(([poolAddress]) => poolsByTrade.includes(poolAddress))
-    //       .map(([, p]) => p)
-    //   : []
     return Array.from(this.pools.values())
   }
 
