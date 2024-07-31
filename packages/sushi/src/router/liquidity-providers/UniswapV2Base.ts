@@ -207,7 +207,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
           pool.address,
           token0,
           token1,
-          this.fee,
+          'fee' in pool ? pool.fee : this.fee,
           0n,
           0n,
         )
