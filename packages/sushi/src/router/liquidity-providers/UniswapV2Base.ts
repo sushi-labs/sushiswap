@@ -12,7 +12,6 @@ import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { ConstantProductPoolCode, type PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider } from './LiquidityProvider.js'
 
-
 interface StaticPool {
   address: Address
   token0: Token
