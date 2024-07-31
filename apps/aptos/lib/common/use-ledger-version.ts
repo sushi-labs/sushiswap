@@ -28,7 +28,7 @@ export function useLedgerVersion({
       return (await response.json()) as number
     },
     enabled: Boolean(secondsAgo),
-    cacheTime: 600,
+    gcTime: 600,
     staleTime: 300,
   })
 }

@@ -46,6 +46,5 @@ export const useSortedTokenList = ({
       )
       return filteredSortedTokens
     },
-    keepPreviousData: false,
   })
 }

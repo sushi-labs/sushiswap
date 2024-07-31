@@ -3,7 +3,7 @@ import {
   sendAnalyticsEvent,
   useTrace,
 } from '@sushiswap/telemetry'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
@@ -32,6 +32,12 @@ function getApiVersion(chainId: ChainId) {
   return ''
 }
 
+function test(a?: string) {
+  console.log(a)
+}
+
+test(undefined)
+
 export const useTradeQuery = (
   {
     chainId,
@@ -43,7 +49,6 @@ export const useTradeQuery = (
     recipient,
     source,
     enabled,
-    onError,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
@@ -110,13 +115,12 @@ export const useTradeQuery = (
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
-    keepPreviousData: !!amount,
-    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    placeholderData: amount ? keepPreviousData : undefined,
+    gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled:
       enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-    onError: (error) => (onError ? onError(error as Error) : undefined),
     queryKeyHashFn: stringify,
   })
 }

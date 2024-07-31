@@ -1,5 +1,5 @@
 import { useTrade as useApiTrade } from '@sushiswap/react-query'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
 import { stargateAdapterAbi } from 'sushi/abi'
@@ -442,8 +442,8 @@ export const useStargateCrossChainTrade = ({
     },
     refetchOnWindowFocus: true,
     refetchInterval: 10000,
-    keepPreviousData: !!amount,
-    cacheTime: 0,
+    placeholderData: amount ? keepPreviousData : undefined,
+    gcTime: 0,
     enabled:
       enabled &&
       Boolean(

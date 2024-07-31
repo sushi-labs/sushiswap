@@ -1,5 +1,5 @@
 import { UseTradeReturn, useTrade as useApiTrade } from '@sushiswap/react-query'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { log } from 'next-axiom'
 import { useMemo } from 'react'
 import { squidRouterAbi } from 'sushi/abi'
@@ -378,8 +378,8 @@ export const useSquidCrossChainTrade = ({
     },
     refetchOnWindowFocus: true,
     refetchInterval: 10000,
-    keepPreviousData: !!amount,
-    cacheTime: 0,
+    placeholderData: amount ? keepPreviousData : undefined,
+    gcTime: 0,
     enabled:
       enabled &&
       Boolean(

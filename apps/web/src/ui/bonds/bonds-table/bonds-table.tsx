@@ -37,7 +37,7 @@ export const BondsTable: FC = () => {
   const { data, isLoading } = useQuery({
     queryKey: [getBondsUrl(args)],
     queryFn: () => getBonds(args),
-    cacheTime: 0,
+    gcTime: 0,
   })
 
   const [sortingState, setSortingState] = useState<SortingState>([

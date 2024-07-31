@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SupportedNetwork, chains } from 'config/chains'
 import {
   AptosPool,
@@ -40,7 +40,7 @@ export function usePools({ enabled = true }: UsePools = { enabled: true }) {
   return useQuery({
     queryKey: ['pools', { network }],
     queryFn: async () => fetchPoolsQueryFn({ network }),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     enabled: Boolean(enabled),
   })
 }

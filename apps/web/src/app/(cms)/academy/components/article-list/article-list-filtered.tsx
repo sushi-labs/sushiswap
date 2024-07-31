@@ -84,7 +84,7 @@ export function ArticleListFiltered({
     },
     getNextPageParam: (_, pages) => pageSize * pages.length,
     staleTime: 3600,
-    cacheTime: 3600,
+    gcTime: 3600,
     initialData: isEmptySearch ? initialData : undefined,
   })
 

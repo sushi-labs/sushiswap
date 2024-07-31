@@ -46,6 +46,6 @@ export const useTokenSearch = ({
     },
     enabled: enabled && !!address && isAddress(address),
     staleTime: 900000, // 15 mins
-    cacheTime: 86400000, // 24hs
+    gcTime: 86400000, // 24hs
   })
 }

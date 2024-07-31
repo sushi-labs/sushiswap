@@ -2,7 +2,7 @@
 
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
@@ -200,7 +200,7 @@ export const useMasterChef: UseMasterChef = ({
     contracts,
     query: {
       enabled: contracts.length > 0 && enabled,
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
       select: (results) => results.map((r) => r.result),
     },
   })
