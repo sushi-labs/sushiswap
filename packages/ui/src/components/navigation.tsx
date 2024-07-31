@@ -192,7 +192,7 @@ const Navigation: React.FC<NavProps> = ({
   leftElements: _leftElements = navigationMenuItems.map((entry) => entry.title),
   rightElement,
   variant,
-  legacyBehavior = false
+  legacyBehavior = false,
 }) => {
   const leftElements = React.useMemo(() => {
     const SimpleItem = (entry: (typeof navigationMenuItems)[number]) => {
