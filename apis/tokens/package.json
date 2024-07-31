@@ -43,6 +43,6 @@
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "20",
     "typescript": "5.4.5",
-    "vercel": "32.5.3"
+    "vercel": "35.2.1"
   }
 }
