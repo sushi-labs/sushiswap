@@ -15,8 +15,6 @@ export interface PoolResponse2 {
     id: string
     name: string
     decimals: number
-    isFeeOnTransfer: boolean
-    isCommon: boolean
   }
   token1: {
     symbol: string
@@ -25,8 +23,6 @@ export interface PoolResponse2 {
     id: string
     name: string
     decimals: number
-    isFeeOnTransfer: boolean
-    isCommon: boolean
   }
 }
 
@@ -42,19 +38,15 @@ export function filterOnDemandPools(
   const token0Pools = pools.filter(
     (p) =>
       (p.token0.address === token0Address.toLowerCase() &&
-        !p.token1.isFeeOnTransfer &&
         p.token1.status === 'APPROVED') ||
       (p.token1.address === token0Address.toLowerCase() &&
-        !p.token0.isFeeOnTransfer &&
         p.token0.status === 'APPROVED'),
   )
   const token1Pools = pools.filter(
     (p) =>
       (p.token0.address === token1Address.toLowerCase() &&
-        !p.token1.isFeeOnTransfer &&
         p.token1.status === 'APPROVED') ||
       (p.token1.address === token1Address.toLowerCase() &&
-        !p.token0.isFeeOnTransfer &&
         p.token0.status === 'APPROVED'),
   )
   // console.log(`Flattened pools, recieved: t0: ${token0Pools.length}, t1: ${token1Pools.length}`)
@@ -105,14 +97,10 @@ export function filterTopPools(pools: PoolResponse2[], size: number) {
   const safePools = pools.filter(
     (p) =>
       p.token0.status === 'APPROVED' &&
-      !p.token0.isFeeOnTransfer &&
-      p.token1.status === 'APPROVED' &&
-      !p.token1.isFeeOnTransfer,
+      p.token1.status === 'APPROVED'
   )
 
-  const commonPools = safePools.filter(
-    (p) => p.token0.isCommon && p.token1.isCommon,
-  )
+  const commonPools: PoolResponse2[] = []
 
   const topPools = safePools
     .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
