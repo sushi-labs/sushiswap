@@ -486,9 +486,11 @@ export class Graph {
     // })
 
     // Lets try to price from the first trusted token first
-    const startV = this.getVert(
-      trustedForPricingTokens ? trustedForPricingTokens[0] ?? start : start,
-    )
+    const startToken = trustedForPricingTokens
+      ? trustedForPricingTokens[0] ?? start
+      : start
+    setTokenId(startToken)
+    const startV = this.getVert(startToken)
     if (startV !== undefined)
       this.setPricesStable(
         startV,
