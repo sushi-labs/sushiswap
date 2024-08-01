@@ -3,7 +3,7 @@ import {
   sendAnalyticsEvent,
   useTrace,
 } from '@sushiswap/telemetry'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'

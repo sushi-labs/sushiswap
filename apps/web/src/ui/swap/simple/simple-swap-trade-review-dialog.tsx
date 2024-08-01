@@ -354,7 +354,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
   const {
     sendTransactionAsync,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     data,
   } = useSendTransaction({
     mutation: {
