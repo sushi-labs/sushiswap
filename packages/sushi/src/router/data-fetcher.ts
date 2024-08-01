@@ -23,7 +23,6 @@ import { SpookySwapProvider } from './liquidity-providers/SpookySwap.js'
 import { SushiSwapV2Provider } from './liquidity-providers/SushiSwapV2.js'
 import { SushiSwapV3Provider } from './liquidity-providers/SushiSwapV3.js'
 import { TraderJoeProvider } from './liquidity-providers/TraderJoe.js'
-import { TridentProvider } from './liquidity-providers/Trident.js'
 import { UbeSwapProvider } from './liquidity-providers/UbeSwap.js'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2.js'
 import { UniswapV3Provider } from './liquidity-providers/UniswapV3.js'
@@ -126,7 +125,6 @@ export class DataFetcher {
       SushiSwapV3Provider,
       TraderJoeProvider,
       QuickSwapProvider,
-      TridentProvider,
       UbeSwapProvider,
       UniswapV2Provider,
       UniswapV3Provider,

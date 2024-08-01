@@ -14,10 +14,7 @@ export const getAllPoolsCodeMap = async ({
     return new Map<string, PoolCode>()
   }
 
-  const sushiLiquidityProviders = [
-    LiquidityProviders.SushiSwapV2,
-    LiquidityProviders.Trident,
-  ]
+  const sushiLiquidityProviders = [LiquidityProviders.SushiSwapV2]
   if (isRouteProcessor4ChainId(chainId)) {
     sushiLiquidityProviders.push(LiquidityProviders.SushiSwapV3)
   }
@@ -42,9 +39,7 @@ export const getAllPoolsCodeMap = async ({
     LiquidityProviders.LaserSwap, // thundercore
   ]
 
-  const testLiquidityProviders = [...sushiLiquidityProviders].filter(
-    (p) => p !== LiquidityProviders.Trident,
-  )
+  const testLiquidityProviders = [...sushiLiquidityProviders]
 
   const dataFetcher = DataFetcher.onChain(chainId)
   // console.log('dataFetcher startDataFetching')
