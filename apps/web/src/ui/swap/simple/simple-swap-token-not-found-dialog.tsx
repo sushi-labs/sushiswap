@@ -87,23 +87,21 @@ export const SimpleSwapTokenNotFoundDialog = () => {
     )
   }, [chainId, setTokens])
 
-  const {
-    data: tokenSecurityResponse,
-    isInitialLoading: tokenSecurityLoading,
-  } = useTokenSecurity({
-    currencies: useMemo(
-      () => [
-        ...(token0NotInList && tokenFrom?.token ? [tokenFrom.token] : []),
-        ...(token1NotInList && tokenTo?.token ? [tokenTo.token] : []),
-      ],
-      [token0NotInList, token1NotInList, tokenFrom, tokenTo],
-    ),
-    enabled: Boolean(
-      !tokenFromLoading &&
-        !tokenToLoading &&
-        (token0NotInList || token1NotInList),
-    ),
-  })
+  const { data: tokenSecurityResponse, isLoading: tokenSecurityLoading } =
+    useTokenSecurity({
+      currencies: useMemo(
+        () => [
+          ...(token0NotInList && tokenFrom?.token ? [tokenFrom.token] : []),
+          ...(token1NotInList && tokenTo?.token ? [tokenTo.token] : []),
+        ],
+        [token0NotInList, token1NotInList, tokenFrom, tokenTo],
+      ),
+      enabled: Boolean(
+        !tokenFromLoading &&
+          !tokenToLoading &&
+          (token0NotInList || token1NotInList),
+      ),
+    })
 
   const honeypot = Boolean(
     (tokenFrom?.token &&

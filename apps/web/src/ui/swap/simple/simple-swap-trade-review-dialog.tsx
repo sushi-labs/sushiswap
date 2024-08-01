@@ -354,7 +354,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
   const {
     writeContractAsync,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     data,
   } = useWriteContract({
     mutation: {

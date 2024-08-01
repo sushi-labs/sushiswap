@@ -158,7 +158,7 @@ export const BondsBuyReviewModal: FC<BondsBuyReviewModal> = ({
 
   const {
     writeContractAsync,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     data,
   } = useWriteContract({
     mutation: {

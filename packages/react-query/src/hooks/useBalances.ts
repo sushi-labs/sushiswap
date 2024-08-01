@@ -34,7 +34,7 @@ export const useBalancesQuery = (
       )
     },
     staleTime: ms('15m'), // 15 mins
-    cacheTime: ms('1h'), // 1hr
+    gcTime: ms('1h'), // 1hr
     enabled: Boolean(chainId && account && enabled),
     select,
   })

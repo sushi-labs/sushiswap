@@ -56,7 +56,7 @@ export default function Partner() {
     address: tokenAddress,
     chainId,
   })
-  const { mutate, isLoading, data, status } = useApplyForTokenList()
+  const { mutate, isPending, data, status } = useApplyForTokenList()
 
   useEffect(() => {
     if (isTokenError)
@@ -262,7 +262,7 @@ export default function Partner() {
               <div>
                 <Button
                   disabled={!methods.formState.isValid}
-                  loading={isLoading}
+                  loading={isPending}
                   type="submit"
                 >
                   Send whitelist request

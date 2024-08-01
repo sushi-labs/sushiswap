@@ -1,6 +1,6 @@
 import { useCustomTokens } from '@sushiswap/hooks'
 import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
 import { ChainId } from 'sushi/chain'
@@ -125,7 +125,7 @@ export const useTokenWithCache = <T extends boolean = false>({
   address,
   withStatus,
   enabled = true,
-  keepPreviousData = true,
+  keepPreviousData: isKeepPreviousData = true,
 }: UseTokenParams<T>) => {
   const { data: customTokens, hasToken } = useCustomTokens()
   const select = useCallback(
@@ -147,10 +147,10 @@ export const useTokenWithCache = <T extends boolean = false>({
       }),
     enabled: Boolean(enabled && chainId && address && isAddress(address)),
     select,
-    keepPreviousData,
+    placeholderData: isKeepPreviousData ? keepPreviousData : undefined,
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 900000, // 15 mins
-    cacheTime: 86400000, // 24hs
+    gcTime: 86400000, // 24hs
   })
 }

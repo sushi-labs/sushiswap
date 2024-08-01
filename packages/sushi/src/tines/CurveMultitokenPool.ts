@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-//import { bigint } from '@ethersproject/bignumber'
 import type { Address } from 'viem'
 import { PoolType, RPool, type RToken } from './RPool.js'
 import { getBigInt } from './Utils.js'

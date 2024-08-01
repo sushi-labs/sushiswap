@@ -1,4 +1,4 @@
-import { type UseQueryOptions, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { isTokenSecurityChainId } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { z } from 'zod'
@@ -162,17 +162,16 @@ const fetchTokenSecurityQueryFn = async (currencies: (Token | undefined)[]) => {
 export const useTokenSecurity = ({
   currencies,
   enabled = true,
-  ...rest
-}: UseQueryOptions<Awaited<ReturnType<typeof fetchTokenSecurityQueryFn>>> & {
+}: {
+  enabled?: boolean
   currencies: (Token | undefined)[]
 }) => {
   return useQuery({
     queryKey: ['useTokenSecurity', currencies?.map((currency) => currency?.id)],
     queryFn: () => fetchTokenSecurityQueryFn(currencies),
     enabled,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 900000, // 15 mins
-    cacheTime: 86400000, // 24hs
-    ...rest,
+    gcTime: 86400000, // 24hs
   })
 }

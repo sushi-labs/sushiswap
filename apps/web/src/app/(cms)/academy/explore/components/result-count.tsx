@@ -20,6 +20,8 @@ export function ResultCount() {
       'academy-articles-infinite',
       { search, category, difficulty, sorting },
     ],
+    initialPageParam: 0,
+    getNextPageParam: () => 0,
     enabled: false,
   })
 

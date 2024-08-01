@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
   filterTokens,
   getSortedTokensByQuery,
@@ -89,6 +89,6 @@ export const useSortedTokenList = ({
         return [Native.onChain(chainId), ...filteredSortedTokens]
       return filteredSortedTokens
     },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   })
 }
