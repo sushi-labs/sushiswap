@@ -32,12 +32,6 @@ export function getTradeQueryApiVersion(chainId: ChainId) {
   return ''
 }
 
-function test(a?: string) {
-  console.log(a)
-}
-
-test(undefined)
-
 export const useTradeQuery = (
   {
     chainId,

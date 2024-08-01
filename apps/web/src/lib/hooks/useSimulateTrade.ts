@@ -1,11 +1,11 @@
 import { UseTradeReturn } from '@sushiswap/react-query'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
   isRouteProcessor4ChainId,
 } from 'sushi/config'
-import { CallErrorType, Hex, RawContractError } from 'viem'
+import { CallErrorType, CallReturnType, Hex, RawContractError } from 'viem'
 import { useCall } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
 
@@ -54,29 +54,32 @@ export function useSimulateTrade({
     },
   })
 
+  const prevErrorRef = useRef<CallErrorType>()
+  const prevDataRef = useRef<CallReturnType>()
+
   // onSuccess
   useEffect(() => {
-    if (simulateTrade.data) {
-      if (typeof trade?.tokenTax === 'undefined') {
+    if (simulateTrade.data && simulateTrade.data !== prevDataRef.current) {
+      prevDataRef.current = simulateTrade.data
+
+      if (trade && typeof trade.tokenTax === 'undefined') {
         setTokenTax(false)
       }
     }
-  }, [setTokenTax, simulateTrade.data, trade?.tokenTax])
+  }, [simulateTrade.data, trade, setTokenTax])
 
   // onError
   useEffect(() => {
-    const error = simulateTrade.error
+    if (simulateTrade.error && simulateTrade.error !== prevErrorRef.current) {
+      prevErrorRef.current = simulateTrade.error
 
-    if (error) {
-      const errorData = isMinOutError(error)
-
+      const errorData = isMinOutError(simulateTrade.error)
       if (errorData) {
         if (trade?.amountOut && typeof trade.tokenTax === 'undefined') {
           const _tokenTax = getTokenTax({
             data: errorData,
             expectedAmountOut: trade.amountOut,
           })
-
           setTokenTax(_tokenTax)
         } else if (trade?.tokenTax !== false) {
           setTokenTax(false)
