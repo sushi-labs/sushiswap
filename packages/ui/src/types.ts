@@ -81,3 +81,6 @@ export type PolymorphicComponentPropsWithRef<
 
 export type IconProps = React.ComponentProps<'svg'>
 export type IconComponent = FC<IconProps>
+export type NakedNetworkIconComponent = FC<
+  IconProps & { circle?: React.ReactNode }
+>

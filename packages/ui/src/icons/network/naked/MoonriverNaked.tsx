@@ -1,15 +1,16 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const MoonriverNaked: IconComponent = (props) => (
+export const MoonriverNaked: NakedNetworkIconComponent = (props) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <g clipPath="url(#a)">
+    {props.circle}
+    <g>
       <path
         d="M63.447 25C47.16 25 33.958 38.225 33.958 54.539c0 1.865.175 3.73.522 5.563l3.81-2.615c6.697-4.601 17.56-4.601 24.257 0l3.997 2.743 2.166 1.49c6.037 4.146 15.817 4.146 21.847 0l1.777-1.219c3.272-15.992-7.022-31.613-22.989-34.888a29.425 29.425 0 0 0-5.886-.6L63.447 25Z"
         fill="#F2B705"
@@ -23,10 +24,5 @@ export const MoonriverNaked: IconComponent = (props) => (
         fill="#53CBC8"
       />
     </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" transform="translate(33 25)" d="M0 0h62v79H0z" />
-      </clipPath>
-    </defs>
   </svg>
 )
