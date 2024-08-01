@@ -54,7 +54,7 @@ export const useActiveBanners = () => {
       }))
     },
     staleTime: 3600000, // 1 hr
-    cacheTime: 14400000, // 4hrs
+    gcTime: 14400000, // 4hrs
     refetchOnWindowFocus: false,
   })
 }

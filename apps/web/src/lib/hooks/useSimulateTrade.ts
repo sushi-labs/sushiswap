@@ -51,26 +51,6 @@ export function useSimulateTrade({
             isRouteProcessor4ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
-      onError: (error) => {
-        const errorData = isMinOutError(error)
-        if (errorData) {
-          if (trade?.amountOut && typeof trade.tokenTax === 'undefined') {
-            const _tokenTax = getTokenTax({
-              data: errorData,
-              expectedAmountOut: trade.amountOut,
-            })
-
-            setTokenTax(_tokenTax)
-          } else if (trade && trade.tokenTax !== false) {
-            setTokenTax(false)
-          }
-        }
-      },
-      onSuccess: () => {
-        if (trade && typeof trade.tokenTax === 'undefined') {
-          setTokenTax(false)
-        }
-      },
     },
   })
 
@@ -83,7 +63,6 @@ export function useSimulateTrade({
     }
   }, [setTokenTax, simulateTrade.data, trade?.tokenTax])
 
-  // onError
   // onError
   useEffect(() => {
     const error = simulateTrade.error

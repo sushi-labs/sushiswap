@@ -94,7 +94,7 @@ export const Notification: FC<{
         >
           <div className="p-2 bg-gray-200 dark:bg-slate-600 text-gray-400 dark:text-slate-200 rounded-full min-h-[36px] min-w-[36px] flex justify-center items-center">
             {!hideStatus &&
-              (status === 'loading' ? (
+              (status === 'pending' ? (
                 <Loader size={18} />
               ) : status === 'error' ? (
                 <XMarkIcon width={20} height={20} className="text-red-400" />

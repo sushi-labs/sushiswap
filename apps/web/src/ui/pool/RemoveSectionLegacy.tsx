@@ -395,7 +395,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
       },
     })
 
-    const { sendTransactionAsync, isLoading: isWritePending } =
+    const { sendTransactionAsync, isPending: isWritePending } =
       useSendTransaction({
         mutation: {
           onSuccess,

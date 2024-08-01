@@ -233,7 +233,7 @@ interface DialogConfirmProps extends DialogContentProps {
   buttonLink?: string
   buttonText?: string
   txHash: string | undefined
-  status: 'idle' | 'loading' | 'success' | 'error'
+  status: 'pending' | 'success' | 'error'
 }
 
 const DialogConfirm: FC<DialogConfirmProps> = ({
@@ -253,7 +253,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {status === 'loading' ? (
+            {status === 'pending' ? (
               <Dots>Confirming</Dots>
             ) : status === 'success' ? (
               'Success!'
@@ -262,7 +262,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             )}
           </DialogTitle>
           <DialogDescription className="font-medium">
-            {status === 'loading' ? (
+            {status === 'pending' ? (
               <>
                 Waiting for your{' '}
                 <a
@@ -296,7 +296,7 @@ const DialogConfirm: FC<DialogConfirmProps> = ({
             )}
           </DialogDescription>
           <div className="py-6 flex justify-center">
-            {status === 'loading' ? (
+            {status === 'pending' ? (
               <Loader size={132} strokeWidth={1} className="!text-blue" />
             ) : status === 'success' ? (
               <CheckMarkIcon width={132} height={132} />

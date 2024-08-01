@@ -96,7 +96,7 @@ function MigrateUnstakeCard({ pool }: { pool: Pool }) {
 
   const { approved } = useApproved(APPROVE_TAG_UNSTAKE)
 
-  const { write: writeWithdraw, isLoading: isWritePending } =
+  const { write: writeWithdraw, isPending: isWritePending } =
     useMasterChefWithdraw({
       chainId: pool.chainId as ChainId,
       amount: stakedBalance,
@@ -474,7 +474,7 @@ export const MigrateTab: FC<{ pool: Pool }> = withCheckerRoot(({ pool }) => {
   const {
     write: writeMigrate,
     isError,
-    isLoading: isMigrateLoading,
+    isPending: isMigrateLoading,
     data: hash,
   } = useV3Migrate({
     account: address,
