@@ -51,8 +51,7 @@ export function useSimulateTrade({
         enabled &&
         Boolean(
           address &&
-            trade?.writeArgs &&
-            trade?.functionName &&
+            trade?.txdata &&
             isRouteProcessor4ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
@@ -105,6 +104,7 @@ export function useSimulateTrade({
                 : undefined,
               data: trade?.txdata as Hex | undefined,
               value: trade?.value || 0n,
+              account: address,
             },
           }
         : undefined,
@@ -123,6 +123,6 @@ export function useSimulateTrade({
           ? null
           : simulateTrade.error,
     }),
-    [simulateTrade, trade, chainId],
+    [simulateTrade, trade, chainId, address],
   )
 }

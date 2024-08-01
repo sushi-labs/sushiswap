@@ -232,6 +232,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
                   : 'processRoute',
                 writeArgs,
                 value,
+                txdata: args?.data,
                 tokenTax,
               }),
             250,
