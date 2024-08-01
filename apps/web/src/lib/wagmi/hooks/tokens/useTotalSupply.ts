@@ -1,6 +1,6 @@
 'use client'
 
-import { useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { Amount, Token } from 'sushi/currency'
 import { Address, erc20Abi } from 'viem'
@@ -34,14 +34,14 @@ export const useMultipleTotalSupply = (
     contracts,
     query: {
       enabled: tokens && tokens.length > 0,
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
     },
   })
 
   // Doesn't make sense to refresh based on one chain's blocknumber
   useEffect(() => {
     const interval = setInterval(() => {
-      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
+      queryClient.invalidateQueries({ queryKey }, { cancelRefetch: false })
     }, 4_000)
 
     return () => clearInterval(interval)

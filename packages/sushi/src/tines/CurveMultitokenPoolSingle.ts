@@ -1,6 +1,6 @@
 //import { bigint } from '@ethersproject/bignumber'
-import { Address } from 'viem'
-import { PoolType, RPool, RToken } from './RPool.js'
+import type { Address } from 'viem'
+import { PoolType, RPool, type RToken } from './RPool.js'
 import { getBigInt } from './Utils.js'
 
 const ZERO = 0n

@@ -4,20 +4,18 @@ import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
-import {
-  AlgebraPoolWatcher,
-  AlgebraPoolWatcherStatus,
-} from './AlgebraPoolWatcher.js'
+import { AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
 import {
   CurveWhitelistConfig,
   CurveWhitelistExtractor,
 } from './CurveWhitelistExtractor.js'
+import { IExtractor } from './IExtractor.js'
 import { LogFilter2, LogFilterType } from './LogFilter2.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
-import { UniV3PoolWatcher, UniV3PoolWatcherStatus } from './UniV3PoolWatcher.js'
+import { UniV3PoolWatcher } from './UniV3PoolWatcher.js'
 
 const DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
@@ -52,10 +50,7 @@ export type ExtractorConfig = {
 //  - direct warnings (std error) to a file
 export class Extractor {
   client: PublicClient
-  extractorV2?: UniV2Extractor
-  extractorV3?: UniV3Extractor
-  extractorAlg?: AlgebraExtractor
-  extractorCurve?: CurveWhitelistExtractor
+  projectExtractors: IExtractor[] = []
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   requestedPairs: Map<string, Set<string>> = new Map()
@@ -101,45 +96,53 @@ export class Extractor {
       args.debug,
     )
     if (args.factoriesV2 && args.factoriesV2.length > 0)
-      this.extractorV2 = new UniV2Extractor(
-        this.client,
-        args.factoriesV2,
-        args.cacheDir,
-        this.logFilter,
-        args.logging !== undefined ? args.logging : false,
-        this.multiCallAggregator,
-        this.tokenManager,
+      this.projectExtractors.push(
+        new UniV2Extractor(
+          this.client,
+          args.factoriesV2,
+          args.cacheDir,
+          this.logFilter,
+          args.logging !== undefined ? args.logging : false,
+          this.multiCallAggregator,
+          this.tokenManager,
+        ),
       )
     if (args.factoriesV3 && args.factoriesV3.length > 0)
-      this.extractorV3 = new UniV3Extractor(
-        this.client,
-        args.tickHelperContractV3,
-        args.factoriesV3,
-        args.cacheDir,
-        this.logFilter,
-        args.logging !== undefined ? args.logging : false,
-        this.multiCallAggregator,
-        this.tokenManager,
+      this.projectExtractors.push(
+        new UniV3Extractor(
+          this.client,
+          args.tickHelperContractV3,
+          args.factoriesV3,
+          args.cacheDir,
+          this.logFilter,
+          args.logging !== undefined ? args.logging : false,
+          this.multiCallAggregator,
+          this.tokenManager,
+        ),
       )
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
-      this.extractorAlg = new AlgebraExtractor(
-        this.client,
-        args.tickHelperContractAlgebra,
-        args.factoriesAlgebra,
-        args.cacheDir,
-        this.logFilter,
-        args.logging !== undefined ? args.logging : false,
-        this.multiCallAggregator,
-        this.tokenManager,
+      this.projectExtractors.push(
+        new AlgebraExtractor(
+          this.client,
+          args.tickHelperContractAlgebra,
+          args.factoriesAlgebra,
+          args.cacheDir,
+          this.logFilter,
+          args.logging !== undefined ? args.logging : false,
+          this.multiCallAggregator,
+          this.tokenManager,
+        ),
       )
     if (args.curveConfig)
-      this.extractorCurve = new CurveWhitelistExtractor(
-        this.client,
-        args.curveConfig,
-        this.logFilter,
-        this.tokenManager,
-        args.logging !== undefined ? args.logging : false,
-        this.multiCallAggregator,
+      this.projectExtractors.push(
+        new CurveWhitelistExtractor(
+          this.client,
+          args.curveConfig,
+          this.logFilter,
+          this.tokenManager,
+          args.logging !== undefined ? args.logging : false,
+          this.multiCallAggregator,
+        ),
       )
   }
 
@@ -147,14 +150,7 @@ export class Extractor {
   /// @param tokensAdditionalSet Prefetch all pools between tokensBaseSet and tokensAdditionalSet
   async start(tokensBaseSet: Token[] = [], tokensAdditionalSet: Token[] = []) {
     this.logFilter.start()
-    await Promise.all(
-      [
-        this.extractorV2?.start(),
-        this.extractorV3?.start(),
-        this.extractorAlg?.start(),
-        this.extractorCurve?.start(),
-      ].filter((e) => e !== undefined),
-    )
+    await Promise.all(this.projectExtractors.map((e) => e.start()))
     await this.prefetch(tokensBaseSet, tokensAdditionalSet)
     if (this.cacheDir !== '')
       this.printTokensPoolsQuantity(
@@ -250,27 +246,16 @@ export class Extractor {
       const tokenMap = new Map<string, Token>()
       tokens.forEach((t) => tokenMap.set(t.address, t))
       const tokensUnique = Array.from(tokenMap.values())
-
-      const pools2 = this.extractorV2
-        ? this.extractorV2.getPoolsForTokens(tokensUnique).prefetched
-        : []
-      const pools3 = this.extractorV3
-        ? (this.extractorV3
-            .getWatchersForTokens(tokensUnique)
-            .prefetched.map((w) => w.getPoolCode())
-            .filter((pc) => pc !== undefined) as PoolCode[])
-        : []
-      const poolsAlg = this.extractorAlg
-        ? (this.extractorAlg
-            .getWatchersForTokens(tokensUnique)
-            .prefetched.map((w) => w.getPoolCode())
-            .filter((pc) => pc !== undefined) as PoolCode[])
-        : []
-      const poolsCurve = this.extractorCurve
-        ? this.extractorCurve.getPoolsForTokens(tokensUnique).prefetched
-        : []
       ++this.requestFinishedNum
-      return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
+      const res = this.projectExtractors.flatMap(
+        (e) => e.getPoolsForTokens(tokensUnique).prefetched,
+      )
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokens',
+      //   tokens.length,
+      //   res.length,
+      // )
+      return res
     } catch (e) {
       ++this.requestFinishedNum
       ++this.requestFailedNum
@@ -295,39 +280,22 @@ export class Extractor {
       })
       const addUnique = Array.from(addMap.values())
 
-      let fetching: Promise<unknown>[] = []
-
-      if (this.extractorV2) {
-        fetching = fetching.concat(
-          this.extractorV2.getPoolsForTokens(baseUnique).fetching,
-        )
-        fetching = fetching.concat(
-          this.extractorV2.getPoolsBetweenTokenSets(baseUnique, addUnique)
-            .fetching,
-        )
-      }
-      if (this.extractorV3) {
-        fetching = fetching.concat(
-          this.extractorV3.getWatchersForTokens(baseUnique).fetching,
-        )
-        fetching = fetching.concat(
-          this.extractorV3.getWatchersBetweenTokenSets(baseUnique, addUnique)
-            .fetching,
-        )
-      }
-      if (this.extractorAlg) {
-        fetching = fetching.concat(
-          this.extractorAlg.getWatchersForTokens(baseUnique).fetching,
-        )
-        fetching = fetching.concat(
-          this.extractorAlg.getWatchersBetweenTokenSets(baseUnique, addUnique)
-            .fetching,
-        )
-      }
-      // curve doesn't need to be prefetched
-      //if (this.extractorCurve) {
-
+      const fetching = [
+        ...this.projectExtractors.flatMap(
+          (e) => e.getPoolsForTokens(baseUnique).fetching,
+        ),
+        ...this.projectExtractors.flatMap(
+          (e) => e.getPoolsBetweenTokenSets(baseUnique, addUnique).fetching,
+        ),
+      ]
+      // console.log(
+      //   'EXTR DEBUG: prefetch start ',
+      //   tokensBaseSet.length,
+      //   tokensAdditionalSet.length,
+      //   fetching.length,
+      // )
       await Promise.allSettled(fetching)
+      // console.log('EXTR DEBUG: prefetch finish')
       ++this.requestFinishedNum
     } catch (e) {
       ++this.requestFinishedNum
@@ -367,46 +335,23 @@ export class Extractor {
       let prefetchedAll: (PoolCode | undefined)[] = []
       let fetchingAll: Promise<unknown>[] = []
 
-      if (this.extractorV2) {
-        const { prefetched, fetching } =
-          this.extractorV2.getPoolsBetweenTokenSets(
-            tokens1Unique,
-            tokens2Unique,
-          )
+      this.projectExtractors.forEach((e) => {
+        const { prefetched, fetching } = e.getPoolsBetweenTokenSets(
+          tokens1Unique,
+          tokens2Unique,
+        )
         prefetchedAll = prefetchedAll.concat(prefetched)
         fetchingAll = fetchingAll.concat(fetching)
-      }
-      if (this.extractorV3) {
-        const { prefetched, fetching } =
-          this.extractorV3.getWatchersBetweenTokenSets(
-            tokens1Unique,
-            tokens2Unique,
-          )
-        prefetchedAll = prefetchedAll.concat(
-          prefetched.map((w) => w.getPoolCode()),
-        )
-        fetchingAll = fetchingAll.concat(fetching)
-      }
-      if (this.extractorAlg) {
-        const { prefetched, fetching } =
-          this.extractorAlg.getWatchersBetweenTokenSets(
-            tokens1Unique,
-            tokens2Unique,
-          )
-        prefetchedAll = prefetchedAll.concat(
-          prefetched.map((w) => w.getPoolCode()),
-        )
-        fetchingAll = fetchingAll.concat(fetching)
-      }
-      if (this.extractorCurve) {
-        const { prefetched, fetching } =
-          this.extractorCurve.getPoolsBetweenTokenSets(
-            tokens1Unique,
-            tokens2Unique,
-          )
-        prefetchedAll = prefetchedAll.concat(prefetched)
-        fetchingAll = fetchingAll.concat(fetching)
-      }
+      })
+
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesBetweenTokenSets start ',
+      //   tokens1.length,
+      //   tokens2.length,
+      //   prefetchedAll.length,
+      //   fetchingAll.length,
+      // )
+
       const fetchedAll = await Promise.allSettled(fetchingAll)
       const res = prefetchedAll
         .concat(
@@ -422,6 +367,10 @@ export class Extractor {
           }),
         )
         .filter((p) => p !== undefined) as PoolCode[]
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesBetweenTokenSets finished ',
+      //   res.length,
+      // )
 
       tokens1Unique.forEach((t0) => {
         tokens2Unique.forEach((t1) => {
@@ -449,34 +398,20 @@ export class Extractor {
 
       let prefetched: PoolCode[] = []
       let fetchingNumber = 0
-      if (this.extractorV2) {
-        const pools2 = this.extractorV2.getPoolsForTokens(tokensUnique)
-        prefetched = pools2.prefetched
-        fetchingNumber = pools2.fetching.length
-      }
-      if (this.extractorV3) {
-        const pools3 = this.extractorV3.getWatchersForTokens(tokensUnique)
-        const pools3Prefetched = pools3.prefetched
-          .map((w) => w.getPoolCode())
-          .filter((pc) => pc !== undefined) as PoolCode[]
 
-        prefetched = prefetched.concat(pools3Prefetched)
-        fetchingNumber += pools3.fetching.length
-      }
-      if (this.extractorAlg) {
-        const poolsAlg = this.extractorAlg.getWatchersForTokens(tokensUnique)
-        const poolsAlgPrefetched = poolsAlg.prefetched
-          .map((w) => w.getPoolCode())
-          .filter((pc) => pc !== undefined) as PoolCode[]
+      this.projectExtractors.forEach((e) => {
+        const pools = e.getPoolsForTokens(tokensUnique)
+        prefetched = prefetched.concat(pools.prefetched)
+        fetchingNumber += pools.fetching.length
+      })
 
-        prefetched = prefetched.concat(poolsAlgPrefetched)
-        fetchingNumber += poolsAlg.fetching.length
-      }
-      if (this.extractorCurve) {
-        const poolsCurve = this.extractorCurve.getPoolsForTokens(tokensUnique)
-        prefetched = prefetched.concat(poolsCurve.prefetched)
-        // no fetching
-      }
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokensFull ',
+      //   tokens.length,
+      //   prefetched.length,
+      //   fetchingNumber,
+      // )
+
       for (let i = 0; i < tokensUnique.length; ++i) {
         for (let j = i + 1; j < tokensUnique.length; ++j) {
           this.addRequestedPair(tokensUnique[i], tokensUnique[j])
@@ -497,87 +432,43 @@ export class Extractor {
   ): Promise<PoolCode[]> {
     ++this.requestStartedNum
     try {
-      let poolsV2: PoolCode[] = []
-      let watchersV3: UniV3PoolWatcher[] = []
-      let watchersAlg: AlgebraPoolWatcher[] = []
-      let poolsCurve: PoolCode[] = []
+      // let poolsV2: PoolCode[] = []
+      // let watchersV3: UniV3PoolWatcher[] = []
+      // let watchersAlg: AlgebraPoolWatcher[] = []
+      // let poolsCurve: PoolCode[] = []
+      let pools: PoolCode[] = []
       let promises: Promise<void>[] = []
 
       const tokenMap = new Map<string, Token>()
       tokens.forEach((t) => tokenMap.set(t.address, t))
       const tokensUnique = Array.from(tokenMap.values())
 
-      if (this.extractorV2) {
-        const { prefetched, fetching } =
-          this.extractorV2.getPoolsForTokens(tokensUnique)
-        poolsV2 = prefetched
-        promises = fetching.map(async (p) => {
-          const pc = await p
-          if (pc !== undefined) poolsV2.push(pc)
-        })
-      }
-
-      if (this.extractorV3) {
-        const { prefetched, fetching } =
-          this.extractorV3.getWatchersForTokens(tokensUnique)
-        watchersV3 = prefetched
-        prefetched.forEach((w) => {
-          if (w.getStatus() !== UniV3PoolWatcherStatus.All)
-            promises.push(w.downloadFinished())
-        })
+      this.projectExtractors.forEach((e) => {
+        const { prefetched, fetching } = e.getPoolsForTokens(tokensUnique)
+        pools = pools.concat(prefetched)
         promises = promises.concat(
           fetching.map(async (p) => {
-            const w = await p
-            if (w === undefined) return
-            watchersV3.push(w)
-            if (w.getStatus() !== UniV3PoolWatcherStatus.All)
-              await w.downloadFinished()
+            const pc = await p
+            if (pc !== undefined) pools.push(pc)
           }),
         )
-      }
+      })
 
-      if (this.extractorAlg) {
-        const { prefetched, fetching } =
-          this.extractorAlg.getWatchersForTokens(tokensUnique)
-        watchersAlg = prefetched
-        prefetched.forEach((w) => {
-          if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-            promises.push(w.downloadFinished())
-        })
-        promises = promises.concat(
-          fetching.map(async (p) => {
-            const w = await p
-            if (w === undefined) return
-            watchersAlg.push(w)
-            if (w.getStatus() !== AlgebraPoolWatcherStatus.All)
-              await w.downloadFinished()
-          }),
-        )
-      }
-
-      if (this.extractorCurve) {
-        const { prefetched, fetching } =
-          this.extractorCurve.getPoolsForTokens(tokensUnique)
-        poolsCurve = prefetched
-        promises = fetching.map(async (p) => {
-          const pc = await p
-          if (pc !== undefined) poolsCurve.push(pc)
-        })
-      }
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokensAsync start',
+      //   tokens.length,
+      //   pools.length,
+      //   promises.length,
+      // )
 
       await Promise.any([Promise.allSettled(promises), delay(timeout)])
-      const poolsV3 = watchersV3
-        .map((w) => w.getPoolCode())
-        .filter(
-          (pc) =>
-            pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
-        ) as PoolCode[]
-      const poolsAlg = watchersAlg
-        .map((w) => w.getPoolCode())
-        .filter(
-          (pc) =>
-            pc !== undefined && pc.pool.reserve0 > 0n && pc.pool.reserve1 > 0n,
-        ) as PoolCode[]
+
+      // console.log(
+      //   'EXTR DEBUG: getPoolCodesForTokensAsync finish',
+      //   tokens.length,
+      //   pools.length,
+      //   promises.length,
+      // )
 
       for (let i = 0; i < tokensUnique.length; ++i) {
         for (let j = i + 1; j < tokensUnique.length; ++j) {
@@ -585,7 +476,7 @@ export class Extractor {
         }
       }
       ++this.requestFinishedNum
-      return poolsV3.concat(poolsAlg).concat(poolsV2).concat(poolsCurve)
+      return pools
     } catch (e) {
       ++this.requestFinishedNum
       ++this.requestFailedNum
@@ -595,11 +486,7 @@ export class Extractor {
 
   getTokensPoolsQuantity(): [Token, number][] {
     const tokenMap: Map<Token, number> = new Map()
-    if (this.extractorV2) this.extractorV2.getTokensPoolsQuantity(tokenMap)
-    if (this.extractorV3) this.extractorV3.getTokensPoolsQuantity(tokenMap)
-    if (this.extractorAlg) this.extractorAlg.getTokensPoolsQuantity(tokenMap)
-    if (this.extractorCurve)
-      this.extractorCurve.getTokensPoolsQuantity(tokenMap)
+    this.projectExtractors.forEach((e) => e.getTokensPoolsQuantity(tokenMap))
     return Array.from(tokenMap.entries()).sort(([, a], [, b]) => b - a)
   }
 
@@ -624,35 +511,15 @@ export class Extractor {
   }
 
   getCurrentPoolCodes(): PoolCode[] {
-    const pools2 = this.extractorV2
-      ? this.extractorV2.getCurrentPoolCodes()
-      : []
-    const pools3 = this.extractorV3
-      ? this.extractorV3.getCurrentPoolCodes()
-      : []
-    const poolsAlg = this.extractorAlg
-      ? this.extractorAlg.getCurrentPoolCodes()
-      : []
-    const poolsCurve = this.extractorCurve
-      ? this.extractorCurve.getCurrentPoolCodes()
-      : []
-    return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
+    return this.projectExtractors.flatMap((e) => e.getCurrentPoolCodes())
   }
 
   // side effect: updated pools list is cleared
   getCurrentPoolCodesUpdate(): PoolCode[] {
-    const pools2 = this.extractorV2?.getUpdatedPoolCodes() ?? []
-    const pools3 = this.extractorV3?.getUpdatedPoolCodes() ?? []
-    const poolsAlg = this.extractorAlg?.getUpdatedPoolCodes() ?? []
-    const poolsCurve = this.extractorCurve?.getUpdatedPoolCodes() ?? []
-    return pools2.concat(pools3).concat(poolsAlg).concat(poolsCurve)
+    return this.projectExtractors.flatMap((e) => e.getUpdatedPoolCodes())
   }
 
   isStarted(): boolean {
-    if (this.extractorV2 && !this.extractorV2.isStarted()) return false
-    if (this.extractorV3 && !this.extractorV3.isStarted()) return false
-    if (this.extractorAlg && !this.extractorAlg.isStarted()) return false
-    if (this.extractorCurve && !this.extractorCurve.isStarted()) return false
-    return true
+    return this.projectExtractors.every((e) => e.isStarted())
   }
 }

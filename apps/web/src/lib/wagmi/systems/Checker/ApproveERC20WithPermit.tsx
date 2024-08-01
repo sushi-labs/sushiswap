@@ -23,6 +23,7 @@ import { FC, useEffect, useState } from 'react'
 import { Amount, Type } from 'sushi/currency'
 
 import { TTLStorageKey } from '@sushiswap/hooks'
+import { ChainId } from 'sushi/chain'
 import { Address } from 'viem'
 import { useAccount, useBytecode } from 'wagmi'
 import {
@@ -33,6 +34,7 @@ import {
   PermitInfo,
   useTokenPermit,
 } from '../../hooks/approvals/hooks/useTokenPermit'
+import { ApproveERC20 } from './ApproveERC20'
 import { useApprovedActions } from './Provider'
 
 enum ApprovalType {
@@ -43,6 +45,7 @@ enum ApprovalType {
 
 interface ApproveERC20WithPermitProps extends ButtonProps {
   id: string
+  chainId: ChainId
   amount: Amount<Type> | undefined
   contract: Address | undefined
   enabled?: boolean
@@ -51,7 +54,22 @@ interface ApproveERC20WithPermitProps extends ButtonProps {
   tag: string
 }
 
-const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
+const PERMIT_DISABLED_CHAIN_IDS = [ChainId.HARMONY]
+
+const isPermitSupportedChainId = (chainId: number) =>
+  !PERMIT_DISABLED_CHAIN_IDS.includes(
+    chainId as (typeof PERMIT_DISABLED_CHAIN_IDS)[number],
+  )
+
+const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = (props) => {
+  return isPermitSupportedChainId(props.chainId) ? (
+    <_ApproveERC20WithPermit {...props} />
+  ) : (
+    <ApproveERC20 {...props} />
+  )
+}
+
+const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
   id,
   amount,
   contract,
@@ -69,15 +87,16 @@ const ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
 
   const { address } = useAccount()
 
-  useBytecode({
+  const { data: bytecode } = useBytecode({
     address,
     query: {
-      onSuccess: (bytecode) => {
-        bytecode !== null && setApprovalType(ApprovalType.Approve)
-      },
       refetchInterval: Infinity,
     },
   })
+
+  useEffect(() => {
+    if (bytecode !== null) setApprovalType(ApprovalType.Approve)
+  }, [bytecode])
 
   const { setSignature } = useApprovedActions(tag)
 

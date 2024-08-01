@@ -122,7 +122,7 @@
     "sushi": "workspace:*",
     "tailwindcss": "3.3.2",
     "typescript": "5.4.5",
-    "wagmi": "2.11.2"
+    "wagmi": "2.12.2"
   },
   "peerDependencies": {
     "next": "14.2.3",
@@ -130,7 +130,7 @@
     "react-dom": "18.2.0",
     "sushi": "*",
     "tailwindcss": "3.3.2",
-    "wagmi": "2.11.2"
+    "wagmi": "2.12.2"
   },
   "peerDependenciesMeta": {
     "next": {

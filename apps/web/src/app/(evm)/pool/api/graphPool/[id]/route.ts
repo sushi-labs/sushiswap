@@ -1,5 +1,3 @@
-import 'sushi/bigint-serializer'
-
 import { NextResponse } from 'next/server'
 import { getV2GraphPool } from 'src/lib/graph'
 import { z } from 'zod'

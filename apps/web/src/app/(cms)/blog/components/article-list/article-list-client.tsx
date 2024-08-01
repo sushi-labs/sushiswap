@@ -49,7 +49,7 @@ export function ArticleListClient({
     queryKey: ['blog-articles-infinite', { search, categories }],
     queryFn: async ({ pageParam }) => {
       const { articles, meta } = await getBlogArticles({
-        pagination: { start: pageParam || 0, limit: pageSize },
+        pagination: { start: pageParam, limit: pageSize },
         filters: {
           title: {
             containsi: search,
@@ -64,9 +64,10 @@ export function ArticleListClient({
 
       return { articles, meta }
     },
+    initialPageParam: 0,
     getNextPageParam: (_, pages) => pageSize * pages.length,
     staleTime: 3600,
-    cacheTime: 3600,
+    gcTime: 3600,
     initialData: isEmptySearch ? initialData : undefined,
   })
 

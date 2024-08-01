@@ -96,6 +96,8 @@ contract RouteProcessor5 is Ownable {
   /// @param amountIn Amount of the input token
   /// @param tokenOut Address of the output token
   /// @param amountOutMin Minimum amount of the output token
+  /// @param to Where to transfer output tokens
+  /// @param route Route to process
   /// @return amountOut Actual amount of the output token
   function processRoute(
     address tokenIn,
@@ -237,7 +239,9 @@ contract RouteProcessor5 is Ownable {
     uint8 v = stream.readUint8();
     bytes32 r = stream.readBytes32();
     bytes32 s = stream.readBytes32();
-    IERC20Permit(tokenIn).safePermit(msg.sender, address(this), value, deadline, v, r, s);
+    if (IERC20(tokenIn).allowance(msg.sender, address(this)) < value) {
+      IERC20Permit(tokenIn).safePermit(msg.sender, address(this), value, deadline, v, r, s);
+    }
   }
 
   /// @notice Processes native coin: call swap for all pools that swap from native coin

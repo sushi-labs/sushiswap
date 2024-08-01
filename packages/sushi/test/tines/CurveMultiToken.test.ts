@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   CurveMultitokenPool,
   CurvePool,
-  RToken,
+  type RToken,
   closeValues,
   createCurvePoolsForMultipool,
   getBigInt,

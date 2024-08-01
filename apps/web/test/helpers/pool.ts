@@ -1,9 +1,5 @@
 import { Page, expect } from '@playwright/test'
 import { NextFixture } from 'next/experimental/testmode/playwright'
-import { Native, Token, Type } from 'sushi/currency'
-import { zeroAddress } from 'viem'
-import { BaseActions } from './base' // Adjust the import path as necessary
-
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -11,11 +7,13 @@ import {
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
 } from 'sushi/config'
-
+import { Native, Token, Type } from 'sushi/currency'
 import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
-} from 'sushi'
+} from 'sushi/pool'
+import { zeroAddress } from 'viem'
+import { BaseActions } from './base' // Adjust the import path as necessary
 
 interface CreateV3PoolArgs {
   token0: Type

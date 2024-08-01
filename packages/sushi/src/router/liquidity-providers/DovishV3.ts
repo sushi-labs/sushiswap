@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem'
+import type { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import { LiquidityProviders } from './LiquidityProvider.js'
 import { UniswapV3BaseProvider } from './UniswapV3Base.js'

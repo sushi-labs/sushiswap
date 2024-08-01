@@ -1,5 +1,3 @@
-import 'sushi/bigint-serializer'
-
 import { getPools } from '@sushiswap/client'
 import type { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import { NextResponse } from 'next/server'

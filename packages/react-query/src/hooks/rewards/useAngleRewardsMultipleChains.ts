@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
+import { isPromiseRejected } from 'sushi'
 import { ChainId } from 'sushi/chain'
 
 import { useAllPrices } from '../prices'
 import { angleRewardsQueryFn, angleRewardsSelect } from './useAngleRewards'
-import { angleRewardsMultipleValidator } from './validator'
 
 interface UseAngleRewardsParams {
   chainIds: ChainId[]
@@ -20,18 +20,18 @@ export const useAngleRewardsMultipleChains = ({
     queryKey: ['getAngleRewardsMultiple', { chainIds, account, prices }],
     queryFn: async () => {
       if (account && prices) {
-        const res = await Promise.all(
+        const res = await Promise.allSettled(
           chainIds.map((chainId) =>
             angleRewardsQueryFn({ chainIds: [chainId], account }),
           ),
         )
-        const parsed = angleRewardsMultipleValidator.parse(res)
 
-        return parsed
+        return res
           .map((el, i) => {
+            if (isPromiseRejected(el)) return null
             const data = angleRewardsSelect({
               chainId: chainIds[i]!,
-              data: el[chainIds[i]!],
+              data: el.value[chainIds[i]!],
               prices: prices[chainIds[i]!],
             })
 
@@ -48,7 +48,7 @@ export const useAngleRewardsMultipleChains = ({
       return null
     },
     staleTime: 15000, // 15 seconds
-    cacheTime: 60000, // 1min,
+    gcTime: 60000, // 1min,
     enabled: !!account,
   })
 }

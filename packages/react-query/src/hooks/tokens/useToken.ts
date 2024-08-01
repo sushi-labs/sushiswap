@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
@@ -86,10 +86,10 @@ export const useToken = <T extends boolean = false>({
     },
     enabled: Boolean(enabled && chainId && address && isAddress(address)),
     select,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 900000, // 15 mins
-    cacheTime: 86400000, // 24hs
+    gcTime: 86400000, // 24hs
   })
 }

@@ -68,6 +68,6 @@
     "ts-generator": "0.1.1",
     "ts-node": "10.9.1",
     "typescript": "5.4.5",
-    "viem": "2.17.8"
+    "viem": "2.18.6"
   }
 }

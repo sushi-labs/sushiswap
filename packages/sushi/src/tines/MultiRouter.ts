@@ -1,12 +1,12 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import {
   Graph,
-  MultiRoute,
-  NetworkInfo,
+  type MultiRoute,
+  type NetworkInfo,
   NoWayMultiRoute,
   RouteStatus,
 } from './Graph.js'
-import { RPool, RToken, setTokenId } from './RPool.js'
+import { RPool, type RToken, setTokenId } from './RPool.js'
 
 // Assumes route is a single path
 function calcPriceImactWithoutFee(route: MultiRoute) {

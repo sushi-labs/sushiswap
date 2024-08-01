@@ -3,7 +3,7 @@ import {
   sendAnalyticsEvent,
   useTrace,
 } from '@sushiswap/telemetry'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
@@ -20,17 +20,23 @@ import type {
 } from './types'
 import { tradeValidator02 } from './validator02'
 
-const API_BASE_URL =
+export const TRADE_API_BASE_URL =
   process.env['API_BASE_URL'] ||
   process.env['NEXT_PUBLIC_API_BASE_URL'] ||
   'https://staging.sushi.com/swap'
 
-function getApiVersion(chainId: ChainId) {
+export function getTradeQueryApiVersion(chainId: ChainId) {
   if (isRouteProcessor4ChainId(chainId)) {
     return '/v4'
   }
   return ''
 }
+
+function test(a?: string) {
+  console.log(a)
+}
+
+test(undefined)
 
 export const useTradeQuery = (
   {
@@ -43,7 +49,6 @@ export const useTradeQuery = (
     recipient,
     source,
     enabled,
-    onError,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
@@ -64,7 +69,9 @@ export const useTradeQuery = (
     ],
     queryFn: async () => {
       const params = new URL(
-        `${API_BASE_URL}/swap${getApiVersion(chainId)}/${chainId}`,
+        `${TRADE_API_BASE_URL}/swap${getTradeQueryApiVersion(
+          chainId,
+        )}/${chainId}`,
       )
       // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
@@ -110,13 +117,12 @@ export const useTradeQuery = (
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
-    keepPreviousData: !!amount,
-    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    placeholderData: (prevData) => (amount ? prevData : undefined),
+    gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled:
       enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-    onError: (error) => (onError ? onError(error as Error) : undefined),
     queryKeyHashFn: stringify,
   })
 }

@@ -1,6 +1,10 @@
-import { AbiStateMutability, Address, ContractFunctionParameters } from 'viem'
-import { Native, Token, Type } from '../../currency/index.js'
-import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
+import type {
+  AbiStateMutability,
+  Address,
+  ContractFunctionParameters,
+} from 'viem'
+import { Native, Token, type Type } from '../../currency/index.js'
+import { type RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
 import { CurvePoolType, curvePoolABI, getPoolRatio } from '../curve-sdk.js'
 import { CurvePoolCode } from '../pool-codes/CurvePool.js'
 import { PoolCode } from '../pool-codes/PoolCode.js'

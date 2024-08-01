@@ -1,10 +1,10 @@
-import { PublicClient } from 'viem'
+import type { PublicClient } from 'viem'
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { ChainId } from '../../chain/index.js'
 import { isWNativeSupported } from '../../config/wnative.js'
 import { WNATIVE, WNATIVE_ADDRESS } from '../../currency/index.js'
 import { Native } from '../../currency/index.js'
-import { BridgeUnlimited, RToken } from '../../tines/index.js'
+import { BridgeUnlimited, type RToken } from '../../tines/index.js'
 import { NativeWrapBridgePoolCode, type PoolCode } from '../pool-codes/index.js'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider.js'
 

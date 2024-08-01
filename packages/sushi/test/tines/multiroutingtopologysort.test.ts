@@ -1,8 +1,8 @@
 import seedrandom from 'seedrandom'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { expect, it } from 'vitest'
 import { ConstantProductRPool } from '../../src/tines/PrimaryPools.js'
-import { RToken } from '../../src/tines/RPool.js'
+import type { RToken } from '../../src/tines/RPool.js'
 import { Edge, Graph, Vertice, getBigInt } from '../../src/tines/index.js'
 
 type Topology = [number, number[][]]

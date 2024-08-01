@@ -1,4 +1,4 @@
-import { Currency, Price } from '../../../currency/index.js'
+import { type Currency, Price } from '../../../currency/index.js'
 import { Fraction } from '../../../math/index.js'
 
 /**

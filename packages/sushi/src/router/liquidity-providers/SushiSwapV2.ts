@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem'
+import type { PublicClient } from 'viem'
 import { ChainId } from '../../chain/index.js'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,

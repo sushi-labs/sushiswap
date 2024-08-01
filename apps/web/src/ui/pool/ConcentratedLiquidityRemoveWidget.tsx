@@ -257,7 +257,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
 
   const {
     sendTransactionAsync,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     data: hash,
   } = useSendTransaction({
     mutation: {

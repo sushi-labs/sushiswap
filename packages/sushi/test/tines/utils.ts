@@ -1,15 +1,15 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { expect } from 'vitest'
 import {
   BridgeStargateV04OneWay,
   BridgeUnlimited,
   ConstantProductRPool,
   HybridRPool,
-  MultiRoute,
-  NetworkInfo,
+  type MultiRoute,
+  type NetworkInfo,
   RPool,
-  RToken,
-  RouteLeg,
+  type RToken,
+  type RouteLeg,
   RouteStatus,
   StableSwapRPool,
   closeValues,

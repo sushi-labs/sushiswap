@@ -1,5 +1,5 @@
 import { useCustomTokens } from '@sushiswap/hooks'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
@@ -69,8 +69,8 @@ export const useTokens = ({ chainId }: UseTokensParams) => {
     queryKey: ['tokens', Object.keys(customTokenMap).length],
     queryFn: () => fetchTokensQueryFn({ customTokenMap }),
     select: (data) => data[chainId],
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: ms('15m'), // 15 mins
-    cacheTime: ms('24h'), // 24hs
+    gcTime: ms('24h'), // 24hs
   })
 }

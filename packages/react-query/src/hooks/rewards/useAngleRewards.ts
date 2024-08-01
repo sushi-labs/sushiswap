@@ -240,7 +240,7 @@ export const useAngleRewards = ({
     select: (data) =>
       angleRewardsSelect({ chainId, data: data[chainId], prices }),
     staleTime: 15000, // 15 seconds
-    cacheTime: 60000, // 1min
+    gcTime: 60000, // 1min
     enabled: Boolean(
       enabled && prices && chainId && isAngleEnabledChainId(chainId),
     ),
