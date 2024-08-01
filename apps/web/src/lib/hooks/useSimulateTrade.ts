@@ -1,5 +1,5 @@
 import { UseTradeReturn } from '@sushiswap/react-query'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import {
   ROUTE_PROCESSOR_4_ADDRESS,
@@ -73,6 +73,38 @@ export function useSimulateTrade({
       },
     },
   })
+
+  // onSuccess
+  useEffect(() => {
+    if (simulateTrade.data) {
+      if (typeof trade?.tokenTax === 'undefined') {
+        setTokenTax(false)
+      }
+    }
+  }, [setTokenTax, simulateTrade.data, trade?.tokenTax])
+
+  // onError
+  // onError
+  useEffect(() => {
+    const error = simulateTrade.error
+
+    if (error) {
+      const errorData = isMinOutError(error)
+
+      if (errorData) {
+        if (trade?.amountOut && typeof trade.tokenTax === 'undefined') {
+          const _tokenTax = getTokenTax({
+            data: errorData,
+            expectedAmountOut: trade.amountOut,
+          })
+
+          setTokenTax(_tokenTax)
+        } else if (trade?.tokenTax !== false) {
+          setTokenTax(false)
+        }
+      }
+    }
+  }, [simulateTrade.error, setTokenTax, trade?.amountOut, trade?.tokenTax])
 
   return useMemo(
     () => ({
