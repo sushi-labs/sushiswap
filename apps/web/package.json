@@ -8,11 +8,11 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
     "dev": "next dev",
+    "generate-swaps": "tsx test/swap/scripts/generate-swaps.ts",
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
-    "test": "npx playwright test -c test/playwright.config.ts",
-    "generate-swaps": "tsx test/swap/scripts/generate-swaps.ts"
+    "test": "npx playwright test -c test/playwright.config.ts"
   },
   "dependencies": {
     "@aptos-labs/wallet-adapter-ant-design": "2.2.0",
