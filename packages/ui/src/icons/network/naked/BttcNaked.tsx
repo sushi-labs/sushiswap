@@ -1,5 +1,6 @@
 import * as React from 'react'
 
+import classNames from 'classnames'
 import { IconComponent } from '../../../types'
 
 export const BttcNaked: IconComponent = (props) => (
@@ -8,7 +9,7 @@ export const BttcNaked: IconComponent = (props) => (
     fill="none"
     viewBox="0 0 128 128"
     {...props}
-    className="dark:text-white text-gray-700"
+    className={classNames(props.className, 'dark:text-white text-gray-700')}
   >
     <path
       fill="currentColor"

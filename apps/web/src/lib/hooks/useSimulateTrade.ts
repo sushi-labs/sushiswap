@@ -48,6 +48,7 @@ export function useSimulateTrade({
         enabled &&
         Boolean(
           trade?.writeArgs &&
+            trade?.functionName &&
             isRouteProcessor4ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),

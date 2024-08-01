@@ -18,7 +18,7 @@ import { FantomNaked } from './FantomNaked'
 import { FilecoinNaked } from './FilecoinNaked'
 import { FuseNaked } from './FuseNaked'
 import { GnosisNaked } from './GnosisNaked'
-import { HaqqNakked } from './HaqqNaked'
+import { HaqqNaked } from './HaqqNaked'
 import { HarmonyNaked } from './HarmonyNaked'
 import { HecoNaked } from './HecoNaked'
 import { KavaNaked } from './KavaNaked'
@@ -101,7 +101,7 @@ export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
   [ChainId.THUNDERCORE]: ThunderCoreNaked,
-  [ChainId.HAQQ]: HaqqNakked,
+  [ChainId.HAQQ]: HaqqNaked,
   [ChainId.CORE]: CoreNaked,
   [ChainId.ZKSYNC_ERA]: EthereumNaked,
   [ChainId.LINEA]: LineaNaked,
