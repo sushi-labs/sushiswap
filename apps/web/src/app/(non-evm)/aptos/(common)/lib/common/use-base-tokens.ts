@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SupportedNetwork } from '~aptos/(common)/config/chains'
 import { tokenlists } from '~aptos/(common)/config/tokenlists'
 import { Token } from '~aptos/(common)/lib/types/token'

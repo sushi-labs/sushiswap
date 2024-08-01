@@ -78,7 +78,7 @@ export function useTokenWithCache({
     },
     enabled: Boolean(enabled && address),
     refetchOnWindowFocus: false,
-    keepPreviousData,
+    placeholderData: (prevData) => (keepPreviousData ? prevData : undefined),
     retry: false,
   })
 }
