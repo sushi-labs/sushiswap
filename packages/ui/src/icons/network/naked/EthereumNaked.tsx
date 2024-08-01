@@ -7,8 +7,8 @@ export const EthereumNaked: NakedNetworkIconComponent = (props) => (
     viewBox="0 0 128 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
     className="dark:text-white text-gray-700"
+    {...props}
   >
     {props.circle}
     <path

@@ -1,6 +1,5 @@
 import * as React from 'react'
 
-import classNames from 'classnames'
 import { NakedNetworkIconComponent } from '../../../types'
 
 export const GnosisNaked: NakedNetworkIconComponent = (props) => (
@@ -8,8 +7,8 @@ export const GnosisNaked: NakedNetworkIconComponent = (props) => (
     viewBox="0 0 128 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    className="dark:text-white text-gray-700"
     {...props}
-    className={classNames(props.className, 'dark:text-white text-gray-700')}
   >
     {props.circle}
     <g fill="currentColor">
