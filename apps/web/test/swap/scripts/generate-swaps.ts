@@ -1,9 +1,9 @@
 import fs from 'fs'
 import { type UseTradeParams, tradeValidator02 } from '@sushiswap/react-query'
-import { isSwapApiEnabledChainId } from 'src/config'
 import { ChainId } from 'sushi'
 import { isRouteProcessor4ChainId } from 'sushi/config'
 import { Amount, Native, USDC, USDT, WBTC } from 'sushi/currency'
+import { isSwapApiEnabledChainId } from '../../../src/config'
 
 const RECIPIENT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
 
@@ -102,60 +102,70 @@ const getSwapApiResult = async ({
 }
 // !
 
+// Assume 100MATIC for Polygon, 1PROBABLY_ETH for the rest
+const nativeAmounts: Partial<Record<ChainId, Amount<Native>>> = {
+  [ChainId.POLYGON]: Amount.fromRawAmount(
+    Native.onChain(ChainId.POLYGON),
+    1e20,
+  ),
+}
+const nativeAmount =
+  nativeAmounts[chainId] || Amount.fromRawAmount(Native.onChain(chainId), 1e18)
+
 const trades: Record<string, TradeParams> = {}
 trades[`${chainId}-native-to-usdc`] = {
   fromToken: Native.onChain(chainId),
   toToken: USDC[chainId as keyof typeof USDC],
-  amount: Amount.fromRawAmount(Native.onChain(chainId), 100),
+  amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-native-to-usdt`] = {
   fromToken: Native.onChain(chainId),
   toToken: USDT[chainId as keyof typeof USDT],
-  amount: Amount.fromRawAmount(Native.onChain(chainId), 100),
+  amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-native-to-wbtc`] = {
   fromToken: Native.onChain(chainId),
   toToken: WBTC[chainId as keyof typeof WBTC],
-  amount: Amount.fromRawAmount(Native.onChain(chainId), 100),
+  amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-unwrap`] = {
   fromToken: Native.onChain(chainId).wrapped,
   toToken: Native.onChain(chainId),
-  amount: Amount.fromRawAmount(Native.onChain(chainId), 100),
+  amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-usdc-to-native`] = {
   fromToken: USDC[chainId as keyof typeof USDC],
   toToken: Native.onChain(chainId),
-  amount: Amount.fromRawAmount(USDC[chainId as keyof typeof USDC], 100),
+  amount: Amount.fromRawAmount(USDC[chainId as keyof typeof USDC], 1e6),
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-usdc-to-usdt`] = {
   fromToken: USDC[chainId as keyof typeof USDC],
   toToken: USDT[chainId as keyof typeof USDT],
-  amount: Amount.fromRawAmount(USDC[chainId as keyof typeof USDC], 100),
+  amount: Amount.fromRawAmount(USDC[chainId as keyof typeof USDC], 1e6),
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-usdt-to-native`] = {
   fromToken: USDT[chainId as keyof typeof USDT],
   toToken: Native.onChain(chainId),
-  amount: Amount.fromRawAmount(USDT[chainId as keyof typeof USDT], 100),
+  amount: Amount.fromRawAmount(USDT[chainId as keyof typeof USDT], 1e6),
   slippagePercentage: '0.5',
 }
 
 trades[`${chainId}-wrap`] = {
   fromToken: Native.onChain(chainId),
   toToken: Native.onChain(chainId).wrapped,
-  amount: Amount.fromRawAmount(Native.onChain(chainId), 100),
+  amount: nativeAmount,
   slippagePercentage: '0.5',
 }
 
