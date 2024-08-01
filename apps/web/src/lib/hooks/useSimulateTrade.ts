@@ -6,7 +6,7 @@ import {
   isRouteProcessor4ChainId,
 } from 'sushi/config'
 import { CallErrorType, CallReturnType, Hex, RawContractError } from 'viem'
-import { useCall } from 'wagmi'
+import { useAccount, useCall } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
 
 const isMinOutError = (_error: CallErrorType): Hex | false => {
@@ -27,12 +27,15 @@ export function useSimulateTrade({
     mutate: { setTokenTax },
   } = useDerivedStateSimpleSwap()
 
+  const { address } = useAccount()
+
   const simulateTrade = useCall({
     chainId: chainId,
     to: isRouteProcessor4ChainId(chainId)
       ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
       : undefined,
     data: trade?.txdata as Hex | undefined,
+    account: address,
     value: trade?.value || 0n,
     query: {
       retry: (i, error) => {
@@ -47,7 +50,8 @@ export function useSimulateTrade({
       enabled:
         enabled &&
         Boolean(
-          trade?.writeArgs &&
+          address &&
+            trade?.writeArgs &&
             trade?.functionName &&
             isRouteProcessor4ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
