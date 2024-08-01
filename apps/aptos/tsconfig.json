@@ -7,6 +7,9 @@
       "DOM.Iterable",
       "ESNext"
     ],
+    "paths": {
+      "~aptos/*": ["app/*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
