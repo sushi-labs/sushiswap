@@ -1,7 +1,7 @@
 'use client'
 
 import { getSushiHistoricPool } from '@sushiswap/graph-client/composite/sushi-historic-pool'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Token } from 'sushi/currency'
 
@@ -62,9 +62,9 @@ export const usePoolGraphData = ({
 
       return null
     },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 0,
-    cacheTime: 3600, // 1hr
+    gcTime: 3600, // 1hr
     enabled: Boolean(poolAddress && chainId && enabled),
   })
 }

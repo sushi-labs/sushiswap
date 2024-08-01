@@ -1,9 +1,9 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { describe, expect, it } from 'vitest'
-import { ConstantProductRPool } from '../../src/tines/PrimaryPools.js'
-import { RToken } from '../../src/tines/RPool.js'
 import {
-  MultiRoute,
+  ConstantProductRPool,
+  type MultiRoute,
+  type RToken,
   RouteStatus,
   closeValues,
   findMultiRouteExactIn,

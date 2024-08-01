@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SushiSwapV3ChainId } from 'sushi/config'
 
 import { useConfig } from 'wagmi'
@@ -35,6 +35,6 @@ export const useConcentratedLiquidityPositionsFromTokenId = ({
     },
     refetchInterval: 10000,
     enabled: Boolean(tokenId && chainId && enabled),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   })
 }

@@ -1,14 +1,15 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const BlastNaked: IconComponent = (props) => (
+export const BlastNaked: NakedNetworkIconComponent = (props) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
+    {props.circle}
     <g>
       <path
         fill="#FCFC03"

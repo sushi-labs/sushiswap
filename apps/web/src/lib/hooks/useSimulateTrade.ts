@@ -1,6 +1,6 @@
 import { UseTradeReturn } from '@sushiswap/react-query'
 import { SimulateContractErrorType } from '@wagmi/core'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { routeProcessor4Abi } from 'sushi/abi'
 import {
@@ -34,7 +34,7 @@ export function useSimulateTrade({
       ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
       : undefined,
     abi: routeProcessor4Abi,
-    functionName: trade?.functionName,
+    functionName: trade?.functionName || 'processRoute', // To make typescript happy
     args: trade?.writeArgs as any,
     value: trade?.value || 0n,
     query: {
@@ -51,30 +51,41 @@ export function useSimulateTrade({
         enabled &&
         Boolean(
           trade?.writeArgs &&
+            trade?.functionName &&
             isRouteProcessor4ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
-      onError: (error: SimulateContractErrorType) => {
-        if (isMinOutError(error)) {
-          if (trade?.amountOut && typeof trade.tokenTax === 'undefined') {
-            const _tokenTax = getTokenTax({
-              error,
-              expectedAmountOut: trade.amountOut,
-            })
-
-            setTokenTax(_tokenTax)
-          } else if (trade && trade.tokenTax !== false) {
-            setTokenTax(false)
-          }
-        }
-      },
-      onSuccess: () => {
-        if (trade && typeof trade.tokenTax === 'undefined') {
-          setTokenTax(false)
-        }
-      },
     },
   })
+
+  // onSuccess
+  useEffect(() => {
+    if (simulateTrade.data) {
+      if (typeof trade?.tokenTax === 'undefined') {
+        setTokenTax(false)
+      }
+    }
+  }, [setTokenTax, simulateTrade.data, trade?.tokenTax])
+
+  // onError
+  useEffect(() => {
+    const error = simulateTrade.error
+
+    if (error) {
+      if (isMinOutError(error)) {
+        if (trade?.amountOut && typeof trade.tokenTax === 'undefined') {
+          const _tokenTax = getTokenTax({
+            error,
+            expectedAmountOut: trade.amountOut,
+          })
+
+          setTokenTax(_tokenTax)
+        } else if (trade?.tokenTax !== false) {
+          setTokenTax(false)
+        }
+      }
+    }
+  }, [simulateTrade.error, setTokenTax, trade?.amountOut, trade?.tokenTax])
 
   return useMemo(
     () => ({

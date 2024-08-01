@@ -2,7 +2,7 @@
 
 import { Currency, SkeletonBox, SkeletonText } from '@sushiswap/ui'
 import { SquidIcon } from '@sushiswap/ui/icons/SquidIcon'
-import { SushiXSwap2Adapter } from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
+import { SushiXSwap2Adapter } from 'src/lib/swap/cross-chain'
 import { Chain } from 'sushi/chain'
 import { STARGATE_TOKEN } from 'sushi/config'
 import { TradeRoutePathView } from '../trade-route-path-view'

@@ -261,7 +261,7 @@ export class MultiCallAggregator {
       a: ReadContractParameters<abi, functionName, args>,
     ): Promise<ReadContractReturnType<abi, functionName, args>> {
       return that.callValue(
-        a.address,
+        a.address as Address,
         a.abi as Abi,
         a.functionName,
         a.args as unknown[],

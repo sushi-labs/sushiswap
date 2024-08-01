@@ -18,13 +18,14 @@ const baseURL = `http://localhost:${PORT}`
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  // quiet: true,
-  testMatch: ['pool.test.ts', 'simple.test.ts'],
-  testIgnore: [
-    'smart.test.ts',
-    // 'swap.test.test',
-    'cross-chain.test.ts',
+  quiet: !!process.env.CI,
+  testMatch: [
+    'pool.test.ts',
+    'simple.test.ts',
+    // 'smart.test.ts',
+    // 'cross-chain.test.ts',
   ],
+  testIgnore: [],
   /* Maximum time one test can run for. Defaults to 30s. */
   timeout: 180_000,
   expect: {
@@ -127,7 +128,6 @@ const config: PlaywrightTestConfig = {
         `EDGE_CONFIG=${String(process.env.EDGE_CONFIG)}`,
         'NEXT_PUBLIC_APP_ENV=test',
         `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
-        'NEXT_PUBLIC_API_BASE_URL=https://mock-swap-api',
         'npm run start',
       ].join(' '),
       port: 3000,
@@ -137,9 +137,6 @@ const config: PlaywrightTestConfig = {
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
         NEXT_PUBLIC_APP_ENV: String(process.env.NEXT_PUBLIC_APP_ENV),
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
-        NEXT_PUBLIC_SWAP_API_BASE_URL: String(
-          process.env.NEXT_PUBLIC_API_BASE_URL,
-        ),
       },
       // stderr: 'pipe',
       // stdout: 'pipe',

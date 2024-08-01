@@ -43,8 +43,6 @@
 //         symbol: true,
 //         decimals: true,
 //         status: true,
-//         isFeeOnTransfer: true,
-//         isCommon: true,
 //       },
 //       where: {
 //         status: 'APPROVED',
@@ -92,8 +90,6 @@
 //             status: 'APPROVED',
 //             name: token.name,
 //             symbol: token.symbol,
-//             isFeeOnTransfer: token.isFeeOnTransfer,
-//             isCommon: token.isCommon,
 //           },
 //         })
 //       )

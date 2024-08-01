@@ -91,6 +91,6 @@ export const useTokenRevokeApproval = ({
   return {
     ...rest,
     write,
-    isPending: isPending || rest.isLoading,
+    isPending: isPending || rest.isPending,
   }
 }

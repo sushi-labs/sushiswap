@@ -12,6 +12,7 @@ import {
   parseAbiItem,
 } from 'viem'
 import { Counter } from './Counter.js'
+import { IExtractor } from './IExtractor.js'
 import { LogFilter2 } from './LogFilter2.js'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
@@ -75,7 +76,7 @@ const UniV2FactoryAbi = [
   parseAbiItem('function allPairs(uint256) external view returns (address)'),
 ]
 
-export class UniV2Extractor {
+export class UniV2Extractor extends IExtractor {
   readonly multiCallAggregator: MultiCallAggregator
   readonly tokenManager: TokenManager
 
@@ -104,6 +105,7 @@ export class UniV2Extractor {
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
   ) {
+    super()
     this.multiCallAggregator =
       multiCallAggregator || new MultiCallAggregator(client)
     this.factories = factories
@@ -210,7 +212,7 @@ export class UniV2Extractor {
     })
   }
 
-  async start() {
+  override async start() {
     const startTime = performance.now()
     if (this.tokenManager.tokens.size === 0)
       await this.tokenManager.addCachedTokens()
@@ -315,7 +317,7 @@ export class UniV2Extractor {
     this.taskCounter.dec()
   }
 
-  getPoolsForTokens(tokensUnique: Token[]): {
+  override getPoolsForTokens(tokensUnique: Token[]): {
     prefetched: ConstantProductPoolCode[]
     fetching: Promise<ConstantProductPoolCode | undefined>[]
   } {
@@ -339,7 +341,7 @@ export class UniV2Extractor {
     }
   }
 
-  getPoolsBetweenTokenSets(
+  override getPoolsBetweenTokenSets(
     tokensUnique1: Token[],
     tokensUnique2: Token[],
   ): {
@@ -637,7 +639,7 @@ export class UniV2Extractor {
     return poolState.poolCode
   }
 
-  getCurrentPoolCodes(): ConstantProductPoolCode[] {
+  override getCurrentPoolCodes(): ConstantProductPoolCode[] {
     const pools = Array.from(this.poolMap.values()).filter((p) =>
       readyForRouting(p.status),
     ) as PoolStateValidPool[]
@@ -645,13 +647,13 @@ export class UniV2Extractor {
   }
 
   // side effect: updated pools list is cleared
-  getUpdatedPoolCodes(): ConstantProductPoolCode[] {
+  override getUpdatedPoolCodes(): ConstantProductPoolCode[] {
     const pools = Array.from(this.poolMapUpdated.values())
     this.poolMapUpdated.clear()
     return pools
   }
 
-  getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+  override getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
     const add = (token: RToken) => {
       const num = tokenMap.get(token as Token) || 0
       tokenMap.set(token as Token, num + 1)
@@ -684,7 +686,7 @@ export class UniV2Extractor {
       console.log(`V2-${this.multiCallAggregator.chainId}: ${log}`)
   }
 
-  isStarted() {
+  override isStarted() {
     return this.started
   }
 }

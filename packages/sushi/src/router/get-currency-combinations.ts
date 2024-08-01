@@ -4,7 +4,7 @@ import {
   BASES_TO_CHECK_TRADES_AGAINST,
   CUSTOM_BASES,
 } from '../config/index.js'
-import { Token, Type } from '../currency/index.js'
+import { Token, type Type } from '../currency/index.js'
 
 export function getCurrencyCombinations(
   chainId: ChainId,

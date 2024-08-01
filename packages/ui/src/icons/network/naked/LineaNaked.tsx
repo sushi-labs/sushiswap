@@ -1,14 +1,15 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const LineaNaked: IconComponent = (props) => (
+export const LineaNaked: NakedNetworkIconComponent = (props) => (
   <svg
     {...props}
     viewBox="0 0 129 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
+    {props.circle}
     <mask
       id="mask0_1001_65"
       style={{ maskType: 'luminance' }}

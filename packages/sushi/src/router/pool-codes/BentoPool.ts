@@ -1,9 +1,9 @@
-import { Address, encodeAbiParameters } from 'viem'
+import { type Address, encodeAbiParameters } from 'viem'
 import {
   ConstantProductRPool,
-  MultiRoute,
+  type MultiRoute,
   RPool,
-  RouteLeg,
+  type RouteLeg,
   StableSwapRPool,
 } from '../../tines/index.js'
 import { HEXer } from '../HEXer.js'

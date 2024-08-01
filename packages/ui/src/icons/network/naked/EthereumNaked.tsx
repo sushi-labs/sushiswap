@@ -1,15 +1,16 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const EthereumNaked: IconComponent = (props) => (
+export const EthereumNaked: NakedNetworkIconComponent = (props) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
     className="dark:text-white text-gray-700"
+    {...props}
   >
+    {props.circle}
     <path
       d="M63.993 24v29.573l24.99 11.169L63.993 24Z"
       fill="currentColor"

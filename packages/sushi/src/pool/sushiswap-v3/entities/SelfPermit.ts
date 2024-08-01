@@ -2,7 +2,7 @@ import { Interface } from '@ethersproject/abi'
 import { selfPermitAbi } from '../../../abi/selfPermitAbi.js'
 import { toHex } from '../../../convert/index.js'
 import { Token } from '../../../currency/index.js'
-import { BigintIsh } from '../../../math/index.js'
+import type { BigintIsh } from '../../../math/index.js'
 
 export interface StandardPermitArguments {
   v: 0 | 1 | 27 | 28

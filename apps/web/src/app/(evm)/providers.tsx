@@ -2,8 +2,6 @@
 
 import '@rainbow-me/rainbowkit/styles.css'
 
-import 'sushi/bigint-serializer'
-
 import { BaseProviders, OnramperProvider } from '@sushiswap/ui'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { QueryClientProvider } from '../../providers/query-client-provider'

@@ -1,8 +1,8 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import {
   PoolType,
   RPool,
-  RToken,
+  type RToken,
   TYPICAL_MINIMAL_LIQUIDITY,
   TYPICAL_SWAP_GAS_COST,
 } from './RPool.js'

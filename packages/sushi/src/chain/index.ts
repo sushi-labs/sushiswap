@@ -142,6 +142,14 @@ export class Chain implements Chain {
       this.explorers?.sort((explorer) =>
         explorer.name === 'blockscout' ? -1 : 1,
       )
+    } else if (data.chainId === ChainId.MOONBEAM) {
+      this.explorers = [
+        {
+          name: 'Moonscan',
+          url: 'https://moonscan.io',
+          standard: 'EIP3091',
+        },
+      ]
     }
   }
   getTxUrl(txHash: string): string {

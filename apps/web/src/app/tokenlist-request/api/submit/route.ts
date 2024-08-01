@@ -1,6 +1,5 @@
 import { createAppAuth } from '@octokit/auth-app'
 import { Ratelimit } from '@upstash/ratelimit'
-import stringify from 'fast-json-stable-stringify'
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit } from 'octokit'
 import { ChainId, ChainKey, chainName } from 'sushi/chain'
@@ -244,7 +243,7 @@ export async function POST(request: NextRequest) {
   // Send Discord notification using webhook
   await fetch(process.env.TOKEN_LIST_PR_WEBHOOK_URL, {
     method: 'POST',
-    body: stringify({
+    body: JSON.stringify({
       content: null,
       embeds: [
         {

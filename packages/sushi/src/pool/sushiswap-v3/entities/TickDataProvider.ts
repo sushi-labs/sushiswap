@@ -1,4 +1,4 @@
-import { BigintIsh } from '../../../math/index.js'
+import type { BigintIsh } from '../../../math/index.js'
 
 /**
  * Provides information about ticks

@@ -1,6 +1,6 @@
 import { parseUnits } from 'viem'
-import { Amount } from './Amount.js'
-import { type Type } from './Type.js'
+import { Amount } from './amount.js'
+import { type Type } from './type.js'
 
 // try to parse a user entered amount for a given token
 export function tryParseAmount<T extends Type>(

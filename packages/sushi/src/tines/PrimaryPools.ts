@@ -1,6 +1,6 @@
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { abs } from '../math/index.js'
-import { PoolType, RPool, RToken } from './RPool.js'
+import { PoolType, RPool, type RToken } from './RPool.js'
 import { getBigInt, revertPositive } from './Utils.js'
 import { computeHybridLiquidity } from './functions/index.js'
 
