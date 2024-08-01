@@ -3,7 +3,6 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 const func: DeployFunction = async ({
   ethers,
-  getNamedSigners,
   deployments,
   run,
 }: HardhatRuntimeEnvironment) => {
