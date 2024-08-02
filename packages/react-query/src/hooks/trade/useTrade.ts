@@ -23,7 +23,7 @@ import { tradeValidator02 } from './validator02'
 export const TRADE_API_BASE_URL =
   process.env['API_BASE_URL'] ||
   process.env['NEXT_PUBLIC_API_BASE_URL'] ||
-  'https://staging.sushi.com/swap'
+  'https://api.sushi.com/swap'
 
 export function getTradeQueryApiVersion(chainId: ChainId) {
   if (isRouteProcessor4ChainId(chainId)) {
