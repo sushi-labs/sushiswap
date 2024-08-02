@@ -1,13 +1,14 @@
 'use client'
 
+import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import {
+  getTokensFromPool,
   useTokenAmountDollarValues,
   useUnderlyingTokenBalanceFromPool,
-  useV2Pool,
 } from 'src/lib/hooks'
 import { useMasterChef } from 'src/lib/wagmi/hooks/master-chef/use-master-chef'
-import type { ChefType, PoolId, PoolWithIncentives } from 'sushi'
+import type { ChefType } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Currency, Token } from 'sushi/currency'
 
@@ -26,7 +27,7 @@ interface PoolPositionStakedContext {
 const Context = createContext<PoolPositionStakedContext | undefined>(undefined)
 
 interface PoolPositionStakedProviderProps {
-  pool: PoolWithIncentives
+  pool: V2Pool | V3Pool
   children: ReactNode
   watch?: boolean
 }
@@ -65,7 +66,7 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> =
   }
 
 interface _PoolPositionStakedProviderProps {
-  pool: PoolId
+  pool: V2Pool | V3Pool
   children: ReactNode
   farmId: number
   chefType: ChefType
@@ -79,9 +80,28 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   chefType,
   children,
 }) => {
-  const {
-    data: { reserve0, reserve1, totalSupply, liquidityToken },
-  } = useV2Pool(pool)
+  const { liquidityToken, reserve0, reserve1, totalSupply } = useMemo(() => {
+    if (!pool)
+      return {
+        token0: undefined,
+        token1: undefined,
+        liquidityToken: undefined,
+      }
+
+    const { token0, token1, liquidityToken } = getTokensFromPool(pool)
+
+    return {
+      liquidityToken,
+      reserve0:
+        token0 && pool ? Amount.fromRawAmount(token0, pool.reserve0) : null,
+      reserve1:
+        token1 && pool ? Amount.fromRawAmount(token1, pool.reserve1) : null,
+      totalSupply:
+        liquidityToken && pool
+          ? Amount.fromRawAmount(liquidityToken, pool.liquidity)
+          : null,
+    }
+  }, [pool])
 
   const { balance, isLoading, isError, isWritePending, isWriteError } =
     useMasterChef({

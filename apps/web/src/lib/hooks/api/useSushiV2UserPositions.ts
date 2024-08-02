@@ -8,12 +8,12 @@ import {
 import { useQuery } from '@tanstack/react-query'
 
 export function useSushiV2UserPositions(
-  args: GetV2Positions,
+  args: Partial<GetV2Positions>,
   shouldFetch = true,
 ) {
   return useQuery<V2Position[]>({
     queryKey: ['v2-positions', args],
-    queryFn: async () => await getV2Positions(args),
+    queryFn: async () => await getV2Positions(args as GetV2Positions),
     enabled: Boolean(shouldFetch && args.chainId && args.user),
   })
 }

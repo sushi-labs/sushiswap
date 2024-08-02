@@ -11,12 +11,11 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { SUPPORTED_CHAIN_IDS, isSupportedChainId } from 'src/config'
+import { SushiSwapProtocol } from 'sushi'
 import { z } from 'zod'
 
 import { useTypedSearchParams } from '../../lib/hooks'
 import { POOL_TYPES } from './TableFiltersPoolType'
-import { SushiSwapProtocol } from 'sushi'
 
 type FilterContext = z.TypeOf<typeof poolFiltersSchema>
 
@@ -33,15 +32,6 @@ export const poolFiltersSchema = z.object({
   tokenSymbols: z.coerce.string().transform((symbols) => {
     return symbols.split(',').filter((symbol) => symbol !== '')
   }),
-  chainIds: z.coerce
-    .string()
-    .default(SUPPORTED_CHAIN_IDS.join(','))
-    .transform((chainIds) =>
-      chainIds !== null && chainIds !== ','
-        ? chainIds.split(',').map((chainId) => Number(chainId))
-        : SUPPORTED_CHAIN_IDS,
-    )
-    .transform((chainIds) => chainIds.filter(isSupportedChainId)),
   protocols: z
     .string()
     .transform((protocols) =>
@@ -61,20 +51,18 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
   children,
 }) => {
   const urlFilters = useTypedSearchParams(poolFiltersSchema.partial())
-  const { tokenSymbols, chainIds, protocols, farmsOnly, smartPoolsOnly } =
-    urlFilters
+  const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } = urlFilters
 
   return (
     <FilterContext.Provider
       value={useMemo(
         () => ({
           tokenSymbols: tokenSymbols ? tokenSymbols : [],
-          chainIds: chainIds ? chainIds : SUPPORTED_CHAIN_IDS,
           protocols: protocols ? protocols : POOL_TYPES,
           farmsOnly: farmsOnly ? farmsOnly : false,
           smartPoolsOnly: smartPoolsOnly ? smartPoolsOnly : false,
         }),
-        [chainIds, farmsOnly, protocols, tokenSymbols, smartPoolsOnly],
+        [farmsOnly, protocols, tokenSymbols, smartPoolsOnly],
       )}
     >
       {children}

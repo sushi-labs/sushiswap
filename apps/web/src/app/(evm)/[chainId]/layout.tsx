@@ -1,15 +1,18 @@
 import { HotJar } from '@sushiswap/ui'
 
+import { isSupportedChainId } from 'src/config'
 import { Header } from './header'
+import notFound from './not-found'
 import { Providers } from './providers'
-
-export const metadata = {
-  title: 'Pool 💦',
-}
 
 export default function PoolLayout({
   children,
-}: { children: React.ReactNode }) {
+  params: { chainId },
+}: { children: React.ReactNode; params: { chainId: string } }) {
+  if (!isSupportedChainId(+chainId)) {
+    return notFound()
+  }
+
   return (
     <>
       <Providers>

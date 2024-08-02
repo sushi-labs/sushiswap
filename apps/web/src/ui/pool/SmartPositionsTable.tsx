@@ -1,10 +1,7 @@
 'use client'
 
+import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
-import { ColumnDef, PaginationState } from '@tanstack/react-table'
-import React, { useMemo, useState } from 'react'
-
-import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import {
   SkeletonText,
   Tooltip,
@@ -12,11 +9,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
+import { ColumnDef, PaginationState } from '@tanstack/react-table'
+import React, { FC, useMemo, useState } from 'react'
 import {
   SteerAccountPositionExtended,
   useSteerAccountPositionsExtended,
 } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
-import { ChainId, formatPercent, SushiSwapProtocol } from 'sushi'
+import { ChainId, SushiSwapProtocol, formatPercent } from 'sushi'
+import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
 import {
@@ -24,8 +24,6 @@ import {
   STEER_POSITION_SIZE_COLUMN,
   STEER_STRATEGY_COLUMN,
 } from './ConcentratedPositionsTable/Tables/Smart/columns'
-import { usePoolFilters } from './PoolsFiltersProvider'
-import { Address } from 'viem'
 
 const COLUMNS = [
   STEER_NAME_COLUMN,
@@ -81,9 +79,8 @@ const COLUMNS = [
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
-export const SmartPositionsTable = () => {
+export const SmartPositionsTable: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
-  const { chainIds } = usePoolFilters()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -91,7 +88,7 @@ export const SmartPositionsTable = () => {
 
   const { data: positions, isLoading } = useSteerAccountPositionsExtended({
     account: address,
-    chainIds: chainIds ? chainIds : [...STEER_SUPPORTED_CHAIN_IDS],
+    chainIds: isSteerChainId(chainId) ? [chainId] : [],
   })
 
   const _positions = useMemo(() => (positions ? positions : []), [positions])

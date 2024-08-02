@@ -16,6 +16,7 @@ const COLUMNS = [
 ] as DisplayColumnDef<V2Position, unknown>[]
 
 interface PositionsTableProps {
+  chainId: ChainId
   onRowClick?(row: V2Position): void
   rowLink?(row: V2Position): string
 }
@@ -23,23 +24,21 @@ interface PositionsTableProps {
 const tableState = { sorting: [{ id: 'value', desc: true }] }
 
 export const PositionsTable: FC<PositionsTableProps> = ({
+  chainId,
   onRowClick,
   rowLink,
 }) => {
   const { address } = useAccount()
-  // const { chainIds, tokenSymbols } = usePoolFilters()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
 
-  const { data: positions, isLoading } = useSushiV2UserPositions(
-    {
-      user: address!,
-      chainId: ChainId.ARBITRUM, // TODO: fix
-    },
-    !!address,
-  )
+  const { data: positions, isLoading } = useSushiV2UserPositions({
+    user: address,
+    chainId,
+  })
+
   const _positions = useMemo(() => {
     if (!positions) return []
     return positions

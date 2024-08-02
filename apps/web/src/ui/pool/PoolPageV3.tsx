@@ -19,16 +19,14 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
-import { SushiSwapV3ChainId } from 'sushi/config'
 import { formatUSD } from 'sushi/format'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
 import { PoolTransactionsV3 } from './PoolTransactionsV3'
 import { StatisticsChartsV3 } from './StatisticsChartV3'
 
-const PoolPageV3: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
+const PoolPageV3: FC<{ pool: V3Pool }> = ({ pool }) => {
   return (
     <ConcentratedLiquidityProvider>
       <Pool pool={pool} />
@@ -36,25 +34,17 @@ const PoolPageV3: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
   )
 }
 
-const Pool: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
-  const { id } = pool
-  const [_chainId, address] = id.split(':')
-  const chainId = +_chainId as SushiSwapV3ChainId
+const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
+  const { chainId, address } = pool
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({
     chainId,
     address,
   })
-  const { data: cPool } = useConcentratedLiquidityPool({
-    chainId,
-    token0: poolStats?.token0,
-    token1: poolStats?.token1,
-    feeAmount: poolStats?.feeAmount,
-  })
 
   const { data: reserves, isLoading: isReservesLoading } =
     useConcentratedLiquidityPoolReserves({
-      pool: cPool,
+      pool,
       chainId,
     })
   const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
@@ -62,7 +52,7 @@ const Pool: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">
       <div className="flex flex-col gap-6">
-        {pool?.hasEnabledSteerVault && (
+        {pool.hasEnabledSteerVault && (
           <Message variant="info" size="sm">
             {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
         allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
@@ -79,13 +69,6 @@ const Pool: FC<{ pool: Awaited<V3Pool> }> = ({ pool }) => {
             </LinkInternal>
           </Message>
         )}
-        {/* <PoolsFiltersProvider>
-          <ConcentratedPositionsTable
-            chainId={pool.chainId as SushiSwapV3ChainId}
-            poolId={pool.address as Address}
-            hideNewSmartPositionButton={!pool.hasEnabledSteerVault}
-          />
-        </PoolsFiltersProvider> */}
         <div className="py-4">
           <Separator />
         </div>
