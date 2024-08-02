@@ -1,6 +1,5 @@
 'use client'
 
-import stringify from 'fast-json-stable-stringify'
 import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
 
@@ -32,12 +31,12 @@ const fetcher = ({ url, chainIds }: { url: string; chainIds: ChainId[] }) => {
   const _url = new URL(url, window.location.origin)
   _url.searchParams.set(
     'networks',
-    stringify(chainIds.length > 0 ? chainIds : ANALYTICS_CHAIN_IDS),
+    JSON.stringify(chainIds.length > 0 ? chainIds : ANALYTICS_CHAIN_IDS),
   )
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
+    .catch((e) => console.log(JSON.stringify(e)))
 }
 
 export const GlobalStatsCharts: FC = () => {

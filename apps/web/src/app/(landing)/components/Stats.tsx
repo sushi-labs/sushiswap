@@ -5,9 +5,11 @@ import React, { FC } from 'react'
 
 export const Stats: FC = () => {
   const isMounted = useIsMounted()
-  const { data } = useQuery(['/api/stats'], () =>
-    fetch('/api/stats').then((response) => response.json()),
-  )
+  const { data } = useQuery({
+    queryKey: ['/api/stats'],
+    queryFn: () => fetch('/api/stats').then((response) => response.json()),
+  })
+
   return (
     <section className="overflow-x-hidden">
       <Container maxWidth="5xl" className="px-4 pt-10 mx-auto">

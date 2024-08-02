@@ -60,15 +60,14 @@ export const useFarmRewards = ({
     data: farmsMap,
     isError,
     isLoading,
-  } = useQuery(
+  } = useQuery({
     queryKey,
-    () =>
+    queryFn: () =>
       fetch('https://farm.sushi.com/v0').then((response) => response.json()),
-    {
-      staleTime: 2000,
-      ...options,
-    },
-  )
+
+    staleTime: 2000,
+    ...options,
+  })
 
   return useMemo(() => {
     return {

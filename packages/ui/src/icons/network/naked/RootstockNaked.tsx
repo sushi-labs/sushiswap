@@ -1,9 +1,10 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const RootstockNaked: IconComponent = (props) => (
+export const RootstockNaked: NakedNetworkIconComponent = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" {...props}>
+    {props.circle}
     <path
       fill="#FF931E"
       d="M 60.097656 14.367188 C 53.054688 16.640625 48.960938 23.648438 50.59375 30.6875 C 52.160156 37.566406 59.105469 42.335938 66.015625 41.246094 C 75.265625 39.808594 80.542969 29.855469 76.449219 21.503906 C 73.503906 15.488281 66.367188 12.382812 60.097656 14.367188 Z M 60.097656 14.367188 "

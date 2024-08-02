@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { Token } from 'sushi/currency'
 import { getAddress } from 'viem'
@@ -14,9 +14,9 @@ export const useTokenListQuery = (select: UseTokenListQuerySelect) =>
       return tokenListValidator.parse(res)
     },
     select,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 900000, // 15 mins
-    cacheTime: 86400000, // 24hs
+    gcTime: 86400000, // 24hs
   })
 
 export const useTokenList = (filter?: 'showNone' | string[]) => {

@@ -36,7 +36,7 @@ export const useAllPrices = (
     queryFn: async () =>
       fetch('/api/price').then((response) => response.json()),
     staleTime: ms('60s'),
-    cacheTime: ms('1h'),
+    gcTime: ms('1h'),
     refetchOnWindowFocus: false,
     select: hydrate,
     enabled,

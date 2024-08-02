@@ -23,7 +23,7 @@ const _StakeSection = () => {
     return tryParseAmount(input, SUSHI[ChainId.ETHEREUM])
   }, [input])
 
-  const { write, isLoading: isWritePending } = useBarDeposit({
+  const { write, isPending: isWritePending } = useBarDeposit({
     amount: parsedInput,
     enabled: Boolean(approved && parsedInput?.greaterThan(ZERO)),
   })

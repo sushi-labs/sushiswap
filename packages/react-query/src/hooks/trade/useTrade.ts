@@ -43,7 +43,6 @@ export const useTradeQuery = (
     recipient,
     source,
     enabled,
-    onError,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
@@ -112,13 +111,11 @@ export const useTradeQuery = (
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
-    keepPreviousData: !!amount,
-    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled:
       enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-    onError: (error) => (onError ? onError(error as Error) : undefined),
     queryKeyHashFn: stringify,
   })
 }
@@ -148,7 +145,6 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      // console.log('data.args', data?.args)
       if (data && amount && data.route && fromToken && toToken) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
         const amountOut = Amount.fromRawAmount(

@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const HaqqNakked: IconComponent = (props) => {
+export const HaqqNaked: NakedNetworkIconComponent = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,6 +12,7 @@ export const HaqqNakked: IconComponent = (props) => {
       viewBox="0 0 128 128"
       {...props}
     >
+      {props.circle}
       <g clipPath="url(#clip0_1006_159)">
         <mask
           id="mask0_1006_159"
