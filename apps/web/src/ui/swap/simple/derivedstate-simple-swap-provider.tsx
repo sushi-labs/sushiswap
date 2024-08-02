@@ -377,15 +377,9 @@ const useDerivedStateSimpleSwap = () => {
   return context
 }
 
-const SWAP_API_BASE_URL =
-  process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL
-
 const useFallback = (chainId: ChainId) => {
   const initialFallbackState = useMemo(
-    () =>
-      !isSwapApiEnabledChainId(chainId) ||
-      (isSwapApiEnabledChainId(chainId) &&
-        typeof SWAP_API_BASE_URL === 'undefined'),
+    () => !isSwapApiEnabledChainId(chainId),
 
     [chainId],
   )
