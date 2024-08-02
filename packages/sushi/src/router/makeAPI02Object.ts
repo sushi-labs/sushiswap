@@ -1,9 +1,12 @@
+import { Token } from '../currency/token.js'
 import {
   type MultiRoute,
   type RToken,
   type RouteLeg,
   RouteStatus,
 } from '../tines/index.js'
+import { LiquidityProviders } from './liquidity-providers/LiquidityProvider.js'
+import { PoolCode } from './pool-codes/PoolCode.js'
 import type { RPParams } from './router.js'
 
 function makeAPI02Token(token: RToken) {
@@ -32,8 +35,24 @@ function makeAPI02Leg(leg: RouteLeg, tokens: TokenConvertor) {
   }
 }
 
+function makeAPI03Leg(
+  leg: RouteLeg,
+  tokens: TokenConvertor,
+  liquidityProviders: LiquidityProviderConvertor,
+) {
+  return {
+    liquidityProvider: liquidityProviders.getLiquidityProviderIndex(
+      leg.uniqueId,
+    ),
+    poolAddress: leg.poolAddress,
+    tokenFrom: tokens.getTokenIndex(leg.tokenFrom),
+    tokenTo: tokens.getTokenIndex(leg.tokenTo),
+    share: leg.absolutePortion,
+  }
+}
+
 class TokenConvertor {
-  tokens: ReturnType<typeof makeAPI02Token>[] = []
+  tokens: RToken[] = []
   tokenMap = new Map<string, number>()
 
   _tokenId(t: RToken) {
@@ -53,6 +72,32 @@ class TokenConvertor {
 
   getTokenList() {
     return this.tokens
+  }
+}
+
+class LiquidityProviderConvertor {
+  liquidityProviders: LiquidityProviders[] = []
+  liquidityProviderMap = new Map<LiquidityProviders, number>()
+  idToLiquidityProvider = new Map<string, LiquidityProviders>()
+
+  addLiquidityProvider(id: string, liquidityProvider: LiquidityProviders) {
+    if (this.liquidityProviderMap.get(liquidityProvider) === undefined) {
+      this.liquidityProviders.push(liquidityProvider)
+
+      this.liquidityProviderMap.set(
+        liquidityProvider,
+        this.liquidityProviders.length - 1,
+      )
+    }
+    this.idToLiquidityProvider.set(id, liquidityProvider)
+  }
+
+  getLiquidityProviderIndex(id: string) {
+    return this.liquidityProviderMap.get(this.idToLiquidityProvider.get(id)!)
+  }
+
+  geLiquidityProviderList() {
+    return this.liquidityProviders
   }
 }
 
@@ -82,6 +127,59 @@ export function makeAPI02Object(
     gasSpent: route.gasSpent,
 
     route: route.legs.map((l) => makeAPI02Leg(l, tokens)),
+  } as any
+  if (rpParams !== undefined) {
+    APIObj.routeProcessorAddr = routeProcessorAddr
+    APIObj.routeProcessorArgs = {
+      tokenIn: rpParams.tokenIn,
+      amountIn: rpParams.amountIn.toString(),
+      tokenOut: rpParams.tokenOut,
+      amountOutMin: rpParams.amountOutMin.toString(),
+      to: rpParams.to,
+      routeCode: rpParams.routeCode,
+      txdata: rpParams.data,
+    }
+    if (rpParams.value !== undefined)
+      APIObj.routeProcessorArgs.value = rpParams.value.toString()
+  }
+
+  return APIObj
+}
+
+export function makeAPI03Object(
+  route: MultiRoute,
+  rpParams: RPParams | undefined,
+  routeProcessorAddr: string,
+  poolCodesMap: Map<string, PoolCode>,
+) {
+  if (route.status === RouteStatus.NoWay) return { status: RouteStatus.NoWay }
+  const tokens = new TokenConvertor()
+  const liquidityProviders = new LiquidityProviderConvertor()
+  route.legs.forEach((l) => {
+    tokens.addToken(l.tokenFrom)
+    tokens.addToken(l.tokenTo)
+    liquidityProviders.addLiquidityProvider(
+      l.uniqueId,
+      poolCodesMap.get(l.uniqueId)!.liquidityProvider,
+    )
+  })
+
+  const APIObj = {
+    status: route.status,
+    tokens: tokens.getTokenList(),
+    liquidityProviders: liquidityProviders.geLiquidityProviderList(),
+    tokenFrom: tokens.getTokenIndex(route.fromToken),
+    tokenTo: tokens.getTokenIndex(route.toToken),
+
+    primaryPrice: route.primaryPrice,
+    swapPrice: route.swapPrice,
+    priceImpact: route.priceImpact,
+
+    amountIn: route.amountInBI.toString(),
+    assumedAmountOut: route.amountOutBI.toString(),
+    gasSpent: route.gasSpent,
+
+    route: route.legs.map((l) => makeAPI03Leg(l, tokens, liquidityProviders)),
   } as any
   if (rpParams !== undefined) {
     APIObj.routeProcessorAddr = routeProcessorAddr
