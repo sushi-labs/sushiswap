@@ -6,6 +6,7 @@ import {
 } from 'viem'
 import { routeProcessor2Abi } from '../abi/routeProcessor2Abi.js'
 import { routeProcessor4Abi } from '../abi/routeProcessor4Abi.js'
+import { routeProcessor5Abi } from '../abi/routeProcessor5Abi.js'
 import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
 import { ADDITIONAL_BASES } from '../config/additional-bases.js'
@@ -34,6 +35,13 @@ import {
 import { getRouteProcessor4Code } from './tines-to-route-processor-4.js'
 import { getRouteProcessorCode } from './tines-to-route-processor.js'
 
+export enum ProcessFunction {
+  ProcessRoute = 0,
+  TransferValueAndprocessRoute = 1,
+  ProcessRouteWithTransferValueInput = 2,
+  ProcessRouteWithTransferValueOutput = 3,
+}
+
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
   const nativeRToken: RToken = {
@@ -58,6 +66,24 @@ const RP4processRouteEncodeData = prepareEncodeFunctionData({
   abi: routeProcessor4Abi,
   functionName: 'processRoute',
 })
+const RP5processRouteEncodeData = [
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'processRoute',
+  }),
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'transferValueAndprocessRoute',
+  }),
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'processRouteWithTransferValueInput',
+  }),
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'processRouteWithTransferValueOutput',
+  }),
+]
 
 const isWrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
   fromToken.isNative &&
@@ -374,7 +400,57 @@ export class Router {
     }
   }
 
-  static routeProcessor5Params = this.routeProcessor4Params
+  // the same as routeProcessor4Params, but with processFunction
+  static routeProcessor5Params(
+    poolCodesMap: Map<string, PoolCode>,
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: Address,
+    RPAddr: Address,
+    permits: PermitData[] = [],
+    maxPriceImpact = 0.005,
+    source = RouterLiquiditySource.Sender,
+    processFunction = ProcessFunction.ProcessRoute,
+  ): RPParams {
+    const tokenIn =
+      fromToken instanceof Token
+        ? (fromToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut =
+      toToken instanceof Token
+        ? (toToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const isWrapOrUnwap =
+      isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
+    const amountOutMin = isWrapOrUnwap
+      ? route.amountInBI
+      : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+        1_000_000n
+
+    const routeCode = getRouteProcessor4Code(
+      route,
+      RPAddr,
+      to,
+      poolCodesMap,
+      permits,
+      source,
+    ) as Hex
+    const data = encodeFunctionData({
+      ...RP5processRouteEncodeData[processFunction],
+      args: [tokenIn, route.amountInBI, tokenOut, amountOutMin, to, routeCode],
+    })
+    return {
+      tokenIn,
+      amountIn: route.amountInBI,
+      tokenOut,
+      amountOutMin,
+      to,
+      routeCode,
+      data,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
+    }
+  }
 
   // Human-readable route printing
   static routeToHumanString(
