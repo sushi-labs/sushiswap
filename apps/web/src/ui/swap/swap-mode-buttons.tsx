@@ -14,7 +14,7 @@ import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { useChainId} from "wagmi"
+import { useChainId } from 'wagmi'
 import { PathnameButton } from '../pathname-button'
 
 const useIsTwapSupported = () => {
@@ -27,7 +27,7 @@ const useIsTwapSupported = () => {
     ).then((m) => m.isSupportedChain)
     setIsTwapSupported(isSupportedChain(chainId))
   }, [chainId])
-  
+
   useEffect(() => {
     validate()
   }, [validate])
