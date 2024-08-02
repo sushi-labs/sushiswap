@@ -31,6 +31,7 @@ import { Currency } from 'sushi/currency'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/TokenSelector'
+import type { ChainId } from 'sushi'
 import { Address } from 'viem'
 import {
   useDerivedStateSimpleSwap,
@@ -182,15 +183,21 @@ const Tooltip = ({ tooltipText }: any) => {
 const TwapNetworkSelector = ({ children }: { children: ReactNode }) => {
   const { switchChain } = useSwitchChain()
 
+  const chainId = useChainId()
+
   const onSelect = useCallback(
-    (chainId: number) => {
+    (chainId: ChainId) => {
       switchChain({ chainId })
     },
     [switchChain],
   )
 
   return (
-    <NetworkSelector networks={supportedChains} onSelect={onSelect}>
+    <NetworkSelector
+      networks={supportedChains as ChainId[]}
+      onSelect={onSelect}
+      selected={chainId}
+    >
       {children}
     </NetworkSelector>
   )
