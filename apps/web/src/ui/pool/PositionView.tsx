@@ -321,7 +321,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                       account={address}
                       chainId={chainId}
                     >
-                      {({ send, isLoading }) => (
+                      {({ send, isPending }) => (
                         <Checker.Connect
                           variant="outline"
                           fullWidth
@@ -335,7 +335,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                           >
                             <Button
                               fullWidth
-                              disabled={isLoading}
+                              disabled={isPending}
                               onClick={send}
                               size="default"
                             >
@@ -389,7 +389,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                         account={address}
                         chainId={chainId}
                       >
-                        {({ write, isLoading }) => (
+                        {({ write, isPending }) => (
                           <Checker.Connect
                             fullWidth
                             variant="outline"
@@ -403,7 +403,7 @@ const Component: FC<{ id: string }> = ({ id }) => {
                             >
                               <Button
                                 fullWidth
-                                disabled={isLoading}
+                                disabled={isPending}
                                 onClick={() => write?.()}
                                 size="default"
                               >

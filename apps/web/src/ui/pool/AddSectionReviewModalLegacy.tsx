@@ -427,7 +427,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     const write = writeWithNative.write || writeWithoutNative.write
     const data = writeWithNative.data || writeWithoutNative.data
     const isWritePending =
-      writeWithNative.isLoading || writeWithoutNative.isLoading
+      writeWithNative.isPending || writeWithoutNative.isPending
 
     const { status } = useWaitForTransactionReceipt({ chainId, hash: data })
 

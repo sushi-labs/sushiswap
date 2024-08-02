@@ -1,14 +1,13 @@
 {
-  "extends": "@sushiswap/typescript-config/react-library.json",
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "dist",
-    ".turbo",
-    "node_modules"
-  ],
+  "extends": "@sushiswap/typescript-config/base.json",
+  "include": ["src"],
+  "exclude": ["dist", ".turbo", "node_modules"],
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2017", "DOM"],
+    "module": "ESNext",
+    "target": "es6",
+    "resolveJsonModule": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "sourceMap": true,

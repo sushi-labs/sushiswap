@@ -44,7 +44,7 @@ const tokenFromRToken = (token: TradeLegType['tokenFrom']) => {
 
 // Can render a tines multi route
 export const TradeRoutePathView: FC<{
-  trade: Pick<UseTradeReturn, 'route'> | undefined
+  trade: Partial<Pick<UseTradeReturn, 'route'>>
   children: ReactNode
 }> = ({ children, trade }) => {
   return (

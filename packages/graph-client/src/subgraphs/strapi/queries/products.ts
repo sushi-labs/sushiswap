@@ -61,7 +61,7 @@ export async function getProducts(
     slug: product.attributes.slug,
     url: product.attributes.url,
     relevantArticleIds: product.attributes.relevantArticleIds,
-    shareImage: product.attributes.shareImage.data
+    shareImage: product?.attributes?.shareImage?.data
       ? transformImage(product.attributes.shareImage.data)
       : null,
   }))

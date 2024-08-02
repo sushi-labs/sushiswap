@@ -6,7 +6,7 @@ import {
   createToast,
 } from '@sushiswap/notifications'
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Address, UserRejectedRequestError, hexToSignature } from 'viem'
 import {
@@ -63,6 +63,7 @@ export const useBentoBoxApproval = ({
     data: approvalData,
     refetch,
     isLoading,
+    error: getApprovalError,
   } = useQuery({
     queryKey: ['masterContractApproval', { chainId, masterContract, address }],
     queryFn: async () => {
@@ -89,34 +90,46 @@ export const useBentoBoxApproval = ({
 
       return null
     },
-    onError: (e: Error) =>
-      onError(e, 'error fetching master contract approval'),
     enabled,
   })
 
-  const { data: simulation } = useSimulateContract({
-    abi: bentoBoxV1Abi,
-    address: BENTOBOX_ADDRESS[chainId],
-    chainId,
-    functionName: 'setMasterContractApproval',
-    args:
-      masterContract && address
-        ? [
-            address,
-            masterContract,
-            true,
-            0,
-            '0x0000000000000000000000000000000000000000000000000000000000000000',
-            '0x0000000000000000000000000000000000000000000000000000000000000000',
-          ]
-        : undefined,
-    query: {
-      enabled: Boolean(
-        enabled && masterContract && address && chainId && fallback,
-      ),
-      onError: (e) => onError(e, 'error preparing master contract approval'),
-    },
-  })
+  // onError
+  useEffect(() => {
+    if (getApprovalError) {
+      onError(getApprovalError, 'error fetching master contract approval')
+    }
+  }, [getApprovalError, onError])
+
+  const { data: simulation, error: simulateApprovalError } =
+    useSimulateContract({
+      abi: bentoBoxV1Abi,
+      address: BENTOBOX_ADDRESS[chainId],
+      chainId,
+      functionName: 'setMasterContractApproval',
+      args:
+        masterContract && address
+          ? [
+              address,
+              masterContract,
+              true,
+              0,
+              '0x0000000000000000000000000000000000000000000000000000000000000000',
+              '0x0000000000000000000000000000000000000000000000000000000000000000',
+            ]
+          : undefined,
+      query: {
+        enabled: Boolean(
+          enabled && masterContract && address && chainId && fallback,
+        ),
+      },
+    })
+
+  // onError
+  useEffect(() => {
+    if (simulateApprovalError) {
+      onError(simulateApprovalError, 'error preparing master contract approval')
+    }
+  }, [simulateApprovalError, onError])
 
   const onSuccess = useCallback(
     async (data: SendTransactionReturnType) => {

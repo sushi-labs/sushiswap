@@ -1,9 +1,9 @@
 import {
   http,
   type Address,
-  Chain,
+  type Chain,
   type PublicClientConfig,
-  Transport,
+  type Transport,
 } from 'viem'
 import {
   arbitrum,
@@ -655,7 +655,7 @@ export const publicChains = [
   palm,
   okc,
   heco,
-  zkSync,
+  zkSync as unknown as Omit<typeof mainnet, 'id'> & { id: 324 },
   linea,
   base,
   scroll,
@@ -786,7 +786,7 @@ export const publicClientConfig = {
     transport: publicTransports[ChainId.HECO],
   },
   [ChainId.ZKSYNC_ERA]: {
-    chain: zkSync,
+    chain: zkSync as unknown as typeof mainnet & { id: 324 },
     transport: publicTransports[ChainId.ZKSYNC_ERA],
   },
   [ChainId.LINEA]: {

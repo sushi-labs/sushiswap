@@ -4,11 +4,11 @@ import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
 import { SquidIcon } from '@sushiswap/ui/icons/SquidIcon'
 import { FC, ReactNode } from 'react'
+import { UseCrossChainTradeReturn } from 'src/lib/hooks'
 import {
   SushiXSwap2Adapter,
-  TransactionType,
-} from 'src/lib/swap/useCrossChainTrade/SushiXSwap2'
-import { UseCrossChainTradeReturn } from 'src/lib/swap/useCrossChainTrade/types'
+  SushiXSwapTransactionType,
+} from 'src/lib/swap/cross-chain/lib'
 import { Chain } from 'sushi/chain'
 import { STARGATE_TOKEN } from 'sushi/config'
 import { shortenAddress } from 'sushi/format'
@@ -41,9 +41,10 @@ export const ConfirmationDialogContent: FC<ConfirmationDialogContent> = ({
 
   const swapOnDest =
     trade?.transactionType &&
-    [TransactionType.BridgeAndSwap, TransactionType.CrossChainSwap].includes(
-      trade.transactionType,
-    )
+    [
+      SushiXSwapTransactionType.BridgeAndSwap,
+      SushiXSwapTransactionType.CrossChainSwap,
+    ].includes(trade.transactionType)
 
   if (dialogState.source === StepState.Sign) {
     return <>Please sign order with your wallet.</>

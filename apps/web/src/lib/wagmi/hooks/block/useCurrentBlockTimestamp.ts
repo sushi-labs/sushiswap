@@ -26,8 +26,7 @@ export const useCurrentBlockTimestamp = (
   useEffect(() => {
     if (blockNumber) {
       queryClient.invalidateQueries(
-        query.queryKey,
-        {},
+        { queryKey: query.queryKey },
         { cancelRefetch: false },
       )
     }

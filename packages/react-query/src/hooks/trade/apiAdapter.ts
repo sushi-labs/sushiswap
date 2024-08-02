@@ -145,6 +145,7 @@ export function apiAdapter02To01(
           tokenOut: res.routeProcessorArgs.tokenOut,
           routeCode: res.routeProcessorArgs.routeCode,
         },
+        txdata: res.routeProcessorArgs.txdata,
       }
     else return { route }
   }

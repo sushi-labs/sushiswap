@@ -331,18 +331,6 @@
 //     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
 //   })
 
-//   it('Trident Native => SUSHI => Native (Polygon only)', async function () {
-//     if (chainId == ChainId.POLYGON) {
-//       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
-//       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
-//         LiquidityProviders.Trident,
-//       ])
-//       intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult, [
-//         LiquidityProviders.Trident,
-//       ])
-//     }
-//   })
-
 //   it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
 //     const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
 //     // || pool instanceof Wr

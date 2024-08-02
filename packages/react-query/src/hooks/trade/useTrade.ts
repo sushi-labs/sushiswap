@@ -20,12 +20,12 @@ import type {
 } from './types'
 import { tradeValidator02 } from './validator02'
 
-const API_BASE_URL =
+export const TRADE_API_BASE_URL =
   process.env['API_BASE_URL'] ||
   process.env['NEXT_PUBLIC_API_BASE_URL'] ||
-  'https://staging.sushi.com/swap'
+  'https://api.sushi.com/swap'
 
-function getApiVersion(chainId: ChainId) {
+export function getTradeQueryApiVersion(chainId: ChainId) {
   if (isRouteProcessor4ChainId(chainId)) {
     return '/v4'
   }
@@ -43,7 +43,6 @@ export const useTradeQuery = (
     recipient,
     source,
     enabled,
-    onError,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
@@ -64,7 +63,9 @@ export const useTradeQuery = (
     ],
     queryFn: async () => {
       const params = new URL(
-        `${API_BASE_URL}/swap${getApiVersion(chainId)}/${chainId}`,
+        `${TRADE_API_BASE_URL}/swap${getTradeQueryApiVersion(
+          chainId,
+        )}/${chainId}`,
       )
       // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
@@ -110,13 +111,11 @@ export const useTradeQuery = (
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
-    keepPreviousData: !!amount,
-    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled:
       enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-    onError: (error) => (onError ? onError(error as Error) : undefined),
     queryKeyHashFn: stringify,
   })
 }
@@ -146,7 +145,6 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      // console.log('data.args', data?.args)
       if (data && amount && data.route && fromToken && toToken) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
         const amountOut = Amount.fromRawAmount(
@@ -155,21 +153,23 @@ export const useTrade = (variables: UseTradeParams) => {
             tokenTax ? new Percent(1).subtract(tokenTax) : 1,
           ).quotient,
         )
-        const minAmountOut = Amount.fromRawAmount(
-          toToken,
-          slippageAmount(
-            amountOut,
-            new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-          )[0],
-        )
+        const minAmountOut = data.args?.amountOutMin
+          ? Amount.fromRawAmount(toToken, data.args.amountOutMin)
+          : Amount.fromRawAmount(
+              toToken,
+              slippageAmount(
+                Amount.fromRawAmount(toToken, data.route.amountOutBI),
+                new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+              )[0],
+            )
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         let writeArgs: UseTradeReturnWriteArgs = data?.args
           ? ([
               data.args.tokenIn as Address,
-              BigInt(data.args.amountIn),
+              data.args.amountIn,
               data.args.tokenOut as Address,
-              minAmountOut.quotient,
+              data.args.amountOutMin,
               data.args.to as Address,
               data.args.routeCode as Hex,
             ] as const)
@@ -219,6 +219,7 @@ export const useTrade = (variables: UseTradeParams) => {
           writeArgs,
           value,
           tokenTax,
+          txdata: data.txdata,
         }
       }
 
@@ -235,6 +236,7 @@ export const useTrade = (variables: UseTradeParams) => {
         functionName: 'processRoute',
         value: undefined,
         tokenTax: undefined,
+        txdata: undefined,
       }
     },
     [

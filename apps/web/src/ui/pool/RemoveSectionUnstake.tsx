@@ -60,7 +60,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = withCheckerRoot(
       return balance?.multiply(value).divide(100)
     }, [balance, value])
 
-    const { write, isLoading: isWritePending } = useMasterChefWithdraw({
+    const { write, isPending: isWritePending } = useMasterChefWithdraw({
       chainId,
       amount,
       pid: farmId,

@@ -1,8 +1,8 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const OkexNaked: IconComponent = (props) => (
+export const OkexNaked: NakedNetworkIconComponent = (props) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"
@@ -10,6 +10,7 @@ export const OkexNaked: IconComponent = (props) => (
     {...props}
     className="dark:text-white text-gray-700"
   >
+    {props.circle}
     <path
       d="M75.5727 50.6799H52.4501C51.9783 50.6799 51.5259 50.8673 51.1923 51.2009C50.8588 51.5345 50.6714 51.9869 50.6714 52.4586V75.5813C50.6714 76.053 50.8588 76.5054 51.1923 76.839C51.5259 77.1726 51.9783 77.36 52.4501 77.36H75.5727C76.0445 77.36 76.4969 77.1726 76.8304 76.839C77.164 76.5054 77.3514 76.053 77.3514 75.5813V52.4586C77.3514 51.9869 77.164 51.5345 76.8304 51.2009C76.4969 50.8673 76.0445 50.6799 75.5727 50.6799Z"
       fill="currentColor"

@@ -3,6 +3,9 @@
     "baseUrl": ".",
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "paths": {
+      "~aptos/*": ["src/app/(non-evm)/aptos/*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -28,5 +31,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "paths": {
+    "~web/*": ["./src/*"],
+    "~test/*": ["./test/*"]
+  }
 }

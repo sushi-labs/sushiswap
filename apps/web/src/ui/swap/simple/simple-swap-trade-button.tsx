@@ -57,7 +57,7 @@ export const _SimpleSwapTradeButton: FC<{
     if (warningSeverity(trade?.priceImpact) <= 3) {
       setChecked(false)
     }
-  }, [trade])
+  }, [trade?.priceImpact])
 
   return (
     <>

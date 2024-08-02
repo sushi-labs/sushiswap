@@ -1,4 +1,4 @@
-import { PublicClient } from 'viem'
+import type { PublicClient } from 'viem'
 import { ChainId, chainShortName } from '../../chain/index.js'
 import type { Token } from '../../currency/index.js'
 import type { PoolCode } from '../pool-codes/index.js'
@@ -8,7 +8,6 @@ export enum LiquidityProviders {
   SushiSwapV3 = 'SushiSwapV3',
   UniswapV2 = 'UniswapV2',
   UniswapV3 = 'UniswapV3',
-  Trident = 'Trident',
   QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
   PancakeSwap = 'PancakeSwap',
@@ -49,8 +48,6 @@ export abstract class LiquidityProvider {
   client: PublicClient
   lastUpdateBlock = 0
   isTest = false
-  readonly ON_DEMAND_POOLS_LIFETIME_IN_SECONDS = 60
-  readonly FETCH_AVAILABLE_POOLS_AFTER_SECONDS = 900
 
   constructor(chainId: ChainId, client: PublicClient, isTest = false) {
     this.chainId = chainId

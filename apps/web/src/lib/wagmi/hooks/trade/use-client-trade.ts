@@ -146,23 +146,22 @@ export const useClientTrade = (variables: UseTradeParams) => {
       }
 
       if (route) {
-        const amountIn = Amount.fromRawAmount(
-          fromToken,
-          route.amountInBI.toString(),
-        )
+        const amountIn = Amount.fromRawAmount(fromToken, route.amountInBI)
         const amountOut = Amount.fromRawAmount(
           toToken,
           new Fraction(route.amountOutBI).multiply(
             tokenTax ? new Percent(1).subtract(tokenTax) : 1,
           ).quotient,
         )
-        const minAmountOut = Amount.fromRawAmount(
-          toToken,
-          slippageAmount(
-            amountOut,
-            new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-          )[0],
-        )
+        const minAmountOut = args?.amountOutMin
+          ? Amount.fromRawAmount(toToken, args.amountOutMin)
+          : Amount.fromRawAmount(
+              toToken,
+              slippageAmount(
+                Amount.fromRawAmount(toToken, route.amountOutBI),
+                new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+              )[0],
+            )
         const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
         // let writeArgs: UseTradeReturnWriteArgs = args
@@ -171,7 +170,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
               args.tokenIn as Address,
               args.amountIn,
               args.tokenOut as Address,
-              minAmountOut.quotient,
+              args.amountOutMin,
               args.to as Address,
               args.routeCode as Hex,
             ]
@@ -233,6 +232,7 @@ export const useClientTrade = (variables: UseTradeParams) => {
                   : 'processRoute',
                 writeArgs,
                 value,
+                txdata: args?.data,
                 tokenTax,
               }),
             250,

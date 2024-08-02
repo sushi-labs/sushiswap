@@ -35,7 +35,7 @@ export const usePrices = ({ chainId, enabled = true }: UsePrices) => {
       )
     },
     staleTime: ms('15s'),
-    cacheTime: ms('1m'),
+    gcTime: ms('1m'),
     enabled: Boolean(chainId && enabled),
   })
 }

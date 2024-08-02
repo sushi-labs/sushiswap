@@ -59,7 +59,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = withCheckerRoot(
       return [tryParseAmount(value, liquidityToken)]
     }, [liquidityToken, value])
 
-    const { write, isLoading: isWritePending } = useMasterChefDeposit({
+    const { write, isPending: isWritePending } = useMasterChefDeposit({
       amount: amounts[0],
       chainId: liquidityToken?.chainId,
       chef: chefType,

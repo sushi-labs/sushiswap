@@ -4,7 +4,7 @@ import {
   getV2PoolBuckets,
   getV3PoolBuckets,
 } from '@sushiswap/graph-client/data-api'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { SushiSwapProtocol } from 'sushi'
 import { SushiSwapV2ChainId, SushiSwapV3ChainId } from 'sushi/config'
 
@@ -41,9 +41,9 @@ export const usePoolGraphData = ({
               }
       return buckets
     },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 0,
-    cacheTime: 3600, // 1hr
+    gcTime: 3600, // 1hr
     enabled: Boolean(poolAddress && chainId && enabled),
   })
 }

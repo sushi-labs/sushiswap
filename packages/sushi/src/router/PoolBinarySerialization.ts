@@ -9,7 +9,7 @@ import {
   ConstantProductRPool,
   CurveMultitokenCore,
   CurveMultitokenPool,
-  RToken,
+  type RToken,
   UniV3Pool,
   createCurvePoolsForMultipool,
 } from '../tines/index.js'

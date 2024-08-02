@@ -218,7 +218,7 @@ const CLAIM_CELL = ({ position }: { position: BondPosition }) => {
     },
   })
 
-  const { writeContractAsync, isLoading: isWritePending } = useWriteContract({
+  const { writeContractAsync, isPending: isWritePending } = useWriteContract({
     mutation: {
       onSuccess,
       onError,

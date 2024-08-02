@@ -70,14 +70,12 @@ export const Search: FC = () => {
     },
   })
 
-  const { data: tokenList } = useQuery<TokenList>(
-    ['https://token-list.sushi.com'],
-    () =>
+  const { data: tokenList } = useQuery<TokenList>({
+    queryKey: ['https://token-list.sushi.com'],
+    queryFn: () =>
       fetch('https://token-list.sushi.com').then((response) => response.json()),
-    {
-      enabled: debouncedQuery.length > 2 && !isAddress(debouncedQuery),
-    },
-  )
+    enabled: debouncedQuery.length > 2 && !isAddress(debouncedQuery),
+  })
 
   const filteredTokens = useMemo(() => {
     return tokenList?.tokens?.filter(

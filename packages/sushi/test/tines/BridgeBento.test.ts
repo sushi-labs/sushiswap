@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom'
 import { describe, expect, it } from 'vitest'
-import { BridgeBento, RToken, getBigInt } from '../../src/tines/index.js'
+import { BridgeBento, type RToken, getBigInt } from '../../src/tines/index.js'
 
 function calcPrecision(a: number, b: number): number {
   if (a === b) return 0

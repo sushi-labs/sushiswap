@@ -1,15 +1,15 @@
 'use client'
 
 import { getSushiBarHistory } from '@sushiswap/graph-client/data-api'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 export const useBarChartData = (enabled = true) => {
   return useQuery({
     queryKey: ['useBarChartData'],
     queryFn: async () => await getSushiBarHistory({}),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 0,
-    cacheTime: 86400000, // 24hs
+    gcTime: 86400000, // 24hs
     enabled,
   })
 }

@@ -48,7 +48,7 @@ export const useAngleRewardsMultipleChains = ({
       return null
     },
     staleTime: 15000, // 15 seconds
-    cacheTime: 60000, // 1min,
+    gcTime: 60000, // 1min,
     enabled: !!account,
   })
 }

@@ -1,13 +1,13 @@
 'use client'
 
-import { useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
+import { ChefType } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
 import { useBlockNumber, useReadContracts } from 'wagmi'
 import { getMasterChefContractConfig } from './use-master-chef-contract'
-import { ChefType } from 'sushi'
 
 interface UseRewarderPayload {
   account: string | undefined
@@ -140,7 +140,7 @@ export const useRewarder = ({
     allowFailure: true,
     query: {
       enabled: !!account && !!enabled,
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
       select: (results) => results.map((r) => r.result),
     },
   })
@@ -149,7 +149,7 @@ export const useRewarder = ({
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
+      queryClient.invalidateQueries({ queryKey }, { cancelRefetch: false })
     }
   }, [blockNumber, queryClient, queryKey])
 

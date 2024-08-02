@@ -173,7 +173,7 @@ export const useBondMarketDetails = ({
 
   useEffect(() => {
     if (blockNumber) {
-      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
+      queryClient.invalidateQueries({ queryKey }, { cancelRefetch: false })
     }
   }, [blockNumber, queryClient, queryKey])
 

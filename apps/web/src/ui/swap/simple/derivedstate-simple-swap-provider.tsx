@@ -377,15 +377,9 @@ const useDerivedStateSimpleSwap = () => {
   return context
 }
 
-const SWAP_API_BASE_URL =
-  process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL
-
 const useFallback = (chainId: ChainId) => {
   const initialFallbackState = useMemo(
-    () =>
-      !isSwapApiEnabledChainId(chainId) ||
-      (isSwapApiEnabledChainId(chainId) &&
-        typeof SWAP_API_BASE_URL === 'undefined'),
+    () => !isSwapApiEnabledChainId(chainId),
 
     [chainId],
   )
@@ -426,12 +420,17 @@ const useSimpleSwapTrade = () => {
 
   const useSwapApi = !isFallback && !forceClient
 
+  const adjustedSlippage = useMemo(
+    () => (tokenTax ? slippagePercent.add(tokenTax) : slippagePercent),
+    [slippagePercent, tokenTax],
+  )
+
   const apiTrade = useApiTrade({
     chainId,
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
+    slippagePercentage: adjustedSlippage.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(useSwapApi && swapAmount?.greaterThan(ZERO)),
@@ -448,7 +447,7 @@ const useSimpleSwapTrade = () => {
     fromToken: token0,
     toToken: token1,
     amount: swapAmount,
-    slippagePercentage: slippagePercent.toFixed(2),
+    slippagePercentage: adjustedSlippage.toFixed(2),
     gasPrice,
     recipient: recipient as Address,
     enabled: Boolean(!useSwapApi && swapAmount?.greaterThan(ZERO)),
