@@ -6,6 +6,7 @@ import z from 'zod'
 // Swap 2.0
 // maxPriceImpact - max current price impact (during route planning). Default - no control
 // maxSlippage - max slippage (during route processing). Default - 0.5%
+
 export const querySchema5 = z.object({
   tokenIn: z.custom<Address>(
     (val) => isAddressFast(val),
@@ -36,15 +37,25 @@ export const querySchema5 = z.object({
     z.coerce
       .number()
       .lt(1, 'maxPriceImpact should be lesser than 1')
-      .gt(0, 'maxPriceImpact should be positive'),
+      .positive(),
   ),
   maxSlippage: z.coerce
     .number()
     .lt(1, 'maxSlippage should be lesser than 1')
-    .gt(0, 'maxSlippage should be positive')
+    .positive()
     .default(0.005),
   // includeRoute: z.boolean().default(true),
   // includeTx: z.boolean().default(true),
+  enableFee: z.boolean().default(true),
+  feeReceiver: z.custom<Address>(
+    (val) => isAddressFast(val),
+    (val) => ({ message: `Incorrect fee receiver address: ${val}` }),
+  ),
+  feeAmount: z.coerce
+    .number()
+    .lte(0.003, 'feeAmount should be less than or equal to 0.003')
+    .positive()
+    .default(0.0025),
 })
 
-export type querySchema4_2 = z.infer<typeof querySchema4_2>
+export type querySchema5 = z.infer<typeof querySchema5>

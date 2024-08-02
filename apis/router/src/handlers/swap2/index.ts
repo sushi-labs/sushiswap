@@ -156,14 +156,7 @@ const handler = (
             )
           : undefined
 
-        const json = makeAPI03Object(
-          bestRoute,
-          rpParams,
-          routeProcessorAddress,
-          poolCodesMap,
-        )
-
-        // we want to return { route, tx: { from, to, gas, gasPrice, data, value, } }
+        const json = makeAPI03Object(bestRoute, rpParams, routeProcessorAddress)
 
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(json)
@@ -174,18 +167,17 @@ const handler = (
 
         const data: {
           error: string | string[] | undefined
-          params: z.infer<typeof querySchema4_2> | undefined
-          route: MultiRoute | undefined
+          params: z.infer<typeof querySchema5> | undefined
+          route: ReturnType<typeof makeAPI03Object> | undefined
         } = {
-          error: e instanceof Error ? e.stack?.split('\n') : `${e}`,
+          error: undefined,
           params: undefined,
           route: undefined,
         }
         try {
           data.error = e instanceof Error ? e.stack?.split('\n') : `${e}`
           if (parsed.data) data.params = parsed.data
-          if (bestRoute)
-            data.route = makeAPI03Object(bestRoute, undefined, '', poolCodesMap)
+          if (bestRoute) data.route = makeAPI03Object(bestRoute, undefined, '')
         } catch (_e) {}
         Logger.error(CHAIN_ID, 'Routing crashed', safeSerialize(data), false)
 
@@ -195,8 +187,8 @@ const handler = (
   }
 }
 
-export const swapV4_2 = handler(
-  querySchema4_2,
+export const swapV5 = handler(
+  querySchema5,
   Router.routeProcessor4Params,
   ROUTE_PROCESSOR_4_ADDRESS[CHAIN_ID],
 )
