@@ -10,9 +10,22 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "./dist/index.js",
-  "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": [
+      "./dist/*.js",
+      "./dist/*/index.js"
+    ]
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*",
+        "src/*/index"
+      ]
+    }
+  },
   "files": [
     "dist/**"
   ],
@@ -33,7 +46,7 @@
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",
-    "@tsconfig/esm": "1.0.4",
+    "@tsconfig/node20": "20.1.4",
     "@tsconfig/strictest": "2.0.2",
     "@types/jest": "29.5.5",
     "@types/react": "18.2.14",

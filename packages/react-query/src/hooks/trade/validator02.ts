@@ -46,6 +46,7 @@ const routeExistValidator = z.object({
       to: z.string(),
       routeCode: z.string(),
       value: z.string().optional(),
+      txdata: z.string(),
     })
     .optional(),
 })

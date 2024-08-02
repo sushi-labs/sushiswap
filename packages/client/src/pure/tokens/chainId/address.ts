@@ -3,7 +3,7 @@ import { TokenApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/addres
 import type { ChainId } from 'sushi/chain'
 
 import { TOKENS_API } from '../../../constants.js'
-import { type GetApiInputFromOutput } from '../../../types.js'
+import type { GetApiInputFromOutput } from '../../../types.js'
 
 export { TokenApiSchema }
 export type Token = Awaited<ReturnType<typeof _getToken>>
