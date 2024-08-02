@@ -1,12 +1,13 @@
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { BENTOBOX_ADDRESS, isBentoBoxChainId } from 'sushi/config'
 
 const func: DeployFunction = async ({
   getNamedAccounts,
   deployments,
   getChainId,
 }: HardhatRuntimeEnvironment) => {
+  const { BENTOBOX_ADDRESS, isBentoBoxChainId } = await import('sushi/config')
+
   const { deploy } = deployments
 
   const { deployer } = await getNamedAccounts()
