@@ -1,11 +1,12 @@
 import { Logger, safeSerialize } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
-import { ROUTE_PROCESSOR_4_ADDRESS } from 'sushi/config'
+import { ROUTE_PROCESSOR_5_ADDRESS } from 'sushi/config'
 import { Type } from 'sushi/currency'
 import {
   NativeWrapProvider,
   PoolCode,
+  ProcessFunction,
   Router,
   RouterLiquiditySource,
   makeAPI03Object,
@@ -44,7 +45,7 @@ async function processUnknownToken(
 
 const handler = (
   querySchema: typeof querySchema5,
-  routeProcessorParams: typeof Router.routeProcessor4Params,
+  routeProcessorParams: typeof Router.routeProcessor5Params,
   routeProcessorAddress: Address,
 ) => {
   return (client: ExtractorClient) => {
@@ -75,6 +76,7 @@ const handler = (
           preferSushi,
           maxPriceImpact,
           maxSlippage,
+          enableFee,
         } = parsed.data
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
@@ -153,6 +155,9 @@ const handler = (
               [],
               maxSlippage,
               source ?? RouterLiquiditySource.Sender,
+              enableFee
+                ? ProcessFunction.ProcessRouteWithTransferValueOutput
+                : ProcessFunction.ProcessRoute,
             )
           : undefined
 
@@ -189,6 +194,6 @@ const handler = (
 
 export const swapV5 = handler(
   querySchema5,
-  Router.routeProcessor4Params,
-  ROUTE_PROCESSOR_4_ADDRESS[CHAIN_ID],
+  Router.routeProcessor5Params,
+  ROUTE_PROCESSOR_5_ADDRESS[CHAIN_ID],
 )

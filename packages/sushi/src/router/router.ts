@@ -409,7 +409,7 @@ export class Router {
     to: Address,
     RPAddr: Address,
     permits: PermitData[] = [],
-    maxPriceImpact = 0.005,
+    maxSlippage = 0.005,
     source = RouterLiquiditySource.Sender,
     processFunction = ProcessFunction.ProcessRoute,
   ): RPParams {
@@ -425,7 +425,7 @@ export class Router {
       isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
     const amountOutMin = isWrapOrUnwap
       ? route.amountInBI
-      : (route.amountOutBI * getBigInt((1 - maxPriceImpact) * 1_000_000)) /
+      : (route.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
         1_000_000n
 
     const routeCode = getRouteProcessor4Code(
@@ -436,6 +436,7 @@ export class Router {
       permits,
       source,
     ) as Hex
+
     const data = encodeFunctionData({
       ...RP5processRouteEncodeData[processFunction],
       args: [tokenIn, route.amountInBI, tokenOut, amountOutMin, to, routeCode],
