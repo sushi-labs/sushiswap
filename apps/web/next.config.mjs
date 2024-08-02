@@ -26,7 +26,7 @@ const nextConfig = bundleAnalyzer({
       {
         source: '/discord{/}?',
         permanent: true,
-        destination: 'https://discord.gg/SDPH8SNVZW',
+        destination: 'https://discord.gg/ej78AWjy6Y',
       },
       {
         source: '/github{/}?',
