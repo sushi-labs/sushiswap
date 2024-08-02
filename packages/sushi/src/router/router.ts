@@ -409,6 +409,8 @@ export class Router {
     maxPriceImpact = 0.005,
     source = RouterLiquiditySource.Sender,
     processFunction = ProcessFunction.ProcessRoute,
+    transferValueTo?: Address,
+    amountValueTransfer?: bigint,
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
@@ -433,10 +435,35 @@ export class Router {
       permits,
       source,
     ) as Hex
-    const data = encodeFunctionData({
-      ...RP5processRouteEncodeData[processFunction],
-      args: [tokenIn, route.amountInBI, tokenOut, amountOutMin, to, routeCode],
-    })
+
+    let data: Hex
+    if (processFunction === ProcessFunction.ProcessRoute) {
+      data = encodeFunctionData({
+        ...RP5processRouteEncodeData[processFunction],
+        args: [
+          tokenIn,
+          route.amountInBI,
+          tokenOut,
+          amountOutMin,
+          to,
+          routeCode,
+        ],
+      })
+    } else {
+      data = encodeFunctionData({
+        ...RP5processRouteEncodeData[processFunction],
+        args: [
+          transferValueTo,
+          amountValueTransfer,
+          tokenIn,
+          route.amountInBI,
+          tokenOut,
+          amountOutMin,
+          to,
+          routeCode,
+        ],
+      })
+    }
     return {
       tokenIn,
       amountIn: route.amountInBI,
