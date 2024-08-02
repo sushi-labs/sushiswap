@@ -53,8 +53,8 @@ import {
 import {
   useAccount,
   usePublicClient,
+  useSendTransaction,
   useWaitForTransactionReceipt,
-  useWriteContract,
 } from 'wagmi'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import {
@@ -353,10 +353,10 @@ export const SimpleSwapTradeReviewDialog: FC<{
   )
 
   const {
-    writeContractAsync,
+    sendTransactionAsync,
     isPending: isWritePending,
     data,
-  } = useWriteContract({
+  } = useSendTransaction({
     mutation: {
       onMutate: () => {
         // Set reference of current trade
@@ -370,15 +370,15 @@ export const SimpleSwapTradeReviewDialog: FC<{
   })
 
   const write = useMemo(() => {
-    if (!writeContractAsync || !simulation) return undefined
+    if (!sendTransactionAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
       try {
-        await writeContractAsync(simulation.request)
+        await sendTransactionAsync(simulation.request)
         confirm()
       } catch {}
     }
-  }, [simulation, writeContractAsync])
+  }, [simulation, sendTransactionAsync])
 
   const { status } = useWaitForTransactionReceipt({
     chainId: chainId,
@@ -542,7 +542,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                           !!error ||
                             isWritePending ||
                             Boolean(
-                              !writeContractAsync &&
+                              !sendTransactionAsync &&
                                 swapAmount?.greaterThan(ZERO),
                             ) ||
                             isError,

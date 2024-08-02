@@ -1,8 +1,8 @@
-import { getTokenAddressesByChainId } from '@sushiswap/tokens-api/lib/api'
+import type { getTokenAddressesByChainId } from '@sushiswap/tokens-api/lib/api'
 import { TokenAddressesApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/addresses'
 
 import { TOKENS_API } from '../../../constants.js'
-import { type GetApiInputFromOutput } from '../../../types.js'
+import type { GetApiInputFromOutput } from '../../../types.js'
 
 export { TokenAddressesApiSchema }
 export type TokenAddress = Awaited<

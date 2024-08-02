@@ -53,4 +53,5 @@ export const tradeValidator01 = z.object({
       routeCode: z.string(),
     }),
   ),
+  txdata: z.optional(z.string()),
 })

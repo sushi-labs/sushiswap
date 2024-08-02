@@ -8,6 +8,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc",
     "dev": "next dev",
+    "generate-swaps": "tsx test/swap/scripts/generate-swaps.ts",
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
@@ -129,6 +130,7 @@
     "postcss": "8.4.23",
     "schema-dts": "^1.1.2",
     "tailwindcss": "3.3.2",
+    "tsx": "^4.16.5",
     "typescript": "5.4.5",
     "unimported": "1.30.0"
   }
