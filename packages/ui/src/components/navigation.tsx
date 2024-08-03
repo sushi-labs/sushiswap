@@ -95,7 +95,6 @@ export type NavigationElement =
 interface NavProps extends VariantProps<typeof navigationContainerVariants> {
   leftElements: NavigationElement[]
   rightElement?: React.ReactNode
-  showOnramper?: boolean
   chainId?: number
 }
 
