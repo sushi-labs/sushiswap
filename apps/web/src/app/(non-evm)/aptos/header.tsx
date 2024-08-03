@@ -9,7 +9,7 @@ export const Header: FC = () => {
   return (
     <Navigation
       showOnramper={false}
-      leftElements={['Swap', 'Pools']}
+      leftElements={[]}
       rightElement={<UserProfile />}
     />
   )
