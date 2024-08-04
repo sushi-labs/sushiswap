@@ -51,6 +51,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     LINK[ChainId.ETHEREUM],
     SUSHI[ChainId.ETHEREUM],
   ],
+  [ChainId.GÖRLI]: [WNATIVE[ChainId.GÖRLI]],
   // [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
   // [ChainId.KOVAN]: [WNATIVE[ChainId.KOVAN], USDC[ChainId.KOVAN]],
   [ChainId.POLYGON]: [

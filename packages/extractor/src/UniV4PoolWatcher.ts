@@ -7,7 +7,7 @@ import { Log, decodeEventLog, parseAbi } from 'viem'
 import { Counter } from './Counter.js'
 import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
-import { WordLoadManager } from './WordLoadManager.js'
+import { UniV4WordLoadManager } from './UniV4WordLoadManager.js'
 
 interface UniV4PoolSelfState {
   blockNumber: number
@@ -47,7 +47,7 @@ export class UniV4PoolWatcher extends EventEmitter {
   token1: Token
   fee: number
   spacing: number
-  hooks: Address
+  hooks: Address | undefined
 
   // Pool mutable state
   state?: UniV4PoolSelfState
@@ -56,7 +56,7 @@ export class UniV4PoolWatcher extends EventEmitter {
   tickHelperContract: Address
   provider: LiquidityProviders
   client: MultiCallAggregator
-  wordLoadManager: WordLoadManager
+  wordLoadManager: UniV4WordLoadManager
   updatePoolStateGuard = false
   busyCounter?: Counter
   private lastPoolCode?: PoolCode
@@ -84,7 +84,7 @@ export class UniV4PoolWatcher extends EventEmitter {
     token1: Token
     fee: number
     spacing: number
-    hooks: Address
+    hooks: Address | undefined
     client: MultiCallAggregator
     busyCounter?: Counter
   }) {
@@ -100,7 +100,8 @@ export class UniV4PoolWatcher extends EventEmitter {
     this.hooks = hooks
 
     this.client = client
-    this.wordLoadManager = new WordLoadManager(
+    this.wordLoadManager = new UniV4WordLoadManager(
+      address,
       id,
       this.spacing,
       tickHelperContract,

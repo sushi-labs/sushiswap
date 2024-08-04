@@ -28,9 +28,10 @@ export type ExtractorConfig = {
   factoriesV3?: FactoryV3[]
   factoriesAlgebra?: FactoryAlgebra[]
   curveConfig?: CurveWhitelistConfig
-  uinV4?: UniV4Config
+  uinV4?: UniV4Config[]
   tickHelperContractV3: Address
   tickHelperContractAlgebra: Address
+  tickHelperContractV4?: Address
   cacheDir: string
   logType?: LogFilterType
   logDepth: number
@@ -146,13 +147,14 @@ export class Extractor {
           this.multiCallAggregator,
         ),
       )
-    if (args.uniV4)
+    if (args.uniV4 && args.tickHelperContractV4)
       this.projectExtractors.push(
         new UniV4Extractor({
           config: args.uniV4,
           multiCallAggregator: this.multiCallAggregator,
           tokenManager: this.tokenManager,
           cacheDir: args.cacheDir,
+          tickHelperContract: args.tickHelperContractV4
         }),
       )
   }

@@ -24,6 +24,7 @@ function getJump(index: number, positiveFirst: boolean): number {
 // event ticksChanged is emitted each time getMaxTickDiapason returns another value (this.words is changed)
 export class UniV4WordLoadManager extends EventEmitter {
   poolAddress: Address
+  poolId: string
   poolSpacing: number
   tickHelperContract: Address
   client: MultiCallAggregator
@@ -36,6 +37,7 @@ export class UniV4WordLoadManager extends EventEmitter {
 
   constructor(
     poolAddress: Address,
+    poolId: string,
     poolSpacing: number,
     tickHelperContract: Address,
     client: MultiCallAggregator,
@@ -43,6 +45,7 @@ export class UniV4WordLoadManager extends EventEmitter {
   ) {
     super()
     this.poolAddress = poolAddress
+    this.poolId = poolId
     this.poolSpacing = poolSpacing
     this.tickHelperContract = tickHelperContract
     this.client = client
@@ -64,7 +67,8 @@ export class UniV4WordLoadManager extends EventEmitter {
           const { blockNumber, returnValue: ticks } = await this.client.call<
             { tick: bigint; liquidityNet: bigint }[]
           >(this.tickHelperContract, tickLensAbi, 'getPopulatedTicksInWord', [
-            this.poolAddress,
+            this.poolAddress,   // TODO: expected params
+            this.poolId,
             wordIndex,
           ])
           const wordIndexNew = this.downloadQueue[this.downloadQueue.length - 1]
@@ -87,7 +91,7 @@ export class UniV4WordLoadManager extends EventEmitter {
       } catch (e) {
         Logger.error(
           this.client.chainId,
-          `Pool ${this.poolAddress} ticks downloading failed`,
+          `Pool ${this.poolAddress}:${this.poolId} ticks downloading failed`,
           e,
         )
       }
@@ -147,7 +151,7 @@ export class UniV4WordLoadManager extends EventEmitter {
         this.client.chainId,
         'Unexpected min tick index',
         new Error(
-          `Pool: ${this.poolAddress}, minIndex: ${minIndex}, poolSpacing: ${this.poolSpacing}, lowerUnknownTick: ${lowerUnknownTick}, tick: ${ticks[0].index}`,
+          `Pool: ${this.poolAddress}:${this.poolId}, minIndex: ${minIndex}, poolSpacing: ${this.poolSpacing}, lowerUnknownTick: ${lowerUnknownTick}, tick: ${ticks[0].index}`,
         ),
       )
     }
@@ -162,8 +166,8 @@ export class UniV4WordLoadManager extends EventEmitter {
         this.client.chainId,
         'Unexpected max tick index',
         new Error(
-          `Pool: ${
-            this.poolAddress
+          `Pool: ${this.poolAddress}:${
+            this.poolId
           }, tick: ${tick}, minIndex: ${minIndex}, poolSpacing: ${
             this.poolSpacing
           }, ticks: ${ticks?.map((t) => t.index)}`,
