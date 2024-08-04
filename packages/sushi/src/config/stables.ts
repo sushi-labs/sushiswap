@@ -215,6 +215,8 @@ export const STABLES = {
     USDP[ChainId.SKALE_EUROPA],
   ],
   [ChainId.ROOTSTOCK]: [USDT[ChainId.ROOTSTOCK], DAI[ChainId.ROOTSTOCK]],
+  [ChainId.PALM]: [],
+  [ChainId.ZKSYNC_ERA]: [],
   // TESTNETS
   // [ChainId.RINKEBY]: [USDC[ChainId.RINKEBY]],
   // [ChainId.ROPSTEN]: [
@@ -228,4 +230,9 @@ export const STABLES = {
   //   DAI[ChainId.KOVAN],
   // ],
   [ChainId.POLYGON_TESTNET]: [USDC[ChainId.POLYGON_TESTNET]],
+  [ChainId.FANTOM_TESTNET]: [],
+  [ChainId.BSC_TESTNET]: [],
+  [ChainId.ARBITRUM_TESTNET]: [],
+  [ChainId.AVALANCHE_TESTNET]: [],
+  [ChainId.SEPOLIA]: [],
 } as const

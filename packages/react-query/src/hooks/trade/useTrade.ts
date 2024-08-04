@@ -98,9 +98,10 @@ export const useTradeQuery = (
       params.searchParams.set('enableFee', 'true')
       params.searchParams.set(
         'feeReceiver',
-        '0x8f54C8c2df62c94772ac14CcFc85603742976312',
+        '0x32464Be3D71ed9105c142FB6bdEe98a0c649cdd3',
       )
       params.searchParams.set('feeAmount', '0.0025')
+      params.searchParams.set('chargeFeeBy', 'output')
       if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())

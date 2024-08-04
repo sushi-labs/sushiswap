@@ -35,6 +35,11 @@ import {
 import { getRouteProcessor4Code } from './tines-to-route-processor-4.js'
 import { getRouteProcessorCode } from './tines-to-route-processor.js'
 
+export enum TransferValue {
+  Input = 'input',
+  Output = 'output',
+}
+
 export enum ProcessFunction {
   ProcessRoute = 0,
   TransferValueAndprocessRoute = 1,
@@ -85,13 +90,24 @@ const RP5processRouteEncodeData = [
   }),
 ]
 
-const isWrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
+export const isWrap = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) =>
   fromToken.isNative &&
   toToken.wrapped.address === Native.onChain(toToken.chainId).wrapped.address
-const isUnwrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
+export const isUnwrap = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) =>
   toToken.isNative &&
   fromToken.wrapped.address ===
     Native.onChain(fromToken.chainId).wrapped.address
+export const isWrapOrUnwrap = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) =>
+  isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
 
 export interface RPParams {
   tokenIn: Address
@@ -413,8 +429,7 @@ export class Router {
     source = RouterLiquiditySource.Sender,
     processFunction = ProcessFunction.ProcessRoute,
     transferValueTo?: Address,
-    feeAmount?: number,
-    // amountValueTransfer?: bigint,
+    amountValueTransfer?: bigint,
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
@@ -431,17 +446,18 @@ export class Router {
       : (route.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
         1_000_000n
 
-    const routeCode = getRouteProcessor4Code(
-      route,
-      RPAddr,
-      to,
-      poolCodesMap,
-      permits,
-      source,
-    ) as Hex
+    let routeCode: Hex
 
     let data: Hex
-    if (isWrapOrUnwap || processFunction === ProcessFunction.ProcessRoute) {
+    if (processFunction === ProcessFunction.ProcessRoute) {
+      routeCode = getRouteProcessor4Code(
+        route,
+        RPAddr,
+        to,
+        poolCodesMap,
+        permits,
+        source,
+      ) as Hex
       data = encodeFunctionData({
         ...RP5processRouteEncodeData[processFunction],
         args: [
@@ -454,9 +470,19 @@ export class Router {
         ],
       })
     } else {
-      const amountValueTransfer =
-        (route.amountOutBI * getBigInt((1 - feeAmount!) * 1_000_000)) /
-        1_000_000n
+      if (!transferValueTo || !amountValueTransfer) {
+        throw new Error('Missing transferValueTo or feeAmount')
+      }
+      routeCode = getRouteProcessor4Code(
+        route,
+        RPAddr,
+        processFunction === ProcessFunction.ProcessRouteWithTransferValueInput
+          ? to
+          : RPAddr,
+        poolCodesMap,
+        permits,
+        source,
+      ) as Hex
       data = encodeFunctionData({
         ...RP5processRouteEncodeData[processFunction],
         args: [

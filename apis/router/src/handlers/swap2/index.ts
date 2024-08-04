@@ -9,9 +9,12 @@ import {
   ProcessFunction,
   Router,
   RouterLiquiditySource,
+  TransferValue,
+  isUnwrap,
+  isWrap,
   makeAPI02Object,
 } from 'sushi/router'
-import { MultiRoute } from 'sushi/tines'
+import { MultiRoute, getBigInt } from 'sushi/tines'
 import { Address } from 'viem'
 import { z } from 'zod'
 import { ExtractorClient } from '../../ExtractorClient.js'
@@ -55,6 +58,9 @@ const handler = (
       let poolCodesMap: Map<string, PoolCode> = new Map()
       let bestRoute: MultiRoute | undefined = undefined
 
+      let amountValueTransfer: bigint | undefined = undefined
+      let processFunction = ProcessFunction.ProcessRoute
+
       const statistics = swapRequestStatistics.requestProcessingStart()
       const parsed = querySchema.safeParse(req.query)
       if (!parsed.success) {
@@ -69,7 +75,7 @@ const handler = (
         const {
           tokenIn: _tokenIn,
           tokenOut: _tokenOut,
-          amount,
+          amount: _amount,
           gasPrice,
           source,
           to,
@@ -79,6 +85,7 @@ const handler = (
           enableFee,
           feeReceiver,
           feeAmount,
+          chargeFeeBy,
         } = parsed.data
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
@@ -116,10 +123,29 @@ const handler = (
             )
         }
 
+        const isWrapOrUnwap =
+          isWrap({ fromToken: tokenIn, toToken: tokenOut }) ||
+          isUnwrap({ fromToken: tokenIn, toToken: tokenOut })
+
         poolCodesMap = client.getKnownPoolsForTokens(tokenIn, tokenOut)
         nativeProvider
           .getCurrentPoolList()
           .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
+
+        const chargeFee = !isWrapOrUnwap && enableFee
+
+        const chargeFeeByInput = chargeFeeBy === TransferValue.Input
+
+        if (chargeFee && chargeFeeByInput) {
+          processFunction = ProcessFunction.ProcessRouteWithTransferValueInput
+          amountValueTransfer =
+            (_amount * getBigInt(feeAmount * 1_000_000)) / 1_000_000n
+        }
+
+        const amount =
+          chargeFeeByInput && amountValueTransfer
+            ? _amount - amountValueTransfer
+            : _amount
 
         bestRoute = preferSushi
           ? Router.findSpecialRoute(
@@ -146,6 +172,17 @@ const handler = (
         )
           bestRoute = Router.NoWayMultiRoute(tokenIn, tokenOut)
 
+        const minAmountOut =
+          (bestRoute.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
+          1_000_000n
+
+        if (chargeFee && !chargeFeeByInput) {
+          processFunction = ProcessFunction.ProcessRouteWithTransferValueOutput
+
+          amountValueTransfer =
+            (minAmountOut * getBigInt(feeAmount * 1_000_000)) / 1_000_000n
+        }
+
         const rpParams = to
           ? routeProcessorParams(
               poolCodesMap,
@@ -155,13 +192,11 @@ const handler = (
               to,
               routeProcessorAddress,
               [],
-              maxSlippage,
+              maxSlippage, // probably just pass min amount out through instead?
               source ?? RouterLiquiditySource.Sender,
-              enableFee
-                ? ProcessFunction.ProcessRouteWithTransferValueOutput
-                : ProcessFunction.ProcessRoute,
+              processFunction,
               feeReceiver,
-              feeAmount,
+              amountValueTransfer,
             )
           : undefined
 

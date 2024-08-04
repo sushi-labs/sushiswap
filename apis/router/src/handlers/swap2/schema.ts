@@ -1,4 +1,4 @@
-import { RouterLiquiditySource } from 'sushi/router'
+import { RouterLiquiditySource, TransferValue } from 'sushi/router'
 import { isAddressFast } from 'sushi/serializer'
 import type { Address } from 'viem'
 import z from 'zod'
@@ -47,15 +47,23 @@ export const querySchema5 = z.object({
   // includeRoute: z.boolean().default(true),
   // includeTx: z.boolean().default(true),
   enableFee: z.coerce.boolean().default(true),
-  feeReceiver: z.custom<Address>(
-    (val) => isAddressFast(val),
-    (val) => ({ message: `Incorrect fee receiver address: ${val}` }),
+  feeReceiver: z.optional(
+    z.custom<Address>(
+      (val) => isAddressFast(val),
+      (val) => ({ message: `Incorrect fee receiver address: ${val}` }),
+    ),
   ),
-  feeAmount: z.coerce
-    .number()
-    .lte(0.003, 'feeAmount should be less than or equal to 0.003')
-    .positive()
+  feeAmount: z
+    .optional(
+      z.coerce
+        .number()
+        .lte(0.003, 'feeAmount should be less than or equal to 0.003')
+        .positive(),
+    )
     .default(0.0025),
+  chargeFeeBy: z
+    .optional(z.nativeEnum(TransferValue))
+    .default(TransferValue.Output),
 })
 
 export type querySchema5 = z.infer<typeof querySchema5>
