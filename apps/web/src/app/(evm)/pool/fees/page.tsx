@@ -22,7 +22,7 @@ import { V3PoolsWithFees, useV3PoolsWithFees } from 'src/lib/hooks'
 import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
 import { Address, Chain, ChainId } from 'sushi'
 import { uniswapV3PoolAbi } from 'sushi/abi'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+import { SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 import { formatNumber, formatUSD } from 'sushi/format'
 import {
   useChainId,
@@ -203,9 +203,12 @@ const COLUMNS = [
 export default function Page() {
   const chainId = useChainId()
 
-  const { data: pools, isLoading } = useV3PoolsWithFees({
-    chainId: isSushiSwapV3ChainId(chainId) ? chainId : ChainId.ETHEREUM,
-  })
+  const { data: pools, isLoading } = useV3PoolsWithFees(
+    {
+      chainId: chainId as SushiSwapV3ChainId,
+    },
+    { enabled: isSushiSwapV3ChainId(chainId), staleTime: Infinity },
+  )
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
