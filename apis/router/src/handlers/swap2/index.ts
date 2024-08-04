@@ -1,4 +1,3 @@
-import { Logger, safeSerialize } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ROUTE_PROCESSOR_5_ADDRESS } from 'sushi/config'

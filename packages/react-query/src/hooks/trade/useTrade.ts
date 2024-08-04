@@ -8,6 +8,8 @@ import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
+  MULTISIG_ADDRESS,
+  isMultisigChainId,
   isRouteProcessor4ChainId,
   isRouteProcessor5ChainId,
   isWNativeSupported,
@@ -98,7 +100,9 @@ export const useTradeQuery = (
       params.searchParams.set('enableFee', 'true')
       params.searchParams.set(
         'feeReceiver',
-        '0x32464Be3D71ed9105c142FB6bdEe98a0c649cdd3',
+        isMultisigChainId(chainId)
+          ? MULTISIG_ADDRESS[chainId]
+          : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
       )
       params.searchParams.set('feeAmount', '0.0025')
       params.searchParams.set('chargeFeeBy', 'output')
