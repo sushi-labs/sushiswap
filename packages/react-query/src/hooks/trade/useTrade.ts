@@ -7,7 +7,11 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
-import { isRouteProcessor4ChainId, isWNativeSupported } from 'sushi/config'
+import {
+  isRouteProcessor4ChainId,
+  isRouteProcessor5ChainId,
+  isWNativeSupported,
+} from 'sushi/config'
 import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
 import { type Address, type Hex, stringify, zeroAddress } from 'viem'
@@ -26,7 +30,9 @@ export const TRADE_API_BASE_URL =
   'https://api.sushi.com/swap'
 
 export function getTradeQueryApiVersion(chainId: ChainId) {
-  if (isRouteProcessor4ChainId(chainId)) {
+  if (isRouteProcessor5ChainId(chainId)) {
+    return '/v5'
+  } else if (isRouteProcessor4ChainId(chainId)) {
     return '/v4'
   }
   return ''
@@ -89,6 +95,12 @@ export const useTradeQuery = (
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
+      params.searchParams.set('enableFee', 'true')
+      // params.searchParams.set(
+      //   'feeReceiver',
+      //   '0x8f54C8c2df62c94772ac14CcFc85603742976312',
+      // )
+      // params.searchParams.set('feeAmount', '0.0025')
       if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())

@@ -46,7 +46,7 @@ export const querySchema5 = z.object({
     .default(0.005),
   // includeRoute: z.boolean().default(true),
   // includeTx: z.boolean().default(true),
-  enableFee: z.boolean().default(true),
+  enableFee: z.coerce.boolean().default(true),
   feeReceiver: z.custom<Address>(
     (val) => isAddressFast(val),
     (val) => ({ message: `Incorrect fee receiver address: ${val}` }),

@@ -38,9 +38,7 @@ export const getTrade = async ({
   recipient,
   source,
 }: GetTrade) => {
-  const params = new URL(
-    `${TRADE_API_BASE_URL}/swap${getTradeQueryApiVersion(chainId)}/${chainId}`,
-  )
+  const params = new URL(`${TRADE_API_BASE_URL}/swap/v4/${chainId}`)
   params.searchParams.set('chainId', `${chainId}`)
   params.searchParams.set('tokenIn', `${fromToken}`)
   params.searchParams.set('tokenOut', `${toToken}`)
