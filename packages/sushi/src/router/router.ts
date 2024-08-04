@@ -412,6 +412,9 @@ export class Router {
     maxSlippage = 0.005,
     source = RouterLiquiditySource.Sender,
     processFunction = ProcessFunction.ProcessRoute,
+    transferValueTo?: Address,
+    feeAmount?: number,
+    // amountValueTransfer?: bigint,
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
@@ -437,10 +440,37 @@ export class Router {
       source,
     ) as Hex
 
-    const data = encodeFunctionData({
-      ...RP5processRouteEncodeData[processFunction],
-      args: [tokenIn, route.amountInBI, tokenOut, amountOutMin, to, routeCode],
-    })
+    let data: Hex
+    if (isWrapOrUnwap || processFunction === ProcessFunction.ProcessRoute) {
+      data = encodeFunctionData({
+        ...RP5processRouteEncodeData[processFunction],
+        args: [
+          tokenIn,
+          route.amountInBI,
+          tokenOut,
+          amountOutMin,
+          to,
+          routeCode,
+        ],
+      })
+    } else {
+      const amountValueTransfer =
+        (route.amountOutBI * getBigInt((1 - feeAmount!) * 1_000_000)) /
+        1_000_000n
+      data = encodeFunctionData({
+        ...RP5processRouteEncodeData[processFunction],
+        args: [
+          transferValueTo,
+          amountValueTransfer,
+          tokenIn,
+          route.amountInBI,
+          tokenOut,
+          amountOutMin,
+          to,
+          routeCode,
+        ],
+      })
+    }
     return {
       tokenIn,
       amountIn: route.amountInBI,

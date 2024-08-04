@@ -9,7 +9,7 @@ import {
   ProcessFunction,
   Router,
   RouterLiquiditySource,
-  makeAPI03Object,
+  makeAPI02Object,
 } from 'sushi/router'
 import { MultiRoute } from 'sushi/tines'
 import { Address } from 'viem'
@@ -77,6 +77,8 @@ const handler = (
           maxPriceImpact,
           maxSlippage,
           enableFee,
+          feeReceiver,
+          feeAmount,
         } = parsed.data
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
@@ -158,10 +160,12 @@ const handler = (
               enableFee
                 ? ProcessFunction.ProcessRouteWithTransferValueOutput
                 : ProcessFunction.ProcessRoute,
+              feeReceiver,
+              feeAmount,
             )
           : undefined
 
-        const json = makeAPI03Object(bestRoute, rpParams, routeProcessorAddress)
+        const json = makeAPI02Object(bestRoute, rpParams, routeProcessorAddress)
 
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(json)
@@ -173,7 +177,7 @@ const handler = (
         const data: {
           error: string | string[] | undefined
           params: z.infer<typeof querySchema5> | undefined
-          route: ReturnType<typeof makeAPI03Object> | undefined
+          route: ReturnType<typeof makeAPI02Object> | undefined
         } = {
           error: undefined,
           params: undefined,
@@ -182,7 +186,7 @@ const handler = (
         try {
           data.error = e instanceof Error ? e.stack?.split('\n') : `${e}`
           if (parsed.data) data.params = parsed.data
-          if (bestRoute) data.route = makeAPI03Object(bestRoute, undefined, '')
+          if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
         } catch (_e) {}
         Logger.error(CHAIN_ID, 'Routing crashed', safeSerialize(data), false)
 

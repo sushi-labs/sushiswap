@@ -96,11 +96,11 @@ export const useTradeQuery = (
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
       params.searchParams.set('enableFee', 'true')
-      // params.searchParams.set(
-      //   'feeReceiver',
-      //   '0x8f54C8c2df62c94772ac14CcFc85603742976312',
-      // )
-      // params.searchParams.set('feeAmount', '0.0025')
+      params.searchParams.set(
+        'feeReceiver',
+        '0x8f54C8c2df62c94772ac14CcFc85603742976312',
+      )
+      params.searchParams.set('feeAmount', '0.0025')
       if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
@@ -187,8 +187,6 @@ export const useTrade = (variables: UseTradeParams) => {
             ] as const)
           : undefined
         let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
-
-        // console.debug(fromToken.isNative, writeArgs, value)
 
         if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
           writeArgs = [

@@ -2,8 +2,8 @@ import { UseTradeReturn } from '@sushiswap/react-query'
 import { useEffect, useMemo, useRef } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import {
-  ROUTE_PROCESSOR_4_ADDRESS,
-  isRouteProcessor4ChainId,
+  ROUTE_PROCESSOR_5_ADDRESS,
+  isRouteProcessor5ChainId,
 } from 'sushi/config'
 import { CallErrorType, CallReturnType, Hex, RawContractError } from 'viem'
 import { useAccount, useCall } from 'wagmi'
@@ -31,8 +31,8 @@ export function useSimulateTrade({
 
   const simulateTrade = useCall({
     chainId: chainId,
-    to: isRouteProcessor4ChainId(chainId)
-      ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
+    to: isRouteProcessor5ChainId(chainId)
+      ? ROUTE_PROCESSOR_5_ADDRESS[chainId]
       : undefined,
     data: trade?.txdata as Hex | undefined,
     account: address,
@@ -52,7 +52,7 @@ export function useSimulateTrade({
         Boolean(
           address &&
             trade?.txdata &&
-            isRouteProcessor4ChainId(chainId) &&
+            isRouteProcessor5ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
     },
@@ -99,8 +99,8 @@ export function useSimulateTrade({
         ? {
             ...simulateTrade.data,
             request: {
-              to: isRouteProcessor4ChainId(chainId)
-                ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
+              to: isRouteProcessor5ChainId(chainId)
+                ? ROUTE_PROCESSOR_5_ADDRESS[chainId]
                 : undefined,
               data: trade?.txdata as Hex | undefined,
               value: trade?.value || 0n,
