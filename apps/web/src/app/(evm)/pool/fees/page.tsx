@@ -2,6 +2,7 @@
 
 import {
   Badge,
+  Button,
   Card,
   Container,
   Currency,
@@ -16,13 +17,18 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { FC, MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import { V3PoolsWithFees, useV3PoolsWithFees } from 'src/lib/hooks'
 import { ProtocolBadge } from 'src/ui/pool/PoolNameCell'
-import { Chain, ChainId } from 'sushi'
+import { Address, Chain, ChainId } from 'sushi'
+import { uniswapV3PoolAbi } from 'sushi/abi'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 import { formatNumber, formatUSD } from 'sushi/format'
-import { useChainId } from 'wagmi'
+import {
+  useChainId,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi'
 
 const NAME_COLUMN_POOL: ColumnDef<V3PoolsWithFees[number], unknown> = {
   id: 'name',
@@ -134,13 +140,54 @@ const VOLUME_COLUMN: ColumnDef<V3PoolsWithFees[number], unknown> = {
   },
 }
 
+const EnableProtocolFeeButton: FC<{ pool: Address }> = ({ pool }) => {
+  const { data: txHash, writeContract, isPending } = useWriteContract()
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash: txHash,
+  })
+
+  const onClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      e.preventDefault()
+      writeContract({
+        address: pool,
+        abi: uniswapV3PoolAbi,
+        functionName: 'setFeeProtocol',
+        args: [4, 4],
+      })
+    },
+    [writeContract, pool],
+  )
+
+  return isSuccess ? (
+    '✅'
+  ) : (
+    <Button
+      size="xs"
+      variant="secondary"
+      loading={isPending || isLoading}
+      onClick={onClick}
+    >
+      {isLoading ? 'Enabling' : 'Enable'}
+    </Button>
+  )
+}
+
 const PROTOCOL_FEE_COLUMN: ColumnDef<V3PoolsWithFees[number], unknown> = {
   id: 'isProtocolFeeEnabled',
-  header: 'Fee Enabled',
+  header: () => 'Fees Enabled',
   accessorFn: (row) => row.volumeUSD,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     +rowA.isProtocolFeeEnabled - +rowB.isProtocolFeeEnabled,
-  cell: (props) => (props.row.original.isProtocolFeeEnabled ? '✅' : '❌'),
+  cell: (props) => (
+    <div className="text-center w-full">
+      {props.row.original.isProtocolFeeEnabled ? (
+        '✅'
+      ) : (
+        <EnableProtocolFeeButton pool={props.row.original.address} />
+      )}
+    </div>
+  ),
   meta: {
     skeleton: <SkeletonText fontSize="lg" />,
   },
