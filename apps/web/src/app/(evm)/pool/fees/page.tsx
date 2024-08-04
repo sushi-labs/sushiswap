@@ -175,7 +175,7 @@ const EnableProtocolFeeButton: FC<{ pool: Address }> = ({ pool }) => {
 
 const PROTOCOL_FEE_COLUMN: ColumnDef<V3PoolsWithFees[number], unknown> = {
   id: 'isProtocolFeeEnabled',
-  header: () => 'Fees Enabled',
+  header: 'Fees Enabled',
   accessorFn: (row) => row.volumeUSD,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
     +rowA.isProtocolFeeEnabled - +rowB.isProtocolFeeEnabled,
