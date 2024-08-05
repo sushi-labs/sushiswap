@@ -32,7 +32,7 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<SushiSwapV3ChainId, string> = {
   [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v3/v3-thundercore-2`,
   [ChainId.CORE]: `${CORE_HOST}/sushi-v3/v3-core-tvl-fix`,
   [ChainId.KAVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-kava/gn`,
-  [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/v3-metis`,
+  [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushi-v3/v3-metis/v0.0.1/gn`,
   [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-bttc/gn`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/v3-filecoin`,
   [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/v3-haqq-2`,
