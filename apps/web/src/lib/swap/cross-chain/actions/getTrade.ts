@@ -1,7 +1,7 @@
 import {
   TRADE_API_BASE_URL,
   UseTradeParams,
-  getTradeQueryApiVersion,
+  // getTradeQueryApiVersion,
   tradeValidator02,
 } from '@sushiswap/react-query'
 import { RouteStatus } from 'sushi/tines'
