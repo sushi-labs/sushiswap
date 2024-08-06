@@ -45,6 +45,7 @@ export interface UseTradeReturn {
   value?: bigint | undefined
   tokenTax: Percent | false | undefined
   txdata: string | undefined
+  fee: string | undefined
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
