@@ -28,6 +28,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
+import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
@@ -52,6 +53,7 @@ import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { Chain } from 'sushi/chain'
 import {
   ANGLE_SUPPORTED_CHAIN_IDS,
+  AngleEnabledChainId,
   SushiSwapV3ChainId,
   isWNativeSupported,
 } from 'sushi/config'
@@ -62,9 +64,10 @@ import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 
 const APPROVE_TAG = 'approve-incentivize'
 
-export default function Page() {
+export default function Page({ params }: { params: { chainId: string } }) {
   return (
     <ConcentratedLiquidityURLStateProvider
+      chainId={+params.chainId as AngleEnabledChainId}
       supportedNetworks={ANGLE_SUPPORTED_CHAIN_IDS}
     >
       <ConcentratedLiquidityProvider>
@@ -82,11 +85,11 @@ const Incentivize = withCheckerRoot(() => {
     token1,
     setToken1,
     setToken0,
-    setNetwork,
     feeAmount,
     setFeeAmount,
   } = useConcentratedLiquidityURLState()
 
+  const router = useRouter()
   const { approved } = useApproved(APPROVE_TAG)
   const [value, setValue] = useState('')
   const [customize, setCustomize] = useState(false)
@@ -201,7 +204,7 @@ const Incentivize = withCheckerRoot(() => {
         <SelectNetworkWidget
           title="On which network would you like to add rewards?"
           selectedNetwork={chainId}
-          onSelect={setNetwork}
+          onSelect={(chainId) => router.push(`/${chainId}/pool/incentivize`)}
           networks={ANGLE_SUPPORTED_CHAIN_IDS}
         />
         <SelectTokensWidget

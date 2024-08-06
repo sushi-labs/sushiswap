@@ -19,7 +19,7 @@ export default async function PoolPage({
 }) {
   const pools = await unstable_cache(
     async () => getTopPools({ chainId: +chainId }),
-    ['pools', chainId.toString()],
+    ['pools', chainId],
     {
       revalidate: 60 * 3,
     },

@@ -1,12 +1,22 @@
 import { Container, typographyVariants } from '@sushiswap/ui'
-
 import { BackButton } from 'src/ui/pool/BackButton'
+import { ChainId } from 'sushi/chain'
+import { isAngleEnabledChainId } from 'sushi/config'
+import notFound from '../../not-found'
 
 export const metadata = {
   title: 'Pool 💦',
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({
+  children,
+  params,
+}: { children: React.ReactNode; params: { chainId: string } }) {
+  const chainId = +params.chainId as ChainId
+  if (!isAngleEnabledChainId(chainId)) {
+    return notFound()
+  }
+
   return (
     <>
       <Container maxWidth="5xl" className="py-10 px-4">
