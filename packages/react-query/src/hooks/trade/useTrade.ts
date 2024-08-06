@@ -277,7 +277,7 @@ export const useTrade = (variables: UseTradeParams) => {
       chainId,
       fromToken,
       price,
-      tokenInPrice,
+      tokenOutPrice,
       slippagePercentage,
       toToken,
       gasPrice,
