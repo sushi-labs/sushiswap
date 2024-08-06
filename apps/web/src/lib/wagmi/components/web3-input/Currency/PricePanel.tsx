@@ -1,13 +1,17 @@
 import { classNames } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
+import {
+  warningSeverity,
+  warningSeverityClassName,
+} from 'src/lib/swap/warningSeverity'
 import { tryParseAmount } from 'sushi/currency'
 import { Fraction, ZERO } from 'sushi/math'
 import { CurrencyInputProps } from './CurrencyInput'
 
 type PricePanel = Pick<
   CurrencyInputProps,
-  'loading' | 'currency' | 'value' | 'usdPctChange'
+  'loading' | 'currency' | 'value' | 'priceImpact'
 > & {
   error?: string
   price: Fraction | undefined
@@ -18,7 +22,7 @@ export const PricePanel: FC<PricePanel> = ({
   price,
   currency,
   value,
-  usdPctChange,
+  priceImpact,
   error,
 }) => {
   const parsedValue = useMemo(
@@ -56,35 +60,21 @@ export const PricePanel: FC<PricePanel> = ({
           $ {big}.<span className="text-sm font-semibold">{portion}</span>
         </>
       )}
-      {!(!loading && price?.equalTo(ZERO)) &&
-        usdPctChange &&
-        usdPctChange !== 0 && (
-          <span
-            className={classNames(
-              'text-sm pl-1',
-              usdPctChange > 0
-                ? 'text-green'
-                : usdPctChange < -5
-                  ? 'text-red'
-                  : usdPctChange < -3
-                    ? 'text-yellow'
-                    : 'text-slate-500',
-            )}
-          >
-            {' '}
-            {`${
-              usdPctChange?.toFixed(2) === '0.00'
-                ? ''
-                : usdPctChange > 0
-                  ? '(+'
-                  : '('
-            }${
-              usdPctChange?.toFixed(2) === '0.00'
-                ? ''
-                : `${usdPctChange?.toFixed(2)}%)`
-            }`}
-          </span>
-        )}
+      {!(!loading && price?.equalTo(ZERO)) && priceImpact && (
+        <span
+          className={classNames(
+            'text-sm pl-1',
+            warningSeverityClassName(warningSeverity(priceImpact)),
+          )}
+        >
+          {priceImpact?.lessThan(ZERO)
+            ? '+'
+            : priceImpact?.greaterThan(ZERO)
+              ? '-'
+              : ''}
+          {Math.abs(Number(priceImpact?.toFixed(2)) || 0)}%
+        </span>
+      )}
     </p>
   )
 }
