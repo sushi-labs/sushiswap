@@ -22,20 +22,25 @@ export default function TabsLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/pool?${searchParams.toString()}`}
+            href={`/aptos/pool?${searchParams.toString()}`}
           >
-            <PathnameButton id="all-pools" pathname={'/pool'} asChild size="sm">
+            <PathnameButton
+              id="all-pools"
+              pathname={'/aptos/pool'}
+              asChild
+              size="sm"
+            >
               All Pools
             </PathnameButton>
           </LinkInternal>
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/pool/my-positions?${searchParams.toString()}`}
+            href={`/aptos/pool/my-positions?${searchParams.toString()}`}
           >
             <PathnameButton
               id="my-positions"
-              pathname={'/pool/my-positions'}
+              pathname={'/aptos/pool/my-positions'}
               asChild
               size="sm"
             >
@@ -50,7 +55,7 @@ export default function TabsLayout({
           <PathnameButton
             disabled
             id="my-rewards"
-            pathname={'/pool/my-rewards'}
+            pathname={'/aptos/pool/my-rewards'}
             size="sm"
           >
             My Rewards

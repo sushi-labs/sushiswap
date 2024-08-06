@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import { headerElements } from '../(evm)/_common/header-elements'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
+  title: 'Partner',
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

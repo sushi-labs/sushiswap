@@ -64,6 +64,11 @@ const nextConfig = bundleAnalyzer({
         destination: '/pool/:path*',
       },
       {
+        source: '/aptos',
+        permanent: true,
+        destination: '/aptos/swap',
+      },
+      {
         source: '/skale/swap',
         permanent: true,
         destination: '/swap?chainId=2046399126',

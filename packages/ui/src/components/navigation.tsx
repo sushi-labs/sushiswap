@@ -14,110 +14,6 @@ import {
   NavigationMenuTrigger,
 } from './navigation-menu'
 
-const EXPLORE_NAVIGATION_LINKS: {
-  title: string
-  href: string
-  description: string
-}[] = [
-  {
-    title: 'Swap',
-    href: '/swap',
-    description: 'The easiest way to trade.',
-  },
-  {
-    title: 'Pools',
-    href: '/pools',
-    description: 'Earn fees by providing liquidity.',
-  },
-  {
-    title: 'Bonds',
-    href: '/bonds',
-    description: 'Earn interest by locking up your assets.',
-  },
-  {
-    title: 'Stake',
-    href: '/stake',
-    description: 'Earn protocol fees by staking SUSHI.',
-  },
-  {
-    title: 'Analytics',
-    href: '/analytics',
-    description: 'Find the best opportunities',
-  },
-  {
-    title: 'Blog',
-    href: '/blog',
-    description:
-      'Stay up to date with the latest product developments at Sushi.',
-  },
-  {
-    title: 'Academy',
-    href: '/academy',
-    description: 'Everything you need to get up to speed with DeFi.',
-  },
-  {
-    title: 'Partner with Sushi',
-    href: '/partner',
-    description: 'Incentivize your token with Sushi rewards.',
-  },
-  {
-    title: 'List enquiry',
-    href: '/tokenlist-request',
-    description: 'Get your token on our default token list.',
-  },
-]
-
-const TOOLS_NAVIGATION_LINKS: {
-  title: string
-  href: string
-  description: string
-}[] = [
-  {
-    title: 'Analytics',
-    href: '/analytics',
-    description: 'Find the best opportunities',
-  },
-  {
-    title: 'Blog',
-    href: '/blog',
-    description:
-      'Stay up to date with the latest product developments at Sushi.',
-  },
-  {
-    title: 'Academy',
-    href: '/academy',
-    description: 'Everything you need to get up to speed with DeFi.',
-  },
-  {
-    title: 'Forum & Proposals',
-    href: 'https://forum.sushi.com',
-    description: 'View and discuss proposals for SushiSwap.',
-  },
-  {
-    title: 'Participate',
-    href: 'https://snapshot.org/#/sushigov.eth',
-    description:
-      'As a Sushi holder, you can vote on proposals to shape the future of SushiSwap.',
-  },
-]
-
-const PARTNER_NAVIGATION_LINKS: {
-  title: string
-  href: string
-  description: string
-}[] = [
-  {
-    title: 'Partner with Sushi',
-    href: '/partner',
-    description: 'Incentivize your token with Sushi rewards.',
-  },
-  {
-    title: 'List enquiry',
-    href: '/tokenlist-request',
-    description: 'Get your token on our default token list.',
-  },
-]
-
 const navigationContainerVariants = cva(
   'px-4 sticky flex items-center flex-grow gap-4 top-0 z-50 min-h-[56px] max-h-[56px] h-[56px]',
   {
@@ -153,81 +49,83 @@ const NavigationContainer: React.FC<NavContainerProps> = ({
   )
 }
 
-const navigationMenuItems = [
-  {
-    title: 'Swap',
-    href: '/swap',
-  },
-  {
-    title: 'Pools',
-    href: '/pool',
-  },
-  {
-    title: 'Bonds',
-    href: '/bonds',
-  },
-  {
-    title: 'Stake',
-    href: '/stake',
-  },
-  {
-    title: 'More',
-    items: TOOLS_NAVIGATION_LINKS,
-  },
-  {
-    title: 'Partners',
-    items: PARTNER_NAVIGATION_LINKS,
-  },
-] as const
+export type NavigationElementShow = 'mobile' | 'desktop' | 'everywhere'
+
+const navigationElementShowMap: Record<NavigationElementShow, string> = {
+  mobile: 'md:hidden block',
+  desktop: 'md:block hidden',
+  everywhere: '',
+}
+
+export enum NavigationElementType {
+  Single = 'single',
+  Dropdown = 'dropdown',
+  Custom = 'custom',
+}
+
+export type NavigationElementSingle = {
+  title: string
+  href: string
+  show: NavigationElementShow
+  type: NavigationElementType.Single
+}
+
+export type NavigationElementDropdown = {
+  title: string
+  items: {
+    title: string
+    href: string
+    description: string
+  }[]
+  show: NavigationElementShow
+  type: NavigationElementType.Dropdown
+}
+
+export type NavigationElementCustom = {
+  item: React.ReactNode
+  show: NavigationElementShow
+  type: NavigationElementType.Custom
+}
+
+export type NavigationElement =
+  | NavigationElementSingle
+  | NavigationElementDropdown
+  | NavigationElementCustom
 
 interface NavProps extends VariantProps<typeof navigationContainerVariants> {
-  leftElements?: (typeof navigationMenuItems)[number]['title'][]
+  leftElements: NavigationElement[]
   rightElement?: React.ReactNode
-  legacyBehavior?: boolean
-  showOnramper?: boolean
   chainId?: number
 }
 
 const Navigation: React.FC<NavProps> = ({
-  leftElements: _leftElements = navigationMenuItems.map((entry) => entry.title),
+  leftElements: _leftElements,
   rightElement,
   variant,
-  legacyBehavior = false,
 }) => {
   const leftElements = React.useMemo(() => {
-    const SimpleItem = (entry: (typeof navigationMenuItems)[number]) => {
-      if (!('href' in entry)) {
-        throw new Error('Invalid entry')
-      }
-
+    const SingleItem = (entry: NavigationElementSingle) => {
       return (
-        <NavigationMenuItem key={entry.title} className="hidden md:block">
-          {legacyBehavior ? (
-            <NavigationMenuLink
-              asChild
-              className={navigationMenuTriggerStyle()}
-            >
-              <a href={entry.href}>{entry.title}</a>
-            </NavigationMenuLink>
-          ) : (
-            <NavigationMenuLink
-              href={entry.href}
-              className={navigationMenuTriggerStyle()}
-            >
-              {entry.title}
-            </NavigationMenuLink>
-          )}
+        <NavigationMenuItem
+          key={entry.title}
+          className={navigationElementShowMap[entry.show]}
+        >
+          <NavigationMenuLink
+            href={entry.href}
+            className={navigationMenuTriggerStyle}
+          >
+            {entry.title}
+          </NavigationMenuLink>
         </NavigationMenuItem>
       )
     }
 
-    const DropdownItem = (entry: (typeof navigationMenuItems)[number]) => {
-      if (!('items' in entry)) {
-        throw new Error('Invalid entry')
-      }
-
+    const DropdownItem = (entry: NavigationElementDropdown) => {
       return (
-        <NavigationMenuItem key={entry.title} className="hidden md:block">
+        <NavigationMenuItem
+          key={entry.title}
+          className={navigationElementShowMap[entry.show]}
+        >
           <NavigationMenuTrigger>{entry.title}</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="w-[400px] gap-3 p-4">
@@ -236,7 +134,6 @@ const Navigation: React.FC<NavProps> = ({
                   key={component.title}
                   title={component.title}
                   href={component.href}
-                  legacyBehavior={legacyBehavior}
                 >
                   {component.description}
                 </NavigationListItem>
@@ -247,39 +144,24 @@ const Navigation: React.FC<NavProps> = ({
       )
     }
 
-    return _leftElements.map((el) => {
-      const entry = navigationMenuItems.find((entry) => entry.title === el)!
-
-      if ('href' in entry) {
-        return SimpleItem(entry)
-      } else {
-        return DropdownItem(entry)
+    return _leftElements.flatMap((el) => {
+      switch (el.type) {
+        case NavigationElementType.Single:
+          return SingleItem(el)
+        case NavigationElementType.Dropdown:
+          return DropdownItem(el)
+        case NavigationElementType.Custom:
+          return (
+            <div className={navigationElementShowMap[el.show]}>el.item</div>
+          )
       }
     })
-  }, [_leftElements, legacyBehavior])
+  }, [_leftElements])
 
   return (
     <NavigationContainer variant={variant}>
       <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem className="block md:hidden">
-            <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="min-w-[240px] gap-3 p-4">
-                {EXPLORE_NAVIGATION_LINKS.map((component) => (
-                  <NavigationListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                  >
-                    {component.description}
-                  </NavigationListItem>
-                ))}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          {leftElements}
-        </NavigationMenuList>
+        <NavigationMenuList>{leftElements}</NavigationMenuList>
       </NavigationMenu>
       <div className="flex items-center gap-2">
         {rightElement ? rightElement : null}
@@ -288,63 +170,49 @@ const Navigation: React.FC<NavProps> = ({
   )
 }
 
-interface NavigationListItemProps extends React.ComponentPropsWithoutRef<'a'> {
-  legacyBehavior?: boolean
-}
+interface NavigationListItemProps extends React.ComponentPropsWithoutRef<'a'> {}
 
 const NavigationListItem = React.forwardRef<
   React.ElementRef<'a'>,
   NavigationListItemProps
->(
-  (
-    { className, title, children, legacyBehavior = false, href, ...props },
-    ref,
-  ) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          {legacyBehavior || !href ? (
-            <a
-              ref={ref}
-              className={classNames(
-                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-                className,
-              )}
-              href={href}
-              {...props}
-            >
-              <div className="text-sm font-medium leading-none">{title}</div>
-              <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
-                {children}
-              </p>
-            </a>
-          ) : (
-            <Link
-              href={href}
-              className={classNames(
-                'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-                className,
-              )}
-            >
-              <div className="text-sm font-medium leading-none">{title}</div>
-              <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
-                {children}
-              </p>
-            </Link>
-          )}
-        </NavigationMenuLink>
-      </li>
-    )
-  },
-)
+>(({ className, title, children, href, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        {!href ? (
+          <a
+            ref={ref}
+            className={classNames(
+              'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+              className,
+            )}
+            href={href}
+            {...props}
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
+              {children}
+            </p>
+          </a>
+        ) : (
+          <Link
+            href={href}
+            className={classNames(
+              'cursor-pointer block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+              className,
+            )}
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
+              {children}
+            </p>
+          </Link>
+        )}
+      </NavigationMenuLink>
+    </li>
+  )
+})
 
 NavigationListItem.displayName = 'NavListItem'
 
-export {
-  EXPLORE_NAVIGATION_LINKS,
-  Navigation,
-  NavigationContainer,
-  NavigationListItem,
-  PARTNER_NAVIGATION_LINKS,
-  TOOLS_NAVIGATION_LINKS,
-}
+export { Navigation, NavigationContainer, NavigationListItem }
