@@ -114,7 +114,7 @@ export const SimpleSwapTradeStats: FC = () => {
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : trade?.gasSpent ? (
               `${trade.gasSpent} ${Native.onChain(chainId).symbol} ${
-                trade?.gasSpentUsd ? `($$${trade.gasSpentUsd})` : ''
+                trade?.gasSpentUsd ? `($${trade.gasSpentUsd})` : ''
               }`
             ) : null}
           </span>
