@@ -96,11 +96,6 @@ const COLUMNS = [
           <div className="flex flex-col gap-0.5">
             <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
               {props.row.original.name}
-              {/* {token0?.symbol}{' '}
-              <span className="font-normal text-gray-900 dark:text-slate-500">
-                /
-              </span>{' '}
-              {token1?.symbol}{' '} */}
               <div
                 className={
                   'text-[10px] bg-gray-200 dark:bg-slate-700 rounded-lg px-1 ml-1'
@@ -229,7 +224,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}`}
+                  href={`/${row.original.chainId}/pool/v3/${row.original.address}`}
                 >
                   <ArrowDownRightIcon width={16} height={16} className="mr-2" />
                   Pool details
@@ -240,7 +235,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/positions/create`}
+                  href={`/${row.original.chainId}/pool/v3/${row.original.address}/positions/create`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position
@@ -257,7 +252,7 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/${row.original.id}/smart`}
+                        href={`/${row.original.chainId}/pool/v3/${row.original.address}/smart`}
                       >
                         <span className="relative">
                           <LightBulbIcon
@@ -299,9 +294,9 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/incentivize?chainId=${
+                        href={`/${
                           row.original.chainId
-                        }&fromCurrency=${
+                        }/pool/incentivize?fromCurrency=${
                           row.original.token0Address ===
                           Native.onChain(row.original.chainId).wrapped.address
                             ? 'NATIVE'
@@ -353,7 +348,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/add`}
+                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/add`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Add liquidity
@@ -364,7 +359,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/remove`}
+                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/remove`}
                 >
                   <MinusIcon width={16} height={16} className="mr-2" />
                   Remove liquidity
@@ -385,7 +380,7 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/pool/${row.original.id}/stake`}
+                        href={`/${row.original.chainId}/pool/v2/${row.original.address}/stake`}
                       >
                         <DownloadIcon width={16} height={16} className="mr-2" />
                         Stake
@@ -406,7 +401,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/pool/${row.original.id}/unstake`}
+                  href={`/${row.original.chainId}/pool/v2/${row.original.address}/unstake`}
                 >
                   <UploadIcon width={16} height={16} className="mr-2" />
                   Unstake

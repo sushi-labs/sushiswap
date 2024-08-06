@@ -79,7 +79,7 @@ export const Hero: FC = () => {
                     asChild
                   >
                     <LinkInternal
-                      href={`/pool/add?chainId=${chainId}`}
+                      href={`/${chainId}/pool/v3/add`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
@@ -98,7 +98,7 @@ export const Hero: FC = () => {
                   {isSushiSwapV2ChainId(chainId as ChainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal
-                        href={`/pools/add/v2/${chainId}`}
+                        href={`/${chainId}/pool/v2/add`}
                         className="flex flex-col !items-start gap-1 cursor-pointer"
                       >
                         <div className="flex items-center gap-1 font-medium leading-none">
