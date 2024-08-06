@@ -90,16 +90,18 @@ export const SimpleSwapTradeStats: FC = () => {
           </span>
         </div>
 
-        {trade?.tokenTax ? (
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Token tax
-            </span>
-            <span className="text-sm font-semibold text-yellow text-right">
-              {trade.tokenTax.toPercentageString()}
-            </span>
-          </div>
-        ) : null}
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Fee (0.25%)
+          </span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {loading || !trade?.fee ? (
+              <SkeletonBox className="h-4 py-0.5 w-[100px]" />
+            ) : (
+              `$${trade?.fee}`
+            )}
+          </span>
+        </div>
 
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">
@@ -111,7 +113,9 @@ export const SimpleSwapTradeStats: FC = () => {
             ) : loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : trade?.gasSpent ? (
-              `${trade.gasSpent} ${Native.onChain(chainId).symbol}`
+              `${trade.gasSpent} ${Native.onChain(chainId).symbol} ($${
+                trade.gasSpentUsd
+              })`
             ) : null}
           </span>
         </div>
