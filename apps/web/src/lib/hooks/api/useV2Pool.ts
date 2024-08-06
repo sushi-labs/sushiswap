@@ -6,8 +6,9 @@ import { Amount } from 'sushi/currency'
 
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { getTokensFromPool } from '../useTokensFromPool'
 import { PoolId } from 'sushi'
+import { stringify } from 'sushi/bigint-serializer'
+import { getTokensFromPool } from '../useTokensFromPool'
 
 export const useV2Pool = (poolId: PoolId) => {
   const {
@@ -23,6 +24,7 @@ export const useV2Pool = (poolId: PoolId) => {
       })
       return result
     },
+    queryKeyHashFn: stringify,
   })
 
   const { token0, token1, liquidityToken } = useMemo(() => {
@@ -46,13 +48,9 @@ export const useV2Pool = (poolId: PoolId) => {
         liquidityToken,
         liquidityUSD: pool ? Number(pool?.liquidityUSD) : null,
         reserve0:
-          token0 && pool
-            ? Amount.fromRawAmount(token0, pool.reserve0)
-            : null,
+          token0 && pool ? Amount.fromRawAmount(token0, pool.reserve0) : null,
         reserve1:
-          token1 && pool
-            ? Amount.fromRawAmount(token1, pool.reserve1)
-            : null,
+          token1 && pool ? Amount.fromRawAmount(token1, pool.reserve1) : null,
         totalSupply:
           liquidityToken && pool
             ? Amount.fromRawAmount(liquidityToken, pool.liquidity)

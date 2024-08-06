@@ -1,8 +1,7 @@
 import { getV3Pool, getVaults } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
-import notFound from '../../../../../not-found'
 import { SteerCarousel } from 'src/ui/pool/Steer/SteerCarousel'
-
+import notFound from '../../../../../not-found'
 
 export default async function VaultOverviewPage({
   params,
@@ -10,7 +9,7 @@ export default async function VaultOverviewPage({
   params: { chainId: string; address: string }
 }) {
   const { chainId, address } = params
-  const poolP = await unstable_cache(
+  const pool = await unstable_cache(
     async () => getV3Pool({ chainId: Number(chainId), address }),
     ['pool', `${chainId}:${address}`],
     {
@@ -18,7 +17,7 @@ export default async function VaultOverviewPage({
     },
   )()
 
-  const vaultsP = unstable_cache(
+  const vaults = await unstable_cache(
     async () => getVaults({ chainId: Number(chainId), poolAddress: address }),
     ['vaults', `${chainId}:${address}`],
     {
@@ -26,12 +25,9 @@ export default async function VaultOverviewPage({
     },
   )()
 
-  const [pool, vaults] = await Promise.all([poolP, vaultsP])
-
   if (!pool || !vaults) {
     return notFound()
   }
 
-  
   return <SteerCarousel pool={pool} vaults={vaults} />
 }

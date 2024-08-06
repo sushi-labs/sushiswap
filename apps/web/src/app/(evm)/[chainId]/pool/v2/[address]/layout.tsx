@@ -38,7 +38,11 @@ export default async function Layout({
       </Container>
       <Container maxWidth="5xl" className="pt-10 px-4">
         <PoolHeader
-          backUrl={referer?.includes('/pool?') ? referer?.toString() : '/pool'}
+          backUrl={
+            referer?.includes('/pool?')
+              ? referer?.toString()
+              : `/${chainId}/explore`
+          }
           address={pool.address}
           pool={pool}
           apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}

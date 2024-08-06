@@ -11,12 +11,11 @@ import { PoolMyRewards } from 'src/ui/pool/PoolMyRewards'
 import { PoolPosition } from 'src/ui/pool/PoolPosition'
 
 export default async function ManageV2PoolPage({
-  params: { chainId, address, tab },
+  params: { chainId, address },
 }: {
   params: {
     chainId: string
     address: string
-    tab: 'add' | 'remove' | 'unstake' | 'stake'
   }
 }) {
   const pool = (await unstable_cache(
@@ -31,7 +30,7 @@ export default async function ManageV2PoolPage({
     <Container maxWidth="5xl" className="px-2 sm:px-4 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
         <div>
-          <ManageV2LiquidityCard pool={pool} tab={tab} />
+          <ManageV2LiquidityCard pool={pool} tab="unstake" />
         </div>
         <div className="flex flex-col gap-6">
           <PoolPositionProvider pool={pool}>
