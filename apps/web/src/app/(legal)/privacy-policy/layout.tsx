@@ -1,6 +1,6 @@
 import { Navigation } from '@sushiswap/ui'
 import { Metadata } from 'next'
-import { headerElements } from '../(evm)/_common/header-elements'
+import { headerElements } from '../../(evm)/_common/header-elements'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
