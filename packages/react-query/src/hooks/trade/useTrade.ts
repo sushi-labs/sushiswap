@@ -93,7 +93,7 @@ export const useTradeQuery = (
         }`,
       )
       params.searchParams.set('amount', `${amount?.quotient.toString()}`)
-      params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
+      params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('gasPrice', `${gasPrice}`)
       params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
@@ -152,6 +152,16 @@ export const useTrade = (variables: UseTradeParams) => {
     chainId,
     address: Native.onChain(chainId).wrapped.address,
     enabled: isWNativeSupported(chainId),
+  })
+
+  // const { data: tokenInPrice } = usePrice({
+  //   chainId,
+  //   address: fromToken?.wrapped.address,
+  // })
+
+  const { data: tokenOutPrice } = usePrice({
+    chainId,
+    address: toToken?.wrapped.address,
   })
 
   const price = useMemo(() => {
@@ -227,6 +237,12 @@ export const useTrade = (variables: UseTradeParams) => {
             price && gasSpent
               ? gasSpent.multiply(price.asFraction).toSignificant(4)
               : undefined,
+          fee: tokenOutPrice
+            ? minAmountOut
+                .multiply(new Percent(25, 10000))
+                .multiply(tokenOutPrice.asFraction)
+                .toSignificant(4)
+            : undefined,
           route: data.route,
           functionName: isOffset
             ? 'transferValueAndprocessRoute'
@@ -246,6 +262,7 @@ export const useTrade = (variables: UseTradeParams) => {
         minAmountOut: undefined,
         gasSpent: undefined,
         gasSpentUsd: undefined,
+        fee: undefined,
         writeArgs: undefined,
         route: undefined,
         functionName: 'processRoute',
@@ -260,6 +277,7 @@ export const useTrade = (variables: UseTradeParams) => {
       chainId,
       fromToken,
       price,
+      tokenInPrice,
       slippagePercentage,
       toToken,
       gasPrice,
