@@ -45,6 +45,7 @@ export const querySchema5 = z.object({
     .positive()
     .default(0.005),
   // includeRoute: z.boolean().default(true),
+  // includeRpArgs: z.boolean().default(true),
   // includeTx: z.boolean().default(true),
   enableFee: z.coerce.boolean().default(true),
   feeReceiver: z.optional(

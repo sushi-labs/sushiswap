@@ -1,3 +1,4 @@
+import { Logger, safeSerialize } from '@sushiswap/extractor'
 import { Request, Response } from 'express'
 import { ChainId } from 'sushi/chain'
 import { ROUTE_PROCESSOR_5_ADDRESS } from 'sushi/config'
@@ -9,6 +10,7 @@ import {
   Router,
   RouterLiquiditySource,
   TransferValue,
+  isStable,
   isUnwrap,
   isWrap,
   makeAPI02Object,
@@ -25,6 +27,7 @@ import {
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
 } from '../../config.js'
+// import { swapResponse } from './response.js'
 import { querySchema5 } from './schema.js'
 
 const nativeProvider = new NativeWrapProvider(
@@ -122,27 +125,27 @@ const handler = (
             )
         }
 
-        const isWrapOrUnwap =
-          isWrap({ fromToken: tokenIn, toToken: tokenOut }) ||
-          isUnwrap({ fromToken: tokenIn, toToken: tokenOut })
-
         poolCodesMap = client.getKnownPoolsForTokens(tokenIn, tokenOut)
         nativeProvider
           .getCurrentPoolList()
           .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
-        const chargeFee = !isWrapOrUnwap && enableFee
+        const chargeFee =
+          enableFee &&
+          !(
+            isWrap({ fromToken: tokenIn, toToken: tokenOut }) ||
+            isUnwrap({ fromToken: tokenIn, toToken: tokenOut })
+          ) &&
+          !isStable({ fromToken: tokenIn, toToken: tokenOut })
 
-        const chargeFeeByInput = chargeFeeBy === TransferValue.Input
-
-        if (chargeFee && chargeFeeByInput) {
+        if (chargeFee && chargeFeeBy === TransferValue.Input) {
           processFunction = ProcessFunction.ProcessRouteWithTransferValueInput
           amountValueTransfer =
             (_amount * getBigInt(feeAmount * 1_000_000)) / 1_000_000n
         }
 
         const amount =
-          chargeFeeByInput && amountValueTransfer
+          chargeFeeBy === TransferValue.Input && amountValueTransfer
             ? _amount - amountValueTransfer
             : _amount
 
@@ -166,8 +169,11 @@ const handler = (
             )
 
         if (
-          maxPriceImpact !== undefined &&
-          (bestRoute.priceImpact ?? 0) > maxPriceImpact
+          // If price impact is missing from the route we return no way multiroute
+          bestRoute.priceImpact === undefined ||
+          (maxPriceImpact !== undefined &&
+            // or if max price impact is defined and less than best route price impact we return no way multiroute (not a feature we use at UI)
+            bestRoute.priceImpact > maxPriceImpact)
         )
           bestRoute = Router.NoWayMultiRoute(tokenIn, tokenOut)
 
@@ -175,7 +181,7 @@ const handler = (
           (bestRoute.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
           1_000_000n
 
-        if (chargeFee && !chargeFeeByInput) {
+        if (chargeFee && chargeFeeBy === TransferValue.Output) {
           processFunction = ProcessFunction.ProcessRouteWithTransferValueOutput
 
           amountValueTransfer =
@@ -201,6 +207,8 @@ const handler = (
 
         const json = makeAPI02Object(bestRoute, rpParams, routeProcessorAddress)
 
+        // return swapResponse()
+
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
         return res.json(json)
       } catch (e) {
@@ -222,6 +230,7 @@ const handler = (
           if (parsed.data) data.params = parsed.data
           if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
         } catch (_e) {}
+
         Logger.error(CHAIN_ID, 'Routing crashed', safeSerialize(data), false)
 
         return res.status(500).send('Internal server error: Routing crashed')
