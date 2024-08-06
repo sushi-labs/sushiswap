@@ -114,11 +114,11 @@ export const isStable = ({
   fromToken,
   toToken,
 }: { fromToken: Type; toToken: Type }) => {
-  const fromTokenIsStable = STABLES[fromToken.chainId].some(
-    (t: Token) => t === fromToken.wrapped,
+  const fromTokenIsStable = STABLES[fromToken.chainId].some((t: Token) =>
+    t.equals(fromToken),
   )
-  const toTokenIsStable = STABLES[toToken.chainId].some(
-    (t: Token) => t === toToken.wrapped,
+  const toTokenIsStable = STABLES[toToken.chainId].some((t: Token) =>
+    t.equals(toToken),
   )
   return fromTokenIsStable && toTokenIsStable
 }
