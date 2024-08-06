@@ -28,7 +28,7 @@ export const querySchema5 = z.object({
     .default(RouterLiquiditySource.Sender),
   to: z.optional(
     z.custom<Address | undefined>(
-      (val) => typeof val === 'string' && isAddressFast(val),
+      (val) => isAddressFast(val),
       (val) => ({ message: `Incorrect address for 'to': ${val}` }),
     ),
   ),
