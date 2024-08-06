@@ -338,6 +338,9 @@ export const EXTRACTOR_CONFIG: Record<
       sushiswapV3Factory(ChainId.ETHEREUM),
       pancakeswapV3Factory(ChainId.ETHEREUM),
     ],
+    curveConfig: {
+      minPoolLiquidityLimitUSD: 1000,
+    },
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
