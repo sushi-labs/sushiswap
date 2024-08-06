@@ -16,22 +16,22 @@ export class CurveMultitokenPool extends RPool {
   flow1 = 0
 
   constructor(core: CurveMultitokenCore, index0: number, index1: number) {
-    if (core) {
-      super(
-        core.address as Address,
-        core.tokens[index0] as RToken,
-        core.tokens[index1] as RToken,
-        core.fee,
-        core.reserves[index0] as bigint,
-        core.reserves[index1] as bigint,
-        MIN_LIQUIDITY,
-        SWAP_GAS_COST,
-      )
-      console.assert(index0 < index1, 'Wrong CurveMultitokenPool indexes')
-      this.core = core
-      this.index0 = index0
-      this.index1 = index1
-    } else {
+    //if (core) {
+    super(
+      core?.address as Address,
+      core?.tokens[index0] as RToken,
+      core?.tokens[index1] as RToken,
+      core?.fee,
+      core?.reserves[index0] as bigint,
+      core?.reserves[index1] as bigint,
+      MIN_LIQUIDITY,
+      SWAP_GAS_COST,
+    )
+    console.assert(index0 < index1, 'Wrong CurveMultitokenPool indexes')
+    this.core = core
+    this.index0 = index0
+    this.index1 = index1
+    /*} else {
       // for deserealization
       super(
         undefined as unknown as Address,
@@ -43,7 +43,7 @@ export class CurveMultitokenPool extends RPool {
         MIN_LIQUIDITY,
         SWAP_GAS_COST,
       )
-    }
+    }*/
   }
 
   override updateReserves(_res0: bigint, _res1: bigint) {
@@ -334,6 +334,13 @@ export class CurveMultitokenCore {
 
   cleanTmpData() {
     this.currentFlow = this.reserves.map(() => 0)
+  }
+
+  getOriginalRates(): number[] {
+    const decimalsMax = Math.max(...this.tokens.map((t) => t.decimals))
+    return this.rates.map(
+      (r, i) => r / 10 ** (decimalsMax - this.tokens[i].decimals),
+    )
   }
 }
 
