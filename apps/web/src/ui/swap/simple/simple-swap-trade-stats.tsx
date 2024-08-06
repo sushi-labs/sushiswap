@@ -98,7 +98,7 @@ export const SimpleSwapTradeStats: FC = () => {
             {loading || !trade?.fee ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `$${trade?.fee}`
+              `${trade?.fee}`
             )}
           </span>
         </div>
@@ -113,9 +113,9 @@ export const SimpleSwapTradeStats: FC = () => {
             ) : loading || !trade?.gasSpent || trade.gasSpent === '0' ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px]" />
             ) : trade?.gasSpent ? (
-              `${trade.gasSpent} ${Native.onChain(chainId).symbol} ($${
-                trade.gasSpentUsd
-              })`
+              `${trade.gasSpent} ${Native.onChain(chainId).symbol} ${
+                trade?.gasSpentUsd ? `($$${trade.gasSpentUsd})` : ''
+              }`
             ) : null}
           </span>
         </div>
