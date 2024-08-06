@@ -11,6 +11,7 @@ import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
 import { ADDITIONAL_BASES } from '../config/additional-bases.js'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '../config/bases-to-check-trades-against.js'
+import { STABLES } from '../config/stables.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
 import { Token, type Type } from '../currency/index.js'
 import {
@@ -108,6 +109,19 @@ export const isWrapOrUnwrap = ({
   toToken,
 }: { fromToken: Type; toToken: Type }) =>
   isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
+
+export const isStable = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) => {
+  const fromTokenIsStable = STABLES[fromToken.chainId].some(
+    (t: Token) => t === fromToken.wrapped,
+  )
+  const toTokenIsStable = STABLES[toToken.chainId].some(
+    (t: Token) => t === toToken.wrapped,
+  )
+  return fromTokenIsStable && toTokenIsStable
+}
 
 export interface RPParams {
   tokenIn: Address
