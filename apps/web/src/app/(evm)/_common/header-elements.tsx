@@ -1,9 +1,11 @@
 import {
   type NavigationElement,
   NavigationElementType,
-  NavigationMenuLink,
+  NavigationListItem,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
   OnramperButton,
-  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 import {
   EXPLORE_NAVIGATION_LINKS,
@@ -19,14 +21,35 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     type: NavigationElementType.Dropdown,
   },
   {
-    title: 'Swap',
-    href: '/swap',
+    show: 'desktop',
+    type: NavigationElementType.Custom,
+    item: (
+      <NavigationMenuItem className={NavigationElementType.Custom}>
+        <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
+        <NavigationMenuContent>
+          <ul className="w-[400px] gap-3 p-4">
+            <NavigationListItem title={'Swap'} href={'/swap'}>
+              The easiest way to trade.
+            </NavigationListItem>
+            <OnramperButton>
+              <NavigationListItem title={'Buy Crypto'}>
+                Onramp with fiat.
+              </NavigationListItem>
+            </OnramperButton>
+          </ul>
+        </NavigationMenuContent>
+      </NavigationMenuItem>
+    ),
+  },
+  {
+    title: 'Explore',
+    href: `/${chainId ?? 1}/explore/pools`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },
   {
-    title: 'Pools',
-    href: `/${chainId ?? 1}/explore/pools`,
+    title: 'Positions',
+    href: `/${chainId ?? 1}/positions`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },
@@ -35,17 +58,6 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     href: '/stake',
     show: 'desktop',
     type: NavigationElementType.Single,
-  },
-  {
-    type: NavigationElementType.Custom,
-    item: (
-      <OnramperButton>
-        <NavigationMenuLink className={navigationMenuTriggerStyle}>
-          Buy Crypto
-        </NavigationMenuLink>
-      </OnramperButton>
-    ),
-    show: 'desktop',
   },
   {
     title: 'More',

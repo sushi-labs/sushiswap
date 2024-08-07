@@ -89,7 +89,7 @@ export const UserPortfolio = () => {
               className="rounded-full"
             />
           ) : null}
-          <span>{shortenAddress(address, isSm ? 3 : 2)}</span>
+          <span>{shortenAddress(address)}</span>
         </Button>
       }
       content={content}

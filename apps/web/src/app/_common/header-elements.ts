@@ -74,14 +74,20 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     type: NavigationElementType.Dropdown,
   },
   {
-    title: 'Swap',
+    title: 'Trade',
     href: '/swap',
     show: 'desktop',
     type: NavigationElementType.Single,
   },
   {
-    title: 'Pools',
+    title: 'Explore',
     href: `/${chainId ?? 1}/explore/pools`,
+    show: 'desktop',
+    type: NavigationElementType.Single,
+  },
+  {
+    title: 'Positions',
+    href: `/${chainId ?? 1}/positions`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },
