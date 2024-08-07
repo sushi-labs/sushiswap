@@ -11,6 +11,7 @@ import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
 import { ADDITIONAL_BASES } from '../config/additional-bases.js'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '../config/bases-to-check-trades-against.js'
+import { LSDS } from '../config/lsds.js'
 import { STABLES } from '../config/stables.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
 import { Token, type Type } from '../currency/index.js'
@@ -127,10 +128,10 @@ export const isLsd = ({
   fromToken,
   toToken,
 }: { fromToken: Type; toToken: Type }) => {
-  const fromTokenIsLsd = STABLES[fromToken.chainId].some((t: Token) =>
+  const fromTokenIsLsd = LSDS[fromToken.chainId].some((t: Token) =>
     t.equals(fromToken),
   )
-  const toTokenIsLsd = STABLES[toToken.chainId].some((t: Token) =>
+  const toTokenIsLsd = LSDS[toToken.chainId].some((t: Token) =>
     t.equals(toToken),
   )
   return (
