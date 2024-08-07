@@ -19,7 +19,7 @@ export const CrossChainSwapWidget = () => {
         <CrossChainSwapSettingsOverlay />
       </div>
       <CrossChainSwapMaintenanceMessage />
-      <CrossChainBanner />
+      {/* <CrossChainBanner /> */}
       <CrossChainSwapToken0Input />
       <CrossChainSwapSwitchTokensButton />
       <div className="flex flex-col">

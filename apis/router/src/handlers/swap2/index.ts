@@ -13,7 +13,6 @@ import {
   isLsd,
   isStable,
   isWrapOrUnwrap,
-  makeAPI02Object,
 } from 'sushi/router'
 import { MultiRoute, getBigInt } from 'sushi/tines'
 import { Address } from 'viem'
@@ -27,6 +26,7 @@ import {
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
 } from '../../config.js'
+import { makeAPI02Object } from '../../make-api-object.js'
 // import { swapResponse } from './response.js'
 import { querySchema5 } from './schema.js'
 
@@ -134,7 +134,7 @@ const handler = (
           enableFee &&
           !isWrapOrUnwrap({ fromToken: tokenIn, toToken: tokenOut }) &&
           !isStable({ fromToken: tokenIn, toToken: tokenOut }) &&
-          isLsd({ fromToken: tokenIn, toToken: tokenOut })
+          !isLsd({ fromToken: tokenIn, toToken: tokenOut })
 
         if (chargeFee && chargeFeeBy === TransferValue.Input) {
           processFunction = ProcessFunction.ProcessRouteWithTransferValueInput

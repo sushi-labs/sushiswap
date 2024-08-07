@@ -9,6 +9,7 @@ import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
   MULTISIG_ADDRESS,
+  ROUTE_PROCESSOR_5_ADDRESS,
   isMultisigChainId,
   isRouteProcessor4ChainId,
   isRouteProcessor5ChainId,
@@ -17,7 +18,7 @@ import {
 import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
 import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
-import { stringify, zeroAddress } from 'viem'
+import { Address, stringify, zeroAddress } from 'viem'
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
@@ -151,6 +152,12 @@ export const useTrade = (variables: UseTradeParams) => {
     enabled: isWNativeSupported(chainId),
   })
 
+  const price = useMemo(() => {
+    return Native.onChain(chainId).wrapped.address === zeroAddress
+      ? new Fraction(0)
+      : _price
+  }, [_price, chainId])
+
   // const { data: tokenInPrice } = usePrice({
   //   chainId,
   //   address: fromToken?.wrapped.address,
@@ -161,15 +168,16 @@ export const useTrade = (variables: UseTradeParams) => {
     address: toToken?.wrapped.address,
   })
 
-  const price = useMemo(() => {
-    return Native.onChain(chainId).wrapped.address === zeroAddress
-      ? new Fraction(0)
-      : _price
-  }, [_price, chainId])
-
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      if (data && amount && data.route && fromToken && toToken) {
+      if (
+        isRouteProcessor5ChainId(chainId) &&
+        data &&
+        amount &&
+        data.route &&
+        fromToken &&
+        toToken
+      ) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
         const amountOut = Amount.fromRawAmount(
           toToken,
@@ -189,20 +197,6 @@ export const useTrade = (variables: UseTradeParams) => {
 
         // const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-        // let writeArgs: UseTradeReturnWriteArgs = data?.args
-        //   ? ([
-        //       data.args.tokenIn as Address,
-        //       data.args.amountIn,
-        //       data.args.tokenOut as Address,
-        //       data.args.amountOutMin,
-        //       data.args.to as Address,
-        //       data.args.routeCode as Hex,
-        //     ] as const)
-        //   : undefined
-        // let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
-
-        const value = fromToken.isNative ? data?.args?.amountIn : undefined
-
         // if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
         //   writeArgs = [
         //     '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
@@ -211,6 +205,8 @@ export const useTrade = (variables: UseTradeParams) => {
         //   ]
         //   value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         // }
+
+        const value = fromToken.isNative ? data?.args?.amountIn : undefined
 
         const gasSpent = gasPrice
           ? Amount.fromRawAmount(
@@ -247,13 +243,16 @@ export const useTrade = (variables: UseTradeParams) => {
                   .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
               : '$0',
           route: data.route,
-          // functionName: isOffset
-          //   ? 'transferValueAndprocessRoute'
-          //   : 'processRoute',
-          // writeArgs,
-          value,
+          tx:
+            data?.args && data?.txdata
+              ? {
+                  from: data.args.to as Address,
+                  to: ROUTE_PROCESSOR_5_ADDRESS[chainId],
+                  data: data.txdata,
+                  value,
+                }
+              : undefined,
           tokenTax,
-          txdata: data.txdata,
         }
       }
 
@@ -266,12 +265,9 @@ export const useTrade = (variables: UseTradeParams) => {
         gasSpent: undefined,
         gasSpentUsd: undefined,
         fee: undefined,
-        // writeArgs: undefined,
         route: undefined,
-        // functionName: 'processRoute',
-        value: undefined,
+        tx: undefined,
         tokenTax: undefined,
-        txdata: undefined,
       }
     },
     [

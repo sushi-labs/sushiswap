@@ -8,12 +8,7 @@ import {
   RouteProcessor4ChainId,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import {
-  NativeWrapProvider,
-  Router,
-  RouterLiquiditySource,
-  makeAPI02Object,
-} from 'sushi/router'
+import { NativeWrapProvider, Router, RouterLiquiditySource } from 'sushi/router'
 import { isAddressFast } from 'sushi/serializer'
 import { MultiRoute } from 'sushi/tines'
 import { Address } from 'viem'
@@ -26,6 +21,7 @@ import {
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
 } from '../../config.js'
+import { makeAPI02Object } from '../../make-api-object.js'
 import { querySchema3_2 } from './schema.js'
 
 const nativeProvider = new NativeWrapProvider(
