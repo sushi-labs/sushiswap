@@ -67,12 +67,12 @@ export const headerElements: NavigationElement[] = [
     show: 'desktop',
     type: NavigationElementType.Single,
   },
-  {
-    title: 'Bonds',
-    href: '/bonds',
-    show: 'desktop',
-    type: NavigationElementType.Single,
-  },
+  // {
+  //   title: 'Bonds',
+  //   href: '/bonds',
+  //   show: 'desktop',
+  //   type: NavigationElementType.Single,
+  // },
   {
     title: 'Stake',
     href: '/stake',
