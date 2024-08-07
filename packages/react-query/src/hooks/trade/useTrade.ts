@@ -17,14 +17,10 @@ import {
 import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
 import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
-import { type Address, type Hex, stringify, zeroAddress } from 'viem'
+import { stringify, zeroAddress } from 'viem'
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
-import type {
-  UseTradeParams,
-  UseTradeQuerySelect,
-  UseTradeReturnWriteArgs,
-} from './types'
+import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
 
 export const TRADE_API_BASE_URL =
@@ -145,7 +141,7 @@ export const useTrade = (variables: UseTradeParams) => {
     toToken,
     amount,
     slippagePercentage,
-    carbonOffset,
+    // carbonOffset,
     gasPrice,
     tokenTax,
   } = variables
@@ -190,28 +186,31 @@ export const useTrade = (variables: UseTradeParams) => {
                 new Percent(Math.floor(+slippagePercentage * 100), 10_000),
               )[0],
             )
-        const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-        let writeArgs: UseTradeReturnWriteArgs = data?.args
-          ? ([
-              data.args.tokenIn as Address,
-              data.args.amountIn,
-              data.args.tokenOut as Address,
-              data.args.amountOutMin,
-              data.args.to as Address,
-              data.args.routeCode as Hex,
-            ] as const)
-          : undefined
-        let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
+        // const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-        if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = [
-            '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
-            20000000000000000n,
-            ...writeArgs,
-          ]
-          value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
-        }
+        // let writeArgs: UseTradeReturnWriteArgs = data?.args
+        //   ? ([
+        //       data.args.tokenIn as Address,
+        //       data.args.amountIn,
+        //       data.args.tokenOut as Address,
+        //       data.args.amountOutMin,
+        //       data.args.to as Address,
+        //       data.args.routeCode as Hex,
+        //     ] as const)
+        //   : undefined
+        // let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
+
+        const value = fromToken.isNative ? data?.args?.amountIn : undefined
+
+        // if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
+        //   writeArgs = [
+        //     '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
+        //     20000000000000000n,
+        //     ...writeArgs,
+        //   ]
+        //   value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
+        // }
 
         const gasSpent = gasPrice
           ? Amount.fromRawAmount(
@@ -248,10 +247,10 @@ export const useTrade = (variables: UseTradeParams) => {
                   .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
               : '$0',
           route: data.route,
-          functionName: isOffset
-            ? 'transferValueAndprocessRoute'
-            : 'processRoute',
-          writeArgs,
+          // functionName: isOffset
+          //   ? 'transferValueAndprocessRoute'
+          //   : 'processRoute',
+          // writeArgs,
           value,
           tokenTax,
           txdata: data.txdata,
@@ -267,16 +266,16 @@ export const useTrade = (variables: UseTradeParams) => {
         gasSpent: undefined,
         gasSpentUsd: undefined,
         fee: undefined,
-        writeArgs: undefined,
+        // writeArgs: undefined,
         route: undefined,
-        functionName: 'processRoute',
+        // functionName: 'processRoute',
         value: undefined,
         tokenTax: undefined,
         txdata: undefined,
       }
     },
     [
-      carbonOffset,
+      // carbonOffset,
       amount,
       chainId,
       fromToken,

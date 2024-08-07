@@ -39,8 +39,8 @@ export interface UseTradeReturn {
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
   gasSpentUsd: string | undefined
-  functionName: 'processRoute' | 'transferValueAndprocessRoute'
-  writeArgs: UseTradeReturnWriteArgs
+  // functionName: 'processRoute' | 'transferValueAndprocessRoute'
+  // writeArgs: UseTradeReturnWriteArgs
   route: TradeType['route']
   value?: bigint | undefined
   tokenTax: Percent | false | undefined

@@ -27,9 +27,9 @@ export const SimpleSwapTradeStats: FC = () => {
   const {
     state: { chainId, swapAmountString, recipient, forceClient },
   } = useDerivedStateSimpleSwap()
-  const { isInitialLoading: isLoading, data: trade } = useSimpleSwapTrade()
+  const { isLoading, data: trade } = useSimpleSwapTrade()
   const { isFallback } = useFallback(chainId)
-  const loading = Boolean(isLoading && !trade?.writeArgs)
+  const loading = Boolean(isLoading && !trade)
 
   return (
     <Collapsible

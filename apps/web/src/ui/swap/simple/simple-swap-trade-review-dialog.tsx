@@ -248,7 +248,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 txHash: hash,
                 exporerLink: Chain.txUrl(chainId, hash),
                 route: stringify(trade?.route),
-                args: stringify(trade?.writeArgs),
+                txdata: stringify(trade?.txdata),
               })
             }
           } else {
@@ -308,7 +308,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 chainId: chainId,
                 txHash: hash,
                 route: stringify(trade?.route),
-                args: stringify(trade?.writeArgs),
+                txdata: stringify(trade?.txdata),
               })
             }
           }
@@ -339,17 +339,18 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
       sendAnalyticsEvent(SwapEventName.SWAP_ERROR, {
         route: stringify(trade?.route),
+        data: stringify(trade?.txdata),
         error: e instanceof Error ? e.message : undefined,
       })
 
       log.error('swap error', {
         route: stringify(trade?.route),
-        args: stringify(trade?.writeArgs),
+        data: stringify(trade?.txdata),
         error: stringify(e),
       })
       createErrorToast(e.message, false)
     },
-    [trade?.route, trade?.writeArgs],
+    [trade?.route, trade?.txdata],
   )
 
   const {
