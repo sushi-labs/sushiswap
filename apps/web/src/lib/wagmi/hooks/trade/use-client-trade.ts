@@ -4,10 +4,9 @@ import {
   usePrice,
 } from '@sushiswap/react-query'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
-import { is } from 'date-fns/locale'
 import { useMemo } from 'react'
 import { getBigInt } from 'sushi'
-import { calculateFee, slippageAmount } from 'sushi/calculate'
+import { calculateFee } from 'sushi/calculate'
 import {
   MULTISIG_ADDRESS,
   ROUTE_PROCESSOR_5_ADDRESS,
@@ -29,7 +28,9 @@ import { zeroAddress } from 'viem'
 import { useGasPrice } from 'wagmi'
 import { usePoolsCodeMap } from '../pools/hooks/usePoolsCodeMap'
 
-export const useClientTrade = (variables: UseTradeParams) => {
+export const useClientTrade = (
+  variables: UseTradeParams,
+): UseQueryResult<UseTradeReturn> => {
   const {
     chainId,
     fromToken,
@@ -226,5 +227,5 @@ export const useClientTrade = (variables: UseTradeParams) => {
     enabled: Boolean(
       enabled && poolsCodeMap && gasPrice && fromToken && toToken && chainId,
     ),
-  }) as UseQueryResult<UseTradeReturn>
+  })
 }

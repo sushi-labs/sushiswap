@@ -1,4 +1,3 @@
-import { CrossChainBanner } from '../cross-chain-banner'
 import { SwapModeButtons } from '../swap-mode-buttons'
 import { SimpleSwapBridgeBanner } from './simple-swap-bridge-banner'
 import { SimpleSwapHeader } from './simple-swap-header'
@@ -21,7 +20,6 @@ export const SimpleSwapWidget = () => {
         <SimpleSwapSettingsOverlay />
       </div>
       <SwapMaintenanceMessage />
-      {/* <CrossChainBanner /> */}
       <SimpleSwapToken0Input />
       <SimpleSwapSwitchTokensButton />
       <div className="flex flex-col">
