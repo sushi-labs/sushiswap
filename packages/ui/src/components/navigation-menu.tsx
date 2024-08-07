@@ -42,7 +42,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
-const navigationMenuTriggerStyle = () => buttonVariants({ variant: 'ghost' })
+const navigationMenuTriggerStyle = buttonVariants({ variant: 'ghost' })
 
 const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
@@ -51,7 +51,7 @@ const NavigationMenuTrigger = React.forwardRef<
   <NavigationMenuPrimitive.Trigger
     ref={ref}
     className={classNames(
-      navigationMenuTriggerStyle(),
+      navigationMenuTriggerStyle,
       'group',
       className,
       '!gap-0.5 !pr-3',
