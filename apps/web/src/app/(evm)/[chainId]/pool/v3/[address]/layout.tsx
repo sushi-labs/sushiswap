@@ -33,9 +33,6 @@ export default async function Layout({
   const referer = headersList.get('referer')
   return (
     <>
-      <Container maxWidth="5xl" className="px-4">
-        <Breadcrumb />
-      </Container>
       <Container maxWidth="5xl" className="pt-10 px-4">
         <PoolHeader
           backUrl={referer?.includes('/pool?') ? referer?.toString() : '/pool'}
