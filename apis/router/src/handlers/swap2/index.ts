@@ -48,11 +48,11 @@ async function processUnknownToken(
   return token
 }
 
-const handler = (
+function handler(
   querySchema: typeof querySchema5,
   routeProcessorParams: typeof Router.routeProcessor5Params,
   routeProcessorAddress: Address,
-) => {
+) {
   return (client: ExtractorClient) => {
     return async (req: Request, res: Response) => {
       res.setHeader('Cache-Control', 's-maxage=2, stale-while-revalidate=28')
