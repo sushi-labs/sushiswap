@@ -136,7 +136,6 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
-      _searchParams.set('chainId', currency.chainId.toString())
       _searchParams.set('fromCurrency', _fromCurrency)
       if (toCurrency) {
         _searchParams.set(
@@ -154,7 +153,6 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       const _searchParams = new URLSearchParams(
         Array.from(searchParams.entries()),
       )
-      _searchParams.set('chainId', currency.chainId.toString())
       _searchParams.set('toCurrency', _toCurrency)
       if (fromCurrency) {
         _searchParams.set(

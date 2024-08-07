@@ -11,8 +11,7 @@ import {
 } from '@sushiswap/ui'
 import { SelectIcon } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import React from 'react'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { ChainId } from 'sushi/chain'
 import {
   SushiSwapV3ChainId,
