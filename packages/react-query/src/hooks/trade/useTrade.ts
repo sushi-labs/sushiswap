@@ -5,7 +5,10 @@ import {
 } from '@sushiswap/telemetry'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
-import { isStable, isWrapOrUnwrap } from 'sushi'
+import {
+  // isStable,
+  isWrapOrUnwrap,
+} from 'sushi'
 import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
@@ -238,14 +241,13 @@ export const useTrade = (variables: UseTradeParams) => {
             price && gasSpent
               ? gasSpent.multiply(price.asFraction).toSignificant(4)
               : undefined,
-          fee:
-            !isWrapOrUnwrap({ fromToken, toToken }) &&
-            !isStable({ fromToken, toToken })
-              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
-                  .multiply(new Percent(25, 10000))
-                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
-                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
-              : '$0',
+          fee: !isWrapOrUnwrap({ fromToken, toToken })
+            ? // && !isStable({ fromToken, toToken })
+              `${tokenOutPrice ? '$' : ''}${minAmountOut
+                .multiply(new Percent(25, 10000))
+                .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
+                .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
+            : '$0',
           route: data.route,
           functionName: isOffset
             ? 'transferValueAndprocessRoute'
