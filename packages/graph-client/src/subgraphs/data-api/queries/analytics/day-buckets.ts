@@ -3,6 +3,7 @@ import type { VariablesOf } from 'gql.tada'
 import { request, type RequestOptions } from 'src/lib/request'
 import { graphql } from '../../graphql'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const AnalyticsDayBucketsQuery = graphql(
   `
@@ -37,7 +38,7 @@ export async function getAnalyticsDayBuckets(
   const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
-    { url, document: AnalyticsDayBucketsQuery, variables, requestHeaders: { 'Origin': 'sushi.com' } },
+    { url, document: AnalyticsDayBucketsQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
     options,
   )
   if (result) {

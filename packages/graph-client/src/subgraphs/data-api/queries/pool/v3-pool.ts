@@ -17,6 +17,7 @@ import { isSushiSwapV3ChainId } from 'sushi/config'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
 import { graphql } from '../../graphql'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const V3PoolQuery = graphql(
   `
@@ -108,7 +109,7 @@ export async function getV3Pool(
   }
 
     const result = await request(
-      { url, document: V3PoolQuery, variables },
+      { url, document: V3PoolQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
       options,
     )
     if (result.v3Pool) {

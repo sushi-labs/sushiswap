@@ -2,6 +2,7 @@ import type { VariablesOf } from 'gql.tada'
 import { type RequestOptions, request } from 'src/lib/request'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const PoolsQuery = graphql(
   `
@@ -48,7 +49,7 @@ export async function getTopPools(
   const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
-    { url, document: PoolsQuery, variables },
+    { url, document: PoolsQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
     options,
   )
   if (result) {

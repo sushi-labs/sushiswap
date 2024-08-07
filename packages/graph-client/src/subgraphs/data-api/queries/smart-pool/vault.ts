@@ -5,6 +5,7 @@ import { request, type RequestOptions } from 'src/lib/request'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
 import { graphql } from '../../graphql'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const VaultQuery = graphql(
   `
@@ -70,7 +71,7 @@ export async function getVault(variables: GetVault, options?: RequestOptions) {
   const url = `https://${SUSHI_DATA_API_HOST}`
   try {
     const result = await request(
-      { url, document: VaultQuery, variables },
+      { url, document: VaultQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
       options,
     )
     if (result) {

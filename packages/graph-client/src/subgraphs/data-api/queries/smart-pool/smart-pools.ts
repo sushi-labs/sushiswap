@@ -6,6 +6,7 @@ import type { ChainId } from 'sushi'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import type { Address } from 'viem'
 import { graphql } from '../../graphql'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const SmartPoolsQuery = graphql(
   `
@@ -63,7 +64,7 @@ export async function getSmartPools(
   const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
-    { url, document: SmartPoolsQuery, variables },
+    { url, document: SmartPoolsQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
     options,
   )
 

@@ -3,6 +3,7 @@ import type { VariablesOf } from 'gql.tada'
 import { request, type RequestOptions } from 'src/lib/request'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
+import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const SushiBarStats = graphql(
   `
@@ -32,7 +33,7 @@ export async function getSushiBarStats(
   const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
-    { url, document: SushiBarStats, variables },
+    { url, document: SushiBarStats, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
     options,
   )
   if (result) {
