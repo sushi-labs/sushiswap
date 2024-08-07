@@ -1,7 +1,9 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
+import { useChainId } from 'wagmi'
 
 export default function NotFound() {
+  const chainId = useChainId()
   return (
     <div className="flex justify-center items-center pt-20 px-4">
       <div className="flex flex-col gap-8 text-center">
@@ -30,7 +32,9 @@ export default function NotFound() {
             icon={ChevronRightIcon}
             iconPosition="end"
           >
-            <LinkInternal href="/pool">See a list of our pools</LinkInternal>
+            <LinkInternal href={`/${chainId}/explore/pools`}>
+              See a list of our pools
+            </LinkInternal>
           </Button>
         </div>
       </div>
