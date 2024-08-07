@@ -5,10 +5,10 @@ import { graphql } from '../../graphql'
 
 export const PoolsQuery = graphql(
   `
-query Pools($chainId: Int!) {
+  query TopPools($chainId: Int!) {
     topPools(chainId: $chainId) {
-      chainId
       id
+      chainId
       name
       address
       createdAt
@@ -30,9 +30,10 @@ query Pools($chainId: Int!) {
       feeApr1d
       totalApr1d
       incentiveApr
-      source
-      isIncentivized
       isSmartPool
+      isIncentivized
+      wasIncentivized
+      source
     }
   }
 `,
@@ -54,7 +55,7 @@ export async function getTopPools(
     return result.topPools ?? []
   }
 
-  throw new Error('No pools found')
+  return []
 }
 
 export type TopPools = Awaited<ReturnType<typeof getTopPools>>

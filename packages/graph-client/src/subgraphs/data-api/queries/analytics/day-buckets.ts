@@ -41,10 +41,15 @@ export async function getAnalyticsDayBuckets(
     options,
   )
   if (result) {
-    return result.sushiDayBuckets
+    return result.sushiDayBuckets ?? {
+      v2: [],
+      v3: [],
+    }
   }
-
-  throw new Error('No sushi day buckets found')
+  return {
+    v2: [],
+    v3: [],
+  }
 }
 
 export type AnalyticsDayBuckets = Awaited<

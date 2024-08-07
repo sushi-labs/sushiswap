@@ -98,7 +98,6 @@ export async function getV2Pool(
     throw new Error('Invalid chainId')
   }
 
-  try {
     const result = await request(
       { url, document: V2PoolQuery, variables },
       options,
@@ -177,12 +176,8 @@ export async function getV2Pool(
         PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>
       >
     }
-
-    throw new Error('No pool found')
-  } catch (_e) {
-    // console.error(e)
     return null
-  }
+
 }
 
 export type V2Pool = NonNullable<Awaited<ReturnType<typeof getV2Pool>>>
