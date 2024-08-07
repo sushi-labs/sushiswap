@@ -260,10 +260,9 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
       fee: SushiSwapV3FeeAmount.HIGH,
     })
-    const removeLiquidityUrl = BASE_URL.concat(
-      `/${this.chainId}:${poolAddress}`,
-    )
-    await this.page.goto(removeLiquidityUrl)
+    // TODO: position Number?
+    const url = BASE_URL.concat(this.chainId.toString()).concat('/pool/v23/').concat(poolAddress).concat('/positions/create')
+    await this.page.goto(url)
     await this.page.goto(BASE_URL)
     await this.connect()
     await this.page.locator('[testdata-id=my-positions-button]').click()
@@ -313,10 +312,9 @@ export class PoolPage extends BaseActions {
       tokenA: this.nativeToken.wrapped,
       tokenB: fakeToken,
     })
-    const removeLiquidityUrl = BASE_URL.concat(
-      `/${this.chainId}:${poolAddress}/remove`,
-    )
-    await this.page.goto(removeLiquidityUrl)
+
+    const url = BASE_URL.concat(this.chainId.toString()).concat('/pool/v2/').concat(poolAddress).concat('/remove')
+    await this.page.goto(url)
     await this.connect()
     await this.switchNetwork(this.chainId)
 
