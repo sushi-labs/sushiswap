@@ -8,7 +8,7 @@ export const EXPLORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   },
   {
     title: 'Pools',
-    href: '/pools',
+    href: '/explore/pools',
     description: 'Earn fees by providing liquidity.',
   },
   {
@@ -20,11 +20,6 @@ export const EXPLORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     title: 'Stake',
     href: '/stake',
     description: 'Earn protocol fees by staking SUSHI.',
-  },
-  {
-    title: 'Analytics',
-    href: '/analytics',
-    description: 'Find the best opportunities',
   },
   {
     title: 'Blog',
