@@ -37,9 +37,9 @@ if (process.env.ANVIL_PORT) {
   // console.warn(`\`ANVIL_PORT\` not found. Falling back to \`${anvilPort}\`.`)
 }
 
-export let chainId: typeof ChainId.ETHEREUM | typeof ChainId.POLYGON
+export let chainId: typeof ChainId.POLYGON
 if (process.env.NEXT_PUBLIC_CHAIN_ID) {
-  chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID)
+  chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID) as typeof ChainId.POLYGON
 } else {
   chainId = 137
   // console.warn(`\`ANVIL_PORT\` not found. Falling back to \`${anvilPort}\`.`)
