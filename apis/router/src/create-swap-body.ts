@@ -56,51 +56,6 @@ class TokenConvertor {
   }
 }
 
-// export function makeAPI02Object(
-//   route: MultiRoute,
-//   rpParams: RPParams | undefined,
-//   routeProcessorAddr: string,
-// ) {
-//   if (route.status === RouteStatus.NoWay) return { status: RouteStatus.NoWay }
-//   const tokens = new TokenConvertor()
-//   route.legs.forEach((l) => {
-//     tokens.addToken(l.tokenFrom)
-//     tokens.addToken(l.tokenTo)
-//   })
-//   const APIObj = {
-//     status: route.status,
-//     tokens: tokens.getTokenList(),
-//     tokenFrom: tokens.getTokenIndex(route.fromToken),
-//     tokenTo: tokens.getTokenIndex(route.toToken),
-
-//     primaryPrice: route.primaryPrice,
-//     swapPrice: route.swapPrice,
-//     priceImpact: route.priceImpact,
-
-//     amountIn: route.amountInBI.toString(),
-//     assumedAmountOut: route.amountOutBI.toString(),
-//     gasSpent: route.gasSpent,
-
-//     route: route.legs.map((l) => makeAPI02Leg(l, tokens)),
-//   } as any
-//   if (rpParams !== undefined) {
-//     APIObj.routeProcessorAddr = routeProcessorAddr
-//     APIObj.routeProcessorArgs = {
-//       tokenIn: rpParams.tokenIn,
-//       amountIn: rpParams.amountIn.toString(),
-//       tokenOut: rpParams.tokenOut,
-//       amountOutMin: rpParams.amountOutMin.toString(),
-//       to: rpParams.to,
-//       routeCode: rpParams.routeCode,
-//       txdata: rpParams.data,
-//     }
-//     if (rpParams.value !== undefined)
-//       APIObj.routeProcessorArgs.value = rpParams.value.toString()
-//   }
-
-//   return APIObj
-// }
-
 export function createSwapBody(
   route: MultiRoute,
   rpParams?: RPParams | undefined,
@@ -157,7 +112,6 @@ export function createSwapBody(
             amountOutMin: rpParams.amountOutMin.toString(),
             to: rpParams.to,
             routeCode: rpParams.routeCode,
-            txdata: rpParams.data,
             value:
               rpParams.value !== undefined
                 ? rpParams.value.toString()

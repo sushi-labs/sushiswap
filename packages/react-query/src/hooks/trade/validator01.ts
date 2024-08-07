@@ -69,5 +69,4 @@ export const tradeValidator01 = z.object({
       value: z.coerce.bigint().optional(),
     }),
   ),
-  txdata: z.optional(z.string()),
 })

@@ -149,9 +149,6 @@ export function apiAdapter02To01(
             routeCode: res.routeProcessorArgs.routeCode,
           }
         : undefined,
-      txdata: res.routeProcessorArgs
-        ? res.routeProcessorArgs.txdata
-        : undefined,
       tx: res.tx ? res.tx : undefined,
     }
   }
