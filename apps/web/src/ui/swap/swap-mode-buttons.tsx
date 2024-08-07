@@ -10,7 +10,6 @@ import {
   HoverCardTrigger,
 } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 import { PathnameButton } from '../pathname-button'
@@ -24,20 +23,16 @@ export const SwapModeButtons = () => {
         </PathnameButton>
       </Link>
       <HoverCard>
-        <motion.div layoutId="container">
-          <motion.div layout layoutId="title">
-            <Link href="/swap/cross-chain">
-              <PathnameButton pathname="/swap/cross-chain" size="sm">
-                <HoverCardTrigger asChild>
-                  <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
-                    <ShuffleIcon width={20} height={20} className="text-blue" />
-                    Cross Chain
-                  </span>
-                </HoverCardTrigger>
-              </PathnameButton>
-            </Link>
-          </motion.div>
-        </motion.div>
+        <Link href="/swap/cross-chain">
+          <PathnameButton pathname="/swap/cross-chain" size="sm">
+            <HoverCardTrigger asChild>
+              <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
+                <ShuffleIcon width={20} height={20} className="text-blue" />
+                Cross Chain
+              </span>
+            </HoverCardTrigger>
+          </PathnameButton>
+        </Link>
         <HoverCardContent className="!p-0 max-w-[320px]">
           <CardHeader>
             <CardTitle>Cross-chain Swap</CardTitle>
