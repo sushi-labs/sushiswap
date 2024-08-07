@@ -116,6 +116,6 @@ export function useSimulateTrade({
           ? null
           : simulateTrade.error,
     }),
-    [simulateTrade, trade, chainId, address],
+    [simulateTrade, trade, address],
   )
 }
