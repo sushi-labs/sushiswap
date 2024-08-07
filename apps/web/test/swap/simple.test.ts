@@ -22,15 +22,7 @@ const url = 'http://localhost:3000/swap'
 const native = Native.onChain(chainId)
 const wnative = native.wrapped
 
-const polygonBridgedUsdc = new Token({
-  chainId: ChainId.POLYGON,
-  address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  symbol: 'USDC.e',
-  name: 'USD Coin (PoS)',
-  decimals: 6,
-})
-
-const usdc = chainId === ChainId.POLYGON ? polygonBridgedUsdc : USDC[chainId]
+const usdc = USDC[chainId]
 const usdt = USDT[chainId]
 const wbtc = WBTC[chainId]
 // let snapshot: string
@@ -87,10 +79,10 @@ test('Wrap and unwrap', async ({ page }) => {
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-wrap.json`)
-  await swapPage.wrap(native, wnative, '10')
+  await swapPage.wrap(native, wnative, '100')
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-unwrap.json`)
-  await swapPage.wrap(wnative, native, '10')
+  await swapPage.wrap(wnative, native, '100')
 })
 
 test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {

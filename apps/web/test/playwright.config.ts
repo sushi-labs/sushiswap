@@ -21,8 +21,8 @@ const config: PlaywrightTestConfig = {
   // quiet: !!process.env.CI,
   quiet: true,
   testMatch: [
-    'pool.test.ts',
     'simple.test.ts',
+    'pool.test.ts',
     // 'smart.test.ts',
     // 'cross-chain.test.ts',
   ],
@@ -136,7 +136,7 @@ const config: PlaywrightTestConfig = {
       reuseExistingServer: !process.env.CI,
       env: {
         EDGE_CONFIG: String(process.env.EDGE_CONFIG),
-        NEXT_PUBLIC_APP_ENV: String(process.env.NEXT_PUBLIC_APP_ENV),
+        NEXT_PUBLIC_APP_ENV: 'test',
         NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
       },
       // stderr: 'pipe',

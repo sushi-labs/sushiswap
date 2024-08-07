@@ -3,8 +3,8 @@ import { type UseTradeParams, tradeValidator02 } from '@sushiswap/react-query'
 import { ChainId } from 'sushi/chain'
 import {
   API_BASE_URL,
-  MULTISIG_ADDRESS,
-  isMultisigChainId,
+  // MULTISIG_ADDRESS,
+  // isMultisigChainId,
   publicClientConfig,
 } from 'sushi/config'
 import { Amount, Native, USDC, USDT, WBTC } from 'sushi/currency'
@@ -83,21 +83,19 @@ const getSwapApiResult = async ({
   params.searchParams.set('gasPrice', `${gasPrice}`)
   params.searchParams.set('to', `${RECIPIENT}`)
   params.searchParams.set('preferSushi', 'true')
-  params.searchParams.set('enableFee', 'true')
-  params.searchParams.set(
-    'feeReceiver',
-    isMultisigChainId(chainId)
-      ? MULTISIG_ADDRESS[chainId]
-      : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
-  )
-  params.searchParams.set('fee', '0.0025')
-  params.searchParams.set('feeBy', 'output')
+  // params.searchParams.set('enableFee', 'true')
+  // params.searchParams.set(
+  //   'feeReceiver',
+  //   isMultisigChainId(chainId)
+  //     ? MULTISIG_ADDRESS[chainId]
+  //     : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
+  // )
+  // params.searchParams.set('fee', '0.0025')
+  // params.searchParams.set('feeBy', 'output')
   params.searchParams.set('includeTransaction', 'true')
   params.searchParams.set('includeRoute', 'true')
 
   if (source !== undefined) params.searchParams.set('source', `${source}`)
-
-  console.log(params.toString())
 
   const res = await fetch(params.toString())
   const json = await res.json()
