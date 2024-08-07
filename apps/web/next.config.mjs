@@ -7,7 +7,7 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
 
-const FURO_URL = 'https://furo.sushi.com'
+const FURO_URL = 'https://pay.sushi.com'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
@@ -68,6 +68,16 @@ const nextConfig = bundleAnalyzer({
         permanent: true,
         destination: '/swap?chainId=2046399126',
       },
+      {
+        source: '/furo',
+        permanent: true,
+        destination: `${FURO_URL}`,
+      },
+      {
+        source: '/furo/:path*',
+        permanent: true,
+        destination: `${FURO_URL}/:path*`,
+      },
     ]
   },
   async rewrites() {
@@ -94,14 +104,6 @@ const nextConfig = bundleAnalyzer({
       //   ],
       //   destination: '/pay/:path*',
       // },
-      {
-        source: '/furo',
-        destination: `${FURO_URL}/furo`,
-      },
-      {
-        source: '/furo/:path*',
-        destination: `${FURO_URL}/furo/:path*`,
-      },
     ]
   },
 })

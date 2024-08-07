@@ -21,7 +21,8 @@ export const GOLDSKY_COMMUNITY_HOST =
   'api.goldsky.com/api/public/project_cl8ylkiw00krx0hvza0qw17vn/subgraphs'
 export const WAGMI_METIS_HOST = 'metis.graph.wagmi.com/subgraphs/name'
 export const WAGMI_KAVA_HOST = 'kava.graph.wagmi.com/subgraphs/name'
-export const METIS_0XGRAPH_HOST = 'metisapi.0xgraph.xyz/subgraphs/name'
+export const METIS_0XGRAPH_HOST =
+  'metisapi.0xgraph.xyz/api/public/fc1ae952-7a36-44ac-9e9b-f46d70cedf7d/subgraphs'
 export const SKALE_HOST =
   'elated-tan-skat-graph.skalenodes.com:8000/subgraphs/name'
 
