@@ -61,16 +61,30 @@ export async function getV3BasePoolsByToken(
   options?: RequestOptions,
 ): Promise<PoolV3<PoolBase>[]> {
   const url = `https://${SUSHI_DATA_API_HOST}`
-  const chainId = Number(variables.chainId) as ChainId
+  const chainId = variables.chainId as ChainId
 
   if (!isSushiSwapV3ChainId(chainId)) {
     throw new Error('Invalid chainId')
   }
 
+  const tokens = [variables.token0, variables.token1].sort() as [
+    `0x${string}`,
+    `0x${string}`,
+  ]
+
   const result = await request(
-    { url, document: V3PoolsByTokensQuery, variables },
+    {
+      url,
+      document: V3PoolsByTokensQuery,
+      variables: {
+        chainId: chainId,
+        token0: tokens[0].toLowerCase(),
+        token1: tokens[1].toLowerCase(),
+      },
+    },
     options,
   )
+
   if (result.v3PoolsByTokens) {
     return result.v3PoolsByTokens.map(
       (pool) =>
