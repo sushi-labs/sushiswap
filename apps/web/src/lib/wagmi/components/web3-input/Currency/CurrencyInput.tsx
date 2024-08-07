@@ -151,7 +151,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         hideSearch={hideSearch}
       >
         <Button
-          data-state={isLoading ? 'inactive' : 'active'}
+          data-state={currencyLoading ? 'inactive' : 'active'}
           size="lg"
           variant={currency ? 'secondary' : 'default'}
           id={id}
@@ -181,7 +181,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
       </TokenSelector>
     )
   }, [
-    isLoading,
+    currencyLoading,
     id,
     onSelect,
     currencies,
@@ -213,7 +213,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           )}
         >
           <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+          {currencyLoading ? (
+            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+          ) : null}
         </div>
         <div
           data-state={isLoading ? 'inactive' : 'active'}
