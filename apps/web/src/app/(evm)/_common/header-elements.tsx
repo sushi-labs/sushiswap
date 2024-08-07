@@ -1,32 +1,20 @@
 import {
   type NavigationElement,
-  NavigationElementDropdown,
   NavigationElementType,
   NavigationMenuLink,
   OnramperButton,
   navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
-import { EXPLORE_NAVIGATION_LINKS } from 'src/app/_common/header-elements'
+import {
+  EXPLORE_NAVIGATION_LINKS,
+  MORE_NAVIGATION_LINKS,
+} from 'src/app/_common/header-elements'
+import { ChainId } from 'sushi'
 
-const MORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
-  {
-    title: 'Pay',
-    href: 'https://pay.sushi.com',
-    description:
-      'Stream or create a vesting schedule with any ERC20 to any wallet.',
-  },
-  {
-    title: 'Bonds',
-    href: 'https://sushi.com/bonds',
-    description:
-      'Buy discounted tokens with vesting to support projects in a sustainable manner.',
-  },
-]
-
-export const headerElements: NavigationElement[] = [
+export const headerElements = (chainId?: ChainId): NavigationElement[] => [
   {
     title: 'Explore',
-    items: EXPLORE_NAVIGATION_LINKS,
+    items: EXPLORE_NAVIGATION_LINKS(chainId),
     show: 'mobile',
     type: NavigationElementType.Dropdown,
   },
@@ -38,7 +26,7 @@ export const headerElements: NavigationElement[] = [
   },
   {
     title: 'Pools',
-    href: '/explore/pool',
+    href: `/${chainId ?? 1}/explore/pools`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },

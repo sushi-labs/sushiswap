@@ -1,6 +1,13 @@
-import type { NavigationElementDropdown } from '@sushiswap/ui'
+import {
+  type NavigationElement,
+  type NavigationElementDropdown,
+  NavigationElementType,
+} from '@sushiswap/ui'
+import { ChainId } from 'sushi'
 
-export const EXPLORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
+export const EXPLORE_NAVIGATION_LINKS = (
+  chainId?: ChainId,
+): NavigationElementDropdown['items'] => [
   {
     title: 'Swap',
     href: '/swap',
@@ -8,7 +15,7 @@ export const EXPLORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   },
   {
     title: 'Pools',
-    href: '/explore/pools',
+    href: `/${chainId ?? 1}/explore/pools`,
     description: 'Earn fees by providing liquidity.',
   },
   {
@@ -41,5 +48,53 @@ export const EXPLORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     title: 'List enquiry',
     href: '/tokenlist-request',
     description: 'Get your token on our default token list.',
+  },
+]
+
+export const MORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
+  {
+    title: 'Pay',
+    href: 'https://pay.sushi.com',
+    description:
+      'Stream or create a vesting schedule with any ERC20 to any wallet.',
+  },
+  {
+    title: 'Bonds',
+    href: 'https://sushi.com/bonds',
+    description:
+      'Buy discounted tokens with vesting to support projects in a sustainable manner.',
+  },
+]
+
+export const headerElements = (chainId?: ChainId): NavigationElement[] => [
+  {
+    title: 'Explore',
+    items: EXPLORE_NAVIGATION_LINKS(chainId),
+    show: 'mobile',
+    type: NavigationElementType.Dropdown,
+  },
+  {
+    title: 'Swap',
+    href: '/swap',
+    show: 'desktop',
+    type: NavigationElementType.Single,
+  },
+  {
+    title: 'Pools',
+    href: `/${chainId ?? 1}/explore/pools`,
+    show: 'desktop',
+    type: NavigationElementType.Single,
+  },
+  {
+    title: 'Stake',
+    href: '/stake',
+    show: 'desktop',
+    type: NavigationElementType.Single,
+  },
+  {
+    title: 'More',
+    items: MORE_NAVIGATION_LINKS,
+    show: 'desktop',
+    type: NavigationElementType.Dropdown,
   },
 ]

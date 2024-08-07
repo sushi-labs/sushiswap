@@ -135,7 +135,6 @@ export type NavigationElement =
 interface NavProps extends VariantProps<typeof navigationContainerVariants> {
   leftElements: NavigationElement[]
   rightElement?: React.ReactNode
-  chainId?: number
 }
 
 const Navigation: React.FC<NavProps> = ({
