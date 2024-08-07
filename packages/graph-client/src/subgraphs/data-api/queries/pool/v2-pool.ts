@@ -182,11 +182,10 @@ export async function getV2Pool(
         PoolWithIncentives<PoolHistory1D<PoolV2<PoolBase>>>
       >
     }
-    return null
   } catch (error) {
     console.error('getV2Pool error', error)
-    return null
   }
+  return null
 }
 
 export type V2Pool = NonNullable<Awaited<ReturnType<typeof getV2Pool>>>

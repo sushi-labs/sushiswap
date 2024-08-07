@@ -200,12 +200,10 @@ export async function getV3Pool(
         PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
       >
     }
-
-    return null
   } catch (error) {
     console.error('getV3Pool error', error)
-    return null
   }
+  return null
 }
 
 export type MaybeV3Pool = Awaited<ReturnType<typeof getV3Pool>>

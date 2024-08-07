@@ -47,19 +47,14 @@ export async function getAnalyticsDayBuckets(
       options,
     )
     if (result) {
-      return (
-        result.sushiDayBuckets ?? {
-          v2: [],
-          v3: [],
-        }
-      )
+      return result.sushiDayBuckets
     }
   } catch {
     // TODO: handle error, probably return {data, error}? or message
-    return {
-      v2: [],
-      v3: [],
-    }
+  }
+  return {
+    v2: [],
+    v3: [],
   }
 }
 

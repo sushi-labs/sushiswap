@@ -62,8 +62,8 @@ export async function getTopPools(
     }
   } catch (error) {
     console.error('getV2Pool error', error)
-    return []
   }
+  return []
 }
 
 export type TopPools = Awaited<ReturnType<typeof getTopPools>>
