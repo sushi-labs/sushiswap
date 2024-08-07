@@ -1,3 +1,5 @@
+import { isAddressFast } from 'sushi/serializer'
+import { Address } from 'viem'
 import z from 'zod'
 
 export const tokenValidator = z.object({
@@ -51,6 +53,20 @@ export const tradeValidator01 = z.object({
       tokenIn: z.string(),
       tokenOut: z.string(),
       routeCode: z.string(),
+    }),
+  ),
+  tx: z.optional(
+    z.object({
+      from: z.custom<Address>(
+        (val) => isAddressFast(val),
+        (val) => ({ message: `Incorrect address for 'from': ${val}` }),
+      ),
+      to: z.custom<Address>(
+        (val) => isAddressFast(val),
+        (val) => ({ message: `Incorrect address for 'to': ${val}` }),
+      ),
+      data: z.string(),
+      value: z.coerce.bigint().optional(),
     }),
   ),
   txdata: z.optional(z.string()),

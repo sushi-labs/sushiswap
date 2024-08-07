@@ -24,7 +24,7 @@ import {
   isStable,
   isWrapOrUnwrap,
 } from 'sushi/router'
-import { zeroAddress } from 'viem'
+import { stringify, zeroAddress } from 'viem'
 import { useGasPrice } from 'wagmi'
 import { usePoolsCodeMap } from '../pools/hooks/usePoolsCodeMap'
 
@@ -79,9 +79,10 @@ export const useClientTrade = (
         currencyB: toToken,
         amount,
         slippagePercentage,
+        gasPrice,
         recipient,
-        poolsCodeMap,
         source,
+        poolsCodeMap,
         tokenTax,
       },
     ],
@@ -227,5 +228,6 @@ export const useClientTrade = (
     enabled: Boolean(
       enabled && poolsCodeMap && gasPrice && fromToken && toToken && chainId,
     ),
+    queryKeyHashFn: stringify,
   })
 }

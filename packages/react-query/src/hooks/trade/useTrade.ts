@@ -9,7 +9,6 @@ import { slippageAmount } from 'sushi/calculate'
 import { ChainId } from 'sushi/chain'
 import {
   MULTISIG_ADDRESS,
-  ROUTE_PROCESSOR_5_ADDRESS,
   isMultisigChainId,
   isRouteProcessor4ChainId,
   isRouteProcessor5ChainId,
@@ -58,8 +57,8 @@ export const useTradeQuery = (
       'getTrade',
       {
         chainId,
-        fromToken,
-        toToken,
+        currencyA: fromToken,
+        currencyB: toToken,
         amount,
         slippagePercentage,
         gasPrice,
@@ -102,14 +101,16 @@ export const useTradeQuery = (
           ? MULTISIG_ADDRESS[chainId]
           : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
       )
-      params.searchParams.set('feeAmount', '0.0025')
-      params.searchParams.set('chargeFeeBy', 'output')
+      params.searchParams.set('fee', '0.0025')
+      params.searchParams.set('feeBy', 'output')
+      params.searchParams.set('includeTransaction', 'true')
+      params.searchParams.set('includeRoute', 'true')
       if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
-      // const json = deserialize(await res.json()) should cause react query error
       const json = await res.json()
       const resp2 = tradeValidator02.parse(json)
+
       const resp1 = apiAdapter02To01(
         resp2,
         fromToken as Type,
@@ -206,7 +207,10 @@ export const useTrade = (variables: UseTradeParams) => {
         //   value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
         // }
 
-        const value = fromToken.isNative ? data?.args?.amountIn : undefined
+        // const value =
+        //   fromToken.isNative && data?.args?.amountIn
+        //     ? data.args.amountIn
+        //     : undefined
 
         const gasSpent = gasPrice
           ? Amount.fromRawAmount(
@@ -243,15 +247,14 @@ export const useTrade = (variables: UseTradeParams) => {
                   .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
               : '$0',
           route: data.route,
-          tx:
-            data?.args && data?.txdata
-              ? {
-                  from: data.args.to as Address,
-                  to: ROUTE_PROCESSOR_5_ADDRESS[chainId],
-                  data: data.txdata,
-                  value,
-                }
-              : undefined,
+          tx: data?.tx
+            ? {
+                from: data.tx.from as Address,
+                to: data.tx.to,
+                data: data.tx.data,
+                value: data.tx.value,
+              }
+            : undefined,
           tokenTax,
         }
       }

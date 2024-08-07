@@ -121,6 +121,9 @@ async function start() {
   app.get(`/swap/v5/${CHAIN_ID}`, (req, res) => {
     return swapV5(client)(req, res)
   })
+  app.get(`/quote/v5/${CHAIN_ID}`, (req, res) => {
+    return swapV5(client)(req, res)
+  })
 
   app.get(`/token/v1/${CHAIN_ID}/:address`, tokenHandler(client))
 

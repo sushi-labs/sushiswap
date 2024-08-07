@@ -44,17 +44,12 @@ export const querySchema5 = z.object({
     .lt(1, 'maxSlippage should be lesser than 1')
     .positive()
     .default(0.005),
-  // includeRoute: z.boolean().default(true),
-  // includeRpArgs: z.boolean().default(true),
-  // includeTx: z.boolean().default(true),
-  enableFee: z.coerce.boolean().default(true),
-  feeReceiver: z.optional(
-    z.custom<Address>(
-      (val) => isAddressFast(val),
-      (val) => ({ message: `Incorrect fee receiver address: ${val}` }),
-    ),
-  ),
-  feeAmount: z
+  includeRouteProcessorParams: z.optional(z.coerce.boolean()).default(false),
+  includeTransaction: z.optional(z.coerce.boolean()).default(false),
+  includeTokens: z.optional(z.coerce.boolean()).default(false),
+  includeRoute: z.optional(z.coerce.boolean()).default(false),
+  enableFee: z.optional(z.coerce.boolean()).default(true),
+  fee: z
     .optional(
       z.coerce
         .number()
@@ -62,9 +57,14 @@ export const querySchema5 = z.object({
         .positive(),
     )
     .default(0.0025),
-  chargeFeeBy: z
-    .optional(z.nativeEnum(TransferValue))
-    .default(TransferValue.Output),
+  feeReceiver: z.optional(
+    z.custom<Address>(
+      (val) => isAddressFast(val),
+      (val) => ({ message: `Incorrect fee receiver address: ${val}` }),
+    ),
+  ),
+  feeBy: z.optional(z.nativeEnum(TransferValue)).default(TransferValue.Output),
+  debug: z.optional(z.coerce.boolean()).default(false),
 })
 
 export type querySchema5 = z.infer<typeof querySchema5>

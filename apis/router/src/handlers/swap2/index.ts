@@ -26,7 +26,7 @@ import {
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
 } from '../../config.js'
-import { makeAPI02Object } from '../../make-api-object.js'
+import { createSwapBody } from '../../create-swap-body.js'
 // import { swapResponse } from './response.js'
 import { querySchema5 } from './schema.js'
 
@@ -58,7 +58,7 @@ const handler = (
       res.setHeader('Cache-Control', 's-maxage=2, stale-while-revalidate=28')
 
       let poolCodesMap: Map<string, PoolCode> = new Map()
-      let bestRoute: MultiRoute | undefined = undefined
+      let route: MultiRoute | undefined = undefined
 
       let amountValueTransfer: bigint | undefined = undefined
       let processFunction = ProcessFunction.ProcessRoute
@@ -86,8 +86,12 @@ const handler = (
           maxSlippage,
           enableFee,
           feeReceiver,
-          feeAmount,
-          chargeFeeBy,
+          fee,
+          feeBy,
+          includeTransaction,
+          includeRouteProcessorParams,
+          includeRoute,
+          debug,
         } = parsed.data
         if (
           client.lastUpdatedTimestamp + MAX_TIME_WITHOUT_NETWORK_UPDATE <
@@ -136,18 +140,18 @@ const handler = (
           !isStable({ fromToken: tokenIn, toToken: tokenOut }) &&
           !isLsd({ fromToken: tokenIn, toToken: tokenOut })
 
-        if (chargeFee && chargeFeeBy === TransferValue.Input) {
+        if (chargeFee && feeBy === TransferValue.Input) {
           processFunction = ProcessFunction.ProcessRouteWithTransferValueInput
           amountValueTransfer =
-            (_amount * getBigInt(feeAmount * 1_000_000)) / 1_000_000n
+            (_amount * getBigInt(fee * 1_000_000)) / 1_000_000n
         }
 
         const amount =
-          chargeFeeBy === TransferValue.Input && amountValueTransfer
+          feeBy === TransferValue.Input && amountValueTransfer
             ? _amount - amountValueTransfer
             : _amount
 
-        bestRoute = preferSushi
+        route = preferSushi
           ? Router.findSpecialRoute(
               poolCodesMap,
               CHAIN_ID,
@@ -168,47 +172,53 @@ const handler = (
 
         if (
           // If price impact is missing from the route we return no way multiroute
-          bestRoute.priceImpact === undefined ||
+          route.priceImpact === undefined ||
           (maxPriceImpact !== undefined &&
             // or if max price impact is defined and less than best route price impact we return no way multiroute (not a feature we use at UI)
-            bestRoute.priceImpact > maxPriceImpact)
+            route.priceImpact > maxPriceImpact)
         )
-          bestRoute = Router.NoWayMultiRoute(tokenIn, tokenOut)
+          route = Router.NoWayMultiRoute(tokenIn, tokenOut)
 
         const minAmountOut =
-          (bestRoute.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
+          (route.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
           1_000_000n
 
-        if (chargeFee && chargeFeeBy === TransferValue.Output) {
+        if (chargeFee && feeBy === TransferValue.Output) {
           processFunction = ProcessFunction.ProcessRouteWithTransferValueOutput
 
           amountValueTransfer =
-            (minAmountOut * getBigInt(feeAmount * 1_000_000)) / 1_000_000n
+            (minAmountOut * getBigInt(fee * 1_000_000)) / 1_000_000n
         }
 
-        const rpParams = to
-          ? routeProcessorParams(
-              poolCodesMap,
-              bestRoute,
-              tokenIn,
-              tokenOut,
-              to,
-              routeProcessorAddress,
-              [],
-              maxSlippage, // probably just pass min amount out through instead?
-              source ?? RouterLiquiditySource.Sender,
-              processFunction,
-              feeReceiver,
-              amountValueTransfer,
-            )
-          : undefined
-
-        const json = makeAPI02Object(bestRoute, rpParams, routeProcessorAddress)
+        const body = createSwapBody(
+          route,
+          to
+            ? routeProcessorParams(
+                poolCodesMap,
+                route,
+                tokenIn,
+                tokenOut,
+                to,
+                routeProcessorAddress,
+                [],
+                maxSlippage, // probably just pass min amount out through instead?
+                source ?? RouterLiquiditySource.Sender,
+                processFunction,
+                feeReceiver,
+                amountValueTransfer,
+              )
+            : undefined,
+          routeProcessorAddress,
+          includeRouteProcessorParams,
+          includeTransaction,
+          includeRoute,
+          debug,
+        )
 
         // return swapResponse()
 
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
-        return res.json(json)
+        return res.json(body)
       } catch (e) {
         swapRequestStatistics.requestRejected(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
@@ -217,7 +227,7 @@ const handler = (
         const data: {
           error: string | string[] | undefined
           params: z.infer<typeof querySchema5> | undefined
-          route: ReturnType<typeof makeAPI02Object> | undefined
+          route: ReturnType<typeof createSwapBody> | undefined
         } = {
           error: undefined,
           params: undefined,
@@ -226,7 +236,7 @@ const handler = (
         try {
           data.error = e instanceof Error ? e.stack?.split('\n') : `${e}`
           if (parsed.data) data.params = parsed.data
-          if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
+          if (route) data.route = createSwapBody(route)
         } catch (_e) {}
 
         Logger.error(CHAIN_ID, 'Routing crashed', safeSerialize(data), false)

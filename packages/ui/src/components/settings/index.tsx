@@ -66,7 +66,6 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
   )
-
   return (
     <Dialog>
       <DialogTrigger asChild>
