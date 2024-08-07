@@ -81,7 +81,7 @@ test.beforeEach(async ({ page, next }) => {
 })
 
 test('Wrap and unwrap', async ({ page }) => {
-  test.slow()
+  // test.slow()
   const swapPage = new SwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -94,7 +94,7 @@ test('Wrap and unwrap', async ({ page }) => {
 })
 
 test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  test.slow()
+  // test.slow()
   const swapPage = new SwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -107,7 +107,7 @@ test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 })
 
 test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
-  test.slow()
+  // test.slow()
   const swapPage = new SwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -122,7 +122,7 @@ test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
 test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({
   page,
 }) => {
-  test.slow()
+  // test.slow()
   const swapPage = new SwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
@@ -138,7 +138,7 @@ test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({
 })
 
 test('Swap Native to WBTC', async ({ page }) => {
-  test.slow()
+  // test.slow()
   const swapPage = new SwapPage(page, chainId)
   await swapPage.goTo(url)
   await swapPage.connect()
