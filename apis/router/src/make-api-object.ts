@@ -1,11 +1,10 @@
+import type { LiquidityProviders, RPParams } from 'sushi/router'
 import {
   type MultiRoute,
   type RToken,
   type RouteLeg,
   RouteStatus,
-} from '../tines/index.js'
-import { LiquidityProviders } from './liquidity-providers/LiquidityProvider.js'
-import type { RPParams } from './router.js'
+} from 'sushi/tines'
 
 function makeAPI02Token(token: RToken) {
   return {
