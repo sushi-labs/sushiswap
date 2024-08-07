@@ -108,12 +108,13 @@ test.beforeEach(async ({ page, next }) => {
 
   // TEMP: Mock V2 POOL..
   await page.route(
-    'http://localhost:3000/pools/api/graphPool/137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
+    'http://localhost:3000/pools/api/graphPool/137:0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
+    // 'http://localhost:3000/pools/api/graphPool/137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
     async (route) => {
       await route.fulfill({
         json: {
-          id: '137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
-          address: '0x0b65273d824393e2f43357a4096e5ebd17c89629',
+          id: '137:0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
+          address: '0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
           chainId: 137,
           name: `WMATIC-FT`,
           swapFee: 0.003,
