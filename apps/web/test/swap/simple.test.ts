@@ -1,6 +1,5 @@
 import { test } from 'next/experimental/testmode/playwright.js'
-import { ChainId } from 'sushi/chain'
-import { Native, Token, USDC, USDT, WBTC } from 'sushi/currency'
+import { Native, USDC, USDT, WBTC } from 'sushi/currency'
 import { SwapPage } from 'test/helpers/swap'
 import {
   // createSnapshot,
