@@ -17,7 +17,7 @@ import {
 const PROTOCOL_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
     title: 'Blog',
-    href: 'https://sushi.com/blog',
+    href: '/blog',
     description:
       'Stay up to date with the latest product developments at Sushi.',
   },
@@ -37,12 +37,12 @@ const PROTOCOL_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
 const PARTNER_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
     title: 'Partner with Sushi',
-    href: 'http://sushi.com/partner',
+    href: '/partner',
     description: 'Incentivize your token with Sushi rewards.',
   },
   {
     title: 'List enquiry',
-    href: 'http://sushi.com/tokenlist-request',
+    href: '/tokenlist-request',
     description: 'Get your token on our default token list.',
   },
 ]
@@ -50,7 +50,7 @@ const PARTNER_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
 const SUPPORT_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
     title: 'Academy',
-    href: 'https://sushi.com/academy',
+    href: '/academy',
     description: 'Everything you need to get up to speed with DeFi.',
   },
 ]

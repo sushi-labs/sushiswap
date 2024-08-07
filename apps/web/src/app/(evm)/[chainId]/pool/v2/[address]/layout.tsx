@@ -1,5 +1,5 @@
 import { getV2Pool } from '@sushiswap/graph-client/data-api'
-import { Breadcrumb, Container } from '@sushiswap/ui'
+import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'

@@ -60,7 +60,7 @@ export const MORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   },
   {
     title: 'Bonds',
-    href: 'https://sushi.com/bonds',
+    href: '/bonds',
     description:
       'Buy discounted tokens with vesting to support projects in a sustainable manner.',
   },
