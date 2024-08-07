@@ -3,9 +3,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { FC, ReactNode, createContext, useContext, useMemo } from 'react'
 import { useBalancesWeb3 } from 'src/lib/wagmi/hooks/balances/useBalancesWeb3'
-import { MASTERCHEF_ADDRESS } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-contract'
 import { erc20Abi, masterChefV1Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import { MASTERCHEF_ADDRESS } from 'sushi/config'
 import {
   Amount,
   SUSHI_ADDRESS,
