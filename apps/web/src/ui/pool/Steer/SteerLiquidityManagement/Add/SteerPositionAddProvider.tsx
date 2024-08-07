@@ -104,16 +104,13 @@ export const useSteerPositionAddActions = () => {
 
 type UseSteerPositionAddInfoProps = {
   // account: string | undefined
-} & (
-  | {
-      vault: VaultV1 | undefined
-    }
-)
+} & {
+  vault: VaultV1 | undefined
+}
 
 export function useSteerPositionAddDerivedInfo({
   vault,
 }: UseSteerPositionAddInfoProps) {
-
   const { independentField, typedValue } = useSteerPositionAddState()
 
   const [currencyA, currencyB] = useMemo(() => {

@@ -24,7 +24,10 @@ import { PROTOCOL_MAP } from '../../lib/constants'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 import { SushiSwapProtocol } from 'sushi'
 
-export const POOL_TYPES = [SushiSwapProtocol.SUSHISWAP_V3, SushiSwapProtocol.SUSHISWAP_V2]
+export const POOL_TYPES = [
+  SushiSwapProtocol.SUSHISWAP_V3,
+  SushiSwapProtocol.SUSHISWAP_V2,
+]
 
 const POOL_DESCRIPTIONS = {
   [SushiSwapProtocol.SUSHISWAP_V3]:
@@ -44,7 +47,9 @@ export const TableFiltersPoolType: FC = () => {
   const [peekedProtocol, setPeekedProtocol] = React.useState<SushiSwapProtocol>(
     POOL_TYPES[0],
   )
-  const [localValue, setValues] = useState<SushiSwapProtocol[]>(isAllThenNone(protocols))
+  const [localValue, setValues] = useState<SushiSwapProtocol[]>(
+    isAllThenNone(protocols),
+  )
 
   const values = pending ? localValue : isAllThenNone(protocols)
 

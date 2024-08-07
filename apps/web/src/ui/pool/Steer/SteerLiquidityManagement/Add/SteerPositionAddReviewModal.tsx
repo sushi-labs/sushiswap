@@ -1,10 +1,7 @@
 'use client'
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import {
-  STEER_PERIPHERY_ADDRESS,
-  isSteerChainId,
-} from '@sushiswap/steer-sdk'
+import { STEER_PERIPHERY_ADDRESS, isSteerChainId } from '@sushiswap/steer-sdk'
 import { steerPeripheryAbi } from '@sushiswap/steer-sdk/abi'
 import {
   Button,

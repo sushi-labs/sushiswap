@@ -400,7 +400,7 @@ export const TX_AMOUNT_IN_V2_COLUMN = (
             />{' '}
             {row.original.amount0In !== '0'
               ? row.original.symbol0
-              : row.original.symbol1 }
+              : row.original.symbol1}
           </span>
         )
       case TransactionType.Mint:

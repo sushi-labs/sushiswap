@@ -40,19 +40,19 @@ interface PoolChartProps {
 
 const tailwind = resolveConfig(tailwindConfig)
 
-export const PoolChartGraph: FC<PoolChartProps> = ({ chart, period, pool, protocol }) => {
-  const {
-    data: buckets,
-    isInitialLoading: isLoading,
-  } = usePoolGraphData({
+export const PoolChartGraph: FC<PoolChartProps> = ({
+  chart,
+  period,
+  pool,
+  protocol,
+}) => {
+  const { data: buckets, isInitialLoading: isLoading } = usePoolGraphData({
     poolAddress: pool.address,
     chainId: pool.chainId,
     protocol,
   })
 
-
   const [xData, yData]: [number[], number[]] = useMemo(() => {
-    
     const data =
       (chartPeriods[period] < chartPeriods[PoolChartPeriod.Week]
         ? buckets?.hourBuckets

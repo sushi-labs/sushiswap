@@ -9,7 +9,8 @@ import {
   CardGroup,
   CardHeader,
   CardLabel,
-  CardTitle, SkeletonText
+  CardTitle,
+  SkeletonText,
 } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'

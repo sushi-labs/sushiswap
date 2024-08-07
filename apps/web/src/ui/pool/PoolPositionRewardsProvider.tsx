@@ -10,7 +10,12 @@ import {
 } from 'src/lib/wagmi/hooks/master-chef/use-rewarder'
 import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
-import type { ChefType, Incentive, PoolBase, PoolWithIncentives } from 'sushi/types'
+import type {
+  ChefType,
+  Incentive,
+  PoolBase,
+  PoolWithIncentives,
+} from 'sushi/types'
 import { useAccount } from 'wagmi'
 
 interface PoolPositionRewardsContext {

@@ -5,7 +5,6 @@ import { FC, useCallback, useMemo } from 'react'
 import { SteerPoolCard } from './SteerPoolCard'
 import { V3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
 
-
 interface SteerCarousel {
   pool: V3Pool
   vaults: VaultV1[]

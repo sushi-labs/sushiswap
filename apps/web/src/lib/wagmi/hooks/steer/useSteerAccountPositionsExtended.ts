@@ -6,7 +6,7 @@ import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import { useMemo } from 'react'
 import { useSteerAccountPositions } from './useSteerAccountPosition'
 import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
-import {  ID } from 'sushi'
+import { ID } from 'sushi'
 
 interface UseSteerAccountPositionsExtended {
   account: Address | undefined
@@ -17,7 +17,6 @@ interface UseSteerAccountPositionsExtended {
 export type SteerAccountPositionExtended = NonNullable<
   ReturnType<typeof useSteerAccountPositionsExtended>['data']
 >[0]
-
 
 export type SteerAccountPositionVault = NonNullable<
   ReturnType<typeof useSteerAccountPositionsExtended>['data']
@@ -30,14 +29,15 @@ export const useSteerAccountPositionsExtended = ({
 }: UseSteerAccountPositionsExtended) => {
   const { data: prices, isInitialLoading: isPricesLoading } = useAllPrices()
 
-
   const { data: smartPools, isLoading: isVaultsLoading } = useSmartPools(
     { chainId: 137 }, // TODO: FIX
     Boolean(enabled && account),
   )
 
-
-  const vaultIds = useMemo(() => smartPools?.map((el) => el.id as ID) ?? [], [smartPools])
+  const vaultIds = useMemo(
+    () => smartPools?.map((el) => el.id as ID) ?? [],
+    [smartPools],
+  )
 
   const { data: positions, isLoading } = useSteerAccountPositions({
     account,

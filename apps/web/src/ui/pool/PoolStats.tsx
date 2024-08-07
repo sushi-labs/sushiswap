@@ -17,7 +17,6 @@ interface PoolStats {
 }
 
 export const PoolStats: FC<PoolStats> = ({ pool }) => {
-
   return (
     <Card>
       <CardHeader>

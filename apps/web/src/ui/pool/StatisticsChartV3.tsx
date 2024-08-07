@@ -54,7 +54,12 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
       {chart === PoolChartType.Depth ? (
         <LiquidityDepthWidget chainId={chainId} address={address} />
       ) : (
-        <PoolChartGraph chart={chart} period={period} pool={pool} protocol={SushiSwapProtocol.SUSHISWAP_V3} />
+        <PoolChartGraph
+          chart={chart}
+          period={period}
+          pool={pool}
+          protocol={SushiSwapProtocol.SUSHISWAP_V3}
+        />
       )}
     </Card>
   )

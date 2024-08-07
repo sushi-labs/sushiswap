@@ -2,13 +2,9 @@ import { getRebases as _getRebases } from '@sushiswap/graph-client/bentobox'
 import { getV3BasePoolsByToken } from '@sushiswap/graph-client/data-api'
 import { getFuroTokens as _getFuroTokens } from '@sushiswap/graph-client/furo'
 import { fetchMultichain } from '@sushiswap/graph-client/multichain'
-import {
-  isSushiSwapV3ChainId
-} from 'sushi/config'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 import { getChainIdAddressFromId } from 'sushi/format'
 import { bentoBoxTokensSchema, furoTokensSchema } from './schema'
-
-
 
 export const getV3PoolsByTokenPair = async (
   tokenId0: string,
@@ -95,4 +91,3 @@ export const getBentoBoxTokens = async (
     throw new Error(error as string)
   }
 }
-

@@ -169,9 +169,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Liquidity pool fee</StatLabel>
-              <StatValue size="sm">
-                {formatPercent(pool.swapFee)}
-              </StatValue>
+              <StatValue size="sm">{formatPercent(pool.swapFee)}</StatValue>
             </Stat>
             {/* <Stat className="px-6 py-3">
               <StatLabel size="sm">Time frame</StatLabel>

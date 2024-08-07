@@ -1,4 +1,3 @@
-
 import { classNames } from '@sushiswap/ui'
 import { Currency as UICurrency } from '@sushiswap/ui'
 import React, { FC } from 'react'
