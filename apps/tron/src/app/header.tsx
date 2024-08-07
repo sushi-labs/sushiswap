@@ -54,7 +54,7 @@ export const Navigation: FC = () => {
             <NavigationMenuItem className="hidden lg:block">
               <NavigationMenuLink
                 href="/swap"
-                className={navigationMenuTriggerStyle()}
+                className={navigationMenuTriggerStyle}
               >
                 Swap
               </NavigationMenuLink>
@@ -62,7 +62,7 @@ export const Navigation: FC = () => {
             <NavigationMenuItem className="hidden lg:block">
               <NavigationMenuLink
                 href="/pool"
-                className={navigationMenuTriggerStyle()}
+                className={navigationMenuTriggerStyle}
               >
                 Pool
               </NavigationMenuLink>

@@ -44,7 +44,7 @@ export const PoolsTable = () => {
   // } = useNetwork()
 
   const rowLink = useCallback((row: PoolExtended) => {
-    return `/pool/${row.id}`
+    return `/aptos/pool/${row.id}`
   }, [])
 
   const filtered = useMemo(() => {
