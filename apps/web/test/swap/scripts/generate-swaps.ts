@@ -1,7 +1,8 @@
 import fs from 'fs'
 import { type UseTradeParams, tradeValidator02 } from '@sushiswap/react-query'
-import { ChainId } from 'sushi'
+import { ChainId } from 'sushi/chain'
 import {
+  API_BASE_URL,
   MULTISIG_ADDRESS,
   isMultisigChainId,
   publicClientConfig,
@@ -50,12 +51,6 @@ if (!fs.existsSync(MOCK_DIRECTORY)) {
 
 fs.rmSync(MOCK_DIRECTORY, { recursive: true })
 fs.mkdirSync(MOCK_DIRECTORY)
-
-// ! COPIED FROM packages/react-query/src/hooks/trade/useTrade.ts
-const API_BASE_URL =
-  process.env['API_BASE_URL'] ||
-  process.env['NEXT_PUBLIC_API_BASE_URL'] ||
-  'https://api.sushi.com'
 
 const getSwapApiResult = async ({
   fromToken,

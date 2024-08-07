@@ -1,10 +1,10 @@
 import {
-  TRADE_API_BASE_URL,
   UseTradeParams,
   // getTradeQueryApiVersion,
   tradeValidator02,
 } from '@sushiswap/react-query'
 import { RouteStatus } from 'sushi/tines'
+import { API_BASE_URL } from 'sushi/config'
 import { Address } from 'viem'
 import { z } from 'zod'
 
@@ -38,7 +38,7 @@ export const getTrade = async ({
   recipient,
   source,
 }: GetTrade) => {
-  const params = new URL(`${TRADE_API_BASE_URL}/swap/v4/${chainId}`)
+  const params = new URL(`${API_BASE_URL}/swap/v4/${chainId}`)
   params.searchParams.set('chainId', `${chainId}`)
   params.searchParams.set('tokenIn', `${fromToken}`)
   params.searchParams.set('tokenOut', `${toToken}`)

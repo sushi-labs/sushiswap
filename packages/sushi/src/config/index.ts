@@ -1,5 +1,6 @@
 export * from './additional-bases.js'
 export * from './angle.js'
+export * from './api.js'
 export * from './bases-to-check-trades-against.js'
 export * from './bentobox.js'
 export * from './custom-bases.js'

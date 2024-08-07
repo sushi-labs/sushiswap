@@ -6,11 +6,10 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
 import {
+  API_BASE_URL,
   MULTISIG_ADDRESS,
   isMultisigChainId,
-  isRouteProcessor4ChainId,
   isRouteProcessor5ChainId,
   isWNativeSupported,
 } from 'sushi/config'
@@ -22,20 +21,6 @@ import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
 import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
-
-export const TRADE_API_BASE_URL =
-  process.env['API_BASE_URL'] ||
-  process.env['NEXT_PUBLIC_API_BASE_URL'] ||
-  'https://api.sushi.com/swap'
-
-export function getTradeQueryApiVersion(chainId: ChainId) {
-  if (isRouteProcessor5ChainId(chainId)) {
-    return '/v5'
-  } else if (isRouteProcessor4ChainId(chainId)) {
-    return '/v4'
-  }
-  return ''
-}
 
 export const useTradeQuery = (
   {
@@ -67,11 +52,7 @@ export const useTradeQuery = (
       },
     ],
     queryFn: async () => {
-      const params = new URL(
-        `${TRADE_API_BASE_URL}/swap${getTradeQueryApiVersion(
-          chainId,
-        )}/${chainId}`,
-      )
+      const params = new URL(`${API_BASE_URL}/swap/v5/${chainId}`)
       // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',
