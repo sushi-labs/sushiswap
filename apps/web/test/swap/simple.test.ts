@@ -1,20 +1,12 @@
 import { test } from 'next/experimental/testmode/playwright.js'
 import { Native, USDC, USDT, WBTC } from 'sushi/currency'
+import { chainId, nativeAmount } from 'test/constants'
 import { SwapPage } from 'test/helpers/swap'
 import {
   // createSnapshot,
   interceptAnvil,
   // loadSnapshot,
 } from 'test/intercept-anvil'
-
-if (
-  typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string' ||
-  !process.env.NEXT_PUBLIC_CHAIN_ID
-) {
-  throw new Error('NEXT_PUBLIC_CHAIN_ID not set')
-}
-
-const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) as 137
 
 const url = 'http://localhost:3000/swap'
 
@@ -78,10 +70,10 @@ test('Wrap and unwrap', async ({ page }) => {
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-wrap.json`)
-  await swapPage.wrap(native, wnative, '100')
+  await swapPage.wrap(native, wnative, nativeAmount.toExact())
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-unwrap.json`)
-  await swapPage.wrap(wnative, native, '100')
+  await swapPage.wrap(wnative, native, nativeAmount.toExact())
 })
 
 test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
@@ -91,7 +83,7 @@ test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdc.json`)
-  await swapPage.swap(native, usdc, '100')
+  await swapPage.swap(native, usdc, nativeAmount.toExact())
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdc-to-native.json`)
   await swapPage.maxSwap(usdc, native)
@@ -104,7 +96,7 @@ test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdt.json`)
-  await swapPage.swap(native, usdt, '100')
+  await swapPage.swap(native, usdt, nativeAmount.toExact())
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdt-to-native.json`)
   await swapPage.maxSwap(usdt, native)
@@ -119,7 +111,7 @@ test('Swap Native to USDC, USDC to USDT then USDT to NATIVE', async ({
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-usdc.json`)
-  await swapPage.swap(native, usdc, '100')
+  await swapPage.swap(native, usdc, nativeAmount.toExact())
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdc-to-usdt.json`)
   await swapPage.maxSwap(usdc, usdt)
@@ -136,5 +128,5 @@ test('Swap Native to WBTC', async ({ page }) => {
   await swapPage.switchNetwork(chainId)
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-native-to-wbtc.json`)
-  await swapPage.swap(native, wbtc, '7000')
+  await swapPage.swap(native, wbtc, nativeAmount.toExact())
 })

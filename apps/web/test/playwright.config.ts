@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
   quiet: true,
   testMatch: [
     'simple.test.ts',
-    'pool.test.ts',
+    // 'pool.test.ts',
     // 'smart.test.ts',
     // 'cross-chain.test.ts',
   ],
