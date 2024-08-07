@@ -36,20 +36,30 @@ export async function getAnalyticsDayBuckets(
   options?: RequestOptions,
 ) {
   const url = `https://${SUSHI_DATA_API_HOST}`
-
-  const result = await request(
-    { url, document: AnalyticsDayBucketsQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
-    options,
-  )
-  if (result) {
-    return result.sushiDayBuckets ?? {
+  try {
+    const result = await request(
+      {
+        url,
+        document: AnalyticsDayBucketsQuery,
+        variables,
+        requestHeaders: SUSHI_REQUEST_HEADERS,
+      },
+      options,
+    )
+    if (result) {
+      return (
+        result.sushiDayBuckets ?? {
+          v2: [],
+          v3: [],
+        }
+      )
+    }
+  } catch {
+    // TODO: handle error, probably return {data, error}? or message
+    return {
       v2: [],
       v3: [],
     }
-  }
-  return {
-    v2: [],
-    v3: [],
   }
 }
 

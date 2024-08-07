@@ -47,16 +47,23 @@ export async function getTopPools(
   options?: RequestOptions,
 ) {
   const url = `https://${SUSHI_DATA_API_HOST}`
-
-  const result = await request(
-    { url, document: PoolsQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
-    options,
-  )
-  if (result) {
-    return result.topPools ?? []
+  try {
+    const result = await request(
+      {
+        url,
+        document: PoolsQuery,
+        variables,
+        requestHeaders: SUSHI_REQUEST_HEADERS,
+      },
+      options,
+    )
+    if (result) {
+      return result.topPools ?? []
+    }
+  } catch (error) {
+    console.error('getV2Pool error', error)
+    return []
   }
-
-  return []
 }
 
 export type TopPools = Awaited<ReturnType<typeof getTopPools>>

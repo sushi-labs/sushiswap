@@ -98,9 +98,14 @@ export async function getV2Pool(
   if (!isSushiSwapV2ChainId(chainId)) {
     throw new Error('Invalid chainId')
   }
-
+  try {
     const result = await request(
-      { url, document: V2PoolQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
+      {
+        url,
+        document: V2PoolQuery,
+        variables,
+        requestHeaders: SUSHI_REQUEST_HEADERS,
+      },
       options,
     )
     if (result.v2Pool) {
@@ -178,7 +183,10 @@ export async function getV2Pool(
       >
     }
     return null
-
+  } catch (error) {
+    console.error('getV2Pool error', error)
+    return null
+  }
 }
 
 export type V2Pool = NonNullable<Awaited<ReturnType<typeof getV2Pool>>>

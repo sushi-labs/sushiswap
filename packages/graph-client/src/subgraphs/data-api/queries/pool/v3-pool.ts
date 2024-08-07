@@ -107,9 +107,14 @@ export async function getV3Pool(
   if (!isSushiSwapV3ChainId(chainId)) {
     throw new Error('Invalid chainId')
   }
-
+  try {
     const result = await request(
-      { url, document: V3PoolQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
+      {
+        url,
+        document: V3PoolQuery,
+        variables,
+        requestHeaders: SUSHI_REQUEST_HEADERS,
+      },
       options,
     )
     if (result.v3Pool) {
@@ -197,6 +202,10 @@ export async function getV3Pool(
     }
 
     return null
+  } catch (error) {
+    console.error('getV3Pool error', error)
+    return null
+  }
 }
 
 export type MaybeV3Pool = Awaited<ReturnType<typeof getV3Pool>>
