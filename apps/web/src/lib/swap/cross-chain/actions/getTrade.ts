@@ -3,8 +3,8 @@ import {
   // getTradeQueryApiVersion,
   tradeValidator02,
 } from '@sushiswap/react-query'
-import { RouteStatus } from 'sushi/tines'
 import { API_BASE_URL } from 'sushi/config'
+import { RouteStatus } from 'sushi/tines'
 import { Address } from 'viem'
 import { z } from 'zod'
 
