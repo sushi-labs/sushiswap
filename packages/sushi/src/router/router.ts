@@ -123,6 +123,21 @@ export const isStable = ({
   return fromTokenIsStable && toTokenIsStable
 }
 
+export const isLsd = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) => {
+  const fromTokenIsLsd = STABLES[fromToken.chainId].some((t: Token) =>
+    t.equals(fromToken),
+  )
+  const toTokenIsLsd = STABLES[toToken.chainId].some((t: Token) =>
+    t.equals(toToken),
+  )
+  return (
+    (fromToken.isNative && toTokenIsLsd) || (fromTokenIsLsd && toToken.isNative)
+  )
+}
+
 export interface RPParams {
   tokenIn: Address
   amountIn: bigint

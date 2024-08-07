@@ -10,7 +10,8 @@ import {
   Router,
   RouterLiquiditySource,
   TransferValue,
-  // isStable,
+  isLsd,
+  isStable,
   isWrapOrUnwrap,
   makeAPI02Object,
 } from 'sushi/router'
@@ -131,8 +132,9 @@ const handler = (
 
         const chargeFee =
           enableFee &&
-          !isWrapOrUnwrap({ fromToken: tokenIn, toToken: tokenOut })
-        // && !isStable({ fromToken: tokenIn, toToken: tokenOut })
+          !isWrapOrUnwrap({ fromToken: tokenIn, toToken: tokenOut }) &&
+          !isStable({ fromToken: tokenIn, toToken: tokenOut }) &&
+          isLsd({ fromToken: tokenIn, toToken: tokenOut })
 
         if (chargeFee && chargeFeeBy === TransferValue.Input) {
           processFunction = ProcessFunction.ProcessRouteWithTransferValueInput
