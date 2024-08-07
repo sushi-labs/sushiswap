@@ -37,7 +37,7 @@ export async function getAnalyticsDayBuckets(
   const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
-    { url, document: AnalyticsDayBucketsQuery, variables },
+    { url, document: AnalyticsDayBucketsQuery, variables, requestHeaders: { 'Origin': 'sushi.com' } },
     options,
   )
   if (result) {
