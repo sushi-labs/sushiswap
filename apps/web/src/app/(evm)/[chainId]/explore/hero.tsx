@@ -1,5 +1,3 @@
-'use client'
-
 import { GiftIcon } from '@heroicons/react-v1/outline'
 import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -21,11 +19,8 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
-import { useChainId } from 'wagmi'
 
-export const Hero: FC = () => {
-  const chainId = useChainId()
-
+export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (
     <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-start mb-12">
       <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
@@ -55,9 +50,9 @@ export const Hero: FC = () => {
               <LinkInternal
                 href={
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-                    ? `/pool/add?chainId=${chainId}`
+                    ? `/${chainId}/pool/v3/add`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                      ? `/pool/add/v2/${chainId}`
+                      ? `/${chainId}/pool/v2/add`
                       : ''
                 }
               >
@@ -121,7 +116,7 @@ export const Hero: FC = () => {
             variant="secondary"
             size="lg"
           >
-            <LinkInternal href="/pools/incentivize">
+            <LinkInternal href={`/${chainId}/pool/incentivize`}>
               I want to incentivize a pool
             </LinkInternal>
           </Button>
