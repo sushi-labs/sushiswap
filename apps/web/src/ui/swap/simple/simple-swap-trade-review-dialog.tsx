@@ -383,7 +383,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
     return async (confirm: () => void) => {
       try {
-        await sendTransactionAsync(simulation.request)
+        await sendTransactionAsync(simulation)
         confirm()
       } catch {}
     }
