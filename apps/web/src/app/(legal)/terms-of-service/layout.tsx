@@ -1,10 +1,6 @@
 import { Navigation } from '@sushiswap/ui'
 import { Metadata } from 'next'
-<<<<<<< HEAD:apps/web/src/app/terms-of-service/layout.tsx
-import { headerElements } from '../_common/header-elements'
-=======
 import { headerElements } from '../../(evm)/_common/header-elements'
->>>>>>> master:apps/web/src/app/(legal)/terms-of-service/layout.tsx
 
 export const metadata: Metadata = {
   title: 'Terms Of Service',

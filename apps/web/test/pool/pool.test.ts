@@ -14,15 +14,6 @@ import { interceptAnvil } from 'test/intercept-anvil'
 const NATIVE_TOKEN = Native.onChain(chainId)
 
 let FAKE_TOKEN: Token
-<<<<<<< HEAD
-=======
-
-// let MOCK_TOKEN_1_DP: Token
-// let MOCK_TOKEN_6_DP: Token
-// let MOCK_TOKEN_8_DP: Token
-// let MOCK_TOKEN_18_DP: Token
-
->>>>>>> master
 const BASE_URL = 'http://localhost:3000/pool'
 
 test.beforeAll(async () => {
@@ -79,7 +70,6 @@ test.beforeEach(async ({ page, next }) => {
 
   // TEMP: Mock V2 POOL..
   await page.route(
-<<<<<<< HEAD
     'https://data.sushi.com', // TODO: update url
     async (route) => {
       await route.fulfill({
@@ -124,22 +114,6 @@ test.beforeEach(async ({ page, next }) => {
               wasIncentivized: false,
               incentives: [],
             },
-=======
-    'http://localhost:3000/pools/api/graphPool/137:0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
-    // 'http://localhost:3000/pools/api/graphPool/137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
-    async (route) => {
-      await route.fulfill({
-        json: {
-          id: '137:0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
-          address: '0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
-          chainId: 137,
-          name: `WMATIC-FT`,
-          swapFee: 0.003,
-          protocol: 'SUSHISWAP_V2',
-          reserve0: {
-            __type: 'bigint',
-            value: '1000000000000000000',
->>>>>>> master
           },
         },
       })
@@ -171,15 +145,10 @@ test.describe('V3', () => {
     next,
   }) => {
     test.slow()
-<<<<<<< HEAD
     const url = BASE_URL.concat(`/${CHAIN_ID.toString()}`)
       .concat(`/v3`)
       .concat('/add')
     const poolPage = new PoolPage(page, CHAIN_ID)
-=======
-    const url = BASE_URL.concat('/add').concat(`?chainId=${chainId}`)
-    const poolPage = new PoolPage(page, chainId)
->>>>>>> master
 
     await poolPage.mockPoolApi(
       next,
@@ -223,13 +192,9 @@ test.describe('V2', () => {
     test.slow()
     const poolPage = new PoolPage(page, chainId)
 
-<<<<<<< HEAD
     const url = BASE_URL.concat(`/${CHAIN_ID.toString()}`)
       .concat(`/v2`)
       .concat('/add')
-=======
-    const url = BASE_URL.concat(`/add/v2/${chainId}`)
->>>>>>> master
     await poolPage.goTo(url)
     await poolPage.connect()
     await poolPage.switchNetwork(chainId)

@@ -20,13 +20,8 @@ const baseURL = `http://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   quiet: !!process.env.CI,
   testMatch: [
-<<<<<<< HEAD
     'pool.test.ts',
     // 'simple.test.ts',
-=======
-    'simple.test.ts',
-    'pool.test.ts',
->>>>>>> master
     // 'smart.test.ts',
     // 'cross-chain.test.ts',
   ],
