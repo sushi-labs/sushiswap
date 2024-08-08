@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test'
+import { API_BASE_URL } from 'sushi/config'
 import { Native, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 import { BaseActions } from './base' // Adjust the import path as necessary
@@ -300,8 +301,11 @@ export class SwapPage extends BaseActions {
   }
 
   async mockSwapApi(jsonFile: string) {
-    await this.page.route('https://api.sushi.com/swap/**/*', (route) => {
-      return route.fulfill({ path: jsonFile })
-    })
+    await this.page.route(
+      `${API_BASE_URL}/swap/v5/${this.chainId}*`,
+      (route) => {
+        return route.fulfill({ path: jsonFile })
+      },
+    )
   }
 }

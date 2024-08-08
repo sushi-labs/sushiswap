@@ -15,13 +15,11 @@ import { UserProfile } from './user-profile'
 
 interface WagmiHeaderComponentsProps {
   chainIds: ChainId[]
-  selectedNetwork?: ChainId
   onChange?(chainId: ChainId): void
 }
 
 export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   chainIds,
-  selectedNetwork,
   onChange,
 }) => {
   const { chainId, address, connector } = useAccount()
@@ -40,13 +38,10 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
       })
     }
   }, [address, chainId, connector, previousConnectedChainId])
+
   return (
     <>
-      <HeaderNetworkSelector
-        networks={chainIds}
-        selectedNetwork={selectedNetwork}
-        onChange={onChange}
-      />
+      <HeaderNetworkSelector networks={chainIds} onChange={onChange} />
       <UserProfile networks={chainIds} />
     </>
   )

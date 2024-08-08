@@ -2,7 +2,7 @@ import type { getPopularTokens as _getPopularTokens } from '@sushiswap/tokens-ap
 import { PopularTokensApiSchema } from '@sushiswap/tokens-api/lib/schemas/chainId/popular'
 
 import { TOKENS_API } from '../../../constants.js'
-import { type GetApiInputFromOutput } from '../../../types.js'
+import type { GetApiInputFromOutput } from '../../../types.js'
 
 export { PopularTokensApiSchema }
 export type PopularToken = Awaited<ReturnType<typeof _getPopularTokens>>

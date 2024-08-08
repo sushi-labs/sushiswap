@@ -6,7 +6,12 @@ import { SwapApi } from './swap-api-setting'
 export const SimpleSwapSettingsOverlay = () => {
   return (
     <SettingsOverlay
-      modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]}
+      modules={[
+        SettingsModule.SlippageTolerance,
+        SettingsModule.ExpertMode,
+        SettingsModule.TransactionDeadline,
+        // SettingsModule.CarbonOffset
+      ]}
       externalModules={[SwapApi]}
     />
   )

@@ -1,20 +1,20 @@
 import { UseTradeReturn } from '@sushiswap/react-query'
-import { SimulateContractErrorType } from '@wagmi/core'
-import { useEffect, useMemo } from 'react'
+import { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
+import { useEffect, useMemo, useRef } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import { routeProcessor4Abi } from 'sushi/abi'
-import {
-  ROUTE_PROCESSOR_4_ADDRESS,
-  isRouteProcessor4ChainId,
-} from 'sushi/config'
-import { BaseError } from 'viem'
-import { useSimulateContract } from 'wagmi'
+import { isRouteProcessor5ChainId } from 'sushi/config'
+import { Hex, RawContractError } from 'viem'
+import { useAccount, useEstimateGas } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
 
-const isMinOutError = (error: SimulateContractErrorType | null) =>
-  error instanceof BaseError &&
-  (error.message.includes('MinimalOutputBalanceViolation') ||
-    error.message.includes('0x963b34a5'))
+const isMinOutError = (_error: EstimateGasErrorType): Hex | false => {
+  const error =
+    _error.name === 'EstimateGasExecutionError'
+      ? (_error.walk() as RawContractError)
+      : undefined
+  const data = typeof error?.data === 'object' ? error.data?.data : error?.data
+  return data?.includes('0x963b34a5') ? data : false
+}
 
 export function useSimulateTrade({
   trade,
@@ -28,15 +28,14 @@ export function useSimulateTrade({
     mutate: { setTokenTax },
   } = useDerivedStateSimpleSwap()
 
-  const simulateTrade = useSimulateContract({
+  const { address } = useAccount()
+
+  const simulateTrade = useEstimateGas({
     chainId: chainId,
-    address: isRouteProcessor4ChainId(chainId)
-      ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
-      : undefined,
-    abi: routeProcessor4Abi,
-    functionName: trade?.functionName || 'processRoute', // To make typescript happy
-    args: trade?.writeArgs as any,
-    value: trade?.value || 0n,
+    to: trade?.tx?.to,
+    data: trade?.tx?.data as Hex | undefined,
+    account: address,
+    value: trade?.tx?.value || 0n,
     query: {
       retry: (i, error) => {
         if (
@@ -50,35 +49,40 @@ export function useSimulateTrade({
       enabled:
         enabled &&
         Boolean(
-          trade?.writeArgs &&
-            trade?.functionName &&
-            isRouteProcessor4ChainId(chainId) &&
+          address &&
+            trade?.tx &&
+            isRouteProcessor5ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
     },
   })
 
+  const prevErrorRef = useRef<EstimateGasErrorType>()
+  const prevDataRef = useRef<EstimateGasReturnType>()
+
   // onSuccess
   useEffect(() => {
-    if (simulateTrade.data) {
-      if (typeof trade?.tokenTax === 'undefined') {
+    if (simulateTrade.data && simulateTrade.data !== prevDataRef.current) {
+      prevDataRef.current = simulateTrade.data
+
+      if (trade && typeof trade.tokenTax === 'undefined') {
         setTokenTax(false)
       }
     }
-  }, [setTokenTax, simulateTrade.data, trade?.tokenTax])
+  }, [simulateTrade.data, trade, setTokenTax])
 
   // onError
   useEffect(() => {
-    const error = simulateTrade.error
+    if (simulateTrade.error && simulateTrade.error !== prevErrorRef.current) {
+      prevErrorRef.current = simulateTrade.error
 
-    if (error) {
-      if (isMinOutError(error)) {
+      const errorData = isMinOutError(simulateTrade.error)
+      if (errorData) {
         if (trade?.amountOut && typeof trade.tokenTax === 'undefined') {
           const _tokenTax = getTokenTax({
-            error,
+            data: errorData,
             expectedAmountOut: trade.amountOut,
           })
-
           setTokenTax(_tokenTax)
         } else if (trade?.tokenTax !== false) {
           setTokenTax(false)
@@ -90,19 +94,30 @@ export function useSimulateTrade({
   return useMemo(
     () => ({
       ...simulateTrade,
+      data: simulateTrade.data
+        ? {
+            gas: (simulateTrade.data * 120n) / 100n,
+            to: trade?.tx?.to,
+            data: trade?.tx?.data as Hex | undefined,
+            value: trade?.tx?.value || 0n,
+            account: address,
+          }
+        : undefined,
       isError:
         trade &&
         typeof trade.tokenTax === 'undefined' &&
+        simulateTrade.error &&
         isMinOutError(simulateTrade.error)
           ? false
           : simulateTrade.isError,
       error:
         trade &&
         typeof trade.tokenTax === 'undefined' &&
+        simulateTrade.error &&
         isMinOutError(simulateTrade.error)
           ? null
           : simulateTrade.error,
     }),
-    [simulateTrade, trade],
+    [simulateTrade, trade, address],
   )
 }

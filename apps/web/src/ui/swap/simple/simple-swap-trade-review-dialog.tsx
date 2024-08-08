@@ -53,8 +53,8 @@ import {
 import {
   useAccount,
   usePublicClient,
+  useSendTransaction,
   useWaitForTransactionReceipt,
-  useWriteContract,
 } from 'wagmi'
 import { APPROVE_TAG_SWAP } from '../../../lib/constants'
 import {
@@ -193,6 +193,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
               from: receipt.from,
               chain_id: chainId,
               route: stringify(trade?.route),
+              tx: stringify(trade?.tx),
             })
             if (
               trade?.route?.legs?.every(
@@ -207,6 +208,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 txHash: hash,
                 exporerLink: Chain.txUrl(chainId, hash),
                 route: stringify(trade?.route),
+                tx: stringify(trade?.tx),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -227,6 +229,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 txHash: hash,
                 exporerLink: Chain.txUrl(chainId, hash),
                 route: stringify(trade?.route),
+                tx: stringify(trade?.tx),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -241,6 +244,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 txHash: hash,
                 exporerLink: Chain.txUrl(chainId, hash),
                 route: stringify(trade?.route),
+                tx: stringify(trade?.tx),
               })
             } else {
               log.info('unknown', {
@@ -248,7 +252,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 txHash: hash,
                 exporerLink: Chain.txUrl(chainId, hash),
                 route: stringify(trade?.route),
-                args: stringify(trade?.writeArgs),
+                tx: stringify(trade?.tx),
               })
             }
           } else {
@@ -257,6 +261,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
               from: receipt.from,
               chain_id: chainId,
               route: stringify(trade?.route),
+              tx: stringify(trade?.tx),
             })
             if (
               trade?.route?.legs?.every(
@@ -270,6 +275,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 chainId: chainId,
                 txHash: hash,
                 route: stringify(trade?.route),
+                tx: stringify(trade?.tx),
               })
             } else if (
               trade?.route?.legs?.some(
@@ -289,6 +295,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 chainId: chainId,
                 txHash: hash,
                 route: stringify(trade?.route),
+                tx: stringify(trade?.tx),
               })
             } else if (
               trade?.route?.legs?.every(
@@ -302,13 +309,14 @@ export const SimpleSwapTradeReviewDialog: FC<{
                 chainId: chainId,
                 txHash: hash,
                 route: stringify(trade?.route),
+                tx: stringify(trade?.tx),
               })
             } else {
               log.error('unknown', {
                 chainId: chainId,
                 txHash: hash,
                 route: stringify(trade?.route),
-                args: stringify(trade?.writeArgs),
+                tx: stringify(trade?.tx),
               })
             }
           }
@@ -339,24 +347,25 @@ export const SimpleSwapTradeReviewDialog: FC<{
 
       sendAnalyticsEvent(SwapEventName.SWAP_ERROR, {
         route: stringify(trade?.route),
+        tx: stringify(trade?.tx),
         error: e instanceof Error ? e.message : undefined,
       })
 
       log.error('swap error', {
         route: stringify(trade?.route),
-        args: stringify(trade?.writeArgs),
+        tx: stringify(trade?.tx),
         error: stringify(e),
       })
       createErrorToast(e.message, false)
     },
-    [trade?.route, trade?.writeArgs],
+    [trade?.route, trade?.tx],
   )
 
   const {
-    writeContractAsync,
+    sendTransactionAsync,
     isPending: isWritePending,
     data,
-  } = useWriteContract({
+  } = useSendTransaction({
     mutation: {
       onMutate: () => {
         // Set reference of current trade
@@ -370,15 +379,15 @@ export const SimpleSwapTradeReviewDialog: FC<{
   })
 
   const write = useMemo(() => {
-    if (!writeContractAsync || !simulation) return undefined
+    if (!sendTransactionAsync || !simulation) return undefined
 
     return async (confirm: () => void) => {
       try {
-        await writeContractAsync(simulation.request)
+        await sendTransactionAsync(simulation)
         confirm()
       } catch {}
     }
-  }, [simulation, writeContractAsync])
+  }, [simulation, sendTransactionAsync])
 
   const { status } = useWaitForTransactionReceipt({
     chainId: chainId,
@@ -542,7 +551,7 @@ export const SimpleSwapTradeReviewDialog: FC<{
                           !!error ||
                             isWritePending ||
                             Boolean(
-                              !writeContractAsync &&
+                              !sendTransactionAsync &&
                                 swapAmount?.greaterThan(ZERO),
                             ) ||
                             isError,

@@ -1,3 +1,4 @@
+import type { Address } from 'viem'
 import { ChainId } from '../chain/index.js'
 
 // v1
@@ -382,7 +383,7 @@ export type RouteProcessor5ChainId =
   (typeof ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS)[number]
 export const ROUTE_PROCESSOR_5_ADDRESS: Record<
   RouteProcessor5ChainId,
-  `0x${string}`
+  Address
 > = {
   [ChainId.ETHEREUM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
   [ChainId.ARBITRUM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',

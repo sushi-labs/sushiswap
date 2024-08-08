@@ -5,8 +5,8 @@ import { Button } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import {
-  ROUTE_PROCESSOR_4_ADDRESS,
-  isRouteProcessor4ChainId,
+  ROUTE_PROCESSOR_5_ADDRESS,
+  isRouteProcessor5ChainId,
 } from 'sushi/config'
 import { Native } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
@@ -57,7 +57,7 @@ export const _SimpleSwapTradeButton: FC<{
     if (warningSeverity(trade?.priceImpact) <= 3) {
       setChecked(false)
     }
-  }, [trade])
+  }, [trade?.priceImpact])
 
   return (
     <>
@@ -73,8 +73,8 @@ export const _SimpleSwapTradeButton: FC<{
                   id="approve-erc20"
                   amount={swapAmount}
                   contract={
-                    isRouteProcessor4ChainId(chainId)
-                      ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
+                    isRouteProcessor5ChainId(chainId)
+                      ? ROUTE_PROCESSOR_5_ADDRESS[chainId]
                       : undefined
                   }
                 >

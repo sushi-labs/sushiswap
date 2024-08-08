@@ -1,11 +1,11 @@
 'use client'
 
-import { useIsMounted } from '@sushiswap/hooks'
 import { InterfaceEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { useBreakpoint } from '@sushiswap/ui'
+import { cloudinaryFetchLoader } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 // import { JazzIcon } from '@sushiswap/ui'
 import { Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
+import Image from 'next/image'
 import React, { FC, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { shortenAddress } from 'sushi/format'
@@ -22,8 +22,6 @@ interface ProfileProps {
 }
 
 export const UserProfile: FC<ProfileProps> = () => {
-  const isMounted = useIsMounted()
-  const { isSm } = useBreakpoint('sm')
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const chainId = useChainId()
   const { address, isConnected } = useAccount()
@@ -38,7 +36,7 @@ export const UserProfile: FC<ProfileProps> = () => {
     chainId: ChainId.ETHEREUM,
   })
 
-  if (!address || !isMounted) return <ConnectButton variant="secondary" />
+  if (!address) return <ConnectButton variant="secondary" />
 
   return (
     <Popover>
@@ -51,17 +49,18 @@ export const UserProfile: FC<ProfileProps> = () => {
         <Button variant="secondary">
           {
             avatar ? (
-              <img
+              <Image
                 alt="ens-avatar"
                 src={avatar}
                 width={20}
                 height={20}
                 className="rounded-full"
+                loader={cloudinaryFetchLoader}
               />
             ) : null
             // <JazzIcon diameter={20} address={address} />
           }
-          <span>{shortenAddress(address, isSm ? 3 : 2)}</span>
+          <span className="hidden sm:block">{shortenAddress(address)}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent

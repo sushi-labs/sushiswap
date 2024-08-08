@@ -27,7 +27,7 @@ export function ArticleCard({ article }: ArticleCard) {
               className={classNames(
                 isMediaVideo(article.cover.provider_metadata)
                   ? ''
-                  : 'group-hover:scale-[1.06] scale-[1.01] transition duration-[400ms]',
+                  : 'group-hover:scale-[1.06] scale-[1.01] transition [animation-duration:400ms]',
               )}
               image={article.cover}
               quality={100}

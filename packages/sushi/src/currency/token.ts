@@ -10,6 +10,7 @@ export class Token extends Currency {
   public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
+
   /**
    * The contract address on the chain on which this token lives
    */
