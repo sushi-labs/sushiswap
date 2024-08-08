@@ -1,4 +1,3 @@
-
 import { getV3BasePools } from '@sushiswap/graph-client/data-api'
 import { Card, Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
