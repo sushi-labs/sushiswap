@@ -8,6 +8,7 @@ import { type SerializedNative, nativeSchema } from './zod.js'
 
 export class Native extends Currency {
   public readonly id: string
+  // public readonly address = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
   public readonly isNative = true as const
   public readonly isToken = false as const
   public override readonly symbol: string

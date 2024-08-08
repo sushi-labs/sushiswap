@@ -104,7 +104,7 @@ export function apiAdapter02To01(
       totalAmountOut: 0,
       totalAmountOutBI: 0n,
     }
-    if (to !== undefined)
+    if (to !== undefined) {
       return {
         route,
         args: {
@@ -116,7 +116,9 @@ export function apiAdapter02To01(
           routeCode: '',
         },
       }
-    else return { route }
+    } else {
+      return { route }
+    }
   } else {
     const route = {
       status: res.status,
@@ -134,19 +136,20 @@ export function apiAdapter02To01(
       totalAmountOut: Number(res.assumedAmountOut),
       totalAmountOutBI: BigInt(res.assumedAmountOut),
     }
-    if (res.routeProcessorArgs)
-      return {
-        route,
-        args: {
-          amountIn: BigInt(res.routeProcessorArgs.amountIn),
-          amountOutMin: BigInt(res.routeProcessorArgs.amountOutMin),
-          to: res.routeProcessorArgs.to,
-          tokenIn: res.routeProcessorArgs.tokenIn,
-          tokenOut: res.routeProcessorArgs.tokenOut,
-          routeCode: res.routeProcessorArgs.routeCode,
-        },
-        txdata: res.routeProcessorArgs.txdata,
-      }
-    else return { route }
+
+    return {
+      route,
+      args: res.routeProcessorArgs
+        ? {
+            amountIn: BigInt(res.routeProcessorArgs.amountIn),
+            amountOutMin: BigInt(res.routeProcessorArgs.amountOutMin),
+            to: res.routeProcessorArgs.to,
+            tokenIn: res.routeProcessorArgs.tokenIn,
+            tokenOut: res.routeProcessorArgs.tokenOut,
+            routeCode: res.routeProcessorArgs.routeCode,
+          }
+        : undefined,
+      tx: res.tx ? res.tx : undefined,
+    }
   }
 }

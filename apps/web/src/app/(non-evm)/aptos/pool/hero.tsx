@@ -32,7 +32,7 @@ export const Hero: FC = () => {
           <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
             <div className="flex items-center w-full">
               <Button asChild size="lg">
-                <LinkInternal href="/pool/add">
+                <LinkInternal href="/aptos/pool/add">
                   I want to create a position
                 </LinkInternal>
               </Button>

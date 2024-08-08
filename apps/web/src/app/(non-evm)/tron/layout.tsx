@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
+  title: 'SushiSwap | Tron',
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

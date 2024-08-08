@@ -61,7 +61,7 @@ export const PositionsTable = () => {
   }, [pools, tokenSymbols])
 
   const rowLink = useCallback((row: PoolExtended) => {
-    return `/pool/${row.id}`
+    return `/aptos/pool/${row.id}`
   }, [])
 
   const state: Partial<TableState> = useMemo(() => {

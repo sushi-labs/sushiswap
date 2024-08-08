@@ -39,4 +39,6 @@ EXPOSE 80
 
 ENV NODE_ENV=production
 
-CMD NODE_OPTIONS=--max-old-space-size=$(expr $(echo "$(free -m)" | awk '/^Mem:/ {print $2}') - 512) node /app/apis/extractor/dist/index.js
+CMD NODE_OPTIONS=--max-old-space-size=7680 node /app/apis/extractor/dist/index.js
+
+# CMD NODE_OPTIONS=--max-old-space-size=$(expr $(echo "$(free -m)" | awk '/^Mem:/ {print $2}') - 512) node /app/apis/extractor/dist/index.js

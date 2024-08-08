@@ -28,6 +28,7 @@ enum PoolTypeIndex {
   Classic = 1,
   Concentrated = 2,
   Curve = 3,
+  CurvePoolCoreHaveBeenSerialized = 255,
 }
 
 const FEE_FRACTIONS = 10_000_000
@@ -101,17 +102,21 @@ export function serializePoolsBinary(
     } else if (pc instanceof CurvePoolCode) {
       const p = pc.pool as CurveMultitokenPool
       const core = p.core
-      if (CurveCoreSerialized.has(core.address)) return
+      if (CurveCoreSerialized.has(core.address)) {
+        stream.uint8(PoolTypeIndex.CurvePoolCoreHaveBeenSerialized)
+        return
+      }
       CurveCoreSerialized.add(core.address)
 
       stream.uint8(PoolTypeIndex.Curve)
       stream.uint8(curvePoolType2Num(pc.poolType))
       stream.address(core.address)
       stream.uint8(core.tokens.length)
+      const originalRates = core.getOriginalRates()
       core.tokens.forEach((t, i) => {
         stream.uint24(tokenIndex.get(t.address) as number)
         stream.bigUInt(core.reserves[i] as bigint, core.address)
-        stream.float64(core.rates[i] as number)
+        stream.float64(originalRates[i] as number)
       })
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
       stream.float64(core.A)
@@ -203,6 +208,8 @@ export function deserializePoolsBinary(
         })
         break
       }
+      case PoolTypeIndex.CurvePoolCoreHaveBeenSerialized: // pools of one core are serialized only once
+        break
       default:
         console.error(`Deserealization: unknown pool type ${poolType}`)
     }

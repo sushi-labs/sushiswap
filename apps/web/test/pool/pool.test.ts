@@ -6,16 +6,12 @@ import {
 } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { Fee } from 'sushi/dex'
+import { chainId } from 'test/constants'
 import { createERC20 } from 'test/erc20'
 import { PoolPage } from 'test/helpers/pool'
 import { interceptAnvil } from 'test/intercept-anvil'
 
-if (typeof process.env.NEXT_PUBLIC_CHAIN_ID !== 'string') {
-  new Error('NEXT_PUBLIC_CHAIN_ID not set')
-}
-
-const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID as string) as 137
-const NATIVE_TOKEN = Native.onChain(CHAIN_ID)
+const NATIVE_TOKEN = Native.onChain(chainId)
 
 let FAKE_TOKEN: Token
 
@@ -23,11 +19,7 @@ let FAKE_TOKEN: Token
 // let MOCK_TOKEN_6_DP: Token
 // let MOCK_TOKEN_8_DP: Token
 // let MOCK_TOKEN_18_DP: Token
-// const EVM_APP_BASE_URL =
-//   process.env['NEXT_PUBLIC_EVM_APP_BASE_URL'] ||
-//   (process.env['NEXT_PUBLIC_VERCEL_URL']
-//     ? `https://${process.env['NEXT_PUBLIC_VERCEL_URL']}`
-//     : 'http://localhost:3000')
+
 const BASE_URL = 'http://localhost:3000/pool'
 
 test.beforeAll(async () => {
@@ -35,7 +27,7 @@ test.beforeAll(async () => {
 
   try {
     FAKE_TOKEN = await createERC20({
-      chainId: CHAIN_ID,
+      chainId,
       name: 'FakeToken',
       symbol: 'FT',
       decimals: 18,
@@ -68,7 +60,7 @@ test.beforeAll(async () => {
     console.error(
       'error creating fake token',
       {
-        chainId: CHAIN_ID,
+        chainId,
         name: 'FakeToken',
         symbol: 'FT',
         decimals: 18,
@@ -108,12 +100,13 @@ test.beforeEach(async ({ page, next }) => {
 
   // TEMP: Mock V2 POOL..
   await page.route(
-    'http://localhost:3000/pools/api/graphPool/137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
+    'http://localhost:3000/pools/api/graphPool/137:0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
+    // 'http://localhost:3000/pools/api/graphPool/137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
     async (route) => {
       await route.fulfill({
         json: {
-          id: '137:0x0b65273d824393e2f43357a4096e5ebd17c89629',
-          address: '0x0b65273d824393e2f43357a4096e5ebd17c89629',
+          id: '137:0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
+          address: '0x74c9bcd8a09d8b80a5654ccd6d338965f6937789',
           chainId: 137,
           name: `WMATIC-FT`,
           swapFee: 0.003,
@@ -169,14 +162,14 @@ test.beforeEach(async ({ page, next }) => {
 
 // Tests will only work for polygon atm
 test.describe('V3', () => {
-  test.skip(!isSushiSwapV3ChainId(CHAIN_ID))
+  test.skip(!isSushiSwapV3ChainId(chainId))
   test('Create, add both sides, single side each token & remove', async ({
     page,
     next,
   }) => {
     test.slow()
-    const url = BASE_URL.concat('/add').concat(`?chainId=${CHAIN_ID}`)
-    const poolPage = new PoolPage(page, CHAIN_ID)
+    const url = BASE_URL.concat('/add').concat(`?chainId=${chainId}`)
+    const poolPage = new PoolPage(page, chainId)
 
     await poolPage.mockPoolApi(
       next,
@@ -188,7 +181,7 @@ test.describe('V3', () => {
 
     await poolPage.goTo(url)
     await poolPage.connect()
-    await poolPage.switchNetwork(CHAIN_ID)
+    await poolPage.switchNetwork(chainId)
 
     await poolPage.createV3Pool({
       token0: NATIVE_TOKEN,
@@ -214,16 +207,16 @@ test.describe('V3', () => {
 })
 
 test.describe('V2', () => {
-  test.skip(!isSushiSwapV2ChainId(CHAIN_ID))
+  test.skip(!isSushiSwapV2ChainId(chainId))
 
   test('Create, add & remove', async ({ page, next }) => {
     test.slow()
-    const poolPage = new PoolPage(page, CHAIN_ID)
+    const poolPage = new PoolPage(page, chainId)
 
-    const url = BASE_URL.concat(`/add/v2/${CHAIN_ID}`)
+    const url = BASE_URL.concat(`/add/v2/${chainId}`)
     await poolPage.goTo(url)
     await poolPage.connect()
-    await poolPage.switchNetwork(CHAIN_ID)
+    await poolPage.switchNetwork(chainId)
 
     await poolPage.mockPoolApi(
       next,
