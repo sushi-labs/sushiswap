@@ -8,10 +8,10 @@ import { useMemo } from 'react'
 import { getBigInt } from 'sushi'
 import { calculateFee } from 'sushi/calculate'
 import {
-  MULTISIG_ADDRESS,
   ROUTE_PROCESSOR_5_ADDRESS,
-  isMultisigChainId,
+  TOKEN_CHOMPER_ADDRESS,
   isRouteProcessor5ChainId,
+  isTokenChomperChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import { Amount, Native, Price } from 'sushi/currency'
@@ -133,8 +133,8 @@ export const useClientTrade = (
                 ? ProcessFunction.ProcessRouteWithTransferValueOutput
                 : ProcessFunction.ProcessRoute,
               chargeFee
-                ? isMultisigChainId(chainId)
-                  ? MULTISIG_ADDRESS[chainId]
+                ? isTokenChomperChainId(chainId)
+                  ? TOKEN_CHOMPER_ADDRESS[chainId]
                   : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098'
                 : undefined,
               chargeFee ? calculateFee(minAmountOut) : undefined,
