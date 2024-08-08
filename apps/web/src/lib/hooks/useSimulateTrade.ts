@@ -1,14 +1,18 @@
 import { UseTradeReturn } from '@sushiswap/react-query'
+import { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
 import { useEffect, useMemo, useRef } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
 import { isRouteProcessor5ChainId } from 'sushi/config'
-import { CallErrorType, CallReturnType, Hex, RawContractError } from 'viem'
-import { useAccount, useCall } from 'wagmi'
+import { Hex, RawContractError } from 'viem'
+import { useAccount, useEstimateGas } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
 
-const isMinOutError = (_error: CallErrorType): Hex | false => {
-  const error = _error.walk() as RawContractError
-  const data = typeof error?.data === 'object' ? error.data?.data : error.data
+const isMinOutError = (_error: EstimateGasErrorType): Hex | false => {
+  const error =
+    _error.name === 'EstimateGasExecutionError'
+      ? (_error.walk() as RawContractError)
+      : undefined
+  const data = typeof error?.data === 'object' ? error.data?.data : error?.data
   return data?.includes('0x963b34a5') ? data : false
 }
 
@@ -26,7 +30,7 @@ export function useSimulateTrade({
 
   const { address } = useAccount()
 
-  const simulateTrade = useCall({
+  const simulateTrade = useEstimateGas({
     chainId: chainId,
     to: trade?.tx?.to,
     data: trade?.tx?.data as Hex | undefined,
@@ -53,8 +57,8 @@ export function useSimulateTrade({
     },
   })
 
-  const prevErrorRef = useRef<CallErrorType>()
-  const prevDataRef = useRef<CallReturnType>()
+  const prevErrorRef = useRef<EstimateGasErrorType>()
+  const prevDataRef = useRef<EstimateGasReturnType>()
 
   // onSuccess
   useEffect(() => {
@@ -92,13 +96,11 @@ export function useSimulateTrade({
       ...simulateTrade,
       data: simulateTrade.data
         ? {
-            ...simulateTrade.data,
-            request: {
-              to: trade?.tx?.to,
-              data: trade?.tx?.data as Hex | undefined,
-              value: trade?.tx?.value || 0n,
-              account: address,
-            },
+            gas: (simulateTrade.data * 120n) / 100n,
+            to: trade?.tx?.to,
+            data: trade?.tx?.data as Hex | undefined,
+            value: trade?.tx?.value || 0n,
+            account: address,
           }
         : undefined,
       isError:
