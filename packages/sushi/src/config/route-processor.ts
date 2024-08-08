@@ -378,7 +378,6 @@ export const ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS = [
   ChainId.BLAST,
   ChainId.SKALE_EUROPA,
   ChainId.ROOTSTOCK,
-  ChainId.CRONOS,
 ] as const
 export type RouteProcessor5ChainId =
   (typeof ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS)[number]

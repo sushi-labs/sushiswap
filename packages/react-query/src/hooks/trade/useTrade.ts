@@ -8,9 +8,9 @@ import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
 import {
   API_BASE_URL,
-  MULTISIG_ADDRESS,
-  isMultisigChainId,
+  TOKEN_CHOMPER_ADDRESS,
   isRouteProcessor5ChainId,
+  isTokenChomperChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import { Amount, Native, Price, type Type } from 'sushi/currency'
@@ -78,8 +78,8 @@ export const useTradeQuery = (
       params.searchParams.set('enableFee', 'true')
       params.searchParams.set(
         'feeReceiver',
-        isMultisigChainId(chainId)
-          ? MULTISIG_ADDRESS[chainId]
+        isTokenChomperChainId(chainId)
+          ? TOKEN_CHOMPER_ADDRESS[chainId]
           : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
       )
       params.searchParams.set('fee', '0.0025')
