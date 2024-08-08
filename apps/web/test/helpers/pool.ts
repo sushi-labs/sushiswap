@@ -262,7 +262,7 @@ export class PoolPage extends BaseActions {
     })
     // TODO: position Number?
     const url = BASE_URL.concat(this.chainId.toString())
-      .concat('/pool/v23/')
+      .concat('/pool/v3/')
       .concat(poolAddress)
       .concat('/positions/create')
     await this.page.goto(url)

@@ -149,7 +149,7 @@ test.describe('V3', () => {
     next,
   }) => {
     test.slow()
-    const url = BASE_URL.concat(CHAIN_ID.toString())
+    const url = BASE_URL.concat(`/${CHAIN_ID.toString()}`)
       .concat(`/v3`)
       .concat('/add')
     const poolPage = new PoolPage(page, CHAIN_ID)
@@ -196,7 +196,7 @@ test.describe('V2', () => {
     test.slow()
     const poolPage = new PoolPage(page, CHAIN_ID)
 
-    const url = BASE_URL.concat(CHAIN_ID.toString())
+    const url = BASE_URL.concat(`/${CHAIN_ID.toString()}`)
       .concat(`/v2`)
       .concat('/add')
     await poolPage.goTo(url)
