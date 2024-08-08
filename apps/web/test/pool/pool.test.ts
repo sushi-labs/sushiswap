@@ -14,7 +14,7 @@ import { interceptAnvil } from 'test/intercept-anvil'
 const NATIVE_TOKEN = Native.onChain(chainId)
 
 let FAKE_TOKEN: Token
-const BASE_URL = 'http://localhost:3000/pool'
+const BASE_URL = 'http://localhost:3000'
 
 test.beforeAll(async () => {
   // console.log('beforeAll pool tests')
@@ -145,7 +145,7 @@ test.describe('V3', () => {
     next,
   }) => {
     test.slow()
-    const url = BASE_URL.concat(`/${chainId.toString()}/v3/add`)
+    const url = BASE_URL.concat(`/${chainId.toString()}/pool/v3/add`)
     const poolPage = new PoolPage(page, chainId)
 
     await poolPage.mockPoolApi(
@@ -190,7 +190,7 @@ test.describe('V2', () => {
     test.slow()
     const poolPage = new PoolPage(page, chainId)
 
-    const url = BASE_URL.concat(`/${chainId.toString()}/v2/add`)
+    const url = BASE_URL.concat(`/${chainId.toString()}/pool/v2/add`)
     await poolPage.goTo(url)
     await poolPage.connect()
     await poolPage.switchNetwork(chainId)
