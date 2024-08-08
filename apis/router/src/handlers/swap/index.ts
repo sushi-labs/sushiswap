@@ -166,6 +166,8 @@ function handler(
             : undefined,
           routeProcessorAddress,
           true,
+          false,
+          true
         )
 
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
