@@ -1,4 +1,3 @@
-import { useIsMounted } from '@sushiswap/hooks'
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui'
@@ -13,7 +12,6 @@ export const HeaderNetworkSelector: FC<{
   selectedNetwork?: ChainId
   onChange?(chainId: ChainId): void
 }> = ({ networks, selectedNetwork, onChange }) => {
-  const isMounted = useIsMounted()
   const { switchChainAsync } = useSwitchChain()
   const chainId = useChainId()
 
@@ -41,21 +39,17 @@ export const HeaderNetworkSelector: FC<{
     [chainId, onChange, selectedNetwork, switchChainAsync],
   )
 
-  const selected = isMounted
-    ? selectedNetwork || chainId || ChainId.ETHEREUM
-    : ChainId.ETHEREUM
-
   return (
     <NetworkSelector
       showAptos
-      selected={selected}
+      selected={chainId}
       onSelect={onSwitchNetwork}
       networks={networks}
     >
       <Button variant="secondary" testId="network-selector">
         <Suspense fallback={null}>
-          <NetworkIcon chainId={selected} width={20} height={20} />
-          <div className="hidden xl:block">{Chain.from(selected)?.name}</div>
+          <NetworkIcon chainId={chainId} width={20} height={20} />
+          <div className="hidden xl:block">{Chain.from(chainId)?.name}</div>
         </Suspense>
       </Button>
     </NetworkSelector>
