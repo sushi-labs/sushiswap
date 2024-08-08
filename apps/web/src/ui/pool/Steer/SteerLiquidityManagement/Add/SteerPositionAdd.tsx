@@ -6,6 +6,7 @@ import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER, Field } from 'src/lib/constants'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
@@ -17,7 +18,6 @@ import {
   useSteerPositionAddState,
 } from './SteerPositionAddProvider'
 import { SteerPositionAddReviewModal } from './SteerPositionAddReviewModal'
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
 
 interface SteerPositionAddProps {
   vault: VaultV1

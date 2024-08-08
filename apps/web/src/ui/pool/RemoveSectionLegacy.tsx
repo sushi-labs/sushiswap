@@ -28,6 +28,7 @@ import { Amount, Native } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { SendTransactionReturnType, encodeFunctionData } from 'viem'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import {
   PermitInfo,
   PermitType,
@@ -57,7 +58,6 @@ import {
 } from 'wagmi'
 import { usePoolPosition } from './PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 const REMOVE_V2_LIQUIDITY_PERMIT_INFO: PermitInfo = {
   version: '1',

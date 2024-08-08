@@ -15,10 +15,10 @@ import {
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { type ChainId } from 'sushi/chain'
 import { usePoolPositionRewards } from './PoolPositionRewardsProvider'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolMyRewardsProps {
   pool: V2Pool

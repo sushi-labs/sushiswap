@@ -21,8 +21,8 @@ import { Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, shortenAddress } from 'sushi/format'
 import { SushiSwapV3Pool } from 'sushi/pool/sushiswap-v3'
 
-import { APRHoverCard } from './APRHoverCard'
 import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
+import { APRHoverCard } from './APRHoverCard'
 
 type PoolHeader = {
   backUrl: string
