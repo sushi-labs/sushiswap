@@ -1,5 +1,6 @@
 'use client'
 
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 import {
   FC,
   ReactNode,
@@ -11,7 +12,6 @@ import {
 import { Field } from 'src/lib/constants'
 import { useSteerVaultReserves } from 'src/lib/wagmi/hooks/steer/useSteerVaultReserves'
 import { Amount, Currency, Token, tryParseAmount } from 'sushi/currency'
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
 
 interface State {
   independentField: Field

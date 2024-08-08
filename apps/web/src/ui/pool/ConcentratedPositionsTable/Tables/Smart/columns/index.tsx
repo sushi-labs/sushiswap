@@ -14,10 +14,10 @@ import { ColumnDef } from '@tanstack/react-table'
 import { formatNumber, formatPercent } from 'sushi/format'
 
 import { SteerAccountPositionExtended } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
+import { SushiSwapProtocol } from 'sushi'
 import { unwrapToken } from 'sushi/currency'
 import { ProtocolBadge } from '../../../../PoolNameCell'
 import { SteerStrategyCell } from './SteerStrategyCell'
-import { SushiSwapProtocol } from 'sushi'
 
 export const STEER_NAME_COLUMN: ColumnDef<
   SteerAccountPositionExtended,

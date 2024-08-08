@@ -5,9 +5,9 @@ import { incentiveRewardToToken } from 'src/lib/functions'
 import { ChainId } from 'sushi/chain'
 import { formatPercent } from 'sushi/format'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 export const AddSectionMyPosition: FC<{ pool: V2Pool }> = ({ pool }) => {
   return (

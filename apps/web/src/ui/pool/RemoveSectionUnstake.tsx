@@ -19,12 +19,12 @@ import { FC, useMemo, useState } from 'react'
 import { ChainId } from 'sushi/chain'
 import { ZERO } from 'sushi/math'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { useMasterChefWithdraw } from 'src/lib/wagmi/hooks/master-chef/use-master-chef-withdraw'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { withCheckerRoot } from 'src/lib/wagmi/systems/Checker/Provider'
-import { usePoolPositionStaked } from './PoolPositionStakedProvider'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { ChefType } from 'sushi'
+import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 
 interface AddSectionStakeProps {
   chainId: ChainId

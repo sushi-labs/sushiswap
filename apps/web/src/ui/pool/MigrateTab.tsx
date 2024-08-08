@@ -2,6 +2,7 @@
 
 import { CogIcon } from '@heroicons/react-v1/outline'
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Card,
@@ -82,7 +83,6 @@ import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 import { SelectFeeConcentratedWidget } from './SelectFeeConcentratedWidget'
 import { SelectPricesWidget } from './SelectPricesWidget'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 function MigrateUnstakeCard({ pool }: { pool: V2Pool }) {
   const {

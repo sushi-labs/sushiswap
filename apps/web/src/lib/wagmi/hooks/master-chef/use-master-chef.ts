@@ -3,6 +3,7 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
+import { ChefType } from 'sushi'
 import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import {
@@ -23,7 +24,6 @@ import {
 import { SendTransactionErrorType } from 'wagmi/actions'
 import { SendTransactionData } from 'wagmi/query'
 import { useMasterChefContract } from './use-master-chef-contract'
-import { ChefType } from 'sushi'
 
 interface UseMasterChefReturn
   extends Pick<ReturnType<typeof useReadContracts>, 'isLoading' | 'isError'> {

@@ -19,9 +19,9 @@ import { ChainId } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
+import { V3Pool } from '@sushiswap/graph-client/data-api'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { DistributionDataTable } from './DistributionDataTable'
-import { V3Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolRewardDistributionsCardParams {
   pool: V3Pool

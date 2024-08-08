@@ -1,3 +1,4 @@
+import { V2Position } from '@sushiswap/graph-client/data-api'
 import { AngleRewardsPool } from '@sushiswap/react-query'
 import { PoolHasSteerVaults } from '@sushiswap/steer-sdk'
 import {
@@ -50,7 +51,6 @@ import {
 import { PriceRangeCell } from './PriceRangeCell'
 import { RewardsV3ClaimableCell } from './RewardsV3ClaimableCell'
 import { RewardsV3NameCell } from './RewardsV3NameCell'
-import { V2Position } from '@sushiswap/graph-client/data-api'
 
 export const REWARDS_V3_NAME_COLUMN: ColumnDef<AngleRewardsPool, unknown> = {
   id: 'poolName',

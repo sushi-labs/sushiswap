@@ -5,9 +5,9 @@ import { FC } from 'react'
 import { ZERO } from 'sushi/math'
 import { getAddress } from 'viem'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolButtonsProps {
   pool: V2Pool

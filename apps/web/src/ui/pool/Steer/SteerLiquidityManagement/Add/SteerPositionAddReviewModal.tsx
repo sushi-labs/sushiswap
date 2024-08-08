@@ -27,6 +27,7 @@ import {
   UserRejectedRequestError,
 } from 'viem'
 
+import { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { APPROVE_TAG_STEER } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
@@ -41,7 +42,6 @@ import { useWriteContract } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
 import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
-import { VaultV1 } from '@sushiswap/graph-client/data-api'
 
 interface SteerPositionAddReviewModalProps {
   vault: VaultV1

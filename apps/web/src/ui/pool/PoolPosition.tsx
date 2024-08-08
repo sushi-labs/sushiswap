@@ -10,6 +10,7 @@ import {
 import { FC } from 'react'
 import { formatUSD } from 'sushi/format'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { SkeletonText } from '@sushiswap/ui'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'wagmi'
@@ -17,7 +18,6 @@ import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { usePoolPosition } from './PoolPositionProvider'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface PoolPositionProps {
   pool: V2Pool

@@ -16,6 +16,7 @@ import {
 import Link from 'next/link'
 import { FC } from 'react'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { AddSectionLegacy } from './AddSectionLegacy'
 import { AddSectionStake } from './AddSectionStake'
 import { PoolPositionProvider } from './PoolPositionProvider'
@@ -23,7 +24,6 @@ import { PoolPositionRewardsProvider } from './PoolPositionRewardsProvider'
 import { PoolPositionStakedProvider } from './PoolPositionStakedProvider'
 import { RemoveSectionLegacy } from './RemoveSectionLegacy'
 import { RemoveSectionUnstake } from './RemoveSectionUnstake'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
 
 interface ManageV2LiquidityCardProps {
   pool: V2Pool

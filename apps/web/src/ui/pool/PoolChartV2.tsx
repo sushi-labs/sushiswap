@@ -1,12 +1,12 @@
 'use client'
 
+import { V2Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
+import { SushiSwapProtocol } from 'sushi'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
-import { V2Pool } from '@sushiswap/graph-client/data-api'
-import { SushiSwapProtocol } from 'sushi'
 
 const charts = [
   PoolChartType.Volume,

@@ -1,12 +1,12 @@
+import { V3Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
+import { SushiSwapProtocol } from 'sushi'
 import { SushiSwapV3ChainId } from 'sushi/config'
 import { LiquidityDepthWidget } from './LiquidityDepthWidget'
 import { PoolChartGraph } from './PoolChartGraph'
 import { PoolChartPeriod, PoolChartPeriods } from './PoolChartPeriods'
 import { PoolChartType, PoolChartTypes } from './PoolChartTypes'
-import { V3Pool } from '@sushiswap/graph-client/data-api'
-import { SushiSwapProtocol } from 'sushi'
 
 const statisticsChart = [
   PoolChartType.Volume,

@@ -19,6 +19,7 @@ import resolveConfig from 'tailwindcss/resolveConfig'
 import { PoolChartPeriod, chartPeriods } from './PoolChartPeriods'
 import { PoolChartType } from './PoolChartTypes'
 
+import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import 'echarts/lib/chart/bar'
@@ -28,7 +29,6 @@ import 'echarts/lib/component/visualMap'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/visual/seriesColor'
 import { usePoolGraphData } from 'src/lib/hooks'
-import { V2Pool, V3Pool } from '@sushiswap/graph-client/data-api'
 import { SushiSwapProtocol } from 'sushi'
 
 interface PoolChartProps {
