@@ -22,17 +22,8 @@ import {
 } from 'wagmi'
 import { SendTransactionErrorType } from 'wagmi/actions'
 import { SendTransactionData } from 'wagmi/query'
-<<<<<<< HEAD
-import {
-  MASTERCHEF_ADDRESS,
-  MASTERCHEF_V2_ADDRESS,
-  MINICHEF_ADDRESS,
-  useMasterChefContract,
-} from './use-master-chef-contract'
-import { ChefType } from 'sushi'
-=======
 import { useMasterChefContract } from './use-master-chef-contract'
->>>>>>> master
+import { ChefType } from 'sushi'
 
 interface UseMasterChefReturn
   extends Pick<ReturnType<typeof useReadContracts>, 'isLoading' | 'isError'> {
