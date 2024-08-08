@@ -1,6 +1,6 @@
 'use client'
 
-import { type SushiV3Pools } from '@sushiswap/graph-client/sushi-v3'
+import { V3BasePool } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -24,7 +24,7 @@ import { Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
-type V3Pool = Omit<SushiV3Pools[number], 'token0' | 'token1'> & {
+type V3Pool = Omit<V3BasePool, 'token0' | 'token1'> & {
   token0: Token
   token1: Token
 }
@@ -177,7 +177,7 @@ const PROTOCOL_FEE_COLUMN: ColumnDef<V3Pool, unknown> = {
   header: 'Fees Enabled',
   accessorFn: (row) => row.volumeUSD,
   sortingFn: ({ original: rowA }, { original: rowB }) =>
-    +rowA.isProtocolFeeEnabled - +rowB.isProtocolFeeEnabled,
+    +rowA.isProtocolFeeEnabled! - +rowB.isProtocolFeeEnabled!,
   cell: (props) => (
     <div className="text-center w-full">
       {props.row.original.isProtocolFeeEnabled ? (
@@ -199,7 +199,7 @@ const COLUMNS = [
   PROTOCOL_FEE_COLUMN,
 ]
 
-export const V3FeesTable: FC<{ pools: SushiV3Pools; chainId: ChainId }> = ({
+export const V3FeesTable: FC<{ pools: V3BasePool[]; chainId: ChainId }> = ({
   pools,
   chainId,
 }) => {

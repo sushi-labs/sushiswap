@@ -1,3 +1,8 @@
+"""
+Indicates exactly one field must be supplied and this field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
+
 type Bucket {
   id: ID!
   date: Int!
@@ -21,6 +26,7 @@ type Query {
   v2PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
   v3PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
   v3PoolsByTokens(token0: String!, token1: String!, chainId: Int!): [V3BasePool!]!
+  v3Pools(chainId: Int!): [V3BasePool!]!
   portfolioWallet(id: ID!): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
@@ -130,6 +136,7 @@ type V3BasePool {
   address: String!
   chainId: Int!
   protocol: String!
+  isProtocolFeeEnabled: Boolean!
   name: String!
   createdAt: String!
   swapFee: Float!

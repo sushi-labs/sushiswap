@@ -1,4 +1,5 @@
-import { getSushiV3Pools } from '@sushiswap/graph-client/sushi-v3'
+
+import { getV3BasePools } from '@sushiswap/graph-client/data-api'
 import { Card, Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
@@ -11,8 +12,8 @@ export default async function Page({
 }: { params: { chainId: string } }) {
   const pools = await unstable_cache(
     async () =>
-      getSushiV3Pools({ chainId: +params.chainId as SushiSwapV3ChainId }),
-    ['v3-pools', params.chainId],
+      getV3BasePools({ chainId: +params.chainId as SushiSwapV3ChainId }),
+    ['operational-v3-pools', params.chainId],
     {
       revalidate: 60 * 15,
     },

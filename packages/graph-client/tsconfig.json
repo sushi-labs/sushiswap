@@ -46,13 +46,7 @@
             "schema": "./src/subgraphs/data-api/schema.graphql",
             "tadaOutputLocation": "./src/subgraphs/data-api/data-api-env.d.ts",
             "tadaTurboLocation": "./src/subgraphs/data-api/data-api-cache.d.ts"
-          },
-          {
-            "name": "sushi-v3",
-            "schema": "./src/subgraphs/sushi-v3/schema.graphql",
-            "tadaOutputLocation": "./src/subgraphs/sushi-v3/sushi-v3-env.d.ts",
-            "tadaTurboLocation": "./src/subgraphs/sushi-v3/sushi-v3-cache.d.ts"
-          },
+          }
         ]
       } 
     ] 

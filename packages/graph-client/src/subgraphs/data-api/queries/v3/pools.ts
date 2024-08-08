@@ -7,58 +7,58 @@ import type { Address } from 'viem'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 
-export const V3PoolsByTokensQuery = graphql(
+export const V3PoolsQuery = graphql(
   `
-    query V3PoolsByTokens($token0: String!, $token1: String!, $chainId: Int!) {
-    v3PoolsByTokens(token0: $token0, token1: $token1, chainId: $chainId) {
-        id
-        address
-        chainId
-        protocol
-        name
-        createdAt
-        swapFee
-        isProtocolFeeEnabled
-        token0 {
-        id
-        chainId
-        address
-        name
-        symbol
-        decimals
-        }
-        token1 {
+    query V3Pools($chainId: Int!) {
+    v3Pools(chainId: $chainId) {
+      id
+      address
+      chainId
+      protocol
+      name
+      createdAt
+      isProtocolFeeEnabled
+      swapFee
+      token0 {
         id
         chainId
         address
         name
         symbol
         decimals
-        }
-        source
-        reserve0
-        reserve1
-        liquidity
-        token0Price
-        token1Price
-        sqrtPrice
-        tick
-        observationIndex
-        feeGrowthGlobal0X128
-        feeGrowthGlobal1X128
-        volumeUSD
-        liquidityUSD
-        feesUSD
-        txCount
+      }
+      token1 {
+        id
+        chainId
+        address
+        name
+        symbol
+        decimals
+      }
+      source
+      reserve0
+      reserve1
+      liquidity
+      token0Price
+      token1Price
+      sqrtPrice
+      tick
+      observationIndex
+      feeGrowthGlobal0X128
+      feeGrowthGlobal1X128
+      volumeUSD
+      liquidityUSD
+      feesUSD
+      txCount
     }
-    }
+  }
 `,
 )
 
-export type GetV3BasePoolsByTokens = VariablesOf<typeof V3PoolsByTokensQuery>
+export type GetV3BasePools = VariablesOf<typeof V3PoolsQuery>
 
-export async function getV3BasePoolsByToken(
-  variables: GetV3BasePoolsByTokens,
+export async function getV3BasePools(
+  variables: GetV3BasePools,
   options?: RequestOptions,
 ): Promise<PoolV3<PoolBase>[]> {
   const url = `https://${SUSHI_DATA_API_HOST}`
@@ -68,26 +68,19 @@ export async function getV3BasePoolsByToken(
     throw new Error('Invalid chainId')
   }
 
-  const tokens = [variables.token0, variables.token1].sort() as [
-    `0x${string}`,
-    `0x${string}`,
-  ]
-
   const result = await request(
     {
       url,
-      document: V3PoolsByTokensQuery,
+      document: V3PoolsQuery,
       variables: {
         chainId: chainId,
-        token0: tokens[0].toLowerCase(),
-        token1: tokens[1].toLowerCase(),
       },
     },
     options,
   )
 
-  if (result.v3PoolsByTokens) {
-    return result.v3PoolsByTokens.map(
+  if (result.v3Pools) {
+    return result.v3Pools.map(
       (pool) =>
         ({
           id: pool.id as `${string}:0x${string}`,
@@ -133,6 +126,8 @@ export async function getV3BasePoolsByToken(
         }) satisfies PoolV3<PoolBase>,
     )
   }
-
-  throw new Error('No pool found')
+  return []
 }
+
+
+export type V3BasePool = NonNullable<Awaited<ReturnType<typeof getV3BasePools>>>[0]
