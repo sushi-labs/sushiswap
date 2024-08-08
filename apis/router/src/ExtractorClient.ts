@@ -347,8 +347,7 @@ export class ExtractorClient {
     for (let i = 0; i < tokens.length; ++i) {
       for (let j = i + 1; j < tokens.length; ++j) {
         const pairPools = this.poolCodesMap.get(
-          // @ts-ignore
-          tokenPairId(tokens[i], tokens[j]),
+          tokenPairId(tokens[i]!, tokens[j]!),
         )
         if (pairPools !== undefined)
           pairPools.forEach((p) => pools.set(p.pool.uniqueID(), p))
@@ -405,8 +404,7 @@ export class ExtractorClient {
     const tokensUnique: Type[] = []
     tokensSorted.forEach((t) => {
       if (tokensUnique.length === 0) tokensUnique.push(t)
-      // @ts-ignore
-      else if (tokenId(tokensUnique[tokensUnique.length - 1]) !== tokenId(t))
+      else if (tokenId(tokensUnique[tokensUnique.length - 1]!) !== tokenId(t))
         tokensUnique.push(t)
     })
 

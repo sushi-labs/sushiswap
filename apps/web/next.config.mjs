@@ -99,6 +99,16 @@ const nextConfig = bundleAnalyzer({
       //   ],
       //   destination: '/aptos/:path*',
       // },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'test.sushi.com',
+          },
+        ],
+        destination: '/test/:path*',
+      },
       // {
       //   source: '/:path*',
       //   has: [

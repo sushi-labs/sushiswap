@@ -485,7 +485,7 @@ const useSimpleSwapTrade = () => {
     setTokenTax(undefined)
   }, [token0, token1, setTokenTax])
 
-  return (useSwapApi ? apiTrade : clientTrade) as ReturnType<typeof useApiTrade>
+  return useSwapApi ? apiTrade : clientTrade
 }
 
 export {

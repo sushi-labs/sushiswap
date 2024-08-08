@@ -1,31 +1,41 @@
 import {
-  UseTradeParams,
-  UseTradeReturnWriteArgs,
+  type UseTradeParams,
+  UseTradeReturn,
   usePrice,
 } from '@sushiswap/react-query'
-import { useQuery } from '@tanstack/react-query'
+import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { slippageAmount } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
+import { getBigInt } from 'sushi'
+import { calculateFee } from 'sushi/calculate'
 import {
-  ROUTE_PROCESSOR_4_ADDRESS,
-  isRouteProcessor4ChainId,
+  ROUTE_PROCESSOR_5_ADDRESS,
+  TOKEN_CHOMPER_ADDRESS,
+  isRouteProcessor5ChainId,
+  isTokenChomperChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import { Amount, Native, Price } from 'sushi/currency'
 import { Fraction, Percent } from 'sushi/math'
-import { Router } from 'sushi/router'
-import { Address, Hex, zeroAddress } from 'viem'
+import {
+  ProcessFunction,
+  Router,
+  RouterLiquiditySource,
+  isLsd,
+  isStable,
+  isWrapOrUnwrap,
+} from 'sushi/router'
+import { stringify, zeroAddress } from 'viem'
 import { useGasPrice } from 'wagmi'
 import { usePoolsCodeMap } from '../pools/hooks/usePoolsCodeMap'
 
-export const useClientTrade = (variables: UseTradeParams) => {
+export const useClientTrade = (
+  variables: UseTradeParams,
+): UseQueryResult<UseTradeReturn> => {
   const {
     chainId,
     fromToken,
     toToken,
     slippagePercentage,
-    carbonOffset,
     amount,
     enabled,
     recipient,
@@ -47,6 +57,11 @@ export const useClientTrade = (variables: UseTradeParams) => {
       : _price
   }, [_price, chainId])
 
+  const { data: tokenOutPrice } = usePrice({
+    chainId,
+    address: toToken?.wrapped.address,
+  })
+
   const { data: poolsCodeMap } = usePoolsCodeMap({
     chainId,
     currencyA: fromToken,
@@ -54,8 +69,6 @@ export const useClientTrade = (variables: UseTradeParams) => {
     enabled,
     withBentoPools: true,
   })
-
-  // console.debug('fee data', feeData)
 
   return useQuery({
     queryKey: [
@@ -66,86 +79,68 @@ export const useClientTrade = (variables: UseTradeParams) => {
         currencyB: toToken,
         amount,
         slippagePercentage,
+        gasPrice,
         recipient,
-        poolsCodeMap,
         source,
+        poolsCodeMap,
         tokenTax,
       },
     ],
     queryFn: async () => {
       if (
-        !poolsCodeMap ||
-        !isRouteProcessor4ChainId(chainId) ||
-        !fromToken ||
-        !amount ||
-        !toToken ||
-        !gasPrice
-      )
-        return {
-          abi: undefined,
-          address: undefined,
-          swapPrice: undefined,
-          priceImpact: undefined,
-          amountIn: undefined,
-          amountOut: undefined,
-          minAmountOut: undefined,
-          gasSpent: undefined,
-          writeArgs: undefined,
-          route: undefined,
-          functionName: 'processRoute',
-          value: undefined,
-          tokenTax: undefined,
-        }
+        poolsCodeMap &&
+        isRouteProcessor5ChainId(chainId) &&
+        fromToken &&
+        amount &&
+        toToken &&
+        gasPrice
+      ) {
+        const route = Router.findSpecialRoute(
+          poolsCodeMap,
+          chainId,
+          fromToken,
+          amount.quotient,
+          toToken,
+          Number(gasPrice),
+          1, // 5% impact before dex aggregation
+        )
 
-      const route = Router.findSpecialRoute(
-        poolsCodeMap,
-        chainId,
-        fromToken,
-        amount.quotient,
-        toToken,
-        Number(gasPrice),
-        1, // 5% impact before dex aggregation
-      )
+        const maxSlippage = +slippagePercentage / 100
 
-      //       const logPools = Array.from(poolsCodeMap.values())
-      //         .map(
-      //           (pc) =>
-      //             `* ${pc.liquidityProvider}/${pc.pool.token0.symbol}/${pc.pool.token1.symbol}-${pc.pool.fee}\n`,
-      //         )
-      //         .join('')
-      //       console.debug(`
-      // Pools found ${poolsCodeMap.size}:
-      // ${logPools}
-      // `)
+        const chargeFee =
+          !isWrapOrUnwrap({ fromToken, toToken }) &&
+          !isStable({ fromToken, toToken }) &&
+          !isLsd({ fromToken, toToken })
 
-      // const route = Router.findSushiRoute(
-      //   poolsCodeMap,
-      //   chainId,
-      //   fromToken,
-      //   BigNumber.from(amount.quotient.toString()),
-      //   toToken,
-      //   feeData.gasPrice.toNumber()
-      // )
+        const minAmountOut = Amount.fromRawAmount(
+          toToken,
+          (route.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
+            1_000_000n,
+        )
 
-      let args = undefined
+        const args = recipient
+          ? Router.routeProcessor5Params(
+              poolsCodeMap,
+              route,
+              fromToken,
+              toToken,
+              recipient,
+              ROUTE_PROCESSOR_5_ADDRESS[chainId],
+              [],
+              maxSlippage,
+              RouterLiquiditySource.Sender,
+              chargeFee
+                ? ProcessFunction.ProcessRouteWithTransferValueOutput
+                : ProcessFunction.ProcessRoute,
+              chargeFee
+                ? isTokenChomperChainId(chainId)
+                  ? TOKEN_CHOMPER_ADDRESS[chainId]
+                  : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098'
+                : undefined,
+              chargeFee ? calculateFee(minAmountOut) : undefined,
+            )
+          : undefined
 
-      if (recipient) {
-        if (isRouteProcessor4ChainId(chainId)) {
-          // console.debug('routeProcessor4Params')
-          args = Router.routeProcessor4Params(
-            poolsCodeMap,
-            route,
-            fromToken,
-            toToken,
-            recipient,
-            ROUTE_PROCESSOR_4_ADDRESS[chainId],
-            [],
-            +slippagePercentage / 100,
-          )
-        }
-      }
-
-      if (route) {
         const amountIn = Amount.fromRawAmount(fromToken, route.amountInBI)
         const amountOut = Amount.fromRawAmount(
           toToken,
@@ -153,96 +148,86 @@ export const useClientTrade = (variables: UseTradeParams) => {
             tokenTax ? new Percent(1).subtract(tokenTax) : 1,
           ).quotient,
         )
-        const minAmountOut = args?.amountOutMin
-          ? Amount.fromRawAmount(toToken, args.amountOutMin)
-          : Amount.fromRawAmount(
-              toToken,
-              slippageAmount(
-                Amount.fromRawAmount(toToken, route.amountOutBI),
-                new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-              )[0],
-            )
-        const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-        // let writeArgs: UseTradeReturnWriteArgs = args
-        let writeArgs: UseTradeReturnWriteArgs = args
-          ? [
-              args.tokenIn as Address,
-              args.amountIn,
-              args.tokenOut as Address,
-              args.amountOutMin,
-              args.to as Address,
-              args.routeCode as Hex,
-            ]
+        // const isOffset = chainId === ChainId.POLYGON && carbonOffset
+
+        // if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
+        //   writeArgs = [
+        //     '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
+        //     20000000000000000n,
+        //     ...writeArgs,
+        //   ]
+        //   value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
+        // }
+
+        const value =
+          fromToken.isNative && args?.amountIn ? args.amountIn : undefined
+
+        const gasSpent = gasPrice
+          ? Amount.fromRawAmount(
+              Native.onChain(chainId),
+              gasPrice * BigInt(route.gasSpent * 1.2),
+            )
           : undefined
 
-        // const overrides = fromToken.isNative && writeArgs?.[1] ? { value: BigNumber.from(writeArgs?.[1]) } : undefined
-        let value =
-          fromToken.isNative && writeArgs?.[1] ? writeArgs[1] : undefined
-
-        if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = [
-            '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
-            20000000000000000n,
-            ...writeArgs,
-          ]
-          value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
-        }
-
-        // console.log({ writeArgs })
-
-        return new Promise((res) =>
-          setTimeout(
-            () =>
-              res({
-                swapPrice: amountOut.greaterThan(0n)
-                  ? new Price({
-                      baseAmount: amount,
-                      quoteAmount: amountOut,
-                    })
-                  : undefined,
-                priceImpact: route.priceImpact
-                  ? new Percent(
-                      BigInt(Math.round(route.priceImpact * 10000)),
-                      10000n,
-                    )
-                  : new Percent(0),
-                amountIn,
-                amountOut,
-                minAmountOut,
-                gasSpent:
-                  price && gasPrice
-                    ? Amount.fromRawAmount(
-                        Native.onChain(chainId),
-                        gasPrice * BigInt(route.gasSpent * 1.2),
-                      ).toSignificant(4)
-                    : undefined,
-                // gasSpentUsd:
-                //   price && feeData.gasPrice
-                //     ? Amount.fromRawAmount(
-                //         Native.onChain(chainId),
-                //         JSBI.multiply(JSBI.BigInt(feeData.gasPrice), JSBI.BigInt(route.gasSpent * 1.2))
-                //       )
-                //         .multiply(price.asFraction)
-                //         .toSignificant(4)
-                //     : undefined,
-                route,
-                functionName: isOffset
-                  ? 'transferValueAndprocessRoute'
-                  : 'processRoute',
-                writeArgs,
+        return {
+          swapPrice: amountOut.greaterThan(0n)
+            ? new Price({
+                baseAmount: amount,
+                quoteAmount: amountOut,
+              })
+            : undefined,
+          priceImpact: route.priceImpact
+            ? new Percent(Math.round(route.priceImpact * 10000), 10000)
+            : new Percent(0),
+          amountIn,
+          amountOut,
+          minAmountOut,
+          gasSpent: gasSpent?.toSignificant(4),
+          gasSpentUsd:
+            price && gasSpent
+              ? gasSpent.multiply(price.asFraction).toSignificant(4)
+              : undefined,
+          fee:
+            !isWrapOrUnwrap({ fromToken, toToken }) &&
+            !isStable({ fromToken, toToken }) &&
+            !isLsd({ fromToken, toToken })
+              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
+                  .multiply(new Percent(25, 10000))
+                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
+                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
+              : '$0',
+          route,
+          tx: args
+            ? {
+                from: recipient,
+                to: ROUTE_PROCESSOR_5_ADDRESS[chainId],
+                data: args?.data,
                 value,
-                txdata: args?.data,
-                tokenTax,
-              }),
-            250,
-          ),
-        )
+              }
+            : undefined,
+          tokenTax,
+        }
+      }
+
+      return {
+        swapPrice: undefined,
+        priceImpact: undefined,
+        amountIn: undefined,
+        amountOut: undefined,
+        minAmountOut: undefined,
+        gasSpent: undefined,
+        gasSpentUsd: undefined,
+        fee: undefined,
+        route: undefined,
+        tx: undefined,
+        tokenTax: undefined,
       }
     },
     refetchInterval: 10000,
     enabled: Boolean(
       enabled && poolsCodeMap && gasPrice && fromToken && toToken && chainId,
     ),
+    queryKeyHashFn: stringify,
   })
 }

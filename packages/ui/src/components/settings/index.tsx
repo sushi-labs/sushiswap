@@ -25,7 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../tooltip'
-import { CarbonOffset } from './CarbonOffset'
+// import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
 import { TransactionDeadline } from './TransactionDeadline'
@@ -66,7 +66,6 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
   )
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -127,9 +126,9 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
           <List className="!pt-0">
             <List.Control>
               {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
-              {modules.includes(SettingsModule.CarbonOffset) && (
+              {/* {modules.includes(SettingsModule.CarbonOffset) && (
                 <CarbonOffset />
-              )}
+              )} */}
               {modules.includes(SettingsModule.TransactionDeadline) &&
                 options?.transactionDeadline && (
                   <TransactionDeadline options={options.transactionDeadline} />

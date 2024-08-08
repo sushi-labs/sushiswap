@@ -11,7 +11,12 @@ require('@matterlabs/hardhat-zksync-deploy')
 require('@matterlabs/hardhat-zksync-solc')
 
 const accounts = process.env.PRIVATE_KEY
-  ? [process.env.PRIVATE_KEY]
+  ? [
+      process.env.PRIVATE_KEY,
+      ...(process.env.FUNDER_PRIVATE_KEY
+        ? [process.env.FUNDER_PRIVATE_KEY]
+        : []),
+    ]
   : {
       mnemonic:
         process.env.MNEMONIC ||
@@ -29,7 +34,7 @@ module.exports.defaultConfig = {
         network: 'kava',
         chainId: 2222,
         urls: {
-          apiURL: 'https://kavascan.com/api',
+          apiURL: 'https://api.verify.mintscan.io/evm/api/0x8ae',
           browserURL: 'https://kavascan.com',
         },
       },
@@ -171,6 +176,47 @@ module.exports.defaultConfig = {
           browserURL: 'https://blastscan.io',
         },
       },
+      {
+        network: 'harmony',
+        chainId: 1666600000,
+        urls: {
+          apiURL: 'https://explorer.harmony.one/api',
+          browserURL: 'https://explorer.harmony.one',
+        },
+      },
+      {
+        network: 'linea',
+        chainId: 59144,
+        urls: {
+          apiURL: 'https://api.lineascan.build/api',
+          browserURL: 'https://lineascan.build/',
+        },
+      },
+      {
+        network: 'metis',
+        chainId: 1088,
+        urls: {
+          apiURL: 'https://rootstock.blockscout.com/api',
+          browserURL: 'https://rootstock.blockscout.com',
+        },
+      },
+      {
+        network: 'rootstock',
+        chainId: 30,
+        urls: {
+          apiURL:
+            'https://api.routescan.io/v2/network/mainnet/evm/1088/etherscan',
+          browserURL: 'https://explorer.metis.io',
+        },
+      },
+      {
+        network: 'skale-europa',
+        chainId: 2046399126,
+        urls: {
+          apiURL: 'https://elated-tan-skat.explorer.mainnet.skalenodes.com/api',
+          browserURL: 'https://elated-tan-skat.explorer.mainnet.skalenodes.com',
+        },
+      },
     ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
@@ -178,6 +224,7 @@ module.exports.defaultConfig = {
       rinkeby: process.env.ETHERSCAN_API_KEY || '',
       goerli: process.env.ETHERSCAN_API_KEY || '',
       kovan: process.env.ETHERSCAN_API_KEY || '',
+      sepolia: process.env.ETHERSCAN_API_KEY || '',
       // binance smart chain
       bsc: process.env.BSCSCAN_API_KEY || '',
       bscTestnet: process.env.BSCSCAN_API_KEY || '',
@@ -189,7 +236,6 @@ module.exports.defaultConfig = {
       ftmTestnet: process.env.FTMSCAN_API_KEY || '',
       // optimism
       optimisticEthereum: process.env.OPTIMISTIC_ETHERSCAN_API_KEY || '',
-      optimisticKovan: process.env.OPTIMISTIC_ETHERSCAN_API_KEY || '',
       // polygon
       polygon: process.env.POLYGONSCAN_API_KEY || '',
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
@@ -229,6 +275,8 @@ module.exports.defaultConfig = {
       fuse: 'api-key',
       boba: 'api-key',
       'boba-bnb': 'api-key',
+      rootstock: 'api-key',
+      'skale-europa': 'api-key',
     },
   },
   tenderly: {
@@ -338,6 +386,13 @@ module.exports.defaultConfig = {
       tags: ['staging'],
       gasMultiplier: 2,
     },
+    sepolia: {
+      url: 'https://rpc.sepolia.org',
+      accounts,
+      chainId: 11155111,
+      live: true,
+      saveDeployments: true,
+    },
     fantom: {
       url: 'https://rpcapi.fantom.network',
       accounts,
@@ -355,7 +410,7 @@ module.exports.defaultConfig = {
       gasMultiplier: 2,
     },
     polygon: {
-      url: 'https://rpc-mainnet.maticvigil.com',
+      url: 'https://polygon.llamarpc.com',
       accounts,
       chainId: 137,
       live: true,
@@ -427,7 +482,7 @@ module.exports.defaultConfig = {
       gasMultiplier: 2,
     },
     harmony: {
-      url: 'https://api.s0.t.hmny.io',
+      url: 'https://rpc.ankr.com/harmony',
       accounts,
       chainId: 1666600000,
       live: true,
@@ -658,10 +713,25 @@ module.exports.defaultConfig = {
       live: true,
       saveDeployments: true,
     },
+    rootstock: {
+      url: 'https://mycrypto.rsk.co',
+      accounts,
+      chainId: 30,
+      live: true,
+      saveDeployments: true,
+    },
+    'skale-europa': {
+      url: 'https://mainnet.skalenodes.com/v1/elated-tan-skat',
+      accounts,
+      chainId: 2046399126,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8
     deployer: process.env.LEDGER || { default: 0 },
+    funder: { default: 1 },
     alice: {
       default: 1,
     },
