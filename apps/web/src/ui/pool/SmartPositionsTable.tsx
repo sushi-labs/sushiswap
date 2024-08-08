@@ -1,6 +1,5 @@
 'use client'
 
-import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import {
   SkeletonText,
@@ -34,8 +33,6 @@ const COLUMNS = [
     header: 'APR (24h)',
     accessorFn: (row) => row.vault.stakedAndIncentiveApr1d,
     cell: (props) => {
-      const totalAPR = props.row.original.vault.stakedAndIncentiveApr1d
-
       return (
         <div className="flex gap-1">
           <TooltipProvider>
@@ -55,17 +52,16 @@ const COLUMNS = [
               id: props.row.original.id as `${string}:0x${string}`,
               address: props.row.original.vault.poolAddress as Address,
               chainId: props.row.original.vault.chainId as ChainId,
-
               protocol: SushiSwapProtocol.SUSHISWAP_V3,
               feeApr1d: props.row.original.vault.feeApr1d,
               incentiveApr: props.row.original.vault.incentiveApr,
               isIncentivized: props.row.original.vault.isIncentivized,
               wasIncentivized: props.row.original.vault.wasIncentivized,
             }}
-            smartPoolAPR={props.row.original.vault.stakedAndIncentiveApr1d}
+            smartPoolAPR={props.row.original.vault.stakedApr1d}
           >
             <span className="underline decoration-dotted underline-offset-2">
-              {formatPercent(totalAPR / 100)}
+              {formatPercent(props.row.original.vault.stakedAndIncentiveApr1d)}
             </span>
           </APRHoverCard>
         </div>
@@ -88,7 +84,7 @@ export const SmartPositionsTable: FC<{ chainId: ChainId }> = ({ chainId }) => {
 
   const { data: positions, isLoading } = useSteerAccountPositionsExtended({
     account: address,
-    chainIds: isSteerChainId(chainId) ? [chainId] : [],
+    chainId,
   })
 
   const _positions = useMemo(() => (positions ? positions : []), [positions])

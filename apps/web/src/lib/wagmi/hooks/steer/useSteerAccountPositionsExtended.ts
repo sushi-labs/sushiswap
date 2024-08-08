@@ -1,17 +1,15 @@
 import { useAllPrices } from '@sushiswap/react-query'
+import { useMemo } from 'react'
+import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
+import { ChainId, ID } from 'sushi'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
-
-import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
-import { useMemo } from 'react'
 import { useSteerAccountPositions } from './useSteerAccountPosition'
-import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
-import { ID } from 'sushi'
 
 interface UseSteerAccountPositionsExtended {
   account: Address | undefined
   enabled?: boolean
-  chainIds?: number[]
+  chainId: ChainId
 }
 
 export type SteerAccountPositionExtended = NonNullable<
@@ -25,12 +23,12 @@ export type SteerAccountPositionVault = NonNullable<
 export const useSteerAccountPositionsExtended = ({
   account,
   enabled = true,
-  chainIds = [...STEER_SUPPORTED_CHAIN_IDS],
+  chainId,
 }: UseSteerAccountPositionsExtended) => {
   const { data: prices, isInitialLoading: isPricesLoading } = useAllPrices()
 
   const { data: smartPools, isLoading: isVaultsLoading } = useSmartPools(
-    { chainId: 137 }, // TODO: FIX
+    { chainId },
     Boolean(enabled && account),
   )
 

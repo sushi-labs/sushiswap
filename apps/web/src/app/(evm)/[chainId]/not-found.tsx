@@ -1,3 +1,5 @@
+'use client'
+
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
 import { useChainId } from 'wagmi'
