@@ -1,3 +1,4 @@
+import type { Address } from 'viem'
 import { ChainId } from '../chain/index.js'
 
 // v1
@@ -340,4 +341,87 @@ export const isRouteProcessor4ChainId = (
 ): chainId is RouteProcessor4ChainId =>
   ROUTE_PROCESSOR_4_SUPPORTED_CHAIN_IDS.includes(
     chainId as RouteProcessor4ChainId,
+  )
+
+// v5
+export const ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.BASE,
+  ChainId.POLYGON,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.LINEA,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.GNOSIS,
+  ChainId.FANTOM,
+  ChainId.BTTC,
+  ChainId.CELO,
+  ChainId.FILECOIN,
+  ChainId.HAQQ,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.THUNDERCORE,
+  ChainId.SCROLL,
+  ChainId.ZETACHAIN,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.POLYGON_ZKEVM,
+  ChainId.FUSE,
+  ChainId.HARMONY,
+  ChainId.TELOS,
+  ChainId.BOBA,
+  ChainId.BOBA_BNB,
+  ChainId.CORE,
+  ChainId.CRONOS,
+  ChainId.BLAST,
+  ChainId.SKALE_EUROPA,
+  ChainId.ROOTSTOCK,
+] as const
+export type RouteProcessor5ChainId =
+  (typeof ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS)[number]
+export const ROUTE_PROCESSOR_5_ADDRESS: Record<
+  RouteProcessor5ChainId,
+  Address
+> = {
+  [ChainId.ETHEREUM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.ARBITRUM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.OPTIMISM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.BASE]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.POLYGON]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.AVALANCHE]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.BSC]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.LINEA]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.ARBITRUM_NOVA]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.GNOSIS]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.FANTOM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.BTTC]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.CELO]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.FILECOIN]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.HAQQ]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.KAVA]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.METIS]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.THUNDERCORE]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.SCROLL]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.ZETACHAIN]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.MOONBEAM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.MOONRIVER]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.POLYGON_ZKEVM]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.FUSE]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.HARMONY]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.TELOS]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.BOBA]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.BOBA_BNB]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.CORE]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.CRONOS]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.BLAST]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.SKALE_EUROPA]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+  [ChainId.ROOTSTOCK]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
+} as const
+export const isRouteProcessor5ChainId = (
+  chainId: ChainId,
+): chainId is RouteProcessor5ChainId =>
+  ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS.includes(
+    chainId as RouteProcessor5ChainId,
   )

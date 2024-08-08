@@ -78,6 +78,7 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
       <List.Control className="bg-gray-100 dark:!bg-slate-700">
         {_connectors.map((connector) => (
           <TraceEvent
+            key={connector.id}
             events={[BrowserEvent.onClick]}
             name={InterfaceEventName.WALLET_SELECTED}
             properties={{ wallet_type: connector.name }}

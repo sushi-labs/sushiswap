@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { usePrice } from '@sushiswap/react-query'
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
@@ -12,12 +13,11 @@ import {
   useState,
   useTransition,
 } from 'react'
+import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
+import { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
-
-import { useIsMounted } from '@sushiswap/hooks'
-import { useBalanceWeb3 } from 'src/lib/wagmi/hooks/balances/useBalanceWeb3'
 import { TokenSelector } from '../../token-selector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -32,7 +32,7 @@ interface CurrencyInputProps {
   chainId: ChainId
   className?: string
   loading?: boolean
-  usdPctChange?: number
+  priceImpact?: Percent | undefined
   disableMaxButton?: boolean
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
@@ -57,7 +57,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   chainId,
   className,
   loading,
-  usdPctChange,
+  priceImpact,
   disableMaxButton = false,
   type,
   fetching,
@@ -151,7 +151,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         hideSearch={hideSearch}
       >
         <Button
-          data-state={isLoading ? 'inactive' : 'active'}
+          data-state={currencyLoading ? 'inactive' : 'active'}
           size="lg"
           variant={currency ? 'secondary' : 'default'}
           id={id}
@@ -181,7 +181,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
       </TokenSelector>
     )
   }, [
-    isLoading,
+    currencyLoading,
     id,
     onSelect,
     currencies,
@@ -213,7 +213,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           )}
         >
           <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+          {currencyLoading ? (
+            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+          ) : null}
         </div>
         <div
           data-state={isLoading ? 'inactive' : 'active'}
@@ -272,7 +274,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
           <PricePanel
             value={value}
             currency={currency}
-            usdPctChange={usdPctChange}
+            priceImpact={priceImpact}
             error={_error}
             loading={isPriceLoading}
             price={price}

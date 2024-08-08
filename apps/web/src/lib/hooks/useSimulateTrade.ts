@@ -1,17 +1,18 @@
 import { UseTradeReturn } from '@sushiswap/react-query'
+import { EstimateGasErrorType, EstimateGasReturnType } from '@wagmi/core'
 import { useEffect, useMemo, useRef } from 'react'
 import { useDerivedStateSimpleSwap } from 'src/ui/swap/simple/derivedstate-simple-swap-provider'
-import {
-  ROUTE_PROCESSOR_4_ADDRESS,
-  isRouteProcessor4ChainId,
-} from 'sushi/config'
-import { CallErrorType, CallReturnType, Hex, RawContractError } from 'viem'
-import { useAccount, useCall } from 'wagmi'
+import { isRouteProcessor5ChainId } from 'sushi/config'
+import { Hex, RawContractError } from 'viem'
+import { useAccount, useEstimateGas } from 'wagmi'
 import { getTokenTax } from '../swap/getTokenTax'
 
-const isMinOutError = (_error: CallErrorType): Hex | false => {
-  const error = _error.walk() as RawContractError
-  const data = typeof error?.data === 'object' ? error.data?.data : error.data
+const isMinOutError = (_error: EstimateGasErrorType): Hex | false => {
+  const error =
+    _error.name === 'EstimateGasExecutionError'
+      ? (_error.walk() as RawContractError)
+      : undefined
+  const data = typeof error?.data === 'object' ? error.data?.data : error?.data
   return data?.includes('0x963b34a5') ? data : false
 }
 
@@ -29,14 +30,12 @@ export function useSimulateTrade({
 
   const { address } = useAccount()
 
-  const simulateTrade = useCall({
+  const simulateTrade = useEstimateGas({
     chainId: chainId,
-    to: isRouteProcessor4ChainId(chainId)
-      ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
-      : undefined,
-    data: trade?.txdata as Hex | undefined,
+    to: trade?.tx?.to,
+    data: trade?.tx?.data as Hex | undefined,
     account: address,
-    value: trade?.value || 0n,
+    value: trade?.tx?.value || 0n,
     query: {
       retry: (i, error) => {
         if (
@@ -51,15 +50,15 @@ export function useSimulateTrade({
         enabled &&
         Boolean(
           address &&
-            trade?.txdata &&
-            isRouteProcessor4ChainId(chainId) &&
+            trade?.tx &&
+            isRouteProcessor5ChainId(chainId) &&
             trade?.route?.status !== 'NoWay',
         ),
     },
   })
 
-  const prevErrorRef = useRef<CallErrorType>()
-  const prevDataRef = useRef<CallReturnType>()
+  const prevErrorRef = useRef<EstimateGasErrorType>()
+  const prevDataRef = useRef<EstimateGasReturnType>()
 
   // onSuccess
   useEffect(() => {
@@ -97,15 +96,11 @@ export function useSimulateTrade({
       ...simulateTrade,
       data: simulateTrade.data
         ? {
-            ...simulateTrade.data,
-            request: {
-              to: isRouteProcessor4ChainId(chainId)
-                ? ROUTE_PROCESSOR_4_ADDRESS[chainId]
-                : undefined,
-              data: trade?.txdata as Hex | undefined,
-              value: trade?.value || 0n,
-              account: address,
-            },
+            gas: (simulateTrade.data * 120n) / 100n,
+            to: trade?.tx?.to,
+            data: trade?.tx?.data as Hex | undefined,
+            value: trade?.tx?.value || 0n,
+            account: address,
           }
         : undefined,
       isError:
@@ -123,6 +118,6 @@ export function useSimulateTrade({
           ? null
           : simulateTrade.error,
     }),
-    [simulateTrade, trade, chainId, address],
+    [simulateTrade, trade, address],
   )
 }
