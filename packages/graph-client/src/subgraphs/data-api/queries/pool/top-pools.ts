@@ -6,7 +6,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const PoolsQuery = graphql(
   `
-  query TopPools($chainId: Int!) {
+  query TopPools($chainId: String!) {
     topPools(chainId: $chainId) {
       id
       chainId
@@ -61,7 +61,7 @@ export async function getTopPools(
       return result.topPools ?? []
     }
   } catch (error) {
-    console.error('getV2Pool error', error)
+    console.error('getTopPools error', error)
   }
   return []
 }

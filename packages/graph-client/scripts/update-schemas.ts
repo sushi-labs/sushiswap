@@ -9,7 +9,6 @@ const schemas = {
   strapi: 'sushi-strapi-cms.herokuapp.com/graphql',
   furo: 'api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',
   'data-api': 'data-api-production-acb1.up.railway.app/graphql',
-  'sushi-v3': 'api.studio.thegraph.com/query/32073/v3-arbitrum/v0.0.1',
 } as const satisfies Record<string, string>
 
 async function updateSchema(schema: keyof typeof schemas) {

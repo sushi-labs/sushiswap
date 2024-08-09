@@ -20,7 +20,7 @@ type SushiDayBuckets {
 
 type Query {
   sushiDayBuckets(chainId: Int!): SushiDayBuckets!
-  topPools(chainId: Int!): [TopPool!]!
+  topPools(chainId: String!): [TopPool!]!
   v2Pool(address: String!, chainId: Int!): V2Pool!
   v3Pool(address: String!, chainId: Int!): V3Pool!
   v2PoolBuckets(address: String!, chainId: Int!): PoolBuckets!
@@ -183,7 +183,7 @@ type PoolBucket {
 
 type TopPool {
   id: ID!
-  chainId: Int!
+  chainId: String!
   name: String!
   address: String!
   createdAt: String!
