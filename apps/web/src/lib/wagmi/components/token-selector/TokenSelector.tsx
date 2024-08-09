@@ -2,12 +2,7 @@
 
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import {
-  DEFAULT_BASES,
-  useCustomTokens,
-  useDebounce,
-  usePinnedTokens,
-} from '@sushiswap/hooks'
+import { useCustomTokens, useDebounce, usePinnedTokens } from '@sushiswap/hooks'
 import {
   NativeAddress,
   useBalances,
@@ -48,6 +43,7 @@ import React, {
   useState,
 } from 'react'
 import { ChainId } from 'sushi/chain'
+import { DEFAULT_BASES } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
 import { isAddress } from 'viem'
 import { useAccount } from 'wagmi'
