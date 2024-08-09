@@ -260,7 +260,9 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
       fee: SushiSwapV3FeeAmount.HIGH,
     })
-    const url = BASE_URL.concat(`/${this.chainId.toString()}/pool/v3/${poolAddress}/positions/create`)
+    const url = BASE_URL.concat(
+      `/${this.chainId.toString()}/pool/v3/${poolAddress}/positions/create`,
+    )
     await this.page.goto(url)
     await this.connect()
     await this.page.locator('[testdata-id=my-positions-button]').click()
@@ -311,7 +313,9 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
     })
 
-    const url = BASE_URL.concat(`/${this.chainId.toString()}/pool/v2/${poolAddress}/remove`)
+    const url = BASE_URL.concat(
+      `/${this.chainId.toString()}/pool/v2/${poolAddress}/remove`,
+    )
     await this.page.goto(url)
     await this.connect()
     await this.switchNetwork(this.chainId)
