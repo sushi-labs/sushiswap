@@ -154,7 +154,7 @@ export class Extractor {
           multiCallAggregator: this.multiCallAggregator,
           tokenManager: this.tokenManager,
           cacheDir: args.cacheDir,
-          tickHelperContract: args.tickHelperContractV4
+          tickHelperContract: args.tickHelperContractV4,
         }),
       )
   }
@@ -294,13 +294,13 @@ export class Extractor {
       const addUnique = Array.from(addMap.values())
 
       const fetching = [
-        ...this.projectExtractors.flatMap(
+        ...this.projectExtractors.map(
           (e) => e.getPoolsForTokens(baseUnique).fetching,
         ),
-        ...this.projectExtractors.flatMap(
+        ...this.projectExtractors.map(
           (e) => e.getPoolsBetweenTokenSets(baseUnique, addUnique).fetching,
         ),
-      ]
+      ].flat()
       // console.log(
       //   'EXTR DEBUG: prefetch start ',
       //   tokensBaseSet.length,
