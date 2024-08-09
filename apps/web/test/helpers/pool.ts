@@ -266,7 +266,6 @@ export class PoolPage extends BaseActions {
       .concat(poolAddress)
       .concat('/positions/create')
     await this.page.goto(url)
-    await this.page.goto(BASE_URL)
     await this.connect()
     await this.page.locator('[testdata-id=my-positions-button]').click()
 
