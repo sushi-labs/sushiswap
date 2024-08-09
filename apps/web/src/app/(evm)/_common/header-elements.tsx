@@ -9,7 +9,7 @@ import {
 } from '@sushiswap/ui'
 import {
   EXPLORE_NAVIGATION_LINKS,
-  MORE_NAVIGATION_LINKS,
+  // MORE_NAVIGATION_LINKS,
 } from 'src/app/_common/header-elements'
 import { ChainId } from 'sushi'
 
@@ -59,10 +59,10 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     show: 'desktop',
     type: NavigationElementType.Single,
   },
-  {
-    title: 'More',
-    items: MORE_NAVIGATION_LINKS,
-    show: 'desktop',
-    type: NavigationElementType.Dropdown,
-  },
+  // {
+  //   title: 'More',
+  //   items: MORE_NAVIGATION_LINKS,
+  //   show: 'desktop',
+  //   type: NavigationElementType.Dropdown,
+  // },
 ]
