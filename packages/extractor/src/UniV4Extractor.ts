@@ -7,8 +7,8 @@ import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import { TokenManager } from './TokenManager.js'
-import { UniV4PoolWatcher } from './UniV4PoolWatcher.js'
-import { Index, IndexArray } from './Utils.js'
+import { UniV4PoolWatcher, UniV4PoolWatcherStatus } from './UniV4PoolWatcher.js'
+import { Index, IndexArray, allFulfilled, sortTokenPair } from './Utils.js'
 
 export interface UniV4Config {
   address: Address
@@ -22,7 +22,7 @@ interface PoolInfo {
   token1: Token
   fee: number
   spacing: number
-  hooks: Address
+  hooks: Address | undefined
 }
 
 interface PoolCacheRecord {
@@ -32,7 +32,7 @@ interface PoolCacheRecord {
   token1: Address
   fee: number
   spacing: number
-  hooks: Address
+  hooks: Address | undefined
 }
 
 const poolInitEvent = parseAbiItem(
@@ -151,7 +151,6 @@ export class UniV4Extractor extends IExtractor {
     prefetched: PoolCode[]
     fetching: Promise<PoolCode[]>
   } {
-    //const startTime = performance.now()
     const prefetched: UniV4PoolWatcher[][] = []
     const waitList: Promise<UniV4PoolWatcher[]>[] = []
     for (let i = 0; i < tokensUnique1.length; ++i) {
@@ -165,7 +164,23 @@ export class UniV4Extractor extends IExtractor {
       }
     }
 
-    return { prefetched: [], fetching: Promise.resolve([]) }
+    const fetching = allFulfilled(waitList).then((res) => {
+      return allFulfilled(
+        res.flat().map(async (w) => {
+          if (w.getStatus() !== UniV4PoolWatcherStatus.All)
+            await w.downloadFinished()
+          return w.getPoolCode()
+        }),
+      ).then((pcs) => pcs.filter((pc) => pc !== undefined) as PoolCode[])
+    })
+
+    return {
+      prefetched: prefetched
+        .flat()
+        .map((p) => p.getPoolCode())
+        .filter((p) => p !== undefined) as PoolCode[],
+      fetching,
+    }
   }
 
   getCurrentPoolCodes() {
@@ -176,6 +191,7 @@ export class UniV4Extractor extends IExtractor {
   }
   getTokensPoolsQuantity() {}
 
+  // ATTENTION: pools created after this moment and before <await newAdded> moment are not returned by this function
   getPoolsCreatedForTokenPair(
     token0: Token,
     token1: Token,
@@ -183,18 +199,18 @@ export class UniV4Extractor extends IExtractor {
     known: UniV4PoolWatcher[]
     newAdded: Promise<UniV4PoolWatcher[]>
   } {
-    const [t0, t1] = token0.sortsBefore(token1)
-      ? [token0, token1]
-      : [token1, token0]
-    return this.getPoolsCreatedForSortedTokenPair(t0, t1)
+    const [t0, t1] = sortTokenPair(token0, token1)
+    return {
+      known: this.tokenPairPool.get(token0.address, token1.address) ?? [],
+      newAdded: this.getPoolsCreatedForSortedTokenPair(t0, t1),
+    }
   }
 
-  /* async getPoolsCreatedForSortedTokenPair(
+  async getPoolsCreatedForSortedTokenPair(
     token0: Token,
     token1: Token,
-  ): Promise<UniV4PoolWatcher[]>
-  } {
-    const known = this.tokenPairPool.get(token0.address, token1.address) ?? []
+  ): Promise<UniV4PoolWatcher[]> {
+    const startTime = performance.now()
     const client = this.multiCallAggregator.client
     const events = await client.getLogs({
       address: this.config.map((c) => c.address),
@@ -204,7 +220,6 @@ export class UniV4Extractor extends IExtractor {
         currency1: token1.address,
       },
     })
-    const known: UniV4PoolWatcher[] = []
     const newAdded: UniV4PoolWatcher[] = []
     events.forEach(({ args, address }) => {
       const { id, fee, tickSpacing, hooks } = args
@@ -213,11 +228,8 @@ export class UniV4Extractor extends IExtractor {
         return
       }
 
-      const watcher = this.poolWatchers.get(id , address)
-      if (watcher !== undefined) {
-        known.push(watcher)
-        return
-      }
+      const watcher = this.poolWatchers.get(id, address)
+      if (watcher !== undefined) return
 
       if (fee === undefined || tickSpacing === undefined) {
         this.errorLog(
@@ -232,25 +244,25 @@ export class UniV4Extractor extends IExtractor {
         return
       }
 
-      const newWatcher = new UniV4PoolWatcher({
-        provider: config.provider,
-        address,
-        id,
-        tickHelperContract: this.tickHelperContract,
-        token0,
-        token1,
-        fee,
-        spacing: tickSpacing,
-        hooks,
-        client: this.multiCallAggregator,
-        busyCounter: this.taskCounter,
-      })
-      this.poolWatchers.set(id , address, newWatcher)
-      newAdded.push(newWatcher)
+      const newWatcher = this.addPoolWatching(
+        {
+          address,
+          id,
+          token0,
+          token1,
+          fee,
+          spacing: tickSpacing,
+          hooks,
+        },
+        'request',
+        true,
+        startTime,
+      )
+      if (newWatcher !== undefined) newAdded.push(newWatcher)
     })
 
-    return { known, newAdded }
-  }*/
+    return newAdded
+  }
 
   watchedPools = 0
   addPoolWatching(
@@ -258,7 +270,7 @@ export class UniV4Extractor extends IExtractor {
     source: 'cache' | 'request' | 'logs',
     addToCache = true,
     startTime = 0,
-  ) {
+  ): UniV4PoolWatcher | undefined {
     // if (this.logProcessingStatus !== LogsProcessing.Started) {
     //   throw new Error(
     //     'Pools can be added only after Log processing have been started',
@@ -281,9 +293,7 @@ export class UniV4Extractor extends IExtractor {
     watcher.updatePoolState()
     this.poolWatchers.set(p.id, p.address, watcher)
 
-    const [t0, t1] = p.token0.sortsBefore(p.token1)
-      ? [p.token0.address, p.token1.address]
-      : [p.token1.address, p.token0.address]
+    const [{ address: t0 }, { address: t1 }] = sortTokenPair(p.token0, p.token1)
 
     this.tokenPairPool.push(t0, t1, watcher)
 
