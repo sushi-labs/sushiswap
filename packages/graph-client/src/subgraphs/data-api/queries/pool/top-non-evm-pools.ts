@@ -4,7 +4,7 @@ import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
-export const PoolsQuery = graphql(
+export const TopNonEvmPoolsQuery = graphql(
   `
   query TopPools($chainId: String!) {
     topPools(chainId: $chainId) {
@@ -40,10 +40,10 @@ export const PoolsQuery = graphql(
 `,
 )
 
-export type GetPools = VariablesOf<typeof PoolsQuery>
+export type GetNonEvmPools = VariablesOf<typeof TopNonEvmPoolsQuery>
 
-export async function getTopPools(
-  variables: GetPools,
+export async function getTopNonEvmPools(
+  variables: GetNonEvmPools,
   options?: RequestOptions,
 ) {
   const url = `https://${SUSHI_DATA_API_HOST}`
@@ -51,7 +51,7 @@ export async function getTopPools(
     const result = await request(
       {
         url,
-        document: PoolsQuery,
+        document: TopNonEvmPoolsQuery,
         variables,
         requestHeaders: SUSHI_REQUEST_HEADERS,
       },
@@ -66,4 +66,4 @@ export async function getTopPools(
   return []
 }
 
-export type TopPools = Awaited<ReturnType<typeof getTopPools>>
+export type TopNonEvmPools = Awaited<ReturnType<typeof getTopNonEvmPools>>
