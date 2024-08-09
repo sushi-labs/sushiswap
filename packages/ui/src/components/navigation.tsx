@@ -14,15 +14,18 @@ import {
   NavigationMenuTrigger,
 } from './navigation-menu'
 
-const PROTOCOL_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
+const COMPANY_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
     title: 'Blog',
     href: '/blog',
     description:
       'Stay up to date with the latest product developments at Sushi.',
   },
+]
+
+const PROTOCOL_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
-    title: 'Forum & Proposals',
+    title: 'Forum',
     href: 'https://forum.sushi.com',
     description: 'View and discuss proposals for SushiSwap.',
   },
@@ -209,6 +212,20 @@ const Navigation: React.FC<NavProps> = ({
               <NavigationMenuContent>
                 <ul className="w-[400px] flex flex-col gap-4 p-4">
                   <div className="flex flex-col gap-2 pt-3">
+                    <span className="font-semibold px-3">Company</span>
+                    <div>
+                      {COMPANY_NAVIGATION_LINKS.map((component) => (
+                        <NavigationListItem
+                          key={component.title}
+                          title={component.title}
+                          href={component.href}
+                        >
+                          {component.description}
+                        </NavigationListItem>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
                     <span className="font-semibold px-3">Protocol</span>
                     <div>
                       {PROTOCOL_NAVIGATION_LINKS.map((component) => (
