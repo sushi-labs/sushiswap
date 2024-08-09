@@ -35,3 +35,43 @@ export async function repeat<RetType>(
   }
   return await action()
 }
+
+type FunctionArgs<FunctionType> = FunctionType extends (...args: infer R) => any
+  ? R
+  : never
+
+export class Index<A, B, Func extends (...args: any) => A> {
+  map: Map<A, B>
+  func: Func
+
+  constructor(map: Map<A, B>, func: Func) {
+    this.map = map
+    this.func = func
+  }
+
+  get(...x: FunctionArgs<Func>): B | undefined {
+    return this.map.get(this.func(...x))
+  }
+
+  set(...x: [...FunctionArgs<Func>, B]): typeof this {
+    this.map.set(this.func(...x), x[x.length - 1])
+    return this
+  }
+
+  has(...x: FunctionArgs<Func>): boolean {
+    return this.map.has(this.func(...x))
+  }
+}
+
+export class IndexArray<A, E, Func extends (...args: any) => A> extends Index<
+  A,
+  E[],
+  Func
+> {
+  push(...x: [...FunctionArgs<Func>, E]): typeof this {
+    const arr = this.map.get(this.func(...x))
+    if (arr === undefined) this.map.set(this.func(...x), [x[x.length - 1]])
+    else arr.push(x[x.length - 1])
+    return this
+  }
+}

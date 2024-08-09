@@ -21,7 +21,7 @@ export abstract class IExtractor {
     tokensUnique2: Token[],
   ): {
     prefetched: PoolCode[]
-    fetching: Promise<PoolCode | undefined>[]
+    fetching: Promise<PoolCode | undefined>[] | Promise<PoolCode[]>
   }
 
   // Returns all currently fetched pools
