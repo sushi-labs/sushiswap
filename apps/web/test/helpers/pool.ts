@@ -46,7 +46,7 @@ interface AddV2LiquidityArgs {
   amount0: string
   amount1: string
 }
-const BASE_URL = 'http://localhost:3000/pool'
+const BASE_URL = 'http://localhost:3000'
 
 export class PoolPage extends BaseActions {
   readonly chainId: number
@@ -260,11 +260,7 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
       fee: SushiSwapV3FeeAmount.HIGH,
     })
-    // TODO: position Number?
-    const url = BASE_URL.concat(this.chainId.toString())
-      .concat('/pool/v3/')
-      .concat(poolAddress)
-      .concat('/positions/create')
+    const url = BASE_URL.concat(`/${this.chainId.toString()}/pool/v3/${poolAddress}/positions/create`)
     await this.page.goto(url)
     await this.connect()
     await this.page.locator('[testdata-id=my-positions-button]').click()
@@ -315,10 +311,7 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
     })
 
-    const url = BASE_URL.concat(this.chainId.toString())
-      .concat('/pool/v2/')
-      .concat(poolAddress)
-      .concat('/remove')
+    const url = BASE_URL.concat(`/${this.chainId.toString()}/pool/v2/${poolAddress}/remove`)
     await this.page.goto(url)
     await this.connect()
     await this.switchNetwork(this.chainId)
