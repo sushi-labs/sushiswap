@@ -261,11 +261,10 @@ export class PoolPage extends BaseActions {
       fee: SushiSwapV3FeeAmount.HIGH,
     })
     const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v3/${poolAddress}/positions/create`,
-    ) // TODO: fix url, must contain the position ID
+      `/${this.chainId.toString()}/pool/v3/${poolAddress.toLowerCase()}/positions`,
+    )
     await this.page.goto(url)
     await this.connect()
-    await this.page.locator('[testdata-id=my-positions-button]').click()
 
     const concentratedPositionTableSelector = this.page.locator(
       '[testdata-id=concentrated-positions-loading-0]',
@@ -277,7 +276,6 @@ export class PoolPage extends BaseActions {
     )
     await expect(firstPositionSelector).toBeVisible()
     await firstPositionSelector.click()
-
     const removeLiquidityTabSelector = this.page.locator(
       '[testdata-id=remove-tab]',
     )
@@ -314,7 +312,7 @@ export class PoolPage extends BaseActions {
     })
 
     const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v2/${poolAddress}/remove`,
+      `/${this.chainId.toString()}/pool/v2/${poolAddress.toLowerCase()}/remove`,
     )
     await this.page.goto(url)
     await this.connect()
@@ -421,108 +419,126 @@ export class PoolPage extends BaseActions {
         console.error('>>>>>>>>> UNKNOWN PROTOCOL')
         throw Error('Unknown protocol')
       }
+      const mockPool =
+        protocol === 'SUSHISWAP_V2'
+          ? {
+              data: {
+                v2Pool: {
+                  id: `${this.chainId}:${address}`.toLowerCase(),
+                  chainId: this.chainId,
+                  name: 'WMATIC / FT',
+                  address,
+                  createdAt: '1630455405',
+                  protocol,
+                  // swapFee: fee / (protocol === 'SUSHISWAP_V3' ? 1000000 : 10000),
+                  swapFee: fee / 10000,
 
-      const mockPool = {
-        id: `${this.chainId}:${address}`.toLowerCase(),
-        address: address.toLowerCase(),
-        name: `${tokenA.symbol}-${tokenB.symbol}`,
-        chainId: this.chainId,
-        protocol,
-        swapFee: fee / (protocol === 'SUSHISWAP_V3' ? 1000000 : 10000),
-        twapEnabled: false,
-        totalSupply: '83920283456658325128353',
-        liquidityUSD: '0',
-        volumeUSD: '0',
-        feeApr1h: 0,
-        feeApr1d: 0,
-        feeApr1w: 0,
-        feeApr1m: 0,
-        totalApr1h: 0,
-        totalApr1d: 0,
-        totalApr1w: 0,
-        totalApr1m: 0,
-        incentiveApr: 0,
-        isIncentivized: false,
-        wasIncentivized: false,
-        fees1h: '0',
-        fees1d: '0',
-        fees1w: '0',
-        fees1m: '0',
-        feesChange1h: 0,
-        feesChange1d: 0,
-        feesChange1w: 0,
-        feesChange1m: 0,
-        volume1h: '0',
-        volume1d: '0',
-        volume1w: '0',
-        volume1m: '0',
-        volumeChange1h: 0,
-        volumeChange1d: 0,
-        volumeChange1w: 0,
-        volumeChange1m: 0,
-        liquidityUSDChange1h: 0,
-        liquidityUSDChange1d: 0,
-        liquidityUSDChange1w: 0,
-        liquidityUSDChange1m: 0,
-        isBlacklisted: false,
-        token0: {
-          id: `${tokenA.chainId}:${tokenA.address}`.toLowerCase(),
-          address: tokenA.address.toLowerCase(),
-          name: tokenA.name,
-          symbol: tokenA.symbol,
-          decimals: tokenA.decimals,
-          chainId: tokenA.chainId,
-        },
-        token1: {
-          id: `${tokenB.chainId}:${tokenB.address}`.toLowerCase(),
-          address: tokenB.address.toLowerCase(),
-          name: tokenB.name,
-          symbol: tokenB.symbol,
-          decimals: tokenB.decimals,
-          chainId: tokenB.chainId,
-        },
-        incentives: [],
-        hadEnabledSteerVault: false,
-        hasEnabledSteerVault: false,
-        steerVaults: [],
-      }
+                  token0: {
+                    id: `${tokenA.chainId}:${tokenA.address}`.toLowerCase(),
+                    address: tokenA.address.toLowerCase(),
+                    name: tokenA.name,
+                    symbol: tokenA.symbol,
+                    decimals: tokenA.decimals,
+                    chainId: tokenA.chainId,
+                  },
+                  token1: {
+                    id: `${tokenB.chainId}:${tokenB.address}`.toLowerCase(),
+                    address: tokenB.address.toLowerCase(),
+                    name: tokenB.name,
+                    symbol: tokenB.symbol,
+                    decimals: tokenB.decimals,
+                    chainId: tokenB.chainId,
+                  },
+                  source: 'SUBGRAPH',
+                  reserve0: '14632715635223519232',
+                  reserve1: '66374911905262165000000',
+                  liquidity: '736541498034438406144',
+                  volumeUSD: 56162969.922308594,
+                  liquidityUSD: 71429.02585542823,
+                  token0Price: 0.0002204555187373958,
+                  token1Price: 4536.062448004257,
+                  volumeUSD1d: 1444.4034653156996,
+                  feeUSD1d: 4.333210395940114,
+                  txCount1d: 104,
+                  feeApr1d: 0.022142564252791732,
+                  totalApr1d: 0.022142564252791732,
+                  volumeUSD1dChange: -0.43870093251068154,
+                  feeUSD1dChange: -0.4387009325124158,
+                  txCount1dChange: -0.11864406779661019,
+                  liquidityUSD1dChange: 0.01395086513190713,
+                  incentiveApr: 0,
+                  isIncentivized: false,
+                  wasIncentivized: false,
+                  incentives: [],
+                },
+              },
+            }
+          : {
+              data: {
+                v3Pool: {
+                  id: `${this.chainId}:${address}`.toLowerCase(),
+                  chainId: this.chainId,
+                  name: 'WMATIC / FT',
+                  address,
+                  createdAt: '1630455405',
+                  protocol,
+                  swapFee: fee / 1_000_000,
 
-      // console.log({ url: request.url.toLowerCase() })
+                  token0: {
+                    id: `${tokenA.chainId}:${tokenA.address}`.toLowerCase(),
+                    address: tokenA.address.toLowerCase(),
+                    name: tokenA.name,
+                    symbol: tokenA.symbol,
+                    decimals: tokenA.decimals,
+                    chainId: tokenA.chainId,
+                  },
+                  token1: {
+                    id: `${tokenB.chainId}:${tokenB.address}`.toLowerCase(),
+                    address: tokenB.address.toLowerCase(),
+                    name: tokenB.name,
+                    symbol: tokenB.symbol,
+                    decimals: tokenB.decimals,
+                    chainId: tokenB.chainId,
+                  },
+                  source: 'SUBGRAPH',
+                  reserve0: '97138000822798992',
+                  reserve1: '251532847196719',
+                  liquidity: '190259449333200569961',
+                  sqrtPrice: '77543082754135133119551574769',
+                  tick: '-430',
+                  observationIndex: '0',
+                  feeGrowthGlobal0X128: '1913748811595781336300706674643883',
+                  feeGrowthGlobal1X128: '1490989199114543008131607233327172',
+                  volumeUSD: 124770.3303415501,
+                  liquidityUSD: 327.7942814599597,
+                  token0Price: 1.0439339999465262,
+                  token1Price: 0.9579149640218858,
+                  volumeUSD1d: 0,
+                  feeUSD1d: 0,
+                  txCount1d: 0,
+                  feeApr1d: 0,
+                  totalApr1d: 0,
+                  volumeUSD1dChange: 0,
+                  feeUSD1dChange: 0,
+                  txCount1dChange: 0,
+                  liquidityUSD1dChange: 0,
+                  incentiveApr: 0,
+                  hadSmartPool: false,
+                  hasSmartPool: false,
+                  isIncentivized: false,
+                  wasIncentivized: false,
+                  incentives: [],
+                  vaults: [],
+                },
+              },
+            }
 
-      if (request.url.toLowerCase().endsWith('/pool/api/pools')) {
-        // console.log('RETURN POOLS MOCK')
-
-        return new Response(JSON.stringify([mockPool]), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-      } else if (
-        request.url
-          .toLowerCase()
-          .endsWith(`/pool/api/pools/${this.chainId}/${address}`.toLowerCase())
-      ) {
-        // console.log('RETURN POOL MOCK')
+      if (request.url.toLowerCase().endsWith('/graphql')) {
         return new Response(JSON.stringify(mockPool), {
           headers: {
             'Content-Type': 'application/json',
           },
         })
-      } else if (
-        request.url
-          .toLowerCase()
-          .endsWith('/pool/api/pools/count'.toLowerCase())
-      ) {
-        // console.log('RETURN POOL COUNT MOCK')
-        return new Response(JSON.stringify({ count: 1 }), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-      } else if (
-        request.url.toLowerCase().endsWith('/pool/api/graphPools'.toLowerCase())
-      ) {
-        console.log('RETURN GRAPH POOLS MOCK')
       }
     })
   }

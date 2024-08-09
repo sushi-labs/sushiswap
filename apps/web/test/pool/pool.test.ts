@@ -68,64 +68,22 @@ test.beforeEach(async ({ page, next }) => {
     console.error('error mockking token api', error)
   }
 
-  // TEMP: Mock V2 POOL..
-  await page.route(
-    'https://data.sushi.com', // TODO: update url
-    async (route) => {
+  try {
+    await page.route(`**/price/v1/${chainId}`, async (route) => {
+      // const response = await route.fetch()
+      // const json = await response.json()
       await route.fulfill({
-        json: {
-          data: {
-            v2Pool: {
-              id: '137:0x3221022e37029923ace4235d812273c5a42c322d',
-              chainId: 42161,
-              name: 'WMATIC / FT',
-              address: '0x3221022e37029923ace4235d812273c5a42c322d',
-              createdAt: '1630455405',
-              swapFee: 0.003,
-              protocol: 'SUSHISWAP_V2',
-              token0: {
-                id: '137:0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                chainId: 137,
-                decimals: 18,
-                name: 'Wrapped Matic',
-                symbol: 'WMATIC',
-              },
-              token1: FAKE_TOKEN,
-              source: 'SUBGRAPH',
-              reserve0: '14632715635223519232',
-              reserve1: '66374911905262165000000',
-              liquidity: '736541498034438406144',
-              volumeUSD: 56162969.922308594,
-              liquidityUSD: 71429.02585542823,
-              token0Price: 0.0002204555187373958,
-              token1Price: 4536.062448004257,
-              volumeUSD1d: 1444.4034653156996,
-              feeUSD1d: 4.333210395940114,
-              txCount1d: 104,
-              feeApr1d: 0.022142564252791732,
-              totalApr1d: 0.022142564252791732,
-              volumeUSD1dChange: -0.43870093251068154,
-              feeUSD1dChange: -0.4387009325124158,
-              txCount1dChange: -0.11864406779661019,
-              liquidityUSD1dChange: 0.01395086513190713,
-              incentiveApr: 0,
-              isIncentivized: false,
-              wasIncentivized: false,
-              incentives: [],
-            },
-          },
-        },
+        json: {},
       })
-    },
-  )
+    })
+  } catch (error) {
+    console.error('error mockking token api', error)
+  }
 
   await page.route('http://localhost:3000/api/**/*', async (route) => {
     await route.abort()
   })
-  await page.route('http://localhost:3000/pool/api/**/*', async (route) => {
-    await route.abort()
-  })
+
   try {
     await interceptAnvil(page, next)
   } catch (error) {
@@ -179,7 +137,7 @@ test.describe('V3', () => {
       amountBelongsToToken0: false,
     })
 
-    // await poolPage.removeLiquidityV3(FAKE_TOKEN) // TODO: enable once you can determine what the position ID will be
+    await poolPage.removeLiquidityV3(FAKE_TOKEN) // TODO: enable once you can determine what the position ID will be
   })
 })
 

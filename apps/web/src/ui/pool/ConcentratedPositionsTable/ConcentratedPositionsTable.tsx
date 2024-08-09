@@ -150,7 +150,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/pool/${chainId}:${poolId}/positions/create`}
+                    href={`/${chainId}/pool/v3/${address}/positions/create`}
                   >
                     <Button icon={PlusIcon} asChild size="sm">
                       Create position
@@ -165,7 +165,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
           testId="concentrated-positions"
           loading={isInitialLoading}
           linkFormatter={(row) =>
-            `/pool/${row.chainId}:${
+            `/${row.chainId}/pool/v3/${
               row.address
             }/positions/${row.tokenId.toString()}`
           }
