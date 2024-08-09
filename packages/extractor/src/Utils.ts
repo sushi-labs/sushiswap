@@ -1,3 +1,5 @@
+import { Token } from 'sushi/currency'
+
 export const delay = async (ms: number) =>
   new Promise((res) => setTimeout(res, ms))
 
@@ -34,6 +36,20 @@ export async function repeat<RetType>(
     }
   }
   return await action()
+}
+
+export function sortTokenPair(t0: Token, t1: Token): [Token, Token] {
+  return t0.sortsBefore(t1) ? [t0, t1] : [t1, t0]
+}
+
+export function allFulfilled<T>(ps: Promise<T>[]): Promise<T[]> {
+  return Promise.allSettled(ps).then((res) => {
+    const out: T[] = []
+    res.forEach((r) => {
+      if (r.status === 'fulfilled') out.push(r.value)
+    })
+    return out
+  })
 }
 
 type FunctionArgs<FunctionType> = FunctionType extends (...args: infer R) => any
