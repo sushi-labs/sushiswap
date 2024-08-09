@@ -261,6 +261,12 @@ export class UniV4PoolWatcher extends EventEmitter {
     return pc
   }
 
+  async waitPoolCode(): Promise<PoolCode | undefined> {
+    if (this.getStatus() !== UniV4PoolWatcherStatus.All)
+      await this.downloadFinished()
+    return this.getPoolCode()
+  }
+
   getTicks(): CLTick[] {
     if (this.state === undefined) return []
     return this.wordLoadManager.getMaxTickDiapason(this.state.tick)

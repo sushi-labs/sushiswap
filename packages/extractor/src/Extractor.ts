@@ -4,7 +4,6 @@ import { Token } from 'sushi/currency'
 import { PoolCode } from 'sushi/router'
 import { Address, PublicClient } from 'viem'
 import { AlgebraExtractor, FactoryAlgebra } from './AlgebraExtractor.js'
-import { AlgebraPoolWatcher } from './AlgebraPoolWatcher.js'
 import {
   CurveWhitelistConfig,
   CurveWhitelistExtractor,
@@ -15,8 +14,8 @@ import { MultiCallAggregator } from './MulticallAggregator.js'
 import { TokenManager } from './TokenManager.js'
 import { FactoryV2, UniV2Extractor } from './UniV2Extractor.js'
 import { FactoryV3, UniV3Extractor } from './UniV3Extractor.js'
-import { UniV3PoolWatcher } from './UniV3PoolWatcher.js'
 import { UniV4Config, UniV4Extractor } from './UniV4Extractor.js'
+import { allFulfilled } from './Utils.js'
 
 const DEFAULT_RPC_MAX_CALLS_IN_ONE_BATCH = 1000
 
@@ -346,7 +345,8 @@ export class Extractor {
       const tokens2Unique = Array.from(map2.values())
 
       let prefetchedAll: (PoolCode | undefined)[] = []
-      let fetchingAll: Promise<unknown>[] = []
+      let fetchingAll: (Promise<PoolCode | undefined> | Promise<PoolCode[]>)[] =
+        []
 
       this.projectExtractors.forEach((e) => {
         const { prefetched, fetching } = e.getPoolsBetweenTokenSets(
@@ -365,20 +365,11 @@ export class Extractor {
       //   fetchingAll.length,
       // )
 
-      const fetchedAll = await Promise.allSettled(fetchingAll)
+      const fetchedAll = await allFulfilled<PoolCode | undefined | PoolCode[]>(
+        fetchingAll,
+      )
       const res = prefetchedAll
-        .concat(
-          fetchedAll.map((p) => {
-            if (p.status === 'fulfilled') {
-              const value = p.value
-              if (value === undefined) return undefined
-              if (value instanceof PoolCode) return value
-              if (value instanceof UniV3PoolWatcher) return value.getPoolCode()
-              if (value instanceof AlgebraPoolWatcher)
-                return value.getPoolCode()
-            }
-          }),
-        )
+        .concat(fetchedAll.flat())
         .filter((p) => p !== undefined) as PoolCode[]
       // console.log(
       //   'EXTR DEBUG: getPoolCodesBetweenTokenSets finished ',

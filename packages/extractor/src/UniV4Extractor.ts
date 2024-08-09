@@ -7,7 +7,7 @@ import { Logger } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import { TokenManager } from './TokenManager.js'
-import { UniV4PoolWatcher, UniV4PoolWatcherStatus } from './UniV4PoolWatcher.js'
+import { UniV4PoolWatcher } from './UniV4PoolWatcher.js'
 import { Index, IndexArray, allFulfilled, sortTokenPair } from './Utils.js'
 
 export interface UniV4Config {
@@ -122,7 +122,7 @@ export class UniV4Extractor extends IExtractor {
     )
   }
 
-  async start() {
+  override async start() {
     // const client = this.multiCallAggregator.client
     // const logsAll = await client.getLogs({
     //   address: this.config.address,
@@ -133,11 +133,11 @@ export class UniV4Extractor extends IExtractor {
     // console.log(this.config.address, logsAll)
   }
 
-  isStarted() {
+  override isStarted() {
     return true
   }
 
-  getPoolsForTokens(): {
+  override getPoolsForTokens(): {
     prefetched: PoolCode[]
     fetching: Promise<PoolCode | undefined>[]
   } {
@@ -164,15 +164,11 @@ export class UniV4Extractor extends IExtractor {
       }
     }
 
-    const fetching = allFulfilled(waitList).then((res) => {
-      return allFulfilled(
-        res.flat().map(async (w) => {
-          if (w.getStatus() !== UniV4PoolWatcherStatus.All)
-            await w.downloadFinished()
-          return w.getPoolCode()
-        }),
-      ).then((pcs) => pcs.filter((pc) => pc !== undefined) as PoolCode[])
-    })
+    const fetching = allFulfilled(waitList).then((res) =>
+      allFulfilled(res.flat().map((w) => w.waitPoolCode())).then(
+        (pcs) => pcs.filter((pc) => pc !== undefined) as PoolCode[],
+      ),
+    )
 
     return {
       prefetched: prefetched
