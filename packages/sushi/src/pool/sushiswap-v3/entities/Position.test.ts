@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { SushiSwapV3FeeAmount, TICK_SPACINGS } from '../../../config/index.js'
+import {
+  SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
+} from '../../../config/sushiswap-v3.js'
 import { Token } from '../../../currency/index.js'
 import { Percent } from '../../../math/index.js'
 import { encodeSqrtRatioX96 } from '../utils/encodeSqrtRatioX96.js'
