@@ -260,7 +260,7 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
       fee: SushiSwapV3FeeAmount.HIGH,
     })
-    const url = BASE_URL.concat(`/${this.chainId.toString()}/pool/v3/${poolAddress}/positions/create`)
+    const url = BASE_URL.concat(`/${this.chainId.toString()}/pool/v3/${poolAddress}/positions/create`) // TODO: fix url, must contain the position ID
     await this.page.goto(url)
     await this.connect()
     await this.page.locator('[testdata-id=my-positions-button]').click()

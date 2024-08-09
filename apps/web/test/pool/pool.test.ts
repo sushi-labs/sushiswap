@@ -179,7 +179,7 @@ test.describe('V3', () => {
       amountBelongsToToken0: false,
     })
 
-    await poolPage.removeLiquidityV3(FAKE_TOKEN)
+    // await poolPage.removeLiquidityV3(FAKE_TOKEN) // TODO: enable once you can determine what the position ID will be
   })
 })
 
