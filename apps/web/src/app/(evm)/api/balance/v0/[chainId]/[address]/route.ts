@@ -1,11 +1,11 @@
 // import { ChainID as CovalentChainID } from '@covalenthq/client-sdk'
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { createConfig, getBalance, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
 // import { covalentClient } from 'src/lib/covalent'
 import { type ChainId } from 'sushi/chain'
 import { Address, erc20Abi } from 'viem'
 import { z } from 'zod'
+import { publicWagmiConfig } from '../../../../../../../lib/wagmi/config/public'
 
 const config = createConfig(publicWagmiConfig)
 
