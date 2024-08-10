@@ -19,6 +19,16 @@ const nextConfig = bundleAnalyzer({
   async redirects() {
     return [
       {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'test.sushi.com',
+          },
+        ],
+        destination: '/test/:path*',
+      },
+      {
         source: '/',
         permanent: true,
         destination: '/swap',
