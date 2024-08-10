@@ -20,7 +20,6 @@
     "@sushiswap/notifications",
     "@sushiswap/ui",
     "@sushiswap/pool-job",
-    "@sushiswap/aptos",
     "@sushiswap/tron",
     "web"
   ]
