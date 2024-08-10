@@ -14,7 +14,7 @@ export default function Layout({
 }: { children: React.ReactNode; params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
   if (!isAngleEnabledChainId(chainId)) {
-    return notFound()
+    return notFound(chainId)
   }
 
   return (

@@ -1,11 +1,8 @@
-'use client'
-
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
-import { useChainId } from 'wagmi'
+import { ChainId } from 'sushi/chain'
 
-export default function NotFound() {
-  const chainId = useChainId()
+export default function NotFound(chainId: ChainId = ChainId.ETHEREUM) {
   return (
     <div className="flex justify-center items-center pt-20 px-4">
       <div className="flex flex-col gap-8 text-center">

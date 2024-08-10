@@ -46,7 +46,7 @@ import notFound from '../../../not-found'
 export default function Page({ params }: { params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
   if (!isSushiSwapV2ChainId(chainId)) {
-    return notFound()
+    return notFound(chainId)
   }
 
   const router = useRouter()
