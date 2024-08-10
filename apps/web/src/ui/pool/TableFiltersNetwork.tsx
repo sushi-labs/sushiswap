@@ -15,7 +15,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useCallback, useState } from 'react'
 import { SUPPORTED_CHAIN_IDS } from 'src/config'
-import { Chain, ChainId } from 'sushi/chain'
+import { Chain, ChainId, ChainKey } from 'sushi/chain'
 
 export const TableFiltersNetwork: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const [open, setOpen] = useState(false)
@@ -26,7 +26,7 @@ export const TableFiltersNetwork: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const onClick = useCallback(
     (chainId: string) => {
       const pathSegments = pathname.split('/')
-      pathSegments[1] = chainId
+      pathSegments[1] = ChainKey[+chainId as ChainId]
       router.push(pathSegments.join('/'))
     },
     [pathname, router],
@@ -43,7 +43,7 @@ export const TableFiltersNetwork: FC<{ chainId: ChainId }> = ({ chainId }) => {
           aria-expanded={open}
           className="!border-dashed"
         >
-          <span>Networks</span>
+          <span>Network</span>
           <Chip variant="secondary">{Chain.from(chainId)?.name}</Chip>
         </Button>
       </PopoverTrigger>
