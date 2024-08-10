@@ -77,6 +77,24 @@ export class Index<A, B, Func extends (...args: any) => A> {
   has(...x: FunctionArgs<Func>): boolean {
     return this.map.has(this.func(...x))
   }
+
+  delete(...x: FunctionArgs<Func>): boolean {
+    return this.map.delete(this.func(...x))
+  }
+
+  forEachValue(f: (b: B, i: number) => void) {
+    let i = 0
+    const values = this.map.values()
+    for (const val of values) f(val, i++)
+  }
+
+  mapValue<T>(f: (b: B) => T): T[] {
+    const res = new Array<T>(this.map.size)
+    this.forEachValue((val, i) => {
+      res[i] = f(val)
+    })
+    return res
+  }
 }
 
 export class IndexArray<A, E, Func extends (...args: any) => A> extends Index<

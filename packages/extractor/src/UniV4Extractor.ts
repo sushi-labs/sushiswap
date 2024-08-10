@@ -170,13 +170,31 @@ export class UniV4Extractor extends IExtractor {
     return this.getPoolsCreatedForTokenPairs(pairs)
   }
 
-  getCurrentPoolCodes() {
-    return []
+  override getCurrentPoolCodes() {
+    return this.poolWatchers
+      .mapValue((p) => p.getPoolCode())
+      .filter((pc) => pc !== undefined) as PoolCode[]
   }
-  getUpdatedPoolCodes() {
-    return []
+
+  // side effect: updated pools list is cleared
+  override getUpdatedPoolCodes() {
+    const res = this.poolWatchersUpdated
+      .mapValue((p) => p.getPoolCode())
+      .filter((pc) => pc !== undefined) as PoolCode[]
+    res.forEach((p) => this.poolWatchersUpdated.delete(p.pool.address))
+    return res
   }
-  getTokensPoolsQuantity() {}
+
+  override getTokensPoolsQuantity(tokenMap: Map<Token, number>) {
+    const add = (token: Token) => {
+      const num = tokenMap.get(token) || 0
+      tokenMap.set(token, num + 1)
+    }
+    this.poolWatchers.forEachValue((p) => {
+      add(p.token0)
+      add(p.token1)
+    })
+  }
 
   getPoolsCreatedForTokenPairs(pairs: [Token, Token][]): {
     prefetched: PoolCode[]
