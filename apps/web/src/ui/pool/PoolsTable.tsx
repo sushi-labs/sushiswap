@@ -500,7 +500,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ pools, onRowClick }) => {
         onSortingChange={setSorting}
         loading={!pools}
         linkFormatter={(row) =>
-          `pool/${
+          `/${row.chainId}/pool/${
             row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
           }/${row.address}`
         }
