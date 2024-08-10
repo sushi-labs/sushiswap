@@ -1,10 +1,9 @@
 import { ChainId } from '../chain/index.js'
 import {
   ENOSYS_APS,
-  ENOSYS_BNZ,
-  ENOSYS_EETH,
-  ENOSYS_EQNT,
   ENOSYS_HLN,
+  ENOSYS_USDT,
+  ENOSYS_WETH,
   MUSD,
   Token,
   USDB,
@@ -492,10 +491,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WNATIVE[ChainId.FLARE],
     WETH9[ChainId.FLARE],
     USDT[ChainId.FLARE],
-    ENOSYS_BNZ,
-    ENOSYS_EQNT,
+    USDC[ChainId.FLARE],
+    ENOSYS_WETH,
+    ENOSYS_USDT,
     ENOSYS_HLN,
     ENOSYS_APS,
-    ENOSYS_EETH,
   ],
 }

@@ -832,13 +832,6 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
     symbol: 'USDT',
     name: 'Tether USD',
   }),
-  [ChainId.FLARE]: new Token({
-    chainId: ChainId.FLARE,
-    address: USDT_ADDRESS[ChainId.FLARE],
-    decimals: 6,
-    symbol: 'eUSDT',
-    name: 'Tether USD',
-  }),
 }
 
 export const DAI = addressMapToTokenMap(
@@ -1165,6 +1158,22 @@ export const MUSD = new Token({
   name: 'Monoswap USD',
   symbol: 'MUSD',
   decimals: 18,
+})
+
+export const ENOSYS_USDT = new Token({
+  chainId: ChainId.FLARE,
+  address: '0x96B41289D90444B8adD57e6F265DB5aE8651DF29',
+  decimals: 6,
+  symbol: 'eUSDT',
+  name: 'Enosys USDT',
+})
+
+export const ENOSYS_WETH = new Token({
+  chainId: ChainId.FLARE,
+  address: '0x62bD084cbcD6c85347C50292A141EA4D3e7e3511',
+  decimals: 18,
+  symbol: 'WETH',
+  name: 'Enosys WETH',
 })
 
 export const ENOSYS_BNZ = new Token({
