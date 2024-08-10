@@ -52,6 +52,12 @@ export function allFulfilled<T>(ps: Promise<T>[]): Promise<T[]> {
   })
 }
 
+export function uniqueArray<T, I>(arr: T[], elementId: (t: T) => I): T[] {
+  const map = new Map<I, T>()
+  arr.forEach((e) => map.set(elementId(e), e))
+  return Array.from(map.values())
+}
+
 type FunctionArgs<FunctionType> = FunctionType extends (...args: infer R) => any
   ? R
   : never

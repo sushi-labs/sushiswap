@@ -8,7 +8,13 @@ import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import { TokenManager } from './TokenManager.js'
 import { UniV4PoolWatcher } from './UniV4PoolWatcher.js'
-import { Index, IndexArray, allFulfilled, sortTokenPair } from './Utils.js'
+import {
+  Index,
+  IndexArray,
+  allFulfilled,
+  sortTokenPair,
+  uniqueArray,
+} from './Utils.js'
 
 export interface UniV4Config {
   address: Address
@@ -35,19 +41,15 @@ interface PoolCacheRecord {
   hooks: Address | undefined
 }
 
+enum StartStatus {
+  NotStarted = 'NotStarted',
+  Starting = 'Starting',
+  Started = 'Started',
+}
+
 const poolInitEvent = parseAbiItem(
   'event Initialize(bytes32 indexed id, address indexed currency0, address indexed currency1, uint24 fee, int24 tickSpacing, address hooks)',
 )
-
-// function splitArray<T>(arr: T[], predicate: (a:T) => boolean): [T[], T[]] {
-//   let predicateTrue: T[] = []
-//   let predicateFalse: T[] = []
-//   arr.forEach(a => {
-//     if (predicate(a)) predicateTrue.push(a)
-//     else predicateFalse.push(a)
-//   })
-//     return [predicateTrue, predicateFalse]
-// }
 
 export class UniV4Extractor extends IExtractor {
   multiCallAggregator: MultiCallAggregator
@@ -60,7 +62,7 @@ export class UniV4Extractor extends IExtractor {
   config: UniV4Config[]
   configMap = new Index(new Map<string, UniV4Config>(), (s: string) =>
     s.toLowerCase(),
-  ) // indexed by UniV4Config.address.toLowerCase()
+  )
 
   poolWatchers = new Index(
     new Map<string, UniV4PoolWatcher>(),
@@ -76,6 +78,8 @@ export class UniV4Extractor extends IExtractor {
     new Map<string, UniV4PoolWatcher>(),
     (s: string) => s.toLowerCase(),
   )
+
+  startStatus: StartStatus = StartStatus.NotStarted
 
   constructor({
     config,
@@ -110,7 +114,7 @@ export class UniV4Extractor extends IExtractor {
       new TokenManager(
         this.multiCallAggregator,
         cacheDir as string,
-        `uniV3Tokens-${this.multiCallAggregator.chainId}`,
+        `uniV4Tokens-${this.multiCallAggregator.chainId}`,
       )
 
     this.tickHelperContract = tickHelperContract
@@ -123,18 +127,61 @@ export class UniV4Extractor extends IExtractor {
   }
 
   override async start() {
-    // const client = this.multiCallAggregator.client
-    // const logsAll = await client.getLogs({
-    //   address: this.config.address,
-    //   event: poolInitEvent,
-    //   // fromBlock,
-    //   // toBlock,
-    // })
-    // console.log(this.config.address, logsAll)
+    if (this.startStatus !== StartStatus.NotStarted) return
+    this.startStatus = StartStatus.Starting
+    const startTime = performance.now()
+
+    if (this.tokenManager.tokens.size === 0)
+      await this.tokenManager.addCachedTokens()
+
+    // deduplication
+    const cachedPoolsInfo: PoolInfo[] = uniqueArray(
+      await this.poolPermanentCache.getAllRecords(),
+      (p: PoolCacheRecord) => (p.id + p.address).toLowerCase(),
+    )
+      .map((r) => {
+        const token0 = this.tokenManager.getKnownToken(r.token0)
+        const token1 = this.tokenManager.getKnownToken(r.token1)
+        return token0 && token1
+          ? {
+              ...r,
+              token0,
+              token1,
+            }
+          : undefined
+      })
+      .filter((p) => p !== undefined) as PoolInfo[]
+
+    const promises = cachedPoolsInfo
+      .map((p) => this.addPoolWatching(p, 'cache', false))
+      .filter((w) => w !== undefined)
+      .map((w) => (w as UniV4PoolWatcher).downloadFinished())
+
+    const result = await Promise.allSettled(promises)
+    const failed = result.reduce(
+      (c, r) => (r.status === 'rejected' ? c + 1 : c),
+      0,
+    )
+    this.startStatus = StartStatus.Started
+    this.consoleLog(
+      `ExtractorV4 is ready, ${failed}/${
+        result.length
+      } pools failed (${Math.round(performance.now() - startTime)}ms)`,
+    )
+    if (failed > 0) {
+      Logger.error(
+        this.multiCallAggregator.chainId,
+        `${failed}/${result.length} pools load failed during ExtractorV4 starting`,
+      )
+    }
+    this.consoleLog(`${cachedPoolsInfo.length} pools were taken from cache`)
+    this.consoleLog(
+      `ExtractorV4 is started (${Math.round(performance.now() - startTime)}ms)`,
+    )
   }
 
   override isStarted() {
-    return true
+    return this.startStatus === StartStatus.Started
   }
 
   override getPoolsForTokens(tokensUnique: Token[]): {
@@ -304,11 +351,11 @@ export class UniV4Extractor extends IExtractor {
     addToCache = true,
     startTime = 0,
   ): UniV4PoolWatcher | undefined {
-    // if (this.logProcessingStatus !== LogsProcessing.Started) {
-    //   throw new Error(
-    //     'Pools can be added only after Log processing have been started',
-    //   )
-    // }
+    if (this.startStatus === StartStatus.NotStarted) {
+      throw new Error(
+        'Pools can be added only after Log processing have been started',
+      )
+    }
     const config = this.configMap.get(p.address)
     if (config === undefined) return // unsupported uniV4 provider
     if (this.poolWatchers.has(p.id, p.address)) return // pool watcher exists
