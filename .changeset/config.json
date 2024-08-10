@@ -30,7 +30,6 @@
     "@sushiswap/nextjs-config",
     "@sushiswap/tailwindcss-config",
     "@sushiswap/typescript-config",
-    "@sushiswap/wagmi-config",
 
     "@sushiswap/pool-job",
 

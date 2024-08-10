@@ -7,8 +7,6 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
 
-const FURO_URL = 'https://pay.sushi.com'
-
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,

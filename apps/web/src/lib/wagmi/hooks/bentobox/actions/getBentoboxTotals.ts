@@ -1,10 +1,10 @@
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContracts } from '@wagmi/core'
 import { Rebase } from 'sushi'
 import { bentoBoxV1TotalsAbi } from 'sushi/abi'
 import { BENTOBOX_ADDRESS, BentoBoxChainId } from 'sushi/config'
 import { Type as Currency } from 'sushi/currency'
 import { Address } from 'viem'
+import { PublicWagmiConfig } from '../../../config/public'
 
 const totalsMap = new Map<string, Rebase>()
 

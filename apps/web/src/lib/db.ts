@@ -1,9 +1,9 @@
 import { createClient } from '@sushiswap/database'
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { createConfig } from '@wagmi/core'
 import { getToken as getTokenFromContract } from '@wagmi/core/actions'
 import { ChainId } from 'sushi/chain'
 import { Address } from 'viem'
+import { publicWagmiConfig } from './wagmi/config/public'
 // import * as defaultTokenList from '@sushiswap/default-token-list' assert { type: 'json' }
 
 const config = createConfig(publicWagmiConfig)

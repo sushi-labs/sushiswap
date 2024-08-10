@@ -1,9 +1,9 @@
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
-import { SushiSwapV2Pool } from 'sushi'
 import { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
 import { TradeType } from 'sushi/dex'
+import { SushiSwapV2Pool } from 'sushi/pool'
 import { UniV3Pool } from 'sushi/tines'
+import { PublicWagmiConfig } from '../../../config/public'
 
 export enum PoolType {
   SushiSwapV2Pool = 'SushiSwapV2',
