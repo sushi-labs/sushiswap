@@ -1,5 +1,0 @@
----
-"sushi": minor
----
-
-configuration
