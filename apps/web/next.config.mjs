@@ -27,6 +27,7 @@ const nextConfig = bundleAnalyzer({
           },
         ],
         destination: '/test/:path*',
+        permanent: true,
       },
       {
         source: '/',
