@@ -1,6 +1,7 @@
 {
   "name": "@sushiswap/graph-client",
-  "version": "0.0.1",
+  "version": "0.0.0",
+  "private": true,
   "description": "Graph Client",
   "keywords": [
     "sushi",
