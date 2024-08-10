@@ -26,7 +26,7 @@ const nextConfig = bundleAnalyzer({
             value: 'test.sushi.com',
           },
         ],
-        destination: '/test/swap',
+        destination: 'https://sushi.com/test/:path*',
         permanent: true,
       },
       {
@@ -37,7 +37,7 @@ const nextConfig = bundleAnalyzer({
             value: 'aptos.sushi.com',
           },
         ],
-        destination: '/aptos',
+        destination: 'https://sushi.com/aptos/:path*',
         permanent: true,
       },
       {
