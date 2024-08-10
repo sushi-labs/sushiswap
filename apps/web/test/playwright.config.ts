@@ -18,7 +18,8 @@ const baseURL = `http://localhost:${PORT}`
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  quiet: !!process.env.CI,
+  // quiet: !!process.env.CI,
+  quiet: true,
   testMatch: [
     'simple.test.ts',
     'pool.test.ts',

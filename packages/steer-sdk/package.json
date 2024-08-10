@@ -1,6 +1,7 @@
 {
   "name": "@sushiswap/steer-sdk",
   "version": "0.0.0",
+  "private": true,
   "description": "Sushi Steer SDK",
   "keywords": [
     "sushi",

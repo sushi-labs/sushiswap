@@ -3,14 +3,14 @@ name: Sushi - verify
 #   workflow_call:
 #   workflow_dispatch:
 on:
-  pull_request:
-    types: [opened, synchronize]
+  workflow_call:
+  workflow_dispatch:
+  # pull_request:
+  #   types: [opened, synchronize]
 env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+
 jobs:
   format:
     name: Format
@@ -20,6 +20,7 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
+          submodules: 'recursive'
           token: ${{ secrets.PAT }}
           ref: ${{ github.head_ref }}
       - name: Install dependencies
@@ -42,6 +43,7 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
+          submodules: 'recursive'
           token: ${{ secrets.PAT }}
           ref: ${{ github.head_ref }}
       - name: Install dependencies
@@ -55,7 +57,28 @@ jobs:
           commit_message: 'chore: lint'
           commit_user_name: 'github-actions[bot]'
           commit_user_email: 'github-actions[bot]@users.noreply.github.com'
-     
+
+  build:
+    name: Build
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with: 
+          submodules: 'recursive'
+
+      - name: Install dependencies
+        uses: ./.github/actions/install
+
+      - name: Build packages
+        run: pnpm exec turbo run build --filter=./packages/*
+
+      - name: Build config
+        run: pnpm exec turbo run build --filter=./config/*
+
   # build:
   #   name: Build
   #   needs: [lint, format]

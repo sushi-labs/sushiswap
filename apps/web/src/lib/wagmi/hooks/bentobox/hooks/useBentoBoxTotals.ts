@@ -4,9 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'
 import { isBentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
-
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useConfig } from 'wagmi'
+import { PublicWagmiConfig } from '../../../config/public'
 import { getBentoboxTotals } from '../actions/getBentoboxTotals'
 
 interface UseBentoboxTotalsParams {

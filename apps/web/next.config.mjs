@@ -7,8 +7,6 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
 
-const FURO_URL = 'https://pay.sushi.com'
-
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
@@ -18,6 +16,33 @@ const nextConfig = bundleAnalyzer({
   },
   async redirects() {
     return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'test.sushi.com',
+          },
+        ],
+        destination: 'https://sushi.com/test/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'aptos.sushi.com',
+          },
+        ],
+        destination: 'https://sushi.com/aptos/:path*',
+        permanent: true,
+      },
+      {
+        source: '/aptos',
+        permanent: true,
+        destination: '/aptos/swap',
+      },
       {
         source: '/',
         permanent: true,
@@ -64,62 +89,14 @@ const nextConfig = bundleAnalyzer({
         destination: '/pool/:path*',
       },
       {
-        source: '/aptos',
-        permanent: true,
-        destination: '/aptos/swap',
-      },
-      {
         source: '/skale/swap',
         permanent: true,
         destination: '/swap?chainId=2046399126',
       },
-      {
-        source: '/furo',
-        permanent: true,
-        destination: `${FURO_URL}`,
-      },
-      {
-        source: '/furo/:path*',
-        permanent: true,
-        destination: `${FURO_URL}/:path*`,
-      },
     ]
   },
   async rewrites() {
-    return [
-      // if the host is `aptos.sushi.com`,
-      // this rewrite will be applied
-      // {
-      //   source: '/:path*',
-      //   has: [
-      //     {
-      //       type: 'host',
-      //       value: 'aptos.sushi.com',
-      //     },
-      //   ],
-      //   destination: '/aptos/:path*',
-      // },
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'test.sushi.com',
-          },
-        ],
-        destination: '/test/:path*',
-      },
-      // {
-      //   source: '/:path*',
-      //   has: [
-      //     {
-      //       type: 'host',
-      //       value: 'pay.sushi.com',
-      //     },
-      //   ],
-      //   destination: '/pay/:path*',
-      // },
-    ]
+    return []
   },
 })
 

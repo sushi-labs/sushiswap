@@ -1,5 +1,4 @@
 import { useCustomTokens } from '@sushiswap/hooks'
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getToken as getTokenWeb3 } from '@wagmi/core/actions'
 import { useCallback } from 'react'
@@ -7,6 +6,7 @@ import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 import { Address, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
+import { PublicWagmiConfig } from '../../config/public'
 
 interface UseTokenParams<T extends boolean> {
   chainId: ChainId | undefined

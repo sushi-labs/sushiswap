@@ -1,7 +1,6 @@
 import { BentoBoxChainId } from 'sushi/config'
 import { Type } from 'sushi/currency'
-
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { PublicWagmiConfig } from '../../../config/public'
 import { getBentoboxTotals } from './getBentoboxTotals'
 
 export const getBentoboxTotal = async ({

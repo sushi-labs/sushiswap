@@ -1,4 +1,4 @@
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
+import { PublicWagmiConfig } from './config/public'
 
 declare module 'wagmi' {
   interface Register {

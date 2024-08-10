@@ -1,4 +1,3 @@
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContracts } from '@wagmi/core/actions'
 import { erc20Abi } from 'sushi/abi'
 import { uniswapV3PoolAbi } from 'sushi/abi'
@@ -13,6 +12,7 @@ import { Currency, Token, Type } from 'sushi/currency'
 import { computeSushiSwapV3PoolAddress } from 'sushi/pool/sushiswap-v3'
 import { RToken, UniV3Pool } from 'sushi/tines'
 import { Address } from 'viem'
+import { PublicWagmiConfig } from '../../../config/public'
 
 export enum V3PoolState {
   LOADING = 'Loading',
