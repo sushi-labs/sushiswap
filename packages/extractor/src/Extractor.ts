@@ -406,7 +406,9 @@ export class Extractor {
       this.projectExtractors.forEach((e) => {
         const pools = e.getPoolsForTokens(tokensUnique)
         prefetched = prefetched.concat(pools.prefetched)
-        fetchingNumber += pools.fetching.length
+        fetchingNumber += Array.isArray(pools.fetching)
+          ? pools.fetching.length
+          : 1
       })
 
       // console.log(
@@ -450,12 +452,20 @@ export class Extractor {
       this.projectExtractors.forEach((e) => {
         const { prefetched, fetching } = e.getPoolsForTokens(tokensUnique)
         pools = pools.concat(prefetched)
-        promises = promises.concat(
-          fetching.map(async (p) => {
-            const pc = await p
-            if (pc !== undefined) pools.push(pc)
-          }),
-        )
+        if (Array.isArray(fetching)) {
+          promises = promises.concat(
+            fetching.map(async (p) => {
+              const pc = await p
+              if (pc !== undefined) pools.push(pc)
+            }),
+          )
+        } else {
+          promises.push(
+            fetching.then((ps) => {
+              pools = pools.concat(ps)
+            }),
+          )
+        }
       })
 
       // console.log(

@@ -10,7 +10,7 @@ export abstract class IExtractor {
   // @param tokensUnique unique list of tokens
   abstract getPoolsForTokens(tokensUnique: Token[]): {
     prefetched: PoolCode[]
-    fetching: Promise<PoolCode | undefined>[]
+    fetching: Promise<PoolCode | undefined>[] | Promise<PoolCode[]>
   }
 
   //  Returns all pools between tokensUnique1 and tokensUnique2 tokens

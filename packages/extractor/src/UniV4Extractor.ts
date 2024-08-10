@@ -137,11 +137,19 @@ export class UniV4Extractor extends IExtractor {
     return true
   }
 
-  override getPoolsForTokens(): {
+  override getPoolsForTokens(tokensUnique: Token[]): {
     prefetched: PoolCode[]
-    fetching: Promise<PoolCode | undefined>[]
+    fetching: Promise<PoolCode[]>
   } {
-    return { prefetched: [], fetching: [] }
+    const pairs: [Token, Token][] = []
+    for (let i = 0; i < tokensUnique.length; ++i) {
+      const t0 = tokensUnique[i]
+      for (let j = i + 1; j < tokensUnique.length; ++j) {
+        pairs.push([t0, tokensUnique[j]])
+      }
+    }
+
+    return this.getPoolsCreatedForTokenPairs(pairs)
   }
 
   override getPoolsBetweenTokenSets(
@@ -151,18 +159,37 @@ export class UniV4Extractor extends IExtractor {
     prefetched: PoolCode[]
     fetching: Promise<PoolCode[]>
   } {
-    const prefetched: UniV4PoolWatcher[][] = []
-    const waitList: Promise<UniV4PoolWatcher[]>[] = []
+    const pairs: [Token, Token][] = []
     for (let i = 0; i < tokensUnique1.length; ++i) {
       const t0 = tokensUnique1[i]
-      this.tokenManager.findToken(t0.address as Address) // to let save it in the cache
       for (let j = 0; j < tokensUnique2.length; ++j) {
-        const t1 = tokensUnique2[j]
-        const { known, newAdded } = this.getPoolsCreatedForTokenPair(t0, t1)
-        prefetched.push(known)
-        waitList.push(newAdded)
+        pairs.push([t0, tokensUnique2[j]])
       }
     }
+
+    return this.getPoolsCreatedForTokenPairs(pairs)
+  }
+
+  getCurrentPoolCodes() {
+    return []
+  }
+  getUpdatedPoolCodes() {
+    return []
+  }
+  getTokensPoolsQuantity() {}
+
+  getPoolsCreatedForTokenPairs(pairs: [Token, Token][]): {
+    prefetched: PoolCode[]
+    fetching: Promise<PoolCode[]>
+  } {
+    const prefetched: UniV4PoolWatcher[][] = []
+    const waitList: Promise<UniV4PoolWatcher[]>[] = []
+    pairs.forEach((pair) => {
+      if (pair[0].equals(pair[1])) return
+      const { known, newAdded } = this.getPoolsCreatedForTokenPair(...pair)
+      prefetched.push(known)
+      waitList.push(newAdded)
+    })
 
     const fetching = allFulfilled(waitList).then((res) =>
       allFulfilled(res.flat().map((w) => w.waitPoolCode())).then(
@@ -178,14 +205,6 @@ export class UniV4Extractor extends IExtractor {
       fetching,
     }
   }
-
-  getCurrentPoolCodes() {
-    return []
-  }
-  getUpdatedPoolCodes() {
-    return []
-  }
-  getTokensPoolsQuantity() {}
 
   // ATTENTION: pools created after this moment and before <await newAdded> moment are not returned by this function
   getPoolsCreatedForTokenPair(
