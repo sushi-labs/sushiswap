@@ -3,8 +3,10 @@ name: Sushi - verify
 #   workflow_call:
 #   workflow_dispatch:
 on:
-  pull_request:
-    types: [opened, synchronize]
+  workflow_call:
+  workflow_dispatch:
+  # pull_request:
+  #   types: [opened, synchronize]
 env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
