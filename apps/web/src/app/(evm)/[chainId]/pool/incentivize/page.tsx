@@ -50,7 +50,7 @@ import {
 import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { Chain } from 'sushi/chain'
+import { Chain, ChainKey } from 'sushi/chain'
 import {
   ANGLE_SUPPORTED_CHAIN_IDS,
   AngleEnabledChainId,
@@ -204,7 +204,7 @@ const Incentivize = withCheckerRoot(() => {
         <SelectNetworkWidget
           title="On which network would you like to add rewards?"
           selectedNetwork={chainId}
-          onSelect={(chainId) => router.push(`/${chainId}/pool/incentivize`)}
+          onSelect={(chainId) => router.push(`/${ChainKey[chainId]}/pool/incentivize`)}
           networks={ANGLE_SUPPORTED_CHAIN_IDS}
         />
         <SelectTokensWidget

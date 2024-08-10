@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
 import { Hero } from './hero'
+import { ChainKey, isChainId } from 'sushi'
 
 export default function TabsLayout({
   children,
@@ -13,7 +14,12 @@ export default function TabsLayout({
   children: React.ReactNode
   params: { chainId: string }
 }) {
+  const _chainId = +chainId
   const searchParams = useSearchParams()
+
+  if (!isChainId(_chainId)) {
+    throw new Error('Must be a valid chain id')
+  }
 
   return (
     <>
@@ -25,11 +31,11 @@ export default function TabsLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${chainId}/positions?${searchParams.toString()}`}
+            href={`/${ChainKey[_chainId]}/positions?${searchParams.toString()}`}
           >
             <PathnameButton
               id="my-positions"
-              pathname={`/${chainId}/positions`}
+              pathname={`/${ChainKey[_chainId]}/positions`}
               asChild
               size="sm"
             >
@@ -39,11 +45,11 @@ export default function TabsLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${chainId}/positions/rewards?${searchParams.toString()}`}
+            href={`/${ChainKey[_chainId]}/positions/rewards?${searchParams.toString()}`}
           >
             <PathnameButton
               id="my-rewards"
-              pathname={`/${chainId}/positions/rewards`}
+              pathname={`/${ChainKey[_chainId]}/positions/rewards`}
               asChild
               size="sm"
             >
@@ -53,11 +59,11 @@ export default function TabsLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${chainId}/positions/migrate?${searchParams.toString()}`}
+            href={`/${ChainKey[_chainId]}/positions/migrate?${searchParams.toString()}`}
           >
             <PathnameButton
               id="migrate"
-              pathname={`/${chainId}/positions/migrate`}
+              pathname={`/${ChainKey[_chainId]}/positions/migrate`}
               asChild
               size="sm"
             >

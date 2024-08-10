@@ -12,7 +12,7 @@ import {
 import { SelectIcon } from '@sushiswap/ui'
 import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
 import React, { FC } from 'react'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import {
   SushiSwapV3ChainId,
   isSushiSwapV2ChainId,
@@ -49,9 +49,9 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
               <LinkInternal
                 href={
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-                    ? `/${chainId}/pool/v3/add`
+                    ? `/${ChainKey[chainId]}/pool/v3/add`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                      ? `/${chainId}/pool/v2/add`
+                      ? `/${ChainKey[chainId]}/pool/v2/add`
                       : ''
                 }
               >
@@ -73,7 +73,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
                     asChild
                   >
                     <LinkInternal
-                      href={`/${chainId}/pool/v3/add`}
+                      href={`/${ChainKey[chainId]}/pool/v3/add`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
@@ -92,7 +92,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
                   {isSushiSwapV2ChainId(chainId as ChainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal
-                        href={`/${chainId}/pool/v2/add`}
+                        href={`/${ChainKey[chainId]}/pool/v2/add`}
                         className="flex flex-col !items-start gap-1 cursor-pointer"
                       >
                         <div className="flex items-center gap-1 font-medium leading-none">
@@ -115,7 +115,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
             variant="secondary"
             size="lg"
           >
-            <LinkInternal href={`/${chainId}/pool/incentivize`}>
+            <LinkInternal href={`/${ChainKey[chainId]}/pool/incentivize`}>
               I want to incentivize a pool
             </LinkInternal>
           </Button>

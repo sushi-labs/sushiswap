@@ -18,7 +18,7 @@ import React, {
 import { DISABLED_CHAIN_IDS } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
-import { ChainId, TESTNET_CHAIN_IDS } from 'sushi/chain'
+import { ChainId, ChainKey, TESTNET_CHAIN_IDS } from 'sushi/chain'
 import {
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -101,7 +101,7 @@ export default function Page({ params }: { params: { chainId: string } }) {
               chainId={chainId}
               setChainId={(chainId) => {
                 if (!isSushiSwapV2ChainId(chainId)) return
-                router.push(`/${chainId}/pool/v2/add`)
+                router.push(`/${ChainKey[chainId]}/pool/v2/add`)
               }}
               pool={pool as SushiSwapV2Pool | null}
               poolState={poolState as SushiSwapV2PoolState}

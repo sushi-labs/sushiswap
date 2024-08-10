@@ -16,6 +16,7 @@ export default async function PoolsPage({
 }: {
   params: { chainId: string }
 }) {
+  
   const pools = await unstable_cache(
     async () => getTopPools({ chainId: params.chainId }),
     ['pools', params.chainId],

@@ -1,4 +1,10 @@
-import { ChainId } from './constants.js'
+import {
+  ChainId,
+  ChainKey,
+  isChainId,
+  isNetworkNameKey,
+  NetworkNameKey,
+} from './constants.js'
 import raw from './generated.js'
 
 const additional = [] as const
@@ -238,6 +244,27 @@ export const chainShortName = Object.fromEntries(
 export const chainName = Object.fromEntries(
   RAW.map((data): [number, string] => [data.chainId, Chain.fromRaw(data).name]),
 )
+
+export const getChainInfo = (
+  input: string,
+):
+  | { chainId: ChainId; networkName: ChainKey }
+  | { chainId: undefined; networkName: undefined } => {
+  const _networkName = input.toLowerCase()
+  const _chainId = parseInt(input)
+
+  if (isChainId(_chainId)) {
+    const networkName = ChainKey[_chainId]
+    return { chainId: _chainId, networkName }
+  }
+
+  if (isNetworkNameKey(_networkName)) {
+    const chainId = NetworkNameKey[_networkName]
+    return { chainId, networkName: _networkName }
+  }
+
+  return { chainId: undefined, networkName: undefined }
+}
 
 export * from './constants.js'
 

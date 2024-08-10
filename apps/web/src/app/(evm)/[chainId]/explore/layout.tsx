@@ -2,7 +2,7 @@ import { Container, LinkInternal } from '@sushiswap/ui'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
 import { PathnameButton } from 'src/ui/pathname-button'
 import { PoolsFiltersProvider } from 'src/ui/pool'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { Hero } from './hero'
 
 export const metadata = {
@@ -26,11 +26,11 @@ export default async function ExploreLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${params.chainId}/explore/pools`}
+            href={`/${ChainKey[+params.chainId as ChainId]}/explore/pools`}
           >
             <PathnameButton
               id="all-pools"
-              pathname={`/${params.chainId}/explore/pools`}
+              pathname={`/${ChainKey[+params.chainId as ChainId]}/explore/pools`}
               asChild
               size="sm"
             >
@@ -40,11 +40,11 @@ export default async function ExploreLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${params.chainId}/explore/smart-pools`}
+            href={`/${ChainKey[+params.chainId as ChainId]}/explore/smart-pools`}
           >
             <PathnameButton
               id="smart-pools"
-              pathname={`/${params.chainId}/explore/smart-pools`}
+              pathname={`/${ChainKey[+params.chainId as ChainId]}/explore/smart-pools`}
               asChild
               size="sm"
             >

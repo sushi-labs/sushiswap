@@ -40,7 +40,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
@@ -500,7 +500,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ pools, onRowClick }) => {
         onSortingChange={setSorting}
         loading={!pools}
         linkFormatter={(row) =>
-          `pool/${
+          `/${ChainKey[row.chainId]}/pool/${
             row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
           }/${row.address}`
         }

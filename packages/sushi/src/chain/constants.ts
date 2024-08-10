@@ -136,3 +136,10 @@ export const ChainKey = {
   [ChainId.ROOTSTOCK]: 'rootstock',
 } as const
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
+
+export const NetworkNameKey = Object.fromEntries(
+  Object.entries(ChainKey).map(([key, value]) => [value, Number(key)])
+) as { [key in ChainKey]: ChainId }
+
+export const isNetworkNameKey = (key: string): key is ChainKey =>
+  Object.keys(NetworkNameKey).includes(key)

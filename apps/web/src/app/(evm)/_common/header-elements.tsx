@@ -11,7 +11,7 @@ import {
   EXPLORE_NAVIGATION_LINKS,
   // MORE_NAVIGATION_LINKS,
 } from 'src/app/_common/header-elements'
-import { ChainId } from 'sushi'
+import { ChainId, ChainKey, isChainId } from 'sushi'
 
 export const headerElements = (chainId?: ChainId): NavigationElement[] => [
   {
@@ -43,13 +43,17 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
   },
   {
     title: 'Explore',
-    href: `/${chainId ?? 1}/explore/pools`,
+    href: `/${
+      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
+    }/explore/pools`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },
   {
     title: 'Positions',
-    href: `/${chainId ?? 1}/positions`,
+    href: `/${
+      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
+    }/positions`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },

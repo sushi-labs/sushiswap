@@ -15,7 +15,7 @@ import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { ChainId } from 'sushi'
+import { ChainId, ChainKey } from 'sushi'
 import {
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   isSushiSwapV3ChainId,
@@ -140,7 +140,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewSmartPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/pool/${chainId}:${poolId}/smart`}
+                    href={`/pool/${chainId ? ChainKey[chainId] : chainId}:${poolId}/smart`}
                   >
                     <Button icon={PlusIcon} asChild size="sm" variant="outline">
                       Create smart position
@@ -150,7 +150,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/${chainId}/pool/v3/${address}/positions/create`}
+                    href={`/${chainId ? ChainKey[chainId] : chainId}/pool/v3/${address}/positions/create`}
                   >
                     <Button icon={PlusIcon} asChild size="sm">
                       Create position

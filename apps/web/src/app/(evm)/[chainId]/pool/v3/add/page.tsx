@@ -14,7 +14,7 @@ import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWi
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectPricesWidget } from 'src/ui/pool/SelectPricesWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { computeSushiSwapV3PoolAddress } from 'sushi'
+import { ChainKey, computeSushiSwapV3PoolAddress } from 'sushi'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
@@ -90,7 +90,7 @@ const _Add: FC = () => {
     <>
       <SelectNetworkWidget
         selectedNetwork={chainId}
-        onSelect={(chainId) => router.push(`/${chainId}/pool/v3/add`)}
+        onSelect={(chainId) => router.push(`/${ChainKey[chainId]}/pool/v3/add`)}
         networks={SUSHISWAP_V3_SUPPORTED_CHAIN_IDS}
       />
       <SelectTokensWidget

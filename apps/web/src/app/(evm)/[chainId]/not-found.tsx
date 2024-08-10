@@ -2,6 +2,7 @@
 
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Button, LinkInternal, typographyVariants } from '@sushiswap/ui'
+import { ChainKey } from 'sushi'
 import { useChainId } from 'wagmi'
 
 export default function NotFound() {
@@ -34,7 +35,7 @@ export default function NotFound() {
             icon={ChevronRightIcon}
             iconPosition="end"
           >
-            <LinkInternal href={`/${chainId}/explore/pools`}>
+            <LinkInternal href={`/${ChainKey[chainId]}/explore/pools`}>
               See a list of our pools
             </LinkInternal>
           </Button>

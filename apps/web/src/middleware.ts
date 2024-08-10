@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { chainShortNameToChainId } from 'sushi/chain'
+import { chainShortNameToChainId, getChainInfo } from 'sushi/chain'
 
 export const config = {
   matcher: [
@@ -46,18 +46,15 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  const chainShortNameMatch = pathname.match(
-    /(\w+)(?:\/explore|\/pool|\/positions)/,
+  const networkNameMatch = pathname.match(
+    /(\w+)(?=\/explore|\/pool|\/positions)/,
   )
-  if (chainShortNameMatch?.length) {
-    const [chainShortName] = chainShortNameMatch[0].split('/')
-    const chainId = String(chainShortNameToChainId[chainShortName])
-
-    // Already rewritten / invalid chainShortName
-    if (chainId === 'undefined') return NextResponse.next()
+  if (networkNameMatch?.length) {
+    const { chainId, networkName } = getChainInfo(networkNameMatch[0])
+    if (!chainId) return NextResponse.next()
 
     const url = req.nextUrl.clone()
-    url.pathname = pathname.replace(chainShortName, chainId)
+    url.pathname = pathname.replace(networkName, chainId.toString())
 
     return NextResponse.rewrite(url)
   }
