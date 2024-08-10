@@ -6,8 +6,9 @@ export default function Layout({
   children,
   params,
 }: { children: React.ReactNode; params: { chainId: string } }) {
-  if (!isSushiSwapV3ChainId(+params.chainId as ChainId)) {
-    return notFound()
+  const chainId = +params.chainId as ChainId
+  if (!isSushiSwapV3ChainId(chainId)) {
+    return notFound(chainId)
   }
 
   return <>{children}</>
