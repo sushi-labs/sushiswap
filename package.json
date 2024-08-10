@@ -5,7 +5,7 @@
   "scripts": {
     "build": "dotenv -- turbo run build",
     "changeset": "changeset",
-    "changeset:release": "changeset publish",
+    "changeset:publish": "changeset publish",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "check": "turbo run check --no-cache --filter=!@sushiswap/tines-sandbox --filter=!@sushiswap/route-processor",
     "clean": "turbo run clean && rm -rf node_modules",
