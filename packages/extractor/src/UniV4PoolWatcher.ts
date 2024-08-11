@@ -46,7 +46,7 @@ export class UniV4PoolWatcher extends EventEmitter {
   token0: Token
   token1: Token
   fee: number
-  spacing: number
+  tickSpacing: number
   hooks: Address | undefined
 
   // Pool mutable state
@@ -71,7 +71,7 @@ export class UniV4PoolWatcher extends EventEmitter {
     token0,
     token1,
     fee,
-    spacing,
+    tickSpacing,
     hooks,
     client,
     busyCounter,
@@ -83,7 +83,7 @@ export class UniV4PoolWatcher extends EventEmitter {
     token0: Token
     token1: Token
     fee: number
-    spacing: number
+    tickSpacing: number
     hooks: Address | undefined
     client: MultiCallAggregator
     busyCounter?: Counter
@@ -96,14 +96,14 @@ export class UniV4PoolWatcher extends EventEmitter {
     this.token0 = token0
     this.token1 = token1
     this.fee = fee
-    this.spacing = spacing
+    this.tickSpacing = tickSpacing
     this.hooks = hooks
 
     this.client = client
     this.wordLoadManager = new UniV4WordLoadManager(
       address,
       id,
-      this.spacing,
+      this.tickSpacing,
       tickHelperContract,
       client,
       busyCounter,
@@ -142,7 +142,7 @@ export class UniV4PoolWatcher extends EventEmitter {
           const [sqrtPriceX96, tick] = slot0 as [bigint, number]
           this.state = {
             blockNumber,
-            tick: Math.floor(tick / this.spacing) * this.spacing,
+            tick: Math.floor(tick / this.tickSpacing) * this.tickSpacing,
             liquidity: liquidity as bigint,
             sqrtPriceX96: sqrtPriceX96 as bigint,
           }
@@ -197,7 +197,8 @@ export class UniV4PoolWatcher extends EventEmitter {
           if (sqrtPriceX96 !== undefined) this.state.sqrtPriceX96 = sqrtPriceX96
           if (liquidity !== undefined) this.state.liquidity = liquidity
           if (tick !== undefined) {
-            this.state.tick = Math.floor(tick / this.spacing) * this.spacing
+            this.state.tick =
+              Math.floor(tick / this.tickSpacing) * this.tickSpacing
             this.wordLoadManager.onPoolTickChange(this.state.tick, false)
           }
         }
@@ -328,7 +329,7 @@ export class UniV4PoolWatcher extends EventEmitter {
       token0: `${this.token0.symbol} (${this.token0.id})`,
       token1: `${this.token1.symbol} (${this.token1.id})`,
       fee: this.fee,
-      spacing: this.spacing,
+      tickSpacing: this.tickSpacing,
 
       blockNumber: this.state?.blockNumber,
       tick: this.state?.tick,
