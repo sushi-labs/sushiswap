@@ -42,6 +42,13 @@ export const PLASMA_BNB_LIST =
 export const LINEA_LIST =
   'https://raw.githubusercontent.com/Consensys/linea-token-list/main/json/linea-mainnet-token-fulllist.json'
 
+export const PANCAKESWAP_EXTENDED =
+  'https://tokens.pancakeswap.finance/pancakeswap-extended.json'
+export const PANCAKESWAP_COINGECKO =
+  'https://tokens.pancakeswap.finance/coingecko.json'
+export const PANCAKESWAP_BNB =
+  'https://tokens.pancakeswap.finance/pancakeswap-bnb-mm.json'
+
 // this is the default list of lists that are exposed to users
 // lower index == higher priority for token import
 export const DEFAULT_TOKEN_LIST_OF_TOKEN_LISTS_TO_DISPLAY: string[] = [
@@ -64,6 +71,9 @@ export const DEFAULT_TOKEN_LIST_OF_TOKEN_LISTS_TO_DISPLAY: string[] = [
   CELO_LIST,
   PLASMA_BNB_LIST,
   LINEA_LIST,
+  PANCAKESWAP_EXTENDED,
+  PANCAKESWAP_COINGECKO,
+  PANCAKESWAP_BNB,
 ]
 
 export const DEFAULT_LIST_OF_LISTS: string[] = [
