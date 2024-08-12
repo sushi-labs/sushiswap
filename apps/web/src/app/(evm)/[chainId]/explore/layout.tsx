@@ -86,9 +86,9 @@ export default async function ExploreLayout({
               <LinkInternal
                 href={
                   isSushiSwapV3ChainId(chainId as SushiSwapV3ChainId)
-                    ? `/${chainId}/pool/v3/add`
+                    ? `/${ChainKey[chainId]}/pool/v3/add`
                     : isSushiSwapV2ChainId(chainId as SushiSwapV3ChainId)
-                      ? `/${chainId}/pool/v2/add`
+                      ? `/${ChainKey[chainId]}/pool/v2/add`
                       : ''
                 }
               >
@@ -110,7 +110,7 @@ export default async function ExploreLayout({
                     asChild
                   >
                     <LinkInternal
-                      href={`/${chainId}/pool/v3/add`}
+                      href={`/${ChainKey[chainId]}/pool/v3/add`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
@@ -129,7 +129,7 @@ export default async function ExploreLayout({
                   {isSushiSwapV2ChainId(chainId as ChainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal
-                        href={`/${chainId}/pool/v2/add`}
+                        href={`/${ChainKey[chainId]}/pool/v2/add`}
                         className="flex flex-col !items-start gap-1 cursor-pointer"
                       >
                         <div className="flex items-center gap-1 font-medium leading-none">
@@ -154,7 +154,7 @@ export default async function ExploreLayout({
           >
             <LinkInternal
               className="text-sm"
-              href={`/${chainId}/pool/incentivize`}
+              href={`/${ChainKey[chainId]}/pool/incentivize`}
             >
               I want to incentivize a pool
             </LinkInternal>

@@ -20,6 +20,7 @@ import {
 import { FC } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
+import { ChainKey } from 'sushi'
 import { formatUSD } from 'sushi/format'
 import { ConcentratedLiquidityProvider } from './ConcentratedLiquidityProvider'
 import { PoolRewardDistributionsCard } from './PoolRewardDistributionsCard'
@@ -62,7 +63,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
             To create a smart pool position, click{' '}
             <LinkInternal
               shallow={true}
-              href={`/pool/${address}/smart`}
+              href={`/${ChainKey[chainId]}/pool/v3/${address}/smart`}
               className="underline"
             >
               here

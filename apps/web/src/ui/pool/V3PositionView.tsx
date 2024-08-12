@@ -40,7 +40,7 @@ import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hook
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { Chain } from 'sushi/chain'
+import { Chain, ChainKey } from 'sushi/chain'
 import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
@@ -687,7 +687,9 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   Anyone can add distributions to this pool.{' '}
                   {_token0 && _token1 ? (
                     <LinkInternal
-                      href={`/pool/incentivize?chainId=${chainId}&fromCurrency=${
+                      href={`${
+                        ChainKey[chainId]
+                      }/pool/incentivize?fromCurrency=${
                         _token0.isNative ? 'NATIVE' : _token0.address
                       }&toCurrency=${
                         _token1.isNative ? 'NATIVE' : _token1.address
