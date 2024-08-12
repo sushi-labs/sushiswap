@@ -7,7 +7,7 @@ import {
 } from '@sushiswap/ui'
 import { FC } from 'react'
 import React from 'react'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
@@ -27,6 +27,13 @@ export const PortfolioFarmClaimables: FC<PortfolioFarmClaimablesProps> = ({
         <PortfolioInfoRow
           id={`${position.chainId}:${position.id}`}
           chainId={token.chainId as ChainId}
+          href={
+            position.protocol === 'SUSHISWAP_V2'
+              ? `/${ChainKey[position.chainId as ChainId]}/pool/v2/${
+                  position.address
+                }/add`
+              : `/${ChainKey[position.chainId as ChainId]}/positions/rewards`
+          }
           icon={
             <img
               className="rounded-full"

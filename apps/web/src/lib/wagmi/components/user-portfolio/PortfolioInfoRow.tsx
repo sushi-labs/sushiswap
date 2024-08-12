@@ -1,11 +1,13 @@
-import { Badge } from '@sushiswap/ui'
+import { Badge, classNames } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { useRouter } from 'next/navigation'
 import { FC, ReactElement } from 'react'
 import { ChainId } from 'sushi/chain'
 
 interface PortfolioInfoRow {
   id: string
   chainId: ChainId
+  href?: string
   icon: ReactElement
   leftContent: ReactElement
   rightContent: ReactElement | null
@@ -15,13 +17,20 @@ export const PortfolioInfoRow: FC<PortfolioInfoRow> = ({
   id,
   chainId,
   icon,
+  href,
   leftContent,
   rightContent,
 }) => {
+  const { push } = useRouter()
   return (
     <div
       id={id}
-      className="flex w-full items-center hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap"
+      className={classNames(
+        'flex w-full items-center hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap',
+        href && 'cursor-pointer',
+      )}
+      onClick={() => href && push(href)}
+      onKeyDown={() => href && push(href)}
     >
       <div className="shrink-0">
         <Badge

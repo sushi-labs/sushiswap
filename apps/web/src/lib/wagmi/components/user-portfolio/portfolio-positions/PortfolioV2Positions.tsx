@@ -6,7 +6,7 @@ import {
   Currency,
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { formatUSD } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
@@ -26,6 +26,9 @@ export const PortfolioV2Positions: FC<PortfolioV2PositionssProps> = ({
         <PortfolioInfoRow
           id={`${position.chainId}:${position.id}`}
           chainId={position.chainId as ChainId}
+          href={`/${ChainKey[position.chainId as ChainId]}/pool/v2/${
+            position.address
+          }/add`}
           icon={
             <Currency.IconList iconWidth={24} iconHeight={24}>
               <img

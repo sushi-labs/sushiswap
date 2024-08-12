@@ -27,6 +27,9 @@ export const PortfolioFuroClaimables: FC<PortfolioFuroClaimablesProps> = ({
         <PortfolioInfoRow
           id={`${position.chainId}:${position.id}`}
           chainId={token.chainId as ChainId}
+          href={`https://pay.sushi.com/${
+            position.name.startsWith('Vesting') ? 'vesting' : 'stream'
+          }/${position.chainId}:${position.positionId}`}
           icon={
             <img
               className="rounded-full"
