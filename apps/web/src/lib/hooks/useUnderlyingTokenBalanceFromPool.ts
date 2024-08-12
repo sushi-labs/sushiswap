@@ -1,8 +1,13 @@
 'use client'
 
 import { useMemo } from 'react'
+import { uniswapV2PairAbi } from 'sushi/abi'
+import { SUSHISWAP_V2_FACTORY_ADDRESS, SushiSwapV2ChainId } from 'sushi/config'
 import { Amount, Token, Type } from 'sushi/currency'
 import { ZERO } from 'sushi/math'
+import { SushiSwapV2Pool } from 'sushi/pool'
+import { zeroAddress } from 'viem'
+import { useReadContracts } from 'wagmi'
 
 interface Params {
   totalSupply: Amount<Token> | undefined | null
@@ -17,8 +22,50 @@ type UseUnderlyingTokenBalanceFromPairParams = (
 
 export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPairParams =
   ({ balance, totalSupply, reserve1, reserve0 }) => {
+    const { data } = useReadContracts({
+      contracts: [
+        {
+          address: totalSupply
+            ? SUSHISWAP_V2_FACTORY_ADDRESS[
+                totalSupply.currency.chainId as SushiSwapV2ChainId
+              ]
+            : undefined,
+          abi: [
+            {
+              inputs: [],
+              name: 'feeTo',
+              outputs: [
+                {
+                  internalType: 'address',
+                  name: '',
+                  type: 'address',
+                },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          functionName: 'feeTo',
+        },
+        {
+          address: totalSupply?.currency.address,
+          abi: uniswapV2PairAbi,
+          functionName: 'kLast',
+        },
+      ],
+      query: {
+        enabled: Boolean(totalSupply),
+      },
+    })
+
     return useMemo(() => {
-      if (!balance || !totalSupply || !reserve0 || !reserve1) {
+      if (
+        !balance ||
+        !totalSupply ||
+        !reserve0 ||
+        !reserve1 ||
+        !data?.every((data) => data.status === 'success')
+      ) {
         return [undefined, undefined]
       }
 
@@ -29,9 +76,33 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
         ]
       }
 
+      const feeEnabled = data[0].result !== zeroAddress
+      const kLast = data[1].result
+
+      const _reserve0 = reserve0.currency.isNative
+        ? Amount.fromRawAmount(reserve0.currency.wrapped, reserve0.quotient)
+        : (reserve0 as Amount<Token>)
+      const _reserve1 = reserve1.currency.isNative
+        ? Amount.fromRawAmount(reserve1.currency.wrapped, reserve1.quotient)
+        : (reserve1 as Amount<Token>)
+
+      const pool = new SushiSwapV2Pool(_reserve0, _reserve1)
+
       return [
-        reserve0.wrapped.multiply(balance.wrapped.divide(totalSupply)),
-        reserve1.wrapped.multiply(balance.wrapped.divide(totalSupply)),
+        pool.getLiquidityValue(
+          _reserve0.currency,
+          totalSupply,
+          balance as Amount<Token>,
+          feeEnabled,
+          kLast,
+        ),
+        pool.getLiquidityValue(
+          _reserve1.currency,
+          totalSupply,
+          balance as Amount<Token>,
+          feeEnabled,
+          kLast,
+        ),
       ]
-    }, [balance, reserve0, reserve1, totalSupply])
+    }, [balance, reserve0, reserve1, totalSupply, data])
   }
