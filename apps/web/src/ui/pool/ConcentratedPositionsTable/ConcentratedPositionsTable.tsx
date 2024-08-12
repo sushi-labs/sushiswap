@@ -140,7 +140,9 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewSmartPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/pool/${chainId ? ChainKey[chainId] : chainId}:${poolId}/smart`}
+                    href={`/pool/${
+                      chainId ? ChainKey[chainId] : chainId
+                    }:${poolId}/smart`}
                   >
                     <Button icon={PlusIcon} asChild size="sm" variant="outline">
                       Create smart position
@@ -150,7 +152,9 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/${chainId ? ChainKey[chainId] : chainId}/pool/v3/${address}/positions/create`}
+                    href={`/${
+                      chainId ? ChainKey[chainId] : chainId
+                    }/pool/v3/${address}/positions/create`}
                   >
                     <Button icon={PlusIcon} asChild size="sm">
                       Create position

@@ -204,7 +204,9 @@ const Incentivize = withCheckerRoot(() => {
         <SelectNetworkWidget
           title="On which network would you like to add rewards?"
           selectedNetwork={chainId}
-          onSelect={(chainId) => router.push(`/${ChainKey[chainId]}/pool/incentivize`)}
+          onSelect={(chainId) =>
+            router.push(`/${ChainKey[chainId]}/pool/incentivize`)
+          }
           networks={ANGLE_SUPPORTED_CHAIN_IDS}
         />
         <SelectTokensWidget

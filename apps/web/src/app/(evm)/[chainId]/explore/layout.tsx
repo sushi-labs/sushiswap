@@ -48,7 +48,9 @@ export default async function ExploreLayout({
           >
             <PathnameButton
               id="all-pools"
-              pathname={`/${ChainKey[+params.chainId as ChainId]}/explore/pools`}
+              pathname={`/${
+                ChainKey[+params.chainId as ChainId]
+              }/explore/pools`}
               asChild
               size="sm"
             >
@@ -58,11 +60,15 @@ export default async function ExploreLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${ChainKey[+params.chainId as ChainId]}/explore/smart-pools`}
+            href={`/${
+              ChainKey[+params.chainId as ChainId]
+            }/explore/smart-pools`}
           >
             <PathnameButton
               id="smart-pools"
-              pathname={`/${ChainKey[+params.chainId as ChainId]}/explore/smart-pools`}
+              pathname={`/${
+                ChainKey[+params.chainId as ChainId]
+              }/explore/smart-pools`}
               asChild
               size="sm"
             >

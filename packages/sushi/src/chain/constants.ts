@@ -138,7 +138,7 @@ export const ChainKey = {
 export type ChainKey = (typeof ChainKey)[keyof typeof ChainKey]
 
 export const NetworkNameKey = Object.fromEntries(
-  Object.entries(ChainKey).map(([key, value]) => [value, Number(key)])
+  Object.entries(ChainKey).map(([key, value]) => [value, Number(key)]),
 ) as { [key in ChainKey]: ChainId }
 
 export const isNetworkNameKey = (key: string): key is ChainKey =>

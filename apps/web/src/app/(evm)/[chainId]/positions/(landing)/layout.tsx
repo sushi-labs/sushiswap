@@ -45,7 +45,9 @@ export default function TabsLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${ChainKey[_chainId]}/positions/rewards?${searchParams.toString()}`}
+            href={`/${
+              ChainKey[_chainId]
+            }/positions/rewards?${searchParams.toString()}`}
           >
             <PathnameButton
               id="my-rewards"
@@ -59,7 +61,9 @@ export default function TabsLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${ChainKey[_chainId]}/positions/migrate?${searchParams.toString()}`}
+            href={`/${
+              ChainKey[_chainId]
+            }/positions/migrate?${searchParams.toString()}`}
           >
             <PathnameButton
               id="migrate"
