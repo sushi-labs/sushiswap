@@ -16,6 +16,13 @@ export class Token extends Currency {
    */
   public readonly address: Address
 
+  /**
+   * Relevant for fee-on-transfer (FOT) token taxes,
+   * Not every ERC20 token is FOT token, so this field is optional
+   */
+  public readonly buyFeeBps?: bigint
+  public readonly sellFeeBps?: bigint
+
   public constructor({
     // TODO:
     // id,
@@ -24,12 +31,16 @@ export class Token extends Currency {
     decimals,
     symbol,
     name,
+    buyFeeBps,
+    sellFeeBps,
   }: {
     chainId: number | string
     address: string
     decimals: number | string
     symbol?: string | undefined
     name?: string | undefined
+    buyFeeBps?: bigint
+    sellFeeBps?: bigint
   }) {
     super({
       chainId,
@@ -43,6 +54,15 @@ export class Token extends Currency {
       // this.tokenId = `${t.address || ''}_${t.chainId}`
     } catch {
       throw `${address} is not a valid address`
+    }
+
+    if (buyFeeBps) {
+      invariant(buyFeeBps >= 0n, 'NON-NEGATIVE FOT FEES')
+      this.buyFeeBps = buyFeeBps
+    }
+    if (sellFeeBps) {
+      invariant(sellFeeBps >= 0n, 'NON-NEGATIVE FOT FEES')
+      this.sellFeeBps = sellFeeBps
     }
   }
 

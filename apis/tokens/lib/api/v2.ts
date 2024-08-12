@@ -1,13 +1,11 @@
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { createConfig, fetchToken } from '@wagmi/core'
 import { sql } from 'drizzle-orm'
 import type { ChainId } from 'sushi/chain'
 import { type Address, getAddress } from 'viem'
+import { config } from '../api.js'
 import { databaseClient, tokenSchema } from '../db.js'
 
 export async function getToken(chainId: ChainId, address: string) {
-  const config = createConfig(publicWagmiConfig)
-
   try {
     const tokens = await databaseClient
       .select({
@@ -33,7 +31,7 @@ export async function getToken(chainId: ChainId, address: string) {
       address: getAddress(token.address),
     }
   } catch {
-    const tokenFromContract = await fetchToken(config, {
+    const tokenFromContract = await fetchToken(createConfig(config), {
       chainId,
       address: address as Address,
     }).catch(() => {

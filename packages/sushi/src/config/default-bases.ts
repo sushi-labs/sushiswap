@@ -1,20 +1,16 @@
 import { getAddress as _getAddress } from 'viem/utils'
 import { ChainId } from '../chain/index.js'
 import {
-  STARGATE_USDC,
-  STARGATE_USDT,
-  STARGATE_WBTC,
-  STARGATE_WETH,
-} from '../config/index.js'
-import {
   ARB,
   DAI,
   FRAX,
   GNO,
   MATIC,
   MIM,
+  Native,
   SKL,
   SUSHI,
+  Token,
   USDB,
   USDC,
   USDT,
@@ -32,7 +28,12 @@ import {
   axlUSDT,
   axlWBTC,
 } from '../currency/index.js'
-import { Native, Token } from '../currency/index.js'
+import {
+  STARGATE_USDC,
+  STARGATE_USDT,
+  STARGATE_WBTC,
+  STARGATE_WETH,
+} from './stargate.js'
 
 /*
   Currencies that are shown at the top of the token selector by default
