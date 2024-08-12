@@ -253,12 +253,7 @@ export class UniV4PoolWatcher extends EventEmitter {
       this.state.sqrtPriceX96,
       ticks,
     )
-    const pc = new UniV4PoolCode(
-      this.address,
-      v3Pool,
-      this.provider,
-      this.provider,
-    )
+    const pc = new UniV4PoolCode(v3Pool, this.provider, this.provider)
     this.lastPoolCode = pc
     return pc
   }

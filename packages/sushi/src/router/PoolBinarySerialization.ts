@@ -11,6 +11,7 @@ import {
   CurveMultitokenPool,
   RToken,
   UniV3Pool,
+  UniV4Pool,
   createCurvePoolsForMultipool,
 } from '../tines/index.js'
 import { curvePoolType2Num, curvePoolTypeFromNum } from './curve-sdk.js'
@@ -21,6 +22,7 @@ import {
   NativeWrapBridgePoolCode,
   PoolCode,
   UniV3PoolCode,
+  UniV4PoolCode,
 } from './pool-codes/index.js'
 
 enum PoolTypeIndex {
@@ -28,6 +30,7 @@ enum PoolTypeIndex {
   Classic = 1,
   Concentrated = 2,
   Curve = 3,
+  V4 = 4,
 }
 
 const FEE_FRACTIONS = 10_000_000
@@ -62,7 +65,7 @@ export function serializePoolsBinary(
 
   stream.uint24(pools.length)
   pools.forEach((pc) => {
-    stream.str16(pc.liquidityProvider)
+    stream.str16(pc.liquidityProvider) // TODO: small set of strings actually, can be optimized
     if (pc instanceof ConstantProductPoolCode) {
       const p = pc.pool as ConstantProductRPool
       stream.uint8(PoolTypeIndex.Classic)
@@ -115,6 +118,23 @@ export function serializePoolsBinary(
       })
       stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
       stream.float64(core.A)
+    } else if (pc instanceof UniV4PoolCode) {
+      const p = pc.pool as UniV4Pool
+      stream.uint8(PoolTypeIndex.V4)
+      stream.address(p.address)
+      stream.str16(p.id)
+      stream.uint24(tokenIndex.get(p.token0.address) as number)
+      stream.uint24(tokenIndex.get(p.token1.address) as number)
+      stream.uint24(p.fee * FEE_FRACTIONS)
+      //stream.uint32(p.tick) nearestTick instead of it
+      stream.uint24(p.nearestTick)
+      stream.bigUInt(p.liquidity, p.address, 'liquidity')
+      stream.bigUInt(p.sqrtPriceX96, p.address, 'price')
+      stream.uint24(p.ticks.length)
+      p.ticks.forEach((t) => {
+        stream.int24(t.index)
+        stream.bigInt(t.DLiquidity)
+      })
     } else {
       console.error(`Serialization: unsupported pool type ${pc.pool.address}`)
     }
@@ -203,6 +223,13 @@ export function deserializePoolsBinary(
         })
         break
       }
+      case PoolTypeIndex.V4:
+        pools[i++] = new UniV4PoolCode(
+          readUniV4Pool(stream, tokensArray),
+          liquidityProvider as LiquidityProviders,
+          liquidityProvider,
+        )
+        break
       default:
         console.error(`Deserealization: unknown pool type ${poolType}`)
     }
@@ -257,6 +284,39 @@ function readUniV3Pool(
     fee,
     reserve0,
     reserve1,
+    0, // tick is not needed if we already have nearestTick
+    liquidity,
+    sqrtPriceX96,
+    ticks,
+    nearestTick,
+  )
+}
+
+function readUniV4Pool(
+  stream: BinReadStream,
+  tokensArray: RToken[],
+): UniV4Pool {
+  const address = stream.address()
+  const id = stream.str16()
+  const token0 = tokensArray[stream.uint24()] as RToken
+  const token1 = tokensArray[stream.uint24()] as RToken
+  const fee = stream.uint24() / FEE_FRACTIONS
+  const nearestTick = stream.uint24()
+  const liquidity = stream.bigUInt()
+  const sqrtPriceX96 = stream.bigUInt()
+  const ticksLen = stream.uint24()
+  const ticks = new Array(ticksLen)
+  for (let i = 0; i < ticksLen; ++i) {
+    const index = stream.int24()
+    const DLiquidity = stream.bigInt()
+    ticks[i] = { index, DLiquidity }
+  }
+  return new UniV4Pool(
+    id,
+    address,
+    token0,
+    token1,
+    fee,
     0, // tick is not needed if we already have nearestTick
     liquidity,
     sqrtPriceX96,
