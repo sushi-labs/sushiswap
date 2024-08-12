@@ -22,7 +22,7 @@ export const interceptAnvil = async (page: Page, next: NextFixture) => {
   next.onFetch((request) => {
     if (request.url === 'http://127.0.0.1:8545/') {
       // console.log(
-      //   `intercept anvil request url ${request.url} and re-write to ${url}`
+      //   `intercept anvil request url ${request.url} and re-write to ${url}`,
       // )
       return fetch(url, request)
     }

@@ -1,8 +1,15 @@
 import fs from 'fs'
 import { type UseTradeParams, tradeValidator02 } from '@sushiswap/react-query'
-import { ChainId } from 'sushi'
-import { isRouteProcessor4ChainId } from 'sushi/config'
+import { ChainId } from 'sushi/chain'
+import {
+  API_BASE_URL,
+  // TOKEN_CHOMPER_ADDRESS,
+  // isTokenChomperChainId,
+  publicClientConfig,
+} from 'sushi/config'
 import { Amount, Native, USDC, USDT, WBTC } from 'sushi/currency'
+import { createPublicClient, stringify } from 'viem'
+import { getBlockNumber } from 'viem/actions'
 import { isSwapApiEnabledChainId } from '../../../src/config'
 
 const RECIPIENT = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
@@ -45,19 +52,6 @@ if (!fs.existsSync(MOCK_DIRECTORY)) {
 fs.rmSync(MOCK_DIRECTORY, { recursive: true })
 fs.mkdirSync(MOCK_DIRECTORY)
 
-// ! COPIED FROM packages/react-query/src/hooks/trade/useTrade.ts
-const API_BASE_URL =
-  process.env['API_BASE_URL'] ||
-  process.env['NEXT_PUBLIC_API_BASE_URL'] ||
-  'https://api.sushi.com'
-
-function getApiVersion(chainId: ChainId) {
-  if (isRouteProcessor4ChainId(chainId)) {
-    return '/v4'
-  }
-  return ''
-}
-
 const getSwapApiResult = async ({
   fromToken,
   toToken,
@@ -66,9 +60,7 @@ const getSwapApiResult = async ({
   slippagePercentage,
   source,
 }: TradeParams) => {
-  const params = new URL(
-    `${API_BASE_URL}/swap${getApiVersion(chainId)}/${chainId}`,
-  )
+  const params = new URL(`${API_BASE_URL}/swap/v5/${chainId}`)
 
   params.searchParams.set(
     'tokenIn',
@@ -87,13 +79,23 @@ const getSwapApiResult = async ({
     }`,
   )
   params.searchParams.set('amount', `${amount?.quotient.toString()}`)
-  params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
+  params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
   params.searchParams.set('gasPrice', `${gasPrice}`)
-  params.searchParams.set('to', RECIPIENT)
+  params.searchParams.set('to', `${RECIPIENT}`)
   params.searchParams.set('preferSushi', 'true')
-  if (source !== undefined) params.searchParams.set('source', `${source}`)
+  // params.searchParams.set('enableFee', 'true')
+  // params.searchParams.set(
+  //   'feeReceiver',
+  //   isTokenChomperChainId(chainId)
+  //     ? TOKEN_CHOMPER_ADDRESS[chainId]
+  //     : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
+  // )
+  // params.searchParams.set('fee', '0.0025')
+  // params.searchParams.set('feeBy', 'output')
+  params.searchParams.set('includeTransaction', 'true')
+  params.searchParams.set('includeRoute', 'true')
 
-  console.log(params.toString())
+  if (source !== undefined) params.searchParams.set('source', `${source}`)
 
   const res = await fetch(params.toString())
   const json = await res.json()
@@ -170,11 +172,16 @@ trades[`${chainId}-wrap`] = {
 }
 
 const main = async () => {
+  const blockNumber = await getBlockNumber(
+    createPublicClient(publicClientConfig[chainId]),
+  )
+  console.log('Block number: ', blockNumber)
+
   for (const [name, trade] of Object.entries(trades)) {
     const result = await getSwapApiResult(trade)
     fs.writeFileSync(
       `${MOCK_DIRECTORY}/${name}.json`,
-      JSON.stringify(result, null, 2),
+      stringify(result, null, 2),
     )
   }
 }

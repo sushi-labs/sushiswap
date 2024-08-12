@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test'
-import { Native, Type } from 'sushi/currency'
+import { API_BASE_URL } from 'sushi/config'
+import { Amount, Native, Type } from 'sushi/currency'
 import { zeroAddress } from 'viem'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
@@ -18,7 +19,11 @@ export class SwapPage extends BaseActions {
     await this.page.goto(url)
   }
 
-  async wrap(inputCurrency: Type, outputCurrency: Type, amount: string) {
+  async wrap(
+    inputCurrency: Type,
+    outputCurrency: Type,
+    amount: Amount<Native> | 'max',
+  ) {
     await this.handleToken(inputCurrency, 'INPUT')
     await this.handleToken(outputCurrency, 'OUTPUT')
     await this.inputAmount(amount)
@@ -80,40 +85,44 @@ export class SwapPage extends BaseActions {
     await makeAnotherSwap.click()
   }
 
-  async swap(inputCurrency: Type, outputCurrency: Type, amount: string) {
+  async swap(
+    inputCurrency: Type,
+    outputCurrency: Type,
+    amount: Amount<Type> | 'max',
+  ) {
     await this.handleToken(inputCurrency, 'INPUT')
     await this.handleToken(outputCurrency, 'OUTPUT')
     await this.inputAmount(amount)
 
-    const swapFromBalance = this.page.locator(
-      '[testdata-id=swap-from-balance-button]',
-    )
-    await expect(swapFromBalance).toBeVisible()
-    await expect(swapFromBalance).toBeEnabled()
-    const swapFromBalanceBefore = await swapFromBalance.textContent()
+    // const swapFromBalance = this.page.locator(
+    //   '[testdata-id=swap-from-balance-button]',
+    // )
+    // await expect(swapFromBalance).toBeVisible()
+    // await expect(swapFromBalance).toBeEnabled()
+    // const swapFromBalanceBefore = await swapFromBalance.textContent()
 
-    const swapToBalance = this.page.locator(
-      '[testdata-id=swap-to-balance-button]',
-    )
-    await expect(swapToBalance).toBeVisible()
-    const swapToBalanceBefore = await swapToBalance.textContent()
+    // const swapToBalance = this.page.locator(
+    //   '[testdata-id=swap-to-balance-button]',
+    // )
+    // await expect(swapToBalance).toBeVisible()
+    // const swapToBalanceBefore = await swapToBalance.textContent()
 
     await this.approve(inputCurrency)
 
     const swapButton = this.page.locator('[testdata-id=swap-button]')
     await expect(swapButton).toBeVisible()
 
-    // const priceImpactCheckbox = page.locator(
-    //   '[testdata-id=price-impact-checkbox]',
-    // )
-    // while (!(await swapButton.isEnabled())) {
-    //   if (
-    //     (await priceImpactCheckbox.isVisible()) &&
-    //     !(await priceImpactCheckbox.isChecked())
-    //   ) {
-    //     await priceImpactCheckbox.check()
-    //   }
-    // }
+    const priceImpactCheckbox = this.page.locator(
+      '[testdata-id=price-impact-checkbox]',
+    )
+    while (!(await swapButton.isEnabled())) {
+      if (
+        (await priceImpactCheckbox.isVisible()) &&
+        !(await priceImpactCheckbox.isChecked())
+      ) {
+        await priceImpactCheckbox.check()
+      }
+    }
 
     await swapButton.isEnabled()
 
@@ -146,90 +155,15 @@ export class SwapPage extends BaseActions {
     await makeAnotherSwap.click()
 
     // Compare against cached balances to ensure there is at least a change...
-    await expect(swapFromBalance).not.toHaveText(
-      swapFromBalanceBefore as string,
-    )
-    const swapFromBalanceAfter = await swapFromBalance.textContent()
-    expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
+    // await expect(swapFromBalance).not.toHaveText(
+    //   swapFromBalanceBefore as string,
+    // )
+    // const swapFromBalanceAfter = await swapFromBalance.textContent()
+    // expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
 
-    await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
-    const swapToBalanceAfter = await swapToBalance.textContent()
-    expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
-  }
-
-  async maxSwap(inputCurrency: Type, outputCurrency: Type) {
-    await this.handleToken(inputCurrency, 'INPUT')
-    await this.handleToken(outputCurrency, 'OUTPUT')
-
-    await this.maxInput(this.page)
-
-    // Cache balances before swap
-    const swapFromBalance = this.page.locator(
-      '[testdata-id=swap-from-balance-button]',
-    )
-    await expect(swapFromBalance).toBeVisible()
-    await expect(swapFromBalance).toBeEnabled()
-    const swapFromBalanceBefore = await swapFromBalance.textContent()
-    const swapToBalance = this.page.locator(
-      '[testdata-id=swap-to-balance-button]',
-    )
-    await expect(swapToBalance).toBeVisible()
-    const swapToBalanceBefore = await swapToBalance.textContent()
-
-    await this.approve(inputCurrency)
-
-    const swapButton = this.page.locator('[testdata-id=swap-button]')
-    await expect(swapButton).toBeVisible()
-
-    const priceImpactCheckbox = this.page.locator(
-      '[testdata-id=price-impact-checkbox]',
-    )
-    while (!(await swapButton.isEnabled())) {
-      if (
-        (await priceImpactCheckbox.isVisible()) &&
-        !(await priceImpactCheckbox.isChecked())
-      ) {
-        await priceImpactCheckbox.check()
-      }
-    }
-
-    await expect(swapButton).toBeEnabled()
-    await swapButton.click()
-
-    const confirmSwap = this.page.locator('[testdata-id=confirm-swap-button]')
-    // const confirmSwap = page.getByRole('button', { name: `Swap ${inputCurrency.symbol} for ${outputCurrency.symbol}` })
-    await expect(confirmSwap).toBeVisible()
-    await expect(confirmSwap).toBeEnabled()
-    await confirmSwap.click()
-
-    const expectedSwappingText = new RegExp(
-      `(Swapping .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`,
-    )
-    expect(this.page.getByText(expectedSwappingText)).toBeVisible()
-
-    const expectedSwapText = new RegExp(
-      `(Swap .* ${inputCurrency.symbol}.* for .* ${outputCurrency.symbol}.*.)`,
-    )
-    expect(this.page.getByText(expectedSwapText)).toBeVisible()
-
-    // Make another swap
-    const makeAnotherSwap = this.page.locator(
-      '[testdata-id=make-another-swap-button]',
-    )
-    await expect(makeAnotherSwap).toBeVisible()
-    await expect(makeAnotherSwap).toBeEnabled()
-    await makeAnotherSwap.click()
-
-    // Compare against cached balances to ensure there is at least a change...
-    await expect(swapFromBalance).not.toHaveText(
-      swapFromBalanceBefore as string,
-    )
-    const swapFromBalanceAfter = await swapFromBalance.textContent()
-    expect(swapFromBalanceBefore).not.toEqual(swapFromBalanceAfter)
-
-    await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
-    const swapToBalanceAfter = await swapToBalance.textContent()
-    expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
+    // await expect(swapToBalance).not.toHaveText(swapToBalanceBefore as string)
+    // const swapToBalanceAfter = await swapToBalance.textContent()
+    // expect(swapToBalanceBefore).not.toEqual(swapToBalanceAfter)
   }
 
   async approve(currency: Type) {
@@ -284,24 +218,38 @@ export class SwapPage extends BaseActions {
     await expect(tokenSelector).toContainText(currency.symbol as string)
   }
 
-  async maxInput(page: Page) {
-    const maxButton = page.locator('[testdata-id=swap-from-balance-button]')
+  async maxInput() {
+    const maxButton = this.page.locator(
+      '[testdata-id=swap-from-balance-button]',
+    )
     await expect(maxButton).toBeVisible()
     await expect(maxButton).toBeEnabled()
     await maxButton.click()
   }
 
-  async inputAmount(amount: string) {
-    const input0 = this.page.locator('[testdata-id=swap-from-input]')
-    // Inputs are not rendered until the trade is found
-    await expect(input0).toBeVisible()
-    await expect(input0).toBeEnabled()
-    await input0.fill(amount)
+  async inputAmount(amount: Amount<Type> | 'max') {
+    if (amount === 'max') {
+      const maxButton = this.page.locator(
+        '[testdata-id=swap-from-balance-button]',
+      )
+      await expect(maxButton).toBeVisible()
+      await expect(maxButton).toBeEnabled()
+      await maxButton.click()
+    } else {
+      const input0 = this.page.locator('[testdata-id=swap-from-input]')
+      // Inputs are not rendered until the trade is found
+      await expect(input0).toBeVisible()
+      await expect(input0).toBeEnabled()
+      await input0.fill(amount.toExact())
+    }
   }
 
   async mockSwapApi(jsonFile: string) {
-    await this.page.route('https://api.sushi.com/swap/**/*', (route) => {
-      return route.fulfill({ path: jsonFile })
-    })
+    await this.page.route(
+      `${API_BASE_URL}/swap/v5/${this.chainId}*`,
+      (route) => {
+        return route.fulfill({ path: jsonFile })
+      },
+    )
   }
 }

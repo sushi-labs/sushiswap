@@ -27,11 +27,11 @@ import {
 import { useTheme } from 'next-themes'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/useSortedTokenList'
+import { ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/TokenSelector'
-import type { ChainId } from 'sushi'
 import { Address } from 'viem'
 import {
   useDerivedStateSimpleSwap,
@@ -128,7 +128,7 @@ const getTokenLogo = (currency: Currency) => {
     return `https://cdn.sushi.com/image/upload/${params.join(
       ',',
     )}/d_unknown.png/${src}`
-  } catch {
+  } catch (_error) {
     return ''
   }
 }
@@ -182,21 +182,19 @@ const Tooltip = ({ tooltipText }: any) => {
 
 const TwapNetworkSelector = ({ children }: { children: ReactNode }) => {
   const { switchChain } = useSwitchChain()
-
   const chainId = useChainId()
-
   const onSelect = useCallback(
-    (chainId: ChainId) => {
-      switchChain({ chainId })
+    (chainId: number) => {
+      switchChain({ chainId: chainId as ChainId })
     },
     [switchChain],
   )
 
   return (
     <NetworkSelector
-      networks={supportedChains as ChainId[]}
-      onSelect={onSelect}
       selected={chainId}
+      networks={supportedChains}
+      onSelect={onSelect}
     >
       {children}
     </NetworkSelector>
@@ -223,10 +221,7 @@ const TwapButton = ({
 function Provider({ isLimit }: { isLimit?: boolean }) {
   const { openConnectModal } = useConnectModal()
   const { connector } = useAccount()
-  const {
-    state,
-    mutate: { setSwapAmount, ...mutate },
-  } = useDerivedStateSimpleSwap()
+  const { state, mutate } = useDerivedStateSimpleSwap()
   const { resolvedTheme } = useTheme()
   const tokens = useTokenList()
   const connectedChainId = useChainId()
@@ -234,9 +229,9 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
   useEffect(() => {
     // we do this to get an indication of market price for single token
     if (state.swapAmountString !== '1') {
-      setSwapAmount('1')
+      mutate.setSwapAmount('1')
     }
-  }, [state.swapAmountString, setSwapAmount])
+  }, [state.swapAmountString, mutate])
 
   return (
     <div className="flex flex-col gap-4">

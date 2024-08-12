@@ -1,19 +1,11 @@
 import { getDifficulties, getProducts } from '@sushiswap/graph-client/strapi'
 import {
-  EXPLORE_NAVIGATION_LINKS,
-  NavigationContainer,
-  NavigationListItem,
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  // OnramperButton,
-  buttonVariants,
+  Navigation,
+  NavigationElement,
+  NavigationElementType,
 } from '@sushiswap/ui'
-// import { getDifficulties, getProducts } from 'lib/api'
 import React from 'react'
+import { EXPLORE_NAVIGATION_LINKS } from '../_common/header-elements'
 import { DOCS_URL } from './constants'
 
 interface HeaderLink {
@@ -45,91 +37,49 @@ export async function Header() {
       : -1,
   )
 
-  const navData: HeaderSection[] = [
-    { title: 'Academy', href: '/academy' },
-    { title: 'Blog', href: '/blog' },
+  const navData: NavigationElement[] = [
+    {
+      title: 'Explore',
+      items: EXPLORE_NAVIGATION_LINKS,
+      show: 'everywhere',
+      type: NavigationElementType.Dropdown,
+    },
+    {
+      title: 'Academy',
+      href: '/academy',
+      show: 'everywhere',
+      type: NavigationElementType.Single,
+    },
+    {
+      title: 'Blog',
+      href: '/blog',
+      show: 'everywhere',
+      type: NavigationElementType.Single,
+    },
     {
       title: 'Products',
-      links: sortedProducts.map(({ longName, slug }) => ({
-        name: longName,
+      items: sortedProducts.map(({ longName, slug }) => ({
+        title: longName,
         href: `/academy/products/${slug}`,
+        description: '',
       })),
-      className: 'hidden md:flex',
+      show: 'desktop',
+      type: NavigationElementType.Dropdown,
     },
     {
       title: 'Learn',
-      links: difficulties?.map(({ shortDescription, slug }) => {
+      items: difficulties?.map(({ shortDescription, slug }) => {
         const isTechnical = slug === 'technical'
         return {
-          name: shortDescription,
+          title: shortDescription,
           href: isTechnical ? DOCS_URL : `/academy/explore?difficulty=${slug}`,
-          isExternal: isTechnical,
+          description: '',
         }
       }),
-      className: 'hidden md:flex',
+      show: 'desktop',
+      type: NavigationElementType.Dropdown,
     },
   ]
 
-  return (
-    <NavigationContainer>
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="w-[400px] gap-3 p-4">
-                {EXPLORE_NAVIGATION_LINKS.map((component) => (
-                  <NavigationListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                  >
-                    {component.description}
-                  </NavigationListItem>
-                ))}
-                {/* <OnramperButton>
-                    <NavigationListItem title="Buy Crypto">
-                      Need to buy some more crypto?
-                    </NavigationListItem>
-                  </OnramperButton> */}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          {navData.map(({ title, href, links, className }) => {
-            if (href && !links) {
-              return (
-                <NavigationMenuItem key={href} className={className}>
-                  <NavigationMenuLink
-                    href={href}
-                    className={buttonVariants({ variant: 'ghost' })}
-                  >
-                    {title}
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              )
-            }
-
-            return (
-              <NavigationMenuItem key={title} className={className}>
-                <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-[400px] gap-3 p-4">
-                    {links?.map(({ name, href }) => (
-                      <NavigationListItem
-                        key={`${title}-${name}`}
-                        title={name.split('-')?.[0]}
-                        href={href}
-                      >
-                        {name.split('-')?.[1]}
-                      </NavigationListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            )
-          })}
-        </NavigationMenuList>
-      </NavigationMenu>
-    </NavigationContainer>
-  )
+  return <Navigation leftElements={navData} />
 }

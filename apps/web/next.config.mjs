@@ -7,8 +7,6 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
 
-const FURO_URL = 'https://furo.sushi.com'
-
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
@@ -18,6 +16,33 @@ const nextConfig = bundleAnalyzer({
   },
   async redirects() {
     return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'test.sushi.com',
+          },
+        ],
+        destination: 'https://sushi.com/test/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'aptos.sushi.com',
+          },
+        ],
+        destination: 'https://sushi.com/aptos/:path*',
+        permanent: true,
+      },
+      {
+        source: '/aptos',
+        permanent: true,
+        destination: '/aptos/swap',
+      },
       {
         source: '/',
         permanent: true,
@@ -71,38 +96,7 @@ const nextConfig = bundleAnalyzer({
     ]
   },
   async rewrites() {
-    return [
-      // if the host is `aptos.sushi.com`,
-      // this rewrite will be applied
-      // {
-      //   source: '/:path*',
-      //   has: [
-      //     {
-      //       type: 'host',
-      //       value: 'aptos.sushi.com',
-      //     },
-      //   ],
-      //   destination: '/aptos/:path*',
-      // },
-      // {
-      //   source: '/:path*',
-      //   has: [
-      //     {
-      //       type: 'host',
-      //       value: 'pay.sushi.com',
-      //     },
-      //   ],
-      //   destination: '/pay/:path*',
-      // },
-      {
-        source: '/furo',
-        destination: `${FURO_URL}/furo`,
-      },
-      {
-        source: '/furo/:path*',
-        destination: `${FURO_URL}/furo/:path*`,
-      },
-    ]
+    return []
   },
 })
 

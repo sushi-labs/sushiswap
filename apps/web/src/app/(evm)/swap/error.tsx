@@ -1,6 +1,12 @@
 'use client' // Error components must be Client Components
 
 import * as Sentry from '@sentry/nextjs'
+import {
+  Button,
+  Container,
+  classNames,
+  typographyVariants,
+} from '@sushiswap/ui'
 
 import { useLogger } from 'next-axiom'
 import { useEffect } from 'react'
@@ -21,17 +27,28 @@ export default function SwapError({
     log.error('swap page error', error)
   }, [log, error])
   return (
-    <div>
-      <h2>Something went wrong!</h2>
-      <button
-        type="button"
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
+    <>
+      <h1
+        className={classNames(
+          typographyVariants({ variant: 'h1' }),
+          'mx-auto text-center p-4',
+        )}
       >
-        Try again
-      </button>
-    </div>
+        Something went wrong!
+      </h1>
+      <Container maxWidth="lg" className="px-4">
+        <div className="flex flex-col gap-4">
+          <Button
+            type="button"
+            onClick={
+              // Attempt to recover by trying to re-render the segment
+              () => reset()
+            }
+          >
+            Try again
+          </Button>
+        </div>
+      </Container>
+    </>
   )
 }

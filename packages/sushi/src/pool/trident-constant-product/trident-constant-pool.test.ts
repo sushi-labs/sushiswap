@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ChainId } from '../../chain/index.js'
-import { TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS } from '../../config/index.js'
+import { TRIDENT_CONSTANT_POOL_FACTORY_ADDRESS } from '../../config/trident.js'
 import {
   Amount,
   Price,

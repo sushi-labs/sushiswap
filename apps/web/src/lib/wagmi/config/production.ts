@@ -11,11 +11,11 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { gtagEvent } from '@sushiswap/ui'
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
-import { ChainId } from 'sushi'
+import { ChainId } from 'sushi/chain'
 import { publicTransports } from 'sushi/config'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
 import { Writeable } from 'zod'
+import { publicWagmiConfig } from './public'
 
 export const DEFAULT_POLLING_INTERVAL = 4_000
 

@@ -1,11 +1,11 @@
 'use client'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { useQuery } from '@tanstack/react-query'
 import { createConfig, getBalance } from '@wagmi/core'
 import { ChainId } from 'sushi/chain'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
+import { publicWagmiConfig } from '../../wagmi/config/public'
 
 const MAX_BALANCE_AMOUNT = 100000000000n // '0.0000001'
 

@@ -3,6 +3,8 @@
 import { Navigation } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
+import { headerElements } from '../_common/header-elements'
+
 export const Header: FC = () => {
-  return <Navigation />
+  return <Navigation leftElements={headerElements} />
 }

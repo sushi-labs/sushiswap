@@ -1,6 +1,7 @@
 {
   "name": "@sushiswap/notifications",
   "version": "0.0.0",
+  "private": true,
   "description": "Sushi Notifications",
   "keywords": [
     "sushi",

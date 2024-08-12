@@ -44,4 +44,5 @@ export const SUSHISWAP_V2_SUBGRAPH_URL: Record<SushiSwapV2ChainId, string> = {
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v2-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v2-skale-europa`,
   [ChainId.ROOTSTOCK]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v2-rootstock/gn`,
+  [ChainId.SEPOLIA]: '',
 }

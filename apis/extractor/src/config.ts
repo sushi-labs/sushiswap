@@ -338,6 +338,9 @@ export const EXTRACTOR_CONFIG: Record<
       sushiswapV3Factory(ChainId.ETHEREUM),
       pancakeswapV3Factory(ChainId.ETHEREUM),
     ],
+    curveConfig: {
+      minPoolLiquidityLimitUSD: 1000,
+    },
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.ETHEREUM],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -515,7 +518,10 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.SCROLL]: {
     client: createPublicClient(extractorClientConfig(ChainId.SCROLL)),
     factoriesV2: [sushiswapV2Factory(ChainId.SCROLL)],
-    factoriesV3: [sushiswapV3Factory(ChainId.SCROLL)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.SCROLL),
+      uniswapV3Factory(ChainId.SCROLL),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.SCROLL],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -529,6 +535,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV3: [
       sushiswapV3Factory(ChainId.LINEA),
       pancakeswapV3Factory(ChainId.LINEA),
+      uniswapV3Factory(ChainId.LINEA),
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.LINEA],
     tickHelperContractAlgebra:
@@ -540,7 +547,10 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.FILECOIN]: {
     client: createPublicClient(extractorClientConfig(ChainId.FILECOIN)),
     factoriesV2: [sushiswapV2Factory(ChainId.FILECOIN)],
-    factoriesV3: [sushiswapV3Factory(ChainId.FILECOIN)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.FILECOIN),
+      uniswapV3Factory(ChainId.FILECOIN),
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.FILECOIN],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -766,6 +776,7 @@ export const EXTRACTOR_CONFIG: Record<
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.BLAST),
+      uniswapV3Factory(ChainId.BLAST),
       {
         address: '0x48d0F09710794313f33619c95147F34458BF7C3b',
         provider: LiquidityProviders.MonoswapV3,
