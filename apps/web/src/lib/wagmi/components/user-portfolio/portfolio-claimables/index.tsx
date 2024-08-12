@@ -67,10 +67,7 @@ export const PortfolioClaimables = () => {
               id={i.toString()}
               className="flex w-full items-center px-5 py-3 gap-x-7"
             >
-              <div className="flex items-center">
-                <SkeletonCircle radius={28} />
-                <SkeletonCircle radius={28} className="-ml-[12px]" />
-              </div>
+              <SkeletonCircle radius={28} />
               <div className="flex w-full justify-between items-center gap-x-3">
                 <div className="basis-3/4 flex flex-col gap-y-1">
                   <SkeletonText fontSize="sm" />
