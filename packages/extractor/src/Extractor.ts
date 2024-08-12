@@ -152,6 +152,7 @@ export class Extractor {
           config: args.uniV4,
           multiCallAggregator: this.multiCallAggregator,
           tokenManager: this.tokenManager,
+          logFilter: this.logFilter,
           cacheDir: args.cacheDir,
           tickHelperContract: args.tickHelperContractV4,
         }),

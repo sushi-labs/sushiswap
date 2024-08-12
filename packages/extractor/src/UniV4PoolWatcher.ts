@@ -244,6 +244,7 @@ export class UniV4PoolWatcher extends EventEmitter {
 
     const v3Pool = new UniV4Pool(
       this.id,
+      this.address,
       this.token0 as RToken,
       this.token1 as RToken,
       this.fee / 1_000_000,

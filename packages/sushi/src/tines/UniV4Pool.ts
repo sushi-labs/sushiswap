@@ -6,9 +6,11 @@ import { UniV3Pool } from './UniV3Pool.js'
 const two96 = 2 ** 96
 
 // The same as UniV3Pool, but:
-// 1) address is id
-// 2) reserves are not set but calculated using liquidity
+// + id
+// + reserves are not set but calculated using liquidity
 export class UniV4Pool extends UniV3Pool {
+  id: string
+
   /// @param address The address of the pool
   /// @param token0 The first token of the pool
   /// @param token1 The secons token of the pool
@@ -19,6 +21,7 @@ export class UniV4Pool extends UniV3Pool {
   /// @param ticks The list of all initialized ticks, sorted by index from low ho high
   constructor(
     id: string,
+    address: Address,
     token0: RToken,
     token1: RToken,
     fee: number,
@@ -29,7 +32,7 @@ export class UniV4Pool extends UniV3Pool {
     nearestTick?: number,
   ) {
     super(
-      id as Address,
+      address,
       token0,
       token1,
       fee,
@@ -41,6 +44,7 @@ export class UniV4Pool extends UniV3Pool {
       ticks,
       nearestTick,
     )
+    this.id = id
     const sqrtPrice = Number(this.sqrtPriceX96) / two96
     const reserve0 = Number(liquidity) / sqrtPrice // TODO: Check it !!!!!
     const reserve1 = reserve0 * sqrtPrice * sqrtPrice
@@ -56,5 +60,9 @@ export class UniV4Pool extends UniV3Pool {
   // don't call this function directly!!!
   override updateState() {
     throw new Error("Function UniV4Pool.updateState shouldn't be called")
+  }
+
+  override uniqueID(): string {
+    return this.id + this.address
   }
 }

@@ -132,7 +132,7 @@ export abstract class RPool {
     return false
   }
 
-  // not so easy for multitoken pools
+  // not so easy for multitoken pools or multiple pools in one address (like UniV4)
   uniqueID(): string {
     return this.address
   }
