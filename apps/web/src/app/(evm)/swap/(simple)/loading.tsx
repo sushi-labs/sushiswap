@@ -13,7 +13,6 @@ export default function SimpleSwapLoading() {
           <SkeletonBox className="h-[36px] w-[125px]" />
           <SkeletonBox className="h-[36px] w-[125px]" />
         </div>
-        <SkeletonBox className="w-full h-[92px]" />
         <SkeletonBox className="w-full h-[110px]" />
         <SkeletonBox className="w-full h-[110px]" />
         <SkeletonBox className="w-full h-[52px]" />
