@@ -1,4 +1,4 @@
-import { LiquidityProviders, PoolCode } from 'sushi'
+import { LiquidityProviders, PoolCode, UniV4Pool, UniV4PoolCode } from 'sushi'
 import { Token } from 'sushi/currency'
 import {
   Address,
@@ -8,10 +8,11 @@ import {
   decodeEventLog,
   parseAbiItem,
 } from 'viem'
+import { PoolSyncState } from './AlgebraQualityChecker.js'
 import { Counter } from './Counter.js'
 import { IExtractor } from './IExtractor.js'
 import { LogFilter2 } from './LogFilter2.js'
-import { Logger } from './Logger.js'
+import { Logger, safeSerialize } from './Logger.js'
 import { MultiCallAggregator } from './MulticallAggregator.js'
 import { PermanentCache } from './PermanentCache.js'
 import { TokenManager } from './TokenManager.js'
@@ -19,6 +20,10 @@ import {
   UniV4ChangeStateEventsAbi,
   UniV4PoolWatcher,
 } from './UniV4PoolWatcher.js'
+import {
+  UniV4QualityChecker,
+  UniV4QualityCheckerCallBackArg,
+} from './UniV4QualityChecker.js'
 import {
   Index,
   IndexArray,
@@ -66,6 +71,7 @@ export class UniV4Extractor extends IExtractor {
   multiCallAggregator: MultiCallAggregator
   tokenManager: TokenManager
   logFilter: LogFilter2
+  qualityChecker: UniV4QualityChecker
   tickHelperContract: Address
   poolPermanentCache: PermanentCache<PoolCacheRecord>
   taskCounter: Counter
@@ -88,7 +94,7 @@ export class UniV4Extractor extends IExtractor {
 
   poolWatchersUpdated = new Index(
     new Map<string, UniV4PoolWatcher>(),
-    (s: string) => s.toLowerCase(),
+    (id: string, address: Address) => (id + address).toLowerCase(),
   )
 
   startStatus: StartStatus = StartStatus.NotStarted
@@ -138,6 +144,40 @@ export class UniV4Extractor extends IExtractor {
     this.poolPermanentCache = new PermanentCache(
       cacheDir,
       `uniV4Pools-${this.multiCallAggregator.chainId}`,
+    )
+
+    this.qualityChecker = new UniV4QualityChecker(
+      200,
+      (arg: UniV4QualityCheckerCallBackArg) => {
+        const { id, address } = arg.ethalonPool
+        if (arg.ethalonPool !== this.poolWatchers.get(id, address)) return false // checked pool was replaced during checking
+        if (arg.correctPool) {
+          this.poolWatchers.set(id, address, arg.correctPool)
+          this.poolWatchersUpdated.set(id, address, arg.correctPool)
+          arg.correctPool.on('PoolCodeWasChanged', (w) => {
+            const { id, address } = w as UniV4PoolWatcher
+            this.poolWatchersUpdated.set(id, address, w)
+          })
+        }
+        if (arg.status !== PoolSyncState.Match)
+          this.errorLog(
+            `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
+              `${arg.correctPool ? 'pool was updated ' : ''}` +
+              `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,
+            safeSerialize({
+              oldPool: arg.ethalonPool.debugState(),
+              newPool: arg.correctPool?.debugState(),
+            }),
+            false,
+          )
+        else
+          this.consoleLog(
+            `Pool ${arg.ethalonPool.address} quality check: ${arg.status} ` +
+              `${arg.correctPool ? 'pool was updated ' : ''}` +
+              `(${this.qualityChecker.totalMatchCounter}/${this.qualityChecker.totalCheckCounter})`,
+          )
+        return true
+      },
     )
 
     this.logFilter = logFilter
@@ -263,11 +303,13 @@ export class UniV4Extractor extends IExtractor {
   }
 
   // side effect: updated pools list is cleared
-  override getUpdatedPoolCodes() {
+  override getUpdatedPoolCodes(): PoolCode[] {
     const res = this.poolWatchersUpdated
       .mapValue((p) => p.getPoolCode())
-      .filter((pc) => pc !== undefined) as PoolCode[]
-    res.forEach((p) => this.poolWatchersUpdated.delete(p.pool.address))
+      .filter((pc) => pc !== undefined) as UniV4PoolCode[]
+    res.forEach((p) =>
+      this.poolWatchersUpdated.delete((p.pool as UniV4Pool).id, p.pool.address),
+    )
     return res
   }
 
@@ -503,7 +545,8 @@ export class UniV4Extractor extends IExtractor {
       }
     })
     watcher.on('PoolCodeWasChanged', (w) => {
-      this.poolWatchersUpdated.set((w as UniV4PoolWatcher).address, w)
+      const { id, address } = w as UniV4PoolWatcher
+      this.poolWatchersUpdated.set(id, address, w)
     })
     return watcher
   }
@@ -513,9 +556,14 @@ export class UniV4Extractor extends IExtractor {
       console.log(`V4-${this.multiCallAggregator.chainId}: ${log}`)
   }
 
-  errorLog(message: string, error?: unknown) {
+  errorLog(message: string, error?: unknown, trim?: boolean) {
     if (!(error instanceof Error))
       error = JSON.stringify(error, undefined, '  ')
-    Logger.error(this.multiCallAggregator.chainId, `UniV4: ${message}`, error)
+    Logger.error(
+      this.multiCallAggregator.chainId,
+      `UniV4: ${message}`,
+      error,
+      trim,
+    )
   }
 }

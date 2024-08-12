@@ -326,10 +326,12 @@ export class UniV4PoolWatcher extends EventEmitter {
   debugState(): object {
     return {
       id: this.id,
+      address: this.address,
       token0: `${this.token0.symbol} (${this.token0.id})`,
       token1: `${this.token1.symbol} (${this.token1.id})`,
       fee: this.fee,
       tickSpacing: this.tickSpacing,
+      hooks: this.hooks,
 
       blockNumber: this.state?.blockNumber,
       tick: this.state?.tick,
