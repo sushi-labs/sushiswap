@@ -64,7 +64,9 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
         !totalSupply ||
         !reserve0 ||
         !reserve1 ||
-        !data?.every((data) => data.status === 'success')
+        !data?.every((data) => data.status === 'success') ||
+        // this condition is a short-circuit in the case where balance updates sooner than totalSupply
+        totalSupply.lessThan(balance)
       ) {
         return [undefined, undefined]
       }
