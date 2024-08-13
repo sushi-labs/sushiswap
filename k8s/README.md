@@ -1,10 +1,18 @@
 # Kubernetes
 
-### Install Cloud Code
+## Install Docker Desktop
+
+https://www.docker.com/products/docker-desktop/
+
+## Install and turn on Kubernetes
+
+https://docs.docker.com/desktop/kubernetes/#install-and-turn-on-kubernetes
+
+## Install Cloud Code
 
 https://cloud.google.com/code/docs/vscode/install
 
-### Install Helm
+## Install Helm
 
 ```bash
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -16,15 +24,18 @@ sudo apt-get install helm
 
 ## LOCAL
 
-### Start Minikube
+In Cloud Code extension, click on the Kubernetes icon on the left sidebar and click on the plus icon to add a new cluster. Select Docker Desktop and click on the add button.
+
+
+<!-- ### Start Minikube
 
 Until fixed, use the following command to start minikube
 
 ```bash
 minikube start --base-image gcr.io/k8s-minikube/kicbase:v0.0.40
-```
+``` -->
 
-## Google Cloud
+## Google Cloud Staging & Production
 
 ### Set Project
 
