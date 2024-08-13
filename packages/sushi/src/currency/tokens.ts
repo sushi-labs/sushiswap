@@ -46,6 +46,7 @@ import {
   STG_ADDRESS,
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
+  SolvBTC_ADDRESS,
   TEL_ADDRESS,
   TRIBE_ADDRESS,
   TUSD_ADDRESS,
@@ -1214,3 +1215,12 @@ export const SKL = new Token({
   symbol: 'SKL',
   decimals: 18,
 })
+
+export const SolvBTC = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'Solv BTC',
+    name: 'SolvBTC',
+  },
+  SolvBTC_ADDRESS,
+) as Record<keyof typeof SolvBTC_ADDRESS, Token>

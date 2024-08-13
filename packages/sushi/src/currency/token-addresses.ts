@@ -650,3 +650,7 @@ export const JUGNI_ADDRESS = {
 export const UDSP_ADDRESS = {
   [ChainId.SKALE_EUROPA]: '0x73d22d8a2D1f59Bf5Bcf62cA382481a2073FAF58',
 } as const
+
+export const SolvBTC_ADDRESS = {
+  [ChainId.ARBITRUM]: '0x3647c54c4c2c65bc7a2d63c0da2809b399dbbdc0',
+} as const
