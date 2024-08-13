@@ -42,12 +42,12 @@ export const SwapModeButtons = () => {
         </PathnameButton>
       </Link>
       <Link href="/limit">
-        <PathnameButton pathname="/swap/limit" size="sm">
+        <PathnameButton pathname="/limit" size="sm">
           Limit
         </PathnameButton>
       </Link>
       <Link href="/dca">
-        <PathnameButton pathname="/swap/dca" size="sm">
+        <PathnameButton pathname="/dca" size="sm">
           DCA
         </PathnameButton>
       </Link>

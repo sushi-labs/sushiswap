@@ -128,7 +128,7 @@ const getTokenLogo = (currency: Currency) => {
     return `https://cdn.sushi.com/image/upload/${params.join(
       ',',
     )}/d_unknown.png/${src}`
-  } catch (_error) {
+  } catch (error) {
     return ''
   }
 }
@@ -231,7 +231,7 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
     if (state.swapAmountString !== '1') {
       mutate.setSwapAmount('1')
     }
-  }, [state.swapAmountString, mutate])
+  }, [state.swapAmountString])
 
   return (
     <div className="flex flex-col gap-4">
