@@ -48,6 +48,7 @@ import {
   SNX,
   STG,
   SUSHI,
+  SolvBTC,
   TEL,
   TRIBE,
   UNI,
@@ -123,6 +124,8 @@ export const ADDITIONAL_BASES: {
   [ChainId.ARBITRUM]: {
     [FRAX_ADDRESS[ChainId.ARBITRUM]]: [FXS[ChainId.ARBITRUM]],
     [FXS_ADDRESS[ChainId.ARBITRUM]]: [FRAX[ChainId.ARBITRUM]],
+    ['0xaFAfd68AFe3fe65d376eEC9Eab1802616cFacCb8']: [SolvBTC[ChainId.ARBITRUM]], // SolvBTC.ENA
+    ['0x346c574C56e1A4aAa8dc88Cda8F7EB12b39947aB']: [SolvBTC[ChainId.ARBITRUM]], // SolvBTC.BBN
   },
   [ChainId.FANTOM]: {
     [FRAX_ADDRESS[ChainId.FANTOM]]: [FXS[ChainId.FANTOM]],
