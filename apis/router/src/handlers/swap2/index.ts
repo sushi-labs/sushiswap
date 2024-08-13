@@ -14,7 +14,7 @@ import {
   isStable,
   isWrapOrUnwrap,
 } from 'sushi/router'
-import { MultiRoute, getBigInt } from 'sushi/tines'
+import { MultiRoute, RouteStatus, getBigInt } from 'sushi/tines'
 import { Address } from 'viem'
 import { z } from 'zod'
 import { ExtractorClient } from '../../ExtractorClient.js'
@@ -192,7 +192,7 @@ function handler(
 
         const body = createSwapBody(
           route,
-          to
+          to && route.status !== RouteStatus.NoWay
             ? routeProcessorParams(
                 poolCodesMap,
                 route,
