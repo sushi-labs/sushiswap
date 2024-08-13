@@ -13,9 +13,10 @@ export default function SimpleSwapLoading() {
           <SkeletonBox className="h-[36px] w-[125px]" />
           <SkeletonBox className="h-[36px] w-[125px]" />
         </div>
-        <SkeletonBox className="w-full h-[92px]" />
-        <SkeletonBox className="w-full h-[110px]" />
-        <SkeletonBox className="w-full h-[110px]" />
+        <div className="flex flex-col gap-2.5">
+          <SkeletonBox className="w-full h-[142px]" />
+          <SkeletonBox className="w-full h-[142px]" />
+        </div>
         <SkeletonBox className="w-full h-[52px]" />
       </div>
     </Container>

@@ -45,6 +45,7 @@ interface CurrencyInputProps {
   hideSearch?: boolean
   hidePricing?: boolean
   hideIcon?: boolean
+  label?: string
 }
 
 const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -70,6 +71,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   hideSearch = false,
   hidePricing = false,
   hideIcon = false,
+  label,
 }) => {
   const isMounted = useIsMounted()
 
@@ -204,6 +206,9 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
         data-state={fetching ? 'active' : 'inactive'}
         className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
       />
+      {label ? (
+        <span className="text-sm text-muted-foreground">{label}</span>
+      ) : null}
       <div className="relative flex items-center gap-4">
         <div
           data-state={isLoading ? 'active' : 'inactive'}
