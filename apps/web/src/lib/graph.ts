@@ -9,7 +9,7 @@ import {
   getSushiV2Pools,
 } from '@sushiswap/graph-client/sushi-v2'
 import { getSushiV3PoolsByTokenPair } from '@sushiswap/graph-client/sushi-v3'
-import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { AMM_SUPPORTED_CHAIN_IDS } from 'src/config'
 import {
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   SushiSwapV2ChainId,
@@ -172,7 +172,7 @@ export const getBentoBoxTokens = async (
 export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks
     ? JSON.parse(query.networks)
-    : SUPPORTED_CHAIN_IDS
+    : AMM_SUPPORTED_CHAIN_IDS
 
   const { data: daySnapshots } = await getSushiDayDatas({
     chainIds,

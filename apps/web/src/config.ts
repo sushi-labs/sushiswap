@@ -50,6 +50,17 @@ export const SWAP_ONLY_CHAIN_IDS = [ChainId.CRONOS] as const
 
 export const CHAIN_IDS = [...SUSHI_CHAIN_IDS, ChainId.CRONOS] as const
 
+export const AMM_SUPPORTED_CHAIN_IDS = SUSHI_CHAIN_IDS.filter(
+  (
+    c,
+  ): c is Exclude<
+    (typeof SUSHI_CHAIN_IDS)[number],
+    (typeof TESTNET_CHAIN_IDS)[number] | (typeof DISABLED_CHAIN_IDS)[number]
+  > =>
+    !TESTNET_CHAIN_IDS.includes(c as (typeof TESTNET_CHAIN_IDS)[number]) &&
+    !DISABLED_CHAIN_IDS.includes(c as (typeof DISABLED_CHAIN_IDS)[number]),
+)
+
 export const SUPPORTED_CHAIN_IDS = Array.from(
   new Set([
     ...PREFERRED_CHAINID_ORDER.filter((el) =>
