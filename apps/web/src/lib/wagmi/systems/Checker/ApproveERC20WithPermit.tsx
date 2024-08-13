@@ -95,7 +95,7 @@ const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
   })
 
   useEffect(() => {
-    if (bytecode !== null) setApprovalType(ApprovalType.Approve)
+    if (bytecode) setApprovalType(ApprovalType.Approve)
   }, [bytecode])
 
   const { setSignature } = useApprovedActions(tag)

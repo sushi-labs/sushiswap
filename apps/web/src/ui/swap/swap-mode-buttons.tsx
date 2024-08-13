@@ -46,9 +46,9 @@ export const SwapModeButtons = () => {
           Limit
         </PathnameButton>
       </Link>
-      <Link href="/swap/twap">
-        <PathnameButton pathname="/swap/twap" size="sm">
-          TWAP
+      <Link href="/swap/dca">
+        <PathnameButton pathname="/swap/dca" size="sm">
+          DCA
         </PathnameButton>
       </Link>
       <HoverCard>
