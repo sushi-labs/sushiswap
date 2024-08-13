@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
-import { Providers } from '../(simple)/providers'
+import { Providers } from './providers'
 
 const TWAPPanel = dynamic(
   () => import('src/ui/swap/twap/twap').then((it) => it.TWAPPanel),
@@ -8,10 +8,11 @@ const TWAPPanel = dynamic(
 )
 
 export const metadata = {
-  title: 'SushiSwap',
+  title: 'Dollar-Cost Averaging (DCA)',
+  description: 'SushiSwap Dollar-Cost Averaging (DCA)',
 }
 
-export default function SwapTwapPage() {
+export default function SwapDCAPage() {
   return (
     <Providers>
       <Container maxWidth="lg" className="px-4">

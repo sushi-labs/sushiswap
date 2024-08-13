@@ -41,30 +41,30 @@ export const SwapModeButtons = () => {
           Swap
         </PathnameButton>
       </Link>
-      <Link href="/swap/limit">
+      <Link href="/limit">
         <PathnameButton pathname="/swap/limit" size="sm">
           Limit
         </PathnameButton>
       </Link>
-      <Link href="/swap/dca">
+      <Link href="/dca">
         <PathnameButton pathname="/swap/dca" size="sm">
           DCA
         </PathnameButton>
       </Link>
       <HoverCard>
-        <Link href="/swap/cross-chain">
-          <PathnameButton pathname="/swap/cross-chain" size="sm">
+        <Link href="/cross-chain">
+          <PathnameButton pathname="/cross-chain" size="sm">
             <HoverCardTrigger asChild>
               <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
                 <ShuffleIcon width={20} height={20} className="text-blue" />
-                Cross Chain
+                Cross-Chain
               </span>
             </HoverCardTrigger>
           </PathnameButton>
         </Link>
         <HoverCardContent className="!p-0 max-w-[320px]">
           <CardHeader>
-            <CardTitle>Cross-chain Swap</CardTitle>
+            <CardTitle>Cross-Chain Swap</CardTitle>
             <CardDescription>
               Swap tokens natively across 15 chains including Ethereum,
               Arbitrum, Optimism, Polygon, Base and more!
