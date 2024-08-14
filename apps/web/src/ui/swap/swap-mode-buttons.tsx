@@ -32,8 +32,8 @@ export const SwapModeButtons = () => {
         </PathnameButton>
       </Link>
       <HoverCard>
-        <Link href="/cross-chain">
-          <PathnameButton pathname="/cross-chain" size="sm">
+        <Link href="/cross-chain-swap">
+          <PathnameButton pathname="/cross-chain-swap" size="sm">
             <HoverCardTrigger asChild>
               <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
                 <ShuffleIcon width={20} height={20} className="text-blue" />
