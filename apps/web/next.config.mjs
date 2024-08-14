@@ -96,7 +96,7 @@ const nextConfig = bundleAnalyzer({
       {
         source: '/swap/cross-chain:path*',
         permanent: true,
-        destination: '/cross-chain:path*',
+        destination: '/cross-chain-swap:path*',
       },
     ]
   },
