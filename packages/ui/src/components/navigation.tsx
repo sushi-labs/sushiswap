@@ -149,7 +149,7 @@ const Navigation: React.FC<NavProps> = ({
     const SingleItem = (entry: NavigationElementSingle) => {
       return (
         <NavigationMenuItem
-          key={entry.title}
+          key={`${entry.title}:${entry.type}`}
           className={navigationElementShowMap[entry.show]}
         >
           <NavigationMenuLink
