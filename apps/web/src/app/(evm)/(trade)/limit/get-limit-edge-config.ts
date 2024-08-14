@@ -5,7 +5,7 @@ interface LimitEdgeConfig {
 }
 
 const getLimitEdgeConfig = async () => {
-  return get<LimitEdgeConfig>('swap')
+  return get<LimitEdgeConfig>('limit')
 }
 
 export { type LimitEdgeConfig, getLimitEdgeConfig }
