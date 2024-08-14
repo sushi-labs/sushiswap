@@ -9,7 +9,7 @@ export const SimpleSwapSettingsOverlay = () => {
       modules={[
         SettingsModule.SlippageTolerance,
         // SettingsModule.ExpertMode,
-        SettingsModule.TransactionDeadline,
+        // SettingsModule.TransactionDeadline,
         // SettingsModule.CarbonOffset
       ]}
       externalModules={[SwapApi]}
