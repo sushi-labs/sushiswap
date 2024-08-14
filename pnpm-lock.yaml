@@ -543,8 +543,8 @@ importers:
         specifier: 4.0.7
         version: 4.0.7(encoding@0.1.13)
       '@orbs-network/twap-ui-sushiswap':
-        specifier: 1.1.31
-        version: 1.1.31(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
+        specifier: 1.1.32
+        version: 1.1.32(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
       '@pontem/wallet-adapter-plugin':
         specifier: ^0.2.1
         version: 0.2.1
@@ -6047,14 +6047,14 @@ packages:
   '@openzeppelin/contracts@4.9.3':
     resolution: {integrity: sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==}
 
-  '@orbs-network/twap-ui-sushiswap@1.1.31':
-    resolution: {integrity: sha512-MIy6ssWcCHGTa+uM3cRGNAn8TtY+zYWjfWmfoN06+Nai9+lglYILvALE3rfG3wbs3pxlIME5AWq1jaBkwgfuEg==}
+  '@orbs-network/twap-ui-sushiswap@1.1.32':
+    resolution: {integrity: sha512-14BR3vHScphz3y5XizYLnh8bygQ8LZUgJ1RXzxKuF4/2t6tz423e9g7yKRRvuiAbpng4tkwYlIUCsYgBBmSQfQ==}
     peerDependencies:
       react: '*'
       react-dom: '*'
 
-  '@orbs-network/twap-ui@1.1.31':
-    resolution: {integrity: sha512-5gEWhvDPqAFKq6jNKcMtaen2HktTgDVmeuwmdHd0vVaS7imMmjZccbRLTPxsAIQVLKIgC3EvWnIj8rAS5TW+zw==}
+  '@orbs-network/twap-ui@1.1.32':
+    resolution: {integrity: sha512-JHxHQ6IC9oqVj0slPbDSKvVn3VpWMNc2oCw3uJmkI86pu8w3IupVu8sHYeTX92uAqbwDbRRQVK823VjYq894yA==}
     peerDependencies:
       react: '*'
       react-dom: '*'
@@ -29007,10 +29007,10 @@ snapshots:
 
   '@openzeppelin/contracts@4.9.3': {}
 
-  '@orbs-network/twap-ui-sushiswap@1.1.31(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@orbs-network/twap-ui-sushiswap@1.1.32(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@orbs-network/twap': 2.2.1
-      '@orbs-network/twap-ui': 1.1.31(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
+      '@orbs-network/twap-ui': 1.1.32(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       web3: 1.10.3(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
@@ -29021,7 +29021,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@orbs-network/twap-ui@1.1.31(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@orbs-network/twap-ui@1.1.32(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@defi.org/web3-candies': 5.0.0(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@orbs-network/twap': 2.2.1

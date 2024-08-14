@@ -149,10 +149,10 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
 
     // Switch token0 and token1
     const switchTokens = useCallback(() => {
-      console.log('switchTokens', {
-        token0: defaultedParams.get('token1'),
-        token1: defaultedParams.get('token0'),
-      })
+      // console.log('switchTokens', {
+      //   token0: defaultedParams.get('token1'),
+      //   token1: defaultedParams.get('token0'),
+      // })
       push(
         `${pathname}?${createQueryString([
           { name: 'swapAmount', value: null },
@@ -175,7 +175,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
         if (
           defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
         ) {
-          console.log('setToken0 switch tokens')
+          // console.log('setToken0 switch tokens')
           switchTokens()
         }
 

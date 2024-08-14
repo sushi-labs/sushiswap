@@ -123,18 +123,26 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
               </List.Control>
             </List>
           )}
-          <List className="!pt-0">
-            <List.Control>
-              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
-              {/* {modules.includes(SettingsModule.CarbonOffset) && (
-                <CarbonOffset />
-              )} */}
-              {modules.includes(SettingsModule.TransactionDeadline) &&
-                options?.transactionDeadline && (
-                  <TransactionDeadline options={options.transactionDeadline} />
-                )}
-            </List.Control>
-          </List>
+          {modules.includes(SettingsModule.ExpertMode) ||
+            (modules.includes(SettingsModule.TransactionDeadline) && (
+              <List className="!pt-0">
+                <List.Control>
+                  {modules.includes(SettingsModule.ExpertMode) && (
+                    <ExpertMode />
+                  )}
+                  {/* {modules.includes(SettingsModule.CarbonOffset) && (
+              <CarbonOffset />
+            )} */}
+                  {modules.includes(SettingsModule.TransactionDeadline) &&
+                    options?.transactionDeadline && (
+                      <TransactionDeadline
+                        options={options.transactionDeadline}
+                      />
+                    )}
+                </List.Control>
+              </List>
+            ))}
+
           {externalModules?.map((Module, index) => (
             <List className="!pt-0" key={index}>
               <List.Control>
