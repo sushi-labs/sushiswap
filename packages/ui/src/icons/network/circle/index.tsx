@@ -13,6 +13,7 @@ import { BobaCircle } from './BobaCircle'
 import { BttcCircle } from './BttcCircle'
 import { CeloCircle } from './CeloCircle'
 import { CoreCircle } from './CoreCircle'
+import { CronosCircle } from './CronosCircle'
 import { EthereumCircle } from './EthereumCircle'
 import { FantomCircle } from './FantomCircle'
 import { FilecoinCircle } from './FilecoinCircle'
@@ -51,6 +52,7 @@ export * from './BobaCircle'
 export * from './BttcCircle'
 export * from './CeloCircle'
 export * from './CoreCircle'
+export * from './CronosCircle'
 export * from './EthereumCircle'
 export * from './FantomCircle'
 export * from './FilecoinCircle'
@@ -114,4 +116,5 @@ export const NETWORK_CIRCLE_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.BLAST]: BlastCircle,
   [ChainId.SKALE_EUROPA]: SkaleCircle,
   [ChainId.ROOTSTOCK]: RootstockCircle,
+  [ChainId.CRONOS]: CronosCircle,
 }

@@ -11,7 +11,7 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { SUPPORTED_CHAIN_IDS, isSupportedChainId } from 'src/config'
+import { AMM_SUPPORTED_CHAIN_IDS, isSupportedChainId } from 'src/config'
 import { z } from 'zod'
 
 import { useTypedSearchParams } from '../../lib/hooks'
@@ -34,11 +34,11 @@ export const poolFiltersSchema = z.object({
   }),
   chainIds: z.coerce
     .string()
-    .default(SUPPORTED_CHAIN_IDS.join(','))
+    .default(AMM_SUPPORTED_CHAIN_IDS.join(','))
     .transform((chainIds) =>
       chainIds !== null && chainIds !== ','
         ? chainIds.split(',').map((chainId) => Number(chainId))
-        : SUPPORTED_CHAIN_IDS,
+        : AMM_SUPPORTED_CHAIN_IDS,
     )
     .transform((chainIds) => chainIds.filter(isSupportedChainId)),
   protocols: z
@@ -68,7 +68,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
       value={useMemo(
         () => ({
           tokenSymbols: tokenSymbols ? tokenSymbols : [],
-          chainIds: chainIds ? chainIds : SUPPORTED_CHAIN_IDS,
+          chainIds: chainIds ? chainIds : AMM_SUPPORTED_CHAIN_IDS,
           protocols: protocols ? protocols : POOL_TYPES,
           farmsOnly: farmsOnly ? farmsOnly : false,
           smartPoolsOnly: smartPoolsOnly ? smartPoolsOnly : false,

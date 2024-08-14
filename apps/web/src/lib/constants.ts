@@ -1,7 +1,7 @@
 import type { GetPoolsArgs } from '@sushiswap/client'
 import { Protocol } from '@sushiswap/database'
 
-import { SUPPORTED_CHAIN_IDS } from '../config'
+import { AMM_SUPPORTED_CHAIN_IDS } from '../config'
 
 export const L2_DEADLINE_FROM_NOW = BigInt(60) * BigInt(5)
 
@@ -46,7 +46,7 @@ export const AVAILABLE_PROTOCOL_MAP: Partial<typeof PROTOCOL_MAP> = {
 // ! Has to be kept up to date with default filters
 // Else prefetching won't work
 export const defaultPoolsArgs: GetPoolsArgs = {
-  chainIds: SUPPORTED_CHAIN_IDS,
+  chainIds: AMM_SUPPORTED_CHAIN_IDS,
   orderBy: 'liquidityUSD',
   orderDir: 'desc',
   protocols: Object.values(Protocol),

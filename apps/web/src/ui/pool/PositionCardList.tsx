@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import type { UserWithPool } from 'src/app/(evm)/pool/api/user-with-pools/route'
-import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
+import { SUSHISWAP_V2_SUPPORTED_CHAIN_IDS } from 'sushi/config'
 import { useAccount } from 'wagmi'
 
 interface PositionCardList {
@@ -23,7 +23,7 @@ export const PositionCardList: FC<PositionCardList> = ({ children }) => {
   const { address } = useAccount()
   const { data: userPositions, isLoading } = useSushiV2UserPositions({
     id: address!,
-    chainIds: SUPPORTED_CHAIN_IDS,
+    chainIds: SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   })
 
   return (
