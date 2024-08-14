@@ -32,6 +32,7 @@ import { Currency } from 'sushi/currency'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/TokenSelector'
+import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Address } from 'viem'
 import {
   useDerivedStateSimpleSwap,
@@ -41,6 +42,10 @@ import { SimpleSwapBridgeBanner } from '../simple/simple-swap-bridge-banner'
 import { SimpleSwapHeader } from '../simple/simple-swap-header'
 import { SimpleSwapSettingsOverlay } from '../simple/simple-swap-settings-overlay'
 import { SwapModeButtons } from '../swap-mode-buttons'
+import { DCAMaintenanceMessage } from './dca-maintenance-message'
+import { LimitMaintenanceMessage } from './limit-maintenance-message'
+import { useIsDCAMaintenance } from './use-is-dca-maintenance'
+import { useIsLimitMaintenance } from './use-is-limit-maintenance'
 
 const Modal = ({
   open,
@@ -201,20 +206,43 @@ const TwapNetworkSelector = ({ children }: { children: ReactNode }) => {
   )
 }
 
-const TwapButton = ({
+const LimitButton = ({
   disabled,
   children,
 }: { disabled?: boolean; children: ReactNode }) => {
+  const { data: maintenance } = useIsLimitMaintenance()
   return (
-    <Button
-      size="xl"
-      disabled={Boolean(disabled)}
-      color={'blue'}
-      fullWidth
-      testId="swap-twap"
-    >
-      {children}
-    </Button>
+    <Checker.Guard guardWhen={maintenance} guardText="Maintenance in progress">
+      <Button
+        size="xl"
+        disabled={Boolean(disabled)}
+        color={'blue'}
+        fullWidth
+        testId="limit"
+      >
+        {children}
+      </Button>
+    </Checker.Guard>
+  )
+}
+
+const DCAButton = ({
+  disabled,
+  children,
+}: { disabled?: boolean; children: ReactNode }) => {
+  const { data: maintenance } = useIsDCAMaintenance()
+  return (
+    <Checker.Guard guardWhen={maintenance} guardText="Maintenance in progress">
+      <Button
+        size="xl"
+        disabled={Boolean(disabled)}
+        color={'blue'}
+        fullWidth
+        testId="dca"
+      >
+        {children}
+      </Button>
+    </Checker.Guard>
   )
 }
 
@@ -241,7 +269,7 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
         <SwapModeButtons />
         <SimpleSwapSettingsOverlay />
       </div>
-
+      {isLimit ? <LimitMaintenanceMessage /> : <DCAMaintenanceMessage />}
       <TwapContainer
         TokenSelectModal={TokenSelectModal}
         Modal={Modal}
@@ -263,7 +291,7 @@ function Provider({ isLimit }: { isLimit?: boolean }) {
         connectedChainId={connectedChainId}
         Tooltip={Tooltip}
         NetworkSelector={TwapNetworkSelector}
-        Button={TwapButton}
+        Button={isLimit ? LimitButton : DCAButton}
       />
     </div>
   )

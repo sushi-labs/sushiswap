@@ -1,11 +1,11 @@
 import { get } from '@vercel/edge-config'
 
-interface SwapEdgeConfig {
+interface DCAEdgeConfig {
   maintenance: boolean
 }
 
-const getSwapEdgeConfig = async () => {
-  return get<SwapEdgeConfig>('dca')
+const getDCAEdgeConfig = async () => {
+  return get<DCAEdgeConfig>('dca')
 }
 
-export { type SwapEdgeConfig, getSwapEdgeConfig }
+export { type DCAEdgeConfig, getDCAEdgeConfig }

@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { SwapEdgeConfig } from 'src/app/(evm)/(trade)/swap/get-swap-edge-config'
+import { DCAEdgeConfig } from 'src/app/(evm)/(trade)/dca/get-dca-edge-config'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
 
-export const useIsSwapMaintenance = () => {
-  const { maintenance } = useEdgeConfig<SwapEdgeConfig>()
+export const useIsDCAMaintenance = () => {
+  const { maintenance } = useEdgeConfig<DCAEdgeConfig>()
 
   return useQuery({
-    queryKey: ['swap-maintenance'],
+    queryKey: ['dca-maintenance'],
     queryFn: async () => {
-      const resp = await fetch('/api/config/swap', {
+      const resp = await fetch('/api/config/dca', {
         next: { revalidate: 60 },
       })
       const data = await resp.json()
