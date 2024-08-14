@@ -102,10 +102,10 @@ const TokenSelectModal = ({
 }
 
 const useTrade = () => {
-  const { data: trade, isInitialLoading } = useSimpleSwapTrade()
+  const { data: trade, isLoading } = useSimpleSwapTrade()
 
   return {
-    isLoading: isInitialLoading,
+    isLoading,
     outAmount: trade?.amountOut?.quotient.toString(),
   }
 }
