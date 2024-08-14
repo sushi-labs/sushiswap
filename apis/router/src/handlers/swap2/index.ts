@@ -223,7 +223,6 @@ function handler(
         swapRequestStatistics.requestRejected(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
         )
-
         const data: {
           error: string | string[] | undefined
           params: z.infer<typeof querySchema5> | undefined

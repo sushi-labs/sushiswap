@@ -48,7 +48,7 @@ export const querySchema5 = z.object({
   includeTransaction: z.optional(z.coerce.boolean()).default(false),
   includeTokens: z.optional(z.coerce.boolean()).default(false),
   includeRoute: z.optional(z.coerce.boolean()).default(false),
-  enableFee: z.optional(z.coerce.boolean()).default(true),
+  enableFee: z.optional(z.coerce.boolean()),
   fee: z
     .optional(
       z.coerce
