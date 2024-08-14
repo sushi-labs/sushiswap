@@ -1,4 +1,5 @@
 import { GiftIcon } from '@heroicons/react-v1/outline'
+import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
@@ -64,16 +65,18 @@ export default async function ExploreLayout({
               ChainKey[+params.chainId as ChainId]
             }/explore/smart-pools`}
           >
-            <PathnameButton
-              id="smart-pools"
-              pathname={`/${
-                ChainKey[+params.chainId as ChainId]
-              }/explore/smart-pools`}
-              asChild
-              size="sm"
-            >
-              Smart Pools
-            </PathnameButton>
+            {isSteerChainId(+params.chainId as ChainId) ? (
+              <PathnameButton
+                id="smart-pools"
+                pathname={`/${
+                  ChainKey[+params.chainId as ChainId]
+                }/explore/smart-pools`}
+                asChild
+                size="sm"
+              >
+                Smart Pools
+              </PathnameButton>
+            ) : null}
           </LinkInternal>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
