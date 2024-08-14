@@ -117,6 +117,7 @@
     "@types/lodash.once": "4.1.9",
     "@types/lodash.uniqby": "^4.7.9",
     "@types/lodash.zip": "4.2.9",
+    "@types/ms": "0.7.34",
     "@types/node": "22",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
