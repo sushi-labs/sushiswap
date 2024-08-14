@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { SwapEdgeConfig } from 'src/app/(evm)/swap/(simple)/get-swap-edge-config'
+import ms from 'ms'
+import { SwapEdgeConfig } from 'src/app/(evm)/(trade)/swap/get-swap-edge-config'
 import { useEdgeConfig } from 'src/providers/edge-config-provider'
 
 export const useIsSwapMaintenance = () => {
@@ -20,6 +21,6 @@ export const useIsSwapMaintenance = () => {
       return false
     },
     initialData: maintenance,
-    refetchInterval: 60000,
+    refetchInterval: ms('1m'),
   })
 }

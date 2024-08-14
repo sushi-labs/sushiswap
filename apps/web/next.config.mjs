@@ -93,6 +93,11 @@ const nextConfig = bundleAnalyzer({
         permanent: true,
         destination: '/swap?chainId=2046399126',
       },
+      {
+        source: '/swap/cross-chain:path*',
+        permanent: true,
+        destination: '/cross-chain:path*',
+      },
     ]
   },
   async rewrites() {
