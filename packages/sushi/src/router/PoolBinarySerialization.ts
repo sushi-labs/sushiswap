@@ -73,7 +73,7 @@ export function serializePoolsBinary(
       stream.address(p.address)
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually 0.003
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually 0.003
       stream.bigUInt(p.reserve0, p.address, 'res0')
       stream.bigUInt(p.reserve1, p.address, 'res1')
     } else if (pc instanceof UniV3PoolCode) {
@@ -82,7 +82,7 @@ export function serializePoolsBinary(
       stream.address(p.address)
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually [0.003, 0.001, 0.0005]
       stream.bigUInt(p.reserve0, p.address, 'res0')
       stream.bigUInt(p.reserve1, p.address, 'res1')
       //stream.uint32(p.tick) nearestTick instead of it
@@ -101,7 +101,7 @@ export function serializePoolsBinary(
       stream.address(p.address)
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually 0.003
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually 0.003
     } else if (pc instanceof CurvePoolCode) {
       const p = pc.pool as CurveMultitokenPool
       const core = p.core
@@ -121,7 +121,7 @@ export function serializePoolsBinary(
         stream.bigUInt(core.reserves[i] as bigint, core.address)
         stream.float64(originalRates[i] as number)
       })
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually [0.003, 0.001, 0.0005]
       stream.float64(core.A)
     } else if (pc instanceof UniV4PoolCode) {
       const p = pc.pool as UniV4Pool
@@ -130,7 +130,7 @@ export function serializePoolsBinary(
       stream.str16(p.id)
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
-      stream.uint24(p.fee * FEE_FRACTIONS)
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS))
       //stream.uint32(p.tick) nearestTick instead of it
       stream.uint24(p.nearestTick)
       stream.bigUInt(p.liquidity, p.address, 'liquidity')
