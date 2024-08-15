@@ -7,6 +7,7 @@ import { classNames } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import React, { useMemo, useState } from 'react'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
 import { formatNumberWithDecimals } from '~aptos/(common)/lib/common/format-number-with-decimals'
 import { useNetwork } from '~aptos/(common)/lib/common/use-network'
@@ -46,7 +47,7 @@ export const RemoveSectionLegacy = ({
     return (
       Math.floor(
         +(slippageTolerance === 'AUTO' || slippageTolerance === ''
-          ? '0.5'
+          ? DEFAULT_SLIPPAGE
           : slippageTolerance) * 100,
       ) / 10000
     )
