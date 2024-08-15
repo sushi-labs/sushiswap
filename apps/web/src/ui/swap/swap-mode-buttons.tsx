@@ -11,31 +11,40 @@ import {
 } from '@sushiswap/ui'
 import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
 import Link from 'next/link'
-
 import { PathnameButton } from '../pathname-button'
 
 export const SwapModeButtons = () => {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 flex-wrap">
       <Link href="/swap">
         <PathnameButton pathname="/swap" size="sm">
           Swap
         </PathnameButton>
       </Link>
+      <Link href="/limit">
+        <PathnameButton pathname="/limit" size="sm">
+          Limit
+        </PathnameButton>
+      </Link>
+      <Link href="/dca">
+        <PathnameButton pathname="/dca" size="sm">
+          DCA
+        </PathnameButton>
+      </Link>
       <HoverCard>
-        <Link href="/swap/cross-chain">
-          <PathnameButton pathname="/swap/cross-chain" size="sm">
+        <Link href="/cross-chain-swap">
+          <PathnameButton pathname="/cross-chain-swap" size="sm">
             <HoverCardTrigger asChild>
               <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">
                 <ShuffleIcon width={20} height={20} className="text-blue" />
-                Cross Chain
+                Cross-Chain
               </span>
             </HoverCardTrigger>
           </PathnameButton>
         </Link>
         <HoverCardContent className="!p-0 max-w-[320px]">
           <CardHeader>
-            <CardTitle>Cross-chain Swap</CardTitle>
+            <CardTitle>Cross-Chain Swap</CardTitle>
             <CardDescription>
               Swap tokens natively across 15 chains including Ethereum,
               Arbitrum, Optimism, Polygon, Base and more!

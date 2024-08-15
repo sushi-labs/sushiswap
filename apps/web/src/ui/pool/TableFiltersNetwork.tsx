@@ -19,13 +19,13 @@ import {
 import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import React, { FC, useCallback, useState, useTransition } from 'react'
-import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { AMM_SUPPORTED_CHAIN_IDS } from 'src/config'
 import { Chain } from 'sushi/chain'
 
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 
 const isAllThenNone = (chainIds: number[]) =>
-  SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
+  AMM_SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds
 
 export const TableFiltersNetwork: FC = () => {
   const [pending, startTransition] = useTransition()
@@ -82,7 +82,7 @@ export const TableFiltersNetwork: FC = () => {
                 {values.length > 2 ? (
                   <Chip variant="secondary">{values.length} selected</Chip>
                 ) : (
-                  SUPPORTED_CHAIN_IDS.filter((option) =>
+                  AMM_SUPPORTED_CHAIN_IDS.filter((option) =>
                     values.includes(option),
                   ).map((option) => (
                     <Chip variant="secondary" key={option}>
@@ -106,7 +106,7 @@ export const TableFiltersNetwork: FC = () => {
           />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
-            {SUPPORTED_CHAIN_IDS.map((chainId) => (
+            {AMM_SUPPORTED_CHAIN_IDS.map((chainId) => (
               <CommandItem
                 key={chainId}
                 value={`${Chain.from(chainId)?.name}__${chainId}`}
