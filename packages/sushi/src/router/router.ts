@@ -500,7 +500,7 @@ export class Router {
         ],
       })
     } else {
-      if (!transferValueTo || !amountValueTransfer) {
+      if (transferValueTo === undefined || amountValueTransfer === undefined) {
         throw new Error('Missing transferValueTo or feeAmount')
       }
       routeCode = getRouteProcessor4Code(
