@@ -14,6 +14,7 @@ import {
 } from '@sushiswap/ui'
 import { useParams } from 'next/navigation'
 import React, { FC, useEffect } from 'react'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { usePool } from '~aptos/pool/lib/use-pool'
 import { useTokensFromPool } from '~aptos/pool/lib/use-tokens-from-pool'
 import { PoolAddCurrencyInput } from '~aptos/pool/ui/pool/add/pool-add-currency-input'
@@ -66,7 +67,7 @@ export const AddSectionWidget: FC = () => {
             options={{
               slippageTolerance: {
                 storageKey: SlippageToleranceStorageKey.AddLiquidity,
-                defaultValue: '0.5',
+                defaultValue: DEFAULT_SLIPPAGE,
                 title: 'Add Liquidity Slippage',
               },
             }}

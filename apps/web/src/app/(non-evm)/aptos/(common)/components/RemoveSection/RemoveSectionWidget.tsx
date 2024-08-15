@@ -18,6 +18,7 @@ import {
 } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 import { formatUSD } from 'sushi'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { CardCurrencyAmountItem } from '~aptos/(common)/components/CardCurrencyAmountItem'
 import { useStablePrice } from '~aptos/(common)/lib/common/use-stable-price'
 import { Token as TokenType } from '~aptos/(common)/lib/types/token'
@@ -73,7 +74,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             options={{
               slippageTolerance: {
                 storageKey: SlippageToleranceStorageKey.RemoveLiquidity,
-                defaultValue: '0.5',
+                defaultValue: DEFAULT_SLIPPAGE,
                 title: 'Remove Liquidity Slippage',
               },
             }}
