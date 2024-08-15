@@ -1,6 +1,6 @@
-import { Address } from 'viem'
-import { CLTick } from './CLPool.js'
-import { RToken } from './RPool.js'
+import { type Address } from 'viem'
+import { type CLTick } from './CLPool.js'
+import { type RToken } from './RPool.js'
 import { UniV3Pool } from './UniV3Pool.js'
 
 const two96 = 2 ** 96
