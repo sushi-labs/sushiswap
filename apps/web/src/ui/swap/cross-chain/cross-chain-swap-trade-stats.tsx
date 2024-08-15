@@ -37,9 +37,7 @@ export const CrossChainSwapTradeStats: FC = () => {
   const loading = Boolean(isLoading && !trade?.writeArgs)
 
   return (
-    <Collapsible
-      open={+swapAmountString > 0 && trade?.route?.status !== 'NoWay'}
-    >
+    <Collapsible open={+swapAmountString > 0 && trade?.status !== 'NoWay'}>
       <div className="w-full px-2 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">
@@ -85,10 +83,10 @@ export const CrossChainSwapTradeStats: FC = () => {
             Min. received
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading || !trade?.minAmountOut ? (
+            {loading || !trade?.amountOutMin ? (
               <SkeletonBox className="h-4 py-0.5 w-[100px]" />
             ) : (
-              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
+              `${trade?.amountOutMin?.toSignificant(6) ?? '0.00'} ${
                 trade?.amountOut?.currency?.symbol ?? ''
               }`
             )}

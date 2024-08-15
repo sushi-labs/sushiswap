@@ -1,10 +1,18 @@
 import { createClient } from '@sushiswap/database'
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { createConfig, getToken as getTokenFromContract } from '@wagmi/core'
-import { ChainId } from 'sushi'
+import { ChainId } from 'sushi/chain'
+import { publicChains, publicTransports } from 'sushi/config'
 import { type Address } from 'viem'
 
-const config = createConfig(publicWagmiConfig)
+export const config = {
+  chains: publicChains,
+  transports: publicTransports,
+  batch: {
+    multicall: {
+      wait: 64,
+    },
+  },
+} as const satisfies Parameters<typeof createConfig>[0]
 
 // import * as defaultTokenList from '@sushiswap/default-token-list' assert { type: 'json' }
 
@@ -18,7 +26,6 @@ export async function getToken(chainId: number, address: string) {
   //     name: tokenFromList.name,
   //     symbol: tokenFromList.symbol,
   //     decimals: tokenFromList.decimals,
-  //     isCommon: false,
   //   }
   // }
 
@@ -31,8 +38,6 @@ export async function getToken(chainId: number, address: string) {
         name: true,
         symbol: true,
         decimals: true,
-        isCommon: true,
-        isFeeOnTransfer: true,
         status: true,
       },
       where: {
@@ -44,7 +49,7 @@ export async function getToken(chainId: number, address: string) {
     return token
   } catch {
     await client.$disconnect()
-    const tokenFromContract = await getTokenFromContract(config, {
+    const tokenFromContract = await getTokenFromContract(createConfig(config), {
       chainId: chainId as ChainId,
       address: address as Address,
     }).catch(() => {
@@ -57,7 +62,6 @@ export async function getToken(chainId: number, address: string) {
         name: tokenFromContract.name,
         symbol: tokenFromContract.symbol,
         decimals: tokenFromContract.decimals,
-        isCommon: false,
       }
     } else {
       throw new Error('Token not found')
@@ -108,8 +112,6 @@ export async function getTokensByChainId(chainId: number) {
       name: true,
       symbol: true,
       decimals: true,
-      isCommon: true,
-      isFeeOnTransfer: true,
     },
     where: {
       AND: {
@@ -132,8 +134,6 @@ export async function getTokens() {
       name: true,
       symbol: true,
       decimals: true,
-      isCommon: true,
-      isFeeOnTransfer: true,
     },
     where: {
       AND: {
@@ -155,8 +155,6 @@ export async function getPopularTokens(chainId: number) {
       name: true,
       symbol: true,
       decimals: true,
-      isCommon: true,
-      isFeeOnTransfer: true,
       pools0: {
         select: {
           liquidityUSD: true,
@@ -197,8 +195,6 @@ export async function getPopularTokens(chainId: number) {
         name: token.name,
         symbol: token.symbol,
         decimals: token.decimals,
-        isCommon: token.isCommon,
-        isFeeOnTransfer: token.isFeeOnTransfer,
         liquidityUSD: Number(liquidity.toFixed(0)),
       }
     })
@@ -218,12 +214,9 @@ export async function getCommonTokens(chainId: number) {
       name: true,
       symbol: true,
       decimals: true,
-      isCommon: true,
-      isFeeOnTransfer: true,
     },
     where: {
       chainId,
-      isCommon: true,
       status: 'APPROVED',
     },
   })
@@ -242,8 +235,6 @@ export async function getTokensByAddress(address: string) {
       name: true,
       symbol: true,
       decimals: true,
-      isCommon: true,
-      isFeeOnTransfer: true,
       status: true,
     },
     where: {

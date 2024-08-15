@@ -7,6 +7,7 @@ import type { Address, WriteContractParameters } from 'viem'
 import z from 'zod'
 
 import { legValidator, tradeValidator01 } from './validator01'
+import { tradeValidator02 } from './validator02'
 
 export interface UseTradeParams {
   chainId: ChainId
@@ -39,13 +40,20 @@ export interface UseTradeReturn {
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
   gasSpentUsd: string | undefined
-  functionName: 'processRoute' | 'transferValueAndprocessRoute'
-  writeArgs: UseTradeReturnWriteArgs
-  route: TradeType['route']
-  value?: bigint | undefined
+  route: TradeType1['route']
+  tx:
+    | {
+        from: Address
+        to: Address
+        data: string
+        value?: bigint | undefined
+      }
+    | undefined
   tokenTax: Percent | false | undefined
+  fee: string | undefined
 }
 
-export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
-export type TradeType = z.infer<typeof tradeValidator01>
+export type UseTradeQuerySelect = (data: TradeType1) => UseTradeReturn
+export type TradeType1 = z.infer<typeof tradeValidator01>
+export type TradeType2 = z.infer<typeof tradeValidator02>
 export type TradeLegType = z.infer<typeof legValidator>

@@ -1,5 +1,5 @@
-import { Address } from 'viem'
-import { PoolType, RPool, RToken, setTokenId } from './RPool.js'
+import type { Address } from 'viem'
+import { PoolType, RPool, type RToken, setTokenId } from './RPool.js'
 import { StableSwapRPool } from './StableSwapPool.js'
 import {
   ASSERT,
@@ -486,9 +486,11 @@ export class Graph {
     // })
 
     // Lets try to price from the first trusted token first
-    const startV = this.getVert(
-      trustedForPricingTokens ? trustedForPricingTokens[0] ?? start : start,
-    )
+    const startToken = trustedForPricingTokens
+      ? trustedForPricingTokens[0] ?? start
+      : start
+    setTokenId(startToken)
+    const startV = this.getVert(startToken)
     if (startV !== undefined)
       this.setPricesStable(
         startV,

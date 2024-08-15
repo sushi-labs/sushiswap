@@ -1,4 +1,3 @@
-import { PublicWagmiConfig } from '@sushiswap/wagmi-config'
 import { readContracts } from '@wagmi/core/actions'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import {
@@ -11,6 +10,7 @@ import {
   SushiSwapV2Pool,
   computeSushiSwapV2PoolAddress,
 } from 'sushi/pool/sushiswap-v2'
+import { PublicWagmiConfig } from '../../../config/public'
 
 export enum PairState {
   LOADING = 'Loading',

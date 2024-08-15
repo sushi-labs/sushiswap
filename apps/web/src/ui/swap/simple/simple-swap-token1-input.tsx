@@ -35,6 +35,8 @@ export const SimpleSwapToken1Input = () => {
       disableMaxButton
       currencyLoading={tokenLoading}
       allowNative={isWNativeSupported(chainId)}
+      label="Buy"
+      // priceImpact={trade?.priceImpact}
     />
   )
 }

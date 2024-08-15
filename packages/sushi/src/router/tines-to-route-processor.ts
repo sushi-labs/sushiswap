@@ -1,9 +1,9 @@
-import { Hex } from 'viem'
+import type { Hex } from 'viem'
 import { ChainId } from '../chain/index.js'
 import {
-  MultiRoute,
-  RToken,
-  RouteLeg,
+  type MultiRoute,
+  type RToken,
+  type RouteLeg,
   RouteStatus,
   getBigInt,
 } from '../tines/index.js'

@@ -3,7 +3,7 @@ import { masterChefV1Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 
 import { config } from 'src/lib/wagmi.js'
-import { MASTERCHEF_ADDRESS } from '../../../config.js'
+import { MASTERCHEF_ADDRESS } from 'sushi/config'
 
 export async function getPoolLength() {
   const poolLengthCall = {

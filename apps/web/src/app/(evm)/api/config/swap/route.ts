@@ -6,7 +6,7 @@ const schema = z.object({
   maintenance: z.boolean(),
 })
 
-// export const runtime = 'edge'
+export const runtime = 'edge'
 
 export const revalidate = 60
 

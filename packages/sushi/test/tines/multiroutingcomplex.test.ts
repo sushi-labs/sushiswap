@@ -1,9 +1,9 @@
 import seedrandom from 'seedrandom'
 import { expect, it } from 'vitest'
-import { RPool } from '../../src/tines/RPool.js'
 import {
   Graph,
-  MultiRoute,
+  type MultiRoute,
+  RPool,
   RouteStatus,
   findMultiRouteExactIn,
   findSingleRouteExactIn,
@@ -11,8 +11,8 @@ import {
 import { checkRouteResult } from './snapshots/snapshot.js'
 import {
   MAX_POOL_IMBALANCE,
-  Network,
-  TToken,
+  type Network,
+  type TToken,
   atomPrice,
   checkRoute,
   chooseRandomTokensForSwap,

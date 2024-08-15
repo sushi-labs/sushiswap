@@ -1,9 +1,9 @@
-import { Address } from 'viem'
-import { CLTick, CL_MAX_TICK, CL_MIN_TICK } from './CLPool.js'
+import type { Address } from 'viem'
+import { type CLTick, CL_MAX_TICK, CL_MIN_TICK } from './CLPool.js'
 import {
   PoolType,
   RPool,
-  RToken,
+  type RToken,
   TYPICAL_MINIMAL_LIQUIDITY,
   TYPICAL_SWAP_GAS_COST,
 } from './RPool.js'

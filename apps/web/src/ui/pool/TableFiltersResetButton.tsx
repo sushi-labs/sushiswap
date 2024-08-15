@@ -4,7 +4,7 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import { Button } from '@sushiswap/ui'
 import React, { FC, useCallback, useMemo, useState, useTransition } from 'react'
 
-import { SUPPORTED_CHAIN_IDS } from '../../config'
+import { AMM_SUPPORTED_CHAIN_IDS } from '../../config'
 import { usePoolFilters, useSetPoolFilters } from './PoolsFiltersProvider'
 import { POOL_TYPES } from './TableFiltersPoolType'
 
@@ -15,7 +15,7 @@ export const TableFiltersResetButton: FC = () => {
   const setFilters = useSetPoolFilters()
 
   const networks = useMemo(
-    () => (SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds),
+    () => (AMM_SUPPORTED_CHAIN_IDS.length === chainIds.length ? [] : chainIds),
     [chainIds],
   )
   const types = useMemo(

@@ -7,8 +7,6 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: false && process.env.NODE_ENV !== 'development',
 })
 
-const FURO_URL = 'https://furo.sushi.com'
-
 /** @type {import('next').NextConfig} */
 const nextConfig = bundleAnalyzer({
   ...defaultNextConfig,
@@ -19,6 +17,33 @@ const nextConfig = bundleAnalyzer({
   async redirects() {
     return [
       {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'test.sushi.com',
+          },
+        ],
+        destination: 'https://sushi.com/test/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'aptos.sushi.com',
+          },
+        ],
+        destination: 'https://sushi.com/aptos/:path*',
+        permanent: true,
+      },
+      {
+        source: '/aptos',
+        permanent: true,
+        destination: '/aptos/swap',
+      },
+      {
         source: '/',
         permanent: true,
         destination: '/swap',
@@ -26,7 +51,7 @@ const nextConfig = bundleAnalyzer({
       {
         source: '/discord{/}?',
         permanent: true,
-        destination: 'https://discord.gg/SDPH8SNVZW',
+        destination: 'https://discord.gg/ej78AWjy6Y',
       },
       {
         source: '/github{/}?',
@@ -68,41 +93,15 @@ const nextConfig = bundleAnalyzer({
         permanent: true,
         destination: '/swap?chainId=2046399126',
       },
+      {
+        source: '/swap/cross-chain:path*',
+        permanent: true,
+        destination: '/cross-chain-swap:path*',
+      },
     ]
   },
   async rewrites() {
-    return [
-      // if the host is `aptos.sushi.com`,
-      // this rewrite will be applied
-      // {
-      //   source: '/:path*',
-      //   has: [
-      //     {
-      //       type: 'host',
-      //       value: 'aptos.sushi.com',
-      //     },
-      //   ],
-      //   destination: '/aptos/:path*',
-      // },
-      // {
-      //   source: '/:path*',
-      //   has: [
-      //     {
-      //       type: 'host',
-      //       value: 'pay.sushi.com',
-      //     },
-      //   ],
-      //   destination: '/pay/:path*',
-      // },
-      {
-        source: '/furo',
-        destination: `${FURO_URL}/furo`,
-      },
-      {
-        source: '/furo/:path*',
-        destination: `${FURO_URL}/furo/:path*`,
-      },
-    ]
+    return []
   },
 })
 

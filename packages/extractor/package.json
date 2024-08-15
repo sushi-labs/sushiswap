@@ -1,6 +1,7 @@
 {
   "name": "@sushiswap/extractor",
-  "version": "1.0.1",
+  "version": "0.0.0",
+  "private": true,
   "description": "Sushi Extractor",
   "keywords": [
     "sushi",
@@ -36,7 +37,7 @@
     "@uniswap/v3-core": "1.0.1",
     "abitype": "0.9.8",
     "sushi": "workspace:*",
-    "viem": "2.10.11"
+    "viem": "2.18.6"
   },
   "devDependencies": {
     "@sushiswap/jest-config": "workspace:*",

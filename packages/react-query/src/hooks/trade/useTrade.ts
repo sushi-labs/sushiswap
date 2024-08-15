@@ -6,31 +6,21 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { slippageAmount } from 'sushi/calculate'
-import { ChainId } from 'sushi/chain'
-import { isRouteProcessor4ChainId, isWNativeSupported } from 'sushi/config'
+import {
+  API_BASE_URL,
+  TOKEN_CHOMPER_ADDRESS,
+  isRouteProcessor5ChainId,
+  isTokenChomperChainId,
+  isWNativeSupported,
+} from 'sushi/config'
 import { Amount, Native, Price, type Type } from 'sushi/currency'
 import { Fraction, Percent, ZERO } from 'sushi/math'
-import { type Address, type Hex, stringify, zeroAddress } from 'viem'
+import { isLsd, isStable, isWrapOrUnwrap } from 'sushi/router'
+import { Address, stringify, zeroAddress } from 'viem'
 import { usePrice } from '../prices'
 import { apiAdapter02To01 } from './apiAdapter'
-import type {
-  UseTradeParams,
-  UseTradeQuerySelect,
-  UseTradeReturnWriteArgs,
-} from './types'
+import type { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator02 } from './validator02'
-
-const API_BASE_URL =
-  process.env['API_BASE_URL'] ||
-  process.env['NEXT_PUBLIC_API_BASE_URL'] ||
-  'https://staging.sushi.com/swap'
-
-function getApiVersion(chainId: ChainId) {
-  if (isRouteProcessor4ChainId(chainId)) {
-    return '/v4'
-  }
-  return ''
-}
 
 export const useTradeQuery = (
   {
@@ -43,7 +33,6 @@ export const useTradeQuery = (
     recipient,
     source,
     enabled,
-    onError,
   }: UseTradeParams,
   select: UseTradeQuerySelect,
 ) => {
@@ -53,8 +42,8 @@ export const useTradeQuery = (
       'getTrade',
       {
         chainId,
-        fromToken,
-        toToken,
+        currencyA: fromToken,
+        currencyB: toToken,
         amount,
         slippagePercentage,
         gasPrice,
@@ -63,9 +52,7 @@ export const useTradeQuery = (
       },
     ],
     queryFn: async () => {
-      const params = new URL(
-        `${API_BASE_URL}/swap${getApiVersion(chainId)}/${chainId}`,
-      )
+      const params = new URL(`${API_BASE_URL}/swap/v5/${chainId}`)
       // params.searchParams.set('chainId', `${chainId}`)
       params.searchParams.set(
         'tokenIn',
@@ -84,16 +71,27 @@ export const useTradeQuery = (
         }`,
       )
       params.searchParams.set('amount', `${amount?.quotient.toString()}`)
-      params.searchParams.set('maxPriceImpact', `${+slippagePercentage / 100}`)
+      params.searchParams.set('maxSlippage', `${+slippagePercentage / 100}`)
       params.searchParams.set('gasPrice', `${gasPrice}`)
-      params.searchParams.set('to', `${recipient}`)
+      recipient && params.searchParams.set('to', `${recipient}`)
       params.searchParams.set('preferSushi', 'true')
+      params.searchParams.set('enableFee', 'true')
+      params.searchParams.set(
+        'feeReceiver',
+        isTokenChomperChainId(chainId)
+          ? TOKEN_CHOMPER_ADDRESS[chainId]
+          : '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
+      )
+      params.searchParams.set('fee', '0.0025')
+      params.searchParams.set('feeBy', 'output')
+      params.searchParams.set('includeTransaction', 'true')
+      params.searchParams.set('includeRoute', 'true')
       if (source !== undefined) params.searchParams.set('source', `${source}`)
 
       const res = await fetch(params.toString())
-      // const json = deserialize(await res.json()) should cause react query error
       const json = await res.json()
       const resp2 = tradeValidator02.parse(json)
+
       const resp1 = apiAdapter02To01(
         resp2,
         fromToken as Type,
@@ -110,13 +108,11 @@ export const useTradeQuery = (
     },
     refetchOnWindowFocus: true,
     refetchInterval: 2500,
-    keepPreviousData: !!amount,
-    cacheTime: 0, // the length of time before inactive data gets removed from the cache
+    gcTime: 0, // the length of time before inactive data gets removed from the cache
     retry: false, // dont retry on failure, immediately fallback
     select,
     enabled:
       enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
-    onError: (error) => (onError ? onError(error as Error) : undefined),
     queryKeyHashFn: stringify,
   })
 }
@@ -128,7 +124,7 @@ export const useTrade = (variables: UseTradeParams) => {
     toToken,
     amount,
     slippagePercentage,
-    carbonOffset,
+    // carbonOffset,
     gasPrice,
     tokenTax,
   } = variables
@@ -144,10 +140,26 @@ export const useTrade = (variables: UseTradeParams) => {
       : _price
   }, [_price, chainId])
 
+  // const { data: tokenInPrice } = usePrice({
+  //   chainId,
+  //   address: fromToken?.wrapped.address,
+  // })
+
+  const { data: tokenOutPrice } = usePrice({
+    chainId,
+    address: toToken?.wrapped.address,
+  })
+
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      // console.log('data.args', data?.args)
-      if (data && amount && data.route && fromToken && toToken) {
+      if (
+        isRouteProcessor5ChainId(chainId) &&
+        data &&
+        amount &&
+        data.route &&
+        fromToken &&
+        toToken
+      ) {
         const amountIn = Amount.fromRawAmount(fromToken, data.route.amountInBI)
         const amountOut = Amount.fromRawAmount(
           toToken,
@@ -155,37 +167,31 @@ export const useTrade = (variables: UseTradeParams) => {
             tokenTax ? new Percent(1).subtract(tokenTax) : 1,
           ).quotient,
         )
-        const minAmountOut = Amount.fromRawAmount(
-          toToken,
-          slippageAmount(
-            amountOut,
-            new Percent(Math.floor(+slippagePercentage * 100), 10_000),
-          )[0],
-        )
-        const isOffset = chainId === ChainId.POLYGON && carbonOffset
+        const minAmountOut = data.args?.amountOutMin
+          ? Amount.fromRawAmount(toToken, data.args.amountOutMin)
+          : Amount.fromRawAmount(
+              toToken,
+              slippageAmount(
+                Amount.fromRawAmount(toToken, data.route.amountOutBI),
+                new Percent(Math.floor(+slippagePercentage * 100), 10_000),
+              )[0],
+            )
 
-        let writeArgs: UseTradeReturnWriteArgs = data?.args
-          ? ([
-              data.args.tokenIn as Address,
-              BigInt(data.args.amountIn),
-              data.args.tokenOut as Address,
-              minAmountOut.quotient,
-              data.args.to as Address,
-              data.args.routeCode as Hex,
-            ] as const)
-          : undefined
-        let value = fromToken.isNative ? writeArgs?.[1] ?? undefined : undefined
+        // const isOffset = chainId === ChainId.POLYGON && carbonOffset
 
-        // console.debug(fromToken.isNative, writeArgs, value)
+        // if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
+        //   writeArgs = [
+        //     '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
+        //     20000000000000000n,
+        //     ...writeArgs,
+        //   ]
+        //   value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
+        // }
 
-        if (writeArgs && isOffset && chainId === ChainId.POLYGON) {
-          writeArgs = [
-            '0xbc4a6be1285893630d45c881c6c343a65fdbe278',
-            20000000000000000n,
-            ...writeArgs,
-          ]
-          value = (fromToken.isNative ? writeArgs[3] : 0n) + 20000000000000000n
-        }
+        // const value =
+        //   fromToken.isNative && data?.args?.amountIn
+        //     ? data.args.amountIn
+        //     : undefined
 
         const gasSpent = gasPrice
           ? Amount.fromRawAmount(
@@ -212,12 +218,24 @@ export const useTrade = (variables: UseTradeParams) => {
             price && gasSpent
               ? gasSpent.multiply(price.asFraction).toSignificant(4)
               : undefined,
+          fee:
+            !isWrapOrUnwrap({ fromToken, toToken }) &&
+            !isStable({ fromToken, toToken }) &&
+            !isLsd({ fromToken, toToken })
+              ? `${tokenOutPrice ? '$' : ''}${minAmountOut
+                  .multiply(new Percent(25, 10000))
+                  .multiply(tokenOutPrice ? tokenOutPrice.asFraction : 1)
+                  .toSignificant(4)} ${!tokenOutPrice ? toToken.symbol : ''}`
+              : '$0',
           route: data.route,
-          functionName: isOffset
-            ? 'transferValueAndprocessRoute'
-            : 'processRoute',
-          writeArgs,
-          value,
+          tx: data?.tx
+            ? {
+                from: data.tx.from as Address,
+                to: data.tx.to,
+                data: data.tx.data,
+                value: data.tx.value,
+              }
+            : undefined,
           tokenTax,
         }
       }
@@ -230,19 +248,19 @@ export const useTrade = (variables: UseTradeParams) => {
         minAmountOut: undefined,
         gasSpent: undefined,
         gasSpentUsd: undefined,
-        writeArgs: undefined,
+        fee: undefined,
         route: undefined,
-        functionName: 'processRoute',
-        value: undefined,
+        tx: undefined,
         tokenTax: undefined,
       }
     },
     [
-      carbonOffset,
+      // carbonOffset,
       amount,
       chainId,
       fromToken,
       price,
+      tokenOutPrice,
       slippagePercentage,
       toToken,
       gasPrice,

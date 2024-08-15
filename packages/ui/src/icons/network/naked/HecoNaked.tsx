@@ -1,14 +1,15 @@
 import * as React from 'react'
 
-import { IconComponent } from '../../../types'
+import { NakedNetworkIconComponent } from '../../../types'
 
-export const HecoNaked: IconComponent = (props) => (
+export const HecoNaked: NakedNetworkIconComponent = (props) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
+    {props.circle}
     <path
       d="M72.0248 48.6063C72.0248 37.1273 66.4914 27.2376 62.2529 24C62.2529 24 61.9586 23.8234 61.9586 24.2943C61.6054 46.4871 50.3618 52.5504 44.122 60.6151C29.8173 79.3348 43.1212 99.8204 56.6606 103.588C64.2544 105.707 54.8946 99.8204 53.7173 87.4584C52.3045 72.4474 72.0248 61.0272 72.0248 48.6063"
       fill="#282E5B"

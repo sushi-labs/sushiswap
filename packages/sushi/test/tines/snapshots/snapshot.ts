@@ -1,4 +1,4 @@
-import fs from 'fs'
+import * as fs from 'fs'
 import { expect } from 'vitest'
 
 const SNAPSHOT_FILE = 'router_snapshot'

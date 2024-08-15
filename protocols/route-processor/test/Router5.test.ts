@@ -999,31 +999,6 @@ describe('End-to-end RouteProcessor5 test', async () => {
     )
   })
 
-  if (network.config.chainId === 137) {
-    // NoWay
-    it.skip('Trident Native => SUSHI => Native (Polygon only)', async () => {
-      await env.snapshot.restore()
-      const usedPools = new Set<string>()
-      intermidiateResult[0] = BigInt(1e4) * BigInt(1e18)
-      intermidiateResult = await updMakeSwap(
-        env,
-        Native.onChain(chainId),
-        SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
-        intermidiateResult,
-        usedPools,
-        [LiquidityProviders.Trident],
-      )
-      intermidiateResult = await updMakeSwap(
-        env,
-        SUSHI[chainId as keyof typeof SUSHI_ADDRESS],
-        Native.onChain(chainId),
-        intermidiateResult,
-        usedPools,
-        [LiquidityProviders.Trident],
-      )
-    })
-  }
-
   it('Swap with not 0 liquidity on ythe router. Native => USDC => USDT', async () => {
     await env.snapshot.restore()
     const usedPools = new Set<string>()

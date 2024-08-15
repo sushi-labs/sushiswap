@@ -24,7 +24,7 @@ const dstChainId = parseInt(
   process.env.NEXT_PUBLIC_DST_CHAIN_ID,
 ) as SupportedChainId
 
-const url = 'http://localhost:3000/swap/cross-chain'
+const url = 'http://localhost:3000/cross-chain-swap'
 
 test.beforeEach(async ({ page }) => {
   page.on('pageerror', (error) => {

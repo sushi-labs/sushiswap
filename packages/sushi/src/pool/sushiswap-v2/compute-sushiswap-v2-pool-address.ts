@@ -3,7 +3,7 @@ import type { Address, Hex } from 'viem'
 import { encodePacked, getCreate2Address, keccak256 } from 'viem/utils'
 import {
   SUSHISWAP_V2_INIT_CODE_HASH,
-  SushiSwapV2ChainId,
+  type SushiSwapV2ChainId,
 } from '../../config/index.js'
 import { Token } from '../../currency/index.js'
 

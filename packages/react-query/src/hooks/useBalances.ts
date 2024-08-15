@@ -34,7 +34,7 @@ export const useBalancesQuery = (
       )
     },
     staleTime: ms('15m'), // 15 mins
-    cacheTime: ms('1h'), // 1hr
+    gcTime: ms('1h'), // 1hr
     enabled: Boolean(chainId && account && enabled),
     select,
   })
@@ -49,7 +49,7 @@ export const useBalances = (variables: UseBalances) => {
 
       return Object.entries(data).reduce<Record<string, Amount<Type>>>(
         (acc, [address, amount]) => {
-          console.log({ tokens, address, amount })
+          // console.log({ tokens, address, amount })
           if (address.toLowerCase() === NativeAddress) {
             acc[address] = Amount.fromRawAmount(Native.onChain(chainId), amount)
           } else {

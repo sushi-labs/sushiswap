@@ -1,9 +1,9 @@
 import { default as seedrandom } from 'seedrandom'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 import {
   CLRPool,
-  CLTick,
+  type CLTick,
   CL_MAX_TICK,
   CL_MIN_TICK,
   getBigInt,

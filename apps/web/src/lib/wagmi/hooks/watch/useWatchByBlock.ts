@@ -41,7 +41,7 @@ export function useWatchByBlock({
     if (modulo && blockNumber % BigInt(modulo) !== 0n) return
 
     keys.forEach((key) => {
-      queryClient.invalidateQueries(key)
+      queryClient.invalidateQueries({ queryKey: key })
     })
   }, [blockNumber, keys, queryClient, modulo])
 }

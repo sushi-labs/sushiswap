@@ -1,23 +1,26 @@
 import {
-  Address,
-  Hex,
+  type Address,
+  type Hex,
   encodeFunctionData,
   prepareEncodeFunctionData,
 } from 'viem'
 import { routeProcessor2Abi } from '../abi/routeProcessor2Abi.js'
 import { routeProcessor4Abi } from '../abi/routeProcessor4Abi.js'
+import { routeProcessor5Abi } from '../abi/routeProcessor5Abi.js'
 import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
 import { ADDITIONAL_BASES } from '../config/additional-bases.js'
 import { BASES_TO_CHECK_TRADES_AGAINST } from '../config/bases-to-check-trades-against.js'
+import { LSDS } from '../config/lsds.js'
+import { STABLES } from '../config/stables.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
-import { Token, Type } from '../currency/index.js'
+import { Token, type Type } from '../currency/index.js'
 import {
-  MultiRoute,
-  NetworkInfo,
+  type MultiRoute,
+  type NetworkInfo,
   NoWayMultiRoute,
   RPool,
-  RToken,
+  type RToken,
   RouteStatus,
   convertTokenToBento,
   findMultiRouteExactIn,
@@ -27,12 +30,24 @@ import {
 import { LiquidityProviders } from './liquidity-providers/index.js'
 import { PoolCode } from './pool-codes/index.js'
 import {
-  PermitData,
+  type PermitData,
   RouterLiquiditySource,
   getRouteProcessor2Code,
 } from './tines-to-route-processor-2.js'
 import { getRouteProcessor4Code } from './tines-to-route-processor-4.js'
 import { getRouteProcessorCode } from './tines-to-route-processor.js'
+
+export enum TransferValue {
+  Input = 'input',
+  Output = 'output',
+}
+
+export enum ProcessFunction {
+  ProcessRoute = 0,
+  TransferValueAndprocessRoute = 1,
+  ProcessRouteWithTransferValueInput = 2,
+  ProcessRouteWithTransferValueOutput = 3,
+}
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
@@ -58,14 +73,71 @@ const RP4processRouteEncodeData = prepareEncodeFunctionData({
   abi: routeProcessor4Abi,
   functionName: 'processRoute',
 })
+const RP5processRouteEncodeData = [
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'processRoute',
+  }),
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'transferValueAndprocessRoute',
+  }),
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'processRouteWithTransferValueInput',
+  }),
+  prepareEncodeFunctionData({
+    abi: routeProcessor5Abi,
+    functionName: 'processRouteWithTransferValueOutput',
+  }),
+]
 
-const isWrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
+export const isWrap = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) =>
   fromToken.isNative &&
   toToken.wrapped.address === Native.onChain(toToken.chainId).wrapped.address
-const isUnwrap = ({ fromToken, toToken }: { fromToken: Type; toToken: Type }) =>
+export const isUnwrap = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) =>
   toToken.isNative &&
   fromToken.wrapped.address ===
     Native.onChain(fromToken.chainId).wrapped.address
+export const isWrapOrUnwrap = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) =>
+  isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
+
+export const isStable = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) => {
+  const fromTokenIsStable = STABLES[fromToken.chainId].some((t: Token) =>
+    t.equals(fromToken),
+  )
+  const toTokenIsStable = STABLES[toToken.chainId].some((t: Token) =>
+    t.equals(toToken),
+  )
+  return fromTokenIsStable && toTokenIsStable
+}
+
+export const isLsd = ({
+  fromToken,
+  toToken,
+}: { fromToken: Type; toToken: Type }) => {
+  const fromTokenIsLsd = LSDS[fromToken.chainId].some((t: Token) =>
+    t.equals(fromToken),
+  )
+  const toTokenIsLsd = LSDS[toToken.chainId].some((t: Token) =>
+    t.equals(toToken),
+  )
+  return (
+    (fromToken.isNative && toTokenIsLsd) || (fromTokenIsLsd && toToken.isNative)
+  )
+}
 
 export interface RPParams {
   tokenIn: Address
@@ -100,7 +172,6 @@ export class Router {
         LiquidityProviders.NativeWrap,
         LiquidityProviders.SushiSwapV2,
         LiquidityProviders.SushiSwapV3,
-        LiquidityProviders.Trident,
       ],
     )
   }
@@ -126,7 +197,6 @@ export class Router {
         LiquidityProviders.NativeWrap,
         LiquidityProviders.SushiSwapV2,
         LiquidityProviders.SushiSwapV3,
-        LiquidityProviders.Trident,
       ],
     )
     // If the route is successful and the price impact is less than maxPriceImpact, then return the route
@@ -211,7 +281,10 @@ export class Router {
       ...route,
       legs: route.legs.map((l) => ({
         ...l,
-        poolName: poolCodesMap.get(l.poolAddress)?.poolName ?? 'Unknown Pool',
+        liquidityProvider:
+          poolCodesMap.get(l.uniqueId)?.liquidityProvider ??
+          'Unknown Liquidity Provider',
+        poolName: poolCodesMap.get(l.uniqueId)?.poolName ?? 'Unknown Pool',
       })),
     }
   }
@@ -373,7 +446,98 @@ export class Router {
     }
   }
 
-  static routeProcessor5Params = this.routeProcessor4Params
+  // the same as routeProcessor4Params, but with processFunction
+  static routeProcessor5Params(
+    poolCodesMap: Map<string, PoolCode>,
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: Address,
+    RPAddr: Address,
+    permits: PermitData[] = [],
+    maxSlippage = 0.005,
+    source = RouterLiquiditySource.Sender,
+    processFunction = ProcessFunction.ProcessRoute,
+    transferValueTo?: Address,
+    amountValueTransfer?: bigint,
+  ): RPParams {
+    const tokenIn =
+      fromToken instanceof Token
+        ? (fromToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const tokenOut =
+      toToken instanceof Token
+        ? (toToken.address as Address)
+        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const isWrapOrUnwap =
+      isWrap({ fromToken, toToken }) || isUnwrap({ fromToken, toToken })
+    const amountOutMin = isWrapOrUnwap
+      ? route.amountInBI
+      : (route.amountOutBI * getBigInt((1 - maxSlippage) * 1_000_000)) /
+        1_000_000n
+
+    let routeCode: Hex
+
+    let data: Hex
+    if (processFunction === ProcessFunction.ProcessRoute) {
+      routeCode = getRouteProcessor4Code(
+        route,
+        RPAddr,
+        to,
+        poolCodesMap,
+        permits,
+        source,
+      ) as Hex
+      data = encodeFunctionData({
+        ...RP5processRouteEncodeData[processFunction],
+        args: [
+          tokenIn,
+          route.amountInBI,
+          tokenOut,
+          amountOutMin,
+          to,
+          routeCode,
+        ],
+      })
+    } else {
+      if (!transferValueTo || !amountValueTransfer) {
+        throw new Error('Missing transferValueTo or feeAmount')
+      }
+      routeCode = getRouteProcessor4Code(
+        route,
+        RPAddr,
+        processFunction === ProcessFunction.ProcessRouteWithTransferValueInput
+          ? to
+          : RPAddr,
+        poolCodesMap,
+        permits,
+        source,
+      ) as Hex
+      data = encodeFunctionData({
+        ...RP5processRouteEncodeData[processFunction],
+        args: [
+          transferValueTo,
+          amountValueTransfer,
+          tokenIn,
+          route.amountInBI,
+          tokenOut,
+          amountOutMin,
+          to,
+          routeCode,
+        ],
+      })
+    }
+    return {
+      tokenIn,
+      amountIn: route.amountInBI,
+      tokenOut,
+      amountOutMin,
+      to,
+      routeCode,
+      data,
+      value: fromToken instanceof Token ? undefined : route.amountInBI,
+    }
+  }
 
   // Human-readable route printing
   static routeToHumanString(

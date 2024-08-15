@@ -8,12 +8,7 @@ import {
   RouteProcessor4ChainId,
 } from 'sushi/config'
 import { Type } from 'sushi/currency'
-import {
-  NativeWrapProvider,
-  Router,
-  RouterLiquiditySource,
-  makeAPI02Object,
-} from 'sushi/router'
+import { NativeWrapProvider, Router, RouterLiquiditySource } from 'sushi/router'
 import { isAddressFast } from 'sushi/serializer'
 import { MultiRoute } from 'sushi/tines'
 import { Address } from 'viem'
@@ -26,6 +21,7 @@ import {
   MAX_TIME_WITHOUT_NETWORK_UPDATE,
   POOL_FETCH_TIMEOUT,
 } from '../../config.js'
+import { createSwapBody } from '../../create-swap-body.js'
 import { querySchema3_2 } from './schema.js'
 
 const nativeProvider = new NativeWrapProvider(
@@ -47,21 +43,21 @@ async function processUnknownToken(
 }
 
 function handler(
-  qSchema: typeof querySchema3_2,
-  rpCode: typeof Router.routeProcessor3_2Params,
-  rpAddress: Address,
+  querySchema: typeof querySchema3_2,
+  routeProcessorParams: typeof Router.routeProcessor3_2Params,
+  routeProcessorAddress: Address,
 ) {
   return (client: ExtractorClient) => {
     return async (req: Request, res: Response) => {
       res.setHeader('Cache-Control', 's-maxage=2, stale-while-revalidate=28')
       let parsedData: any = undefined
-      let bestRoute: MultiRoute | undefined = undefined
+      let route: MultiRoute | undefined = undefined
       try {
         const statistics = swapRequestStatistics.requestProcessingStart()
 
         let parsed: ReturnType<typeof querySchema3_2.safeParse> | undefined
         try {
-          parsed = qSchema.safeParse(req.query)
+          parsed = querySchema.safeParse(req.query)
         } catch (_e) {}
         if (!parsed || !parsed.success) {
           swapRequestStatistics.requestRejected(
@@ -135,7 +131,7 @@ function handler(
           .getCurrentPoolList()
           .forEach((p) => poolCodesMap.set(p.pool.uniqueID(), p))
 
-        bestRoute = preferSushi
+        route = preferSushi
           ? Router.findSpecialRoute(
               poolCodesMap,
               CHAIN_ID as ChainId,
@@ -153,28 +149,31 @@ function handler(
               gasPrice ?? 30e9,
             )
 
-        const json = makeAPI02Object(
-          bestRoute,
+        const body = createSwapBody(
+          route,
           to
-            ? rpCode(
+            ? routeProcessorParams(
                 poolCodesMap,
-                bestRoute,
+                route,
                 tokenIn,
                 tokenOut,
                 to,
-                rpAddress as Address,
+                routeProcessorAddress as Address,
                 [],
                 maxPriceImpact,
                 source ?? RouterLiquiditySource.Sender,
               )
             : undefined,
-          rpAddress as Address,
+          routeProcessorAddress,
+          true,
+          false,
+          true,
         )
 
         // we want to return { route, tx: { from, to, gas, gasPrice, value, input } }
 
         swapRequestStatistics.requestWasProcessed(statistics, tokensAreKnown)
-        return res.json(json)
+        return res.json(body)
       } catch (e) {
         swapRequestStatistics.requestRejected(
           ResponseRejectReason.UNKNOWN_EXCEPTION,
@@ -184,7 +183,7 @@ function handler(
         try {
           data.error = e instanceof Error ? e.stack?.split('\n') : `${e}`
           if (parsedData) data.params = parsedData
-          if (bestRoute) data.route = makeAPI02Object(bestRoute, undefined, '')
+          if (route) data.route = createSwapBody(route)
         } catch (_e) {}
         Logger.error(CHAIN_ID, 'Routing crashed', safeSerialize(data), false)
 

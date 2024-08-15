@@ -2,10 +2,15 @@
 
 import { ChefType } from '@sushiswap/client'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo } from 'react'
 import { erc20Abi, masterChefV2Abi, miniChefV2Abi } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
+import {
+  MASTERCHEF_ADDRESS,
+  MASTERCHEF_V2_ADDRESS,
+  MINICHEF_ADDRESS,
+} from 'sushi/config'
 import { SUSHI, SUSHI_ADDRESS } from 'sushi/currency'
 import { Amount, Token } from 'sushi/currency'
 import { Address, UserRejectedRequestError, encodeFunctionData } from 'viem'
@@ -18,12 +23,7 @@ import {
 } from 'wagmi'
 import { SendTransactionErrorType } from 'wagmi/actions'
 import { SendTransactionData } from 'wagmi/query'
-import {
-  MASTERCHEF_ADDRESS,
-  MASTERCHEF_V2_ADDRESS,
-  MINICHEF_ADDRESS,
-  useMasterChefContract,
-} from './use-master-chef-contract'
+import { useMasterChefContract } from './use-master-chef-contract'
 
 interface UseMasterChefReturn
   extends Pick<ReturnType<typeof useReadContracts>, 'isLoading' | 'isError'> {
@@ -200,7 +200,7 @@ export const useMasterChef: UseMasterChef = ({
     contracts,
     query: {
       enabled: contracts.length > 0 && enabled,
-      keepPreviousData: true,
+      placeholderData: keepPreviousData,
       select: (results) => results.map((r) => r.result),
     },
   })
@@ -209,7 +209,7 @@ export const useMasterChef: UseMasterChef = ({
 
   useEffect(() => {
     if (watch && blockNumber) {
-      queryClient.invalidateQueries(queryKey, {}, { cancelRefetch: false })
+      queryClient.invalidateQueries({ queryKey }, { cancelRefetch: false })
     }
   }, [blockNumber, watch, queryClient, queryKey])
 
@@ -332,7 +332,7 @@ export const useMasterChef: UseMasterChef = ({
 
   const {
     sendTransaction: _harvest,
-    isLoading: isWritePending,
+    isPending: isWritePending,
     isError: isWriteError,
   } = useSendTransaction({
     mutation: {

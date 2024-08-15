@@ -87,15 +87,16 @@ const _ApproveERC20WithPermit: FC<ApproveERC20WithPermitProps> = ({
 
   const { address } = useAccount()
 
-  useBytecode({
+  const { data: bytecode } = useBytecode({
     address,
     query: {
-      onSuccess: (bytecode) => {
-        bytecode !== null && setApprovalType(ApprovalType.Approve)
-      },
       refetchInterval: Infinity,
     },
   })
+
+  useEffect(() => {
+    if (bytecode) setApprovalType(ApprovalType.Approve)
+  }, [bytecode])
 
   const { setSignature } = useApprovedActions(tag)
 

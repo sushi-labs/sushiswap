@@ -1,5 +1,5 @@
 import { ChainId } from '../../../chain/index.js'
-import { SushiSwapV3ChainId } from '../../sushiswap-v3.js'
+import type { SushiSwapV3ChainId } from '../../sushiswap-v3.js'
 import {
   CORE_HOST,
   DECENTRALIZED_HOST_BY_DEPLOYMENT_ID,
@@ -29,13 +29,13 @@ export const SUSHISWAP_V3_SUBGRAPH_URL: Record<SushiSwapV3ChainId, string> = {
   [ChainId.LINEA]: `${DECENTRALIZED_HOST_BY_DEPLOYMENT_ID}/QmNZ9ePvxGRDHAEhb7cLsb3AvtCCPJ3qAwh1CDvDn39RMa`,
   [ChainId.SCROLL]: `${DECENTRALIZED_HOST_BY_DEPLOYMENT_ID}/QmR6VP1qoF8nxhtMaGEg9VMmkaTDFqyeM8nJWkakP6nHes`,
   [ChainId.ARBITRUM_NOVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-arbitrum-nova/gn`,
-  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v3/v3-thundercore`,
-  [ChainId.CORE]: `${CORE_HOST}/sushi-v3/v3-core-fix`,
+  [ChainId.THUNDERCORE]: `${THUNDERCORE_HOST}/sushi-v3/v3-thundercore-2`,
+  [ChainId.CORE]: `${CORE_HOST}/sushi-v3/v3-core-tvl-fix`,
   [ChainId.KAVA]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-kava/gn`,
-  [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushiswap/v3-metis`,
+  [ChainId.METIS]: `${METIS_0XGRAPH_HOST}/sushi-v3/v3-metis/v0.0.1/gn`,
   [ChainId.BTTC]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushi-v3/v3-bttc/gn`,
   [ChainId.FILECOIN]: `${FILECOIN_HOST}/sushiswap/v3-filecoin`,
-  [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/v3-haqq`,
+  [ChainId.HAQQ]: `${HAQQ_HOST}/sushi/v3-haqq-2`,
   [ChainId.ZETACHAIN]: `${SUSHI_GOLDSKY_HOST}/v3-zetachain/1.0.0/gn`,
   [ChainId.BLAST]: `${SUSHI_DEDICATED_GOLDSKY_HOST}/sushiswap/v3-blast/gn`,
   [ChainId.SKALE_EUROPA]: `${SKALE_HOST}/sushi/v3-skale-europa`,

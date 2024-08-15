@@ -31,7 +31,7 @@ export function useWatchByInterval({
   useEffect(() => {
     const int = setInterval(() => {
       keys.forEach((key) => {
-        queryClient.invalidateQueries(key)
+        queryClient.invalidateQueries({ queryKey: key })
       })
     }, interval)
 

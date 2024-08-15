@@ -2,15 +2,51 @@
   "status": "Success",
   "tokens": [
     {
-      "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
       "symbol": "USDC",
-      "name": "USD Coin (PoS)",
+      "name": "USD Coin",
       "decimals": 6
     },
     {
       "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
       "symbol": "WMATIC",
       "name": "Wrapped Matic",
+      "decimals": 18
+    },
+    {
+      "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "symbol": "USDC",
+      "name": "USD Coin (PoS)",
+      "decimals": 6
+    },
+    {
+      "address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      "symbol": "USDT",
+      "name": "(PoS) Tether USD",
+      "decimals": 6
+    },
+    {
+      "address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      "symbol": "WBTC",
+      "name": "(PoS) Wrapped BTC",
+      "decimals": 8
+    },
+    {
+      "address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "symbol": "DAI",
+      "name": "(PoS) Dai Stablecoin",
+      "decimals": 18
+    },
+    {
+      "address": "0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89",
+      "symbol": "FRAX",
+      "name": "Frax",
+      "decimals": 18
+    },
+    {
+      "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "symbol": "WETH",
+      "name": "Wrapped Ether",
       "decimals": 18
     },
     {
@@ -21,24 +57,177 @@
     }
   ],
   "tokenFrom": 0,
-  "tokenTo": 2,
-  "primaryPrice": 1117186443275.135,
-  "swapPrice": 1112058845263.2546,
-  "priceImpact": 0.004589742421908016,
-  "amountIn": "89475609",
-  "assumedAmountOut": "99502142423766499328",
-  "gasSpent": 160000,
+  "tokenTo": 8,
+  "swapPrice": 2530082355848.2344,
+  "priceImpact": 0.000979278072000711,
+  "amountIn": "1000000",
+  "assumedAmountOut": "2530082355848236032",
+  "gasSpent": 1450000,
   "route": [
+    {
+      "poolAddress": "0x96c7FC08D8CDACdB95a8613b19fffe4D54307263",
+      "poolType": "Classic",
+      "poolName": "SushiSwapV2 0.3%",
+      "poolFee": 0.003,
+      "tokenFrom": 0,
+      "tokenTo": 1,
+      "share": 0.03,
+      "assumedAmountIn": "29999",
+      "assumedAmountOut": "76139156023664560"
+    },
+    {
+      "poolAddress": "0x00604DCc4463D6c39D957BC25C7b6683dDD2Ba90",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.01%",
+      "poolFee": 0.0001,
+      "tokenFrom": 0,
+      "tokenTo": 2,
+      "share": 0.95,
+      "assumedAmountIn": "950004",
+      "assumedAmountOut": "949945"
+    },
+    {
+      "poolAddress": "0x498d5cdcC5667b21210b49442Bf2D8792527194d",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.01%",
+      "poolFee": 0.0001,
+      "tokenFrom": 0,
+      "tokenTo": 3,
+      "share": 0.02,
+      "assumedAmountIn": "19997",
+      "assumedAmountOut": "19988"
+    },
+    {
+      "poolAddress": "0x5212438DfBA63c6C4021AF24C96E6BAE7d6fba71",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.01%",
+      "poolFee": 0.0001,
+      "tokenFrom": 3,
+      "tokenTo": 1,
+      "share": 1,
+      "assumedAmountIn": "19988",
+      "assumedAmountOut": "50730835238416672"
+    },
     {
       "poolAddress": "0x21988C9CFD08db3b5793c2C6782271dC94749251",
       "poolType": "Concentrated",
       "poolName": "SushiSwapV3 0.05%",
       "poolFee": 0.0005,
-      "tokenFrom": 0,
+      "tokenFrom": 2,
+      "tokenTo": 1,
+      "share": 0.8736842093327086,
+      "assumedAmountIn": "829953",
+      "assumedAmountOut": "2099409626577039104"
+    },
+    {
+      "poolAddress": "0x135A796632229424B10237f8f127898dbf6F793f",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.05%",
+      "poolFee": 0.0005,
+      "tokenFrom": 2,
+      "tokenTo": 4,
+      "share": 0.010526315954472305,
+      "assumedAmountIn": "9998",
+      "assumedAmountOut": "18"
+    },
+    {
+      "poolAddress": "0x4646E8A5e1d14E2DA01577822D6346c7883C6890",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.01%",
+      "poolFee": 0.0001,
+      "tokenFrom": 2,
+      "tokenTo": 5,
+      "share": 0.11578947471281899,
+      "assumedAmountIn": "109994",
+      "assumedAmountOut": "109981406034812832"
+    },
+    {
+      "poolAddress": "0x8531c4e29491fE6e5e87AF6054FC20FcCf0b4290",
+      "poolType": "Classic",
+      "poolName": "SushiSwapV2 0.3%",
+      "poolFee": 0.003,
+      "tokenFrom": 4,
+      "tokenTo": 1,
+      "share": 0.8354280246266744,
+      "assumedAmountIn": "15",
+      "assumedAmountOut": "21160170833119080"
+    },
+    {
+      "poolAddress": "0x7a1d5E67c3a273274766E241363E3E98e721E456",
+      "poolType": "Classic",
+      "poolName": "SushiSwapV2 0.3%",
+      "poolFee": 0.003,
+      "tokenFrom": 4,
+      "tokenTo": 5,
+      "share": 0.16457197537332557,
+      "assumedAmountIn": "3",
+      "assumedAmountOut": "1701942943600490"
+    },
+    {
+      "poolAddress": "0x16d4618717B0A3C7D7Cc261110e61A02E7FB0b73",
+      "poolType": "Classic",
+      "poolName": "SushiSwapV2 0.3%",
+      "poolFee": 0.003,
+      "tokenFrom": 5,
+      "tokenTo": 6,
+      "share": 0.08494474705336469,
+      "assumedAmountIn": "9487162642295370",
+      "assumedAmountOut": "9641366168050864"
+    },
+    {
+      "poolAddress": "0x333923EC5bb34bf25468d77C641771e86Ee7bfCf",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.01%",
+      "poolFee": 0.0001,
+      "tokenFrom": 5,
+      "tokenTo": 7,
+      "share": 0.9150552529466353,
+      "assumedAmountIn": "102196186336117952",
+      "assumedAmountOut": "42656905353976"
+    },
+    {
+      "poolAddress": "0xf1A12338D39Fc085D8631E1A745B5116BC9b2A32",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.05%",
+      "poolFee": 0.0005,
+      "tokenFrom": 7,
+      "tokenTo": 1,
+      "share": 0.3333135183356411,
+      "assumedAmountIn": "14218317548672",
+      "assumedAmountOut": "86160838774417536"
+    },
+    {
+      "poolAddress": "0x89A54409f8ce05b91317C0e2a985E8d30de93341",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 0.3%",
+      "poolFee": 0.003,
+      "tokenFrom": 7,
+      "tokenTo": 1,
+      "share": 0.5000182900938339,
+      "assumedAmountIn": "21329266312753",
+      "assumedAmountOut": "129318380207947136"
+    },
+    {
+      "poolAddress": "0x0287Ef25D7bD3fFEc6a3A31F9496C797ACd78225",
+      "poolType": "Concentrated",
+      "poolName": "SushiSwapV3 1%",
+      "poolFee": 0.01,
+      "tokenFrom": 7,
+      "tokenTo": 1,
+      "share": 0.16666819157052493,
+      "assumedAmountIn": "7109321492551",
+      "assumedAmountOut": "43098463620553504"
+    },
+    {
+      "poolAddress": "0xE7C714DD3dD70eE04EB69A856655765454E77c88",
+      "poolType": "Classic",
+      "poolName": "SushiSwapV2 0.3%",
+      "poolFee": 0.003,
+      "tokenFrom": 6,
       "tokenTo": 1,
       "share": 1,
-      "assumedAmountIn": "89475609",
-      "assumedAmountOut": "99502142423766482944"
+      "assumedAmountIn": "9641366168050864",
+      "assumedAmountOut": "24064884573077836"
     },
     {
       "poolAddress": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
@@ -46,19 +235,16 @@
       "poolName": "Wrap",
       "poolFee": 0,
       "tokenFrom": 1,
-      "tokenTo": 2,
+      "tokenTo": 8,
       "share": 1,
-      "assumedAmountIn": "99502142423766482944",
-      "assumedAmountOut": "99502142423766482944"
+      "assumedAmountIn": "2530082355848236032",
+      "assumedAmountOut": "2530082355848236032"
     }
   ],
-  "routeProcessorAddr": "0x46B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e",
-  "routeProcessorArgs": {
-    "tokenIn": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-    "amountIn": "89475609",
-    "tokenOut": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-    "amountOutMin": "99004631711647666831",
-    "to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-    "routeCode": "0x022791Bca1f2de4661ED88A30C99A7a9449Aa8417401ffff0121988C9CFD08db3b5793c2C6782271dC947492510046B3fDF7b5CDe91Ac049936bF0bDb12c5d22202e010d500B1d8E8eF31E21C99d1Db9A6444d3ADf127001ffff0200f39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+  "routeProcessorAddr": "0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55",
+  "tx": {
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "to": "0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55",
+    "data": "0x2646478b0000000000000000000000003c499c542cef5e3811e1192ce70d8cc03d5c335900000000000000000000000000000000000000000000000000000000000f4240000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000022efb703e4741723000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000368023c499c542cEF5E3811e1192ce70d8cC03d5c33590307ae0096c7FC08D8CDACdB95a8613b19fffe4D5430726300f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55000bb8fab80100604DCc4463D6c39D957BC25C7b6683dDD2Ba9000f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55ffff01498d5cdcC5667b21210b49442Bf2D8792527194d01f2614A233c7C3e7f08b1F887Ba133a13f1eb2c5501c2132D05D31c914a87C6611C10748AEb04B58e8F01ffff015212438DfBA63c6C4021AF24C96E6BAE7d6fba7100f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55012791Bca1f2de4661ED88A30C99A7a9449Aa8417403dfa90121988C9CFD08db3b5793c2C6782271dC9474925100f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55155501135A796632229424B10237f8f127898dbf6F793f00f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55ffff014646E8A5e1d14E2DA01577822D6346c7883C689001f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55011BFD67037B42Cf73acF2047067bd4F2C47D9BfD602d5de008531c4e29491fE6e5e87AF6054FC20FcCf0b429000f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55000bb8ffff007a1d5E67c3a273274766E241363E3E98e721E45601f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55000bb8018f3Cf7ad23Cd3CaDbD9735AFf958023239c6A0630215bf0016d4618717B0A3C7D7Cc261110e61A02E7FB0b7300E7C714DD3dD70eE04EB69A856655765454E77c88000bb8ffff01333923EC5bb34bf25468d77C641771e86Ee7bfCf00f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55017ceB23fD6bC0adD59E62ac25578270cFf1b9f61903555401f1A12338D39Fc085D8631E1A745B5116BC9b2A3200f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55c0000189A54409f8ce05b91317C0e2a985E8d30de9334100f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55ffff010287Ef25D7bD3fFEc6a3A31F9496C797ACd7822500f2614A233c7C3e7f08b1F887Ba133a13f1eb2c550445c32fA6DF82ead1e2EF74d17b76547EDdFaFF8900E7C714DD3dD70eE04EB69A856655765454E77c8800f2614A233c7C3e7f08b1F887Ba133a13f1eb2c55000bb8010d500B1d8E8eF31E21C99d1Db9A6444d3ADf127001ffff0200f39Fd6e51aad88F6F4ce6aB8827279cffFb92266000000000000000000000000000000000000000000000000"
   }
 }

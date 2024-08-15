@@ -1,7 +1,7 @@
-import { BigintIsh } from '../../../math/index.js'
+import type { BigintIsh } from '../../../math/index.js'
 import { TickList } from '../utils/tickList.js'
-import { Tick, TickConstructorArgs } from './Tick.js'
-import { TickDataProvider } from './TickDataProvider.js'
+import { Tick, type TickConstructorArgs } from './Tick.js'
+import type { TickDataProvider } from './TickDataProvider.js'
 
 /**
  * A data provider for ticks that is backed by an in-memory array of ticks.

@@ -1,5 +1,4 @@
 import { ChainId } from '../chain/index.js'
-import { Token } from './Token.js'
 import {
   AAVE_ADDRESS,
   AGEUR_ADDRESS,
@@ -47,6 +46,7 @@ import {
   STG_ADDRESS,
   SUSHI_ADDRESS,
   SWISE_ADDRESS,
+  SolvBTC_ADDRESS,
   TEL_ADDRESS,
   TRIBE_ADDRESS,
   TUSD_ADDRESS,
@@ -74,6 +74,7 @@ import {
   renBTC_ADDRESS,
   sETH2_ADDRESS,
 } from './token-addresses.js'
+import { Token } from './token.js'
 
 function addressMapToTokenMap(
   {
@@ -1214,3 +1215,12 @@ export const SKL = new Token({
   symbol: 'SKL',
   decimals: 18,
 })
+
+export const SolvBTC = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'Solv BTC',
+    name: 'SolvBTC',
+  },
+  SolvBTC_ADDRESS,
+) as Record<keyof typeof SolvBTC_ADDRESS, Token>

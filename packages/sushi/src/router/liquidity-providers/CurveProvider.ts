@@ -1,8 +1,8 @@
 import {
-  AbiStateMutability,
-  Address,
-  ContractFunctionParameters,
-  PublicClient,
+  type AbiStateMutability,
+  type Address,
+  type ContractFunctionParameters,
+  type PublicClient,
   getContract,
   parseAbi,
 } from 'viem'
@@ -16,8 +16,8 @@ import {
   WBTC,
   renBTC,
 } from '../../currency/index.js'
-import { Native, Token, Type } from '../../currency/index.js'
-import { RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
+import { Native, Token, type Type } from '../../currency/index.js'
+import { type RToken, createCurvePoolsForMultipool } from '../../tines/index.js'
 import { CurvePoolType, curvePoolABI } from '../curve-sdk.js'
 import { getCurrencyCombinations } from '../get-currency-combinations.js'
 import { CurvePoolCode } from '../pool-codes/CurvePool.js'

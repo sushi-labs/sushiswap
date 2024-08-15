@@ -1,9 +1,9 @@
 import seedrandom from 'seedrandom'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 import {
   CurvePool,
-  RToken,
+  type RToken,
   closeValues,
   getBigInt,
 } from '../../src/tines/index.js'

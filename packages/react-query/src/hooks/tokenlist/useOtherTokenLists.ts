@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
@@ -31,9 +31,9 @@ export const useOtherTokenListsQuery = ({
         .map((el) => otherTokenListValidator.parse(el))
         .flatMap((el) => el.tokens)
     },
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     staleTime: 900000, // 15 mins
-    cacheTime: 86400000, // 24hs
+    gcTime: 86400000, // 24hs
     enabled: Boolean(chainId),
     refetchOnWindowFocus: true,
   })

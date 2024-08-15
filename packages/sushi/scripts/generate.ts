@@ -1,4 +1,3 @@
-/// <reference lib="dom" />
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'

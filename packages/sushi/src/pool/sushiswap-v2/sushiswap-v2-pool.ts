@@ -3,14 +3,14 @@ import { chainName } from '../../chain/index.js'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
   isSushiSwapV2ChainId,
-} from '../../config/index.js'
+} from '../../config/sushiswap-v2.js'
 import { Amount, Price, Token } from '../../currency/index.js'
 import {
   InsufficientInputAmountError,
   InsufficientReservesError,
 } from '../../dex/index.js'
 import {
-  BigintIsh,
+  type BigintIsh,
   FIVE,
   ONE,
   ZERO,
@@ -19,7 +19,7 @@ import {
   sqrt,
 } from '../../math/index.js'
 import { computeSushiSwapV2PoolAddress } from './compute-sushiswap-v2-pool-address.js'
-import { SerializedSushiSwapV2Pool, sushiSwapV2PoolSchema } from './zod.js'
+import { type SerializedSushiSwapV2Pool, sushiSwapV2PoolSchema } from './zod.js'
 
 export class SushiSwapV2Pool {
   public readonly liquidityToken: Token

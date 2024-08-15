@@ -24,7 +24,7 @@ export const CrossChainBanner: FC = () => {
   const isMounted = useIsMounted()
   const pathname = usePathname()
   const [, startTransition] = useTransition()
-  const [checked, setChecked] = useState(pathname === '/swap/cross-chain')
+  const [checked, setChecked] = useState(pathname === '/cross-chain-swap')
   const { push } = useRouter()
 
   const handleChange = useCallback(
@@ -32,7 +32,7 @@ export const CrossChainBanner: FC = () => {
       setChecked(checked)
       setTimeout(() => {
         startTransition(() => {
-          if (checked) push('/swap/cross-chain')
+          if (checked) push('/cross-chain-swap')
           else push('/swap')
         })
       }, 100)

@@ -13,12 +13,13 @@ import { BobaNaked } from './BobaNaked'
 import { BttcNaked } from './BttcNaked'
 import { CeloNaked } from './CeloNaked'
 import { CoreNaked } from './CoreNaked'
+import { CronosNaked } from './CronosNaked'
 import { EthereumNaked } from './EthereumNaked'
 import { FantomNaked } from './FantomNaked'
 import { FilecoinNaked } from './FilecoinNaked'
 import { FuseNaked } from './FuseNaked'
 import { GnosisNaked } from './GnosisNaked'
-import { HaqqNakked } from './HaqqNaked'
+import { HaqqNaked } from './HaqqNaked'
 import { HarmonyNaked } from './HarmonyNaked'
 import { HecoNaked } from './HecoNaked'
 import { KavaNaked } from './KavaNaked'
@@ -50,6 +51,7 @@ export * from './BobaNaked'
 export * from './BttcNaked'
 export * from './CeloNaked'
 export * from './CoreNaked'
+export * from './CronosNaked'
 export * from './EthereumNaked'
 export * from './FantomNaked'
 export * from './FilecoinNaked'
@@ -101,7 +103,7 @@ export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
   [ChainId.THUNDERCORE]: ThunderCoreNaked,
-  [ChainId.HAQQ]: HaqqNakked,
+  [ChainId.HAQQ]: HaqqNaked,
   [ChainId.CORE]: CoreNaked,
   [ChainId.ZKSYNC_ERA]: EthereumNaked,
   [ChainId.LINEA]: LineaNaked,
@@ -112,4 +114,5 @@ export const NETWORK_NAKED_ICON: Partial<Record<ChainId, IconComponent>> = {
   [ChainId.BLAST]: BlastNaked,
   [ChainId.SKALE_EUROPA]: SkaleNaked,
   [ChainId.ROOTSTOCK]: RootstockNaked,
+  [ChainId.CRONOS]: CronosNaked,
 }

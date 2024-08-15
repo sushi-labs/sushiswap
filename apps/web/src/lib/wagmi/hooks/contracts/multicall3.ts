@@ -1,7 +1,7 @@
 'use client'
 
-import { publicWagmiConfig } from '@sushiswap/wagmi-config'
 import { Address } from 'viem'
+import { publicWagmiConfig } from '../../config/public'
 
 export type Multicall3ChainId =
   (typeof publicWagmiConfig)['chains'][number]['id']
