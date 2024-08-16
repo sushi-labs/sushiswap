@@ -224,14 +224,17 @@ export class CurveWhitelistExtractor extends IExtractor {
     poolType: CurvePoolType,
   ) {
     try {
-      const tokens =
-        typeof tokenAddress[0] === 'string'
-          ? ((await Promise.all(
-              tokenAddress.map((a) =>
-                this.tokenManager.findToken(a as Address),
-              ),
-            )) as RToken[])
-          : (tokenAddress as RToken[])
+      let tokens: RToken[] = []
+      if (typeof tokenAddress[0] === 'string') {
+        tokens = (await Promise.all(
+          tokenAddress.map((a) => this.tokenManager.findToken(a as Address)),
+        )) as RToken[]
+      } else {
+        tokens = tokenAddress as RToken[]
+        ;(tokenAddress as Token[]).forEach((t) =>
+          this.tokenManager.addToken(t, true),
+        ) // make tokenManager know about these tokens
+      }
       const balancesCalls = tokenAddress.map((_, i) => ({
         address: poolAddress,
         abi: curvePoolABI[poolType],
