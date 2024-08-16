@@ -191,48 +191,58 @@ export function deserializePoolsBinary(
   }
 
   const poolsNum = stream.uint24()
-  const pools: PoolCode[] = new Array(poolsNum)
-  for (let i = 0; i < poolsNum; ) {
+  const pools: PoolCode[] = []
+  for (let i = 0; i < poolsNum; ++i) {
     const liquidityProvider = stream.str16()
     const poolType = stream.uint8() as PoolTypeIndex
     switch (poolType) {
       case PoolTypeIndex.Classic:
-        pools[i++] = new ConstantProductPoolCode(
-          readCPRPool(stream, tokensArray),
-          liquidityProvider as LiquidityProviders,
-          liquidityProvider,
+        pools.push(
+          new ConstantProductPoolCode(
+            readCPRPool(stream, tokensArray),
+            liquidityProvider as LiquidityProviders,
+            liquidityProvider,
+          ),
         )
         break
       case PoolTypeIndex.Concentrated:
-        pools[i++] = new UniV3PoolCode(
-          readUniV3Pool(stream, tokensArray),
-          liquidityProvider as LiquidityProviders,
-          liquidityProvider,
+        pools.push(
+          new UniV3PoolCode(
+            readUniV3Pool(stream, tokensArray),
+            liquidityProvider as LiquidityProviders,
+            liquidityProvider,
+          ),
         )
         break
       case PoolTypeIndex.Bridge:
-        pools[i++] = new NativeWrapBridgePoolCode(
-          readNativeWrapRPool(stream, tokensArray),
-          liquidityProvider as LiquidityProviders,
+        pools.push(
+          new NativeWrapBridgePoolCode(
+            readNativeWrapRPool(stream, tokensArray),
+            liquidityProvider as LiquidityProviders,
+          ),
         )
         break
       case PoolTypeIndex.Curve: {
         const curvePoolType = curvePoolTypeFromNum(stream.uint8())
         readCurveRPools(stream, tokensArray).forEach((p) => {
-          pools[i++] = new CurvePoolCode(
-            p,
-            liquidityProvider as LiquidityProviders,
-            liquidityProvider,
-            curvePoolType,
+          pools.push(
+            new CurvePoolCode(
+              p,
+              liquidityProvider as LiquidityProviders,
+              liquidityProvider,
+              curvePoolType,
+            ),
           )
         })
         break
       }
       case PoolTypeIndex.V4:
-        pools[i++] = new UniV4PoolCode(
-          readUniV4Pool(stream, tokensArray),
-          liquidityProvider as LiquidityProviders,
-          liquidityProvider,
+        pools.push(
+          new UniV4PoolCode(
+            readUniV4Pool(stream, tokensArray),
+            liquidityProvider as LiquidityProviders,
+            liquidityProvider,
+          ),
         )
         break
       case PoolTypeIndex.CurvePoolCoreHaveBeenSerialized: // pools of one core are serialized only once
