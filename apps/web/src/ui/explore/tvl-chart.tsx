@@ -1,325 +1,192 @@
 'use client'
 
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  SkeletonBox,
-  SkeletonText,
-  Toggle,
-  classNames,
-} from '@sushiswap/ui'
-import format from 'date-fns/format'
-import { FC, useCallback, useMemo, useState } from 'react'
-import { formatUSD } from 'sushi/format'
-import tailwindConfig from 'tailwind.config.js'
-import resolveConfig from 'tailwindcss/resolveConfig'
-
 import { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
-import ReactEchartsCore from 'echarts-for-react'
+import { CardContent } from '@sushiswap/ui'
+import format from 'date-fns/format'
+import ReactEcharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
-import 'echarts/lib/chart/bar'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/visualMap'
 import echarts from 'echarts/lib/echarts'
-import 'echarts/lib/visual/seriesColor'
-
-const tailwind = resolveConfig(tailwindConfig)
-
-enum TvlChartPeriod {
-  Day = 0,
-  Week = 1,
-  Month = 2,
-  Year = 3,
-  All = 4,
-}
-
-const chartTimespans: Record<TvlChartPeriod, number> = {
-  [TvlChartPeriod.Day]: 86400 * 1000,
-  [TvlChartPeriod.Week]: 604800 * 1000,
-  [TvlChartPeriod.Month]: 2629746 * 1000,
-  [TvlChartPeriod.Year]: 31556952 * 1000,
-  [TvlChartPeriod.All]: Infinity,
-}
+import { useTheme } from 'next-themes'
+import { FC, useCallback, useMemo } from 'react'
+import { formatUSD } from 'sushi/format'
 
 export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
-  const [chartPeriod, setChartPeriod] = useState<TvlChartPeriod>(
-    TvlChartPeriod.Month,
-  )
+  const { resolvedTheme } = useTheme()
 
-  const [xData, yData] = useMemo(() => {
-    const v2Data = data.v2.reverse()
-    const v3Data = data.v3.reverse()
-
-    const _xData = (v2Data.length > v3Data.length ? v2Data : v3Data).map(
-      (data) => data.date,
+  const [v2, v3, combinedTVL, currentDate] = useMemo(() => {
+    const xData = (data.v2.length > data.v3.length ? data.v2 : data.v3).map(
+      (data) => data.date * 1000,
     )
 
-    const currentDate = Math.round(Date.now())
-    const predicates = _xData.map(
-      (x) => x * 1000 >= currentDate - chartTimespans[chartPeriod],
-    )
+    const v2 = xData
+      .map((xData, i) => [xData, data.v2[i]?.liquidityUSD ?? 0])
+      .reverse()
+    const v3 = xData
+      .map((xData, i) => [xData, data.v3[i]?.liquidityUSD ?? 0])
+      .reverse()
+    const combinedTVL = v2[v2.length - 1][1] + v3[v3.length - 1][1]
 
-    const yData = {
-      v2: Array(_xData.length - v2Data.length)
-        .fill(0)
-        .concat(v2Data.map((data) => data.liquidityUSD))
-        .filter((_, i) => predicates[i]),
-      v3: Array(_xData.length - v3Data.length)
-        .fill(0)
-        .concat(v3Data.map((data) => data.liquidityUSD))
-        .filter((_, i) => predicates[i]),
-    }
+    const currentDate = xData[0]
 
-    const xData = _xData.filter((_, i) => predicates[i])
+    return [v2, v3, combinedTVL, currentDate]
+  }, [data])
 
-    return [xData, yData]
-  }, [data, chartPeriod])
+  const onMouseOver = useCallback((params: { data: number[] }[]) => {
+    const tvlNode = document.getElementById('hoveredTVL')
+    const v2TVLNode = document.getElementById('hoveredV2TVL')
+    const v3TVLNode = document.getElementById('hoveredV3TVL')
+    const dateNode = document.getElementById('hoveredTVLDate')
 
-  // Transient update for performance
-  const onMouseOver = useCallback(
-    ({ name, value }: { name: number; value: number }) => {
-      const valueNodes = document.getElementsByClassName('hoveredItemValueTVL')
-      const nameNodes = document.getElementsByClassName('hoveredItemNameTVL')
-
-      valueNodes[0].innerHTML = formatUSD(value)
-      nameNodes[0].innerHTML = format(
-        new Date(name * 1000),
-        'dd MMM yyyy HH:mm',
+    if (tvlNode)
+      tvlNode.innerHTML = formatUSD(params[0].data[1] + params[1].data[1])
+    if (dateNode)
+      dateNode.innerHTML = format(
+        new Date(params[0].data[0]),
+        'dd MMM yyyy HH:mm aa',
       )
-    },
-    [],
-  )
+    if (v2TVLNode)
+      v2TVLNode.innerHTML = params[0].data[1]
+        ? formatUSD(params[0].data[1])
+        : 'v2'
+    if (v3TVLNode)
+      v3TVLNode.innerHTML = params[1].data[1]
+        ? formatUSD(params[1].data[1])
+        : 'v3'
+  }, [])
+
+  const onMouseLeave = useCallback(() => {
+    const tvlNode = document.getElementById('hoveredTVL')
+    const v2TVLNode = document.getElementById('hoveredV2TVL')
+    const v3TVLNode = document.getElementById('hoveredV3TVL')
+    const dateNode = document.getElementById('hoveredTVLDate')
+
+    if (tvlNode) tvlNode.innerHTML = formatUSD(combinedTVL)
+    if (dateNode)
+      dateNode.innerHTML = format(new Date(currentDate), 'dd MMM yyyy HH:mm aa')
+    if (v2TVLNode) v2TVLNode.innerHTML = 'v2'
+    if (v3TVLNode) v3TVLNode.innerHTML = 'v3'
+  }, [combinedTVL, currentDate])
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
       tooltip: {
         trigger: 'axis',
-        extraCssText: 'z-index: 1000',
-        responsive: true,
-        // @ts-ignore
-        backgroundColor: tailwind.theme.colors.slate['700'],
-        textStyle: {
-          // @ts-ignore
-          color: tailwind.theme.colors.slate['50'],
-          fontSize: 12,
-          fontWeight: 600,
-        },
-        axisPointer: {
-          lineStyle: {
-            type: 'dashed',
-          },
-        },
-        formatter: (params: any) => {
-          onMouseOver({
-            name: params[0].name,
-            value: params[0].value + params[1].value,
-          })
-
-          const date = new Date(Number(params[0].name * 1000))
-          return `<div class="flex flex-col gap-0.5">
-            <span class="text-sm text-slate-50 font-bold">${formatUSD(
-              params[0].value,
-            )}</span>
-            <span class="text-sm text-slate-50 font-bold">${formatUSD(
-              params[1].value,
-            )}</span>
-            <span class="text-xs text-slate-400 font-medium">${
-              date instanceof Date && !Number.isNaN(date?.getTime())
-                ? format(date, 'dd MMM yyyy HH:mm')
-                : ''
-            }</span>
-          </div>`
-        },
-        borderWidth: 0,
+        formatter: onMouseOver,
       },
-      toolbox: {
-        show: false,
-      },
+      color: ['#3B7EF6', '#A755DD'],
       grid: {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
-      },
-      dataZoom: {
-        show: false,
-        start: 0,
-        end: 100,
-      },
-      visualMap: {
-        show: false,
-        // @ts-ignore
-        color: [tailwind.theme.colors.blue['500']],
       },
       xAxis: [
         {
-          show: false,
-          type: 'category',
+          type: 'time',
           boundaryGap: true,
-          data: xData,
+          splitLine: {
+            show: false,
+          },
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            showMaxLabel: false,
+            showMinLabel: false,
+            color: resolvedTheme === 'dark' ? 'white' : 'black',
+            formatter: (value: number) => {
+              const date = new Date(value)
+              return `${date.toLocaleString('en-US', {
+                month: 'short',
+              })} ${date.getDate()}\n${date.getFullYear()}`
+            },
+          },
         },
       ],
       yAxis: [
         {
           show: false,
-          type: 'value',
-          scale: true,
-          name: 'Volume',
-          max: 'dataMax',
-          min: 'dataMin',
-        },
-        {
-          show: false,
-          type: 'value',
-          scale: true,
-          name: 'Volume',
-          max: 'dataMax',
-          min: 'dataMin',
         },
       ],
       series: [
         {
-          name: 'Volume',
+          name: 'v2',
           type: 'line',
-          xAxisIndex: 0,
-          yAxisIndex: 0,
-          itemStyle: {
-            color: 'blue',
-            normal: {
-              barBorderRadius: 2,
-            },
+          smooth: true,
+          lineStyle: {
+            width: 0,
           },
+          showSymbol: false,
           areaStyle: {
-            // @ts-ignore
-            color: tailwind.theme.colors.blue['500'],
+            opacity: 0.8,
+            color: '#3B7EF6',
           },
-          animationEasing: 'elasticOut',
-          animationDelayUpdate: (idx: number) => idx * 2,
-          data: yData.v2,
+          data: v2,
         },
         {
-          name: 'Volume',
+          name: 'v3',
           type: 'line',
-          xAxisIndex: 0,
-          yAxisIndex: 1,
-          itemStyle: {
-            color: 'red',
-            normal: {
-              barBorderRadius: 2,
-            },
+          smooth: true,
+          lineStyle: {
+            width: 0,
           },
+          showSymbol: false,
           areaStyle: {
-            // @ts-ignore
-            color: tailwind.theme.colors.red['500'],
+            opacity: 0.8,
+            color: '#A755DD',
           },
-          animationEasing: 'elasticOut',
-          animationDelayUpdate: (idx: number) => idx * 2,
-          data: yData.v3,
+          data: v3,
         },
       ],
     }),
-    [onMouseOver, xData, yData],
+    [onMouseOver, v2, v3, resolvedTheme],
   )
 
   return (
     <div>
-      <CardHeader>
-        <CardTitle className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          Total value locked (TVL){' '}
-          <div className="flex gap-4">
-            <Toggle
-              size="xs"
-              pressed={chartPeriod === TvlChartPeriod.Week}
-              onClick={() => setChartPeriod(TvlChartPeriod.Week)}
-              className={classNames(
-                'font-semibold text-sm',
-                chartPeriod === TvlChartPeriod.Week
-                  ? 'text-blue'
-                  : 'text-slate-500',
-              )}
-            >
-              1W
-            </Toggle>
-            <Toggle
-              size="xs"
-              pressed={chartPeriod === TvlChartPeriod.Month}
-              onClick={() => setChartPeriod(TvlChartPeriod.Month)}
-              className={classNames(
-                'font-semibold text-sm',
-                chartPeriod === TvlChartPeriod.Month
-                  ? 'text-blue'
-                  : 'text-slate-500',
-              )}
-            >
-              1M
-            </Toggle>
-            <Toggle
-              size="xs"
-              pressed={chartPeriod === TvlChartPeriod.Year}
-              onClick={() => setChartPeriod(TvlChartPeriod.Year)}
-              className={classNames(
-                'font-semibold text-sm',
-                chartPeriod === TvlChartPeriod.Year
-                  ? 'text-blue'
-                  : 'text-slate-500',
-              )}
-            >
-              1Y
-            </Toggle>
-            <Toggle
-              size="xs"
-              pressed={chartPeriod === TvlChartPeriod.All}
-              onClick={() => setChartPeriod(TvlChartPeriod.All)}
-              className={classNames(
-                'font-semibold text-sm',
-                chartPeriod === TvlChartPeriod.All
-                  ? 'text-blue'
-                  : 'text-slate-500',
-              )}
-            >
-              ALL
-            </Toggle>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardHeader className="border-t border-accent">
-        <CardTitle>
-          <span className="hoveredItemValueTVL">
-            {formatUSD(
-              yData.v2[yData.v2.length - 1] + yData.v3[yData.v3.length - 1],
-            )}
-          </span>
-        </CardTitle>
-        <CardDescription>
-          {xData?.length ? (
-            <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemNameTVL">
-              {format(
-                new Date(xData[xData.length - 1] * 1000),
-                'dd MMM yyyy HH:mm',
-              )}
+      <div className="flex flex-col gap-3 p-6">
+        <span className="text-muted-foreground text-sm">Sushi TVL</span>
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-3">
+            <div className="text-3xl font-medium">
+              <span id="hoveredTVL">{formatUSD(combinedTVL)}</span>
             </div>
-          ) : (
-            <SkeletonText fontSize="sm" />
-          )}
-        </CardDescription>
-      </CardHeader>
+            <div>
+              <div
+                id="hoveredTVLDate"
+                className="text-sm text-gray-500 dark:text-slate-500"
+              >
+                {format(new Date(currentDate), 'MMM dd yyyy HH:mm aa')}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex justify-end items-center gap-1">
+              <span id="hoveredV2TVL" className="text-sm">
+                v2
+              </span>
+              <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
+            </div>
+            <div className="flex justify-end items-center gap-1">
+              <span id="hoveredV3TVL" className="text-sm">
+                v3
+              </span>
+              <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
+            </div>
+          </div>
+        </div>
+      </div>
       <CardContent>
-        {xData ? (
-          <ReactEchartsCore
-            option={DEFAULT_OPTION}
-            echarts={echarts}
-            style={{ height: 400 }}
-          />
-        ) : (
-          <SkeletonBox
-            className={classNames(
-              'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
-            )}
-          />
-        )}
+        <ReactEcharts
+          option={DEFAULT_OPTION}
+          echarts={echarts}
+          style={{ height: 400 }}
+          onEvents={{
+            globalout: onMouseLeave,
+          }}
+        />
       </CardContent>
     </div>
   )

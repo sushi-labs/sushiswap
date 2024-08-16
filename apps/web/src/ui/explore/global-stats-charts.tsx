@@ -1,5 +1,4 @@
 import { getAnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
-import { Card } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { FC } from 'react'
 import { ChainId } from 'sushi/chain'
@@ -22,12 +21,10 @@ export const GlobalStatsCharts: FC<{ chainId: ChainId }> = async ({
 
   return (
     <div className="flex flex-col gap-2">
-      <Card>
-        <div className="grid grid-cols-1 lg:grid-cols-2 lg:divide-x divide-accent divide-y lg:divide-y-0">
-          <TVLChart data={dayBuckets} />
-          <VolumeChart data={dayBuckets} />
-        </div>
-      </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2">
+        <TVLChart data={dayBuckets} />
+        <VolumeChart data={dayBuckets} />
+      </div>
     </div>
   )
 }
