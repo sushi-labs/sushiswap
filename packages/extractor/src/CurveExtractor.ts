@@ -335,8 +335,11 @@ export class CurveExtractor {
         )) as RToken[]
       } else {
         tokens = tokenAddress as RToken[]
-        ;(tokenAddress as Token[]).forEach((t) =>
-          this.tokenManager.addToken(t, true),
+        tokens.forEach((t) =>
+          this.tokenManager.addToken(
+            new Token({ ...t, chainId: t.chainId as number }),
+            true,
+          ),
         ) // make tokenManager know about these tokens
       }
       const balancesCalls = tokenAddress.map((_, i) => ({
