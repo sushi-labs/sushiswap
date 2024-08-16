@@ -47,7 +47,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /(\w+)(?=\/explore|\/pool|\/positions)/,
+    /([\w-]+)(?=\/explore|\/pool|\/positions)/,
   )
   if (networkNameMatch?.length) {
     const { chainId, networkName } = getChainInfo(networkNameMatch[0])
