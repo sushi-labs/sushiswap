@@ -31,6 +31,14 @@ module.exports.defaultConfig = {
   etherscan: {
     customChains: [
       {
+        network: 'mantle',
+        chainId: 5000,
+        urls: {
+          apiURL: 'https://explorer.mantle.xyz/api',
+          browserURL: 'https://explorer.mantle.xyz',
+        },
+      },
+      {
         network: 'kava',
         chainId: 2222,
         urls: {
@@ -277,6 +285,7 @@ module.exports.defaultConfig = {
       'boba-bnb': 'api-key',
       rootstock: 'api-key',
       'skale-europa': 'api-key',
+      mantle: 'api-key',
     },
   },
   tenderly: {
@@ -724,6 +733,13 @@ module.exports.defaultConfig = {
       url: 'https://mainnet.skalenodes.com/v1/elated-tan-skat',
       accounts,
       chainId: 2046399126,
+      live: true,
+      saveDeployments: true,
+    },
+    mantle: {
+      url: 'https://mantle.drpc.org',
+      accounts,
+      chainId: 5000,
       live: true,
       saveDeployments: true,
     },

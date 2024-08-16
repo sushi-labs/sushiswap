@@ -379,6 +379,7 @@ export const ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS = [
   ChainId.SKALE_EUROPA,
   ChainId.ROOTSTOCK,
   ChainId.ZKSYNC_ERA,
+  ChainId.MANTLE,
 ] as const
 export type RouteProcessor5ChainId =
   (typeof ROUTE_PROCESSOR_5_SUPPORTED_CHAIN_IDS)[number]
@@ -420,6 +421,7 @@ export const ROUTE_PROCESSOR_5_ADDRESS: Record<
   [ChainId.SKALE_EUROPA]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
   [ChainId.ROOTSTOCK]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
   [ChainId.ZKSYNC_ERA]: '0x9e55e562D40FD01f38cD4057e632352fE0758F16',
+  [ChainId.MANTLE]: '0xf2614A233c7C3e7f08b1F887Ba133a13f1eb2c55',
 } as const
 export const isRouteProcessor5ChainId = (
   chainId: ChainId,

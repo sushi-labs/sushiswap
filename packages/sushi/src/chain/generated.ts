@@ -553,11 +553,42 @@ export default [
     shortName: 'tftm',
   },
   {
+    chainId: 5000,
+    explorers: [
+      {
+        name: 'mantlescan',
+        url: 'https://mantlescan.xyz',
+        standard: 'EIP3091',
+      },
+      {
+        name: 'Mantle Explorer',
+        url: 'https://explorer.mantle.xyz',
+        standard: 'EIP3091',
+      },
+    ],
+    nativeCurrency: {
+      name: 'Mantle',
+      symbol: 'MNT',
+      decimals: 18,
+    },
+    name: 'Mantle',
+    shortName: 'mantle',
+    parent: {
+      type: 'L2',
+      chain: 'eip155-1',
+      bridges: [
+        {
+          url: 'https://bridge.mantle.xyz',
+        },
+      ],
+    },
+  },
+  {
     chainId: 7000,
     explorers: [
       {
         name: 'ZetaChain Mainnet Explorer',
-        url: 'https://explorer.mainnet.zetachain.com',
+        url: 'https://explorer.zetachain.com',
         standard: 'none',
       },
     ],
