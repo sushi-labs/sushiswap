@@ -258,14 +258,10 @@ export class ExtractorClient {
     try {
       if (DEBUG_PRINT)
         console.log(
-          `${this.extractorServer}/pool-codes-between/${
-            this.chainId
-          }/${tokenAddr(t0)}/${tokenAddr(t1)}`,
+          `${this.extractorServer}/pool-codes-between/${this.chainId}/${addr0}/${addr1}`,
         )
       const resp = await fetch(
-        `${this.extractorServer}/pool-codes-between/${this.chainId}/${tokenAddr(
-          t0,
-        )}/${tokenAddr(t1)}`,
+        `${this.extractorServer}/pool-codes-between/${this.chainId}/${addr0}/${addr1}`,
       )
       this.fetchPoolsBetweenRequests.delete(id)
 
@@ -285,14 +281,17 @@ export class ExtractorClient {
         if (pl === undefined) this.poolCodesMap.set(id, [p])
         else pl.push(p)
       })
+
+      const addr0PairSet = this.requestedPairs.get(addr0)
+      if (addr0PairSet) addr0PairSet.add(addr1)
+      else this.requestedPairs.set(addr0, new Set([addr1]))
+
       if (DEBUG_PRINT)
         console.log(`Fetch pool codes between: ${pools.length} pools`)
       return pools
     } catch (e) {
       console.error(
-        `ExtractorClient: fetchPoolsBetween failed for ${tokenAddr(
-          t0,
-        )}/${tokenAddr(t1)}`,
+        `ExtractorClient: fetchPoolsBetween failed for ${addr0}/${addr1}`,
         e,
       )
       this.fetchPoolsBetweenRequests.delete(id)
