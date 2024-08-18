@@ -18,10 +18,10 @@ spec:
           image: extractor
           ports:
             - containerPort: 80
-          # resources:
-          #   requests:
-          #     cpu: 1250m
-          #     memory: 8Gi
+          resources:
+            requests:
+              cpu: 1250m
+              memory: 8Gi
           livenessProbe:
             failureThreshold: 3
             httpGet:
