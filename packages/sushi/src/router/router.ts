@@ -9,8 +9,6 @@ import { routeProcessor4Abi } from '../abi/routeProcessor4Abi.js'
 import { routeProcessor5Abi } from '../abi/routeProcessor5Abi.js'
 import { routeProcessorAbi } from '../abi/routeProcessorAbi.js'
 import { ChainId } from '../chain/index.js'
-import { ADDITIONAL_BASES } from '../config/additional-bases.js'
-import { BASES_TO_CHECK_TRADES_AGAINST } from '../config/bases-to-check-trades-against.js'
 import { LSDS } from '../config/lsds.js'
 import { STABLES } from '../config/stables.js'
 import { Native, WNATIVE, WNATIVE_ADDRESS } from '../currency/index.js'
@@ -29,6 +27,7 @@ import {
 } from '../tines/index.js'
 import { LiquidityProviders } from './liquidity-providers/index.js'
 import { PoolCode } from './pool-codes/index.js'
+import { baseAgainstAllTokens } from './routingBases.js'
 import {
   type PermitData,
   RouterLiquiditySource,
@@ -261,11 +260,6 @@ export class Router {
 
     if (poolFilter) pools = pools.filter(poolFilter)
 
-    const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
-    const additionalTrusted = Object.values(
-      ADDITIONAL_BASES[chainId] ?? [],
-    ).flat()
-
     const route = findMultiRouteExactIn(
       TokenToRToken(fromToken),
       TokenToRToken(toToken),
@@ -274,7 +268,7 @@ export class Router {
       networks,
       gasPrice,
       undefined,
-      baseTrusted.concat(additionalTrusted) as RToken[],
+      baseAgainstAllTokens(chainId, true) as RToken[],
     )
 
     return {

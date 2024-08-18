@@ -3,13 +3,14 @@ import fs from 'node:fs'
 import { Logger } from '@sushiswap/extractor'
 import { IncrementalPricer } from 'sushi'
 import { ChainId } from 'sushi/chain'
-import {
-  ADDITIONAL_BASES,
-  BASES_TO_CHECK_TRADES_AGAINST,
-  STABLES,
-} from 'sushi/config'
+import { STABLES } from 'sushi/config'
 import { Native, Token, Type } from 'sushi/currency'
-import { PoolCode, deserializePoolsBinary } from 'sushi/router'
+import {
+  PoolCode,
+  baseAgainstAllTokens,
+  baseAgainstTokensForPair,
+  deserializePoolsBinary,
+} from 'sushi/router'
 //import { deserializePoolCodesJSON } from 'sushi/serializer'
 import { Address } from 'viem'
 
@@ -55,15 +56,11 @@ export class ExtractorClient {
     this.extractorServer = extractorServer
     this.poolUpdateInterval = poolUpdateInterval
     this.requestedPairsUpdateInterval = requestedPairsUpdateInterval
-    const baseTrusted = BASES_TO_CHECK_TRADES_AGAINST[chainId] ?? []
-    const additionalTrusted = Object.values(
-      ADDITIONAL_BASES[chainId] ?? [],
-    ).flat()
     const stables = STABLES[chainId as keyof typeof STABLES].slice() ?? []
     this.pricer = new IncrementalPricer(
       stables,
       stables.map((_) => 1),
-      baseTrusted.concat(additionalTrusted),
+      baseAgainstAllTokens(chainId, true),
       1000,
     )
   }
@@ -240,7 +237,7 @@ export class ExtractorClient {
   // fetch pools for the pair if we didn't do it previously
   async fetchPoolsBetween(t0: Type, t1: Type) {
     if (this.isShapshotMode()) return
-    if (t0.isNative || t1.isNative) return // natives locally is processed wrapped
+    //if (t0.isNative || t1.isNative) return // natives locally is processed wrapped
     const id = tokenPairId(t0, t1)
     if (this.poolCodesMap.get(id) !== undefined) return
     if (this.fetchPoolsBetweenRequests.has(id)) return // already fetched
@@ -386,19 +383,10 @@ export class ExtractorClient {
   }
 
   _getTokenListSorted(t0: Type, t1: Type): Type[] {
-    const common = BASES_TO_CHECK_TRADES_AGAINST[this.chainId] ?? []
-    const additionalA =
-      ADDITIONAL_BASES[this.chainId]?.[t0.wrapped.address] ?? []
-    const additionalB =
-      ADDITIONAL_BASES[this.chainId]?.[t1.wrapped.address] ?? []
-
     const tokensSorted = [
-      Native.onChain(this.chainId),
       t0.wrapped,
       t1.wrapped,
-      ...common,
-      ...additionalA,
-      ...additionalB,
+      ...baseAgainstTokensForPair(t0.wrapped, t1.wrapped, true),
     ].sort((t0, t1) => (tokenId(t0) < tokenId(t1) ? -1 : 1))
     const tokensUnique: Type[] = []
     tokensSorted.forEach((t) => {
