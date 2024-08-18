@@ -19,7 +19,7 @@ export function nativeToken(chainId: ChainId): Token {
 let _baseTokensWithNativeChain: number | undefined = undefined
 let _baseTokensWithNative: Token[] | undefined
 export function baseTokens(chainId: ChainId, withNative = false): Token[] {
-  if (withNative) return BASES_TO_CHECK_TRADES_AGAINST[chainId]
+  if (!withNative) return BASES_TO_CHECK_TRADES_AGAINST[chainId]
   if (_baseTokensWithNativeChain === chainId)
     return _baseTokensWithNative as Token[]
   _baseTokensWithNativeChain = chainId
