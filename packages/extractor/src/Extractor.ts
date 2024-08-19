@@ -32,6 +32,7 @@ export type ExtractorConfig = {
   tickHelperContractAlgebra: Address
   tickHelperContractV4?: Address
   cacheDir: string
+  cacheReadOnly?: boolean
   logType?: LogFilterType
   logDepth: number
   logging?: boolean
@@ -74,6 +75,7 @@ export class Extractor {
   /// @param logDepth the depth of logs to keep in memory for reorgs
   /// @param logging to write logs in console or not
   constructor(args: ExtractorConfig) {
+    const cacheReadOnly = args.cacheReadOnly ?? false
     this.config = args
     this.cacheDir = args.cacheDir
     this.logging = Boolean(args.logging)
@@ -87,6 +89,7 @@ export class Extractor {
     )
     this.tokenManager = new TokenManager(
       this.multiCallAggregator,
+      cacheReadOnly,
       args.cacheDir,
       `tokens-${this.multiCallAggregator.chainId}`,
     )
@@ -107,6 +110,7 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
           this.tokenManager,
+          cacheReadOnly,
         ),
       )
     if (args.factoriesV3 && args.factoriesV3.length > 0)
@@ -120,6 +124,7 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
           this.tokenManager,
+          cacheReadOnly,
         ),
       )
     if (args.factoriesAlgebra && args.factoriesAlgebra.length > 0)
@@ -133,6 +138,7 @@ export class Extractor {
           args.logging !== undefined ? args.logging : false,
           this.multiCallAggregator,
           this.tokenManager,
+          cacheReadOnly,
         ),
       )
     if (args.curveConfig)
@@ -155,6 +161,7 @@ export class Extractor {
           logFilter: this.logFilter,
           cacheDir: args.cacheDir,
           tickHelperContract: args.tickHelperContractV4,
+          cacheReadOnly,
         }),
       )
   }

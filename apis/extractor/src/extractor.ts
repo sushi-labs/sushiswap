@@ -4,7 +4,12 @@ import { baseTokens } from 'sushi'
 // import { TokenList } from 'sushi/token-list'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config.js'
 
-const extractor = new Extractor(EXTRACTOR_CONFIG[CHAIN_ID])
+export const cacheReadOnly = process.env['CACHE_READ_ONLY'] === 'true'
+
+const extractor = new Extractor({
+  ...EXTRACTOR_CONFIG[CHAIN_ID],
+  cacheReadOnly,
+})
 
 // const start = Date.now()
 // fetch('https://token-list.sushi.com')

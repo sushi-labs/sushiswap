@@ -109,6 +109,7 @@ export class UniV4Extractor extends IExtractor {
     tickHelperContract,
     cacheDir,
     logging,
+    cacheReadOnly,
   }: {
     config: UniV4Config[]
     client?: PublicClient
@@ -118,6 +119,7 @@ export class UniV4Extractor extends IExtractor {
     tickHelperContract: Address
     cacheDir: string
     logging?: boolean
+    cacheReadOnly?: boolean
   }) {
     super()
     this.config = config
@@ -134,6 +136,7 @@ export class UniV4Extractor extends IExtractor {
       tokenManager ||
       new TokenManager(
         this.multiCallAggregator,
+        cacheReadOnly ?? false,
         cacheDir as string,
         `uniV4Tokens-${this.multiCallAggregator.chainId}`,
       )
@@ -141,7 +144,9 @@ export class UniV4Extractor extends IExtractor {
     this.tickHelperContract = tickHelperContract
     this.taskCounter = new Counter(() => {})
     this.logging = logging ?? true
+    this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.poolPermanentCache = new PermanentCache(
+      cacheReadOnly ?? false,
       cacheDir,
       `uniV4Pools-${this.multiCallAggregator.chainId}`,
     )

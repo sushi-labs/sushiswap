@@ -95,6 +95,7 @@ export class UniV3Extractor extends IExtractor {
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
+    cacheReadOnly = false,
   ) {
     super()
     this.multiCallAggregator =
@@ -103,6 +104,7 @@ export class UniV3Extractor extends IExtractor {
       tokenManager ||
       new TokenManager(
         this.multiCallAggregator,
+        cacheReadOnly,
         cacheDir,
         `uniV3Tokens-${this.multiCallAggregator.chainId}`,
       )
@@ -110,10 +112,12 @@ export class UniV3Extractor extends IExtractor {
     this.factories = factories
     factories.forEach((f) => this.factoryMap.set(f.address.toLowerCase(), f))
     this.poolPermanentCache = new PermanentCache(
+      cacheReadOnly,
       cacheDir,
       `uniV3Pools-${this.multiCallAggregator.chainId}`,
     )
     this.logging = logging
+    this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })

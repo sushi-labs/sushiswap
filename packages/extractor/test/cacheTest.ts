@@ -10,7 +10,7 @@ interface TestExampleRecord {
 }
 
 async function testCache() {
-  const cache = new PermanentCache<TestExampleRecord>('test-load-cache')
+  const cache = new PermanentCache<TestExampleRecord>(true, 'test-load-cache')
   const records = await cache.getAllRecords()
   if (records.length === 0) console.log('Cache was created')
   else console.log(records.length, 'records were read from cache')

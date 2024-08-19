@@ -29,11 +29,13 @@ class Mutex {
 export class PermanentCache<CacheRecord> {
   filePath?: string
   file?: FileHandle
+  readOnly: boolean
   lock: Mutex = new Mutex()
 
   // type RecordType = Record<Fields, unknown>
 
-  constructor(...paths: string[]) {
+  constructor(cacheReadOnly: boolean, ...paths: string[]) {
+    this.readOnly = cacheReadOnly
     if (paths.length > 0 && paths[0] !== '') {
       const filePath = path.resolve(...paths)
       this.filePath = filePath
@@ -84,7 +86,7 @@ export class PermanentCache<CacheRecord> {
   }
 
   async add(record: CacheRecord) {
-    if (this.filePath === undefined) return
+    if (this.filePath === undefined || this.readOnly) return
     await this.lock.takeTurn()
     try {
       if (this.file === undefined) {
