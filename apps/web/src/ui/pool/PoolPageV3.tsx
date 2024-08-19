@@ -54,7 +54,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
     <Container maxWidth="5xl" className="px-2 sm:px-4">
       <div className="flex flex-col gap-6">
         {pool.hasEnabledSteerVault && (
-          <Message variant="info" size="sm">
+          <Message variant="info" size="sm" className="mb-4">
             {`This pool has been activated to leverage our smart pool feature. Smart pools are designed to optimize the
         allocation of liquidity within customized price ranges, thereby improving trading efficiency. They achieve
         this by enhancing liquidity depth around the current price, which results in higher fee earnings for liquidity
@@ -70,9 +70,6 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
             </LinkInternal>
           </Message>
         )}
-        <div className="py-4">
-          <Separator />
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-[auto_400px] gap-6">
           <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
           <div className="flex flex-col gap-6">

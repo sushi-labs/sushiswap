@@ -3,7 +3,7 @@ import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import notFound from '../../../not-found'
 
 export const metadata = {
@@ -37,7 +37,11 @@ export default async function Layout({
     <>
       <Container maxWidth="5xl" className="pt-10 px-4">
         <PoolHeader
-          backUrl={referer?.includes('/pool?') ? referer?.toString() : '/pool'}
+          backUrl={
+            referer?.includes('/pool?')
+              ? referer?.toString()
+              : `/${ChainKey[chainId]}/pool`
+          }
           address={address}
           pool={pool}
           apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
