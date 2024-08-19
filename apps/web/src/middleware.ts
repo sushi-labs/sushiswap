@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { chainShortNameToChainId, getChainInfo } from 'sushi/chain'
+import { getChainInfo } from 'sushi/chain'
 
 export const config = {
   matcher: [
@@ -7,6 +7,8 @@ export const config = {
     '/:chainId/explore/:path*',
     '/:chainId/pool/:path*',
     '/:chainId/positions/:path*',
+    '/:chainId/migrate',
+    '/:chainId/rewards',
   ],
 }
 
@@ -47,7 +49,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/explore|\/pool|\/positions)/,
+    /([\w-]+)(?=\/explore|\/pool|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
     const { chainId, networkName } = getChainInfo(networkNameMatch[0])

@@ -50,10 +50,10 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     type: NavigationElementType.Single,
   },
   {
-    title: 'Positions',
+    title: 'Pools',
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/positions`,
+    }/pool`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },

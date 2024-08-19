@@ -1,5 +1,7 @@
+'use client'
+
 import { GiftIcon } from '@heroicons/react-v1/outline'
-import { LinkExternal, LinkInternal, typographyVariants } from '@sushiswap/ui'
+import { Container, LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Chip } from '@sushiswap/ui'
 import {
@@ -10,40 +12,89 @@ import {
   DropdownMenuTrigger,
 } from '@sushiswap/ui'
 import { SelectIcon } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import React, { FC } from 'react'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { useSearchParams } from 'next/navigation'
+import { PathnameButton } from 'src/ui/pathname-button'
+import { PoolsFiltersProvider } from 'src/ui/pool'
+import { ChainId, ChainKey, isChainId } from 'sushi/chain'
 import {
   SushiSwapV3ChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/config'
+import { Hero } from './hero'
 
-export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export default function TabsLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: { chainId: string }
+}) {
+  const chainId = +params.chainId as ChainId
+  const searchParams = useSearchParams()
+
+  if (!isChainId(chainId)) {
+    throw new Error('Must be a valid chain id')
+  }
+
   return (
-    <section className="flex flex-col justify-between gap-12 lg:flex-row lg:items-start mb-12">
-      <div className="flex flex-col items-center flex-grow gap-6 lg:items-start">
-        <div className="flex flex-col">
-          <h1 className={typographyVariants({ variant: 'h1' })}>
-            Put your funds to work <br />
-            by providing liquidity.
-          </h1>
-          <p
-            className={typographyVariants({
-              variant: 'lead',
-              className: 'max-w-[500px]',
-            })}
+    <>
+      <Container maxWidth="7xl" className="px-4 pt-16 pb-4">
+        <Hero />
+      </Container>
+      <Container
+        maxWidth="7xl"
+        className="px-4 flex justify-between flex-wrap-reverse gap-4 pb-4"
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <LinkInternal
+            shallow={true}
+            scroll={false}
+            href={`/${ChainKey[chainId]}/pool?${searchParams.toString()}`}
           >
-            When you add liquidity to a pool, you can receive a share of its
-            trading volume and potentially snag extra rewards when there are
-            incentives involved!
-          </p>
+            <PathnameButton
+              id="my-positions"
+              pathname={`/${ChainKey[chainId]}/pool`}
+              asChild
+              size="sm"
+            >
+              My Positions
+            </PathnameButton>
+          </LinkInternal>
+          <LinkInternal
+            shallow={true}
+            scroll={false}
+            href={`/${ChainKey[chainId]}/rewards?${searchParams.toString()}`}
+          >
+            <PathnameButton
+              id="my-rewards"
+              pathname={`/${ChainKey[chainId]}/rewards`}
+              asChild
+              size="sm"
+            >
+              My Rewards
+            </PathnameButton>
+          </LinkInternal>
+          <LinkInternal
+            shallow={true}
+            scroll={false}
+            href={`/${ChainKey[chainId]}/migrate?${searchParams.toString()}`}
+          >
+            <PathnameButton
+              id="migrate"
+              pathname={`/${ChainKey[chainId]}/migrate`}
+              asChild
+              size="sm"
+            >
+              Migrate
+            </PathnameButton>
+          </LinkInternal>
         </div>
         <div className="flex flex-col sm:flex-row w-full sm:w-[unset] gap-4">
           <div className="flex items-center w-full">
             <Button
               asChild
-              size="lg"
+              size="sm"
               className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none"
             >
               <LinkInternal
@@ -60,7 +111,7 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button asChild size="lg" className="rounded-l-none">
+                <Button asChild size="sm" className="rounded-l-none">
                   <SelectIcon />
                 </Button>
               </DropdownMenuTrigger>
@@ -113,37 +164,22 @@ export const Hero: FC<{ chainId: ChainId }> = ({ chainId }) => {
             asChild
             icon={GiftIcon}
             variant="secondary"
-            size="lg"
+            size="sm"
           >
-            <LinkInternal href={`/${ChainKey[chainId]}/pool/incentivize`}>
+            <LinkInternal
+              className="text-sm"
+              href={`/${ChainKey[chainId]}/pool/incentivize`}
+            >
               I want to incentivize a pool
             </LinkInternal>
           </Button>
         </div>
-      </div>
-      <div className="flex flex-col items-center gap-4 lg:items-end">
-        <div className="flex flex-col items-center gap-1 lg:items-end">
-          <span className="font-semibold lg:text-sm">
-            Looking for a partnership with Sushi?
-          </span>
-          <Button
-            className="flex-1 w-full sm:flex-0 sm:w-[unset]"
-            variant="link"
-            size="sm"
-            asChild
-          >
-            <LinkInternal href="/partner">Apply here</LinkInternal>
-          </Button>
+      </Container>
+      <section className="flex flex-col flex-1">
+        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
+          <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
         </div>
-        <div className="flex flex-col items-center gap-1 lg:items-end">
-          <span className="font-semibold lg:text-sm">Need Help?</span>
-          <Button icon={DiscordIcon} variant="link" size="sm" asChild>
-            <LinkExternal href="https://sushi.com/discord">
-              Join our discord
-            </LinkExternal>
-          </Button>
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }

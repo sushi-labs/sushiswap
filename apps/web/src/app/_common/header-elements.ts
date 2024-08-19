@@ -17,8 +17,15 @@ export const EXPLORE_NAVIGATION_LINKS = (
     title: 'Pools',
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/explore/pools`,
+    }/pool`,
     description: 'Earn fees by providing liquidity.',
+  },
+  {
+    title: 'Explore',
+    href: `/${
+      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
+    }/explore/pools`,
+    description: 'Explore top pools.',
   },
   {
     title: 'Stake',
@@ -64,10 +71,10 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     type: NavigationElementType.Single,
   },
   {
-    title: 'Positions',
+    title: 'Pools',
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/positions`,
+    }/pool`,
     show: 'desktop',
     type: NavigationElementType.Single,
   },
