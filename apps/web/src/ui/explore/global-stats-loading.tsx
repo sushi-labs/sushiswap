@@ -9,7 +9,7 @@ export const GlobalStatsLoading = () => {
           <SkeletonText fontSize="3xl" className="!w-36" />
           <SkeletonText fontSize="sm" className="!w-40" />
         </div>
-        <SkeletonChart type="line" height={400} />
+        <SkeletonChart type="area" height={400} />
       </div>
       <div>
         <div className="flex flex-col gap-3">
