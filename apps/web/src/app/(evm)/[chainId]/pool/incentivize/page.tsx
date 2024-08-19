@@ -50,11 +50,11 @@ import {
 import { SelectFeeConcentratedWidget } from 'src/ui/pool/SelectFeeConcentratedWidget'
 import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
-import { Chain, ChainKey } from 'sushi/chain'
+import { Chain, ChainId, ChainKey } from 'sushi/chain'
 import {
   ANGLE_SUPPORTED_CHAIN_IDS,
-  AngleEnabledChainId,
   SushiSwapV3ChainId,
+  isAngleEnabledChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
@@ -65,9 +65,10 @@ import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 const APPROVE_TAG = 'approve-incentivize'
 
 export default function Page({ params }: { params: { chainId: string } }) {
+  const chainId = +params.chainId as ChainId
   return (
     <ConcentratedLiquidityURLStateProvider
-      chainId={+params.chainId as AngleEnabledChainId}
+      chainId={isAngleEnabledChainId(chainId) ? chainId : ChainId.ETHEREUM}
       supportedNetworks={ANGLE_SUPPORTED_CHAIN_IDS}
     >
       <ConcentratedLiquidityProvider>
