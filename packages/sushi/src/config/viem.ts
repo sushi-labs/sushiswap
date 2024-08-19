@@ -47,6 +47,7 @@ import {
   linea,
   localhost,
   mainnet,
+  mantle,
   metis,
   // metisGoerli,
   moonbeam,
@@ -612,6 +613,9 @@ export const publicTransports = {
       ? `https://rpc.mainnet.rootstock.io/${rskId}`
       : 'https://public-node.rsk.co',
   ),
+  [ChainId.MANTLE]: http(
+    `https://lb.drpc.org/ogrpc?network=mantle&dkey=${drpcId}`,
+  ),
   /* Testnets */ // TODO: add testnet transports
   [ChainId.ARBITRUM_TESTNET]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   [ChainId.AVALANCHE_TESTNET]: http(
@@ -662,6 +666,7 @@ export const publicChains = [
   skaleEuropa,
   filecoin,
   zetachain,
+  mantle,
 
   /* Testnets */
   arbitrumSepolia,
@@ -824,6 +829,10 @@ export const publicClientConfig = {
   [ChainId.ROOTSTOCK]: {
     chain: rootstock,
     transport: publicTransports[ChainId.ROOTSTOCK],
+  },
+  [ChainId.MANTLE]: {
+    chain: mantle,
+    transport: publicTransports[ChainId.MANTLE],
   },
 
   /* Testnets */

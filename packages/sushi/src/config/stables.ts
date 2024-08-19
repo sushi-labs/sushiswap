@@ -215,6 +215,7 @@ export const STABLES = {
     USDP[ChainId.SKALE_EUROPA],
   ],
   [ChainId.ROOTSTOCK]: [USDT[ChainId.ROOTSTOCK], DAI[ChainId.ROOTSTOCK]],
+  [ChainId.MANTLE]: [USDC[ChainId.MANTLE]],
   [ChainId.PALM]: [],
   [ChainId.ZKSYNC_ERA]: [],
   // TESTNETS

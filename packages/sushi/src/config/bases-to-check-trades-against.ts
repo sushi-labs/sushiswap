@@ -492,4 +492,9 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     WETH9[ChainId.ROOTSTOCK],
     USDT[ChainId.ROOTSTOCK],
   ],
+  [ChainId.MANTLE]: [
+    WNATIVE[ChainId.MANTLE],
+    WETH9[ChainId.MANTLE],
+    USDC[ChainId.MANTLE],
+  ],
 }

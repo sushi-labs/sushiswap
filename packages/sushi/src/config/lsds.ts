@@ -395,6 +395,7 @@ export const LSDS = {
   [ChainId.ROOTSTOCK]: [],
   [ChainId.PALM]: [],
   [ChainId.ZKSYNC_ERA]: [],
+  [ChainId.MANTLE]: [],
   // TESTNETS
   [ChainId.POLYGON_TESTNET]: [],
   [ChainId.FANTOM_TESTNET]: [],

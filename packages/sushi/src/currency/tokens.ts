@@ -716,6 +716,13 @@ export const WNATIVE = {
     decimals: 0,
   }),
   [ChainId.ROOTSTOCK]: WBTC[ChainId.ROOTSTOCK],
+  [ChainId.MANTLE]: new Token({
+    chainId: ChainId.MANTLE,
+    address: WNATIVE_ADDRESS[ChainId.MANTLE],
+    decimals: 18,
+    symbol: 'WMNT',
+    name: 'Wrapped MNT',
+  }),
 } as const
 
 export const SUSHI = addressMapToTokenMap(
