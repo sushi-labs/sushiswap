@@ -1,9 +1,9 @@
 import {
   ChainId,
   ChainKey,
+  NetworkNameKey,
   isChainId,
   isNetworkNameKey,
-  NetworkNameKey,
 } from './constants.js'
 import raw from './generated.js'
 

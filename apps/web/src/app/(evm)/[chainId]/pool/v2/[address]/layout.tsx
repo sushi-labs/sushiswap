@@ -3,8 +3,8 @@ import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 import { PoolHeader } from 'src/ui/pool/PoolHeader'
-import notFound from '../../../not-found'
 import { ChainKey, isChainId } from 'sushi'
+import notFound from '../../../not-found'
 
 export const metadata = {
   title: 'Pool 💦',
