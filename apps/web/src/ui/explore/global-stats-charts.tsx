@@ -26,9 +26,9 @@ const _GlobalStatsCharts: FC<{ chainId: ChainId }> = async ({ chainId }) => {
     },
   )()
 
-  await new Promise((resolve) => setTimeout(resolve, 5000))
-
-  return (
+  return !dayBuckets.v2.length && !dayBuckets.v3.length ? (
+    <GlobalStatsLoading />
+  ) : (
     <div className="flex flex-col gap-2">
       <div className="grid grid-cols-1 sm:grid-cols-2">
         <TVLChart data={dayBuckets} />
