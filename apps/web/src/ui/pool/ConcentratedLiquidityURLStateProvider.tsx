@@ -2,10 +2,10 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import React, { FC, ReactNode, createContext, useContext, useMemo } from 'react'
-import { SUPPORTED_CHAIN_IDS } from 'src/config'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { ChainId } from 'sushi/chain'
 import {
+  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
   SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
   currencyFromShortCurrencyName,
@@ -76,7 +76,11 @@ const getTokenFromUrl = (
 
 export const ConcentratedLiquidityURLStateProvider: FC<
   ConcentratedLiquidityURLStateProvider
-> = ({ children, chainId, supportedNetworks = SUPPORTED_CHAIN_IDS }) => {
+> = ({
+  children,
+  chainId,
+  supportedNetworks = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+}) => {
   const { push } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()!

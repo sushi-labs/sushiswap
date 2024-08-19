@@ -5,9 +5,10 @@ import { Providers } from './providers'
 
 export const metadata = {
   title: 'Cross-Chain Swap',
+  description: 'SushiSwap Cross-Chain Swap',
 }
 
-export default async function SwapCrossChainPage() {
+export default async function CrossChainSwapPage() {
   return (
     <Providers>
       <Container maxWidth="lg" className="px-4">

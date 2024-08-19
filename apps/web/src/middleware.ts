@@ -28,7 +28,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (pathname === '/swap/cross-chain' && search !== '') {
+  if (pathname === '/cross-chain-swap' && search !== '') {
     const url = req.nextUrl.clone()
     if (searchParams.has('chainId0') && searchParams.has('chainId1')) {
       const chainId0 = searchParams.get('chainId0')?.toLowerCase()

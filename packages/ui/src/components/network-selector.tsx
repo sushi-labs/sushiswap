@@ -53,6 +53,7 @@ export interface NetworkSelectorProps<T extends number = ChainId> {
 }
 
 const NEW_CHAINS: number[] = [
+  ChainId.CRONOS,
   ChainId.SKALE_EUROPA,
   ChainId.ROOTSTOCK,
 ] satisfies ChainId[]

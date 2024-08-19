@@ -4,10 +4,10 @@ import React, { Dispatch, FC, Fragment, SetStateAction } from 'react'
 
 import { RadioGroup } from '@headlessui/react'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
-import { useLocalStorage } from '@sushiswap/hooks'
+// import { useLocalStorage } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { IconButton } from '@sushiswap/ui'
-import { Switch } from '@sushiswap/ui'
+// import { Switch } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { ProfileView } from './ProfileView'
 
@@ -23,7 +23,7 @@ const map = {
 
 export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
   const { theme, setTheme } = useTheme()
-  const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
+  // const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
   return (
     <>
@@ -65,9 +65,9 @@ export const SettingsView: FC<SettingsViewProps> = ({ setView }) => {
               </div>
             </RadioGroup>
           </List.KeyValue>
-          <List.KeyValue flex title="Show testnets">
+          {/* <List.KeyValue flex title="Show testnets">
             <Switch checked={showTestnets} onCheckedChange={setShowTestnets} />
-          </List.KeyValue>
+          </List.KeyValue> */}
         </List.Control>
       </List>
     </>

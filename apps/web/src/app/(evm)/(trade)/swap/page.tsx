@@ -1,6 +1,5 @@
 import { Container } from '@sushiswap/ui'
 import { SimpleSwapWidget } from 'src/ui/swap/simple/simple-swap-widget'
-
 import { Providers } from './providers'
 
 export const metadata = {

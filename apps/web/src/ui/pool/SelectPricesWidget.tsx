@@ -543,93 +543,92 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             </div>
           )}
           <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <div className="flex justify-end lg:hidden">
-                {isLoading || !pool || !token0 || !token1 ? (
-                  <SkeletonText fontSize="xs" />
-                ) : (
-                  <div
-                    onClick={() => setInvert((prev) => !prev)}
-                    onKeyDown={() => setInvert((prev) => !prev)}
-                    role="button"
-                    className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+            <div className="flex lg:hidden">
+              {isLoading || !pool || !token0 || !token1 ? (
+                <SkeletonText fontSize="xs" />
+              ) : (
+                <div
+                  onClick={() => setInvert((prev) => !prev)}
+                  onKeyDown={() => setInvert((prev) => !prev)}
+                  role="button"
+                  className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+                >
+                  <SwitchHorizontalIcon width={16} height={16} />
+                  <div className="flex items-baseline gap-1.5">
+                    {invert ? token1.symbol : token0.symbol} ={' '}
+                    {pool
+                      .priceOf(invert ? token1.wrapped : token0.wrapped)
+                      ?.toSignificant(4)}{' '}
+                    {invert ? token0.symbol : token1.symbol}
+                    <span className="text-xs font-normal">
+                      ${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-4 justify-between">
+              <RadioGroup value={priceRange} className="gap-2 flex flex-wrap">
+                {PRICE_RANGE_OPTIONS.map(({ value, label, onClick }) => (
+                  <RadioGroup.Option value={value} key={value}>
+                    <Toggle
+                      disabled={!feeAmount}
+                      size="sm"
+                      variant="outline"
+                      className="whitespace-nowrap"
+                      onClick={
+                        priceRange === value
+                          ? () => {
+                              setPriceRangeSelector(undefined)
+                              resetMintState()
+                            }
+                          : () => {
+                              setPriceRangeSelector(value)
+                              onClick()
+                            }
+                      }
+                      pressed={priceRange === value}
+                    >
+                      {label}
+                    </Toggle>
+                  </RadioGroup.Option>
+                ))}
+              </RadioGroup>
+              {switchTokens ? (
+                <div className="flex justify-end gap-1">
+                  <Toggle
+                    variant="outline"
+                    onPressedChange={handleSwitchTokens}
+                    pressed={isSorted}
+                    size="sm"
                   >
-                    <SwitchHorizontalIcon width={16} height={16} />
-                    <div className="flex items-baseline gap-1.5">
-                      {invert ? token1.symbol : token0.symbol} ={' '}
-                      {pool
-                        .priceOf(invert ? token1.wrapped : token0.wrapped)
-                        ?.toSignificant(4)}{' '}
-                      {invert ? token0.symbol : token1.symbol}
-                      <span className="text-xs font-normal">
-                        ${fiatAmountsAsNumber[invert ? 1 : 0].toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-1 justify-between">
-                <RadioGroup value={priceRange} className="gap-2 flex flex-wrap">
-                  {PRICE_RANGE_OPTIONS.map(({ value, label, onClick }) => (
-                    <RadioGroup.Option value={value} key={value}>
-                      <Toggle
-                        disabled={!feeAmount}
-                        size="sm"
-                        variant="outline"
-                        onClick={
-                          priceRange === value
-                            ? () => {
-                                setPriceRangeSelector(undefined)
-                                resetMintState()
-                              }
-                            : () => {
-                                setPriceRangeSelector(value)
-                                onClick()
-                              }
-                        }
-                        pressed={priceRange === value}
-                      >
-                        {label}
-                      </Toggle>
-                    </RadioGroup.Option>
-                  ))}
-                </RadioGroup>
-                {switchTokens ? (
-                  <div className="flex justify-end gap-1">
-                    <Toggle
-                      variant="outline"
-                      onPressedChange={handleSwitchTokens}
-                      pressed={isSorted}
-                      size="sm"
-                    >
-                      {isSorted ? token0?.symbol : token1?.symbol}
-                    </Toggle>
-                    <Toggle
-                      variant="outline"
-                      onPressedChange={handleSwitchTokens}
-                      pressed={!isSorted}
-                      size="sm"
-                    >
-                      {isSorted ? token1?.symbol : token0?.symbol}
-                    </Toggle>
-                  </div>
-                ) : (
-                  <div />
-                )}
-              </div>
+                    {isSorted ? token0?.symbol : token1?.symbol}
+                  </Toggle>
+                  <Toggle
+                    variant="outline"
+                    onPressedChange={handleSwitchTokens}
+                    pressed={!isSorted}
+                    size="sm"
+                  >
+                    {isSorted ? token1?.symbol : token0?.symbol}
+                  </Toggle>
+                </div>
+              ) : (
+                <div />
+              )}
             </div>
             <Card>
               <CardHeader>
                 <CardDescription className="flex flex-col gap-3 !text-accent-foreground">
-                  <div className="flex justify-between">
-                    <div className="flex gap-1 items-center">
-                      {`Token Ratio (${token0?.symbol} : ${token1?.symbol})`}
-                      <Explainer>
+                  <div className="flex flex-wrap items-center justify-between gap-1">
+                    <span>
+                      <span className="mr-1">{`Token Ratio (${token0?.symbol} : ${token1?.symbol})`}</span>
+                      <Explainer iconProps={{ className: 'inline mb-0.5' }}>
                         This is the ratio of the cash values of the two
                         underlying tokens in this position.
                       </Explainer>
-                    </div>
-                    <div className="flex gap-1 items-center">
+                    </span>
+                    <div className="flex flex-grow gap-1 items-center justify-end">
                       {valueRatio
                         ? `${(valueRatio[0] * 100).toFixed(0)}% : ${(
                             valueRatio[1] * 100
@@ -685,10 +684,10 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       </TooltipProvider>
                     </div>
                   </div>
-                  <div className="flex justify-between">
-                    <div className="flex gap-1 items-center">
-                      Capital Efficiency
-                      <Explainer>
+                  <div className="flex flex-wrap items-center justify-between gap-1">
+                    <span>
+                      <span className="mr-1">Capital Efficiency</span>
+                      <Explainer iconProps={{ className: 'inline mb-0.5' }}>
                         For example, 2x capital efficiency means one unit of
                         liquidity in a concentrated liquidity position would
                         require a 2x capital in a full range position.
@@ -697,8 +696,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                         The narrower the price range, the higher the capital
                         efficiency.
                       </Explainer>
-                    </div>
-                    <div>
+                    </span>
+                    <div className="flex flex-grow items-center justify-end">
                       {capitalEfficiency &&
                       Number.isFinite(capitalEfficiency) &&
                       capitalEfficiency >= 0 ? (
@@ -708,12 +707,12 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-between ">
-                    <div className="flex gap-1 items-center">
+                  <div className="flex flex-wrap items-center justify-between gap-1">
+                    <span>
                       <TooltipProvider>
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
-                            <span>
+                            <span className="mr-1">
                               <span className="underline decoration-dotted">
                                 {yieldRate === YieldRatePeriod.DAILY
                                   ? 'Daily Rate'
@@ -746,7 +745,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      <Explainer>
+                      <Explainer iconProps={{ className: 'inline mb-0.5' }}>
                         Estimated returns based on yesterday 24hr trade fees.
                         <br />
                         <br />
@@ -754,19 +753,21 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                         (IL), and assumes the position is “in-range” all the
                         time.
                       </Explainer>
-                    </div>
-                    {!apr || !sanitizedCE ? (
-                      <div className="text-muted-foreground">
-                        Not enough data
-                      </div>
-                    ) : (
-                      <div>
+                    </span>
+                    <div className="flex flex-grow items-center justify-end">
+                      {!apr || !sanitizedCE ? (
                         <span className="text-muted-foreground">
-                          {formatPercent(apr)} * {sanitizedCE.toFixed(2)} =
-                        </span>{' '}
-                        {formatPercent(apr * sanitizedCE)}
-                      </div>
-                    )}
+                          Not enough data
+                        </span>
+                      ) : (
+                        <span>
+                          <span className="text-muted-foreground">
+                            {formatPercent(apr)} * {sanitizedCE.toFixed(2)} =
+                          </span>{' '}
+                          {formatPercent(apr * sanitizedCE)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </CardDescription>
               </CardHeader>

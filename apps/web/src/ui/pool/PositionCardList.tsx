@@ -1,9 +1,11 @@
 import { V2Position } from '@sushiswap/graph-client/data-api'
 import React, { FC, ReactNode } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
+import { ChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 
 interface PositionCardList {
+  chainId: ChainId
   children({
     positions,
     isLoading,
@@ -18,11 +20,14 @@ const value = (position: V2Position) =>
     Number(position.pool.liquidity)) *
   Number(position.pool.liquidityUSD)
 
-export const PositionCardList: FC<PositionCardList> = ({ children }) => {
+export const PositionCardList: FC<PositionCardList> = ({
+  children,
+  chainId,
+}) => {
   const { address } = useAccount()
   const { data: userPositions, isLoading } = useSushiV2UserPositions({
-    user: address!,
-    chainId: 42161, // TODO: FIX
+    user: address,
+    chainId,
   })
 
   return (

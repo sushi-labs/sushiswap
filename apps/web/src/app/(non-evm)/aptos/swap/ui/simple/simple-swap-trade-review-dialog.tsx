@@ -19,6 +19,7 @@ import {
 } from '@sushiswap/ui'
 import { Provider } from 'aptos'
 import React, { FC } from 'react'
+import { DEFAULT_SLIPPAGE } from 'sushi/config'
 import { ModalType } from '~aptos/(common)//components/Modal/ModalProvider'
 import { Modal } from '~aptos/(common)/components/Modal/Modal'
 import { networkNameToNetwork } from '~aptos/(common)/config/chains'
@@ -191,7 +192,9 @@ export const SimpleSwapTradeReviewDialog: FC = () => {
                   </List.KeyValue>
                   <List.KeyValue
                     title={`Min. received after slippage (${
-                      slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance
+                      slippageTolerance === 'AUTO'
+                        ? DEFAULT_SLIPPAGE
+                        : slippageTolerance
                     }%)`}
                     subtitle="The minimum amount you are guaranteed to receive."
                   >

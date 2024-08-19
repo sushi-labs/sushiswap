@@ -14,7 +14,7 @@ import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { FC, useCallback, useState } from 'react'
-import { SUPPORTED_CHAIN_IDS } from 'src/config'
+import { AMM_SUPPORTED_CHAIN_IDS } from 'src/config'
 import { Chain, ChainId, ChainKey } from 'sushi/chain'
 
 export const TableFiltersNetwork: FC<{ chainId: ChainId }> = ({ chainId }) => {
@@ -58,7 +58,7 @@ export const TableFiltersNetwork: FC<{ chainId: ChainId }> = ({ chainId }) => {
           />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
-            {SUPPORTED_CHAIN_IDS.map((_chainId) => (
+            {AMM_SUPPORTED_CHAIN_IDS.map((_chainId) => (
               <CommandItem
                 key={_chainId}
                 value={_chainId.toString()}
