@@ -22,7 +22,11 @@ import { Address, Chain, ChainId } from 'sushi'
 import { uniswapV3PoolAbi } from 'sushi/abi'
 import { Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+import {
+  useSwitchChain,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi'
 
 type V3Pool = Omit<V3BasePool, 'token0' | 'token1'> & {
   token0: Token
@@ -139,7 +143,11 @@ const VOLUME_COLUMN: ColumnDef<V3Pool, unknown> = {
   },
 }
 
-const EnableProtocolFeeButton: FC<{ pool: Address }> = ({ pool }) => {
+const EnableProtocolFeeButton: FC<{ pool: Address; chainId: ChainId }> = ({
+  pool,
+  chainId,
+}) => {
+  const { switchChainAsync } = useSwitchChain()
   const { data: txHash, writeContract, isPending } = useWriteContract()
   const { isLoading, isSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
@@ -148,14 +156,17 @@ const EnableProtocolFeeButton: FC<{ pool: Address }> = ({ pool }) => {
   const onClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
       e.preventDefault()
-      writeContract({
-        address: pool,
-        abi: uniswapV3PoolAbi,
-        functionName: 'setFeeProtocol',
-        args: [4, 4],
-      })
+      switchChainAsync({ chainId }).then(() =>
+        writeContract({
+          address: pool,
+          abi: uniswapV3PoolAbi,
+          functionName: 'setFeeProtocol',
+          args: [4, 4],
+          chainId,
+        }),
+      )
     },
-    [writeContract, pool],
+    [writeContract, pool, chainId, switchChainAsync],
   )
 
   return isSuccess ? (
@@ -183,7 +194,10 @@ const PROTOCOL_FEE_COLUMN: ColumnDef<V3Pool, unknown> = {
       {props.row.original.isProtocolFeeEnabled ? (
         '✅'
       ) : (
-        <EnableProtocolFeeButton pool={props.row.original.address} />
+        <EnableProtocolFeeButton
+          pool={props.row.original.address}
+          chainId={props.row.original.chainId}
+        />
       )}
     </div>
   ),
