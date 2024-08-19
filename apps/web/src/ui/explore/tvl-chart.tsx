@@ -114,6 +114,7 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
         {
           name: 'v2',
           type: 'line',
+          stack: 'a',
           smooth: true,
           lineStyle: {
             width: 0,
@@ -128,6 +129,7 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
         {
           name: 'v3',
           type: 'line',
+          stack: 'a',
           smooth: true,
           lineStyle: {
             width: 0,
