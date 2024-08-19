@@ -29,11 +29,9 @@ const _GlobalStatsCharts: FC<{ chainId: ChainId }> = async ({ chainId }) => {
   return !dayBuckets.v2.length && !dayBuckets.v3.length ? (
     <GlobalStatsLoading />
   ) : (
-    <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-1 sm:grid-cols-2">
-        <TVLChart data={dayBuckets} />
-        <VolumeChart data={dayBuckets} />
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
+      <TVLChart data={dayBuckets} />
+      <VolumeChart data={dayBuckets} />
     </div>
   )
 }

@@ -159,7 +159,7 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
   )
 
   return (
-    <div className="p-6">
+    <div>
       <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-sm">Sushi TVL</span>
         <div className="flex justify-between">

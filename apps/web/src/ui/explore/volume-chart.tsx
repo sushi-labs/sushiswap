@@ -124,7 +124,7 @@ export const VolumeChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
   )
 
   return (
-    <div className="p-6">
+    <div>
       <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-sm">Sushi volume</span>
         <div className="flex justify-between">
