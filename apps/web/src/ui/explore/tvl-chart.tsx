@@ -1,7 +1,6 @@
 'use client'
 
 import { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
-import { CardContent } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import ReactEcharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -30,6 +29,17 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
 
     return [v2, v3, combinedTVL, currentDate]
   }, [data])
+
+  const zIndex = useMemo(() => {
+    const v2Sum = v2.reduce((sum, [_, value]) => sum + value, 0)
+    const v3Sum = v3.reduce((sum, [_, value]) => sum + value, 0)
+
+    if (v2Sum < v3Sum) {
+      return { v2: 2, v3: 1 }
+    } else {
+      return { v2: 1, v3: 2 }
+    }
+  }, [v2, v3])
 
   const onMouseOver = useCallback((params: { data: number[] }[]) => {
     const tvlNode = document.getElementById('hoveredTVL')
@@ -114,41 +124,41 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
         {
           name: 'v2',
           type: 'line',
-          stack: 'a',
+          stack: 'v2',
           smooth: true,
           lineStyle: {
             width: 0,
           },
           showSymbol: false,
           areaStyle: {
-            opacity: 0.8,
             color: '#3B7EF6',
           },
           data: v2,
+          z: zIndex.v2,
         },
         {
           name: 'v3',
           type: 'line',
-          stack: 'a',
+          stack: 'v3',
           smooth: true,
           lineStyle: {
             width: 0,
           },
           showSymbol: false,
           areaStyle: {
-            opacity: 0.8,
             color: '#A755DD',
           },
           data: v3,
+          z: zIndex.v3,
         },
       ],
     }),
-    [onMouseOver, v2, v3, resolvedTheme],
+    [onMouseOver, v2, v3, zIndex, resolvedTheme],
   )
 
   return (
-    <div>
-      <div className="flex flex-col gap-3 p-6">
+    <div className="p-6">
+      <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-sm">Sushi TVL</span>
         <div className="flex justify-between">
           <div className="flex flex-col gap-3">
@@ -180,16 +190,14 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
           </div>
         </div>
       </div>
-      <CardContent>
-        <ReactEcharts
-          option={DEFAULT_OPTION}
-          echarts={echarts}
-          style={{ height: 400 }}
-          onEvents={{
-            globalout: onMouseLeave,
-          }}
-        />
-      </CardContent>
+      <ReactEcharts
+        option={DEFAULT_OPTION}
+        echarts={echarts}
+        style={{ height: 400 }}
+        onEvents={{
+          globalout: onMouseLeave,
+        }}
+      />
     </div>
   )
 }

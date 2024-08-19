@@ -35,7 +35,7 @@ export default async function ExploreLayout({
   return (
     <>
       <Container maxWidth="7xl" className="px-4 p-10">
-        <GlobalStatsCharts chainId={+params.chainId as ChainId} />
+        <GlobalStatsCharts chainId={chainId} />
       </Container>
       <Container
         maxWidth="7xl"
@@ -45,13 +45,11 @@ export default async function ExploreLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${ChainKey[+params.chainId as ChainId]}/explore/pools`}
+            href={`/${ChainKey[chainId]}/explore/pools`}
           >
             <PathnameButton
               id="all-pools"
-              pathname={`/${
-                ChainKey[+params.chainId as ChainId]
-              }/explore/pools`}
+              pathname={`/${ChainKey[chainId]}/explore/pools`}
               asChild
               size="sm"
             >
@@ -61,16 +59,12 @@ export default async function ExploreLayout({
           <LinkInternal
             shallow={true}
             scroll={false}
-            href={`/${
-              ChainKey[+params.chainId as ChainId]
-            }/explore/smart-pools`}
+            href={`/${ChainKey[chainId]}/explore/smart-pools`}
           >
-            {isSteerChainId(+params.chainId as ChainId) ? (
+            {isSteerChainId(chainId) ? (
               <PathnameButton
                 id="smart-pools"
-                pathname={`/${
-                  ChainKey[+params.chainId as ChainId]
-                }/explore/smart-pools`}
+                pathname={`/${ChainKey[chainId]}/explore/smart-pools`}
                 asChild
                 size="sm"
               >

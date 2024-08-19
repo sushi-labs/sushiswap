@@ -1,7 +1,6 @@
 'use client'
 
 import { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
-import { CardContent } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -125,8 +124,8 @@ export const VolumeChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
   )
 
   return (
-    <div>
-      <div className="flex flex-col gap-3 p-6">
+    <div className="p-6">
+      <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-sm">Sushi volume</span>
         <div className="flex justify-between">
           <div className="flex flex-col gap-3">
@@ -158,16 +157,14 @@ export const VolumeChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
           </div>
         </div>
       </div>
-      <CardContent>
-        <ReactECharts
-          option={DEFAULT_OPTION}
-          echarts={echarts}
-          style={{ height: 400 }}
-          onEvents={{
-            globalout: onMouseLeave,
-          }}
-        />
-      </CardContent>
+      <ReactECharts
+        option={DEFAULT_OPTION}
+        echarts={echarts}
+        style={{ height: 400 }}
+        onEvents={{
+          globalout: onMouseLeave,
+        }}
+      />
     </div>
   )
 }
