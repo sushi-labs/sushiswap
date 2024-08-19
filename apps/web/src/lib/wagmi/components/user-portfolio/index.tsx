@@ -8,8 +8,11 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  cloudinaryFetchLoader,
   useBreakpoint,
 } from '@sushiswap/ui'
+import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
+import Image from 'next/image'
 import { FC, ReactNode, useMemo, useState } from 'react'
 import { ChainId, shortenAddress } from 'sushi'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
@@ -81,15 +84,18 @@ export const UserPortfolio = () => {
       trigger={
         <Button variant="secondary">
           {avatar ? (
-            <img
+            <Image
               alt="ens-avatar"
               src={avatar}
               width={20}
               height={20}
               className="rounded-full"
+              loader={cloudinaryFetchLoader}
             />
-          ) : null}
-          <span>{shortenAddress(address)}</span>
+          ) : (
+            <JazzIcon diameter={20} address={address} />
+          )}
+          <span className="hidden sm:block">{shortenAddress(address)}</span>
         </Button>
       }
       content={content}

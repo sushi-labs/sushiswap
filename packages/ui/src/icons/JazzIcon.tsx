@@ -9,7 +9,7 @@ interface JazzIconProps {
   address: string
 }
 
-const Jazzicon = dynamic(() => import('react-jazzicon'), { ssr: false })
+const Jazzicon = dynamic(() => import('react-jazzicon'))
 
 export const JazzIcon: FC<JazzIconProps> = ({ diameter, address }) => {
   return <Jazzicon diameter={diameter} seed={jsNumberForAddress(address)} />
