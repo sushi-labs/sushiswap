@@ -108,15 +108,15 @@ function ChartLoadingStateMask({
     case 'bar':
       return (
         <g transform={`translate(0, ${height - 60}) scale(1,-1)`}>
-          {Array.from({ length: 30 }).map((_, i) => {
+          {Array.from({ length: 25 }).map((_, i) => {
             const _height = Math.random() * height * 0.8 + 20
             return (
               <rect
                 key={i}
                 rx="3"
-                width="3.3%" // Adjusted width to fit 30 bars
+                width="3%"
                 height={_height}
-                x={`${i * 3.4}%`} // Adjusted x position to ensure even spacing
+                x={`${i * 4}%`}
                 className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
               />
             )
