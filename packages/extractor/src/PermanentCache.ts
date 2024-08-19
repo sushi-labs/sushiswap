@@ -55,14 +55,28 @@ export class PermanentCache<CacheRecord> {
     }
     try {
       const data = await file.readFile('utf8')
+      let failCount = 0
       records = data
         .split('\n')
         .filter((r) => r !== '')
-        .map((s) => JSON.parse(s) as CacheRecord)
+        .map((s) => {
+          try {
+            return JSON.parse(s) as CacheRecord
+          } catch (_e) {
+            ++failCount
+          }
+        })
+        .filter((r) => r !== undefined) as CacheRecord[]
       await file.close()
+      if (failCount > 0)
+        console.error(
+          `Cache ${this.filePath} error: ${failCount}/${
+            records.length + failCount
+          } records are incorrect`,
+        )
     } catch (_e) {
       throw new Error(
-        `Cache ${this.filePath} in incorrect! Please fix it or remove file`,
+        `Cache ${this.filePath} is fatal incorrect! Please fix it or remove file`,
       )
     }
     this.lock.returnTurn()
