@@ -132,6 +132,7 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
           showSymbol: false,
           areaStyle: {
             color: '#3B7EF6',
+            opacity: 1,
           },
           data: v2,
           z: zIndex.v2,
@@ -147,6 +148,7 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
           showSymbol: false,
           areaStyle: {
             color: '#A755DD',
+            opacity: 1,
           },
           data: v3,
           z: zIndex.v3,
