@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
 import { SmartPositionsTable } from './SmartPositionsTable'
@@ -95,7 +95,9 @@ export const PositionsTab: FC<{ chainId: ChainId }> = ({ chainId }) => {
         <TabsContent value="v2">
           <PositionsTable
             chainId={chainId}
-            rowLink={(row) => `/pool/${row.pool.id}`}
+            rowLink={(row) =>
+              `/${ChainKey[chainId]}/pool/v2/${row.pool.address}/add`
+            }
           />
         </TabsContent>
         <TabsContent value="smart">

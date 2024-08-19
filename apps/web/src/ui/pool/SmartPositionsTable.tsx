@@ -14,7 +14,7 @@ import {
   SteerAccountPositionExtended,
   useSteerAccountPositionsExtended,
 } from 'src/lib/wagmi/hooks/steer/useSteerAccountPositionsExtended'
-import { ChainId, SushiSwapProtocol, formatPercent } from 'sushi'
+import { ChainId, ChainKey, SushiSwapProtocol, formatPercent } from 'sushi'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 import { APRHoverCard } from './APRHoverCard'
@@ -102,7 +102,9 @@ export const SmartPositionsTable: FC<{ chainId: ChainId }> = ({ chainId }) => {
       <DataTable
         loading={isLoading}
         linkFormatter={(row) =>
-          `/pool/${row.vault.poolAddress}/smart/${row.vault.id}`
+          `/${ChainKey[row.chainId]}/pool/v3/${row.vault.poolAddress}/smart/${
+            row.address
+          }`
         }
         columns={COLUMNS}
         data={_positions}

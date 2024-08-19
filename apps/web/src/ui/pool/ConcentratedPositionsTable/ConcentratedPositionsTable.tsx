@@ -16,10 +16,7 @@ import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { ChainId, ChainKey } from 'sushi'
-import {
-  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-  isSushiSwapV3ChainId,
-} from 'sushi/config'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
@@ -39,7 +36,7 @@ const COLUMNS = [
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 interface ConcentratedPositionsTableProps {
-  chainId?: ChainId
+  chainId: ChainId
   poolId?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewSmartPositionButton?: boolean
@@ -59,10 +56,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     const [hide, setHide] = useState(true)
 
     const chainIds = useMemo(() => {
-      if (chainId) {
-        return isSushiSwapV3ChainId(chainId) ? [chainId] : []
-      }
-      return [...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS]
+      return isSushiSwapV3ChainId(chainId) ? [chainId] : []
     }, [chainId])
 
     const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -73,7 +67,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     const { data: positions, isInitialLoading } =
       useConcentratedLiquidityPositions({
         account: address,
-        chainIds: chainIds,
+        chainIds,
       })
 
     const _positions = useMemo(() => {
