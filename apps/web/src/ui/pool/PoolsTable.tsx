@@ -163,6 +163,9 @@ const COLUMNS = [
       )
     },
     size: 300,
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
   TVL_COLUMN,
   {
@@ -175,6 +178,9 @@ const COLUMNS = [
       formatUSD(props.row.original.volumeUSD1h).includes('NaN')
         ? '$0.00'
         : formatUSD(props.row.original.volumeUSD1h),
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
   VOLUME_1D_COLUMN,
   {
@@ -187,6 +193,9 @@ const COLUMNS = [
       formatUSD(props.row.original.feeUSD1h).includes('NaN')
         ? '$0.00'
         : formatUSD(props.row.original.feeUSD1h),
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
   {
     id: 'feeUSD1d',
@@ -198,6 +207,9 @@ const COLUMNS = [
       formatUSD(props.row.original.feeUSD1d).includes('NaN')
         ? '$0.00'
         : formatUSD(props.row.original.feeUSD1d),
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
   },
   APR_COLUMN,
   {
@@ -419,11 +431,16 @@ const COLUMNS = [
 ] as ColumnDef<TopPools[number], unknown>[]
 
 interface PositionsTableProps {
-  pools: TopPools
+  pools?: TopPools
+  isLoading?: boolean
   onRowClick?(row: TopPools[number]): void
 }
 
-export const PoolsTable: FC<PositionsTableProps> = ({ pools, onRowClick }) => {
+export const PoolsTable: FC<PositionsTableProps> = ({
+  pools,
+  isLoading = false,
+  onRowClick,
+}) => {
   const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
 
@@ -498,7 +515,7 @@ export const PoolsTable: FC<PositionsTableProps> = ({ pools, onRowClick }) => {
       <DataTable
         state={state}
         onSortingChange={setSorting}
-        loading={!pools}
+        loading={isLoading}
         linkFormatter={(row) =>
           `/${ChainKey[row.chainId]}/pool/${
             row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
