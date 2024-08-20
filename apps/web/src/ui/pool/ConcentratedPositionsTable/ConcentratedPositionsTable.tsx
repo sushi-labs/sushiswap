@@ -37,7 +37,7 @@ const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 interface ConcentratedPositionsTableProps {
   chainId: ChainId
-  poolId?: string
+  poolAddress?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
@@ -47,7 +47,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
   ({
     chainId,
     onRowClick,
-    poolId,
+    poolAddress,
     hideNewSmartPositionButton = true,
     hideNewPositionButton = false,
   }) => {
@@ -86,10 +86,12 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
         .filter((el) => {
           return (
             (hide ? el.liquidity !== 0n : true) &&
-            (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+            (poolAddress
+              ? el.address.toLowerCase() === poolAddress.toLowerCase()
+              : true)
           )
         })
-    }, [tokenSymbols, positions, hide, poolId])
+    }, [tokenSymbols, positions, hide, poolAddress])
 
     const rowRenderer = useCallback(
       (
@@ -134,9 +136,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewSmartPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/pool/${
-                      chainId ? ChainKey[chainId] : chainId
-                    }:${poolId}/smart`}
+                    href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
                   >
                     <Button icon={PlusIcon} asChild size="sm" variant="outline">
                       Create smart position
@@ -146,9 +146,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/${
-                      chainId ? ChainKey[chainId] : chainId
-                    }/pool/v3/${address}/positions/create`}
+                    href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/positions/create`}
                   >
                     <Button icon={PlusIcon} asChild size="sm">
                       Create position

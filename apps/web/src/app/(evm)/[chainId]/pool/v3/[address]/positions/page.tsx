@@ -24,7 +24,7 @@ export default async function ManageV3PoolPage({
         <PoolsFiltersProvider>
           <ConcentratedPositionsTable
             chainId={pool.chainId}
-            poolId={pool.address}
+            poolAddress={pool.address}
             hideNewSmartPositionButton={!pool.hasEnabledSteerVault}
           />
         </PoolsFiltersProvider>
