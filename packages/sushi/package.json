@@ -72,6 +72,11 @@
       "import": "./dist/_esm/currency/index.js",
       "default": "./dist/_cjs/currency/index.js"
     },
+    "./data": {
+      "types": "./dist/_types/data/index.d.ts",
+      "import": "./dist/_esm/data/index.js",
+      "default": "./dist/_cjs/data/index.js"
+    },
     "./dex": {
       "types": "./dist/_types/dex/index.d.ts",
       "import": "./dist/_esm/dex/index.js",
@@ -175,6 +180,9 @@
       ],
       "currency": [
         "./dist/_types/currency/index.d.ts"
+      ],
+      "data": [
+        "./dist/_types/data/index.d.ts"
       ],
       "dex": [
         "./dist/_types/dex/index.d.ts"

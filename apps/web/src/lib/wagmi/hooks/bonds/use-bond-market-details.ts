@@ -17,7 +17,7 @@ import { useEffect, useMemo } from 'react'
 import { uniswapV2PairAbi } from 'sushi/abi'
 import { Amount, Token } from 'sushi/currency'
 import { Fraction } from 'sushi/math'
-import { Address, getAddress } from 'viem'
+import { Address } from 'viem'
 import { useBlockNumber, useReadContracts } from 'wagmi'
 
 interface UseBondMarketDetails {
@@ -26,7 +26,7 @@ interface UseBondMarketDetails {
 }
 
 function getTokenPrice(prices: Map<Address, Fraction>, token: Address) {
-  const tokenPriceFraction = prices.get(getAddress(token))
+  const tokenPriceFraction = prices.get(token)
   if (!tokenPriceFraction) return undefined
   return Number(tokenPriceFraction.toFixed(10))
 }
@@ -182,9 +182,7 @@ export const useBondMarketDetails = ({
 
   const quoteTokenPriceUSD = useQuoteTokenPriceUSD(bond, enabled)
   const payoutTokenPriceUSD = useMemo(() => {
-    return Number(
-      (prices?.get(getAddress(bond.payoutToken.address)) || 0)?.toFixed(10),
-    )
+    return Number((prices?.get(bond.payoutToken.address) || 0)?.toFixed(10))
   }, [prices, bond])
 
   const discount = useMemo(() => {
