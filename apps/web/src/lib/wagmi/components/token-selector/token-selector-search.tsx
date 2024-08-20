@@ -63,7 +63,7 @@ export function TokenSelectorSearch({
 
     if (data) {
       data.forEach((token) => {
-        if (!customTokens.includes(token.address)) {
+        if (!customTokens.includes(token.address) && token.approved === false) {
           set.add(token.address.toLowerCase() as Address)
         }
       })

@@ -106,7 +106,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="!flex flex-col justify-start h-[80vh] min-w-[600px]">
+      <DialogContent className="!flex flex-col justify-start h-[80vh] md:min-w-[600px]">
         <Trace
           name={InterfaceEventName.TOKEN_SELECTOR_OPENED}
           modal={InterfaceModalName.TOKEN_SELECTOR}
@@ -134,7 +134,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
           <div
             id="token-list-container"
-            className="space-y-2 relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll pr-4"
+            className="space-y-2 relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll md:pr-4 pr-2"
           >
             {(() => {
               if (currencies) {
