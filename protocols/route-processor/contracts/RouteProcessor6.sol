@@ -9,6 +9,7 @@ import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import '../interfaces/ICurve.sol';
+import '../interfaces/UniV4.sol';
 import './InputStream.sol';
 import './Utils.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
@@ -29,7 +30,7 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-contract RouteProcessor5 is Ownable {
+contract RouteProcessor6 is Ownable {
   using SafeERC20 for IERC20;
   using Utils for IERC20;
   using Utils for address;
@@ -323,6 +324,7 @@ contract RouteProcessor5 is Ownable {
     else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
     else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
     else if (poolType == 5) swapCurve(stream, from, tokenIn, amountIn);
+    else if (poolType == 6) swapUniV4(stream, from, tokenIn, amountIn);
     else revert('RouteProcessor: Unknown pool type');
   }
 
@@ -524,5 +526,86 @@ contract RouteProcessor5 is Ownable {
     }
 
     if (to != address(this)) tokenOut.transferAny(to, amountOut);
+  }
+
+  struct UniV4CallbackData {
+    address sender;
+    IPoolManager manager;
+    PoolKey key;
+    IPoolManager.SwapParams params;
+    bytes hookData;
+  }
+
+  /// @notice UniswapV4 pool swap
+  /// @param stream [pool, direction, recipient]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
+  function swapUniV4(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    address pool = stream.readAddress();
+    bool zeroForOne = stream.readUint8() > 0;
+    address recipient = stream.readAddress();
+
+    if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
+// TODO: + natives !!!
+    lastCalledPool = pool;
+    delta = abi.decode(
+      IPoolManager(pool).unlock(abi.encode(CallbackData(msg.sender, testSettings, key, params, hookData))), (BalanceDelta)
+    );
+
+    uint256 ethBalance = address(this).balance;
+    if (ethBalance > 0) CurrencyLibrary.NATIVE.transfer(msg.sender, ethBalance);
+    lastCalledPool = pool;
+    IPoolManager(pool).unlock();
+    require(lastCalledPool == IMPOSSIBLE_POOL_ADDRESS, 'RouteProcessor.swapUniV3: unexpected'); // Just to be sure
+  }
+
+  // callback for UniV4
+  function unlockCallback(bytes calldata rawData) external returns (bytes memory) {
+    require(msg.sender == lastCalledPool, 'RouteProcessor.unlockCallback: call from unknown source');    
+
+    UniV4CallbackData memory data = abi.decode(rawData, (UniV4CallbackData));
+
+    // protection against unlockCallback replay. Can it be written easier?
+    int256 deltaBefore0 = data.manager.currencyDelta(data.key.currency0, data.sender, address(this));
+    int256 deltaBefore1 = data.manager.currencyDelta(data.key.currency1, data.sender, address(this));
+    require(deltaBefore0 == 0, "deltaBefore0 is not equal to 0");
+    require(deltaBefore1 == 0, "deltaBefore1 is not equal to 0");
+
+    BalanceDelta delta = manager.swap(data.key, data.params, data.hookData);
+
+    int256 deltaAfter0 = data.manager.currencyDelta(data.key.currency0, data.sender, address(this));
+    int256 deltaAfter1 = data.manager.currencyDelta(data.key.currency1, data.sender, address(this));
+
+    if (data.params.zeroForOne) {
+      require(
+          deltaAfter0 >= data.params.amountSpecified,
+          "deltaAfter0 is not greater than or equal to data.params.amountSpecified"
+      );
+      require(delta.amount0() == deltaAfter0, "delta.amount0() is not equal to deltaAfter0");
+      require(deltaAfter1 >= 0, "deltaAfter1 is not greater than or equal to 0");
+    } else {
+      require(
+          deltaAfter1 >= data.params.amountSpecified,
+          "deltaAfter1 is not greater than or equal to data.params.amountSpecified"
+      );
+      require(delta.amount1() == deltaAfter1, "delta.amount1() is not equal to deltaAfter1");
+      require(deltaAfter0 >= 0, "deltaAfter0 is not greater than or equal to 0");
+    }
+
+    if (deltaAfter0 < 0) {
+        data.key.currency0.settle(manager, data.sender, uint256(-deltaAfter0), data.testSettings.settleUsingBurn);
+    }
+    if (deltaAfter1 < 0) {
+        data.key.currency1.settle(manager, data.sender, uint256(-deltaAfter1), data.testSettings.settleUsingBurn);
+    }
+    if (deltaAfter0 > 0) {
+        data.key.currency0.take(manager, data.sender, uint256(deltaAfter0), data.testSettings.takeClaims);
+    }
+    if (deltaAfter1 > 0) {
+        data.key.currency1.take(manager, data.sender, uint256(deltaAfter1), data.testSettings.takeClaims);
+    }
+
+    return abi.encode(delta);
   }
 }
