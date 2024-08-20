@@ -88,7 +88,6 @@ const TokenSelectModal = ({
 
   return (
     <TokenSelector
-      id={`twap-token-selector`}
       selected={selected}
       chainId={chainId}
       onSelect={onSelect}

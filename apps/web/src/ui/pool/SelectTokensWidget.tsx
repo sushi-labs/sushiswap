@@ -32,7 +32,6 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({
     >
       <div className="flex gap-3">
         <TokenSelector
-          id={'token0-token-selector'}
           selected={token0}
           chainId={chainId}
           onSelect={setToken0}
@@ -60,7 +59,6 @@ export const SelectTokensWidget: FC<SelectTokensWidget> = ({
           </Button>
         </TokenSelector>
         <TokenSelector
-          id={'token1-token-selector'}
           selected={token1}
           chainId={chainId}
           onSelect={setToken1}
