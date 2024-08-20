@@ -83,7 +83,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
       >
         <div className="relative py-0.5 h-[64px]" style={style}>
           <div
-            testdata-id={`selector-row-${
+            testdata-id={`token-selector-row-${
               currency.isNative
                 ? zeroAddress
                 : currency.wrapped.address.toLowerCase()
