@@ -12,7 +12,7 @@ import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/pool'
-import { zeroAddress } from 'viem'
+import { NativeAddress } from '@sushiswap/react-query'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 interface CreateV3PoolArgs {
@@ -368,20 +368,31 @@ export class PoolPage extends BaseActions {
     )
     await expect(tokenSelector).toBeVisible()
     await tokenSelector.click()
-    await this.page.fill(
-      `[testdata-id=${selectorInfix}-token-selector-address-input]`,
-      currency.symbol as string,
-    )
-    const rowSelector = this.page.locator(
-      `[testdata-id=${selectorInfix}-token-selector-row-${
-        currency.isNative ? zeroAddress : currency.wrapped.address.toLowerCase()
-      }]`,
-    )
-    await expect(rowSelector).toBeVisible()
-    await rowSelector.click()
 
-    // await expect token selector to contain symbol of selected token
-    await expect(tokenSelector).toContainText(currency.symbol as string)
+    if (currency.isNative) {
+      const chipToSelect = this.page.locator(
+        `[testdata-id=token-selector-chip-${NativeAddress}]`,
+      )
+      await expect(chipToSelect).toBeVisible()
+
+      await chipToSelect.click()
+      await expect(tokenSelector).toContainText(currency.symbol as string)
+    } else {
+      const tokenSearch = this.page.locator(
+        `[testdata-id=token-selector-address-input]`,
+      )
+      await expect(tokenSearch).toBeVisible()
+      await expect(tokenSearch).toBeEnabled()
+      await tokenSearch.fill(currency.address)
+
+      const tokenToSelect = this.page.locator(
+        `[testdata-id=token-selector-row-${currency.address.toLowerCase()}]`,
+      )
+      await expect(tokenToSelect).toBeVisible()
+
+      await tokenToSelect.click()
+      await expect(tokenSelector).toContainText(currency.symbol as string)
+    }
   }
 
   async mockPoolApi(
