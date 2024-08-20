@@ -180,7 +180,7 @@ export const angleRewardsSelect = ({
   const unclaimed = unclaimedAmounts.map((amount) => {
     let amountUSD = 0
 
-    const price = prices[amount.currency.wrapped.address]
+    const price = prices.get(amount.currency.wrapped.address)
 
     if (amount?.greaterThan(ZERO) && price) {
       amountUSD = Number(Number(amount.toExact()) * Number(price.toFixed(10)))

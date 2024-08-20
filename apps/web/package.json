@@ -22,7 +22,7 @@
     "@aptstats/safepal-wallet-extension": "^0.0.3",
     "@blocto/aptos-wallet-adapter-plugin": "^0.2.9",
     "@cloudinary/url-gen": "1.11.2",
-    "@covalenthq/client-sdk": "0.9.4",
+    "@covalenthq/client-sdk": "2.0.2",
     "@headlessui/react": "1.7.7",
     "@heroicons/react": "2.0.13",
     "@heroicons/react-v1": "npm:@heroicons/react@v1",

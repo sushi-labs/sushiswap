@@ -43,19 +43,19 @@ export const useBondDiscount = ({
   const discount = useMemo(() => {
     if (!marketPrice || !prices) return undefined
 
-    const quoteTokenPriceUSD = prices[getAddress(quoteToken.address)]
-    const payoutTokenPriceUSD = prices[getAddress(payoutToken.address)]
+    const quoteTokenPriceUSD = prices.get(getAddress(quoteToken.address))
+    const payoutTokenPriceUSD = prices.get(getAddress(payoutToken.address))
 
     return getBondDiscount({
       marketPrice: marketPrice[0],
       marketScale: marketScale,
       payoutToken: {
         decimals: payoutToken.decimals,
-        priceUSD: +payoutTokenPriceUSD.toFixed(10) || 0,
+        priceUSD: +(payoutTokenPriceUSD?.toFixed(10) || 0),
       },
       quoteToken: {
         decimals: quoteToken.decimals,
-        priceUSD: +quoteTokenPriceUSD.toFixed(10) || 0,
+        priceUSD: +(quoteTokenPriceUSD?.toFixed(10) || 0),
       },
     })
   }, [prices, marketPrice, marketScale, payoutToken, quoteToken])

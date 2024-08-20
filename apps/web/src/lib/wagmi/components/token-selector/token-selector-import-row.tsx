@@ -89,7 +89,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
         </div>
       </div>
       {!isTokenSecurityChainId(currency.chainId) || !tokenSecurityLoading ? (
-        <DialogContent className="!max-h-screen overflow-y-auto">
+        <DialogContent className="!flex flex-col max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>Import token</DialogTitle>
             <DialogDescription>
@@ -98,54 +98,53 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
               this token, you may not be able to sell it back.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col gap-4">
-            <List>
-              <List.Control>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Name
-                    </span>
-                  }
+          <List>
+            <List.Control>
+              <List.KeyValue
+                title={
+                  <span className="text-gray-900 dark:text-slate-50">Name</span>
+                }
+              >
+                {currency.name}
+              </List.KeyValue>
+              <List.KeyValue
+                title={
+                  <span className="text-gray-900 dark:text-slate-50">
+                    Symbol
+                  </span>
+                }
+              >
+                {currency.symbol}
+              </List.KeyValue>
+              <List.KeyValue
+                title={
+                  <span className="text-gray-900 dark:text-slate-50">
+                    Address
+                  </span>
+                }
+              >
+                <a
+                  target="_blank"
+                  href={Chain.from(currency.chainId)?.getTokenUrl(
+                    currency.address,
+                  )}
+                  className="text-blue"
+                  rel="noreferrer"
                 >
-                  {currency.name}
-                </List.KeyValue>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Symbol
-                    </span>
-                  }
-                >
-                  {currency.symbol}
-                </List.KeyValue>
-                <List.KeyValue
-                  title={
-                    <span className="text-gray-900 dark:text-slate-50">
-                      Address
-                    </span>
-                  }
-                >
-                  <a
-                    target="_blank"
-                    href={Chain.from(currency.chainId)?.getTokenUrl(
-                      currency.address,
-                    )}
-                    className="text-blue"
-                    rel="noreferrer"
-                  >
-                    {shortenAddress(currency.address)}
-                  </a>
-                </List.KeyValue>
-              </List.Control>
-            </List>
-            {isTokenSecurityChainId(currency.chainId) ? (
+                  {shortenAddress(currency.address)}
+                </a>
+              </List.KeyValue>
+            </List.Control>
+          </List>
+          {isTokenSecurityChainId(currency.chainId) ? (
+            <div className="flex flex-1 flex-grow flex-col overflow-y-scroll relative pr-4">
               <TokenSecurityView
                 tokenSecurityResponse={tokenSecurityResponse}
                 token={currency}
+                forceShowMore
               />
-            ) : null}
-          </div>
+            </div>
+          ) : null}
           <DialogFooter>
             <div className="flex flex-col gap-3 w-full">
               {!honeypot ? (

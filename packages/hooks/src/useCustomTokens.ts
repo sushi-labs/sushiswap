@@ -13,6 +13,7 @@ type Data = {
   decimals: number
   name: string | undefined
   symbol: string | undefined
+  logoUrl: string | undefined
 }
 
 export const useCustomTokens = () => {
@@ -40,6 +41,7 @@ export const useCustomTokens = () => {
         name: currency.name,
         symbol: currency.symbol,
         decimals: currency.decimals,
+        logoUrl: currency.logoUrl,
       }))
 
       setValue((prev) => {

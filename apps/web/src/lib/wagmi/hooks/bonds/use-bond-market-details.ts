@@ -25,8 +25,8 @@ interface UseBondMarketDetails {
   enabled?: boolean
 }
 
-function getTokenPrice(prices: Record<string, Fraction>, token: Address) {
-  const tokenPriceFraction = prices[getAddress(token)]
+function getTokenPrice(prices: Map<Address, Fraction>, token: Address) {
+  const tokenPriceFraction = prices.get(getAddress(token))
   if (!tokenPriceFraction) return undefined
   return Number(tokenPriceFraction.toFixed(10))
 }
@@ -183,7 +183,7 @@ export const useBondMarketDetails = ({
   const quoteTokenPriceUSD = useQuoteTokenPriceUSD(bond, enabled)
   const payoutTokenPriceUSD = useMemo(() => {
     return Number(
-      (prices?.[getAddress(bond.payoutToken.address)] || 0)?.toFixed(10),
+      (prices?.get(getAddress(bond.payoutToken.address)) || 0)?.toFixed(10),
     )
   }, [prices, bond])
 
