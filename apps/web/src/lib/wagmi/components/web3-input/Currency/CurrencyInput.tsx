@@ -143,7 +143,6 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
 
     return (
       <TokenSelector
-        id={`${id}-token-selector`}
         currencies={currencies}
         selected={currency}
         chainId={chainId}

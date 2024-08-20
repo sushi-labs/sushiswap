@@ -31,7 +31,6 @@ interface TokenSelectorCurrencyListProps {
 
 export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
   memo(function TokenSelectorCurrencyList({
-    id,
     onSelect,
     currencies,
     selected,
@@ -46,7 +45,6 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
       if (!currencies) return []
 
       return currencies.map((currency) => ({
-        id: id,
         account: address,
         currency,
         balance: balancesMap?.get(
@@ -78,7 +76,6 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> =
       address,
       balancesMap,
       currencies,
-      id,
       onSelect,
       pricesMap,
       selected,

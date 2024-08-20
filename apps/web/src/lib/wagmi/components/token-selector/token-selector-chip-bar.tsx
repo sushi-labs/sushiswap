@@ -42,7 +42,12 @@ export function TokenSelectorChipBar({
           element={InterfaceElementName.COMMON_BASES_CURRENCY_BUTTON}
           key={token.id}
         >
-          <div className="group">
+          <div
+            className="group"
+            testdata-id={`token-selector-chip-${
+              token.isNative ? NativeAddress : token.address.toLowerCase()
+            }`}
+          >
             <Button
               size="sm"
               variant="secondary"

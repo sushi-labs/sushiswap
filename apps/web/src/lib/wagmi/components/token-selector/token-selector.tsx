@@ -37,7 +37,6 @@ import { TokenSelectorSearch } from './token-selector-search'
 import { TokenSelectorTrendingTokens } from './token-selector-trending-tokens'
 
 interface TokenSelectorProps {
-  id: string
   selected: Type | undefined
   chainId: ChainId
   onSelect(currency: Type): void
@@ -50,7 +49,6 @@ interface TokenSelectorProps {
 
 export const TokenSelector: FC<TokenSelectorProps> = ({
   includeNative = true,
-  id,
   selected,
   onSelect,
   chainId,
@@ -127,7 +125,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                 placeholder="Search by token or address"
                 icon={MagnifyingGlassIcon}
                 type="text"
-                testdata-id={`${id}-address-input`}
+                testdata-id={`token-selector-address-input`}
                 value={query}
                 onValueChange={setQuery}
               />

@@ -29,7 +29,6 @@ import { Fraction, ZERO } from 'sushi/math'
 import { zeroAddress } from 'viem'
 
 export interface TokenSelectorRow {
-  id: string
   account?: `0x${string}`
   currency: Type
   style?: CSSProperties
@@ -48,7 +47,6 @@ export interface TokenSelectorRow {
 
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
   function TokenSelectorRow({
-    id,
     price,
     balance,
     currency,
@@ -85,7 +83,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
       >
         <div className="relative py-0.5 h-[64px]" style={style}>
           <div
-            testdata-id={`${id}-row-${
+            testdata-id={`selector-row-${
               currency.isNative
                 ? zeroAddress
                 : currency.wrapped.address.toLowerCase()
