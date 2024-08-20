@@ -15,7 +15,7 @@ export default async function VaultOverviewPage({
     async () => getV3Pool({ chainId, address }),
     ['pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 3,
+      revalidate: 60 * 15,
     },
   )()
 

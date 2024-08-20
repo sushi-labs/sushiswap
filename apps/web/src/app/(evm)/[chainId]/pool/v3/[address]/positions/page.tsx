@@ -14,7 +14,7 @@ export default async function ManageV3PoolPage({
     async () => await getV3Pool({ chainId: Number(chainId), address }),
     ['pool', `${chainId}:${address}`],
     {
-      revalidate: 60 * 3,
+      revalidate: 60 * 15,
     },
   )()) as NonNullable<V3Pool>
 
