@@ -40,7 +40,7 @@ export default async function Layout({
           backUrl={
             referer?.includes('/pool?')
               ? referer?.toString()
-              : `/${ChainKey[chainId]}/pool`
+              : `/${ChainKey[chainId]}/explore/pool`
           }
           address={address}
           pool={pool}
