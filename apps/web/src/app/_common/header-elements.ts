@@ -11,11 +11,11 @@ export const EXPLORE_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     href: '/pools',
     description: 'Earn fees by providing liquidity.',
   },
-  {
-    title: 'Bonds',
-    href: '/bonds',
-    description: 'Earn interest by locking up your assets.',
-  },
+//  {
+//    title: 'Bonds',
+//    href: '/bonds',
+//    description: 'Earn interest by locking up your assets.',
+//  },
   {
     title: 'Stake',
     href: '/stake',
