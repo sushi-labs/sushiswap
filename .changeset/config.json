@@ -31,8 +31,6 @@
     "@sushiswap/tailwindcss-config",
     "@sushiswap/typescript-config",
 
-    "@sushiswap/pool-job",
-
     "@sushiswap/bonds-sdk",
     "@sushiswap/client",
     "@sushiswap/database",

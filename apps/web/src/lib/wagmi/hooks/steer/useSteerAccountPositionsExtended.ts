@@ -56,8 +56,8 @@ export const useSteerAccountPositionsExtended = ({
       const token0 = new Token(vault.token0)
       const token1 = new Token(vault.token1)
 
-      const token0Price = prices?.[String(vault.chainId)]?.[token0.address] || 0
-      const token1Price = prices?.[String(vault.chainId)]?.[token1.address] || 0
+      const token0Price = prices?.get(vault.chainId)?.get(token0.address) || 0
+      const token1Price = prices?.get(vault.chainId)?.get(token1.address) || 0
 
       const token0Amount = Amount.fromRawAmount(token0, position.token0Balance)
       const token1Amount = Amount.fromRawAmount(token1, position.token1Balance)

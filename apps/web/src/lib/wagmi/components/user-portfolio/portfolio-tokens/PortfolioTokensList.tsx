@@ -17,6 +17,7 @@ export const PortfolioTokensList: FC<PortfolioTokensListProps> = ({
       return (
         <PortfolioInfoRow
           id={`${token.chainId}:${token.id}`}
+          key={`${token.chainId}:${token.id}`}
           chainId={token.chainId as ChainId}
           icon={
             <img

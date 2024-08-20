@@ -516,8 +516,8 @@ importers:
         specifier: 1.11.2
         version: 1.11.2
       '@covalenthq/client-sdk':
-        specifier: 0.9.4
-        version: 0.9.4
+        specifier: 2.0.2
+        version: 2.0.2
       '@headlessui/react':
         specifier: 1.7.7
         version: 1.7.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -3752,8 +3752,8 @@ packages:
   '@cosmjs/utils@0.31.3':
     resolution: {integrity: sha512-VBhAgzrrYdIe0O5IbKRqwszbQa7ZyQLx9nEQuHQ3HUplQW7P44COG/ye2n6AzCudtqxmwdX7nyX8ta1J07GoqA==}
 
-  '@covalenthq/client-sdk@0.9.4':
-    resolution: {integrity: sha512-BBR2c7ST1i5dtcK8YOGKsI+wFsHO5bxrhG/bIl1rRhaKWKBS3imnDjMd+crspzpvtpKYcpHJMuX/ByVLEUco1g==}
+  '@covalenthq/client-sdk@2.0.2':
+    resolution: {integrity: sha512-Cpp7CjokakaPVho6z0Yy+a19ZhsGsfpgF5EPq/wmVyCPasfZ8sRoKnVIGqD1cMhWZ3lL2UeZ6xRN8G6FeZ7wpQ==}
 
   '@cryptoalgebra/integral-core@0.2.0':
     resolution: {integrity: sha512-gj3pvt7x70fa2Y2LgnJgAuMxggmBfIVyI8dBEG7uEJGwmwkDwY9dqA/SqM5Dp6HChPDfwUNMOKOKmyramexIkA==}
@@ -7137,15 +7137,6 @@ packages:
       rollup:
         optional: true
 
-  '@rollup/plugin-commonjs@25.0.7':
-    resolution: {integrity: sha512-nEvcR+LRjEjsaSsc4x3XZfCCvZIaSMenZu/OiwOKGN2UhQpAYI7ru7czFvyWbErlpoGjnSX3D5Ch5FcMA3kRWQ==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^2.68.0||^3.0.0||^4.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-
   '@rollup/plugin-commonjs@26.0.1':
     resolution: {integrity: sha512-UnsKoZK6/aGIH6AdkptXhNvhaqftcjq3zZdT+LY5Ftms6JR06nADcDsYp5hTU9E2lbJUEOhdlY5J4DNTneM+jQ==}
     engines: {node: '>=16.0.0 || 14 >= 14.17'}
@@ -7160,15 +7151,6 @@ packages:
     engines: {node: '>= 10.0.0'}
     peerDependencies:
       rollup: ^1.20.0||^2.0.0
-
-  '@rollup/plugin-node-resolve@15.2.3':
-    resolution: {integrity: sha512-j/lym8nf5E21LwBT4Df1VD6hRO2L2iwUeUmP7litikRsVp1H6NWx20NEp0Y7su+7XGc476GnXXc4kFeZNGmaSQ==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^2.78.0||^3.0.0||^4.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
 
   '@rollup/plugin-replace@2.4.2':
     resolution: {integrity: sha512-IGcu+cydlUMZ5En85jxHH4qj2hta/11BHq95iHEyb2sbgiN0eCdzvUcHw5gt9pBL5lTi4JDYJ1acCoMGpTvEZg==}
@@ -8977,9 +8959,6 @@ packages:
 
   '@types/resolve@1.17.1':
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
-
-  '@types/resolve@1.20.2':
-    resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
 
   '@types/responselike@1.0.0':
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
@@ -19695,12 +19674,6 @@ packages:
     peerDependencies:
       rollup: ^2.0.0
 
-  rollup-plugin-typescript2@0.35.0:
-    resolution: {integrity: sha512-szcIO9hPUx3PhQl91u4pfNAH2EKbtrXaES+m163xQVE5O1CC0ea6YZV/5woiDDW3CR9jF2CszPrKN+AFiND0bg==}
-    peerDependencies:
-      rollup: '>=1.26.3'
-      typescript: 5.4.5
-
   rollup-plugin-visualizer@5.12.0:
     resolution: {integrity: sha512-8/NU9jXcHRs7Nnj07PF2o4gjxmm9lXIrZ8r175bT9dK8qoLlvKTwRMArRCMgpMGlq8CTLugRvEmyMeMXIU2pNQ==}
     engines: {node: '>=14'}
@@ -25859,15 +25832,9 @@ snapshots:
 
   '@cosmjs/utils@0.31.3': {}
 
-  '@covalenthq/client-sdk@0.9.4':
+  '@covalenthq/client-sdk@2.0.2':
     dependencies:
-      '@rollup/plugin-commonjs': 25.0.7(rollup@3.29.4)
-      '@rollup/plugin-node-resolve': 15.2.3(rollup@3.29.4)
       big.js: 6.2.1
-      date-fns: 2.30.0
-      rollup: 3.29.4
-      rollup-plugin-typescript2: 0.35.0(rollup@3.29.4)(typescript@5.4.5)
-      typescript: 5.4.5
 
   '@cryptoalgebra/integral-core@0.2.0':
     dependencies:
@@ -30405,17 +30372,6 @@ snapshots:
     optionalDependencies:
       rollup: 2.78.0
 
-  '@rollup/plugin-commonjs@25.0.7(rollup@3.29.4)':
-    dependencies:
-      '@rollup/pluginutils': 5.0.4(rollup@3.29.4)
-      commondir: 1.0.1
-      estree-walker: 2.0.2
-      glob: 8.1.0
-      is-reference: 1.2.1
-      magic-string: 0.30.10
-    optionalDependencies:
-      rollup: 3.29.4
-
   '@rollup/plugin-commonjs@26.0.1(rollup@3.29.4)':
     dependencies:
       '@rollup/pluginutils': 5.0.4(rollup@3.29.4)
@@ -30436,17 +30392,6 @@ snapshots:
       is-module: 1.0.0
       resolve: 1.22.8
       rollup: 2.78.0
-
-  '@rollup/plugin-node-resolve@15.2.3(rollup@3.29.4)':
-    dependencies:
-      '@rollup/pluginutils': 5.0.4(rollup@3.29.4)
-      '@types/resolve': 1.20.2
-      deepmerge: 4.3.1
-      is-builtin-module: 3.2.1
-      is-module: 1.0.0
-      resolve: 1.22.8
-    optionalDependencies:
-      rollup: 3.29.4
 
   '@rollup/plugin-replace@2.4.2(rollup@2.78.0)':
     dependencies:
@@ -33312,8 +33257,6 @@ snapshots:
   '@types/resolve@1.17.1':
     dependencies:
       '@types/node': 22.1.0
-
-  '@types/resolve@1.20.2': {}
 
   '@types/responselike@1.0.0':
     dependencies:
@@ -48698,16 +48641,6 @@ snapshots:
       rollup: 2.78.0
       serialize-javascript: 4.0.0
       terser: 5.30.3
-
-  rollup-plugin-typescript2@0.35.0(rollup@3.29.4)(typescript@5.4.5):
-    dependencies:
-      '@rollup/pluginutils': 4.2.1
-      find-cache-dir: 3.3.2
-      fs-extra: 10.1.0
-      rollup: 3.29.4
-      semver: 7.6.0
-      tslib: 2.6.3
-      typescript: 5.4.5
 
   rollup-plugin-visualizer@5.12.0(rollup@2.78.0):
     dependencies:

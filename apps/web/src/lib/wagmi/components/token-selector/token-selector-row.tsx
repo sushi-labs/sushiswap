@@ -12,6 +12,7 @@ import {
 } from '@sushiswap/telemetry'
 import {
   IconButton,
+  SkeletonCircle,
   SkeletonText,
   Tooltip,
   TooltipContent,
@@ -231,3 +232,26 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
     )
   },
 )
+
+export function TokenSelectorRowLoading() {
+  return (
+    <div className="block flex-1 py-0.5 h-[64px]">
+      <div className="flex items-center w-full h-full px-3 rounded-lg">
+        <div className="flex items-center justify-between flex-grow gap-2 rounded">
+          <div className="flex flex-row items-center flex-grow gap-4">
+            <SkeletonCircle radius={40} />
+            <div className="flex flex-col items-start">
+              <SkeletonText className="w-full w-[100px]" />
+              <SkeletonText fontSize="sm" className="w-full w-[60px]" />
+            </div>
+          </div>
+
+          <div className="flex flex-col w-full">
+            <SkeletonText className="w-[80px]" />
+            <SkeletonText fontSize="sm" align="right" className="w-[40px]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

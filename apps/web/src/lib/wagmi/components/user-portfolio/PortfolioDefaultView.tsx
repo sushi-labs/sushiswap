@@ -142,10 +142,12 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
       <div className="flex px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (
           <Button
+            key={_tab}
             asChild
             size="xs"
             variant={_tab === tab ? 'secondary' : 'ghost'}
             onClick={() => setTab(_tab)}
+            className="select-none"
           >
             {_tab}
           </Button>

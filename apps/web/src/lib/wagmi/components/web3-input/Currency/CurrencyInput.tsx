@@ -18,7 +18,7 @@ import { ChainId } from 'sushi/chain'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
 import { Percent } from 'sushi/math'
 import { useAccount } from 'wagmi'
-import { TokenSelector } from '../../token-selector/TokenSelector'
+import { TokenSelector } from '../../token-selector/token-selector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
 

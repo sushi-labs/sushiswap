@@ -26,6 +26,7 @@ export const PortfolioALMPositions: FC<PortfolioALMPositionsProps> = ({
       {positions.map((position) => (
         <PortfolioInfoRow
           id={`${position.chainId}:${position.id}`}
+          key={`${position.chainId}:${position.id}`}
           chainId={position.chainId as ChainId}
           href={`/${ChainKey[position.chainId as ChainId]}/pool/v3/${
             position.address
