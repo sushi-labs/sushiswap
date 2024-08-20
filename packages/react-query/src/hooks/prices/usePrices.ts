@@ -4,7 +4,7 @@ import { LowercaseMap } from 'sushi'
 import { API_BASE_URL } from 'sushi/config'
 import { withoutScientificNotation } from 'sushi/format'
 import { Fraction } from 'sushi/math'
-import { Address, isAddress, parseUnits } from 'viem'
+import { Address, parseUnits } from 'viem'
 
 interface UsePrices {
   chainId: number | undefined
@@ -15,7 +15,7 @@ export const usePrices = ({ chainId, enabled = true }: UsePrices) => {
   return useQuery({
     queryKey: [`${API_BASE_URL}/price/v1/${chainId}`],
     queryFn: async () => {
-      const data: Record<string, number> = await fetch(
+      const data: Record<Address, number> = await fetch(
         `${API_BASE_URL}/price/v1/${chainId}`,
       ).then((response) => response.json())
 
@@ -23,9 +23,9 @@ export const usePrices = ({ chainId, enabled = true }: UsePrices) => {
 
       Object.entries(data).forEach(([address, _price]) => {
         const price = withoutScientificNotation(_price.toFixed(18))
-        if (isAddress(address) && typeof price !== 'undefined') {
+        if (typeof price !== 'undefined') {
           priceMap.set(
-            address,
+            address as Address,
             new Fraction(
               parseUnits(price, 18).toString(),
               parseUnits('1', 18).toString(),
