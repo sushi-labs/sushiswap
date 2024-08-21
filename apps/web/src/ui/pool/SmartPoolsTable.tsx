@@ -501,8 +501,14 @@ const COLUMNS = [
   },
 ] satisfies ColumnDef<SmartPoolsV1[number], unknown>[]
 
-export const SmartPoolsTable: FC<{ smartPools: SmartPoolsV1 }> = ({
+interface SmartPoolsTableProps {
+  smartPools?: SmartPoolsV1
+  isLoading?: boolean
+}
+
+export const SmartPoolsTable: FC<SmartPoolsTableProps> = ({
   smartPools,
+  isLoading = false,
 }) => {
   const { tokenSymbols, protocols, farmsOnly } = usePoolFilters()
   const [sorting, setSorting] = useState<SortingState>([
@@ -581,7 +587,7 @@ export const SmartPoolsTable: FC<{ smartPools: SmartPoolsV1 }> = ({
           `/${row.chainId}/pool/v3/${row.poolAddress}/smart/${row.address}`
         }
         onSortingChange={setSorting}
-        loading={!vaults}
+        loading={isLoading}
         columns={COLUMNS}
         data={vaults}
       />

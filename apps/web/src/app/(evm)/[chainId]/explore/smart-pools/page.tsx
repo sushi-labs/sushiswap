@@ -1,7 +1,7 @@
 import { getSmartPools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
-import React from 'react'
+import React, { FC, Suspense } from 'react'
 import { SmartPoolsTable } from 'src/ui/pool/SmartPoolsTable'
 import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
 import { TableFiltersNetwork } from 'src/ui/pool/TableFiltersNetwork'
@@ -10,29 +10,36 @@ import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { ChainId } from 'sushi/chain'
 
-export default async function SmartPoolsPage({
-  params,
-}: {
-  params: { chainId: string }
-}) {
+const _SmartPoolsTable: FC<{ chainId: ChainId }> = async ({ chainId }) => {
   const smartPools = await unstable_cache(
-    async () => getSmartPools({ chainId: +params.chainId }),
-    ['smart-pools', params.chainId],
+    async () => getSmartPools({ chainId }),
+    ['smart-pools', `${chainId}`],
     {
       revalidate: 60 * 15,
     },
   )()
 
+  return <SmartPoolsTable smartPools={smartPools} />
+}
+
+export default async function SmartPoolsPage({
+  params,
+}: {
+  params: { chainId: string }
+}) {
+  const chainId = +params.chainId as ChainId
   return (
     <Container maxWidth="7xl" className="px-4">
       <div className="flex flex-wrap gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersPoolType />
-        <TableFiltersNetwork chainId={+params.chainId as ChainId} />
+        <TableFiltersNetwork chainId={chainId} />
         <TableFiltersFarmsOnly />
         <TableFiltersResetButton />
       </div>
-      <SmartPoolsTable smartPools={smartPools} />
+      <Suspense fallback={<SmartPoolsTable isLoading={true} />}>
+        <_SmartPoolsTable chainId={chainId} />
+      </Suspense>
     </Container>
   )
 }

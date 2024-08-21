@@ -430,13 +430,13 @@ const COLUMNS = [
   } satisfies ColumnDef<TopPools[number], unknown>,
 ] as ColumnDef<TopPools[number], unknown>[]
 
-interface PositionsTableProps {
+interface PoolsTableProps {
   pools?: TopPools
   isLoading?: boolean
   onRowClick?(row: TopPools[number]): void
 }
 
-export const PoolsTable: FC<PositionsTableProps> = ({
+export const PoolsTable: FC<PoolsTableProps> = ({
   pools,
   isLoading = false,
   onRowClick,
