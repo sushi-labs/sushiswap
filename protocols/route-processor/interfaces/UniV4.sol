@@ -18,13 +18,13 @@ library BalanceDeltaLibrary {
   BalanceDelta public constant ZERO_DELTA = BalanceDelta.wrap(0);
 
   function amount0(BalanceDelta balanceDelta) internal pure returns (int128 _amount0) {
-      assembly {
+      assembly ("memory-safe") {
           _amount0 := sar(128, balanceDelta)
       }
   }
 
   function amount1(BalanceDelta balanceDelta) internal pure returns (int128 _amount1) {
-      assembly {
+      assembly ("memory-safe") {
           _amount1 := signextend(15, balanceDelta)
       }
   }
@@ -102,7 +102,7 @@ library PoolManagerAdditionalLibrary {
     /// @param currency The currency for which to lookup the delta
     function currencyDelta(IPoolManager manager, Currency currency, address target) internal view returns (int256) {
         bytes32 key;
-        assembly {
+        assembly ("memory-safe") {
             mstore(0, and(target, 0xffffffffffffffffffffffffffffffffffffffff))
             mstore(32, and(currency, 0xffffffffffffffffffffffffffffffffffffffff))
             key := keccak256(0, 64)
@@ -128,10 +128,16 @@ library PoolManagerAdditionalLibrary {
     }
 }
 
-// library UniV4CallBackManagerCheck {
-//   function setManager(IPoolManager manager) {
-//         assembly {
-//             sstore(CURRENCY_SLOT, 0)
-//         }
-//   }
-// }
+bytes32 constant UniV4CallBackManager_SLOT = 0;
+library UniV4CallBackProtection {
+  function checkAndSetExpectedManager(address prevValue, address newValue) internal {
+    address value;
+    assembly ("memory-safe"){
+      value := tload(UniV4CallBackManager_SLOT)
+    }
+    if (value != prevValue) revert('Expected UniV4 manager slot error');
+    assembly ("memory-safe"){
+      tstore(UniV4CallBackManager_SLOT, newValue)
+    }
+  }
+}

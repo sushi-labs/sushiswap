@@ -561,7 +561,7 @@ contract RouteProcessor6 is Ownable {
     // It is safer to make transferFrom here, but TODO: Can be avoided? We could transfer in unlockCallback
     if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
 
-    lastCalledPool = manager;
+    UniV4CallBackProtection.checkAndSetExpectedManager(address(0), manager);
     IPoolManager(manager).unlock(abi.encode(UniV4CallbackData(
         IPoolManager(manager), 
         PoolKey(
@@ -576,25 +576,15 @@ contract RouteProcessor6 is Ownable {
         to
       ))
     );
-
-    require(lastCalledPool == IMPOSSIBLE_POOL_ADDRESS, 'RouteProcessor.swapUniV3: unexpected'); // Just to be sure
   }
 
   // callback for UniV4
   // TODO: interaction swapUniV4<->unlockCallback through transient storage?
   // Attention: For UniV4 Native is 0x0 !!!! (NATIVE = Currency.wrap(address(0));)
   function unlockCallback(bytes calldata rawData) external {
-    require(msg.sender == lastCalledPool, 'RouteProcessor.unlockCallback: call from unknown source');    
-    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS; // TODO: transient?  
+    UniV4CallBackProtection.checkAndSetExpectedManager(msg.sender, address(0)); 
 
     UniV4CallbackData memory data = abi.decode(rawData, (UniV4CallbackData));
-
-    // protection against unlockCallback replay. TODO: Can it be written easier?
-    int256 deltaBefore0 = data.manager.currencyDelta(data.key.currency0, address(this));
-    int256 deltaBefore1 = data.manager.currencyDelta(data.key.currency1, address(this));
-    require(deltaBefore0 == 0, "deltaBefore0 is not equal to 0");
-    require(deltaBefore1 == 0, "deltaBefore1 is not equal to 0");
-
     BalanceDelta delta = data.manager.swap(data.key, data.params, data.hookData);
 
     //TODO: Why can't we trust to deltas?
