@@ -235,12 +235,12 @@ function transform(
         ? StrategyTypes[vault.payload.strategyConfigData.name]
         : null
 
-      if (!strategyType) {
+      if (!strategyType || !vault.payload) {
         return []
       }
 
       let lastAdjustmentTimestamp = Math.floor(
-        vault.payload!.strategyConfigData.epochStart,
+        vault.payload.strategyConfigData.epochStart,
       )
       if (lastAdjustmentTimestamp > 1000000000000) {
         lastAdjustmentTimestamp = Math.floor(lastAdjustmentTimestamp / 1000)
@@ -278,7 +278,7 @@ function transform(
 
         strategy: strategyType,
         payloadHash: vault.payloadIpfs,
-        description: vault.payload!.strategyConfigData.description,
+        description: '', // not used
         state: 'PendingThreshold', // unused
 
         performanceFee: 0.15, // currently constant
@@ -291,7 +291,7 @@ function transform(
           : TickMath.MAX_TICK,
 
         adjustmentFrequency: Number(
-          vault.payload!.strategyConfigData.epochLength,
+          vault.payload.strategyConfigData.epochLength,
         ),
         lastAdjustmentTimestamp,
 
