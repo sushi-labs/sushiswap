@@ -18,6 +18,7 @@ export const SmartPoolsQuery = graphql(
       address
       swapFee
       strategy
+      description
       protocol
       token0 {
         id

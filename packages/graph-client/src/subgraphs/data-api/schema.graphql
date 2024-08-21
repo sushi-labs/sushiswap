@@ -433,7 +433,8 @@ type BasicSmartPool {
   protocol: String!
   token0: Token!
   token1: Token!
-  strategy: String
+  strategy: String!
+  description: String!
   liquidityUSD: Float!
   vaultLiquidityUSD: Float!
   feeUSD1d: Float!

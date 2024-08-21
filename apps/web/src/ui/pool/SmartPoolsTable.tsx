@@ -192,7 +192,7 @@ const COLUMNS = [
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-[320px]">
-            <p>{original.strategy.description}</p>
+            <p>{original.description}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
