@@ -48,4 +48,5 @@ export const SteerStrategyComponents: Record<
   [SteerStrategy.KeltnerAlgo]: SteerBaseStrategy,
   [SteerStrategy.MovingVolatilityChannel]: SteerBaseStrategy,
   [SteerStrategy.MovingVolatilityChannelMedium]: SteerBaseStrategy,
+  [SteerStrategy.FluidLiquidity]: SteerBaseStrategy,
 }

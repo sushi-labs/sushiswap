@@ -91,6 +91,7 @@ export enum SteerStrategy {
   FixedPercentage = 'FixedPercentage',
   KeltnerAlgo = 'KeltnerAlgo',
   BollingerAlgo = 'BollingerAlgo',
+  FluidLiquidity = 'FluidLiquidity',
 }
 
 export const isSteerStrategy = (strategy: string): strategy is SteerStrategy =>
