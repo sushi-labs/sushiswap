@@ -291,7 +291,7 @@ function transform(
           : TickMath.MAX_TICK,
 
         adjustmentFrequency: Number(
-          vault.payload.strategyConfigData.epochLength
+          vault.payload.strategyConfigData.epochLength,
         ),
         lastAdjustmentTimestamp,
 
