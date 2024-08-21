@@ -46,7 +46,11 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   pool,
   protocol,
 }) => {
-  const { data: buckets, isInitialLoading: isLoading } = usePoolGraphData({
+  const {
+    data: buckets,
+    isInitialLoading: isLoading,
+    isError,
+  } = usePoolGraphData({
     poolAddress: pool.address,
     chainId: pool.chainId,
     protocol,
@@ -230,6 +234,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         <CardDescription>
           {isLoading ? (
             <SkeletonText fontSize="sm" />
+          ) : isError || !xData.length ? (
+            <div className="text-sm h-[1ch] w-full" />
           ) : (
             <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
               {format(
@@ -247,6 +253,8 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
               'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
             )}
           />
+        ) : isError ? (
+          <div className="h-[400px] w-full" />
         ) : (
           <ReactEchartsCore
             echarts={echarts}
