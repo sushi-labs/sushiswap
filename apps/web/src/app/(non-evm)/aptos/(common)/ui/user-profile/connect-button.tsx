@@ -32,7 +32,7 @@ export function ConnectButton(props: ButtonProps) {
             const Icon = WalletIcons[wallet.name]
             return (
               <DropdownMenuItem
-                onClick={() => onSelect(wallet.name as WalletName)}
+                onClick={() => onSelect(wallet.name)}
                 key={wallet.name}
               >
                 <Icon className="w-4 h-4 mr-2" />

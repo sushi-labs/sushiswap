@@ -14,19 +14,24 @@ export const EXPLORE_NAVIGATION_LINKS = (
     description: 'The easiest way to trade.',
   },
   {
-    title: 'Pools',
-    href: `/${
-      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
-    }/pool`,
-    description: 'Earn fees by providing liquidity.',
-  },
-  {
     title: 'Explore',
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
     }/explore/pools`,
     description: 'Explore top pools.',
   },
+  {
+    title: 'Pools',
+    href: `/${
+      isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
+    }/pool`,
+    description: 'Earn fees by providing liquidity.',
+  },
+  //  {
+  //    title: 'Bonds',
+  //    href: '/bonds',
+  //    description: 'Earn interest by locking up your assets.',
+  //  },
   {
     title: 'Stake',
     href: '/stake',
