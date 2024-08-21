@@ -235,12 +235,12 @@ function transform(
         ? StrategyTypes[vault.payload.strategyConfigData.name]
         : null
 
-      if (!strategyType) {
+      if (!strategyType || !vault.payload) {
         return []
       }
 
       let lastAdjustmentTimestamp = Math.floor(
-        vault.payload!.strategyConfigData.epochStart,
+        vault.payload.strategyConfigData.epochStart,
       )
       if (lastAdjustmentTimestamp > 1000000000000) {
         lastAdjustmentTimestamp = Math.floor(lastAdjustmentTimestamp / 1000)
@@ -291,7 +291,7 @@ function transform(
           : TickMath.MAX_TICK,
 
         adjustmentFrequency: Number(
-          vault.payload?.strategyConfigData.epochLength ?? 0
+          vault.payload.strategyConfigData.epochLength
         ),
         lastAdjustmentTimestamp,
 
