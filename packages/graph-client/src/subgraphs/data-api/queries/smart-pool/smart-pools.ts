@@ -1,6 +1,5 @@
 import type { VariablesOf } from 'gql.tada'
 
-import { isSteerStrategy, type SteerStrategy } from '@sushiswap/steer-sdk'
 import { request, type RequestOptions } from 'src/lib/request'
 import type { ChainId } from 'sushi'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
@@ -70,12 +69,11 @@ export async function getSmartPools(
 
   if (result) {
     return result.smartPools
-      .filter((v) => isSteerStrategy(v.strategy))
       .map((pool) => ({
         ...pool,
         chainId: pool.chainId as ChainId,
         id: pool.id as `${string}:0x${string}`,
-        strategy: pool.strategy as SteerStrategy,
+        strategy: pool.strategy,
         token0: {
           id: pool.token0.id as `${string}:0x${string}`,
           address: pool.token0.address as Address,

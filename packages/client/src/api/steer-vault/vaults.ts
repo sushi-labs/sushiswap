@@ -242,6 +242,7 @@ export async function getSteerVaultsFromDB(
     feesUSD: Number(vault.feesUSD),
 
     strategy: vault.strategy as any,
+    description: '',
     payloadHash: vault.payloadHash,
     // description: vault.description,
     // state: vault.state

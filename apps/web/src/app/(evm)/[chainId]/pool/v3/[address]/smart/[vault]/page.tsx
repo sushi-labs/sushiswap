@@ -10,9 +10,9 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
 import {
-  SteerStrategyComponents,
   SteerStrategyGeneric,
 } from 'src/ui/pool/Steer/SteerStrategies'
+import { SteerBaseStrategy } from 'src/ui/pool/Steer/SteerStrategies/SteerBaseStrategy'
 import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'
 import { formatNumber } from 'sushi/format'
@@ -106,7 +106,7 @@ export default async function SteerVaultPage({
     },
   )()
 
-  const Component = SteerStrategyComponents[vault.strategy]
+  const Component = SteerBaseStrategy
 
   return (
     <Container maxWidth="5xl" className="px-2 sm:px-4">

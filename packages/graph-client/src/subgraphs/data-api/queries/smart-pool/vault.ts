@@ -1,5 +1,4 @@
 import type { SteerChainId } from '@sushiswap/steer-sdk'
-import { SteerStrategy } from '@sushiswap/steer-sdk'
 import type { VariablesOf } from 'gql.tada'
 import { request, type RequestOptions } from 'src/lib/request'
 import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
@@ -34,6 +33,7 @@ export const VaultQuery = graphql(
       adjustmentFrequency
       lastAdjustmentTimestamp
       strategy
+      description
       payloadHash
       lowerTick
       upperTick
@@ -76,9 +76,6 @@ export async function getVault(variables: GetVault, options?: RequestOptions) {
     )
     if (result) {
       const vault = result.vault
-      const strategy =
-        SteerStrategy[vault.strategy as keyof typeof SteerStrategy]
-      if (!strategy) throw new Error('No strategy found')
       return {
         ...vault,
         chainId: vault.chainId as SteerChainId,
@@ -100,7 +97,6 @@ export async function getVault(variables: GetVault, options?: RequestOptions) {
           address: vault.token1.address as Address,
           chainId: vault.chainId as SteerChainId,
         },
-        strategy,
       }
     }
 

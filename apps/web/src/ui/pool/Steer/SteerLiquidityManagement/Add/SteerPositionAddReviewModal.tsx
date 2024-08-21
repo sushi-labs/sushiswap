@@ -40,7 +40,6 @@ import { useSimulateContract } from 'wagmi'
 import { useWaitForTransactionReceipt } from 'wagmi'
 import { useWriteContract } from 'wagmi'
 import { useTokenAmountDollarValues } from '../../../../../lib/hooks'
-import { SteerStrategyConfig } from '../../constants'
 import { useSteerPositionAddDerivedInfo } from './SteerPositionAddProvider'
 
 interface SteerPositionAddReviewModalProps {
@@ -227,7 +226,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>
-                    {SteerStrategyConfig[vault.strategy].name}
+                    {vault.strategy}
                   </DialogTitle>
                   <DialogDescription>Add liquidity</DialogDescription>
                 </DialogHeader>

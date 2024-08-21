@@ -31,7 +31,6 @@ import {
   SteerPositionRemove,
 } from '../SteerLiquidityManagement'
 import { SteerStrategyLiquidityDistribution } from '../SteerStrategyLiquidityChart'
-import { SteerStrategyConfig } from '../constants'
 
 export const SteerBaseStrategy: SteerStrategyComponent = ({
   pool,
@@ -111,9 +110,9 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
       <div>
         <Card>
           <CardHeader>
-            <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
+            <CardTitle>{vault.strategy}</CardTitle>
             <CardDescription>
-              {SteerStrategyConfig[vault.strategy].description}
+              {vault.description}
             </CardDescription>
           </CardHeader>
           <Separator />

@@ -1,4 +1,4 @@
-import { SteerStrategy } from '@sushiswap/steer-sdk'
+
 import type { Token } from 'sushi/types'
 import type { SteerVaultId } from './steer-vault-id'
 
@@ -34,7 +34,8 @@ export type SteerVault<T extends SteerVaultId = SteerVaultId> = T & {
   token0: Token
   token1: Token
 
-  strategy: SteerStrategy
+  strategy: string
+  description: string
   payloadHash: string
 
   isEnabled: boolean

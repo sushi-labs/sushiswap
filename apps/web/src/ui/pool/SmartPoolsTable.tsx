@@ -54,7 +54,6 @@ import { SushiSwapProtocol } from 'sushi/types'
 import { APRHoverCard } from './APRHoverCard'
 import { ProtocolBadge } from './PoolNameCell'
 import { usePoolFilters } from './PoolsFiltersProvider'
-import { SteerStrategyConfig } from './Steer/constants'
 
 const COLUMNS = [
   {
@@ -193,7 +192,7 @@ const COLUMNS = [
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-[320px]">
-            <p>{SteerStrategyConfig[original.strategy].description}</p>
+            <p>{original.strategy.description}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

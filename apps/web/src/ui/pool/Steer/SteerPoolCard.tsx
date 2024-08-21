@@ -19,7 +19,6 @@ import type { PoolWithFeeAprs, PoolWithIncentives } from 'sushi/types'
 import { APRHoverCard } from '../APRHoverCard'
 import { SteerAPRChart } from './SteerAPRChart'
 import { SteerLiquidityDistributionWidget } from './SteerLiquidityDistributionWidget/SteerLiquidityDistributionWidget'
-import { SteerStrategyConfig } from './constants'
 
 interface SteerPoolCardProps {
   pool: PoolWithIncentives<PoolWithFeeAprs>
@@ -37,9 +36,9 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
         )}
       >
         <CardHeader>
-          <CardTitle>{SteerStrategyConfig[vault.strategy].name}</CardTitle>
+          <CardTitle>{vault.strategy}</CardTitle>
           <CardDescription>
-            {SteerStrategyConfig[vault.strategy].description}
+            {vault.description}
           </CardDescription>
         </CardHeader>
         <Separator />

@@ -1,10 +1,8 @@
-import { BONDS_SUBGRAPH_URL } from '@sushiswap/bonds-sdk'
 import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql'
 
 import fs from 'fs'
 
 const schemas = {
-  bonds: BONDS_SUBGRAPH_URL[1],
   bentobox: 'api.studio.thegraph.com/query/32073/bentobox-ethereum/v0.0.1',
   strapi: 'sushi-strapi-cms.herokuapp.com/graphql',
   furo: 'api.studio.thegraph.com/query/32073/furo-ethereum/v0.0.1',

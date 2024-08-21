@@ -36,6 +36,12 @@ type Query {
   vaults(chainId: Int!, poolAddress: String!): [Vault!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
+  tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [Bytes!]): [TokenListEntry!]!
+  tokenListBalances(chainId: TokenListChainId!, account: Bytes!, includeNative: Boolean = true, customTokens: [Bytes!]): [TokenListEntryWithBalance!]!
+  approvedCommunityTokens: [TokenListEntry!]!
+  tokenAnalysis(chainId: Int!, address: Bytes!): TokenAnalysis!
+  pendingTokens: [PendingToken!]!
+  trendingTokens(chainId: Int!): [TrendingToken!]!
   v2LiquidityPositions(user: String!, chainId: Int!): [V2LiquidityPosition!]!
   v2Swaps(address: String!, chainId: Int!): [V2Swap!]!
   v2Burns(address: String!, chainId: Int!): [V2Burn!]!
@@ -410,6 +416,14 @@ type PortfolioTransaction {
   gasFeeUSD: Float!
 }
 
+"""
+A field whose value is a byte string: https://en.wikipedia.org/wiki/Byte_string
+"""
+scalar Bytes
+
+"""A field whose value is a bigint"""
+scalar BigInt
+
 type BasicSmartPool {
   id: ID!
   chainId: Int!
@@ -452,6 +466,7 @@ type Vault {
   lastAdjustmentTimestamp: Int!
   strategy: String!
   payloadHash: String!
+  description: String!
   lowerTick: Int!
   upperTick: Int!
   apr: Float!
@@ -505,6 +520,98 @@ type SushiBarHistory {
   hourSnapshots: [SushiBarBucket!]!
   daySnapshots: [SushiBarBucket!]!
   weekSnapshots: [SushiBarBucket!]!
+}
+
+scalar TokenListChainId
+
+type TokenListEntry {
+  address: Bytes!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  approved: Boolean!
+}
+
+type TokenListEntryWithBalance {
+  address: Bytes!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  balance: BigInt!
+  approved: Boolean!
+}
+
+type TokenValidationMetrics {
+  age: Int!
+  volumeUSD24h: Float!
+  marketcapUSD: Float!
+  holders: Int!
+}
+
+type TokenSubmissionRequirements {
+  minimumAge: Int!
+  minimumVolumeUSD24h: Float!
+  minimumMarketcapUSD: Float!
+  minimumHolders: Int!
+}
+
+type TokenAnalysis {
+  token: Token!
+  isExisting: Boolean!
+  isPending: Boolean!
+  isPassingRequirements: Boolean!
+  reasoning: [String!]!
+  metrics: TokenValidationMetrics!
+  requirements: TokenSubmissionRequirements!
+  security: TokenSecurity
+}
+
+type PendingToken {
+  token: Token!
+  tweetUrl: String!
+  logoUrl: String!
+  reasoning: [String!]!
+  createdAt: Int!
+  metrics: TokenValidationMetrics!
+  security: TokenSecurity
+}
+
+type TokenSecurity {
+  isOpenSource: Boolean!
+  isProxy: Boolean!
+  isMintable: Boolean!
+  canTakeBackOwnership: Boolean!
+  ownerChangeBalance: Boolean!
+  hiddenOwner: Boolean!
+  selfDestruct: Boolean!
+  externalCall: Boolean!
+  gasAbuse: Boolean!
+  buyTax: Boolean
+  sellTax: Boolean
+  cannotBuy: Boolean!
+  cannotSellAll: Boolean!
+  slippageModifiable: Boolean!
+  isHoneypot: Boolean!
+  transferPausable: Boolean!
+  isBlacklisted: Boolean!
+  isWhitelisted: Boolean!
+  isAntiWhale: Boolean!
+  tradingCooldown: Boolean!
+  isTrueToken: Boolean!
+  isAirdropScam: Boolean!
+  trustList: Boolean!
+  isBuyable: Boolean
+  isFakeToken: Boolean
+  isSellLimit: Boolean
+  holderCount: Float!
+}
+
+type TrendingToken {
+  address: Bytes!
+  symbol: String!
+  name: String!
+  decimals: Int!
+  approved: Boolean!
 }
 
 type V2LiquidityPosition {
