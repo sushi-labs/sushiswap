@@ -278,7 +278,7 @@ function transform(
 
         strategy: strategyType,
         payloadHash: vault.payloadIpfs,
-        description: vault.payload!.strategyConfigData.description,
+        description: '', // not used
         state: 'PendingThreshold', // unused
 
         performanceFee: 0.15, // currently constant
@@ -291,7 +291,7 @@ function transform(
           : TickMath.MAX_TICK,
 
         adjustmentFrequency: Number(
-          vault.payload!.strategyConfigData.epochLength,
+          vault.payload?.strategyConfigData.epochLength ?? 0
         ),
         lastAdjustmentTimestamp,
 
