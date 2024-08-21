@@ -75,4 +75,8 @@ export const SteerStrategyConfig: Record<SteerStrategy, SteerStrategyConfig> = {
     description:
       'This strategy uses recent trading data to form a Keltner Channel that sets the range to place optimal liquidity for a given period of time. The Keltner Channel is a technical indicator that measures volatility using upper and lower bands, and an exponential moving average. These bands adjust based on market volatility.',
   },
+  [SteerStrategy.FluidLiquidity]: {
+    name: 'Fluid Liquidity',
+    description: '',
+  },
 }
