@@ -318,14 +318,18 @@ contract RouteProcessor6 is Ownable {
   /// @param amountIn Amount of tokenIn to take for swap
   function swap(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     uint8 poolType = stream.readUint8();
-    if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
-    else if (poolType == 1) swapUniV3(stream, from, tokenIn, amountIn);
-    else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
-    else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
-    else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
-    else if (poolType == 5) swapCurve(stream, from, tokenIn, amountIn);
-    else if (poolType == 6) swapUniV4(stream, from, tokenIn, amountIn);
-    else revert('RouteProcessor: Unknown pool type');
+    if(poolType % 2 == 0) {
+      if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
+      else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
+      else if (poolType == 6) swapUniV4(stream, from, tokenIn, amountIn);
+      else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
+      else revert('RouteProcessor: Unknown pool type');
+    } else {
+      if (poolType == 1) swapUniV3(stream, from, tokenIn, amountIn);
+      else if (poolType == 5) swapCurve(stream, from, tokenIn, amountIn);
+      else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
+      else revert('RouteProcessor: Unknown pool type');
+    }
   }
 
   /// @notice Wraps/unwraps native token
@@ -581,6 +585,7 @@ contract RouteProcessor6 is Ownable {
   // Attention: For UniV4 Native is 0x0 !!!! (NATIVE = Currency.wrap(address(0));)
   function unlockCallback(bytes calldata rawData) external {
     require(msg.sender == lastCalledPool, 'RouteProcessor.unlockCallback: call from unknown source');    
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS; // TODO: transient?  
 
     UniV4CallbackData memory data = abi.decode(rawData, (UniV4CallbackData));
 
@@ -624,7 +629,5 @@ contract RouteProcessor6 is Ownable {
     if (deltaAfter1 > 0) {
       data.manager.take(data.key.currency1, data.to, uint256(deltaAfter1));
     }
-
-    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS; // TODO: transient?
   }
 }
