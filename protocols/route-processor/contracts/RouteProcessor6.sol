@@ -543,7 +543,7 @@ contract RouteProcessor6 is Ownable {
   using BalanceDeltaLibrary for BalanceDelta;
 
   /// @notice UniswapV4 pool swap
-  /// @param stream [pool, direction, recipient]
+  /// @param stream [manager, PoolKey, SwapParams, hookData, to]
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
   /// @param amountIn Amount of tokenIn to take for swap
@@ -558,7 +558,7 @@ contract RouteProcessor6 is Ownable {
     bytes memory hookData = stream.readBytes();
     address to = stream.readAddress();  // where to transfer liquidity after this swap
 
-    // It is safer to make transferFrom here, but TODO: Can be avoided? We could transfer in unlockCallback
+    // This transfer is superflous and can be avoided, but it is a safer to make transferFrom here
     if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
 
     UniV4CallBackProtection.checkAndSetExpectedManager(address(0), manager);
@@ -579,7 +579,6 @@ contract RouteProcessor6 is Ownable {
   }
 
   // callback for UniV4
-  // TODO: interaction swapUniV4<->unlockCallback through transient storage?
   // Attention: For UniV4 Native is 0x0 !!!! (NATIVE = Currency.wrap(address(0));)
   function unlockCallback(bytes calldata rawData) external {
     UniV4CallBackProtection.checkAndSetExpectedManager(msg.sender, address(0)); 

@@ -116,13 +116,7 @@ library PoolManagerAdditionalLibrary {
         manager.settle{value: amount}();
       } else {
           manager.sync(currency);
-          // if (payer != address(this)) {
-          //   // TODO: Dangerous!!! To use transient storage? Or send to RP first
-          //     IERC20Minimal(Currency.unwrap(currency)).transferFrom(payer, address(manager), amount);
-          // } else {
-            // TODO: possible optimization - 1 transfer instead of 2
-              IERC20(Currency.unwrap(currency)).transfer(address(manager), amount);
-          // }
+          IERC20(Currency.unwrap(currency)).transfer(address(manager), amount);
           manager.settle();
       }
     }
