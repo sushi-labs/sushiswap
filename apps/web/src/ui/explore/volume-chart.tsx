@@ -73,14 +73,13 @@ export const VolumeChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
         formatter: onMouseOver,
       },
       grid: {
-        left: '0',
-        right: '0',
-        top: '0',
+        top: 0,
+        left: 20,
+        right: 20,
       },
       xAxis: [
         {
           type: 'time',
-          boundaryGap: true,
           splitLine: {
             show: false,
           },
@@ -91,8 +90,7 @@ export const VolumeChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
             show: false,
           },
           axisLabel: {
-            showMaxLabel: false,
-            showMinLabel: false,
+            hideOverlap: true,
             color: resolvedTheme === 'dark' ? 'white' : 'black',
             formatter: (value: number) => format(new Date(value), 'MMM d'),
           },

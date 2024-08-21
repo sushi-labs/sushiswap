@@ -86,13 +86,12 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
       color: ['#3B7EF6', '#A755DD'],
       grid: {
         top: 0,
-        left: 0,
-        right: 0,
+        left: 20,
+        right: 20,
       },
       xAxis: [
         {
           type: 'time',
-          boundaryGap: true,
           splitLine: {
             show: false,
           },
@@ -103,8 +102,7 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
             show: false,
           },
           axisLabel: {
-            showMaxLabel: false,
-            showMinLabel: false,
+            hideOverlap: true,
             color: resolvedTheme === 'dark' ? 'white' : 'black',
             formatter: (value: number) => {
               const date = new Date(value)
