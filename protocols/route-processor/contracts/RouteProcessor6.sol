@@ -497,7 +497,7 @@ contract RouteProcessor6 is Ownable {
     uniswapV3SwapCallback(amount0Delta, amount1Delta, data);
   }
 
-  /// @notice Curve pool swap. Legacy pools that don't return amountOut and have native coins are not supported
+  /// @notice Curve pool swap. Legacy pools that doesn't return amountOut and have native coins are not supported
   /// @param stream [pool, poolType, fromIndex, toIndex, recipient, output token]
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
@@ -529,12 +529,14 @@ contract RouteProcessor6 is Ownable {
   }
 
   struct UniV4CallbackData {
-    address sender;
     IPoolManager manager;
     PoolKey key;
     IPoolManager.SwapParams params;
     bytes hookData;
+    address to;
   }
+  using PoolManagerAdditionalLibrary for IPoolManager;
+  using BalanceDeltaLibrary for BalanceDelta;
 
   /// @notice UniswapV4 pool swap
   /// @param stream [pool, direction, recipient]
@@ -542,40 +544,57 @@ contract RouteProcessor6 is Ownable {
   /// @param tokenIn Input token
   /// @param amountIn Amount of tokenIn to take for swap
   function swapUniV4(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
-    address pool = stream.readAddress();
+    if (tokenIn == Utils.NATIVE_ADDRESS) tokenIn = address(0); // For UniV4 Native is 0x0
+    address manager = stream.readAddress();
+    address tokenOut = stream.readAddress();
+    uint24 fee = stream.readUint24();
+    int24 tickSpacing = int24(stream.readUint24());
+    address hooks = stream.readAddress();
     bool zeroForOne = stream.readUint8() > 0;
-    address recipient = stream.readAddress();
+    bytes memory hookData = stream.readBytes();
+    address to = stream.readAddress();  // where to transfer liquidity after this swap
 
+    // It is safer to make transferFrom here, but TODO: Can be avoided? We could transfer in unlockCallback
     if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
-// TODO: + natives !!!
-    lastCalledPool = pool;
-    delta = abi.decode(
-      IPoolManager(pool).unlock(abi.encode(CallbackData(msg.sender, testSettings, key, params, hookData))), (BalanceDelta)
+
+    lastCalledPool = manager;
+    IPoolManager(manager).unlock(abi.encode(UniV4CallbackData(
+        IPoolManager(manager), 
+        PoolKey(
+          Currency.wrap(zeroForOne ? tokenIn : tokenOut), 
+          Currency.wrap(zeroForOne ? tokenOut : tokenIn),
+          fee,
+          tickSpacing,
+          IHooks.wrap(hooks)
+        ), 
+        IPoolManager.SwapParams(zeroForOne, int256(amountIn), zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1), 
+        hookData, 
+        to
+      ))
     );
 
-    uint256 ethBalance = address(this).balance;
-    if (ethBalance > 0) CurrencyLibrary.NATIVE.transfer(msg.sender, ethBalance);
-    lastCalledPool = pool;
-    IPoolManager(pool).unlock();
     require(lastCalledPool == IMPOSSIBLE_POOL_ADDRESS, 'RouteProcessor.swapUniV3: unexpected'); // Just to be sure
   }
 
   // callback for UniV4
-  function unlockCallback(bytes calldata rawData) external returns (bytes memory) {
+  // TODO: interaction swapUniV4<->unlockCallback through transient storage?
+  // Attention: For UniV4 Native is 0x0 !!!! (NATIVE = Currency.wrap(address(0));)
+  function unlockCallback(bytes calldata rawData) external {
     require(msg.sender == lastCalledPool, 'RouteProcessor.unlockCallback: call from unknown source');    
 
     UniV4CallbackData memory data = abi.decode(rawData, (UniV4CallbackData));
 
-    // protection against unlockCallback replay. Can it be written easier?
-    int256 deltaBefore0 = data.manager.currencyDelta(data.key.currency0, data.sender, address(this));
-    int256 deltaBefore1 = data.manager.currencyDelta(data.key.currency1, data.sender, address(this));
+    // protection against unlockCallback replay. TODO: Can it be written easier?
+    int256 deltaBefore0 = data.manager.currencyDelta(data.key.currency0, address(this));
+    int256 deltaBefore1 = data.manager.currencyDelta(data.key.currency1, address(this));
     require(deltaBefore0 == 0, "deltaBefore0 is not equal to 0");
     require(deltaBefore1 == 0, "deltaBefore1 is not equal to 0");
 
-    BalanceDelta delta = manager.swap(data.key, data.params, data.hookData);
+    BalanceDelta delta = data.manager.swap(data.key, data.params, data.hookData);
 
-    int256 deltaAfter0 = data.manager.currencyDelta(data.key.currency0, data.sender, address(this));
-    int256 deltaAfter1 = data.manager.currencyDelta(data.key.currency1, data.sender, address(this));
+    //TODO: Why can't we trust to deltas?
+    int256 deltaAfter0 = data.manager.currencyDelta(data.key.currency0, address(this));
+    int256 deltaAfter1 = data.manager.currencyDelta(data.key.currency1, address(this));
 
     if (data.params.zeroForOne) {
       require(
@@ -594,18 +613,18 @@ contract RouteProcessor6 is Ownable {
     }
 
     if (deltaAfter0 < 0) {
-        data.key.currency0.settle(manager, data.sender, uint256(-deltaAfter0), data.testSettings.settleUsingBurn);
+      data.manager.settle(data.key.currency0, uint256(-deltaAfter0));
     }
     if (deltaAfter1 < 0) {
-        data.key.currency1.settle(manager, data.sender, uint256(-deltaAfter1), data.testSettings.settleUsingBurn);
+      data.manager.settle(data.key.currency1, uint256(-deltaAfter1));
     }
     if (deltaAfter0 > 0) {
-        data.key.currency0.take(manager, data.sender, uint256(deltaAfter0), data.testSettings.takeClaims);
+      data.manager.take(data.key.currency0, data.to, uint256(deltaAfter0));
     }
     if (deltaAfter1 > 0) {
-        data.key.currency1.take(manager, data.sender, uint256(deltaAfter1), data.testSettings.takeClaims);
+      data.manager.take(data.key.currency1, data.to, uint256(deltaAfter1));
     }
 
-    return abi.encode(delta);
+    lastCalledPool = IMPOSSIBLE_POOL_ADDRESS; // TODO: transient?
   }
 }
