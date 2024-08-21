@@ -9,9 +9,7 @@ import { Container } from '@sushiswap/ui'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
-import {
-  SteerStrategyGeneric,
-} from 'src/ui/pool/Steer/SteerStrategies'
+import { SteerStrategyGeneric } from 'src/ui/pool/Steer/SteerStrategies'
 import { SteerBaseStrategy } from 'src/ui/pool/Steer/SteerStrategies/SteerBaseStrategy'
 import { publicClientConfig } from 'sushi/config'
 import { Token } from 'sushi/currency'

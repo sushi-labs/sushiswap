@@ -37,9 +37,7 @@ export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
       >
         <CardHeader>
           <CardTitle>{vault.strategy}</CardTitle>
-          <CardDescription>
-            {vault.description}
-          </CardDescription>
+          <CardDescription>{vault.description}</CardDescription>
         </CardHeader>
         <Separator />
         <CardContent className="pt-6">

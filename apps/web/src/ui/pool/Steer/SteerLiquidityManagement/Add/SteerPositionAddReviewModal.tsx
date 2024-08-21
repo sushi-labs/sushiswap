@@ -225,9 +225,7 @@ export const SteerPositionAddReviewModal: FC<SteerPositionAddReviewModalProps> =
               {children}
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>
-                    {vault.strategy}
-                  </DialogTitle>
+                  <DialogTitle>{vault.strategy}</DialogTitle>
                   <DialogDescription>Add liquidity</DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-4">

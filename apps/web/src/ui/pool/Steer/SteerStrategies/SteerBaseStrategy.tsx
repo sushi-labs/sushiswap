@@ -111,9 +111,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
         <Card>
           <CardHeader>
             <CardTitle>{vault.strategy}</CardTitle>
-            <CardDescription>
-              {vault.description}
-            </CardDescription>
+            <CardDescription>{vault.description}</CardDescription>
           </CardHeader>
           <Separator />
           <div className="h-[200px] rounded-xl flex flex-col p-6">
