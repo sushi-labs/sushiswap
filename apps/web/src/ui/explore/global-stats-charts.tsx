@@ -22,7 +22,7 @@ const _GlobalStatsCharts: FC<{ chainId: ChainId }> = async ({ chainId }) => {
       }),
     ['dayBuckets', `${chainId}`],
     {
-      revalidate: 60 * 3,
+      revalidate: 60 * 15,
     },
   )()
 

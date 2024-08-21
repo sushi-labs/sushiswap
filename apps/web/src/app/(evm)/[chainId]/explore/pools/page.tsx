@@ -16,7 +16,7 @@ const _PoolsTable: FC<{ chainId: ChainId }> = async ({ chainId }) => {
     async () => getTopPools({ chainId: `${chainId}` }),
     ['pools', `${chainId}`],
     {
-      revalidate: 60 * 3,
+      revalidate: 60 * 15,
     },
   )()
 

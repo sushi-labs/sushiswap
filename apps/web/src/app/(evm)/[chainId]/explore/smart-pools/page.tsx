@@ -19,7 +19,7 @@ export default async function SmartPoolsPage({
     async () => getSmartPools({ chainId: +params.chainId }),
     ['smart-pools', params.chainId],
     {
-      revalidate: 60 * 3,
+      revalidate: 60 * 15,
     },
   )()
 
