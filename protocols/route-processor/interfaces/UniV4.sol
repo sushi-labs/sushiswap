@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.24;
 
 // temp till there is no official v4-core. TODO: substitute to v4-core
 
@@ -127,3 +127,11 @@ library PoolManagerAdditionalLibrary {
       }
     }
 }
+
+// library UniV4CallBackManagerCheck {
+//   function setManager(IPoolManager manager) {
+//         assembly {
+//             sstore(CURRENCY_SLOT, 0)
+//         }
+//   }
+// }
