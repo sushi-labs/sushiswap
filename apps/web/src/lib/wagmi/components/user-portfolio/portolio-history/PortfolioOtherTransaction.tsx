@@ -1,10 +1,10 @@
 import { GlobeAltIcon, Square2StackIcon } from '@heroicons/react/24/outline'
 import { PortfolioTransaction } from '@sushiswap/graph-client/data-api'
-import { ClipboardController, FormattedNumber } from '@sushiswap/ui'
+import { ClipboardController, FormattedNumber, IconButton } from '@sushiswap/ui'
 import { SushiLiteIcon } from '@sushiswap/ui/icons/SushiLiteIcon'
 import { format, fromUnixTime } from 'date-fns'
 import React, { FC } from 'react'
-import { ChainId } from 'sushi/chain'
+import { Chain, ChainId } from 'sushi/chain'
 import { shortenHash } from 'sushi/format'
 import { PortfolioInfoRow } from '../PortfolioInfoRow'
 
@@ -15,6 +15,8 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
     <PortfolioInfoRow
       id={`${tx.chainId}:${tx.txHash}`}
       chainId={tx.chainId as ChainId}
+      href={Chain.from(tx.chainId)?.getTxUrl(tx.txHash)}
+      externalLink
       icon={
         tx.projectName.toLowerCase().includes('sushi') ? (
           <div className="p-1.5 bg-gradient-to-r from-[rgba(12,116,183,0.3)] to-[rgba(174,46,141,0.3)] rounded-full w-7 h-7">
@@ -31,15 +33,21 @@ export const PortfolioOtherTransaction: FC<{ tx: PortfolioTransaction }> = ({
           <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
             {tx.functionName}
           </div>
-          <ClipboardController hideTooltip>
-            {({ setCopied }) => (
-              <div
-                onClick={() => setCopied(tx.txHash)}
-                onKeyDown={() => setCopied(tx.txHash)}
-                className="flex items-center gap-x-1 text-xs text-muted-foreground cursor-pointer"
-              >
+          <ClipboardController>
+            {({ setCopied, isCopied }) => (
+              <div className="flex items-center gap-x-1 text-xs text-muted-foreground">
                 TxHash: {shortenHash(tx.txHash)}
-                <Square2StackIcon className="w-3 h-3" />
+                <IconButton
+                  icon={Square2StackIcon}
+                  name={'Copy'}
+                  variant={'ghost'}
+                  className="!w-3 !h-3 !min-w-[unset] !min-h-[unset]"
+                  description={isCopied ? 'Copied!' : 'Copy Transaction Hash'}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setCopied(tx.txHash)
+                  }}
+                />
               </div>
             )}
           </ClipboardController>

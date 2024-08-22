@@ -1,37 +1,41 @@
-import { Badge, classNames } from '@sushiswap/ui'
+import { Badge } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { FC, ReactElement } from 'react'
 import { ChainId } from 'sushi/chain'
 
 interface PortfolioInfoRow {
   id: string
   chainId: ChainId
-  href?: string
   icon: ReactElement
   leftContent: ReactElement
   rightContent: ReactElement | null
+  href?: string
+  externalLink?: boolean
 }
 
-export const PortfolioInfoRow: FC<PortfolioInfoRow> = ({
-  id,
+export const PortfolioInfoRow: FC<PortfolioInfoRow> = (params) => {
+  const { id, href, externalLink = false } = params
+
+  return href ? (
+    <Link id={id} href={href} target={externalLink ? '_blank' : '_self'}>
+      <_PortfolioInfoRow {...params} />
+    </Link>
+  ) : (
+    <div id={id}>
+      <_PortfolioInfoRow {...params} />
+    </div>
+  )
+}
+
+const _PortfolioInfoRow: FC<PortfolioInfoRow> = ({
   chainId,
   icon,
-  href,
   leftContent,
   rightContent,
 }) => {
-  const { push } = useRouter()
   return (
-    <div
-      id={id}
-      className={classNames(
-        'flex w-full items-center hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap',
-        href && 'cursor-pointer',
-      )}
-      onClick={() => href && push(href)}
-      onKeyDown={() => href && push(href)}
-    >
+    <div className="flex w-full items-center hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap">
       <div className="shrink-0">
         <Badge
           className="border-2 border-background bg-background rounded-full z-[11]"
