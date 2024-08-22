@@ -10,6 +10,7 @@ const two96 = 2 ** 96
 // + reserves are not set but calculated using liquidity
 export class UniV4Pool extends UniV3Pool {
   id: string
+  hooks: Address
 
   /// @param address The address of the pool
   /// @param token0 The first token of the pool
@@ -25,6 +26,7 @@ export class UniV4Pool extends UniV3Pool {
     token0: RToken,
     token1: RToken,
     fee: number,
+    hooks: Address,
     tick: number,
     liquidity: bigint,
     sqrtPriceX96: bigint,
@@ -45,6 +47,7 @@ export class UniV4Pool extends UniV3Pool {
       nearestTick,
     )
     this.id = id
+    this.hooks = hooks
     const sqrtPrice = Number(this.sqrtPriceX96) / two96
     const reserve0 = Number(liquidity) / sqrtPrice // TODO: Check it !!!!!
     const reserve1 = reserve0 * sqrtPrice * sqrtPrice

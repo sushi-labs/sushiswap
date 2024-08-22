@@ -131,6 +131,7 @@ export function serializePoolsBinary(
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
       stream.uint24(Math.round(p.fee * FEE_FRACTIONS))
+      stream.address(p.hooks)
       //stream.uint32(p.tick) nearestTick instead of it
       stream.uint24(p.nearestTick)
       stream.bigUInt(p.liquidity, p.address, 'liquidity')
@@ -140,6 +141,7 @@ export function serializePoolsBinary(
         stream.int24(t.index)
         stream.bigInt(t.DLiquidity)
       })
+      stream.uint24(pc.tickSpacing)
     } else {
       console.error(`Serialization: unsupported pool type ${pc.pool.address}`)
     }
@@ -237,13 +239,18 @@ export function deserializePoolsBinary(
         break
       }
       case PoolTypeIndex.V4:
-        pools.push(
-          new UniV4PoolCode(
-            readUniV4Pool(stream, tokensArray),
-            liquidityProvider as LiquidityProviders,
-            liquidityProvider,
-          ),
-        )
+        {
+          const pool = readUniV4Pool(stream, tokensArray)
+          const tickSpacing = stream.uint24()
+          pools.push(
+            new UniV4PoolCode(
+              pool,
+              tickSpacing,
+              liquidityProvider as LiquidityProviders,
+              liquidityProvider,
+            ),
+          )
+        }
         break
       case PoolTypeIndex.CurvePoolCoreHaveBeenSerialized: // pools of one core are serialized only once
         break
@@ -318,6 +325,7 @@ function readUniV4Pool(
   const token0 = tokensArray[stream.uint24()] as RToken
   const token1 = tokensArray[stream.uint24()] as RToken
   const fee = stream.uint24() / FEE_FRACTIONS
+  const hooks = stream.address()
   const nearestTick = stream.uint24()
   const liquidity = stream.bigUInt()
   const sqrtPriceX96 = stream.bigUInt()
@@ -334,6 +342,7 @@ function readUniV4Pool(
     token0,
     token1,
     fee,
+    hooks,
     0, // tick is not needed if we already have nearestTick
     liquidity,
     sqrtPriceX96,

@@ -47,7 +47,7 @@ export class UniV4PoolWatcher extends EventEmitter {
   token1: Token
   fee: number
   tickSpacing: number
-  hooks: Address | undefined
+  hooks: Address
 
   // Pool mutable state
   state?: UniV4PoolSelfState
@@ -84,7 +84,7 @@ export class UniV4PoolWatcher extends EventEmitter {
     token1: Token
     fee: number
     tickSpacing: number
-    hooks: Address | undefined
+    hooks: Address
     client: MultiCallAggregator
     busyCounter?: Counter
   }) {
@@ -242,18 +242,24 @@ export class UniV4PoolWatcher extends EventEmitter {
     const ticks = this.wordLoadManager.getMaxTickDiapason(this.state.tick)
     if (ticks.length === 0) return
 
-    const v3Pool = new UniV4Pool(
+    const v4Pool = new UniV4Pool(
       this.id,
       this.address,
       this.token0 as RToken,
       this.token1 as RToken,
       this.fee / 1_000_000,
+      this.hooks,
       this.state.tick,
       this.state.liquidity,
       this.state.sqrtPriceX96,
       ticks,
     )
-    const pc = new UniV4PoolCode(v3Pool, this.provider, this.provider)
+    const pc = new UniV4PoolCode(
+      v4Pool,
+      this.tickSpacing,
+      this.provider,
+      this.provider,
+    )
     this.lastPoolCode = pc
     return pc
   }
