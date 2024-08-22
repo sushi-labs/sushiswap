@@ -19,7 +19,7 @@ import { Chain, ChainId, ChainKey } from 'sushi/chain'
 
 export const TableFiltersNetwork: FC<{
   chainId: ChainId
-  chainIds: ChainId[]
+  chainIds?: ChainId[]
 }> = ({ chainId, chainIds = AMM_SUPPORTED_CHAIN_IDS }) => {
   const [open, setOpen] = useState(false)
 
