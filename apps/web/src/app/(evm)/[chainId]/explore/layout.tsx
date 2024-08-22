@@ -38,12 +38,12 @@ export default async function ExploreLayout({
               All Pools
             </PathnameButton>
           </LinkInternal>
-          <LinkInternal
-            shallow={true}
-            scroll={false}
-            href={`/${ChainKey[chainId]}/explore/smart-pools`}
-          >
-            {isSteerChainId(chainId) ? (
+          {isSteerChainId(chainId) ? (
+            <LinkInternal
+              shallow={true}
+              scroll={false}
+              href={`/${ChainKey[chainId]}/explore/smart-pools`}
+            >
               <PathnameButton
                 id="smart-pools"
                 pathname={`/${ChainKey[chainId]}/explore/smart-pools`}
@@ -52,8 +52,12 @@ export default async function ExploreLayout({
               >
                 Smart Pools
               </PathnameButton>
-            ) : null}
-          </LinkInternal>
+            </LinkInternal>
+          ) : (
+            <PathnameButton pathname="" size="sm" disabled>
+              Smart Pools
+            </PathnameButton>
+          )}
         </div>
       </Container>
       <section className="flex flex-col flex-1">
