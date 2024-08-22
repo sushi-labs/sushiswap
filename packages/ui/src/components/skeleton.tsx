@@ -97,7 +97,7 @@ function ChartLoadingStateMask({
       return (
         <g transform={`translate(0, ${height - 60}) scale(1,-1)`}>
           <path
-            d="M0 150 Q50 30, 100 70 T200 60 T300 120 T400 90 T500 100 T600 50 T700 80 T800 30 V0 H0 Z"
+            d="M0 170 Q50 90, 100 170 T200 170 T300 170 T400 170 T500 170 T600 170 T700 170 T800 170 V0 H0 Z"
             className="fill-black/[0.10] dark:fill-white/[0.10] animate-pulse"
           />
         </g>
