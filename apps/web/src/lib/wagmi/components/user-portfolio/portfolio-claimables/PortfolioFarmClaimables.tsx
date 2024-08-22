@@ -25,7 +25,7 @@ export const PortfolioFarmClaimables: FC<PortfolioFarmClaimablesProps> = ({
     <AccordionContent className="cursor-default">
       {claimables.map(({ position, token }) => (
         <PortfolioInfoRow
-          id={`${position.chainId}:${position.id}`}
+          key={`${position.chainId}:${position.id}`}
           chainId={token.chainId as ChainId}
           href={
             position.protocol === 'SUSHISWAP_V2'

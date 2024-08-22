@@ -67,7 +67,7 @@ export const PortfolioTokens = () => {
         <div>
           {Array.from({ length: 12 }).map((_, i) => (
             <div
-              id={i.toString()}
+              key={`${i}`}
               className="flex w-full items-center px-5 py-3 gap-x-5"
             >
               <SkeletonCircle radius={28} />

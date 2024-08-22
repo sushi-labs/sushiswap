@@ -35,7 +35,7 @@ export const PortfolioHistory = () => {
           <div>
             {Array.from({ length: 12 }).map((_, i) => (
               <div
-                id={i.toString()}
+                key={`${i}`}
                 className="flex w-full items-center px-5 py-3 gap-x-5"
               >
                 <SkeletonCircle radius={28} />
@@ -55,13 +55,25 @@ export const PortfolioHistory = () => {
         ) : (
           data?.map((tx) =>
             tx.category === 'APPROVE' ? (
-              <PortfolioApproveTransaction tx={tx} />
+              <PortfolioApproveTransaction
+                key={`${tx.chainId}:${tx.txHash}`}
+                tx={tx}
+              />
             ) : tx.category === 'SEND' ? (
-              <PortfolioSendTransaction tx={tx} />
+              <PortfolioSendTransaction
+                key={`${tx.chainId}:${tx.txHash}`}
+                tx={tx}
+              />
             ) : tx.category === 'RECEIVE' ? (
-              <PortfolioReceiveTransaction tx={tx} />
+              <PortfolioReceiveTransaction
+                key={`${tx.chainId}:${tx.txHash}`}
+                tx={tx}
+              />
             ) : (
-              <PortfolioOtherTransaction tx={tx} />
+              <PortfolioOtherTransaction
+                key={`${tx.chainId}:${tx.txHash}`}
+                tx={tx}
+              />
             ),
           )
         )}

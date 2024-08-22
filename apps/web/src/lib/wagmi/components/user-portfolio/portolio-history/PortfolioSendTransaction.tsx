@@ -13,7 +13,6 @@ export const PortfolioSendTransaction: FC<{ tx: PortfolioTransaction }> = ({
 }) => {
   return (
     <PortfolioInfoRow
-      id={`${tx.chainId}:${tx.txHash}`}
       chainId={tx.chainId as ChainId}
       href={Chain.from(tx.chainId)?.getTxUrl(tx.txHash)}
       externalLink

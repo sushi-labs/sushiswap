@@ -186,7 +186,7 @@ const Navigation: React.FC<NavProps> = ({
       )
     }
 
-    return _leftElements.flatMap((el) => {
+    return _leftElements.flatMap((el, i) => {
       switch (el.type) {
         case NavigationElementType.Single:
           return SingleItem(el)
@@ -194,7 +194,9 @@ const Navigation: React.FC<NavProps> = ({
           return DropdownItem(el)
         case NavigationElementType.Custom:
           return (
-            <div className={navigationElementShowMap[el.show]}>{el.item}</div>
+            <div key={`${i}`} className={navigationElementShowMap[el.show]}>
+              {el.item}
+            </div>
           )
       }
     })

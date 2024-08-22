@@ -5,7 +5,6 @@ import { FC, ReactElement } from 'react'
 import { ChainId } from 'sushi/chain'
 
 interface PortfolioInfoRow {
-  id: string
   chainId: ChainId
   icon: ReactElement
   leftContent: ReactElement
@@ -15,16 +14,14 @@ interface PortfolioInfoRow {
 }
 
 export const PortfolioInfoRow: FC<PortfolioInfoRow> = (params) => {
-  const { id, href, externalLink = false } = params
+  const { href, externalLink = false } = params
 
   return href ? (
-    <Link id={id} href={href} target={externalLink ? '_blank' : '_self'}>
+    <Link href={href} target={externalLink ? '_blank' : '_self'}>
       <_PortfolioInfoRow {...params} />
     </Link>
   ) : (
-    <div id={id}>
-      <_PortfolioInfoRow {...params} />
-    </div>
+    <_PortfolioInfoRow {...params} />
   )
 }
 
