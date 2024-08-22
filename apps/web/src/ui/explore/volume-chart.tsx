@@ -74,8 +74,8 @@ export const VolumeChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
       },
       grid: {
         top: 0,
-        left: 20,
-        right: 20,
+        left: 0,
+        right: 0,
       },
       xAxis: [
         {
@@ -91,8 +91,26 @@ export const VolumeChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
           },
           axisLabel: {
             hideOverlap: true,
+            showMinLabel: true,
+            showMaxLabel: true,
             color: resolvedTheme === 'dark' ? 'white' : 'black',
-            formatter: (value: number) => format(new Date(value), 'MMM d'),
+            formatter: (value: number, index: number) => {
+              const label = format(new Date(value), 'MMM d')
+              return index === 0
+                ? `{min|${label}}`
+                : value > v2?.[v2.length - 2]?.[0]
+                  ? `{max|${label}}`
+                  : label
+            },
+            padding: [0, 10, 0, 10],
+            rich: {
+              min: {
+                padding: [0, 10, 0, 50],
+              },
+              max: {
+                padding: [0, 50, 0, 10],
+              },
+            },
           },
         },
       ],

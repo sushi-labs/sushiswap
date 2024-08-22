@@ -86,8 +86,8 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
       color: ['#3B7EF6', '#A755DD'],
       grid: {
         top: 0,
-        left: 20,
-        right: 20,
+        left: 0,
+        right: 0,
       },
       xAxis: [
         {
@@ -103,12 +103,29 @@ export const TVLChart: FC<{ data: AnalyticsDayBuckets }> = ({ data }) => {
           },
           axisLabel: {
             hideOverlap: true,
+            showMinLabel: true,
+            showMaxLabel: true,
             color: resolvedTheme === 'dark' ? 'white' : 'black',
-            formatter: (value: number) => {
+            formatter: (value: number, index: number) => {
               const date = new Date(value)
-              return `${date.toLocaleString('en-US', {
+              const label = `${date.toLocaleString('en-US', {
                 month: 'short',
               })} ${date.getDate()}\n${date.getFullYear()}`
+
+              return index === 0
+                ? `{min|${label}}`
+                : value > v2?.[v2.length - 2]?.[0]
+                  ? `{max|${label}}`
+                  : label
+            },
+            padding: [0, 10, 0, 10],
+            rich: {
+              min: {
+                padding: [0, 10, 0, 50],
+              },
+              max: {
+                padding: [0, 50, 0, 10],
+              },
             },
           },
         },
