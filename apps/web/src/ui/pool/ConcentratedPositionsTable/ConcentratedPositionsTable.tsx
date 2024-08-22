@@ -15,10 +15,8 @@ import { ColumnDef, PaginationState, Row } from '@tanstack/react-table'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedLiquidityPositions'
 import { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import {
-  SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
-  SushiSwapV3ChainId,
-} from 'sushi/config'
+import { ChainId, ChainKey } from 'sushi'
+import { isSushiSwapV3ChainId } from 'sushi/config'
 import { useAccount } from 'wagmi'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
@@ -38,8 +36,8 @@ const COLUMNS = [
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
 interface ConcentratedPositionsTableProps {
-  chainId?: SushiSwapV3ChainId
-  poolId?: string
+  chainId: ChainId
+  poolAddress?: string
   onRowClick?(row: ConcentratedLiquidityPositionWithV3Pool): void
   hideNewSmartPositionButton?: boolean
   hideNewPositionButton?: boolean
@@ -49,17 +47,16 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
   ({
     chainId,
     onRowClick,
-    poolId,
+    poolAddress,
     hideNewSmartPositionButton = true,
     hideNewPositionButton = false,
   }) => {
     const { address } = useAccount()
-    const { chainIds: filterChainIds, tokenSymbols } = usePoolFilters()
+    const { tokenSymbols } = usePoolFilters()
     const [hide, setHide] = useState(true)
 
     const chainIds = useMemo(() => {
-      if (chainId) return [chainId] as SushiSwapV3ChainId[]
-      return [...SUSHISWAP_V3_SUPPORTED_CHAIN_IDS]
+      return isSushiSwapV3ChainId(chainId) ? [chainId] : []
     }, [chainId])
 
     const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -70,17 +67,12 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
     const { data: positions, isInitialLoading } =
       useConcentratedLiquidityPositions({
         account: address,
-        chainIds: chainIds,
+        chainIds,
       })
 
     const _positions = useMemo(() => {
       const _tokenSymbols = tokenSymbols?.filter((el) => el !== '') || []
       return (positions || [])
-        ?.filter((el) =>
-          filterChainIds.includes(
-            el.chainId as (typeof filterChainIds)[number],
-          ),
-        )
         .filter((el) =>
           _tokenSymbols.length > 0
             ? _tokenSymbols.some((symbol) => {
@@ -94,10 +86,12 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
         .filter((el) => {
           return (
             (hide ? el.liquidity !== 0n : true) &&
-            (poolId ? el.address.toLowerCase() === poolId.toLowerCase() : true)
+            (poolAddress
+              ? el.address.toLowerCase() === poolAddress.toLowerCase()
+              : true)
           )
         })
-    }, [tokenSymbols, positions, filterChainIds, hide, poolId])
+    }, [tokenSymbols, positions, hide, poolAddress])
 
     const rowRenderer = useCallback(
       (
@@ -142,7 +136,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewSmartPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/pool/${chainId}:${poolId}/smart`}
+                    href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/smart`}
                   >
                     <Button icon={PlusIcon} asChild size="sm" variant="outline">
                       Create smart position
@@ -152,7 +146,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
                 {!hideNewPositionButton ? (
                   <LinkInternal
                     shallow={true}
-                    href={`/pool/${chainId}:${poolId}/positions/create`}
+                    href={`/${ChainKey[chainId]}/pool/v3/${poolAddress}/positions/create`}
                   >
                     <Button icon={PlusIcon} asChild size="sm">
                       Create position
@@ -167,7 +161,7 @@ export const ConcentratedPositionsTable: FC<ConcentratedPositionsTableProps> =
           testId="concentrated-positions"
           loading={isInitialLoading}
           linkFormatter={(row) =>
-            `/pool/${row.chainId}:${
+            `/${row.chainId}/pool/v3/${
               row.address
             }/positions/${row.tokenId.toString()}`
           }
