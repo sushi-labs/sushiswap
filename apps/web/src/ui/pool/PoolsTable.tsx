@@ -189,10 +189,7 @@ const COLUMNS = [
     accessorFn: (row) => row.txCount1d,
     sortingFn: ({ original: rowA }, { original: rowB }) =>
       rowA.txCount1d - rowB.txCount1d,
-    cell: (props) =>
-      formatUSD(props.row.original.txCount1d).includes('NaN')
-        ? '0'
-        : formatUSD(props.row.original.txCount1d),
+    cell: (props) => props.row.original.txCount1d,
     meta: {
       skeleton: <SkeletonText fontSize="lg" />,
     },
