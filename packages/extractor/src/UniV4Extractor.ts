@@ -44,7 +44,7 @@ interface PoolInfo {
   token1: Token
   fee: number
   tickSpacing: number
-  hooks: Address | undefined
+  hooks: Address
 }
 
 interface PoolCacheRecord {
@@ -54,7 +54,7 @@ interface PoolCacheRecord {
   token1: Address
   fee: number
   tickSpacing: number
-  hooks: Address | undefined
+  hooks: Address
 }
 
 enum StartStatus {
@@ -397,7 +397,11 @@ export class UniV4Extractor extends IExtractor {
       const watcher = this.poolWatchers.get(id, address)
       if (watcher !== undefined) return
 
-      if (fee === undefined || tickSpacing === undefined) {
+      if (
+        fee === undefined ||
+        tickSpacing === undefined ||
+        hooks === undefined
+      ) {
         this.errorLog(
           `undefined fee ${fee} or tickSpacing ${tickSpacing} in getLog for ${address}:${id}`,
         )
@@ -477,7 +481,8 @@ export class UniV4Extractor extends IExtractor {
         currency0 &&
         currency1 &&
         fee !== undefined &&
-        tickSpacing !== undefined
+        tickSpacing !== undefined &&
+        hooks
       ) {
         const [token0, token1] = await Promise.all([
           this.tokenManager.findToken(currency0),
