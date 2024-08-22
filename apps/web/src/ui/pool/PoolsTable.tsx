@@ -168,35 +168,7 @@ const COLUMNS = [
     },
   },
   TVL_COLUMN,
-  {
-    id: 'volumeUSD1h',
-    header: 'Volume (60min)',
-    accessorFn: (row) => row.volumeUSD1h,
-    sortingFn: ({ original: rowA }, { original: rowB }) =>
-      rowA.volumeUSD1h - rowB.volumeUSD1h,
-    cell: (props) =>
-      formatUSD(props.row.original.volumeUSD1h).includes('NaN')
-        ? '$0.00'
-        : formatUSD(props.row.original.volumeUSD1h),
-    meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-    },
-  },
   VOLUME_1D_COLUMN,
-  {
-    id: 'feeUSD1h',
-    header: 'Fees (60min)',
-    accessorFn: (row) => row.feeUSD1h,
-    sortingFn: ({ original: rowA }, { original: rowB }) =>
-      rowA.feeUSD1h - rowB.feeUSD1h,
-    cell: (props) =>
-      formatUSD(props.row.original.feeUSD1h).includes('NaN')
-        ? '$0.00'
-        : formatUSD(props.row.original.feeUSD1h),
-    meta: {
-      skeleton: <SkeletonText fontSize="lg" />,
-    },
-  },
   {
     id: 'feeUSD1d',
     header: 'Fees (24h)',
@@ -207,6 +179,20 @@ const COLUMNS = [
       formatUSD(props.row.original.feeUSD1d).includes('NaN')
         ? '$0.00'
         : formatUSD(props.row.original.feeUSD1d),
+    meta: {
+      skeleton: <SkeletonText fontSize="lg" />,
+    },
+  },
+  {
+    id: 'txCount1d',
+    header: 'Transaction Count (24h)',
+    accessorFn: (row) => row.txCount1d,
+    sortingFn: ({ original: rowA }, { original: rowB }) =>
+      rowA.txCount1d - rowB.txCount1d,
+    cell: (props) =>
+      formatUSD(props.row.original.txCount1d).includes('NaN')
+        ? '0'
+        : formatUSD(props.row.original.txCount1d),
     meta: {
       skeleton: <SkeletonText fontSize="lg" />,
     },
