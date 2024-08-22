@@ -6,6 +6,7 @@ import { ZERO } from 'sushi/math'
 import { getAddress } from 'viem'
 
 import { V2Pool } from '@sushiswap/graph-client/data-api'
+import { ChainKey } from 'sushi/chain'
 import { usePoolPosition } from './PoolPositionProvider'
 import { usePoolPositionStaked } from './PoolPositionStakedProvider'
 
@@ -29,10 +30,18 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pool }) => {
           variant="secondary"
           fullWidth
         >
-          <LinkInternal href={`/pool/${pool.id}/remove`}>Withdraw</LinkInternal>
+          <LinkInternal
+            href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/remove`}
+          >
+            Withdraw
+          </LinkInternal>
         </Button>
         <Button asChild size="lg" fullWidth>
-          <LinkInternal href={`/pool/${pool.id}/add`}>Deposit</LinkInternal>
+          <LinkInternal
+            href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
+          >
+            Deposit
+          </LinkInternal>
         </Button>
       </div>
       <Button asChild className="col-span-2" size="lg" variant="secondary">

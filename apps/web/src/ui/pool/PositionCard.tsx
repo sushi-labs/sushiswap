@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
-import { Chain } from 'sushi/chain'
+import { Chain, ChainKey } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'
 
 interface PositionCard {
@@ -88,7 +88,11 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
       </div>
       <div className="absolute bottom-7 right-7">
         <Button size="sm" asChild>
-          <LinkInternal href={`/pools/${position.pool.id}/migrate`}>
+          <LinkInternal
+            href={`/${ChainKey[position.pool.chainId]}/pool/v2/${
+              position.pool.address
+            }/migrate`}
+          >
             Migrate
           </LinkInternal>
         </Button>
