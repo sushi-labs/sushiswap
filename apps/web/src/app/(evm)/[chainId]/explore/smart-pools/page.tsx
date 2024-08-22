@@ -13,7 +13,10 @@ import { ChainId } from 'sushi/chain'
 
 const _SmartPoolsTable: FC<{ chainId: ChainId }> = async ({ chainId }) => {
   const smartPools = await unstable_cache(
-    async () => getSmartPools({ chainId }),
+    async () =>
+      getSmartPools({ chainId }).then((smartPools) =>
+        smartPools.filter((smartPool) => smartPool.isEnabled),
+      ),
     ['smart-pools', `${chainId}`],
     {
       revalidate: 60 * 15,
