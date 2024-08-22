@@ -52,7 +52,7 @@ export const PortfolioPositions = () => {
           </div>
           {Array.from({ length: 12 }).map((_, i) => (
             <div
-              id={i.toString()}
+              key={`${i}`}
               className="flex w-full items-center px-5 py-3 gap-x-7"
             >
               <div className="flex items-center">

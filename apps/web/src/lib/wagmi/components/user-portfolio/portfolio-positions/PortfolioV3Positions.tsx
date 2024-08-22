@@ -26,7 +26,7 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
     <AccordionContent className="cursor-default">
       {positions.map((position) => (
         <PortfolioInfoRow
-          id={`${position.chainId}:${position.id}`}
+          key={`${position.chainId}:${position.id}`}
           chainId={position.chainId as ChainId}
           href={`/${ChainKey[position.chainId as ChainId]}/pool/v3/${
             position.address

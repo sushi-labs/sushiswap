@@ -25,7 +25,7 @@ export const PortfolioFuroClaimables: FC<PortfolioFuroClaimablesProps> = ({
     <AccordionContent className="cursor-default">
       {claimables.map(({ position, token }) => (
         <PortfolioInfoRow
-          id={`${position.chainId}:${position.id}`}
+          key={`${position.chainId}:${position.id}`}
           chainId={token.chainId as ChainId}
           href={`https://pay.sushi.com/${
             position.name.startsWith('Vesting') ? 'vesting' : 'stream'
