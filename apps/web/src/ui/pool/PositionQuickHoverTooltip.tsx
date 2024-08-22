@@ -5,7 +5,7 @@ import { Currency } from '@sushiswap/ui'
 import { LinkInternal } from '@sushiswap/ui'
 import { List } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { ZERO } from 'sushi/math'
 import { useAccount, useSwitchChain } from 'wagmi'
@@ -80,10 +80,16 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
       </div>
       <div className="flex flex-wrap gap-2">
         <Button icon={PlusIcon} asChild size="sm" variant="secondary">
-          <LinkInternal href={`/pools/${pool.id}/add`}>Deposit</LinkInternal>
+          <LinkInternal
+            href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/add`}
+          >
+            Deposit
+          </LinkInternal>
         </Button>
         <Button icon={MinusIcon} asChild size="sm" variant="secondary">
-          <LinkInternal href={`/pools/${pool.id}/remove`}>
+          <LinkInternal
+            href={`/${ChainKey[pool.chainId]}/pool/v2/${pool.address}/remove`}
+          >
             Withdraw
           </LinkInternal>
         </Button>
