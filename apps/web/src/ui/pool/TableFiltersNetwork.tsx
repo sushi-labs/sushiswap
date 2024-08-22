@@ -17,7 +17,10 @@ import React, { FC, useCallback, useState } from 'react'
 import { AMM_SUPPORTED_CHAIN_IDS } from 'src/config'
 import { Chain, ChainId, ChainKey } from 'sushi/chain'
 
-export const TableFiltersNetwork: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const TableFiltersNetwork: FC<{
+  chainId: ChainId
+  chainIds: ChainId[]
+}> = ({ chainId, chainIds = AMM_SUPPORTED_CHAIN_IDS }) => {
   const [open, setOpen] = useState(false)
 
   const router = useRouter()
@@ -58,7 +61,7 @@ export const TableFiltersNetwork: FC<{ chainId: ChainId }> = ({ chainId }) => {
           />
           <CommandEmpty>No network found.</CommandEmpty>
           <CommandGroup>
-            {AMM_SUPPORTED_CHAIN_IDS.map((_chainId) => (
+            {chainIds.map((_chainId) => (
               <CommandItem
                 key={_chainId}
                 value={_chainId.toString()}

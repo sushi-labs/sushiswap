@@ -1,4 +1,5 @@
 import { getSmartPools } from '@sushiswap/graph-client/data-api'
+import { STEER_SUPPORTED_CHAIN_IDS } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import React, { FC, Suspense } from 'react'
@@ -33,7 +34,10 @@ export default async function SmartPoolsPage({
       <div className="flex flex-wrap gap-3 mb-4">
         <TableFiltersSearchToken />
         <TableFiltersPoolType />
-        <TableFiltersNetwork chainId={chainId} />
+        <TableFiltersNetwork
+          chainId={chainId}
+          chainIds={STEER_SUPPORTED_CHAIN_IDS}
+        />
         <TableFiltersFarmsOnly />
         <TableFiltersResetButton />
       </div>
