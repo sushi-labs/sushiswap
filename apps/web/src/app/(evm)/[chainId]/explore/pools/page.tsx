@@ -20,7 +20,7 @@ const _PoolsTable: FC<{ chainId: ChainId }> = async ({ chainId }) => {
     },
   )()
 
-  return <PoolsTable pools={pools} />
+  return <PoolsTable chainId={chainId} pools={pools} />
 }
 
 export default async function PoolsPage({
@@ -39,7 +39,7 @@ export default async function PoolsPage({
         <TableFiltersSmartPoolsOnly />
         <TableFiltersResetButton />
       </div>
-      <Suspense fallback={<PoolsTable isLoading={true} />}>
+      <Suspense fallback={<PoolsTable chainId={chainId} isLoading={true} />}>
         <_PoolsTable chainId={chainId} />
       </Suspense>
     </Container>

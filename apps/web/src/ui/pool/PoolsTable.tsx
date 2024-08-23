@@ -40,7 +40,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { Chain, ChainId, ChainKey } from 'sushi/chain'
 import { isAngleEnabledChainId } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
@@ -414,12 +414,14 @@ const COLUMNS = [
 ] as ColumnDef<TopPools[number], unknown>[]
 
 interface PoolsTableProps {
+  chainId: ChainId
   pools?: TopPools
   isLoading?: boolean
   onRowClick?(row: TopPools[number]): void
 }
 
 export const PoolsTable: FC<PoolsTableProps> = ({
+  chainId,
   pools,
   isLoading = false,
   onRowClick,
@@ -487,12 +489,15 @@ export const PoolsTable: FC<PoolsTableProps> = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          Pools{' '}
-          {data.length ? (
-            <span className="text-gray-400 dark:text-slate-500">
-              ({data.length})
-            </span>
-          ) : null}
+          {isLoading ? (
+            <div className="!w-72 !h-[18px]">
+              <SkeletonText />
+            </div>
+          ) : (
+            <span>{`Top ${data.length} Pools on ${
+              Chain.from(chainId)?.name
+            }`}</span>
+          )}
         </CardTitle>
       </CardHeader>
       <DataTable
