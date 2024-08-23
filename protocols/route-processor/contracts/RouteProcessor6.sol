@@ -571,7 +571,7 @@ contract RouteProcessor6 is Ownable {
           tickSpacing,
           IHooks.wrap(hooks)
         ), 
-        IPoolManager.SwapParams(zeroForOne, int256(amountIn), zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1), 
+        IPoolManager.SwapParams(zeroForOne, -int256(amountIn), zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1), 
         hookData, 
         to
       ))
