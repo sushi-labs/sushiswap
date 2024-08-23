@@ -25,8 +25,11 @@ export class UniV4PoolCode extends PoolCode {
   override getSwapCodeForRouteProcessor2(): string {
     return 'unsupported'
   }
+  override getSwapCodeForRouteProcessor4(): string {
+    return 'unsupported'
+  }
 
-  getSwapCodeForRouteProcessor6(
+  override getSwapCodeForRouteProcessor6(
     leg: RouteLeg,
     _route: MultiRoute,
     to: string,

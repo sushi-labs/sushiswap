@@ -58,4 +58,12 @@ export abstract class PoolCode {
   ): string {
     return this.getSwapCodeForRouteProcessor2(leg, route, to)
   }
+
+  getSwapCodeForRouteProcessor6(
+    leg: RouteLeg,
+    route: MultiRoute,
+    to: string,
+  ): string {
+    return this.getSwapCodeForRouteProcessor4(leg, route, to)
+  }
 }

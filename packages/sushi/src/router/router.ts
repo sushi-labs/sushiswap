@@ -34,6 +34,7 @@ import {
   getRouteProcessor2Code,
 } from './tines-to-route-processor-2.js'
 import { getRouteProcessor4Code } from './tines-to-route-processor-4.js'
+import { getRouteProcessor6Code } from './tines-to-route-processor-6.js'
 import { getRouteProcessorCode } from './tines-to-route-processor.js'
 
 export enum TransferValue {
@@ -454,6 +455,7 @@ export class Router {
     processFunction = ProcessFunction.ProcessRoute,
     transferValueTo?: Address,
     amountValueTransfer?: bigint,
+    rpCodeCompiler = getRouteProcessor4Code,
   ): RPParams {
     const tokenIn =
       fromToken instanceof Token
@@ -474,7 +476,7 @@ export class Router {
 
     let data: Hex
     if (processFunction === ProcessFunction.ProcessRoute) {
-      routeCode = getRouteProcessor4Code(
+      routeCode = rpCodeCompiler(
         route,
         RPAddr,
         to,
@@ -497,7 +499,7 @@ export class Router {
       if (!transferValueTo || !amountValueTransfer) {
         throw new Error('Missing transferValueTo or feeAmount')
       }
-      routeCode = getRouteProcessor4Code(
+      routeCode = rpCodeCompiler(
         route,
         RPAddr,
         processFunction === ProcessFunction.ProcessRouteWithTransferValueInput
@@ -531,6 +533,39 @@ export class Router {
       data,
       value: fromToken instanceof Token ? undefined : route.amountInBI,
     }
+  }
+
+  // the same as routeProcessor5Params, but rpCodeCompiler = getRouteProcessor6Code
+  static routeProcessor6Params(
+    poolCodesMap: Map<string, PoolCode>,
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: Address,
+    RPAddr: Address,
+    permits: PermitData[] = [],
+    maxSlippage = 0.005,
+    source = RouterLiquiditySource.Sender,
+    processFunction = ProcessFunction.ProcessRoute,
+    transferValueTo?: Address,
+    amountValueTransfer?: bigint,
+    rpCodeCompiler = getRouteProcessor6Code,
+  ): RPParams {
+    return Router.routeProcessor5Params(
+      poolCodesMap,
+      route,
+      fromToken,
+      toToken,
+      to,
+      RPAddr,
+      permits,
+      maxSlippage,
+      source,
+      processFunction,
+      transferValueTo,
+      amountValueTransfer,
+      rpCodeCompiler,
+    )
   }
 
   // Human-readable route printing
