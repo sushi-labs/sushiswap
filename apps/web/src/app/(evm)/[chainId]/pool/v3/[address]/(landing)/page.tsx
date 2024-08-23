@@ -15,7 +15,7 @@ export default async function PoolPage({
     {
       revalidate: 60 * 15,
     },
-  )()) as NonNullable<V3Pool>
+  )()) as V3Pool
 
   return <PoolPageV3 pool={pool} />
 }

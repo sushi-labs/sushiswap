@@ -1,4 +1,3 @@
-import '@sushiswap/database'
 import { getV3Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { ChainId } from 'sushi/chain'

@@ -32,7 +32,7 @@ export const PortfolioFarmClaimables: FC<PortfolioFarmClaimablesProps> = ({
               ? `/${ChainKey[position.chainId as ChainId]}/pool/v2/${
                   position.address
                 }/add`
-              : `/${ChainKey[position.chainId as ChainId]}/positions/rewards`
+              : `/${ChainKey[position.chainId as ChainId]}/rewards`
           }
           icon={
             <img

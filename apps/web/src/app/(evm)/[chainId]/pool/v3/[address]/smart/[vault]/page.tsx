@@ -5,7 +5,6 @@ import {
   getVault,
 } from '@sushiswap/graph-client/data-api'
 import { getTokenRatios, getVaultPositions } from '@sushiswap/steer-sdk'
-import { Container } from '@sushiswap/ui'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { unstable_cache } from 'next/cache'
@@ -106,9 +105,5 @@ export default async function SteerVaultPage({
 
   const Component = SteerBaseStrategy
 
-  return (
-    <Container maxWidth="5xl" className="px-2 sm:px-4">
-      <Component pool={pool} vault={vault} generic={generics} />
-    </Container>
-  )
+  return <Component pool={pool} vault={vault} generic={generics} />
 }

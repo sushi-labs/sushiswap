@@ -46,11 +46,13 @@ export const useUnderlyingTokenBalanceFromPool: UseUnderlyingTokenBalanceFromPai
             },
           ],
           functionName: 'feeTo',
+          chainId: totalSupply?.currency?.chainId,
         },
         {
           address: totalSupply?.currency.address,
           abi: uniswapV2PairAbi,
           functionName: 'kLast',
+          chainId: totalSupply?.currency?.chainId,
         },
       ],
       query: {

@@ -3,6 +3,7 @@ import { Container, LinkInternal } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import { ChainId, ChainKey } from 'sushi/chain'
 
 export default async function Layout({
   children,
@@ -11,13 +12,16 @@ export default async function Layout({
   children: React.ReactNode
   params: { chainId: string; vault: string; address: string }
 }) {
+  const { chainId: _chainId, address, vault: vaultAddress } = params
+  const chainId = +_chainId as ChainId
+
   const vault = await unstable_cache(
     async () =>
       await getVault({
-        chainId: Number(params.chainId),
-        vaultAddress: params.vault,
+        chainId,
+        vaultAddress,
       }),
-    ['vault', `${params.chainId}:${params.vault}`],
+    ['vault', `${chainId}:${vaultAddress}`],
     { revalidate: 60 * 15 },
   )()
 
@@ -26,8 +30,14 @@ export default async function Layout({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <Container maxWidth="5xl" className="px-2 sm:px-4">
+    <Container maxWidth="5xl" className="py-10 px-4">
+      <div className="flex flex-col gap-4">
+        <LinkInternal
+          href={`/${ChainKey[chainId]}/pool/v3/${address}/smart`}
+          className="text-sm text-blue hover:underline"
+        >
+          ← Strategies
+        </LinkInternal>
         {vault.isDeprecated && (
           <div className="text-center text-red dark:text-red-600 w-full">
             <div className=" font-medium">This vault is deprecated.</div>
@@ -36,16 +46,9 @@ export default async function Layout({
             </div>
           </div>
         )}
-        <LinkInternal
-          href={`/${params.chainId}/pool/v3/${params.address}/smart`}
-          className="text-sm text-blue hover:underline"
-        >
-          ← Strategies
-        </LinkInternal>
-      </Container>
-      <Container maxWidth="screen-3xl" className="px-2 sm:px-4">
+
         {children}
-      </Container>
-    </div>
+      </div>
+    </Container>
   )
 }
