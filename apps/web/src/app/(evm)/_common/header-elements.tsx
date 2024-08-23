@@ -23,6 +23,7 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
   {
     show: 'desktop',
     type: NavigationElementType.Custom,
+    href: '/swap',
     item: (
       <NavigationMenuItem className={NavigationElementType.Custom}>
         <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
