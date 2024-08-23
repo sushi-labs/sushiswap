@@ -8,7 +8,7 @@ import { VolumeChart } from './volume-chart'
 
 export const GlobalStatsCharts: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (
-    <Suspense fallback={<GlobalStatsLoading />}>
+    <Suspense fallback={<GlobalStatsLoading chainId={chainId} />}>
       <_GlobalStatsCharts chainId={chainId} />
     </Suspense>
   )
@@ -27,11 +27,11 @@ const _GlobalStatsCharts: FC<{ chainId: ChainId }> = async ({ chainId }) => {
   )()
 
   return !dayBuckets.v2.length && !dayBuckets.v3.length ? (
-    <GlobalStatsLoading />
+    <GlobalStatsLoading chainId={chainId} />
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
-      <TVLChart data={dayBuckets} />
-      <VolumeChart data={dayBuckets} />
+      <TVLChart chainId={chainId} data={dayBuckets} />
+      <VolumeChart chainId={chainId} data={dayBuckets} />
     </div>
   )
 }
