@@ -230,7 +230,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${row.original.chainId}/pool/v3/${row.original.address}/positions/create`}
+                  href={`/${row.original.chainId}/pool/v3/${row.original.address}/create`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position

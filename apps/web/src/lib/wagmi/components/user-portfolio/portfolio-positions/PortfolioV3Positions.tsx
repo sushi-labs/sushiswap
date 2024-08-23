@@ -30,7 +30,7 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
           chainId={position.chainId as ChainId}
           href={`/${ChainKey[position.chainId as ChainId]}/pool/v3/${
             position.address
-          }/positions/${position.positionId}`}
+          }/${position.positionId}`}
           icon={
             <Currency.IconList iconWidth={24} iconHeight={24}>
               <img
