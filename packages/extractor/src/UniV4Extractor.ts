@@ -27,6 +27,7 @@ import {
 import {
   Index,
   IndexArray,
+  IndexSet,
   allFulfilled,
   sortTokenPair,
   uniqueArray,
@@ -45,6 +46,15 @@ interface PoolInfo {
   fee: number
   tickSpacing: number
   hooks: Address
+}
+
+const DYNAMIC_FEE_FLAG = 0x800000
+const BEFORE_OR_AFTER_SWAP_RETURNS_DELTA_FLAG = (1n << 3n) | (1n << 2n)
+export function poolIsNotSupported(p: PoolInfo): boolean {
+  if (p.fee === DYNAMIC_FEE_FLAG) return false // dynamic fee pool
+  // pool with unpredictable internal in/out amount changes
+  if (BigInt(p.address) & BEFORE_OR_AFTER_SWAP_RETURNS_DELTA_FLAG) return false
+  return true
 }
 
 interface PoolCacheRecord {
@@ -85,6 +95,9 @@ export class UniV4Extractor extends IExtractor {
   poolWatchers = new Index(
     new Map<string, UniV4PoolWatcher>(),
     (id: string, address: Address) => (id + address).toLowerCase(),
+  )
+  poolWatchersUnsupported = new IndexSet((id: string, address: Address) =>
+    (id + address).toLowerCase(),
   )
 
   tokenPairPool = new IndexArray(
@@ -396,6 +409,7 @@ export class UniV4Extractor extends IExtractor {
 
       const watcher = this.poolWatchers.get(id, address)
       if (watcher !== undefined) return
+      if (this.poolWatchersUnsupported.has(id, address)) return
 
       if (
         fee === undefined ||
@@ -445,7 +459,9 @@ export class UniV4Extractor extends IExtractor {
       if (pool) {
         this.qualityChecker.processLog(l, pool)
         return pool.processLog(l)
-      } else this.addPoolById(l.address, event.args.id) // ????? not too agressive?
+      } else if (this.poolWatchersUnsupported.has(event.args.id, l.address))
+        return 'UnsprtPool'
+      else this.addPoolById(l.address, event.args.id) // ????? not too agressive?
       return 'UnknPool'
     } catch (e) {
       this.errorLog(
@@ -517,6 +533,12 @@ export class UniV4Extractor extends IExtractor {
     const config = this.configMap.get(p.address)
     if (config === undefined) return // unsupported uniV4 provider
     if (this.poolWatchers.has(p.id, p.address)) return // pool watcher exists
+    if (this.poolWatchersUnsupported.has(p.id, p.address)) return // pool is not supported
+
+    if (!poolIsNotSupported(p)) {
+      this.poolWatchersUnsupported.add(p.id, p.address)
+      return
+    }
 
     startTime = startTime || performance.now()
 

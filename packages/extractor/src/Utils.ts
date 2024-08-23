@@ -115,3 +115,21 @@ export class IndexArray<A, E, Func extends (...args: any) => A> extends Index<
     return this
   }
 }
+
+export class IndexSet<A, Func extends (...args: any) => A> {
+  set = new Set<A>()
+  func: Func
+
+  constructor(func: Func) {
+    this.func = func
+  }
+
+  has(...x: FunctionArgs<Func>): boolean {
+    return this.set.has(this.func(...x))
+  }
+
+  add(...x: FunctionArgs<Func>): typeof this {
+    this.set.add(this.func(...x))
+    return this
+  }
+}
