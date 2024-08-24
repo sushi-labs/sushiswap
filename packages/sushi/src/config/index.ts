@@ -1,5 +1,4 @@
 export * from './token-maps/index.js'
-export * from './derived-features/index.js'
 export * from './features/index.js'
 export * from './api.js'
 export * from './token-maps/custom-bases.js'
