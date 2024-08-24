@@ -20,7 +20,7 @@ import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
 import { V3Pool } from '@sushiswap/graph-client/data-api'
-import { isAngleEnabledChainId } from 'sushi/config'
+import { isMerklChainId } from 'sushi/config'
 import { DistributionDataTable } from './DistributionDataTable'
 
 interface PoolRewardDistributionsCardParams {
@@ -35,7 +35,7 @@ export const PoolRewardDistributionsCard: FC<
   })
 
   if (!pool) return null
-  if (!isAngleEnabledChainId(pool.chainId)) return null
+  if (!isMerklChainId(pool.chainId)) return null
 
   const currentAngleRewardsPool = rewardsData?.pools[getAddress(pool.address)]
 

@@ -52,9 +52,9 @@ import { SelectNetworkWidget } from 'src/ui/pool/SelectNetworkWidget'
 import { SelectTokensWidget } from 'src/ui/pool/SelectTokensWidget'
 import { Chain, ChainId, ChainKey } from 'sushi/chain'
 import {
-  ANGLE_SUPPORTED_CHAIN_IDS,
+  MERKL_SUPPORTED_CHAIN_IDS,
   SushiSwapV3ChainId,
-  isAngleEnabledChainId,
+  isMerklChainId,
   isWNativeSupported,
 } from 'sushi/config'
 import { Token, Type, tryParseAmount } from 'sushi/currency'
@@ -68,8 +68,8 @@ export default function Page({ params }: { params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
   return (
     <ConcentratedLiquidityURLStateProvider
-      chainId={isAngleEnabledChainId(chainId) ? chainId : ChainId.ETHEREUM}
-      supportedNetworks={ANGLE_SUPPORTED_CHAIN_IDS}
+      chainId={isMerklChainId(chainId) ? chainId : ChainId.ETHEREUM}
+      supportedNetworks={MERKL_SUPPORTED_CHAIN_IDS}
     >
       <ConcentratedLiquidityProvider>
         <Incentivize />
@@ -208,7 +208,7 @@ const Incentivize = withCheckerRoot(() => {
           onSelect={(chainId) =>
             router.push(`/${ChainKey[chainId]}/pool/incentivize`)
           }
-          networks={ANGLE_SUPPORTED_CHAIN_IDS}
+          networks={MERKL_SUPPORTED_CHAIN_IDS}
         />
         <SelectTokensWidget
           title="Which token pair would you like to incentivize?"
