@@ -1,4 +1,4 @@
-import type { SushiSwapV2ChainId } from '../../config/sushiswap-v2.js'
+import type { SushiSwapV2ChainId } from '../../config/features/sushiswap-v2.js'
 import type { PoolId } from './pool-id.js'
 import { SushiSwapProtocol, type SushiSwapV2Protocol } from './protocol.js'
 

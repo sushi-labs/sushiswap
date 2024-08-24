@@ -1,4 +1,4 @@
-import { ChainId, natives } from '../chain/index.js'
+import { ChainId, natives } from '../../chain/index.js'
 import {
   ARB,
   BUSD,
@@ -12,7 +12,7 @@ import {
   USDT,
   WETH9,
   axlUSDC,
-} from '../currency/index.js'
+} from '../../currency/index.js'
 
 export const defaultCurrency = {
   ...Object.fromEntries(

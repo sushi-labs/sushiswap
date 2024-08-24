@@ -1,4 +1,4 @@
-import { ChainId } from '../chain/index.js'
+import { ChainId } from '../../chain/index.js'
 import {
   BUSD,
   BUSD_ADDRESS,
@@ -14,7 +14,7 @@ import {
   USDC_ADDRESS,
   USDT,
   USDT_ADDRESS,
-} from '../currency/index.js'
+} from '../../currency/index.js'
 
 export const STARGATE_CHAIN_ID = {
   [ChainId.ETHEREUM]: 101,
