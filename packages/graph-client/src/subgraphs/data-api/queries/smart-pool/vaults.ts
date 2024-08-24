@@ -9,7 +9,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const VaultsQuery = graphql(
   `
-  query Vaults($chainId: Int!, $poolAddress: String!) {
+  query Vaults($chainId: SmartPoolChainId!, $poolAddress: Bytes!) {
     vaults(chainId: $chainId, poolAddress: $poolAddress) {
       id
       address
@@ -75,7 +75,12 @@ export async function getVaults(
   const url = `https://${SUSHI_DATA_API_HOST}`
 
   const result = await request(
-    { url, document: VaultsQuery, variables, requestHeaders: SUSHI_REQUEST_HEADERS },
+    {
+      url,
+      document: VaultsQuery,
+      variables,
+      requestHeaders: SUSHI_REQUEST_HEADERS,
+    },
     options,
   )
   if (result.vaults) {

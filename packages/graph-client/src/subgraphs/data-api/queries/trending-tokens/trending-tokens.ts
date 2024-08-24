@@ -9,7 +9,7 @@ import type { ChainIdVariable } from 'src/lib/types/chainId'
 
 export const TrendingTokensQuery = graphql(
   `
-  query TrendingTokens($chainId: Int!) {
+  query TrendingTokens($chainId: TrendingTokensChainId!) {
     trendingTokens(chainId: $chainId) {
       address
       symbol

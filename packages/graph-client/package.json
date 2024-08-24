@@ -60,7 +60,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
     "prepublishOnly": "pnpm build",
-    "update-schemas": "tsx scripts/update-schemas.ts"
+    "update-schemas": "tsx scripts/update-schemas.ts",
+    "update-data-api-types": "tsx scripts/update-data-api-types.ts"
   },
   "dependencies": {
     "@sushiswap/bonds-sdk": "workspace:*",
