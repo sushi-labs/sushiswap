@@ -2,7 +2,7 @@ import type { Hex } from 'viem'
 import { keccak256 } from 'viem/utils'
 import { describe, expect, it } from 'vitest'
 
-import { ChainId } from '../chain/index.js'
+import { ChainId } from '../../chain/index.js'
 import { UNISWAP_V3_INIT_CODE_HASH } from './uniswap-v3.js'
 
 const bytecode =

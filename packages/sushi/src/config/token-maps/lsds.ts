@@ -1,5 +1,5 @@
-import { ChainId } from '../chain/index.js'
-import { Token } from '../currency/token.js'
+import { ChainId } from '../../chain/index.js'
+import { Token } from '../../currency/token.js'
 
 export const LSDS = {
   [ChainId.ARBITRUM]: [

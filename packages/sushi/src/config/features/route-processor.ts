@@ -1,5 +1,5 @@
 import type { Address } from 'viem'
-import { ChainId } from '../chain/index.js'
+import { ChainId } from '../../chain/index.js'
 
 // v1
 export const ROUTE_PROCESSOR_SUPPORTED_CHAIN_IDS = [

@@ -1,4 +1,4 @@
-import { ChainId } from '../chain/index.js'
+import { ChainId } from '../../chain/index.js'
 import {
   BASE_BRIDGE_USDC,
   BTTC_BSC_BRIDGE_USDC,
@@ -31,8 +31,8 @@ import {
   ZETA_ETH_BRIDGE_USDC,
   ZETA_ETH_BRIDGE_USDT,
   axlUSDC,
-} from '../currency/index.js'
-import { STARGATE_USDC, STARGATE_USDT } from './stargate.js'
+} from '../../currency/index.js'
+import { STARGATE_USDC, STARGATE_USDT } from '../features/stargate.js'
 
 export const STABLES = {
   [ChainId.ARBITRUM]: [

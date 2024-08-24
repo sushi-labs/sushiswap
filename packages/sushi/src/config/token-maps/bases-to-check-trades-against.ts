@@ -1,5 +1,5 @@
-import { ChainId } from '../chain/index.js'
-import { MUSD, SKL, Token, USDB, USDP } from '../currency/index.js'
+import { ChainId } from '../../chain/index.js'
+import { MUSD, SKL, Token, USDB, USDP } from '../../currency/index.js'
 import {
   AAVE,
   BUSD,
@@ -28,13 +28,13 @@ import {
   axlETH,
   axlUSDC,
   axlWBTC,
-} from '../currency/index.js'
+} from '../../currency/index.js'
 import {
   STARGATE_USDC,
   STARGATE_USDT,
   STARGATE_WBTC,
   STARGATE_WETH,
-} from './stargate.js'
+} from '../features/stargate.js'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
   readonly [chainId: number]: Token[]

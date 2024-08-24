@@ -1,4 +1,4 @@
-import { ChainId } from '../chain/index.js'
+import { ChainId } from '../../chain/index.js'
 
 export const PANCAKESWAP_V2_FACTORY_ADDRESS = {
   [ChainId.ETHEREUM]: '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362',

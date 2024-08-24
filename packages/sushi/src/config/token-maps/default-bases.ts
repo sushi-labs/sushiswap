@@ -1,5 +1,5 @@
 import { getAddress as _getAddress } from 'viem/utils'
-import { ChainId } from '../chain/index.js'
+import { ChainId } from '../../chain/index.js'
 import {
   ARB,
   DAI,
@@ -27,13 +27,13 @@ import {
   axlUSDC,
   axlUSDT,
   axlWBTC,
-} from '../currency/index.js'
+} from '../../currency/index.js'
 import {
   STARGATE_USDC,
   STARGATE_USDT,
   STARGATE_WBTC,
   STARGATE_WETH,
-} from './stargate.js'
+} from '../features/stargate.js'
 
 /*
   Currencies that are shown at the top of the token selector by default
