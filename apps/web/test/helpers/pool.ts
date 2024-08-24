@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test'
+import { NativeAddress } from '@sushiswap/react-query'
 import { NextFixture } from 'next/experimental/testmode/playwright'
 import {
   SUSHISWAP_V2_FACTORY_ADDRESS,
@@ -12,7 +13,6 @@ import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/pool'
-import { NativeAddress } from '@sushiswap/react-query'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 interface CreateV3PoolArgs {
