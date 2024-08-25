@@ -11,12 +11,12 @@ import {
 } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 
+import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { ChainKey } from 'sushi/chain'
+import { SushiSwapChainId } from 'sushi/config'
 import { ConcentratedPositionsTable } from './ConcentratedPositionsTable/ConcentratedPositionsTable'
 import { PositionsTable } from './PositionsTable'
 import { SmartPositionsTable } from './SmartPositionsTable'
-import { SushiSwapChainId } from 'sushi/config'
-import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 
 const ITEMS: { id: string; value: string; children: React.ReactNode }[] = [
   {
