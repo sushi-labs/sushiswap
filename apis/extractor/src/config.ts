@@ -212,7 +212,7 @@ export const EXTRACTOR_CONFIG: Record<
           '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
         feeSpacingMap: {
           200: 4,
-          500: 10,
+          750: 15,
           3000: 60,
           10_000: 200,
         },
@@ -223,10 +223,11 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
         feeSpacingMap: {
+          80: 1,
           350: 10,
-          500: 10,
-          3000: 60,
-          10_000: 200,
+          450: 10,
+          2500: 60,
+          10000: 200,
         },
       },
       // baseswap v3 0x2acd3ee2b3e7b4d7f9a570770175860cfcd6943a
