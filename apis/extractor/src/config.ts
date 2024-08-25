@@ -2,10 +2,13 @@ import { ExtractorConfig, LogFilterType } from '@sushiswap/extractor'
 import { ChainId } from 'sushi/chain'
 import {
   ExtractorSupportedChainId,
+  PANCAKESWAP_V2_FACTORY_ADDRESS,
+  PANCAKESWAP_V2_INIT_CODE_HASH,
   PANCAKESWAP_V3_DEPLOYER_ADDRESS,
   PANCAKESWAP_V3_FACTORY_ADDRESS,
   PANCAKESWAP_V3_FEE_SPACING_MAP,
   PANCAKESWAP_V3_INIT_CODE_HASH,
+  PancakeSwapV2ChainId,
   PancakeSwapV3ChainId,
   SUSHISWAP_V2_FACTORY_ADDRESS,
   SUSHISWAP_V2_INIT_CODE_HASH,
@@ -76,6 +79,15 @@ export function pancakeswapV3Factory(chainId: PancakeSwapV3ChainId) {
   } as const
 }
 
+export function pancakeswapV2Factory(chainId: PancakeSwapV2ChainId) {
+  return {
+    address: PANCAKESWAP_V2_FACTORY_ADDRESS[chainId],
+    provider: LiquidityProviders.PancakeSwap,
+    initCodeHash: PANCAKESWAP_V2_INIT_CODE_HASH[chainId],
+    fee: 0.0025,
+  } as const
+}
+
 function extractorClientConfig(chainId: ChainId): PublicClientConfig {
   const url = publicClientConfig[chainId]?.transport({})?.value?.url
   if (url === undefined) throw new Error('extractorClientConfig: Unknown url')
@@ -100,6 +112,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       uniswapV2Factory(ChainId.ARBITRUM),
       sushiswapV2Factory(ChainId.ARBITRUM),
+      pancakeswapV2Factory(ChainId.ARBITRUM),
       {
         address: '0xA102072A4C07F06EC3B4900FDC4C7B80b6c57429' as Address,
         provider: LiquidityProviders.Dfyn,
@@ -172,6 +185,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       uniswapV2Factory(ChainId.BASE),
       sushiswapV2Factory(ChainId.BASE),
+      pancakeswapV2Factory(ChainId.BASE),
       {
         address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
         provider: LiquidityProviders.BaseSwap,
@@ -244,13 +258,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       uniswapV2Factory(ChainId.BSC),
       sushiswapV2Factory(ChainId.BSC),
-      {
-        address: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73' as Address,
-        provider: LiquidityProviders.PancakeSwap,
-        fee: 0.0025,
-        initCodeHash:
-          '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
-      },
+      pancakeswapV2Factory(ChainId.BSC),
       {
         address: '0x858E3312ed3A876947EA49d572A7C42DE08af7EE' as Address,
         provider: LiquidityProviders.Biswap,
@@ -330,6 +338,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       uniswapV2Factory(ChainId.ETHEREUM),
       sushiswapV2Factory(ChainId.ETHEREUM),
+      pancakeswapV2Factory(ChainId.BSC),
       {
         address: '0xBAe5dc9B19004883d0377419FeF3c2C8832d7d7B' as Address,
         provider: LiquidityProviders.ApeSwap,
@@ -343,13 +352,6 @@ export const EXTRACTOR_CONFIG: Record<
         fee: 0.003,
         initCodeHash:
           '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-      },
-      {
-        address: '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362' as Address,
-        provider: LiquidityProviders.PancakeSwap,
-        fee: 0.0025,
-        initCodeHash:
-          '0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5',
       },
     ],
     factoriesV3: [
@@ -550,6 +552,7 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.LINEA]: {
     client: createPublicClient(extractorClientConfig(ChainId.LINEA)),
+    factoriesV2: [pancakeswapV2Factory(ChainId.LINEA)],
     // factoriesV2: [sushiswapV2Factory(ChainId.LINEA)], // no v2 on linea?
     factoriesV3: [
       sushiswapV3Factory(ChainId.LINEA),
