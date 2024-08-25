@@ -135,6 +135,10 @@ kubectl port-forward statefulset/extractor-8453 3000:80
 
 http://localhost:3000/pool-codes-bin/8453
 
+### Debug
+
+kubectl run -it --rm --restart=Never curl --image=curlimages/curl:latest sh
+
 ### Restart Router
 
 kubectl rollout restart deployment/router-1

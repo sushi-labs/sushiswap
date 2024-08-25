@@ -27,6 +27,7 @@ export enum LiquidityProviders {
   Wagmi = 'Wagmi',
   LaserSwap = 'LaserSwap',
   BaseSwap = 'BaseSwap',
+  BaseSwapV3 = 'BaseSwapV3',
   AlgebraIntegral = 'AlgebraIntegral',
   Solarbeam = 'Solarbeam',
   Swapsicle = 'Swapsicle',

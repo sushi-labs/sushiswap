@@ -213,10 +213,23 @@ export const EXTRACTOR_CONFIG: Record<
         feeSpacingMap: {
           200: 4,
           500: 10,
-          2500: 50,
+          3000: 60,
           10_000: 200,
         },
       },
+      {
+        address: '0x2ACD3eE2B3e7B4D7f9a570770175860CFCD6943a' as Address,
+        provider: LiquidityProviders.BaseSwapV3,
+        initCodeHash:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+        feeSpacingMap: {
+          350: 10,
+          500: 10,
+          3000: 60,
+          10_000: 200,
+        },
+      },
+      // baseswap v3 0x2acd3ee2b3e7b4d7f9a570770175860cfcd6943a
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     tickHelperContractAlgebra:
