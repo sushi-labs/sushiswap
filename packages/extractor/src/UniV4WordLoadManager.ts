@@ -67,7 +67,7 @@ export class UniV4WordLoadManager extends EventEmitter {
           const { blockNumber, returnValue: ticks } = await this.client.call<
             { tick: bigint; liquidityNet: bigint }[]
           >(this.tickHelperContract, tickLensAbi, 'getPopulatedTicksInWord', [
-            this.poolAddress,   // TODO: expected params
+            this.poolAddress, // TODO: expected params
             this.poolId,
             wordIndex,
           ])
