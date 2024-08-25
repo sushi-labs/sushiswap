@@ -185,7 +185,7 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       uniswapV2Factory(ChainId.BASE),
       sushiswapV2Factory(ChainId.BASE),
-      pancakeswapV2Factory(ChainId.BASE),
+      // pancakeswapV2Factory(ChainId.BASE),
       {
         address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
         provider: LiquidityProviders.BaseSwap,
