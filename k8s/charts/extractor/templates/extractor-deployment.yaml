@@ -1,6 +1,6 @@
 {{- range .Values.chains }}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: extractor-{{ .id }}
 spec:
