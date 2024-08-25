@@ -9,6 +9,7 @@ import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import '../interfaces/ICurve.sol';
+import '../interfaces/UniV4.sol';
 import './InputStream.sol';
 import './Utils.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
@@ -29,7 +30,7 @@ uint160 constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970
 
 /// @title A route processor for the Sushi Aggregator
 /// @author Ilya Lyalin
-contract RouteProcessor5 is Ownable {
+contract RouteProcessor6 is Ownable {
   using SafeERC20 for IERC20;
   using Utils for IERC20;
   using Utils for address;
@@ -317,13 +318,18 @@ contract RouteProcessor5 is Ownable {
   /// @param amountIn Amount of tokenIn to take for swap
   function swap(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
     uint8 poolType = stream.readUint8();
-    if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
-    else if (poolType == 1) swapUniV3(stream, from, tokenIn, amountIn);
-    else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
-    else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
-    else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
-    else if (poolType == 5) swapCurve(stream, from, tokenIn, amountIn);
-    else revert('RouteProcessor: Unknown pool type');
+    if(poolType % 2 == 0) {
+      if (poolType == 0) swapUniV2(stream, from, tokenIn, amountIn);
+      else if (poolType == 2) wrapNative(stream, from, tokenIn, amountIn);
+      else if (poolType == 6) swapUniV4(stream, from, tokenIn, amountIn);
+      else if (poolType == 4) swapTrident(stream, from, tokenIn, amountIn);
+      else revert('RouteProcessor: Unknown pool type');
+    } else {
+      if (poolType == 1) swapUniV3(stream, from, tokenIn, amountIn);
+      else if (poolType == 5) swapCurve(stream, from, tokenIn, amountIn);
+      else if (poolType == 3) bentoBridge(stream, from, tokenIn, amountIn);
+      else revert('RouteProcessor: Unknown pool type');
+    }
   }
 
   /// @notice Wraps/unwraps native token
@@ -495,7 +501,7 @@ contract RouteProcessor5 is Ownable {
     uniswapV3SwapCallback(amount0Delta, amount1Delta, data);
   }
 
-  /// @notice Curve pool swap. Legacy pools that don't return amountOut and have native coins are not supported
+  /// @notice Curve pool swap. Legacy pools that doesn't return amountOut and have native coins are not supported
   /// @param stream [pool, poolType, fromIndex, toIndex, recipient, output token]
   /// @param from Where to take liquidity for swap
   /// @param tokenIn Input token
@@ -524,5 +530,93 @@ contract RouteProcessor5 is Ownable {
     }
 
     if (to != address(this)) tokenOut.transferAny(to, amountOut);
+  }
+
+  struct UniV4CallbackData {
+    IPoolManager manager;
+    PoolKey key;
+    IPoolManager.SwapParams params;
+    bytes hookData;
+    address to;
+  }
+  using PoolManagerAdditionalLibrary for IPoolManager;
+  using BalanceDeltaLibrary for BalanceDelta;
+
+  /// @notice UniswapV4 pool swap
+  /// @param stream [manager, PoolKey, SwapParams, hookData, to]
+  /// @param from Where to take liquidity for swap
+  /// @param tokenIn Input token
+  /// @param amountIn Amount of tokenIn to take for swap
+  function swapUniV4(uint256 stream, address from, address tokenIn, uint256 amountIn) private {
+    if (tokenIn == Utils.NATIVE_ADDRESS) tokenIn = address(0); // For UniV4 Native is 0x0
+    address manager = stream.readAddress();
+    address tokenOut = stream.readAddress();
+    uint24 fee = stream.readUint24();
+    int24 tickSpacing = int24(stream.readUint24());
+    address hooks = stream.readAddress();
+    bool zeroForOne = stream.readUint8() > 0;
+    bytes memory hookData = stream.readBytes();
+    address to = stream.readAddress();  // where to transfer liquidity after this swap
+
+    // This transfer is superflous and can be avoided, but it is a safer to make transferFrom here
+    if (from == msg.sender) IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), uint256(amountIn));
+
+    UniV4CallBackProtection.checkAndSetExpectedManager(address(0), manager);
+    IPoolManager(manager).unlock(abi.encode(UniV4CallbackData(
+        IPoolManager(manager), 
+        PoolKey(
+          Currency.wrap(zeroForOne ? tokenIn : tokenOut), 
+          Currency.wrap(zeroForOne ? tokenOut : tokenIn),
+          fee,
+          tickSpacing,
+          IHooks.wrap(hooks)
+        ), 
+        IPoolManager.SwapParams(zeroForOne, -int256(amountIn), zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1), 
+        hookData, 
+        to
+      ))
+    );
+  }
+
+  // callback for UniV4
+  // Attention: For UniV4 Native is 0x0 !!!! (NATIVE = Currency.wrap(address(0));)
+  function unlockCallback(bytes calldata rawData) external {
+    UniV4CallBackProtection.checkAndSetExpectedManager(msg.sender, address(0)); 
+
+    UniV4CallbackData memory data = abi.decode(rawData, (UniV4CallbackData));
+    BalanceDelta delta = data.manager.swap(data.key, data.params, data.hookData);
+
+    //TODO: Why can't we trust to deltas?
+    int256 deltaAfter0 = data.manager.currencyDelta(data.key.currency0, address(this));
+    int256 deltaAfter1 = data.manager.currencyDelta(data.key.currency1, address(this));
+
+    if (data.params.zeroForOne) {
+      require(
+          deltaAfter0 >= data.params.amountSpecified,
+          "deltaAfter0 is not greater than or equal to data.params.amountSpecified"
+      );
+      require(delta.amount0() == deltaAfter0, "delta.amount0() is not equal to deltaAfter0");
+      require(deltaAfter1 >= 0, "deltaAfter1 is not greater than or equal to 0");
+    } else {
+      require(
+          deltaAfter1 >= data.params.amountSpecified,
+          "deltaAfter1 is not greater than or equal to data.params.amountSpecified"
+      );
+      require(delta.amount1() == deltaAfter1, "delta.amount1() is not equal to deltaAfter1");
+      require(deltaAfter0 >= 0, "deltaAfter0 is not greater than or equal to 0");
+    }
+
+    if (deltaAfter0 < 0) {
+      data.manager.settle(data.key.currency0, uint256(-deltaAfter0));
+    }
+    if (deltaAfter1 < 0) {
+      data.manager.settle(data.key.currency1, uint256(-deltaAfter1));
+    }
+    if (deltaAfter0 > 0) {
+      data.manager.take(data.key.currency0, data.to, uint256(deltaAfter0));
+    }
+    if (deltaAfter1 > 0) {
+      data.manager.take(data.key.currency1, data.to, uint256(deltaAfter1));
+    }
   }
 }

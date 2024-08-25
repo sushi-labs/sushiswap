@@ -1,12 +1,10 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import {
-  CurveWhitelistConfig,
   Extractor,
   FactoryV2,
   FactoryV3,
   LogFilterType,
-  MultiCallAggregator,
   TokenManager,
 } from '@sushiswap/extractor'
 import { routeProcessor5Abi } from 'sushi/abi'
@@ -42,6 +40,7 @@ import {
   arbitrum,
   arbitrumNova,
   celo,
+  goerli,
   mainnet,
   optimism,
   polygon,
@@ -159,8 +158,7 @@ async function startInfinitTest(args: {
 
   const nativeProvider = new NativeWrapProvider(chainId, client)
   const tokenManager = new TokenManager(
-    extractor.extractorV2?.multiCallAggregator ||
-      (extractor.extractorV3?.multiCallAggregator as MultiCallAggregator),
+    extractor.multiCallAggregator,
     __dirname,
     `tokens-${client.chain?.id}`,
   )
@@ -292,7 +290,7 @@ async function startInfinitTest(args: {
   }
 }
 
-it.only('Extractor Ethereum infinite work test (Curve)', async () => {
+it.skip('Extractor Ethereum infinite work test (Curve)', async () => {
   await startInfinitTest({
     providerURL: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
     chain: mainnet,
@@ -592,5 +590,25 @@ it.skip('Extractor Harmony infinite work test', async () => {
     logDepth: 300,
     logging: true,
     RPAddress: RPAddress[ChainId.HARMONY],
+  })
+})
+
+it.only('Extractor Goerli infinite work test (UniV4 only)', async () => {
+  await startInfinitTest({
+    providerURL: `https://eth-goerli.api.onfinality.io/public`,
+    chain: goerli,
+    factoriesV2: [],
+    factoriesV3: [],
+    tickHelperContractV3:
+      '0x0000000000000000000000000000000000000000' as Address,
+    tickHelperContractAlgebra:
+      '0x0000000000000000000000000000000000000000' as Address,
+    cacheDir: './cache',
+    logDepth: 300,
+    logging: true,
+    RPAddress: RPAddress[ChainId.HARMONY],
+    uniV4: {
+      address: '0x3A9D48AB9751398BbFa63ad67599Bb04e4BdF98b' as Address,
+    },
   })
 })

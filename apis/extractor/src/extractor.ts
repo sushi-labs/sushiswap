@@ -1,10 +1,15 @@
 import { Extractor } from '@sushiswap/extractor'
-import { BASES_TO_CHECK_TRADES_AGAINST } from 'sushi/config'
+import { baseTokens } from 'sushi'
 // import { Token } from 'sushi/currency'
 // import { TokenList } from 'sushi/token-list'
 import { CHAIN_ID, EXTRACTOR_CONFIG } from './config.js'
 
-const extractor = new Extractor(EXTRACTOR_CONFIG[CHAIN_ID])
+export const cacheReadOnly = process.env['CACHE_READ_ONLY'] === 'true'
+
+const extractor = new Extractor({
+  ...EXTRACTOR_CONFIG[CHAIN_ID],
+  cacheReadOnly,
+})
 
 // const start = Date.now()
 // fetch('https://token-list.sushi.com')
@@ -23,7 +28,7 @@ const extractor = new Extractor(EXTRACTOR_CONFIG[CHAIN_ID])
 //           }),
 //       )
 
-//     return extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID], additional)
+//     return extractor.start(baseTokens(CHAIN_ID, true), additional)
 //   })
 //   .then(() => {
 //     const time = Date.now() - start
@@ -34,6 +39,6 @@ const extractor = new Extractor(EXTRACTOR_CONFIG[CHAIN_ID])
 //     throw e
 //   })
 
-extractor.start(BASES_TO_CHECK_TRADES_AGAINST[CHAIN_ID])
+extractor.start(baseTokens(CHAIN_ID, true))
 
 export default extractor
