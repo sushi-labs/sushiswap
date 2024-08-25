@@ -1,4 +1,16 @@
 {{- range .Values.chains }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: extractor-{{ .id }}-pv-claim
+spec:
+  storageClassName: premium-rwx
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 250Mi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,11 +25,18 @@ spec:
       labels:
         app: extractor-{{ .id }}
     spec:
+      volumes:
+        - name: extractor-{{ .id }}-pv-storage
+          persistentVolumeClaim:
+            claimName: extractor-{{ .id }}-pv-claim
       containers:
         - name: extractor
           image: extractor
           ports:
             - containerPort: 80
+          volumeMounts:
+            - mountPath: "/app/cache"
+              name: extractor-{{ .id }}-pv-storage
           resources:
             requests:
               cpu: 1250m
@@ -38,9 +57,6 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 3
-          volumeMounts:
-            - mountPath: /app/cache
-              name: extractor-{{ .id }}-cache
           env:
             - name: CHAIN_ID
               value: "{{ .id }}"
@@ -64,12 +80,4 @@ spec:
                 secretKeyRef:
                   name: sushi-api
                   key: SENTRY_ENVIRONMENT
-  volumeClaimTemplates:
-  - metadata:
-      name: extractor-{{ .id }}-cache
-    spec:
-      accessModes: ["ReadWriteMany"]
-      resources:
-        requests:
-          storage: 250Mi
 {{- end }}
