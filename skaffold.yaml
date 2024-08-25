@@ -22,8 +22,15 @@ build:
 deploy:
   helm:
     releases:
-      - name: sushi-api
-        chartPath: k8s/chart
+      - name: sushi-extractor
+        chartPath: k8s/charts/extractor
+        valuesFiles: [k8s/charts/values.yaml]
+      - name: sushi-router
+        chartPath: k8s/charts/router
+        valuesFiles: [k8s/charts/values.yaml]
+      - name: sushi-nginx
+        chartPath: k8s/charts/nginx
+        valuesFiles: [k8s/charts/values.yaml]
 manifests:
   rawYaml:
     - k8s/ingress-local.yaml
