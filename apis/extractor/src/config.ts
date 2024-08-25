@@ -179,11 +179,30 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
       },
+      {
+        address: '0x3E84D913803b02A4a7f027165E8cA42C14C0FdE7' as Address,
+        provider: LiquidityProviders.AlienBaseV2,
+        fee: 0.0016,
+        initCodeHash:
+          '0x7ede5bbb7d245103c4a6d59bfd62246fbc488e93f95f23a19d9d76f0d91bd0d0',
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.BASE),
       uniswapV3Factory(ChainId.BASE),
       pancakeswapV3Factory(ChainId.BASE),
+      {
+        address: '0x0Fd83557b2be93617c9C1C1B6fd549401C74558C' as Address,
+        provider: LiquidityProviders.AlienBaseV3,
+        initCodeHash:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+        feeSpacingMap: {
+          200: 4,
+          500: 10,
+          2500: 50,
+          10_000: 200,
+        },
+      },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     tickHelperContractAlgebra:

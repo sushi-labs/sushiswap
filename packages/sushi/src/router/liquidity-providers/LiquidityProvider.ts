@@ -41,6 +41,8 @@ export enum LiquidityProviders {
   DyorV2 = 'DyorV2',
   HyperBlast = 'HyperBlast',
   KinetixV3 = 'KinetixV3',
+  AlienBaseV2 = 'AlienBaseV2',
+  AlienBaseV3 = 'AlienBaseV3',
 }
 
 export abstract class LiquidityProvider {
