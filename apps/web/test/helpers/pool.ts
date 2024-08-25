@@ -402,7 +402,7 @@ export class PoolPage extends BaseActions {
     fee: number,
     protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3',
   ) {
-    next.onFetch((request) => {
+    next.onFetch(async (request) => {
       // console.log('REQUEST', request.url.toLowerCase())
 
       const [tokenA, tokenB] = token0.sortsBefore(token1)
@@ -545,11 +545,85 @@ export class PoolPage extends BaseActions {
             }
 
       if (request.url.toLowerCase().endsWith('/graphql')) {
-        return new Response(JSON.stringify(mockPool), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
+        console.log({ request })
+        const requestBody = await request.json()
+        const operationName = requestBody.operationName
+        console.log({operationName})
+
+        if (operationName === 'TrendingTokens') {
+          return new Response(
+            JSON.stringify({
+              data: {
+                trendingTokens: [
+               
+                ],
+              },
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+        }
+        
+        if (operationName === 'TokenList') {
+          return new Response(
+            JSON.stringify({
+              data: {
+                trendingTokens: [
+                  {
+                    ...tokenA,
+                    approved: true,
+                  },
+                  {
+                    ...tokenB,
+                    approved: true,
+                  },
+                ],
+              },
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+        }
+
+
+        if (operationName === 'TokenListBalances') {
+          return new Response(
+            JSON.stringify({
+              data: {
+                tokenListBalances: [
+                  {
+                    ...tokenA,
+                    approved: true,
+                    balance: '10000000000000000000000',
+                  },
+                  {
+                    ...tokenB,
+                    approved: true,
+                    balance: '10000000000000000000000',
+                  },
+                ],
+              },
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+        }
+        if (operationName.includes('Pool')) {
+          return new Response(JSON.stringify(mockPool), {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+        }
       }
     })
   }
