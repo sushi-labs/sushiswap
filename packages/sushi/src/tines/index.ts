@@ -12,6 +12,7 @@ export * from './RPool.js'
 export * from './StableSwapPool.js'
 export * from './StarGateFeesV04.js'
 export * from './UniV3Pool.js'
+export * from './UniV4Pool.js'
 export * from './Utils.js'
 
 export * from './functions/index.js'

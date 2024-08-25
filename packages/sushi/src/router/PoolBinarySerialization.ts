@@ -11,6 +11,7 @@ import {
   CurveMultitokenPool,
   type RToken,
   UniV3Pool,
+  UniV4Pool,
   createCurvePoolsForMultipool,
 } from '../tines/index.js'
 import { curvePoolType2Num, curvePoolTypeFromNum } from './curve-sdk.js'
@@ -21,6 +22,7 @@ import {
   NativeWrapBridgePoolCode,
   PoolCode,
   UniV3PoolCode,
+  UniV4PoolCode,
 } from './pool-codes/index.js'
 
 enum PoolTypeIndex {
@@ -28,6 +30,7 @@ enum PoolTypeIndex {
   Classic = 1,
   Concentrated = 2,
   Curve = 3,
+  V4 = 4,
   CurvePoolCoreHaveBeenSerialized = 255,
 }
 
@@ -63,14 +66,14 @@ export function serializePoolsBinary(
 
   stream.uint24(pools.length)
   pools.forEach((pc) => {
-    stream.str16(pc.liquidityProvider)
+    stream.str16(pc.liquidityProvider) // TODO: small set of strings actually, can be optimized
     if (pc instanceof ConstantProductPoolCode) {
       const p = pc.pool as ConstantProductRPool
       stream.uint8(PoolTypeIndex.Classic)
       stream.address(p.address)
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually 0.003
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually 0.003
       stream.bigUInt(p.reserve0, p.address, 'res0')
       stream.bigUInt(p.reserve1, p.address, 'res1')
     } else if (pc instanceof UniV3PoolCode) {
@@ -79,7 +82,7 @@ export function serializePoolsBinary(
       stream.address(p.address)
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually [0.003, 0.001, 0.0005]
       stream.bigUInt(p.reserve0, p.address, 'res0')
       stream.bigUInt(p.reserve1, p.address, 'res1')
       //stream.uint32(p.tick) nearestTick instead of it
@@ -98,7 +101,7 @@ export function serializePoolsBinary(
       stream.address(p.address)
       stream.uint24(tokenIndex.get(p.token0.address) as number)
       stream.uint24(tokenIndex.get(p.token1.address) as number)
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually 0.003
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually 0.003
     } else if (pc instanceof CurvePoolCode) {
       const p = pc.pool as CurveMultitokenPool
       const core = p.core
@@ -118,8 +121,27 @@ export function serializePoolsBinary(
         stream.bigUInt(core.reserves[i] as bigint, core.address)
         stream.float64(originalRates[i] as number)
       })
-      stream.uint24(p.fee * FEE_FRACTIONS) // can be optimized - usually [0.003, 0.001, 0.0005]
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS)) // can be optimized - usually [0.003, 0.001, 0.0005]
       stream.float64(core.A)
+    } else if (pc instanceof UniV4PoolCode) {
+      const p = pc.pool as UniV4Pool
+      stream.uint8(PoolTypeIndex.V4)
+      stream.address(p.address)
+      stream.str16(p.id)
+      stream.uint24(tokenIndex.get(p.token0.address) as number)
+      stream.uint24(tokenIndex.get(p.token1.address) as number)
+      stream.uint24(Math.round(p.fee * FEE_FRACTIONS))
+      stream.address(p.hooks)
+      //stream.uint32(p.tick) nearestTick instead of it
+      stream.uint24(p.nearestTick)
+      stream.bigUInt(p.liquidity, p.address, 'liquidity')
+      stream.bigUInt(p.sqrtPriceX96, p.address, 'price')
+      stream.uint24(p.ticks.length)
+      p.ticks.forEach((t) => {
+        stream.int24(t.index)
+        stream.bigInt(t.DLiquidity)
+      })
+      stream.uint24(pc.tickSpacing)
     } else {
       console.error(`Serialization: unsupported pool type ${pc.pool.address}`)
     }
@@ -171,43 +193,65 @@ export function deserializePoolsBinary(
   }
 
   const poolsNum = stream.uint24()
-  const pools: PoolCode[] = new Array(poolsNum)
-  for (let i = 0; i < poolsNum; ) {
+  const pools: PoolCode[] = []
+  for (let i = 0; i < poolsNum; ++i) {
     const liquidityProvider = stream.str16()
     const poolType = stream.uint8() as PoolTypeIndex
     switch (poolType) {
       case PoolTypeIndex.Classic:
-        pools[i++] = new ConstantProductPoolCode(
-          readCPRPool(stream, tokensArray),
-          liquidityProvider as LiquidityProviders,
-          liquidityProvider,
+        pools.push(
+          new ConstantProductPoolCode(
+            readCPRPool(stream, tokensArray),
+            liquidityProvider as LiquidityProviders,
+            liquidityProvider,
+          ),
         )
         break
       case PoolTypeIndex.Concentrated:
-        pools[i++] = new UniV3PoolCode(
-          readUniV3Pool(stream, tokensArray),
-          liquidityProvider as LiquidityProviders,
-          liquidityProvider,
+        pools.push(
+          new UniV3PoolCode(
+            readUniV3Pool(stream, tokensArray),
+            liquidityProvider as LiquidityProviders,
+            liquidityProvider,
+          ),
         )
         break
       case PoolTypeIndex.Bridge:
-        pools[i++] = new NativeWrapBridgePoolCode(
-          readNativeWrapRPool(stream, tokensArray),
-          liquidityProvider as LiquidityProviders,
+        pools.push(
+          new NativeWrapBridgePoolCode(
+            readNativeWrapRPool(stream, tokensArray),
+            liquidityProvider as LiquidityProviders,
+          ),
         )
         break
       case PoolTypeIndex.Curve: {
         const curvePoolType = curvePoolTypeFromNum(stream.uint8())
         readCurveRPools(stream, tokensArray).forEach((p) => {
-          pools[i++] = new CurvePoolCode(
-            p,
-            liquidityProvider as LiquidityProviders,
-            liquidityProvider,
-            curvePoolType,
+          pools.push(
+            new CurvePoolCode(
+              p,
+              liquidityProvider as LiquidityProviders,
+              liquidityProvider,
+              curvePoolType,
+            ),
           )
         })
         break
       }
+      case PoolTypeIndex.V4:
+        {
+          const pool = readUniV4Pool(stream, tokensArray)
+          const tickSpacing = stream.uint24()
+          pools.push(
+            new UniV4PoolCode(
+              pool,
+              tickSpacing,
+              liquidityProvider as LiquidityProviders,
+              liquidityProvider,
+            ),
+          )
+        }
+        break
       case PoolTypeIndex.CurvePoolCoreHaveBeenSerialized: // pools of one core are serialized only once
         break
       default:
@@ -264,6 +308,41 @@ function readUniV3Pool(
     fee,
     reserve0,
     reserve1,
+    0, // tick is not needed if we already have nearestTick
+    liquidity,
+    sqrtPriceX96,
+    ticks,
+    nearestTick,
+  )
+}
+
+function readUniV4Pool(
+  stream: BinReadStream,
+  tokensArray: RToken[],
+): UniV4Pool {
+  const address = stream.address()
+  const id = stream.str16()
+  const token0 = tokensArray[stream.uint24()] as RToken
+  const token1 = tokensArray[stream.uint24()] as RToken
+  const fee = stream.uint24() / FEE_FRACTIONS
+  const hooks = stream.address()
+  const nearestTick = stream.uint24()
+  const liquidity = stream.bigUInt()
+  const sqrtPriceX96 = stream.bigUInt()
+  const ticksLen = stream.uint24()
+  const ticks = new Array(ticksLen)
+  for (let i = 0; i < ticksLen; ++i) {
+    const index = stream.int24()
+    const DLiquidity = stream.bigInt()
+    ticks[i] = { index, DLiquidity }
+  }
+  return new UniV4Pool(
+    id,
+    address,
+    token0,
+    token1,
+    fee,
+    hooks,
     0, // tick is not needed if we already have nearestTick
     liquidity,
     sqrtPriceX96,

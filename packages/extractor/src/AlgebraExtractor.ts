@@ -127,6 +127,7 @@ export class AlgebraExtractor extends IExtractor {
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
+    cacheReadOnly = false,
   ) {
     super()
     this.multiCallAggregator =
@@ -135,16 +136,19 @@ export class AlgebraExtractor extends IExtractor {
       tokenManager ||
       new TokenManager(
         this.multiCallAggregator,
+        cacheReadOnly,
         cacheDir,
         `AlgebraTokens-${this.multiCallAggregator.chainId}`,
       )
     this.tickHelperContract = tickHelperContract
     this.factories = factories
     this.poolPermanentCache = new PermanentCache(
+      cacheReadOnly,
       cacheDir,
       `AlgebraPools-${this.multiCallAggregator.chainId}`,
     )
     this.logging = logging
+    this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.taskCounter = new Counter(() => {
       //if (count == 0) this.consoleLog(`All pools were updated`)
     })

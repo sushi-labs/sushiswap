@@ -293,7 +293,11 @@ type TokenSlotRecord =
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const cache = new PermanentCache<TokenSlotRecord>(__dirname, './setTokenCache')
+const cache = new PermanentCache<TokenSlotRecord>(
+  true,
+  __dirname,
+  './setTokenCache',
+)
 const cachedMap = new Map<Address, BalanceSlotInfo | undefined>()
 
 async function initCache() {
