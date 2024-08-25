@@ -1,3 +1,4 @@
+import { V2Position } from '@sushiswap/graph-client/data-api'
 import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
@@ -9,13 +10,12 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { UserWithPool } from 'src/app/(evm)/pool/api/user-with-pools/route'
 import { useTokensFromPool } from 'src/lib/hooks'
-import { Chain } from 'sushi/chain'
+import { Chain, ChainKey } from 'sushi/chain'
 import { formatPercent, formatUSD } from 'sushi/format'
 
 interface PositionCard {
-  position: UserWithPool
+  position: V2Position
 }
 
 export const PositionCardSkeleton = () => {
@@ -88,7 +88,11 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
       </div>
       <div className="absolute bottom-7 right-7">
         <Button size="sm" asChild>
-          <LinkInternal href={`/pools/${position.pool.id}/migrate`}>
+          <LinkInternal
+            href={`/${ChainKey[position.pool.chainId]}/pool/v2/${
+              position.pool.address
+            }/migrate`}
+          >
             Migrate
           </LinkInternal>
         </Button>

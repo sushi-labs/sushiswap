@@ -31,7 +31,7 @@ export function CategoryFilterClient({ categories }: CategoryFilterClient) {
 
       setSearch((prev) => ({
         ...prev,
-        categories: prevToNew(prev.categories!, slug),
+        categories: prevToNew(prev.categories || [], slug),
       }))
     },
     [setSearch, selectedCategories],

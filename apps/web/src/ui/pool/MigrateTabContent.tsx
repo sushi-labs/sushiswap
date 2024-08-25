@@ -7,16 +7,17 @@ import {
   Carousel,
   Container,
 } from '@sushiswap/ui'
-import React from 'react'
+import React, { FC } from 'react'
 import { isSushiSwapV3ChainId } from 'sushi/config'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
+import { ChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 import { PositionCard, PositionCardSkeleton } from './PositionCard'
 import { PositionCardList } from './PositionCardList'
 
-function MigrateTabContentPositions() {
+const MigrateTabContentPositions: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { isConnected } = useAccount()
 
   if (!isConnected) {
@@ -28,7 +29,7 @@ function MigrateTabContentPositions() {
   }
 
   return (
-    <PositionCardList>
+    <PositionCardList chainId={chainId}>
       {({ positions, isLoading }) => {
         if (!isLoading && positions.length === 0) {
           return (
@@ -59,7 +60,7 @@ function MigrateTabContentPositions() {
   )
 }
 
-export const MigrateTabContent = () => {
+export const MigrateTabContent: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
 
   return (
@@ -74,7 +75,7 @@ export const MigrateTabContent = () => {
           </CardDescription>
         </CardHeader>
       </Container>
-      {isMounted ? <MigrateTabContentPositions /> : null}
+      {isMounted ? <MigrateTabContentPositions chainId={chainId} /> : null}
     </div>
   )
 }
