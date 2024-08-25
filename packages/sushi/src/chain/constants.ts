@@ -90,7 +90,7 @@ export const ChainKey = {
   [ChainId.FANTOM]: 'fantom',
   [ChainId.FANTOM_TESTNET]: 'fantom-testnet',
   [ChainId.FUSE]: 'fuse',
-  // [ChainId.GÖRLI]: 'goerli',
+  [ChainId.GÖRLI]: 'goerli',
   [ChainId.HARMONY]: 'harmony',
   // [ChainId.HARMONY_TESTNET]: 'harmony-testnet',
   [ChainId.HECO]: 'heco',

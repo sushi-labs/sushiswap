@@ -669,6 +669,7 @@ export const publicChains = [
   avalancheFuji,
   bscTestnet,
   fantomTestnet,
+  goerli,
   polygonMumbai,
   sepolia,
 ] as const satisfies Readonly<Chain[]>
@@ -844,6 +845,10 @@ export const publicClientConfig = {
     chain: fantomTestnet,
     transport: publicTransports[ChainId.FANTOM_TESTNET],
   },
+  [ChainId.GÖRLI]: {
+    chain: goerli,
+    transport: publicTransports[ChainId.GÖRLI],
+  },
   [ChainId.POLYGON_TESTNET]: {
     chain: polygonMumbai,
     transport: publicTransports[ChainId.POLYGON_TESTNET],
@@ -851,10 +856,6 @@ export const publicClientConfig = {
   [ChainId.SEPOLIA]: {
     chain: sepolia,
     transport: publicTransports[ChainId.SEPOLIA],
-  },
-  [ChainId.GÖRLI]: {
-    chain: goerli as unknown as typeof mainnet,
-    transport: publicTransports[ChainId.GÖRLI],
   },
 } as const satisfies Record<
   ChainId,
