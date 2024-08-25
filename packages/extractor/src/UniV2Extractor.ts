@@ -104,6 +104,7 @@ export class UniV2Extractor extends IExtractor {
     logging = true,
     multiCallAggregator?: MultiCallAggregator,
     tokenManager?: TokenManager,
+    cacheReadOnly = false,
   ) {
     super()
     this.multiCallAggregator =
@@ -114,14 +115,17 @@ export class UniV2Extractor extends IExtractor {
       tokenManager ||
       new TokenManager(
         this.multiCallAggregator,
+        cacheReadOnly,
         cacheDir,
         `uniV2Tokens-${this.multiCallAggregator.chainId}`,
       )
     this.logging = logging
+    this.consoleLog(`CacheReadOnly = ${cacheReadOnly}`)
     this.taskCounter = new Counter(() => {
       // do nothing
     })
     this.poolPermanentCache = new PermanentCache(
+      cacheReadOnly,
       cacheDir,
       `uniV2Pools-${this.multiCallAggregator.chainId}`,
     )

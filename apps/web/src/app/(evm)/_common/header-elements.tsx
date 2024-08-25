@@ -51,7 +51,7 @@ export const headerElements = (chainId?: ChainId): NavigationElement[] => [
     type: NavigationElementType.Single,
   },
   {
-    title: 'Pools',
+    title: 'Pool',
     href: `/${
       isChainId(Number(chainId)) ? ChainKey[chainId as ChainId] : 'ethereum'
     }/pool`,

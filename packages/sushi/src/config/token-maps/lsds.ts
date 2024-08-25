@@ -402,4 +402,5 @@ export const LSDS = {
   [ChainId.ARBITRUM_TESTNET]: [],
   [ChainId.AVALANCHE_TESTNET]: [],
   [ChainId.SEPOLIA]: [],
+  [ChainId.GÖRLI]: [],
 } as const satisfies Record<ChainId, Token[]>

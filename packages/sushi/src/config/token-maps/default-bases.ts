@@ -55,7 +55,7 @@ export const DEFAULT_BASES = {
   ],
   // [ChainId.ROPSTEN]: [],
   // [ChainId.RINKEBY]: [],
-  // [ChainId.GÖRLI]: [],
+  [ChainId.GÖRLI]: [],
   // [ChainId.KOVAN]: [],
   [ChainId.GNOSIS]: [
     Native.onChain(ChainId.GNOSIS),

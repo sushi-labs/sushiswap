@@ -39,9 +39,13 @@ export class TokenManager {
   tokenPermanentCache: PermanentCache<TokenCacheRecord>
   cacheTokensAddingPromise?: Promise<void>
 
-  constructor(client: MultiCallAggregator, ...paths: string[]) {
+  constructor(
+    client: MultiCallAggregator,
+    cacheReadOnly: boolean,
+    ...paths: string[]
+  ) {
     this.client = client
-    this.tokenPermanentCache = new PermanentCache(...paths)
+    this.tokenPermanentCache = new PermanentCache(cacheReadOnly, ...paths)
   }
 
   async addCachedTokens() {

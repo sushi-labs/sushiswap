@@ -28,7 +28,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
     "prepublishOnly": "pnpm build",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "test-cache": "npx tsx ./test/cacheTest.ts"
   },
   "dependencies": {
     "@cryptoalgebra/integral-core": "0.2.0",
