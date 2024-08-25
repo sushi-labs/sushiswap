@@ -68,7 +68,7 @@ spec:
   - metadata:
       name: extractor-{{ .id }}-cache
     spec:
-      accessModes: ["ReadWriteOncePod"]
+      accessModes: ["ReadWriteMany"]
       resources:
         requests:
           storage: 250Mi
