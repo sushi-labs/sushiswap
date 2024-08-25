@@ -1,15 +1,15 @@
+import { TrendingTokensChainId } from '@sushiswap/graph-client/data-api'
 import { usePrices } from '@sushiswap/react-query'
 import { List } from '@sushiswap/ui'
-import type { ChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
-import { useTrendingTokens } from './hooks/use-trending-tokens'
+import { useTrendingTokens } from '../hooks/use-trending-tokens'
 import {
   TokenSelectorCurrencyList,
   TokenSelectorCurrencyListLoading,
-} from './token-selector-currency-list'
+} from './common/token-selector-currency-list'
 
 interface TokenSelectorTrendingTokens {
-  chainId: ChainId
+  chainId: TrendingTokensChainId
   onSelect(currency: Type): void
   selected: Type | undefined
 }

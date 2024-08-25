@@ -43,3 +43,8 @@ res.forEach((content, i) => {
   writeFileSync(file, content)
   console.log(`Updated ${feature} type`)
 })
+
+writeFileSync(
+  `${path}/index.ts`,
+  res.map((_, i) => `export * from './${features[i]}'`).join('\n'),
+)

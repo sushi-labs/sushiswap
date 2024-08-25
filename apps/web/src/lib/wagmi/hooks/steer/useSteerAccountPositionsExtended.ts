@@ -1,7 +1,8 @@
+import { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { useAllPrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
 import { useSmartPools } from 'src/lib/hooks/api/userSmartPools'
-import { ChainId, ID } from 'sushi'
+import { ID } from 'sushi'
 import { Amount, Token } from 'sushi/currency'
 import { Address } from 'viem'
 import { useSteerAccountPositions } from './useSteerAccountPosition'
@@ -9,7 +10,7 @@ import { useSteerAccountPositions } from './useSteerAccountPosition'
 interface UseSteerAccountPositionsExtended {
   account: Address | undefined
   enabled?: boolean
-  chainId: ChainId
+  chainId: SmartPoolChainId
 }
 
 export type SteerAccountPositionExtended = NonNullable<

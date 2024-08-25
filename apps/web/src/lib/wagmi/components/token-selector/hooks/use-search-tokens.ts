@@ -1,12 +1,14 @@
-import { getTokenList } from '@sushiswap/graph-client/data-api'
+import {
+  TokenListChainId,
+  getTokenList,
+} from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import type { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
 
 type UseSearchTokens = {
-  chainId: ChainId
+  chainId: TokenListChainId | undefined
   search?: string
   includeCustomTokens?: boolean
   pagination?: {
@@ -38,6 +40,8 @@ export function useSearchTokens({
       { chainId, symbol: search, pageSize: pagination.pageSize, customTokens },
     ],
     queryFn: async ({ pageParam }) => {
+      if (!chainId) throw new Error('chainId is required')
+
       const result = await getTokenList({
         chainId,
         first: pagination.pageSize,
@@ -47,6 +51,7 @@ export function useSearchTokens({
       })
       return result
     },
+    enabled: !!chainId,
     getNextPageParam: (_1, _2, lastPageParam) => lastPageParam + 1,
     initialPageParam: pagination.initialPage,
     // 15 minutes

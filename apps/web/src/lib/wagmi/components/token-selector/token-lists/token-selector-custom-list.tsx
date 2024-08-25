@@ -1,17 +1,20 @@
+import { isTokenListChainId } from '@sushiswap/graph-client/data-api'
 import { usePrices } from '@sushiswap/react-query'
 import { List } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import { Address } from 'sushi'
 import type { ChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
-import { useMyTokens } from './hooks/use-my-tokens'
-import { TokenSelectorCurrencyList } from './token-selector-currency-list'
+import { useMyTokens } from '../hooks/use-my-tokens'
+import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
 
 interface TokenSelectorCustomList {
-  currencies: Type[]
+  currencies: Readonly<Type[]>
   chainId: ChainId
   account?: Address
   selected: Type | undefined
   onSelect(currency: Type): void
+  search?: string
 }
 
 export function TokenSelectorCustomList({
@@ -20,15 +23,34 @@ export function TokenSelectorCustomList({
   account,
   selected,
   onSelect,
+  search,
 }: TokenSelectorCustomList) {
   const {
     data: { balanceMap },
     isLoading,
-  } = useMyTokens({ chainId, account })
+  } = useMyTokens({
+    chainId: isTokenListChainId(chainId) ? chainId : undefined,
+    account,
+  })
 
   const { data: pricesMap } = usePrices({
     chainId,
   })
+
+  const filteredCurrencies = useMemo(() => {
+    if (!search) return currencies
+
+    const searchLower = search.toLowerCase()
+
+    const matchingCurrencies = currencies.filter((currency) => {
+      if (currency.symbol?.toLowerCase().includes(searchLower)) return true
+      if (currency.name?.toLowerCase().includes(searchLower)) return true
+
+      return false
+    })
+
+    return matchingCurrencies
+  }, [currencies, search])
 
   return (
     <div className="flex flex-1 flex-col">
@@ -38,7 +60,7 @@ export function TokenSelectorCustomList({
             id="trending"
             selected={selected}
             onSelect={onSelect}
-            currencies={currencies}
+            currencies={filteredCurrencies}
             chainId={chainId}
             balancesMap={balanceMap}
             pricesMap={pricesMap}

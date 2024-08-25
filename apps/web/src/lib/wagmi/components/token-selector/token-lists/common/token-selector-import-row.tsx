@@ -24,7 +24,7 @@ import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
 import { isTokenSecurityChainId } from 'sushi/config'
-import { TokenSecurityView } from '../token-security-view'
+import { TokenSecurityView } from '../../../token-security-view'
 
 interface TokenSelectorImportRow {
   currency: Token

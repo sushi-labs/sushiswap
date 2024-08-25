@@ -1,18 +1,19 @@
+import { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { usePrices } from '@sushiswap/react-query'
 import { List } from '@sushiswap/ui'
-import type { ChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
-import { useMyTokens } from './hooks/use-my-tokens'
+import { useMyTokens } from '../hooks/use-my-tokens'
 import {
   TokenSelectorCurrencyList,
   TokenSelectorCurrencyListLoading,
-} from './token-selector-currency-list'
+} from './common/token-selector-currency-list'
 
 interface TokenSelectorMyTokens {
-  chainId: ChainId
+  chainId: TokenListChainId
   onSelect(currency: Type): void
   selected: Type | undefined
+  includeNative?: boolean
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -30,12 +31,14 @@ export function TokenSelectorMyTokens({
   chainId,
   onSelect,
   selected,
+  includeNative,
 }: TokenSelectorMyTokens) {
   const { address } = useAccount()
 
   const { data, isError, isLoading } = useMyTokens({
     chainId,
     account: address,
+    includeNative,
   })
 
   const { data: pricesMap } = usePrices({

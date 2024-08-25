@@ -1,19 +1,19 @@
+import { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { usePrices } from '@sushiswap/react-query'
 import { List } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import type { ChainId } from 'sushi/chain'
 import type { Type } from 'sushi/currency'
 import type { Address } from 'viem'
-import { useSearchTokens } from './hooks/use-search-tokens'
+import { useSearchTokens } from '../hooks/use-search-tokens'
 import {
   TokenSelectorCurrencyList,
   TokenSelectorCurrencyListLoading,
-} from './token-selector-currency-list'
+} from './common/token-selector-currency-list'
 
 interface TokenSelectorSearch {
-  chainId: ChainId
+  chainId: TokenListChainId
   search: string
   onSelect(currency: Type): void
   selected: Type | undefined

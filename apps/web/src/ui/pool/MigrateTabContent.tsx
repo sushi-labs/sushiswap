@@ -8,16 +8,17 @@ import {
   Container,
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
-import { isSushiSwapV3ChainId } from 'sushi/config'
+import { SushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/config'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { ChainId } from 'sushi/chain'
 import { useAccount } from 'wagmi'
 import { PositionCard, PositionCardSkeleton } from './PositionCard'
 import { PositionCardList } from './PositionCardList'
 
-const MigrateTabContentPositions: FC<{ chainId: ChainId }> = ({ chainId }) => {
+const MigrateTabContentPositions: FC<{ chainId: SushiSwapV2ChainId }> = ({
+  chainId,
+}) => {
   const { isConnected } = useAccount()
 
   if (!isConnected) {
@@ -60,7 +61,9 @@ const MigrateTabContentPositions: FC<{ chainId: ChainId }> = ({ chainId }) => {
   )
 }
 
-export const MigrateTabContent: FC<{ chainId: ChainId }> = ({ chainId }) => {
+export const MigrateTabContent: FC<{ chainId: SushiSwapV2ChainId }> = ({
+  chainId,
+}) => {
   const isMounted = useIsMounted()
 
   return (

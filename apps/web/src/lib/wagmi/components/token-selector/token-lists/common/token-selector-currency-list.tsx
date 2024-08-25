@@ -12,7 +12,7 @@ import { TokenSelectorRow, TokenSelectorRowLoading } from './token-selector-row'
 
 interface TokenSelectorCurrencyListProps {
   id: string
-  currencies: Type[] | undefined
+  currencies: Readonly<Type[]> | undefined
   chainId: ChainId
   onSelect(currency: Type): void
   pin?: {

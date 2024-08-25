@@ -1,18 +1,21 @@
-import { getTokenListBalances } from '@sushiswap/graph-client/data-api'
+import {
+  TokenListChainId,
+  getTokenListBalances,
+} from '@sushiswap/graph-client/data-api'
 import { useCustomTokens } from '@sushiswap/hooks'
 import { NativeAddress } from '@sushiswap/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import type { ChainId } from 'sushi/chain'
 import { Amount, Native, Token, Type } from 'sushi/currency'
 import type { Address } from 'viem'
 
 interface UseMyTokens {
-  chainId: ChainId
+  chainId: TokenListChainId | undefined
   account?: Address
+  includeNative?: boolean
 }
 
-export function useMyTokens({ chainId, account }: UseMyTokens) {
+export function useMyTokens({ chainId, account, includeNative }: UseMyTokens) {
   const { data } = useCustomTokens()
 
   const customTokens = useMemo(() => {
@@ -22,17 +25,22 @@ export function useMyTokens({ chainId, account }: UseMyTokens) {
   }, [chainId, data])
 
   const query = useQuery({
-    queryKey: ['data-api-token-list-balances', { chainId, customTokens }],
+    queryKey: [
+      'data-api-token-list-balances',
+      { chainId, customTokens, includeNative },
+    ],
     queryFn: async () => {
       if (!account) throw new Error('Account is required')
+      if (!chainId) throw new Error('ChainId is required')
 
       return getTokenListBalances({
         chainId,
         account,
         customTokens,
+        includeNative,
       })
     },
-    enabled: !!account,
+    enabled: Boolean(account && chainId),
   })
 
   return useMemo(() => {
@@ -48,7 +56,7 @@ export function useMyTokens({ chainId, account }: UseMyTokens) {
         let address: Address
 
         if (token.address === NativeAddress) {
-          _token = Native.onChain(chainId)
+          _token = Native.onChain(chainId!)
           address = NativeAddress
         } else {
           _token = new Token(token)

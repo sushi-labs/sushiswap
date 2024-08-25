@@ -9,8 +9,8 @@ import type { ChainIdVariable } from 'src/lib/types/chainId'
 
 export const TokenListBalancesQuery = graphql(
   `
-  query TokenListBalances($chainId: TokenListChainId!, $account: Bytes!, $customTokens: [Bytes!]) {
-    tokenListBalances(chainId: $chainId, account: $account, customTokens: $customTokens) {
+  query TokenListBalances($chainId: TokenListChainId!, $account: Bytes!, $includeNative: Boolean, $customTokens: [Bytes!]) {
+    tokenListBalances(chainId: $chainId, account: $account, includeNative: $includeNative, customTokens: $customTokens) {
       address
       symbol
       name

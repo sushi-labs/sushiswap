@@ -28,13 +28,7 @@ import React, {
 import { ChainId } from 'sushi/chain'
 import { Token, Type } from 'sushi/currency'
 import { useAccount } from 'wagmi'
-import { useMyTokens } from './hooks/use-my-tokens'
-import { useTrendingTokens } from './hooks/use-trending-tokens'
-import { TokenSelectorChipBar } from './token-selector-chip-bar'
-import { TokenSelectorCustomList } from './token-selector-custom-list'
-import { TokenSelectorMyTokens } from './token-selector-my-tokens'
-import { TokenSelectorSearch } from './token-selector-search'
-import { TokenSelectorTrendingTokens } from './token-selector-trending-tokens'
+import { TokenSelectorStates } from './token-selector-states'
 
 interface TokenSelectorProps {
   selected: Type | undefined
@@ -61,17 +55,6 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
-
-  // Ensure that the user's tokens are loaded
-  useMyTokens({
-    chainId,
-    account: address,
-  })
-
-  // Ensure that the trending tokens are loaded
-  useTrendingTokens({
-    chainId,
-  })
 
   const debouncedQuery = useDebounce(query, 250)
 
@@ -136,55 +119,16 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
             id="token-list-container"
             className="space-y-2 relative flex flex-1 flex-col flex-grow gap-3 px-1 py-0.5 overflow-y-scroll md:pr-4 pr-2"
           >
-            {(() => {
-              if (currencies) {
-                return (
-                  <TokenSelectorCustomList
-                    chainId={chainId}
-                    account={address}
-                    currencies={currencies}
-                    selected={selected}
-                    onSelect={_onSelect}
-                  />
-                )
-              }
-
-              if (debouncedQuery) {
-                return (
-                  <TokenSelectorSearch
-                    chainId={chainId}
-                    onSelect={_onSelect}
-                    search={debouncedQuery}
-                    selected={selected}
-                  />
-                )
-              }
-
-              return (
-                <>
-                  <TokenSelectorChipBar
-                    chainId={chainId}
-                    onSelect={_onSelect}
-                    includeNative={includeNative}
-                    showPinnedTokens={!hidePinnedTokens}
-                  />
-
-                  {address ? (
-                    <TokenSelectorMyTokens
-                      chainId={chainId}
-                      onSelect={_onSelect}
-                      selected={selected}
-                    />
-                  ) : null}
-
-                  <TokenSelectorTrendingTokens
-                    chainId={chainId}
-                    onSelect={_onSelect}
-                    selected={selected}
-                  />
-                </>
-              )
-            })()}
+            <TokenSelectorStates
+              selected={selected}
+              chainId={chainId}
+              account={address}
+              onSelect={_onSelect}
+              currencies={currencies}
+              includeNative={includeNative}
+              hidePinnedTokens={hidePinnedTokens}
+              search={query}
+            />
           </div>
         </Trace>
       </DialogContent>

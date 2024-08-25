@@ -10,7 +10,7 @@ import {
 import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
 import type { ChainId } from 'sushi/chain'
 import { Type } from 'sushi/currency'
-import { useChipTokens } from './hooks/use-chip-tokens'
+import { useChipTokens } from '../hooks/use-chip-tokens'
 
 interface TokenSelectorChipBar {
   chainId: ChainId
