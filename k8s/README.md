@@ -109,9 +109,19 @@ kubectl exec --stdin --tty extractor-56-0 -- /bin/bash
 
 ### Copy
 
+Remote to local:
+
 ```bash
 kubectl cp -n default extractor-56-0:/app/cache ./cache
 ```
+Local to remote:
+
+copies the cache folder to the extractor-56-0 app folder, replacing current cache folder (careful...)
+
+```bash
+kubectl cp  -n default ./cache extractor-56-0:/app
+```
+
 
 ### Port Forward
 
