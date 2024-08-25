@@ -548,15 +548,13 @@ export class PoolPage extends BaseActions {
         console.log({ request })
         const requestBody = await request.json()
         const operationName = requestBody.operationName
-        console.log({operationName})
+        console.log({ operationName })
 
         if (operationName === 'TrendingTokens') {
           return new Response(
             JSON.stringify({
               data: {
-                trendingTokens: [
-               
-                ],
+                trendingTokens: [],
               },
             }),
             {
@@ -566,7 +564,7 @@ export class PoolPage extends BaseActions {
             },
           )
         }
-        
+
         if (operationName === 'TokenList') {
           return new Response(
             JSON.stringify({
@@ -590,7 +588,6 @@ export class PoolPage extends BaseActions {
             },
           )
         }
-
 
         if (operationName === 'TokenListBalances') {
           return new Response(
