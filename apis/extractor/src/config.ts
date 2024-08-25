@@ -218,7 +218,7 @@ export const EXTRACTOR_CONFIG: Record<
         },
       },
       {
-        address: '0x2ACD3eE2B3e7B4D7f9a570770175860CFCD6943a' as Address,
+        address: '0x38015D05f4fEC8AFe15D7cc0386a126574e8077B' as Address,
         provider: LiquidityProviders.BaseSwapV3,
         initCodeHash:
           '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
