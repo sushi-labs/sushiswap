@@ -235,6 +235,13 @@ export const EXTRACTOR_CONFIG: Record<
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
+    // TODO: Need to find tick helper for algebra on base
+    // factoriesAlgebra: [
+    //   {
+    //     address: '0x2F0d41f94d5D1550b79A83D2fe85C82d68c5a3ca' as Address,
+    //     provider: LiquidityProviders.KimV4,
+    //   },
+    // ],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
@@ -809,6 +816,13 @@ export const EXTRACTOR_CONFIG: Record<
         initCodeHash:
           '0x2e6ab686c26cf8ecf0a8c01a9fb0ef96dbd4631c04b03005350fa49e8f2f32f8',
       },
+      {
+        address: '0x24F5Ac9A706De0cF795A8193F6AB3966B14ECfE6',
+        provider: LiquidityProviders.RingExchangeV2,
+        fee: 0.003,
+        initCodeHash:
+          '0x501ce753061ab6e75837b15f074633bb775f5972f8dc1112fcc829c2e88dc689',
+      },
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.BLAST),
@@ -825,6 +839,12 @@ export const EXTRACTOR_CONFIG: Record<
         provider: LiquidityProviders.ThrusterV3,
         initCodeHash:
           '0xd0c3a51b16dbc778f000c620eaabeecd33b33a80bd145e1f7cbc0d4de335193d',
+      },
+      {
+        address: '0x890509Fab3dD11D4Ff57d8471b5eAC74687E4C75',
+        provider: LiquidityProviders.RingExchangeV3,
+        initCodeHash:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
       },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BLAST] as Address,
