@@ -100,9 +100,9 @@ const Incentivize = withCheckerRoot(() => {
   const [endDate, setEndDate] = useState<Date | null>()
   const [rewardToken, setRewardToken] = useState<Type>()
   const [blacklist, setBlacklist] = useState<string[]>([])
-  const [distro1, setDistro1] = useState<number[]>([20])
-  const [distro2, setDistro2] = useState<number[]>([40])
-  const [distro3, setDistro3] = useState<number[]>([40])
+  const [distro1, setDistro1] = useState<number[]>([0])
+  const [distro2, setDistro2] = useState<number[]>([0])
+  const [distro3, setDistro3] = useState<number[]>([100])
   const totalDistro = distro1[0] + distro2[0] + distro3[0]
 
   const amount = useMemo(
