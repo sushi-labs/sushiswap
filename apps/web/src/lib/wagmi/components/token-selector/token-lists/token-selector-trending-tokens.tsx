@@ -52,7 +52,7 @@ export function TokenSelectorTrendingTokens({
       </Shell>
     )
 
-  if (!data)
+  if (!data?.length)
     return (
       <Shell>
         <div className="flex w-full justify-center pt-3">No tokens found.</div>
