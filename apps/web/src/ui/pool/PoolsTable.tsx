@@ -1,8 +1,5 @@
 'use client'
 
-import { Slot } from '@radix-ui/react-slot'
-import { TopPools } from '@sushiswap/graph-client/data-api'
-
 import { UploadIcon } from '@heroicons/react-v1/outline'
 import { DownloadIcon } from '@heroicons/react-v1/solid'
 import {
@@ -13,6 +10,8 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
+import { Slot } from '@radix-ui/react-slot'
+import { Pools, PoolsResponse } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -410,14 +409,14 @@ const COLUMNS = [
       disableLink: true,
       skeleton: <SkeletonText fontSize="lg" />,
     },
-  } satisfies ColumnDef<TopPools[number], unknown>,
-] as ColumnDef<TopPools[number], unknown>[]
+  } satisfies ColumnDef<Pools[number], unknown>,
+] as ColumnDef<Pools[number], unknown>[]
 
 interface PoolsTableProps {
   chainId: ChainId
-  pools?: TopPools
+  pools?: PoolsResponse
   isLoading?: boolean
-  onRowClick?(row: TopPools[number]): void
+  onRowClick?(row: Pools[number]): void
 }
 
 export const PoolsTable: FC<PoolsTableProps> = ({
@@ -435,7 +434,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
 
   const data = useMemo(
     () =>
-      pools?.flat()?.filter((pool) => {
+      pools?.data?.flat()?.filter((pool) => {
         if (
           tokenSymbols.length &&
           !tokenSymbols.some((tokenSymbol) =>
@@ -470,7 +469,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   }, [data?.length, sorting])
 
   const rowRenderer = useCallback(
-    (row: Row<TopPools[number]>, rowNode: ReactNode) => {
+    (row: Row<Pools[number]>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -494,7 +493,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
               <SkeletonText />
             </div>
           ) : (
-            <span>{`Top ${data.length} Pools on ${
+            <span>{`Top ${pools?.count} Pools on ${
               Chain.from(chainId)?.name
             }`}</span>
           )}
@@ -505,7 +504,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
         onSortingChange={setSorting}
         loading={isLoading}
         linkFormatter={(row) =>
-          `/${ChainKey[row.chainId]}/pool/${
+          `/${ChainKey[row.chainId as ChainId]}/pool/${
             row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
           }/${row.address}`
         }

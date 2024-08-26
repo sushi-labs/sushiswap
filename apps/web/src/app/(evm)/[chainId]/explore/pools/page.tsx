@@ -1,4 +1,4 @@
-import { getTopPools } from '@sushiswap/graph-client/data-api'
+import { getPools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import React, { FC, Suspense } from 'react'
@@ -13,7 +13,7 @@ import { ChainId } from 'sushi/chain'
 
 const _PoolsTable: FC<{ chainId: ChainId }> = async ({ chainId }) => {
   const pools = await unstable_cache(
-    async () => getTopPools({ chainId: `${chainId}` }),
+    async () => getPools({ chainId }),
     ['pools', `${chainId}`],
     {
       revalidate: 60 * 15,
