@@ -48,6 +48,8 @@ export enum LiquidityProviders {
   RingExchangeV2 = 'RingExchangeV2',
   RingExchangeV3 = 'RingExchangeV3',
   GlyphV4 = 'GlyphV4',
+  BladeSwap = 'BladeSwap',
+  Fenix = 'Fenix',
 }
 
 export abstract class LiquidityProvider {
