@@ -8,7 +8,7 @@ import { graphql } from '../../graphql'
 
 export const V2PoolBucketsQuery = graphql(
   `
-query V2PoolBuckets($address: String!, $chainId: Int!) {
+query V2PoolBuckets($address: Bytes!, $chainId: SushiSwapV2ChainId!) {
   v2PoolBuckets(address: $address, chainId: $chainId) {
     hourBuckets {
       id

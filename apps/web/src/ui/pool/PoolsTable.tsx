@@ -43,7 +43,7 @@ import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
 import { ChainId, ChainKey } from 'sushi/chain'
-import { isAngleEnabledChainId } from 'sushi/config'
+import { isMerklChainId } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { SushiSwapProtocol } from 'sushi/types'
@@ -281,11 +281,11 @@ const COLUMNS = [
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger
-                    asChild={isAngleEnabledChainId(row.original.chainId)}
+                    asChild={isMerklChainId(row.original.chainId)}
                   >
                     <DropdownMenuItem
                       asChild
-                      disabled={!isAngleEnabledChainId(row.original.chainId)}
+                      disabled={!isMerklChainId(row.original.chainId)}
                     >
                       <Link
                         onClick={(e) => e.stopPropagation()}
@@ -312,7 +312,7 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!isAngleEnabledChainId(row.original.chainId)
+                      {!isMerklChainId(row.original.chainId)
                         ? 'Not available on this network'
                         : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
                     </p>

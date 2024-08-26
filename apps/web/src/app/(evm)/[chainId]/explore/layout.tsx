@@ -1,6 +1,8 @@
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { isSteerChainId } from '@sushiswap/steer-sdk'
 import { Container } from '@sushiswap/ui'
 import { LinkInternal } from '@sushiswap/ui'
+import { notFound } from 'next/navigation'
 
 import React from 'react'
 import { GlobalStatsCharts } from 'src/ui/explore/global-stats-charts'
@@ -17,6 +19,11 @@ export default async function ExploreLayout({
   params,
 }: { children: React.ReactNode; params: { chainId: string } }) {
   const chainId = +params.chainId as ChainId
+
+  if (!isPoolChainId(chainId)) {
+    return notFound()
+  }
+
   return (
     <>
       <Container maxWidth="7xl" className="px-4 py-4">

@@ -56,6 +56,7 @@ import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from '@sushiswap/react-query'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import { Address } from 'sushi'
 import { formatPercent } from 'sushi/format'
 import { Fraction } from 'sushi/math'
 import { useAccount } from 'wagmi'
@@ -101,7 +102,7 @@ interface SelectPricesWidget {
   chainId: SushiSwapV3ChainId
   token0: Type | undefined
   token1: Type | undefined
-  poolAddress: string | undefined
+  poolAddress: Address | undefined
   feeAmount: SushiSwapV3FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined

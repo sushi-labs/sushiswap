@@ -5,7 +5,7 @@ import { ZERO } from 'sushi/math'
 import { parseUnits } from 'viem'
 import z from 'zod'
 
-import { isAngleEnabledChainId } from 'sushi/config'
+import { isMerklChainId } from 'sushi/config'
 
 import { usePrices } from '../prices'
 
@@ -180,7 +180,7 @@ export const angleRewardsSelect = ({
   const unclaimed = unclaimedAmounts.map((amount) => {
     let amountUSD = 0
 
-    const price = prices[amount.currency.wrapped.address]
+    const price = prices.get(amount.currency.wrapped.address)
 
     if (amount?.greaterThan(ZERO) && price) {
       amountUSD = Number(Number(amount.toExact()) * Number(price.toFixed(10)))
@@ -241,8 +241,6 @@ export const useAngleRewards = ({
       angleRewardsSelect({ chainId, data: data[chainId], prices }),
     staleTime: 15000, // 15 seconds
     gcTime: 60000, // 1min
-    enabled: Boolean(
-      enabled && prices && chainId && isAngleEnabledChainId(chainId),
-    ),
+    enabled: Boolean(enabled && prices && chainId && isMerklChainId(chainId)),
   })
 }

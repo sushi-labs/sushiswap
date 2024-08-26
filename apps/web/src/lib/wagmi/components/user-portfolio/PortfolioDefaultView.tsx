@@ -147,6 +147,7 @@ export const PortfolioDefaultView: FC<PortfolioDefaultProps> = ({
             size="xs"
             variant={_tab === tab ? 'secondary' : 'ghost'}
             onClick={() => setTab(_tab)}
+            className="select-none"
           >
             {_tab}
           </Button>
