@@ -348,7 +348,13 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV3: [sushiswapV3Factory(ChainId.CORE)],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.CORE],
     tickHelperContractAlgebra:
-      '0x0000000000000000000000000000000000000000' as Address,
+      '0x433cef5888C701831360686e54668376330cED6D' as Address,
+    factoriesAlgebra: [
+      {
+        address: '0x74EfE55beA4988e7D92D03EFd8ddB8BF8b7bD597' as Address,
+        provider: LiquidityProviders.GlyphExchangeV4,
+      },
+    ],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
