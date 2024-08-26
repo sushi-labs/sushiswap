@@ -611,7 +611,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                               {unwrapToken(currencyQuote)?.symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
-                                  <span className="text-sm underline decoration-dotted underline-offset-2 underline-offset-2 text-muted-foreground font-normal">
+                                  <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
                                     (
                                     {formatPercent(
                                       priceUpper

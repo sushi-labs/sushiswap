@@ -15,7 +15,7 @@ import {
   TabsTrigger,
 } from '@sushiswap/ui'
 import { FC } from 'react'
-import { ChainId } from 'sushi/chain'
+import { ChainId, ChainKey } from 'sushi/chain'
 import { Native } from 'sushi/currency'
 import { getAddress } from 'viem'
 
@@ -47,7 +47,9 @@ export const PoolRewardDistributionsCard: FC<
           Anyone can add distributions to this pool.{' '}
           {pool.token0 && pool.token1 ? (
             <LinkInternal
-              href={`/pool/incentivize?chainId=${pool.chainId}&fromCurrency=${
+              href={`${ChainKey[pool.chainId]}/pool/incentivize?chainId=${
+                pool.chainId
+              }&fromCurrency=${
                 pool.token0.address ===
                 Native.onChain(pool.chainId).wrapped.address
                   ? 'NATIVE'
