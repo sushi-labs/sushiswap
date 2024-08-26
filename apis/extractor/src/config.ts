@@ -230,7 +230,6 @@ export const EXTRACTOR_CONFIG: Record<
           10000: 200,
         },
       },
-      // baseswap v3 0x2acd3ee2b3e7b4d7f9a570770175860cfcd6943a
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     tickHelperContractAlgebra:
@@ -244,7 +243,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    // maxCallsInOneBatch: 200,
+    maxCallsInOneBatch: 200,
     maxBatchesSimultaniously: 5,
   },
   [ChainId.BLAST]: {
