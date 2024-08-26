@@ -687,7 +687,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                   Anyone can add distributions to this pool.{' '}
                   {_token0 && _token1 ? (
                     <LinkInternal
-                      href={`${
+                      href={`/${
                         ChainKey[chainId]
                       }/pool/incentivize?fromCurrency=${
                         _token0.isNative ? 'NATIVE' : _token0.address

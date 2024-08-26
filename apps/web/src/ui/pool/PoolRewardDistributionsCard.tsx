@@ -47,7 +47,7 @@ export const PoolRewardDistributionsCard: FC<
           Anyone can add distributions to this pool.{' '}
           {pool.token0 && pool.token1 ? (
             <LinkInternal
-              href={`${ChainKey[pool.chainId]}/pool/incentivize?chainId=${
+              href={`/${ChainKey[pool.chainId]}/pool/incentivize?chainId=${
                 pool.chainId
               }&fromCurrency=${
                 pool.token0.address ===
