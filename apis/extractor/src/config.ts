@@ -825,6 +825,48 @@ export const EXTRACTOR_CONFIG: Record<
     logDepth: 50,
     logging: true,
   },
+  [ChainId.MANTLE]: {
+    client: createPublicClient(extractorClientConfig(ChainId.MANTLE)),
+    factoriesV2: [
+      {
+        address: '0xE5020961fA51ffd3662CDf307dEf18F9a87Cce7c',
+        provider: LiquidityProviders.FusionX,
+        fee: 0.0025,
+        initCodeHash:
+          '0x58c684aeb03fe49c8a3080db88e425fae262c5ef5bf0e8acffc0526c6e3c03a0',
+      },
+    ],
+    factoriesV3: [
+      uniswapV3Factory(ChainId.MANTLE),
+      {
+        address: '0x25780dc8Fc3cfBD75F33bFDAB65e969b603b2035',
+        deployer: '0xe9827B4EBeB9AE41FC57efDdDd79EDddC2EA4d03',
+        provider: LiquidityProviders.Agni,
+        initCodeHash:
+          '0xaf9bd540c3449b723624376f906d8d3a0e6441ff18b847f05f4f85789ab64d9a',
+      },
+      {
+        address: '0x530d2766D1988CC1c000C8b7d00334c14B69AD71',
+        deployer: '0x8790c2C3BA67223D83C8FCF2a5E3C650059987b4',
+        provider: LiquidityProviders.FusionX,
+        initCodeHash:
+          '0x1bce652aaa6528355d7a339037433a20cd28410e3967635ba8d2ddb037440dbf',
+      },
+    ],
+    factoriesAlgebra: [
+      {
+        address: '0xC848bc597903B4200b9427a3d7F61e3FF0553913' as Address,
+        provider: LiquidityProviders.Swapsicle,
+      },
+    ],
+    tickHelperContractV3:
+      '0x38EB9e62ABe4d3F70C0e161971F29593b8aE29FF' as Address,
+    tickHelperContractAlgebra:
+      '0x92B858beD547A3F94d6E674D176C4a12F3A82326' as Address,
+    cacheDir: './cache',
+    logDepth: 50,
+    logging: true,
+  },
   // [ChainId.RONIN]: {
   //   client: createPublicClient(extractorClientConfig(ChainId.RONIN]),
   //   factoriesV2: [],
