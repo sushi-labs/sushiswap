@@ -89,7 +89,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="!flex flex-col justify-start max-h-[80vh] md:min-w-[600px]">
+      <DialogContent className="!flex flex-col justify-start h-[80vh] md:min-w-[600px]">
         <Trace
           name={InterfaceEventName.TOKEN_SELECTOR_OPENED}
           modal={InterfaceModalName.TOKEN_SELECTOR}

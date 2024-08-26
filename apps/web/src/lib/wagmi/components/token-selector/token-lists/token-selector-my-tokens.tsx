@@ -18,7 +18,7 @@ interface TokenSelectorMyTokens {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-1 flex-col space-y-2">
+    <div className="flex flex-col space-y-2">
       <div className="text-sm">My Tokens</div>
       <List.Control className="flex flex-1">
         <div className="flex-1 block">{children}</div>
