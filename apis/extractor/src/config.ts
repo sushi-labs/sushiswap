@@ -234,14 +234,13 @@ export const EXTRACTOR_CONFIG: Record<
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.BASE],
     tickHelperContractAlgebra:
-      '0x0000000000000000000000000000000000000000' as Address,
-    // TODO: Need to find tick helper for algebra on base
-    // factoriesAlgebra: [
-    //   {
-    //     address: '0x2F0d41f94d5D1550b79A83D2fe85C82d68c5a3ca' as Address,
-    //     provider: LiquidityProviders.KimV4,
-    //   },
-    // ],
+      '0x44a6d9741cDF9C955eE89C14C739FB1aeaD82d6B' as Address,
+    factoriesAlgebra: [
+      {
+        address: '0x2F0d41f94d5D1550b79A83D2fe85C82d68c5a3ca' as Address,
+        provider: LiquidityProviders.KimV4,
+      },
+    ],
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
