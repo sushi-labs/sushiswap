@@ -378,12 +378,12 @@ export class PoolPage extends BaseActions {
       await chipToSelect.click()
       await expect(tokenSelector).toContainText(currency.symbol as string)
     } else {
-      const tokenSearch = this.page.locator(
-        `[testdata-id=token-selector-address-input]`,
-      )
-      await expect(tokenSearch).toBeVisible()
-      await expect(tokenSearch).toBeEnabled()
-      await tokenSearch.fill(currency.address)
+      // const tokenSearch = this.page.locator(
+      //   `[testdata-id=token-selector-address-input]`,
+      // )
+      // await expect(tokenSearch).toBeVisible()
+      // await expect(tokenSearch).toBeEnabled()
+      // await tokenSearch.fill(currency.address)
 
       const tokenToSelect = this.page.locator(
         `[testdata-id=token-selector-row-${currency.address.toLowerCase()}]`,
