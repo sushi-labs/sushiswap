@@ -50,6 +50,9 @@ export enum LiquidityProviders {
   GlyphV4 = 'GlyphV4',
   BladeSwap = 'BladeSwap',
   Fenix = 'Fenix',
+  SilverSwap = 'SilverSwap',
+  Horizon = 'Horizon',
+  Scribe = 'Scribe',
 }
 
 export abstract class LiquidityProvider {
