@@ -30,7 +30,7 @@ export const TableFiltersNetwork: FC<{
     (chainId: string) => {
       const pathSegments = pathname.split('/')
       pathSegments[1] = ChainKey[+chainId as ChainId]
-      router.push(pathSegments.join('/'))
+      router.push(pathSegments.join('/'), { scroll: false })
     },
     [pathname, router],
   )
