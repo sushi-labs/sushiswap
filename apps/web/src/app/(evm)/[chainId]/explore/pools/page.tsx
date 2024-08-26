@@ -1,7 +1,5 @@
-import { getPools } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
-import { unstable_cache } from 'next/cache'
-import React, { FC, Suspense } from 'react'
+import React from 'react'
 import { PoolsTable } from 'src/ui/pool/PoolsTable'
 import { TableFiltersSmartPoolsOnly } from 'src/ui/pool/TableFilterSmartPoolsOnly'
 import { TableFiltersFarmsOnly } from 'src/ui/pool/TableFiltersFarmsOnly'
@@ -10,18 +8,6 @@ import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { ChainId } from 'sushi/chain'
-
-const _PoolsTable: FC<{ chainId: ChainId }> = async ({ chainId }) => {
-  const pools = await unstable_cache(
-    async () => getPools({ chainId }),
-    ['pools', `${chainId}`],
-    {
-      revalidate: 60 * 15,
-    },
-  )()
-
-  return <PoolsTable chainId={chainId} pools={pools} />
-}
 
 export default async function PoolsPage({
   params,
@@ -39,9 +25,7 @@ export default async function PoolsPage({
         <TableFiltersSmartPoolsOnly />
         <TableFiltersResetButton />
       </div>
-      <Suspense fallback={<PoolsTable chainId={chainId} isLoading={true} />}>
-        <_PoolsTable chainId={chainId} />
-      </Suspense>
+      <PoolsTable chainId={chainId} />
     </Container>
   )
 }

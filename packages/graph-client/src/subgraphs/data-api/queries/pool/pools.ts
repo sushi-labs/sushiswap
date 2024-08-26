@@ -6,8 +6,8 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const PoolsQuery = graphql(
   `
-  query Pools($chainId: PoolChainId!, $page: Int = null, $search: String = null, $orderBy: PoolsOrderBy = null, $orderDirection: OrderDirection = null) {
-    pools(chainId: $chainId, page: $page, search: $search, orderBy: $orderBy, orderDirection: $orderDirection) {
+  query Pools($chainId: PoolChainId!, $page: Int, $search: String, $orderBy: PoolsOrderBy, $orderDirection: OrderDirection, $protocols: [Protocol], $onlyIncentivized: Boolean, $onlySmartPools: Boolean) {
+    pools(chainId: $chainId, page: $page, search: $search, protocols: $protocols, onlyIncentivized: $onlyIncentivized, onlySmartPools: $onlySmartPools, orderBy: $orderBy, orderDirection: $orderDirection) {
       count
       data {
         id
@@ -39,8 +39,6 @@ export type GetPools = VariablesOf<typeof PoolsQuery>
 
 export async function getPools(variables: GetPools, options?: RequestOptions) {
   const url = `https://${SUSHI_DATA_API_HOST}`
-  console.log('url', url)
-  console.log('variables', variables)
   try {
     const result = await request(
       {

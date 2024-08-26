@@ -21,7 +21,7 @@ type SushiDayBuckets {
 type Query {
   sushiDayBuckets(chainId: SushiSwapChainId!): SushiDayBuckets!
   protocolFeeAnalysis: ProtocolFeeAnalysis!
-  pools(chainId: PoolChainId!, page: Int = 1, search: String, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
+  pools(chainId: PoolChainId!, page: Int = 1, search: String, protocols: [Protocol], onlyIncentivized: Boolean = false, onlySmartPools: Boolean = false, orderBy: PoolsOrderBy = liquidityUSD, orderDirection: OrderDirection = desc): Pools!
   topPools(chainId: String!): [TopPool!]!
   v2Pool(address: Bytes!, chainId: SushiSwapV2ChainId!): V2Pool!
   v3Pool(address: Bytes!, chainId: SushiSwapV3ChainId!): V3Pool!
@@ -99,6 +99,11 @@ enum PoolsOrderBy {
 enum OrderDirection {
   asc
   desc
+}
+
+enum Protocol {
+  SUSHISWAP_V2
+  SUSHISWAP_V3
 }
 
 type Token {
