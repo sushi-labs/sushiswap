@@ -839,7 +839,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             </CardHeader>
             <CardFooter>
               <LinkExternal href={poolFish.toString()}>
-                <Button variant="link" size="sm">
+                <Button variant="link" size="sm" asChild>
                   View position on Poolfish.xyz
                 </Button>
               </LinkExternal>
