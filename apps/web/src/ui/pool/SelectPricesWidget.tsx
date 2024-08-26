@@ -620,7 +620,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             <Card>
               <CardHeader>
                 <CardDescription className="flex flex-col gap-3 !text-accent-foreground">
-                  <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
                     <span>
                       <span className="mr-1">{`Token Ratio (${token0?.symbol} : ${token1?.symbol})`}</span>
                       <Explainer iconProps={{ className: 'inline mb-0.5' }}>
@@ -684,7 +684,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       </TooltipProvider>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
                     <span>
                       <span className="mr-1">Capital Efficiency</span>
                       <Explainer iconProps={{ className: 'inline mb-0.5' }}>
@@ -707,7 +707,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       )}
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-1">
+                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col  sm:flex-row sm:items-center">
                     <span>
                       <TooltipProvider>
                         <Tooltip delayDuration={0}>
@@ -773,7 +773,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               </CardHeader>
             </Card>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <PriceBlock
               id={'min-price'}
               token0={token0}
