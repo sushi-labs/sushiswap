@@ -243,7 +243,7 @@ export const EXTRACTOR_CONFIG: Record<
     cacheDir: './cache',
     logDepth: 50,
     logging: true,
-    maxCallsInOneBatch: 200,
+    // maxCallsInOneBatch: 200,
     maxBatchesSimultaniously: 5,
   },
   [ChainId.BLAST]: {
