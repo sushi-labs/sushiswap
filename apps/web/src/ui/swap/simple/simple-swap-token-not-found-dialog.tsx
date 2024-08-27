@@ -23,6 +23,8 @@ import {
 import { Token } from 'sushi/currency'
 import { shortenAddress } from 'sushi/format'
 
+import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapTokenNotFoundDialog = () => {
@@ -32,26 +34,50 @@ export const SimpleSwapTokenNotFoundDialog = () => {
   } = useDerivedStateSimpleSwap()
 
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
+  const { data: tokenFrom, isInitialLoading: tokenFromLoading } =
+    useTokenWithCache({
+      chainId,
+      address: token0?.wrapped.address,
+      withStatus: true,
+    })
+
+  const { data: tokenTo, isInitialLoading: tokenToLoading } = useTokenWithCache(
+    {
+      chainId,
+      address: token1?.wrapped.address,
+      withStatus: true,
+    },
+  )
 
   const token0NotInList = Boolean(
-    token0?.approved === false && token0.isToken && !hasToken(token0),
+    tokenFrom?.status !== 'APPROVED' &&
+      tokenFrom?.token &&
+      !hasToken(tokenFrom?.token),
   )
   const token1NotInList = Boolean(
-    token1?.approved === false && token1.isToken && !hasToken(token1),
+    tokenTo?.status !== 'APPROVED' &&
+      tokenTo?.token &&
+      !hasToken(tokenTo?.token),
   )
 
   const onImport = useCallback(
     ([token0, token1]: (Token | undefined)[]) => {
       const _tokens: Token[] = []
-      if (token0?.approved === false && token0) _tokens.push(token0)
-      if (token1?.approved === false && token1) _tokens.push(token1)
+      if (tokenFrom?.status !== 'APPROVED' && token0) _tokens.push(token0)
+      if (tokenTo?.status !== 'APPROVED' && token1) _tokens.push(token1)
 
       customTokensMutate('add', _tokens)
 
       if (token0) setToken0(token0)
       if (token1) setToken1(token1)
     },
-    [customTokensMutate, setToken0, setToken1],
+    [
+      customTokensMutate,
+      setToken0,
+      setToken1,
+      tokenFrom?.status,
+      tokenTo?.status,
+    ],
   )
 
   const reset = useCallback(() => {
@@ -65,33 +91,42 @@ export const SimpleSwapTokenNotFoundDialog = () => {
     useTokenSecurity({
       currencies: useMemo(
         () => [
-          ...(token0NotInList && token0?.isToken ? [token0] : []),
-          ...(token1NotInList && token1?.isToken ? [token1] : []),
+          ...(token0NotInList && tokenFrom?.token ? [tokenFrom.token] : []),
+          ...(token1NotInList && tokenTo?.token ? [tokenTo.token] : []),
         ],
-        [token0NotInList, token1NotInList, token0, token1],
+        [token0NotInList, token1NotInList, tokenFrom, tokenTo],
       ),
-      enabled: Boolean(token0NotInList || token1NotInList),
+      enabled: Boolean(
+        !tokenFromLoading &&
+          !tokenToLoading &&
+          (token0NotInList || token1NotInList),
+      ),
     })
 
   const honeypot = Boolean(
-    (token0?.isToken &&
-      tokenSecurityResponse?.[token0?.address]?.is_honeypot) ||
-      (token1?.isToken && tokenSecurityResponse?.[token1.address]?.is_honeypot),
+    (tokenFrom?.token &&
+      tokenSecurityResponse?.[tokenFrom?.token?.address]?.is_honeypot) ||
+      (tokenTo?.token &&
+        tokenSecurityResponse?.[tokenTo?.token?.address]?.is_honeypot),
   )
 
   if (isTokenSecurityChainId(chainId) && tokenSecurityLoading) return null
 
   return (
     <Dialog
-      open={Boolean(token0NotInList || token1NotInList)}
+      open={Boolean(
+        !tokenFromLoading &&
+          !tokenToLoading &&
+          (token0NotInList || token1NotInList),
+      )}
       onOpenChange={(open) => !open && reset()}
     >
       <DialogContent className="!max-h-screen overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             Unknown token
-            {(token0NotInList || !token0?.isToken) &&
-            (token1NotInList || !token1?.isToken)
+            {(token0NotInList || !tokenFrom?.token) &&
+            (token1NotInList || !tokenTo?.token)
               ? 's'
               : ''}
           </DialogTitle>
@@ -102,9 +137,9 @@ export const SimpleSwapTokenNotFoundDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
-          {token0 && token0NotInList && !token0?.isToken && (
+          {token0 && token0NotInList && !tokenFrom?.token && (
             <List>
-              {token1NotInList || !token1?.isToken ? (
+              {token1NotInList || !tokenTo?.token ? (
                 <List.Label>Token 1</List.Label>
               ) : null}
               <List.Control>
@@ -125,9 +160,9 @@ export const SimpleSwapTokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token0NotInList && token0?.isToken && (
+          {token0NotInList && tokenFrom?.token && (
             <List>
-              {token1NotInList || !token1?.isToken ? (
+              {token1NotInList || !tokenTo?.token ? (
                 <List.Label>Token 1</List.Label>
               ) : null}
               <List.Control>
@@ -138,7 +173,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {token0.name}
+                  {tokenFrom.token.name}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -147,7 +182,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {token0.name}
+                  {tokenFrom.token.symbol}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -158,19 +193,29 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                 >
                   <a
                     target="_blank"
-                    href={Chain.from(chainId)?.getTokenUrl(token0.address)}
+                    href={Chain.from(chainId)?.getTokenUrl(
+                      tokenFrom.token.address,
+                    )}
                     className="text-blue"
                     rel="noreferrer"
                   >
-                    {shortenAddress(token0.address)}
+                    {shortenAddress(tokenFrom.token.address)}
                   </a>
                 </List.KeyValue>
               </List.Control>
             </List>
           )}
-          {token1 && token1NotInList && !token1.isToken && (
+          {token0NotInList &&
+          tokenFrom?.token &&
+          isTokenSecurityChainId(tokenFrom.token.chainId) ? (
+            <TokenSecurityView
+              tokenSecurityResponse={tokenSecurityResponse}
+              token={tokenFrom.token}
+            />
+          ) : null}
+          {token1 && token1NotInList && !tokenTo?.token && (
             <List>
-              {token0NotInList || !token0?.isToken ? (
+              {token0NotInList || !tokenFrom?.token ? (
                 <List.Label>Token 2</List.Label>
               ) : null}
               <List.Control>
@@ -191,9 +236,9 @@ export const SimpleSwapTokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token1NotInList && token1?.isToken && (
+          {token1NotInList && tokenTo?.token && (
             <List>
-              {token0NotInList || !token0?.isToken ? (
+              {token0NotInList || !tokenFrom?.token ? (
                 <List.Label>Token 2</List.Label>
               ) : null}
               <List.Control>
@@ -204,7 +249,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {token1.name}
+                  {tokenTo.token.name}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -213,7 +258,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                     </span>
                   }
                 >
-                  {token1.symbol}
+                  {tokenTo.token.symbol}
                 </List.KeyValue>
                 <List.KeyValue
                   title={
@@ -224,30 +269,35 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                 >
                   <a
                     target="_blank"
-                    href={Chain.from(chainId)?.getTokenUrl(token1.address)}
+                    href={Chain.from(chainId)?.getTokenUrl(
+                      tokenTo.token.address,
+                    )}
                     className="text-blue"
                     rel="noreferrer"
                   >
-                    {shortenAddress(token1.address)}
+                    {shortenAddress(tokenTo.token.address)}
                   </a>
                 </List.KeyValue>
               </List.Control>
             </List>
           )}
+          {token1NotInList &&
+          tokenTo?.token &&
+          isTokenSecurityChainId(tokenTo.token.chainId) ? (
+            <TokenSecurityView
+              tokenSecurityResponse={tokenSecurityResponse}
+              token={tokenTo.token}
+            />
+          ) : null}
         </div>
         <DialogFooter>
           {!honeypot &&
-          ((token0NotInList && token0?.isToken) ||
-            (token1NotInList && token1?.isToken)) ? (
+          ((token0NotInList && tokenFrom?.token) ||
+            (token1NotInList && tokenTo?.token)) ? (
             <Button
               fullWidth
               size="xl"
-              onClick={() =>
-                onImport([
-                  token0?.isToken ? token0 : undefined,
-                  token1?.isToken ? token1 : undefined,
-                ])
-              }
+              onClick={() => onImport([tokenFrom?.token, tokenTo?.token])}
             >
               I understand
             </Button>

@@ -1,12 +1,12 @@
 import { getV3Pool } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
-import { SushiSwapV3ChainId } from 'sushi/config'
+import { ChainId } from 'sushi/chain'
 import { Amount, Token } from 'sushi/currency'
-import { Address, parseUnits } from 'viem'
+import { parseUnits } from 'viem'
 
 interface UseConcentratedLiquidityPoolStats {
-  chainId: SushiSwapV3ChainId | undefined
-  address: Address | undefined
+  chainId: ChainId | undefined
+  address: string | undefined
   enabled?: boolean
 }
 
@@ -20,7 +20,7 @@ export const useConcentratedLiquidityPoolStats = ({
     queryFn: async () => {
       if (!chainId || !address) return undefined
 
-      const data = await getV3Pool({ chainId, address })
+      const data = await getV3Pool({ chainId: Number(chainId), address })
       if (data) {
         return {
           ...data,

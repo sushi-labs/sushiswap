@@ -45,12 +45,11 @@ export const XSushiPrice = ({
   })
 
   const price = useMemo(() => {
-    const _sushiPrice = prices?.get(SUSHI_ADDRESS[ChainId.ETHEREUM])
-
-    const sushiPrice =
-      _sushiPrice !== undefined
-        ? tryParseAmount('1', SUSHI[ChainId.ETHEREUM])?.multiply(_sushiPrice)
-        : undefined
+    const sushiPrice = prices?.[SUSHI_ADDRESS[ChainId.ETHEREUM]]
+      ? tryParseAmount('1', SUSHI[ChainId.ETHEREUM])?.multiply(
+          prices[SUSHI_ADDRESS[ChainId.ETHEREUM]],
+        )
+      : undefined
 
     const xSushiPrice =
       sushiPrice && totalSupply && sushiBalance

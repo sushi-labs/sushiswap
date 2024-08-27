@@ -4,7 +4,7 @@ import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
 
 import { V2Position } from '@sushiswap/graph-client/data-api'
-import { SushiSwapV2ChainId } from 'sushi/config'
+import { ChainId } from 'sushi'
 import { useAccount } from 'wagmi'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
 
@@ -16,7 +16,7 @@ const COLUMNS = [
 ] as DisplayColumnDef<V2Position, unknown>[]
 
 interface PositionsTableProps {
-  chainId: SushiSwapV2ChainId
+  chainId: ChainId
   onRowClick?(row: V2Position): void
   rowLink?(row: V2Position): string
 }

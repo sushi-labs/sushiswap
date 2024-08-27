@@ -60,7 +60,7 @@ export class SushiSwapV3Pool {
     fee: SushiSwapV3FeeAmount,
     initCodeHashManualOverride?: Hex,
     factoryAddressOverride?: Address,
-  ): Address {
+  ): string {
     return computeSushiSwapV3PoolAddress({
       factoryAddress:
         factoryAddressOverride ??

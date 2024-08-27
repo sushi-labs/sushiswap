@@ -7,7 +7,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const AnalyticsDayBucketsQuery = graphql(
   `
-  query SushiDayBuckets($chainId: SushiSwapChainId!) {
+  query SushiDayBuckets($chainId: Int!) {
   sushiDayBuckets(chainId: $chainId) {
     v2 {
       id

@@ -1,6 +1,5 @@
 import { V2Pool, getV2Pool } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
-import { notFound } from 'next/navigation'
 import {
   PoolPositionProvider,
   PoolPositionRewardsProvider,
@@ -10,8 +9,6 @@ import { ManageV2LiquidityCard } from 'src/ui/pool/ManageV2LiquidityCard'
 import { PoolMyRewards } from 'src/ui/pool/PoolMyRewards'
 import { PoolPosition } from 'src/ui/pool/PoolPosition'
 import { ChainId } from 'sushi/chain'
-import { isSushiSwapV2ChainId } from 'sushi/config'
-import { isAddress } from 'viem'
 
 export default async function ManageV2PoolPage({
   params,
@@ -20,14 +17,6 @@ export default async function ManageV2PoolPage({
 }) {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as ChainId
-
-  if (
-    !isSushiSwapV2ChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
-    return notFound()
-  }
-
   const pool = (await unstable_cache(
     async () => getV2Pool({ chainId, address }),
     ['pool', `${chainId}:${address}`],

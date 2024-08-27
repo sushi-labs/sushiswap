@@ -41,7 +41,7 @@ import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Chain, ChainKey } from 'sushi/chain'
-import { SushiSwapV3ChainId, isMerklChainId } from 'sushi/config'
+import { SushiSwapV3ChainId, isAngleEnabledChainId } from 'sushi/config'
 import { Amount, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { getAddress } from 'viem'
@@ -211,7 +211,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                     >
                       Fees
                     </TabsTrigger>
-                    {isMerklChainId(chainId) ? (
+                    {isAngleEnabledChainId(chainId) ? (
                       <TabsTrigger
                         testdata-id="rewards-tab"
                         value="rewards"
@@ -346,7 +346,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
                     </ConcentratedLiquidityCollectButton>
                   </CardFooter>
                 </TabsContent>
-                {isMerklChainId(chainId) ? (
+                {isAngleEnabledChainId(chainId) ? (
                   <TabsContent value="rewards">
                     <CardHeader>
                       <CardTitle>Unclaimed rewards</CardTitle>
@@ -675,7 +675,7 @@ const Component: FC<{ chainId: string; address: string; position: string }> = ({
             </Card>
           </div>
         </div>
-        {isMerklChainId(chainId) ? (
+        {isAngleEnabledChainId(chainId) ? (
           <>
             <div className="py-4">
               <Separator />

@@ -26,12 +26,12 @@ import {
 } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
-import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/use-sorted-token-list'
+import { useSortedTokenList } from 'src/lib/wagmi/components/token-selector/hooks/useSortedTokenList'
 import { ChainId } from 'sushi/chain'
 import { Currency } from 'sushi/currency'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 
-import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
+import { TokenSelector } from 'src/lib/wagmi/components/token-selector/TokenSelector'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Address } from 'viem'
 import {
@@ -88,6 +88,7 @@ const TokenSelectModal = ({
 
   return (
     <TokenSelector
+      id={`twap-token-selector`}
       selected={selected}
       chainId={chainId}
       onSelect={onSelect}

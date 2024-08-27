@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   SushiSwapV3FeeAmount,
   TICK_SPACINGS,
-} from '../../../config/features/sushiswap-v3.js'
+} from '../../../config/sushiswap-v3.js'
 import {
   Amount as CurrencyAmount,
   Native,

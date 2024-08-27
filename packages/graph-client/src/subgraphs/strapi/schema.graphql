@@ -1012,7 +1012,7 @@ input FaqAnswerInput {
 type FaqAnswer {
   name: String!
   ghostSlug: String!
-  faqAnswerGroup: FaqAnswerGroupEntityResponse!
+  faqAnswerGroup: FaqAnswerGroupEntityResponse
   slug: String!
   createdAt: DateTime
   updatedAt: DateTime
@@ -1065,10 +1065,10 @@ input FaqAnswerGroupInput {
 
 type FaqAnswerGroup {
   name: String!
-  faqAnswers(filters: FaqAnswerFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerRelationResponseCollection!
+  faqAnswers(filters: FaqAnswerFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerRelationResponseCollection
   slug: String!
-  faqDefaultAnswer: FaqAnswerEntityResponse
-  faqCategory: FaqCategoryEntityResponse!
+  faqDefaultAnswer: FaqAnswerEntityResponse!
+  faqCategory: FaqCategoryEntityResponse
   faqProduct: FaqProductEntityResponse
   createdAt: DateTime
   updatedAt: DateTime
@@ -1116,7 +1116,7 @@ input FaqCategoryInput {
 type FaqCategory {
   name: String!
   slug: String!
-  faqAnswerGroups(filters: FaqAnswerGroupFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerGroupRelationResponseCollection!
+  faqAnswerGroups(filters: FaqAnswerGroupFiltersInput, pagination: PaginationArg = {}, sort: [String] = [], publicationState: PublicationState = LIVE): FaqAnswerGroupRelationResponseCollection
   createdAt: DateTime
   updatedAt: DateTime
   publishedAt: DateTime
@@ -1138,7 +1138,7 @@ type FaqCategoryEntityResponseCollection {
 
 input FaqMostSearchedFiltersInput {
   id: IDFilterInput
-  faqAnswerGroup: FaqAnswerGroupFiltersInput
+  faq_answer_group: FaqAnswerGroupFiltersInput
   createdAt: DateTimeFilterInput
   updatedAt: DateTimeFilterInput
   publishedAt: DateTimeFilterInput
@@ -1148,12 +1148,12 @@ input FaqMostSearchedFiltersInput {
 }
 
 input FaqMostSearchedInput {
-  faqAnswerGroup: ID
+  faq_answer_group: ID
   publishedAt: DateTime
 }
 
 type FaqMostSearched {
-  faqAnswerGroup: FaqAnswerGroupEntityResponse!
+  faq_answer_group: FaqAnswerGroupEntityResponse
   createdAt: DateTime
   updatedAt: DateTime
   publishedAt: DateTime

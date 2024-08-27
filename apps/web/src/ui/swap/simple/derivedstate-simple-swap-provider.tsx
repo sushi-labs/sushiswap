@@ -91,9 +91,6 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       undefined,
     )
     const [forceClient, setForceClient] = useState(false)
-    const [localTokenCache, setLocalTokenCache] = useState<Map<string, Type>>(
-      new Map(),
-    )
 
     // Get the searchParams and complete with defaults.
     // This handles the case where some params might not be provided by the user
@@ -136,6 +133,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     // Update the URL with a new chainId
     const setChainId = useCallback(
       (chainId: number) => {
+        console.log('setChainId', chainId)
         push(
           `${pathname}?${createQueryString([
             { name: 'swapAmount', value: null },
@@ -168,17 +166,16 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
     // Update the URL with a new token0
     const setToken0 = useCallback<{ (_token0: string | Type): void }>(
       (_token0) => {
+        console.log('setToken0', _token0)
+
         // If entity is provided, parse it to a string
         const token0 = getTokenAsString(_token0)
-
-        if (typeof _token0 !== 'string') {
-          setLocalTokenCache(localTokenCache.set(token0, _token0))
-        }
 
         // Switch tokens if the new token0 is the same as the current token1
         if (
           defaultedParams.get('token1')?.toLowerCase() === token0.toLowerCase()
         ) {
+          // console.log('setToken0 switch tokens')
           switchTokens()
         }
 
@@ -192,30 +189,22 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           )
         }
       },
-      [
-        createQueryString,
-        defaultedParams,
-        localTokenCache,
-        pathname,
-        push,
-        switchTokens,
-      ],
+      [createQueryString, defaultedParams, pathname, push, switchTokens],
     )
 
     // Update the URL with a new token1
     const setToken1 = useCallback<{ (_token1: string | Type): void }>(
       (_token1) => {
+        console.log('setToken1', _token1)
+
         // If entity is provided, parse it to a string
         const token1 = getTokenAsString(_token1)
-
-        if (typeof _token1 !== 'string') {
-          setLocalTokenCache(localTokenCache.set(token1, _token1))
-        }
 
         // Switch tokens if the new token0 is the same as the current token1
         if (
           defaultedParams.get('token0')?.toLowerCase() === token1.toLowerCase()
         ) {
+          console.log('setToken1 switch tokens')
           switchTokens()
         }
 
@@ -229,14 +218,7 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
           )
         }
       },
-      [
-        createQueryString,
-        defaultedParams,
-        localTokenCache,
-        pathname,
-        push,
-        switchTokens,
-      ],
+      [createQueryString, defaultedParams, pathname, push, switchTokens],
     )
 
     // Update the URL with both tokens
@@ -301,32 +283,25 @@ const DerivedstateSimpleSwapProvider: FC<DerivedStateSimpleSwapProviderProps> =
       return () => unwatch()
     }, [config, chainId, setChainId])
 
-    const token0Param = defaultedParams.get('token0') as string
-    const token1Param = defaultedParams.get('token1') as string
-
-    const token0FromLocalCache = localTokenCache.get(token0Param)
-    const token1FromLocalCache = localTokenCache.get(token1Param)
-
     // Derive token0
-    const { data: token0FromCache, isInitialLoading: token0Loading } =
-      useTokenWithCache({
+    const { data: token0, isInitialLoading: token0Loading } = useTokenWithCache(
+      {
         chainId,
-        address: token0Param,
-        enabled: isAddress(token0Param) && !token0FromLocalCache,
+        address: defaultedParams.get('token0') as string,
+        enabled: isAddress(defaultedParams.get('token0') as string),
         keepPreviousData: false,
-      })
+      },
+    )
 
     // Derive token1
-    const { data: token1FromCache, isInitialLoading: token1Loading } =
-      useTokenWithCache({
+    const { data: token1, isInitialLoading: token1Loading } = useTokenWithCache(
+      {
         chainId,
-        address: token1Param,
-        enabled: isAddress(token1Param) && !token1FromLocalCache,
+        address: defaultedParams.get('token1') as string,
+        enabled: isAddress(defaultedParams.get('token1') as string),
         keepPreviousData: false,
-      })
-
-    const token0 = token0FromLocalCache ?? token0FromCache
-    const token1 = token1FromLocalCache ?? token1FromCache
+      },
+    )
 
     return (
       <DerivedStateSimpleSwapContext.Provider

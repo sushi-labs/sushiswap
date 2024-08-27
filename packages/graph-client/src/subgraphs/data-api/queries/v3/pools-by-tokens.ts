@@ -9,7 +9,7 @@ import { graphql } from '../../graphql'
 
 export const V3PoolsByTokensQuery = graphql(
   `
-    query V3PoolsByTokens($token0: Bytes!, $token1: Bytes!, $chainId: SushiSwapV3ChainId!) {
+    query V3PoolsByTokens($token0: String!, $token1: String!, $chainId: Int!) {
     v3PoolsByTokens(token0: $token0, token1: $token1, chainId: $chainId) {
         id
         address

@@ -1,5 +1,8 @@
 'use client'
 
+import { Slot } from '@radix-ui/react-slot'
+import { TopPools } from '@sushiswap/graph-client/data-api'
+
 import { UploadIcon } from '@heroicons/react-v1/outline'
 import { DownloadIcon } from '@heroicons/react-v1/solid'
 import {
@@ -10,8 +13,6 @@ import {
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
-import { Slot } from '@radix-ui/react-slot'
-import { GetPools, PoolChainId, Pools } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -29,7 +30,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Loader,
   SkeletonText,
   Tooltip,
   TooltipContent,
@@ -40,10 +40,8 @@ import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { ColumnDef, Row, SortingState, TableState } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
-import { usePoolsInfinite } from 'src/lib/hooks'
-import { ChainKey } from 'sushi/chain'
-import { isMerklChainId } from 'sushi/config'
+import { Chain, ChainId, ChainKey } from 'sushi/chain'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
 import { SushiSwapProtocol } from 'sushi/types'
@@ -82,7 +80,7 @@ const COLUMNS = [
                 position="bottom-right"
                 badgeContent={
                   <NetworkIcon
-                    chainId={props.row.original.chainId}
+                    chainId={props.row.original.chainId as ChainId}
                     width={14}
                     height={14}
                   />
@@ -281,11 +279,11 @@ const COLUMNS = [
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger
-                    asChild={isMerklChainId(row.original.chainId)}
+                    asChild={isAngleEnabledChainId(row.original.chainId)}
                   >
                     <DropdownMenuItem
                       asChild
-                      disabled={!isMerklChainId(row.original.chainId)}
+                      disabled={!isAngleEnabledChainId(row.original.chainId)}
                     >
                       <Link
                         onClick={(e) => e.stopPropagation()}
@@ -312,7 +310,7 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!isMerklChainId(row.original.chainId)
+                      {!isAngleEnabledChainId(row.original.chainId)
                         ? 'Not available on this network'
                         : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
                     </p>
@@ -408,20 +406,26 @@ const COLUMNS = [
           </DropdownMenuContent>
         </DropdownMenu>
       ),
-    size: 80,
     meta: {
       disableLink: true,
       skeleton: <SkeletonText fontSize="lg" />,
     },
-  } satisfies ColumnDef<Pools[number], unknown>,
-] as ColumnDef<Pools[number], unknown>[]
+  } satisfies ColumnDef<TopPools[number], unknown>,
+] as ColumnDef<TopPools[number], unknown>[]
 
 interface PoolsTableProps {
-  chainId: PoolChainId
-  onRowClick?(row: Pools[number]): void
+  chainId: ChainId
+  pools?: TopPools
+  isLoading?: boolean
+  onRowClick?(row: TopPools[number]): void
 }
 
-export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
+export const PoolsTable: FC<PoolsTableProps> = ({
+  chainId,
+  pools,
+  isLoading = false,
+  onRowClick,
+}) => {
   const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
 
@@ -429,26 +433,30 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
     { id: 'liquidityUSD', desc: true },
   ])
 
-  const args = useMemo<Omit<GetPools, 'page'>>(() => {
-    return {
-      chainId,
-      search: tokenSymbols,
-      onlyIncentivized: farmsOnly,
-      onlySmartPools: smartPoolsOnly,
-      protocols,
-      orderBy: sorting[0]?.id as GetPools['orderBy'],
-      orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
-    }
-  }, [chainId, tokenSymbols, farmsOnly, smartPoolsOnly, sorting, protocols])
+  const data = useMemo(
+    () =>
+      pools?.flat()?.filter((pool) => {
+        if (
+          tokenSymbols.length &&
+          !tokenSymbols.some((tokenSymbol) =>
+            pool.name.toLowerCase().includes(tokenSymbol.toLowerCase()),
+          )
+        )
+          return false
 
-  const { data: pools, isLoading, fetchNextPage } = usePoolsInfinite(args)
+        if (
+          protocols.length &&
+          !protocols.some((protocol) => pool.protocol === protocol)
+        )
+          return false
 
-  const [data, count] = useMemo(
-    () => [
-      pools?.pages?.flatMap(({ data }) => data) ?? [],
-      pools?.pages?.[0]?.count,
-    ],
-    [pools],
+        if (smartPoolsOnly && !pool.isSmartPool) return false
+
+        if (farmsOnly && !pool.isIncentivized) return false
+
+        return true
+      }) || [],
+    [pools, tokenSymbols, protocols, farmsOnly, smartPoolsOnly],
   )
 
   const state: Partial<TableState> = useMemo(() => {
@@ -462,7 +470,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
   }, [data?.length, sorting])
 
   const rowRenderer = useCallback(
-    (row: Row<Pools[number]>, rowNode: ReactNode) => {
+    (row: Row<TopPools[number]>, rowNode: ReactNode) => {
       if (onRowClick)
         return (
           <Slot
@@ -478,47 +486,33 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
   )
 
   return (
-    <InfiniteScroll
-      dataLength={data.length}
-      next={fetchNextPage}
-      hasMore={data.length < (count ?? 0)}
-      loader={
-        <div className="flex justify-center w-full py-4">
-          <Loader size={16} />
-        </div>
-      }
-    >
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {isLoading ? (
-              <div className="!w-28 !h-[18px]">
-                <SkeletonText />
-              </div>
-            ) : (
-              <span>
-                Pools{' '}
-                <span className="text-gray-400 dark:text-slate-500">
-                  ({count ?? 0})
-                </span>
-              </span>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <DataTable
-          state={state}
-          onSortingChange={setSorting}
-          loading={isLoading}
-          linkFormatter={(row) =>
-            `/${ChainKey[row.chainId]}/pool/${
-              row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
-            }/${row.address}`
-          }
-          rowRenderer={rowRenderer}
-          columns={COLUMNS}
-          data={data}
-        />
-      </Card>
-    </InfiniteScroll>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          {isLoading ? (
+            <div className="!w-72 !h-[18px]">
+              <SkeletonText />
+            </div>
+          ) : (
+            <span>{`Top ${data.length} Pools on ${
+              Chain.from(chainId)?.name
+            }`}</span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <DataTable
+        state={state}
+        onSortingChange={setSorting}
+        loading={isLoading}
+        linkFormatter={(row) =>
+          `/${ChainKey[row.chainId]}/pool/${
+            row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
+          }/${row.address}`
+        }
+        rowRenderer={rowRenderer}
+        columns={COLUMNS}
+        data={data}
+      />
+    </Card>
   )
 }

@@ -30,14 +30,6 @@ export abstract class Currency {
    * The name of the currency, i.e. a descriptive textual non-unique identifier
    */
   public readonly name?: string | undefined
-  /**
-   * A link to the logo of the currency
-   */
-  public readonly logoUrl?: string | undefined
-  /**
-   * If the currency is approved
-   */
-  public readonly approved?: boolean | undefined
 
   /**
    * Constructs an instance of the abstract class `Currency`.
@@ -46,23 +38,17 @@ export abstract class Currency {
    * @param symbol symbol of the currency
    * @param name of the currency
    * @param rebase of the currency
-   * @param logoUrl a link to the logo of the currency
-   * @param approved if the currency is approved
    */
   protected constructor({
     chainId: _chainId,
     decimals: _decimals,
     symbol,
     name,
-    logoUrl,
-    approved,
   }: {
     chainId: number | string
     decimals: number | string
     symbol?: string | undefined
     name?: string | undefined
-    logoUrl?: string | undefined
-    approved?: boolean | undefined
   }) {
     const chainId = Number(_chainId) as ChainId
     const decimals = Number(_decimals)
@@ -76,8 +62,6 @@ export abstract class Currency {
     this.decimals = decimals
     this.symbol = symbol
     this.name = name
-    this.logoUrl = logoUrl
-    this.approved = approved
   }
 
   /**

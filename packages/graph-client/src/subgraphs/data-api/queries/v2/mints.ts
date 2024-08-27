@@ -5,7 +5,7 @@ import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 
 export const SushiV2MintsQuery = graphql(`
-query V2Mints($address: Bytes!, $chainId: SushiSwapV2ChainId!) {
+query V2Mints($address: String!, $chainId: Int!) {
   v2Mints(address: $address, chainId: $chainId) {
     id
     logIndex

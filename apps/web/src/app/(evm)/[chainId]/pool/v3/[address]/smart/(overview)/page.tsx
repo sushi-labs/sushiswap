@@ -1,13 +1,7 @@
-import {
-  getV3Pool,
-  getVaults,
-  isSmartPoolChainId,
-} from '@sushiswap/graph-client/data-api'
+import { getV3Pool, getVaults } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { SteerCarousel } from 'src/ui/pool/Steer/SteerCarousel'
 import { ChainId } from 'sushi/chain'
-import { isSushiSwapV3ChainId } from 'sushi/config'
-import { isAddress } from 'viem'
 import notFound from '../../../../../not-found'
 
 export default async function VaultOverviewPage({
@@ -17,15 +11,6 @@ export default async function VaultOverviewPage({
 }) {
   const { chainId: _chainId, address } = params
   const chainId = +_chainId as ChainId
-
-  if (
-    !isSushiSwapV3ChainId(chainId) ||
-    !isSmartPoolChainId(chainId) ||
-    !isAddress(address, { strict: false })
-  ) {
-    return notFound()
-  }
-
   const pool = await unstable_cache(
     async () => getV3Pool({ chainId, address }),
     ['pool', `${chainId}:${address}`],

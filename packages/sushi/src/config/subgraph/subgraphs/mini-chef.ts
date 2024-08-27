@@ -1,5 +1,5 @@
 import { ChainId } from '../../../chain/index.js'
-import type { MiniChefChainId } from '../../features/mini-chef.js'
+import type { MiniChefChainId } from '../../mini-chef.js'
 import {
   DECENTRALIZED_HOST_BY_DEPLOYMENT_ID,
   METIS_0XGRAPH_HOST,

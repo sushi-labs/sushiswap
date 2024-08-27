@@ -8,7 +8,7 @@ import {
   WalletConnectionResult,
   sendAnalyticsEvent,
 } from '@sushiswap/telemetry'
-import { Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { HeaderNetworkSelector } from './header-network-selector'
 import { UserPortfolio } from './user-portfolio'
@@ -40,9 +40,9 @@ export const WagmiHeaderComponents: React.FC<WagmiHeaderComponentsProps> = ({
   }, [address, chainId, connector, previousConnectedChainId])
 
   return (
-    <Suspense>
+    <>
       <HeaderNetworkSelector networks={chainIds} onChange={onChange} />
       <UserPortfolio />
-    </Suspense>
+    </>
   )
 }

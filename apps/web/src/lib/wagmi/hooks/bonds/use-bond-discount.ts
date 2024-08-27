@@ -5,7 +5,7 @@ import {
 } from '@sushiswap/bonds-sdk'
 import { usePrices } from '@sushiswap/react-query'
 import { useMemo } from 'react'
-import { Address } from 'viem'
+import { Address, getAddress } from 'viem'
 import { useBondMarketPrices } from './use-bond-market-price'
 
 interface UseBondsDiscount {
@@ -43,19 +43,19 @@ export const useBondDiscount = ({
   const discount = useMemo(() => {
     if (!marketPrice || !prices) return undefined
 
-    const quoteTokenPriceUSD = prices.get(quoteToken.address)
-    const payoutTokenPriceUSD = prices.get(payoutToken.address)
+    const quoteTokenPriceUSD = prices[getAddress(quoteToken.address)]
+    const payoutTokenPriceUSD = prices[getAddress(payoutToken.address)]
 
     return getBondDiscount({
       marketPrice: marketPrice[0],
       marketScale: marketScale,
       payoutToken: {
         decimals: payoutToken.decimals,
-        priceUSD: +(payoutTokenPriceUSD?.toFixed(10) || 0),
+        priceUSD: +payoutTokenPriceUSD.toFixed(10) || 0,
       },
       quoteToken: {
         decimals: quoteToken.decimals,
-        priceUSD: +(quoteTokenPriceUSD?.toFixed(10) || 0),
+        priceUSD: +quoteTokenPriceUSD.toFixed(10) || 0,
       },
     })
   }, [prices, marketPrice, marketScale, payoutToken, quoteToken])

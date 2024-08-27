@@ -53,10 +53,7 @@ export function useFuroTokens(args: GetFuroTokenArgs) {
 
           const priceUSD =
             Number(
-              prices
-                ?.get(furoToken.chainId)
-                ?.get(token.address)
-                ?.toSignificant(4),
+              prices?.[furoToken.chainId]?.[token.address]?.toSignificant(4),
             ) || 0
           const liquidity = Number(
             Amount.fromRawAmount(token, liquidityElastic).toSignificant(4),

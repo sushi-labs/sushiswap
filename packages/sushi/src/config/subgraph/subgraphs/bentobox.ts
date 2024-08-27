@@ -1,5 +1,5 @@
 import { ChainId } from '../../../chain/index.js'
-import type { BentoBoxChainId } from '../../features/bentobox.js'
+import type { BentoBoxChainId } from '../../bentobox.js'
 import {
   DECENTRALIZED_HOST_BY_DEPLOYMENT_ID,
   SUSHI_DEDICATED_GOLDSKY_HOST,

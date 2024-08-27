@@ -1,5 +1,5 @@
 import { ChainId } from '../../../chain/index.js'
-import type { SushiSwapV3ChainId } from '../../features/sushiswap-v3.js'
+import type { SushiSwapV3ChainId } from '../../sushiswap-v3.js'
 import {
   CORE_HOST,
   DECENTRALIZED_HOST_BY_DEPLOYMENT_ID,

@@ -35,15 +35,11 @@ export const SimpleSwapHeader = () => {
   const price = useMemo(() => {
     if (!token0 || !token1) return '0.00'
 
-    const token0Price = prices?.has(token0.wrapped.address)
-      ? tryParseAmount('1', token0)?.multiply(
-          prices.get(token0.wrapped.address)!,
-        )
+    const token0Price = prices?.[token0.wrapped.address]
+      ? tryParseAmount('1', token0)?.multiply(prices[token0.wrapped.address])
       : undefined
-    const token1Price = prices?.has(token1.wrapped.address)
-      ? tryParseAmount('1', token1)?.multiply(
-          prices.get(token1.wrapped.address)!,
-        )
+    const token1Price = prices?.[token1.wrapped.address]
+      ? tryParseAmount('1', token1)?.multiply(prices[token1.wrapped.address])
       : undefined
 
     let price

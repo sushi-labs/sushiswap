@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant'
 import { type Address, getAddress } from 'viem'
-import type { ID } from '../types/id.js'
 import { Currency } from './currency.js'
 import { type Type } from './type.js'
 import { type SerializedToken, tokenSchema } from './zod.js'
@@ -8,7 +7,7 @@ import { type SerializedToken, tokenSchema } from './zod.js'
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends Currency {
-  public readonly id: ID
+  public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
 
@@ -34,8 +33,6 @@ export class Token extends Currency {
     name,
     buyFeeBps,
     sellFeeBps,
-    logoUrl,
-    approved,
   }: {
     chainId: number | string
     address: string
@@ -44,20 +41,16 @@ export class Token extends Currency {
     name?: string | undefined
     buyFeeBps?: bigint
     sellFeeBps?: bigint
-    logoUrl?: string | undefined
-    approved?: boolean | undefined
   }) {
     super({
       chainId,
       decimals,
       symbol,
       name,
-      logoUrl,
-      approved,
     })
     try {
       this.address = getAddress(address)
-      this.id = `${chainId}:${address}` as ID
+      this.id = `${chainId}:${address}`
       // this.tokenId = `${t.address || ''}_${t.chainId}`
     } catch {
       throw `${address} is not a valid address`

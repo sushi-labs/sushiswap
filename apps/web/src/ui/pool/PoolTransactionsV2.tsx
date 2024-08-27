@@ -20,7 +20,6 @@ import {
   getSushiV2Mints,
   getSushiV2Swaps,
 } from '@sushiswap/graph-client/data-api'
-import type { Address } from 'viem'
 
 import {
   TX_AMOUNT_IN_V2_COLUMN,
@@ -43,7 +42,7 @@ interface UseTransactionsV2Opts {
   skip?: number
 }
 
-const fetchMints = async (address: Address, chainId: SushiSwapV2ChainId) => {
+const fetchMints = async (address: string, chainId: SushiSwapV2ChainId) => {
   const mints = await getSushiV2Mints({
     chainId,
     address,
@@ -57,7 +56,7 @@ const fetchMints = async (address: Address, chainId: SushiSwapV2ChainId) => {
   }))
 }
 
-const fetchBurns = async (address: Address, chainId: SushiSwapV2ChainId) => {
+const fetchBurns = async (address: string, chainId: SushiSwapV2ChainId) => {
   const burns = await getSushiV2Burns({
     chainId,
     address,
@@ -71,7 +70,7 @@ const fetchBurns = async (address: Address, chainId: SushiSwapV2ChainId) => {
   }))
 }
 
-const fetchSwaps = async (address: Address, chainId: SushiSwapV2ChainId) => {
+const fetchSwaps = async (address: string, chainId: SushiSwapV2ChainId) => {
   const swaps = await getSushiV2Swaps({
     chainId,
     address,
@@ -89,11 +88,11 @@ const fetchSwaps = async (address: Address, chainId: SushiSwapV2ChainId) => {
 // The fact that there are different subtransactions aggregated under one transaction makes paging a bit difficult
 function useTransactionsV2(
   pool: V2Pool | undefined | null,
-  poolAddress: Address,
+  poolId: string,
   opts: UseTransactionsV2Opts,
 ) {
   return useQuery({
-    queryKey: ['poolTransactionsV2', poolAddress, pool?.chainId, opts],
+    queryKey: ['poolTransactionsV2', poolId, pool?.chainId, opts],
     queryFn: async () => {
       const chainId = pool?.chainId as ChainId
 
@@ -103,16 +102,16 @@ function useTransactionsV2(
 
       switch (opts.type) {
         case TransactionType.Burn:
-          transactions = await fetchBurns(poolAddress, chainId)
+          transactions = await fetchBurns(poolId, chainId)
           break
         case TransactionType.Mint:
-          transactions = await fetchMints(poolAddress, chainId)
+          transactions = await fetchMints(poolId, chainId)
           break
         case TransactionType.Swap:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolId, chainId)
           break
         default:
-          transactions = await fetchSwaps(poolAddress, chainId)
+          transactions = await fetchSwaps(poolId, chainId)
       }
 
       if (!transactions.length) return []
@@ -177,13 +176,10 @@ type Transaction = NonNullable<ReturnType<typeof useTransactionsV2>['data']>[0]
 
 interface PoolTransactionsV2Props {
   pool: V2Pool | undefined | null
-  poolAddress: Address
+  poolId: string
 }
 
-const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
-  pool,
-  poolAddress,
-}) => {
+const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({ pool, poolId }) => {
   const [type, setType] = useState<
     Parameters<typeof useTransactionsV2>['2']['type']
   >(TransactionType.Swap)
@@ -213,7 +209,7 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
     [paginationState.pageIndex, paginationState.pageSize, type],
   )
 
-  const { data, isLoading } = useTransactionsV2(pool, poolAddress, opts)
+  const { data, isLoading } = useTransactionsV2(pool, poolId, opts)
 
   const _data = useMemo(() => {
     return data ?? []

@@ -8,7 +8,7 @@
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "origin/master",
+  "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "privatePackages": {
     "tag": false,

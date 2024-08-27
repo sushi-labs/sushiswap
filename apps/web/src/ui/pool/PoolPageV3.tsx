@@ -154,7 +154,7 @@ const Pool: FC<{ pool: V3Pool }> = ({ pool }) => {
           <Separator />
         </div>
         <PoolRewardDistributionsCard pool={pool} />
-        <PoolTransactionsV3 pool={pool} poolAddress={address} />
+        <PoolTransactionsV3 pool={pool} poolId={address} />
       </div>
     </Container>
   )

@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import { ID } from 'sushi'
 import { type Currency } from 'sushi/currency'
 import { getAddress as _getAddress, isAddress } from 'viem/utils'
 import { useLocalStorage } from './useLocalStorage'
@@ -34,7 +33,7 @@ export const usePinnedTokens = () => {
   )
 
   const removePinnedToken = useCallback(
-    (currencyId: ID) => {
+    (currencyId: string) => {
       const [chainId, address] = currencyId.split(':')
       setPinnedTokens((value) => {
         value[chainId] = Array.from(
@@ -73,7 +72,7 @@ export const usePinnedTokens = () => {
   )
 
   const mutate = useCallback(
-    (type: 'add' | 'remove', currencyId: ID) => {
+    (type: 'add' | 'remove', currencyId: string) => {
       if (type === 'add') addPinnedToken(currencyId)
       if (type === 'remove') removePinnedToken(currencyId)
     },

@@ -5,7 +5,7 @@ import { graphql } from '../../graphql'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 import { ChainId, isChainId } from 'sushi'
 
-export const TopPoolsQuery = graphql(
+export const PoolsQuery = graphql(
   `
   query TopPools($chainId: String!) {
     topPools(chainId: $chainId) {
@@ -41,24 +41,22 @@ export const TopPoolsQuery = graphql(
 `,
 )
 
-export type GetTopPools = VariablesOf<typeof TopPoolsQuery>
+export type GetPools = VariablesOf<typeof PoolsQuery>
 
 export async function getTopPools(
-  variables: GetTopPools,
+  variables: GetPools,
   options?: RequestOptions,
 ) {
   const url = `https://${SUSHI_DATA_API_HOST}`
   try {
     if (!isChainId(parseInt(variables.chainId))) {
-      throw new Error(
-        `Invalid chainId: ${variables.chainId}, this only supports evm networks and must be a number.`,
-      )
+      throw new Error(`Invalid chainId: ${variables.chainId}, this only supports evm networks and must be a number.`)
     }
     const chainId = parseInt(variables.chainId) as ChainId
     const result = await request(
       {
         url,
-        document: TopPoolsQuery,
+        document: PoolsQuery,
         variables,
         requestHeaders: SUSHI_REQUEST_HEADERS,
       },

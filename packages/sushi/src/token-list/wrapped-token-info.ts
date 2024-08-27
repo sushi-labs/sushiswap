@@ -2,7 +2,6 @@ import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { type Address, getAddress, isAddress } from 'viem'
 import type { ChainId } from '../chain/index.js'
 import { Token, type Type } from '../currency/index.js'
-import type { ID } from '../types/id.js'
 
 type TagDetails = Tags[keyof Tags]
 
@@ -13,7 +12,7 @@ interface TagInfo extends TagDetails {
  * Token instances created from token info on a token list.
  */
 export class WrappedTokenInfo implements Token {
-  public readonly id: ID
+  public readonly id: string
   public readonly isNative = false as const
   public readonly isToken = true as const
   public readonly list?: TokenList | undefined
@@ -21,7 +20,7 @@ export class WrappedTokenInfo implements Token {
   public readonly tokenInfo: TokenInfo
 
   constructor(tokenInfo: TokenInfo, list?: TokenList) {
-    this.id = `${tokenInfo.chainId}:${tokenInfo.address}` as ID
+    this.id = `${tokenInfo.chainId}:${tokenInfo.address}`
     this.tokenInfo = tokenInfo
     this.list = list
   }

@@ -47,7 +47,7 @@ import {
 } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { FC, useMemo, useState } from 'react'
-import { isMerklChainId } from 'sushi/config'
+import { isAngleEnabledChainId } from 'sushi/config'
 import { Native, Token, unwrapToken } from 'sushi/currency'
 import { formatPercent, formatUSD } from 'sushi/format'
 import { SushiSwapProtocol } from 'sushi/types'
@@ -366,11 +366,11 @@ const COLUMNS = [
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger
-                    asChild={isMerklChainId(row.original.chainId)}
+                    asChild={isAngleEnabledChainId(row.original.chainId)}
                   >
                     <DropdownMenuItem
                       asChild
-                      disabled={!isMerklChainId(row.original.chainId)}
+                      disabled={!isAngleEnabledChainId(row.original.chainId)}
                     >
                       {/* FIX */}
                       <Link
@@ -398,7 +398,7 @@ const COLUMNS = [
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[240px]">
                     <p>
-                      {!isMerklChainId(row.original.chainId)
+                      {!isAngleEnabledChainId(row.original.chainId)
                         ? 'Not available on this network'
                         : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
                     </p>

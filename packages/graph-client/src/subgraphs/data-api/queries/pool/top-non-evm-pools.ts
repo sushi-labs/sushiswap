@@ -40,10 +40,10 @@ export const TopNonEvmPoolsQuery = graphql(
 `,
 )
 
-export type GetTopNonEvmPools = VariablesOf<typeof TopNonEvmPoolsQuery>
+export type GetNonEvmPools = VariablesOf<typeof TopNonEvmPoolsQuery>
 
 export async function getTopNonEvmPools(
-  variables: GetTopNonEvmPools,
+  variables: GetNonEvmPools,
   options?: RequestOptions,
 ) {
   const url = `https://${SUSHI_DATA_API_HOST}`
@@ -61,7 +61,7 @@ export async function getTopNonEvmPools(
       return result.topPools ?? []
     }
   } catch (error) {
-    console.error('getTopNonEvmPools error', error)
+    console.error('getTopPools error', error)
   }
   return []
 }

@@ -1,6 +1,5 @@
 'use client'
 
-import { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import {
   SkeletonText,
@@ -76,9 +75,7 @@ const COLUMNS = [
 
 const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
 
-export const SmartPositionsTable: FC<{ chainId: SmartPoolChainId }> = ({
-  chainId,
-}) => {
+export const SmartPositionsTable: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,

@@ -20,7 +20,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const V2PoolQuery = graphql(
   `
-   query V2Pool($address: Bytes!, $chainId: SushiSwapV2ChainId!) {
+   query V2Pool($address: String!, $chainId: Int!) {
     v2Pool(address: $address, chainId: $chainId) {
       id
       chainId

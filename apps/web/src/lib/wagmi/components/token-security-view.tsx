@@ -49,13 +49,11 @@ const isTokenSecurityIssue = {
 export const TokenSecurityView = ({
   tokenSecurityResponse,
   token,
-  forceShowMore = false,
 }: {
   tokenSecurityResponse: TokenSecurityResponse | undefined
   token: Token
-  forceShowMore?: boolean
 }) => {
-  const [showMore, setShowMore] = useState<boolean>(forceShowMore)
+  const [showMore, setShowMore] = useState<boolean>(false)
 
   const { tokenSecurity, issues, nonIssues } = useMemo(() => {
     const tokenSecurity = tokenSecurityResponse?.[token.address]
@@ -155,26 +153,24 @@ export const TokenSecurityView = ({
               </List.KeyValue>
             ))
           : null}
-        {!forceShowMore ? (
-          <div className="p-3">
-            <Button
-              size="xs"
-              fullWidth
-              onClick={() => setShowMore(!showMore)}
-              variant="ghost"
-            >
-              {showMore ? (
-                <>
-                  <SelectIcon className="rotate-180" />
-                </>
-              ) : (
-                <>
-                  <SelectIcon />
-                </>
-              )}
-            </Button>
-          </div>
-        ) : null}
+        <div className="p-3">
+          <Button
+            size="xs"
+            fullWidth
+            onClick={() => setShowMore(!showMore)}
+            variant="ghost"
+          >
+            {showMore ? (
+              <>
+                <SelectIcon className="rotate-180" />
+              </>
+            ) : (
+              <>
+                <SelectIcon />
+              </>
+            )}
+          </Button>
+        </div>
       </List.Control>
     </List>
   )

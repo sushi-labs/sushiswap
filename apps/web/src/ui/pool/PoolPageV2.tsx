@@ -30,7 +30,7 @@ export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
       <div className="py-4">
         <Separator />
       </div>
-      <PoolTransactionsV2 pool={pool} poolAddress={pool.address} />
+      <PoolTransactionsV2 pool={pool} poolId={pool.address} />
     </Container>
   )
 }

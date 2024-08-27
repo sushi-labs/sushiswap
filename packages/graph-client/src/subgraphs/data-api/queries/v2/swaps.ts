@@ -5,7 +5,7 @@ import { SUSHI_DATA_API_HOST } from 'sushi/config/subgraph'
 import { graphql } from '../../graphql'
 
 export const SushiV2SwapsQuery = graphql(`
-query V2Swaps($address: Bytes!, $chainId: SushiSwapV2ChainId!) {
+query V2Swaps($address: String!, $chainId: Int!) {
   v2Swaps(address: $address, chainId: $chainId) {
     transaction {
       createdAtBlock

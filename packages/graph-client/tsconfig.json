@@ -4,7 +4,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
-    "rootDir": "src",
+    "rootDir": "./src",
     "declaration": true,
     "resolveJsonModule": true,
     "target": "ES2020",

@@ -1,11 +1,10 @@
 import { useMemo } from 'react'
 import type { Fraction } from 'sushi'
-import { Address } from 'viem'
 import { usePrices } from './usePrices'
 
 interface UsePrice {
   chainId: number | undefined
-  address: Address | undefined
+  address: string | undefined
   enabled?: boolean
 }
 
@@ -18,7 +17,7 @@ export const usePrice = ({ chainId, address, enabled = true }: UsePrice) => {
   return useMemo(() => {
     return {
       ...usePricesQuery,
-      data: (address ? usePricesQuery.data?.get(address) : undefined) as
+      data: (address ? usePricesQuery.data?.[address] : undefined) as
         | Fraction
         | undefined,
     }

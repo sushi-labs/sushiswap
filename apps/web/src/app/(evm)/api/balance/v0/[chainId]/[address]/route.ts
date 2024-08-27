@@ -1,5 +1,7 @@
+// import { ChainID as CovalentChainID } from '@covalenthq/client-sdk'
 import { createConfig, getBalance, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
+// import { covalentClient } from 'src/lib/covalent'
 import { type ChainId } from 'sushi/chain'
 import { Address, erc20Abi } from 'viem'
 import { z } from 'zod'
@@ -22,6 +24,8 @@ const tokensSchema = z.array(z.coerce.string())
 
 export const revalidate = 10
 
+// const resp = await client.BalanceService.getTokenBalancesForWalletAddress("eth-mainnet");
+
 export async function GET(
   _req: Request,
   {
@@ -30,6 +34,34 @@ export async function GET(
 ) {
   console.log('request', _req)
   const { chainId, address } = querySchema.parse(params)
+
+  // try {
+  //   const { data } =
+  //     await covalentClient.BalanceService.getTokenBalancesForWalletAddress(
+  //       chainId as CovalentChainID,
+  //       address,
+  //     )
+
+  //   return Response.json(
+  //     data.items.reduce(
+  //       (previousValue, currentValue) => {
+  //         if (currentValue.balance) {
+  //           previousValue[currentValue.contract_address] =
+  //             currentValue.balance.toString()
+  //         }
+  //         return previousValue
+  //       },
+  //       {} as Record<string, string>,
+  //     ),
+  //     {
+  //       headers: {
+  //         'Cache-Control': 's-maxage=1, stale-while-revalidate=59',
+  //       },
+  //     },
+  //   )
+  // } catch (e) {
+  //   console.error("Couldn't fetch balances from covalent", e)
+  // }
 
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`, {
     next: { revalidate: 3600 },

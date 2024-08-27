@@ -24,12 +24,12 @@ export const useTokenAmountDollarValues: UseTokenAmountDollarValues = ({
     return amounts.map((amount) => {
       if (
         !amount?.greaterThan(ZERO) ||
-        !prices?.has(amount.currency.wrapped.address)
+        !prices?.[amount.currency.wrapped.address]
       )
         return 0
       const price = Number(
         Number(amount.toExact()) *
-          Number(prices.get(amount.currency.wrapped.address)!.toFixed(10)),
+          Number(prices[amount.currency.wrapped.address].toFixed(10)),
       )
       if (Number.isNaN(price) || price < 0.000001) {
         return 0

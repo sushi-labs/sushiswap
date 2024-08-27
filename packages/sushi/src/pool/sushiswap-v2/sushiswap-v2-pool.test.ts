@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ChainId } from '~sushi/chain/constants.js'
-import { SUSHISWAP_V2_FACTORY_ADDRESS } from '~sushi/config/features/sushiswap-v2.js'
+import { SUSHISWAP_V2_FACTORY_ADDRESS } from '~sushi/config/sushiswap-v2.js'
 import { Amount } from '~sushi/currency/amount.js'
 import { Price } from '~sushi/currency/price.js'
 import { Token } from '~sushi/currency/token.js'

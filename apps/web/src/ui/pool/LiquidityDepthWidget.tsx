@@ -5,13 +5,12 @@ import { SkeletonBox } from '@sushiswap/ui'
 import React, { FC, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { SushiSwapV3ChainId } from 'sushi/config'
-import type { Address } from 'viem'
 import { useConcentratedDerivedMintInfo } from './ConcentratedLiquidityProvider'
 import LiquidityChartRangeInput from './LiquidityChartRangeInput'
 import { useDensityChartData } from './LiquidityChartRangeInput/hooks'
 
 interface LiquidityDepthWidget {
-  address: Address
+  address: string
   chainId: SushiSwapV3ChainId
 }
 

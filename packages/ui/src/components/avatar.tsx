@@ -33,20 +33,15 @@ const AvatarImage = React.forwardRef<
 >(({ className, width, src }, ref) => {
   const _width = Number(width) ?? 40
 
-  const useCloudinary =
-    src.startsWith('native-currency') || src.startsWith('tokens')
-
   return (
     <AvatarPrimitive.Image
-      src={
-        useCloudinary ? cloudinaryLogoImageLoader({ src, width: _width }) : src
-      }
+      src={cloudinaryLogoImageLoader({ src, width: _width })}
       asChild
       ref={ref}
       className={classNames('aspect-square h-full w-full', className)}
     >
       <Image
-        loader={useCloudinary ? cloudinaryLogoImageLoader : undefined}
+        loader={cloudinaryLogoImageLoader}
         alt="avatar"
         src={src}
         width={_width}

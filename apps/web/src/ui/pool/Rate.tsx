@@ -25,13 +25,11 @@ export const Rate: FC<Rate> = ({ children, price }) => {
       : price?.baseCurrency.chainId,
   })
   const usdPrice = price
-    ? prices
-        ?.get(
-          invert
-            ? price.quoteCurrency.wrapped.address
-            : price.baseCurrency.wrapped.address,
-        )
-        ?.toFixed(2)
+    ? prices?.[
+        invert
+          ? price.quoteCurrency.wrapped.address
+          : price.baseCurrency.wrapped.address
+      ]?.toFixed(2)
     : undefined
 
   const content = (

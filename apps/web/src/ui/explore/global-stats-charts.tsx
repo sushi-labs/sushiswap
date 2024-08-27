@@ -1,16 +1,12 @@
-import {
-  PoolChainId,
-  getAnalyticsDayBuckets,
-} from '@sushiswap/graph-client/data-api'
+import { getAnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
 import { FC, Suspense } from 'react'
+import { ChainId } from 'sushi/chain'
 import { GlobalStatsLoading } from './global-stats-loading'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'
 
-export const GlobalStatsCharts: FC<{ chainId: PoolChainId }> = ({
-  chainId,
-}) => {
+export const GlobalStatsCharts: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (
     <Suspense fallback={<GlobalStatsLoading chainId={chainId} />}>
       <_GlobalStatsCharts chainId={chainId} />
@@ -18,9 +14,7 @@ export const GlobalStatsCharts: FC<{ chainId: PoolChainId }> = ({
   )
 }
 
-const _GlobalStatsCharts: FC<{ chainId: PoolChainId }> = async ({
-  chainId,
-}) => {
+const _GlobalStatsCharts: FC<{ chainId: ChainId }> = async ({ chainId }) => {
   const dayBuckets = await unstable_cache(
     async () =>
       getAnalyticsDayBuckets({

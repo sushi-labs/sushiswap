@@ -1,33 +1,31 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { ChainId, LowercaseMap } from 'sushi'
 import { withoutScientificNotation } from 'sushi/format'
 import { Fraction } from 'sushi/math'
-import { Address, parseUnits } from 'viem'
+import { getAddress, isAddress, parseUnits } from 'viem'
 
-const hydrate = (data: Record<Address, number>) => {
-  const chainPriceMap = new Map<ChainId, LowercaseMap<Address, Fraction>>()
+const hydrate = (data: Record<string, number>) => {
+  return Object.entries(data).reduce<Record<string, Record<string, Fraction>>>(
+    (acc, [chainId, addresses]) => {
+      acc[chainId] = Object.entries(addresses).reduce<Record<string, Fraction>>(
+        (acc, [address, _price]) => {
+          const price = withoutScientificNotation(_price.toFixed(18))
+          if (isAddress(address) && typeof price !== 'undefined') {
+            acc[getAddress(address)] = new Fraction(
+              parseUnits(price, 18).toString(),
+              parseUnits('1', 18).toString(),
+            )
+          }
 
-  Object.entries(data).forEach(([chainId, addresses]) => {
-    const priceMap = new LowercaseMap<Address, Fraction>()
+          return acc
+        },
+        {},
+      )
 
-    Object.entries(addresses).forEach(([address, _price]) => {
-      const price = withoutScientificNotation(_price.toFixed(18))
-      if (typeof price !== 'undefined') {
-        priceMap.set(
-          address as Address,
-          new Fraction(
-            parseUnits(price, 18).toString(),
-            parseUnits('1', 18).toString(),
-          ),
-        )
-      }
-    })
-
-    chainPriceMap.set(parseInt(chainId) as ChainId, priceMap)
-  })
-
-  return chainPriceMap
+      return acc
+    },
+    {},
+  )
 }
 
 export const useAllPrices = (

@@ -3,11 +3,10 @@
 import React, { FC } from 'react'
 import { SushiSwapV3ChainId } from 'sushi/config'
 
-import { Address } from 'sushi'
 import { CreatePositionManual } from './CreatePositionManual'
 
 interface NewPositionProps {
-  address: Address
+  address: string
   chainId: SushiSwapV3ChainId
 }
 

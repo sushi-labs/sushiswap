@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test'
-import { NativeAddress } from '@sushiswap/react-query'
 import { API_BASE_URL } from 'sushi/config'
 import { Amount, Native, Type } from 'sushi/currency'
+import { zeroAddress } from 'viem'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 type InputType = 'INPUT' | 'OUTPUT'
@@ -199,30 +199,23 @@ export class SwapPage extends BaseActions {
     await expect(tokenSelector).toBeEnabled()
     await tokenSelector.click()
 
-    if (currency.isNative) {
-      const chipToSelect = this.page.locator(
-        `[testdata-id=token-selector-chip-${NativeAddress}]`,
-      )
-      await expect(chipToSelect).toBeVisible()
+    const tokenSearch = this.page.locator(
+      `[testdata-id=swap-${selectorInfix}-token-selector-address-input]`,
+    )
+    await expect(tokenSearch).toBeVisible()
+    await expect(tokenSearch).toBeEnabled()
+    await tokenSearch.fill(currency.symbol as string)
 
-      await chipToSelect.click()
-      await expect(tokenSelector).toContainText(currency.symbol as string)
-    } else {
-      const tokenSearch = this.page.locator(
-        `[testdata-id=token-selector-address-input]`,
-      )
-      await expect(tokenSearch).toBeVisible()
-      await expect(tokenSearch).toBeEnabled()
-      await tokenSearch.fill(currency.address)
+    const tokenToSelect = this.page.locator(
+      `[testdata-id=swap-${selectorInfix}-token-selector-row-${
+        currency.isNative ? zeroAddress : currency.address.toLowerCase()
+      }]`,
+    )
+    await expect(tokenToSelect).toBeVisible()
+    // await expect(tokenSearch).toBeEnabled()
 
-      const tokenToSelect = this.page.locator(
-        `[testdata-id=token-selector-row-${currency.address.toLowerCase()}]`,
-      )
-      await expect(tokenToSelect).toBeVisible()
-
-      await tokenToSelect.click()
-      await expect(tokenSelector).toContainText(currency.symbol as string)
-    }
+    await tokenToSelect.click()
+    await expect(tokenSelector).toContainText(currency.symbol as string)
   }
 
   async maxInput() {

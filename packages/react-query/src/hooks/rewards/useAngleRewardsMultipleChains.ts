@@ -2,13 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { isPromiseRejected } from 'sushi'
 import { ChainId } from 'sushi/chain'
 
-import { Address } from 'viem'
 import { useAllPrices } from '../prices'
 import { angleRewardsQueryFn, angleRewardsSelect } from './useAngleRewards'
 
 interface UseAngleRewardsParams {
   chainIds: ChainId[]
-  account: Address | undefined
+  account: string | undefined
 }
 
 export const useAngleRewardsMultipleChains = ({
@@ -33,7 +32,7 @@ export const useAngleRewardsMultipleChains = ({
             const data = angleRewardsSelect({
               chainId: chainIds[i]!,
               data: el.value[chainIds[i]!],
-              prices: prices.get(chainIds[i]!),
+              prices: prices[chainIds[i]!],
             })
 
             return data
