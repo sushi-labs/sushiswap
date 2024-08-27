@@ -700,8 +700,10 @@ export const EXTRACTOR_CONFIG: Record<
   },
   [ChainId.LINEA]: {
     client: createPublicClient(extractorClientConfig(ChainId.LINEA)),
-    factoriesV2: [pancakeswapV2Factory(ChainId.LINEA)],
-    // factoriesV2: [sushiswapV2Factory(ChainId.LINEA)], // no v2 on linea?
+    factoriesV2: [
+      sushiswapV2Factory(ChainId.LINEA),
+      pancakeswapV2Factory(ChainId.LINEA),
+    ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.LINEA),
       pancakeswapV3Factory(ChainId.LINEA),
