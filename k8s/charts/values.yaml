@@ -44,6 +44,16 @@ chains:
   #   id: "7000"
   - name: "base"
     id: "8453"
+    extractor:
+      resources:
+        requests:
+          cpu: 300m
+          memory: 4Gi
+    router:
+      resources:
+        requests:
+          cpu: 1000m
+          memory: 2Gi
   # - name: "haqq"
   #   id: "11235"
   # - name: "arbitrum"
@@ -58,8 +68,8 @@ chains:
   #   id: "59144"
   # - name: "boba-bnb"
   #   id: "56288"
-  - name: "blast"
-    id: "81457"
+  # - name: "blast"
+  #   id: "81457"
   # - name: "scroll"
   #   id: "534352"
   # - name: "harmony"

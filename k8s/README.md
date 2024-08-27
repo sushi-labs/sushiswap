@@ -119,7 +119,7 @@ Local to remote:
 copies the cache folder to the extractor-56-0 app folder, replacing current cache folder (careful...)
 
 ```bash
-kubectl cp  -n default ./cache extractor-56-0:/app
+kubectl cp  -n default ./cache/56 extractor-56-0:/app/cache
 ```
 
 

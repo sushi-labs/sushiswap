@@ -13,6 +13,9 @@ spec:
       labels:
         app: extractor-{{ .id }}
     spec:
+      nodeSelector:
+        cloud.google.com/compute-class: Performance
+        cloud.google.com/machine-family: c3
       volumes:
         - name: extractor-pv
           persistentVolumeClaim:
@@ -23,12 +26,13 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            - mountPath: "/app/cache/{{ .id }}"
+            - mountPath: "/app/cache"
+              subPath: "{{ .id }}"
               name: extractor-pv
           resources:
             requests:
-              cpu: 1250m
-              memory: 8Gi
+              cpu: 100m
+              memory: 2Gi
           startupProbe:
             failureThreshold: 120 # 120 * 10s = 20 minutes to start
             httpGet:
