@@ -652,6 +652,7 @@ export const EXTRACTOR_CONFIG: Record<
     ],
     factoriesV3: [
       sushiswapV3Factory(ChainId.POLYGON_ZKEVM),
+      uniswapV3Factory(ChainId.POLYGON_ZKEVM),
       pancakeswapV3Factory(ChainId.POLYGON_ZKEVM),
       {
         address: '0xdE474Db1Fa59898BC91314328D29507AcD0D593c' as Address,
