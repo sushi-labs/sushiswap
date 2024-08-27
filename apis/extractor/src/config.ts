@@ -740,7 +740,21 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.METIS]: {
     client: createPublicClient(extractorClientConfig(ChainId.METIS)),
     factoriesV2: [sushiswapV2Factory(ChainId.METIS)],
-    factoriesV3: [sushiswapV3Factory(ChainId.METIS)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.METIS),
+      {
+        address: '0x8112E18a34b63964388a3B2984037d6a2EFE5B8A' as Address,
+        provider: LiquidityProviders.Wagmi,
+        initCodeHash:
+          '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
+        feeSpacingMap: {
+          500: 10,
+          1500: 30,
+          3000: 60,
+          10_000: 200,
+        },
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.METIS],
     tickHelperContractAlgebra:
       '0x0000000000000000000000000000000000000000' as Address,
@@ -782,6 +796,18 @@ export const EXTRACTOR_CONFIG: Record<
         provider: LiquidityProviders.KinetixV3,
         initCodeHash:
           '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      },
+      {
+        address: '0x0e0Ce4D450c705F8a0B6Dd9d5123e3df2787D16B' as Address,
+        provider: LiquidityProviders.Wagmi,
+        initCodeHash:
+          '0x30146866f3a846fe3c636beb2756dbd24cf321bc52c9113c837c21f47470dfeb',
+        feeSpacingMap: {
+          500: 10,
+          1500: 30,
+          3000: 60,
+          10_000: 200,
+        },
       },
     ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.KAVA],
