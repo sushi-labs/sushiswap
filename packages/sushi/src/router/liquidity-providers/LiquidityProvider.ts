@@ -42,7 +42,8 @@ export enum LiquidityProviders {
   HyperBlast = 'HyperBlast',
   KinetixV3 = 'KinetixV3',
   Agni = 'Agni',
-  FusionX = 'FusionX',
+  FusionXV2 = 'FusionXV2',
+  FusionXV3 = 'FusionXV3',
 }
 
 export abstract class LiquidityProvider {

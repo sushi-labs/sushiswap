@@ -175,7 +175,7 @@ export const EXTRACTOR_CONFIG: Record<
       {
         address: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB' as Address,
         provider: LiquidityProviders.BaseSwap,
-        fee: 0.0025,
+        fee: 0.002,
         initCodeHash:
           '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b',
       },
@@ -830,8 +830,8 @@ export const EXTRACTOR_CONFIG: Record<
     factoriesV2: [
       {
         address: '0xE5020961fA51ffd3662CDf307dEf18F9a87Cce7c',
-        provider: LiquidityProviders.FusionX,
-        fee: 0.0025,
+        provider: LiquidityProviders.FusionXV2,
+        fee: 0.002,
         initCodeHash:
           '0x58c684aeb03fe49c8a3080db88e425fae262c5ef5bf0e8acffc0526c6e3c03a0',
       },
@@ -842,13 +842,15 @@ export const EXTRACTOR_CONFIG: Record<
         address: '0x25780dc8Fc3cfBD75F33bFDAB65e969b603b2035',
         deployer: '0xe9827B4EBeB9AE41FC57efDdDd79EDddC2EA4d03',
         provider: LiquidityProviders.Agni,
+        feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP,
         initCodeHash:
           '0xaf9bd540c3449b723624376f906d8d3a0e6441ff18b847f05f4f85789ab64d9a',
       },
       {
         address: '0x530d2766D1988CC1c000C8b7d00334c14B69AD71',
         deployer: '0x8790c2C3BA67223D83C8FCF2a5E3C650059987b4',
-        provider: LiquidityProviders.FusionX,
+        provider: LiquidityProviders.FusionXV3,
+        feeSpacingMap: PANCAKESWAP_V3_FEE_SPACING_MAP,
         initCodeHash:
           '0x1bce652aaa6528355d7a339037433a20cd28410e3967635ba8d2ddb037440dbf',
       },
