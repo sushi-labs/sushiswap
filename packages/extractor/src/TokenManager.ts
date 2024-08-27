@@ -1,3 +1,4 @@
+import { nativeToken } from 'sushi'
 import { erc20Abi, erc20Abi_bytes32 } from 'sushi/abi'
 import { ChainId } from 'sushi/chain'
 import { Token } from 'sushi/currency'
@@ -46,6 +47,7 @@ export class TokenManager {
   ) {
     this.client = client
     this.tokenPermanentCache = new PermanentCache(cacheReadOnly, ...paths)
+    this.addToken(nativeToken(client.chainId), false)
   }
 
   async addCachedTokens() {
