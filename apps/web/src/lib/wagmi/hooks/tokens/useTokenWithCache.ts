@@ -91,16 +91,7 @@ export const getTokenWithCacheQueryFn = async ({
     } as Data
   }
 
-  // Try fetching from API
-  const resp = await fetch(`https://tokens.sushi.com/v0/${chainId}/${address}`)
-  if (resp.status === 200) {
-    const { address, name, symbol, decimals, status, id }: Data =
-      await resp.json()
-
-    return { address, name, symbol, decimals, status, id }
-
-    // Try fetching from wagmi
-  } else if (chainId) {
+if (chainId) {
     const resp = await getTokenWeb3(config, {
       address: address as Address,
       chainId,
