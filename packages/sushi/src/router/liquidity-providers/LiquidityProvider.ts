@@ -28,6 +28,7 @@ export enum LiquidityProviders {
   LaserSwap = 'LaserSwap',
   BaseSwap = 'BaseSwap',
   AlgebraIntegral = 'AlgebraIntegral',
+  AerodromeSlipstream = 'AerodromeSlipstream',
   Solarbeam = 'Solarbeam',
   Swapsicle = 'Swapsicle',
   VVSStandard = 'VVSStandard',
