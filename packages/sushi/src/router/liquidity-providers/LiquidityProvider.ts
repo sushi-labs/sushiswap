@@ -53,6 +53,7 @@ export enum LiquidityProviders {
   SilverSwap = 'SilverSwap',
   Horizon = 'Horizon',
   Scribe = 'Scribe',
+  COREx = 'COREx',
 }
 
 export abstract class LiquidityProvider {

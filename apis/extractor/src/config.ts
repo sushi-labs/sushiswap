@@ -446,7 +446,15 @@ export const EXTRACTOR_CONFIG: Record<
   [ChainId.CORE]: {
     client: createPublicClient(extractorClientConfig(ChainId.CORE)),
     factoriesV2: [sushiswapV2Factory(ChainId.CORE)],
-    factoriesV3: [sushiswapV3Factory(ChainId.CORE)],
+    factoriesV3: [
+      sushiswapV3Factory(ChainId.CORE),
+      {
+        address: '0x526190295AFB6b8736B14E4b42744FBd95203A3a' as Address,
+        provider: LiquidityProviders.COREx,
+        initCodeHash:
+          '0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54',
+      },
+    ],
     tickHelperContractV3: SUSHISWAP_V3_TICK_LENS[ChainId.CORE],
     tickHelperContractAlgebra:
       '0x433cef5888C701831360686e54668376330cED6D' as Address,
