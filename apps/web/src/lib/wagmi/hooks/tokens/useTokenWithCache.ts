@@ -100,7 +100,7 @@ export const getTokenWithCacheQueryFn = async ({
   //   return { address, name, symbol, decimals, status, id }
 
   //   // Try fetching from wagmi
-  // } else 
+  // } else
   if (chainId) {
     const resp = await getTokenWeb3(config, {
       address: address as Address,
