@@ -26,8 +26,9 @@ export const TableFiltersNetwork: FC<{
   const router = useRouter()
   const pathname = usePathname()
 
-  const onClick = useCallback(
-    (chainId: string) => {
+  const onSelect = useCallback(
+    (value: string) => {
+      const chainId = +value.split('__')[1]
       const pathSegments = pathname.split('/')
       pathSegments[1] = ChainKey[+chainId as ChainId]
       router.push(pathSegments.join('/'))
@@ -64,8 +65,8 @@ export const TableFiltersNetwork: FC<{
             {chainIds.map((_chainId) => (
               <CommandItem
                 key={_chainId}
-                value={_chainId.toString()}
-                onSelect={onClick}
+                value={`${Chain.from(_chainId)?.name}__${_chainId}`}
+                onSelect={onSelect}
                 className="py-2 pl-8 pr-2"
               >
                 {chainId === _chainId ? (
