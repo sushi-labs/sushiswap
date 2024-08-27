@@ -29,46 +29,46 @@ export default async function ExploreLayout({
       <Container maxWidth="7xl" className="px-4 py-4">
         <GlobalStatsCharts chainId={chainId} />
       </Container>
-      <Container maxWidth="7xl" className="px-4">
-        <div className="flex flex-wrap items-center gap-2 mb-4">
-          <LinkInternal
-            shallow={true}
-            scroll={false}
-            href={`/${ChainKey[chainId]}/explore/pools`}
-          >
-            <PathnameButton
-              id="all-pools"
-              pathname={`/${ChainKey[chainId]}/explore/pools`}
-              asChild
-              size="sm"
-            >
-              All Pools
-            </PathnameButton>
-          </LinkInternal>
-          {isSteerChainId(chainId) ? (
+      <section className="flex flex-col min-h-screen">
+        <Container maxWidth="7xl" className="px-4">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             <LinkInternal
               shallow={true}
               scroll={false}
-              href={`/${ChainKey[chainId]}/explore/smart-pools`}
+              href={`/${ChainKey[chainId]}/explore/pools`}
             >
               <PathnameButton
-                id="smart-pools"
-                pathname={`/${ChainKey[chainId]}/explore/smart-pools`}
+                id="all-pools"
+                pathname={`/${ChainKey[chainId]}/explore/pools`}
                 asChild
                 size="sm"
               >
-                Smart Pools
+                All Pools
               </PathnameButton>
             </LinkInternal>
-          ) : (
-            <PathnameButton pathname="" size="sm" disabled>
-              Smart Pools
-            </PathnameButton>
-          )}
-        </div>
-      </Container>
-      <section className="flex flex-col flex-1">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
+            {isSteerChainId(chainId) ? (
+              <LinkInternal
+                shallow={true}
+                scroll={false}
+                href={`/${ChainKey[chainId]}/explore/smart-pools`}
+              >
+                <PathnameButton
+                  id="smart-pools"
+                  pathname={`/${ChainKey[chainId]}/explore/smart-pools`}
+                  asChild
+                  size="sm"
+                >
+                  Smart Pools
+                </PathnameButton>
+              </LinkInternal>
+            ) : (
+              <PathnameButton pathname="" size="sm" disabled>
+                Smart Pools
+              </PathnameButton>
+            )}
+          </div>
+        </Container>
+        <div className="flex-1 bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20">
           <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
         </div>
       </section>
