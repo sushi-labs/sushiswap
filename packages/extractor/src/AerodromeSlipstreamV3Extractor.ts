@@ -33,6 +33,7 @@ import {
   UniV3PoolWatcher,
   UniV3PoolWatcherStatus,
 } from './UniV3PoolWatcher.js'
+import { delay } from './Utils.js'
 
 const TickSpacingEnabledEventABI = parseAbiItem(
   'event TickSpacingEnabled(int24 indexed tickSpacing, uint24 indexed fee)',
@@ -82,7 +83,7 @@ interface PoolCacheRecord {
 //        master: poolImplementation,
 //        salt: keccak256(abi.encode(token0, token1, tickSpacing))
 //    });
-// 3) Pool fee can be changed (not during swap)
+// 3) Pool fee can be changed (not during swap). But tickSpacing - never
 export class AerodromeSlipstreamV3Extractor extends IExtractor {
   factories: AerodromeSlipstreamFactoryV3[]
   factoryMap: Map<string, AerodromeSlipstreamFactoryV3> = new Map()
@@ -272,6 +273,42 @@ export class AerodromeSlipstreamV3Extractor extends IExtractor {
 
   async fetchFeeSpacingMap() {
     const client = this.multiCallAggregator.client
+
+    // checks once per our changes in feeSpacingMap
+    client.createEventFilter({ event: TickSpacingEnabledEventABI }).then(
+      async (filter) => {
+        for (;;) {
+          await delay(3600 * 1000)
+          try {
+            const logs = await client.getFilterChanges({
+              filter,
+            })
+            logs.forEach(({ address, args }) => {
+              const f = this.factoryMap.get(address.toLowerCase())
+              if (!f) return
+              f.feeSpacingMap = f.feeSpacingMap ?? {}
+              const { fee, tickSpacing } = args
+              if (fee !== undefined && tickSpacing !== undefined)
+                f.feeSpacingMap[fee] = tickSpacing
+            })
+          } catch (e) {
+            Logger.error(
+              client.chain?.id,
+              `TickSpacingEnabledEvent ${filter.id} error`,
+              e,
+            )
+          }
+        }
+      },
+      (e) => {
+        Logger.error(
+          client.chain?.id,
+          `TickSpacingEnabledEvent creation error`,
+          e,
+        )
+      },
+    )
+
     await Promise.allSettled(
       this.factories.map(async (f) => {
         try {
