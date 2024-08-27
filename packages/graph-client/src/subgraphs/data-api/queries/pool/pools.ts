@@ -52,7 +52,10 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
     if (result) {
       return {
         count: result.pools.count,
-        data: result.pools.data,
+        data: result.pools.data.map((pool) => ({
+          ...pool,
+          chainId: variables.chainId,
+        })),
       }
     }
   } catch (error) {

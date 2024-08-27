@@ -11,7 +11,7 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Slot } from '@radix-ui/react-slot'
-import { GetPools, Pools } from '@sushiswap/graph-client/data-api'
+import { GetPools, PoolChainId, Pools } from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Button,
@@ -42,7 +42,7 @@ import Link from 'next/link'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolsInfinite } from 'src/lib/hooks'
-import { ChainId, ChainKey } from 'sushi/chain'
+import { ChainKey } from 'sushi/chain'
 import { isMerklChainId } from 'sushi/config'
 import { Native, Token } from 'sushi/currency'
 import { formatNumber, formatUSD } from 'sushi/format'
@@ -82,7 +82,7 @@ const COLUMNS = [
                 position="bottom-right"
                 badgeContent={
                   <NetworkIcon
-                    chainId={props.row.original.chainId as ChainId}
+                    chainId={props.row.original.chainId}
                     width={14}
                     height={14}
                   />
@@ -416,7 +416,7 @@ const COLUMNS = [
 ] as ColumnDef<Pools[number], unknown>[]
 
 interface PoolsTableProps {
-  chainId: ChainId
+  chainId: PoolChainId
   onRowClick?(row: Pools[number]): void
 }
 
@@ -509,7 +509,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
           onSortingChange={setSorting}
           loading={isLoading}
           linkFormatter={(row) =>
-            `/${ChainKey[row.chainId as ChainId]}/pool/${
+            `/${ChainKey[row.chainId]}/pool/${
               row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
             }/${row.address}`
           }

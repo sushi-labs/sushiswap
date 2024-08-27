@@ -1,3 +1,4 @@
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import React from 'react'
 import { PoolsTable } from 'src/ui/pool/PoolsTable'
@@ -8,6 +9,7 @@ import { TableFiltersPoolType } from 'src/ui/pool/TableFiltersPoolType'
 import { TableFiltersResetButton } from 'src/ui/pool/TableFiltersResetButton'
 import { TableFiltersSearchToken } from 'src/ui/pool/TableFiltersSearchToken'
 import { ChainId } from 'sushi/chain'
+import notFound from '../../not-found'
 
 export default async function PoolsPage({
   params,
@@ -15,6 +17,8 @@ export default async function PoolsPage({
   params: { chainId: string }
 }) {
   const chainId = +params.chainId as ChainId
+  if (!isPoolChainId(chainId)) return notFound()
+
   return (
     <Container maxWidth="7xl" className="px-4">
       <div className="flex flex-wrap gap-3 mb-4">
