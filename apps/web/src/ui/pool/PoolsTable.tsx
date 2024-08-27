@@ -431,7 +431,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({ chainId, onRowClick }) => {
   const args = useMemo<Omit<GetPools, 'page'>>(() => {
     return {
       chainId,
-      search: tokenSymbols.join(' / '), // TODO
+      search: tokenSymbols,
       onlyIncentivized: farmsOnly,
       onlySmartPools: smartPoolsOnly,
       protocols,

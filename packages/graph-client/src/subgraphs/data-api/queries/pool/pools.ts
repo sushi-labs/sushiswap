@@ -6,7 +6,7 @@ import { SUSHI_REQUEST_HEADERS } from '../../request-headers'
 
 export const PoolsQuery = graphql(
   `
-  query Pools($chainId: PoolChainId!, $page: Int, $search: String, $orderBy: PoolsOrderBy, $orderDirection: OrderDirection, $protocols: [Protocol], $onlyIncentivized: Boolean, $onlySmartPools: Boolean) {
+  query Pools($chainId: PoolChainId!, $page: Int, $search: [String], $orderBy: PoolsOrderBy, $orderDirection: OrderDirection, $protocols: [Protocol], $onlyIncentivized: Boolean, $onlySmartPools: Boolean) {
     pools(chainId: $chainId, page: $page, search: $search, protocols: $protocols, onlyIncentivized: $onlyIncentivized, onlySmartPools: $onlySmartPools, orderBy: $orderBy, orderDirection: $orderDirection) {
       count
       data {
