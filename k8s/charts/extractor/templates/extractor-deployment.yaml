@@ -1,16 +1,4 @@
 {{- range .Values.chains }}
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: extractor-{{ .id }}-pv-claim
-spec:
-  storageClassName: premium-rwx
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 1Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,17 +14,17 @@ spec:
         app: extractor-{{ .id }}
     spec:
       volumes:
-        - name: extractor-{{ .id }}-pv-storage
+        - name: extractor-pv
           persistentVolumeClaim:
-            claimName: extractor-{{ .id }}-pv-claim
+            claimName: extractor-pvc
       containers:
         - name: extractor
           image: extractor
           ports:
             - containerPort: 80
           volumeMounts:
-            - mountPath: "/app/cache"
-              name: extractor-{{ .id }}-pv-storage
+            - mountPath: "/app/cache/{{ .id }}"
+              name: extractor-pv
           resources:
             requests:
               cpu: 1250m
